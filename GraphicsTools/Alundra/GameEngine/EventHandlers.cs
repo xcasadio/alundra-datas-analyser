@@ -22,69 +22,69 @@ namespace GraphicsTools.Alundra
             for (int dex = 0; dex <= 0xff; dex++)
                 Handlers.Add(dex, __Unknown_Handler);
 
-            Handlers.Add(0x2, _02_Goto_Handler);
-            Handlers.Add(0x3, _03_BranchIfTrue_Handler);
-            Handlers.Add(0x4, _04_BranchIfFalse_Handler);
-            Handlers.Add(0x5, _05_FlagOn_Handler);
-            Handlers.Add(0x6, _06_FlagOff_Handler);
-            Handlers.Add(0x7, _07_CheckEntityInArea_Handler);
-            Handlers.Add(0x8, _08_Turn_Handler);
-            Handlers.Add(0x9, _09_SetDir_Handler);
-            Handlers.Add(0xa, _0a_Reverse_Handler);
-            Handlers.Add(0xc, _0c_SetRandomDir_Handler);
-            Handlers.Add(0xd, _0d_Dialog_Handler);
-            Handlers.Add(0x10, _10_LoseControl_Handler);
-            Handlers.Add(0x11, _11_GainControl_Handler);
-            Handlers.Add(0x12, _12_PlaySound1_Handler);
-            Handlers.Add(0x15, _15_ResetZPos_Handler);
-            Handlers.Add(0x16, _16_GravityOn_Handler);
-            Handlers.Add(0x17, _17_GravityOff_Handler);
-            Handlers.Add(0x19, _19_Deactivate_Handler);
-            Handlers.Add(0x1a, _1a_SetAnim_Handler);
-            Handlers.Add(0x1b, _1b_Fly_Handler);
-            Handlers.Add(0x1c, _1c_WaitAnim_Handler);
-            Handlers.Add(0x1d, _1d_WaitAnim2_Handler);
-            Handlers.Add(0x1e, _1e_WaitWalk_Handler);
-            Handlers.Add(0x1f, _1f_WaitWalk2_Handler);
-            Handlers.Add(0x24, _24_WaitForceAdjusted_Handler);
-            Handlers.Add(0x25, _25_WaitEntityCollisionZOr144_Handler);
-            Handlers.Add(0x26, _26_WaitForceAdjustedOrEntityCollisionZ_Handler);
-            Handlers.Add(0x27, _27_FacePlayer_Handler);
-            Handlers.Add(0x28, _28_Flag2On_Handler);
-            Handlers.Add(0x29, _29_Flag2Off_Handler);
-            Handlers.Add(0x2a, _2a_Flag3On_Handler);
-            Handlers.Add(0x2b, _2b_Flag3Off_Handler);
-            Handlers.Add(0x2d, _2d_ActivateEntity_Handler);
-            Handlers.Add(0x2e, _2e_Hide_Handler);
-            Handlers.Add(0x2f, _2f_CheckPlayerInput_Handler);
-            Handlers.Add(0x30, _30_IfFlagOff_Handler);
-            Handlers.Add(0x31, _31_IfFlagOn_Handler);
-            Handlers.Add(0x32, _32_FlagToggle_Handler);
-            Handlers.Add(0x33, _33_CheckFlagsOn_Handler);
-            Handlers.Add(0x34, _34_CheckFlagsOff_Handler);
-            Handlers.Add(0x35, _35_UntilFlagOff_Handler);
-            Handlers.Add(0x36, _36_UntilFlagOn_Handler);
-            Handlers.Add(0x37, _37_Wait_Handler);
-            Handlers.Add(0x3b, _3b_CheckPlayerInArea_Handler);
-            Handlers.Add(0x40, _40_SetProgramIndex_Handler);
-            Handlers.Add(0x41, _41_SetSpriteProgramIndex_Handler);
-            Handlers.Add(0x45, _45_Flag4Off_Handler);
-            Handlers.Add(0x46, _46_Flag4On_Handler);
-            Handlers.Add(0x49, _49_Restart_Handler);
-            Handlers.Add(0x4a, _4a_IfTrueRestart_Handler);
-            Handlers.Add(0x4b, _4b_IfFalseRestart_Handler);
-            Handlers.Add(0x54, _54_SetWalkable_Handler);
-            Handlers.Add(0x55, _55_SetNonWalkable_Handler);
-            Handlers.Add(0x58, _58_DirectionalBranch_Handler);
-            Handlers.Add(0x59, _59_SetEntityAnim_Handler);
-            Handlers.Add(0x5a, _5a_TurnEntity_Handler);
-            Handlers.Add(0x5b, _5b_TurnEntityWithAnim_Handler);
-            Handlers.Add(0x62, _62_EntityFlagsOn_Handler);
-            Handlers.Add(0x63, _63_EntityFlagsOff_Handler);
-            Handlers.Add(0x64, _64_SetEntityPos_Handler);
-            Handlers.Add(0x65, _65_MoveEntityPos_Handler);
-            Handlers.Add(0x67, _67_CamFollowEntity_Handler);
-            Handlers.Add(0x70, _70_Check144_Handler);
+            Handlers[0x2] = _02_Goto_Handler;
+            Handlers[0x3] = _03_BranchIfTrue_Handler;
+            Handlers[0x4] = _04_BranchIfFalse_Handler;
+            Handlers[0x5] = _05_FlagOn_Handler;
+            Handlers[0x6] = _06_FlagOff_Handler;
+            Handlers[0x7] = _07_CheckEntityInArea_Handler;
+            Handlers[0x8] = _08_Turn_Handler;
+            Handlers[0x9] = _09_SetDir_Handler;
+            Handlers[0xa] = _0a_Reverse_Handler;
+            Handlers[0xc] = _0c_SetRandomDir_Handler;
+            Handlers[0xd] = _0d_Dialog_Handler;
+            Handlers[0x10] = _10_LoseControl_Handler;
+            Handlers[0x11] = _11_GainControl_Handler;
+            Handlers[0x12] = _12_PlaySound1_Handler;
+            Handlers[0x15] = _15_ResetZPos_Handler;
+            Handlers[0x16] = _16_GravityOn_Handler;
+            Handlers[0x17] = _17_GravityOff_Handler;
+            Handlers[0x19] = _19_Deactivate_Handler;
+            Handlers[0x1a] = _1a_SetAnim_Handler;
+            Handlers[0x1b] = _1b_Fly_Handler;
+            Handlers[0x1c] = _1c_WaitAnim_Handler;
+            Handlers[0x1d] = _1d_WaitAnim2_Handler;
+            Handlers[0x1e] = _1e_WaitWalk_Handler;
+            Handlers[0x1f] = _1f_WaitWalk2_Handler;
+            Handlers[0x24] = _24_WaitForceAdjusted_Handler;
+            Handlers[0x25] = _25_WaitEntityCollisionZOr144_Handler;
+            Handlers[0x26] = _26_WaitForceAdjustedOrEntityCollisionZ_Handler;
+            Handlers[0x27] = _27_FacePlayer_Handler;
+            Handlers[0x28] = _28_Flag2On_Handler;
+            Handlers[0x29] = _29_Flag2Off_Handler;
+            Handlers[0x2a] = _2a_Flag3On_Handler;
+            Handlers[0x2b] = _2b_Flag3Off_Handler;
+            Handlers[0x2d] = _2d_ActivateEntity_Handler;
+            Handlers[0x2e] = _2e_Hide_Handler;
+            Handlers[0x2f] = _2f_CheckPlayerInput_Handler;
+            Handlers[0x30] = _30_IfFlagOff_Handler;
+            Handlers[0x31] = _31_IfFlagOn_Handler;
+            Handlers[0x32] = _32_FlagToggle_Handler;
+            Handlers[0x33] = _33_CheckFlagsOn_Handler;
+            Handlers[0x34] = _34_CheckFlagsOff_Handler;
+            Handlers[0x35] = _35_UntilFlagOff_Handler;
+            Handlers[0x36] = _36_UntilFlagOn_Handler;
+            Handlers[0x37] = _37_Wait_Handler;
+            Handlers[0x3b] = _3b_CheckPlayerInArea_Handler;
+            Handlers[0x40] = _40_SetProgramIndex_Handler;
+            Handlers[0x41] = _41_SetSpriteProgramIndex_Handler;
+            Handlers[0x45] = _45_Flag4Off_Handler;
+            Handlers[0x46] = _46_Flag4On_Handler;
+            Handlers[0x49] = _49_Restart_Handler;
+            Handlers[0x4a] = _4a_IfTrueRestart_Handler;
+            Handlers[0x4b] = _4b_IfFalseRestart_Handler;
+            Handlers[0x54] = _54_SetWalkable_Handler;
+            Handlers[0x55] = _55_SetNonWalkable_Handler;
+            Handlers[0x58] = _58_DirectionalBranch_Handler;
+            Handlers[0x59] = _59_SetEntityAnim_Handler;
+            Handlers[0x5a] = _5a_TurnEntity_Handler;
+            Handlers[0x5b] = _5b_TurnEntityWithAnim_Handler;
+            Handlers[0x62] = _62_EntityFlagsOn_Handler;
+            Handlers[0x63] = _63_EntityFlagsOff_Handler;
+            Handlers[0x64] = _64_SetEntityPos_Handler;
+            Handlers[0x65] = _65_MoveEntityPos_Handler;
+            Handlers[0x67] = _67_CamFollowEntity_Handler;
+            Handlers[0x70] = _70_Check144_Handler;
 
         }
 
@@ -200,7 +200,7 @@ namespace GraphicsTools.Alundra
                 eventdata.sp = 0;
                 eventdata.exp = 0;
             }
-            
+
         }
 
         private void InitEventData(SpriteInstance entity, int eventprogramtype, EventProgramState eventdata)
@@ -225,8 +225,8 @@ namespace GraphicsTools.Alundra
 
 
 
-        
-       
+
+
 
 
 
@@ -381,10 +381,10 @@ namespace GraphicsTools.Alundra
             if (dify < 0)
                 dify = -dify;
             int distance = code[exp + 2] + (code[exp + 3] << 8);
-            
-            if (difx>>16 >= distance)
+
+            if (difx >> 16 >= distance)
                 return 4;//done
-            if (dify>>16 >= distance)
+            if (dify >> 16 >= distance)
                 return 4;//done
 
             return 0;//keep blocking
@@ -540,14 +540,14 @@ namespace GraphicsTools.Alundra
                 return 0;
             }
 
-            var x = Math.Abs(eventData.evtvars[0] - entity.XPos)>>16;
-            var y = Math.Abs(eventData.evtvars[1] - entity.YPos)>>16;
+            var x = Math.Abs(eventData.evtvars[0] - entity.XPos) >> 16;
+            var y = Math.Abs(eventData.evtvars[1] - entity.YPos) >> 16;
 
             int distance = code[exp + 1] | (code[exp + 2] << 8);
 
             if (x >= distance || y >= distance)
                 return 3;
-            
+
             return 0;
         }
 
@@ -1048,7 +1048,7 @@ namespace GraphicsTools.Alundra
             int z1 = code[exp + 5];
             int z2 = code[exp + 6];
 
-                var checkme = gameState.PlayerEntity;
+            var checkme = gameState.PlayerEntity;
             if (checkme.XTile >= x1 && checkme.XTile <= x2
                 && checkme.YTile >= y1 && checkme.YTile <= y2
                 && checkme.ZTile >= z1 && checkme.ZTile <= z2)
@@ -1206,7 +1206,7 @@ namespace GraphicsTools.Alundra
             var entityid = code[exp + 1];
             int animid = code[exp + 2];
             var turncode = code[exp + 3];
-            
+
             int numentities = gameState.GetEntityFromRefId(entity, entityid);
             for (int dex = 0; dex < numentities; dex++)
             {
@@ -1251,9 +1251,9 @@ namespace GraphicsTools.Alundra
         public int _64_SetEntityPos_Handler(SpriteInstance entity, SpriteInstance entityself/*?*/, int exp, EventProgramState eventData, byte[] code)
         {
             var entityid = code[exp + 1];
-            int x = (code[exp + 2] + (code[exp + 3] << 8))<<16;
-            int y = (code[exp + 4] + (code[exp + 5] << 8))<<16;
-            int z = (code[exp + 6] + (code[exp + 7] << 8))<<16;
+            int x = (code[exp + 2] + (code[exp + 3] << 8)) << 16;
+            int y = (code[exp + 4] + (code[exp + 5] << 8)) << 16;
+            int z = (code[exp + 6] + (code[exp + 7] << 8)) << 16;
 
             int numentities = gameState.GetEntityFromRefId(entity, entityid);
             for (int dex = 0; dex < numentities; dex++)
@@ -1438,7 +1438,7 @@ namespace GraphicsTools.Alundra
             int x = (code[2] | code[3] << 8) << 16;
             int y = (code[4] | code[5] << 8) << 16;
             int z = (code[6] | code[7] << 8) << 16;
-            
+
             effect.X = x;
             effect.Y = y;
             effect.Z = z;
@@ -1487,7 +1487,7 @@ namespace GraphicsTools.Alundra
         {
             if ((i & 0x8000) == 0)
                 return 0x0000FFFF & i;
-            else 
+            else
                 return (int)(0xFFFF0000 | i);
         }
 

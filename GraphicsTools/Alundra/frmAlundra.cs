@@ -22,7 +22,7 @@ namespace GraphicsTools.Alundra
         {
             DebugSymbols.Init();
             this.datasBin = datasBin;
-            for (int dex = 0;dex<datasBin.gamemaps.Length;dex++)
+            for (int dex = 0; dex < datasBin.gamemaps.Length; dex++)
             {
                 if (datasBin.gamemaps[dex] != null)
                 {
@@ -46,7 +46,7 @@ namespace GraphicsTools.Alundra
             if (!CachedTiles.ContainsKey(tileid))
                 CachedTiles.Add(tileid, selectedGame.GenerateTileBitmap(tileid & 0x3ff, selectedGame.info.palettes[(tileid & 0xf000) >> 12]));
 
-            
+
             return CachedTiles[tileid];
         }
 
@@ -155,7 +155,7 @@ namespace GraphicsTools.Alundra
             lblScrollSize.Text = selectedGame.header.scrollsize.ToString();
             lblStringsSize.Text = selectedGame.header.stringsize.ToString();
 
-            
+
 
             //sprite palettes
             lstSpritePalettes.Items.Clear();
@@ -207,7 +207,7 @@ namespace GraphicsTools.Alundra
                             entity.eventcodese_deactivate_index.ToString("x2"),
                             entity.eventcodesf_interact_index.ToString("x2")
                         });
-                    lvi.ToolTipText = DispByte((byte)(entity.u7&0xff)) + DispByte((byte)((entity.u7&0xff00)>>8)) + DispByte(entity.contents) + DispByte(entity.u10) + DispByte(entity.minx) + DispByte(entity.miny);
+                    lvi.ToolTipText = DispByte((byte)(entity.u7 & 0xff)) + DispByte((byte)((entity.u7 & 0xff00) >> 8)) + DispByte(entity.contents) + DispByte(entity.u10) + DispByte(entity.minx) + DispByte(entity.miny);
                     lsvEntities.Items.Add(lvi);
                 }
             }
@@ -265,22 +265,22 @@ namespace GraphicsTools.Alundra
         bool showdebug = false;
         void DrawMap()
         {
-            if (selectedGame != null)
+            if (selectedGame != null && selectedGame.map != null)
             {
                 var map = selectedGame.map;
-                
+
                 using (var g = Graphics.FromImage(pctMap.Image))
                 {
-                    var fnt= new Font(FontFamily.GenericSansSerif,6);
+                    var fnt = new Font(FontFamily.GenericSansSerif, 6);
                     g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                     g.Clear(Color.Black);
                     for (int y = 0; y < map.height - vScrollMap.Value; y++)
                     {
                         for (int x = 0; x < pctMap.Width / mapscale / 24; x++)
                         {
-                            var tile = map.maptiles[(y+vScrollMap.Value) * map.width + (x+hScrollMap.Value)];
-                            
-                            
+                            var tile = map.maptiles[(y + vScrollMap.Value) * map.width + (x + hScrollMap.Value)];
+
+
                             int dx = x * mapscale * 24;
                             int dy = (y - tile.height) * mapscale * 16;
                             if (tile.tileid != -1)
@@ -290,11 +290,11 @@ namespace GraphicsTools.Alundra
                             if (tile.walltiles != null)
                             {
 
-                                for (int dex = 0; dex < tile.walltiles.count;dex++)
+                                for (int dex = 0; dex < tile.walltiles.count; dex++)
                                 {
                                     if (tile.walltiles.tiles[dex] != -1)
                                     {
-                                            g.DrawImage(GetTile(tile.walltiles.tiles[dex]), dx, dy + (dex - tile.walltiles.offset + 1) * 16 * mapscale, 24 * mapscale + 1, 16 * mapscale + 1);
+                                        g.DrawImage(GetTile(tile.walltiles.tiles[dex]), dx, dy + (dex - tile.walltiles.offset + 1) * 16 * mapscale, 24 * mapscale + 1, 16 * mapscale + 1);
                                     }
                                 }
 
@@ -314,8 +314,8 @@ namespace GraphicsTools.Alundra
                                 //    g.DrawString(tile.walltiles.count.ToString(), fnt, Brushes.Green, dx + 16 * mapscale, dy + 16 * mapscale / 1.5f);
                                 //}
                             }
-                                
-                            
+
+
                         }
                     }
 
@@ -373,14 +373,14 @@ namespace GraphicsTools.Alundra
             }
             pctMapPalettes.Refresh();
 
-            
+
         }
 
         private void pctMapPalettes_Paint(object sender, PaintEventArgs e)
         {
             if (lstMapPalettes.SelectedIndex >= 0)
             {
-                int y = lstMapPalettes.SelectedIndex*pal_scale - 3;
+                int y = lstMapPalettes.SelectedIndex * pal_scale - 3;
                 e.Graphics.DrawRectangle(Pens.Red, 0, y, pctMapPalettes.Width, pal_scale);
             }
         }
@@ -469,7 +469,7 @@ namespace GraphicsTools.Alundra
                 var frm = new frmFileAnalyzer();
                 frm.datafile = datasBin.binfile;
                 frm.offset = (int)selectedGame.binoffset + offset;
-				frm.memaddress = memaddress;
+                frm.memaddress = memaddress;
                 frm.startoffset = startoffset;
                 frm.Show();
             }
@@ -525,14 +525,14 @@ namespace GraphicsTools.Alundra
         private void frmAlundra_Load(object sender, EventArgs e)
         {
             pctMap.Image = new Bitmap(pctMap.Width, pctMap.Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-            
+
             animtimer = new Timer();
             animtimer.Enabled = false;
             animtimer.Tick += new EventHandler(animtimer_Tick);
 
         }
 
-        
+
 
         private void vScrollMap_Scroll(object sender, ScrollEventArgs e)
         {
@@ -563,7 +563,7 @@ namespace GraphicsTools.Alundra
 
                 var tile = selectedGame.map.maptiles[selectedPortal.x1 + selectedPortal.y1 * selectedGame.map.width];
 
-                
+
 
                 lblportalx1.Text = selectedPortal.x1.ToString();
                 lblportaly1.Text = selectedPortal.y1.ToString();
@@ -581,7 +581,7 @@ namespace GraphicsTools.Alundra
                     CenterOnTile(selectedPortal.x1, selectedPortal.y1 - tile.height);
                 else
                     pctMap.Refresh();
-                
+
             }
             else
             {
@@ -711,7 +711,7 @@ namespace GraphicsTools.Alundra
                 lstGameMaps.SelectedIndex = selectedPortal.destmapid;
 
                 var tile = selectedGame.map.maptiles[destx + desty * selectedGame.map.width];
-                CenterOnTile(destx, desty-tile.height);
+                CenterOnTile(destx, desty - tile.height);
             }
         }
 
@@ -796,7 +796,7 @@ namespace GraphicsTools.Alundra
                     lblSector1d.Text = GetSector1ByteCodes(br, selectedEntity.eventcodesd_touch_index, sector1.eventcodesdtable);
                     lblSector1e.Text = GetSector1ByteCodes(br, selectedEntity.eventcodese_deactivate_index, sector1.eventcodesetable);
                     lblSector1f.Text = GetSector1ByteCodes(br, selectedEntity.eventcodesf_interact_index, sector1.eventcodesftable);
-                    
+
                     br.Close();
                 }
             }
@@ -819,7 +819,7 @@ namespace GraphicsTools.Alundra
             lblsector5mem.Text = 0.ToString("x8");
             selectedSector5 = null;
             if (selectedGame != null && lstSector5.SelectedIndex >= 0 && lstSector5.SelectedItem.ToString() != "-1")
-                selectedSector5 = selectedGame.spriteinfo.sprites[int.Parse(lstSector5.SelectedItem.ToString().Replace("record ",""),System.Globalization.NumberStyles.AllowHexSpecifier)];
+                selectedSector5 = selectedGame.spriteinfo.sprites[int.Parse(lstSector5.SelectedItem.ToString().Replace("record ", ""), System.Globalization.NumberStyles.AllowHexSpecifier)];
             lstSector5Animations.Items.Clear();
             lstSector5Animations.SelectedIndex = -1;
             lbl_moreflags.Text = "?";
@@ -915,7 +915,7 @@ namespace GraphicsTools.Alundra
 
             if (selectedSector5 != null)
             {
-                
+
                 var br = datasBin.OpenBin();
                 selectedAnim = selectedSector5.GetAnimation(br, animoffset);
                 lblSelAnim.Text = selectedAnim.memaddr.ToString("x6");
@@ -1107,7 +1107,7 @@ namespace GraphicsTools.Alundra
             }
         }
 
-        
+
 
         private void pctFrame_Paint(object sender, PaintEventArgs e)
         {

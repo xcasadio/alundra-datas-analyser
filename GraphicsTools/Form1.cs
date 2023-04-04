@@ -33,12 +33,12 @@ namespace GraphicsTools
                 gr.DrawImage(orig, new Rectangle(0, 0, clone.Width, clone.Height));
             }
 
-            
+
 
             setImage(clone, 0, 0, scale);
 
             //get colors
-            
+
         }
 
         void drawImage(Image img, int xoff, int yoff, float scale)
@@ -53,7 +53,7 @@ namespace GraphicsTools
                 picOut.Refresh();
             }
 
-            
+
         }
 
         void setImage(Bitmap img, int xoff, int yoff, float scale)
@@ -101,7 +101,7 @@ namespace GraphicsTools
             if (!string.IsNullOrEmpty(ofd.FileName))
             {
                 open(Image.FromFile(ofd.FileName));
-                
+
             }
         }
 
@@ -109,7 +109,7 @@ namespace GraphicsTools
         Bitmap loadedImage;
         int width;
         int height;
-        const int cellwidth= 8; const int cellheight = 8;
+        const int cellwidth = 8; const int cellheight = 8;
         Dictionary<Color, int>[] cells;
         Color[] colors;
         Dictionary<Color, int> colorBank;
@@ -169,13 +169,13 @@ namespace GraphicsTools
             picOut.Refresh();
 
 
-            
+
         }
 
-        
+
         private void SavePalette(List<Color> pal, string file)
         {
-            using (var br = new BinaryWriter(File.Open(file,FileMode.Create)))
+            using (var br = new BinaryWriter(File.Open(file, FileMode.Create)))
             {
                 foreach (var c in pal)
                 {
@@ -189,7 +189,7 @@ namespace GraphicsTools
                 br.Close();
             }
         }
-        private void SaveImage(Color[] image,int[]map, string file)
+        private void SaveImage(Color[] image, int[] map, string file)
         {
             using (var br = new BinaryWriter(File.Open(file, FileMode.Create)))
             {
@@ -206,8 +206,14 @@ namespace GraphicsTools
         }
         private void btnProcess_Click(object sender, EventArgs e)
         {
+            if (colors == null)
+            {
+                MessageBox.Show("colors is null", "error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             int[] cbuff = new int[0xffffff];
-            foreach(var c in colors)
+            foreach (var c in colors)
             {
                 int color = c.ToRbg24();// 15();
                 cbuff[color] = cbuff[color] + 1;
@@ -220,7 +226,7 @@ namespace GraphicsTools
             int pp = 0;
             for (int y = 0; y < height; y++)
             {
-                pp = ((height-1)-y) * bmp.rowsize;
+                pp = ((height - 1) - y) * bmp.rowsize;
                 for (int x = 0; x < width; x++)
                 {
                     int color = colors[y * width + x].ToRbg24();
@@ -229,13 +235,13 @@ namespace GraphicsTools
                     bmp.pixels[pp++] = (byte)(realcolor & (int)0xff);
                     bmp.pixels[pp++] = (byte)((realcolor & (int)0xff00) >> 8);
                     bmp.pixels[pp++] = (byte)((realcolor & (int)0xff0000) >> 16);
-                    
+
                 }
             }
 
             SavePalette(palette, "D:\\TEST.PAL");
             SaveImage(colors, cbuff, "D:\\TEST.IMG"); ;
-            
+
 
 
             //var stream = File.Open("D:\\test.bmp", FileMode.OpenOrCreate);
@@ -248,7 +254,7 @@ namespace GraphicsTools
         }
 
         int ScaledHeight
-        { 
+        {
             get
             {
                 return (int)(height * scale);
@@ -349,7 +355,7 @@ namespace GraphicsTools
             }
         }
 
-        
+
         private void openDATASBINToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -363,7 +369,7 @@ namespace GraphicsTools
                 frmAlundra.Init(datasBin);
 
                 //show soundboard too
-                var frmSoundboard = new Alundra.frmSoundboard(datasBin);
+                var frmSoundboard = new Alundra.frmSoundboard(datasBin, Path.Combine(Path.GetDirectoryName(ofd.FileName), "SOUND.BIN"));
                 frmSoundboard.Show();
             }
         }
@@ -392,14 +398,14 @@ namespace GraphicsTools
             ofd.ShowDialog();
             if (!string.IsNullOrWhiteSpace(ofd.FileName))
             {
-                var frmGame = new Alundra.frmGame(new Alundra.DatasBin(ofd.FileName), new Alundra.SoundBin("C:\\git\\alundra\\GraphicsTools\\SOUND.BIN"));
+                var frmGame = new Alundra.frmGame(new Alundra.DatasBin(ofd.FileName), new Alundra.SoundBin(Path.Combine(Path.GetDirectoryName(ofd.FileName), "SOUND.BIN")));
                 frmGame.Show();
             }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            
+
         }
     }
 

@@ -13,10 +13,10 @@ namespace GraphicsTools.Alundra
 {
     public partial class frmSoundboard : Form
     {
-        public frmSoundboard(DatasBin datasBin)
+        public frmSoundboard(DatasBin datasBin, string SoundBinFileName)
         {
             this.datasBin = datasBin;
-            soundBin = new SoundBin("C:\\git\\alundra\\GraphicsTools\\SOUND.BIN");
+            soundBin = new SoundBin(SoundBinFileName);
             InitializeComponent();
         }
         InputPort _input;
@@ -97,7 +97,7 @@ namespace GraphicsTools.Alundra
 
         private void _input_KeyUp(object sender, int number, int velocity)
         {
-            
+
         }
 
         int selectedSfx = 0;
@@ -124,8 +124,8 @@ namespace GraphicsTools.Alundra
             var map = datasBin.gamemaps[lstGameMaps.SelectedIndex];
             soundBin.OpenMap(map.info.mapid);
             lstMapSfx.Items.Clear();
-            
-            for(int dex = 0;dex<soundBin.MapVabHeader.Header.vs;dex++)
+
+            for (int dex = 0; dex < soundBin.MapVabHeader.Header.vs; dex++)
             {
                 lstMapSfx.Items.Add("Map VAG " + dex);
             }
@@ -183,7 +183,7 @@ namespace GraphicsTools.Alundra
                 return;
             e.Graphics.DrawLine(Pens.Green, loop_start - waveoffset, 0, loop_start - waveoffset, pctWaveform.Height);
             e.Graphics.DrawLine(Pens.Red, loop_end - waveoffset, 0, loop_end - waveoffset, pctWaveform.Height);
-            for (int dex = 0; dex < waveform.Length; dex += is8bit ? 1: 2)
+            for (int dex = 0; dex < waveform.Length; dex += is8bit ? 1 : 2)
             {
                 int sampledex = dex / (is8bit ? 1 : 2);
                 short sample;
@@ -204,6 +204,6 @@ namespace GraphicsTools.Alundra
             }
         }
 
-        
+
     }
 }

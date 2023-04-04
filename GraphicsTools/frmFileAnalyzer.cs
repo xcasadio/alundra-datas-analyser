@@ -84,12 +84,11 @@ namespace GraphicsTools
         {
             loadchunk(offset);
 
-            //var frm = new frmLib("C:\\PSYQ_SDK\\psyq\\lib\\LIBSND.LIB", "C:\\PSYQ_SDK\\psyq\\include\\LIBSND.H", "C:\\PSYQ_SDK\\psyq\\lib", "C:\\PSYQ_SDK\\psyq\\include", this);
             var frm = new frmLib(
-                "C:\\PSYQ_SDK\\psyq\\lib\\old_libs\\LIB35\\LIB\\LIBSND.LIB", 
-                "C:\\PSYQ_SDK\\psyq\\lib\\old_libs\\LIB35\\INCLUDE\\LIBSND.H", 
-                "C:\\PSYQ_SDK\\psyq\\lib\\old_libs\\LIB35\\LIB", 
-                "C:\\PSYQ_SDK\\psyq\\lib\\old_libs\\LIB35\\INCLUDE", 
+                @"..\..\..\psyq_sdk\LIB\LIBSND.LIB",
+                @"..\..\..\psyq_sdk\INCLUDE\LIBSND.H",
+                @"..\..\..\psyq_sdk\LIB",
+                @"..\..\..\psyq_sdk\INCLUDE",
                 this);
             frm.Show();
             libfuncs = frm.analyzedfuncs;
@@ -201,7 +200,7 @@ namespace GraphicsTools
                 DisplayData(rtfText.SelectionStart);
         }
 
-        
+
 
         private void btnViewImage_Click(object sender, EventArgs e)
         {
@@ -343,7 +342,7 @@ namespace GraphicsTools
                 long num = data[dex] | data[dex + 1] << 8;// | data[dex + 2] << 16 | data[dex + 3] << 24;
                 if (flip)
                 {
-                    num = data[dex+1] | data[dex + 0] << 8;
+                    num = data[dex + 1] | data[dex + 0] << 8;
                 }
                 if (num >= search && num <= search + range)
                 {
@@ -486,7 +485,7 @@ namespace GraphicsTools
                                                 name2 += "[" + off.ToString("x") + "]";
 
                                         }
-                                        if(inst.GlobalRegisterOffset > 0)
+                                        if (inst.GlobalRegisterOffset > 0)
                                         {
                                             name2 += "[" + MIPS.GetRegister(inst.GlobalRegisterOffset) + "]";
                                         }
@@ -802,7 +801,7 @@ namespace GraphicsTools
 
                 funclist.Add(this);
                 address = addr;
-                if(fname != null)
+                if (fname != null)
                 {
                     name = fname;
                 }
@@ -951,7 +950,7 @@ namespace GraphicsTools
                     }
                 }
 
-                foreach(var gvar in globalvariables)
+                foreach (var gvar in globalvariables)
                 {
                     if (gvar.address >= 0x29f30 && gvar.address <= 0x2aaba)
                     {
@@ -1025,7 +1024,7 @@ namespace GraphicsTools
             {
                 get
                 {
-                    
+
                     if (!string.IsNullOrEmpty(libname))
                         return libname;
                     if (!string.IsNullOrEmpty(name))
@@ -1070,7 +1069,7 @@ namespace GraphicsTools
                 //its a recursively called function
                 //indicate it somehow?
             }
-            
+
 
             return node;
         }
@@ -1079,11 +1078,11 @@ namespace GraphicsTools
         {
             var ablocks = func.blocks;
             var bblocks = comp.blocks;
-            int hits =0;
-            int misses=0;
+            int hits = 0;
+            int misses = 0;
             if (ablocks.Count != bblocks.Count)
                 return 0;
-            for (int bdex=0;bdex<ablocks.Count;bdex++)
+            for (int bdex = 0; bdex < ablocks.Count; bdex++)
             {
                 var ablock = ablocks[bdex];
                 var bblock = bblocks[bdex];
@@ -1093,9 +1092,9 @@ namespace GraphicsTools
                 var binst = bblock.Instructions.Where(x => x.cmd != "nop").OrderBy(x => x.cmd).ToList();
                 if (ainst.Count == binst.Count)
                 {
-                    for (int dex =0;dex<ainst.Count;dex++)
+                    for (int dex = 0; dex < ainst.Count; dex++)
                     {
-                        if(ainst[dex].cmd == binst[dex].cmd)
+                        if (ainst[dex].cmd == binst[dex].cmd)
                         {
                             hits++;
                         }
@@ -1132,7 +1131,7 @@ namespace GraphicsTools
             var endaddress = (uint)0x0002c518;
             analyzedfunctions = new List<AnalyzedFunction>();
             analyzedglobalvariables = new List<AnalyzedGlobalVariable>();
-            
+
             root = new AnalyzedFunction(address, analyzedfunctions, analyzedglobalvariables, datafile, AnalyzeFunction, endaddress);
 
             //do the alundra event funcs too
@@ -1167,12 +1166,12 @@ namespace GraphicsTools
             stream.Position = 0x9b554;
             numread = stream.Read(fdata, 0, chunklength);
             stream.Close();
-            for (int dex = 0; dex < 6*4; dex += 4)
+            for (int dex = 0; dex < 6 * 4; dex += 4)
             {
                 uint addr = (uint)(fdata[dex] | fdata[dex + 1] << 8 | fdata[dex + 2] << 16 | (uint)fdata[dex + 3] << 24);
-                seventptrs[dex/4] = (0xFFFFFFF & addr);
+                seventptrs[dex / 4] = (0xFFFFFFF & addr);
             }
-            for(int sdex=0;sdex<6;sdex++)
+            for (int sdex = 0; sdex < 6; sdex++)
             {
                 if (seventptrs[sdex] == 0)
                     continue;
@@ -1195,7 +1194,7 @@ namespace GraphicsTools
                     //var sicode = Alundra.SpriteInfoEventCodes.GetCode((byte)fdex);
                     var sicodename = "";//TODO, add a way to register names for these
                     string eventtypename = "";
-                    switch(sdex)
+                    switch (sdex)
                     {
                         case 0:
                             eventtypename = "eload";
@@ -1260,12 +1259,12 @@ namespace GraphicsTools
             }
 
             var maxstack = root.GetDepth(new List<AnalyzedFunction>());
-            foreach(var efunc in eventFuncs)
+            foreach (var efunc in eventFuncs)
             {
                 efunc.GetDepth(new List<AnalyzedFunction>());
             }
 
-            foreach(var ifunc in importantFuncs)
+            foreach (var ifunc in importantFuncs)
             {
                 ifunc.GetDepth(new List<AnalyzedFunction>());
             }
@@ -1276,7 +1275,7 @@ namespace GraphicsTools
             debugStrings = new Dictionary<string, List<AnalyzedFunction>>();
             foreach (var func in analyzedfunctions)
             {
-                
+
 
                 string fname = "";
                 if (!string.IsNullOrEmpty(func.name) || !string.IsNullOrEmpty(func.notes))
@@ -1304,7 +1303,7 @@ namespace GraphicsTools
                         }
                     }
                 }
-                if (func.potentiallibs.Count>0)
+                if (func.potentiallibs.Count > 0)
                 {
                     fname += " (" + string.Join(",", func.potentiallibs.Select(x => x.name)) + ")";
                 }
@@ -1342,17 +1341,17 @@ namespace GraphicsTools
             tvFuncs.Nodes.Clear();
 
             tvFuncs.Nodes.Add(GetNode(root));
-            foreach(var efunc in eventFuncs)
+            foreach (var efunc in eventFuncs)
             {
                 tvFuncs.Nodes.Add(GetNode(efunc));
             }
-            foreach(var ifunc in importantFuncs)
+            foreach (var ifunc in importantFuncs)
             {
                 tvFuncs.Nodes.Add(GetNode(ifunc));
             }
 
             lstDebugs.Items.Clear();
-            foreach(var item in debugStrings.OrderByDescending(x => x.Value.Count))
+            foreach (var item in debugStrings.OrderByDescending(x => x.Value.Count))
             {
                 lstDebugs.Items.Add(item.Key);
             }
@@ -1365,7 +1364,7 @@ namespace GraphicsTools
         }
 
         float rot = 0f;
-        List<Vector3> points = new List<Vector3> {new Vector3(-10,10,0), new Vector3(10,10,0), new Vector3(10,-10,0), new Vector3(-10,-10,0)  };
+        List<Vector3> points = new List<Vector3> { new Vector3(-10, 10, 0), new Vector3(10, 10, 0), new Vector3(10, -10, 0), new Vector3(-10, -10, 0) };
         private void canvas_Paint(object sender, PaintEventArgs e)
         {
             var g = e.Graphics;
@@ -1378,12 +1377,12 @@ namespace GraphicsTools
             camera = camera * rotmat;
 
 
-            float width = canvas.Width/2;
-            float height = canvas.Height/2;
+            float width = canvas.Width / 2;
+            float height = canvas.Height / 2;
 
             if (points != null)
             {
-                foreach(var pnt in points)
+                foreach (var pnt in points)
                 {
                     var p1 = Vector3.Transform(pnt, camera);
                     g.DrawLine(Pens.Red, p1.X, p1.Y, p1.X + 1, p1.Y + 1);
@@ -1392,12 +1391,12 @@ namespace GraphicsTools
 
         }
 
-        int drawpos=0;
+        int drawpos = 0;
         float GetSaturnFixedFloat()
         {
-            short s = (short)(data[drawpos+0] << 8 | data[drawpos+1]);
+            short s = (short)(data[drawpos + 0] << 8 | data[drawpos + 1]);
             drawpos += 2;
-            short s2 = (short)(data[drawpos+0] << 8 | data[drawpos+1]);
+            short s2 = (short)(data[drawpos + 0] << 8 | data[drawpos + 1]);
             drawpos += 2;
             return s + (s2 / 65536.0f);
         }
@@ -1407,7 +1406,7 @@ namespace GraphicsTools
             points = new List<Vector3>();
             var numverts = ParseNum(txtNumVerts.Text);
             drawpos = rtfText.SelectionStart;
-            for(var vert = 0;vert<numverts;vert++)
+            for (var vert = 0; vert < numverts; vert++)
             {
                 Vector3 v;
                 v.X = GetSaturnFixedFloat();
@@ -1434,7 +1433,7 @@ namespace GraphicsTools
             if (lstDebugs.SelectedItem != null)
             {
                 var funcs = debugStrings[(string)lstDebugs.SelectedItem];
-                foreach(var func in funcs)
+                foreach (var func in funcs)
                 {
                     lstDebugIncludeds.Items.Add(func.ToString());
                 }
@@ -1457,7 +1456,7 @@ namespace GraphicsTools
             if (lstGlobals.SelectedItem != null)
             {
                 var gvar = analyzedglobalvariables.FirstOrDefault(x => x.DisplayName == (string)lstGlobals.SelectedItem);
-                
+
                 foreach (var func in gvar.functions)
                 {
                     lstGlobalIncludeds.Items.Add(func.ToString());
@@ -1500,11 +1499,11 @@ namespace GraphicsTools
 
             string s = "short[] DirectionTable = new short[]{\r\n";
             int dex = 0;
-            
-            for (int y = 0;y<16; y++)
+
+            for (int y = 0; y < 16; y++)
             {
                 string line = "";
-                for (int x = 0;x<16;x++)
+                for (int x = 0; x < 16; x++)
                 {
                     line += "0x" + (data[dex + 0] + (data[dex + 1] << 8)).ToString("x1") + ",";
                     dex += 2;
@@ -1520,8 +1519,8 @@ namespace GraphicsTools
 
             for (int i = 0; i < 29; i++)
             {
-                    string line = "0x" + (data[dex + 0] + (data[dex + 1] << 8) + (data[dex+2]<<16)+(data[dex+3]<<24)).ToString("x8") + ",";
-                    dex += 4;
+                string line = "0x" + (data[dex + 0] + (data[dex + 1] << 8) + (data[dex + 2] << 16) + (data[dex + 3] << 24)).ToString("x8") + ",";
+                dex += 4;
                 s += line + "\r\n";
             }
 
@@ -1567,12 +1566,12 @@ namespace GraphicsTools
             }
             s += "};";
             Clipboard.SetText(s);*/
-            
+
             s = "cmds = new {\r\n";
             dex = 0;
-            for (int i = 0;i<255*2;i++)
+            for (int i = 0; i < 255 * 2; i++)
             {
-                
+
                 var cmd = new Alundra.UIDrawCmd();
                 cmd.u = data[dex + 0xc];
                 cmd.v = data[dex + 0xd];
@@ -1584,48 +1583,48 @@ namespace GraphicsTools
             }
             s += "}";
             Clipboard.SetText(s);
-/*
-            s = "infos = new {\r\n";
-            dex = 0;
-            for (int i = 0; i < 128; i++)
-            {
+            /*
+                        s = "infos = new {\r\n";
+                        dex = 0;
+                        for (int i = 0; i < 128; i++)
+                        {
 
-                int[] vals= new int[5];
-                for(int sdex=0; sdex<5;sdex++)
-                {
-                    vals[sdex] = data[dex + 3] << 24 | data[dex + 2] << 16 | data[dex + 1] << 8 | data[dex + 0];
-                    dex += 4;
-                }
-                string line = $"new FontCharInfo{{ width = 0x{vals[0].ToString("x")}, height = 0x{vals[1].ToString("x")}, sx = 0x{vals[3].ToString("x")}, sy = 0x{vals[3].ToString("x")}, y = 0x{vals[4].ToString("x")}}},//0x{i.ToString("x")}";
-                s += line + "\r\n";
-            }
-            s += "}";
-            Clipboard.SetText(s);
+                            int[] vals= new int[5];
+                            for(int sdex=0; sdex<5;sdex++)
+                            {
+                                vals[sdex] = data[dex + 3] << 24 | data[dex + 2] << 16 | data[dex + 1] << 8 | data[dex + 0];
+                                dex += 4;
+                            }
+                            string line = $"new FontCharInfo{{ width = 0x{vals[0].ToString("x")}, height = 0x{vals[1].ToString("x")}, sx = 0x{vals[3].ToString("x")}, sy = 0x{vals[3].ToString("x")}, y = 0x{vals[4].ToString("x")}}},//0x{i.ToString("x")}";
+                            s += line + "\r\n";
+                        }
+                        s += "}";
+                        Clipboard.SetText(s);
 
-            s = "string [] StringTable = new string[] {\r\n";
-            dex = 0;
-            
-            int soffset = data[dex + 3] << 24 | data[dex + 2] << 16 | data[dex + 1] << 8 | data[dex + 0];
-            while(soffset >> 31 == 1)
-            {
-                soffset = soffset & 0xffffff;
-                int diff = soffset - offset;
-                if (diff <= 0)
-                    break;
-                StringBuilder sb = new StringBuilder();
-                char chr = (char)data[diff++];
-                while(chr != 0)
-                {
-                    sb.Append(chr);
-                    chr = (char)data[diff++];
-                }
-                s += $"\"{sb.ToString()}\",\r\n";
-                dex += 4;
-                soffset = data[dex + 3] << 24 | data[dex + 2] << 16 | data[dex + 1] << 8 | data[dex + 0];
-            }
-            s += "}";
-            Clipboard.SetText(s);
-            */
+                        s = "string [] StringTable = new string[] {\r\n";
+                        dex = 0;
+
+                        int soffset = data[dex + 3] << 24 | data[dex + 2] << 16 | data[dex + 1] << 8 | data[dex + 0];
+                        while(soffset >> 31 == 1)
+                        {
+                            soffset = soffset & 0xffffff;
+                            int diff = soffset - offset;
+                            if (diff <= 0)
+                                break;
+                            StringBuilder sb = new StringBuilder();
+                            char chr = (char)data[diff++];
+                            while(chr != 0)
+                            {
+                                sb.Append(chr);
+                                chr = (char)data[diff++];
+                            }
+                            s += $"\"{sb.ToString()}\",\r\n";
+                            dex += 4;
+                            soffset = data[dex + 3] << 24 | data[dex + 2] << 16 | data[dex + 1] << 8 | data[dex + 0];
+                        }
+                        s += "}";
+                        Clipboard.SetText(s);
+                        */
         }
 
         private void btnFuncContainsAddr_Click(object sender, EventArgs e)
@@ -1651,7 +1650,7 @@ namespace GraphicsTools
                 {
                     if (func.name.Contains("eload_"))
                     {
-                        
+
                     }
                 }
             }

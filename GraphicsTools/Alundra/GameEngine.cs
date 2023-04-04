@@ -23,7 +23,7 @@ namespace GraphicsTools.Alundra
                 datasBin.alundragamemap.Load(reader, false);
             reader.Close();
 
-            game = new GameState (datasBin.alundragamemap, datasBin.balancebin, soundBin) { CamXPos = 100 << 16, CamYPos = 100 << 16 };
+            game = new GameState(datasBin.alundragamemap, datasBin.balancebin, soundBin) { CamXPos = 100 << 16, CamYPos = 100 << 16 };
 
             eventHandlers = new EventHandlers(game);
         }
@@ -79,7 +79,7 @@ namespace GraphicsTools.Alundra
 
 
                     //var tile = selectedGame.map.maptiles[sx + sy * selectedGame.map.width];
-                    int scx = (si.ModdedXPos>>16) - curxpos;
+                    int scx = (si.ModdedXPos >> 16) - curxpos;
                     int scy = ((si.ModdedYPos >> 16) - (si.ModdedZPos >> 16)) - curypos;
                     if (si.Sprite != null)
                     {
@@ -144,17 +144,17 @@ namespace GraphicsTools.Alundra
                 var entity = map.spriteinfo.entities.entities[dex];
                 if (entity != null)
                 {
-                    
+
                 }
             }
 
-            
+
             for (int dex = 0; dex < map.spriteinfo.mapevents.records.Length; dex++)
             {
                 var record = map.spriteinfo.mapevents.records[dex];
                 if (record != null)
                 {
-                    
+
                 }
             }
 
@@ -301,7 +301,7 @@ namespace GraphicsTools.Alundra
             //add spriterefs
             if (game.ToRenderCount > 0)
             {
-                for (int dex = 0;dex<game.ToRenderCount;dex++)
+                for (int dex = 0; dex < game.ToRenderCount; dex++)
                 {
                     var entity = game.ToRenderList[dex];
 
@@ -385,7 +385,7 @@ namespace GraphicsTools.Alundra
                     {
                         if (entity2.ModdedYPos - entity.ModdedYPos >= 0 && entity2.ModdedYPos - entity.ModdedYPos < entity.Depth + 1)
 
-                                                        {
+                        {
                             entity.RidingEntity = entity2;
                             break;
                         }
@@ -594,8 +594,8 @@ namespace GraphicsTools.Alundra
                 entity.TargetYForce = Helper.DirVectorsY[entity.TargetDir] * entity.AnimSet.speed;
             }
             else if (entity.Acceleration == (entity.AnimSet.acceleration & 0xf))
-            { 
-                    return;
+            {
+                return;
             }
 
             entity.Acceleration = entity.AnimSet.acceleration & 0xf;
@@ -609,7 +609,7 @@ namespace GraphicsTools.Alundra
         {
             if (game.ToRenderCount <= 0)
                 return;
-            for (int dex = 0;dex<game.ToRenderCount;dex++)
+            for (int dex = 0; dex < game.ToRenderCount; dex++)
             {
                 var entity = game.ToRenderList[dex];
                 entity.DepthSortVal = 0;
@@ -666,7 +666,7 @@ namespace GraphicsTools.Alundra
                     continue;
                 //X
                 int x = (checkme.XPos + checkme.XMod) - entity.ModdedXPos;
-                if (x>=0)
+                if (x >= 0)
                 {
                     if (x >= entity.Width + 1)
                         continue;
@@ -708,7 +708,7 @@ namespace GraphicsTools.Alundra
         {
             if (game.ToProcessesCount <= 0)
                 return;
-            for (int dex = 0;dex<game.ToProcessesCount;dex++)
+            for (int dex = 0; dex < game.ToProcessesCount; dex++)
             {
                 var entity = game.ToProcessList[dex];
 
@@ -724,7 +724,7 @@ namespace GraphicsTools.Alundra
 
                 if (flags == 0)
                     continue;
-                for(int dex2=0;dex2<game.ToProcessesCount;dex2++)
+                for (int dex2 = 0; dex2 < game.ToProcessesCount; dex2++)
                 {
                     var checkme = game.ToProcessList[dex2];
                     if (checkme == entity)
@@ -838,12 +838,12 @@ namespace GraphicsTools.Alundra
         void CreateRandomPoofs(int x, int y, int z)
         {
             //creates two poofs moving away from the impact at random speed and direction
-            for (int dex = 0;dex<2;dex++)
+            for (int dex = 0; dex < 2; dex++)
             {
                 var effect = game.CreateEffect_Type0(0, 9, 0, x, y, z);
                 if (effect == null)
                     continue;
-                int baseforce = (int)(0xffff<<16);
+                int baseforce = (int)(0xffff << 16);
 
                 int i = game.Seed;
                 int val1 = (int)(i * 0x7d2b89dd);
@@ -877,7 +877,7 @@ namespace GraphicsTools.Alundra
             for (int dex = 0; dex < game.MaxEntity; dex++)
             {
                 var entity = game.Entities[dex];
-                if(entity.Status-2 >= 2 || (entity.DamagedTickCounter & 3) ==3)
+                if (entity.Status - 2 >= 2 || (entity.DamagedTickCounter & 3) == 3)
                 {
                     if (entity.ActiveEffect != null)
                     {
@@ -895,7 +895,7 @@ namespace GraphicsTools.Alundra
                     entity.ActiveEffect = effect;
                 }
 
-                if (((entity.Flags>>16) & 7) == 0)
+                if (((entity.Flags >> 16) & 7) == 0)
                     continue;
 
                 if ((entity.AnimFlags & 0x10) != 0)
@@ -908,7 +908,7 @@ namespace GraphicsTools.Alundra
                 }
                 //TODO: what is 18c, something with slope and sliding?
                 int animid = -1;
-                if ((entity._18c == 4 || entity._190 == 4) 
+                if ((entity._18c == 4 || entity._190 == 4)
                     && entity._18c != entity._190)
                 {
                     game.CreateEffect_Type0(0, 6, 0, entity.XPos, entity.YPos, entity.CollidedWithEntityZ);
@@ -916,7 +916,7 @@ namespace GraphicsTools.Alundra
 
                 if (entity._18c >= 8)
                     continue;
-                switch(entity._18c)
+                switch (entity._18c)
                 {
                     case 1:
                     case 2:
@@ -969,7 +969,7 @@ namespace GraphicsTools.Alundra
 
         void UpdateAnims()
         {
-            for (int dex =0;dex<game.ToProcessesCount;dex++)
+            for (int dex = 0; dex < game.ToProcessesCount; dex++)
             {
                 var entity = game.Entities[dex];
                 game.UpdateAnim(entity);
@@ -989,13 +989,13 @@ namespace GraphicsTools.Alundra
 
             if (game.MaxEntity > 0)
             {
-                for (int dex =1;dex<game.MaxEntity;dex++)
+                for (int dex = 1; dex < game.MaxEntity; dex++)
                 {
                     var entity = game.Entities[dex];
                     int evttype = -1;
-                    if (entity._20 == 0 && entity.Status< 5)
+                    if (entity._20 == 0 && entity.Status < 5)
                     {
-                        switch(entity.Status)
+                        switch (entity.Status)
                         {
                             case 1://loading/activating
                                 evttype = Helper.PROGRAM_A_LOAD;
@@ -1136,7 +1136,7 @@ namespace GraphicsTools.Alundra
 
         void UpdateCounters()
         {
-            if (game.MaxEntity>=0)
+            if (game.MaxEntity >= 0)
             {
                 for (int dex = 0; dex <= game.MaxEntity; dex++)
                 {
@@ -1156,7 +1156,7 @@ namespace GraphicsTools.Alundra
         void ProcessDestroyedEntities()
         {
             int max = 0;
-            for (int dex = 0;dex<game.Entities.Length;dex++)
+            for (int dex = 0; dex < game.Entities.Length; dex++)
             {
                 var entity = game.Entities[dex];
                 if (entity.Status == 4)
@@ -1185,10 +1185,10 @@ namespace GraphicsTools.Alundra
             if (game.MaxEntity < 0)
                 return;
 
-            foreach(var entity in game.Entities)
+            foreach (var entity in game.Entities)
             {
                 //processable
-                if (entity.Status -2 < 2 && entity._20 == 0)
+                if (entity.Status - 2 < 2 && entity._20 == 0)
                 {
                     game.ToProcessList[game.ToProcessesCount++] = entity;
                 }
@@ -1202,7 +1202,7 @@ namespace GraphicsTools.Alundra
                 }
 
                 //renderable
-                if (entity.Status-2 < 2 && (entity.DamagedTickCounter & 3) != 3)//flicker effect, every 3rd frame when being damaged
+                if (entity.Status - 2 < 2 && (entity.DamagedTickCounter & 3) != 3)//flicker effect, every 3rd frame when being damaged
                 {
                     game.ToRenderList[game.ToRenderCount++] = entity;
                 }
@@ -1216,7 +1216,7 @@ namespace GraphicsTools.Alundra
                 return;
             int medex = 0;
             var p = game.PlayerEntity;
-            foreach(var mapevent in game.MapEvents)
+            foreach (var mapevent in game.MapEvents)
             {
                 var eventcode = mapevent.ProgramB_Map;
                 if ((eventcode & 0x7f) == 0)
@@ -1230,7 +1230,7 @@ namespace GraphicsTools.Alundra
                     p.EventTrigger = medex;
                     p.EntitySelf = mapevent.Entity;
                     eventHandlers.RunEntityEventScripts(p, Helper.PROGRAM_B_MAP);
-                    
+
                     mapevent.ProgramB_Map = p.Program_Indexes[Helper.PROGRAM_B_MAP];
                     mapevent.EventData = p.eventdata;
                     mapevent.Entity = p.EntitySelf;
@@ -1247,7 +1247,7 @@ namespace GraphicsTools.Alundra
             }
         }
 
-        
+
 
 
         //updates effect animations and adds sprites to spritereflist

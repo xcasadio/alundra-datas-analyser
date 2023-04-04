@@ -37,12 +37,15 @@ namespace GraphicsTools.Alundra
             using (var g = Graphics.FromImage(backbuffer))
             {
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+
+                //engine.MainUpdate(false);
                 engine.Render(g);
+                //engine.Render(g);
             }
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             e.Graphics.Clear(Color.Black);
             e.Graphics.DrawImage(backbuffer, 0, 0, pctOut.Width, pctOut.Height);
-                
+
         }
     }
 }
