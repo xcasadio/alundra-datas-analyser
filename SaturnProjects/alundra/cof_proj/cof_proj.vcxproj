@@ -67,7 +67,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\SBL_601\SEGASMP\LIB\strt2_g.c" />
     <ClCompile Include="..\datasbin.c" />
     <ClCompile Include="..\events.c" />
     <ClCompile Include="..\filesystem.c" />
@@ -76,7 +75,6 @@
     <ClCompile Include="..\utilities.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\SBL_601\SEGASMP\LIB\strt1_g.s" />
     <None Include="..\SAMPLE.CFG" />
   </ItemGroup>
   <ItemGroup>

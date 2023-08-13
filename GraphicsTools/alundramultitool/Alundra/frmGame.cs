@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Timer = System.Windows.Forms.Timer;
 
 namespace GraphicsTools.Alundra
 {
@@ -19,7 +20,7 @@ namespace GraphicsTools.Alundra
             InitializeComponent();
 
             engine = new GameEngine(datasBin, soundBin);
-            var map = datasBin.gamemaps[165];
+            var map = datasBin.gamemaps[389]; // 165
             engine.LoadMap(map);
             tmr = new Timer();
             tmr.Interval = 1000 / 30;
@@ -40,7 +41,6 @@ namespace GraphicsTools.Alundra
 
                 //engine.MainUpdate(false);
                 engine.Render(g);
-                //engine.Render(g);
             }
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             e.Graphics.Clear(Color.Black);

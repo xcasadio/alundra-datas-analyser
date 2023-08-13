@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using alundramultitool.Alundra;
+using GraphicsTools.Alundra;
 
 namespace GraphicsTools
 {
@@ -363,6 +365,7 @@ namespace GraphicsTools
             ofd.ShowDialog();
             if (!string.IsNullOrWhiteSpace(ofd.FileName))
             {
+                DebugSymbols.Init();
                 var frmAlundra = new Alundra.frmAlundra();
                 frmAlundra.Show();
                 var datasBin = new Alundra.DatasBin(ofd.FileName);
@@ -371,6 +374,11 @@ namespace GraphicsTools
                 //show soundboard too
                 var frmSoundboard = new Alundra.frmSoundboard(datasBin, Path.Combine(Path.GetDirectoryName(ofd.FileName), "SOUND.BIN"));
                 frmSoundboard.Show();
+
+                //new window
+                var analyserWindow = new AnalyserWindow();
+                analyserWindow.Show();
+                analyserWindow.Init(datasBin);
             }
         }
 

@@ -227,6 +227,7 @@
             this.label72 = new System.Windows.Forms.Label();
             this.lbl_moreflags = new System.Windows.Forms.Label();
             this.label74 = new System.Windows.Forms.Label();
+            this.buttonSaveSpriteSheet = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pctMapPalettes)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pctTilesheet)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pctSpritesheet)).BeginInit();
@@ -2040,11 +2041,22 @@
             this.label74.TabIndex = 178;
             this.label74.Text = "moreflags";
             // 
+            // buttonSaveSpriteSheet
+            // 
+            this.buttonSaveSpriteSheet.Location = new System.Drawing.Point(1340, 188);
+            this.buttonSaveSpriteSheet.Name = "buttonSaveSpriteSheet";
+            this.buttonSaveSpriteSheet.Size = new System.Drawing.Size(116, 23);
+            this.buttonSaveSpriteSheet.TabIndex = 184;
+            this.buttonSaveSpriteSheet.Text = "Save spritesheet";
+            this.buttonSaveSpriteSheet.UseVisualStyleBackColor = true;
+            this.buttonSaveSpriteSheet.Click += new System.EventHandler(this.buttonSaveSpriteSheet_Click);
+            // 
             // frmAlundra
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1507, 809);
+            this.Controls.Add(this.buttonSaveSpriteSheet);
             this.Controls.Add(this.lbl_flags);
             this.Controls.Add(this.label70);
             this.Controls.Add(this.lbl_canpickup);
@@ -2396,7 +2408,7 @@
         private System.Windows.Forms.Label lblFrameData;
         private System.Windows.Forms.Label lblImageData;
         private System.Windows.Forms.Label lblEntityInfo;
-		private System.Windows.Forms.Label lblsinfoaddr;
+        private System.Windows.Forms.Label lblsinfoaddr;
         private System.Windows.Forms.Button btnSector1cCmds;
         private System.Windows.Forms.Button btnSector1bCmds;
         private System.Windows.Forms.Button btnSector1aCmds;
@@ -2439,5 +2451,6 @@
         private System.Windows.Forms.Label label72;
         private System.Windows.Forms.Label lbl_moreflags;
         private System.Windows.Forms.Label label74;
+        private System.Windows.Forms.Button buttonSaveSpriteSheet;
     }
 }

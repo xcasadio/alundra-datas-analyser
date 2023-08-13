@@ -15,6 +15,7 @@ namespace GraphicsTools.Alundra
         public GameMap alundragamemap;
         public string binfile;
         public BalanceBin balancebin;
+
         public DatasBin(string binfile)
         {
             //load balance file
@@ -29,9 +30,8 @@ namespace GraphicsTools.Alundra
             {
                 header = new DBHeader(br);
 
-                alundragamemap = new GameMap(br,header);
+                alundragamemap = new GameMap(br, header);
 
-                
 #if DEBUG       //verify maps
                 for (int dex = 0; dex < header.gamemaps.Length; dex++)
                 {
@@ -56,7 +56,6 @@ namespace GraphicsTools.Alundra
                     }
                 }
 
-
             }
         }
 
@@ -65,8 +64,6 @@ namespace GraphicsTools.Alundra
             return new BinaryReader(File.OpenRead(binfile));
         }
 
-        
-
     }
 
     public class GameMap
@@ -74,7 +71,7 @@ namespace GraphicsTools.Alundra
 
         public GameMap(BinaryReader br, DBHeader dbheader)
         {//the alundra gamemap (just has sprites)
-            
+
             br.BaseStream.Position = binoffset = 0;
             header = new GameMapHeader(dbheader);
         }
@@ -83,7 +80,7 @@ namespace GraphicsTools.Alundra
             //read header
             br.BaseStream.Position = binoffset = offset;
             header = new GameMapHeader(br);
-            
+
             //just read mapid
             br.BaseStream.Position = binoffset + header.infoblock;
             info = new GameMapInfo(br.ReadInt32(), memaddr + header.infoblock);
@@ -184,6 +181,7 @@ namespace GraphicsTools.Alundra
                         }
                     }
                 }
+
                 header.stringsize = (int)(br.BaseStream.Position - binoffset) - header.stringtable;
             }
             //loaded = true;
@@ -201,8 +199,6 @@ namespace GraphicsTools.Alundra
             return bmp;
         }
 
-        
-
         public Bitmap GenerateSpriteBitmap(SIImage img, Color[] pal)
         {
             bool shiftleft = img.sx % 2 == 1;
@@ -216,14 +212,12 @@ namespace GraphicsTools.Alundra
             if (readwidth % 2 == 1)// or if odd width
                 readwidth++;
 
-
-
             byte[] buff = new byte[outputwidth * img.sheight / 2];
             byte[] readbuff = new byte[readwidth / 2];
 
             for (int y = 0; y < img.sheight; y++)
             {
-                Buffer.BlockCopy(spritesheetimagedata, (((img.spritesheet&0x7))*256 + img.sy + y) * 256 / 2 + img.sx / 2, readbuff, 0, readwidth / 2);
+                Buffer.BlockCopy(spritesheetimagedata, (((img.spritesheet & 0x7)) * 256 + img.sy + y) * 256 / 2 + img.sx / 2, readbuff, 0, readwidth / 2);
 
                 if (shiftleft)
                 {
@@ -246,7 +240,6 @@ namespace GraphicsTools.Alundra
 
             }
 
-
             if (outputwidth > swidth)
             {
                 img.swidth = (byte)outputwidth;
@@ -267,8 +260,6 @@ namespace GraphicsTools.Alundra
             return Utils.BitmapFromPsxBuff(buff, outputwidth, img.sheight, 4, pal);
         }
 
-
-
         Dictionary<long, Bitmap> tileCache = new Dictionary<long, Bitmap>();
         public Bitmap GetTileBitmap(int tileid)
         {
@@ -282,12 +273,12 @@ namespace GraphicsTools.Alundra
             return bmp;
         }
 
-        public Bitmap GenerateTileBitmap(int tile,Color[]pal)
+        public Bitmap GenerateTileBitmap(int tile, Color[] pal)
         {
             Debug.Assert(tile < 10 * 16 * 6, "Bad tile index!", "unexpectedly large tile index of {0}", tile);
             byte[] tilebuff = new byte[24 * 16 * 4 / 8];
-            int tilex = tile%10 * 24;
-            int tiley = tile/10 * 16;
+            int tilex = tile % 10 * 24;
+            int tiley = tile / 10 * 16;
             if (tile < 10 * 16 * 6)
             {
                 for (int y = 0; y < 16; y++)
@@ -323,7 +314,7 @@ namespace GraphicsTools.Alundra
             br.BaseStream.Position = binoffset + 1540;//why this number?
 
             maptiles = new MapTile[width * height];
-            for (int dex = 0;dex<maptiles.Length;dex++)
+            for (int dex = 0; dex < maptiles.Length; dex++)
             {
                 maptiles[dex] = new MapTile(br);
             }
@@ -346,7 +337,7 @@ namespace GraphicsTools.Alundra
         public int walltilesoffset;
 
         public MapTile[] maptiles;
-        
+
     }
 
     public class MapTile
@@ -409,8 +400,8 @@ namespace GraphicsTools.Alundra
             //{
             //    flag = flag;
             //}
-            
-            for (int dex =0;dex<count;dex++)
+
+            for (int dex = 0; dex < count; dex++)
             {
                 tiles[dex] = br.ReadInt16();
             }
@@ -448,9 +439,9 @@ namespace GraphicsTools.Alundra
         public SpriteInfo(BinaryReader br, int memaddr, int sectorend, bool ismap)
         {
             binoffset = br.BaseStream.Position;
-            
+
             header = new SpriteInfoHeader(br, memaddr);
-            
+
             //read sprite table
             br.BaseStream.Position = binoffset + header.spritetablepointer;
             spritetable = new int[0xff];
@@ -473,8 +464,8 @@ namespace GraphicsTools.Alundra
 
             //event effects
             br.BaseStream.Position = binoffset + header.mapeffectsector3pointer;
-            mapeffectrecords = new MapEffectRecord[header.mapeffectsector3size/12];
-            for(int dex=0;dex<mapeffectrecords.Length;dex++)
+            mapeffectrecords = new MapEffectRecord[header.mapeffectsector3size / 12];
+            for (int dex = 0; dex < mapeffectrecords.Length; dex++)
             {
                 mapeffectrecords[dex] = new MapEffectRecord(br);
             }
@@ -555,7 +546,7 @@ namespace GraphicsTools.Alundra
     {
         public SpriteRecord(BinaryReader br, long binoffset, int id, int memaddr, int spriteinfomemaddr)
         {
-            
+
             header = new SpriteTableHeader(br, binoffset, id, memaddr, spriteinfomemaddr);
             animsets = new SIAnimSet[(header.animationspointer - header.animationoffsetspointer) / 14];
             for (int dex = 0; dex < animsets.Length; dex++)
@@ -573,7 +564,7 @@ namespace GraphicsTools.Alundra
                     if (animsets[animdex].animoffsets[dirdex] != 0xffff)
                     {
                         animsets[animdex].preloaded_anims[dirdex] = GetAnimation(br, animsets[animdex].animoffsets[dirdex]);
-                        
+
                         /*DBFrame* frames = (DBFrame*)&(*spr->framesdata)[spr->animsets[animdex].diroffsets[dirdex]];
                         int framedex;
                         for (framedex = 0; framedex < 32; framedex++)
@@ -596,7 +587,6 @@ namespace GraphicsTools.Alundra
 
                     }
                 }
-
 
             }
 
@@ -622,7 +612,6 @@ namespace GraphicsTools.Alundra
             return imageset;
         }
 
-        
         public SpriteTableHeader header;
         public SIAnimSet[] animsets;
 
@@ -648,9 +637,9 @@ namespace GraphicsTools.Alundra
                 animoffsets[dex] = br.ReadInt16();
                 if (final == -1)
                 {
-                    final = animoffsets[dex]/2;
+                    final = animoffsets[dex] / 2;
                 }
-                
+
             }
             //preload all of the animations here
             int animdex;
@@ -668,7 +657,6 @@ namespace GraphicsTools.Alundra
         int effectid;
         public SIEffectAnimation[] preloaded_anims;
 
-
         public SIEffectAnimation GetAnimation(BinaryReader br, int animationoffset)
         {
             br.BaseStream.Position = binoffset + animationoffset;
@@ -677,8 +665,6 @@ namespace GraphicsTools.Alundra
 
             return anim;
         }
-
-        
 
     }
 
@@ -713,9 +699,9 @@ namespace GraphicsTools.Alundra
     }
     public enum SIAnimDir
     {
-        down = 0, 
-        up = 1, 
-        left = 2, 
+        down = 0,
+        up = 1,
+        left = 2,
         right = 3
     }
 
@@ -813,7 +799,6 @@ namespace GraphicsTools.Alundra
         public SIEffectFrame[] frames;
     }
 
-
     public class SIAnimation
     {
         public SIAnimation(BinaryReader br, SpriteTableHeader header, int memaddr)
@@ -855,8 +840,7 @@ namespace GraphicsTools.Alundra
 
             collisionoffset = br.ReadInt16();
             imagesetpointer = br.ReadUInt16() * 2;
-            
-            
+
             //load images
             long savepos = br.BaseStream.Position;
 
@@ -903,7 +887,6 @@ namespace GraphicsTools.Alundra
             delay = br.ReadByte();
             imagesetpointer = br.ReadUInt16() * 2;
 
-
             //load images
             long savepos = br.BaseStream.Position;
 
@@ -912,7 +895,6 @@ namespace GraphicsTools.Alundra
 
             br.BaseStream.Position = savepos;
         }
-
 
         public int memaddr;
         public byte delay;//top bit masked
@@ -1017,7 +999,6 @@ namespace GraphicsTools.Alundra
     {
         public SpriteInfoHeader(BinaryReader br, int memaddr)
         {
-            
             entitiespointer = br.ReadInt32();
             mapeffectsector3pointer = br.ReadInt32();
             mapeventspointer = br.ReadInt32();
@@ -1076,8 +1057,6 @@ namespace GraphicsTools.Alundra
         public int eventcodesfsize;//calced when reading sector1
         public int eventcodesfandremainingsize;
     }
-
-    
 
     public class SpriteInfoEventCodes
     {
@@ -1171,13 +1150,12 @@ namespace GraphicsTools.Alundra
             if (ismap)
                 Top += 1024 * 512;
 
-
             br.BaseStream.Position = binoffset;
             if (datasize > 0)
                 br.Read(Code, Top, datasize);
             //half mb for global codes, half mb for map codes
         }
-        
+
         public class SICode
         {
             public byte code { get; set; }
@@ -1560,7 +1538,6 @@ namespace GraphicsTools.Alundra
                     size = 1;
                     break;
 
-
                 //unknowns, just get the size down
                 case 0x69:
                     size = 7;
@@ -1593,10 +1570,10 @@ namespace GraphicsTools.Alundra
             var bytes = new byte[datasize - eventcodesoffset];
             br.Read(bytes, 0, bytes.Length);
             int dex = 0;
-            while (dex < bytes.Length && (comandssize == 0 || dex< comandssize))
+            while (dex < bytes.Length && (comandssize == 0 || dex < comandssize))
             {
                 byte b = bytes[dex++];
-                
+
                 var sicode = GetCode(b);
                 int size = sicode.size;
                 string name = sicode.name;
@@ -1631,13 +1608,13 @@ namespace GraphicsTools.Alundra
                         cmd = new JumpCommand(b, parms, name, addr);
                         break;
                     case "directionalbranch":
-                        cmd = new DirectionBranchCommand(b,parms, name, addr);
+                        cmd = new DirectionBranchCommand(b, parms, name, addr);
                         break;
                     default:
                         cmd = new SICommand(b, size, parms, name, addr);
                         break;
                 }
-                
+
                 commands.Add(cmd);
                 if (stopatff && b == 0xff)
                     break;
@@ -1649,11 +1626,11 @@ namespace GraphicsTools.Alundra
         public byte[] GetByteCode(BinaryReader br, int sector1offset)
         {
 
-            byte[] bytes = new byte[datasize-sector1offset];
+            byte[] bytes = new byte[datasize - sector1offset];
             int dex = 0;
             br.BaseStream.Position = binoffset + sector1offset;
-            
-            while(dex < bytes.Length)
+
+            while (dex < bytes.Length)
             {
                 //Debug.Assert(dex < bytes.Length, "ByteCodes larger than 255");
 
@@ -1740,7 +1717,7 @@ namespace GraphicsTools.Alundra
         public BranchCommand(byte command, int size, byte[] parameters, string name, int memaddr)
             : base(command, size, parameters, name, memaddr)
         {
-            base.refoffset = (Int16)(parameters[size-3] | (parameters[size-2] << 8));
+            base.refoffset = (Int16)(parameters[size - 3] | (parameters[size - 2] << 8));
         }
 
         public override string PrintParameters(List<SICommand> commands)
@@ -1760,7 +1737,7 @@ namespace GraphicsTools.Alundra
             }
             parms.Add(refoffset.ToString());
 
-            return string.Join(", ",parms);
+            return string.Join(", ", parms);
         }
     }
 
@@ -1781,7 +1758,7 @@ namespace GraphicsTools.Alundra
         public override string PrintParameters(List<SICommand> commands)
         {
             var parms = new List<string>();
-            foreach(var offset in offsets)
+            foreach (var offset in offsets)
             {
                 int jumpaddr = this.memaddr + offset;
                 int dex;
@@ -1810,7 +1787,7 @@ namespace GraphicsTools.Alundra
             Int16 jumpamount = (Int16)refoffset;// (Int16)(parameters[0] | parameters[1] << 8);
             int jumpaddr = this.memaddr + jumpamount;
             int dex;
-            for (dex = 0;dex<commands.Count;dex++)
+            for (dex = 0; dex < commands.Count; dex++)
             {
                 if (commands[dex].memaddr == jumpaddr)
                     break;
@@ -1845,7 +1822,7 @@ namespace GraphicsTools.Alundra
 
         public virtual string PrintParameters(List<SICommand> commands)
         {
-            return string.Join(", ",parameters.Select(x=> x.ToString("x2")));
+            return string.Join(", ", parameters.Select(x => x.ToString("x2")));
         }
 
         public string Print(int depth, List<SICommand> commands)
@@ -1915,7 +1892,7 @@ namespace GraphicsTools.Alundra
             //u8 = br.ReadByte();//11
             contents = br.ReadByte();//12
             u10 = br.ReadByte();//13
-            
+
         }
 
         public SIAnimation GetSprite(BinaryReader br, SpriteInfo si)
@@ -1963,7 +1940,7 @@ namespace GraphicsTools.Alundra
         //public byte u8;
         public byte contents;
         public byte u10;
-        
+
     }
 
     public class MapEffectRecord
@@ -1984,7 +1961,7 @@ namespace GraphicsTools.Alundra
             u1 = br.ReadByte();//probably just padding
             u2 = br.ReadByte();//padding
         }
-        public byte x1,x2,y1,y2;//player must be within these map tiles
+        public byte x1, x2, y1, y2;//player must be within these map tiles
         public byte flags;//0x80 ismapsprite //4
         public byte effectid;//5
         public byte x;//6
@@ -1992,7 +1969,7 @@ namespace GraphicsTools.Alundra
         public byte z;//8
         public byte animid;//9
 
-        public byte u1,u2;
+        public byte u1, u2;
 
     }
 
@@ -2014,11 +1991,10 @@ namespace GraphicsTools.Alundra
                 records[dex] = new SIMapEventRecord(br);
             }
 
-
         }
 
         public SIMapEventRecord[] records;
-        
+
     }
 
     public class SIMapEventRecord
@@ -2036,14 +2012,12 @@ namespace GraphicsTools.Alundra
             ub3 = br.ReadByte();
         }
 
-        public byte x1,y1,x2,y2;
+        public byte x1, y1, x2, y2;
         public byte eventcodesbindex;
         public byte ub1;
         public byte ub2;
         public byte ub3;
     }
-
-
 
     public class GameMapInfo
     {

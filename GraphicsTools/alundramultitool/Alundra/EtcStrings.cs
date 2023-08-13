@@ -11,16 +11,17 @@ namespace GraphicsTools.Alundra
     {
         string[] strings = new string[1024];
         int numstrings = 0;
+
         public EtcStrings(string file)
         {
             var buff = File.ReadAllBytes(file);
             int dex = 0;
             int offset = buff[dex + 1] << 8 | buff[dex];
-            while(offset > 0 && offset < buff.Length)
+            while (offset > 0 && offset < buff.Length)
             {
                 StringBuilder sb = new StringBuilder();
                 char chr = (char)buff[offset++];
-                while(chr != 0)
+                while (chr != 0)
                 {
                     sb.Append(chr);
                     chr = (char)buff[offset++];

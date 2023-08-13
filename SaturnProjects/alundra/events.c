@@ -3,12 +3,12 @@
 
 int numUnhandledCommands = 0;
 UnhandledCommand unhandledCommands[128];
-int EchNull(EventProgramState * eps, SpriteInstance * si)
+int EchNull(EventProgramState* eps, SpriteInstance* si)
 {
 	Uint8 cmd = eps->exp[0];
 	//update count if its already in unhandled command list
 	int dex;
-	for (dex = 0; dex<numUnhandledCommands; dex++)
+	for (dex = 0; dex < numUnhandledCommands; dex++)
 	{
 		if (unhandledCommands[dex].cmd == cmd)
 		{
@@ -24,13 +24,13 @@ int EchNull(EventProgramState * eps, SpriteInstance * si)
 }
 
 /* 0x02 */
-int EchGoto(EventProgramState * eps, SpriteInstance * si)
+int EchGoto(EventProgramState* eps, SpriteInstance* si)
 {
 	return (Sint16)(eps->exp[1] | eps->exp[2] << 8);
 }
 
 /* 0x03 */
-int EchIfFalse(EventProgramState * eps, SpriteInstance * si)
+int EchIfFalse(EventProgramState* eps, SpriteInstance* si)
 {
 	if (eps->logicResult == 0)
 		return 3;
@@ -38,7 +38,7 @@ int EchIfFalse(EventProgramState * eps, SpriteInstance * si)
 }
 
 /* 0x04 */
-int EchWhileFalse(EventProgramState * eps, SpriteInstance * si)
+int EchWhileFalse(EventProgramState* eps, SpriteInstance* si)
 {
 	if (eps->logicResult != 0)
 		return 3;
@@ -48,7 +48,7 @@ int EchWhileFalse(EventProgramState * eps, SpriteInstance * si)
 Uint32 mapgameflags[1024];
 Uint32 globalgameflags[1024];
 /* 0x05 */
-int EchFlagOn(EventProgramState * eps, SpriteInstance * si)
+int EchFlagOn(EventProgramState* eps, SpriteInstance* si)
 {
 	Uint16 flag = (Uint16)(eps->exp[1] | eps->exp[2] << 8);
 	Uint16 flagdex = (flag >> 5) & 0x03ff;	//0111111111100000
@@ -61,12 +61,12 @@ int EchFlagOn(EventProgramState * eps, SpriteInstance * si)
 	{
 		mapgameflags[flagdex] |= (1 << flagval);
 	}
-	
+
 	return 3;
 }
 
 /* 0x06 */
-int EchFlagOff(EventProgramState * eps, SpriteInstance * si)
+int EchFlagOff(EventProgramState* eps, SpriteInstance* si)
 {
 	Uint16 flag = (Uint16)(eps->exp[1] | eps->exp[2] << 8);
 	Uint16 flagdex = (flag >> 5) & 0x03ff;	//0111111111100000
@@ -84,9 +84,9 @@ int EchFlagOff(EventProgramState * eps, SpriteInstance * si)
 }
 
 /* 0x07 */
-int EchCheckEntityInArea(EventProgramState * eps, SpriteInstance * si)
+int EchCheckEntityInArea(EventProgramState* eps, SpriteInstance* si)
 {
-	SpriteInstance * entity = si;
+	SpriteInstance* entity = si;
 	int entityid = eps->exp[1];
 	if (entityid & 0x8000 == 0)
 	{
@@ -107,14 +107,14 @@ int EchCheckEntityInArea(EventProgramState * eps, SpriteInstance * si)
 }
 
 /* 0x09 */
-int EchSetDir(EventProgramState * eps, SpriteInstance * si)
+int EchSetDir(EventProgramState* eps, SpriteInstance* si)
 {
 	si->dir = eps->exp[1] & 0x1f;
 	return 2;
 }
 
 /* 0x0a */
-int EchReverseDir(EventProgramState * eps, SpriteInstance * si)
+int EchReverseDir(EventProgramState* eps, SpriteInstance* si)
 {
 	Uint8 dir = si->dir + 0x10;//add 16
 	si->dir &= 0x1f;
@@ -122,12 +122,12 @@ int EchReverseDir(EventProgramState * eps, SpriteInstance * si)
 }
 
 /* 0x0d */
-int EchShowDialog(EventProgramState * eps, SpriteInstance * si)
+int EchShowDialog(EventProgramState* eps, SpriteInstance* si)
 {
 	int sindex = eps->exp[1] & 0x7f;
 	int dflags = eps->exp[2];
-	DBStringTable * st = &dbmap->stringtable;
-	Uint8 * cstr = &st->stringdata[st->stringoffsets[sindex]];
+	DBStringTable* st = &dbmap->stringtable;
+	Uint8* cstr = &st->stringdata[st->stringoffsets[sindex]];
 	debug_print(2, 22, cstr);
 	return 3;
 }
@@ -135,42 +135,42 @@ int EchShowDialog(EventProgramState * eps, SpriteInstance * si)
 
 int playerhascontrol = 1;
 /* 0x10 */
-int EchLoseControl(EventProgramState * eps, SpriteInstance * si)
+int EchLoseControl(EventProgramState* eps, SpriteInstance* si)
 {
 	playerhascontrol = 0;
 	return 1;
 }
 
 /* 0x11 */
-int EchGainControl(EventProgramState * eps, SpriteInstance * si)
+int EchGainControl(EventProgramState* eps, SpriteInstance* si)
 {
 	playerhascontrol = 1;
 	return 1;
 }
 
 /* 0x16 */
-int EchEnabledGravity(EventProgramState * eps, SpriteInstance * si)
+int EchEnabledGravity(EventProgramState* eps, SpriteInstance* si)
 {
 	si->gravity = 1;
 	return 1;
 }
 
 /* 0x17 */
-int EchDisableGravity(EventProgramState * eps, SpriteInstance * si)
+int EchDisableGravity(EventProgramState* eps, SpriteInstance* si)
 {
 	si->gravity = 0;
 	return 1;
 }
 
 /* 0x19 */
-int EchDeactivate(EventProgramState * eps, SpriteInstance * si)
+int EchDeactivate(EventProgramState* eps, SpriteInstance* si)
 {
 	si->enabled &= ~0x80;
 	return 1;
 }
 
 /* 0x1a */
-int EchSetAnim(EventProgramState * eps, SpriteInstance * si)
+int EchSetAnim(EventProgramState* eps, SpriteInstance* si)
 {
 	set_sprite_anim(si, eps->exp[1], si->lastTick);
 	return 2;
@@ -180,7 +180,7 @@ int EchSetAnim(EventProgramState * eps, SpriteInstance * si)
 
 
 
-int(*EventCommandHandlers[])(EventProgramState * eps, SpriteInstance * si) = {
+int(*EventCommandHandlers[])(EventProgramState* eps, SpriteInstance* si) = {
 	/*0x00*/ EchNull,
 	/*0x01*/ EchNull,
 	/*0x02*/ EchGoto,
@@ -442,7 +442,7 @@ int(*EventCommandHandlers[])(EventProgramState * eps, SpriteInstance * si) = {
 
 
 /* processes event commands until 0x00 or 0xff is reached */
-void ProcessEvent(EventProgramState * eps, SpriteInstance * si)
+void ProcessEvent(EventProgramState* eps, SpriteInstance* si)
 {
 	while (1)
 	{
@@ -460,7 +460,7 @@ void ProcessEvent(EventProgramState * eps, SpriteInstance * si)
 	}
 }
 
-void ProcessOneTimeEvent(Uint8* evt, SpriteInstance * si)
+void ProcessOneTimeEvent(Uint8* evt, SpriteInstance* si)
 {
 	EventProgramState eps;
 	eps.elapsedMs = 0;
@@ -468,6 +468,6 @@ void ProcessOneTimeEvent(Uint8* evt, SpriteInstance * si)
 	eps.logicResult = 0;
 	eps.sp = evt;
 	eps.exp = evt;
-	
+
 	ProcessEvent(&eps, si);
 }

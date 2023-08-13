@@ -209,7 +209,7 @@ namespace GraphicsTools.Alundra
 
             //game._1d7a7c = 0xf0 - (game._1d7a74 * 2);
 
-            //GetPlayerInput();
+            GetPlayerInput();
 
             Update();
 
@@ -234,6 +234,11 @@ namespace GraphicsTools.Alundra
 
             if (force)
                 game.BreakoutGameLoop = false;
+        }
+
+        private void GetPlayerInput()
+        {
+
         }
 
         public void Update()

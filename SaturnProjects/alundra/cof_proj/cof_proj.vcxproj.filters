@@ -18,9 +18,6 @@
     <ClCompile Include="..\main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\SBL_601\SEGASMP\LIB\strt2_g.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\datasbin.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -38,9 +35,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\SBL_601\SEGASMP\LIB\strt1_g.s">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="..\SAMPLE.CFG">
       <Filter>Resource Files</Filter>
     </None>

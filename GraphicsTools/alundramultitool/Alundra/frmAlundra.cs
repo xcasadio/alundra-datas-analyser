@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using Timer = System.Windows.Forms.Timer;
 
 namespace GraphicsTools.Alundra
 {
@@ -20,7 +24,6 @@ namespace GraphicsTools.Alundra
         DatasBin datasBin;
         public void Init(DatasBin datasBin)
         {
-            DebugSymbols.Init();
             this.datasBin = datasBin;
             for (int dex = 0; dex < datasBin.gamemaps.Length; dex++)
             {
@@ -28,7 +31,10 @@ namespace GraphicsTools.Alundra
                 {
                     string name = "";
                     if (!string.IsNullOrEmpty(DebugSymbols.MapNames[dex]))
+                    {
                         name = $" ({DebugSymbols.MapNames[dex]})";
+                    }
+
                     lstGameMaps.Items.Add("" + datasBin.gamemaps[dex].info.mapid + name);
                 }
             }
@@ -44,8 +50,9 @@ namespace GraphicsTools.Alundra
         Bitmap GetTile(int tileid)
         {
             if (!CachedTiles.ContainsKey(tileid))
+            {
                 CachedTiles.Add(tileid, selectedGame.GenerateTileBitmap(tileid & 0x3ff, selectedGame.info.palettes[(tileid & 0xf000) >> 12]));
-
+            }
 
             return CachedTiles[tileid];
         }
@@ -60,7 +67,6 @@ namespace GraphicsTools.Alundra
                     list.Add(selectedGame.GenerateSpriteBitmap(imgset.images[dex], selectedGame.spriteinfo.palettes[imgset.images[dex].palette & 0x1f]));
                 CachedSprites.Add(imgset.imagesetid, list);
             }
-
 
             return CachedSprites[imgset.imagesetid];
         }
@@ -92,14 +98,17 @@ namespace GraphicsTools.Alundra
             if (selectedGame.info != null)
             {
                 var info = selectedGame.info;
-                lblInfo.Text = string.Format("grav:{0} term_vel:{1} _a:{2} balance:{3} _c:{4} _d:{5} _e:{6} _f:{7} _10:{8}", info.gravity, info.terminal_velocity, info.slideeffectid, info.balancelevel, info._c, info._d, info._e, info._f, info._10);
+                lblInfo.Text =
+                    $@"grav:{info.gravity} term_vel:{info.terminal_velocity} _a:{info.slideeffectid} balance:{info.balancelevel} _c:{info._c} _d:{info._d} _e:{info._e} _f:{info._f} _10:{info._10}";
 
                 //portals
                 lstPortals.Items.Clear();
                 for (int dex = 0; dex < selectedGame.info.portals.Length; dex++)
                 {
                     if (selectedGame.info.portals[dex].x2 != 0xff && selectedGame.info.portals[dex].y2 != 0xff)
+                    {
                         lstPortals.Items.Add("portal " + dex);
+                    }
                 }
                 lstPortals_SelectedIndexChanged(null, null);
 
@@ -131,13 +140,16 @@ namespace GraphicsTools.Alundra
 
             //spriteinfo
             var sinfo = selectedGame.spriteinfo.header;
-            lblSpriteInfo.Text = string.Format(@"{0}    {1} {2} {3} {4} palettes:{5}    {6} {7} {8} {9} {10}    {11}", Fix(sinfo.entitiespointer), Fix(sinfo.mapeffectsector3pointer), Fix(sinfo.mapeventspointer), Fix(sinfo.spritetablepointer), Fix(sinfo.spriteeffectspointer), Fix(sinfo.spritepalettespointer), Fix(sinfo.eventcodesapointer), Fix(sinfo.eventcodesbpointer), Fix(sinfo.eventcodescpointer), Fix(sinfo.eventcodesdpointer), Fix(sinfo.eventcodesepointer), Fix(sinfo.eventcodesfpointer));
-            lblSpriteInfoSizes.Text = string.Format("{0}    {1} {2} {3} {4} palettes:{5}    {6} {7} {8} {9} {10}    {11}", Fix(sinfo.entitiessize), Fix(sinfo.mapeffectsector3size), Fix(sinfo.mapeventssize), Fix(sinfo.spritetablesize), Fix(sinfo.spriteeffectssize), Fix(sinfo.spritepalettessize), Fix(sinfo.eventcodesasize), Fix(sinfo.eventcodesbsize), Fix(sinfo.eventcodescsize), Fix(sinfo.eventcodesdsize), Fix(sinfo.eventcodesesize), Fix(sinfo.eventcodesfandremainingsize));
+            lblSpriteInfo.Text =
+                $@"{Fix(sinfo.entitiespointer)}    {Fix(sinfo.mapeffectsector3pointer)} {Fix(sinfo.mapeventspointer)} {Fix(sinfo.spritetablepointer)} {Fix(sinfo.spriteeffectspointer)} palettes:{Fix(sinfo.spritepalettespointer)}    {Fix(sinfo.eventcodesapointer)} {Fix(sinfo.eventcodesbpointer)} {Fix(sinfo.eventcodescpointer)} {Fix(sinfo.eventcodesdpointer)} {Fix(sinfo.eventcodesepointer)}    {Fix(sinfo.eventcodesfpointer)}";
+            lblSpriteInfoSizes.Text =
+                $@"{Fix(sinfo.entitiessize)}    {Fix(sinfo.mapeffectsector3size)} {Fix(sinfo.mapeventssize)} {Fix(sinfo.spritetablesize)} {Fix(sinfo.spriteeffectssize)} palettes:{Fix(sinfo.spritepalettessize)}    {Fix(sinfo.eventcodesasize)} {Fix(sinfo.eventcodesbsize)} {Fix(sinfo.eventcodescsize)} {Fix(sinfo.eventcodesdsize)} {Fix(sinfo.eventcodesesize)}    {Fix(sinfo.eventcodesfandremainingsize)}";
             //scroll info
             if (selectedGame.scrollscreen != null)
             {
                 var scinfo = selectedGame.scrollscreen;
-                lblScrollInfo.Text = string.Format("? {0}\t? {1}\t? {2}\t? {3}\t? {4}\t? {5}\t? {6}\t? {7}", scinfo.unknown1, scinfo.unknown2, scinfo.unknown3, scinfo.unknown4, scinfo.unknown5, scinfo.unknown6, scinfo.unknown7, scinfo.unknown8);
+                lblScrollInfo.Text =
+                    $"? {scinfo.unknown1}\t? {scinfo.unknown2}\t? {scinfo.unknown3}\t? {scinfo.unknown4}\t? {scinfo.unknown5}\t? {scinfo.unknown6}\t? {scinfo.unknown7}\t? {scinfo.unknown8}";
             }
             else
             {
@@ -154,8 +166,6 @@ namespace GraphicsTools.Alundra
             lblSpritesSize.Text = selectedGame.header.spritessize.ToString();
             lblScrollSize.Text = selectedGame.header.scrollsize.ToString();
             lblStringsSize.Text = selectedGame.header.stringsize.ToString();
-
-
 
             //sprite palettes
             lstSpritePalettes.Items.Clear();
@@ -184,7 +194,6 @@ namespace GraphicsTools.Alundra
                     lstStringTable.Items.Add("string " + dex + " - " + selectedGame.strings[dex]);
                 }
             }
-
 
             //spriteinfo
             lsvEntities.Items.Clear();
@@ -237,13 +246,16 @@ namespace GraphicsTools.Alundra
             {
                 var sector5record = selectedGame.spriteinfo.sprites[dex];
                 if (sector5record != null)
+                {
                     lstSector5.Items.Add("record " + dex.ToString("x2"));
+                }
             }
 
             lstSector5.SelectedIndex = -1;
             if (lstSector5.Items.Count > 0)
+            {
                 lstSector5.SelectedIndex = 0;
-
+            }
 
             //tilesheet
             //triggered by palette
@@ -280,16 +292,16 @@ namespace GraphicsTools.Alundra
                         {
                             var tile = map.maptiles[(y + vScrollMap.Value) * map.width + (x + hScrollMap.Value)];
 
-
                             int dx = x * mapscale * 24;
                             int dy = (y - tile.height) * mapscale * 16;
                             if (tile.tileid != -1)
+                            {
                                 g.DrawImage(GetTile(tile.tileid), dx, dy, 24 * mapscale + 1, 16 * mapscale + 1);
+                            }
 
                             showdebug = false;
                             if (tile.walltiles != null)
                             {
-
                                 for (int dex = 0; dex < tile.walltiles.count; dex++)
                                 {
                                     if (tile.walltiles.tiles[dex] != -1)
@@ -297,7 +309,6 @@ namespace GraphicsTools.Alundra
                                         g.DrawImage(GetTile(tile.walltiles.tiles[dex]), dx, dy + (dex - tile.walltiles.offset + 1) * 16 * mapscale, 24 * mapscale + 1, 16 * mapscale + 1);
                                     }
                                 }
-
                             }
                             if (showdebug)
                             {
@@ -314,7 +325,6 @@ namespace GraphicsTools.Alundra
                                 //    g.DrawString(tile.walltiles.count.ToString(), fnt, Brushes.Green, dx + 16 * mapscale, dy + 16 * mapscale / 1.5f);
                                 //}
                             }
-
 
                         }
                     }
@@ -372,7 +382,6 @@ namespace GraphicsTools.Alundra
 
             }
             pctMapPalettes.Refresh();
-
 
         }
 
@@ -477,49 +486,65 @@ namespace GraphicsTools.Alundra
         private void btnAnalyzeInfo_Click(object sender, EventArgs e)
         {
             if (selectedGame != null)
+            {
                 AnalyzeAt(selectedGame.header.infoblock, selectedGame.info.memaddr);
+            }
         }
 
         private void btnAnalyzeMap_Click(object sender, EventArgs e)
         {
             if (selectedGame != null)
+            {
                 AnalyzeAt(selectedGame.header.mapblock, selectedGame.map.memaddr);
+            }
         }
 
         private void btnAnalyzeWallTiles_Click(object sender, EventArgs e)
         {
             if (selectedGame != null)
+            {
                 AnalyzeAt(selectedGame.header.mapblock + selectedGame.map.walltilesoffset);
+            }
         }
 
         private void btnAnalyzeTiles_Click(object sender, EventArgs e)
         {
             if (selectedGame != null)
+            {
                 AnalyzeAt(selectedGame.header.tilesheets);
+            }
         }
 
         private void btnAnalyzeSInfo_Click(object sender, EventArgs e)
         {
             if (selectedGame != null)
+            {
                 AnalyzeAt(selectedGame.header.spriteinfo, selectedGame.spriteinfo.header.memaddr);
+            }
         }
 
         private void btnAnalyzeSprites_Click(object sender, EventArgs e)
         {
             if (selectedGame != null)
+            {
                 AnalyzeAt(selectedGame.header.spritesheets);
+            }
         }
 
         private void btnAnalyzeScroll_Click(object sender, EventArgs e)
         {
             if (selectedGame != null)
+            {
                 AnalyzeAt(selectedGame.header.scrollscreen);
+            }
         }
 
         private void btnanalyzeStrings_Click(object sender, EventArgs e)
         {
             if (selectedGame != null)
+            {
                 AnalyzeAt(selectedGame.header.stringtable);
+            }
         }
 
         private void frmAlundra_Load(object sender, EventArgs e)
@@ -531,8 +556,6 @@ namespace GraphicsTools.Alundra
             animtimer.Tick += new EventHandler(animtimer_Tick);
 
         }
-
-
 
         private void vScrollMap_Scroll(object sender, ScrollEventArgs e)
         {
@@ -563,8 +586,6 @@ namespace GraphicsTools.Alundra
 
                 var tile = selectedGame.map.maptiles[selectedPortal.x1 + selectedPortal.y1 * selectedGame.map.width];
 
-
-
                 lblportalx1.Text = selectedPortal.x1.ToString();
                 lblportaly1.Text = selectedPortal.y1.ToString();
                 lblportalx2.Text = selectedPortal.x2.ToString();
@@ -578,10 +599,13 @@ namespace GraphicsTools.Alundra
                 lblportalu4.Text = selectedPortal.unknown4.ToString();
 
                 if (!dontcenteronportal)
+                {
                     CenterOnTile(selectedPortal.x1, selectedPortal.y1 - tile.height);
+                }
                 else
+                {
                     pctMap.Refresh();
-
+                }
             }
             else
             {
@@ -607,14 +631,24 @@ namespace GraphicsTools.Alundra
             int targety = tiley - pctMap.Height / 16 / mapscale / 2;
             //scroll map to make portal visible
             if (targetx > hScrollMap.Maximum)
+            {
                 targetx = hScrollMap.Maximum;
-            if (targety > vScrollMap.Maximum)
-                targety = vScrollMap.Maximum;
-            if (targetx < 0)
-                targetx = 0;
-            if (targety < 0)
-                targety = 0;
+            }
 
+            if (targety > vScrollMap.Maximum)
+            {
+                targety = vScrollMap.Maximum;
+            }
+
+            if (targetx < 0)
+            {
+                targetx = 0;
+            }
+
+            if (targety < 0)
+            {
+                targety = 0;
+            }
 
             hScrollMap.Value = targetx;
             vScrollMap.Value = targety;
@@ -640,7 +674,9 @@ namespace GraphicsTools.Alundra
 
                         e.Graphics.DrawRectangle(Pens.Blue, x1, y1, x2 - x1, y2 - y1);
                         if (portals[dex] == selectedPortal)
+                        {
                             e.Graphics.DrawRectangle(Pens.Red, x1 + 1, y1 + 1, x2 - x1 - 2, y2 - y1 - 2);
+                        }
                     }
                 }
 
@@ -677,20 +713,22 @@ namespace GraphicsTools.Alundra
                                         int w = img.x4 - img.x1;
                                         int h = img.y4 - img.y1;
                                         if (w != 0 && h != 0)
+                                        {
                                             e.Graphics.DrawImage(bmps[sdex], x1 + 12 * mapscale + img.x1 * mapscale, y1 + 8 * mapscale + img.y1 * mapscale, w * mapscale, h * mapscale);
+                                        }
                                     }
                                 }
                             }
                         }
                         catch (Exception ex)
                         {
-                            ex = ex;
+                            //ex = ex;
                         }
 
-                        e.Graphics.DrawRectangle(Pens.Green, x1, y1, 24 * mapscale, 16 * mapscale);
-                        e.Graphics.DrawString("entity " + dex, fnt, Brushes.Green, x1, y1);
-                        if (entities[dex] == selectedEntity)
-                            e.Graphics.DrawRectangle(Pens.Yellow, x1 + 1, y1 + 1, 24 * mapscale - 2, 16 * mapscale - 2);
+                        var pen = entities[dex] == selectedEntity ? Pens.Yellow : Pens.Green;
+                        var brush = entities[dex] == selectedEntity ? Brushes.Yellow : Brushes.Green;
+                        e.Graphics.DrawRectangle(pen, x1, y1, 24 * mapscale, 16 * mapscale);
+                        e.Graphics.DrawString("entity " + dex, fnt, brush, x1, y1);
                     }
                 }
 
@@ -748,7 +786,9 @@ namespace GraphicsTools.Alundra
             {
                 output += bytecodes[dex].ToString("x2") + ",";
                 if (bytecodes[dex] == 0xff)
+                {
                     break;
+                }
             }
             return output.Substring(0, output.Length - 1);
         }
@@ -764,7 +804,9 @@ namespace GraphicsTools.Alundra
                     return selectedGame.spriteinfo.eventcodes.GetCommands(br, eventcodestable[dex], false, size);
                 }
                 else
+                {
                     return selectedGame.spriteinfo.eventcodes.GetCommands(br, eventcodestable[dex]);
+                }
             }
             return new List<SICommand>();
         }
@@ -772,7 +814,10 @@ namespace GraphicsTools.Alundra
         string GetSector1ByteCodes(System.IO.BinaryReader br, int index, short[] sector1table)
         {
             if (index > 0 && index < 0xff)
+            {
                 return sector1table[index & 0x7f].ToString("x4") + ":" + (selectedGame.spriteinfo.header.eventcodeaddr + sector1table[index & 0x7f]).ToString("x6") + ":" + RenderByteCodes(selectedGame.spriteinfo.eventcodes.GetByteCode(br, sector1table[index & 0x7f]));
+            }
+
             return "0";
         }
         string DispByte(byte b)
@@ -819,7 +864,10 @@ namespace GraphicsTools.Alundra
             lblsector5mem.Text = 0.ToString("x8");
             selectedSector5 = null;
             if (selectedGame != null && lstSector5.SelectedIndex >= 0 && lstSector5.SelectedItem.ToString() != "-1")
+            {
                 selectedSector5 = selectedGame.spriteinfo.sprites[int.Parse(lstSector5.SelectedItem.ToString().Replace("record ", ""), System.Globalization.NumberStyles.AllowHexSpecifier)];
+            }
+
             lstSector5Animations.Items.Clear();
             lstSector5Animations.SelectedIndex = -1;
             lbl_moreflags.Text = "?";
@@ -851,7 +899,10 @@ namespace GraphicsTools.Alundra
                 string sicodename = "";
                 var dbs = DebugSymbols.EventHandlerNames["eload"];
                 if (dbs.ContainsKey(ecode))
+                {
                     sicodename = dbs[ecode];
+                }
+
                 string fname = $"{ecode.ToString("x2")}_{sicodename}_handler";
                 lbl_eload.Text = fname;
 
@@ -859,7 +910,10 @@ namespace GraphicsTools.Alundra
                 sicodename = "";
                 dbs = DebugSymbols.EventHandlerNames["etick"];
                 if (dbs.ContainsKey(ecode))
+                {
                     sicodename = dbs[ecode];
+                }
+
                 fname = $"{ecode.ToString("x2")}_{sicodename}_handler";
                 lbl_etick.Text = fname;
 
@@ -867,7 +921,10 @@ namespace GraphicsTools.Alundra
                 sicodename = "";
                 dbs = DebugSymbols.EventHandlerNames["etouch"];
                 if (dbs.ContainsKey(ecode))
+                {
                     sicodename = dbs[ecode];
+                }
+
                 fname = $"{ecode.ToString("x2")}_{sicodename}_handler";
                 lbl_etouch.Text = fname;
 
@@ -875,7 +932,10 @@ namespace GraphicsTools.Alundra
                 sicodename = "";
                 dbs = DebugSymbols.EventHandlerNames["edeactivate"];
                 if (dbs.ContainsKey(ecode))
+                {
                     sicodename = dbs[ecode];
+                }
+
                 fname = $"{ecode.ToString("x2")}_{sicodename}_handler";
                 lbl_edeactivate.Text = fname;
 
@@ -883,7 +943,10 @@ namespace GraphicsTools.Alundra
                 sicodename = "";
                 dbs = DebugSymbols.EventHandlerNames["einteract"];
                 if (dbs.ContainsKey(ecode))
+                {
                     sicodename = dbs[ecode];
+                }
+
                 fname = $"{ecode.ToString("x2")}_{sicodename}_handler";
                 lbl_einteract.Text = fname;
 
@@ -931,32 +994,42 @@ namespace GraphicsTools.Alundra
                     lstSector5Frames.Items.Add("frame " + dex + " (imageset " + (selectedAnim.frames[dex].images.imagesetid & 0xff) + ")");
                 }
                 if (selectedAnim.numframes > 0)
+                {
                     lstSector5Frames.SelectedIndex = 0;
+                }
             }
         }
 
         private void rdoDown_CheckedChanged(object sender, EventArgs e)
         {
             if (rdoDown.Checked)
+            {
                 UpdateAnim(selectedAnimSet.downoffset);
+            }
         }
 
         private void rdoUp_CheckedChanged(object sender, EventArgs e)
         {
             if (rdoUp.Checked)
+            {
                 UpdateAnim(selectedAnimSet.upoffset);
+            }
         }
 
         private void rdoLeft_CheckedChanged(object sender, EventArgs e)
         {
             if (rdoLeft.Checked)
+            {
                 UpdateAnim(selectedAnimSet.leftoffset);
+            }
         }
 
         private void rdoRight_CheckedChanged(object sender, EventArgs e)
         {
             if (rdoRight.Checked)
+            {
                 UpdateAnim(selectedAnimSet.rightoffset);
+            }
         }
 
         SIAnimSet selectedAnimSet;
@@ -996,7 +1069,10 @@ namespace GraphicsTools.Alundra
             {
                 curframe++;
                 if (curframe >= selectedAnim.numframes)
+                {
                     curframe = 0;
+                }
+
                 animtimer.Interval = (selectedAnim.frames[curframe].delay & 0x7f) * 23;
 
                 pctAnim.Refresh();
@@ -1025,7 +1101,9 @@ namespace GraphicsTools.Alundra
                     lstSector5Images.Items.Add("image " + dex);
                 }
                 if (selectedFrame.images.numimages > 0)
+                {
                     lstSector5Images.SelectedIndex = 0;
+                }
             }
 
             pctFrame.Refresh();
@@ -1096,7 +1174,9 @@ namespace GraphicsTools.Alundra
                             int w = img.x4 - img.x1;
                             int h = img.y4 - img.y1;
                             if (w != 0 && h != 0)
+                            {
                                 e.Graphics.DrawImage(bmps[dex], posx + img.x1, posy + img.y1, w, h);
+                            }
                         }
                     }
                 }
@@ -1106,8 +1186,6 @@ namespace GraphicsTools.Alundra
 
             }
         }
-
-
 
         private void pctFrame_Paint(object sender, PaintEventArgs e)
         {
@@ -1131,7 +1209,9 @@ namespace GraphicsTools.Alundra
                             int w = img.x4 - img.x1;
                             int h = img.y4 - img.y1;
                             if (w != 0 && h != 0)
+                            {
                                 e.Graphics.DrawImage(bmps[dex], posx + img.x1, posy + img.y1);//, w, h);
+                            }
                         }
                     }
                 }
@@ -1159,8 +1239,9 @@ namespace GraphicsTools.Alundra
                     int w = selectedImage.x4 - selectedImage.x1;
                     int h = selectedImage.y4 - selectedImage.y1;
                     if (w != 0 && h != 0)
+                    {
                         e.Graphics.DrawImage(bmps[Array.IndexOf(selectedFrame.images.images, selectedImage)], posx + selectedImage.x1, posy + selectedImage.y1);//, w, h);
-
+                    }
                 }
             }
             catch (Exception ex)
@@ -1261,7 +1342,9 @@ namespace GraphicsTools.Alundra
         private void btnSector4Analyze_Click(object sender, EventArgs e)
         {
             if (selectedGame != null)
+            {
                 AnalyzeAt(selectedGame.header.spriteinfo, selectedGame.spriteinfo.header.memaddr, selectedGame.spriteinfo.header.mapeventspointer);
+            }
         }
 
         string dumpfile = "";
@@ -1309,6 +1392,76 @@ namespace GraphicsTools.Alundra
             {
 
             }
+        }
+
+        private void buttonSaveSpriteSheet_Click(object sender, EventArgs e)
+        {
+            int posx = 0;
+            int posy = 0;
+            var spriteSheet = new Bitmap(512, 512);
+            var graphics = Graphics.FromImage(spriteSheet);
+            graphics.DrawRectangle(new Pen(Color.Transparent, 10f), 0, 0, spriteSheet.Width, spriteSheet.Height);
+            int spriteHeight = 0;
+
+            var br = datasBin.OpenBin();
+
+            foreach (var spriteRecord in selectedGame.spriteinfo.sprites.Where(x => x != null))
+            {
+                foreach (var animSet in spriteRecord.animsets)
+                {
+                    var animationOffsets = new[]
+                    {
+                        animSet.downoffset,
+                        animSet.upoffset,
+                        animSet.leftoffset,
+                        animSet.rightoffset,
+                    };
+
+                    foreach (var animationOffset in animationOffsets)
+                    {
+                        var animation = spriteRecord.GetAnimation(br, animationOffset);
+
+                        for (int frameIndex = 0; frameIndex < animation.numframes; frameIndex++)
+                        {
+                            var delay = (animation.frames[frameIndex].delay & 0x7f) * 23;
+                            var frame = animation.frames[frameIndex];
+                            var bmps = GetSpriteImages(frame.images);
+                            int xOffset = Math.Abs((int)frame.images.images.Min(x => Math.Min(x.x1, x.x2)));
+                            int yOffset = Math.Abs((int)frame.images.images.Min(x => Math.Min(x.y1, x.y2)));
+
+                            var maxWidth = Math.Max(frame.images.images.Max(x => x.swidth), xOffset);
+                            spriteHeight = Math.Max(spriteHeight, Math.Max(frame.images.images.Max(x => x.sheight), yOffset));
+
+                            if (posx + maxWidth >= spriteSheet.Width) // new row
+                            {
+                                posx = 0;
+                                posy += spriteHeight;
+                                spriteHeight = 0;
+                            }
+
+                            for (int dex = frame.images.numimages - 1; dex >= 0; dex--)
+                            {
+                                var img = frame.images.images[dex];
+                                if (img != null)
+                                {
+                                    int w = img.x4 - img.x1;
+                                    int h = img.y4 - img.y1;
+                                    if (w != 0 && h != 0)
+                                    {
+                                        graphics.DrawImage(bmps[dex], posx + img.x1 + xOffset, posy + img.y1 + yOffset, w, h);
+                                    }
+                                }
+                            }
+
+                            posx += maxWidth;
+                        }
+                    }
+                }
+            }
+
+            br.Close();
+
+            spriteSheet.Save(@"C:\Users\casad\dev\repo\alundra-datas-analyser\ExportedDatas\spritesheet.png", ImageFormat.Png);
         }
     }
 }
