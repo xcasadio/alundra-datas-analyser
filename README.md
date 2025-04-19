@@ -15,7 +15,28 @@ You are welcome, you can contact me with [GitHub Discussions](https://github.com
 ## Source code analyser
 - I use Ghidra to analyse the source code, the project is in the folder Ghidra.
 - I use pcsx-redux to debug the code
+- [Connecting Ghidra to PCSX-Redux] (https://pcsx-redux.consoledev.net/Debugging/ghidra/)
 
 ## Datas analyser
 Open GraphicsTool.sln and open the Datas.bin file (you'll need to extract the data from your Alundra game).
 ![Screenshot of GraphicsTool](/gitHub/GraphisTool_screenshot.jpg)
+
+
+## Datas.bin structure
+Datas.bin
+├── DbHeader
+├── GameMap[]
+│   ├── GameMapHeader
+│   ├── GameMapInfo (Infoblock)
+│   ├── Map (Mapblock)
+│   │   └── MapTile[] → WallTiles
+│   ├── Tilesheet (Tilesheets)
+│   ├── SpriteInfo (Spriteinfo)
+│   │   ├── Sprites, Effets
+│   │   ├── Animations
+│   │   ├── Palettes
+│   │   ├── Entities
+│   │   └── EventCodes A–F
+│   ├── Spritesheet (Spritesheets)
+│   ├── ScrollScreen
+│   └── StringTable [128]
