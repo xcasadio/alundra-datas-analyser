@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GraphicsTools.Alundra
+﻿namespace GraphicsTools.Alundra
 {
     //0x80 byte record
     public class SpriteEffect
@@ -12,7 +6,7 @@ namespace GraphicsTools.Alundra
         public int Id;//0
         public MapEffectRecord MapEffectRecord;//4
         public SpriteEffectRecord SpriteEffectRecord;//8
-        public SpriteRef SpriteRef = new SpriteRef();//c-20
+        public SpriteRef SpriteRef = new();//c-20
         //24
         public int AddToSheet;//28
         public int AddToPalette;//2c
@@ -36,11 +30,11 @@ namespace GraphicsTools.Alundra
         public byte TargetAnim;             //70
         public byte CurAnim;                //71
 
-        public SIEffectFrame Frame;   //74
-        public SIEffectFrame FirstFrame;      //78
+        public SiEffectFrame Frame;   //74
+        public SiEffectFrame FirstFrame;      //78
         public byte Delay;                  //7c
         public byte DestroyFlag;            //7d  if this is set true the effect is destroyed on next update (status = 0)
 
-        public int animdex = 0;//use this extra field because we arent using frame pointers that we can simply ++ to the next one
+        public int Animdex = 0;//use this extra field because we arent using frame pointers that we can simply ++ to the next one
     }
 }

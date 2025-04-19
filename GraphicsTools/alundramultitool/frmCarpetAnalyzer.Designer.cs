@@ -1,6 +1,6 @@
 ﻿namespace GraphicsTools
 {
-    partial class frmCarpetAnalyzer
+    partial class FrmCarpetAnalyzer
     {
         /// <summary>
         /// Required designer variable.
@@ -498,7 +498,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.rtfText);
             this.KeyPreview = true;
-            this.Name = "frmCarpetAnalyzer";
+            this.Name = "FrmCarpetAnalyzer";
             this.Text = "frmCarpetAnalyzer";
             this.Load += new System.EventHandler(this.frmFileAnalyzer_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmFileAnalyzer_KeyDown);

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace GraphicsTools.Alundra
+﻿namespace GraphicsTools.Alundra
 {
     public class SpriteInstance
     {
@@ -12,7 +7,7 @@ namespace GraphicsTools.Alundra
         public SpriteInstance UnknownBeforeOwnerEntity;
         public SpriteInstance OwnerEntity;
         public int Status;//0=destroyed,1=loaded,2=normal,3=deactivated,4=flagtodestroy,5=?
-        public int HP;
+        public int Hp;
         public int MaxHp;
         public int UnknownCounter;//1c
         public int _20;
@@ -22,9 +17,9 @@ namespace GraphicsTools.Alundra
 
         public int ContentsItemId;
         public int ContentsGameFlag;
-        public SIEntityRecord EntityRecord;
+        public SiEntityRecord EntityRecord;
         public int EntityRefId;
-        public int[] Program_Indexes = new int[6];
+        public readonly int[] ProgramIndexes = new int[6];
         //public int ProgramA_Load;
         //public int ProgramB_Map;
         //public int ProgramC_Tick;
@@ -34,7 +29,7 @@ namespace GraphicsTools.Alundra
         public SpriteRecord Sprite;
         public int SpriteTableIndex;
         public int Flags;//0x800000 = portrait,0x0100 = gravity,0xf = ?, 0x1 = ? , 0x80 = collidable
-        public int[] Sprite_Program_Indexes = new int[6];
+        public readonly int[] SpriteProgramIndexes = new int[6];
         //public int SpriteU4;
         //public int UnkownBeforeThrowType;
         //public int ThrowType;
@@ -46,10 +41,10 @@ namespace GraphicsTools.Alundra
         public int TargetDir;
         public int CurAnim;
         public int CurDir;
-        public int FrameDex;
-        public SIAnimSet AnimSet;
-        public SIFrame FirstFrame;
-        public SIFrame Frame;
+        public int CurrentFrame;
+        public SiAnimSet AnimSet;
+        public SiFrame FirstFrame;
+        public SiFrame Frame;
         public int NextFrameDelay;
         public int WierdNextFrameDelayFlag;
         public int AnimCompleteCounter;
@@ -80,8 +75,8 @@ namespace GraphicsTools.Alundra
         public int ForceAdjusted;
         public int CollidedWithEntityZ;//some boolean that has to do with if moddedzpos is greater than hity from collideentitiesz
         public int _144;//collided with something
-        public MapTile[] MapTiles = new MapTile[4];
-        public int[] MapHeights = new int[4];
+        public readonly MapTile[] MapTiles = new MapTile[4];
+        public readonly int[] MapHeights = new int[4];
         public bool DoneMoving;
 
         public int _180, _184, SomethingForceIndex;//188
@@ -116,7 +111,7 @@ namespace GraphicsTools.Alundra
         public int EventTrigger;//228  for the player character this holds the id of the map event that is triggering, for other entities this holds the type of event slot to trigger
         public int MapEventProgramId;//22c
         public SpriteInstance EntitySelf;
-        public EventProgramState eventdata = new EventProgramState();
+        public EventProgramState Eventdata = new();
         //public EventProgramState eventdata2 = new EventProgramState();
         public int UnknownEventAnim;//26c
         public int UnknownEventDir;//270
@@ -125,18 +120,12 @@ namespace GraphicsTools.Alundra
         public int _27c;
         public int SpawnedGameFlag;//280
         public int SpawnedZForce;//284
-        public bool IsMapSprite
-        {
-            get
-            {
-                return (EntityRecord.spritedir & 0x80) != 0;
-            }
-        }
+        public bool IsMapSprite => (EntityRecord.Spritedir & 0x80) != 0;
     }
 
     public class SpriteRef
     {
-        public SIImage[] Images;        //c
+        public SiImage[] Images;        //c
         public int X;//4				//10
         public int Y;//8				//14
         public int Z;//c				//18
@@ -153,14 +142,14 @@ namespace GraphicsTools.Alundra
 
     public class EventProgramState
     {
-        public int sp;
-        public int exp;
-        public int evttickprog;
-        public int[] evtvars = new int[8];
-        public int logicResult;
+        public int Sp;
+        public int Exp;
+        public int Tick;
+        public readonly int[] Variables = new int[8];
+        public int LogicResult;
 
-        public ushort elapsedMs;
-        public byte isWaiting;
-        public byte[] code;
+        public ushort ElapsedMs;
+        public byte IsWaiting;
+        public byte[] Code;
     }
 }

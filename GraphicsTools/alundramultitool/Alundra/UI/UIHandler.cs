@@ -1,144 +1,142 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GraphicsTools.Alundra
+﻿namespace GraphicsTools.Alundra
 {
-    public class UIHandler
+    public class UiHandler
     {
-        GameState game;
-        EtcStrings etcstrings;
-        DatasBin datasbin;
+        private GameState _game;
+        private EtcStrings _etcstrings;
+        private DatasBin _datasbin;
         public short SavedBoxDrawerX, SavedBoxDrawerY;
         public int DialogChoiceUnknown1;//0x1072ec
         public int DialogChoiceUnknown2;//0x1072cc
 
-        byte[] uiimagedata;
-        byte[] fontimagedata;
-        int fontimageoffset = 64;
-        List<Color[]> uipalettes = new List<Color[]>();
-        BitmapDrawCommand dialognametextcmd;
+        private byte[] _uiimagedata;
+        private byte[] _fontimagedata;
+        private int _fontimageoffset = 64;
+        private List<Color[]> _uipalettes = new();
+        private BitmapDrawCommand _dialognametextcmd;
 
-        public UIHandler(GameState gameState, DatasBin datasbin, EtcStrings etcstrings, string fontfile, string palettesfile, string uifile)
+        public UiHandler(GameState gameState, DatasBin datasbin, EtcStrings etcstrings, string fontfile, string palettesfile, string uifile)
         {
-            this.game = gameState;
-            this.etcstrings = etcstrings;
+            _game = gameState;
+            _etcstrings = etcstrings;
             //load palettes
-            byte[] buff = File.ReadAllBytes(fontfile);
-            for (int pdex = 0; pdex + 32 < buff.Length; pdex += 32)
+            var buff = File.ReadAllBytes(fontfile);
+            for (var pdex = 0; pdex + 32 < buff.Length; pdex += 32)
             {
-                Color[] pal = new Color[16];
-                for (int dex = 0; dex < pal.Length; dex++)
+                var pal = new Color[16];
+                for (var dex = 0; dex < pal.Length; dex++)
                 {
-                    int ddex = pdex + dex * 2;
+                    var ddex = pdex + dex * 2;
                     pal[dex] = Utils.FromPsxColor((byte)(buff[ddex + 1] << 8), buff[ddex]);
                 }
-                uipalettes.Add(pal);
+                _uipalettes.Add(pal);
             }
 
             //load uitex
-            uiimagedata = File.ReadAllBytes(uifile);
+            _uiimagedata = File.ReadAllBytes(uifile);
 
             //load font image
-            fontimagedata = File.ReadAllBytes(fontfile);
-            fontimageoffset = 64;//is the first one an rgba palette?
+            _fontimagedata = File.ReadAllBytes(fontfile);
+            _fontimageoffset = 64;//is the first one an rgba palette?
         }
-        Dictionary<long, Bitmap> spriteCache = new Dictionary<long, Bitmap>();
-        Bitmap GetUIBitmap(UIDrawCmd cmd)
+
+        private Dictionary<long, Bitmap> _spriteCache = new();
+
+        private Bitmap GetUiBitmap(UiDrawCmd cmd)
         {
-            var pal = uipalettes[cmd.uipaletteindex];
-            if (spriteCache.ContainsKey(cmd.signature))
-                return spriteCache[cmd.signature];
-            var bmp = UIHelper.GenerateBitmap(cmd, pal, uiimagedata);
-            spriteCache.Add(cmd.signature, bmp);
+            var pal = _uipalettes[cmd.Uipaletteindex];
+            if (_spriteCache.ContainsKey(cmd.Signature))
+            {
+                return _spriteCache[cmd.Signature];
+            }
+
+            var bmp = UiHelper.GenerateBitmap(cmd, pal, _uiimagedata);
+            _spriteCache.Add(cmd.Signature, bmp);
 
             return bmp;
         }
         public void Init()
         {
-            foreach (var cmd in BoxDrawer3.boxcommands[0])
+            foreach (var cmd in _boxDrawer3.Boxcommands[0])
             {
-                var bmp = GetUIBitmap(cmd);
+                var bmp = GetUiBitmap(cmd);
             }
         }
-        public UILerper DialogBoxLerper = new UILerper { };
-        public UILerper DialogNameBoxLerper = new UILerper { };
+        public readonly UiLerper DialogBoxLerper = new() { };
+        public readonly UiLerper DialogNameBoxLerper = new() { };
 
         //TODO how should these be setup
         //
-        UIBoxAnimated BoxDrawer1 = new UIBoxAnimated
+        private UiBoxAnimated _boxDrawer1 = new()
         {
-            x = 0x10,
-            y = 0xa8,
-            width = 0x24,
-            height = 0x7,
-            boxcommands = new UIDrawCmd[][] { UIHelper.DialogBoxDrawCommands }
+            X = 0x10,
+            Y = 0xa8,
+            Width = 0x24,
+            Height = 0x7,
+            Boxcommands = new UiDrawCmd[][] { UiHelper.DialogBoxDrawCommands }
         };
-        UIBoxAnimated BoxDrawer2 = new UIBoxAnimated
+
+        private UiBoxAnimated _boxDrawer2 = new()
         {
-            x = 0x10,
-            y = 0xa8,
-            width = 0x24,
-            height = 0x7,
-            boxcommands = new UIDrawCmd[][] { new UIDrawCmd[480 / 8 + 240 / 8], new UIDrawCmd[] { } }
+            X = 0x10,
+            Y = 0xa8,
+            Width = 0x24,
+            Height = 0x7,
+            Boxcommands = new UiDrawCmd[][] { new UiDrawCmd[480 / 8 + 240 / 8], new UiDrawCmd[] { } }
         };
         //this one is the dialoboxname
-        UIBoxAnimated BoxDrawer3 = new UIBoxAnimated
+        private UiBoxAnimated _boxDrawer3 = new()
         {
-            x = 0x40,
-            y = 0x8c,
-            width = 0xe,
-            height = 0x4,
-            boxcommands = new UIDrawCmd[][] { UIHelper.DialogNameBoxDrawCommands }
+            X = 0x40,
+            Y = 0x8c,
+            Width = 0xe,
+            Height = 0x4,
+            Boxcommands = new UiDrawCmd[][] { UiHelper.DialogNameBoxDrawCommands }
         };
-        public List<UIRecord> records = new List<UIRecord>();
-        public void RegisterUIRecord(UIBoxAnimated boxanimated, short x, short y, short width, short height, UIFunction setup, UIFunction render, int unknown)
+        public readonly List<UiRecord> Records = new();
+        public void RegisterUiRecord(UiBoxAnimated boxanimated, short x, short y, short width, short height, UiFunction setup, UiFunction render, int unknown)
         {
-            var rec = new UIRecord { boxAnimated = boxanimated, x = x, y = y, width = width, height = height, SetupFunc = setup, RenderFunc = render, UnknownVal = unknown };
-            records.Add(rec);
+            var rec = new UiRecord { BoxAnimated = boxanimated, X = x, Y = y, Width = width, Height = height, SetupFunc = setup, RenderFunc = render, UnknownVal = unknown };
+            Records.Add(rec);
         }
-        public UIHandler()
+        public UiHandler()
         {
             //0 dialog box
-            RegisterUIRecord(BoxDrawer1, 0x10, 5, 0x20, 6, InitUI_1, RenderDialogBox, 0);
+            RegisterUiRecord(_boxDrawer1, 0x10, 5, 0x20, 6, InitUI_1, RenderDialogBox, 0);
             //1 main ui
-            RegisterUIRecord(null, 0, 0, 0x40, 4, InitUI_2, RenderMainUI, -1);
+            RegisterUiRecord(null, 0, 0, 0x40, 4, InitUI_2, RenderMainUi, -1);
             //2
-            RegisterUIRecord(BoxDrawer1, 8, 0xc, 0x20, 4, InitUI_1, Render2, 0);
+            RegisterUiRecord(_boxDrawer1, 8, 0xc, 0x20, 4, InitUI_1, Render2, 0);
             //3
-            RegisterUIRecord(BoxDrawer2, 0x10, 8, 0x20, 4, null, Render3, 5);
+            RegisterUiRecord(_boxDrawer2, 0x10, 8, 0x20, 4, null, Render3, 5);
             //4
-            RegisterUIRecord(null, 0x10, 8, 0x20, 4, InitUI_3, Render4, -1);
+            RegisterUiRecord(null, 0x10, 8, 0x20, 4, InitUI_3, Render4, -1);
             //5
-            RegisterUIRecord(BoxDrawer1, 0x10, 0xc, 0x20, 4, InitUI_1, Render5, 0);
+            RegisterUiRecord(_boxDrawer1, 0x10, 0xc, 0x20, 4, InitUI_1, Render5, 0);
             //6 item menu
-            RegisterUIRecord(null, 0x10, 8, 0x20, 4, null, RenderItemMenu, 0);
+            RegisterUiRecord(null, 0x10, 8, 0x20, 4, null, RenderItemMenu, 0);
             //7
-            RegisterUIRecord(BoxDrawer1, 0x10, 8, 0x20, 4, InitUI_1, null, 0);
+            RegisterUiRecord(_boxDrawer1, 0x10, 8, 0x20, 4, InitUI_1, null, 0);
             //8
-            RegisterUIRecord(BoxDrawer1, 0x10, 0xc, 0x20, 4, InitUI_1, Render8, 0);
+            RegisterUiRecord(_boxDrawer1, 0x10, 0xc, 0x20, 4, InitUI_1, Render8, 0);
             //9
-            RegisterUIRecord(BoxDrawer1, 0x10, 0xc, 0x20, 4, InitUI_1, Render9, 0);
+            RegisterUiRecord(_boxDrawer1, 0x10, 0xc, 0x20, 4, InitUI_1, Render9, 0);
             //a
-            RegisterUIRecord(null, 0x10, 0xc, 0x20, 4, null, Rendera, 0);
+            RegisterUiRecord(null, 0x10, 0xc, 0x20, 4, null, Rendera, 0);
             //b
-            RegisterUIRecord(BoxDrawer1, 8, 0xc, 0x20, 4, InitUI_1, Renderb, 0);
+            RegisterUiRecord(_boxDrawer1, 8, 0xc, 0x20, 4, InitUI_1, Renderb, 0);
             //c dialog name box
-            RegisterUIRecord(BoxDrawer3, 0x10, 8, 0x20, 4, InitUI_4, RenderDialogNameBox, 5);
+            RegisterUiRecord(_boxDrawer3, 0x10, 8, 0x20, 4, InitUI_4, RenderDialogNameBox, 5);
         }
 
         //0x491a4
-        bool InitUI_1(UIRecord ui)
+        private bool InitUI_1(UiRecord ui)
         {
-            for (int y = 0; y < ui.boxAnimated.height; y++)
+            for (var y = 0; y < ui.BoxAnimated.Height; y++)
             {
-                for (int x = 0; x < ui.boxAnimated.width; x++)
+                for (var x = 0; x < ui.BoxAnimated.Width; x++)
                 {
-                    var cmd = ui.boxAnimated.boxcommands[0][y * ui.boxAnimated.width + x];
+                    var cmd = ui.BoxAnimated.Boxcommands[0][y * ui.BoxAnimated.Width + x];
                     //SetShadeTex(cmd)
 
                     //cmd[e] = *uipalettes
@@ -148,81 +146,84 @@ namespace GraphicsTools.Alundra
         }
 
         //0x4c998
-        bool InitUI_2(UIRecord ui)
+        private bool InitUI_2(UiRecord ui)
         {
             return true;
         }
 
         //0x550d4
-        bool InitUI_3(UIRecord ui)
+        private bool InitUI_3(UiRecord ui)
         {
             return true;
         }
 
         //0x5c300
-        bool InitUI_4(UIRecord ui)
+        private bool InitUI_4(UiRecord ui)
         {
-            DialogNameBoxLerper.tickstolinger = 2;
-            DialogNameBoxLerper.numticks = 0xf;
-            DialogNameBoxLerper.currenttick = 0;
-            DialogNameBoxLerper.x1 = 0x140;
-            if (ui.boxAnimated.y < 0)
+            DialogNameBoxLerper.Tickstolinger = 2;
+            DialogNameBoxLerper.Numticks = 0xf;
+            DialogNameBoxLerper.Currenttick = 0;
+            DialogNameBoxLerper.X1 = 0x140;
+            if (ui.BoxAnimated.Y < 0)
             {
-                DialogNameBoxLerper.y1 = (short)(ui.boxAnimated.y - ui.boxAnimated.height * 8);
+                DialogNameBoxLerper.Y1 = (short)(ui.BoxAnimated.Y - ui.BoxAnimated.Height * 8);
             }
             else
             {
-                DialogNameBoxLerper.y1 = ui.boxAnimated.y;
+                DialogNameBoxLerper.Y1 = ui.BoxAnimated.Y;
             }
 
-            if (ui.boxAnimated.x < 0)
+            if (ui.BoxAnimated.X < 0)
             {
-                DialogNameBoxLerper.x2 = (short)(ui.boxAnimated.x - ui.boxAnimated.width * 8);
+                DialogNameBoxLerper.X2 = (short)(ui.BoxAnimated.X - ui.BoxAnimated.Width * 8);
             }
             else
             {
-                DialogNameBoxLerper.x2 = ui.boxAnimated.x;
+                DialogNameBoxLerper.X2 = ui.BoxAnimated.X;
             }
 
-            if (ui.boxAnimated.y < 0)
+            if (ui.BoxAnimated.Y < 0)
             {
-                DialogNameBoxLerper.y2 = (short)(ui.boxAnimated.y - ui.boxAnimated.height * 8);
+                DialogNameBoxLerper.Y2 = (short)(ui.BoxAnimated.Y - ui.BoxAnimated.Height * 8);
             }
             else
             {
-                DialogNameBoxLerper.y2 = ui.boxAnimated.y;
+                DialogNameBoxLerper.Y2 = ui.BoxAnimated.Y;
             }
 
-            DialogNameBoxLerper.AfterX = ui.boxAnimated.x;
-            DialogNameBoxLerper.AfterY = ui.boxAnimated.y;
-            game.DialogNameState = 5;
+            DialogNameBoxLerper.AfterX = ui.BoxAnimated.X;
+            DialogNameBoxLerper.AfterY = ui.BoxAnimated.Y;
+            _game.DialogNameState = 5;
 
-            var name = etcstrings.GetEtcString(game.DialogName);
+            var name = _etcstrings.GetEtcString(_game.DialogName);
 
-            dialognametextcmd = RenderText(name, 0, (short)(ui.y + ui.boxAnimated.y), 3);
+            _dialognametextcmd = RenderText(name, 0, (short)(ui.Y + ui.BoxAnimated.Y), 3);
 
             return true;
         }
 
         //0x47de4 TODO: impliment missing functions
-        bool RenderDialogBox(UIRecord ui)
+        private bool RenderDialogBox(UiRecord ui)
         {
             //setdrawarea
             //it sets the clipping for the dialog box
 
 
-            if ((game.DialogState & 0x3) != 0)
+            if ((_game.DialogState & 0x3) != 0)
             {
-                var finished = LerpUIBox(ui.boxAnimated, DialogBoxLerper);
+                var finished = LerpUiBox(ui.BoxAnimated, DialogBoxLerper);
                 if (finished)
                 {
-                    if ((game.DialogState & 1) != 0)
-                        game.DialogState &= ~1;//turn off bit 1 if its on
-                    if ((game.DialogState & 2) != 0)
+                    if ((_game.DialogState & 1) != 0)
+                    {
+                        _game.DialogState &= ~1;//turn off bit 1 if its on
+                    }
+
+                    if ((_game.DialogState & 2) != 0)
                     {
                         //dialog is finished?
-                        BoxDrawer1.x = SavedBoxDrawerX;
-                        BoxDrawer1.y = SavedBoxDrawerY;
+                        _boxDrawer1.X = SavedBoxDrawerX;
+                        _boxDrawer1.Y = SavedBoxDrawerY;
                         ZeroDialogState(ui);
                         return false;
                     }
@@ -251,73 +252,84 @@ namespace GraphicsTools.Alundra
         }
 
         //0x4d218
-        bool RenderMainUI(UIRecord ui)
+        private bool RenderMainUi(UiRecord ui)
         {
             return true;
         }
-        bool Render2(UIRecord ui)
+
+        private bool Render2(UiRecord ui)
         {
             return true;
         }
-        bool Render3(UIRecord ui)
+
+        private bool Render3(UiRecord ui)
         {
             return true;
         }
-        bool Render4(UIRecord ui)
+
+        private bool Render4(UiRecord ui)
         {
             return true;
         }
-        bool Render5(UIRecord ui)
+
+        private bool Render5(UiRecord ui)
         {
             return true;
         }
         //0x5695c
-        bool RenderItemMenu(UIRecord ui)
+        private bool RenderItemMenu(UiRecord ui)
         {
             return true;
         }
-        bool Render8(UIRecord ui)
+
+        private bool Render8(UiRecord ui)
         {
             return true;
         }
-        bool Render9(UIRecord ui)
+
+        private bool Render9(UiRecord ui)
         {
             return true;
         }
-        bool Rendera(UIRecord ui)
+
+        private bool Rendera(UiRecord ui)
         {
             return true;
         }
-        bool Renderb(UIRecord ui)
+
+        private bool Renderb(UiRecord ui)
         {
             return true;
         }
         //0x5c4ac
-        bool RenderDialogNameBox(UIRecord ui)
+        private bool RenderDialogNameBox(UiRecord ui)
         {
-            if ((game.DialogNameState & 3) != 0)
+            if ((_game.DialogNameState & 3) != 0)
             {
-                var finished = LerpUIBox(ui.boxAnimated, DialogNameBoxLerper);
+                var finished = LerpUiBox(ui.BoxAnimated, DialogNameBoxLerper);
                 if (finished)
                 {
-                    if ((game.DialogNameState & 1) != 0)
-                        game.DialogNameState &= ~1;//turn off bit 1 if its on
-                    if ((game.DialogNameState & 2) != 0)
+                    if ((_game.DialogNameState & 1) != 0)
+                    {
+                        _game.DialogNameState &= ~1;//turn off bit 1 if its on
+                    }
+
+                    if ((_game.DialogNameState & 2) != 0)
                     {
                         //dialog is finished?
-                        ui.boxAnimated.x = SavedBoxDrawerX;
-                        ui.boxAnimated.y = SavedBoxDrawerY;
+                        ui.BoxAnimated.X = SavedBoxDrawerX;
+                        ui.BoxAnimated.Y = SavedBoxDrawerY;
                         ZeroDialogNameState(ui);
                         return false;
                     }
                 }
             }
 
-            string text = etcstrings.GetEtcString(game.DialogName);
-            int width = GetRenderedTextWidth(text);
-            width = ui.boxAnimated.width * 8 - width;
-            dialognametextcmd.x = (short)(width / 2 + ui.boxAnimated.x);
-            dialognametextcmd.y = (short)(ui.y + ui.boxAnimated.y);
+            var text = _etcstrings.GetEtcString(_game.DialogName);
+            var width = GetRenderedTextWidth(text);
+            width = ui.BoxAnimated.Width * 8 - width;
+            _dialognametextcmd.X = (short)(width / 2 + ui.BoxAnimated.X);
+            _dialognametextcmd.Y = (short)(ui.Y + ui.BoxAnimated.Y);
 
             //not sure whats being done down here
 
@@ -326,36 +338,38 @@ namespace GraphicsTools.Alundra
         }
 
 
-        int drawAreaId = 0;
+        private int _drawAreaId = 0;
 
-        public bool LerpUIBox(UIBoxAnimated boxanim, UILerper lerper)
+        public bool LerpUiBox(UiBoxAnimated boxanim, UiLerper lerper)
         {
-            if (lerper.tickstolinger == 0)
-                return true;//complete
-
-            if (lerper.currenttick != lerper.numticks)
+            if (lerper.Tickstolinger == 0)
             {
-                boxanim.x = (short)((lerper.x2 - lerper.x1) / (float)lerper.numticks * lerper.currenttick);
-                boxanim.y = (short)((lerper.y2 - lerper.y1) / (float)lerper.numticks * lerper.currenttick);
-                lerper.currenttick++;
+                return true;//complete
+            }
+
+            if (lerper.Currenttick != lerper.Numticks)
+            {
+                boxanim.X = (short)((lerper.X2 - lerper.X1) / (float)lerper.Numticks * lerper.Currenttick);
+                boxanim.Y = (short)((lerper.Y2 - lerper.Y1) / (float)lerper.Numticks * lerper.Currenttick);
+                lerper.Currenttick++;
             }
             else
             {
-                boxanim.x = lerper.x2;
-                boxanim.y = lerper.y2;
-                lerper.tickstolinger--;
+                boxanim.X = lerper.X2;
+                boxanim.Y = lerper.Y2;
+                lerper.Tickstolinger--;
             }
             //commands for the 8x8 portions of the dialog box,  but how are the corners and edges drawn?  must be code elsewhere to set that up, this just sets the positions
-            UIDrawCmd[] cmds = boxanim.boxcommands[this.drawAreaId];
-            int dex = 0;
-            short y = boxanim.y;
-            while (y < boxanim.height * 8 + boxanim.y)
+            var cmds = boxanim.Boxcommands[_drawAreaId];
+            var dex = 0;
+            var y = boxanim.Y;
+            while (y < boxanim.Height * 8 + boxanim.Y)
             {
-                short x = boxanim.x;
-                while (x < boxanim.width * 8 + boxanim.x)
+                var x = boxanim.X;
+                while (x < boxanim.Width * 8 + boxanim.X)
                 {
-                    cmds[dex].x = x;
-                    cmds[dex].y = y;
+                    cmds[dex].X = x;
+                    cmds[dex].Y = y;
                     x += 8;
                 }
 
@@ -365,18 +379,18 @@ namespace GraphicsTools.Alundra
             return false;
         }
 
-        public void ZeroDialogState(UIRecord ui)
+        public void ZeroDialogState(UiRecord ui)
         {
             ZeroDialogRecord(ui);
-            game.DialogState = 0;
-            game.PlayerControlSetting &= 0xffe7;//turn off bits 4 and 5
+            _game.DialogState = 0;
+            _game.PlayerControlSetting &= 0xffe7;//turn off bits 4 and 5
         }
-        public void ZeroDialogNameState(UIRecord ui)
+        public void ZeroDialogNameState(UiRecord ui)
         {
             ZeroDialogRecord(ui);
-            game.DialogNameState = 0;
+            _game.DialogNameState = 0;
         }
-        public bool ZeroDialogRecord(UIRecord ui)
+        public bool ZeroDialogRecord(UiRecord ui)
         {
             ui.Status = 0;
             return true;
@@ -384,58 +398,66 @@ namespace GraphicsTools.Alundra
 
         public class BitmapDrawCommand
         {
-            public Bitmap bmp;
-            public short x;
-            public short y;
+            public Bitmap Bmp;
+            public short X;
+            public short Y;
         }
         public BitmapDrawCommand RenderText(string text, short x, short y,int linenum)
         {
-            byte[] buff = new byte[0x800];
+            var buff = new byte[0x800];
             if (linenum >= 4)
+            {
                 linenum++;
+            }
+
             if (linenum > 0xe)
+            {
                 throw new Exception("set mess over");
-            string tempstr = text;
+            }
+
+            var tempstr = text;
             
             RenderTextInner(tempstr, buff, 0x3c0, linenum * 16 + 0x120, 0, 0, 0x100, 0x10);
-            var cmd = new UIDrawCmd { x = x, y = y, u = 0, v = 0, w = 255, h = 16, uipaletteindex = 8 };
-            var bdc = new BitmapDrawCommand { x = x, y = y };
-            bdc.bmp = UIHelper.GenerateBitmap(cmd, uipalettes[8], buff);
+            var cmd = new UiDrawCmd { X = x, Y = y, U = 0, V = 0, W = 255, H = 16, Uipaletteindex = 8 };
+            var bdc = new BitmapDrawCommand { X = x, Y = y };
+            bdc.Bmp = UiHelper.GenerateBitmap(cmd, _uipalettes[8], buff);
             return bdc;
         }
 
-        int DialogSomething;
-        int _1dd7ea;
-        int _1072fc, _1072dc, _107214, _1072e0, _1072e4, _107228,_1072d4,_1072d8;
-        int _107210;
-        byte[] RenderTextBuff = new byte[0x800];
-        int DialogRenderCharCounter;
-        int DialogTextLineStartX;
-        int[] _107220 = new int[8];
-        int DialogLetterWait, DialogLetterWaitRemaining;
-        int DialogSomethingBit3On;
-        char[] DialogTextBuffer = new char[0x960];
-        string DialogTextBufferStr;//string version of dialogtextbuffer
-        int DialogTextBufferPos;
-        int DialogChoice;
-        int _1072f0, _1072f4;
-        int DialogTextSfx;
+        private int _dialogSomething;
+        private int _1dd7Ea;
+        private int _1072Fc, _1072dc, _107214, _1072E0, _1072E4, _107228,_1072d4,_1072d8;
+        private int _107210;
+        private byte[] _renderTextBuff = new byte[0x800];
+        private int _dialogRenderCharCounter;
+        private int _dialogTextLineStartX;
+        private int[] _107220 = new int[8];
+        private int _dialogLetterWait, _dialogLetterWaitRemaining;
+        private int _dialogSomethingBit3On;
+        private char[] _dialogTextBuffer = new char[0x960];
+        private string _dialogTextBufferStr;//string version of dialogtextbuffer
+        private int _dialogTextBufferPos;
+        private int _dialogChoice;
+        private int _1072F0, _1072F4;
+        private int _dialogTextSfx;
         public void RenderDialogText()
         {
-            if ((DialogSomething & 8) != 0)
+            if ((_dialogSomething & 8) != 0)
             {
-                if ((_1dd7ea & 0x80) == 0)
+                if ((_1dd7Ea & 0x80) == 0)
+                {
                     return;
+                }
 
-                _1072fc = 0;
-                DialogSomething &= 0xfff7;
+                _1072Fc = 0;
+                _dialogSomething &= 0xfff7;
 
                 _1072dc |= 8;
 
                 {//near_end
-                    DialogRenderCharCounter = 0;
-                    DialogTextLineStartX = 0;
-                    RenderTextBuff = new byte[0x800];
+                    _dialogRenderCharCounter = 0;
+                    _dialogTextLineStartX = 0;
+                    _renderTextBuff = new byte[0x800];
 
                     if (_107214 == 2)
                     {
@@ -445,7 +467,7 @@ namespace GraphicsTools.Alundra
 
                         if ((_1072dc & 1) != 0)
                         {
-                            _1072e0 = _1072e4;
+                            _1072E0 = _1072E4;
                             _107228 = 0;
                         }
                     }
@@ -459,83 +481,94 @@ namespace GraphicsTools.Alundra
                 }
                 return;
             }
-            bool DoProcess = false;
+            var doProcess = false;
 
-            if ((DialogSomething & 2) != 0)
+            if ((_dialogSomething & 2) != 0)
             {
-                DialogLetterWaitRemaining--;
+                _dialogLetterWaitRemaining--;
 
-                if (DialogLetterWaitRemaining == 0)
+                if (_dialogLetterWaitRemaining == 0)
                 {
-                    DoProcess = true;
-                    DialogLetterWaitRemaining = DialogLetterWait;
+                    doProcess = true;
+                    _dialogLetterWaitRemaining = _dialogLetterWait;
                 }
             }
 
-            if ((DialogSomething & 1) != 0 && (game.PlayerInput[0] & 0x80) != 0)
-                DoProcess = true;
-
-            if ((DialogSomething & 4) != 0 && DialogSomethingBit3On == 1)
+            if ((_dialogSomething & 1) != 0 && (_game.PlayerInput[0] & 0x80) != 0)
             {
-                DoProcess = true;
-                DialogSomethingBit3On = 0;
+                doProcess = true;
             }
 
-            if (!DoProcess)
+            if ((_dialogSomething & 4) != 0 && _dialogSomethingBit3On == 1)
+            {
+                doProcess = true;
+                _dialogSomethingBit3On = 0;
+            }
+
+            if (!doProcess)
+            {
                 return;
+            }
 
             while(true)
             {
                 char c;
                 while(true)
                 {
-                    c = DialogTextBuffer[DialogTextBufferPos];
+                    c = _dialogTextBuffer[_dialogTextBufferPos];
                     if (c == 0)
                     {
                         DialogChoiceUnknown1 = 1;
-                        if ((DialogChoice & 1) != 0)
+                        if ((_dialogChoice & 1) != 0)
                         {
-                            _1072f0 = _1072f4;
+                            _1072F0 = _1072F4;
                         }
                         return;
                     }
 
                     if (c != 0xa)
+                    {
                         break;
+                    }
 
-                    DialogTextBufferPos++;
+                    _dialogTextBufferPos++;
                 }
 
                 if (c != '\\')
+                {
                     break;
+                }
 
-                DialogTextBufferPos++;
-                c = DialogTextBuffer[DialogTextBufferPos];
+                _dialogTextBufferPos++;
+                c = _dialogTextBuffer[_dialogTextBufferPos];
 
 
                 switch(c)
                 {
                     case 'W'://render special character
-                        DialogTextBufferPos++;
+                        _dialogTextBufferPos++;
                         
-                        char val = (char)(DialogTextBuffer[DialogTextBufferPos] - 0x20);
-                        if (DialogTextBuffer[DialogTextBufferPos] >= 0x41)
-                            val = (char)(byte)(DialogTextBuffer[DialogTextBufferPos] + 0xd9);
-                        int wierdv = ((_107210 + _107214) - (((_107210 + _107214) * 0x55555556) >> 32) * 3) * 8 + 0x120;
-                        RenderTextInner(val.ToString(), RenderTextBuff, 0x3c0, wierdv, DialogTextLineStartX, 0, 0x100, 0x10);
+                        var val = (char)(_dialogTextBuffer[_dialogTextBufferPos] - 0x20);
+                        if (_dialogTextBuffer[_dialogTextBufferPos] >= 0x41)
+                        {
+                            val = (char)(byte)(_dialogTextBuffer[_dialogTextBufferPos] + 0xd9);
+                        }
 
-                        var inf = UIHelper.FontCharInfos[(int)val];
-                        DialogTextLineStartX += inf.width;
+                        var wierdv = (_107210 + _107214 - (((_107210 + _107214) * 0x55555556) >> 32) * 3) * 8 + 0x120;
+                        RenderTextInner(val.ToString(), _renderTextBuff, 0x3c0, wierdv, _dialogTextLineStartX, 0, 0x100, 0x10);
+
+                        var inf = UiHelper.FontCharInfos[(int)val];
+                        _dialogTextLineStartX += inf.Width;
                         return;
                     case 'Y':
-                        DialogTextBufferPos++;
+                        _dialogTextBufferPos++;
                         return;
                     case 'V':
                         //TODO
                         continue;
                     case 'X':
-                        DialogTextBufferPos++;
-                        char c2 = DialogTextBuffer[DialogTextBufferPos];
+                        _dialogTextBufferPos++;
+                        var c2 = _dialogTextBuffer[_dialogTextBufferPos];
                         switch (c2)
                         {
                             case '0':
@@ -557,19 +590,19 @@ namespace GraphicsTools.Alundra
                         }
                         continue;
                     case 'T':
-                        DialogTextBufferPos++;
-                        DialogLetterWaitRemaining = DialogLetterWait * 2;
+                        _dialogTextBufferPos++;
+                        _dialogLetterWaitRemaining = _dialogLetterWait * 2;
                         return;
                     case 'H':
-                        DialogTextBufferPos++;
-                        _107220[_107214] = GetRenderedTextWidth(DialogTextBufferStr.Substring(DialogTextBufferPos));
+                        _dialogTextBufferPos++;
+                        _107220[_107214] = GetRenderedTextWidth(_dialogTextBufferStr.Substring(_dialogTextBufferPos));
                         continue;
                     case 'N':
-                        DialogTextBufferPos++;
+                        _dialogTextBufferPos++;
                         {//near_end
-                            DialogRenderCharCounter = 0;
-                            DialogTextLineStartX = 0;
-                            RenderTextBuff = new byte[0x800];
+                            _dialogRenderCharCounter = 0;
+                            _dialogTextLineStartX = 0;
+                            _renderTextBuff = new byte[0x800];
 
                             if (_107214 == 2)
                             {
@@ -579,7 +612,7 @@ namespace GraphicsTools.Alundra
 
                                 if ((_1072dc & 1) != 0)
                                 {
-                                    _1072e0 = _1072e4;
+                                    _1072E0 = _1072E4;
                                     _107228 = 0;
                                 }
                             }
@@ -593,43 +626,43 @@ namespace GraphicsTools.Alundra
                         }
                         return;
                     case 'A':
-                        _1072fc = 1;
-                        DialogSomething |= 8;
-                        DialogTextBufferPos++;
+                        _1072Fc = 1;
+                        _dialogSomething |= 8;
+                        _dialogTextBufferPos++;
                         return;
                     case 'B':
-                        DialogTextSfx = -1;
-                        DialogTextBufferPos++;
+                        _dialogTextSfx = -1;
+                        _dialogTextBufferPos++;
                         continue;
                     case 'C':
-                        DialogTextSfx = 0;
-                        DialogTextBufferPos++;
+                        _dialogTextSfx = 0;
+                        _dialogTextBufferPos++;
                         continue;
                     case 'D':
-                        DialogTextSfx = 1;
-                        DialogTextBufferPos++;
+                        _dialogTextSfx = 1;
+                        _dialogTextBufferPos++;
                         continue;
                     case 'E':
-                        DialogTextSfx = 2;
-                        DialogTextBufferPos++;
+                        _dialogTextSfx = 2;
+                        _dialogTextBufferPos++;
                         continue;
                     case 'F':
-                        DialogTextSfx = 3;
-                        DialogTextBufferPos++;
+                        _dialogTextSfx = 3;
+                        _dialogTextBufferPos++;
                         continue;
                     case 'G':
-                        DialogTextSfx = 4;
-                        DialogTextBufferPos++;
+                        _dialogTextSfx = 4;
+                        _dialogTextBufferPos++;
                         continue;
                     case 'M':
-                        DialogTextBufferPos++;
-                        if (DialogTextBuffer[DialogTextBufferPos] == 'C')
+                        _dialogTextBufferPos++;
+                        if (_dialogTextBuffer[_dialogTextBufferPos] == 'C')
                         {
-                            DialogTextBufferPos++;
-                            if (DialogTextBuffer[DialogTextBufferPos] == 'E')
+                            _dialogTextBufferPos++;
+                            if (_dialogTextBuffer[_dialogTextBufferPos] == 'E')
                             {
-                                DialogTextBufferPos++;
-                                DialogSomething = 4;
+                                _dialogTextBufferPos++;
+                                _dialogSomething = 4;
                             }
                         }
                         continue;
@@ -654,48 +687,51 @@ namespace GraphicsTools.Alundra
 
             //CHECK KANJI HERE
 
-            string txt = DialogTextBuffer[DialogTextBufferPos++].ToString();
+            var txt = _dialogTextBuffer[_dialogTextBufferPos++].ToString();
 
-            int wierdval = ((_107210 + _107214) - (((_107210 + _107214) * 0x55555556) >> 32) * 3) * 8 + 0x120;
-            RenderTextInner(txt, RenderTextBuff, 0x3c0, wierdval, DialogTextLineStartX, 0, 0x100, 0x10);
+            var wierdval = (_107210 + _107214 - (((_107210 + _107214) * 0x55555556) >> 32) * 3) * 8 + 0x120;
+            RenderTextInner(txt, _renderTextBuff, 0x3c0, wierdval, _dialogTextLineStartX, 0, 0x100, 0x10);
 
-            var info = UIHelper.FontCharInfos[(int)txt[0]];
-            DialogTextLineStartX += info.width;
-            if ((DialogRenderCharCounter & 1) == 0)//every other
+            var info = UiHelper.FontCharInfos[(int)txt[0]];
+            _dialogTextLineStartX += info.Width;
+            if ((_dialogRenderCharCounter & 1) == 0)//every other
             {
-                if (DialogTextSfx != 4 && DialogTextSfx >= 0)
+                if (_dialogTextSfx != 4 && _dialogTextSfx >= 0)
                 {
-                    if (game.soundbin != null)
+                    if (_game.Soundbin != null)
                     {
-                        game.soundbin.PlaySoundEffect(0x4f + DialogTextSfx);
+                        _game.Soundbin.PlaySoundEffect(0x4f + _dialogTextSfx);
                     }
                 }
             }
 
-            DialogRenderCharCounter++;
+            _dialogRenderCharCounter++;
 
 
         }
 
         public void RenderTextInner(string linetext, byte[]outputbitmap,int vramx, int vramy, int startx, int starty, int outputbitmapwidth, int outputbitmapheight)
         {
-            int x = startx;
-            int dex = 0;
-            char chr = linetext[dex];
+            var x = startx;
+            var dex = 0;
+            var chr = linetext[dex];
             while(chr != 0)
             {
-                var info = UIHelper.FontCharInfos[(int)chr];
-                int fontstartdex = fontimageoffset + (info.sx / 2) + (info.sy * 128);
+                var info = UiHelper.FontCharInfos[(int)chr];
+                var fontstartdex = _fontimageoffset + info.Sx / 2 + info.Sy * 128;
 
-                for (int y = 0; y < info.height; y++)
+                for (var y = 0; y < info.Height; y++)
                 {
-                    int charx = x;
-                    int lineoffset = y * 128;
-                    for (int xdex = 0; xdex < info.width; xdex++)
+                    var charx = x;
+                    var lineoffset = y * 128;
+                    for (var xdex = 0; xdex < info.Width; xdex++)
                     {
                         if (charx >= 0x100)
+                        {
                             break;
-                        int outputpos = ((starty + info.y) * outputbitmapwidth / 2) + (charx / 2);
+                        }
+
+                        var outputpos = (starty + info.Y) * outputbitmapwidth / 2 + charx / 2;
                         
                         byte existingnib, sourcenib;
 
@@ -704,12 +740,12 @@ namespace GraphicsTools.Alundra
                             existingnib = (byte)(outputbitmap[outputpos] & 0xf);
                             if ((xdex & 1) != 0)
                             {
-                                sourcenib = fontimagedata[fontstartdex + lineoffset + xdex / 2];
+                                sourcenib = _fontimagedata[fontstartdex + lineoffset + xdex / 2];
                                 sourcenib = (byte)(sourcenib & 0xf0);
                             }
                             else
                             {
-                                sourcenib = fontimagedata[fontstartdex + lineoffset + xdex / 2];
+                                sourcenib = _fontimagedata[fontstartdex + lineoffset + xdex / 2];
                                 sourcenib = (byte)((sourcenib & 0xf) << 4);
                             }
                         }
@@ -718,12 +754,12 @@ namespace GraphicsTools.Alundra
                             existingnib = (byte)(outputbitmap[outputpos] & 0xf0);
                             if ((xdex & 1) != 0)
                             {
-                                sourcenib = fontimagedata[fontstartdex + lineoffset + xdex / 2];
+                                sourcenib = _fontimagedata[fontstartdex + lineoffset + xdex / 2];
                                 sourcenib = (byte)(sourcenib >> 4);
                             }
                             else
                             {
-                                sourcenib = fontimagedata[fontstartdex + lineoffset + xdex / 2];
+                                sourcenib = _fontimagedata[fontstartdex + lineoffset + xdex / 2];
                                 sourcenib = (byte)(sourcenib & 0xf);
                             }
                         }
@@ -735,17 +771,17 @@ namespace GraphicsTools.Alundra
                     }
                 }
                 
-                x += info.width + 1;
+                x += info.Width + 1;
                 dex++;
                 chr = linetext[dex];
             }
         }
 
-        int GetRenderedTextWidth(string text)
+        private int GetRenderedTextWidth(string text)
         {
-            int width = 0;
-            int dex = 0;
-            char c = text[dex];
+            var width = 0;
+            var dex = 0;
+            var c = text[dex];
             while(c!=0)
             {
                 if(c == '\\')
@@ -775,11 +811,16 @@ namespace GraphicsTools.Alundra
                         case 'W':
                             int lookup = text[dex];
                             if (lookup < 'A')
+                            {
                                 lookup -= 0x20;
+                            }
                             else
+                            {
                                 lookup -= 0x27;
+                            }
+
                             dex++;
-                            width += UIHelper.FontCharInfos[lookup].width + 1;
+                            width += UiHelper.FontCharInfos[lookup].Width + 1;
                             break;
                         case 'X':
                             dex += 2;
@@ -800,7 +841,7 @@ namespace GraphicsTools.Alundra
                 }
                 else
                 {
-                    width += UIHelper.FontCharInfos[c].width + 1;
+                    width += UiHelper.FontCharInfos[c].Width + 1;
                     dex++;
                 }
 
@@ -811,89 +852,101 @@ namespace GraphicsTools.Alundra
         }
 
 
-        UIRecord uirecord;
-        public bool SetUIRecordCallSetup(int uiid)
+        private UiRecord _uirecord;
+        public bool SetUiRecordCallSetup(int uiid)
         {
             if (uiid >= 0xd)
+            {
                 return false;
-            uirecord = records[uiid];
+            }
+
+            _uirecord = Records[uiid];
             //do i need to copy all the properties over from the source records?
-            uirecord.Status = 1;
+            _uirecord.Status = 1;
 
 
-            if (uirecord.SetupFunc != null)
-                uirecord.SetupFunc(uirecord);
+            if (_uirecord.SetupFunc != null)
+            {
+                _uirecord.SetupFunc(_uirecord);
+            }
+
             return true;
         }
 
-        void SetName(int nameid)
+        private void SetName(int nameid)
         {
-            if ((game.DialogNameState & 4) == 0
+            if ((_game.DialogNameState & 4) == 0
                 && nameid-0x100 < 0x100
-                && !string.IsNullOrEmpty(etcstrings.GetEtcString(nameid)))
+                && !string.IsNullOrEmpty(_etcstrings.GetEtcString(nameid)))
             {
-                game.DialogName = nameid;
-                SetUIRecordCallSetup(0xc);
+                _game.DialogName = nameid;
+                SetUiRecordCallSetup(0xc);
             }
         }
 
-        bool IsDialogActiveInner()
+        private bool IsDialogActiveInner()
         {
-            return (game.DialogState & 4) != 0;
+            return (_game.DialogState & 4) != 0;
         }
 
-        int dialogstatus,dialogxpos,dialogypos,dialogzpos,dialogcamxpos,dialogcamypos;
-        UIDrawCmd dialogportraitcmd = new UIDrawCmd();
-        int dialogvalx, dialogvaly, dialogvalxsaved, dialogvalysaved, dialogvalxsaved2, dialogvalysaved2, dialogvalxmodded, dialogvalymodded;
-        int dialogvalunknown1, dialogvalunknown2, dialogvalunknown3;
-        void SetDialogPortrait(int xpos, int ypos, int zpos, int camxpos, int camypos, int sx, int sy, int width, int height, int palette, int spritesheet)
+        private int _dialogstatus,_dialogxpos,_dialogypos,_dialogzpos,_dialogcamxpos,_dialogcamypos;
+        private UiDrawCmd _dialogportraitcmd = new();
+        private int _dialogvalx, _dialogvaly, _dialogvalxsaved, _dialogvalysaved, _dialogvalxsaved2, _dialogvalysaved2, _dialogvalxmodded, _dialogvalymodded;
+        private int _dialogvalunknown1, _dialogvalunknown2, _dialogvalunknown3;
+
+        private void SetDialogPortrait(int xpos, int ypos, int zpos, int camxpos, int camypos, int sx, int sy, int width, int height, int palette, int spritesheet)
         {
-            if (dialogstatus != 0)
+            if (_dialogstatus != 0)
+            {
                 return;
+            }
 
-            dialogxpos = xpos;
-            dialogypos = ypos;
-            dialogzpos = zpos;
-            dialogcamxpos = camxpos;
-            dialogcamypos = camypos;
-            dialogstatus = 5;
+            _dialogxpos = xpos;
+            _dialogypos = ypos;
+            _dialogzpos = zpos;
+            _dialogcamxpos = camxpos;
+            _dialogcamypos = camypos;
+            _dialogstatus = 5;
 
-            dialogportraitcmd.u = (byte)sx;
-            dialogportraitcmd.v = (byte)sy;
-            dialogportraitcmd.w = (short)width;
-            dialogportraitcmd.h = (short)height;
-            dialogportraitcmd.x = 64;
-            dialogportraitcmd.y = 64;
+            _dialogportraitcmd.U = (byte)sx;
+            _dialogportraitcmd.V = (byte)sy;
+            _dialogportraitcmd.W = (short)width;
+            _dialogportraitcmd.H = (short)height;
+            _dialogportraitcmd.X = 64;
+            _dialogportraitcmd.Y = 64;
 
-            dialogportraitcmd.uipaletteindex = (short)palette;
-            dialogportraitcmd.spritesheet = (short)spritesheet;
+            _dialogportraitcmd.Uipaletteindex = (short)palette;
+            _dialogportraitcmd.Spritesheet = (short)spritesheet;
 
 
-            dialogvalxsaved = dialogxpos >> 16 - dialogcamxpos;
-            dialogvalunknown2 = 0x30;
-            dialogvalunknown3 = 0x38;
-            dialogvalxsaved2 = dialogvalx;
-            dialogvalxmodded = dialogvalxsaved - dialogvalx;
-            dialogvalunknown1 = 0xf;
+            _dialogvalxsaved = _dialogxpos >> 16 - _dialogcamxpos;
+            _dialogvalunknown2 = 0x30;
+            _dialogvalunknown3 = 0x38;
+            _dialogvalxsaved2 = _dialogvalx;
+            _dialogvalxmodded = _dialogvalxsaved - _dialogvalx;
+            _dialogvalunknown1 = 0xf;
 
-            dialogvalysaved = dialogypos >> 16 - dialogcamypos - dialogzpos >> 16 - 0x20;
-            dialogvalysaved2 = dialogvaly;
-            dialogvalymodded = dialogvalysaved - dialogvaly;
+            _dialogvalysaved = _dialogypos >> 16 - _dialogcamypos - _dialogzpos >> 16 - 0x20;
+            _dialogvalysaved2 = _dialogvaly;
+            _dialogvalymodded = _dialogvalysaved - _dialogvaly;
         }
 
-        bool SetText(int textid, int playercontrolflag)
+        private bool SetText(int textid, int playercontrolflag)
         {
             if (!IsDialogActiveInner())
+            {
                 return false;
+            }
+
             string text;
             if ((textid & 0x80) != 0)
             {
                 
-                text = datasbin.alundragamemap.strings[textid & 0x7f];
+                text = _datasbin.AlundraGameMap.Strings[textid & 0x7f];
             }
             else
             {
-                text = game.gameMap.strings[textid & 0x7f];
+                text = _game.GameMap.Strings[textid & 0x7f];
             }
 
             SetupDialogDrawCmds(text, playercontrolflag);
@@ -901,77 +954,80 @@ namespace GraphicsTools.Alundra
             return true;
         }
 
-        int DialogChoiceSaved, _1072d0, _107300;
-        bool SetupDialogDrawCmds(string text, int playercontrolflag)
+        private int _dialogChoiceSaved, _1072d0, _107300;
+
+        private bool SetupDialogDrawCmds(string text, int playercontrolflag)
         {
-            if (!SetUIRecordCallSetup(0))
+            if (!SetUiRecordCallSetup(0))
+            {
                 return false;
+            }
 
             if (text.Length < 0x960)
             {
-                for(int dex =0;dex<text.Length;dex++)
+                for(var dex =0;dex<text.Length;dex++)
                 {
-                    DialogTextBuffer[dex] = text[dex];
+                    _dialogTextBuffer[dex] = text[dex];
                 }
-                DialogTextBuffer[text.Length] = (char)0;
+                _dialogTextBuffer[text.Length] = (char)0;
             }
             //else impliment the other code
 
-            DialogBoxLerper.tickstolinger = 2;
-            DialogBoxLerper.currenttick = 0;
-            DialogBoxLerper.numticks = 0xf;
-            if (BoxDrawer1.x < 0)
+            DialogBoxLerper.Tickstolinger = 2;
+            DialogBoxLerper.Currenttick = 0;
+            DialogBoxLerper.Numticks = 0xf;
+            if (_boxDrawer1.X < 0)
             {
-                DialogBoxLerper.x1 = (short)(BoxDrawer1.x - BoxDrawer1.width * 8);
+                DialogBoxLerper.X1 = (short)(_boxDrawer1.X - _boxDrawer1.Width * 8);
             }
             else
             {
-                DialogBoxLerper.x1 = BoxDrawer1.x;
+                DialogBoxLerper.X1 = _boxDrawer1.X;
             }
-            DialogBoxLerper.y1 = 0xf0;
-            if (BoxDrawer1.x < 0)
+            DialogBoxLerper.Y1 = 0xf0;
+            if (_boxDrawer1.X < 0)
             {
-                DialogBoxLerper.x2 = (short)(BoxDrawer1.x - BoxDrawer1.width * 8);
+                DialogBoxLerper.X2 = (short)(_boxDrawer1.X - _boxDrawer1.Width * 8);
             }
             else
             {
-                DialogBoxLerper.x2 = BoxDrawer1.x;
+                DialogBoxLerper.X2 = _boxDrawer1.X;
             }
 
-            if (BoxDrawer1.y < 0)
+            if (_boxDrawer1.Y < 0)
             {
-                DialogBoxLerper.y2 = (short)(BoxDrawer1.y - BoxDrawer1.height * 8);
+                DialogBoxLerper.Y2 = (short)(_boxDrawer1.Y - _boxDrawer1.Height * 8);
             }
             else
             {
-                DialogBoxLerper.y2 = BoxDrawer1.y;
+                DialogBoxLerper.Y2 = _boxDrawer1.Y;
             }
 
-            game.DialogState = 5;
+            _game.DialogState = 5;
 
-            DialogBoxLerper.AfterX = BoxDrawer1.x;
-            DialogBoxLerper.AfterY = BoxDrawer1.y;
+            DialogBoxLerper.AfterX = _boxDrawer1.X;
+            DialogBoxLerper.AfterY = _boxDrawer1.Y;
 
             if (playercontrolflag==1)
             {
-                game.PlayerControlSetting |= 0x10;
+                _game.PlayerControlSetting |= 0x10;
             }
             else
             {
-                game.PlayerControlSetting |= 8;
+                _game.PlayerControlSetting |= 8;
             }
 
             DialogChoiceUnknown1 = 0;
-            DialogChoiceSaved = 0;
+            _dialogChoiceSaved = 0;
             DialogChoiceUnknown2 = 0;
             _1072d0 = 0;
-            DialogSomethingBit3On = 0;
-            DialogTextSfx = -1;
+            _dialogSomethingBit3On = 0;
+            _dialogTextSfx = -1;
             _107210 = 0;
             _107214 = 0;
-            DialogTextBufferPos = 0;
-            DialogRenderCharCounter = 0;
-            for (int linedex = 0;linedex<3;linedex++)
+            _dialogTextBufferPos = 0;
+            _dialogRenderCharCounter = 0;
+            for (var linedex = 0;linedex<3;linedex++)
             {
                 _107220[linedex] = 0;
                 //init the draw commands for these lines
@@ -984,18 +1040,18 @@ namespace GraphicsTools.Alundra
             //}
 
 
-            _1072fc = 0;
+            _1072Fc = 0;
             _107300 = 0;
             //clearimage
 
-            DialogLetterWait = 4;
-            DialogSomething = 3;
-            DialogLetterWaitRemaining = 1;
+            _dialogLetterWait = 4;
+            _dialogSomething = 3;
+            _dialogLetterWaitRemaining = 1;
             _1072dc = 3;
-            DialogChoice = 3;
-            RenderTextBuff = new byte[0x800];//zero out memory
-            DialogTextLineStartX = 0;
-            game.soundbin.PlaySoundEffect(6);
+            _dialogChoice = 3;
+            _renderTextBuff = new byte[0x800];//zero out memory
+            _dialogTextLineStartX = 0;
+            _game.Soundbin.PlaySoundEffect(6);
 
             return true;
         }

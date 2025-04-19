@@ -1,7 +1,7 @@
 ﻿
 namespace alundramultitool
 {
-    partial class frmAnalyzedFunction
+    partial class FrmAnalyzedFunction
     {
         /// <summary>
         /// Required designer variable.
@@ -187,7 +187,7 @@ namespace alundramultitool
             this.Controls.Add(this.lstDebugStrings);
             this.Controls.Add(this.lstGlobalVars);
             this.Controls.Add(this.txtFunction);
-            this.Name = "frmAnalyzedFunction";
+            this.Name = "FrmAnalyzedFunction";
             this.Text = "frmAnalyzedFunction";
             this.Load += new System.EventHandler(this.frmAnalyzedFunction_Load);
             this.ResumeLayout(false);

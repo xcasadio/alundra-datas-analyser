@@ -1,223 +1,219 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Diagnostics;
-using System.Drawing;
+﻿using System.Diagnostics;
 
 namespace GraphicsTools.Alundra
 {
     public class DatasBin
     {
-        public DBHeader header;
-        public GameMap[] gamemaps;
-        public GameMap alundragamemap;
-        public string binfile;
-        public BalanceBin balancebin;
+        public readonly DbHeader Header;
+        public readonly GameMap[] GameMaps;
+        public readonly GameMap AlundraGameMap;
+        public readonly string Binfile;
 
         public DatasBin(string binfile)
         {
-            //load balance file
-            var balancefile = binfile.Substring(0, binfile.LastIndexOf('\\') + 1) + "BALANCE.BIN";
-            using (var br = new BinaryReader(File.OpenRead(balancefile)))
-            {
-                balancebin = new BalanceBin(br);
-            }
+            Binfile = binfile;
+            using var br = new BinaryReader(File.OpenRead(binfile));
+            Header = new DbHeader(br);
 
-            this.binfile = binfile;
-            using (var br = new BinaryReader(File.OpenRead(binfile)))
-            {
-                header = new DBHeader(br);
-
-                alundragamemap = new GameMap(br, header);
+            AlundraGameMap = new GameMap(br, Header);
 
 #if DEBUG       //verify maps
-                for (int dex = 0; dex < header.gamemaps.Length; dex++)
+            for (var dex = 0; dex < Header.GameMaps.Length; dex++)
+            {
+                if (Header.GameMaps[dex] > 0)
                 {
-                    if (header.gamemaps[dex] > 0)
+                    br.BaseStream.Position = Header.GameMaps[dex];
+                    if (br.BaseStream.Position != br.BaseStream.Length)
                     {
-                        br.BaseStream.Position = header.gamemaps[dex];
-                        if (br.BaseStream.Position != br.BaseStream.Length)
-                        {
-                            int check = br.ReadInt32();
-                            Debug.Assert(check == 28);
-                        }
+                        var check = br.ReadInt32();
+                        Debug.Assert(check == 28);
                     }
                 }
+            }
 #endif
 
-                gamemaps = new GameMap[header.gamemaps.Length];
-                for (int dex = 0; dex < header.gamemaps.Length; dex++)
-                {
-                    if (header.gamemaps[dex] > 0 && header.gamemaps[dex] < br.BaseStream.Length)
-                    {
-                        gamemaps[dex] = new GameMap(br, header.gamemaps[dex]);
-                    }
-                }
+            GameMaps = new GameMap[Header.GameMaps.Length];
+            for (var i = 0; i < Header.GameMaps.Length; i++)
+            {
+                var gameMapOffset = Header.GameMaps[i];
 
+                if (gameMapOffset > 0 && gameMapOffset < br.BaseStream.Length)
+                {
+                    GameMaps[i] = new GameMap(br, gameMapOffset);
+                    GameMaps[i].Load(br, false);
+                }
             }
         }
 
         public BinaryReader OpenBin()
         {
-            return new BinaryReader(File.OpenRead(binfile));
+            return new BinaryReader(File.OpenRead(Binfile));
         }
 
     }
 
     public class GameMap
     {
-
-        public GameMap(BinaryReader br, DBHeader dbheader)
-        {//the alundra gamemap (just has sprites)
-
-            br.BaseStream.Position = binoffset = 0;
-            header = new GameMapHeader(dbheader);
+        public GameMap(BinaryReader br, DbHeader dbheader)
+        {
+            //the alundra gamemap (just has sprites)
+            br.BaseStream.Position = Offset = 0;
+            Header = new GameMapHeader(dbheader);
         }
+
         public GameMap(BinaryReader br, long offset)
         {
             //read header
-            br.BaseStream.Position = binoffset = offset;
-            header = new GameMapHeader(br);
+            br.BaseStream.Position = Offset = offset;
+            Header = new GameMapHeader(br);
 
             //just read mapid
-            br.BaseStream.Position = binoffset + header.infoblock;
-            info = new GameMapInfo(br.ReadInt32(), memaddr + header.infoblock);
+            br.BaseStream.Position = Offset + Header.InfoBlock;
+            Info = new GameMapInfo(br.ReadInt32(), Memaddr + Header.InfoBlock);
+        }
 
-        }
-        public long binoffset;
-        public static int memaddr = 0x153460;// + 0x260;
-        public static int eventobjects_memaddr = 0x1ac498;// + 0x260;
-        public static int eventobject_size = 0x294;
-        public static int EventObjectAddr(int eventobjectid)
-        {
-            return eventobjects_memaddr + eventobjectid * eventobject_size;
-        }
-        public GameMapHeader header;
-        public GameMapInfo info;
-        public SpriteInfo spriteinfo;
-        public ScrollScreen scrollscreen;
-        public Map map;
-        public string[] strings;
-        public bool loaded = false;
-        byte[] tilesheetimagedata;
-        public Bitmap tilesheetbmp;
-        byte[] spritesheetimagedata;
-        public Bitmap spritesheetbmp;
-        int numspritesheets = 8;
+        public readonly long Offset;
+        public static readonly int Memaddr = 0x153460;// + 0x260; Header size ??
+
+
+        public readonly GameMapHeader Header;
+        public GameMapInfo Info;
+        public SpriteInfo Spriteinfo;
+        public ScrollScreen ScrollScreen;
+        public Map Map;
+        public string[] Strings;
+        public readonly bool Loaded = false;
+        private byte[] _tilesheetimagedata;
+        public Bitmap Tilesheetbmp;
+        private byte[] _spritesheetimagedata;
+        public Bitmap Spritesheetbmp;
+        private int _numspritesheets = 8;
+
         public void Load(BinaryReader br, bool ismap)
         {
             //read info
-            if (header.infoblock != -1)
+            if (Header.InfoBlock != -1)
             {
-                br.BaseStream.Position = binoffset + header.infoblock;
-                info = new GameMapInfo(br, memaddr + header.infoblock);
+                br.BaseStream.Position = Offset + Header.InfoBlock;
+                Info = new GameMapInfo(br, Memaddr + Header.InfoBlock);
             }
 
             //map
-            if (header.mapblock != -1)
+            if (Header.MapBlock != -1)
             {
-                br.BaseStream.Position = binoffset + header.mapblock;
-                map = new Map(br, memaddr + header.mapblock);
-                header.walltilessize = header.tilesheets - (map.walltilesoffset + header.mapblock);
-                header.mapsize -= header.walltilessize;
+                br.BaseStream.Position = Offset + Header.MapBlock;
+                Map = new Map(br, Memaddr + Header.MapBlock);
+                Header.WallTilesSize = Header.TileSheets - (Map.WallTilesOffset + Header.MapBlock);
+                Header.Mapsize -= Header.WallTilesSize;
             }
 
             //tilesheet
-            if (header.tilesheets != -1)
+            if (Header.TileSheets != -1)
             {
-                br.BaseStream.Position = binoffset + header.tilesheets + 6;
-                byte[] buff = new byte[header.spriteinfo - header.tilesheets];
+                br.BaseStream.Position = Offset + Header.TileSheets + 6;
+                var buff = new byte[Header.SpriteInfo - Header.TileSheets];
                 br.Read(buff, 0, buff.Length);
-                tilesheetimagedata = new byte[256 * 256 * 6 / 2];//6 256x256 4bpp bitmaps
-                Utils.Deflate(buff, tilesheetimagedata);
+                _tilesheetimagedata = new byte[256 * 256 * 6 / 2];//6 256x256 4bpp bitmaps
+                Utils.Deflate(buff, _tilesheetimagedata);
             }
 
             //spriteinfo
-            if (header.spriteinfo != -1)
+            if (Header.SpriteInfo != -1)
             {
-                br.BaseStream.Position = binoffset + header.spriteinfo;
-                spriteinfo = new SpriteInfo(br, memaddr + header.spriteinfo, header.spritesheets, ismap);
+                br.BaseStream.Position = Offset + Header.SpriteInfo;
+                Spriteinfo = new SpriteInfo(br, Memaddr + Header.SpriteInfo, Header.SpriteSheets, ismap);
             }
 
             //spritesheet
-            if (header.spritesheets != -1)
+            if (Header.SpriteSheets != -1)
             {
-                br.BaseStream.Position = binoffset + header.spritesheets + 6;
-                byte[] buff = new byte[header.spritessize - 6];
+                br.BaseStream.Position = Offset + Header.SpriteSheets + 6;
+                var buff = new byte[Header.Spritessize - 6];
                 br.Read(buff, 0, buff.Length);
-                spritesheetimagedata = new byte[256 * 256 * numspritesheets / 2];//numspritesheets 256x256 4bpp bitmaps
-                Utils.Deflate(buff, spritesheetimagedata);
+                _spritesheetimagedata = new byte[256 * 256 * _numspritesheets / 2];//numspritesheets 256x256 4bpp bitmaps
+                Utils.Deflate(buff, _spritesheetimagedata);
             }
 
             //scrollscreen
-            if (header.scrollscreen != -1)
+            if (Header.ScrollScreen != -1)
             {
-                scrollscreen = new ScrollScreen(br);
+                ScrollScreen = new ScrollScreen(br);
             }
 
             //read string table
-            if (header.stringtable != -1)
+            if (Header.StringTable != -1)
             {
-                br.BaseStream.Position = binoffset + header.stringtable;
-                strings = new string[128];
-                short[] stringoffsets = new short[128];
-                for (int dex = 0; dex < 128; dex++)
+                br.BaseStream.Position = Offset + Header.StringTable;
+                Strings = new string[128];
+                var stringoffsets = new short[128];
+                for (var i = 0; i < 128; i++)
                 {
-                    stringoffsets[dex] = br.ReadInt16();
+                    stringoffsets[i] = br.ReadInt16();
                 }
-                for (int dex = 0; dex < 128; dex++)
+                for (var i = 0; i < 128; i++)
                 {
-                    if (stringoffsets[dex] != -1)
+                    if (stringoffsets[i] != -1)
                     {
-                        strings[dex] = "";
-                        br.BaseStream.Position = binoffset + header.stringtable + stringoffsets[dex];
-                        char c = br.ReadChar();
+                        Strings[i] = "";
+                        br.BaseStream.Position = Offset + Header.StringTable + stringoffsets[i];
+                        var c = br.ReadChar();
                         while (c != '\0')
                         {
-                            strings[dex] += c;
+                            Strings[i] += c;
                             c = br.ReadChar();
                         }
+
+                        Strings[i] = TextInterpreter.DecodeString(Strings[i]);
                     }
                 }
 
-                header.stringsize = (int)(br.BaseStream.Position - binoffset) - header.stringtable;
+                Header.Stringsize = (int)(br.BaseStream.Position - Offset) - Header.StringTable;
             }
             //loaded = true;
         }
 
-        Dictionary<long, Bitmap> spriteCache = new Dictionary<long, Bitmap>();
-        public Bitmap GetSpriteBitmap(SIImage img)
+        private Dictionary<long, Bitmap> _spriteCache = new();
+        public Bitmap GetSpriteBitmap(SiImage img)
         {
-            var pal = spriteinfo.palettes[img.palette & 0x1f];
-            if (spriteCache.ContainsKey(img.signature))
-                return spriteCache[img.signature];
+            var pal = Spriteinfo.Palettes[img.Palette & 0x1f];
+            if (_spriteCache.ContainsKey(img.Signature))
+            {
+                return _spriteCache[img.Signature];
+            }
+
             var bmp = GenerateSpriteBitmap(img, pal);
-            spriteCache.Add(img.signature, bmp);
+            _spriteCache.Add(img.Signature, bmp);
 
             return bmp;
         }
 
-        public Bitmap GenerateSpriteBitmap(SIImage img, Color[] pal)
+        public Bitmap GenerateSpriteBitmap(SiImage img, Color[] pal)
         {
-            bool shiftleft = img.sx % 2 == 1;
-            int swidth = img.swidth;
-            int readwidth = swidth;
-            int outputwidth = img.swidth;
+            var shiftleft = img.Sx % 2 == 1;
+            int swidth = img.Swidth;
+            var readwidth = swidth;
+            int outputwidth = img.Swidth;
             if (outputwidth % 8 > 0)//make output interval of 8
-                outputwidth += 8 - outputwidth % 8;
-            if (shiftleft)//make sure theres an extra byte if shifting left
-                readwidth++;
-            if (readwidth % 2 == 1)// or if odd width
-                readwidth++;
-
-            byte[] buff = new byte[outputwidth * img.sheight / 2];
-            byte[] readbuff = new byte[readwidth / 2];
-
-            for (int y = 0; y < img.sheight; y++)
             {
-                Buffer.BlockCopy(spritesheetimagedata, (((img.spritesheet & 0x7)) * 256 + img.sy + y) * 256 / 2 + img.sx / 2, readbuff, 0, readwidth / 2);
+                outputwidth += 8 - outputwidth % 8;
+            }
+
+            if (shiftleft)//make sure theres an extra byte if shifting left
+            {
+                readwidth++;
+            }
+
+            if (readwidth % 2 == 1)// or if odd width
+            {
+                readwidth++;
+            }
+
+            var buff = new byte[outputwidth * img.Sheight / 2];
+            var readbuff = new byte[readwidth / 2];
+
+            for (var y = 0; y < img.Sheight; y++)
+            {
+                Buffer.BlockCopy(_spritesheetimagedata, ((img.Spritesheet & 0x7) * 256 + img.Sy + y) * 256 / 2 + img.Sx / 2, readbuff, 0, readwidth / 2);
 
                 if (shiftleft)
                 {
@@ -242,33 +238,36 @@ namespace GraphicsTools.Alundra
 
             if (outputwidth > swidth)
             {
-                img.swidth = (byte)outputwidth;
+                img.Swidth = (byte)outputwidth;
 
-                float vec1x = (img.x2 - img.x1) / (float)swidth;//get the normalized (normalized to ratio of swidth/outputwidth) vector of point 1
-                float vec1y = (img.y2 - img.y1) / (float)swidth;
+                var vec1X = (img.X2 - img.X1) / (float)swidth;//get the normalized (normalized to ratio of swidth/outputwidth) vector of point 1
+                var vec1Y = (img.Y2 - img.Y1) / (float)swidth;
 
-                float vec3x = (img.x4 - img.x3) / (float)swidth;//get normalized vector of point 3
-                float vec3y = (img.y4 - img.y3) / (float)swidth;
+                var vec3X = (img.X4 - img.X3) / (float)swidth;//get normalized vector of point 3
+                var vec3Y = (img.Y4 - img.Y3) / (float)swidth;
 
-                img.x2 = (sbyte)(img.x1 + (vec1x * outputwidth));//extend point 2 to new width
-                img.y2 = (sbyte)(img.y1 + (vec1y * outputwidth));
+                img.X2 = (sbyte)(img.X1 + vec1X * outputwidth);//extend point 2 to new width
+                img.Y2 = (sbyte)(img.Y1 + vec1Y * outputwidth);
 
-                img.x4 = (sbyte)(img.x3 + (vec3x * outputwidth));//extend point 4 to new width
-                img.y4 = (sbyte)(img.y3 + (vec3y * outputwidth));
+                img.X4 = (sbyte)(img.X3 + vec3X * outputwidth);//extend point 4 to new width
+                img.Y4 = (sbyte)(img.Y3 + vec3Y * outputwidth);
             }
 
-            return Utils.BitmapFromPsxBuff(buff, outputwidth, img.sheight, 4, pal);
+            return Utils.BitmapFromPsxBuff(buff, outputwidth, img.Sheight, 4, pal);
         }
 
-        Dictionary<long, Bitmap> tileCache = new Dictionary<long, Bitmap>();
+        private Dictionary<long, Bitmap> _tileCache = new();
         public Bitmap GetTileBitmap(int tileid)
         {
-            int tiledex = tileid & 0x3ff;
-            int paldex = (tileid & 0xf000) >> 12;
-            if (tileCache.ContainsKey(tileid))
-                return tileCache[tileid];
-            var bmp = GenerateTileBitmap(tiledex, info.palettes[paldex]);
-            tileCache.Add(tileid, bmp);
+            var tiledex = tileid & 0x3ff;
+            var paldex = (tileid & 0xf000) >> 12;
+            if (_tileCache.ContainsKey(tileid))
+            {
+                return _tileCache[tileid];
+            }
+
+            var bmp = GenerateTileBitmap(tiledex, Info.Palettes[paldex]);
+            _tileCache.Add(tileid, bmp);
 
             return bmp;
         }
@@ -276,26 +275,35 @@ namespace GraphicsTools.Alundra
         public Bitmap GenerateTileBitmap(int tile, Color[] pal)
         {
             Debug.Assert(tile < 10 * 16 * 6, "Bad tile index!", "unexpectedly large tile index of {0}", tile);
-            byte[] tilebuff = new byte[24 * 16 * 4 / 8];
-            int tilex = tile % 10 * 24;
-            int tiley = tile / 10 * 16;
+            var tilebuff = new byte[24 * 16 * 4 / 8];
+            var tilex = tile % 10 * 24;
+            var tiley = tile / 10 * 16;
             if (tile < 10 * 16 * 6)
             {
-                for (int y = 0; y < 16; y++)
-                    Buffer.BlockCopy(tilesheetimagedata, (tiley + y) * 256 / 2 + tilex / 2, tilebuff, y * 24 / 2, 24 / 2);
+                for (var y = 0; y < 16; y++)
+                    Buffer.BlockCopy(_tilesheetimagedata, (tiley + y) * 256 / 2 + tilex / 2, tilebuff, y * 24 / 2, 24 / 2);
             }
             return Utils.BitmapFromPsxBuff(tilebuff, 24, 16, 4, pal);
         }
+
         public Bitmap GenerateTileSheetBmp(Color[] pal)
         {
-            tilesheetbmp = Utils.BitmapFromPsxBuff(tilesheetimagedata, 256, 256 * 6, 4, pal);
-            return tilesheetbmp;
+            Tilesheetbmp = Utils.BitmapFromPsxBuff(_tilesheetimagedata, 256, 256 * 6, 4, pal);
+            return Tilesheetbmp;
         }
 
         public Bitmap GenerateSpriteSheetBmp(Color[] pal)
         {
-            spritesheetbmp = Utils.BitmapFromPsxBuff(spritesheetimagedata, 256, 256 * numspritesheets, 4, pal);
-            return spritesheetbmp;
+            Spritesheetbmp = Utils.BitmapFromPsxBuff(_spritesheetimagedata, 256, 256 * _numspritesheets, 4, pal);
+            return Spritesheetbmp;
+        }
+
+        public static readonly int EventobjectsMemaddr = 0x1ac498;// + 0x260;
+        public static readonly int EventobjectSize = 0x294;
+
+        public static int EventObjectAddr(int eventobjectid)
+        {
+            return EventobjectsMemaddr + eventobjectid * EventobjectSize;
         }
     }
 
@@ -303,40 +311,40 @@ namespace GraphicsTools.Alundra
     {
         public Map(BinaryReader br, int memaddr)
         {
-            this.memaddr = memaddr;
-            long binoffset = br.BaseStream.Position;
+            Memaddr = memaddr;
+            var binoffset = br.BaseStream.Position;
 
-            width = br.ReadByte();
-            height = br.ReadByte();
-            width2 = br.ReadByte();
-            height2 = br.ReadByte();
+            Width = br.ReadByte();
+            Height = br.ReadByte();
+            Width2 = br.ReadByte();
+            Height2 = br.ReadByte();
 
             br.BaseStream.Position = binoffset + 1540;//why this number?
 
-            maptiles = new MapTile[width * height];
-            for (int dex = 0; dex < maptiles.Length; dex++)
+            MapTiles = new MapTile[Width * Height];
+            for (var i = 0; i < MapTiles.Length; i++)
             {
-                maptiles[dex] = new MapTile(br);
+                MapTiles[i] = new MapTile(br);
             }
 
-            walltilesoffset = (int)(br.BaseStream.Position - binoffset);
+            WallTilesOffset = (int)(br.BaseStream.Position - binoffset);
 
             //load wall tiles
-            for (int dex = 0; dex < maptiles.Length; dex++)
+            for (var i = 0; i < MapTiles.Length; i++)
             {
-                maptiles[dex].LoadWallTiles(br, binoffset + walltilesoffset);
+                MapTiles[i].LoadWallTiles(br, binoffset + WallTilesOffset);
             }
         }
-        public int memaddr;
+        public readonly int Memaddr;
 
-        public int width;
-        public int height;
-        public int width2;
-        public int height2;
+        public readonly int Width;
+        public readonly int Height;
+        public readonly int Width2;
+        public readonly int Height2;
 
-        public int walltilesoffset;
+        public readonly int WallTilesOffset;
 
-        public MapTile[] maptiles;
+        public readonly MapTile[] MapTiles;
 
     }
 
@@ -344,47 +352,48 @@ namespace GraphicsTools.Alundra
     {
         public MapTile(BinaryReader br)
         {
-            Int64 i = br.ReadUInt32();
-            walkability = (byte)(i & 0xff);
+            long i = br.ReadUInt32();
+            Walkability = (byte)(i & 0xff);
             i >>= 8;
-            groundproperty = (byte)(i & 0xff);
+            GroundProperty = (byte)(i & 0xff);
             i >>= 8;
-            slope = (byte)(i & 0xff);
+            Slope = (byte)(i & 0xff);
             i >>= 8;
-            height = (byte)(i & 0xff);
+            Height = (byte)(i & 0xff);
 
             i = br.ReadUInt16();
-            tileid = (short)i;
+            TileId = (short)i;
             if (i == 0xffff)
             {
-                palette = -1;
-                tile = -1;
+                Palette = -1;
+                Tile = -1;
             }
             else
             {
-                palette = (short)((i & 0xf000) >> 12);
-                tile = (short)(i & 0x3ff);
+                Palette = (short)((i & 0xf000) >> 12);
+                Tile = (short)(i & 0x3ff);
             }
-            tilesoffset = br.ReadInt16();
-            if (tilesoffset != -1)
-                tilesoffset *= 2;
-
+            TilesOffset = br.ReadInt16();
+            if (TilesOffset != -1)
+            {
+                TilesOffset *= 2;
+            }
         }
-        public byte walkability;
-        public byte groundproperty;
-        public byte slope;
-        public byte height;
-        public short tileid;
-        public short palette;
-        public short tile;
-        public short tilesoffset;
-        public WallTiles walltiles;
+        public byte Walkability;
+        public byte GroundProperty;
+        public readonly byte Slope;
+        public readonly byte Height;
+        public readonly short TileId;
+        public short Palette;
+        public short Tile;
+        public readonly short TilesOffset;
+        public WallTiles WallTiles;
         public void LoadWallTiles(BinaryReader br, long offset)
         {
-            if (tilesoffset != -1)
+            if (TilesOffset != -1)
             {
-                br.BaseStream.Position = offset + tilesoffset;
-                walltiles = new WallTiles(br);
+                br.BaseStream.Position = offset + TilesOffset;
+                WallTiles = new WallTiles(br);
             }
         }
     }
@@ -393,153 +402,153 @@ namespace GraphicsTools.Alundra
     {
         public WallTiles(BinaryReader br)
         {
-            offset = br.ReadSByte();
-            count = br.ReadByte();
-            tiles = new short[count];
+            Offset = br.ReadSByte();
+            Count = br.ReadByte();
+            Tiles = new short[Count];
             //if ((flag != 0 && flag != 255) || count==0 || count == 255)
             //{
             //    flag = flag;
             //}
 
-            for (int dex = 0; dex < count; dex++)
+            for (var dex = 0; dex < Count; dex++)
             {
-                tiles[dex] = br.ReadInt16();
+                Tiles[dex] = br.ReadInt16();
             }
         }
-        public sbyte offset;
-        public byte count;
-        public short[] tiles;
+        public readonly sbyte Offset;
+        public readonly byte Count;
+        public readonly short[] Tiles;
     }
 
     public class ScrollScreen
     {
         public ScrollScreen(BinaryReader br)
         {
-            unknown1 = br.ReadInt32();
-            unknown2 = br.ReadInt32();
-            unknown3 = br.ReadInt32();
-            unknown4 = br.ReadInt32();
-            unknown5 = br.ReadInt32();
-            unknown6 = br.ReadInt32();
-            unknown7 = br.ReadInt32();
-            unknown8 = br.ReadInt32();
+            Unknown1 = br.ReadInt32();
+            Unknown2 = br.ReadInt32();
+            Unknown3 = br.ReadInt32();
+            Unknown4 = br.ReadInt32();
+            Unknown5 = br.ReadInt32();
+            Unknown6 = br.ReadInt32();
+            Unknown7 = br.ReadInt32();
+            Unknown8 = br.ReadInt32();
         }
-        public int unknown1;
-        public int unknown2;
-        public int unknown3;
-        public int unknown4;
-        public int unknown5;
-        public int unknown6;
-        public int unknown7;
-        public int unknown8;
+        public readonly int Unknown1;
+        public readonly int Unknown2;
+        public readonly int Unknown3;
+        public readonly int Unknown4;
+        public readonly int Unknown5;
+        public readonly int Unknown6;
+        public readonly int Unknown7;
+        public readonly int Unknown8;
     }
 
     public class SpriteInfo
     {
         public SpriteInfo(BinaryReader br, int memaddr, int sectorend, bool ismap)
         {
-            binoffset = br.BaseStream.Position;
+            _binoffset = br.BaseStream.Position;
 
-            header = new SpriteInfoHeader(br, memaddr);
+            Header = new SpriteInfoHeader(br, memaddr);
 
             //read sprite table
-            br.BaseStream.Position = binoffset + header.spritetablepointer;
-            spritetable = new int[0xff];
-            for (int dex = 0; dex < spritetable.Length; dex++)
+            br.BaseStream.Position = _binoffset + Header.Spritetablepointer;
+            SpriteTable = new int[0xff];
+            for (var dex = 0; dex < SpriteTable.Length; dex++)
             {
-                spritetable[dex] = br.ReadInt32();
+                SpriteTable[dex] = br.ReadInt32();
             }
 
-            br.BaseStream.Position = binoffset + header.spriteeffectspointer;
-            spriteeffecttable = new int[0xff];
-            for (int dex = 0; dex < spriteeffecttable.Length; dex++)
+            br.BaseStream.Position = _binoffset + Header.Spriteeffectspointer;
+            SpriteEffectTable = new int[0xff];
+            for (var i = 0; i < SpriteEffectTable.Length; i++)
             {
-                spriteeffecttable[dex] = br.ReadInt32();
-                if (spriteeffecttable[dex] == 0)
+                SpriteEffectTable[i] = br.ReadInt32();
+                if (SpriteEffectTable[i] == 0)
                 {
-                    numspriteeffects = dex;
+                    NumSpriteEffects = i;
                     break;
                 }
             }
 
             //event effects
-            br.BaseStream.Position = binoffset + header.mapeffectsector3pointer;
-            mapeffectrecords = new MapEffectRecord[header.mapeffectsector3size / 12];
-            for (int dex = 0; dex < mapeffectrecords.Length; dex++)
+            br.BaseStream.Position = _binoffset + Header.Mapeffectsector3Pointer;
+            MapEffectRecords = new MapEffectRecord[Header.Mapeffectsector3Size / 12];
+            for (var i = 0; i < MapEffectRecords.Length; i++)
             {
-                mapeffectrecords[dex] = new MapEffectRecord(br);
+                MapEffectRecords[i] = new MapEffectRecord(br);
             }
 
             //read palettes
-            br.BaseStream.Position = binoffset + header.spritepalettespointer;
-            int maxpalettes = 32;
-            palettes = new System.Drawing.Color[maxpalettes][];
-            byte[] buff = new byte[maxpalettes * 16 * 2];
+            br.BaseStream.Position = _binoffset + Header.Spritepalettespointer;
+            var maxpalettes = 32;
+            Palettes = new Color[maxpalettes][];
+            var buff = new byte[maxpalettes * 16 * 2];
             br.Read(buff, 0, buff.Length);
-            int buffdex = 0;
-            for (int dex = 0; dex < maxpalettes; dex++)
+            var buffdex = 0;
+            for (var dex = 0; dex < maxpalettes; dex++)
             {
-                palettes[dex] = new System.Drawing.Color[16];
-                for (int cdex = 0; cdex < 16; cdex++)
+                Palettes[dex] = new Color[16];
+                for (var cdex = 0; cdex < 16; cdex++)
                 {
-                    byte b2 = buff[buffdex++];
-                    byte b1 = buff[buffdex++];
-                    palettes[dex][cdex] = Utils.FromPsxColor((b1 << 8) | b2);
+                    var b2 = buff[buffdex++];
+                    var b1 = buff[buffdex++];
+                    Palettes[dex][cdex] = Utils.FromPsxColor((b1 << 8) | b2);
                 }
             }
-            palettesbitmap = Utils.BitmapFromPsxBuff(buff, 16, maxpalettes, 16, null);
+            Palettesbitmap = Utils.BitmapFromPsxBuff(buff, 16, maxpalettes, 16, null);
 
             //read eventcodes
-            eventcodes = new SpriteInfoEventCodes(br, binoffset, header, ismap);
+            EventCodes = new SpriteInfoEventCodes(br, _binoffset, Header, ismap);
 
             //read entities
-            br.BaseStream.Position = binoffset + header.entitiespointer;
-            entities = new SpriteInfoEntities(br, memaddr + header.entitiespointer);
+            br.BaseStream.Position = _binoffset + Header.Entitiespointer;
+            Entities = new SpriteInfoEntities(br, memaddr + Header.Entitiespointer);
 
             //read mapevents
-            br.BaseStream.Position = binoffset + header.mapeventspointer;
-            mapevents = new SpriteInfoMapEvents(br, binoffset, sectorend);
+            br.BaseStream.Position = _binoffset + Header.Mapeventspointer;
+            MapEvents = new SpriteInfoMapEvents(br, _binoffset, sectorend);
 
             //read sprite table records;
-            sprites = new SpriteRecord[spritetable.Length];
-            for (int dex = 0; dex < sprites.Length; dex++)
+            Sprites = new SpriteRecord[SpriteTable.Length];
+            for (var dex = 0; dex < Sprites.Length; dex++)
             {
-                if (spritetable[dex] != -1)
+                if (SpriteTable[dex] != -1)
                 {
-                    br.BaseStream.Position = binoffset + spritetable[dex];
-                    sprites[dex] = new SpriteRecord(br, binoffset, dex, memaddr + spritetable[dex], memaddr);
+                    br.BaseStream.Position = _binoffset + SpriteTable[dex];
+                    Sprites[dex] = new SpriteRecord(br, _binoffset, dex, memaddr + SpriteTable[dex], memaddr);
                 }
             }
 
-            spriteeffects = new SpriteEffectRecord[numspriteeffects];
-            for (int dex = 0; dex < spriteeffects.Length; dex++)
+            Spriteeffects = new SpriteEffectRecord[NumSpriteEffects];
+            for (var dex = 0; dex < Spriteeffects.Length; dex++)
             {
-                if (spriteeffecttable[dex] != -1)
+                if (SpriteEffectTable[dex] != -1)
                 {
-                    br.BaseStream.Position = binoffset + spriteeffecttable[dex];
-                    spriteeffects[dex] = new SpriteEffectRecord(br, binoffset + spriteeffecttable[dex], dex | 0x8000, memaddr + spriteeffecttable[dex], memaddr + spriteeffecttable[dex]);
+                    br.BaseStream.Position = _binoffset + SpriteEffectTable[dex];
+                    Spriteeffects[dex] = new SpriteEffectRecord(br, _binoffset + SpriteEffectTable[dex], dex | 0x8000, memaddr + SpriteEffectTable[dex], memaddr + SpriteEffectTable[dex]);
                 }
             }
         }
 
-        public SpriteInfoHeader header;
-        public SpriteInfoEventCodes eventcodes;
-        public SpriteInfoEntities entities;
-        public SpriteInfoMapEvents mapevents;
+        public readonly SpriteInfoHeader Header;
+        public readonly SpriteInfoEventCodes EventCodes;
+        public readonly SpriteInfoEntities Entities;
+        public readonly SpriteInfoMapEvents MapEvents;
 
-        public int[] spritetable;
-        public SpriteRecord[] sprites;
+        public readonly int[] SpriteTable;
+        public readonly SpriteRecord[] Sprites;
 
-        public int[] spriteeffecttable;
-        public SpriteEffectRecord[] spriteeffects;
-        public int numspriteeffects;
+        public readonly int[] SpriteEffectTable;
+        public readonly SpriteEffectRecord[] Spriteeffects;
+        public readonly int NumSpriteEffects;
 
-        public MapEffectRecord[] mapeffectrecords;
+        public readonly MapEffectRecord[] MapEffectRecords;
 
-        long binoffset;
+        private long _binoffset;
 
-        public System.Drawing.Color[][] palettes;
-        public Bitmap palettesbitmap;
+        public readonly Color[][] Palettes;
+        public readonly Bitmap Palettesbitmap;
     }
 
     public class SpriteRecord
@@ -547,23 +556,23 @@ namespace GraphicsTools.Alundra
         public SpriteRecord(BinaryReader br, long binoffset, int id, int memaddr, int spriteinfomemaddr)
         {
 
-            header = new SpriteTableHeader(br, binoffset, id, memaddr, spriteinfomemaddr);
-            animsets = new SIAnimSet[(header.animationspointer - header.animationoffsetspointer) / 14];
-            for (int dex = 0; dex < animsets.Length; dex++)
+            Header = new SpriteTableHeader(br, binoffset, id, memaddr, spriteinfomemaddr);
+            Animsets = new SiAnimSet[(Header.Animationspointer - Header.Animationoffsetspointer) / 14];
+            for (var dex = 0; dex < Animsets.Length; dex++)
             {
-                animsets[dex] = new SIAnimSet(br, memaddr + 32 + dex * 14);
+                Animsets[dex] = new SiAnimSet(br, memaddr + 32 + dex * 14);
             }
 
             //preload all of the animations here
             int animdex;
-            for (animdex = 0; animdex < animsets.Length; animdex++)
+            for (animdex = 0; animdex < Animsets.Length; animdex++)
             {
                 int dirdex;
                 for (dirdex = 0; dirdex < 4; dirdex++)
                 {
-                    if (animsets[animdex].animoffsets[dirdex] != 0xffff)
+                    if (Animsets[animdex].Animoffsets[dirdex] != 0xffff)
                     {
-                        animsets[animdex].preloaded_anims[dirdex] = GetAnimation(br, animsets[animdex].animoffsets[dirdex]);
+                        Animsets[animdex].PreloadedAnims[dirdex] = GetAnimation(br, Animsets[animdex].Animoffsets[dirdex]);
 
                         /*DBFrame* frames = (DBFrame*)&(*spr->framesdata)[spr->animsets[animdex].diroffsets[dirdex]];
                         int framedex;
@@ -592,28 +601,28 @@ namespace GraphicsTools.Alundra
 
         }
 
-        public SIAnimation GetAnimation(BinaryReader br, int animationoffset)
+        public SiAnimation GetAnimation(BinaryReader br, int animationoffset)
         {
-            br.BaseStream.Position = header.binoffset + header.animationspointer + animationoffset;
+            br.BaseStream.Position = Header.Binoffset + Header.Animationspointer + animationoffset;
 
-            var anim = new SIAnimation(br, header, header.spriteinfomemaddr + header.animationspointer + animationoffset);
+            var anim = new SiAnimation(br, Header, Header.Spriteinfomemaddr + Header.Animationspointer + animationoffset);
 
             return anim;
         }
 
-        public SIImageSet GetPortraitImageset(BinaryReader br)
+        public SiImageSet GetPortraitImageset(BinaryReader br)
         {
-            long savepos = br.BaseStream.Position;
+            var savepos = br.BaseStream.Position;
             var imagesetpointer = 0;//(its the first one)
-            br.BaseStream.Position = header.binoffset + header.framespointer + 0;
-            var imageset = new SIImageSet(br, header.sector5id << 16 | imagesetpointer, header.spriteinfomemaddr + header.framespointer + imagesetpointer, true);
+            br.BaseStream.Position = Header.Binoffset + Header.Framespointer + 0;
+            var imageset = new SiImageSet(br, Header.Sector5Id << 16 | imagesetpointer, Header.Spriteinfomemaddr + Header.Framespointer + imagesetpointer, true);
 
             br.BaseStream.Position = savepos;
             return imageset;
         }
 
-        public SpriteTableHeader header;
-        public SIAnimSet[] animsets;
+        public readonly SpriteTableHeader Header;
+        public readonly SiAnimSet[] Animsets;
 
     }
 
@@ -621,247 +630,255 @@ namespace GraphicsTools.Alundra
     {
         public SpriteEffectRecord(BinaryReader br, long binoffset, int id, int memaddr, int spriteinfomemaddr)
         {
-            this.effectid = id;
-            this.binoffset = binoffset;
-            this.spriteinfomemaddr = spriteinfomemaddr;
+            _effectid = id;
+            _binoffset = binoffset;
+            _spriteinfomemaddr = spriteinfomemaddr;
 
-            animoffsets = new int[255];
-            int final = -1;
-            for (int dex = 0; dex < animoffsets.Length; dex++)
+            _animoffsets = new int[255];
+            var final = -1;
+            for (var dex = 0; dex < _animoffsets.Length; dex++)
             {
                 if (final != -1 && dex >= final)
                 {
-                    numanims = dex;
+                    _numanims = dex;
                     break;
                 }
-                animoffsets[dex] = br.ReadInt16();
+                _animoffsets[dex] = br.ReadInt16();
                 if (final == -1)
                 {
-                    final = animoffsets[dex] / 2;
+                    final = _animoffsets[dex] / 2;
                 }
 
             }
             //preload all of the animations here
             int animdex;
-            preloaded_anims = new SIEffectAnimation[numanims];
-            for (animdex = 0; animdex < numanims; animdex++)
+            PreloadedAnims = new SiEffectAnimation[_numanims];
+            for (animdex = 0; animdex < _numanims; animdex++)
             {
-                preloaded_anims[animdex] = GetAnimation(br, animoffsets[animdex]);
+                PreloadedAnims[animdex] = GetAnimation(br, _animoffsets[animdex]);
             }
 
         }
-        long binoffset;
-        int spriteinfomemaddr;
-        int[] animoffsets;
-        int numanims;
-        int effectid;
-        public SIEffectAnimation[] preloaded_anims;
 
-        public SIEffectAnimation GetAnimation(BinaryReader br, int animationoffset)
+        private long _binoffset;
+        private int _spriteinfomemaddr;
+        private int[] _animoffsets;
+        private int _numanims;
+        private int _effectid;
+        public readonly SiEffectAnimation[] PreloadedAnims;
+
+        public SiEffectAnimation GetAnimation(BinaryReader br, int animationoffset)
         {
-            br.BaseStream.Position = binoffset + animationoffset;
+            br.BaseStream.Position = _binoffset + animationoffset;
 
-            var anim = new SIEffectAnimation(br, effectid, (int)binoffset, spriteinfomemaddr + animationoffset);
+            var anim = new SiEffectAnimation(br, _effectid, (int)_binoffset, _spriteinfomemaddr + animationoffset);
 
             return anim;
         }
 
     }
 
-    public class SIAnimSet
+    public class SiAnimSet
     {
-        public SIAnimSet(BinaryReader br, int memaddr)
+        public SiAnimSet(BinaryReader br, int memaddr)
         {
-            this.memaddr = memaddr;
-            animoffsets = new int[4];
-            for (int dex = 0; dex < animoffsets.Length; dex++)
-                animoffsets[dex] = br.ReadInt16();
-            speed = br.ReadUInt16();
-            sfx = br.ReadByte();
-            flags = br.ReadByte();
-            acceleration = br.ReadByte();
-            u6 = br.ReadByte();
-            preloaded_anims = new SIAnimation[4];
+            Memaddr = memaddr;
+            Animoffsets = new int[4];
+            for (var dex = 0; dex < Animoffsets.Length; dex++)
+                Animoffsets[dex] = br.ReadInt16();
+            Speed = br.ReadUInt16();
+            Sfx = br.ReadByte();
+            Flags = br.ReadByte();
+            Acceleration = br.ReadByte();
+            U6 = br.ReadByte();
+            PreloadedAnims = new SiAnimation[4];
         }
-        public int memaddr;
-        public int[] animoffsets;//4 of them for each direction
-        public SIAnimation[] preloaded_anims;
-        public ushort speed;
-        public byte sfx;
-        public byte flags;//0x80 adds 0x100 to sfx, does it mean global or map sfx?
-        public byte acceleration;
-        public byte u6;
+        public readonly int Memaddr;
+        public readonly int[] Animoffsets;//4 of them for each direction
+        public readonly SiAnimation[] PreloadedAnims;
+        public readonly ushort Speed;
+        public readonly byte Sfx;
+        public readonly byte Flags;//0x80 adds 0x100 to sfx, does it mean global or map sfx?
+        public readonly byte Acceleration;
+        public readonly byte U6;
 
-        public int downoffset { get { return animoffsets[(int)SIAnimDir.down]; } }
-        public int upoffset { get { return animoffsets[(int)SIAnimDir.up]; } }
-        public int leftoffset { get { return animoffsets[(int)SIAnimDir.left]; } }
-        public int rightoffset { get { return animoffsets[(int)SIAnimDir.right]; } }
+        public int Downoffset { get { return Animoffsets[(int)SiAnimDir.Down]; } }
+        public int Upoffset { get { return Animoffsets[(int)SiAnimDir.Up]; } }
+        public int Leftoffset { get { return Animoffsets[(int)SiAnimDir.Left]; } }
+        public int Rightoffset { get { return Animoffsets[(int)SiAnimDir.Right]; } }
     }
-    public enum SIAnimDir
+    
+    public enum SiAnimDir
     {
-        down = 0,
-        up = 1,
-        left = 2,
-        right = 3
+        Down = 0,
+        Up = 1,
+        Left = 2,
+        Right = 3
     }
 
     public class SpriteTableHeader
     {
         public SpriteTableHeader(BinaryReader br, long binoffset, int id, int memaddr, int spriteinfomemaddr)
         {
-            this.spriteinfomemaddr = spriteinfomemaddr;
-            this.memaddr = memaddr;
-            this.sector5id = id;
-            this.binoffset = binoffset;
-            animationoffsetspointer = br.ReadInt32();
-            animationspointer = br.ReadInt32();
-            framecollisionpointer = br.ReadInt32();
-            framespointer = br.ReadInt32();
-            ubuff = new byte[16];
-            br.Read(ubuff, 0, ubuff.Length);
+            Spriteinfomemaddr = spriteinfomemaddr;
+            Memaddr = memaddr;
+            Sector5Id = id;
+            Binoffset = binoffset;
+            Animationoffsetspointer = br.ReadInt32();
+            Animationspointer = br.ReadInt32();
+            Framecollisionpointer = br.ReadInt32();
+            Framespointer = br.ReadInt32();
+            Ubuff = new byte[16];
+            br.Read(Ubuff, 0, Ubuff.Length);
 
             br.BaseStream.Position -= 16;
-            moreflags = br.ReadByte();//10
-            canpickup = br.ReadByte();//11
-            flags_portrait_shadowtype = br.ReadByte();//12
-            program_load = br.ReadByte();//13
-            program_tick = br.ReadByte();//14
-            program_touch = br.ReadByte();//15
-            program_deactivate = br.ReadByte();//16
-            program_interact = br.ReadByte();//17
-            xmod = br.ReadSByte();//18+0
-            ymod = br.ReadSByte();//18+1
-            zmod = br.ReadSByte();//18+2
-            width = br.ReadByte();//18+3
-            depth = br.ReadByte();//18+4
-            height = br.ReadByte();//18+5
-            breakeffect = br.ReadByte();//18+6
-            contents = br.ReadByte();//18+7
+            Moreflags = br.ReadByte();//10
+            Canpickup = br.ReadByte();//11
+            FlagsPortraitShadowtype = br.ReadByte();//12
+            ProgramLoad = br.ReadByte();//13
+            ProgramTick = br.ReadByte();//14
+            ProgramTouch = br.ReadByte();//15
+            ProgramDeactivate = br.ReadByte();//16
+            ProgramInteract = br.ReadByte();//17
+            Xmod = br.ReadSByte();//18+0
+            Ymod = br.ReadSByte();//18+1
+            Zmod = br.ReadSByte();//18+2
+            Width = br.ReadByte();//18+3
+            Depth = br.ReadByte();//18+4
+            Height = br.ReadByte();//18+5
+            Breakeffect = br.ReadByte();//18+6
+            Contents = br.ReadByte();//18+7
         }
-        public int sector5id;
-        public long binoffset;
-        public int memaddr;
-        public int spriteinfomemaddr;
+        public readonly int Sector5Id;
+        public readonly long Binoffset;
+        public readonly int Memaddr;
+        public readonly int Spriteinfomemaddr;
 
-        public int animationoffsetspointer;
-        public int animationspointer;
-        public int framecollisionpointer;
-        public int framespointer;
-        public byte[] ubuff;
+        public readonly int Animationoffsetspointer;
+        public readonly int Animationspointer;
+        public readonly int Framecollisionpointer;
+        public readonly int Framespointer;
+        public readonly byte[] Ubuff;
 
-        public byte moreflags;
-        public byte canpickup;
-        public byte flags_portrait_shadowtype;
-        public byte program_load;
-        public byte program_tick;
-        public byte program_touch;
-        public byte program_deactivate;
-        public byte program_interact;
-        public sbyte xmod;
-        public sbyte ymod;
-        public sbyte zmod;
-        public byte width;
-        public byte depth;
-        public byte height;
-        public byte breakeffect;
-        public byte contents;
+        public readonly byte Moreflags;
+        public readonly byte Canpickup;
+        public readonly byte FlagsPortraitShadowtype;
+        public readonly byte ProgramLoad;
+        public readonly byte ProgramTick;
+        public readonly byte ProgramTouch;
+        public readonly byte ProgramDeactivate;
+        public readonly byte ProgramInteract;
+        public readonly sbyte Xmod;
+        public readonly sbyte Ymod;
+        public readonly sbyte Zmod;
+        public readonly byte Width;
+        public readonly byte Depth;
+        public readonly byte Height;
+        public readonly byte Breakeffect;
+        public readonly byte Contents;
     }
 
-    public class SIEffectAnimation
+    public class SiEffectAnimation
     {
-        public SIEffectAnimation(BinaryReader br, int effectid, int binoffset, int memaddr)
+        public SiEffectAnimation(BinaryReader br, int effectid, int binoffset, int memaddr)
         {
-            this.memaddr = memaddr;
-            frames = new SIEffectFrame[32];//32 max frames?
-            for (int dex = 0; dex < frames.Length; dex++)
+            Memaddr = memaddr;
+            Frames = new SiEffectFrame[32];//32 max frames?
+            for (var dex = 0; dex < Frames.Length; dex++)
             {
                 //read test bytes to check for the end of the list
                 short test = br.ReadByte();
                 if ((test & 0x80) != 0x80)
+                {
                     break;
-                numframes++;
+                }
+
+                Numframes++;
                 br.BaseStream.Position -= 1;
 
-                frames[dex] = new SIEffectFrame(br, effectid, binoffset, memaddr + dex * 3);
+                Frames[dex] = new SiEffectFrame(br, effectid, binoffset, memaddr + dex * 3);
 
-                for (int dex2 = 0; dex2 < dex; dex2++)
+                for (var dex2 = 0; dex2 < dex; dex2++)
                 {
-                    if (frames[dex2].imagesetpointer == frames[dex].imagesetpointer)
+                    if (Frames[dex2].Imagesetpointer == Frames[dex].Imagesetpointer)
                     {
-                        frames[dex].images = frames[dex2].images;
+                        Frames[dex].Images = Frames[dex2].Images;
                         break;
                     }
                 }
             }
         }
-        public int memaddr;
-        public int numframes;
-        public SIEffectFrame[] frames;
+        public int Memaddr;
+        public int Numframes;
+        public readonly SiEffectFrame[] Frames;
     }
 
-    public class SIAnimation
+    public class SiAnimation
     {
-        public SIAnimation(BinaryReader br, SpriteTableHeader header, int memaddr)
+        public SiAnimation(BinaryReader br, SpriteTableHeader header, int memaddr)
         {
-            this.memaddr = memaddr;
-            frames = new SIFrame[32];//32 max frames?
-            for (int dex = 0; dex < frames.Length; dex++)
+            Memaddr = memaddr;
+            Frames = new SiFrame[32];//32 max frames?
+            for (var dex = 0; dex < Frames.Length; dex++)
             {
                 //read two test bytes to check for the end of the list
                 short test = br.ReadByte();
                 if ((test & 0x80) != 0x80)
+                {
                     break;
-                numframes++;
+                }
+
+                Numframes++;
                 br.BaseStream.Position -= 1;
 
-                frames[dex] = new SIFrame(br, header, memaddr + dex * 5);
+                Frames[dex] = new SiFrame(br, header, memaddr + dex * 5);
 
-                for (int dex2 = 0; dex2 < dex; dex2++)
+                for (var dex2 = 0; dex2 < dex; dex2++)
                 {
-                    if (frames[dex2].imagesetpointer == frames[dex].imagesetpointer)
+                    if (Frames[dex2].Imagesetpointer == Frames[dex].Imagesetpointer)
                     {
-                        frames[dex].images = frames[dex2].images;
+                        Frames[dex].Images = Frames[dex2].Images;
                         break;
                     }
                 }
             }
         }
-        public int memaddr;
-        public int numframes;
-        public SIFrame[] frames;
+        public readonly int Memaddr;
+        public readonly int Numframes;
+        public readonly SiFrame[] Frames;
     }
 
-    public class SIFrame
+    public class SiFrame
     {
-        public SIFrame(BinaryReader br, SpriteTableHeader header, int memaddr)
+        public SiFrame(BinaryReader br, SpriteTableHeader header, int memaddr)
         {
-            this.memaddr = memaddr;
-            delay = br.ReadByte();
+            Memaddr = memaddr;
+            Delay = br.ReadByte();
 
-            collisionoffset = br.ReadInt16();
-            imagesetpointer = br.ReadUInt16() * 2;
+            Collisionoffset = br.ReadInt16();
+            Imagesetpointer = br.ReadUInt16() * 2;
 
             //load images
-            long savepos = br.BaseStream.Position;
+            var savepos = br.BaseStream.Position;
 
-            br.BaseStream.Position = header.binoffset + header.framespointer + imagesetpointer;
-            images = new SIImageSet(br, header.sector5id << 16 | imagesetpointer, header.spriteinfomemaddr + header.framespointer + imagesetpointer);
+            br.BaseStream.Position = header.Binoffset + header.Framespointer + Imagesetpointer;
+            Images = new SiImageSet(br, header.Sector5Id << 16 | Imagesetpointer, header.Spriteinfomemaddr + header.Framespointer + Imagesetpointer);
 
-            if (collisionoffset != -1)
+            if (Collisionoffset != -1)
             {
-                br.BaseStream.Position = header.binoffset + header.framecollisionpointer + collisionoffset;
+                br.BaseStream.Position = header.Binoffset + header.Framecollisionpointer + Collisionoffset;
                 CollisionData = new FrameCollisionData(br);
             }
 
             br.BaseStream.Position = savepos;
         }
 
-        public FrameCollisionData CollisionData;
-        public int memaddr;
-        public byte delay;//top bit masked
-        public short collisionoffset;//-1
-        public int imagesetpointer;
-        public SIImageSet images;
+        public readonly FrameCollisionData CollisionData;
+        public readonly int Memaddr;
+        public readonly byte Delay;//top bit masked
+        public readonly short Collisionoffset;//-1
+        public readonly int Imagesetpointer;
+        public SiImageSet Images;
     }
 
     public class FrameCollisionData
@@ -875,79 +892,86 @@ namespace GraphicsTools.Alundra
             Depth = br.ReadByte();
             Height = br.ReadByte();
         }
-        public byte XOff, YOff, ZOff;
-        public byte Width, Depth, Height;
+        public readonly byte XOff;
+        public readonly byte YOff;
+        public readonly byte ZOff;
+        public readonly byte Width;
+        public readonly byte Depth;
+        public readonly byte Height;
     }
 
-    public class SIEffectFrame
+    public class SiEffectFrame
     {
-        public SIEffectFrame(BinaryReader br, int effectid, int binoffset, int memaddr)
+        public SiEffectFrame(BinaryReader br, int effectid, int binoffset, int memaddr)
         {
-            this.memaddr = memaddr;
-            delay = br.ReadByte();
-            imagesetpointer = br.ReadUInt16() * 2;
+            Memaddr = memaddr;
+            Delay = br.ReadByte();
+            Imagesetpointer = br.ReadUInt16() * 2;
 
             //load images
-            long savepos = br.BaseStream.Position;
+            var savepos = br.BaseStream.Position;
 
-            br.BaseStream.Position = binoffset + imagesetpointer;
-            images = new SIImageSet(br, effectid << 16 | imagesetpointer, memaddr + imagesetpointer);
+            br.BaseStream.Position = binoffset + Imagesetpointer;
+            Images = new SiImageSet(br, effectid << 16 | Imagesetpointer, memaddr + Imagesetpointer);
 
             br.BaseStream.Position = savepos;
         }
 
-        public int memaddr;
-        public byte delay;//top bit masked
-        public short unknown;//-1
-        public int imagesetpointer;
-        public SIImageSet images;
+        public int Memaddr;
+        public readonly byte Delay;//top bit masked
+        public short Unknown;//-1
+        public readonly int Imagesetpointer;
+        public SiImageSet Images;
     }
 
-    public class SIImageSet
+    public class SiImageSet
     {
-        public SIImageSet(BinaryReader br, int imagesetid, int memaddr, bool isportrait = false)
+        public SiImageSet(BinaryReader br, int imagesetid, int memaddr, bool isportrait = false)
         {
-            this.memaddr = memaddr;
-            this.imagesetid = imagesetid;
-            unknown = br.ReadByte();//palette?
-            numimages = br.ReadByte();
+            Memaddr = memaddr;
+            Imagesetid = imagesetid;
+            Unknown = br.ReadByte();//palette?
+            Numimages = br.ReadByte();
             if (isportrait)
-                numimages = 1;
-            images = new SIImage[numimages];
-            for (int dex = 0; dex < numimages; dex++)
             {
-                images[dex] = new SIImage(br);
+                Numimages = 1;
+            }
+
+            Images = new SiImage[Numimages];
+            for (var dex = 0; dex < Numimages; dex++)
+            {
+                Images[dex] = new SiImage(br);
             }
         }
 
-        public int memaddr;
-        public int imagesetid;
-        public byte unknown;
-        public byte numimages;
-        public SIImage[] images;
+        public readonly int Memaddr;
+        public readonly int Imagesetid;
+        public readonly byte Unknown;
+        public readonly byte Numimages;
+        public readonly SiImage[] Images;
     }
 
-    public class SIImage
+    public class SiImage
     {
-        public long signature;
-        public SIImage(BinaryReader br)
+        public readonly long Signature;
+        public SiImage(BinaryReader br)
         {
-            spritesheet = br.ReadByte();
-            palette = br.ReadByte();
-            sx = br.ReadByte();
-            sy = br.ReadByte();
-            swidth = br.ReadByte();
-            sheight = br.ReadByte();
-            x1 = br.ReadSByte();
-            y1 = br.ReadSByte();
-            x2 = br.ReadSByte();
-            y2 = br.ReadSByte();
-            x3 = br.ReadSByte();
-            y3 = br.ReadSByte();
-            x4 = br.ReadSByte();
-            y4 = br.ReadSByte();
+            Spritesheet = br.ReadByte();
+            Palette = br.ReadByte();
+            Sx = br.ReadByte();
+            Sy = br.ReadByte();
+            Swidth = br.ReadByte();
+            Sheight = br.ReadByte();
+            X1 = br.ReadSByte();
+            Y1 = br.ReadSByte();
+            X2 = br.ReadSByte();
+            Y2 = br.ReadSByte();
+            X3 = br.ReadSByte();
+            Y3 = br.ReadSByte();
+            X4 = br.ReadSByte();
+            Y4 = br.ReadSByte();
 
-            signature = spritesheet | palette << 8 | sx << 16 | sy << 24 | swidth << 32 | sheight << 38;
+            Signature = Spritesheet | Palette << 8 | Sx << 16 | Sy << 24 | Swidth << 32 | Sheight << 38;
             /*if (rejigger)
             {//byte align
                 if (sx % 2 == 1)
@@ -979,193 +1003,210 @@ namespace GraphicsTools.Alundra
             }*/
         }
 
-        public byte spritesheet;
-        public byte palette;
-        public byte sx;
-        public byte sy;
-        public byte swidth;
-        public byte sheight;
-        public sbyte x1;
-        public sbyte y1;
-        public sbyte x2;
-        public sbyte y2;
-        public sbyte x3;
-        public sbyte y3;
-        public sbyte x4;
-        public sbyte y4;
+        public readonly byte Spritesheet;
+        public readonly byte Palette;
+        public readonly byte Sx;
+        public readonly byte Sy;
+        public byte Swidth;
+        public readonly byte Sheight;
+        public readonly sbyte X1;
+        public readonly sbyte Y1;
+        public sbyte X2;
+        public sbyte Y2;
+        public readonly sbyte X3;
+        public readonly sbyte Y3;
+        public sbyte X4;
+        public sbyte Y4;
     }
 
     public class SpriteInfoHeader
     {
         public SpriteInfoHeader(BinaryReader br, int memaddr)
         {
-            entitiespointer = br.ReadInt32();
-            mapeffectsector3pointer = br.ReadInt32();
-            mapeventspointer = br.ReadInt32();
-            spritetablepointer = br.ReadInt32();
-            spriteeffectspointer = br.ReadInt32();
-            spritepalettespointer = br.ReadInt32();
-            eventcodesapointer = br.ReadInt32();
-            eventcodesbpointer = br.ReadInt32();
-            eventcodescpointer = br.ReadInt32();
-            eventcodesdpointer = br.ReadInt32();
-            eventcodesepointer = br.ReadInt32();
-            eventcodesfpointer = br.ReadInt32();
+            Entitiespointer = br.ReadInt32();
+            Mapeffectsector3Pointer = br.ReadInt32();
+            Mapeventspointer = br.ReadInt32();
+            Spritetablepointer = br.ReadInt32();
+            Spriteeffectspointer = br.ReadInt32();
+            Spritepalettespointer = br.ReadInt32();
+            Eventcodesapointer = br.ReadInt32();
+            Eventcodesbpointer = br.ReadInt32();
+            Eventcodescpointer = br.ReadInt32();
+            Eventcodesdpointer = br.ReadInt32();
+            Eventcodesepointer = br.ReadInt32();
+            Eventcodesfpointer = br.ReadInt32();
 
-            this.memaddr = memaddr;
-            this.eventcodeaddr = memaddr + eventcodesapointer;
+            Memaddr = memaddr;
+            Eventcodeaddr = memaddr + Eventcodesapointer;
 
-            entitiessize = mapeffectsector3pointer - entitiespointer;
-            mapeffectsector3size = mapeventspointer - mapeffectsector3pointer;
-            mapeventssize = -1;// unknown4 - unknown3;
-            spritetablesize = spriteeffectspointer - spritetablepointer;
-            spriteeffectssize = spritepalettespointer - spriteeffectspointer;
-            spritepalettessize = eventcodesapointer - spritepalettespointer;
-            eventcodesasize = eventcodesbpointer - eventcodesapointer;
-            eventcodesbsize = eventcodescpointer - eventcodesbpointer;
-            eventcodescsize = eventcodesdpointer - eventcodescpointer;
-            eventcodesdsize = eventcodesepointer - eventcodesdpointer;
-            eventcodesesize = eventcodesfpointer - eventcodesepointer;
-            eventcodesfandremainingsize = entitiespointer - eventcodesfpointer;
+            Entitiessize = Mapeffectsector3Pointer - Entitiespointer;
+            Mapeffectsector3Size = Mapeventspointer - Mapeffectsector3Pointer;
+            Mapeventssize = -1;// unknown4 - unknown3;
+            Spritetablesize = Spriteeffectspointer - Spritetablepointer;
+            Spriteeffectssize = Spritepalettespointer - Spriteeffectspointer;
+            Spritepalettessize = Eventcodesapointer - Spritepalettespointer;
+            Eventcodesasize = Eventcodesbpointer - Eventcodesapointer;
+            Eventcodesbsize = Eventcodescpointer - Eventcodesbpointer;
+            Eventcodescsize = Eventcodesdpointer - Eventcodescpointer;
+            Eventcodesdsize = Eventcodesepointer - Eventcodesdpointer;
+            Eventcodesesize = Eventcodesfpointer - Eventcodesepointer;
+            Eventcodesfandremainingsize = Entitiespointer - Eventcodesfpointer;
         }
-        public int memaddr;
-        public int eventcodeaddr;
+        public readonly int Memaddr;
+        public readonly int Eventcodeaddr;
 
-        public int entitiespointer;
-        public int entitiessize;
-        public int mapeffectsector3pointer;
-        public int mapeffectsector3size;
-        public int mapeventspointer;
-        public int mapeventssize;
-        public int spritetablepointer;
-        public int spritetablesize;
-        public int spriteeffectspointer;//0000333b000e240e0400000000000000
-        public int spriteeffectssize;
-        public int spritepalettespointer;
-        public int spritepalettessize;
-        public int eventcodesapointer;
-        public int eventcodesasize;
-        public int eventcodesbpointer;
-        public int eventcodesbsize;
-        public int eventcodescpointer;
-        public int eventcodescsize;
-        public int eventcodesdpointer;
-        public int eventcodesdsize;
-        public int eventcodesepointer;
-        public int eventcodesesize;
-        public int eventcodesfpointer;
-        public int eventcodesfsize;//calced when reading sector1
-        public int eventcodesfandremainingsize;
+        public readonly int Entitiespointer;
+        public readonly int Entitiessize;
+        public readonly int Mapeffectsector3Pointer;
+        public readonly int Mapeffectsector3Size;
+        public readonly int Mapeventspointer;
+        public readonly int Mapeventssize;
+        public readonly int Spritetablepointer;
+        public readonly int Spritetablesize;
+        public readonly int Spriteeffectspointer;//0000333b000e240e0400000000000000
+        public readonly int Spriteeffectssize;
+        public readonly int Spritepalettespointer;
+        public readonly int Spritepalettessize;
+        public readonly int Eventcodesapointer;
+        public readonly int Eventcodesasize;
+        public readonly int Eventcodesbpointer;
+        public readonly int Eventcodesbsize;
+        public readonly int Eventcodescpointer;
+        public readonly int Eventcodescsize;
+        public readonly int Eventcodesdpointer;
+        public readonly int Eventcodesdsize;
+        public readonly int Eventcodesepointer;
+        public readonly int Eventcodesesize;
+        public readonly int Eventcodesfpointer;
+        public int Eventcodesfsize;//calced when reading sector1
+        public readonly int Eventcodesfandremainingsize;
     }
 
     public class SpriteInfoEventCodes
     {
-        public static byte[] Code = new byte[1024 * 1024];//1mb of event codes, too much prob but oh well;
+        public static readonly byte[] Code = new byte[1024 * 1024];//1mb of event codes, too much prob but oh well;
 
         public SpriteInfoEventCodes(BinaryReader br, long binoffset, SpriteInfoHeader header, bool ismap)
         {
-            int table_size = 0;
+            var tableSize = 0;
             short firstoffset = 0;
 
             //read sector1a
-            br.BaseStream.Position = binoffset + header.eventcodesapointer;
-            table_size = header.eventcodesasize / 2;
-            eventcodesatable = new short[table_size];
-            for (int dex = 0; dex < table_size; dex++)
+            br.BaseStream.Position = binoffset + header.Eventcodesapointer;
+            tableSize = header.Eventcodesasize / 2;
+            Eventcodesatable = new short[tableSize];
+            for (var dex = 0; dex < tableSize; dex++)
             {
-                eventcodesatable[dex] = br.ReadInt16();
-                if (firstoffset == 0 && eventcodesatable[dex] != 0)
-                    firstoffset = eventcodesatable[dex];
+                Eventcodesatable[dex] = br.ReadInt16();
+                if (firstoffset == 0 && Eventcodesatable[dex] != 0)
+                {
+                    firstoffset = Eventcodesatable[dex];
+                }
             }
 
             //read sector1b
-            br.BaseStream.Position = binoffset + header.eventcodesbpointer;
-            table_size = header.eventcodesbsize / 2;
-            eventcodesbtable = new short[table_size];
-            for (int dex = 0; dex < table_size; dex++)
+            br.BaseStream.Position = binoffset + header.Eventcodesbpointer;
+            tableSize = header.Eventcodesbsize / 2;
+            Eventcodesbtable = new short[tableSize];
+            for (var dex = 0; dex < tableSize; dex++)
             {
-                eventcodesbtable[dex] = br.ReadInt16();
-                if (firstoffset == 0 && eventcodesbtable[dex] != 0)
-                    firstoffset = eventcodesbtable[dex];
+                Eventcodesbtable[dex] = br.ReadInt16();
+                if (firstoffset == 0 && Eventcodesbtable[dex] != 0)
+                {
+                    firstoffset = Eventcodesbtable[dex];
+                }
             }
 
             //read sector1c
-            br.BaseStream.Position = binoffset + header.eventcodescpointer;
-            table_size = header.eventcodescsize / 2;
-            eventcodesctable = new short[table_size];
-            for (int dex = 0; dex < table_size; dex++)
+            br.BaseStream.Position = binoffset + header.Eventcodescpointer;
+            tableSize = header.Eventcodescsize / 2;
+            Eventcodesctable = new short[tableSize];
+            for (var dex = 0; dex < tableSize; dex++)
             {
-                eventcodesctable[dex] = br.ReadInt16();
-                if (firstoffset == 0 && eventcodesctable[dex] != 0)
-                    firstoffset = eventcodesctable[dex];
+                Eventcodesctable[dex] = br.ReadInt16();
+                if (firstoffset == 0 && Eventcodesctable[dex] != 0)
+                {
+                    firstoffset = Eventcodesctable[dex];
+                }
             }
 
             //read sector1d
-            br.BaseStream.Position = binoffset + header.eventcodesdpointer;
-            table_size = header.eventcodesdsize / 2;
-            eventcodesdtable = new short[table_size];
-            for (int dex = 0; dex < table_size; dex++)
+            br.BaseStream.Position = binoffset + header.Eventcodesdpointer;
+            tableSize = header.Eventcodesdsize / 2;
+            Eventcodesdtable = new short[tableSize];
+            for (var dex = 0; dex < tableSize; dex++)
             {
-                eventcodesdtable[dex] = br.ReadInt16();
-                if (firstoffset == 0 && eventcodesdtable[dex] != 0)
-                    firstoffset = eventcodesdtable[dex];
+                Eventcodesdtable[dex] = br.ReadInt16();
+                if (firstoffset == 0 && Eventcodesdtable[dex] != 0)
+                {
+                    firstoffset = Eventcodesdtable[dex];
+                }
             }
 
             //read sector1e
-            br.BaseStream.Position = binoffset + header.eventcodesepointer;
-            table_size = header.eventcodesesize / 2;
-            eventcodesetable = new short[table_size];
-            for (int dex = 0; dex < table_size; dex++)
+            br.BaseStream.Position = binoffset + header.Eventcodesepointer;
+            tableSize = header.Eventcodesesize / 2;
+            Eventcodesetable = new short[tableSize];
+            for (var dex = 0; dex < tableSize; dex++)
             {
-                eventcodesetable[dex] = br.ReadInt16();
-                if (firstoffset == 0 && eventcodesetable[dex] != 0)
-                    firstoffset = eventcodesetable[dex];
+                Eventcodesetable[dex] = br.ReadInt16();
+                if (firstoffset == 0 && Eventcodesetable[dex] != 0)
+                {
+                    firstoffset = Eventcodesetable[dex];
+                }
             }
 
             //read sector1f
-            header.eventcodesfsize = (header.eventcodesapointer + firstoffset) - header.eventcodesfpointer;
-            br.BaseStream.Position = binoffset + header.eventcodesfpointer;
-            table_size = header.eventcodesfsize / 2;
-            if (table_size < 0)
-                table_size = 16;
-            eventcodesftable = new short[table_size];
-            for (int dex = 0; dex < table_size; dex++)
+            header.Eventcodesfsize = header.Eventcodesapointer + firstoffset - header.Eventcodesfpointer;
+            br.BaseStream.Position = binoffset + header.Eventcodesfpointer;
+            tableSize = header.Eventcodesfsize / 2;
+            if (tableSize < 0)
             {
-                eventcodesftable[dex] = br.ReadInt16();
+                tableSize = 16;
+            }
+
+            Eventcodesftable = new short[tableSize];
+            for (var dex = 0; dex < tableSize; dex++)
+            {
+                Eventcodesftable[dex] = br.ReadInt16();
             }
 
             //set binoffset for eventcodes
-            this.binoffset = binoffset + header.eventcodesapointer;
-            this.memaddr = header.memaddr + header.eventcodesapointer;
-            this.datasize = header.entitiespointer - header.eventcodesapointer;
+            _binoffset = binoffset + header.Eventcodesapointer;
+            _memaddr = header.Memaddr + header.Eventcodesapointer;
+            _datasize = header.Entitiespointer - header.Eventcodesapointer;
 
-            eventcodestable.Add(eventcodesatable);
-            eventcodestable.Add(eventcodesbtable);
-            eventcodestable.Add(eventcodesctable);
-            eventcodestable.Add(eventcodesdtable);
-            eventcodestable.Add(eventcodesetable);
-            eventcodestable.Add(eventcodesftable);
+            Eventcodestable.Add(Eventcodesatable);
+            Eventcodestable.Add(Eventcodesbtable);
+            Eventcodestable.Add(Eventcodesctable);
+            Eventcodestable.Add(Eventcodesdtable);
+            Eventcodestable.Add(Eventcodesetable);
+            Eventcodestable.Add(Eventcodesftable);
 
-            int Top = 0;
+            var top = 0;
             if (ismap)
-                Top += 1024 * 512;
+            {
+                top += 1024 * 512;
+            }
 
             br.BaseStream.Position = binoffset;
-            if (datasize > 0)
-                br.Read(Code, Top, datasize);
+            if (_datasize > 0)
+            {
+                br.Read(Code, top, _datasize);
+            }
             //half mb for global codes, half mb for map codes
         }
 
-        public class SICode
+        public class SiCode
         {
-            public byte code { get; set; }
-            public string name { get; set; }
-            public int size { get; set; }
+            public byte Code { get; set; }
+            public string Name { get; set; }
+            public int Size { get; set; }
         }
-        public static SICode GetCode(byte b)
+        public static SiCode GetCode(byte b)
         {
-            int size = 1;
-            string name = "";
+            var size = 1;
+            var name = "";
             switch (b)
             {
                 case 0x02:
@@ -1560,29 +1601,29 @@ namespace GraphicsTools.Alundra
                     break;
             }
 
-            return new SICode { code = b, size = size, name = name };
+            return new SiCode { Code = b, Size = size, Name = name };
         }
-        public List<SICommand> GetCommands(BinaryReader br, int eventcodesoffset, bool stopatff = false, int comandssize = 0)
+        public List<SiCommand> GetCommands(BinaryReader br, int eventcodesoffset, bool stopatff = false, int comandssize = 0)
         {
-            var commands = new List<SICommand>();
+            var commands = new List<SiCommand>();
             //var bytes = GetByteCode(br, sector1offset);
-            br.BaseStream.Position = binoffset + eventcodesoffset;
-            var bytes = new byte[datasize - eventcodesoffset];
+            br.BaseStream.Position = _binoffset + eventcodesoffset;
+            var bytes = new byte[_datasize - eventcodesoffset];
             br.Read(bytes, 0, bytes.Length);
-            int dex = 0;
+            var dex = 0;
             while (dex < bytes.Length && (comandssize == 0 || dex < comandssize))
             {
-                byte b = bytes[dex++];
+                var b = bytes[dex++];
 
                 var sicode = GetCode(b);
-                int size = sicode.size;
-                string name = sicode.name;
+                var size = sicode.Size;
+                var name = sicode.Name;
                 var parms = new byte[size - 1];
-                int pdex = 0;
+                var pdex = 0;
                 while (pdex < size - 1)
                     parms[pdex++] = bytes[dex++];
-                SICommand cmd;
-                int addr = memaddr + eventcodesoffset + dex - size;
+                SiCommand cmd;
+                var addr = _memaddr + eventcodesoffset + dex - size;
                 switch (name)
                 {
                     case "walk":
@@ -1611,30 +1652,32 @@ namespace GraphicsTools.Alundra
                         cmd = new DirectionBranchCommand(b, parms, name, addr);
                         break;
                     default:
-                        cmd = new SICommand(b, size, parms, name, addr);
+                        cmd = new SiCommand(b, size, parms, name, addr);
                         break;
                 }
 
                 commands.Add(cmd);
                 if (stopatff && b == 0xff)
+                {
                     break;
+                }
             }
 
             return commands;
         }
 
-        public byte[] GetByteCode(BinaryReader br, int sector1offset)
+        public byte[] GetByteCode(BinaryReader br, int sector1Offset)
         {
 
-            byte[] bytes = new byte[datasize - sector1offset];
-            int dex = 0;
-            br.BaseStream.Position = binoffset + sector1offset;
+            var bytes = new byte[_datasize - sector1Offset];
+            var dex = 0;
+            br.BaseStream.Position = _binoffset + sector1Offset;
 
             while (dex < bytes.Length)
             {
                 //Debug.Assert(dex < bytes.Length, "ByteCodes larger than 255");
 
-                byte b = br.ReadByte();
+                var b = br.ReadByte();
                 if (b == 0)//what does 0 mean?
                 {
                     bytes[dex++] = b;
@@ -1653,119 +1696,121 @@ namespace GraphicsTools.Alundra
             return bytes;
         }
 
-        long binoffset;
-        int datasize;
-        int memaddr;
-        public short[] eventcodesatable;
-        public short[] eventcodesbtable;
-        public short[] eventcodesctable;
-        public short[] eventcodesdtable;
-        public short[] eventcodesetable;
-        public short[] eventcodesftable;
+        private long _binoffset;
+        private int _datasize;
+        private int _memaddr;
+        public readonly short[] Eventcodesatable;
+        public readonly short[] Eventcodesbtable;
+        public readonly short[] Eventcodesctable;
+        public readonly short[] Eventcodesdtable;
+        public readonly short[] Eventcodesetable;
+        public readonly short[] Eventcodesftable;
 
-        public List<short[]> eventcodestable = new List<short[]>();
+        public readonly List<short[]> Eventcodestable = new();
     }
 
-    public class SetFlagCommand : SICommand
+    public class SetFlagCommand : SiCommand
     {
         public SetFlagCommand(byte command, byte[] parameters, string name, int memaddr)
             : base(command, 3, parameters, name, memaddr)
         {
         }
 
-        public override string PrintParameters(List<SICommand> commands)
+        public override string PrintParameters(List<SiCommand> commands)
         {
-            return (parameters[0] | (parameters[1] << 8)).ToString("x4");
+            return (Parameters[0] | (Parameters[1] << 8)).ToString("x4");
         }
     }
 
-    public class WalkCommand : SICommand
+    public class WalkCommand : SiCommand
     {
         public WalkCommand(byte command, byte[] parameters, string name, int memaddr)
             : base(command, 3, parameters, name, memaddr)
         {
         }
 
-        public override string PrintParameters(List<SICommand> commands)
+        public override string PrintParameters(List<SiCommand> commands)
         {
-            return (parameters[0] | (parameters[1] << 8)).ToString("x4");
+            return (Parameters[0] | (Parameters[1] << 8)).ToString("x4");
         }
     }
 
-    public class SetPositionCommand : SICommand
+    public class SetPositionCommand : SiCommand
     {
         public SetPositionCommand(byte command, byte[] parameters, string name, int memaddr)
             : base(command, 8, parameters, name, memaddr)
         {
         }
 
-        public override string PrintParameters(List<SICommand> commands)
+        public override string PrintParameters(List<SiCommand> commands)
         {
             var parms = new List<string>();
 
-            parms.Add(parameters[0].ToString("x2"));
-            parms.Add((parameters[1] | (parameters[2] << 8)).ToString("x4"));
-            parms.Add((parameters[3] | (parameters[4] << 8)).ToString("x4"));
-            parms.Add((parameters[5] | (parameters[6] << 8)).ToString("x4"));
+            parms.Add(Parameters[0].ToString("x2"));
+            parms.Add((Parameters[1] | (Parameters[2] << 8)).ToString("x4"));
+            parms.Add((Parameters[3] | (Parameters[4] << 8)).ToString("x4"));
+            parms.Add((Parameters[5] | (Parameters[6] << 8)).ToString("x4"));
 
             return string.Join(", ", parms);
         }
     }
 
-    public class BranchCommand : SICommand
+    public class BranchCommand : SiCommand
     {
         public BranchCommand(byte command, int size, byte[] parameters, string name, int memaddr)
             : base(command, size, parameters, name, memaddr)
         {
-            base.refoffset = (Int16)(parameters[size - 3] | (parameters[size - 2] << 8));
+            Refoffset = (short)(parameters[size - 3] | (parameters[size - 2] << 8));
         }
 
-        public override string PrintParameters(List<SICommand> commands)
+        public override string PrintParameters(List<SiCommand> commands)
         {
             var parms = new List<string>();
-            if (size == 5)
+            if (Size == 5)
             {
-                parms.Add((parameters[size - 5] | (parameters[size - 4] << 8)).ToString("x4"));
+                parms.Add((Parameters[Size - 5] | (Parameters[Size - 4] << 8)).ToString("x4"));
             }
             else
             {
 
-                for (int dex = 0; dex < size - 3; dex++)
+                for (var dex = 0; dex < Size - 3; dex++)
                 {
-                    parms.Add(parameters[dex].ToString("x2"));
+                    parms.Add(Parameters[dex].ToString("x2"));
                 }
             }
-            parms.Add(refoffset.ToString());
+            parms.Add(Refoffset.ToString());
 
             return string.Join(", ", parms);
         }
     }
 
-    public class DirectionBranchCommand : SICommand
+    public class DirectionBranchCommand : SiCommand
     {
         public DirectionBranchCommand(byte command, byte[] parameters, string name, int memaddr)
             : base(command, 9, parameters, name, memaddr)
         {
 
-            offsets[0] = (Int16)(parameters[size - 9] | (parameters[size - 8] << 8));
-            offsets[1] = (Int16)(parameters[size - 7] | (parameters[size - 6] << 8));
-            offsets[2] = (Int16)(parameters[size - 5] | (parameters[size - 4] << 8));
-            offsets[3] = (Int16)(parameters[size - 3] | (parameters[size - 2] << 8));
+            _offsets[0] = (short)(parameters[Size - 9] | (parameters[Size - 8] << 8));
+            _offsets[1] = (short)(parameters[Size - 7] | (parameters[Size - 6] << 8));
+            _offsets[2] = (short)(parameters[Size - 5] | (parameters[Size - 4] << 8));
+            _offsets[3] = (short)(parameters[Size - 3] | (parameters[Size - 2] << 8));
         }
 
-        int[] offsets = new int[4];
+        private int[] _offsets = new int[4];
 
-        public override string PrintParameters(List<SICommand> commands)
+        public override string PrintParameters(List<SiCommand> commands)
         {
             var parms = new List<string>();
-            foreach (var offset in offsets)
+            foreach (var offset in _offsets)
             {
-                int jumpaddr = this.memaddr + offset;
+                var jumpaddr = Memaddr + offset;
                 int dex;
                 for (dex = 0; dex < commands.Count; dex++)
                 {
-                    if (commands[dex].memaddr == jumpaddr)
+                    if (commands[dex].Memaddr == jumpaddr)
+                    {
                         break;
+                    }
                 }
                 parms.Add(dex < commands.Count ? dex.ToString() : "?");
             }
@@ -1774,64 +1819,66 @@ namespace GraphicsTools.Alundra
         }
     }
 
-    public class JumpCommand : SICommand
+    public class JumpCommand : SiCommand
     {
         public JumpCommand(byte command, byte[] parameters, string name, int memaddr)
             : base(command, 3, parameters, name, memaddr)
         {
-            base.refoffset = (Int16)(parameters[0] | (parameters[1] << 8));
+            Refoffset = (short)(parameters[0] | (parameters[1] << 8));
         }
 
-        public override string PrintParameters(List<SICommand> commands)
+        public override string PrintParameters(List<SiCommand> commands)
         {
-            Int16 jumpamount = (Int16)refoffset;// (Int16)(parameters[0] | parameters[1] << 8);
-            int jumpaddr = this.memaddr + jumpamount;
+            var jumpamount = (short)Refoffset;// (Int16)(parameters[0] | parameters[1] << 8);
+            var jumpaddr = Memaddr + jumpamount;
             int dex;
             for (dex = 0; dex < commands.Count; dex++)
             {
-                if (commands[dex].memaddr == jumpaddr)
+                if (commands[dex].Memaddr == jumpaddr)
+                {
                     break;
+                }
             }
             return dex < commands.Count ? dex.ToString() : "?";
         }
 
     }
 
-    public class SICommand
+    public class SiCommand
     {
-        public SICommand(byte command, int size, byte[] parameters, string name, int memaddr)
+        public SiCommand(byte command, int size, byte[] parameters, string name, int memaddr)
         {
-            this.memaddr = memaddr;
-            this.command = command;
-            this.parameters = parameters;
-            this.size = size;
-            this.name = name;
+            Memaddr = memaddr;
+            Command = command;
+            Parameters = parameters;
+            Size = size;
+            Name = name;
         }
-        public int memaddr;
-        public byte command;
-        public byte[] parameters;
-        public int size;
-        public int refoffset;
+        public readonly int Memaddr;
+        public readonly byte Command;
+        public readonly byte[] Parameters;
+        public readonly int Size;
+        public int Refoffset;
 
-        public string name;
+        public readonly string Name;
 
         public string PrintName()
         {
-            return !string.IsNullOrEmpty(name) ? name : command.ToString("x2");
+            return !string.IsNullOrEmpty(Name) ? Name : Command.ToString("x2");
         }
 
-        public virtual string PrintParameters(List<SICommand> commands)
+        public virtual string PrintParameters(List<SiCommand> commands)
         {
-            return string.Join(", ", parameters.Select(x => x.ToString("x2")));
+            return string.Join(", ", Parameters.Select(x => x.ToString("x2")));
         }
 
-        public string Print(int depth, List<SICommand> commands)
+        public string Print(int depth, List<SiCommand> commands)
         {
-            int index = commands.IndexOf(this);
-            string output = index.ToString("d3") + " ";
+            var index = commands.IndexOf(this);
+            var output = index.ToString("d3") + " ";
             output += new string(' ', depth * 4);
             output += PrintName();
-            if (command != 0 && command != 0xff)
+            if (Command != 0 && Command != 0xff)
             {
                 output += "(";
                 output += PrintParameters(commands);
@@ -1847,99 +1894,108 @@ namespace GraphicsTools.Alundra
         {
             //br.BaseStream.Position += 2;//this is wrong, dont nudge it like this
 
-            entities = new SIEntityRecord[128];
-            for (int dex = 0; dex < entities.Length; dex++)
+            Entities = new SiEntityRecord[128];
+            for (var dex = 0; dex < Entities.Length; dex++)
             {
                 //read two test bytes to check for the end of the list
-                short test = br.ReadInt16();
+                var test = br.ReadInt16();
                 test = br.ReadInt16();
                 if (test == 0)
+                {
                     break;
+                }
+
                 br.BaseStream.Position -= 4;
 
                 //read the record
-                entities[dex] = new SIEntityRecord(br, memaddr + dex * 20);
+                Entities[dex] = new SiEntityRecord(br, memaddr + dex * 20);
             }
         }
-        public SIEntityRecord[] entities;
+        public readonly SiEntityRecord[] Entities;
     }
 
-    public class SIEntityRecord
+    public class SiEntityRecord
     {
-        public SIEntityRecord(BinaryReader br, int memaddr)
+        public SiEntityRecord(BinaryReader br, int memaddr)
         {
-            this.memaddr = memaddr;
+            Memaddr = memaddr;
             //i used to think these were the last of the previous entry, but its the first of this one
-            minx = br.ReadByte();//0
-            miny = br.ReadByte();//1
+            Minx = br.ReadByte();//0
+            Miny = br.ReadByte();//1
 
-            maxx = br.ReadByte();//2
-            maxy = br.ReadByte();//3
-            u3 = br.ReadByte();//4
-            spritedir = br.ReadByte();//5
-            spritetableindex = br.ReadByte();//6
-            xpos = br.ReadByte();//7
-            ypos = br.ReadByte();//8
-            height = br.ReadByte();//9
-            eventcodesa_load_index = br.ReadByte();
-            eventcodesb_map_index = br.ReadByte();
-            eventcodesc_tick_index = br.ReadByte();
-            eventcodesd_touch_index = br.ReadByte();
-            eventcodese_deactivate_index = br.ReadByte();
-            eventcodesf_interact_index = br.ReadByte();
-            u7 = br.ReadByte();//10
-            u7 = (short)(u7 | (br.ReadByte() << 8));
+            Maxx = br.ReadByte();//2
+            Maxy = br.ReadByte();//3
+            U3 = br.ReadByte();//4
+            Spritedir = br.ReadByte();//5
+            Spritetableindex = br.ReadByte();//6
+            Xpos = br.ReadByte();//7
+            Ypos = br.ReadByte();//8
+            Height = br.ReadByte();//9
+            EventcodesaLoadIndex = br.ReadByte();
+            EventcodesbMapIndex = br.ReadByte();
+            EventcodescTickIndex = br.ReadByte();
+            EventcodesdTouchIndex = br.ReadByte();
+            EventcodeseDeactivateIndex = br.ReadByte();
+            EventcodesfInteractIndex = br.ReadByte();
+            U7 = br.ReadByte();//10
+            U7 = (short)(U7 | (br.ReadByte() << 8));
             //u8 = br.ReadByte();//11
-            contents = br.ReadByte();//12
-            u10 = br.ReadByte();//13
+            Contents = br.ReadByte();//12
+            U10 = br.ReadByte();//13
 
         }
 
-        public SIAnimation GetSprite(BinaryReader br, SpriteInfo si)
+        public SiAnimation GetSprite(BinaryReader br, SpriteInfo si)
         {
-            var sector5 = si.sprites[spritetableindex];
-            if (sector5 != null && this.spritedir >> 4 != 0x4 && this.spritedir >> 4 != 0x0)
+            var sector5 = si.Sprites[Spritetableindex];
+            if (sector5 != null && Spritedir >> 4 != 0x4 && Spritedir >> 4 != 0x0)
             {
-                List<SICommand> commands = new List<SICommand>();
-                if (eventcodesa_load_index != 0xff && eventcodesa_load_index != 0)
-                    commands.AddRange(si.eventcodes.GetCommands(br, si.eventcodes.eventcodesatable[eventcodesa_load_index & 0x7f], true));
-                if (commands.Count == 0 && eventcodesc_tick_index != 0xff && eventcodesc_tick_index != 0)
-                    commands.AddRange(si.eventcodes.GetCommands(br, si.eventcodes.eventcodesctable[eventcodesc_tick_index & 0x7f], true));
+                var commands = new List<SiCommand>();
+                if (EventcodesaLoadIndex != 0xff && EventcodesaLoadIndex != 0)
+                {
+                    commands.AddRange(si.EventCodes.GetCommands(br, si.EventCodes.Eventcodesatable[EventcodesaLoadIndex & 0x7f], true));
+                }
+
+                if (commands.Count == 0 && EventcodescTickIndex != 0xff && EventcodescTickIndex != 0)
+                {
+                    commands.AddRange(si.EventCodes.GetCommands(br, si.EventCodes.Eventcodesctable[EventcodescTickIndex & 0x7f], true));
+                }
+
                 foreach (var cmd in commands)
                 {
-                    if (cmd.command == 0x1a)//set sprite
+                    if (cmd.Command == 0x1a)//set sprite
                     {
-                        var animset = sector5.animsets[cmd.parameters[0]];
+                        var animset = sector5.Animsets[cmd.Parameters[0]];
 
-                        return sector5.GetAnimation(br, animset.animoffsets[spritedir & 0x3]);
+                        return sector5.GetAnimation(br, animset.Animoffsets[Spritedir & 0x3]);
                     }
                 }
-                return sector5.GetAnimation(br, sector5.animsets[0].animoffsets[spritedir & 0x3]);//default anim
+                return sector5.GetAnimation(br, sector5.Animsets[0].Animoffsets[Spritedir & 0x3]);//default anim
             }
 
             return null;
         }
-        public int memaddr;
-        public byte minx;//if character isnt within this bounding box, dont activate the entity
-        public byte miny;
-        public byte maxx;//33
-        public byte maxy;//3b
-        public byte u3;//1
-        public byte spritedir;//0,c0,c1,c2,c3,80
-        public byte spritetableindex;
-        public byte xpos;//divide by 2
-        public byte ypos;//divide by 2
-        public byte height;//divide by 2
-        public byte eventcodesa_load_index;
-        public byte eventcodesb_map_index;
-        public byte eventcodesc_tick_index;
-        public byte eventcodesd_touch_index;
-        public byte eventcodese_deactivate_index;
-        public byte eventcodesf_interact_index;
-        public short u7;
+        public readonly int Memaddr;
+        public readonly byte Minx;//if character isnt within this bounding box, dont activate the entity
+        public readonly byte Miny;
+        public readonly byte Maxx;//33
+        public readonly byte Maxy;//3b
+        public readonly byte U3;//1
+        public readonly byte Spritedir;//0,c0,c1,c2,c3,80
+        public readonly byte Spritetableindex;
+        public readonly byte Xpos;//divide by 2
+        public readonly byte Ypos;//divide by 2
+        public readonly byte Height;//divide by 2
+        public readonly byte EventcodesaLoadIndex;
+        public readonly byte EventcodesbMapIndex;
+        public readonly byte EventcodescTickIndex;
+        public readonly byte EventcodesdTouchIndex;
+        public readonly byte EventcodeseDeactivateIndex;
+        public readonly byte EventcodesfInteractIndex;
+        public readonly short U7;
         //public byte u8;
-        public byte contents;
-        public byte u10;
+        public readonly byte Contents;
+        public readonly byte U10;
 
     }
 
@@ -1947,29 +2003,32 @@ namespace GraphicsTools.Alundra
     {
         public MapEffectRecord(BinaryReader br)
         {
-            x1 = br.ReadByte();
-            y1 = br.ReadByte();
-            x2 = br.ReadByte();
-            y2 = br.ReadByte();
-            flags = br.ReadByte();
-            effectid = br.ReadByte();
-            x = br.ReadByte();
-            y = br.ReadByte();
-            z = br.ReadByte();
-            animid = br.ReadByte();
+            X1 = br.ReadByte();
+            Y1 = br.ReadByte();
+            X2 = br.ReadByte();
+            Y2 = br.ReadByte();
+            Flags = br.ReadByte();
+            Effectid = br.ReadByte();
+            X = br.ReadByte();
+            Y = br.ReadByte();
+            Z = br.ReadByte();
+            Animid = br.ReadByte();
 
-            u1 = br.ReadByte();//probably just padding
-            u2 = br.ReadByte();//padding
+            U1 = br.ReadByte();//probably just padding
+            U2 = br.ReadByte();//padding
         }
-        public byte x1, x2, y1, y2;//player must be within these map tiles
-        public byte flags;//0x80 ismapsprite //4
-        public byte effectid;//5
-        public byte x;//6
-        public byte y;//7
-        public byte z;//8
-        public byte animid;//9
+        public readonly byte X1;//player must be within these map tiles
+        public readonly byte X2;//player must be within these map tiles
+        public readonly byte Y1;//player must be within these map tiles
+        public readonly byte Y2;//player must be within these map tiles
+        public readonly byte Flags;//0x80 ismapsprite //4
+        public readonly byte Effectid;//5
+        public readonly byte X;//6
+        public readonly byte Y;//7
+        public readonly byte Z;//8
+        public readonly byte Animid;//9
 
-        public byte u1, u2;
+        public byte U1, U2;
 
     }
 
@@ -1978,227 +2037,245 @@ namespace GraphicsTools.Alundra
         public SpriteInfoMapEvents(BinaryReader br, long sioffset, int sectorend)
         {
 
-            records = new SIMapEventRecord[64];
-            for (int dex = 0; dex < records.Length; dex++)
+            Records = new SiMapEventRecord[64];
+            for (var dex = 0; dex < Records.Length; dex++)
             {
                 //read two test bytes to check for the end of the list
-                int test = br.ReadInt32();
+                var test = br.ReadInt32();
                 if (test == 0)
+                {
                     break;
+                }
+
                 br.BaseStream.Position -= 4;
 
                 //read the record
-                records[dex] = new SIMapEventRecord(br);
+                Records[dex] = new SiMapEventRecord(br);
             }
 
         }
 
-        public SIMapEventRecord[] records;
+        public readonly SiMapEventRecord[] Records;
 
     }
 
-    public class SIMapEventRecord
+    public class SiMapEventRecord
     {
-        public SIMapEventRecord(BinaryReader br)
+        public SiMapEventRecord(BinaryReader br)
         {
 
-            x1 = br.ReadByte();
-            y1 = br.ReadByte();
-            x2 = br.ReadByte();
-            y2 = br.ReadByte();
-            eventcodesbindex = br.ReadByte();
-            ub1 = br.ReadByte();
-            ub2 = br.ReadByte();
-            ub3 = br.ReadByte();
+            X1 = br.ReadByte();
+            Y1 = br.ReadByte();
+            X2 = br.ReadByte();
+            Y2 = br.ReadByte();
+            Eventcodesbindex = br.ReadByte();
+            Ub1 = br.ReadByte();
+            Ub2 = br.ReadByte();
+            Ub3 = br.ReadByte();
         }
 
-        public byte x1, y1, x2, y2;
-        public byte eventcodesbindex;
-        public byte ub1;
-        public byte ub2;
-        public byte ub3;
+        public readonly byte X1;
+        public readonly byte Y1;
+        public readonly byte X2;
+        public readonly byte Y2;
+        public readonly byte Eventcodesbindex;
+        public readonly byte Ub1;
+        public readonly byte Ub2;
+        public readonly byte Ub3;
     }
 
     public class GameMapInfo
     {
-        public GameMapInfo(int mapid, int memaddr)
+        public GameMapInfo(int mapId, int memaddr)
         {
-            this.memaddr = memaddr;
-            this.mapid = mapid;
+            Memaddr = memaddr;
+            MapId = mapId;
         }
 
         public GameMapInfo(BinaryReader br, int memaddr)
         {
-            this.memaddr = memaddr;
-            long binoffset = br.BaseStream.Position;
-            mapid = br.ReadInt32();//0
-            gravity = br.ReadInt16();//4
-            terminal_velocity = br.ReadInt16();//8
-            slideeffectid = br.ReadByte();//a
-            balancelevel = br.ReadByte();//b
-            _c = br.ReadByte();//c
-            _d = br.ReadByte();//d
-            _e = br.ReadByte();//e
-            _f = br.ReadByte();//f
+            Memaddr = memaddr; // start just after the header ??
+            var startPosition = br.BaseStream.Position;
+            MapId = br.ReadInt32();//0
+            Gravity = br.ReadInt16();//4
+            TerminalVelocity = br.ReadInt16();//8
+            SlideEffectId = br.ReadByte();//a
+            BalanceLevel = br.ReadByte();//b
+            C = br.ReadByte();//c
+            D = br.ReadByte();//d
+            E = br.ReadByte();//e
+            F = br.ReadByte();//f
             _10 = br.ReadInt16();//10
             //read palettes
-            int maxpalettes = 32;
-            palettes = new System.Drawing.Color[maxpalettes][];
-            byte[] buff = new byte[maxpalettes * 16 * 2];
+            var maxpalettes = 32;
+            Palettes = new Color[maxpalettes][];
+            var buff = new byte[maxpalettes * 16 * 2];
             br.Read(buff, 0, buff.Length);
-            int buffdex = 0;
-            for (int dex = 0; dex < maxpalettes; dex++)
+            var buffdex = 0;
+
+            for (var dex = 0; dex < maxpalettes; dex++)
             {
-                palettes[dex] = new System.Drawing.Color[16];
-                for (int cdex = 0; cdex < 16; cdex++)
+                Palettes[dex] = new Color[16];
+                for (var cdex = 0; cdex < 16; cdex++)
                 {
-                    byte b2 = buff[buffdex++];
-                    byte b1 = buff[buffdex++];
-                    palettes[dex][cdex] = Utils.FromPsxColor((b1 << 8) | b2);
+                    var b2 = buff[buffdex++];
+                    var b1 = buff[buffdex++];
+                    Palettes[dex][cdex] = Utils.FromPsxColor((b1 << 8) | b2);
                 }
             }
-            palettesbitmap = Utils.BitmapFromPsxBuff(buff, 16, maxpalettes, 16, null);
+
+            Palettesbitmap = Utils.BitmapFromPsxBuff(buff, 16, maxpalettes, 16, null);
 
             //read portals
-            br.BaseStream.Position = binoffset + 1066;
-            portalflag1 = br.ReadByte();
-            portalflag2 = br.ReadByte();
-            int maxportals = 64;
-            portals = new Portal[maxportals];
-            for (int dex = 0; dex < portals.Length; dex++)
+            br.BaseStream.Position = startPosition + 1066;
+            PortalFlag1 = br.ReadByte();
+            PortalFlag2 = br.ReadByte();
+            var maxportals = 64;
+            Portals = new Portal[maxportals];
+            for (var dex = 0; dex < Portals.Length; dex++)
             {
-                portals[dex] = new Portal(br);
+                Portals[dex] = new Portal(br);
             }
         }
-        public int memaddr;
-        public int mapid;
-        public short gravity;
-        public short terminal_velocity;
-        public byte slideeffectid;
-        public byte balancelevel;
-        public byte _c;
-        public byte _d;
-        public byte _e;
-        public byte _f;
-        public short _10;
-        public System.Drawing.Color[][] palettes;
-        public Bitmap palettesbitmap;
-        public byte portalflag1;
-        public byte portalflag2;
-        public Portal[] portals;
+
+        public readonly int Memaddr;
+        public readonly int MapId;
+        public readonly short Gravity;
+        public readonly short TerminalVelocity;
+        public readonly byte SlideEffectId;
+        public readonly byte BalanceLevel;
+        public readonly byte C;
+        public readonly byte D;
+        public readonly byte E;
+        public readonly byte F;
+        public readonly short _10;
+        public readonly Color[][] Palettes;
+        public readonly Bitmap Palettesbitmap;
+        public readonly byte PortalFlag1;
+        public readonly byte PortalFlag2;
+        public readonly Portal[] Portals;
 
     }
+    
     public class Portal
     {
         public Portal(BinaryReader br)
         {
-            x1 = br.ReadByte();
-            y1 = br.ReadByte();
-            x2 = br.ReadByte();
-            y2 = br.ReadByte();
-            destmapid = br.ReadInt16();
-            destx = br.ReadByte();
-            desty = br.ReadByte();
-            unknown1 = br.ReadByte();
-            unknown2 = br.ReadByte();
-            unknown3 = br.ReadByte();
-            unknown4 = br.ReadByte();
+            X1 = br.ReadByte();
+            Y1 = br.ReadByte();
+            X2 = br.ReadByte();
+            Y2 = br.ReadByte();
+            DestMapId = br.ReadInt16();
+            DestX = br.ReadByte();
+            DestY = br.ReadByte();
+            Unknown1 = br.ReadByte();
+            Unknown2 = br.ReadByte();
+            Unknown3 = br.ReadByte();
+            Unknown4 = br.ReadByte();
         }
-        public byte x1, y1;
-        public byte x2, y2;
-        public short destmapid;
-        public byte destx, desty;
-        public byte unknown1, unknown2;
-        public byte unknown3, unknown4;
+        public readonly byte X1;
+        public readonly byte Y1;
+        public readonly byte X2;
+        public readonly byte Y2;
+        public readonly short DestMapId;
+        public readonly byte DestX;
+        public readonly byte DestY;
+        public readonly byte Unknown1;
+        public readonly byte Unknown2;
+        public readonly byte Unknown3;
+        public readonly byte Unknown4;
     }
+    
     public class GameMapHeader
     {
-        public GameMapHeader(DBHeader header)
+        public GameMapHeader(DbHeader header)
         {//alundra gamemap, just has sprites
-            infoblock = -1;
-            mapblock = -1;
-            tilesheets = -1;
-            spriteinfo = (int)header.alundraspriteinfo;
-            spritesheets = (int)header.alundrasprites;
-            scrollscreen = -1;
-            stringtable = (int)header.alundrastringtable;
+            InfoBlock = -1;
+            MapBlock = -1;
+            TileSheets = -1;
+            SpriteInfo = (int)header.Alundraspriteinfo;
+            SpriteSheets = (int)header.Alundrasprites;
+            ScrollScreen = -1;
+            StringTable = (int)header.Alundrastringtable;
 
-            infosize = 0;
-            mapsize = 0;
-            tilessize = 0;
-            sinfosize = spritesheets - spriteinfo;
-            spritessize = (int)header.unknownmapa - spritesheets;
-            scrollsize = 0;
+            Infosize = 0;
+            Mapsize = 0;
+            Tilessize = 0;
+            Sinfosize = SpriteSheets - SpriteInfo;
+            Spritessize = (int)header.Unknownmapa - SpriteSheets;
+            Scrollsize = 0;
         }
         public GameMapHeader(BinaryReader br)
         {
-            infoblock = br.ReadInt32();//0
-            mapblock = br.ReadInt32();//4
-            tilesheets = br.ReadInt32();//8
-            spriteinfo = br.ReadInt32();//c
-            spritesheets = br.ReadInt32();//10
-            scrollscreen = br.ReadInt32();//14
-            stringtable = br.ReadInt32();//18
+            InfoBlock = br.ReadInt32();//0
+            MapBlock = br.ReadInt32();//4
+            TileSheets = br.ReadInt32();//8
+            SpriteInfo = br.ReadInt32();//c
+            SpriteSheets = br.ReadInt32();//10
+            ScrollScreen = br.ReadInt32();//14
+            StringTable = br.ReadInt32();//18
 
-            infosize = mapblock - infoblock;
-            mapsize = tilesheets - mapblock;
-            tilessize = spriteinfo - tilesheets;
-            sinfosize = spritesheets - spriteinfo;
-            spritessize = scrollscreen - spritesheets;
-            scrollsize = stringtable - scrollscreen;
+            Infosize = MapBlock - InfoBlock;
+            Mapsize = TileSheets - MapBlock;
+            Tilessize = SpriteInfo - TileSheets;
+            Sinfosize = SpriteSheets - SpriteInfo;
+            Spritessize = ScrollScreen - SpriteSheets;
+            Scrollsize = StringTable - ScrollScreen;
             //string table is called later
         }
 
-        public int infosize;
-        public int mapsize;
-        public int walltilessize;
-        public int tilessize;
-        public int sinfosize;
-        public int spritessize;
-        public int scrollsize;
-        public int stringsize;
+        public readonly int Infosize;
+        public int Mapsize;
+        public int WallTilesSize;
+        public readonly int Tilessize;
+        public readonly int Sinfosize;
+        public readonly int Spritessize;
+        public readonly int Scrollsize;
+        public int Stringsize;
 
-        public int infoblock;
-        public int mapblock;
-        public int tilesheets;
-        public int spriteinfo;
-        public int spritesheets;
-        public int scrollscreen;//shadow, sky or distant background
-        public int stringtable;
+        public readonly int InfoBlock;
+        public readonly int MapBlock;
+        public readonly int TileSheets;
+        public readonly int SpriteInfo;
+        public readonly int SpriteSheets;
+        public readonly int ScrollScreen;//shadow, sky or distant background
+        public readonly int StringTable;
     }
 
-    public class DBHeader
+    public class DbHeader
     {
-        public DBHeader(BinaryReader br)
+        public DbHeader(BinaryReader br)
         {
-            alundraspriteinfo = br.ReadUInt32();//0
-            alundrasprites = br.ReadUInt32();//4
-            alundraspritesrepeat = br.ReadUInt32();//8
-            alundrastringtable = br.ReadUInt32();//c
-            alundrastringtablerepeat = br.ReadUInt32();//10
-            unknownmapa = br.ReadUInt32();//14
-            unknownmapb = br.ReadUInt32();//18
-            unknownmapb2 = br.ReadUInt32();//1c
-            unknownmapb3 = br.ReadUInt32();//20
-            unknownmapb4 = br.ReadUInt32();//24
-            int maxmaps = 502;
-            gamemaps = new UInt32[maxmaps];//28
-            for (int dex = 0; dex < maxmaps; dex++)
+            Alundraspriteinfo = br.ReadUInt32();//0
+            Alundrasprites = br.ReadUInt32();//4
+            Alundraspritesrepeat = br.ReadUInt32();//8
+            Alundrastringtable = br.ReadUInt32();//c
+            Alundrastringtablerepeat = br.ReadUInt32();//10
+
+            Unknownmapa = br.ReadUInt32();//14
+            Unknownmapb = br.ReadUInt32();//18
+            Unknownmapb2 = br.ReadUInt32();//1c
+            Unknownmapb3 = br.ReadUInt32();//20
+            Unknownmapb4 = br.ReadUInt32();//24
+
+            GameMaps = new uint[502];//28
+
+            for (var i = 0; i < GameMaps.Length; i++)
             {
-                gamemaps[dex] = br.ReadUInt32();
+                GameMaps[i] = br.ReadUInt32();
             }
         }
 
-        public UInt32 alundraspriteinfo;
-        public UInt32 alundrasprites;
-        public UInt32 alundraspritesrepeat;
-        public UInt32 alundrastringtable;
-        public UInt32 alundrastringtablerepeat;
-        public UInt32 unknownmapa;
-        public UInt32 unknownmapb;
-        public UInt32 unknownmapb2;
-        public UInt32 unknownmapb3;
-        public UInt32 unknownmapb4;
-        public UInt32[] gamemaps;
+        public readonly uint Alundraspriteinfo;
+        public readonly uint Alundrasprites;
+        public uint Alundraspritesrepeat;
+        public readonly uint Alundrastringtable;
+        public uint Alundrastringtablerepeat;
+        public readonly uint Unknownmapa;
+        public uint Unknownmapb;
+        public uint Unknownmapb2;
+        public uint Unknownmapb3;
+        public uint Unknownmapb4;
+        public readonly uint[] GameMaps;
     }
 }

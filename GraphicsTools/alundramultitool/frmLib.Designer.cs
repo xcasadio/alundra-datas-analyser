@@ -1,7 +1,7 @@
 ﻿
 namespace GraphicsTools
 {
-    partial class frmLib
+    partial class FrmLib
     {
         /// <summary>
         /// Required designer variable.
@@ -185,7 +185,7 @@ namespace GraphicsTools
             this.Controls.Add(this.lstModules);
             this.Controls.Add(this.txtCode);
             this.Controls.Add(this.lstFuncs);
-            this.Name = "frmLib";
+            this.Name = "FrmLib";
             this.Text = "frmLib";
             this.Load += new System.EventHandler(this.frmLib_Load);
             this.ResumeLayout(false);

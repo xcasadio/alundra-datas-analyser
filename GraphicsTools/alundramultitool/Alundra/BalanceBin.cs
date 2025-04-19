@@ -1,42 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GraphicsTools.Alundra
+﻿namespace GraphicsTools.Alundra
 {
     public class BalanceBin
     {
-        List<BalanceRecord> records = new List<BalanceRecord>();
+        private readonly string _balanceFile;
+        private readonly List<BalanceRecord> _balanceRecords = new();
 
-        public BalanceBin(BinaryReader br)
+        public BalanceBin(string balanceFile)
         {
-            int[] offsets = new int[1024];
-            int offset = 0;
-            int firstoffset = 0;
-            int numoffsets = 0;
+            _balanceFile = balanceFile;
+            using var br = new BinaryReader(File.OpenRead(balanceFile));
+            List<int> offsets = new ();
+            var firstoffset = 0;
+
             while (firstoffset == 0 || br.BaseStream.Position < firstoffset)
             {
-                offset = br.ReadInt16();
+                int offset = br.ReadInt16();
                 if (firstoffset == 0)
+                {
                     firstoffset = offset;
-                offsets[numoffsets++] = offset;
+                }
+
+                offsets.Add(offset);
             }
 
-            for (int dex = 0; dex < numoffsets; dex++)
+            foreach (var offset in offsets)
             {
-                var record = new BalanceRecord(br, offsets[dex]);
-                records.Add(record);
+                var record = new BalanceRecord(br, offset);
+                _balanceRecords.Add(record);
             }
         }
 
         public BalanceRecord GetBalanceRecordFromSpriteIndex(int index, int balancelevel)
         {
-            var record = records[index];
+            var record = _balanceRecords[index];
             if (record.Level >= balancelevel)
+            {
                 return record;
+            }
+
             do
             {
                 record = record.Next;
@@ -48,10 +49,10 @@ namespace GraphicsTools.Alundra
 
     public class BalanceRecord
     {
-        public byte Level;//0
-        public byte OffsetToNextLevel;//1
-        public byte Hp;//2 
-        public byte[] Vals = new byte[11];//supposed to be at 2
+        public readonly byte Level;//0
+        public readonly byte OffsetToNextLevel;//1
+        public readonly byte Hp;//2 
+        public readonly byte[] Vals = new byte[11];//supposed to be at 2
         //but i think ill put it at 3 and subtract q from the indexvals
         //3
         //4
@@ -64,11 +65,11 @@ namespace GraphicsTools.Alundra
         //b
         //c
         //d
-        public byte NumAnimVals;//e
-        public BalanceAnimValRef[] AnimVals;//targetanim+1 //f
+        public readonly byte NumAnimVals;//e
+        public readonly BalanceAnimValRef[] AnimVals;//targetanim+1 //f
 
         public int Offset;
-        public BalanceRecord Next;
+        public readonly BalanceRecord Next;
 
         public BalanceRecord(BinaryReader br, int offset)
         {
@@ -82,7 +83,7 @@ namespace GraphicsTools.Alundra
             if (NumAnimVals > 0)
             {
                 AnimVals = new BalanceAnimValRef[NumAnimVals];
-                for (int dex = 0; dex < NumAnimVals; dex++)
+                for (var dex = 0; dex < NumAnimVals; dex++)
                 {
                     AnimVals[dex] = new BalanceAnimValRef(br);
                 }
@@ -96,13 +97,13 @@ namespace GraphicsTools.Alundra
 
     public class BalanceAnimValRef
     {
-        public byte Val;
-        public byte u2;
+        public readonly byte Val;
+        public byte U2;
 
         public BalanceAnimValRef(BinaryReader br)
         {
             Val = br.ReadByte();
-            u2 = br.ReadByte();
+            U2 = br.ReadByte();
         }
     }
 }

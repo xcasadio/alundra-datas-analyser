@@ -1,6 +1,6 @@
 ﻿namespace alundramultitool
 {
-    partial class frmIntGrid
+    partial class FrmIntGrid
     {
         /// <summary>
         /// Required designer variable.

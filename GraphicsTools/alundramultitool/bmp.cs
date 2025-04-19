@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using System.Drawing;
+﻿using System.Runtime.InteropServices;
 
 namespace GraphicsTools
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct bmp_header
+    public struct BmpHeader
     {
         public short signature;
         public uint file_size;
@@ -30,7 +23,7 @@ namespace GraphicsTools
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct bitmapinfo_header
+    public struct BitmapinfoHeader
     {
         public int header_size;
         public int image_width;
@@ -75,85 +68,85 @@ namespace GraphicsTools
 
     }
 
-    public class palette
+    public class Palette
     {
-        public palette(int num_colors)
+        public Palette(int numColors)
         {
-            red_bitmask = 0xff << 16;
-            green_bitmask = 0xff << 8;
-            blue_bitmask = 0xff;
-            colors = new Color[num_colors];
+            RedBitmask = 0xff << 16;
+            GreenBitmask = 0xff << 8;
+            BlueBitmask = 0xff;
+            Colors = new Color[numColors];
         }
 
-        public uint red_bitmask;
-        public uint green_bitmask;
-        public uint blue_bitmask;
-        public Color[] colors;
+        public uint RedBitmask;
+        public uint GreenBitmask;
+        public uint BlueBitmask;
+        public Color[] Colors;
 
         public void Write(Stream stream)
         {
             var bw = new BinaryWriter(stream);
-            bw.Write(red_bitmask);
-            bw.Write(green_bitmask);
-            bw.Write(blue_bitmask);
-            for (int dex = 0; dex < colors.Length; dex++)
+            bw.Write(RedBitmask);
+            bw.Write(GreenBitmask);
+            bw.Write(BlueBitmask);
+            for (var dex = 0; dex < Colors.Length; dex++)
             {
-                bw.Write(colors[dex].R);
-                bw.Write(colors[dex].G);
-                bw.Write(colors[dex].B);
+                bw.Write(Colors[dex].R);
+                bw.Write(Colors[dex].G);
+                bw.Write(Colors[dex].B);
             }
         }
     }
 
-    public class bmp
+    public class Bmp
     {
-        public bmp(int width, int height, short bpp)
+        public Bmp(int width, int height, short bpp)
         {
-            bmph.signature = (byte)'B' | ((byte)'M' << 8);
+            Bmph.signature = (byte)'B' | ((byte)'M' << 8);
 
-            dibh.header_size = Marshal.SizeOf(dibh);
-            dibh.planes = 1;
-            dibh.image_width = width;
-            dibh.image_height = height;
-            dibh.bpp = bpp;
-            dibh.compression = 3;
-            dibh.image_size = (uint)rowsize * (uint)Math.Abs(height);
-            dibh.pixels_per_meter_x = 2835;
-            dibh.pixels_per_meter_y = 2835;
-            dibh.palette_size = 0;
-            dibh.important_color_count = 0;
-            bmph.pixel_offset = (uint)(Marshal.SizeOf(bmph) + dibh.header_size + 12 + (uint)dibh.palette_size * 3);
-            bmph.pixel_offset += 4 - bmph.pixel_offset % 4;
-            bmph.file_size = bmph.pixel_offset + dibh.image_size;
-            pixels = new byte[dibh.image_size];
-            pal = new palette(0);
-            pal.red_bitmask = 0x7c00;
-            pal.green_bitmask = 0x03e0;
-            pal.blue_bitmask = 0x001f;
+            Dibh.header_size = Marshal.SizeOf(Dibh);
+            Dibh.planes = 1;
+            Dibh.image_width = width;
+            Dibh.image_height = height;
+            Dibh.bpp = bpp;
+            Dibh.compression = 3;
+            Dibh.image_size = (uint)Rowsize * (uint)Math.Abs(height);
+            Dibh.pixels_per_meter_x = 2835;
+            Dibh.pixels_per_meter_y = 2835;
+            Dibh.palette_size = 0;
+            Dibh.important_color_count = 0;
+            Bmph.pixel_offset = (uint)(Marshal.SizeOf(Bmph) + Dibh.header_size + 12 + (uint)Dibh.palette_size * 3);
+            Bmph.pixel_offset += 4 - Bmph.pixel_offset % 4;
+            Bmph.file_size = Bmph.pixel_offset + Dibh.image_size;
+            Pixels = new byte[Dibh.image_size];
+            Pal = new Palette(0);
+            Pal.RedBitmask = 0x7c00;
+            Pal.GreenBitmask = 0x03e0;
+            Pal.BlueBitmask = 0x001f;
             //dibh.red_bitmask = 0x7c00;
             //dibh.green_bitmask = 0x03e0;
             //dibh.blue_bitmask = 0x001f;
         }
-        public bmp_header bmph;
-        public bitmapinfo_header dibh;
-        public palette pal;
-        public byte[] pixels;
+        public BmpHeader Bmph;
+        public BitmapinfoHeader Dibh;
+        public Palette Pal;
+        public byte[] Pixels;
 
-        public int rowsize
+        public int Rowsize
         {
             get
             {
-                return ((dibh.bpp * dibh.image_width + 31) / 32) * 4;
+                return (Dibh.bpp * Dibh.image_width + 31) / 32 * 4;
             }
         }
 
         public void Write(Stream stream)
         {
-            bmph.Write(stream);
-            dibh.Write(stream);
-            pal.Write(stream);
-            stream.Position = bmph.pixel_offset;
-            stream.Write(pixels, 0, (int)dibh.image_size);
+            Bmph.Write(stream);
+            Dibh.Write(stream);
+            Pal.Write(stream);
+            stream.Position = Bmph.pixel_offset;
+            stream.Write(Pixels, 0, (int)Dibh.image_size);
         }
     }
 }

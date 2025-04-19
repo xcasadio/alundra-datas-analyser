@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-
-namespace GraphicsTools.Alundra.Sprite
+﻿namespace GraphicsTools.Alundra.Sprite
 {
     public class SpriteInfoSector3
     {

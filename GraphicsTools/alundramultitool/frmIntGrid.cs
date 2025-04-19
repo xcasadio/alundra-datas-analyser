@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-
-namespace alundramultitool
+﻿namespace alundramultitool
 {
-    public partial class frmIntGrid : Form
+    public partial class FrmIntGrid : Form
     {
-        public frmIntGrid()
+        public FrmIntGrid()
         {
             InitializeComponent();
         }

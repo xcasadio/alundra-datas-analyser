@@ -1,37 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GraphicsTools.Alundra
+﻿namespace GraphicsTools.Alundra
 {
     public class GameState
     {
-        public GameMap gameMap;
-        public GameMap global;
-        public BalanceBin balancebin;
-        public SoundBin soundbin;
+        public GameMap GameMap;
+        public readonly GameMap Global;
+        public BalanceBin Balancebin;
+        public SoundBin Soundbin;
         public GameState(GameMap global, BalanceBin balancebin, SoundBin soundbin)
         {
-            this.global = global;
+            Global = global;
         }
         public void LoadMap(GameMap map)
         {
-            this.gameMap = map;
+            GameMap = map;
 
 
             //load MapEvents
             MapEvents = new List<MapEvent>();
-            for (int dex = 0; dex < map.spriteinfo.mapevents.records.Length; dex++)
+            for (var dex = 0; dex < map.Spriteinfo.MapEvents.Records.Length; dex++)
             {
-                var record = map.spriteinfo.mapevents.records[dex];
+                var record = map.Spriteinfo.MapEvents.Records[dex];
                 if (record != null)
                 {
-                    var me = new MapEvent { id = dex };
+                    var me = new MapEvent { Id = dex };
                     me.MapEventRecord = record;
-                    me.ProgramB_Map = record.eventcodesbindex;
+                    me.ProgramBMap = record.Eventcodesbindex;
                     //TODO special logic if the eventcodesindex is 0
                     me.Entity = PlayerEntity;
                     MapEvents.Add(me);
@@ -46,7 +39,7 @@ namespace GraphicsTools.Alundra
 
         public void LoadEntities()
         {
-            for(int dex=0;dex<Entities.Length;dex++)
+            for(var dex=0;dex<Entities.Length;dex++)
             {
                 var entity = new SpriteInstance();
                 entity.Index = dex;
@@ -55,27 +48,30 @@ namespace GraphicsTools.Alundra
             }
 
             MaxEntity = 0;
-            for (int dex = 0;dex< gameMap.spriteinfo.entities.entities.Length;dex++)
+            for (var dex = 0;dex< GameMap.Spriteinfo.Entities.Entities.Length;dex++)
             {
-                var record = gameMap.spriteinfo.entities.entities[dex];
+                var record = GameMap.Spriteinfo.Entities.Entities[dex];
                 if (record == null)
+                {
                     break;
+                }
 
                 var entity = ActivateEntity(null, dex, 0);
 
                 //it does some checks here with memory at 0x1ac468
                 if (entity == null && false && false)
+                {
                     throw new Exception("error loading entity");
-                    
+                }
             }
 
             CamFollowEntity = PlayerEntity;
         }
 
         public int Seed = 42;
-        public int[] GameFlagsMap = new int[1024];
-        public int[] GameFlagsGlobal = new int[1024];
-        public short[] PlayerInput = new short[16];//no idea how many there are
+        public readonly int[] GameFlagsMap = new int[1024];
+        public readonly int[] GameFlagsGlobal = new int[1024];
+        public readonly short[] PlayerInput = new short[16];//no idea how many there are
         public int PlayerControlSetting;
         public int CamXPos;
         public int CamYPos;
@@ -89,8 +85,8 @@ namespace GraphicsTools.Alundra
         public int ActiveEventCode, PrevEventCode, ActiveEventProgramType, ActiveEventProgIndex, ActiveEntityRefId;
 
         public int NumSprites;
-        public SpriteRef[] SpriteRefs = new SpriteRef[2048];
-        public SpriteEffect[] SpriteEffects = new SpriteEffect[0x80];
+        public readonly SpriteRef[] SpriteRefs = new SpriteRef[2048];
+        public readonly SpriteEffect[] SpriteEffects = new SpriteEffect[0x80];
 
         public int EventProgsSet;//a prog was set by an event, main event handler will repond
 
@@ -98,36 +94,36 @@ namespace GraphicsTools.Alundra
         //int NumEntities;
         public int MaxEntity = 0;//higest index entity that is activated
         //64 max
-        public SpriteInstance[] Entities = new SpriteInstance[0x40];
+        public readonly SpriteInstance[] Entities = new SpriteInstance[0x40];
         public SpriteInstance PlayerEntity;
 
         public SpriteInstance ActiveCollisionEntity;
         public SpriteInstance CamFollowEntity;
 
-        public EventProgramState GlobalEventData = new EventProgramState();
+        public readonly EventProgramState GlobalEventData = new();
 
 
-        public SpriteInstance[] GetEntityList = new SpriteInstance[128];
+        public readonly SpriteInstance[] GetEntityList = new SpriteInstance[128];
 
         public int ToCollideCount = 0;
-        public SpriteInstance[] ToCollideList = new SpriteInstance[128];
+        public readonly SpriteInstance[] ToCollideList = new SpriteInstance[128];
 
         public int ToRenderCount = 0;
-        public SpriteInstance[] ToRenderList = new SpriteInstance[128];
+        public readonly SpriteInstance[] ToRenderList = new SpriteInstance[128];
 
         public int ToProcessesCount = 0;
-        public SpriteInstance[] ToProcessList = new SpriteInstance[128];
+        public readonly SpriteInstance[] ToProcessList = new SpriteInstance[128];
 
-        public List<MapEvent> MapEvents = new List<MapEvent>();
+        public List<MapEvent> MapEvents = new();
 
 
-        public SIEntityRecord GetInitData(int entityid)
+        public SiEntityRecord GetInitData(int entityid)
         {
             //if (NumEntities)
             //todo impliment it
             return null;
         }
-        private SIEntityRecord CheckValidEntityId(int entityid)
+        private SiEntityRecord CheckValidEntityId(int entityid)
         {
             var rec = GetInitData(entityid);
 
@@ -151,10 +147,13 @@ namespace GraphicsTools.Alundra
 
         public int TurnEntity(SpriteInstance entity, int turnCode)
         {
-            int turndir = turnCode & 0x1f;
-            int turntype = turnCode >> 5;
+            var turndir = turnCode & 0x1f;
+            var turntype = turnCode >> 5;
             if (turntype >= 8)
+            {
                 return 0;
+            }
+
             switch(turntype)
             {
                 case 1:
@@ -166,20 +165,20 @@ namespace GraphicsTools.Alundra
                     return (dfv + turndir) & 0x1f;
                 case 4:
                     {
-                        int i = Seed;
-                        int val1 = (int)(i * 0x7d2b89dd);
-                        int val2 = (int)(0xe06a02e7 + val1);
-                        int val3 = (int)(((long)val2 * 4) >> 32);
+                        var i = Seed;
+                        var val1 = (int)(i * 0x7d2b89dd);
+                        var val2 = (int)(0xe06a02e7 + val1);
+                        var val3 = (int)(((long)val2 * 4) >> 32);
                         Seed = val2;
                         var dir = Helper.CardinalDirTable[val3];//val3 here is a number between 0 and 3
                         return dir;
                     }
                 case 5:
                     {
-                        int i = Seed;
-                        int val1 = (int)(i * 0x7d2b89dd);
-                        int val2 = (int)(0xe06a02e7 + val1);
-                        int val3 = (int)(((long)val2 * 0x20) >> 32);
+                        var i = Seed;
+                        var val1 = (int)(i * 0x7d2b89dd);
+                        var val2 = (int)(0xe06a02e7 + val1);
+                        var val3 = (int)(((long)val2 * 0x20) >> 32);
                         Seed = val2;
                         return val2;
                     }
@@ -188,7 +187,10 @@ namespace GraphicsTools.Alundra
                 case 7:
                     var ret = GetCardialDirToPlayer(entity);
                     if (ret != -1)
+                    {
                         return (ret + turndir) & 0x1f;
+                    }
+
                     break;
                 case 0:
                     break;
@@ -199,7 +201,9 @@ namespace GraphicsTools.Alundra
         public int GetCardialDirToPlayer(SpriteInstance entity)
         {
             if (entity == ActiveCollisionEntity)
+            {
                 return -1;
+            }
 
             var difx = PlayerEntity.ModdedXPos - entity.ModdedXPos;
 
@@ -208,24 +212,26 @@ namespace GraphicsTools.Alundra
             {
                 //checkx
                 if (PlayerEntity.XPos < entity.XPos)
+                {
                     return 0x08;
-                else
-                    return 0x18;
+                }
+
+                return 0x18;
             }
-            else
+
+            //checky
+            if (PlayerEntity.YPos < entity.YPos)
             {
-                //checky
-                if (PlayerEntity.YPos < entity.YPos)
-                    return 0x10;
-                else
-                    return 0x00;
+                return 0x10;
             }
+
+            return 0x00;
 
         }
 
         public int GetEntityFromRefId(SpriteInstance ownerEntity, int entityid)
         {
-            int numgot = 0;
+            var numgot = 0;
             if ((entityid & 0x80) == 0)
             {
                 CheckValidEntityId(entityid);//calls getinitrecord which is a 20 byte datarecord SIEntityRecord
@@ -238,125 +244,123 @@ namespace GraphicsTools.Alundra
                 }
                 return numgot;
             }
-            else
+
+            var functionid = entityid & 0x7f;
+            switch (functionid)
             {
-                var functionid = entityid & 0x7f;
-                switch (functionid)
-                {
-                    case 0://get owner
-                        GetEntityList[numgot++] = ownerEntity;
-                        return numgot;
-                    case 1://get player
-                        GetEntityList[numgot++] = PlayerEntity;
-                        return numgot;
-                    case 2://get all entities
-                        foreach (var entity in Entities)
+                case 0://get owner
+                    GetEntityList[numgot++] = ownerEntity;
+                    return numgot;
+                case 1://get player
+                    GetEntityList[numgot++] = PlayerEntity;
+                    return numgot;
+                case 2://get all entities
+                    foreach (var entity in Entities)
+                    {
+                        if (entity.Status - 1 < 2 || entity.Status == 3)
                         {
-                            if (entity.Status - 1 < 2 || entity.Status == 3)
-                            {
-                                GetEntityList[numgot++] = entity;
-                            }
+                            GetEntityList[numgot++] = entity;
                         }
-                        return numgot;
-                    case 3://get all entities except player
-                        foreach (var entity in Entities.Skip(1))
+                    }
+                    return numgot;
+                case 3://get all entities except player
+                    foreach (var entity in Entities.Skip(1))
+                    {
+                        if (entity.Status - 1 < 2 || entity.Status == 3)
                         {
-                            if (entity.Status - 1 < 2 || entity.Status == 3)
-                            {
-                                GetEntityList[numgot++] = entity;
-                            }
+                            GetEntityList[numgot++] = entity;
                         }
-                        return numgot;
-                    case 4://all entities on the ground
-                        foreach (var entity in Entities)
+                    }
+                    return numgot;
+                case 4://all entities on the ground
+                    foreach (var entity in Entities)
+                    {
+                        if ((ownerEntity.Status - 1 < 2 || ownerEntity.Status == 3)
+                            && (entity.Flags & 0x80) != 0
+                            && (entity.AnimFlags & 0x80) == 0
+                            && entity.PlatformEntity == null)
                         {
-                            if ((ownerEntity.Status - 1 < 2 || ownerEntity.Status == 3)
-                                && (entity.Flags & 0x80) != 0
-                                && (entity.AnimFlags & 0x80) == 0
-                                && entity.PlatformEntity == null)
-                            {
-                                GetEntityList[numgot++] = entity;
-                            }
+                            GetEntityList[numgot++] = entity;
                         }
-                        return numgot;
-                    case 5://all entities besides player that the ownerentity is riding on
-                        foreach (var entity in Entities.Skip(1))
+                    }
+                    return numgot;
+                case 5://all entities besides player that the ownerentity is riding on
+                    foreach (var entity in Entities.Skip(1))
+                    {
+                        if ((entity.Status - 1 < 2 || entity.Status == 3)
+                            && ownerEntity.RidingEntity == entity)
                         {
-                            if ((entity.Status - 1 < 2 || entity.Status == 3)
-                                && ownerEntity.RidingEntity == entity)
-                            {
-                                GetEntityList[numgot++] = entity;
-                            }
+                            GetEntityList[numgot++] = entity;
+                        }
 
-                        }
-                        return numgot;
-                    case 6://all entities besides player that are riding on the ownerentity
-                        foreach (var entity in Entities.Skip(1))
+                    }
+                    return numgot;
+                case 6://all entities besides player that are riding on the ownerentity
+                    foreach (var entity in Entities.Skip(1))
+                    {
+                        if ((entity.Status - 1 < 2 || entity.Status == 3)
+                            && entity.RidingEntity == ownerEntity)
                         {
-                            if ((entity.Status - 1 < 2 || entity.Status == 3)
-                                && entity.RidingEntity == ownerEntity)
-                            {
-                                GetEntityList[numgot++] = entity;
-                            }
-
+                            GetEntityList[numgot++] = entity;
                         }
-                        return numgot;
-                    case 7://all entities besides player where ownerentity.xcollision? == entity
-                        foreach (var entity in Entities.Skip(1))
+
+                    }
+                    return numgot;
+                case 7://all entities besides player where ownerentity.xcollision? == entity
+                    foreach (var entity in Entities.Skip(1))
+                    {
+                        if ((entity.Status - 1 < 2 || entity.Status == 3)
+                            && ownerEntity.XCollisionEntity == entity)
                         {
-                            if ((entity.Status - 1 < 2 || entity.Status == 3)
-                                && ownerEntity.XCollisionEntity == entity)
-                            {
-                                GetEntityList[numgot++] = entity;
-                            }
-
+                            GetEntityList[numgot++] = entity;
                         }
-                        return numgot;
-                    case 8://all entities besides player where entity.xcollision? == ownerentity
-                        foreach (var entity in Entities.Skip(1))
+
+                    }
+                    return numgot;
+                case 8://all entities besides player where entity.xcollision? == ownerentity
+                    foreach (var entity in Entities.Skip(1))
+                    {
+                        if ((entity.Status - 1 < 2 || entity.Status == 3)
+                            && entity.XCollisionEntity == ownerEntity)
                         {
-                            if ((entity.Status - 1 < 2 || entity.Status == 3)
-                                && entity.XCollisionEntity == ownerEntity)
-                            {
-                                GetEntityList[numgot++] = entity;
-                            }
-
+                            GetEntityList[numgot++] = entity;
                         }
-                        return numgot;
-                    case 9://all entities besides player where entity.ownerentity [c] == ownerentity
-                        foreach (var entity in Entities.Skip(1))
+
+                    }
+                    return numgot;
+                case 9://all entities besides player where entity.ownerentity [c] == ownerentity
+                    foreach (var entity in Entities.Skip(1))
+                    {
+                        if ((entity.Status - 1 < 2 || entity.Status == 3)
+                            && entity.OwnerEntity == ownerEntity )
                         {
-                            if ((entity.Status - 1 < 2 || entity.Status == 3)
-                                && entity.OwnerEntity == ownerEntity )
-                            {
-                                GetEntityList[numgot++] = entity;
-                            }
-
+                            GetEntityList[numgot++] = entity;
                         }
-                        return numgot;
-                    case 10://all entities besides player where ownerentity.ownerentity [c] == entity
-                        foreach (var entity in Entities.Skip(1))
+
+                    }
+                    return numgot;
+                case 10://all entities besides player where ownerentity.ownerentity [c] == entity
+                    foreach (var entity in Entities.Skip(1))
+                    {
+                        if ((entity.Status - 1 < 2 || entity.Status == 3)
+                            && ownerEntity.OwnerEntity == entity)
                         {
-                            if ((entity.Status - 1 < 2 || entity.Status == 3)
-                                && ownerEntity.OwnerEntity == entity)
-                            {
-                                GetEntityList[numgot++] = entity;
-                            }
-
+                            GetEntityList[numgot++] = entity;
                         }
-                        return numgot;
-                    case 11://all entities besides player that are on a platform
-                        foreach (var entity in Entities.Skip(1))
+
+                    }
+                    return numgot;
+                case 11://all entities besides player that are on a platform
+                    foreach (var entity in Entities.Skip(1))
+                    {
+                        if ((entity.Status - 1 < 2 || entity.Status == 3)
+                            && entity.PlatformEntity != null)
                         {
-                            if ((entity.Status - 1 < 2 || entity.Status == 3)
-                                && entity.PlatformEntity != null)
-                            {
-                                GetEntityList[numgot++] = entity;
-                            }
-
+                            GetEntityList[numgot++] = entity;
                         }
-                        return numgot;
-                }
+
+                    }
+                    return numgot;
             }
 
             return numgot;
@@ -376,59 +380,85 @@ namespace GraphicsTools.Alundra
                 //if player is outside of the activation zone dont activate
                 //  this is used when a map has multiple rooms, the activate zone is set to the room where
                 //  the entity is, if the player loads in a different room then the entity wont activate
-                if (PlayerEntity.XTile < data.minx)
+                if (PlayerEntity.XTile < data.Minx)
+                {
                     return null;
-                if (data.maxx < PlayerEntity.XTile)
+                }
+
+                if (data.Maxx < PlayerEntity.XTile)
+                {
                     return null;
-                if (PlayerEntity.YTile < data.miny)
+                }
+
+                if (PlayerEntity.YTile < data.Miny)
+                {
                     return null;
-                if (data.maxy < PlayerEntity.YTile)
+                }
+
+                if (data.Maxy < PlayerEntity.YTile)
+                {
                     return null;
+                }
             }
 
-            if ((data.spritedir & 0x40) == 0 && forceactivate == 0)
+            if ((data.Spritedir & 0x40) == 0 && forceactivate == 0)
+            {
                 return null;
+            }
 
             int addedtosheet, addedtopalette;
-            bool isMapSprite = (data.spritedir & 0x80) != 0;
-            var sprite = GetSpriteFromSpriteTable(isMapSprite, data.spritetableindex, out addedtosheet, out addedtopalette);
+            var isMapSprite = (data.Spritedir & 0x80) != 0;
+            var sprite = GetSpriteFromSpriteTable(isMapSprite, data.Spritetableindex, out addedtosheet, out addedtopalette);
 
             if (sprite == null)
+            {
                 return null;
+            }
 
             var entity = GetNextAvailableEntity();
 
             if (entity == null)
+            {
                 return null;
+            }
 
-            int x = (data.xpos * 12 + 12) << 16;
-            int y = (data.xpos * 8 + 8) << 16;
-            int z = data.height << 19;
+            var x = (data.Xpos * 12 + 12) << 16;
+            var y = (data.Xpos * 8 + 8) << 16;
+            var z = data.Height << 19;
 
-            int[] dirtable = new[] { 0x00, 0x10, 0x08, 0x18 };
-            var dir = dirtable[data.spritedir & 0x3];
+            var dirtable = new[] { 0x00, 0x10, 0x08, 0x18 };
+            var dir = dirtable[data.Spritedir & 0x3];
 
-            var spritetable = (int)data.spritetableindex;
-            if ((data.spritedir & 0x80) != 0)
+            var spritetable = (int)data.Spritetableindex;
+            if ((data.Spritedir & 0x80) != 0)
+            {
                 spritetable += 0x100;
+            }
 
             InitEntity(entity, ownerEntity, sprite, data, spritetable, entityid, x, y, z, 0, dir, addedtosheet, addedtopalette);
 
             return entity;
         }
 
-        public void InitEntity(SpriteInstance entity, SpriteInstance ownerentity, SpriteRecord sprite, SIEntityRecord initdata, int spritetableindex, int entityid, int x, int y, int z, int anim, int dir, int addedtosheet, int addedtopalette)
+        public void InitEntity(SpriteInstance entity, SpriteInstance ownerentity, SpriteRecord sprite, SiEntityRecord initdata, int spritetableindex, int entityid, int x, int y, int z, int anim, int dir, int addedtosheet, int addedtopalette)
         {
             if (MaxEntity < entity.Index)
+            {
                 MaxEntity = entity.Index;
+            }
+
             entity.OwnerEntity = ownerentity;
 
             if (ownerentity != null)
             {
                 if (ownerentity.UnknownBeforeOwnerEntity != null)
+                {
                     entity.UnknownBeforeOwnerEntity = ownerentity.UnknownBeforeOwnerEntity;
+                }
                 else
+                {
                     entity.UnknownBeforeOwnerEntity = ownerentity;
+                }
             }
 
             entity.Sprite = sprite;
@@ -452,30 +482,30 @@ namespace GraphicsTools.Alundra
             entity.CurDir = ~dir;
             entity.TargetAnim = anim;
             entity.TargetDir = dir;
-            entity.Flags = sprite.header.moreflags | sprite.header.canpickup << 8 | sprite.header.flags_portrait_shadowtype << 16;
+            entity.Flags = sprite.Header.Moreflags | sprite.Header.Canpickup << 8 | sprite.Header.FlagsPortraitShadowtype << 16;
 
-            entity.Sprite_Program_Indexes[1] = 0;
-            entity.Sprite_Program_Indexes[0] = sprite.header.program_load;
-            entity.Sprite_Program_Indexes[2] = sprite.header.program_tick;
-            entity.Sprite_Program_Indexes[3] = sprite.header.program_touch;
-            entity.Sprite_Program_Indexes[4] = sprite.header.program_deactivate;
-            entity.Sprite_Program_Indexes[5] = sprite.header.program_interact;
+            entity.SpriteProgramIndexes[1] = 0;
+            entity.SpriteProgramIndexes[0] = sprite.Header.ProgramLoad;
+            entity.SpriteProgramIndexes[2] = sprite.Header.ProgramTick;
+            entity.SpriteProgramIndexes[3] = sprite.Header.ProgramTouch;
+            entity.SpriteProgramIndexes[4] = sprite.Header.ProgramDeactivate;
+            entity.SpriteProgramIndexes[5] = sprite.Header.ProgramInteract;
 
             entity.AddedToSheet = addedtosheet;
             entity.AddedToPalette = addedtopalette;
 
-            var ret = balancebin.GetBalanceRecordFromSpriteIndex(spritetableindex, gameMap.info.balancelevel);
+            var ret = Balancebin.GetBalanceRecordFromSpriteIndex(spritetableindex, GameMap.Info.BalanceLevel);
             entity.BalanceRecord = ret;
-            entity.HP = ret.Hp;
+            entity.Hp = ret.Hp;
             entity.MaxHp = ret.Hp;
 
             InitCodePrograms(entity);
 
-            InitEntityDimensions(entity, sprite.header.xmod, sprite.header.ymod, sprite.header.zmod, sprite.header.width, sprite.header.depth, sprite.header.height);
+            InitEntityDimensions(entity, sprite.Header.Xmod, sprite.Header.Ymod, sprite.Header.Zmod, sprite.Header.Width, sprite.Header.Depth, sprite.Header.Height);
 
             entity.XPos = x;
             entity.YPos = y;
-            entity.ZPos = (z - entity.ZMod) + 1;
+            entity.ZPos = z - entity.ZMod + 1;
             
             UpdateAnim(entity);
 
@@ -499,14 +529,13 @@ namespace GraphicsTools.Alundra
             InitContents(entity);
         }
 
-        
 
-        void InitContents(SpriteInstance entity)
+        private void InitContents(SpriteInstance entity)
         {
             
             if (entity.EntityRecord != null)
             {
-                int u7 = entity.EntityRecord.u7;
+                int u7 = entity.EntityRecord.U7;
 
                 if ((u7 & 0x7ffff) >= 800)
                 {
@@ -516,7 +545,7 @@ namespace GraphicsTools.Alundra
                 entity.ContentsGameFlag = u7;
                 if (u7 != 0)
                 {
-                    int flagid = ((u7 >> 3) & 0xffc) >> 2;
+                    var flagid = ((u7 >> 3) & 0xffc) >> 2;
 
                     int flag;
                     if((u7 & 0x8000) != 0)
@@ -528,24 +557,24 @@ namespace GraphicsTools.Alundra
                         flag = GameFlagsGlobal[flagid];
                     }
 
-                    int val = u7;
+                    var val = u7;
                     if (u7 < 0)
                     {
                         val = u7 + 0x1f;
                     }
-                    int val2 = val >> 5;
+                    var val2 = val >> 5;
                     val2 = val2 << 5;
-                    int dif = val - val2;
-                    int bittocheck = 1 << dif;
+                    var dif = val - val2;
+                    var bittocheck = 1 << dif;
                     if ((flag & bittocheck) != 0)
                     {
                         entity.ContentsItemId = GetContentsItemId(0);
                         return;
                     }
                 }
-                if (entity.EntityRecord.contents != 0)
+                if (entity.EntityRecord.Contents != 0)
                 {
-                    entity.ContentsItemId = GetContentsItemId(entity.EntityRecord.contents);
+                    entity.ContentsItemId = GetContentsItemId(entity.EntityRecord.Contents);
                     return;
                 }
             }
@@ -554,33 +583,38 @@ namespace GraphicsTools.Alundra
                 entity.ContentsGameFlag = 0;
             }
 
-            entity.ContentsItemId = GetContentsItemId(entity.Sprite.header.contents);
+            entity.ContentsItemId = GetContentsItemId(entity.Sprite.Header.Contents);
         }
 
-        byte[][] contentstable = new byte[][]{ 
+        private byte[][] _contentstable = new byte[][]{ 
             new byte[]{0,1,2,3,4,5 },
             new byte[] {0,1,2,3 }
 
         };
-        int GetContentsItemId(int contentsid)
+
+        private int GetContentsItemId(int contentsid)
         {
             do
             {
                 if (contentsid >= 0x100)
+                {
                     return 0;
+                }
 
                 if ((contentsid & 0x80) == 0)
+                {
                     return contentsid & (0 - (contentsid < 0x62 ? 1 : 0));
+                }
 
-                int i = Seed;
-                int val1 = (int)(i * 0x7d2b89dd);
-                int val2 = (int)(0xe06a02e7 + val1);
-                int targetval = (int)(((long)val2 * 16) >> 32);
+                var i = Seed;
+                var val1 = (int)(i * 0x7d2b89dd);
+                var val2 = (int)(0xe06a02e7 + val1);
+                var targetval = (int)(((long)val2 * 16) >> 32);
                 Seed = val2;
 
-                int tableid = contentsid & 0x7f;
+                var tableid = contentsid & 0x7f;
                 //0x28db0 a table
-                contentsid = ContentsTable[tableid][targetval];
+                contentsid = _contentsTable[tableid][targetval];
                 
 
             } while (true);
@@ -609,11 +643,11 @@ namespace GraphicsTools.Alundra
             if ((entity.Flags & 0x100) != 0)
             {
                 tohit = 0xe00;
-                int[] somevals = new int[4];
-                for (int dex=0;dex<4;dex++)
+                var somevals = new int[4];
+                for (var dex=0;dex<4;dex++)
                 {
                     var tl = entity.MapTiles[dex];
-                    var fullval = tl.walkability | tl.groundproperty << 8 | tl.slope << 16 | tl.height << 24;
+                    var fullval = tl.Walkability | tl.GroundProperty << 8 | tl.Slope << 16 | tl.Height << 24;
                     if (entity.MapHeights[dex]+1 == entity.ModdedZPos)
                     {
                         
@@ -621,7 +655,7 @@ namespace GraphicsTools.Alundra
                         if ((fullval & 0xe00) < tohit)
                         {
                             somevals[dex] = fullval;
-                            tohit = (fullval & 0xe00);
+                            tohit = fullval & 0xe00;
                         }
                     }
                     else
@@ -639,7 +673,9 @@ namespace GraphicsTools.Alundra
                 if (tilex > 0)
                 {
                     if (tilex >= 0x34)
+                    {
                         tilex = 0x33;
+                    }
                 }
                 else
                 {
@@ -649,15 +685,17 @@ namespace GraphicsTools.Alundra
                 if (tiley > 0)
                 {
                     if (tiley >= 0x3c)
+                    {
                         tiley = 0x3b;
+                    }
                 }
                 else
                 {
                     tiley = 0;
                 }
 
-                var tile = gameMap.map.maptiles[tilex + tiley * 52];
-                var fullval2 = tile.walkability | tile.groundproperty << 8 | tile.slope << 16 | tile.height << 24;
+                var tile = GameMap.Map.MapTiles[tilex + tiley * 52];
+                var fullval2 = tile.Walkability | tile.GroundProperty << 8 | tile.Slope << 16 | tile.Height << 24;
                 var height = (int)(fullval2 & 0xff000000 >> 4) + 1;
                 var r3 = height ^ entity.ModdedZPos;
             }
@@ -680,46 +718,68 @@ namespace GraphicsTools.Alundra
         {
             var collision = entity.ZMapCollision + 1;
             if ((entity.Flags & 0x80) == 0)
+            {
                 return collision;
+            }
+
             if ((entity.AnimFlags & 0x80) != 0)
+            {
                 return collision;
+            }
+
             if (entity.PlatformEntity != null)
+            {
                 return collision;
+            }
 
             if (ToCollideCount <= 0)
+            {
                 return collision;
+            }
 
-            for( int dex = 0;dex<ToCollideCount;dex++)
+            for( var dex = 0;dex<ToCollideCount;dex++)
             {
                 var checkme = ToCollideList[dex];
 
                 if (checkme == entity)
+                {
                     continue;
-                
+                }
+
                 if (checkme.ModdedZPos + checkme.Height >= entity.ModdedZPos
-                 || checkme.ModdedZPos + checkme.Height < collision)
+                    || checkme.ModdedZPos + checkme.Height < collision)
+                {
                     continue;
+                }
 
                 if (checkme.ModdedXPos-entity.ModdedXPos >= 0)
                 {
                     if (checkme.ModdedXPos - entity.ModdedXPos >= entity.Width + 1)
+                    {
                         continue;
+                    }
                 }
                 else
                 {
                     if (entity.ModdedXPos - checkme.ModdedXPos >= checkme.Width + 1)
+                    {
                         continue;
+                    }
                 }
 
                 if (checkme.ModdedYPos-entity.ModdedYPos >= 0)
                 {
                     if (checkme.ModdedYPos - entity.ModdedYPos < entity.Depth + 1)
+                    {
                         collision = checkme.ModdedZPos + checkme.Height;
+                    }
                 }
                 else
                 {
                     if (entity.ModdedYPos-checkme.ModdedYPos < checkme.Depth+1)
+                    {
                         collision = checkme.ModdedZPos + checkme.Height;
+                    }
                 }
 
             }
@@ -728,12 +788,12 @@ namespace GraphicsTools.Alundra
 
         public int CollideWithMap(SpriteInstance entity)
         {
-            int[] xs = new int[4];
-            int[] ys = new int[4];
-            int x1 = (entity.XPos + entity.XMod) >> 16;
-            int x2 = (entity.XPos + entity.XMod + entity.Width) >> 16;
-            int y1 = (entity.YPos + entity.YMod) >> 16;
-            int y2 = (entity.YPos + entity.YMod + entity.Depth) >> 16;
+            var xs = new int[4];
+            var ys = new int[4];
+            var x1 = (entity.XPos + entity.XMod) >> 16;
+            var x2 = (entity.XPos + entity.XMod + entity.Width) >> 16;
+            var y1 = (entity.YPos + entity.YMod) >> 16;
+            var y2 = (entity.YPos + entity.YMod + entity.Depth) >> 16;
             xs[0] = x1;
             ys[0] = y1;
             xs[1] = x2;
@@ -742,9 +802,9 @@ namespace GraphicsTools.Alundra
             ys[2] = y2;
             xs[3] = x2;
             ys[3] = y2;
-            int highest = 0;
-            int slopes_hit = 0;
-            for (int dex=0;dex<4;dex++)
+            var highest = 0;
+            var slopesHit = 0;
+            for (var dex=0;dex<4;dex++)
             {
                 var x = xs[dex];
                 var y = ys[dex];
@@ -752,7 +812,10 @@ namespace GraphicsTools.Alundra
                 if (tilex > 0)
                 {
                     if (tilex >= 0x34)
+                    {
                         tilex = 0x33;
+                    }
+
                     tilex = tilex << 16;
                     tilex = tilex >> 16;
                 }
@@ -764,7 +827,10 @@ namespace GraphicsTools.Alundra
                 if (tiley > 0)
                 {
                     if (tiley >= 0x3c)
+                    {
                         tiley = 0x3b;
+                    }
+
                     tiley = tiley << 16;
                     tiley = tiley >> 16;
                 }
@@ -773,17 +839,17 @@ namespace GraphicsTools.Alundra
                     tiley = 0;
                 }
                 //int offset = (tilex * 8) + (tiley * 8 * 52);
-                var tile = gameMap.map.maptiles[tiley * 52 + tilex];
+                var tile = GameMap.Map.MapTiles[tiley * 52 + tilex];
                 entity.MapTiles[dex] = tile;
                 int height;
-                if ((tile.slope & 0x3) != 0)
+                if ((tile.Slope & 0x3) != 0)
                 {
-                    height = tile.height * 16;//puts it in pixels
+                    height = tile.Height * 16;//puts it in pixels
                     //bunch of slope stuff
-                    switch(tile.slope & 0x3)
+                    switch(tile.Slope & 0x3)
                     {
                         case 1:
-                            if ((slopes_hit & 6) != 0)//it already hit 2 or 3
+                            if ((slopesHit & 6) != 0)//it already hit 2 or 3
                             {
                                 height += 0x10;//add a tile;
                             }
@@ -793,16 +859,19 @@ namespace GraphicsTools.Alundra
                                 var result = height + 0x10;
                                 var my2 = my;
                                 if (my < 0)
+                                {
                                     my2 = my + 15;
+                                }
+
                                 my2 = my2 / 16;
                                 my2 = my2 * 16;
                                 var remainder = my - my2;
                                 height = result - remainder;
                             }
-                            slopes_hit |= 1;
+                            slopesHit |= 1;
                             break;
                         case 2:
-                            if ((slopes_hit & 5) != 0)//it already hit 1 or 3
+                            if ((slopesHit & 5) != 0)//it already hit 1 or 3
                             {
                                 height += 0x10;//add a tile;
                             }
@@ -814,7 +883,7 @@ namespace GraphicsTools.Alundra
                                 var remainder = mx - mx2;
                                 remainder = 0x17 - remainder;
 
-                                int result = (int)(((float)remainder / 0x18) * 0x10);
+                                var result = (int)((float)remainder / 0x18 * 0x10);
                                 /*var result = (int)((mx * (long)0x2aaaaaab)>>32);//get the high dword
                                 int neg = result >> 31;
                                 int res2 = result >> 2;//divide by 4
@@ -826,10 +895,10 @@ namespace GraphicsTools.Alundra
                                 //result = 0x236d4[res2];some lookuptable of heights based on width*/
                                 height += result;
                             }
-                            slopes_hit |= 2;
+                            slopesHit |= 2;
                             break;
                         case 3:
-                            if ((slopes_hit & 3) != 0)//it already hit 1 or 2
+                            if ((slopesHit & 3) != 0)//it already hit 1 or 2
                             {
                                 height += 0x10;
                             }
@@ -841,7 +910,7 @@ namespace GraphicsTools.Alundra
                                 var remainder = mx - mx2;
                                 //remainder = 0x17 - remainder;
 
-                                int result = (int)(((float)remainder / 0x18) * 0x10);
+                                var result = (int)((float)remainder / 0x18 * 0x10);
                                 /*var result = (int)((mx * (long)0x2aaaaaab) >> 32);//get the high dword
                                 int neg = result >> 31;
                                 int res2 = result >> 2;//divide by 4
@@ -853,7 +922,7 @@ namespace GraphicsTools.Alundra
                                 //result = 0x236d4[res2];some lookuptable*/
                                 height += result;
                             }
-                            slopes_hit |= 4;
+                            slopesHit |= 4;
                             break;
                     }
 
@@ -861,17 +930,19 @@ namespace GraphicsTools.Alundra
                 }
                 else
                 {
-                    height = (tile.height*16) << 16;//put in pixels then shift over to fixed float
+                    height = (tile.Height*16) << 16;//put in pixels then shift over to fixed float
                 }
 
                 entity.MapHeights[dex] = height;
                 if (highest < height)
+                {
                     highest = height;
+                }
             }
             return highest;
         }
 
-        static int[] FrameDexTable = new int[]{
+        private static int[] _frameDexTable = new int[]{
 0x00000000,
 0x00000000,
 0x00000002,
@@ -910,29 +981,29 @@ namespace GraphicsTools.Alundra
         {
             //TODO
             var dirdex = ((entity.TargetDir + 2) & 0x1c) >> 2;
-            var fdex = FrameDexTable[dirdex + (entity.FrameDex << 3)];
-            SIFrame frame = null;
+            var fdex = _frameDexTable[dirdex + (entity.CurrentFrame << 3)];
+            SiFrame frame = null;
             entity.AppliedZForce = 0;
             if (entity.TargetAnim != entity.CurAnim
-                || fdex!= entity.FrameDex)
+                || fdex!= entity.CurrentFrame)
             {
-                entity.AnimSet = entity.Sprite.animsets[entity.TargetAnim];
-                entity.FrameDex = fdex;
+                entity.AnimSet = entity.Sprite.Animsets[entity.TargetAnim];
+                entity.CurrentFrame = fdex;
                 //SIAnimSet se;
                 //se.animoffsets[]
 
                 entity.NextFrameDelay = 0;
                 entity.CurAnim = entity.TargetAnim;
                 //TODO: look into if these indexes are correct
-                frame = entity.AnimSet.preloaded_anims[entity.TargetDir].frames[fdex];
+                frame = entity.AnimSet.PreloadedAnims[entity.TargetDir].Frames[fdex];
 
                 entity.FirstFrame = frame;
                 entity.Frame = frame;
 
-                entity.AppliedZForce = entity.AnimSet.speed;
+                entity.AppliedZForce = entity.AnimSet.Speed;
 
                 entity.WierdNextFrameDelayFlag = 0;
-                entity.AnimFlags = entity.AnimSet.flags;
+                entity.AnimFlags = entity.AnimSet.Flags;
                 BalanceAnimValRef avr = null;
                 if (entity.BalanceRecord.NumAnimVals != 0)
                 {
@@ -947,8 +1018,8 @@ namespace GraphicsTools.Alundra
                 }
                 entity.BalanceVal = avr;
 
-                int sfx = entity.AnimSet.sfx;
-                if ((entity.AnimSet.flags & 0x20) != 0)
+                int sfx = entity.AnimSet.Sfx;
+                if ((entity.AnimSet.Flags & 0x20) != 0)
                 {
                     sfx += 0x100;
                 }
@@ -958,20 +1029,23 @@ namespace GraphicsTools.Alundra
             else
             {
                 if (--entity.NextFrameDelay != 0)
+                {
                     return;
+                }
+
                 //time to change the frame
                 frame = entity.Frame;
             }
             do
             {
                 //if it has a next frame
-                if ((frame.delay & 0x80) != 0)
+                if ((frame.Delay & 0x80) != 0)
                 {
-                    entity.NextFrameDelay = frame.delay & 0x7f;
+                    entity.NextFrameDelay = frame.Delay & 0x7f;
                     //TODO: better way to do this
-                    entity.Frame = entity.AnimSet.preloaded_anims[entity.TargetDir].frames[entity.FrameDex + 1];
+                    entity.Frame = entity.AnimSet.PreloadedAnims[entity.TargetDir].Frames[entity.CurrentFrame + 1];
 
-                    if (frame.collisionoffset != -1)
+                    if (frame.Collisionoffset != -1)
                     {
                         entity.FrameCollision = entity.Frame.CollisionData;
                         entity.FrameXOff = entity.FrameCollision.XOff << 16;
@@ -986,11 +1060,11 @@ namespace GraphicsTools.Alundra
                         entity.FrameCollision = null;
                     }
 
-                    if (frame.imagesetpointer != -1)
+                    if (frame.Imagesetpointer != -1)
                     {
-                        entity.SpriteRef.Images = frame.images.images;
-                        entity.SpriteRef.DepthSortVal = frame.images.unknown;
-                        entity.SpriteRef.NumImages = frame.images.numimages;
+                        entity.SpriteRef.Images = frame.Images.Images;
+                        entity.SpriteRef.DepthSortVal = frame.Images.Unknown;
+                        entity.SpriteRef.NumImages = frame.Images.Numimages;
                         return;
                     }
                     entity.SpriteRef.Images = null;
@@ -999,9 +1073,9 @@ namespace GraphicsTools.Alundra
                     return;
                 }
 
-                if (frame.delay != 0)
+                if (frame.Delay != 0)
                 {
-                    if (frame.delay != 1)
+                    if (frame.Delay != 1)
                     {
                         //this is a bad state, output debug info
                         throw new Exception("this is a bad animation state");
@@ -1009,14 +1083,14 @@ namespace GraphicsTools.Alundra
                 }
                 else
                 {//frame.delay = 0, non repeating animation?
-                    if ((frame.collisionoffset & 0x80) != 0)//why, it doesnt relaly make sense
+                    if ((frame.Collisionoffset & 0x80) != 0)//why, it doesnt relaly make sense
                     {
                         entity.NextFrameDelay = 0x7fffffff;//what will this mean
                         entity.WierdNextFrameDelayFlag = 1;
                         return;
                     }
-                    fdex = entity.FrameDex;
-                    entity.TargetAnim = frame.collisionoffset & 0xff;
+                    fdex = entity.CurrentFrame;
+                    entity.TargetAnim = frame.Collisionoffset & 0xff;
                     entity.AnimCompleteCounter++;////we get here when the animation is nonrepeating and is finished, so it switches back to some other animation
                                                  //call recursivly?
                     UpdateAnim(entity);
@@ -1032,9 +1106,9 @@ namespace GraphicsTools.Alundra
         {
             entity.NegXMod = -(xmod << 16);
             entity.NegYMod = -(ymod << 16);
-            entity.XMod = (xmod << 16);
-            entity.YMod = (ymod << 16);
-            entity.ZMod = (zmod << 16);
+            entity.XMod = xmod << 16;
+            entity.YMod = ymod << 16;
+            entity.ZMod = zmod << 16;
 
             entity.ScreenClipX = 0x4e00000 - ((xmod + width) << 16);
             entity.ScreenClipY = 0x3c00000 - ((ymod + depth) << 16);
@@ -1073,36 +1147,41 @@ namespace GraphicsTools.Alundra
             entity.EntitySelf = entity;
             if (entity.EntityRecord != null)
             {
-                entity.Program_Indexes[Helper.PROGRAM_A_LOAD] = entity.EntityRecord.eventcodesa_load_index;
-                entity.Program_Indexes[Helper.PROGRAM_B_MAP] = entity.EntityRecord.eventcodesb_map_index;
-                entity.Program_Indexes[Helper.PROGRAM_C_TICK] = entity.EntityRecord.eventcodesc_tick_index;
-                entity.Program_Indexes[Helper.PROGRAM_D_TOUCH] = entity.EntityRecord.eventcodesd_touch_index;
-                entity.Program_Indexes[Helper.PROGRAM_E_DEACTIVATE] = entity.EntityRecord.eventcodese_deactivate_index;
-                entity.Program_Indexes[Helper.PROGRAM_F_INTERACT] = entity.EntityRecord.eventcodesf_interact_index;
+                entity.ProgramIndexes[Helper.ProgramALoad] = entity.EntityRecord.EventcodesaLoadIndex;
+                entity.ProgramIndexes[Helper.ProgramBMap] = entity.EntityRecord.EventcodesbMapIndex;
+                entity.ProgramIndexes[Helper.ProgramCTick] = entity.EntityRecord.EventcodescTickIndex;
+                entity.ProgramIndexes[Helper.ProgramDTouch] = entity.EntityRecord.EventcodesdTouchIndex;
+                entity.ProgramIndexes[Helper.ProgramEDeactivate] = entity.EntityRecord.EventcodeseDeactivateIndex;
+                entity.ProgramIndexes[Helper.ProgramFInteract] = entity.EntityRecord.EventcodesfInteractIndex;
             }
         }
 
-        SpriteRecord GetSpriteFromSpriteTable(bool isMapSprite, int spritetableindex, out int addedtosheet, out int addedtopallette)
+        private SpriteRecord GetSpriteFromSpriteTable(bool isMapSprite, int spritetableindex, out int addedtosheet, out int addedtopallette)
         {
             SpriteInfo si;
             if (isMapSprite)
             {
-                si = gameMap.spriteinfo;
+                si = GameMap.Spriteinfo;
                 addedtosheet = 0;
                 addedtopallette = 0x20;
             }
             else
             {
-                si = global.spriteinfo;
+                si = Global.Spriteinfo;
                 addedtosheet = 0xb;
                 addedtopallette = 0x60;
             }
             if (spritetableindex < 0)
+            {
                 throw new Exception("Illegal Character Race!");
-            if (spritetableindex >= si.spritetable.Length)
-                throw new Exception("Illegal Character Race!");
+            }
 
-            var sprite = si.sprites[spritetableindex];
+            if (spritetableindex >= si.SpriteTable.Length)
+            {
+                throw new Exception("Illegal Character Race!");
+            }
+
+            var sprite = si.Sprites[spritetableindex];
             return sprite;
         }
 
@@ -1111,18 +1190,20 @@ namespace GraphicsTools.Alundra
             SpriteInfo si;
             if (isMapSprite)
             {
-                si = gameMap.spriteinfo;
+                si = GameMap.Spriteinfo;
                 addedtosheet = 0;
                 addedtopallette = 0x20;
             }
             else
             {
-                si = global.spriteinfo;
+                si = Global.Spriteinfo;
                 addedtosheet = 0xb;
                 addedtopallette = 0x60;
             }
-            if (spritetableindex >= 0 && spritetableindex < si.spritetable.Length)
-                return si.spriteeffects[spritetableindex];
+            if (spritetableindex >= 0 && spritetableindex < si.SpriteTable.Length)
+            {
+                return si.Spriteeffects[spritetableindex];
+            }
 
             return null;
         }
@@ -1132,7 +1213,9 @@ namespace GraphicsTools.Alundra
             foreach(var effect in SpriteEffects)
             {
                 if (effect.Status == 0)
+                {
                     return effect;
+                }
             }
             return null;
         }
@@ -1171,7 +1254,7 @@ namespace GraphicsTools.Alundra
             effect.Delay = 0;
             effect.DestroyFlag = 0;
 
-            effect.animdex = 0;
+            effect.Animdex = 0;
 
 
             effect.MapEffectRecord = mapEffectRecord;
@@ -1210,7 +1293,7 @@ namespace GraphicsTools.Alundra
 
             if (effectid == -1)
             {
-                effectid = entity.Sprite.header.breakeffect;
+                effectid = entity.Sprite.Header.Breakeffect;
             }
 
             if (effectid != 0)
@@ -1225,17 +1308,24 @@ namespace GraphicsTools.Alundra
             }
         }
 
-        int SpawnEntityContents(SpriteInstance entity)
+        private int SpawnEntityContents(SpriteInstance entity)
         {
             if (entity.ContentsItemId == 0)
+            {
                 return 0;
+            }
+
             if (!CheckItemId(entity.ContentsItemId))
+            {
                 return 0;
+            }
 
             var child = SpawnEntity(null, false, entity.ContentsItemId + 0x1e, entity.XPos, entity.YPos, entity.ZPos, 0);
 
             if (child == null)
+            {
                 return 0;
+            }
 
             child.ZForce = 0xa0000;
             child._274 = 1;
@@ -1260,18 +1350,20 @@ namespace GraphicsTools.Alundra
             return 1;
         }
 
-        bool CheckItemId(int itemid)
+        private bool CheckItemId(int itemid)
         {
             if (itemid != 0x26)
             {
                 if (itemid - 0x51 >= 2)
+                {
                     return false;
+                }
             }
-            int ret = GetSomething();
+            var ret = GetSomething();
             return ret < 1 ? true : false;
         }
 
-        int GetSomething()//0x4f380
+        private int GetSomething()//0x4f380
         {
             //TODO: what is this actually checking?
             //ptr = *0x119888
@@ -1281,15 +1373,17 @@ namespace GraphicsTools.Alundra
 
         public MapEffectRecord GetMapEffectRecord(int id, bool checkBoundingBox)
         {
-            if (id < gameMap.spriteinfo.mapeffectrecords.Length)
+            if (id < GameMap.Spriteinfo.MapEffectRecords.Length)
             {
-                var record = gameMap.spriteinfo.mapeffectrecords[id];
+                var record = GameMap.Spriteinfo.MapEffectRecords[id];
                 if (checkBoundingBox)
                 {
                     var p = PlayerEntity;
-                    if (p.XTile < record.x1 || p.XTile > record.x2
-                        || p.YTile < record.y1 || p.YTile > record.y2)
+                    if (p.XTile < record.X1 || p.XTile > record.X2
+                        || p.YTile < record.Y1 || p.YTile > record.Y2)
+                    {
                         return null;
+                    }
                 }
                 
                 return record;
@@ -1346,15 +1440,18 @@ namespace GraphicsTools.Alundra
             var record = GetMapEffectRecord(mapeffectid, checkBoundingbox);
             if (record != null)
             {
-                if (!checkBoundingbox && (record.flags & 0x40) == 0)
+                if (!checkBoundingbox && (record.Flags & 0x40) == 0)
+                {
                     return null;
+                }
+
                 var effect = GetNextAvailableEffect();
 
                 if (effect != null)
                 {
                     InitEffect(effect, record, mapeffectid, 0,
-                        (byte)((record.flags & 0x80) >> 7), record.effectid, record.animid,
-                        ((record.x * 12) + 12) << 16, ((record.y * 8) + 8) << 16, record.z << 19);
+                        (byte)((record.Flags & 0x80) >> 7), record.Effectid, record.Animid,
+                        (record.X * 12 + 12) << 16, (record.Y * 8 + 8) << 16, record.Z << 19);
 
                     return effect;
                 }
@@ -1369,15 +1466,21 @@ namespace GraphicsTools.Alundra
             int i1, i2;
             var spriterecord = GetSpriteFromSpriteTable(ismapsprite, tableindex, out i1, out i2);
             if (spriterecord == null)
+            {
                 return null;
+            }
 
             var entity = GetNextAvailableEntity();
             if (entity == null)
+            {
                 return null;
+            }
 
             var spritetableindex = tableindex;
             if (ismapsprite)
+            {
                 spritetableindex += 0x100;
+            }
 
             InitEntity(entity, ownerEntity, spriterecord, null, spritetableindex, -1, xpos, ypos, zpos, 0, dir, i1, i2);
 
@@ -1385,14 +1488,14 @@ namespace GraphicsTools.Alundra
         }
 
 
-
-
-        SpriteInstance GetNextAvailableEntity()
+        private SpriteInstance GetNextAvailableEntity()
         {
             foreach (var entity in Entities)
             {
                 if (entity.Status == 0)
+                {
                     return entity;
+                }
             }
             //var newentity = new SpriteInstance { Index = Entities.Count + 1 };
             //Entities.Add(newentity);
@@ -1425,8 +1528,7 @@ namespace GraphicsTools.Alundra
         }*/
 
 
-
-        byte[][] ContentsTable = new byte[][]{
+        private byte[][] _contentsTable = new byte[][]{
 new byte[]{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,},
 new byte[]{0x24,0x25,0x45,0x46,0x47,0x48,0x4f,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x00,0x00,},
 new byte[]{0x54,0x54,0x54,0x55,0x55,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,},

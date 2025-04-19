@@ -1,6 +1,6 @@
 ﻿namespace GraphicsTools
 {
-    partial class frmViewer
+    partial class FrmViewer
     {
         /// <summary>
         /// Required designer variable.
@@ -68,7 +68,7 @@
             this.Controls.Add(this.hScroll);
             this.Controls.Add(this.vScroll);
             this.Controls.Add(this.picOut);
-            this.Name = "frmViewer";
+            this.Name = "FrmViewer";
             this.Text = "frmViewer";
             this.Resize += new System.EventHandler(this.frmViewer_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.picOut)).EndInit();

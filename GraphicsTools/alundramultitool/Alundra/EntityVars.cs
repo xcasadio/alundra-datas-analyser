@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace GraphicsTools.Alundra
+﻿namespace GraphicsTools.Alundra
 {
     public static class EntityVars
     {
 
-        public static string[] VarOffsets = new string[GameMap.eventobject_size / 4];
+        public static readonly string[] VarOffsets = new string[GameMap.EventobjectSize / 4];
 
         public static void Init()
         {

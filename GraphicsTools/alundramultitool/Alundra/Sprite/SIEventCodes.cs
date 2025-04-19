@@ -1,103 +1,111 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace GraphicsTools.Alundra.Sprite
 {
-    public class SIEventCodes
+    public class SiEventCodes
     {
-        public SIEventCodes(BinaryReader br, long binoffset, SpriteInfoHeader header)
+        public SiEventCodes(BinaryReader br, long binoffset, SpriteInfoHeader header)
         {
 
-            int table_size = 0;
+            var tableSize = 0;
             short firstoffset = 0;
 
             //read sector1a
-            br.BaseStream.Position = binoffset + header.sector1apointer;
-            table_size = header.sector1asize / 2;
-            sector1atable = new short[table_size];
-            for (int dex = 0; dex < table_size; dex++)
+            br.BaseStream.Position = binoffset + header.Sector1Apointer;
+            tableSize = header.Sector1Asize / 2;
+            Sector1Atable = new short[tableSize];
+            for (var dex = 0; dex < tableSize; dex++)
             {
-                sector1atable[dex] = br.ReadInt16();
-                if (firstoffset == 0 && sector1atable[dex] != 0)
-                    firstoffset = sector1atable[dex];
+                Sector1Atable[dex] = br.ReadInt16();
+                if (firstoffset == 0 && Sector1Atable[dex] != 0)
+                {
+                    firstoffset = Sector1Atable[dex];
+                }
             }
 
             //read sector1b
-            br.BaseStream.Position = binoffset + header.sector1bpointer;
-            table_size = header.sector1bsize / 2;
-            sector1btable = new short[table_size];
-            for (int dex = 0; dex < table_size; dex++)
+            br.BaseStream.Position = binoffset + header.Sector1Bpointer;
+            tableSize = header.Sector1Bsize / 2;
+            Sector1Btable = new short[tableSize];
+            for (var dex = 0; dex < tableSize; dex++)
             {
-                sector1btable[dex] = br.ReadInt16();
-                if (firstoffset == 0 && sector1btable[dex] != 0)
-                    firstoffset = sector1btable[dex];
+                Sector1Btable[dex] = br.ReadInt16();
+                if (firstoffset == 0 && Sector1Btable[dex] != 0)
+                {
+                    firstoffset = Sector1Btable[dex];
+                }
             }
 
             //read sector1c
-            br.BaseStream.Position = binoffset + header.sector1cpointer;
-            table_size = header.sector1csize / 2;
-            sector1ctable = new short[table_size];
-            for (int dex = 0; dex < table_size; dex++)
+            br.BaseStream.Position = binoffset + header.Sector1Cpointer;
+            tableSize = header.Sector1Csize / 2;
+            Sector1Ctable = new short[tableSize];
+            for (var dex = 0; dex < tableSize; dex++)
             {
-                sector1ctable[dex] = br.ReadInt16();
-                if (firstoffset == 0 && sector1ctable[dex] != 0)
-                    firstoffset = sector1ctable[dex];
+                Sector1Ctable[dex] = br.ReadInt16();
+                if (firstoffset == 0 && Sector1Ctable[dex] != 0)
+                {
+                    firstoffset = Sector1Ctable[dex];
+                }
             }
 
             //read sector1d
-            br.BaseStream.Position = binoffset + header.sector1dpointer;
-            table_size = header.sector1dsize / 2;
-            sector1dtable = new short[table_size];
-            for (int dex = 0; dex < table_size; dex++)
+            br.BaseStream.Position = binoffset + header.Sector1dpointer;
+            tableSize = header.Sector1dsize / 2;
+            Sector1dtable = new short[tableSize];
+            for (var dex = 0; dex < tableSize; dex++)
             {
-                sector1dtable[dex] = br.ReadInt16();
-                if (firstoffset == 0 && sector1dtable[dex] != 0)
-                    firstoffset = sector1dtable[dex];
+                Sector1dtable[dex] = br.ReadInt16();
+                if (firstoffset == 0 && Sector1dtable[dex] != 0)
+                {
+                    firstoffset = Sector1dtable[dex];
+                }
             }
 
             //read sector1e
-            br.BaseStream.Position = binoffset + header.sector1epointer;
-            table_size = header.sector1esize / 2;
-            sector1etable = new short[table_size];
-            for (int dex = 0; dex < table_size; dex++)
+            br.BaseStream.Position = binoffset + header.Sector1Epointer;
+            tableSize = header.Sector1Esize / 2;
+            Sector1Etable = new short[tableSize];
+            for (var dex = 0; dex < tableSize; dex++)
             {
-                sector1etable[dex] = br.ReadInt16();
-                if (firstoffset == 0 && sector1etable[dex] != 0)
-                    firstoffset = sector1etable[dex];
+                Sector1Etable[dex] = br.ReadInt16();
+                if (firstoffset == 0 && Sector1Etable[dex] != 0)
+                {
+                    firstoffset = Sector1Etable[dex];
+                }
             }
 
             //read sector1f
-            header.sector1fsize = (header.sector1apointer + firstoffset) - header.sector1fpointer;
-            br.BaseStream.Position = binoffset + header.sector1fpointer;
-            table_size = header.sector1fsize / 2;
-            if (table_size < 0)
-                table_size = 16;
-            sector1ftable = new short[table_size];
-            for (int dex = 0; dex < table_size; dex++)
+            header.Sector1Fsize = header.Sector1Apointer + firstoffset - header.Sector1Fpointer;
+            br.BaseStream.Position = binoffset + header.Sector1Fpointer;
+            tableSize = header.Sector1Fsize / 2;
+            if (tableSize < 0)
             {
-                sector1ftable[dex] = br.ReadInt16();
+                tableSize = 16;
+            }
+
+            Sector1Ftable = new short[tableSize];
+            for (var dex = 0; dex < tableSize; dex++)
+            {
+                Sector1Ftable[dex] = br.ReadInt16();
             }
 
             //set binoffset for sector1
-            this.binoffset = binoffset + header.sector1apointer; ;
+            _binoffset = binoffset + header.Sector1Apointer; ;
         }
 
-        public byte[] GetByteCode(BinaryReader br, int sector1offset)
+        public byte[] GetByteCode(BinaryReader br, int sector1Offset)
         {
 
-            byte[] bytes = new byte[255];
-            int dex = 0;
-            br.BaseStream.Position = binoffset + sector1offset;
+            var bytes = new byte[255];
+            var dex = 0;
+            br.BaseStream.Position = _binoffset + sector1Offset;
 
             while (true)
             {
                 Debug.Assert(dex < bytes.Length, "ByteCodes larger than 255");
 
-                byte b = br.ReadByte();
+                var b = br.ReadByte();
                 if (b == 0)//what does 0 mean?
                 {
                     bytes[dex++] = b;
@@ -115,12 +123,12 @@ namespace GraphicsTools.Alundra.Sprite
             }
         }
 
-        long binoffset;
-        public short[] sector1atable;
-        public short[] sector1btable;
-        public short[] sector1ctable;
-        public short[] sector1dtable;
-        public short[] sector1etable;
-        public short[] sector1ftable;
+        private long _binoffset;
+        public readonly short[] Sector1Atable;
+        public readonly short[] Sector1Btable;
+        public readonly short[] Sector1Ctable;
+        public readonly short[] Sector1dtable;
+        public readonly short[] Sector1Etable;
+        public readonly short[] Sector1Ftable;
     }
 }

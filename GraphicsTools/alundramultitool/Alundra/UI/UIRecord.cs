@@ -1,61 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GraphicsTools.Alundra
+﻿namespace GraphicsTools.Alundra
 {
-    public class UIRecord
+    public class UiRecord
     {
         public int Status;//1 = active
-        public UIBoxAnimated boxAnimated;//04 ptr or 0
-        public short x;//8
-        public short y;//a
-        public short width;//c //in 8s
-        public short height;//e //in 8s
-        public UIFunction SetupFunc;//10 setup function
-        public UIFunction RenderFunc;//14 render function
+        public UiBoxAnimated BoxAnimated;//04 ptr or 0
+        public short X;//8
+        public short Y;//a
+        public short Width;//c //in 8s
+        public short Height;//e //in 8s
+        public UiFunction SetupFunc;//10 setup function
+        public UiFunction RenderFunc;//14 render function
         public int UnknownVal;//18 0, -1,5
     }
 
-    public class UIBoxAnimated
+    public class UiBoxAnimated
     {
-        public short x;
-        public short y;
-        public short width;//in 8s
-        public short height;// in 8s
-        public UIDrawCmd[][] boxcommands = new UIDrawCmd[0xa][];//drawareaid is an index into this
+        public short X;
+        public short Y;
+        public short Width;//in 8s
+        public short Height;// in 8s
+        public UiDrawCmd[][] Boxcommands = new UiDrawCmd[0xa][];//drawareaid is an index into this
     }
 
     //20 byte records
-    public class UIDrawCmd
+    public class UiDrawCmd
     {
-        public short x, y;
-        public byte u, v;
-        public short uipaletteindex;//(clut address - 0x7812)/ 64
-        public short spritesheet;
-        public short w, h;
+        public short X, Y;
+        public byte U, V;
+        public short Uipaletteindex;//(clut address - 0x7812)/ 64
+        public short Spritesheet;
+        public short W, H;
 
-        public long signature { get
+        public long Signature { get
             {
-                return spritesheet | uipaletteindex << 8 | u << 16 | v << 24 | w << 32 | h << 38;
+                return Spritesheet | Uipaletteindex << 8 | U << 16 | V << 24 | W << 32 | H << 38;
             }
         }
     }
 
     //this structure lerps (linear interpolation) coordinates over a period of ticks
-    public class UILerper
+    public class UiLerper
     {
-        public int currenttick;//0 tick progress, starts at 9
-        public int numticks;//4 number of ticks to iterate
-        public int tickstolinger;//8 ticks to linger once the lerp is finished, countsdown to zero then lerp function returns true (finished)
-        public short x1;//c
-        public short y1;//e
-        public short x2;//10
-        public short y2;//12
+        public int Currenttick;//0 tick progress, starts at 9
+        public int Numticks;//4 number of ticks to iterate
+        public int Tickstolinger;//8 ticks to linger once the lerp is finished, countsdown to zero then lerp function returns true (finished)
+        public short X1;//c
+        public short Y1;//e
+        public short X2;//10
+        public short Y2;//12
 
         public short AfterX, AfterY;
     }
@@ -63,16 +55,16 @@ namespace GraphicsTools.Alundra
 
     public class FontCharInfo
     {
-        public int width;//width (kerning)
-        public int height;//height
-        public int sx;//source bitmap x
-        public int sy;//source bitmap y
-        public int y;//y offset from top
+        public int Width;//width (kerning)
+        public int Height;//height
+        public int Sx;//source bitmap x
+        public int Sy;//source bitmap y
+        public int Y;//y offset from top
     }
 
     
 
-    public delegate bool UIFunction(UIRecord ui);
+    public delegate bool UiFunction(UiRecord ui);
     //there are several of these
     //0 is for the dialog box
     //1 is for the main ui elements

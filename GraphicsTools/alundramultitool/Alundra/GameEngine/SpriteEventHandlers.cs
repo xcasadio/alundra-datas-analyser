@@ -1,38 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GraphicsTools.Alundra
+﻿namespace GraphicsTools.Alundra
 {
     public class SpriteEventHandlers
     {
-        GameState gameState;
-        Dictionary<int, SpriteEventHandler>[] TypeHandlers = new Dictionary<int, SpriteEventHandler>[6];
+        private GameState _gameState;
+        private Dictionary<int, SpriteEventHandler>[] _typeHandlers = new Dictionary<int, SpriteEventHandler>[6];
         public SpriteEventHandlers(GameState gameState)
         {
-            this.gameState = gameState;
+            _gameState = gameState;
 
-            TypeHandlers[Helper.PROGRAM_A_LOAD] = new Dictionary<int, SpriteEventHandler>();
+            _typeHandlers[Helper.ProgramALoad] = new Dictionary<int, SpriteEventHandler>();
             //there are no spriteevent handlers for map
-            TypeHandlers[Helper.PROGRAM_C_TICK] = new Dictionary<int, SpriteEventHandler>();
-            TypeHandlers[Helper.PROGRAM_D_TOUCH] = new Dictionary<int, SpriteEventHandler>();
-            TypeHandlers[Helper.PROGRAM_E_DEACTIVATE] = new Dictionary<int, SpriteEventHandler>();
-            TypeHandlers[Helper.PROGRAM_F_INTERACT] = new Dictionary<int, SpriteEventHandler>();
+            _typeHandlers[Helper.ProgramCTick] = new Dictionary<int, SpriteEventHandler>();
+            _typeHandlers[Helper.ProgramDTouch] = new Dictionary<int, SpriteEventHandler>();
+            _typeHandlers[Helper.ProgramEDeactivate] = new Dictionary<int, SpriteEventHandler>();
+            _typeHandlers[Helper.ProgramFInteract] = new Dictionary<int, SpriteEventHandler>();
 
             //register the ones that have been implimented here
-            Register(Helper.PROGRAM_C_TICK, 0x17, etick_17_jarsandboxes_Handler);
+            Register(Helper.ProgramCTick, 0x17, etick_17_jarsandboxes_Handler);
         }
 
-        void Register(int type, byte code, SpriteEventHandler handler)
+        private void Register(int type, byte code, SpriteEventHandler handler)
         {
-            TypeHandlers[type].Add(code, handler);
+            _typeHandlers[type].Add(code, handler);
         }
 
         public void RunSpriteHandler(int eventtype, int eventid, SpriteInstance entity)
         {
-            var handlers = TypeHandlers[eventtype];
+            var handlers = _typeHandlers[eventtype];
             if (handlers.ContainsKey(eventid))
             {
                 handlers[eventid](entity);
@@ -43,7 +37,10 @@ namespace GraphicsTools.Alundra
         public void etick_17_jarsandboxes_Handler(SpriteInstance entity)
         {
             if (entity.PlatformEntity == null)
+            {
                 return;
+            }
+
             if (entity._24 == 0)
             {
                 entity.TargetAnim = 0;
@@ -57,11 +54,13 @@ namespace GraphicsTools.Alundra
             }
             else
             {
-                entity.TargetAnim = Helper.Anim_24_Table[entity._24];
+                entity.TargetAnim = Helper.Anim24Table[entity._24];
             }
 
             if (entity.PlatformEntity != null)//redudant check
+            {
                 entity._2c = 0;
+            }
 
             entity.PlatformEntity = null;
             entity.Flags = (entity.Flags | 0x30) & 0xff7f;//turn off bit 8, turn on bits 5 and 6

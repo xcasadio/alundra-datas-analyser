@@ -1,6 +1,6 @@
 ﻿namespace GraphicsTools
 {
-    partial class frmFileAnalyzer
+    partial class FrmFileAnalyzer
     {
         /// <summary>
         /// Required designer variable.
@@ -802,7 +802,7 @@
             this.Controls.Add(this.chkSortGlobal);
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(4);
-            this.Name = "frmFileAnalyzer";
+            this.Name = "FrmFileAnalyzer";
             this.Text = "frmFileAnalyzer";
             this.Load += new System.EventHandler(this.frmFileAnalyzer_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmFileAnalyzer_KeyDown);

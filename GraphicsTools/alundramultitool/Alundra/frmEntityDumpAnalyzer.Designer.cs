@@ -1,6 +1,6 @@
 ﻿namespace GraphicsTools.Alundra
 {
-    partial class frmEntityDumpAnalyzer
+    partial class FrmEntityDumpAnalyzer
     {
         /// <summary>
         /// Required designer variable.
@@ -693,7 +693,7 @@
             this.Controls.Add(this.label46);
             this.Controls.Add(this.label47);
             this.Controls.Add(this.label48);
-            this.Name = "frmEntityDumpAnalyzer";
+            this.Name = "FrmEntityDumpAnalyzer";
             this.Text = "frmEntityDumpAnalyzer";
             this.Load += new System.EventHandler(this.frmEntityDumpAnalyzer_Load);
             this.ResumeLayout(false);

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
-using System.IO;
+﻿using System.Diagnostics;
 
 namespace GraphicsTools
 {
@@ -21,76 +14,78 @@ namespace GraphicsTools
             //return Color.FromArgb((c & 0x1f) << 3, (c & (0x1f << 5)) >> 2, (c & (0x1f << 10)) >> 7);
             //return Color.FromArgb((c & 0x1f) << 3, (c & 0x1f) << 3, (c & 0x1f) << 3);
             //return Color.FromArgb((c & (0x1f << 5)) >> 2, (c & (0x1f << 5)) >> 2, (c & (0x1f << 5)) >> 2);
-            return Color.FromArgb(((c != 0) ? 255 : 0),  (c & (0x1f << 10)) >> 7,
+            return Color.FromArgb(c != 0 ? 255 : 0, (c & (0x1f << 10)) >> 7,
                                     (c & (0x1f << 5)) >> 2,
                                     (c & 0x1f) << 3
                                  );
         }
 
-        public static int Deflate(byte[]data,byte[]dest)
+        public static int Deflate(byte[] data, byte[] dest)
         {
-                //compressed
-                int dex = 0;
-                int buffdex = 0;
-                while (dex < dest.Length && buffdex < data.Length)
+            //compressed
+            var dex = 0;
+            var buffdex = 0;
+            while (dex < dest.Length && buffdex < data.Length)
+            {
+                var b = data[buffdex++];
+                if (b == 0xad)
                 {
-                    byte b = data[buffdex++];
-                    if (b == 0xad)
+                    int seek = data[buffdex++];
+                    if (seek == 0)
                     {
-                        int seek = data[buffdex++];
-                        if (seek == 0)
-                        {
-                            dest[dex++] = b;
-                        }
-                        else
-                        {
-                            int len = data[buffdex++];
-                            int seekdex = dex - seek;
-                            while (len-- > 0)
-                                dest[dex++] = dest[seekdex++];
-                        }
+                        dest[dex++] = b;
                     }
                     else
-                        dest[dex++] = b;
+                    {
+                        int len = data[buffdex++];
+                        var seekdex = dex - seek;
+                        while (len-- > 0)
+                            dest[dex++] = dest[seekdex++];
+                    }
                 }
-                return dex;
+                else
+                {
+                    dest[dex++] = b;
+                }
+            }
+            return dex;
         }
 
         public static Bitmap BitmapFromPsxBuff(byte[] imagedata, int width, int height, int bpp, Color[] pal)
         {
             //bmp bmp = new bmp(width, height, 32);
-            int rowsize = ((32 * width + 31) / 32) * 4;
-            byte[] pixels = new byte[rowsize * Math.Abs(height)];
+            var rowsize = (32 * width + 31) / 32 * 4;
+            var pixels = new byte[rowsize * Math.Abs(height)];
 
             if (bpp == 16)
             {
-                int dex = 0;
-                for (int y = 0; y < height; y++)
+                var dex = 0;
+                for (var y = 0; y < height; y++)
                 {
-                    int bmpdex = 0;
-                    for (int x = 0; x < width; x++)
+                    var bmpdex = 0;
+                    for (var x = 0; x < width; x++)
                     {
-                        byte b2 = imagedata[dex++];
-                        byte b1 = imagedata[dex++];
-                        Color c = Utils.FromPsxColor((b1 << 8) | b2);
+                        var b2 = imagedata[dex++];
+                        var b1 = imagedata[dex++];
+                        var c = FromPsxColor((b1 << 8) | b2);
                         pixels[y * rowsize + bmpdex++] = c.R;
                         pixels[y * rowsize + bmpdex++] = c.G;
                         pixels[y * rowsize + bmpdex++] = c.B;
                         pixels[y * rowsize + bmpdex++] = c.A;
                     }
                 }
-                
+
             }
             else if (bpp == 4 && pal != null)
             {
-                
-                int dex = 0;
-                for (int y = 0; y < height; y++)
+
+                var dex = 0;
+                for (var y = 0; y < height; y++)
                 {
-                    int bmpdex = 0;
-                    for (int x = 0; x < width / 2; x++)
+                    var bmpdex = 0;
+                    for (var x = 0; x < width / 2; x++)
                     {
-                        Color c = pal[imagedata[dex] & 0xf];
+                        var c = pal[imagedata[dex] & 0xf];
 
                         pixels[y * rowsize + bmpdex++] = c.R;
                         pixels[y * rowsize + bmpdex++] = c.G;
@@ -110,7 +105,7 @@ namespace GraphicsTools
             //var ms = new MemoryStream();
             //bmp.Write(ms);
             //ms.Position = 0;
-            var bitmap = new Bitmap(width,height,System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            var bitmap = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             var bdata = bitmap.LockBits(new Rectangle(0, 0, width, height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             System.Runtime.InteropServices.Marshal.Copy(pixels, 0, bdata.Scan0, pixels.Length);
             bitmap.UnlockBits(bdata);
@@ -118,69 +113,73 @@ namespace GraphicsTools
 
         }
 
-        public static ushort RGB(byte r, byte g, byte b)
+        public static ushort Rgb(byte r, byte g, byte b)
         {
             return (ushort)(((r & ~7) << 7) | ((g & ~7) << 2) | (b >> 3));
         }
 
-        public static int RGB24(byte r, byte g, byte b)
+        public static int Rgb24(byte r, byte g, byte b)
         {
             return r | (g << 8) | (b << 16);
         }
 
-        public static byte RED24(int color)
+        public static byte Red24(int color)
         {
             return (byte)(color & 0xff);
         }
-        public static byte GREEN24(int color)
+
+        public static byte Green24(int color)
         {
-            return (byte)((color & 0xff00)>>8);
+            return (byte)((color & 0xff00) >> 8);
         }
-        public static byte BLUE24(int color)
+
+        public static byte Blue24(int color)
         {
-            return (byte)((color & 0xff0000)>>16);
+            return (byte)((color & 0xff0000) >> 16);
         }
-        public static byte RED(ushort color)
+
+        public static byte Red(ushort color)
         {
             return (byte)(((color >> 10) & 255) << 3);
         }
-        public static byte GREEN(ushort color)
+
+        public static byte Green(ushort color)
         {
             return (byte)(((color >> 5) & 255) << 3);
         }
-        public static byte BLUE(ushort color)
+
+        public static byte Blue(ushort color)
         {
             return (byte)((color & 31) << 3);
         }
 
         public static ushort ToRbg15(this Color c)
         {
-            return RGB(c.R, c.G, c.B);
+            return Rgb(c.R, c.G, c.B);
         }
 
         public static int ToRbg24(this Color c)
         {
-            return RGB24(c.R, c.G, c.B);
+            return Rgb24(c.R, c.G, c.B);
         }
-
 
         public static List<Color> MedianCut(ref int[] cbuff, int maxcubes)
         {
-            List<Cube> cubes = new List<Cube>();
+            var cubes = new List<Cube>();
 
             //first cube has all colors
             var cube = new Cube();
-            cube.level = 0;
-            for (int dex = 0; dex < cbuff.Length; dex++)
+            cube.Level = 0;
+            for (var dex = 0; dex < cbuff.Length; dex++)
             {
                 if (cbuff[dex] > 0)
                 {
-                    cube.colors.Add(new ColorEntry
+                    cube.Colors.Add(new ColorEntry
                     {
-                        count = cbuff[dex],
-                        color = Color.FromArgb(RED24(dex), GREEN24(dex), BLUE24(dex))
+                        Count = cbuff[dex],
+                        Color = Color.FromArgb(Red24(dex), Green24(dex), Blue24(dex))
                     });
-                    cube.count += cbuff[dex];
+                    cube.Count += cbuff[dex];
                 }
             }
             CalcMinMax(cube);
@@ -188,52 +187,60 @@ namespace GraphicsTools
             //build cubes
             while (cubes.Count < maxcubes)
             {
-                int level = 255;
-                int splitpos = -1;
-                for (int dex = 0; dex < cubes.Count; dex++)
+                var level = 255;
+                var splitpos = -1;
+                for (var dex = 0; dex < cubes.Count; dex++)
                 {
-                    if (cubes[dex].colors.Count > 1 && cubes[dex].level < level)
+                    if (cubes[dex].Colors.Count > 1 && cubes[dex].Level < level)
                     {
-                        level = cubes[dex].level;
+                        level = cubes[dex].Level;
                         splitpos = dex;
                     }
                 }
                 if (splitpos == -1)
+                {
                     break;//no more to split
+                }
 
                 cube = cubes[splitpos];
                 //sort by widest color range
-                var cdif = Color.FromArgb(cube.max.R - cube.min.R, cube.max.G - cube.min.G, cube.max.B - cube.min.B);
+                var cdif = Color.FromArgb(cube.Max.R - cube.Min.R, cube.Max.G - cube.Min.G, cube.Max.B - cube.Min.B);
                 if (cdif.R >= cdif.G && cdif.R >= cdif.B)
-                    cube.colors = cube.colors.OrderBy(x => x.color.R).ToList();
+                {
+                    cube.Colors = cube.Colors.OrderBy(x => x.Color.R).ToList();
+                }
                 else if (cdif.G >= cdif.R && cdif.G >= cdif.B)
-                    cube.colors = cube.colors.OrderBy(x => x.color.G).ToList();
+                {
+                    cube.Colors = cube.Colors.OrderBy(x => x.Color.G).ToList();
+                }
                 else if (cdif.B >= cdif.R && cdif.B >= cdif.G)
-                    cube.colors = cube.colors.OrderBy(x => x.color.B).ToList();
+                {
+                    cube.Colors = cube.Colors.OrderBy(x => x.Color.B).ToList();
+                }
 
                 //split cubes by half of count
                 var cubea = new Cube();
                 var cubeb = new Cube();
-                foreach (var ce in cube.colors)
+                foreach (var ce in cube.Colors)
                 {
-                    if (cubea.count >= cube.count / 2 || cube.colors.IndexOf(ce) == cube.colors.Count -1)
+                    if (cubea.Count >= cube.Count / 2 || cube.Colors.IndexOf(ce) == cube.Colors.Count - 1)
                     {
-                        cubeb.colors.Add(ce);
-                        cubeb.count += ce.count;
+                        cubeb.Colors.Add(ce);
+                        cubeb.Count += ce.Count;
                     }
                     else
                     {
-                        cubea.colors.Add(ce);
-                        cubea.count += ce.count;
+                        cubea.Colors.Add(ce);
+                        cubea.Count += ce.Count;
                     }
                 }
 
 
-                Debug.Assert(cubea.colors.Count > 0 && cubeb.colors.Count > 0);
+                Debug.Assert(cubea.Colors.Count > 0 && cubeb.Colors.Count > 0);
 
-                cubea.level = cube.level + 1;
+                cubea.Level = cube.Level + 1;
                 CalcMinMax(cubea);
-                cubeb.level = cube.level + 1;
+                cubeb.Level = cube.Level + 1;
                 CalcMinMax(cubeb);
 
                 //remove split cube
@@ -252,12 +259,13 @@ namespace GraphicsTools
             float x = a.R - b.R;
             float y = a.G - b.G;
             float z = a.B - b.B;
-            return ((x * x) + (y * y) + (z * z));
+            return x * x + y * y + z * z;
         }
+
         static List<Color> BuildPalette(List<Cube> cubes, ref int[] remapper, bool fast = false)
         {
             //build the color map
-            List<Color> cmap = new List<Color>();
+            var cmap = new List<Color>();
 
 
             foreach (var cube in cubes)
@@ -265,43 +273,43 @@ namespace GraphicsTools
                 float rsum = 0;
                 float gsum = 0;
                 float bsum = 0;
-                foreach (var ce in cube.colors)
+                foreach (var ce in cube.Colors)
                 {
-                    rsum += ce.color.R * ce.count;
-                    gsum += ce.color.G * ce.count;
-                    bsum += ce.color.B * ce.count;
+                    rsum += ce.Color.R * ce.Count;
+                    gsum += ce.Color.G * ce.Count;
+                    bsum += ce.Color.B * ce.Count;
                 }
-                cmap.Add(Color.FromArgb((int)(rsum / cube.count), (int)(gsum / cube.count), (int)(bsum / cube.count)));
+                cmap.Add(Color.FromArgb((int)(rsum / cube.Count), (int)(gsum / cube.Count), (int)(bsum / cube.Count)));
 
             }
             if (fast)
             {
-                for (int dex = 0; dex < cubes.Count; dex++)
+                for (var dex = 0; dex < cubes.Count; dex++)
                 {
-                    foreach (var ce in cubes[dex].colors)
+                    foreach (var ce in cubes[dex].Colors)
                     {
-                        remapper[RGB24(ce.color.R, ce.color.G, ce.color.B)] = dex;
+                        remapper[Rgb24(ce.Color.R, ce.Color.G, ce.Color.B)] = dex;
                     }
                 }
             }
             else
             {
-                for (int dex = 0; dex < cubes.Count; dex++)
+                for (var dex = 0; dex < cubes.Count; dex++)
                 {
-                    foreach (var ce in cubes[dex].colors)
+                    foreach (var ce in cubes[dex].Colors)
                     {
-                        Color closest = cmap.First();
-                        float shortestdist = float.MaxValue;
+                        var closest = cmap.First();
+                        var shortestdist = float.MaxValue;
                         foreach (var c in cmap)
                         {
-                            float dist = ColorDistance(c, ce.color);
+                            var dist = ColorDistance(c, ce.Color);
                             if (dist < shortestdist)
                             {
                                 shortestdist = dist;
                                 closest = c;
                             }
                         }
-                        remapper[RGB24(ce.color.R, ce.color.G, ce.color.B)] = cmap.IndexOf(closest);
+                        remapper[Rgb24(ce.Color.R, ce.Color.G, ce.Color.B)] = cmap.IndexOf(closest);
                     }
                 }
             }
@@ -311,39 +319,55 @@ namespace GraphicsTools
 
         static void CalcMinMax(Cube cube)
         {
-            cube.min = Color.FromArgb(255, 255, 255);
-            cube.max = Color.FromArgb(0, 0, 0);
-            foreach (var ce in cube.colors)
+            cube.Min = Color.FromArgb(255, 255, 255);
+            cube.Max = Color.FromArgb(0, 0, 0);
+            foreach (var ce in cube.Colors)
             {
-                if (ce.color.R < cube.min.R)
-                    cube.min = Color.FromArgb(ce.color.R, cube.min.G, cube.min.B);
-                if (ce.color.G < cube.min.G)
-                    cube.min = Color.FromArgb(cube.min.R, ce.color.G, cube.min.B);
-                if (ce.color.B < cube.min.B)
-                    cube.min = Color.FromArgb(cube.min.R, cube.min.G, ce.color.B);
+                if (ce.Color.R < cube.Min.R)
+                {
+                    cube.Min = Color.FromArgb(ce.Color.R, cube.Min.G, cube.Min.B);
+                }
 
-                if (ce.color.R > cube.max.R)
-                    cube.max = Color.FromArgb(ce.color.R, cube.max.G, cube.max.B);
-                if (ce.color.G > cube.max.G)
-                    cube.max = Color.FromArgb(cube.max.R, ce.color.G, cube.max.B);
-                if (ce.color.B > cube.max.B)
-                    cube.max = Color.FromArgb(cube.max.R, cube.max.G, ce.color.B);
+                if (ce.Color.G < cube.Min.G)
+                {
+                    cube.Min = Color.FromArgb(cube.Min.R, ce.Color.G, cube.Min.B);
+                }
+
+                if (ce.Color.B < cube.Min.B)
+                {
+                    cube.Min = Color.FromArgb(cube.Min.R, cube.Min.G, ce.Color.B);
+                }
+
+                if (ce.Color.R > cube.Max.R)
+                {
+                    cube.Max = Color.FromArgb(ce.Color.R, cube.Max.G, cube.Max.B);
+                }
+
+                if (ce.Color.G > cube.Max.G)
+                {
+                    cube.Max = Color.FromArgb(cube.Max.R, ce.Color.G, cube.Max.B);
+                }
+
+                if (ce.Color.B > cube.Max.B)
+                {
+                    cube.Max = Color.FromArgb(cube.Max.R, cube.Max.G, ce.Color.B);
+                }
             }
         }
 
         class ColorEntry
         {
-            public Color color;
-            public int count;
+            public Color Color;
+            public int Count;
         }
 
         class Cube
         {
-            public List<ColorEntry> colors = new List<ColorEntry>();
-            public int count;
-            public int level;
-            public Color max;
-            public Color min;
+            public List<ColorEntry> Colors = new();
+            public int Count;
+            public int Level;
+            public Color Max;
+            public Color Min;
         }
     }
 }

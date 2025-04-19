@@ -1,50 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-
-namespace GraphicsTools.Alundra
+﻿namespace GraphicsTools.Alundra
 {
     public partial class FrmEventProgram : Form
     {
-        List<SICommand> commands;
+        private List<SiCommand> _commands;
 
         public FrmEventProgram()
         {
             InitializeComponent();
         }
 
-        public void Init(List<SICommand> commands)
+        public void Init(List<SiCommand> commands)
         {
-            this.commands = commands;
+            _commands = commands;
         }
 
         
         private void FrmEventProgram_Load(object sender, EventArgs e)
         {
-            List<stackframe> stack = new List<stackframe>();
-            foreach (var cmd in commands)
+            var stack = new List<Stackframe>();
+            foreach (var cmd in _commands)
             {
-                lstProgram.Items.Add(cmd.Print(stack.Count, commands));
+                lstProgram.Items.Add(cmd.Print(stack.Count, _commands));
 
                 //if (cmd.command == 0xff && stack.Count == 0)
                 //    break;
                 
-                if (cmd.GetType() == typeof(BranchCommand) && cmd.refoffset > 0)
+                if (cmd.GetType() == typeof(BranchCommand) && cmd.Refoffset > 0)
                 {
-                    stack.Add(new stackframe { length = cmd.refoffset, level = stack.Count });
+                    stack.Add(new Stackframe { Length = cmd.Refoffset, Level = stack.Count });
                 }
 
-                for (int dex = stack.Count -1;dex >= 0;dex--)
+                for (var dex = stack.Count -1;dex >= 0;dex--)
                 {
                     var frame = stack[dex];
-                    frame.length -= cmd.size;
-                    if (frame.length <= 0)
+                    frame.Length -= cmd.Size;
+                    if (frame.Length <= 0)
+                    {
                         stack.RemoveAt(dex);
+                    }
                 }
             }
         }
@@ -53,14 +46,14 @@ namespace GraphicsTools.Alundra
         {
             if (lstProgram.SelectedIndex >= 0)
             {
-                lblmemaddr.Text = commands[lstProgram.SelectedIndex].memaddr.ToString("x6");
-                lblcode.Text = commands[lstProgram.SelectedIndex].command.ToString("x2") + "(" + string.Join(",", commands[lstProgram.SelectedIndex].parameters.Select(x => x.ToString("x2"))) + ")";
+                lblmemaddr.Text = _commands[lstProgram.SelectedIndex].Memaddr.ToString("x6");
+                lblcode.Text = _commands[lstProgram.SelectedIndex].Command.ToString("x2") + "(" + string.Join(",", _commands[lstProgram.SelectedIndex].Parameters.Select(x => x.ToString("x2"))) + ")";
             }
         }
 
-        int ParseNum(string num)
+        private int ParseNum(string num)
         {
-            int i = 0;
+            var i = 0;
             if (num.StartsWith("0x"))
             {
                 int.TryParse(num.Replace("0x", ""), System.Globalization.NumberStyles.AllowHexSpecifier, null, out i);
@@ -74,10 +67,10 @@ namespace GraphicsTools.Alundra
 
         private void btnFind_Click(object sender, EventArgs e)
         {
-            int code = ParseNum(txtFind.Text);
-            for (int dex = lstProgram.SelectedIndex + 1; dex < lstProgram.Items.Count; dex++)
+            var code = ParseNum(txtFind.Text);
+            for (var dex = lstProgram.SelectedIndex + 1; dex < lstProgram.Items.Count; dex++)
             {
-                if (commands[dex].command == code)
+                if (_commands[dex].Command == code)
                 {
                     lstProgram.SelectedIndex = dex;
                     break;
@@ -86,9 +79,9 @@ namespace GraphicsTools.Alundra
         }
     }
 
-    class stackframe
+    internal class Stackframe
     {
-        public int level;
-        public int length;
+        public int Level;
+        public int Length;
     }
 }

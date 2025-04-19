@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace GraphicsTools
+﻿namespace GraphicsTools
 {
     static class Program
     {
@@ -19,8 +13,8 @@ namespace GraphicsTools
             Application.Run(new Form1());
         }
 
-        public static System.Drawing.Color[] palette;
-        public static frmViewer viewer;
-        public static frmViewer pal;
+        public static Color[] Palette;
+        public static FrmViewer Viewer;
+        public static FrmViewer Pal;
     }
 }

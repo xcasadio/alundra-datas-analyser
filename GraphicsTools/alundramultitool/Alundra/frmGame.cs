@@ -1,30 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Timer = System.Windows.Forms.Timer;
+﻿using Timer = System.Windows.Forms.Timer;
 
 namespace GraphicsTools.Alundra
 {
-    public partial class frmGame : Form
+    public partial class FrmGame : Form
     {
-        GameEngine engine;
-        Timer tmr;
-        public frmGame(DatasBin datasBin, SoundBin soundBin)
+        private GameEngine _engine;
+        private Timer _tmr;
+        public FrmGame(DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin)
         {
             InitializeComponent();
 
-            engine = new GameEngine(datasBin, soundBin);
-            var map = datasBin.gamemaps[389]; // 165
-            engine.LoadMap(map);
-            tmr = new Timer();
-            tmr.Interval = 1000 / 30;
-            tmr.Tick += Tmr_Tick;
+            _engine = new GameEngine(datasBin, balanceBin, soundBin);
+            var map = datasBin.GameMaps[389]; // 165
+            _engine.LoadMap(map);
+            _tmr = new Timer();
+            _tmr.Interval = 1000 / 30;
+            _tmr.Tick += Tmr_Tick;
         }
 
         private void Tmr_Tick(object sender, EventArgs e)
@@ -40,7 +31,7 @@ namespace GraphicsTools.Alundra
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 
                 //engine.MainUpdate(false);
-                engine.Render(g);
+                _engine.Render(g);
             }
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             e.Graphics.Clear(Color.Black);

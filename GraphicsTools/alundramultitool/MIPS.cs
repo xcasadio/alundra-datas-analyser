@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace alundramultitool
+﻿namespace alundramultitool
 {
     public class InstructionSet
     {
@@ -14,7 +9,7 @@ namespace alundramultitool
 
         public static int SignedValAtOffset(uint instruction, int width, int bitoffset)
         {
-            int signoffset = 0;
+            var signoffset = 0;
             while (width >> signoffset > 1)
                 signoffset++;
             return (int)(ValAtOffset(instruction, width ^ (1 << signoffset), bitoffset) | (ValAtOffset(instruction, 1, signoffset) == 1 ? (0xffffffff >> signoffset) << signoffset : 0));
@@ -30,24 +25,29 @@ namespace alundramultitool
 
     }
 
-    public class BranchOperation<T> where T : ISInstruction
+    public class BranchOperation<T> where T : IsInstruction
     {
         public BranchOperation(T instruction, CodeBlock<T> block)
         {
-            this.Instruction = instruction;
-            this.Block = block;
-            if (instruction.cmd == "beq" || instruction.cmd == "bne")
+            Instruction = instruction;
+            Block = block;
+            if (instruction.Cmd == "beq" || instruction.Cmd == "bne")
             {
-                Comp1 = MIPS.GetRegister(instruction.rs);
-                Comp2 = MIPS.GetRegister(instruction.rt);
+                Comp1 = Mips.GetRegister(instruction.Rs);
+                Comp2 = Mips.GetRegister(instruction.Rt);
                 if (Comp1 == "r0")
+                {
                     Comp1 = "0";
+                }
+
                 if (Comp2 == "r0")
+                {
                     Comp2 = "0";
+                }
             }
             else
             {
-                Comp1 = MIPS.GetRegister(instruction.rs);
+                Comp1 = Mips.GetRegister(instruction.Rs);
                 Comp2 = "0";
             }
         }
@@ -59,24 +59,33 @@ namespace alundramultitool
         //todo make this generic and implimented for each instruction set
         public string Print()
         {
-            string text = "if";
+            var text = "if";
 
             T previnst = null;
             var prevdex = Block.Instructions.IndexOf(Instruction) - 1;
             if (prevdex >= 0)
+            {
                 previnst = Block.Instructions[prevdex];
+            }
+
             //"beq", "bgezal", "bgez", "bltz", "bltzal", "bgtz", "blez", "bne"
-            switch (Instruction.cmd)
+            switch (Instruction.Cmd)
             {
                 case "beq":
-                    if (Comp2 == "0" && previnst != null && previnst.rd == Instruction.rs && (previnst.cmd == "slt" || previnst.cmd == "sltu"))
+                    if (Comp2 == "0" && previnst != null && previnst.Rd == Instruction.Rs && (previnst.Cmd == "slt" || previnst.Cmd == "sltu"))
                     {
-                        Comp1 = MIPS.GetRegister(previnst.rs);
-                        Comp2 = MIPS.GetRegister(previnst.rt);
+                        Comp1 = Mips.GetRegister(previnst.Rs);
+                        Comp2 = Mips.GetRegister(previnst.Rt);
                         if (Comp1 == "r0")
+                        {
                             Comp1 = "0";
+                        }
+
                         if (Comp2 == "r0")
+                        {
                             Comp2 = "0";
+                        }
+
                         text += string.Format("({0} < {1})", Comp1, Comp2);
                     }
                     else
@@ -106,21 +115,21 @@ namespace alundramultitool
         }
     }
 
-    public class CodeBlock<T> where T : ISInstruction
+    public class CodeBlock<T> where T : IsInstruction
     {
-        public List<T> Instructions = new List<T>();
+        public List<T> Instructions = new();
 
         public BlockType BlockType;
-        public List<CodeBlock<T>> InEdges = new List<CodeBlock<T>>();
-        public List<CodeBlock<T>> OutEdges = new List<CodeBlock<T>>();
-        public List<uint> OutAddresses = new List<uint>();
+        public List<CodeBlock<T>> InEdges = new();
+        public List<CodeBlock<T>> OutEdges = new();
+        public List<uint> OutAddresses = new();
 
 
         public uint Address
         {
             get
             {
-                return Instructions.FirstOrDefault().address;
+                return Instructions.FirstOrDefault().Address;
             }
         }
 
@@ -128,7 +137,7 @@ namespace alundramultitool
         {
             get
             {
-                return Instructions.LastOrDefault().address + 4;
+                return Instructions.LastOrDefault().Address + 4;
             }
         }
 
@@ -139,7 +148,9 @@ namespace alundramultitool
                 foreach (var edge in InEdges)
                 {
                     if (edge.EndAddress != Address)
+                    {
                         return true;
+                    }
                 }
                 return false;
             }
@@ -152,7 +163,9 @@ namespace alundramultitool
                 foreach (var edge in InEdges)
                 {
                     if (edge.Address >= Address)
+                    {
                         return true;
+                    }
                 }
                 return false;
             }
@@ -165,7 +178,9 @@ namespace alundramultitool
                 foreach (var edge in OutEdges)
                 {
                     if (edge != null && edge.Address <= Address)
+                    {
                         return true;
+                    }
                 }
                 return false;
             }
@@ -187,26 +202,26 @@ namespace alundramultitool
 
     }
 
-    public abstract class ISInstruction
+    public abstract class IsInstruction
     {
-        public string cmd;
-        public uint referencedAddress;
-        public string display;
+        public string Cmd;
+        public uint ReferencedAddress;
+        public string Display;
 
-        public uint instruction;
-        public int opcode;
-        public int funct;
-        public int rs;
-        public int rt;
-        public int rd;//displacement register
-        public int shamt;//shift amount
-        public uint address;
-        public int immediate;
-        public uint immediateu;
+        public uint Instruction;
+        public int Opcode;
+        public int Funct;
+        public int Rs;
+        public int Rt;
+        public int Rd;//displacement register
+        public int Shamt;//shift amount
+        public uint Address;
+        public int Immediate;
+        public uint Immediateu;
 
-        public int rn;//destination register
-        public int rm;//source register
-        public int disp;//displacement immediate
+        public int Rn;//destination register
+        public int Rm;//source register
+        public int Disp;//displacement immediate
 
         public abstract bool IsBranch { get; }
         public abstract bool IsCall { get; }
@@ -214,11 +229,11 @@ namespace alundramultitool
         public abstract bool IsReturn { get; }
 
         public int GlobalRegisterOffset = 0;
-        public abstract uint GetGlobalVariable(CodeBlock<ISInstruction> block);
+        public abstract uint GetGlobalVariable(CodeBlock<IsInstruction> block);
 
         public abstract bool IsAssignment { get;}
 
-        public abstract void GetAssignmentGlobals(out uint left, out string right, CodeBlock<ISInstruction> block);
+        public abstract void GetAssignmentGlobals(out uint left, out string right, CodeBlock<IsInstruction> block);
     }
 
 
@@ -236,7 +251,7 @@ namespace alundramultitool
     
 
 
-    public class MIPS: InstructionSet
+    public class Mips: InstructionSet
     {
         public static string GetRegister(int num)
         {
@@ -250,285 +265,294 @@ namespace alundramultitool
             Itype
         }
         
-        public class Instruction : ISInstruction
+        public class Instruction : IsInstruction
         {
             public Instruction(uint address, uint instruction)
             {
-                this.address = address;
-                this.instruction = instruction;
+                Address = address;
+                Instruction = instruction;
 
-                opcode = MIPS.ValAtOffset(instruction, 0x3f, 26);
+                Opcode = ValAtOffset(instruction, 0x3f, 26);
 
-                string onevalformat = "{0} {1}";
-                string twovalformat = "{0} {1}, {2}";
-                string threevalformat = "{0} {1},{2},{3}";
-                string threevalmemoryformat = "{0} {1},{3}({2})";
+                var onevalformat = "{0} {1}";
+                var twovalformat = "{0} {1}, {2}";
+                var threevalformat = "{0} {1},{2},{3}";
+                var threevalmemoryformat = "{0} {1},{3}({2})";
 
                 if (instruction == 0)
                 {
-                    cmd = "nop";
-                    display = cmd;
+                    Cmd = "nop";
+                    Display = Cmd;
                 }
-                else if (opcode == 0x0)//R type instruction
+                else if (Opcode == 0x0)//R type instruction
                 {
-                    type = InstructionType.Rtype;
-                    funct = (int)(instruction & 0x3f);
-                    rs = ValAtOffset(instruction, 0x1f, 6 + 5 * 3);
-                    string srs = GetRegister(rs);
-                    rt = ValAtOffset(instruction, 0x1f, 6 + 5 * 2);
-                    string srt = GetRegister(rt);
-                    rd = ValAtOffset(instruction, 0x1f, 6 + 5 * 1);
-                    string srd = GetRegister(rd);
-                    shamt = ValAtOffset(instruction, 0x1f, 6 + 5 * 0);
+                    Type = InstructionType.Rtype;
+                    Funct = (int)(instruction & 0x3f);
+                    Rs = ValAtOffset(instruction, 0x1f, 6 + 5 * 3);
+                    var srs = GetRegister(Rs);
+                    Rt = ValAtOffset(instruction, 0x1f, 6 + 5 * 2);
+                    var srt = GetRegister(Rt);
+                    Rd = ValAtOffset(instruction, 0x1f, 6 + 5 * 1);
+                    var srd = GetRegister(Rd);
+                    Shamt = ValAtOffset(instruction, 0x1f, 6 + 5 * 0);
 
-                    switch (funct)
+                    switch (Funct)
                     {
                         case 0x20://add
-                            cmd = "add";
-                            display = string.Format(threevalformat, "add", srd, srs, srt);
+                            Cmd = "add";
+                            Display = string.Format(threevalformat, "add", srd, srs, srt);
                             break;
                         case 0x21://add unsigned
-                            cmd = "addu";
-                            display = string.Format(threevalformat, "addu", srd, srs, srt);
+                            Cmd = "addu";
+                            Display = string.Format(threevalformat, "addu", srd, srs, srt);
                             break;
                         case 0x22://subtract
-                            cmd = "sub";
-                            display = string.Format(threevalformat, "sub", srd, srs, srt);
+                            Cmd = "sub";
+                            Display = string.Format(threevalformat, "sub", srd, srs, srt);
                             break;
                         case 0x23://subtract unsigned
-                            cmd = "subu";
-                            display = string.Format(threevalformat, "subu", srd, srs, srt);
+                            Cmd = "subu";
+                            Display = string.Format(threevalformat, "subu", srd, srs, srt);
                             break;
                         case 0x18://multiply
-                            cmd = "mult";
-                            display = string.Format(twovalformat, "mult", srs, srt);
+                            Cmd = "mult";
+                            Display = string.Format(twovalformat, "mult", srs, srt);
                             break;
                         case 0x19://multiply unsigned
-                            cmd = "multu";
-                            display = string.Format(twovalformat, "multu", srs, srt);
+                            Cmd = "multu";
+                            Display = string.Format(twovalformat, "multu", srs, srt);
                             break;
                         case 0x1a://divide
-                            cmd = "div";
-                            display = string.Format(twovalformat, "div", srs, srt);
+                            Cmd = "div";
+                            Display = string.Format(twovalformat, "div", srs, srt);
                             break;
                         case 0x1b://divide unsigned
-                            cmd = "divu";
-                            display = string.Format(twovalformat, "divu", srs, srt);
+                            Cmd = "divu";
+                            Display = string.Format(twovalformat, "divu", srs, srt);
                             break;
                         case 0x10://move from hi
-                            cmd = "mfhi";
-                            display = string.Format(onevalformat, "mfhi", srd);
+                            Cmd = "mfhi";
+                            Display = string.Format(onevalformat, "mfhi", srd);
                             break;
                         case 0x12://move from low
-                            cmd = "mflo";
-                            display = string.Format(onevalformat, "mflo", srd);
+                            Cmd = "mflo";
+                            Display = string.Format(onevalformat, "mflo", srd);
                             break;
                         case 0x24://and
-                            cmd = "and";
-                            display = string.Format(threevalformat, "and", srd, srs, srt);
+                            Cmd = "and";
+                            Display = string.Format(threevalformat, "and", srd, srs, srt);
                             break;
                         case 0x25://or
-                            cmd = "or";
-                            display = string.Format(threevalformat, "or", srd, srs, srt);
+                            Cmd = "or";
+                            Display = string.Format(threevalformat, "or", srd, srs, srt);
                             break;
                         case 0x26://xor
-                            cmd = "xor";
-                            display = string.Format(threevalformat, "xor", srd, srs, srt);
+                            Cmd = "xor";
+                            Display = string.Format(threevalformat, "xor", srd, srs, srt);
                             break;
                         case 0x27://nor
-                            cmd = "nor";
-                            display = string.Format(threevalformat, "nor", srd, srs, srt);
+                            Cmd = "nor";
+                            Display = string.Format(threevalformat, "nor", srd, srs, srt);
                             break;
                         case 0x2a://set on less than
-                            cmd = "slt";
-                            display = string.Format(threevalformat, "slt", srd, srs, srt);
+                            Cmd = "slt";
+                            Display = string.Format(threevalformat, "slt", srd, srs, srt);
                             break;
                         case 0x2b://set on less than unsigned
-                            cmd = "sltu";
-                            display = string.Format(threevalformat, "slt", srd, srs, srt);
+                            Cmd = "sltu";
+                            Display = string.Format(threevalformat, "slt", srd, srs, srt);
                             break;
                         case 0x0://shift left logical immediate
-                            cmd = "sll";
-                            display = string.Format(threevalformat, "sll", srd, srt, shamt);
+                            Cmd = "sll";
+                            Display = string.Format(threevalformat, "sll", srd, srt, Shamt);
                             break;
                         case 0x2://shift right logical immediate
-                            cmd = "srl";
-                            display = string.Format(threevalformat, "srl", srd, srt, shamt);
+                            Cmd = "srl";
+                            Display = string.Format(threevalformat, "srl", srd, srt, Shamt);
                             break;
                         case 0x3://shift right arithmetic immediate
-                            cmd = "sra";
-                            display = string.Format(threevalformat, "sra", srd, srt, shamt);
+                            Cmd = "sra";
+                            Display = string.Format(threevalformat, "sra", srd, srt, Shamt);
                             break;
                         case 0x4://shift left logical
-                            cmd = "sllv";
-                            display = string.Format(threevalformat, "sllv", srd, srt, srs);
+                            Cmd = "sllv";
+                            Display = string.Format(threevalformat, "sllv", srd, srt, srs);
                             break;
                         case 0x6://shift right logical
-                            cmd = "srlv";
-                            display = string.Format(threevalformat, "srlv", srd, srt, srs);
+                            Cmd = "srlv";
+                            Display = string.Format(threevalformat, "srlv", srd, srt, srs);
                             break;
                         case 0x7://shift right arithmetic
-                            cmd = "srav";
-                            display = string.Format(threevalformat, "srav", srd, srt, srs);
+                            Cmd = "srav";
+                            Display = string.Format(threevalformat, "srav", srd, srt, srs);
                             break;
                         case 0x8://jump register
-                            cmd = "jr";
-                            display = string.Format(onevalformat, "jr", srs);
+                            Cmd = "jr";
+                            Display = string.Format(onevalformat, "jr", srs);
                             break;
                         case 0x9://jump and link register
-                            cmd = "jalr";
-                            display = string.Format(twovalformat, "jalr", srs, srd);
+                            Cmd = "jalr";
+                            Display = string.Format(twovalformat, "jalr", srs, srd);
                             break;
                         default:
-                            cmd = "???";
-                            display = "unknown R type funct: " + funct.ToString("x2");
+                            Cmd = "???";
+                            Display = "unknown R type funct: " + Funct.ToString("x2");
                             break;
                     }
                 }
-                else if (opcode == 0x2 || opcode == 0x3)//J type instruction
+                else if (Opcode == 0x2 || Opcode == 0x3)//J type instruction
                 {
-                    type = InstructionType.Jtype;
-                    immediateu = (uint)ValAtOffset(instruction, 0x3ffffff, 0);
-                    referencedAddress = immediateu << 2;
-                    switch (opcode)
+                    Type = InstructionType.Jtype;
+                    Immediateu = (uint)ValAtOffset(instruction, 0x3ffffff, 0);
+                    ReferencedAddress = Immediateu << 2;
+                    switch (Opcode)
                     {
                         case 0x2:
-                            cmd = "j";
-                            display = string.Format(onevalformat, "j", "0x" + referencedAddress.ToString("x8"));
+                            Cmd = "j";
+                            Display = string.Format(onevalformat, "j", "0x" + ReferencedAddress.ToString("x8"));
                             break;
                         case 0x3:
-                            cmd = "jal";
-                            display = string.Format(onevalformat, "jal", "0x" + referencedAddress.ToString("x8"));
+                            Cmd = "jal";
+                            Display = string.Format(onevalformat, "jal", "0x" + ReferencedAddress.ToString("x8"));
                             break;
                     }
                 }
                 else//I type instruction
                 {
-                    type = InstructionType.Itype;
-                    rs = ValAtOffset(instruction, 0x1f, 6 + 5 * 3);
-                    string srs = GetRegister(rs);
-                    rt = ValAtOffset(instruction, 0x1f, 6 + 5 * 2);
-                    string srt = GetRegister(rt);
-                    immediate = (short)SignedValAtOffset(instruction, 0xffff, 0);
-                    string simmediate = "0x" + ((short)immediate).ToString("x4");
-                    immediateu = (ushort)ValAtOffset(instruction, 0xffff, 0);
-                    string simmediateu = "0x" + ((ushort)immediateu).ToString("x4");
+                    Type = InstructionType.Itype;
+                    Rs = ValAtOffset(instruction, 0x1f, 6 + 5 * 3);
+                    var srs = GetRegister(Rs);
+                    Rt = ValAtOffset(instruction, 0x1f, 6 + 5 * 2);
+                    var srt = GetRegister(Rt);
+                    Immediate = (short)SignedValAtOffset(instruction, 0xffff, 0);
+                    var simmediate = "0x" + ((short)Immediate).ToString("x4");
+                    Immediateu = (ushort)ValAtOffset(instruction, 0xffff, 0);
+                    var simmediateu = "0x" + ((ushort)Immediateu).ToString("x4");
 
-                    switch (opcode)
+                    switch (Opcode)
                     {
                         case 0x8://add immediate
-                            cmd = "addi";
-                            display =  string.Format(threevalformat, "addi", srt, srs, simmediate);
+                            Cmd = "addi";
+                            Display =  string.Format(threevalformat, "addi", srt, srs, simmediate);
                             break;
                         case 0x9://add immediate unsigned (the immediate is always signed, this is kind of nuts 
-                            cmd = "addiu";
-                            display = string.Format(threevalformat, "addiu", srt, srs, simmediate);
+                            Cmd = "addiu";
+                            Display = string.Format(threevalformat, "addiu", srt, srs, simmediate);
                             break;
                         case 0x23://load word
-                            cmd = "lw";
-                            display = string.Format(threevalmemoryformat, "lw", srt, srs, simmediate);
+                            Cmd = "lw";
+                            Display = string.Format(threevalmemoryformat, "lw", srt, srs, simmediate);
                             break;
                         case 0x21://load halfword
-                            cmd = "lh";
-                            display = string.Format(threevalmemoryformat, "lh", srt, srs, simmediate);
+                            Cmd = "lh";
+                            Display = string.Format(threevalmemoryformat, "lh", srt, srs, simmediate);
                             break;
                         case 0x25://load halfword unsigned
-                            cmd = "lhu";
-                            display = string.Format(threevalmemoryformat, "lhu", srt, srs, simmediate);
+                            Cmd = "lhu";
+                            Display = string.Format(threevalmemoryformat, "lhu", srt, srs, simmediate);
                             break;
                         case 0x20://load byte
-                            cmd = "lb";
-                            display = string.Format(threevalmemoryformat, "lb", srt, srs, simmediate);
+                            Cmd = "lb";
+                            Display = string.Format(threevalmemoryformat, "lb", srt, srs, simmediate);
                             break;
                         case 0x24://load byte unsigned
-                            cmd = "lbu";
-                            display = string.Format(threevalmemoryformat, "lbu", srt, srs, simmediate);
+                            Cmd = "lbu";
+                            Display = string.Format(threevalmemoryformat, "lbu", srt, srs, simmediate);
                             break;
                         case 0x2b://store word
-                            cmd = "sw";
-                            display = string.Format(threevalmemoryformat, "sw", srt, srs, simmediate);
+                            Cmd = "sw";
+                            Display = string.Format(threevalmemoryformat, "sw", srt, srs, simmediate);
                             break;
                         case 0x29://store halfword
-                            cmd = "sh";
-                            display = string.Format(threevalmemoryformat, "sh", srt, srs, simmediate);
+                            Cmd = "sh";
+                            Display = string.Format(threevalmemoryformat, "sh", srt, srs, simmediate);
                             break;
                         case 0x28://store byte
-                            cmd = "sb";
-                            display = string.Format(threevalmemoryformat, "sb", srt, srs, simmediate);
+                            Cmd = "sb";
+                            Display = string.Format(threevalmemoryformat, "sb", srt, srs, simmediate);
                             break;
                         case 0xf://load upper immediate
-                            cmd = "lui";
-                            display = string.Format(twovalformat, "lui", srt, simmediate);
+                            Cmd = "lui";
+                            Display = string.Format(twovalformat, "lui", srt, simmediate);
                             break;
                         case 0xc://and immediate
-                            cmd = "andi";
-                            display = string.Format(threevalformat, "andi", srt, srs, simmediate);
+                            Cmd = "andi";
+                            Display = string.Format(threevalformat, "andi", srt, srs, simmediate);
                             break;
                         case 0xd://or immediate
-                            cmd = "ori";
-                            display = string.Format(threevalformat, "ori", srt, srs, simmediate);
+                            Cmd = "ori";
+                            Display = string.Format(threevalformat, "ori", srt, srs, simmediate);
                             break;
                         case 0xe://xor immediate
-                            cmd = "xori";
-                            display = string.Format(threevalformat, "xori", srt, srs, simmediate);
+                            Cmd = "xori";
+                            Display = string.Format(threevalformat, "xori", srt, srs, simmediate);
                             break;
                         case 0xa://set on less than immediate
-                            cmd = "slti";
-                            display = string.Format(threevalformat, "slti", srt, srs, simmediate);
+                            Cmd = "slti";
+                            Display = string.Format(threevalformat, "slti", srt, srs, simmediate);
                             break;
                         case 0xb://set on less than immediate unsigned
-                            cmd = "sltiu";
-                            display = string.Format(threevalformat, "sltiu", srt, srs, simmediateu);
+                            Cmd = "sltiu";
+                            Display = string.Format(threevalformat, "sltiu", srt, srs, simmediateu);
                             break;
                         case 0x4://branch on equal
-                            cmd = "beq";
-                            referencedAddress = (uint)(address + 4 + (immediate << 2));
-                            display = string.Format(threevalformat, "beq", srs, srt, "0x" + referencedAddress.ToString("x8"));
+                            Cmd = "beq";
+                            ReferencedAddress = (uint)(address + 4 + (Immediate << 2));
+                            Display = string.Format(threevalformat, "beq", srs, srt, "0x" + ReferencedAddress.ToString("x8"));
                             break;
                         case 0x1://branch on greater than or equal to zero
-                            if (rt == 0x11)
-                                cmd = "bgezal";
-                            else if (rt == 0x1)
-                                cmd = "bgez";
-                            else if (rt == 0)
-                                cmd = "bltz";
-                            else if (rt == 0x10)
-                                cmd = "bltzal";
-                            referencedAddress = (uint)(address + 4 + (immediate << 2));
-                            display = string.Format(twovalformat, cmd, srs, "0x" + referencedAddress.ToString("x8"));
+                            if (Rt == 0x11)
+                            {
+                                Cmd = "bgezal";
+                            }
+                            else if (Rt == 0x1)
+                            {
+                                Cmd = "bgez";
+                            }
+                            else if (Rt == 0)
+                            {
+                                Cmd = "bltz";
+                            }
+                            else if (Rt == 0x10)
+                            {
+                                Cmd = "bltzal";
+                            }
+
+                            ReferencedAddress = (uint)(address + 4 + (Immediate << 2));
+                            Display = string.Format(twovalformat, Cmd, srs, "0x" + ReferencedAddress.ToString("x8"));
                             break;
                         case 0x7://branch on greater than zero
-                            cmd = "bgtz";
-                            referencedAddress = (uint)(address + 4 + (immediate << 2));
-                            display = string.Format(twovalformat, cmd, srs, "0x" + referencedAddress.ToString("x8"));
+                            Cmd = "bgtz";
+                            ReferencedAddress = (uint)(address + 4 + (Immediate << 2));
+                            Display = string.Format(twovalformat, Cmd, srs, "0x" + ReferencedAddress.ToString("x8"));
                             break;
                         case 0x6://branch on less than or equal to zero
-                            cmd = "blez";
-                            referencedAddress = (uint)(address + 4 + (immediate << 2));
-                            display = string.Format(twovalformat, "blez", srs, "0x" + referencedAddress.ToString("x8"));
+                            Cmd = "blez";
+                            ReferencedAddress = (uint)(address + 4 + (Immediate << 2));
+                            Display = string.Format(twovalformat, "blez", srs, "0x" + ReferencedAddress.ToString("x8"));
                             break;
                         case 0x5://branch on not equal
-                            cmd = "bne";
-                            referencedAddress = (uint)(address + 4 + (immediate << 2));
-                            display = string.Format(threevalformat, "bne", srs, srt, "0x" + referencedAddress.ToString("x8"));
+                            Cmd = "bne";
+                            ReferencedAddress = (uint)(address + 4 + (Immediate << 2));
+                            Display = string.Format(threevalformat, "bne", srs, srt, "0x" + ReferencedAddress.ToString("x8"));
                             break;
                         default:
-                            cmd = "?";
-                            display = "unknown I type opcode: " + opcode.ToString("x2");
+                            Cmd = "?";
+                            Display = "unknown I type opcode: " + Opcode.ToString("x2");
                             break;
 
                     }
                 }
             }
 
-            public InstructionType type;
+            public InstructionType Type;
 
 
             public override bool IsCall
             {
                 get
                 {
-                    return new[] { "jal", "jalr"}.Contains(cmd);
+                    return new[] { "jal", "jalr"}.Contains(Cmd);
                 }
             }
 
@@ -536,7 +560,7 @@ namespace alundramultitool
             {
                 get
                 {
-                    return new[] { "beq", "bgezal", "bgez", "bltz", "bltzal", "bgtz", "blez", "bne" }.Contains(cmd);
+                    return new[] { "beq", "bgezal", "bgez", "bltz", "bltzal", "bgtz", "blez", "bne" }.Contains(Cmd);
                 }
             }
 
@@ -544,7 +568,7 @@ namespace alundramultitool
             {
                 get
                 {
-                    return cmd == "j";
+                    return Cmd == "j";
                 }
             }
 
@@ -552,7 +576,7 @@ namespace alundramultitool
             {
                 get
                 {
-                    return cmd == "jr" && rs == 31;
+                    return Cmd == "jr" && Rs == 31;
                 }
             }
 
@@ -560,51 +584,51 @@ namespace alundramultitool
             {
                 get
                 {
-                    return type == InstructionType.Itype && cmd[0] == 's';
+                    return Type == InstructionType.Itype && Cmd[0] == 's';
                 }
             }
-            public override void GetAssignmentGlobals(out uint left, out string right, CodeBlock<ISInstruction> block)
+            public override void GetAssignmentGlobals(out uint left, out string right, CodeBlock<IsInstruction> block)
             {
                 left = 0;
                 right = "?";
                 //assumed itype
-                if (this.type == InstructionType.Itype)
+                if (Type == InstructionType.Itype)
                 {
                     var fulladdr = GetGlobalVariable(block);
                     if (fulladdr != 0)
                     {
                         left = fulladdr;
-                        var reg = rt;
+                        var reg = Rt;
 
                         right = "r" + reg;
 
                         var mdex = block.Instructions.IndexOf(this);
-                        int seekback = 2;
-                        for (int dex = mdex - 1; dex >= mdex - (1 + seekback) && dex >= 0; dex--)
+                        var seekback = 2;
+                        for (var dex = mdex - 1; dex >= mdex - (1 + seekback) && dex >= 0; dex--)
                         {
                             var binst = (Instruction)block.Instructions[dex];
-                            if (binst.type == InstructionType.Rtype && binst.rd == reg)
+                            if (binst.Type == InstructionType.Rtype && binst.Rd == reg)
                             {
-                                right = "r" + reg + "(" + binst.disp + ")";
+                                right = "r" + reg + "(" + binst.Disp + ")";
 
                                 break;
                             }
-                            else if (binst.type == InstructionType.Itype)
+                            else if (binst.Type == InstructionType.Itype)
                             {
                                 if (binst.IsAssignment)
                                 {
-                                    if (binst.rs == reg)
+                                    if (binst.Rs == reg)
                                     {
-                                        right = "r" + reg + "(" + binst.disp + ")";
+                                        right = "r" + reg + "(" + binst.Disp + ")";
 
                                         break;
                                     }
                                 }
                                 else
                                 {
-                                    if (binst.rt == reg)
+                                    if (binst.Rt == reg)
                                     {
-                                        right = "r" + reg + "(" + binst.disp + ")";
+                                        right = "r" + reg + "(" + binst.Disp + ")";
 
                                         break;
                                     }
@@ -618,31 +642,31 @@ namespace alundramultitool
                 }
             }
             
-            public override uint GetGlobalVariable(CodeBlock<ISInstruction> block)
+            public override uint GetGlobalVariable(CodeBlock<IsInstruction> block)
             {
                 GlobalRegisterOffset = 0;
                 //var varlist = GraphicsTools.Alundra.DebugSymbols.GlobalVariableNames;
                 //if its a global variable then return the address
                 var typesthatreallyare = new[] { "addiu", "addi", "ori" };
                 var typesthatpotentiallyare = new[] { "lw", "sw", "lhu", "lh", "shu", "sh", "lbu", "lb", "sbu", "sb" };//
-                if (typesthatreallyare.Contains(this.cmd) || typesthatpotentiallyare.Contains(this.cmd))
+                if (typesthatreallyare.Contains(Cmd) || typesthatpotentiallyare.Contains(Cmd))
                 {
                     var mdex = block.Instructions.IndexOf(this);
-                    int seekback = 2;
-                    for (int dex = mdex - 1; dex >= mdex - (1 + seekback) && dex >= 0; dex--)
+                    var seekback = 2;
+                    for (var dex = mdex - 1; dex >= mdex - (1 + seekback) && dex >= 0; dex--)
                     {
                         var binst = (Instruction)block.Instructions[dex];
-                        if (binst.cmd == "lui" && binst.rt == this.rs)
+                        if (binst.Cmd == "lui" && binst.Rt == Rs)
                         {
                             uint fulladdr = 0;
-                            switch (this.cmd)
+                            switch (Cmd)
                             {
                                 case "ori":
-                                    fulladdr = (uint)((UInt32)(((uint)binst.immediate & 0xff) << 16) | this.immediateu);
+                                    fulladdr = (uint)((uint)(((uint)binst.Immediate & 0xff) << 16) | Immediateu);
                                     break;
                                 case "addiu":
                                 case "addi":
-                                    fulladdr = (uint)((UInt32)(((uint)binst.immediate & 0xff) << 16) + this.immediate);
+                                    fulladdr = (uint)((uint)(((uint)binst.Immediate & 0xff) << 16) + Immediate);
                                     break;
 
                                 case "lw":
@@ -655,22 +679,22 @@ namespace alundramultitool
                                 case "sb":
                                 case "lbu":
                                 case "sbu":
-                                    fulladdr = (uint)((UInt32)(((uint)binst.immediate & 0xff) << 16) + this.immediate);
+                                    fulladdr = (uint)((uint)(((uint)binst.Immediate & 0xff) << 16) + Immediate);
                                     break;
                             }
                             return fulladdr;
 
                         }
-                        else if (binst.type == InstructionType.Itype && binst.rt == this.rs)
+                        else if (binst.Type == InstructionType.Itype && binst.Rt == Rs)
                         {
                             break;//dont seek back any further because the register in question was already overwritten
                         }
-                        else if (binst.type == InstructionType.Rtype && binst.rd == this.rs)
+                        else if (binst.Type == InstructionType.Rtype && binst.Rd == Rs)
                         {
                             //"addu", srd, srs, srt)
-                            if ((binst.cmd == "addu" || binst.cmd == "add") && binst.rs == this.rs )
+                            if ((binst.Cmd == "addu" || binst.Cmd == "add") && binst.Rs == Rs )
                             {
-                                GlobalRegisterOffset = binst.rt;
+                                GlobalRegisterOffset = binst.Rt;
                             }
                             else
                             {

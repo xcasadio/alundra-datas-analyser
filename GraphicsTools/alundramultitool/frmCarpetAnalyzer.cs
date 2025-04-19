@@ -1,38 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.IO;
-using System.Runtime.InteropServices;
-using alundramultitool;
+﻿using alundramultitool;
 
 namespace GraphicsTools
 {
-    public partial class frmCarpetAnalyzer : Form
+    public partial class FrmCarpetAnalyzer : Form
     {
-        public frmCarpetAnalyzer()
+        public FrmCarpetAnalyzer()
         {
             InitializeComponent();
             Alundra.DebugSymbols.Init();
         }
 
-        public string datafile;
+        public string Datafile;
 
-        public int offset;
-        public int memaddress;
-        public int startoffset = 0;
-        public int startsize = 0;
-        int chunklength = 1024*1024;
-        byte[] data;
+        public int Offset;
+        public int Memaddress;
+        public int Startoffset = 0;
+        public int Startsize = 0;
+        int _chunklength = 1024*1024;
+        byte[] _data;
 
         int ParseNum(string num)
         {
-            int i = 0;
+            var i = 0;
             if (num.StartsWith("0x"))
             {
                 int.TryParse(num.Replace("0x", ""), System.Globalization.NumberStyles.AllowHexSpecifier, null, out i);
@@ -46,75 +35,82 @@ namespace GraphicsTools
 
         private void frmFileAnalyzer_Load(object sender, EventArgs e)
         {
-            loadchunk(offset);
+            Loadchunk(Offset);
         }
 
-        int instOffset = 0;
-        List<ISInstruction> instructions = new List<ISInstruction>();
-        List<uint> functions = new List<uint>();
-        void loadchunk(int offset)
+        int _instOffset = 0;
+        List<IsInstruction> _instructions = new();
+        List<uint> _functions = new();
+        void Loadchunk(int offset)
         {
-            this.Text = "frmCarpetAnalyzer: " + datafile + " : " + offset.ToString();
-            txtAddressOffset.Text = (memaddress - offset).ToString();
-            this.offset = offset;
-            data = new byte[chunklength];
-            var stream = File.OpenRead(datafile);
+            Text = "frmCarpetAnalyzer: " + Datafile + " : " + offset.ToString();
+            txtAddressOffset.Text = (Memaddress - offset).ToString();
+            Offset = offset;
+            _data = new byte[_chunklength];
+            var stream = File.OpenRead(Datafile);
             stream.Position = offset;
-            int numread = stream.Read(data, 0, chunklength);
+            var numread = stream.Read(_data, 0, _chunklength);
             stream.Close();
-            rtfText.LoadFile(new MemoryStream(data), RichTextBoxStreamType.PlainText);
-            rtfText.Select(startoffset, startsize);
+            rtfText.LoadFile(new MemoryStream(_data), RichTextBoxStreamType.PlainText);
+            rtfText.Select(Startoffset, Startsize);
 
-            instOffset = ParseNum(txtInstructionsOffset.Text);
-            instructions.Clear();
+            _instOffset = ParseNum(txtInstructionsOffset.Text);
+            _instructions.Clear();
             lstInstructions.Items.Clear();
             lstFunctions.Items.Clear();
-            var mips = new MIPS();
-            for (int dex = 0; dex < 0x6000; dex+=4)
+            var mips = new Mips();
+            for (var dex = 0; dex < 0x6000; dex+=4)
             {
-                var inst = new MIPS.Instruction((uint)(instOffset + offset + dex), (uint)(data[dex] | data[dex + 1] << 8 | data[dex + 2] << 16 | (uint)data[dex + 3] << 24));
-                if (inst.cmd == "jal")
-                    functions.Add(inst.referencedAddress);
-                    
-                instructions.Add(inst);
-                lstInstructions.Items.Add(string.Format("{0}:  {1}", inst.address.ToString("x8"), inst.display));
+                var inst = new Mips.Instruction((uint)(_instOffset + offset + dex), (uint)(_data[dex] | _data[dex + 1] << 8 | _data[dex + 2] << 16 | (uint)_data[dex + 3] << 24));
+                if (inst.Cmd == "jal")
+                {
+                    _functions.Add(inst.ReferencedAddress);
+                }
+
+                _instructions.Add(inst);
+                lstInstructions.Items.Add(string.Format("{0}:  {1}", inst.Address.ToString("x8"), inst.Display));
             }
-            foreach (var functaddr in functions.Distinct().OrderBy(x => x))
+            foreach (var functaddr in _functions.Distinct().OrderBy(x => x))
             {
-                string fname = "";
+                var fname = "";
                 if (Alundra.DebugSymbols.FunctionNames.ContainsKey(functaddr))
+                {
                     fname = " (" + Alundra.DebugSymbols.FunctionNames[functaddr] + ")";
+                }
+
                 lstFunctions.Items.Add("0x" + functaddr.ToString("x8") + fname);
             }
         }
 
         void DisplayData(int pos)
         {
-            int addrOffset = 0;
+            var addrOffset = 0;
             int.TryParse(txtAddressOffset.Text, out addrOffset);
-            txtOffset.Text = offset.ToString();
-            lblCursorOffset.Text = (pos + offset).ToString() + "(" + (pos + offset + addrOffset).ToString("x6") + ")";
+            txtOffset.Text = Offset.ToString();
+            lblCursorOffset.Text = (pos + Offset).ToString() + "(" + (pos + Offset + addrOffset).ToString("x6") + ")";
             lblRelOffset.Text = pos.ToString();
             lblSelLength.Text = rtfText.SelectionLength.ToString();
 
-            lbl8bit.Text = data[pos].ToString() + " (" + data[pos].ToString("x2") + ")"; ;
-            long l = data[pos + 1] | data[pos] << 8;
+            lbl8bit.Text = _data[pos].ToString() + " (" + _data[pos].ToString("x2") + ")"; ;
+            long l = _data[pos + 1] | _data[pos] << 8;
             lbl16bit.Text = l.ToString() + " (" + l.ToString("x4") + ")";
-            l = data[pos+3] | data[pos + 2] << 8 | data[pos + 1] << 16 | (long)data[pos + 0] << 24;
+            l = _data[pos+3] | _data[pos + 2] << 8 | _data[pos + 1] << 16 | (long)_data[pos + 0] << 24;
             lbl32bit.Text = l.ToString() + " (" + l.ToString("x8") + ")";
 
-            lbl4bita.Text = ((data[pos] & 0xf0) >> 4).ToString();
-            lbl4bitb.Text = (data[pos] & 0xf).ToString();
+            lbl4bita.Text = ((_data[pos] & 0xf0) >> 4).ToString();
+            lbl4bitb.Text = (_data[pos] & 0xf).ToString();
         }
 
         private void rtfText_SelectionChanged(object sender, EventArgs e)
         {
             if (rtfText.SelectionStart >= 0)
+            {
                 DisplayData(rtfText.SelectionStart);
+            }
         }
 
-        frmViewer viewer;
-        frmViewer pal;
+        FrmViewer _viewer;
+        FrmViewer _pal;
 
         private void btnViewImage_Click(object sender, EventArgs e)
         {
@@ -126,49 +122,53 @@ namespace GraphicsTools
             int.TryParse(txtStarty.Text, out starty);
             int.TryParse(txtBpp.Text, out bpp);
 
-            int imagestart = rtfText.SelectionStart;
+            var imagestart = rtfText.SelectionStart;
 
-            byte[]imagedata = new byte[width*height*bpp/8];
+            var imagedata = new byte[width*height*bpp/8];
 
             if (stride == -1)
             {
                 //compressed
-                int imagedex = 0;
-                int buffdex = imagestart;
+                var imagedex = 0;
+                var buffdex = imagestart;
                 while(imagedex < imagedata.Length)
                 {
-                    byte b = data[buffdex++];
+                    var b = _data[buffdex++];
                     if (b == 0xad)
                     {
-                        int seek = data[buffdex++];
+                        int seek = _data[buffdex++];
                         if (seek == 0)
                         {
                             imagedata[imagedex++] = b;
                         }
                         else
                         {
-                            int len = data[buffdex++];
-                            int seekdex = imagedex - seek;
+                            int len = _data[buffdex++];
+                            var seekdex = imagedex - seek;
                             while (len-- > 0)
                                 imagedata[imagedex++] = imagedata[seekdex++];
                         }
                     }
                     else
+                    {
                         imagedata[imagedex++] = b;
+                    }
                 }
             }
             else
             {
-                for (int y = 0; y < height; y++)
+                for (var y = 0; y < height; y++)
                 {
-                    Buffer.BlockCopy(data, imagestart + (y + starty) * stride + (startx / 2), imagedata, y * width * bpp / 8, width * bpp / 8);
+                    Buffer.BlockCopy(_data, imagestart + (y + starty) * stride + startx / 2, imagedata, y * width * bpp / 8, width * bpp / 8);
                 }
             }
 
-            int paloffset = 0;
-            Color[] palettes = new Color[(int)Math.Pow(2, bpp)];
-            if (Program.palette != null)
-                palettes = Program.palette;
+            var paloffset = 0;
+            var palettes = new Color[(int)Math.Pow(2, bpp)];
+            if (Program.Palette != null)
+            {
+                palettes = Program.Palette;
+            }
             else
             {
                 throw new Exception("no palette specified");
@@ -178,15 +178,15 @@ namespace GraphicsTools
                     palettes[dex] = Utils.FromPsxColor(data[ddex + 1], data[dex]);// Color.FromArgb(255, (data[ddex + 1] & 0x1f) << 3, ((data[ddex + 1] & 0xe0) >> 2) | ((data[ddex] & 0x3) << 6), data[ddex] & 0x7c);
                 }*/
             }
-            viewer = new frmViewer();
-            viewer.Show();
-            viewer.init(imagedata,24,bpp, width, height, palettes);
+            _viewer = new FrmViewer();
+            _viewer.Show();
+            _viewer.Init(imagedata,24,bpp, width, height, palettes);
         }
 
         private void btnJump_Click(object sender, EventArgs e)
         {
-            offset = ParseNum(txtOffset.Text);
-            loadchunk(offset);
+            Offset = ParseNum(txtOffset.Text);
+            Loadchunk(Offset);
         }
 
         private void btnViewPal_Click(object sender, EventArgs e)
@@ -196,26 +196,26 @@ namespace GraphicsTools
             int.TryParse(txtWidth.Text, out width);
             int.TryParse(txtHeight.Text, out height);
 
-            int palettestart = rtfText.SelectionStart;
+            var palettestart = rtfText.SelectionStart;
 
-            int palbpp = 24;
-            int bpp = 8;
-            byte[] imagedata = new byte[width * height * palbpp / 8];
-            for (int y = 0; y < height; y++)
+            var palbpp = 24;
+            var bpp = 8;
+            var imagedata = new byte[width * height * palbpp / 8];
+            for (var y = 0; y < height; y++)
             {
-                Buffer.BlockCopy(data, palettestart + y * stride, imagedata, y * width * palbpp / 8, width * palbpp / 8);
+                Buffer.BlockCopy(_data, palettestart + y * stride, imagedata, y * width * palbpp / 8, width * palbpp / 8);
 
             }
-            var frm = new frmViewer();
+            var frm = new FrmViewer();
             frm.Show();
-            frm.initpalette(viewer, imagedata,palbpp,bpp, width, height);
+            frm.Initpalette(_viewer, imagedata,palbpp,bpp, width, height);
         }
 
         private void rtfText_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (rtfText.SelectionStart >= 0)
             {
-                lstInstructions.SelectedIndex = (rtfText.SelectionStart) / 4;
+                lstInstructions.SelectedIndex = rtfText.SelectionStart / 4;
                 
             }
         }
@@ -225,10 +225,10 @@ namespace GraphicsTools
         private void btnFindInt32_Click(object sender, EventArgs e)
         {
             long search = ParseNum(txtSearch.Text);
-            int range = ParseNum(txtSearchRange.Text);
-            for (int dex = rtfText.SelectionStart+1; dex < data.Length - 3; dex++)
+            var range = ParseNum(txtSearchRange.Text);
+            for (var dex = rtfText.SelectionStart+1; dex < _data.Length - 3; dex++)
             {
-                long num = data[dex] | data[dex + 1] << 8 | data[dex + 2] << 16 | data[dex + 3] << 24;
+                long num = _data[dex] | _data[dex + 1] << 8 | _data[dex + 2] << 16 | _data[dex + 3] << 24;
                 if (num >= search && num <= search + range)
                 {
                     rtfText.Focus();
@@ -242,16 +242,18 @@ namespace GraphicsTools
         private void frmFileAnalyzer_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.F3)
+            {
                 btnFindInt32_Click(null, null);
+            }
         }
 
         private void frmFindInt16_Click(object sender, EventArgs e)
         {
             long search = ParseNum(txtSearch.Text);
-            int range = ParseNum(txtSearchRange.Text);
-            for (int dex = rtfText.SelectionStart + 1; dex < data.Length - 3; dex++)
+            var range = ParseNum(txtSearchRange.Text);
+            for (var dex = rtfText.SelectionStart + 1; dex < _data.Length - 3; dex++)
             {
-                long num = data[dex] | data[dex + 1] << 8;// | data[dex + 2] << 16 | data[dex + 3] << 24;
+                long num = _data[dex] | _data[dex + 1] << 8;// | data[dex + 2] << 16 | data[dex + 3] << 24;
                 if (num >= search && num <= search + range)
                 {
                     rtfText.Focus();
@@ -261,30 +263,35 @@ namespace GraphicsTools
                 }
             }
         }
-        List<ISInstruction> selectedFunction = null;
+        List<IsInstruction> _selectedFunction = null;
         private void lstFunctions_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lstFunctions.SelectedIndex >= 0)
             {
-                int address = ParseNum(lstFunctions.Text.Split('(')[0].Trim());
-                var fdat = new byte[chunklength];
-                var stream = File.OpenRead(datafile);
+                var address = ParseNum(lstFunctions.Text.Split('(')[0].Trim());
+                var fdat = new byte[_chunklength];
+                var stream = File.OpenRead(Datafile);
                 stream.Position = address;
-                int numread = stream.Read(fdat, 0, chunklength);
+                var numread = stream.Read(fdat, 0, _chunklength);
                 stream.Close();
 
-                bool exit = false;
+                var exit = false;
                 
-                selectedFunction = new List<ISInstruction>();
+                _selectedFunction = new List<IsInstruction>();
 
-                for (int dex = 0; dex < 10000; dex += 4)
+                for (var dex = 0; dex < 10000; dex += 4)
                 {
-                    var inst = new MIPS.Instruction((uint)(address + dex), (uint)(fdat[dex] | fdat[dex + 1] << 8 | fdat[dex + 2] << 16 | (uint)fdat[dex + 3] << 24));
-                    selectedFunction.Add(inst);
+                    var inst = new Mips.Instruction((uint)(address + dex), (uint)(fdat[dex] | fdat[dex + 1] << 8 | fdat[dex + 2] << 16 | (uint)fdat[dex + 3] << 24));
+                    _selectedFunction.Add(inst);
                     if (exit)
+                    {
                         break;
+                    }
+
                     if (inst.IsReturn)
+                    {
                         exit = true;
+                    }
                 }
                 AnalyzeFunction();
             }
@@ -293,48 +300,48 @@ namespace GraphicsTools
         void AnalyzeFunction()
         {
             //string ftext = "0x";
-            List<uint> refs = selectedFunction.Select(x => x.referencedAddress).Where(x => x != 0).ToList();
+            var refs = _selectedFunction.Select(x => x.ReferencedAddress).Where(x => x != 0).ToList();
             
             var fnames = Alundra.DebugSymbols.FunctionNames;
             var evars = Alundra.DebugSymbols.EntityVarOffsets;
 
-            List<CodeBlock<ISInstruction>> blocks = new List<CodeBlock<ISInstruction>>();
+            var blocks = new List<CodeBlock<IsInstruction>>();
 
-            var block = new CodeBlock<ISInstruction>();
+            var block = new CodeBlock<IsInstruction>();
 
-            for (int dex = 0; dex < selectedFunction.Count; dex++)
+            for (var dex = 0; dex < _selectedFunction.Count; dex++)
             {
-                var inst = selectedFunction[dex];
-                if (refs.Contains(inst.address))
+                var inst = _selectedFunction[dex];
+                if (refs.Contains(inst.Address))
                 {
                     if (block.Instructions.Count > 0)
                     {
                         block.BlockType = BlockType.FallThrough;
-                        block.OutAddresses.Add(inst.address);
+                        block.OutAddresses.Add(inst.Address);
                         blocks.Add(block);
-                        block = new CodeBlock<ISInstruction>();
+                        block = new CodeBlock<IsInstruction>();
                     }
                     //ftext += "\r\n0x";
                 }
                 if (inst.IsCall)
                 {
                     block.BlockType = BlockType.Call;
-                    block.OutAddresses.Add(inst.address + 8);
+                    block.OutAddresses.Add(inst.Address + 8);
                     block.Instructions.Add(inst);
                     dex++;
-                    inst = selectedFunction[dex];
+                    inst = _selectedFunction[dex];
                     block.Instructions.Add(inst);
                     blocks.Add(block);
-                    block = new CodeBlock<ISInstruction>();
+                    block = new CodeBlock<IsInstruction>();
                 }
                 else if (inst.IsReturn)
                 {
                     block.BlockType = BlockType.Return;
                     block.Instructions.Add(inst);
                     dex++;
-                    if (dex < selectedFunction.Count)
+                    if (dex < _selectedFunction.Count)
                     {
-                        inst = selectedFunction[dex];
+                        inst = _selectedFunction[dex];
                         block.Instructions.Add(inst);
                     }
                     blocks.Add(block);
@@ -343,25 +350,25 @@ namespace GraphicsTools
                 else if (inst.IsBranch)
                 {
                     block.BlockType = BlockType.TwoWay;
-                    block.OutAddresses.Add(inst.referencedAddress);
-                    block.OutAddresses.Add(inst.address + 8);
+                    block.OutAddresses.Add(inst.ReferencedAddress);
+                    block.OutAddresses.Add(inst.Address + 8);
                     block.Instructions.Add(inst);
                     dex++;
-                    inst = selectedFunction[dex];
+                    inst = _selectedFunction[dex];
                     block.Instructions.Add(inst);
                     blocks.Add(block);
-                    block = new CodeBlock<ISInstruction>();
+                    block = new CodeBlock<IsInstruction>();
                 }
                 else if (inst.IsJump)
                 {
                     block.BlockType = BlockType.OneWay;
-                    block.OutAddresses.Add(inst.referencedAddress);
+                    block.OutAddresses.Add(inst.ReferencedAddress);
                     block.Instructions.Add(inst);
                     dex++;
-                    inst = selectedFunction[dex];
+                    inst = _selectedFunction[dex];
                     block.Instructions.Add(inst);
                     blocks.Add(block);
-                    block = new CodeBlock<ISInstruction>();
+                    block = new CodeBlock<IsInstruction>();
                 }
                 else
                 {

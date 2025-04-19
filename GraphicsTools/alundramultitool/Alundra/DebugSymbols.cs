@@ -1,52 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace GraphicsTools.Alundra
+﻿namespace GraphicsTools.Alundra
 {
     public static class DebugSymbols
     {
-        public static Dictionary<string, Dictionary<byte, string>> EventHandlerNames = new Dictionary<string, Dictionary<byte, string>>();
+        public static Dictionary<string, Dictionary<byte, string>> EventHandlerNames = new();
 
-        public static string[] EntityVarOffsets = new string[GameMap.eventobject_size];
-        public static Dictionary<uint, NameComment> FunctionNames = new Dictionary<uint, NameComment>();
-        public static Dictionary<uint, NameComment> GlobalVariableNames = new Dictionary<uint, NameComment>();
-        public static Dictionary<uint, string> Comments = new Dictionary<uint, string>();
-        public static string[] MapNames = new string[502];
+        public static readonly string[] EntityVarOffsets = new string[GameMap.EventobjectSize];
+        public static readonly Dictionary<uint, NameComment> FunctionNames = new();
+        public static readonly Dictionary<uint, NameComment> GlobalVariableNames = new();
+        public static readonly Dictionary<uint, string> Comments = new();
+        public static readonly string[] MapNames = new string[502];
 
         public static uint Adjustment = 0 + 0xdc;
 
         public class NameComment
         {
-            public string name;
-            public string comment;
+            public string Name;
+            public string Comment;
         }
 
-        static void AddHandlerName(string handlertype, byte eventcode, string name)
+        private static void AddHandlerName(string handlertype, byte eventcode, string name)
         {
             EventHandlerNames[handlertype][eventcode] = name;
         }
 
-        static void AddFunction(uint addr, string name, string comment)
+        private static void AddFunction(uint addr, string name, string comment)
         {
-            FunctionNames.Add(addr, new NameComment { name = name, comment = comment });
-        }
-        static void AddGlobalVariable(uint addr, string name, string comment)
-        {
-            GlobalVariableNames.Add(addr, new NameComment { name = name, comment = comment });
+            FunctionNames.Add(addr, new NameComment { Name = name, Comment = comment });
         }
 
-        static void AddComment(uint addr, string comment)
+        private static void AddGlobalVariable(uint addr, string name, string comment)
+        {
+            GlobalVariableNames.Add(addr, new NameComment { Name = name, Comment = comment });
+        }
+
+        private static void AddComment(uint addr, string comment)
         {
             Comments.Add(addr, comment);
         }
 
-        static void AddGlobalVariableRange(uint addr_start,uint addr_end, string name, string comment)
+        private static void AddGlobalVariableRange(uint addrStart,uint addrEnd, string name, string comment)
         {
-            for (uint addr = addr_start; addr <= addr_end; addr++)
+            for (var addr = addrStart; addr <= addrEnd; addr++)
             {
-                GlobalVariableNames.Add(addr, new NameComment { name = name, comment = comment });
+                GlobalVariableNames.Add(addr, new NameComment { Name = name, Comment = comment });
             }
         }
         public static void Init()
@@ -1036,7 +1032,7 @@ namespace GraphicsTools.Alundra
             AddGlobalVariable(0x1F801824, "portmdec", "");
 
             AddFunction(0x8db44, "entrypoint", "");
-            bool isstartmenu = false;
+            var isstartmenu = false;
             if (isstartmenu)
             {
                 AddGlobalVariable(0x1f4b28, "soundbinhandle","");

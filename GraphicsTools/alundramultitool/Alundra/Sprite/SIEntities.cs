@@ -1,78 +1,75 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-
-namespace GraphicsTools.Alundra.Sprite
+﻿namespace GraphicsTools.Alundra.Sprite
 {
-    public class SIEntities
+    public class SiEntities
     {
-        public SIEntities(BinaryReader br)
+        public SiEntities(BinaryReader br)
         {
             br.BaseStream.Position += 2;
 
-            entities = new SIEntityRecord[128];
-            for (int dex = 0; dex < entities.Length; dex++)
+            Entities = new SiEntityRecord[128];
+            for (var dex = 0; dex < Entities.Length; dex++)
             {
                 //read two test bytes to check for the end of the list
-                short test = br.ReadInt16();
+                var test = br.ReadInt16();
                 if (test == 0)
+                {
                     break;
+                }
+
                 br.BaseStream.Position -= 2;
 
                 //read the record
-                entities[dex] = new SIEntityRecord(br);
+                Entities[dex] = new SiEntityRecord(br);
             }
         }
-        public SIEntityRecord[] entities;
+        public readonly SiEntityRecord[] Entities;
     }
 
-    public class SIEntityRecord
+    public class SiEntityRecord
     {
-        public SIEntityRecord(BinaryReader br)
+        public SiEntityRecord(BinaryReader br)
         {
-            u1 = br.ReadByte();
-            u2 = br.ReadByte();
-            u3 = br.ReadByte();
-            spritecode = br.ReadByte();
-            sector5tableindex = br.ReadByte();
-            xpos = br.ReadByte();
-            ypos = br.ReadByte();
-            height = br.ReadByte();
-            sector1a_bahavior_index = br.ReadByte();
-            sector1b_unknown_index = br.ReadByte();
-            sector1c_unknown_index = br.ReadByte();
-            sector1d_unknown_index = br.ReadByte();
-            sector1e_unknown_index = br.ReadByte();
-            sector1f_dialog_index = br.ReadByte();
-            u7 = br.ReadByte();
-            u8 = br.ReadByte();
-            u9 = br.ReadByte();
-            u10 = br.ReadByte();
-            u11 = br.ReadByte();
-            u12 = br.ReadByte();
+            U1 = br.ReadByte();
+            U2 = br.ReadByte();
+            U3 = br.ReadByte();
+            Spritecode = br.ReadByte();
+            Sector5Tableindex = br.ReadByte();
+            Xpos = br.ReadByte();
+            Ypos = br.ReadByte();
+            Height = br.ReadByte();
+            Sector1ABahaviorIndex = br.ReadByte();
+            Sector1BUnknownIndex = br.ReadByte();
+            Sector1CUnknownIndex = br.ReadByte();
+            Sector1dUnknownIndex = br.ReadByte();
+            Sector1EUnknownIndex = br.ReadByte();
+            Sector1FDialogIndex = br.ReadByte();
+            U7 = br.ReadByte();
+            U8 = br.ReadByte();
+            U9 = br.ReadByte();
+            U10 = br.ReadByte();
+            U11 = br.ReadByte();
+            U12 = br.ReadByte();
         }
 
-        public byte u1;//33
-        public byte u2;//3b
-        public byte u3;//1
-        public byte spritecode;//0,c0,c1,c2,c3,80
-        public byte sector5tableindex;
-        public byte xpos;//divide by 2
-        public byte ypos;//divide by 2
-        public byte height;//divide by 2
-        public byte sector1a_bahavior_index;
-        public byte sector1b_unknown_index;
-        public byte sector1c_unknown_index;
-        public byte sector1d_unknown_index;
-        public byte sector1e_unknown_index;
-        public byte sector1f_dialog_index;
-        public byte u7;
-        public byte u8;
-        public byte u9;
-        public byte u10;
-        public byte u11;
-        public byte u12;
+        public byte U1;//33
+        public byte U2;//3b
+        public byte U3;//1
+        public byte Spritecode;//0,c0,c1,c2,c3,80
+        public byte Sector5Tableindex;
+        public byte Xpos;//divide by 2
+        public byte Ypos;//divide by 2
+        public byte Height;//divide by 2
+        public byte Sector1ABahaviorIndex;
+        public byte Sector1BUnknownIndex;
+        public byte Sector1CUnknownIndex;
+        public byte Sector1dUnknownIndex;
+        public byte Sector1EUnknownIndex;
+        public byte Sector1FDialogIndex;
+        public byte U7;
+        public byte U8;
+        public byte U9;
+        public byte U10;
+        public byte U11;
+        public byte U12;
     }
 }

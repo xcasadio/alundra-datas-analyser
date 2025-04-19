@@ -1,74 +1,69 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static GraphicsTools.frmFileAnalyzer;
+﻿using static GraphicsTools.FrmFileAnalyzer;
 
 namespace alundramultitool
 {
-    public partial class frmAnalyzedFunction : Form
+    public partial class FrmAnalyzedFunction : Form
     {
-        AnalyzedFunction func;
-        string datafile;
-        public frmAnalyzedFunction(AnalyzedFunction func,string datafile)
+        AnalyzedFunction _func;
+        string _datafile;
+        public FrmAnalyzedFunction(AnalyzedFunction func,string datafile)
         {
-            this.func = func;
-            this.datafile = datafile;
+            _func = func;
+            _datafile = datafile;
             InitializeComponent();
             
         }
 
         private void frmAnalyzedFunction_Load(object sender, EventArgs e)
         {
-            lblName.Text = func.ToString() + string.Join(">",func.stack.Select(x=>x.DisplayName));
-            txtNotes.Text = func.notes;
+            lblName.Text = _func.ToString() + string.Join(">",_func.Stack.Select(x=>x.DisplayName));
+            txtNotes.Text = _func.Notes;
 
-            foreach(var cfunc in func.calledfunctions)
+            foreach(var cfunc in _func.Calledfunctions)
             {
                 lstCalledFunctions.Items.Add(cfunc);
             }
 
-            foreach (var cfunc in func.calledby)
+            foreach (var cfunc in _func.Calledby)
             {
                 lstCalledBy.Items.Add(cfunc.ToString());
             }
 
-            foreach (var gvar in func.globalvariables)
+            foreach (var gvar in _func.Globalvariables)
             {
                 lstGlobalVars.Items.Add(gvar.DisplayName);
             }
 
-            foreach (var dstring in func.debugstrings)
+            foreach (var dstring in _func.Debugstrings)
             {
                 lstDebugStrings.Items.Add(dstring);
             }
 
 
-            int chunklength = 1024 * 1024;
+            var chunklength = 1024 * 1024;
             var fdat = new byte[chunklength];
-            var stream = File.OpenRead(datafile);
-            stream.Position = func.address;
-            int numread = stream.Read(fdat, 0, chunklength);
+            var stream = File.OpenRead(_datafile);
+            stream.Position = _func.Address;
+            var numread = stream.Read(fdat, 0, chunklength);
             stream.Close();
 
-            bool exit = false;
+            var exit = false;
 
-            var selectedFunction = new List<ISInstruction>();
+            var selectedFunction = new List<IsInstruction>();
 
-            for (int dex = 0; dex < 10000; dex += 4)
+            for (var dex = 0; dex < 10000; dex += 4)
             {
-                var inst = new MIPS.Instruction((uint)(func.address + dex), (uint)(fdat[dex] | fdat[dex + 1] << 8 | fdat[dex + 2] << 16 | (uint)fdat[dex + 3] << 24));
+                var inst = new Mips.Instruction((uint)(_func.Address + dex), (uint)(fdat[dex] | fdat[dex + 1] << 8 | fdat[dex + 2] << 16 | (uint)fdat[dex + 3] << 24));
                 selectedFunction.Add(inst);
                 if (exit)
+                {
                     break;
+                }
+
                 if (inst.IsReturn)
+                {
                     exit = true;
+                }
             }
             var blocks = AnalyzeFunction(selectedFunction);
 
@@ -80,8 +75,8 @@ namespace alundramultitool
             lstVarsIncludedIn.Items.Clear();
             if (lstGlobalVars.SelectedIndex != -1)
             {
-                var gvar = func.globalvariables.FirstOrDefault(x => x.DisplayName == lstGlobalVars.SelectedItem.ToString());
-                foreach (var ifunc in gvar.functions)
+                var gvar = _func.Globalvariables.FirstOrDefault(x => x.DisplayName == lstGlobalVars.SelectedItem.ToString());
+                foreach (var ifunc in gvar.Functions)
                     lstVarsIncludedIn.Items.Add(ifunc);
             }
         }
@@ -105,7 +100,7 @@ namespace alundramultitool
                     var cfunc = (AnalyzedFunction)lstCalledFunctions.SelectedItem;
                     if (cfunc != null)
                     {
-                        var frm = new frmAnalyzedFunction(cfunc, datafile);
+                        var frm = new FrmAnalyzedFunction(cfunc, _datafile);
                         frm.Show();
                     }
 
@@ -114,10 +109,12 @@ namespace alundramultitool
 
         private void FindText(string tofind)
         {
-            int pos = txtFunction.SelectionStart;
+            var pos = txtFunction.SelectionStart;
             var next = txtFunction.Text.IndexOf(tofind, pos + 1);
             if (next == -1)
+            {
                 next = txtFunction.Text.IndexOf(tofind);
+            }
 
             if (next >= 0)
             {
@@ -130,11 +127,11 @@ namespace alundramultitool
 
         private void lstCalledBy_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            foreach (var cfunc in func.calledby)
+            foreach (var cfunc in _func.Calledby)
             {
                 if (cfunc.ToString() == (string)lstCalledBy.SelectedItem)
                 {
-                    var frm = new frmAnalyzedFunction(cfunc, datafile);
+                    var frm = new FrmAnalyzedFunction(cfunc, _datafile);
                     frm.Show();
                     break;
                 }
@@ -146,7 +143,7 @@ namespace alundramultitool
             var cfunc = (AnalyzedFunction)lstVarsIncludedIn.SelectedItem;
             if (cfunc != null)
             {
-                var frm = new frmAnalyzedFunction(cfunc, datafile);
+                var frm = new FrmAnalyzedFunction(cfunc, _datafile);
                 frm.Show();
             }
         }

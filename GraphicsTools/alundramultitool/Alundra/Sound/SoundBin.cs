@@ -1,84 +1,76 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GraphicsTools.Alundra
+﻿namespace GraphicsTools.Alundra
 {
     public class SoundBin
     {
-        string datafile;
-        public SoundBin(string datafile)
+        private string _soundBinfile;
+
+        public SoundBin(string soundBinfile)
         {
-            this.datafile = datafile;
+            _soundBinfile = soundBinfile;
             SfxRecords = SfxRecordsData.Select(x => new SfxRecord(x)).ToArray();
 
-            using (var br = new BinaryReader(File.OpenRead(datafile)))
-            {
-                //red seq buff
-                SeqDataBuff = new byte[SfxVabHeaderOffset];
-                br.Read(SeqDataBuff, 0, SfxVabHeaderOffset);
+            using var br = new BinaryReader(File.OpenRead(soundBinfile));
+            //red seq buff
+            _seqDataBuff = new byte[SfxVabHeaderOffset];
+            br.Read(_seqDataBuff, 0, SfxVabHeaderOffset);
 
-                //read header
-                int pos = SfxVabHeaderOffset;
-                int len = SfxVabBodyOffset - pos;
-                GlobalSfxVabHeaderBuff = new byte[len];
-                br.BaseStream.Position = pos;
-                br.Read(GlobalSfxVabHeaderBuff, 0, len);
+            //read header
+            var pos = SfxVabHeaderOffset;
+            var len = SfxVabBodyOffset - pos;
+            _globalSfxVabHeaderBuff = new byte[len];
+            br.BaseStream.Position = pos;
+            br.Read(_globalSfxVabHeaderBuff, 0, len);
 
-                //try reading header directly to class
-                br.BaseStream.Position = pos;
-                GlobalVabHeader = new VabHeader(br);
+            //try reading header directly to class
+            br.BaseStream.Position = pos;
+            GlobalVabHeader = new VabHeader(br);
 
-                //read body
-                pos = SfxVabBodyOffset;
-                len = MapVabOffsets[0] - pos;
-                GlobalSfxVabBodyBuff = new byte[len];
-                br.BaseStream.Position = pos;
-                br.Read(GlobalSfxVabBodyBuff, 0, len);
-            }
+            //read body
+            pos = SfxVabBodyOffset;
+            len = MapVabOffsets[0] - pos;
+            _globalSfxVabBodyBuff = new byte[len];
+            br.BaseStream.Position = pos;
+            br.Read(_globalSfxVabBodyBuff, 0, len);
         }
 
-        private int mapVabIndex = -1;
+        private int _mapVabIndex = -1;
+
         public void OpenMap(int mapid)
         {
-            mapVabIndex = MapIdToVabIndex[mapid];
-            using (var br = new BinaryReader(File.OpenRead(datafile)))
-            {
-                int dex = mapVabIndex * 2;
-                //read header
-                int pos = MapVabOffsets[dex];
-                int len = MapVabOffsets[dex + 1] - pos;
-                MapSfxVabHeaderBuff = new byte[len];
-                br.BaseStream.Position = pos;
-                br.Read(MapSfxVabHeaderBuff, 0, len);
+            _mapVabIndex = MapIdToVabIndex[mapid];
+            using var br = new BinaryReader(File.OpenRead(_soundBinfile));
+            var dex = _mapVabIndex * 2;
+            //read header
+            var pos = MapVabOffsets[dex];
+            var len = MapVabOffsets[dex + 1] - pos;
+            _mapSfxVabHeaderBuff = new byte[len];
+            br.BaseStream.Position = pos;
+            br.Read(_mapSfxVabHeaderBuff, 0, len);
 
-                //try reading header directly to class
-                br.BaseStream.Position = pos;
-                MapVabHeader = new VabHeader(br);
+            //try reading header directly to class
+            br.BaseStream.Position = pos;
+            MapVabHeader = new VabHeader(br);
 
-                //read body
-                pos = MapVabOffsets[dex + 1];
-                len = MapVabOffsets[dex + 2] - pos;
-                MapSfxVabBodyBuff = new byte[len];
-                br.BaseStream.Position = pos;
-                br.Read(MapSfxVabBodyBuff, 0, len);
-            }
+            //read body
+            pos = MapVabOffsets[dex + 1];
+            len = MapVabOffsets[dex + 2] - pos;
+            _mapSfxVabBodyBuff = new byte[len];
+            br.BaseStream.Position = pos;
+            br.Read(_mapSfxVabBodyBuff, 0, len);
         }
-        public VabHeader GlobalVabHeader;
-        private byte[] SeqDataBuff;
-        private byte[] GlobalSfxVabHeaderBuff;
-        private byte[] GlobalSfxVabBodyBuff;
+
+        public readonly VabHeader GlobalVabHeader;
+        private byte[] _seqDataBuff;
+        private byte[] _globalSfxVabHeaderBuff;
+        private byte[] _globalSfxVabBodyBuff;
         public VabHeader MapVabHeader;
-        private byte[] MapSfxVabHeaderBuff;
-        private byte[] MapSfxVabBodyBuff;
+        private byte[] _mapSfxVabHeaderBuff;
+        private byte[] _mapSfxVabBodyBuff;
 
-        public SfxRecord[] SfxRecords;
+        public readonly SfxRecord[] SfxRecords;
 
-        public const int samples_per_block = 28;
-        const int samples_from_last_block = 3;
+        public const int SamplesPerBlock = 28;
+        private const int SamplesFromLastBlock = 3;
 
         public void PlaySoundEffect(int sfxid)
         {
@@ -88,27 +80,37 @@ namespace GraphicsTools.Alundra
 
         }
 
-        public byte[] PlaySoundEffect(int sfxid, int note, int velocity, bool is8bit, out int loop_start, out int loop_end, out bool repeat)
+        public byte[] PlaySoundEffect(int sfxid, int note, int velocity, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
         {
-            loop_start = loop_end = -1;
+            loopStart = loopEnd = -1;
             repeat = false;
             if (sfxid <= 0)
+            {
                 return null;
+            }
+
             if (sfxid >= SfxRecords.Length)
+            {
                 return null;
-            
+            }
+
             //if its in some sfx list return null
 
 
             var record = SfxRecords[sfxid];
             if (record == null || record.VabId == -2)
+            {
                 return null;
+            }
+
             if (record.VabId == -1)
             {
                 if (record.SeqNum != -1)
                 {
                     if ((record.Flags & 2) != 0)
+                    {
                         return null;//its already playing
+                    }
 
                     //load and play the sequence
 
@@ -118,11 +120,14 @@ namespace GraphicsTools.Alundra
                 //return if its too many to play another one
 
                 byte[] wavetoreturn = null;
-                for (int dex = 0; dex < record.NumTones; dex++)
+                for (var dex = 0; dex < record.NumTones; dex++)
                 {
-                    var wave = PlaySfxInner(GlobalVabHeader, GlobalSfxVabBodyBuff, record.ProgramNumber, record.ToneNumber + dex, note != -1 ? note : record.Note, is8bit, out loop_start, out loop_end, out repeat);
+                    var wave = PlaySfxInner(GlobalVabHeader, _globalSfxVabBodyBuff, record.ProgramNumber, record.ToneNumber + dex, note != -1 ? note : record.Note, is8Bit, out loopStart, out loopEnd, out repeat);
                     if (wavetoreturn == null)
+                    {
                         wavetoreturn = wave;//return the first wave if its a series of tones
+                    }
+
                     //register the voice info
                     {
 
@@ -134,7 +139,7 @@ namespace GraphicsTools.Alundra
             else //its a mapvab
             {
                 //get a sfx in the group (refsfxchains through the group) that is for the currently loaded mapvab
-                while (record.VabId != mapVabIndex)
+                while (record.VabId != _mapVabIndex)
                 {
                     if (record.RefSfxId == 0)
                     {
@@ -146,7 +151,9 @@ namespace GraphicsTools.Alundra
                 if (record.SeqNum != -1)
                 {
                     if ((record.Flags & 2) != 0)
+                    {
                         return null;//its already playing
+                    }
 
                     //load and play the sequence
 
@@ -156,12 +163,15 @@ namespace GraphicsTools.Alundra
                 //return if its too many to play another one
 
                 byte[] wavetoreturn = null;
-                for (int dex = 0; dex < record.NumTones; dex++)
+                for (var dex = 0; dex < record.NumTones; dex++)
                 {
-                    var wave = PlaySfxInner(MapVabHeader, MapSfxVabBodyBuff, record.ProgramNumber, record.ToneNumber + dex, note != -1 ? note : record.Note, is8bit, out loop_start, out loop_end, out repeat);
+                    var wave = PlaySfxInner(MapVabHeader, _mapSfxVabBodyBuff, record.ProgramNumber, record.ToneNumber + dex, note != -1 ? note : record.Note, is8Bit, out loopStart, out loopEnd, out repeat);
                     if (wavetoreturn == null)
+                    {
                         wavetoreturn = wave;//return the first wave if its a series of tones
-                                            //register the voice info
+                    }
+
+                    //register the voice info
                     {
 
                     }
@@ -171,78 +181,82 @@ namespace GraphicsTools.Alundra
             }
 
         }
-        public byte[] PlaySfx(int sfx, int pitch, bool is8bit, out int loop_start, out int loop_end, out bool repeat)
+        public byte[] PlaySfx(int sfx, int pitch, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
         {
-            return PlaySfxInner(sfx, GlobalVabHeader, GlobalSfxVabBodyBuff, pitch, is8bit, out loop_start, out loop_end, out repeat);
+            return PlaySfxInner(sfx, GlobalVabHeader, _globalSfxVabBodyBuff, pitch, is8Bit, out loopStart, out loopEnd, out repeat);
         }
-        public byte[] PlayMapSfx(int sfx, int pitch, bool is8bit, out int loop_start, out int loop_end, out bool repeat)
+        public byte[] PlayMapSfx(int sfx, int pitch, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
         {
-            return PlaySfxInner(sfx, MapVabHeader, MapSfxVabBodyBuff, pitch, is8bit, out loop_start, out loop_end, out repeat);
+            return PlaySfxInner(sfx, MapVabHeader, _mapSfxVabBodyBuff, pitch, is8Bit, out loopStart, out loopEnd, out repeat);
         }
 
-        byte[] PlaySfxInner(VabHeader header, byte[] bodybuff, int prognum, int tonenum, int note, bool is8bit, out int loop_start, out int loop_end, out bool repeat)
+        private byte[] PlaySfxInner(VabHeader header, byte[] bodybuff, int prognum, int tonenum, int note, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
         {
-            int base_pitch = 44100;// 22050;// 11025;
+            var basePitch = 44100;// 22050;// 11025;
             var attr = header.VagAttributes[prognum][tonenum];
-            int dif = note - attr.center;
-            dif += (int)(attr.shift / 100f);
-            int pitch = (int)(base_pitch * Math.Pow(2, dif / 12f));
-            return PlaySfxInner(attr.vag, header, bodybuff, pitch, is8bit, out loop_start, out loop_end, out repeat);
+            var dif = note - attr.Center;
+            dif += (int)(attr.Shift / 100f);
+            var pitch = (int)(basePitch * Math.Pow(2, dif / 12f));
+            return PlaySfxInner(attr.Vag, header, bodybuff, pitch, is8Bit, out loopStart, out loopEnd, out repeat);
         }
 
-        byte[] PlaySfxInner(int sfx, VabHeader header, byte[]bodybuff, int pitch, bool is8bit, out int loop_start, out int loop_end, out bool repeat)
+        private byte[] PlaySfxInner(int sfx, VabHeader header, byte[]bodybuff, int pitch, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
         {
-            int pos = 0;
-            for (int dex = 0; dex < sfx; dex++)
+            var pos = 0;
+            for (var dex = 0; dex < sfx; dex++)
             {
                 pos += header.VagOffsetTable[dex] << 3;
             }
-            int length = header.VagOffsetTable[sfx] << 3;
+            var length = header.VagOffsetTable[sfx] << 3;
             var blocks = length / 16;
 
             var bytespersample = 2;
-            if (is8bit)
+            if (is8Bit)
+            {
                 bytespersample = 1;
-            byte[] buff = new byte[blocks * samples_per_block * bytespersample];
+            }
+
+            var buff = new byte[blocks * SamplesPerBlock * bytespersample];
             int blockloopstart, blockloopend;
-            DecodeADPCM(bodybuff, pos, length, buff, is8bit, out blockloopstart,out blockloopend, out repeat);
+            DecodeAdpcm(bodybuff, pos, length, buff, is8Bit, out blockloopstart,out blockloopend, out repeat);
             if ((blockloopend == -1 || blockloopstart == -1) && length != 0)
             {
                 //this is not good, all samples should have loop points set, even if they arent used
                 throw new Exception("no loop point set for sample");
             }
-            loop_start = blockloopstart * samples_per_block;//loops to start of block
-            loop_end = (blockloopend * samples_per_block) + samples_per_block - 1;//loops at end of block
-            var ms = WriteWavFile(buff, 0, buff.Length, pitch, is8bit);
+            loopStart = blockloopstart * SamplesPerBlock;//loops to start of block
+            loopEnd = blockloopend * SamplesPerBlock + SamplesPerBlock - 1;//loops at end of block
+            var ms = WriteWavFile(buff, 0, buff.Length, pitch, is8Bit);
             PlayWave(ms);
 
             return buff;
         }
-        System.Media.SoundPlayer sp;
+
+        private System.Media.SoundPlayer _sp;
         public void PlayWave(Stream s)
         {
-            sp = new System.Media.SoundPlayer(s);
+            _sp = new System.Media.SoundPlayer(s);
             //sp.PlayLooping();
-            sp.Play();
+            _sp.Play();
         }
-        public static void DecodeADPCM(byte[]adpcm, int pos, int len, byte[] pcm, bool is8bit, out int loopstart, out int loopend, out bool looprepeat)
+        public static void DecodeAdpcm(byte[]adpcm, int pos, int len, byte[] pcm, bool is8Bit, out int loopstart, out int loopend, out bool looprepeat)
         {
             loopstart = loopend = -1;
             looprepeat = false;
-            int pcmpos = 0;
-            int[] filter_table_pos = new[] { 0, 60, 115, 98, 122 };
-            int[] filter_table_neg = new[] { 0, 0, -52, -55, -60 };
+            var pcmpos = 0;
+            var filterTablePos = new[] { 0, 60, 115, 98, 122 };
+            var filterTableNeg = new[] { 0, 0, -52, -55, -60 };
 
-            short[] current_block_samples = new short[samples_from_last_block + samples_per_block];
-            short[] adpcm_last_samples = new short[2];
-            short[] last_samples = new short[2];
-            int numblocks = len / 16;
-            int dpos = pos;
-            ADPCMBlock block = new ADPCMBlock();
-            for (int dex = 0;dex<numblocks;dex++)
+            var currentBlockSamples = new short[SamplesFromLastBlock + SamplesPerBlock];
+            var adpcmLastSamples = new short[2];
+            var lastSamples = new short[2];
+            var numblocks = len / 16;
+            var dpos = pos;
+            var block = new AdpcmBlock();
+            for (var dex = 0;dex<numblocks;dex++)
             {
                 block.Fill(adpcm, dpos);
-                if (block.is_loopstart)
+                if (block.IsLoopstart)
                 {
                     if (loopstart == -1)
                     {
@@ -254,12 +268,12 @@ namespace GraphicsTools.Alundra
                         throw new Exception("sample has multiple start blocks.");
                     }
                 }
-                if (block.is_loopend)
+                if (block.IsLoopend)
                 {
                     if (loopend == -1)
                     {
                         loopend = dex;
-                        looprepeat = block.is_looprepeat;
+                        looprepeat = block.IsLooprepeat;
                     }
                     else if (dex != loopend+1)
                     {
@@ -269,86 +283,89 @@ namespace GraphicsTools.Alundra
                 }
 
                 //process block
-                current_block_samples[2] = current_block_samples[samples_from_last_block + samples_per_block - 1];
-                current_block_samples[1] = current_block_samples[samples_from_last_block + samples_per_block - 2];
-                current_block_samples[0] = current_block_samples[samples_from_last_block + samples_per_block - 3];
-                byte shift = (byte)(block.shift_filter & 0xf);
+                currentBlockSamples[2] = currentBlockSamples[SamplesFromLastBlock + SamplesPerBlock - 1];
+                currentBlockSamples[1] = currentBlockSamples[SamplesFromLastBlock + SamplesPerBlock - 2];
+                currentBlockSamples[0] = currentBlockSamples[SamplesFromLastBlock + SamplesPerBlock - 3];
+                var shift = (byte)(block.ShiftFilter & 0xf);
                 //shift = shift > 12 ? (byte)9 : shift;
-                byte filter_index = (byte)((block.shift_filter >> 4) & 0x7);
-                filter_index = filter_index > 4 ? (byte)4 : filter_index;
-                int filter_pos = filter_table_pos[filter_index];
-                int filter_neg = filter_table_neg[filter_index];
-                last_samples[0] = adpcm_last_samples[0];
-                last_samples[1] = adpcm_last_samples[1];
-                for (int sdex = 0;sdex<samples_per_block;sdex++)
+                var filterIndex = (byte)((block.ShiftFilter >> 4) & 0x7);
+                filterIndex = filterIndex > 4 ? (byte)4 : filterIndex;
+                var filterPos = filterTablePos[filterIndex];
+                var filterNeg = filterTableNeg[filterIndex];
+                lastSamples[0] = adpcmLastSamples[0];
+                lastSamples[1] = adpcmLastSamples[1];
+                for (var sdex = 0;sdex<SamplesPerBlock;sdex++)
                 {
-                    int nib = block.data[sdex / 2] >> ((sdex % 2) * 4) & 0xf;
-                    int sample = (short)(nib << 12) >> shift;
-                    sample += (last_samples[0] * filter_pos) >> 6;
-                    sample += (last_samples[1] * filter_neg) >> 6;
+                    var nib = block.Data[sdex / 2] >> (sdex % 2 * 4) & 0xf;
+                    var sample = (short)(nib << 12) >> shift;
+                    sample += (lastSamples[0] * filterPos) >> 6;
+                    sample += (lastSamples[1] * filterNeg) >> 6;
 
-                    last_samples[1] = last_samples[0];
-                    last_samples[0] = (short)((sample < -0x8000) ? -0x8000 : (sample > 0x7FFF) ? 0x7FFF : sample);
-                    current_block_samples[samples_from_last_block + sdex] = last_samples[0];
-                    if (is8bit)
+                    lastSamples[1] = lastSamples[0];
+                    lastSamples[0] = (short)(sample < -0x8000 ? -0x8000 : sample > 0x7FFF ? 0x7FFF : sample);
+                    currentBlockSamples[SamplesFromLastBlock + sdex] = lastSamples[0];
+                    if (is8Bit)
                     {
-                        int s = last_samples[0];
-                        int samplemax = 0x7fff;
-                        int scaledmax = 0x7f;
+                        int s = lastSamples[0];
+                        var samplemax = 0x7fff;
+                        var scaledmax = 0x7f;
                         s = (int)(s * ((float)scaledmax / samplemax));
-                        pcm[pcmpos] = (byte)((sbyte)s);
+                        pcm[pcmpos] = (byte)(sbyte)s;
                         pcmpos++;
 
                     }
                     else
                     {
-                        pcm[pcmpos + 1] = (byte)(last_samples[0] & 0xff);
-                        pcm[pcmpos + 0] = (byte)((last_samples[0] & 0xff00) >> 8);
+                        pcm[pcmpos + 1] = (byte)(lastSamples[0] & 0xff);
+                        pcm[pcmpos + 0] = (byte)((lastSamples[0] & 0xff00) >> 8);
                         pcmpos += 2;
                     }
                 }
 
-                adpcm_last_samples[0] = current_block_samples[0];
-                adpcm_last_samples[1] = current_block_samples[1];
+                adpcmLastSamples[0] = currentBlockSamples[0];
+                adpcmLastSamples[1] = currentBlockSamples[1];
 
                 dpos += 16;
             }
         }
 
-        public class ADPCMBlock
+        public class AdpcmBlock
         {
-            public byte shift_filter;
-            public byte flags;//1=loop end,2=loop repeat,4=loop start
-            public byte[] data = new byte[samples_per_block / 2];
+            public byte ShiftFilter;
+            public byte Flags;//1=loop end,2=loop repeat,4=loop start
+            public readonly byte[] Data = new byte[SamplesPerBlock / 2];
             public void Fill(byte[]adpcm, int pos)
             {
-                shift_filter = adpcm[pos++];
-                flags = adpcm[pos++];
-                Array.Copy(adpcm, pos, data, 0, data.Length);
+                ShiftFilter = adpcm[pos++];
+                Flags = adpcm[pos++];
+                Array.Copy(adpcm, pos, Data, 0, Data.Length);
             }
 
-            public bool is_loopstart { get { return (flags & 4) != 0; } }
-            public bool is_loopend { get { return (flags & 1) != 0; } }
-            public bool is_looprepeat { get { return (flags & 2) != 0; } }
+            public bool IsLoopstart { get { return (Flags & 4) != 0; } }
+            public bool IsLoopend { get { return (Flags & 1) != 0; } }
+            public bool IsLooprepeat { get { return (Flags & 2) != 0; } }
         }
-        public static MemoryStream WriteWavFile(byte[] sampleData,int start, int length, int sampleRate, bool is8bit)
+        public static MemoryStream WriteWavFile(byte[] sampleData,int start, int length, int sampleRate, bool is8Bit)
         {
-            MemoryStream ms = new MemoryStream();
+            var ms = new MemoryStream();
 
             short numChannels = 1;
             short bps = 16;
-            if (is8bit)
+            if (is8Bit)
+            {
                 bps = 8;
+            }
+
             //8 bit should be chopped in half
-            int numSamples = (int)(length / (bps / (float)8));
-            int byteRate = (int)(sampleRate * numChannels * bps / (float)8);
-            short blockAlign = (short)(numChannels * bps / (float)8);
+            var numSamples = (int)(length / (bps / (float)8));
+            var byteRate = (int)(sampleRate * numChannels * bps / (float)8);
+            var blockAlign = (short)(numChannels * bps / (float)8);
 
 
-            int subChunk1Size = 16;
-            int subChunk2Size = numSamples * numChannels * bps / 8;
+            var subChunk1Size = 16;
+            var subChunk2Size = numSamples * numChannels * bps / 8;
 
-            BinaryWriter br = new BinaryWriter(ms);
+            var br = new BinaryWriter(ms);
 
             br.Write((byte)'R');
             br.Write((byte)'I');
@@ -384,9 +401,9 @@ namespace GraphicsTools.Alundra
 
 
 
-            for (int dex = start; dex < length-1; dex += bps/8)
+            for (var dex = start; dex < length-1; dex += bps/8)
             {
-                if (is8bit)
+                if (is8Bit)
                 {
                     //br.Write(sampleData[dex + 0]);
                     //br.Write(sampleData[dex + 1]);
@@ -412,176 +429,174 @@ namespace GraphicsTools.Alundra
             public VabHeader(BinaryReader br)
             {
                 Header = new VabHdr(br);
-                for(int dex = 0;dex<128;dex++)
+                for(var dex = 0;dex<128;dex++)
                 {
                     ProgAttributes[dex] = new ProgAtr(br);
                 }
-                VagAttributes = new VagAtr[Header.ps][];
-                for (int programdex = 0; programdex < Header.ps; programdex++)
+                VagAttributes = new VagAtr[Header.Ps][];
+                for (var programdex = 0; programdex < Header.Ps; programdex++)
                 {
                     //16 is max number of tones
                     VagAttributes[programdex] = new VagAtr[16];
-                    for (int tonedex= 0; tonedex < 16; tonedex++)
+                    for (var tonedex= 0; tonedex < 16; tonedex++)
                     {
                         VagAttributes[programdex][tonedex] = new VagAtr(br);
                     }
                 }
-                for (int dex= 0;dex<256;dex++)
+                for (var dex= 0;dex<256;dex++)
                 {
                     VagOffsetTable[dex] = br.ReadUInt16();//its bit shifted so needs to be << 3 when using the offset;
                 }
             }
-            public VabHdr Header;
-            public ProgAtr[] ProgAttributes = new ProgAtr[128];
-            public VagAtr[][] VagAttributes;
-            public ushort[] VagOffsetTable = new ushort[256];
+            public readonly VabHdr Header;
+            public readonly ProgAtr[] ProgAttributes = new ProgAtr[128];
+            public readonly VagAtr[][] VagAttributes;
+            public readonly ushort[] VagOffsetTable = new ushort[256];
             //int[] VagOffsetTable = new int[256];
             
             public class VabHdr//32 byte
             {
-                public int form;//always VABp
-                public int ver;//VAB file version number
-                public int id;//VAB id
-                public uint fsize;//VAB file size
-                public ushort reserved0;
-                public ushort ps;//# of the programs in this bank
-                public ushort ts;//# of the tones in this bank
-                public ushort vs;//# of the vags in this bank
-                public byte mvol;//master volume for this bank
-                public byte pan;//master panning for this bank
-                public byte attr1;//bank attributes1
-                public byte attr2;//bank attributes2
-                public int reserved1;
+                public int Form;//always VABp
+                public int Ver;//VAB file version number
+                public int Id;//VAB id
+                public uint Fsize;//VAB file size
+                public ushort Reserved0;
+                public readonly ushort Ps;//# of the programs in this bank
+                public ushort Ts;//# of the tones in this bank
+                public readonly ushort Vs;//# of the vags in this bank
+                public byte Mvol;//master volume for this bank
+                public byte Pan;//master panning for this bank
+                public byte Attr1;//bank attributes1
+                public byte Attr2;//bank attributes2
+                public int Reserved1;
                 public VabHdr(BinaryReader br)
                 {
-                    form = br.ReadInt32();
-                    ver = br.ReadInt32();
-                    id = br.ReadInt32();
-                    fsize = br.ReadUInt32();
-                    reserved0 = br.ReadUInt16();
-                    ps = br.ReadUInt16();
-                    ts = br.ReadUInt16();
-                    vs = br.ReadUInt16();
-                    mvol = br.ReadByte();
-                    pan = br.ReadByte();
-                    attr1 = br.ReadByte();
-                    attr2 = br.ReadByte();
-                    reserved1 = br.ReadInt32();
+                    Form = br.ReadInt32();
+                    Ver = br.ReadInt32();
+                    Id = br.ReadInt32();
+                    Fsize = br.ReadUInt32();
+                    Reserved0 = br.ReadUInt16();
+                    Ps = br.ReadUInt16();
+                    Ts = br.ReadUInt16();
+                    Vs = br.ReadUInt16();
+                    Mvol = br.ReadByte();
+                    Pan = br.ReadByte();
+                    Attr1 = br.ReadByte();
+                    Attr2 = br.ReadByte();
+                    Reserved1 = br.ReadInt32();
                 }
             }
             public class ProgAtr//16 bytes
             {
-                public byte tones;//# of tones
-                public byte mvol;//program volume
-                public byte prior;//program priority
-                public byte mode;//program mode
-                public byte mpan;//program pan
-                public byte reserved0;
-                public short attr;//program attribute
-                public int reserved1;
-                public int reserved2;
+                public readonly byte Tones;//# of tones
+                public byte Mvol;//program volume
+                public byte Prior;//program priority
+                public byte Mode;//program mode
+                public byte Mpan;//program pan
+                public byte Reserved0;
+                public short Attr;//program attribute
+                public int Reserved1;
+                public int Reserved2;
                 public ProgAtr(BinaryReader br)
                 {
-                    tones = br.ReadByte();
-                    mvol = br.ReadByte();
-                    prior = br.ReadByte();
-                    mode = br.ReadByte();
-                    mpan = br.ReadByte();
-                    reserved0 = br.ReadByte();
-                    attr = br.ReadInt16();
-                    reserved1 = br.ReadInt32();
-                    reserved2 = br.ReadInt32();
+                    Tones = br.ReadByte();
+                    Mvol = br.ReadByte();
+                    Prior = br.ReadByte();
+                    Mode = br.ReadByte();
+                    Mpan = br.ReadByte();
+                    Reserved0 = br.ReadByte();
+                    Attr = br.ReadInt16();
+                    Reserved1 = br.ReadInt32();
+                    Reserved2 = br.ReadInt32();
                 }
             }
             public class VagAtr//32 bytes
             {
-                public byte prior;//tone priority
-                public byte mode;//play mode
-                public byte vol;//tone volume
-                public byte pan;//tone panning
-                public byte center;//center note
-                public byte shift;//center note fine tune
-                public byte min;//minimum note limit
-                public byte max;//maximum note limit
-                public byte vibW;//vibrate depth
-                public byte vibT;//vibrate duration
-                public byte porW;//portamento depth
-                public byte porT;//portamento duration
-                public byte pbmin;//under pitch bend max
-                public byte pbmax;//upper pitch bend max
-                public byte reserved1;
-                public byte reserved2;
-                public ushort adsr1;//adsr1
-                public ushort adsr2;//adsr2
-                public short prog;//parent program
-                public short vag;//vag reference
-                public short[] reserved = new short[4];
+                public byte Prior;//tone priority
+                public byte Mode;//play mode
+                public byte Vol;//tone volume
+                public byte Pan;//tone panning
+                public readonly byte Center;//center note
+                public readonly byte Shift;//center note fine tune
+                public readonly byte Min;//minimum note limit
+                public readonly byte Max;//maximum note limit
+                public byte VibW;//vibrate depth
+                public byte VibT;//vibrate duration
+                public byte PorW;//portamento depth
+                public byte PorT;//portamento duration
+                public byte Pbmin;//under pitch bend max
+                public byte Pbmax;//upper pitch bend max
+                public byte Reserved1;
+                public byte Reserved2;
+                public ushort Adsr1;//adsr1
+                public ushort Adsr2;//adsr2
+                public short Prog;//parent program
+                public readonly short Vag;//vag reference
+                public readonly short[] Reserved = new short[4];
                 public VagAtr(BinaryReader br)
                 {
-                    prior = br.ReadByte();
-                    mode = br.ReadByte();
-                    vol = br.ReadByte();
-                    pan = br.ReadByte();
-                    center = br.ReadByte();
-                    shift = br.ReadByte();
-                    min = br.ReadByte();
-                    max = br.ReadByte();
-                    vibW = br.ReadByte();
-                    vibT = br.ReadByte();
-                    porW = br.ReadByte();
-                    porT = br.ReadByte();
-                    pbmin = br.ReadByte();
-                    pbmax = br.ReadByte();
-                    reserved1 = br.ReadByte();
-                    reserved2 = br.ReadByte();
-                    adsr1 = br.ReadUInt16();
-                    adsr2 = br.ReadUInt16();
-                    prog = br.ReadInt16();
-                    vag = br.ReadInt16();
-                    reserved[0] = br.ReadInt16();
-                    reserved[1] = br.ReadInt16();
-                    reserved[2] = br.ReadInt16();
-                    reserved[3] = br.ReadInt16();
+                    Prior = br.ReadByte();
+                    Mode = br.ReadByte();
+                    Vol = br.ReadByte();
+                    Pan = br.ReadByte();
+                    Center = br.ReadByte();
+                    Shift = br.ReadByte();
+                    Min = br.ReadByte();
+                    Max = br.ReadByte();
+                    VibW = br.ReadByte();
+                    VibT = br.ReadByte();
+                    PorW = br.ReadByte();
+                    PorT = br.ReadByte();
+                    Pbmin = br.ReadByte();
+                    Pbmax = br.ReadByte();
+                    Reserved1 = br.ReadByte();
+                    Reserved2 = br.ReadByte();
+                    Adsr1 = br.ReadUInt16();
+                    Adsr2 = br.ReadUInt16();
+                    Prog = br.ReadInt16();
+                    Vag = br.ReadInt16();
+                    Reserved[0] = br.ReadInt16();
+                    Reserved[1] = br.ReadInt16();
+                    Reserved[2] = br.ReadInt16();
+                    Reserved[3] = br.ReadInt16();
                 }
             }
         }
         public byte[] VoicesAreActive = new byte[24];
-        public VoiceInfo VoiceInfo = new VoiceInfo();
+        public VoiceInfo VoiceInfo = new();
         
         public class SfxRecord
         {
             public SfxRecord(byte[] data)
             {
-                using(var br = new BinaryReader(new MemoryStream(data)))
-                {
-                    VabId = br.ReadInt16();
-                    ProgramNumber = br.ReadInt16();
-                    ToneNumber = br.ReadInt16();
-                    Note = br.ReadInt16();
-                    Flags = br.ReadInt16();
-                    SeqNum= br.ReadInt16();
-                    RefSfxId  = br.ReadInt16();
-                    Unknown1 = br.ReadInt16();
-                    MaxVoices = br.ReadInt16();
-                    Unknown2 = br.ReadInt16();
-                    NumTones = br.ReadInt16();
-                }
+                using var br = new BinaryReader(new MemoryStream(data));
+                VabId = br.ReadInt16();
+                ProgramNumber = br.ReadInt16();
+                ToneNumber = br.ReadInt16();
+                Note = br.ReadInt16();
+                Flags = br.ReadInt16();
+                SeqNum= br.ReadInt16();
+                RefSfxId  = br.ReadInt16();
+                Unknown1 = br.ReadInt16();
+                MaxVoices = br.ReadInt16();
+                Unknown2 = br.ReadInt16();
+                NumTones = br.ReadInt16();
             }
-            public short VabId;
-            public short ProgramNumber;
-            public short ToneNumber;
-            public short Note;
-            public short Flags;//1=playing note, 2=playing seq
-            public short SeqNum;
-            public short RefSfxId;
-            public short Unknown1;
-            public short MaxVoices;
-            public short Unknown2;
-            public short NumTones;
+            public readonly short VabId;
+            public readonly short ProgramNumber;
+            public readonly short ToneNumber;
+            public readonly short Note;
+            public readonly short Flags;//1=playing note, 2=playing seq
+            public readonly short SeqNum;
+            public readonly short RefSfxId;
+            public readonly short Unknown1;
+            public readonly short MaxVoices;
+            public readonly short Unknown2;
+            public readonly short NumTones;
             
         }
-        public static int SfxVabHeaderOffset = 0x800;
-        public static int SfxVabBodyOffset = 0x3000;
+        public static readonly int SfxVabHeaderOffset = 0x800;
+        public static readonly int SfxVabBodyOffset = 0x3000;
         public static int[] SeqOffsets = new int[]{
 0x00000000,//0x00
 0x00000084,//0x01
@@ -590,7 +605,7 @@ namespace GraphicsTools.Alundra
 0x000002b8,//0x04
 0x000002e4,//0x05
 };
-        public static int[] MapVabOffsets = new int[]{//header,body,header,body,header,body, etc
+        public static readonly int[] MapVabOffsets = new int[]{//header,body,header,body,header,body, etc
 0x0003b800,//0x00
 0x0003c800,//0x01
 0x00050000,//0x02
@@ -887,7 +902,7 @@ namespace GraphicsTools.Alundra
 0x00b8f800,//0x8c
 0x00b9f000,//0x8d
 };
-        public static int[] MapIdToVabIndex = new int[]{
+        public static readonly int[] MapIdToVabIndex = new int[]{
 0x00000000,//0x00
 0x0000002e,//0x01
 0x00000012,//0x02
@@ -1373,7 +1388,7 @@ namespace GraphicsTools.Alundra
 0x00000000//0x1e2
 };
 
-        public static byte[][] SfxRecordsData = new byte[][]{
+        public static readonly byte[][] SfxRecordsData = new byte[][]{
 new byte[]{0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0x00,0x00,0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,},
 new byte[]{0xff,0xff,0x00,0x00,0x00,0x00,0x3c,0x00,0x00,0x00,0xff,0xff,0x00,0x00,0xff,0xff,0x02,0x00,0x00,0x00,0x01,0x00,},
 new byte[]{0xff,0xff,0x00,0x00,0x01,0x00,0x3d,0x00,0x00,0x00,0xff,0xff,0x00,0x00,0xff,0xff,0x02,0x00,0x00,0x00,0x01,0x00,},

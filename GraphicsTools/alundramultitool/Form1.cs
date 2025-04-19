@@ -1,16 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.IO;
-using alundramultitool.Alundra;
+﻿using System.Drawing.Imaging;
 using GraphicsTools.Alundra;
 
 namespace GraphicsTools
@@ -23,31 +11,31 @@ namespace GraphicsTools
         }
 
 
-        void open(Image img)
+        void Open(Image img)
         {
-            width = img.Width;
-            height = img.Height;
-            Bitmap orig = new Bitmap(img);
+            _width = img.Width;
+            _height = img.Height;
+            var orig = new Bitmap(img);
 
-            Bitmap clone = new Bitmap(orig.Width, orig.Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-            using (Graphics gr = Graphics.FromImage(clone))
+            var clone = new Bitmap(orig.Width, orig.Height, PixelFormat.Format24bppRgb);
+            using (var gr = Graphics.FromImage(clone))
             {
                 gr.DrawImage(orig, new Rectangle(0, 0, clone.Width, clone.Height));
             }
 
 
 
-            setImage(clone, 0, 0, scale);
+            SetImage(clone, 0, 0, _scale);
 
             //get colors
 
         }
 
-        void drawImage(Image img, int xoff, int yoff, float scale)
+        void DrawImage(Image img, int xoff, int yoff, float scale)
         {
             if (picOut.Image != null)
             {
-                using (Graphics gr = Graphics.FromImage(picOut.Image))
+                using (var gr = Graphics.FromImage(picOut.Image))
                 {
                     gr.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                     gr.DrawImage(img, new Rectangle(xoff, yoff, (int)(img.Width * scale), (int)(img.Height * scale)));
@@ -58,85 +46,85 @@ namespace GraphicsTools
 
         }
 
-        void setImage(Bitmap img, int xoff, int yoff, float scale)
+        void SetImage(Bitmap img, int xoff, int yoff, float scale)
         {
-            Bitmap scaled = new Bitmap((int)(img.Width * scale), (int)(img.Height * scale), img.PixelFormat);
-            this.scale = scale;
+            var scaled = new Bitmap((int)(img.Width * scale), (int)(img.Height * scale), img.PixelFormat);
+            _scale = scale;
             picOut.Image = scaled;
 
-            if (loadedImage != img)
+            if (_loadedImage != img)
             {
-                loadedImage = img;
-                width = img.Width;
-                height = img.Height;
-                colors = new Color[width * height];
-                colorBank = new Dictionary<Color, int>();
-                for (int y = 0; y < height; y++)
+                _loadedImage = img;
+                _width = img.Width;
+                _height = img.Height;
+                _colors = new Color[_width * _height];
+                _colorBank = new Dictionary<Color, int>();
+                for (var y = 0; y < _height; y++)
                 {
-                    for (int x = 0; x < width; x++)
+                    for (var x = 0; x < _width; x++)
                     {
                         var color = img.GetPixel(x, y);
-                        colors[y * width + x] = color;
+                        _colors[y * _width + x] = color;
                         //if (!colorBank.ContainsKey(color))
                         //    colorBank.Add(color, 1);
                         //else
                         //    colorBank[color] += 1;
                     }
                 }
-                lblColors.Text = colorBank.Count.ToString();
+                lblColors.Text = _colorBank.Count.ToString();
                 lsvColors.Items.Clear();
-                foreach (var item in colorBank.OrderByDescending(x => x.Value))
+                foreach (var item in _colorBank.OrderByDescending(x => x.Value))
                 {
                     lsvColors.Items.Add(new ListViewItem { BackColor = item.Key, Text = item.Value.ToString() });
                 }
-                cells = new Dictionary<Color, int>[(width / cellwidth) * (height / cellheight)];
+                _cells = new Dictionary<Color, int>[_width / Cellwidth * (_height / Cellheight)];
             }
 
             Form1_Resize(this, null);
-            drawImage(loadedImage, -hScroll.Value, -vScroll.Value, scale);
+            DrawImage(_loadedImage, -hScroll.Value, -vScroll.Value, scale);
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            var ofd = new OpenFileDialog();
             ofd.ShowDialog();
             if (!string.IsNullOrEmpty(ofd.FileName))
             {
-                open(Image.FromFile(ofd.FileName));
+                Open(Image.FromFile(ofd.FileName));
 
             }
         }
 
-        float scale = 1;
-        Bitmap loadedImage;
-        int width;
-        int height;
-        const int cellwidth = 8; const int cellheight = 8;
-        Dictionary<Color, int>[] cells;
-        Color[] colors;
-        Dictionary<Color, int> colorBank;
+        float _scale = 1;
+        Bitmap _loadedImage;
+        int _width;
+        int _height;
+        const int Cellwidth = 8; const int Cellheight = 8;
+        Dictionary<Color, int>[] _cells;
+        Color[] _colors;
+        Dictionary<Color, int> _colorBank;
 
         private void picOut_Paint(object sender, PaintEventArgs e)
         {
             if (chkGrid.Checked)
             {
-                for (int x = 0; x < width / cellwidth; x++)
+                for (var x = 0; x < _width / Cellwidth; x++)
                 {
-                    e.Graphics.DrawLine(Pens.Red, x * cellwidth * scale, 0, x * cellwidth * scale, picOut.Height);
+                    e.Graphics.DrawLine(Pens.Red, x * Cellwidth * _scale, 0, x * Cellwidth * _scale, picOut.Height);
                 }
-                for (int y = 0; y < height / cellheight; y++)
+                for (var y = 0; y < _height / Cellheight; y++)
                 {
-                    e.Graphics.DrawLine(Pens.Red, 0, y * cellheight * scale, picOut.Width, y * cellheight * scale);
+                    e.Graphics.DrawLine(Pens.Red, 0, y * Cellheight * _scale, picOut.Width, y * Cellheight * _scale);
                 }
-                Font fnt = new Font(FontFamily.GenericSansSerif, 9);
-                for (int y = 0; y < height / cellheight; y++)
+                var fnt = new Font(FontFamily.GenericSansSerif, 9);
+                for (var y = 0; y < _height / Cellheight; y++)
                 {
-                    for (int x = 0; x < width / cellwidth; x++)
+                    for (var x = 0; x < _width / Cellwidth; x++)
                     {
-                        int dex = y * (width / cellwidth) + x;
-                        if (cells[dex] != null)
+                        var dex = y * (_width / Cellwidth) + x;
+                        if (_cells[dex] != null)
                         {
-                            e.Graphics.DrawString(cells[dex].Count.ToString(), fnt, Brushes.Red, x * cellwidth * scale, y * cellheight * scale);
+                            e.Graphics.DrawString(_cells[dex].Count.ToString(), fnt, Brushes.Red, x * Cellwidth * _scale, y * Cellheight * _scale);
 
                         }
                     }
@@ -146,25 +134,29 @@ namespace GraphicsTools
 
         private void picOut_MouseClick(object sender, MouseEventArgs e)
         {
-            int cellx = e.X / (int)(cellwidth * scale);
-            int celly = e.Y / (int)(cellheight * scale);
-            int dex = celly * (width / cellwidth) + cellx;
-            cells[dex] = new Dictionary<Color, int>();
-            for (int y = 0; y < cellheight; y++)
+            var cellx = e.X / (int)(Cellwidth * _scale);
+            var celly = e.Y / (int)(Cellheight * _scale);
+            var dex = celly * (_width / Cellwidth) + cellx;
+            _cells[dex] = new Dictionary<Color, int>();
+            for (var y = 0; y < Cellheight; y++)
             {
-                for (int x = 0; x < cellwidth; x++)
+                for (var x = 0; x < Cellwidth; x++)
                 {
-                    var color = colors[(y + celly * cellheight) * width + (x + cellx * cellwidth)];
+                    var color = _colors[(y + celly * Cellheight) * _width + x + cellx * Cellwidth];
                     //cellcolors[y * width + x] = color;
-                    if (!cells[dex].ContainsKey(color))
-                        cells[dex].Add(color, 1);
+                    if (!_cells[dex].ContainsKey(color))
+                    {
+                        _cells[dex].Add(color, 1);
+                    }
                     else
-                        cells[dex][color] += 1;
+                    {
+                        _cells[dex][color] += 1;
+                    }
                 }
             }
-            lblCellColors.Text = cells[dex].Count.ToString();
+            lblCellColors.Text = _cells[dex].Count.ToString();
             lsvCellColors.Items.Clear();
-            foreach (var item in cells[dex].OrderByDescending(x => x.Value))
+            foreach (var item in _cells[dex].OrderByDescending(x => x.Value))
             {
                 lsvCellColors.Items.Add(new ListViewItem { BackColor = item.Key, Text = item.Value.ToString() });
             }
@@ -195,11 +187,11 @@ namespace GraphicsTools
         {
             using (var br = new BinaryWriter(File.Open(file, FileMode.Create)))
             {
-                for (int y = 0; y < height; y++)
+                for (var y = 0; y < _height; y++)
                 {
-                    for (int x = 0; x < width; x++)
+                    for (var x = 0; x < _width; x++)
                     {
-                        int color = colors[y * width + x].ToRbg24();
+                        var color = _colors[y * _width + x].ToRbg24();
                         br.Write((byte)map[color]);
                     }
                 }
@@ -208,58 +200,58 @@ namespace GraphicsTools
         }
         private void btnProcess_Click(object sender, EventArgs e)
         {
-            if (colors == null)
+            if (_colors == null)
             {
                 MessageBox.Show("colors is null", "error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            int[] cbuff = new int[0xffffff];
-            foreach (var c in colors)
+            var cbuff = new int[0xffffff];
+            foreach (var c in _colors)
             {
-                int color = c.ToRbg24();// 15();
+                var color = c.ToRbg24();// 15();
                 cbuff[color] = cbuff[color] + 1;
             }
 
             var palette = Utils.MedianCut(ref cbuff, 256);
 
 
-            var bmp = new bmp(width, height, 24);
-            int pp = 0;
-            for (int y = 0; y < height; y++)
+            var bmp = new Bmp(_width, _height, 24);
+            var pp = 0;
+            for (var y = 0; y < _height; y++)
             {
-                pp = ((height - 1) - y) * bmp.rowsize;
-                for (int x = 0; x < width; x++)
+                pp = (_height - 1 - y) * bmp.Rowsize;
+                for (var x = 0; x < _width; x++)
                 {
-                    int color = colors[y * width + x].ToRbg24();
-                    int realcolor = palette[cbuff[color]].ToRbg24();
+                    var color = _colors[y * _width + x].ToRbg24();
+                    var realcolor = palette[cbuff[color]].ToRbg24();
 
-                    bmp.pixels[pp++] = (byte)(realcolor & (int)0xff);
-                    bmp.pixels[pp++] = (byte)((realcolor & (int)0xff00) >> 8);
-                    bmp.pixels[pp++] = (byte)((realcolor & (int)0xff0000) >> 16);
+                    bmp.Pixels[pp++] = (byte)(realcolor & (int)0xff);
+                    bmp.Pixels[pp++] = (byte)((realcolor & (int)0xff00) >> 8);
+                    bmp.Pixels[pp++] = (byte)((realcolor & (int)0xff0000) >> 16);
 
                 }
             }
 
-            SavePalette(palette, "D:\\TEST.PAL");
-            SaveImage(colors, cbuff, "D:\\TEST.IMG"); ;
+            //SavePalette(palette, "D:\\TEST.PAL");
+            //SaveImage(_colors, cbuff, "D:\\TEST.IMG"); ;
 
 
 
             //var stream = File.Open("D:\\test.bmp", FileMode.OpenOrCreate);
             //bmp.Write(stream);
             //stream.Close();
-            MemoryStream ms = new MemoryStream();
+            var ms = new MemoryStream();
             bmp.Write(ms);
             ms.Position = 0;
-            setImage((Bitmap)Bitmap.FromStream(ms), -hScroll.Value, -vScroll.Value, scale);
+            SetImage((Bitmap)Bitmap.FromStream(ms), -hScroll.Value, -vScroll.Value, _scale);
         }
 
         int ScaledHeight
         {
             get
             {
-                return (int)(height * scale);
+                return (int)(_height * _scale);
             }
         }
 
@@ -267,21 +259,26 @@ namespace GraphicsTools
         {
             get
             {
-                return (int)(width * scale);
+                return (int)(_width * _scale);
             }
         }
 
         private void Form1_Resize(object sender, EventArgs e)
         {
-            bool imageLoaded = width > 0 && height > 0;
+            var imageLoaded = _width > 0 && _height > 0;
             picOut.Width = picOut.Parent.Width - picOut.Left - 40;
             picOut.Height = picOut.Parent.Height - picOut.Top - 70;
             if (imageLoaded)
             {
                 if (picOut.Width > ScaledWidth)
+                {
                     picOut.Width = ScaledWidth;
+                }
+
                 if (picOut.Height > ScaledHeight)
+                {
                     picOut.Height = ScaledHeight;
+                }
             }
             vScroll.Left = picOut.Right + 3;
             vScroll.Height = picOut.Height;
@@ -289,7 +286,7 @@ namespace GraphicsTools
             hScroll.Width = picOut.Width;
             if (imageLoaded)
             {
-                int ydiff = ScaledHeight - picOut.Height;
+                var ydiff = ScaledHeight - picOut.Height;
                 if (ydiff > 0)
                 {
                     vScroll.Minimum = 0;
@@ -302,7 +299,7 @@ namespace GraphicsTools
                     vScroll.Maximum = 0;
                     vScroll.Enabled = false;
                 }
-                int xdiff = ScaledWidth - picOut.Width;
+                var xdiff = ScaledWidth - picOut.Width;
                 if (xdiff > 0)
                 {
                     hScroll.Minimum = 0;
@@ -320,12 +317,12 @@ namespace GraphicsTools
 
         private void vScroll_Scroll(object sender, ScrollEventArgs e)
         {
-            drawImage(loadedImage, -hScroll.Value, -vScroll.Value, scale);
+            DrawImage(_loadedImage, -hScroll.Value, -vScroll.Value, _scale);
         }
 
         private void hScroll_Scroll(object sender, ScrollEventArgs e)
         {
-            drawImage(loadedImage, -hScroll.Value, -vScroll.Value, scale);
+            DrawImage(_loadedImage, -hScroll.Value, -vScroll.Value, _scale);
         }
 
         private void chkGrid_CheckedChanged(object sender, EventArgs e)
@@ -335,24 +332,24 @@ namespace GraphicsTools
 
         private void btnZoomIn_Click(object sender, EventArgs e)
         {
-            scale *= 2;
-            setImage(loadedImage, -hScroll.Value, -vScroll.Value, scale);
+            _scale *= 2;
+            SetImage(_loadedImage, -hScroll.Value, -vScroll.Value, _scale);
         }
 
         private void btnZoomOut_Click(object sender, EventArgs e)
         {
-            scale /= 2;
-            setImage(loadedImage, -hScroll.Value, -vScroll.Value, scale);
+            _scale /= 2;
+            SetImage(_loadedImage, -hScroll.Value, -vScroll.Value, _scale);
         }
 
         private void analyzeFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            var ofd = new OpenFileDialog();
             ofd.ShowDialog();
             if (!string.IsNullOrEmpty(ofd.FileName))
             {
-                var frm = new frmFileAnalyzer();
-                frm.datafile = ofd.FileName;
+                var frm = new FrmFileAnalyzer();
+                frm.Datafile = ofd.FileName;
                 frm.Show();
             }
         }
@@ -360,25 +357,23 @@ namespace GraphicsTools
 
         private void openDATASBINToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            var ofd = new OpenFileDialog();
+            ofd.Title = "Select DATAS.BIN";
             ofd.Filter = "DATAS.BIN|DATAS.BIN|All Files (*.*)|*.*";
             ofd.ShowDialog();
+
             if (!string.IsNullOrWhiteSpace(ofd.FileName))
             {
                 DebugSymbols.Init();
-                var frmAlundra = new Alundra.frmAlundra();
+                var frmAlundra = new FrmAlundra();
                 frmAlundra.Show();
-                var datasBin = new Alundra.DatasBin(ofd.FileName);
-                frmAlundra.Init(datasBin);
+                var datasBin = new DatasBin(ofd.FileName);
+                var balanceFile = Path.Combine(Path.GetDirectoryName(ofd.FileName), "BALANCE.BIN");
+                var balanceBin = new BalanceBin(balanceFile);
+                var soundBinFileName = Path.Combine(Path.GetDirectoryName(ofd.FileName), "SOUND.BIN");
+                var soundBin = new SoundBin(soundBinFileName);
 
-                //show soundboard too
-                var frmSoundboard = new Alundra.frmSoundboard(datasBin, Path.Combine(Path.GetDirectoryName(ofd.FileName), "SOUND.BIN"));
-                frmSoundboard.Show();
-
-                //new window
-                var analyserWindow = new AnalyserWindow();
-                analyserWindow.Show();
-                analyserWindow.Init(datasBin);
+                frmAlundra.Init(datasBin, balanceBin, soundBin);
             }
         }
 
@@ -389,24 +384,30 @@ namespace GraphicsTools
 
         private void analyzeCarpetToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            var ofd = new OpenFileDialog();
             ofd.ShowDialog();
             if (!string.IsNullOrEmpty(ofd.FileName))
             {
-                var frm = new frmCarpetAnalyzer();
-                frm.datafile = ofd.FileName;
+                var frm = new FrmCarpetAnalyzer();
+                frm.Datafile = ofd.FileName;
                 frm.Show();
             }
         }
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            var ofd = new OpenFileDialog();
             ofd.Filter = "DATAS.BIN|DATAS.BIN|All Files (*.*)|*.*";
             ofd.ShowDialog();
             if (!string.IsNullOrWhiteSpace(ofd.FileName))
             {
-                var frmGame = new Alundra.frmGame(new Alundra.DatasBin(ofd.FileName), new Alundra.SoundBin(Path.Combine(Path.GetDirectoryName(ofd.FileName), "SOUND.BIN")));
+                var soundFile = Path.Combine(Path.GetDirectoryName(ofd.FileName), "SOUND.BIN");
+                var balanceFile = Path.Combine(Path.GetDirectoryName(ofd.FileName), "BALANCE.BIN");
+
+                var frmGame = new FrmGame(
+                    new DatasBin(ofd.FileName), 
+                    new BalanceBin(balanceFile),
+                    new SoundBin(soundFile));
                 frmGame.Show();
             }
         }

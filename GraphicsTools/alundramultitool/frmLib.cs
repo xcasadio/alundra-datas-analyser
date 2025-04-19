@@ -1,37 +1,34 @@
 ﻿using alundramultitool;
 using GraphicsTools.LIB;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace GraphicsTools
 {
-    public partial class frmLib : Form
+    public partial class FrmLib : Form
     {
-        LIB.LIB _lib;
-        string[] hlines;
-        public List<AnalyzedFunction> analyzedfuncs = new List<AnalyzedFunction>();
-        frmFileAnalyzer sister;
-        string libFile;
-        List<LIB.LIB> _libs = new List<LIB.LIB>();
-        public frmLib(string libFile, string hFile, string libdir, string includdir, frmFileAnalyzer sister)
+        Lib _lib;
+        string[] _hlines;
+        public List<AnalyzedFunction> Analyzedfuncs = new();
+        FrmFileAnalyzer _sister;
+        string _libFile;
+        List<Lib> _libs = new();
+
+        public FrmLib(string psyqSdkFolder, FrmFileAnalyzer sister)
         {
-            this.sister = sister;
+            _sister = sister;
             InitializeComponent();
-            List<string> otherdefs = new List<string>();
+
+            var libFile = Path.Combine(psyqSdkFolder, "LIB", "LIBSND.LIB");
+            var hFile = Path.Combine(psyqSdkFolder, "INCLUDE", "LIBSND.H");
+            var libdir = Path.Combine(psyqSdkFolder, "LIB");
+            var includdir = Path.Combine(psyqSdkFolder, "INCLUDE");
+
+            var otherdefs = new List<string>();
             foreach(var file in Directory.GetFiles(includdir, "*.H"))
             {
                 var id = Path.GetFileNameWithoutExtension(file);
                 if (!id.StartsWith("LIB"))
                 {
-
                     otherdefs.AddRange(File.ReadAllLines(file));
                 }
             }
@@ -40,35 +37,33 @@ namespace GraphicsTools
             {
                 var id = Path.GetFileNameWithoutExtension(file);
                 var hf = Path.Combine(includdir, id  + ".H");
-                var lib = new LIB.LIB(file, hf, otherdefs);
+                var lib = new Lib(file, hf, otherdefs);
                 _libs.Add(lib);
             }
 
-            this.libFile = libFile;
-            _lib = new LIB.LIB(libFile, hFile, null);
+            _libFile = libFile;
+            _lib = new Lib(libFile, hFile, null);
 
+            _hlines = File.ReadAllLines(hFile);
 
-            hlines = System.IO.File.ReadAllLines(hFile);
-            
-
-            foreach(var mod in _lib.modules)
+            foreach(var mod in _lib.Modules)
             {
-                foreach(var sym in mod.Link.symbols)
+                foreach(var sym in mod.Link.Symbols)
                 {
-                    if (sym.Type == LIB.SYMBOL_TYPE.INTERNAL)
+                    if (sym.Type == SymbolType.Internal)
                     {
                         var hdef = FindDef(sym);
-                        var func = new AnalyzedFunction(sym, mod, frmFileAnalyzer.AnalyzeFunction, hdef);
-                        analyzedfuncs.Add(func);
+                        var func = new AnalyzedFunction(sym, mod, FrmFileAnalyzer.AnalyzeFunction, hdef);
+                        Analyzedfuncs.Add(func);
                     }
-                    else if (sym.Type == SYMBOL_TYPE.LOCAL)
+                    else if (sym.Type == SymbolType.Local)
                     {
-                        var section = mod.Link.sections.FirstOrDefault(x => x.Symbol == sym.Section);
-                        if (section.patches.Exists(x=>x.Value == sym.Offset && x.PatchType == PATCH_TYPE.SECTION_BASE && x.RelocType == RELOC_TYPE.FUNCTION_CALL))
+                        var section = mod.Link.Sections.FirstOrDefault(x => x.Symbol == sym.Section);
+                        if (section.Patches.Exists(x=>x.Value == sym.Offset && x.PatchType == PatchType.SectionBase && x.RelocType == RelocType.FunctionCall))
                         {
                             var hdef = FindDef(sym);
-                            var func = new AnalyzedFunction(sym, mod, frmFileAnalyzer.AnalyzeFunction, hdef);
-                            analyzedfuncs.Add(func);
+                            var func = new AnalyzedFunction(sym, mod, FrmFileAnalyzer.AnalyzeFunction, hdef);
+                            Analyzedfuncs.Add(func);
                         }
                     }
                 }
@@ -76,77 +71,81 @@ namespace GraphicsTools
 
             foreach (var lib in _libs)
             {
-                foreach(var mod in lib.modules)
+                foreach(var mod in lib.Modules)
                 {
-                    foreach(var sym in mod.Link.symbols)
+                    foreach(var sym in mod.Link.Symbols)
                     {
                         AnalyzedFunction func = null;
-                        if (sym.Type == LIB.SYMBOL_TYPE.INTERNAL)
+                        if (sym.Type == SymbolType.Internal)
                         {
-                            var section = mod.Link.sections.FirstOrDefault(x => x.Symbol == sym.Section);
-                            if (lib.ExportedFunctions.Contains(mod.header.ModuleName + " : "+ sym.Name) || section.patches.Exists(x => x.Symbol == sym.Sym && x.RelocType == RELOC_TYPE.FUNCTION_CALL))
+                            var section = mod.Link.Sections.FirstOrDefault(x => x.Symbol == sym.Section);
+                            if (lib.ExportedFunctions.Contains(mod.Header.ModuleName + " : "+ sym.Name) || section.Patches.Exists(x => x.Symbol == sym.Sym && x.RelocType == RelocType.FunctionCall))
                             {
-                                func = new AnalyzedFunction(sym, mod, frmFileAnalyzer.AnalyzeFunction, null);
+                                func = new AnalyzedFunction(sym, mod, FrmFileAnalyzer.AnalyzeFunction, null);
                             }
                             
                         }
-                        else if (sym.Type == SYMBOL_TYPE.LOCAL)
+                        else if (sym.Type == SymbolType.Local)
                         {
-                            var section = mod.Link.sections.FirstOrDefault(x => x.Symbol == sym.Section);
-                            if (section.patches.Exists(x => x.Value == sym.Offset && x.PatchType == PATCH_TYPE.SECTION_BASE && x.RelocType == RELOC_TYPE.FUNCTION_CALL))
+                            var section = mod.Link.Sections.FirstOrDefault(x => x.Symbol == sym.Section);
+                            if (section.Patches.Exists(x => x.Value == sym.Offset && x.PatchType == PatchType.SectionBase && x.RelocType == RelocType.FunctionCall))
                             {
-                                func = new AnalyzedFunction(sym, mod, frmFileAnalyzer.AnalyzeFunction, null);
+                                func = new AnalyzedFunction(sym, mod, FrmFileAnalyzer.AnalyzeFunction, null);
                             }
                         }
                         if (func!=null)
                         {
-                            fullanalyzedfuncs.Add(func);
-                            if (lib.ExportedFunctions.Contains(mod.header.ModuleName + " : " + sym.Name))
-                                exportedanalyzedfuncs.Add(func);
+                            Fullanalyzedfuncs.Add(func);
+                            if (lib.ExportedFunctions.Contains(mod.Header.ModuleName + " : " + sym.Name))
+                            {
+                                Exportedanalyzedfuncs.Add(func);
+                            }
                         }
                     }
                 }
             }
 
-            for(int dex = 0;dex<fullanalyzedfuncs.Count;dex++)
+            for(var dex = 0;dex<Fullanalyzedfuncs.Count;dex++)
             {
-                var func = fullanalyzedfuncs[dex];
+                var func = Fullanalyzedfuncs[dex];
 
                 if (func is UnknownAnalyzedFunction)
-                    continue;
-
-                foreach(var sym in func.calledsymbols)
                 {
-                    bool found = false;
-                    if (sym.Type == SYMBOL_TYPE.LOCAL)
+                    continue;
+                }
+
+                foreach(var sym in func.Calledsymbols)
+                {
+                    var found = false;
+                    if (sym.Type == SymbolType.Local)
                     {
-                        foreach(var checkme in fullanalyzedfuncs.Where(x=>x.module == sym.Mod))
+                        foreach(var checkme in Fullanalyzedfuncs.Where(x=>x.Module == sym.Mod))
                         {
-                            if (checkme.name == sym.Name)
+                            if (checkme.Name == sym.Name)
                             {
-                                func.calledfunctions.Add(checkme);
+                                func.Calledfunctions.Add(checkme);
                                 found = true;
                             }
                         }
                     }
-                    else if (sym.Type == SYMBOL_TYPE.INTERNAL)
+                    else if (sym.Type == SymbolType.Internal)
                     {
-                        foreach (var checkme in fullanalyzedfuncs.Where(x => x.module == sym.Mod))
+                        foreach (var checkme in Fullanalyzedfuncs.Where(x => x.Module == sym.Mod))
                         {
-                            if (checkme.name == sym.Name)
+                            if (checkme.Name == sym.Name)
                             {
-                                func.calledfunctions.Add(checkme);
+                                func.Calledfunctions.Add(checkme);
                                 found = true;
                             }
                         }
                     }
                     else
                     {
-                        foreach (var checkme in exportedanalyzedfuncs)
+                        foreach (var checkme in Exportedanalyzedfuncs)
                         {
-                            if (checkme.name == sym.Name)
+                            if (checkme.Name == sym.Name)
                             {
-                                func.calledfunctions.Add(checkme);
+                                func.Calledfunctions.Add(checkme);
                                 found = true;
                             }
                         }
@@ -155,11 +154,11 @@ namespace GraphicsTools
                     if (!found)
                     {
                         
-                        foreach (var checkme in fullanalyzedfuncs)
+                        foreach (var checkme in Fullanalyzedfuncs)
                         {
-                            if (checkme.name == sym.Name)
+                            if (checkme.Name == sym.Name)
                             {
-                                func.calledfunctions.Add(checkme);
+                                func.Calledfunctions.Add(checkme);
                                 found = true;
                             }
                         }
@@ -167,12 +166,12 @@ namespace GraphicsTools
                     if (!found)
                     {
                         var unanalyzed = new UnknownAnalyzedFunction(sym.Name);
-                        func.calledfunctions.Add(unanalyzed);
-                        fullanalyzedfuncs.Add(unanalyzed);
+                        func.Calledfunctions.Add(unanalyzed);
+                        Fullanalyzedfuncs.Add(unanalyzed);
                     }
                 }
             }
-            foreach (var func in fullanalyzedfuncs)
+            foreach (var func in Fullanalyzedfuncs)
             {
                 func.GetDepth(new List<AnalyzedFunction>());
             }
@@ -182,44 +181,49 @@ namespace GraphicsTools
                 lstLibs.Items.Add(lib);
             }
         }
-        public List<AnalyzedFunction> fullanalyzedfuncs = new List<AnalyzedFunction>();
-        public List<AnalyzedFunction> exportedanalyzedfuncs = new List<AnalyzedFunction>();
+        public List<AnalyzedFunction> Fullanalyzedfuncs = new();
+        public List<AnalyzedFunction> Exportedanalyzedfuncs = new();
 
         string FindDef(Symbol sym)
         {
-            for (int dex = 0;dex<hlines.Length;dex++)
+            for (var dex = 0;dex<_hlines.Length;dex++)
             {
-                if (hlines[dex].Replace(" (","(").Contains(" " + sym.Name + "("))
-                    return hlines[dex].Trim().Replace(";", "");
+                if (_hlines[dex].Replace(" (","(").Contains(" " + sym.Name + "("))
+                {
+                    return _hlines[dex].Trim().Replace(";", "");
+                }
             }
             return null;
         }
 
         private void frmLib_Load(object sender, EventArgs e)
         {
-            foreach (var func in analyzedfuncs)
+            foreach (var func in Analyzedfuncs)
                 lstFuncs.Items.Add(func);
 
-            foreach(var module in _lib.modules)
+            foreach(var module in _lib.Modules)
             {
-                lstModules.Items.Add(module.header.ModuleName);
+                lstModules.Items.Add(module.Header.ModuleName);
             }
         }
 
-        public static string PrintFunction(List<CodeBlock<ISInstruction>> blocks, Link link, Section section)
+        public static string PrintFunction(List<CodeBlock<IsInstruction>> blocks, Link link, Section section)
         {
-            string ftext = "";
+            var ftext = "";
             if (blocks.Count == 0)
+            {
                 return "";
-            uint addradjust = blocks.First().Instructions.First().address;
+            }
+
+            var addradjust = blocks.First().Instructions.First().Address;
 
             var fnames = Alundra.DebugSymbols.FunctionNames;
             var evars = Alundra.DebugSymbols.EntityVarOffsets;
             var globalvars = Alundra.DebugSymbols.GlobalVariableNames;
             var comments = Alundra.DebugSymbols.Comments;
 
-            int indentlevel = 0;
-            int codestart = 40;
+            var indentlevel = 0;
+            var codestart = 40;
             foreach (var block in blocks)
             {
                 if (block.BeginsLoop)
@@ -233,37 +237,44 @@ namespace GraphicsTools
                 }
                 foreach (var inst in block.Instructions)
                 {
-                    string ccode = "";
-                    if (fnames.ContainsKey(inst.address))
+                    var ccode = "";
+                    if (fnames.ContainsKey(inst.Address))
                     {
-                        ccode = "void " + fnames[inst.address].name + "()";
-                        if (!string.IsNullOrEmpty(fnames[inst.address].comment))
-                            ccode += "//" + fnames[inst.address].comment;
+                        ccode = "void " + fnames[inst.Address].Name + "()";
+                        if (!string.IsNullOrEmpty(fnames[inst.Address].Comment))
+                        {
+                            ccode += "//" + fnames[inst.Address].Comment;
+                        }
                     }
                     else
                     {
-                        switch (inst.cmd)
+                        switch (inst.Cmd)
                         {
                             case "jal":
-                                var sname = inst.referencedAddress.ToString("x");
+                                var sname = inst.ReferencedAddress.ToString("x");
                                 var scomment = "";
-                                if (fnames.ContainsKey(inst.referencedAddress))
+                                if (fnames.ContainsKey(inst.ReferencedAddress))
                                 {
-                                    var fref = fnames[inst.referencedAddress];
-                                    if (!string.IsNullOrEmpty(fref.name))
-                                        sname = fref.name;
-                                    if (!string.IsNullOrEmpty(fref.comment))
-                                        scomment = fref.comment;
+                                    var fref = fnames[inst.ReferencedAddress];
+                                    if (!string.IsNullOrEmpty(fref.Name))
+                                    {
+                                        sname = fref.Name;
+                                    }
+
+                                    if (!string.IsNullOrEmpty(fref.Comment))
+                                    {
+                                        scomment = fref.Comment;
+                                    }
                                 }
                                 {
-                                    var patch = section.patches.FirstOrDefault(x =>
+                                    var patch = section.Patches.FirstOrDefault(x =>
                                         //(x.Value == 0 && x.Offset == inst.address)
                                         //|| (x.Value != 0 && x.Value == inst.address)
-                                        x.Offset == inst.address
+                                        x.Offset == inst.Address
                                     );// (x.PatchType == PATCH_TYPE.REF && x.Offset + addradjust == inst.address) || x.Offset + addradjust == inst.address);
                                     if (patch != null)
                                     {
-                                        var sym = link.symbols.FirstOrDefault(x => x.Sym == patch.Symbol || (patch.PatchType == PATCH_TYPE.SECTION_BASE && x.Offset == patch.Value));
+                                        var sym = link.Symbols.FirstOrDefault(x => x.Sym == patch.Symbol || (patch.PatchType == PatchType.SectionBase && x.Offset == patch.Value));
                                         if (sym != null)
                                         {
                                             sname = sym.Name;
@@ -283,13 +294,15 @@ namespace GraphicsTools
                             case "sb":
                             case "lbu":
                             case "sbu":
-                                if (inst.rs != 29)//if not local variable declaration
+                                if (inst.Rs != 29)//if not local variable declaration
                                 {
-                                    bool nudgewierdness = false;
+                                    var nudgewierdness = false;
                                     //if (inst.rt == 16 || inst.rs == 16)
                                     //    nudgewierdness = true;
                                     if (nudgewierdness)
-                                        inst.immediate += 0x134;
+                                    {
+                                        inst.Immediate += 0x134;
+                                    }
                                     //assume entity struct
                                     /*if (inst.immediate > 0xc && inst.immediate < evars.Length)
                                     {
@@ -313,34 +326,49 @@ namespace GraphicsTools
                                     {
                                         var name2 = "0x" + fulladdr2.ToString("x");
                                         if (globalvars.ContainsKey(fulladdr2))
-                                            name2 = globalvars[fulladdr2].name;
+                                        {
+                                            name2 = globalvars[fulladdr2].Name;
+                                        }
 
-                                        if (fulladdr2 > 0x1ac498 && fulladdr2 < (0x1ac498 + 0x294))
+                                        if (fulladdr2 > 0x1ac498 && fulladdr2 < 0x1ac498 + 0x294)
                                         {
                                             name2 = "playercharacter";
                                             var off = fulladdr2 - 0x1ac498;
                                             var evarname = evars[off];
                                             if (!string.IsNullOrEmpty(evarname))
+                                            {
                                                 name2 += "." + evarname;
+                                            }
                                             else
+                                            {
                                                 name2 += "[" + off.ToString("x") + "]";
-
+                                            }
                                         }
 
-                                        if (inst.cmd == "lw" || inst.cmd == "lh" || inst.cmd == "lhu" || inst.cmd == "lb" || inst.cmd == "lbu")
-                                            ccode = MIPS.GetRegister(inst.rt) + " = *" + name2;
-                                        else if (inst.cmd == "sw" || inst.cmd == "sh" || inst.cmd == "shu" || inst.cmd == "sb" || inst.cmd == "sbu")
-                                            ccode = "*" + name2 + " = " + MIPS.GetRegister(inst.rt);
+                                        if (inst.Cmd == "lw" || inst.Cmd == "lh" || inst.Cmd == "lhu" || inst.Cmd == "lb" || inst.Cmd == "lbu")
+                                        {
+                                            ccode = Mips.GetRegister(inst.Rt) + " = *" + name2;
+                                        }
+                                        else if (inst.Cmd == "sw" || inst.Cmd == "sh" || inst.Cmd == "shu" || inst.Cmd == "sb" || inst.Cmd == "sbu")
+                                        {
+                                            ccode = "*" + name2 + " = " + Mips.GetRegister(inst.Rt);
+                                        }
                                     }
                                     else
                                     {
-                                        if (inst.cmd == "lw" || inst.cmd == "lh" || inst.cmd == "lhu" || inst.cmd == "lb" || inst.cmd == "lbu")
-                                            ccode = MIPS.GetRegister(inst.rt) + " = " + MIPS.GetRegister(inst.rs) + "[" + inst.immediate.ToString("x") + "]";
-                                        else if (inst.cmd == "sw" || inst.cmd == "sh" || inst.cmd == "shu" || inst.cmd == "sb" || inst.cmd == "sbu")
-                                            ccode = MIPS.GetRegister(inst.rs) + "[" + inst.immediate.ToString("x") + "]" + " = " + MIPS.GetRegister(inst.rt);
+                                        if (inst.Cmd == "lw" || inst.Cmd == "lh" || inst.Cmd == "lhu" || inst.Cmd == "lb" || inst.Cmd == "lbu")
+                                        {
+                                            ccode = Mips.GetRegister(inst.Rt) + " = " + Mips.GetRegister(inst.Rs) + "[" + inst.Immediate.ToString("x") + "]";
+                                        }
+                                        else if (inst.Cmd == "sw" || inst.Cmd == "sh" || inst.Cmd == "shu" || inst.Cmd == "sb" || inst.Cmd == "sbu")
+                                        {
+                                            ccode = Mips.GetRegister(inst.Rs) + "[" + inst.Immediate.ToString("x") + "]" + " = " + Mips.GetRegister(inst.Rt);
+                                        }
                                     }
                                     if (nudgewierdness)
-                                        inst.immediate -= 0x134;
+                                    {
+                                        inst.Immediate -= 0x134;
+                                    }
                                 }
                                 break;
 
@@ -357,8 +385,10 @@ namespace GraphicsTools
                                 if (fulladdr != 0)
                                 {
                                     if (globalvars.ContainsKey(fulladdr))
-                                        ccode = "//" + globalvars[fulladdr].name;
-                                    else if (fulladdr > 0x1ac498 && fulladdr < (0x1ac498 + 0x294))
+                                    {
+                                        ccode = "//" + globalvars[fulladdr].Name;
+                                    }
+                                    else if (fulladdr > 0x1ac498 && fulladdr < 0x1ac498 + 0x294)
                                     {
                                         var name2 = "playercharacter";
                                         var off = fulladdr - 0x1ac498;
@@ -370,7 +400,9 @@ namespace GraphicsTools
                                         ccode = "//" + name2;
                                     }
                                     else
+                                    {
                                         ccode = "//0x" + fulladdr.ToString("x");
+                                    }
                                 }
                                 break;
                                 /*case "addiu":
@@ -397,9 +429,12 @@ namespace GraphicsTools
                                     break;*/
                         }
                     }
-                    if (comments.ContainsKey(inst.address))
-                        ccode += "//" + comments[inst.address];
-                    string asm = string.Format("{0}: {1} {2}", ((block.Instructions.IndexOf(inst) == 0 && block.IsJumpTarget) ? "0x" : "") + inst.address.ToString("x8"), inst.instruction.ToString("x8"), inst.display);
+                    if (comments.ContainsKey(inst.Address))
+                    {
+                        ccode += "//" + comments[inst.Address];
+                    }
+
+                    var asm = string.Format("{0}: {1} {2}", (block.Instructions.IndexOf(inst) == 0 && block.IsJumpTarget ? "0x" : "") + inst.Address.ToString("x8"), inst.Instruction.ToString("x8"), inst.Display);
                     ftext += string.Format("{0}{1}{2}{3}\r\n", asm, RawIndent(codestart - asm.Length), Indent(indentlevel), ccode);
                 }
                 if (block.EndsLoop)
@@ -450,8 +485,8 @@ namespace GraphicsTools
 
         static string Indent(int indentlevel)
         {
-            string indent = "";
-            for (int dex = 0; dex < indentlevel; dex++)
+            var indent = "";
+            for (var dex = 0; dex < indentlevel; dex++)
             {
                 indent += "  ";
             }
@@ -460,8 +495,8 @@ namespace GraphicsTools
 
         static string RawIndent(int indentlevel)
         {
-            string indent = "";
-            for (int dex = 0; dex < indentlevel; dex++)
+            var indent = "";
+            for (var dex = 0; dex < indentlevel; dex++)
             {
                 indent += " ";
             }
@@ -473,8 +508,8 @@ namespace GraphicsTools
             public UnknownAnalyzedFunction(string name):
                 base(null,null,null,null)
             {
-                this.name = name;
-                this.fullname = name + " (unalyzed)";
+                Name = name;
+                Fullname = name + " (unalyzed)";
             }
 
             
@@ -482,90 +517,105 @@ namespace GraphicsTools
 
         public class AnalyzedFunction
         {
-            public string name;
-            public string fullname;
-            public int length;
-            public bool hasloop;
-            public bool callsfunctionpointers;
-            public List<AnalyzedFunction> calledfunctions = new List<AnalyzedFunction>();
-            public List<Symbol> calledsymbols = new List<Symbol>();
-            public List<AnalyzedFunction> calledby = new List<AnalyzedFunction>();
-            public List<ISInstruction> instructions;
-            public List<CodeBlock<ISInstruction>> blocks;
-            public Lib_Module module;
-            public Section section;
+            public string Name;
+            public string Fullname;
+            public int Length;
+            public bool Hasloop;
+            public bool Callsfunctionpointers;
+            public List<AnalyzedFunction> Calledfunctions = new();
+            public List<Symbol> Calledsymbols = new();
+            public List<AnalyzedFunction> Calledby = new();
+            public List<IsInstruction> Instructions;
+            public List<CodeBlock<IsInstruction>> Blocks;
+            public LibModule Module;
+            public Section Section;
 
             public override string ToString()
             {
-                return fullname;
+                return Fullname;
             }
-            public AnalyzedFunction(Symbol symb, Lib_Module module, Func<List<ISInstruction>, List<CodeBlock<ISInstruction>>> AnalyzeFunction, string hdef)
+            public AnalyzedFunction(Symbol symb, LibModule module, Func<List<IsInstruction>, List<CodeBlock<IsInstruction>>> analyzeFunction, string hdef)
             {
                 if (symb == null)
-                    return;
-                this.module = module;
-                var link = module.Link;
-                section = link.sections.FirstOrDefault(x => x.Symbol == symb.Section);
-                var fdat = section.Code;
-                name = symb.Name;
-                if (!string.IsNullOrEmpty(hdef))
-                    fullname = hdef;
-                else
-                    fullname = name;
-                int address = 0;
-                int endaddr = 0;
-                bool exit = false;
-
-                instructions = new List<ISInstruction>();
-
-                for (int dex = symb.Offset; dex < fdat.Length; dex += 4)
                 {
-                    var inst = new MIPS.Instruction((uint)(address + dex), (uint)(fdat[dex] | fdat[dex + 1] << 8 | fdat[dex + 2] << 16 | (uint)fdat[dex + 3] << 24));
+                    return;
+                }
+
+                Module = module;
+                var link = module.Link;
+                Section = link.Sections.FirstOrDefault(x => x.Symbol == symb.Section);
+                var fdat = Section.Code;
+                Name = symb.Name;
+                if (!string.IsNullOrEmpty(hdef))
+                {
+                    Fullname = hdef;
+                }
+                else
+                {
+                    Fullname = Name;
+                }
+
+                var address = 0;
+                var endaddr = 0;
+                var exit = false;
+
+                Instructions = new List<IsInstruction>();
+
+                for (var dex = symb.Offset; dex < fdat.Length; dex += 4)
+                {
+                    var inst = new Mips.Instruction((uint)(address + dex), (uint)(fdat[dex] | fdat[dex + 1] << 8 | fdat[dex + 2] << 16 | (uint)fdat[dex + 3] << 24));
 
                     //check patch
-                    if (inst.cmd == "j")
+                    if (inst.Cmd == "j")
                     {
-                        var patch = section.patches.FirstOrDefault(x =>
-                            x.Offset == inst.address
+                        var patch = Section.Patches.FirstOrDefault(x =>
+                            x.Offset == inst.Address
                         );
                         if (patch != null)
                         {
-                            inst.referencedAddress = patch.Value;
-                            string onevalformat = "{0} {1}";
-                            inst.display = string.Format(onevalformat, "j", "0x" + inst.referencedAddress.ToString("x8"));
+                            inst.ReferencedAddress = patch.Value;
+                            var onevalformat = "{0} {1}";
+                            inst.Display = string.Format(onevalformat, "j", "0x" + inst.ReferencedAddress.ToString("x8"));
                         }
                     }
-                    else if (inst.cmd == "jal")
+                    else if (inst.Cmd == "jal")
                     {
-                        var patch = section.patches.FirstOrDefault(x =>
-                            x.Offset == inst.address
+                        var patch = Section.Patches.FirstOrDefault(x =>
+                            x.Offset == inst.Address
                         );
                         if (patch != null)
                         {
-                            var sym = link.symbols.FirstOrDefault(x => x.Sym == patch.Symbol || (patch.PatchType == PATCH_TYPE.SECTION_BASE && x.Offset == patch.Value));
+                            var sym = link.Symbols.FirstOrDefault(x => x.Sym == patch.Symbol || (patch.PatchType == PatchType.SectionBase && x.Offset == patch.Value));
                             if (sym != null)
                             {
-                                if (!calledsymbols.Exists(x => x.Name == sym.Name))
-                                    calledsymbols.Add(sym);
+                                if (!Calledsymbols.Exists(x => x.Name == sym.Name))
+                                {
+                                    Calledsymbols.Add(sym);
+                                }
                             }
                         }
                     }
 
-                    instructions.Add(inst);
+                    Instructions.Add(inst);
                     if (exit)
+                    {
                         break;
-                    if (inst.IsReturn || (endaddr != 0 && inst.address == endaddr))
+                    }
+
+                    if (inst.IsReturn || (endaddr != 0 && inst.Address == endaddr))
+                    {
                         exit = true;
+                    }
                 }
 
-                length = (int)(instructions.Last().address - address);
-                blocks = AnalyzeFunction(instructions);
+                Length = (int)(Instructions.Last().Address - address);
+                Blocks = analyzeFunction(Instructions);
 
-                foreach (var block in blocks)
+                foreach (var block in Blocks)
                 {
                     foreach (var inst in block.Instructions)
                     {
-                        switch (inst.cmd)
+                        switch (inst.Cmd)
                         {
                             case "jal":
                                 /*var calledfunc = funclist.FirstOrDefault(x => x.address == inst.referencedAddress);
@@ -616,7 +666,7 @@ namespace GraphicsTools
                                 */
                                 break;
                             case "jalr":
-                                callsfunctionpointers = true;
+                                Callsfunctionpointers = true;
                                 break;
                             //TODO record global variables
                             case "addiu":
@@ -669,34 +719,38 @@ namespace GraphicsTools
                     }
                     if (block.EndsLoop)
                     {
-                        hasloop = true;
+                        Hasloop = true;
                     }
                 }
 
             }
 
-            public List<AnalyzedFunction> stack = new List<AnalyzedFunction>();
-            public List<AnalyzedFunction> maxstack = new List<AnalyzedFunction>();
+            public List<AnalyzedFunction> Stack = new();
+            public List<AnalyzedFunction> Maxstack = new();
 
             public List<AnalyzedFunction> GetDepth(List<AnalyzedFunction> depthstack)
             {
-                stack = depthstack;
-                maxstack = stack;
+                Stack = depthstack;
+                Maxstack = Stack;
                 //detect recursion
                 if (depthstack.Contains(this))
+                {
                     return depthstack;
+                }
 
                 depthstack.Add(this);
 
 
-                foreach (var func in calledfunctions)
+                foreach (var func in Calledfunctions)
                 {
                     var potentialstack = func.GetDepth(depthstack.ToList());
-                    if (potentialstack.Count > maxstack.Count)
-                        maxstack = potentialstack;
+                    if (potentialstack.Count > Maxstack.Count)
+                    {
+                        Maxstack = potentialstack;
+                    }
                 }
 
-                return maxstack;
+                return Maxstack;
             }
         }
 
@@ -704,14 +758,14 @@ namespace GraphicsTools
         {
             var func = (AnalyzedFunction)lstFuncs.SelectedItem;// analyzedfuncs.FirstOrDefault(x => x.fullname == (string)lstFuncs.SelectedItem);
 
-            var blocks = frmFileAnalyzer.AnalyzeFunction(func.instructions);
+            var blocks = FrmFileAnalyzer.AnalyzeFunction(func.Instructions);
 
-            txtCode.Text = PrintFunction(blocks, func.module.Link, func.section);
+            txtCode.Text = PrintFunction(blocks, func.Module.Link, func.Section);
         }
 
         private void lstModules_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var module = _lib.modules.FirstOrDefault(x => x.header.ModuleName == (string)lstModules.SelectedItem);
+            var module = _lib.Modules.FirstOrDefault(x => x.Header.ModuleName == (string)lstModules.SelectedItem);
             if (module!=null)
             {
                 DumpModule(module);
@@ -722,9 +776,9 @@ namespace GraphicsTools
             }
         }
 
-        private void DumpModule(Lib_Module module)
+        private void DumpModule(LibModule module)
         {
-            using (var br = new BinaryReader(File.OpenRead(libFile)))
+            using (var br = new BinaryReader(File.OpenRead(_libFile)))
             {
                 module.Rerun(br);
             }
@@ -737,25 +791,25 @@ namespace GraphicsTools
             //txtDump.Text = sb.ToString();
         }
 
-        LIB.LIB selectedLib;
+        Lib _selectedLib;
         private void lstLibs_SelectedIndexChanged(object sender, EventArgs e)
         {
             //lstLibModules.Items.Clear();
             lstExportedFuncs.Items.Clear();
-            selectedLib = (LIB.LIB)lstLibs.SelectedItem;
+            _selectedLib = (Lib)lstLibs.SelectedItem;
             tvFuncs.Nodes.Clear();
-            if (selectedLib != null)
+            if (_selectedLib != null)
             {
-                foreach(var func in exportedanalyzedfuncs.Where(x=>x.module.lib == selectedLib))
+                foreach(var func in Exportedanalyzedfuncs.Where(x=>x.Module.Lib == _selectedLib))
                 {
                     var node = GetNode(func);
                     tvFuncs.Nodes.Add(node);
                 }
-                foreach (var s in selectedLib.ExportedFunctions)
+                foreach (var s in _selectedLib.ExportedFunctions)
                     lstExportedFuncs.Items.Add(s);
             }
         }
-        Lib_Module selectedMod;
+        LibModule _selectedMod;
         private void lstLibModules_SelectedIndexChanged(object sender, EventArgs e)
         {
             /*lstExportedFuncs.Items.Clear();
@@ -779,9 +833,9 @@ namespace GraphicsTools
             node.Tag = func;
             if (!recursive)
             {
-                foreach (var child in func.calledfunctions)
+                foreach (var child in func.Calledfunctions)
                 {
-                    bool isrecursive = func.stack.Contains(child);
+                    var isrecursive = func.Stack.Contains(child);
                     node.Nodes.Add(GetNode(child, isrecursive));
                 }
             }
@@ -794,20 +848,23 @@ namespace GraphicsTools
 
             return node;
         }
-        bool ignoreevents = false;
+        bool _ignoreevents = false;
         private void tvFuncs_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            ignoreevents = true;
+            _ignoreevents = true;
             if (sender != null && e != null)
+            {
                 txtFilter.Text = "";
-            ignoreevents = false;
+            }
+
+            _ignoreevents = false;
             var func = (AnalyzedFunction)tvFuncs.SelectedNode?.Tag;
             lstPotentialMatches.Items.Clear();
             if (func != null && !(func is UnknownAnalyzedFunction))
             {
-                var blocks = frmFileAnalyzer.AnalyzeFunction(func.instructions);
+                var blocks = FrmFileAnalyzer.AnalyzeFunction(func.Instructions);
 
-                txtCode.Text = PrintFunction(blocks, func.module.Link, func.section);
+                txtCode.Text = PrintFunction(blocks, func.Module.Link, func.Section);
                 
                 FindPotentialMatches(func);
             }
@@ -819,26 +876,28 @@ namespace GraphicsTools
 
         void FindPotentialMatches(AnalyzedFunction func)
         {
-            int minaddress = sister.datafile.Contains("startscreen") ? 0 : 0x82478;
-            foreach(var checkme in sister.analyzedfunctions.Where(
-                    x=> x.address > minaddress && 
-                    x.blocks.Count == func.blocks.Count && 
-                    x.calledfunctions.Count == func.calledfunctions.Count
+            var minaddress = _sister.Datafile.Contains("startscreen") ? 0 : 0x82478;
+            foreach(var checkme in _sister.Analyzedfunctions.Where(
+                    x=> x.Address > minaddress && 
+                    x.Blocks.Count == func.Blocks.Count && 
+                    x.Calledfunctions.Count == func.Calledfunctions.Count
                 )
             )
             {
-                bool filterHit = false;
+                var filterHit = false;
                 int dex;
-                for(dex = 0;dex<checkme.blocks.Count;dex++)
+                for(dex = 0;dex<checkme.Blocks.Count;dex++)
                 {
-                    var b1 = checkme.blocks[dex];
-                    var b2 = func.blocks[dex];
+                    var b1 = checkme.Blocks[dex];
+                    var b2 = func.Blocks[dex];
                     if (b1.BlockType != b2.BlockType)
+                    {
                         break;
+                    }
 
                     if (txtFilter.Text!="")
                     {
-                        if (b1.Instructions.Any(x=>x.display.Contains(txtFilter.Text) || x.instruction.ToString("x8").Contains(txtFilter.Text)))
+                        if (b1.Instructions.Any(x=>x.Display.Contains(txtFilter.Text) || x.Instruction.ToString("x8").Contains(txtFilter.Text)))
                         {
                             filterHit = true;
                         }
@@ -847,13 +906,21 @@ namespace GraphicsTools
                     var instructionsdif = Math.Abs(b1.Instructions.Count - b2.Instructions.Count);
                     var instdifper = b1.Instructions.Count / (float)b2.Instructions.Count;
                     if (!(instructionsdif <= 2 || (b1.Instructions.Count > 20 && instdifper > 0.9 && instdifper < 1.1)))
+                    {
                         break;
-                    if (b1.Instructions.Where(x => x.cmd == "jal").Count() != b2.Instructions.Where(x => x.cmd == "jal").Count())
+                    }
+
+                    if (b1.Instructions.Where(x => x.Cmd == "jal").Count() != b2.Instructions.Where(x => x.Cmd == "jal").Count())
+                    {
                         break;
+                    }
                 }
                 if (txtFilter.Text != "" && !filterHit)
+                {
                     continue;
-                if (dex == checkme.blocks.Count)
+                }
+
+                if (dex == checkme.Blocks.Count)
                 {
                     //it made it through all the blocks
                     lstPotentialMatches.Items.Add(checkme);
@@ -863,46 +930,49 @@ namespace GraphicsTools
 
         private void lstPotentialMatches_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            var func = (frmFileAnalyzer.AnalyzedFunction)lstPotentialMatches.SelectedItem;
+            var func = (FrmFileAnalyzer.AnalyzedFunction)lstPotentialMatches.SelectedItem;
             if (func!=null)
             {
-                var frm = new frmAnalyzedFunction(func, sister.datafile);
+                var frm = new FrmAnalyzedFunction(func, _sister.Datafile);
                 frm.Show();
             }
             
         }
-        StringBuilder definer = new StringBuilder();
-        void AddToDef(AnalyzedFunction func, frmFileAnalyzer.AnalyzedFunction match)
+        StringBuilder _definer = new();
+        void AddToDef(AnalyzedFunction func, FrmFileAnalyzer.AnalyzedFunction match)
         {
-            definer.AppendLine($"AddFunction(0x{match.address.ToString("x")}, \"{func.name}\", \"\")");
-            for (int dex = 0;dex<func.calledfunctions.Count;dex++)
+            _definer.AppendLine($"AddFunction(0x{match.Address.ToString("x")}, \"{func.Name}\", \"\")");
+            for (var dex = 0;dex<func.Calledfunctions.Count;dex++)
             {
-                var subfunc = func.calledfunctions[dex];
-                var submatch = match.calledfunctions[dex];
+                var subfunc = func.Calledfunctions[dex];
+                var submatch = match.Calledfunctions[dex];
                 AddToDef(subfunc, submatch);
             }
         }
         private void btnDefineMatch_Click(object sender, EventArgs e)
         {
             var func = (AnalyzedFunction)tvFuncs.SelectedNode?.Tag;
-            var match = (frmFileAnalyzer.AnalyzedFunction)lstPotentialMatches.SelectedItem;
+            var match = (FrmFileAnalyzer.AnalyzedFunction)lstPotentialMatches.SelectedItem;
             if (match == null)
             {
-                var addr = sister.ParseNum(txtAddr.Text);
-                match = sister.analyzedfunctions.FirstOrDefault(x => x.address == addr);
+                var addr = _sister.ParseNum(txtAddr.Text);
+                match = _sister.Analyzedfunctions.FirstOrDefault(x => x.Address == addr);
             }
-            definer = new StringBuilder();
+            _definer = new StringBuilder();
             if (func!= null && match!=null)
             {
                 AddToDef(func, match);
             }
-            txtDefine.Text = definer.ToString();
+            txtDefine.Text = _definer.ToString();
         }
 
         private void txtFilter_TextChanged(object sender, EventArgs e)
         {
-            if (ignoreevents)
+            if (_ignoreevents)
+            {
                 return;
+            }
+
             //refresh matches view
             tvFuncs_AfterSelect(null, null);
         }

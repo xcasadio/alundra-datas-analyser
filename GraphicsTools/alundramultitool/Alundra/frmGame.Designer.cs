@@ -1,7 +1,7 @@
 ﻿
 namespace GraphicsTools.Alundra
 {
-    partial class frmGame
+    partial class FrmGame
     {
         /// <summary>
         /// Required designer variable.
@@ -48,7 +48,7 @@ namespace GraphicsTools.Alundra
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(640, 449);
             this.Controls.Add(this.pctOut);
-            this.Name = "frmGame";
+            this.Name = "FrmGame";
             this.Text = "frmGame";
             ((System.ComponentModel.ISupportInitialize)(this.pctOut)).EndInit();
             this.ResumeLayout(false);
