@@ -13,7 +13,7 @@ You are welcome, you can contact me with [GitHub Discussions](https://github.com
 
 # Tools
 ## Source code analyser
-- I use Ghidra to analyse the source code, the project is in the folder Ghidra.
+- I use Ghidra (11.3.1) to analyse the source code, the project is in the folder Ghidra.
 - I use pcsx-redux to debug the code
 - [Connecting Ghidra to PCSX-Redux] (https://pcsx-redux.consoledev.net/Debugging/ghidra/)
 
