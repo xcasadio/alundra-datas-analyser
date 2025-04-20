@@ -26,13 +26,53 @@ internal class Program
     {
         var dataFolder = "C:\\Users\\casad\\dev\\repo\\Alundra Remake\\Alundra (France)\\Alundra (France)_extracted\\DATA";
 
-        //var etcResRFileName = Path.Combine(dataFolder, "ETC_RES.R");
-        //var etcResR = new EtcResR(etcResRFileName);
+        var etcResRFileName = Path.Combine(dataFolder, "ETC_RES.R");
+        var etcResR = new EtcResR(etcResRFileName);
 
-        var datasBinFileName = Path.Combine(dataFolder, "DATAS.BIN");
-        var datasBin = new DatasBin(datasBinFileName);
-        DisplayAllMapOffset(datasBin);
-        DisplayAllMapInfo(datasBin.GameMaps[162]); // Inoa
+        DisplayInfoEtcResR(etcResR);
+
+        //var datasBinFileName = Path.Combine(dataFolder, "DATAS.BIN");
+        //var datasBin = new DatasBin(datasBinFileName);
+        //DisplayAllMapOffset(datasBin);
+        //DisplayAllMapInfo(datasBin.GameMaps[162]); // Inoa
+    }
+
+    private static void DisplayInfoEtcResR(EtcResR etcResR)
+    {
+        int i = 0;
+        Log("Tile");
+        foreach (var value in etcResR.TileTable)
+        {
+            Log($"{i++} {MAGENTA}{value} {BLUE}{etcResR.Strings[value]} {GREEN}{etcResR.Strings[etcResR.StringTable[value]]}{NORMAL}");
+        }
+
+        i = 0;
+        Log("IconNameTable");
+        foreach (var value in etcResR.IconNameTable)
+        {
+            Log($"{i++} {MAGENTA}{value} {BLUE}{etcResR.Strings[value]} {GREEN}{etcResR.Strings[etcResR.StringTable[value]]}{NORMAL}");
+        }
+
+        i = 0;
+        Log("PaletteTable");
+        foreach (var value in etcResR.PaletteTable)
+        {
+            Log($"{i++} {MAGENTA}{value} {BLUE}{etcResR.Strings[value]} {GREEN}{etcResR.Strings[etcResR.StringTable[value]]}{NORMAL}");
+        }
+
+        i = 0;
+        Log("StringTable");
+        foreach (var value in etcResR.StringTable)
+        {
+            Log($"{i++} {MAGENTA}{value} {BLUE}{etcResR.Strings[value]} {GREEN}{etcResR.Strings[etcResR.StringTable[value]]}{NORMAL}");
+        }
+
+        i = 0;
+        Log("Strings");
+        foreach (var value in etcResR.Strings.Where(x => x != null))
+        {
+            Log($"{i++} {GREEN}{value}{NORMAL}");
+        }
     }
 
     private static void DisplayAllMapInfo(GameMap gameMap)

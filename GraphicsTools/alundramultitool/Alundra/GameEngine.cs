@@ -2,6 +2,11 @@
 {
     public class GameEngine
     {
+        public const int ScreenWidth = 320;
+        public const int ScreenHeight = 224;
+        public const int MapTileWidth = 24;
+        public const int MapTileHeight = 16;
+
         private DatasBin _datasBin;
         private BalanceBin _balanceBin;
         private GameMap _map;
@@ -27,8 +32,6 @@
             _eventHandlers = new EventHandlers(_game);
         }
 
-        private const int ScreenWidth = 320;
-        private const int ScreenHeight = 224;
         public void Render(Graphics g)
         {
             var curxpos = _game.CamXPos >> 16;

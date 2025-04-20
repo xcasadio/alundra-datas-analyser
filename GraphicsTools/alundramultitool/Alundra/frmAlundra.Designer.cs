@@ -237,6 +237,17 @@
             tabPage6 = new TabPage();
             soundboardControl1 = new SoundboardControl();
             buttonSelectAlundra = new Button();
+            tabPage7 = new TabPage();
+            listBoxEtcTileTable = new ListBox();
+            label45 = new Label();
+            label51 = new Label();
+            listBoxEtcIconNameTable = new ListBox();
+            label55 = new Label();
+            listBoxEtcPaletteTable = new ListBox();
+            label59 = new Label();
+            listBoxEtcStringTable = new ListBox();
+            label62 = new Label();
+            listBoxEtcStrings = new ListBox();
             ((System.ComponentModel.ISupportInitialize)pctMapPalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctTilesheet).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctSpritesheet).BeginInit();
@@ -254,6 +265,7 @@
             tabPage4.SuspendLayout();
             tabPage5.SuspendLayout();
             tabPage6.SuspendLayout();
+            tabPage7.SuspendLayout();
             SuspendLayout();
             // 
             // lstGameMaps
@@ -2188,6 +2200,7 @@
             tabControl1.Controls.Add(tabPage4);
             tabControl1.Controls.Add(tabPage5);
             tabControl1.Controls.Add(tabPage6);
+            tabControl1.Controls.Add(tabPage7);
             tabControl1.Location = new Point(910, 12);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
@@ -2460,6 +2473,112 @@
             buttonSelectAlundra.UseVisualStyleBackColor = true;
             buttonSelectAlundra.Click += buttonSelectAlundra_Click;
             // 
+            // tabPage7
+            // 
+            tabPage7.Controls.Add(label62);
+            tabPage7.Controls.Add(listBoxEtcStrings);
+            tabPage7.Controls.Add(label59);
+            tabPage7.Controls.Add(listBoxEtcStringTable);
+            tabPage7.Controls.Add(label55);
+            tabPage7.Controls.Add(listBoxEtcPaletteTable);
+            tabPage7.Controls.Add(label51);
+            tabPage7.Controls.Add(listBoxEtcIconNameTable);
+            tabPage7.Controls.Add(label45);
+            tabPage7.Controls.Add(listBoxEtcTileTable);
+            tabPage7.Location = new Point(4, 24);
+            tabPage7.Name = "tabPage7";
+            tabPage7.Padding = new Padding(3);
+            tabPage7.Size = new Size(872, 1043);
+            tabPage7.TabIndex = 6;
+            tabPage7.Text = "Etc ressources";
+            tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // listBoxEtcTileTable
+            // 
+            listBoxEtcTileTable.FormattingEnabled = true;
+            listBoxEtcTileTable.Location = new Point(6, 21);
+            listBoxEtcTileTable.Name = "listBoxEtcTileTable";
+            listBoxEtcTileTable.Size = new Size(122, 319);
+            listBoxEtcTileTable.TabIndex = 0;
+            // 
+            // label45
+            // 
+            label45.AutoSize = true;
+            label45.Location = new Point(6, 3);
+            label45.Name = "label45";
+            label45.Size = new Size(54, 15);
+            label45.TabIndex = 1;
+            label45.Text = "Tile table";
+            // 
+            // label51
+            // 
+            label51.AutoSize = true;
+            label51.Location = new Point(134, 3);
+            label51.Name = "label51";
+            label51.Size = new Size(92, 15);
+            label51.TabIndex = 3;
+            label51.Text = "Icon name table";
+            // 
+            // listBoxEtcIconNameTable
+            // 
+            listBoxEtcIconNameTable.FormattingEnabled = true;
+            listBoxEtcIconNameTable.Location = new Point(134, 21);
+            listBoxEtcIconNameTable.Name = "listBoxEtcIconNameTable";
+            listBoxEtcIconNameTable.Size = new Size(122, 319);
+            listBoxEtcIconNameTable.TabIndex = 2;
+            // 
+            // label55
+            // 
+            label55.AutoSize = true;
+            label55.Location = new Point(262, 3);
+            label55.Name = "label55";
+            label55.Size = new Size(72, 15);
+            label55.TabIndex = 5;
+            label55.Text = "Palette table";
+            // 
+            // listBoxEtcPaletteTable
+            // 
+            listBoxEtcPaletteTable.FormattingEnabled = true;
+            listBoxEtcPaletteTable.Location = new Point(262, 21);
+            listBoxEtcPaletteTable.Name = "listBoxEtcPaletteTable";
+            listBoxEtcPaletteTable.Size = new Size(122, 319);
+            listBoxEtcPaletteTable.TabIndex = 4;
+            // 
+            // label59
+            // 
+            label59.AutoSize = true;
+            label59.Location = new Point(390, 3);
+            label59.Name = "label59";
+            label59.Size = new Size(67, 15);
+            label59.TabIndex = 7;
+            label59.Text = "String table";
+            // 
+            // listBoxEtcStringTable
+            // 
+            listBoxEtcStringTable.FormattingEnabled = true;
+            listBoxEtcStringTable.Location = new Point(390, 21);
+            listBoxEtcStringTable.Name = "listBoxEtcStringTable";
+            listBoxEtcStringTable.Size = new Size(122, 319);
+            listBoxEtcStringTable.TabIndex = 6;
+            // 
+            // label62
+            // 
+            label62.AutoSize = true;
+            label62.Location = new Point(6, 348);
+            label62.Name = "label62";
+            label62.Size = new Size(43, 15);
+            label62.TabIndex = 9;
+            label62.Text = "Strings";
+            // 
+            // listBoxEtcStrings
+            // 
+            listBoxEtcStrings.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            listBoxEtcStrings.FormattingEnabled = true;
+            listBoxEtcStrings.Location = new Point(6, 366);
+            listBoxEtcStrings.Name = "listBoxEtcStrings";
+            listBoxEtcStrings.Size = new Size(860, 664);
+            listBoxEtcStrings.TabIndex = 8;
+            // 
             // FrmAlundra
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -2501,6 +2620,8 @@
             tabPage5.ResumeLayout(false);
             tabPage5.PerformLayout();
             tabPage6.ResumeLayout(false);
+            tabPage7.ResumeLayout(false);
+            tabPage7.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -2716,5 +2837,16 @@
         private TabPage tabPage6;
         private SoundboardControl soundboardControl1;
         private Button buttonSelectAlundra;
+        private TabPage tabPage7;
+        private Label label62;
+        private ListBox listBoxEtcStrings;
+        private Label label59;
+        private ListBox listBoxEtcStringTable;
+        private Label label55;
+        private ListBox listBoxEtcPaletteTable;
+        private Label label51;
+        private ListBox listBoxEtcIconNameTable;
+        private Label label45;
+        private ListBox listBoxEtcTileTable;
     }
 }

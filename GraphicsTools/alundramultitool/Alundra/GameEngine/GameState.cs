@@ -1147,12 +1147,12 @@
             entity.EntitySelf = entity;
             if (entity.EntityRecord != null)
             {
-                entity.ProgramIndexes[Helper.ProgramALoad] = entity.EntityRecord.EventcodesaLoadIndex;
-                entity.ProgramIndexes[Helper.ProgramBMap] = entity.EntityRecord.EventcodesbMapIndex;
-                entity.ProgramIndexes[Helper.ProgramCTick] = entity.EntityRecord.EventcodescTickIndex;
-                entity.ProgramIndexes[Helper.ProgramDTouch] = entity.EntityRecord.EventcodesdTouchIndex;
-                entity.ProgramIndexes[Helper.ProgramEDeactivate] = entity.EntityRecord.EventcodeseDeactivateIndex;
-                entity.ProgramIndexes[Helper.ProgramFInteract] = entity.EntityRecord.EventcodesfInteractIndex;
+                entity.ProgramIndexes[Helper.ProgramALoad] = entity.EntityRecord.EventCodesA_LoadIndex;
+                entity.ProgramIndexes[Helper.ProgramBMap] = entity.EntityRecord.EventCodesB_MapIndex;
+                entity.ProgramIndexes[Helper.ProgramCTick] = entity.EntityRecord.EventCodesC_TickIndex;
+                entity.ProgramIndexes[Helper.ProgramDTouch] = entity.EntityRecord.EventCodesD_TouchIndex;
+                entity.ProgramIndexes[Helper.ProgramEDeactivate] = entity.EntityRecord.EventCodesE_DeactivateIndex;
+                entity.ProgramIndexes[Helper.ProgramFInteract] = entity.EntityRecord.EventCodesF_InteractIndex;
             }
         }
 

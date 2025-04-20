@@ -1895,7 +1895,7 @@ namespace GraphicsTools.Alundra
             //br.BaseStream.Position += 2;//this is wrong, dont nudge it like this
 
             Entities = new SiEntityRecord[128];
-            for (var dex = 0; dex < Entities.Length; dex++)
+            for (var i = 0; i < Entities.Length; i++)
             {
                 //read two test bytes to check for the end of the list
                 var test = br.ReadInt16();
@@ -1908,7 +1908,7 @@ namespace GraphicsTools.Alundra
                 br.BaseStream.Position -= 4;
 
                 //read the record
-                Entities[dex] = new SiEntityRecord(br, memaddr + dex * 20);
+                Entities[i] = new SiEntityRecord(br, memaddr + i * 20);
             }
         }
         public readonly SiEntityRecord[] Entities;
@@ -1931,12 +1931,12 @@ namespace GraphicsTools.Alundra
             Xpos = br.ReadByte();//7
             Ypos = br.ReadByte();//8
             Height = br.ReadByte();//9
-            EventcodesaLoadIndex = br.ReadByte();
-            EventcodesbMapIndex = br.ReadByte();
-            EventcodescTickIndex = br.ReadByte();
-            EventcodesdTouchIndex = br.ReadByte();
-            EventcodeseDeactivateIndex = br.ReadByte();
-            EventcodesfInteractIndex = br.ReadByte();
+            EventCodesA_LoadIndex = br.ReadByte();
+            EventCodesB_MapIndex = br.ReadByte();
+            EventCodesC_TickIndex = br.ReadByte();
+            EventCodesD_TouchIndex = br.ReadByte();
+            EventCodesE_DeactivateIndex = br.ReadByte();
+            EventCodesF_InteractIndex = br.ReadByte();
             U7 = br.ReadByte();//10
             U7 = (short)(U7 | (br.ReadByte() << 8));
             //u8 = br.ReadByte();//11
@@ -1951,14 +1951,14 @@ namespace GraphicsTools.Alundra
             if (sector5 != null && Spritedir >> 4 != 0x4 && Spritedir >> 4 != 0x0)
             {
                 var commands = new List<SiCommand>();
-                if (EventcodesaLoadIndex != 0xff && EventcodesaLoadIndex != 0)
+                if (EventCodesA_LoadIndex != 0xff && EventCodesA_LoadIndex != 0)
                 {
-                    commands.AddRange(si.EventCodes.GetCommands(br, si.EventCodes.Eventcodesatable[EventcodesaLoadIndex & 0x7f], true));
+                    commands.AddRange(si.EventCodes.GetCommands(br, si.EventCodes.Eventcodesatable[EventCodesA_LoadIndex & 0x7f], true));
                 }
 
-                if (commands.Count == 0 && EventcodescTickIndex != 0xff && EventcodescTickIndex != 0)
+                if (commands.Count == 0 && EventCodesC_TickIndex != 0xff && EventCodesC_TickIndex != 0)
                 {
-                    commands.AddRange(si.EventCodes.GetCommands(br, si.EventCodes.Eventcodesctable[EventcodescTickIndex & 0x7f], true));
+                    commands.AddRange(si.EventCodes.GetCommands(br, si.EventCodes.Eventcodesctable[EventCodesC_TickIndex & 0x7f], true));
                 }
 
                 foreach (var cmd in commands)
@@ -1986,12 +1986,12 @@ namespace GraphicsTools.Alundra
         public readonly byte Xpos;//divide by 2
         public readonly byte Ypos;//divide by 2
         public readonly byte Height;//divide by 2
-        public readonly byte EventcodesaLoadIndex;
-        public readonly byte EventcodesbMapIndex;
-        public readonly byte EventcodescTickIndex;
-        public readonly byte EventcodesdTouchIndex;
-        public readonly byte EventcodeseDeactivateIndex;
-        public readonly byte EventcodesfInteractIndex;
+        public readonly byte EventCodesA_LoadIndex;
+        public readonly byte EventCodesB_MapIndex;
+        public readonly byte EventCodesC_TickIndex;
+        public readonly byte EventCodesD_TouchIndex;
+        public readonly byte EventCodesE_DeactivateIndex;
+        public readonly byte EventCodesF_InteractIndex;
         public readonly short U7;
         //public byte u8;
         public readonly byte Contents;
