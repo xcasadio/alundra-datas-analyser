@@ -17,9 +17,9 @@
 
             //load MapEvents
             MapEvents = new List<MapEvent>();
-            for (var dex = 0; dex < map.Spriteinfo.MapEvents.Records.Length; dex++)
+            for (var dex = 0; dex < map.SpriteInfo.MapEvents.Records.Length; dex++)
             {
-                var record = map.Spriteinfo.MapEvents.Records[dex];
+                var record = map.SpriteInfo.MapEvents.Records[dex];
                 if (record != null)
                 {
                     var me = new MapEvent { Id = dex };
@@ -48,9 +48,9 @@
             }
 
             MaxEntity = 0;
-            for (var dex = 0;dex< GameMap.Spriteinfo.Entities.Entities.Length;dex++)
+            for (var dex = 0;dex< GameMap.SpriteInfo.Entities.Entities.Length;dex++)
             {
-                var record = GameMap.Spriteinfo.Entities.Entities[dex];
+                var record = GameMap.SpriteInfo.Entities.Entities[dex];
                 if (record == null)
                 {
                     break;
@@ -1161,13 +1161,13 @@
             SpriteInfo si;
             if (isMapSprite)
             {
-                si = GameMap.Spriteinfo;
+                si = GameMap.SpriteInfo;
                 addedtosheet = 0;
                 addedtopallette = 0x20;
             }
             else
             {
-                si = Global.Spriteinfo;
+                si = Global.SpriteInfo;
                 addedtosheet = 0xb;
                 addedtopallette = 0x60;
             }
@@ -1190,13 +1190,13 @@
             SpriteInfo si;
             if (isMapSprite)
             {
-                si = GameMap.Spriteinfo;
+                si = GameMap.SpriteInfo;
                 addedtosheet = 0;
                 addedtopallette = 0x20;
             }
             else
             {
-                si = Global.Spriteinfo;
+                si = Global.SpriteInfo;
                 addedtosheet = 0xb;
                 addedtopallette = 0x60;
             }
@@ -1373,9 +1373,9 @@
 
         public MapEffectRecord GetMapEffectRecord(int id, bool checkBoundingBox)
         {
-            if (id < GameMap.Spriteinfo.MapEffectRecords.Length)
+            if (id < GameMap.SpriteInfo.MapEffectRecords.Length)
             {
-                var record = GameMap.Spriteinfo.MapEffectRecords[id];
+                var record = GameMap.SpriteInfo.MapEffectRecords[id];
                 if (checkBoundingBox)
                 {
                     var p = PlayerEntity;

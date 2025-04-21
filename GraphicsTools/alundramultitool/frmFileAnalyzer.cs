@@ -297,11 +297,11 @@ namespace GraphicsTools
             for (var y = 0; y < height; y++)
             {
                 Buffer.BlockCopy(_data, palettestart + y * stride, imagedata, y * width * bpp / 8, width * bpp / 8);
-
             }
+
             var frm = new FrmViewer();
             frm.Show();
-            frm.Initpalette(Program.Viewer, imagedata, 16, 4, width, height);
+            frm.InitPalette(Program.Viewer, imagedata, 16, 4, width, height);
         }
 
         private void rtfText_MouseDoubleClick(object sender, MouseEventArgs e)

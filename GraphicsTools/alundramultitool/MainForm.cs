@@ -59,8 +59,9 @@ namespace GraphicsTools
                 var soundBin = new SoundBin(soundBinFileName);
                 var etcResRFileName = Path.Combine(dataFolder, "ETC_RES.R");
                 var etcResR = new EtcResR(etcResRFileName);
+                var font3 = new Font3(Path.Combine(dataFolder, "..", "TAKI\\SCREEN"));
 
-                frmAlundra.Init(datasBin, balanceBin, soundBin, etcResR);
+                frmAlundra.Init(datasBin, balanceBin, soundBin, etcResR, font3);
             }
         }
 

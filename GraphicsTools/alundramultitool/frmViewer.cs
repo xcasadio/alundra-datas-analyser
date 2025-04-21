@@ -33,7 +33,7 @@
 
         FrmViewer _viewer;
         bool _isPalette;
-        public void Initpalette(FrmViewer viewer, byte[]imagedata,int palbpp, int bpp, int width, int height)
+        public void InitPalette(FrmViewer viewer, byte[]imagedata, int palbpp, int bpp, int width, int height)
         {
             _bpp = bpp;
             _palbpp = palbpp;

@@ -19,10 +19,11 @@ namespace GraphicsTools.Alundra
 
         private DatasBin _datasBin;
 
-        public void Init(DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR)
+        public void Init(DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR, Font3 font3)
         {
             _etcResR = etcResR;
             _datasBin = datasBin;
+            _font3 = font3;
 
             for (var i = 0; i < datasBin.GameMaps.Length; i++)
             {
@@ -41,6 +42,7 @@ namespace GraphicsTools.Alundra
             soundboardControl1.Initialize(soundBin);
 
             InitEtcControls();
+            InitFont3Controls();
 
             LoadMap(datasBin.AlundraGameMap);
         }
@@ -73,6 +75,25 @@ namespace GraphicsTools.Alundra
             }
         }
 
+        private void InitFont3Controls()
+        {
+            pictureBoxFont3Texture.Image = new Bitmap(pictureBoxFont3Texture.Width, pictureBoxFont3Texture.Height, PixelFormat.Format24bppRgb);
+
+            listBoxFont3Palette.Items.Clear();
+            for (var i = 0; i < _font3.Palettes.Length; i++)
+            {
+                listBoxFont3Palette.Items.Add("palette " + i);
+            }
+            listBoxFont3Palette.SelectedIndex = 0;
+            
+            pictureBoxFont3Palette.Image = new Bitmap(pictureBoxFont3Palette.Width * _palScale, pictureBoxFont3Palette.Height * _palScale, PixelFormat.Format24bppRgb);
+            using var graphics = Graphics.FromImage(pictureBoxFont3Palette.Image);
+            graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            graphics.Clear(Color.Black);
+            graphics.DrawImage(_font3.PalettesBitmap, 0, 0, _font3.PalettesBitmap.Width * _palScale, _font3.PalettesBitmap.Height * _palScale);
+            pictureBoxFont3Palette.Refresh();
+        }
+
         private Bitmap GetTile(int tileid)
         {
             if (!_cachedTiles.ContainsKey(tileid))
@@ -91,7 +112,10 @@ namespace GraphicsTools.Alundra
             {
                 var list = new List<Bitmap>();
                 for (var dex = 0; dex < imgset.Numimages; dex++)
-                    list.Add(_selectedGameMap.GenerateSpriteBitmap(imgset.Images[dex], _selectedGameMap.Spriteinfo.Palettes[imgset.Images[dex].Palette & 0x1f]));
+                {
+                    list.Add(_selectedGameMap.GenerateSpriteBitmap(imgset.Images[dex], _selectedGameMap.SpriteInfo.Palettes[imgset.Images[dex].Palette & 0x1f]));
+                }
+
                 _cachedSprites.Add(imgset.Imagesetid, list);
             }
 
@@ -153,13 +177,13 @@ namespace GraphicsTools.Alundra
                 }
                 lstMapPalettes.SelectedIndex = 0;
 
-                pctMapPalettes.Image = new Bitmap(_selectedGameMap.Info.Palettesbitmap, 16 * _palScale, 32 * _palScale);
+                pctMapPalettes.Image = new Bitmap(_selectedGameMap.Info.PalettesBitmap, 16 * _palScale, 32 * _palScale);
                 pctMapPalettes.Width = pctMapPalettes.Image.Width;
                 pctMapPalettes.Height = pctMapPalettes.Image.Height;
                 using var g = Graphics.FromImage(pctMapPalettes.Image);
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 g.Clear(Color.Black);
-                g.DrawImage(_selectedGameMap.Info.Palettesbitmap, 0, 0, _selectedGameMap.Info.Palettesbitmap.Width * _palScale, _selectedGameMap.Info.Palettesbitmap.Height * _palScale);
+                g.DrawImage(_selectedGameMap.Info.PalettesBitmap, 0, 0, _selectedGameMap.Info.PalettesBitmap.Width * _palScale, _selectedGameMap.Info.PalettesBitmap.Height * _palScale);
             }
             else
             {
@@ -169,7 +193,7 @@ namespace GraphicsTools.Alundra
             }
 
             //spriteinfo
-            var sinfo = _selectedGameMap.Spriteinfo.Header;
+            var sinfo = _selectedGameMap.SpriteInfo.Header;
             lblSpriteInfo.Text =
                 $@"{Fix(sinfo.Entitiespointer)}    {Fix(sinfo.Mapeffectsector3Pointer)} {Fix(sinfo.Mapeventspointer)} {Fix(sinfo.Spritetablepointer)} {Fix(sinfo.Spriteeffectspointer)} palettes:{Fix(sinfo.Spritepalettespointer)}    {Fix(sinfo.Eventcodesapointer)} {Fix(sinfo.Eventcodesbpointer)} {Fix(sinfo.Eventcodescpointer)} {Fix(sinfo.Eventcodesdpointer)} {Fix(sinfo.Eventcodesepointer)}    {Fix(sinfo.Eventcodesfpointer)}";
             lblSpriteInfoSizes.Text =
@@ -199,20 +223,20 @@ namespace GraphicsTools.Alundra
 
             //sprite palettes
             lstSpritePalettes.Items.Clear();
-            for (var dex = 0; dex < _selectedGameMap.Spriteinfo.Palettes.Length; dex++)
+            for (var dex = 0; dex < _selectedGameMap.SpriteInfo.Palettes.Length; dex++)
             {
                 lstSpritePalettes.Items.Add("palette " + dex);
             }
             lstSpritePalettes.SelectedIndex = 0;
 
-            pctSpritePalettes.Image = new Bitmap(_selectedGameMap.Spriteinfo.Palettesbitmap, 16 * _palScale, 32 * _palScale);
+            pctSpritePalettes.Image = new Bitmap(_selectedGameMap.SpriteInfo.Palettesbitmap, 16 * _palScale, 32 * _palScale);
             pctSpritePalettes.Width = pctSpritePalettes.Image.Width;
             pctSpritePalettes.Height = pctSpritePalettes.Image.Height;
             using (var g = Graphics.FromImage(pctSpritePalettes.Image))
             {
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 g.Clear(Color.Black);
-                g.DrawImage(_selectedGameMap.Spriteinfo.Palettesbitmap, 0, 0, _selectedGameMap.Spriteinfo.Palettesbitmap.Width * _palScale, _selectedGameMap.Spriteinfo.Palettesbitmap.Height * _palScale);
+                g.DrawImage(_selectedGameMap.SpriteInfo.Palettesbitmap, 0, 0, _selectedGameMap.SpriteInfo.Palettesbitmap.Width * _palScale, _selectedGameMap.SpriteInfo.Palettesbitmap.Height * _palScale);
             }
 
             //strings
@@ -227,9 +251,9 @@ namespace GraphicsTools.Alundra
 
             //spriteinfo
             lsvEntities.Items.Clear();
-            for (var dex = 0; dex < _selectedGameMap.Spriteinfo.Entities.Entities.Length; dex++)
+            for (var dex = 0; dex < _selectedGameMap.SpriteInfo.Entities.Entities.Length; dex++)
             {
-                var entity = _selectedGameMap.Spriteinfo.Entities.Entities[dex];
+                var entity = _selectedGameMap.SpriteInfo.Entities.Entities[dex];
                 if (entity != null)
                 {
                     var lvi = new ListViewItem([
@@ -252,9 +276,9 @@ namespace GraphicsTools.Alundra
             }
 
             lsvSector4.Items.Clear();
-            for (var dex = 0; dex < _selectedGameMap.Spriteinfo.MapEvents.Records.Length; dex++)
+            for (var dex = 0; dex < _selectedGameMap.SpriteInfo.MapEvents.Records.Length; dex++)
             {
-                var record = _selectedGameMap.Spriteinfo.MapEvents.Records[dex];
+                var record = _selectedGameMap.SpriteInfo.MapEvents.Records[dex];
                 if (record != null)
                 {
                     lsvSector4.Items.Add(new ListViewItem([
@@ -272,9 +296,9 @@ namespace GraphicsTools.Alundra
             }
 
             lstSector5.Items.Clear();
-            for (var dex = 0; dex < _selectedGameMap.Spriteinfo.Sprites.Length; dex++)
+            for (var dex = 0; dex < _selectedGameMap.SpriteInfo.Sprites.Length; dex++)
             {
-                var sector5Record = _selectedGameMap.Spriteinfo.Sprites[dex];
+                var sector5Record = _selectedGameMap.SpriteInfo.Sprites[dex];
                 if (sector5Record != null)
                 {
                     lstSector5.Items.Add("record " + dex.ToString("x2"));
@@ -408,7 +432,7 @@ namespace GraphicsTools.Alundra
                 _selectedPalette = _selectedGameMap.Info.Palettes[lstMapPalettes.SelectedIndex];
                 pctTilesheet.Image = new Bitmap(pctTilesheet.Width, pctTilesheet.Height, PixelFormat.Format24bppRgb);
                 _selectedGameMap.GenerateTileSheetBmp(_selectedPalette);
-                vScrolTile.Maximum = _selectedGameMap.Tilesheetbmp.Height;
+                vScrolTile.Maximum = _selectedGameMap.TileSheetBitmap.Height;
                 //vScrolTile.Value = 0;
 
                 //draw map
@@ -444,13 +468,13 @@ namespace GraphicsTools.Alundra
 
         private void vScrolTile_Scroll(object sender, ScrollEventArgs e)
         {
-            if (_selectedGameMap != null && _selectedGameMap.Tilesheetbmp != null)
+            if (_selectedGameMap != null && _selectedGameMap.TileSheetBitmap != null)
             {
                 using (var g = Graphics.FromImage(pctTilesheet.Image))
                 {
                     g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                     g.Clear(Color.Black);
-                    g.DrawImage(_selectedGameMap.Tilesheetbmp, 0, -vScrolTile.Value);
+                    g.DrawImage(_selectedGameMap.TileSheetBitmap, 0, -vScrolTile.Value);
                 }
                 pctTilesheet.Refresh();
             }
@@ -460,10 +484,10 @@ namespace GraphicsTools.Alundra
         {
             if (lstSpritePalettes.SelectedIndex >= 0 && _selectedGameMap != null)
             {
-                _selectedSpritePalette = _selectedGameMap.Spriteinfo.Palettes[lstSpritePalettes.SelectedIndex];
+                _selectedSpritePalette = _selectedGameMap.SpriteInfo.Palettes[lstSpritePalettes.SelectedIndex];
                 pctSpritesheet.Image = new Bitmap(pctSpritesheet.Width, pctSpritesheet.Height, PixelFormat.Format24bppRgb);
                 _selectedGameMap.GenerateSpriteSheetBmp(_selectedSpritePalette);
-                vScrollSprite.Maximum = _selectedGameMap.Spritesheetbmp.Height;
+                vScrollSprite.Maximum = _selectedGameMap.SpriteSheetBitmap.Height;
                 //vScrollSprite.Value = 0;
 
                 vScrollSprite_Scroll(null, null);
@@ -495,13 +519,13 @@ namespace GraphicsTools.Alundra
 
         private void vScrollSprite_Scroll(object sender, ScrollEventArgs e)
         {
-            if (_selectedGameMap != null && _selectedGameMap.Spritesheetbmp != null)
+            if (_selectedGameMap != null && _selectedGameMap.SpriteSheetBitmap != null)
             {
                 using (var g = Graphics.FromImage(pctSpritesheet.Image))
                 {
                     g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                     g.Clear(Color.Black);
-                    g.DrawImage(_selectedGameMap.Spritesheetbmp, 0, -vScrollSprite.Value);
+                    g.DrawImage(_selectedGameMap.SpriteSheetBitmap, 0, -vScrollSprite.Value);
                 }
                 pctSpritesheet.Refresh();
             }
@@ -564,7 +588,7 @@ namespace GraphicsTools.Alundra
         {
             if (_selectedGameMap != null)
             {
-                AnalyzeAt(_selectedGameMap.Header.SpriteInfo, _selectedGameMap.Spriteinfo.Header.Memaddr);
+                AnalyzeAt(_selectedGameMap.Header.SpriteInfo, _selectedGameMap.SpriteInfo.Header.Memaddr);
             }
         }
 
@@ -727,7 +751,7 @@ namespace GraphicsTools.Alundra
 
                 var fnt = new Font(FontFamily.GenericSansSerif, 9);
 
-                var entities = _selectedGameMap.Spriteinfo.Entities.Entities;
+                var entities = _selectedGameMap.SpriteInfo.Entities.Entities;
                 var br = _datasBin.OpenBin();
                 for (var dex = 0; dex < entities.Length; dex++)
                 {
@@ -743,7 +767,7 @@ namespace GraphicsTools.Alundra
                         try
                         {
 
-                            var anim = entities[dex].GetSprite(br, _selectedGameMap.Spriteinfo);
+                            var anim = entities[dex].GetSprite(br, _selectedGameMap.SpriteInfo);
 
                             if (anim != null)
                             {
@@ -846,10 +870,10 @@ namespace GraphicsTools.Alundra
                 if (dex < eventcodestable.Length - 1)
                 {
                     var size = eventcodestable[dex + 1] - eventcodestable[dex];
-                    return _selectedGameMap?.Spriteinfo?.EventCodes?.GetCommands(br, eventcodestable[dex], false, size);
+                    return _selectedGameMap?.SpriteInfo?.EventCodes?.GetCommands(br, eventcodestable[dex], false, size);
                 }
 
-                return _selectedGameMap?.Spriteinfo?.EventCodes?.GetCommands(br, eventcodestable[dex]);
+                return _selectedGameMap?.SpriteInfo?.EventCodes?.GetCommands(br, eventcodestable[dex]);
             }
             return [];
         }
@@ -858,7 +882,7 @@ namespace GraphicsTools.Alundra
         {
             if (index > 0 && index < 0xff)
             {
-                return sector1Table[index & 0x7f].ToString("x4") + ":" + (_selectedGameMap.Spriteinfo.Header.Eventcodeaddr + sector1Table[index & 0x7f]).ToString("x6") + ":" + RenderByteCodes(_selectedGameMap.Spriteinfo.EventCodes.GetByteCode(br, sector1Table[index & 0x7f]));
+                return sector1Table[index & 0x7f].ToString("x4") + ":" + (_selectedGameMap.SpriteInfo.Header.Eventcodeaddr + sector1Table[index & 0x7f]).ToString("x6") + ":" + RenderByteCodes(_selectedGameMap.SpriteInfo.EventCodes.GetByteCode(br, sector1Table[index & 0x7f]));
             }
 
             return "0";
@@ -876,9 +900,9 @@ namespace GraphicsTools.Alundra
             {
                 using var br = _datasBin.OpenBin();
                 _selectedMapEvent = null;
-                _selectedEntity = _selectedGameMap.Spriteinfo.Entities.Entities[lsvEntities.SelectedIndices[0]];
+                _selectedEntity = _selectedGameMap.SpriteInfo.Entities.Entities[lsvEntities.SelectedIndices[0]];
                 lblEntityInfo.Text = "si addr:" + GameMap.EventObjectAddr(lsvEntities.SelectedIndices[0]).ToString("x6") + " entity addr:" + _selectedEntity.Memaddr.ToString("x6") + " u123: " + ByteToString(_selectedEntity.Maxx) + ByteToString(_selectedEntity.Maxy) + ByteToString(_selectedEntity.U3) + " u789ab:" + lsvEntities.Items[lsvEntities.SelectedIndices[0]].ToolTipText;
-                var sector1 = _selectedGameMap.Spriteinfo.EventCodes;
+                var sector1 = _selectedGameMap.SpriteInfo.EventCodes;
                 lblSector1a.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesA_LoadIndex, sector1.Eventcodesatable);
                 lblSector1b.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesB_MapIndex, sector1.Eventcodesbtable);
                 lblSector1c.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesC_TickIndex, sector1.Eventcodesctable);
@@ -908,7 +932,7 @@ namespace GraphicsTools.Alundra
             _selectedSector5 = null;
             if (_selectedGameMap != null && lstSector5.SelectedIndex >= 0 && lstSector5.SelectedItem.ToString() != "-1")
             {
-                _selectedSector5 = _selectedGameMap.Spriteinfo.Sprites[int.Parse(lstSector5.SelectedItem.ToString().Replace("record ", ""), System.Globalization.NumberStyles.AllowHexSpecifier)];
+                _selectedSector5 = _selectedGameMap.SpriteInfo.Sprites[int.Parse(lstSector5.SelectedItem.ToString().Replace("record ", ""), System.Globalization.NumberStyles.AllowHexSpecifier)];
             }
 
             lstSector5Animations.Items.Clear();
@@ -1300,8 +1324,8 @@ namespace GraphicsTools.Alundra
             {
                 using var br = _datasBin.OpenBin();
                 _selectedEntity = null;
-                _selectedMapEvent = _selectedGameMap.Spriteinfo.MapEvents.Records[lsvSector4.SelectedIndices[0]];
-                var sector1 = _selectedGameMap.Spriteinfo.EventCodes;
+                _selectedMapEvent = _selectedGameMap.SpriteInfo.MapEvents.Records[lsvSector4.SelectedIndices[0]];
+                var sector1 = _selectedGameMap.SpriteInfo.EventCodes;
                 lblSector1a.Text = "";
                 lblSector1b.Text = GetSector1ByteCodes(br, _selectedMapEvent.Eventcodesbindex, sector1.Eventcodesbtable);
                 lblSector1c.Text = "";
@@ -1334,7 +1358,7 @@ namespace GraphicsTools.Alundra
             {
                 var frm = new FrmEventProgram();
                 var br = _datasBin.OpenBin();
-                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesA_LoadIndex, _selectedGameMap.Spriteinfo.EventCodes.Eventcodesatable));
+                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesA_LoadIndex, _selectedGameMap.SpriteInfo.EventCodes.Eventcodesatable));
                 frm.Show();
                 br.Close();
             }
@@ -1346,12 +1370,12 @@ namespace GraphicsTools.Alundra
             var br = _datasBin.OpenBin();
             if (_selectedEntity != null)
             {
-                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesB_MapIndex, _selectedGameMap.Spriteinfo.EventCodes.Eventcodesbtable));
+                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesB_MapIndex, _selectedGameMap.SpriteInfo.EventCodes.Eventcodesbtable));
                 frm.Show();
             }
             else if (_selectedMapEvent != null)
             {
-                frm.Init(GetEventCodeCommands(br, _selectedMapEvent.Eventcodesbindex, _selectedGameMap.Spriteinfo.EventCodes.Eventcodesbtable));
+                frm.Init(GetEventCodeCommands(br, _selectedMapEvent.Eventcodesbindex, _selectedGameMap.SpriteInfo.EventCodes.Eventcodesbtable));
                 frm.Show();
             }
             br.Close();
@@ -1363,7 +1387,7 @@ namespace GraphicsTools.Alundra
             {
                 var frm = new FrmEventProgram();
                 var br = _datasBin.OpenBin();
-                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesC_TickIndex, _selectedGameMap.Spriteinfo.EventCodes.Eventcodesctable));
+                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesC_TickIndex, _selectedGameMap.SpriteInfo.EventCodes.Eventcodesctable));
                 frm.Show();
                 br.Close();
             }
@@ -1375,7 +1399,7 @@ namespace GraphicsTools.Alundra
             {
                 var frm = new FrmEventProgram();
                 var br = _datasBin.OpenBin();
-                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesF_InteractIndex, _selectedGameMap.Spriteinfo.EventCodes.Eventcodesftable));
+                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesF_InteractIndex, _selectedGameMap.SpriteInfo.EventCodes.Eventcodesftable));
                 frm.Show();
                 br.Close();
             }
@@ -1385,12 +1409,13 @@ namespace GraphicsTools.Alundra
         {
             if (_selectedGameMap != null)
             {
-                AnalyzeAt(_selectedGameMap.Header.SpriteInfo, _selectedGameMap.Spriteinfo.Header.Memaddr, _selectedGameMap.Spriteinfo.Header.Mapeventspointer);
+                AnalyzeAt(_selectedGameMap.Header.SpriteInfo, _selectedGameMap.SpriteInfo.Header.Memaddr, _selectedGameMap.SpriteInfo.Header.Mapeventspointer);
             }
         }
 
         private string _dumpfile = "";
         private EtcResR _etcResR;
+        private Font3 _font3;
 
         private void btnAnalyzeEntity_Click(object sender, EventArgs e)
         {
@@ -1433,7 +1458,7 @@ namespace GraphicsTools.Alundra
                         var br = _datasBin.OpenBin();
                         var portraitset = _selectedSector5.GetPortraitImageset(br);
                         br.Close();
-                        var portraitbmp = _selectedGameMap.GenerateSpriteBitmap(portraitset.Images[0], _selectedGameMap.Spriteinfo.Palettes[portraitset.Images[0].Palette & 0x1f]);
+                        var portraitbmp = _selectedGameMap.GenerateSpriteBitmap(portraitset.Images[0], _selectedGameMap.SpriteInfo.Palettes[portraitset.Images[0].Palette & 0x1f]);
                         e.Graphics.DrawImage(portraitbmp, 0, 0);
                     }
                 }
@@ -1442,6 +1467,27 @@ namespace GraphicsTools.Alundra
             {
 
             }
+        }
+
+        private void listBoxFont3Palette_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBoxFont3Palette.SelectedIndex >= 0 && _font3 != null)
+            {
+                var paletteIndex = _font3.Palettes[listBoxFont3Palette.SelectedIndex];
+                var image = _font3.GenerateFontBitmap(paletteIndex);
+
+                pictureBoxFont3Texture.Image = new Bitmap(pictureBoxFont3Texture.Width, pictureBoxFont3Texture.Height, PixelFormat.Format24bppRgb);
+                using var graphics = Graphics.FromImage(pictureBoxFont3Texture.Image);
+                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                graphics.Clear(Color.Black);
+                graphics.DrawImage(image, 0, 0/*-vScrollSprite.Value*/);
+                pictureBoxFont3Texture.Refresh();
+
+                //vScrollSprite.Maximum = _font3.FontBitmap.Height;
+                //vScrollSprite_Scroll(null, null);
+
+            }
+            pctSpritePalettes.Refresh();
         }
 
         private void buttonSaveSpriteSheet_Click(object sender, EventArgs e)

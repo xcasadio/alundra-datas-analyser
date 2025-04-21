@@ -14,7 +14,9 @@ namespace GraphicsTools.Alundra
             SpriteHandlers = new SpriteEventHandlers(gameState);
             //add handlers
             for (var dex = 0; dex <= 0xff; dex++)
+            {
                 _handlers.Add(dex, __Unknown_Handler);
+            }
 
             _handlers[0x2] = _02_Goto_Handler;
             _handlers[0x3] = _03_BranchIfTrue_Handler;
@@ -206,11 +208,11 @@ namespace GraphicsTools.Alundra
         private void InitEventData(SpriteInstance entity, int eventprogramtype, EventProgramState eventdata)
         {
             var codeindex = entity.ProgramIndexes[eventprogramtype];
-            var si = _gameState.Global.Spriteinfo;
+            var si = _gameState.Global.SpriteInfo;
             var mod = 0;
             if ((codeindex & 0x80) != 0)
             {
-                si = _gameState.GameMap.Spriteinfo;
+                si = _gameState.GameMap.SpriteInfo;
                 mod = 1024 * 512;
             }
 

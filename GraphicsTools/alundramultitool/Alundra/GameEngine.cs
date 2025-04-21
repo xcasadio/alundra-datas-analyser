@@ -39,8 +39,8 @@
 
             var curxtile = curxpos / 24;
 
-            var sinfo = _map.Spriteinfo;
-            var gensi = _datasBin.AlundraGameMap.Spriteinfo;
+            var sinfo = _map.SpriteInfo;
+            var gensi = _datasBin.AlundraGameMap.SpriteInfo;
 
             for (var y = 0; y < 60; y++)
             {
@@ -152,9 +152,9 @@
 
 
             //spriteinfo
-            for (var dex = 0; dex < _map.Spriteinfo.Entities.Entities.Length; dex++)
+            for (var dex = 0; dex < _map.SpriteInfo.Entities.Entities.Length; dex++)
             {
-                var entity = _map.Spriteinfo.Entities.Entities[dex];
+                var entity = _map.SpriteInfo.Entities.Entities[dex];
                 if (entity != null)
                 {
 
@@ -162,9 +162,9 @@
             }
 
 
-            for (var dex = 0; dex < _map.Spriteinfo.MapEvents.Records.Length; dex++)
+            for (var dex = 0; dex < _map.SpriteInfo.MapEvents.Records.Length; dex++)
             {
-                var record = _map.Spriteinfo.MapEvents.Records[dex];
+                var record = _map.SpriteInfo.MapEvents.Records[dex];
                 if (record != null)
                 {
 
@@ -172,9 +172,9 @@
             }
 
 
-            for (var dex = 0; dex < _map.Spriteinfo.Sprites.Length; dex++)
+            for (var dex = 0; dex < _map.SpriteInfo.Sprites.Length; dex++)
             {
-                var sprite = _map.Spriteinfo.Sprites[dex];
+                var sprite = _map.SpriteInfo.Sprites[dex];
                 if (sprite != null)
                 {
 

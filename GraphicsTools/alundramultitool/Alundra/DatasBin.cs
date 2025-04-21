@@ -78,16 +78,16 @@ namespace GraphicsTools.Alundra
 
         public readonly GameMapHeader Header;
         public GameMapInfo Info;
-        public SpriteInfo Spriteinfo;
+        public SpriteInfo SpriteInfo;
         public ScrollScreen ScrollScreen;
         public Map Map;
         public string[] Strings;
         public readonly bool Loaded = false;
-        private byte[] _tilesheetimagedata;
-        public Bitmap Tilesheetbmp;
-        private byte[] _spritesheetimagedata;
-        public Bitmap Spritesheetbmp;
-        private int _numspritesheets = 8;
+        private byte[] _tileSheetImageData;
+        public Bitmap TileSheetBitmap;
+        private byte[] _spriteSheetImageData;
+        public Bitmap SpriteSheetBitmap;
+        private readonly int _numSpriteSheets = 8;
 
         public void Load(BinaryReader br, bool ismap)
         {
@@ -113,15 +113,15 @@ namespace GraphicsTools.Alundra
                 br.BaseStream.Position = Offset + Header.TileSheets + 6;
                 var buff = new byte[Header.SpriteInfo - Header.TileSheets];
                 br.Read(buff, 0, buff.Length);
-                _tilesheetimagedata = new byte[256 * 256 * 6 / 2];//6 256x256 4bpp bitmaps
-                Utils.Deflate(buff, _tilesheetimagedata);
+                _tileSheetImageData = new byte[256 * 256 * 6 / 2];//6 256x256 4bpp bitmaps
+                Utils.Deflate(buff, _tileSheetImageData);
             }
 
             //spriteinfo
             if (Header.SpriteInfo != -1)
             {
                 br.BaseStream.Position = Offset + Header.SpriteInfo;
-                Spriteinfo = new SpriteInfo(br, Memaddr + Header.SpriteInfo, Header.SpriteSheets, ismap);
+                SpriteInfo = new SpriteInfo(br, Memaddr + Header.SpriteInfo, Header.SpriteSheets, ismap);
             }
 
             //spritesheet
@@ -130,8 +130,8 @@ namespace GraphicsTools.Alundra
                 br.BaseStream.Position = Offset + Header.SpriteSheets + 6;
                 var buff = new byte[Header.Spritessize - 6];
                 br.Read(buff, 0, buff.Length);
-                _spritesheetimagedata = new byte[256 * 256 * _numspritesheets / 2];//numspritesheets 256x256 4bpp bitmaps
-                Utils.Deflate(buff, _spritesheetimagedata);
+                _spriteSheetImageData = new byte[256 * 256 * _numSpriteSheets / 2];//numspritesheets 256x256 4bpp bitmaps
+                Utils.Deflate(buff, _spriteSheetImageData);
             }
 
             //scrollscreen
@@ -175,7 +175,7 @@ namespace GraphicsTools.Alundra
         private Dictionary<long, Bitmap> _spriteCache = new();
         public Bitmap GetSpriteBitmap(SiImage img)
         {
-            var pal = Spriteinfo.Palettes[img.Palette & 0x1f];
+            var pal = SpriteInfo.Palettes[img.Palette & 0x1f];
             if (_spriteCache.ContainsKey(img.Signature))
             {
                 return _spriteCache[img.Signature];
@@ -213,7 +213,7 @@ namespace GraphicsTools.Alundra
 
             for (var y = 0; y < img.Sheight; y++)
             {
-                Buffer.BlockCopy(_spritesheetimagedata, ((img.Spritesheet & 0x7) * 256 + img.Sy + y) * 256 / 2 + img.Sx / 2, readbuff, 0, readwidth / 2);
+                Buffer.BlockCopy(_spriteSheetImageData, ((img.Spritesheet & 0x7) * 256 + img.Sy + y) * 256 / 2 + img.Sx / 2, readbuff, 0, readwidth / 2);
 
                 if (shiftleft)
                 {
@@ -261,9 +261,10 @@ namespace GraphicsTools.Alundra
         {
             var tiledex = tileid & 0x3ff;
             var paldex = (tileid & 0xf000) >> 12;
-            if (_tileCache.ContainsKey(tileid))
+
+            if (_tileCache.TryGetValue(tileid, out var bitmap))
             {
-                return _tileCache[tileid];
+                return bitmap;
             }
 
             var bmp = GenerateTileBitmap(tiledex, Info.Palettes[paldex]);
@@ -275,27 +276,30 @@ namespace GraphicsTools.Alundra
         public Bitmap GenerateTileBitmap(int tile, Color[] pal)
         {
             Debug.Assert(tile < 10 * 16 * 6, "Bad tile index!", "unexpectedly large tile index of {0}", tile);
+
             var tilebuff = new byte[24 * 16 * 4 / 8];
             var tilex = tile % 10 * 24;
             var tiley = tile / 10 * 16;
             if (tile < 10 * 16 * 6)
             {
                 for (var y = 0; y < 16; y++)
-                    Buffer.BlockCopy(_tilesheetimagedata, (tiley + y) * 256 / 2 + tilex / 2, tilebuff, y * 24 / 2, 24 / 2);
+                {
+                    Buffer.BlockCopy(_tileSheetImageData, (tiley + y) * 256 / 2 + tilex / 2, tilebuff, y * 24 / 2, 24 / 2);
+                }
             }
             return Utils.BitmapFromPsxBuff(tilebuff, 24, 16, 4, pal);
         }
 
         public Bitmap GenerateTileSheetBmp(Color[] pal)
         {
-            Tilesheetbmp = Utils.BitmapFromPsxBuff(_tilesheetimagedata, 256, 256 * 6, 4, pal);
-            return Tilesheetbmp;
+            TileSheetBitmap = Utils.BitmapFromPsxBuff(_tileSheetImageData, 256, 256 * 6, 4, pal);
+            return TileSheetBitmap;
         }
 
         public Bitmap GenerateSpriteSheetBmp(Color[] pal)
         {
-            Spritesheetbmp = Utils.BitmapFromPsxBuff(_spritesheetimagedata, 256, 256 * _numspritesheets, 4, pal);
-            return Spritesheetbmp;
+            SpriteSheetBitmap = Utils.BitmapFromPsxBuff(_spriteSheetImageData, 256, 256 * _numSpriteSheets, 4, pal);
+            return SpriteSheetBitmap;
         }
 
         public static readonly int EventobjectsMemaddr = 0x1ac498;// + 0x260;
@@ -685,7 +689,10 @@ namespace GraphicsTools.Alundra
             Memaddr = memaddr;
             Animoffsets = new int[4];
             for (var dex = 0; dex < Animoffsets.Length; dex++)
+            {
                 Animoffsets[dex] = br.ReadInt16();
+            }
+
             Speed = br.ReadUInt16();
             Sfx = br.ReadByte();
             Flags = br.ReadByte();
@@ -2107,24 +2114,24 @@ namespace GraphicsTools.Alundra
             F = br.ReadByte();//f
             _10 = br.ReadInt16();//10
             //read palettes
-            var maxpalettes = 32;
-            Palettes = new Color[maxpalettes][];
-            var buff = new byte[maxpalettes * 16 * 2];
+            var maxPalettes = 32;
+            Palettes = new Color[maxPalettes][];
+            var buff = new byte[maxPalettes * 16 * 2];
             br.Read(buff, 0, buff.Length);
-            var buffdex = 0;
+            var buffIndex = 0;
 
-            for (var dex = 0; dex < maxpalettes; dex++)
+            for (var i = 0; i < maxPalettes; i++)
             {
-                Palettes[dex] = new Color[16];
-                for (var cdex = 0; cdex < 16; cdex++)
+                Palettes[i] = new Color[16];
+                for (var j = 0; j < 16; j++)
                 {
-                    var b2 = buff[buffdex++];
-                    var b1 = buff[buffdex++];
-                    Palettes[dex][cdex] = Utils.FromPsxColor((b1 << 8) | b2);
+                    var b2 = buff[buffIndex++];
+                    var b1 = buff[buffIndex++];
+                    Palettes[i][j] = Utils.FromPsxColor((b1 << 8) | b2);
                 }
             }
 
-            Palettesbitmap = Utils.BitmapFromPsxBuff(buff, 16, maxpalettes, 16, null);
+            PalettesBitmap = Utils.BitmapFromPsxBuff(buff, 16, maxPalettes, 16, null);
 
             //read portals
             br.BaseStream.Position = startPosition + 1066;
@@ -2150,7 +2157,7 @@ namespace GraphicsTools.Alundra
         public readonly byte F;
         public readonly short _10;
         public readonly Color[][] Palettes;
-        public readonly Bitmap Palettesbitmap;
+        public readonly Bitmap PalettesBitmap;
         public readonly byte PortalFlag1;
         public readonly byte PortalFlag2;
         public readonly Portal[] Portals;

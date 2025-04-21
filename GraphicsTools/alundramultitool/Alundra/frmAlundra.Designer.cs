@@ -236,18 +236,23 @@
             tabPage5 = new TabPage();
             tabPage6 = new TabPage();
             soundboardControl1 = new SoundboardControl();
-            buttonSelectAlundra = new Button();
             tabPage7 = new TabPage();
-            listBoxEtcTileTable = new ListBox();
-            label45 = new Label();
-            label51 = new Label();
-            listBoxEtcIconNameTable = new ListBox();
-            label55 = new Label();
-            listBoxEtcPaletteTable = new ListBox();
-            label59 = new Label();
-            listBoxEtcStringTable = new ListBox();
             label62 = new Label();
             listBoxEtcStrings = new ListBox();
+            label59 = new Label();
+            listBoxEtcStringTable = new ListBox();
+            label55 = new Label();
+            listBoxEtcPaletteTable = new ListBox();
+            label51 = new Label();
+            listBoxEtcIconNameTable = new ListBox();
+            label45 = new Label();
+            listBoxEtcTileTable = new ListBox();
+            tabPage8 = new TabPage();
+            pictureBoxFont3Palette = new PictureBox();
+            listBoxFont3Palette = new ListBox();
+            pictureBoxFont3Texture = new PictureBox();
+            label63 = new Label();
+            buttonSelectAlundra = new Button();
             ((System.ComponentModel.ISupportInitialize)pctMapPalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctTilesheet).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctSpritesheet).BeginInit();
@@ -266,6 +271,9 @@
             tabPage5.SuspendLayout();
             tabPage6.SuspendLayout();
             tabPage7.SuspendLayout();
+            tabPage8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Palette).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Texture).BeginInit();
             SuspendLayout();
             // 
             // lstGameMaps
@@ -2201,6 +2209,7 @@
             tabControl1.Controls.Add(tabPage5);
             tabControl1.Controls.Add(tabPage6);
             tabControl1.Controls.Add(tabPage7);
+            tabControl1.Controls.Add(tabPage8);
             tabControl1.Location = new Point(910, 12);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
@@ -2463,16 +2472,6 @@
             soundboardControl1.Size = new Size(872, 1040);
             soundboardControl1.TabIndex = 0;
             // 
-            // buttonSelectAlundra
-            // 
-            buttonSelectAlundra.Location = new Point(13, 28);
-            buttonSelectAlundra.Name = "buttonSelectAlundra";
-            buttonSelectAlundra.Size = new Size(120, 23);
-            buttonSelectAlundra.TabIndex = 187;
-            buttonSelectAlundra.Text = "Select Alundra map";
-            buttonSelectAlundra.UseVisualStyleBackColor = true;
-            buttonSelectAlundra.Click += buttonSelectAlundra_Click;
-            // 
             // tabPage7
             // 
             tabPage7.Controls.Add(label62);
@@ -2493,56 +2492,23 @@
             tabPage7.Text = "Etc ressources";
             tabPage7.UseVisualStyleBackColor = true;
             // 
-            // listBoxEtcTileTable
+            // label62
             // 
-            listBoxEtcTileTable.FormattingEnabled = true;
-            listBoxEtcTileTable.Location = new Point(6, 21);
-            listBoxEtcTileTable.Name = "listBoxEtcTileTable";
-            listBoxEtcTileTable.Size = new Size(122, 319);
-            listBoxEtcTileTable.TabIndex = 0;
+            label62.AutoSize = true;
+            label62.Location = new Point(6, 348);
+            label62.Name = "label62";
+            label62.Size = new Size(43, 15);
+            label62.TabIndex = 9;
+            label62.Text = "Strings";
             // 
-            // label45
+            // listBoxEtcStrings
             // 
-            label45.AutoSize = true;
-            label45.Location = new Point(6, 3);
-            label45.Name = "label45";
-            label45.Size = new Size(54, 15);
-            label45.TabIndex = 1;
-            label45.Text = "Tile table";
-            // 
-            // label51
-            // 
-            label51.AutoSize = true;
-            label51.Location = new Point(134, 3);
-            label51.Name = "label51";
-            label51.Size = new Size(92, 15);
-            label51.TabIndex = 3;
-            label51.Text = "Icon name table";
-            // 
-            // listBoxEtcIconNameTable
-            // 
-            listBoxEtcIconNameTable.FormattingEnabled = true;
-            listBoxEtcIconNameTable.Location = new Point(134, 21);
-            listBoxEtcIconNameTable.Name = "listBoxEtcIconNameTable";
-            listBoxEtcIconNameTable.Size = new Size(122, 319);
-            listBoxEtcIconNameTable.TabIndex = 2;
-            // 
-            // label55
-            // 
-            label55.AutoSize = true;
-            label55.Location = new Point(262, 3);
-            label55.Name = "label55";
-            label55.Size = new Size(72, 15);
-            label55.TabIndex = 5;
-            label55.Text = "Palette table";
-            // 
-            // listBoxEtcPaletteTable
-            // 
-            listBoxEtcPaletteTable.FormattingEnabled = true;
-            listBoxEtcPaletteTable.Location = new Point(262, 21);
-            listBoxEtcPaletteTable.Name = "listBoxEtcPaletteTable";
-            listBoxEtcPaletteTable.Size = new Size(122, 319);
-            listBoxEtcPaletteTable.TabIndex = 4;
+            listBoxEtcStrings.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            listBoxEtcStrings.FormattingEnabled = true;
+            listBoxEtcStrings.Location = new Point(6, 366);
+            listBoxEtcStrings.Name = "listBoxEtcStrings";
+            listBoxEtcStrings.Size = new Size(860, 664);
+            listBoxEtcStrings.TabIndex = 8;
             // 
             // label59
             // 
@@ -2561,23 +2527,119 @@
             listBoxEtcStringTable.Size = new Size(122, 319);
             listBoxEtcStringTable.TabIndex = 6;
             // 
-            // label62
+            // label55
             // 
-            label62.AutoSize = true;
-            label62.Location = new Point(6, 348);
-            label62.Name = "label62";
-            label62.Size = new Size(43, 15);
-            label62.TabIndex = 9;
-            label62.Text = "Strings";
+            label55.AutoSize = true;
+            label55.Location = new Point(262, 3);
+            label55.Name = "label55";
+            label55.Size = new Size(72, 15);
+            label55.TabIndex = 5;
+            label55.Text = "Palette table";
             // 
-            // listBoxEtcStrings
+            // listBoxEtcPaletteTable
             // 
-            listBoxEtcStrings.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            listBoxEtcStrings.FormattingEnabled = true;
-            listBoxEtcStrings.Location = new Point(6, 366);
-            listBoxEtcStrings.Name = "listBoxEtcStrings";
-            listBoxEtcStrings.Size = new Size(860, 664);
-            listBoxEtcStrings.TabIndex = 8;
+            listBoxEtcPaletteTable.FormattingEnabled = true;
+            listBoxEtcPaletteTable.Location = new Point(262, 21);
+            listBoxEtcPaletteTable.Name = "listBoxEtcPaletteTable";
+            listBoxEtcPaletteTable.Size = new Size(122, 319);
+            listBoxEtcPaletteTable.TabIndex = 4;
+            // 
+            // label51
+            // 
+            label51.AutoSize = true;
+            label51.Location = new Point(134, 3);
+            label51.Name = "label51";
+            label51.Size = new Size(92, 15);
+            label51.TabIndex = 3;
+            label51.Text = "Icon name table";
+            // 
+            // listBoxEtcIconNameTable
+            // 
+            listBoxEtcIconNameTable.FormattingEnabled = true;
+            listBoxEtcIconNameTable.Location = new Point(134, 21);
+            listBoxEtcIconNameTable.Name = "listBoxEtcIconNameTable";
+            listBoxEtcIconNameTable.Size = new Size(122, 319);
+            listBoxEtcIconNameTable.TabIndex = 2;
+            // 
+            // label45
+            // 
+            label45.AutoSize = true;
+            label45.Location = new Point(6, 3);
+            label45.Name = "label45";
+            label45.Size = new Size(54, 15);
+            label45.TabIndex = 1;
+            label45.Text = "Tile table";
+            // 
+            // listBoxEtcTileTable
+            // 
+            listBoxEtcTileTable.FormattingEnabled = true;
+            listBoxEtcTileTable.Location = new Point(6, 21);
+            listBoxEtcTileTable.Name = "listBoxEtcTileTable";
+            listBoxEtcTileTable.Size = new Size(122, 319);
+            listBoxEtcTileTable.TabIndex = 0;
+            // 
+            // tabPage8
+            // 
+            tabPage8.Controls.Add(pictureBoxFont3Palette);
+            tabPage8.Controls.Add(listBoxFont3Palette);
+            tabPage8.Controls.Add(pictureBoxFont3Texture);
+            tabPage8.Controls.Add(label63);
+            tabPage8.Location = new Point(4, 24);
+            tabPage8.Name = "tabPage8";
+            tabPage8.Padding = new Padding(3);
+            tabPage8.Size = new Size(872, 1043);
+            tabPage8.TabIndex = 7;
+            tabPage8.Text = "Font3";
+            tabPage8.UseVisualStyleBackColor = true;
+            // 
+            // pictureBoxFont3Palette
+            // 
+            pictureBoxFont3Palette.Location = new Point(97, 21);
+            pictureBoxFont3Palette.Margin = new Padding(4, 3, 4, 3);
+            pictureBoxFont3Palette.Name = "pictureBoxFont3Palette";
+            pictureBoxFont3Palette.Size = new Size(107, 140);
+            pictureBoxFont3Palette.TabIndex = 96;
+            pictureBoxFont3Palette.TabStop = false;
+            // 
+            // listBoxFont3Palette
+            // 
+            listBoxFont3Palette.FormattingEnabled = true;
+            listBoxFont3Palette.Location = new Point(7, 21);
+            listBoxFont3Palette.Margin = new Padding(4, 3, 4, 3);
+            listBoxFont3Palette.Name = "listBoxFont3Palette";
+            listBoxFont3Palette.Size = new Size(82, 139);
+            listBoxFont3Palette.TabIndex = 93;
+            listBoxFont3Palette.SelectedIndexChanged += listBoxFont3Palette_SelectedIndexChanged;
+            // 
+            // pictureBoxFont3Texture
+            // 
+            pictureBoxFont3Texture.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pictureBoxFont3Texture.Location = new Point(7, 166);
+            pictureBoxFont3Texture.Margin = new Padding(4, 3, 4, 3);
+            pictureBoxFont3Texture.Name = "pictureBoxFont3Texture";
+            pictureBoxFont3Texture.Size = new Size(256, 256);
+            pictureBoxFont3Texture.TabIndex = 94;
+            pictureBoxFont3Texture.TabStop = false;
+            // 
+            // label63
+            // 
+            label63.AutoSize = true;
+            label63.Location = new Point(4, 3);
+            label63.Margin = new Padding(4, 0, 4, 0);
+            label63.Name = "label63";
+            label63.Size = new Size(48, 15);
+            label63.TabIndex = 95;
+            label63.Text = "Palettes";
+            // 
+            // buttonSelectAlundra
+            // 
+            buttonSelectAlundra.Location = new Point(13, 28);
+            buttonSelectAlundra.Name = "buttonSelectAlundra";
+            buttonSelectAlundra.Size = new Size(120, 23);
+            buttonSelectAlundra.TabIndex = 187;
+            buttonSelectAlundra.Text = "Select Alundra map";
+            buttonSelectAlundra.UseVisualStyleBackColor = true;
+            buttonSelectAlundra.Click += buttonSelectAlundra_Click;
             // 
             // FrmAlundra
             // 
@@ -2622,6 +2684,10 @@
             tabPage6.ResumeLayout(false);
             tabPage7.ResumeLayout(false);
             tabPage7.PerformLayout();
+            tabPage8.ResumeLayout(false);
+            tabPage8.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Palette).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Texture).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -2848,5 +2914,10 @@
         private ListBox listBoxEtcIconNameTable;
         private Label label45;
         private ListBox listBoxEtcTileTable;
+        private TabPage tabPage8;
+        private ListBox listBoxFont3Palette;
+        private PictureBox pictureBoxFont3Texture;
+        private Label label63;
+        private PictureBox pictureBoxFont3Palette;
     }
 }
