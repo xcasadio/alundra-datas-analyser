@@ -14,6 +14,9 @@
 typedef unsigned char   undefined;
 typedef unsigned long long ulonglong;
 
+typedef void (*func)();
+typedef void (*func49)(int, void (*func)());
+
 //exported from Ghidra
 
 typedef unsigned char bool;
@@ -32,14 +35,16 @@ typedef unsigned long long undefined8;
 typedef unsigned short ushort;
 typedef unsigned short word;
 
-typedef struct AnimationData AnimationData, *PAnimationData;
+typedef struct AnimationTable AnimationTable, * PAnimationTable;
+
+typedef struct AnimationData AnimationData, * PAnimationData;
 
 struct AnimationData {
-    undefined1 entries;
+    undefined1 entries; /* Created by retype action */
     undefined field1_0x1;
     undefined field2_0x2;
     undefined field3_0x3;
-    undefined field4_0x4;
+    undefined1 frameListOffset; /* Created by retype action */
     undefined field5_0x5;
     undefined field6_0x6;
     undefined field7_0x7;
@@ -47,22 +52,39 @@ struct AnimationData {
     undefined field9_0x9;
     undefined field10_0xa;
     undefined field11_0xb;
-    undefined field12_0xc;
+    undefined1 pointerListOffset; /* Created by retype action */
     undefined field13_0xd;
     undefined field14_0xe;
     undefined field15_0xf;
     uint3 field16_0x10;
     undefined field17_0x13;
-    undefined field18_0x14;
+    undefined1 rawPtrListOffset; /* Created by retype action */
     undefined field19_0x15;
     undefined field20_0x16;
     undefined field21_0x17;
-    char offsetX;
+    char offsetX; /* Created by retype action */
     char offsetY;
     char offsetZ;
     byte sizeX;
     byte sizeY;
     byte sizeZ;
+};
+
+struct AnimationTable {
+    struct AnimationData* baseDataPtr;
+    int rawPointerList;
+    int* field2_0x8;
+    int* pointerList;
+    int pointerListCount;
+    int field5_0x14;
+    int* frameList;
+    int* field7_0x1c;
+    int field8_0x20;
+    int frameCount;
+    int* scriptList;
+    int scriptCount;
+    int field12_0x30;
+    int field13_0x34;
 };
 
 typedef struct Effect Effect, *PEffect;
