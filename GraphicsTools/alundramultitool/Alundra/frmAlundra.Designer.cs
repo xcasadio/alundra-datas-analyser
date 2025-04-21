@@ -250,9 +250,12 @@
             tabPage8 = new TabPage();
             pictureBoxFont3Palette = new PictureBox();
             listBoxFont3Palette = new ListBox();
-            pictureBoxFont3Texture = new PictureBox();
+            pictureBoxWindTx = new PictureBox();
             label63 = new Label();
             buttonSelectAlundra = new Button();
+            label65 = new Label();
+            label67 = new Label();
+            pictureBoxFont3Tim = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)pctMapPalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctTilesheet).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctSpritesheet).BeginInit();
@@ -273,7 +276,8 @@
             tabPage7.SuspendLayout();
             tabPage8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Palette).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Texture).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxWindTx).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Tim).BeginInit();
             SuspendLayout();
             // 
             // lstGameMaps
@@ -2580,9 +2584,12 @@
             // 
             // tabPage8
             // 
+            tabPage8.Controls.Add(label67);
+            tabPage8.Controls.Add(pictureBoxFont3Tim);
+            tabPage8.Controls.Add(label65);
             tabPage8.Controls.Add(pictureBoxFont3Palette);
             tabPage8.Controls.Add(listBoxFont3Palette);
-            tabPage8.Controls.Add(pictureBoxFont3Texture);
+            tabPage8.Controls.Add(pictureBoxWindTx);
             tabPage8.Controls.Add(label63);
             tabPage8.Location = new Point(4, 24);
             tabPage8.Name = "tabPage8";
@@ -2611,15 +2618,15 @@
             listBoxFont3Palette.TabIndex = 93;
             listBoxFont3Palette.SelectedIndexChanged += listBoxFont3Palette_SelectedIndexChanged;
             // 
-            // pictureBoxFont3Texture
+            // pictureBoxWindTx
             // 
-            pictureBoxFont3Texture.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            pictureBoxFont3Texture.Location = new Point(7, 166);
-            pictureBoxFont3Texture.Margin = new Padding(4, 3, 4, 3);
-            pictureBoxFont3Texture.Name = "pictureBoxFont3Texture";
-            pictureBoxFont3Texture.Size = new Size(256, 256);
-            pictureBoxFont3Texture.TabIndex = 94;
-            pictureBoxFont3Texture.TabStop = false;
+            pictureBoxWindTx.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pictureBoxWindTx.Location = new Point(7, 181);
+            pictureBoxWindTx.Margin = new Padding(4, 3, 4, 3);
+            pictureBoxWindTx.Name = "pictureBoxWindTx";
+            pictureBoxWindTx.Size = new Size(256, 256);
+            pictureBoxWindTx.TabIndex = 94;
+            pictureBoxWindTx.TabStop = false;
             // 
             // label63
             // 
@@ -2640,6 +2647,36 @@
             buttonSelectAlundra.Text = "Select Alundra map";
             buttonSelectAlundra.UseVisualStyleBackColor = true;
             buttonSelectAlundra.Click += buttonSelectAlundra_Click;
+            // 
+            // label65
+            // 
+            label65.AutoSize = true;
+            label65.Location = new Point(4, 163);
+            label65.Margin = new Padding(4, 0, 4, 0);
+            label65.Name = "label65";
+            label65.Size = new Size(54, 15);
+            label65.TabIndex = 97;
+            label65.Text = "WIND.TX";
+            // 
+            // label67
+            // 
+            label67.AutoSize = true;
+            label67.Location = new Point(7, 440);
+            label67.Margin = new Padding(4, 0, 4, 0);
+            label67.Name = "label67";
+            label67.Size = new Size(66, 15);
+            label67.TabIndex = 99;
+            label67.Text = "FONT3.TIM";
+            // 
+            // pictureBoxFont3Tim
+            // 
+            pictureBoxFont3Tim.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pictureBoxFont3Tim.Location = new Point(10, 458);
+            pictureBoxFont3Tim.Margin = new Padding(4, 3, 4, 3);
+            pictureBoxFont3Tim.Name = "pictureBoxFont3Tim";
+            pictureBoxFont3Tim.Size = new Size(256, 256);
+            pictureBoxFont3Tim.TabIndex = 98;
+            pictureBoxFont3Tim.TabStop = false;
             // 
             // FrmAlundra
             // 
@@ -2687,7 +2724,8 @@
             tabPage8.ResumeLayout(false);
             tabPage8.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Palette).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Texture).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxWindTx).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Tim).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -2916,8 +2954,11 @@
         private ListBox listBoxEtcTileTable;
         private TabPage tabPage8;
         private ListBox listBoxFont3Palette;
-        private PictureBox pictureBoxFont3Texture;
+        private PictureBox pictureBoxWindTx;
         private Label label63;
         private PictureBox pictureBoxFont3Palette;
+        private Label label65;
+        private Label label67;
+        private PictureBox pictureBoxFont3Tim;
     }
 }

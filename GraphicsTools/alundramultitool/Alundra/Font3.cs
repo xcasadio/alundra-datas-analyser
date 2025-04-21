@@ -5,21 +5,29 @@ public class Font3
     public Color[][] Palettes;
     public Bitmap PalettesBitmap;
     public Bitmap FontBitmap;
+    public Bitmap FontBitmapTim;
     //character tiles description
 
     private byte[] _fontImageData;
+    private byte[] _fontImageDataTim;
 
     public Font3(string folderName)
     {
         LoadPalette(folderName);
         LoadImage(folderName);
-        LoadCharacterDescriptions(folderName);
+        LoadImageTim(folderName);
     }
     
     public Bitmap GenerateFontBitmap(Color[] pal)
     {
         FontBitmap = Utils.BitmapFromPsxBuff(_fontImageData, 256, 256, 4, pal);
         return FontBitmap;
+    }
+
+    public Bitmap GenerateFontBitmapTim(Color[] pal)
+    {
+        FontBitmapTim = Utils.BitmapFromPsxBuff(_fontImageDataTim, 256, 256, 4, pal);
+        return FontBitmapTim;
     }
 
     private void LoadPalette(string folderName)
@@ -48,11 +56,8 @@ public class Font3
         _fontImageData = File.ReadAllBytes(Path.Combine(folderName, "WIND.TX"));
     }
 
-    private void LoadCharacterDescriptions(string folderName)
+    private void LoadImageTim(string folderName)
     {
-        var buffer = File.ReadAllBytes(Path.Combine(folderName, "FONT3.TIM")); // 32 832
-        var numChar = 256;
-        _fontImageData = new byte[256 * 256 * numChar / 2];//numspritesheets 256x256 4bpp bitmaps
-        Utils.Deflate(buffer, _fontImageData);
+        _fontImageDataTim = File.ReadAllBytes(Path.Combine(folderName, "FONT3.TIM"));
     }
 }

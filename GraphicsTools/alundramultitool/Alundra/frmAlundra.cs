@@ -77,7 +77,7 @@ namespace GraphicsTools.Alundra
 
         private void InitFont3Controls()
         {
-            pictureBoxFont3Texture.Image = new Bitmap(pictureBoxFont3Texture.Width, pictureBoxFont3Texture.Height, PixelFormat.Format24bppRgb);
+            pictureBoxWindTx.Image = new Bitmap(pictureBoxWindTx.Width, pictureBoxWindTx.Height, PixelFormat.Format24bppRgb);
 
             listBoxFont3Palette.Items.Clear();
             for (var i = 0; i < _font3.Palettes.Length; i++)
@@ -1474,18 +1474,23 @@ namespace GraphicsTools.Alundra
             if (listBoxFont3Palette.SelectedIndex >= 0 && _font3 != null)
             {
                 var paletteIndex = _font3.Palettes[listBoxFont3Palette.SelectedIndex];
-                var image = _font3.GenerateFontBitmap(paletteIndex);
 
-                pictureBoxFont3Texture.Image = new Bitmap(pictureBoxFont3Texture.Width, pictureBoxFont3Texture.Height, PixelFormat.Format24bppRgb);
-                using var graphics = Graphics.FromImage(pictureBoxFont3Texture.Image);
+                pictureBoxWindTx.Image = new Bitmap(pictureBoxWindTx.Width, pictureBoxWindTx.Height, PixelFormat.Format24bppRgb);
+                using var graphics = Graphics.FromImage(pictureBoxWindTx.Image);
                 graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 graphics.Clear(Color.Black);
-                graphics.DrawImage(image, 0, 0/*-vScrollSprite.Value*/);
-                pictureBoxFont3Texture.Refresh();
+                graphics.DrawImage(_font3.GenerateFontBitmap(paletteIndex), 0, 0/*-vScrollSprite.Value*/);
+                pictureBoxWindTx.Refresh();
+
+                pictureBoxFont3Tim.Image = new Bitmap(pictureBoxFont3Tim.Width, pictureBoxFont3Tim.Height, PixelFormat.Format24bppRgb);
+                using var graphics2 = Graphics.FromImage(pictureBoxFont3Tim.Image);
+                graphics2.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                graphics2.Clear(Color.Black);
+                graphics2.DrawImage(_font3.GenerateFontBitmapTim(paletteIndex), 0, 0/*-vScrollSprite.Value*/);
+                pictureBoxFont3Tim.Refresh();
 
                 //vScrollSprite.Maximum = _font3.FontBitmap.Height;
                 //vScrollSprite_Scroll(null, null);
-
             }
             pctSpritePalettes.Refresh();
         }
