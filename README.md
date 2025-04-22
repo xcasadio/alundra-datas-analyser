@@ -23,7 +23,7 @@ You are welcome, you can contact me with [GitHub Discussions](https://github.com
 Open GraphicsTool.sln and open the Datas.bin file (you'll need to extract the data from your Alundra game).
 ![Screenshot of GraphicsTool](/gitHub/GraphisTool_screenshot.jpg)
 
-
+# Documentation
 ## Datas.bin structure
 Datas.bin  
 ├── DbHeader  
