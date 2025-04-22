@@ -2,7 +2,7 @@
 #include "globals.h"
 
 
-// Function @0x8002AB50
+//8002AB50
 void InitDebugVars(void)
 
 {
@@ -20,7 +20,7 @@ void InitDebugVars(void)
     return;
 }
 
-// Function @0x8002ABBC
+//8002ABBC
 void InitStaticVariable(void)
 
 {
@@ -30,7 +30,7 @@ void InitStaticVariable(void)
     return;
 }
 
-// Function @0x8002ABE8
+//8002ABE8
 int UpdateDebugColor(int param_1, int param_2, int param_3)
 
 {
@@ -53,7 +53,7 @@ int UpdateDebugColor(int param_1, int param_2, int param_3)
     return param_2;
 }
 
-// Function @0x8002AC2C
+//8002AC2C
 void PrintDebug(void)
 
 {
@@ -299,7 +299,7 @@ void PrintDebug(void)
     }
 END_DEBUG:
     if (0x59000 < g_data_buffer_length) {
-        if ((g_display_overflow_message & 4) == 0) {
+        if (((uint)g_display_overflow_message & 4) == 0) {
             value = strlen(&g_debugMessage);
             sprintf(&g_debugMessage + value, "\n");
         }
@@ -314,7 +314,7 @@ END_DEBUG:
         }
     }
     if (-1 < g_map_sprite) {
-        if ((g_display_overflow_message & 4) == 0) {
+        if (((uint)g_display_overflow_message & 4) == 0) {
             value = strlen(&g_debugMessage);
             sprintf(&g_debugMessage + value, "\n");
         }
@@ -324,7 +324,7 @@ END_DEBUG:
         }
     }
     if (-1 < g_dr_tpage) {
-        if ((g_display_overflow_message & 4) == 0) {
+        if (((uint)g_display_overflow_message & 4) == 0) {
             value = strlen(&g_debugMessage);
             sprintf(&g_debugMessage + value, "\n");
         }
@@ -334,7 +334,7 @@ END_DEBUG:
         }
     }
     if (-1 < g_obj_poly_ft4) {
-        if ((g_display_overflow_message & 4) == 0) {
+        if (((uint)g_display_overflow_message & 4) == 0) {
             value = strlen(&g_debugMessage);
             sprintf(&g_debugMessage + value, "\n");
         }
@@ -346,7 +346,7 @@ END_DEBUG:
     return;
 }
 
-// Function @0x8002B92C
+//8002B92C
 void ClearAllOrderTables(u_long* orderTableBase)
 
 {
@@ -358,7 +358,7 @@ void ClearAllOrderTables(u_long* orderTableBase)
     return;
 }
 
-// Function @0x8002B98C
+//8002B98C
 void InitializeOrderingTables(void)
 
 {
@@ -369,7 +369,7 @@ void InitializeOrderingTables(void)
     return;
 }
 
-// Function @0x8002B9D4
+//8002B9D4
 void ClearOrderTables(undefined2 param_1)
 
 {
@@ -385,7 +385,7 @@ void ClearOrderTables(undefined2 param_1)
     return;
 }
 
-// Function @0x8002BA4C
+//8002BA4C
 void DrawOTags(void)
 
 {
@@ -409,7 +409,7 @@ void DrawOTags(void)
     return;
 }
 
-// Function @0x8002BAEC
+//8002BAEC
 void HandlePostUpdateLogic(int shouldClearDebugFlag)
 
 {
@@ -470,7 +470,7 @@ void HandlePostUpdateLogic(int shouldClearDebugFlag)
     return;
 }
 
-// Function @0x8002BD60
+//8002BD60
 /* WARNING: This function may have set the stack pointer */
 
 void RenderSceneWithTileLayers(void)
@@ -499,7 +499,7 @@ void RenderSceneWithTileLayers(void)
     return;
 }
 
-// Function @0x8002BE98
+//8002BE98
 void LoadSomethingInDatasBin(int* offset)
 
 {
@@ -546,7 +546,7 @@ void LoadSomethingInDatasBin(int* offset)
     return;
 }
 
-// Function @0x8002BFE0
+//8002BFE0
 void MainLoop(void)
 
 {
@@ -633,7 +633,7 @@ void MainLoop(void)
         g_imageBufferCDEnd);
     LoadBalance_bin(0, 0);
     InitDebugVars();
-    FUN_800423ac(DATAS_BIN, DAT_801eab40);
+    LoadAnimTableMaybeInDatasBin(DATAS_BIN, DAT_801eab40);
     FUN_80042984();
     FUN_80044094();
     LoadFontInTakiFolder();
@@ -672,7 +672,7 @@ void MainLoop(void)
             PrepareBufferFlip();
             OpenMap(g_currentMap);
             HandlePostUpdateLogic(1);
-            PrintDebugInfo();
+            ResetDebugRenderingState();
             do {
                 g_debugMessage = 0;
                 PrintDebug();
@@ -720,7 +720,7 @@ void MainLoop(void)
                     LoadBgm(0);
                     LoadSomethingInDatasBin(&g_indexInDatasBin);
                     LoadLOADER_EXE();
-                    DoNothing(&DAT_800203b4);
+                    DoNothing(&g_unused_800203b4);
                     exit();
                 }
                 goto LAB_8002c5dc;
@@ -737,7 +737,7 @@ void MainLoop(void)
     } while (true);
 }
 
-// Function @0x8002C624
+//8002C624
 void LoadEtc(void)
 
 {
@@ -780,7 +780,7 @@ void LoadEtc(void)
     return;
 }
 
-// Function @0x8002C708
+//8002C708
 void LoadVRAMAssets(void)
 
 {
@@ -831,7 +831,7 @@ void LoadVRAMAssets(void)
     return;
 }
 
-// Function @0x8002C894
+//8002C894
 void ResetTileAnimationState(void)
 
 {
@@ -882,7 +882,7 @@ void ResetTileAnimationState(void)
     return;
 }
 
-// Function @0x8002C9E0
+//8002C9E0
 void printPatchDataError(int startX, int startY, int sizeX, int sizeY, int distX, int distY)
 
 {
@@ -897,7 +897,7 @@ void printPatchDataError(int startX, int startY, int sizeX, int sizeY, int distX
     return;
 }
 
-// Function @0x8002CAB4
+//8002CAB4
 void InitializeTileRenderingSystem(undefined4 drawPageParam)
 
 {
@@ -913,7 +913,7 @@ void InitializeTileRenderingSystem(undefined4 drawPageParam)
     frameIndex = 0;
     spriteBufferOffset = 0;
     g_drawPageInfoTable = &g_drawPageInfoBase;
-    g_drawPageTPageIDs = &g_tPageIds;
+    g_drawPageTPageIDs = (int*)&g_tPageIds;
     g_currentDrawPageParam = drawPageParam;
     do {
         spriteIndex = 0;
@@ -934,14 +934,14 @@ void InitializeTileRenderingSystem(undefined4 drawPageParam)
         frameIndex = frameIndex + 1;
         spriteBufferOffset = spriteBufferOffset + 0x3520;
     } while (frameIndex < 2);
-    drawPage = (DR_TPAGE*)&g_tileOrderingTable;
     spriteBufferOffset = 0;
+    drawPage = (DR_TPAGE*)&g_tileOrderingTable;
     do {
-        frameIndex = spriteBufferOffset + 1;
-        SetDrawTPage(drawPage, 0, 0, (uint)(ushort)g_drawPageTPageIDs[spriteBufferOffset]);
+        frameIndex = spriteBufferOffset * 2;
+        spriteBufferOffset = spriteBufferOffset + 1;
+        SetDrawTPage(drawPage, 0, 0, (uint) * (ushort*)(frameIndex + (int)g_drawPageTPageIDs));
         drawPage = drawPage + 1;
-        spriteBufferOffset = frameIndex;
-    } while (frameIndex < 6);
+    } while (spriteBufferOffset < 6);
     colorPtr = &g_tileColorTable;
     frameIndex = 0;
     spriteBufferOffset = 0;
@@ -966,7 +966,7 @@ void InitializeTileRenderingSystem(undefined4 drawPageParam)
     return;
 }
 
-// Function @0x8002CC58
+//8002CC58
 /* WARNING: Removing unreachable block (ram,0x8002cd0c) */
 
 void InitMapSpriteTable(int baseOffset, undefined4 vramTablePtr, undefined4 otherPtr)
@@ -1010,7 +1010,7 @@ void InitMapSpriteTable(int baseOffset, undefined4 vramTablePtr, undefined4 othe
     return;
 }
 
-// Function @0x8002CD54
+//8002CD54
 void ResetCameraAndLoadVRAMAssets(void)
 
 {
@@ -1023,7 +1023,7 @@ void ResetCameraAndLoadVRAMAssets(void)
     return;
 }
 
-// Function @0x8002CDA0
+//8002CDA0
 int GetCameraTransformMatrix(int renderListBase, int playerX, int playerY, int playerZ)
 
 {
@@ -1032,10 +1032,10 @@ int GetCameraTransformMatrix(int renderListBase, int playerX, int playerY, int p
     uint layerFlag;
     uint spriteAttr;
     uint spriteIndex;
+    int* piVar1;
     byte* tileColorData;
-    uint* puVar1;
-    byte* colorTableEntry;
     uint* puVar2;
+    byte* colorTableEntry;
     char* tileAnimPtr;
     int otIndex;
     int i;
@@ -1045,7 +1045,7 @@ int GetCameraTransformMatrix(int renderListBase, int playerX, int playerY, int p
     ushort* tileAnimListPtr;
     short* tileOffsetYPtr;
     int** tilePrimPtr;
-    uint* puVar4;
+    int** ppiVar4;
     int iVar5;
     int visibleTileCount;
     int maxTileSprite;
@@ -1109,7 +1109,7 @@ int GetCameraTransformMatrix(int renderListBase, int playerX, int playerY, int p
     i = 0;
     tileAnimPtr = &g_spriteMapTable;
     tilePrimPtr = &g_tileSpriteBuffer + (g_tileAnimFrameCounter & 1) * 0xd48;
-    puVar4 = (uint*)(&DAT_800e0758 + (g_tileAnimFrameCounter & 1) * 0x3520);
+    ppiVar4 = &PTR_800e0758 + (g_tileAnimFrameCounter & 1) * 0xd48;
     do {
         if ((*tileAnimPtr == '\x01') &&
             (tileAnimCounter = tileAnimPtr[5], tileAnimPtr[5] = tileAnimCounter + 1U,
@@ -1168,12 +1168,12 @@ int GetCameraTransformMatrix(int renderListBase, int playerX, int playerY, int p
                             *primitivePtr = tileColorData[2];
                             primitivePtr = primitivePtr + 0x14;
                             otIndex = i * 0x10 + (uint)*tileColorData;
-                            puVar1 = (uint*)(otIndex * 4 + renderListBase);
+                            puVar2 = (uint*)(otIndex * 4 + renderListBase);
                             /* Probable PsyQ macro: addPrim(). */
                             spriteAttr = (uint)tilePrimPtr & 0xffffff;
-                            *tilePrimPtr = (int*)((uint)*tilePrimPtr & 0xff000000 | *puVar1 & 0xffffff);
+                            *tilePrimPtr = (int*)((uint)*tilePrimPtr & 0xff000000 | *puVar2 & 0xffffff);
                             tilePrimPtr = tilePrimPtr + 5;
-                            *puVar1 = *puVar1 & 0xff000000 | spriteAttr;
+                            *puVar2 = *puVar2 & 0xff000000 | spriteAttr;
                             (&g_tileOTFlags)[otIndex] = 1;
                         }
                     }
@@ -1204,11 +1204,11 @@ int GetCameraTransformMatrix(int renderListBase, int playerX, int playerY, int p
                                         *tileColorData = colorTableEntry[2];
                                         tileColorData = tileColorData + 0x14;
                                         otIndex = i * 0x10 + (uint)*colorTableEntry + 7;
-                                        puVar1 = (uint*)(otIndex * 4 + renderListBase);
-                                        *tilePrimPtr = (int*)((uint)*tilePrimPtr & 0xff000000 | *puVar1 & 0xffffff);
+                                        puVar2 = (uint*)(otIndex * 4 + renderListBase);
+                                        *tilePrimPtr = (int*)((uint)*tilePrimPtr & 0xff000000 | *puVar2 & 0xffffff);
                                         spriteIndex = (uint)tilePrimPtr & 0xffffff;
                                         tilePrimPtr = tilePrimPtr + 5;
-                                        *puVar1 = *puVar1 & 0xff000000 | spriteIndex;
+                                        *puVar2 = *puVar2 & 0xff000000 | spriteIndex;
                                         (&g_tileOTFlags)[otIndex] = 1;
                                     }
                                 }
@@ -1231,35 +1231,35 @@ int GetCameraTransformMatrix(int renderListBase, int playerX, int playerY, int p
     newCamRow = 0;
     do {
         col = 0;
-        puVar1 = &g_tileOrderingTable;
+        tilePrimPtr = &g_tileOrderingTable;
         do {
             currentRow = newCamRow * 0x10 + col;
             if ((&g_tileOTFlags)[currentRow] == 1) {
-                layerFlag = puVar1[1];
-                *puVar4 = *puVar1;
-                puVar4[1] = layerFlag;
+                piVar1 = tilePrimPtr[1];
+                *ppiVar4 = *tilePrimPtr;
+                ppiVar4[1] = piVar1;
                 maxTileSprite = maxTileSprite + 1;
                 puVar2 = (uint*)(currentRow * 4 + renderListBase);
                 /* Probable PsyQ macro: addPrim(). */
-                layerFlag = (uint)puVar4 & 0xffffff;
-                *puVar4 = *puVar4 & 0xff000000 | *puVar2 & 0xffffff;
-                puVar4 = puVar4 + 2;
+                layerFlag = (uint)ppiVar4 & 0xffffff;
+                *ppiVar4 = (int*)((uint)*ppiVar4 & 0xff000000 | *puVar2 & 0xffffff);
+                ppiVar4 = ppiVar4 + 2;
                 *puVar2 = *puVar2 & 0xff000000 | layerFlag;
             }
             if ((&g_tileOTFlags)[currentRow + 7] == 1) {
-                layerFlag = puVar1[1];
-                *puVar4 = *puVar1;
-                puVar4[1] = layerFlag;
+                piVar1 = tilePrimPtr[1];
+                *ppiVar4 = *tilePrimPtr;
+                ppiVar4[1] = piVar1;
                 maxTileSprite = maxTileSprite + 1;
                 puVar2 = (uint*)((currentRow + 7) * 4 + renderListBase);
                 /* Probable PsyQ macro: addPrim(). */
-                layerFlag = (uint)puVar4 & 0xffffff;
-                *puVar4 = *puVar4 & 0xff000000 | *puVar2 & 0xffffff;
-                puVar4 = puVar4 + 2;
+                layerFlag = (uint)ppiVar4 & 0xffffff;
+                *ppiVar4 = (int*)((uint)*ppiVar4 & 0xff000000 | *puVar2 & 0xffffff);
+                ppiVar4 = ppiVar4 + 2;
                 *puVar2 = *puVar2 & 0xff000000 | layerFlag;
             }
             col = col + 1;
-            puVar1 = puVar1 + 2;
+            tilePrimPtr = tilePrimPtr + 2;
         } while (col < 6);
         newCamRow = newCamRow + 1;
     } while (newCamRow < 0x3c);
@@ -1275,7 +1275,7 @@ int GetCameraTransformMatrix(int renderListBase, int playerX, int playerY, int p
     return maxTileSprite * 0x10000 + visibleTileCount;
 }
 
-// Function @0x8002D608
+//8002D608
 void CopySpriteVramRegion(int startX, int startY, int sizeX, int sizeY, int distX, int distY)
 
 {
@@ -1320,7 +1320,7 @@ void CopySpriteVramRegion(int startX, int startY, int sizeX, int sizeY, int dist
     return;
 }
 
-// Function @0x8002D7B0
+//8002D7B0
 void CopySpriteFromVramTable(int spriteIndex)
 
 {
@@ -1332,7 +1332,7 @@ void CopySpriteFromVramTable(int spriteIndex)
     return;
 }
 
-// Function @0x8002D808
+//8002D808
 void InitAnimationData(AnimationTable* table, AnimationData* data)
 
 {
@@ -1345,26 +1345,26 @@ void InitAnimationData(AnimationTable* table, AnimationData* data)
 
     table->baseDataPtr = data;
     pointerListCount = 0;
-    table->rawPointerList = (int)(&data->entries + *(int*)&data->rawPtrListOffset);
-    piVar3 = (int*)(&data->entries + *(int*)&data->pointerListOffset);
+    table->rawPointerList = (int)&data->entries + (int)data->rawPtrListOffset;
+    piVar3 = (int*)((int)&data->entries + (int)data->pointerListOffset);
     table->pointerList = piVar3;
     do {
         offset = *piVar3;
         if (offset == 0) break;
-        piVar2 = (int*)(&data->entries + offset);
+        piVar2 = (int*)((int)&data->entries + offset);
         if (offset != -1) {
             *piVar3 = (int)piVar2;
-            *piVar2 = (int)(&data->entries + *piVar2);
-            piVar2[1] = (int)(&data->entries + piVar2[1]);
-            piVar2[2] = (int)(&data->entries + piVar2[2]);
-            piVar2[3] = (int)(&data->entries + piVar2[3]);
+            *piVar2 = (int)&data->entries + *piVar2;
+            piVar2[1] = (int)&data->entries + piVar2[1];
+            piVar2[2] = (int)&data->entries + piVar2[2];
+            piVar2[3] = (int)&data->entries + piVar2[3];
         }
         pointerListCount = pointerListCount + 1;
         piVar3 = piVar3 + 1;
     } while (pointerListCount < 0x100);
     table->pointerListCount = pointerListCount;
-    piVar3 = (int*)(&data->entries + *(int*)data);
-    if (*(int*)data == 0) {
+    piVar3 = (int*)((int)&data->entries + (int)data->entries);
+    if (data->entries == (int*)0x0) {
         table->field2_0x8 = (int*)0x0;
         table->field5_0x14 = 0;
     }
@@ -1379,20 +1379,20 @@ void InitAnimationData(AnimationTable* table, AnimationData* data)
         table->field5_0x14 = pointerListCount;
     }
     pointerListCount = 0;
-    piVar3 = (int*)(&data->entries + *(int*)&data->field16_0x10);
+    piVar3 = (int*)((int)&data->entries + *(int*)&data->field7_0x10);
     table->field7_0x1c = piVar3;
     do {
         offset = *piVar3;
         if (offset == 0) break;
         if (offset != -1) {
-            *piVar3 = (int)(&data->entries + offset);
+            *piVar3 = (int)&data->entries + offset;
         }
         pointerListCount = pointerListCount + 1;
         piVar3 = piVar3 + 1;
     } while (pointerListCount < 0x100);
     table->field8_0x20 = pointerListCount;
-    piVar3 = (int*)(&data->entries + *(int*)&data->frameListOffset);
-    if (*(int*)&data->frameListOffset == 0) {
+    piVar3 = (int*)((int)&data->entries + (int)data->frameListOffset);
+    if (data->frameListOffset == (int*)0x0) {
         table->frameList = (int*)0x0;
         table->frameCount = 0;
     }
@@ -1406,8 +1406,8 @@ void InitAnimationData(AnimationTable* table, AnimationData* data)
         } while (pointerListCount < 0x80);
         table->frameCount = pointerListCount;
     }
-    piVar3 = (int*)(&data->entries + *(int*)&data->field_0x8);
-    if (*(int*)&data->field_0x8 == 0) {
+    piVar3 = (int*)((int)&data->entries + *(int*)&data->entryIndex);
+    if (*(int*)&data->entryIndex == 0) {
         table->scriptList = (int*)0x0;
         table->scriptCount = 0;
     }
@@ -1422,19 +1422,19 @@ void InitAnimationData(AnimationTable* table, AnimationData* data)
         table->scriptCount = pointerListCount;
     }
     pointerListCount = 0;
-    table->field12_0x30 = (int)(&data->entries + *(int*)&data->offsetX);
+    table->field12_0x30 = (int)&data->entries + *(int*)&data->offsetX;
     pAVar4 = data;
     do {
         pcVar1 = &pAVar4->offsetX;
         pAVar4 = (AnimationData*)&pAVar4->frameListOffset;
         pointerListCount = pointerListCount + 1;
-        table->field13_0x34 = (int)(&data->entries + *(int*)pcVar1);
+        table->field13_0x34 = (int)&data->entries + *(int*)pcVar1;
         table = (AnimationTable*)&table->rawPointerList;
     } while (pointerListCount < 6);
     return;
 }
 
-// Function @0x8002DA04
+//8002DA04
 void SortSpritePointerTable(int startIndex, int endIndex)
 
 {
@@ -1473,7 +1473,7 @@ void SortSpritePointerTable(int startIndex, int endIndex)
         rightPtr = rightPtr + -1;
     }
     if (startIndex < leftIndex + -1) {
-        SortSpritePointerTable();
+        SortSpritePointerTable(startIndex, leftIndex + -1);
     }
     if (rightIndex + 1 < endIndex) {
         SortSpritePointerTable(rightIndex + 1, endIndex);
@@ -1481,7 +1481,7 @@ void SortSpritePointerTable(int startIndex, int endIndex)
     return;
 }
 
-// Function @0x8002DB48
+//8002DB48
 int FUN_8002db48(undefined4* param_1, undefined4* param_2, int param_3)
 
 {
@@ -1574,7 +1574,7 @@ int FUN_8002db48(undefined4* param_1, undefined4* param_2, int param_3)
     return iVar5;
 }
 
-// Function @0x8002DE4C
+//8002DE4C
 void InitSpriteResourcesFromFile
 (char* fileName, int frameDataStart, int frameDataEnd, int imageDataStart,
     int imageDataEnd)
@@ -1617,7 +1617,7 @@ void InitSpriteResourcesFromFile
     return;
 }
 
-// Function @0x8002DFBC
+//8002DFBC
 void LoadMapSpriteTable(AnimationData* param_1)
 
 {
@@ -1625,7 +1625,7 @@ void LoadMapSpriteTable(AnimationData* param_1)
     return;
 }
 
-// Function @0x8002DFE4
+//8002DFE4
 void LoadMapAndInitializeEntities(undefined4 bufferImage)
 
 {
@@ -1637,7 +1637,7 @@ void LoadMapAndInitializeEntities(undefined4 bufferImage)
     return;
 }
 
-// Function @0x8002E058
+//8002E058
 void UpdateEntities(void)
 
 {
@@ -1645,7 +1645,7 @@ void UpdateEntities(void)
     int iVar2;
 
     if (0x38800 < g_animationRawSize) {
-        if ((g_display_overflow_message & 4) == 0) {
+        if (((uint)g_display_overflow_message & 4) == 0) {
             iVar2 = strlen(&g_debugMessage);
             sprintf(&g_debugMessage + iVar2, "\n");
         }
@@ -1666,7 +1666,7 @@ void UpdateEntities(void)
     return;
 }
 
-// Function @0x8002E130
+//8002E130
 int GetProjectionMatrix(undefined4 param_1, undefined4 param_2, undefined4 param_3)
 
 {
@@ -1703,7 +1703,7 @@ int GetProjectionMatrix(undefined4 param_1, undefined4 param_2, undefined4 param
     return iVar4;
 }
 
-// Function @0x8002E250
+//8002E250
 void UpdatePad(PadState* padState, ushort buttonState)
 
 {
@@ -1738,7 +1738,7 @@ LAB_8002e304:
     return;
 }
 
-// Function @0x8002E30C
+//8002E30C
 void ClearPadInputStates(void)
 
 {
@@ -1760,7 +1760,7 @@ void ClearPadInputStates(void)
     return;
 }
 
-// Function @0x8002E34C
+//8002E34C
 void InitPadController(void)
 
 {
@@ -1773,7 +1773,7 @@ void InitPadController(void)
     return;
 }
 
-// Function @0x8002E38C
+//8002E38C
 void UpdatePads(void)
 
 {
@@ -1785,7 +1785,7 @@ void UpdatePads(void)
     return;
 }
 
-// Function @0x8002E48C
+//8002E48C
 void CheckClut(uint param_1, int param_2)
 
 {
@@ -1796,7 +1796,7 @@ void CheckClut(uint param_1, int param_2)
     return;
 }
 
-// Function @0x8002E4D8
+//8002E4D8
 void GetNextTile(int* x, int* y, int h)
 
 {
@@ -1813,7 +1813,7 @@ void GetNextTile(int* x, int* y, int h)
     return;
 }
 
-// Function @0x8002E6D0
+//8002E6D0
 void LoadImageArea(u_long* buffer, int x, int y, int h)
 
 {
@@ -1845,7 +1845,7 @@ void LoadImageArea(u_long* buffer, int x, int y, int h)
     return;
 }
 
-// Function @0x8002E814
+//8002E814
 uint GetDirectionToTarget(uint deltaX, uint deltaY)
 
 {
@@ -1867,14 +1867,14 @@ uint GetDirectionToTarget(uint deltaX, uint deltaY)
         maxDelta = deltaY;
     }
     scaleIndex = 0;
-    if (DAT_80022688 < maxDelta) {
-        scaleThresholdTable = &DAT_80022688;
+    if ((uint)g_angleLookupTable[0x80] < maxDelta) {
+        scaleThresholdTable = (uint*)(g_angleLookupTable + 0x80);
         do {
             scaleThresholdTable = scaleThresholdTable + 1;
             scaleIndex = scaleIndex + 1;
         } while (*scaleThresholdTable < maxDelta);
     }
-    maxDelta = (uint) * (short*)(&DAT_80022488 +
+    maxDelta = (uint) * (short*)((int)g_angleLookupTable +
         ((deltaY >> (scaleIndex & 0x1f)) * 0x10 +
             (deltaX >> (scaleIndex & 0x1f))) * 2);
     if (quadrant == 1) {
@@ -1899,7 +1899,7 @@ uint GetDirectionToTarget(uint deltaX, uint deltaY)
     return maxDelta & 0x1f;
 }
 
-// Function @0x8002E910
+//8002E910
 undefined4 CheckWarpTrigger(void)
 
 {
@@ -1952,7 +1952,7 @@ FinalCheck:
     return uVar1;
 }
 
-// Function @0x8002EAF4
+//8002EAF4
 undefined4 CheckTileWarpTrigger(void)
 
 {
@@ -1973,10 +1973,10 @@ undefined4 CheckTileWarpTrigger(void)
             return 0;
         }
         if (g_warpZoneReady == 0) {
-            warpData = &DAT_80028c7d + g_currentTileFlags * 0xd;
+            warpData = (byte*)((int)&g_tileWarpDataInactive + g_currentTileFlags * 0xd);
         }
         else {
-            warpData = &DAT_80028c79 + g_currentTileFlags * 0xd;
+            warpData = (byte*)((int)&g_tileWarpDataActive + g_currentTileFlags * 0xd);
         }
         if (*warpData == 0) {
             PlaySoundEffect(3);
@@ -2011,16 +2011,16 @@ undefined4 CheckTileWarpTrigger(void)
             offsetXPtr = offsetXPtr + 2;
         } while (iVar4 < 0x10);
         PlaySoundEffect(0x2b);
-        bVar1 = (&DAT_80028c81)[g_currentTileFlags * 0xd];
-        warpData = &DAT_80028c81 + g_currentTileFlags * 0xd;
+        bVar1 = *(byte*)((int)g_tileWarpTypeList + g_currentTileFlags * 0xd);
+        warpData = (byte*)((int)g_tileWarpTypeList + g_currentTileFlags * 0xd);
     }
     g_warpState = (uint)bVar1;
     g_warpStepFlags = 0;
-    g_warpTransitionCooldown = warpData;
+    g_warpTransitionCooldown = (int)warpData;
     return 1;
 }
 
-// Function @0x8002ED64
+//8002ED64
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 int TryHandleWarpTrigger(void)
@@ -2038,7 +2038,7 @@ int TryHandleWarpTrigger(void)
     return 1;
 }
 
-// Function @0x8002EDBC
+//8002EDBC
 int TryTriggerWarpFromEntity(Entity* entity)
 
 {
@@ -2080,7 +2080,7 @@ int TryTriggerWarpFromEntity(Entity* entity)
     return isUnlocked;
 }
 
-// Function @0x8002EEAC
+//8002EEAC
 int FUN_8002eeac(void)
 
 {
@@ -2124,7 +2124,7 @@ int FUN_8002eeac(void)
     return iVar1;
 }
 
-// Function @0x8002EFF0
+//8002EFF0
 void PrintDebugWarpInfo(char* buffer, int param_2)
 
 {
@@ -2139,9 +2139,10 @@ void PrintDebugWarpInfo(char* buffer, int param_2)
         , iVar3);
     if (param_2 != -1) {
         iVar1 = strlen(&g_debugMessage);
-        sprintf(&g_debugMessage + iVar1, "/%s-%s", (&PTR_DAT_80098f10)[param_2],
-            *(undefined4*)((int)&PTR_DAT_80098f10 + ((*(ushort*)(buffer + 10) & 0x3000) >> 10)),
-            iVar2, iVar3);
+        sprintf(&g_debugMessage + iVar1, "/%s-%s", g_angleLookupTable_part[param_2],
+            *(undefined4*)
+            ((int)g_angleLookupTable_part + ((*(ushort*)(buffer + 10) & 0x3000) >> 10)), iVar2,
+            iVar3);
     }
     iVar1 = strlen(&g_debugMessage);
     sprintf(&g_debugMessage + iVar1, "\n%03d(%03d) : %02d,%02d,%02d\n", (uint) * (ushort*)(buffer + 4),
@@ -2153,7 +2154,7 @@ void PrintDebugWarpInfo(char* buffer, int param_2)
     return;
 }
 
-// Function @0x8002F120
+//8002F120
 void CheckAndExecuteWarp(void)
 
 {
@@ -2189,8 +2190,8 @@ void CheckAndExecuteWarp(void)
                     else {
                         tileAttribute = (uint)(*(ushort*)(messageLength + 10) >> 0xe);
                         PrintDebugWarpInfo(messageLength, tileAttribute);
-                        if (((g_playerTileAttribute & *(ushort*)(&DAT_80022778 + tileAttribute * 2)) == 0) ||
-                            (DAT_80127dc8 != tileAttribute)) {
+                        if (((g_playerTileAttribute & *(ushort*)((int)&INT_80022778 + tileAttribute * 2)) == 0)
+                            || (g_requiredWarpZoneId != tileAttribute)) {
                             messageLength = strlen(&g_debugMessage);
                             buffer = &g_debugMessage + messageLength;
                             fmt = "Warp Not Ready!\n";
@@ -2252,38 +2253,38 @@ void CheckAndExecuteWarp(void)
             return;
         }
         tileAttribute = (uint)(warpData->flags >> 0xe);
-        if ((g_playerTileAttribute & *(ushort*)(&DAT_80022778 + tileAttribute * 2)) == 0) {
+        if ((g_playerTileAttribute & *(ushort*)((int)&INT_80022778 + tileAttribute * 2)) == 0) {
             return;
         }
-        if (DAT_80127dc8 != tileAttribute) {
+        if (g_requiredWarpZoneId != tileAttribute) {
             return;
         }
-        warpDestinationPtr = *(undefined4*)((int)&DAT_80023644 + ((warpData->flags & 0x3000) >> 10));
+        warpDestinationPtr = *(undefined4*)((int)&g_warpZones + ((warpData->flags & 0x3000) >> 10));
     }
     else {
         warpData = (WarpData*)GetWarpData();
         if (warpData == (WarpData*)0x0) {
             return;
         }
-        warpDestinationPtr = *(undefined4*)((int)&DAT_80023644 + ((warpData->flags & 0x3000) >> 10));
+        warpDestinationPtr = *(undefined4*)((int)&g_warpZones + ((warpData->flags & 0x3000) >> 10));
     }
     HandleWarpTransition(warpData, 0x36, warpDestinationPtr);
     return;
 }
 
-// Function @0x8002F49C
-int FUN_8002f49c(void)
+//8002F49C
+int UpdatePlayerWarpEffect(void)
 
 {
-    Effect* pEffect;
-    uint uVar1;
-    undefined4 uVar2;
+    Effect* effect;
+    uint randomSeed;
+    undefined4 uVar1;
+    int iVar2;
     int iVar3;
-    int iVar4;
 
     if (((((g_playerTileAttribute & 0x80) == 0) && ((g_tileWarpFlags & 0x80) == 0)) ||
-        ((&BYTE_80028c78)[g_currentTileFlags * 0xd] == 0)) ||
-        ((&DAT_80028d14)[g_warpState * 2] == '\0')) {
+        ((&g_tileWarpInitFlags)[g_currentTileFlags * 0xd] == 0)) ||
+        (*(char*)((int)g_tileWarpTypeList + g_warpState * 2 + 0x93) == '\0')) {
         g_playerWarpTimer = 0;
     }
     else if (g_playerWarpTimer < 0x3c) {
@@ -2299,27 +2300,27 @@ int FUN_8002f49c(void)
         if ((g_frameTimer == 0) || (*(char*)(g_frameTimer + 0x7d) != '\0')) {
             g_frameTimer = CreateAttachedEffect(0, 3, 0, &g_player, 1, 0, 0, 0x100000);
         }
-        if ((DAT_80127d4c & 3) == 0) {
+        if ((g_gameFrameCounter & 3U) == 0) {
             if (g_playerWarpTimer < 0x3c) {
                 PlaySoundEffect(0x2a);
             }
             else {
-                pEffect = (Effect*)
+                effect = (Effect*)
                     CreateEffectEntity(0, 0x10, 0, g_currentCamX, g_currentCamY, g_currentCamZ + 0x100000);
-                if (pEffect != (Effect*)0x0) {
-                    uVar2 = 0x1ad;
-                    if ((DAT_80127d4c & 7) != 0) {
-                        uVar2 = 0x1ac;
+                if (effect != (Effect*)0x0) {
+                    uVar1 = 0x1ad;
+                    if ((g_gameFrameCounter & 7U) != 0) {
+                        uVar1 = 0x1ac;
                     }
-                    PlaySoundEffect(uVar2);
-                    uVar1 = g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                    g_gameRandomSeed = uVar1 * 0x7d2b89dd + 0xe06a02e7;
-                    iVar4 = (int)((ulonglong)uVar1 * 0x60001 >> 0x20) + -0x30000;
-                    pEffect->posX = pEffect->posX + iVar4 * 0x14;
-                    iVar3 = (int)((ulonglong)g_gameRandomSeed * 0x40001 >> 0x20) + -0x20000;
-                    pEffect->posY = pEffect->posY + iVar3 * 0x14;
-                    pEffect->velocityX2 = g_targetZForce - iVar4;
-                    pEffect->velocityZ2 = g_targetXYZForce - iVar3;
+                    PlaySoundEffect(uVar1);
+                    randomSeed = g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+                    g_gameRandomSeed = randomSeed * 0x7d2b89dd + 0xe06a02e7;
+                    iVar3 = (int)((ulonglong)randomSeed * 0x60001 >> 0x20) + -0x30000;
+                    effect->posX = effect->posX + iVar3 * 0x14;
+                    iVar2 = (int)((ulonglong)g_gameRandomSeed * 0x40001 >> 0x20) + -0x20000;
+                    effect->posY = effect->posY + iVar2 * 0x14;
+                    effect->velocityX2 = g_targetZForce - iVar3;
+                    effect->velocityZ2 = g_targetXYZForce - iVar2;
                 }
             }
         }
@@ -2327,35 +2328,35 @@ int FUN_8002f49c(void)
     return g_playerWarpTimer;
 }
 
-// Function @0x8002F768
-undefined4 FUN_8002f768(void)
+//8002F768
+undefined4 UpdateWarpStepProgression(void)
 
 {
-    int iVar1;
+    int stepCounter;
 
-    iVar1 = g_warpStepFlags;
+    stepCounter = g_warpStepFlags;
     if (g_warpTransitionCooldown != 0) {
-        if ((*(byte*)(g_warpTransitionCooldown + 1) == 0) || ((&DAT_80028d15)[g_warpState * 2] == '\0')
-            ) {
+        if ((*(byte*)(g_warpTransitionCooldown + 1) == 0) ||
+            (*(char*)((int)g_tileWarpTypeList + g_warpState * 2 + 0x94) == '\0')) {
             g_warpTransitionCooldown = 0;
         }
         else {
-            iVar1 = g_warpStepFlags + 1;
+            stepCounter = g_warpStepFlags + 1;
             if ((int)(uint) * (byte*)(g_warpTransitionCooldown + 2) <= g_warpStepFlags) {
                 SpawnWarpEntity((Entity*)&g_player, (Entity*)0x0,
                     (uint) * (byte*)(g_warpTransitionCooldown + 1), g_currentCamX, g_currentCamY,
                     g_currentCamZ + (uint) * (byte*)(g_warpTransitionCooldown + 3) * 0x10000,
-                    (&DAT_80023644)[DAT_80127dc8]);
+                    (&g_warpZones)[g_requiredWarpZoneId]);
                 g_warpTransitionCooldown = 0;
                 return 1;
             }
         }
     }
-    g_warpStepFlags = iVar1;
+    g_warpStepFlags = stepCounter;
     return 0;
 }
 
-// Function @0x8002F854
+//8002F854
 int StepTowards(int current, int target, uint maxStep)
 
 {
@@ -2373,7 +2374,7 @@ int StepTowards(int current, int target, uint maxStep)
     return target;
 }
 
-// Function @0x8002F884
+//8002F884
 void UpdatePlayerWarpDirection(int mode)
 
 {
@@ -2465,13 +2466,13 @@ void UpdatePlayerWarpDirection(int mode)
     return;
 }
 
-// Function @0x8002FB14
+//8002FB14
 void PreparePlayerForWarpEntry(int param_1)
 
 {
-    short sVar1;
+    ulonglong uVar1;
     ulonglong uVar2;
-    longlong lVar3;
+    int iVar3;
     int iVar4;
     int iVar5;
     ushort* puVar6;
@@ -2480,11 +2481,10 @@ void PreparePlayerForWarpEntry(int param_1)
     int* piVar9;
     uint uVar10;
     int iVar11;
-    undefined* puVar12;
     int local_50[4];
     int local_40[4];
-    undefined8 local_30;
-    undefined8 local_28;
+    ulonglong local_30;
+    ulonglong local_28;
 
     switch (g_warpState) {
     case 4:
@@ -2507,49 +2507,47 @@ void PreparePlayerForWarpEntry(int param_1)
     switchD_8002fb64_caseD_5:
         break;
     case 0x29:
-        if ((DAT_80127d4c & 7) == 0) {
-            PlaySoundEffect((int)*(short*)(&DAT_80022814 + g_currentMapTileAttribute * 2));
+        if ((g_gameFrameCounter & 7U) == 0) {
+            PlaySoundEffect((int)SHORT_ARRAY_80022814[g_currentMapTileAttribute]);
         }
         if ((g_currentMapTileAttribute - 1U < 2) || (g_currentMapTileAttribute == 4)) {
-            puVar12 = &DAT_80022864;
+            iVar11 = -0x7ffdd79c;
             cVar7 = '\x06';
         }
         else {
-            puVar12 = &UNK_80022824;
+            iVar11 = -0x7ffdd7dc;
             cVar7 = *(char*)(g_spriteDataBase + 10);
         }
-        iVar11 = DAT_80127de0 + -1;
-        if (iVar11 < 0) goto switchD_8002fb64_caseD_5;
-        iVar4 = iVar11 * 2;
-        if (3 < iVar11) {
-            iVar11 = 3;
+        iVar3 = DAT_80127de0 + -1;
+        if (iVar3 < 0) goto switchD_8002fb64_caseD_5;
+        iVar4 = iVar3 * 2;
+        if (3 < iVar3) {
+            iVar3 = 3;
             iVar4 = 6;
         }
-        if (((int)*(short*)(puVar12 + iVar4) & DAT_80127d4c) == 0) {
+        if ((*(short*)(iVar4 + iVar11) & g_gameFrameCounter) == 0) {
             if (cVar7 == '\0') {
                 iVar4 = 0;
             }
             else {
                 iVar4 = CreateEffectEntity(0, cVar7, 0, g_currentCamX, g_currentCamY, g_playerPosZ_2);
             }
-            iVar5 = DAT_80127dc8;
             if (iVar4 != 0) {
-                iVar11 = (int)*(short*)(puVar12 + iVar11 * 2 + 8);
+                iVar5 = iVar11 + g_requiredWarpZoneId * 4;
+                iVar3 = (int)*(short*)(iVar3 * 2 + iVar11 + 8);
                 uVar10 = g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
                 *(int*)(iVar4 + 0x54) =
-                    *(short*)(puVar12 + DAT_80127dc8 * 4 + 0x12) * iVar11 +
-                    (int)((ulonglong)uVar10 *
-                        (ulonglong)(*(short*)(puVar12 + DAT_80127dc8 * 4 + 0x10) * iVar11 + 1) >> 0x20);
+                    *(short*)(iVar5 + 0x12) * iVar3 +
+                    (int)((ulonglong)uVar10 * (ulonglong)(*(short*)(iVar5 + 0x10) * iVar3 + 1) >> 0x20);
                 uVar10 = uVar10 * 0x7d2b89dd + 0xe06a02e7;
                 *(int*)(iVar4 + 0x58) =
-                    *(short*)(puVar12 + iVar5 * 4 + 0x26) * iVar11 +
-                    (int)((ulonglong)uVar10 *
-                        (ulonglong)(*(short*)(puVar12 + iVar5 * 4 + 0x24) * iVar11 + 1) >> 0x20);
+                    *(short*)(iVar5 + 0x26) * iVar3 +
+                    (int)((ulonglong)uVar10 * (ulonglong)(*(short*)(iVar5 + 0x24) * iVar3 + 1) >> 0x20);
                 g_gameRandomSeed = uVar10 * 0x7d2b89dd + 0xe06a02e7;
-                lVar3 = (ulonglong)g_gameRandomSeed * (ulonglong)(*(short*)(puVar12 + 0x30) * iVar11 + 1);
-                local_30._4_4_ = (int)((ulonglong)lVar3 >> 0x20);
-                *(int*)(iVar4 + 0x5c) = *(short*)(puVar12 + 0x32) * iVar11 + local_30._4_4_;
-                local_30 = lVar3;
+                uVar1 = (ulonglong)g_gameRandomSeed * (ulonglong)(*(short*)(iVar11 + 0x30) * iVar3 + 1);
+                local_30._4_4_ = (int)(uVar1 >> 0x20);
+                *(int*)(iVar4 + 0x5c) = *(short*)(iVar11 + 0x32) * iVar3 + local_30._4_4_;
+                local_30 = uVar1;
             }
             goto switchD_8002fb64_caseD_5;
         }
@@ -2558,29 +2556,29 @@ void PreparePlayerForWarpEntry(int param_1)
     switch (g_warpState) {
     case 1:
     case 7:
-        if ((DAT_80127d4c & 0xf) == 0) {
-            PlaySoundEffect((int)*(short*)(&DAT_800227f4 + g_currentMapTileAttribute * 2));
+        if ((g_gameFrameCounter & 0xfU) == 0) {
+            PlaySoundEffect((int)SHORT_ARRAY_800227f4[g_currentMapTileAttribute]);
         }
         goto LAB_800301d8;
     case 3:
-        iVar4 = 0;
-        if ((DAT_80127d4c & 7) == 0) {
-            PlaySoundEffect((int)*(short*)(&DAT_80022814 + g_currentMapTileAttribute * 2));
+        iVar3 = 0;
+        if ((g_gameFrameCounter & 7U) == 0) {
+            PlaySoundEffect((int)SHORT_ARRAY_80022814[g_currentMapTileAttribute]);
         }
         goto LAB_8002feac;
     case 4:
     case 0x2a:
-        iVar4 = 1;
+        iVar3 = 1;
     LAB_8002feac:
         if ((g_currentMapTileAttribute - 1U < 2) || (g_currentMapTileAttribute == 4)) {
-            puVar12 = &DAT_80022864;
+            iVar4 = -0x7ffdd79c;
             cVar7 = '\x06';
         }
         else {
-            puVar12 = &UNK_80022824;
+            iVar4 = -0x7ffdd7dc;
             cVar7 = *(char*)(g_spriteDataBase + 10);
         }
-        if (((int)*(short*)(puVar12 + 0x34) & DAT_80127d4c) != 0) goto LAB_800301d8;
+        if ((*(short*)(iVar4 + 0x34) & g_gameFrameCounter) != 0) goto LAB_800301d8;
         if (cVar7 == '\0') {
             iVar11 = 0;
         }
@@ -2588,24 +2586,24 @@ void PreparePlayerForWarpEntry(int param_1)
             iVar11 = CreateEffectEntity(0, cVar7, 0, g_currentCamX, g_currentCamY, g_playerPosZ_2);
         }
         if (iVar11 != 0) {
-            sVar1 = *(short*)(puVar12 + iVar4 * 2 + 0x36);
-            *(int*)(iVar11 + 0x54) = g_targetZForce * sVar1 >> 8;
-            *(int*)(iVar11 + 0x58) = g_targetXYZForce * sVar1 >> 8;
+            iVar3 = (int)*(short*)(iVar3 * 2 + iVar4 + 0x36);
+            *(int*)(iVar11 + 0x54) = g_targetZForce * iVar3 >> 8;
+            *(int*)(iVar11 + 0x58) = g_targetXYZForce * iVar3 >> 8;
             g_gameRandomSeed = g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-            lVar3 = (ulonglong)g_gameRandomSeed * (ulonglong)((int)*(short*)(puVar12 + 0x3a) + 1);
-            local_28._4_4_ = (int)((ulonglong)lVar3 >> 0x20);
-            iVar5 = (int)*(short*)(puVar12 + 0x3c);
-            iVar4 = local_28._4_4_;
-            local_28 = lVar3;
+            uVar1 = (ulonglong)g_gameRandomSeed * (ulonglong)((int)*(short*)(iVar4 + 0x3a) + 1);
+            local_28._4_4_ = (int)(uVar1 >> 0x20);
+            iVar4 = (int)*(short*)(iVar4 + 0x3c);
+            iVar3 = local_28._4_4_;
+            local_28 = uVar1;
         LAB_800301c8:
-            *(int*)(iVar11 + 0x5c) = iVar5 + iVar4;
+            *(int*)(iVar11 + 0x5c) = iVar4 + iVar3;
         }
         break;
     case 0x23:
-        uVar10 = DAT_80127d4c & 7;
+        uVar10 = g_gameFrameCounter & 7;
         goto LAB_80030094;
     case 0x24:
-        uVar10 = DAT_80127d4c & 3;
+        uVar10 = g_gameFrameCounter & 3;
     LAB_80030094:
         if (uVar10 != 0) goto LAB_800301d8;
         iVar11 = CreateEffectEntity(0, *(undefined1*)(g_spriteDataBase + 10), 0, g_currentCamX,
@@ -2614,30 +2612,30 @@ void PreparePlayerForWarpEntry(int param_1)
         uVar10 = g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
         uVar8 = uVar10 * 0x7d2b89dd + 0xe06a02e7;
         g_gameRandomSeed = uVar8 * 0x7d2b89dd + 0xe06a02e7;
-        uVar2 = (ulonglong)g_gameRandomSeed;
+        uVar1 = (ulonglong)g_gameRandomSeed;
         local_30._4_4_ = (int)((ulonglong)uVar10 * 0x180001 >> 0x20);
         *(int*)(iVar11 + 0x3c) = *(int*)(iVar11 + 0x3c) + -0xc0000 + local_30._4_4_;
         *(int*)(iVar11 + 0x40) =
             *(int*)(iVar11 + 0x40) + -0x80000 + (int)((ulonglong)uVar8 * 0x100001 >> 0x20);
-        local_30._4_4_ = (int)(uVar2 * 0x10001 >> 0x20);
-        iVar5 = *(int*)(iVar11 + 0x5c) + 0x10000;
-        iVar4 = local_30._4_4_;
-        local_30 = uVar2 * 0x10001;
+        local_30._4_4_ = (int)(uVar1 * 0x10001 >> 0x20);
+        iVar4 = *(int*)(iVar11 + 0x5c) + 0x10000;
+        iVar3 = local_30._4_4_;
+        local_30 = uVar1 * 0x10001;
         goto LAB_800301c8;
     case 0x28:
-        if (((DAT_80127d4c & 7) != 0) ||
+        if (((g_gameFrameCounter & 7U) != 0) ||
             (iVar11 = CreateEffectEntity(0, 6, 0, g_currentCamX, g_currentCamY, g_playerPosZ_2), iVar11 == 0))
             goto LAB_800301d8;
-        iVar4 = -g_targetZForce;
+        iVar3 = -g_targetZForce;
         if (0 < g_targetZForce) {
-            iVar4 = iVar4 + 3;
+            iVar3 = iVar3 + 3;
         }
-        *(int*)(iVar11 + 0x54) = iVar4 >> 2;
-        iVar4 = -g_targetXYZForce;
+        *(int*)(iVar11 + 0x54) = iVar3 >> 2;
+        iVar3 = -g_targetXYZForce;
         if (0 < g_targetXYZForce) {
-            iVar4 = iVar4 + 3;
+            iVar3 = iVar3 + 3;
         }
-        *(int*)(iVar11 + 0x58) = iVar4 >> 2;
+        *(int*)(iVar11 + 0x58) = iVar3 >> 2;
     }
 LAB_800301d8:
     switch (g_warpState) {
@@ -2662,27 +2660,27 @@ LAB_800301d8:
     case 0x46:
     case 0x4b:
         if ((((param_1 == 0) || (DAT_80098f30 == 0)) && (g_warpZoneReady != 0)) && (g_spriteData < 1)) {
-            PlaySoundEffect((int)*(short*)(&DAT_80022804 + g_currentMapTileAttribute * 2));
+            PlaySoundEffect((int)SHORT_ARRAY_80022804[g_currentMapTileAttribute]);
             if ((g_currentMapTileAttribute < 1) ||
                 ((2 < g_currentMapTileAttribute && (g_currentMapTileAttribute != 4)))) {
                 iVar11 = 0;
                 do {
                     if (*(char*)(g_spriteDataBase + 10) == '\0') {
-                        iVar4 = 0;
+                        iVar3 = 0;
                     }
                     else {
-                        iVar4 = CreateEffectEntity(0, *(char*)(g_spriteDataBase + 10), 0, g_currentCamX,
+                        iVar3 = CreateEffectEntity(0, *(char*)(g_spriteDataBase + 10), 0, g_currentCamX,
                             g_currentCamY, g_playerPosZ_2);
                     }
-                    if (iVar4 != 0) {
+                    if (iVar3 != 0) {
                         uVar10 = g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                        lVar3 = (ulonglong)uVar10 * 0x30001;
+                        uVar2 = (ulonglong)uVar10 * 0x30001;
                         g_gameRandomSeed = uVar10 * 0x7d2b89dd + 0xe06a02e7;
-                        uVar2 = (ulonglong)g_gameRandomSeed;
-                        local_30._4_4_ = (int)((ulonglong)lVar3 >> 0x20);
-                        *(int*)(iVar4 + 0x54) = local_30._4_4_ + -0x18000;
-                        *(int*)(iVar4 + 0x58) = (int)(uVar2 * 0x20001 >> 0x20) + -0x10000;
-                        local_30 = lVar3;
+                        uVar1 = (ulonglong)g_gameRandomSeed;
+                        local_30._4_4_ = (int)(uVar2 >> 0x20);
+                        *(int*)(iVar3 + 0x54) = local_30._4_4_ + -0x18000;
+                        *(int*)(iVar3 + 0x58) = (int)(uVar1 * 0x20001 >> 0x20) + -0x10000;
+                        local_30 = uVar2;
                     }
                     iVar11 = iVar11 + 1;
                 } while (iVar11 < 3);
@@ -2705,7 +2703,7 @@ LAB_800301d8:
         if (g_warpState == 0x16) {
             iVar11 = 0;
         }
-        else if ((int)g_warpState < 0x17) {
+        else if (g_warpState < 0x17) {
             iVar11 = 0;
             if (g_warpState != 0x12) {
                 return;
@@ -2734,28 +2732,28 @@ LAB_800301d8:
                 local_50[1] = (int)(short)(&g_tileToWorldXTable)
                     [g_warpZoneCheckMinX + g_warpZoneCheckMaxX >> 0x10];
                 do {
-                    iVar4 = *piVar9;
+                    iVar3 = *piVar9;
+                    if (iVar3 < 1) {
+                        iVar3 = 0;
+                    }
+                    else if (0x33 < iVar3) {
+                        iVar3 = 0x33;
+                    }
+                    iVar4 = piVar9[4];
                     if (iVar4 < 1) {
                         iVar4 = 0;
                     }
-                    else if (0x33 < iVar4) {
-                        iVar4 = 0x33;
+                    else if (0x3b < iVar4) {
+                        iVar4 = 0x3b;
                     }
-                    iVar5 = piVar9[4];
-                    if (iVar5 < 1) {
-                        iVar5 = 0;
-                    }
-                    else if (0x3b < iVar5) {
-                        iVar5 = 0x3b;
-                    }
-                    puVar6 = (ushort*)(g_spriteVRAMPointer + iVar5 * 0x1a0 + 0x604 + iVar4 * 8);
+                    puVar6 = (ushort*)(g_spriteVRAMPointer + iVar4 * 0x1a0 + 0x604 + iVar3 * 8);
                     if ((g_warpZoneCheckMinZ < (int)((uint) * (byte*)((int)puVar6 + 3) << 0x14)) ||
                         ((*puVar6 & 0x40) != 0)) {
                         if (g_warpZoneReady == 0) {
-                            g_warpState = (uint)(byte)(&DAT_800228a5)[iVar11 * 2];
+                            g_warpState = (uint)BYTE_ARRAY_800228a4[iVar11 * 2 + 1];
                             return;
                         }
-                        g_warpState = (uint)(byte)(&DAT_800228a4)[iVar11 * 2];
+                        g_warpState = (uint)BYTE_ARRAY_800228a4[iVar11 * 2];
                         return;
                     }
                     piVar9 = piVar9 + 1;
@@ -2763,16 +2761,16 @@ LAB_800301d8:
             }
         }
         else if (g_warpZoneReady == 0) {
-            g_warpState = (uint)(byte)(&DAT_800228a5)[iVar11 * 2];
+            g_warpState = (int)BYTE_ARRAY_800228a4[iVar11 * 2 + 1];
         }
         else {
-            g_warpState = (uint)(byte)(&DAT_800228a4)[iVar11 * 2];
+            g_warpState = (int)BYTE_ARRAY_800228a4[iVar11 * 2];
         }
     }
     return;
 }
 
-// Function @0x80030680
+//80030680
 void AppendHexVisualDebugLine(int dataPtr, char* label)
 
 {
@@ -2784,14 +2782,14 @@ void AppendHexVisualDebugLine(int dataPtr, char* label)
     int iVar4;
     int offset;
 
-    strcpy(&DAT_80126f68, label);
-    iVar2 = strlen(&DAT_80126f68);
+    strcpy(CHAR_80126f68, label);
+    iVar2 = strlen(CHAR_80126f68);
     iVar4 = 0;
     offset = 1;
-    digitPtr2 = &DAT_80126f69 + iVar2;
-    digitPtr1 = &DAT_80126f6a + iVar2;
+    digitPtr2 = CHAR_80126f68 + iVar2 + 1;
+    digitPtr1 = CHAR_80126f68 + iVar2 + 2;
     do {
-        (&DAT_80126f68)[iVar2] = 0x20;
+        CHAR_80126f68[iVar2] = ' ';
         bVar1 = *(byte*)(dataPtr + offset + 2);
         bVar3 = bVar1 & 0xc0;
         if (bVar3 == 0x40) {
@@ -2825,7 +2823,7 @@ void AppendHexVisualDebugLine(int dataPtr, char* label)
         iVar2 = iVar2 + 3;
         if (0xb < offset) {
             if (iVar4 != 0) {
-                strcat(&g_debugMessage, &DAT_80126f68);
+                strcat(&g_debugMessage, CHAR_80126f68);
                 strcat(&g_debugMessage, "\n");
             }
             return;
@@ -2833,7 +2831,7 @@ void AppendHexVisualDebugLine(int dataPtr, char* label)
     } while (true);
 }
 
-// Function @0x800307E8
+//800307E8
 void UpdateWarpEffectState(void)
 
 {
@@ -2850,8 +2848,7 @@ void UpdateWarpEffectState(void)
     int* piVar11;
     undefined4* puVar12;
     Entity* pEVar13;
-    char* fmt;
-    undefined* puVar14;
+    char* pcVar14;
     int* piVar15;
     Entity** ppEVar16;
     uint uVar17;
@@ -2860,7 +2857,6 @@ void UpdateWarpEffectState(void)
     uint uVar20;
     int iVar21;
     byte* pbVar22;
-    uint* puVar23;
 
     iVar4 = IsMapUnlocked(0x1c);
     if (iVar4 == 0) {
@@ -2883,8 +2879,8 @@ void UpdateWarpEffectState(void)
     }
     iVar21 = 0x61;
     iVar4 = -0x7ff39d7c;
-    DAT_80146e10 = 0;
-    DAT_80146e08 = 0;
+    PTR_80146e10 = (int*)0x0;
+    PTR_80146e08 = (int*)0x0;
     g_balanceEffectSourceList = (undefined4*)0x0;
     DAT_80146e14 = 0;
     DAT_80146e0c = 0;
@@ -2900,12 +2896,12 @@ void UpdateWarpEffectState(void)
     } while (-1 < iVar21);
     iVar4 = GetCurrentTileIndex();
     if ((iVar4 - 1U < 0x61) && (((&DAT_800c5f82)[iVar4 * 8] & 0x7f) == 1)) {
-        DAT_80146e08 = GetItemDataPointer(iVar4);
+        PTR_80146e08 = (int*)GetItemDataPointer(iVar4);
         DAT_80146e0c = iVar4 + 0x1e;
     }
     iVar4 = GetTriggeredWarpMapId();
     if ((iVar4 - 1U < 0x61) && (((&DAT_800c5f82)[iVar4 * 8] & 0x7f) == 3)) {
-        DAT_80146e10 = GetItemDataPointer(iVar4);
+        PTR_80146e10 = (int*)GetItemDataPointer(iVar4);
         DAT_80146e14 = iVar4 + 0x1e;
     }
     if (g_balanceEffectSourceList == (undefined4*)0x0) {
@@ -2986,11 +2982,11 @@ void UpdateWarpEffectState(void)
     iVar4 = -0x7fed8ff7;
     do {
         uVar8 = (uint) * (byte*)(iVar4 + 2);
-        if (DAT_80146e08 != 0) {
-            uVar17 = (uint) * (byte*)(DAT_80146e08 + iVar21 + 2);
+        if (PTR_80146e08 != (int*)0x0) {
+            uVar17 = (uint) * (byte*)((int)PTR_80146e08 + iVar21 + 2);
         }
-        if (DAT_80146e10 != 0) {
-            uVar20 = (uint) * (byte*)(DAT_80146e10 + iVar21 + 2);
+        if (PTR_80146e10 != (int*)0x0) {
+            uVar20 = (uint) * (byte*)((int)PTR_80146e10 + iVar21 + 2);
         }
         uVar6 = uVar17 & 0xc0;
         uVar10 = uVar20 & 0xc0;
@@ -3027,7 +3023,7 @@ void UpdateWarpEffectState(void)
         ((g_playerTileAttribute == 0 && ((g_warpAnimEntity != 0 && (g_warpAnimEntity < g_warpTarget))))
             )) {
         iVar4 = 0;
-        piVar11 = &DAT_80126fe8;
+        piVar11 = &INT_80126fe8;
         piVar15 = (int*)&g_balanceEffectSourceList;
         do {
             iVar21 = *piVar15;
@@ -3053,13 +3049,13 @@ void UpdateWarpEffectState(void)
     else {
         DAT_80126ff0 = 0;
         DAT_80126fec = 0;
-        DAT_80126fe8 = 0;
+        INT_80126fe8 = 0;
     }
     if ((g_debugState < 0) && (bVar3 = false, (g_debugFlags & 0x400) != 0)) {
         iVar4 = 0;
         piVar11 = (int*)&g_balanceEffectSourceList;
         pbVar22 = &DAT_80098f34;
-        puVar23 = &DAT_80126fe8;
+        piVar15 = &INT_80126fe8;
         do {
             iVar21 = *piVar11;
             if (iVar21 != 0) {
@@ -3081,10 +3077,10 @@ void UpdateWarpEffectState(void)
                 if (iVar5 == 0) {
                     if (*(char*)(iVar21 + 2) != '\0') {
                         iVar21 = strlen(&g_debugMessage);
-                        fmt = "%c(%02d/T%03d)";
+                        pcVar14 = "%c(%02d/T%03d)";
                         bVar2 = *pbVar22;
                         iVar18 = piVar11[1];
-                        uVar17 = *puVar23;
+                        uVar17 = *piVar15;
                         goto LAB_80030ea4;
                     }
                     iVar21 = strlen(&g_debugMessage);
@@ -3095,45 +3091,45 @@ void UpdateWarpEffectState(void)
                     bVar2 = *pbVar22;
                     iVar18 = piVar11[1];
                     uVar17 = (uint) * (byte*)(iVar5 + 1);
-                    fmt = "%c(%02d/A%03d)";
+                    pcVar14 = "%c(%02d/A%03d)";
                 LAB_80030ea4:
-                    sprintf(&g_debugMessage + iVar21, fmt, (uint)bVar2, iVar18 + -0x1e, uVar17);
+                    sprintf(&g_debugMessage + iVar21, pcVar14, (uint)bVar2, iVar18 + -0x1e, uVar17);
                 }
                 else {
                     iVar21 = strlen(&g_debugMessage);
                     sprintf(&g_debugMessage + iVar21, "%c(%02d/A%03d/T%03d)", (uint)*pbVar22, piVar11[1] + -0x1e,
-                        (uint) * (byte*)(iVar5 + 1), *puVar23);
+                        (uint) * (byte*)(iVar5 + 1), *piVar15);
                 }
             }
             piVar11 = piVar11 + 2;
             pbVar22 = pbVar22 + 1;
             iVar4 = iVar4 + 1;
-            puVar23 = puVar23 + 1;
+            piVar15 = (int*)((uint*)piVar15 + 1);
         } while (iVar4 < 3);
         if (bVar3) {
             strcat(&g_debugMessage, "\n");
         }
         if (g_balanceEffectSourceList == (undefined4*)0x0) {
-            puVar14 = &DAT_80022be8;
+            pcVar14 = "ALN";
             puVar12 = DAT_80127ef4;
         }
         else {
-            puVar14 = &DAT_80022be4;
+            pcVar14 = "ARM";
             puVar12 = g_balanceEffectSourceList;
         }
-        AppendHexVisualDebugLine(puVar12, puVar14);
-        if (DAT_80146e08 != 0) {
-            AppendHexVisualDebugLine(DAT_80146e08, &DAT_80022bec);
+        AppendHexVisualDebugLine(puVar12, pcVar14);
+        if (PTR_80146e08 != (int*)0x0) {
+            AppendHexVisualDebugLine(PTR_80146e08, "WEP");
         }
-        if (DAT_80146e10 != 0) {
-            AppendHexVisualDebugLine(DAT_80146e10, &DAT_80022bf0);
+        if (PTR_80146e10 != (int*)0x0) {
+            AppendHexVisualDebugLine(PTR_80146e10, "ITM");
         }
-        AppendHexVisualDebugLine(&g_defaultTargetEntity, &DAT_80022bf4);
+        AppendHexVisualDebugLine(&g_defaultTargetEntity, "DEF");
     }
     return;
 }
 
-// Function @0x80030FC8
+//80030FC8
 void UpdateDebugStatusText(void)
 
 {
@@ -3183,7 +3179,7 @@ void UpdateDebugStatusText(void)
     return;
 }
 
-// Function @0x80031340
+//80031340
 void HandleWarpTransition(WarpData* warpData, undefined4 warpType, undefined4 extraData)
 
 {
@@ -3234,7 +3230,7 @@ void HandleWarpTransition(WarpData* warpData, undefined4 warpType, undefined4 ex
     return;
 }
 
-// Function @0x8003153C
+//8003153C
 void ToggleDebugCamera(void)
 
 {
@@ -3248,7 +3244,7 @@ void ToggleDebugCamera(void)
     return;
 }
 
-// Function @0x800315B0
+//800315B0
 void InitializeMapWarpPosition(void)
 
 {
@@ -3269,7 +3265,7 @@ void InitializeMapWarpPosition(void)
     return;
 }
 
-// Function @0x8003166C
+//8003166C
 char* GetWarpData(void)
 
 {
@@ -3292,7 +3288,7 @@ char* GetWarpData(void)
     return pcVar2;
 }
 
-// Function @0x80031700
+//80031700
 void InitGameStateFromWarpTrigger(void)
 
 {
@@ -3375,14 +3371,15 @@ void InitGameStateFromWarpTrigger(void)
     return;
 }
 
-// Function @0x80031974
+//80031974
 void ResetEntityState(void)
 
 {
     int tileIndex;
 
-    InitEntity(&g_player, (Entity*)0x0, *(AnimationData**)g_initialAnimationTable, 0, 0, 0xffffffff,
-        g_targetCamX, g_targetCamY, g_animation_id, g_warpTriggerType, g_warpExtraParam, 0xb, 0x60);
+    InitEntity(&g_player, (Entity*)0x0, (AnimationData*)g_initialAnimationTable->entries, 0, 0,
+        0xffffffff, g_targetCamX, g_targetCamY, g_animation_id, g_warpTriggerType, g_warpExtraParam,
+        0xb, 0x60);
     g_playerInitState = 2;
     g_warpTarget = FUN_8004dc50();
     g_warpAnimEntity = GetFadeControl();
@@ -3397,7 +3394,7 @@ void ResetEntityState(void)
     return;
 }
 
-// Function @0x80031A68
+//80031A68
 uint FindWarpFacingDirection(void)
 
 {
@@ -3429,7 +3426,7 @@ uint FindWarpFacingDirection(void)
     return direction;
 }
 
-// Function @0x80031B50
+//80031B50
 void ProcessPlayerWarpState(void)
 
 {
@@ -3570,21 +3567,21 @@ END:
     return;
 }
 
-// Function @0x80031D20
+//80031D20
 void FUN_80031d20(void)
 
 {
-    Entity* pEVar1;
     int iVar2;
     uint unaff_s1;
     int unaff_s3;
+    Entity* pEVar1;
 
     if ((((unaff_s3 != 0) && (unaff_s1 == 0x10)) && (g_lastFacingDirection == 0x10)) &&
         ((DAT_80127e6c != 0 && (g_playerActorPtr == (Entity*)0x0)))) {
         g_warpState = 0xe;
     }
-    FUN_8002f49c();
-    FUN_8002f768();
+    UpdatePlayerWarpEffect();
+    UpdateWarpStepProgression();
     UpdatePlayerWarpDirection(0);
     switch (g_warpState) {
     case 0:
@@ -3646,9 +3643,9 @@ void FUN_80031d20(void)
                     DAT_80126ff4 = 1;
                 }
                 else if (((g_playerTileAttribute & 0x10) == 0) ||
-                    (((iVar2 = DAT_80127dc8 * 0xc, unaff_s1 != *(uint*)(&DAT_80022cec + iVar2) &&
-                        (unaff_s1 != *(uint*)(&DAT_80022cf0 + iVar2))) &&
-                        (unaff_s1 != *(uint*)(&DAT_80022cf4 + iVar2))))) {
+                    (((unaff_s1 != (&INT_80022cec)[g_requiredWarpZoneId * 3] &&
+                        (unaff_s1 != (&INT_80022cf0)[g_requiredWarpZoneId * 3])) &&
+                        (unaff_s1 != (&INT_80022cf4)[g_requiredWarpZoneId * 3])))) {
                     g_warpState = 0x2a;
                     DAT_80126ff4 = 0;
                 }
@@ -3736,7 +3733,7 @@ void FUN_80031d20(void)
                 }
             }
             else if ((g_warpEntryFlags & 0x2000) == 0) {
-                g_playerActorPtr->targetDirection = (&DAT_80023644)[DAT_80127dc8];
+                g_playerActorPtr->targetDirection = (uint)(&g_warpZones)[g_requiredWarpZoneId];
                 pEVar1->xpos = g_currentCamX;
                 pEVar1->ypos = g_currentCamY;
                 pEVar1->zpos = g_currentCamZ + 0x200000;
@@ -3895,10 +3892,9 @@ void FUN_80031d20(void)
         if ((g_playerTileAttribute & 0x10) != 0) {
             g_lastFacingDirection = unaff_s1;
             if ((DAT_80127de0 != 0) &&
-                (g_lastFacingDirection = unaff_s1, *(uint*)(&DAT_80022cac + unaff_s3 * 4) != 0xffffffff))
-            {
+                (g_lastFacingDirection = unaff_s1, (&INT_80022cac)[unaff_s3] != 0xffffffff)) {
                 g_warpState = 3;
-                g_lastFacingDirection = *(uint*)(&DAT_80022cac + unaff_s3 * 4);
+                g_lastFacingDirection = (&INT_80022cac)[unaff_s3];
             }
             break;
         }
@@ -3915,9 +3911,9 @@ void FUN_80031d20(void)
                 if ((DAT_80127e6c == 0) &&
                     (DAT_80126ff4 = DAT_80126ff4 + 1, (g_playerTileAttribute & 0x10) != 0)) {
                     if (10 < DAT_80126ff4) {
-                        if (*(uint*)(&DAT_80022cac + unaff_s3 * 4) != 0xffffffff) {
+                        if ((&INT_80022cac)[unaff_s3] != 0xffffffff) {
                             g_warpState = 3;
-                            g_lastFacingDirection = *(uint*)(&DAT_80022cac + unaff_s3 * 4);
+                            g_lastFacingDirection = (&INT_80022cac)[unaff_s3];
                         }
                         break;
                     }
@@ -3962,7 +3958,7 @@ switchD_80032650_caseD_28:
     goto END;
 }
 
-// Function @0x8003260C
+//8003260C
 void HandleWarpSystemState(void)
 
 {
@@ -4083,7 +4079,7 @@ void HandleWarpSystemState(void)
     return;
 }
 
-// Function @0x800327F0
+//800327F0
 void HandleWarpZoneEntryOrCutscene(void)
 
 {
@@ -4117,7 +4113,7 @@ void HandleWarpZoneEntryOrCutscene(void)
     return;
 }
 
-// Function @0x80032870
+//80032870
 void FUN_80032870(void)
 
 {
@@ -4132,7 +4128,7 @@ void FUN_80032870(void)
     return;
 }
 
-// Function @0x80032884
+//80032884
 void HandleWarpExitFallback(void)
 
 {
@@ -4147,7 +4143,7 @@ void HandleWarpExitFallback(void)
     return;
 }
 
-// Function @0x80032898
+//80032898
 void HandleWarpExitDecision(void)
 
 {
@@ -4165,7 +4161,7 @@ void HandleWarpExitDecision(void)
     return;
 }
 
-// Function @0x800328CC
+//800328CC
 void FUN_800328cc(void)
 
 {
@@ -4186,7 +4182,7 @@ void FUN_800328cc(void)
     return;
 }
 
-// Function @0x8003295C
+//8003295C
 void ResetWarpLockTimer(void)
 
 {
@@ -4194,7 +4190,7 @@ void ResetWarpLockTimer(void)
     return;
 }
 
-// Function @0x80032968
+//80032968
 uint ResolveScriptAction(uint actionId)
 
 {
@@ -4217,7 +4213,7 @@ uint ResolveScriptAction(uint actionId)
     return actionId;
 }
 
-// Function @0x80032A00
+//80032A00
 bool FUN_80032a00(int param_1)
 
 {
@@ -4231,7 +4227,7 @@ bool FUN_80032a00(int param_1)
     return bVar1;
 }
 
-// Function @0x80032A40
+//80032A40
 /* WARNING: Removing unreachable block (ram,0x80032ab8) */
 
 void SetupAnimationBehavior(Entity* pEntity)
@@ -4270,14 +4266,14 @@ void SetupAnimationBehavior(Entity* pEntity)
         if (animId != '\0') goto SET_ANIM;
         animDataPtr = pEntity->spriteRecordPtr;
     }
-    animId = animDataPtr[1].field_0x1;
+    animId = *(char*)((int)&animDataPtr[1].entries + 1);
 SET_ANIM:
     result = (void*)ResolveScriptAction(animId);
     pEntity->scriptCallback = result;
     return;
 }
 
-// Function @0x80032B90
+//80032B90
 undefined4 TrySpawnScriptedWarpEntity(Entity* entity)
 
 {
@@ -4295,7 +4291,7 @@ undefined4 TrySpawnScriptedWarpEntity(Entity* entity)
         spawnedEntity->spawnCustomByte = 1;
         spawnedEntity->flags = spawnedEntity->flags & 0xffffff7f;
         delayFrames = 600;
-        if ((&DAT_800c5f80)[(int)pvVar1 * 8] == '\0') {
+        if ((char)(&SHORT_800c5f80)[(int)pvVar1 * 4] == '\0') {
             delayFrames = -1;
         }
         spawnedEntity->initialXPos = delayFrames;
@@ -4309,33 +4305,31 @@ undefined4 TrySpawnScriptedWarpEntity(Entity* entity)
     return 0;
 }
 
-// Function @0x80032C7C
-undefined4 FUN_80032c7c(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4)
+//80032C7C
+undefined4 FUN_80032c7c(uint actionId, int x, int y, int z)
 
 {
-    int iVar1;
-    undefined4 uVar2;
+    int subType;
+    undefined4 result;
     int iVar3;
     Entity* warpEntity;
 
-    iVar1 = ResolveScriptAction();
-    uVar2 = 0;
-    if (iVar1 != 0) {
-        iVar3 = FUN_80032a00(iVar1);
-        uVar2 = 0;
+    subType = ResolveScriptAction();
+    result = 0;
+    if (subType != 0) {
+        iVar3 = FUN_80032a00(subType);
+        result = 0;
         if (iVar3 == 0) {
-            warpEntity = (Entity*)
-                SpawnWarpEntity((Entity*)0x0, (Entity*)0x0, iVar1 + 0x1e, param_2, param_3, param_4,
-                    0);
+            warpEntity = (Entity*)SpawnWarpEntity((Entity*)0x0, (Entity*)0x0, subType + 0x1e, x, y, z, 0);
             if (warpEntity == (Entity*)0x0) {
-                uVar2 = 0;
+                result = 0;
             }
             else {
                 warpEntity->zForce = 0xa0000;
                 warpEntity->spawnCustomByte = 1;
                 warpEntity->flags = warpEntity->flags & 0xffffff7f;
                 iVar3 = 600;
-                if ((&DAT_800c5f80)[iVar1 * 8] == '\0') {
+                if ((char)(&SHORT_800c5f80)[subType * 4] == '\0') {
                     iVar3 = -1;
                 }
                 warpEntity->initialXPos = iVar3;
@@ -4343,14 +4337,14 @@ undefined4 FUN_80032c7c(undefined4 param_1, undefined4 param_2, undefined4 param
                 warpEntity->spawnedGameFlag[0] = 0;
                 warpEntity->spawnedGameFlag[1] = 0xa0000;
                 PlaySoundEffect(0x54);
-                uVar2 = 1;
+                result = 1;
             }
         }
     }
-    return uVar2;
+    return result;
 }
 
-// Function @0x80032E2C
+//80032E2C
 void AddLifeToEntity(Entity* entity)
 
 {
@@ -4364,7 +4358,7 @@ void AddLifeToEntity(Entity* entity)
     return;
 }
 
-// Function @0x80032E50
+//80032E50
 void IncreaseHpMax(Entity* entity)
 
 {
@@ -4394,7 +4388,7 @@ void IncreaseHpMax(Entity* entity)
     return;
 }
 
-// Function @0x80032EEC
+//80032EEC
 void AddLowHpAndSpawnEffect(Entity* entity)
 
 {
@@ -4424,7 +4418,7 @@ void AddLowHpAndSpawnEffect(Entity* entity)
     return;
 }
 
-// Function @0x80032F84
+//80032F84
 void AddMediumHpAndSpawnEffect(Entity* entity)
 
 {
@@ -4463,7 +4457,7 @@ void AddMediumHpAndSpawnEffect(Entity* entity)
     return;
 }
 
-// Function @0x800330FC
+//800330FC
 void AddHugeHpAndSpawnEffect(Entity* entity)
 
 {
@@ -4502,7 +4496,7 @@ void AddHugeHpAndSpawnEffect(Entity* entity)
     return;
 }
 
-// Function @0x80033274
+//80033274
 void TriggerWarpAnimation(Entity* entity)
 
 {
@@ -4540,7 +4534,7 @@ void TriggerWarpAnimation(Entity* entity)
     return;
 }
 
-// Function @0x800333AC
+//800333AC
 void TriggerExplosionEffect(Entity* entity)
 
 {
@@ -4598,7 +4592,7 @@ void TriggerExplosionEffect(Entity* entity)
     return;
 }
 
-// Function @0x800335AC
+//800335AC
 void SpawnRandomExplosionParticles(void)
 
 {
@@ -4627,7 +4621,7 @@ void SpawnRandomExplosionParticles(void)
     return;
 }
 
-// Function @0x800336F0
+//800336F0
 void SpawnSpinningParticleRing(void)
 
 {
@@ -4667,7 +4661,7 @@ void SpawnSpinningParticleRing(void)
     return;
 }
 
-// Function @0x8003382C
+//8003382C
 void SpawnCamExplosionEffects(void)
 
 {
@@ -4724,7 +4718,7 @@ void SpawnCamExplosionEffects(void)
     return;
 }
 
-// Function @0x80033A2C
+//80033A2C
 void FUN_80033a2c(Entity* entity)
 
 {
@@ -4796,7 +4790,7 @@ void FUN_80033a2c(Entity* entity)
     return;
 }
 
-// Function @0x80033DF0
+//80033DF0
 void FUN_80033df0(void)
 
 {
@@ -4804,7 +4798,7 @@ void FUN_80033df0(void)
     return;
 }
 
-// Function @0x80033E00
+//80033E00
 void FUN_80033e00(void)
 
 {
@@ -4812,7 +4806,7 @@ void FUN_80033e00(void)
     return;
 }
 
-// Function @0x80033E10
+//80033E10
 void FUN_80033e10(void)
 
 {
@@ -4820,7 +4814,7 @@ void FUN_80033e10(void)
     return;
 }
 
-// Function @0x80033E20
+//80033E20
 void FUN_80033e20(void)
 
 {
@@ -4828,7 +4822,7 @@ void FUN_80033e20(void)
     return;
 }
 
-// Function @0x80033E30
+//80033E30
 void FUN_80033e30(void)
 
 {
@@ -4836,7 +4830,7 @@ void FUN_80033e30(void)
     return;
 }
 
-// Function @0x80033E40
+//80033E40
 void FUN_80033e40(void)
 
 {
@@ -4844,7 +4838,7 @@ void FUN_80033e40(void)
     return;
 }
 
-// Function @0x80033E50
+//80033E50
 void FUN_80033e50(void)
 
 {
@@ -4852,7 +4846,7 @@ void FUN_80033e50(void)
     return;
 }
 
-// Function @0x80033E60
+//80033E60
 void FUN_80033e60(void)
 
 {
@@ -4860,7 +4854,7 @@ void FUN_80033e60(void)
     return;
 }
 
-// Function @0x80033E70
+//80033E70
 void FUN_80033e70(Entity* param_1)
 
 {
@@ -4868,7 +4862,7 @@ void FUN_80033e70(Entity* param_1)
     return;
 }
 
-// Function @0x80033E80
+//80033E80
 void FUN_80033e80(Entity* param_1)
 
 {
@@ -4876,7 +4870,7 @@ void FUN_80033e80(Entity* param_1)
     return;
 }
 
-// Function @0x80033E90
+//80033E90
 void FUN_80033e90(Entity* param_1)
 
 {
@@ -4884,7 +4878,7 @@ void FUN_80033e90(Entity* param_1)
     return;
 }
 
-// Function @0x80033EA0
+//80033EA0
 void FUN_80033ea0(Entity* param_1)
 
 {
@@ -4892,7 +4886,7 @@ void FUN_80033ea0(Entity* param_1)
     return;
 }
 
-// Function @0x80033EB0
+//80033EB0
 void FUN_80033eb0(undefined4 param_1, undefined4 param_2)
 
 {
@@ -4900,7 +4894,7 @@ void FUN_80033eb0(undefined4 param_1, undefined4 param_2)
     return;
 }
 
-// Function @0x80033EC8
+//80033EC8
 bool IsMapRequirementMet(undefined4 warpIndex)
 
 {
@@ -4912,168 +4906,173 @@ bool IsMapRequirementMet(undefined4 warpIndex)
     return currentProgress < requiredProgress;
 }
 
-// Function @0x80033F40
+//80033F40
 undefined4 FUN_80033f40(void)
 
 {
     return 0;
 }
 
-// Function @0x80033F48
+//80033F48
 bool FUN_80033f48(void)
 
 {
-    int iVar1;
+    bool bVar1;
+    undefined3 extraout_var;
     Entity* unaff_s0;
     int unaff_s1;
 
-    iVar1 = IsMapRequirementMet();
-    if (iVar1 == 0) {
+    bVar1 = IsMapRequirementMet(unaff_s1);
+    if (CONCAT31(extraout_var, bVar1) == 0) {
         IncreaseHpMax(unaff_s0);
     }
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x80033F6C
+//80033F6C
 bool FUN_80033f6c(void)
 
 {
-    int iVar1;
+    bool bVar1;
+    undefined3 extraout_var;
     Entity* unaff_s0;
     int unaff_s1;
 
-    iVar1 = IsMapRequirementMet();
-    if (iVar1 == 0) {
+    bVar1 = IsMapRequirementMet(unaff_s1);
+    if (CONCAT31(extraout_var, bVar1) == 0) {
         TriggerWarpAnimation(unaff_s0);
     }
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x80033F90
+//80033F90
 bool FUN_80033f90(void)
 
 {
-    int iVar1;
+    bool bVar1;
+    undefined3 extraout_var;
     int unaff_s1;
 
-    iVar1 = IsMapRequirementMet();
-    if (iVar1 == 0) {
+    bVar1 = IsMapRequirementMet(unaff_s1);
+    if (CONCAT31(extraout_var, bVar1) == 0) {
         SpawnRandomExplosionParticles();
     }
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x80033FA8
+//80033FA8
 bool FUN_80033fa8(void)
 
 {
-    int iVar1;
+    bool bVar1;
+    undefined3 extraout_var;
     Entity* unaff_s0;
     int unaff_s1;
 
-    iVar1 = IsMapRequirementMet();
-    if (iVar1 == 0) {
+    bVar1 = IsMapRequirementMet(unaff_s1);
+    if (CONCAT31(extraout_var, bVar1) == 0) {
         FUN_80033a2c(unaff_s0);
     }
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x80033FCC
+//80033FCC
 bool FUN_80033fcc(void)
 
 {
-    int iVar1;
+    bool bVar1;
+    undefined3 extraout_var;
     Entity* unaff_s0;
     int unaff_s1;
 
-    iVar1 = IsMapRequirementMet();
-    if (iVar1 == 0) {
+    bVar1 = IsMapRequirementMet(unaff_s1);
+    if (CONCAT31(extraout_var, bVar1) == 0) {
         AddHugeHpAndSpawnEffect(unaff_s0);
     }
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x80033FF0
+//80033FF0
 bool FUN_80033ff0(void)
 
 {
     int unaff_s1;
 
     AdjustFadeLevelRelative(1);
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x80034000
+//80034000
 bool FUN_80034000(void)
 
 {
     int unaff_s1;
 
     AdjustFadeLevelRelative(5);
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x80034010
+//80034010
 bool FUN_80034010(void)
 
 {
     int unaff_s1;
 
     AdjustFadeLevelRelative(10);
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x80034020
+//80034020
 bool FUN_80034020(void)
 
 {
     int unaff_s1;
 
     AdjustFadeLevelRelative(0x1e);
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x80034030
+//80034030
 bool FUN_80034030(void)
 
 {
     int unaff_s1;
 
     IncreaseFadeLevel(1);
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x80034040
+//80034040
 bool FUN_80034040(void)
 
 {
     int unaff_s1;
 
     SpawnCamExplosionEffects();
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x80034054
+//80034054
 bool FUN_80034054(void)
 
 {
     int unaff_s1;
 
     SpawnRandomExplosionParticles();
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x80034068
+//80034068
 bool FUN_80034068(void)
 
 {
     int unaff_s1;
 
     SpawnSpinningParticleRing();
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x8003407C
+//8003407C
 bool FUN_8003407c(void)
 
 {
@@ -5081,10 +5080,10 @@ bool FUN_8003407c(void)
     int unaff_s1;
 
     TriggerExplosionEffect(unaff_s0);
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x80034090
+//80034090
 bool FUN_80034090(void)
 
 {
@@ -5092,10 +5091,10 @@ bool FUN_80034090(void)
     int unaff_s1;
 
     AddLifeToEntity(unaff_s0);
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x800340A4
+//800340A4
 bool FUN_800340a4(void)
 
 {
@@ -5103,10 +5102,10 @@ bool FUN_800340a4(void)
     int unaff_s1;
 
     AddLowHpAndSpawnEffect(unaff_s0);
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x800340B8
+//800340B8
 bool FUN_800340b8(void)
 
 {
@@ -5114,20 +5113,20 @@ bool FUN_800340b8(void)
     int unaff_s1;
 
     AddMediumHpAndSpawnEffect(unaff_s0);
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x800340CC
+//800340CC
 bool FUN_800340cc(void)
 
 {
     int unaff_s1;
 
     GetMapUnlockRequirement();
-    return (&DAT_800c5f80)[unaff_s1 * 8] == '\0';
+    return (char)(&SHORT_800c5f80)[unaff_s1 * 4] == '\0';
 }
 
-// Function @0x80034108
+//80034108
 int HandleMapTriggerCommand(int commandId)
 
 {
@@ -5139,7 +5138,8 @@ int HandleMapTriggerCommand(int commandId)
         result = 0;
         break;
     default:
-        result = IsMapRequirementMet(commandId);
+        result._0_1_ = IsMapRequirementMet(commandId);
+        result = (int)result._0_1_;
         break;
     case 0x45:
         fadeLevel = 1;
@@ -5191,7 +5191,7 @@ int HandleMapTriggerCommand(int commandId)
     return result;
 }
 
-// Function @0x80034224
+//80034224
 undefined4 TrySpawnWarpEntity(void)
 
 {
@@ -5224,7 +5224,7 @@ undefined4 TrySpawnWarpEntity(void)
     return result;
 }
 
-// Function @0x80034320
+//80034320
 undefined4 FUN_80034320(void)
 
 {
@@ -5234,7 +5234,7 @@ undefined4 FUN_80034320(void)
     int iVar4;
 
     if (g_warpLockTimer == 0) {
-        if ((g_currentMapTileAttribute == 3) && (g_warpState < 2)) {
+        if ((g_currentMapTileAttribute == 3) && ((uint)g_warpState < 2)) {
             g_warpState = 0x20;
             return 0;
         }
@@ -5287,7 +5287,7 @@ LAB_80034520:
     return 1;
 }
 
-// Function @0x8003453C
+//8003453C
 undefined4 FUN_8003453c(void)
 
 {
@@ -5331,7 +5331,7 @@ undefined4 FUN_8003453c(void)
     return 1;
 }
 
-// Function @0x80034680
+//80034680
 undefined4 FUN_80034680(undefined4 param_1)
 
 {
@@ -5346,7 +5346,7 @@ undefined4 FUN_80034680(undefined4 param_1)
     return 1;
 }
 
-// Function @0x800346F0
+//800346F0
 undefined4 TryWarpToMap(undefined4 mapId)
 
 {
@@ -5362,7 +5362,7 @@ undefined4 TryWarpToMap(undefined4 mapId)
     return 1;
 }
 
-// Function @0x80034760
+//80034760
 undefined4 HandleWarpTrigger(undefined4 mapId)
 
 {
@@ -5382,7 +5382,7 @@ undefined4 HandleWarpTrigger(undefined4 mapId)
     return 1;
 }
 
-// Function @0x800347D4
+//800347D4
 undefined4 PlayCutscene(undefined4 param_1)
 
 {
@@ -5403,7 +5403,7 @@ undefined4 PlayCutscene(undefined4 param_1)
     return 1;
 }
 
-// Function @0x80034870
+//80034870
 undefined4 TryWarpWithExplosionEffect(undefined4 targetMapId)
 
 {
@@ -5418,14 +5418,14 @@ undefined4 TryWarpWithExplosionEffect(undefined4 targetMapId)
     return 1;
 }
 
-// Function @0x800348E0
+//800348E0
 bool TryStartMapWarp(int mapId)
 
 {
     bool result;
     int currentTile;
 
-    if (((g_playerActorPtr == (Entity*)0x0) && (g_warpState < 2)) && (g_warpLockTimer == 0)) {
+    if (((g_playerActorPtr == (Entity*)0x0) && ((uint)g_warpState < 2)) && (g_warpLockTimer == 0)) {
         currentTile = GetCurrentTileIndex();
         if (currentTile != 7) {
             currentTile = GetMaxUnlockedMap();
@@ -5444,7 +5444,7 @@ bool TryStartMapWarp(int mapId)
     return result;
 }
 
-// Function @0x8003499C
+//8003499C
 int HandleWarpEvent(void)
 
 {
@@ -5511,7 +5511,7 @@ int HandleWarpEvent(void)
     return result;
 }
 
-// Function @0x80034ACC
+//80034ACC
 void FUN_80034acc(void)
 
 {
@@ -5527,7 +5527,7 @@ void FUN_80034acc(void)
     return;
 }
 
-// Function @0x80034B54
+//80034B54
 void FUN_80034b54(void)
 
 {
@@ -5543,7 +5543,7 @@ void FUN_80034b54(void)
     return;
 }
 
-// Function @0x80034BDC
+//80034BDC
 void FUN_80034bdc(void)
 
 {
@@ -5568,7 +5568,7 @@ void FUN_80034bdc(void)
     return;
 }
 
-// Function @0x80034C54
+//80034C54
 void FUN_80034c54(void)
 
 {
@@ -5593,7 +5593,7 @@ void FUN_80034c54(void)
     return;
 }
 
-// Function @0x80034D2C
+//80034D2C
 void FUN_80034d2c(void)
 
 {
@@ -5627,51 +5627,49 @@ void FUN_80034d2c(void)
     return;
 }
 
-// Function @0x80034E08
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
+//80034E08
 void FUN_80034e08(void)
 
 {
     Entity* pEVar1;
-    undefined4 uVar2;
-    undefined4 uVar3;
+    int* piVar2;
+    int* piVar3;
     int iVar4;
-    undefined4 uVar5;
-    undefined4* puVar6;
+    int* piVar5;
+    int** ppiVar6;
     undefined4* puVar7;
 
     puVar7 = &g_bossCutsceneFlag;
-    puVar6 = &DAT_80127138;
+    ppiVar6 = (int**)&DAT_80127138;
     do {
-        uVar2 = puVar6[1];
-        uVar3 = puVar6[2];
-        uVar5 = puVar6[3];
-        *puVar7 = *puVar6;
-        puVar7[1] = uVar2;
-        puVar7[2] = uVar3;
-        puVar7[3] = uVar5;
-        puVar6 = puVar6 + 4;
+        piVar2 = ppiVar6[1];
+        piVar3 = ppiVar6[2];
+        piVar5 = ppiVar6[3];
+        *puVar7 = *ppiVar6;
+        puVar7[1] = piVar2;
+        puVar7[2] = piVar3;
+        puVar7[3] = piVar5;
+        ppiVar6 = ppiVar6 + 4;
         puVar7 = puVar7 + 4;
-    } while (puVar6 != (undefined4*)&UNK_80127158);
-    *puVar7 = _UNK_80127158;
+    } while (ppiVar6 != &PTR_80127158);
+    *puVar7 = PTR_80127158;
     pEVar1 = g_entity;
     iVar4 = 1;
     if (0 < (int)g_entity) {
-        puVar6 = &DAT_80127fe4;
+        puVar7 = &DAT_80127fe4;
         do {
-            if ((puVar6[0x12] == 0x15) && (puVar6[-4] == 2)) {
-                puVar6[-4] = 3;
-                *puVar6 = 0;
+            if ((puVar7[0x12] == 0x15) && (puVar7[-4] == 2)) {
+                puVar7[-4] = 3;
+                *puVar7 = 0;
             }
             iVar4 = iVar4 + 1;
-            puVar6 = puVar6 + 0xa5;
+            puVar7 = puVar7 + 0xa5;
         } while (iVar4 <= (int)pEVar1);
     }
     return;
 }
 
-// Function @0x80034EC4
+//80034EC4
 void FUN_80034ec4(void)
 
 {
@@ -5713,7 +5711,7 @@ void FUN_80034ec4(void)
     return;
 }
 
-// Function @0x800350C0
+//800350C0
 void AnimateWarpEffect(void)
 
 {
@@ -5747,7 +5745,7 @@ void AnimateWarpEffect(void)
     return;
 }
 
-// Function @0x800351B8
+//800351B8
 undefined4 IsFadeActive(void)
 
 {
@@ -5760,7 +5758,7 @@ undefined4 IsFadeActive(void)
     return uVar1;
 }
 
-// Function @0x80035204
+//80035204
 undefined4 FUN_80035204(void)
 
 {
@@ -5776,7 +5774,7 @@ undefined4 FUN_80035204(void)
     return 1;
 }
 
-// Function @0x80035260
+//80035260
 undefined4 FUN_80035260(void)
 
 {
@@ -5791,7 +5789,7 @@ undefined4 FUN_80035260(void)
     return uVar1;
 }
 
-// Function @0x800352C4
+//800352C4
 undefined4 FUN_800352c4(void)
 
 {
@@ -5807,7 +5805,7 @@ undefined4 FUN_800352c4(void)
     return 1;
 }
 
-// Function @0x80035320
+//80035320
 undefined4 FUN_80035320(void)
 
 {
@@ -5867,7 +5865,7 @@ undefined4 FUN_80035320(void)
     return 0;
 }
 
-// Function @0x800354D0
+//800354D0
 undefined4 FUN_800354d0(void)
 
 {
@@ -5939,7 +5937,7 @@ undefined4 FUN_800354d0(void)
     return 0;
 }
 
-// Function @0x80035790
+//80035790
 undefined4 ProcessSpecialWarpSequence(int triggerId)
 
 {
@@ -6051,7 +6049,7 @@ undefined4 ProcessSpecialWarpSequence(int triggerId)
     return 0;
 }
 
-// Function @0x80035A84
+//80035A84
 undefined4 FUN_80035a84(void)
 
 {
@@ -6110,18 +6108,20 @@ undefined4 FUN_80035a84(void)
     return 0;
 }
 
-// Function @0x80035C64
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
+//80035C64
 undefined4 FUN_80035c64(void)
 
 {
     int iVar1;
     undefined4 uVar2;
-    undefined4 uVar3;
+    int* piVar3;
     undefined4 uVar4;
-    undefined4* puVar5;
-    undefined4* puVar6;
+    int* piVar5;
+    undefined4 uVar6;
+    int* piVar7;
+    undefined4* puVar8;
+    int** ppiVar9;
+    undefined4* puVar10;
 
     if (g_specialWarpPhase != 1) {
         if (1 < g_specialWarpPhase) {
@@ -6148,20 +6148,20 @@ undefined4 FUN_80035c64(void)
         if (DAT_80127124 == 0) {
             return 1;
         }
-        puVar6 = &DAT_80127138;
-        puVar5 = &g_bossCutsceneFlag;
+        puVar10 = &DAT_80127138;
+        puVar8 = &g_bossCutsceneFlag;
         do {
-            uVar2 = puVar5[1];
-            uVar3 = puVar5[2];
-            uVar4 = puVar5[3];
-            *puVar6 = *puVar5;
-            puVar6[1] = uVar2;
-            puVar6[2] = uVar3;
-            puVar6[3] = uVar4;
-            puVar5 = puVar5 + 4;
-            puVar6 = puVar6 + 4;
-        } while (puVar5 != &DAT_800e4358);
-        *puVar6 = DAT_800e4358;
+            uVar2 = puVar8[1];
+            uVar4 = puVar8[2];
+            uVar6 = puVar8[3];
+            *puVar10 = *puVar8;
+            puVar10[1] = uVar2;
+            puVar10[2] = uVar4;
+            puVar10[3] = uVar6;
+            puVar8 = puVar8 + 4;
+            puVar10 = puVar10 + 4;
+        } while (puVar8 != &DAT_800e4358);
+        *puVar10 = DAT_800e4358;
         g_specialWarpPhase = g_specialWarpPhase + 1;
         DAT_80127128 = *(int*)(DAT_80127124 + 4);
     }
@@ -6175,43 +6175,43 @@ undefined4 FUN_80035c64(void)
             g_flagCutsceneState2 = g_triggerEvent2;
         }
         else {
-            puVar6 = &g_bossCutsceneFlag;
-            puVar5 = &DAT_80127138;
+            puVar8 = &g_bossCutsceneFlag;
+            ppiVar9 = (int**)&DAT_80127138;
             do {
-                uVar2 = puVar5[1];
-                uVar3 = puVar5[2];
-                uVar4 = puVar5[3];
-                *puVar6 = *puVar5;
-                puVar6[1] = uVar2;
-                puVar6[2] = uVar3;
-                puVar6[3] = uVar4;
-                puVar5 = puVar5 + 4;
-                puVar6 = puVar6 + 4;
-            } while (puVar5 != (undefined4*)&UNK_80127158);
-            *puVar6 = _UNK_80127158;
+                piVar3 = ppiVar9[1];
+                piVar5 = ppiVar9[2];
+                piVar7 = ppiVar9[3];
+                *puVar8 = *ppiVar9;
+                puVar8[1] = piVar3;
+                puVar8[2] = piVar5;
+                puVar8[3] = piVar7;
+                ppiVar9 = ppiVar9 + 4;
+                puVar8 = puVar8 + 4;
+            } while (ppiVar9 != &PTR_80127158);
+            *puVar8 = PTR_80127158;
             g_warpState = 0x34;
             g_specialWarpPhase = g_specialWarpPhase + 1;
         }
         return 0;
     }
-    puVar6 = &g_bossCutsceneFlag;
-    puVar5 = &DAT_80127138;
+    puVar8 = &g_bossCutsceneFlag;
+    ppiVar9 = (int**)&DAT_80127138;
     do {
-        uVar2 = puVar5[1];
-        uVar3 = puVar5[2];
-        uVar4 = puVar5[3];
-        *puVar6 = *puVar5;
-        puVar6[1] = uVar2;
-        puVar6[2] = uVar3;
-        puVar6[3] = uVar4;
-        puVar5 = puVar5 + 4;
-        puVar6 = puVar6 + 4;
-    } while (puVar5 != (undefined4*)&UNK_80127158);
-    *puVar6 = _UNK_80127158;
+        piVar3 = ppiVar9[1];
+        piVar5 = ppiVar9[2];
+        piVar7 = ppiVar9[3];
+        *puVar8 = *ppiVar9;
+        puVar8[1] = piVar3;
+        puVar8[2] = piVar5;
+        puVar8[3] = piVar7;
+        ppiVar9 = ppiVar9 + 4;
+        puVar8 = puVar8 + 4;
+    } while (ppiVar9 != &PTR_80127158);
+    *puVar8 = PTR_80127158;
     return 1;
 }
 
-// Function @0x80035EB0
+//80035EB0
 undefined4 FUN_80035eb0(void)
 
 {
@@ -6317,7 +6317,7 @@ undefined4 FUN_80035eb0(void)
     return 0;
 }
 
-// Function @0x80036218
+//80036218
 undefined4 FUN_80036218(void)
 
 {
@@ -6362,7 +6362,7 @@ undefined4 FUN_80036218(void)
     return 0;
 }
 
-// Function @0x8003634C
+//8003634C
 int MaybeStartWarpAnimation(void)
 
 {
@@ -6417,7 +6417,7 @@ int MaybeStartWarpAnimation(void)
     return iVar1;
 }
 
-// Function @0x800364C8
+//800364C8
 void FUN_800364c8(void)
 
 {
@@ -6476,7 +6476,7 @@ void FUN_800364c8(void)
     return;
 }
 
-// Function @0x80036614
+//80036614
 void UpdateEntityPhysics(Entity* entity)
 
 {
@@ -6519,7 +6519,7 @@ void UpdateEntityPhysics(Entity* entity)
     return;
 }
 
-// Function @0x800366FC
+//800366FC
 void ApplyEntityForces(Entity* entity)
 
 {
@@ -6560,7 +6560,7 @@ void ApplyEntityForces(Entity* entity)
     return;
 }
 
-// Function @0x800367E4
+//800367E4
 int SmoothStep(int param_1, int param_2, int param_3)
 
 {
@@ -6581,7 +6581,7 @@ int SmoothStep(int param_1, int param_2, int param_3)
     return param_1;
 }
 
-// Function @0x80036828
+//80036828
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 /* WARNING: Restarted to delay deadcode elimination for space: ram */
 
@@ -6654,7 +6654,7 @@ void UpdateAllEntities(void)
             }
             else {
                 if (entity->platformEntity == (Entity*)0x0) {
-                    if (entity->appliedZForceOrAnimationSomething == 0) {
+                    if (entity->isZForceApplied == 0) {
                         if ((entity->flags & 0x100U) != 0) {
                             spriteZForceTemp = entity->zForce + (uint) * (ushort*)(g_spriteDataBase + 4) * -0x100;
                             spriteZForceAbs = spriteZForceTemp;
@@ -6670,12 +6670,11 @@ void UpdateAllEntities(void)
                             entity->zForce = zForceMax;
                         }
                     }
-                    else if (((short)entity->appliedZForceOrAnimationSomething == -0x8000) &&
-                        ((entity->flags & 0x100U) == 0)) {
+                    else if (((short)entity->isZForceApplied == -0x8000) && ((entity->flags & 0x100U) == 0)) {
                         entity->zForce = 0;
                     }
                     else {
-                        entity->zForce = entity->appliedZForceOrAnimationSomething << 8;
+                        entity->zForce = entity->isZForceApplied << 8;
                     }
                     UpdateEntityPhysics(entity);
                     spriteZForceAbs = SmoothStep(entity->targetZForce, entity->targetXForce, entity->xForceStep)
@@ -6702,7 +6701,7 @@ void UpdateAllEntities(void)
     return;
 }
 
-// Function @0x80036BFC
+//80036BFC
 bool FUN_80036bfc(Entity* entity, int* param_2, int* param_3)
 
 {
@@ -6762,7 +6761,7 @@ bool FUN_80036bfc(Entity* entity, int* param_2, int* param_3)
     return bVar7;
 }
 
-// Function @0x80036D94
+//80036D94
 bool FUN_80036d94(Entity* param_1, int* param_2, int* param_3)
 
 {
@@ -6824,7 +6823,7 @@ bool FUN_80036d94(Entity* param_1, int* param_2, int* param_3)
     return bVar8;
 }
 
-// Function @0x80036F34
+//80036F34
 Entity* FUN_80036f34(Entity* param_1)
 
 {
@@ -6877,7 +6876,7 @@ Entity* FUN_80036f34(Entity* param_1)
     return (Entity*)0x0;
 }
 
-// Function @0x800370C4
+//800370C4
 int ComputeEntityGroundHeight(Entity* pEntity)
 
 {
@@ -6994,26 +6993,26 @@ int ComputeEntityGroundHeight(Entity* pEntity)
     } while (true);
 }
 
-// Function @0x80037364
-void FUN_80037364(int param_1, int param_2)
+//80037364
+void FUN_80037364(Entity* entity, Entity* entity2)
 
 {
-    undefined4 uVar1;
+    int zForce;
 
-    if (*(int*)(param_2 + 300) != 0) {
-        FUN_80037364(param_2);
+    if (entity2->ridingEntity != (Entity*)0x0) {
+        FUN_80037364(entity2, entity2->ridingEntity);
     }
-    *(int*)(param_1 + 0xe4) = *(int*)(param_1 + 0xe4) + *(int*)(param_2 + 0xdc);
-    *(int*)(param_1 + 0xe8) = *(int*)(param_1 + 0xe8) + *(int*)(param_2 + 0xe0);
-    if (*(int*)(param_1 + 0xf8) == 0) {
-        uVar1 = *(undefined4*)(param_2 + 0xec);
-        *(undefined4*)(param_1 + 0xb8) = uVar1;
-        *(undefined4*)(param_1 + 0xec) = uVar1;
+    entity->finalXForce = entity->finalXForce + entity2->adjustedXForce;
+    entity->finalyForce = entity->finalyForce + entity2->adjustedYForce;
+    if (entity->isZForceApplied == 0) {
+        zForce = entity2->finalZForce;
+        entity->zForce = zForce;
+        entity->finalZForce = zForce;
     }
     return;
 }
 
-// Function @0x800373E4
+//800373E4
 uint FUN_800373e4(Entity* entity, uint* param_2)
 
 {
@@ -7043,7 +7042,7 @@ uint FUN_800373e4(Entity* entity, uint* param_2)
     return *param_2 | param_2[1] | param_2[2] | param_2[3];
 }
 
-// Function @0x80037488
+//80037488
 uint FUN_80037488(undefined4 param_1, uint* param_2)
 
 {
@@ -7092,7 +7091,7 @@ uint FUN_80037488(undefined4 param_1, uint* param_2)
     return uVar4;
 }
 
-// Function @0x800375E0
+//800375E0
 void FUN_800375e0(Entity* entity)
 
 {
@@ -7138,7 +7137,7 @@ void FUN_800375e0(Entity* entity)
     return;
 }
 
-// Function @0x80037730
+//80037730
 int GetEntityCollisionCandidate(Entity* entity)
 
 {
@@ -7428,7 +7427,7 @@ LAB_8003799c:
     goto LAB_80037798;
 }
 
-// Function @0x80037E34
+//80037E34
 void UpdateEntityPlatformPosition(Entity* entity)
 
 {
@@ -7463,7 +7462,7 @@ void UpdateEntityPlatformPosition(Entity* entity)
     return;
 }
 
-// Function @0x80037F28
+//80037F28
 int GetAdjustedEntityZ(Entity* entity)
 
 {
@@ -7513,7 +7512,7 @@ int GetAdjustedEntityZ(Entity* entity)
     return adjustedZ;
 }
 
-// Function @0x80038064
+//80038064
 void UpdateEntityCollisionData(Entity* pEntity)
 
 {
@@ -7623,7 +7622,7 @@ FinishUpdate:
     return;
 }
 
-// Function @0x800384F4
+//800384F4
 void FilterEntities(void)
 
 {
@@ -7669,7 +7668,7 @@ void FilterEntities(void)
     return;
 }
 
-// Function @0x80038634
+//80038634
 void LoadOrResetEntities(void)
 
 {
@@ -7711,7 +7710,7 @@ void LoadOrResetEntities(void)
     return;
 }
 
-// Function @0x800386D0
+//800386D0
 void FUN_800386d0(void)
 
 {
@@ -7812,7 +7811,7 @@ void FUN_800386d0(void)
     return;
 }
 
-// Function @0x80038998
+//80038998
 void FUN_80038998(void)
 
 {
@@ -7867,11 +7866,11 @@ void FUN_80038998(void)
     return;
 }
 
-// Function @0x80038AB4
+//80038AB4
 void UpdateAnims(Entity* entity)
 
 {
-    int animTableOffset;
+    int* animTableOffset;
     char* transformPtr;
     AnimationData* animRecordPtr;
     int animationIndex;
@@ -7882,7 +7881,7 @@ void UpdateAnims(Entity* entity)
     ushort frameOffset;
 
     frameTimer = entity->targetAnimationId;
-    entity->appliedZForceOrAnimationSomething = 0;
+    entity->isZForceApplied = 0;
     animationIndex =
         *(int*)(&UNK_800237f4 +
             (entity->targetDirection + 2 & 0x1c) + entity->currentAnimFrame * 0x20);
@@ -7904,7 +7903,7 @@ void UpdateAnims(Entity* entity)
                         entity->currentTransformData = (char*)0x0;
                     }
                     else {
-                        transformPtr = (char*)(*(int*)&animationBanks->field_0x8 + animationIndex);
+                        transformPtr = (char*)(*(int*)&animationBanks->entryIndex + animationIndex);
                         entity->currentTransformData = transformPtr;
                         entity->transformX = (int)*transformPtr << 0x10;
                         entity->transformY = (int)transformPtr[1] << 0x10;
@@ -7915,8 +7914,7 @@ void UpdateAnims(Entity* entity)
                     }
                     animationIndex = (uint)frameDataPtr[4] * 0x100 + (uint)frameDataPtr[3];
                     if (animationIndex != 0xffff) {
-                        frameDataPtr = (byte*)(*(int*)&animationBanks->pointerListOffset + animationIndex * 2)
-                            ;
+                        frameDataPtr = (byte*)((int)animationBanks->pointerListOffset + animationIndex * 2);
                         entity->collisionDataPtr = frameDataPtr + 2;
                         entity->collisionParam1 = (uint)*frameDataPtr;
                         entity->collisionParam2 = (uint)frameDataPtr[1];
@@ -7949,19 +7947,19 @@ void UpdateAnims(Entity* entity)
             entity->targetAnimationId = frameTimer;
             entity->animCompleteCounter = entity->animCompleteCounter + 1;
         LOAD_ANIMATION:
-            animRecordPtr = (AnimationData*)(*(int*)animationBanks + frameTimer * 0xe);
+            animRecordPtr = (AnimationData*)((int)animationBanks->entries + frameTimer * 0xe);
             entity->animSet = (int*)animRecordPtr;
-            frameOffset = *(ushort*)(&animRecordPtr->entries + animationIndex * 2);
-            animTableOffset = *(int*)&animationBanks->frameListOffset;
+            frameOffset = *(ushort*)((int)&animRecordPtr->entries + animationIndex * 2);
+            animTableOffset = animationBanks->frameListOffset;
             entity->currentAnimFrame = animationIndex;
             animationIndex = entity->balanceRecord;
             entity->nextFrameDelay = 0;
             entity->currentAnimationId = frameTimer;
-            frameDataPtr = (byte*)(animTableOffset + (uint)frameOffset);
+            frameDataPtr = (byte*)((int)animTableOffset + (uint)frameOffset);
             entity->frame = (int*)frameDataPtr;
             entity->initialFrame = (int*)frameDataPtr;
-            entity->appliedZForceOrAnimationSomething = (int)*(short*)&animRecordPtr->field_0xa;
-            flags = animRecordPtr->field_0xd;
+            entity->isZForceApplied = (int)*(short*)&animRecordPtr->field_0xa;
+            flags = *(byte*)((int)&animRecordPtr->pointerListOffset + 1);
             entity->forceResetAnimationFlag = 0;
             entity->animFlags = (uint)flags;
             if (*(byte*)(animationIndex + 0xe) == 0) {
@@ -7974,8 +7972,8 @@ void UpdateAnims(Entity* entity)
                 animationIndex = animationIndex + 0xf;
             }
             entity->balanceVal = animationIndex;
-            frameTimer = (uint)(byte)animRecordPtr->pointerListOffset;
-            if ((animRecordPtr->field_0xd & 0x20) != 0) {
+            frameTimer = (uint) * (byte*)&animRecordPtr->pointerListOffset;
+            if (((uint)animRecordPtr->pointerListOffset & 0x2000) != 0) {
                 frameTimer = frameTimer + 0x100;
             }
             PlaySoundEffect(frameTimer);
@@ -7986,7 +7984,7 @@ void UpdateAnims(Entity* entity)
     return;
 }
 
-// Function @0x80038E18
+//80038E18
 void UpdateAnimOfAllEntities(void)
 
 {
@@ -8007,7 +8005,7 @@ void UpdateAnimOfAllEntities(void)
     return;
 }
 
-// Function @0x80038E84
+//80038E84
 void FUN_80038e84(void)
 
 {
@@ -8094,7 +8092,7 @@ void FUN_80038e84(void)
     return;
 }
 
-// Function @0x80039188
+//80039188
 void SpawnRandomHitEffects(undefined4 x, undefined4 y, undefined4 z)
 
 {
@@ -8123,7 +8121,7 @@ void SpawnRandomHitEffects(undefined4 x, undefined4 y, undefined4 z)
     return;
 }
 
-// Function @0x80039300
+//80039300
 void ProcessBalanceHitCollisions(void)
 
 {
@@ -8205,8 +8203,8 @@ void ProcessBalanceHitCollisions(void)
                                             if ((g_debugState < 0) && ((g_debugFlags & 0x800) != 0)) {
                                                 sprintf(&g_messageDebug + (int)otherEntity->previousEntity * 0x100,
                                                     "%24s (Race) %s\n\r%24s (Attr) %s\n\r",
-                                                    (&PTR_DAT_8009870c)[entity->spriteTableIndex],
-                                                    (&PTR_DAT_8009870c)[otherEntity->spriteTableIndex],
+                                                    g_spriteTableIndexes[entity->spriteTableIndex],
+                                                    g_spriteTableIndexes[otherEntity->spriteTableIndex],
                                                     (&PTR_s_No_Effect_80098f64)[animAttrIndex],
                                                     (&PTR_s_Normal_Damage_80098f94)
                                                     [*(byte*)(otherEntity->balanceRecord + animAttrIndex + 2) >> 6]);
@@ -8272,7 +8270,7 @@ void ProcessBalanceHitCollisions(void)
     return;
 }
 
-// Function @0x800397AC
+//800397AC
 int ComputeEntityZOrder(Entity* entity)
 
 {
@@ -8347,7 +8345,7 @@ int ComputeEntityZOrder(Entity* entity)
     return computedZOrder;
 }
 
-// Function @0x800399B8
+//800399B8
 void UpdateVisibleEntitiesZSort(void)
 
 {
@@ -8394,7 +8392,7 @@ void UpdateVisibleEntitiesZSort(void)
     return;
 }
 
-// Function @0x80039AD0
+//80039AD0
 Entity* AllocateEntitySlot(void)
 
 {
@@ -8414,7 +8412,7 @@ Entity* AllocateEntitySlot(void)
     return (Entity*)0x0;
 }
 
-// Function @0x80039B28
+//80039B28
 uint GetEntityDataId(int entityType, int entitySubtype, undefined4* outPaletteIndex,
     undefined4* outSheetSize)
 
@@ -8442,7 +8440,7 @@ uint GetEntityDataId(int entityType, int entitySubtype, undefined4* outPaletteIn
     return entityId;
 }
 
-// Function @0x80039BD0
+//80039BD0
 int CheckInitData(int initData)
 
 {
@@ -8461,7 +8459,7 @@ int CheckInitData(int initData)
     return res;
 }
 
-// Function @0x80039C40
+//80039C40
 void SetEntityDimensions(Entity* entity, int offsetX, int offsetY, int offsetZ, int sizeX, int sizeY,
     int sizeZ)
 
@@ -8497,7 +8495,7 @@ void SetEntityDimensions(Entity* entity, int offsetX, int offsetY, int offsetZ, 
     return;
 }
 
-// Function @0x80039D04
+//80039D04
 void InitEntity(Entity* entity, Entity* parentEntity, AnimationData* animData, int initType,
     int spriteTableIndex, int entityId, int x, int y, int z, uint animationId, uint direction,
     int paletteIndex, int sheeetSize)
@@ -8532,7 +8530,7 @@ void InitEntity(Entity* entity, Entity* parentEntity, AnimationData* animData, i
     entity->status = 1;
     g_nextEntity = (Entity*)((int)g_nextEntity + 1);
     entity->nextEntity = g_nextEntity;
-    gravityFlags = animData->field16_0x10;
+    gravityFlags = animData->field7_0x10;
     entity->currentAnimationId = ~animationId;
     entity->currentDirection = ~direction;
     entity->targetAnimationId = animationId;
@@ -8542,10 +8540,10 @@ void InitEntity(Entity* entity, Entity* parentEntity, AnimationData* animData, i
     animInfo = entity->spriteRecordPtr;
     entity->spriteProgramIndexes[1] = 0;
     entity->spriteProgramIndexes[0] = (uint)animFlag;
-    entity->spriteProgramIndexes[2] = (uint)(byte)animInfo->rawPtrListOffset;
-    entity->spriteProgramIndexes[3] = (uint)(byte)animInfo->field_0x15;
-    entity->spriteProgramIndexes[4] = (uint)(byte)animInfo->field_0x16;
-    entity->spriteProgramIndexes[5] = (uint)(byte)animInfo->field_0x17;
+    entity->spriteProgramIndexes[2] = (uint) * (byte*)&animInfo->rawPtrListOffset;
+    entity->spriteProgramIndexes[3] = (uint) * (byte*)((int)&animInfo->rawPtrListOffset + 1);
+    entity->spriteProgramIndexes[4] = (uint) * (byte*)((int)&animInfo->rawPtrListOffset + 2);
+    entity->spriteProgramIndexes[5] = (uint) * (byte*)((int)&animInfo->rawPtrListOffset + 3);
     entity->paletteIndex = paletteIndex;
     entity->sheetSize = sheeetSize;
     animGraphicsPtr = GetSpriteAnimationPtr(entity->spriteTableIndex);
@@ -8576,7 +8574,7 @@ void InitEntity(Entity* entity, Entity* parentEntity, AnimationData* animData, i
     return;
 }
 
-// Function @0x80039F58
+//80039F58
 Entity* SpawnWarpEntity(Entity* parentEntity, Entity* entityType, int subtype, undefined4 posX,
     undefined4 posY, undefined4 posZ, undefined4 direction)
 
@@ -8604,7 +8602,7 @@ Entity* SpawnWarpEntity(Entity* parentEntity, Entity* entityType, int subtype, u
     return result;
 }
 
-// Function @0x8003A048
+//8003A048
 Entity* FUN_8003a048(Entity* entity, Entity* entity2, int param_3, int spriteTableIndex, undefined4 x,
     undefined4 y, undefined4 z, undefined4 direction)
 
@@ -8663,60 +8661,65 @@ Entity* FUN_8003a048(Entity* entity, Entity* entity2, int param_3, int spriteTab
     return entity;
 }
 
-// Function @0x8003A1B8
-int SpawnEntity(Entity* param_1, undefined4 initData, int param_3)
+//8003A1B8
+Entity* SpawnEntity(Entity* entity, undefined4 initData, int param_3)
 
 {
     byte bVar1;
     byte* initType;
     AnimationData* animData;
-    int entity;
-    int iVar2;
+    Entity* entity_00;
+    Entity* spawnedEntity;
     uint spriteTableIndex;
     undefined4 local_28;
     undefined4 local_24;
 
     initType = (byte*)CheckInitData(initData);
     if (initType == (byte*)0x0) {
-        return 0;
+        spawnedEntity = (Entity*)0x0;
+        return spawnedEntity;
     }
     if (param_3 == 0) {
         if (g_playerPosX < (int)(uint)*initType) {
-            return 0;
+            spawnedEntity = (Entity*)0x0;
+            return spawnedEntity;
         }
         if ((int)(uint)initType[2] < g_playerPosX) {
-            return 0;
+            spawnedEntity = (Entity*)0x0;
+            return spawnedEntity;
         }
         if (g_playerPosY < (int)(uint)initType[1]) {
-            return 0;
+            spawnedEntity = (Entity*)0x0;
+            return spawnedEntity;
         }
         if ((int)(uint)initType[3] < g_playerPosY) {
-            return 0;
+            spawnedEntity = (Entity*)0x0;
+            return spawnedEntity;
         }
     }
     bVar1 = initType[5];
-    if (((bVar1 & 0x40) != 0) || (iVar2 = 0, param_3 != 0)) {
+    if (((bVar1 & 0x40) != 0) || (spawnedEntity = (Entity*)0x0, param_3 != 0)) {
         animData = (AnimationData*)GetEntityDataId(bVar1 & 0x80, initType[6], &local_28, &local_24);
-        iVar2 = 0;
+        spawnedEntity = (Entity*)0x0;
         if (animData != (AnimationData*)0x0) {
-            entity = AllocateEntitySlot();
-            iVar2 = 0;
-            if (entity != 0) {
+            entity_00 = (Entity*)AllocateEntitySlot();
+            spawnedEntity = (Entity*)0x0;
+            if (entity_00 != (Entity*)0x0) {
                 spriteTableIndex = (uint)initType[6];
                 if ((bVar1 & 0x80) != 0) {
                     spriteTableIndex = spriteTableIndex + 0x100;
                 }
-                InitEntity(entity, param_1, animData, initType, spriteTableIndex, initData,
+                InitEntity(entity_00, entity, animData, initType, spriteTableIndex, initData,
                     ((uint)initType[7] * 0xc + 0xc) * 0x10000, ((uint)initType[8] * 8 + 8) * 0x10000,
-                    (uint)initType[9] << 0x13, 0, (&DAT_80023644)[bVar1 & 3], local_28, local_24);
-                iVar2 = entity;
+                    (uint)initType[9] << 0x13, 0, (&g_warpZones)[bVar1 & 3], local_28, local_24);
+                spawnedEntity = entity_00;
             }
         }
     }
-    return iVar2;
+    return spawnedEntity;
 }
 
-// Function @0x8003A374
+//8003A374
 bool UpdateEntityFacingDirection(Entity** entityHandle)
 
 {
@@ -8785,7 +8788,7 @@ END:
     return targetEntity2 == (Entity*)0x0;
 }
 
-// Function @0x8003A59C
+//8003A59C
 void SetEntityAnimation(Entity* param_1, uint param_2)
 
 {
@@ -8797,7 +8800,7 @@ void SetEntityAnimation(Entity* param_1, uint param_2)
         param_1->warpLinkedEntity = 0;
     }
     if (param_2 == 0xffffffff) {
-        param_2 = (uint)(byte)param_1->spriteRecordPtr[1].entries;
+        param_2 = (uint) * (byte*)&param_1->spriteRecordPtr[1].entries;
     }
     if (param_2 != 0) {
         CreateAttachedEffect(0, param_2, 0, param_1, 1, 0, 0, 0);
@@ -8808,7 +8811,7 @@ void SetEntityAnimation(Entity* param_1, uint param_2)
     return;
 }
 
-// Function @0x8003A648
+//8003A648
 void FUN_8003a648(Entity* param_1, uint param_2)
 
 {
@@ -8834,7 +8837,7 @@ void FUN_8003a648(Entity* param_1, uint param_2)
         param_1->warpLinkedEntity = 0;
     }
     if (param_2 == 0xffffffff) {
-        param_2 = (uint)(byte)param_1->spriteRecordPtr[1].entries;
+        param_2 = (uint) * (byte*)&param_1->spriteRecordPtr[1].entries;
     }
     if (param_2 != 0) {
         CreateAttachedEffect(0, param_2, 0, param_1, 1, 0, 0, 0);
@@ -8845,7 +8848,7 @@ void FUN_8003a648(Entity* param_1, uint param_2)
     return;
 }
 
-// Function @0x8003A774
+//8003A774
 void TriggerWarp(Entity* pEntity)
 
 {
@@ -8869,17 +8872,17 @@ void TriggerWarp(Entity* pEntity)
     return;
 }
 
-// Function @0x8003A7B0
+//8003A7B0
 void FUN_8003a7b0(int param_1)
 
 {
     int iVar1;
     int iVar2;
     ushort* puVar3;
-    int iVar4;
-    int* piVar5;
+    int y;
+    int* piVar4;
+    int iVar5;
     int iVar6;
-    int iVar7;
     int local_48[4];
     int local_38[4];
 
@@ -8890,22 +8893,22 @@ void FUN_8003a7b0(int param_1)
             [*(int*)(param_1 + 0x1fc) + *(int*)(param_1 + 0x214) >> 0x10];
         local_48[1] = (int)(short)(&g_tileToWorldXTable)
             [*(int*)(param_1 + 0x1fc) + *(int*)(param_1 + 0x214) >> 0x10];
-        piVar5 = local_48;
+        piVar4 = local_48;
         local_38[1] = *(int*)(param_1 + 0x200) >> 0x14;
         local_38[0] = local_38[1];
         local_38[3] = *(int*)(param_1 + 0x200) + *(int*)(param_1 + 0x218) >> 0x14;
         local_38[2] = local_38[3];
-        iVar6 = *(int*)(param_1 + 0x204);
-        iVar7 = *(int*)(param_1 + 0x21c);
+        iVar5 = *(int*)(param_1 + 0x204);
+        iVar6 = *(int*)(param_1 + 0x21c);
         do {
-            iVar1 = *piVar5;
+            iVar1 = *piVar4;
             if (iVar1 < 1) {
                 iVar1 = 0;
             }
             else if (0x33 < iVar1) {
                 iVar1 = 0x33;
             }
-            iVar2 = piVar5[4];
+            iVar2 = piVar4[4];
             if (iVar2 < 1) {
                 iVar2 = 0;
             }
@@ -8915,23 +8918,23 @@ void FUN_8003a7b0(int param_1)
             puVar3 = (ushort*)(g_spriteVRAMPointer + iVar2 * 0x1a0 + 0x604 + iVar1 * 8);
             if ((*puVar3 & 2) != 0) {
                 iVar1 = (uint) * (byte*)((int)puVar3 + 3) * 0x100000;
-                if ((iVar6 <= iVar1 + 0x80000) && (iVar1 + 0x80000 <= iVar6 + iVar7)) {
+                if ((iVar5 <= iVar1 + 0x80000) && (iVar1 + 0x80000 <= iVar5 + iVar6)) {
                     *puVar3 = *puVar3 & 0xfffd;
                     puVar3[3] = 0xffff;
-                    iVar2 = *piVar5 * 0x180000 + 0xc0000;
-                    iVar4 = piVar5[4] * 0x100000 + 0x80000;
-                    CreateEffectEntity(0, *(undefined1*)(g_spriteDataBase + 9), 0, iVar2, iVar4, iVar1);
-                    FUN_80032c7c(0xff, iVar2, iVar4, iVar1);
+                    iVar2 = *piVar4 * 0x180000 + 0xc0000;
+                    y = piVar4[4] * 0x100000 + 0x80000;
+                    CreateEffectEntity(0, *(undefined1*)(g_spriteDataBase + 9), 0, iVar2, y, iVar1);
+                    FUN_80032c7c(0xff, iVar2, y, iVar1);
                     PlaySoundEffect(0x1f);
                 }
             }
-            piVar5 = piVar5 + 1;
-        } while ((int)piVar5 < (int)local_38);
+            piVar4 = piVar4 + 1;
+        } while ((int)piVar4 < (int)local_38);
     }
     return;
 }
 
-// Function @0x8003A9E0
+//8003A9E0
 int GetTileHeightAtOffset(Entity* entity, int offsetX, int offsetY)
 
 {
@@ -8990,20 +8993,20 @@ int GetTileHeightAtOffset(Entity* entity, int offsetX, int offsetY)
     return 0x7800000;
 }
 
-// Function @0x8003AB54
+//8003AB54
 void GetEntityTileHeight(Entity* entity, int animIndex, int direction)
 
 {
     uint stepDistance;
 
-    stepDistance = (uint) * (ushort*)(*(int*)entity->spriteRecordPtr + animIndex * 0xe + 8);
+    stepDistance = (uint) * (ushort*)((int)entity->spriteRecordPtr->entries + animIndex * 0xe + 8);
     GetTileHeightAtOffset
     (entity, (int)(short)(&g_offsetXList)[direction] * stepDistance,
         (int)(short)(&g_offsetZList)[direction] * stepDistance);
     return;
 }
 
-// Function @0x8003ABCC
+//8003ABCC
 bool FUN_8003abcc(Entity* entity)
 
 {
@@ -9015,12 +9018,12 @@ bool FUN_8003abcc(Entity* entity)
             entity->spriteTableIndex, entity->programIndexes[2],
             ((uint) * (byte*)(iVar1 + 7) * 0xc + 0xc) * 0x10000,
             ((uint) * (byte*)(iVar1 + 8) * 8 + 8) * 0x10000, (uint) * (byte*)(iVar1 + 9) << 0x13, 0,
-            (&DAT_80023644)[*(byte*)(iVar1 + 5) & 3], entity->paletteIndex, entity->sheetSize);
+            (&g_warpZones)[*(byte*)(iVar1 + 5) & 3], entity->paletteIndex, entity->sheetSize);
     }
     return iVar1 != 0;
 }
 
-// Function @0x8003AC9C
+//8003AC9C
 int FUN_8003ac9c(int param_1, int param_2)
 
 {
@@ -9044,7 +9047,7 @@ int FUN_8003ac9c(int param_1, int param_2)
     return iVar1;
 }
 
-// Function @0x8003AE04
+//8003AE04
 void SortEntitiesByDistance(int param_1, int param_2, int param_3, int param_4)
 
 {
@@ -9112,7 +9115,7 @@ void SortEntitiesByDistance(int param_1, int param_2, int param_3, int param_4)
     return;
 }
 
-// Function @0x8003AF70
+//8003AF70
 int FindNearbyEntities(Entity*** entity, uint param_2, int param_3, undefined4* nearbyEntityList,
     int* distanceSquaredList)
 
@@ -9159,7 +9162,7 @@ int FindNearbyEntities(Entity*** entity, uint param_2, int param_3, undefined4* 
     return nearbyCount;
 }
 
-// Function @0x8003B0E8
+//8003B0E8
 void InitSpriteTileLayouts(void)
 
 {
@@ -9218,7 +9221,7 @@ void InitSpriteTileLayouts(void)
     return;
 }
 
-// Function @0x8003B24C
+//8003B24C
 void InitializeEntitySlots(void)
 
 {
@@ -9273,7 +9276,7 @@ void InitializeEntitySlots(void)
     return;
 }
 
-// Function @0x8003B388
+//8003B388
 /* WARNING: This function may have set the stack pointer */
 
 void UpdateAllEntities(void)
@@ -9330,7 +9333,7 @@ void UpdateAllEntities(void)
     return;
 }
 
-// Function @0x8003B51C
+//8003B51C
 void UpdateEntityGeometry(uint* orderingTable)
 
 {
@@ -9479,7 +9482,7 @@ void UpdateEntityGeometry(uint* orderingTable)
     return;
 }
 
-// Function @0x8003B9C4
+//8003B9C4
 Effect* GetFreeEffect(void)
 
 {
@@ -9498,7 +9501,7 @@ Effect* GetFreeEffect(void)
     return (Effect*)0x0;
 }
 
-// Function @0x8003B9FC
+//8003B9FC
 int LoadEffectAnimationData(int param_1, int param_2, undefined4* param_3, undefined4* param_4)
 
 {
@@ -9524,7 +9527,7 @@ int LoadEffectAnimationData(int param_1, int param_2, undefined4* param_3, undef
     return iVar3;
 }
 
-// Function @0x8003BA70
+//8003BA70
 byte* FUN_8003ba70(int param_1, int param_2)
 
 {
@@ -9542,7 +9545,7 @@ byte* FUN_8003ba70(int param_1, int param_2)
     return pbVar1;
 }
 
-// Function @0x8003BB14
+//8003BB14
 void InitEffectEntity(Effect* effect, int effectStatus, int param_3, int extraParam, int behaviorFlag,
     byte effectType, byte effectSubtype, int x, int y, int z)
 
@@ -9590,7 +9593,7 @@ void InitEffectEntity(Effect* effect, int effectStatus, int param_3, int extraPa
     return;
 }
 
-// Function @0x8003BBDC
+//8003BBDC
 void UpdateEffectAnimation(Effect* pEffect)
 
 {
@@ -9675,7 +9678,7 @@ CLEAR_FRAME_COUNT:
     return;
 }
 
-// Function @0x8003BDD8
+//8003BDD8
 Effect* CreateEffectEntity(int behaviorFlags, byte effectType, byte effectSubType, undefined4 x,
     undefined4 y, undefined4 z)
 
@@ -9692,7 +9695,7 @@ Effect* CreateEffectEntity(int behaviorFlags, byte effectType, byte effectSubTyp
     return effect;
 }
 
-// Function @0x8003BE74
+//8003BE74
 Effect* CreateAttachedEffect
 (int behaviourFlags, byte effectType, byte effectSubType, Entity* pEntity,
     int zSortOffset, int velocityX, int velocityY, int velocityZ)
@@ -9716,7 +9719,7 @@ Effect* CreateAttachedEffect
     return effect;
 }
 
-// Function @0x8003BFE8
+//8003BFE8
 Effect* CreateDetachedEffect
 (int behaviourFlags, byte effectType, byte effectSubType, Entity* entity,
     int zSortOffset, int x, int y, int z)
@@ -9736,7 +9739,7 @@ Effect* CreateDetachedEffect
     return effect;
 }
 
-// Function @0x8003C094
+//8003C094
 Effect* FUN_8003c094(undefined4 param_1, int param_2)
 
 {
@@ -9765,7 +9768,7 @@ Effect* FUN_8003c094(undefined4 param_1, int param_2)
     return effect;
 }
 
-// Function @0x8003C17C
+//8003C17C
 void InitSpriteGroupIndex(void)
 
 {
@@ -9782,7 +9785,7 @@ void InitSpriteGroupIndex(void)
     return;
 }
 
-// Function @0x8003C1A4
+//8003C1A4
 void InitEffectSlots(void)
 
 {
@@ -9813,7 +9816,7 @@ void InitEffectSlots(void)
     return;
 }
 
-// Function @0x8003C284
+//8003C284
 void UpdateEffectPosition(Effect* effect)
 
 {
@@ -9867,7 +9870,7 @@ LAB_8003c39c:
     return;
 }
 
-// Function @0x8003C410
+//8003C410
 void UpdateAllActiveEffects(void)
 
 {
@@ -9906,14 +9909,14 @@ void UpdateAllActiveEffects(void)
     } while (true);
 }
 
-// Function @0x8003C508
+//8003C508
 void DoNothing(void)
 
 {
     return;
 }
 
-// Function @0x8003C510
+//8003C510
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void InitMonitors(void)
@@ -9987,7 +9990,7 @@ void InitMonitors(void)
     return;
 }
 
-// Function @0x8003C67C
+//8003C67C
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void UpdatePlayerCollisionAndState(void)
@@ -10078,7 +10081,7 @@ void UpdatePlayerCollisionAndState(void)
     return;
 }
 
-// Function @0x8003C840
+//8003C840
 void PrintCommandMap(void)
 
 {
@@ -10105,7 +10108,7 @@ void PrintCommandMap(void)
     return;
 }
 
-// Function @0x8003C914
+//8003C914
 int IsInitDataValid(void)
 
 {
@@ -10118,7 +10121,7 @@ int IsInitDataValid(void)
     return iVar1;
 }
 
-// Function @0x8003C954
+//8003C954
 int FindMatchingEntities(Entity* entity, int entity2)
 
 {
@@ -10334,7 +10337,7 @@ int FindMatchingEntities(Entity* entity, int entity2)
     return matchCount;
 }
 
-// Function @0x8003CF20
+//8003CF20
 int GetWarpFacingDirection(Entity* entity)
 
 {
@@ -10358,7 +10361,7 @@ int GetWarpFacingDirection(Entity* entity)
     return deltaX;
 }
 
-// Function @0x8003CFC8
+//8003CFC8
 /* Resolve a direction value based on a mode and offset.
 
    @param entity     Pointer to the entity context (used in several modes)
@@ -10378,52 +10381,53 @@ int GetWarpFacingDirection(Entity* entity)
 
    @return A final direction in range 0–31. */
 
-uint ResolveDirectionFromParam(Entity* entity, uint encodedDir)
+int* ResolveDirectionFromParam(Entity* entity, uint encodedDir)
 
 {
     int direction;
-    uint result;
+    uint uVar1;
+    int* result;
 
-    result = encodedDir & 0x1f;
+    result = (int*)(encodedDir & 0x1f);
     switch ((int)encodedDir >> 5) {
     case 0:
         return result;
     case 1:
-        result = entity->targetDirection + result;
+        uVar1 = entity->targetDirection + (int)result;
         goto LAB_8003d110;
     case 2:
-        result = (&DAT_80023644)[encodedDir & 3];
+        result = (&g_warpZones)[encodedDir & 3];
         break;
     case 3:
         direction = GetDirectionToTarget(g_currentCamX - entity->xpos, g_currentCamY - entity->ypos);
-        result = direction + result;
+        uVar1 = direction + (int)result;
         goto LAB_8003d110;
     case 4:
         g_gameRandomSeed = g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-        result = (&DAT_80023644)[(int)((ulonglong)g_gameRandomSeed * 4 >> 0x20)];
+        result = (&g_warpZones)[(int)((ulonglong)g_gameRandomSeed * 4 >> 0x20)];
         break;
     case 5:
         g_gameRandomSeed = g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-        result = (uint)((ulonglong)g_gameRandomSeed * 0x20 >> 0x20);
+        result = (int*)((ulonglong)g_gameRandomSeed * 0x20 >> 0x20);
         break;
     case 6:
-        result = g_lastFacingDirection + result;
+        uVar1 = g_lastFacingDirection + (int)result;
     LAB_8003d110:
-        result = result & 0x1f;
+        result = (int*)(uVar1 & 0x1f);
         break;
     case 7:
         direction = GetWarpFacingDirection(entity);
         if (direction == -1) {
             return result;
         }
-        return direction + result & 0x1f;
+        return (int*)(direction + (int)result & 0x1f);
     default:
-        result = 0;
+        result = (int*)0x0;
     }
     return result;
 }
 
-// Function @0x8003D158
+//8003D158
 undefined4 FUN_8003d158(void)
 
 {
@@ -10431,7 +10435,7 @@ undefined4 FUN_8003d158(void)
     return 0;
 }
 
-// Function @0x8003D17C
+//8003D17C
 int FUN_8003d17c(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -10439,7 +10443,7 @@ int FUN_8003d17c(undefined4 param_1, undefined4 param_2, int* param_3)
         0x10;
 }
 
-// Function @0x8003D1A0
+//8003D1A0
 int FUN_8003d1a0(Entity* param_1, Entity* entity, Script* script, LogicContext* logicContext)
 
 {
@@ -10453,7 +10457,7 @@ int FUN_8003d1a0(Entity* param_1, Entity* entity, Script* script, LogicContext* 
     return iVar1;
 }
 
-// Function @0x8003D1D8
+//8003D1D8
 int FUN_8003d1d8(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -10467,7 +10471,7 @@ int FUN_8003d1d8(undefined4 param_1, undefined4 param_2, int* param_3, int param
     return iVar1;
 }
 
-// Function @0x8003D210
+//8003D210
 undefined4 FUN_8003d210(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -10487,7 +10491,7 @@ undefined4 FUN_8003d210(undefined4 param_1, undefined4 param_2, int* param_3)
     return 3;
 }
 
-// Function @0x8003D288
+//8003D288
 undefined4 FUN_8003d288(Entity* entity, undefined4 param_2, int* param_3)
 
 {
@@ -10507,7 +10511,7 @@ undefined4 FUN_8003d288(Entity* entity, undefined4 param_2, int* param_3)
     return 3;
 }
 
-// Function @0x8003D308
+//8003D308
 undefined4 FUN_8003d308(Entity* entity, Entity* param_2, Script* script, LogicContext* logicContext)
 
 {
@@ -10549,7 +10553,7 @@ undefined4 FUN_8003d308(Entity* entity, Entity* param_2, Script* script, LogicCo
     return 8;
 }
 
-// Function @0x8003D404
+//8003D404
 undefined4 FUN_8003d404(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -10557,7 +10561,7 @@ undefined4 FUN_8003d404(Entity* param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x8003D42C
+//8003D42C
 undefined4 FUN_8003d42c(Entity* param_1, undefined4 param_2, Script* param_3)
 
 {
@@ -10565,7 +10569,7 @@ undefined4 FUN_8003d42c(Entity* param_1, undefined4 param_2, Script* param_3)
     return 2;
 }
 
-// Function @0x8003D44C
+//8003D44C
 undefined4 FUN_8003d44c(int param_1)
 
 {
@@ -10573,7 +10577,7 @@ undefined4 FUN_8003d44c(int param_1)
     return 1;
 }
 
-// Function @0x8003D468
+//8003D468
 undefined4 FUN_8003d468(int param_1, Entity* entity, Script* script, LogicContext* logicContext)
 
 {
@@ -10606,16 +10610,16 @@ undefined4 FUN_8003d468(int param_1, Entity* entity, Script* script, LogicContex
     return uVar1;
 }
 
-// Function @0x8003D518
+//8003D518
 undefined8 FUN_8003d518(int param_1)
 
 {
     g_gameRandomSeed = g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-    *(undefined4*)(param_1 + 0x8c) = (&DAT_80023644)[(int)((ulonglong)g_gameRandomSeed * 4 >> 0x20)];
+    *(int**)(param_1 + 0x8c) = (&g_warpZones)[(int)((ulonglong)g_gameRandomSeed * 4 >> 0x20)];
     return 1;
 }
 
-// Function @0x8003D578
+//8003D578
 undefined4 FUN_8003d578(int param_1, undefined4 param_2, int* param_3)
 
 {
@@ -10640,7 +10644,7 @@ undefined4 FUN_8003d578(int param_1, undefined4 param_2, int* param_3)
     return uVar1;
 }
 
-// Function @0x8003D688
+//8003D688
 undefined4 FUN_8003d688(void)
 
 {
@@ -10648,7 +10652,7 @@ undefined4 FUN_8003d688(void)
     return 1;
 }
 
-// Function @0x8003D6A4
+//8003D6A4
 undefined4 FUN_8003d6a4(void)
 
 {
@@ -10656,7 +10660,7 @@ undefined4 FUN_8003d6a4(void)
     return 1;
 }
 
-// Function @0x8003D6C0
+//8003D6C0
 undefined4 FUN_8003d6c0(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -10664,15 +10668,15 @@ undefined4 FUN_8003d6c0(undefined4 param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x8003D6EC
-undefined4 FUN_8003d6ec(void)
+//8003D6EC
+int Script_PrintCommandMap(void)
 
 {
-    PrintCommandMap(&DAT_80023c94);
+    PrintCommandMap(&g_unusedTextBuffer);
     return 0;
 }
 
-// Function @0x8003D710
+//8003D710
 undefined4 FUN_8003d710(int param_1)
 
 {
@@ -10687,7 +10691,7 @@ undefined4 FUN_8003d710(int param_1)
     return 1;
 }
 
-// Function @0x8003D774
+//8003D774
 undefined4 FUN_8003d774(int param_1)
 
 {
@@ -10695,7 +10699,7 @@ undefined4 FUN_8003d774(int param_1)
     return 1;
 }
 
-// Function @0x8003D78C
+//8003D78C
 undefined4 FUN_8003d78c(int param_1)
 
 {
@@ -10703,7 +10707,7 @@ undefined4 FUN_8003d78c(int param_1)
     return 1;
 }
 
-// Function @0x8003D7A4
+//8003D7A4
 undefined4 FUN_8003d7a4(int param_1)
 
 {
@@ -10711,7 +10715,7 @@ undefined4 FUN_8003d7a4(int param_1)
     return 1;
 }
 
-// Function @0x8003D7B4
+//8003D7B4
 undefined4 FUN_8003d7b4(int param_1, undefined4 param_2, int* param_3)
 
 {
@@ -10719,7 +10723,7 @@ undefined4 FUN_8003d7b4(int param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x8003D7D0
+//8003D7D0
 undefined4 FUN_8003d7d0(int param_1, undefined4 param_2, int* param_3)
 
 {
@@ -10729,7 +10733,7 @@ undefined4 FUN_8003d7d0(int param_1, undefined4 param_2, int* param_3)
     return 3;
 }
 
-// Function @0x8003D7FC
+//8003D7FC
 int FUN_8003d7fc(int param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -10751,7 +10755,7 @@ LAB_8003d868:
     return (*(int*)(param_4 + 0xc) < (int)(uint) * (byte*)(*param_3 + 1) ^ 1) << 1;
 }
 
-// Function @0x8003D890
+//8003D890
 int FUN_8003d890(int param_1)
 
 {
@@ -10766,7 +10770,7 @@ int FUN_8003d890(int param_1)
     return iVar2;
 }
 
-// Function @0x8003D8D8
+//8003D8D8
 undefined4 FUN_8003d8d8(int param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -10798,7 +10802,7 @@ undefined4 FUN_8003d8d8(int param_1, undefined4 param_2, int* param_3, int param
     return uVar1;
 }
 
-// Function @0x8003D974
+//8003D974
 int FUN_8003d974(int param_1)
 
 {
@@ -10813,7 +10817,7 @@ int FUN_8003d974(int param_1)
     return iVar2;
 }
 
-// Function @0x8003D9BC
+//8003D9BC
 undefined4 FUN_8003d9bc(int param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -10841,7 +10845,7 @@ undefined4 FUN_8003d9bc(int param_1, undefined4 param_2, int* param_3, int param
     return uVar1;
 }
 
-// Function @0x8003DA28
+//8003DA28
 int FUN_8003da28(int param_1)
 
 {
@@ -10856,7 +10860,7 @@ int FUN_8003da28(int param_1)
     return iVar2;
 }
 
-// Function @0x8003DA70
+//8003DA70
 undefined4 FUN_8003da70(int param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -10894,7 +10898,7 @@ undefined4 FUN_8003da70(int param_1, undefined4 param_2, int* param_3, int param
     return uVar2;
 }
 
-// Function @0x8003DB28
+//8003DB28
 int FUN_8003db28(int param_1)
 
 {
@@ -10909,14 +10913,14 @@ int FUN_8003db28(int param_1)
     return iVar2;
 }
 
-// Function @0x8003DB70
+//8003DB70
 bool FUN_8003db70(int param_1)
 
 {
     return *(int*)(param_1 + 0x13c) != 0;
 }
 
-// Function @0x8003DB7C
+//8003DB7C
 undefined4 FUN_8003db7c(int param_1)
 
 {
@@ -10929,7 +10933,7 @@ undefined4 FUN_8003db7c(int param_1)
     return uVar1;
 }
 
-// Function @0x8003DBA8
+//8003DBA8
 undefined4 FUN_8003dba8(int param_1)
 
 {
@@ -10942,7 +10946,7 @@ undefined4 FUN_8003dba8(int param_1)
     return uVar1;
 }
 
-// Function @0x8003DBD4
+//8003DBD4
 undefined4 FUN_8003dbd4(int param_1)
 
 {
@@ -10955,7 +10959,7 @@ undefined4 FUN_8003dbd4(int param_1)
     return 1;
 }
 
-// Function @0x8003DC24
+//8003DC24
 undefined4 FUN_8003dc24(int param_1)
 
 {
@@ -10963,7 +10967,7 @@ undefined4 FUN_8003dc24(int param_1)
     return 1;
 }
 
-// Function @0x8003DC3C
+//8003DC3C
 undefined4 FUN_8003dc3c(int param_1)
 
 {
@@ -10971,7 +10975,7 @@ undefined4 FUN_8003dc3c(int param_1)
     return 1;
 }
 
-// Function @0x8003DC54
+//8003DC54
 undefined4 FUN_8003dc54(int param_1)
 
 {
@@ -10979,7 +10983,7 @@ undefined4 FUN_8003dc54(int param_1)
     return 1;
 }
 
-// Function @0x8003DC6C
+//8003DC6C
 undefined4 FUN_8003dc6c(int param_1)
 
 {
@@ -10987,7 +10991,7 @@ undefined4 FUN_8003dc6c(int param_1)
     return 1;
 }
 
-// Function @0x8003DC84
+//8003DC84
 undefined4 FUN_8003dc84(Entity* param_1, undefined4 param_2, int* param_3, LogicContext* param_4)
 
 {
@@ -10998,7 +11002,7 @@ undefined4 FUN_8003dc84(Entity* param_1, undefined4 param_2, int* param_3, Logic
     return 2;
 }
 
-// Function @0x8003DCC4
+//8003DCC4
 undefined4 FUN_8003dcc4(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11011,7 +11015,7 @@ undefined4 FUN_8003dcc4(undefined4 param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x8003DD00
+//8003DD00
 undefined4 FUN_8003dd00(Entity* param_1, undefined4 param_2, int* param_3, LogicContext* param_4)
 
 {
@@ -11034,7 +11038,7 @@ undefined4 FUN_8003dd00(Entity* param_1, undefined4 param_2, int* param_3, Logic
     return 2;
 }
 
-// Function @0x8003DD8C
+//8003DD8C
 undefined4 FUN_8003dd8c(undefined4 param_1, undefined4 param_2, int* param_3, LogicContext* param_4)
 
 {
@@ -11051,7 +11055,7 @@ undefined4 FUN_8003dd8c(undefined4 param_1, undefined4 param_2, int* param_3, Lo
     return 4;
 }
 
-// Function @0x8003DDDC
+//8003DDDC
 int FUN_8003dddc(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11076,7 +11080,7 @@ int FUN_8003dddc(undefined4 param_1, undefined4 param_2, int* param_3)
     return iVar2;
 }
 
-// Function @0x8003DE6C
+//8003DE6C
 int FUN_8003de6c(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11101,7 +11105,7 @@ int FUN_8003de6c(undefined4 param_1, undefined4 param_2, int* param_3)
     return iVar2;
 }
 
-// Function @0x8003DEFC
+//8003DEFC
 undefined4 FUN_8003defc(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11121,7 +11125,7 @@ undefined4 FUN_8003defc(undefined4 param_1, undefined4 param_2, int* param_3)
     return 3;
 }
 
-// Function @0x8003DF74
+//8003DF74
 undefined4 FUN_8003df74(undefined4 param_1, undefined4 param_2, int* param_3, LogicContext* param_4)
 
 {
@@ -11176,7 +11180,7 @@ undefined4 FUN_8003df74(undefined4 param_1, undefined4 param_2, int* param_3, Lo
     return 9;
 }
 
-// Function @0x8003E128
+//8003E128
 undefined4 FUN_8003e128(undefined4 param_1, undefined4 param_2, int* param_3, LogicContext* param_4)
 
 {
@@ -11231,7 +11235,7 @@ undefined4 FUN_8003e128(undefined4 param_1, undefined4 param_2, int* param_3, Lo
     return 9;
 }
 
-// Function @0x8003E2DC
+//8003E2DC
 undefined4 FUN_8003e2dc(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11254,7 +11258,7 @@ undefined4 FUN_8003e2dc(undefined4 param_1, undefined4 param_2, int* param_3)
     return uVar2;
 }
 
-// Function @0x8003E35C
+//8003E35C
 undefined4 FUN_8003e35c(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11277,7 +11281,7 @@ undefined4 FUN_8003e35c(undefined4 param_1, undefined4 param_2, int* param_3)
     return uVar2;
 }
 
-// Function @0x8003E3DC
+//8003E3DC
 int FUN_8003e3dc(Entity* param_1, Entity* param_2, Script* script, LogicContext* logicContext)
 
 {
@@ -11299,7 +11303,7 @@ int FUN_8003e3dc(Entity* param_1, Entity* param_2, Script* script, LogicContext*
     return result;
 }
 
-// Function @0x8003E424
+//8003E424
 undefined4 FUN_8003e424(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11311,7 +11315,7 @@ undefined4 FUN_8003e424(undefined4 param_1, undefined4 param_2, int* param_3)
     return 5;
 }
 
-// Function @0x8003E464
+//8003E464
 bool FUN_8003e464(void)
 
 {
@@ -11321,15 +11325,15 @@ bool FUN_8003e464(void)
     return iVar1 == 0;
 }
 
-// Function @0x8003E484
+//8003E484
 undefined4 FUN_8003e484(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
-    param_1->targetDirection = (&DAT_80023644)[*(byte*)(*param_3 + 1) & 3];
+    param_1->targetDirection = (uint)(&g_warpZones)[*(byte*)(*param_3 + 1) & 3];
     return 2;
 }
 
-// Function @0x8003E4B4
+//8003E4B4
 undefined4 FUN_8003e4b4(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -11350,7 +11354,7 @@ undefined4 FUN_8003e4b4(undefined4 param_1, undefined4 param_2, int* param_3, in
     return 7;
 }
 
-// Function @0x8003E558
+//8003E558
 undefined4 FUN_8003e558(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -11383,7 +11387,7 @@ undefined4 FUN_8003e558(undefined4 param_1, undefined4 param_2, int* param_3, in
     return 7;
 }
 
-// Function @0x8003E64C
+//8003E64C
 undefined4 FUN_8003e64c(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -11415,7 +11419,7 @@ undefined4 FUN_8003e64c(undefined4 param_1, undefined4 param_2, int* param_3, in
     return 7;
 }
 
-// Function @0x8003E708
+//8003E708
 undefined4 FUN_8003e708(int param_1, undefined4 param_2, undefined4 param_3, int param_4)
 
 {
@@ -11428,7 +11432,7 @@ undefined4 FUN_8003e708(int param_1, undefined4 param_2, undefined4 param_3, int
     return 1;
 }
 
-// Function @0x8003E734
+//8003E734
 undefined4 FUN_8003e734(int param_1, undefined4 param_2, undefined4 param_3, int param_4)
 
 {
@@ -11451,7 +11455,7 @@ undefined4 FUN_8003e734(int param_1, undefined4 param_2, undefined4 param_3, int
     return 1;
 }
 
-// Function @0x8003E7B8
+//8003E7B8
 undefined4 FUN_8003e7b8(int param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11460,7 +11464,7 @@ undefined4 FUN_8003e7b8(int param_1, undefined4 param_2, int* param_3)
     return 3;
 }
 
-// Function @0x8003E7E4
+//8003E7E4
 undefined4 FUN_8003e7e4(int param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11468,7 +11472,7 @@ undefined4 FUN_8003e7e4(int param_1, undefined4 param_2, int* param_3)
     return 3;
 }
 
-// Function @0x8003E808
+//8003E808
 undefined4 FUN_8003e808(undefined4 param_1, int param_2)
 
 {
@@ -11476,7 +11480,7 @@ undefined4 FUN_8003e808(undefined4 param_1, int param_2)
     return 1;
 }
 
-// Function @0x8003E81C
+//8003E81C
 undefined4 FUN_8003e81c(Entity* param_1, int param_2, int* param_3, int param_4)
 
 {
@@ -11493,7 +11497,7 @@ undefined4 FUN_8003e81c(Entity* param_1, int param_2, int* param_3, int param_4)
     return 2;
 }
 
-// Function @0x8003E88C
+//8003E88C
 undefined4 FUN_8003e88c(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -11525,7 +11529,7 @@ undefined4 FUN_8003e88c(undefined4 param_1, undefined4 param_2, int* param_3, in
     return 0;
 }
 
-// Function @0x8003E954
+//8003E954
 undefined4 FUN_8003e954(Entity* param_1)
 
 {
@@ -11533,7 +11537,7 @@ undefined4 FUN_8003e954(Entity* param_1)
     return 1;
 }
 
-// Function @0x8003E96C
+//8003E96C
 undefined4 FUN_8003e96c(int param_1)
 
 {
@@ -11541,7 +11545,7 @@ undefined4 FUN_8003e96c(int param_1)
     return 1;
 }
 
-// Function @0x8003E984
+//8003E984
 undefined4 FUN_8003e984(int param_1)
 
 {
@@ -11554,7 +11558,7 @@ undefined4 FUN_8003e984(int param_1)
     return uVar1;
 }
 
-// Function @0x8003E9B0
+//8003E9B0
 undefined4 FUN_8003e9b0(int param_1)
 
 {
@@ -11567,7 +11571,7 @@ undefined4 FUN_8003e9b0(int param_1)
     return uVar1;
 }
 
-// Function @0x8003E9DC
+//8003E9DC
 int FUN_8003e9dc(void)
 
 {
@@ -11576,7 +11580,7 @@ int FUN_8003e9dc(void)
     return *in_a3 - in_a3[1];
 }
 
-// Function @0x8003E9EC
+//8003E9EC
 int FUN_8003e9ec(void)
 
 {
@@ -11590,7 +11594,7 @@ int FUN_8003e9ec(void)
     return iVar1;
 }
 
-// Function @0x8003EA14
+//8003EA14
 int FUN_8003ea14(void)
 
 {
@@ -11604,7 +11608,7 @@ int FUN_8003ea14(void)
     return iVar1;
 }
 
-// Function @0x8003EA3C
+//8003EA3C
 undefined4 FUN_8003ea3c(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11612,7 +11616,7 @@ undefined4 FUN_8003ea3c(undefined4 param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x8003EA68
+//8003EA68
 undefined4 FUN_8003ea68(void)
 
 {
@@ -11620,7 +11624,7 @@ undefined4 FUN_8003ea68(void)
     return 1;
 }
 
-// Function @0x8003EA88
+//8003EA88
 undefined4 FUN_8003ea88(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11628,7 +11632,7 @@ undefined4 FUN_8003ea88(undefined4 param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x8003EAB4
+//8003EAB4
 undefined4 FUN_8003eab4(void)
 
 {
@@ -11636,7 +11640,7 @@ undefined4 FUN_8003eab4(void)
     return 1;
 }
 
-// Function @0x8003EAD4
+//8003EAD4
 undefined4 FUN_8003ead4(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11644,7 +11648,7 @@ undefined4 FUN_8003ead4(undefined4 param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x8003EB00
+//8003EB00
 undefined4 FUN_8003eb00(void)
 
 {
@@ -11652,7 +11656,7 @@ undefined4 FUN_8003eb00(void)
     return 1;
 }
 
-// Function @0x8003EB20
+//8003EB20
 undefined4 FUN_8003eb20(void)
 
 {
@@ -11671,7 +11675,7 @@ undefined4 FUN_8003eb20(void)
     return 1;
 }
 
-// Function @0x8003EB88
+//8003EB88
 undefined4 FUN_8003eb88(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11679,7 +11683,7 @@ undefined4 FUN_8003eb88(undefined4 param_1, undefined4 param_2, int* param_3)
     int iVar2;
     int iVar3;
 
-    g_warpType = (uint) * (byte*)(*param_3 + 6);
+    g_warpType = (int)*(byte*)(*param_3 + 6);
     g_desiredMap = (uint) * (ushort*)(*param_3 + 1);
     g_warpEntryBehavior = (uint) * (byte*)(*param_3 + 7);
     iVar1 = *param_3;
@@ -11705,7 +11709,7 @@ undefined4 FUN_8003eb88(undefined4 param_1, undefined4 param_2, int* param_3)
     return 8;
 }
 
-// Function @0x8003ECBC
+//8003ECBC
 undefined4 FUN_8003ecbc(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11732,7 +11736,7 @@ undefined4 FUN_8003ecbc(undefined4 param_1, undefined4 param_2, int* param_3)
     return 5;
 }
 
-// Function @0x8003ED5C
+//8003ED5C
 undefined4 FUN_8003ed5c(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11759,7 +11763,7 @@ undefined4 FUN_8003ed5c(undefined4 param_1, undefined4 param_2, int* param_3)
     return 5;
 }
 
-// Function @0x8003EDFC
+//8003EDFC
 undefined4 FUN_8003edfc(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11767,17 +11771,17 @@ undefined4 FUN_8003edfc(undefined4 param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x8003EE28
+//8003EE28
 int FUN_8003ee28(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
     byte* pbVar1;
 
-    pbVar1 = (byte*)(*param_3 + DAT_80127dc8 * 2 + 1);
+    pbVar1 = (byte*)(*param_3 + g_requiredWarpZoneId * 2 + 1);
     return (int)(((uint)*pbVar1 + (uint)pbVar1[1] * 0x100) * 0x10000) >> 0x10;
 }
 
-// Function @0x8003EE5C
+//8003EE5C
 int FUN_8003ee5c(int param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11787,7 +11791,7 @@ int FUN_8003ee5c(int param_1, undefined4 param_2, int* param_3)
     return (int)(((uint)*pbVar1 + (uint)pbVar1[1] * 0x100) * 0x10000) >> 0x10;
 }
 
-// Function @0x8003EE8C
+//8003EE8C
 undefined4 FUN_8003ee8c(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11810,7 +11814,7 @@ undefined4 FUN_8003ee8c(Entity* param_1, undefined4 param_2, int* param_3)
     return 3;
 }
 
-// Function @0x8003EEF4
+//8003EEF4
 undefined4 FUN_8003eef4(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11835,7 +11839,7 @@ undefined4 FUN_8003eef4(Entity* param_1, undefined4 param_2, int* param_3)
     return 3;
 }
 
-// Function @0x8003EF80
+//8003EF80
 undefined4 FUN_8003ef80(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11864,26 +11868,28 @@ undefined4 FUN_8003ef80(Entity* param_1, undefined4 param_2, int* param_3)
     return 4;
 }
 
-// Function @0x8003F01C
+//8003F01C
 int ScriptCmd_UpdateCameraToEntityAndCheckCondition(Entity* entity, Entity* param_2, Script* scriptPC)
 
 {
     int matchCount;
+    int* piVar1;
     Entity* matchedEntity;
 
     matchCount = FindMatchingEntities(entity, (uint) * (byte*)(scriptPC->command + 1));
     matchedEntity = g_matchingEntitiesBuffer;
     if (matchCount != 0) {
         if ((g_matchingEntitiesBuffer->flags & 0x800000U) != 0) {
-            matchCount = *(int*)&g_matchingEntitiesBuffer->spriteRecordPtr->pointerListOffset;
+            piVar1 = g_matchingEntitiesBuffer->spriteRecordPtr->pointerListOffset;
             ApplyCameraEffect(&g_matchingEntitiesBuffer->xpos, &g_matchingEntitiesBuffer->ypos,
                 &g_matchingEntitiesBuffer->zpos, &g_targetCamX_2, &g_targetCamY_2,
-                *(undefined1*)(matchCount + 4), *(undefined1*)(matchCount + 5),
-                *(undefined1*)(matchCount + 6), *(undefined1*)(matchCount + 7),
+                (char)piVar1[1], *(undefined1*)((int)piVar1 + 5),
+                *(undefined1*)((int)piVar1 + 6), *(undefined1*)((int)piVar1 + 7),
                 (&g_drawPageInfoBase)
-                [g_matchingEntitiesBuffer->sheetSize + (*(byte*)(matchCount + 3) & 0x3f)],
+                [g_matchingEntitiesBuffer->sheetSize + (*(byte*)((int)piVar1 + 3) & 0x3f)],
                 (&g_tPageFadeLUT)
-                [g_matchingEntitiesBuffer->paletteIndex + (*(byte*)(matchCount + 2) & 7)]);
+                [g_matchingEntitiesBuffer->paletteIndex + (*(byte*)((int)piVar1 + 2) & 7)])
+                ;
         }
         TriggerVisualUpdate(matchedEntity->spriteTableIndex);
     }
@@ -11892,7 +11898,7 @@ int ScriptCmd_UpdateCameraToEntityAndCheckCondition(Entity* entity, Entity* para
     return (uint)(matchCount != 0) << 2;
 }
 
-// Function @0x8003F144
+//8003F144
 undefined4 FUN_8003f144(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11913,7 +11919,7 @@ undefined4 FUN_8003f144(Entity* param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x8003F1A0
+//8003F1A0
 undefined4 FUN_8003f1a0(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -11939,7 +11945,7 @@ undefined4 FUN_8003f1a0(Entity* param_1, undefined4 param_2, int* param_3)
     return 4;
 }
 
-// Function @0x8003F218
+//8003F218
 int ScriptCmd_WaitForAnimOrDistance
 (Entity* entity, Entity* entity2, Script* script, LogicContext* logicContext)
 
@@ -12007,7 +12013,7 @@ UPDATE_FRAME_COUNTER:
     return 0;
 }
 
-// Function @0x8003F3F8
+//8003F3F8
 undefined4 FUN_8003f3f8(Entity* param_1, undefined4 param_2, Script* param_3, LogicContext* param_4)
 
 {
@@ -12030,7 +12036,7 @@ undefined4 FUN_8003f3f8(Entity* param_1, undefined4 param_2, Script* param_3, Lo
     return 2;
 }
 
-// Function @0x8003F488
+//8003F488
 undefined4 FUN_8003f488(Entity* param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -12053,7 +12059,7 @@ undefined4 FUN_8003f488(Entity* param_1, undefined4 param_2, int* param_3, int p
     return 2;
 }
 
-// Function @0x8003F514
+//8003F514
 undefined4 FUN_8003f514(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -12076,7 +12082,7 @@ undefined4 FUN_8003f514(Entity* param_1, undefined4 param_2, int* param_3)
     return 4;
 }
 
-// Function @0x8003F590
+//8003F590
 undefined4 FUN_8003f590(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -12099,7 +12105,7 @@ undefined4 FUN_8003f590(Entity* param_1, undefined4 param_2, int* param_3)
     return 4;
 }
 
-// Function @0x8003F610
+//8003F610
 undefined4 FUN_8003f610(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -12129,7 +12135,7 @@ undefined4 FUN_8003f610(Entity* param_1, undefined4 param_2, int* param_3)
     return 8;
 }
 
-// Function @0x8003F6C8
+//8003F6C8
 undefined4 FUN_8003f6c8(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -12168,52 +12174,50 @@ undefined4 FUN_8003f6c8(Entity* param_1, undefined4 param_2, int* param_3)
     return 8;
 }
 
-// Function @0x8003F794
-/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
-
-undefined4 FUN_8003f794(Entity* entity, Entity* entity2, Script* script)
+//8003F794
+int CopyLogicContextAndAssignScript(Entity* sourceEntity, Entity* targetEntity, Script* script)
 
 {
-    LogicContext* pLVar1;
+    Script* script2;
     int command;
-    LogicContext* script2;
-    LogicContext* pLVar2;
-    LogicContext** ppLVar3;
-    LogicContext** ppLVar4;
-    LogicContext** globalLogicContext;
-    LogicContext** logicContext;
+    LogicContext* sourceContextPtr;
+    int xpos;
+    LogicContext* nextSource;
+    LogicContext** nextTarget;
+    LogicContext** targetContextPtr;
 
-    globalLogicContext = &g_logicContext;
-    logicContext = &entity2->logicContext;
+    sourceContextPtr = &g_logicContext;
+    targetContextPtr = &targetEntity->logicContext;
     do {
-        ppLVar4 = logicContext;
-        ppLVar3 = globalLogicContext;
-        script2 = ppLVar3[1];
-        pLVar1 = ppLVar3[2];
-        pLVar2 = ppLVar3[3];
-        *ppLVar4 = *ppLVar3;
-        ppLVar4[1] = script2;
-        ppLVar4[2] = pLVar1;
-        ppLVar4[3] = pLVar2;
-        globalLogicContext = ppLVar3 + 4;
-        logicContext = ppLVar4 + 4;
-    } while (ppLVar3 + 4 != (LogicContext**)&UNK_8013da18);
-    script2 = ppLVar3[5];
-    ppLVar4[4] = _UNK_8013da18;
-    ppLVar4[5] = script2;
-    entity->unknownEventAnim = entity->targetAnimationId;
-    entity->unknownEventDir = entity->targetDirection;
+        nextTarget = targetContextPtr;
+        nextSource = sourceContextPtr;
+        script2 = nextSource->script;
+        command = nextSource->previousCommandPtr;
+        xpos = nextSource->xpos;
+        *nextTarget = *(LogicContext**)nextSource;
+        nextTarget[1] = (LogicContext*)script2;
+        nextTarget[2] = (LogicContext*)command;
+        nextTarget[3] = (LogicContext*)xpos;
+        sourceContextPtr = (LogicContext*)&nextSource->savedY;
+        targetContextPtr = nextTarget + 4;
+    } while (&nextSource->savedY != (int*)&g_logicContext.saveY);
+    command = nextSource->savedZ;
+    nextTarget[4] = (LogicContext*)g_logicContext._48_4_;
+    nextTarget[5] = (LogicContext*)command;
+    sourceEntity->lastTargetAnimationId = sourceEntity->targetAnimationId;
+    sourceEntity->lastTargetDirection = sourceEntity->targetDirection;
     command = script->command;
-    script2 = (LogicContext*)
+    sourceContextPtr =
+        (LogicContext*)
         (command +
-            ((int)(((uint) * (byte*)(command + 1) + (uint) * (byte*)(command + 2) * 0x100) * 0x10000)
-                >> 0x10));
-    entity2->script = (Script*)script2;
-    entity2->logicContext = script2;
+            ((int)(((uint) * (byte*)(command + 1) + (uint) * (byte*)(command + 2) * 0x100) * 0x10000) >>
+                0x10));
+    targetEntity->script = (Script*)sourceContextPtr;
+    targetEntity->logicContext = sourceContextPtr;
     return 3;
 }
 
-// Function @0x8003F82C
+//8003F82C
 undefined4 FUN_8003f82c(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -12222,7 +12226,7 @@ undefined4 FUN_8003f82c(Entity* param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x8003F868
+//8003F868
 undefined4 FUN_8003f868(void)
 
 {
@@ -12230,7 +12234,7 @@ undefined4 FUN_8003f868(void)
     return 1;
 }
 
-// Function @0x8003F878
+//8003F878
 undefined4 FUN_8003f878(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -12241,7 +12245,7 @@ undefined4 FUN_8003f878(undefined4 param_1, undefined4 param_2, int* param_3)
     return 7;
 }
 
-// Function @0x8003F8DC
+//8003F8DC
 undefined4 FUN_8003f8dc(Entity* param_1, undefined4 param_2, undefined4 param_3, int param_4)
 
 {
@@ -12251,7 +12255,7 @@ undefined4 FUN_8003f8dc(Entity* param_1, undefined4 param_2, undefined4 param_3,
     return 1;
 }
 
-// Function @0x8003F908
+//8003F908
 undefined4 FUN_8003f908(int param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -12265,7 +12269,7 @@ undefined4 FUN_8003f908(int param_1, undefined4 param_2, int* param_3, int param
     return 3;
 }
 
-// Function @0x8003F94C
+//8003F94C
 undefined4 FUN_8003f94c(int param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -12279,7 +12283,7 @@ undefined4 FUN_8003f94c(int param_1, undefined4 param_2, int* param_3, int param
     return 3;
 }
 
-// Function @0x8003F990
+//8003F990
 undefined4 FUN_8003f990(int param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -12293,7 +12297,7 @@ undefined4 FUN_8003f990(int param_1, undefined4 param_2, int* param_3, int param
     return 3;
 }
 
-// Function @0x8003F9D4
+//8003F9D4
 undefined4 FUN_8003f9d4(int param_1, undefined4 param_2, undefined4 param_3, int param_4)
 
 {
@@ -12301,7 +12305,7 @@ undefined4 FUN_8003f9d4(int param_1, undefined4 param_2, undefined4 param_3, int
     return 1;
 }
 
-// Function @0x8003F9E8
+//8003F9E8
 undefined4 FUN_8003f9e8(int param_1, undefined4 param_2, undefined4 param_3, int param_4)
 
 {
@@ -12309,7 +12313,7 @@ undefined4 FUN_8003f9e8(int param_1, undefined4 param_2, undefined4 param_3, int
     return 1;
 }
 
-// Function @0x8003F9FC
+//8003F9FC
 undefined4 FUN_8003f9fc(int param_1, undefined4 param_2, undefined4 param_3, int param_4)
 
 {
@@ -12317,7 +12321,7 @@ undefined4 FUN_8003f9fc(int param_1, undefined4 param_2, undefined4 param_3, int
     return 1;
 }
 
-// Function @0x8003FA10
+//8003FA10
 undefined4 FUN_8003fa10(int param_1, undefined4 param_2, undefined4 param_3, int param_4)
 
 {
@@ -12325,16 +12329,16 @@ undefined4 FUN_8003fa10(int param_1, undefined4 param_2, undefined4 param_3, int
     return 1;
 }
 
-// Function @0x8003FA24
+//8003FA24
 undefined4 FUN_8003fa24(Entity* entity)
 
 {
-    entity->unknownEventAnim = entity->targetAnimationId;
-    entity->unknownEventDir = entity->targetDirection;
+    entity->lastTargetAnimationId = entity->targetAnimationId;
+    entity->lastTargetDirection = entity->targetDirection;
     return 1;
 }
 
-// Function @0x8003FA3C
+//8003FA3C
 undefined4 FUN_8003fa3c(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -12342,14 +12346,14 @@ undefined4 FUN_8003fa3c(undefined4 param_1, undefined4 param_2, int* param_3, in
     return 2;
 }
 
-// Function @0x8003FA58
+//8003FA58
 int FUN_8003fa58(undefined4 param_1, undefined4 param_2, Script* param_3, LogicContext* param_4)
 
 {
     int iVar1;
 
-    iVar1 = *(int*)&param_4->field_0x30 + -1;
-    *(int*)&param_4->field_0x30 = iVar1;
+    iVar1 = *(int*)&param_4->saveY + -1;
+    *(int*)&param_4->saveY = iVar1;
     if (iVar1 < 1) {
         iVar1 = 3;
     }
@@ -12360,7 +12364,7 @@ int FUN_8003fa58(undefined4 param_1, undefined4 param_2, Script* param_3, LogicC
     return iVar1;
 }
 
-// Function @0x8003FA9C
+//8003FA9C
 undefined4 FUN_8003fa9c(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -12368,23 +12372,23 @@ undefined4 FUN_8003fa9c(undefined4 param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x8003FAC8
+//8003FAC8
 undefined4 FUN_8003fac8(void)
 
 {
-    PrintCommandMap(&DAT_80023d0c);
+    PrintCommandMap(&PTR_DAT_80023d0c);
     return 0;
 }
 
-// Function @0x8003FAEC
+//8003FAEC
 undefined4 FUN_8003faec(void)
 
 {
-    PrintCommandMap(&DAT_80023d0c);
+    PrintCommandMap(&PTR_DAT_80023d0c);
     return 0;
 }
 
-// Function @0x8003FB10
+//8003FB10
 int FUN_8003fb10(undefined4 param_1, undefined4 param_2, Script* param_3, LogicContext* param_4)
 
 {
@@ -12393,7 +12397,7 @@ int FUN_8003fb10(undefined4 param_1, undefined4 param_2, Script* param_3, LogicC
         (uint) * (byte*)(param_3->command + 2) * 0x100) * 0x10000) >> 0x10;
 }
 
-// Function @0x8003FB44
+//8003FB44
 int FUN_8003fb44(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -12408,7 +12412,7 @@ int FUN_8003fb44(undefined4 param_1, undefined4 param_2, int* param_3, int param
     return iVar1;
 }
 
-// Function @0x8003FB8C
+//8003FB8C
 int FUN_8003fb8c(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -12423,7 +12427,7 @@ int FUN_8003fb8c(undefined4 param_1, undefined4 param_2, int* param_3, int param
     return iVar1;
 }
 
-// Function @0x8003FBD4
+//8003FBD4
 int FUN_8003fbd4(Entity* param_1, Entity* param_2, Script* param_3, LogicContext* param_4)
 
 {
@@ -12448,7 +12452,7 @@ int FUN_8003fbd4(Entity* param_1, Entity* param_2, Script* param_3, LogicContext
     return iVar1;
 }
 
-// Function @0x8003FC74
+//8003FC74
 int FUN_8003fc74(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -12473,14 +12477,14 @@ int FUN_8003fc74(undefined4 param_1, undefined4 param_2, int* param_3, int param
     return iVar2;
 }
 
-// Function @0x8003FD14
+//8003FD14
 int FUN_8003fd14(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
     return *(int*)(param_4 + 0x34) - *param_3;
 }
 
-// Function @0x8003FD24
+//8003FD24
 int FUN_8003fd24(undefined4 param_1, undefined4 param_2, int* param_3, LogicContext* param_4)
 
 {
@@ -12493,7 +12497,7 @@ int FUN_8003fd24(undefined4 param_1, undefined4 param_2, int* param_3, LogicCont
     return iVar1;
 }
 
-// Function @0x8003FD4C
+//8003FD4C
 int FUN_8003fd4c(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -12506,7 +12510,7 @@ int FUN_8003fd4c(undefined4 param_1, undefined4 param_2, int* param_3, int param
     return iVar1;
 }
 
-// Function @0x8003FD74
+//8003FD74
 int FUN_8003fd74(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -12529,7 +12533,7 @@ int FUN_8003fd74(undefined4 param_1, undefined4 param_2, int* param_3, int param
     return iVar2;
 }
 
-// Function @0x8003FDF8
+//8003FDF8
 int FUN_8003fdf8(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -12552,7 +12556,7 @@ int FUN_8003fdf8(undefined4 param_1, undefined4 param_2, int* param_3, int param
     return iVar2;
 }
 
-// Function @0x8003FE7C
+//8003FE7C
 int FUN_8003fe7c(undefined4 param_1, undefined4 param_2, Script* script, LogicContext* logicContext)
 
 {
@@ -12568,7 +12572,7 @@ int FUN_8003fe7c(undefined4 param_1, undefined4 param_2, Script* script, LogicCo
     return 2;
 }
 
-// Function @0x8003FEC8
+//8003FEC8
 undefined4 FUN_8003fec8(undefined4 param_1, undefined4 param_2, Script* param_3, LogicContext* param_4)
 
 {
@@ -12584,7 +12588,7 @@ undefined4 FUN_8003fec8(undefined4 param_1, undefined4 param_2, Script* param_3,
     return 3;
 }
 
-// Function @0x8003FF34
+//8003FF34
 undefined4 FUN_8003ff34(undefined4 param_1, undefined4 param_2, int* param_3, LogicContext* param_4)
 
 {
@@ -12600,7 +12604,7 @@ undefined4 FUN_8003ff34(undefined4 param_1, undefined4 param_2, int* param_3, Lo
     return 2;
 }
 
-// Function @0x8003FF84
+//8003FF84
 undefined4 FUN_8003ff84(undefined4 param_1, undefined4 param_2, Script* param_3)
 
 {
@@ -12614,7 +12618,7 @@ undefined4 FUN_8003ff84(undefined4 param_1, undefined4 param_2, Script* param_3)
     return 7;
 }
 
-// Function @0x8003FFD4
+//8003FFD4
 undefined4 FUN_8003ffd4(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -12637,7 +12641,7 @@ undefined4 FUN_8003ffd4(Entity* param_1, undefined4 param_2, int* param_3)
     return 4;
 }
 
-// Function @0x80040048
+//80040048
 undefined4 FUN_80040048(Entity* param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -12667,30 +12671,30 @@ undefined4 FUN_80040048(Entity* param_1, undefined4 param_2, int* param_3, int p
     return 3;
 }
 
-// Function @0x8004011C
+//8004011C
 undefined4 FUN_8004011c(Entity* entity, undefined4 param_2, int* param_3)
 
 {
+    int matchingEntityCount;
     int iVar1;
-    int iVar2;
+    int* piVar2;
     int* piVar3;
-    undefined4 uVar4;
 
-    uVar4 = *(undefined4*)(&DAT_80023d2c + (uint) * (byte*)(*param_3 + 2) * 4);
-    iVar1 = FindMatchingEntities(entity, (uint) * (byte*)(*param_3 + 1));
-    if (0 < iVar1) {
-        piVar3 = &g_programIndex2 + iVar1;
+    piVar3 = (&PTR_DAT_80023d2c)[*(byte*)(*param_3 + 2)];
+    matchingEntityCount = FindMatchingEntities(entity, (uint) * (byte*)(*param_3 + 1));
+    if (0 < matchingEntityCount) {
+        piVar2 = &g_programIndex2 + matchingEntityCount;
         do {
-            iVar2 = *piVar3;
-            piVar3 = piVar3 + -1;
-            iVar1 = iVar1 + -1;
-            *(undefined4*)(iVar2 + 0x10) = uVar4;
-        } while (0 < iVar1);
+            iVar1 = *piVar2;
+            piVar2 = piVar2 + -1;
+            matchingEntityCount = matchingEntityCount + -1;
+            *(int**)(iVar1 + 0x10) = piVar3;
+        } while (0 < matchingEntityCount);
     }
     return 3;
 }
 
-// Function @0x80040194
+//80040194
 undefined4 FUN_80040194(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -12735,7 +12739,7 @@ undefined4 FUN_80040194(Entity* param_1, undefined4 param_2, int* param_3)
     return 9;
 }
 
-// Function @0x80040284
+//80040284
 undefined4 FUN_80040284(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -12754,7 +12758,7 @@ undefined4 FUN_80040284(undefined4 param_1, undefined4 param_2, int* param_3)
     return 8;
 }
 
-// Function @0x8004033C
+//8004033C
 undefined4 FUN_8004033c(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -12782,7 +12786,7 @@ undefined4 FUN_8004033c(Entity* param_1, undefined4 param_2, int* param_3)
     return 9;
 }
 
-// Function @0x80040438
+//80040438
 undefined8 FUN_80040438(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -12796,7 +12800,7 @@ undefined8 FUN_80040438(undefined4 param_1, undefined4 param_2, int* param_3, in
     return 2;
 }
 
-// Function @0x800404A8
+//800404A8
 undefined4 FUN_800404a8(Entity* param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -12819,7 +12823,7 @@ undefined4 FUN_800404a8(Entity* param_1, undefined4 param_2, int* param_3, int p
     return 2;
 }
 
-// Function @0x80040534
+//80040534
 undefined4 FUN_80040534(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -12831,7 +12835,7 @@ undefined4 FUN_80040534(undefined4 param_1, undefined4 param_2, int* param_3)
     return 5;
 }
 
-// Function @0x80040598
+//80040598
 undefined4 FUN_80040598(void)
 
 {
@@ -12839,7 +12843,7 @@ undefined4 FUN_80040598(void)
     return 1;
 }
 
-// Function @0x800405A8
+//800405A8
 undefined4 FUN_800405a8(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -12847,7 +12851,7 @@ undefined4 FUN_800405a8(undefined4 param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x800405D4
+//800405D4
 undefined4 FUN_800405d4(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -12868,7 +12872,7 @@ undefined4 FUN_800405d4(undefined4 param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x80040628
+//80040628
 undefined4 FUN_80040628(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -12891,7 +12895,7 @@ undefined4 FUN_80040628(undefined4 param_1, undefined4 param_2, int* param_3)
     return 3;
 }
 
-// Function @0x80040680
+//80040680
 undefined4 FUN_80040680(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -12928,7 +12932,7 @@ undefined4 FUN_80040680(undefined4 param_1, undefined4 param_2, int* param_3)
     return 8;
 }
 
-// Function @0x8004071C
+//8004071C
 undefined4 FUN_8004071c(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -12965,7 +12969,7 @@ undefined4 FUN_8004071c(undefined4 param_1, undefined4 param_2, int* param_3)
     return 8;
 }
 
-// Function @0x800407C0
+//800407C0
 undefined4 FUN_800407c0(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -13024,7 +13028,7 @@ undefined4 FUN_800407c0(undefined4 param_1, undefined4 param_2, int* param_3, in
     return 10;
 }
 
-// Function @0x800409A8
+//800409A8
 undefined4 FUN_800409a8(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13052,7 +13056,7 @@ undefined4 FUN_800409a8(Entity* param_1, undefined4 param_2, int* param_3)
     return 3;
 }
 
-// Function @0x80040A2C
+//80040A2C
 undefined4 FUN_80040a2c(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13060,7 +13064,7 @@ undefined4 FUN_80040a2c(undefined4 param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x80040A58
+//80040A58
 undefined4 FUN_80040a58(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13068,7 +13072,7 @@ undefined4 FUN_80040a58(undefined4 param_1, undefined4 param_2, int* param_3)
     return 3;
 }
 
-// Function @0x80040A8C
+//80040A8C
 undefined4 FUN_80040a8c(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -13085,7 +13089,7 @@ undefined4 FUN_80040a8c(undefined4 param_1, undefined4 param_2, int* param_3, in
     return 3;
 }
 
-// Function @0x80040B00
+//80040B00
 undefined4 FUN_80040b00(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -13101,7 +13105,7 @@ undefined4 FUN_80040b00(undefined4 param_1, undefined4 param_2, int* param_3, in
     return 3;
 }
 
-// Function @0x80040B68
+//80040B68
 void FUN_80040b68(void)
 
 {
@@ -13109,7 +13113,7 @@ void FUN_80040b68(void)
     return;
 }
 
-// Function @0x80040B78
+//80040B78
 undefined4 FUN_80040b78(void)
 
 {
@@ -13117,7 +13121,7 @@ undefined4 FUN_80040b78(void)
     return 1;
 }
 
-// Function @0x80040B88
+//80040B88
 void FUN_80040b88(void)
 
 {
@@ -13126,7 +13130,7 @@ void FUN_80040b88(void)
     return;
 }
 
-// Function @0x80040BB4
+//80040BB4
 undefined4 FUN_80040bb4(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -13167,7 +13171,7 @@ undefined4 FUN_80040bb4(undefined4 param_1, undefined4 param_2, int* param_3, in
     return 6;
 }
 
-// Function @0x80040C80
+//80040C80
 undefined4 FUN_80040c80(Entity* param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -13194,7 +13198,7 @@ undefined4 FUN_80040c80(Entity* param_1, undefined4 param_2, int* param_3, int p
     return 2;
 }
 
-// Function @0x80040D60
+//80040D60
 undefined4 FUN_80040d60(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13231,7 +13235,7 @@ undefined4 FUN_80040d60(undefined4 param_1, undefined4 param_2, int* param_3)
     return 8;
 }
 
-// Function @0x80040E10
+//80040E10
 undefined4 FUN_80040e10(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13276,7 +13280,7 @@ undefined4 FUN_80040e10(Entity* param_1, undefined4 param_2, int* param_3)
     return 9;
 }
 
-// Function @0x80040F00
+//80040F00
 undefined4 FUN_80040f00(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13294,7 +13298,7 @@ undefined4 FUN_80040f00(undefined4 param_1, undefined4 param_2, int* param_3)
     return 8;
 }
 
-// Function @0x80040FAC
+//80040FAC
 undefined4 FUN_80040fac(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13320,7 +13324,7 @@ undefined4 FUN_80040fac(Entity* param_1, undefined4 param_2, int* param_3)
     return 9;
 }
 
-// Function @0x80041098
+//80041098
 undefined4 FUN_80041098(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13328,7 +13332,7 @@ undefined4 FUN_80041098(undefined4 param_1, undefined4 param_2, int* param_3)
     return 3;
 }
 
-// Function @0x800410C8
+//800410C8
 undefined4 FUN_800410c8(void)
 
 {
@@ -13336,7 +13340,7 @@ undefined4 FUN_800410c8(void)
     return 1;
 }
 
-// Function @0x800410E8
+//800410E8
 undefined4 FUN_800410e8(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13344,7 +13348,7 @@ undefined4 FUN_800410e8(undefined4 param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x80041114
+//80041114
 undefined4 FUN_80041114(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13352,7 +13356,7 @@ undefined4 FUN_80041114(undefined4 param_1, undefined4 param_2, int* param_3)
     return 3;
 }
 
-// Function @0x80041144
+//80041144
 undefined4 FUN_80041144(void)
 
 {
@@ -13364,7 +13368,7 @@ undefined4 FUN_80041144(void)
     return 1;
 }
 
-// Function @0x80041174
+//80041174
 undefined4 FUN_80041174(Entity* param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -13387,7 +13391,7 @@ undefined4 FUN_80041174(Entity* param_1, undefined4 param_2, int* param_3, int p
     return 2;
 }
 
-// Function @0x80041200
+//80041200
 undefined4 FUN_80041200(Entity* param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -13410,7 +13414,7 @@ undefined4 FUN_80041200(Entity* param_1, undefined4 param_2, int* param_3, int p
     return 2;
 }
 
-// Function @0x80041290
+//80041290
 undefined4 FUN_80041290(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13421,7 +13425,7 @@ undefined4 FUN_80041290(undefined4 param_1, undefined4 param_2, int* param_3)
     return 4;
 }
 
-// Function @0x800412C4
+//800412C4
 undefined4 FUN_800412c4(Entity* param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13439,7 +13443,7 @@ undefined4 FUN_800412c4(Entity* param_1, undefined4 param_2, int* param_3)
     return 4;
 }
 
-// Function @0x80041344
+//80041344
 undefined4 FUN_80041344(Entity* param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -13488,16 +13492,16 @@ undefined4 FUN_80041344(Entity* param_1, undefined4 param_2, int* param_3, int p
     return 9;
 }
 
-// Function @0x800414B4
+//800414B4
 void FUN_800414b4(void)
 
 {
-    DoNothing(&DAT_80023d5c);
+    DoNothing(&PTR_DAT_80023d5c);
     exit();
     return;
 }
 
-// Function @0x800414E0
+//800414E0
 undefined4 FUN_800414e0(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13510,7 +13514,7 @@ undefined4 FUN_800414e0(undefined4 param_1, undefined4 param_2, int* param_3)
     return 7;
 }
 
-// Function @0x80041570
+//80041570
 undefined4 FUN_80041570(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13522,7 +13526,7 @@ undefined4 FUN_80041570(undefined4 param_1, undefined4 param_2, int* param_3)
     return 5;
 }
 
-// Function @0x800415E8
+//800415E8
 undefined4 FUN_800415e8(void)
 
 {
@@ -13537,68 +13541,69 @@ undefined4 FUN_800415e8(void)
     return 1;
 }
 
-// Function @0x80041628
+//80041628
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
-undefined4 FUN_80041628(Entity* param_1, undefined4 param_2, int* param_3, int param_4)
+int CompareEntityGroupsForMatch
+(Entity* currentEntity, int unusedParam, int* scriptPtr, int logicContextPtr)
 
 {
-    int iVar1;
-    int iVar2;
-    Entity* pEVar3;
-    int* piVar4;
-    Entity* pEVar5;
-    int* piVar6;
-    Entity* pEVar7;
-    int iVar8;
-    Entity** ppEVar9;
-    int local_120[66];
+    int group1Count;
+    int group2Count;
+    Entity* group2Entity1;
+    Entity* group2Entity2;
+    int* group1Ptr2;
+    Entity* group2Entity3;
+    int matchIndex;
+    Entity** group1EntityList;
+    int* group1Ptr;
+    int group1EntitiesBuffer[66];
 
-    iVar1 = FindMatchingEntities(param_1, (uint) * (byte*)(*param_3 + 1));
-    piVar4 = local_120;
-    if (iVar1 == 0) {
-        *(undefined4*)(param_4 + 0x2c) = 0;
+    group1Count = FindMatchingEntities(currentEntity, (uint) * (byte*)(*scriptPtr + 1));
+    group1Ptr = group1EntitiesBuffer;
+    if (group1Count == 0) {
+        *(undefined4*)(logicContextPtr + 0x2c) = 0;
     }
     else {
-        ppEVar9 = &g_matchingEntitiesBuffer;
+        group1EntityList = &g_matchingEntitiesBuffer;
         do {
-            pEVar3 = ppEVar9[1];
-            pEVar5 = ppEVar9[2];
-            pEVar7 = ppEVar9[3];
-            *piVar4 = (int)*ppEVar9;
-            piVar4[1] = (int)pEVar3;
-            piVar4[2] = (int)pEVar5;
-            piVar4[3] = (int)pEVar7;
-            ppEVar9 = ppEVar9 + 4;
-            piVar4 = piVar4 + 4;
-        } while (ppEVar9 != (Entity**)&UNK_8013d9d8);
-        *piVar4 = _UNK_8013d9d8;
-        iVar2 = FindMatchingEntities(param_1, (uint) * (byte*)(*param_3 + 2));
-        if (0 < iVar2) {
-            piVar4 = &g_programIndex2 + iVar2;
+            group2Entity1 = group1EntityList[1];
+            group2Entity2 = group1EntityList[2];
+            group2Entity3 = group1EntityList[3];
+            *group1Ptr = (int)*group1EntityList;
+            group1Ptr[1] = (int)group2Entity1;
+            group1Ptr[2] = (int)group2Entity2;
+            group1Ptr[3] = (int)group2Entity3;
+            group1EntityList = group1EntityList + 4;
+            group1Ptr = group1Ptr + 4;
+        } while (group1EntityList != (Entity**)&UNK_8013d9d8);
+        *group1Ptr = _UNK_8013d9d8;
+        group2Count = FindMatchingEntities(currentEntity, (uint) * (byte*)(*scriptPtr + 2));
+        if (0 < group2Count) {
+            group1Ptr = &g_programIndex2 + group2Count;
             do {
-                iVar8 = 0;
-                piVar6 = local_120;
-                if (0 < iVar1) {
+                matchIndex = 0;
+                group1Ptr2 = group1EntitiesBuffer;
+                if (0 < group1Count) {
                     do {
-                        iVar8 = iVar8 + 1;
-                        if (*piVar6 == *piVar4) {
-                            *(undefined4*)(param_4 + 0x2c) = 1;
+                        matchIndex = matchIndex + 1;
+                        if (*group1Ptr2 == *group1Ptr) {
+                            *(undefined4*)(logicContextPtr + 0x2c) = 1;
                             return 3;
                         }
-                        piVar6 = piVar6 + 1;
-                    } while (iVar8 < iVar1);
+                        group1Ptr2 = group1Ptr2 + 1;
+                    } while (matchIndex < group1Count);
                 }
-                iVar2 = iVar2 + -1;
-                piVar4 = piVar4 + -1;
-            } while (0 < iVar2);
+                group2Count = group2Count + -1;
+                group1Ptr = group1Ptr + -1;
+            } while (0 < group2Count);
         }
-        *(undefined4*)(param_4 + 0x2c) = 0;
+        *(undefined4*)(logicContextPtr + 0x2c) = 0;
     }
     return 3;
 }
 
-// Function @0x80041750
+//80041750
 undefined4 FUN_80041750(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13609,7 +13614,7 @@ undefined4 FUN_80041750(undefined4 param_1, undefined4 param_2, int* param_3)
     return 9;
 }
 
-// Function @0x800417CC
+//800417CC
 undefined4 FUN_800417cc(Entity* param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -13625,7 +13630,7 @@ undefined4 FUN_800417cc(Entity* param_1, undefined4 param_2, int* param_3, int p
     return 2;
 }
 
-// Function @0x80041830
+//80041830
 undefined4 FUN_80041830(Entity* param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -13641,7 +13646,7 @@ undefined4 FUN_80041830(Entity* param_1, undefined4 param_2, int* param_3, int p
     return 2;
 }
 
-// Function @0x80041894
+//80041894
 undefined4 FUN_80041894(Entity* param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -13657,7 +13662,7 @@ undefined4 FUN_80041894(Entity* param_1, undefined4 param_2, int* param_3, int p
     return 2;
 }
 
-// Function @0x800418F8
+//800418F8
 undefined4 FUN_800418f8(Entity* param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -13682,7 +13687,7 @@ undefined4 FUN_800418f8(Entity* param_1, undefined4 param_2, int* param_3, int p
     return 3;
 }
 
-// Function @0x80041988
+//80041988
 undefined4 FUN_80041988(Entity* param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -13707,7 +13712,7 @@ undefined4 FUN_80041988(Entity* param_1, undefined4 param_2, int* param_3, int p
     return 3;
 }
 
-// Function @0x80041A18
+//80041A18
 undefined4 FUN_80041a18(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13715,7 +13720,7 @@ undefined4 FUN_80041a18(undefined4 param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x80041A44
+//80041A44
 undefined4 FUN_80041a44(void)
 
 {
@@ -13727,7 +13732,7 @@ undefined4 FUN_80041a44(void)
     return 1;
 }
 
-// Function @0x80041A74
+//80041A74
 undefined4 FUN_80041a74(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -13784,7 +13789,7 @@ undefined4 FUN_80041a74(undefined4 param_1, undefined4 param_2, int* param_3, in
     return uVar1;
 }
 
-// Function @0x80041C00
+//80041C00
 undefined4 FUN_80041c00(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13795,7 +13800,7 @@ undefined4 FUN_80041c00(undefined4 param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x80041C38
+//80041C38
 undefined4 FUN_80041c38(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13803,7 +13808,7 @@ undefined4 FUN_80041c38(undefined4 param_1, undefined4 param_2, int* param_3)
     return 3;
 }
 
-// Function @0x80041C6C
+//80041C6C
 undefined4 FUN_80041c6c(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13811,7 +13816,7 @@ undefined4 FUN_80041c6c(undefined4 param_1, undefined4 param_2, int* param_3)
     return 3;
 }
 
-// Function @0x80041CA0
+//80041CA0
 undefined4 FUN_80041ca0(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13822,7 +13827,7 @@ undefined4 FUN_80041ca0(undefined4 param_1, undefined4 param_2, int* param_3)
     return 5;
 }
 
-// Function @0x80041CDC
+//80041CDC
 undefined4 FUN_80041cdc(undefined4 param_1, undefined4 param_2, int* param_3)
 
 {
@@ -13831,7 +13836,7 @@ undefined4 FUN_80041cdc(undefined4 param_1, undefined4 param_2, int* param_3)
     return 2;
 }
 
-// Function @0x80041D18
+//80041D18
 undefined4 FUN_80041d18(void)
 
 {
@@ -13839,7 +13844,7 @@ undefined4 FUN_80041d18(void)
     return 1;
 }
 
-// Function @0x80041D34
+//80041D34
 undefined4 FUN_80041d34(undefined4 param_1, undefined4 param_2, int* param_3, int param_4)
 
 {
@@ -13852,7 +13857,7 @@ undefined4 FUN_80041d34(undefined4 param_1, undefined4 param_2, int* param_3, in
     return 2;
 }
 
-// Function @0x80041D6C
+//80041D6C
 undefined4 FUN_80041d6c(void)
 
 {
@@ -13865,25 +13870,27 @@ undefined4 FUN_80041d6c(void)
     return 1;
 }
 
-// Function @0x80041DA8
+//80041DA8
 undefined4 FUN_80041da8(Entity* entity, undefined4 param_2, int* param_3)
 
 {
     int iVar1;
     undefined4 uVar2;
+    int* piVar3;
 
     iVar1 = FindMatchingEntities(entity, (uint) * (byte*)(*param_3 + 1));
     if (iVar1 != 0) {
         if ((g_matchingEntitiesBuffer->flags & 0x800000U) != 0) {
-            iVar1 = *(int*)&g_matchingEntitiesBuffer->spriteRecordPtr->pointerListOffset;
+            piVar3 = g_matchingEntitiesBuffer->spriteRecordPtr->pointerListOffset;
             ApplyCameraEffect(&g_matchingEntitiesBuffer->xpos, &g_matchingEntitiesBuffer->ypos,
                 &g_matchingEntitiesBuffer->zpos, &g_targetCamX_2, &g_targetCamY_2,
-                *(undefined1*)(iVar1 + 4), *(undefined1*)(iVar1 + 5),
-                *(undefined1*)(iVar1 + 6), *(undefined1*)(iVar1 + 7),
+                (char)piVar3[1], *(undefined1*)((int)piVar3 + 5),
+                *(undefined1*)((int)piVar3 + 6), *(undefined1*)((int)piVar3 + 7),
                 (&g_drawPageInfoBase)
-                [g_matchingEntitiesBuffer->sheetSize + (*(byte*)(iVar1 + 3) & 0x3f)],
+                [g_matchingEntitiesBuffer->sheetSize + (*(byte*)((int)piVar3 + 3) & 0x3f)],
                 (&g_tPageFadeLUT)
-                [g_matchingEntitiesBuffer->paletteIndex + (*(byte*)(iVar1 + 2) & 7)]);
+                [g_matchingEntitiesBuffer->paletteIndex + (*(byte*)((int)piVar3 + 2) & 7)])
+                ;
         }
         TriggerVisualUpdate((uint) * (ushort*)(*param_3 + 2));
     }
@@ -13895,15 +13902,15 @@ undefined4 FUN_80041da8(Entity* entity, undefined4 param_2, int* param_3)
     return uVar2;
 }
 
-// Function @0x80041EE4
-void GetAnimationDataEntry(int initDataBaseAddr, int entryIndex, uint* outAnimOffset)
+//80041EE4
+void GetAnimationDataEntry(int* initDataBaseAddr, int entryIndex, uint* outAnimOffset)
 
 {
     int* animationOffset;
     int** animationBank;
     uint logicCode;
 
-    logicCode = *(uint*)(entryIndex * 4 + initDataBaseAddr + 0x4c);
+    logicCode = initDataBaseAddr[entryIndex + 0x13];
     if ((logicCode & 0x80) == 0) {
         animationBank = &g_animationStructs;
     }
@@ -13919,8 +13926,8 @@ void GetAnimationDataEntry(int initDataBaseAddr, int entryIndex, uint* outAnimOf
         (((logicCode & 0x80) == 0 ||
             ((animationOffset < (int*)((int)animationBank[0x12] + 2U) ||
                 (animationBank[2] <= animationOffset)))))) {
-        DoNothing(&DAT_80023d8c);
-        PrintInfo("Init No  = ", *(undefined4*)(initDataBaseAddr + 0x48));
+        DoNothing(&g_unusedTextBuffer2);
+        PrintInfo("Init No  = ", initDataBaseAddr[0x12]);
         PrintInfo("Entry    = ", entryIndex);
         PrintInfo("Logic No = ", logicCode);
         exit();
@@ -13928,7 +13935,7 @@ void GetAnimationDataEntry(int initDataBaseAddr, int entryIndex, uint* outAnimOf
     return;
 }
 
-// Function @0x8004201C
+//8004201C
 void InitializeEntityChain(Entity* entity)
 
 {
@@ -13950,14 +13957,14 @@ void InitializeEntityChain(Entity* entity)
     return;
 }
 
-// Function @0x80042054
+//80042054
 void DoNothing(void)
 
 {
     return;
 }
 
-// Function @0x8004205C
+//8004205C
 void RunScript(Entity* entity, int logicMode)
 
 {
@@ -13985,8 +13992,8 @@ void RunScript(Entity* entity, int logicMode)
         ppLVar1 = (LogicContext*)&entity->logicContext;
         if ((entity->script != (Script*)0x0) && (entity->logicContext != (LogicContext*)0x0)) {
             if (entity->mapEventProgramId != 2) {
-                entity->targetAnimationId = entity->unknownEventAnim;
-                entity->targetDirection = entity->unknownEventDir;
+                entity->targetAnimationId = entity->lastTargetAnimationId;
+                entity->targetDirection = entity->lastTargetDirection;
             }
             goto SET_LOGIC_MODE;
         }
@@ -13999,10 +14006,10 @@ void RunScript(Entity* entity, int logicMode)
     case 0:
     case 3:
     case 4:
-        ppLVar1 = (LogicContext*)&g_logicContext;
+        ppLVar1 = &g_logicContext;
         if (entity->mapEventProgramId == 2) {
-            entity->unknownEventAnim = entity->targetAnimationId;
-            entity->unknownEventDir = entity->targetDirection;
+            entity->lastTargetAnimationId = entity->targetAnimationId;
+            entity->lastTargetDirection = entity->targetDirection;
         }
         break;
     default:
@@ -14013,7 +14020,7 @@ void RunScript(Entity* entity, int logicMode)
         entity->mapEventProgramId = logicMode;
         goto END_LOGIC_SETUP;
     }
-    GetAnimationDataEntry(entity, logicMode, ppLVar1);
+    GetAnimationDataEntry((int*)entity, logicMode, ppLVar1);
     entity->mapEventProgramId = logicMode;
 END_LOGIC_SETUP:
     if (isDebug && isDebugLogicTraceEnabled) {
@@ -14044,7 +14051,7 @@ END_LOGIC_SETUP:
         if (command == 0) break;
         g_lastCommand = g_command;
         g_command = command;
-        scriptCode = (*(code*)(&g_scriptFunctions)[command])(logicContextEntity, entity, script, ppLVar1);
+        scriptCode = (*(code*)g_scriptFunctions[command])(logicContextEntity, entity, script, ppLVar1);
         if (g_logicBranchFlag != 0) {
             g_logicBranchFlag = 0;
             if (logicContextEntity == entity) {
@@ -14073,39 +14080,40 @@ END_SCRIPT:
     return;
 }
 
-// Function @0x800423AC
-void FUN_800423ac(undefined4 param_1, undefined4 param_2)
+//800423AC
+void LoadAnimTableMaybeInDatasBin(char* fileName, uint fileOffset)
 
 {
-    ReadFileFromCDIntoBuffer(param_1, &DAT_8013da30, param_2, 0x2000);
-    g_etcAnimTable = &DAT_8013da30;
+    ReadFileFromCDIntoBuffer(fileName, g_datasBinBuffer4, fileOffset, 0x2000);
+    g_etcAnimTable = (int*)g_datasBinBuffer4;
     return;
 }
 
-// Function @0x800423EC
-void FUN_800423ec(undefined4 param_1)
+//800423EC
+void FUN_800423ec(int* param_1)
 
 {
     g_etcAnimTableAlt = param_1;
     return;
 }
 
-// Function @0x800423F8
+//800423F8
 int TryPlayEtcAnimation(uint animationId, int animationMode)
 
 {
     int iVar1;
     int success;
+    int* piVar2;
     char* animOffset;
 
     iVar1 = IsWarpInProgress();
     success = 0;
     if (iVar1 == 0) {
-        iVar1 = g_etcAnimTable;
+        piVar2 = g_etcAnimTable;
         if ((animationId & 0x80) != 0) {
-            iVar1 = g_etcAnimTableAlt;
+            piVar2 = g_etcAnimTableAlt;
         }
-        animOffset = (char*)(iVar1 + (uint) * (ushort*)((animationId & 0x7f) * 2 + iVar1));
+        animOffset = (char*)((int)piVar2 + (uint) * (ushort*)((animationId & 0x7f) * 2 + (int)piVar2));
         SetupEtcAnimation(animationId, animOffset);
         PlayEtcAnimation(animOffset, animationMode);
         success = 1;
@@ -14113,7 +14121,7 @@ int TryPlayEtcAnimation(uint animationId, int animationMode)
     return success;
 }
 
-// Function @0x8004248C
+//8004248C
 /* Possible GS_106.OBJ/GsSetProjection
    Possible _OP_VDEL.OBJ/__builtin_vec_delete
    Possible _OP_VNEW.OBJ/__builtin_vec_new
@@ -14127,7 +14135,7 @@ void FUN_8004248c(void)
     return;
 }
 
-// Function @0x800424AC
+//800424AC
 void InitDrawAndDisplayEnvs(DRAWENV* drawEnv, int clipX, int clipY, int w, int h)
 
 {
@@ -14147,7 +14155,7 @@ void InitDrawAndDisplayEnvs(DRAWENV* drawEnv, int clipX, int clipY, int w, int h
     return;
 }
 
-// Function @0x80042554
+//80042554
 void UpdateDisplayEnvironments(void)
 
 {
@@ -14169,7 +14177,7 @@ void UpdateDisplayEnvironments(void)
     return;
 }
 
-// Function @0x80042610
+//80042610
 void DrawSyncCallbackCustom(void)
 
 {
@@ -14188,11 +14196,11 @@ void DrawSyncCallbackCustom(void)
     return;
 }
 
-// Function @0x80042658
-void InitDisplaySystem(undefined4 param_1, undefined4 param_2)
+//80042658
+void InitDisplaySystem(int* param_1, int* param_2)
 
 {
-    g_display_overflow_message = 0;
+    g_display_overflow_message = (char*)0x0;
     g_gameplayTime = 0;
     g_mapOffsetX = 0;
     g_mapOffsetY = 0;
@@ -14214,17 +14222,17 @@ void InitDisplaySystem(undefined4 param_1, undefined4 param_2)
     return;
 }
 
-// Function @0x80042748
-void PrintDebugInfo(void)
+//80042748
+void ResetDebugRenderingState(void)
 
 {
-    DISPENV* pDVar1;
+    DISPENV* dispENv;
 
     DrawSync(0);
     VSync(0);
-    pDVar1 = g_currentDisplayEnv;
-    pDVar1[6].screen.x = 0;
-    pDVar1[6].screen.y = 0;
+    dispENv = g_currentDisplayEnv;
+    dispENv[6].screen.x = 0;
+    dispENv[6].screen.y = 0;
     g_actorCount = 0;
     g_primCount = 0;
     g_lineCount = 0;
@@ -14232,18 +14240,18 @@ void PrintDebugInfo(void)
     return;
 }
 
-// Function @0x80042798
+//80042798
 void PauseGameDuringNbFrame(int frameCount)
 
 {
-    DISPENV* pDVar1;
     int remainingFrames;
+    DISPENV* pDispEnv;
 
     g_lineCount = GetRCnt(0xf2000001);
     DrawSync(0);
     g_primCount._0_2_ = g_currentDisplayEnv[6].screen.x;
     g_primCount._2_2_ = g_currentDisplayEnv[6].screen.y;
-    (*g_screenUpdateFunc)(g_display_overflow_message & 1);
+    (*(code*)g_screenUpdateFunc)((uint)g_display_overflow_message & 1);
     g_actorCount = GetRCnt(0xf2000001);
     VSync(0);
     UpdateDisplayEnvironments();
@@ -14259,20 +14267,20 @@ void PauseGameDuringNbFrame(int frameCount)
     if (g_gameplayTime < 0x14996c4) {
         g_gameplayTime = g_gameplayTime + 1;
     }
-    pDVar1 = g_currentDisplayEnv;
-    pDVar1[6].screen.x = 0;
-    pDVar1[6].screen.y = 0;
+    pDispEnv = g_currentDisplayEnv;
+    pDispEnv[6].screen.x = 0;
+    pDispEnv[6].screen.y = 0;
     ResetRCnt(0xf2000001);
-    (*g_drawScreenFunc)(g_display_overflow_message);
+    (*(code*)g_drawScreenFunc)(g_display_overflow_message);
     return;
 }
 
-// Function @0x8004288C
+//8004288C
 void FUN_8004288c(void)
 
 {
     DrawSync(0);
-    (*g_screenUpdateFunc)(g_display_overflow_message & 1);
+    (*(code*)g_screenUpdateFunc)((uint)g_display_overflow_message & 1);
     VSync(0);
     UpdateDisplayEnvironments();
     if (g_gameplayTime < 0x14996c4) {
@@ -14283,7 +14291,7 @@ void FUN_8004288c(void)
     return;
 }
 
-// Function @0x80042920
+//80042920
 void FUN_80042920(void)
 
 {
@@ -14292,14 +14300,14 @@ void FUN_80042920(void)
     return;
 }
 
-// Function @0x8004294C
+//8004294C
 void DoNothing(void)
 
 {
     return;
 }
 
-// Function @0x80042954
+//80042954
 int FUN_80042954(int param_1, int param_2, int param_3)
 
 {
@@ -14319,7 +14327,7 @@ int FUN_80042954(int param_1, int param_2, int param_3)
     return iVar2;
 }
 
-// Function @0x80042984
+//80042984
 void FUN_80042984(void)
 
 {
@@ -14338,7 +14346,7 @@ void FUN_80042984(void)
     return;
 }
 
-// Function @0x80042A08
+//80042A08
 void BeginFadeEffect(int fadeTPageIndex, int fadeDuration)
 
 {
@@ -14380,7 +14388,7 @@ void BeginFadeEffect(int fadeTPageIndex, int fadeDuration)
     return;
 }
 
-// Function @0x80042B94
+//80042B94
 void SetFadeDuration(int fadeDuration)
 
 {
@@ -14418,7 +14426,7 @@ void SetFadeDuration(int fadeDuration)
     return;
 }
 
-// Function @0x80042C9C
+//80042C9C
 void ApplyScreenFade(undefined4 param_1, undefined4 fadeDuration)
 
 {
@@ -14427,7 +14435,7 @@ void ApplyScreenFade(undefined4 param_1, undefined4 fadeDuration)
     return;
 }
 
-// Function @0x80042CCC
+//80042CCC
 uint RenderEffects(uint* param_1)
 
 {
@@ -14479,7 +14487,7 @@ LAB_80042ee4:
     return g_warpFlags | g_warpStepFlags_2;
 }
 
-// Function @0x80042F18
+//80042F18
 void FUN_80042f18(void)
 
 {
@@ -14487,7 +14495,7 @@ void FUN_80042f18(void)
     return;
 }
 
-// Function @0x80042F3C
+//80042F3C
 void InitStandardWarpEffect(void)
 
 {
@@ -14502,7 +14510,7 @@ void InitStandardWarpEffect(void)
     return;
 }
 
-// Function @0x80042F8C
+//80042F8C
 void InitUnknownWarpEffect(void)
 
 {
@@ -14517,7 +14525,7 @@ void InitUnknownWarpEffect(void)
     return;
 }
 
-// Function @0x80042FDC
+//80042FDC
 void InitInstantWarpEffect(void)
 
 {
@@ -14544,11 +14552,12 @@ void InitInstantWarpEffect(void)
             uVar3 = uVar2 * 0x7d2b89dd + 0xe06a02e7;
             g_gameRandomSeed = uVar3 * 0x7d2b89dd + 0xe06a02e7;
             iVar4 = iVar4 + 1;
-            *(short*)((int)&DAT_80143488 + iVar7) =
+            *(short*)((int)&SHORT_80143488 + iVar7) =
                 -(short)((ulonglong)uVar1 * 0x15 >> 0x20) - (short)(iVar6 * iVar6 + iVar5 * iVar5 >> 10);
-            *(short*)((int)&DAT_8014348a + iVar7) = (short)((ulonglong)uVar2 * 0x15 >> 0x20) + 0x14;
-            *(short*)((int)&DAT_8014348c + iVar7) = (short)((ulonglong)uVar3 * 0x130 >> 0x20);
-            *(short*)((int)&DAT_8014348e + iVar7) = (short)((ulonglong)g_gameRandomSeed * 0xe0 >> 0x20);
+            *(short*)((int)&SHORT_8014348a + iVar7) = (short)((ulonglong)uVar2 * 0x15 >> 0x20) + 0x14;
+            *(short*)((int)&SHORT_8014348c + iVar7) = (short)((ulonglong)uVar3 * 0x130 >> 0x20);
+            *(short*)((int)&SHORT_8014348e + iVar7) = (short)((ulonglong)g_gameRandomSeed * 0xe0 >> 0x20)
+                ;
             iVar6 = iVar6 + 0x10;
             iVar7 = iVar7 + 8;
         } while (iVar4 < 0x14);
@@ -14571,26 +14580,26 @@ void InitInstantWarpEffect(void)
     return;
 }
 
-// Function @0x8004320C
+//8004320C
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void InitFadeOutWarp(void)
 
 {
-    undefined* puVar1;
-    int iVar2;
+    int** entityBase;
+    int entityIndex;
 
-    iVar2 = 0;
-    puVar1 = &DAT_8013fc10;
+    entityIndex = 0;
+    entityBase = &g_entityPoolStart;
     do {
-        *(undefined2*)(puVar1 + 0x1c36) = 1;
-        *(undefined2*)(puVar1 + 0x16) = 1;
-        *(short*)(puVar1 + 0x1c2e) = (short)iVar2;
-        *(short*)(puVar1 + 0xe) = (short)iVar2;
-        iVar2 = iVar2 + 1;
-        puVar1 = puVar1 + 0x18;
-    } while (iVar2 < 0xf0);
-    _DAT_80143488 = 0;
+        *(undefined2*)((int)entityBase + 0x1c36) = 1;
+        *(undefined2*)((int)entityBase + 0x16) = 1;
+        *(short*)((int)entityBase + 0x1c2e) = (short)entityIndex;
+        *(short*)((int)entityBase + 0xe) = (short)entityIndex;
+        entityIndex = entityIndex + 1;
+        entityBase = entityBase + 6;
+    } while (entityIndex < 0xf0);
+    _SHORT_80143488 = 0;
     g_targetFadeColorR = 0xff0000;
     g_targetFadeColorG = 0xff0000;
     g_targetFadeColorB = 0xff0000;
@@ -14606,7 +14615,7 @@ void InitFadeOutWarp(void)
     return;
 }
 
-// Function @0x800432A4
+//800432A4
 void InitSpecialWarpEffect(void)
 
 {
@@ -14636,13 +14645,13 @@ void InitSpecialWarpEffect(void)
             else {
                 iVar2 = iVar2 + -7 + iVar6;
             }
-            *(int*)((int)&DAT_80143488 + iVar5) = iVar2 * -2;
+            *(int*)((int)&SHORT_80143488 + iVar5) = iVar2 * -2;
             uVar3 = g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
             g_gameRandomSeed = uVar3 * 0x7d2b89dd + 0xe06a02e7;
             uVar1 = (ulonglong)g_gameRandomSeed;
             iVar4 = iVar4 + 1;
-            *(short*)((int)&DAT_8014348c + iVar5) = 0x40 - (short)((ulonglong)uVar3 * 0x81 >> 0x20);
-            *(short*)((int)&DAT_8014348e + iVar5) = -0x10 - (short)(uVar1 * 0x41 >> 0x20);
+            *(short*)((int)&SHORT_8014348c + iVar5) = 0x40 - (short)((ulonglong)uVar3 * 0x81 >> 0x20);
+            *(short*)((int)&SHORT_8014348e + iVar5) = -0x10 - (short)(uVar1 * 0x41 >> 0x20);
             iVar5 = iVar5 + 8;
         } while (iVar4 < 0x14);
         iVar6 = iVar6 + 1;
@@ -14667,7 +14676,7 @@ void InitSpecialWarpEffect(void)
     return;
 }
 
-// Function @0x80043458
+//80043458
 void InitMapChangeWarp(void)
 
 {
@@ -14683,7 +14692,7 @@ void InitMapChangeWarp(void)
     do {
         uVar4 = 0;
         iVar2 = iVar6;
-        pbVar3 = &DAT_800993a8;
+        pbVar3 = BYTE_ARRAY_800993a8;
         do {
             if ((uVar4 & 1) == 0) {
                 iVar1 = (0xe - iVar5) * 2 + (uint)*pbVar3;
@@ -14691,8 +14700,8 @@ void InitMapChangeWarp(void)
             else {
                 iVar1 = iVar5 * 2 + (uint)*pbVar3;
             }
-            *(int*)((int)&DAT_80143488 + iVar2) = iVar1;
-            *(undefined2*)((int)&DAT_8014348c + iVar2) = 0;
+            *(int*)((int)&SHORT_80143488 + iVar2) = iVar1;
+            *(undefined2*)((int)&SHORT_8014348c + iVar2) = 0;
             iVar2 = iVar2 + 8;
             uVar4 = uVar4 + 1;
             pbVar3 = pbVar3 + 1;
@@ -14715,28 +14724,28 @@ void InitMapChangeWarp(void)
     return;
 }
 
-// Function @0x80043540
+//80043540
 void InitCutsceneWarp(void)
 
 {
-    undefined* puVar1;
+    int** ppiVar1;
     int iVar2;
 
     iVar2 = 0;
-    puVar1 = &DAT_8013fc10;
+    ppiVar1 = &g_entityPoolStart;
     do {
-        *(undefined2*)(puVar1 + 0x1c30) = 0;
-        *(undefined2*)(puVar1 + 0x10) = 0;
-        *(undefined2*)(puVar1 + 0x1c34) = 0x140;
-        *(undefined2*)(puVar1 + 0x14) = 0x140;
-        *(undefined2*)(puVar1 + 0x1c36) = 1;
-        *(undefined2*)(puVar1 + 0x16) = 1;
-        *(undefined2*)(puVar1 + 0x1c2c) = 0x140;
-        *(undefined2*)(puVar1 + 0xc) = 0x140;
+        *(undefined2*)(ppiVar1 + 0x70c) = 0;
+        *(undefined2*)(ppiVar1 + 4) = 0;
+        *(undefined2*)(ppiVar1 + 0x70d) = 0x140;
+        *(undefined2*)(ppiVar1 + 5) = 0x140;
+        *(undefined2*)((int)ppiVar1 + 0x1c36) = 1;
+        *(undefined2*)((int)ppiVar1 + 0x16) = 1;
+        *(undefined2*)(ppiVar1 + 0x70b) = 0x140;
+        *(undefined2*)(ppiVar1 + 3) = 0x140;
         iVar2 = iVar2 + 1;
-        puVar1 = puVar1 + 0x18;
+        ppiVar1 = ppiVar1 + 6;
     } while (iVar2 < 0xf0);
-    DAT_8014348e = 0xef;
+    SHORT_8014348e = 0xef;
     g_targetFadeColorR = 0xff0000;
     g_targetFadeColorG = 0xff0000;
     g_targetFadeColorB = 0xff0000;
@@ -14748,34 +14757,34 @@ void InitCutsceneWarp(void)
     return;
 }
 
-// Function @0x800435E0
+//800435E0
 void FUN_800435e0(uint* param_1)
 
 {
     short sVar1;
     uint uVar2;
-    uint* puVar3;
-    uint uVar4;
+    int** ppiVar3;
+    int* piVar4;
 
     RenderEffects();
     uVar2 = DAT_80143de8 & 1;
-    puVar3 = (uint*)(&DAT_8013fc10 + uVar2 * 0x1c20);
+    ppiVar3 = &g_entityPoolStart + uVar2 * 0x708;
     (&DAT_8013fc20)[uVar2 * 0xe10] = 0;
     sVar1 = (g_currentDisplayEnv->disp).y;
     DAT_80143de8 = DAT_80143de8 + 1;
     (&DAT_8013fc24)[uVar2 * 0xe10] = 0x140;
     (&DAT_8013fc1c)[uVar2 * 0xe10] = 0x140;
-    uVar4 = *puVar3;
+    piVar4 = *ppiVar3;
     (&DAT_8013fc26)[uVar2 * 0xe10] = 0xf0;
     (&DAT_8013fc1e)[uVar2 * 0xe10] = 0;
     *(short*)(&DAT_8013fc22 + uVar2 * 0x1c20) = sVar1;
     /* Probable PsyQ macro: addPrim(). */
-    *puVar3 = uVar4 & 0xff000000 | *param_1 & 0xffffff;
-    *param_1 = *param_1 & 0xff000000 | (uint)puVar3 & 0xffffff;
+    *ppiVar3 = (int*)((uint)piVar4 & 0xff000000 | *param_1 & 0xffffff);
+    *param_1 = *param_1 & 0xff000000 | (uint)ppiVar3 & 0xffffff;
     return;
 }
 
-// Function @0x800436A0
+//800436A0
 int FUN_800436a0(uint* param_1)
 
 {
@@ -14811,14 +14820,14 @@ int FUN_800436a0(uint* param_1)
         iVar13 = 0;
         iVar12 = iVar16;
         do {
-            sVar8 = *(short*)((int)&DAT_80143488 + iVar12) + 1;
-            *(short*)((int)&DAT_80143488 + iVar12) = sVar8;
+            sVar8 = *(short*)((int)&SHORT_80143488 + iVar12) + 1;
+            *(short*)((int)&SHORT_80143488 + iVar12) = sVar8;
             sVar7 = (short)(iVar11 << 4);
             if (sVar8 < 1) {
                 sVar8 = (short)(iVar14 << 4);
                 iVar3 = 0;
             LAB_80043820:
-                puVar6 = (uint*)(&DAT_8013fc10 + iVar13 + uVar15 * 0x1c20 + iVar17);
+                puVar6 = (uint*)((int)&g_entityPoolStart + iVar13 + uVar15 * 0x1c20 + iVar17);
                 *(short*)(puVar6 + 4) = sVar7;
                 sVar1 = (short)iVar3;
                 sVar2 = sVar1 * -2 + 0x10;
@@ -14834,7 +14843,7 @@ int FUN_800436a0(uint* param_1)
                 *param_1 = *param_1 & 0xff000000 | (uint)puVar6 & 0xffffff;
             }
             else {
-                iVar5 = (int)*(short*)((int)&DAT_8014348a + iVar12);
+                iVar5 = (int)*(short*)((int)&SHORT_8014348a + iVar12);
                 iVar3 = iVar5 - sVar8;
                 iVar4 = iVar3 * 0x10000;
                 if (0 < iVar3) {
@@ -14847,8 +14856,8 @@ int FUN_800436a0(uint* param_1)
                     }
                     iVar3 = 8 - ((iVar18 << 3) >> 0x10);
                     if (iVar3 < 8) {
-                        iVar9 = (iVar18 * (*(short*)((int)&DAT_8014348c + iVar12) + -0x98) >> 0x10) + 0x98;
-                        iVar4 = (iVar18 * (*(short*)((int)&DAT_8014348e + iVar12) + -0x70) >> 0x10) + 0x70;
+                        iVar9 = (iVar18 * (*(short*)((int)&SHORT_8014348c + iVar12) + -0x98) >> 0x10) + 0x98;
+                        iVar4 = (iVar18 * (*(short*)((int)&SHORT_8014348e + iVar12) + -0x70) >> 0x10) + 0x70;
                         sVar7 = (short)iVar9 + (short)((uint)(iVar18 * (iVar10 - iVar9)) >> 0x10) + (short)iVar3
                             ;
                         sVar8 = (short)iVar4 + (short)((uint)(iVar18 * (iVar14 * 0x10 - iVar4)) >> 0x10) +
@@ -14873,7 +14882,7 @@ int FUN_800436a0(uint* param_1)
     } while (true);
 }
 
-// Function @0x8004392C
+//8004392C
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 undefined4 FUN_8004392c(uint* param_1)
@@ -14883,48 +14892,49 @@ undefined4 FUN_8004392c(uint* param_1)
     undefined4 uVar2;
     int iVar3;
     int iVar4;
-    uint* puVar5;
-    int iVar6;
-    uint uVar7;
-    undefined* puVar8;
-    int iVar9;
+    int** ppiVar5;
+    uint* puVar6;
+    int iVar7;
+    uint uVar8;
+    int** ppiVar9;
+    int iVar10;
 
     uVar2 = RenderEffects();
-    iVar3 = _DAT_80143488;
-    iVar6 = 0;
-    puVar8 = &DAT_8013fc10;
-    uVar7 = DAT_80143de8 & 1;
+    iVar3 = _SHORT_80143488;
+    iVar7 = 0;
+    ppiVar9 = &g_entityPoolStart;
+    uVar8 = DAT_80143de8 & 1;
     DAT_80143de8 = DAT_80143de8 + 1;
     do {
         g_gameRandomSeed = g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-        iVar9 = ((int)((ulonglong)g_gameRandomSeed * 0x201 >> 0x20) + -0x100) * iVar3;
-        puVar5 = (uint*)(puVar8 + uVar7 * 0x1c20);
-        iVar4 = iVar9 >> 0x10;
-        sVar1 = (short)((uint)iVar9 >> 0x10);
+        iVar10 = ((int)((ulonglong)g_gameRandomSeed * 0x201 >> 0x20) + -0x100) * iVar3;
+        ppiVar5 = ppiVar9 + uVar8 * 0x708;
+        iVar4 = iVar10 >> 0x10;
+        sVar1 = (short)((uint)iVar10 >> 0x10);
         if (iVar4 < 0) {
             if (-0x140 < iVar4) {
-                *(short*)(puVar5 + 5) = sVar1 + 0x140;
-                *(undefined2*)(puVar5 + 4) = 0;
-                *(short*)(puVar5 + 3) = 0x140 - sVar1;
+                *(short*)(ppiVar5 + 5) = sVar1 + 0x140;
+                *(undefined2*)(ppiVar5 + 4) = 0;
+                *(short*)(ppiVar5 + 3) = 0x140 - sVar1;
                 goto LAB_80043a30;
             }
         }
         else if (iVar4 < 0x140) {
-            *(short*)(puVar5 + 4) = sVar1;
-            *(short*)(puVar5 + 5) = 0x140 - sVar1;
-            *(undefined2*)(puVar5 + 3) = 0x140;
+            *(short*)(ppiVar5 + 4) = sVar1;
+            *(short*)(ppiVar5 + 5) = 0x140 - sVar1;
+            *(undefined2*)(ppiVar5 + 3) = 0x140;
         LAB_80043a30:
-            *(short*)((int)puVar5 + 0x12) = (g_currentDisplayEnv->disp).y + (short)iVar6;
+            *(short*)((int)ppiVar5 + 0x12) = (g_currentDisplayEnv->disp).y + (short)iVar7;
             /* Probable PsyQ macro: addPrim(). */
-            *puVar5 = *puVar5 & 0xff000000 | *param_1 & 0xffffff;
-            *param_1 = *param_1 & 0xff000000 | (uint)puVar5 & 0xffffff;
+            *ppiVar5 = (int*)((uint)*ppiVar5 & 0xff000000 | *param_1 & 0xffffff);
+            *param_1 = *param_1 & 0xff000000 | (uint)ppiVar5 & 0xffffff;
         }
-        iVar6 = iVar6 + 1;
-        puVar8 = puVar8 + 0x18;
-        if (0xef < iVar6) {
-            iVar3 = uVar7 * 0x1c20;
-            puVar5 = (uint*)(&DAT_80141290 + iVar3);
-            _DAT_80143488 = _DAT_80143488 + 0x80;
+        iVar7 = iVar7 + 1;
+        ppiVar9 = ppiVar9 + 6;
+        if (0xef < iVar7) {
+            iVar3 = uVar8 * 0x1c20;
+            puVar6 = (uint*)(&DAT_80141290 + iVar3);
+            _SHORT_80143488 = _SHORT_80143488 + 0x80;
             *(undefined2*)(&DAT_801412a0 + iVar3) = 0;
             sVar1 = (g_currentDisplayEnv->disp).y;
             *(undefined2*)(&DAT_801412a4 + iVar3) = 0x140;
@@ -14933,14 +14943,14 @@ undefined4 FUN_8004392c(uint* param_1)
             *(undefined2*)(&DAT_8014129e + iVar3) = 0;
             *(short*)(&DAT_801412a2 + iVar3) = sVar1;
             /* Probable PsyQ macro: addPrim(). */
-            *puVar5 = *puVar5 & 0xff000000 | *param_1 & 0xffffff;
-            *param_1 = *param_1 & 0xff000000 | (uint)puVar5 & 0xffffff;
+            *puVar6 = *puVar6 & 0xff000000 | *param_1 & 0xffffff;
+            *param_1 = *param_1 & 0xff000000 | (uint)puVar6 & 0xffffff;
             return uVar2;
         }
     } while (true);
 }
 
-// Function @0x80043B34
+//80043B34
 undefined4 FUN_80043b34(uint* param_1)
 
 {
@@ -14972,19 +14982,19 @@ undefined4 FUN_80043b34(uint* param_1)
     do {
         iVar12 = 0;
         iVar15 = iVar13 * 0x10;
-        puVar6 = (uint*)(&DAT_8013fc10 + uVar2 * 0x1c20 + iVar16);
+        puVar6 = (uint*)((int)&g_entityPoolStart + uVar2 * 0x1c20 + iVar16);
         iVar8 = iVar14;
         do {
             iVar4 = iVar12 * 0x10;
             sVar11 = (short)iVar4 + 0x140;
             sVar7 = 0x10;
-            iVar3 = *(int*)((int)&DAT_80143488 + iVar8);
+            iVar3 = *(int*)((int)&SHORT_80143488 + iVar8);
             sVar10 = 0x10;
             iVar5 = iVar15;
             iVar9 = iVar15;
             if (iVar3 < 1) {
             LAB_80043c94:
-                *(int*)((int)&DAT_80143488 + iVar8) = *(int*)((int)&DAT_80143488 + iVar8) + 1;
+                *(int*)((int)&SHORT_80143488 + iVar8) = *(int*)((int)&SHORT_80143488 + iVar8) + 1;
                 *(short*)(puVar6 + 4) = (short)iVar4;
                 uVar17 = 1;
                 sVar1 = (g_currentDisplayEnv->disp).y;
@@ -14998,8 +15008,8 @@ undefined4 FUN_80043b34(uint* param_1)
                 *param_1 = *param_1 & 0xff000000 | (uint)puVar6 & 0xffffff;
             }
             else {
-                iVar5 = iVar15 + ((int)((uint) * (ushort*)((int)&DAT_8014348e + iVar8) << 0x10) >> 0x14);
-                iVar4 = iVar4 + (*(short*)((int)&DAT_8014348c + iVar8) * iVar3 >> 4);
+                iVar5 = iVar15 + ((int)((uint) * (ushort*)((int)&SHORT_8014348e + iVar8) << 0x10) >> 0x14);
+                iVar4 = iVar4 + (*(short*)((int)&SHORT_8014348c + iVar8) * iVar3 >> 4);
                 sVar7 = (short)iVar4;
                 if (-1 < iVar4) {
                     sVar10 = 0x10;
@@ -15021,8 +15031,8 @@ undefined4 FUN_80043b34(uint* param_1)
                             sVar7 = 0xf0 - (short)iVar5;
                         }
                     }
-                    *(short*)((int)&DAT_8014348e + iVar8) =
-                        *(short*)((int)&DAT_8014348e + iVar8) + (short)iVar3 * 4;
+                    *(short*)((int)&SHORT_8014348e + iVar8) =
+                        *(short*)((int)&SHORT_8014348e + iVar8) + (short)iVar3 * 4;
                     goto LAB_80043c94;
                 }
                 if (-0x10 < iVar4) {
@@ -15046,7 +15056,7 @@ undefined4 FUN_80043b34(uint* param_1)
     } while (true);
 }
 
-// Function @0x80043D54
+//80043D54
 int FUN_80043d54(uint* param_1)
 
 {
@@ -15057,144 +15067,145 @@ int FUN_80043d54(uint* param_1)
     uint uVar5;
     int iVar6;
     short sVar7;
-    uint* puVar8;
-    uint uVar9;
-    int iVar10;
+    int** ppiVar8;
+    int* piVar9;
+    uint* puVar10;
     int iVar11;
     int iVar12;
     int iVar13;
     int iVar14;
+    int iVar15;
 
     iVar4 = RenderEffects();
     if (iVar4 == 0) {
-        iVar14 = 0;
+        iVar15 = 0;
         iVar4 = 0;
+        iVar14 = 0;
         iVar13 = 0;
-        iVar12 = 0;
         uVar5 = DAT_80143de8 & 1;
         DAT_80143de8 = DAT_80143de8 + 1;
         do {
-            iVar10 = 0;
-            puVar8 = (uint*)(&DAT_8013fc10 + uVar5 * 0x1c20 + iVar13);
-            iVar11 = iVar12;
+            iVar11 = 0;
+            puVar10 = (uint*)((int)&g_entityPoolStart + uVar5 * 0x1c20 + iVar14);
+            iVar12 = iVar13;
             do {
-                iVar6 = *(int*)((int)&DAT_80143488 + iVar11);
+                iVar6 = *(int*)((int)&SHORT_80143488 + iVar12);
                 if (iVar6 == 0) {
-                    iVar6 = *(short*)((int)&DAT_8014348c + iVar11) + 0x80;
+                    iVar6 = *(short*)((int)&SHORT_8014348c + iVar12) + 0x80;
                     if (iVar6 < 0x800) {
-                        *(short*)((int)&DAT_8014348c + iVar11) = (short)iVar6;
+                        *(short*)((int)&SHORT_8014348c + iVar12) = (short)iVar6;
                         sVar3 = (short)((uint)iVar6 >> 8);
                         goto LAB_80043eac;
                     }
                 }
                 else {
-                    *(int*)((int)&DAT_80143488 + iVar11) = iVar6 + -1;
+                    *(int*)((int)&SHORT_80143488 + iVar12) = iVar6 + -1;
                     sVar3 = 0;
                 LAB_80043eac:
-                    sVar7 = (short)iVar10 * 0x10 + sVar3;
-                    *(short*)(puVar8 + 4) = sVar7;
+                    sVar7 = (short)iVar11 * 0x10 + sVar3;
+                    *(short*)(puVar10 + 4) = sVar7;
                     sVar2 = sVar3 * -2 + 0x10;
                     sVar1 = (g_currentDisplayEnv->disp).y;
-                    iVar14 = 1;
-                    *(short*)((int)puVar8 + 0x16) = sVar2;
-                    *(short*)(puVar8 + 5) = sVar2;
+                    iVar15 = 1;
+                    *(short*)((int)puVar10 + 0x16) = sVar2;
+                    *(short*)(puVar10 + 5) = sVar2;
                     sVar3 = (short)iVar4 * 0x10 + sVar3;
-                    *(short*)(puVar8 + 3) = sVar7 + 0x140;
-                    *(short*)((int)puVar8 + 0xe) = sVar3;
-                    *(short*)((int)puVar8 + 0x12) = sVar1 + sVar3;
+                    *(short*)(puVar10 + 3) = sVar7 + 0x140;
+                    *(short*)((int)puVar10 + 0xe) = sVar3;
+                    *(short*)((int)puVar10 + 0x12) = sVar1 + sVar3;
                     /* Probable PsyQ macro: addPrim(). */
-                    *puVar8 = *puVar8 & 0xff000000 | *param_1 & 0xffffff;
-                    *param_1 = *param_1 & 0xff000000 | (uint)puVar8 & 0xffffff;
+                    *puVar10 = *puVar10 & 0xff000000 | *param_1 & 0xffffff;
+                    *param_1 = *param_1 & 0xff000000 | (uint)puVar10 & 0xffffff;
                 }
-                puVar8 = puVar8 + 6;
-                iVar10 = iVar10 + 1;
-                iVar11 = iVar11 + 8;
-            } while (iVar10 < 0x14);
-            iVar13 = iVar13 + 0x1e0;
+                puVar10 = puVar10 + 6;
+                iVar11 = iVar11 + 1;
+                iVar12 = iVar12 + 8;
+            } while (iVar11 < 0x14);
+            iVar14 = iVar14 + 0x1e0;
             iVar4 = iVar4 + 1;
-            iVar12 = iVar12 + 0xa0;
+            iVar13 = iVar13 + 0xa0;
         } while (iVar4 < 0xf);
     }
     else {
-        iVar14 = 1;
+        iVar15 = 1;
         uVar5 = DAT_80143de8 & 1;
-        puVar8 = (uint*)(&DAT_8013fc10 + uVar5 * 0x1c20);
+        ppiVar8 = &g_entityPoolStart + uVar5 * 0x708;
         (&DAT_8013fc20)[uVar5 * 0xe10] = 0;
         sVar3 = (g_currentDisplayEnv->disp).y;
         DAT_80143de8 = DAT_80143de8 + 1;
         (&DAT_8013fc24)[uVar5 * 0xe10] = 0x140;
         (&DAT_8013fc1c)[uVar5 * 0xe10] = 0x140;
-        uVar9 = *puVar8;
+        piVar9 = *ppiVar8;
         (&DAT_8013fc26)[uVar5 * 0xe10] = 0xf0;
         (&DAT_8013fc1e)[uVar5 * 0xe10] = 0;
         *(short*)(&DAT_8013fc22 + uVar5 * 0x1c20) = sVar3;
         /* Probable PsyQ macro: addPrim(). */
-        *puVar8 = uVar9 & 0xff000000 | *param_1 & 0xffffff;
-        *param_1 = *param_1 & 0xff000000 | (uint)puVar8 & 0xffffff;
+        *ppiVar8 = (int*)((uint)piVar9 & 0xff000000 | *param_1 & 0xffffff);
+        *param_1 = *param_1 & 0xff000000 | (uint)ppiVar8 & 0xffffff;
     }
-    if (iVar14 == 0) {
+    if (iVar15 == 0) {
         g_renderFlags = g_renderFlags | 0x400000;
     }
-    return iVar14;
+    return iVar15;
 }
 
-// Function @0x80043F8C
+//80043F8C
 undefined4 FUN_80043f8c(uint* param_1)
 
 {
     undefined4 uVar1;
     uint uVar2;
-    uint* puVar3;
+    int** ppiVar3;
     int iVar4;
-    undefined* puVar5;
+    int** ppiVar5;
 
     uVar1 = RenderEffects();
     iVar4 = 0;
-    puVar5 = &DAT_8013fc10;
+    ppiVar5 = &g_entityPoolStart;
     uVar2 = DAT_80143de8 & 1;
     DAT_80143de8 = DAT_80143de8 + 1;
     do {
-        puVar3 = (uint*)(puVar5 + uVar2 * 0x1c20);
-        if (DAT_8014348e < iVar4) {
-            *(short*)((int)puVar3 + 0xe) = DAT_8014348e;
+        ppiVar3 = ppiVar5 + uVar2 * 0x708;
+        if (SHORT_8014348e < iVar4) {
+            *(short*)((int)ppiVar3 + 0xe) = SHORT_8014348e;
         }
         else {
-            *(short*)((int)puVar3 + 0xe) = (short)iVar4;
+            *(short*)((int)ppiVar3 + 0xe) = (short)iVar4;
         }
-        puVar5 = puVar5 + 0x18;
-        *(short*)((int)puVar3 + 0x12) = (g_currentDisplayEnv->disp).y + (short)iVar4;
+        ppiVar5 = ppiVar5 + 6;
+        *(short*)((int)ppiVar3 + 0x12) = (g_currentDisplayEnv->disp).y + (short)iVar4;
         iVar4 = iVar4 + 1;
-        *puVar3 = *puVar3 & 0xff000000 | *param_1 & 0xffffff;
-        *param_1 = *param_1 & 0xff000000 | (uint)puVar3 & 0xffffff;
+        *ppiVar3 = (int*)((uint)*ppiVar3 & 0xff000000 | *param_1 & 0xffffff);
+        *param_1 = *param_1 & 0xff000000 | (uint)ppiVar3 & 0xffffff;
     } while (iVar4 < 0xf0);
-    if (DAT_8014348e != 0) {
-        DAT_8014348e = DAT_8014348e + -1;
+    if (SHORT_8014348e != 0) {
+        SHORT_8014348e = SHORT_8014348e + -1;
     }
     return uVar1;
 }
 
-// Function @0x80044094
+//80044094
 void FUN_80044094(void)
 
 {
-    DR_MOVE* p;
+    int** p;
     DR_MOVE* p_00;
     int iVar1;
 
     iVar1 = 0;
-    p = (DR_MOVE*)&DAT_8013fc10;
+    p = &g_entityPoolStart;
     p_00 = (DR_MOVE*)&DAT_80141830;
     do {
-        SetDrawMove(p);
+        SetDrawMove((DR_MOVE*)p);
         SetDrawMove(p_00);
         p_00 = p_00 + 1;
         iVar1 = iVar1 + 1;
-        p = p + 1;
+        p = (int**)((int)p + 0x18);
     } while (iVar1 < 300);
     return;
 }
 
-// Function @0x800440FC
+//800440FC
 void StartWarpTransition(int posX, int posY, int posZ, int transitionType)
 
 {
@@ -15285,8 +15296,8 @@ void StartWarpTransition(int posX, int posY, int posZ, int transitionType)
     return;
 }
 
-// Function @0x80044320
-void StartWarpTransition(undefined4 warpType)
+//80044320
+void StartWarpTransition(int warpType)
 
 {
     DrawSync(0);
@@ -15329,7 +15340,7 @@ void StartWarpTransition(undefined4 warpType)
     return;
 }
 
-// Function @0x80044440
+//80044440
 undefined4 FUN_80044440(undefined4 param_1, undefined4 param_2)
 
 {
@@ -15364,7 +15375,7 @@ undefined4 FUN_80044440(undefined4 param_1, undefined4 param_2)
     return uVar1;
 }
 
-// Function @0x800444EC
+//800444EC
 void LoadBalance_bin(void)
 
 {
@@ -15372,25 +15383,25 @@ void LoadBalance_bin(void)
     return;
 }
 
-// Function @0x80044520
+//80044520
 void FUN_80044520(undefined4 param_1)
 
 {
-    undefined4* puVar1;
+    int** ppiVar1;
     int iVar2;
 
     iVar2 = 2;
-    puVar1 = &DAT_80146e10;
+    ppiVar1 = &PTR_80146e10;
     g_itemIdThreshold = param_1;
     do {
-        *puVar1 = 0;
+        *ppiVar1 = (int*)0x0;
         iVar2 = iVar2 + -1;
-        puVar1 = puVar1 + -2;
+        ppiVar1 = ppiVar1 + -2;
     } while (-1 < iVar2);
     return;
 }
 
-// Function @0x80044550
+//80044550
 byte* GetSpriteAnimationPtr(int spriteIndex)
 
 {
@@ -15413,7 +15424,7 @@ byte* GetSpriteAnimationPtr(int spriteIndex)
     return animDataPtr;
 }
 
-// Function @0x800445C0
+//800445C0
 byte* GetItemDataPointer(int itemId)
 
 {
@@ -15434,7 +15445,7 @@ byte* GetItemDataPointer(int itemId)
     return itemDataPtr;
 }
 
-// Function @0x8004464C
+//8004464C
 Entity* ResolveBalanceTarget(byte* balanceConfig, Entity* targetEntity, Entity* currentTarget)
 
 {
@@ -15513,15 +15524,15 @@ Entity* ResolveBalanceTarget(byte* balanceConfig, Entity* targetEntity, Entity* 
     return currentTarget;
 }
 
-// Function @0x80044820
+//80044820
 void LoadTakiScreenWind_tx(void)
 
 {
     ushort uVar1;
-    ushort* tpageList1;
+    short* tpageList1;
     byte* fadeConfig;
     DR_MODE* drawModePtr;
-    ushort* tpageList2;
+    short* tpageList2;
     DR_MODE* drawMode;
     int iVar2;
     DR_MODE* drawModeB;
@@ -15547,26 +15558,27 @@ void LoadTakiScreenWind_tx(void)
     texRect.w = 0x40;
     texRect.h = 0x100;
     LoadImage(&texRect, (u_long*)&g_bufferImage2);
-    drawModeB = (DR_MODE*)&g_drawModeB;
+    drawModeB = g_drawModes + 1;
     i = 0;
-    drawModeA = (DR_MODE*)&g_drawModeA;
-    drawModeC = (DR_MODE*)&g_drawModeC;
+    drawModeA = g_drawModes;
+    drawModeC = g_drawModes + 3;
     do {
         iVar2 = 0;
-        SetDrawMode(drawModeA, 0, 0, (uint)g_tpageOverlayA, &clipRect);
-        SetDrawMode((DR_MODE*)(&DAT_80146e9c + i), 0, 0, (uint)g_tpageOverlayB, &clipRect);
-        SetDrawMode(drawModeC, 0, 0, (uint)g_tpageMain, &clipRect);
+        SetDrawMode(drawModeA, 0, 0, (uint)(ushort)g_tpageOverlayA, &clipRect);
+        SetDrawMode((DR_MODE*)((int)g_drawModes[5].code + i + -4), 0, 0, (uint)(ushort)g_tpageOverlayB,
+            &clipRect);
+        SetDrawMode(drawModeC, 0, 0, (uint)(ushort)g_tpageMain, &clipRect);
         tpageList1 = &g_tpageWind1;
         tpageList2 = &g_tpageWind3;
-        drawModePtr = (DR_MODE*)(&DAT_80146ea8 + i);
+        drawModePtr = (DR_MODE*)((int)g_drawModes[6].code + i + -4);
         drawMode = drawModeB;
         do {
             uVar1 = *tpageList1;
-            tpageList1 = tpageList1 + 1;
+            tpageList1 = (short*)((ushort*)tpageList1 + 1);
             iVar2 = iVar2 + 1;
             SetDrawMode(drawMode, 0, 0, (uint)uVar1, &clipRect);
             uVar1 = *tpageList2;
-            tpageList2 = tpageList2 + 1;
+            tpageList2 = (short*)((ushort*)tpageList2 + 1);
             SetDrawMode(drawModePtr, 0, 0, (uint)uVar1, &clipRect);
             drawModePtr = drawModePtr + 1;
             drawMode = drawMode + 1;
@@ -15577,13 +15589,13 @@ void LoadTakiScreenWind_tx(void)
         drawModeA = drawModeA + 10;
     } while ((int)drawModeB < -0x7feb90a4);
     fadeConfig = (byte*)GetFadeSettings(0x20);
-    DAT_80146e50 = GetTPage(0, 0, (uint)*fadeConfig * 0x40 + 0x140, 0x100);
-    SetDrawMode((DR_MODE*)&PTR_80146e90, 0, 0, (uint)DAT_80146e50, &clipRect);
-    SetDrawMode((DR_MODE*)&PTR_80146f08, 0, 0, (uint)DAT_80146e50, &clipRect);
+    SHORT_80146e50 = GetTPage(0, 0, (uint)*fadeConfig * 0x40 + 0x140, 0x100);
+    SetDrawMode(g_drawModes + 4, 0, 0, (uint)(ushort)SHORT_80146e50, &clipRect);
+    SetDrawMode(g_drawModes + 0xe, 0, 0, (uint)(ushort)SHORT_80146e50, &clipRect);
     return;
 }
 
-// Function @0x80044B48
+//80044B48
 void LoadtakiScreenWind_cl(void)
 
 {
@@ -15609,12 +15621,12 @@ void LoadtakiScreenWind_cl(void)
     return;
 }
 
-// Function @0x80044BE4
+//80044BE4
 void LoadFontInTakiFolder(void)
 
 {
-    ClearOrderTable((u_long*)&DAT_80146f58, 10);
-    ClearOrderTable((u_long*)&DAT_80146f80, 10);
+    ClearOrderTable(g_orderTableTaki, 10);
+    ClearOrderTable(g_orderTableTaki2, 10);
     LoadTakiScreenWind_tx();
     LoadtakiScreenWind_cl();
     LoadFONT3_tim();
@@ -15625,87 +15637,83 @@ void LoadFontInTakiFolder(void)
     return;
 }
 
-// Function @0x80044C5C
-undefined* GetDisplaySyncCounter(void)
+//80044C5C
+u_long* GetDisplaySyncCounter(void)
 
 {
-    DR_MODE** primitiveStart;
-    DR_MODE** ppDVar1;
-    uint* primitiveChain;
-    uint* puVar2;
+    int iVar1;
+    DR_MODE* primitiveStart;
+    DR_MODE* pDVar2;
     uint* puVar3;
-    int bufferIndex;
-    int iVar4;
+    u_long* primitiveChain;
     uint newBufferIndex;
-    uint* primitiveEnd;
+    u_long* primitiveEnd;
     DISPENV displayEnv;
     DR_AREA drawArea;
 
     GetDispEnv(&displayEnv);
     SetDrawArea(&drawArea, &displayEnv.disp);
-    FUN_800481f8(&DAT_80146f58 + g_bufferIndex * 0x28);
-    FUN_80058134(&DAT_80146f64 + g_bufferIndex * 0x28);
-    bufferIndex = g_bufferIndex * 0x78;
-    primitiveStart = &PTR_80146e90 + g_bufferIndex * 0x1e;
-    iVar4 = g_bufferIndex * 0x28;
-    primitiveChain = (uint*)(&DAT_80146f68 + iVar4);
-    primitiveEnd = (uint*)(&DAT_80146f64 + iVar4);
+    FUN_800481f8(g_orderTableTaki + g_bufferIndex * 10);
+    FUN_80058134(g_bufferIndex * 0x28 + -0x7feb909c);
+    iVar1 = g_bufferIndex;
+    primitiveStart = g_drawModes + g_bufferIndex * 10 + 4;
+    primitiveChain = g_orderTableTaki + g_bufferIndex * 10 + 4;
+    primitiveEnd = g_orderTableTaki + g_bufferIndex * 10 + 3;
     /* Probable PsyQ macro: addPrim(). */
-    *primitiveStart = (DR_MODE*)((uint)*primitiveStart & 0xff000000 | *primitiveChain & 0xffffff);
-    ppDVar1 = &g_drawModeC + g_bufferIndex * 0x1e;
+    primitiveStart->tag = primitiveStart->tag & 0xff000000 | *primitiveChain & 0xffffff;
+    pDVar2 = g_drawModes + g_bufferIndex * 10 + 3;
     *primitiveChain = *primitiveChain & 0xff000000 | (uint)primitiveStart & 0xffffff;
-    primitiveChain = (uint*)(&DAT_80146f58 + iVar4);
+    primitiveChain = g_orderTableTaki + g_bufferIndex * 10;
     /* Probable PsyQ macro: addPrim(). */
-    *ppDVar1 = (DR_MODE*)((uint)*ppDVar1 & 0xff000000 | *primitiveEnd & 0xffffff);
-    primitiveStart = &g_drawModeA + g_bufferIndex * 0x1e;
-    *primitiveEnd = *primitiveEnd & 0xff000000 | (uint)ppDVar1 & 0xffffff;
+    pDVar2->tag = pDVar2->tag & 0xff000000 | *primitiveEnd & 0xffffff;
+    primitiveStart = g_drawModes + g_bufferIndex * 10;
+    *primitiveEnd = *primitiveEnd & 0xff000000 | (uint)pDVar2 & 0xffffff;
     /* Probable PsyQ macro: addPrim(). */
-    *primitiveStart = (DR_MODE*)((uint)*primitiveStart & 0xff000000 | *primitiveChain & 0xffffff);
-    ppDVar1 = &g_drawModeB + g_bufferIndex * 0x1e;
+    primitiveStart->tag = primitiveStart->tag & 0xff000000 | *primitiveChain & 0xffffff;
+    pDVar2 = g_drawModes + g_bufferIndex * 10 + 1;
     *primitiveChain = *primitiveChain & 0xff000000 | (uint)primitiveStart & 0xffffff;
-    puVar2 = (uint*)(&DAT_80146f5c + iVar4);
+    primitiveChain = g_orderTableTaki + g_bufferIndex * 10 + 1;
     /* Probable PsyQ macro: addPrim(). */
-    *ppDVar1 = (DR_MODE*)((uint)*ppDVar1 & 0xff000000 | *puVar2 & 0xffffff);
-    primitiveChain = (uint*)(&DAT_80146e78 + bufferIndex);
-    *puVar2 = *puVar2 & 0xff000000 | (uint)ppDVar1 & 0xffffff;
-    puVar3 = (uint*)(&DAT_80146f60 + iVar4);
+    pDVar2->tag = pDVar2->tag & 0xff000000 | *primitiveChain & 0xffffff;
+    primitiveStart = g_drawModes + g_bufferIndex * 10 + 2;
+    *primitiveChain = *primitiveChain & 0xff000000 | (uint)pDVar2 & 0xffffff;
+    primitiveChain = g_orderTableTaki + g_bufferIndex * 10 + 2;
     /* Probable PsyQ macro: addPrim(). */
-    *primitiveChain = *primitiveChain & 0xff000000 | *puVar3 & 0xffffff;
-    puVar2 = (uint*)(&DAT_80146e9c + bufferIndex);
-    *puVar3 = *puVar3 & 0xff000000 | (uint)primitiveChain & 0xffffff;
-    puVar3 = (uint*)(&DAT_80146f6c + iVar4);
+    primitiveStart->tag = primitiveStart->tag & 0xff000000 | *primitiveChain & 0xffffff;
+    pDVar2 = g_drawModes + g_bufferIndex * 10 + 5;
+    *primitiveChain = *primitiveChain & 0xff000000 | (uint)primitiveStart & 0xffffff;
+    primitiveChain = g_orderTableTaki + g_bufferIndex * 10 + 5;
     /* Probable PsyQ macro: addPrim(). */
-    *puVar2 = *puVar2 & 0xff000000 | *puVar3 & 0xffffff;
-    primitiveChain = (uint*)(&DAT_80146ea8 + bufferIndex);
-    *puVar3 = *puVar3 & 0xff000000 | (uint)puVar2 & 0xffffff;
-    puVar2 = (uint*)(&DAT_80146f70 + iVar4);
-    puVar3 = (uint*)(&DAT_80146eb4 + bufferIndex);
+    pDVar2->tag = pDVar2->tag & 0xff000000 | *primitiveChain & 0xffffff;
+    primitiveStart = g_drawModes + g_bufferIndex * 10 + 6;
+    *primitiveChain = *primitiveChain & 0xff000000 | (uint)pDVar2 & 0xffffff;
+    primitiveChain = g_orderTableTaki + g_bufferIndex * 10 + 6;
+    pDVar2 = g_drawModes + g_bufferIndex * 10 + 7;
     /* Probable PsyQ macro: addPrim(). */
-    *primitiveChain = *primitiveChain & 0xff000000 | *puVar2 & 0xffffff;
-    *puVar2 = *puVar2 & 0xff000000 | (uint)primitiveChain & 0xffffff;
-    primitiveChain = (uint*)(&DAT_80146f74 + iVar4);
-    bufferIndex = g_bufferIndex * 0xc;
-    newBufferIndex = g_bufferIndex + 1 & 1;
+    primitiveStart->tag = primitiveStart->tag & 0xff000000 | *primitiveChain & 0xffffff;
+    *primitiveChain = *primitiveChain & 0xff000000 | (uint)primitiveStart & 0xffffff;
+    primitiveChain = g_orderTableTaki + g_bufferIndex * 10 + 7;
+    newBufferIndex = g_bufferIndex + 1U & 1;
     /* Probable PsyQ macro: addPrim(). */
     g_bufferIndex = newBufferIndex;
-    *puVar3 = *puVar3 & 0xff000000 | *primitiveChain & 0xffffff;
-    *primitiveChain = *primitiveChain & 0xff000000 | (uint)puVar3 & 0xffffff;
-    primitiveChain = (uint*)(&DAT_80180108 + bufferIndex);
+    pDVar2->tag = pDVar2->tag & 0xff000000 | *primitiveChain & 0xffffff;
+    *primitiveChain = *primitiveChain & 0xff000000 | (uint)pDVar2 & 0xffffff;
+    puVar3 = UINT_ARRAY_80180108 + iVar1 * 3;
     /* Probable PsyQ macro: addPrim(). */
-    *primitiveChain = *primitiveChain & 0xff000000 | *primitiveEnd & 0xffffff;
-    *primitiveEnd = *primitiveEnd & 0xff000000 | (uint)primitiveChain & 0xffffff;
-    return &DAT_80146f58 + (newBufferIndex ^ 1) * 0x28;
+    *puVar3 = *puVar3 & 0xff000000 | *primitiveEnd & 0xffffff;
+    *primitiveEnd = *primitiveEnd & 0xff000000 | (uint)puVar3 & 0xffffff;
+    return g_orderTableTaki + (newBufferIndex ^ 1) * 10;
 }
 
-// Function @0x80044F48
+//80044F48
 void FUN_80044f48(void)
 
 {
-    ClearOrderTable((u_long*)(&DAT_80146f58 + g_bufferIndex * 0x28), 10);
+    ClearOrderTable(g_orderTableTaki + g_bufferIndex * 10, 10);
     return;
 }
 
-// Function @0x80044F88
+//80044F88
 void LoadFONT3_tim(void)
 
 {
@@ -15718,18 +15726,18 @@ void LoadFONT3_tim(void)
     g_textNextChoice = 8;
     g_textSelectionNext = 10;
     g_textBufferSize = 0x168;
-    ReadFileFromCDIntoBuffer("taki\\screen\\FONT3.tim", &g_bufferFONT3_tim, 0, 0x8220);
+    ReadFileFromCDIntoBuffer("taki\\screen\\FONT3.tim", g_bufferFONT3_tim, 0, 0x8220);
     return;
 }
 
-// Function @0x80045004
+//80045004
 bool IsWarpInProgress(void)
 
 {
     return (g_warpFlags_2 & 4) != 0;
 }
 
-// Function @0x8004501C
+//8004501C
 void FUN_8004501c(void)
 
 {
@@ -15739,25 +15747,25 @@ void FUN_8004501c(void)
     return;
 }
 
-// Function @0x80045054
+//80045054
 void FinalizeWarp(void)
 
 {
-    if ((g_etcAnimationMode & 4) != 0) {
+    if ((g_etcAnimationMode & 4U) != 0) {
         g_textHoldState_2 = 1;
     }
     return;
 }
 
-// Function @0x8004507C
-void SetEtcAnimationMode(undefined4 mode)
+//8004507C
+void SetEtcAnimationMode(int mode)
 
 {
     g_etcAnimationMode = mode;
     return;
 }
 
-// Function @0x80045088
+//80045088
 void FUN_80045088(void)
 
 {
@@ -15767,7 +15775,7 @@ void FUN_80045088(void)
     return;
 }
 
-// Function @0x800450B0
+//800450B0
 void FUN_800450b0(undefined4 param_1)
 
 {
@@ -15775,17 +15783,17 @@ void FUN_800450b0(undefined4 param_1)
     return;
 }
 
-// Function @0x800450BC
+//800450BC
 void FUN_800450bc(void)
 
 {
-    if ((g_debugFlags_2 & 4) != 0) {
+    if ((g_debugFlags_2 & 4U) != 0) {
         g_textAutoAdvanceFlag_2 = 1;
     }
     return;
 }
 
-// Function @0x800450E4
+//800450E4
 void SetDebugFlag(int debugFlags)
 
 {
@@ -15793,7 +15801,7 @@ void SetDebugFlag(int debugFlags)
     return;
 }
 
-// Function @0x800450F0
+//800450F0
 int PlayEtcAnimation(char* scriptText, int animationMode)
 
 {
@@ -15880,13 +15888,13 @@ int PlayEtcAnimation(char* scriptText, int animationMode)
             g_isWarpForbidden = g_isWarpForbidden | 8;
         }
         textLen = 0;
-        local_30 = &DAT_80149be8;
+        local_30 = &g_textLineWidth;
         g_textPrimitives = 0;
         g_textHoldState_2 = 0;
         g_textMessageConfirmed = 0;
         g_textAutoAdvanceFlag_2 = 0;
         g_textAutoAdvanceFlag = 0;
-        g_currentVoiceSfxId = 0xffffffff;
+        g_currentVoiceSfxId = -1;
         g_textBufferX = 0;
         g_textLineIndex = 0;
         g_textCursor = 0;
@@ -15960,7 +15968,7 @@ int PlayEtcAnimation(char* scriptText, int animationMode)
     return success;
 }
 
-// Function @0x800455B4
+//800455B4
 void FUN_800455b4(int* param_1)
 
 {
@@ -15970,7 +15978,7 @@ void FUN_800455b4(int* param_1)
     int iVar4;
     int** ppiVar5;
     int iVar6;
-    uint* puVar7;
+    u_long* puVar7;
     int iVar8;
     uint* puVar9;
     int iVar10;
@@ -15991,7 +15999,7 @@ void FUN_800455b4(int* param_1)
         iVar4 = (iVar3 + iVar15) % 3;
         iVar11 = iVar4 * 0x28;
         do {
-            if ((&DAT_80149be8)[iVar4] == 0) {
+            if ((&g_textLineWidth)[iVar4] == 0) {
                 iVar6 = iVar10 + iVar11 + iVar2 * 0x14;
                 *(short*)(&DAT_80149c00 + iVar6) = **(short**)(*param_1 + 4) + *(short*)(*param_1 + 8);
                 *(short*)(&DAT_80149c02 + iVar6) =
@@ -16001,7 +16009,7 @@ void FUN_800455b4(int* param_1)
                 iVar6 = iVar10 + iVar11 + iVar2 * 0x14;
                 *(short*)(&DAT_80149c00 + iVar6) =
                     **(short**)(*param_1 + 4) +
-                    (short)(((*(short**)(*param_1 + 4))[2] * 8 - (&DAT_80149be8)[iVar4]) / 2);
+                    (short)(((*(short**)(*param_1 + 4))[2] * 8 - (&g_textLineWidth)[iVar4]) / 2);
                 *(short*)(&DAT_80149c02 + iVar6) =
                     *(short*)(*param_1 + 10) + *(short*)(*(int*)(*param_1 + 4) + 2) + sVar12 + sVar14;
             }
@@ -16010,7 +16018,7 @@ void FUN_800455b4(int* param_1)
             iVar10 = iVar10 + 0x14;
             sVar12 = sVar12 + -1;
             puVar9 = (uint*)((int)&g_primitiveGroup + iVar8);
-            puVar7 = (uint*)(&DAT_80146f60 + iVar2 * 0x28);
+            puVar7 = g_orderTableTaki + iVar2 * 10 + 2;
             iVar13 = iVar13 + 1;
             /* Probable PsyQ macro: addPrim(). */
             *puVar9 = *puVar9 & 0xff000000 | *puVar7 & 0xffffff;
@@ -16020,12 +16028,12 @@ void FUN_800455b4(int* param_1)
         iVar15 = iVar15 + 1;
         sVar14 = sVar14 + 0x10;
     } while (iVar15 < 3);
-    puVar7 = (uint*)(&DAT_80153010 + g_bufferIndex * 0xc);
-    puVar9 = (uint*)(&DAT_80146f60 + g_bufferIndex * 0x28);
+    puVar9 = (uint*)(&DAT_80153010 + g_bufferIndex * 0xc);
+    puVar7 = g_orderTableTaki + g_bufferIndex * 10 + 2;
     /* Probable PsyQ macro: addPrim(). */
-    *puVar7 = *puVar7 & 0xff000000 | *puVar9 & 0xffffff;
+    *puVar9 = *puVar9 & 0xff000000 | *puVar7 & 0xffffff;
     bVar1 = g_textHoldState != 0;
-    *puVar9 = *puVar9 & 0xff000000 | (uint)puVar7 & 0xffffff;
+    *puVar7 = *puVar7 & 0xff000000 | (uint)puVar9 & 0xffffff;
     if (bVar1) {
         DAT_80149cd4 = DAT_80149cd4 + 1;
         if (0x27 < DAT_80149cd4) {
@@ -16040,7 +16048,7 @@ void FUN_800455b4(int* param_1)
         (&DAT_80149c82)[iVar3 * 10] =
             *(short*)(*(int*)(*param_1 + 4) + 2) + *(short*)(*(int*)(*param_1 + 4) + 6) * 8 + -0x18
             ;
-        puVar7 = (uint*)(&DAT_80146f58 + iVar3 * 0x28);
+        puVar7 = g_orderTableTaki + iVar3 * 10;
         /* Probable PsyQ macro: addPrim(). */
         *ppiVar5 = (int*)((uint)*ppiVar5 & 0xff000000 | *puVar7 & 0xffffff);
         *puVar7 = *puVar7 & 0xff000000 | (uint)ppiVar5 & 0xffffff;
@@ -16048,7 +16056,7 @@ void FUN_800455b4(int* param_1)
     return;
 }
 
-// Function @0x80045988
+//80045988
 void FUN_80045988(int* param_1)
 
 {
@@ -16056,7 +16064,7 @@ void FUN_80045988(int* param_1)
     int iVar2;
     int iVar3;
     int iVar4;
-    uint* puVar5;
+    u_long* puVar5;
     int iVar6;
     uint* puVar7;
     int iVar8;
@@ -16070,18 +16078,18 @@ void FUN_80045988(int* param_1)
 
     iVar4 = g_textBufferX;
     if (g_textChoiceIndex == g_textNextChoice) {
-        bVar1 = (g_debugFlags_2 & 8) != 0;
+        bVar1 = (g_debugFlags_2 & 8U) != 0;
         if (bVar1) {
             g_debugFlags_2 = g_debugFlags_2 & 0xfffffff7;
         }
-        if (((g_debugFlags_2 & 2) != 0) && ((g_inputHeld & 0x80) != 0)) {
+        if (((g_debugFlags_2 & 2U) != 0) && ((g_inputHeld & 0x80) != 0)) {
             bVar1 = true;
         }
-        if (((g_debugFlags_2 & 1) != 0) &&
+        if (((g_debugFlags_2 & 1U) != 0) &&
             (g_textSelectionConfirmed = g_textSelectionConfirmed + -1, g_textSelectionConfirmed == 0)) {
             bVar1 = true;
         }
-        if (((g_debugFlags_2 & 4) != 0) && (g_textAutoAdvanceFlag_2 == 1)) {
+        if (((g_debugFlags_2 & 4U) != 0) && (g_textAutoAdvanceFlag_2 == 1)) {
             bVar1 = true;
             g_textAutoAdvanceFlag_2 = 0;
         }
@@ -16102,7 +16110,7 @@ LAB_80045aa0:
         iVar3 = (iVar4 + iVar13) % 3;
         iVar9 = iVar3 * 0x28;
         do {
-            if ((&DAT_80149be8)[iVar3] == 0) {
+            if ((&g_textLineWidth)[iVar3] == 0) {
                 iVar6 = (g_textNextChoice - g_textChoiceIndex) * 0x10;
                 iVar14 = iVar6 / g_textNextChoice;
                 if (g_textNextChoice == 0) {
@@ -16129,7 +16137,7 @@ LAB_80045aa0:
                 iVar6 = iVar8 + iVar9 + iVar2 * 0x14;
                 *(short*)(&DAT_80149c00 + iVar6) =
                     **(short**)(*param_1 + 4) +
-                    (short)(((*(short**)(*param_1 + 4))[2] * 8 - (&DAT_80149be8)[iVar3]) / 2);
+                    (short)(((*(short**)(*param_1 + 4))[2] * 8 - (&g_textLineWidth)[iVar3]) / 2);
                 *(short*)(&DAT_80149c02 + iVar6) =
                     (*(short*)(*param_1 + 10) + *(short*)(*(int*)(*param_1 + 4) + 2) + sVar10 + sVar12)
                     - (short)iVar14;
@@ -16139,7 +16147,7 @@ LAB_80045aa0:
             iVar8 = iVar8 + 0x14;
             sVar10 = sVar10 + -1;
             puVar7 = (uint*)((int)&g_primitiveGroup + iVar14);
-            puVar5 = (uint*)(&DAT_80146f60 + iVar2 * 0x28);
+            puVar5 = g_orderTableTaki + iVar2 * 10 + 2;
             iVar11 = iVar11 + 1;
             /* Probable PsyQ macro: addPrim(). */
             *puVar7 = *puVar7 & 0xff000000 | *puVar5 & 0xffffff;
@@ -16148,17 +16156,17 @@ LAB_80045aa0:
         iVar13 = iVar13 + 1;
         sVar12 = sVar12 + 0x10;
     } while (iVar13 < 3);
-    puVar5 = (uint*)(&DAT_80153010 + g_bufferIndex * 0xc);
-    puVar7 = (uint*)(&DAT_80146f60 + g_bufferIndex * 0x28);
+    puVar7 = (uint*)(&DAT_80153010 + g_bufferIndex * 0xc);
+    puVar5 = g_orderTableTaki + g_bufferIndex * 10 + 2;
     /* Probable PsyQ macro: addPrim(). */
-    *puVar5 = *puVar5 & 0xff000000 | *puVar7 & 0xffffff;
+    *puVar7 = *puVar7 & 0xff000000 | *puVar5 & 0xffffff;
     bVar1 = g_textChoiceIndex == 0;
-    *puVar7 = *puVar7 & 0xff000000 | (uint)puVar5 & 0xffffff;
+    *puVar5 = *puVar5 & 0xff000000 | (uint)puVar7 & 0xffffff;
     if (bVar1) {
         g_textBufferX = (g_textBufferX + 1) % 3;
         g_textMessageConfirmed = 0;
         iVar4 = g_textBufferX + 2;
-        (&DAT_80149be8)[(g_textBufferX + g_textLineIndex) % 3] = 0;
+        (&g_textLineWidth)[(g_textBufferX + g_textLineIndex) % 3] = 0;
         local_28.x = 0x3c0;
         local_28.y = ((short)iVar4 +
             ((short)((ulonglong)((longlong)iVar4 * 0x55555556) >> 0x20) -
@@ -16170,20 +16178,20 @@ LAB_80045aa0:
     return;
 }
 
-// Function @0x80045E60
+//80045E60
 void ProcessEtcTextAdvance(void)
 
 {
     byte shouldAdvance;
 
     shouldAdvance = 0;
-    if ((g_etcAnimationMode & 2) != 0) {
+    if ((g_etcAnimationMode & 2U) != 0) {
         shouldAdvance = (byte)g_inputHeld >> 7;
     }
-    if (((g_etcAnimationMode & 1) != 0) && (DAT_80149cc4 = DAT_80149cc4 + -1, DAT_80149cc4 == 0)) {
+    if (((g_etcAnimationMode & 1U) != 0) && (INT_80149cc4 = INT_80149cc4 + -1, INT_80149cc4 == 0)) {
         shouldAdvance = 1;
     }
-    if (((g_etcAnimationMode & 4) != 0) && (g_textHoldState_2 == 1)) {
+    if (((g_etcAnimationMode & 4U) != 0) && (g_textHoldState_2 == 1)) {
         shouldAdvance = 1;
         g_textHoldState_2 = 0;
     }
@@ -16218,7 +16226,7 @@ void ProcessEtcTextAdvance(void)
     return;
 }
 
-// Function @0x80045FE0
+//80045FE0
 /* WARNING: Removing unreachable block (ram,0x80046c8c) */
 
 void TextInterpreter(void)
@@ -16355,7 +16363,7 @@ void TextInterpreter(void)
                     else {
                         DoNothing("Kanji Error:");
                         DoNothing(g_scriptBuffer + g_textCursor);
-                        DoNothing(&DAT_80023fa4);
+                        DoNothing(&g_unused_buffer_5);
                         textBuffer[0] = 0x3f;
                         g_textCursor = g_textCursor + 2;
                     }
@@ -16400,7 +16408,7 @@ void TextInterpreter(void)
                     currentLineIndex = g_textCursor + 2;
                     g_textCursor = g_textCursor + 2;
                     uVar1 = CalculateTextWidthFromScript(g_scriptBuffer + currentLineIndex);
-                    (&DAT_80149be8)[(g_textBufferX + g_textLineIndex) % 3] = uVar1;
+                    (&g_textLineWidth)[(g_textBufferX + g_textLineIndex) % 3] = uVar1;
                     cursor = g_textCursor;
                     goto switchD_80046540_RENDER_NEXT_CHARACTER;
                 case 'M':
@@ -16538,8 +16546,8 @@ void TextInterpreter(void)
             }
             g_textPrimitives = 1;
             currentLineIndex = g_textLineIndex;
-            if ((g_etcAnimationMode & 1) != 0) {
-                DAT_80149cc4 = g_textBufferSize;
+            if ((g_etcAnimationMode & 1U) != 0) {
+                INT_80149cc4 = g_textBufferSize;
             }
         }
     }
@@ -16559,7 +16567,7 @@ void TextInterpreter(void)
                 if (g_textLineIndex == 2) {
                     g_textMessageConfirmed = 1;
                     g_textChoiceIndex = g_textNextChoice;
-                    if ((g_debugFlags_2 & 1) != 0) {
+                    if ((g_debugFlags_2 & 1U) != 0) {
                         g_textSelectionConfirmed = g_textSelectionNext;
                     }
                 }
@@ -16579,7 +16587,7 @@ code_r0x8004615c:
     goto switchD_80046540_RENDER_NEXT_CHARACTER;
 }
 
-// Function @0x800462B8
+//800462B8
 void FUN_800462b8(void)
 
 {
@@ -16601,7 +16609,7 @@ void FUN_800462b8(void)
     return;
 }
 
-// Function @0x800463B8
+//800463B8
 void MoveTextCursor(void)
 
 {
@@ -16609,7 +16617,7 @@ void MoveTextCursor(void)
     return;
 }
 
-// Function @0x800463D0
+//800463D0
 /* WARNING: Removing unreachable block (ram,0x80046c8c) */
 
 void FUN_800463d0(void)
@@ -16662,12 +16670,12 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         g_textCursor = iVar5;
         cVar1 = g_scriptBuffer[g_textCursor];
         if (cVar1 == '\0') {
-            if ((g_etcAnimationMode & 1) == 0) {
+            if ((g_etcAnimationMode & 1U) == 0) {
                 g_textPrimitives = 1;
                 return;
             }
             g_textPrimitives = 1;
-            DAT_80149cc4 = g_textBufferSize;
+            INT_80149cc4 = g_textBufferSize;
             return;
         }
         if (cVar1 != '\n') break;
@@ -16763,7 +16771,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         else {
             DoNothing("Kanji Error:");
             DoNothing(g_scriptBuffer + g_textCursor);
-            DoNothing(&DAT_80023fa4);
+            DoNothing(&g_unused_buffer_5);
             bStack00000020 = 0x3f;
             g_textCursor = g_textCursor + 2;
         }
@@ -16787,7 +16795,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
             if (g_textLineIndex == 2) {
                 g_textMessageConfirmed = 1;
                 g_textChoiceIndex = g_textNextChoice;
-                if ((g_debugFlags_2 & 1) != 0) {
+                if ((g_debugFlags_2 & 1U) != 0) {
                     g_textSelectionConfirmed = g_textSelectionNext;
                 }
             }
@@ -16828,7 +16836,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         iVar5 = g_textCursor + 2;
         g_textCursor = g_textCursor + 2;
         uVar3 = CalculateTextWidthFromScript(g_scriptBuffer + iVar5);
-        (&DAT_80149be8)[(g_textBufferX + g_textLineIndex) % 3] = uVar3;
+        (&g_textLineWidth)[(g_textBufferX + g_textLineIndex) % 3] = uVar3;
         iVar5 = g_textCursor;
         goto switchD_80046540_RENDER_NEXT_CHARACTER;
     case 'M':
@@ -16947,7 +16955,7 @@ LAB_80046984:
     goto LAB_800469b4;
 }
 
-// Function @0x800464F4
+//800464F4
 /* WARNING: Removing unreachable block (ram,0x80046c8c) */
 
 void FUN_800464f4(void)
@@ -17048,12 +17056,12 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         g_textCursor = iVar3;
         cVar1 = g_scriptBuffer[g_textCursor];
         if (cVar1 == '\0') {
-            if ((g_etcAnimationMode & 1) == 0) {
+            if ((g_etcAnimationMode & 1U) == 0) {
                 g_textPrimitives = 1;
                 return;
             }
             g_textPrimitives = 1;
-            DAT_80149cc4 = g_textBufferSize;
+            INT_80149cc4 = g_textBufferSize;
             return;
         }
         if (cVar1 != '\n') break;
@@ -17149,7 +17157,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         else {
             DoNothing("Kanji Error:");
             DoNothing(g_scriptBuffer + g_textCursor);
-            DoNothing(&DAT_80023fa4);
+            DoNothing(&g_unused_buffer_5);
             bStack00000020 = 0x3f;
             g_textCursor = g_textCursor + 2;
         }
@@ -17173,7 +17181,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
             if (g_textLineIndex == 2) {
                 g_textMessageConfirmed = 1;
                 g_textChoiceIndex = g_textNextChoice;
-                if ((g_debugFlags_2 & 1) != 0) {
+                if ((g_debugFlags_2 & 1U) != 0) {
                     g_textSelectionConfirmed = g_textSelectionNext;
                 }
             }
@@ -17214,7 +17222,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         iVar3 = g_textCursor + 2;
         g_textCursor = g_textCursor + 2;
         uVar4 = CalculateTextWidthFromScript(g_scriptBuffer + iVar3);
-        (&DAT_80149be8)[(g_textBufferX + g_textLineIndex) % 3] = uVar4;
+        (&g_textLineWidth)[(g_textBufferX + g_textLineIndex) % 3] = uVar4;
         iVar3 = g_textCursor;
         goto switchD_80046540_RENDER_NEXT_CHARACTER;
     case 'M':
@@ -17283,7 +17291,7 @@ LAB_800469b4:
     goto switchD_80046540_RENDER_NEXT_CHARACTER;
 }
 
-// Function @0x800469C4
+//800469C4
 void FUN_800469c4(void)
 
 {
@@ -17292,77 +17300,77 @@ void FUN_800469c4(void)
     return;
 }
 
-// Function @0x800469F0
+//800469F0
 /* WARNING: Removing unreachable block (ram,0x80046c8c) */
 
-void FUN_800469f0(void)
+void InterpretTextScript(void)
 
 {
-    char cVar1;
-    byte bVar2;
-    int iVar3;
-    undefined4 uVar4;
-    uint uVar5;
-    char* pcVar6;
-    uint* puVar7;
+    int scriptIndex;
+    int textWidth;
+    uint uVar1;
+    char* pcVar2;
+    uint* puVar3;
     int unaff_s7;
     int unaff_s8;
-    int iVar8;
-    int iVar9;
-    byte bStack00000020;
-    undefined1 uStack00000021;
-    char in_stack_00000028;
+    int iVar4;
+    byte charToRender;
+    int uStack00000021;
+    char dummy;
+    byte asciiDigit;
+    char currentChar;
+    int lineIndex;
 
-    iVar3 = g_textCursor;
+    scriptIndex = g_textCursor;
 code_r0x800469f0:
-    g_textCursor = iVar3;
-    iVar3 = g_textCursor + 1;
+    g_textCursor = scriptIndex;
+    scriptIndex = g_textCursor + 1;
     g_textCursor = g_textCursor + 1;
-    uVar4 = CalculateTextWidthFromScript(g_scriptBuffer + iVar3);
-    (&DAT_80149be8)[(g_textBufferX + g_textLineIndex) % 3] = uVar4;
-    iVar3 = g_textCursor;
+    textWidth = CalculateTextWidthFromScript(g_scriptBuffer + scriptIndex);
+    (&g_textLineWidth)[(g_textBufferX + g_textLineIndex) % 3] = textWidth;
+    scriptIndex = g_textCursor;
 switchD_80046540_RENDER_NEXT_CHARACTER:
     while (true) {
-        g_textCursor = iVar3;
-        cVar1 = g_scriptBuffer[g_textCursor];
-        if (cVar1 == '\0') {
-            if ((g_etcAnimationMode & 1) == 0) {
+        g_textCursor = scriptIndex;
+        currentChar = g_scriptBuffer[g_textCursor];
+        if (currentChar == '\0') {
+            if ((g_etcAnimationMode & 1U) == 0) {
                 g_textPrimitives = 1;
                 return;
             }
             g_textPrimitives = 1;
-            DAT_80149cc4 = g_textBufferSize;
+            INT_80149cc4 = g_textBufferSize;
             return;
         }
-        if (cVar1 != '\n') break;
-        iVar3 = g_textCursor + 1;
+        if (currentChar != '\n') break;
+        scriptIndex = g_textCursor + 1;
     }
-    if (cVar1 == '{') {
-        iVar9 = g_textCursor + 1;
+    if (currentChar == '{') {
+        lineIndex = g_textCursor + 1;
         g_textCursor = g_textCursor + 2;
-        iVar3 = g_textBufferX + g_textLineIndex >> 0x1f;
-        iVar8 = (g_textBufferX + g_textLineIndex) / 3 + iVar3;
-        bStack00000020 = g_scriptBuffer[iVar9] + 0x50;
+        scriptIndex = g_textBufferX + g_textLineIndex >> 0x1f;
+        iVar4 = (g_textBufferX + g_textLineIndex) / 3 + scriptIndex;
+        charToRender = g_scriptBuffer[lineIndex] + 0x50;
     LAB_8004635c:
-        uStack00000021 = 0;
+        uStack00000021._0_1_ = 0;
         RenderTextBitmap((char*)&stack0x00000020, g_textBuffer, 0x3c0,
-            (short)((uint)(((g_textBufferX + g_textLineIndex + (iVar8 - iVar3) * -3) * 0x10
-                + 0x120) * 0x10000) >> 0x10), (undefined2)g_textRenderState, 0,
-            0x100, 0x10);
-        g_textRenderState = g_textRenderState + (int)(&g_fontCharWidthTable)[(uint)bStack00000020 * 5];
+            (short)((uint)(((g_textBufferX + g_textLineIndex + (iVar4 - scriptIndex) * -3)
+                * 0x10 + 0x120) * 0x10000) >> 0x10),
+            (undefined2)g_textRenderState, 0, 0x100, 0x10);
+        g_textRenderState = g_textRenderState + (int)(&g_fontCharWidthTable)[(uint)charToRender * 5];
         return;
     }
-    if (cVar1 == '}') {
-        iVar9 = g_textCursor + 1;
+    if (currentChar == '}') {
+        lineIndex = g_textCursor + 1;
         g_textCursor = g_textCursor + 2;
-        iVar3 = g_textBufferX + g_textLineIndex >> 0x1f;
-        iVar8 = (g_textBufferX + g_textLineIndex) / 3 + iVar3;
-        bStack00000020 = g_scriptBuffer[iVar9] + 0x90;
+        scriptIndex = g_textBufferX + g_textLineIndex >> 0x1f;
+        iVar4 = (g_textBufferX + g_textLineIndex) / 3 + scriptIndex;
+        charToRender = g_scriptBuffer[lineIndex] + 0x90;
         goto LAB_8004635c;
     }
-    iVar3 = g_textCursor;
-    if (cVar1 != '\\') goto LAB_80046ccc;
-    iVar3 = g_textCursor + 1;
+    scriptIndex = g_textCursor;
+    if (currentChar != '\\') goto LAB_80046ccc;
+    scriptIndex = g_textCursor + 1;
     switch (g_scriptBuffer[g_textCursor + 1]) {
     case '0':
     case '1':
@@ -17374,30 +17382,30 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
     case '7':
     case '8':
     case '9':
-        in_stack_00000028 = '\0';
-        iVar9 = 0;
-        bVar2 = g_scriptBuffer[g_textCursor + 1];
-        g_textCursor = iVar3;
-        while (bVar2 - 0x30 < 10) {
-            (&stack0x00000028)[iVar9] = g_scriptBuffer[g_textCursor];
-            (&stack0x00000029)[iVar9] = 0;
-            iVar9 = iVar9 + 1;
-            bVar2 = g_scriptBuffer[g_textCursor + 1];
+        dummy = '\0';
+        lineIndex = 0;
+        asciiDigit = g_scriptBuffer[g_textCursor + 1];
+        g_textCursor = scriptIndex;
+        while (asciiDigit - 0x30 < 10) {
+            (&stack0x00000028)[lineIndex] = g_scriptBuffer[g_textCursor];
+            (&stack0x00000029)[lineIndex] = 0;
+            lineIndex = lineIndex + 1;
+            asciiDigit = g_scriptBuffer[g_textCursor + 1];
             g_textCursor = g_textCursor + 1;
         }
-        iVar3 = 0;
-        if (0 < iVar9 + -1) {
+        scriptIndex = 0;
+        if (0 < lineIndex + -1) {
             do {
-                pcVar6 = &stack0x00000028 + iVar3;
-                iVar3 = iVar3 + 1;
-                if (*pcVar6 != '0') break;
-                *pcVar6 = ' ';
-            } while (iVar3 < iVar9 + -1);
+                pcVar2 = &stack0x00000028 + scriptIndex;
+                scriptIndex = scriptIndex + 1;
+                if (*pcVar2 != '0') break;
+                *pcVar2 = ' ';
+            } while (scriptIndex < lineIndex + -1);
         }
-        uVar5 = atoi(&stack0x00000028);
-        puVar7 = (uint*)((int)&g_bitfieldTable2 + ((uVar5 & 0x7fe0) >> 3));
-        *puVar7 = *puVar7 | 1 << (uVar5 & 0x1f);
-        iVar3 = g_textCursor;
+        uVar1 = atoi(&stack0x00000028);
+        puVar3 = (uint*)((int)&g_bitfieldTable2 + ((uVar1 & 0x7fe0) >> 3));
+        *puVar3 = *puVar3 | 1 << (uVar1 & 0x1f);
+        scriptIndex = g_textCursor;
         goto switchD_80046540_RENDER_NEXT_CHARACTER;
     case ':':
     case ';':
@@ -17418,51 +17426,51 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
     case 'U':
     default:
     LAB_80046ccc:
-        g_textCursor = iVar3;
-        iVar3 = ContainsSpecialTextFormatting(g_scriptBuffer + g_textCursor);
-        if (iVar3 == 0) {
-            bStack00000020 = g_scriptBuffer[g_textCursor];
+        g_textCursor = scriptIndex;
+        scriptIndex = ContainsSpecialTextFormatting(g_scriptBuffer + g_textCursor);
+        if (scriptIndex == 0) {
+            charToRender = g_scriptBuffer[g_textCursor];
             g_textCursor = g_textCursor + 1;
         }
         else {
             DoNothing("Kanji Error:");
             DoNothing(g_scriptBuffer + g_textCursor);
-            DoNothing(&DAT_80023fa4);
-            bStack00000020 = 0x3f;
+            DoNothing(&g_unused_buffer_5);
+            charToRender = 0x3f;
             g_textCursor = g_textCursor + 2;
         }
-        uStack00000021 = 0;
+        uStack00000021._0_1_ = 0;
         RenderTextBitmap((char*)&stack0x00000020, g_textBuffer, 0x3c0,
             (short)((uint)((((g_textBufferX + g_textLineIndex) % 3) * 0x10 + 0x120) *
                 0x10000) >> 0x10), (undefined2)g_textRenderState, 0, 0x100, 0x10);
-        g_textRenderState = g_textRenderState + (int)(&g_fontCharWidthTable)[(uint)bStack00000020 * 5];
+        g_textRenderState = g_textRenderState + (int)(&g_fontCharWidthTable)[(uint)charToRender * 5];
         if ((((g_textRenderStep & 1) == 0) && (g_currentVoiceSfxId != 4)) && (-1 < g_currentVoiceSfxId))
         {
             PlaySoundEffect(g_currentVoiceSfxId + 0x4f);
         }
         g_textRenderStep = g_textRenderStep + 1;
     LAB_80046e34:
-        iVar3 = g_textLineIndex;
+        scriptIndex = g_textLineIndex;
         if (unaff_s7 != 0) {
             g_textRenderStep = 0;
             g_textRenderState = 0;
             bzero((uchar*)g_textBuffer, 0x800);
-            iVar3 = g_textLineIndex;
+            scriptIndex = g_textLineIndex;
             if (g_textLineIndex == 2) {
                 g_textMessageConfirmed = 1;
                 g_textChoiceIndex = g_textNextChoice;
-                if ((g_debugFlags_2 & 1) != 0) {
+                if ((g_debugFlags_2 & 1U) != 0) {
                     g_textSelectionConfirmed = g_textSelectionNext;
                 }
             }
             else {
-                iVar3 = g_textLineIndex + 1;
+                scriptIndex = g_textLineIndex + 1;
                 if (g_textLineIndex + 1 == 3) {
-                    iVar3 = g_textLineIndex;
+                    scriptIndex = g_textLineIndex;
                 }
             }
         }
-        g_textLineIndex = iVar3;
+        g_textLineIndex = scriptIndex;
         return;
     case 'A':
         g_textFlags = g_textFlags | 8;
@@ -17474,7 +17482,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         break;
     case 'C':
         g_currentVoiceSfxId = 0;
-        iVar3 = g_textCursor + 2;
+        scriptIndex = g_textCursor + 2;
         goto switchD_80046540_RENDER_NEXT_CHARACTER;
     case 'D':
         g_currentVoiceSfxId = 1;
@@ -17491,11 +17499,11 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
     case 'H':
         goto code_r0x800469f0;
     case 'M':
-        iVar3 = g_textCursor + 2;
+        scriptIndex = g_textCursor + 2;
         if ((g_scriptBuffer[g_textCursor + 2] == 'C') &&
-            (iVar3 = g_textCursor + 3, g_scriptBuffer[g_textCursor + 3] == 'E')) {
+            (scriptIndex = g_textCursor + 3, g_scriptBuffer[g_textCursor + 3] == 'E')) {
             g_textFlags = 4;
-            iVar3 = g_textCursor + 4;
+            scriptIndex = g_textCursor + 4;
         }
         goto switchD_80046540_RENDER_NEXT_CHARACTER;
     case 'N':
@@ -17509,36 +17517,36 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         g_textCursor = g_textCursor + 2;
         return;
     case 'V':
-        bVar2 = g_scriptBuffer[g_textCursor + 2];
+        asciiDigit = g_scriptBuffer[g_textCursor + 2];
         g_textCursor = g_textCursor + 3;
         strncpy(&stack0x00000038, g_scriptBuffer, g_textCursor);
         (&stack0x00000038)[g_textCursor] = '\0';
-        iVar3 = (&DAT_80191908)[bVar2 - 0x30];
-        if (iVar3 == 0) {
+        scriptIndex = (&DAT_80191908)[asciiDigit - 0x30];
+        if (scriptIndex == 0) {
             strcpy(&stack0x000012f8, PTR_DAT_8009a7ec);
         }
         else {
-            iVar9 = (int)((ulonglong)((longlong)iVar3 * 0x66666667) >> 0x20);
+            lineIndex = (int)((ulonglong)((longlong)scriptIndex * 0x66666667) >> 0x20);
             do {
-                iVar8 = (iVar9 >> 2) - (iVar3 >> 0x1f);
-                strcpy(&stack0x00000998, (&PTR_DAT_8009a7ec)[iVar3 + iVar8 * -10]);
+                iVar4 = (lineIndex >> 2) - (scriptIndex >> 0x1f);
+                strcpy(&stack0x00000998, (&PTR_DAT_8009a7ec)[scriptIndex + iVar4 * -10]);
                 strcat(&stack0x00000998, &stack0x000012f8);
                 strcpy(&stack0x000012f8, &stack0x00000998);
-                iVar9 = (int)((ulonglong)((longlong)iVar8 * 0x66666667) >> 0x20);
-                iVar3 = iVar8;
-            } while (iVar8 != 0);
+                lineIndex = (int)((ulonglong)((longlong)iVar4 * 0x66666667) >> 0x20);
+                scriptIndex = iVar4;
+            } while (iVar4 != 0);
         }
         strcat(&stack0x00000038, &stack0x000012f8);
         strcat(&stack0x00000038, g_scriptBuffer + g_textCursor);
         goto LAB_800469b4;
     case 'W':
-        cVar1 = -0x20;
+        currentChar = -0x20;
         if (0x40 < (byte)g_scriptBuffer[g_textCursor + 2]) {
-            cVar1 = -0x27;
+            currentChar = -0x27;
         }
-        bStack00000020 = g_scriptBuffer[g_textCursor + 2] + cVar1;
-        iVar3 = g_textBufferX + g_textLineIndex >> 0x1f;
-        iVar8 = (g_textBufferX + g_textLineIndex) / 3 + iVar3;
+        charToRender = g_scriptBuffer[g_textCursor + 2] + currentChar;
+        scriptIndex = g_textBufferX + g_textLineIndex >> 0x1f;
+        iVar4 = (g_textBufferX + g_textLineIndex) / 3 + scriptIndex;
         g_textCursor = g_textCursor + 3;
         goto LAB_8004635c;
     case 'X':
@@ -17547,22 +17555,22 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         g_textCursor = g_textCursor + 2;
         return;
     }
-    iVar3 = g_textCursor + 2;
+    scriptIndex = g_textCursor + 2;
     goto switchD_80046540_RENDER_NEXT_CHARACTER;
 FUN_800464f4:
-    iVar3 = g_textCursor + 2;
+    scriptIndex = g_textCursor + 2;
     switch (g_scriptBuffer[g_textCursor + 2]) {
     case '0':
         g_textCursor = g_textCursor + 3;
         strncpy(&stack0x00000038, g_scriptBuffer, g_textCursor);
         (&stack0x00000038)[g_textCursor] = '\0';
-        iVar3 = FUN_8004e7a4();
-        if (iVar3 / 10 + (iVar3 >> 0x1f) != iVar3 >> 0x1f) {
-            iVar3 = FUN_8004e7a4();
-            strcat(&stack0x00000038, (&PTR_DAT_8009a7ec)[iVar3 / 10]);
+        scriptIndex = FUN_8004e7a4();
+        if (scriptIndex / 10 + (scriptIndex >> 0x1f) != scriptIndex >> 0x1f) {
+            scriptIndex = FUN_8004e7a4();
+            strcat(&stack0x00000038, (&PTR_DAT_8009a7ec)[scriptIndex / 10]);
         }
-        iVar3 = FUN_8004e7a4();
-        strcat(&stack0x00000038, (&PTR_DAT_8009a7ec)[iVar3 % 10]);
+        scriptIndex = FUN_8004e7a4();
+        strcat(&stack0x00000038, (&PTR_DAT_8009a7ec)[scriptIndex % 10]);
         strcat(&stack0x00000038, g_scriptBuffer + g_textCursor);
         break;
     case '1':
@@ -17571,12 +17579,12 @@ FUN_800464f4:
         (&stack0x00000038)[g_textCursor] = '\0';
         FUN_8004e738();
         UpdatePlayerProgressState();
-        iVar3 = GetFadeControlWarpVisualId();
-        if (iVar3 / 10 + (iVar3 >> 0x1f) != iVar3 >> 0x1f) {
-            iVar3 = GetFadeControlWarpVisualId();
-            strcat(&stack0x00000038, (&PTR_DAT_8009a7ec)[iVar3 / 10]);
+        scriptIndex = GetFadeControlWarpVisualId();
+        if (scriptIndex / 10 + (scriptIndex >> 0x1f) != scriptIndex >> 0x1f) {
+            scriptIndex = GetFadeControlWarpVisualId();
+            strcat(&stack0x00000038, (&PTR_DAT_8009a7ec)[scriptIndex / 10]);
         }
-        iVar3 = GetFadeControlWarpVisualId();
+        scriptIndex = GetFadeControlWarpVisualId();
         goto LAB_80046984;
     case '2':
     case '4':
@@ -17598,7 +17606,7 @@ FUN_800464f4:
             ;
         strcat(&stack0x00000038, g_scriptBuffer + g_textCursor);
         strcpy(g_scriptBuffer, &stack0x00000038);
-        iVar3 = g_textCursor;
+        scriptIndex = g_textCursor;
         goto switchD_80046540_RENDER_NEXT_CHARACTER;
     case '5':
         g_textCursor = g_textCursor + 3;
@@ -17606,17 +17614,17 @@ FUN_800464f4:
         (&stack0x00000038)[g_textCursor] = '\0';
         FUN_8004e738();
         UpdatePlayerProgressState();
-        iVar3 = GetFadeControlWarpVisualId();
-        iVar3 = g_categoryThresholdTable[g_textCategoryIndex] - iVar3;
-        if (9 < iVar3) {
-            strcat(&stack0x00000038, (&PTR_DAT_8009a7ec)[iVar3 / 10]);
+        scriptIndex = GetFadeControlWarpVisualId();
+        scriptIndex = g_categoryThresholdTable[g_textCategoryIndex] - scriptIndex;
+        if (9 < scriptIndex) {
+            strcat(&stack0x00000038, (&PTR_DAT_8009a7ec)[scriptIndex / 10]);
         }
     LAB_80046984:
-        strcat(&stack0x00000038, (&PTR_DAT_8009a7ec)[iVar3 % 10]);
+        strcat(&stack0x00000038, (&PTR_DAT_8009a7ec)[scriptIndex % 10]);
         strcat(&stack0x00000038, g_scriptBuffer + g_textCursor);
     LAB_800469b4:
         strcpy(g_scriptBuffer, &stack0x00000038);
-        iVar3 = g_textCursor;
+        scriptIndex = g_textCursor;
         goto switchD_80046540_RENDER_NEXT_CHARACTER;
     default:
         goto switchD_80046540_RENDER_NEXT_CHARACTER;
@@ -17624,11 +17632,11 @@ FUN_800464f4:
     strcpy(g_scriptBuffer, &stack0x00000038);
     FUN_8004e738();
     UpdatePlayerProgressState();
-    iVar3 = g_textCursor;
+    scriptIndex = g_textCursor;
     goto switchD_80046540_RENDER_NEXT_CHARACTER;
 }
 
-// Function @0x80046A60
+//80046A60
 void FUN_80046a60(void)
 
 {
@@ -17649,7 +17657,7 @@ void FUN_80046a60(void)
         if (g_textLineIndex == 2) {
             g_textMessageConfirmed = 1;
             g_textChoiceIndex = g_textNextChoice;
-            if ((g_debugFlags_2 & 1) != 0) {
+            if ((g_debugFlags_2 & 1U) != 0) {
                 g_textSelectionConfirmed = g_textSelectionNext;
             }
         }
@@ -17664,7 +17672,7 @@ void FUN_80046a60(void)
     return;
 }
 
-// Function @0x80046A80
+//80046A80
 void FUN_80046a80(void)
 
 {
@@ -17674,7 +17682,7 @@ void FUN_80046a80(void)
     return;
 }
 
-// Function @0x80046AB0
+//80046AB0
 /* WARNING: Removing unreachable block (ram,0x80046c8c) */
 
 void FUN_80046ab0(void)
@@ -17707,12 +17715,12 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         g_textCursor = iVar3;
         cVar1 = g_scriptBuffer[g_textCursor];
         if (cVar1 == '\0') {
-            if ((g_etcAnimationMode & 1) == 0) {
+            if ((g_etcAnimationMode & 1U) == 0) {
                 g_textPrimitives = 1;
                 return;
             }
             g_textPrimitives = 1;
-            DAT_80149cc4 = g_textBufferSize;
+            INT_80149cc4 = g_textBufferSize;
             return;
         }
         if (cVar1 != '\n') break;
@@ -17809,7 +17817,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         else {
             DoNothing("Kanji Error:");
             DoNothing(g_scriptBuffer + g_textCursor);
-            DoNothing(&DAT_80023fa4);
+            DoNothing(&g_unused_buffer_5);
             bStack00000020 = 0x3f;
             g_textCursor = g_textCursor + 2;
         }
@@ -17833,7 +17841,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
             if (g_textLineIndex == 2) {
                 g_textMessageConfirmed = 1;
                 g_textChoiceIndex = g_textNextChoice;
-                if ((g_debugFlags_2 & 1) != 0) {
+                if ((g_debugFlags_2 & 1U) != 0) {
                     g_textSelectionConfirmed = g_textSelectionNext;
                 }
             }
@@ -17871,7 +17879,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         iVar3 = g_textCursor + 2;
         g_textCursor = g_textCursor + 2;
         uVar4 = CalculateTextWidthFromScript(g_scriptBuffer + iVar3);
-        (&DAT_80149be8)[(g_textBufferX + g_textLineIndex) % 3] = uVar4;
+        (&g_textLineWidth)[(g_textBufferX + g_textLineIndex) % 3] = uVar4;
         iVar3 = g_textCursor;
         goto switchD_80046540_RENDER_NEXT_CHARACTER;
     case 'M':
@@ -18014,7 +18022,7 @@ FUN_80046ae0:
     goto LAB_80046b2c;
 }
 
-// Function @0x80046AC4
+//80046AC4
 /* WARNING: Removing unreachable block (ram,0x80046c8c) */
 
 void FUN_80046ac4(void)
@@ -18045,12 +18053,12 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         g_textCursor = iVar3;
         cVar1 = g_scriptBuffer[g_textCursor];
         if (cVar1 == '\0') {
-            if ((g_etcAnimationMode & 1) == 0) {
+            if ((g_etcAnimationMode & 1U) == 0) {
                 g_textPrimitives = 1;
                 return;
             }
             g_textPrimitives = 1;
-            DAT_80149cc4 = g_textBufferSize;
+            INT_80149cc4 = g_textBufferSize;
             return;
         }
         if (cVar1 != '\n') break;
@@ -18146,7 +18154,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         else {
             DoNothing("Kanji Error:");
             DoNothing(g_scriptBuffer + g_textCursor);
-            DoNothing(&DAT_80023fa4);
+            DoNothing(&g_unused_buffer_5);
             bStack00000020 = 0x3f;
             g_textCursor = g_textCursor + 2;
         }
@@ -18170,7 +18178,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
             if (g_textLineIndex == 2) {
                 g_textMessageConfirmed = 1;
                 g_textChoiceIndex = g_textNextChoice;
-                if ((g_debugFlags_2 & 1) != 0) {
+                if ((g_debugFlags_2 & 1U) != 0) {
                     g_textSelectionConfirmed = g_textSelectionNext;
                 }
             }
@@ -18209,7 +18217,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         iVar3 = g_textCursor + 2;
         g_textCursor = g_textCursor + 2;
         uVar4 = CalculateTextWidthFromScript(g_scriptBuffer + iVar3);
-        (&DAT_80149be8)[(g_textBufferX + g_textLineIndex) % 3] = uVar4;
+        (&g_textLineWidth)[(g_textBufferX + g_textLineIndex) % 3] = uVar4;
         iVar3 = g_textCursor;
         goto switchD_80046540_RENDER_NEXT_CHARACTER;
     case 'M':
@@ -18350,7 +18358,7 @@ FUN_800464f4:
     goto switchD_80046540_RENDER_NEXT_CHARACTER;
 }
 
-// Function @0x80046AE0
+//80046AE0
 /* WARNING: Removing unreachable block (ram,0x80046c8c) */
 
 void FUN_80046ae0(void)
@@ -18383,12 +18391,12 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         g_textCursor = iVar3;
         cVar1 = g_scriptBuffer[g_textCursor];
         if (cVar1 == '\0') {
-            if ((g_etcAnimationMode & 1) == 0) {
+            if ((g_etcAnimationMode & 1U) == 0) {
                 g_textPrimitives = 1;
                 return;
             }
             g_textPrimitives = 1;
-            DAT_80149cc4 = g_textBufferSize;
+            INT_80149cc4 = g_textBufferSize;
             return;
         }
         if (cVar1 != '\n') break;
@@ -18485,7 +18493,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         else {
             DoNothing("Kanji Error:");
             DoNothing(g_scriptBuffer + g_textCursor);
-            DoNothing(&DAT_80023fa4);
+            DoNothing(&g_unused_buffer_5);
             bStack00000020 = 0x3f;
             g_textCursor = g_textCursor + 2;
         }
@@ -18509,7 +18517,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
             if (g_textLineIndex == 2) {
                 g_textMessageConfirmed = 1;
                 g_textChoiceIndex = g_textNextChoice;
-                if ((g_debugFlags_2 & 1) != 0) {
+                if ((g_debugFlags_2 & 1U) != 0) {
                     g_textSelectionConfirmed = g_textSelectionNext;
                 }
             }
@@ -18547,7 +18555,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         iVar3 = g_textCursor + 2;
         g_textCursor = g_textCursor + 2;
         uVar4 = CalculateTextWidthFromScript(g_scriptBuffer + iVar3);
-        (&DAT_80149be8)[(g_textBufferX + g_textLineIndex) % 3] = uVar4;
+        (&g_textLineWidth)[(g_textBufferX + g_textLineIndex) % 3] = uVar4;
         iVar3 = g_textCursor;
         goto switchD_80046540_RENDER_NEXT_CHARACTER;
     case 'M':
@@ -18690,7 +18698,7 @@ FUN_80046ab0:
     goto LAB_80046b2c;
 }
 
-// Function @0x80046AF4
+//80046AF4
 /* WARNING: Removing unreachable block (ram,0x80046c8c) */
 
 void FUN_80046af4(void)
@@ -18723,12 +18731,12 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         g_textCursor = iVar3;
         cVar1 = g_scriptBuffer[g_textCursor];
         if (cVar1 == '\0') {
-            if ((g_etcAnimationMode & 1) == 0) {
+            if ((g_etcAnimationMode & 1U) == 0) {
                 g_textPrimitives = 1;
                 return;
             }
             g_textPrimitives = 1;
-            DAT_80149cc4 = g_textBufferSize;
+            INT_80149cc4 = g_textBufferSize;
             return;
         }
         if (cVar1 != '\n') break;
@@ -18825,7 +18833,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         else {
             DoNothing("Kanji Error:");
             DoNothing(g_scriptBuffer + g_textCursor);
-            DoNothing(&DAT_80023fa4);
+            DoNothing(&g_unused_buffer_5);
             bStack00000020 = 0x3f;
             g_textCursor = g_textCursor + 2;
         }
@@ -18849,7 +18857,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
             if (g_textLineIndex == 2) {
                 g_textMessageConfirmed = 1;
                 g_textChoiceIndex = g_textNextChoice;
-                if ((g_debugFlags_2 & 1) != 0) {
+                if ((g_debugFlags_2 & 1U) != 0) {
                     g_textSelectionConfirmed = g_textSelectionNext;
                 }
             }
@@ -18887,7 +18895,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         iVar3 = g_textCursor + 2;
         g_textCursor = g_textCursor + 2;
         uVar4 = CalculateTextWidthFromScript(g_scriptBuffer + iVar3);
-        (&DAT_80149be8)[(g_textBufferX + g_textLineIndex) % 3] = uVar4;
+        (&g_textLineWidth)[(g_textBufferX + g_textLineIndex) % 3] = uVar4;
         iVar3 = g_textCursor;
         goto switchD_80046540_RENDER_NEXT_CHARACTER;
     case 'M':
@@ -19030,7 +19038,7 @@ FUN_80046ab0:
     goto LAB_80046b2c;
 }
 
-// Function @0x80046B08
+//80046B08
 /* WARNING: Removing unreachable block (ram,0x80046c8c) */
 
 void FUN_80046b08(void)
@@ -19063,12 +19071,12 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         g_textCursor = iVar3;
         cVar1 = g_scriptBuffer[g_textCursor];
         if (cVar1 == '\0') {
-            if ((g_etcAnimationMode & 1) == 0) {
+            if ((g_etcAnimationMode & 1U) == 0) {
                 g_textPrimitives = 1;
                 return;
             }
             g_textPrimitives = 1;
-            DAT_80149cc4 = g_textBufferSize;
+            INT_80149cc4 = g_textBufferSize;
             return;
         }
         if (cVar1 != '\n') break;
@@ -19165,7 +19173,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         else {
             DoNothing("Kanji Error:");
             DoNothing(g_scriptBuffer + g_textCursor);
-            DoNothing(&DAT_80023fa4);
+            DoNothing(&g_unused_buffer_5);
             bStack00000020 = 0x3f;
             g_textCursor = g_textCursor + 2;
         }
@@ -19189,7 +19197,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
             if (g_textLineIndex == 2) {
                 g_textMessageConfirmed = 1;
                 g_textChoiceIndex = g_textNextChoice;
-                if ((g_debugFlags_2 & 1) != 0) {
+                if ((g_debugFlags_2 & 1U) != 0) {
                     g_textSelectionConfirmed = g_textSelectionNext;
                 }
             }
@@ -19227,7 +19235,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         iVar3 = g_textCursor + 2;
         g_textCursor = g_textCursor + 2;
         uVar4 = CalculateTextWidthFromScript(g_scriptBuffer + iVar3);
-        (&DAT_80149be8)[(g_textBufferX + g_textLineIndex) % 3] = uVar4;
+        (&g_textLineWidth)[(g_textBufferX + g_textLineIndex) % 3] = uVar4;
         iVar3 = g_textCursor;
         goto switchD_80046540_RENDER_NEXT_CHARACTER;
     case 'M':
@@ -19370,7 +19378,7 @@ FUN_80046ab0:
     goto LAB_80046b2c;
 }
 
-// Function @0x80046B1C
+//80046B1C
 /* WARNING: Removing unreachable block (ram,0x80046c8c) */
 
 void FUN_80046b1c(void)
@@ -19403,12 +19411,12 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         g_textCursor = iVar3;
         cVar1 = g_scriptBuffer[g_textCursor];
         if (cVar1 == '\0') {
-            if ((g_etcAnimationMode & 1) == 0) {
+            if ((g_etcAnimationMode & 1U) == 0) {
                 g_textPrimitives = 1;
                 return;
             }
             g_textPrimitives = 1;
-            DAT_80149cc4 = g_textBufferSize;
+            INT_80149cc4 = g_textBufferSize;
             return;
         }
         if (cVar1 != '\n') break;
@@ -19505,7 +19513,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         else {
             DoNothing("Kanji Error:");
             DoNothing(g_scriptBuffer + g_textCursor);
-            DoNothing(&DAT_80023fa4);
+            DoNothing(&g_unused_buffer_5);
             bStack00000020 = 0x3f;
             g_textCursor = g_textCursor + 2;
         }
@@ -19529,7 +19537,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
             if (g_textLineIndex == 2) {
                 g_textMessageConfirmed = 1;
                 g_textChoiceIndex = g_textNextChoice;
-                if ((g_debugFlags_2 & 1) != 0) {
+                if ((g_debugFlags_2 & 1U) != 0) {
                     g_textSelectionConfirmed = g_textSelectionNext;
                 }
             }
@@ -19567,7 +19575,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         iVar3 = g_textCursor + 2;
         g_textCursor = g_textCursor + 2;
         uVar4 = CalculateTextWidthFromScript(g_scriptBuffer + iVar3);
-        (&DAT_80149be8)[(g_textBufferX + g_textLineIndex) % 3] = uVar4;
+        (&g_textLineWidth)[(g_textBufferX + g_textLineIndex) % 3] = uVar4;
         iVar3 = g_textCursor;
         goto switchD_80046540_RENDER_NEXT_CHARACTER;
     case 'M':
@@ -19710,7 +19718,7 @@ FUN_80046ab0:
     goto LAB_80046b2c;
 }
 
-// Function @0x80046B3C
+//80046B3C
 /* WARNING: Removing unreachable block (ram,0x80046c8c) */
 
 void FUN_80046b3c(void)
@@ -19745,12 +19753,12 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         g_textCursor = iVar3;
         cVar1 = g_scriptBuffer[g_textCursor];
         if (cVar1 == '\0') {
-            if ((g_etcAnimationMode & 1) == 0) {
+            if ((g_etcAnimationMode & 1U) == 0) {
                 g_textPrimitives = 1;
                 return;
             }
             g_textPrimitives = 1;
-            DAT_80149cc4 = g_textBufferSize;
+            INT_80149cc4 = g_textBufferSize;
             return;
         }
         if (cVar1 != '\n') break;
@@ -19846,7 +19854,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         else {
             DoNothing("Kanji Error:");
             DoNothing(g_scriptBuffer + g_textCursor);
-            DoNothing(&DAT_80023fa4);
+            DoNothing(&g_unused_buffer_5);
             bStack00000020 = 0x3f;
             g_textCursor = g_textCursor + 2;
         }
@@ -19870,7 +19878,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
             if (g_textLineIndex == 2) {
                 g_textMessageConfirmed = 1;
                 g_textChoiceIndex = g_textNextChoice;
-                if ((g_debugFlags_2 & 1) != 0) {
+                if ((g_debugFlags_2 & 1U) != 0) {
                     g_textSelectionConfirmed = g_textSelectionNext;
                 }
             }
@@ -19911,7 +19919,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         iVar3 = g_textCursor + 2;
         g_textCursor = g_textCursor + 2;
         uVar4 = CalculateTextWidthFromScript(g_scriptBuffer + iVar3);
-        (&DAT_80149be8)[(g_textBufferX + g_textLineIndex) % 3] = uVar4;
+        (&g_textLineWidth)[(g_textBufferX + g_textLineIndex) % 3] = uVar4;
         iVar3 = g_textCursor;
         goto switchD_80046540_RENDER_NEXT_CHARACTER;
     case 'M':
@@ -20046,7 +20054,7 @@ FUN_800464f4:
     goto switchD_80046540_RENDER_NEXT_CHARACTER;
 }
 
-// Function @0x80046B9C
+//80046B9C
 /* WARNING: Removing unreachable block (ram,0x80046c8c) */
 
 void FUN_80046b9c(void)
@@ -20099,12 +20107,12 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         g_textCursor = iVar7;
         cVar1 = g_scriptBuffer[g_textCursor];
         if (cVar1 == '\0') {
-            if ((g_etcAnimationMode & 1) == 0) {
+            if ((g_etcAnimationMode & 1U) == 0) {
                 g_textPrimitives = 1;
                 return;
             }
             g_textPrimitives = 1;
-            DAT_80149cc4 = g_textBufferSize;
+            INT_80149cc4 = g_textBufferSize;
             return;
         }
         if (cVar1 != '\n') break;
@@ -20176,7 +20184,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         else {
             DoNothing("Kanji Error:");
             DoNothing(g_scriptBuffer + g_textCursor);
-            DoNothing(&DAT_80023fa4);
+            DoNothing(&g_unused_buffer_5);
             bStack00000020 = 0x3f;
             g_textCursor = g_textCursor + 2;
         }
@@ -20200,7 +20208,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
             if (g_textLineIndex == 2) {
                 g_textMessageConfirmed = 1;
                 g_textChoiceIndex = g_textNextChoice;
-                if ((g_debugFlags_2 & 1) != 0) {
+                if ((g_debugFlags_2 & 1U) != 0) {
                     g_textSelectionConfirmed = g_textSelectionNext;
                 }
             }
@@ -20241,7 +20249,7 @@ switchD_80046540_RENDER_NEXT_CHARACTER:
         iVar7 = g_textCursor + 2;
         g_textCursor = g_textCursor + 2;
         uVar3 = CalculateTextWidthFromScript(g_scriptBuffer + iVar7);
-        (&DAT_80149be8)[(g_textBufferX + g_textLineIndex) % 3] = uVar3;
+        (&g_textLineWidth)[(g_textBufferX + g_textLineIndex) % 3] = uVar3;
         iVar7 = g_textCursor;
         goto switchD_80046540_RENDER_NEXT_CHARACTER;
     case 'M':
@@ -20382,7 +20390,7 @@ FUN_800464f4:
     goto switchD_80046540_RENDER_NEXT_CHARACTER;
 }
 
-// Function @0x80046CC8
+//80046CC8
 void FUN_80046cc8(void)
 
 {
@@ -20399,7 +20407,7 @@ void FUN_80046cc8(void)
     else {
         DoNothing("Kanji Error:");
         DoNothing(g_scriptBuffer + g_textCursor);
-        DoNothing(&DAT_80023fa4);
+        DoNothing(&g_unused_buffer_5);
         in_stack_00000020 = 0x3f;
         g_textCursor = g_textCursor + 2;
     }
@@ -20421,7 +20429,7 @@ void FUN_80046cc8(void)
         if (g_textLineIndex == 2) {
             g_textMessageConfirmed = 1;
             g_textChoiceIndex = g_textNextChoice;
-            if ((g_debugFlags_2 & 1) != 0) {
+            if ((g_debugFlags_2 & 1U) != 0) {
                 g_textSelectionConfirmed = g_textSelectionNext;
             }
         }
@@ -20436,7 +20444,7 @@ void FUN_80046cc8(void)
     return;
 }
 
-// Function @0x80046EF0
+//80046EF0
 undefined4 FUN_80046ef0(int* param_1)
 
 {
@@ -20490,7 +20498,7 @@ undefined4 FUN_80046ef0(int* param_1)
     return 1;
 }
 
-// Function @0x800472D0
+//800472D0
 void DisplayIconName(SPRT* sprite, char* warpName, int warpNameSize, short textCoordDstX,
     short textCoordDstY, int displayMode)
 
@@ -20584,7 +20592,7 @@ void DisplayIconName(SPRT* sprite, char* warpName, int warpNameSize, short textC
     return;
 }
 
-// Function @0x8004754C
+//8004754C
 void UpdatePlayerProgressState(void)
 
 {
@@ -20648,7 +20656,7 @@ void UpdatePlayerProgressState(void)
     return;
 }
 
-// Function @0x8004771C
+//8004771C
 int CalculateTextWidthFromScript(byte* text)
 
 {
@@ -20734,7 +20742,7 @@ switchD_800477e0_caseD_41:
     return totalWidth;
 }
 
-// Function @0x800478C4
+//800478C4
 void RenderTextBitmap(char* formattedText, char* buffer, short posX, short posY, short textWidth,
     short textLineOffset, short drawWidth, short drawHeight)
 
@@ -20742,7 +20750,7 @@ void RenderTextBitmap(char* formattedText, char* buffer, short posX, short posY,
     byte fontPixel;
     int bufferWidth2;
     byte bufferOffset;
-    int glyphDataOffset;
+    int iVar1;
     uint glyphStartBit;
     uint charIndex;
     uint fontColumn;
@@ -20762,7 +20770,7 @@ void RenderTextBitmap(char* formattedText, char* buffer, short posX, short posY,
             glyphRow = 0;
             bufferWidth2 = charIndex * 0x14;
             glyphStartBit = *(uint*)(&DAT_800993cc + bufferWidth2);
-            glyphDataOffset = *(int*)(&DAT_800993d0 + bufferWidth2) * 0x80 + (int)glyphStartBit / 2;
+            iVar1 = *(int*)(&DAT_800993d0 + bufferWidth2) * 0x80 + (int)glyphStartBit / 2 + -0x7feb52d8;
             if (0 < *(int*)(&DAT_800993c8 + bufferWidth2)) {
                 do {
                     bufferWidth2 = 0;
@@ -20779,12 +20787,10 @@ void RenderTextBitmap(char* formattedText, char* buffer, short posX, short posY,
                                         (uint)(byte)*formattedText * 0x14))) / 2 +
                                     (int)fontPixelOffset / 2] & 0xf0;
                                 if ((fontColumn & 1) == 0) {
-                                    fontPixel = (&UNK_8014ad28)
-                                        [lineByteOffset + (int)fontColumn / 2 + glyphDataOffset] & 0xf;
+                                    fontPixel = *(byte*)(iVar1 + lineByteOffset + (int)fontColumn / 2) & 0xf;
                                 }
                                 else {
-                                    fontPixel = (byte)(&UNK_8014ad28)
-                                        [lineByteOffset + (int)fontColumn / 2 + glyphDataOffset] >> 4;
+                                    fontPixel = *(byte*)(iVar1 + lineByteOffset + (int)fontColumn / 2) >> 4;
                                 }
                             }
                             else {
@@ -20792,13 +20798,11 @@ void RenderTextBitmap(char* formattedText, char* buffer, short posX, short posY,
                                     (drawY + *(int*)(&DAT_800993d4 + charIndex * 0x14))) / 2 +
                                     (int)fontPixelOffset / 2] & 0xf;
                                 if ((fontColumn & 1) == 0) {
-                                    fontPixel = (byte)(((byte)(&UNK_8014ad28)
-                                        [lineByteOffset + (int)fontColumn / 2 + glyphDataOffset]
-                                        & 0xf) << 4);
+                                    fontPixel = (byte)((*(byte*)(iVar1 + lineByteOffset + (int)fontColumn / 2) & 0xf)
+                                        << 4);
                                 }
                                 else {
-                                    fontPixel = (&UNK_8014ad28)
-                                        [lineByteOffset + (int)fontColumn / 2 + glyphDataOffset] & 0xf0;
+                                    fontPixel = *(byte*)(iVar1 + lineByteOffset + (int)fontColumn / 2) & 0xf0;
                                 }
                             }
                             buffer[(bufferWidth *
@@ -20832,7 +20836,7 @@ void RenderTextBitmap(char* formattedText, char* buffer, short posX, short posY,
     return;
 }
 
-// Function @0x80047C50
+//80047C50
 void ResetTransitionSystem(void)
 
 {
@@ -20844,14 +20848,14 @@ void ResetTransitionSystem(void)
     return;
 }
 
-// Function @0x80047C8C
+//80047C8C
 ushort FUN_80047c8c(int param_1)
 
 {
     return (&g_callbackTable)[param_1 * 0xe] & 1;
 }
 
-// Function @0x80047CB0
+//80047CB0
 undefined4 FUN_80047cb0(undefined4* param_1)
 
 {
@@ -20859,7 +20863,7 @@ undefined4 FUN_80047cb0(undefined4* param_1)
     return 1;
 }
 
-// Function @0x80047DD0
+//80047DD0
 undefined4 FUN_80047dd0(short* param_1, int* param_2)
 
 {
@@ -20924,7 +20928,7 @@ undefined4 FUN_80047dd0(short* param_1, int* param_2)
     return uVar1;
 }
 
-// Function @0x80047F94
+//80047F94
 undefined4 SetTransitionType(int transitionType)
 
 {
@@ -20963,7 +20967,7 @@ undefined4 SetTransitionType(int transitionType)
     return miscParam;
 }
 
-// Function @0x80048054
+//80048054
 void SwapBuffersAndDraw(void)
 
 {
@@ -21010,51 +21014,51 @@ void SwapBuffersAndDraw(void)
     return;
 }
 
-// Function @0x800481F8
+//800481F8
 void FUN_800481f8(void)
 
 {
     int iVar1;
-    uint* puVar2;
-    ushort* puVar3;
-    int iVar4;
+    int iVar2;
+    uint* puVar3;
+    ushort* puVar4;
     int iVar5;
     int iVar6;
     int iVar7;
 
+    iVar1 = g_bufferIndex;
     iVar5 = 0;
-    puVar3 = &g_callbackTable;
+    puVar4 = &g_callbackTable;
     iVar6 = g_bufferIndex * 4;
-    iVar4 = g_bufferIndex * 0x28;
     do {
-        g_activeTransitionCallback = puVar3;
-        if ((*puVar3 & 1) != 0) {
-            iVar1 = *(int*)(puVar3 + 2);
-            puVar2 = *(uint**)(iVar6 + iVar1 + 8);
-            if ((iVar1 != 0) && (*(int*)(puVar3 + 0xc) != -1)) {
-                iVar7 = (int)*(short*)(iVar1 + 4) * (int)*(short*)(iVar1 + 6);
-                iVar1 = 0;
+        g_activeTransitionCallback = puVar4;
+        if ((*puVar4 & 1) != 0) {
+            iVar2 = *(int*)(puVar4 + 2);
+            puVar3 = *(uint**)(iVar6 + iVar2 + 8);
+            if ((iVar2 != 0) && (*(int*)(puVar4 + 0xc) != -1)) {
+                iVar7 = (int)*(short*)(iVar2 + 4) * (int)*(short*)(iVar2 + 6);
+                iVar2 = 0;
                 if (0 < iVar7) {
                     do {
-                        iVar1 = iVar1 + 1;
+                        iVar2 = iVar2 + 1;
                         /* Probable PsyQ macro: addPrim(). */
-                        *puVar2 = *puVar2 & 0xff000000 |
-                            *(uint*)(&DAT_80146f58 + iVar4 + *(int*)(puVar3 + 0xc) * 4) & 0xffffff;
-                        *(uint*)(&DAT_80146f58 + iVar4 + *(int*)(puVar3 + 0xc) * 4) =
-                            *(uint*)(&DAT_80146f58 + iVar4 + *(int*)(puVar3 + 0xc) * 4) & 0xff000000 |
-                            (uint)puVar2 & 0xffffff;
-                        puVar2 = puVar2 + 5;
-                    } while (iVar1 < iVar7);
+                        *puVar3 = *puVar3 & 0xff000000 |
+                            g_orderTableTaki[*(int*)(puVar4 + 0xc) + iVar1 * 10] & 0xffffff;
+                        g_orderTableTaki[*(int*)(puVar4 + 0xc) + iVar1 * 10] =
+                            g_orderTableTaki[*(int*)(puVar4 + 0xc) + iVar1 * 10] & 0xff000000 |
+                            (uint)puVar3 & 0xffffff;
+                        puVar3 = puVar3 + 5;
+                    } while (iVar2 < iVar7);
                 }
             }
         }
         iVar5 = iVar5 + 1;
-        puVar3 = puVar3 + 0xe;
+        puVar4 = puVar4 + 0xe;
     } while (iVar5 < 0xd);
     return;
 }
 
-// Function @0x80048304
+//80048304
 void FUN_80048304(int* param_1)
 
 {
@@ -21097,7 +21101,7 @@ void FUN_80048304(int* param_1)
     return;
 }
 
-// Function @0x800484E8
+//800484E8
 undefined4 InitSoundSystem(void)
 
 {
@@ -21125,7 +21129,7 @@ undefined4 InitSoundSystem(void)
         voiceIndex = voiceIndex + 1;
         voice_state_ptr = voice_state_ptr + 4;
     } while (voiceIndex < 0x18);
-    FUN_8008eeac(&DAT_80175a50, 4, 1);
+    FUN_8008eeac(&INT_80175a50, 4, 1);
     FUN_8008e398();
     SpuSetMute(1);
     FUN_8008ec8c(4);
@@ -21136,12 +21140,12 @@ undefined4 InitSoundSystem(void)
         g_vabBaseSector = CdPosToInt((CdlLOC*)&PTR_CDFile_Sound_bin);
     }
     DAT_8017384c = 4;
-    DAT_80166128 = 7;
+    g_spuReverbAttr = (SpuReverbAttr*)0x7;
     DAT_8016612c = 0x104;
     DAT_80166130 = 0x2a00;
     DAT_80166132 = 0x2a00;
-    SpuSetReverbModeParam((SpuReverbAttr*)&DAT_80166128);
-    SpuSetReverbDepth((SpuReverbAttr*)&DAT_80166128);
+    SpuSetReverbModeParam((SpuReverbAttr*)&g_spuReverbAttr);
+    SpuSetReverbDepth((SpuReverbAttr*)&g_spuReverbAttr);
     SpuSetReverbVoice(1, 0xffffff);
     SpuSetReverb(1);
     DAT_80166140 = 0x2ec0;
@@ -21173,7 +21177,7 @@ undefined4 InitSoundSystem(void)
     return result;
 }
 
-// Function @0x80048704
+//80048704
 void FUN_80048704(void)
 
 {
@@ -21214,7 +21218,7 @@ void FUN_80048704(void)
     return;
 }
 
-// Function @0x80048850
+//80048850
 void FUN_80048850(void)
 
 {
@@ -21255,7 +21259,7 @@ void FUN_80048850(void)
     return;
 }
 
-// Function @0x800489C8
+//800489C8
 void FUN_800489c8(undefined4 param_1)
 
 {
@@ -21265,7 +21269,7 @@ void FUN_800489c8(undefined4 param_1)
     return;
 }
 
-// Function @0x80048A14
+//80048A14
 int FUN_80048a14(int param_1, int param_2)
 
 {
@@ -21283,7 +21287,7 @@ int FUN_80048a14(int param_1, int param_2)
     return -1;
 }
 
-// Function @0x80048B74
+//80048B74
 void UpdateAmbientSound(void)
 
 {
@@ -21312,7 +21316,7 @@ void UpdateAmbientSound(void)
     return;
 }
 
-// Function @0x80048C48
+//80048C48
 void ResetAmbientSound(void)
 
 {
@@ -21325,7 +21329,7 @@ void ResetAmbientSound(void)
     return;
 }
 
-// Function @0x80048CD4
+//80048CD4
 void FinalizeAudioBuffers(void)
 
 {
@@ -21363,7 +21367,7 @@ void FinalizeAudioBuffers(void)
     return;
 }
 
-// Function @0x80048DF4
+//80048DF4
 undefined4 IsSoundEffectAlreadyPlaying(int param_1)
 
 {
@@ -21387,7 +21391,7 @@ undefined4 IsSoundEffectAlreadyPlaying(int param_1)
     return 0;
 }
 
-// Function @0x80048E44
+//80048E44
 void FUN_80048e44(void)
 
 {
@@ -21428,7 +21432,7 @@ void FUN_80048e44(void)
     return;
 }
 
-// Function @0x80048FCC
+//80048FCC
 void UpdateSoundStream(void)
 
 {
@@ -21465,7 +21469,7 @@ void UpdateSoundStream(void)
     return;
 }
 
-// Function @0x80049060
+//80049060
 int FindAvailableSoundBank(int param_1)
 
 {
@@ -21488,7 +21492,7 @@ int FindAvailableSoundBank(int param_1)
     return iVar2;
 }
 
-// Function @0x800490FC
+//800490FC
 void PlaySoundEffect(int effectIndex)
 
 {
@@ -21657,7 +21661,7 @@ void PlaySoundEffect(int effectIndex)
     return;
 }
 
-// Function @0x80049634
+//80049634
 void PlaySoundEffect(int param_1)
 
 {
@@ -21678,7 +21682,7 @@ void PlaySoundEffect(int param_1)
     return;
 }
 
-// Function @0x80049714
+//80049714
 int FUN_80049714(int param_1)
 
 {
@@ -21697,7 +21701,7 @@ int FUN_80049714(int param_1)
     return -1;
 }
 
-// Function @0x8004974C
+//8004974C
 int FUN_8004974c(int param_1, int param_2)
 
 {
@@ -21716,7 +21720,7 @@ int FUN_8004974c(int param_1, int param_2)
     return iVar2;
 }
 
-// Function @0x80049794
+//80049794
 void FUN_80049794(int param_1, int param_2, int param_3)
 
 {
@@ -21773,7 +21777,7 @@ void FUN_80049794(int param_1, int param_2, int param_3)
     return;
 }
 
-// Function @0x80049AF4
+//80049AF4
 void StopAllSound(void)
 
 {
@@ -21790,7 +21794,7 @@ void StopAllSound(void)
     return;
 }
 
-// Function @0x80049B7C
+//80049B7C
 void LoadBgm(int param_1)
 
 {
@@ -21804,7 +21808,7 @@ void LoadBgm(int param_1)
     return;
 }
 
-// Function @0x80049BE0
+//80049BE0
 void MaybeLoadSound(int param_1, int param_2)
 
 {
@@ -21823,10 +21827,10 @@ void MaybeLoadSound(int param_1, int param_2)
         DoNothing("SsVabOpen Error\r\n");
     }
     ReadFileFromCDIntoBuffer
-    ("data\\sound.bin", &g_errorMarker, (&g_seqExtraAddrTable)[g_currentMapSoundIndex * 3],
+    ("data\\sound.bin", &g_errorMarker2, (&g_seqExtraAddrTable)[g_currentMapSoundIndex * 3],
         (int)(&g_seqStartAddrTable)[g_currentMapSoundIndex * 3] -
         (int)(&g_seqExtraAddrTable)[g_currentMapSoundIndex * 3]);
-    g_requestedSeqId = LoadSeq(&g_errorMarker, (int)g_currentVabId);
+    g_requestedSeqId = LoadSeq(&g_errorMarker2, (int)g_currentVabId);
     if ((int)((uint)g_requestedSeqId << 0x10) < 0) {
         DoNothing("SsSeqOpen Error\r\n");
     }
@@ -21838,7 +21842,7 @@ void MaybeLoadSound(int param_1, int param_2)
     return;
 }
 
-// Function @0x80049D3C
+//80049D3C
 int FUN_80049d3c(int param_1)
 
 {
@@ -21867,7 +21871,7 @@ int FUN_80049d3c(int param_1)
     return *(int*)(&DAT_800c659c + param_1 * 4);
 }
 
-// Function @0x80049E10
+//80049E10
 undefined4 FUN_80049e10(void)
 
 {
@@ -21903,14 +21907,14 @@ undefined4 FUN_80049e10(void)
     return 1;
 }
 
-// Function @0x80049F00
+//80049F00
 undefined4 FUN_80049f00(int param_1)
 
 {
     return *(undefined4*)(&DAT_800c6d28 + param_1 * 4);
 }
 
-// Function @0x80049F1C
+//80049F1C
 undefined4 FUN_80049f1c(undefined4 param_1, int param_2)
 
 {
@@ -21941,7 +21945,7 @@ undefined4 FUN_80049f1c(undefined4 param_1, int param_2)
     return 1;
 }
 
-// Function @0x80049FF8
+//80049FF8
 void FUN_80049ff8(void)
 
 {
@@ -21967,14 +21971,14 @@ void FUN_80049ff8(void)
     return;
 }
 
-// Function @0x8004A088
+//8004A088
 undefined4 DoNothing(void)
 
 {
     return 0;
 }
 
-// Function @0x8004A09C
+//8004A09C
 undefined4 OpenMap(undefined4 map)
 
 {
@@ -22006,7 +22010,7 @@ undefined4 OpenMap(undefined4 map)
     return 1;
 }
 
-// Function @0x8004A184
+//8004A184
 void FUN_8004a184(ushort* param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4)
 
 {
@@ -22050,14 +22054,14 @@ void FUN_8004a184(ushort* param_1, undefined4 param_2, undefined4 param_3, undef
     return;
 }
 
-// Function @0x8004B104
+//8004B104
 bool IsSoundDriverReady(void)
 
 {
     return g_soundLoadState != 0;
 }
 
-// Function @0x8004B114
+//8004B114
 void FUN_8004b114(int param_1, int param_2)
 
 {
@@ -22084,7 +22088,7 @@ void FUN_8004b114(int param_1, int param_2)
     return;
 }
 
-// Function @0x8004B1D4
+//8004B1D4
 void HandleMapSoundStreaming(void)
 
 {
@@ -22161,7 +22165,7 @@ void HandleMapSoundStreaming(void)
                     if (g_vabBodyRemainingSize < 0) {
                         remainingSize = g_vabBodyRemainingSize + 0x7ff;
                     }
-                    LoadSoundChunk(g_vabBodyOffset, (remainingSize >> 0xb) + 1, &g_errorMarker);
+                    LoadSoundChunk(g_vabBodyOffset, (remainingSize >> 0xb) + 1, &g_errorMarker2);
                     g_soundLoadState = 5;
                 }
                 else {
@@ -22190,7 +22194,7 @@ void HandleMapSoundStreaming(void)
     case 5:
         remainingSize = IsSoundLoadComplete();
         if (remainingSize != 0) {
-            g_requestedSeqId = LoadSeq(&g_errorMarker, (int)(short)g_currentVabId);
+            g_requestedSeqId = LoadSeq(&g_errorMarker2, (int)(short)g_currentVabId);
             if ((int)((uint)g_requestedSeqId << 0x10) < 0) {
                 DoNothing("SsSeqOpen Error\r\n");
             }
@@ -22204,7 +22208,7 @@ void HandleMapSoundStreaming(void)
     return;
 }
 
-// Function @0x8004B5F8
+//8004B5F8
 void CloseSound(void)
 
 {
@@ -22219,7 +22223,7 @@ void CloseSound(void)
     return;
 }
 
-// Function @0x8004B674
+//8004B674
 void FUN_8004b674(void)
 
 {
@@ -22252,7 +22256,7 @@ void FUN_8004b674(void)
     return;
 }
 
-// Function @0x8004B730
+//8004B730
 void SetupPostWarpGraphics(void)
 
 {
@@ -22263,7 +22267,7 @@ void SetupPostWarpGraphics(void)
     return;
 }
 
-// Function @0x8004BD9C
+//8004BD9C
 void DrawPrimaryFrame(void)
 
 {
@@ -22285,7 +22289,7 @@ void DrawPrimaryFrame(void)
     return;
 }
 
-// Function @0x8004BE00
+//8004BE00
 void CompleteBufferFlip(void)
 
 {
@@ -22293,7 +22297,7 @@ void CompleteBufferFlip(void)
     return;
 }
 
-// Function @0x8004BE0C
+//8004BE0C
 void PrepareBufferFlip(void)
 
 {
@@ -22311,7 +22315,7 @@ void PrepareBufferFlip(void)
     return;
 }
 
-// Function @0x8004DA0C
+//8004DA0C
 void FUN_8004da0c(SPRT* sprt, int textureId, short x, short y)
 
 {
@@ -22336,7 +22340,7 @@ void FUN_8004da0c(SPRT* sprt, int textureId, short x, short y)
     return;
 }
 
-// Function @0x8004DAC0
+//8004DAC0
 void InitializeWarpAndFadeSystem(void)
 
 {
@@ -22375,7 +22379,7 @@ void InitializeWarpAndFadeSystem(void)
     return;
 }
 
-// Function @0x8004DB90
+//8004DB90
 void LogDebugMessage(undefined4 param_1, uint param_2)
 
 {
@@ -22389,14 +22393,14 @@ void LogDebugMessage(undefined4 param_1, uint param_2)
     return;
 }
 
-// Function @0x8004DC50
+//8004DC50
 int FUN_8004dc50(void)
 
 {
     return (int)g_fadeControl->warpVisualId;
 }
 
-// Function @0x8004DC68
+//8004DC68
 int UpdateEntityFromWarpFlag(int param_1)
 
 {
@@ -22414,7 +22418,7 @@ int UpdateEntityFromWarpFlag(int param_1)
     return (int)g_fadeControl->warpVisualId;
 }
 
-// Function @0x8004DD18
+//8004DD18
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 FadeControl* GetFadeControl(void)
@@ -22423,7 +22427,7 @@ FadeControl* GetFadeControl(void)
     return (FadeControl*)(int)*(short*)g_fadeControl;
 }
 
-// Function @0x8004DD30
+//8004DD30
 int FinalizeWarpEntities(int param_1)
 
 {
@@ -22439,14 +22443,14 @@ int FinalizeWarpEntities(int param_1)
     return (int)*(short*)g_fadeControl;
 }
 
-// Function @0x8004DDDC
+//8004DDDC
 int GetCurrentPaletteFadeLevel(void)
 
 {
     return (int)g_fadeControl->maxFadeLevel;
 }
 
-// Function @0x8004DDF4
+//8004DDF4
 int SetMaxFadeLevel(int maxFadeLevel)
 
 {
@@ -22464,7 +22468,7 @@ int SetMaxFadeLevel(int maxFadeLevel)
     return (int)g_fadeControl->maxFadeLevel;
 }
 
-// Function @0x8004DE4C
+//8004DE4C
 void FUN_8004de4c(int param_1)
 
 {
@@ -22472,14 +22476,14 @@ void FUN_8004de4c(int param_1)
     return;
 }
 
-// Function @0x8004DEA4
+//8004DEA4
 int GetMaxUnlockedMap(void)
 
 {
     return (int)g_fadeControl->targetFadeLevel;
 }
 
-// Function @0x8004DEBC
+//8004DEBC
 int SetFadeTargetLevel(int targetLevel)
 
 {
@@ -22495,7 +22499,7 @@ int SetFadeTargetLevel(int targetLevel)
     return (int)g_fadeControl->targetFadeLevel;
 }
 
-// Function @0x8004DF10
+//8004DF10
 void FUN_8004df10(int param_1)
 
 {
@@ -22503,7 +22507,7 @@ void FUN_8004df10(int param_1)
     return;
 }
 
-// Function @0x8004DF3C
+//8004DF3C
 void DecreaseFadeLevel(int amount)
 
 {
@@ -22511,14 +22515,14 @@ void DecreaseFadeLevel(int amount)
     return;
 }
 
-// Function @0x8004DF68
+//8004DF68
 int FUN_8004df68(void)
 
 {
     return (int)*(short*)(g_fadeControl + 1);
 }
 
-// Function @0x8004DF80
+//8004DF80
 int ApplyFadeLevel(int newFadeValue)
 
 {
@@ -22536,7 +22540,7 @@ int ApplyFadeLevel(int newFadeValue)
     return (int)*(short*)(g_fadeControl + 1);
 }
 
-// Function @0x8004DFD8
+//8004DFD8
 void AdjustFadeLevelRelative(int relativeFadeValue)
 
 {
@@ -22544,7 +22548,7 @@ void AdjustFadeLevelRelative(int relativeFadeValue)
     return;
 }
 
-// Function @0x8004E004
+//8004E004
 void FUN_8004e004(int param_1)
 
 {
@@ -22552,7 +22556,7 @@ void FUN_8004e004(int param_1)
     return;
 }
 
-// Function @0x8004E030
+//8004E030
 undefined4 GetCurrentTileIndex(void)
 
 {
@@ -22589,7 +22593,7 @@ undefined4 GetCurrentTileIndex(void)
     return tileIndex;
 }
 
-// Function @0x8004E0F8
+//8004E0F8
 int GetTriggeredWarpMapId(void)
 
 {
@@ -22609,14 +22613,14 @@ int GetTriggeredWarpMapId(void)
     return iVar3;
 }
 
-// Function @0x8004E168
+//8004E168
 int FUN_8004e168(int param_1)
 
 {
     return (int)*(short*)(&DAT_800b9ff0 + param_1 * 10);
 }
 
-// Function @0x8004E18C
+//8004E18C
 int SelectTileMapSection(uint sectionId)
 
 {
@@ -22654,7 +22658,7 @@ int SelectTileMapSection(uint sectionId)
     return bestMatchIndex;
 }
 
-// Function @0x8004E268
+//8004E268
 void GetCurrentTile_Zone1(void)
 
 {
@@ -22662,7 +22666,7 @@ void GetCurrentTile_Zone1(void)
     return;
 }
 
-// Function @0x8004E288
+//8004E288
 void GetCurrentTile_Zone2(void)
 
 {
@@ -22670,7 +22674,7 @@ void GetCurrentTile_Zone2(void)
     return;
 }
 
-// Function @0x8004E2A8
+//8004E2A8
 void GetCurrentTile_Zone3(void)
 
 {
@@ -22678,7 +22682,7 @@ void GetCurrentTile_Zone3(void)
     return;
 }
 
-// Function @0x8004E2C8
+//8004E2C8
 void GetCurrentTile_Zone4(void)
 
 {
@@ -22686,7 +22690,7 @@ void GetCurrentTile_Zone4(void)
     return;
 }
 
-// Function @0x8004E2E8
+//8004E2E8
 void GetCurrentTile_Zone5(void)
 
 {
@@ -22694,7 +22698,7 @@ void GetCurrentTile_Zone5(void)
     return;
 }
 
-// Function @0x8004E308
+//8004E308
 void GetCurrentTile_Zone6(void)
 
 {
@@ -22702,7 +22706,7 @@ void GetCurrentTile_Zone6(void)
     return;
 }
 
-// Function @0x8004E328
+//8004E328
 void FUN_8004e328(void)
 
 {
@@ -22710,7 +22714,7 @@ void FUN_8004e328(void)
     return;
 }
 
-// Function @0x8004E348
+//8004E348
 void FUN_8004e348(void)
 
 {
@@ -22718,7 +22722,7 @@ void FUN_8004e348(void)
     return;
 }
 
-// Function @0x8004E368
+//8004E368
 void FUN_8004e368(void)
 
 {
@@ -22726,7 +22730,7 @@ void FUN_8004e368(void)
     return;
 }
 
-// Function @0x8004E388
+//8004E388
 void FUN_8004e388(void)
 
 {
@@ -22734,7 +22738,7 @@ void FUN_8004e388(void)
     return;
 }
 
-// Function @0x8004E3A8
+//8004E3A8
 void FUN_8004e3a8(void)
 
 {
@@ -22742,7 +22746,7 @@ void FUN_8004e3a8(void)
     return;
 }
 
-// Function @0x8004E3C8
+//8004E3C8
 void FUN_8004e3c8(void)
 
 {
@@ -22750,7 +22754,7 @@ void FUN_8004e3c8(void)
     return;
 }
 
-// Function @0x8004E3E8
+//8004E3E8
 void FUN_8004e3e8(void)
 
 {
@@ -22758,7 +22762,7 @@ void FUN_8004e3e8(void)
     return;
 }
 
-// Function @0x8004E408
+//8004E408
 void FUN_8004e408(void)
 
 {
@@ -22766,7 +22770,7 @@ void FUN_8004e408(void)
     return;
 }
 
-// Function @0x8004E428
+//8004E428
 int IsMapUnlocked(int param_1)
 
 {
@@ -22782,7 +22786,7 @@ int IsMapUnlocked(int param_1)
     return iVar1;
 }
 
-// Function @0x8004E484
+//8004E484
 void LoadWarpVisuals(int warpVisualId)
 
 {
@@ -22796,7 +22800,7 @@ void LoadWarpVisuals(int warpVisualId)
     return;
 }
 
-// Function @0x8004E4D8
+//8004E4D8
 void FUN_8004e4d8(int param_1)
 
 {
@@ -22809,7 +22813,7 @@ void FUN_8004e4d8(int param_1)
     return;
 }
 
-// Function @0x8004E530
+//8004E530
 int GetMapUnlockRequirement(int warpIndex)
 
 {
@@ -22833,7 +22837,7 @@ int GetMapUnlockRequirement(int warpIndex)
     return unlockRequirement;
 }
 
-// Function @0x8004E5C4
+//8004E5C4
 int StartWarpToMap(int mapIndex)
 
 {
@@ -22858,7 +22862,7 @@ int StartWarpToMap(int mapIndex)
     return warpEntryOffset;
 }
 
-// Function @0x8004E6EC
+//8004E6EC
 void IncreaseFadeLevel(short fadeIncrement)
 
 {
@@ -22874,7 +22878,7 @@ void IncreaseFadeLevel(short fadeIncrement)
     return;
 }
 
-// Function @0x8004E738
+//8004E738
 void FUN_8004e738(void)
 
 {
@@ -22892,21 +22896,21 @@ void FUN_8004e738(void)
     return;
 }
 
-// Function @0x8004E78C
+//8004E78C
 int GetFadeControlWarpVisualId(void)
 
 {
     return (int)*(short*)(g_fadeControl + 2);
 }
 
-// Function @0x8004E7A4
+//8004E7A4
 int FUN_8004e7a4(void)
 
 {
     return (int)g_fadeControl[1].maxFadeLevel;
 }
 
-// Function @0x8004E7BC
+//8004E7BC
 void InitCDRom2(void)
 
 {
@@ -22933,7 +22937,7 @@ void InitCDRom2(void)
     return;
 }
 
-// Function @0x8004E878
+//8004E878
 void ToUpperCase(byte* str)
 
 {
@@ -22950,7 +22954,7 @@ void ToUpperCase(byte* str)
     return;
 }
 
-// Function @0x8004EA64
+//8004EA64
 CdlFILE* LocateCDFile(CdlFILE* cdlFile, char* formattedFileName)
 
 {
@@ -22996,7 +23000,7 @@ CdlFILE* LocateCDFile(CdlFILE* cdlFile, char* formattedFileName)
     return cdlFile;
 }
 
-// Function @0x8004EB50
+//8004EB50
 void ReadFileFromCDIntoBuffer(char* fileName, u_long* buffer, uint fileOffset, int byteLength)
 
 {
@@ -23092,7 +23096,7 @@ void ReadFileFromCDIntoBuffer(char* fileName, u_long* buffer, uint fileOffset, i
     } while (true);
 }
 
-// Function @0x8004F18C
+//8004F18C
 void LoadSoundChunk(int param_1, undefined4 param_2, undefined4 param_3)
 
 {
@@ -23107,7 +23111,7 @@ void LoadSoundChunk(int param_1, undefined4 param_2, undefined4 param_3)
     return;
 }
 
-// Function @0x8004F1D8
+//8004F1D8
 undefined4 IsSoundLoadComplete(void)
 
 {
@@ -23146,7 +23150,7 @@ undefined4 IsSoundLoadComplete(void)
     return uVar1;
 }
 
-// Function @0x8004F304
+//8004F304
 bool ContainsSpecialTextFormatting(char* text)
 
 {
@@ -23156,7 +23160,7 @@ bool ContainsSpecialTextFormatting(char* text)
     return result != -1;
 }
 
-// Function @0x8004F334
+//8004F334
 int GetStyledFontBitmap(char* text)
 
 {
@@ -23169,7 +23173,7 @@ int GetStyledFontBitmap(char* text)
     return iVar1;
 }
 
-// Function @0x8004F374
+//8004F374
 void RenderStyledText(char* text, short posX, short posY)
 
 {
@@ -23259,7 +23263,7 @@ void RenderStyledText(char* text, short posX, short posY)
     return;
 }
 
-// Function @0x800505FC
+//800505FC
 void StartAsyncCallback(undefined4 param_1, undefined2 param_2, undefined4* param_3)
 
 {
@@ -23273,7 +23277,7 @@ void StartAsyncCallback(undefined4 param_1, undefined2 param_2, undefined4* para
     return;
 }
 
-// Function @0x80050670
+//80050670
 void FUN_80050670(int param_1)
 
 {
@@ -23292,7 +23296,7 @@ void FUN_80050670(int param_1)
     return;
 }
 
-// Function @0x800506AC
+//800506AC
 void FUN_800506ac(void)
 
 {
@@ -23300,21 +23304,21 @@ void FUN_800506ac(void)
     return;
 }
 
-// Function @0x800506DC
-void ApplyFadeTransform(Sprite* spriteBufferBase, undefined2 posX, undefined2 posY, int spriteIndex)
+//800506DC
+void ApplyFadeTransform(SPRT* spriteBufferBase, short posX, short posY, int spriteIndex)
 
 {
-    spriteBufferBase[spriteIndex].posX = posX;
-    spriteBufferBase[spriteIndex].posY = posY;
+    spriteBufferBase[spriteIndex].w = posX;
+    spriteBufferBase[spriteIndex].h = posY;
     return;
 }
 
-// Function @0x800506FC
-void InitFadeOverlaySprites(Sprite* spriteBufferBase)
+//800506FC
+void InitFadeOverlaySprites(SPRT* spriteBufferBase)
 
 {
     SPRT* sprite;
-    Sprite* currentOffset;
+    SPRT* currentOffset;
     int i;
     int spriteOffset;
 
@@ -23322,24 +23326,26 @@ void InitFadeOverlaySprites(Sprite* spriteBufferBase)
     spriteOffset = 8;
     currentOffset = spriteBufferBase;
     do {
-        sprite = (SPRT*)(&spriteBufferBase->sprites + spriteOffset);
-        *(undefined2*)&currentOffset[1].field_0x4 = 0x10;
-        *(undefined2*)&currentOffset[1].field_0x6 = 0x10;
-        currentOffset[1].sprites = g_sprt;
+        sprite = (SPRT*)((int)&spriteBufferBase->tag + spriteOffset);
+        currentOffset[1].r0 = '\x10';
+        currentOffset[1].g0 = '\0';
+        currentOffset[1].b0 = '\x10';
+        currentOffset[1].code = '\0';
+        *(undefined1*)&currentOffset[1].tag = g_sprt;
         spriteOffset = spriteOffset + 0x14;
-        currentOffset[1].field_0x1 = g_fadeSomething;
+        *(undefined1*)((int)&currentOffset[1].tag + 1) = g_fadeSomething;
         SetSprt(sprite);
         SetSemiTrans(sprite, 0);
         SetShadeTex(sprite, 1);
         ApplyFadeTransform(spriteBufferBase, 0, 0, i);
         i = i + 1;
-        *(undefined2*)&currentOffset[1].field_0x2 = g_fadeSomething2;
+        *(undefined2*)((int)&currentOffset[1].tag + 2) = g_fadeSomething2;
         currentOffset = currentOffset + 1;
     } while (i < 2);
     return;
 }
 
-// Function @0x80050908
+//80050908
 void FUN_80050908(int param_1, short param_2, short param_3, int param_4)
 
 {
@@ -23351,7 +23357,7 @@ void FUN_80050908(int param_1, short param_2, short param_3, int param_4)
     return;
 }
 
-// Function @0x80050998
+//80050998
 void FUN_80050998(int param_1)
 
 {
@@ -23381,7 +23387,7 @@ void FUN_80050998(int param_1)
     return;
 }
 
-// Function @0x80050B98
+//80050B98
 void AsyncCallbackHandler(undefined4 param_1)
 
 {
@@ -23389,7 +23395,7 @@ void AsyncCallbackHandler(undefined4 param_1)
     return;
 }
 
-// Function @0x80050BA8
+//80050BA8
 int StartWarpWithCheck(int param_1, int param_2, int* param_3)
 
 {
@@ -23401,7 +23407,7 @@ int StartWarpWithCheck(int param_1, int param_2, int* param_3)
     return 1;
 }
 
-// Function @0x80050C00
+//80050C00
 undefined4
 InitAsyncOperation(undefined4 callbackArg1, undefined4 callbackArg2, int* operationCounterPtr)
 
@@ -23415,7 +23421,7 @@ InitAsyncOperation(undefined4 callbackArg1, undefined4 callbackArg2, int* operat
     return 1;
 }
 
-// Function @0x80050C64
+//80050C64
 void ResetFadeTimer(void)
 
 {
@@ -23425,7 +23431,7 @@ void ResetFadeTimer(void)
     return;
 }
 
-// Function @0x80050C88
+//80050C88
 undefined4 FUN_80050c88(char* param_1, char* param_2, undefined4* param_3)
 
 {
@@ -23491,12 +23497,12 @@ LAB_80050cdc:
         DAT_8017e638 = g_textBaseX;
         DAT_8017e63a = DAT_8009cfbe;
         DAT_8017e63c = 5;
-        DisplayIconName(&DAT_8017e410, &DAT_8017e490, 0x40,
+        DisplayIconName(&SPRT_8017e410, &DAT_8017e490, 0x40,
             **(short**)(g_activeTransitionCallback + 4) +
             *(short*)(g_activeTransitionCallback + 8),
             (*(short**)(g_activeTransitionCallback + 4))[1] +
             *(short*)(g_activeTransitionCallback + 10), 1);
-        DisplayIconName(&DAT_8017e438, &DAT_8017e511, 0x40,
+        DisplayIconName(&SPRT_8017e438, &DAT_8017e511, 0x40,
             **(short**)(g_activeTransitionCallback + 4) +
             *(short*)(g_activeTransitionCallback + 8),
             (*(short**)(g_activeTransitionCallback + 4))[1] +
@@ -23506,7 +23512,7 @@ LAB_80050cdc:
     return uVar3;
 }
 
-// Function @0x80051218
+//80051218
 void FUN_80051218(void)
 
 {
@@ -23591,7 +23597,7 @@ void FUN_80051218(void)
     return;
 }
 
-// Function @0x80051F1C
+//80051F1C
 void FUN_80051f1c(void)
 
 {
@@ -23605,7 +23611,7 @@ void FUN_80051f1c(void)
     return;
 }
 
-// Function @0x80051F70
+//80051F70
 void InitializeSpriteGrid(SprtGridDescriptor* gridDescriptor)
 
 {
@@ -23646,7 +23652,7 @@ void InitializeSpriteGrid(SprtGridDescriptor* gridDescriptor)
     return;
 }
 
-// Function @0x80052100
+//80052100
 void ClearScreenEffectState(void)
 
 {
@@ -23777,7 +23783,7 @@ void ClearScreenEffectState(void)
     return;
 }
 
-// Function @0x80052618
+//80052618
 undefined4 StartFadeOut(void)
 
 {
@@ -23797,7 +23803,7 @@ undefined4 StartFadeOut(void)
     return 1;
 }
 
-// Function @0x800548A4
+//800548A4
 void FUN_800548a4(int param_1)
 
 {
@@ -23838,7 +23844,7 @@ void FUN_800548a4(int param_1)
     return;
 }
 
-// Function @0x80054A34
+//80054A34
 void FUN_80054a34(void)
 
 {
@@ -23944,7 +23950,7 @@ void FUN_80054a34(void)
     return;
 }
 
-// Function @0x80055570
+//80055570
 undefined4 IsInForbiddenWarpZone(void)
 
 {
@@ -23991,7 +23997,7 @@ undefined4 IsInForbiddenWarpZone(void)
     return 1;
 }
 
-// Function @0x80055C84
+//80055C84
 void DisplayWarpNames(void)
 
 {
@@ -24014,7 +24020,7 @@ void DisplayWarpNames(void)
     return;
 }
 
-// Function @0x800579A0
+//800579A0
 void FUN_800579a0(void)
 
 {
@@ -24036,7 +24042,7 @@ void FUN_800579a0(void)
     return;
 }
 
-// Function @0x800579C8
+//800579C8
 void FUN_800579c8(void)
 
 {
@@ -24058,7 +24064,7 @@ void FUN_800579c8(void)
     return;
 }
 
-// Function @0x80057A00
+//80057A00
 void FUN_80057a00(void)
 
 {
@@ -24080,7 +24086,7 @@ void FUN_80057a00(void)
     return;
 }
 
-// Function @0x80057A30
+//80057A30
 void FUN_80057a30(void)
 
 {
@@ -24102,7 +24108,7 @@ void FUN_80057a30(void)
     return;
 }
 
-// Function @0x80057A60
+//80057A60
 void FUN_80057a60(void)
 
 {
@@ -24124,7 +24130,7 @@ void FUN_80057a60(void)
     return;
 }
 
-// Function @0x80057A90
+//80057A90
 void FUN_80057a90(void)
 
 {
@@ -24146,14 +24152,14 @@ void FUN_80057a90(void)
     return;
 }
 
-// Function @0x80057B40
+//80057B40
 int GetFadeSettings(int index)
 
 {
-    return *(int*)(*(int*)(&g_initialAnimationTable->entries + index * 4) + 0xc) + 2;
+    return (&g_initialAnimationTable->entries)[index][3] + 2;
 }
 
-// Function @0x80057B64
+//80057B64
 void InitCameraTransitionState(void)
 
 {
@@ -24163,7 +24169,7 @@ void InitCameraTransitionState(void)
     return;
 }
 
-// Function @0x80057B84
+//80057B84
 void UpdateCameraTransitionState(void)
 
 {
@@ -24182,7 +24188,7 @@ void UpdateCameraTransitionState(void)
     return;
 }
 
-// Function @0x80057C18
+//80057C18
 void InitCameraTransition(void)
 
 {
@@ -24192,7 +24198,7 @@ void InitCameraTransition(void)
     return;
 }
 
-// Function @0x80057C84
+//80057C84
 void ApplyCameraEffect(void)
 
 {
@@ -24202,7 +24208,7 @@ void ApplyCameraEffect(void)
     return;
 }
 
-// Function @0x80057CF0
+//80057CF0
 void InitCameraTransitionEffect
 (int srcX, int srcY, int srcZ, int* dstXPtr, int* dstYPtr, u_char uvX, u_char uvY,
     short width, short height, undefined2 textureId1, undefined2 textureId2)
@@ -24268,7 +24274,7 @@ void InitCameraTransitionEffect
     return;
 }
 
-// Function @0x80057EBC
+//80057EBC
 void FUN_80057ebc(void)
 
 {
@@ -24351,7 +24357,7 @@ LAB_800580ac:
     return;
 }
 
-// Function @0x80058134
+//80058134
 void FUN_80058134(uint* param_1)
 
 {
@@ -24359,7 +24365,7 @@ void FUN_80058134(uint* param_1)
     DISPENV DStack_28;
 
     GetDispEnv(&DStack_28);
-    SetDrawArea((DR_AREA*)(&DAT_80180108 + g_bufferIndex * 0xc), &DStack_28.disp);
+    SetDrawArea((DR_AREA*)(UINT_ARRAY_80180108 + g_bufferIndex * 3), &DStack_28.disp);
     if (g_cameraTransitionState != 0) {
         FUN_80057ebc();
         ppiVar1 = &g_cameraTransitionPolygons + g_bufferIndex * 10;
@@ -24370,7 +24376,7 @@ void FUN_80058134(uint* param_1)
     return;
 }
 
-// Function @0x80058204
+//80058204
 void FUN_80058204(int param_1)
 
 {
@@ -24411,7 +24417,7 @@ void FUN_80058204(int param_1)
     return;
 }
 
-// Function @0x80058394
+//80058394
 void FUN_80058394(void)
 
 {
@@ -24422,20 +24428,20 @@ void FUN_80058394(void)
     return;
 }
 
-// Function @0x80058AB4
-undefined4 FUN_80058ab4(undefined4 param_1, undefined4 param_2, undefined4* param_3)
+//80058AB4
+undefined4 FUN_80058ab4(int param_1, int param_2, int* param_3)
 
 {
     DrawPrimaryFrame();
-    DAT_80180128 = param_3;
-    DAT_80180238 = param_1;
-    DAT_8018023c = param_2;
-    *param_3 = 0xffffffff;
+    PTR_80180128 = param_3;
+    INT_80180238 = param_1;
+    INT_8018023c = param_2;
+    *param_3 = -1;
     SetTransitionType(10);
     return 1;
 }
 
-// Function @0x80059F6C
+//80059F6C
 void TriggerVisualUpdate(int spriteTableIndex)
 
 {
@@ -24448,7 +24454,7 @@ void TriggerVisualUpdate(int spriteTableIndex)
     return;
 }
 
-// Function @0x80059FE0
+//80059FE0
 void ResetEtcTextAnimationState(void)
 
 {
@@ -24480,7 +24486,7 @@ void ResetEtcTextAnimationState(void)
     return;
 }
 
-// Function @0x8005A0C8
+//8005A0C8
 void InitializeTextSpriteTiles(void)
 
 {
@@ -24520,7 +24526,7 @@ void InitializeTextSpriteTiles(void)
     return;
 }
 
-// Function @0x8005A724
+//8005A724
 void InitCDReading(void)
 
 {
@@ -24546,7 +24552,7 @@ void InitCDReading(void)
     return;
 }
 
-// Function @0x8005A7D4
+//8005A7D4
 bool FUN_8005a7d4(void)
 
 {
@@ -24561,7 +24567,7 @@ bool FUN_8005a7d4(void)
     return bVar1;
 }
 
-// Function @0x8005A924
+//8005A924
 undefined4 SearchARAN_XA(void)
 
 {
@@ -24587,7 +24593,7 @@ undefined4 SearchARAN_XA(void)
     return 1;
 }
 
-// Function @0x8005A9E0
+//8005A9E0
 void SetNextMapId(int mapIndex)
 
 {
@@ -24613,7 +24619,7 @@ void SetNextMapId(int mapIndex)
     return;
 }
 
-// Function @0x8005AB0C
+//8005AB0C
 void FUN_8005ab0c(int param_1)
 
 {
@@ -24633,7 +24639,7 @@ void FUN_8005ab0c(int param_1)
     return;
 }
 
-// Function @0x8005ABE0
+//8005ABE0
 void ActivateSpecialRenderMode(int param_1)
 
 {
@@ -24649,7 +24655,7 @@ void ActivateSpecialRenderMode(int param_1)
     return;
 }
 
-// Function @0x8005AC90
+//8005AC90
 void FUN_8005ac90(void)
 
 {
@@ -24683,7 +24689,7 @@ void FUN_8005ac90(void)
     return;
 }
 
-// Function @0x8005AD38
+//8005AD38
 void OnCdDataStreamComplete(void)
 
 {
@@ -24873,7 +24879,7 @@ END:
     return;
 }
 
-// Function @0x8005B1E8
+//8005B1E8
 undefined1* InitializeTileSet(undefined4 param_1, TileSetMetaData* tileSet)
 
 {
@@ -25041,7 +25047,7 @@ undefined1* InitializeTileSet(undefined4 param_1, TileSetMetaData* tileSet)
     return &tileSet->field_0x8;
 }
 
-// Function @0x8005B63C
+//8005B63C
 void InitializeTileAnimationSystem(void)
 
 {
@@ -25051,7 +25057,7 @@ void InitializeTileAnimationSystem(void)
     return;
 }
 
-// Function @0x8005B670
+//8005B670
 uint RenderAllTileLayers(undefined4 orderingTableBuffer1, undefined4 orderingTableBuffer2,
     undefined4 cameraX, undefined4 cameraY)
 
@@ -25084,7 +25090,7 @@ uint RenderAllTileLayers(undefined4 orderingTableBuffer1, undefined4 orderingTab
     return numberOfLayers;
 }
 
-// Function @0x8005B7A0
+//8005B7A0
 void UpdateTileAnimationFrame(void)
 
 {
@@ -25109,7 +25115,7 @@ void UpdateTileAnimationFrame(void)
     return;
 }
 
-// Function @0x8005B848
+//8005B848
 int* RenderLayerToBuffer(int layerIndex, int* mainBuffer, int* fallbackBuffer, int posX, int posY)
 
 {
@@ -25119,7 +25125,7 @@ int* RenderLayerToBuffer(int layerIndex, int* mainBuffer, int* fallbackBuffer, i
     ushort drawModeIndex;
     byte renderType;
 
-    drawMode = (DR_MODE*)(&UNK_80181c38 + layerIndex * 0x18 + (int)g_renderingBufferIndex * 0xc);
+    drawMode = (DR_MODE*)(layerIndex * 0x18 + (int)g_renderingBufferIndex * 0xc + -0x7fe7e3c8);
     g_currentBuffer = fallbackBuffer;
     if (*(char*)((&g_tile_scroll_frame_counter_by_layer)[layerIndex] + 3) == '\0') {
         g_currentBuffer = mainBuffer;
@@ -25154,7 +25160,7 @@ int* RenderLayerToBuffer(int layerIndex, int* mainBuffer, int* fallbackBuffer, i
     return renderedTilesPtr;
 }
 
-// Function @0x8005BA40
+//8005BA40
 void RenderTileOverlayLayer(uint* orderingTable)
 
 {
@@ -25162,7 +25168,7 @@ void RenderTileOverlayLayer(uint* orderingTable)
     DR_MODE* drawModePtr;
     byte drawModeIndexRaw;
 
-    drawModePtr = g_drawModes + (int)g_renderingBufferIndex;
+    drawModePtr = g_drawModes2 + (int)g_renderingBufferIndex;
     UpdateOverlayTileAnimation();
     if (g_tileSetMetaData[1].tileAnimationMode < 0x65) {
         /* Récupération de l’index d’overlay à utiliser */
@@ -25180,7 +25186,7 @@ void RenderTileOverlayLayer(uint* orderingTable)
     return;
 }
 
-// Function @0x8005BB24
+//8005BB24
 void InitScrollModeA(int layerIndex)
 
 {
@@ -25195,7 +25201,7 @@ void InitScrollModeA(int layerIndex)
         g_tile_scroll_frame_counter_by_layer =
             &g_tile_set->field_0x0 + *(int*)&g_tileSetMetaData->numberOfLayers;
         g_tile_scroll_params_by_layer =
-            &g_tile_set->numberOfLayers + *(int*)&g_tileSetMetaData->numberOfLayers;
+            (int)(&g_tile_set->numberOfLayers + *(int*)&g_tileSetMetaData->numberOfLayers);
     }
     else {
         g_tile_scroll_frame_counter_by_layer_2 =
@@ -25222,18 +25228,18 @@ void InitScrollModeA(int layerIndex)
         y = y + 1;
         tileIndex = tileIndex + 0x15;
     } while (y < 0x10);
-    if ((*(char*)((int)(&g_tile_scroll_params_by_layer)[layerIndex] + 4) < '\0') ||
-        (*(char*)((int)(&g_tile_scroll_params_by_layer)[layerIndex] + 5) < '\0')) {
+    if ((*(char*)((&g_tile_scroll_params_by_layer)[layerIndex] + 4) < '\0') ||
+        (*(char*)((&g_tile_scroll_params_by_layer)[layerIndex] + 5) < '\0')) {
         scrollDeltaFlag = 0xffffffff;
     }
     else {
         scrollDeltaFlag = 1;
     }
     (&g_scrollingX_delta_layers)[layerIndex] = scrollDeltaFlag;
-    if (*(char*)((int)(&g_tile_scroll_params_by_layer)[layerIndex] + 5) == '\0') {
+    if (*(char*)((&g_tile_scroll_params_by_layer)[layerIndex] + 5) == '\0') {
         (&g_scrollingX_delta_layers)[layerIndex] = 0;
     }
-    tileIndex = (int)(&g_tile_scroll_params_by_layer)[layerIndex];
+    tileIndex = (&g_tile_scroll_params_by_layer)[layerIndex];
     if ((*(char*)(tileIndex + 6) < '\0') || (*(char*)(tileIndex + 7) < '\0')) {
         scrollDeltaFlag = 0xffffffff;
     }
@@ -25241,13 +25247,13 @@ void InitScrollModeA(int layerIndex)
         scrollDeltaFlag = 1;
     }
     (&g_scrollingY_delta_layers)[layerIndex] = scrollDeltaFlag;
-    if (*(char*)((int)(&g_tile_scroll_params_by_layer)[layerIndex] + 7) == '\0') {
+    if (*(char*)((&g_tile_scroll_params_by_layer)[layerIndex] + 7) == '\0') {
         (&g_scrollingY_delta_layers)[layerIndex] = 0;
     }
     return;
 }
 
-// Function @0x8005BDD4
+//8005BDD4
 void InitScrollModeB(int layerIndex)
 
 {
@@ -25366,7 +25372,7 @@ void InitScrollModeB(int layerIndex)
     return;
 }
 
-// Function @0x8005C294
+//8005C294
 /* WARNING: Removing unreachable block (ram,0x8005c418) */
 
 int RenderTileLayerNormal(uint* drawBuffer, int cameraX, int cameraY, int layerIndex)
@@ -25486,7 +25492,7 @@ int RenderTileLayerNormal(uint* drawBuffer, int cameraX, int cameraY, int layerI
     return renderedTileCount;
 }
 
-// Function @0x8005C648
+//8005C648
 void SetupLayerScroll(int cameraX, int cameraY, int layerIndex)
 
 {
@@ -25572,7 +25578,7 @@ void SetupLayerScroll(int cameraX, int cameraY, int layerIndex)
     return;
 }
 
-// Function @0x8005C8BC
+//8005C8BC
 int RenderTileLayerSpecial(uint* orderingTable, int cameraX, int cameraY, int layerIndex)
 
 {
@@ -25652,7 +25658,7 @@ int RenderTileLayerSpecial(uint* orderingTable, int cameraX, int cameraY, int la
     return tilesDrawn;
 }
 
-// Function @0x8005CB38
+//8005CB38
 undefined4
 RenderScrollingTile(uint* oderingTable, char frameCounter, int tileIdx, int layerIndex, int cameraX,
     int cameraY)
@@ -25735,7 +25741,7 @@ RenderScrollingTile(uint* oderingTable, char frameCounter, int tileIdx, int laye
     return 1;
 }
 
-// Function @0x8005CE44
+//8005CE44
 undefined4
 RenderAnimatedTileEntry(uint* orderingTable, char animFrameOffset, int tileIndex, int layerIndex)
 
@@ -25767,7 +25773,7 @@ RenderAnimatedTileEntry(uint* orderingTable, char animFrameOffset, int tileIndex
             (ushort)(byte)(&g_tile_set->field_0x0 +
                 *(int*)&g_tileSetMetaData->field_0xc + *framePointer)[1] * 0x100;
         currentFrame = *(int*)&vramAddr->field_0xc + *framePointer;
-        *(ushort*)((int)&g_tile_rendering_buffer_1 + renderBufferOffset) =
+        *(ushort*)((int)&g_tile_rendering_buffer_ptr + renderBufferOffset) =
             (ushort)(byte)(&pTVar1->field_0x2)[currentFrame] +
             (ushort)(byte)(&pTVar1->field_0x3)[currentFrame] * 0x100;
         currentFrame = *(int*)&vramAddr->field_0xc + *framePointer;
@@ -25784,8 +25790,8 @@ RenderAnimatedTileEntry(uint* orderingTable, char animFrameOffset, int tileIndex
     currentFrame = g_tileUVLookup;
     *(undefined2*)(tileEntry + 6) = *(undefined2*)((int)&g_tileFrameUVs + layerIndex * 2);
     renderBufferOffset = g_rendering_tile_buffer;
-    *(undefined2*)(tileEntry + 8) = *(undefined2*)((int)&g_tile_rendering_buffer_1 + layerIndex * 2)
-        ;
+    *(undefined2*)(tileEntry + 8) =
+        *(undefined2*)((int)&g_tile_rendering_buffer_ptr + layerIndex * 2);
     primPtr = (uint*)(renderBufferOffset + tileIndex * 0x14 + layerIndex * 4000);
     *(undefined2*)((int)primPtr + 0xe) = *(undefined2*)((uint)*tileEntry * 2 + currentFrame);
     *(byte*)(primPtr + 3) = tileEntry[1];
@@ -25798,7 +25804,7 @@ RenderAnimatedTileEntry(uint* orderingTable, char animFrameOffset, int tileIndex
     return 1;
 }
 
-// Function @0x8005D05C
+//8005D05C
 int RenderTileWithRandomWrap
 (uint* orderingTable, char frameOffset, int tileIndex, int layerIndex, int cameraX,
     int cameraY)
@@ -25893,7 +25899,7 @@ int RenderTileWithRandomWrap
     return 1;
 }
 
-// Function @0x8005D42C
+//8005D42C
 undefined4
 RenderSpecialTileAnimation(uint* orderingTable, char paletteOffset, int tileIndex, int layerIndex)
 
@@ -25938,7 +25944,7 @@ RenderSpecialTileAnimation(uint* orderingTable, char paletteOffset, int tileInde
     return 1;
 }
 
-// Function @0x8005D5E8
+//8005D5E8
 void InitTileRenderer(undefined4 tPageX, undefined4 tPageY, int paletteX, int paletteY, short drawMode,
     undefined2 paletteIndex, undefined2 tileScaleX, undefined2 tileScaleY,
     undefined4 uvLookupTablePtr)
@@ -25958,7 +25964,7 @@ void InitTileRenderer(undefined4 tPageX, undefined4 tPageY, int paletteX, int pa
     return;
 }
 
-// Function @0x8005D668
+//8005D668
 void SetTileAnimationMode(undefined4 animationMode, int animationBankIndex)
 
 {
@@ -25974,7 +25980,7 @@ void SetTileAnimationMode(undefined4 animationMode, int animationBankIndex)
     return;
 }
 
-// Function @0x8005D6C4
+//8005D6C4
 void InitOverlayDrawBuffers(void)
 
 {
@@ -25984,7 +25990,7 @@ void InitOverlayDrawBuffers(void)
 
     i = 0;
     if (g_tileSetMetaData[1].tileAnimationMode < 0x65) {
-        quad = &g_overlayDrawBuffers;
+        quad = g_overlayDrawBuffers;
         do {
             SetTile((TILE*)quad);
             ((TILE*)quad)->w = 0x140;
@@ -26001,7 +26007,7 @@ void InitOverlayDrawBuffers(void)
         } while (i < 2);
     }
     else {
-        quad = &g_extendedOverlayDrawBuffers;
+        quad = g_extendedOverlayDrawBuffers;
         do {
             SetPolyG4((POLY_G4*)quad);
             ((POLY_G4*)quad)->x0 = 0;
@@ -26033,7 +26039,7 @@ void InitOverlayDrawBuffers(void)
     return;
 }
 
-// Function @0x8005D858
+//8005D858
 void UpdateOverlayTileAnimation(uint* orderingTable)
 
 {
@@ -26055,8 +26061,8 @@ void UpdateOverlayTileAnimation(uint* orderingTable)
                 g_tileAnimationFrameIndex = 0;
             }
         }
-        g_currentOverlayBuffer = &g_overlayDrawBuffers + (int)g_renderingBufferIndex * 4;
-        (&g_overlayDrawBuffers)[(int)g_renderingBufferIndex * 0x10] = g_overlayFrame0;
+        g_currentOverlayBuffer = g_overlayDrawBuffers + (int)g_renderingBufferIndex * 4;
+        *(undefined1*)(g_overlayDrawBuffers + (int)g_renderingBufferIndex * 4 + 1) = g_overlayFrame0;
         *(undefined1*)((int)g_currentOverlayBuffer + 5) = g_overlayFrame1;
         *(undefined1*)((int)g_currentOverlayBuffer + 6) = g_overlayFrame2;
         currentOverlayBuffer = g_currentOverlayBuffer;
@@ -26085,9 +26091,8 @@ void UpdateOverlayTileAnimation(uint* orderingTable)
                 g_tileAnimationFrameIndex = 0;
             }
         }
-        g_currentExtendedOverlayBuffer = &g_extendedOverlayDrawBuffers + (int)g_renderingBufferIndex * 9
-            ;
-        *(undefined1*)(&g_extendedOverlayDrawBuffers_2 + (int)g_renderingBufferIndex * 9) =
+        g_currentExtendedOverlayBuffer = g_extendedOverlayDrawBuffers + (int)g_renderingBufferIndex * 9;
+        *(undefined1*)(g_extendedOverlayDrawBuffers + (int)g_renderingBufferIndex * 9 + 1) =
             g_overlayFrame0;
         *(undefined1*)((int)g_currentExtendedOverlayBuffer + 5) = g_overlayFrame1;
         *(undefined1*)((int)g_currentExtendedOverlayBuffer + 6) = g_overlayFrame2;
@@ -26108,14 +26113,14 @@ void UpdateOverlayTileAnimation(uint* orderingTable)
     return;
 }
 
-// Function @0x8005DB94
+//8005DB94
 void InitScrollModeNone(void)
 
 {
     return;
 }
 
-// Function @0x8005DB9C
+//8005DB9C
 void InitMemoryCard(void)
 
 {
@@ -26127,7 +26132,7 @@ void InitMemoryCard(void)
     return;
 }
 
-// Function @0x8005DBDC
+//8005DBDC
 void StopMemoryCardAll(void)
 
 {
@@ -26136,7 +26141,7 @@ void StopMemoryCardAll(void)
     return;
 }
 
-// Function @0x8005DC04
+//8005DC04
 void FUN_8005dc04(int param_1, int* param_2, undefined4* param_3)
 
 {
@@ -26157,7 +26162,7 @@ void FUN_8005dc04(int param_1, int* param_2, undefined4* param_3)
     return;
 }
 
-// Function @0x8005DC94
+//8005DC94
 void FUN_8005dc94(int param_1, int param_2, int* param_3)
 
 {
@@ -26196,7 +26201,7 @@ LAB_8005dd10:
     return;
 }
 
-// Function @0x8005DD74
+//8005DD74
 int FUN_8005dd74(int param_1, int param_2, undefined4 param_3)
 
 {
@@ -26242,7 +26247,7 @@ LAB_8005ddf0:
     return -1;
 }
 
-// Function @0x8005DE7C
+//8005DE7C
 int FUN_8005de7c(int param_1, int param_2, undefined4 param_3)
 
 {
@@ -26288,7 +26293,7 @@ LAB_8005def8:
     return -1;
 }
 
-// Function @0x8005DF84
+//8005DF84
 void FUN_8005df84(int param_1)
 
 {
@@ -26307,7 +26312,7 @@ LAB_8005dfc4:
     return;
 }
 
-// Function @0x8005DFE0
+//8005DFE0
 undefined4 FUN_8005dfe0(undefined4 param_1)
 
 {
@@ -26328,7 +26333,7 @@ undefined4 FUN_8005dfe0(undefined4 param_1)
     return uVar2;
 }
 
-// Function @0x8005E064
+//8005E064
 undefined4 FUN_8005e064(int param_1, int param_2)
 
 {
@@ -26371,7 +26376,7 @@ LAB_8005e0d0:
     return uVar2;
 }
 
-// Function @0x8005E12C
+//8005E12C
 void FUN_8005e12c(int param_1, int param_2)
 
 {
@@ -26408,7 +26413,7 @@ LAB_8005e198:
     return;
 }
 
-// Function @0x8005E2E0
+//8005E2E0
 uint FUN_8005e2e0(uint param_1)
 
 {
@@ -26468,7 +26473,7 @@ uint FUN_8005e2e0(uint param_1)
     return param_1;
 }
 
-// Function @0x8005E3E4
+//8005E3E4
 undefined4* FUN_8005e3e4(int param_1, undefined1* param_2, int param_3, undefined4* param_4)
 
 {
@@ -26646,7 +26651,7 @@ undefined4* FUN_8005e3e4(int param_1, undefined1* param_2, int param_3, undefine
     return param_4;
 }
 
-// Function @0x8005E7C4
+//8005E7C4
 void FUN_8005e7c4(int param_1)
 
 {
@@ -26656,7 +26661,7 @@ void FUN_8005e7c4(int param_1)
     return;
 }
 
-// Function @0x8005E7FC
+//8005E7FC
 void FUN_8005e7fc(void)
 
 {
@@ -26681,7 +26686,7 @@ void FUN_8005e7fc(void)
     return;
 }
 
-// Function @0x8005E9B4
+//8005E9B4
 void StopMemoryCard(void)
 
 {
@@ -26698,77 +26703,77 @@ void StopMemoryCard(void)
     return;
 }
 
-// Function @0x8005EA5C
+//8005EA5C
 undefined4 FUN_8005ea5c(void)
 
 {
     int iVar1;
 
     do {
-        iVar1 = TestEvent(DAT_800dc088);
+        iVar1 = TestEvent();
         if (iVar1 == 1) {
             return 0;
         }
-        iVar1 = TestEvent(DAT_800dc08c);
+        iVar1 = TestEvent();
         if (iVar1 == 1) {
             return 1;
         }
-        iVar1 = TestEvent(DAT_800dc090);
+        iVar1 = TestEvent();
         if (iVar1 == 1) {
             return 2;
         }
-        iVar1 = TestEvent(DAT_800dc094);
+        iVar1 = TestEvent();
     } while (iVar1 != 1);
     return 3;
 }
 
-// Function @0x8005EAF8
+//8005EAF8
 undefined4 FUN_8005eaf8(void)
 
 {
     int iVar1;
 
     do {
-        iVar1 = TestEvent(DAT_800dc4a4);
+        iVar1 = TestEvent();
         if (iVar1 == 1) {
             return 0;
         }
-        iVar1 = TestEvent(DAT_800dc4a8);
+        iVar1 = TestEvent();
         if (iVar1 == 1) {
             return 1;
         }
-        iVar1 = TestEvent(DAT_800dc4ac);
+        iVar1 = TestEvent();
         if (iVar1 == 1) {
             return 2;
         }
-        iVar1 = TestEvent(DAT_800dc4b0);
+        iVar1 = TestEvent();
     } while (iVar1 != 1);
     return 3;
 }
 
-// Function @0x8005EB94
+//8005EB94
 void FUN_8005eb94(void)
 
 {
-    TestEvent(DAT_800dc088);
-    TestEvent(DAT_800dc08c);
-    TestEvent(DAT_800dc090);
-    TestEvent(DAT_800dc094);
+    TestEvent();
+    TestEvent();
+    TestEvent();
+    TestEvent();
     return;
 }
 
-// Function @0x8005EBEC
+//8005EBEC
 void FUN_8005ebec(void)
 
 {
-    TestEvent(DAT_800dc4a4);
-    TestEvent(DAT_800dc4a8);
-    TestEvent(DAT_800dc4ac);
-    TestEvent(DAT_800dc4b0);
+    TestEvent();
+    TestEvent();
+    TestEvent();
+    TestEvent();
     return;
 }
 
-// Function @0x8005EC44
+//8005EC44
 uint CopyMemoryToRAM(int* sourcePtr, int byteCount, int postProcessingMode)
 
 {
@@ -26789,7 +26794,7 @@ uint CopyMemoryToRAM(int* sourcePtr, int byteCount, int postProcessingMode)
     return result;
 }
 
-// Function @0x8005EC98
+//8005EC98
 int UpdatePostProcessingEffects(void)
 
 {
@@ -26816,7 +26821,7 @@ int UpdatePostProcessingEffects(void)
     return result;
 }
 
-// Function @0x8005ED2C
+//8005ED2C
 undefined4 RunWaveEffect(void)
 
 {
@@ -26868,7 +26873,7 @@ undefined4 RunWaveEffect(void)
     return 1;
 }
 
-// Function @0x8005F458
+//8005F458
 void RunFadeEffect(void)
 
 {
@@ -27664,7 +27669,7 @@ void RunFadeEffect(void)
     return;
 }
 
-// Function @0x80060B1C
+//80060B1C
 void FUN_80060b1c(void)
 
 {
@@ -27686,7 +27691,7 @@ void FUN_80060b1c(void)
     return;
 }
 
-// Function @0x80060BD0
+//80060BD0
 void FUN_80060bd0(void)
 
 {
@@ -27727,7 +27732,7 @@ void FUN_80060bd0(void)
     return;
 }
 
-// Function @0x80060CF8
+//80060CF8
 void ApplyEtcFade(char* param_1, char* param_2, undefined4* fadeControlValue)
 
 {
@@ -27744,7 +27749,7 @@ void ApplyEtcFade(char* param_1, char* param_2, undefined4* fadeControlValue)
     return;
 }
 
-// Function @0x80060E20
+//80060E20
 /* WARNING: Removing unreachable block (ram,0x80061004) */
 /* WARNING: Removing unreachable block (ram,0x80061050) */
 /* WARNING: Removing unreachable block (ram,0x80060f64) */
@@ -27876,7 +27881,7 @@ undefined4 FUN_80060e20(undefined4 param_1, undefined4 param_2)
     return uVar4;
 }
 
-// Function @0x8006122C
+//8006122C
 /* WARNING: Removing unreachable block (ram,0x80061418) */
 /* WARNING: Removing unreachable block (ram,0x80061464) */
 /* WARNING: Removing unreachable block (ram,0x80061378) */
@@ -28024,7 +28029,7 @@ undefined4 FUN_8006122c(undefined4 param_1, undefined4 param_2, int param_3)
     return uVar4;
 }
 
-// Function @0x800616D8
+//800616D8
 uint FUN_800616d8(uint param_1)
 
 {
@@ -28053,7 +28058,7 @@ uint FUN_800616d8(uint param_1)
     return ~uVar1;
 }
 
-// Function @0x8006174C
+//8006174C
 void FUN_8006174c(Entity* param_1)
 
 {
@@ -28061,7 +28066,7 @@ void FUN_8006174c(Entity* param_1)
     return;
 }
 
-// Function @0x80061758
+//80061758
 void FUN_80061758(int param_1)
 
 {
@@ -28069,7 +28074,7 @@ void FUN_80061758(int param_1)
     return;
 }
 
-// Function @0x80061764
+//80061764
 void FUN_80061764(Entity* param_1)
 
 {
@@ -28080,7 +28085,7 @@ void FUN_80061764(Entity* param_1)
     return;
 }
 
-// Function @0x800617B8
+//800617B8
 void FUN_800617b8(int param_1)
 
 {
@@ -28088,7 +28093,7 @@ void FUN_800617b8(int param_1)
     return;
 }
 
-// Function @0x800617C4
+//800617C4
 void FUN_800617c4(int param_1)
 
 {
@@ -28096,7 +28101,7 @@ void FUN_800617c4(int param_1)
     return;
 }
 
-// Function @0x800617D0
+//800617D0
 void FUN_800617d0(Entity* entity)
 
 {
@@ -28104,7 +28109,7 @@ void FUN_800617d0(Entity* entity)
     return;
 }
 
-// Function @0x800617DC
+//800617DC
 void FUN_800617dc(int param_1)
 
 {
@@ -28112,7 +28117,7 @@ void FUN_800617dc(int param_1)
     return;
 }
 
-// Function @0x800617E8
+//800617E8
 void FUN_800617e8(int param_1)
 
 {
@@ -28120,7 +28125,7 @@ void FUN_800617e8(int param_1)
     return;
 }
 
-// Function @0x800617F4
+//800617F4
 void FUN_800617f4(int param_1)
 
 {
@@ -28129,7 +28134,7 @@ void FUN_800617f4(int param_1)
     return;
 }
 
-// Function @0x80061808
+//80061808
 void FUN_80061808(int param_1)
 
 {
@@ -28137,7 +28142,7 @@ void FUN_80061808(int param_1)
     return;
 }
 
-// Function @0x80061814
+//80061814
 void FUN_80061814(int param_1)
 
 {
@@ -28145,7 +28150,7 @@ void FUN_80061814(int param_1)
     return;
 }
 
-// Function @0x80061820
+//80061820
 void FUN_80061820(Entity* param_1)
 
 {
@@ -28160,7 +28165,7 @@ void FUN_80061820(Entity* param_1)
     return;
 }
 
-// Function @0x80061888
+//80061888
 void FUN_80061888(int param_1)
 
 {
@@ -28191,7 +28196,7 @@ void FUN_80061888(int param_1)
     return;
 }
 
-// Function @0x8006191C
+//8006191C
 void FUN_8006191c(int param_1)
 
 {
@@ -28200,7 +28205,7 @@ void FUN_8006191c(int param_1)
     return;
 }
 
-// Function @0x80061930
+//80061930
 void FUN_80061930(Entity* param_1)
 
 {
@@ -28213,7 +28218,7 @@ void FUN_80061930(Entity* param_1)
     return;
 }
 
-// Function @0x80061998
+//80061998
 void FUN_80061998(int param_1)
 
 {
@@ -28222,7 +28227,7 @@ void FUN_80061998(int param_1)
     return;
 }
 
-// Function @0x800619A8
+//800619A8
 void FUN_800619a8(int param_1)
 
 {
@@ -28232,7 +28237,7 @@ void FUN_800619a8(int param_1)
     return;
 }
 
-// Function @0x800619C0
+//800619C0
 void FUN_800619c0(int param_1)
 
 {
@@ -28241,7 +28246,7 @@ void FUN_800619c0(int param_1)
     return;
 }
 
-// Function @0x800619D0
+//800619D0
 void FUN_800619d0(int param_1)
 
 {
@@ -28249,7 +28254,7 @@ void FUN_800619d0(int param_1)
     return;
 }
 
-// Function @0x800619DC
+//800619DC
 void FUN_800619dc(int param_1)
 
 {
@@ -28257,7 +28262,7 @@ void FUN_800619dc(int param_1)
     return;
 }
 
-// Function @0x800619E8
+//800619E8
 void FUN_800619e8(Entity* entity)
 
 {
@@ -28272,7 +28277,7 @@ void FUN_800619e8(Entity* entity)
     return;
 }
 
-// Function @0x80061A6C
+//80061A6C
 void FUN_80061a6c(Entity* param_1)
 
 {
@@ -28312,7 +28317,7 @@ void FUN_80061a6c(Entity* param_1)
     return;
 }
 
-// Function @0x80061D14
+//80061D14
 void FUN_80061d14(Entity* param_1)
 
 {
@@ -28373,7 +28378,7 @@ void FUN_80061d14(Entity* param_1)
     return;
 }
 
-// Function @0x80061EB8
+//80061EB8
 void SpawnWarpIfValid(Entity* entity)
 
 {
@@ -28494,7 +28499,7 @@ void SpawnWarpIfValid(Entity* entity)
         }
     }
     if (*(char*)((int)&entity->spawnCustomByte + 1) == '\0') {
-        iVar3 = *(int*)(&DAT_80026cdc + seed1 * 4);
+        iVar3 = (&INT_80026cdc)[seed1];
         g_layerBuffer[seed1 * 9 + 0x42b] = 0x2a00000;
         g_layerBuffer[seed1 * 9 + 0x42a] = iVar3;
         *(undefined1*)((int)&entity->spawnCustomByte + 1) = 1;
@@ -28505,7 +28510,7 @@ void SpawnWarpIfValid(Entity* entity)
         if (sVar1 != 0) {
             *(short*)((int)entity->spawnedGameFlag + 2) = sVar1 + -1;
         }
-        rand2 = entity->initialXPos + *(int*)(&DAT_80026ce4 + seed1 * 4) & 0x1ff;
+        rand2 = entity->initialXPos + (&INT_80026ce4)[seed1] & 0x1ff;
         entity->initialXPos = rand2;
         entity->xpos = g_layerBuffer[seed1 * 9 + 0x42a] + (short)(&DAT_80028334)[rand2] * 0x1200;
         entity->ypos = g_layerBuffer[seed1 * 9 + 0x42b] +
@@ -28546,8 +28551,7 @@ void SpawnWarpIfValid(Entity* entity)
                 *(undefined2*)((int)entity->spawnedGameFlag + 2) = 0x78;
                 entity->targetAnimationId = 0;
                 g_layerBuffer[seed1 * 9 + 0x42a] =
-                    *(int*)(&DAT_80026cdc + seed1 * 4) + (entity->xpos - g_layerBuffer[seed1 * 9 + 0x42c])
-                    ;
+                    (&INT_80026cdc)[seed1] + (entity->xpos - g_layerBuffer[seed1 * 9 + 0x42c]);
                 g_layerBuffer[seed1 * 9 + 0x42b] =
                     (entity->ypos - g_layerBuffer[seed1 * 9 + 0x42d]) + 0x2a00000;
             }
@@ -28749,7 +28753,7 @@ LAB_80062b94:
     return;
 }
 
-// Function @0x80062BC0
+//80062BC0
 void FUN_80062bc0(Entity* entity)
 
 {
@@ -28757,21 +28761,20 @@ void FUN_80062bc0(Entity* entity)
     char cVar2;
     short sVar3;
     short sVar4;
-    undefined4 uVar5;
+    int iVar5;
     uint uVar6;
     undefined2* puVar7;
-    undefined* puVar8;
-    int iVar9;
-    uint uVar10;
+    undefined4 uVar8;
+    int* piVar9;
+    int iVar10;
     uint uVar11;
-    int iVar12;
+    uint uVar12;
     Entity* pEVar13;
     Entity* pEVar14;
     undefined4* puVar15;
-    int* piVar16;
-    uint uVar17;
+    uint uVar16;
+    int iVar17;
     int iVar18;
-    int iVar19;
     int local_48;
     int local_44;
     int local_38;
@@ -28780,9 +28783,9 @@ void FUN_80062bc0(Entity* entity)
 
     if (g_loaderInitialized == 0) {
         puVar15 = &DAT_801910f0;
-        iVar9 = 0;
+        iVar10 = 0;
         puVar7 = &DAT_8019110c;
-        puVar8 = &DAT_80026d30;
+        piVar9 = &INT_80026d30;
         do {
             *puVar15 = 0x600;
             *(undefined4*)(puVar7 + -0xc) = 0;
@@ -28790,63 +28793,62 @@ void FUN_80062bc0(Entity* entity)
             puVar7[-8] = 0;
             puVar7[-7] = 0;
             puVar7[-6] = 0;
-            uVar5 = *(undefined4*)(puVar8 + 8);
-            puVar8 = puVar8 + 4;
-            iVar9 = iVar9 + 1;
+            iVar5 = piVar9[2];
+            piVar9 = piVar9 + 1;
+            iVar10 = iVar10 + 1;
             puVar15 = puVar15 + 8;
             *(undefined4*)(puVar7 + -2) = 0x200000;
             *puVar7 = 0;
-            *(undefined4*)(puVar7 + -4) = uVar5;
+            *(int*)(puVar7 + -4) = iVar5;
             puVar7 = puVar7 + 0x10;
-        } while (iVar9 != 2);
+        } while (iVar10 != 2);
         g_loaderInitialized = 1;
     }
     if (entity->targetAnimationId - 7 < 2) {
         return;
     }
-    iVar9 = 0;
-    uVar17 = (uint)(byte)entity->spawnCustomByte;
-    piVar16 = &DAT_801910f0 + uVar17 * 8;
-    iVar12 = *(int*)(&DAT_80026d30 + uVar17 * 4);
-    uVar11 = (uint)(short)(&DAT_801910fc)[uVar17 * 0x10];
-    sVar4 = (&DAT_801910fe)[uVar17 * 0x10];
-    sVar3 = (&DAT_80191100)[uVar17 * 0x10];
+    iVar10 = 0;
+    uVar16 = (uint)(byte)entity->spawnCustomByte;
+    piVar9 = &DAT_801910f0 + uVar16 * 8;
+    iVar5 = (&INT_80026d30)[uVar16];
+    uVar12 = (uint)(short)(&DAT_801910fc)[uVar16 * 0x10];
+    sVar4 = (&DAT_801910fe)[uVar16 * 0x10];
+    sVar3 = (&DAT_80191100)[uVar16 * 0x10];
     pEVar13 = entity;
     do {
-        iVar19 = ((7 - iVar9) * 0x80) / 7;
-        iVar18 = ((&DAT_80191104)[uVar17 * 8] + (int)(short)(&DAT_80028334)[uVar11] * *piVar16) * iVar19
-            ;
+        iVar18 = ((7 - iVar10) * 0x80) / 7;
+        iVar17 = ((&DAT_80191104)[uVar16 * 8] + (int)(short)(&DAT_80028334)[uVar12] * *piVar9) * iVar18;
+        if (iVar17 < 0) {
+            iVar17 = iVar17 + 0x7f;
+        }
+        pEVar13->xpos = iVar5 + (iVar17 >> 7);
+        iVar17 = ((&DAT_80191108)[uVar16 * 8] +
+            (int)(short)(&DAT_80028734)[sVar4] * (&DAT_801910f4)[uVar16 * 8]) * iVar18;
+        if (iVar17 < 0) {
+            iVar17 = iVar17 + 0x7f;
+        }
+        pEVar13->ypos = (iVar17 >> 7) + 0x2600000;
+        iVar18 = (&DAT_801910f8)[uVar16 * 8] * iVar18;
         if (iVar18 < 0) {
             iVar18 = iVar18 + 0x7f;
         }
-        pEVar13->xpos = iVar12 + (iVar18 >> 7);
-        iVar18 = ((&DAT_80191108)[uVar17 * 8] +
-            (int)(short)(&DAT_80028734)[sVar4] * (&DAT_801910f4)[uVar17 * 8]) * iVar19;
-        if (iVar18 < 0) {
-            iVar18 = iVar18 + 0x7f;
-        }
-        pEVar13->ypos = (iVar18 >> 7) + 0x2600000;
-        iVar19 = (&DAT_801910f8)[uVar17 * 8] * iVar19;
-        if (iVar19 < 0) {
-            iVar19 = iVar19 + 0x7f;
-        }
-        iVar9 = iVar9 + 1;
-        uVar11 = uVar11 + 0x40 & 0x1ff;
-        pEVar13->zpos = (int)(short)(&DAT_80028734)[sVar3] * (iVar19 >> 7) + 0xa00000;
+        iVar10 = iVar10 + 1;
+        uVar12 = uVar12 + 0x40 & 0x1ff;
+        pEVar13->zpos = (int)(short)(&DAT_80028734)[sVar3] * (iVar18 >> 7) + 0xa00000;
         pEVar13 = (Entity*)pEVar13->spawnedGameFlag[1];
-    } while (iVar9 != 8);
+    } while (iVar10 != 8);
     local_30 = 0;
-    (&DAT_801910fc)[uVar17 * 0x10] = (&DAT_801910fc)[uVar17 * 0x10] + 2 & 0x1ff;
+    (&DAT_801910fc)[uVar16 * 0x10] = (&DAT_801910fc)[uVar16 * 0x10] + 2 & 0x1ff;
     local_2c = 0;
     pEVar13 = entity->parentEntity;
-    uVar11 = GetDirectionToTarget(g_currentCamX - iVar12, g_currentCamY + -0x2580000);
+    uVar12 = GetDirectionToTarget(g_currentCamX - iVar5, g_currentCamY + -0x2580000);
     if (pEVar13->hp == 0) {
-        iVar9 = 0;
+        iVar10 = 0;
         do {
-            iVar9 = iVar9 + 1;
+            iVar10 = iVar10 + 1;
             entity->flags = entity->flags & 0xfffffffc;
             entity = (Entity*)entity->spawnedGameFlag[1];
-        } while (iVar9 != 8);
+        } while (iVar10 != 8);
         return;
     }
     bVar1 = *(byte*)((int)&entity->spawnCustomByte + 1);
@@ -28866,19 +28868,19 @@ void FUN_80062bc0(Entity* entity)
                 g_flagCutsceneState2 = 1;
             }
             else {
-                iVar9 = (&DAT_80191104)[uVar17 * 8];
-                if (iVar9 < entity->initialXPos) {
-                    (&DAT_80191104)[uVar17 * 8] = iVar9 + 0x80000;
-                    iVar9 = (&DAT_80191104)[uVar17 * 8];
+                iVar10 = (&DAT_80191104)[uVar16 * 8];
+                if (iVar10 < entity->initialXPos) {
+                    (&DAT_80191104)[uVar16 * 8] = iVar10 + 0x80000;
+                    iVar10 = (&DAT_80191104)[uVar16 * 8];
                 }
-                if (entity->initialXPos < iVar9) {
-                    (&DAT_80191104)[uVar17 * 8] = iVar9 + -0x80000;
+                if (entity->initialXPos < iVar10) {
+                    (&DAT_80191104)[uVar16 * 8] = iVar10 + -0x80000;
                 }
-                if ((&DAT_801910fe)[uVar17 * 0x10] != 0) {
-                    (&DAT_801910fe)[uVar17 * 0x10] = (&DAT_801910fe)[uVar17 * 0x10] + 8 & 0x1ff;
+                if ((&DAT_801910fe)[uVar16 * 0x10] != 0) {
+                    (&DAT_801910fe)[uVar16 * 0x10] = (&DAT_801910fe)[uVar16 * 0x10] + 8 & 0x1ff;
                 }
-                if ((&DAT_80191100)[uVar17 * 0x10] != 0x80) {
-                    (&DAT_80191100)[uVar17 * 0x10] = (&DAT_80191100)[uVar17 * 0x10] + 8 & 0x1ff;
+                if ((&DAT_80191100)[uVar16 * 0x10] != 0x80) {
+                    (&DAT_80191100)[uVar16 * 0x10] = (&DAT_80191100)[uVar16 * 0x10] + 8 & 0x1ff;
                 }
             }
         }
@@ -28890,25 +28892,25 @@ void FUN_80062bc0(Entity* entity)
                     *(undefined2*)((int)entity->spawnedGameFlag + 2) = 0x1a;
                     *(char*)((int)&entity->spawnCustomByte + 2) =
                         *(char*)((int)&entity->spawnCustomByte + 2) + '\x01';
-                    (&DAT_801910fe)[uVar17 * 0x10] = 0x180;
-                    (&DAT_801910f4)[uVar17 * 8] = 0x3000;
-                    (&DAT_80191100)[uVar17 * 0x10] = 0;
+                    (&DAT_801910fe)[uVar16 * 0x10] = 0x180;
+                    (&DAT_801910f4)[uVar16 * 8] = 0x3000;
+                    (&DAT_80191100)[uVar16 * 0x10] = 0;
                 }
                 else {
                 LAB_80063254:
                     *(short*)((int)entity->spawnedGameFlag + 2) = sVar4 + -1;
-                    if ((&DAT_80191104)[uVar17 * 8] != 0) {
-                        iVar9 = -0x10000;
-                        if (uVar17 == 0) {
-                            iVar9 = 0x10000;
+                    if ((&DAT_80191104)[uVar16 * 8] != 0) {
+                        iVar10 = -0x10000;
+                        if (uVar16 == 0) {
+                            iVar10 = 0x10000;
                         }
-                        (&DAT_80191104)[uVar17 * 8] = (&DAT_80191104)[uVar17 * 8] + iVar9;
+                        (&DAT_80191104)[uVar16 * 8] = (&DAT_80191104)[uVar16 * 8] + iVar10;
                     }
-                    if ((&DAT_80191108)[uVar17 * 8] != 0) {
-                        (&DAT_80191108)[uVar17 * 8] = (&DAT_80191108)[uVar17 * 8] + -0x40000;
+                    if ((&DAT_80191108)[uVar16 * 8] != 0) {
+                        (&DAT_80191108)[uVar16 * 8] = (&DAT_80191108)[uVar16 * 8] + -0x40000;
                     }
-                    if (*piVar16 != 0) {
-                        *piVar16 = *piVar16 + -0x80;
+                    if (*piVar9 != 0) {
+                        *piVar9 = *piVar9 + -0x80;
                     }
                 }
             }
@@ -28934,31 +28936,31 @@ void FUN_80062bc0(Entity* entity)
             sVar4 = *(short*)((int)entity->spawnedGameFlag + 2) + -1;
             *(short*)((int)entity->spawnedGameFlag + 2) = sVar4;
             if (sVar4 == 0) goto LAB_800636e8;
-            if ((&DAT_801910fe)[uVar17 * 0x10] != 0x180) {
-                (&DAT_801910fe)[uVar17 * 0x10] = (&DAT_801910fe)[uVar17 * 0x10] - 4 & 0x1ff;
+            if ((&DAT_801910fe)[uVar16 * 0x10] != 0x180) {
+                (&DAT_801910fe)[uVar16 * 0x10] = (&DAT_801910fe)[uVar16 * 0x10] - 4 & 0x1ff;
             }
-            if ((&DAT_80191100)[uVar17 * 0x10] != 0) {
-                (&DAT_80191100)[uVar17 * 0x10] = (&DAT_80191100)[uVar17 * 0x10] - 4 & 0x1ff;
+            if ((&DAT_80191100)[uVar16 * 0x10] != 0) {
+                (&DAT_80191100)[uVar16 * 0x10] = (&DAT_80191100)[uVar16 * 0x10] - 4 & 0x1ff;
             }
-            iVar9 = (&DAT_80191104)[uVar17 * 8];
-            if (iVar9 != (&DAT_80026d38)[uVar17]) {
-                if (iVar9 < (int)(&DAT_80026d38)[uVar17]) {
-                    iVar9 = iVar9 + 0x40000;
+            iVar10 = (&DAT_80191104)[uVar16 * 8];
+            if (iVar10 != (&DAT_80026d38)[uVar16]) {
+                if (iVar10 < (int)(&DAT_80026d38)[uVar16]) {
+                    iVar10 = iVar10 + 0x40000;
                 }
                 else {
                 LAB_80063474:
-                    iVar12 = -0x40000;
+                    iVar5 = -0x40000;
                 LAB_80063478:
-                    iVar9 = iVar9 + iVar12;
+                    iVar10 = iVar10 + iVar5;
                 }
-                (&DAT_80191104)[uVar17 * 8] = iVar9;
+                (&DAT_80191104)[uVar16 * 8] = iVar10;
             }
         LAB_80063480:
-            if ((&DAT_80191108)[uVar17 * 8] != 0x200000) {
-                (&DAT_80191108)[uVar17 * 8] = (&DAT_80191108)[uVar17 * 8] + 0x20000;
+            if ((&DAT_80191108)[uVar16 * 8] != 0x200000) {
+                (&DAT_80191108)[uVar16 * 8] = (&DAT_80191108)[uVar16 * 8] + 0x20000;
             }
-            if (*piVar16 != 0x600) {
-                *piVar16 = *piVar16 + 0x80;
+            if (*piVar9 != 0x600) {
+                *piVar9 = *piVar9 + 0x80;
             }
         }
     }
@@ -28967,11 +28969,11 @@ void FUN_80062bc0(Entity* entity)
             CalculateEntityRelativePosition(entity, &local_48);
             local_2c = 1;
             if (((g_isWarpForbidden & 0x20) == 0) && ((g_bitfieldTable2 & 2) != 0)) {
-                if (uVar11 - 6 < 0x15) {
+                if (uVar12 - 6 < 0x15) {
                 LAB_80062f9c:
-                    if ((local_38 < 0) && ((&DAT_8019110c)[(uVar17 ^ 1) * 0x10] != 2)) {
+                    if ((local_38 < 0) && ((&DAT_8019110c)[(uVar16 ^ 1) * 0x10] != 2)) {
                         *(undefined1*)((int)&entity->spawnCustomByte + 1) = 2;
-                        (&DAT_8019110c)[uVar17 * 0x10] = 2;
+                        (&DAT_8019110c)[uVar16 * 0x10] = 2;
                     LAB_80062fd4:
                         *(undefined1*)((int)&entity->spawnCustomByte + 2) = 0;
                         *(undefined2*)((int)entity->spawnedGameFlag + 2) = 0x18;
@@ -28979,14 +28981,14 @@ void FUN_80062bc0(Entity* entity)
                 }
                 else {
                     if ((4 < local_44) || (4 < local_48)) {
-                        if ((uVar11 - 6 < 0x15) || ((6 < local_48 || (6 < local_44)))) goto LAB_80062f9c;
+                        if ((uVar12 - 6 < 0x15) || ((6 < local_48 || (6 < local_44)))) goto LAB_80062f9c;
                         *(undefined1*)((int)&entity->spawnCustomByte + 1) = 3;
                         goto LAB_80062fd4;
                     }
                     *(undefined2*)((int)entity->spawnedGameFlag + 2) = 0x18;
                     *(undefined1*)((int)&entity->spawnCustomByte + 2) = 0;
                     *(undefined1*)((int)&entity->spawnCustomByte + 1) = 1;
-                    entity->initialXPos = (short)(&g_offsetXList)[uVar11] * 0x2400 & 0xfff80000;
+                    entity->initialXPos = (short)(&g_offsetXList)[uVar12] * 0x2400 & 0xfff80000;
                 }
             }
         }
@@ -28997,12 +28999,12 @@ void FUN_80062bc0(Entity* entity)
             bVar1 = *(byte*)((int)&entity->spawnCustomByte + 2);
             if (bVar1 == 1) {
                 uVar6 = (uint)(ushort)entity->spawnedGameFlag[2];
-                uVar10 = 0;
+                uVar11 = 0;
                 if (uVar6 != 0) {
                     do {
                         pEVar14 = (Entity*)pEVar14->spawnedGameFlag[1];
-                        uVar10 = uVar10 + 1;
-                    } while (uVar10 != uVar6);
+                        uVar11 = uVar11 + 1;
+                    } while (uVar11 != uVar6);
                 }
                 if (pEVar14->targetAnimationId == 8) {
                     if (pEVar14->forceResetAnimationFlag != 0) {
@@ -29010,12 +29012,12 @@ void FUN_80062bc0(Entity* entity)
                         sVar4 = (short)entity->spawnedGameFlag[2] + -1;
                         *(short*)(entity->spawnedGameFlag + 2) = sVar4;
                         if (sVar4 == 0) {
-                            iVar12 = entity->ypos;
+                            iVar5 = entity->ypos;
                             *(char*)((int)&entity->spawnCustomByte + 2) =
                                 *(char*)((int)&entity->spawnCustomByte + 2) + '\x01';
-                            iVar9 = entity->zpos + 0x100000;
+                            iVar10 = entity->zpos + 0x100000;
                         LAB_80063584:
-                            CreateEffectEntity(1, 0, 0, entity->xpos, iVar12, iVar9);
+                            CreateEffectEntity(1, 0, 0, entity->xpos, iVar5, iVar10);
                         }
                     }
                 }
@@ -29045,17 +29047,17 @@ void FUN_80062bc0(Entity* entity)
                 if (sVar4 == 0) {
                     *(undefined2*)((int)entity->spawnedGameFlag + 2) = 0x14;
                     PlaySoundEffect(0x19f);
-                    iVar9 = SpawnWarpEntity(pEVar13, (Entity*)0x1, 0xd0, entity->xpos, entity->ypos, entity->zpos,
-                        entity->targetDirection);
+                    iVar10 = SpawnWarpEntity(pEVar13, (Entity*)0x1, 0xd0, entity->xpos, entity->ypos, entity->zpos
+                        , entity->targetDirection);
                     CreateEffectEntity(1, 0, 1, entity->xpos, entity->ypos, entity->zpos + 0x100000);
-                    if (iVar9 != 0) {
-                        *(undefined4*)(iVar9 + 0x88) = 0xf;
-                        *(undefined4*)(iVar9 + 0xb8) = 0x40000;
-                        *(undefined1*)(iVar9 + 0x274) = 1;
-                        *(uint*)(iVar9 + 0x6c) = *(uint*)(iVar9 + 0x6c) & 0xfffffffe;
-                        iVar9 = entity->initialXPos + 1;
-                        entity->initialXPos = iVar9;
-                        if (iVar9 == 10) goto LAB_80063148;
+                    if (iVar10 != 0) {
+                        *(undefined4*)(iVar10 + 0x88) = 0xf;
+                        *(undefined4*)(iVar10 + 0xb8) = 0x40000;
+                        *(undefined1*)(iVar10 + 0x274) = 1;
+                        *(uint*)(iVar10 + 0x6c) = *(uint*)(iVar10 + 0x6c) & 0xfffffffe;
+                        iVar10 = entity->initialXPos + 1;
+                        entity->initialXPos = iVar10;
+                        if (iVar10 == 10) goto LAB_80063148;
                     }
                 }
                 else {
@@ -29067,11 +29069,11 @@ void FUN_80062bc0(Entity* entity)
                 sVar4 = *(short*)((int)entity->spawnedGameFlag + 2) + -1;
                 *(short*)((int)entity->spawnedGameFlag + 2) = sVar4;
                 if (sVar4 != 0) {
-                    iVar9 = (&DAT_80191104)[uVar17 * 8];
+                    iVar10 = (&DAT_80191104)[uVar16 * 8];
                     local_2c = 1;
-                    if (iVar9 != (&DAT_80026d38)[uVar17]) {
-                        iVar12 = 0x40000;
-                        if ((int)(&DAT_80026d38)[uVar17] <= iVar9) goto LAB_80063474;
+                    if (iVar10 != (&DAT_80026d38)[uVar16]) {
+                        iVar5 = 0x40000;
+                        if ((int)(&DAT_80026d38)[uVar16] <= iVar10) goto LAB_80063474;
                         goto LAB_80063478;
                     }
                     goto LAB_80063480;
@@ -29084,12 +29086,12 @@ void FUN_80062bc0(Entity* entity)
             bVar1 = *(byte*)((int)&entity->spawnCustomByte + 2);
             if (bVar1 == 1) {
                 uVar6 = (uint)(ushort)entity->spawnedGameFlag[2];
-                uVar10 = 0;
+                uVar11 = 0;
                 if (uVar6 != 0) {
                     do {
                         pEVar14 = (Entity*)pEVar14->spawnedGameFlag[1];
-                        uVar10 = uVar10 + 1;
-                    } while (uVar10 != uVar6);
+                        uVar11 = uVar11 + 1;
+                    } while (uVar11 != uVar6);
                 }
                 if (pEVar14->targetAnimationId != 8) goto LAB_8006359c;
                 if (pEVar14->forceResetAnimationFlag != 0) {
@@ -29097,10 +29099,10 @@ void FUN_80062bc0(Entity* entity)
                     sVar4 = (short)entity->spawnedGameFlag[2] + -1;
                     *(short*)(entity->spawnedGameFlag + 2) = sVar4;
                     if (sVar4 == 0) {
-                        iVar12 = entity->ypos;
+                        iVar5 = entity->ypos;
                         *(char*)((int)&entity->spawnCustomByte + 2) =
                             *(char*)((int)&entity->spawnCustomByte + 2) + '\x01';
-                        iVar9 = entity->zpos;
+                        iVar10 = entity->zpos;
                         goto LAB_80063584;
                     }
                 }
@@ -29117,17 +29119,17 @@ void FUN_80062bc0(Entity* entity)
                 local_2c = 1;
                 if (sVar4 != 0) goto LAB_800635b8;
                 *(undefined2*)((int)entity->spawnedGameFlag + 2) = 0xf;
-                iVar9 = entity->ypos;
-                iVar12 = entity->zpos;
+                iVar10 = entity->ypos;
+                iVar5 = entity->zpos;
                 PlaySoundEffect(0x19f);
-                iVar9 = SpawnWarpEntity(pEVar13, (Entity*)0x1, 0xd0, entity->xpos, iVar9 + 0x80000,
-                    iVar12 + -0x80000, entity->targetDirection);
+                iVar10 = SpawnWarpEntity(pEVar13, (Entity*)0x1, 0xd0, entity->xpos, iVar10 + 0x80000,
+                    iVar5 + -0x80000, entity->targetDirection);
                 CreateEffectEntity(1, 0, 1, entity->xpos, entity->ypos, entity->zpos);
-                if (iVar9 != 0) {
-                    *(uint*)(iVar9 + 0x88) = entity->targetAnimationId + 10;
-                    *(undefined1*)(iVar9 + 0x274) = 2;
-                    *(uint*)(iVar9 + 0x6c) = *(uint*)(iVar9 + 0x6c) & 0xfffffffe | 0x100;
-                    *(char*)(iVar9 + 0x275) = (char)entity->spawnedGameFlag[2] + '\x02';
+                if (iVar10 != 0) {
+                    *(uint*)(iVar10 + 0x88) = entity->targetAnimationId + 10;
+                    *(undefined1*)(iVar10 + 0x274) = 2;
+                    *(uint*)(iVar10 + 0x6c) = *(uint*)(iVar10 + 0x6c) & 0xfffffffe | 0x100;
+                    *(char*)(iVar10 + 0x275) = (char)entity->spawnedGameFlag[2] + '\x02';
                     sVar4 = (short)entity->spawnedGameFlag[2] + 1;
                     *(short*)(entity->spawnedGameFlag + 2) = sVar4;
                     if (sVar4 == 5) {
@@ -29144,18 +29146,18 @@ void FUN_80062bc0(Entity* entity)
         }
     }
     if (local_2c != 0) {
-        if (0x14 < uVar11 - 6) {
-            entity->targetDirection = uVar11;
+        if (0x14 < uVar12 - 6) {
+            entity->targetDirection = uVar12;
         }
-        if (((int)uVar11 < 2) || (uVar11 == 0x1f)) {
+        if (((int)uVar12 < 2) || (uVar12 == 0x1f)) {
             entity->targetAnimationId = 0;
         }
         else {
             uVar6 = 1;
-            if ((3 < (int)uVar11) && (uVar6 = 2, 0xf < (int)uVar11)) {
-                if ((int)uVar11 < 0x1d) {
+            if ((3 < (int)uVar12) && (uVar6 = 2, 0xf < (int)uVar12)) {
+                if ((int)uVar12 < 0x1d) {
                     uVar6 = 4;
-                    if ((int)uVar11 < 0x11) goto LAB_8006375c;
+                    if ((int)uVar12 < 0x11) goto LAB_8006375c;
                 }
                 else {
                     uVar6 = 3;
@@ -29166,20 +29168,20 @@ void FUN_80062bc0(Entity* entity)
     }
 LAB_8006375c:
     if (local_30 != 0) {
-        uVar5 = (&DAT_80026d38)[uVar17];
-        (&DAT_80191108)[uVar17 * 8] = 0x200000;
-        *piVar16 = 0x600;
-        (&DAT_801910f4)[uVar17 * 8] = 0;
-        (&DAT_801910fe)[uVar17 * 0x10] = 0;
-        (&DAT_80191100)[uVar17 * 0x10] = 0;
-        (&DAT_80191104)[uVar17 * 8] = uVar5;
+        uVar8 = (&DAT_80026d38)[uVar16];
+        (&DAT_80191108)[uVar16 * 8] = 0x200000;
+        *piVar9 = 0x600;
+        (&DAT_801910f4)[uVar16 * 8] = 0;
+        (&DAT_801910fe)[uVar16 * 0x10] = 0;
+        (&DAT_80191100)[uVar16 * 0x10] = 0;
+        (&DAT_80191104)[uVar16 * 8] = uVar8;
         *(undefined1*)((int)&entity->spawnCustomByte + 1) = 0;
-        (&DAT_8019110c)[uVar17 * 0x10] = 0;
+        (&DAT_8019110c)[uVar16 * 0x10] = 0;
     }
     return;
 }
 
-// Function @0x800637D8
+//800637D8
 void UpdateEntityAI_IdleLookAround(Entity* entity)
 
 {
@@ -29297,7 +29299,7 @@ ExitIdleCheck:
     return;
 }
 
-// Function @0x80063CB4
+//80063CB4
 void UpdateEntityTriggerWarpBehavior(Entity* entity)
 
 {
@@ -29320,7 +29322,7 @@ void UpdateEntityTriggerWarpBehavior(Entity* entity)
     return;
 }
 
-// Function @0x80063DB4
+//80063DB4
 void UpdateEntityAI_IdleCurious(Entity* entity)
 
 {
@@ -29454,7 +29456,7 @@ void UpdateEntityAI_IdleCurious(Entity* entity)
     return;
 }
 
-// Function @0x80064294
+//80064294
 void FUN_80064294(Entity* entity)
 
 {
@@ -29477,7 +29479,7 @@ void FUN_80064294(Entity* entity)
         *(undefined1*)((int)&entity->spawnCustomByte + 2) = 0;
         *(undefined1*)&entity->spawnCustomByte = 0;
         DAT_80191134 = 0;
-        DAT_80191130 = *(int*)(&DAT_80026d70 + (uint)bVar1 * 4);
+        DAT_80191130 = INT_ARRAY_80026d70[bVar1];
         if (*(byte*)((int)&entity->spawnCustomByte + 1) - 1 < 2) {
             iVar5 = SpawnEntity(entity, 0, 1);
             *(undefined4*)(iVar5 + 0x8c) = 0x18;
@@ -29508,8 +29510,8 @@ void FUN_80064294(Entity* entity)
             if (DAT_80191910 < 0) {
                 DAT_80191910 = 0;
             }
-            if (*(short*)(&DAT_80026d84 + (uint) * (byte*)((int)&entity->spawnCustomByte + 1) * 2) <=
-                DAT_80191910) {
+            if (*(short*)((int)INT_ARRAY_80026d84 +
+                (uint) * (byte*)((int)&entity->spawnCustomByte + 1) * 2) <= DAT_80191910) {
                 g_bitfieldTable2 = g_bitfieldTable2 | 0x100;
             }
             cVar2 = *(char*)((int)&entity->spawnCustomByte + 1);
@@ -29599,7 +29601,7 @@ LAB_800645f8:
     return;
 }
 
-// Function @0x800647B0
+//800647B0
 void FUN_800647b0(Entity* param_1)
 
 {
@@ -29625,106 +29627,108 @@ LAB_80064864:
     return;
 }
 
-// Function @0x80064884
-void FUN_80064884(int param_1)
+//80064884
+void FUN_80064884(Entity* entity)
 
 {
-    bool bVar1;
-    short sVar2;
-    undefined4 uVar3;
+    byte bVar1;
+    bool bVar2;
+    short sVar3;
     int iVar4;
     int* piVar5;
     uint uVar6;
-    uint uVar7;
+    int iVar7;
+    uint uVar8;
     int local_c;
 
-    if (*(int*)(param_1 + 0x284) == 0) {
-        uVar3 = FUN_8003c094(0, 1);
-        *(undefined4*)(param_1 + 0x284) = uVar3;
+    if (entity->spawnedGameFlag[1] == 0) {
+        iVar4 = FUN_8003c094(0, 1);
+        entity->spawnedGameFlag[1] = iVar4;
     }
     if ((g_bitfieldTable2 & 1) == 0) {
         return;
     }
-    if (*(char*)(param_1 + 0x276) == '\0') {
+    if (*(char*)((int)&entity->spawnCustomByte + 2) == '\0') {
         if ((g_bitfieldTable2 & 0x80) != 0) {
-            *(undefined1*)(param_1 + 0x275) = 0;
+            *(undefined1*)((int)&entity->spawnCustomByte + 1) = 0;
             g_bitfieldTable2 = g_bitfieldTable2 & 0xffffff7f;
         }
         uVar6 = g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-        bVar1 = false;
-        uVar7 = uVar6 * 0x7d2b89dd + 0xe06a02e7;
-        DAT_8019113c = *(int*)(param_1 + 0x278);
+        bVar2 = false;
+        uVar8 = uVar6 * 0x7d2b89dd + 0xe06a02e7;
+        DAT_8019113c = entity->initialXPos;
         local_c = (int)((ulonglong)uVar6 * 3 >> 0x20);
         DAT_80191140 = local_c + 3;
-        *(undefined2*)(param_1 + 0x282) = 0x3c;
-        *(undefined2*)(param_1 + 0x288) = 0;
-        iVar4 = (int)((ulonglong)uVar7 * 5 >> 0x20) + 0x46;
-        g_gameRandomSeed = uVar7;
-        *(int*)(param_1 + 0x27c) = iVar4;
-        *(uint*)(param_1 + 0x278) = *(int*)(param_1 + 0x278) + iVar4 & 0xf;
-        if ((3 < *(byte*)(param_1 + 0x275)) &&
-            (g_gameRandomSeed = uVar7 * 0x7d2b89dd + 0xe06a02e7,
+        *(undefined2*)((int)entity->spawnedGameFlag + 2) = 0x3c;
+        *(undefined2*)(entity->spawnedGameFlag + 2) = 0;
+        iVar4 = (int)((ulonglong)uVar8 * 5 >> 0x20) + 0x46;
+        g_gameRandomSeed = uVar8;
+        entity->initialYPos = iVar4;
+        bVar1 = *(byte*)((int)&entity->spawnCustomByte + 1);
+        entity->initialXPos = entity->initialXPos + iVar4 & 0xf;
+        if ((3 < bVar1) &&
+            (g_gameRandomSeed = uVar8 * 0x7d2b89dd + 0xe06a02e7,
                 (int)((ulonglong)g_gameRandomSeed * 3 >> 0x20) == 0)) {
-            iVar4 = *(int*)(param_1 + 0x278);
+            iVar4 = entity->initialXPos;
             if (iVar4 == 1) {
-                *(undefined4*)(param_1 + 0x278) = 0;
-                *(int*)(param_1 + 0x27c) = *(int*)(param_1 + 0x27c) + -1;
-                iVar4 = *(int*)(param_1 + 0x278);
+                entity->initialXPos = 0;
+                entity->initialYPos = entity->initialYPos + -1;
+                iVar4 = entity->initialXPos;
             }
             if (iVar4 == 0xf) {
-                *(undefined4*)(param_1 + 0x278) = 0;
-                *(int*)(param_1 + 0x27c) = *(int*)(param_1 + 0x27c) + 1;
+                entity->initialXPos = 0;
+                entity->initialYPos = entity->initialYPos + 1;
             }
         }
-        if (*(int*)(param_1 + 0x278) == 0) {
+        if (entity->initialXPos == 0) {
         LAB_80064ae0:
-            if (((*(byte*)(param_1 + 0x275) < 2) &&
+            if (((*(byte*)((int)&entity->spawnCustomByte + 1) < 2) &&
                 (g_gameRandomSeed = g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7,
                     (int)((ulonglong)g_gameRandomSeed * 3 >> 0x20) == 0)) &&
-                (uVar6 = *(int*)(param_1 + 0x278) + 1U & 0xf, uVar6 != 0)) {
-                if ((*(ushort*)(&DAT_80026d90 + uVar6 * 4) - 0x8000 & 0x8000) == 0) {
+                (uVar6 = entity->initialXPos + 1U & 0xf, uVar6 != 0)) {
+                if ((*(ushort*)(INT_ARRAY_80026d90 + uVar6) - 0x8000 & 0x8000) == 0) {
                     piVar5 = g_bitfieldTable;
                 }
                 else {
                     piVar5 = (int*)&g_bitfieldTable2;
                 }
-                if ((*(uint*)((*(ushort*)(&DAT_80026d90 + uVar6 * 4) - 0x8000 >> 3 & 0xffc) + (int)piVar5)
-                    & 1 << (*(int*)(&DAT_80026d90 + uVar6 * 4) + 0x8000U & 0x1f)) != 0) {
-                    bVar1 = true;
-                    *(uint*)(param_1 + 0x278) = uVar6;
-                    *(int*)(param_1 + 0x27c) = *(int*)(param_1 + 0x27c) + 1;
+                if ((*(uint*)((*(ushort*)(INT_ARRAY_80026d90 + uVar6) - 0x8000 >> 3 & 0xffc) + (int)piVar5
+                    ) & 1 << (INT_ARRAY_80026d90[uVar6] + 0x8000U & 0x1f)) != 0) {
+                    bVar2 = true;
+                    entity->initialXPos = uVar6;
+                    entity->initialYPos = entity->initialYPos + 1;
                 }
             }
         }
         else {
-            if ((*(ushort*)(&DAT_80026d90 + *(int*)(param_1 + 0x278) * 4) - 0x8000 & 0x8000) == 0) {
+            if ((*(ushort*)(INT_ARRAY_80026d90 + entity->initialXPos) - 0x8000 & 0x8000) == 0) {
                 piVar5 = g_bitfieldTable;
             }
             else {
                 piVar5 = (int*)&g_bitfieldTable2;
             }
-            if ((*(uint*)((*(ushort*)(&DAT_80026d90 + *(int*)(param_1 + 0x278) * 4) - 0x8000 >> 3 &
-                0xffc) + (int)piVar5) &
-                1 << (*(int*)(&DAT_80026d90 + *(int*)(param_1 + 0x278) * 4) + 0x8000U & 0x1f)) == 0)
-                goto LAB_80064ae0;
-            bVar1 = true;
+            if ((*(uint*)((*(ushort*)(INT_ARRAY_80026d90 + entity->initialXPos) - 0x8000 >> 3 & 0xffc) +
+                (int)piVar5) & 1 << (INT_ARRAY_80026d90[entity->initialXPos] + 0x8000U & 0x1f))
+                == 0) goto LAB_80064ae0;
+            bVar2 = true;
         }
-        if (bVar1) {
+        if (bVar2) {
             g_bitfieldTable2 = g_bitfieldTable2 | 0x100;
         }
         else {
             g_bitfieldTable2 = g_bitfieldTable2 & 0xfffffeff;
         }
-        *(undefined1*)(param_1 + 0x276) = 1;
+        *(undefined1*)((int)&entity->spawnCustomByte + 2) = 1;
     }
-    sVar2 = *(short*)(param_1 + 0x282) + -1;
-    *(short*)(param_1 + 0x282) = sVar2;
-    if (sVar2 != 0) {
+    sVar3 = *(short*)((int)entity->spawnedGameFlag + 2) + -1;
+    *(short*)((int)entity->spawnedGameFlag + 2) = sVar3;
+    if (sVar3 != 0) {
         return;
     }
-    if (*(int*)(param_1 + 0x27c) == 0) {
-        *(undefined1*)(param_1 + 0x276) = 0;
-        *(char*)(param_1 + 0x275) = *(char*)(param_1 + 0x275) + '\x01';
+    if (entity->initialYPos == 0) {
+        *(undefined1*)((int)&entity->spawnCustomByte + 2) = 0;
+        *(char*)((int)&entity->spawnCustomByte + 1) =
+            *(char*)((int)&entity->spawnCustomByte + 1) + '\x01';
         if ((g_bitfieldTable2 & 0x100) != 0) {
             g_bitfieldTable2 = g_bitfieldTable2 & 0xfffffffe;
             PlaySoundEffect(0x1c6);
@@ -29734,144 +29738,147 @@ void FUN_80064884(int param_1)
         PlaySoundEffect(0x1c7);
         return;
     }
-    DAT_8019113c = DAT_8019113c + 1 & 0xf;
-    *(int*)(param_1 + 0x27c) = *(int*)(param_1 + 0x27c) + -1;
-    iVar4 = DAT_8019113c * 8;
-    uVar3 = *(undefined4*)(&DAT_80026dd0 + iVar4);
-    *(short*)(param_1 + 0x288) = *(short*)(param_1 + 0x288) + 1;
-    *(undefined4*)(*(int*)(param_1 + 0x284) + 0x3c) = uVar3;
-    *(undefined4*)(*(int*)(param_1 + 0x284) + 0x40) = *(undefined4*)(&DAT_80026dd4 + iVar4);
+    iVar7 = entity->spawnedGameFlag[1];
+    uVar6 = DAT_8019113c + 1 & 0xf;
+    entity->initialYPos = entity->initialYPos + -1;
+    iVar4 = (&INT_80026dd0)[uVar6 * 2];
+    DAT_8019113c = uVar6;
+    *(short*)(entity->spawnedGameFlag + 2) = (short)entity->spawnedGameFlag[2] + 1;
+    *(int*)(iVar7 + 0x3c) = iVar4;
+    *(int*)(entity->spawnedGameFlag[1] + 0x40) = INT_ARRAY_80026dd4[uVar6 * 2];
     PlaySoundEffect(0x1c8);
-    if (DAT_80191140 < *(int*)(param_1 + 0x27c)) {
-        if (4 < *(ushort*)(param_1 + 0x288)) {
-            sVar2 = 6;
+    if (DAT_80191140 < entity->initialYPos) {
+        if (4 < (ushort)entity->spawnedGameFlag[2]) {
+            sVar3 = 6;
             goto LAB_80064d78;
         }
     }
-    else if (4 < *(ushort*)(param_1 + 0x288)) {
-        sVar2 = ((short)DAT_80191140 - (short)*(int*)(param_1 + 0x27c)) * 8 + 8;
+    else if (4 < (ushort)entity->spawnedGameFlag[2]) {
+        sVar3 = ((short)DAT_80191140 - (short)entity->initialYPos) * 8 + 8;
         goto LAB_80064d78;
     }
-    sVar2 = *(short*)(param_1 + 0x288) * -6 + 0x24;
+    sVar3 = (short)entity->spawnedGameFlag[2] * -6 + 0x24;
 LAB_80064d78:
-    *(short*)(param_1 + 0x282) = sVar2;
+    *(short*)((int)entity->spawnedGameFlag + 2) = sVar3;
     return;
 }
 
-// Function @0x80064D90
-void FUN_80064d90(int param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4)
+//80064D90
+void FUN_80064d90(Entity* entity, undefined4 param_2, undefined4 param_3, undefined4 param_4)
 
 {
-    undefined2 uVar1;
-    ushort uVar2;
-    Entity** ppEVar3;
-    int iVar4;
-    int iVar5;
-    uint uVar6;
-    undefined2* puVar7;
-    undefined* puVar8;
-    undefined2* puVar9;
-    longlong lVar10;
+    byte bVar1;
+    char cVar2;
+    short sVar3;
+    ushort uVar4;
+    Entity* spawnedEntity;
+    Entity** ppEVar5;
+    int iVar6;
+    int iVar7;
+    uint uVar8;
+    short* psVar9;
+    short* psVar10;
 
     if ((g_bitfieldTable2 & 1) != 0) {
-        if (*(short*)(param_1 + 0x288) == 0) {
+        if ((short)entity->spawnedGameFlag[2] == 0) {
             if ((g_bitfieldTable2 & 0x80) != 0) {
-                *(undefined1*)(param_1 + 0x275) = 0;
+                *(undefined1*)((int)&entity->spawnCustomByte + 1) = 0;
                 g_bitfieldTable2 = g_bitfieldTable2 & 0xffffff7f;
             }
-            *(undefined1*)(param_1 + 0x276) = 0;
-            *(undefined4*)(param_1 + 0x27c) = 0;
-            *(undefined2*)(param_1 + 0x282) = 0;
-            DAT_80191144 = &UNK_80026e6c + (uint) * (byte*)(param_1 + 0x275) * 0x28;
+            bVar1 = *(byte*)((int)&entity->spawnCustomByte + 1);
+            *(undefined1*)((int)&entity->spawnCustomByte + 2) = 0;
+            entity->initialYPos = 0;
+            *(undefined2*)((int)entity->spawnedGameFlag + 2) = 0;
+            DAT_80191144 = &UNK_80026e6c + (uint)bVar1 * 0x28;
             g_bitfieldTable2 = g_bitfieldTable2 & 0xfffffeff;
-            *(undefined2*)(param_1 + 0x288) = 1;
+            *(undefined2*)(entity->spawnedGameFlag + 2) = 1;
         }
-        uVar2 = *(short*)(param_1 + 0x282) + 1;
-        *(ushort*)(param_1 + 0x282) = uVar2;
-        iVar4 = 0;
-        if (uVar2 < 0x708) {
-            ppEVar3 = &g_player;
+        uVar4 = *(short*)((int)entity->spawnedGameFlag + 2) + 1;
+        *(ushort*)((int)entity->spawnedGameFlag + 2) = uVar4;
+        iVar6 = 0;
+        if (uVar4 < 0x708) {
+            ppEVar5 = &g_player;
             if (-1 < (int)g_entity) {
                 do {
-                    iVar4 = iVar4 + 1;
-                    if (ppEVar3[0x12][-1].spawnedGameFlag + 0xb < (int*)0x9) {
+                    iVar6 = iVar6 + 1;
+                    if (ppEVar5[0x12][-1].spawnedGameFlag + 0xb < (int*)0x9) {
                         return;
                     }
-                    ppEVar3 = ppEVar3 + 0xa5;
-                } while (iVar4 <= (int)g_entity);
+                    ppEVar5 = ppEVar5 + 0xa5;
+                } while (iVar6 <= (int)g_entity);
             }
-            iVar4 = *(int*)(param_1 + 0x278) + -1;
-            if (*(int*)(param_1 + 0x278) == 0) {
-                iVar4 = (int)*(short*)(DAT_80191144 + *(int*)(param_1 + 0x27c) * 2);
-                *(int*)(param_1 + 0x27c) = *(int*)(param_1 + 0x27c) + 1;
-                switch (iVar4) {
+            iVar6 = entity->initialXPos + -1;
+            if (entity->initialXPos == 0) {
+                iVar6 = (int)*(short*)(DAT_80191144 + entity->initialYPos * 2);
+                entity->initialYPos = entity->initialYPos + 1;
+                switch (iVar6) {
                 case 1:
-                    iVar5 = 0;
-                    puVar8 = &DAT_80026f34;
+                    iVar7 = 0;
+                    psVar10 = &SHORT_80026f34;
                     break;
                 case 2:
-                    iVar5 = 2;
-                    puVar8 = &DAT_80026f3c;
+                    iVar7 = 2;
+                    psVar10 = &SHORT_80026f3c;
                     break;
                 case 3:
-                    iVar5 = 1;
-                    puVar8 = &UNK_80026f60;
+                    iVar7 = 1;
+                    psVar10 = &SHORT_80026f60;
                     break;
                 case 4:
-                    iVar5 = 1;
-                    puVar8 = &UNK_80026f84;
+                    iVar7 = 1;
+                    psVar10 = &SHORT_80026f84;
                     break;
                 default:
-                    *(int*)(param_1 + 0x27c) = *(int*)(param_1 + 0x27c) + -1;
+                    entity->initialYPos = entity->initialYPos + -1;
                     return;
                 case 6:
-                    iVar5 = 1;
-                    puVar8 = &UNK_80026fb4;
+                    iVar7 = 1;
+                    psVar10 = &SHORT_80026fb4;
                 }
                 g_gameRandomSeed = g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                lVar10 = (ulonglong)g_gameRandomSeed * (ulonglong)(iVar5 + 1);
-                puVar9 = (undefined2*)(puVar8 + iVar4 * (int)((ulonglong)lVar10 >> 0x20) * 6);
-                if (iVar4 != 0) {
-                    puVar7 = puVar9 + 2;
+                psVar10 = psVar10 + iVar6 * (int)((ulonglong)g_gameRandomSeed * (ulonglong)(iVar7 + 1) >>
+                    0x20) * 3;
+                if (iVar6 != 0) {
+                    psVar9 = psVar10 + 2;
                     do {
-                        uVar6 = (uint)(short)puVar7[-1];
-                        if ((uVar6 & 0x80) != 0) {
-                            iVar5 = (uVar6 & 0xf) * 4;
+                        uVar8 = (uint)psVar9[-1];
+                        if ((uVar8 & 0x80) != 0) {
                             g_gameRandomSeed = g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                            uVar6 = (int)*(short*)(&DAT_80026e5e + iVar5) +
+                            uVar8 = (int)*(short*)(&DAT_80026e5e + (uVar8 & 0xf) * 4) +
                                 (int)((ulonglong)g_gameRandomSeed *
-                                    (ulonglong)((int)*(short*)(&DAT_80026e5c + iVar5) + 1) >> 0x20);
+                                    (ulonglong)((int)(&SHORT_80026e5c)[(uVar8 & 0xf) * 2] + 1) >> 0x20);
                         }
-                        iVar5 = SpawnEntity(param_1, uVar6, 1, param_4, lVar10);
-                        uVar1 = *puVar9;
-                        puVar9 = puVar9 + 3;
-                        iVar4 = iVar4 + -1;
-                        *(undefined2*)(iVar5 + 0x282) = uVar1;
-                        uVar1 = *puVar7;
-                        puVar7 = puVar7 + 3;
-                        *(undefined4*)(iVar5 + 0x3c) = 0;
-                        *(undefined2*)(iVar5 + 0x288) = uVar1;
-                    } while (iVar4 != 0);
+                        spawnedEntity = (Entity*)SpawnEntity(entity, uVar8, 1);
+                        sVar3 = *psVar10;
+                        psVar10 = psVar10 + 3;
+                        iVar6 = iVar6 + -1;
+                        *(short*)((int)spawnedEntity->spawnedGameFlag + 2) = sVar3;
+                        sVar3 = *psVar9;
+                        psVar9 = psVar9 + 3;
+                        spawnedEntity->scriptCallback = (void*)0x0;
+                        *(short*)(spawnedEntity->spawnedGameFlag + 2) = sVar3;
+                    } while (iVar6 != 0);
                 }
-                iVar4 = 0x14;
+                iVar6 = 0x14;
             }
-            *(int*)(param_1 + 0x278) = iVar4;
+            entity->initialXPos = iVar6;
         }
         else {
-            DAT_80191908 = (uint) * (byte*)(param_1 + 0x276);
-            if (*(short*)(&DAT_80026e50 + (uint) * (byte*)(param_1 + 0x275) * 2) <=
-                (short)(ushort) * (byte*)(param_1 + 0x276)) {
+            DAT_80191908 = (uint) * (byte*)((int)&entity->spawnCustomByte + 2);
+            if (*(short*)((int)&INT_80026e50 + (uint) * (byte*)((int)&entity->spawnCustomByte + 1) * 2) <=
+                (short)(ushort) * (byte*)((int)&entity->spawnCustomByte + 2)) {
                 g_bitfieldTable2 = g_bitfieldTable2 | 0x100;
             }
-            *(undefined2*)(param_1 + 0x288) = 0;
-            *(char*)(param_1 + 0x275) = *(char*)(param_1 + 0x275) + '\x01';
+            cVar2 = *(char*)((int)&entity->spawnCustomByte + 1);
+            *(undefined2*)(entity->spawnedGameFlag + 2) = 0;
+            *(char*)((int)&entity->spawnCustomByte + 1) = cVar2 + '\x01';
             g_bitfieldTable2 = g_bitfieldTable2 & 0xfffffffe;
         }
     }
     return;
 }
 
-// Function @0x80065100
+//80065100
 void FUN_80065100(Entity* param_1)
 
 {
@@ -29912,7 +29919,7 @@ void FUN_80065100(Entity* param_1)
     return;
 }
 
-// Function @0x80065204
+//80065204
 void FUN_80065204(int param_1)
 
 {
@@ -30070,7 +30077,7 @@ void FUN_80065204(int param_1)
     return;
 }
 
-// Function @0x80065750
+//80065750
 void FUN_80065750(Entity* param_1)
 
 {
@@ -30177,7 +30184,7 @@ void FUN_80065750(Entity* param_1)
     return;
 }
 
-// Function @0x800657A4
+//800657A4
 void UpdateEntityAI_FlyingWatcher(Entity* entity)
 
 {
@@ -30276,7 +30283,7 @@ void UpdateEntityAI_FlyingWatcher(Entity* entity)
     return;
 }
 
-// Function @0x80065B0C
+//80065B0C
 void FUN_80065b0c(Entity* param_1)
 
 {
@@ -30431,7 +30438,7 @@ LAB_80065e00:
     return;
 }
 
-// Function @0x80065ED4
+//80065ED4
 void UpdateEntityAI_IdleSkittish(Entity* entity)
 
 {
@@ -30549,7 +30556,7 @@ void UpdateEntityAI_IdleSkittish(Entity* entity)
     return;
 }
 
-// Function @0x80066250
+//80066250
 void UpdateEntityAI_CuriousFlying(Entity* entity)
 
 {
@@ -30656,7 +30663,7 @@ void UpdateEntityAI_CuriousFlying(Entity* entity)
     return;
 }
 
-// Function @0x800665A0
+//800665A0
 void UpdateEntityAI_1(Entity* entity)
 
 {
@@ -30769,7 +30776,7 @@ void UpdateEntityAI_1(Entity* entity)
     return;
 }
 
-// Function @0x80066984
+//80066984
 void FUN_80066984(Entity* param_1)
 
 {
@@ -30861,7 +30868,7 @@ LAB_80066be0:
     return;
 }
 
-// Function @0x80066BF8
+//80066BF8
 void UpdateEntityAI_0(Entity* entity)
 
 {
@@ -30995,7 +31002,7 @@ switchD_80066c3c_caseD_2:
     return;
 }
 
-// Function @0x80066F38
+//80066F38
 void UpdateEntityAI_3(Entity* entity)
 
 {
@@ -31068,7 +31075,7 @@ void UpdateEntityAI_3(Entity* entity)
     return;
 }
 
-// Function @0x80067138
+//80067138
 void UpdateEntityAI_4(Entity* entity)
 
 {
@@ -31329,7 +31336,7 @@ void UpdateEntityAI_4(Entity* entity)
     return;
 }
 
-// Function @0x8006790C
+//8006790C
 void UpdateEntityAI_5(Entity* param_1)
 
 {
@@ -31482,7 +31489,7 @@ void UpdateEntityAI_5(Entity* param_1)
     return;
 }
 
-// Function @0x80067D98
+//80067D98
 void UpdateEntityAI_6(Entity* param_1)
 
 {
@@ -31620,7 +31627,7 @@ void UpdateEntityAI_6(Entity* param_1)
     return;
 }
 
-// Function @0x80068154
+//80068154
 void UpdateEntityAI_6(Entity* param_1)
 
 {
@@ -31849,7 +31856,7 @@ switchD_800685cc_caseD_8:
     return;
 }
 
-// Function @0x80068930
+//80068930
 void UpdateEntityAI_7(Entity* param_1)
 
 {
@@ -31956,7 +31963,7 @@ void UpdateEntityAI_7(Entity* param_1)
     return;
 }
 
-// Function @0x80068CC8
+//80068CC8
 void UpdateEntityAI_8(Entity* param_1)
 
 {
@@ -32309,7 +32316,7 @@ LAB_800691a8:
     return;
 }
 
-// Function @0x80069684
+//80069684
 void UpdateEntityAI_8(Entity* param_1)
 
 {
@@ -32426,7 +32433,7 @@ switchD_800696c8_caseD_2:
     return;
 }
 
-// Function @0x800699C4
+//800699C4
 void UpdateEntityAI_9(Entity* param_1)
 
 {
@@ -32517,7 +32524,7 @@ void UpdateEntityAI_9(Entity* param_1)
     return;
 }
 
-// Function @0x80069C84
+//80069C84
 void UpdateEntityAI_10(Entity* param_1)
 
 {
@@ -32617,7 +32624,7 @@ void UpdateEntityAI_10(Entity* param_1)
     return;
 }
 
-// Function @0x80069F44
+//80069F44
 void FUN_80069f44(Entity* param_1)
 
 {
@@ -32729,7 +32736,7 @@ void FUN_80069f44(Entity* param_1)
     return;
 }
 
-// Function @0x8006A29C
+//8006A29C
 void UpdateEntityAI_11(Entity* param_1)
 
 {
@@ -32835,7 +32842,7 @@ switchD_8006a2dc_caseD_5:
     return;
 }
 
-// Function @0x8006A564
+//8006A564
 void FUN_8006a564(Entity* param_1)
 
 {
@@ -32968,7 +32975,7 @@ void FUN_8006a564(Entity* param_1)
     return;
 }
 
-// Function @0x8006A974
+//8006A974
 void UpdateEntityAI_12(Entity* param_1)
 
 {
@@ -33046,7 +33053,7 @@ void UpdateEntityAI_12(Entity* param_1)
     return;
 }
 
-// Function @0x8006ABB0
+//8006ABB0
 void UpdateEntityAI_13(Entity* param_1)
 
 {
@@ -33274,7 +33281,7 @@ switchD_8006ac00_caseD_6:
     return;
 }
 
-// Function @0x8006B234
+//8006B234
 void UpdateEntityAI_14(Entity* param_1)
 
 {
@@ -33374,7 +33381,7 @@ void UpdateEntityAI_14(Entity* param_1)
     return;
 }
 
-// Function @0x8006B510
+//8006B510
 void FUN_8006b510(Entity* param_1)
 
 {
@@ -33482,7 +33489,7 @@ void FUN_8006b510(Entity* param_1)
     return;
 }
 
-// Function @0x8006B848
+//8006B848
 void FUN_8006b848(int param_1)
 
 {
@@ -33513,14 +33520,14 @@ void FUN_8006b848(int param_1)
     return;
 }
 
-// Function @0x8006B8CC
+//8006B8CC
 void FUN_8006b8cc(void)
 
 {
     return;
 }
 
-// Function @0x8006B8D4
+//8006B8D4
 void UpdateEntityAI_15(Entity* param_1)
 
 {
@@ -33641,7 +33648,7 @@ void UpdateEntityAI_15(Entity* param_1)
     return;
 }
 
-// Function @0x8006BD30
+//8006BD30
 void UpdateEntityAI_17(Entity* param_1)
 
 {
@@ -33758,7 +33765,7 @@ switchD_8006bd70_caseD_5:
     return;
 }
 
-// Function @0x8006C100
+//8006C100
 void UpdateEntityAI_18(Entity* entity)
 
 {
@@ -33887,7 +33894,7 @@ switchD_8006c154_caseD_5:
     return;
 }
 
-// Function @0x8006C5CC
+//8006C5CC
 void UpdateEntityAI_19(Entity* entity)
 
 {
@@ -34020,7 +34027,7 @@ switchD_8006c618_caseD_2:
     return;
 }
 
-// Function @0x8006CA40
+//8006CA40
 void UpdateEntityAI_20(Entity* param_1)
 
 {
@@ -34157,7 +34164,7 @@ void UpdateEntityAI_20(Entity* param_1)
     return;
 }
 
-// Function @0x8006CE08
+//8006CE08
 void FUN_8006ce08(Entity* param_1)
 
 {
@@ -34343,7 +34350,7 @@ void FUN_8006ce08(Entity* param_1)
     return;
 }
 
-// Function @0x8006D550
+//8006D550
 void UpdateEntityAI_20(Entity* param_1)
 
 {
@@ -34480,7 +34487,7 @@ void UpdateEntityAI_20(Entity* param_1)
     return;
 }
 
-// Function @0x8006D998
+//8006D998
 void UpdateEntityAI_21(Entity* param_1, int param_2)
 
 {
@@ -34616,7 +34623,7 @@ void UpdateEntityAI_21(Entity* param_1, int param_2)
     return;
 }
 
-// Function @0x8006DE68
+//8006DE68
 void UpdateEntityAI_22(Entity* param_1)
 
 {
@@ -34745,7 +34752,7 @@ void UpdateEntityAI_22(Entity* param_1)
     return;
 }
 
-// Function @0x8006E2D8
+//8006E2D8
 void UpdateEntityAI_23(Entity* param_1)
 
 {
@@ -34900,7 +34907,7 @@ LAB_8006e800:
     return;
 }
 
-// Function @0x8006E83C
+//8006E83C
 void FUN_8006e83c(Entity* entity)
 
 {
@@ -34923,7 +34930,7 @@ void FUN_8006e83c(Entity* entity)
     return;
 }
 
-// Function @0x8006E89C
+//8006E89C
 void UpdateEntityAI_23(Entity* param_1)
 
 {
@@ -35033,7 +35040,7 @@ LAB_8006e970:
     return;
 }
 
-// Function @0x8006EB9C
+//8006EB9C
 void FUN_8006eb9c(Entity* param_1)
 
 {
@@ -35381,7 +35388,7 @@ void FUN_8006eb9c(Entity* param_1)
     return;
 }
 
-// Function @0x8006F860
+//8006F860
 void FUN_8006f860(int param_1)
 
 {
@@ -35403,7 +35410,7 @@ void FUN_8006f860(int param_1)
     return;
 }
 
-// Function @0x8006F8E4
+//8006F8E4
 void FUN_8006f8e4(Entity* param_1)
 
 {
@@ -35538,7 +35545,7 @@ void FUN_8006f8e4(Entity* param_1)
     return;
 }
 
-// Function @0x8006F93C
+//8006F93C
 void UpdateEntityAI_24(void)
 
 {
@@ -35662,7 +35669,7 @@ void UpdateEntityAI_24(void)
     return;
 }
 
-// Function @0x8006FC7C
+//8006FC7C
 void UpdateEntityAI_Boss(Entity* entity)
 
 {
@@ -35915,7 +35922,7 @@ void UpdateEntityAI_Boss(Entity* entity)
     return;
 }
 
-// Function @0x80070598
+//80070598
 void UpdateBossEntityState(Entity* entity)
 
 {
@@ -36155,7 +36162,7 @@ void UpdateBossEntityState(Entity* entity)
     return;
 }
 
-// Function @0x80070C40
+//80070C40
 void UpdateBossEntityState(Entity* entity)
 
 {
@@ -36336,7 +36343,7 @@ switchD_80070fac_caseD_13:
     return;
 }
 
-// Function @0x80071134
+//80071134
 void ApplyZGravityIfIdle(Entity* entity)
 
 {
@@ -36346,7 +36353,7 @@ void ApplyZGravityIfIdle(Entity* entity)
     return;
 }
 
-// Function @0x80071164
+//80071164
 void UpdateEntityAI_BoosPhase3(Entity* entity)
 
 {
@@ -36674,7 +36681,7 @@ void UpdateEntityAI_BoosPhase3(Entity* entity)
     return;
 }
 
-// Function @0x80071BF4
+//80071BF4
 void UpdateEntityAI_SpecialBoss(Entity* entity)
 
 {
@@ -36904,7 +36911,7 @@ void UpdateEntityAI_SpecialBoss(Entity* entity)
     return;
 }
 
-// Function @0x8007252C
+//8007252C
 void UpdateEntityIA_WatcherBehavior(Entity* entity)
 
 {
@@ -36956,7 +36963,7 @@ void UpdateEntityIA_WatcherBehavior(Entity* entity)
     return;
 }
 
-// Function @0x80072680
+//80072680
 void UpdateEntityDelayedSoundTrigger(Entity* entity)
 
 {
@@ -36984,7 +36991,7 @@ void UpdateEntityDelayedSoundTrigger(Entity* entity)
     return;
 }
 
-// Function @0x80072728
+//80072728
 /* WARNING: Removing unreachable block (ram,0x80073610) */
 
 void UpdateEntityAI_TwinBoss(Entity* entity)
@@ -37049,7 +37056,7 @@ void UpdateEntityAI_TwinBoss(Entity* entity)
     return;
 }
 
-// Function @0x8007285C
+//8007285C
 void FUN_8007285c(void)
 
 {
@@ -37166,7 +37173,7 @@ void FUN_8007285c(void)
     return;
 }
 
-// Function @0x80072BB8
+//80072BB8
 void FUN_80072bb8(void)
 
 {
@@ -37383,7 +37390,7 @@ switchD_800729c4_caseD_6:
     return;
 }
 
-// Function @0x8007314C
+//8007314C
 void FUN_8007314c(void)
 
 {
@@ -37422,7 +37429,7 @@ void FUN_8007314c(void)
     return;
 }
 
-// Function @0x80073178
+//80073178
 void FUN_80073178(void)
 
 {
@@ -37474,7 +37481,7 @@ void FUN_80073178(void)
     return;
 }
 
-// Function @0x80073228
+//80073228
 void FUN_80073228(void)
 
 {
@@ -37523,7 +37530,7 @@ void FUN_80073228(void)
     return;
 }
 
-// Function @0x800732A4
+//800732A4
 void FUN_800732a4(void)
 
 {
@@ -37561,7 +37568,7 @@ void FUN_800732a4(void)
     return;
 }
 
-// Function @0x800732C0
+//800732C0
 void FUN_800732c0(void)
 
 {
@@ -37656,7 +37663,7 @@ switchD_800729c4_caseD_6:
     return;
 }
 
-// Function @0x800734F4
+//800734F4
 void FUN_800734f4(void)
 
 {
@@ -37691,7 +37698,7 @@ void FUN_800734f4(void)
     return;
 }
 
-// Function @0x80073500
+//80073500
 void FUN_80073500(void)
 
 {
@@ -37726,7 +37733,7 @@ void FUN_80073500(void)
     return;
 }
 
-// Function @0x8007350C
+//8007350C
 void FUN_8007350c(void)
 
 {
@@ -37799,7 +37806,7 @@ void FUN_8007350c(void)
     return;
 }
 
-// Function @0x80073728
+//80073728
 void FUN_80073728(int param_1)
 
 {
@@ -37827,7 +37834,7 @@ void FUN_80073728(int param_1)
     return;
 }
 
-// Function @0x800737D0
+//800737D0
 void FUN_800737d0(Entity* param_1)
 
 {
@@ -37902,7 +37909,7 @@ void FUN_800737d0(Entity* param_1)
     return;
 }
 
-// Function @0x80073940
+//80073940
 void FUN_80073940(int param_1)
 
 {
@@ -38012,7 +38019,7 @@ void FUN_80073940(int param_1)
     } while (true);
 }
 
-// Function @0x80073BD4
+//80073BD4
 void FUN_80073bd4(Entity* param_1, int param_2, int direction)
 
 {
@@ -38075,7 +38082,7 @@ switchD_80073c40_caseD_e:
     return;
 }
 
-// Function @0x80073CFC
+//80073CFC
 /* WARNING: Removing unreachable block (ram,0x800741dc) */
 
 void UpdateEntityAI_0(Entity* entity)
@@ -38468,7 +38475,7 @@ switchD_80074088_caseD_5:
     return;
 }
 
-// Function @0x800749A4
+//800749A4
 void UpdateFollowerBehaviorIfTriggered(Entity* entity)
 
 {
@@ -38519,7 +38526,7 @@ TriggerDespawn:
     return;
 }
 
-// Function @0x80074AE8
+//80074AE8
 void FUN_80074ae8(Entity* param_1)
 
 {
@@ -38572,7 +38579,7 @@ void FUN_80074ae8(Entity* param_1)
     return;
 }
 
-// Function @0x80074D00
+//80074D00
 void UpdateEntityAI_WarpBoss(Entity* entity)
 
 {
@@ -38872,7 +38879,7 @@ void UpdateEntityAI_WarpBoss(Entity* entity)
     return;
 }
 
-// Function @0x800756EC
+//800756EC
 void FUN_800756ec(Entity* param_1)
 
 {
@@ -38961,7 +38968,7 @@ LAB_80075814:
     return;
 }
 
-// Function @0x80075A3C
+//80075A3C
 void FUN_80075a3c(Entity* param_1)
 
 {
@@ -39523,7 +39530,7 @@ void FUN_80075a3c(Entity* param_1)
     return;
 }
 
-// Function @0x80076DA0
+//80076DA0
 void UpdateLoaderBossAI(Entity* entity)
 
 {
@@ -39753,7 +39760,7 @@ void UpdateLoaderBossAI(Entity* entity)
     return;
 }
 
-// Function @0x8007763C
+//8007763C
 void FUN_8007763c(int param_1)
 
 {
@@ -39800,7 +39807,7 @@ void FUN_8007763c(int param_1)
     return;
 }
 
-// Function @0x80077734
+//80077734
 void FUN_80077734(Entity* param_1)
 
 {
@@ -40381,7 +40388,7 @@ switchD_80078810_caseD_5:
     return;
 }
 
-// Function @0x80078A5C
+//80078A5C
 void FUN_80078a5c(int param_1)
 
 {
@@ -40410,7 +40417,7 @@ void FUN_80078a5c(int param_1)
     return;
 }
 
-// Function @0x80078B54
+//80078B54
 void FUN_80078b54(int param_1)
 
 {
@@ -40545,7 +40552,7 @@ switchD_80078c20_caseD_6:
     return;
 }
 
-// Function @0x80078E34
+//80078E34
 void UpdateEntityIA_FirePlatform(Entity* entity)
 
 {
@@ -40888,7 +40895,7 @@ void UpdateEntityIA_FirePlatform(Entity* entity)
     return;
 }
 
-// Function @0x80079950
+//80079950
 void FUN_80079950(int param_1)
 
 {
@@ -40954,7 +40961,7 @@ void FUN_80079950(int param_1)
     return;
 }
 
-// Function @0x80079AD4
+//80079AD4
 void FUN_80079ad4(int param_1)
 
 {
@@ -40967,7 +40974,7 @@ void FUN_80079ad4(int param_1)
     return;
 }
 
-// Function @0x80079B14
+//80079B14
 void FUN_80079b14(Entity* param_1)
 
 {
@@ -41207,7 +41214,7 @@ void FUN_80079b14(Entity* param_1)
     return;
 }
 
-// Function @0x8007A2F8
+//8007A2F8
 void FUN_8007a2f8(int param_1)
 
 {
@@ -41283,14 +41290,14 @@ void FUN_8007a2f8(int param_1)
     return;
 }
 
-// Function @0x8007A4A8
+//8007A4A8
 void FUN_8007a4a8(void)
 
 {
     return;
 }
 
-// Function @0x8007A4B0
+//8007A4B0
 void FUN_8007a4b0(int param_1)
 
 {
@@ -41338,7 +41345,7 @@ void FUN_8007a4b0(int param_1)
     return;
 }
 
-// Function @0x8007A680
+//8007A680
 void FUN_8007a680(int param_1)
 
 {
@@ -41419,7 +41426,7 @@ void FUN_8007a680(int param_1)
     return;
 }
 
-// Function @0x8007A8A0
+//8007A8A0
 void FUN_8007a8a0(int param_1)
 
 {
@@ -41445,7 +41452,7 @@ void FUN_8007a8a0(int param_1)
     return;
 }
 
-// Function @0x8007A958
+//8007A958
 /* Possible GS_106.OBJ/GsSetProjection
    Possible _OP_VDEL.OBJ/__builtin_vec_delete
    Possible _OP_VNEW.OBJ/__builtin_vec_new
@@ -41459,7 +41466,7 @@ void FUN_8007a958(void)
     return;
 }
 
-// Function @0x8007A978
+//8007A978
 void FUN_8007a978(Entity* param_1)
 
 {
@@ -41556,7 +41563,7 @@ LAB_8007ac48:
     return;
 }
 
-// Function @0x8007AC60
+//8007AC60
 void FUN_8007ac60(int param_1)
 
 {
@@ -41611,7 +41618,7 @@ LAB_8007adc0:
     return;
 }
 
-// Function @0x8007ADDC
+//8007ADDC
 void FUN_8007addc(Entity* param_1)
 
 {
@@ -41647,7 +41654,7 @@ void FUN_8007addc(Entity* param_1)
     return;
 }
 
-// Function @0x8007AF20
+//8007AF20
 void UpdateHomingProjectileBehavior(Entity* projectileEntity)
 
 {
@@ -41694,7 +41701,7 @@ void UpdateHomingProjectileBehavior(Entity* projectileEntity)
     return;
 }
 
-// Function @0x8007B04C
+//8007B04C
 void FUN_8007b04c(Entity* entity)
 
 {
@@ -41752,7 +41759,7 @@ void FUN_8007b04c(Entity* entity)
     return;
 }
 
-// Function @0x8007B1F0
+//8007B1F0
 void FUN_8007b1f0(Entity* param_1)
 
 {
@@ -41813,7 +41820,7 @@ void FUN_8007b1f0(Entity* param_1)
     return;
 }
 
-// Function @0x8007B3C4
+//8007B3C4
 void FUN_8007b3c4(Entity* param_1)
 
 {
@@ -41910,7 +41917,7 @@ void FUN_8007b3c4(Entity* param_1)
     return;
 }
 
-// Function @0x8007B6EC
+//8007B6EC
 void FUN_8007b6ec(Entity* param_1)
 
 {
@@ -41937,7 +41944,7 @@ void FUN_8007b6ec(Entity* param_1)
     return;
 }
 
-// Function @0x8007B7B0
+//8007B7B0
 void FUN_8007b7b0(int param_1)
 
 {
@@ -41968,7 +41975,7 @@ void FUN_8007b7b0(int param_1)
     return;
 }
 
-// Function @0x8007B834
+//8007B834
 void FUN_8007b834(int param_1)
 
 {
@@ -42021,7 +42028,7 @@ void FUN_8007b834(int param_1)
     return;
 }
 
-// Function @0x8007B998
+//8007B998
 void ProcessWarpTransitionState(Entity* entity)
 
 {
@@ -42087,7 +42094,7 @@ switchD_8007b9dc_LABEL_Return:
     return;
 }
 
-// Function @0x8007BB30
+//8007BB30
 void FUN_8007bb30(Entity* entity)
 
 {
@@ -42111,7 +42118,7 @@ void FUN_8007bb30(Entity* entity)
     return;
 }
 
-// Function @0x8007BB9C
+//8007BB9C
 void FUN_8007bb9c(int param_1)
 
 {
@@ -42164,7 +42171,7 @@ void FUN_8007bb9c(int param_1)
     return;
 }
 
-// Function @0x8007BD8C
+//8007BD8C
 void FUN_8007bd8c(int param_1)
 
 {
@@ -42232,7 +42239,7 @@ void FUN_8007bd8c(int param_1)
     return;
 }
 
-// Function @0x8007C024
+//8007C024
 void FUN_8007c024(Entity* param_1)
 
 {
@@ -42259,7 +42266,7 @@ void FUN_8007c024(Entity* param_1)
     return;
 }
 
-// Function @0x8007C0D8
+//8007C0D8
 void FUN_8007c0d8(int param_1)
 
 {
@@ -42278,7 +42285,7 @@ void FUN_8007c0d8(int param_1)
     return;
 }
 
-// Function @0x8007C768
+//8007C768
 void FUN_8007c768(Entity* param_1)
 
 {
@@ -42647,7 +42654,7 @@ LAB_8007d444:
     return;
 }
 
-// Function @0x8007D554
+//8007D554
 void FUN_8007d554(Entity* param_1)
 
 {
@@ -42810,7 +42817,7 @@ switchD_8007d698_caseD_4:
     return;
 }
 
-// Function @0x8007D9A4
+//8007D9A4
 void FUN_8007d9a4(int param_1)
 
 {
@@ -42829,7 +42836,7 @@ void FUN_8007d9a4(int param_1)
     return;
 }
 
-// Function @0x8007DA08
+//8007DA08
 void FUN_8007da08(int param_1)
 
 {
@@ -42869,7 +42876,7 @@ LAB_8007db1c:
     return;
 }
 
-// Function @0x8007DB38
+//8007DB38
 void FUN_8007db38(int param_1)
 
 {
@@ -42895,7 +42902,7 @@ void FUN_8007db38(int param_1)
     return;
 }
 
-// Function @0x8007DBE0
+//8007DBE0
 void FUN_8007dbe0(int param_1)
 
 {
@@ -42924,7 +42931,7 @@ LAB_8007dcbc:
     return;
 }
 
-// Function @0x8007DCD8
+//8007DCD8
 void FUN_8007dcd8(int param_1)
 
 {
@@ -42943,7 +42950,7 @@ void FUN_8007dcd8(int param_1)
     return;
 }
 
-// Function @0x8007DD3C
+//8007DD3C
 void FUN_8007dd3c(int param_1)
 
 {
@@ -42962,7 +42969,7 @@ void FUN_8007dd3c(int param_1)
     return;
 }
 
-// Function @0x8007DDA0
+//8007DDA0
 void FUN_8007dda0(int param_1)
 
 {
@@ -42981,7 +42988,7 @@ void FUN_8007dda0(int param_1)
     return;
 }
 
-// Function @0x8007DE04
+//8007DE04
 void FUN_8007de04(int param_1)
 
 {
@@ -43000,7 +43007,7 @@ void FUN_8007de04(int param_1)
     return;
 }
 
-// Function @0x8007DE68
+//8007DE68
 void FUN_8007de68(int param_1)
 
 {
@@ -43022,7 +43029,7 @@ void FUN_8007de68(int param_1)
     return;
 }
 
-// Function @0x8007DEE8
+//8007DEE8
 void FUN_8007dee8(int param_1)
 
 {
@@ -43041,7 +43048,7 @@ void FUN_8007dee8(int param_1)
     return;
 }
 
-// Function @0x8007DF4C
+//8007DF4C
 void FUN_8007df4c(int param_1)
 
 {
@@ -43075,7 +43082,7 @@ LAB_8007e058:
     return;
 }
 
-// Function @0x8007E074
+//8007E074
 void FUN_8007e074(int param_1)
 
 {
@@ -43094,7 +43101,7 @@ void FUN_8007e074(int param_1)
     return;
 }
 
-// Function @0x8007E0D8
+//8007E0D8
 void FUN_8007e0d8(int param_1)
 
 {
@@ -43108,7 +43115,7 @@ void FUN_8007e0d8(int param_1)
     return;
 }
 
-// Function @0x8007E114
+//8007E114
 void FUN_8007e114(int param_1)
 
 {
@@ -43127,7 +43134,7 @@ void FUN_8007e114(int param_1)
     return;
 }
 
-// Function @0x8007E140
+//8007E140
 void FUN_8007e140(int param_1)
 
 {
@@ -43152,7 +43159,7 @@ void FUN_8007e140(int param_1)
     return;
 }
 
-// Function @0x8007E1C4
+//8007E1C4
 void FUN_8007e1c4(int param_1)
 
 {
@@ -43171,7 +43178,7 @@ void FUN_8007e1c4(int param_1)
     return;
 }
 
-// Function @0x8007E228
+//8007E228
 void FUN_8007e228(int param_1)
 
 {
@@ -43191,7 +43198,7 @@ void FUN_8007e228(int param_1)
     return;
 }
 
-// Function @0x8007E2A0
+//8007E2A0
 void FUN_8007e2a0(int param_1)
 
 {
@@ -43210,7 +43217,7 @@ void FUN_8007e2a0(int param_1)
     return;
 }
 
-// Function @0x8007E304
+//8007E304
 void FUN_8007e304(int param_1)
 
 {
@@ -43258,7 +43265,7 @@ void FUN_8007e304(int param_1)
     return;
 }
 
-// Function @0x8007E424
+//8007E424
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void FUN_8007e424(undefined* param_1, undefined4 param_2)
@@ -43308,7 +43315,7 @@ void FUN_8007e424(undefined* param_1, undefined4 param_2)
     return;
 }
 
-// Function @0x8007E548
+//8007E548
 void FUN_8007e548(int param_1)
 
 {
@@ -43323,7 +43330,7 @@ void FUN_8007e548(int param_1)
     return;
 }
 
-// Function @0x8007E5B0
+//8007E5B0
 void FUN_8007e5b0(int param_1)
 
 {
@@ -43343,7 +43350,7 @@ void FUN_8007e5b0(int param_1)
     return;
 }
 
-// Function @0x8007E628
+//8007E628
 void FUN_8007e628(int param_1)
 
 {
@@ -43362,14 +43369,14 @@ void FUN_8007e628(int param_1)
     return;
 }
 
-// Function @0x8007E68C
+//8007E68C
 void FUN_8007e68c(void)
 
 {
     return;
 }
 
-// Function @0x8007E694
+//8007E694
 void FUN_8007e694(int param_1)
 
 {
@@ -43387,7 +43394,7 @@ void FUN_8007e694(int param_1)
     return;
 }
 
-// Function @0x8007E704
+//8007E704
 void FUN_8007e704(int param_1)
 
 {
@@ -43403,7 +43410,7 @@ void FUN_8007e704(int param_1)
     return;
 }
 
-// Function @0x8007E754
+//8007E754
 void FUN_8007e754(int param_1)
 
 {
@@ -43417,7 +43424,7 @@ void FUN_8007e754(int param_1)
     return;
 }
 
-// Function @0x8007E790
+//8007E790
 void FUN_8007e790(int param_1)
 
 {
@@ -43425,7 +43432,7 @@ void FUN_8007e790(int param_1)
     return;
 }
 
-// Function @0x8007E79C
+//8007E79C
 void FUN_8007e79c(int param_1)
 
 {
@@ -43438,7 +43445,7 @@ void FUN_8007e79c(int param_1)
     return;
 }
 
-// Function @0x8007E7E4
+//8007E7E4
 void FUN_8007e7e4(int param_1)
 
 {
@@ -43449,7 +43456,7 @@ void FUN_8007e7e4(int param_1)
     return;
 }
 
-// Function @0x8007E828
+//8007E828
 void FUN_8007e828(int param_1)
 
 {
@@ -43460,7 +43467,7 @@ void FUN_8007e828(int param_1)
     return;
 }
 
-// Function @0x8007E86C
+//8007E86C
 void FUN_8007e86c(int param_1)
 
 {
@@ -43471,7 +43478,7 @@ void FUN_8007e86c(int param_1)
     return;
 }
 
-// Function @0x8007E8AC
+//8007E8AC
 void FUN_8007e8ac(int param_1)
 
 {
@@ -43482,7 +43489,7 @@ void FUN_8007e8ac(int param_1)
     return;
 }
 
-// Function @0x8007E8F0
+//8007E8F0
 void FUN_8007e8f0(int param_1)
 
 {
@@ -43511,7 +43518,7 @@ void FUN_8007e8f0(int param_1)
     return;
 }
 
-// Function @0x8007E994
+//8007E994
 void FUN_8007e994(int param_1)
 
 {
@@ -43520,7 +43527,7 @@ void FUN_8007e994(int param_1)
     return;
 }
 
-// Function @0x8007E9AC
+//8007E9AC
 void FUN_8007e9ac(int param_1)
 
 {
@@ -43534,7 +43541,7 @@ void FUN_8007e9ac(int param_1)
     return;
 }
 
-// Function @0x8007E9E8
+//8007E9E8
 void FUN_8007e9e8(int param_1)
 
 {
@@ -43548,7 +43555,7 @@ void FUN_8007e9e8(int param_1)
     return;
 }
 
-// Function @0x8007EA24
+//8007EA24
 void FUN_8007ea24(int param_1)
 
 {
@@ -43564,7 +43571,7 @@ void FUN_8007ea24(int param_1)
     return;
 }
 
-// Function @0x8007EA84
+//8007EA84
 void FUN_8007ea84(int param_1)
 
 {
@@ -43592,7 +43599,7 @@ void FUN_8007ea84(int param_1)
     return;
 }
 
-// Function @0x8007EB1C
+//8007EB1C
 void FUN_8007eb1c(int param_1)
 
 {
@@ -43606,7 +43613,7 @@ void FUN_8007eb1c(int param_1)
     return;
 }
 
-// Function @0x8007EB58
+//8007EB58
 void FUN_8007eb58(int param_1)
 
 {
@@ -43622,7 +43629,7 @@ void FUN_8007eb58(int param_1)
     return;
 }
 
-// Function @0x8007EBA8
+//8007EBA8
 void FUN_8007eba8(int param_1)
 
 {
@@ -43639,7 +43646,7 @@ void FUN_8007eba8(int param_1)
     return;
 }
 
-// Function @0x8007EBF0
+//8007EBF0
 void FUN_8007ebf0(int param_1)
 
 {
@@ -43660,7 +43667,7 @@ void FUN_8007ebf0(int param_1)
     return;
 }
 
-// Function @0x8007EC60
+//8007EC60
 void FUN_8007ec60(int param_1)
 
 {
@@ -43671,7 +43678,7 @@ void FUN_8007ec60(int param_1)
     return;
 }
 
-// Function @0x8007EC9C
+//8007EC9C
 void FUN_8007ec9c(int param_1)
 
 {
@@ -43694,7 +43701,7 @@ void FUN_8007ec9c(int param_1)
     return;
 }
 
-// Function @0x8007ED10
+//8007ED10
 void FUN_8007ed10(undefined4 param_1)
 
 {
@@ -43702,7 +43709,7 @@ void FUN_8007ed10(undefined4 param_1)
     return;
 }
 
-// Function @0x8007ED30
+//8007ED30
 void FUN_8007ed30(int param_1)
 
 {
@@ -43717,7 +43724,7 @@ void FUN_8007ed30(int param_1)
     return;
 }
 
-// Function @0x8007EDA0
+//8007EDA0
 void FUN_8007eda0(int param_1)
 
 {
@@ -43731,7 +43738,7 @@ void FUN_8007eda0(int param_1)
     return;
 }
 
-// Function @0x8007EE04
+//8007EE04
 void FUN_8007ee04(int param_1)
 
 {
@@ -43745,7 +43752,7 @@ void FUN_8007ee04(int param_1)
     return;
 }
 
-// Function @0x8007EE68
+//8007EE68
 void FUN_8007ee68(int param_1)
 
 {
@@ -43765,14 +43772,14 @@ void FUN_8007ee68(int param_1)
     return;
 }
 
-// Function @0x8007EEE0
+//8007EEE0
 void FUN_8007eee0(void)
 
 {
     return;
 }
 
-// Function @0x8007EEF0
+//8007EEF0
 void FUN_8007eef0(undefined4 param_1)
 
 {
@@ -43780,7 +43787,7 @@ void FUN_8007eef0(undefined4 param_1)
     return;
 }
 
-// Function @0x8007EF10
+//8007EF10
 void FUN_8007ef10(undefined4 param_1)
 
 {
@@ -43788,7 +43795,7 @@ void FUN_8007ef10(undefined4 param_1)
     return;
 }
 
-// Function @0x8007EF30
+//8007EF30
 void FUN_8007ef30(undefined4 param_1)
 
 {
@@ -43796,7 +43803,7 @@ void FUN_8007ef30(undefined4 param_1)
     return;
 }
 
-// Function @0x8007EF50
+//8007EF50
 void HandleEntityHitEffect(Entity* entity)
 
 {
@@ -43864,7 +43871,7 @@ void HandleEntityHitEffect(Entity* entity)
     return;
 }
 
-// Function @0x8007F23C
+//8007F23C
 void FUN_8007f23c(undefined4 param_1)
 
 {
@@ -43872,7 +43879,7 @@ void FUN_8007f23c(undefined4 param_1)
     return;
 }
 
-// Function @0x8007F25C
+//8007F25C
 void FUN_8007f25c(undefined4 param_1)
 
 {
@@ -43880,7 +43887,7 @@ void FUN_8007f25c(undefined4 param_1)
     return;
 }
 
-// Function @0x8007F27C
+//8007F27C
 void FUN_8007f27c(int param_1)
 
 {
@@ -43896,7 +43903,7 @@ void FUN_8007f27c(int param_1)
     return;
 }
 
-// Function @0x8007F30C
+//8007F30C
 void FUN_8007f30c(int param_1)
 
 {
@@ -43913,7 +43920,7 @@ void FUN_8007f30c(int param_1)
     return;
 }
 
-// Function @0x8007F378
+//8007F378
 void FUN_8007f378(undefined4 param_1)
 
 {
@@ -43922,7 +43929,7 @@ void FUN_8007f378(undefined4 param_1)
     return;
 }
 
-// Function @0x8007F3B0
+//8007F3B0
 void FUN_8007f3b0(undefined4 param_1)
 
 {
@@ -43931,7 +43938,7 @@ void FUN_8007f3b0(undefined4 param_1)
     return;
 }
 
-// Function @0x8007F3E8
+//8007F3E8
 void FUN_8007f3e8(undefined4 param_1)
 
 {
@@ -43940,7 +43947,7 @@ void FUN_8007f3e8(undefined4 param_1)
     return;
 }
 
-// Function @0x8007F420
+//8007F420
 void UpdateIdleEntityAndCheckCollision(Entity* entity)
 
 {
@@ -44030,7 +44037,7 @@ void UpdateIdleEntityAndCheckCollision(Entity* entity)
     return;
 }
 
-// Function @0x8007F658
+//8007F658
 void FUN_8007f658(undefined4 param_1)
 
 {
@@ -44039,7 +44046,7 @@ void FUN_8007f658(undefined4 param_1)
     return;
 }
 
-// Function @0x8007F690
+//8007F690
 void FUN_8007f690(undefined4 param_1)
 
 {
@@ -44048,7 +44055,7 @@ void FUN_8007f690(undefined4 param_1)
     return;
 }
 
-// Function @0x8007F6C8
+//8007F6C8
 void FUN_8007f6c8(Entity* param_1)
 
 {
@@ -44083,7 +44090,7 @@ void FUN_8007f6c8(Entity* param_1)
     return;
 }
 
-// Function @0x8007F7CC
+//8007F7CC
 void FUN_8007f7cc(Entity* param_1)
 
 {
@@ -44105,14 +44112,14 @@ void FUN_8007f7cc(Entity* param_1)
     return;
 }
 
-// Function @0x8007F864
+//8007F864
 void FUN_8007f864(void)
 
 {
     return;
 }
 
-// Function @0x8007F878
+//8007F878
 void FUN_8007f878(int param_1)
 
 {
@@ -44126,7 +44133,7 @@ void FUN_8007f878(int param_1)
     return;
 }
 
-// Function @0x8007F8AC
+//8007F8AC
 void FUN_8007f8ac(Entity* param_1)
 
 {
@@ -44148,7 +44155,7 @@ LAB_8007f94c:
     return;
 }
 
-// Function @0x8007F974
+//8007F974
 void FUN_8007f974(Entity* param_1)
 
 {
@@ -44190,7 +44197,7 @@ void FUN_8007f974(Entity* param_1)
     return;
 }
 
-// Function @0x8007FA14
+//8007FA14
 void FUN_8007fa14(void)
 
 {
@@ -44224,7 +44231,7 @@ void FUN_8007fa14(void)
     return;
 }
 
-// Function @0x8007FA60
+//8007FA60
 void FUN_8007fa60(void)
 
 {
@@ -44235,14 +44242,14 @@ void FUN_8007fa60(void)
     return;
 }
 
-// Function @0x8007FA7C
+//8007FA7C
 void FUN_8007fa7c(void)
 
 {
     return;
 }
 
-// Function @0x8007FAA0
+//8007FAA0
 /* Possible GS_106.OBJ/GsSetProjection
    Possible _OP_VDEL.OBJ/__builtin_vec_delete
    Possible _OP_VNEW.OBJ/__builtin_vec_new
@@ -44256,7 +44263,7 @@ void FUN_8007faa0(Entity* param_1)
     return;
 }
 
-// Function @0x8007FAC0
+//8007FAC0
 void FUN_8007fac0(int param_1)
 
 {
@@ -44271,7 +44278,7 @@ void FUN_8007fac0(int param_1)
     return;
 }
 
-// Function @0x8007FB0C
+//8007FB0C
 void FUN_8007fb0c(int param_1)
 
 {
@@ -44280,14 +44287,14 @@ void FUN_8007fb0c(int param_1)
     return;
 }
 
-// Function @0x8007FB28
+//8007FB28
 void FUN_8007fb28(void)
 
 {
     return;
 }
 
-// Function @0x8007FB38
+//8007FB38
 void FUN_8007fb38(undefined4 param_1)
 
 {
@@ -44295,7 +44302,7 @@ void FUN_8007fb38(undefined4 param_1)
     return;
 }
 
-// Function @0x8007FB58
+//8007FB58
 void FUN_8007fb58(int param_1)
 
 {
@@ -44325,7 +44332,7 @@ void FUN_8007fb58(int param_1)
     return;
 }
 
-// Function @0x8007FE20
+//8007FE20
 void CalculateEntityRelativePosition(Entity* entity, int* relativePositions)
 
 {
@@ -44354,7 +44361,7 @@ void CalculateEntityRelativePosition(Entity* entity, int* relativePositions)
     return;
 }
 
-// Function @0x8007FE8C
+//8007FE8C
 void FUN_8007fe8c(int param_1, int* param_2)
 
 {
@@ -44383,7 +44390,7 @@ void FUN_8007fe8c(int param_1, int* param_2)
     return;
 }
 
-// Function @0x8007FEF8
+//8007FEF8
 void StartFlying(Entity* entity, uint param_2, short param_3, uint param_4)
 
 {
@@ -44407,7 +44414,7 @@ void StartFlying(Entity* entity, uint param_2, short param_3, uint param_4)
     return;
 }
 
-// Function @0x80080030
+//80080030
 void SetEntityRandomDirection(Entity* entity, uint newAnimId, short delayDuration)
 
 {
@@ -44430,7 +44437,7 @@ void SetEntityRandomDirection(Entity* entity, uint newAnimId, short delayDuratio
     return;
 }
 
-// Function @0x80080144
+//80080144
 undefined4 HandleAnimationDirection(Entity* entity, uint newAnimId, int currentZ)
 
 {
@@ -44496,7 +44503,7 @@ undefined4 HandleAnimationDirection(Entity* entity, uint newAnimId, int currentZ
     return returnValue;
 }
 
-// Function @0x80080260
+//80080260
 undefined4 CanMoveForward(Entity* entity, int zOffset)
 
 {
@@ -44547,7 +44554,7 @@ SkipAllChecks:
     return result;
 }
 
-// Function @0x80080348
+//80080348
 undefined4
 FUN_80080348(undefined4 param_1, int* param_2, byte param_3, int param_4, int param_5, int param_6)
 
@@ -44614,7 +44621,7 @@ FUN_80080348(undefined4 param_1, int* param_2, byte param_3, int param_4, int pa
     return uVar2;
 }
 
-// Function @0x8008048C
+//8008048C
 bool FUN_8008048c(undefined4 param_1, int* param_2, byte param_3, int param_4, int param_5, int param_6)
 
 {
@@ -44671,7 +44678,7 @@ bool FUN_8008048c(undefined4 param_1, int* param_2, byte param_3, int param_4, i
     return !bVar1;
 }
 
-// Function @0x800805C8
+//800805C8
 bool TryAttackPlayerFront
 (Entity* entity, int* relativePOsitions, int xThreshold, int yThreshold, int zThreshold)
 
@@ -44731,7 +44738,7 @@ bool TryAttackPlayerFront
     return !isOutOfRange;
 }
 
-// Function @0x80080704
+//80080704
 bool TryAttackPlayer(Entity* entity, int* relativePositions, int maxHorizontalRange,
     int maxVerticalRange)
 
@@ -44795,7 +44802,7 @@ bool TryAttackPlayer(Entity* entity, int* relativePositions, int maxHorizontalRa
     return !isWithinRange;
 }
 
-// Function @0x800808DC
+//800808DC
 int UpdateDirectionForced(Entity* entity, uint newAnimId, uint fallbackAnimId, int zThreshold)
 
 {
@@ -44821,7 +44828,7 @@ int UpdateDirectionForced(Entity* entity, uint newAnimId, uint fallbackAnimId, i
     return heightDiff;
 }
 
-// Function @0x80080990
+//80080990
 uint FUN_80080990(int param_1, int param_2)
 
 {
@@ -44862,7 +44869,7 @@ uint FUN_80080990(int param_1, int param_2)
     return uVar2;
 }
 
-// Function @0x80080A34
+//80080A34
 void FUN_80080a34(void)
 
 {
@@ -44878,7 +44885,7 @@ void FUN_80080a34(void)
     return;
 }
 
-// Function @0x80080A88
+//80080A88
 void TriggerScreenEffect(undefined4 fadeColor, undefined4 param_2, undefined4 frameCount,
     int resetBackgroundColor)
 
@@ -44897,7 +44904,7 @@ void TriggerScreenEffect(undefined4 fadeColor, undefined4 param_2, undefined4 fr
     return;
 }
 
-// Function @0x80080AE0
+//80080AE0
 void UpdateEntityAI_ExecuteBossSpecialMove(Entity* entity)
 
 {
@@ -44972,7 +44979,7 @@ void UpdateEntityAI_ExecuteBossSpecialMove(Entity* entity)
     return;
 }
 
-// Function @0x80080DBC
+//80080DBC
 void FUN_80080dbc(undefined4 param_1, undefined4 param_2, undefined4 param_3)
 
 {
@@ -44982,7 +44989,7 @@ void FUN_80080dbc(undefined4 param_1, undefined4 param_2, undefined4 param_3)
     return;
 }
 
-// Function @0x80080DD8
+//80080DD8
 void FUN_80080dd8(undefined4 param_1)
 
 {
@@ -44990,7 +44997,7 @@ void FUN_80080dd8(undefined4 param_1)
     return;
 }
 
-// Function @0x80080DE4
+//80080DE4
 int FUN_80080de4(void)
 
 {
@@ -45047,7 +45054,7 @@ int FUN_80080de4(void)
     } while (true);
 }
 
-// Function @0x80080EEC
+//80080EEC
 void FUN_80080eec(void)
 
 {
@@ -45063,7 +45070,7 @@ void FUN_80080eec(void)
     return;
 }
 
-// Function @0x80080F40
+//80080F40
 int FUN_80080f40(short x, short y, u_long* bufferImage2, int param_4, u_long* bufferImage)
 
 {
@@ -45111,7 +45118,7 @@ int FUN_80080f40(short x, short y, u_long* bufferImage2, int param_4, u_long* bu
     return iVar2;
 }
 
-// Function @0x800810C4
+//800810C4
 void LoadCompressedImageToBuffer
 (undefined4 bufferImage2, undefined4 param_2, undefined4 param_3, undefined4 param_4,
     undefined4 bufferImage)
@@ -45121,7 +45128,7 @@ void LoadCompressedImageToBuffer
     return;
 }
 
-// Function @0x800810F8
+//800810F8
 void FUN_800810f8(u_long* param_1)
 
 {
@@ -45136,7 +45143,7 @@ void FUN_800810f8(u_long* param_1)
     return;
 }
 
-// Function @0x80081188
+//80081188
 undefined* PrintSnapDebug(undefined4 param_1)
 
 {
@@ -45144,7 +45151,7 @@ undefined* PrintSnapDebug(undefined4 param_1)
     return &DAT_80191930;
 }
 
-// Function @0x800811E4
+//800811E4
 undefined4 FUN_800811e4(undefined4* param_1, int param_2)
 
 {
@@ -45217,7 +45224,7 @@ undefined4 FUN_800811e4(undefined4* param_1, int param_2)
     return 0x38436;
 }
 
-// Function @0x80081324
+//80081324
 void FUN_80081324(void)
 
 {
@@ -45238,7 +45245,7 @@ void FUN_80081324(void)
     return;
 }
 
-// Function @0x800813B0
+//800813B0
 int GetFirstEnabledFlagIndex(char* outString)
 
 {
@@ -45277,7 +45284,7 @@ int GetFirstEnabledFlagIndex(char* outString)
     } while (true);
 }
 
-// Function @0x800814A0
+//800814A0
 void LoadDefaultGameData(void)
 
 {
@@ -45301,7 +45308,7 @@ void LoadDefaultGameData(void)
     return;
 }
 
-// Function @0x800814E8
+//800814E8
 void CopyInitialDataToRAM(void)
 
 {
@@ -45334,7 +45341,7 @@ void CopyInitialDataToRAM(void)
     return;
 }
 
-// Function @0x8008153C
+//8008153C
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void InitializeExtraSystemState(void)
@@ -45370,7 +45377,7 @@ void InitializeExtraSystemState(void)
     return;
 }
 
-// Function @0x8008159C
+//8008159C
 void FUN_8008159c(void)
 
 {
@@ -45387,7 +45394,7 @@ void FUN_8008159c(void)
     return;
 }
 
-// Function @0x800815C4
+//800815C4
 /* Possible GS_106.OBJ/GsSetProjection
    Possible _OP_VDEL.OBJ/__builtin_vec_delete
    Possible _OP_VNEW.OBJ/__builtin_vec_new
@@ -45401,35 +45408,35 @@ void InitCDRom(void)
     return;
 }
 
-// Function @0x800815E4
+//800815E4
 void DoNothing(void)
 
 {
     return;
 }
 
-// Function @0x800815EC
+//800815EC
 void DoNothing(void)
 
 {
     return;
 }
 
-// Function @0x800815FC
+//800815FC
 void PrintInfo(void)
 
 {
     return;
 }
 
-// Function @0x80081604
+//80081604
 void DisplayHpDebugString(void)
 
 {
     return;
 }
 
-// Function @0x8008160C
+//8008160C
 /* Possible GS_106.OBJ/GsSetProjection
    Possible _OP_VDEL.OBJ/__builtin_vec_delete
    Possible _OP_VNEW.OBJ/__builtin_vec_new
@@ -45443,7 +45450,7 @@ void ReadFileFromCDIntoBuffer(void)
     return;
 }
 
-// Function @0x80081634
+//80081634
 void LoadLOADER_EXE(void)
 
 {
@@ -45454,14 +45461,14 @@ void LoadLOADER_EXE(void)
     return;
 }
 
-// Function @0x8008167C
+//8008167C
 void SetupEtcAnimation(void)
 
 {
     return;
 }
 
-// Function @0x80081684
+//80081684
 void main(void)
 
 {
@@ -45475,7 +45482,7 @@ void main(void)
     return;
 }
 
-// Function @0x800816D4
+//800816D4
 /* WARNING: Removing unreachable block (ram,0x800816fc) */
 
 int* GetEtcSectionPtr(int offset)
@@ -45485,14 +45492,14 @@ int* GetEtcSectionPtr(int offset)
     return (int*)((int)&g_bufferEtc + (uint) * (ushort*)((int)&g_bufferEtc + offset * 2));
 }
 
-// Function @0x80081754
+//80081754
 int** GetBufferEtc(void)
 
 {
     return &g_bufferEtc;
 }
 
-// Function @0x800818E4
+//800818E4
 byte* FUN_800818e4(byte* param_1)
 
 {
@@ -45503,7 +45510,7 @@ byte* FUN_800818e4(byte* param_1)
     return param_1;
 }
 
-// Function @0x80081974
+//80081974
 void LoadExec(void)
 
 {
@@ -45511,7 +45518,7 @@ void LoadExec(void)
     return;
 }
 
-// Function @0x80081984
+//80081984
 void _bu_init(void)
 
 {
@@ -45519,7 +45526,7 @@ void _bu_init(void)
     return;
 }
 
-// Function @0x80081994
+//80081994
 void _96_init(void)
 
 {
@@ -45527,7 +45534,7 @@ void _96_init(void)
     return;
 }
 
-// Function @0x800819A4
+//800819A4
 void _96_remove(void)
 
 {
@@ -45535,7 +45542,7 @@ void _96_remove(void)
     return;
 }
 
-// Function @0x800819B4
+//800819B4
 void OpenEvent(void)
 
 {
@@ -45543,7 +45550,7 @@ void OpenEvent(void)
     return;
 }
 
-// Function @0x800819C4
+//800819C4
 void CloseEvent(void)
 
 {
@@ -45551,15 +45558,17 @@ void CloseEvent(void)
     return;
 }
 
-// Function @0x800819D4
-void TestEvent(void)
+//800819D4
+int TestEvent(void)
 
 {
-    (*(code*)&LAB_padstate_000000b0)();
-    return;
+    int result;
+
+    result = (*(code*)&LAB_padstate_000000b0)();
+    return result;
 }
 
-// Function @0x800819E4
+//800819E4
 void EnableEvent(void)
 
 {
@@ -45567,7 +45576,7 @@ void EnableEvent(void)
     return;
 }
 
-// Function @0x800819F4
+//800819F4
 /* Possible A36.OBJ/EnterCriticalSection */
 
 void syscall(void)
@@ -45577,7 +45586,7 @@ void syscall(void)
     return;
 }
 
-// Function @0x80081A04
+//80081A04
 /* Possible A37.OBJ/ExitCriticalSection */
 
 void syscall2(void)
@@ -45587,7 +45596,7 @@ void syscall2(void)
     return;
 }
 
-// Function @0x80081A14
+//80081A14
 /* Possible A39.OBJ/SetSp */
 
 void doNothing(void)
@@ -45596,7 +45605,7 @@ void doNothing(void)
     return;
 }
 
-// Function @0x80081A24
+//80081A24
 void open(void)
 
 {
@@ -45604,7 +45613,7 @@ void open(void)
     return;
 }
 
-// Function @0x80081A34
+//80081A34
 void read(void)
 
 {
@@ -45612,7 +45621,7 @@ void read(void)
     return;
 }
 
-// Function @0x80081A44
+//80081A44
 void write(void)
 
 {
@@ -45620,7 +45629,7 @@ void write(void)
     return;
 }
 
-// Function @0x80081A54
+//80081A54
 void close(void)
 
 {
@@ -45628,7 +45637,7 @@ void close(void)
     return;
 }
 
-// Function @0x80081A64
+//80081A64
 void format(void)
 
 {
@@ -45636,7 +45645,7 @@ void format(void)
     return;
 }
 
-// Function @0x80081A74
+//80081A74
 void firstfile(void)
 
 {
@@ -45644,7 +45653,7 @@ void firstfile(void)
     return;
 }
 
-// Function @0x80081A84
+//80081A84
 void nextfile(void)
 
 {
@@ -45652,7 +45661,7 @@ void nextfile(void)
     return;
 }
 
-// Function @0x80081A94
+//80081A94
 void delete(void)
 
 {
@@ -45660,7 +45669,7 @@ void delete(void)
     return;
 }
 
-// Function @0x80081AA4
+//80081AA4
 void Krom2RawAdd(void)
 
 {
@@ -45668,7 +45677,7 @@ void Krom2RawAdd(void)
     return;
 }
 
-// Function @0x80081AB4
+//80081AB4
 undefined4 SetRCnt(uint param_1, undefined2 param_2, uint param_3)
 
 {
@@ -45705,7 +45714,7 @@ undefined4 SetRCnt(uint param_1, undefined2 param_2, uint param_3)
     return 1;
 }
 
-// Function @0x80081B28
+//80081B28
 undefined4 COUNTER_OBJ_74(void)
 
 {
@@ -45720,14 +45729,14 @@ undefined4 COUNTER_OBJ_74(void)
     return 1;
 }
 
-// Function @0x80081B4C
+//80081B4C
 void COUNTER_OBJ_98(void)
 
 {
     return;
 }
 
-// Function @0x80081B54
+//80081B54
 undefined4 GetRCnt(ushort param_1)
 
 {
@@ -45740,14 +45749,14 @@ undefined4 GetRCnt(ushort param_1)
     return 0;
 }
 
-// Function @0x80081B84
+//80081B84
 void COUNTER_OBJ_D0(void)
 
 {
     return;
 }
 
-// Function @0x80081B8C
+//80081B8C
 bool StartRCnt(uint param_1)
 
 {
@@ -45756,7 +45765,7 @@ bool StartRCnt(uint param_1)
     return (param_1 & 0xffff) < 3;
 }
 
-// Function @0x80081BC0
+//80081BC0
 undefined4 StopRCnt(uint param_1)
 
 {
@@ -45765,7 +45774,7 @@ undefined4 StopRCnt(uint param_1)
     return 1;
 }
 
-// Function @0x80081BF4
+//80081BF4
 undefined4 ResetRCnt(uint param_1)
 
 {
@@ -45779,14 +45788,14 @@ undefined4 ResetRCnt(uint param_1)
     return 0;
 }
 
-// Function @0x80081C24
+//80081C24
 void COUNTER_OBJ_170(void)
 
 {
     return;
 }
 
-// Function @0x80081C2C
+//80081C2C
 int atoi(char* param_1)
 
 {
@@ -45851,7 +45860,7 @@ code_r0x80081d10:
     return iVar6 * iVar7;
 }
 
-// Function @0x80081D10
+//80081D10
 int ATOI_OBJ_E4(void)
 
 {
@@ -45872,14 +45881,14 @@ int ATOI_OBJ_E4(void)
     return unaff_s2 * unaff_s3;
 }
 
-// Function @0x80081D40
+//80081D40
 void ATOI_OBJ_114(void)
 
 {
     return;
 }
 
-// Function @0x80081D60
+//80081D60
 /* Possible GS_106.OBJ/GsSetProjection
    Possible _OP_VDEL.OBJ/__builtin_vec_delete
    Possible _OP_VNEW.OBJ/__builtin_vec_new
@@ -45895,7 +45904,7 @@ long atol(char* param_1)
     return iVar1;
 }
 
-// Function @0x80081D80
+//80081D80
 void* bzero(uchar* param_1, int param_2)
 
 {
@@ -45914,7 +45923,7 @@ void* bzero(uchar* param_1, int param_2)
     return puVar1;
 }
 
-// Function @0x80081DAC
+//80081DAC
 char toupper(char param_1)
 
 {
@@ -45924,7 +45933,7 @@ char toupper(char param_1)
     return param_1;
 }
 
-// Function @0x80081DDC
+//80081DDC
 char tolower(char param_1)
 
 {
@@ -45934,7 +45943,7 @@ char tolower(char param_1)
     return param_1;
 }
 
-// Function @0x80081E0C
+//80081E0C
 void* memcpy(uchar* param_1, uchar* param_2, int param_3)
 
 {
@@ -45955,7 +45964,7 @@ void* memcpy(uchar* param_1, uchar* param_2, int param_3)
     return puVar2;
 }
 
-// Function @0x80081E40
+//80081E40
 void* memset(uchar* param_1, uchar param_2, int param_3)
 
 {
@@ -45974,7 +45983,7 @@ void* memset(uchar* param_1, uchar param_2, int param_3)
     return puVar1;
 }
 
-// Function @0x80081E6C
+//80081E6C
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 int rand(void)
@@ -45984,7 +45993,7 @@ int rand(void)
     return DAT_801eeb48 >> 0x10 & 0x7fff;
 }
 
-// Function @0x80081E9C
+//80081E9C
 /* Possible GS_101.OBJ/GsSetNearClip
    Possible GS_102.OBJ/GsSetFarClip
    Possible GS_124.OBJ/GsSetWorkBase */
@@ -45996,7 +46005,7 @@ void srand(uint param_1)
     return;
 }
 
-// Function @0x80081EAC
+//80081EAC
 char* strcat(char* param_1, char* param_2)
 
 {
@@ -46029,14 +46038,14 @@ char* strcat(char* param_1, char* param_2)
     return (char*)0x0;
 }
 
-// Function @0x80081F38
+//80081F38
 void STRCAT_OBJ_8C(void)
 
 {
     return;
 }
 
-// Function @0x80081F54
+//80081F54
 int strcmp(char* param_1, char* param_2)
 
 {
@@ -46066,14 +46075,14 @@ int strcmp(char* param_1, char* param_2)
     return iVar2;
 }
 
-// Function @0x80081FB0
+//80081FB0
 void STRCMP_OBJ_5C(void)
 
 {
     return;
 }
 
-// Function @0x80081FB8
+//80081FB8
 char* strcpy(char* param_1, char* param_2)
 
 {
@@ -46098,7 +46107,7 @@ char* strcpy(char* param_1, char* param_2)
     return pcVar2;
 }
 
-// Function @0x80081FFC
+//80081FFC
 int strlen(char* param_1)
 
 {
@@ -46116,14 +46125,14 @@ int strlen(char* param_1)
     return iVar2;
 }
 
-// Function @0x80082024
+//80082024
 void STRLEN_OBJ_28(void)
 
 {
     return;
 }
 
-// Function @0x8008202C
+//8008202C
 char* strncpy(char* param_1, char* param_2, int param_3)
 
 {
@@ -46152,7 +46161,7 @@ char* strncpy(char* param_1, char* param_2, int param_3)
     return pcVar2;
 }
 
-// Function @0x80082070
+//80082070
 void STRNCPY_OBJ_44(undefined1* param_1, undefined4 param_2, int param_3)
 
 {
@@ -46167,14 +46176,14 @@ void STRNCPY_OBJ_44(undefined1* param_1, undefined4 param_2, int param_3)
     return;
 }
 
-// Function @0x80082098
+//80082098
 void STRNCPY_OBJ_6C(void)
 
 {
     return;
 }
 
-// Function @0x800820A4
+//800820A4
 char* strrchr(char* param_1, char param_2)
 
 {
@@ -46199,7 +46208,7 @@ char* strrchr(char* param_1, char param_2)
     return (char*)0x0;
 }
 
-// Function @0x800820EC
+//800820EC
 int todigit(byte param_1)
 
 {
@@ -46217,14 +46226,14 @@ int todigit(byte param_1)
     return iVar1;
 }
 
-// Function @0x8008213C
+//8008213C
 void TODIGIT_OBJ_50(void)
 
 {
     return;
 }
 
-// Function @0x8008214C
+//8008214C
 int printf(char* fmt, ...)
 
 {
@@ -46243,7 +46252,7 @@ int printf(char* fmt, ...)
     return iVar1;
 }
 
-// Function @0x80082188
+//80082188
 void prnt(undefined4 param_1, byte* param_2, uint* param_3)
 
 {
@@ -46580,7 +46589,7 @@ code_r0x800825fc:
     return;
 }
 
-// Function @0x800821D8
+//800821D8
 void PRNT_OBJ_50(void)
 
 {
@@ -46907,7 +46916,7 @@ code_r0x800825fc:
     return;
 }
 
-// Function @0x800821E8
+//800821E8
 void PRNT_OBJ_60(void)
 
 {
@@ -46915,7 +46924,7 @@ void PRNT_OBJ_60(void)
     return;
 }
 
-// Function @0x80082210
+//80082210
 void PRNT_OBJ_88(void)
 
 {
@@ -47232,7 +47241,7 @@ code_r0x800825fc:
     return;
 }
 
-// Function @0x80082240
+//80082240
 void PRNT_OBJ_B8(void)
 
 {
@@ -47546,7 +47555,7 @@ code_r0x800825fc:
     return;
 }
 
-// Function @0x80082250
+//80082250
 void PRNT_OBJ_C8(void)
 
 {
@@ -47860,7 +47869,7 @@ code_r0x800825fc:
     return;
 }
 
-// Function @0x80082258
+//80082258
 void PRNT_OBJ_D0(void)
 
 {
@@ -48182,7 +48191,7 @@ code_r0x800825fc:
     return;
 }
 
-// Function @0x80082274
+//80082274
 void PRNT_OBJ_EC(void)
 
 {
@@ -48503,7 +48512,7 @@ code_r0x800825fc:
     return;
 }
 
-// Function @0x8008227C
+//8008227C
 void PRNT_OBJ_F4(void)
 
 {
@@ -48817,7 +48826,7 @@ code_r0x800825fc:
     return;
 }
 
-// Function @0x80082284
+//80082284
 void PRNT_OBJ_FC(void)
 
 {
@@ -49120,7 +49129,7 @@ code_r0x800825fc:
     return;
 }
 
-// Function @0x800822FC
+//800822FC
 void PRNT_OBJ_174(void)
 
 {
@@ -49437,7 +49446,7 @@ code_r0x800825fc:
     return;
 }
 
-// Function @0x80082310
+//80082310
 void PRNT_OBJ_188(void)
 
 {
@@ -49751,7 +49760,7 @@ code_r0x800825fc:
     return;
 }
 
-// Function @0x80082318
+//80082318
 void PRNT_OBJ_190(void)
 
 {
@@ -49770,7 +49779,7 @@ void PRNT_OBJ_190(void)
     return;
 }
 
-// Function @0x80082370
+//80082370
 void PRNT_OBJ_1E8(void)
 
 {
@@ -50084,7 +50093,7 @@ code_r0x800825fc:
     return;
 }
 
-// Function @0x80082378
+//80082378
 void PRNT_OBJ_1F0(void)
 
 {
@@ -50398,7 +50407,7 @@ code_r0x800825fc:
     return;
 }
 
-// Function @0x80082380
+//80082380
 void PRNT_OBJ_1F8(void)
 
 {
@@ -50712,7 +50721,7 @@ code_r0x800825fc:
     return;
 }
 
-// Function @0x80082388
+//80082388
 void PRNT_OBJ_200(void)
 
 {
@@ -50724,7 +50733,7 @@ void PRNT_OBJ_200(void)
     return;
 }
 
-// Function @0x800823A4
+//800823A4
 /* WARNING: Removing unreachable block (ram,0x80082594) */
 /* WARNING: Removing unreachable block (ram,0x800823b4) */
 /* WARNING: Removing unreachable block (ram,0x800823bc) */
@@ -50830,7 +50839,7 @@ void PRNT_OBJ_21C(void)
     return;
 }
 
-// Function @0x800823A8
+//800823A8
 /* WARNING: Removing unreachable block (ram,0x80082594) */
 /* WARNING: Removing unreachable block (ram,0x800825dc) */
 /* WARNING: Removing unreachable block (ram,0x800825ec) */
@@ -50938,7 +50947,7 @@ void PRNT_OBJ_220(void)
     return;
 }
 
-// Function @0x800823D4
+//800823D4
 /* WARNING: Removing unreachable block (ram,0x80082594) */
 /* WARNING: Removing unreachable block (ram,0x800825dc) */
 /* WARNING: Removing unreachable block (ram,0x800825ec) */
@@ -51040,7 +51049,7 @@ void PRNT_OBJ_24C(void)
     return;
 }
 
-// Function @0x800823EC
+//800823EC
 void PRNT_OBJ_264(void)
 
 {
@@ -51058,7 +51067,7 @@ void PRNT_OBJ_264(void)
     return;
 }
 
-// Function @0x80082428
+//80082428
 /* WARNING: Removing unreachable block (ram,0x80082438) */
 /* WARNING: Removing unreachable block (ram,0x80082440) */
 
@@ -51069,7 +51078,7 @@ void PRNT_OBJ_2A0(void)
     return;
 }
 
-// Function @0x8008242C
+//8008242C
 void PRNT_OBJ_2A4(void)
 
 {
@@ -51083,7 +51092,7 @@ void PRNT_OBJ_2A4(void)
     return;
 }
 
-// Function @0x80082460
+//80082460
 void PRNT_OBJ_2D8(void)
 
 {
@@ -51091,7 +51100,7 @@ void PRNT_OBJ_2D8(void)
     return;
 }
 
-// Function @0x80082470
+//80082470
 /* WARNING: Removing unreachable block (ram,0x80082608) */
 /* WARNING: Removing unreachable block (ram,0x80082678) */
 
@@ -51170,7 +51179,7 @@ void PRNT_OBJ_2E8(void)
     return;
 }
 
-// Function @0x800824D4
+//800824D4
 /* WARNING: Removing unreachable block (ram,0x800824e4) */
 /* WARNING: Removing unreachable block (ram,0x800824ec) */
 
@@ -51181,7 +51190,7 @@ void PRNT_OBJ_34C(void)
     return;
 }
 
-// Function @0x800824D8
+//800824D8
 void PRNT_OBJ_350(void)
 
 {
@@ -51195,7 +51204,7 @@ void PRNT_OBJ_350(void)
     return;
 }
 
-// Function @0x8008250C
+//8008250C
 /* WARNING: Removing unreachable block (ram,0x80082608) */
 /* WARNING: Removing unreachable block (ram,0x80082594) */
 /* WARNING: Removing unreachable block (ram,0x800825dc) */
@@ -51299,7 +51308,7 @@ void PRNT_OBJ_384(void)
     return;
 }
 
-// Function @0x80082518
+//80082518
 /* WARNING: Removing unreachable block (ram,0x80082608) */
 /* WARNING: Removing unreachable block (ram,0x80082594) */
 /* WARNING: Removing unreachable block (ram,0x800825dc) */
@@ -51401,7 +51410,7 @@ void PRNT_OBJ_390(void)
     return;
 }
 
-// Function @0x80082548
+//80082548
 /* WARNING: Removing unreachable block (ram,0x80082608) */
 /* WARNING: Removing unreachable block (ram,0x80082594) */
 /* WARNING: Removing unreachable block (ram,0x800825dc) */
@@ -51498,7 +51507,7 @@ void PRNT_OBJ_3C0(void)
     return;
 }
 
-// Function @0x8008255C
+//8008255C
 /* WARNING: Removing unreachable block (ram,0x80082608) */
 /* WARNING: Removing unreachable block (ram,0x80082678) */
 
@@ -51597,7 +51606,7 @@ PRNT_OBJ_470:
     return;
 }
 
-// Function @0x80082560
+//80082560
 void PRNT_OBJ_3D8(uint param_1)
 
 {
@@ -51700,7 +51709,7 @@ PRNT_OBJ_470:
     return;
 }
 
-// Function @0x800825FC
+//800825FC
 void PRNT_OBJ_474(void)
 
 {
@@ -51766,7 +51775,7 @@ void PRNT_OBJ_474(void)
     return;
 }
 
-// Function @0x8008271C
+//8008271C
 void PRNT_OBJ_594(void)
 
 {
@@ -51797,7 +51806,7 @@ void PRNT_OBJ_594(void)
     return;
 }
 
-// Function @0x800827C0
+//800827C0
 void PRNT_OBJ_638(void)
 
 {
@@ -52119,7 +52128,7 @@ code_r0x800825fc:
     return;
 }
 
-// Function @0x800827D8
+//800827D8
 void PRNT_OBJ_650(void)
 
 {
@@ -52446,14 +52455,14 @@ code_r0x800825fc:
     return;
 }
 
-// Function @0x800827E0
+//800827E0
 void PRNT_OBJ_658(void)
 
 {
     return;
 }
 
-// Function @0x80082814
+//80082814
 void* memchr(uchar* param_1, uchar param_2, int param_3)
 
 {
@@ -52466,7 +52475,7 @@ void* memchr(uchar* param_1, uchar param_2, int param_3)
     return (void*)0x0;
 }
 
-// Function @0x80082834
+//80082834
 undefined4 MEMCHR_OBJ_20(char* param_1, char param_2, int param_3)
 
 {
@@ -52487,14 +52496,14 @@ undefined4 MEMCHR_OBJ_20(char* param_1, char param_2, int param_3)
     return 0;
 }
 
-// Function @0x8008285C
+//8008285C
 void MEMCHR_OBJ_48(void)
 
 {
     return;
 }
 
-// Function @0x80082864
+//80082864
 void putchar(char param_1)
 
 {
@@ -52523,7 +52532,7 @@ void putchar(char param_1)
     return;
 }
 
-// Function @0x800828A0
+//800828A0
 void PUTCHAR_OBJ_3C(void)
 
 {
@@ -52533,7 +52542,7 @@ void PUTCHAR_OBJ_3C(void)
     return;
 }
 
-// Function @0x800828FC
+//800828FC
 void PUTCHAR_OBJ_98(undefined4 param_1)
 
 {
@@ -52541,7 +52550,7 @@ void PUTCHAR_OBJ_98(undefined4 param_1)
     return;
 }
 
-// Function @0x80082918
+//80082918
 int sprintf(char* buffer, char* fmt, ...)
 
 {
@@ -52858,7 +52867,7 @@ SPRINTF_OBJ_824:
     return iVar10;
 }
 
-// Function @0x800829A8
+//800829A8
 int SPRINTF_OBJ_90(undefined4 param_1, undefined4 param_2, uint param_3)
 
 {
@@ -53154,7 +53163,7 @@ int SPRINTF_OBJ_90(undefined4 param_1, undefined4 param_2, uint param_3)
     } while (true);
 }
 
-// Function @0x80082AD8
+//80082AD8
 int SPRINTF_OBJ_1C0(int param_1, uint param_2)
 
 {
@@ -53446,7 +53455,7 @@ int SPRINTF_OBJ_1C0(int param_1, uint param_2)
     } while (true);
 }
 
-// Function @0x80082B78
+//80082B78
 int SPRINTF_OBJ_260(int param_1, uint param_2)
 
 {
@@ -53738,7 +53747,7 @@ int SPRINTF_OBJ_260(int param_1, uint param_2)
     } while (true);
 }
 
-// Function @0x80082BBC
+//80082BBC
 int SPRINTF_OBJ_2A4(int param_1, uint param_2)
 
 {
@@ -54033,7 +54042,7 @@ int SPRINTF_OBJ_2A4(int param_1, uint param_2)
     } while (true);
 }
 
-// Function @0x80082BE0
+//80082BE0
 void SPRINTF_OBJ_2C8(void)
 
 {
@@ -54041,7 +54050,7 @@ void SPRINTF_OBJ_2C8(void)
     return;
 }
 
-// Function @0x80082BEC
+//80082BEC
 void SPRINTF_OBJ_2D4(void)
 
 {
@@ -54049,7 +54058,7 @@ void SPRINTF_OBJ_2D4(void)
     return;
 }
 
-// Function @0x80082BF8
+//80082BF8
 void SPRINTF_OBJ_2E0(undefined4 param_1)
 
 {
@@ -54059,7 +54068,7 @@ void SPRINTF_OBJ_2E0(undefined4 param_1)
     return;
 }
 
-// Function @0x80082C04
+//80082C04
 void SPRINTF_OBJ_2EC(undefined4 param_1)
 
 {
@@ -54069,7 +54078,7 @@ void SPRINTF_OBJ_2EC(undefined4 param_1)
     return;
 }
 
-// Function @0x80082C24
+//80082C24
 int SPRINTF_OBJ_30C(void)
 
 {
@@ -54372,7 +54381,7 @@ SPRINTF_OBJ_35C:
     goto code_r0x80082ca0;
 }
 
-// Function @0x80082C74
+//80082C74
 int SPRINTF_OBJ_35C(void)
 
 {
@@ -54675,7 +54684,7 @@ SPRINTF_OBJ_30C:
     goto code_r0x80082ca0;
 }
 
-// Function @0x80082CA0
+//80082CA0
 int SPRINTF_OBJ_388(uint param_1)
 
 {
@@ -54978,7 +54987,7 @@ SPRINTF_OBJ_30C:
     goto code_r0x80082ca0;
 }
 
-// Function @0x80082D8C
+//80082D8C
 int SPRINTF_OBJ_474(void)
 
 {
@@ -55279,7 +55288,7 @@ SPRINTF_OBJ_588:
     goto code_r0x80083088;
 }
 
-// Function @0x80082E7C
+//80082E7C
 void SPRINTF_OBJ_564(void)
 
 {
@@ -55287,7 +55296,7 @@ void SPRINTF_OBJ_564(void)
     return;
 }
 
-// Function @0x80082E90
+//80082E90
 void SPRINTF_OBJ_578(void)
 
 {
@@ -55295,7 +55304,7 @@ void SPRINTF_OBJ_578(void)
     return;
 }
 
-// Function @0x80082EA0
+//80082EA0
 int SPRINTF_OBJ_588(undefined4 param_1, uint param_2)
 
 {
@@ -55597,7 +55606,7 @@ SPRINTF_OBJ_6A0:
     goto code_r0x80083088;
 }
 
-// Function @0x80082EA8
+//80082EA8
 int SPRINTF_OBJ_590(undefined4 param_1, uint param_2, undefined4 param_3, char* param_4)
 
 {
@@ -55902,7 +55911,7 @@ SPRINTF_OBJ_6A0:
     goto code_r0x80083088;
 }
 
-// Function @0x80082F98
+//80082F98
 void SPRINTF_OBJ_680(void)
 
 {
@@ -55914,7 +55923,7 @@ void SPRINTF_OBJ_680(void)
     return;
 }
 
-// Function @0x80082FB8
+//80082FB8
 int SPRINTF_OBJ_6A0(void)
 
 {
@@ -56215,7 +56224,7 @@ SPRINTF_OBJ_588:
     goto code_r0x80083088;
 }
 
-// Function @0x8008303C
+//8008303C
 void SPRINTF_OBJ_724(void)
 
 {
@@ -56233,7 +56242,7 @@ void SPRINTF_OBJ_724(void)
     return;
 }
 
-// Function @0x80083070
+//80083070
 void SPRINTF_OBJ_758(undefined4 param_1, int param_2)
 
 {
@@ -56249,7 +56258,7 @@ void SPRINTF_OBJ_758(undefined4 param_1, int param_2)
     return;
 }
 
-// Function @0x80083088
+//80083088
 int SPRINTF_OBJ_770(void)
 
 {
@@ -56550,7 +56559,7 @@ SPRINTF_OBJ_588:
     goto code_r0x80083088;
 }
 
-// Function @0x8008311C
+//8008311C
 int SPRINTF_OBJ_804(void)
 
 {
@@ -56841,7 +56850,7 @@ SPRINTF_OBJ_824:
     return unaff_s2;
 }
 
-// Function @0x80083174
+//80083174
 void* memmove(uchar* param_1, uchar* param_2, int param_3)
 
 {
@@ -56885,14 +56894,14 @@ void* memmove(uchar* param_1, uchar* param_2, int param_3)
     return param_1;
 }
 
-// Function @0x800831D8
+//800831D8
 undefined4 MEMMOVE_OBJ_64(undefined4 param_1)
 
 {
     return param_1;
 }
 
-// Function @0x800831E0
+//800831E0
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void exit(void)
@@ -56902,7 +56911,7 @@ void exit(void)
     return;
 }
 
-// Function @0x800831F0
+//800831F0
 void _card_info(void)
 
 {
@@ -56910,7 +56919,7 @@ void _card_info(void)
     return;
 }
 
-// Function @0x80083200
+//80083200
 void _card_load(void)
 
 {
@@ -56918,7 +56927,7 @@ void _card_load(void)
     return;
 }
 
-// Function @0x80083210
+//80083210
 void _card_auto(void)
 
 {
@@ -56926,7 +56935,7 @@ void _card_auto(void)
     return;
 }
 
-// Function @0x80083220
+//80083220
 void InitCARD(void)
 
 {
@@ -56934,7 +56943,7 @@ void InitCARD(void)
     return;
 }
 
-// Function @0x80083230
+//80083230
 void StartCARD(void)
 
 {
@@ -56942,7 +56951,7 @@ void StartCARD(void)
     return;
 }
 
-// Function @0x80083240
+//80083240
 void StopCARD(void)
 
 {
@@ -56950,7 +56959,7 @@ void StopCARD(void)
     return;
 }
 
-// Function @0x80083250
+//80083250
 void _card_read(void)
 
 {
@@ -56958,7 +56967,7 @@ void _card_read(void)
     return;
 }
 
-// Function @0x80083260
+//80083260
 void _new_card(void)
 
 {
@@ -56966,7 +56975,7 @@ void _new_card(void)
     return;
 }
 
-// Function @0x80083270
+//80083270
 void _card_clear(undefined4 param_1)
 
 {
@@ -56975,7 +56984,7 @@ void _card_clear(undefined4 param_1)
     return;
 }
 
-// Function @0x800832A8
+//800832A8
 void _card_write(void)
 
 {
@@ -56983,7 +56992,7 @@ void _card_write(void)
     return;
 }
 
-// Function @0x800832B8
+//800832B8
 u_short LoadTPage(u_long* pix, int tp, int abr, int x, int y, int w, int h)
 
 {
@@ -57020,7 +57029,7 @@ u_short LoadTPage(u_long* pix, int tp, int abr, int x, int y, int w, int h)
     return uVar1;
 }
 
-// Function @0x80083360
+//80083360
 u_short EXT_OBJ_A8(void)
 
 {
@@ -57036,7 +57045,7 @@ u_short EXT_OBJ_A8(void)
     return uVar1;
 }
 
-// Function @0x80083364
+//80083364
 u_short EXT_OBJ_AC(RECT* param_1)
 
 {
@@ -57052,7 +57061,7 @@ u_short EXT_OBJ_AC(RECT* param_1)
     return uVar1;
 }
 
-// Function @0x800833A4
+//800833A4
 u_short LoadClut(u_long* clut, int x, int y)
 
 {
@@ -57068,7 +57077,7 @@ u_short LoadClut(u_long* clut, int x, int y)
     return uVar1;
 }
 
-// Function @0x8008340C
+//8008340C
 u_short LoadClut2(u_long* param_1, int param_2, int param_3)
 
 {
@@ -57084,7 +57093,7 @@ u_short LoadClut2(u_long* param_1, int param_2, int param_3)
     return uVar1;
 }
 
-// Function @0x80083474
+//80083474
 DRAWENV* SetDefDrawEnv(DRAWENV* env, int x, int y, int w, int h)
 
 {
@@ -57120,7 +57129,7 @@ DRAWENV* SetDefDrawEnv(DRAWENV* env, int x, int y, int w, int h)
     return env;
 }
 
-// Function @0x800834EC
+//800834EC
 void EXT_OBJ_234(void)
 
 {
@@ -57142,7 +57151,7 @@ void EXT_OBJ_234(void)
     return;
 }
 
-// Function @0x80083544
+//80083544
 DISPENV* SetDefDispEnv(DISPENV* env, int x, int y, int w, int h)
 
 {
@@ -57161,7 +57170,7 @@ DISPENV* SetDefDispEnv(DISPENV* env, int x, int y, int w, int h)
     return env;
 }
 
-// Function @0x80083580
+//80083580
 void SetDumpFnt(int id)
 
 {
@@ -57172,7 +57181,7 @@ void SetDumpFnt(int id)
     return;
 }
 
-// Function @0x800835C0
+//800835C0
 void FntLoad(int tx, int ty)
 
 {
@@ -57183,7 +57192,7 @@ void FntLoad(int tx, int ty)
     return;
 }
 
-// Function @0x80083664
+//80083664
 int FntOpen(int x, int y, int w, int h, int isbg, int n)
 
 {
@@ -57244,14 +57253,14 @@ int FntOpen(int x, int y, int w, int h, int isbg, int n)
     return iVar1;
 }
 
-// Function @0x800838EC
+//800838EC
 void FONT_OBJ_36C(void)
 
 {
     return;
 }
 
-// Function @0x8008391C
+//8008391C
 u_long* FntFlush(int id)
 
 {
@@ -57364,7 +57373,7 @@ u_long* FntFlush(int id)
     return puVar4;
 }
 
-// Function @0x80083AB8
+//80083AB8
 u_long* FONT_OBJ_538(void)
 
 {
@@ -57464,7 +57473,7 @@ code_r0x80083b64:
     goto FONT_OBJ_5E0;
 }
 
-// Function @0x80083AE8
+//80083AE8
 u_long* FONT_OBJ_568(void)
 
 {
@@ -57564,7 +57573,7 @@ code_r0x80083b64:
     goto FONT_OBJ_5E0;
 }
 
-// Function @0x80083B4C
+//80083B4C
 u_long* FONT_OBJ_5CC(void)
 
 {
@@ -57669,7 +57678,7 @@ code_r0x80083b64:
     goto FONT_OBJ_5E0;
 }
 
-// Function @0x80083B64
+//80083B64
 u_long* FONT_OBJ_5E4(void)
 
 {
@@ -57775,14 +57784,14 @@ code_r0x80083b64:
     } while (true);
 }
 
-// Function @0x80083C0C
+//80083C0C
 void FONT_OBJ_68C(void)
 
 {
     return;
 }
 
-// Function @0x80083C40
+//80083C40
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 int FntPrint(void)
@@ -57828,7 +57837,7 @@ int FntPrint(void)
     return iVar1;
 }
 
-// Function @0x80083DAC
+//80083DAC
 undefined4 FONT_OBJ_82C(undefined4 param_1, uint param_2, int param_3, char param_4)
 
 {
@@ -57961,7 +57970,7 @@ FONT_OBJ_748:
     return uVar1;
 }
 
-// Function @0x80083DF4
+//80083DF4
 undefined4 FONT_OBJ_874(void)
 
 {
@@ -58052,7 +58061,7 @@ FONT_OBJ_748:
     return uVar1;
 }
 
-// Function @0x80083E74
+//80083E74
 undefined4 FONT_OBJ_8F4(void)
 
 {
@@ -58142,7 +58151,7 @@ FONT_OBJ_748:
     return uVar2;
 }
 
-// Function @0x80083EEC
+//80083EEC
 void FONT_OBJ_96C(undefined4 param_1, undefined4 param_2)
 
 {
@@ -58154,7 +58163,7 @@ void FONT_OBJ_96C(undefined4 param_1, undefined4 param_2)
     return;
 }
 
-// Function @0x80083F0C
+//80083F0C
 undefined4 FONT_OBJ_98C(void)
 
 {
@@ -58217,7 +58226,7 @@ FONT_OBJ_748:
     return uVar1;
 }
 
-// Function @0x80083F2C
+//80083F2C
 undefined4 FONT_OBJ_9AC(undefined4 param_1, undefined4 param_2, int param_3)
 
 {
@@ -58278,7 +58287,7 @@ FONT_OBJ_748:
     return uVar1;
 }
 
-// Function @0x80083F30
+//80083F30
 undefined4 FONT_OBJ_9B0(undefined4 param_1, undefined4 param_2, int param_3)
 
 {
@@ -58341,14 +58350,14 @@ FONT_OBJ_748:
     return uVar1;
 }
 
-// Function @0x80083FF8
+//80083FF8
 void FONT_OBJ_A78(void)
 
 {
     return;
 }
 
-// Function @0x80084020
+//80084020
 u_short GetTPage(int tp, int abr, int x, int y)
 
 {
@@ -58367,7 +58376,7 @@ u_short GetTPage(int tp, int abr, int x, int y)
     return uVar1;
 }
 
-// Function @0x800840C4
+//800840C4
 uint PRIM_OBJ_A4(void)
 
 {
@@ -58377,14 +58386,14 @@ uint PRIM_OBJ_A4(void)
     return in_v1 | in_v0;
 }
 
-// Function @0x800840E8
+//800840E8
 u_short GetClut(int x, int y)
 
 {
     return (ushort)(y << 6) | (ushort)(x >> 4) & 0x3f;
 }
 
-// Function @0x80084100
+//80084100
 void DumpTPage(u_short tpage)
 
 {
@@ -58407,14 +58416,14 @@ void DumpTPage(u_short tpage)
     return;
 }
 
-// Function @0x800841BC
+//800841BC
 void PRIM_OBJ_19C(void)
 
 {
     return;
 }
 
-// Function @0x800841D0
+//800841D0
 void DumpClut(u_short clut)
 
 {
@@ -58422,7 +58431,7 @@ void DumpClut(u_short clut)
     return;
 }
 
-// Function @0x80084210
+//80084210
 void* NextPrim(void* p)
 
 {
@@ -58432,7 +58441,7 @@ void* NextPrim(void* p)
     return (void*)(*p & 0xffffff | 0x80000000);
 }
 
-// Function @0x8008422C
+//8008422C
 int IsEndPrim(void* p)
 
 {
@@ -58440,7 +58449,7 @@ int IsEndPrim(void* p)
     return (uint)((*p & 0xffffff) == 0xffffff);
 }
 
-// Function @0x80084248
+//80084248
 void AddPrim(void* ot, void* p)
 
 {
@@ -58453,7 +58462,7 @@ void AddPrim(void* ot, void* p)
     return;
 }
 
-// Function @0x80084284
+//80084284
 void AddPrims(void* ot, void* p0, void* p1)
 
 {
@@ -58466,7 +58475,7 @@ void AddPrims(void* ot, void* p0, void* p1)
     return;
 }
 
-// Function @0x800842C0
+//800842C0
 void CatPrim(void* p0, void* p1)
 
 {
@@ -58475,7 +58484,7 @@ void CatPrim(void* p0, void* p1)
     return;
 }
 
-// Function @0x800842E4
+//800842E4
 void TermPrim(void* p)
 
 {
@@ -58484,7 +58493,7 @@ void TermPrim(void* p)
     return;
 }
 
-// Function @0x800842FC
+//800842FC
 void SetSemiTrans(void* p, int abe)
 
 {
@@ -58496,7 +58505,7 @@ void SetSemiTrans(void* p, int abe)
     return;
 }
 
-// Function @0x8008431C
+//8008431C
 void PRIM_OBJ_2FC(int param_1)
 
 {
@@ -58506,7 +58515,7 @@ void PRIM_OBJ_2FC(int param_1)
     return;
 }
 
-// Function @0x80084324
+//80084324
 void SetShadeTex(void* p, int tge)
 
 {
@@ -58518,7 +58527,7 @@ void SetShadeTex(void* p, int tge)
     return;
 }
 
-// Function @0x80084344
+//80084344
 void PRIM_OBJ_324(int param_1)
 
 {
@@ -58528,7 +58537,7 @@ void PRIM_OBJ_324(int param_1)
     return;
 }
 
-// Function @0x8008434C
+//8008434C
 void SetPolyF3(POLY_F3* p)
 
 {
@@ -58538,7 +58547,7 @@ void SetPolyF3(POLY_F3* p)
     return;
 }
 
-// Function @0x80084360
+//80084360
 void SetPolyFT3(POLY_FT3* p)
 
 {
@@ -58548,7 +58557,7 @@ void SetPolyFT3(POLY_FT3* p)
     return;
 }
 
-// Function @0x80084374
+//80084374
 void SetPolyG3(POLY_G3* p)
 
 {
@@ -58558,7 +58567,7 @@ void SetPolyG3(POLY_G3* p)
     return;
 }
 
-// Function @0x80084388
+//80084388
 void SetPolyGT3(POLY_GT3* p)
 
 {
@@ -58568,7 +58577,7 @@ void SetPolyGT3(POLY_GT3* p)
     return;
 }
 
-// Function @0x8008439C
+//8008439C
 void SetPolyF4(POLY_F4* p)
 
 {
@@ -58578,7 +58587,7 @@ void SetPolyF4(POLY_F4* p)
     return;
 }
 
-// Function @0x800843B0
+//800843B0
 void SetPolyFT4(POLY_FT4* p)
 
 {
@@ -58588,7 +58597,7 @@ void SetPolyFT4(POLY_FT4* p)
     return;
 }
 
-// Function @0x800843C4
+//800843C4
 void SetPolyG4(POLY_G4* p)
 
 {
@@ -58598,7 +58607,7 @@ void SetPolyG4(POLY_G4* p)
     return;
 }
 
-// Function @0x800843D8
+//800843D8
 void SetPolyGT4(POLY_GT4* p)
 
 {
@@ -58608,7 +58617,7 @@ void SetPolyGT4(POLY_GT4* p)
     return;
 }
 
-// Function @0x800843EC
+//800843EC
 void SetSprt8(SPRT_8* p)
 
 {
@@ -58618,7 +58627,7 @@ void SetSprt8(SPRT_8* p)
     return;
 }
 
-// Function @0x80084400
+//80084400
 void SetSprt16(SPRT_16* p)
 
 {
@@ -58628,7 +58637,7 @@ void SetSprt16(SPRT_16* p)
     return;
 }
 
-// Function @0x80084414
+//80084414
 void SetSprt(SPRT* p)
 
 {
@@ -58638,7 +58647,7 @@ void SetSprt(SPRT* p)
     return;
 }
 
-// Function @0x80084428
+//80084428
 void SetTile1(TILE_1* p)
 
 {
@@ -58648,7 +58657,7 @@ void SetTile1(TILE_1* p)
     return;
 }
 
-// Function @0x8008443C
+//8008443C
 void SetTile8(TILE_8* p)
 
 {
@@ -58658,7 +58667,7 @@ void SetTile8(TILE_8* p)
     return;
 }
 
-// Function @0x80084450
+//80084450
 void SetTile16(TILE_16* p)
 
 {
@@ -58668,7 +58677,7 @@ void SetTile16(TILE_16* p)
     return;
 }
 
-// Function @0x80084464
+//80084464
 void SetTile(TILE* p)
 
 {
@@ -58678,7 +58687,7 @@ void SetTile(TILE* p)
     return;
 }
 
-// Function @0x80084478
+//80084478
 void SetLineF2(LINE_F2* p)
 
 {
@@ -58688,7 +58697,7 @@ void SetLineF2(LINE_F2* p)
     return;
 }
 
-// Function @0x8008448C
+//8008448C
 void SetLineG2(LINE_G2* p)
 
 {
@@ -58698,7 +58707,7 @@ void SetLineG2(LINE_G2* p)
     return;
 }
 
-// Function @0x800844A0
+//800844A0
 void SetLineF3(LINE_F3* p)
 
 {
@@ -58709,7 +58718,7 @@ void SetLineF3(LINE_F3* p)
     return;
 }
 
-// Function @0x800844C0
+//800844C0
 void SetLineG3(LINE_G3* p)
 
 {
@@ -58720,7 +58729,7 @@ void SetLineG3(LINE_G3* p)
     return;
 }
 
-// Function @0x800844E0
+//800844E0
 void SetLineF4(LINE_F4* p)
 
 {
@@ -58731,7 +58740,7 @@ void SetLineF4(LINE_F4* p)
     return;
 }
 
-// Function @0x80084500
+//80084500
 void SetLineG4(LINE_G4* p)
 
 {
@@ -58742,7 +58751,7 @@ void SetLineG4(LINE_G4* p)
     return;
 }
 
-// Function @0x80084520
+//80084520
 void SetBlockFill(int param_1)
 
 {
@@ -58751,7 +58760,7 @@ void SetBlockFill(int param_1)
     return;
 }
 
-// Function @0x80084534
+//80084534
 void SetDrawMove(DR_MOVE* p)
 
 {
@@ -58761,7 +58770,7 @@ void SetDrawMove(DR_MOVE* p)
     return;
 }
 
-// Function @0x80084550
+//80084550
 void SetDrawTPage(DR_TPAGE* p, int dfe, int dtd, int tpage)
 
 {
@@ -58787,7 +58796,7 @@ void SetDrawTPage(DR_TPAGE* p, int dfe, int dtd, int tpage)
     return;
 }
 
-// Function @0x800845E0
+//800845E0
 void PRIM_OBJ_5C0(void)
 
 {
@@ -58798,7 +58807,7 @@ void PRIM_OBJ_5C0(void)
     return;
 }
 
-// Function @0x80084604
+//80084604
 void SetDrawLoad(DR_LOAD* p, RECT* rect)
 
 {
@@ -58818,7 +58827,7 @@ void SetDrawLoad(DR_LOAD* p, RECT* rect)
     return;
 }
 
-// Function @0x80084668
+//80084668
 int MargePrim(void* p0, void* p1)
 
 {
@@ -58835,14 +58844,14 @@ int MargePrim(void* p0, void* p1)
     return -1;
 }
 
-// Function @0x80084698
+//80084698
 void PRIM_OBJ_678(void)
 
 {
     return;
 }
 
-// Function @0x800846A0
+//800846A0
 void DumpDrawEnv(DRAWENV* env)
 
 {
@@ -58874,14 +58883,14 @@ void DumpDrawEnv(DRAWENV* env)
     return;
 }
 
-// Function @0x8008480C
+//8008480C
 void PRIM_OBJ_7EC(void)
 
 {
     return;
 }
 
-// Function @0x80084820
+//80084820
 void DumpDispEnv(DISPENV* env)
 
 {
@@ -58896,7 +58905,7 @@ void DumpDispEnv(DISPENV* env)
     return;
 }
 
-// Function @0x800848CC
+//800848CC
 int ResetGraph(int mode)
 
 {
@@ -58926,14 +58935,14 @@ int ResetGraph(int mode)
     return iVar1;
 }
 
-// Function @0x80084A0C
+//80084A0C
 void SYS_OBJ_140(void)
 
 {
     return;
 }
 
-// Function @0x80084A24
+//80084A24
 int SetGraphReverse(int mode)
 
 {
@@ -58963,7 +58972,7 @@ int SetGraphReverse(int mode)
     return uVar4;
 }
 
-// Function @0x80084AB0
+//80084AB0
 void SYS_OBJ_1E4(uint param_1)
 
 {
@@ -58981,7 +58990,7 @@ void SYS_OBJ_1E4(uint param_1)
     return;
 }
 
-// Function @0x80084B38
+//80084B38
 int SetGraphDebug(int level)
 
 {
@@ -58997,7 +59006,7 @@ int SetGraphDebug(int level)
     return uVar1;
 }
 
-// Function @0x80084BA4
+//80084BA4
 int SetGraphQueue(int mode)
 
 {
@@ -59015,14 +59024,14 @@ int SetGraphQueue(int mode)
     return uVar1;
 }
 
-// Function @0x80084C50
+//80084C50
 undefined1 GetGraphType(void)
 
 {
     return DAT_800c8134;
 }
 
-// Function @0x80084C60
+//80084C60
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 int GetGraphDebug(void)
@@ -59031,7 +59040,7 @@ int GetGraphDebug(void)
     return (uint)g_debugLevel;
 }
 
-// Function @0x80084C70
+//80084C70
 u_long DrawSyncCallback(func* func)
 
 {
@@ -59045,7 +59054,7 @@ u_long DrawSyncCallback(func* func)
     return lastDrawSyncCallback;
 }
 
-// Function @0x80084CCC
+//80084CCC
 void SetDispMask(int mask)
 
 {
@@ -59065,7 +59074,7 @@ void SetDispMask(int mask)
     return;
 }
 
-// Function @0x80084D68
+//80084D68
 int DrawSync(int mode)
 
 {
@@ -59078,7 +59087,7 @@ int DrawSync(int mode)
     return iVar1;
 }
 
-// Function @0x80084DD4
+//80084DD4
 void checkRECT(undefined4 param_1, short* param_2)
 
 {
@@ -59108,7 +59117,7 @@ void checkRECT(undefined4 param_1, short* param_2)
     return;
 }
 
-// Function @0x80084EAC
+//80084EAC
 void SYS_OBJ_5E0(void)
 
 {
@@ -59120,14 +59129,14 @@ void SYS_OBJ_5E0(void)
     return;
 }
 
-// Function @0x80084EE8
+//80084EE8
 void SYS_OBJ_61C(void)
 
 {
     return;
 }
 
-// Function @0x80084EFC
+//80084EFC
 int ClearImage(RECT* rect, u_char r, u_char g, u_char b)
 
 {
@@ -59140,7 +59149,7 @@ int ClearImage(RECT* rect, u_char r, u_char g, u_char b)
     return iVar1;
 }
 
-// Function @0x80084F90
+//80084F90
 int LoadImage(RECT* rect, u_long* buffer)
 
 {
@@ -59152,7 +59161,7 @@ int LoadImage(RECT* rect, u_long* buffer)
     return iVar1;
 }
 
-// Function @0x80084FF4
+//80084FF4
 int StoreImage(RECT* rect, u_long* p)
 
 {
@@ -59164,7 +59173,7 @@ int StoreImage(RECT* rect, u_long* p)
     return iVar1;
 }
 
-// Function @0x80085058
+//80085058
 int MoveImage(RECT* rect, int x, int y)
 
 {
@@ -59188,14 +59197,14 @@ int MoveImage(RECT* rect, int x, int y)
     return iVar1;
 }
 
-// Function @0x80085100
+//80085100
 void SYS_OBJ_834(void)
 
 {
     return;
 }
 
-// Function @0x8008511C
+//8008511C
 u_long* ClearOrderTable(u_long* orderTable, int entryCount)
 
 {
@@ -59216,7 +59225,7 @@ u_long* ClearOrderTable(u_long* orderTable, int entryCount)
     return orderTable;
 }
 
-// Function @0x800851D4
+//800851D4
 u_long* ClearOTagR(u_long* ot, int n)
 
 {
@@ -59228,7 +59237,7 @@ u_long* ClearOTagR(u_long* ot, int n)
     return ot;
 }
 
-// Function @0x8008526C
+//8008526C
 void DrawPrim(void* p)
 
 {
@@ -59240,7 +59249,7 @@ void DrawPrim(void* p)
     return;
 }
 
-// Function @0x800852CC
+//800852CC
 void DrawOTag(u_long* p)
 
 {
@@ -59252,7 +59261,7 @@ void DrawOTag(u_long* p)
     return;
 }
 
-// Function @0x80085340
+//80085340
 DRAWENV* PutDrawEnv(DRAWENV* env)
 
 {
@@ -59269,7 +59278,7 @@ DRAWENV* PutDrawEnv(DRAWENV* env)
     return env;
 }
 
-// Function @0x80085404
+//80085404
 void DrawOTagEnv(uint param_1, DRAWENV* param_2)
 
 {
@@ -59286,7 +59295,7 @@ void DrawOTagEnv(uint param_1, DRAWENV* param_2)
     return;
 }
 
-// Function @0x800854E0
+//800854E0
 DRAWENV* GetDrawEnv(DRAWENV* env)
 
 {
@@ -59294,7 +59303,7 @@ DRAWENV* GetDrawEnv(DRAWENV* env)
     return env;
 }
 
-// Function @0x80085518
+//80085518
 DISPENV* PutDispEnv(DISPENV* env)
 
 {
@@ -59447,7 +59456,7 @@ SYS_OBJ_F54:
     return env;
 }
 
-// Function @0x800855C8
+//800855C8
 void SYS_OBJ_CFC(void)
 
 {
@@ -59581,7 +59590,7 @@ SYS_OBJ_F54:
     return;
 }
 
-// Function @0x800856B4
+//800856B4
 void SYS_OBJ_DE8(undefined4 param_1, uint param_2, uint param_3)
 
 {
@@ -59695,7 +59704,7 @@ code_r0x800857c4:
     return;
 }
 
-// Function @0x80085768
+//80085768
 void SYS_OBJ_E9C(uint param_1, uint param_2, uint param_3)
 
 {
@@ -59774,7 +59783,7 @@ code_r0x800857c4:
     return;
 }
 
-// Function @0x800857C4
+//800857C4
 void SYS_OBJ_EF8(undefined4 param_1, uint param_2, uint param_3)
 
 {
@@ -59836,7 +59845,7 @@ void SYS_OBJ_EF8(undefined4 param_1, uint param_2, uint param_3)
     return;
 }
 
-// Function @0x80085954
+//80085954
 void SYS_OBJ_1088(void)
 
 {
@@ -59856,7 +59865,7 @@ void SYS_OBJ_1088(void)
     return;
 }
 
-// Function @0x800859C8
+//800859C8
 DISPENV* GetDispEnv(DISPENV* env)
 
 {
@@ -59864,7 +59873,7 @@ DISPENV* GetDispEnv(DISPENV* env)
     return env;
 }
 
-// Function @0x80085A00
+//80085A00
 uint GetODE(void)
 
 {
@@ -59874,7 +59883,7 @@ uint GetODE(void)
     return uVar1 >> 0x1f;
 }
 
-// Function @0x80085A34
+//80085A34
 void SetTexWindow(DR_TWIN* p, RECT* tw)
 
 {
@@ -59887,7 +59896,7 @@ void SetTexWindow(DR_TWIN* p, RECT* tw)
     return;
 }
 
-// Function @0x80085A70
+//80085A70
 void SetDrawArea(DR_AREA* p, RECT* r)
 
 {
@@ -59902,7 +59911,7 @@ void SetDrawArea(DR_AREA* p, RECT* r)
     return;
 }
 
-// Function @0x80085AF4
+//80085AF4
 void SetDrawOffset(DR_OFFSET* p, u_short* ofs)
 
 {
@@ -59915,7 +59924,7 @@ void SetDrawOffset(DR_OFFSET* p, u_short* ofs)
     return;
 }
 
-// Function @0x80085B38
+//80085B38
 void SetPriority(DR_PRIO* p, int pbc, int pbw)
 
 {
@@ -59931,7 +59940,7 @@ void SetPriority(DR_PRIO* p, int pbc, int pbw)
     return;
 }
 
-// Function @0x80085B60
+//80085B60
 void SetDrawMode(DR_MODE* p, int dfe, int dtd, int tpage, RECT* tw)
 
 {
@@ -59945,7 +59954,7 @@ void SetDrawMode(DR_MODE* p, int dfe, int dtd, int tpage, RECT* tw)
     return;
 }
 
-// Function @0x80085BB8
+//80085BB8
 void SetDrawEnv(DR_ENV* dr_env, DRAWENV* env)
 
 {
@@ -60006,7 +60015,7 @@ void SetDrawEnv(DR_ENV* dr_env, DRAWENV* env)
     return;
 }
 
-// Function @0x80085D20
+//80085D20
 void SYS_OBJ_1454(void)
 
 {
@@ -60040,7 +60049,7 @@ void SYS_OBJ_1454(void)
     return;
 }
 
-// Function @0x80085E3C
+//80085E3C
 void SYS_OBJ_1570(void)
 
 {
@@ -60051,7 +60060,7 @@ void SYS_OBJ_1570(void)
     return;
 }
 
-// Function @0x80085E5C
+//80085E5C
 uint get_mode(int param_1, int param_2, uint param_3)
 
 {
@@ -60081,7 +60090,7 @@ uint get_mode(int param_1, int param_2, uint param_3)
     return uVar1 | param_3;
 }
 
-// Function @0x80085EB0
+//80085EB0
 uint SYS_OBJ_15E4(void)
 
 {
@@ -60091,7 +60100,7 @@ uint SYS_OBJ_15E4(void)
     return in_v1 | in_v0;
 }
 
-// Function @0x80085EB8
+//80085EB8
 uint get_cs(short param_1, short param_2)
 
 {
@@ -60116,7 +60125,7 @@ uint get_cs(short param_1, short param_2)
     return uVar1;
 }
 
-// Function @0x80085F74
+//80085F74
 uint SYS_OBJ_16A8(void)
 
 {
@@ -60126,7 +60135,7 @@ uint SYS_OBJ_16A8(void)
     return in_v1 | in_v0 | 0xe3000000;
 }
 
-// Function @0x80085F84
+//80085F84
 uint get_ce(short param_1, short param_2)
 
 {
@@ -60151,7 +60160,7 @@ uint get_ce(short param_1, short param_2)
     return uVar1;
 }
 
-// Function @0x80086040
+//80086040
 uint SYS_OBJ_1774(void)
 
 {
@@ -60161,7 +60170,7 @@ uint SYS_OBJ_1774(void)
     return in_v1 | in_v0 | 0xe4000000;
 }
 
-// Function @0x80086050
+//80086050
 uint get_ofs(uint param_1, uint param_2)
 
 {
@@ -60174,7 +60183,7 @@ uint get_ofs(uint param_1, uint param_2)
     return (param_2 & 0xfff) << 0xc | param_1 & 0xfff | 0xe5000000;
 }
 
-// Function @0x80086088
+//80086088
 uint SYS_OBJ_17BC(void)
 
 {
@@ -60184,7 +60193,7 @@ uint SYS_OBJ_17BC(void)
     return in_v1 | in_v0 | 0xe5000000;
 }
 
-// Function @0x80086098
+//80086098
 uint get_tw(byte* param_1)
 
 {
@@ -60199,14 +60208,14 @@ uint get_tw(byte* param_1)
         (int)(-(int)*(short*)(param_1 + 4) & 0xffU) >> 3;
 }
 
-// Function @0x80086110
+//80086110
 void SYS_OBJ_1844(void)
 
 {
     return;
 }
 
-// Function @0x8008611C
+//8008611C
 int get_dx(short* param_1)
 
 {
@@ -60231,7 +60240,7 @@ int get_dx(short* param_1)
     return iVar1;
 }
 
-// Function @0x80086168
+//80086168
 void SYS_OBJ_189C(void)
 
 {
@@ -60239,28 +60248,28 @@ void SYS_OBJ_189C(void)
     return;
 }
 
-// Function @0x800861CC
+//800861CC
 int SYS_OBJ_1900(short* param_1)
 
 {
     return (int)*param_1;
 }
 
-// Function @0x800861D0
+//800861D0
 void SYS_OBJ_1904(void)
 
 {
     return;
 }
 
-// Function @0x800861D8
+//800861D8
 undefined4 _status(void)
 
 {
     return *(undefined4*)PTR_GPU_REG1_800c8208;
 }
 
-// Function @0x800861F0
+//800861F0
 int _otc(int param_1, int param_2)
 
 {
@@ -60285,7 +60294,7 @@ int _otc(int param_1, int param_2)
     return -1;
 }
 
-// Function @0x800862D8
+//800862D8
 undefined4 _clr(ushort* param_1, uint param_2)
 
 {
@@ -60340,7 +60349,7 @@ undefined4 _clr(ushort* param_1, uint param_2)
     return uVar2;
 }
 
-// Function @0x80086334
+//80086334
 undefined4 SYS_OBJ_1A68(void)
 
 {
@@ -60389,7 +60398,7 @@ undefined4 SYS_OBJ_1A68(void)
     return uVar1;
 }
 
-// Function @0x80086378
+//80086378
 undefined4 SYS_OBJ_1AAC(void)
 
 {
@@ -60428,7 +60437,7 @@ undefined4 SYS_OBJ_1AAC(void)
     return uVar2;
 }
 
-// Function @0x800864C4
+//800864C4
 undefined4 SYS_OBJ_1BF8(void)
 
 {
@@ -60436,7 +60445,7 @@ undefined4 SYS_OBJ_1BF8(void)
     return 0;
 }
 
-// Function @0x800864F0
+//800864F0
 /* WARNING: Removing unreachable block (ram,0x8008666c) */
 
 undefined4 _dws(undefined4* param_1, undefined4* param_2)
@@ -60504,7 +60513,7 @@ undefined4 _dws(undefined4* param_1, undefined4* param_2)
     return uVar1;
 }
 
-// Function @0x80086560
+//80086560
 undefined4 SYS_OBJ_1C94(void)
 
 {
@@ -60568,7 +60577,7 @@ undefined4 SYS_OBJ_1C94(void)
     return uVar1;
 }
 
-// Function @0x800865A8
+//800865A8
 undefined4 SYS_OBJ_1CDC(undefined2 param_1)
 
 {
@@ -60622,14 +60631,14 @@ undefined4 SYS_OBJ_1CDC(undefined2 param_1)
     return 0xffffffff;
 }
 
-// Function @0x8008671C
+//8008671C
 void SYS_OBJ_1E50(void)
 
 {
     return;
 }
 
-// Function @0x80086744
+//80086744
 undefined4 _drs(undefined4* param_1, undefined4* param_2)
 
 {
@@ -60702,7 +60711,7 @@ undefined4 _drs(undefined4* param_1, undefined4* param_2)
     return uVar1;
 }
 
-// Function @0x800867B0
+//800867B0
 undefined4 SYS_OBJ_1EE4(void)
 
 {
@@ -60768,7 +60777,7 @@ undefined4 SYS_OBJ_1EE4(void)
     return uVar1;
 }
 
-// Function @0x800867F8
+//800867F8
 undefined4 SYS_OBJ_1F2C(undefined2 param_1)
 
 {
@@ -60824,14 +60833,14 @@ undefined4 SYS_OBJ_1F2C(undefined2 param_1)
     return 0xffffffff;
 }
 
-// Function @0x800869BC
+//800869BC
 void SYS_OBJ_20F0(void)
 
 {
     return;
 }
 
-// Function @0x800869E0
+//800869E0
 void _ctl(uint param_1)
 
 {
@@ -60840,14 +60849,14 @@ void _ctl(uint param_1)
     return;
 }
 
-// Function @0x80086A08
+//80086A08
 undefined1 _getctl(int param_1)
 
 {
     return (&DAT_801f2fa0)[param_1];
 }
 
-// Function @0x80086A1C
+//80086A1C
 undefined4 _cwb(undefined4* param_1, int param_2)
 
 {
@@ -60867,7 +60876,7 @@ undefined4 _cwb(undefined4* param_1, int param_2)
     return 0;
 }
 
-// Function @0x80086A6C
+//80086A6C
 void _cwc(undefined4 param_1)
 
 {
@@ -60878,7 +60887,7 @@ void _cwc(undefined4 param_1)
     return;
 }
 
-// Function @0x80086AB8
+//80086AB8
 uint _param(uint param_1)
 
 {
@@ -60886,7 +60895,7 @@ uint _param(uint param_1)
     return *(uint*)PTR_GPU_REG0_800c8204 & 0xffffff;
 }
 
-// Function @0x80086AE8
+//80086AE8
 void _addque(undefined4 param_1, undefined4 param_2, undefined4 param_3)
 
 {
@@ -60894,7 +60903,7 @@ void _addque(undefined4 param_1, undefined4 param_2, undefined4 param_3)
     return;
 }
 
-// Function @0x80086B0C
+//80086B0C
 void _addque2(void)
 
 {
@@ -60903,7 +60912,7 @@ void _addque2(void)
     return;
 }
 
-// Function @0x80086B58
+//80086B58
 uint SYS_OBJ_228C(void)
 
 {
@@ -60967,7 +60976,7 @@ uint SYS_OBJ_228C(void)
     return uVar1;
 }
 
-// Function @0x80086C80
+//80086C80
 void SYS_OBJ_23B4(undefined4 param_1, undefined4 param_2, int param_3, undefined4* param_4)
 
 {
@@ -60994,7 +61003,7 @@ void SYS_OBJ_23B4(undefined4 param_1, undefined4 param_2, int param_3, undefined
     return;
 }
 
-// Function @0x80086D3C
+//80086D3C
 uint SYS_OBJ_2470(void)
 
 {
@@ -61009,14 +61018,14 @@ uint SYS_OBJ_2470(void)
     return DAT_800c8238 - DAT_800c823c & 0x3f;
 }
 
-// Function @0x80086DD0
+//80086DD0
 void SYS_OBJ_2504(void)
 
 {
     return;
 }
 
-// Function @0x80086DF0
+//80086DF0
 uint _exeque(void)
 
 {
@@ -61057,7 +61066,7 @@ uint _exeque(void)
     return uVar1;
 }
 
-// Function @0x800870EC
+//800870EC
 undefined4 _reset(uint param_1)
 
 {
@@ -61091,7 +61100,7 @@ undefined4 _reset(uint param_1)
     return uVar1;
 }
 
-// Function @0x800871F0
+//800871F0
 undefined4 SYS_OBJ_2924(void)
 
 {
@@ -61106,7 +61115,7 @@ undefined4 SYS_OBJ_2924(void)
     return uVar1;
 }
 
-// Function @0x80087228
+//80087228
 uint _sync(int param_1)
 
 {
@@ -61129,7 +61138,7 @@ uint _sync(int param_1)
     return uVar1;
 }
 
-// Function @0x80087248
+//80087248
 undefined4 SYS_OBJ_297C(void)
 
 {
@@ -61155,7 +61164,7 @@ undefined4 SYS_OBJ_297C(void)
     return 0xffffffff;
 }
 
-// Function @0x80087260
+//80087260
 undefined4 SYS_OBJ_2994(void)
 
 {
@@ -61177,14 +61186,14 @@ undefined4 SYS_OBJ_2994(void)
     return uVar1;
 }
 
-// Function @0x8008735C
+//8008735C
 void SYS_OBJ_2A90(void)
 
 {
     return;
 }
 
-// Function @0x80087370
+//80087370
 void set_alarm(void)
 
 {
@@ -61196,7 +61205,7 @@ void set_alarm(void)
     return;
 }
 
-// Function @0x800873A4
+//800873A4
 undefined4 get_alarm(void)
 
 {
@@ -61225,14 +61234,14 @@ undefined4 get_alarm(void)
     return uVar3;
 }
 
-// Function @0x80087500
+//80087500
 void SYS_OBJ_2C34(void)
 
 {
     return;
 }
 
-// Function @0x80087510
+//80087510
 undefined4 _version(uint param_1)
 
 {
@@ -61261,14 +61270,14 @@ undefined4 _version(uint param_1)
     return uVar1;
 }
 
-// Function @0x800875E4
+//800875E4
 void SYS_OBJ_2D18(void)
 
 {
     return;
 }
 
-// Function @0x800875EC
+//800875EC
 void* memset(uchar* param_1, uchar param_2, int param_3)
 
 {
@@ -61285,7 +61294,7 @@ void* memset(uchar* param_1, uchar param_2, int param_3)
     return pvVar1;
 }
 
-// Function @0x80087618
+//80087618
 void GPU_cw(void)
 
 {
@@ -61293,7 +61302,7 @@ void GPU_cw(void)
     return;
 }
 
-// Function @0x80087628
+//80087628
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 int CdInit(void)
@@ -61318,14 +61327,14 @@ int CdInit(void)
     return 0;
 }
 
-// Function @0x800876A4
+//800876A4
 void EVENT_OBJ_7C(void)
 
 {
     return;
 }
 
-// Function @0x800876B8
+//800876B8
 void def_cbsync(void)
 
 {
@@ -61333,7 +61342,7 @@ void def_cbsync(void)
     return;
 }
 
-// Function @0x800876E0
+//800876E0
 void def_cbready(void)
 
 {
@@ -61341,7 +61350,7 @@ void def_cbready(void)
     return;
 }
 
-// Function @0x80087708
+//80087708
 void def_cbread(void)
 
 {
@@ -61349,7 +61358,7 @@ void def_cbread(void)
     return;
 }
 
-// Function @0x80087730
+//80087730
 void DeliverEvent(void)
 
 {
@@ -61357,7 +61366,7 @@ void DeliverEvent(void)
     return;
 }
 
-// Function @0x80087740
+//80087740
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 int CdStatus(void)
@@ -61366,7 +61375,7 @@ int CdStatus(void)
     return (uint)DAT_800c82e4;
 }
 
-// Function @0x80087750
+//80087750
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 int CdMode(void)
@@ -61375,7 +61384,7 @@ int CdMode(void)
     return (uint)DAT_800c82f4;
 }
 
-// Function @0x80087760
+//80087760
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 int CdLastCom(void)
@@ -61384,7 +61393,7 @@ int CdLastCom(void)
     return (uint)DAT_800c82f5;
 }
 
-// Function @0x80087770
+//80087770
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 CdlLOC* CdLastPos(void)
@@ -61393,7 +61402,7 @@ CdlLOC* CdLastPos(void)
     return (CdlLOC*)&DAT_800c82f0;
 }
 
-// Function @0x80087780
+//80087780
 undefined4 CdReset(int param_1)
 
 {
@@ -61417,14 +61426,14 @@ undefined4 CdReset(int param_1)
     return uVar1;
 }
 
-// Function @0x800877D8
+//800877D8
 void SYS_OBJ_98(void)
 
 {
     return;
 }
 
-// Function @0x800877EC
+//800877EC
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 /* Possible GS_106.OBJ/GsSetProjection
    Possible _OP_VDEL.OBJ/__builtin_vec_delete
@@ -61439,7 +61448,7 @@ void CdFlush(void)
     return;
 }
 
-// Function @0x8008780C
+//8008780C
 int CdSetDebug(int level)
 
 {
@@ -61450,7 +61459,7 @@ int CdSetDebug(int level)
     return iVar1;
 }
 
-// Function @0x80087824
+//80087824
 char* CdComstr(u_char com)
 
 {
@@ -61463,14 +61472,14 @@ char* CdComstr(u_char com)
     return "none";
 }
 
-// Function @0x80087850
+//80087850
 void SYS_OBJ_110(void)
 
 {
     return;
 }
 
-// Function @0x80087858
+//80087858
 char* CdIntstr(u_char intr)
 
 {
@@ -61483,14 +61492,14 @@ char* CdIntstr(u_char intr)
     return "none";
 }
 
-// Function @0x80087884
+//80087884
 void SYS_OBJ_144(void)
 
 {
     return;
 }
 
-// Function @0x8008788C
+//8008788C
 /* Possible GS_106.OBJ/GsSetProjection
    Possible _OP_VDEL.OBJ/__builtin_vec_delete
    Possible _OP_VNEW.OBJ/__builtin_vec_new
@@ -61506,7 +61515,7 @@ int CdSync(int mode, u_char* result)
     return iVar1;
 }
 
-// Function @0x800878AC
+//800878AC
 /* Possible GS_106.OBJ/GsSetProjection
    Possible _OP_VDEL.OBJ/__builtin_vec_delete
    Possible _OP_VNEW.OBJ/__builtin_vec_new
@@ -61522,7 +61531,7 @@ int CdReady(int mode, u_char* result)
     return iVar1;
 }
 
-// Function @0x800878CC
+//800878CC
 CdlCB CdSyncCallback(CdlCB func)
 
 {
@@ -61533,7 +61542,7 @@ CdlCB CdSyncCallback(CdlCB func)
     return pCVar1;
 }
 
-// Function @0x800878E4
+//800878E4
 CdlCB CdReadyCallback(CdlCB func)
 
 {
@@ -61544,7 +61553,7 @@ CdlCB CdReadyCallback(CdlCB func)
     return pCVar1;
 }
 
-// Function @0x800878FC
+//800878FC
 int CdControl(u_char com, u_char* param, u_char* result)
 
 {
@@ -61571,7 +61580,7 @@ int CdControl(u_char com, u_char* param, u_char* result)
     return 1;
 }
 
-// Function @0x80087A34
+//80087A34
 int CdControlF(u_char com, u_char* param)
 
 {
@@ -61598,7 +61607,7 @@ int CdControlF(u_char com, u_char* param)
     return 1;
 }
 
-// Function @0x80087B60
+//80087B60
 int CdControlB(u_char com, u_char* param, u_char* result)
 
 {
@@ -61633,14 +61642,14 @@ int CdControlB(u_char com, u_char* param, u_char* result)
     return iVar4;
 }
 
-// Function @0x80087C78
+//80087C78
 void SYS_OBJ_538(void)
 
 {
     return;
 }
 
-// Function @0x80087CA4
+//80087CA4
 int CdMix(CdlATV* vol)
 
 {
@@ -61648,7 +61657,7 @@ int CdMix(CdlATV* vol)
     return 1;
 }
 
-// Function @0x80087CC8
+//80087CC8
 int CdGetSector(void* madr, int size)
 
 {
@@ -61658,7 +61667,7 @@ int CdGetSector(void* madr, int size)
     return (uint)(iVar1 == 0);
 }
 
-// Function @0x80087CEC
+//80087CEC
 _func_49* CdDataCallback(func* func)
 
 {
@@ -61668,7 +61677,7 @@ _func_49* CdDataCallback(func* func)
     return p_Var1;
 }
 
-// Function @0x80087D10
+//80087D10
 /* Possible GS_106.OBJ/GsSetProjection
    Possible _OP_VDEL.OBJ/__builtin_vec_delete
    Possible _OP_VNEW.OBJ/__builtin_vec_new
@@ -61684,7 +61693,7 @@ int CdDataSync(int mode)
     return iVar1;
 }
 
-// Function @0x80087D30
+//80087D30
 CdlLOC* CdIntToPos(int i, CdlLOC* p)
 
 {
@@ -61702,7 +61711,7 @@ CdlLOC* CdIntToPos(int i, CdlLOC* p)
     return p;
 }
 
-// Function @0x80087E34
+//80087E34
 int CdPosToInt(CdlLOC* p)
 
 {
@@ -61711,7 +61720,7 @@ int CdPosToInt(CdlLOC* p)
         (uint)(p->sector >> 4) * 10 + (p->sector & 0xf) + -0x96;
 }
 
-// Function @0x80087EB4
+//80087EB4
 undefined4 getintr(void)
 
 {
@@ -61725,7 +61734,7 @@ undefined4 getintr(void)
     return 0;
 }
 
-// Function @0x80087F18
+//80087F18
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 undefined4 BIOS_OBJ_64(byte* param_1)
@@ -61918,7 +61927,7 @@ undefined4 BIOS_OBJ_64(byte* param_1)
     return uVar2;
 }
 
-// Function @0x8008810C
+//8008810C
 /* WARNING: Removing unreachable block (ram,0x80088250) */
 
 void BIOS_OBJ_258(void)
@@ -61975,7 +61984,7 @@ void BIOS_OBJ_258(void)
     return;
 }
 
-// Function @0x8008820C
+//8008820C
 void BIOS_OBJ_358(void)
 
 {
@@ -62003,7 +62012,7 @@ void BIOS_OBJ_358(void)
     return;
 }
 
-// Function @0x80088258
+//80088258
 void BIOS_OBJ_3A4(void)
 
 {
@@ -62040,7 +62049,7 @@ void BIOS_OBJ_3A4(void)
     return;
 }
 
-// Function @0x800882DC
+//800882DC
 void BIOS_OBJ_428(void)
 
 {
@@ -62075,7 +62084,7 @@ void BIOS_OBJ_428(void)
     return;
 }
 
-// Function @0x80088364
+//80088364
 void BIOS_OBJ_4B0(void)
 
 {
@@ -62110,14 +62119,14 @@ void BIOS_OBJ_4B0(void)
     return;
 }
 
-// Function @0x80088414
+//80088414
 void BIOS_OBJ_560(void)
 
 {
     return;
 }
 
-// Function @0x8008842C
+//8008842C
 undefined4 CD_sync(int param_1, undefined1* param_2)
 
 {
@@ -62180,7 +62189,7 @@ undefined4 CD_sync(int param_1, undefined1* param_2)
     return uVar5;
 }
 
-// Function @0x80088558
+//80088558
 undefined4 BIOS_OBJ_6A4(void)
 
 {
@@ -62250,7 +62259,7 @@ undefined4 BIOS_OBJ_6A4(void)
     return uVar6;
 }
 
-// Function @0x80088588
+//80088588
 undefined4 BIOS_OBJ_6D4(void)
 
 {
@@ -62315,14 +62324,14 @@ undefined4 BIOS_OBJ_6D4(void)
     } while (true);
 }
 
-// Function @0x80088680
+//80088680
 void BIOS_OBJ_7CC(void)
 
 {
     return;
 }
 
-// Function @0x800886AC
+//800886AC
 undefined4 CD_ready(int param_1, undefined1* param_2)
 
 {
@@ -62403,7 +62412,7 @@ BIOS_OBJ_A84:
     return uVar5;
 }
 
-// Function @0x800887E0
+//800887E0
 undefined4 BIOS_OBJ_92C(void)
 
 {
@@ -62491,7 +62500,7 @@ BIOS_OBJ_A84:
     return uVar6;
 }
 
-// Function @0x80088810
+//80088810
 undefined4 BIOS_OBJ_95C(void)
 
 {
@@ -62575,14 +62584,14 @@ undefined4 BIOS_OBJ_95C(void)
     } while (true);
 }
 
-// Function @0x80088948
+//80088948
 void BIOS_OBJ_A94(void)
 
 {
     return;
 }
 
-// Function @0x80088978
+//80088978
 int CD_cw(byte param_1, undefined1* param_2, undefined1* param_3, int param_4)
 
 {
@@ -62685,7 +62694,7 @@ int CD_cw(byte param_1, undefined1* param_2, undefined1* param_3, int param_4)
     return iVar4;
 }
 
-// Function @0x80088C3C
+//80088C3C
 int BIOS_OBJ_D88(void)
 
 {
@@ -62752,7 +62761,7 @@ int BIOS_OBJ_D88(void)
     return -(uint)(DAT_800c85b0 == '\x05');
 }
 
-// Function @0x80088C6C
+//80088C6C
 int BIOS_OBJ_DB8(void)
 
 {
@@ -62815,14 +62824,14 @@ int BIOS_OBJ_DB8(void)
     } while (true);
 }
 
-// Function @0x80088D90
+//80088D90
 void BIOS_OBJ_EDC(void)
 
 {
     return;
 }
 
-// Function @0x80088DC0
+//80088DC0
 undefined4 CD_vol(undefined1* param_1)
 
 {
@@ -62836,7 +62845,7 @@ undefined4 CD_vol(undefined1* param_1)
     return 0;
 }
 
-// Function @0x80088E48
+//80088E48
 void CD_flush(void)
 
 {
@@ -62859,7 +62868,7 @@ void CD_flush(void)
     return;
 }
 
-// Function @0x80088F28
+//80088F28
 undefined4 CD_initvol(void)
 
 {
@@ -62885,7 +62894,7 @@ undefined4 CD_initvol(void)
     return 0;
 }
 
-// Function @0x8008901C
+//8008901C
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 void CD_initintr(void)
@@ -62900,7 +62909,7 @@ void CD_initintr(void)
     return;
 }
 
-// Function @0x8008906C
+//8008906C
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
 
 int CD_init(void)
@@ -62951,7 +62960,7 @@ int CD_init(void)
     return iVar3;
 }
 
-// Function @0x80089258
+//80089258
 undefined4 CD_datasync(int param_1)
 
 {
@@ -62979,7 +62988,7 @@ undefined4 CD_datasync(int param_1)
     return uVar3;
 }
 
-// Function @0x80089374
+//80089374
 undefined4 BIOS_OBJ_14C0(void)
 
 {
@@ -63011,7 +63020,7 @@ undefined4 BIOS_OBJ_14C0(void)
     return uVar3;
 }
 
-// Function @0x800893C4
+//800893C4
 undefined4 CD_getsector(undefined4 param_1, uint param_2)
 
 {
@@ -63035,7 +63044,7 @@ undefined4 CD_getsector(undefined4 param_1, uint param_2)
     return 0;
 }
 
-// Function @0x800894C4
+//800894C4
 /* Possible GS_101.OBJ/GsSetNearClip
    Possible GS_102.OBJ/GsSetFarClip
    Possible GS_124.OBJ/GsSetWorkBase */
@@ -63047,7 +63056,7 @@ void CD_set_test_parmnum(undefined4 param_1)
     return;
 }
 
-// Function @0x800894D4
+//800894D4
 void callback(void)
 
 {
@@ -63069,7 +63078,7 @@ void callback(void)
     return;
 }
 
-// Function @0x80089500
+//80089500
 void BIOS_OBJ_164C(void)
 
 {
@@ -63091,7 +63100,7 @@ void BIOS_OBJ_164C(void)
     return;
 }
 
-// Function @0x800895B4
+//800895B4
 void puts(char* param_1)
 
 {
@@ -63110,7 +63119,7 @@ void puts(char* param_1)
     return;
 }
 
-// Function @0x800895E0
+//800895E0
 void PUTS_OBJ_2C(void)
 
 {
@@ -63126,7 +63135,7 @@ void PUTS_OBJ_2C(void)
     return;
 }
 
-// Function @0x80089604
+//80089604
 CdlFILE* CdSearchFile(CdlFILE* _30, char* name)
 
 {
@@ -63263,7 +63272,7 @@ ISO9660_OBJ_110:
     return (CdlFILE*)0x0;
 }
 
-// Function @0x80089710
+//80089710
 undefined4 ISO9660_OBJ_10C(void)
 
 {
@@ -63344,7 +63353,7 @@ undefined4 ISO9660_OBJ_10C(void)
     return 0;
 }
 
-// Function @0x800898B0
+//800898B0
 undefined4 ISO9660_OBJ_2AC(char* param_1)
 
 {
@@ -63352,14 +63361,14 @@ undefined4 ISO9660_OBJ_2AC(char* param_1)
     return 0;
 }
 
-// Function @0x800898BC
+//800898BC
 void ISO9660_OBJ_2B8(void)
 
 {
     return;
 }
 
-// Function @0x800898E4
+//800898E4
 bool _cmp(char* param_1, char* param_2)
 
 {
@@ -63369,7 +63378,7 @@ bool _cmp(char* param_1, char* param_2)
     return iVar1 == 0;
 }
 
-// Function @0x80089908
+//80089908
 undefined4 CD_newmedia(void)
 
 {
@@ -63452,14 +63461,14 @@ undefined4 CD_newmedia(void)
     return uVar3;
 }
 
-// Function @0x80089BBC
+//80089BBC
 void ISO9660_OBJ_5B8(void)
 
 {
     return;
 }
 
-// Function @0x80089BE4
+//80089BE4
 undefined4 CD_searchdir(int param_1, char* param_2)
 
 {
@@ -63489,14 +63498,14 @@ undefined4 CD_searchdir(int param_1, char* param_2)
     return uVar2;
 }
 
-// Function @0x80089C68
+//80089C68
 void ISO9660_OBJ_664(void)
 
 {
     return;
 }
 
-// Function @0x80089C8C
+//80089C8C
 /* WARNING: Removing unreachable block (ram,0x80089dc8) */
 /* WARNING: Removing unreachable block (ram,0x80089dd0) */
 /* WARNING: Removing unreachable block (ram,0x80089de8) */
@@ -63539,7 +63548,7 @@ undefined4 CD_cachefile(int param_1)
     return 1;
 }
 
-// Function @0x80089E08
+//80089E08
 undefined4 ISO9660_OBJ_804(uchar* param_1)
 
 {
@@ -63592,7 +63601,7 @@ undefined4 ISO9660_OBJ_804(uchar* param_1)
     return uVar2;
 }
 
-// Function @0x80089E24
+//80089E24
 undefined4 ISO9660_OBJ_820(void)
 
 {
@@ -63643,14 +63652,14 @@ undefined4 ISO9660_OBJ_820(void)
     return uVar2;
 }
 
-// Function @0x80089F04
+//80089F04
 void ISO9660_OBJ_900(void)
 
 {
     return;
 }
 
-// Function @0x80089F30
+//80089F30
 bool cd_read(int param_1, int param_2, u_long* param_3)
 
 {
@@ -63664,7 +63673,7 @@ bool cd_read(int param_1, int param_2, u_long* param_3)
     return iVar1 == 0;
 }
 
-// Function @0x80089F9C
+//80089F9C
 void* memcpy(uchar* param_1, uchar* param_2, int param_3)
 
 {
@@ -63686,7 +63695,7 @@ void* memcpy(uchar* param_1, uchar* param_2, int param_3)
     return in_v0;
 }
 
-// Function @0x80089FD0
+//80089FD0
 int strncmp(char* param_1, char* param_2, int param_3)
 
 {
@@ -63727,14 +63736,14 @@ int strncmp(char* param_1, char* param_2, int param_3)
     return 0;
 }
 
-// Function @0x8008A048
+//8008A048
 void STRNCMP_OBJ_78(void)
 
 {
     return;
 }
 
-// Function @0x8008A050
+//8008A050
 void cb_read(char param_1, undefined4 param_2)
 
 {
@@ -63786,7 +63795,7 @@ void cb_read(char param_1, undefined4 param_2)
     return;
 }
 
-// Function @0x8008A164
+//8008A164
 void CDREAD_OBJ_114(void)
 
 {
@@ -63816,7 +63825,7 @@ void CDREAD_OBJ_114(void)
     return;
 }
 
-// Function @0x8008A274
+//8008A274
 undefined4 cd_read_retry(int param_1)
 
 {
@@ -63872,21 +63881,21 @@ undefined4 cd_read_retry(int param_1)
     return DAT_800c8600;
 }
 
-// Function @0x8008A42C
+//8008A42C
 undefined4 CDREAD_OBJ_3DC(void)
 
 {
     return DAT_800c8600;
 }
 
-// Function @0x8008A434
+//8008A434
 void CDREAD_OBJ_3E4(void)
 
 {
     return;
 }
 
-// Function @0x8008A44C
+//8008A44C
 int CdRead(int sectors, u_long* buf, int mode)
 
 {
@@ -63907,7 +63916,7 @@ int CdRead(int sectors, u_long* buf, int mode)
     return iVar1;
 }
 
-// Function @0x8008A4AC
+//8008A4AC
 bool CDREAD_OBJ_45C(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4)
 
 {
@@ -63930,7 +63939,7 @@ bool CDREAD_OBJ_45C(undefined4 param_1, undefined4 param_2, undefined4 param_3, 
     return 0 < iVar2;
 }
 
-// Function @0x8008A4B8
+//8008A4B8
 bool CDREAD_OBJ_468(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4)
 
 {
@@ -63951,7 +63960,7 @@ bool CDREAD_OBJ_468(undefined4 param_1, undefined4 param_2, undefined4 param_3, 
     return 0 < iVar2;
 }
 
-// Function @0x8008A554
+//8008A554
 int CdReadSync(int mode, u_char* result)
 
 {
@@ -63974,7 +63983,7 @@ int CdReadSync(int mode, u_char* result)
     return iVar2;
 }
 
-// Function @0x8008A5E4
+//8008A5E4
 int CDREAD_OBJ_594(void)
 
 {
@@ -64001,7 +64010,7 @@ int CDREAD_OBJ_594(void)
     return iVar1;
 }
 
-// Function @0x8008A620
+//8008A620
 CdlCB CdReadCallback(CdlCB func)
 
 {
@@ -64012,7 +64021,7 @@ CdlCB CdReadCallback(CdlCB func)
     return pCVar1;
 }
 
-// Function @0x8008A638
+//8008A638
 void PadInit(int mode)
 
 {
@@ -64024,7 +64033,7 @@ void PadInit(int mode)
     return;
 }
 
-// Function @0x8008A688
+//8008A688
 u_long PadRead(int id)
 
 {
@@ -64032,7 +64041,7 @@ u_long PadRead(int id)
     return ~g_padStateFromPsx;
 }
 
-// Function @0x8008A6B8
+//8008A6B8
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 /* Possible GS_106.OBJ/GsSetProjection
    Possible _OP_VDEL.OBJ/__builtin_vec_delete
@@ -64047,7 +64056,7 @@ void PadStop(void)
     return;
 }
 
-// Function @0x8008A6D8
+//8008A6D8
 void StopPAD(void)
 
 {
@@ -64055,7 +64064,7 @@ void StopPAD(void)
     return;
 }
 
-// Function @0x8008A6E8
+//8008A6E8
 void PAD_init(void)
 
 {
@@ -64063,7 +64072,7 @@ void PAD_init(void)
     return;
 }
 
-// Function @0x8008A6F8
+//8008A6F8
 void PAD_dr(void)
 
 {
@@ -64071,7 +64080,7 @@ void PAD_dr(void)
     return;
 }
 
-// Function @0x8008A708
+//8008A708
 void ChangeClearPAD(void)
 
 {
@@ -64079,7 +64088,7 @@ void ChangeClearPAD(void)
     return;
 }
 
-// Function @0x8008A718
+//8008A718
 int VSync(int mode)
 
 {
@@ -64114,7 +64123,7 @@ int VSync(int mode)
     return uVar1 & 0xffff;
 }
 
-// Function @0x8008A79C
+//8008A79C
 void VSYNC_OBJ_84(void)
 
 {
@@ -64132,14 +64141,14 @@ void VSYNC_OBJ_84(void)
     return;
 }
 
-// Function @0x8008A848
+//8008A848
 void VSYNC_OBJ_130(void)
 
 {
     return;
 }
 
-// Function @0x8008A860
+//8008A860
 void v_wait(int param_1, int param_2)
 
 {
@@ -64157,14 +64166,14 @@ void v_wait(int param_1, int param_2)
     return;
 }
 
-// Function @0x8008A8EC
+//8008A8EC
 void VSYNC_OBJ_1D4(void)
 
 {
     return;
 }
 
-// Function @0x8008A8FC
+//8008A8FC
 void ChangeClearRCnt(void)
 
 {
@@ -64172,7 +64181,7 @@ void ChangeClearRCnt(void)
     return;
 }
 
-// Function @0x8008A90C
+//8008A90C
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 int ResetCallback(void)
@@ -64184,7 +64193,7 @@ int ResetCallback(void)
     return iVar1;
 }
 
-// Function @0x8008A93C
+//8008A93C
 void InterruptCallback(void)
 
 {
@@ -64192,7 +64201,7 @@ void InterruptCallback(void)
     return;
 }
 
-// Function @0x8008A96C
+//8008A96C
 void DMACallback(void)
 
 {
@@ -64200,7 +64209,7 @@ void DMACallback(void)
     return;
 }
 
-// Function @0x8008A99C
+//8008A99C
 int VSyncCallback(f* f)
 
 {
@@ -64210,7 +64219,7 @@ int VSyncCallback(f* f)
     return iVar1;
 }
 
-// Function @0x8008A9D0
+//8008A9D0
 int VSyncCallbacks(int ch, f* f)
 
 {
@@ -64220,7 +64229,7 @@ int VSyncCallbacks(int ch, f* f)
     return iVar1;
 }
 
-// Function @0x8008AA00
+//8008AA00
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 int StopCallback(void)
@@ -64232,7 +64241,7 @@ int StopCallback(void)
     return iVar1;
 }
 
-// Function @0x8008AA30
+//8008AA30
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 int RestartCallback(void)
@@ -64244,7 +64253,7 @@ int RestartCallback(void)
     return iVar1;
 }
 
-// Function @0x8008AA60
+//8008AA60
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 int CheckCallback(void)
@@ -64253,14 +64262,14 @@ int CheckCallback(void)
     return (uint)DAT_800c862a;
 }
 
-// Function @0x8008AA70
+//8008AA70
 undefined2 GetIntrMask(void)
 
 {
     return *(undefined2*)PTR_I_MASK_800c96b8;
 }
 
-// Function @0x8008AA88
+//8008AA88
 undefined2 SetIntrMask(undefined2 param_1)
 
 {
@@ -64271,7 +64280,7 @@ undefined2 SetIntrMask(undefined2 param_1)
     return uVar1;
 }
 
-// Function @0x8008AAA4
+//8008AAA4
 undefined2* startIntr(void)
 
 {
@@ -64307,7 +64316,7 @@ undefined2* startIntr(void)
     return puVar3;
 }
 
-// Function @0x8008AB80
+//8008AB80
 void trapIntr(void)
 
 {
@@ -64361,7 +64370,7 @@ void trapIntr(void)
     return;
 }
 
-// Function @0x8008AD34
+//8008AD34
 void INTR_OBJ_428(void)
 
 {
@@ -64370,7 +64379,7 @@ void INTR_OBJ_428(void)
     return;
 }
 
-// Function @0x8008AD68
+//8008AD68
 int setIntr(uint param_1, int param_2)
 
 {
@@ -64411,7 +64420,7 @@ int setIntr(uint param_1, int param_2)
     return iVar4;
 }
 
-// Function @0x8008AE20
+//8008AE20
 void INTR_OBJ_514(void)
 
 {
@@ -64436,7 +64445,7 @@ void INTR_OBJ_514(void)
     return;
 }
 
-// Function @0x8008AEBC
+//8008AEBC
 undefined2* stopIntr(void)
 
 {
@@ -64461,7 +64470,7 @@ undefined2* stopIntr(void)
     return puVar3;
 }
 
-// Function @0x8008AF68
+//8008AF68
 undefined4 restartIntr(void)
 
 {
@@ -64479,14 +64488,14 @@ undefined4 restartIntr(void)
     return 0;
 }
 
-// Function @0x8008AFDC
+//8008AFDC
 void INTR_OBJ_6D0(void)
 
 {
     return;
 }
 
-// Function @0x8008AFF0
+//8008AFF0
 void memclr(undefined4* param_1, int param_2)
 
 {
@@ -64503,7 +64512,7 @@ void memclr(undefined4* param_1, int param_2)
     return;
 }
 
-// Function @0x8008B01C
+//8008B01C
 void ReturnFromException(void)
 
 {
@@ -64511,7 +64520,7 @@ void ReturnFromException(void)
     return;
 }
 
-// Function @0x8008B02C
+//8008B02C
 void ResetEntryInt(void)
 
 {
@@ -64519,7 +64528,7 @@ void ResetEntryInt(void)
     return;
 }
 
-// Function @0x8008B03C
+//8008B03C
 void HookEntryInt(void)
 
 {
@@ -64527,7 +64536,7 @@ void HookEntryInt(void)
     return;
 }
 
-// Function @0x8008B04C
+//8008B04C
 undefined4 setjmp(undefined4* param_1)
 
 {
@@ -64558,14 +64567,14 @@ undefined4 setjmp(undefined4* param_1)
     return 0;
 }
 
-// Function @0x8008B088
+//8008B088
 undefined4 longjmp(undefined4 param_1, undefined4 param_2)
 
 {
     return param_2;
 }
 
-// Function @0x8008B0CC
+//8008B0CC
 code* startIntrVSync(void)
 
 {
@@ -64576,7 +64585,7 @@ code* startIntrVSync(void)
     return setIntrVSync;
 }
 
-// Function @0x8008B124
+//8008B124
 void trapIntrVSync(void)
 
 {
@@ -64598,7 +64607,7 @@ void trapIntrVSync(void)
     return;
 }
 
-// Function @0x8008B19C
+//8008B19C
 void setIntrVSync(int param_1, int param_2)
 
 {
@@ -64608,7 +64617,7 @@ void setIntrVSync(int param_1, int param_2)
     return;
 }
 
-// Function @0x8008B1C8
+//8008B1C8
 void memclr(undefined4* param_1, int param_2)
 
 {
@@ -64625,7 +64634,7 @@ void memclr(undefined4* param_1, int param_2)
     return;
 }
 
-// Function @0x8008B1F4
+//8008B1F4
 code* startIntrDMA(void)
 
 {
@@ -64635,7 +64644,7 @@ code* startIntrDMA(void)
     return setIntrDMA;
 }
 
-// Function @0x8008B244
+//8008B244
 void trapIntrDMA(void)
 
 {
@@ -64675,7 +64684,7 @@ void trapIntrDMA(void)
     return;
 }
 
-// Function @0x8008B3C8
+//8008B3C8
 int setIntrDMA(int param_1, int param_2)
 
 {
@@ -64699,7 +64708,7 @@ int setIntrDMA(int param_1, int param_2)
     return iVar3;
 }
 
-// Function @0x8008B468
+//8008B468
 undefined4 INTR_DMA_OBJ_274(void)
 
 {
@@ -64708,7 +64717,7 @@ undefined4 INTR_DMA_OBJ_274(void)
     return in_a3;
 }
 
-// Function @0x8008B470
+//8008B470
 void memclr(undefined4* param_1, int param_2)
 
 {
@@ -64725,7 +64734,7 @@ void memclr(undefined4* param_1, int param_2)
     return;
 }
 
-// Function @0x8008B49C
+//8008B49C
 /* Possible VMODE.OBJ/SetVideoMode */
 
 undefined4 FUN_8008b49c(undefined4 param_1)
@@ -64738,7 +64747,7 @@ undefined4 FUN_8008b49c(undefined4 param_1)
     return uVar1;
 }
 
-// Function @0x8008B4B4
+//8008B4B4
 /* Possible VMODE.OBJ/GetVideoMode
    Possible GS_125.OBJ/GsGetWorkBase */
 
@@ -64748,7 +64757,7 @@ undefined4 FUN_8008b4b4(void)
     return DAT_800c9714;
 }
 
-// Function @0x8008B4C4
+//8008B4C4
 int PCopen(char* name, int flags, int perms)
 
 {
@@ -64762,7 +64771,7 @@ int PCopen(char* name, int flags, int perms)
     return in_v1;
 }
 
-// Function @0x8008B4E4
+//8008B4E4
 /* Possible CLOSE.OBJ/PCclose */
 
 void FUN_8008b4e4(void)
@@ -64772,7 +64781,7 @@ void FUN_8008b4e4(void)
     return;
 }
 
-// Function @0x8008B4F4
+//8008B4F4
 int PClseek(int fd, int offset, int mode)
 
 {
@@ -64786,7 +64795,7 @@ int PClseek(int fd, int offset, int mode)
     return in_v1;
 }
 
-// Function @0x8008B518
+//8008B518
 int PCcreat(char* name, int perms)
 
 {
@@ -64800,7 +64809,7 @@ int PCcreat(char* name, int perms)
     return in_v1;
 }
 
-// Function @0x8008B538
+//8008B538
 /* WARNING: Removing unreachable block (ram,0x8008b620) */
 
 void start(void)
@@ -64837,7 +64846,7 @@ void start(void)
     return;
 }
 
-// Function @0x8008B5E0
+//8008B5E0
 /* WARNING: Removing unreachable block (ram,0x8008b620) */
 
 void FUN_8008b5e0(void)
@@ -64849,7 +64858,7 @@ void FUN_8008b5e0(void)
     return;
 }
 
-// Function @0x8008B6B8
+//8008B6B8
 void InitHeap(ulong* param_1, ulong param_2)
 
 {
@@ -64857,7 +64866,7 @@ void InitHeap(ulong* param_1, ulong param_2)
     return;
 }
 
-// Function @0x8008B6C8
+//8008B6C8
 /* Possible WRITE.OBJ/PCwrite */
 
 int PCread(int fd, char* buff, int len)
@@ -64889,7 +64898,7 @@ int PCread(int fd, char* buff, int len)
     return iVar4;
 }
 
-// Function @0x8008B75C
+//8008B75C
 /* Possible WRITE.OBJ/WRITE_OBJ_94 */
 
 void READ_OBJ_94(void)
@@ -64898,7 +64907,7 @@ void READ_OBJ_94(void)
     return;
 }
 
-// Function @0x8008B788
+//8008B788
 void _SN_read(void)
 
 {
@@ -64906,7 +64915,7 @@ void _SN_read(void)
     return;
 }
 
-// Function @0x8008B7A0
+//8008B7A0
 /* Possible READ.OBJ/PCread
    Possible WRITE.OBJ/PCwrite */
 
@@ -64944,7 +64953,7 @@ int FUN_8008b7a0(undefined4 param_1, int param_2, uint param_3)
     return iVar4;
 }
 
-// Function @0x8008B860
+//8008B860
 void _SN_write(void)
 
 {
@@ -64952,7 +64961,7 @@ void _SN_write(void)
     return;
 }
 
-// Function @0x8008B878
+//8008B878
 void FUN_8008b878(short param_1, short param_2)
 
 {
@@ -64965,7 +64974,7 @@ void FUN_8008b878(short param_1, short param_2)
     return;
 }
 
-// Function @0x8008B8C8
+//8008B8C8
 /* WARNING: Removing unreachable block (ram,0x8008ba6c) */
 
 undefined4 FUN_8008b8c8(ushort param_1, undefined2 param_2, char* param_3)
@@ -65095,7 +65104,7 @@ undefined4 FUN_8008b8c8(ushort param_1, undefined2 param_2, char* param_3)
     return uVar4;
 }
 
-// Function @0x8008BC00
+//8008BC00
 uint LoadSeq(undefined4 param_1, short param_2)
 
 {
@@ -65128,7 +65137,7 @@ uint LoadSeq(undefined4 param_1, short param_2)
     return uVar3;
 }
 
-// Function @0x8008BCC4
+//8008BCC4
 void FUN_8008bcc4(int param_1, short param_2)
 
 {
@@ -65171,7 +65180,7 @@ void FUN_8008bcc4(int param_1, short param_2)
     return;
 }
 
-// Function @0x8008BDD0
+//8008BDD0
 void FUN_8008bdd0(short param_1, short param_2)
 
 {
@@ -65267,7 +65276,7 @@ void FUN_8008bdd0(short param_1, short param_2)
     return;
 }
 
-// Function @0x8008C064
+//8008C064
 void FUN_8008c064(short param_1, short param_2, undefined1 param_3, byte param_4)
 
 {
@@ -65295,7 +65304,7 @@ void FUN_8008c064(short param_1, short param_2, undefined1 param_3, byte param_4
     return;
 }
 
-// Function @0x8008C144
+//8008C144
 void FUN_8008c144(short param_1, short param_2, undefined1 param_3)
 
 {
@@ -65309,7 +65318,7 @@ void FUN_8008c144(short param_1, short param_2, undefined1 param_3)
     return;
 }
 
-// Function @0x8008C1B8
+//8008C1B8
 void FUN_8008c1b8(ushort param_1, short param_2, byte param_3)
 
 {
@@ -65394,7 +65403,7 @@ void FUN_8008c1b8(ushort param_1, short param_2, byte param_3)
     return;
 }
 
-// Function @0x8008C70C
+//8008C70C
 void FUN_8008c70c(ushort param_1, short param_2, byte param_3)
 
 {
@@ -65428,7 +65437,7 @@ void FUN_8008c70c(ushort param_1, short param_2, byte param_3)
     return;
 }
 
-// Function @0x8008C854
+//8008C854
 void FUN_8008c854(short param_1, short param_2)
 
 {
@@ -65449,7 +65458,7 @@ void FUN_8008c854(short param_1, short param_2)
     return;
 }
 
-// Function @0x8008C918
+//8008C918
 void FUN_8008c918(ushort param_1, short param_2, undefined1 param_3)
 
 {
@@ -65481,7 +65490,7 @@ LAB_8008c9c8:
     return;
 }
 
-// Function @0x8008CA40
+//8008CA40
 void FUN_8008ca40(short param_1, short param_2, char param_3)
 
 {
@@ -65533,7 +65542,7 @@ void FUN_8008ca40(short param_1, short param_2, char param_3)
     return;
 }
 
-// Function @0x8008CB88
+//8008CB88
 void FUN_8008cb88(short param_1, short param_2, undefined1 param_3)
 
 {
@@ -65548,7 +65557,7 @@ void FUN_8008cb88(short param_1, short param_2, undefined1 param_3)
     return;
 }
 
-// Function @0x8008CBFC
+//8008CBFC
 void FUN_8008cbfc(short param_1, short param_2, undefined1 param_3)
 
 {
@@ -65563,7 +65572,7 @@ void FUN_8008cbfc(short param_1, short param_2, undefined1 param_3)
     return;
 }
 
-// Function @0x8008CC70
+//8008CC70
 /* WARNING: Removing unreachable block (ram,0x8008ce28) */
 
 void FUN_8008cc70(short param_1, short param_2, undefined1 param_3)
@@ -65667,7 +65676,7 @@ void FUN_8008cc70(short param_1, short param_2, undefined1 param_3)
     return;
 }
 
-// Function @0x8008D1F4
+//8008D1F4
 void FUN_8008d1f4(short param_1, short param_2, short param_3, undefined4 param_4)
 
 {
@@ -65796,7 +65805,7 @@ void FUN_8008d1f4(short param_1, short param_2, short param_3, undefined4 param_
     return;
 }
 
-// Function @0x8008D4C0
+//8008D4C0
 void FUN_8008d4c0(short param_1, short param_2)
 
 {
@@ -65818,7 +65827,7 @@ void FUN_8008d4c0(short param_1, short param_2)
     return;
 }
 
-// Function @0x8008D568
+//8008D568
 /* WARNING: Removing unreachable block (ram,0x8008d644) */
 
 void FUN_8008d568(short param_1, short param_2, char param_3)
@@ -65922,7 +65931,7 @@ void FUN_8008d568(short param_1, short param_2, char param_3)
     return;
 }
 
-// Function @0x8008D8D0
+//8008D8D0
 int FUN_8008d8d0(int param_1, short param_2)
 
 {
@@ -65958,7 +65967,7 @@ int FUN_8008d8d0(int param_1, short param_2)
     return iVar2;
 }
 
-// Function @0x8008D988
+//8008D988
 void FUN_8008d988(uint param_1, uint param_2, ushort* param_3)
 
 {
@@ -65977,7 +65986,7 @@ void FUN_8008d988(uint param_1, uint param_2, ushort* param_3)
     return;
 }
 
-// Function @0x8008D9E4
+//8008D9E4
 void FUN_8008d9e4(ushort* param_1, ushort* param_2, ushort* param_3)
 
 {
@@ -65997,7 +66006,7 @@ void FUN_8008d9e4(ushort* param_1, ushort* param_2, ushort* param_3)
     return;
 }
 
-// Function @0x8008DA70
+//8008DA70
 void FUN_8008da70(int param_1, short param_2)
 
 {
@@ -66021,7 +66030,7 @@ void FUN_8008da70(int param_1, short param_2)
     return;
 }
 
-// Function @0x8008DD1C
+//8008DD1C
 undefined1 FUN_8008dd1c(int param_1, short param_2)
 
 {
@@ -66029,7 +66038,7 @@ undefined1 FUN_8008dd1c(int param_1, short param_2)
         (param_2 * 0xac + *(int*)((int)&DAT_801f6ce8 + ((param_1 << 0x10) >> 0xe)) + 0x2b);
 }
 
-// Function @0x8008DD8C
+//8008DD8C
 void ResetSomethingSound2(short param_1)
 
 {
@@ -66072,7 +66081,7 @@ void ResetSomethingSound2(short param_1)
     return;
 }
 
-// Function @0x8008DF04
+//8008DF04
 void ResetSomethingSound(short param_1)
 
 {
@@ -66080,7 +66089,7 @@ void ResetSomethingSound(short param_1)
     return;
 }
 
-// Function @0x8008DF4C
+//8008DF4C
 void ResetAllVoicesAndAudioBuffers(void)
 
 {
@@ -66139,7 +66148,7 @@ void ResetAllVoicesAndAudioBuffers(void)
     return;
 }
 
-// Function @0x8008E034
+//8008E034
 void InitSound(void)
 
 {
@@ -66149,7 +66158,7 @@ void InitSound(void)
     return;
 }
 
-// Function @0x8008E064
+//8008E064
 void FUN_8008e064(void)
 
 {
@@ -66157,7 +66166,7 @@ void FUN_8008e064(void)
     return;
 }
 
-// Function @0x8008E084
+//8008E084
 void FUN_8008e084(void)
 
 {
@@ -66168,7 +66177,7 @@ void FUN_8008e084(void)
     return;
 }
 
-// Function @0x8008E0A0
+//8008E0A0
 void FUN_8008e0a0(void)
 
 {
@@ -66176,7 +66185,7 @@ void FUN_8008e0a0(void)
     return;
 }
 
-// Function @0x8008E0C4
+//8008E0C4
 void FUN_8008e0c4(void)
 
 {
@@ -66190,7 +66199,7 @@ void FUN_8008e0c4(void)
     return;
 }
 
-// Function @0x8008E114
+//8008E114
 /* WARNING: Removing unreachable block (ram,0x8008e24c) */
 /* WARNING: Removing unreachable block (ram,0x8008e294) */
 
@@ -66286,7 +66295,7 @@ LAB_8008e2a4:
     return;
 }
 
-// Function @0x8008E398
+//8008E398
 void FUN_8008e398(void)
 
 {
@@ -66294,7 +66303,7 @@ void FUN_8008e398(void)
     return;
 }
 
-// Function @0x8008E3D8
+//8008E3D8
 void FUN_8008e3d8(void)
 
 {
@@ -66351,7 +66360,7 @@ void FUN_8008e3d8(void)
     return;
 }
 
-// Function @0x8008E610
+//8008E610
 void FUN_8008e610(ushort param_1, ushort param_2)
 
 {
@@ -66422,7 +66431,7 @@ LAB_8008e894:
     return;
 }
 
-// Function @0x8008E8D0
+//8008E8D0
 void FUN_8008e8d0(ushort param_1, ushort param_2)
 
 {
@@ -66495,7 +66504,7 @@ LAB_8008eb24:
     return;
 }
 
-// Function @0x8008EB5C
+//8008EB5C
 void FUN_8008eb5c(short param_1, short param_2)
 
 {
@@ -66511,7 +66520,7 @@ void FUN_8008eb5c(short param_1, short param_2)
     return;
 }
 
-// Function @0x8008EBF8
+//8008EBF8
 void FUN_8008ebf8(short param_1, short param_2)
 
 {
@@ -66519,7 +66528,7 @@ void FUN_8008ebf8(short param_1, short param_2)
     return;
 }
 
-// Function @0x8008EC24
+//8008EC24
 void FUN_8008ec24(int param_1, short param_2)
 
 {
@@ -66533,7 +66542,7 @@ void FUN_8008ec24(int param_1, short param_2)
     return;
 }
 
-// Function @0x8008EC8C
+//8008EC8C
 void FUN_8008ec8c(uint param_1)
 
 {
@@ -66590,7 +66599,7 @@ void FUN_8008ec8c(uint param_1)
     return;
 }
 
-// Function @0x8008EDFC
+//8008EDFC
 void FUN_8008edfc(void)
 
 {
@@ -66616,7 +66625,7 @@ void FUN_8008edfc(void)
     return;
 }
 
-// Function @0x8008EEAC
+//8008EEAC
 void FUN_8008eeac(int param_1, short param_2, short param_3)
 
 {
@@ -66677,7 +66686,7 @@ void FUN_8008eeac(int param_1, short param_2, short param_3)
     return;
 }
 
-// Function @0x8008F088
+//8008F088
 void StartSequencePlayback(short sequenceId, short sequenceBank, char playMode, undefined2 volume)
 
 {
@@ -66706,7 +66715,7 @@ void StartSequencePlayback(short sequenceId, short sequenceBank, char playMode, 
     return;
 }
 
-// Function @0x8008F188
+//8008F188
 void PlaySeq(short sequenceId, undefined1 playMode, short volume)
 
 {
@@ -66714,7 +66723,7 @@ void PlaySeq(short sequenceId, undefined1 playMode, short volume)
     return;
 }
 
-// Function @0x8008F1F8
+//8008F1F8
 void FUN_8008f1f8(short param_1, int param_2, short param_3, short param_4)
 
 {
@@ -66722,7 +66731,7 @@ void FUN_8008f1f8(short param_1, int param_2, short param_3, short param_4)
     return;
 }
 
-// Function @0x8008F23C
+//8008F23C
 void SetSeqVolume(short param_1, short param_2, short param_3)
 
 {
@@ -66730,7 +66739,7 @@ void SetSeqVolume(short param_1, short param_2, short param_3)
     return;
 }
 
-// Function @0x8008F2E8
+//8008F2E8
 void FUN_8008f2e8(short param_1, short param_2)
 
 {
@@ -66787,7 +66796,7 @@ void FUN_8008f2e8(short param_1, short param_2)
     return;
 }
 
-// Function @0x8008F458
+//8008F458
 void InitBgm(short param_1)
 
 {
@@ -66795,7 +66804,7 @@ void InitBgm(short param_1)
     return;
 }
 
-// Function @0x8008F4AC
+//8008F4AC
 void FUN_8008f4ac(int param_1, short param_2)
 
 {
@@ -66861,7 +66870,7 @@ LAB_8008f594:
     return;
 }
 
-// Function @0x8008F690
+//8008F690
 void FUN_8008f690(int param_1, short param_2, short param_3, uint param_4)
 
 {
@@ -66894,7 +66903,7 @@ void FUN_8008f690(int param_1, short param_2, short param_3, uint param_4)
     return;
 }
 
-// Function @0x8008F760
+//8008F760
 void FUN_8008f760(short param_1, short param_2, short param_3)
 
 {
@@ -66910,7 +66919,7 @@ void FUN_8008f760(short param_1, short param_2, short param_3)
     return;
 }
 
-// Function @0x8008F808
+//8008F808
 void FUN_8008f808(short param_1, short param_2, undefined4 param_3)
 
 {
@@ -66918,7 +66927,7 @@ void FUN_8008f808(short param_1, short param_2, undefined4 param_3)
     return;
 }
 
-// Function @0x8008F994
+//8008F994
 /* Possible VS_MONO.OBJ/SsSetStereo
    Possible VM_DOFF.OBJ/SpuVmDamperOff */
 
@@ -66929,7 +66938,7 @@ void FUN_8008f994(void)
     return;
 }
 
-// Function @0x8008F9A4
+//8008F9A4
 void MaybeFreeSound(ushort param_1)
 
 {
@@ -66943,7 +66952,7 @@ void MaybeFreeSound(ushort param_1)
     return;
 }
 
-// Function @0x8008FAAC
+//8008FAAC
 int LoadVabHeader(undefined4 param_1, short param_2, undefined4 param_3)
 
 {
@@ -66953,7 +66962,7 @@ int LoadVabHeader(undefined4 param_1, short param_2, undefined4 param_3)
     return (int)sVar1;
 }
 
-// Function @0x8008FB0C
+//8008FB0C
 int FUN_8008fb0c(uint* param_1, int param_2, short param_3, long param_4)
 
 {
@@ -67097,7 +67106,7 @@ int FUN_8008fb0c(uint* param_1, int param_2, short param_3, long param_4)
     return -1;
 }
 
-// Function @0x8008FFC0
+//8008FFC0
 int FUN_8008ffc0(uchar* param_1, uint param_2, ushort param_3)
 
 {
@@ -67132,7 +67141,7 @@ int FUN_8008ffc0(uchar* param_1, uint param_2, ushort param_3)
     return -1;
 }
 
-// Function @0x8009011C
+//8009011C
 int CheckTransferComplete(short param_1)
 
 {
@@ -67142,7 +67151,7 @@ int CheckTransferComplete(short param_1)
     return (int)(short)lVar1;
 }
 
-// Function @0x80090144
+//80090144
 /* Possible VM_DOFF.OBJ/SpuVmDamperOff */
 
 void FUN_80090144(void)
@@ -67152,7 +67161,7 @@ void FUN_80090144(void)
     return;
 }
 
-// Function @0x80090154
+//80090154
 /* Possible VM_DON.OBJ/SpuVmDamperOn */
 
 void FUN_80090154(void)
@@ -67162,7 +67171,7 @@ void FUN_80090154(void)
     return;
 }
 
-// Function @0x80090168
+//80090168
 void FUN_80090168(void)
 
 {
@@ -67174,7 +67183,7 @@ void FUN_80090168(void)
     return;
 }
 
-// Function @0x800901A8
+//800901A8
 undefined4 FUN_800901a8(short param_1, short param_2, undefined1* param_3)
 
 {
@@ -67198,7 +67207,7 @@ undefined4 FUN_800901a8(short param_1, short param_2, undefined1* param_3)
     return uVar1;
 }
 
-// Function @0x800902AC
+//800902AC
 undefined4 FUN_800902ac(ushort param_1, short param_2)
 
 {
@@ -67222,7 +67231,7 @@ undefined4 FUN_800902ac(ushort param_1, short param_2)
     return 0xffffffff;
 }
 
-// Function @0x80090370
+//80090370
 undefined4 GetVoiceVolumes(short param_1, short param_2, int param_3, undefined1* param_4)
 
 {
@@ -67259,7 +67268,7 @@ undefined4 GetVoiceVolumes(short param_1, short param_2, int param_3, undefined1
     return uVar1;
 }
 
-// Function @0x800905A8
+//800905A8
 ulong SsUtGetVBaddrInSB(short param_1)
 
 {
@@ -67272,14 +67281,14 @@ ulong SsUtGetVBaddrInSB(short param_1)
     return 0xffffffff;
 }
 
-// Function @0x800905F0
+//800905F0
 void UT_GVBA_OBJ_48(void)
 
 {
     return;
 }
 
-// Function @0x800905F8
+//800905F8
 int FUN_800905f8(ushort param_1)
 
 {
@@ -67310,7 +67319,7 @@ int FUN_800905f8(ushort param_1)
     return iVar3;
 }
 
-// Function @0x800906A8
+//800906A8
 void FUN_800906a8(void)
 
 {
@@ -67318,7 +67327,7 @@ void FUN_800906a8(void)
     return;
 }
 
-// Function @0x800906C8
+//800906C8
 void FUN_800906c8(void)
 
 {
@@ -67326,7 +67335,7 @@ void FUN_800906c8(void)
     return;
 }
 
-// Function @0x800906E8
+//800906E8
 void FUN_800906e8(short param_1)
 
 {
@@ -67336,7 +67345,7 @@ void FUN_800906e8(short param_1)
     return;
 }
 
-// Function @0x80090728
+//80090728
 /* WARNING: Removing unreachable block (ram,0x80090784) */
 /* WARNING: Removing unreachable block (ram,0x80090748) */
 /* WARNING: Removing unreachable block (ram,0x80090758) */
@@ -67354,7 +67363,7 @@ void FUN_80090728(short param_1, short param_2)
     return;
 }
 
-// Function @0x800907E4
+//800907E4
 void FUN_800907e4(short param_1)
 
 {
@@ -67364,7 +67373,7 @@ void FUN_800907e4(short param_1)
     return;
 }
 
-// Function @0x80090824
+//80090824
 undefined4 FUN_80090824(short param_1, short param_2, int param_3, undefined1* param_4)
 
 {
@@ -67401,7 +67410,7 @@ undefined4 FUN_80090824(short param_1, short param_2, int param_3, undefined1* p
     return uVar1;
 }
 
-// Function @0x800909E8
+//800909E8
 byte FUN_800909e8(void)
 
 {
@@ -67480,7 +67489,7 @@ byte FUN_800909e8(void)
     return bVar10;
 }
 
-// Function @0x80090C58
+//80090C58
 /* WARNING: Removing unreachable block (ram,0x80090f48) */
 /* WARNING: Removing unreachable block (ram,0x80090ec4) */
 /* WARNING: Removing unreachable block (ram,0x80090e58) */
@@ -67576,7 +67585,7 @@ void FUN_80090c58(undefined4 param_1, undefined2 param_2)
     return;
 }
 
-// Function @0x80091134
+//80091134
 void FUN_80091134(void)
 
 {
@@ -67603,7 +67612,7 @@ void FUN_80091134(void)
     return;
 }
 
-// Function @0x80091204
+//80091204
 byte FUN_80091204(int param_1, int param_2)
 
 {
@@ -67631,7 +67640,7 @@ byte FUN_80091204(int param_1, int param_2)
     return bVar4;
 }
 
-// Function @0x800912B4
+//800912B4
 void FUN_800912b4(void)
 
 {
@@ -67670,7 +67679,7 @@ void FUN_800912b4(void)
     return;
 }
 
-// Function @0x800914CC
+//800914CC
 /* WARNING: Removing unreachable block (ram,0x800916ec) */
 /* WARNING: Removing unreachable block (ram,0x80091680) */
 /* WARNING: Removing unreachable block (ram,0x80091614) */
@@ -67773,7 +67782,7 @@ void FUN_800914cc(uint param_1)
     return;
 }
 
-// Function @0x80091B1C
+//80091B1C
 void FUN_80091b1c(uint param_1)
 
 {
@@ -67787,7 +67796,7 @@ void FUN_80091b1c(uint param_1)
     return;
 }
 
-// Function @0x80091B60
+//80091B60
 /* WARNING: Removing unreachable block (ram,0x80091b98) */
 /* WARNING: Removing unreachable block (ram,0x80091ba8) */
 /* WARNING: Removing unreachable block (ram,0x80091bb0) */
@@ -67818,7 +67827,7 @@ uint FUN_80091b60(void)
     return uVar3 & 0xffff;
 }
 
-// Function @0x80091C18
+//80091C18
 /* WARNING: Removing unreachable block (ram,0x80091c9c) */
 /* WARNING: Removing unreachable block (ram,0x80091cac) */
 /* WARNING: Removing unreachable block (ram,0x80091cb4) */
@@ -67853,7 +67862,7 @@ uint FUN_80091c18(int param_1, uint param_2)
     return uVar2 & 0xffff;
 }
 
-// Function @0x800920E0
+//800920E0
 /* WARNING: Removing unreachable block (ram,0x80092280) */
 /* WARNING: Removing unreachable block (ram,0x80092288) */
 /* WARNING: Removing unreachable block (ram,0x80092270) */
@@ -67947,7 +67956,7 @@ LAB_8009220c:
     return;
 }
 
-// Function @0x8009261C
+//8009261C
 /* WARNING: Removing unreachable block (ram,0x800927bc) */
 /* WARNING: Removing unreachable block (ram,0x800927c4) */
 /* WARNING: Removing unreachable block (ram,0x800927ac) */
@@ -68041,7 +68050,7 @@ LAB_80092748:
     return;
 }
 
-// Function @0x8009299C
+//8009299C
 void FUN_8009299c(byte numberOfVoices)
 
 {
@@ -68134,7 +68143,7 @@ void FUN_8009299c(byte numberOfVoices)
     return;
 }
 
-// Function @0x80092E04
+//80092E04
 /* WARNING: Removing unreachable block (ram,0x80092f00) */
 /* WARNING: Removing unreachable block (ram,0x80092f10) */
 /* WARNING: Removing unreachable block (ram,0x80092f18) */
@@ -68191,7 +68200,7 @@ undefined4 FUN_80092e04(short param_1, short param_2, short param_3, short param
     return uVar3;
 }
 
-// Function @0x80093030
+//80093030
 int FUN_80093030(short param_1, short param_2, short param_3, undefined2 param_4)
 
 {
@@ -68213,7 +68222,7 @@ int FUN_80093030(short param_1, short param_2, short param_3, undefined2 param_4
     return iVar3;
 }
 
-// Function @0x8009311C
+//8009311C
 void UpdateSoundVoicesState(void)
 
 {
@@ -68350,7 +68359,7 @@ void UpdateSoundVoicesState(void)
     return;
 }
 
-// Function @0x800934B8
+//800934B8
 /* WARNING: Removing unreachable block (ram,0x800935cc) */
 /* WARNING: Removing unreachable block (ram,0x800935dc) */
 /* WARNING: Removing unreachable block (ram,0x800935e4) */
@@ -68461,7 +68470,7 @@ uint FUN_800934b8(uint param_1, short param_2, short param_3, undefined2 param_4
     return uVar5;
 }
 
-// Function @0x80093A04
+//80093A04
 int FUN_80093a04(short param_1, short param_2, short param_3, uint param_4)
 
 {
@@ -68494,7 +68503,7 @@ int FUN_80093a04(short param_1, short param_2, short param_3, uint param_4)
     return iVar3;
 }
 
-// Function @0x80093C78
+//80093C78
 int UpdateSequenceVolumeBalance
 (uint sequenceKey, short volumeLeft, short volumeRight, short updateVoices)
 
@@ -68531,7 +68540,7 @@ int UpdateSequenceVolumeBalance
     return (int)g_sequenceKey;
 }
 
-// Function @0x80093DE8
+//80093DE8
 int FUN_80093de8(uint param_1, undefined2* param_2, undefined2* param_3)
 
 {
@@ -68544,7 +68553,7 @@ int FUN_80093de8(uint param_1, undefined2* param_2, undefined2* param_3)
     return (int)g_sequenceKey;
 }
 
-// Function @0x80093EF4
+//80093EF4
 void FUN_80093ef4(short param_1)
 
 {
@@ -68566,7 +68575,7 @@ void FUN_80093ef4(short param_1)
     return;
 }
 
-// Function @0x80093F8C
+//80093F8C
 uint FUN_80093f8c(short param_1, short param_2, undefined1 param_3)
 
 {
@@ -68583,7 +68592,7 @@ uint FUN_80093f8c(short param_1, short param_2, undefined1 param_3)
     return uVar2;
 }
 
-// Function @0x8009410C
+//8009410C
 /* WARNING: Removing unreachable block (ram,0x800945a8) */
 /* WARNING: Removing unreachable block (ram,0x800944b8) */
 /* WARNING: Removing unreachable block (ram,0x80094558) */
@@ -68683,7 +68692,7 @@ int FUN_8009410c(uint param_1, short param_2, short param_3, uint param_4, ushor
     return iVar7;
 }
 
-// Function @0x80094660
+//80094660
 uint TriggerVoice(short param_1, ushort param_2, byte param_3, short param_4, short param_5,
     short param_6, short param_7)
 
@@ -68776,7 +68785,7 @@ uint TriggerVoice(short param_1, ushort param_2, byte param_3, short param_4, sh
     return 0xffffffff;
 }
 
-// Function @0x80094F20
+//80094F20
 undefined4 FUN_80094f20(ushort param_1)
 
 {
@@ -68801,7 +68810,7 @@ undefined4 FUN_80094f20(ushort param_1)
     return uVar1;
 }
 
-// Function @0x80095298
+//80095298
 int SetVoiceVolume(ushort voiceIndex, undefined2 volumeLeft, undefined2 volumeRight)
 
 {
@@ -68823,7 +68832,7 @@ int SetVoiceVolume(ushort voiceIndex, undefined2 volumeLeft, undefined2 volumeRi
     return result;
 }
 
-// Function @0x80095610
+//80095610
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 /* Possible S_I.OBJ/SpuInit */
 
@@ -68834,7 +68843,7 @@ void SsUtReverbOff(void)
     return;
 }
 
-// Function @0x80095630
+//80095630
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void _SpuInit(void)
@@ -68871,7 +68880,7 @@ void _SpuInit(void)
     return;
 }
 
-// Function @0x800956F8
+//800956F8
 /* WARNING: Unknown calling convention -- yet parameter storage is locked */
 
 void SpuStart(void)
@@ -68889,7 +68898,7 @@ void SpuStart(void)
     return;
 }
 
-// Function @0x8009577C
+//8009577C
 void _spu_reset(void)
 
 {
@@ -68899,7 +68908,7 @@ void _spu_reset(void)
     return;
 }
 
-// Function @0x800957D4
+//800957D4
 undefined4 SPU_OBJ_58(ushort param_1)
 
 {
@@ -68911,7 +68920,7 @@ undefined4 SPU_OBJ_58(ushort param_1)
     return 0;
 }
 
-// Function @0x80095808
+//80095808
 undefined4 _spu_init(int param_1)
 
 {
@@ -68997,7 +69006,7 @@ undefined4 _spu_init(int param_1)
     return uVar4;
 }
 
-// Function @0x80095948
+//80095948
 undefined4 SPU_OBJ_1CC(void)
 
 {
@@ -69055,7 +69064,7 @@ undefined4 SPU_OBJ_1CC(void)
     return 0;
 }
 
-// Function @0x80095A90
+//80095A90
 void SPU_OBJ_314(void)
 
 {
@@ -69069,7 +69078,7 @@ void SPU_OBJ_314(void)
     return;
 }
 
-// Function @0x80095ADC
+//80095ADC
 void SPU_OBJ_360(void)
 
 {
@@ -69083,7 +69092,7 @@ void SPU_OBJ_360(void)
     return;
 }
 
-// Function @0x80095B28
+//80095B28
 void SPU_OBJ_3AC(void)
 
 {
@@ -69097,7 +69106,7 @@ void SPU_OBJ_3AC(void)
     return;
 }
 
-// Function @0x80095B74
+//80095B74
 void SPU_OBJ_3F8(void)
 
 {
@@ -69115,7 +69124,7 @@ void SPU_OBJ_3F8(void)
     return;
 }
 
-// Function @0x80095BEC
+//80095BEC
 void SPU_OBJ_470(void)
 
 {
@@ -69129,7 +69138,7 @@ void SPU_OBJ_470(void)
     return;
 }
 
-// Function @0x80095C38
+//80095C38
 void SPU_OBJ_4BC(void)
 
 {
@@ -69143,7 +69152,7 @@ void SPU_OBJ_4BC(void)
     return;
 }
 
-// Function @0x80095C84
+//80095C84
 void SPU_OBJ_508(void)
 
 {
@@ -69157,7 +69166,7 @@ void SPU_OBJ_508(void)
     return;
 }
 
-// Function @0x80095CD0
+//80095CD0
 undefined4 SPU_OBJ_554(void)
 
 {
@@ -69172,7 +69181,7 @@ undefined4 SPU_OBJ_554(void)
     return 0;
 }
 
-// Function @0x80095D24
+//80095D24
 void _spu_writeByIO(undefined2* param_1, uint param_2)
 
 {
@@ -69225,7 +69234,7 @@ void _spu_writeByIO(undefined2* param_1, uint param_2)
     return;
 }
 
-// Function @0x80095E58
+//80095E58
 void SPU_OBJ_6DC(void)
 
 {
@@ -69250,7 +69259,7 @@ void SPU_OBJ_6DC(void)
     return;
 }
 
-// Function @0x80095EF4
+//80095EF4
 void SPU_OBJ_778(void)
 
 {
@@ -69261,7 +69270,7 @@ void SPU_OBJ_778(void)
     return;
 }
 
-// Function @0x80095F2C
+//80095F2C
 void SPU_OBJ_7B0(void)
 
 {
@@ -69273,7 +69282,7 @@ void SPU_OBJ_7B0(void)
     return;
 }
 
-// Function @0x80095F78
+//80095F78
 void SPU_OBJ_7FC(void)
 
 {
@@ -69327,14 +69336,14 @@ void SPU_OBJ_7FC(void)
     return;
 }
 
-// Function @0x80096034
+//80096034
 void SPU_OBJ_8B8(void)
 
 {
     return;
 }
 
-// Function @0x80096058
+//80096058
 void _spu_FiDMA(void)
 
 {
@@ -69364,7 +69373,7 @@ void _spu_FiDMA(void)
     return;
 }
 
-// Function @0x800960A8
+//800960A8
 void SPU_OBJ_92C(void)
 
 {
@@ -69378,7 +69387,7 @@ void SPU_OBJ_92C(void)
     return;
 }
 
-// Function @0x800960F4
+//800960F4
 void SPU_OBJ_978(void)
 
 {
@@ -69392,7 +69401,7 @@ void SPU_OBJ_978(void)
     return;
 }
 
-// Function @0x80096140
+//80096140
 void SPU_OBJ_9C4(void)
 
 {
@@ -69421,14 +69430,14 @@ void SPU_OBJ_9C4(void)
     return;
 }
 
-// Function @0x800961E8
+//800961E8
 void SPU_OBJ_A6C(void)
 
 {
     return;
 }
 
-// Function @0x800961F8
+//800961F8
 void _spu_r_(undefined4 param_1, undefined2 param_2)
 
 {
@@ -69443,7 +69452,7 @@ void _spu_r_(undefined4 param_1, undefined2 param_2)
     return;
 }
 
-// Function @0x800962A0
+//800962A0
 void SPU_OBJ_B24(void)
 
 {
@@ -69457,7 +69466,7 @@ void SPU_OBJ_B24(void)
     return;
 }
 
-// Function @0x8009630C
+//8009630C
 void SPU_OBJ_B90(void)
 
 {
@@ -69469,7 +69478,7 @@ void SPU_OBJ_B90(void)
     return;
 }
 
-// Function @0x80096358
+//80096358
 void SPU_OBJ_BDC(undefined4 param_1, undefined4 param_2, int param_3, undefined4 param_4)
 
 {
@@ -69485,7 +69494,7 @@ void SPU_OBJ_BDC(undefined4 param_1, undefined4 param_2, int param_3, undefined4
     return;
 }
 
-// Function @0x800963D8
+//800963D8
 undefined4 _spu_t(int param_1, uint param_2, uint param_3)
 
 {
@@ -69572,7 +69581,7 @@ undefined4 _spu_t(int param_1, uint param_2, uint param_3)
     return uVar2;
 }
 
-// Function @0x800965E0
+//800965E0
 undefined4 SPU_OBJ_E64(uint* param_1, undefined4 param_2, undefined4* param_3)
 
 {
@@ -69593,14 +69602,14 @@ undefined4 SPU_OBJ_E64(uint* param_1, undefined4 param_2, undefined4* param_3)
     return 0;
 }
 
-// Function @0x80096678
+//80096678
 void SPU_OBJ_EFC(void)
 
 {
     return;
 }
 
-// Function @0x80096680
+//80096680
 undefined4 _spu_write(undefined4 param_1, undefined4 param_2)
 
 {
@@ -69617,14 +69626,14 @@ undefined4 _spu_write(undefined4 param_1, undefined4 param_2)
     return param_2;
 }
 
-// Function @0x800966F0
+//800966F0
 void SPU_OBJ_F74(void)
 
 {
     return;
 }
 
-// Function @0x80096708
+//80096708
 undefined4 _spu_read(undefined4 param_1, undefined4 param_2)
 
 {
@@ -69634,7 +69643,7 @@ undefined4 _spu_read(undefined4 param_1, undefined4 param_2)
     return param_2;
 }
 
-// Function @0x80096770
+//80096770
 void _spu_FsetRXX(int param_1, uint param_2, int param_3)
 
 {
@@ -69648,14 +69657,14 @@ void _spu_FsetRXX(int param_1, uint param_2, int param_3)
     return;
 }
 
-// Function @0x800967B0
+//800967B0
 void SPU_OBJ_1034(void)
 
 {
     return;
 }
 
-// Function @0x800967B8
+//800967B8
 uint _spu_FsetRXXa(int param_1, uint param_2)
 
 {
@@ -69682,14 +69691,14 @@ uint _spu_FsetRXXa(int param_1, uint param_2)
     return uVar1;
 }
 
-// Function @0x80096854
+//80096854
 void SPU_OBJ_10D8(void)
 
 {
     return;
 }
 
-// Function @0x8009685C
+//8009685C
 uint _spu_FgetRXXa(int param_1, int param_2)
 
 {
@@ -69702,14 +69711,14 @@ uint _spu_FgetRXXa(int param_1, int param_2)
     return (uint) * (ushort*)(PTR_VOICE_00_LEFT_RIGHT_800c9d88 + param_1 * 2);
 }
 
-// Function @0x80096890
+//80096890
 void SPU_OBJ_1114(void)
 
 {
     return;
 }
 
-// Function @0x80096898
+//80096898
 void _SpuDataCallback(undefined4 param_1)
 
 {
@@ -69717,7 +69726,7 @@ void _SpuDataCallback(undefined4 param_1)
     return;
 }
 
-// Function @0x800968BC
+//800968BC
 /* Possible S_Q.OBJ/SpuQuit */
 
 void FUN_800968bc(void)
@@ -69736,7 +69745,7 @@ void FUN_800968bc(void)
     return;
 }
 
-// Function @0x80096938
+//80096938
 void DisableEvent(void)
 
 {
@@ -69744,7 +69753,7 @@ void DisableEvent(void)
     return;
 }
 
-// Function @0x80096948
+//80096948
 long SpuSetMute(long on_off)
 
 {
@@ -69763,7 +69772,7 @@ long SpuSetMute(long on_off)
     return 1;
 }
 
-// Function @0x80096994
+//80096994
 undefined4 S_SM_OBJ_4C(undefined4 param_1)
 
 {
@@ -69774,14 +69783,14 @@ undefined4 S_SM_OBJ_4C(undefined4 param_1)
     return param_1;
 }
 
-// Function @0x80096998
+//80096998
 undefined4 S_SM_OBJ_50(undefined4 param_1)
 
 {
     return param_1;
 }
 
-// Function @0x800969A0
+//800969A0
 long SpuInitMalloc(long num, char* top)
 
 {
@@ -69804,14 +69813,14 @@ long SpuInitMalloc(long num, char* top)
     return num;
 }
 
-// Function @0x800969EC
+//800969EC
 void S_M_INIT_OBJ_4C(void)
 
 {
     return;
 }
 
-// Function @0x800969F4
+//800969F4
 /* WARNING: Removing unreachable block (ram,0x80096b2c) */
 /* WARNING: Removing unreachable block (ram,0x80096bf0) */
 /* WARNING: Removing unreachable block (ram,0x80096c04) */
@@ -69860,7 +69869,7 @@ long SpuMalloc(long size)
     return -1;
 }
 
-// Function @0x80096A48
+//80096A48
 uint S_M_M_OBJ_54(void)
 
 {
@@ -69937,7 +69946,7 @@ uint S_M_M_OBJ_54(void)
     return uVar1;
 }
 
-// Function @0x80096B20
+//80096B20
 undefined4 S_M_M_OBJ_12C(void)
 
 {
@@ -69992,14 +70001,14 @@ undefined4 S_M_M_OBJ_12C(void)
     return uVar1;
 }
 
-// Function @0x80096C9C
+//80096C9C
 void S_M_M_OBJ_2A8(void)
 
 {
     return;
 }
 
-// Function @0x80096CBC
+//80096CBC
 void _spu_gcSPU(void)
 
 {
@@ -70113,7 +70122,7 @@ void _spu_gcSPU(void)
     return;
 }
 
-// Function @0x80096D0C
+//80096D0C
 void S_M_INT_OBJ_50(undefined4 param_1, undefined4 param_2, int param_3, uint* param_4)
 
 {
@@ -70233,7 +70242,7 @@ code_r0x80096d04:
     goto code_r0x80096d0c;
 }
 
-// Function @0x80096D7C
+//80096D7C
 void S_M_INT_OBJ_C0(void)
 
 {
@@ -70347,7 +70356,7 @@ void S_M_INT_OBJ_C0(void)
     return;
 }
 
-// Function @0x80096F2C
+//80096F2C
 void S_M_INT_OBJ_270(void)
 
 {
@@ -70377,7 +70386,7 @@ void S_M_INT_OBJ_270(void)
     return;
 }
 
-// Function @0x80096FBC
+//80096FBC
 void SpuFree(ulong addr)
 
 {
@@ -70402,7 +70411,7 @@ void SpuFree(ulong addr)
     return;
 }
 
-// Function @0x80097020
+//80097020
 void S_M_F_OBJ_64(void)
 
 {
@@ -70410,7 +70419,7 @@ void S_M_F_OBJ_64(void)
     return;
 }
 
-// Function @0x80097038
+//80097038
 ulong SpuSetNoiseVoice(long on_off, ulong voice_bit)
 
 {
@@ -70420,7 +70429,7 @@ ulong SpuSetNoiseVoice(long on_off, ulong voice_bit)
     return uVar1;
 }
 
-// Function @0x8009705C
+//8009705C
 uint _SpuSetAnyVoice(int param_1, uint param_2, int param_3, int param_4)
 
 {
@@ -70444,7 +70453,7 @@ uint _SpuSetAnyVoice(int param_1, uint param_2, int param_3, int param_4)
     return uVar3;
 }
 
-// Function @0x800970FC
+//800970FC
 uint S_SAV_OBJ_A0(void)
 
 {
@@ -70456,7 +70465,7 @@ uint S_SAV_OBJ_A0(void)
     return in_t0 & 0xffffff;
 }
 
-// Function @0x80097110
+//80097110
 long SpuSetReverb(long on_off)
 
 {
@@ -70483,7 +70492,7 @@ long SpuSetReverb(long on_off)
     return DAT_800c9924;
 }
 
-// Function @0x800971C0
+//800971C0
 undefined4 S_SR_OBJ_B0(void)
 
 {
@@ -70494,14 +70503,14 @@ undefined4 S_SR_OBJ_B0(void)
     return DAT_800c9924;
 }
 
-// Function @0x800971C4
+//800971C4
 undefined4 S_SR_OBJ_B4(void)
 
 {
     return DAT_800c9924;
 }
 
-// Function @0x800971E0
+//800971E0
 undefined4 _SpuIsInAllocateArea(uint param_1)
 
 {
@@ -70526,7 +70535,7 @@ undefined4 _SpuIsInAllocateArea(uint param_1)
     } while (true);
 }
 
-// Function @0x800971F8
+//800971F8
 undefined4 S_M_UTIL_OBJ_18(uint param_1, uint* param_2, uint param_3, uint param_4)
 
 {
@@ -70550,7 +70559,7 @@ undefined4 S_M_UTIL_OBJ_18(uint param_1, uint* param_2, uint param_3, uint param
     } while (true);
 }
 
-// Function @0x80097250
+//80097250
 undefined4 _SpuIsInAllocateArea_(int param_1)
 
 {
@@ -70577,7 +70586,7 @@ undefined4 _SpuIsInAllocateArea_(int param_1)
     } while (true);
 }
 
-// Function @0x80097274
+//80097274
 undefined4 S_M_UTIL_OBJ_94(uint param_1, uint* param_2, uint param_3, uint param_4)
 
 {
@@ -70601,7 +70610,7 @@ undefined4 S_M_UTIL_OBJ_94(uint param_1, uint* param_2, uint param_3, uint param
     } while (true);
 }
 
-// Function @0x800972C8
+//800972C8
 /* WARNING: Removing unreachable block (ram,0x8009773c) */
 /* WARNING: Removing unreachable block (ram,0x800975fc) */
 /* WARNING: Removing unreachable block (ram,0x8009760c) */
@@ -70735,7 +70744,7 @@ long SpuSetReverbModeParam(SpuReverbAttr* attr)
     return lVar4;
 }
 
-// Function @0x80097438
+//80097438
 undefined4 S_SRMP_OBJ_170(void)
 
 {
@@ -70857,7 +70866,7 @@ undefined4 S_SRMP_OBJ_170(void)
     return 0;
 }
 
-// Function @0x80097448
+//80097448
 undefined4 S_SRMP_OBJ_180(void)
 
 {
@@ -70982,7 +70991,7 @@ undefined4 S_SRMP_OBJ_180(void)
     return 0;
 }
 
-// Function @0x80097574
+//80097574
 undefined4 S_SRMP_OBJ_2AC(void)
 
 {
@@ -71067,7 +71076,7 @@ undefined4 S_SRMP_OBJ_2AC(void)
     return 0;
 }
 
-// Function @0x80097608
+//80097608
 void S_SRMP_OBJ_340(void)
 
 {
@@ -71080,7 +71089,7 @@ void S_SRMP_OBJ_340(void)
     return;
 }
 
-// Function @0x80097654
+//80097654
 undefined4 S_SRMP_OBJ_38C(void)
 
 {
@@ -71134,7 +71143,7 @@ undefined4 S_SRMP_OBJ_38C(void)
     return 0;
 }
 
-// Function @0x80097700
+//80097700
 undefined4 S_SRMP_OBJ_438(void)
 
 {
@@ -71163,7 +71172,7 @@ undefined4 S_SRMP_OBJ_438(void)
     return 0;
 }
 
-// Function @0x80097724
+//80097724
 undefined4 S_SRMP_OBJ_45C(void)
 
 {
@@ -71186,14 +71195,14 @@ undefined4 S_SRMP_OBJ_45C(void)
     return 0;
 }
 
-// Function @0x800977A4
+//800977A4
 void S_SRMP_OBJ_4DC(void)
 
 {
     return;
 }
 
-// Function @0x800977D8
+//800977D8
 void _spu_setReverbAttr(uint* param_1)
 
 {
@@ -71314,7 +71323,7 @@ void _spu_setReverbAttr(uint* param_1)
     return;
 }
 
-// Function @0x80097CA8
+//80097CA8
 long SpuSetReverbDepth(SpuReverbAttr* attr)
 
 {
@@ -71332,7 +71341,7 @@ long SpuSetReverbDepth(SpuReverbAttr* attr)
     return 0;
 }
 
-// Function @0x80097D20
+//80097D20
 ulong SpuSetReverbVoice(long on_off, ulong voice_bit)
 
 {
@@ -71342,7 +71351,7 @@ ulong SpuSetReverbVoice(long on_off, ulong voice_bit)
     return uVar1;
 }
 
-// Function @0x80097D44
+//80097D44
 long SpuClearReverbWorkArea(long mode)
 
 {
@@ -71393,7 +71402,7 @@ long SpuClearReverbWorkArea(long mode)
     return lVar4;
 }
 
-// Function @0x80097DE0
+//80097DE0
 undefined4 S_CRWA_OBJ_9C(void)
 
 {
@@ -71430,7 +71439,7 @@ undefined4 S_CRWA_OBJ_9C(void)
     return uVar2;
 }
 
-// Function @0x80097E44
+//80097E44
 undefined4 S_CRWA_OBJ_100(void)
 
 {
@@ -71467,14 +71476,14 @@ undefined4 S_CRWA_OBJ_100(void)
     return uVar1;
 }
 
-// Function @0x80097EB8
+//80097EB8
 void S_CRWA_OBJ_174(void)
 
 {
     return;
 }
 
-// Function @0x80097EE0
+//80097EE0
 void WaitEvent(void)
 
 {
@@ -71482,7 +71491,7 @@ void WaitEvent(void)
     return;
 }
 
-// Function @0x80097EF0
+//80097EF0
 void SpuSetKey(long on_off, ulong voice_bit)
 
 {
@@ -71507,7 +71516,7 @@ void SpuSetKey(long on_off, ulong voice_bit)
     return;
 }
 
-// Function @0x80097F58
+//80097F58
 void S_SK_OBJ_68(void)
 
 {
@@ -71517,7 +71526,7 @@ void S_SK_OBJ_68(void)
     return;
 }
 
-// Function @0x80097F68
+//80097F68
 /* Possible S_W.OBJ/SpuWrite */
 
 ulong SpuRead(uchar* addr, ulong size)
@@ -71533,7 +71542,7 @@ ulong SpuRead(uchar* addr, ulong size)
     return size;
 }
 
-// Function @0x80097FC8
+//80097FC8
 ulong SpuSetTransferStartAddr(ulong addr)
 
 {
@@ -71541,7 +71550,7 @@ ulong SpuSetTransferStartAddr(ulong addr)
     return addr;
 }
 
-// Function @0x80098004
+//80098004
 long SpuSetTransferMode(long mode)
 
 {
@@ -71556,7 +71565,7 @@ long SpuSetTransferMode(long mode)
     return 0;
 }
 
-// Function @0x80098020
+//80098020
 void S_STM_OBJ_1C(undefined4 param_1)
 
 {
@@ -71567,7 +71576,7 @@ void S_STM_OBJ_1C(undefined4 param_1)
     return;
 }
 
-// Function @0x80098038
+//80098038
 ulong SpuWritePartly(uchar* addr, ulong size)
 
 {
@@ -71587,7 +71596,7 @@ ulong SpuWritePartly(uchar* addr, ulong size)
     return size;
 }
 
-// Function @0x800980C4
+//800980C4
 long SpuIsTransferCompleted(long flag)
 
 {
@@ -71596,13 +71605,13 @@ long SpuIsTransferCompleted(long flag)
     int iVar3;
 
     if ((DAT_800c9920 != 1) && (g_SPUTransferInProgress != 1)) {
-        iVar3 = TestEvent(DAT_800c9974);
+        iVar3 = TestEvent();
         if (flag == 1) {
             bVar1 = iVar3 == 0;
             iVar3 = 1;
             if (bVar1) {
                 do {
-                    iVar3 = TestEvent(DAT_800c9974);
+                    iVar3 = TestEvent();
                 } while (iVar3 == 0);
                 lVar2 = S_ITC_OBJ_88();
                 return lVar2;
@@ -71618,7 +71627,7 @@ long SpuIsTransferCompleted(long flag)
     return lVar2;
 }
 
-// Function @0x8009814C
+//8009814C
 void S_ITC_OBJ_88(void)
 
 {
@@ -71628,14 +71637,14 @@ void S_ITC_OBJ_88(void)
     return;
 }
 
-// Function @0x80098154
+//80098154
 void S_ITC_OBJ_90(void)
 
 {
     return;
 }
 
-// Function @0x8009816C
+//8009816C
 /* Possible S_IT.OBJ/_spu_setInTransfer */
 
 void SetSPUTransferInProgressFlag(int enable)
@@ -71645,7 +71654,7 @@ void SetSPUTransferInProgressFlag(int enable)
     return;
 }
 
-// Function @0x80098198
+//80098198
 /* Possible S_IT.OBJ/_spu_getInTransfer */
 
 bool FUN_80098198(void)
@@ -71654,7 +71663,7 @@ bool FUN_80098198(void)
     return g_SPUTransferInProgress == 0;
 }
 
-// Function @0x800981A8
+//800981A8
 void SpuSetCommonAttr(SpuCommonAttr* attr)
 
 {
@@ -71806,7 +71815,7 @@ S_SCA_OBJ_1A8:
     return;
 }
 
-// Function @0x80098204
+//80098204
 void S_SCA_OBJ_5C(int param_1)
 
 {
@@ -71917,7 +71926,7 @@ S_SCA_OBJ_1A8:
     return;
 }
 
-// Function @0x8009820C
+//8009820C
 void S_SCA_OBJ_64(int param_1)
 
 {
@@ -72028,7 +72037,7 @@ S_SCA_OBJ_1A8:
     return;
 }
 
-// Function @0x80098214
+//80098214
 void S_SCA_OBJ_6C(int param_1)
 
 {
@@ -72139,7 +72148,7 @@ S_SCA_OBJ_1A8:
     return;
 }
 
-// Function @0x8009821C
+//8009821C
 void S_SCA_OBJ_74(int param_1)
 
 {
@@ -72250,7 +72259,7 @@ S_SCA_OBJ_1A8:
     return;
 }
 
-// Function @0x80098224
+//80098224
 void S_SCA_OBJ_7C(int param_1)
 
 {
@@ -72361,7 +72370,7 @@ S_SCA_OBJ_1A8:
     return;
 }
 
-// Function @0x8009822C
+//8009822C
 void S_SCA_OBJ_84(int param_1)
 
 {
@@ -72472,7 +72481,7 @@ S_SCA_OBJ_1A8:
     return;
 }
 
-// Function @0x80098234
+//80098234
 void S_SCA_OBJ_8C(int param_1)
 
 {
@@ -72583,7 +72592,7 @@ S_SCA_OBJ_1A8:
     return;
 }
 
-// Function @0x8009823C
+//8009823C
 /* WARNING: Removing unreachable block (ram,0x8009824c) */
 /* WARNING: Removing unreachable block (ram,0x80098260) */
 /* WARNING: Removing unreachable block (ram,0x80098268) */
@@ -72692,7 +72701,7 @@ S_SCA_OBJ_1A8:
     return;
 }
 
-// Function @0x80098244
+//80098244
 void S_SCA_OBJ_9C(int param_1, int param_2, ushort param_3)
 
 {
@@ -72805,7 +72814,7 @@ S_SCA_OBJ_1A8:
     return;
 }
 
-// Function @0x80098274
+//80098274
 void S_SCA_OBJ_CC(int param_1, ushort param_2, ushort param_3)
 
 {
@@ -72908,7 +72917,7 @@ S_SCA_OBJ_1A8:
     return;
 }
 
-// Function @0x800982CC
+//800982CC
 void S_SCA_OBJ_124(int param_1)
 
 {
@@ -72972,7 +72981,7 @@ void S_SCA_OBJ_124(int param_1)
     return;
 }
 
-// Function @0x800982D4
+//800982D4
 void S_SCA_OBJ_12C(int param_1)
 
 {
@@ -73036,7 +73045,7 @@ void S_SCA_OBJ_12C(int param_1)
     return;
 }
 
-// Function @0x800982DC
+//800982DC
 void S_SCA_OBJ_134(int param_1)
 
 {
@@ -73100,7 +73109,7 @@ void S_SCA_OBJ_134(int param_1)
     return;
 }
 
-// Function @0x800982E4
+//800982E4
 void S_SCA_OBJ_13C(int param_1)
 
 {
@@ -73164,7 +73173,7 @@ void S_SCA_OBJ_13C(int param_1)
     return;
 }
 
-// Function @0x800982EC
+//800982EC
 void S_SCA_OBJ_144(int param_1)
 
 {
@@ -73228,7 +73237,7 @@ void S_SCA_OBJ_144(int param_1)
     return;
 }
 
-// Function @0x800982F4
+//800982F4
 void S_SCA_OBJ_14C(int param_1)
 
 {
@@ -73292,7 +73301,7 @@ void S_SCA_OBJ_14C(int param_1)
     return;
 }
 
-// Function @0x800982FC
+//800982FC
 void S_SCA_OBJ_154(int param_1)
 
 {
@@ -73356,7 +73365,7 @@ void S_SCA_OBJ_154(int param_1)
     return;
 }
 
-// Function @0x80098304
+//80098304
 /* WARNING: Removing unreachable block (ram,0x80098314) */
 /* WARNING: Removing unreachable block (ram,0x80098328) */
 /* WARNING: Removing unreachable block (ram,0x80098330) */
@@ -73417,7 +73426,7 @@ void S_SCA_OBJ_15C(int param_1)
     return;
 }
 
-// Function @0x8009830C
+//8009830C
 void S_SCA_OBJ_164(int param_1, int param_2)
 
 {
@@ -73486,7 +73495,7 @@ void S_SCA_OBJ_164(int param_1, int param_2)
     return;
 }
 
-// Function @0x8009833C
+//8009833C
 void S_SCA_OBJ_194(int param_1, ushort param_2)
 
 {
@@ -73542,7 +73551,7 @@ void S_SCA_OBJ_194(int param_1, ushort param_2)
     return;
 }
 
-// Function @0x800983E8
+//800983E8
 void S_SCA_OBJ_240(int param_1)
 
 {
@@ -73585,7 +73594,7 @@ void S_SCA_OBJ_240(int param_1)
     return;
 }
 
-// Function @0x8009843C
+//8009843C
 void S_SCA_OBJ_294(int param_1)
 
 {
@@ -73620,7 +73629,7 @@ void S_SCA_OBJ_294(int param_1)
     return;
 }
 
-// Function @0x800984D8
+//800984D8
 void S_SCA_OBJ_330(int param_1)
 
 {
@@ -73641,7 +73650,7 @@ void S_SCA_OBJ_330(int param_1)
     return;
 }
 
-// Function @0x8009852C
+//8009852C
 void S_SCA_OBJ_384(void)
 
 {
@@ -73652,7 +73661,7 @@ void S_SCA_OBJ_384(void)
     return;
 }
 
-// Function @0x8009853C
+//8009853C
 long SpuRGetAllKeysStatus(long min_, long max_, char* status)
 
 {
@@ -73699,7 +73708,7 @@ long SpuRGetAllKeysStatus(long min_, long max_, char* status)
     return lVar1;
 }
 
-// Function @0x800985F0
+//800985F0
 undefined4 SR_GAKS_OBJ_B4(undefined4 param_1, int param_2, undefined1* param_3, uint param_4)
 
 {
@@ -73732,14 +73741,14 @@ undefined4 SR_GAKS_OBJ_B4(undefined4 param_1, int param_2, undefined1* param_3, 
     return uVar1;
 }
 
-// Function @0x80098604
+//80098604
 void SR_GAKS_OBJ_C8(void)
 
 {
     return;
 }
 
-// Function @0x8009860C
+//8009860C
 void SpuGetAllKeysStatus(char* status)
 
 {
@@ -73769,7 +73778,7 @@ void SpuGetAllKeysStatus(char* status)
     return;
 }
 
-// Function @0x8009867C
+//8009867C
 void SR_GAKS_OBJ_140(undefined4 param_1, undefined1* param_2, uint param_3, int param_4)
 
 {
@@ -73800,4 +73809,3 @@ void SR_GAKS_OBJ_140(undefined4 param_1, undefined1* param_2, uint param_3, int 
     SR_GAKS_OBJ_140();
     return;
 }
-

@@ -6,6 +6,7 @@
 //only for structure to remove after
 #include "LIBGPU.h"
 #include "LIBCD.h"
+#include "LIBSPU.h"
 
 //don't delete
 #define false 0
@@ -14,9 +15,6 @@
 typedef unsigned char   undefined;
 typedef long long longlong;
 typedef unsigned long long ulonglong;
-
-typedef void (*func)();
-typedef void (*func49)(int, void (*func)());
 
 //exported from Ghidra
 
@@ -36,40 +34,35 @@ typedef unsigned long long undefined8;
 typedef unsigned short ushort;
 typedef unsigned short word;
 
-typedef struct AnimationTable AnimationTable, * PAnimationTable;
+
+typedef struct Entity Entity, * PEntity;
+
+typedef void (*func)();
+typedef void (*func49)(int, void (*func)());
+typedef void (*code)(Entity*, uint*);
 
 typedef struct AnimationData AnimationData, * PAnimationData;
 
 struct AnimationData {
-    undefined1 entries; /* Created by retype action */
-    undefined field1_0x1;
-    undefined field2_0x2;
-    undefined field3_0x3;
-    undefined1 frameListOffset; /* Created by retype action */
-    undefined field5_0x5;
-    undefined field6_0x6;
-    undefined field7_0x7;
-    undefined field8_0x8;
-    undefined field9_0x9;
-    undefined field10_0xa;
-    undefined field11_0xb;
-    undefined1 pointerListOffset; /* Created by retype action */
-    undefined field13_0xd;
-    undefined field14_0xe;
-    undefined field15_0xf;
-    uint3 field16_0x10;
-    undefined field17_0x13;
-    undefined1 rawPtrListOffset; /* Created by retype action */
-    undefined field19_0x15;
-    undefined field20_0x16;
-    undefined field21_0x17;
-    char offsetX; /* Created by retype action */
+    int* entries;
+    int* frameListOffset;
+    undefined1 entryIndex; /* Created by retype action */
+    undefined field3_0x9;
+    undefined field4_0xa;
+    undefined field5_0xb;
+    int* pointerListOffset;
+    uint3 field7_0x10;
+    undefined field8_0x13;
+    int* rawPtrListOffset;
+    char offsetX;
     char offsetY;
     char offsetZ;
     byte sizeX;
     byte sizeY;
     byte sizeZ;
 };
+
+typedef struct AnimationTable AnimationTable, * PAnimationTable;
 
 struct AnimationTable {
     struct AnimationData* baseDataPtr;
@@ -88,36 +81,34 @@ struct AnimationTable {
     int field13_0x34;
 };
 
-typedef struct Effect Effect, *PEffect;
+typedef struct Effect Effect, * PEffect;
 
-typedef struct Entity Entity, *PEntity;
+typedef struct LogicContext LogicContext, * PLogicContext;
 
-typedef struct LogicContext LogicContext, *PLogicContext;
-
-typedef struct Script Script, *PScript;
+typedef struct Script Script, * PScript;
 
 struct Entity {
-    struct Entity *previousEntity;
-    struct Entity *nextEntity; /* collisionMask too!! */
-    struct Entity *childEntity;
-    struct Entity *parentEntity;
+    struct Entity* previousEntity;
+    struct Entity* nextEntity; /* collisionMask too!! */
+    struct Entity* childEntity;
+    struct Entity* parentEntity;
     int status; /* //0=destroyed,1=loaded,2=normal,3=deactivated,4=flagtodestroy,5=? */
     int hp;
     int hpMax;
     int hitFrameCounter;
     int field8_0x20;
     int flags2;
-    struct Entity *platformEntity;
+    struct Entity* platformEntity;
     int field11_0x2c;
     int contentsItemId;
     int contentsGameFlag;
-    void *entityRecord;
-    void *scriptCallback;
+    void* entityRecord;
+    void* scriptCallback;
     int programIndexes[6];
     int field17_0x58;
     int zVelocity;
     int warpScriptPointer;
-    struct AnimationData *spriteRecordPtr; /* SpriteRecord */
+    struct AnimationData* spriteRecordPtr; /* SpriteRecord */
     int spriteTableIndex;
     int flags; /* 0x800000 = portrait,0x0100 = gravity,0xf = ?, 0x1 = ? , 0x80 = collidable */
     int spriteProgramIndexes[6];
@@ -126,9 +117,9 @@ struct Entity {
     uint currentAnimationId;
     uint currentDirection;
     int currentAnimFrame;
-    int *animSet;
-    int *initialFrame;
-    int *frame;
+    int* animSet;
+    int* initialFrame;
+    int* frame;
     int nextFrameDelay;
     int forceResetAnimationFlag;
     int animCompleteCounter;
@@ -149,7 +140,7 @@ struct Entity {
     int finalZForce;
     int acceleration;
     int speed;
-    int appliedZForceOrAnimationSomething;
+    int isZForceApplied;
     int boundingBoxMaxX;
     int boundingBoxMaxY;
     int boundingBoxMaxZ;
@@ -162,8 +153,8 @@ struct Entity {
     int tileX;
     int tileY;
     int tileZ;
-    struct Entity *ridingEntity;
-    struct Entity *XCollisionEntity;
+    struct Entity* ridingEntity;
+    struct Entity* XCollisionEntity;
     int floorHeight;
     int terrainHeight;
     int forceAdjusted;
@@ -185,7 +176,7 @@ struct Entity {
     int tileAttributes;
     int hitboxHeightY; /* slope ? */
     int hitboxHeightZ; /* slope ? */
-    byte *collisionDataPtr; /* sprite ref */
+    byte* collisionDataPtr; /* sprite ref */
     int xposOld;
     int yposOld;
     short zposOld;
@@ -202,7 +193,7 @@ struct Entity {
     int balanceVal; /* BalanceAnimValRef */
     int damagedTickCounter;
     int frameColTickCounter;
-    char *currentTransformData; /* FrameCollisionData */
+    char* currentTransformData; /* FrameCollisionData */
     int adjustedPosX;
     int adjustedPosY;
     int adjustedPosZ;
@@ -222,12 +213,12 @@ struct Entity {
     uint transformDepth;
     uint transformHeight;
     int hitCounter;
-    struct Entity *touchingEntity;
+    struct Entity* touchingEntity;
     int eventTrigger; /* for the player character this holds the id of the map event that is triggering, for other entities this holds the type of event slot to trigger */
     int mapEventProgramId;
-    struct Entity *logicContextEntity;
-    struct LogicContext *logicContext;
-    struct Script *script;
+    struct Entity* logicContextEntity;
+    struct LogicContext* logicContext;
+    struct Script* script;
     undefined field131_0x23c;
     undefined field132_0x23d;
     undefined field133_0x23e;
@@ -276,8 +267,8 @@ struct Entity {
     undefined field176_0x269;
     undefined field177_0x26a;
     undefined field178_0x26b;
-    int unknownEventAnim;
-    int unknownEventDir;
+    int lastTargetAnimationId;
+    int lastTargetDirection;
     int spawnCustomByte;
     int initialXPos;
     int initialYPos; /* can be equals to spawnedGameFlag[2] */
@@ -303,13 +294,13 @@ struct LogicContext {
     undefined field1_0x1;
     undefined field2_0x2;
     undefined field3_0x3;
-    struct Script *script;
-    int previousCommandPtr;
-    int xpos;
-    int savedY;
-    int savedZ;
-    int animRepeatCount;
-    int frameCounter;
+    struct Script* script;
+    int previousCommandPtr; /* Created by retype action */
+    int xpos; /* Created by retype action */
+    int savedY; /* Created by retype action */
+    int savedZ; /* Created by retype action */
+    int animRepeatCount; /* Created by retype action */
+    int frameCounter; /* Created by retype action */
     undefined field11_0x20;
     undefined field12_0x21;
     undefined field13_0x22;
@@ -323,11 +314,11 @@ struct LogicContext {
     undefined field21_0x2a;
     undefined field22_0x2b;
     int isCommandSuccess;
-    undefined field24_0x30;
+    undefined1 saveY; /* Created by retype action */
     undefined field25_0x31;
     undefined field26_0x32;
     undefined field27_0x33;
-    struct Script *nextInstruction;
+    struct Script* nextInstruction;
 };
 
 struct Effect {
@@ -335,7 +326,7 @@ struct Effect {
     int field1_0x4;
     undefined4 animationDataPtr;
     undefined4 field3_0xc;
-    struct Effect *nextEffect;
+    struct Effect* nextEffect; /* Created by retype action */
     undefined field5_0x14;
     undefined field6_0x15;
     undefined field7_0x16;
@@ -366,18 +357,18 @@ struct Effect {
     undefined field32_0x2f;
     int logicParam;
     int updateMode;
-    struct Entity *attachedEntity;
+    struct Entity* attachedEntity;
     int posX;
     int posY;
     int posZ;
-    int velocityX;
-    int velocityY;
-    int velocityZ;
-    int velocityX2;
-    int velocityZ2;
-    int velocityY2;
-    int zSortOffset;
-    int zSortValue;
+    int velocityX; /* Created by retype action */
+    int velocityY; /* Created by retype action */
+    int velocityZ; /* Created by retype action */
+    int velocityX2; /* Created by retype action */
+    int velocityZ2; /* Created by retype action */
+    int velocityY2; /* Created by retype action */
+    int zSortOffset; /* Created by retype action */
+    int zSortValue; /* Created by retype action */
     int state;
     bool hasBehavior;
     bool noBehavior;
@@ -387,53 +378,30 @@ struct Effect {
     byte subTypeInverse;
 };
 
-typedef struct FadeControl FadeControl, *PFadeControl;
+typedef struct FadeControl FadeControl, * PFadeControl;
 
 struct FadeControl {
     undefined field0_0x0;
     undefined field1_0x1;
-    short warpVisualId;
+    short warpVisualId; /* Created by retype action */
     short targetFadeLevel;
     short maxFadeLevel;
 };
 
-typedef struct PadState PadState, *PPadState;
+typedef struct PadState PadState, * PPadState;
 
 struct PadState {
     uint maxNbFrameHeld;
     uint repeatInterval;
     uint isOverThanMaxNbFrameHeld;
     uint numberOfFrameHold;
-    ushort buttonsHold;
+    ushort buttonsHold; /* Created by retype action */
     ushort buttonsJustPressed;
     ushort buttonReleased;
     ushort buttonsJustPressedByInterval;
 };
 
-typedef struct Sprite Sprite, *PSprite;
-
-struct Sprite {
-    undefined1 sprites;
-    undefined field1_0x1;
-    undefined field2_0x2;
-    undefined field3_0x3;
-    undefined field4_0x4;
-    undefined field5_0x5;
-    undefined field6_0x6;
-    undefined field7_0x7;
-    undefined field8_0x8;
-    undefined field9_0x9;
-    undefined field10_0xa;
-    undefined field11_0xb;
-    undefined field12_0xc;
-    undefined field13_0xd;
-    undefined field14_0xe;
-    undefined field15_0xf;
-    undefined2 posX;
-    undefined2 posY;
-};
-
-typedef struct SpriteMapEntry SpriteMapEntry, *PSpriteMapEntry;
+typedef struct SpriteMapEntry SpriteMapEntry, * PSpriteMapEntry;
 
 struct SpriteMapEntry {
     bool enabled;
@@ -445,7 +413,7 @@ struct SpriteMapEntry {
     undefined1 offsetZ;
 };
 
-typedef struct SprtGridDescriptor SprtGridDescriptor, *PSprtGridDescriptor;
+typedef struct SprtGridDescriptor SprtGridDescriptor, * PSprtGridDescriptor;
 
 typedef struct SPRT *PSPRT;
 
@@ -462,7 +430,7 @@ struct SprtGridDescriptor {
     undefined field3_0x3;
     short spriteCountX;
     short spriteCountY;
-    struct SPRT *spriteTablePtr;
+    struct SPRT* spriteTablePtr;
 };
 
 struct SPRT {
@@ -480,44 +448,44 @@ struct SPRT {
     short h;
 };
 
-typedef struct TileSetMetaData TileSetMetaData, *PTileSetMetaData;
+typedef struct TileSetMetaData TileSetMetaData, * PTileSetMetaData;
 
 struct TileSetMetaData {
     undefined field0_0x0;
     undefined field1_0x1;
     undefined field2_0x2;
     undefined field3_0x3;
-    byte numberOfLayers;
-    short tileDepth;
+    byte numberOfLayers; /* Created by retype action */
+    short tileDepth; /* Created by retype action */
     undefined field6_0x7;
     undefined field7_0x8;
     undefined field8_0x9;
     undefined field9_0xa;
-    byte tileAnimationMode;
+    byte tileAnimationMode; /* Created by retype action */
     undefined field11_0xc;
     undefined field12_0xd;
     undefined field13_0xe;
     undefined field14_0xf;
-    int tileAnimationBankOffset;
+    int tileAnimationBankOffset; /* Created by retype action */
     int tileAnimationOffset;
 };
 
-typedef struct Voice Voice, *PVoice;
+typedef struct Voice Voice, * PVoice;
 
 struct Voice {
-    undefined1 volLeft;
+    undefined1 volLeft; /* Created by retype action */
     undefined field1_0x1;
     undefined field2_0x2;
     undefined field3_0x3;
-    undefined1 pitch;
+    undefined1 pitch; /* Created by retype action */
     undefined field5_0x5;
-    undefined1 reverbDepth;
+    undefined1 reverbDepth; /* Created by retype action */
     undefined field7_0x7;
-    undefined1 adsrAttack;
+    undefined1 adsrAttack; /* Created by retype action */
     undefined field9_0x9;
-    undefined1 adsrSustain;
+    undefined1 adsrSustain; /* Created by retype action */
     undefined field11_0xb;
-    undefined1 status;
+    undefined1 status; /* Created by retype action */
     undefined field13_0xd;
     undefined field14_0xe;
     undefined field15_0xf;
@@ -932,7 +900,7 @@ struct Voice {
     ushort field424_0x1aa;
 };
 
-typedef struct WarpData WarpData, *PWarpData;
+typedef struct WarpData WarpData, * PWarpData;
 
 struct WarpData {
     char tileX1;
@@ -945,4 +913,3 @@ struct WarpData {
     short zLevel;
     ushort flags;
 };
-

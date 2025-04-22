@@ -11,2135 +11,2119 @@ char* s__c888 = "~c888";
 char* s__c558 = "~c558";
 
 const char* DATAS_BIN = "DATA\\DATAS.BIN";
-const char* g_warpNames[] = { "0-FADE", "1-RAPID", "2-WHITE", "3-SCROLL", "4-DREAM", "5-WARP", "6-GATE", "7-NONE" };
+const char* g_warpNames[] = { "0-FADE", "1-RAPID", "2-WHITE", "3-SCROLL", "4-DREAM", "5-WARP", "6-GATE", "7-NONE" }; // 0x80098694
 
 
 //exported from Ghidra
-extern undefined4 DAT_1f8003fc;
-extern dword EXP1_BASE_ADDR;
-extern dword EXP2_BASE_ADDR;
-extern dword EXP1_DELAY_SIZE;
-extern dword EXP3_DELAY_SIZE;
-extern dword BIOS_ROM;
-extern dword SPU_DELAY;
-extern dword CDROM_DELAY;
-extern dword EXP2_DELAY_SIZE;
-extern dword COMMON_DELAY;
-extern dword JOY_MCD_DATA;
-extern dword JOY_MCD_STAT;
-extern word JOY_MCD_MODE;
-extern word JOY_MCD_CTRL;
-extern word JOY_MCD_BAUD;
-extern dword SIO_DATA;
-extern dword SIO_STAT;
-extern word SIO_MODE;
-extern word SIO_CTRL;
-extern word SIO_MISC;
-extern word SIO_BAUD;
-extern dword RAM_SIZE;
-extern word I_STAT;
-extern word I_MASK;
-extern dword DMA_MDEC_IN_MADR;
-extern dword DMA_MDEC_IN_BCR;
-extern dword DMA_MDEC_IN_CHCR;
-extern dword DMA_MDEC_OUT_MADR;
-extern dword DMA_MDEC_OUT_BCR;
-extern dword DMA_MDEC_OUT_CHCR;
-extern dword DMA_GPU_MADR;
-extern dword DMA_GPU_BCR;
-extern dword DMA_GPU_CHCR;
-extern dword DMA_CDROM_MADR;
-extern dword DMA_CDROM_BCR;
-extern dword DMA_CDROM_CHCR;
-extern dword DMA_SPU_MADR;
-extern dword DMA_SPU_BCR;
-extern dword DMA_SPU_CHCR;
-extern dword DMA_PIO_MADR;
-extern dword DMA_PIO_BCR;
-extern dword DMA_PIO_CHCR;
-extern dword DMA_OTC_MADR;
-extern dword DMA_OTC_BCR;
-extern dword DMA_OTC_CHCR;
-extern dword DMA_DPCR;
-extern dword DMA_DICR;
-extern dword TMR_DOTCLOCK_VAL;
-extern dword TMR_DOTCLOCK_MODE;
-extern dword TMR_DOTCLOCK_MAX;
-extern dword TMR_HRETRACE_VAL;
-extern dword TMR_HRETRACE_MODE;
-extern dword TMR_HRETRACE_MAX;
-extern dword TMR_SYSCLOCK_VAL;
-extern dword TMR_SYSCLOCK_MODE;
-extern dword TMR_SYSCLOCK_MAX;
-extern byte CDROM_REG0;
-extern byte CDROM_REG1;
-extern byte CDROM_REG2;
-extern byte CDROM_REG3;
-extern dword GPU_REG0;
-extern dword GPU_REG1;
-extern dword MDEC_REG0;
-extern dword MDEC_REG1;
-extern dword VOICE_00_LEFT_RIGHT;
-extern word VOICE_00_ADPCM_SAMPLE_RATE;
-extern word VOICE_00_ADPCM_START_ADDR;
-extern word VOICE_00_ADSR_ATT_DEC_SUS_REL;
-extern undefined2 DAT_1f801c0a;
-extern word VOICE_00_ADSR_CURR_VOLUME;
-extern word VOICE_00_ADPCM_REPEAT_ADDR;
-extern dword VOICE_01_LEFT_RIGHT;
-extern word VOICE_01_ADPCM_SAMPLE_RATE;
-extern word VOICE_01_ADPCM_START_ADDR;
-extern word VOICE_01_ADSR_ATT_DEC_SUS_REL;
-extern undefined2 DAT_1f801c1a;
-extern word VOICE_01_ADSR_CURR_VOLUME;
-extern word VOICE_01_ADPCM_REPEAT_ADDR;
-extern dword VOICE_02_LEFT_RIGHT;
-extern word VOICE_02_ADPCM_SAMPLE_RATE;
-extern word VOICE_02_ADPCM_START_ADDR;
-extern word VOICE_02_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_02_ADSR_CURR_VOLUME;
-extern word VOICE_02_ADPCM_REPEAT_ADDR;
-extern dword VOICE_03_LEFT_RIGHT;
-extern word VOICE_03_ADPCM_SAMPLE_RATE;
-extern word VOICE_03_ADPCM_START_ADDR;
-extern word VOICE_03_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_03_ADSR_CURR_VOLUME;
-extern word VOICE_03_ADPCM_REPEAT_ADDR;
-extern dword VOICE_04_LEFT_RIGHT;
-extern word VOICE_04_ADPCM_SAMPLE_RATE;
-extern word VOICE_04_ADPCM_START_ADDR;
-extern word VOICE_04_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_04_ADSR_CURR_VOLUME;
-extern word VOICE_04_ADPCM_REPEAT_ADDR;
-extern dword VOICE_05_LEFT_RIGHT;
-extern word VOICE_05_ADPCM_SAMPLE_RATE;
-extern word VOICE_05_ADPCM_START_ADDR;
-extern word VOICE_05_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_05_ADSR_CURR_VOLUME;
-extern word VOICE_05_ADPCM_REPEAT_ADDR;
-extern dword VOICE_06_LEFT_RIGHT;
-extern word VOICE_06_ADPCM_SAMPLE_RATE;
-extern word VOICE_06_ADPCM_START_ADDR;
-extern word VOICE_06_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_06_ADSR_CURR_VOLUME;
-extern word VOICE_06_ADPCM_REPEAT_ADDR;
-extern dword VOICE_07_LEFT_RIGHT;
-extern word VOICE_07_ADPCM_SAMPLE_RATE;
-extern word VOICE_07_ADPCM_START_ADDR;
-extern word VOICE_07_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_07_ADSR_CURR_VOLUME;
-extern word VOICE_07_ADPCM_REPEAT_ADDR;
-extern dword VOICE_08_LEFT_RIGHT;
-extern word VOICE_08_ADPCM_SAMPLE_RATE;
-extern word VOICE_08_ADPCM_START_ADDR;
-extern word VOICE_08_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_08_ADSR_CURR_VOLUME;
-extern word VOICE_08_ADPCM_REPEAT_ADDR;
-extern dword VOICE_09_LEFT_RIGHT;
-extern word VOICE_09_ADPCM_SAMPLE_RATE;
-extern word VOICE_09_ADPCM_START_ADDR;
-extern word VOICE_09_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_09_ADSR_CURR_VOLUME;
-extern word VOICE_09_ADPCM_REPEAT_ADDR;
-extern dword VOICE_0a_LEFT_RIGHT;
-extern word VOICE_0a_ADPCM_SAMPLE_RATE;
-extern word VOICE_0a_ADPCM_START_ADDR;
-extern word VOICE_0a_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_0a_ADSR_CURR_VOLUME;
-extern word VOICE_0a_ADPCM_REPEAT_ADDR;
-extern dword VOICE_0b_LEFT_RIGHT;
-extern word VOICE_0b_ADPCM_SAMPLE_RATE;
-extern word VOICE_0b_ADPCM_START_ADDR;
-extern word VOICE_0b_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_0b_ADSR_CURR_VOLUME;
-extern word VOICE_0b_ADPCM_REPEAT_ADDR;
-extern dword VOICE_0c_LEFT_RIGHT;
-extern word VOICE_0c_ADPCM_SAMPLE_RATE;
-extern word VOICE_0c_ADPCM_START_ADDR;
-extern word VOICE_0c_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_0c_ADSR_CURR_VOLUME;
-extern word VOICE_0c_ADPCM_REPEAT_ADDR;
-extern dword VOICE_0d_LEFT_RIGHT;
-extern word VOICE_0d_ADPCM_SAMPLE_RATE;
-extern word VOICE_0d_ADPCM_START_ADDR;
-extern word VOICE_0d_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_0d_ADSR_CURR_VOLUME;
-extern word VOICE_0d_ADPCM_REPEAT_ADDR;
-extern dword VOICE_0e_LEFT_RIGHT;
-extern word VOICE_0e_ADPCM_SAMPLE_RATE;
-extern word VOICE_0e_ADPCM_START_ADDR;
-extern word VOICE_0e_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_0e_ADSR_CURR_VOLUME;
-extern word VOICE_0e_ADPCM_REPEAT_ADDR;
-extern dword VOICE_0f_LEFT_RIGHT;
-extern word VOICE_0f_ADPCM_SAMPLE_RATE;
-extern word VOICE_0f_ADPCM_START_ADDR;
-extern word VOICE_0f_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_0f_ADSR_CURR_VOLUME;
-extern word VOICE_0f_ADPCM_REPEAT_ADDR;
-extern dword VOICE_10_LEFT_RIGHT;
-extern word VOICE_10_ADPCM_SAMPLE_RATE;
-extern word VOICE_10_ADPCM_START_ADDR;
-extern word VOICE_10_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_10_ADSR_CURR_VOLUME;
-extern word VOICE_10_ADPCM_REPEAT_ADDR;
-extern dword VOICE_11_LEFT_RIGHT;
-extern word VOICE_11_ADPCM_SAMPLE_RATE;
-extern word VOICE_11_ADPCM_START_ADDR;
-extern word VOICE_11_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_11_ADSR_CURR_VOLUME;
-extern word VOICE_11_ADPCM_REPEAT_ADDR;
-extern dword VOICE_12_LEFT_RIGHT;
-extern word VOICE_12_ADPCM_SAMPLE_RATE;
-extern word VOICE_12_ADPCM_START_ADDR;
-extern word VOICE_12_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_12_ADSR_CURR_VOLUME;
-extern word VOICE_12_ADPCM_REPEAT_ADDR;
-extern dword VOICE_13_LEFT_RIGHT;
-extern word VOICE_13_ADPCM_SAMPLE_RATE;
-extern word VOICE_13_ADPCM_START_ADDR;
-extern word VOICE_13_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_13_ADSR_CURR_VOLUME;
-extern word VOICE_13_ADPCM_REPEAT_ADDR;
-extern dword VOICE_14_LEFT_RIGHT;
-extern word VOICE_14_ADPCM_SAMPLE_RATE;
-extern word VOICE_14_ADPCM_START_ADDR;
-extern word VOICE_14_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_14_ADSR_CURR_VOLUME;
-extern word VOICE_14_ADPCM_REPEAT_ADDR;
-extern dword VOICE_15_LEFT_RIGHT;
-extern word VOICE_15_ADPCM_SAMPLE_RATE;
-extern word VOICE_15_ADPCM_START_ADDR;
-extern word VOICE_15_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_15_ADSR_CURR_VOLUME;
-extern word VOICE_15_ADPCM_REPEAT_ADDR;
-extern dword VOICE_16_LEFT_RIGHT;
-extern word VOICE_16_ADPCM_SAMPLE_RATE;
-extern word VOICE_16_ADPCM_START_ADDR;
-extern word VOICE_16_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_16_ADSR_CURR_VOLUME;
-extern word VOICE_16_ADPCM_REPEAT_ADDR;
-extern dword VOICE_17_LEFT_RIGHT;
-extern word VOICE_17_ADPCM_SAMPLE_RATE;
-extern word VOICE_17_ADPCM_START_ADDR;
-extern word VOICE_17_ADSR_ATT_DEC_SUS_REL;
-extern word VOICE_17_ADSR_CURR_VOLUME;
-extern word VOICE_17_ADPCM_REPEAT_ADDR;
-extern word SPU_MAIN_VOL_L;
-extern word SPU_MAIN_VOL_R;
-extern word SPU_REVERB_OUT_L;
-extern word SPU_REVERB_OUT_R;
-extern dword SPU_VOICE_KEY_ON;
-extern dword SPU_VOICE_KEY_OFF;
-extern dword SPU_VOICE_CHN_FM_MODE;
-extern dword SPU_VOICE_CHN_NOISE_MODE;
-extern dword SPU_VOICE_CHN_REVERB_MODE;
-extern dword SPU_VOICE_CHN_ON_OFF_STATUS;
-extern word SPU_UNKN_1DA0;
-extern word SOUND_RAM_REVERB_WORK_ADDR;
-extern word SOUND_RAM_IRQ_ADDR;
-extern word SOUND_RAM_DATA_TRANSFER_ADDR;
-extern word SOUND_RAM_DATA_TRANSFER_FIFO;
-extern word SPU_CTRL_REG_CPUCNT;
-extern word SOUND_RAM_DATA_TRANSTER_CTRL;
-extern word SPU_STATUS_REG_SPUSTAT;
-extern word CD_VOL_L;
-extern word CD_VOL_R;
-extern word EXT_VOL_L;
-extern word EXT_VOL_R;
-extern word CURR_MAIN_VOL_L;
-extern word CURR_MAIN_VOL_R;
-extern dword SPU_UNKN_1DBC;
-extern undefined4 g_someDataIntoRam;
-extern undefined4 DAT_80010004;
-extern undefined4 DAT_80010008;
-extern undefined4 DAT_8001000c;
-extern undefined4 DAT_80010010;
-extern undefined4 DAT_80010014;
-extern undefined4 DAT_80010018;
-extern undefined4 DAT_8001001c;
-extern undefined4 DAT_8001004c;
-extern undefined1 g_transitionCounter;
-extern int* PTR_DAT_80020384;
-extern short g_tileOffsetYTable;
-extern int* g_tileOffsetYPtr;
-extern int[8] g_sinTable;
-extern int g_cosTable[8];
-extern undefined4 DAT_80022688;
-extern undefined4 DAT_8002268c;
-extern undefined4 DAT_80022690;
-extern undefined2 DAT_80022858;
-extern undefined2 DAT_8002286a;
-extern undefined2 DAT_80022872;
-extern undefined2 DAT_80022894;
-extern undefined2 DAT_80022896;
-extern undefined2 DAT_80022898;
-extern undefined2 DAT_8002289a;
-extern undefined2 DAT_8002289e;
-extern undefined2 DAT_800228a0;
-extern undefined1 DAT_800228a4;
-extern undefined1 DAT_800228a5;
-extern undefined4 DAT_80022bf8;
-extern undefined4 DAT_80022bfc;
-extern undefined4 DAT_80022c00;
-extern undefined4 DAT_80022c04;
-extern undefined4 DAT_80022c08;
-extern undefined4 DAT_80022c0c;
-extern undefined4 DAT_80022c10;
-extern undefined1 DAT_80022c14;
-extern undefined4 DAT_80022c18;
-extern undefined4 DAT_80022c1c;
-extern undefined4 DAT_80022c20;
-extern undefined4 DAT_80022c24;
-extern undefined4 DAT_80022c28;
-extern undefined4 DAT_80022c2c;
-extern undefined4 DAT_80022c30;
-extern undefined1 DAT_80022c34;
-extern undefined1 DAT_80022c35;
-extern undefined1 DAT_80022c36;
-extern undefined* PTR_LAB_80022d1c;
-extern undefined* PTR_HandleWarpExitDecision_80022fbc;
-extern undefined2 DAT_8002343c;
-extern undefined2 DAT_8002343e;
-extern undefined2 DAT_80023440;
-extern undefined2 DAT_80023442;
-extern undefined2 DAT_80023504;
-extern undefined2 DAT_80023506;
-extern undefined2 DAT_80023508;
-extern undefined2 DAT_80023544;
-extern undefined2 DAT_80023546;
-extern undefined2 DAT_80023548;
-extern undefined2 DAT_8002354a;
-extern undefined2 DAT_8002354c;
-extern undefined2 DAT_8002354e;
-extern undefined2 DAT_80023550;
-extern undefined2 DAT_80023552;
-extern undefined2 DAT_8002357c;
-extern undefined2 DAT_800235e0;
-extern undefined2 DAT_800235e2;
-extern undefined4 DAT_80023644;
-extern undefined2 g_offsetXList;
-extern undefined2 DAT_8002365c;
-extern undefined2 DAT_80023660;
-extern undefined2 DAT_80023664;
-extern undefined2 DAT_80023684;
-extern undefined2 g_offsetZList;
-extern undefined2 DAT_8002369c;
-extern undefined2 DAT_800236a0;
-extern undefined2 DAT_800236a4;
-extern undefined2 DAT_800236c4;
-extern undefined4 DAT_80023ee0;
-extern undefined4 DAT_80023ee4;
-extern undefined4 DAT_80023f78;
-extern undefined4 DAT_80023f7c;
-extern undefined4 DAT_80023f80;
-extern undefined4 DAT_80023f84;
-extern undefined4 DAT_80023f88;
-extern undefined4 DAT_80023f8c;
-extern undefined1 DAT_80023f90;
-extern undefined1 DAT_80023f91;
-extern undefined1 DAT_80023f92;
-extern undefined* PTR_FUN_80023fa8;
-extern char g_debugMessage_SelectTileMapSection[32];
-extern char g_buffer_isMapUnlocked[20];
-extern char g_logMessage_InvalidWarpVisualId[136];
-extern undefined4 DAT_80026840;
-extern undefined2 DAT_80026844;
-extern undefined1 DAT_80026846;
-extern undefined4 DAT_80026848;
-extern undefined1 DAT_80026b38;
-extern undefined1 DAT_80026b39;
-extern undefined1 DAT_80026b94;
-extern undefined1 DAT_80026b95;
-extern undefined4 DAT_80026c98;
-extern undefined4 DAT_80026c9c;
-extern undefined4 DAT_80026ca0;
-extern undefined4 DAT_80026ca4;
-extern undefined4 DAT_80026ca8;
-extern undefined4 DAT_80026cac;
-extern undefined4 DAT_80026cb0;
-extern undefined4 DAT_80026cb4;
-extern undefined4 DAT_80026d38;
-extern undefined4 DAT_80026d3c;
-extern undefined2 DAT_80026d4c;
-extern undefined2 DAT_80026d4e;
-extern undefined4 DAT_80027840;
-extern undefined4 DAT_80027844;
-extern undefined4 DAT_80027848;
-extern undefined4 DAT_8002784c;
-extern undefined4 DAT_800278b8;
-extern undefined4 DAT_800278bc;
-extern undefined2 DAT_800278c0;
-extern undefined4 DAT_800278c4;
-extern undefined4 DAT_800278c8;
-extern undefined4 DAT_80027990;
-extern undefined4 DAT_80027994;
-extern undefined2 DAT_80027998;
-extern undefined4 DAT_8002799c;
-extern undefined4 DAT_800279a0;
-extern undefined2 DAT_80027a28;
-extern undefined* PTR_FUN_80027a54;
-extern undefined2 DAT_80027bf8;
-extern undefined2 DAT_80027bfa;
-extern int* g_spawnTableX;
-extern int* g_spawnTableY;
-extern undefined4 DAT_80027c80;
-extern undefined4 DAT_80027c88;
-extern undefined2 DAT_80027d18;
-extern undefined2 DAT_80027d1a;
-extern undefined2 DAT_80027d24;
-extern undefined2 DAT_80027d26;
-extern undefined2 DAT_80027d90;
-extern undefined2 DAT_80027d92;
-extern undefined2 DAT_80027d94;
-extern undefined2 DAT_80027e10;
-extern undefined2 DAT_80027e12;
-extern undefined2 DAT_80027e1c;
-extern undefined2 DAT_80027e1e;
-extern undefined4 DAT_80027eb4;
-extern undefined4 DAT_80027eb8;
-extern undefined4 DAT_80027ebc;
-extern undefined4 DAT_80027ec0;
-extern undefined4 g_directionCycleTable;
-extern undefined4 DAT_800280f4;
-extern undefined4 DAT_800280f8;
-extern undefined4 DAT_80028104;
-extern undefined4 DAT_80028108;
-extern undefined4 DAT_80028270;
-extern undefined4 DAT_80028288;
-extern undefined4 DAT_8002829c;
-extern undefined4 DAT_800282a0;
-extern undefined2 DAT_80028334;
-extern undefined2 DAT_800283b4;
-extern undefined2 DAT_80028434;
-extern undefined2 DAT_80028634;
-extern undefined2 DAT_8002863c;
-extern undefined2 DAT_80028734;
-extern undefined2 DAT_800287b4;
-extern undefined2 DAT_80028834;
-extern undefined2 DAT_80028a34;
-extern undefined2 DAT_80028a3c;
-extern int g_directionFlipTable[8];
-extern undefined1 DAT_80028b54;
-extern undefined1 DAT_80028b55;
-extern undefined1 DAT_80028b57;
-extern int* g_warpStepThresholdTable;
-extern int g_tileAttributeXForces[16];
-extern int g_tileAttributeYForces[16];
-extern int g_tileAttributeLUT[25];
-extern byte BYTE_80028c78;
-extern int g_warpBehaviorTable[20];
-extern char* g_flagNameList;
-extern int* g_flagIdList;
-extern undefined2 DAT_80029650;
-extern undefined1 DAT_80029bc8;
-extern undefined4 DAT_80029bcc;
-extern undefined1 DAT_8002a4fc;
-extern undefined2 DAT_8002a6ac;
-extern undefined2 DAT_8002a6b0;
-extern undefined1 DAT_8002a6b2;
-extern undefined4 DAT_800986c0;
-extern undefined4 g_debugLineColor;
-extern undefined4 g_debugPrimColor;
-extern undefined4 g_debugActorColor;
-extern Entity* g_lastWarpEntity;
-extern undefined4 g_map_sprite;
-extern undefined4 g_dr_tpage;
-extern undefined4 g_tileAnimFrameCounter;
-extern undefined4 g_obj_poly_ft4;
-extern undefined4 DAT_80098704;
-extern undefined4 g_gameRandomSeed;
-extern undefined* PTR_DAT_8009870c;
-extern Entity* g_lastValidWarpEntity;
-extern undefined* PTR_DAT_80098f10;
-extern undefined4 DAT_80098f24;
-extern undefined4 g_warpDelayCounter;
-extern undefined4 DAT_80098f2c;
-extern undefined4 DAT_80098f30;
-extern undefined1 DAT_80098f34;
-extern undefined4 DAT_80098f48;
-extern undefined* PTR_s_No_Effect_80098f64;
-extern undefined* PTR_s_Normal_Damage_80098f94;
-extern undefined* g_scriptFunctions;
-extern undefined1 DAT_800993a8;
-extern int* g_fontCharWidthTable;
-extern undefined4 DAT_800998b0;
-extern undefined* PTR_DAT_8009a7ec;
-extern undefined* PTR_PTR_DAT_8009a814;
-extern int g_categoryThresholdTable[7];
-extern int INT_8009a850;
-extern int g_isCdResetRequested;
-extern undefined2 g_textBaseX;
-extern undefined2 DAT_8009cfbe;
-extern undefined2 g_textOffsetX_2;
-extern undefined2 g_textOffsetY_2;
-extern undefined2 DAT_8009cfda;
-extern undefined2 DAT_800a500a;
-extern undefined2 g_textPosBaseX;
-extern undefined2 g_textPosBaseY;
-extern undefined2 g_textPosOffsetX;
-extern undefined2 g_textPosOffsetY;
-extern undefined1 g_sprt;
-extern undefined1 g_fadeSomething;
-extern undefined* g_soundNameList;
-extern undefined4 DAT_800a7d2c;
-extern undefined4 DAT_800a7d30;
-extern undefined4 DAT_800a7d34;
-extern int* g_seqExtraAddrTable;
-extern int* g_seqStartAddrTable;
-extern int* g_seqEndAddrTable;
-extern undefined4 g_seqBodySizeTable;
-extern undefined4 DAT_800a7fa0;
-extern int g_sequenceOffsets;
-extern undefined4 DAT_800a81e4;
-extern undefined4 DAT_800a81e8;
-extern undefined4 DAT_800a81ec;
-extern undefined4 DAT_800a81f0;
-extern undefined2 g_currentVabId;
-extern undefined2 g_mainSoundDriver;
-extern undefined2 g_altSoundDriver;
-extern undefined4 g_soundLoadState;
-extern int g_partialVabBodyLoadState;
-extern undefined4 g_forceStopAllSound;
-extern undefined2 g_soundFadeTimer;
-extern undefined4 DAT_800a8284;
-extern undefined4 DAT_800a8288;
-extern undefined4 DAT_800a828c;
-extern undefined4 DAT_800a8290;
-extern undefined4 g_cdIsReady;
-extern undefined4 g_cdReadMode;
-extern undefined4 DAT_800a82b8;
-extern int* g_soundEffectData;
-extern short g_soundPitch;
-extern short g_soundNote;
-extern short g_soundBankTable;
-extern short g_soundEffectBankIdList;
-extern int g_soundEffectMaxVoices;
-extern int* g_soundEffectToneCount;
-extern undefined2 DAT_800a8308;
-extern undefined2 DAT_800af666;
-extern int* g_errorMarker;
-extern undefined2 DAT_800b06de;
-extern undefined2 DAT_800b122e;
-extern undefined2 DAT_800b1d7e;
-extern undefined2 DAT_800b287e;
-extern undefined1 DAT_800b2898;
-extern undefined1 DAT_800b2899;
-extern undefined4 DAT_800b42dc;
-extern undefined4 DAT_800b42e0;
-extern undefined2 DAT_800b58aa;
-extern undefined2 DAT_800b8362;
-extern undefined2 g_textCoordSrcX;
-extern undefined2 g_textCoordSrcY;
-extern undefined2 g_textCoordDstX;
-extern undefined2 g_textCoordDstY;
-extern undefined2 DAT_800b9a12;
-extern undefined2 DAT_800b9e5a;
-extern undefined2 DAT_800b9fe2;
-extern undefined2 g_tilemapWarpSections;
-extern undefined2 DAT_800b9fea;
-extern undefined2 g_tilemapWarpSections;
-extern undefined2 DAT_800b9ff2;
-extern char g_entitySpriteNamesTable[372];
-extern int INT_800c4180;
-extern undefined* g_debugStringTable;
-extern undefined4 g_cdInitRequired;
-extern undefined4 g_previousVSyncCallback;
-extern undefined4 g_cdDataLoaded;
-extern int g_mapCdDataOffsets[39];
-extern int g_tile_frame_counter_by_layer;
-extern undefined4 DAT_800c48b8;
-extern int g_tile_frame_counter_by_layer_2;
-extern undefined4 DAT_800c48c0;
-extern undefined4 DAT_800c48c4;
-extern undefined4 g_frameCounterScrollingX_layers;
-extern undefined4 DAT_800c48cc;
-extern undefined4 g_frameCounterScrollingY_layers;
-extern undefined4 DAT_800c48d4;
-extern undefined4 g_scrollingX_delta_layers;
-extern undefined4 DAT_800c48dc;
-extern undefined4 g_scrollingY_delta_layers;
-extern undefined4 DAT_800c48e4;
-extern undefined4 g_scrollingX_layers;
-extern undefined4 DAT_800c48ec;
-extern undefined4 g_scrollingY_layers;
-extern undefined4 DAT_800c48f4;
-extern undefined4 g_tile_scroll_X_by_layer;
-extern undefined4 DAT_800c48fc;
-extern undefined4 g_tile_scroll_Y_by_layer;
-extern undefined4 DAT_800c4904;
-extern undefined4 g_animationFrameCounter;
-extern undefined4 g_tileOffset;
-extern undefined4 g_animationCounter;
-extern undefined4 g_tileFrameOffsets;
-extern undefined4 DAT_800c4918;
-extern undefined4 g_tileFrameCounters;
-extern undefined4 DAT_800c4920;
-extern int* g_tileFrameUVs;
-extern int* g_tileFrameDurations;
-extern undefined4 g_tileAnimationFrameIndex;
-extern undefined4 g_tile_frame_counter;
-extern undefined1 g_overlayFrame0;
-extern undefined1 g_overlayFrame1;
-extern undefined1 g_overlayFrame2;
-extern undefined1 g_tileAnimationFrameDuration;
-extern undefined1 g_overlayFrame3;
-extern undefined1 g_overlayFrame4;
-extern undefined1 g_overlayFrame5;
-extern undefined1 g_overlayFrame6;
-extern undefined1 g_overlayFrame7;
-extern undefined1 g_overlayFrame8;
-extern undefined1 g_overlayFrame9;
-extern undefined1 g_overlayFrame10;
-extern undefined1 g_overlayFrame11;
-extern int* g_debugGameTitle;
-extern undefined4 DAT_800c494c;
-extern undefined4 DAT_800c4950;
-extern undefined4 DAT_800c4954;
-extern undefined4 DAT_800c4958;
-extern undefined4 DAT_800c495c;
-extern undefined4 DAT_800c4960;
-extern undefined4 DAT_800c4964;
-extern undefined4 DAT_800c4968;
-extern undefined4 g_fadeFrame;
-extern undefined4 g_isMemoryCopyInProgress;
-extern undefined4 g_globalTransitionState;
-extern undefined4 g_fadeControlValue;
-extern undefined4 g_asyncOperationStatus;
-extern undefined4 g_fadeSubstate;
-extern undefined4 DAT_800c4990;
-extern undefined4 DAT_800c4994;
-extern undefined4 DAT_800c4998;
-extern undefined4 DAT_800c499c;
-extern undefined4 DAT_800c49a0;
-extern undefined4 DAT_800c49a4;
-extern undefined4 DAT_800c49a8;
-extern undefined4 DAT_800c49ac;
-extern undefined4 DAT_800c49b0;
-extern undefined4 DAT_800c4a14;
-extern undefined4 DAT_800c4a18;
-extern undefined4 DAT_800c4a1c;
-extern undefined4 DAT_800c4a20;
-extern undefined4 DAT_800c4a24;
-extern undefined4 DAT_800c4a28;
-extern undefined4 DAT_800c4a2c;
-extern undefined4 DAT_800c4a30;
-extern undefined4 DAT_800c4a94;
-extern undefined4 DAT_800c4a98;
-extern undefined4 DAT_800c4a9c;
-extern undefined4 DAT_800c4aa0;
-extern undefined4 DAT_800c4aa4;
-extern undefined4 DAT_800c4aa8;
-extern undefined4 DAT_800c4aac;
-extern undefined4 DAT_800c4ab0;
-extern undefined4 DAT_800c4b14;
-extern undefined4 DAT_800c4b18;
-extern undefined4 DAT_800c4b1c;
-extern undefined4 DAT_800c4b20;
-extern undefined4 DAT_800c4b24;
-extern undefined4 DAT_800c4b28;
-extern undefined4 DAT_800c4b2c;
-extern undefined4 DAT_800c4b30;
-extern undefined* PTR_UpdateEntityAI_0_800c4ff0;
-extern undefined4 DAT_800c5f34;
-extern undefined4 DAT_800c5f38;
-extern undefined4 DAT_800c5f3c;
-extern undefined4 DAT_800c5f40;
-extern undefined4 DAT_800c5f44;
-extern undefined4 DAT_800c5f48;
-extern undefined4 DAT_800c5f4c;
-extern undefined4 DAT_800c5f50;
-extern int* g_iconNameEtcBase;
-extern undefined1 DAT_800c5f82;
-extern undefined1 DAT_800c5f8a;
-extern undefined1 DAT_800c6282;
-extern undefined1 DAT_800c628a;
-extern int* g_tileSetEtcBase;
-extern int* g_paletteSetEtcBase;
-extern undefined4 DAT_800c7550;
-extern undefined4 DAT_800c7554;
-extern undefined4 DAT_800c7558;
-extern undefined4 DAT_800c76dc;
-extern undefined4 DAT_800c76e0;
-extern undefined4 DAT_800c80e4;
-extern undefined* PTR__dws_800c810c;
-extern undefined* PTR__getctl_800c8114;
-extern undefined* PTR__otc_800c8118;
-extern undefined1 DAT_800c8134;
-extern undefined1 DAT_800c8135;
-extern undefined1 g_debugLevel;
-extern undefined1 DAT_800c8137;
-extern undefined2 DAT_800c8138;
-extern undefined2 DAT_800c813a;
-extern undefined4 DAT_800c813c;
-extern undefined4 g_drawSyncCallback;
-extern undefined2 DAT_800c81a0;
-extern undefined2 DAT_800c81a2;
-extern undefined2 DAT_800c81a4;
-extern undefined2 DAT_800c81a6;
-extern undefined2 DAT_800c81a8;
-extern undefined2 DAT_800c81aa;
-extern undefined2 DAT_800c81ac;
-extern undefined2 DAT_800c81ae;
-extern undefined4 DAT_800c81b0;
-extern undefined4 DAT_800c81e4;
-extern undefined4 DAT_800c81e8;
-extern undefined4 DAT_800c81ec;
-extern undefined4 DAT_800c8214;
-extern undefined4 DAT_800c8228;
-extern undefined4 DAT_800c822c;
-extern undefined4 DAT_800c8230;
-extern undefined4 DAT_800c8238;
-extern undefined4 DAT_800c823c;
-extern undefined4 DAT_800c8240;
-extern undefined4 DAT_800c8244;
-extern undefined4 DAT_800c8248;
-extern undefined4 DAT_800c824c;
-extern undefined4 DAT_800c8250;
-extern undefined4 DAT_800c82d4;
-extern undefined4 DAT_800c82d8;
-extern undefined4 DAT_800c82e0;
-extern undefined1 DAT_800c82e4;
-extern undefined4 DAT_800c82e8;
-extern undefined4 DAT_800c82ec;
-extern undefined1 DAT_800c82f0;
-extern undefined1 DAT_800c82f1;
-extern undefined1 DAT_800c82f4;
-extern undefined1 DAT_800c82f5;
-extern undefined* PTR_s_CdlSync_800c82f8;
-extern undefined* PTR_s_NoIntr_800c8378;
-extern undefined4 DAT_800c857c;
-extern undefined1 DAT_800c85b0;
-extern undefined1 DAT_800c85b1;
-extern undefined1 DAT_800c85b2;
-extern undefined* PTR_DAT_800c85b4;
-extern undefined4 DAT_800c85e0;
-extern undefined4 DAT_800c85e4;
-extern undefined4 DAT_800c85e8;
-extern undefined4 DAT_800c85ec;
-extern undefined4 DAT_800c85f0;
-extern undefined4 DAT_800c85f4;
-extern undefined4 DAT_800c85f8;
-extern undefined4 DAT_800c85fc;
-extern undefined4 DAT_800c8600;
-extern undefined4 DAT_800c8604;
-extern undefined4 DAT_800c8608;
-extern undefined4 DAT_800c860c;
-extern undefined4 DAT_800c8610;
-extern undefined4 DAT_800c8614;
-extern undefined4 DAT_800c8620;
-extern undefined4 DAT_800c8624;
-extern undefined2 DAT_800c8628;
-extern undefined2 DAT_800c862a;
-extern undefined4 DAT_800c862c;
-extern undefined2 DAT_800c8658;
-extern undefined2 DAT_800c865a;
-extern undefined4 DAT_800c865c;
-extern undefined4 DAT_800c8664;
-extern undefined4 DAT_800c9694;
-extern undefined4 DAT_800c96a4;
-extern undefined4 DAT_800c96c0;
-extern undefined4 DAT_800c96c4;
-extern undefined4 DAT_800c96c8;
-extern undefined4 DAT_800c96e4;
-extern undefined4 DAT_800c96f0;
-extern undefined4 DAT_800c9714;
-extern undefined4 DAT_800c9718;
-extern undefined4 DAT_800c971c;
-extern undefined4 DAT_800c9720;
-extern undefined4 DAT_800c973c;
-extern undefined4 DAT_800c9740;
-extern undefined2 DAT_800c9744;
-extern undefined2 DAT_800c9746;
-extern undefined2 DAT_800c9754;
-extern undefined2 DAT_800c9756;
-extern undefined4 DAT_800c9774;
-extern undefined4 DAT_800c9778;
-extern undefined4 DAT_800c9780;
-extern undefined1 DAT_800c9784;
-extern undefined1 DAT_800c9785;
-extern undefined1 DAT_800c9786;
-extern undefined4 DAT_800c9788;
-extern undefined4 DAT_800c978c;
-extern undefined2 DAT_800c9790;
-extern Voice* PTR_VOICE_00_LEFT_RIGHT_800c9794;
-extern undefined4 DAT_800c991c;
-extern undefined4 DAT_800c9920;
-extern undefined4 DAT_800c9924;
-extern undefined4 DAT_800c9928;
-extern undefined4 DAT_800c992c;
-extern undefined4 DAT_800c9934;
-extern undefined2 DAT_800c9938;
-extern undefined2 DAT_800c993a;
-extern undefined4 DAT_800c993c;
-extern undefined4 DAT_800c9940;
-extern undefined2 DAT_800c9970;
-extern undefined2 DAT_800c9972;
-extern undefined4 DAT_800c9974;
-extern undefined4 DAT_800c9978;
-extern undefined4 DAT_800c9d7c;
-extern undefined4 DAT_800c9d80;
-extern undefined2 DAT_800c9d84;
-extern undefined4 DAT_800c9da0;
-extern undefined4 DAT_800c9da4;
-extern undefined4 DAT_800c9da8;
-extern undefined4 DAT_800c9dac;
-extern undefined4 DAT_800c9db0;
-extern undefined4 DAT_800c9db4;
-extern undefined4 g_SPUTransferInProgress;
-extern undefined4 DAT_800c9dbc;
-extern undefined4 DAT_800c9dc0;
-extern undefined4 DAT_800c9dd4;
-extern undefined4 DAT_800c9dd8;
-extern undefined4 DAT_800c9ddc;
-extern undefined4 DAT_800c9de0;
-extern undefined4 DAT_800c9de4;
-extern undefined4 DAT_800c9de8;
-extern undefined4 DAT_800c9dec;
-extern undefined4 DAT_800ca0e8;
-extern undefined4 DAT_800ca0ec;
-extern undefined2 g_drawPageInfoBase;
-extern int g_clutTableBase[24];
-extern int g_uvLookupTableInit[8];
-extern int* g_orderTableFrame0;
-extern int* g_orderTableFrame1;
-extern undefined4 g_orderingTableBuffer;
-extern undefined4 g_orderingTableBufferAlt;
-extern int* g_bufferImage2;
-extern undefined4 DAT_800cc05c;
-extern undefined2 DAT_800cc078;
-extern undefined2 DAT_800cc07a;
-extern undefined4 g_targetSearchParams;
-extern undefined4 g_debugState;
-extern undefined4 g_debugFlags;
-extern undefined4 g_debugFrameDelay;
-extern undefined4 g_debugVar_WarpDestinationId;
-extern undefined4 g_warpIndex;
-extern undefined4 g_debugVar_NbFrameBreak;
-extern undefined4 g_mapLimits;
-extern undefined4 g_data_buffer;
-extern undefined4 g_data_buffer_length;
-extern undefined4 g_cameraTransformMatrix;
-extern undefined4 g_cameraProjectionMatrix;
-extern undefined4 g_numberOfLayersDrawn;
-extern undefined4 DAT_800dc088;
-extern undefined4 DAT_800dc08c;
-extern undefined4 DAT_800dc090;
-extern undefined4 DAT_800dc094;
-extern undefined4 g_primitive_sync;
-extern undefined1 g_debugMessage;
-extern undefined4 g_fontLoaded;
-extern undefined4 DAT_800dc4a4;
-extern undefined4 DAT_800dc4a8;
-extern undefined4 DAT_800dc4ac;
-extern undefined4 DAT_800dc4b0;
-extern undefined4 g_warpDelayFrames;
-extern undefined4 g_isWarpForbidden;
-extern undefined4 g_isWarpDisabled;
-extern undefined4 g_stayInDebugMode;
-extern undefined4 g_warpType;
-extern undefined4 g_desiredMap;
-extern undefined4 g_warpTriggerType;
-extern undefined4 g_warpExtraParam;
-extern undefined4 g_targetCamX;
-extern undefined4 g_targetCamY;
-extern undefined4 g_animation_id;
-extern undefined4 DAT_800dc4e4;
-extern undefined4 g_warpEntryBehavior;
-extern undefined2 g_tPageFadeLUT;
-extern undefined2 g_tPageIds;
-extern undefined2 DAT_800dc4fc;
-extern undefined2 g_drawModeIndexInit;
-extern undefined2 DAT_800dc51c;
-extern undefined2 g_paletteIndexInit;
-extern undefined2 g_tileScaleXInit;
-extern undefined2 g_tileScaleYInit;
-extern undefined4 g_currentMap;
-extern undefined2 g_tileOTFlags;
-extern undefined2 DAT_800dc5aa;
-extern undefined2 DAT_800dc5b6;
-extern undefined2 DAT_800dc5c8;
-extern undefined2 DAT_800dcd24;
-extern undefined2 g_tileVRAMClearTable;
-extern undefined1 g_tileColorTable;
-extern undefined1 DAT_800dcd29;
-extern undefined1 DAT_800dcd2a;
-extern undefined1 DAT_800dcd2b;
-extern undefined1 DAT_800dcd2c;
-extern undefined1 DAT_800dcd2d;
-extern undefined4 g_renderTileRowCount;
-extern undefined4 g_spriteVRAMPointer;
-extern undefined4 g_camOffsetXDebug;
-extern undefined4 g_camOffsetYDebug;
-extern int* g_tileSpriteBuffer;
-extern undefined1 DAT_800dd87c;
-extern undefined1 DAT_800dd87d;
-extern undefined1 DAT_800dd87e;
-extern undefined2 DAT_800dd888;
-extern undefined2 DAT_800dd88a;
-extern undefined4 g_resetCamScroll;
-extern undefined4 g_drawPageTPageIDs;
-extern undefined4 g_tileOrderingTable;
-extern undefined4 DAT_800e42c4;
-extern undefined1 g_spriteMapTable;
-extern undefined1 DAT_800e42f1;
-extern undefined1 DAT_800e42f2;
-extern undefined1 DAT_800e42f3;
-extern undefined1 DAT_800e42f4;
-extern undefined1 DAT_800e42f5;
-extern undefined1 DAT_800e42f6;
-extern undefined1 DAT_800e42f7;
-extern undefined4 g_LoadVRAMAssets_debug;
-extern undefined4 g_drawPageInfoTable;
-extern undefined4 g_currentDrawPageParam;
-extern undefined4 g_targetCamX_2;
-extern undefined4 g_targetCamY_2;
-extern undefined4 g_spriteOtherPointer;
-extern undefined4 g_spriteDataBase;
-extern undefined4 g_bossCutsceneFlag;
-extern undefined4 g_triggerEvent1;
-extern undefined4 g_triggerEvent2;
-extern undefined4 g_flagCutsceneState1;
-extern undefined4 g_flagCutsceneState2;
-extern undefined4 g_camOffsetX;
-extern undefined4 g_camOffsetY;
-extern undefined4 DAT_800e4354;
-extern undefined4 DAT_800e4358;
-extern int g_animationRawData[4096];
-extern undefined4 DAT_8011cb60;
-extern undefined4 DAT_8011cb64;
-extern undefined4 g_currentIndexEntityUpdated;
-extern POLY_FT4* g_polyFT4Table;
-extern undefined1 DAT_8011ce6c;
-extern undefined1 DAT_8011ce6d;
-extern undefined1 DAT_8011ce6e;
-extern undefined4 g_animationRawSize;
-extern undefined4 g_currentEntityCollisionDataPtr;
-extern int* g_animationStructs2;
-extern undefined4 g_bufferImage;
-extern undefined4 g_initTableEntry;
-extern undefined4 DAT_80126e7c;
-extern undefined4 DAT_80126e80;
-extern undefined4 g_maxInitData;
-extern undefined4 g_effectInitTable;
-extern undefined4 DAT_80126e8c;
-extern undefined4 DAT_80126e90;
-extern undefined4 DAT_80126e94;
-extern undefined4 DAT_80126e98;
-extern undefined4 DAT_80126ea0;
-extern undefined4 DAT_80126eb8;
-extern int* g_animationStructs;
-extern undefined4 g_animationStructs_paletteClut;
-extern AnimationData* g_initialAnimationTable;
-extern undefined4 DAT_80126ee0;
-extern undefined4 DAT_80126ef0;
-extern undefined4 DAT_80126f10;
-extern undefined4 DAT_80126f14;
-extern undefined4 g_padState1;
-extern undefined4 DAT_pad_80126f1c;
-extern undefined4 DAT_80126f20;
-extern undefined4 DAT_80126f24;
-extern undefined2 g_playerTileAttribute;
-extern undefined2 g_inputHeld;
-extern undefined2 g_tileWarpFlags;
-extern undefined2 DAT_80126f2e;
-extern undefined4 g_padState2;
-extern undefined4 DAT_pad_80126f34;
-extern undefined4 DAT_80126f38;
-extern undefined4 DAT_80126f3c;
-extern undefined2 g_inputHeldFlags;
-extern undefined2 g_inputJustPressed;
-extern undefined2 g_inputRepeated;
-extern undefined4 g_lastWarpCamX;
-extern undefined4 g_lastWarpCamY;
-extern undefined4 g_lastWarpCamZ;
-extern undefined4 g_lastWarpDirection;
-extern undefined4 g_lastWarpTargetX;
-extern undefined4 g_lastWarpTargetY;
-extern undefined4 g_lastWarpTargetZ;
-extern undefined4 g_lastWarpFacing;
-extern undefined4 DAT_80126fe8;
-extern undefined4 DAT_80126fec;
-extern undefined4 DAT_80126ff0;
-extern undefined4 DAT_80126ff4;
-extern undefined4 g_frameTimer;
-extern undefined4 g_playerWarpTimer;
-extern undefined4 g_warpPriorityFlag;
-extern Entity* g_defaultTargetEntity;
-extern undefined4 DAT_8012700c;
-extern undefined4 DAT_80127010;
-extern undefined4 DAT_80127014;
-extern undefined4 DAT_80127018;
-extern undefined4 DAT_8012701c;
-extern undefined4 DAT_80127020;
-extern undefined4 DAT_80127024;
-extern undefined4 g_warpStepCounter;
-extern undefined4 g_currentTileFlags;
-extern undefined4 g_warpTransitionCooldown;
-extern undefined4 g_warpStepFlags;
-extern undefined4 g_specialWarpTimer;
-extern undefined4 DAT_8012711c;
-extern undefined4 DAT_80127120;
-extern undefined4 DAT_80127124;
-extern undefined4 DAT_80127128;
-extern undefined4 DAT_8012712c;
-extern undefined4 DAT_80127130;
-extern undefined4 DAT_80127134;
-extern undefined4 DAT_80127138;
-extern undefined4 DAT_8012713c;
-extern undefined4 DAT_80127140;
-extern undefined4 DAT_80127144;
-extern undefined4 DAT_80127148;
-extern undefined4 DAT_8012714c;
-extern undefined4 DAT_80127150;
-extern undefined4 DAT_80127154;
-extern undefined4 g_currentWarpFrame;
-extern undefined4 g_specialWarpPhase;
-extern undefined4 g_warpLockTimer;
-extern undefined2 g_tileToWorldXTable;
-extern undefined2 DAT_8012716a;
-extern undefined2 DAT_80127198;
-extern Entity* g_entities;
-extern undefined4 DAT_80127b2c;
-extern Entity* g_logicalEntities;
-extern undefined4 DAT_80127c2c;
-extern undefined4 g_numberOfEntity;
-extern undefined4 g_visibleEntitiesCount;
-extern Entity* g_player;
-extern undefined4 DAT_80127d34;
-extern undefined4 DAT_80127d38;
-extern undefined4 DAT_80127d3c;
-extern undefined4 g_playerInitState;
-extern undefined4 g_warpAnimEntity;
-extern undefined4 g_warpTarget;
-extern undefined4 DAT_80127d4c;
-extern undefined4 g_isWarpInProgress;
-extern Entity* g_entity4;
-extern Entity* g_playerActorPtr;
-extern undefined4 g_warpDirectionX;
-extern undefined4 g_warpDirectionY;
-extern undefined4 g_warpDirectionZ;
-extern undefined4 DAT_80127d78;
-extern undefined4 DAT_80127d80;
-extern undefined4 DAT_80127d94;
-extern Entity* g_targetEntity;
-extern undefined4 g_playerFlags;
-extern undefined4 g_warpState;
-extern undefined4 g_lastFacingDirection;
-extern undefined4 g_warpState2;
-extern undefined4 DAT_80127dc8;
-extern undefined4 g_warpZoneAvailable;
-extern undefined4 DAT_80127de0;
-extern undefined4 DAT_80127de4;
-extern undefined4 g_spriteData;
-extern undefined4 g_targetXForce;
-extern undefined4 g_targetYForce;
-extern undefined4 g_targetZForce;
-extern undefined4 g_targetXYZForce;
-extern undefined4 DAT_80127dfc;
-extern undefined4 DAT_80127e00;
-extern undefined4 g_XForce;
-extern undefined4 g_YForce;
-extern undefined4 DAT_80127e14;
-extern undefined4 DAT_80127e18;
-extern undefined4 g_currentCamX;
-extern undefined4 g_currentCamY;
-extern undefined4 g_currentCamZ;
-extern undefined4 g_playerPosX;
-extern undefined4 g_playerPosY;
-extern undefined4 g_playerPosZ;
-extern undefined4 DAT_80127e5c;
-extern Entity* g_nearestWarpCandidate;
-extern undefined4 g_playerPosZ_2;
-extern undefined4 DAT_80127e68;
-extern undefined4 DAT_80127e6c;
-extern undefined4 g_warpZoneReady;
-extern undefined4 DAT_80127e78;
-extern undefined4 DAT_80127e7c;
-extern undefined4 DAT_80127e88;
-extern undefined4 g_warpEntryFlags;
-extern undefined4 g_currentMapTileAttirbute;
-extern undefined4 g_tileEventFlags;
-extern undefined4 g_currentMapTileAttribute;
-extern undefined4 DAT_80127ec0;
-extern undefined4 DAT_80127ee0;
-extern undefined4 DAT_80127ee8;
-extern undefined4 DAT_80127ef4;
-extern undefined4 DAT_80127ef8;
-extern Entity* g_entities2;
-extern undefined4 DAT_80127f00;
-extern undefined4 DAT_80127f04;
-extern undefined4 DAT_80127f08;
-extern undefined4 DAT_80127f0c;
-extern undefined4 DAT_80127f10;
-extern undefined4 DAT_80127f14;
-extern undefined4 DAT_80127f18;
-extern undefined4 DAT_80127f1c;
-extern undefined4 DAT_80127f20;
-extern Entity** g_entityTable;
-extern undefined4 DAT_80127f28;
-extern undefined4 g_warpZoneCheckMinX;
-extern undefined4 g_warpZoneCheckMinY;
-extern undefined4 g_warpZoneCheckMinZ;
-extern undefined4 DAT_80127f38;
-extern undefined4 DAT_80127f3c;
-extern undefined4 DAT_80127f40;
-extern undefined4 g_warpZoneCheckMaxX;
-extern undefined4 g_warpZoneCheckMaxY;
-extern undefined4 g_warpZoneCheckMaxZ;
-extern undefined4 DAT_80127f50;
-extern undefined4 g_warpLinkedEntityPtr;
-extern undefined4 g_logicModeMonitor;
-extern undefined4 DAT_80127f5c;
-extern undefined4 DAT_80127f60;
-extern undefined4 DAT_80127f64;
-extern undefined4 DAT_80127f68;
-extern undefined4 DAT_80127f6c;
-extern undefined4 DAT_80127f70;
-extern undefined4 DAT_80127f74;
-extern undefined4 DAT_80127f78;
-extern undefined4 DAT_80127f7c;
-extern undefined4 DAT_80127f80;
-extern Entity** g_entitySlots;
-extern undefined4 DAT_80127fc8;
-extern undefined4 DAT_80127fcc;
-extern undefined4 DAT_80127fd0;
-extern undefined4 DAT_80127fd4;
-extern undefined4 DAT_80127fe0;
-extern undefined4 DAT_80127fe4;
-extern undefined4 DAT_80127fec;
-extern undefined4 DAT_8012800c;
-extern undefined4 DAT_80128024;
-extern undefined4 DAT_8012802c;
-extern undefined4 DAT_80128030;
-extern undefined4 DAT_80128048;
-extern undefined4 DAT_8012804c;
-extern undefined4 DAT_80128070;
-extern undefined4 DAT_80128078;
-extern undefined4 DAT_801280d8;
-extern undefined4 DAT_801280dc;
-extern undefined4 DAT_801280e0;
-extern undefined4 DAT_801280f0;
-extern undefined4 DAT_801280f4;
-extern undefined4 DAT_80128100;
-extern undefined4 DAT_80128108;
-extern undefined4 DAT_80128144;
-extern undefined4 DAT_80128150;
-extern undefined4 DAT_80128188;
-extern undefined4 DAT_80128190;
-extern undefined4 DAT_80128194;
-extern undefined4 DAT_8012819c;
-extern undefined4 DAT_801281a0;
-extern undefined4 DAT_801281a4;
-extern undefined4 DAT_801281b4;
-extern undefined4 DAT_801281b8;
-extern undefined4 DAT_801281bc;
-extern undefined4 DAT_801281e4;
-extern undefined4 DAT_801281e8;
-extern undefined4 DAT_801281ec;
-extern undefined4 DAT_80128254;
-extern undefined4 DAT_80128268;
-extern undefined4 DAT_80128278;
-extern undefined4 DAT_801282c0;
-extern undefined4 DAT_80128480;
-extern undefined1 DAT_801284cc;
-extern undefined1 DAT_801284cd;
-extern undefined4 DAT_8012a3ec;
-extern undefined4 DAT_8012a680;
-extern undefined4 DAT_8012a6fc;
-extern undefined4 DAT_8012a784;
-extern undefined4 DAT_8012a788;
-extern undefined4 g_debugFrameCounter;
-extern TILE* g_spriteTiles;
-extern byte BYTE_80132238;
-extern byte BYTE_80132239;
-extern short g_debugTileDrawBuffer;
-extern short SHORT_8013223c;
-extern short SHORT_8013223e;
-extern short SHORT_80132240;
-extern short SHORT_80132242;
-extern int INT_80132244;
-extern byte BYTE_80132248;
-extern byte BYTE_80132249;
-extern short SHORT_8013224a;
-extern short SHORT_8013224c;
-extern short SHORT_8013224e;
-extern short SHORT_80132250;
-extern short SHORT_80132252;
-extern int INT_80132254;
-extern byte BYTE_80132258;
-extern byte BYTE_80132259;
-extern short SHORT_8013225a;
-extern short SHORT_8013225c;
-extern Entity* g_visibleEntities;
-extern undefined4 DAT_80134254;
-extern undefined4 g_playerX;
-extern undefined4 g_playerY;
-extern undefined4 g_playerZ;
-extern undefined4 g_logicalEntitiesCount;
-extern Entity* g_entity;
-extern undefined4 g_entities3;
-extern undefined4 DAT_8013436c;
-extern undefined4 DAT_80134370;
-extern undefined4 DAT_80134374;
-extern undefined4 DAT_80134378;
-extern undefined4 DAT_8013437c;
-extern undefined4 DAT_80134380;
-extern undefined4 DAT_80134384;
-extern undefined4 DAT_801343b0;
-extern undefined4 g_Entities;
-extern undefined4 g_nextEntity;
-extern undefined1 g_messageDebug;
-extern undefined1 DAT_80134708;
-extern undefined4 g_effectSlots;
-extern undefined4 DAT_80138618;
-extern undefined4 DAT_8013861c;
-extern undefined4 DAT_80138620;
-extern undefined4 DAT_80138624;
-extern undefined4 DAT_80138638;
-extern undefined4 DAT_80138644;
-extern undefined4 DAT_80138648;
-extern undefined4 DAT_8013864c;
-extern undefined4 DAT_8013865c;
-extern undefined4 DAT_80138660;
-extern undefined4 DAT_80138664;
-extern undefined4 DAT_8013866c;
-extern undefined4 DAT_80138670;
-extern undefined1 DAT_80138678;
-extern undefined1 DAT_80138685;
-extern undefined4 DAT_80138688;
-extern undefined4 DAT_801386f0;
-extern undefined4 DAT_8013c608;
-extern undefined4 DAT_8013c60c;
-extern undefined4 DAT_8013c610;
-extern undefined4 DAT_8013c614;
-extern undefined4 DAT_8013c618;
-extern undefined4 DAT_8013c61c;
-extern undefined4 DAT_8013c620;
-extern undefined4 DAT_8013c624;
-extern undefined4 g_monitorBase;
-extern undefined4 DAT_8013c68c;
-extern undefined4 DAT_8013c690;
-extern undefined4 g_monitorData;
-extern undefined4 DAT_8013c698;
-extern undefined4 DAT_8013c69c;
-extern undefined4 DAT_8013c6a0;
-extern undefined4 DAT_8013c6a4;
-extern undefined4 DAT_8013c6a8;
-extern undefined4 DAT_8013c6ac;
-extern undefined4 DAT_8013c6b0;
-extern undefined4 DAT_8013c6b4;
-extern undefined4 DAT_8013c6c4;
-extern undefined4 DAT_8013c6d0;
-extern undefined4 DAT_8013c6d4;
-extern undefined4 DAT_8013c6d8;
-extern undefined4 DAT_8013c6dc;
-extern undefined4 g_monitorTablePtr;
-extern undefined4 DAT_8013d88c;
-extern undefined4 DAT_8013d890;
-extern undefined4 DAT_8013d894;
-extern undefined4 DAT_8013d898;
-extern undefined4 DAT_8013d89c;
-extern undefined4 DAT_8013d8a0;
-extern undefined4 DAT_8013d8a4;
-extern undefined4 DAT_8013d8d0;
-extern undefined4 g_programIndex2;
-extern Entity* g_matchingEntitiesBuffer;
-extern undefined4 DAT_8013d8dc;
-extern undefined4 DAT_8013d8e0;
-extern undefined4 DAT_8013d8e4;
-extern undefined4 DAT_8013d8e8;
-extern undefined4 DAT_8013d8ec;
-extern undefined4 DAT_8013d8f0;
-extern undefined4 DAT_8013d8f4;
-extern undefined4 g_logicMode;
-extern undefined4 g_lastCommand;
-extern LogicContext* g_logicContext;
-extern undefined4 DAT_8013d9ec;
-extern undefined4 DAT_8013d9f0;
-extern undefined4 DAT_8013d9f4;
-extern undefined4 DAT_8013d9f8;
-extern undefined4 DAT_8013d9fc;
-extern undefined4 DAT_8013da00;
-extern undefined4 DAT_8013da04;
-extern undefined4 g_logicBranchFlag;
-extern undefined4 g_logicNo;
-extern undefined4 g_command;
-extern undefined4 g_etcAnimTableAlt;
-extern undefined4 g_etcAnimTable;
-extern DRAWENV* PTR_8013fa38;
-extern undefined1 DAT_8013fa60;
-extern DRAWENV* PTR_8013fabc;
-extern undefined1 DAT_8013fae4;
-extern RECT* g_currentDrawEnv;
-extern DISPENV* g_currentDisplayEnv;
-extern undefined4 g_display_overflow_message;
-extern undefined4 g_gameplayTime;
-extern undefined4 g_primCount;
-extern undefined4 g_lineCount;
-extern undefined4 g_actorCount;
-extern undefined4 g_displayEnvColorR;
-extern undefined4 g_displayEnvColorG;
-extern undefined4 g_displayEnvColorB;
-extern undefined4 g_mapOffsetX;
-extern undefined4 g_mapOffsetY;
-extern undefined4 g_mapScreenPosX;
-extern undefined4 g_mapScreenPosY;
-extern undefined4 g_drawScreenFunc;
-extern undefined4 g_screenUpdateFunc;
-extern undefined4 DAT_8013fb80;
-extern int* g_fadeTPagePrim1;
-extern int* g_fadeTPagePrim2;
-extern TILE* PTR_8013fb98;
-extern undefined2 DAT_8013fba0;
-extern undefined2 DAT_8013fba2;
-extern undefined2 DAT_8013fba4;
-extern undefined2 DAT_8013fba6;
-extern TILE* PTR_8013fba8;
-extern undefined2 DAT_8013fbb0;
-extern undefined2 DAT_8013fbb2;
-extern undefined2 DAT_8013fbb4;
-extern undefined2 DAT_8013fbb6;
-extern undefined4 g_warpFlags;
-extern undefined4 g_playerLastX;
-extern undefined4 g_playerLastY;
-extern undefined4 g_playerLastZ;
-extern undefined4 g_playerStartX;
-extern undefined4 g_playerStartY;
-extern undefined4 g_playerStartZ;
-extern undefined4 g_playerStepX;
-extern undefined4 g_playerStepY;
-extern undefined4 g_playerStepZ;
-extern undefined4 g_warpStepFlags_2;
-extern undefined4 g_fadeFrameCounter;
-extern undefined4 g_currentFadeColorB;
-extern undefined4 g_currentFadeColorG;
-extern undefined4 g_currentFadeColorR;
-extern undefined4 g_targetFadeColorB;
-extern undefined4 g_targetFadeColorG;
-extern undefined4 g_targetFadeColorR;
-extern undefined4 g_fadeColorStepB;
-extern undefined4 g_warpColorStepG;
-extern undefined4 g_fadeColorStepR;
-extern undefined2 DAT_8013fc1c;
-extern undefined2 DAT_8013fc1e;
-extern undefined2 DAT_8013fc20;
-extern undefined2 DAT_8013fc24;
-extern undefined2 DAT_8013fc26;
-extern undefined2 DAT_8013fc34;
-extern undefined2 DAT_8013fc36;
-extern undefined2 DAT_8013fc38;
-extern undefined2 DAT_8013fc3c;
-extern undefined2 DAT_8013fc3e;
-extern undefined2 DAT_8014183c;
-extern undefined2 DAT_8014183e;
-extern undefined2 DAT_80141840;
-extern undefined2 DAT_80141844;
-extern undefined2 DAT_80141846;
-extern undefined2 DAT_80141854;
-extern undefined2 DAT_80141856;
-extern undefined2 DAT_80141858;
-extern undefined2 DAT_8014185c;
-extern undefined2 DAT_8014185e;
-extern undefined2 DAT_80143488;
-extern undefined2 DAT_8014348a;
-extern undefined2 DAT_8014348c;
-extern undefined2 DAT_8014348e;
-extern undefined2 DAT_80143490;
-extern undefined2 DAT_80143528;
-extern undefined4 DAT_80143de8;
-extern undefined4 g_itemIdThreshold;
-extern int* g_itemDataBase;
-extern undefined2 g_itemDataOffsetTable;
-extern undefined2 DAT_80143e36;
-extern undefined4 g_balanceAnimIndex;
-extern undefined4 g_balanceEffectSourceList;
-extern undefined4 DAT_80146e04;
-extern undefined4 DAT_80146e08;
-extern undefined4 DAT_80146e0c;
-extern undefined4 DAT_80146e10;
-extern undefined4 DAT_80146e14;
-extern undefined2 g_balanceEffectHpTotal;
-extern undefined2 g_balanceEffectParams;
-extern undefined2 g_balanceEffectHp;
-extern undefined2 g_balanceEffectParams_2;
-extern undefined2 g_balanceEffectResult;
-extern undefined2 g_clutTable;
-extern undefined2 DAT_80146e32;
-extern undefined2 g_fadeSomething2;
-extern undefined2 g_tpageOverlayA;
-extern undefined2 g_tpageWind1;
-extern undefined2 g_tpageWind2;
-extern undefined2 g_tpageMain;
-extern undefined2 DAT_80146e50;
-extern undefined2 g_tpageOverlayB;
-extern undefined2 g_tpageWind3;
-extern undefined2 g_tpageWind4;
-extern DR_MODE* g_drawModeA;
-extern DR_MODE* g_drawModeB;
-extern DR_MODE* g_drawModeC;
-extern DR_MODE* PTR_80146e90;
-extern DR_MODE* PTR_80146f08;
-extern undefined4 g_bufferIndex;
-extern undefined4 g_etcTextCursorBlink;
-extern undefined4 g_etcTextSpeed;
-extern undefined4 g_etcTextMode;
-extern undefined2 g_etcTextX;
-extern undefined2 g_etcTextY;
-extern undefined2 g_etcTextStartX;
-extern undefined2 g_etcTextStartY;
-extern undefined2 g_etcTextXOrigin;
-extern undefined2 g_etcTextYOrigin;
-extern undefined4 g_textPosX;
-extern undefined4 g_textPosY;
-extern undefined2 g_textOffsetX;
-extern undefined2 g_textOffsetY;
-extern undefined2 g_textState;
-extern undefined2 g_textCurrentPage;
-extern char g_scriptBuffer[256];
-extern undefined4 g_textFlags;
-extern undefined4 g_textAutoAdvanceFlag;
-extern undefined4 g_textDelayReset;
-extern undefined4 g_textDelay;
-extern undefined4 g_textBufferX;
-extern undefined4 g_textLineIndex;
-extern undefined4 g_textCursor;
-extern undefined4 g_textRenderStep;
-extern undefined4 DAT_80149be8;
-extern undefined4 DAT_80149bec;
-extern int* g_primitiveGroup;
-extern undefined1 DAT_80149c04;
-extern undefined1 DAT_80149c05;
-extern undefined2 DAT_80149c06;
-extern undefined2 DAT_80149c08;
-extern undefined2 DAT_80149c0a;
-extern undefined1 DAT_80149c18;
-extern undefined1 DAT_80149c19;
-extern undefined2 DAT_80149c1c;
-extern undefined2 DAT_80149c1e;
-extern undefined1 DAT_80149c2c;
-extern undefined1 DAT_80149c2d;
-extern undefined2 DAT_80149c30;
-extern undefined2 DAT_80149c32;
-extern int* g_fadePrimitive;
-extern undefined2 DAT_80149c80;
-extern undefined2 DAT_80149c82;
-extern undefined1 DAT_80149c84;
-extern undefined1 DAT_80149c85;
-extern undefined2 DAT_80149c86;
-extern undefined2 DAT_80149c88;
-extern undefined2 DAT_80149c8a;
-extern undefined1 DAT_80149c98;
-extern undefined1 DAT_80149c99;
-extern undefined2 DAT_80149c9c;
-extern undefined2 DAT_80149c9e;
-extern undefined4 g_textMessageConfirmed;
-extern undefined4 g_textAutoAdvanceFlag_2;
-extern undefined4 g_textChoiceIndex;
-extern undefined4 g_textNextChoice;
-extern undefined4 g_debugFlags_2;
-extern undefined4 g_textSelectionConfirmed;
-extern undefined4 g_textSelectionNext;
-extern undefined4 g_etcAnimationMode;
-extern undefined4 g_textPrimitives;
-extern undefined4 DAT_80149cc4;
-extern undefined4 g_textBufferSize;
-extern undefined4 g_textHoldState_2;
-extern undefined4 g_textHoldState;
-extern undefined4 DAT_80149cd4;
-extern undefined4 g_textCategoryIndex;
-extern undefined4 g_currentVoiceSfxId;
-extern int g_textRenderState;
-extern char g_textBuffer[2048];
-extern int* g_bufferFONT3_tim;
-extern undefined4 g_warpFlags_2;
-extern undefined2 g_callbackTable;
-extern undefined4 g_transitionDataTable;
-extern int* g_transitionDrawArgs;
-extern int* g_transitionUpdateArgs;
-extern int* g_transitionDrawFunc;
-extern undefined4 g_transitionUpdateFunc;
-extern undefined4 g_transitionMiscParam;
-extern undefined2 DAT_80153044;
-extern undefined2 DAT_80153098;
-extern undefined2 g_fadeTimer2;
-extern undefined4 g_postProcessState;
-extern undefined4 g_currentTransitionType;
-extern undefined4 g_activeTransitionCallback;
-extern char g_partialVabBodyBuffer[256];
-extern undefined4 DAT_80164fc0;
-extern undefined4 g_vabBaseSector;
-extern undefined4 g_vabBodyOffset;
-extern undefined4 g_vabBodyRemainingSize;
-extern undefined4 DAT_80165024;
-extern undefined4 DAT_80165028;
-extern undefined4 DAT_8016502c;
-extern undefined4 DAT_80165120;
-extern undefined4 DAT_80165124;
-extern undefined2 g_requestedSeqId;
-extern undefined4 g_resetSoundFlag;
-extern int* g_animVolumeMap;
-extern undefined4 DAT_80166128;
-extern undefined4 DAT_8016612c;
-extern undefined2 DAT_80166130;
-extern undefined2 DAT_80166132;
-extern undefined4 DAT_80166140;
-extern undefined2 DAT_80166150;
-extern undefined2 DAT_80166152;
-extern undefined4 DAT_80166158;
-extern undefined2 DAT_8016615c;
-extern undefined2 DAT_8016615e;
-extern undefined4 DAT_80166164;
-extern undefined2 g_currentMapSoundIndex;
-extern undefined4 g_currentSoundGroup;
-extern undefined4 DAT_8017384c;
-extern undefined4 g_soundEffectState;
-extern undefined1 g_voiceState;
-extern undefined1 DAT_80175859;
-extern undefined4 g_voiceFrameMap;
-extern undefined4 DAT_80175874;
-extern undefined4 g_voiceType;
-extern undefined4 g_voicePitch;
-extern int* g_voiceVolumeLeft;
-extern int* g_voiceVolumeRight;
-extern undefined2 DAT_80175cfe;
-extern short g_loadedSequenceHandles[8];
-extern short SHORT_80175d10;
-extern short SHORT_80175d12;
-extern undefined4 g_fadeTimer;
-extern undefined4 g_fadeStep;
-extern undefined4 g_drawState;
-extern undefined2 g_blendRed;
-extern undefined2 g_blendGreen;
-extern undefined2 g_blendBlue;
-extern undefined2 g_blendAlpha;
-extern undefined4 g_drawFrameFlags;
-extern FadeControl* g_fadeControl;
-extern undefined4 g_warpUsageTable;
-extern undefined4 g_totalWarpEntries;
-extern int* g_cdSmallBuffer;
-extern undefined1 DAT_CDRom_8017e390;
-extern undefined1 DAT_CDRom_8017e391;
-extern undefined4 DAT_CDRom_8017e3a0;
-extern undefined4 DAT_CDRom_8017e3a4;
-extern undefined4 DAT_CDRom_8017e3a8;
-extern undefined4 DAT_8017e3b0;
-extern undefined4 DAT_8017e3b4;
-extern undefined4 DAT_8017e3b8;
-extern CdlFILE* PTR_CDFile_Datas_bin;
-extern undefined4 g_datasBinSize;
-extern char* g_datasBinNamePart1;
-extern char* g_datasBinNamePart2;
-extern char* g_datasBinNamePart3;
-extern char* g_datasBinNamePart4;
-extern CdlFILE* PTR_CDFile_Sound_bin;
-extern undefined4 g_soundBinSize;
-extern char* g_soundBinNamePart1;
-extern char* g_soundBinNamePart2;
-extern char* g_soundBinNamePart3;
-extern char* g_soundBinNamePart4;
-extern undefined4 g_asyncOperationCounterPtr;
-extern undefined4 g_asyncCallbackArg1;
-extern undefined4 g_asyncCallbackArg2;
-extern undefined4 DAT_8017e400;
-extern undefined1 DAT_8017e490;
-extern undefined1 DAT_8017e491;
-extern undefined1 DAT_8017e511;
-extern undefined1 DAT_8017e512;
-extern undefined4 DAT_8017e620;
-extern undefined4 DAT_8017e624;
-extern undefined4 DAT_8017e628;
-extern undefined2 DAT_8017e62c;
-extern undefined2 DAT_8017e62e;
-extern undefined2 DAT_8017e630;
-extern undefined2 DAT_8017e632;
-extern undefined2 DAT_8017e638;
-extern undefined2 DAT_8017e63a;
-extern undefined4 DAT_8017e63c;
-extern Sprite* g_sprites;
-extern undefined4 g_asyncOperationCountdown;
-extern undefined2 DAT_8017e8a4;
-extern undefined4 DAT_8017e8a8;
-extern undefined4 DAT_8017e8d8;
-extern undefined2 DAT_8017e990;
-extern undefined4 DAT_8017e998;
-extern undefined2 DAT_8017e99c;
-extern undefined1 DAT_8017e99e;
-extern undefined1 DAT_8017e9ac;
-extern undefined1 DAT_8017f794;
-extern undefined1 DAT_8017f795;
-extern undefined1 DAT_8017f796;
-extern undefined1 DAT_8017f79c;
-extern undefined1 DAT_8017f79d;
-extern undefined2 DAT_8017f79e;
-extern undefined2 DAT_8017f7a0;
-extern undefined2 DAT_8017f7a2;
-extern undefined2 DAT_8017f88e;
-extern undefined2 DAT_8017f890;
-extern undefined2 DAT_8017f892;
-extern undefined2 DAT_8017f8de;
-extern undefined2 DAT_8017f8e0;
-extern undefined2 DAT_8017f8e2;
-extern SPRT* g_warpNameDisplaySrc;
-extern SPRT g_warpNameDisplayDst;
-extern undefined2 DAT_8017fe82;
-extern undefined2 DAT_8017fe84;
-extern undefined2 DAT_8017fe86;
-extern undefined2 DAT_8017fe96;
-extern undefined2 DAT_8017fe98;
-extern undefined2 DAT_8017fe9a;
-extern undefined4 DAT_8017fef4;
-extern undefined4 DAT_8017ff28;
-extern undefined2 g_cameraTransitionState;
-extern int* g_cameraTransitionPolygons;
-extern undefined1 DAT_80180078;
-extern undefined1 DAT_80180079;
-extern undefined1 DAT_8018007a;
-extern undefined2 DAT_8018007c;
-extern undefined2 DAT_8018007e;
-extern undefined1 DAT_80180080;
-extern undefined1 DAT_80180081;
-extern undefined2 DAT_80180082;
-extern undefined2 DAT_80180084;
-extern undefined2 DAT_80180086;
-extern undefined1 DAT_80180088;
-extern undefined1 DAT_80180089;
-extern undefined2 DAT_8018008a;
-extern undefined2 DAT_8018008c;
-extern undefined2 DAT_8018008e;
-extern undefined1 DAT_80180090;
-extern undefined1 DAT_80180091;
-extern undefined2 DAT_80180094;
-extern undefined2 DAT_80180096;
-extern undefined1 DAT_80180098;
-extern undefined1 DAT_80180099;
-extern undefined4 g_cameraTransitionSrcX;
-extern undefined4 g_cameraTransitionSrcY;
-extern undefined4 g_cameraTransitionSrcZ;
-extern undefined4 g_cameraTransitionDstXPtr;
-extern undefined4 g_cameraTransitionDstYPtr;
-extern undefined4 g_cameraDeltaX;
-extern undefined4 g_cameraDeltaY;
-extern undefined4 g_cameraCurrentX;
-extern undefined4 g_cameraCurrentY;
-extern undefined4 g_cameraTargetX;
-extern undefined4 g_cameraTargetY;
-extern undefined4 g_cameraTransitionAlpha;
-extern undefined4 g_cameraTransitionHalfWidth;
-extern undefined4 g_cameraTransitionHalfHeight;
-extern undefined4 g_cameraTransitionStartX;
-extern undefined4 g_cameraTransitionStartY;
-extern undefined4 DAT_80180128;
-extern undefined4 DAT_80180238;
-extern undefined4 DAT_8018023c;
-extern undefined2 g_etcDisplayFlags;
-extern undefined4 g_etcTextCursorBlink_2;
-extern undefined4 g_etcTextSpeed_2;
-extern undefined4 g_etcTextMode_2;
-extern undefined2 g_etcTextX_2;
-extern undefined2 g_etcTextY_2;
-extern undefined2 g_etcTextStartX_2;
-extern undefined2 g_etcTextStartY_2;
-extern undefined4 g_entitySpriteNameTableIndex;
-extern undefined4 g_cdDataStartPtr;
-extern undefined4 g_cdDataEndPtr;
-extern undefined4 g_cdReadPtr;
-extern undefined4 g_cdReadComplete;
-extern undefined1 g_cdControlCommand;
-extern undefined1 g_cdTrackIndex;
-extern undefined4 DAT_CDAranXa_pos;
-extern undefined4 g_cdStreamDelay;
-extern undefined4 g_currentOverlayBuffer;
-extern undefined4 g_currentExtendedOverlayBuffer;
-extern undefined4 g_tileTPageX;
-extern undefined4 g_tileTPageY;
-extern undefined4 g_tile_scroll_frame_counter_by_layer;
-extern undefined4 g_tile_scroll_frame_counter_by_layer_2;
-extern undefined4 g_scrollStepX;
-extern undefined4 DAT_801802e4;
-extern undefined4 DAT_80180600;
-extern undefined4 g_scrollStepY;
-extern undefined4 DAT_80180924;
-extern undefined4 DAT_80180c40;
-extern int g_screenWrapX;
-extern int g_screenWrapY;
-extern int g_tile_rendering_buffer;
-extern int g_tileAnimationType;
-extern int g_paletteX;
-extern int g_paletteY;
-extern int* g_extendedOverlayDrawBuffers;
-extern int* g_extendedOverlayDrawBuffers_2;
-extern undefined2 DAT_80181bf8;
-extern undefined2 DAT_80181bfa;
-extern undefined1 DAT_80181bfc;
-extern undefined1 DAT_80181bfd;
-extern undefined1 DAT_80181bfe;
-extern undefined2 DAT_80181c00;
-extern undefined2 DAT_80181c02;
-extern undefined1 DAT_80181c04;
-extern undefined1 DAT_80181c05;
-extern undefined1 DAT_80181c06;
-extern undefined2 DAT_80181c08;
-extern undefined2 DAT_80181c0a;
-extern undefined1 DAT_80181c0c;
-extern undefined1 DAT_80181c0d;
-extern undefined1 DAT_80181c0e;
-extern undefined2 DAT_80181c10;
-extern undefined2 DAT_80181c12;
-extern DR_MODE g_drawModes[2];
-extern undefined4 g_tileUVLookup;
-extern undefined4 g_scrollPosX;
-extern undefined4 DAT_80181c8c;
-extern undefined4 DAT_80181fa8;
-extern undefined4 g_scrollPosY;
-extern undefined4 DAT_801822cc;
-extern undefined4 DAT_801825e8;
-extern int* g_renderingBuffer0;
-extern int* g_renderingBuffer1;
-extern TileSetMetaData* g_tile_set;
-extern undefined4 g_tileAnimationMode;
-extern undefined4 g_animationData;
-extern undefined4 g_tileSetIsSpecialHeader;
-extern undefined2 g_screenXBuffer;
-extern undefined2 DAT_8018679a;
-extern undefined2 DAT_80186928;
-extern undefined2 g_screenYBuffer;
-extern undefined2 DAT_80186aba;
-extern undefined2 DAT_80186c48;
-extern undefined4 g_scrollTargetX;
-extern undefined4 DAT_80186ddc;
-extern undefined4 DAT_801870f8;
-extern undefined4 g_scrollTargetY;
-extern undefined4 DAT_8018741c;
-extern undefined4 DAT_80187738;
-extern int g_tile_rendering_buffer_1[2720];
-extern int g_tile_rendering_buffer_2[2720];
-extern TileSetMetaData* g_tileSetMetaData;
-extern int* g_renderingBufferIndex;
-extern int* g_currentBuffer;
-extern short g_paletteLookup;
-extern short g_drawModeIndex;
-extern undefined2 g_tilePaletteIndex;
-extern undefined2 g_tileScaleX;
-extern undefined2 g_tileScaleY;
-extern int* g_overlayDrawBuffers;
-extern undefined1 DAT_8018cf75;
-extern undefined1 DAT_8018cf76;
-extern undefined1 DAT_8018cf77;
-extern undefined2 DAT_8018cf78;
-extern undefined2 DAT_8018cf7a;
-extern undefined2 DAT_8018cf7c;
-extern undefined2 DAT_8018cf7e;
-extern undefined4 g_tile_scroll_params_by_layer;
-extern undefined4 g_tile_scroll_params_by_layer_2;
-extern undefined4 g_tileLayerInfo;
-extern undefined4 DAT_8018cf9c;
-extern undefined4 g_scrollFrameCounterX;
-extern undefined4 DAT_8018cfa4;
-extern undefined4 DAT_8018d2c0;
-extern undefined4 g_scrollFrameCounterY;
-extern undefined4 DAT_8018d5e4;
-extern undefined4 DAT_8018d900;
-extern int g_scrollFactorX;
-extern int g_scrollFactorY;
-extern undefined4 g_rendering_tile_buffer;
-extern undefined1 DAT_8018e8a8;
-extern undefined1 DAT_8018e8a9;
-extern undefined1 DAT_8018e8aa;
-extern undefined1 DAT_8018e8c7;
-extern undefined1 DAT_8018e8c8;
-extern undefined1 DAT_8018e8e9;
-extern undefined4 DAT_8018ecc8;
-extern undefined4 DAT_8018ed68;
-extern undefined4 DAT_8018ed6c;
-extern undefined4 DAT_8018ed88;
-extern undefined4 DAT_8018ed8c;
-extern undefined4 DAT_8018ede8;
-extern undefined4 DAT_8018edec;
-extern undefined4 DAT_8018ee10;
-extern undefined4 DAT_8018ee38;
-extern undefined1 g_titleScreenData;
-extern undefined1 DAT_8018f079;
-extern undefined1 DAT_8018f07a;
-extern undefined1 DAT_8018f07b;
-extern undefined4 DAT_8018f07c;
-extern undefined4 DAT_8018f080;
-extern undefined4 DAT_8018f084;
-extern undefined4 DAT_8018f088;
-extern undefined4 DAT_8018f08c;
-extern undefined4 DAT_8018f090;
-extern undefined4 DAT_8018f094;
-extern undefined4 DAT_8018f098;
-extern undefined4 DAT_8018f0d8;
-extern undefined4 DAT_8018f0dc;
-extern undefined4 DAT_8018f0e0;
-extern undefined4 DAT_8018f0e4;
-extern undefined4 DAT_8018f0e8;
-extern undefined4 DAT_8018f0ec;
-extern undefined4 DAT_8018f0f0;
-extern undefined4 DAT_8018f0f4;
-extern undefined4 DAT_8018f0f8;
-extern undefined4 DAT_8018f0fc;
-extern undefined4 DAT_8018f100;
-extern undefined4 DAT_8018f104;
-extern undefined4 DAT_8018f108;
-extern undefined4 DAT_8018f10c;
-extern undefined4 DAT_8018f110;
-extern undefined4 DAT_8018f114;
-extern undefined4 DAT_8018f178;
-extern undefined4 DAT_8018f17c;
-extern undefined4 DAT_8018f180;
-extern undefined4 DAT_8018f184;
-extern undefined4 DAT_8018f188;
-extern undefined4 DAT_8018f18c;
-extern undefined4 DAT_8018f190;
-extern undefined4 DAT_8018f194;
-extern undefined4 DAT_8018f1f8;
-extern undefined4 DAT_8018f1fc;
-extern undefined4 DAT_8018f200;
-extern undefined4 DAT_8018f204;
-extern undefined4 DAT_8018f208;
-extern undefined4 DAT_8018f20c;
-extern undefined4 DAT_8018f210;
-extern undefined4 DAT_8018f214;
-extern int g_layerBuffer[1082];
-extern Entity* g_entitySpawned;
-extern undefined4 DAT_801910f0;
-extern undefined4 DAT_801910f4;
-extern undefined4 DAT_801910f8;
-extern undefined2 DAT_801910fc;
-extern undefined2 DAT_801910fe;
-extern undefined2 DAT_80191100;
-extern undefined4 DAT_80191104;
-extern undefined4 DAT_80191108;
-extern undefined2 DAT_8019110c;
-extern undefined4 DAT_80191110;
-extern undefined4 DAT_80191114;
-extern undefined4 DAT_80191118;
-extern undefined2 DAT_8019111c;
-extern undefined2 DAT_8019111e;
-extern undefined2 DAT_80191120;
-extern undefined4 DAT_80191124;
-extern undefined4 DAT_80191128;
-extern undefined2 DAT_8019112c;
-extern undefined4 DAT_80191130;
-extern undefined4 DAT_80191134;
-extern undefined4 DAT_80191138;
-extern undefined4 DAT_8019113c;
-extern undefined4 DAT_80191140;
-extern undefined4 DAT_80191144;
-extern undefined4 DAT_80191150;
-extern undefined4 DAT_80191154;
-extern undefined4 DAT_80191158;
-extern undefined4 DAT_8019115c;
-extern undefined4 DAT_80191160;
-extern undefined4 DAT_80191164;
-extern undefined4 DAT_80191168;
-extern undefined4 DAT_8019116c;
-extern undefined4 DAT_80191170;
-extern undefined1 DAT_80191175;
-extern undefined1 DAT_80191178;
-extern undefined1 DAT_80191179;
-extern undefined1 DAT_8019118b;
-extern undefined1 DAT_80191197;
-extern undefined1 DAT_80191199;
-extern undefined4 DAT_8019119c;
-extern undefined4 g_loaderEntityIndex;
-extern undefined4 g_loaderEntityAngle;
-extern undefined4 g_loaderFadeAmount;
-extern undefined4 g_loaderStateTimer;
-extern undefined4 g_loaderStateStep;
-extern undefined4 g_loaderInputCooldown;
-extern undefined4 g_bossSpawnedEffectEntity;
-extern undefined4 g_bossEffectEntity;
-extern undefined4 DAT_801911c0;
-extern undefined4 DAT_801911c4;
-extern undefined4 DAT_801911c8;
-extern undefined4 DAT_801911cc;
-extern undefined4 DAT_801911d0;
-extern undefined4 DAT_801911d4;
-extern undefined4 DAT_801911d8;
-extern undefined4 DAT_801911dc;
-extern undefined4 DAT_801911e0;
-extern undefined4 DAT_801911e4;
-extern undefined4 DAT_801911e8;
-extern undefined4 DAT_801911ec;
-extern undefined4 g_loaderEffectEntityId;
-extern undefined2 g_loaderEventDelay2;
-extern undefined2 g_loaderEventDelay1;
-extern undefined2 DAT_801911f8;
-extern undefined2 DAT_801911fa;
-extern undefined2 DAT_801911fc;
-extern undefined2 DAT_801911fe;
-extern undefined2 DAT_80191200;
-extern undefined4 DAT_80191204;
-extern undefined4 g_specialEffectEntityArray;
-extern undefined4 DAT_8019120c;
-extern undefined4 DAT_80191238;
-extern undefined4 g_fireSummonCount;
-extern undefined4 g_fireCycleState;
-extern undefined4 g_fireCyclePhase;
-extern undefined4 g_fireCycleCounter;
-extern undefined4 DAT_8019124c;
-extern undefined4 DAT_80191250;
-extern undefined4 DAT_80191254;
-extern undefined4 DAT_80191258;
-extern undefined4 DAT_8019125c;
-extern undefined4 g_warpStatusFlag;
-extern undefined4 DAT_801912e8;
-extern undefined4 DAT_801912ec;
-extern undefined4 DAT_801912f0;
-extern undefined4 DAT_801912f4;
-extern undefined4 DAT_801912f8;
-extern undefined4 DAT_801912fc;
-extern undefined4 DAT_80191300;
-extern undefined4 DAT_80191304;
-extern undefined2 g_loaderDirectionHistory;
-extern undefined2 DAT_8019130a;
-extern undefined2 DAT_80191462;
-extern undefined2 DAT_80191508;
-extern undefined2 DAT_8019150a;
-extern undefined2 DAT_801915ae;
-extern undefined2 DAT_801915b0;
-extern undefined2 DAT_80191662;
-extern undefined2 DAT_80191708;
-extern undefined2 DAT_8019170a;
-extern undefined2 DAT_801917ae;
-extern undefined2 DAT_801917b0;
-extern undefined2 DAT_80191862;
-extern undefined4 DAT_80191908;
-extern undefined4 DAT_8019190c;
-extern undefined4 DAT_80191910;
-extern undefined4 g_loaderInitialized;
-extern undefined4 DAT_80191920;
-extern undefined4 DAT_80191924;
-extern undefined4 DAT_80191928;
-extern undefined4 g_compressedImageData;
-extern undefined4 DAT_80191b34;
-extern undefined4 DAT_80191b38;
-extern undefined4 g_mapIndexInDatasBin;
-extern undefined4 DAT_80191b40;
-extern undefined4 DAT_80191b44;
-extern undefined4 DAT_80191b48;
-extern undefined4 DAT_8019acbc;
-extern undefined4 DAT_8019acc4;
-extern undefined4 g_datasBinBuffer0To1976;
-extern undefined4 g_spriteBufferCDEnd;
-extern undefined4 g_imageBufferCDStart;
-extern undefined4 g_imageBufferCDEnd;
-extern undefined4 DAT_801eab40;
-extern undefined4 g_drawPageParam;
-extern int g_indexInDatasBin;
-extern undefined4 DAT_801eab58;
-extern undefined4 DAT_801eab5c;
-extern undefined4 DAT_801eab60;
-extern undefined4 g_ramDestination;
-extern undefined4 g_lastVisitedMapId;
-extern undefined4 DAT_801eb2f0;
-extern undefined4 DAT_801eb2f4;
-extern undefined4 DAT_801eb2f8;
-extern undefined4 DAT_801eb2fc;
-extern undefined4 DAT_801eb300;
-extern undefined4 DAT_801eb304;
-extern char g_menuStatusText[32];
-extern undefined4 g_tempGameState;
-extern undefined4 g_initialWarpMap;
-extern undefined4 g_initialWarpTileX;
-extern undefined4 g_initialWarpTileY;
-extern undefined4 g_initialWarpZ;
-extern int g_bitfieldTable[22];
-extern int g_mapTransitionFlags;
-extern int g_playerState;
-extern int g_progressStateFlags;
-extern int g_systemFlags;
-extern int g_renderFlags;
-extern undefined4 DAT_801eb43c;
-extern undefined4 g_debugPrintDisableFrameCounter;
-extern int* g_mapIdToInternalMapIndexTable;
-extern undefined2 DAT_801eb828;
-extern undefined2 DAT_801eb82a;
-extern undefined2 g_fadeControl2;
-extern undefined2 DAT_801eb82e;
-extern undefined2 DAT_801eb830;
-extern undefined2 DAT_801eb832;
-extern undefined2 DAT_801eb834;
-extern undefined2 DAT_801eb83a;
-extern undefined2 DAT_801eb83c;
-extern undefined2 DAT_801eb83e;
-extern undefined2 DAT_801eb840;
-extern undefined2 DAT_801eb842;
-extern undefined2 DAT_801eb844;
-extern undefined1 g_currentSaveSlotNameIndex;
-extern undefined4 g_bitfieldTable2;
-extern undefined4 DAT_801eba4c;
-extern undefined4 DAT_801eba58;
-extern undefined4 DAT_801ebb38;
-extern undefined4 DAT_801ebb3c;
-extern int* g_bufferEtc;
-extern int* g_bufferEtcPtr;
-extern undefined4 DAT_801eeb48;
-extern undefined4 DAT_801eeb50;
-extern undefined1 DAT_801eeb58;
-extern undefined2 DAT_801f2f58;
-extern undefined2 DAT_801f2f5c;
-extern undefined4 DAT_801f2f60;
-extern undefined4 DAT_801f2f64;
-extern undefined4 DAT_801f2f68;
-extern undefined4 DAT_801f2f6c;
-extern undefined4 DAT_801f2f70;
-extern undefined4 DAT_801f2f74;
-extern undefined4 DAT_801f2f78;
-extern undefined4 DAT_801f2f7c;
-extern undefined4 DAT_801f2f80;
-extern undefined4 DAT_801f2f84;
-extern undefined4 DAT_801f2f88;
-extern undefined4 DAT_801f2f8c;
-extern undefined1 DAT_801f48a0;
-extern undefined1 DAT_801f48a1;
-extern undefined1 DAT_801f48a8;
-extern undefined1 DAT_801f48a9;
-extern undefined1 DAT_801f48b0;
-extern undefined1 DAT_801f48b1;
-extern undefined4 DAT_801f48b8;
-extern undefined4 DAT_801f48bc;
-extern undefined4 DAT_801f48c0;
-extern undefined4 DAT_801f48c8;
-extern undefined4 DAT_801f48cc;
-extern undefined1 DAT_801f48d0;
-extern undefined4 DAT_801f48d4;
-extern undefined4 DAT_801f48d8;
-extern undefined4 DAT_801f48dc;
-extern undefined1 DAT_801f48e8;
-extern undefined1 DAT_801f48ea;
-extern undefined4 DAT_801f4ec8;
-extern undefined4 DAT_801f4ecc;
-extern undefined4 DAT_801f4ed0;
-extern undefined4 DAT_801f4ef8;
-extern undefined1 DAT_801f64c8;
-extern undefined4 DAT_801f64ca;
-extern undefined1 DAT_801f64ce;
-extern undefined4 DAT_801f64d2;
-extern undefined1 DAT_801f64e8;
-extern undefined4 DAT_801f6554;
-extern undefined4 g_padStateFromPsx;
-extern undefined4 g_padMode;
-extern undefined4 DAT_801f6cd0;
-extern undefined4 DAT_801f6cd8;
-extern undefined4 DAT_801f6ce0;
-extern undefined4 DAT_801f6ce8;
-extern undefined4 DAT_801f6cec;
-extern undefined4 DAT_801f6da0;
-extern undefined4 DAT_801f6da4;
-extern undefined4 DAT_801f6de4;
-extern undefined2 DAT_801f7568;
-extern undefined2 DAT_801f7570;
-extern undefined4 DAT_sound_801f7578;
-extern undefined4 DAT_sound_801f757c;
-extern undefined2 g_volumeLeft;
-extern undefined2 g_volumeRight;
-extern undefined4 DAT_801f7584;
-extern undefined4 DAT_801f7588;
-extern undefined4 DAT_801f75d0;
-extern undefined2 DAT_sound_801f7610;
-extern undefined2 DAT_sound_801f7658;
-extern undefined2 DAT_sound_801f7660;
-extern undefined4 DAT_801f7668;
-extern undefined4 DAT_801f7678;
-extern undefined4 DAT_801f7680;
-extern undefined1 g_numberOfVoices;
-extern undefined2 g_audioFadeState;
-extern undefined1 DAT_801f7698;
-extern undefined1 DAT_801f7699;
-extern undefined1 DAT_801f769a;
-extern undefined1 DAT_801f769b;
-extern undefined1 DAT_801f769c;
-extern undefined1 DAT_801f769d;
-extern undefined1 DAT_801f769e;
-extern undefined1 DAT_801f769f;
-extern undefined1 DAT_801f76a2;
-extern undefined1 DAT_801f76a3;
-extern undefined1 DAT_801f76a4;
-extern undefined1 DAT_801f76a5;
-extern undefined1 DAT_801f76a6;
-extern undefined1 DAT_801f76a7;
-extern undefined1 DAT_801f76a8;
-extern undefined1 DAT_801f76a9;
-extern undefined1 DAT_801f76aa;
-extern undefined1 DAT_801f76ab;
-extern undefined1 DAT_801f76ac;
-extern undefined2 g_sequenceKey;
-extern undefined2 DAT_801f76b0;
-extern undefined2 DAT_maybeCurrentVoiceIndex_801f76b2;
-extern undefined2 DAT_801f76b4;
-extern undefined2 DAT_801f76b6;
-extern undefined1 DAT_sound_801f76b8;
-extern undefined1 DAT_801f76b9;
-extern undefined1 g_voiceLockFlag;
-extern undefined2 DAT_sound_801f7710;
-extern int* DAT_sound_801f7718;
-extern undefined4 DAT_801f7758;
-extern undefined2 g_volumesL;
-extern undefined2 g_volumesR;
-extern undefined2 g_pitches;
-extern undefined2 g_reverbs;
-extern undefined2 g_adsrAttack;
-extern undefined2 g_adsrSustain;
-extern undefined1 g_voiceUpdateFlags;
-extern undefined1 DAT_801f7919;
-extern undefined2 DAT_sound_801f7930;
-extern undefined2 DAT_sound_801f7932;
-extern undefined2 DAT_sound_801f7934;
-extern undefined2 g_voiceStatusTable;
-extern undefined2 DAT_sound_801f7938;
-extern undefined1 DAT_sound_801f793a;
-extern undefined2 DAT_801f793c;
-extern undefined2 DAT_sound_801f793e;
-extern undefined2 DAT_sound_801f7940;
-extern undefined2 DAT_sound_801f7942;
-extern undefined2 DAT_sound_801f7944;
-extern undefined2 DAT_801f7946;
-extern undefined2 DAT_801f7948;
-extern undefined1 g_voiceNoiseFlags;
-extern undefined2 DAT_sound_801f794c;
-extern undefined2 DAT_sound_801f794e;
-extern undefined2 DAT_sound_801f7950;
-extern undefined2 DAT_sound_801f7952;
-extern undefined2 DAT_sound_801f7954;
-extern undefined2 DAT_sound_801f7958;
-extern undefined2 DAT_sound_801f795a;
-extern undefined2 DAT_sound_801f795c;
-extern undefined2 DAT_sound_801f795e;
-extern undefined2 DAT_sound_801f7960;
-extern undefined2 DAT_801f7964;
-extern undefined2 DAT_801f7966;
-extern undefined2 DAT_801f7968;
-extern undefined2 DAT_801f796a;
-extern undefined2 DAT_801f796c;
-extern undefined1 DAT_801f796e;
-extern undefined2 DAT_801f7970;
-extern undefined2 DAT_801f7972;
-extern undefined2 DAT_801f7974;
-extern undefined2 DAT_801f7976;
-extern undefined2 DAT_801f7978;
-extern undefined1 DAT_801f797f;
-extern undefined2 DAT_801f7980;
-extern undefined2 DAT_801f7982;
-extern undefined2 DAT_801f7984;
-extern undefined2 DAT_801f7986;
-extern undefined2 DAT_801f7988;
-extern undefined2 DAT_801f798c;
-extern undefined2 DAT_801f798e;
-extern undefined2 DAT_801f7990;
-extern undefined2 DAT_801f7992;
-extern undefined2 DAT_801f7994;
-extern undefined4 g_activeVoiceBufferIndex;
-extern undefined4 g_voiceActiveTable;
-extern undefined4 DAT_801f7e1c;
-extern char* SPUBuffer_801f7e60;
-extern undefined2 g_voiceCommandPlayingLeft;
-extern undefined2 g_voiceCommandPlayingRight;
-extern undefined2 DAT_sound_801f7ef8;
-extern undefined2 DAT_sound_801f7f00;
-extern undefined2 g_voiceCommandPendingLeft;
-extern undefined2 g_voiceCommandPendingRight;
-extern int* g_executable_loaded;
+extern undefined4 DAT_1f8003fc; // 1F8003FC
+extern dword EXP1_BASE_ADDR; // 1F801000
+extern dword EXP2_BASE_ADDR; // 1F801004
+extern dword EXP1_DELAY_SIZE; // 1F801008
+extern dword EXP3_DELAY_SIZE; // 1F80100C
+extern dword BIOS_ROM; // 1F801010
+extern dword SPU_DELAY; // 1F801014
+extern dword CDROM_DELAY; // 1F801018
+extern dword EXP2_DELAY_SIZE; // 1F80101C
+extern dword COMMON_DELAY; // 1F801020
+extern dword JOY_MCD_DATA; // 1F801040
+extern dword JOY_MCD_STAT; // 1F801044
+extern word JOY_MCD_MODE; // 1F801048
+extern word JOY_MCD_CTRL; // 1F80104A
+extern word JOY_MCD_BAUD; // 1F80104E
+extern dword SIO_DATA; // 1F801050
+extern dword SIO_STAT; // 1F801054
+extern word SIO_MODE; // 1F801058
+extern word SIO_CTRL; // 1F80105A
+extern word SIO_MISC; // 1F80105C
+extern word SIO_BAUD; // 1F80105E
+extern dword RAM_SIZE; // 1F801060
+extern word I_STAT; // 1F801070
+extern word I_MASK; // 1F801074
+extern dword DMA_MDEC_IN_MADR; // 1F801080
+extern dword DMA_MDEC_IN_BCR; // 1F801084
+extern dword DMA_MDEC_IN_CHCR; // 1F801088
+extern dword DMA_MDEC_OUT_MADR; // 1F801090
+extern dword DMA_MDEC_OUT_BCR; // 1F801094
+extern dword DMA_MDEC_OUT_CHCR; // 1F801098
+extern dword DMA_GPU_MADR; // 1F8010A0
+extern dword DMA_GPU_BCR; // 1F8010A4
+extern dword DMA_GPU_CHCR; // 1F8010A8
+extern dword DMA_CDROM_MADR; // 1F8010B0
+extern dword DMA_CDROM_BCR; // 1F8010B4
+extern dword DMA_CDROM_CHCR; // 1F8010B8
+extern dword DMA_SPU_MADR; // 1F8010C0
+extern dword DMA_SPU_BCR; // 1F8010C4
+extern dword DMA_SPU_CHCR; // 1F8010C8
+extern dword DMA_PIO_MADR; // 1F8010D0
+extern dword DMA_PIO_BCR; // 1F8010D4
+extern dword DMA_PIO_CHCR; // 1F8010D8
+extern dword DMA_OTC_MADR; // 1F8010E0
+extern dword DMA_OTC_BCR; // 1F8010E4
+extern dword DMA_OTC_CHCR; // 1F8010E8
+extern dword DMA_DPCR; // 1F8010F0
+extern dword DMA_DICR; // 1F8010F4
+extern dword TMR_DOTCLOCK_VAL; // 1F801100
+extern dword TMR_DOTCLOCK_MODE; // 1F801104
+extern dword TMR_DOTCLOCK_MAX; // 1F801108
+extern dword TMR_HRETRACE_VAL; // 1F801110
+extern dword TMR_HRETRACE_MODE; // 1F801114
+extern dword TMR_HRETRACE_MAX; // 1F801118
+extern dword TMR_SYSCLOCK_VAL; // 1F801120
+extern dword TMR_SYSCLOCK_MODE; // 1F801124
+extern dword TMR_SYSCLOCK_MAX; // 1F801128
+extern byte CDROM_REG0; // 1F801800
+extern byte CDROM_REG1; // 1F801801
+extern byte CDROM_REG2; // 1F801802
+extern byte CDROM_REG3; // 1F801803
+extern dword GPU_REG0; // 1F801810
+extern dword GPU_REG1; // 1F801814
+extern dword MDEC_REG0; // 1F801820
+extern dword MDEC_REG1; // 1F801824
+extern dword VOICE_00_LEFT_RIGHT; // 1F801C00
+extern word VOICE_00_ADPCM_SAMPLE_RATE; // 1F801C04
+extern word VOICE_00_ADPCM_START_ADDR; // 1F801C06
+extern word VOICE_00_ADSR_ATT_DEC_SUS_REL; // 1F801C08
+extern undefined2 DAT_1f801c0a; // 1F801C0A
+extern word VOICE_00_ADSR_CURR_VOLUME; // 1F801C0C
+extern word VOICE_00_ADPCM_REPEAT_ADDR; // 1F801C0E
+extern dword VOICE_01_LEFT_RIGHT; // 1F801C10
+extern word VOICE_01_ADPCM_SAMPLE_RATE; // 1F801C14
+extern word VOICE_01_ADPCM_START_ADDR; // 1F801C16
+extern word VOICE_01_ADSR_ATT_DEC_SUS_REL; // 1F801C18
+extern undefined2 DAT_1f801c1a; // 1F801C1A
+extern word VOICE_01_ADSR_CURR_VOLUME; // 1F801C1C
+extern word VOICE_01_ADPCM_REPEAT_ADDR; // 1F801C1E
+extern dword VOICE_02_LEFT_RIGHT; // 1F801C20
+extern word VOICE_02_ADPCM_SAMPLE_RATE; // 1F801C24
+extern word VOICE_02_ADPCM_START_ADDR; // 1F801C26
+extern word VOICE_02_ADSR_ATT_DEC_SUS_REL; // 1F801C28
+extern word VOICE_02_ADSR_CURR_VOLUME; // 1F801C2C
+extern word VOICE_02_ADPCM_REPEAT_ADDR; // 1F801C2E
+extern dword VOICE_03_LEFT_RIGHT; // 1F801C30
+extern word VOICE_03_ADPCM_SAMPLE_RATE; // 1F801C34
+extern word VOICE_03_ADPCM_START_ADDR; // 1F801C36
+extern word VOICE_03_ADSR_ATT_DEC_SUS_REL; // 1F801C38
+extern word VOICE_03_ADSR_CURR_VOLUME; // 1F801C3C
+extern word VOICE_03_ADPCM_REPEAT_ADDR; // 1F801C3E
+extern dword VOICE_04_LEFT_RIGHT; // 1F801C40
+extern word VOICE_04_ADPCM_SAMPLE_RATE; // 1F801C44
+extern word VOICE_04_ADPCM_START_ADDR; // 1F801C46
+extern word VOICE_04_ADSR_ATT_DEC_SUS_REL; // 1F801C48
+extern word VOICE_04_ADSR_CURR_VOLUME; // 1F801C4C
+extern word VOICE_04_ADPCM_REPEAT_ADDR; // 1F801C4E
+extern dword VOICE_05_LEFT_RIGHT; // 1F801C50
+extern word VOICE_05_ADPCM_SAMPLE_RATE; // 1F801C54
+extern word VOICE_05_ADPCM_START_ADDR; // 1F801C56
+extern word VOICE_05_ADSR_ATT_DEC_SUS_REL; // 1F801C58
+extern word VOICE_05_ADSR_CURR_VOLUME; // 1F801C5C
+extern word VOICE_05_ADPCM_REPEAT_ADDR; // 1F801C5E
+extern dword VOICE_06_LEFT_RIGHT; // 1F801C60
+extern word VOICE_06_ADPCM_SAMPLE_RATE; // 1F801C64
+extern word VOICE_06_ADPCM_START_ADDR; // 1F801C66
+extern word VOICE_06_ADSR_ATT_DEC_SUS_REL; // 1F801C68
+extern word VOICE_06_ADSR_CURR_VOLUME; // 1F801C6C
+extern word VOICE_06_ADPCM_REPEAT_ADDR; // 1F801C6E
+extern dword VOICE_07_LEFT_RIGHT; // 1F801C70
+extern word VOICE_07_ADPCM_SAMPLE_RATE; // 1F801C74
+extern word VOICE_07_ADPCM_START_ADDR; // 1F801C76
+extern word VOICE_07_ADSR_ATT_DEC_SUS_REL; // 1F801C78
+extern word VOICE_07_ADSR_CURR_VOLUME; // 1F801C7C
+extern word VOICE_07_ADPCM_REPEAT_ADDR; // 1F801C7E
+extern dword VOICE_08_LEFT_RIGHT; // 1F801C80
+extern word VOICE_08_ADPCM_SAMPLE_RATE; // 1F801C84
+extern word VOICE_08_ADPCM_START_ADDR; // 1F801C86
+extern word VOICE_08_ADSR_ATT_DEC_SUS_REL; // 1F801C88
+extern word VOICE_08_ADSR_CURR_VOLUME; // 1F801C8C
+extern word VOICE_08_ADPCM_REPEAT_ADDR; // 1F801C8E
+extern dword VOICE_09_LEFT_RIGHT; // 1F801C90
+extern word VOICE_09_ADPCM_SAMPLE_RATE; // 1F801C94
+extern word VOICE_09_ADPCM_START_ADDR; // 1F801C96
+extern word VOICE_09_ADSR_ATT_DEC_SUS_REL; // 1F801C98
+extern word VOICE_09_ADSR_CURR_VOLUME; // 1F801C9C
+extern word VOICE_09_ADPCM_REPEAT_ADDR; // 1F801C9E
+extern dword VOICE_0a_LEFT_RIGHT; // 1F801CA0
+extern word VOICE_0a_ADPCM_SAMPLE_RATE; // 1F801CA4
+extern word VOICE_0a_ADPCM_START_ADDR; // 1F801CA6
+extern word VOICE_0a_ADSR_ATT_DEC_SUS_REL; // 1F801CA8
+extern word VOICE_0a_ADSR_CURR_VOLUME; // 1F801CAC
+extern word VOICE_0a_ADPCM_REPEAT_ADDR; // 1F801CAE
+extern dword VOICE_0b_LEFT_RIGHT; // 1F801CB0
+extern word VOICE_0b_ADPCM_SAMPLE_RATE; // 1F801CB4
+extern word VOICE_0b_ADPCM_START_ADDR; // 1F801CB6
+extern word VOICE_0b_ADSR_ATT_DEC_SUS_REL; // 1F801CB8
+extern word VOICE_0b_ADSR_CURR_VOLUME; // 1F801CBC
+extern word VOICE_0b_ADPCM_REPEAT_ADDR; // 1F801CBE
+extern dword VOICE_0c_LEFT_RIGHT; // 1F801CC0
+extern word VOICE_0c_ADPCM_SAMPLE_RATE; // 1F801CC4
+extern word VOICE_0c_ADPCM_START_ADDR; // 1F801CC6
+extern word VOICE_0c_ADSR_ATT_DEC_SUS_REL; // 1F801CC8
+extern word VOICE_0c_ADSR_CURR_VOLUME; // 1F801CCC
+extern word VOICE_0c_ADPCM_REPEAT_ADDR; // 1F801CCE
+extern dword VOICE_0d_LEFT_RIGHT; // 1F801CD0
+extern word VOICE_0d_ADPCM_SAMPLE_RATE; // 1F801CD4
+extern word VOICE_0d_ADPCM_START_ADDR; // 1F801CD6
+extern word VOICE_0d_ADSR_ATT_DEC_SUS_REL; // 1F801CD8
+extern word VOICE_0d_ADSR_CURR_VOLUME; // 1F801CDC
+extern word VOICE_0d_ADPCM_REPEAT_ADDR; // 1F801CDE
+extern dword VOICE_0e_LEFT_RIGHT; // 1F801CE0
+extern word VOICE_0e_ADPCM_SAMPLE_RATE; // 1F801CE4
+extern word VOICE_0e_ADPCM_START_ADDR; // 1F801CE6
+extern word VOICE_0e_ADSR_ATT_DEC_SUS_REL; // 1F801CE8
+extern word VOICE_0e_ADSR_CURR_VOLUME; // 1F801CEC
+extern word VOICE_0e_ADPCM_REPEAT_ADDR; // 1F801CEE
+extern dword VOICE_0f_LEFT_RIGHT; // 1F801CF0
+extern word VOICE_0f_ADPCM_SAMPLE_RATE; // 1F801CF4
+extern word VOICE_0f_ADPCM_START_ADDR; // 1F801CF6
+extern word VOICE_0f_ADSR_ATT_DEC_SUS_REL; // 1F801CF8
+extern word VOICE_0f_ADSR_CURR_VOLUME; // 1F801CFC
+extern word VOICE_0f_ADPCM_REPEAT_ADDR; // 1F801CFE
+extern dword VOICE_10_LEFT_RIGHT; // 1F801D00
+extern word VOICE_10_ADPCM_SAMPLE_RATE; // 1F801D04
+extern word VOICE_10_ADPCM_START_ADDR; // 1F801D06
+extern word VOICE_10_ADSR_ATT_DEC_SUS_REL; // 1F801D08
+extern word VOICE_10_ADSR_CURR_VOLUME; // 1F801D0C
+extern word VOICE_10_ADPCM_REPEAT_ADDR; // 1F801D0E
+extern dword VOICE_11_LEFT_RIGHT; // 1F801D10
+extern word VOICE_11_ADPCM_SAMPLE_RATE; // 1F801D14
+extern word VOICE_11_ADPCM_START_ADDR; // 1F801D16
+extern word VOICE_11_ADSR_ATT_DEC_SUS_REL; // 1F801D18
+extern word VOICE_11_ADSR_CURR_VOLUME; // 1F801D1C
+extern word VOICE_11_ADPCM_REPEAT_ADDR; // 1F801D1E
+extern dword VOICE_12_LEFT_RIGHT; // 1F801D20
+extern word VOICE_12_ADPCM_SAMPLE_RATE; // 1F801D24
+extern word VOICE_12_ADPCM_START_ADDR; // 1F801D26
+extern word VOICE_12_ADSR_ATT_DEC_SUS_REL; // 1F801D28
+extern word VOICE_12_ADSR_CURR_VOLUME; // 1F801D2C
+extern word VOICE_12_ADPCM_REPEAT_ADDR; // 1F801D2E
+extern dword VOICE_13_LEFT_RIGHT; // 1F801D30
+extern word VOICE_13_ADPCM_SAMPLE_RATE; // 1F801D34
+extern word VOICE_13_ADPCM_START_ADDR; // 1F801D36
+extern word VOICE_13_ADSR_ATT_DEC_SUS_REL; // 1F801D38
+extern word VOICE_13_ADSR_CURR_VOLUME; // 1F801D3C
+extern word VOICE_13_ADPCM_REPEAT_ADDR; // 1F801D3E
+extern dword VOICE_14_LEFT_RIGHT; // 1F801D40
+extern word VOICE_14_ADPCM_SAMPLE_RATE; // 1F801D44
+extern word VOICE_14_ADPCM_START_ADDR; // 1F801D46
+extern word VOICE_14_ADSR_ATT_DEC_SUS_REL; // 1F801D48
+extern word VOICE_14_ADSR_CURR_VOLUME; // 1F801D4C
+extern word VOICE_14_ADPCM_REPEAT_ADDR; // 1F801D4E
+extern dword VOICE_15_LEFT_RIGHT; // 1F801D50
+extern word VOICE_15_ADPCM_SAMPLE_RATE; // 1F801D54
+extern word VOICE_15_ADPCM_START_ADDR; // 1F801D56
+extern word VOICE_15_ADSR_ATT_DEC_SUS_REL; // 1F801D58
+extern word VOICE_15_ADSR_CURR_VOLUME; // 1F801D5C
+extern word VOICE_15_ADPCM_REPEAT_ADDR; // 1F801D5E
+extern dword VOICE_16_LEFT_RIGHT; // 1F801D60
+extern word VOICE_16_ADPCM_SAMPLE_RATE; // 1F801D64
+extern word VOICE_16_ADPCM_START_ADDR; // 1F801D66
+extern word VOICE_16_ADSR_ATT_DEC_SUS_REL; // 1F801D68
+extern word VOICE_16_ADSR_CURR_VOLUME; // 1F801D6C
+extern word VOICE_16_ADPCM_REPEAT_ADDR; // 1F801D6E
+extern dword VOICE_17_LEFT_RIGHT; // 1F801D70
+extern word VOICE_17_ADPCM_SAMPLE_RATE; // 1F801D74
+extern word VOICE_17_ADPCM_START_ADDR; // 1F801D76
+extern word VOICE_17_ADSR_ATT_DEC_SUS_REL; // 1F801D78
+extern word VOICE_17_ADSR_CURR_VOLUME; // 1F801D7C
+extern word VOICE_17_ADPCM_REPEAT_ADDR; // 1F801D7E
+extern word SPU_MAIN_VOL_L; // 1F801D80
+extern word SPU_MAIN_VOL_R; // 1F801D82
+extern word SPU_REVERB_OUT_L; // 1F801D84
+extern word SPU_REVERB_OUT_R; // 1F801D86
+extern dword SPU_VOICE_KEY_ON; // 1F801D88
+extern dword SPU_VOICE_KEY_OFF; // 1F801D8C
+extern dword SPU_VOICE_CHN_FM_MODE; // 1F801D90
+extern dword SPU_VOICE_CHN_NOISE_MODE; // 1F801D94
+extern dword SPU_VOICE_CHN_REVERB_MODE; // 1F801D98
+extern dword SPU_VOICE_CHN_ON_OFF_STATUS; // 1F801D9C
+extern word SPU_UNKN_1DA0; // 1F801DA0
+extern word SOUND_RAM_REVERB_WORK_ADDR; // 1F801DA2
+extern word SOUND_RAM_IRQ_ADDR; // 1F801DA4
+extern word SOUND_RAM_DATA_TRANSFER_ADDR; // 1F801DA6
+extern word SOUND_RAM_DATA_TRANSFER_FIFO; // 1F801DA8
+extern word SPU_CTRL_REG_CPUCNT; // 1F801DAA
+extern word SOUND_RAM_DATA_TRANSTER_CTRL; // 1F801DAC
+extern word SPU_STATUS_REG_SPUSTAT; // 1F801DAE
+extern word CD_VOL_L; // 1F801DB0
+extern word CD_VOL_R; // 1F801DB2
+extern word EXT_VOL_L; // 1F801DB4
+extern word EXT_VOL_R; // 1F801DB6
+extern word CURR_MAIN_VOL_L; // 1F801DB8
+extern word CURR_MAIN_VOL_R; // 1F801DBA
+extern dword SPU_UNKN_1DBC; // 1F801DBC
+extern undefined4 g_someDataIntoRam; // 80010000
+extern undefined4 DAT_80010004; // 80010004
+extern undefined4 DAT_80010008; // 80010008
+extern undefined4 DAT_8001000c; // 8001000C
+extern undefined4 DAT_80010010; // 80010010
+extern undefined4 DAT_80010014; // 80010014
+extern undefined4 DAT_80010018; // 80010018
+extern undefined4 DAT_8001001c; // 8001001C
+extern int g_debugVar_WarpDestRestart; // 8001004C
+extern undefined1 g_transitionCounter; // 80010756
+extern int* PTR_DAT_80020384; // 80020384
+extern int g_unused_800203b4; // 800203B4
+extern short g_tileOffsetYTable; // 800203F0
+extern int* g_tileOffsetYPtr; // 80020410
+extern int g_sinTable[8]; // 800204F0
+extern int g_cosTable[8]; // 800206F0
+extern int g_angleLookupTable[162]; // 80022488
+extern int INT_80022778; // 80022778
+extern short SHORT_ARRAY_800227f4[8]; // 800227F4
+extern short SHORT_ARRAY_80022804[8]; // 80022804
+extern short SHORT_ARRAY_80022814[72]; // 80022814
+extern byte BYTE_ARRAY_800228a4[8]; // 800228A4
+extern char s_ARM_80022be4[84]; // 80022BE4
+extern int INT_80022cac; // 80022CAC
+extern int INT_80022cec; // 80022CEC
+extern int INT_80022cf0; // 80022CF0
+extern int INT_80022cf4; // 80022CF4
+extern undefined* PTR_LAB_80022d1c; // 80022D1C
+extern undefined* PTR_HandleWarpExitDecision_80022fbc; // 80022FBC
+extern undefined2 DAT_8002343c; // 8002343C
+extern undefined2 DAT_8002343e; // 8002343E
+extern undefined2 DAT_80023440; // 80023440
+extern undefined2 DAT_80023442; // 80023442
+extern undefined2 DAT_80023504; // 80023504
+extern undefined2 DAT_80023506; // 80023506
+extern undefined2 DAT_80023508; // 80023508
+extern undefined2 DAT_80023544; // 80023544
+extern undefined2 DAT_80023546; // 80023546
+extern undefined2 DAT_80023548; // 80023548
+extern undefined2 DAT_8002354a; // 8002354A
+extern undefined2 DAT_8002354c; // 8002354C
+extern undefined2 DAT_8002354e; // 8002354E
+extern undefined2 DAT_80023550; // 80023550
+extern undefined2 DAT_80023552; // 80023552
+extern undefined2 DAT_8002357c; // 8002357C
+extern undefined2 DAT_800235e0; // 800235E0
+extern undefined2 DAT_800235e2; // 800235E2
+extern int* g_warpZones; // 80023644
+extern undefined2 g_offsetXList; // 80023654
+extern undefined2 DAT_8002365c; // 8002365C
+extern undefined2 DAT_80023660; // 80023660
+extern undefined2 DAT_80023664; // 80023664
+extern undefined2 DAT_80023684; // 80023684
+extern undefined2 g_offsetZList; // 80023694
+extern undefined2 DAT_8002369c; // 8002369C
+extern undefined2 DAT_800236a0; // 800236A0
+extern undefined2 DAT_800236a4; // 800236A4
+extern undefined2 DAT_800236c4; // 800236C4
+extern char* g_unusedTextBuffer; // 80023C94
+extern char* PTR_DAT_80023d0c; // 80023D0C
+extern int* PTR_DAT_80023d2c; // 80023D2C
+extern char* PTR_DAT_80023d5c; // 80023D5C
+extern char* g_unusedTextBuffer2; // 80023D8C
+extern undefined4 DAT_80023ee0; // 80023EE0
+extern undefined4 DAT_80023ee4; // 80023EE4
+extern undefined4 DAT_80023f78; // 80023F78
+extern undefined4 DAT_80023f7c; // 80023F7C
+extern undefined4 DAT_80023f80; // 80023F80
+extern undefined4 DAT_80023f84; // 80023F84
+extern undefined4 DAT_80023f88; // 80023F88
+extern undefined4 DAT_80023f8c; // 80023F8C
+extern undefined1 DAT_80023f90; // 80023F90
+extern undefined1 DAT_80023f91; // 80023F91
+extern undefined1 DAT_80023f92; // 80023F92
+extern int g_unused_buffer_5; // 80023FA4
+extern undefined* PTR_FUN_80023fa8; // 80023FA8
+extern char g_debugMessage_SelectTileMapSection[32]; // 800265EC
+extern char g_buffer_isMapUnlocked[20]; // 8002660C
+extern char g_logMessage_InvalidWarpVisualId[136]; // 80026620
+extern undefined4 DAT_80026840; // 80026840
+extern undefined2 DAT_80026844; // 80026844
+extern undefined1 DAT_80026846; // 80026846
+extern undefined4 DAT_80026848; // 80026848
+extern undefined1 DAT_80026b38; // 80026B38
+extern undefined1 DAT_80026b39; // 80026B39
+extern undefined1 DAT_80026b94; // 80026B94
+extern undefined1 DAT_80026b95; // 80026B95
+extern undefined4 DAT_80026c98; // 80026C98
+extern undefined4 DAT_80026c9c; // 80026C9C
+extern undefined4 DAT_80026ca0; // 80026CA0
+extern undefined4 DAT_80026ca4; // 80026CA4
+extern undefined4 DAT_80026ca8; // 80026CA8
+extern undefined4 DAT_80026cac; // 80026CAC
+extern undefined4 DAT_80026cb0; // 80026CB0
+extern undefined4 DAT_80026cb4; // 80026CB4
+extern int INT_80026cdc; // 80026CDC
+extern int INT_80026ce4; // 80026CE4
+extern int INT_80026d30; // 80026D30
+extern undefined4 DAT_80026d38; // 80026D38
+extern undefined4 DAT_80026d3c; // 80026D3C
+extern undefined2 DAT_80026d4c; // 80026D4C
+extern undefined2 DAT_80026d4e; // 80026D4E
+extern int INT_ARRAY_80026d70[5]; // 80026D70
+extern int INT_ARRAY_80026d84[3]; // 80026D84
+extern int INT_ARRAY_80026d90[16]; // 80026D90
+extern int INT_80026dd0; // 80026DD0
+extern int INT_ARRAY_80026dd4[31]; // 80026DD4
+extern int INT_80026e50; // 80026E50
+extern short SHORT_80026e5c; // 80026E5C
+extern short SHORT_80026f34; // 80026F34
+extern short SHORT_80026f3c; // 80026F3C
+extern undefined4 DAT_80027840; // 80027840
+extern undefined4 DAT_80027844; // 80027844
+extern undefined4 DAT_80027848; // 80027848
+extern undefined4 DAT_8002784c; // 8002784C
+extern undefined4 DAT_800278b8; // 800278B8
+extern undefined4 DAT_800278bc; // 800278BC
+extern undefined2 DAT_800278c0; // 800278C0
+extern undefined4 DAT_800278c4; // 800278C4
+extern undefined4 DAT_800278c8; // 800278C8
+extern undefined4 DAT_80027990; // 80027990
+extern undefined4 DAT_80027994; // 80027994
+extern undefined2 DAT_80027998; // 80027998
+extern undefined4 DAT_8002799c; // 8002799C
+extern undefined4 DAT_800279a0; // 800279A0
+extern undefined2 DAT_80027a28; // 80027A28
+extern undefined* PTR_FUN_80027a54; // 80027A54
+extern undefined2 DAT_80027bf8; // 80027BF8
+extern undefined2 DAT_80027bfa; // 80027BFA
+extern int* g_spawnTableX; // 80027C1C
+extern int* g_spawnTableY; // 80027C20
+extern undefined4 DAT_80027c80; // 80027C80
+extern undefined4 DAT_80027c88; // 80027C88
+extern undefined2 DAT_80027d18; // 80027D18
+extern undefined2 DAT_80027d1a; // 80027D1A
+extern undefined2 DAT_80027d24; // 80027D24
+extern undefined2 DAT_80027d26; // 80027D26
+extern undefined2 DAT_80027d90; // 80027D90
+extern undefined2 DAT_80027d92; // 80027D92
+extern undefined2 DAT_80027d94; // 80027D94
+extern undefined2 DAT_80027e10; // 80027E10
+extern undefined2 DAT_80027e12; // 80027E12
+extern undefined2 DAT_80027e1c; // 80027E1C
+extern undefined2 DAT_80027e1e; // 80027E1E
+extern undefined4 DAT_80027eb4; // 80027EB4
+extern undefined4 DAT_80027eb8; // 80027EB8
+extern undefined4 DAT_80027ebc; // 80027EBC
+extern undefined4 DAT_80027ec0; // 80027EC0
+extern undefined4 g_directionCycleTable; // 80027FDC
+extern undefined4 DAT_800280f4; // 800280F4
+extern undefined4 DAT_800280f8; // 800280F8
+extern undefined4 DAT_80028104; // 80028104
+extern undefined4 DAT_80028108; // 80028108
+extern undefined4 DAT_80028270; // 80028270
+extern undefined4 DAT_80028288; // 80028288
+extern undefined4 DAT_8002829c; // 8002829C
+extern undefined4 DAT_800282a0; // 800282A0
+extern undefined2 DAT_80028334; // 80028334
+extern undefined2 DAT_800283b4; // 800283B4
+extern undefined2 DAT_80028434; // 80028434
+extern undefined2 DAT_80028634; // 80028634
+extern undefined2 DAT_8002863c; // 8002863C
+extern undefined2 DAT_80028734; // 80028734
+extern undefined2 DAT_800287b4; // 800287B4
+extern undefined2 DAT_80028834; // 80028834
+extern undefined2 DAT_80028a34; // 80028A34
+extern undefined2 DAT_80028a3c; // 80028A3C
+extern int g_directionFlipTable[8]; // 80028B34
+extern undefined1 DAT_80028b54; // 80028B54
+extern undefined1 DAT_80028b55; // 80028B55
+extern undefined1 DAT_80028b57; // 80028B57
+extern int* g_warpStepThresholdTable; // 80028B8C
+extern int g_tileAttributeXForces[16]; // 80028B94
+extern int g_tileAttributeYForces[16]; // 80028BD4
+extern int g_tileAttributeLUT[25]; // 80028C14
+extern byte g_tileWarpInitFlags; // 80028C78
+extern int* g_tileWarpDataActive; // 80028C79
+extern int* g_tileWarpDataInactive; // 80028C7D
+extern int g_tileWarpTypeList[82]; // 80028C81
+extern int g_warpBehaviorTable[20]; // 80028DCC
+extern char* g_flagNameList; // 8002960E
+extern int* g_flagIdList; // 8002962E
+extern undefined2 DAT_80029650; // 80029650
+extern undefined1 DAT_80029bc8; // 80029BC8
+extern undefined4 DAT_80029bcc; // 80029BCC
+extern undefined1 DAT_8002a4fc; // 8002A4FC
+extern undefined2 DAT_8002a6ac; // 8002A6AC
+extern undefined2 DAT_8002a6b0; // 8002A6B0
+extern undefined1 DAT_8002a6b2; // 8002A6B2
+extern undefined4 DAT_800986c0; // 800986C0
+extern undefined4 g_debugLineColor; // 800986E4
+extern undefined4 g_debugPrimColor; // 800986E8
+extern undefined4 g_debugActorColor; // 800986EC
+extern Entity* g_lastWarpEntity; // 800986F0
+extern undefined4 g_map_sprite; // 800986F4
+extern undefined4 g_dr_tpage; // 800986F8
+extern undefined4 g_tileAnimFrameCounter; // 800986FC
+extern undefined4 g_obj_poly_ft4; // 80098700
+extern undefined4 DAT_80098704; // 80098704
+extern undefined4 g_gameRandomSeed; // 80098708
+extern int* g_spriteTableIndexes[512]; // 8009870C
+extern Entity* g_lastValidWarpEntity; // 80098F0C
+extern int* g_angleLookupTable_part[5]; // 80098F10
+extern undefined4 DAT_80098f24; // 80098F24
+extern undefined4 g_warpDelayCounter; // 80098F28
+extern undefined4 DAT_80098f2c; // 80098F2C
+extern undefined4 DAT_80098f30; // 80098F30
+extern undefined1 DAT_80098f34; // 80098F34
+extern undefined4 DAT_80098f48; // 80098F48
+extern undefined* PTR_s_No_Effect_80098f64; // 80098F64
+extern undefined* PTR_s_Normal_Damage_80098f94; // 80098F94
+extern int* g_scriptFunctions[255]; // 80098FAC
+extern byte BYTE_ARRAY_800993a8[28]; // 800993A8
+extern int* g_fontCharWidthTable; // 800993C4
+extern undefined4 DAT_800998b0; // 800998B0
+extern undefined* PTR_DAT_8009a7ec; // 8009A7EC
+extern undefined* PTR_PTR_DAT_8009a814; // 8009A814
+extern int g_categoryThresholdTable[7]; // 8009A834
+extern int INT_8009a850; // 8009A850
+extern int g_isCdResetRequested; // 8009A858
+extern undefined2 g_textBaseX; // 8009CFBC
+extern undefined2 DAT_8009cfbe; // 8009CFBE
+extern undefined2 g_textOffsetX_2; // 8009CFC0
+extern undefined2 g_textOffsetY_2; // 8009CFC2
+extern undefined2 DAT_8009cfda; // 8009CFDA
+extern undefined2 DAT_800a500a; // 800A500A
+extern undefined2 g_textPosBaseX; // 800A58BC
+extern undefined2 g_textPosBaseY; // 800A58BE
+extern undefined2 g_textPosOffsetX; // 800A58C0
+extern undefined2 g_textPosOffsetY; // 800A58C2
+extern undefined1 g_sprt; // 800A58D8
+extern undefined1 g_fadeSomething; // 800A58D9
+extern undefined* g_soundNameList; // 800A7488
+extern undefined4 DAT_800a7d2c; // 800A7D2C
+extern undefined4 DAT_800a7d30; // 800A7D30
+extern undefined4 DAT_800a7d34; // 800A7D34
+extern int* g_seqExtraAddrTable; // 800A7F90
+extern int* g_seqStartAddrTable; // 800A7F94
+extern int* g_seqEndAddrTable; // 800A7F98
+extern undefined4 g_seqBodySizeTable; // 800A7F9C
+extern undefined4 DAT_800a7fa0; // 800A7FA0
+extern int g_sequenceOffsets; // 800A81C8
+extern undefined4 DAT_800a81e4; // 800A81E4
+extern undefined4 DAT_800a81e8; // 800A81E8
+extern undefined4 DAT_800a81ec; // 800A81EC
+extern undefined4 DAT_800a81f0; // 800A81F0
+extern undefined2 g_currentVabId; // 800A8244
+extern undefined2 g_mainSoundDriver; // 800A8246
+extern undefined2 g_altSoundDriver; // 800A8248
+extern undefined4 g_soundLoadState; // 800A824C
+extern int g_partialVabBodyLoadState; // 800A8250
+extern undefined4 g_forceStopAllSound; // 800A8254
+extern undefined2 g_soundFadeTimer; // 800A825E
+extern undefined4 DAT_800a8284; // 800A8284
+extern undefined4 DAT_800a8288; // 800A8288
+extern undefined4 DAT_800a828c; // 800A828C
+extern undefined4 DAT_800a8290; // 800A8290
+extern undefined4 g_cdIsReady; // 800A82B0
+extern undefined4 g_cdReadMode; // 800A82B4
+extern undefined4 DAT_800a82b8; // 800A82B8
+extern int* g_soundEffectData; // 800A82E8
+extern short g_soundPitch; // 800A82EC
+extern short g_soundNote; // 800A82EE
+extern short g_soundBankTable; // 800A82F0
+extern short g_soundEffectBankIdList; // 800A82F2
+extern int g_soundEffectMaxVoices; // 800A82F8
+extern int* g_soundEffectToneCount; // 800A82FC
+extern undefined2 DAT_800a8308; // 800A8308
+extern undefined2 DAT_800af666; // 800AF666
+extern int* g_errorMarker; // 800B0000
+extern undefined2 DAT_800b06de; // 800B06DE
+extern undefined2 DAT_800b122e; // 800B122E
+extern undefined2 DAT_800b1d7e; // 800B1D7E
+extern undefined2 DAT_800b287e; // 800B287E
+extern undefined1 DAT_800b2898; // 800B2898
+extern undefined1 DAT_800b2899; // 800B2899
+extern undefined4 DAT_800b42dc; // 800B42DC
+extern undefined4 DAT_800b42e0; // 800B42E0
+extern undefined2 DAT_800b58aa; // 800B58AA
+extern undefined2 DAT_800b8362; // 800B8362
+extern undefined2 g_textCoordSrcX; // 800B8EB0
+extern undefined2 g_textCoordSrcY; // 800B8EB2
+extern undefined2 g_textCoordDstX; // 800B9A00
+extern undefined2 g_textCoordDstY; // 800B9A02
+extern undefined2 DAT_800b9a12; // 800B9A12
+extern undefined2 DAT_800b9e5a; // 800B9E5A
+extern undefined2 DAT_800b9fe2; // 800B9FE2
+extern undefined2 g_tilemapWarpSections; // 800B9FE8
+extern undefined2 DAT_800b9fea; // 800B9FEA
+extern undefined2 g_tilemapWarpSections; // 800B9FEC
+extern undefined2 DAT_800b9ff2; // 800B9FF2
+extern char g_entitySpriteNamesTable[372]; // 800C400C
+extern int INT_800c4180; // 800C4180
+extern int* PTR_DAT_800c41a0; // 800C41A0
+extern int* PTR_DAT_800c4214; // 800C4214
+extern int* PTR_DAT_800c4288; // 800C4288
+extern int* PTR_INT_800c42fc; // 800C42FC
+extern undefined* g_debugStringTable; // 800C440C
+extern undefined4 g_cdInitRequired; // 800C480C
+extern undefined4 g_previousVSyncCallback; // 800C4810
+extern undefined4 g_cdDataLoaded; // 800C4814
+extern int g_mapCdDataOffsets[39]; // 800C4818
+extern int g_tile_frame_counter_by_layer; // 800C48B4
+extern undefined4 DAT_800c48b8; // 800C48B8
+extern int g_tile_frame_counter_by_layer_2; // 800C48BC
+extern undefined4 DAT_800c48c0; // 800C48C0
+extern undefined4 DAT_800c48c4; // 800C48C4
+extern undefined4 g_frameCounterScrollingX_layers; // 800C48C8
+extern undefined4 DAT_800c48cc; // 800C48CC
+extern undefined4 g_frameCounterScrollingY_layers; // 800C48D0
+extern undefined4 DAT_800c48d4; // 800C48D4
+extern undefined4 g_scrollingX_delta_layers; // 800C48D8
+extern undefined4 DAT_800c48dc; // 800C48DC
+extern undefined4 g_scrollingY_delta_layers; // 800C48E0
+extern undefined4 DAT_800c48e4; // 800C48E4
+extern undefined4 g_scrollingX_layers; // 800C48E8
+extern undefined4 DAT_800c48ec; // 800C48EC
+extern undefined4 g_scrollingY_layers; // 800C48F0
+extern undefined4 DAT_800c48f4; // 800C48F4
+extern undefined4 g_tile_scroll_X_by_layer; // 800C48F8
+extern undefined4 DAT_800c48fc; // 800C48FC
+extern undefined4 g_tile_scroll_Y_by_layer; // 800C4900
+extern undefined4 DAT_800c4904; // 800C4904
+extern undefined4 g_animationFrameCounter; // 800C4908
+extern undefined4 g_tileOffset; // 800C490C
+extern undefined4 g_animationCounter; // 800C4910
+extern undefined4 g_tileFrameOffsets; // 800C4914
+extern undefined4 DAT_800c4918; // 800C4918
+extern undefined4 g_tileFrameCounters; // 800C491C
+extern undefined4 DAT_800c4920; // 800C4920
+extern int* g_tileFrameUVs; // 800C4924
+extern int* g_tile_rendering_buffer_ptr; // 800C4928
+extern int* g_tileFrameDurations; // 800C492C
+extern undefined4 g_tileAnimationFrameIndex; // 800C4930
+extern undefined4 g_tile_frame_counter; // 800C4934
+extern undefined1 g_overlayFrame0; // 800C4938
+extern undefined1 g_overlayFrame1; // 800C4939
+extern undefined1 g_overlayFrame2; // 800C493A
+extern undefined1 g_tileAnimationFrameDuration; // 800C493B
+extern undefined1 g_overlayFrame3; // 800C493C
+extern undefined1 g_overlayFrame4; // 800C493D
+extern undefined1 g_overlayFrame5; // 800C493E
+extern undefined1 g_overlayFrame6; // 800C493F
+extern undefined1 g_overlayFrame7; // 800C4940
+extern undefined1 g_overlayFrame8; // 800C4941
+extern undefined1 g_overlayFrame9; // 800C4942
+extern undefined1 g_overlayFrame10; // 800C4943
+extern undefined1 g_overlayFrame11; // 800C4944
+extern int* g_debugGameTitle; // 800C4948
+extern undefined4 DAT_800c494c; // 800C494C
+extern undefined4 DAT_800c4950; // 800C4950
+extern undefined4 DAT_800c4954; // 800C4954
+extern undefined4 DAT_800c4958; // 800C4958
+extern undefined4 DAT_800c495c; // 800C495C
+extern undefined4 DAT_800c4960; // 800C4960
+extern undefined4 DAT_800c4964; // 800C4964
+extern undefined4 DAT_800c4968; // 800C4968
+extern undefined4 g_fadeFrame; // 800C4978
+extern undefined4 g_isMemoryCopyInProgress; // 800C497C
+extern undefined4 g_globalTransitionState; // 800C4980
+extern undefined4 g_fadeControlValue; // 800C4984
+extern undefined4 g_asyncOperationStatus; // 800C4988
+extern undefined4 g_fadeSubstate; // 800C498C
+extern undefined4 DAT_800c4990; // 800C4990
+extern undefined4 DAT_800c4994; // 800C4994
+extern undefined4 DAT_800c4998; // 800C4998
+extern undefined4 DAT_800c499c; // 800C499C
+extern undefined4 DAT_800c49a0; // 800C49A0
+extern undefined4 DAT_800c49a4; // 800C49A4
+extern undefined4 DAT_800c49a8; // 800C49A8
+extern undefined4 DAT_800c49ac; // 800C49AC
+extern undefined4 DAT_800c49b0; // 800C49B0
+extern undefined4 DAT_800c4a14; // 800C4A14
+extern undefined4 DAT_800c4a18; // 800C4A18
+extern undefined4 DAT_800c4a1c; // 800C4A1C
+extern undefined4 DAT_800c4a20; // 800C4A20
+extern undefined4 DAT_800c4a24; // 800C4A24
+extern undefined4 DAT_800c4a28; // 800C4A28
+extern undefined4 DAT_800c4a2c; // 800C4A2C
+extern undefined4 DAT_800c4a30; // 800C4A30
+extern undefined4 DAT_800c4a94; // 800C4A94
+extern undefined4 DAT_800c4a98; // 800C4A98
+extern undefined4 DAT_800c4a9c; // 800C4A9C
+extern undefined4 DAT_800c4aa0; // 800C4AA0
+extern undefined4 DAT_800c4aa4; // 800C4AA4
+extern undefined4 DAT_800c4aa8; // 800C4AA8
+extern undefined4 DAT_800c4aac; // 800C4AAC
+extern undefined4 DAT_800c4ab0; // 800C4AB0
+extern undefined4 DAT_800c4b14; // 800C4B14
+extern undefined4 DAT_800c4b18; // 800C4B18
+extern undefined4 DAT_800c4b1c; // 800C4B1C
+extern undefined4 DAT_800c4b20; // 800C4B20
+extern undefined4 DAT_800c4b24; // 800C4B24
+extern undefined4 DAT_800c4b28; // 800C4B28
+extern undefined4 DAT_800c4b2c; // 800C4B2C
+extern undefined4 DAT_800c4b30; // 800C4B30
+extern undefined* PTR_UpdateEntityAI_0_800c4ff0; // 800C4FF0
+extern undefined4 DAT_800c5f34; // 800C5F34
+extern undefined4 DAT_800c5f38; // 800C5F38
+extern undefined4 DAT_800c5f3c; // 800C5F3C
+extern undefined4 DAT_800c5f40; // 800C5F40
+extern undefined4 DAT_800c5f44; // 800C5F44
+extern undefined4 DAT_800c5f48; // 800C5F48
+extern undefined4 DAT_800c5f4c; // 800C5F4C
+extern undefined4 DAT_800c5f50; // 800C5F50
+extern int* g_iconNameEtcBase; // 800C5F7C
+extern short SHORT_800c5f80; // 800C5F80
+extern undefined1 DAT_800c5f82; // 800C5F82
+extern undefined1 DAT_800c5f8a; // 800C5F8A
+extern undefined1 DAT_800c6282; // 800C6282
+extern undefined1 DAT_800c628a; // 800C628A
+extern int* g_tileSetEtcBase; // 800C628C
+extern int* g_paletteSetEtcBase; // 800C6290
+extern undefined4 DAT_800c7550; // 800C7550
+extern undefined4 DAT_800c7554; // 800C7554
+extern undefined4 DAT_800c7558; // 800C7558
+extern undefined4 DAT_800c76dc; // 800C76DC
+extern undefined4 DAT_800c76e0; // 800C76E0
+extern undefined4 DAT_800c80e4; // 800C80E4
+extern undefined* PTR__dws_800c810c; // 800C810C
+extern undefined* PTR__getctl_800c8114; // 800C8114
+extern undefined* PTR__otc_800c8118; // 800C8118
+extern undefined1 DAT_800c8134; // 800C8134
+extern undefined1 DAT_800c8135; // 800C8135
+extern undefined1 g_debugLevel; // 800C8136
+extern undefined1 DAT_800c8137; // 800C8137
+extern undefined2 DAT_800c8138; // 800C8138
+extern undefined2 DAT_800c813a; // 800C813A
+extern undefined4 DAT_800c813c; // 800C813C
+extern undefined4 g_drawSyncCallback; // 800C8140
+extern undefined2 DAT_800c81a0; // 800C81A0
+extern undefined2 DAT_800c81a2; // 800C81A2
+extern undefined2 DAT_800c81a4; // 800C81A4
+extern undefined2 DAT_800c81a6; // 800C81A6
+extern undefined2 DAT_800c81a8; // 800C81A8
+extern undefined2 DAT_800c81aa; // 800C81AA
+extern undefined2 DAT_800c81ac; // 800C81AC
+extern undefined2 DAT_800c81ae; // 800C81AE
+extern undefined4 DAT_800c81b0; // 800C81B0
+extern undefined4 DAT_800c81e4; // 800C81E4
+extern undefined4 DAT_800c81e8; // 800C81E8
+extern undefined4 DAT_800c81ec; // 800C81EC
+extern undefined4 DAT_800c8214; // 800C8214
+extern undefined4 DAT_800c8228; // 800C8228
+extern undefined4 DAT_800c822c; // 800C822C
+extern undefined4 DAT_800c8230; // 800C8230
+extern undefined4 DAT_800c8238; // 800C8238
+extern undefined4 DAT_800c823c; // 800C823C
+extern undefined4 DAT_800c8240; // 800C8240
+extern undefined4 DAT_800c8244; // 800C8244
+extern undefined4 DAT_800c8248; // 800C8248
+extern undefined4 DAT_800c824c; // 800C824C
+extern undefined4 DAT_800c8250; // 800C8250
+extern undefined4 DAT_800c82d4; // 800C82D4
+extern undefined4 DAT_800c82d8; // 800C82D8
+extern undefined4 DAT_800c82e0; // 800C82E0
+extern undefined1 DAT_800c82e4; // 800C82E4
+extern undefined4 DAT_800c82e8; // 800C82E8
+extern undefined4 DAT_800c82ec; // 800C82EC
+extern undefined1 DAT_800c82f0; // 800C82F0
+extern undefined1 DAT_800c82f1; // 800C82F1
+extern undefined1 DAT_800c82f4; // 800C82F4
+extern undefined1 DAT_800c82f5; // 800C82F5
+extern undefined* PTR_s_CdlSync_800c82f8; // 800C82F8
+extern undefined* PTR_s_NoIntr_800c8378; // 800C8378
+extern undefined4 DAT_800c857c; // 800C857C
+extern undefined1 DAT_800c85b0; // 800C85B0
+extern undefined1 DAT_800c85b1; // 800C85B1
+extern undefined1 DAT_800c85b2; // 800C85B2
+extern undefined* PTR_DAT_800c85b4; // 800C85B4
+extern undefined4 DAT_800c85e0; // 800C85E0
+extern undefined4 DAT_800c85e4; // 800C85E4
+extern undefined4 DAT_800c85e8; // 800C85E8
+extern undefined4 DAT_800c85ec; // 800C85EC
+extern undefined4 DAT_800c85f0; // 800C85F0
+extern undefined4 DAT_800c85f4; // 800C85F4
+extern undefined4 DAT_800c85f8; // 800C85F8
+extern undefined4 DAT_800c85fc; // 800C85FC
+extern undefined4 DAT_800c8600; // 800C8600
+extern undefined4 DAT_800c8604; // 800C8604
+extern undefined4 DAT_800c8608; // 800C8608
+extern undefined4 DAT_800c860c; // 800C860C
+extern undefined4 DAT_800c8610; // 800C8610
+extern undefined4 DAT_800c8614; // 800C8614
+extern undefined4 DAT_800c8620; // 800C8620
+extern undefined4 DAT_800c8624; // 800C8624
+extern undefined2 DAT_800c8628; // 800C8628
+extern undefined2 DAT_800c862a; // 800C862A
+extern undefined4 DAT_800c862c; // 800C862C
+extern undefined2 DAT_800c8658; // 800C8658
+extern undefined2 DAT_800c865a; // 800C865A
+extern undefined4 DAT_800c865c; // 800C865C
+extern undefined4 DAT_800c8664; // 800C8664
+extern undefined4 DAT_800c9694; // 800C9694
+extern undefined4 DAT_800c96a4; // 800C96A4
+extern undefined4 DAT_800c96c0; // 800C96C0
+extern undefined4 DAT_800c96c4; // 800C96C4
+extern undefined4 DAT_800c96c8; // 800C96C8
+extern undefined4 DAT_800c96e4; // 800C96E4
+extern undefined4 DAT_800c96f0; // 800C96F0
+extern undefined4 DAT_800c9714; // 800C9714
+extern undefined4 DAT_800c9718; // 800C9718
+extern undefined4 DAT_800c971c; // 800C971C
+extern undefined4 DAT_800c9720; // 800C9720
+extern undefined4 DAT_800c973c; // 800C973C
+extern undefined4 DAT_800c9740; // 800C9740
+extern undefined2 DAT_800c9744; // 800C9744
+extern undefined2 DAT_800c9746; // 800C9746
+extern undefined2 DAT_800c9754; // 800C9754
+extern undefined2 DAT_800c9756; // 800C9756
+extern undefined4 DAT_800c9774; // 800C9774
+extern undefined4 DAT_800c9778; // 800C9778
+extern undefined4 DAT_800c9780; // 800C9780
+extern undefined1 DAT_800c9784; // 800C9784
+extern undefined1 DAT_800c9785; // 800C9785
+extern undefined1 DAT_800c9786; // 800C9786
+extern undefined4 DAT_800c9788; // 800C9788
+extern undefined4 DAT_800c978c; // 800C978C
+extern undefined2 DAT_800c9790; // 800C9790
+extern Voice* PTR_VOICE_00_LEFT_RIGHT_800c9794; // 800C9794
+extern undefined4 DAT_800c991c; // 800C991C
+extern undefined4 DAT_800c9920; // 800C9920
+extern undefined4 DAT_800c9924; // 800C9924
+extern undefined4 DAT_800c9928; // 800C9928
+extern undefined4 DAT_800c992c; // 800C992C
+extern undefined4 DAT_800c9934; // 800C9934
+extern undefined2 DAT_800c9938; // 800C9938
+extern undefined2 DAT_800c993a; // 800C993A
+extern undefined4 DAT_800c993c; // 800C993C
+extern undefined4 DAT_800c9940; // 800C9940
+extern undefined2 DAT_800c9970; // 800C9970
+extern undefined2 DAT_800c9972; // 800C9972
+extern undefined4 DAT_800c9974; // 800C9974
+extern undefined4 DAT_800c9978; // 800C9978
+extern undefined4 DAT_800c9d7c; // 800C9D7C
+extern undefined4 DAT_800c9d80; // 800C9D80
+extern undefined2 DAT_800c9d84; // 800C9D84
+extern undefined4 DAT_800c9da0; // 800C9DA0
+extern undefined4 DAT_800c9da4; // 800C9DA4
+extern undefined4 DAT_800c9da8; // 800C9DA8
+extern undefined4 DAT_800c9dac; // 800C9DAC
+extern undefined4 DAT_800c9db0; // 800C9DB0
+extern undefined4 DAT_800c9db4; // 800C9DB4
+extern undefined4 g_SPUTransferInProgress; // 800C9DB8
+extern undefined4 DAT_800c9dbc; // 800C9DBC
+extern undefined4 DAT_800c9dc0; // 800C9DC0
+extern undefined4 DAT_800c9dd4; // 800C9DD4
+extern undefined4 DAT_800c9dd8; // 800C9DD8
+extern undefined4 DAT_800c9ddc; // 800C9DDC
+extern undefined4 DAT_800c9de0; // 800C9DE0
+extern undefined4 DAT_800c9de4; // 800C9DE4
+extern undefined4 DAT_800c9de8; // 800C9DE8
+extern undefined4 DAT_800c9dec; // 800C9DEC
+extern undefined4 DAT_800ca0e8; // 800CA0E8
+extern undefined4 DAT_800ca0ec; // 800CA0EC
+extern undefined2 g_drawPageInfoBase; // 800CA0F0
+extern int g_clutTableBase[24]; // 800CA1B0
+extern int g_uvLookupTableInit[8]; // 800CA210
+extern int* g_orderTableFrame0; // 800CA230
+extern int* g_orderTableFrame1; // 800CB140
+extern undefined4 g_orderingTableBuffer; // 800CC050
+extern undefined4 g_orderingTableBufferAlt; // 800CC054
+extern int* g_bufferImage2; // 800CC058
+extern undefined4 DAT_800cc05c; // 800CC05C
+extern undefined2 DAT_800cc078; // 800CC078
+extern undefined2 DAT_800cc07a; // 800CC07A
+extern undefined4 g_targetSearchParams; // 800CC158
+extern undefined4 g_debugState; // 800DC058
+extern undefined4 g_debugFlags; // 800DC05C
+extern undefined4 g_debugFrameDelay; // 800DC060
+extern undefined4 g_debugVar_WarpDestinationId; // 800DC064
+extern undefined4 g_warpIndex; // 800DC068
+extern undefined4 g_debugVar_NbFrameBreak; // 800DC06C
+extern undefined4 g_mapLimits; // 800DC070
+extern undefined4 g_data_buffer; // 800DC074
+extern undefined4 g_data_buffer_length; // 800DC078
+extern undefined4 g_cameraTransformMatrix; // 800DC07C
+extern undefined4 g_cameraProjectionMatrix; // 800DC080
+extern undefined4 g_numberOfLayersDrawn; // 800DC084
+extern undefined4 DAT_800dc088; // 800DC088
+extern undefined4 DAT_800dc08c; // 800DC08C
+extern undefined4 DAT_800dc090; // 800DC090
+extern undefined4 DAT_800dc094; // 800DC094
+extern undefined4 g_primitive_sync; // 800DC098
+extern undefined1 g_debugMessage; // 800DC0A0
+extern undefined4 g_fontLoaded; // 800DC4A0
+extern undefined4 DAT_800dc4a4; // 800DC4A4
+extern undefined4 DAT_800dc4a8; // 800DC4A8
+extern undefined4 DAT_800dc4ac; // 800DC4AC
+extern undefined4 DAT_800dc4b0; // 800DC4B0
+extern undefined4 g_warpDelayFrames; // 800DC4B4
+extern undefined4 g_isWarpForbidden; // 800DC4B8
+extern undefined4 g_isWarpDisabled; // 800DC4C0
+extern undefined4 g_stayInDebugMode; // 800DC4C4
+extern int g_warpType; // 800DC4C8
+extern undefined4 g_desiredMap; // 800DC4CC
+extern undefined4 g_warpTriggerType; // 800DC4D0
+extern undefined4 g_warpExtraParam; // 800DC4D4
+extern undefined4 g_targetCamX; // 800DC4D8
+extern undefined4 g_targetCamY; // 800DC4DC
+extern undefined4 g_animation_id; // 800DC4E0
+extern undefined4 DAT_800dc4e4; // 800DC4E4
+extern undefined4 g_warpEntryBehavior; // 800DC4E8
+extern undefined2 g_tPageFadeLUT; // 800DC4F0
+extern undefined2 g_tPageIds; // 800DC4FA
+extern undefined2 DAT_800dc4fc; // 800DC4FC
+extern undefined2 g_drawModeIndexInit; // 800DC516
+extern undefined2 DAT_800dc51c; // 800DC51C
+extern undefined2 g_paletteIndexInit; // 800DC542
+extern undefined2 g_tileScaleXInit; // 800DC56E
+extern undefined2 g_tileScaleYInit; // 800DC59A
+extern undefined4 g_currentMap; // 800DC5A0
+extern undefined2 g_tileOTFlags; // 800DC5A8
+extern undefined2 DAT_800dc5aa; // 800DC5AA
+extern undefined2 DAT_800dc5b6; // 800DC5B6
+extern undefined2 DAT_800dc5c8; // 800DC5C8
+extern undefined2 DAT_800dcd24; // 800DCD24
+extern undefined2 g_tileVRAMClearTable; // 800DCD26
+extern undefined1 g_tileColorTable; // 800DCD28
+extern undefined1 DAT_800dcd29; // 800DCD29
+extern undefined1 DAT_800dcd2a; // 800DCD2A
+extern undefined1 DAT_800dcd2b; // 800DCD2B
+extern undefined1 DAT_800dcd2c; // 800DCD2C
+extern undefined1 DAT_800dcd2d; // 800DCD2D
+extern undefined4 g_renderTileRowCount; // 800DD868
+extern undefined4 g_spriteVRAMPointer; // 800DD86C
+extern undefined4 g_camOffsetXDebug; // 800DD870
+extern undefined4 g_camOffsetYDebug; // 800DD874
+extern int* g_tileSpriteBuffer; // 800DD878
+extern undefined1 DAT_800dd87c; // 800DD87C
+extern undefined1 DAT_800dd87d; // 800DD87D
+extern undefined1 DAT_800dd87e; // 800DD87E
+extern undefined2 DAT_800dd888; // 800DD888
+extern undefined2 DAT_800dd88a; // 800DD88A
+extern int* PTR_800e0758; // 800E0758
+extern int* PTR_800e075c; // 800E075C
+extern int* PTR_800e0760; // 800E0760
+extern int g_resetCamScroll; // 800E42B8
+extern int* g_drawPageTPageIDs; // 800E42BC
+extern int* g_tileOrderingTable; // 800E42C0
+extern int INT_800e42c4; // 800E42C4
+extern undefined1 g_spriteMapTable; // 800E42F0
+extern undefined1 DAT_800e42f1; // 800E42F1
+extern undefined1 DAT_800e42f2; // 800E42F2
+extern undefined1 DAT_800e42f3; // 800E42F3
+extern undefined1 DAT_800e42f4; // 800E42F4
+extern undefined1 DAT_800e42f5; // 800E42F5
+extern undefined1 DAT_800e42f6; // 800E42F6
+extern undefined1 DAT_800e42f7; // 800E42F7
+extern undefined4 g_LoadVRAMAssets_debug; // 800E431C
+extern undefined4 g_drawPageInfoTable; // 800E4320
+extern undefined4 g_currentDrawPageParam; // 800E4324
+extern undefined4 g_targetCamX_2; // 800E4328
+extern undefined4 g_targetCamY_2; // 800E432C
+extern undefined4 g_spriteOtherPointer; // 800E4330
+extern undefined4 g_spriteDataBase; // 800E4334
+extern undefined4 g_bossCutsceneFlag; // 800E4338
+extern undefined4 g_triggerEvent1; // 800E433C
+extern undefined4 g_triggerEvent2; // 800E4340
+extern undefined4 g_flagCutsceneState1; // 800E4344
+extern undefined4 g_flagCutsceneState2; // 800E4348
+extern undefined4 g_camOffsetX; // 800E434C
+extern undefined4 g_camOffsetY; // 800E4350
+extern undefined4 DAT_800e4354; // 800E4354
+extern undefined4 DAT_800e4358; // 800E4358
+extern int g_animationRawData[4096]; // 800E4360
+extern undefined4 DAT_8011cb60; // 8011CB60
+extern undefined4 DAT_8011cb64; // 8011CB64
+extern undefined4 g_currentIndexEntityUpdated; // 8011CE60
+extern POLY_FT4* g_polyFT4Table; // 8011CE68
+extern undefined1 DAT_8011ce6c; // 8011CE6C
+extern undefined1 DAT_8011ce6d; // 8011CE6D
+extern undefined1 DAT_8011ce6e; // 8011CE6E
+extern undefined4 g_animationRawSize; // 80126E68
+extern undefined4 g_currentEntityCollisionDataPtr; // 80126E6C
+extern int* g_animationStructs2; // 80126E70
+extern undefined4 g_bufferImage; // 80126E74
+extern undefined4 g_initTableEntry; // 80126E78
+extern undefined4 DAT_80126e7c; // 80126E7C
+extern undefined4 DAT_80126e80; // 80126E80
+extern undefined4 g_maxInitData; // 80126E84
+extern undefined4 g_effectInitTable; // 80126E88
+extern undefined4 DAT_80126e8c; // 80126E8C
+extern undefined4 DAT_80126e90; // 80126E90
+extern undefined4 DAT_80126e94; // 80126E94
+extern undefined4 DAT_80126e98; // 80126E98
+extern undefined4 DAT_80126ea0; // 80126EA0
+extern undefined4 DAT_80126eb8; // 80126EB8
+extern int* g_animationStructs; // 80126EC0
+extern undefined4 g_animationStructs_paletteClut; // 80126EC4
+extern AnimationData* g_initialAnimationTable; // 80126ECC
+extern undefined4 DAT_80126ee0; // 80126EE0
+extern undefined4 DAT_80126ef0; // 80126EF0
+extern undefined4 DAT_80126f10; // 80126F10
+extern undefined4 DAT_80126f14; // 80126F14
+extern undefined4 g_padState1; // 80126F18
+extern undefined4 DAT_pad_80126f1c; // 80126F1C
+extern undefined4 DAT_80126f20; // 80126F20
+extern undefined4 DAT_80126f24; // 80126F24
+extern u_short g_playerTileAttribute; // 80126F28
+extern undefined2 g_inputHeld; // 80126F2A
+extern ushort g_tileWarpFlags; // 80126F2C
+extern undefined2 DAT_80126f2e; // 80126F2E
+extern undefined4 g_padState2; // 80126F30
+extern undefined4 DAT_pad_80126f34; // 80126F34
+extern undefined4 DAT_80126f38; // 80126F38
+extern undefined4 DAT_80126f3c; // 80126F3C
+extern undefined2 g_inputHeldFlags; // 80126F40
+extern undefined2 g_inputJustPressed; // 80126F42
+extern undefined2 g_inputRepeated; // 80126F46
+extern undefined4 g_lastWarpCamX; // 80126F48
+extern undefined4 g_lastWarpCamY; // 80126F4C
+extern undefined4 g_lastWarpCamZ; // 80126F50
+extern undefined4 g_lastWarpDirection; // 80126F54
+extern undefined4 g_lastWarpTargetX; // 80126F58
+extern undefined4 g_lastWarpTargetY; // 80126F5C
+extern undefined4 g_lastWarpTargetZ; // 80126F60
+extern undefined4 g_lastWarpFacing; // 80126F64
+extern char CHAR_80126f68[128]; // 80126F68
+extern int INT_80126fe8; // 80126FE8
+extern undefined4 DAT_80126fec; // 80126FEC
+extern undefined4 DAT_80126ff0; // 80126FF0
+extern undefined4 DAT_80126ff4; // 80126FF4
+extern int g_frameTimer; // 80126FF8
+extern int g_playerWarpTimer; // 80126FFC
+extern undefined4 g_warpPriorityFlag; // 80127000
+extern Entity* g_defaultTargetEntity; // 80127008
+extern undefined4 DAT_8012700c; // 8012700C
+extern undefined4 DAT_80127010; // 80127010
+extern undefined4 DAT_80127014; // 80127014
+extern undefined4 DAT_80127018; // 80127018
+extern undefined4 DAT_8012701c; // 8012701C
+extern undefined4 DAT_80127020; // 80127020
+extern undefined4 DAT_80127024; // 80127024
+extern undefined4 g_warpStepCounter; // 80127108
+extern uint g_currentTileFlags; // 8012710C
+extern int g_warpTransitionCooldown; // 80127110
+extern int g_warpStepFlags; // 80127114
+extern undefined4 g_specialWarpTimer; // 80127118
+extern undefined4 DAT_8012711c; // 8012711C
+extern undefined4 DAT_80127120; // 80127120
+extern undefined4 DAT_80127124; // 80127124
+extern undefined4 DAT_80127128; // 80127128
+extern undefined4 DAT_8012712c; // 8012712C
+extern undefined4 DAT_80127130; // 80127130
+extern undefined4 DAT_80127134; // 80127134
+extern undefined4 DAT_80127138; // 80127138
+extern undefined4 DAT_8012713c; // 8012713C
+extern undefined4 DAT_80127140; // 80127140
+extern undefined4 DAT_80127144; // 80127144
+extern undefined4 DAT_80127148; // 80127148
+extern undefined4 DAT_8012714c; // 8012714C
+extern undefined4 DAT_80127150; // 80127150
+extern int INT_80127154; // 80127154
+extern undefined4 g_currentWarpFrame; // 8012715C
+extern undefined4 g_specialWarpPhase; // 80127160
+extern undefined4 g_warpLockTimer; // 80127164
+extern undefined2 g_tileToWorldXTable; // 80127168
+extern undefined2 DAT_8012716a; // 8012716A
+extern undefined2 DAT_80127198; // 80127198
+extern Entity* g_entities; // 80127B28
+extern undefined4 DAT_80127b2c; // 80127B2C
+extern Entity* g_logicalEntities; // 80127C28
+extern undefined4 DAT_80127c2c; // 80127C2C
+extern undefined4 g_numberOfEntity; // 80127D28
+extern undefined4 g_visibleEntitiesCount; // 80127D2C
+extern Entity* g_player; // 80127D30
+extern undefined4 DAT_80127d34; // 80127D34
+extern undefined4 DAT_80127d38; // 80127D38
+extern undefined4 DAT_80127d3c; // 80127D3C
+extern undefined4 g_playerInitState; // 80127D40
+extern undefined4 g_warpAnimEntity; // 80127D44
+extern undefined4 g_warpTarget; // 80127D48
+extern int g_gameFrameCounter; // 80127D4C
+extern undefined4 g_isWarpInProgress; // 80127D50
+extern Entity* g_entity4; // 80127D58
+extern Entity* g_playerActorPtr; // 80127D5C
+extern undefined4 g_warpDirectionX; // 80127D60
+extern undefined4 g_warpDirectionY; // 80127D64
+extern undefined4 g_warpDirectionZ; // 80127D68
+extern undefined4 DAT_80127d78; // 80127D78
+extern undefined4 DAT_80127d80; // 80127D80
+extern undefined4 DAT_80127d94; // 80127D94
+extern Entity* g_targetEntity; // 80127D98
+extern undefined4 g_playerFlags; // 80127D9C
+extern int g_warpState; // 80127DB8
+extern undefined4 g_lastFacingDirection; // 80127DBC
+extern undefined4 g_warpState2; // 80127DC0
+extern int g_requiredWarpZoneId; // 80127DC8
+extern undefined4 g_warpZoneAvailable; // 80127DDC
+extern undefined4 DAT_80127de0; // 80127DE0
+extern undefined4 DAT_80127de4; // 80127DE4
+extern undefined4 g_spriteData; // 80127DE8
+extern undefined4 g_targetXForce; // 80127DEC
+extern undefined4 g_targetYForce; // 80127DF0
+extern undefined4 g_targetZForce; // 80127DF4
+extern undefined4 g_targetXYZForce; // 80127DF8
+extern undefined4 DAT_80127dfc; // 80127DFC
+extern undefined4 DAT_80127e00; // 80127E00
+extern undefined4 g_XForce; // 80127E04
+extern undefined4 g_YForce; // 80127E08
+extern undefined4 DAT_80127e14; // 80127E14
+extern undefined4 DAT_80127e18; // 80127E18
+extern undefined4 g_currentCamX; // 80127E44
+extern undefined4 g_currentCamY; // 80127E48
+extern int g_currentCamZ; // 80127E4C
+extern undefined4 g_playerPosX; // 80127E50
+extern undefined4 g_playerPosY; // 80127E54
+extern undefined4 g_playerPosZ; // 80127E58
+extern undefined4 DAT_80127e5c; // 80127E5C
+extern Entity* g_nearestWarpCandidate; // 80127E60
+extern undefined4 g_playerPosZ_2; // 80127E64
+extern undefined4 DAT_80127e68; // 80127E68
+extern undefined4 DAT_80127e6c; // 80127E6C
+extern undefined4 g_warpZoneReady; // 80127E74
+extern undefined4 DAT_80127e78; // 80127E78
+extern undefined4 DAT_80127e7c; // 80127E7C
+extern undefined4 DAT_80127e88; // 80127E88
+extern undefined4 g_warpEntryFlags; // 80127EB0
+extern undefined4 g_currentMapTileAttirbute; // 80127EB4
+extern undefined4 g_tileEventFlags; // 80127EB8
+extern undefined4 g_currentMapTileAttribute; // 80127EBC
+extern undefined4 DAT_80127ec0; // 80127EC0
+extern undefined4 DAT_80127ee0; // 80127EE0
+extern undefined4 DAT_80127ee8; // 80127EE8
+extern undefined4 DAT_80127ef4; // 80127EF4
+extern undefined4 DAT_80127ef8; // 80127EF8
+extern Entity* g_entities2; // 80127EFC
+extern undefined4 DAT_80127f00; // 80127F00
+extern undefined4 DAT_80127f04; // 80127F04
+extern undefined4 DAT_80127f08; // 80127F08
+extern undefined4 DAT_80127f0c; // 80127F0C
+extern undefined4 DAT_80127f10; // 80127F10
+extern undefined4 DAT_80127f14; // 80127F14
+extern undefined4 DAT_80127f18; // 80127F18
+extern undefined4 DAT_80127f1c; // 80127F1C
+extern undefined4 DAT_80127f20; // 80127F20
+extern Entity** g_entityTable; // 80127F24
+extern undefined4 DAT_80127f28; // 80127F28
+extern undefined4 g_warpZoneCheckMinX; // 80127F2C
+extern undefined4 g_warpZoneCheckMinY; // 80127F30
+extern undefined4 g_warpZoneCheckMinZ; // 80127F34
+extern undefined4 DAT_80127f38; // 80127F38
+extern undefined4 DAT_80127f3c; // 80127F3C
+extern undefined4 DAT_80127f40; // 80127F40
+extern undefined4 g_warpZoneCheckMaxX; // 80127F44
+extern undefined4 g_warpZoneCheckMaxY; // 80127F48
+extern undefined4 g_warpZoneCheckMaxZ; // 80127F4C
+extern undefined4 DAT_80127f50; // 80127F50
+extern undefined4 g_warpLinkedEntityPtr; // 80127F54
+extern undefined4 g_logicModeMonitor; // 80127F58
+extern undefined4 DAT_80127f5c; // 80127F5C
+extern undefined4 DAT_80127f60; // 80127F60
+extern undefined4 DAT_80127f64; // 80127F64
+extern undefined4 DAT_80127f68; // 80127F68
+extern undefined4 DAT_80127f6c; // 80127F6C
+extern undefined4 DAT_80127f70; // 80127F70
+extern undefined4 DAT_80127f74; // 80127F74
+extern undefined4 DAT_80127f78; // 80127F78
+extern undefined4 DAT_80127f7c; // 80127F7C
+extern undefined4 DAT_80127f80; // 80127F80
+extern Entity** g_entitySlots; // 80127FC4
+extern undefined4 DAT_80127fc8; // 80127FC8
+extern undefined4 DAT_80127fcc; // 80127FCC
+extern undefined4 DAT_80127fd0; // 80127FD0
+extern undefined4 DAT_80127fd4; // 80127FD4
+extern undefined4 DAT_80127fe0; // 80127FE0
+extern undefined4 DAT_80127fe4; // 80127FE4
+extern undefined4 DAT_80127fec; // 80127FEC
+extern undefined4 DAT_8012800c; // 8012800C
+extern undefined4 DAT_80128024; // 80128024
+extern undefined4 DAT_8012802c; // 8012802C
+extern undefined4 DAT_80128030; // 80128030
+extern undefined4 DAT_80128048; // 80128048
+extern undefined4 DAT_8012804c; // 8012804C
+extern undefined4 DAT_80128070; // 80128070
+extern undefined4 DAT_80128078; // 80128078
+extern undefined4 DAT_801280d8; // 801280D8
+extern undefined4 DAT_801280dc; // 801280DC
+extern undefined4 DAT_801280e0; // 801280E0
+extern undefined4 DAT_801280f0; // 801280F0
+extern undefined4 DAT_801280f4; // 801280F4
+extern undefined4 DAT_80128100; // 80128100
+extern undefined4 DAT_80128108; // 80128108
+extern undefined4 DAT_80128144; // 80128144
+extern undefined4 DAT_80128150; // 80128150
+extern undefined4 DAT_80128188; // 80128188
+extern undefined4 DAT_80128190; // 80128190
+extern undefined4 DAT_80128194; // 80128194
+extern undefined4 DAT_8012819c; // 8012819C
+extern undefined4 DAT_801281a0; // 801281A0
+extern undefined4 DAT_801281a4; // 801281A4
+extern undefined4 DAT_801281b4; // 801281B4
+extern undefined4 DAT_801281b8; // 801281B8
+extern undefined4 DAT_801281bc; // 801281BC
+extern undefined4 DAT_801281e4; // 801281E4
+extern undefined4 DAT_801281e8; // 801281E8
+extern undefined4 DAT_801281ec; // 801281EC
+extern undefined4 DAT_80128254; // 80128254
+extern undefined4 DAT_80128268; // 80128268
+extern undefined4 DAT_80128278; // 80128278
+extern undefined4 DAT_801282c0; // 801282C0
+extern undefined4 DAT_80128480; // 80128480
+extern undefined1 DAT_801284cc; // 801284CC
+extern undefined1 DAT_801284cd; // 801284CD
+extern undefined4 DAT_8012a3ec; // 8012A3EC
+extern undefined4 DAT_8012a680; // 8012A680
+extern undefined4 DAT_8012a6fc; // 8012A6FC
+extern undefined4 DAT_8012a784; // 8012A784
+extern undefined4 DAT_8012a788; // 8012A788
+extern undefined4 g_debugFrameCounter; // 80132230
+extern TILE* g_spriteTiles; // 80132234
+extern byte BYTE_80132238; // 80132238
+extern byte BYTE_80132239; // 80132239
+extern short g_debugTileDrawBuffer; // 8013223A
+extern short SHORT_8013223c; // 8013223C
+extern short SHORT_8013223e; // 8013223E
+extern short SHORT_80132240; // 80132240
+extern short SHORT_80132242; // 80132242
+extern int INT_80132244; // 80132244
+extern byte BYTE_80132248; // 80132248
+extern byte BYTE_80132249; // 80132249
+extern short SHORT_8013224a; // 8013224A
+extern short SHORT_8013224c; // 8013224C
+extern short SHORT_8013224e; // 8013224E
+extern short SHORT_80132250; // 80132250
+extern short SHORT_80132252; // 80132252
+extern int INT_80132254; // 80132254
+extern byte BYTE_80132258; // 80132258
+extern byte BYTE_80132259; // 80132259
+extern short SHORT_8013225a; // 8013225A
+extern short SHORT_8013225c; // 8013225C
+extern Entity* g_visibleEntities; // 80134250
+extern undefined4 DAT_80134254; // 80134254
+extern undefined4 g_playerX; // 80134350
+extern undefined4 g_playerY; // 80134354
+extern undefined4 g_playerZ; // 80134358
+extern undefined4 g_logicalEntitiesCount; // 8013435C
+extern Entity* g_entity; // 80134360
+extern undefined4 g_entities3; // 80134368
+extern undefined4 DAT_8013436c; // 8013436C
+extern undefined4 DAT_80134370; // 80134370
+extern undefined4 DAT_80134374; // 80134374
+extern undefined4 DAT_80134378; // 80134378
+extern undefined4 DAT_8013437c; // 8013437C
+extern undefined4 DAT_80134380; // 80134380
+extern undefined4 DAT_80134384; // 80134384
+extern undefined4 DAT_801343b0; // 801343B0
+extern undefined4 g_Entities; // 801345FC
+extern undefined4 g_nextEntity; // 80134600
+extern undefined1 g_messageDebug; // 80134608
+extern undefined1 DAT_80134708; // 80134708
+extern undefined4 g_effectSlots; // 80138608
+extern undefined4 DAT_80138618; // 80138618
+extern undefined4 DAT_8013861c; // 8013861C
+extern undefined4 DAT_80138620; // 80138620
+extern undefined4 DAT_80138624; // 80138624
+extern undefined4 DAT_80138638; // 80138638
+extern undefined4 DAT_80138644; // 80138644
+extern undefined4 DAT_80138648; // 80138648
+extern undefined4 DAT_8013864c; // 8013864C
+extern undefined4 DAT_8013865c; // 8013865C
+extern undefined4 DAT_80138660; // 80138660
+extern undefined4 DAT_80138664; // 80138664
+extern undefined4 DAT_8013866c; // 8013866C
+extern undefined4 DAT_80138670; // 80138670
+extern undefined1 DAT_80138678; // 80138678
+extern undefined1 DAT_80138685; // 80138685
+extern undefined4 DAT_80138688; // 80138688
+extern undefined4 DAT_801386f0; // 801386F0
+extern undefined4 DAT_8013c608; // 8013C608
+extern undefined4 DAT_8013c60c; // 8013C60C
+extern undefined4 DAT_8013c610; // 8013C610
+extern undefined4 DAT_8013c614; // 8013C614
+extern undefined4 DAT_8013c618; // 8013C618
+extern undefined4 DAT_8013c61c; // 8013C61C
+extern undefined4 DAT_8013c620; // 8013C620
+extern undefined4 DAT_8013c624; // 8013C624
+extern undefined4 g_monitorBase; // 8013C688
+extern undefined4 DAT_8013c68c; // 8013C68C
+extern undefined4 DAT_8013c690; // 8013C690
+extern undefined4 g_monitorData; // 8013C694
+extern undefined4 DAT_8013c698; // 8013C698
+extern undefined4 DAT_8013c69c; // 8013C69C
+extern undefined4 DAT_8013c6a0; // 8013C6A0
+extern undefined4 DAT_8013c6a4; // 8013C6A4
+extern undefined4 DAT_8013c6a8; // 8013C6A8
+extern undefined4 DAT_8013c6ac; // 8013C6AC
+extern undefined4 DAT_8013c6b0; // 8013C6B0
+extern undefined4 DAT_8013c6b4; // 8013C6B4
+extern undefined4 DAT_8013c6c4; // 8013C6C4
+extern undefined4 DAT_8013c6d0; // 8013C6D0
+extern undefined4 DAT_8013c6d4; // 8013C6D4
+extern undefined4 DAT_8013c6d8; // 8013C6D8
+extern undefined4 DAT_8013c6dc; // 8013C6DC
+extern undefined4 g_monitorTablePtr; // 8013D888
+extern undefined4 DAT_8013d88c; // 8013D88C
+extern undefined4 DAT_8013d890; // 8013D890
+extern undefined4 DAT_8013d894; // 8013D894
+extern undefined4 DAT_8013d898; // 8013D898
+extern undefined4 DAT_8013d89c; // 8013D89C
+extern undefined4 DAT_8013d8a0; // 8013D8A0
+extern undefined4 DAT_8013d8a4; // 8013D8A4
+extern undefined4 DAT_8013d8d0; // 8013D8D0
+extern undefined4 g_programIndex2; // 8013D8D4
+extern Entity* g_matchingEntitiesBuffer; // 8013D8D8
+extern undefined4 DAT_8013d8dc; // 8013D8DC
+extern undefined4 DAT_8013d8e0; // 8013D8E0
+extern undefined4 DAT_8013d8e4; // 8013D8E4
+extern undefined4 DAT_8013d8e8; // 8013D8E8
+extern undefined4 DAT_8013d8ec; // 8013D8EC
+extern undefined4 DAT_8013d8f0; // 8013D8F0
+extern undefined4 DAT_8013d8f4; // 8013D8F4
+extern undefined4 g_logicMode; // 8013D9DC
+extern undefined4 g_lastCommand; // 8013D9E0
+extern LogicContext g_logicContext; // 8013D9E8
+extern undefined4 g_logicBranchFlag; // 8013DA20
+extern undefined4 g_logicNo; // 8013DA24
+extern undefined4 g_command; // 8013DA28
+extern byte g_datasBinBuffer4[8192]; // 8013DA30
+extern int* g_etcAnimTableAlt; // 8013FA30
+extern int* g_etcAnimTable; // 8013FA34
+extern DRAWENV* PTR_8013fa38; // 8013FA38
+extern undefined1 DAT_8013fa60; // 8013FA60
+extern DRAWENV* PTR_8013fabc; // 8013FABC
+extern undefined1 DAT_8013fae4; // 8013FAE4
+extern RECT* g_currentDrawEnv; // 8013FB40
+extern DISPENV* g_currentDisplayEnv; // 8013FB44
+extern char* g_display_overflow_message; // 8013FB48
+extern undefined4 g_gameplayTime; // 8013FB4C
+extern undefined4 g_primCount; // 8013FB50
+extern int g_lineCount; // 8013FB54
+extern undefined4 g_actorCount; // 8013FB58
+extern undefined4 g_displayEnvColorR; // 8013FB5C
+extern undefined4 g_displayEnvColorG; // 8013FB60
+extern undefined4 g_displayEnvColorB; // 8013FB64
+extern undefined4 g_mapOffsetX; // 8013FB68
+extern undefined4 g_mapOffsetY; // 8013FB6C
+extern undefined4 g_mapScreenPosX; // 8013FB70
+extern undefined4 g_mapScreenPosY; // 8013FB74
+extern int* g_drawScreenFunc; // 8013FB78
+extern int* g_screenUpdateFunc; // 8013FB7C
+extern undefined4 DAT_8013fb80; // 8013FB80
+extern int* g_fadeTPagePrim1; // 8013FB88
+extern int* g_fadeTPagePrim2; // 8013FB90
+extern TILE* PTR_8013fb98; // 8013FB98
+extern undefined2 DAT_8013fba0; // 8013FBA0
+extern undefined2 DAT_8013fba2; // 8013FBA2
+extern undefined2 DAT_8013fba4; // 8013FBA4
+extern undefined2 DAT_8013fba6; // 8013FBA6
+extern TILE* PTR_8013fba8; // 8013FBA8
+extern undefined2 DAT_8013fbb0; // 8013FBB0
+extern undefined2 DAT_8013fbb2; // 8013FBB2
+extern undefined2 DAT_8013fbb4; // 8013FBB4
+extern undefined2 DAT_8013fbb6; // 8013FBB6
+extern undefined4 g_warpFlags; // 8013FBB8
+extern undefined4 g_playerLastX; // 8013FBBC
+extern undefined4 g_playerLastY; // 8013FBC0
+extern undefined4 g_playerLastZ; // 8013FBC4
+extern undefined4 g_playerStartX; // 8013FBC8
+extern undefined4 g_playerStartY; // 8013FBCC
+extern undefined4 g_playerStartZ; // 8013FBD0
+extern undefined4 g_playerStepX; // 8013FBD4
+extern undefined4 g_playerStepY; // 8013FBD8
+extern undefined4 g_playerStepZ; // 8013FBDC
+extern undefined4 g_warpStepFlags_2; // 8013FBE0
+extern undefined4 g_fadeFrameCounter; // 8013FBE4
+extern undefined4 g_currentFadeColorB; // 8013FBE8
+extern undefined4 g_currentFadeColorG; // 8013FBEC
+extern undefined4 g_currentFadeColorR; // 8013FBF0
+extern undefined4 g_targetFadeColorB; // 8013FBF4
+extern undefined4 g_targetFadeColorG; // 8013FBF8
+extern undefined4 g_targetFadeColorR; // 8013FBFC
+extern undefined4 g_fadeColorStepB; // 8013FC00
+extern undefined4 g_warpColorStepG; // 8013FC04
+extern undefined4 g_fadeColorStepR; // 8013FC08
+extern int* g_entityPoolStart; // 8013FC10
+extern undefined2 DAT_8013fc1c; // 8013FC1C
+extern undefined2 DAT_8013fc1e; // 8013FC1E
+extern undefined2 DAT_8013fc20; // 8013FC20
+extern undefined2 DAT_8013fc24; // 8013FC24
+extern undefined2 DAT_8013fc26; // 8013FC26
+extern undefined2 DAT_8013fc34; // 8013FC34
+extern undefined2 DAT_8013fc36; // 8013FC36
+extern undefined2 DAT_8013fc38; // 8013FC38
+extern undefined2 DAT_8013fc3c; // 8013FC3C
+extern undefined2 DAT_8013fc3e; // 8013FC3E
+extern undefined2 DAT_8014183c; // 8014183C
+extern undefined2 DAT_8014183e; // 8014183E
+extern undefined2 DAT_80141840; // 80141840
+extern undefined2 DAT_80141844; // 80141844
+extern undefined2 DAT_80141846; // 80141846
+extern undefined2 DAT_80141854; // 80141854
+extern undefined2 DAT_80141856; // 80141856
+extern undefined2 DAT_80141858; // 80141858
+extern undefined2 DAT_8014185c; // 8014185C
+extern undefined2 DAT_8014185e; // 8014185E
+extern short SHORT_80143488; // 80143488
+extern short SHORT_8014348a; // 8014348A
+extern short SHORT_8014348c; // 8014348C
+extern short SHORT_8014348e; // 8014348E
+extern short SHORT_80143490; // 80143490
+extern undefined2 DAT_80143528; // 80143528
+extern undefined4 DAT_80143de8; // 80143DE8
+extern undefined4 g_itemIdThreshold; // 80143DF0
+extern int* g_itemDataBase; // 80143DF8
+extern undefined2 g_itemDataOffsetTable; // 80143E34
+extern undefined2 DAT_80143e36; // 80143E36
+extern undefined4 g_balanceAnimIndex; // 80146DF8
+extern undefined4 g_balanceEffectSourceList; // 80146E00
+extern undefined4 DAT_80146e04; // 80146E04
+extern int* PTR_80146e08; // 80146E08
+extern undefined4 DAT_80146e0c; // 80146E0C
+extern int* PTR_80146e10; // 80146E10
+extern undefined4 DAT_80146e14; // 80146E14
+extern undefined2 g_balanceEffectHpTotal; // 80146E18
+extern undefined2 g_balanceEffectParams; // 80146E1A
+extern undefined2 g_balanceEffectHp; // 80146E1C
+extern undefined2 g_balanceEffectParams_2; // 80146E1E
+extern undefined2 g_balanceEffectResult; // 80146E20
+extern undefined2 g_clutTable; // 80146E28
+extern undefined2 DAT_80146e32; // 80146E32
+extern undefined2 g_fadeSomething2; // 80146E38
+extern short g_tpageOverlayA; // 80146E48
+extern short g_tpageWind1; // 80146E4A
+extern short g_tpageWind2; // 80146E4C
+extern short g_tpageMain; // 80146E4E
+extern short SHORT_80146e50; // 80146E50
+extern short g_tpageOverlayB; // 80146E52
+extern short g_tpageWind3; // 80146E54
+extern short g_tpageWind4; // 80146E56
+extern DR_MODE g_drawModes[20]; // 80146E60
+extern int g_bufferIndex; // 80146F50
+extern u_long g_orderTableTaki[10]; // 80146F58
+extern u_long g_orderTableTaki2[10]; // 80146F80
+extern int g_etcTextCursorBlink; // 80146FA8
+extern int g_etcTextSpeed; // 80146FAC
+extern int g_etcTextMode; // 80146FB0
+extern short g_etcTextX; // 80146FB4
+extern short g_etcTextY; // 80146FB6
+extern short g_etcTextStartX; // 80146FB8
+extern short g_etcTextStartY; // 80146FBA
+extern short g_etcTextXOrigin; // 80146FC0
+extern short g_etcTextYOrigin; // 80146FC2
+extern undefined4 g_textPosX; // 801490C8
+extern undefined4 g_textPosY; // 801490CC
+extern undefined2 g_textOffsetX; // 801490D0
+extern undefined2 g_textOffsetY; // 801490D2
+extern undefined2 g_textState; // 801490D4
+extern undefined2 g_textCurrentPage; // 801490D6
+extern char g_scriptBuffer[256]; // 80149268
+extern undefined4 g_textFlags; // 80149BC8
+extern undefined4 g_textAutoAdvanceFlag; // 80149BCC
+extern undefined4 g_textDelayReset; // 80149BD0
+extern undefined4 g_textDelay; // 80149BD4
+extern undefined4 g_textBufferX; // 80149BD8
+extern undefined4 g_textLineIndex; // 80149BDC
+extern undefined4 g_textCursor; // 80149BE0
+extern undefined4 g_textRenderStep; // 80149BE4
+extern undefined4 g_textLineWidth; // 80149BE8
+extern undefined4 DAT_80149bec; // 80149BEC
+extern int* g_primitiveGroup; // 80149BF8
+extern undefined1 DAT_80149c04; // 80149C04
+extern undefined1 DAT_80149c05; // 80149C05
+extern undefined2 DAT_80149c06; // 80149C06
+extern undefined2 DAT_80149c08; // 80149C08
+extern undefined2 DAT_80149c0a; // 80149C0A
+extern undefined1 DAT_80149c18; // 80149C18
+extern undefined1 DAT_80149c19; // 80149C19
+extern undefined2 DAT_80149c1c; // 80149C1C
+extern undefined2 DAT_80149c1e; // 80149C1E
+extern undefined1 DAT_80149c2c; // 80149C2C
+extern undefined1 DAT_80149c2d; // 80149C2D
+extern undefined2 DAT_80149c30; // 80149C30
+extern undefined2 DAT_80149c32; // 80149C32
+extern int* g_fadePrimitive; // 80149C78
+extern undefined2 DAT_80149c80; // 80149C80
+extern undefined2 DAT_80149c82; // 80149C82
+extern undefined1 DAT_80149c84; // 80149C84
+extern undefined1 DAT_80149c85; // 80149C85
+extern undefined2 DAT_80149c86; // 80149C86
+extern undefined2 DAT_80149c88; // 80149C88
+extern undefined2 DAT_80149c8a; // 80149C8A
+extern undefined1 DAT_80149c98; // 80149C98
+extern undefined1 DAT_80149c99; // 80149C99
+extern undefined2 DAT_80149c9c; // 80149C9C
+extern undefined2 DAT_80149c9e; // 80149C9E
+extern int g_textMessageConfirmed; // 80149CA0
+extern int g_textAutoAdvanceFlag_2; // 80149CA4
+extern int g_textChoiceIndex; // 80149CA8
+extern int g_textNextChoice; // 80149CAC
+extern int g_debugFlags_2; // 80149CB0
+extern int g_textSelectionConfirmed; // 80149CB4
+extern int g_textSelectionNext; // 80149CB8
+extern int g_etcAnimationMode; // 80149CBC
+extern int g_textPrimitives; // 80149CC0
+extern int INT_80149cc4; // 80149CC4
+extern int g_textBufferSize; // 80149CC8
+extern int g_textHoldState_2; // 80149CCC
+extern int g_textHoldState; // 80149CD0
+extern undefined4 DAT_80149cd4; // 80149CD4
+extern int g_textCategoryIndex; // 80149CD8
+extern int g_currentVoiceSfxId; // 80149CDC
+extern int g_textRenderState; // 80149CE0
+extern char g_textBuffer[2048]; // 80149CE8
+extern byte g_bufferFONT3_tim[11000]; // 8014ACE8
+extern byte BYTE_80150000; // 80150000
+extern undefined4 g_warpFlags_2; // 80152F08
+extern undefined2 g_callbackTable; // 80153028
+extern undefined4 g_transitionDataTable; // 8015302C
+extern int* g_transitionDrawArgs; // 80153030
+extern int* g_transitionUpdateArgs; // 80153034
+extern int* g_transitionDrawFunc; // 80153038
+extern undefined4 g_transitionUpdateFunc; // 8015303C
+extern undefined4 g_transitionMiscParam; // 80153040
+extern undefined2 DAT_80153044; // 80153044
+extern undefined2 DAT_80153098; // 80153098
+extern undefined2 g_fadeTimer2; // 801530D0
+extern undefined4 g_postProcessState; // 80153194
+extern undefined4 g_currentTransitionType; // 80153198
+extern undefined4 g_activeTransitionCallback; // 8015319C
+extern char g_partialVabBodyBuffer[256]; // 801531A0
+extern undefined4 DAT_80164fc0; // 80164FC0
+extern undefined4 g_vabBaseSector; // 80164FC4
+extern undefined4 g_vabBodyOffset; // 80164FC8
+extern undefined4 g_vabBodyRemainingSize; // 80164FCC
+extern undefined4 DAT_80165024; // 80165024
+extern undefined4 DAT_80165028; // 80165028
+extern undefined4 DAT_8016502c; // 8016502C
+extern undefined4 DAT_80165120; // 80165120
+extern undefined4 DAT_80165124; // 80165124
+extern undefined2 g_requestedSeqId; // 80165128
+extern undefined4 g_resetSoundFlag; // 8016512C
+extern int* g_animVolumeMap; // 80165130
+extern SpuReverbAttr* g_spuReverbAttr; // 80166128
+extern undefined4 DAT_8016612c; // 8016612C
+extern undefined2 DAT_80166130; // 80166130
+extern undefined2 DAT_80166132; // 80166132
+extern undefined4 DAT_80166140; // 80166140
+extern undefined2 DAT_80166150; // 80166150
+extern undefined2 DAT_80166152; // 80166152
+extern undefined4 DAT_80166158; // 80166158
+extern undefined2 DAT_8016615c; // 8016615C
+extern undefined2 DAT_8016615e; // 8016615E
+extern undefined4 DAT_80166164; // 80166164
+extern int g_errorMarker2; // 80166168
+extern undefined2 g_currentMapSoundIndex; // 80173844
+extern undefined4 g_currentSoundGroup; // 80173848
+extern undefined4 DAT_8017384c; // 8017384C
+extern undefined4 g_soundEffectState; // 80175850
+extern undefined1 g_voiceState; // 80175858
+extern undefined1 DAT_80175859; // 80175859
+extern undefined4 g_voiceFrameMap; // 80175870
+extern undefined4 DAT_80175874; // 80175874
+extern undefined4 g_voiceType; // 801758D0
+extern undefined4 g_voicePitch; // 80175930
+extern int* g_voiceVolumeLeft; // 80175990
+extern int* g_voiceVolumeRight; // 801759F0
+extern int INT_80175a50; // 80175A50
+extern undefined2 DAT_80175cfe; // 80175CFE
+extern short g_loadedSequenceHandles[8]; // 80175D00
+extern short SHORT_80175d10; // 80175D10
+extern short SHORT_80175d12; // 80175D12
+extern undefined4 g_fadeTimer; // 80175D18
+extern undefined4 g_fadeStep; // 80175D1C
+extern undefined4 g_drawState; // 80175D20
+extern undefined2 g_blendRed; // 80175D24
+extern undefined2 g_blendGreen; // 80175D26
+extern undefined2 g_blendBlue; // 80175D28
+extern undefined2 g_blendAlpha; // 80175D2A
+extern undefined4 g_drawFrameFlags; // 80176310
+extern FadeControl* g_fadeControl; // 80176318
+extern undefined4 g_warpUsageTable; // 8017631C
+extern undefined4 g_totalWarpEntries; // 8017638C
+extern int* g_cdSmallBuffer; // 80176390
+extern undefined1 DAT_CDRom_8017e390; // 8017E390
+extern undefined1 DAT_CDRom_8017e391; // 8017E391
+extern undefined4 DAT_CDRom_8017e3a0; // 8017E3A0
+extern undefined4 DAT_CDRom_8017e3a4; // 8017E3A4
+extern undefined4 DAT_CDRom_8017e3a8; // 8017E3A8
+extern undefined4 DAT_8017e3b0; // 8017E3B0
+extern undefined4 DAT_8017e3b4; // 8017E3B4
+extern undefined4 DAT_8017e3b8; // 8017E3B8
+extern CdlFILE* PTR_CDFile_Datas_bin; // 8017E3C0
+extern undefined4 g_datasBinSize; // 8017E3C4
+extern char* g_datasBinNamePart1; // 8017E3C8
+extern char* g_datasBinNamePart2; // 8017E3CC
+extern char* g_datasBinNamePart3; // 8017E3D0
+extern char* g_datasBinNamePart4; // 8017E3D4
+extern CdlFILE* PTR_CDFile_Sound_bin; // 8017E3D8
+extern undefined4 g_soundBinSize; // 8017E3DC
+extern char* g_soundBinNamePart1; // 8017E3E0
+extern char* g_soundBinNamePart2; // 8017E3E4
+extern char* g_soundBinNamePart3; // 8017E3E8
+extern char* g_soundBinNamePart4; // 8017E3EC
+extern undefined4 g_asyncOperationCounterPtr; // 8017E3F0
+extern undefined4 g_asyncCallbackArg1; // 8017E3F8
+extern undefined4 g_asyncCallbackArg2; // 8017E3FC
+extern undefined4 DAT_8017e400; // 8017E400
+extern SPRT SPRT_8017e410; // 8017E410
+extern SPRT SPRT_8017e438; // 8017E438
+extern undefined1 DAT_8017e490; // 8017E490
+extern undefined1 DAT_8017e491; // 8017E491
+extern undefined1 DAT_8017e511; // 8017E511
+extern undefined1 DAT_8017e512; // 8017E512
+extern undefined4 DAT_8017e620; // 8017E620
+extern undefined4 DAT_8017e624; // 8017E624
+extern undefined4 DAT_8017e628; // 8017E628
+extern undefined2 DAT_8017e62c; // 8017E62C
+extern undefined2 DAT_8017e62e; // 8017E62E
+extern undefined2 DAT_8017e630; // 8017E630
+extern undefined2 DAT_8017e632; // 8017E632
+extern undefined2 DAT_8017e638; // 8017E638
+extern undefined2 DAT_8017e63a; // 8017E63A
+extern undefined4 DAT_8017e63c; // 8017E63C
+extern undefined4 g_asyncOperationCountdown; // 8017E670
+extern undefined2 DAT_8017e8a4; // 8017E8A4
+extern undefined4 DAT_8017e8a8; // 8017E8A8
+extern undefined4 DAT_8017e8d8; // 8017E8D8
+extern undefined2 DAT_8017e990; // 8017E990
+extern undefined4 DAT_8017e998; // 8017E998
+extern undefined2 DAT_8017e99c; // 8017E99C
+extern undefined1 DAT_8017e99e; // 8017E99E
+extern undefined1 DAT_8017e9ac; // 8017E9AC
+extern undefined1 DAT_8017f794; // 8017F794
+extern undefined1 DAT_8017f795; // 8017F795
+extern undefined1 DAT_8017f796; // 8017F796
+extern undefined1 DAT_8017f79c; // 8017F79C
+extern undefined1 DAT_8017f79d; // 8017F79D
+extern undefined2 DAT_8017f79e; // 8017F79E
+extern undefined2 DAT_8017f7a0; // 8017F7A0
+extern undefined2 DAT_8017f7a2; // 8017F7A2
+extern undefined2 DAT_8017f88e; // 8017F88E
+extern undefined2 DAT_8017f890; // 8017F890
+extern undefined2 DAT_8017f892; // 8017F892
+extern undefined2 DAT_8017f8de; // 8017F8DE
+extern undefined2 DAT_8017f8e0; // 8017F8E0
+extern undefined2 DAT_8017f8e2; // 8017F8E2
+extern SPRT* g_warpNameDisplaySrc; // 8017FA34
+extern SPRT g_warpNameDisplayDst; // 8017FA5C
+extern undefined2 DAT_8017fe82; // 8017FE82
+extern undefined2 DAT_8017fe84; // 8017FE84
+extern undefined2 DAT_8017fe86; // 8017FE86
+extern undefined2 DAT_8017fe96; // 8017FE96
+extern undefined2 DAT_8017fe98; // 8017FE98
+extern undefined2 DAT_8017fe9a; // 8017FE9A
+extern undefined4 DAT_8017fef4; // 8017FEF4
+extern undefined4 DAT_8017ff28; // 8017FF28
+extern undefined2 g_cameraTransitionState; // 80180070
+extern int* g_cameraTransitionPolygons; // 80180074
+extern undefined1 DAT_80180078; // 80180078
+extern undefined1 DAT_80180079; // 80180079
+extern undefined1 DAT_8018007a; // 8018007A
+extern undefined2 DAT_8018007c; // 8018007C
+extern undefined2 DAT_8018007e; // 8018007E
+extern undefined1 DAT_80180080; // 80180080
+extern undefined1 DAT_80180081; // 80180081
+extern undefined2 DAT_80180082; // 80180082
+extern undefined2 DAT_80180084; // 80180084
+extern undefined2 DAT_80180086; // 80180086
+extern undefined1 DAT_80180088; // 80180088
+extern undefined1 DAT_80180089; // 80180089
+extern undefined2 DAT_8018008a; // 8018008A
+extern undefined2 DAT_8018008c; // 8018008C
+extern undefined2 DAT_8018008e; // 8018008E
+extern undefined1 DAT_80180090; // 80180090
+extern undefined1 DAT_80180091; // 80180091
+extern undefined2 DAT_80180094; // 80180094
+extern undefined2 DAT_80180096; // 80180096
+extern undefined1 DAT_80180098; // 80180098
+extern undefined1 DAT_80180099; // 80180099
+extern undefined4 g_cameraTransitionSrcX; // 801800C4
+extern undefined4 g_cameraTransitionSrcY; // 801800C8
+extern undefined4 g_cameraTransitionSrcZ; // 801800CC
+extern undefined4 g_cameraTransitionDstXPtr; // 801800D0
+extern undefined4 g_cameraTransitionDstYPtr; // 801800D4
+extern undefined4 g_cameraDeltaX; // 801800D8
+extern undefined4 g_cameraDeltaY; // 801800DC
+extern undefined4 g_cameraCurrentX; // 801800E0
+extern undefined4 g_cameraCurrentY; // 801800E4
+extern undefined4 g_cameraTargetX; // 801800E8
+extern undefined4 g_cameraTargetY; // 801800EC
+extern undefined4 g_cameraTransitionAlpha; // 801800F0
+extern undefined4 g_cameraTransitionHalfWidth; // 801800F4
+extern undefined4 g_cameraTransitionHalfHeight; // 801800F8
+extern undefined4 g_cameraTransitionStartX; // 801800FC
+extern undefined4 g_cameraTransitionStartY; // 80180100
+extern uint UINT_ARRAY_80180108[8]; // 80180108
+extern int* PTR_80180128; // 80180128
+extern int INT_80180238; // 80180238
+extern int INT_8018023c; // 8018023C
+extern undefined2 g_etcDisplayFlags; // 80180240
+extern undefined4 g_etcTextCursorBlink_2; // 80180244
+extern undefined4 g_etcTextSpeed_2; // 80180248
+extern undefined4 g_etcTextMode_2; // 8018024C
+extern undefined2 g_etcTextX_2; // 80180250
+extern undefined2 g_etcTextY_2; // 80180252
+extern undefined2 g_etcTextStartX_2; // 80180254
+extern undefined2 g_etcTextStartY_2; // 80180256
+extern undefined4 g_entitySpriteNameTableIndex; // 80180288
+extern undefined4 g_cdDataStartPtr; // 801802A8
+extern undefined4 g_cdDataEndPtr; // 801802AC
+extern undefined4 g_cdReadPtr; // 801802B0
+extern undefined4 g_cdReadComplete; // 801802B4
+extern undefined1 g_cdControlCommand; // 801802B8
+extern undefined1 g_cdTrackIndex; // 801802B9
+extern undefined4 DAT_CDAranXa_pos; // 801802BC
+extern undefined4 g_cdStreamDelay; // 801802C0
+extern undefined4 g_currentOverlayBuffer; // 801802C8
+extern undefined4 g_currentExtendedOverlayBuffer; // 801802CC
+extern undefined4 g_tileTPageX; // 801802D0
+extern undefined4 g_tileTPageY; // 801802D4
+extern undefined4 g_tile_scroll_frame_counter_by_layer; // 801802D8
+extern undefined4 g_tile_scroll_frame_counter_by_layer_2; // 801802DC
+extern undefined4 g_scrollStepX; // 801802E0
+extern undefined4 DAT_801802e4; // 801802E4
+extern undefined4 DAT_80180600; // 80180600
+extern undefined4 g_scrollStepY; // 80180920
+extern undefined4 DAT_80180924; // 80180924
+extern undefined4 DAT_80180c40; // 80180C40
+extern int g_screenWrapX; // 80180F60
+extern int g_screenWrapY; // 801815A0
+extern int g_tile_rendering_buffer; // 80181BE0
+extern int g_tileAnimationType; // 80181BE4
+extern int g_paletteX; // 80181BE8
+extern int g_paletteY; // 80181BEC
+extern int* g_extendedOverlayDrawBuffers[30]; // 80181BF0
+extern DR_MODE g_drawModes2[2]; // 80181C68
+extern undefined4 g_tileUVLookup; // 80181C80
+extern undefined4 g_scrollPosX; // 80181C88
+extern undefined4 DAT_80181c8c; // 80181C8C
+extern undefined4 DAT_80181fa8; // 80181FA8
+extern undefined4 g_scrollPosY; // 801822C8
+extern undefined4 DAT_801822cc; // 801822CC
+extern undefined4 DAT_801825e8; // 801825E8
+extern int* g_renderingBuffer0; // 80182908
+extern int* g_renderingBuffer1; // 80184848
+extern TileSetMetaData* g_tile_set; // 80186788
+extern undefined4 g_tileAnimationMode; // 8018678C
+extern undefined4 g_animationData; // 80186790
+extern undefined4 g_tileSetIsSpecialHeader; // 80186794
+extern undefined2 g_screenXBuffer; // 80186798
+extern undefined2 DAT_8018679a; // 8018679A
+extern undefined2 DAT_80186928; // 80186928
+extern undefined2 g_screenYBuffer; // 80186AB8
+extern undefined2 DAT_80186aba; // 80186ABA
+extern undefined2 DAT_80186c48; // 80186C48
+extern undefined4 g_scrollTargetX; // 80186DD8
+extern undefined4 DAT_80186ddc; // 80186DDC
+extern undefined4 DAT_801870f8; // 801870F8
+extern undefined4 g_scrollTargetY; // 80187418
+extern undefined4 DAT_8018741c; // 8018741C
+extern undefined4 DAT_80187738; // 80187738
+extern int g_tile_rendering_buffer_1[2720]; // 80187A58
+extern int g_tile_rendering_buffer_2[2720]; // 8018A4D8
+extern TileSetMetaData* g_tileSetMetaData; // 8018CF58
+extern int* g_renderingBufferIndex; // 8018CF5C
+extern int* g_currentBuffer; // 8018CF60
+extern short g_paletteLookup; // 8018CF66
+extern short g_drawModeIndex; // 8018CF68
+extern undefined2 g_tilePaletteIndex; // 8018CF6A
+extern undefined2 g_tileScaleX; // 8018CF6C
+extern undefined2 g_tileScaleY; // 8018CF6E
+extern int* g_overlayDrawBuffers[8]; // 8018CF70
+extern int g_tile_scroll_params_by_layer; // 8018CF90
+extern undefined4 g_tile_scroll_params_by_layer_2; // 8018CF94
+extern undefined4 g_tileLayerInfo; // 8018CF98
+extern undefined4 DAT_8018cf9c; // 8018CF9C
+extern undefined4 g_scrollFrameCounterX; // 8018CFA0
+extern undefined4 DAT_8018cfa4; // 8018CFA4
+extern undefined4 DAT_8018d2c0; // 8018D2C0
+extern undefined4 g_scrollFrameCounterY; // 8018D5E0
+extern undefined4 DAT_8018d5e4; // 8018D5E4
+extern undefined4 DAT_8018d900; // 8018D900
+extern int g_scrollFactorX; // 8018DC20
+extern int g_scrollFactorY; // 8018E260
+extern undefined4 g_rendering_tile_buffer; // 8018E8A0
+extern undefined1 DAT_8018e8a8; // 8018E8A8
+extern undefined1 DAT_8018e8a9; // 8018E8A9
+extern undefined1 DAT_8018e8aa; // 8018E8AA
+extern undefined1 DAT_8018e8c7; // 8018E8C7
+extern undefined1 DAT_8018e8c8; // 8018E8C8
+extern undefined1 DAT_8018e8e9; // 8018E8E9
+extern undefined4 DAT_8018ecc8; // 8018ECC8
+extern undefined4 DAT_8018ed68; // 8018ED68
+extern undefined4 DAT_8018ed6c; // 8018ED6C
+extern undefined4 DAT_8018ed88; // 8018ED88
+extern undefined4 DAT_8018ed8c; // 8018ED8C
+extern undefined4 DAT_8018ede8; // 8018EDE8
+extern undefined4 DAT_8018edec; // 8018EDEC
+extern undefined4 DAT_8018ee10; // 8018EE10
+extern undefined4 DAT_8018ee38; // 8018EE38
+extern undefined1 g_titleScreenData; // 8018F078
+extern undefined1 DAT_8018f079; // 8018F079
+extern undefined1 DAT_8018f07a; // 8018F07A
+extern undefined1 DAT_8018f07b; // 8018F07B
+extern undefined4 DAT_8018f07c; // 8018F07C
+extern undefined4 DAT_8018f080; // 8018F080
+extern undefined4 DAT_8018f084; // 8018F084
+extern undefined4 DAT_8018f088; // 8018F088
+extern undefined4 DAT_8018f08c; // 8018F08C
+extern undefined4 DAT_8018f090; // 8018F090
+extern undefined4 DAT_8018f094; // 8018F094
+extern undefined4 DAT_8018f098; // 8018F098
+extern undefined4 DAT_8018f0d8; // 8018F0D8
+extern undefined4 DAT_8018f0dc; // 8018F0DC
+extern undefined4 DAT_8018f0e0; // 8018F0E0
+extern undefined4 DAT_8018f0e4; // 8018F0E4
+extern undefined4 DAT_8018f0e8; // 8018F0E8
+extern undefined4 DAT_8018f0ec; // 8018F0EC
+extern undefined4 DAT_8018f0f0; // 8018F0F0
+extern undefined4 DAT_8018f0f4; // 8018F0F4
+extern undefined4 DAT_8018f0f8; // 8018F0F8
+extern undefined4 DAT_8018f0fc; // 8018F0FC
+extern undefined4 DAT_8018f100; // 8018F100
+extern undefined4 DAT_8018f104; // 8018F104
+extern undefined4 DAT_8018f108; // 8018F108
+extern undefined4 DAT_8018f10c; // 8018F10C
+extern undefined4 DAT_8018f110; // 8018F110
+extern undefined4 DAT_8018f114; // 8018F114
+extern undefined4 DAT_8018f178; // 8018F178
+extern undefined4 DAT_8018f17c; // 8018F17C
+extern undefined4 DAT_8018f180; // 8018F180
+extern undefined4 DAT_8018f184; // 8018F184
+extern undefined4 DAT_8018f188; // 8018F188
+extern undefined4 DAT_8018f18c; // 8018F18C
+extern undefined4 DAT_8018f190; // 8018F190
+extern undefined4 DAT_8018f194; // 8018F194
+extern undefined4 DAT_8018f1f8; // 8018F1F8
+extern undefined4 DAT_8018f1fc; // 8018F1FC
+extern undefined4 DAT_8018f200; // 8018F200
+extern undefined4 DAT_8018f204; // 8018F204
+extern undefined4 DAT_8018f208; // 8018F208
+extern undefined4 DAT_8018f20c; // 8018F20C
+extern undefined4 DAT_8018f210; // 8018F210
+extern undefined4 DAT_8018f214; // 8018F214
+extern int g_layerBuffer[1082]; // 80190000
+extern Entity* g_entitySpawned; // 801910E8
+extern undefined4 DAT_801910f0; // 801910F0
+extern undefined4 DAT_801910f4; // 801910F4
+extern undefined4 DAT_801910f8; // 801910F8
+extern undefined2 DAT_801910fc; // 801910FC
+extern undefined2 DAT_801910fe; // 801910FE
+extern undefined2 DAT_80191100; // 80191100
+extern undefined4 DAT_80191104; // 80191104
+extern undefined4 DAT_80191108; // 80191108
+extern undefined2 DAT_8019110c; // 8019110C
+extern undefined4 DAT_80191110; // 80191110
+extern undefined4 DAT_80191114; // 80191114
+extern undefined4 DAT_80191118; // 80191118
+extern undefined2 DAT_8019111c; // 8019111C
+extern undefined2 DAT_8019111e; // 8019111E
+extern undefined2 DAT_80191120; // 80191120
+extern undefined4 DAT_80191124; // 80191124
+extern undefined4 DAT_80191128; // 80191128
+extern undefined2 DAT_8019112c; // 8019112C
+extern undefined4 DAT_80191130; // 80191130
+extern undefined4 DAT_80191134; // 80191134
+extern undefined4 DAT_80191138; // 80191138
+extern undefined4 DAT_8019113c; // 8019113C
+extern undefined4 DAT_80191140; // 80191140
+extern undefined4 DAT_80191144; // 80191144
+extern undefined4 DAT_80191150; // 80191150
+extern undefined4 DAT_80191154; // 80191154
+extern undefined4 DAT_80191158; // 80191158
+extern undefined4 DAT_8019115c; // 8019115C
+extern undefined4 DAT_80191160; // 80191160
+extern undefined4 DAT_80191164; // 80191164
+extern undefined4 DAT_80191168; // 80191168
+extern undefined4 DAT_8019116c; // 8019116C
+extern undefined4 DAT_80191170; // 80191170
+extern undefined1 DAT_80191175; // 80191175
+extern undefined1 DAT_80191178; // 80191178
+extern undefined1 DAT_80191179; // 80191179
+extern undefined1 DAT_8019118b; // 8019118B
+extern undefined1 DAT_80191197; // 80191197
+extern undefined1 DAT_80191199; // 80191199
+extern undefined4 DAT_8019119c; // 8019119C
+extern undefined4 g_loaderEntityIndex; // 801911A0
+extern undefined4 g_loaderEntityAngle; // 801911A4
+extern undefined4 g_loaderFadeAmount; // 801911A8
+extern undefined4 g_loaderStateTimer; // 801911AC
+extern undefined4 g_loaderStateStep; // 801911B0
+extern undefined4 g_loaderInputCooldown; // 801911B4
+extern undefined4 g_bossSpawnedEffectEntity; // 801911B8
+extern undefined4 g_bossEffectEntity; // 801911BC
+extern undefined4 DAT_801911c0; // 801911C0
+extern undefined4 DAT_801911c4; // 801911C4
+extern undefined4 DAT_801911c8; // 801911C8
+extern undefined4 DAT_801911cc; // 801911CC
+extern undefined4 DAT_801911d0; // 801911D0
+extern undefined4 DAT_801911d4; // 801911D4
+extern undefined4 DAT_801911d8; // 801911D8
+extern undefined4 DAT_801911dc; // 801911DC
+extern undefined4 DAT_801911e0; // 801911E0
+extern undefined4 DAT_801911e4; // 801911E4
+extern undefined4 DAT_801911e8; // 801911E8
+extern undefined4 DAT_801911ec; // 801911EC
+extern undefined4 g_loaderEffectEntityId; // 801911F0
+extern undefined2 g_loaderEventDelay2; // 801911F4
+extern undefined2 g_loaderEventDelay1; // 801911F6
+extern undefined2 DAT_801911f8; // 801911F8
+extern undefined2 DAT_801911fa; // 801911FA
+extern undefined2 DAT_801911fc; // 801911FC
+extern undefined2 DAT_801911fe; // 801911FE
+extern undefined2 DAT_80191200; // 80191200
+extern undefined4 DAT_80191204; // 80191204
+extern undefined4 g_specialEffectEntityArray; // 80191208
+extern undefined4 DAT_8019120c; // 8019120C
+extern undefined4 DAT_80191238; // 80191238
+extern undefined4 g_fireSummonCount; // 8019123C
+extern undefined4 g_fireCycleState; // 80191240
+extern undefined4 g_fireCyclePhase; // 80191244
+extern undefined4 g_fireCycleCounter; // 80191248
+extern undefined4 DAT_8019124c; // 8019124C
+extern undefined4 DAT_80191250; // 80191250
+extern undefined4 DAT_80191254; // 80191254
+extern undefined4 DAT_80191258; // 80191258
+extern undefined4 DAT_8019125c; // 8019125C
+extern undefined4 g_warpStatusFlag; // 80191260
+extern undefined4 DAT_801912e8; // 801912E8
+extern undefined4 DAT_801912ec; // 801912EC
+extern undefined4 DAT_801912f0; // 801912F0
+extern undefined4 DAT_801912f4; // 801912F4
+extern undefined4 DAT_801912f8; // 801912F8
+extern undefined4 DAT_801912fc; // 801912FC
+extern undefined4 DAT_80191300; // 80191300
+extern undefined4 DAT_80191304; // 80191304
+extern undefined2 g_loaderDirectionHistory; // 80191308
+extern undefined2 DAT_8019130a; // 8019130A
+extern undefined2 DAT_80191462; // 80191462
+extern undefined2 DAT_80191508; // 80191508
+extern undefined2 DAT_8019150a; // 8019150A
+extern undefined2 DAT_801915ae; // 801915AE
+extern undefined2 DAT_801915b0; // 801915B0
+extern undefined2 DAT_80191662; // 80191662
+extern undefined2 DAT_80191708; // 80191708
+extern undefined2 DAT_8019170a; // 8019170A
+extern undefined2 DAT_801917ae; // 801917AE
+extern undefined2 DAT_801917b0; // 801917B0
+extern undefined2 DAT_80191862; // 80191862
+extern undefined4 DAT_80191908; // 80191908
+extern undefined4 DAT_8019190c; // 8019190C
+extern undefined4 DAT_80191910; // 80191910
+extern undefined4 g_loaderInitialized; // 80191918
+extern undefined4 DAT_80191920; // 80191920
+extern undefined4 DAT_80191924; // 80191924
+extern undefined4 DAT_80191928; // 80191928
+extern undefined4 g_compressedImageData; // 80191B30
+extern undefined4 DAT_80191b34; // 80191B34
+extern undefined4 DAT_80191b38; // 80191B38
+extern undefined4 g_mapIndexInDatasBin; // 80191B3C
+extern undefined4 DAT_80191b40; // 80191B40
+extern undefined4 DAT_80191b44; // 80191B44
+extern undefined4 DAT_80191b48; // 80191B48
+extern undefined4 DAT_8019acbc; // 8019ACBC
+extern undefined4 DAT_8019acc4; // 8019ACC4
+extern undefined4 g_datasBinBuffer0To1976; // 801EAB30
+extern undefined4 g_spriteBufferCDEnd; // 801EAB34
+extern undefined4 g_imageBufferCDStart; // 801EAB38
+extern undefined4 g_imageBufferCDEnd; // 801EAB3C
+extern undefined4 DAT_801eab40; // 801EAB40
+extern undefined4 g_drawPageParam; // 801EAB44
+extern int g_indexInDatasBin; // 801EAB48
+extern undefined4 DAT_801eab58; // 801EAB58
+extern undefined4 DAT_801eab5c; // 801EAB5C
+extern undefined4 DAT_801eab60; // 801EAB60
+extern undefined4 g_ramDestination; // 801EB2E8
+extern undefined4 g_lastVisitedMapId; // 801EB2EC
+extern undefined4 DAT_801eb2f0; // 801EB2F0
+extern undefined4 DAT_801eb2f4; // 801EB2F4
+extern undefined4 DAT_801eb2f8; // 801EB2F8
+extern undefined4 DAT_801eb2fc; // 801EB2FC
+extern undefined4 DAT_801eb300; // 801EB300
+extern undefined4 DAT_801eb304; // 801EB304
+extern char g_menuStatusText[32]; // 801EB310
+extern undefined4 g_tempGameState; // 801EB330
+extern undefined4 g_initialWarpMap; // 801EB334
+extern undefined4 g_initialWarpTileX; // 801EB338
+extern undefined4 g_initialWarpTileY; // 801EB33C
+extern undefined4 g_initialWarpZ; // 801EB340
+extern int g_bitfieldTable[22]; // 801EB344
+extern int g_mapTransitionFlags; // 801EB39C
+extern int g_playerState; // 801EB3F4
+extern int g_progressStateFlags; // 801EB3F8
+extern int g_systemFlags; // 801EB410
+extern int g_renderFlags; // 801EB424
+extern undefined4 DAT_801eb43c; // 801EB43C
+extern undefined4 g_debugPrintDisableFrameCounter; // 801EB440
+extern int* g_mapIdToInternalMapIndexTable; // 801EB444
+extern undefined2 DAT_801eb828; // 801EB828
+extern undefined2 DAT_801eb82a; // 801EB82A
+extern undefined2 g_fadeControl2; // 801EB82C
+extern undefined2 DAT_801eb82e; // 801EB82E
+extern undefined2 DAT_801eb830; // 801EB830
+extern undefined2 DAT_801eb832; // 801EB832
+extern undefined2 DAT_801eb834; // 801EB834
+extern undefined2 DAT_801eb83a; // 801EB83A
+extern undefined2 DAT_801eb83c; // 801EB83C
+extern undefined2 DAT_801eb83e; // 801EB83E
+extern undefined2 DAT_801eb840; // 801EB840
+extern undefined2 DAT_801eb842; // 801EB842
+extern undefined2 DAT_801eb844; // 801EB844
+extern undefined1 g_currentSaveSlotNameIndex; // 801EBA3E
+extern undefined4 g_bitfieldTable2; // 801EBA40
+extern undefined4 DAT_801eba4c; // 801EBA4C
+extern undefined4 DAT_801eba58; // 801EBA58
+extern undefined4 DAT_801ebb38; // 801EBB38
+extern undefined4 DAT_801ebb3c; // 801EBB3C
+extern int* g_bufferEtc; // 801EBB40
+extern int* g_bufferEtcPtr; // 801EEB40
+extern undefined4 DAT_801eeb48; // 801EEB48
+extern undefined4 DAT_801eeb50; // 801EEB50
+extern undefined1 DAT_801eeb58; // 801EEB58
+extern undefined2 DAT_801f2f58; // 801F2F58
+extern undefined2 DAT_801f2f5c; // 801F2F5C
+extern undefined4 DAT_801f2f60; // 801F2F60
+extern undefined4 DAT_801f2f64; // 801F2F64
+extern undefined4 DAT_801f2f68; // 801F2F68
+extern undefined4 DAT_801f2f6c; // 801F2F6C
+extern undefined4 DAT_801f2f70; // 801F2F70
+extern undefined4 DAT_801f2f74; // 801F2F74
+extern undefined4 DAT_801f2f78; // 801F2F78
+extern undefined4 DAT_801f2f7c; // 801F2F7C
+extern undefined4 DAT_801f2f80; // 801F2F80
+extern undefined4 DAT_801f2f84; // 801F2F84
+extern undefined4 DAT_801f2f88; // 801F2F88
+extern undefined4 DAT_801f2f8c; // 801F2F8C
+extern undefined1 DAT_801f48a0; // 801F48A0
+extern undefined1 DAT_801f48a1; // 801F48A1
+extern undefined1 DAT_801f48a8; // 801F48A8
+extern undefined1 DAT_801f48a9; // 801F48A9
+extern undefined1 DAT_801f48b0; // 801F48B0
+extern undefined1 DAT_801f48b1; // 801F48B1
+extern undefined4 DAT_801f48b8; // 801F48B8
+extern undefined4 DAT_801f48bc; // 801F48BC
+extern undefined4 DAT_801f48c0; // 801F48C0
+extern undefined4 DAT_801f48c8; // 801F48C8
+extern undefined4 DAT_801f48cc; // 801F48CC
+extern undefined1 DAT_801f48d0; // 801F48D0
+extern undefined4 DAT_801f48d4; // 801F48D4
+extern undefined4 DAT_801f48d8; // 801F48D8
+extern undefined4 DAT_801f48dc; // 801F48DC
+extern undefined1 DAT_801f48e8; // 801F48E8
+extern undefined1 DAT_801f48ea; // 801F48EA
+extern undefined4 DAT_801f4ec8; // 801F4EC8
+extern undefined4 DAT_801f4ecc; // 801F4ECC
+extern undefined4 DAT_801f4ed0; // 801F4ED0
+extern undefined4 DAT_801f4ef8; // 801F4EF8
+extern undefined1 DAT_801f64c8; // 801F64C8
+extern undefined4 DAT_801f64ca; // 801F64CA
+extern undefined1 DAT_801f64ce; // 801F64CE
+extern undefined4 DAT_801f64d2; // 801F64D2
+extern undefined1 DAT_801f64e8; // 801F64E8
+extern undefined4 DAT_801f6554; // 801F6554
+extern undefined4 g_padStateFromPsx; // 801F6CC8
+extern undefined4 g_padMode; // 801F6CCC
+extern undefined4 DAT_801f6cd0; // 801F6CD0
+extern undefined4 DAT_801f6cd8; // 801F6CD8
+extern undefined4 DAT_801f6ce0; // 801F6CE0
+extern undefined4 DAT_801f6ce8; // 801F6CE8
+extern undefined4 DAT_801f6cec; // 801F6CEC
+extern undefined4 DAT_801f6da0; // 801F6DA0
+extern undefined4 DAT_801f6da4; // 801F6DA4
+extern undefined4 DAT_801f6de4; // 801F6DE4
+extern undefined2 DAT_801f7568; // 801F7568
+extern undefined2 DAT_801f7570; // 801F7570
+extern undefined4 DAT_sound_801f7578; // 801F7578
+extern undefined4 DAT_sound_801f757c; // 801F757C
+extern undefined2 g_volumeLeft; // 801F7580
+extern undefined2 g_volumeRight; // 801F7582
+extern undefined4 DAT_801f7584; // 801F7584
+extern undefined4 DAT_801f7588; // 801F7588
+extern undefined4 DAT_801f75d0; // 801F75D0
+extern undefined2 DAT_sound_801f7610; // 801F7610
+extern undefined2 DAT_sound_801f7658; // 801F7658
+extern undefined2 DAT_sound_801f7660; // 801F7660
+extern undefined4 DAT_801f7668; // 801F7668
+extern undefined4 DAT_801f7678; // 801F7678
+extern undefined4 DAT_801f7680; // 801F7680
+extern undefined1 g_numberOfVoices; // 801F7688
+extern undefined2 g_audioFadeState; // 801F7690
+extern undefined1 DAT_801f7698; // 801F7698
+extern undefined1 DAT_801f7699; // 801F7699
+extern undefined1 DAT_801f769a; // 801F769A
+extern undefined1 DAT_801f769b; // 801F769B
+extern undefined1 DAT_801f769c; // 801F769C
+extern undefined1 DAT_801f769d; // 801F769D
+extern undefined1 DAT_801f769e; // 801F769E
+extern undefined1 DAT_801f769f; // 801F769F
+extern undefined1 DAT_801f76a2; // 801F76A2
+extern undefined1 DAT_801f76a3; // 801F76A3
+extern undefined1 DAT_801f76a4; // 801F76A4
+extern undefined1 DAT_801f76a5; // 801F76A5
+extern undefined1 DAT_801f76a6; // 801F76A6
+extern undefined1 DAT_801f76a7; // 801F76A7
+extern undefined1 DAT_801f76a8; // 801F76A8
+extern undefined1 DAT_801f76a9; // 801F76A9
+extern undefined1 DAT_801f76aa; // 801F76AA
+extern undefined1 DAT_801f76ab; // 801F76AB
+extern undefined1 DAT_801f76ac; // 801F76AC
+extern undefined2 g_sequenceKey; // 801F76AE
+extern undefined2 DAT_801f76b0; // 801F76B0
+extern undefined2 DAT_maybeCurrentVoiceIndex_801f76b2; // 801F76B2
+extern undefined2 DAT_801f76b4; // 801F76B4
+extern undefined2 DAT_801f76b6; // 801F76B6
+extern undefined1 DAT_sound_801f76b8; // 801F76B8
+extern undefined1 DAT_801f76b9; // 801F76B9
+extern undefined1 g_voiceLockFlag; // 801F76C8
+extern undefined2 DAT_sound_801f7710; // 801F7710
+extern int* DAT_sound_801f7718; // 801F7718
+extern undefined4 DAT_801f7758; // 801F7758
+extern undefined2 g_volumesL; // 801F7798
+extern undefined2 g_volumesR; // 801F779A
+extern undefined2 g_pitches; // 801F779C
+extern undefined2 g_reverbs; // 801F779E
+extern undefined2 g_adsrAttack; // 801F77A0
+extern undefined2 g_adsrSustain; // 801F77A2
+extern undefined1 g_voiceUpdateFlags; // 801F7918
+extern undefined1 DAT_801f7919; // 801F7919
+extern undefined2 DAT_sound_801f7930; // 801F7930
+extern undefined2 DAT_sound_801f7932; // 801F7932
+extern undefined2 DAT_sound_801f7934; // 801F7934
+extern undefined2 g_voiceStatusTable; // 801F7936
+extern undefined2 DAT_sound_801f7938; // 801F7938
+extern undefined1 DAT_sound_801f793a; // 801F793A
+extern undefined2 DAT_801f793c; // 801F793C
+extern undefined2 DAT_sound_801f793e; // 801F793E
+extern undefined2 DAT_sound_801f7940; // 801F7940
+extern undefined2 DAT_sound_801f7942; // 801F7942
+extern undefined2 DAT_sound_801f7944; // 801F7944
+extern undefined2 DAT_801f7946; // 801F7946
+extern undefined2 DAT_801f7948; // 801F7948
+extern undefined1 g_voiceNoiseFlags; // 801F794B
+extern undefined2 DAT_sound_801f794c; // 801F794C
+extern undefined2 DAT_sound_801f794e; // 801F794E
+extern undefined2 DAT_sound_801f7950; // 801F7950
+extern undefined2 DAT_sound_801f7952; // 801F7952
+extern undefined2 DAT_sound_801f7954; // 801F7954
+extern undefined2 DAT_sound_801f7958; // 801F7958
+extern undefined2 DAT_sound_801f795a; // 801F795A
+extern undefined2 DAT_sound_801f795c; // 801F795C
+extern undefined2 DAT_sound_801f795e; // 801F795E
+extern undefined2 DAT_sound_801f7960; // 801F7960
+extern undefined2 DAT_801f7964; // 801F7964
+extern undefined2 DAT_801f7966; // 801F7966
+extern undefined2 DAT_801f7968; // 801F7968
+extern undefined2 DAT_801f796a; // 801F796A
+extern undefined2 DAT_801f796c; // 801F796C
+extern undefined1 DAT_801f796e; // 801F796E
+extern undefined2 DAT_801f7970; // 801F7970
+extern undefined2 DAT_801f7972; // 801F7972
+extern undefined2 DAT_801f7974; // 801F7974
+extern undefined2 DAT_801f7976; // 801F7976
+extern undefined2 DAT_801f7978; // 801F7978
+extern undefined1 DAT_801f797f; // 801F797F
+extern undefined2 DAT_801f7980; // 801F7980
+extern undefined2 DAT_801f7982; // 801F7982
+extern undefined2 DAT_801f7984; // 801F7984
+extern undefined2 DAT_801f7986; // 801F7986
+extern undefined2 DAT_801f7988; // 801F7988
+extern undefined2 DAT_801f798c; // 801F798C
+extern undefined2 DAT_801f798e; // 801F798E
+extern undefined2 DAT_801f7990; // 801F7990
+extern undefined2 DAT_801f7992; // 801F7992
+extern undefined2 DAT_801f7994; // 801F7994
+extern undefined4 g_activeVoiceBufferIndex; // 801F7E10
+extern undefined4 g_voiceActiveTable; // 801F7E18
+extern undefined4 DAT_801f7e1c; // 801F7E1C
+extern char* SPUBuffer_801f7e60; // 801F7E60
+extern undefined2 g_voiceCommandPlayingLeft; // 801F7EE8
+extern undefined2 g_voiceCommandPlayingRight; // 801F7EF0
+extern undefined2 DAT_sound_801f7ef8; // 801F7EF8
+extern undefined2 DAT_sound_801f7f00; // 801F7F00
+extern undefined2 g_voiceCommandPendingLeft; // 801F7F08
+extern undefined2 g_voiceCommandPendingRight; // 801F7F10
+extern int* g_executable_loaded; // 801FFF00
