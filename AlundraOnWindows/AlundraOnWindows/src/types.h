@@ -12,6 +12,7 @@
 #define true  1
 
 typedef unsigned char   undefined;
+typedef long long longlong;
 typedef unsigned long long ulonglong;
 
 typedef void (*func)();
