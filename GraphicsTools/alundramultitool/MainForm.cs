@@ -1,5 +1,10 @@
 ﻿using System.Text.Json;
+using Alundra;
+using Alundra.DatasBin;
+using Alundra.Sound;
+using Alundra.Text;
 using GraphicsTools.Alundra;
+using EtcResR = Alundra.EtcResR;
 
 namespace GraphicsTools
 {
@@ -77,13 +82,19 @@ namespace GraphicsTools
             ofd.ShowDialog();
             if (!string.IsNullOrWhiteSpace(ofd.FileName))
             {
-                var soundFile = Path.Combine(Path.GetDirectoryName(ofd.FileName), "SOUND.BIN");
-                var balanceFile = Path.Combine(Path.GetDirectoryName(ofd.FileName), "BALANCE.BIN");
+                var datasBin = new DatasBin(ofd.FileName);
+                var dataFolder = Path.GetDirectoryName(ofd.FileName);
+                var soundFile = Path.Combine(dataFolder, "SOUND.BIN");
+                var balanceFile = Path.Combine(dataFolder, "BALANCE.BIN");
+                var etcResRFileName = Path.Combine(dataFolder, "ETC_RES.R");
+                var font3Folder = Path.Combine(dataFolder, "..", "TAKI\\SCREEN");
 
                 var frmGame = new FrmGame(
                     new DatasBin(ofd.FileName), 
                     new BalanceBin(balanceFile),
-                    new SoundBin(soundFile));
+                    new SoundBin(soundFile),
+                    new EtcResR(etcResRFileName),
+                    new Font3(font3Folder));
                 frmGame.Show();
             }
         }

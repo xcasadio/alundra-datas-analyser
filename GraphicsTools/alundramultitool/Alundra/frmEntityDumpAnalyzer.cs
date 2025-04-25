@@ -1,4 +1,6 @@
-﻿namespace GraphicsTools.Alundra
+﻿using Alundra.DatasBin;
+
+namespace GraphicsTools.Alundra
 {
     public partial class FrmEntityDumpAnalyzer : Form
     {

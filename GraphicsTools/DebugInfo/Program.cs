@@ -1,4 +1,6 @@
-﻿using GraphicsTools.Alundra;
+﻿using Alundra;
+using Alundra.DatasBin;
+using Alundra.Text;
 
 namespace DebugInfo;
 
@@ -61,7 +63,7 @@ internal class Program
         }
 
         i = 0;
-        Log("StringTable");
+        Log("StringTableOffset");
         foreach (var value in etcResR.StringTable)
         {
             Log($"{i++} {MAGENTA}{value} {BLUE}{etcResR.Strings[value]} {GREEN}{etcResR.Strings[etcResR.StringTable[value]]}{NORMAL}");
@@ -79,13 +81,13 @@ internal class Program
     {
         Log($"Header");
         Indent();
-        Log($"{BLUE}InfoBlock {NORMAL}{gameMap.Header.InfoBlock}");
-        Log($"{BLUE}MapBlock {NORMAL}{gameMap.Header.MapBlock}");
-        Log($"{BLUE}TileSheets {NORMAL}{gameMap.Header.TileSheets}");
-        Log($"{BLUE}SpriteInfo {NORMAL}{gameMap.Header.SpriteInfo}");
-        Log($"{BLUE}SpriteSheets {NORMAL}{gameMap.Header.SpriteSheets}");
-        Log($"{BLUE}ScrollScreen {NORMAL}{gameMap.Header.ScrollScreen}");
-        Log($"{BLUE}StringTable {NORMAL}{gameMap.Header.StringTable}");
+        Log($"{BLUE}InfoBlockOffset {NORMAL}{gameMap.Header.InfoBlockOffset}");
+        Log($"{BLUE}MapBlockOffset {NORMAL}{gameMap.Header.MapBlockOffset}");
+        Log($"{BLUE}TileSheetsOffset {NORMAL}{gameMap.Header.TileSheetsOffset}");
+        Log($"{BLUE}SpriteInfoOffset {NORMAL}{gameMap.Header.SpriteInfoOffset}");
+        Log($"{BLUE}SpriteSheetsOffset {NORMAL}{gameMap.Header.SpriteSheetsOffset}");
+        Log($"{BLUE}ScrollScreenOffset {NORMAL}{gameMap.Header.ScrollScreenOffset}");
+        Log($"{BLUE}StringTableOffset {NORMAL}{gameMap.Header.StringTableOffset}");
         DeIndent();
 
         Log($"Info");

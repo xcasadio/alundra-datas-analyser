@@ -1,5 +1,9 @@
 ﻿using System.Drawing.Imaging;
 using System.Text.Json;
+using Alundra;
+using Alundra.DatasBin;
+using Alundra.Sound;
+using Alundra.Text;
 using Color = System.Drawing.Color;
 using Timer = System.Windows.Forms.Timer;
 
@@ -19,7 +23,7 @@ namespace GraphicsTools.Alundra
 
         private DatasBin _datasBin;
 
-        public void Init(DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR, Font3 font3)
+        public void Init(DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, global::Alundra.EtcResR etcResR, Font3 font3)
         {
             _etcResR = etcResR;
             _datasBin = datasBin;
@@ -111,7 +115,7 @@ namespace GraphicsTools.Alundra
             if (!_cachedSprites.ContainsKey(imgset.Imagesetid))
             {
                 var list = new List<Bitmap>();
-                for (var dex = 0; dex < imgset.Numimages; dex++)
+                for (var dex = 0; dex < imgset.NumberOfImages; dex++)
                 {
                     list.Add(_selectedGameMap.GenerateSpriteBitmap(imgset.Images[dex], _selectedGameMap.SpriteInfo.Palettes[imgset.Images[dex].Palette & 0x1f]));
                 }
@@ -211,15 +215,15 @@ namespace GraphicsTools.Alundra
             }
 
             //sizes
-            lblInfoSize.Text = _selectedGameMap.Header.Infosize.ToString();
-            lblMapSize.Text = _selectedGameMap.Header.Mapsize.ToString();
+            lblInfoSize.Text = _selectedGameMap.Header.InfoSize.ToString();
+            lblMapSize.Text = _selectedGameMap.Header.MapSize.ToString();
             lblWallTiles.Text = _selectedGameMap.Header.WallTilesSize.ToString();
-            lblTilesSize.Text = _selectedGameMap.Header.Tilessize.ToString();
-            lblSInfoSize.Text = _selectedGameMap.Header.Sinfosize.ToString();
-            lblsinfoaddr.Text = (GameMap.Memaddr + _selectedGameMap.Header.SpriteInfo).ToString("x6");
-            lblSpritesSize.Text = _selectedGameMap.Header.Spritessize.ToString();
-            lblScrollSize.Text = _selectedGameMap.Header.Scrollsize.ToString();
-            lblStringsSize.Text = _selectedGameMap.Header.Stringsize.ToString();
+            lblTilesSize.Text = _selectedGameMap.Header.TilesSize.ToString();
+            lblSInfoSize.Text = _selectedGameMap.Header.SpriteInfoSize.ToString();
+            lblsinfoaddr.Text = (GameMap.MemoryAddress + _selectedGameMap.Header.SpriteInfoOffset).ToString("x6");
+            lblSpritesSize.Text = _selectedGameMap.Header.SpritesSize.ToString();
+            lblScrollSize.Text = _selectedGameMap.Header.ScrollSize.ToString();
+            lblStringsSize.Text = _selectedGameMap.Header.StringSize.ToString();
 
             //sprite palettes
             lstSpritePalettes.Items.Clear();
@@ -258,10 +262,10 @@ namespace GraphicsTools.Alundra
                 {
                     var lvi = new ListViewItem([
                         "entity " + dex,
-                            entity.Spritedir.ToString("x2"),
-                            entity.Spritetableindex.ToString("x2"),
-                            (entity.Xpos/2).ToString(),
-                            (entity.Ypos/2).ToString(),
+                            entity.SpriteDirection.ToString("x2"),
+                            entity.SpriteTableIndex.ToString("x2"),
+                            (entity.XPos/2).ToString(),
+                            (entity.YPos/2).ToString(),
                             entity.Height.ToString("x2"),
                             entity.EventCodesA_LoadIndex.ToString("x2"),
                             entity.EventCodesB_MapIndex.ToString("x2"),
@@ -270,7 +274,7 @@ namespace GraphicsTools.Alundra
                             entity.EventCodesE_DeactivateIndex.ToString("x2"),
                             entity.EventCodesF_InteractIndex.ToString("x2")
                     ]);
-                    lvi.ToolTipText = ByteToString((byte)(entity.U7 & 0xff)) + ByteToString((byte)((entity.U7 & 0xff00) >> 8)) + ByteToString(entity.Contents) + ByteToString(entity.U10) + ByteToString(entity.Minx) + ByteToString(entity.Miny);
+                    lvi.ToolTipText = ByteToString((byte)(entity.U7 & 0xff)) + ByteToString((byte)((entity.U7 & 0xff00) >> 8)) + ByteToString(entity.Contents) + ByteToString(entity.U10) + ByteToString(entity.XMin) + ByteToString(entity.YMin);
                     lsvEntities.Items.Add(lvi);
                 }
             }
@@ -287,7 +291,7 @@ namespace GraphicsTools.Alundra
                             record.Y1.ToString("x2"),
                             record.X2.ToString("x2"),
                             record.Y2.ToString("x2"),
-                            record.Eventcodesbindex.ToString("x2"),
+                            record.EventCodesBIndex.ToString("x2"),
                             record.Ub1.ToString("x2"),
                             record.Ub2.ToString("x2"),
                             record.Ub3.ToString("x2")
@@ -556,7 +560,7 @@ namespace GraphicsTools.Alundra
         {
             if (_selectedGameMap != null)
             {
-                AnalyzeAt(_selectedGameMap.Header.InfoBlock, _selectedGameMap.Info.Memaddr);
+                AnalyzeAt(_selectedGameMap.Header.InfoBlockOffset, _selectedGameMap.Info.MemoryAddress);
             }
         }
 
@@ -564,7 +568,7 @@ namespace GraphicsTools.Alundra
         {
             if (_selectedGameMap != null)
             {
-                AnalyzeAt(_selectedGameMap.Header.MapBlock, _selectedGameMap.Map.Memaddr);
+                AnalyzeAt(_selectedGameMap.Header.MapBlockOffset, _selectedGameMap.Map.Memaddr);
             }
         }
 
@@ -572,7 +576,7 @@ namespace GraphicsTools.Alundra
         {
             if (_selectedGameMap != null)
             {
-                AnalyzeAt(_selectedGameMap.Header.MapBlock + _selectedGameMap.Map.WallTilesOffset);
+                AnalyzeAt(_selectedGameMap.Header.MapBlockOffset + _selectedGameMap.Map.WallTilesOffset);
             }
         }
 
@@ -580,7 +584,7 @@ namespace GraphicsTools.Alundra
         {
             if (_selectedGameMap != null)
             {
-                AnalyzeAt(_selectedGameMap.Header.TileSheets);
+                AnalyzeAt(_selectedGameMap.Header.TileSheetsOffset);
             }
         }
 
@@ -588,7 +592,7 @@ namespace GraphicsTools.Alundra
         {
             if (_selectedGameMap != null)
             {
-                AnalyzeAt(_selectedGameMap.Header.SpriteInfo, _selectedGameMap.SpriteInfo.Header.Memaddr);
+                AnalyzeAt(_selectedGameMap.Header.SpriteInfoOffset, _selectedGameMap.SpriteInfo.Header.Memaddr);
             }
         }
 
@@ -596,7 +600,7 @@ namespace GraphicsTools.Alundra
         {
             if (_selectedGameMap != null)
             {
-                AnalyzeAt(_selectedGameMap.Header.SpriteSheets);
+                AnalyzeAt(_selectedGameMap.Header.SpriteSheetsOffset);
             }
         }
 
@@ -604,7 +608,7 @@ namespace GraphicsTools.Alundra
         {
             if (_selectedGameMap != null)
             {
-                AnalyzeAt(_selectedGameMap.Header.ScrollScreen);
+                AnalyzeAt(_selectedGameMap.Header.ScrollScreenOffset);
             }
         }
 
@@ -612,7 +616,7 @@ namespace GraphicsTools.Alundra
         {
             if (_selectedGameMap != null)
             {
-                AnalyzeAt(_selectedGameMap.Header.StringTable);
+                AnalyzeAt(_selectedGameMap.Header.StringTableOffset);
             }
         }
 
@@ -757,8 +761,8 @@ namespace GraphicsTools.Alundra
                 {
                     if (entities[dex] != null)
                     {
-                        var x = entities[dex].Xpos / 2;
-                        var y = entities[dex].Ypos / 2;
+                        var x = entities[dex].XPos / 2;
+                        var y = entities[dex].YPos / 2;
                         var height = entities[dex].Height / 2;
 
                         //var tile = selectedGame.map.maptiles[x + y * selectedGame.map.width];
@@ -773,7 +777,7 @@ namespace GraphicsTools.Alundra
                             {
                                 var frame = anim.Frames[0];
                                 var bmps = GetSpriteImages(frame.Images);
-                                for (var sdex = frame.Images.Numimages - 1; sdex >= 0; sdex--)
+                                for (var sdex = frame.Images.NumberOfImages - 1; sdex >= 0; sdex--)
                                 {
                                     var img = frame.Images.Images[sdex];
                                     if (img != null)
@@ -901,7 +905,7 @@ namespace GraphicsTools.Alundra
                 using var br = _datasBin.OpenBin();
                 _selectedMapEvent = null;
                 _selectedEntity = _selectedGameMap.SpriteInfo.Entities.Entities[lsvEntities.SelectedIndices[0]];
-                lblEntityInfo.Text = "si addr:" + GameMap.EventObjectAddr(lsvEntities.SelectedIndices[0]).ToString("x6") + " entity addr:" + _selectedEntity.Memaddr.ToString("x6") + " u123: " + ByteToString(_selectedEntity.Maxx) + ByteToString(_selectedEntity.Maxy) + ByteToString(_selectedEntity.U3) + " u789ab:" + lsvEntities.Items[lsvEntities.SelectedIndices[0]].ToolTipText;
+                lblEntityInfo.Text = "si addr:" + GameMap.EventObjectAddr(lsvEntities.SelectedIndices[0]).ToString("x6") + " entity addr:" + _selectedEntity.MemoryAddress.ToString("x6") + " u123: " + ByteToString(_selectedEntity.XMax) + ByteToString(_selectedEntity.YMax) + ByteToString(_selectedEntity.IsEnabled) + " u789ab:" + lsvEntities.Items[lsvEntities.SelectedIndices[0]].ToolTipText;
                 var sector1 = _selectedGameMap.SpriteInfo.EventCodes;
                 lblSector1a.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesA_LoadIndex, sector1.Eventcodesatable);
                 lblSector1b.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesB_MapIndex, sector1.Eventcodesbtable);
@@ -955,8 +959,8 @@ namespace GraphicsTools.Alundra
             lbl_contents.Text = "?";
             if (_selectedSector5 != null)
             {
-                lblsector5mem.Text = _selectedSector5.Header.Memaddr.ToString("x8");
-                for (var dex = 0; dex < _selectedSector5.Animsets.Length; dex++)
+                lblsector5mem.Text = _selectedSector5.Header.MemoryAddress.ToString("x8");
+                for (var dex = 0; dex < _selectedSector5.AnimSets.Length; dex++)
                 {
                     lstSector5Animations.Items.Add("anim " + dex);
                 }
@@ -1018,7 +1022,7 @@ namespace GraphicsTools.Alundra
                 lbl_einteract.Text = fname;
 
                 lbl_moreflags.Text = _selectedSector5.Header.Moreflags.ToString("x");
-                lbl_canpickup.Text = _selectedSector5.Header.Canpickup.ToString("x");
+                lbl_canpickup.Text = _selectedSector5.Header.CanPickup.ToString("x");
                 lbl_flags.Text = _selectedSector5.Header.FlagsPortraitShadowtype.ToString("x");
                 lbl_offsetx.Text = _selectedSector5.Header.Xmod.ToString();
                 lbl_offsety.Text = _selectedSector5.Header.Ymod.ToString();
@@ -1048,19 +1052,19 @@ namespace GraphicsTools.Alundra
 
                 var br = _datasBin.OpenBin();
                 _selectedAnim = _selectedSector5.GetAnimation(br, animoffset);
-                lblSelAnim.Text = _selectedAnim.Memaddr.ToString("x6");
+                lblSelAnim.Text = _selectedAnim.MemoryAddress.ToString("x6");
                 _cachedSprites = new Dictionary<int, List<Bitmap>>();//blow cache
-                _curframe = _selectedAnim.Numframes;
+                _curframe = _selectedAnim.NumberOfFrames;
                 _animtimer.Interval = 1;
                 _animtimer.Enabled = true;
                 animtimer_Tick(null, null);
                 br.Close();
 
-                for (var dex = 0; dex < _selectedAnim.Numframes; dex++)
+                for (var dex = 0; dex < _selectedAnim.NumberOfFrames; dex++)
                 {
                     lstSector5Frames.Items.Add("frame " + dex + " (imageset " + (_selectedAnim.Frames[dex].Images.Imagesetid & 0xff) + ")");
                 }
-                if (_selectedAnim.Numframes > 0)
+                if (_selectedAnim.NumberOfFrames > 0)
                 {
                     lstSector5Frames.SelectedIndex = 0;
                 }
@@ -1071,7 +1075,7 @@ namespace GraphicsTools.Alundra
         {
             if (rdoDown.Checked)
             {
-                UpdateAnim(_selectedAnimSet.Downoffset);
+                UpdateAnim(_selectedAnimSet.DownOffset);
             }
         }
 
@@ -1079,7 +1083,7 @@ namespace GraphicsTools.Alundra
         {
             if (rdoUp.Checked)
             {
-                UpdateAnim(_selectedAnimSet.Upoffset);
+                UpdateAnim(_selectedAnimSet.UpOffset);
             }
         }
 
@@ -1087,7 +1091,7 @@ namespace GraphicsTools.Alundra
         {
             if (rdoLeft.Checked)
             {
-                UpdateAnim(_selectedAnimSet.Leftoffset);
+                UpdateAnim(_selectedAnimSet.LeftOffset);
             }
         }
 
@@ -1095,7 +1099,7 @@ namespace GraphicsTools.Alundra
         {
             if (rdoRight.Checked)
             {
-                UpdateAnim(_selectedAnimSet.Rightoffset);
+                UpdateAnim(_selectedAnimSet.RightOffset);
             }
         }
 
@@ -1112,12 +1116,12 @@ namespace GraphicsTools.Alundra
             _selectedAnimSet = null;
             if (_selectedGameMap != null && _selectedSector5 != null && lstSector5Animations.SelectedIndex >= 0)
             {
-                _selectedAnimSet = _selectedSector5.Animsets[lstSector5Animations.SelectedIndex];
-                lblAnimSetAddr.Text = _selectedAnimSet.Memaddr.ToString("x6");
-                rdoDown.Text = "down (" + _selectedAnimSet.Animoffsets[(int)SiAnimDir.Down].ToString("x4") + ")";
-                rdoUp.Text = "up (" + _selectedAnimSet.Animoffsets[(int)SiAnimDir.Up].ToString("x4") + ")";
-                rdoLeft.Text = "left (" + _selectedAnimSet.Animoffsets[(int)SiAnimDir.Left].ToString("x4") + ")";
-                rdoRight.Text = "right (" + _selectedAnimSet.Animoffsets[(int)SiAnimDir.Right].ToString("x4") + ")";
+                _selectedAnimSet = _selectedSector5.AnimSets[lstSector5Animations.SelectedIndex];
+                lblAnimSetAddr.Text = _selectedAnimSet.MemoryAddress.ToString("x6");
+                rdoDown.Text = "down (" + _selectedAnimSet.AnimOffsets[(int)SiAnimDir.Down].ToString("x4") + ")";
+                rdoUp.Text = "up (" + _selectedAnimSet.AnimOffsets[(int)SiAnimDir.Up].ToString("x4") + ")";
+                rdoLeft.Text = "left (" + _selectedAnimSet.AnimOffsets[(int)SiAnimDir.Left].ToString("x4") + ")";
+                rdoRight.Text = "right (" + _selectedAnimSet.AnimOffsets[(int)SiAnimDir.Right].ToString("x4") + ")";
 
                 rdoDown.Checked = true;
 
@@ -1132,10 +1136,10 @@ namespace GraphicsTools.Alundra
         private void animtimer_Tick(object sender, EventArgs e)
         {
             _animtimer.Enabled = false;
-            if (_selectedAnim != null && _selectedAnim.Numframes > 0)
+            if (_selectedAnim != null && _selectedAnim.NumberOfFrames > 0)
             {
                 _curframe++;
-                if (_curframe >= _selectedAnim.Numframes)
+                if (_curframe >= _selectedAnim.NumberOfFrames)
                 {
                     _curframe = 0;
                 }
@@ -1159,15 +1163,15 @@ namespace GraphicsTools.Alundra
             if (_selectedAnim != null && lstSector5Frames.SelectedIndex >= 0)
             {
                 _selectedFrame = _selectedAnim.Frames[lstSector5Frames.SelectedIndex];
-                lblFrameAddr.Text = _selectedFrame.Memaddr.ToString("x6");
+                lblFrameAddr.Text = _selectedFrame.MemoryAddress.ToString("x6");
                 lblImgAddr.Text = _selectedFrame.Images.Memaddr.ToString("x6");
-                lblFrameData.Text = "delay: " + ByteToString(_selectedFrame.Delay) + " frm?: " + _selectedFrame.Collisionoffset.ToString("x4") + " imgs?: " + ByteToString(_selectedFrame.Images.Unknown);
+                lblFrameData.Text = "delay: " + ByteToString(_selectedFrame.Delay) + " frm?: " + _selectedFrame.CollisionOffset.ToString("x4") + " imgs?: " + ByteToString(_selectedFrame.Images.Unknown);
                 //CachedSprites.Remove(selectedFrame.images.imagesetid);
-                for (var dex = 0; dex < _selectedFrame.Images.Numimages; dex++)
+                for (var dex = 0; dex < _selectedFrame.Images.NumberOfImages; dex++)
                 {
                     lstSector5Images.Items.Add("image " + dex);
                 }
-                if (_selectedFrame.Images.Numimages > 0)
+                if (_selectedFrame.Images.NumberOfImages > 0)
                 {
                     lstSector5Images.SelectedIndex = 0;
                 }
@@ -1223,7 +1227,7 @@ namespace GraphicsTools.Alundra
             try
             {
                 e.Graphics.Clear(Color.Black);
-                if (_selectedAnim != null && _selectedAnim.Numframes > 0)
+                if (_selectedAnim != null && _selectedAnim.NumberOfFrames > 0)
                 {
                     var frame = _selectedAnim.Frames[_curframe];
                     var bmps = GetSpriteImages(frame.Images);
@@ -1232,7 +1236,7 @@ namespace GraphicsTools.Alundra
 
                     e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 
-                    for (var dex = frame.Images.Numimages - 1; dex >= 0; dex--)
+                    for (var dex = frame.Images.NumberOfImages - 1; dex >= 0; dex--)
                     {
                         var img = frame.Images.Images[dex];
                         if (img != null)
@@ -1267,7 +1271,7 @@ namespace GraphicsTools.Alundra
 
                     e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 
-                    for (var dex = _selectedFrame.Images.Numimages - 1; dex >= 0; dex--)
+                    for (var dex = _selectedFrame.Images.NumberOfImages - 1; dex >= 0; dex--)
                     {
                         var img = _selectedFrame.Images.Images[dex];
                         if (img != null)
@@ -1327,7 +1331,7 @@ namespace GraphicsTools.Alundra
                 _selectedMapEvent = _selectedGameMap.SpriteInfo.MapEvents.Records[lsvSector4.SelectedIndices[0]];
                 var sector1 = _selectedGameMap.SpriteInfo.EventCodes;
                 lblSector1a.Text = "";
-                lblSector1b.Text = GetSector1ByteCodes(br, _selectedMapEvent.Eventcodesbindex, sector1.Eventcodesbtable);
+                lblSector1b.Text = GetSector1ByteCodes(br, _selectedMapEvent.EventCodesBIndex, sector1.Eventcodesbtable);
                 lblSector1c.Text = "";
                 lblSector1d.Text = "";
                 lblSector1e.Text = "";
@@ -1375,7 +1379,7 @@ namespace GraphicsTools.Alundra
             }
             else if (_selectedMapEvent != null)
             {
-                frm.Init(GetEventCodeCommands(br, _selectedMapEvent.Eventcodesbindex, _selectedGameMap.SpriteInfo.EventCodes.Eventcodesbtable));
+                frm.Init(GetEventCodeCommands(br, _selectedMapEvent.EventCodesBIndex, _selectedGameMap.SpriteInfo.EventCodes.Eventcodesbtable));
                 frm.Show();
             }
             br.Close();
@@ -1409,12 +1413,12 @@ namespace GraphicsTools.Alundra
         {
             if (_selectedGameMap != null)
             {
-                AnalyzeAt(_selectedGameMap.Header.SpriteInfo, _selectedGameMap.SpriteInfo.Header.Memaddr, _selectedGameMap.SpriteInfo.Header.Mapeventspointer);
+                AnalyzeAt(_selectedGameMap.Header.SpriteInfoOffset, _selectedGameMap.SpriteInfo.Header.Memaddr, _selectedGameMap.SpriteInfo.Header.Mapeventspointer);
             }
         }
 
         private string _dumpfile = "";
-        private EtcResR _etcResR;
+        private global::Alundra.EtcResR _etcResR;
         private Font3 _font3;
 
         private void btnAnalyzeEntity_Click(object sender, EventArgs e)

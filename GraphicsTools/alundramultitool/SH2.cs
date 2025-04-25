@@ -1074,25 +1074,60 @@
 
             }
 
-            public override bool IsBranch => throw new NotImplementedException();
-            public override bool IsCall => throw new NotImplementedException();
-            public override bool IsJump => throw new NotImplementedException();
-            public override bool IsReturn => throw new NotImplementedException();
+            public override bool IsBranch
+            {
+                get 
+                { 
+                    System.Diagnostics.Debugger.Break();
+                    throw new NotImplementedException(); }
+            }
 
-            public override bool IsAssignment => throw new NotImplementedException();
+            public override bool IsCall
+            {
+                get 
+                { 
+                    System.Diagnostics.Debugger.Break();
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override bool IsJump 
+            {
+                get 
+                { 
+                    System.Diagnostics.Debugger.Break();
+                    throw new NotImplementedException();
+                }
+            }
+            public override bool IsReturn 
+            {
+                get 
+                { 
+                    System.Diagnostics.Debugger.Break();
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override bool IsAssignment 
+            {
+                get 
+                { 
+                    System.Diagnostics.Debugger.Break();
+                    throw new NotImplementedException();
+                }
+            }
 
             public override uint GetGlobalVariable(CodeBlock<IsInstruction> block)
             {
+                System.Diagnostics.Debugger.Break();
                 throw new NotImplementedException();
             }
 
             public override void GetAssignmentGlobals(out uint left, out string right, CodeBlock<IsInstruction> block)
             {
+                System.Diagnostics.Debugger.Break();
                 throw new NotImplementedException();
             }
-
         }
-
-
     }
 }

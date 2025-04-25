@@ -1,6 +1,9 @@
 ﻿using System.Text;
 using alundramultitool;
 using System.Numerics;
+using Alundra;
+using Alundra.DatasBin;
+using Alundra.UI;
 
 namespace GraphicsTools
 {
@@ -114,7 +117,7 @@ namespace GraphicsTools
                 for (var fdex = 0; fdex < _functions.Count; fdex++)
                 {
                     var functaddr = _functions[fdex];
-                    var sicode = Alundra.SpriteInfoEventCodes.GetCode((byte)fdex);
+                    var sicode = SpriteInfoEventCodes.GetCode((byte)fdex);
 
                     var fname = $"({sicode.Code.ToString("x2")}_{sicode.Name}_handler)";
 
@@ -267,7 +270,7 @@ namespace GraphicsTools
                 for (var dex = 0; dex < palettes.Length; dex++)
                 {
                     var ddex = imagestart + paloffset + dex * 2;
-                    palettes[dex] = Utils.FromPsxColor(_data[ddex + 1], _data[dex]);// Color.FromArgb(255, (data[ddex + 1] & 0x1f) << 3, ((data[ddex + 1] & 0xe0) >> 2) | ((data[ddex] & 0x3) << 6), data[ddex] & 0x7c);
+                    palettes[dex] = ImageHelper.FromPsxColor(_data[ddex + 1], _data[dex]);// Color.FromArgb(255, (data[ddex + 1] & 0x1f) << 3, ((data[ddex + 1] & 0xe0) >> 2) | ((data[ddex] & 0x3) << 6), data[ddex] & 0x7c);
                 }
             }
             Program.Viewer = new FrmViewer();
@@ -1264,7 +1267,7 @@ namespace GraphicsTools
             for (var fdex = 0; fdex < addresses.Count; fdex++)
             {
                 var functaddr = addresses[fdex];
-                var sicode = Alundra.SpriteInfoEventCodes.GetCode((byte)fdex);
+                var sicode = SpriteInfoEventCodes.GetCode((byte)fdex);
 
                 var fname = $"({sicode.Code.ToString("x2")}_{sicode.Name}_handler)";
 
@@ -1709,7 +1712,7 @@ namespace GraphicsTools
             for (var i = 0; i < 255 * 2; i++)
             {
 
-                var cmd = new Alundra.UiDrawCmd();
+                var cmd = new UiDrawCmd();
                 cmd.U = _data[dex + 0xc];
                 cmd.V = _data[dex + 0xd];
                 var addr = _data[dex + 0xe] | _data[dex + 0xf] << 8;
@@ -1738,7 +1741,7 @@ namespace GraphicsTools
                         s += "}";
                         Clipboard.SetText(s);
 
-                        s = "string [] StringTable = new string[] {\r\n";
+                        s = "string [] StringTableOffset = new string[] {\r\n";
                         dex = 0;
 
                         int soffset = data[dex + 3] << 24 | data[dex + 2] << 16 | data[dex + 1] << 8 | data[dex + 0];

@@ -1,4 +1,5 @@
-﻿using midi;
+﻿using Alundra.Sound;
+using midi;
 
 namespace GraphicsTools.Alundra
 {
@@ -19,7 +20,7 @@ namespace GraphicsTools.Alundra
             lstGlobalSfx.Items.Clear();
             for (var dex = 0; dex < _soundBin.GlobalVabHeader.Header.Vs; dex++)
             {
-                lstGlobalSfx.Items.Add("Global VAG " + dex);
+                lstGlobalSfx.Items.Add("AlundraGameMap VAG " + dex);
             }
 
             lsvSfx.Items.Clear();

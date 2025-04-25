@@ -1,4 +1,6 @@
-﻿namespace GraphicsTools
+﻿using Alundra;
+
+namespace GraphicsTools
 {
     public partial class FrmViewer : Form
     {
@@ -55,8 +57,8 @@
                     {
                         var b2 = imagedata[dex++];
                         var b1 = imagedata[dex++];
-                        //Color c = Utils.FromPsxColor(b1, b2);
-                        c = Utils.FromPsxColor((b1 << 8) | b2);
+                        //Color c = ImageHelper.FromPsxColor(b1, b2);
+                        c = ImageHelper.FromPsxColor((b1 << 8) | b2);
                     }
                     else if (palbpp == 24)
                     {
@@ -292,7 +294,7 @@
 
                             var b2 = _imagedata[imagedex++];
                             var b1 = _imagedata[imagedex++];
-                            palette[dex] = Utils.FromPsxColor((b1 << 8) | b2);
+                            palette[dex] = ImageHelper.FromPsxColor((b1 << 8) | b2);
                         }
                         if (_viewer != null)
                         {

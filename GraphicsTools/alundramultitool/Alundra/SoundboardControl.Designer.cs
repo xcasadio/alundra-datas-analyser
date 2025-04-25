@@ -204,7 +204,7 @@ namespace GraphicsTools.Alundra
             label1.Name = "label1";
             label1.Size = new Size(59, 15);
             label1.TabIndex = 9;
-            label1.Text = "Global sfx";
+            label1.Text = "AlundraGameMap sfx";
             // 
             // label2
             // 
@@ -213,7 +213,7 @@ namespace GraphicsTools.Alundra
             label2.Name = "label2";
             label2.Size = new Size(66, 15);
             label2.TabIndex = 10;
-            label2.Text = "Global VAG";
+            label2.Text = "AlundraGameMap VAG";
             // 
             // label3
             // 
