@@ -2,24 +2,24 @@
 
 public class SiEffectFrame
 {
-    public SiEffectFrame(BinaryReader br, int effectid, int binoffset, int memaddr)
+    public SiEffectFrame(BinaryReader br, int effectid, int binoffset, int memoryAddress)
     {
-        Memaddr = memaddr;
+        MemoryAddress = memoryAddress;
         Delay = br.ReadByte();
-        Imagesetpointer = br.ReadUInt16() * 2;
+        ImageSetPointer = br.ReadUInt16() * 2;
 
         //load images
         var savepos = br.BaseStream.Position;
 
-        br.BaseStream.Position = binoffset + Imagesetpointer;
-        Images = new SiImageSet(br, effectid << 16 | Imagesetpointer, memaddr + Imagesetpointer);
+        br.BaseStream.Position = binoffset + ImageSetPointer;
+        Images = new SiImageSet(br, effectid << 16 | ImageSetPointer, memoryAddress + ImageSetPointer);
 
         br.BaseStream.Position = savepos;
     }
 
-    public int Memaddr;
+    public int MemoryAddress;
     public readonly byte Delay;//top bit masked
     public short Unknown;//-1
-    public readonly int Imagesetpointer;
+    public readonly int ImageSetPointer;
     public SiImageSet Images;
 }

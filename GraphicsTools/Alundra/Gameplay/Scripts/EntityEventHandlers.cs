@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Alundra.DatasBin;
 
-namespace Alundra.Gameplay.Script;
+namespace Alundra.Gameplay.Scripts;
 
 public class EntityEventHandlers
 {
@@ -431,7 +431,7 @@ public class EntityEventHandlers
             //var img = portrait.images[0];
             //var bmps = gameState.GetSpriteImages(portrait);
             //var bmp = bmps[0];
-            //WrapsDialogSetupPortrait(entity.XPos, entity.YPos, entity.ZPos, gameState.CamXPos, gameState.CamYPos, img.sx, img.sy, img.swidth, img.sheight, bmp);
+            //WrapsDialogSetupPortrait(entity.XPos, entity.YPos, entity.ZPos, gameState.g_cameraCurrentX, gameState.g_cameraCurrentY, img.sx, img.sy, img.swidth, img.sheight, bmp);
         }
         //SetName(entity.NameId);
 
@@ -444,13 +444,13 @@ public class EntityEventHandlers
 
     public int _10_LoseControl_Handler(Entity entity, Entity entityself/*?*/, int exp, EventProgramState eventData, byte[] code)
     {
-        _gameState.PlayerControlSetting |= 0x4;
+        StaticVariables.g_playerControlFlags |= 0x4;
         return 1;
     }
 
     public int _11_GainControl_Handler(Entity entity, Entity entityself/*?*/, int exp, EventProgramState eventData, byte[] code)
     {
-        _gameState.PlayerControlSetting &= ~0x4;
+        StaticVariables.g_playerControlFlags &= ~0x4;
         return 1;
     }
 
@@ -1373,7 +1373,7 @@ public class EntityEventHandlers
 
         var numentities = _gameState.GetEntityFromRefId(entity, entityid);
 
-        _gameState.CameraFollowEntity = _gameState.GetEntityList[0];
+        StaticVariables.g_entityFollowedByCamera = _gameState.GetEntityList[0];
 
         return 2;
     }

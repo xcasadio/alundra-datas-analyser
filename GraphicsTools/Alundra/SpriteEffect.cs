@@ -31,7 +31,7 @@ public class SpriteEffect
     public byte TargetSpriteTableIndex; //6e
     public byte CurrentSpriteTableIndex;    //6f
     public byte TargetAnim;             //70
-    public byte CurAnim;                //71
+    public byte CurrentAnim;                //71
 
     public SiEffectFrame Frame;   //74
     public SiEffectFrame FirstFrame;      //78

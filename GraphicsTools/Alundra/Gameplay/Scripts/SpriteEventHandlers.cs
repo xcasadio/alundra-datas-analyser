@@ -1,4 +1,4 @@
-﻿namespace Alundra.Gameplay.Script;
+﻿namespace Alundra.Gameplay.Scripts;
 
 public class SpriteEventHandlers
 {

@@ -1,5 +1,5 @@
 ﻿using Alundra.DatasBin;
-using Alundra.Gameplay.Script;
+using Alundra.Gameplay.Scripts;
 using Alundra.Sound;
 
 namespace Alundra.Gameplay;
@@ -83,7 +83,7 @@ public class Entity
     public readonly int[] MapHeights = new int[4];
     public bool DoneMoving;
 
-    public int _180, _184, SomethingForceIndex;//188
+    public int combinedVramFlagsOR, combinedVramFlagsAND, SomethingForceIndex;//188
     public int _18c, _190;//slopesomething?, slopesomethingprev?
     public SpriteRef SpriteRef = new SpriteRef();//194 
     //public int field91_0x1ac; // 1ac => SpriteRef

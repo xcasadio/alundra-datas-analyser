@@ -1,6 +1,6 @@
 ﻿using Alundra.DatasBin;
 using Alundra.Gameplay;
-using Alundra.Gameplay.Script;
+using Alundra.Gameplay.Scripts;
 using Alundra.Sound;
 using Alundra.Text;
 
@@ -38,7 +38,8 @@ public class Game
             datasBin.AlundraGameMap.Load(reader, false);
         }
 
-        _gameState = new GameState(datasBin.AlundraGameMap, _balanceBin, soundBin) { CamXPos = 100 << 16, CamYPos = 100 << 16 };
+        _gameState = new GameState(datasBin.AlundraGameMap, _balanceBin, soundBin);
+            //{ StaticVariables.g_cameraCurrentX = 100 << 16, g_cameraCurrentY = 100 << 16 };
 
         _entityEventHandlers = new EntityEventHandlers(_gameState);
     }
@@ -57,8 +58,8 @@ public class Game
 
     public void Render(Graphics g)
     {
-        var curxpos = _gameState.CamXPos >> 16;
-        var curypos = _gameState.CamYPos >> 16;
+        var curxpos = StaticVariables.g_cameraCurrentX >> 16;
+        var curypos = StaticVariables.g_cameraCurrentY >> 16;
 
         var curxtile = curxpos / 24;
 
@@ -99,7 +100,7 @@ public class Game
             }
 
             //draw sprites who are on this row
-            for (var i = 0; i < _gameState.MaxEntity; i++)
+            for (var i = 0; i < StaticVariables.g_numberOfEntity; i++)
             {
                 var si = _gameState.Entities[i];
                 if (si.Status == 5)
@@ -272,7 +273,7 @@ public class Game
         //    game._1ef998--;
         //}
 
-        /*if (game.PlayerControlSetting == 0
+        /*if (game.g_playerControlFlags == 0
             && game.PlayerEntity._20 == 0
             && game._1f0fbc == 0
             && (game.1dd7ea & 0x803) != 0
@@ -322,21 +323,21 @@ public class Game
 
     public void UpdateEntities()
     {
-        if ((_gameState.PlayerControlSetting & 0x48) == 0)
+        if ((StaticVariables.g_playerControlFlags & 0x48) == 0)
         {
-            ProcessDestroyedEntities();
+            UpdateDestroyedEntities();
 
-            DoEvents();
+            UpdateEntitiesEvents();
 
-            UpdateCounters();
+            UpdateEntitiesCounters();
 
 
 
-            AddToLists();
+            UpdateEntityLists();
 
-            UpdateAnims();
+            UpdateEntitiesAnimation();
 
-            DoPhysics();
+            UpdateEntitiesPhysics();
 
             UpdateActiveEffects();
 
@@ -344,27 +345,27 @@ public class Game
         }
         else
         {
-            AddToLists();
+            UpdateEntityLists();
         }
 
-        if (_gameState.CameraFollowEntity != null)
+        if (StaticVariables.g_entityFollowedByCamera != null)
         {
-            if (_gameState.CameraFollowEntity.Status <= 3)
+            if (StaticVariables.g_entityFollowedByCamera.Status <= 3)
             {
                 //gets halfwords
-                _gameState.CamTargetX = _gameState.CameraFollowEntity.XPos >> 16;
-                _gameState.CamTargetY = _gameState.CameraFollowEntity.YPos >> 16;
-                _gameState.CamTargetZ = _gameState.CameraFollowEntity.ZPos >> 16;
+                StaticVariables.g_playerX = StaticVariables.g_entityFollowedByCamera.XPos >> 16;
+                StaticVariables.g_playerY = StaticVariables.g_entityFollowedByCamera.YPos >> 16;
+                StaticVariables.g_playerZ = StaticVariables.g_entityFollowedByCamera.ZPos >> 16;
             }
         }
-        SetDepthSortVals();
+        UpdateVisibleEntitiesZSort();
 
         //add spriterefs
-        if (_gameState.ToRenderCount > 0)
+        if (StaticVariables.g_visibleEntityCount > 0)
         {
-            for (var dex = 0; dex < _gameState.ToRenderCount; dex++)
+            for (var dex = 0; dex < StaticVariables.g_visibleEntityCount; dex++)
             {
-                var entity = _gameState.ToRenderList[dex];
+                var entity = StaticVariables.g_visibleEntities[dex];
 
                 entity.SpriteRef.DepthSortVal = entity.DepthSortVal;
                 entity.SpriteRef.X = entity.XPos;
@@ -375,11 +376,11 @@ public class Game
         }
     }
 
-    private void DoPhysics()
+    private void UpdateEntitiesPhysics()
     {
-        for (var i = 0; i < _gameState.ToProcessesCount; i++)
+        for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
         {
-            var entity = _gameState.ToProcessList[i];
+            var entity = StaticVariables.g_activeEntities[i];
             entity.DoneMoving = false;
             entity.CollidedWithEntityZ = 0;
             entity.ForceAdjusted = 0;
@@ -389,30 +390,30 @@ public class Game
             entity.ModdedZPos = entity.ZPos + entity.ZMod;
         }
 
-        SetRidingEntities();
-        UpdateForces();
+        CheckRidingEntities();
+        UpdateEntitiesForces();
 
-        for (var i = 0; i < _gameState.ToCollideCount; i++)
+        for (var i = 0; i < StaticVariables.g_collideableEntitiesCount; i++)
         {
-            var entity = _gameState.ToCollideList[i];
+            var entity = StaticVariables.g_collideableEntities[i];
             if (entity.RidingEntity != null)
             {
                 UpdateRidingEntity(entity, entity.RidingEntity);
             }
         }
 
-        for (var i = 0; i < _gameState.ToProcessesCount; i++)
+        for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
         {
-            var entity = _gameState.ToProcessList[i];
+            var entity = StaticVariables.g_activeEntities[i];
             if (!entity.DoneMoving)
             {
                 //MoveEntity(entity);
             }
         }
 
-        for (var i = 0; i < _gameState.ToProcessesCount; i++)
+        for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
         {
-            var entity = _gameState.ToProcessList[i];
+            var entity = StaticVariables.g_activeEntities[i];
             _gameState.UpdateTile(entity);
         }
     }
@@ -421,6 +422,7 @@ public class Game
     {
         if (ridingEntity.RidingEntity != null)
         {
+            //TODO: bug maybe in CheckRidingEntities why overflow ???
             //UpdateRidingEntity(ridingEntity, ridingEntity.RidingEntity);
         }
 
@@ -433,19 +435,19 @@ public class Game
         }
     }
 
-    private void SetRidingEntities()
+    private void CheckRidingEntities()
     {
-        for (var i = 0; i < _gameState.ToCollideCount; i++)
+        for (var i = 0; i < StaticVariables.g_collideableEntitiesCount; i++)
         {
-            var entity = _gameState.ToCollideList[i];
+            var entity = StaticVariables.g_collideableEntities[i];
             if ((entity.Flags & 0x4100) != 0x0100)
             {
                 continue;
             }
 
-            for (var dex2 = 0; dex2 < _gameState.ToCollideCount; dex2++)
+            for (var j = 0; j < StaticVariables.g_collideableEntitiesCount; j++)
             {
-                var entity2 = _gameState.ToCollideList[dex2];
+                var entity2 = StaticVariables.g_collideableEntities[j];
                 if (entity == entity2)
                 {
                     continue;
@@ -469,19 +471,19 @@ public class Game
         }
     }
 
-    private void UpdateForces()
+    private void UpdateEntitiesForces()
     {
         var player = _gameState.PlayerEntity;
 
-        for (var i = 0; i < _gameState.ToProcessesCount; i++)
+        for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
         {
-            var entity = _gameState.ToProcessList[i];
+            var entity = StaticVariables.g_activeEntities[i];
             if (entity == player)
             {
                 if (player.IsZForceApplied != 0)
                 {
                     if ((player.Flags & 0x100) != 0
-                        && (player._180 & 0x0010) != 0
+                        && (player.combinedVramFlagsOR & 0x0010) != 0
                         && _gameState.SomeGravitySetting <= 0)
                     {
                         player.ZForce = player.IsZForceApplied * 160;
@@ -517,7 +519,7 @@ public class Game
                 SetXyForces(player);
 
                 int xforcestep, yforcestep;
-                if ((player._180 & 0x0020) != 0)
+                if ((player.combinedVramFlagsOR & 0x0020) != 0)
                 {
                     long resultx = player.XForceStep * 0x1000;
                     xforcestep = (int)(resultx >> 16);
@@ -532,7 +534,7 @@ public class Game
                 }
 
                 int targetxforce, targetyforce;
-                if ((player._180 & 0x0008) != 0
+                if ((player.combinedVramFlagsOR & 0x0008) != 0
                     && _gameState.SomeGravitySetting <= 0)
                 {
                     long resultx = player.TargetXForce * 0x8000;
@@ -695,32 +697,32 @@ public class Game
         entity.YForceStep = Math.Abs(entity.TargetYForce - entity.YForce) >> entity.Acceleration;
     }
 
-    private void SetDepthSortVals()
+    private void UpdateVisibleEntitiesZSort()
     {
-        if (_gameState.ToRenderCount <= 0)
+        if (StaticVariables.g_visibleEntityCount <= 0)
         {
             return;
         }
 
-        for (var dex = 0; dex < _gameState.ToRenderCount; dex++)
+        for (var dex = 0; dex < StaticVariables.g_visibleEntityCount; dex++)
         {
-            var entity = _gameState.ToRenderList[dex];
+            var entity = StaticVariables.g_visibleEntities[dex];
             entity.DepthSortVal = 0;
             entity.SortTop = entity.ModdedZPos + entity.Height;
         }
 
-        for (var dex = 0; dex < _gameState.ToRenderCount; dex++)
+        for (var dex = 0; dex < StaticVariables.g_visibleEntityCount; dex++)
         {
-            var entity = _gameState.ToRenderList[dex];
+            var entity = StaticVariables.g_visibleEntities[dex];
             if (entity.DepthSortVal == 0)
             {
                 SetDepthSortVal(entity);
             }
         }
 
-        for (var dex = 0; dex < _gameState.ToRenderCount; dex++)
+        for (var dex = 0; dex < StaticVariables.g_visibleEntityCount; dex++)
         {
-            var entity = _gameState.ToRenderList[dex];
+            var entity = StaticVariables.g_visibleEntities[dex];
             entity.DepthSortVal = (int)(entity.DepthSortVal & 0xffff0000) + (entity.ZPos & 0xffff);
         }
     }
@@ -753,9 +755,9 @@ public class Game
             }
         }
 
-        for (var dex = 0; dex < _gameState.ToCollideCount; dex++)
+        for (var dex = 0; dex < StaticVariables.g_collideableEntitiesCount; dex++)
         {
-            var checkme = _gameState.ToCollideList[dex];
+            var checkme = StaticVariables.g_collideableEntities[dex];
             if (checkme == entity)
             {
                 continue;
@@ -816,14 +818,14 @@ public class Game
 
     private void UpdateBalanceRecords()
     {
-        if (_gameState.ToProcessesCount <= 0)
+        if (StaticVariables.g_activeEntityCount <= 0)
         {
             return;
         }
 
-        for (var i = 0; i < _gameState.ToProcessesCount; i++)
+        for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
         {
-            var entity = _gameState.ToProcessList[i];
+            var entity = StaticVariables.g_activeEntities[i];
 
             if (entity.FrameCollision == null)
             {
@@ -851,9 +853,9 @@ public class Game
                 continue;
             }
 
-            for (var j = 0; j < _gameState.ToProcessesCount; j++)
+            for (var j = 0; j < StaticVariables.g_activeEntityCount; j++)
             {
-                var checkme = _gameState.ToProcessList[j];
+                var checkme = StaticVariables.g_activeEntities[j];
                 if (checkme == entity)
                 {
                     continue;
@@ -1042,12 +1044,12 @@ public class Game
 
     private void UpdateActiveEffects()
     {
-        if (_gameState.MaxEntity < 0)
+        if (StaticVariables.g_numberOfEntity < 0)
         {
             return;
         }
 
-        for (var i = 0; i < _gameState.MaxEntity; i++)
+        for (var i = 0; i < StaticVariables.g_numberOfEntity; i++)
         {
             var entity = _gameState.Entities[i];
             if (entity.Status - 2 >= 2 || (entity.DamagedTickCounter & 3) == 3)
@@ -1165,9 +1167,9 @@ public class Game
         }
     }
 
-    private void UpdateAnims()
+    private void UpdateEntitiesAnimation()
     {
-        for (var dex = 0; dex < _gameState.ToProcessesCount; dex++)
+        for (var dex = 0; dex < StaticVariables.g_activeEntityCount; dex++)
         {
             var entity = _gameState.Entities[dex];
             _gameState.UpdateAnimation(entity);
@@ -1181,13 +1183,13 @@ public class Game
         //perhaps the largest in the entire game
     }
 
-    private void DoEvents()
+    private void UpdateEntitiesEvents()
     {
         MovePlayer();
 
-        if (_gameState.MaxEntity > 0)
+        if (StaticVariables.g_numberOfEntity > 0)
         {
-            for (var dex = 1; dex < _gameState.MaxEntity; dex++)
+            for (var dex = 1; dex < StaticVariables.g_numberOfEntity; dex++)
             {
                 var entity = _gameState.Entities[dex];
                 var evttype = -1;
@@ -1214,7 +1216,7 @@ public class Game
 
                             if ((entity.Flags & 0x200000) != 0)
                             {
-                                if ((entity._180 & 0x8004) != 0)
+                                if ((entity.combinedVramFlagsOR & 0x8004) != 0)
                                 {
                                     _gameState.DestroyEntity(entity, -1);
 
@@ -1299,10 +1301,10 @@ public class Game
         do
         {
             keepgoing = false;
-            if (_gameState.MaxEntity > 0)
+            if (StaticVariables.g_numberOfEntity > 0)
             {
                 //foreach entity besides player
-                for (var dex = 1; dex < _gameState.MaxEntity; dex++)
+                for (var dex = 1; dex < StaticVariables.g_numberOfEntity; dex++)
                 {
                     var entity = _gameState.Entities[dex];
 
@@ -1332,11 +1334,11 @@ public class Game
         } while (keepgoing);
     }
 
-    private void UpdateCounters()
+    private void UpdateEntitiesCounters()
     {
-        if (_gameState.MaxEntity >= 0)
+        if (StaticVariables.g_numberOfEntity >= 0)
         {
-            for (var dex = 0; dex <= _gameState.MaxEntity; dex++)
+            for (var dex = 0; dex <= StaticVariables.g_numberOfEntity; dex++)
             {
                 var entity = _gameState.Entities[dex];
                 entity.UnknownCounter++;
@@ -1356,7 +1358,7 @@ public class Game
 
     }
 
-    private void ProcessDestroyedEntities()
+    private void UpdateDestroyedEntities()
     {
         var max = 0;
         for (var i = 0; i < _gameState.Entities.Length; i++)
@@ -1378,47 +1380,47 @@ public class Game
             }
         }
 
-        _gameState.MaxEntity = max;
+        StaticVariables.g_numberOfEntity = max;
     }
 
-    private void AddToLists()
+    private void UpdateEntityLists()
     {
-        _gameState.ToProcessesCount = 0;
-        _gameState.ToCollideCount = 0;
-        _gameState.ToRenderCount = 0;
+        StaticVariables.g_activeEntityCount = 0;
+        StaticVariables.g_collideableEntitiesCount = 0;
+        StaticVariables.g_visibleEntityCount = 0;
 
-        if (_gameState.MaxEntity < 0)
+        if (StaticVariables.g_numberOfEntity < 0)
         {
             return;
         }
 
-        for (int i = 0; i < _gameState.MaxEntity; i++)
+        for (int i = 0; i < StaticVariables.g_numberOfEntity; i++)
         {
             var entity = _gameState.Entities[i];
 
             //processable
             if (entity.Status - 2 < 2 && entity._20 == 0)
             {
-                _gameState.ToProcessList[_gameState.ToProcessesCount++] = entity;
+                StaticVariables.g_activeEntities[StaticVariables.g_activeEntityCount++] = entity;
             }
 
             //collidable
             if ((entity.Flags & 0x80) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.PlatformEntity == null)
             {
-                _gameState.ToCollideList[_gameState.ToCollideCount++] = entity;
+                StaticVariables.g_collideableEntities[StaticVariables.g_collideableEntitiesCount++] = entity;
             }
 
             //renderable
             if (entity.Status - 2 < 2 && (entity.DamagedTickCounter & 3) != 3)//flicker effect, every 3rd frame when being damaged
             {
-                _gameState.ToRenderList[_gameState.ToRenderCount++] = entity;
+                StaticVariables.g_visibleEntities[StaticVariables.g_visibleEntityCount++] = entity;
             }
         }
     }
 
     public void UpdateMapEvents()
     {
-        if ((_gameState.PlayerControlSetting & 0x48) != 0)
+        if ((StaticVariables.g_playerControlFlags & 0x48) != 0)
         {
             return;
         }
@@ -1473,7 +1475,7 @@ public class Game
                 continue;
             }
 
-            if ((_gameState.PlayerControlSetting & 0x48) == 0)
+            if ((StaticVariables.g_playerControlFlags & 0x48) == 0)
             {
                 if (effect.DestroyFlag != 0)
                 {
@@ -1517,15 +1519,15 @@ public class Game
 
             effect.AddToSheet = addtosheet;
             effect.AddToPalette = addtopal;
-            effect.CurAnim = (byte)~effect.TargetAnim;
+            effect.CurrentAnim = (byte)~effect.TargetAnim;
         }
 
-        if (effect.CurAnim != effect.TargetAnim)
+        if (effect.CurrentAnim != effect.TargetAnim)
         {
             var animation = effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnim];
             effect.AnimIndex = 0;
             var nframe = animation.Frames[effect.AnimIndex];
-            effect.CurAnim = effect.TargetAnim;
+            effect.CurrentAnim = effect.TargetAnim;
             effect.Delay = 0;
             effect.DestroyFlag = 0;
             effect.FirstFrame = nframe;

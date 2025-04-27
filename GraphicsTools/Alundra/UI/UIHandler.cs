@@ -383,7 +383,7 @@ public class UiHandler
     {
         ZeroDialogRecord(ui);
         _game.DialogState = 0;
-        _game.PlayerControlSetting &= 0xffe7;//turn off bits 4 and 5
+        StaticVariables.g_playerControlFlags &= 0xffe7;//turn off bits 4 and 5
     }
     public void ZeroDialogNameState(UiRecord ui)
     {
@@ -1010,11 +1010,11 @@ public class UiHandler
 
         if (playercontrolflag==1)
         {
-            _game.PlayerControlSetting |= 0x10;
+            StaticVariables.g_playerControlFlags |= 0x10;
         }
         else
         {
-            _game.PlayerControlSetting |= 8;
+            StaticVariables.g_playerControlFlags |= 8;
         }
 
         DialogChoiceUnknown1 = 0;

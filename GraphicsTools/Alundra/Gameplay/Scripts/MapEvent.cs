@@ -1,6 +1,6 @@
 ﻿using Alundra.DatasBin;
 
-namespace Alundra.Gameplay.Script;
+namespace Alundra.Gameplay.Scripts;
 
 //0x48 byte record
 public class MapEvent

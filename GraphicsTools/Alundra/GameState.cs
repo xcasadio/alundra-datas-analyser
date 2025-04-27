@@ -1,30 +1,21 @@
 ﻿using Alundra.DatasBin;
 using Alundra.Gameplay;
-using Alundra.Gameplay.Script;
+using Alundra.Gameplay.Scripts;
 using Alundra.Sound;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Alundra;
 
 public class GameState
 {
-    public readonly GameMap AlundraGameMap;
-
-    public GameMap GameMap;
-
     public BalanceBin BalanceBin;
     public SoundBin SoundBin;
-
-
+    public readonly GameMap AlundraGameMap;
+    public GameMap GameMap;
 
     public int Seed = 42;
     public readonly int[] GameFlagsMap = new int[1024];
     public readonly int[] GameFlagsGlobal = new int[1024];
     public readonly short[] PlayerInput = new short[16];//no idea how many there are
-    public int PlayerControlSetting;
-    public int CamXPos;
-    public int CamYPos;
-    public int CamTargetX, CamTargetY, CamTargetZ;
     public bool BreakoutGameLoop;
     public int SomeGravitySetting;//0x1d84e0
 
@@ -40,33 +31,18 @@ public class GameState
     public int EventProgsSet;//a prog was set by an event, main event handler will repond
 
     public int UnknownCounter = 0;
-    //int NumEntities;
-    public int MaxEntity = 0;//higest index entity that is activated
-    //64 max
-    public readonly Entity[] Entities = new Entity[0x40];
-    public Entity PlayerEntity;
 
     public Entity ActiveCollisionEntity;
-    public Entity CameraFollowEntity;
 
     public readonly EventProgramState GlobalEventData = new();
 
-
     public readonly Entity[] GetEntityList = new Entity[128];
-
-    public int ToCollideCount = 0;
-    public readonly Entity[] ToCollideList = new Entity[128];
-
-    public int ToRenderCount = 0;
-    public readonly Entity[] ToRenderList = new Entity[128];
-
-    public int ToProcessesCount = 0;
-    public readonly Entity[] ToProcessList = new Entity[128];
 
     public List<MapEvent> MapEvents = new();
 
-    private readonly Entity[] _entitySlots = new Entity[64];
-
+    private readonly Entity[] g_entitySlots = new Entity[64];
+    public readonly Entity[] Entities = new Entity[0x40];
+    public Entity PlayerEntity; // => Entities[0]
 
 
     public GameState(GameMap alundraGameMap, BalanceBin balanceBin, SoundBin soundBin)
@@ -75,9 +51,9 @@ public class GameState
         BalanceBin = balanceBin;
         SoundBin = soundBin;
 
-        for (int i = 0; i < _entitySlots.Length; i++)
+        for (int i = 0; i < g_entitySlots.Length; i++)
         {
-            _entitySlots[i] = new Entity
+            g_entitySlots[i] = new Entity
             {
                 Index = i,
                 Status = 0,
@@ -144,7 +120,7 @@ public class GameState
             Entities[i] = entity;
         }
 
-        MaxEntity = 0;
+        StaticVariables.g_numberOfEntity = 0;
 
         InitializeEntitySlots();
 
@@ -165,7 +141,7 @@ public class GameState
             }
         }
 
-        CameraFollowEntity = PlayerEntity;
+        StaticVariables.g_entityFollowedByCamera = PlayerEntity;
     }
 
     public void Initialize()
@@ -260,8 +236,8 @@ public class GameState
         StaticVariables.g_warpType = 0;
         StaticVariables.g_warpTriggerType = 0x36;
         StaticVariables.g_warpExtraParam = 0;
-        StaticVariables.g_targetCamX = (StaticVariables.g_initialWarpTileX * 0x18 + 0xc) * 0x10000;
-        StaticVariables.g_targetCamY = (StaticVariables.g_initialWarpTileY * 0x10 + 8) * 0x10000;
+        StaticVariables.g_cameraTargetX = (StaticVariables.g_initialWarpTileX * 0x18 + 0xc) * 0x10000;
+        StaticVariables.g_cameraTargetY = (StaticVariables.g_initialWarpTileY * 0x10 + 8) * 0x10000;
         StaticVariables.g_animation_id = StaticVariables.g_initialWarpZ << 0x14;
         StaticVariables.g_gameplayTime = StaticVariables.g_tempGameState;
     }
@@ -307,7 +283,7 @@ public class GameState
             blockStart = writePtr;
         } while ((int)entityCounter < 0x40); //64
         */
-        StaticVariables.g_entity = null;
+        //StaticVariables.g_entity = null;
         ResetEntityState();
         initDataIndex = 0;
         //var initTableEntry = 0; //StaticVariables.g_initTableEntry;
@@ -387,7 +363,7 @@ public class GameState
         //    /*StaticVariables.g_initialAnimationTable->entries*/null, 
         //    null, 0,
         //    -1, 
-        //    StaticVariables.g_targetCamX, StaticVariables.g_targetCamY, 
+        //    StaticVariables.g_cameraTargetX, StaticVariables.g_cameraTargetY, 
         //    StaticVariables.g_animation_id, StaticVariables.g_warpTriggerType, StaticVariables.g_warpExtraParam,
         //    0xb, 0x60);
         StaticVariables.g_playerInitState = 2;
@@ -406,11 +382,11 @@ public class GameState
 
     private Entity AllocateEntitySlot()
     {
-        for (int i = 1; i < _entitySlots.Length; i++)
+        for (int i = 1; i < g_entitySlots.Length; i++)
         {
-            if (_entitySlots[i].Status == 0)
+            if (g_entitySlots[i].Status == 0)
             {
-                return _entitySlots[i];
+                return g_entitySlots[i];
             }
         }
 
@@ -758,24 +734,13 @@ public class GameState
 
     public void InitializeEntity(Entity entity, Entity ownerEntity, SpriteRecord sprite, SiEntityRecord initData, int spriteTableIndex, int entityId, int x, int y, int z, int anim, int dir, int addedtosheet, int addedtopalette)
     {
-        if (MaxEntity < entity.Index)
+        if (StaticVariables.g_numberOfEntity < entity.Index)
         {
-            MaxEntity = entity.Index;
+            StaticVariables.g_numberOfEntity = entity.Index;
         }
 
         entity.OwnerEntity = ownerEntity;
-
-        if (ownerEntity != null)
-        {
-            if (ownerEntity.UnknownBeforeOwnerEntity != null)
-            {
-                entity.UnknownBeforeOwnerEntity = ownerEntity.UnknownBeforeOwnerEntity;
-            }
-            else
-            {
-                entity.UnknownBeforeOwnerEntity = ownerEntity;
-            }
-        }
+        entity.UnknownBeforeOwnerEntity = ownerEntity?.UnknownBeforeOwnerEntity;
 
         entity.Sprite = sprite;
         entity.EntityRecord = initData;
@@ -979,8 +944,8 @@ public class GameState
                 }
             }
 
-            entity._180 = somevals[0] | somevals[1] | somevals[2] | somevals[3];
-            entity._184 = somevals[0] & somevals[1] & somevals[2] & somevals[3];
+            entity.combinedVramFlagsOR = somevals[0] | somevals[1] | somevals[2] | somevals[3];
+            entity.combinedVramFlagsAND = somevals[0] & somevals[1] & somevals[2] & somevals[3];
 
             var tilex = entity.XTile;
 
@@ -1016,8 +981,8 @@ public class GameState
         else
         {
             tohit = 0;
-            entity._180 = 0;
-            entity._184 = 0;
+            entity.combinedVramFlagsOR = 0;
+            entity.combinedVramFlagsAND = 0;
         }
 
         //all that slope code is for setting this value
@@ -1046,14 +1011,14 @@ public class GameState
             return collision;
         }
 
-        if (ToCollideCount <= 0)
+        if (StaticVariables.g_collideableEntitiesCount <= 0)
         {
             return collision;
         }
 
-        for (var dex = 0; dex < ToCollideCount; dex++)
+        for (var dex = 0; dex < StaticVariables.g_collideableEntitiesCount; dex++)
         {
-            var checkme = ToCollideList[dex];
+            var checkme = StaticVariables.g_collideableEntities[dex];
 
             if (checkme == entity)
             {
@@ -1731,7 +1696,7 @@ public class GameState
         effect.TargetSpriteTableIndex = 0;
         effect.CurrentSpriteTableIndex = 0;
         effect.TargetAnim = 0;
-        effect.CurAnim = 0;
+        effect.CurrentAnim = 0;
         effect.Frame = null;
         effect.FirstFrame = null;
         effect.Delay = 0;
@@ -1756,7 +1721,7 @@ public class GameState
         effect.CurrentIsMapSprite = (byte)~ismapeffect;
         effect.TargetSpriteTableIndex = effectid;
         effect.TargetAnim = animid;
-        effect.CurAnim = (byte)~animid;
+        effect.CurrentAnim = (byte)~animid;
         effect.X = x;
         effect.Y = y;
         effect.Z = z;

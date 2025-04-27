@@ -22,7 +22,7 @@ public class SiEffectAnimation
 
             for (var dex2 = 0; dex2 < dex; dex2++)
             {
-                if (Frames[dex2].Imagesetpointer == Frames[dex].Imagesetpointer)
+                if (Frames[dex2].ImageSetPointer == Frames[dex].ImageSetPointer)
                 {
                     Frames[dex].Images = Frames[dex2].Images;
                     break;

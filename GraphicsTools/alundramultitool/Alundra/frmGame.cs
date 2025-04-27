@@ -8,9 +8,9 @@ namespace GraphicsTools.Alundra
 {
     public partial class FrmGame : Form
     {
-        private Game _engine;
-        private Timer _tmr;
-        private Bitmap _backBuffer = new(320, 240);
+        private readonly Game _engine;
+        private readonly Timer _tmr;
+        private readonly Bitmap _backBuffer = new(320, 240);
 
         public FrmGame(DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR, Font3 font3)
         {
