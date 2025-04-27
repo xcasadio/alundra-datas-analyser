@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <stdlib.h>
 
@@ -12,11 +12,12 @@
 #define false 0
 #define true  1
 
-typedef unsigned char   undefined;
 typedef long long longlong;
 typedef unsigned long long ulonglong;
 
 //exported from Ghidra
+
+typedef unsigned char undefined;
 
 typedef unsigned char bool;
 typedef unsigned char byte;
@@ -37,26 +38,26 @@ typedef unsigned short word;
 
 typedef struct Entity Entity, * PEntity;
 
+//modify by hand don't delete
 typedef void (*func)();
 typedef void (*func49)(int, void (*func)());
 typedef void (*code)(Entity*, uint*);
+//end
+
 
 typedef struct AnimationData AnimationData, * PAnimationData;
 
 struct AnimationData {
     int* entries;
     int* frameListOffset;
-    undefined1 entryIndex; /* Created by retype action */
-    undefined field3_0x9;
-    undefined field4_0xa;
-    undefined field5_0xb;
+    short entryIndex;
+    short isZForceApplied;
     int* pointerListOffset;
-    uint3 field7_0x10;
-    undefined field8_0x13;
+    uint flags;
     int* rawPtrListOffset;
-    char offsetX;
-    char offsetY;
-    char offsetZ;
+    byte offsetX;
+    byte offsetY;
+    byte offsetZ;
     byte sizeX;
     byte sizeY;
     byte sizeZ;
@@ -81,7 +82,37 @@ struct AnimationTable {
     int field13_0x34;
 };
 
-typedef struct Effect Effect, * PEffect;
+typedef struct BalanceAnimValRef BalanceAnimValRef, * PBalanceAnimValRef;
+
+struct BalanceAnimValRef {
+    byte val;
+    byte u2;
+};
+
+typedef struct BalanceRecord BalanceRecord, * PBalanceRecord;
+
+struct BalanceRecord {
+    byte level;
+    byte offsetToNextLevel;
+    byte Hp;
+    byte values[11];
+    byte numAnimVals;
+    int* animVals;
+    struct BalanceRecord* next;
+};
+
+typedef struct EffectFrame EffectFrame, * PEffectFrame;
+
+struct EffectFrame {
+    byte delay;
+    int imageSet; /* ImageSetPointer = br.ReadUInt16() * 2; */
+};
+
+//typedef struct Entity Entity, * PEntity;
+
+typedef struct Frame Frame, * PFrame;
+
+typedef struct FrameCollisionData FrameCollisionData, * PFrameCollisionData;
 
 typedef struct LogicContext LogicContext, * PLogicContext;
 
@@ -96,15 +127,15 @@ struct Entity {
     int hp;
     int hpMax;
     int hitFrameCounter;
-    int field8_0x20;
+    int isNotProcessable;
     int flags2;
     struct Entity* platformEntity;
-    int field11_0x2c;
+    int actionState;
     int contentsItemId;
     int contentsGameFlag;
     void* entityRecord;
     void* scriptCallback;
-    int programIndexes[6];
+    int programIndexes[6]; /* [0]=scriptId, [1]=initDataId, [2]=Entity, logicmode... */
     int field17_0x58;
     int zVelocity;
     int warpScriptPointer;
@@ -116,10 +147,10 @@ struct Entity {
     uint targetDirection;
     uint currentAnimationId;
     uint currentDirection;
-    int currentAnimFrame;
+    int currentFrameIndex;
     int* animSet;
-    int* initialFrame;
-    int* frame;
+    struct Frame* initialFrame;
+    struct Frame* frame;
     int nextFrameDelay;
     int forceResetAnimationFlag;
     int animCompleteCounter;
@@ -162,38 +193,34 @@ struct Entity {
     int isAboveGround;
     int mapTiles[4]; /* convert to MapTile */
     int mapHeights[4];
-    undefined field74_0x168;
-    undefined field75_0x169;
-    undefined field76_0x16a;
-    undefined field77_0x16b;
-    int field78_0x16c;
+    int platformUpdateFlag;
+    int field75_0x16c;
     int hitboxOriginX;
     int hitboxOriginY;
     int hitboxOriginZ;
-    int field82_0x17c;
+    int field79_0x17c;
     int combinedVramFlagsOR;
     int combinedVramFlagsAND;
     int tileAttributes;
     int hitboxHeightY; /* slope ? */
     int hitboxHeightZ; /* slope ? */
-    byte* collisionDataPtr; /* sprite ref */
-    int xposOld;
-    int yposOld;
-    short zposOld;
-    short renderOrderOffsetOld;
-    int zSortFlagsOld;
-    uint collisionParam1;
-    uint collisionParam2;
+    int* spriteImages;
+    int spriteX;
+    int spriteY;
+    int spriteZ;
+    int depthSortVal;
+    int spriteNumberOfImages;
+    int field91_0x1ac;
     int paletteIndex; /* represents offset where the pallets and sheets are in memory for map vs global sprites */
     int sheetSize; /* represents offset where the pallets and sheets are in memory for map vs global sprites */
     int warpLinkedEntity;
     int zSortValue;
     int zSortDepth;
-    int balanceRecord; /* BalanceRecord */
-    int balanceVal; /* BalanceAnimValRef */
+    struct BalanceRecord* balanceRecord;
+    struct BalanceAnimValRef* balanceAnimValRef;
     int damagedTickCounter;
     int frameColTickCounter;
-    char* currentTransformData; /* FrameCollisionData */
+    struct FrameCollisionData* frameCollisionData;
     int adjustedPosX;
     int adjustedPosY;
     int adjustedPosZ;
@@ -219,170 +246,132 @@ struct Entity {
     struct Entity* logicContextEntity;
     struct LogicContext* logicContext;
     struct Script* script;
-    undefined field131_0x23c;
-    undefined field132_0x23d;
-    undefined field133_0x23e;
-    undefined field134_0x23f;
-    undefined field135_0x240;
-    undefined field136_0x241;
-    undefined field137_0x242;
-    undefined field138_0x243;
-    undefined field139_0x244;
-    undefined field140_0x245;
-    undefined field141_0x246;
-    undefined field142_0x247;
-    undefined field143_0x248;
-    undefined field144_0x249;
-    undefined field145_0x24a;
-    undefined field146_0x24b;
-    undefined field147_0x24c;
-    undefined field148_0x24d;
-    undefined field149_0x24e;
-    undefined field150_0x24f;
-    undefined field151_0x250;
-    undefined field152_0x251;
-    undefined field153_0x252;
-    undefined field154_0x253;
-    undefined field155_0x254;
-    undefined field156_0x255;
-    undefined field157_0x256;
-    undefined field158_0x257;
-    undefined field159_0x258;
-    undefined field160_0x259;
-    undefined field161_0x25a;
-    undefined field162_0x25b;
-    undefined field163_0x25c;
-    undefined field164_0x25d;
-    undefined field165_0x25e;
-    undefined field166_0x25f;
-    undefined field167_0x260;
-    undefined field168_0x261;
-    undefined field169_0x262;
-    undefined field170_0x263;
-    undefined field171_0x264;
-    undefined field172_0x265;
-    undefined field173_0x266;
-    undefined field174_0x267;
-    undefined field175_0x268;
-    undefined field176_0x269;
-    undefined field177_0x26a;
-    undefined field178_0x26b;
+    byte _23c[40];
+    int _264;
+    int _268;
     int lastTargetAnimationId;
     int lastTargetDirection;
     int spawnCustomByte;
     int initialXPos;
     int initialYPos; /* can be equals to spawnedGameFlag[2] */
-    int spawnedGameFlag[12]; /* [0] = animId?? [1] arg can be an Entity [2] = duration [3] phaseNum [10] remainingDelay */
+    int spawnedGameFlag[5]; /* [0] = animId?? [1] arg can be an Entity [2] = duration [3] phaseNum [10] remainingDelay */
 };
 
 struct Script {
     int command;
-    undefined field1_0x4;
-    undefined field2_0x5;
-    undefined field3_0x6;
-    undefined field4_0x7;
-    undefined field5_0x8;
-    undefined field6_0x9;
-    undefined field7_0xa;
-    undefined field8_0xb;
-    undefined field9_0xc;
-    undefined field10_0xd;
+    byte _4[10];
+};
+
+struct Frame {
+    byte delay; /* delay & 0x80 → indique un frame avec données de sprite/transform. */
+    byte transformIndexLow; /* transformIndex = high<<8 | low → index dans la table de TransformData */
+    byte transformIndexHigh; /* transformIndex = high<<8 | low → index dans la table de TransformData */
+    byte spriteIndexLow; /* spriteIndex = high<<8 | low → index vers la table de SpriteImageData */
+    byte spriteIndexHigh; /* spriteIndex = high<<8 | low → index vers la table de SpriteImageData */
 };
 
 struct LogicContext {
-    undefined field0_0x0;
-    undefined field1_0x1;
-    undefined field2_0x2;
-    undefined field3_0x3;
+    int field0_0x0;
     struct Script* script;
-    int previousCommandPtr; /* Created by retype action */
-    int xpos; /* Created by retype action */
-    int savedY; /* Created by retype action */
-    int savedZ; /* Created by retype action */
-    int animRepeatCount; /* Created by retype action */
-    int frameCounter; /* Created by retype action */
-    undefined field11_0x20;
-    undefined field12_0x21;
-    undefined field13_0x22;
-    undefined field14_0x23;
-    undefined field15_0x24;
-    undefined field16_0x25;
-    undefined field17_0x26;
-    undefined field18_0x27;
-    undefined field19_0x28;
-    undefined field20_0x29;
-    undefined field21_0x2a;
-    undefined field22_0x2b;
+    int previousCommandPtr;
+    int xpos;
+    int savedY;
+    int savedZ;
+    int animRepeatCount;
+    int frameCounter;
+    int _20;
+    int _24;
+    int _28;
     int isCommandSuccess;
-    undefined1 saveY; /* Created by retype action */
-    undefined field25_0x31;
-    undefined field26_0x32;
-    undefined field27_0x33;
+    byte saveY;
+    byte _31;
+    byte _32;
+    byte _33;
     struct Script* nextInstruction;
 };
 
-struct Effect {
-    undefined4 effectId;
-    int field1_0x4;
-    undefined4 animationDataPtr;
-    undefined4 field3_0xc;
-    struct Effect* nextEffect; /* Created by retype action */
-    undefined field5_0x14;
-    undefined field6_0x15;
-    undefined field7_0x16;
-    undefined field8_0x17;
-    undefined field9_0x18;
-    undefined field10_0x19;
-    undefined field11_0x1a;
-    undefined field12_0x1b;
-    undefined field13_0x1c;
-    undefined field14_0x1d;
-    undefined field15_0x1e;
-    undefined field16_0x1f;
-    undefined field17_0x20;
-    undefined field18_0x21;
-    undefined field19_0x22;
-    undefined field20_0x23;
-    undefined field21_0x24;
-    undefined field22_0x25;
-    undefined field23_0x26;
-    undefined field24_0x27;
-    undefined field25_0x28;
-    undefined field26_0x29;
-    undefined field27_0x2a;
-    undefined field28_0x2b;
-    undefined field29_0x2c;
-    undefined field30_0x2d;
-    undefined field31_0x2e;
-    undefined field32_0x2f;
-    int logicParam;
+struct FrameCollisionData {
+    char xOffset;
+    char yOffset;
+    char zOffset;
+    byte width;
+    byte depth;
+    byte heigth;
+};
+
+typedef struct EntityEffect EntityEffect, * PEntityEffect;
+
+struct EntityEffect {
+    int Id;
+    int* mapEffectRecord; /* MapEffectRecord */
+    int* spriteEffectRecord; /* SpriteEffectRecord */
+    int* spriteRef; /* SpriteRef */
+    struct EntityEffect* nextEffect;
+    int _14;
+    int _18;
+    int zSortValue2;
+    int _20;
+    int _24;
+    int sheetSize;
+    int paletteIndex;
+    int mapEffectId;
     int updateMode;
     struct Entity* attachedEntity;
-    int posX;
-    int posY;
-    int posZ;
-    int velocityX; /* Created by retype action */
-    int velocityY; /* Created by retype action */
-    int velocityZ; /* Created by retype action */
-    int velocityX2; /* Created by retype action */
-    int velocityZ2; /* Created by retype action */
-    int velocityY2; /* Created by retype action */
-    int zSortOffset; /* Created by retype action */
-    int zSortValue; /* Created by retype action */
-    int state;
-    bool hasBehavior;
-    bool noBehavior;
-    byte type;
-    byte typeInverse;
-    byte subType;
-    byte subTypeInverse;
+    int x;
+    int y;
+    int z;
+    int velocityX;
+    int velocityY;
+    int velocityZ;
+    int xForce;
+    int yForce;
+    int zForce;
+    int zSortOffset;
+    int zSortValue; /* stored to 1c, is it a depth sorting id? */
+    int status; /* 2 is active */
+    bool targetIsMapSprite;
+    bool currentIsMapSprite;
+    byte targetSpriteTableIndex;
+    byte currentSpriteTableIndex;
+    byte targetAnimation;
+    byte currentAnimation;
+    short _72;
+    struct EffectFrame* effectFrame;
+    struct EffectFrame* initialEffectFrame;
+    byte delay;
+    byte destroyFlag; /* if this is set true the effect is destroyed on next update (status = 0) */
+};
+
+typedef struct EntityRecord EntityRecord, * PEntityRecord;
+
+struct EntityRecord {
+    byte xMin;
+    byte yMin;
+    byte xMax;
+    byte yMax;
+    byte isEnabled;
+    byte spriteDirection;
+    byte spriteTableIndex;
+    byte xPox;
+    byte yPos;
+    byte height;
+    byte eventCodesA_LoadIndex;
+    byte eventCodesB_MapIndex;
+    byte eventCodesC_TickIndex;
+    byte eventCodesD_TouchIndex;
+    byte eventCodesE_DeactivateIndex;
+    byte eventCodesF_InteractIndex;
+    byte _10;
+    byte _11;
+    byte contents;
+    byte _13;
 };
 
 typedef struct FadeControl FadeControl, * PFadeControl;
 
 struct FadeControl {
-    undefined field0_0x0;
-    undefined field1_0x1;
+    byte _0;
+    byte _1;
     short warpVisualId; /* Created by retype action */
     short targetFadeLevel;
     short maxFadeLevel;
@@ -407,15 +396,15 @@ struct SpriteMapEntry {
     bool enabled;
     byte vramShift;
     char tileWidth;
-    undefined1 rowCount;
-    undefined1 offsetX;
-    undefined1 offsetY;
-    undefined1 offsetZ;
+    byte rowCount;
+    byte offsetX;
+    byte offsetY;
+    byte offsetZ;
 };
 
 typedef struct SprtGridDescriptor SprtGridDescriptor, * PSprtGridDescriptor;
 
-typedef struct SPRT *PSPRT;
+typedef struct SPRT * PSPRT;
 
 typedef ulong u_long;
 
@@ -424,10 +413,8 @@ typedef uchar u_char;
 typedef ushort u_short;
 
 struct SprtGridDescriptor {
-    undefined field0_0x0;
-    undefined field1_0x1;
-    undefined field2_0x2;
-    undefined field3_0x3;
+    short _0;
+    short _2;
     short spriteCountX;
     short spriteCountY;
     struct SPRT* spriteTablePtr;
@@ -451,21 +438,18 @@ struct SPRT {
 typedef struct TileSetMetaData TileSetMetaData, * PTileSetMetaData;
 
 struct TileSetMetaData {
-    undefined field0_0x0;
-    undefined field1_0x1;
-    undefined field2_0x2;
-    undefined field3_0x3;
+    byte tileUVCoordinates; /* Created by retype action */
+    byte _1;
+    byte tileRenderDataLow; /* Created by retype action */
+    byte tileRenderDataHigh; /* Created by retype action */
     byte numberOfLayers; /* Created by retype action */
     short tileDepth; /* Created by retype action */
-    undefined field6_0x7;
-    undefined field7_0x8;
-    undefined field8_0x9;
-    undefined field9_0xa;
+    int _7;
     byte tileAnimationMode; /* Created by retype action */
-    undefined field11_0xc;
-    undefined field12_0xd;
-    undefined field13_0xe;
-    undefined field14_0xf;
+    byte frameOffsetTable; /* Created by retype action */
+    byte _d;
+    byte _e;
+    byte _f;
     int tileAnimationBankOffset; /* Created by retype action */
     int tileAnimationOffset;
 };
@@ -473,431 +457,39 @@ struct TileSetMetaData {
 typedef struct Voice Voice, * PVoice;
 
 struct Voice {
-    undefined1 volLeft; /* Created by retype action */
-    undefined field1_0x1;
-    undefined field2_0x2;
-    undefined field3_0x3;
-    undefined1 pitch; /* Created by retype action */
-    undefined field5_0x5;
-    undefined1 reverbDepth; /* Created by retype action */
-    undefined field7_0x7;
-    undefined1 adsrAttack; /* Created by retype action */
-    undefined field9_0x9;
-    undefined1 adsrSustain; /* Created by retype action */
-    undefined field11_0xb;
-    undefined1 status; /* Created by retype action */
-    undefined field13_0xd;
-    undefined field14_0xe;
-    undefined field15_0xf;
-    undefined field16_0x10;
-    undefined field17_0x11;
-    undefined field18_0x12;
-    undefined field19_0x13;
-    undefined field20_0x14;
-    undefined field21_0x15;
-    undefined field22_0x16;
-    undefined field23_0x17;
-    undefined field24_0x18;
-    undefined field25_0x19;
-    undefined field26_0x1a;
-    undefined field27_0x1b;
-    undefined field28_0x1c;
-    undefined field29_0x1d;
-    undefined field30_0x1e;
-    undefined field31_0x1f;
-    undefined field32_0x20;
-    undefined field33_0x21;
-    undefined field34_0x22;
-    undefined field35_0x23;
-    undefined field36_0x24;
-    undefined field37_0x25;
-    undefined field38_0x26;
-    undefined field39_0x27;
-    undefined field40_0x28;
-    undefined field41_0x29;
-    undefined field42_0x2a;
-    undefined field43_0x2b;
-    undefined field44_0x2c;
-    undefined field45_0x2d;
-    undefined field46_0x2e;
-    undefined field47_0x2f;
-    undefined field48_0x30;
-    undefined field49_0x31;
-    undefined field50_0x32;
-    undefined field51_0x33;
-    undefined field52_0x34;
-    undefined field53_0x35;
-    undefined field54_0x36;
-    undefined field55_0x37;
-    undefined field56_0x38;
-    undefined field57_0x39;
-    undefined field58_0x3a;
-    undefined field59_0x3b;
-    undefined field60_0x3c;
-    undefined field61_0x3d;
-    undefined field62_0x3e;
-    undefined field63_0x3f;
-    undefined field64_0x40;
-    undefined field65_0x41;
-    undefined field66_0x42;
-    undefined field67_0x43;
-    undefined field68_0x44;
-    undefined field69_0x45;
-    undefined field70_0x46;
-    undefined field71_0x47;
-    undefined field72_0x48;
-    undefined field73_0x49;
-    undefined field74_0x4a;
-    undefined field75_0x4b;
-    undefined field76_0x4c;
-    undefined field77_0x4d;
-    undefined field78_0x4e;
-    undefined field79_0x4f;
-    undefined field80_0x50;
-    undefined field81_0x51;
-    undefined field82_0x52;
-    undefined field83_0x53;
-    undefined field84_0x54;
-    undefined field85_0x55;
-    undefined field86_0x56;
-    undefined field87_0x57;
-    undefined field88_0x58;
-    undefined field89_0x59;
-    undefined field90_0x5a;
-    undefined field91_0x5b;
-    undefined field92_0x5c;
-    undefined field93_0x5d;
-    undefined field94_0x5e;
-    undefined field95_0x5f;
-    undefined field96_0x60;
-    undefined field97_0x61;
-    undefined field98_0x62;
-    undefined field99_0x63;
-    undefined field100_0x64;
-    undefined field101_0x65;
-    undefined field102_0x66;
-    undefined field103_0x67;
-    undefined field104_0x68;
-    undefined field105_0x69;
-    undefined field106_0x6a;
-    undefined field107_0x6b;
-    undefined field108_0x6c;
-    undefined field109_0x6d;
-    undefined field110_0x6e;
-    undefined field111_0x6f;
-    undefined field112_0x70;
-    undefined field113_0x71;
-    undefined field114_0x72;
-    undefined field115_0x73;
-    undefined field116_0x74;
-    undefined field117_0x75;
-    undefined field118_0x76;
-    undefined field119_0x77;
-    undefined field120_0x78;
-    undefined field121_0x79;
-    undefined field122_0x7a;
-    undefined field123_0x7b;
-    undefined field124_0x7c;
-    undefined field125_0x7d;
-    undefined field126_0x7e;
-    undefined field127_0x7f;
-    undefined field128_0x80;
-    undefined field129_0x81;
-    undefined field130_0x82;
-    undefined field131_0x83;
-    undefined field132_0x84;
-    undefined field133_0x85;
-    undefined field134_0x86;
-    undefined field135_0x87;
-    undefined field136_0x88;
-    undefined field137_0x89;
-    undefined field138_0x8a;
-    undefined field139_0x8b;
-    undefined field140_0x8c;
-    undefined field141_0x8d;
-    undefined field142_0x8e;
-    undefined field143_0x8f;
-    undefined field144_0x90;
-    undefined field145_0x91;
-    undefined field146_0x92;
-    undefined field147_0x93;
-    undefined field148_0x94;
-    undefined field149_0x95;
-    undefined field150_0x96;
-    undefined field151_0x97;
-    undefined field152_0x98;
-    undefined field153_0x99;
-    undefined field154_0x9a;
-    undefined field155_0x9b;
-    undefined field156_0x9c;
-    undefined field157_0x9d;
-    undefined field158_0x9e;
-    undefined field159_0x9f;
-    undefined field160_0xa0;
-    undefined field161_0xa1;
-    undefined field162_0xa2;
-    undefined field163_0xa3;
-    undefined field164_0xa4;
-    undefined field165_0xa5;
-    undefined field166_0xa6;
-    undefined field167_0xa7;
-    undefined field168_0xa8;
-    undefined field169_0xa9;
-    undefined field170_0xaa;
-    undefined field171_0xab;
-    undefined field172_0xac;
-    undefined field173_0xad;
-    undefined field174_0xae;
-    undefined field175_0xaf;
-    undefined field176_0xb0;
-    undefined field177_0xb1;
-    undefined field178_0xb2;
-    undefined field179_0xb3;
-    undefined field180_0xb4;
-    undefined field181_0xb5;
-    undefined field182_0xb6;
-    undefined field183_0xb7;
-    undefined field184_0xb8;
-    undefined field185_0xb9;
-    undefined field186_0xba;
-    undefined field187_0xbb;
-    undefined field188_0xbc;
-    undefined field189_0xbd;
-    undefined field190_0xbe;
-    undefined field191_0xbf;
-    undefined field192_0xc0;
-    undefined field193_0xc1;
-    undefined field194_0xc2;
-    undefined field195_0xc3;
-    undefined field196_0xc4;
-    undefined field197_0xc5;
-    undefined field198_0xc6;
-    undefined field199_0xc7;
-    undefined field200_0xc8;
-    undefined field201_0xc9;
-    undefined field202_0xca;
-    undefined field203_0xcb;
-    undefined field204_0xcc;
-    undefined field205_0xcd;
-    undefined field206_0xce;
-    undefined field207_0xcf;
-    undefined field208_0xd0;
-    undefined field209_0xd1;
-    undefined field210_0xd2;
-    undefined field211_0xd3;
-    undefined field212_0xd4;
-    undefined field213_0xd5;
-    undefined field214_0xd6;
-    undefined field215_0xd7;
-    undefined field216_0xd8;
-    undefined field217_0xd9;
-    undefined field218_0xda;
-    undefined field219_0xdb;
-    undefined field220_0xdc;
-    undefined field221_0xdd;
-    undefined field222_0xde;
-    undefined field223_0xdf;
-    undefined field224_0xe0;
-    undefined field225_0xe1;
-    undefined field226_0xe2;
-    undefined field227_0xe3;
-    undefined field228_0xe4;
-    undefined field229_0xe5;
-    undefined field230_0xe6;
-    undefined field231_0xe7;
-    undefined field232_0xe8;
-    undefined field233_0xe9;
-    undefined field234_0xea;
-    undefined field235_0xeb;
-    undefined field236_0xec;
-    undefined field237_0xed;
-    undefined field238_0xee;
-    undefined field239_0xef;
-    undefined field240_0xf0;
-    undefined field241_0xf1;
-    undefined field242_0xf2;
-    undefined field243_0xf3;
-    undefined field244_0xf4;
-    undefined field245_0xf5;
-    undefined field246_0xf6;
-    undefined field247_0xf7;
-    undefined field248_0xf8;
-    undefined field249_0xf9;
-    undefined field250_0xfa;
-    undefined field251_0xfb;
-    undefined field252_0xfc;
-    undefined field253_0xfd;
-    undefined field254_0xfe;
-    undefined field255_0xff;
-    undefined field256_0x100;
-    undefined field257_0x101;
-    undefined field258_0x102;
-    undefined field259_0x103;
-    undefined field260_0x104;
-    undefined field261_0x105;
-    undefined field262_0x106;
-    undefined field263_0x107;
-    undefined field264_0x108;
-    undefined field265_0x109;
-    undefined field266_0x10a;
-    undefined field267_0x10b;
-    undefined field268_0x10c;
-    undefined field269_0x10d;
-    undefined field270_0x10e;
-    undefined field271_0x10f;
-    undefined field272_0x110;
-    undefined field273_0x111;
-    undefined field274_0x112;
-    undefined field275_0x113;
-    undefined field276_0x114;
-    undefined field277_0x115;
-    undefined field278_0x116;
-    undefined field279_0x117;
-    undefined field280_0x118;
-    undefined field281_0x119;
-    undefined field282_0x11a;
-    undefined field283_0x11b;
-    undefined field284_0x11c;
-    undefined field285_0x11d;
-    undefined field286_0x11e;
-    undefined field287_0x11f;
-    undefined field288_0x120;
-    undefined field289_0x121;
-    undefined field290_0x122;
-    undefined field291_0x123;
-    undefined field292_0x124;
-    undefined field293_0x125;
-    undefined field294_0x126;
-    undefined field295_0x127;
-    undefined field296_0x128;
-    undefined field297_0x129;
-    undefined field298_0x12a;
-    undefined field299_0x12b;
-    undefined field300_0x12c;
-    undefined field301_0x12d;
-    undefined field302_0x12e;
-    undefined field303_0x12f;
-    undefined field304_0x130;
-    undefined field305_0x131;
-    undefined field306_0x132;
-    undefined field307_0x133;
-    undefined field308_0x134;
-    undefined field309_0x135;
-    undefined field310_0x136;
-    undefined field311_0x137;
-    undefined field312_0x138;
-    undefined field313_0x139;
-    undefined field314_0x13a;
-    undefined field315_0x13b;
-    undefined field316_0x13c;
-    undefined field317_0x13d;
-    undefined field318_0x13e;
-    undefined field319_0x13f;
-    undefined field320_0x140;
-    undefined field321_0x141;
-    undefined field322_0x142;
-    undefined field323_0x143;
-    undefined field324_0x144;
-    undefined field325_0x145;
-    undefined field326_0x146;
-    undefined field327_0x147;
-    undefined field328_0x148;
-    undefined field329_0x149;
-    undefined field330_0x14a;
-    undefined field331_0x14b;
-    undefined field332_0x14c;
-    undefined field333_0x14d;
-    undefined field334_0x14e;
-    undefined field335_0x14f;
-    undefined field336_0x150;
-    undefined field337_0x151;
-    undefined field338_0x152;
-    undefined field339_0x153;
-    undefined field340_0x154;
-    undefined field341_0x155;
-    undefined field342_0x156;
-    undefined field343_0x157;
-    undefined field344_0x158;
-    undefined field345_0x159;
-    undefined field346_0x15a;
-    undefined field347_0x15b;
-    undefined field348_0x15c;
-    undefined field349_0x15d;
-    undefined field350_0x15e;
-    undefined field351_0x15f;
-    undefined field352_0x160;
-    undefined field353_0x161;
-    undefined field354_0x162;
-    undefined field355_0x163;
-    undefined field356_0x164;
-    undefined field357_0x165;
-    undefined field358_0x166;
-    undefined field359_0x167;
-    undefined field360_0x168;
-    undefined field361_0x169;
-    undefined field362_0x16a;
-    undefined field363_0x16b;
-    undefined field364_0x16c;
-    undefined field365_0x16d;
-    undefined field366_0x16e;
-    undefined field367_0x16f;
-    undefined field368_0x170;
-    undefined field369_0x171;
-    undefined field370_0x172;
-    undefined field371_0x173;
-    undefined field372_0x174;
-    undefined field373_0x175;
-    undefined field374_0x176;
-    undefined field375_0x177;
-    undefined field376_0x178;
-    undefined field377_0x179;
-    undefined field378_0x17a;
-    undefined field379_0x17b;
-    undefined field380_0x17c;
-    undefined field381_0x17d;
-    undefined field382_0x17e;
-    undefined field383_0x17f;
-    undefined field384_0x180;
-    undefined field385_0x181;
-    undefined field386_0x182;
-    undefined field387_0x183;
-    undefined field388_0x184;
-    undefined field389_0x185;
-    undefined field390_0x186;
-    undefined field391_0x187;
-    undefined field392_0x188;
-    undefined field393_0x189;
-    undefined field394_0x18a;
-    undefined field395_0x18b;
-    undefined field396_0x18c;
-    undefined field397_0x18d;
-    undefined field398_0x18e;
-    undefined field399_0x18f;
-    undefined field400_0x190;
-    undefined field401_0x191;
-    undefined field402_0x192;
-    undefined field403_0x193;
-    ushort field404_0x194;
-    ushort field405_0x196;
-    undefined field406_0x198;
-    undefined field407_0x199;
-    undefined field408_0x19a;
-    undefined field409_0x19b;
-    undefined field410_0x19c;
-    undefined field411_0x19d;
-    undefined field412_0x19e;
-    undefined field413_0x19f;
-    undefined field414_0x1a0;
-    undefined field415_0x1a1;
-    undefined field416_0x1a2;
-    undefined field417_0x1a3;
-    undefined field418_0x1a4;
-    undefined field419_0x1a5;
-    undefined field420_0x1a6;
-    undefined field421_0x1a7;
-    undefined field422_0x1a8;
-    undefined field423_0x1a9;
-    ushort field424_0x1aa;
+    undefined1 volLeft;
+    byte _1;
+    byte _2;
+    byte _3;
+    byte pitch;
+    byte _5;
+    byte reverbDepth;
+    byte _7;
+    byte adsrAttack;
+    byte _9;
+    byte adsrSustain;
+    byte _b;
+    byte status;
+    byte _d[3];
+    struct Voice* nextVoice;
+    byte _14[359];
+    short _17b;
+    short _17d;
+    short _17f;
+    short _181;
+    byte _183[5];
+    short _188;
+    short _18a;
+    byte _18c;
+    byte _18d;
+    short _18e;
+    int _190;
+    ushort _194;
+    ushort _196;
+    short _198;
+    short _19a;
+    byte _19c[14];
+    ushort _1aa;
 };
 
 typedef struct WarpData WarpData, * PWarpData;
@@ -913,3 +505,4 @@ struct WarpData {
     short zLevel;
     ushort flags;
 };
+
