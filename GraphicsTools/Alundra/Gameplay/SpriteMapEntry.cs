@@ -1,11 +1,11 @@
 ﻿namespace Alundra.Gameplay;
 
 public class SpriteMapEntry {
-    bool enabled;
-    byte vramShift;
-    char tileWidth;
-    byte rowCount;
-    byte offsetX;
-    byte offsetY;
-    byte offsetZ;
+    public bool Enabled;
+    public byte VramShift;
+    public char TileWidth;
+    public byte RowCount;
+    public byte OffsetX;
+    public byte OffsetY;
+    public byte OffsetZ;
 };

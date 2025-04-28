@@ -8,7 +8,6 @@ public class SiEntityRecord
         //i used to think these were the last of the previous entry, but its the first of this oneMinx = br.ReadByte();//0
         XMin = br.ReadByte();//0
         YMin = br.ReadByte();//1
-
         XMax = br.ReadByte();//2
         YMax = br.ReadByte();//3
         IsEnabled = br.ReadByte();//4
@@ -80,7 +79,7 @@ public class SiEntityRecord
     public readonly byte EventCodesF_InteractIndex;
     public readonly short U7;
     //public byte u8;
-    public readonly byte Contents;
+    public readonly short Contents;
     public readonly byte U10;
 
 }

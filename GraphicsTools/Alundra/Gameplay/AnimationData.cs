@@ -1,17 +1,17 @@
 ﻿namespace Alundra.Gameplay;
 
 public class AnimationData {
-    int[] entries;
-    int[] frameListOffset;
-    short entryIndex;
-    short isZForceApplied;
-    int[] pointerListOffset;
-    uint flags;
-    int[] rawPtrListOffset;
-    byte offsetX;
-    byte offsetY;
-    byte offsetZ;
-    byte sizeX;
-    byte sizeY;
-    byte sizeZ;
+    public int[] Entries;
+    public int[] FrameListOffset;
+    public short EntryIndex;
+    public short IsZForceApplied;
+    public int[] PointerListOffset;
+    public uint Flags;
+    public int[] rawPtrListOffset;
+    public byte OffsetX;
+    public byte OffsetY;
+    public byte OffsetZ;
+    public byte SizeX;
+    public byte SizeY;
+    public byte SizeZ;
 };

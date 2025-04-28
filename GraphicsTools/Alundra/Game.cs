@@ -8,11 +8,6 @@ namespace Alundra;
 
 public class Game
 {
-    public const int ScreenWidth = 320;
-    public const int ScreenHeight = 224;
-    public const int MapTileWidth = 24;
-    public const int MapTileHeight = 16;
-
     private readonly DatasBin.DatasBin _datasBin;
     private readonly BalanceBin _balanceBin;
     private readonly EtcResR _etcResR;
@@ -22,7 +17,7 @@ public class Game
     private Dictionary<int, Bitmap> _cachedTiles;
     private Dictionary<int, List<Bitmap>> _cachedSprites;
     private readonly GameState _gameState;
-    private readonly EntityEventHandlers _entityEventHandlers;
+    //private readonly EntityEventHandlers _entityEventHandlers;
 
     public Game(DatasBin.DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR, Font3 font3)
     {
@@ -41,134 +36,19 @@ public class Game
         _gameState = new GameState(datasBin.AlundraGameMap, _balanceBin, soundBin);
             //{ StaticVariables.g_cameraCurrentX = 100 << 16, g_cameraCurrentY = 100 << 16 };
 
-        _entityEventHandlers = new EntityEventHandlers(_gameState);
+        //_entityEventHandlers = new EntityEventHandlers(_gameState);
     }
 
-    public void Initialize()
+    public void InitializeEngine()
     {
         _gameState.Initialize();
-
-        for (int i = 0; i < _gameState.SpriteEffects.Length; i++)
-        {
-            _gameState.SpriteEffects[i] = new SpriteEffect { Status = 0 };
-        }
-
+        StaticVariables.Initialize();
         LoadMap(389);
     }
 
     public void Render(Graphics g)
     {
-        var curxpos = StaticVariables.g_cameraCurrentX >> 16;
-        var curypos = StaticVariables.g_cameraCurrentY >> 16;
-
-        var curxtile = curxpos / 24;
-
-        var sinfo = _map.SpriteInfo;
-        var gensi = _datasBin.AlundraGameMap.SpriteInfo;
-
-        for (var y = 0; y < 60; y++)
-        {
-            //draw tiles on this row
-            for (var x = curxtile; x < curxtile + ScreenWidth / 24 + 2; x++)
-            {
-                var tile = _map.Map.MapTiles[y * 52 + x];
-                //render tile
-                var dx = x * 24 - curxpos;
-                var dy = (y - tile.Height) * 16 - curypos;
-
-                if (dy > -16 && dy < ScreenHeight && tile.TileId != -1)
-                {
-                    DrawTile(tile.TileId, dx, dy, g);
-                }
-
-                if (tile.WallTiles != null)
-                {
-                    var wallTiles = tile.WallTiles;
-                    int i;
-                    dy -= wallTiles.Offset * 16;
-
-                    for (i = 0; i < wallTiles.Count; i++)
-                    {
-                        dy += 16;
-                        //render wall tile
-                        if (dy > -16 && dy < ScreenHeight && wallTiles.Tiles[i] != -1)
-                        {
-                            DrawTile(wallTiles.Tiles[i], dx, dy, g);
-                        }
-                    }
-                }
-            }
-
-            //draw sprites who are on this row
-            for (var i = 0; i < StaticVariables.g_numberOfEntity; i++)
-            {
-                var si = _gameState.Entities[i];
-                if (si.Status == 5)
-                {
-                    continue;
-                }
-
-                if (si.YTile != y)
-                {
-                    continue;//if its not in this row, continue
-                }
-
-                //var tile = selectedGame.map.maptiles[sx + sy * selectedGame.map.width];
-                var scx = (si.ModdedXPos >> 16) - curxpos;
-                var scy = (si.ModdedYPos >> 16) - (si.ModdedZPos >> 16) - curypos;
-
-                if (si.Sprite != null)
-                {
-                    int idex;
-
-                    var map = si.IsMapSprite ? _map : _datasBin.AlundraGameMap;
-
-                    if (si.Frame == null) // why?? TODO, not initialized ?
-                    {
-                        continue;
-                    }
-
-                    var iset = si.Frame.Images;
-                    for (idex = iset.NumberOfImages - 1; idex >= 0; idex--)
-                    {
-                        var img = iset.Images[idex];
-                        DrawSprite(map, img, scx, scy, g);
-                    }
-                }
-            }
-        }
-    }
-
-    private readonly Point[] _pnts = new Point[4];
-    private void DrawSprite(GameMap gm, SiImage img, int x, int y, Graphics g)
-    {
-        var bmp = gm.GetSpriteBitmap(img);
-        _pnts[0].X = x + img.X1;
-        _pnts[0].Y = y + img.Y1;
-
-        _pnts[1].X = x + img.X2;
-        _pnts[1].Y = y + img.Y2;
-
-        _pnts[2].X = x + img.X3;
-        _pnts[2].Y = y + img.Y3;
-
-        _pnts[3].X = x + img.X4;
-        _pnts[3].Y = y + img.Y4;
-
-        var rectangle = new Rectangle(
-            x + Math.Min(img.X1, Math.Min(img.X2, Math.Min(img.X3, img.X4))), 
-            y + Math.Min(img.Y1, Math.Min(img.Y2, Math.Min(img.Y3, img.Y4))), 
-            x+ Math.Max(img.X1, Math.Max(img.X2, Math.Max(img.X3, img.X4))), 
-            y + Math.Max(img.Y1, Math.Max(img.Y2, Math.Max(img.Y3, img.Y4))));
-
-        g.DrawImage(bmp, rectangle);
-        //g.DrawImage(bmp, _pnts);
-    }
-
-    private void DrawTile(int tileid, int x, int y, Graphics g)
-    {
-        var bmp = _map.GetTileBitmap(tileid);
-        g.DrawImage(bmp, x, y);
+        Renderer.Render(g, _datasBin, _map);
     }
 
     public void LoadMap(int mapId)
@@ -284,8 +164,8 @@ public class Game
 
         //PlayMusic();
         //advance random seed num
-        var rnd = (int)(_gameState.Seed * 0x7d2b89dd + 0xe06a02e7);
-        _gameState.Seed = rnd;
+        var rnd = (int)(StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7);
+        StaticVariables.g_gameRandomSeed = (uint)rnd;
 
         if (force)
         {
@@ -317,7 +197,7 @@ public class Game
 
         UpdateEntities();
 
-        UpdateEffects();
+        UpdateAllActiveEffectsPostLogic();
 
     }
 
@@ -473,7 +353,7 @@ public class Game
 
     private void UpdateEntitiesForces()
     {
-        var player = _gameState.PlayerEntity;
+        var player = StaticVariables.PlayerEntity;
 
         for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
         {
@@ -484,7 +364,7 @@ public class Game
                 {
                     if ((player.Flags & 0x100) != 0
                         && (player.combinedVramFlagsOR & 0x0010) != 0
-                        && _gameState.SomeGravitySetting <= 0)
+                        && StaticVariables.g_gravityFlag <= 0)
                     {
                         player.ZForce = player.IsZForceApplied * 160;
                     }
@@ -535,7 +415,7 @@ public class Game
 
                 int targetxforce, targetyforce;
                 if ((player.combinedVramFlagsOR & 0x0008) != 0
-                    && _gameState.SomeGravitySetting <= 0)
+                    && StaticVariables.g_gravityFlag <= 0)
                 {
                     long resultx = player.TargetXForce * 0x8000;
                     targetxforce = (int)(resultx >> 16);
@@ -1016,27 +896,27 @@ public class Game
 
             var baseforce = (int)(0xffff << 16);
 
-            var i = _gameState.Seed;
+            var i = StaticVariables.g_gameRandomSeed;
             var val1 = (int)(i * 0x7d2b89dd);
             var val2 = (int)(0xe06a02e7 + val1);
             var targetval = (int)(((long)val2 * 0x20001) >> 32);
-            _gameState.Seed = val2;
+            StaticVariables.g_gameRandomSeed = (uint)val2;
 
             effect.XForce = targetval + baseforce;
 
-            i = _gameState.Seed;
+            i = StaticVariables.g_gameRandomSeed;
             val1 = (int)(i * 0x7d2b89dd);
             val2 = (int)(0xe06a02e7 + val1);
             targetval = (int)(((long)val2 * 0x20001) >> 32);
-            _gameState.Seed = val2;
+            StaticVariables.g_gameRandomSeed = (uint)val2;
 
             effect.YForce = targetval + baseforce;
 
-            i = _gameState.Seed;
+            i = StaticVariables.g_gameRandomSeed;
             val1 = (int)(i * 0x7d2b89dd);
             val2 = (int)(0xe06a02e7 + val1);
             targetval = (int)(((long)val2 * 0x20001) >> 32);
-            _gameState.Seed = val2;
+            StaticVariables.g_gameRandomSeed = (uint)val2;
 
             effect.ZForce = targetval + baseforce;
         }
@@ -1051,7 +931,7 @@ public class Game
 
         for (var i = 0; i < StaticVariables.g_numberOfEntity; i++)
         {
-            var entity = _gameState.Entities[i];
+            var entity = StaticVariables.g_entitySlots[i];
             if (entity.Status - 2 >= 2 || (entity.DamagedTickCounter & 3) == 3)
             {
                 if (entity.ActiveEffect != null)
@@ -1169,9 +1049,9 @@ public class Game
 
     private void UpdateEntitiesAnimation()
     {
-        for (var dex = 0; dex < StaticVariables.g_activeEntityCount; dex++)
+        for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
         {
-            var entity = _gameState.Entities[dex];
+            var entity = StaticVariables.g_entitySlots[i];
             _gameState.UpdateAnimation(entity);
         }
     }
@@ -1191,9 +1071,9 @@ public class Game
         {
             for (var dex = 1; dex < StaticVariables.g_numberOfEntity; dex++)
             {
-                var entity = _gameState.Entities[dex];
+                var entity = StaticVariables.g_entitySlots[dex];
                 var evttype = -1;
-                if (entity._20 == 0 && entity.Status < 5)
+                if (entity.PlatformEntity == null && entity.Status < 5)
                 {
                     switch (entity.Status)
                     {
@@ -1229,7 +1109,7 @@ public class Game
                             {
                                 if (entity.ForceAdjusted != 0 || entity._144 != 3)
                                 {
-                                    entity.Status = 3;//decativate
+                                    entity.Status = 3;//deactivate
                                     evttype = ScriptHelper.ProgramEDeactivate;
                                     break;
                                 }
@@ -1263,7 +1143,7 @@ public class Game
 
                             //i think this gamevar is more than just activecollitionentity, 
                             //the interact button probabaly has to be down for this to be set
-                            if (_gameState.ActiveCollisionEntity != entity)
+                            if (StaticVariables.g_activeCollisionEntity != entity)
                             {
                                 evttype = 2;
                                 break;
@@ -1306,7 +1186,7 @@ public class Game
                 //foreach entity besides player
                 for (var dex = 1; dex < StaticVariables.g_numberOfEntity; dex++)
                 {
-                    var entity = _gameState.Entities[dex];
+                    var entity = StaticVariables.g_entitySlots[dex];
 
                     if (entity.EventTrigger != -1)
                     {
@@ -1314,15 +1194,15 @@ public class Game
 
                         if (progindex != 0)
                         {
-                            //run the eventhandler script
-                            _entityEventHandlers.RunEntityEventScripts(entity, entity.EventTrigger);
+                            System.Diagnostics.Debugger.Break();
+                            //_entityEventHandlers.RunEntityEventScripts(entity, entity.EventTrigger);
                             entity.EventTrigger = -1;
                         }
                         else
                         {
                             var eventid = entity.SpriteProgramIndexes[entity.EventTrigger];
-                            //run the sprite event handler
-                            _entityEventHandlers.SpriteHandlers.RunSpriteHandler(entity.EventTrigger, eventid, entity);
+                            System.Diagnostics.Debugger.Break();
+                            //_entityEventHandlers.SpriteHandlers.RunSpriteHandler(entity.EventTrigger, eventid, entity);
                             entity.EventTrigger = -1;
                         }
 
@@ -1340,7 +1220,7 @@ public class Game
         {
             for (var dex = 0; dex <= StaticVariables.g_numberOfEntity; dex++)
             {
-                var entity = _gameState.Entities[dex];
+                var entity = StaticVariables.g_entitySlots[dex];
                 entity.UnknownCounter++;
                 if (entity.DamagedTickCounter != 0)
                 {
@@ -1361,17 +1241,17 @@ public class Game
     private void UpdateDestroyedEntities()
     {
         var max = 0;
-        for (var i = 0; i < _gameState.Entities.Length; i++)
+        for (var i = 0; i < StaticVariables.g_entitySlots.Length; i++)
         {
-            var entity = _gameState.Entities[i];
+            var entity = StaticVariables.g_entitySlots[i];
 
             if (entity.Status == 4)
             {
                 //zero out the properties
                 entity = new Entity();
                 entity.EntityRefId = -1;
-                _gameState.Entities[i] = entity;
-                entity.Index = i;
+                StaticVariables.g_entitySlots[i] = entity;
+                //entity.Index = i;
             }
 
             if (entity.Status != 0)
@@ -1396,10 +1276,10 @@ public class Game
 
         for (int i = 0; i < StaticVariables.g_numberOfEntity; i++)
         {
-            var entity = _gameState.Entities[i];
+            var entity = StaticVariables.g_entitySlots[i];
 
             //processable
-            if (entity.Status - 2 < 2 && entity._20 == 0)
+            if (entity.Status - 2 < 2 && entity.PlatformEntity == null)
             {
                 StaticVariables.g_activeEntities[StaticVariables.g_activeEntityCount++] = entity;
             }
@@ -1426,7 +1306,7 @@ public class Game
         }
 
         var medex = 0;
-        var playerEntity = _gameState.PlayerEntity;
+        var playerEntity = StaticVariables.PlayerEntity;
 
         foreach (var mapEvent in _gameState.MapEvents)
         {
@@ -1441,14 +1321,15 @@ public class Game
             {
                 playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap] = mapEvent.ProgramBMap;
                 playerEntity.MapEventProgramId = mapEvent.ProgramBMap;
-                playerEntity.Eventdata = mapEvent.EventData;
+                playerEntity.EventProgramState = mapEvent.EventData;
                 playerEntity.EventTrigger = medex;
-                playerEntity.EntitySelf = mapEvent.Entity;
-                _entityEventHandlers.RunEntityEventScripts(playerEntity, ScriptHelper.ProgramBMap);
+                playerEntity.LogicContextEntity = mapEvent.Entity;
+                System.Diagnostics.Debugger.Break();
+                //_entityEventHandlers.RunEntityEventScripts(playerEntity, ScriptHelper.ProgramBMap);
 
                 mapEvent.ProgramBMap = playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap];
-                mapEvent.EventData = playerEntity.Eventdata;
-                mapEvent.Entity = playerEntity.EntitySelf;
+                mapEvent.EventData = playerEntity.EventProgramState;
+                mapEvent.Entity = playerEntity.LogicContextEntity;
             }
             else
             {
@@ -1465,10 +1346,10 @@ public class Game
 
 
 
-    //updates effect animations and adds sprites to spritereflist
-    public void UpdateEffects()
+    //updates effect animations and adds sprites to spriteRefList
+    public void UpdateAllActiveEffectsPostLogic()
     {
-        foreach (var effect in _gameState.SpriteEffects)
+        foreach (var effect in StaticVariables.g_effectSlots)
         {
             if (effect.Status != 2)
             {
@@ -1483,9 +1364,9 @@ public class Game
                     continue;
                 }
 
-                UpdateEffectAnim(effect);
+                UpdateEffectAnimation(effect);
 
-                UpdateEffectByType(effect);
+                UpdateEffectPosition(effect);
             }
 
             effect.SpriteRef.DepthSortVal = effect.DepthSortVal;
@@ -1496,9 +1377,8 @@ public class Game
         }
     }
 
-    public void UpdateEffectAnim(SpriteEffect effect)
+    public void UpdateEffectAnimation(SpriteEffect effect)
     {
-        return;
         if (effect.CurrentSpriteTableIndex != effect.TargetSpriteTableIndex
             || effect.CurrentIsMapSprite != effect.TargetIsMapSprite)
         {
@@ -1517,8 +1397,8 @@ public class Game
             effect.CurrentIsMapSprite = effect.TargetIsMapSprite;
             effect.CurrentSpriteTableIndex = effect.TargetSpriteTableIndex;
 
-            effect.AddToSheet = addtosheet;
-            effect.AddToPalette = addtopal;
+            effect.SheetSize = addtosheet;
+            effect.PaletteIndex = addtopal;
             effect.CurrentAnim = (byte)~effect.TargetAnim;
         }
 
@@ -1583,7 +1463,7 @@ public class Game
 
     }
 
-    public void UpdateEffectByType(SpriteEffect effect)
+    public void UpdateEffectPosition(SpriteEffect effect)
     {
         if (effect.EffectType == 0)
         {

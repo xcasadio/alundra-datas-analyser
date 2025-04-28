@@ -2,14 +2,15 @@
 
 public class SpriteEventHandlers
 {
+    private readonly GameEngine _gameEngine;
+
     public delegate void SpriteEventHandler(Entity entity);
 
-    private GameState _gameState;
     private readonly Dictionary<int, SpriteEventHandler>[] _typeHandlers = new Dictionary<int, SpriteEventHandler>[6];
 
-    public SpriteEventHandlers(GameState gameState)
+    public SpriteEventHandlers(GameEngine gameEngine)
     {
-        _gameState = gameState;
+        _gameEngine = gameEngine;
 
         _typeHandlers[ScriptHelper.ProgramALoad] = new Dictionary<int, SpriteEventHandler>();
         //there are no spriteevent handlers for map
@@ -57,7 +58,7 @@ public class SpriteEventHandlers
         }
         else
         {
-            entity.TargetAnimationId = ScriptHelper.Anim24Table[entity._24];
+            entity.TargetAnimationId = (uint)ScriptHelper.Anim24Table[entity._24];
         }
 
         if (entity.PlatformEntity != null)//redudant check

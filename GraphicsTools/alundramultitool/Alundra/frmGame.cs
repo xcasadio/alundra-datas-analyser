@@ -8,7 +8,8 @@ namespace GraphicsTools.Alundra
 {
     public partial class FrmGame : Form
     {
-        private readonly Game _engine;
+        //private readonly Game _engine;
+        private readonly GameEngine _engine;
         private readonly Timer _tmr;
         private readonly Bitmap _backBuffer = new(320, 240);
 
@@ -16,8 +17,10 @@ namespace GraphicsTools.Alundra
         {
             InitializeComponent();
 
-            _engine = new Game(datasBin, balanceBin, soundBin, etcResR, font3);
-            _engine.Initialize();
+            _engine = new GameEngine(datasBin, balanceBin, soundBin, etcResR, font3);
+            _engine.InitializeEngine();
+            _engine.InitializeGame();
+
             _tmr = new Timer();
             _tmr.Interval = 1000 / 30;
             _tmr.Tick += Tmr_Tick;
@@ -33,9 +36,9 @@ namespace GraphicsTools.Alundra
             using var g = Graphics.FromImage(_backBuffer);
             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 
-            _engine.MainUpdate(false);
-            _engine.Render(g);
-            //_engine.MainLoop(g);
+            //_engine.MainUpdate(false);
+            //_engine.Render(g);
+            _engine.MainLoop(g);
 
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             e.Graphics.Clear(Color.Black);

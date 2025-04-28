@@ -6,9 +6,10 @@ public class SpriteRecord
     {
         Header = new SpriteTableHeader(br, binOffset, id, memoryAddress, spriteInfoMemoryAddress);
         AnimSets = new SiAnimSet[(Header.AnimationsPointer - Header.AnimationOffsetsPointer) / 14];
-        for (var dex = 0; dex < AnimSets.Length; dex++)
+
+        for (var i = 0; i < AnimSets.Length; i++)
         {
-            AnimSets[dex] = new SiAnimSet(br, memoryAddress + 32 + dex * 14);
+            AnimSets[i] = new SiAnimSet(br, memoryAddress + 32 + i * 14);
         }
 
         //preload all of the animations here

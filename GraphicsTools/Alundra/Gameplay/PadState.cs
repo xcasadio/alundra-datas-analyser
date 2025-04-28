@@ -1,12 +1,12 @@
 ﻿namespace Alundra.Gameplay;
 
 public class PadState {
-    uint maxNbFrameHeld;
-    uint repeatInterval;
-    uint isOverThanMaxNbFrameHeld;
-    uint numberOfFrameHold;
-    ushort buttonsHold;
-    ushort buttonsJustPressed;
-    ushort buttonReleased;
-    ushort buttonsJustPressedByInterval;
+    public uint MaxNbFrameHeld;
+    public uint RepeatInterval;
+    public uint IsOverThanMaxNbFrameHeld;
+    public uint NumberOfFrameHold;
+    public ushort ButtonsHold;
+    public ushort ButtonsJustPressed;
+    public ushort ButtonReleased;
+    public ushort ButtonsJustPressedByInterval;
 };

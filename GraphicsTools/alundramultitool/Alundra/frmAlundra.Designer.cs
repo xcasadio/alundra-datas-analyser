@@ -2386,7 +2386,7 @@
             tabPage2.Padding = new Padding(3);
             tabPage2.Size = new Size(872, 1043);
             tabPage2.TabIndex = 1;
-            tabPage2.Text = "Entities";
+            tabPage2.Text = "g_entitySlots";
             tabPage2.UseVisualStyleBackColor = true;
             // 
             // tabPage4

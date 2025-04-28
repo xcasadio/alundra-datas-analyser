@@ -274,7 +274,7 @@ namespace GraphicsTools.Alundra
                             entity.EventCodesE_DeactivateIndex.ToString("x2"),
                             entity.EventCodesF_InteractIndex.ToString("x2")
                     ]);
-                    lvi.ToolTipText = ByteToString((byte)(entity.U7 & 0xff)) + ByteToString((byte)((entity.U7 & 0xff00) >> 8)) + ByteToString(entity.Contents) + ByteToString(entity.U10) + ByteToString(entity.XMin) + ByteToString(entity.YMin);
+                    lvi.ToolTipText = ByteToString((byte)(entity.U7 & 0xff)) + ByteToString((byte)((entity.U7 & 0xff00) >> 8)) + ShortToString(entity.Contents) + ByteToString(entity.U10) + ByteToString(entity.XMin) + ByteToString(entity.YMin);
                     lsvEntities.Items.Add(lvi);
                 }
             }
@@ -895,6 +895,12 @@ namespace GraphicsTools.Alundra
         private string ByteToString(byte b)
         {
             return b.ToString("x2");
+        }
+
+        
+        private string ShortToString(short s)
+        {
+            return s.ToString("x4");
         }
 
         private void lsvEntities_SelectedIndexChanged(object sender, EventArgs e)

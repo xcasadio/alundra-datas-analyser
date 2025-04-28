@@ -10,9 +10,9 @@ public class SpriteEffect
     public MapEffectRecord MapEffectRecord;//4
     public SpriteEffectRecord SpriteEffectRecord;//8
     public SpriteRef SpriteRef = new();//c-20
-    //24
-    public int AddToSheet;//28
-    public int AddToPalette;//2c
+    public int _24;
+    public int SheetSize;//28
+    public int PaletteIndex;//2c
     public int MapEffectId;//30
     public int EffectType;//34 //effecttype?
     public Entity EntityRef;//38 pointer to something// attached to an entity?
@@ -32,7 +32,7 @@ public class SpriteEffect
     public byte CurrentSpriteTableIndex;    //6f
     public byte TargetAnim;             //70
     public byte CurrentAnim;                //71
-
+    public short _72;
     public SiEffectFrame Frame;   //74
     public SiEffectFrame FirstFrame;      //78
     public byte Delay;                  //7c
