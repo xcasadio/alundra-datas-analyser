@@ -21,7 +21,7 @@ public class GameEngine
 
     //find the staticVariables for this=>
     private int NumSprites;
-    private readonly SpriteRef[] SpriteRefs = new SpriteRef[2048];
+    private readonly SpriteRef[] SpriteRefs = new SpriteRef[10000];
     private List<MapEvent> MapEvents = new();
     private readonly EntityEventHandlers _entityEventHandlers;
 
@@ -396,18 +396,8 @@ public class GameEngine
         } while (index2 < 0x34);
         newEntity = null;
 
-        //if (-1 < StaticVariables.g_numberOfEntity)
-        //{
-        //    entityLinkPtr = StaticVariables.PlayerEntity.Index;
-        //    do
-        //    {
-        //        entityLinkPtr = newEntity;
-        //        newEntity = newEntity.PreviousEntity.NextEntity;
-        //        entityLinkPtr = entityLinkPtr + 0xa5;
-        //    } while ((int)newEntity <= currentEntity);
-        //}
         InitGameStateFromWarpTrigger();
-        StaticVariables.g_emptyEntityForClearing.ProgramIndexes[2] = -1;
+        StaticVariables.g_emptyEntityForClearing.EntityRefId = -1;
     }
 
     private void InitGameStateFromWarpTrigger()
@@ -1211,11 +1201,6 @@ public class GameEngine
             {
                 continue;
             }
-
-            StaticVariables.g_entitySlots[i] = entity;
-            StaticVariables.g_entitySlots[i].Index = i;
-            //Debug.Assert(StaticVariables.g_entitySlots[i].Status == 0, "Entity status != 0");
-            StaticVariables.g_entitySlots[i].Status = 0;
         }
 
         StaticVariables.g_entityFollowedByCamera = StaticVariables.PlayerEntity;
@@ -1312,7 +1297,7 @@ public class GameEngine
             return null;
         }
 
-        var isMapSprite = (entityRecord.SpriteDirection & 0x80) == 0;
+        var isMapSprite = (entityRecord.SpriteDirection & 0x80) != 0;
         var spriteRecord = GetSpriteFromSpriteTable(isMapSprite, entityRecord.SpriteTableIndex, out paletteIndex, out sheetSize);
 
         if (spriteRecord == null)
@@ -3140,9 +3125,9 @@ public class GameEngine
         //add spriterefs
         if (StaticVariables.g_visibleEntityCount > 0)
         {
-            for (var dex = 0; dex < StaticVariables.g_visibleEntityCount; dex++)
+            for (var i = 0; i < StaticVariables.g_visibleEntityCount; i++)
             {
-                var entity = StaticVariables.g_visibleEntities[dex];
+                var entity = StaticVariables.g_visibleEntities[i];
 
                 entity.SpriteRef.DepthSortVal = entity.DepthSortVal;
                 entity.SpriteRef.X = entity.XPos;
@@ -4081,15 +4066,15 @@ public class GameEngine
             if (StaticVariables.g_numberOfEntity > 0)
             {
                 //foreach entity besides player
-                for (var dex = 1; dex < StaticVariables.g_numberOfEntity; dex++)
+                for (var i = 1; i < StaticVariables.g_numberOfEntity; i++)
                 {
-                    var entity = StaticVariables.g_entitySlots[dex];
+                    var entity = StaticVariables.g_entitySlots[i];
 
                     if (entity.EventTrigger != -1)
                     {
-                        var progindex = entity.ProgramIndexes[entity.EventTrigger] & 0x7f;
+                        var progIndex = entity.ProgramIndexes[entity.EventTrigger] & 0x7f;
 
-                        if (progindex != 0)
+                        if (progIndex != 0)
                         {
                             //run the eventhandler script
                             _entityEventHandlers.RunEntityEventScripts(entity, entity.EventTrigger);
