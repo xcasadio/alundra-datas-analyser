@@ -248,14 +248,14 @@
             label45 = new Label();
             listBoxEtcTileTable = new ListBox();
             tabPage8 = new TabPage();
+            label67 = new Label();
+            pictureBoxFont3Tim = new PictureBox();
+            label65 = new Label();
             pictureBoxFont3Palette = new PictureBox();
             listBoxFont3Palette = new ListBox();
             pictureBoxWindTx = new PictureBox();
             label63 = new Label();
             buttonSelectAlundra = new Button();
-            label65 = new Label();
-            label67 = new Label();
-            pictureBoxFont3Tim = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)pctMapPalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctTilesheet).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctSpritesheet).BeginInit();
@@ -275,9 +275,9 @@
             tabPage6.SuspendLayout();
             tabPage7.SuspendLayout();
             tabPage8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Tim).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Palette).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxWindTx).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Tim).BeginInit();
             SuspendLayout();
             // 
             // lstGameMaps
@@ -2386,7 +2386,7 @@
             tabPage2.Padding = new Padding(3);
             tabPage2.Size = new Size(872, 1043);
             tabPage2.TabIndex = 1;
-            tabPage2.Text = "g_entitySlots";
+            tabPage2.Text = "Entities";
             tabPage2.UseVisualStyleBackColor = true;
             // 
             // tabPage4
@@ -2599,6 +2599,36 @@
             tabPage8.Text = "Font3";
             tabPage8.UseVisualStyleBackColor = true;
             // 
+            // label67
+            // 
+            label67.AutoSize = true;
+            label67.Location = new Point(7, 440);
+            label67.Margin = new Padding(4, 0, 4, 0);
+            label67.Name = "label67";
+            label67.Size = new Size(66, 15);
+            label67.TabIndex = 99;
+            label67.Text = "FONT3.TIM";
+            // 
+            // pictureBoxFont3Tim
+            // 
+            pictureBoxFont3Tim.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pictureBoxFont3Tim.Location = new Point(10, 458);
+            pictureBoxFont3Tim.Margin = new Padding(4, 3, 4, 3);
+            pictureBoxFont3Tim.Name = "pictureBoxFont3Tim";
+            pictureBoxFont3Tim.Size = new Size(256, 256);
+            pictureBoxFont3Tim.TabIndex = 98;
+            pictureBoxFont3Tim.TabStop = false;
+            // 
+            // label65
+            // 
+            label65.AutoSize = true;
+            label65.Location = new Point(4, 163);
+            label65.Margin = new Padding(4, 0, 4, 0);
+            label65.Name = "label65";
+            label65.Size = new Size(54, 15);
+            label65.TabIndex = 97;
+            label65.Text = "WIND.TX";
+            // 
             // pictureBoxFont3Palette
             // 
             pictureBoxFont3Palette.Location = new Point(97, 21);
@@ -2648,36 +2678,6 @@
             buttonSelectAlundra.UseVisualStyleBackColor = true;
             buttonSelectAlundra.Click += buttonSelectAlundra_Click;
             // 
-            // label65
-            // 
-            label65.AutoSize = true;
-            label65.Location = new Point(4, 163);
-            label65.Margin = new Padding(4, 0, 4, 0);
-            label65.Name = "label65";
-            label65.Size = new Size(54, 15);
-            label65.TabIndex = 97;
-            label65.Text = "WIND.TX";
-            // 
-            // label67
-            // 
-            label67.AutoSize = true;
-            label67.Location = new Point(7, 440);
-            label67.Margin = new Padding(4, 0, 4, 0);
-            label67.Name = "label67";
-            label67.Size = new Size(66, 15);
-            label67.TabIndex = 99;
-            label67.Text = "FONT3.TIM";
-            // 
-            // pictureBoxFont3Tim
-            // 
-            pictureBoxFont3Tim.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            pictureBoxFont3Tim.Location = new Point(10, 458);
-            pictureBoxFont3Tim.Margin = new Padding(4, 3, 4, 3);
-            pictureBoxFont3Tim.Name = "pictureBoxFont3Tim";
-            pictureBoxFont3Tim.Size = new Size(256, 256);
-            pictureBoxFont3Tim.TabIndex = 98;
-            pictureBoxFont3Tim.TabStop = false;
-            // 
             // FrmAlundra
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -2723,9 +2723,9 @@
             tabPage7.PerformLayout();
             tabPage8.ResumeLayout(false);
             tabPage8.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Tim).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Palette).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxWindTx).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Tim).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }

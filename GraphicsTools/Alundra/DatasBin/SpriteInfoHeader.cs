@@ -2,63 +2,63 @@
 
 public class SpriteInfoHeader
 {
-    public SpriteInfoHeader(BinaryReader br, int memaddr)
+    public SpriteInfoHeader(BinaryReader br, int memoryAddress)
     {
-        Entitiespointer = br.ReadInt32();
-        Mapeffectsector3Pointer = br.ReadInt32();
-        Mapeventspointer = br.ReadInt32();
-        Spritetablepointer = br.ReadInt32();
-        Spriteeffectspointer = br.ReadInt32();
-        Spritepalettespointer = br.ReadInt32();
-        Eventcodesapointer = br.ReadInt32();
-        Eventcodesbpointer = br.ReadInt32();
-        Eventcodescpointer = br.ReadInt32();
-        Eventcodesdpointer = br.ReadInt32();
-        Eventcodesepointer = br.ReadInt32();
-        Eventcodesfpointer = br.ReadInt32();
+        EntitiesPointer = br.ReadInt32();
+        MapEffectSector3Pointer = br.ReadInt32();
+        MapEventsPointer = br.ReadInt32();
+        SpriteTablePointer = br.ReadInt32();
+        SpriteEffectsPointer = br.ReadInt32();
+        SpritePalettesPointer = br.ReadInt32();
+        EventCodesAPointer = br.ReadInt32();
+        EventCodesBPointer = br.ReadInt32();
+        EventCodesCPointer = br.ReadInt32();
+        EventCodesDPointer = br.ReadInt32();
+        EventCodesEPointer = br.ReadInt32();
+        EventCodesFPointer = br.ReadInt32();
 
-        Memaddr = memaddr;
-        Eventcodeaddr = memaddr + Eventcodesapointer;
+        MemoryAddress = memoryAddress;
+        EventCodeAddress = memoryAddress + EventCodesAPointer;
 
-        Entitiessize = Mapeffectsector3Pointer - Entitiespointer;
-        Mapeffectsector3Size = Mapeventspointer - Mapeffectsector3Pointer;
-        Mapeventssize = -1;// unknown4 - unknown3;
-        Spritetablesize = Spriteeffectspointer - Spritetablepointer;
-        Spriteeffectssize = Spritepalettespointer - Spriteeffectspointer;
-        Spritepalettessize = Eventcodesapointer - Spritepalettespointer;
-        Eventcodesasize = Eventcodesbpointer - Eventcodesapointer;
-        Eventcodesbsize = Eventcodescpointer - Eventcodesbpointer;
-        Eventcodescsize = Eventcodesdpointer - Eventcodescpointer;
-        Eventcodesdsize = Eventcodesepointer - Eventcodesdpointer;
-        Eventcodesesize = Eventcodesfpointer - Eventcodesepointer;
-        Eventcodesfandremainingsize = Entitiespointer - Eventcodesfpointer;
+        EntitiesSize = MapEffectSector3Pointer - EntitiesPointer;
+        MapEffectSector3Size = MapEventsPointer - MapEffectSector3Pointer;
+        MapEventsSize = -1;// unknown4 - unknown3;
+        SpriteTableSize = SpriteEffectsPointer - SpriteTablePointer;
+        SpriteEffectsSize = SpritePalettesPointer - SpriteEffectsPointer;
+        SpritePalettesSize = EventCodesAPointer - SpritePalettesPointer;
+        EventCodesASize = EventCodesBPointer - EventCodesAPointer;
+        EventCodesBSize = EventCodesCPointer - EventCodesBPointer;
+        EventCodesCSize = EventCodesDPointer - EventCodesCPointer;
+        EventCodesDSize = EventCodesEPointer - EventCodesDPointer;
+        EventCodesESize = EventCodesFPointer - EventCodesEPointer;
+        EventCodesFAndremainingSize = EntitiesPointer - EventCodesFPointer;
     }
-    public readonly int Memaddr;
-    public readonly int Eventcodeaddr;
+    public readonly int MemoryAddress;
+    public readonly int EventCodeAddress;
 
-    public readonly int Entitiespointer;
-    public readonly int Entitiessize;
-    public readonly int Mapeffectsector3Pointer;
-    public readonly int Mapeffectsector3Size;
-    public readonly int Mapeventspointer;
-    public readonly int Mapeventssize;
-    public readonly int Spritetablepointer;
-    public readonly int Spritetablesize;
-    public readonly int Spriteeffectspointer;//0000333b000e240e0400000000000000
-    public readonly int Spriteeffectssize;
-    public readonly int Spritepalettespointer;
-    public readonly int Spritepalettessize;
-    public readonly int Eventcodesapointer;
-    public readonly int Eventcodesasize;
-    public readonly int Eventcodesbpointer;
-    public readonly int Eventcodesbsize;
-    public readonly int Eventcodescpointer;
-    public readonly int Eventcodescsize;
-    public readonly int Eventcodesdpointer;
-    public readonly int Eventcodesdsize;
-    public readonly int Eventcodesepointer;
-    public readonly int Eventcodesesize;
-    public readonly int Eventcodesfpointer;
-    public int Eventcodesfsize;//calced when reading sector1
-    public readonly int Eventcodesfandremainingsize;
+    public readonly int EntitiesPointer;
+    public readonly int EntitiesSize;
+    public readonly int MapEffectSector3Pointer;
+    public readonly int MapEffectSector3Size;
+    public readonly int MapEventsPointer;
+    public readonly int MapEventsSize;
+    public readonly int SpriteTablePointer;
+    public readonly int SpriteTableSize;
+    public readonly int SpriteEffectsPointer;//0000333b000e240e0400000000000000
+    public readonly int SpriteEffectsSize;
+    public readonly int SpritePalettesPointer;
+    public readonly int SpritePalettesSize;
+    public readonly int EventCodesAPointer;
+    public readonly int EventCodesASize;
+    public readonly int EventCodesBPointer;
+    public readonly int EventCodesBSize;
+    public readonly int EventCodesCPointer;
+    public readonly int EventCodesCSize;
+    public readonly int EventCodesDPointer;
+    public readonly int EventCodesDSize;
+    public readonly int EventCodesEPointer;
+    public readonly int EventCodesESize;
+    public readonly int EventCodesFPointer;
+    public int EventCodesFSize;//calced when reading sector1
+    public readonly int EventCodesFAndremainingSize;
 }

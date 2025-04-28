@@ -337,6 +337,18 @@ namespace Alundra
 
         public static void Initialize()
         {
+            //TODO : alreay loaded where?
+            g_spriteDataBase = new byte[50000];
+            for (var i = 0; i < StaticVariables.g_entitySlots.Length; i++)
+            {
+                var entity = new Entity();
+                //entity.Index = i;
+                //entity.Status = 0;
+                entity.EntityRefId = -1;
+                g_entitySlots[i] = entity;
+            }
+
+            g_isGameEnding = 1; //force initialization
             g_gameRandomSeed = 0xB017C93D;
             g_tileToWorldXTable = new short[1248];
             g_fadeControl = new FadeControl();
@@ -370,35 +382,12 @@ namespace Alundra
         //
         //
         /*
-        
-           typedef long long longlong;
-           typedef unsigned long long ulonglong;
-           
-           //exported from Ghidra
-           
-           typedef unsigned char int;
-           
-           typedef unsigned char bool;
-           typedef unsigned char byte;
-           typedef unsigned int dword;
-           typedef unsigned char uchar;
-           typedef unsigned int uint;
-           typedef unsigned int uint3;
-           typedef unsigned long ulong;
-           typedef unsigned char int1;
-           typedef unsigned short int2;
-           typedef unsigned int int3;
-           typedef unsigned int int4;
-           typedef unsigned long long int5;
-           typedef unsigned long long int8;
-           typedef unsigned short ushort;
-           typedef unsigned short word;
-
+           replace order => 
 
            extern => public static 
-           int1 => byte
-           int2 => short
-           int4 => int
+           undefined1 => byte
+           undefined2 => short
+           undefined4 => int
            dword => int
            word => short
 
@@ -1310,17 +1299,17 @@ namespace Alundra
         public static int DAT_80126f10; // 80126F10
         public static int DAT_80126f14; // 80126F14
         public static PadState g_padState1; // 80126F18
-        public static int DAT_pad_80126f1c; // 80126F1C
-        public static int DAT_80126f20; // 80126F20
-        public static int DAT_80126f24; // 80126F24
+        public static int g_padInputDelayCounter; // 80126F1C
+        public static int g_padInputReleaseFlags; // 80126F20
+        public static int g_padInputRepeatFlags; // 80126F24
         public static ushort g_playerTileAttribute; // 80126F28
         public static short g_inputHeld; // 80126F2A
         public static ushort g_tileWarpFlags; // 80126F2C
         public static short DAT_80126f2e; // 80126F2E
         public static PadState g_padState2; // 80126F30
-        public static int DAT_pad_80126f34; // 80126F34
-        public static int DAT_80126f38; // 80126F38
-        public static int DAT_80126f3c; // 80126F3C
+        public static int g_padInputRepeatCounter; // 80126F34
+        public static int g_padInputPressFlags; // 80126F38
+        public static int g_padInputHeldFlags; // 80126F3C
         public static short g_inputHeldFlags; // 80126F40
         public static short g_inputJustPressed; // 80126F42
         public static short g_inputRepeated; // 80126F46
@@ -1375,7 +1364,7 @@ namespace Alundra
         public static int g_collideableEntitiesCount; // 80127D2C
                                                       //public static Entity g_player; // 80127D30
         public static Entity PlayerEntity => g_entitySlots[0]; // 80127D34
-        public static Entity[] g_entitySlots = new Entity[64]; // 80127FC4
+        public static Entity[] g_entitySlots = new Entity[128]; // 80127FC4
         public static int g_debugFrameCounter; // 80132230
                                                //public static TILE g_spriteTiles; // 80132234
         public static Entity[] g_visibleEntities = new Entity[64]; // 80134250
@@ -1471,7 +1460,7 @@ namespace Alundra
         public static int g_balanceAnimIndex; // 80146DF8
         public static int g_balanceEffectSourceList; // 80146E00
         public static int DAT_80146e04; // 80146E04
-        public static int[] g_items = new int[4]; // 80146E08
+        public static int[] g_items = new int[5]; // 80146E08
         public static short g_balanceEffectHpTotal; // 80146E18
         public static short g_balanceEffectParams; // 80146E1A
         public static short g_balanceEffectHp; // 80146E1C
@@ -2076,7 +2065,7 @@ namespace Alundra
         public static int DAT_801f64d2; // 801F64D2
         public static byte DAT_801f64e8; // 801F64E8
         public static int DAT_801f6554; // 801F6554
-        public static int g_padStateFromPsx; // 801F6CC8
+        public static uint g_padStateFromPsx; // 801F6CC8
         public static int g_padMode; // 801F6CCC
         public static int DAT_801f6cd0; // 801F6CD0
         public static int DAT_801f6cd8; // 801F6CD8

@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
-using System.Drawing;
 using Alundra.DatasBin;
 using Alundra.Gameplay;
 using Alundra.Gameplay.Scripts;
 using Alundra.Sound;
+//using Alundra.Sprite;
 using Alundra.Text;
 
 namespace Alundra;
@@ -16,14 +16,14 @@ public class GameEngine
     private readonly EtcResR _etcResR;
     private readonly Font3 _font3;
 
-    public GameMap CurrentMap { get; }
+    public GameMap CurrentMap { get; private set; }
     public GameMap AlundraMap => _datasBin.AlundraGameMap;
 
     //find the staticVariables for this=>
     private int NumSprites;
     private readonly SpriteRef[] SpriteRefs = new SpriteRef[2048];
     private List<MapEvent> MapEvents = new();
-    private EntityEventHandlers _entityEventHandlers;
+    private readonly EntityEventHandlers _entityEventHandlers;
 
 
     public GameEngine(DatasBin.DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR, Font3 font3)
@@ -53,81 +53,99 @@ public class GameEngine
 
         //do
         //{
-            //while (true)
-            //{
-                InitStaticVariable();
-                StaticVariables.INT_800dc4e4 = 0;
-                StaticVariables.g_isGameEnding = 0;
-                StaticVariables.g_warpEntryBehavior = 0;
-                if (StaticVariables.g_desiredMap != StaticVariables.g_currentMap)
-                {
-                    StaticVariables.g_currentMap = StaticVariables.g_desiredMap;
-                    //ReadFileFromCDIntoBuffer(StaticVariables.DATAS_BIN, StaticVariables.g_compressedImageData, (StaticVariables.INT_801eab58)[StaticVariables.g_desiredMap], (StaticVariables.INT_801eab5c)[StaticVariables.g_desiredMap] - (StaticVariables.INT_801eab58)[StaticVariables.g_desiredMap]);
-                    InitializeMapSpriteTable(null, null, 0);
-                    //StaticVariables.g_compressedImageData + ??,
-                    //StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b34,
-                    //StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b38);
-                    LoadMapSpriteTable(null); //StaticVariables.g_compressedImageData[StaticVariables.g_mapIndexInDatasBin]);
-                    FUN_800423ec(StaticVariables.g_compressedImageData[StaticVariables.g_animTableAlt_80191b48]);
-                    //InitializeTileSet(StaticVariables.g_currentMap, StaticVariables.g_compressedImageData[StaticVariables.g_tileSet_index_80191b44]);
-                    playerPosX = StaticVariables.g_spriteDataBase[0xc] << 3;
-                    playerPosY = StaticVariables.g_spriteDataBase[0xd] << 3;
-                    playerPosZ = StaticVariables.g_spriteDataBase[0xe] << 3;
-                }
+        //while (true)
+        //{
+
+        if (StaticVariables.g_isGameEnding != 0)
+        {
+            InitStaticVariable();
+            StaticVariables.INT_800dc4e4 = 0;
+            StaticVariables.g_isGameEnding = 0;
+            StaticVariables.g_warpEntryBehavior = 0;
+
+            if (StaticVariables.g_desiredMap != StaticVariables.g_currentMap)
+            {
+                StaticVariables.g_currentMap = StaticVariables.g_desiredMap;
+                //ReadFileFromCDIntoBuffer(StaticVariables.DATAS_BIN, StaticVariables.g_compressedImageData, (StaticVariables.INT_801eab58)[StaticVariables.g_desiredMap], (StaticVariables.INT_801eab5c)[StaticVariables.g_desiredMap] - (StaticVariables.INT_801eab58)[StaticVariables.g_desiredMap]);
+                InitializeMapSpriteTable(null, null, 0);
+                //StaticVariables.g_compressedImageData + ??,
+                //StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b34,
+                //StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b38);
+                LoadMapSpriteTable(null); //StaticVariables.g_compressedImageData[StaticVariables.g_mapIndexInDatasBin]);
+                FUN_800423ec(-1/*StaticVariables.g_compressedImageData[StaticVariables.g_animTableAlt_80191b48]*/);
+                //InitializeTileSet(StaticVariables.g_currentMap, StaticVariables.g_compressedImageData[StaticVariables.g_tileSet_index_80191b44]);
+                playerPosX = StaticVariables.g_spriteDataBase[0xc] << 3;
+                playerPosY = StaticVariables.g_spriteDataBase[0xd] << 3;
+                playerPosZ = StaticVariables.g_spriteDataBase[0xe] << 3;
+            }
+
+            //DoNothing();
+            ClearGlobalFlags();
+            ResetCameraAndLoadVRAMAssets();
+            FUN_80044520(StaticVariables.g_spriteDataBase[0xb]);
+            LoadMapAndInitializeEntities(null/*StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b40*/);
+            WarpPlayer(playerPosX, playerPosY, playerPosZ, StaticVariables.g_warpType);
+            InitializeTileAnimationSystem();
+            PrepareBufferFlip();
+            OpenMap(StaticVariables.g_currentMap);
+            UpdateEntities(1);
+            ResetDebugRenderingState();
+        }
+
+
+        //do
+        //{
+            StaticVariables.g_debugMessage = 0;
+            //PrintDebug();
+            RenderScene(graphics);
+            UpdateEntities(0);
+            //FntPrint();
+            var ndDebugFrame = 1;
+            if ((StaticVariables.g_debugState < 0) && ((StaticVariables.g_debugFlags & 0x40000000) != 0))
+            {
+                ndDebugFrame = StaticVariables.g_debugVar_NbFrameBreak;
+            }
+            //PauseGameDuringNbFrame(ndDebugFrame);
+            //DoNothing();
+        //} while (StaticVariables.g_isGameEnding == 0);
+
+        if (StaticVariables.g_isGameEnding != 0)
+        {
+            //HandleMapSoundEffects(StaticVariables.g_desiredMap, StaticVariables.g_warpEntryBehavior);
+            StaticVariables.g_warpEntryBehavior = 0;
+            StartWarpTransition(StaticVariables.g_warpType);
+            StaticVariables.INT_800dc4e4 = 1;
+            do
+            {
+                StaticVariables.g_debugMessage = 0;
+                UpdatePads();
+                //isEffectRunning = FUN_80044440(StaticVariables.g_orderingTableBuffer + 3, StaticVariables.g_warpType);
+                //HandleMapSoundStreaming();
+                //PauseGameDuringNbFrame(1);
                 //DoNothing();
-                ClearGlobalFlags();
-                ResetCameraAndLoadVRAMAssets();
-                FUN_80044520(StaticVariables.g_spriteDataBase[0xb]);
-                LoadMapAndInitializeEntities(null/*StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b40*/);
-                WarpPlayer(playerPosX, playerPosY, playerPosZ, StaticVariables.g_warpType);
-                InitializeTileAnimationSystem();
-                PrepareBufferFlip();
-                OpenMap(StaticVariables.g_currentMap);
-                UpdateEntities(1);
-                ResetDebugRenderingState();
-                do
-                {
-                    StaticVariables.g_debugMessage = 0;
-                    //PrintDebug();
-                    RenderScene(graphics);
-                    UpdateEntities(0);
-                    //FntPrint();
-                    var ndDebugFrame = 1;
-                    if ((StaticVariables.g_debugState < 0) && ((StaticVariables.g_debugFlags & 0x40000000) != 0))
-                    {
-                        ndDebugFrame = StaticVariables.g_debugVar_NbFrameBreak;
-                    }
-                    //PauseGameDuringNbFrame(ndDebugFrame);
-                    //DoNothing();
-                } while (StaticVariables.g_isGameEnding == 0);
-                //HandleMapSoundEffects(StaticVariables.g_desiredMap, StaticVariables.g_warpEntryBehavior);
-                StaticVariables.g_warpEntryBehavior = 0;
-                StartWarpTransition(StaticVariables.g_warpType);
-                StaticVariables.INT_800dc4e4 = 1;
-                do
-                {
-                    StaticVariables.g_debugMessage = 0;
-                    UpdatePads();
-                    //isEffectRunning = FUN_80044440(StaticVariables.g_orderingTableBuffer + 3, StaticVariables.g_warpType);
-                    //HandleMapSoundStreaming();
-                    //PauseGameDuringNbFrame(1);
-                    //DoNothing();
-                } while (isEffectRunning != 0);
-                EndFrame();
-                //FUN_80049ff8(); //sound
-                if (StaticVariables.g_warpType != 9) return; //break;
-                //LoadBgm(0);
-                //LoadSomethingInDatasBin(g_indexInDatasBin);
-                //_96_remove();
-                //_96_init();
-                //syscall();
-                //LoadExec();
-                //DoNothing();
-                Environment.Exit(0);
-                LAB_8002c590:
-                //LoadBgm(0);
-                StaticVariables.g_playerControlFlags = 0;
-                //InitializeMapWarpPosition();
+            } while (isEffectRunning != 0);
+
+            EndFrame();
+            //FUN_80049ff8(); //sound
+            if (StaticVariables.g_warpType != 9)
+            {
+                return; //break;
+            }
+
+            //LoadBgm(0);
+            //LoadSomethingInDatasBin(g_indexInDatasBin);
+            //_96_remove();
+            //_96_init();
+            //syscall();
+            //LoadExec();
+            //DoNothing();
+            System.Diagnostics.Debugger.Break();
+            Environment.Exit(0);
+
+            LAB_8002c590:
+            //LoadBgm(0);
+            StaticVariables.g_playerControlFlags = 0;
+            //InitializeMapWarpPosition();
             //}
             //if (9 < StaticVariables.g_warpType)
             //{
@@ -154,76 +172,91 @@ public class GameEngine
             //    //LAB_8002c5dc:
             //    //DoNothing();
             //}
+        }
+
         //} while (true);
     }
 
     public void InitializeGame()
     {
-        /*short tPagePtr = StaticVariables.g_tPageFadeLUT;
-           ushort tPage;
-           ushort clutPtr;
-           int screenX;
-           int screenY;
-         int clutLoopIndex = 0;
-           int largestEntryIndex = 0;
-           byte[] datasBinHeader;
+        short tPagePtr = StaticVariables.g_tPageFadeLUT;
+        ushort tPage;
+        ushort clutPtr;
+        int screenX;
+        int screenY;
+        int clutLoopIndex = 0;
+        int largestEntryIndex = 0;
+        byte[] datasBinHeader;
 
-        do
-        {
-            largestEntryIndex = 0;
-            screenY = 0;
-            do
-            {
-                screenX = 0x140;
-                clutPtr = tPagePtr + largestEntryIndex;
-                do
-                {
-                    tPage = GetTPage(0, clutLoopIndex, screenX, screenY);
-                    *clutPtr = tPage;
-                    screenX = screenX + 0x40;
-                    clutPtr = clutPtr + 1;
-                    largestEntryIndex = largestEntryIndex + 1;
-                } while (screenX < 0x400);
-                screenY = screenY + 0x100;
-            } while (screenY < 0x200);
-            tPagePtr = tPagePtr + 0x16;
-            clutLoopIndex = clutLoopIndex + 1;
-            screenY = 0;
-        } while (clutLoopIndex < 4);
-        clutLoopIndex = 0;
-        do
-        {
-            largestEntryIndex = 0x1e0;
-            clutPtr = &g_drawPageInfoBase + screenY;
-            do
-            {
-                tPage = GetClut(clutLoopIndex, largestEntryIndex);
-                *clutPtr = tPage;
-                largestEntryIndex = largestEntryIndex + 1;
-                clutPtr = clutPtr + 1;
-                screenY = screenY + 1;
-            } while (largestEntryIndex < 0x200);
-            clutLoopIndex = clutLoopIndex + 0x40;
-        } while (clutLoopIndex < 0x140);*/
-        /*datasBinHeader = &g_datasBinHeaderOffset;
-        ReadFileFromCDIntoBuffer(DATAS_BIN, (u_long*)&g_datasBinHeaderOffset, 0, 0x7b8);
-        clutLoopIndex = 0;
-        g_data_buffer = 0;
-        g_data_buffer_length = 0;
-        do
-        {
-            if (g_data_buffer_length < (int)datasBinHeader[0xb] - (int)datasBinHeader[10])
-            {
-                g_data_buffer = clutLoopIndex;
-                g_data_buffer_length = (int)datasBinHeader[0xb] - (int)datasBinHeader[10];
-            }
-            clutLoopIndex = clutLoopIndex + 1;
-            datasBinHeader = datasBinHeader + 1;
-        } while (clutLoopIndex < 0x1e3);
-        LoadEtc();
-        InitDisplaySystem((int*)DrawOTags, (int*)ClearOrderTables);
-        InitializeOrderingTables();
-        InitializeTileRenderingSystem(g_drawPageParam);*/
+        //VSync(0);
+        //ResetCallback();
+        //ResetGraph(3);
+        //CdInit();
+        //InitSound();
+        InitPadController();
+        //InitCDRom();
+        //InitMemoryCard();
+        //FntLoad(0x3c0, 0x100);
+        //StaticVariables.g_fontLoaded = FntOpen(8, 0x20, 0x130, 0xc0, 0, 0x400);
+        //SetDumpFnt(g_fontLoaded);
+
+        //do
+        //{
+        //    largestEntryIndex = 0;
+        //    screenY = 0;
+        //    do
+        //    {
+        //        screenX = 0x140;
+        //        clutPtr = tPagePtr + largestEntryIndex;
+        //        do
+        //        {
+        //            tPage = GetTPage(0, clutLoopIndex, screenX, screenY);
+        //            *clutPtr = tPage;
+        //            screenX = screenX + 0x40;
+        //            clutPtr = clutPtr + 1;
+        //            largestEntryIndex = largestEntryIndex + 1;
+        //        } while (screenX < 0x400);
+        //        screenY = screenY + 0x100;
+        //    } while (screenY < 0x200);
+        //    tPagePtr = tPagePtr + 0x16;
+        //    clutLoopIndex = clutLoopIndex + 1;
+        //    screenY = 0;
+        //} while (clutLoopIndex < 4);
+        //clutLoopIndex = 0;
+        //do
+        //{
+        //    largestEntryIndex = 0x1e0;
+        //    clutPtr = &g_drawPageInfoBase + screenY;
+        //    do
+        //    {
+        //        tPage = GetClut(clutLoopIndex, largestEntryIndex);
+        //        *clutPtr = tPage;
+        //        largestEntryIndex = largestEntryIndex + 1;
+        //        clutPtr = clutPtr + 1;
+        //        screenY = screenY + 1;
+        //    } while (largestEntryIndex < 0x200);
+        //    clutLoopIndex = clutLoopIndex + 0x40;
+        //} while (clutLoopIndex < 0x140);
+        //datasBinHeader = &g_datasBinHeaderOffset;
+        //ReadFileFromCDIntoBuffer(DATAS_BIN, (u_long*)&g_datasBinHeaderOffset, 0, 0x7b8);
+        //clutLoopIndex = 0;
+        //g_data_buffer = 0;
+        //g_data_buffer_length = 0;
+        //do
+        //{
+        //    if (g_data_buffer_length < (int)datasBinHeader[0xb] - (int)datasBinHeader[10])
+        //    {
+        //        g_data_buffer = clutLoopIndex;
+        //        g_data_buffer_length = (int)datasBinHeader[0xb] - (int)datasBinHeader[10];
+        //    }
+        //    clutLoopIndex = clutLoopIndex + 1;
+        //    datasBinHeader = datasBinHeader + 1;
+        //} while (clutLoopIndex < 0x1e3);
+        //LoadEtc();
+        //InitDisplaySystem((int*)DrawOTags, (int*)ClearOrderTables);
+        //InitializeOrderingTables();
+        //InitializeTileRenderingSystem(g_drawPageParam);
+
         InitSpriteResourcesFromFile(StaticVariables.DATAS_BIN,
             StaticVariables.g_datasBinHeaderOffset, StaticVariables.g_spriteBufferCDEnd,
             StaticVariables.g_imageBufferCDStart, StaticVariables.g_imageBufferCDEnd);
@@ -239,6 +272,48 @@ public class GameEngine
             StaticVariables.g_tileScaleYInit, StaticVariables.g_uvLookupTableInit);
         StaticVariables.g_currentMap = ~StaticVariables.g_desiredMap;
     }
+
+    private void InitPadController()
+    {
+        PadInit(0);
+
+        StaticVariables.g_padState2 = new PadState();
+        StaticVariables.g_padState1 = new PadState();
+        StaticVariables.g_padInputRepeatCounter = 0;
+        StaticVariables.g_padInputDelayCounter = 0;
+
+        ClearPadInputStates();
+    }
+
+
+    void PadInit(int mode)
+
+    {
+        StaticVariables.g_padStateFromPsx = 0xffffffff;
+        StaticVariables.g_padMode = mode;
+        //ResetCallback();
+        //PAD_init();
+        //ChangeClearPAD();
+    }
+
+    private void ClearPadInputStates()
+    {
+        StaticVariables.g_padInputPressFlags = 0;
+        StaticVariables.g_padInputReleaseFlags = 0;
+        StaticVariables.g_padInputHeldFlags = 0;
+        StaticVariables.g_padInputRepeatFlags = 0;
+
+        StaticVariables.g_padState1.ButtonsHold = 0;
+        StaticVariables.g_padState1.MaxNbFrameHeld = 0;
+        StaticVariables.g_padState1.RepeatInterval = 0;
+        StaticVariables.g_padState1.IsOverThanMaxNbFrameHeld = 0;
+        StaticVariables.g_padState1.NumberOfFrameHold = 0;
+        StaticVariables.g_padState1.ButtonsHold = 0;
+        StaticVariables.g_padState1.ButtonsJustPressed = 0;
+        StaticVariables.g_padState1.ButtonReleased = 0;
+        StaticVariables.g_padState1.ButtonsJustPressedByInterval = 0;
+    }
+
 
     private void InitSpriteResourcesFromFile(string fileName, int frameDataStart, int frameDataEnd,
         int imageDataStart, int imageDataEnd)
@@ -777,44 +852,46 @@ public class GameEngine
 
     private void InitializeMapSpriteTable(byte[] buffer, ushort[] vramTable, int otherPtr)
     {
-        int spriteIndex = 0;
+        //TODO
 
-        StaticVariables.g_spriteVRAMPointer = vramTable;
-        StaticVariables.g_spriteOtherPointer = otherPtr;
-        StaticVariables.g_spriteDataBase = buffer;
-
-        do
-        {
-            int spriteDataOffset = spriteIndex * 2;
-
-            if (StaticVariables.g_spriteDataBase[spriteDataOffset + 0x420] == 0 ||
-                StaticVariables.g_spriteDataBase[spriteDataOffset + 0x421] == 0)
-            {
-                StaticVariables.g_spriteMapTable[spriteIndex].Enabled = false;
-                StaticVariables.g_spriteMapTable[spriteIndex].OffsetX = 0;
-            }
-            else
-            {
-                StaticVariables.g_spriteMapTable[spriteIndex].Enabled = true;
-                StaticVariables.g_spriteMapTable[spriteIndex].VramShift = (byte)(1 << (StaticVariables.g_spriteDataBase[spriteDataOffset + 0x420] & 0x1f));
-
-                if (StaticVariables.g_spriteMapTable[spriteIndex].VramShift == 0)
-                {
-                    System.Diagnostics.Debugger.Break();
-                    //Trap(0x1c00);
-                }
-
-                StaticVariables.g_spriteMapTable[spriteIndex].TileWidth = (char)(0xa0 / StaticVariables.g_spriteMapTable[spriteIndex].VramShift);
-                byte vramY = StaticVariables.g_spriteDataBase[spriteDataOffset + 0x421];
-
-                StaticVariables.g_spriteMapTable[spriteIndex].OffsetZ = 0;
-                StaticVariables.g_spriteMapTable[spriteIndex].OffsetY = 0;
-                StaticVariables.g_spriteMapTable[spriteIndex].OffsetX = 0;
-                StaticVariables.g_spriteMapTable[spriteIndex].RowCount = vramY;
-            }
-
-            spriteIndex++;
-        } while (spriteIndex < 6);
+        //int spriteIndex = 0;
+        //
+        //StaticVariables.g_spriteVRAMPointer = vramTable;
+        //StaticVariables.g_spriteOtherPointer = otherPtr;
+        //StaticVariables.g_spriteDataBase = buffer;
+        //
+        //do
+        //{
+        //    int spriteDataOffset = spriteIndex * 2;
+        //
+        //    if (StaticVariables.g_spriteDataBase[spriteDataOffset + 0x420] == 0 ||
+        //        StaticVariables.g_spriteDataBase[spriteDataOffset + 0x421] == 0)
+        //    {
+        //        StaticVariables.g_spriteMapTable[spriteIndex].Enabled = false;
+        //        StaticVariables.g_spriteMapTable[spriteIndex].OffsetX = 0;
+        //    }
+        //    else
+        //    {
+        //        StaticVariables.g_spriteMapTable[spriteIndex].Enabled = true;
+        //        StaticVariables.g_spriteMapTable[spriteIndex].VramShift = (byte)(1 << (StaticVariables.g_spriteDataBase[spriteDataOffset + 0x420] & 0x1f));
+        //
+        //        if (StaticVariables.g_spriteMapTable[spriteIndex].VramShift == 0)
+        //        {
+        //            System.Diagnostics.Debugger.Break();
+        //            //Trap(0x1c00);
+        //        }
+        //
+        //        StaticVariables.g_spriteMapTable[spriteIndex].TileWidth = (char)(0xa0 / StaticVariables.g_spriteMapTable[spriteIndex].VramShift);
+        //        byte vramY = StaticVariables.g_spriteDataBase[spriteDataOffset + 0x421];
+        //
+        //        StaticVariables.g_spriteMapTable[spriteIndex].OffsetZ = 0;
+        //        StaticVariables.g_spriteMapTable[spriteIndex].OffsetY = 0;
+        //        StaticVariables.g_spriteMapTable[spriteIndex].OffsetX = 0;
+        //        StaticVariables.g_spriteMapTable[spriteIndex].RowCount = vramY;
+        //    }
+        //
+        //    spriteIndex++;
+        //} while (spriteIndex < 6);
     }
 
     private void LoadMapSpriteTable(AnimationData animationData)
@@ -982,7 +1059,7 @@ public class GameEngine
 
         do
         {
-            StaticVariables.g_items[piVar1] = 0;
+            StaticVariables.g_items[piVar1 + 2] = 0;
             iVar2 = iVar2 - 1;
             piVar1 = piVar1 - 2;
         } while (iVar2 >= 0);
@@ -990,11 +1067,79 @@ public class GameEngine
 
     private void LoadMapAndInitializeEntities(uint[] bufferImage)
     {
+        LoadMap(StaticVariables.g_currentMap); // Added
+
+        //Added by hand
+        LoadAlundra();
+
         //LoadImageArea(StaticVariables.g_bufferImage, 0x40, 0x1e0, 0x40);
         //LoadCompressedImageToBuffer(bufferImage, 0x140, 0, 5, StaticVariables.g_bufferImage2);
         InitializeEntitySlots();
         //InitMonitors();
         //InitEffectSlots();
+    }
+
+    public void LoadMap(int mapId)
+    {
+        CurrentMap = _datasBin.GameMaps[mapId];
+
+        if (!CurrentMap.Loaded)
+        {
+            using var reader = _datasBin.OpenBin();
+            CurrentMap.Load(reader, true);
+        }
+
+        LoadMap(CurrentMap);
+    }
+
+    public void LoadMap(GameMap map)
+    {
+        //load MapEvents
+        MapEvents = new List<MapEvent>();
+        for (var i = 0; i < map.SpriteInfo.MapEvents.Records.Length; i++)
+        {
+            var record = map.SpriteInfo.MapEvents.Records[i];
+            if (record != null)
+            {
+                var mapEvent = new MapEvent
+                {
+                    Id = i,
+                    MapEventRecord = record,
+                    ProgramBMap = record.EventCodesBIndex,
+                    //TODO special logic if the eventcodesindex is 0
+                    Entity = StaticVariables.PlayerEntity,
+                    EventData = new EventProgramState()
+                };
+                MapEvents.Add(mapEvent);
+            }
+        }
+
+        //LoadEntities();
+    }
+
+    private void LoadAlundra()
+    {
+        using var reader = _datasBin.OpenBin();
+        AlundraMap.Load(reader,false);
+
+        int paletteIndex;
+        int sheetSize;
+        var spriteRecord = GetSpriteFromSpriteTable(false, 0, out paletteIndex, out sheetSize);
+
+        //if (spriteRecord == null)
+        //{
+        //    return;
+        //}
+        
+        StaticVariables.PlayerEntity.Index = 1;
+
+        InitializeEntity(StaticVariables.PlayerEntity, null, spriteRecord,
+            null, 0, 0,
+            50, 50, 0,
+            0,
+            0, //dir g_warpZones[flags & 3]
+            paletteIndex,
+            sheetSize);
     }
 
     private void InitializeEntitySlots()
@@ -1033,7 +1178,7 @@ public class GameEngine
         //}
         //while ((int)entityCounter < 0x40);
 
-        StaticVariables.g_numberOfEntity = 0;
+        StaticVariables.g_numberOfEntity = 1; //alundra already loaded
 
         ResetEntityState();
 
@@ -1058,11 +1203,18 @@ public class GameEngine
         //}
         //while (characterIndex < 0x80);
 
-        for (int i = 0; i < StaticVariables.g_entitySlots.Length; i++)
+        for (int i = 1; i < StaticVariables.g_entitySlots.Length; i++)
         {
-            StaticVariables.g_entitySlots[i] = SpawnEntity(null, i, 0);
+            var entity = SpawnEntity(null, i, 0);
+
+            if (entity == null)
+            {
+                continue;
+            }
+
+            StaticVariables.g_entitySlots[i] = entity;
             StaticVariables.g_entitySlots[i].Index = i;
-            Debug.Assert(StaticVariables.g_entitySlots[i].Status == 0, "Entity status != 0");
+            //Debug.Assert(StaticVariables.g_entitySlots[i].Status == 0, "Entity status != 0");
             StaticVariables.g_entitySlots[i].Status = 0;
         }
 
@@ -1121,35 +1273,46 @@ public class GameEngine
         return entity;
     }
 
-    private Entity SpawnEntity(Entity parent, int initDataIndex, int checkSpawnZone)
+    private Entity SpawnEntity(Entity parent, int entityId, int notCheckSpawnZone)
     {
-        var entityRecord = CurrentMap.SpriteInfo.Entities.Entities[initDataIndex];
+        var entityRecord = CurrentMap.SpriteInfo.Entities.Entities[entityId];
 
         if (entityRecord == null)
         {
             return null;
         }
 
-        if (StaticVariables.PlayerEntity.XTile < entityRecord.XMin)
+        if (notCheckSpawnZone == 0)
         {
-            return null;
-        }
-        if (entityRecord.XMax < StaticVariables.PlayerEntity.XTile)
-        {
-            return null;
-        }
-        if (StaticVariables.PlayerEntity.YTile < entityRecord.YMin)
-        {
-            return null;
-        }
-        if (entityRecord.YMax < StaticVariables.PlayerEntity.YTile)
-        {
-            return null;
+            if (StaticVariables.PlayerEntity.XTile < entityRecord.XMin)
+            {
+                return null;
+            }
+
+            if (entityRecord.XMax < StaticVariables.PlayerEntity.XTile)
+            {
+                return null;
+            }
+
+            if (StaticVariables.PlayerEntity.YTile < entityRecord.YMin)
+            {
+                return null;
+            }
+
+            if (entityRecord.YMax < StaticVariables.PlayerEntity.YTile)
+            {
+                return null;
+            }
         }
 
         int paletteIndex, sheetSize;
 
-        var isMapSprite = ((uint)entityRecord.SpriteDirection & 0x40) != 0;
+        if (((uint)entityRecord.SpriteDirection & 0x40) == 0 && notCheckSpawnZone == 0)
+        {
+            return null;
+        }
+
+        var isMapSprite = (entityRecord.SpriteDirection & 0x80) == 0;
         var spriteRecord = GetSpriteFromSpriteTable(isMapSprite, entityRecord.SpriteTableIndex, out paletteIndex, out sheetSize);
 
         if (spriteRecord == null)
@@ -1170,7 +1333,7 @@ public class GameEngine
         }
 
         InitializeEntity(entity, parent, spriteRecord,
-            entityRecord, (uint)spriteTableIndex, initDataIndex,
+            entityRecord, (uint)spriteTableIndex, entityId,
             entityRecord.XPos, //(x * 12 + 12) * 65536
             entityRecord.YPos, //(y * 8 + 8) * 65536
             entityRecord.Height, //h << 19
@@ -1179,14 +1342,13 @@ public class GameEngine
             paletteIndex,
             sheetSize);
 
-        StaticVariables.g_numberOfEntity++; //TODO added
-
         return entity;
     }
 
     private SpriteRecord GetSpriteFromSpriteTable(bool isMapSprite, uint spriteTableIndex, out int addedtosheet, out int addedtopallette)
     {
         SpriteInfo si;
+
         if (isMapSprite)
         {
             si = CurrentMap.SpriteInfo;
@@ -1281,7 +1443,7 @@ public class GameEngine
         entity.TargetAnimationId = animationId;
         entity.TargetDirection = direction;
         //uint flags = animData.Flags;
-        entity.Flags = (uint)(sprite.Header.Moreflags | sprite.Header.CanPickup << 8 | sprite.Header.FlagsPortraitShadowtype << 16);;
+        entity.Flags = (uint)(sprite.Header.Moreflags | sprite.Header.CanPickup << 8 | sprite.Header.FlagsPortraitShadowtype << 16); ;
 
         //byte animFlag = animData.FlagsExtra0;
         //AnimationData animInfo = entity.SpriteRecordPtr;
@@ -1291,7 +1453,7 @@ public class GameEngine
         //entity.SpriteProgramIndexes[3] = animInfo.RawPtrListOffset1;
         //entity.SpriteProgramIndexes[4] = animInfo.RawPtrListOffset2;
         //entity.SpriteProgramIndexes[5] = animInfo.RawPtrListOffset3;
-        
+
         entity.SpriteProgramIndexes[1] = 0;
         entity.SpriteProgramIndexes[0] = sprite.Header.ProgramLoad;
         entity.SpriteProgramIndexes[2] = sprite.Header.ProgramTick;
@@ -1303,6 +1465,7 @@ public class GameEngine
         entity.AddedToSheet = sheetSize;
 
         //BalanceRecord balanceRecord = GetSpriteAnimationPtr(entity.SpriteTableIndex);
+        //Added by hand
         BalanceRecord balanceRecord = BalanceBin.GetBalanceRecordFromSpriteIndex((int)spriteTableIndex, CurrentMap.Info.BalanceLevel);
         entity.BalanceRecord = balanceRecord;
 
@@ -1313,15 +1476,15 @@ public class GameEngine
         InitializeEntityChain(entity);
 
         SetEntityDimensions(entity,
-            sprite.Header.Xmod, sprite.Header.Ymod, sprite.Header.Zmod, 
+            sprite.Header.Xmod, sprite.Header.Ymod, sprite.Header.Zmod,
             sprite.Header.Width, sprite.Header.Depth, sprite.Header.Height);
-
 
         entity.XPos = x;
         entity.YPos = y;
         entity.ZPos = (z - entity.ZMod) + 1;
 
         UpdateAnimation(entity);
+        Debug.Assert(entity.AnimSet != null);
 
         entity.ModdedXPos = entity.XPos + entity.XMod;
         entity.ModdedYPos = entity.YPos + entity.YMod;
@@ -1345,7 +1508,7 @@ public class GameEngine
     private void InitializeEntityChain(Entity entity)
     {
         entity.LogicContextEntity = entity;
-        
+
         int initType = entity.ProgramIndexes[1];
         if (initType != 0)
         {
@@ -1553,8 +1716,9 @@ public class GameEngine
             }
             else if (frameDelay + 1 < entity.BalanceRecord.NumAnimVals)
             {
-                //entity.BalanceVal = entity.BalanceRecord.Vals[frameDelay * 2 + 0xe];
-                System.Diagnostics.Debugger.Break();
+                //entity.BalanceRecord.Vals ??
+                entity.BalanceVal = entity.BalanceRecord.AnimVals[frameDelay * 2 + 0xe];
+                //System.Diagnostics.Debugger.Break();
             }
             else
             {
@@ -2274,7 +2438,7 @@ public class GameEngine
     {
         if ((StaticVariables.g_systemFlags & 0x40000000U) != 0 && StaticVariables.g_drawFrameFlags == 0)
         {
-            //SetTransitionType(1);
+            SetTransitionType(1);
             StaticVariables.g_drawState = 2;
             StaticVariables.g_fadeTimer = 0;
             StaticVariables.g_fadeStep = 0xf;
@@ -2285,6 +2449,55 @@ public class GameEngine
             StaticVariables.g_blendGreen = (short)~(ushort)(StaticVariables.g_soundFadeTimer << 3);
         }
     }
+
+    private int SetTransitionType(int transitionType)
+    {
+        int miscParam;
+        int[] callbackData;
+        int[] dataArgs;
+        int[] drawArgs;
+        int[] updateArgs;
+
+        if (transitionType < 0xd)
+        {
+            //int index = transitionType * 7;
+            //callbackData = StaticVariables.g_callbackTable[index];
+            //dataArgs = StaticVariables.g_transitionFuncArgs[index + 1];
+            //drawArgs = StaticVariables.g_transitionFuncArgs[index + 2];
+            //updateArgs = StaticVariables.g_transitionFuncArgs[index + 3];
+            //
+            //StaticVariables.g_activeTransitionCallback = callbackData;
+            //StaticVariables.g_callbackTable[index] = StaticVariables.g_transitionFuncArgs[index];
+            //StaticVariables.g_callbackTable[index + 1] = dataArgs;
+            //StaticVariables.g_callbackTable[index + 2] = drawArgs;
+            //StaticVariables.g_callbackTable[index + 3] = updateArgs;
+            //
+            //dataArgs = StaticVariables.g_transitionFuncArgs[index + 5];
+            //drawArgs = StaticVariables.g_transitionFuncArgs[index + 6];
+            //
+            //StaticVariables.g_callbackTable[index + 4] = StaticVariables.g_transitionFuncArgs[index + 4];
+            //StaticVariables.g_callbackTable[index + 5] = dataArgs;
+            //StaticVariables.g_callbackTable[index + 6] = drawArgs;
+            //
+            //StaticVariables.g_activeTransitionCallback[0] = StaticVariables.g_activeTransitionCallback[0] | 1;
+            //StaticVariables.g_currentTransitionType = transitionType;
+            //
+            //if (StaticVariables.g_callbackTable[index + 4] != null)
+            //{
+            //    StaticVariables.g_callbackTable[index + 4](StaticVariables.g_activeTransitionCallback);
+            //}
+
+            miscParam = 1;
+        }
+        else
+        {
+            miscParam = 0;
+        }
+
+        return miscParam;
+    }
+
+
 
     private void ResetDebugRenderingState()
     {
@@ -2717,7 +2930,7 @@ public class GameEngine
         }
     }
 
-    
+
     private void UpdateEffectAnimation(SpriteEffect effect)
     {
         if (effect.CurrentSpriteTableIndex != effect.TargetSpriteTableIndex
@@ -2753,6 +2966,7 @@ public class GameEngine
             effect.DestroyFlag = 0;
             effect.FirstFrame = nframe;
             effect.Frame = nframe;
+            Debug.Assert(nframe != null);
         }
         else
         {
@@ -2768,10 +2982,11 @@ public class GameEngine
             var frame = effect.Frame;
             if ((frame.Delay & 0x80) != 00)
             {
-                effect.AnimIndex++;
+                //effect.AnimIndex++;
                 var anim = effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnim];
                 frame = anim.Frames[effect.AnimIndex];
                 effect.Frame = frame;
+                Debug.Assert(frame != null);
                 if (frame?.Images != null)
                 {
                     effect.SpriteRef.Images = frame.Images.Images;
@@ -2821,7 +3036,7 @@ public class GameEngine
         }
         if (spritetableindex >= 0 && spritetableindex < si.SpriteTable.Length)
         {
-            return si.Spriteeffects[spritetableindex];
+            return si.SpriteEffects[spritetableindex];
         }
 
         return null;
@@ -2919,6 +3134,7 @@ public class GameEngine
                 StaticVariables.g_playerZ = StaticVariables.g_entityFollowedByCamera.ZPos >> 16;
             }
         }
+
         UpdateVisibleEntitiesZSort();
 
         //add spriterefs
@@ -3576,7 +3792,7 @@ public class GameEngine
             }
 
             var baseforce = (int)(0xffff << 16);
-            
+
             var i = StaticVariables.g_gameRandomSeed;
             var val1 = (uint)(i * 0x7d2b89dd);
             var val2 = (uint)(0xe06a02e7 + val1);
@@ -3899,9 +4115,9 @@ public class GameEngine
     {
         if (StaticVariables.g_numberOfEntity >= 0)
         {
-            for (var dex = 0; dex <= StaticVariables.g_numberOfEntity; dex++)
+            for (var i = 0; i <= StaticVariables.g_numberOfEntity; i++)
             {
-                var entity = StaticVariables.g_entitySlots[dex];
+                var entity = StaticVariables.g_entitySlots[i];
                 entity.UnknownCounter++;
                 if (entity.DamagedTickCounter != 0)
                 {
@@ -3937,7 +4153,7 @@ public class GameEngine
 
             if (entity.Status != 0)
             {
-                max = i;
+                max = i + 1;
             }
         }
 
@@ -4023,7 +4239,7 @@ public class GameEngine
 
         //SpawnEntity(Entity parent, int initDataIndex, int checkSpawnZone)
         //SpawnEntity(Entity ownerEntity, bool ismapsprite, uint tableindex, int xpos, int ypos, int zpos, uint dir)
-        var child = SpawnEntity(null, false, entity.ContentsItemId + 0x1e, 
+        var child = SpawnEntity(null, false, entity.ContentsItemId + 0x1e,
             entity.XPos, entity.YPos, entity.ZPos, 0);
 
         if (child == null)
@@ -4163,7 +4379,7 @@ public class GameEngine
         return null;
     }
 
-    
+
     public SpriteEffect GetNextAvailableEffect()
     {
         foreach (var effect in StaticVariables.g_effectSlots)
@@ -4235,7 +4451,7 @@ public class GameEngine
         effect.Z = z;
     }
 
-    
+
 
     //TODO all the slope stuff
     public void UpdateTile(Entity entity)
@@ -4402,7 +4618,7 @@ public class GameEngine
         return collision;
     }
 
-    
+
     public int GetEntityFromRefId(Entity ownerEntity, int entityid)
     {
         var numgot = 0;
@@ -4539,7 +4755,7 @@ public class GameEngine
 
         return numgot;
     }
-    
+
     private SiEntityRecord CheckValidEntityId(int entityId)
     {
         var rec = GetInitData(entityId);
@@ -4656,7 +4872,7 @@ public class GameEngine
         }
     }
 
-    
+
     public uint TurnEntity(Entity entity, int turnCode)
     {
         var turndir = turnCode & 0x1f;

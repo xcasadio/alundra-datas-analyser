@@ -1566,7 +1566,7 @@ public class GameState
         }
         if (spritetableindex >= 0 && spritetableindex < si.SpriteTable.Length)
         {
-            return si.Spriteeffects[spritetableindex];
+            return si.SpriteEffects[spritetableindex];
         }
 
         return null;

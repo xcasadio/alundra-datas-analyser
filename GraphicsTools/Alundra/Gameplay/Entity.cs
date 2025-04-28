@@ -126,7 +126,7 @@ public class Entity
     public int SpawnedGameFlag;//280
     public int SpawnedZForce;//284
 
-    public bool IsMapSprite => (EntityRecord.SpriteDirection & 0x80) != 0;
+    public bool IsMapSprite => EntityRecord == null ? false : (EntityRecord.SpriteDirection & 0x80) != 0;
 }
 
 //public class EventProgramState

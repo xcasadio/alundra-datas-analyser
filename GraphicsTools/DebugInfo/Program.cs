@@ -1,6 +1,8 @@
 ﻿using Alundra;
 using Alundra.DatasBin;
 using Alundra.Text;
+using System.Linq;
+using System.Text;
 
 namespace DebugInfo;
 
@@ -26,17 +28,82 @@ internal class Program
 
     public static void Main(string[] args)
     {
-        var dataFolder = "C:\\Users\\casad\\dev\\repo\\Alundra Remake\\Alundra (France)\\Alundra (France)_extracted\\DATA";
+        var alundraFolder = "C:\\Users\\casad\\dev\\repo\\Alundra Remake\\Alundra (France)\\Alundra (France)_extracted";
+        var dataFolder = Path.Combine(alundraFolder, "DATA");
 
-        var etcResRFileName = Path.Combine(dataFolder, "ETC_RES.R");
-        var etcResR = new EtcResR(etcResRFileName);
+        DisplaySoundListNames();
 
-        DisplayInfoEtcResR(etcResR);
+        //var etcResRFileName = Path.Combine(dataFolder, "ETC_RES.R");
+        //var etcResR = new EtcResR(etcResRFileName);
+        //DisplayInfoEtcResR(etcResR);
 
         //var datasBinFileName = Path.Combine(dataFolder, "DATAS.BIN");
         //var datasBin = new DatasBin(datasBinFileName);
         //DisplayAllMapOffset(datasBin);
         //DisplayAllMapInfo(datasBin.GameMaps[162]); // Inoa
+    }
+
+    private static void DisplaySoundListNames()
+    {
+        const long startOffset = 0x80000000;
+        //const long headerOffset = 0x800;
+        const long tableOffset = 0x800A7488 - startOffset; // + headerOffset;
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        Encoding shiftJis = Encoding.GetEncoding("shift_jis");
+
+        var exeFile = @"C:\Users\casad\AppData\Roaming\pcsx-redux\SLES01198_mem_wram.bin";
+
+        using var fs = new FileStream(exeFile, FileMode.Open, FileAccess.Read);
+        using var br = new BinaryReader(fs);
+        fs.Seek(tableOffset, SeekOrigin.Begin);
+
+        List<uint> addresses = new();
+
+        // Lire tous les pointeurs
+        while (true)
+        {
+            var add = br.ReadUInt32();
+
+            if (add == 0x0)
+            {
+                break;
+            }
+
+            addresses.Add(add);
+            Log($"0x{add:X8}");
+        }
+
+        foreach (uint addr in addresses)
+        {
+            long dataOffset = addr - startOffset; // + headerOffset;
+        
+            if (dataOffset < 0)
+            {
+                Log($"Invalid address: 0x{addr:X8}");
+                continue;
+            }
+
+            fs.Seek(dataOffset, SeekOrigin.Begin);
+
+            List<byte> buffer = new List<byte>();
+
+            while (true)
+            {
+                var val = br.ReadByte();
+
+                if (val == 0x0)
+                {
+                    break;
+                }
+
+                buffer.Add(val);
+            }
+            
+            var array = buffer.ToArray();
+            string decodedString = shiftJis.GetString(array);
+            string text = System.Text.Encoding.ASCII.GetString(array);
+            Console.WriteLine("Data at 0x{0:X8}: {1} -> {2}", addr, text, decodedString);
+        }
     }
 
     private static void DisplayInfoEtcResR(EtcResR etcResR)

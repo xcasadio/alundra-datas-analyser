@@ -2,7 +2,9 @@
 using Alundra.Gameplay;
 using Alundra.Gameplay.Scripts;
 using Alundra.Sound;
+using Alundra.Sprite;
 using Alundra.Text;
+using System.Diagnostics;
 
 namespace Alundra;
 
@@ -1431,6 +1433,7 @@ public class Game
                 var anim = effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnim];
                 frame = anim.Frames[effect.AnimIndex];
                 effect.Frame = frame;
+                Debug.Assert(frame != null);
                 if (frame?.Images != null)
                 {
                     effect.SpriteRef.Images = frame.Images.Images;

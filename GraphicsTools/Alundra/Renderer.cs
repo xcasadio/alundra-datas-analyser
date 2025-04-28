@@ -6,25 +6,26 @@ public class Renderer
 {
     public static void Render(Graphics g, DatasBin.DatasBin datasBin, GameMap gameMap)
     {
-        var curxpos = StaticVariables.g_cameraCurrentX >> 16;
-        var curypos = StaticVariables.g_cameraCurrentY >> 16;
+        var curxpos = StaticVariables.g_cameraCurrentX;// >> StaticVariables.MapTileHeight;
+        var curypos = StaticVariables.g_cameraCurrentY;// >> StaticVariables.MapTileHeight;
 
-        var curxtile = curxpos / 24;
+        var curxtile = curxpos / StaticVariables.MapTileWidth;
 
         var sinfo = gameMap.SpriteInfo;
         var gensi = datasBin.AlundraGameMap.SpriteInfo;
 
-        for (var y = 0; y < 60; y++)
+        for (var y = 0; y < StaticVariables.g_mapLimits; y++)
         {
             //draw tiles on this row
-            for (var x = curxtile; x < curxtile + StaticVariables.ScreenWidth / 24 + 2; x++)
+            for (var x = curxtile; x < curxtile + StaticVariables.ScreenWidth / StaticVariables.MapTileWidth + 2; x++)
             {
+                //StaticVariables.g_mapLimits
                 var tile = gameMap.Map.MapTiles[y * 52 + x];
                 //render tile
-                var dx = x * 24 - curxpos;
-                var dy = (y - tile.Height) * 16 - curypos;
+                var dx = x * StaticVariables.MapTileWidth - curxpos;
+                var dy = (y - tile.Height) * StaticVariables.MapTileHeight - curypos;
 
-                if (dy > -16 && dy < StaticVariables.ScreenHeight && tile.TileId != -1)
+                if (dy > -StaticVariables.MapTileHeight && dy < StaticVariables.ScreenHeight && tile.TileId != -1)
                 {
                     DrawTile(tile.TileId, dx, dy, g, gameMap);
                 }
@@ -33,13 +34,13 @@ public class Renderer
                 {
                     var wallTiles = tile.WallTiles;
                     int i;
-                    dy -= wallTiles.Offset * 16;
+                    dy -= wallTiles.Offset * StaticVariables.MapTileHeight;
 
                     for (i = 0; i < wallTiles.Count; i++)
                     {
-                        dy += 16;
+                        dy += StaticVariables.MapTileHeight;
                         //render wall tile
-                        if (dy > -16 && dy < StaticVariables.ScreenHeight && wallTiles.Tiles[i] != -1)
+                        if (dy > -StaticVariables.MapTileHeight && dy < StaticVariables.ScreenHeight && wallTiles.Tiles[i] != -1)
                         {
                             DrawTile(wallTiles.Tiles[i], dx, dy, g, gameMap);
                         }
@@ -50,33 +51,33 @@ public class Renderer
             //draw sprites who are on this row
             for (var i = 0; i < StaticVariables.g_numberOfEntity; i++)
             {
-                var si = StaticVariables.g_entitySlots[i];
-                if (si.Status == 5)
+                var entity = StaticVariables.g_entitySlots[i];
+                if (entity.Status == 5)
                 {
                     continue;
                 }
 
-                if (si.YTile != y)
+                if (entity.YTile != y)
                 {
                     continue;//if its not in this row, continue
                 }
 
                 //var tile = selectedGame.map.maptiles[sx + sy * selectedGame.map.width];
-                var scx = (si.ModdedXPos >> 16) - curxpos;
-                var scy = (si.ModdedYPos >> 16) - (si.ModdedZPos >> 16) - curypos;
+                var scx = (entity.ModdedXPos >> 16) - curxpos;
+                var scy = (entity.ModdedYPos >> 16) - (entity.ModdedZPos >> 16) - curypos;
 
-                if (si.Sprite != null)
+                if (entity.Sprite != null)
                 {
                     int idex;
 
-                    var map = si.IsMapSprite ? gameMap : datasBin.AlundraGameMap;
+                    var map = entity.IsMapSprite ? gameMap : datasBin.AlundraGameMap;
 
-                    if (si.Frame == null) // why?? TODO, not initialized ?
+                    if (entity.Frame == null) // why?? TODO, not initialized ?
                     {
                         continue;
                     }
 
-                    var iset = si.Frame.Images;
+                    var iset = entity.Frame.Images;
                     for (idex = iset.NumberOfImages - 1; idex >= 0; idex--)
                     {
                         var img = iset.Images[idex];
