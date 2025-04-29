@@ -533,37 +533,37 @@ public class GameEngine
         {
             if (param_1 < 0)
             {
-                StaticVariables.g_fadeControl.warpVisualId = 0;
+                StaticVariables.g_fadeControl.WarpVisualId = 0;
             }
             else
             {
-                StaticVariables.g_fadeControl.warpVisualId = (short)param_1;
+                StaticVariables.g_fadeControl.WarpVisualId = (short)param_1;
             }
         }
         else
         {
-            StaticVariables.g_fadeControl.warpVisualId = 0x32;
+            StaticVariables.g_fadeControl.WarpVisualId = 0x32;
         }
 
-        return StaticVariables.g_fadeControl.warpVisualId;
+        return StaticVariables.g_fadeControl.WarpVisualId;
     }
 
     private int FinalizeWarpEntities(short warpEntityId)
     {
-        if (StaticVariables.g_fadeControl.warpVisualId < warpEntityId)
+        if (StaticVariables.g_fadeControl.WarpVisualId < warpEntityId)
         {
-            StaticVariables.g_fadeControl.currentWarpEntityId = StaticVariables.g_fadeControl.warpVisualId;
+            StaticVariables.g_fadeControl.CurrentWarpEntityId = StaticVariables.g_fadeControl.WarpVisualId;
         }
         else if (warpEntityId < 0)
         {
-            StaticVariables.g_fadeControl.currentWarpEntityId = 0;
+            StaticVariables.g_fadeControl.CurrentWarpEntityId = 0;
         }
         else
         {
-            StaticVariables.g_fadeControl.currentWarpEntityId = warpEntityId;
+            StaticVariables.g_fadeControl.CurrentWarpEntityId = warpEntityId;
         }
 
-        return StaticVariables.g_fadeControl.currentWarpEntityId;
+        return StaticVariables.g_fadeControl.CurrentWarpEntityId;
     }
 
     private int SetMaxFadeLevel(short maxFadeLevel)
@@ -572,37 +572,37 @@ public class GameEngine
         {
             if (maxFadeLevel < 0)
             {
-                StaticVariables.g_fadeControl.maxFadeLevel = 0;
+                StaticVariables.g_fadeControl.MaxFadeLevel = 0;
             }
             else
             {
-                StaticVariables.g_fadeControl.maxFadeLevel = maxFadeLevel;
+                StaticVariables.g_fadeControl.MaxFadeLevel = maxFadeLevel;
             }
         }
         else
         {
-            StaticVariables.g_fadeControl.maxFadeLevel = 4;
+            StaticVariables.g_fadeControl.MaxFadeLevel = 4;
         }
 
-        return StaticVariables.g_fadeControl.maxFadeLevel;
+        return StaticVariables.g_fadeControl.MaxFadeLevel;
     }
 
     private int SetFadeTargetLevel(short targetLevel)
     {
-        if (StaticVariables.g_fadeControl.maxFadeLevel < targetLevel)
+        if (StaticVariables.g_fadeControl.MaxFadeLevel < targetLevel)
         {
-            StaticVariables.g_fadeControl.targetFadeLevel = StaticVariables.g_fadeControl.maxFadeLevel;
+            StaticVariables.g_fadeControl.TargetFadeLevel = StaticVariables.g_fadeControl.MaxFadeLevel;
         }
         else if (targetLevel < 0)
         {
-            StaticVariables.g_fadeControl.targetFadeLevel = 0;
+            StaticVariables.g_fadeControl.TargetFadeLevel = 0;
         }
         else
         {
-            StaticVariables.g_fadeControl.targetFadeLevel = targetLevel;
+            StaticVariables.g_fadeControl.TargetFadeLevel = targetLevel;
         }
 
-        return StaticVariables.g_fadeControl.targetFadeLevel;
+        return StaticVariables.g_fadeControl.TargetFadeLevel;
     }
 
     private int ApplyFadeLevel(short newFadeValue)
@@ -611,19 +611,19 @@ public class GameEngine
         {
             if (newFadeValue < 0)
             {
-                StaticVariables.g_fadeControl.currentWarpEntityId = 0;
+                StaticVariables.g_fadeControl.CurrentWarpEntityId = 0;
             }
             else
             {
-                StaticVariables.g_fadeControl.currentWarpEntityId = newFadeValue;
+                StaticVariables.g_fadeControl.CurrentWarpEntityId = newFadeValue;
             }
         }
         else
         {
-            StaticVariables.g_fadeControl.currentWarpEntityId = 9999;
+            StaticVariables.g_fadeControl.CurrentWarpEntityId = 9999;
         }
 
-        return StaticVariables.g_fadeControl.currentWarpEntityId;
+        return StaticVariables.g_fadeControl.CurrentWarpEntityId;
     }
 
     private void SetupPostWarpGraphics()
@@ -636,23 +636,23 @@ public class GameEngine
 
     private int FUN_8004dc50()
     {
-        return StaticVariables.g_fadeControl.warpVisualId;
+        return StaticVariables.g_fadeControl.WarpVisualId;
     }
 
     private int GetCurrentPaletteFadeLevel()
     {
-        return StaticVariables.g_fadeControl.maxFadeLevel;
+        return StaticVariables.g_fadeControl.MaxFadeLevel;
     }
 
     private void LoadWarpVisuals(ushort warpVisualId)
     {
         if (warpVisualId == 0xffffffff || warpVisualId - 1 < 6)
         {
-            StaticVariables.g_fadeControl.warpVisualId = (short)warpVisualId;
+            StaticVariables.g_fadeControl.WarpVisualId = (short)warpVisualId;
         }
         else
         {
-            //LogDebugMessage(StaticVariables.g_logMessage_InvalidWarpVisualId, warpVisualId);
+            //LogDebugMessage(StaticVariables.g_logMessage_InvalidWarpVisualId, WarpVisualId);
         }
 
         GetCurrentTileIndex();
@@ -661,7 +661,7 @@ public class GameEngine
     private uint GetCurrentTileIndex()
     {
         uint tileIndex = 0xffffffff;
-        int caseValue = (StaticVariables.g_fadeControl.warpVisualId - 1);
+        int caseValue = (StaticVariables.g_fadeControl.WarpVisualId - 1);
 
         switch (caseValue)
         {
@@ -4072,9 +4072,9 @@ public class GameEngine
 
                     if (entity.EventTrigger != -1)
                     {
-                        var progIndex = entity.ProgramIndexes[entity.EventTrigger] & 0x7f;
+                        var programIndex = entity.ProgramIndexes[entity.EventTrigger] & 0x7f;
 
-                        if (progIndex != 0)
+                        if (programIndex != 0)
                         {
                             //run the eventhandler script
                             _entityEventHandlers.RunEntityEventScripts(entity, entity.EventTrigger);
@@ -4082,9 +4082,9 @@ public class GameEngine
                         }
                         else
                         {
-                            var eventid = entity.SpriteProgramIndexes[entity.EventTrigger];
+                            var eventId = entity.SpriteProgramIndexes[entity.EventTrigger];
                             //run the sprite event handler
-                            _entityEventHandlers.SpriteHandlers.RunSpriteHandler(entity.EventTrigger, eventid, entity);
+                            _entityEventHandlers.SpriteHandlers.RunSpriteHandler(entity.EventTrigger, eventId, entity);
                             entity.EventTrigger = -1;
                         }
 

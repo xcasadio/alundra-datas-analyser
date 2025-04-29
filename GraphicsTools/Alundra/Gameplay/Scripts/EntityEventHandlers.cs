@@ -212,16 +212,16 @@ public class EntityEventHandlers
 
     private void InitEventData(Entity entity, int eventProgramType, EventProgramState eventData)
     {
-        var codeindex = entity.ProgramIndexes[eventProgramType];
+        var codeIndex = entity.ProgramIndexes[eventProgramType];
         var si = _gameEngine.AlundraMap.SpriteInfo;
         var mod = 0;
-        if ((codeindex & 0x80) != 0)
+        if ((codeIndex & 0x80) != 0)
         {
             si = _gameEngine.CurrentMap.SpriteInfo;
             mod = 1024 * 512;
         }
 
-        var sp = si.EventCodes.Eventcodestable[eventProgramType][codeindex & 0x7f] + mod;
+        var sp = si.EventCodes.EventCodesTable[eventProgramType][codeIndex & 0x7f] + mod;
         eventData.Sp = sp;
         eventData.Exp = sp;
 
@@ -229,8 +229,8 @@ public class EntityEventHandlers
         //looking to see if the code pointers are in the correct range of where they should be
     }
 
-
-
+    //All Script_xxx functions
+    //8003D158
     public int __Unknown_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventData, byte[] code)
     {
         Debug.WriteLine("Data Logic Error!");
@@ -1342,12 +1342,12 @@ public class EntityEventHandlers
         var z = (code[exp + 6] + (code[exp + 7] << 8)) << 16;
 
         var numentities = _gameEngine.GetEntityFromRefId(entity, entityid);
-        for (var dex = 0; dex < numentities; dex++)
+        for (var i = 0; i < numentities; i++)
         {
-            var dome = StaticVariables.g_entitySlots[dex];
-            dome.XPos = x;
-            dome.YPos = y;
-            dome.ZPos = z + 1;
+            var entity2 = StaticVariables.g_entitySlots[i];
+            entity2.XPos = x;
+            entity2.YPos = y;
+            entity2.ZPos = z + 1;
         }
 
         return 8;

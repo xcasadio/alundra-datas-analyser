@@ -19,7 +19,7 @@ public class SpriteEventHandlers
         _typeHandlers[ScriptHelper.ProgramEDeactivate] = new Dictionary<int, SpriteEventHandler>();
         _typeHandlers[ScriptHelper.ProgramFInteract] = new Dictionary<int, SpriteEventHandler>();
 
-        //register the ones that have been implimented here
+        //register the ones that have been implemented here
         Register(ScriptHelper.ProgramCTick, 0x17, etick_17_jarsandboxes_Handler);
     }
 
@@ -28,16 +28,18 @@ public class SpriteEventHandlers
         _typeHandlers[type].Add(code, handler);
     }
 
-    public void RunSpriteHandler(int eventtype, int eventid, Entity entity)
+    public void RunSpriteHandler(int eventType, int eventId, Entity entity)
     {
-        var handlers = _typeHandlers[eventtype];
-        if (handlers.ContainsKey(eventid))
+        var handlers = _typeHandlers[eventType];
+        if (handlers.ContainsKey(eventId))
         {
-            handlers[eventid](entity);
-            return;
+            handlers[eventId](entity);
         }
     }
 
+    //All AI_xxx functions
+
+    //8007b7b0
     public void etick_17_jarsandboxes_Handler(Entity entity)
     {
         if (entity.PlatformEntity == null)

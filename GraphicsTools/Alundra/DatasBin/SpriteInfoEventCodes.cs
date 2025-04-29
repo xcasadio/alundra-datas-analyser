@@ -96,12 +96,12 @@ public class SpriteInfoEventCodes
         _memaddr = header.MemoryAddress + header.EventCodesAPointer;
         _datasize = header.EntitiesPointer - header.EventCodesAPointer;
 
-        Eventcodestable.Add(Eventcodesatable);
-        Eventcodestable.Add(Eventcodesbtable);
-        Eventcodestable.Add(Eventcodesctable);
-        Eventcodestable.Add(Eventcodesdtable);
-        Eventcodestable.Add(Eventcodesetable);
-        Eventcodestable.Add(Eventcodesftable);
+        EventCodesTable.Add(Eventcodesatable);
+        EventCodesTable.Add(Eventcodesbtable);
+        EventCodesTable.Add(Eventcodesctable);
+        EventCodesTable.Add(Eventcodesdtable);
+        EventCodesTable.Add(Eventcodesetable);
+        EventCodesTable.Add(Eventcodesftable);
 
         var top = 0;
         if (ismap)
@@ -626,5 +626,5 @@ public class SpriteInfoEventCodes
     public readonly short[] Eventcodesetable;
     public readonly short[] Eventcodesftable;
 
-    public readonly List<short[]> Eventcodestable = new();
+    public readonly List<short[]> EventCodesTable = new();
 }
