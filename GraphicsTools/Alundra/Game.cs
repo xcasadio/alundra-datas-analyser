@@ -263,7 +263,7 @@ public class Game
         for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
         {
             var entity = StaticVariables.g_activeEntities[i];
-            entity.DoneMoving = false;
+            entity.PlatformUpdateFlag = 0;
             entity.CollidedWithEntityZ = 0;
             entity.ForceAdjusted = 0;
 
@@ -287,7 +287,7 @@ public class Game
         for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
         {
             var entity = StaticVariables.g_activeEntities[i];
-            if (!entity.DoneMoving)
+            if (entity.PlatformUpdateFlag != 0)
             {
                 //MoveEntity(entity);
             }
@@ -365,7 +365,7 @@ public class Game
                 if (player.IsZForceApplied != 0)
                 {
                     if ((player.Flags & 0x100) != 0
-                        && (player.combinedVramFlagsOR & 0x0010) != 0
+                        && (player.CombinedVramFlagsOR & 0x0010) != 0
                         && StaticVariables.g_gravityFlag <= 0)
                     {
                         player.ZForce = player.IsZForceApplied * 160;
@@ -401,7 +401,7 @@ public class Game
                 SetXyForces(player);
 
                 int xforcestep, yforcestep;
-                if ((player.combinedVramFlagsOR & 0x0020) != 0)
+                if ((player.CombinedVramFlagsOR & 0x0020) != 0)
                 {
                     long resultx = player.XForceStep * 0x1000;
                     xforcestep = (int)(resultx >> 16);
@@ -416,7 +416,7 @@ public class Game
                 }
 
                 int targetxforce, targetyforce;
-                if ((player.combinedVramFlagsOR & 0x0008) != 0
+                if ((player.CombinedVramFlagsOR & 0x0008) != 0
                     && StaticVariables.g_gravityFlag <= 0)
                 {
                     long resultx = player.TargetXForce * 0x8000;
@@ -497,8 +497,8 @@ public class Game
         var lastinteracty = entity.InteractYForce;
         entity.InteractYForce = 0;
         entity.InteractXForce = 0;
-        var xval = entity.XForce + ScriptHelper.XForceTable[entity.SomethingForceIndex & 0xf] >> _gameState.GameMap.Info.Gravity;
-        var yval = entity.YForce + ScriptHelper.YForceTable[entity.SomethingForceIndex & 0xf] >> _gameState.GameMap.Info.Gravity;
+        var xval = entity.XForce + ScriptHelper.XForceTable[entity.TileAttributes & 0xf] >> _gameState.GameMap.Info.Gravity;
+        var yval = entity.YForce + ScriptHelper.YForceTable[entity.TileAttributes & 0xf] >> _gameState.GameMap.Info.Gravity;
 
         xval += lastinteractx;
         yval += lastinteracty;
@@ -561,11 +561,11 @@ public class Game
         {
             entity.Speed = entity.AnimSet.Speed;
 
-            entity.TargetXForce = ScriptHelper.DirVectorsX[entity.TargetDirection] * entity.AnimSet.Speed;
+            entity.TargetXForce = StaticVariables.g_offsetXList[entity.TargetDirection] * entity.AnimSet.Speed;
 
             entity.CurrentDirection = entity.TargetDirection;
 
-            entity.TargetYForce = ScriptHelper.DirVectorsY[entity.TargetDirection] * entity.AnimSet.Speed;
+            entity.TargetYForce = StaticVariables.g_offsetYList[entity.TargetDirection] * entity.AnimSet.Speed;
         }
         else if (entity.Acceleration == (entity.AnimSet.Acceleration & 0xf))
         {
@@ -972,24 +972,24 @@ public class Game
             }
             //TODO: what is 18c, something with slope and sliding?
             var animid = -1;
-            if ((entity._18c == 4 || entity._190 == 4)
-                && entity._18c != entity._190)
+            if ((entity.HitboxHeightX == 4 || entity.HitboxHeightY == 4)
+                && entity.HitboxHeightX != entity.HitboxHeightY)
             {
                 _gameState.CreateEffect_Type0(0, 6, 0, entity.XPos, entity.YPos, entity.CollidedWithEntityZ);
             }
 
-            if (entity._18c >= 8)
+            if (entity.HitboxHeightX >= 8)
             {
                 continue;
             }
 
-            switch (entity._18c)
+            switch (entity.HitboxHeightX)
             {
                 case 1:
                 case 2:
                     effect.TargetIsMapSprite = 0;
                     effect.TargetSpriteTableIndex = 1;
-                    effect.TargetAnim = (byte)animid;
+                    effect.TargetAnimation = (byte)animid;
                     effect.Status = 2;
                     effect.X = entity.XPos;
                     effect.Y = entity.YPos;
@@ -1040,7 +1040,7 @@ public class Game
             effect.TargetIsMapSprite = 0;
             effect.TargetSpriteTableIndex = 0;
 
-            effect.TargetAnim = (byte)animid;
+            effect.TargetAnimation = (byte)animid;
             effect.Status = 2;
 
             effect.X = entity.XPos;
@@ -1087,7 +1087,7 @@ public class Game
 
                             if ((entity.Flags & 0x100000) != 0)
                             {
-                                if (entity._18c == 4)
+                                if (entity.HitboxHeightX == 4)
                                 {
                                     _gameState.DestroyEntity(entity, 6);
 
@@ -1098,7 +1098,7 @@ public class Game
 
                             if ((entity.Flags & 0x200000) != 0)
                             {
-                                if ((entity.combinedVramFlagsOR & 0x8004) != 0)
+                                if ((entity.CombinedVramFlagsOR & 0x8004) != 0)
                                 {
                                     _gameState.DestroyEntity(entity, -1);
 
@@ -1109,7 +1109,7 @@ public class Game
 
                             if ((entity.Flags & 0x10) != 0)
                             {
-                                if (entity.ForceAdjusted != 0 || entity._144 != 3)
+                                if (entity.ForceAdjusted != 0 || entity.IsAboveGround != 3)
                                 {
                                     entity.Status = 3;//deactivate
                                     evttype = ScriptHelper.ProgramEDeactivate;
@@ -1319,7 +1319,7 @@ public class Game
             }
 
             var rec = mapEvent.MapEventRecord;
-            if (playerEntity.XTile < rec.X1 || playerEntity.XTile > rec.X2 || playerEntity.YTile < rec.Y1 || playerEntity.YTile > rec.Y2)
+            if (playerEntity.TileX < rec.X1 || playerEntity.TileX > rec.X2 || playerEntity.TileY < rec.Y1 || playerEntity.TileY > rec.Y2)
             {
                 playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap] = mapEvent.ProgramBMap;
                 playerEntity.MapEventProgramId = mapEvent.ProgramBMap;
@@ -1401,18 +1401,18 @@ public class Game
 
             effect.SheetSize = addtosheet;
             effect.PaletteIndex = addtopal;
-            effect.CurrentAnim = (byte)~effect.TargetAnim;
+            effect.CurrentAnimation = (byte)~effect.TargetAnimation;
         }
 
-        if (effect.CurrentAnim != effect.TargetAnim)
+        if (effect.CurrentAnimation != effect.TargetAnimation)
         {
-            var animation = effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnim];
+            var animation = effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnimation];
             effect.AnimIndex = 0;
             var nframe = animation.Frames[effect.AnimIndex];
-            effect.CurrentAnim = effect.TargetAnim;
+            effect.CurrentAnimation = effect.TargetAnimation;
             effect.Delay = 0;
             effect.DestroyFlag = 0;
-            effect.FirstFrame = nframe;
+            effect.InitialFrame = nframe;
             effect.Frame = nframe;
         }
         else
@@ -1430,7 +1430,7 @@ public class Game
             if ((frame.Delay & 0x80) != 00)
             {
                 effect.AnimIndex++;
-                var anim = effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnim];
+                var anim = effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnimation];
                 frame = anim.Frames[effect.AnimIndex];
                 effect.Frame = frame;
                 Debug.Assert(frame != null);
@@ -1452,7 +1452,7 @@ public class Game
                 {
                     //repeat
                     effect.AnimIndex = 0;
-                    effect.Frame = effect.FirstFrame;
+                    effect.Frame = effect.InitialFrame;
                     continue;
                 }
                 throw new Exception("Error with Effect Animation!");
@@ -1468,7 +1468,7 @@ public class Game
 
     public void UpdateEffectPosition(SpriteEffect effect)
     {
-        if (effect.EffectType == 0)
+        if (effect.UpdateMode == 0)
         {
             effect.X += effect.XForce; //forces?
             effect.Y += effect.YForce;
@@ -1478,9 +1478,9 @@ public class Game
             return;
         }
 
-        if (effect.EffectType == 1)
+        if (effect.UpdateMode == 1)
         {
-            var entity = effect.EntityRef;
+            var entity = effect.AttachedEntity;
             if (entity.Status != 0)
             {
                 effect.X = entity.XPos + effect.XOff;
@@ -1489,15 +1489,15 @@ public class Game
                 effect.DepthSortVal = entity.DepthSortVal + effect.DepthSortMod;
                 if (entity.Status == 4)
                 {
-                    effect.EffectType = 2;
+                    effect.UpdateMode = 2;
                 }
             }
             else
             {
-                effect.EffectType = 2;
+                effect.UpdateMode = 2;
             }
         }
-        else if (effect.EffectType != 3)
+        else if (effect.UpdateMode != 3)
         {
             return;
         }
@@ -1506,18 +1506,18 @@ public class Game
         effect.Y += effect.YForce;
         effect.Z += effect.ZForce;
 
-        if (effect.EntityRef.Status != 0)
+        if (effect.AttachedEntity.Status != 0)
         {
-            effect.DepthSortVal = effect.EntityRef.DepthSortVal + effect.DepthSortMod;
+            effect.DepthSortVal = effect.AttachedEntity.DepthSortVal + effect.DepthSortMod;
 
-            if (effect.EntityRef.Status == 4)
+            if (effect.AttachedEntity.Status == 4)
             {
-                effect.EffectType = 2;
+                effect.UpdateMode = 2;
             }
         }
         else
         {
-            effect.EffectType = 2;
+            effect.UpdateMode = 2;
         }
     }
 }

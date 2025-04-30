@@ -19,7 +19,7 @@ public static class ScriptHelper
         return (int)(0xFFFF0000 | i);
     }
 
-    public static int DirFromVector(int x, int y)
+    public static int GetDirectionToTarget(int x, int y)
     {
         var flipper = 0;
         if (y < 1)
@@ -84,14 +84,81 @@ public static class ScriptHelper
         return ret & 0x1f;
     }
 
-    public static readonly int[] Anim24Table =
-    [
-        0x00000000,//0x00
-        0x00000003,//0x01
-        0x00000001,//0x02
-        0x00000004,//0x03
-        0x00000000 //0x04
-    ];
+    public static void CalculateEntityRelativePosition(Entity entity, int[] relativePositions)
+    {
+        int deltaX;
+        int deltaZ;
+        int deltaY;
+
+        deltaX = entity.TileX - StaticVariables.PlayerEntity.TileX;
+        deltaY = entity.TileY - StaticVariables.PlayerEntity.TileY;
+        deltaZ = entity.FloorHeight - StaticVariables.PlayerEntity.FloorHeight;
+
+        relativePositions[3] = deltaX;
+
+        if (deltaX < 0)
+        {
+            deltaX = -deltaX;
+        }
+
+        relativePositions[4] = deltaY;
+
+        if (deltaY < 0)
+        {
+            deltaY = -deltaY;
+        }
+
+        relativePositions[5] = deltaZ;
+
+        if (deltaZ < 0)
+        {
+            deltaZ = -deltaZ;
+        }
+
+        relativePositions[0] = deltaX;
+        relativePositions[1] = deltaY;
+        relativePositions[2] = deltaZ;
+    }
+
+    public static void Set(this byte[] array, short value, int index = 0)
+    {
+        array[0 + index] = (byte)(value & 0xFF);
+        array[1 + index] = (byte)((value >> 8) & 0xFF);
+    }
+
+    public static void Set(this byte[] array, ushort value, int index = 0)
+    {
+        array[0 + index] = (byte)(value & 0xFF);
+        array[1 + index] = (byte)((value >> 8) & 0xFF);
+    }
+
+    public static void Set(this byte[] array, int value, int index = 0)
+    {
+        array[0 + index] = (byte)(value & 0xFF);
+        array[1 + index] = (byte)((value >> 8) & 0xFF);
+        array[2 + index] = (byte)((value >> 16) & 0xFF);
+        array[3 + index] = (byte)((value >> 24) & 0xFF);
+    }
+
+    public static void Set(this byte[] array, uint value, int index = 0)
+    {
+        array[0 + index] = (byte)(value & 0xFF);
+        array[1 + index] = (byte)((value >> 8) & 0xFF);
+        array[2 + index] = (byte)((value >> 16) & 0xFF);
+        array[3 + index] = (byte)((value >> 24) & 0xFF);
+    }
+
+    public static void Set(this short[] array, int value, int index = 0)
+    {
+        array[0 + index] = (byte)(value & 0xFFFF);
+        array[1 + index] = (byte)((value >> 16) & 0xFFFF);
+    }
+
+    public static void Set(this short[] array, uint value, int index = 0)
+    {
+        array[0 + index] = (byte)(value & 0xFFFF);
+        array[1 + index] = (byte)((value >> 16) & 0xFFFF);
+    }
 
     public static readonly int[] XForceTable =
     [
@@ -133,21 +200,9 @@ public static class ScriptHelper
         0x00000000 //0x0f
     ];
 
-    public static readonly short[] DirVectorsX =
-    [
-        0x0,unchecked((short)0xff6a),unchecked((short)0xfeda),unchecked((short)0xfe5a),unchecked((short)0xfde1),unchecked((short)0xfd81),unchecked((short)0xfd3a),unchecked((short)0xfd0f),unchecked((short)0xfd00),unchecked((short)0xfd0f),unchecked((short)0xfd3a),unchecked((short)0xfd81),unchecked((short)0xfde1),unchecked((short)0xfe5a),unchecked((short)0xfeda),unchecked((short)0xff6a),
-        0x0,0x96,0x126,0x1a6,0x21f,0x27f,0x2c6,0x2f1,0x300,0x2f1,0x2c6,0x27f,0x21f,0x1a6,0x126,0x96
-    ];
-
-    public static readonly short[] DirVectorsY =
-    [
-        0x200,0x1f6,0x1d9,0x1aa,0x16a,0x11c,0xc4,0x64,0x0,unchecked((short)0xff9c),unchecked((short)0xff3c),unchecked((short)0xfee4),unchecked((short)0xfe96),unchecked((short)0xfe56),unchecked((short)0xfe27),unchecked((short)0xfe0a),
-        unchecked((short)0xfe00),unchecked((short)0xfe0a),unchecked((short)0xfe27),unchecked((short)0xfe56),unchecked((short)0xfe96),unchecked((short)0xfee4),unchecked((short)0xff3c),unchecked((short)0xff9c),0x0,0x64,0xc4,0x11c,0x16a,0x1aa,0x1d9,0x1f6
-    ];
-
     public static readonly short[] CardinalDirTable = [0, 0x10, 0x08, 0x18];
 
-    private static readonly short[] DirectionTable =
+    public static readonly short[] DirectionTable = // 80028b34
     [
         0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,
         0x8,0x4,0x2,0x2,0x1,0x1,0x1,0x1,0x1,0x1,0x1,0x0,0x0,0x0,0x0,0x0,

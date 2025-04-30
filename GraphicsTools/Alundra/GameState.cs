@@ -77,9 +77,9 @@ public class GameState
         StaticVariables.PlayerEntity.XPos = 0;
         StaticVariables.PlayerEntity.YPos = 0;
         StaticVariables.PlayerEntity.ZPos = 0;
-        StaticVariables.PlayerEntity.XTile = 0;
-        StaticVariables.PlayerEntity.YTile = 0;
-        StaticVariables.PlayerEntity.ZTile = 0;
+        StaticVariables.PlayerEntity.TileX = 0;
+        StaticVariables.PlayerEntity.TileY = 0;
+        StaticVariables.PlayerEntity.TileZ = 0;
         StaticVariables.PlayerEntity.ModdedXPos = 0;
         StaticVariables.PlayerEntity.ModdedYPos = 0;
         StaticVariables.PlayerEntity.ModdedZPos = 0;
@@ -394,7 +394,7 @@ public class GameState
         }
         if (entity.PlatformEntity != null)
         {
-            entity.PlatformEntity._2c = 0;
+            entity.PlatformEntity.ActionState = 0;
         }
     }
 
@@ -414,7 +414,7 @@ public class GameState
             case 2:
                 return (uint)ScriptHelper.CardinalDirTable[turndir & 0x3];
             case 3:
-                var dfv = ScriptHelper.DirFromVector(StaticVariables.PlayerEntity.XPos - entity.XPos, StaticVariables.PlayerEntity.YPos - entity.YPos);
+                var dfv = ScriptHelper.GetDirectionToTarget(StaticVariables.PlayerEntity.XPos - entity.XPos, StaticVariables.PlayerEntity.YPos - entity.YPos);
                 return (uint)((dfv + turndir) & 0x1f);
             case 4:
                 {
@@ -633,22 +633,22 @@ public class GameState
             //if player is outside of the activation zone dont activate
             //  this is used when a map has multiple rooms, the activate zone is set to the room where
             //  the entity is, if the player loads in a different room then the entity wont activate
-            if (StaticVariables.PlayerEntity.XTile < data.XMin)
+            if (StaticVariables.PlayerEntity.TileX < data.XMin)
             {
                 return null;
             }
 
-            if (data.XMax < StaticVariables.PlayerEntity.XTile)
+            if (data.XMax < StaticVariables.PlayerEntity.TileX)
             {
                 return null;
             }
 
-            if (StaticVariables.PlayerEntity.YTile < data.YMin)
+            if (StaticVariables.PlayerEntity.TileY < data.YMin)
             {
                 return null;
             }
 
-            if (data.YMax < StaticVariables.PlayerEntity.YTile)
+            if (data.YMax < StaticVariables.PlayerEntity.TileY)
             {
                 return null;
             }
@@ -757,7 +757,7 @@ public class GameState
 
         var zhit = CollideWithMap(entity);
 
-        entity.TerrainHeight = zhit;
+        entity.FloorHeight = zhit;
         if (zhit + 1 >= entity.ZPos)
         {
             entity.ZPos = zhit + 1;
@@ -864,9 +864,9 @@ public class GameState
             entity.FrameZ = entity.ZPos + entity.FrameZOff;
         }
 
-        entity.ZTile = entity.ZPos >> 20; //(z >> 16) / 16
-        entity.XTile = (entity.XPos >> 16) / 24;
-        entity.YTile = entity.YPos >> 20;
+        entity.TileZ = entity.ZPos >> 20; //(z >> 16) / 16
+        entity.TileX = (entity.XPos >> 16) / 24;
+        entity.TileY = entity.YPos >> 20;
 
         var hitz = CollideOnEntitiesZ(entity);
         int tohit;
@@ -897,10 +897,10 @@ public class GameState
                 }
             }
 
-            entity.combinedVramFlagsOR = somevals[0] | somevals[1] | somevals[2] | somevals[3];
-            entity.combinedVramFlagsAND = somevals[0] & somevals[1] & somevals[2] & somevals[3];
+            entity.CombinedVramFlagsOR = somevals[0] | somevals[1] | somevals[2] | somevals[3];
+            entity.CombinedVramFlagsAND = somevals[0] & somevals[1] & somevals[2] & somevals[3];
 
-            var tilex = entity.XTile;
+            var tilex = entity.TileX;
 
             if (tilex > 0)
             {
@@ -913,7 +913,7 @@ public class GameState
             {
                 tilex = 0;
             }
-            var tiley = entity.YTile;
+            var tiley = entity.TileY;
             if (tiley > 0)
             {
                 if (tiley >= 0x3c)
@@ -934,21 +934,21 @@ public class GameState
         else
         {
             tohit = 0;
-            entity.combinedVramFlagsOR = 0;
-            entity.combinedVramFlagsAND = 0;
+            entity.CombinedVramFlagsOR = 0;
+            entity.CombinedVramFlagsAND = 0;
         }
 
         //all that slope code is for setting this value
-        entity.SomethingForceIndex = 0;
+        entity.TileAttributes = 0;
 
-        var prevtohit = entity._18c;
-        entity._18c = tohit;
-        entity._190 = prevtohit;
+        var prevtohit = entity.HitboxHeightX;
+        entity.HitboxHeightX = tohit;
+        entity.HitboxHeightY = prevtohit;
     }
 
     public int CollideOnEntitiesZ(Entity entity)
     {
-        var collision = entity.TerrainHeight + 1;
+        var collision = entity.FloorHeight + 1;
         if ((entity.Flags & 0x80) == 0)
         {
             return collision;
@@ -1593,8 +1593,8 @@ public class GameState
         effect.SheetSize = 0;
         effect.PaletteIndex = 0;
         effect.MapEffectId = 0;
-        effect.EffectType = 0;
-        effect.EntityRef = null;
+        effect.UpdateMode = 0;
+        effect.AttachedEntity = null;
         effect.X = 0;
         effect.Y = 0;
         effect.Z = 0;
@@ -1611,10 +1611,10 @@ public class GameState
         effect.CurrentIsMapSprite = 0;
         effect.TargetSpriteTableIndex = 0;
         effect.CurrentSpriteTableIndex = 0;
-        effect.TargetAnim = 0;
-        effect.CurrentAnim = 0;
+        effect.TargetAnimation = 0;
+        effect.CurrentAnimation = 0;
         effect.Frame = null;
-        effect.FirstFrame = null;
+        effect.InitialFrame = null;
         effect.Delay = 0;
         effect.DestroyFlag = 0;
 
@@ -1636,8 +1636,8 @@ public class GameState
         effect.TargetIsMapSprite = ismapeffect;
         effect.CurrentIsMapSprite = (byte)~ismapeffect;
         effect.TargetSpriteTableIndex = effectid;
-        effect.TargetAnim = animid;
-        effect.CurrentAnim = (byte)~animid;
+        effect.TargetAnimation = animid;
+        effect.CurrentAnimation = (byte)~animid;
         effect.X = x;
         effect.Y = y;
         effect.Z = z;
@@ -1668,7 +1668,7 @@ public class GameState
         if (entity.PlatformEntity != null)
         {
             //TODO: figure out what 2c is
-            entity.PlatformEntity._2c = 0;
+            entity.PlatformEntity.ActionState = 0;
         }
     }
 
@@ -1692,7 +1692,7 @@ public class GameState
         }
 
         child.ZForce = 0xa0000;
-        child._274 = 1;
+        child.Bytes[0] = 1;
 
         child.Flags &= 0xff7f;
 
@@ -1702,15 +1702,15 @@ public class GameState
         //if (result == 0)
         //    result = -1;
 
-        //child.SpawnedItemId = result;
+        //child.InitialXPos = result;
 
-        child._27c = 0;
+        child.InitialYPos = 0;
 
-        child.SpawnedZForce = 0xa0000;
+        child.AIValues.Set(0xa0000, 1);
 
         //TODO sfx
         //PlaySoundEffect(0x54);
-        child.SpawnedGameFlag = entity.ContentsGameFlag;
+        child.AIValues.Set(entity.ContentsGameFlag);
         return 1;
     }
 
@@ -1743,8 +1743,8 @@ public class GameState
             if (checkBoundingBox)
             {
                 var playerEntity = StaticVariables.PlayerEntity;
-                if (playerEntity.XTile < record.X1 || playerEntity.XTile > record.X2
-                                        || playerEntity.YTile < record.Y1 || playerEntity.YTile > record.Y2)
+                if (playerEntity.TileX < record.X1 || playerEntity.TileX > record.X2
+                                        || playerEntity.TileY < record.Y1 || playerEntity.TileY > record.Y2)
                 {
                     return null;
                 }
@@ -1775,7 +1775,7 @@ public class GameState
         if (effect != null)
         {
             InitEffect(effect, null, -1, 1, ismapeffect, effectid, animid, entity.XPos, entity.YPos, entity.ZPos);
-            effect.EntityRef = entity;
+            effect.AttachedEntity = entity;
             effect.DepthSortMod = depthsortmod;
             effect.XOff = xoff;
             effect.YOff = yoff;
@@ -1792,7 +1792,7 @@ public class GameState
         if (effect != null)
         {
             InitEffect(effect, null, -1, 3, ismapeffect, effectid, animid, x, y, z);
-            effect.EntityRef = entity;
+            effect.AttachedEntity = entity;
             effect.DepthSortMod = depthsortmod;
             return effect;
         }

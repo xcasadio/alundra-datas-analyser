@@ -164,9 +164,9 @@ public partial class FrmGame : Form
                $"Hp: {entity.HpMax} / {entity.Hp}{Environment.NewLine}" +
                $"UnknownCounter: {entity.UnknownCounter}{Environment.NewLine}" +
                $"IsNotProcessable: {entity.IsNotProcessable}{Environment.NewLine}" +
-               $"_24: {entity._24}{Environment.NewLine}" +
+               $"Flags2: {entity.Flags2}{Environment.NewLine}" +
                $"PlatformEntity: {entity.PlatformEntity}{Environment.NewLine}" +
-               $"_2c: {entity._2c}{Environment.NewLine}" +
+               $"ActionState: {entity.ActionState}{Environment.NewLine}" +
                $"RelativeWarpOffsetX: {entity.RelativeWarpOffsetX} x {entity.RelativeWarpOffsetY} x {entity.RelativeWarpOffsetZ}{Environment.NewLine}" +
                $"ContentsItemId: {entity.ContentsItemId}{Environment.NewLine}" +
                $"ContentsGameFlag: {entity.ContentsGameFlag}{Environment.NewLine}" +
@@ -199,19 +199,19 @@ public partial class FrmGame : Form
                $"ScreenClipX: {entity.ScreenClipX} {entity.ScreenClipY} {entity.ScreenClipZ}{Environment.NewLine}" +
                $"NegXMod: {entity.NegXMod} {entity.NegYMod}{Environment.NewLine}" +
                $"XPos: {entity.XPos} {entity.YPos} {entity.ZPos}{Environment.NewLine}" +
-               $"XTile: {entity.XTile} {entity.YTile} {entity.ZTile}{Environment.NewLine}" +
+               $"TileX: {entity.TileX} {entity.TileY} {entity.TileZ}{Environment.NewLine}" +
                $"RidingEntity: {entity.RidingEntity}{Environment.NewLine}" +
                $"XCollisionEntity: {entity.XCollisionEntity}{Environment.NewLine}" +
                $"ZEntityCollision: {entity.ZEntityCollision}{Environment.NewLine}" +
-               $"TerrainHeight: {entity.TerrainHeight}{Environment.NewLine}" +
+               $"FloorHeight: {entity.FloorHeight}{Environment.NewLine}" +
                $"ForceAdjusted: {entity.ForceAdjusted}{Environment.NewLine}" +
                $"CollidedWithEntityZ: {entity.CollidedWithEntityZ}{Environment.NewLine}" +
-               $"_144: {entity._144}{Environment.NewLine}" +
+               $"IsAboveGround: {entity.IsAboveGround}{Environment.NewLine}" +
                $"MapTiles: {entity.MapTiles}{Environment.NewLine}" +
                $"MapHeights: {entity.MapHeights}{Environment.NewLine}" +
-               $"DoneMoving: {entity.DoneMoving}{Environment.NewLine}" +
-               $"combinedVramFlagsOR: {entity.combinedVramFlagsOR} {entity.combinedVramFlagsAND}{Environment.NewLine}" +
-               $"_18c: {entity._18c}{Environment.NewLine}" +
+               $"PlatformUpdateFlag: {entity.PlatformUpdateFlag}{Environment.NewLine}" +
+               $"CombinedVramFlagsOR: {entity.CombinedVramFlagsOR} {entity.CombinedVramFlagsAND}{Environment.NewLine}" +
+               $"_18c: {entity.HitboxHeightX}{Environment.NewLine}" +
                $"SpriteRef: {entity.SpriteRef}{Environment.NewLine}" +
                $"AddedToSheet: {entity.AddedToSheet}{Environment.NewLine}" +
                $"ActiveEffect: {entity.ActiveEffect}{Environment.NewLine}" +
@@ -234,13 +234,12 @@ public partial class FrmGame : Form
                $"MapEventProgramId: {entity.MapEventProgramId}{Environment.NewLine}" +
                $"LogicContextEntity: {entity.LogicContextEntity}{Environment.NewLine}" +
                $"EventProgramState: {entity.EventProgramState}{Environment.NewLine}" +
-               $"UnknownEventAnim: {entity.UnknownEventAnim}{Environment.NewLine}" +
-               $"UnknownEventDir: {entity.UnknownEventDir}{Environment.NewLine}" +
-               $"_274: {entity._274}{Environment.NewLine}" +
-               $"SpawnedItemId: {entity.SpawnedItemId}{Environment.NewLine}" +
-               $"_27c: {entity._27c}{Environment.NewLine}" +
-               $"SpawnedGameFlag: {entity.SpawnedGameFlag}{Environment.NewLine}" +
-               $"SpawnedZForce: {entity.SpawnedZForce}{Environment.NewLine}";
+               $"LastTargetAnimationId: {entity.LastTargetAnimationId}{Environment.NewLine}" +
+               $"LastTargetDirection: {entity.LastTargetDirection}{Environment.NewLine}" +
+               $"Bytes: {string.Join(',', entity.Bytes)}{Environment.NewLine}" +
+               $"InitialXPos: {entity.InitialXPos}{Environment.NewLine}" +
+               $"InitialYPos: {entity.InitialYPos}{Environment.NewLine}" +
+               $"AIValues: {string.Join(',', entity.AIValues)}{Environment.NewLine}";
     }
 
     [DllImport("user32.dll")]

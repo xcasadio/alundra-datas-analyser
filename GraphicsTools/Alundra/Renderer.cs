@@ -6,8 +6,8 @@ public class Renderer
 {
     public static void Render(Graphics g, DatasBin.DatasBin datasBin, GameMap gameMap)
     {
-        var curxpos = StaticVariables.g_cameraCurrentX;// >> StaticVariables.MapTileHeight;
-        var curypos = StaticVariables.g_cameraCurrentY;// >> StaticVariables.MapTileHeight;
+        var curxpos = StaticVariables.g_cameraCurrentX;// >> 16;
+        var curypos = StaticVariables.g_cameraCurrentY;// >> 16;
 
         var curxtile = curxpos / StaticVariables.MapTileWidth;
 
@@ -57,7 +57,7 @@ public class Renderer
                     continue;
                 }
 
-                if (entity.YTile != y)
+                if (entity.TileY != y)
                 {
                     continue;//if its not in this row, continue
                 }

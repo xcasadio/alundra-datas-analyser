@@ -114,8 +114,8 @@ public class EntityEventHandlers
                         if (entity.MapEventProgramId != 2)
                         {
                             //TODO make sure these event vars are right
-                            entity.TargetAnimationId = entity.UnknownEventAnim;
-                            entity.TargetDirection = entity.UnknownEventDir;
+                            entity.TargetAnimationId = entity.LastTargetAnimationId;
+                            entity.TargetDirection = entity.LastTargetDirection;
                         }
                     }
                     break;
@@ -132,8 +132,8 @@ public class EntityEventHandlers
 
                     if (entity.MapEventProgramId != 2)
                     {
-                        entity.UnknownEventAnim = entity.TargetAnimationId;
-                        entity.UnknownEventDir = entity.TargetDirection;
+                        entity.LastTargetAnimationId = entity.TargetAnimationId;
+                        entity.LastTargetDirection = entity.TargetDirection;
                     }
 
                     InitEventData(entity, eventProgramType, eventProgramState);
@@ -339,9 +339,9 @@ public class EntityEventHandlers
         for (var i = 0; i < numentities; i++)
         {
             var checkme = StaticVariables.g_entitySlots[i];
-            if (checkme.XTile >= x1 && checkme.XTile <= x2
-                                    && checkme.YTile >= y1 && checkme.YTile <= y2
-                                    && checkme.ZTile >= z1 && checkme.ZTile <= z2)
+            if (checkme.TileX >= x1 && checkme.TileX <= x2
+                                    && checkme.TileY >= y1 && checkme.TileY <= y2
+                                    && checkme.TileZ >= z1 && checkme.TileZ <= z2)
             {
                 eventData.LogicResult = 1;
                 return 8;
@@ -616,7 +616,7 @@ public class EntityEventHandlers
             return 1;
         }
 
-        if (entity._144 != 0)
+        if (entity.IsAboveGround != 0)
         {
             return 1;
         }
@@ -641,7 +641,7 @@ public class EntityEventHandlers
 
     public int _27_FacePlayer_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventData, byte[] code)
     {
-        entity.TargetDirection = (uint)ScriptHelper.DirFromVector(StaticVariables.PlayerEntity.XPos - entity.XPos, StaticVariables.PlayerEntity.YPos - entity.YPos);
+        entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(StaticVariables.PlayerEntity.XPos - entity.XPos, StaticVariables.PlayerEntity.YPos - entity.YPos);
         return 1;
     }
 
@@ -1109,9 +1109,9 @@ public class EntityEventHandlers
         int z2 = code[exp + 6];
 
         var checkme = StaticVariables.PlayerEntity;
-        if (checkme.XTile >= x1 && checkme.XTile <= x2
-                                && checkme.YTile >= y1 && checkme.YTile <= y2
-                                && checkme.ZTile >= z1 && checkme.ZTile <= z2)
+        if (checkme.TileX >= x1 && checkme.TileX <= x2
+                                && checkme.TileY >= y1 && checkme.TileY <= y2
+                                && checkme.TileZ >= z1 && checkme.TileZ <= z2)
         {
             eventData.LogicResult = 1;
             return 7;
@@ -1385,7 +1385,7 @@ public class EntityEventHandlers
 
     public int _70_Check144_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventData, byte[] code)
     {
-        eventData.LogicResult = entity._144;
+        eventData.LogicResult = entity.IsAboveGround;
 
         return 2;
     }
@@ -1419,7 +1419,7 @@ public class EntityEventHandlers
         {
             if (effect.Status != 0 && effect.MapEffectId == effectid)
             {
-                effect.TargetAnim = animid;
+                effect.TargetAnimation = animid;
             }
         }
 
