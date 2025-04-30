@@ -38,12 +38,12 @@ public class SiEntityRecord
             var commands = new List<SiCommand>();
             if (EventCodesA_LoadIndex != 0xff && EventCodesA_LoadIndex != 0)
             {
-                commands.AddRange(si.EventCodes.GetCommands(br, si.EventCodes.Eventcodesatable[EventCodesA_LoadIndex & 0x7f], true));
+                commands.AddRange(si.EventCodes.GetCommands(br, si.EventCodes.EventCodesATable[EventCodesA_LoadIndex & 0x7f], true));
             }
 
             if (commands.Count == 0 && EventCodesC_TickIndex != 0xff && EventCodesC_TickIndex != 0)
             {
-                commands.AddRange(si.EventCodes.GetCommands(br, si.EventCodes.Eventcodesctable[EventCodesC_TickIndex & 0x7f], true));
+                commands.AddRange(si.EventCodes.GetCommands(br, si.EventCodes.EventCodesCTable[EventCodesC_TickIndex & 0x7f], true));
             }
 
             foreach (var cmd in commands)

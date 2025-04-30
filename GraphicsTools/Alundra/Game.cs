@@ -972,18 +972,18 @@ public class Game
             }
             //TODO: what is 18c, something with slope and sliding?
             var animid = -1;
-            if ((entity.HitboxHeightX == 4 || entity.HitboxHeightY == 4)
-                && entity.HitboxHeightX != entity.HitboxHeightY)
+            if ((entity.Slope_18c == 4 || entity.Slope_190 == 4)
+                && entity.Slope_18c != entity.Slope_190)
             {
                 _gameState.CreateEffect_Type0(0, 6, 0, entity.XPos, entity.YPos, entity.CollidedWithEntityZ);
             }
 
-            if (entity.HitboxHeightX >= 8)
+            if (entity.Slope_18c >= 8)
             {
                 continue;
             }
 
-            switch (entity.HitboxHeightX)
+            switch (entity.Slope_18c)
             {
                 case 1:
                 case 2:
@@ -1087,7 +1087,7 @@ public class Game
 
                             if ((entity.Flags & 0x100000) != 0)
                             {
-                                if (entity.HitboxHeightX == 4)
+                                if (entity.Slope_18c == 4)
                                 {
                                     _gameState.DestroyEntity(entity, 6);
 

@@ -14,65 +14,65 @@ public class SpriteInfoEventCodes
         //read sector1a
         br.BaseStream.Position = binoffset + header.EventCodesAPointer;
         tableSize = header.EventCodesASize / 2;
-        Eventcodesatable = new short[tableSize];
+        EventCodesATable = new short[tableSize];
         for (var dex = 0; dex < tableSize; dex++)
         {
-            Eventcodesatable[dex] = br.ReadInt16();
-            if (firstoffset == 0 && Eventcodesatable[dex] != 0)
+            EventCodesATable[dex] = br.ReadInt16();
+            if (firstoffset == 0 && EventCodesATable[dex] != 0)
             {
-                firstoffset = Eventcodesatable[dex];
+                firstoffset = EventCodesATable[dex];
             }
         }
 
         //read sector1b
         br.BaseStream.Position = binoffset + header.EventCodesBPointer;
         tableSize = header.EventCodesBSize / 2;
-        Eventcodesbtable = new short[tableSize];
+        EventCodesBTable = new short[tableSize];
         for (var dex = 0; dex < tableSize; dex++)
         {
-            Eventcodesbtable[dex] = br.ReadInt16();
-            if (firstoffset == 0 && Eventcodesbtable[dex] != 0)
+            EventCodesBTable[dex] = br.ReadInt16();
+            if (firstoffset == 0 && EventCodesBTable[dex] != 0)
             {
-                firstoffset = Eventcodesbtable[dex];
+                firstoffset = EventCodesBTable[dex];
             }
         }
 
         //read sector1c
         br.BaseStream.Position = binoffset + header.EventCodesCPointer;
         tableSize = header.EventCodesCSize / 2;
-        Eventcodesctable = new short[tableSize];
+        EventCodesCTable = new short[tableSize];
         for (var dex = 0; dex < tableSize; dex++)
         {
-            Eventcodesctable[dex] = br.ReadInt16();
-            if (firstoffset == 0 && Eventcodesctable[dex] != 0)
+            EventCodesCTable[dex] = br.ReadInt16();
+            if (firstoffset == 0 && EventCodesCTable[dex] != 0)
             {
-                firstoffset = Eventcodesctable[dex];
+                firstoffset = EventCodesCTable[dex];
             }
         }
 
         //read sector1d
         br.BaseStream.Position = binoffset + header.EventCodesDPointer;
         tableSize = header.EventCodesDSize / 2;
-        Eventcodesdtable = new short[tableSize];
+        EventCodesDTable = new short[tableSize];
         for (var dex = 0; dex < tableSize; dex++)
         {
-            Eventcodesdtable[dex] = br.ReadInt16();
-            if (firstoffset == 0 && Eventcodesdtable[dex] != 0)
+            EventCodesDTable[dex] = br.ReadInt16();
+            if (firstoffset == 0 && EventCodesDTable[dex] != 0)
             {
-                firstoffset = Eventcodesdtable[dex];
+                firstoffset = EventCodesDTable[dex];
             }
         }
 
         //read sector1e
         br.BaseStream.Position = binoffset + header.EventCodesEPointer;
         tableSize = header.EventCodesESize / 2;
-        Eventcodesetable = new short[tableSize];
+        EventCodesETable = new short[tableSize];
         for (var dex = 0; dex < tableSize; dex++)
         {
-            Eventcodesetable[dex] = br.ReadInt16();
-            if (firstoffset == 0 && Eventcodesetable[dex] != 0)
+            EventCodesETable[dex] = br.ReadInt16();
+            if (firstoffset == 0 && EventCodesETable[dex] != 0)
             {
-                firstoffset = Eventcodesetable[dex];
+                firstoffset = EventCodesETable[dex];
             }
         }
 
@@ -85,23 +85,23 @@ public class SpriteInfoEventCodes
             tableSize = 16;
         }
 
-        Eventcodesftable = new short[tableSize];
+        EventCodesFTable = new short[tableSize];
         for (var dex = 0; dex < tableSize; dex++)
         {
-            Eventcodesftable[dex] = br.ReadInt16();
+            EventCodesFTable[dex] = br.ReadInt16();
         }
 
         //set binoffset for eventcodes
-        _binoffset = binoffset + header.EventCodesAPointer;
-        _memaddr = header.MemoryAddress + header.EventCodesAPointer;
-        _datasize = header.EntitiesPointer - header.EventCodesAPointer;
+        _binOffset = binoffset + header.EventCodesAPointer;
+        _memoryAddress = header.MemoryAddress + header.EventCodesAPointer;
+        _dataSize = header.EntitiesPointer - header.EventCodesAPointer;
 
-        EventCodesTable.Add(Eventcodesatable);
-        EventCodesTable.Add(Eventcodesbtable);
-        EventCodesTable.Add(Eventcodesctable);
-        EventCodesTable.Add(Eventcodesdtable);
-        EventCodesTable.Add(Eventcodesetable);
-        EventCodesTable.Add(Eventcodesftable);
+        EventCodesTable.Add(EventCodesATable);
+        EventCodesTable.Add(EventCodesBTable);
+        EventCodesTable.Add(EventCodesCTable);
+        EventCodesTable.Add(EventCodesDTable);
+        EventCodesTable.Add(EventCodesETable);
+        EventCodesTable.Add(EventCodesFTable);
 
         var top = 0;
         if (ismap)
@@ -110,9 +110,9 @@ public class SpriteInfoEventCodes
         }
 
         br.BaseStream.Position = binoffset;
-        if (_datasize > 0)
+        if (_dataSize > 0)
         {
-            br.Read(Code, top, _datasize);
+            br.Read(Code, top, _dataSize);
         }
         //half mb for global codes, half mb for map codes
     }
@@ -123,6 +123,7 @@ public class SpriteInfoEventCodes
         public string Name { get; set; }
         public int Size { get; set; }
     }
+    
     public static SiCode GetCode(byte b)
     {
         var size = 1;
@@ -523,27 +524,34 @@ public class SpriteInfoEventCodes
 
         return new SiCode { Code = b, Size = size, Name = name };
     }
-    public List<SiCommand> GetCommands(BinaryReader br, int eventcodesoffset, bool stopatff = false, int comandssize = 0)
+    
+    public List<SiCommand> GetCommands(BinaryReader br, int eventCodesOffset, bool stopAtff = false, int commandsSize = 0)
     {
         var commands = new List<SiCommand>();
         //var bytes = GetByteCode(br, sector1offset);
-        br.BaseStream.Position = _binoffset + eventcodesoffset;
-        var bytes = new byte[_datasize - eventcodesoffset];
+        br.BaseStream.Position = _binOffset + eventCodesOffset;
+        var bytes = new byte[_dataSize - eventCodesOffset];
         br.Read(bytes, 0, bytes.Length);
-        var dex = 0;
-        while (dex < bytes.Length && (comandssize == 0 || dex < comandssize))
+        var i = 0;
+
+        while (i < bytes.Length && (commandsSize == 0 || i < commandsSize))
         {
-            var b = bytes[dex++];
+            var b = bytes[i++];
 
             var sicode = GetCode(b);
             var size = sicode.Size;
             var name = sicode.Name;
             var parms = new byte[size - 1];
-            var pdex = 0;
-            while (pdex < size - 1)
-                parms[pdex++] = bytes[dex++];
+            var j = 0;
+
+            while (j < size - 1)
+            {
+                parms[j++] = bytes[i++];
+            }
+
             SiCommand cmd;
-            var addr = _memaddr + eventcodesoffset + dex - size;
+            var addr = _memoryAddress + eventCodesOffset + i - size;
+
             switch (name)
             {
                 case "walk":
@@ -577,7 +585,7 @@ public class SpriteInfoEventCodes
             }
 
             commands.Add(cmd);
-            if (stopatff && b == 0xff)
+            if (stopAtff && b == 0xff)
             {
                 break;
             }
@@ -589,42 +597,42 @@ public class SpriteInfoEventCodes
     public byte[] GetByteCode(BinaryReader br, int sector1Offset)
     {
 
-        var bytes = new byte[_datasize - sector1Offset];
-        var dex = 0;
-        br.BaseStream.Position = _binoffset + sector1Offset;
+        var bytes = new byte[_dataSize - sector1Offset];
+        var i = 0;
+        br.BaseStream.Position = _binOffset + sector1Offset;
 
-        while (dex < bytes.Length)
+        while (i < bytes.Length)
         {
             //Debug.Assert(dex < bytes.Length, "ByteCodes larger than 255");
 
             var b = br.ReadByte();
             if (b == 0)//what does 0 mean?
             {
-                bytes[dex++] = b;
+                bytes[i++] = b;
             }
             else if (b == 0xff)//end
             {
-                bytes[dex++] = b;
+                bytes[i++] = b;
                 return bytes;//for now
             }
             else
             {
-                bytes[dex++] = b;
+                bytes[i++] = b;
                 //skip ahead by parameter length
             }
         }
         return bytes;
     }
 
-    private readonly long _binoffset;
-    private readonly int _datasize;
-    private readonly int _memaddr;
-    public readonly short[] Eventcodesatable;
-    public readonly short[] Eventcodesbtable;
-    public readonly short[] Eventcodesctable;
-    public readonly short[] Eventcodesdtable;
-    public readonly short[] Eventcodesetable;
-    public readonly short[] Eventcodesftable;
+    private readonly long _binOffset;
+    private readonly int _dataSize;
+    private readonly int _memoryAddress;
+    public readonly short[] EventCodesATable;
+    public readonly short[] EventCodesBTable;
+    public readonly short[] EventCodesCTable;
+    public readonly short[] EventCodesDTable;
+    public readonly short[] EventCodesETable;
+    public readonly short[] EventCodesFTable;
 
     public readonly List<short[]> EventCodesTable = new();
 }

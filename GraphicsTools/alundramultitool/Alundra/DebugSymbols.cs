@@ -809,6 +809,8 @@ namespace GraphicsTools.Alundra
             MapNames[390] = "ship captains";
             MapNames[391] = "ship night";
             MapNames[392] = "ship int";
+            
+            MapNames[477] = "game over";
 
             
             AddGlobalVariable(0x13d224, "getentitieslist","");

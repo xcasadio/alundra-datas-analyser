@@ -10,5 +10,5 @@ public class EventProgramState
 
     public ushort ElapsedMs;
     public byte IsWaiting;
-    public byte[] Code;
+    public byte[] Code = new byte[9];
 }

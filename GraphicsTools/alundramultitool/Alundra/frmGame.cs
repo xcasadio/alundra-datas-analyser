@@ -211,7 +211,7 @@ public partial class FrmGame : Form
                $"MapHeights: {entity.MapHeights}{Environment.NewLine}" +
                $"PlatformUpdateFlag: {entity.PlatformUpdateFlag}{Environment.NewLine}" +
                $"CombinedVramFlagsOR: {entity.CombinedVramFlagsOR} {entity.CombinedVramFlagsAND}{Environment.NewLine}" +
-               $"_18c: {entity.HitboxHeightX}{Environment.NewLine}" +
+               $"_18c: {entity.Slope_18c}{Environment.NewLine}" +
                $"SpriteRef: {entity.SpriteRef}{Environment.NewLine}" +
                $"AddedToSheet: {entity.AddedToSheet}{Environment.NewLine}" +
                $"ActiveEffect: {entity.ActiveEffect}{Environment.NewLine}" +

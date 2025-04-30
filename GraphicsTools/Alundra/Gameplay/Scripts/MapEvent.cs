@@ -9,5 +9,5 @@ public class MapEvent
     public SiMapEventRecord MapEventRecord;//4
     public int ProgramBMap;//8
     public Entity Entity;//c
-    public EventProgramState EventData;//10
+    public EventProgramState EventData = new();//10
 }

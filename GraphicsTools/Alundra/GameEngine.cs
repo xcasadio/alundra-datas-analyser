@@ -22,7 +22,6 @@ public class GameEngine
     //find the staticVariables for this=>
     private int NumSprites;
     private readonly SpriteRef[] SpriteRefs = new SpriteRef[10000];
-    private List<MapEvent> MapEvents = new();
     private readonly EntityEventHandlers _entityEventHandlers;
 
 
@@ -1051,6 +1050,8 @@ public class GameEngine
 
     private void LoadMapAndInitializeEntities(uint[] bufferImage)
     {
+        InitializeMapEvents();
+
         LoadMap(StaticVariables.g_currentMap); // Added
 
         //Added by hand
@@ -1059,8 +1060,191 @@ public class GameEngine
         //LoadImageArea(StaticVariables.g_bufferImage, 0x40, 0x1e0, 0x40);
         //LoadCompressedImageToBuffer(bufferImage, 0x140, 0, 5, StaticVariables.g_bufferImage2);
         InitializeEntitySlots();
-        //InitMonitors();
-        //InitEffectSlots();
+        //InitializeMapEvents();
+        InitEffectSlots();
+    }
+
+    private void InitializeMapEvents()
+    {
+        int programBMapCode;
+        int i = 0;
+        MapEvent mapEventDest;
+        MapEvent emptyMapEvent;
+        SiMapEventRecord mapEventRecord;
+        Entity entity;
+        byte monitorEnabledFlag;
+
+        MapEvent[] mapEvents = StaticVariables.g_mapEvents;
+        //MapEvent pEmptyMapEvent = StaticVariables.g_emptyMapEvent;
+        //MapEvent pMapEvents = mapEvents[0];
+
+        do
+        {
+            mapEvents[i].Id = i;
+            mapEvents[i].ProgramBMap = 0;
+            mapEvents[i].MapEventRecord = null;
+            mapEvents[i].Entity = null;
+            mapEvents[i].EventData.Sp = 0;
+            mapEvents[i].EventData.Exp = 0;
+            mapEvents[i].EventData.Tick = 0;
+            for (int j = 0; j < mapEvents[i].EventData.Variables.Length; j++)
+            {
+                mapEvents[i].EventData.Variables[j] = 0;
+            }
+            mapEvents[i].EventData.LogicResult = 0;
+            mapEvents[i].EventData.ElapsedMs = 0;
+            mapEvents[i].EventData.IsWaiting = 0;
+            for (int j = 0; j < mapEvents[i].EventData.Code.Length; j++)
+            {
+                mapEvents[i].EventData.Code[j] = 0;
+            }
+
+
+            i++;
+            //do
+            //{
+            //    mapEventDest = pMapEvents;
+            //    emptyMapEvent = pEmptyMapEvent;
+            //
+            //    mapEventRecord = emptyMapEvent.MapEventRecord;
+            //    programBMapCode = emptyMapEvent.ProgramBMap;
+            //    entity = emptyMapEvent.Entity;
+            //
+            //    mapEventDest.Id = emptyMapEvent.Id;
+            //    mapEventDest.MapEventRecord = mapEventRecord;
+            //    mapEventDest.ProgramBMap = programBMapCode;
+            //    mapEventDest.Entity = entity;
+            //
+            //    pEmptyMapEvent = emptyMapEvent.EventData;
+            //    pMapEvents = mapEventDest.EventData;
+            //
+            //} while (pEmptyMapEvent != StaticVariables.g_emptyMapEvent.EventData.Code[1]);
+            //
+            //programBMapCode = pEmptyMapEvent.EventData.Exp;
+            //mapEventDest.EventData.Sp = StaticVariables.g_emptyMapEvent.EventData.Code[1];
+            //mapEventDest.EventData.Exp = programBMapCode;
+            //
+            //mapEvents[i].Id = i;
+            //i++;
+            //mapEvents[i - 1].ProgramBMap = 0;
+            //
+            //if (i < 0x40)
+            //{
+            //    pEmptyMapEvent = StaticVariables.g_emptyMapEvent;
+            //    pMapEvents = mapEvents[i];
+            //}
+        } while (i < 0x40);
+
+        i = 0;
+        int index = 0;
+
+        //byte[] MonitorFlags = StaticVariables.g_effectInitTable[4] + 1; //.Skip(4).ToArray();
+        entity = StaticVariables.g_mapEvents[0].Entity;
+
+        while (i < 0x80)
+        {
+            mapEventRecord = StaticVariables.g_effectInitTable[4 + i];
+
+            if (mapEventRecord == null)
+            {
+                return;
+            }
+
+            programBMapCode = StaticVariables.g_effectInitTable[4].EventCodesBIndex;
+
+            if (programBMapCode == 0)
+            {
+                if (StaticVariables.g_debugState < 0 && (StaticVariables.g_debugFlags & 0x20) != 0)
+                {
+                    //PrintInfo();
+                }
+            }
+            else
+            {
+                StaticVariables.g_mapEvents[index].Entity = entity;
+                //StaticVariables.g_mapEvents[index].MapEventRecord = StaticVariables.g_effectInitTable[4].
+                StaticVariables.g_mapEvents[index].ProgramBMap = programBMapCode;
+                //StaticVariables.g_mapEvents[index].MapEntity2 = StaticVariables.g_entitySlots;
+                //StaticVariables.g_mapEvents[index].MonitorFlag = MonitorFlags[0];
+            }
+
+            i++;
+            //MonitorFlags = MonitorFlags + 8; //.Skip(8).ToArray();
+            entity = entity.ChildEntity;
+        }
+    }
+
+    private void InitEffectSlots()
+    {
+        SpriteEffect effectSlotPtr;
+        int val;
+        int effectIndex;
+        int[] effectInitTable;
+
+        effectSlotPtr = StaticVariables.g_effectSlots[0];
+        effectIndex = 0x7f;
+        do
+        {
+            StaticVariables.g_effectSlots[0x7f - effectIndex].Status = 0;
+            effectIndex = effectIndex - 1;
+        } while (effectIndex >= 0);
+
+        effectIndex = 0;
+        //val = StaticVariables.g_effectInitTable[0];
+        //effectInitTable = StaticVariables.g_effectInitTable;
+        //
+        //while (val != 0)
+        //{
+        //    effectSlotPtr = SpawnSpriteEffect(effectIndex, 0);
+        //    if ((effectSlotPtr == null) && ((StaticVariables.g_debugState & 0x80000000U) != 0) &&
+        //        ((StaticVariables.g_debugFlags & 0x20) != 0))
+        //    {
+        //        //PrintInfo();
+        //    }
+        //    effectInitTable = effectInitTable + 3; //.Skip(3).ToArray();
+        //    effectIndex = effectIndex + 1;
+        //    val = effectInitTable[0];
+        //}
+    }
+
+    private SpriteEffect SpawnSpriteEffect(int effectId, int checkSpawnArea)
+    {
+        MapEffectRecord effectStatus;
+        SpriteEffect effect;
+        byte bVar1;
+
+        effectStatus = GetMapEffectRecord(effectId, checkSpawnArea == 1);
+        effect = null;
+
+        if (effectStatus != null)
+        {
+            bVar1 = effectStatus.Flags;
+            if ((checkSpawnArea != 0) || ((bVar1 & 0x40) != 0))
+            {
+                effect = GetFreeEffect();
+                if (effect == null)
+                {
+                    effect = null;
+                }
+                else
+                {
+                    InitEffectEntity(
+                        effect,
+                        effectStatus,
+                        effectId,
+                        0,
+                        bVar1 & 0x80,
+                        effectStatus.EffectId,
+                        effectStatus.AnimId,
+                        (int)(((uint)effectStatus.X * 12 + 12) * 0x10000),
+                        (int)(((uint)effectStatus.Y * 8 + 8) * 0x10000),
+                        (int)((uint)effectStatus.Z << 0x13)
+                    );
+                }
+            }
+        }
+
+        return effect;
     }
 
     public void LoadMap(int mapId)
@@ -1078,23 +1262,18 @@ public class GameEngine
 
     public void LoadMap(GameMap map)
     {
-        //load MapEvents
-        MapEvents = new List<MapEvent>();
         for (var i = 0; i < map.SpriteInfo.MapEvents.Records.Length; i++)
         {
             var record = map.SpriteInfo.MapEvents.Records[i];
             if (record != null)
             {
-                var mapEvent = new MapEvent
-                {
-                    Id = i,
-                    MapEventRecord = record,
-                    ProgramBMap = record.EventCodesBIndex,
-                    //TODO special logic if the eventcodesindex is 0
-                    Entity = StaticVariables.PlayerEntity,
-                    EventData = new EventProgramState()
-                };
-                MapEvents.Add(mapEvent);
+                var mapEvent = StaticVariables.g_mapEvents[i];
+                mapEvent.Id = i;
+                mapEvent.MapEventRecord = record;
+                mapEvent.ProgramBMap = record.EventCodesBIndex;
+                //TODO special logic if the eventcodesindex is 0
+                mapEvent.Entity = StaticVariables.PlayerEntity;
+                mapEvent.EventData = new EventProgramState();
             }
         }
 
@@ -1220,7 +1399,7 @@ public class GameEngine
         StaticVariables.g_frameTimer = 0;
         //tileIndex = GetCurrentTileIndex();
         //StaticVariables.g_currentTileFlags = StaticVariables.g_tileAttributeLUT[tileIndex];
-        StaticVariables.g_warpTransitionCooldown = 0;
+        StaticVariables.g_playerEffectTransitionCooldown = 0;
         //ResetWarpLockTimer();
     }
 
@@ -1405,17 +1584,15 @@ public class GameEngine
         if (entityRecord != null)
         {
             entity.EntityRefId = entityId;
-            //entity.ProgramIndexes[2] = -1;
         }
         else
         {
             entity.EntityRefId = -1;
-            //entity.ProgramIndexes[2] = entityId;
         }
 
         entity.Status = 1;
-        //entity.Index2 = ++UnknownCounter;
-        entity.Index = StaticVariables.g_nextEntityIndex++;
+        entity.Index2++;
+        //entity.Index = StaticVariables.g_nextEntityIndex++;
 
         entity.CurrentAnimationId = ~animationId;
         entity.CurrentDirection = ~direction;
@@ -1423,18 +1600,9 @@ public class GameEngine
         entity.TargetDirection = direction;
         //uint flags = animData.Flags;
         entity.Flags = (uint)(sprite.Header.Moreflags | sprite.Header.CanPickup << 8 | sprite.Header.FlagsPortraitShadowtype << 16); ;
-
-        //byte animFlag = animData.FlagsExtra0;
-        //AnimationData animInfo = entity.SpriteRecordPtr;
-        //entity.SpriteProgramIndexes[1] = 0;
-        //entity.SpriteProgramIndexes[0] = animFlag;
-        //entity.SpriteProgramIndexes[2] = animInfo.RawPtrListOffset0;
-        //entity.SpriteProgramIndexes[3] = animInfo.RawPtrListOffset1;
-        //entity.SpriteProgramIndexes[4] = animInfo.RawPtrListOffset2;
-        //entity.SpriteProgramIndexes[5] = animInfo.RawPtrListOffset3;
-
-        entity.SpriteProgramIndexes[1] = 0;
+        
         entity.SpriteProgramIndexes[0] = sprite.Header.ProgramLoad;
+        entity.SpriteProgramIndexes[1] = 0;
         entity.SpriteProgramIndexes[2] = sprite.Header.ProgramTick;
         entity.SpriteProgramIndexes[3] = sprite.Header.ProgramTouch;
         entity.SpriteProgramIndexes[4] = sprite.Header.ProgramDeactivate;
@@ -1444,15 +1612,13 @@ public class GameEngine
         entity.AddedToSheet = sheetSize;
 
         //BalanceRecord balanceRecord = GetSpriteAnimationPtr(entity.SpriteTableIndex);
-        //Added by hand
         BalanceRecord balanceRecord = BalanceBin.GetBalanceRecordFromSpriteIndex((int)spriteTableIndex, CurrentMap.Info.BalanceLevel);
         entity.BalanceRecord = balanceRecord;
-
         byte balanceHp = balanceRecord.Hp;
         entity.HpMax = balanceHp;
         entity.Hp = balanceHp;
 
-        InitializeEntityChain(entity);
+        InitCodePrograms(entity);
 
         SetEntityDimensions(entity,
             sprite.Header.Xmod, sprite.Header.Ymod, sprite.Header.Zmod,
@@ -1484,35 +1650,19 @@ public class GameEngine
         InitializeContents(entity);
     }
 
-    private void InitializeEntityChain(Entity entity)
+    private void InitCodePrograms(Entity entity)
     {
         entity.LogicContextEntity = entity;
 
-        int initType = entity.ProgramIndexes[1];
-        if (initType != 0)
+        if (entity.EntityRecord != null)
         {
-            int i = 0;
-            do
-            {
-                int offset = initType + i;
-                i = i + 1;
-                entity.ProgramIndexes[3] = offset + 10;
-                //entity = entity.Index2;
-            } while (i < 6);
+            entity.ProgramIndexes[ScriptHelper.ProgramALoad] = entity.EntityRecord.EventCodesA_LoadIndex;
+            entity.ProgramIndexes[ScriptHelper.ProgramBMap] = entity.EntityRecord.EventCodesB_MapIndex;
+            entity.ProgramIndexes[ScriptHelper.ProgramCTick] = entity.EntityRecord.EventCodesC_TickIndex;
+            entity.ProgramIndexes[ScriptHelper.ProgramDTouch] = entity.EntityRecord.EventCodesD_TouchIndex;
+            entity.ProgramIndexes[ScriptHelper.ProgramEDeactivate] = entity.EntityRecord.EventCodesE_DeactivateIndex;
+            entity.ProgramIndexes[ScriptHelper.ProgramFInteract] = entity.EntityRecord.EventCodesF_InteractIndex;
         }
-
-        /*
-         entity.LogicContextEntity = entity;
-           if (entity.EntityRecord != null)
-           {
-               entity.ProgramIndexes[ScriptHelper.ProgramALoad] = entity.EntityRecord.EventCodesA_LoadIndex;
-               entity.ProgramIndexes[ScriptHelper.ProgramBMap] = entity.EntityRecord.EventCodesB_MapIndex;
-               entity.ProgramIndexes[ScriptHelper.ProgramCTick] = entity.EntityRecord.EventCodesC_TickIndex;
-               entity.ProgramIndexes[ScriptHelper.ProgramDTouch] = entity.EntityRecord.EventCodesD_TouchIndex;
-               entity.ProgramIndexes[ScriptHelper.ProgramEDeactivate] = entity.EntityRecord.EventCodesE_DeactivateIndex;
-               entity.ProgramIndexes[ScriptHelper.ProgramFInteract] = entity.EntityRecord.EventCodesF_InteractIndex;
-           }
-         */
     }
 
     private void SetEntityDimensions(Entity entity, int offsetX, int offsetY, int offsetZ, int sizeX, int sizeY, int sizeZ)
@@ -1969,9 +2119,9 @@ public class GameEngine
         //all that slope code is for setting this value
         entity.TileAttributes = 0;
 
-        var prevtohit = entity.HitboxHeightX;
-        entity.HitboxHeightX = tohit;
-        entity.HitboxHeightY = prevtohit;
+        var prevtohit = entity.Slope_18c;
+        entity.Slope_18c = tohit;
+        entity.Slope_190 = prevtohit;
     }
 
     private int GetCollisionOnZ(Entity entity)
@@ -2615,6 +2765,8 @@ public class GameEngine
     private void RenderScene(Graphics graphics)
     {
         Renderer.Render(graphics, _datasBin, CurrentMap);
+
+
     }
 
     private void UpdateEntities(int endGame)
@@ -2827,12 +2979,12 @@ public class GameEngine
         //StaticVariables.g_currentEntitySpriteImages = 0x8011cb60;
         StaticVariables.g_currentIndexEntityUpdated = 0;
 
-        UpdatePlayerCollisionAndState();
+        RunMapEvents();
         UpdateAllEntitiesPostLogic();
         UpdateAllActiveEffectsPostLogic();
     }
 
-    private void UpdatePlayerCollisionAndState()
+    private void RunMapEvents()
     {
         //TODO: I don't understand this function, what is g_monitorBase and g_monitorData ??
 
@@ -2844,7 +2996,7 @@ public class GameEngine
         var medex = 0;
         var playerEntity = StaticVariables.PlayerEntity;
 
-        foreach (var mapEvent in MapEvents)
+        foreach (var mapEvent in StaticVariables.g_mapEvents)
         {
             var eventCode = mapEvent.ProgramBMap;
             if ((eventCode & 0x7f) == 0)
@@ -3846,18 +3998,18 @@ public class GameEngine
             }
             //TODO: what is 18c, something with slope and sliding?
             var animid = -1;
-            if ((entity.HitboxHeightX == 4 || entity.HitboxHeightY == 4)
-                && entity.HitboxHeightX != entity.HitboxHeightY)
+            if ((entity.Slope_18c == 4 || entity.Slope_190 == 4)
+                && entity.Slope_18c != entity.Slope_190)
             {
                 CreateEffect_Type0(0, 6, 0, entity.XPos, entity.YPos, entity.CollidedWithEntityZ);
             }
 
-            if (entity.HitboxHeightX >= 8)
+            if (entity.Slope_18c >= 8)
             {
                 continue;
             }
 
-            switch (entity.HitboxHeightX)
+            switch (entity.Slope_18c)
             {
                 case 1:
                 case 2:
@@ -3934,7 +4086,7 @@ public class GameEngine
 
     private void MovePlayer()
     {
-        //TODO: impliment
+        //TODO: implement
         //this function is MASSIVE
         //perhaps the largest in the entire game
     }
@@ -3961,7 +4113,7 @@ public class GameEngine
 
                             if ((entity.Flags & 0x100000) != 0)
                             {
-                                if (entity.HitboxHeightX == 4)
+                                if (entity.Slope_18c == 4)
                                 {
                                     DestroyEntity(entity, 6);
 
@@ -4053,10 +4205,11 @@ public class GameEngine
         }
 
         //run events
-        var keepgoing = false;
+        bool keepGoing;
+
         do
         {
-            keepgoing = false;
+            keepGoing = false;
             if (StaticVariables.g_numberOfEntity > 0)
             {
                 //foreach entity besides player
@@ -4082,12 +4235,12 @@ public class GameEngine
                             entity.EventTrigger = -1;
                         }
 
-                        keepgoing = true;
+                        keepGoing = true;
                     }
                 }
             }
 
-        } while (keepgoing);
+        } while (keepGoing);
     }
 
     private void UpdateEntitiesCounters()
@@ -4369,7 +4522,7 @@ public class GameEngine
             if (effect != null)
             {
                 InitEffect(effect, record, mapeffectid, 0,
-                    (byte)((record.Flags & 0x80) >> 7), record.Effectid, record.Animid,
+                    (byte)((record.Flags & 0x80) >> 7), record.EffectId, record.AnimId,
                     (record.X * 12 + 12) << 16, (record.Y * 8 + 8) << 16, record.Z << 19);
 
                 return effect;
@@ -4540,9 +4693,9 @@ public class GameEngine
         //all that slope code is for setting this value
         entity.TileAttributes = 0;
 
-        var prevtohit = entity.HitboxHeightX;
-        entity.HitboxHeightX = tohit;
-        entity.HitboxHeightY = prevtohit;
+        var prevtohit = entity.Slope_18c;
+        entity.Slope_18c = tohit;
+        entity.Slope_190 = prevtohit;
     }
 
     public int CollideOnEntitiesZ(Entity entity)
@@ -4994,7 +5147,6 @@ public class GameEngine
         }
     }
 
-
     public uint TurnEntity(Entity entity, int turnCode)
     {
         var turndir = turnCode & 0x1f;
@@ -5047,7 +5199,6 @@ public class GameEngine
         }
         return (uint)turndir;
     }
-
 
     public int GetCardinalDirToPlayer(Entity entity)
     {
@@ -5106,7 +5257,6 @@ public class GameEngine
             entity.AIValues.Set(delay, 1);
         }
     }
-
 
     public bool TryAttackPlayer(Entity entity, int[] relativePositions, int maxHorizontalRange, int maxVerticalRange)
     {
@@ -5393,7 +5543,7 @@ public class GameEngine
             }
 
             int tileOffset = tileYIndex * 0xd0 + tileXIndex * 4 + 0x302;
-            
+
             if ((CurrentMap.Map.MapTiles[tileOffset].GroundProperty & flagBits) != 0)
             //if ((StaticVariables.g_spriteVRAMPointer[tileOffset] & flagBits) != 0)
             {

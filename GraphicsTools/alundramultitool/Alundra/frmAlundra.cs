@@ -912,12 +912,12 @@ namespace GraphicsTools.Alundra
                 _selectedEntity = _selectedGameMap.SpriteInfo.Entities.Entities[lsvEntities.SelectedIndices[0]];
                 lblEntityInfo.Text = "si addr:" + GameMap.EventObjectAddr(lsvEntities.SelectedIndices[0]).ToString("x6") + " entity addr:" + _selectedEntity.MemoryAddress.ToString("x6") + " u123: " + ByteToString(_selectedEntity.XMax) + ByteToString(_selectedEntity.YMax) + ByteToString(_selectedEntity.IsEnabled) + " u789ab:" + lsvEntities.Items[lsvEntities.SelectedIndices[0]].ToolTipText;
                 var sector1 = _selectedGameMap.SpriteInfo.EventCodes;
-                lblSector1a.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesA_LoadIndex, sector1.Eventcodesatable);
-                lblSector1b.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesB_MapIndex, sector1.Eventcodesbtable);
-                lblSector1c.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesC_TickIndex, sector1.Eventcodesctable);
-                lblSector1d.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesD_TouchIndex, sector1.Eventcodesdtable);
-                lblSector1e.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesE_DeactivateIndex, sector1.Eventcodesetable);
-                lblSector1f.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesF_InteractIndex, sector1.Eventcodesftable);
+                lblSector1a.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesA_LoadIndex, sector1.EventCodesATable);
+                lblSector1b.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesB_MapIndex, sector1.EventCodesBTable);
+                lblSector1c.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesC_TickIndex, sector1.EventCodesCTable);
+                lblSector1d.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesD_TouchIndex, sector1.EventCodesDTable);
+                lblSector1e.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesE_DeactivateIndex, sector1.EventCodesETable);
+                lblSector1f.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesF_InteractIndex, sector1.EventCodesFTable);
 
                 br.Close();
             }
@@ -1336,7 +1336,7 @@ namespace GraphicsTools.Alundra
                 _selectedMapEvent = _selectedGameMap.SpriteInfo.MapEvents.Records[lsvSector4.SelectedIndices[0]];
                 var sector1 = _selectedGameMap.SpriteInfo.EventCodes;
                 lblSector1a.Text = "";
-                lblSector1b.Text = GetSector1ByteCodes(br, _selectedMapEvent.EventCodesBIndex, sector1.Eventcodesbtable);
+                lblSector1b.Text = GetSector1ByteCodes(br, _selectedMapEvent.EventCodesBIndex, sector1.EventCodesBTable);
                 lblSector1c.Text = "";
                 lblSector1d.Text = "";
                 lblSector1e.Text = "";
@@ -1367,7 +1367,7 @@ namespace GraphicsTools.Alundra
             {
                 var frm = new FrmEventProgram();
                 var br = _datasBin.OpenBin();
-                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesA_LoadIndex, _selectedGameMap.SpriteInfo.EventCodes.Eventcodesatable));
+                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesA_LoadIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesATable));
                 frm.Show();
                 br.Close();
             }
@@ -1379,12 +1379,12 @@ namespace GraphicsTools.Alundra
             var br = _datasBin.OpenBin();
             if (_selectedEntity != null)
             {
-                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesB_MapIndex, _selectedGameMap.SpriteInfo.EventCodes.Eventcodesbtable));
+                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesB_MapIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable));
                 frm.Show();
             }
             else if (_selectedMapEvent != null)
             {
-                frm.Init(GetEventCodeCommands(br, _selectedMapEvent.EventCodesBIndex, _selectedGameMap.SpriteInfo.EventCodes.Eventcodesbtable));
+                frm.Init(GetEventCodeCommands(br, _selectedMapEvent.EventCodesBIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable));
                 frm.Show();
             }
             br.Close();
@@ -1396,7 +1396,7 @@ namespace GraphicsTools.Alundra
             {
                 var frm = new FrmEventProgram();
                 var br = _datasBin.OpenBin();
-                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesC_TickIndex, _selectedGameMap.SpriteInfo.EventCodes.Eventcodesctable));
+                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesC_TickIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesCTable));
                 frm.Show();
                 br.Close();
             }
@@ -1408,7 +1408,7 @@ namespace GraphicsTools.Alundra
             {
                 var frm = new FrmEventProgram();
                 var br = _datasBin.OpenBin();
-                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesF_InteractIndex, _selectedGameMap.SpriteInfo.EventCodes.Eventcodesftable));
+                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesF_InteractIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesFTable));
                 frm.Show();
                 br.Close();
             }

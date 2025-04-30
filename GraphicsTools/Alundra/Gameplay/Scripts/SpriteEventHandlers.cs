@@ -72,6 +72,7 @@ public class SpriteEventHandlers
         {
             if (eventType != ScriptHelper.ProgramCTick && eventId != 0 && eventType != ScriptHelper.ProgramALoad && eventId != 13)
             {
+                //exec of a func !!!!!!!!!
                 System.Diagnostics.Debugger.Break();
             }
 
@@ -799,7 +800,7 @@ public class SpriteEventHandlers
             return;
         }
 
-        if (entity.TargetAnimationId == 0 && entity.HitboxHeightY == 4)
+        if (entity.TargetAnimationId == 0 && entity.Slope_190 == 4)
         {
             entity.TargetAnimationId = 5;
             return;
@@ -810,7 +811,7 @@ public class SpriteEventHandlers
             return;
         }
 
-        if (entity.HitboxHeightY == 4)
+        if (entity.Slope_190 == 4)
         {
             return;
         }

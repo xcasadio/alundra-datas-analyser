@@ -350,7 +350,7 @@ public class GameState
         StaticVariables.g_frameTimer = 0;
         //tileIndex = GetCurrentTileIndex();
         //StaticVariables.g_currentTileFlags = StaticVariables.g_tileAttributeLUT[tileIndex];
-        StaticVariables.g_warpTransitionCooldown = 0;
+        StaticVariables.g_playerEffectTransitionCooldown = 0;
         //ResetWarpLockTimer();
         return;
     }
@@ -941,9 +941,9 @@ public class GameState
         //all that slope code is for setting this value
         entity.TileAttributes = 0;
 
-        var prevtohit = entity.HitboxHeightX;
-        entity.HitboxHeightX = tohit;
-        entity.HitboxHeightY = prevtohit;
+        var prevtohit = entity.Slope_18c;
+        entity.Slope_18c = tohit;
+        entity.Slope_190 = prevtohit;
     }
 
     public int CollideOnEntitiesZ(Entity entity)
@@ -1814,7 +1814,7 @@ public class GameState
             if (effect != null)
             {
                 InitEffect(effect, record, mapeffectid, 0,
-                    (byte)((record.Flags & 0x80) >> 7), record.Effectid, record.Animid,
+                    (byte)((record.Flags & 0x80) >> 7), record.EffectId, record.AnimId,
                     (record.X * 12 + 12) << 16, (record.Y * 8 + 8) << 16, record.Z << 19);
 
                 return effect;

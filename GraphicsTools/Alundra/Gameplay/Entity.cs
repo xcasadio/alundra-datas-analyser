@@ -92,7 +92,8 @@ public class Entity
     public int CombinedVramFlagsOR;
     public int CombinedVramFlagsAND;
     public int TileAttributes; //188
-    public int HitboxHeightX, HitboxHeightY;//slopesomething?, slopesomethingprev?
+    public int Slope_18c; // slopesomething?, 
+    public int Slope_190; // slopesomethingprev?
     public SpriteRef SpriteRef = new SpriteRef();//194 
     //public int field91_0x1ac; // 1ac => SpriteRef
     public int AddedToSheet, AddedToPalette;//represents offset where the pallets and sheets are in memory for map vs global sprites, prob not used with my engine

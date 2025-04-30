@@ -89,6 +89,7 @@ public class EntityEventHandlers
 
     public void RunEntityEventScripts(Entity entity, int eventProgramType)
     {
+        System.Diagnostics.Debugger.Break();
         EventProgramState eventProgramState;
         if (eventProgramType < 6)
         {

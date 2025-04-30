@@ -436,6 +436,11 @@ public static class StaticVariables
         g_fadeControl = new FadeControl();
         g_emptyEntityForClearing = new Entity();
 
+        for (int i = 0; i < g_mapEvents.Length; i++)
+        {
+            g_mapEvents[i] = new MapEvent() { Id = i };
+        }
+
         var index2 = 0;
         var layoutIndex = 0;
         do
@@ -1353,7 +1358,7 @@ public static class StaticVariables
     public static int g_mapLimits; // 800DC070
     public static int g_data_buffer; // 800DC074
     public static int g_data_buffer_length; // 800DC078
-    public static int g_cameraTransformMatrix; // 800DC07C
+    public static int g_numberOfTilesDrawn; // 800DC07C
     public static int g_cameraProjectionMatrix; // 800DC080
     public static int g_numberOfLayersDrawn; // 800DC084
     public static int DAT_800dc088; // 800DC088
@@ -1402,19 +1407,19 @@ public static class StaticVariables
     public static byte DAT_800dcd2d; // 800DCD2D
     public static int g_renderTileRowCount; // 800DD868
     public static ushort  g_spriteVRAMPointer; // 800DD86C
-    public static int g_camOffsetXDebug; // 800DD870
-    public static int g_camOffsetYDebug; // 800DD874
+    public static int g_cameraDebugOffsetX; // 800DD870
+    public static int g_cameraDebugOffsetY; // 800DD874
     public static SPRT[] g_tileSpriteBuffer = new SPRT[600]; // 800DD878
     public static int[] INT_ARRAY_800e0758 = new int[3800]; // 800E0758
-    public static int g_resetCamScroll; // 800E42B8
+    public static int g_isCameraScrolling; // 800E42B8
     public static short  g_drawPageTPageIDs; // 800E42BC
     //public static DR_TPAGE[] g_tileOrderingTable = new DR_TPAGE[6]; // 800E42C0
     public static SpriteMapEntry[] g_spriteMapTable = new SpriteMapEntry[11]; // 800E42F0
     public static int g_LoadVRAMAssets_debug; // 800E431C
     public static int  g_drawPageInfoTable; // 800E4320
     public static int g_currentDrawPageParam; // 800E4324
-    public static int g_targetCamX_2; // 800E4328
-    public static int g_targetCamY_2; // 800E432C
+    public static int g_cameraScrollingX; // 800E4328
+    public static int g_cameraScrollingY; // 800E432C
     public static int  g_spriteOtherPointer; // 800E4330
     public static byte[]  g_spriteDataBase; // 800E4334
     public static int g_bossCutsceneFlag; // 800E4338
@@ -1422,8 +1427,8 @@ public static class StaticVariables
     public static int g_triggerEvent2; // 800E4340
     public static int g_flagCutsceneState1; // 800E4344
     public static int g_flagCutsceneState2; // 800E4348
-    public static int g_camOffsetX; // 800E434C
-    public static int g_camOffsetY; // 800E4350
+    public static int g_cameraOffsetX; // 800E434C
+    public static int g_cameraOffsetY; // 800E4350
     public static int INT_800e4354; // 800E4354
     public static int INT_800e4358; // 800E4358
     public static int[] g_animationRawData = new int[58050]; // 800E4360
@@ -1437,7 +1442,7 @@ public static class StaticVariables
     public static int INT_80126e7c; // 80126E7C
     public static int INT_80126e80; // 80126E80
     public static int g_maxInitData; // 80126E84
-    public static int[] g_effectInitTable = new int[14]; // 80126E88
+    public static SiMapEventRecord[] g_effectInitTable = new SiMapEventRecord[14]; // 80126E88
     public static SpriteInfoHeader  g_alundraSpriteInfo; // 80126EC0
     public static int  g_animationStructs_paletteClut; // 80126EC4
     public static SpriteRecord  g_initialAnimationTable; // 80126ECC
@@ -1463,12 +1468,12 @@ public static class StaticVariables
     public static int[] g_intArray_80127008 = new int[64]; // 80127008
     public static Entity  g_activeCollisionEntity; // 80127108
     public static uint g_currentTileFlags; // 8012710C
-    public static int g_warpTransitionCooldown; // 80127110
-    public static int g_warpStepFlags; // 80127114
-    public static int g_specialWarpTimer; // 80127118
+    public static int g_playerEffectTransitionCooldown; // 80127110
+    public static int g_playerEffectStepFlags; // 80127114
+    public static int g_playerEffectTimer; // 80127118
     public static Entity[] g_spawnedWarpEntity = new Entity[16]; // 8012711C
-    public static int g_currentWarpFrame; // 8012715C
-    public static int g_specialWarpPhase; // 80127160
+    public static int g_playerEffectCurrentFrame; // 8012715C
+    public static int g_playerEffectPhase; // 80127160
     public static int g_warpLockTimer; // 80127164
     public static short[] g_tileToWorldXTable = new short[1248]; // 80127168
     public static Entity[]  g_activeEntities = new Entity[64]; // 80127B28
@@ -1480,9 +1485,9 @@ public static class StaticVariables
     //public static TILE[] g_spriteTiles = new TILE[512]; // 80132234
     //public static DR_MODE[] DR_MODE_ARRAY_80134234 = new DR_MODE[2]; // 80134234
     public static Entity[] g_visibleEntities = new Entity[64]; // 80134250
-    public static int g_playerX; // 80134350
-    public static int g_playerY; // 80134354
-    public static int g_playerZ; // 80134358
+    public static int g_cameraLookAtX; // 80134350
+    public static int g_cameraLookAtY; // 80134354
+    public static int g_cameraLookAtZ; // 80134358
     public static int g_visibleEntityCount; // 8013435C
     public static int g_numberOfEntity; // 80134360
     public static Entity g_emptyEntityForClearing; // 80134368
@@ -1490,9 +1495,9 @@ public static class StaticVariables
     public static int g_nextEntityIndex; // 80134600
     public static char[] g_messageDebug = new char[16384]; // 80134608
     public static SpriteEffect[] g_effectSlots = new SpriteEffect[128]; // 80138608
-    public static int  g_monitorBase; // 8013C688
+    public static MapEvent[] g_mapEvents = new MapEvent[64]; // 8013C688
     public static int[] g_monitorData = new int[3]; // 8013C68C
-    public static int[] g_monitorTable = new int[18]; // 8013D888
+    public static MapEvent g_emptyMapEvent = new(); // 8013D888
     public static int INT_8013d8d0; // 8013D8D0
     public static int g_activeEntityRefId; // 8013D8D4
     public static int[] g_matchingEntitiesBuffer = new int[65]; // 8013D8D8
