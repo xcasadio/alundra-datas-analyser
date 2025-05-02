@@ -1429,10 +1429,10 @@ public static class StaticVariables
     public static int INT_800e4354; // 800E4354
     public static int INT_800e4358; // 800E4358
     public static int[] g_animationRawData = new int[58050]; // 800E4360
-    public static int g_currentIndexEntityUpdated; // 8011ce60
+    public static int g_spriteNumberOfImage; // 8011ce60
     //public static POLY_FT4[] g_polyFT4Table = new POLY_FT4[1024]; // 8011CE68
     public static int g_animationRawSize; // 80126E68
-    public static int  g_currentEntitySpriteImages; // 80126E6C
+    public static SpriteRef[] g_spriteImages = new SpriteRef[1024]; // 80126E6C
     public static SpriteInfoHeader  g_currentMapSpriteInfo; // 80126E70
     public static int  g_bufferImage; // 80126E74
     public static EntityRecord  g_initTableEntry; // 80126E78

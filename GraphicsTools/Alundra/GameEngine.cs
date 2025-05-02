@@ -20,8 +20,8 @@ public class GameEngine
     public GameMap AlundraMap => _datasBin.AlundraGameMap;
 
     //find the staticVariables for this=>
-    private int NumSprites;
-    private readonly SpriteRef[] SpriteRefs = new SpriteRef[10000];
+    //private int NumSprites;
+    //private readonly SpriteRef[] SpriteRefs = new SpriteRef[10000];
     private readonly EntityEventHandlers _entityEventHandlers;
 
 
@@ -44,7 +44,7 @@ public class GameEngine
     public void MainLoop(Graphics graphics)
     {
         //InitializeGame();
-        NumSprites = 0;
+        StaticVariables.g_spriteNumberOfImage = 0;
 
         byte isEffectRunning = 0;
         var playerPosX = 0;
@@ -3129,7 +3129,7 @@ public class GameEngine
         }
 
         //StaticVariables.g_currentEntitySpriteImages = 0x8011cb60;
-        StaticVariables.g_currentIndexEntityUpdated = 0;
+        StaticVariables.g_spriteNumberOfImage = 0;
 
         RunMapEvents();
         UpdateAllEntitiesPostLogic();
@@ -3206,9 +3206,9 @@ public class GameEngine
             effect.SpriteRef.X = effect.X;
             effect.SpriteRef.Y = effect.Y;
             effect.SpriteRef.Z = effect.Z;
-            SpriteRefs[NumSprites++] = effect.SpriteRef;
-            StaticVariables.g_currentEntitySpriteImages++;
-            StaticVariables.g_currentIndexEntityUpdated++;
+            StaticVariables.g_spriteImages[StaticVariables.g_spriteNumberOfImage++] = effect.SpriteRef;
+            //StaticVariables.g_currentEntitySpriteImages++;
+            //StaticVariables.g_spriteNumberOfImage++;
         }
     }
 
@@ -3406,14 +3406,11 @@ public class GameEngine
             UpdateEntityLists();
         }
 
-        if (StaticVariables.g_entityFollowedByCamera != null)
+        if (StaticVariables.g_entityFollowedByCamera != null && StaticVariables.g_entityFollowedByCamera.Status <= 3)
         {
-            if (StaticVariables.g_entityFollowedByCamera.Status <= 3)
-            {
-                StaticVariables.g_cameraLookAtX = StaticVariables.g_entityFollowedByCamera.XPos >> 16;
-                StaticVariables.g_cameraLookAtY = StaticVariables.g_entityFollowedByCamera.YPos >> 16;
-                StaticVariables.g_cameraLookAtZ = StaticVariables.g_entityFollowedByCamera.ZPos >> 16;
-            }
+            StaticVariables.g_cameraLookAtX = StaticVariables.g_entityFollowedByCamera.XPos + 2; // >> 16;
+            StaticVariables.g_cameraLookAtY = StaticVariables.g_entityFollowedByCamera.YPos + 2; // >> 16;
+            StaticVariables.g_cameraLookAtZ = StaticVariables.g_entityFollowedByCamera.ZPos + 2; // >> 16;
         }
 
         UpdateVisibleEntitiesZSort();
@@ -3429,7 +3426,7 @@ public class GameEngine
                 entity.SpriteRef.X = entity.XPos;
                 entity.SpriteRef.Y = entity.YPos;
                 entity.SpriteRef.Z = entity.ZPos;
-                SpriteRefs[NumSprites++] = entity.SpriteRef;
+                StaticVariables.g_spriteImages[StaticVariables.g_spriteNumberOfImage++] = entity.SpriteRef;
             }
         }
     }
