@@ -48,7 +48,7 @@ public class Entity
     public uint CurrentAnimationId;
     public uint CurrentDirection;
     public int CurrentFrameIndex;
-    public SiAnimSet AnimSet;
+    public AnimationSet AnimSet;
     public SiFrame FirstFrame;
     public SiFrame Frame;
     public int NextFrameDelay;

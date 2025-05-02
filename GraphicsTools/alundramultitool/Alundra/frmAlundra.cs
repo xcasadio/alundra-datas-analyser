@@ -1026,7 +1026,7 @@ namespace GraphicsTools.Alundra
                 fname = $"{ecode.ToString("x2")}_{sicodename}_handler";
                 lbl_einteract.Text = fname;
 
-                lbl_moreflags.Text = _selectedSector5.Header.Moreflags.ToString("x");
+                lbl_moreflags.Text = _selectedSector5.Header.MoreFlags.ToString("x");
                 lbl_canpickup.Text = _selectedSector5.Header.CanPickup.ToString("x");
                 lbl_flags.Text = _selectedSector5.Header.FlagsPortraitShadowtype.ToString("x");
                 lbl_offsetx.Text = _selectedSector5.Header.Xmod.ToString();
@@ -1035,7 +1035,7 @@ namespace GraphicsTools.Alundra
                 lbl_width.Text = _selectedSector5.Header.Width.ToString();
                 lbl_depth.Text = _selectedSector5.Header.Depth.ToString();
                 lbl_height.Text = _selectedSector5.Header.Height.ToString();
-                lbl_breakeffect.Text = _selectedSector5.Header.Breakeffect.ToString();
+                lbl_breakeffect.Text = _selectedSector5.Header.BreakEffect.ToString();
                 lbl_contents.Text = _selectedSector5.Header.Contents.ToString("x");
 
             }
@@ -1108,7 +1108,7 @@ namespace GraphicsTools.Alundra
             }
         }
 
-        private SiAnimSet _selectedAnimSet;
+        private AnimationSet _selectedAnimSet;
         private void lstSector5Animations_SelectedIndexChanged(object sender, EventArgs e)
         {
             _selectedAnim = null;
@@ -1123,10 +1123,10 @@ namespace GraphicsTools.Alundra
             {
                 _selectedAnimSet = _selectedSector5.AnimSets[lstSector5Animations.SelectedIndex];
                 lblAnimSetAddr.Text = _selectedAnimSet.MemoryAddress.ToString("x6");
-                rdoDown.Text = "down (" + _selectedAnimSet.AnimOffsets[(int)SiAnimDir.Down].ToString("x4") + ")";
-                rdoUp.Text = "up (" + _selectedAnimSet.AnimOffsets[(int)SiAnimDir.Up].ToString("x4") + ")";
-                rdoLeft.Text = "left (" + _selectedAnimSet.AnimOffsets[(int)SiAnimDir.Left].ToString("x4") + ")";
-                rdoRight.Text = "right (" + _selectedAnimSet.AnimOffsets[(int)SiAnimDir.Right].ToString("x4") + ")";
+                rdoDown.Text = "down (" + _selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Down].ToString("x4") + ")";
+                rdoUp.Text = "up (" + _selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Up].ToString("x4") + ")";
+                rdoLeft.Text = "left (" + _selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Left].ToString("x4") + ")";
+                rdoRight.Text = "right (" + _selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Right].ToString("x4") + ")";
 
                 rdoDown.Checked = true;
 

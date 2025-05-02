@@ -17,7 +17,7 @@ public class SpriteTableHeader
         br.Read(Ubuff, 0, Ubuff.Length);
         br.BaseStream.Position -= 16;
 
-        Moreflags = br.ReadByte();//10
+        MoreFlags = br.ReadByte();//10
         CanPickup = br.ReadByte();//11
         FlagsPortraitShadowtype = br.ReadByte();//12
         ProgramLoad = br.ReadByte();//13
@@ -31,7 +31,7 @@ public class SpriteTableHeader
         Width = br.ReadByte();//18+3
         Depth = br.ReadByte();//18+4
         Height = br.ReadByte();//18+5
-        Breakeffect = br.ReadByte();//18+6
+        BreakEffect = br.ReadByte();//18+6
         Contents = br.ReadByte();//18+7
     }
     public readonly int Sector5Id;
@@ -45,7 +45,7 @@ public class SpriteTableHeader
     public readonly int FramesPointer;
     public readonly byte[] Ubuff;
 
-    public readonly byte Moreflags;
+    public readonly byte MoreFlags;
     public readonly byte CanPickup;
     public readonly byte FlagsPortraitShadowtype;
     public readonly byte ProgramLoad;
@@ -59,6 +59,6 @@ public class SpriteTableHeader
     public readonly byte Width;
     public readonly byte Depth;
     public readonly byte Height;
-    public readonly byte Breakeffect;
+    public readonly byte BreakEffect;
     public readonly byte Contents;
 }

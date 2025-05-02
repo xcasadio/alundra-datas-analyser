@@ -8,7 +8,7 @@ public class Renderer
     {
         var curxpos = StaticVariables.g_cameraCurrentX;// >> 16;
         var curypos = StaticVariables.g_cameraCurrentY;// >> 16;
-
+                     
         var curxtile = curxpos / StaticVariables.MapTileWidth;
 
         var sinfo = gameMap.SpriteInfo;

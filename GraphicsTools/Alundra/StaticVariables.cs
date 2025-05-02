@@ -13,9 +13,6 @@ public static class StaticVariables
     public const int MapTileWidth = 24;
     public const int MapTileHeight = 16;
 
-        
-    public static readonly EventProgramState GlobalEventData = new();
-
     public static int g_playerInitState;
     public static Entity PlayerEntity => g_entitySlots[0];
 
@@ -1346,8 +1343,8 @@ public static class StaticVariables
     public static int[] g_uvLookupTableInit = new int[8]; // 800CA210
     public static int[] g_orderTableFrame0 = new int[372]; // 800CA230
     public static int[] g_orderTableFrame1 = new int[964]; // 800CB140
-    public static int  g_orderingTableBuffer; // 800CC050
-    public static int  g_orderingTableBufferAlt; // 800CC054
+    public static int[] g_orderingTableBuffer = new int[4]; // 800CC050
+    //public static int g_orderingTableBufferAlt; // 800CC054
     public static byte[] g_bufferImage2 = new byte[65536]; // 800CC058
     public static int g_debugState; // 800DC058
     public static uint g_debugFlags; // 800DC05C
@@ -1359,7 +1356,7 @@ public static class StaticVariables
     public static int g_data_buffer; // 800DC074
     public static int g_data_buffer_length; // 800DC078
     public static int g_numberOfTilesDrawn; // 800DC07C
-    public static int g_cameraProjectionMatrix; // 800DC080
+    public static int g_numberOfEntitiesDrawn; // 800DC080
     public static int g_numberOfLayersDrawn; // 800DC084
     public static int DAT_800dc088; // 800DC088
     public static int DAT_800dc08c; // 800DC08C
@@ -1442,7 +1439,7 @@ public static class StaticVariables
     public static int INT_80126e7c; // 80126E7C
     public static int INT_80126e80; // 80126E80
     public static int g_maxInitData; // 80126E84
-    public static SiMapEventRecord[] g_effectInitTable = new SiMapEventRecord[14]; // 80126E88
+    public static SiMapEventRecord[] g_initMapEventRecords = new SiMapEventRecord[14]; // 80126E88
     public static SpriteInfoHeader  g_alundraSpriteInfo; // 80126EC0
     public static int  g_animationStructs_paletteClut; // 80126EC4
     public static SpriteRecord  g_initialAnimationTable; // 80126ECC
@@ -1503,7 +1500,7 @@ public static class StaticVariables
     public static int[] g_matchingEntitiesBuffer = new int[65]; // 8013D8D8
     public static int g_activeEventProgramType; // 8013D9DC
     public static int g_lastCommand; // 8013D9E0
-    public static EventProgramState g_logicContext; // 8013D9E8
+    public static EventProgramState g_eventProgramState = new EventProgramState(); // 8013D9E8
     public static int g_clearProgramState; // 8013DA20
     public static int g_activeEventProgramIndex; // 8013DA24
     public static int g_activeCommand; // 8013DA28
@@ -2225,4 +2222,12 @@ public static class StaticVariables
     public static short g_voiceCommandPendingRight; // 801F7F10
     public static byte[] g_heapBuffer = new byte[32732]; // 801F7F24
     public static int  g_executable_loaded; // 801FFF00
+
+    
+    public static int g_cutsceneScrollLimitY = 0;
+    public static int g_cutsceneScrollLimitX = 0;
+    public static int g_cutsceneScrollSpeedY = 0;
+    public static int g_cutsceneScrollSpeedX = 0;
+    public static int g_cutsceneXReachedMin = 0;
+    public static int g_cutsceneYReachedMin = 0;
 }

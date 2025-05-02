@@ -204,9 +204,9 @@ public class GameState
             //InitializeExtraSystemState();
         }
 
-        StaticVariables.g_playerX = (playerTileX * 0x18 + 0xc) * 0x10000;
-        StaticVariables.g_playerY = (playerTileY * 0x10 + 8) * 0x10000;
-        StaticVariables.g_playerZ = playerZ << 0x14;
+        StaticVariables.g_cameraLookAtX = (playerTileX * 0x18 + 0xc) * 0x10000;
+        StaticVariables.g_cameraLookAtY = (playerTileY * 0x10 + 8) * 0x10000;
+        StaticVariables.g_cameraLookAtZ = playerZ << 0x14;
         StaticVariables.g_desiredMap = StaticVariables.g_initialWarpMap;
         StaticVariables.g_warpType = 0;
         StaticVariables.g_warpTriggerType = 0x36;
@@ -724,7 +724,7 @@ public class GameState
         entity.CurrentDirection = ~dir;
         entity.TargetAnimationId = anim;
         entity.TargetDirection = dir;
-        entity.Flags = (uint)(sprite.Header.Moreflags | sprite.Header.CanPickup << 8 | sprite.Header.FlagsPortraitShadowtype << 16);
+        entity.Flags = (uint)(sprite.Header.MoreFlags | sprite.Header.CanPickup << 8 | sprite.Header.FlagsPortraitShadowtype << 16);
 
         entity.SpriteProgramIndexes[1] = 0;
         entity.SpriteProgramIndexes[0] = sprite.Header.ProgramLoad;
@@ -1289,7 +1289,7 @@ public class GameState
             entity.AnimSet = animSet;
             System.Diagnostics.Debug.Assert(entity.AnimSet != null);
             //frameOffset = (ushort)((int)animSet.entries + animationFrameIndex * 2);
-            var animTableOffset = entity.AnimSet.AnimOffsets[entity.CurrentFrameIndex];
+            var animTableOffset = entity.AnimSet.AnimationOffsets[entity.CurrentFrameIndex];
             entity.CurrentFrameIndex = animationFrameIndex;
             entity.NextFrameDelay = 0;
             entity.CurrentAnimationId = frameDelay;
@@ -1305,7 +1305,7 @@ public class GameState
             entity.FirstFrame = currentFrame;
             //entity.IsZForceApplied = animSet.isZForceApplied;
             entity.ForceResetAnimationFlag = 0;
-            //entity.AnimFlags = (byte)animRecordPtr.AnimOffsets[1];
+            //entity.AnimFlags = (byte)animRecordPtr.AnimationOffsets[1];
             entity.AnimFlags = entity.AnimSet.Flags;
 
             if (entity.BalanceRecord.NumAnimVals == 0)
@@ -1657,7 +1657,7 @@ public class GameState
 
         if (effectid == -1)
         {
-            effectid = entity.Sprite.Header.Breakeffect;
+            effectid = entity.Sprite.Header.BreakEffect;
         }
 
         if (effectid != 0)

@@ -1,14 +1,14 @@
 ﻿namespace Alundra.DatasBin;
 
-public class SiAnimSet
+public class AnimationSet
 {
-    public SiAnimSet(BinaryReader br, int memoryAddress)
+    public AnimationSet(BinaryReader br, int memoryAddress)
     {
         MemoryAddress = memoryAddress;
-        AnimOffsets = new int[4];
-        for (var i = 0; i < AnimOffsets.Length; i++)
+        AnimationOffsets = new int[4];
+        for (var i = 0; i < AnimationOffsets.Length; i++)
         {
-            AnimOffsets[i] = br.ReadInt16();
+            AnimationOffsets[i] = br.ReadInt16();
         }
 
         Speed = br.ReadUInt16();
@@ -19,7 +19,7 @@ public class SiAnimSet
         PreloadedAnims = new SiAnimation[4];
     }
     public readonly int MemoryAddress;
-    public readonly int[] AnimOffsets;//4 of them for each direction
+    public readonly int[] AnimationOffsets;//4 of them for each direction
     public readonly SiAnimation[] PreloadedAnims;
     public readonly ushort Speed;
     public readonly byte Sfx;
@@ -27,8 +27,8 @@ public class SiAnimSet
     public readonly byte Acceleration;
     public readonly byte U6;
 
-    public int DownOffset => AnimOffsets[(int)SiAnimDir.Down];
-    public int UpOffset => AnimOffsets[(int)SiAnimDir.Up];
-    public int LeftOffset => AnimOffsets[(int)SiAnimDir.Left];
-    public int RightOffset => AnimOffsets[(int)SiAnimDir.Right];
+    public int DownOffset => AnimationOffsets[(int)SiAnimDir.Down];
+    public int UpOffset => AnimationOffsets[(int)SiAnimDir.Up];
+    public int LeftOffset => AnimationOffsets[(int)SiAnimDir.Left];
+    public int RightOffset => AnimationOffsets[(int)SiAnimDir.Right];
 }

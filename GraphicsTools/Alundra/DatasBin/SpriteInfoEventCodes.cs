@@ -4,15 +4,15 @@ namespace Alundra.DatasBin;
 
 public class SpriteInfoEventCodes
 {
-    public static readonly byte[] Code = new byte[1024 * 1024];//1mb of event codes, too much prob but oh well;
+    public static readonly byte[] Codes = new byte[1024 * 1024];//1mb of event codes, too much prob but oh well;
 
-    public SpriteInfoEventCodes(BinaryReader br, long binoffset, SpriteInfoHeader header, bool ismap)
+    public SpriteInfoEventCodes(BinaryReader br, long binOffset, SpriteInfoHeader header, bool ismap)
     {
         var tableSize = 0;
         short firstoffset = 0;
 
         //read sector1a
-        br.BaseStream.Position = binoffset + header.EventCodesAPointer;
+        br.BaseStream.Position = binOffset + header.EventCodesAPointer;
         tableSize = header.EventCodesASize / 2;
         EventCodesATable = new short[tableSize];
         for (var dex = 0; dex < tableSize; dex++)
@@ -25,7 +25,7 @@ public class SpriteInfoEventCodes
         }
 
         //read sector1b
-        br.BaseStream.Position = binoffset + header.EventCodesBPointer;
+        br.BaseStream.Position = binOffset + header.EventCodesBPointer;
         tableSize = header.EventCodesBSize / 2;
         EventCodesBTable = new short[tableSize];
         for (var dex = 0; dex < tableSize; dex++)
@@ -38,7 +38,7 @@ public class SpriteInfoEventCodes
         }
 
         //read sector1c
-        br.BaseStream.Position = binoffset + header.EventCodesCPointer;
+        br.BaseStream.Position = binOffset + header.EventCodesCPointer;
         tableSize = header.EventCodesCSize / 2;
         EventCodesCTable = new short[tableSize];
         for (var dex = 0; dex < tableSize; dex++)
@@ -51,7 +51,7 @@ public class SpriteInfoEventCodes
         }
 
         //read sector1d
-        br.BaseStream.Position = binoffset + header.EventCodesDPointer;
+        br.BaseStream.Position = binOffset + header.EventCodesDPointer;
         tableSize = header.EventCodesDSize / 2;
         EventCodesDTable = new short[tableSize];
         for (var dex = 0; dex < tableSize; dex++)
@@ -64,7 +64,7 @@ public class SpriteInfoEventCodes
         }
 
         //read sector1e
-        br.BaseStream.Position = binoffset + header.EventCodesEPointer;
+        br.BaseStream.Position = binOffset + header.EventCodesEPointer;
         tableSize = header.EventCodesESize / 2;
         EventCodesETable = new short[tableSize];
         for (var dex = 0; dex < tableSize; dex++)
@@ -78,7 +78,7 @@ public class SpriteInfoEventCodes
 
         //read sector1f
         header.EventCodesFSize = header.EventCodesAPointer + firstoffset - header.EventCodesFPointer;
-        br.BaseStream.Position = binoffset + header.EventCodesFPointer;
+        br.BaseStream.Position = binOffset + header.EventCodesFPointer;
         tableSize = header.EventCodesFSize / 2;
         if (tableSize < 0)
         {
@@ -91,8 +91,8 @@ public class SpriteInfoEventCodes
             EventCodesFTable[dex] = br.ReadInt16();
         }
 
-        //set binoffset for eventcodes
-        _binOffset = binoffset + header.EventCodesAPointer;
+        //set binOffset for eventcodes
+        _binOffset = binOffset + header.EventCodesAPointer;
         _memoryAddress = header.MemoryAddress + header.EventCodesAPointer;
         _dataSize = header.EntitiesPointer - header.EventCodesAPointer;
 
@@ -109,10 +109,10 @@ public class SpriteInfoEventCodes
             top += 1024 * 512;
         }
 
-        br.BaseStream.Position = binoffset;
+        br.BaseStream.Position = binOffset;
         if (_dataSize > 0)
         {
-            br.Read(Code, top, _dataSize);
+            br.Read(Codes, top, _dataSize);
         }
         //half mb for global codes, half mb for map codes
     }

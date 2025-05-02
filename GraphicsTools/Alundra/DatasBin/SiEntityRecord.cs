@@ -52,10 +52,10 @@ public class SiEntityRecord
                 {
                     var animset = sector5.AnimSets[cmd.Parameters[0]];
 
-                    return sector5.GetAnimation(br, animset.AnimOffsets[SpriteDirection & 0x3]);
+                    return sector5.GetAnimation(br, animset.AnimationOffsets[SpriteDirection & 0x3]);
                 }
             }
-            return sector5.GetAnimation(br, sector5.AnimSets[0].AnimOffsets[SpriteDirection & 0x3]);//default anim
+            return sector5.GetAnimation(br, sector5.AnimSets[0].AnimationOffsets[SpriteDirection & 0x3]);//default anim
         }
 
         return null;

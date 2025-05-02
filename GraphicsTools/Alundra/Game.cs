@@ -234,10 +234,9 @@ public class Game
         {
             if (StaticVariables.g_entityFollowedByCamera.Status <= 3)
             {
-                //gets halfwords
-                StaticVariables.g_playerX = StaticVariables.g_entityFollowedByCamera.XPos >> 16;
-                StaticVariables.g_playerY = StaticVariables.g_entityFollowedByCamera.YPos >> 16;
-                StaticVariables.g_playerZ = StaticVariables.g_entityFollowedByCamera.ZPos >> 16;
+                StaticVariables.g_cameraLookAtX = StaticVariables.g_entityFollowedByCamera.XPos >> 16;
+                StaticVariables.g_cameraLookAtY = StaticVariables.g_entityFollowedByCamera.YPos >> 16;
+                StaticVariables.g_cameraLookAtZ = StaticVariables.g_entityFollowedByCamera.ZPos >> 16;
             }
         }
         UpdateVisibleEntitiesZSort();

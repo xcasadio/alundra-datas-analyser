@@ -5,11 +5,11 @@ public class SpriteRecord
     public SpriteRecord(BinaryReader br, long binOffset, int id, int memoryAddress, int spriteInfoMemoryAddress)
     {
         Header = new SpriteTableHeader(br, binOffset, id, memoryAddress, spriteInfoMemoryAddress);
-        AnimSets = new SiAnimSet[(Header.AnimationsPointer - Header.AnimationOffsetsPointer) / 14];
+        AnimSets = new AnimationSet[(Header.AnimationsPointer - Header.AnimationOffsetsPointer) / 14];
 
         for (var i = 0; i < AnimSets.Length; i++)
         {
-            AnimSets[i] = new SiAnimSet(br, memoryAddress + 32 + i * 14);
+            AnimSets[i] = new AnimationSet(br, memoryAddress + 32 + i * 14);
         }
 
         //preload all of the animations here
@@ -17,9 +17,9 @@ public class SpriteRecord
         {
             for (int direction = 0; direction < 4; direction++)
             {
-                if (AnimSets[i].AnimOffsets[direction] != 0xffff)
+                if (AnimSets[i].AnimationOffsets[direction] != 0xffff)
                 {
-                    AnimSets[i].PreloadedAnims[direction] = GetAnimation(br, AnimSets[i].AnimOffsets[direction]);
+                    AnimSets[i].PreloadedAnims[direction] = GetAnimation(br, AnimSets[i].AnimationOffsets[direction]);
 
                     /*DBFrame* frames = (DBFrame*)&(*spr->framesdata)[spr->animsets[animdex].diroffsets[dirdex]];
                     int framedex;
@@ -64,5 +64,5 @@ public class SpriteRecord
     }
 
     public readonly SpriteTableHeader Header;
-    public readonly SiAnimSet[] AnimSets;
+    public readonly AnimationSet[] AnimSets;
 }
