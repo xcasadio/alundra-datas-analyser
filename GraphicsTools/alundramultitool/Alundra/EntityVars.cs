@@ -5,7 +5,7 @@ namespace GraphicsTools.Alundra
     public static class EntityVars
     {
 
-        public static readonly string[] VarOffsets = new string[GameMap.EventobjectSize / 4];
+        public static readonly string[] VarOffsets = new string[GameMap.EventObjectSize / 4];
 
         public static void Init()
         {

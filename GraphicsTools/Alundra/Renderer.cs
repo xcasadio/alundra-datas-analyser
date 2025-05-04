@@ -130,15 +130,23 @@ public class Renderer
         //
         //_pnts[3].X = x + img.X4;
         //_pnts[3].Y = y + img.Y4;
-
-        var rectangle = new Rectangle(
-            x + Math.Min(img.X1, Math.Min(img.X2, Math.Min(img.X3, img.X4))), 
-            y + Math.Min(img.Y1, Math.Min(img.Y2, Math.Min(img.Y3, img.Y4))), 
-            x+ Math.Max(img.X1, Math.Max(img.X2, Math.Max(img.X3, img.X4))), 
-            y + Math.Max(img.Y1, Math.Max(img.Y2, Math.Max(img.Y3, img.Y4))));
-
-        g.DrawImage(bmp, rectangle);
+        //
         //g.DrawImage(bmp, _pnts);
+
+        var w = img.X4 - img.X1;
+        var h = img.Y4 - img.Y1;
+        if (w != 0 && h != 0)
+        {
+            g.DrawImage(bmp, x + img.X1, y + img.Y1, w, h);
+        }
+
+        //var rectangle = new Rectangle(
+        //    x + Math.Min(img.X1, Math.Min(img.X2, Math.Min(img.X3, img.X4))), 
+        //    y + Math.Min(img.Y1, Math.Min(img.Y2, Math.Min(img.Y3, img.Y4))), 
+        //    x+ Math.Max(img.X1, Math.Max(img.X2, Math.Max(img.X3, img.X4))), 
+        //    y + Math.Max(img.Y1, Math.Max(img.Y2, Math.Max(img.Y3, img.Y4))));
+        //
+        //g.DrawImage(bmp, rectangle);
     }
 
     private static void DrawTile(int tileMapIndex, int x, int y, Graphics g, GameMap gameMap)

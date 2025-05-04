@@ -134,10 +134,3 @@ public class Entity
 
     public bool IsMapSprite => EntityRecord == null ? false : (EntityRecord.SpriteDirection & 0x80) != 0;
 }
-
-//public class EventProgramState
-//{
-//	public int maploadprogram;//program that runs on map load
-//	public EventProgramState tickprogram;//event program that runs every tick
-//	public int interactprogram;
-//}

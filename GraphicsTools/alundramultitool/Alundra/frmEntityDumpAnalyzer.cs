@@ -26,7 +26,7 @@ namespace GraphicsTools.Alundra
             lbladdr.Text = "addr: " + _addr.ToString("x6");
             var br = new BinaryReader(File.OpenRead(_dumpfile));
             br.BaseStream.Position = _addr;
-            _buff = br.ReadBytes(GameMap.EventobjectSize);
+            _buff = br.ReadBytes(GameMap.EventObjectSize);
             br.Close();
             
             for (var dex = 0; dex < _buff.Length / _rowlen; dex++)

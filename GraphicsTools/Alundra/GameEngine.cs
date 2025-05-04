@@ -973,7 +973,6 @@ public class GameEngine
     private void LoadMapAndInitializeEntities(uint[] bufferImage)
     {
         InitializeMapEvents();
-
         //LoadImageArea(StaticVariables.g_bufferImage, 0x40, 0x1e0, 0x40);
         //LoadCompressedImageToBuffer(bufferImage, 0x140, 0, 5, StaticVariables.g_bufferImage2);
         InitializeEntitySlots();
@@ -987,33 +986,33 @@ public class GameEngine
         int i = 0;
         MapEvent mapEventDest;
         MapEvent emptyMapEvent;
-        SiMapEventRecord mapEventRecord;
+        //SiMapEventRecord mapEventRecord;
         Entity entity;
         byte monitorEnabledFlag;
 
-        MapEvent[] mapEvents = StaticVariables.g_mapEvents;
+        //MapEvent[] mapEvents = StaticVariables.g_mapEvents;
         //MapEvent pEmptyMapEvent = StaticVariables.g_emptyMapEvent;
         //MapEvent pMapEvents = mapEvents[0];
 
         do
         {
-            mapEvents[i].Id = i;
-            mapEvents[i].ProgramBMap = 0;
-            mapEvents[i].MapEventRecord = null;
-            mapEvents[i].Entity = null;
-            mapEvents[i].EventData.Sp = 0;
-            mapEvents[i].EventData.Exp = 0;
-            mapEvents[i].EventData.Tick = 0;
-            for (int j = 0; j < mapEvents[i].EventData.Variables.Length; j++)
+            StaticVariables.g_mapEvents[i].Id = i;
+            StaticVariables.g_mapEvents[i].ProgramBMap = 0;
+            StaticVariables.g_mapEvents[i].MapEventRecord = null;
+            StaticVariables.g_mapEvents[i].Entity = null;
+            StaticVariables.g_mapEvents[i].EventData.Sp = 0;
+            StaticVariables.g_mapEvents[i].EventData.Exp = 0;
+            StaticVariables.g_mapEvents[i].EventData.Tick = 0;
+            for (int j = 0; j < StaticVariables.g_mapEvents[i].EventData.Variables.Length; j++)
             {
-                mapEvents[i].EventData.Variables[j] = 0;
+                StaticVariables.g_mapEvents[i].EventData.Variables[j] = 0;
             }
-            mapEvents[i].EventData.LogicResult = 0;
-            mapEvents[i].EventData.ElapsedMs = 0;
-            mapEvents[i].EventData.IsWaiting = 0;
-            for (int j = 0; j < mapEvents[i].EventData.Codes.Length; j++)
+            StaticVariables.g_mapEvents[i].EventData.LogicResult = 0;
+            StaticVariables.g_mapEvents[i].EventData.ElapsedMs = 0;
+            StaticVariables.g_mapEvents[i].EventData.IsWaiting = 0;
+            for (int j = 0; j < StaticVariables.g_mapEvents[i].EventData.Codes.Length; j++)
             {
-                mapEvents[i].EventData.Codes[j] = 0;
+                StaticVariables.g_mapEvents[i].EventData.Codes[j] = 0;
             }
 
 
@@ -1053,18 +1052,17 @@ public class GameEngine
         } while (i < 0x40);
 
         i = 0;
-        int index = 0;
 
         //byte[] MonitorFlags = StaticVariables.g_initMapEventRecords[4] + 1; //.Skip(4).ToArray();
-        entity = StaticVariables.g_mapEvents[0].Entity;
+        //entity = StaticVariables.PlayerEntity;//StaticVariables.g_mapEvents[0].Entity;
 
-        do
+        foreach (var mapEventRecord in CurrentMap.SpriteInfo.MapEvents.Records)
         {
-            mapEventRecord = StaticVariables.g_initMapEventRecords[4 + i];
+            //mapEventRecord = StaticVariables.g_initMapEventRecords[i];
 
             if (mapEventRecord == null)
             {
-                return;
+                break;
             }
 
             programBMapCode = mapEventRecord.EventCodesBIndex;
@@ -1082,17 +1080,52 @@ public class GameEngine
                 //entity.AIValues[6] = mapEventRecord;
                 //entity.AIValues[8] = (short)programBMapCode;
 
-                //StaticVariables.g_mapEvents[index].Entity = entity;
-                //StaticVariables.g_mapEvents[index].MapEventRecord = StaticVariables.g_initMapEventRecords[4].
-                //StaticVariables.g_mapEvents[index].ProgramBMap = programBMapCode;
-                //StaticVariables.g_mapEvents[index].MapEntity2 = StaticVariables.g_entitySlots;
-                //StaticVariables.g_mapEvents[index].MonitorFlag = MonitorFlags[0];
+                StaticVariables.g_mapEvents[i].Entity = StaticVariables.PlayerEntity;
+                StaticVariables.g_mapEvents[i].MapEventRecord = mapEventRecord;
+                StaticVariables.g_mapEvents[i].ProgramBMap = programBMapCode;
+                StaticVariables.g_mapEvents[i].EventData = new EventProgramState();
+                StaticVariables.g_mapEvents[i].Id = i;
             }
 
             i++;
-            //MonitorFlags = MonitorFlags + 8; //.Skip(8).ToArray();
-            entity = entity.ChildEntity;
-        } while (i < 0x80);
+        }
+        
+
+        //do
+        //{
+        //    mapEventRecord = StaticVariables.g_initMapEventRecords[i];
+        //
+        //    if (mapEventRecord == null)
+        //    {
+        //        return;
+        //    }
+        //
+        //    programBMapCode = mapEventRecord.EventCodesBIndex;
+        //
+        //    if (programBMapCode == 0)
+        //    {
+        //        if (StaticVariables.g_debugState < 0 && (StaticVariables.g_debugFlags & 0x20) != 0)
+        //        {
+        //            //PrintInfo();
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //entity.MapEventProgramId = mapEventRecord.EventCodesBIndex;
+        //        //entity.AIValues[6] = mapEventRecord;
+        //        //entity.AIValues[8] = (short)programBMapCode;
+        //
+        //        StaticVariables.g_mapEvents[i].Entity = entity;
+        //        StaticVariables.g_mapEvents[i].MapEventRecord = mapEventRecord;
+        //        StaticVariables.g_mapEvents[i].ProgramBMap = programBMapCode;
+        //        StaticVariables.g_mapEvents[i].EventData = new EventProgramState();
+        //        StaticVariables.g_mapEvents[i].Id = i;
+        //    }
+        //
+        //    i++;
+        //    //MonitorFlags = MonitorFlags + 8; //.Skip(8).ToArray();
+        //    //entity = entity.ChildEntity;
+        //} while (i < 0x80);
     }
 
     private void InitEffectSlots()
@@ -3151,9 +3184,8 @@ public class GameEngine
                 continue;
             }
 
-            var rec = mapEvent.MapEventRecord;
-            //if (playerEntity.TileX < rec.X1 || playerEntity.TileX > rec.X2 || playerEntity.TileY < rec.Y1 || playerEntity.TileY > rec.Y2)
-            if (playerEntity.TileX > rec.X1 || playerEntity.TileX < rec.X2 || playerEntity.TileY > rec.Y1 || playerEntity.TileY < rec.Y2)
+            var mapEventRecord = mapEvent.MapEventRecord;
+            if (playerEntity.TileX > mapEventRecord.X1 || playerEntity.TileX < mapEventRecord.X2 || playerEntity.TileY > mapEventRecord.Y1 || playerEntity.TileY < mapEventRecord.Y2)
             {
                 playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap] = mapEvent.ProgramBMap;
                 playerEntity.MapEventProgramId = mapEvent.ProgramBMap;
@@ -3169,11 +3201,13 @@ public class GameEngine
             }
             else
             {
-                mapEvent.EventData.Sp = 0;
-                mapEvent.EventData.Exp = 0;
-                mapEvent.EventData.LogicResult = 0;
+                mapEvent.Id = 0;
+                mapEvent.EventData = new EventProgramState();
+                //mapEvent.EventData.Sp = 0;
+                //mapEvent.EventData.Exp = 0;
+                //mapEvent.EventData.LogicResult = 0;
                 mapEvent.Entity = playerEntity;
-                mapEvent.ProgramBMap = rec.EventCodesBIndex;
+                mapEvent.ProgramBMap = mapEventRecord.EventCodesBIndex;
             }
             medex++;
         }

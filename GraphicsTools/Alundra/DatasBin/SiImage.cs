@@ -3,6 +3,7 @@
 public class SiImage
 {
     public readonly long Signature;
+
     public SiImage(BinaryReader br)
     {
         Spritesheet = br.ReadByte();
@@ -21,35 +22,6 @@ public class SiImage
         Y4 = br.ReadSByte();
 
         Signature = Spritesheet | Palette << 8 | Sx << 16 | Sy << 24 | Swidth << 32 | Sheight << 38;
-        /*if (rejigger)
-            {//byte align
-                if (sx % 2 == 1)
-                {
-                    sx--;
-                    swidth++;
-                    if (x2 > x1)
-                        x1--;
-                    else
-                        x1++;
-                    if (x4 > x3)
-                        x3--;
-                    else
-                        x3++;
-                }
-
-                if (swidth % 2 == 1)
-                {
-                    swidth++;
-                    if (x2 > x1)
-                        x2++;
-                    else
-                        x2--;
-                    if (x4 > x3)
-                        x4++;
-                    else
-                        x4--;
-                }
-            }*/
     }
 
     public readonly byte Spritesheet;

@@ -76,7 +76,8 @@ namespace GraphicsTools.Alundra
             pctOut.BackColor = Color.Black;
             pctOut.Location = new Point(0, 0);
             pctOut.Name = "pctOut";
-            pctOut.Size = new Size(320, 224);
+            pctOut.Size = new Size(640, 448);
+            pctOut.SizeMode = PictureBoxSizeMode.StretchImage;
             pctOut.TabIndex = 0;
             pctOut.TabStop = false;
             pctOut.Paint += pctOut_Paint;
@@ -91,7 +92,7 @@ namespace GraphicsTools.Alundra
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(labelNumberOfEntity);
-            groupBox1.Location = new Point(326, 0);
+            groupBox1.Location = new Point(646, 12);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(143, 90);
             groupBox1.TabIndex = 1;
@@ -182,7 +183,7 @@ namespace GraphicsTools.Alundra
             groupBox2.Controls.Add(labelCamera2);
             groupBox2.Controls.Add(label13);
             groupBox2.Controls.Add(labelCameraPosition);
-            groupBox2.Location = new Point(618, 4);
+            groupBox2.Location = new Point(938, 16);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(200, 105);
             groupBox2.TabIndex = 9;
@@ -329,7 +330,7 @@ namespace GraphicsTools.Alundra
             groupBox3.Controls.Add(label19);
             groupBox3.Controls.Add(label21);
             groupBox3.Controls.Add(labelMapId);
-            groupBox3.Location = new Point(475, 0);
+            groupBox3.Location = new Point(795, 12);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new Size(137, 128);
             groupBox3.TabIndex = 10;
@@ -412,21 +413,21 @@ namespace GraphicsTools.Alundra
             // 
             listBoxEntities.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listBoxEntities.FormattingEnabled = true;
-            listBoxEntities.Location = new Point(12, 230);
+            listBoxEntities.Location = new Point(644, 242);
             listBoxEntities.Name = "listBoxEntities";
-            listBoxEntities.Size = new Size(103, 469);
+            listBoxEntities.Size = new Size(103, 499);
             listBoxEntities.TabIndex = 11;
             // 
             // textBoxEntityInfos
             // 
             textBoxEntityInfos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             textBoxEntityInfos.BorderStyle = BorderStyle.None;
-            textBoxEntityInfos.Location = new Point(121, 230);
+            textBoxEntityInfos.Location = new Point(753, 242);
             textBoxEntityInfos.Multiline = true;
             textBoxEntityInfos.Name = "textBoxEntityInfos";
             textBoxEntityInfos.ReadOnly = true;
             textBoxEntityInfos.ScrollBars = ScrollBars.Both;
-            textBoxEntityInfos.Size = new Size(295, 469);
+            textBoxEntityInfos.Size = new Size(295, 511);
             textBoxEntityInfos.TabIndex = 13;
             textBoxEntityInfos.Text = "Entity infos";
             // 
@@ -434,7 +435,7 @@ namespace GraphicsTools.Alundra
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(830, 714);
+            ClientSize = new Size(1143, 756);
             Controls.Add(textBoxEntityInfos);
             Controls.Add(listBoxEntities);
             Controls.Add(groupBox3);

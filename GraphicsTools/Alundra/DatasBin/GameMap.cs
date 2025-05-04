@@ -126,12 +126,12 @@ public class GameMap
     private readonly Dictionary<long, Bitmap> _spriteCache = new();
     public Bitmap GetSpriteBitmap(SiImage img)
     {
-        var pal = SpriteInfo.Palettes[img.Palette & 0x1f];
-        if (_spriteCache.ContainsKey(img.Signature))
+        if (_spriteCache.TryGetValue(img.Signature, out var bitmap))
         {
-            return _spriteCache[img.Signature];
+            return bitmap;
         }
-
+        
+        var pal = SpriteInfo.Palettes[img.Palette & 0x1f];
         var bmp = GenerateSpriteBitmap(img, pal);
         _spriteCache.Add(img.Signature, bmp);
 
@@ -210,14 +210,13 @@ public class GameMap
     private readonly Dictionary<long, Bitmap> _tileCache = new();
     public Bitmap GetTileBitmap(int tileMapIndex)
     {
-        var tileId = tileMapIndex & 0x3ff;
-        var paletteId = (tileMapIndex & 0xf000) >> 12;
-
         if (_tileCache.TryGetValue(tileMapIndex, out var bitmap))
         {
             return bitmap;
         }
-
+        
+        var tileId = tileMapIndex & 0x3ff;
+        var paletteId = (tileMapIndex & 0xf000) >> 12;
         var bmp = GenerateTileBitmap(tileId, Info.Palettes[paletteId]);
         _tileCache.Add(tileMapIndex, bmp);
 
@@ -255,11 +254,11 @@ public class GameMap
         return SpriteSheetBitmap;
     }
 
-    public static readonly int EventobjectsMemaddr = 0x1ac498;// + 0x260;
-    public static readonly int EventobjectSize = 0x294;
+    public static readonly int EventObjectsMemoryAddress = 0x1ac498;// + 0x260;
+    public static readonly int EventObjectSize = 0x294;
 
     public static int EventObjectAddr(int eventobjectid)
     {
-        return EventobjectsMemaddr + eventobjectid * EventobjectSize;
+        return EventObjectsMemoryAddress + eventobjectid * EventObjectSize;
     }
 }

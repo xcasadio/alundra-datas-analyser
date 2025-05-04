@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection.Emit;
 using Alundra.DatasBin;
 
 namespace Alundra.Gameplay.Scripts;
@@ -87,8 +88,155 @@ public class EntityEventHandlers
         _handlers[0x70] = _70_Check144_Handler;
     }
 
-    //RunScript
-    public void RunEntityEventScripts(Entity entity, int eventProgramType)
+    //8004205c
+    public void RunEntityEventScripts(Entity entity, int logicMode)
+    {
+        //EventProgramState eventProgramState;
+
+        var isDebug = StaticVariables.g_debugState < 0;
+        var isDebugLogicTraceEnabled = (StaticVariables.g_debugFlags & 0x10) != 0;
+
+        if (logicMode < 6)
+        {
+            switch (logicMode)
+            {
+                case ScriptHelper.ProgramBMap:
+                    if (entity.EventProgramState.Sp == 0 &&
+                        entity.ProgramIndexes[ScriptHelper.ProgramBMap] != 0)
+                    {
+                        entity.MapEventProgramId = logicMode;
+
+                        goto END_LOGIC_SETUP;
+                    }
+                    
+                    if (entity.ProgramIndexes[ScriptHelper.ProgramBMap] == 0)
+                    {
+                        InitializeEventData(entity, logicMode, StaticVariables.g_eventProgramState);
+                        entity.MapEventProgramId = logicMode;
+                        goto END_LOGIC_SETUP;
+                    }
+                    break;
+
+                case ScriptHelper.ProgramCTick:
+                    if (entity.EventProgramState.Sp == 0)
+                        break;
+
+                    if (entity.ProgramIndexes[ScriptHelper.ProgramBMap] == 2)
+                        goto SET_LOGIC_MODE;
+
+                    entity.LastTargetAnimationId = entity.TargetAnimationId;
+                    entity.LastTargetDirection = entity.TargetDirection;
+                    goto SET_LOGIC_MODE;
+
+                case ScriptHelper.ProgramFInteract:
+                    StaticVariables.PlayerEntity.YForceStep = 0;
+                    StaticVariables.PlayerEntity.XForceStep = 0;
+                    StaticVariables.PlayerEntity.YForce = 0;
+                    StaticVariables.PlayerEntity.XForce = 0;
+                    break;
+
+                default:
+                    if (entity.ProgramIndexes[ScriptHelper.ProgramCTick] != 2)
+                        break;
+
+                    // Save previous animation state
+                    entity.LastTargetAnimationId = entity.TargetAnimationId;
+                    entity.LastTargetDirection = entity.TargetDirection;
+                    break;
+            }
+        }
+        else
+        {
+            throw new Exception("Illegal logic entry!");
+        }
+
+        if (isDebug && isDebugLogicTraceEnabled)
+        {
+            if (logicMode == 1)
+            {
+                //StaticVariables.g_debugMessage += $"mon{entity.EventTrigger}:";
+            }
+            else
+            {
+                //StaticVariables.g_debugMessage += $"%{entity.EntityRefId:x2}({logicMode}):";
+            }
+        }
+
+        SET_LOGIC_MODE:
+        entity.MapEventProgramId = logicMode;
+
+        END_LOGIC_SETUP:
+        if (isDebug)
+        {
+            if (logicMode == 1)
+            {
+                //DebugMessageFormat("mon{0:D2}:", entity.EventTrigger);
+            }
+            else
+            {
+                //DebugMessageFormat("{0:X2}({1}):", entity.SpriteProgramIndexes[0], logicMode);
+            }
+        }
+
+        var eventProgramState = StaticVariables.g_eventProgramState;
+
+        // Main script execution loop
+        while (true)
+        {
+            int command = entity.EventProgramState.Sp;
+            //if (isDebug)
+            //    DebugMessageFormat(" {0:D3}", command);
+
+            if (command == 0xFF) break; // end of script
+            if (command == 0x00)
+            {
+                entity.EventProgramState.Variables[0] = 0;
+                entity.EventProgramState.Sp++;
+                break;
+            }
+
+            var logicContextEntity = entity.LogicContextEntity ?? entity;
+            var lastCommand = StaticVariables.g_activeCommand;
+            StaticVariables.g_activeCommand = command;
+            
+            
+            var codes = SpriteInfoEventCodes.Codes;
+            var eventCode = codes[eventProgramState.Exp];
+
+            var func = _handlers[command];
+            var advanced = func(entity.LogicContextEntity, entity, eventProgramState.Exp, eventProgramState, codes);
+
+            StaticVariables.g_lastCommand = lastCommand;
+
+            if (StaticVariables.g_clearProgramState != 0)
+            {
+                if (logicContextEntity != entity)
+                {
+                    StaticVariables.g_clearProgramState = 0;
+                    logicContextEntity.EventProgramState.Sp = 0;
+                    logicContextEntity.EventProgramState.Exp = 0;
+                }
+                else
+                {
+                    entity.EventProgramState.Sp = 0;
+                    entity.EventProgramState.Exp = 0;
+                }
+            }
+
+            //if (command == 0xFF)
+            //    break;
+
+            entity.EventProgramState.Variables[0] = 0;
+            entity.EventProgramState.Sp += command;
+            //StaticVariables.Memory.WriteByte(entity.EventProgramState.ScriptPointer, command);
+        }
+
+        //if (isDebug)
+        //    DebugMessageFormat("\n");
+    }
+
+    //8004205c RunScript
+    public void RunEntityEventScripts2(Entity entity, int eventProgramType)
     {
         EventProgramState eventProgramState;
 
@@ -107,8 +255,10 @@ public class EntityEventHandlers
                         InitializeEventData(entity, eventProgramType, eventProgramState);
                     }
                     break;
+
                 case ScriptHelper.ProgramCTick:
                     eventProgramState = entity.EventProgramState;
+
                     if (eventProgramState.Exp == 0
                         || eventProgramState.Sp == 0)
                     {
@@ -132,7 +282,7 @@ public class EntityEventHandlers
                         entity.LastTargetAnimationId = entity.TargetAnimationId;
                         entity.LastTargetDirection = entity.TargetDirection;
                     }
-                    
+
                     //why ?
                     //if (ScriptHelper.ProgramFInteract == 5)//have to do it here because switch fallthrough isnt allowed in c#
                     //{
@@ -164,7 +314,7 @@ public class EntityEventHandlers
         }
 
         //Debug.WriteLine($"[{entity.Index}] {entity.EntityRefId} {eventProgramType}");
-        
+
         StaticVariables.g_activeEntityRefId = entity.EntityRefId;
         StaticVariables.g_activeEventProgramType = eventProgramType;
         StaticVariables.g_activeCommand = -1;
@@ -195,7 +345,7 @@ public class EntityEventHandlers
 
             StaticVariables.g_lastCommand = StaticVariables.g_activeCommand;
             StaticVariables.g_activeCommand = eventCode;
-            
+
             var func = _handlers[eventCode];
             var advanced = func(entity.LogicContextEntity, entity, eventProgramState.Exp, eventProgramState, codes);
 
@@ -258,7 +408,7 @@ public class EntityEventHandlers
     //8003D158
     public int __Unknown_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
     {
-        Debug.WriteLine("Data Logic Error!");
+        //Debug.WriteLine("Data Logic Error!");
         return 0;
     }
 
@@ -1147,8 +1297,6 @@ public class EntityEventHandlers
 
         return 7;
     }
-
-
 
     public int _40_SetProgramIndex_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
     {

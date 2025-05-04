@@ -6,7 +6,7 @@ namespace GraphicsTools.Alundra
     {
         public static Dictionary<string, Dictionary<byte, string>> EventHandlerNames = new();
 
-        public static readonly string[] EntityVarOffsets = new string[GameMap.EventobjectSize];
+        public static readonly string[] EntityVarOffsets = new string[GameMap.EventObjectSize];
         public static readonly Dictionary<uint, NameComment> FunctionNames = new();
         public static readonly Dictionary<uint, NameComment> GlobalVariableNames = new();
         public static readonly Dictionary<uint, string> Comments = new();
