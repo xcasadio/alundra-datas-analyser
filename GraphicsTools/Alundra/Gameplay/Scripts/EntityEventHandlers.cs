@@ -223,8 +223,8 @@ public class EntityEventHandlers
                 }
             }
 
-            //if (command == 0xFF)
-            //    break;
+            if (advanced == 0)
+                break;
 
             entity.EventProgramState.Variables[0] = 0;
             entity.EventProgramState.Sp += command;
