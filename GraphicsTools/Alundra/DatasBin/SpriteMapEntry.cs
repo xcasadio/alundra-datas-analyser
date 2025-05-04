@@ -1,4 +1,4 @@
-﻿namespace Alundra.Gameplay;
+﻿namespace Alundra.DatasBin;
 
 public class SpriteMapEntry {
     public byte Enabled;

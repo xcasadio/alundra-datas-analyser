@@ -149,7 +149,7 @@ public class GameEngine
             //syscall();
             //LoadExec();
             //DoNothing();
-            System.Diagnostics.Debugger.Break();
+            Debugger.Break();
             Environment.Exit(0);
 
             LAB_8002c590:
@@ -272,7 +272,7 @@ public class GameEngine
         //LoadBalance_bin();
         InitDebugVars();
         //LoadAlundraStringTable(DATAS_BIN, _datasBin.Header.AlundraStringTableRepeatOffset);
-        using var reader = _datasBin.OpenBin();
+        using var reader = _datasBin.OpenBin(); //added by hand
         AlundraMap.Load(reader, false);
 
         IntializeTiles();
@@ -288,9 +288,9 @@ public class GameEngine
     private void InitPadController()
     {
         PadInit(0);
-
-        StaticVariables.g_padState2 = new PadState();
+        
         StaticVariables.g_padState1 = new PadState();
+        StaticVariables.g_padState2 = new PadState();
 
         ClearPadInputStates();
     }
@@ -452,7 +452,7 @@ public class GameEngine
             innerTileIndex = layoutIndex;
             do
             {
-                StaticVariables.g_tileToWorldXTable[innerTileIndex] = (short)index2;
+                StaticVariables.g_tileToWorldXTable[innerTileIndex] = (short)index2; //useless => why an array ? (x / 24) is used
                 //currentEntity = StaticVariables.g_numberOfEntity;
                 tileOffset = tileOffset + 1;
                 innerTileIndex = layoutIndex + tileOffset;
@@ -1665,7 +1665,7 @@ public class GameEngine
                     //    .Frames[entity.CurrentFrameIndex + 1];
 
 
-                    System.Diagnostics.Debug.Assert(entity.Frame != null);
+                    Debug.Assert(entity.Frame != null);
 
                     if (currentFrame.CollisionOffset != -1)
                     {
@@ -1732,7 +1732,7 @@ public class GameEngine
             LOAD_ANIMATION:
             var animSet = entity.Sprite.AnimSets[frameDelay]; //frameDelay * 0xe
             entity.AnimSet = animSet;
-            System.Diagnostics.Debug.Assert(entity.AnimSet != null);
+            Debug.Assert(entity.AnimSet != null);
             //frameOffset = (ushort)((int)animSet.entries + animationFrameIndex * 2);
             var animTableOffset = entity.AnimSet.AnimationOffsets[entity.CurrentFrameIndex];
             entity.CurrentFrameIndex = animationFrameIndex;
