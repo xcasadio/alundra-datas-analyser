@@ -160,8 +160,8 @@ public class SpriteEventHandlers
     // 80061820
     public void SpawnWarpAndSetAnim(Entity entity)
     {
-        Entity spawned = _gameEngine.SpawnWarpEntity(entity, 1, 0xF5,
-            entity.XPos + 0xF00000, entity.YPos, entity.ZPos, entity.TargetDirection);
+        Entity spawned = _gameEngine.SpawnWarpEntity(entity, 1, 0xF5, entity.XPos + 0xF00000, 
+            entity.YPos, entity.ZPos, entity.TargetDirection);
         entity.AIValues[0] = (short)spawned.Index;
         spawned.AIValues[1] = 0;
         entity.TargetAnimationId = 3;
@@ -482,7 +482,7 @@ public class SpriteEventHandlers
                 entity.AIValues[6] = (short)direction;
                 if ((direction & 7) == 0)
                 {
-                    _gameEngine.CreateEffectEntity(0, StaticVariables.g_spriteDataBase[10], 0,
+                    _gameEngine.CreateEffectEntity(0, StaticVariables.g_imageBuffer[10], 0,
                         entity.XPos, entity.YPos, entity.FloorHeight);
                 }
 

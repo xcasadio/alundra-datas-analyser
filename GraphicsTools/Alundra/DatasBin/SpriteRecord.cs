@@ -54,12 +54,12 @@ public class SpriteRecord
 
     public SiImageSet GetPortraitImageset(BinaryReader br)
     {
-        var savepos = br.BaseStream.Position;
+        var position = br.BaseStream.Position;
         var imageSetPointer = 0;//(its the first one)
         br.BaseStream.Position = Header.BinOffset + Header.FramesPointer + 0;
         var imageset = new SiImageSet(br, Header.Sector5Id << 16 | imageSetPointer, Header.SpriteInfoMemoryAddress + Header.FramesPointer + imageSetPointer, true);
 
-        br.BaseStream.Position = savepos;
+        br.BaseStream.Position = position;
         return imageset;
     }
 

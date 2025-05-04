@@ -38,12 +38,12 @@ public class SpriteInfo
 
         //read palettes
         br.BaseStream.Position = _binOffset + Header.SpritePalettesPointer;
-        var maxpalettes = 32;
-        Palettes = new Color[maxpalettes][];
-        var buff = new byte[maxpalettes * 16 * 2];
+        var maxPalettes = 32;
+        Palettes = new Color[maxPalettes][];
+        var buff = new byte[maxPalettes * 16 * 2];
         br.Read(buff, 0, buff.Length);
         var buffdex = 0;
-        for (var i = 0; i < maxpalettes; i++)
+        for (var i = 0; i < maxPalettes; i++)
         {
             Palettes[i] = new Color[16];
             for (var j = 0; j < 16; j++)
@@ -53,7 +53,7 @@ public class SpriteInfo
                 Palettes[i][j] = ImageHelper.FromPsxColor((b1 << 8) | b2);
             }
         }
-        PalettesBitmap = ImageHelper.BitmapFromPsxBuff(buff, 16, maxpalettes, 16, null);
+        PalettesBitmap = ImageHelper.BitmapFromPsxBuff(buff, 16, maxPalettes, 16, null);
 
         //read eventcodes
         EventCodes = new SpriteInfoEventCodes(br, _binOffset, Header, ismap);

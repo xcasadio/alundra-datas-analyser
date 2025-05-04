@@ -90,7 +90,6 @@ public class EntityEventHandlers
     //RunScript
     public void RunEntityEventScripts(Entity entity, int eventProgramType)
     {
-        Debugger.Break();
         EventProgramState eventProgramState;
 
         var isDebug = StaticVariables.g_debugState < 0;
@@ -164,7 +163,7 @@ public class EntityEventHandlers
             }
         }
 
-        Debug.WriteLine($"[{entity.Index}] {entity.EntityRefId} {eventProgramType}");
+        //Debug.WriteLine($"[{entity.Index}] {entity.EntityRefId} {eventProgramType}");
         
         StaticVariables.g_activeEntityRefId = entity.EntityRefId;
         StaticVariables.g_activeEventProgramType = eventProgramType;
@@ -354,15 +353,15 @@ public class EntityEventHandlers
 
     public int _07_CheckEntityInArea_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
     {
-        var entityid = code[exp + 1];
+        var entityId = code[exp + 1];
         int x1 = code[exp + 2];
         int x2 = code[exp + 3];
         int y1 = code[exp + 4];
         int y2 = code[exp + 5];
         int z1 = code[exp + 6];
         int z2 = code[exp + 7];
-        var numentities = _gameEngine.GetEntityFromRefId(entity, entityid);
-        for (var i = 0; i < numentities; i++)
+        var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
+        for (var i = 0; i < numEntities; i++)
         {
             var checkme = StaticVariables.g_entitySlots[i];
             if (checkme.TileX >= x1 && checkme.TileX <= x2
@@ -442,7 +441,7 @@ public class EntityEventHandlers
         var val1 = (int)(i * 0x7d2b89dd);
         var val2 = (int)(0xe06a02e7 + val1);
         var val3 = (int)(((long)val2 * 4) >> 32);
-        var dir = (uint)ScriptHelper.CardinalDirTable[val3];//val3 here is a number between 0 and 3
+        var dir = (uint)StaticVariables.g_cardinalDirectionTable[val3];//val3 here is a number between 0 and 3
         StaticVariables.g_gameRandomSeed = (uint)val2;
         entity.TargetDirection = dir;
         return 1;
@@ -699,8 +698,8 @@ public class EntityEventHandlers
 
     public int _2d_ActivateEntity_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
     {
-        var entityid = code[exp + 1];
-        var loaded = _gameEngine.ActivateEntity(entity, entityid, 1);
+        var entityId = code[exp + 1];
+        var loaded = _gameEngine.ActivateEntity(entity, entityId, 1);
         if (loaded == null)
         {
             throw new Exception("Illigal InitData Number!!");
@@ -711,9 +710,9 @@ public class EntityEventHandlers
 
     public int _2e_Hide_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
     {
-        var entityid = code[exp + 1];
-        var numentities = _gameEngine.GetEntityFromRefId(entity, entityid);
-        for (var dex = 0; dex < numentities; dex++)
+        var entityId = code[exp + 1];
+        var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
+        for (var dex = 0; dex < numEntities; dex++)
         {
             var checkme = StaticVariables.g_entitySlots[dex];
             _gameEngine.HideEntity(checkme);
@@ -1286,12 +1285,12 @@ public class EntityEventHandlers
 
     public int _59_SetEntityAnim_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
     {
-        var entityid = code[exp + 1];
+        var entityId = code[exp + 1];
         int animid = code[exp + 2];
-        var numentities = _gameEngine.GetEntityFromRefId(entity, entityid);
-        for (var dex = 0; dex < numentities; dex++)
+        var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
+        for (var i = 0; i < numEntities; i++)
         {
-            var dome = StaticVariables.g_entitySlots[dex];
+            var dome = StaticVariables.g_entitySlots[i];
             dome.TargetAnimationId = (uint)animid;
         }
 
@@ -1300,13 +1299,13 @@ public class EntityEventHandlers
 
     public int _5a_TurnEntity_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
     {
-        var entityid = code[exp + 1];
+        var entityId = code[exp + 1];
         var turncode = code[exp + 2];
 
-        var numentities = _gameEngine.GetEntityFromRefId(entity, entityid);
-        for (var dex = 0; dex < numentities; dex++)
+        var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
+        for (var i = 0; i < numEntities; i++)
         {
-            var dome = StaticVariables.g_entitySlots[dex];
+            var dome = StaticVariables.g_entitySlots[i];
             dome.TargetDirection = _gameEngine.TurnEntity(entity, turncode);
         }
 
@@ -1315,14 +1314,14 @@ public class EntityEventHandlers
 
     public int _5b_TurnEntityWithAnim_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
     {
-        var entityid = code[exp + 1];
+        var entityId = code[exp + 1];
         int animid = code[exp + 2];
         var turncode = code[exp + 3];
 
-        var numentities = _gameEngine.GetEntityFromRefId(entity, entityid);
-        for (var dex = 0; dex < numentities; dex++)
+        var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
+        for (var i = 0; i < numEntities; i++)
         {
-            var dome = StaticVariables.g_entitySlots[dex];
+            var dome = StaticVariables.g_entitySlots[i];
             dome.TargetAnimationId = (uint)animid;
             dome.TargetDirection = _gameEngine.TurnEntity(entity, turncode);
         }
@@ -1332,13 +1331,13 @@ public class EntityEventHandlers
 
     public int _62_EntityFlagsOn_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
     {
-        var entityid = code[exp + 1];
+        var entityId = code[exp + 1];
         var flagbits = code[exp + 2] + (code[exp + 3] << 8);
 
-        var numentities = _gameEngine.GetEntityFromRefId(entity, entityid);
-        for (var dex = 0; dex < numentities; dex++)
+        var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
+        for (var i = 0; i < numEntities; i++)
         {
-            var dome = StaticVariables.g_entitySlots[dex];
+            var dome = StaticVariables.g_entitySlots[i];
             dome.Flags |= (uint)flagbits;
         }
 
@@ -1347,13 +1346,13 @@ public class EntityEventHandlers
 
     public int _63_EntityFlagsOff_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
     {
-        var entityid = code[exp + 1];
+        var entityId = code[exp + 1];
         var flagbits = code[exp + 2] + (code[exp + 3] << 8);
 
-        var numentities = _gameEngine.GetEntityFromRefId(entity, entityid);
-        for (var dex = 0; dex < numentities; dex++)
+        var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
+        for (var i = 0; i < numEntities; i++)
         {
-            var dome = StaticVariables.g_entitySlots[dex];
+            var dome = StaticVariables.g_entitySlots[i];
             dome.Flags &= ~(uint)flagbits;
         }
 
@@ -1362,13 +1361,13 @@ public class EntityEventHandlers
 
     public int _64_SetEntityPos_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
     {
-        var entityid = code[exp + 1];
+        var entityId = code[exp + 1];
         var x = (code[exp + 2] + (code[exp + 3] << 8)) << 16;
         var y = (code[exp + 4] + (code[exp + 5] << 8)) << 16;
         var z = (code[exp + 6] + (code[exp + 7] << 8)) << 16;
 
-        var numentities = _gameEngine.GetEntityFromRefId(entity, entityid);
-        for (var i = 0; i < numentities; i++)
+        var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
+        for (var i = 0; i < numEntities; i++)
         {
             var entity2 = StaticVariables.g_entitySlots[i];
             entity2.XPos = x;
@@ -1381,15 +1380,15 @@ public class EntityEventHandlers
 
     public int _65_MoveEntityPos_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
     {
-        var entityid = code[exp + 1];
+        var entityId = code[exp + 1];
         var x = (code[exp + 2] + (code[exp + 3] << 8)) << 16;
         var y = (code[exp + 4] + (code[exp + 5] << 8)) << 16;
         var z = (code[exp + 6] + (code[exp + 7] << 8)) << 16;
 
-        var numentities = _gameEngine.GetEntityFromRefId(entity, entityid);
-        for (var dex = 0; dex < numentities; dex++)
+        var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
+        for (var i = 0; i < numEntities; i++)
         {
-            var dome = StaticVariables.g_entitySlots[dex];
+            var dome = StaticVariables.g_entitySlots[i];
             dome.XPos += x;
             dome.YPos += y;
             dome.ZPos += z;
@@ -1400,9 +1399,9 @@ public class EntityEventHandlers
 
     public int _67_CamFollowEntity_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
     {
-        var entityid = code[exp + 1];
+        var entityId = code[exp + 1];
 
-        var numentities = _gameEngine.GetEntityFromRefId(entity, entityid);
+        var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
 
         StaticVariables.g_entityFollowedByCamera = StaticVariables.g_entitySlots[0];
 
@@ -1512,10 +1511,10 @@ public class EntityEventHandlers
     public int _a1_AdjustEffectPosWithEntity_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
     {
         var effectid = code[1];
-        var entityid = code[2];
+        var entityId = code[2];
 
-        var numentities = _gameEngine.GetEntityFromRefId(entity, entityid);
-        if (numentities == 0)
+        var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
+        if (numEntities == 0)
         {
             return 9;
         }
@@ -1566,9 +1565,9 @@ public class EntityEventHandlers
     public int _a3_CreateEffectWithEntityPos_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
     {
         var effectid = code[1];
-        var entityid = code[2];
-        var numentities = _gameEngine.GetEntityFromRefId(entity, entityid);
-        if (numentities == 0)
+        var entityId = code[2];
+        var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
+        if (numEntities == 0)
         {
             return 9;
         }

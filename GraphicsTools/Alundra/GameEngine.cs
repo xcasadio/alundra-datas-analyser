@@ -3,7 +3,7 @@ using Alundra.DatasBin;
 using Alundra.Gameplay;
 using Alundra.Gameplay.Scripts;
 using Alundra.Sound;
-//using Alundra.Sprite;
+
 using Alundra.Text;
 
 namespace Alundra;
@@ -66,28 +66,38 @@ public class GameEngine
             if (StaticVariables.g_desiredMap != StaticVariables.g_currentMap)
             {
                 StaticVariables.g_currentMap = StaticVariables.g_desiredMap;
+                LoadMap(StaticVariables.g_currentMap); // Added by hand
                 //ReadFileFromCDIntoBuffer(StaticVariables.DATAS_BIN, StaticVariables.g_compressedImageData, (StaticVariables.INT_801eab58)[StaticVariables.g_desiredMap], (StaticVariables.INT_801eab5c)[StaticVariables.g_desiredMap] - (StaticVariables.INT_801eab58)[StaticVariables.g_desiredMap]);
-                InitializeMapSpriteTable(null, null, 0);
+                InitializeMapSpriteTable(null, null, null);
                 //StaticVariables.g_compressedImageData + ??,
                 //StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b34,
                 //StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b38);
-                LoadMapSpriteTable(null); //StaticVariables.g_compressedImageData[StaticVariables.g_mapIndexInDatasBin]);
-                FUN_800423ec(-1/*StaticVariables.g_compressedImageData[StaticVariables.g_animTableAlt_80191b48]*/);
+                //LoadSpriteInfo(StaticVariables.g_compressedImageData[StaticVariables.g_mapIndexInDatasBin]);
+                //SetEtcAnimTableAlt(StaticVariables.g_compressedImageData[StaticVariables.g_animTableAlt_80191b48]);
                 //InitializeTileSet(StaticVariables.g_currentMap, StaticVariables.g_compressedImageData[StaticVariables.g_tileSet_index_80191b44]);
-                playerPosX = StaticVariables.g_spriteDataBase[0xc] << 3;
-                playerPosY = StaticVariables.g_spriteDataBase[0xd] << 3;
-                playerPosZ = StaticVariables.g_spriteDataBase[0xe] << 3;
+
+                //_datasBin.AlundraGameMap.SpriteInfo.Entities.Entities[0].XPos
+                //StaticVariables.g_imageBuffer[0xc];
+                //StaticVariables.g_imageBuffer[0xd];
+                //StaticVariables.g_imageBuffer[0xe];
+                var x = CurrentMap.SpriteInfo.Entities.Entities[0].XPos;   
+                var y = CurrentMap.SpriteInfo.Entities.Entities[0].YPos;   
+                var z = CurrentMap.SpriteInfo.Entities.Entities[0].Height; 
+
+                playerPosX = x << 3;
+                playerPosY = y << 3;
+                playerPosZ = z << 3;
             }
 
             //DoNothing();
             ClearGlobalFlags();
             ResetCameraAndLoadVRAMAssets();
-            FUN_80044520(StaticVariables.g_spriteDataBase[0xb]);
+            InitializeItems(StaticVariables.g_imageBuffer[0xb]);
             LoadMapAndInitializeEntities(null/*StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b40*/);
             WarpPlayer(playerPosX, playerPosY, playerPosZ, StaticVariables.g_warpType);
             InitializeTileAnimationSystem();
             PrepareBufferFlip();
-            OpenMap(StaticVariables.g_currentMap);
+            LoadMapSounds(StaticVariables.g_currentMap);
             UpdateEntities(1);
             ResetDebugRenderingState();
         }
@@ -255,15 +265,17 @@ public class GameEngine
         //LoadEtc();
         //InitDisplaySystem((int*)DrawOTags, (int*)ClearOrderTables);
         //InitializeOrderingTables();
-        //InitializeTileRenderingSystem(g_drawPageParam);
-
-        InitSpriteResourcesFromFile(StaticVariables.DATAS_BIN,
-            StaticVariables.g_datasBinHeaderOffset, StaticVariables.g_spriteBufferCDEnd,
-            StaticVariables.g_imageBufferCDStart, StaticVariables.g_imageBufferCDEnd);
-        //LoadBalance.bin();
+        InitializeTileRenderingSystem(StaticVariables.g_drawPageParam);
+        InitializeAlundraSpriteResourcesFromFile(StaticVariables.DATAS_BIN,
+            _datasBin.Header.AlundraSpriteInfoOffset, _datasBin.Header.AlundraSpritesOffset,
+            _datasBin.Header.AlundraSpritesRepeatOffset, _datasBin.Header.AlundraStringTableOffset);
+        //LoadBalance_bin();
         InitDebugVars();
-        //LoadAnimTableMaybeInDatasBin(DATAS_BIN, INT_801eab40);
-        FUN_80042984();
+        //LoadAlundraStringTable(DATAS_BIN, _datasBin.Header.AlundraStringTableRepeatOffset);
+        using var reader = _datasBin.OpenBin();
+        AlundraMap.Load(reader, false);
+
+        IntializeTiles();
         //InitializeDrMoveBuffers();
         LoadFontInTakiFolder();
         //InitSoundSystem();
@@ -307,9 +319,70 @@ public class GameEngine
         StaticVariables.g_padState1.ButtonsJustPressedByInterval = 0;
     }
 
+    private void InitializeTileRenderingSystem(int drawPageParam)
+    {
+        StaticVariables.g_drawPageInfoTable = StaticVariables.g_drawPageInfoBase;
+        StaticVariables.g_drawPageTPageIDs = StaticVariables.g_tPageIds;                             
+        StaticVariables.g_currentDrawPageParam = drawPageParam;
 
-    private void InitSpriteResourcesFromFile(string fileName, int frameDataStart, int frameDataEnd,
-        int imageDataStart, int imageDataEnd)
+        //TODO: initialize g_tileSpriteBuffer ?
+
+        StaticVariables.g_tileAnimDescriptorTable = new TileAnimDescriptor[960];
+
+        int tileAnimIndex = 0;
+
+        for (byte spriteIndex = 0; spriteIndex < 6; spriteIndex++)
+        {
+            byte padding = 0;
+
+            for (int i = 0; i < 16; i++, padding += 0x10)
+            {
+                drawPageParam = 0;
+
+                while ((drawPageParam + 0x18) < 0x101)
+                {
+                    StaticVariables.g_tileAnimDescriptorTable[tileAnimIndex] = new TileAnimDescriptor();
+                    StaticVariables.g_tileAnimDescriptorTable[tileAnimIndex].SpriteIndex = spriteIndex;
+                    StaticVariables.g_tileAnimDescriptorTable[tileAnimIndex].DrawPageOffset = (byte)drawPageParam;
+                    StaticVariables.g_tileAnimDescriptorTable[tileAnimIndex].Padding = padding;
+
+                    tileAnimIndex++;
+                    drawPageParam += 0x18;
+                }
+            }
+        }
+
+        //var frameIndex = 0;
+        //var spriteBufferOffset = 0;
+        //var spriteOffset = 0;
+        //
+        //do {
+        //    do {
+        //        var pcVar1 = StaticVariables.g_tileAnimDescriptorTable.field2_0x2;
+        //        var spriteIndex = 0;
+        //
+        //        do {
+        //            StaticVariables.g_tileAnimDescriptorTable.field0_0x0 = (char)frameIndex;
+        //            pcVar1[-1] = (char)spriteIndex;
+        //            *pcVar1 = (char)spriteBufferOffset;
+        //            pcVar1 = pcVar1 + 3;
+        //            spriteOffset = spriteIndex + 0x30;
+        //            StaticVariables.g_tileAnimDescriptorTable = (astruct *)&StaticVariables.g_tileAnimDescriptorTable->field_0x3;
+        //            spriteIndex = spriteIndex + 0x18;
+        //        } while (spriteOffset < 0x101);
+        //
+        //        spriteBufferOffset = spriteBufferOffset + 0x10;
+        //
+        //    } while (spriteBufferOffset < 0x100);
+        //
+        //    frameIndex = frameIndex + 1;
+        //    spriteBufferOffset = 0;
+        //
+        //} while (frameIndex < 6);
+    }
+
+    private void InitializeAlundraSpriteResourcesFromFile(string fileName, uint frameDataStart, uint frameDataEnd,
+        uint imageDataStart, uint imageDataEnd)
     {
         /*POLY_FT4 *polyFt4;
         int j;
@@ -334,7 +407,7 @@ public class GameEngine
             pPolyFt4 = (POLY_FT4 **)((int)pPolyFt4 + 0x28);
         } while (i < 0x200);*/
         //ReadFileFromCDIntoBuffer(fileName,(u_long *)g_animationRawData,frameDataStart,frameDataEnd - frameDataStart);
-        StaticVariables.g_animationRawSize = frameDataEnd - frameDataStart;
+        StaticVariables.g_animationRawSize = (int)(frameDataEnd - frameDataStart);
         //InitAnimationData(StaticVariables.g_animationStructs, StaticVariables.g_animationRawData);
         //LoadImageArea(g_animationStructs_paletteClut,0xc0,0x1e0,0x28);
         //ReadFileFromCDIntoBuffer(fileName,&g_compressedImageData,imageDataStart,imageDataEnd - imageDataStart);
@@ -380,7 +453,7 @@ public class GameEngine
             do
             {
                 StaticVariables.g_tileToWorldXTable[innerTileIndex] = (short)index2;
-                currentEntity = StaticVariables.g_numberOfEntity;
+                //currentEntity = StaticVariables.g_numberOfEntity;
                 tileOffset = tileOffset + 1;
                 innerTileIndex = layoutIndex + tileOffset;
             } while (tileOffset < 0x18);
@@ -760,7 +833,7 @@ public class GameEngine
         StaticVariables.g_debugVar_WarpDestinationId = StaticVariables.g_desiredMap;
     }
 
-    private void FUN_80042984()
+    private void IntializeTiles()
     {
         //SetTile(StaticVariables.TILE_8013fb98);
         //SetTile(StaticVariables.TILE_8013fba8);
@@ -833,181 +906,30 @@ public class GameEngine
         StaticVariables.g_debugFlags = StaticVariables.g_debugFlags & 0xf7ffff3f;
     }
 
-    private void InitializeMapSpriteTable(byte[] buffer, ushort[] vramTable, int otherPtr)
+    private void InitializeMapSpriteTable(byte[] buffer, ushort[] vramTable, byte[] otherPtr)
     {
-        //TODO
+        //already loaded in GameMap
 
-        //int spriteIndex = 0;
-        //
         //StaticVariables.g_spriteVRAMPointer = vramTable;
-        //StaticVariables.g_spriteOtherPointer = otherPtr;
-        //StaticVariables.g_spriteDataBase = buffer;
-        //
-        //do
-        //{
-        //    int spriteDataOffset = spriteIndex * 2;
-        //
-        //    if (StaticVariables.g_spriteDataBase[spriteDataOffset + 0x420] == 0 ||
-        //        StaticVariables.g_spriteDataBase[spriteDataOffset + 0x421] == 0)
-        //    {
-        //        StaticVariables.g_spriteMapTable[spriteIndex].Enabled = false;
-        //        StaticVariables.g_spriteMapTable[spriteIndex].OffsetX = 0;
-        //    }
-        //    else
-        //    {
-        //        StaticVariables.g_spriteMapTable[spriteIndex].Enabled = true;
-        //        StaticVariables.g_spriteMapTable[spriteIndex].VramShift = (byte)(1 << (StaticVariables.g_spriteDataBase[spriteDataOffset + 0x420] & 0x1f));
-        //
-        //        if (StaticVariables.g_spriteMapTable[spriteIndex].VramShift == 0)
-        //        {
-        //            System.Diagnostics.Debugger.Break();
-        //            //Trap(0x1c00);
-        //        }
-        //
-        //        StaticVariables.g_spriteMapTable[spriteIndex].TileWidth = (char)(0xa0 / StaticVariables.g_spriteMapTable[spriteIndex].VramShift);
-        //        byte vramY = StaticVariables.g_spriteDataBase[spriteDataOffset + 0x421];
-        //
-        //        StaticVariables.g_spriteMapTable[spriteIndex].OffsetZ = 0;
-        //        StaticVariables.g_spriteMapTable[spriteIndex].OffsetY = 0;
-        //        StaticVariables.g_spriteMapTable[spriteIndex].OffsetX = 0;
-        //        StaticVariables.g_spriteMapTable[spriteIndex].RowCount = vramY;
-        //    }
-        //
-        //    spriteIndex++;
-        //} while (spriteIndex < 6);
+        //StaticVariables.g_imageBufferCompressed = otherPtr;
+        //StaticVariables.g_imageBuffer = buffer;
+
+        //StaticVariables.g_spriteMapTable[]
     }
 
-    private void LoadMapSpriteTable(AnimationData animationData)
+    private void LoadSpriteInfo(SpriteRecord spriteRecord)
     {
-        //InitAnimationData(StaticVariables.g_animationStructs2, animationData);
+        InitializeSpriteInfo(StaticVariables.g_currentMapSpriteInfo, spriteRecord);
     }
 
-    private void InitAnimationData(AnimationTable table, AnimationData data)
+    private void InitializeSpriteInfo(SpriteInfoHeader spriteInfoHeader, SpriteRecord spriteRecord)
     {
-        //int pointerListCount = 0;
-        //
-        //table.baseDataPtr = data;
-        //table.rawPointerList = data.entriesOffset + data.rawPtrListOffset;
-        //int[] pointerList = data.entriesOffset + data.pointerListOffset;
-        //table.pointerList = pointerList;
-        //
-        //while (pointerListCount < 0x100)
-        //{
-        //    int offset = pointerList[pointerListCount];
-        //    if (offset == 0)
-        //        break;
-        //
-        //    if (offset != -1)
-        //    {
-        //        pointerList[pointerListCount] = data.entriesOffset + offset;
-        //        int entryPtr = pointerList[pointerListCount];
-        //        entryPtr = data.entriesOffset + entryPtr;
-        //        pointerList[pointerListCount + 1] = data.entriesOffset + pointerList[pointerListCount + 1];
-        //        pointerList[pointerListCount + 2] = data.entriesOffset + pointerList[pointerListCount + 2];
-        //        pointerList[pointerListCount + 3] = data.entriesOffset + pointerList[pointerListCount + 3];
-        //    }
-        //
-        //    pointerListCount++;
-        //}
-        //
-        //table.pointerListCount = pointerListCount;
-        //
-        //int[] entriesPtr = data.entriesOffset + data.entries;
-        //if (data.entries == 0)
-        //{
-        //    table.field2_0x8 = 0;
-        //    table.field5_0x14 = 0;
-        //}
-        //else
-        //{
-        //    table.field2_0x8 = entriesPtr;
-        //    pointerListCount = 0;
-        //    while (pointerListCount < 0x80)
-        //    {
-        //        if (entriesPtr[pointerListCount * 5] == 0)
-        //            break;
-        //
-        //        pointerListCount++;
-        //    }
-        //    table.field5_0x14 = pointerListCount;
-        //}
-        //
-        //pointerListCount = 0;
-        //int[] flagsPtr = data.entriesOffset + data.flags;
-        //table.field7_0x1c = flagsPtr;
-        //while (pointerListCount < 0x100)
-        //{
-        //    int offset = flagsPtr[pointerListCount];
-        //    if (offset == 0)
-        //        break;
-        //
-        //    if (offset != -1)
-        //    {
-        //        flagsPtr[pointerListCount] = data.entriesOffset + offset;
-        //    }
-        //
-        //    pointerListCount++;
-        //}
-        //table.field8_0x20 = pointerListCount;
-        //
-        //int[] frameListPtr = data.entriesOffset + data.frameListOffset;
-        //if (data.frameListOffset == 0)
-        //{
-        //    table.frameList = 0;
-        //    table.frameCount = 0;
-        //}
-        //else
-        //{
-        //    table.frameList = frameListPtr;
-        //    pointerListCount = 0;
-        //    while (pointerListCount < 0x80)
-        //    {
-        //        if (frameListPtr[pointerListCount * 3] == 0)
-        //            break;
-        //
-        //        pointerListCount++;
-        //    }
-        //    table.frameCount = pointerListCount;
-        //}
-        //
-        //int[] scriptListPtr = data.entriesOffset + data.entryIndex;
-        //if (data.entryIndex == 0)
-        //{
-        //    table.scriptList = 0;
-        //    table.scriptCount = 0;
-        //}
-        //else
-        //{
-        //    table.scriptList = scriptListPtr;
-        //    pointerListCount = 0;
-        //    while (pointerListCount < 0x80)
-        //    {
-        //        if (scriptListPtr[pointerListCount * 2] == 0)
-        //            break;
-        //
-        //        pointerListCount++;
-        //    }
-        //    table.scriptCount = pointerListCount;
-        //}
-        //
-        //table.field12_0x30 = data.entriesOffset + data.offsetX;
-        //AnimationData pAVar4 = data;
-        //
-        //pointerListCount = 0;
-        //while (pointerListCount < 6)
-        //{
-        //    byte[] pbVar1 = pAVar4.offsetX;
-        //    pAVar4 = pAVar4.frameListOffset;
-        //    pointerListCount++;
-        //
-        //    table.field13_0x34 = data.entriesOffset + BitConverter.ToInt32(pbVar1, 0);
-        //    table = table.rawPointerList;
-        //}
+        //Loaded in GameMap
     }
 
-    private void FUN_800423ec(int param_1)
+    private void SetEtcAnimTableAlt(int param_1)
     {
-        StaticVariables.g_etcAnimTableAlt = param_1;
+        StaticVariables.g_etcAnimTable = param_1;
     }
 
     private void ClearGlobalFlags()
@@ -1033,7 +955,7 @@ public class GameEngine
         //LoadVRAMAssets();
     }
 
-    private void FUN_80044520(int param_1)
+    private void InitializeItems(int param_1)
     {
         int iVar2 = 2;
         int piVar1 = 2;
@@ -1051,11 +973,6 @@ public class GameEngine
     private void LoadMapAndInitializeEntities(uint[] bufferImage)
     {
         InitializeMapEvents();
-
-        LoadMap(StaticVariables.g_currentMap); // Added
-
-        //Added by hand
-        LoadAlundra();
 
         //LoadImageArea(StaticVariables.g_bufferImage, 0x40, 0x1e0, 0x40);
         //LoadCompressedImageToBuffer(bufferImage, 0x140, 0, 5, StaticVariables.g_bufferImage2);
@@ -1094,9 +1011,9 @@ public class GameEngine
             mapEvents[i].EventData.LogicResult = 0;
             mapEvents[i].EventData.ElapsedMs = 0;
             mapEvents[i].EventData.IsWaiting = 0;
-            for (int j = 0; j < mapEvents[i].EventData.Code.Length; j++)
+            for (int j = 0; j < mapEvents[i].EventData.Codes.Length; j++)
             {
-                mapEvents[i].EventData.Code[j] = 0;
+                mapEvents[i].EventData.Codes[j] = 0;
             }
 
 
@@ -1149,7 +1066,7 @@ public class GameEngine
             {
                 return;
             }
-            
+
             programBMapCode = mapEventRecord.EventCodesBIndex;
 
             if (programBMapCode == 0)
@@ -1176,7 +1093,7 @@ public class GameEngine
             //MonitorFlags = MonitorFlags + 8; //.Skip(8).ToArray();
             entity = entity.ChildEntity;
         } while (i < 0x80);
-    } 
+    }
 
     private void InitEffectSlots()
     {
@@ -1217,8 +1134,8 @@ public class GameEngine
         {
             effect = SpawnSpriteEffect(effectIndex, 0);
 
-            if (effect == null 
-                && (StaticVariables.g_debugState & 0x80000000U) != 0 
+            if (effect == null
+                && (StaticVariables.g_debugState & 0x80000000U) != 0
                 && (StaticVariables.g_debugFlags & 0x20) != 0)
             {
                 //PrintInfo();
@@ -1301,31 +1218,6 @@ public class GameEngine
         //LoadEntities();
     }
 
-    private void LoadAlundra()
-    {
-        using var reader = _datasBin.OpenBin();
-        AlundraMap.Load(reader, false);
-
-        int paletteIndex;
-        int sheetSize;
-        var spriteRecord = GetSpriteFromSpriteTable(false, 0, out paletteIndex, out sheetSize);
-
-        //if (spriteRecord == null)
-        //{
-        //    return;
-        //}
-
-        StaticVariables.PlayerEntity.Index = 1;
-
-        InitializeEntity(StaticVariables.PlayerEntity, null, spriteRecord,
-            null, 0, 0,
-            50, 50, 0,
-            0,
-            0, //dir g_warpZones[flags & 3]
-            paletteIndex,
-            sheetSize);
-    }
-
     private void InitializeEntitySlots()
     {
         Entity entityCounter = null;
@@ -1362,7 +1254,7 @@ public class GameEngine
         //}
         //while ((int)entityCounter < 0x40);
 
-        StaticVariables.g_numberOfEntity = 1; //alundra already loaded
+        StaticVariables.g_numberOfEntity = 0;
 
         ResetEntityState();
 
@@ -1402,15 +1294,14 @@ public class GameEngine
 
     private void ResetEntityState()
     {
-        int tileIndex;
+        var spriteRecord = GetSpriteFromSpriteTable(false, 0, out _, out _);
 
-        //InitializeEntity(PlayerEntity, null, 
-        //    /*StaticVariables.g_initialAnimationTable->entries*/null, 
-        //    null, 0,
-        //    -1, 
-        //    StaticVariables.g_cameraTargetX, StaticVariables.g_cameraTargetY, 
-        //    StaticVariables.g_animation_id, StaticVariables.g_warpTriggerType, StaticVariables.g_warpExtraParam,
-        //    0xb, 0x60);
+        InitializeEntity(StaticVariables.PlayerEntity, null,
+            spriteRecord, null, 0, -1,
+            StaticVariables.g_cameraTargetX, StaticVariables.g_cameraTargetY,
+            StaticVariables.g_animation_id, (uint)StaticVariables.g_warpTriggerType,
+            (uint)StaticVariables.g_warpExtraParam,
+            0xb, 0x60);
         StaticVariables.g_playerInitState = 2;
         //StaticVariables.g_warpTarget = FUN_8004dc50();
         //StaticVariables.g_warpAnimEntity = GetFadeControl();
@@ -1418,7 +1309,7 @@ public class GameEngine
         StaticVariables.g_playerWarpTimer = 0;
         StaticVariables.g_isWarpDisabled = 0;
         StaticVariables.g_frameTimer = 0;
-        //tileIndex = GetCurrentTileIndex();
+        //var tileIndex = GetCurrentTileIndex();
         //StaticVariables.g_currentTileFlags = StaticVariables.g_tileAttributeLUT[tileIndex];
         StaticVariables.g_playerEffectTransitionCooldown = 0;
         //ResetWarpLockTimer();
@@ -1511,13 +1402,15 @@ public class GameEngine
             spriteTableIndex += 0x100;
         }
 
+        var directionIndex = entityRecord.SpriteDirection & 3;
+
         InitializeEntity(entity, parent, spriteRecord,
             entityRecord, (uint)spriteTableIndex, entityId,
-            entityRecord.XPos, //(x * 12 + 12) * 65536
-            entityRecord.YPos, //(y * 8 + 8) * 65536
-            entityRecord.Height, //h << 19
+            (entityRecord.XPos * 0xc + 0xc) * 0x10000, //(x * 12 + 12) * 65536
+            (entityRecord.YPos * 8 + 8) * 0x10000, //(y * 8 + 8) * 65536
+            entityRecord.Height << 0x1, //h << 19
             0,
-            0, //dir g_warpZones[flags & 3]
+            (uint)StaticVariables.g_cardinalDirectionTable[directionIndex], //dir g_cardinalDirectionTable[flags & 3]
             paletteIndex,
             sheetSize);
 
@@ -1852,7 +1745,15 @@ public class GameEngine
             //System.Diagnostics.Debug.Assert(entity.CurrentFrameIndex < entity.AnimSet.PreloadedAnims[animTableOffset].Frames.Length);
 
             //currentFrame = entity.AnimSet.PreloadedAnims[animTableOffset].Frames[entity.CurrentFrameIndex];
-            currentFrame = entity.AnimSet.PreloadedAnims[entity.TargetAnimationId].Frames[entity.CurrentFrameIndex];
+            //TargetAnimationId ??
+            try
+            {
+                currentFrame = entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.CurrentFrameIndex];
+            }
+            catch (Exception e)
+            {
+                Debugger.Break();
+            }
             entity.Frame = currentFrame;
             entity.FirstFrame = currentFrame;
             //entity.IsZForceApplied = animSet.isZForceApplied;
@@ -1867,7 +1768,8 @@ public class GameEngine
             else if (frameDelay + 1 < entity.BalanceRecord.NumAnimVals)
             {
                 //entity.BalanceRecord.Vals ??
-                entity.BalanceVal = entity.BalanceRecord.AnimVals[frameDelay * 2 + 0xe];
+                //entity.BalanceVal = entity.BalanceRecord.AnimVals[frameDelay * 2 + 0xe];
+                entity.BalanceVal = entity.BalanceRecord.AnimVals[frameDelay];
                 //System.Diagnostics.Debugger.Break();
             }
             else
@@ -1914,10 +1816,10 @@ public class GameEngine
         ys[3] = y2;
         var highest = 0;
         var slopesHit = 0;
-        for (var dex = 0; dex < 4; dex++)
+        for (var i = 0; i < 4; i++)
         {
-            var x = xs[dex];
-            var y = ys[dex];
+            var x = xs[i];
+            var y = ys[i];
             var tilex = x / 24;
             if (tilex > 0)
             {
@@ -1950,7 +1852,7 @@ public class GameEngine
             }
             //int offset = (tilex * 8) + (tiley * 8 * 52);
             var tile = CurrentMap.Map.MapTiles[tiley * 52 + tilex];
-            entity.MapTiles[dex] = tile;
+            entity.MapTiles[i] = tile;
             int height;
             if ((tile.Slope & 0x3) != 0)
             {
@@ -1965,7 +1867,7 @@ public class GameEngine
                         }
                         else
                         {
-                            var my = ys[dex];
+                            var my = ys[i];
                             var result = height + 0x10;
                             var my2 = my;
                             if (my < 0)
@@ -1987,7 +1889,7 @@ public class GameEngine
                         }
                         else
                         {
-                            var mx = xs[dex];
+                            var mx = xs[i];
                             var mx2 = mx / 24;
                             mx2 = mx2 * 24;
                             var remainder = mx - mx2;
@@ -2014,7 +1916,7 @@ public class GameEngine
                         }
                         else
                         {
-                            var mx = xs[dex];
+                            var mx = xs[i];
                             var mx2 = mx / 24;
                             mx2 = mx2 * 24;
                             var remainder = mx - mx2;
@@ -2043,7 +1945,7 @@ public class GameEngine
                 height = (tile.Height * 16) << 16;//put in pixels then shift over to fixed float
             }
 
-            entity.MapHeights[dex] = height;
+            entity.MapHeights[i] = height;
             if (highest < height)
             {
                 highest = height;
@@ -2499,7 +2401,7 @@ public class GameEngine
         StaticVariables.g_animationCounter = 2;
     }
 
-    private int OpenMap(int mapId)
+    private int LoadMapSounds(int mapId)
     {
         var iVar1 = GetMapWarpDestination(mapId);
 
@@ -2788,7 +2690,7 @@ public class GameEngine
         byte localScratchpad = 0;
         StaticVariables.g_unusedByteArray = localScratchpad;
 
-        StaticVariables.g_numberOfTilesDrawn = RenderTiles(/*StaticVariables.g_orderingTableBuffer[4]*/ null, 
+        StaticVariables.g_numberOfTilesDrawn = RenderTiles(/*StaticVariables.g_orderingTableBuffer[4]*/ null,
             StaticVariables.g_cameraLookAtX, StaticVariables.g_cameraLookAtY, StaticVariables.g_cameraLookAtZ);
 
         //StaticVariables.g_numberOfEntitiesDrawn = RenderEntitiesMaybe(StaticVariables.g_orderingTableBuffer[4],  StaticVariables.g_cameraScrollingX, StaticVariables.g_cameraScrollingY);
@@ -2818,6 +2720,101 @@ public class GameEngine
     {
         //TODO
         ResetTileAnimationState();
+
+        if (StaticVariables.g_isCameraScrolling == 0)
+        {
+            StaticVariables.g_cameraScrollingX =
+                StaticVariables.g_cameraScrollingX +
+                (offsetX - (StaticVariables.g_cameraScrollingX + 0xa0) >> 4) + StaticVariables.g_cameraOffsetX + StaticVariables.g_cameraDebugOffsetX;
+            StaticVariables.g_cameraScrollingY =
+                StaticVariables.g_cameraScrollingY +
+                ((offsetY - offsetZ) - (StaticVariables.g_cameraScrollingY + 0x88) >> 4) + StaticVariables.g_cameraOffsetY +
+                StaticVariables.g_cameraDebugOffsetY;
+        }
+        else
+        {
+            StaticVariables.g_isCameraScrolling = 0;
+            StaticVariables.g_cameraScrollingY = (offsetY - offsetZ) + -0x88;
+            StaticVariables.g_cameraScrollingX = offsetX + -0xa0;
+        }
+
+        StaticVariables.g_cameraDebugOffsetX = 0;
+        StaticVariables.g_cameraDebugOffsetY = 0;
+
+        if (StaticVariables.g_cameraScrollingX < 0)
+        {
+            StaticVariables.g_cameraScrollingX = 0;
+        }
+        else if (0x39f < StaticVariables.g_cameraScrollingX)
+        {
+            StaticVariables.g_cameraScrollingX = 0x39f;
+        }
+
+        var tileHeight = 0xf;
+        var newCamRow = StaticVariables.g_cameraScrollingX / 0x18;
+        var col = StaticVariables.g_cameraScrollingX % 0x18;
+
+        if (col < 0x10)
+        {
+            tileHeight = 0xe;
+        }
+
+        if (StaticVariables.g_cameraScrollingY < 0)
+        {
+            StaticVariables.g_cameraScrollingY = 0;
+        }
+        else if (0x2cf < StaticVariables.g_cameraScrollingY)
+        {
+            StaticVariables.g_cameraScrollingY = 0x2cf;
+        }
+
+        var currentRow = StaticVariables.g_cameraScrollingY;
+
+        if (StaticVariables.g_cameraScrollingY < 0)
+        {
+            currentRow = StaticVariables.g_cameraScrollingY + 0xf;
+        }
+
+        currentRow = currentRow >> 4;
+        var camTileOffsetY = (short)StaticVariables.g_cameraScrollingY + (short)currentRow * -0x10;
+
+        var i = 0x3bf;
+        //tileDataPtr = &StaticVariables.g_tileVRAMClearTable;
+        //do {
+        //    *tileDataPtr = 0;
+        //    i = i + -1;
+        //    tileDataPtr = tileDataPtr + -1;
+        //} while (-1 < i);
+        //maxTileSprite = 0;
+        //visibleTileCount = 0;
+        i = 0;
+        //spriteMapEntry = StaticVariables.g_spriteMapTable;
+        //tilePrimPtr = StaticVariables.g_tileSpriteBuffer + (StaticVariables.g_tileAnimFrameCounter & 1U) * 0x2a8;
+        //puVar4 = (uint *)(StaticVariables.INT_ARRAY_800e0758 + (StaticVariables.g_tileAnimFrameCounter & 1U) * 0xd48);
+
+        do
+        {
+            var spriteMapEntry = CurrentMap.Info.SpriteMapEntries[i];
+            spriteMapEntry.Tick++;
+
+            if (spriteMapEntry.Enabled == 1 && spriteMapEntry.FrameDuration <= spriteMapEntry.Tick)
+            {
+                spriteMapEntry.Index += spriteMapEntry.TileWidth;
+                spriteMapEntry.Tick = 0;
+                spriteMapEntry.FrameIndex++;
+
+                if (spriteMapEntry.NumberOfFrame <= spriteMapEntry.FrameIndex)
+                {
+                    spriteMapEntry.Index = 0;
+                    spriteMapEntry.FrameIndex = 0;
+                }
+            }
+
+            i++;
+        } while (i < 6);
+
+        //TODO
+
         return 0;
     }
 
@@ -2993,7 +2990,7 @@ public class GameEngine
             StaticVariables.g_warpDelayFrames == 0 &&
             (StaticVariables.g_padState1.ButtonsHold & 0x100) == 0 &&
             StaticVariables.g_globalTransitionState == 0 &&
-            IsInForbiddenWarpZone() == 0)
+            RenderDebugZone() == 0)
         {
             StaticVariables.g_isGameEnding = 1;
         }
@@ -3055,7 +3052,7 @@ public class GameEngine
         return warpEntryOffset;
     }
 
-    private int IsInForbiddenWarpZone()
+    private int RenderDebugZone()
     {
         //uint isSpecialWarpTriggered;
         //
@@ -3155,7 +3152,8 @@ public class GameEngine
             }
 
             var rec = mapEvent.MapEventRecord;
-            if (playerEntity.TileX < rec.X1 || playerEntity.TileX > rec.X2 || playerEntity.TileY < rec.Y1 || playerEntity.TileY > rec.Y2)
+            //if (playerEntity.TileX < rec.X1 || playerEntity.TileX > rec.X2 || playerEntity.TileY < rec.Y1 || playerEntity.TileY > rec.Y2)
+            if (playerEntity.TileX > rec.X1 || playerEntity.TileX < rec.X2 || playerEntity.TileY > rec.Y1 || playerEntity.TileY < rec.Y2)
             {
                 playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap] = mapEvent.ProgramBMap;
                 playerEntity.MapEventProgramId = mapEvent.ProgramBMap;
@@ -4578,16 +4576,8 @@ public class GameEngine
                 return false;
             }
         }
-        var ret = GetSomething();
+        var ret = GetCurrentPaletteFadeLevel();
         return ret < 1 ? true : false;
-    }
-
-    private int GetSomething()//0x4f380
-    {
-        //TODO: what is this actually checking?
-        //ptr = *0x119888
-        //return (short)ptr[6]
-        return 0;
     }
 
     private MapEffectRecord GetMapEffectRecord(int id, bool checkBoundingBox)
@@ -4750,12 +4740,15 @@ public class GameEngine
         effect.Z = z;
     }
 
-
-
-    //TODO all the slope stuff
     public void UpdateTile(Entity entity)
     {
-        //set of variables set by certain special frames of animation
+        int tileX;
+        int tileY;
+        uint tileAttr;
+        uint tileFlags;
+        uint bestFlagMask;
+        uint[] tempFlags = new uint[4];
+
         if (entity.FrameCollision != null)
         {
             entity.FrameX = entity.XPos + entity.FrameXOff;
@@ -4763,86 +4756,133 @@ public class GameEngine
             entity.FrameZ = entity.ZPos + entity.FrameZOff;
         }
 
-        entity.TileZ = entity.ZPos >> 20; //(z >> 16) / 16
         entity.TileX = (entity.XPos >> 16) / 24;
         entity.TileY = entity.YPos >> 20;
+        entity.TileZ = entity.ZPos >> 20;
 
-        var hitz = CollideOnEntitiesZ(entity);
-        int tohit;
-        entity.ZEntityCollision = hitz;
-        entity.CollidedWithEntityZ = hitz < entity.ZPos ? 0 : 1;
-        if ((entity.Flags & 0x100) != 0)
+
+        var hitz = GetCollisionOnZ(entity);
+        entity.FloorHeight = hitz;
+        entity.IsAboveGround = hitz < entity.ZPos ? 0 : 1;
+        //entity.ZEntityCollision = hitz;
+        //entity.CollidedWithEntityZ = hitz < entity.ZPos ? 0 : 1;
+
+        if ((entity.Flags & 0x100U) == 0)
         {
-            tohit = 0xe00;
-            var somevals = new int[4];
-            for (var dex = 0; dex < 4; dex++)
-            {
-                var tl = entity.MapTiles[dex];
-                var fullval = tl.Walkability | tl.GroundProperty << 8 | tl.Slope << 16 | tl.Height << 24;
-                if (entity.MapHeights[dex] + 1 == entity.ModdedZPos)
-                {
+            tileX = entity.TileX;
+            bestFlagMask = 0;
+            entity.CombinedVramFlagsOR = 0;
+            entity.CombinedVramFlagsAND = 0;
 
-                    //var val = (tl.groundproperty & 0xe) << 8;
-                    if ((fullval & 0xe00) < tohit)
+            if (tileX < 1)
+            {
+                tileX = 0;
+            }
+            else if (0x33 < tileX)
+            {
+                tileX = 0x33;
+            }
+
+            tileY = entity.TileY;
+
+            if (tileY < 1)
+            {
+                tileY = 0;
+            }
+            else if (0x3b < tileY)
+            {
+                tileY = 0x3b;
+            }
+
+
+            var tl = CurrentMap.Map.MapTiles[tileX + tileY * 52]; //entity.MapTiles[tileY * 0xd0 + tileX * 4 + 0x302];
+            tileFlags = tl.Flags;
+            //tileFlags = StaticVariables.g_spriteVRAMPointer + tileY * 0xd0 + tileX * 4 + 0x302;
+            if (((tileFlags & 0xc00000) == 0) || ((tileFlags & 0x80000) == 0)) goto NoCollision;
+        }
+        else
+        {
+            bestFlagMask = 0xe00;
+            var i = 0;
+
+            do
+            {
+                tileFlags = entity.MapTiles[i].Flags & 0xe00;
+                if (entity.MapHeights[0] + 1 == entity.ModdedZPos)
+                {
+                    tempFlags[i] = entity.MapTiles[0].Flags;
+                    if (tileFlags < bestFlagMask)
                     {
-                        somevals[dex] = fullval;
-                        tohit = fullval & 0xe00;
+                        bestFlagMask = tileFlags;
                     }
                 }
                 else
                 {
-                    somevals[dex] = 0;
-                    tohit = 0;
+                    tempFlags[i] = 0;
+                    bestFlagMask = 0;
                 }
+                i = i + 1;
+            } while (i < 4);
+
+            entity.CombinedVramFlagsOR = (int)(tempFlags[0] | tempFlags[1] | tempFlags[2] | tempFlags[3]);
+            entity.CombinedVramFlagsAND = (int)(tempFlags[0] & tempFlags[1] & tempFlags[2] & tempFlags[3]);
+            tileX = entity.TileX;
+
+            if (tileX < 1)
+            {
+                tileX = 0;
+            }
+            else if (0x33 < tileX)
+            {
+                tileX = 0x33;
             }
 
-            entity.CombinedVramFlagsOR = somevals[0] | somevals[1] | somevals[2] | somevals[3];
-            entity.CombinedVramFlagsAND = somevals[0] & somevals[1] & somevals[2] & somevals[3];
+            tileY = entity.TileY;
 
-            var tilex = entity.TileX;
-
-            if (tilex > 0)
+            if (tileY < 1)
             {
-                if (tilex >= 0x34)
-                {
-                    tilex = 0x33;
-                }
+                tileY = 0;
             }
-            else
+            else if (0x3b < tileY)
             {
-                tilex = 0;
-            }
-            var tiley = entity.TileY;
-            if (tiley > 0)
-            {
-                if (tiley >= 0x3c)
-                {
-                    tiley = 0x3b;
-                }
-            }
-            else
-            {
-                tiley = 0;
+                tileY = 0x3b;
             }
 
-            var tile = CurrentMap.Map.MapTiles[tilex + tiley * 52];
-            var fullval2 = tile.Walkability | tile.GroundProperty << 8 | tile.Slope << 16 | tile.Height << 24;
-            var height = (int)(fullval2 & 0xff000000 >> 4) + 1;
-            var r3 = height ^ entity.ModdedZPos;
+            var tl = CurrentMap.Map.MapTiles[tileX + tileY * 52]; //entity.MapTiles[tileY * 0xd0 + tileX * 4 + 0x302];
+            tileFlags = (uint)(tl.Walkability | tl.GroundProperty << 8 | tl.Slope << 16 | tl.Height << 24);
+            //tileFlags = StaticVariables.g_spriteVRAMPointer + tileY * 0xd0 + tileX * 4 + 0x302;
+
+            if ((tileFlags & 0xc00000) == 0)
+            {
+                goto NoCollision;
+            }
+            tileAttr = 0x40000;
+            if (((tileFlags & 0xff000000) >> 4) + 1 != entity.ModdedZPos)
+            {
+                tileAttr = 0x80000;
+            }
+            if ((tileFlags & tileAttr) == 0)
+            {
+                goto NoCollision;
+            }
         }
-        else
+
+        tileAttr = 1U << ((int)(tileFlags >> 0x14) & 3);
+        entity.TileAttributes = (int)tileAttr;
+        if ((tileFlags & 0x800000) != 0)
         {
-            tohit = 0;
-            entity.CombinedVramFlagsOR = 0;
-            entity.CombinedVramFlagsAND = 0;
+            entity.TileAttributes = (int)(tileAttr | 0x80);
         }
 
-        //all that slope code is for setting this value
-        entity.TileAttributes = 0;
+        FinishUpdate:
+        tileX = entity.Slope_18c;
+        entity.Slope_18c = (int)bestFlagMask >> 9;
+        entity.Slope_190 = tileX;
+        return;
 
-        var prevtohit = entity.Slope_18c;
-        entity.Slope_18c = tohit;
-        entity.Slope_190 = prevtohit;
+        NoCollision:
+        entity.TileAttributes = 0;
+        goto FinishUpdate;
     }
 
     public int CollideOnEntitiesZ(Entity entity)
@@ -5308,7 +5348,7 @@ public class GameEngine
             case 1:
                 return (uint)((entity.TargetDirection + turndir) & 0x1f);
             case 2:
-                return (uint)ScriptHelper.CardinalDirTable[turndir & 0x3];
+                return (uint)StaticVariables.g_cardinalDirectionTable[turndir & 0x3];
             case 3:
                 var dfv = ScriptHelper.GetDirectionToTarget(StaticVariables.PlayerEntity.XPos - entity.XPos, StaticVariables.PlayerEntity.YPos - entity.YPos);
                 return (uint)((dfv + turndir) & 0x1f);
@@ -5319,7 +5359,7 @@ public class GameEngine
                     var val2 = (int)(0xe06a02e7 + val1);
                     var val3 = (int)(((long)val2 * 4) >> 32);
                     StaticVariables.g_gameRandomSeed = (uint)val2;
-                    var dir = ScriptHelper.CardinalDirTable[val3];//val3 here is a number between 0 and 3
+                    var dir = StaticVariables.g_cardinalDirectionTable[val3];//val3 here is a number between 0 and 3
                     return (uint)dir;
                 }
             case 5:

@@ -17,12 +17,13 @@ public class DatasBin
 
         AlundraGameMap = new GameMap(br, Header);
 
-#if DEBUG       //verify maps
-        for (var dex = 0; dex < Header.GameMaps.Length; dex++)
+#if DEBUG       
+        //verify maps
+        for (var i = 0; i < Header.GameMaps.Length; i++)
         {
-            if (Header.GameMaps[dex] > 0)
+            if (Header.GameMaps[i] > 0)
             {
-                br.BaseStream.Position = Header.GameMaps[dex];
+                br.BaseStream.Position = Header.GameMaps[i];
                 if (br.BaseStream.Position != br.BaseStream.Length)
                 {
                     var check = br.ReadInt32();

@@ -10,5 +10,10 @@ public class EventProgramState
 
     public ushort ElapsedMs;
     public byte IsWaiting;
-    public byte[] Code = new byte[9];
+    public byte[] Codes = new byte[9];
+
+    public override string ToString()
+    {
+        return $"Sp:{Sp} Exp:{Exp} Tick:{Tick} Vars:{string.Join(',', Variables)} LR:{LogicResult} EM:{ElapsedMs} IW:{IsWaiting} Codes:{string.Join(',', Codes)}";
+    }
 }

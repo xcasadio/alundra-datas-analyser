@@ -10,8 +10,8 @@ public class DbHeader
         AlundraStringTableOffset = br.ReadUInt32();//c
         AlundraStringTableRepeatOffset = br.ReadUInt32();//10
 
-        UnknownMapA = br.ReadUInt32();//14
-        UnknownMapB = br.ReadUInt32();//18
+        UnknownMapA = br.ReadUInt32();//14 g_currentDrawPageParam
+        UnknownMapB = br.ReadUInt32();//18 offset to fill g_orderingTableBuffer in 8002be98, used to exit game
         UnknownMapB2 = br.ReadUInt32();//1c
         UnknownMapB3 = br.ReadUInt32();//20
         UnknownMapB4 = br.ReadUInt32();//24

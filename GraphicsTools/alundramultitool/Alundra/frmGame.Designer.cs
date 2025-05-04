@@ -40,8 +40,20 @@ namespace GraphicsTools.Alundra
             label1 = new Label();
             labelNumberOfEntity = new Label();
             groupBox2 = new GroupBox();
+            label11 = new Label();
+            labelCamera5 = new Label();
+            label9 = new Label();
+            labelCamera4 = new Label();
+            label6 = new Label();
+            labelCamera3 = new Label();
+            label3 = new Label();
+            labelCamera2 = new Label();
             label13 = new Label();
             labelCameraPosition = new Label();
+            label4 = new Label();
+            labelCamera7 = new Label();
+            label10 = new Label();
+            labelCamera6 = new Label();
             groupBox3 = new GroupBox();
             labelMapNumberOfEntity = new Label();
             label15 = new Label();
@@ -160,14 +172,94 @@ namespace GraphicsTools.Alundra
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(label11);
+            groupBox2.Controls.Add(labelCamera5);
+            groupBox2.Controls.Add(label9);
+            groupBox2.Controls.Add(labelCamera4);
+            groupBox2.Controls.Add(label6);
+            groupBox2.Controls.Add(labelCamera3);
+            groupBox2.Controls.Add(label3);
+            groupBox2.Controls.Add(labelCamera2);
             groupBox2.Controls.Add(label13);
             groupBox2.Controls.Add(labelCameraPosition);
             groupBox2.Location = new Point(618, 4);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(143, 45);
+            groupBox2.Size = new Size(200, 105);
             groupBox2.TabIndex = 9;
             groupBox2.TabStop = false;
             groupBox2.Text = "Camera";
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Location = new Point(6, 79);
+            label11.Name = "label11";
+            label11.Size = new Size(49, 15);
+            label11.TabIndex = 9;
+            label11.Text = "camera:";
+            // 
+            // labelCamera5
+            // 
+            labelCamera5.AutoSize = true;
+            labelCamera5.Location = new Point(77, 79);
+            labelCamera5.Name = "labelCamera5";
+            labelCamera5.Size = new Size(13, 15);
+            labelCamera5.TabIndex = 8;
+            labelCamera5.Text = "0";
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(6, 64);
+            label9.Name = "label9";
+            label9.Size = new Size(49, 15);
+            label9.TabIndex = 7;
+            label9.Text = "camera:";
+            // 
+            // labelCamera4
+            // 
+            labelCamera4.AutoSize = true;
+            labelCamera4.Location = new Point(77, 64);
+            labelCamera4.Name = "labelCamera4";
+            labelCamera4.Size = new Size(13, 15);
+            labelCamera4.TabIndex = 6;
+            labelCamera4.Text = "0";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(6, 49);
+            label6.Name = "label6";
+            label6.Size = new Size(49, 15);
+            label6.TabIndex = 5;
+            label6.Text = "camera:";
+            // 
+            // labelCamera3
+            // 
+            labelCamera3.AutoSize = true;
+            labelCamera3.Location = new Point(77, 49);
+            labelCamera3.Name = "labelCamera3";
+            labelCamera3.Size = new Size(13, 15);
+            labelCamera3.TabIndex = 4;
+            labelCamera3.Text = "0";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(6, 34);
+            label3.Name = "label3";
+            label3.Size = new Size(49, 15);
+            label3.TabIndex = 3;
+            label3.Text = "camera:";
+            // 
+            // labelCamera2
+            // 
+            labelCamera2.AutoSize = true;
+            labelCamera2.Location = new Point(77, 34);
+            labelCamera2.Name = "labelCamera2";
+            labelCamera2.Size = new Size(13, 15);
+            labelCamera2.TabIndex = 2;
+            labelCamera2.Text = "0";
             // 
             // label13
             // 
@@ -187,10 +279,50 @@ namespace GraphicsTools.Alundra
             labelCameraPosition.TabIndex = 0;
             labelCameraPosition.Text = "0";
             // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(6, 94);
+            label4.Name = "label4";
+            label4.Size = new Size(63, 15);
+            label4.TabIndex = 13;
+            label4.Text = "screen pos";
+            // 
+            // labelCamera7
+            // 
+            labelCamera7.AutoSize = true;
+            labelCamera7.Location = new Point(77, 94);
+            labelCamera7.Name = "labelCamera7";
+            labelCamera7.Size = new Size(13, 15);
+            labelCamera7.TabIndex = 12;
+            labelCamera7.Text = "0";
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Location = new Point(6, 79);
+            label10.Name = "label10";
+            label10.Size = new Size(59, 15);
+            label10.TabIndex = 11;
+            label10.Text = "pos offset";
+            // 
+            // labelCamera6
+            // 
+            labelCamera6.AutoSize = true;
+            labelCamera6.Location = new Point(77, 79);
+            labelCamera6.Name = "labelCamera6";
+            labelCamera6.Size = new Size(13, 15);
+            labelCamera6.TabIndex = 10;
+            labelCamera6.Text = "0";
+            // 
             // groupBox3
             // 
+            groupBox3.Controls.Add(label4);
             groupBox3.Controls.Add(labelMapNumberOfEntity);
+            groupBox3.Controls.Add(labelCamera7);
             groupBox3.Controls.Add(label15);
+            groupBox3.Controls.Add(label10);
+            groupBox3.Controls.Add(labelCamera6);
             groupBox3.Controls.Add(labelMapGravity);
             groupBox3.Controls.Add(label17);
             groupBox3.Controls.Add(labelMapSize);
@@ -199,7 +331,7 @@ namespace GraphicsTools.Alundra
             groupBox3.Controls.Add(labelMapId);
             groupBox3.Location = new Point(475, 0);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(137, 90);
+            groupBox3.Size = new Size(137, 128);
             groupBox3.TabIndex = 10;
             groupBox3.TabStop = false;
             groupBox3.Text = "Map";
@@ -294,7 +426,7 @@ namespace GraphicsTools.Alundra
             textBoxEntityInfos.Name = "textBoxEntityInfos";
             textBoxEntityInfos.ReadOnly = true;
             textBoxEntityInfos.ScrollBars = ScrollBars.Both;
-            textBoxEntityInfos.Size = new Size(248, 469);
+            textBoxEntityInfos.Size = new Size(295, 469);
             textBoxEntityInfos.TabIndex = 13;
             textBoxEntityInfos.Text = "Entity infos";
             // 
@@ -348,5 +480,17 @@ namespace GraphicsTools.Alundra
         private Label labelMapId;
         private ListBox listBoxEntities;
         private TextBox textBoxEntityInfos;
+        private Label label6;
+        private Label labelCamera3;
+        private Label label3;
+        private Label labelCamera2;
+        private Label label11;
+        private Label labelCamera5;
+        private Label label9;
+        private Label labelCamera4;
+        private Label label4;
+        private Label labelCamera7;
+        private Label label10;
+        private Label labelCamera6;
     }
 }

@@ -5,6 +5,7 @@ public class MapTile
     public MapTile(BinaryReader br)
     {
         long i = br.ReadUInt32();
+
         Walkability = (byte)(i & 0xff);
         i >>= 8;
         GroundProperty = (byte)(i & 0xff);
@@ -15,6 +16,7 @@ public class MapTile
 
         i = br.ReadUInt16();
         TileId = (short)i;
+
         if (i == 0xffff)
         {
             Palette = -1;
@@ -25,12 +27,15 @@ public class MapTile
             Palette = (short)((i & 0xf000) >> 12);
             Tile = (short)(i & 0x3ff);
         }
+
         TilesOffset = br.ReadInt16();
+
         if (TilesOffset != -1)
         {
             TilesOffset *= 2;
         }
     }
+
     public byte Walkability;
     public byte GroundProperty;
     public readonly byte Slope;
@@ -40,6 +45,9 @@ public class MapTile
     public short Tile;
     public readonly short TilesOffset;
     public WallTiles WallTiles;
+
+    public uint Flags => (uint)(Walkability | (GroundProperty << 8) | (Slope << 16) | (Height << 24));
+
     public void LoadWallTiles(BinaryReader br, long offset)
     {
         if (TilesOffset != -1)

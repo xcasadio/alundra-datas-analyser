@@ -113,11 +113,18 @@ public partial class FrmGame : Form
         labelNumberOfVisibleEntity.Text = StaticVariables.g_visibleEntityCount.ToString();
 
         labelCameraPosition.Text = $"{StaticVariables.g_cameraCurrentX} x {StaticVariables.g_cameraCurrentY}";
+        labelCamera2.Text = $"{StaticVariables.g_cameraX} x {StaticVariables.g_cameraY}";
+        labelCamera3.Text = $"{StaticVariables.g_cameraLookAtX >> 16} x {StaticVariables.g_cameraLookAtY >> 16} x {StaticVariables.g_cameraLookAtZ >> 16}";
+        labelCamera4.Text = $"{StaticVariables.g_cameraOffsetX} x {StaticVariables.g_cameraOffsetY}";
+        labelCamera5.Text = $"{StaticVariables.g_cameraDeltaX} x {StaticVariables.g_cameraDeltaY}";
 
         labelMapId.Text = $"{StaticVariables.g_currentMap}";
         labelMapSize.Text = $"{_engine.CurrentMap?.Map.Width} x {_engine.CurrentMap?.Map.Height}";
         labelMapGravity.Text = $"{_engine.CurrentMap?.Info.Gravity}";
         labelMapNumberOfEntity.Text = $"{_engine.CurrentMap?.SpriteInfo.Entities.Entities.Count(x => x != null)}";
+
+        labelCamera6.Text = $"{StaticVariables.g_mapOffsetX} x {StaticVariables.g_mapOffsetY}";
+        labelCamera7.Text = $"{StaticVariables.g_mapScreenPosX} x {StaticVariables.g_mapScreenPosY}";
 
         if (_lastMapId != StaticVariables.g_currentMap && _engine.CurrentMap != null)
         {
@@ -160,51 +167,76 @@ public partial class FrmGame : Form
                $"Index2: {entity.Index2}{Environment.NewLine}" +
                $"ChildEntity: {entity.ChildEntity}{Environment.NewLine}" +
                $"ParentEntity: {entity.ParentEntity}{Environment.NewLine}" +
+               //Position
+               $"Position: {entity.XPos >> 16} {entity.YPos >> 16} {entity.ZPos >> 16}{Environment.NewLine}" +
+               $"Initial Pos: {entity.InitialXPos} x {entity.InitialYPos}{Environment.NewLine}" +
+               $"ScreenClip: {entity.ScreenClipX >> 16} {entity.ScreenClipY >> 16} {entity.ScreenClipZ >> 16}{Environment.NewLine}" +
+               $"NegMod: {entity.NegXMod >> 16} {entity.NegYMod >> 16}{Environment.NewLine}" +
+               $"Tile Pos: {entity.TileX} {entity.TileY} {entity.TileZ}{Environment.NewLine}" +
+               //Status
+               $"ActionState: {entity.ActionState}{Environment.NewLine}" +
+               $"Flags: {entity.Flags}{Environment.NewLine}" +
+               $"Flags2: {entity.Flags2}{Environment.NewLine}" +
                $"Status: {entity.Status}{Environment.NewLine}" +
                $"Hp: {entity.HpMax} / {entity.Hp}{Environment.NewLine}" +
                $"UnknownCounter: {entity.UnknownCounter}{Environment.NewLine}" +
                $"IsNotProcessable: {entity.IsNotProcessable}{Environment.NewLine}" +
-               $"Flags2: {entity.Flags2}{Environment.NewLine}" +
-               $"PlatformEntity: {entity.PlatformEntity}{Environment.NewLine}" +
-               $"ActionState: {entity.ActionState}{Environment.NewLine}" +
-               $"RelativeWarpOffsetX: {entity.RelativeWarpOffsetX} x {entity.RelativeWarpOffsetY} x {entity.RelativeWarpOffsetZ}{Environment.NewLine}" +
+               $"RelativeWarpOffset: {entity.RelativeWarpOffsetX} x {entity.RelativeWarpOffsetY} x {entity.RelativeWarpOffsetZ}{Environment.NewLine}" +
                $"ContentsItemId: {entity.ContentsItemId}{Environment.NewLine}" +
                $"ContentsGameFlag: {entity.ContentsGameFlag}{Environment.NewLine}" +
                $"EntityRecord: {entity.EntityRecord}{Environment.NewLine}" +
                $"EntityRefId: {entity.EntityRefId}{Environment.NewLine}" +
+               //Script
                $"ProgramIndexes: {string.Join(',', entity.ProgramIndexes)}{Environment.NewLine}" +
-               $"Sprite: {entity.Sprite}{Environment.NewLine}" +
-               $"SpriteTableIndex: {entity.SpriteTableIndex}{Environment.NewLine}" +
-               $"Flags: {entity.Flags}{Environment.NewLine}" +
                $"SpriteProgramIndexes: {string.Join(',', entity.SpriteProgramIndexes)}{Environment.NewLine}" +
-               $"CurrentAnimationId: {entity.CurrentAnimationId} => {entity.TargetAnimationId}{Environment.NewLine}" +
-               $"CurrentDirection: {entity.CurrentDirection} => {entity.TargetDirection}{Environment.NewLine}" +
-               $"CurrentFrameIndex: {entity.CurrentFrameIndex}{Environment.NewLine}" +
+               $"EventTrigger: {entity.EventTrigger}{Environment.NewLine}" +
+               $"MapEventProgramId: {entity.MapEventProgramId}{Environment.NewLine}" +
+               $"LogicContextEntity: {entity.LogicContextEntity}{Environment.NewLine}" +
+               $"EventProgramState: {entity.EventProgramState}{Environment.NewLine}" +
+               $"Bytes: {string.Join(',', entity.Bytes)}{Environment.NewLine}" +
+               $"AIValues: {string.Join(',', entity.AIValues)}{Environment.NewLine}" +
+               //Display
+               $"Sprite: {entity.Sprite}{Environment.NewLine}" +
+               $"SpriteRef: {entity.SpriteRef}{Environment.NewLine}" +
+               $"SpriteTableIndex: {entity.SpriteTableIndex}{Environment.NewLine}" +
+               $"AnimationId: {entity.CurrentAnimationId} => {entity.TargetAnimationId} ({entity.LastTargetAnimationId}){Environment.NewLine}" +
+               $"Direction: {entity.CurrentDirection} => {entity.TargetDirection} ({entity.LastTargetDirection}){Environment.NewLine}" +
+               $"FrameIndex: {entity.CurrentFrameIndex}{Environment.NewLine}" +
                $"AnimSet: {entity.AnimSet}{Environment.NewLine}" +
                $"Frame: {entity.Frame} / {entity.FirstFrame}{Environment.NewLine}" +
                $"NextFrameDelay: {entity.NextFrameDelay}{Environment.NewLine}" +
                $"ForceResetAnimationFlag: {entity.ForceResetAnimationFlag}{Environment.NewLine}" +
                $"AnimCompleteCounter: {entity.AnimCompleteCounter}{Environment.NewLine}" +
                $"AnimFlags: {entity.AnimFlags}{Environment.NewLine}" +
-               $"ZForce: {entity.ZForce}{Environment.NewLine}" +
-               $"TargetXForce: {entity.TargetXForce} {entity.TargetYForce}{Environment.NewLine}" +
-               $"XForce: {entity.XForce} {entity.YForce}{Environment.NewLine}" +
-               $"InteractXForce: {entity.InteractXForce} {entity.InteractYForce}{Environment.NewLine}" +
-               $"XForceStep: {entity.XForceStep} {entity.YForceStep}{Environment.NewLine}" +
-               $"AdjustedXForce: {entity.AdjustedXForce} {entity.AdjustedYForce}{Environment.NewLine}" +
-               $"FinalXForce: {entity.FinalXForce} {entity.FinalXForce} {entity.FinalXForce}{Environment.NewLine}" +
-               $"Acceleration: {entity.Acceleration}{Environment.NewLine}" +
+               //
+               $"ModdedXPos: {entity.ModdedXPos >> 16} {entity.ModdedYPos >> 16} {entity.ModdedZPos >> 16}{Environment.NewLine}" +
+               $"XYZMod: {entity.XMod >> 16} {entity.YMod >> 16} {entity.ZMod >> 16}{Environment.NewLine}" +
+               $"Size: {entity.Width >> 16} {entity.Height >> 16} {entity.Depth >> 16}{Environment.NewLine}" +
+               $"Frame Pos: {entity.FrameX} {entity.FrameY} {entity.FrameZ}{Environment.NewLine}" +
+               $"Frame Off: {entity.FrameXOff} {entity.FrameYOff} {entity.FrameZOff}{Environment.NewLine}" +
+               $"FrameWidth: {entity.FrameWidth} {entity.FrameDepth} {entity.FrameHeight}{Environment.NewLine}" +
+               $"DepthSortVal: {entity.DepthSortVal >> 16}{Environment.NewLine}" +
+               $"SortTop: {entity.SortTop >> 16}{Environment.NewLine}" +
+               //
+               $"AddedToSheet: {entity.AddedToSheet}{Environment.NewLine}" +
+               $"ActiveEffect: {entity.ActiveEffect}{Environment.NewLine}" +
+               //Physics
+               $"Target Forces: {entity.TargetXForce >> 16} {entity.TargetYForce >> 16}{Environment.NewLine}" +
+               $"Forces: {entity.XForce >> 16} {entity.YForce >> 16} {entity.ZForce >> 16}{Environment.NewLine}" +
+               $"Interact Force: {entity.InteractXForce >> 16} {entity.InteractYForce >> 16}{Environment.NewLine}" +
+               $"Force Step: {entity.XForceStep >> 16} {entity.YForceStep >> 16}{Environment.NewLine}" +
+               $"Adjusted Force: {entity.AdjustedXForce >> 16} {entity.AdjustedYForce >> 16}{Environment.NewLine}" +
+               $"Final Force: {entity.FinalXForce >> 16} {entity.FinalYForce >> 16} {entity.FinalZForce >> 16}{Environment.NewLine}" +
+               $"Acceleration: {entity.Acceleration >> 16}{Environment.NewLine}" +
                $"Speed: {entity.Speed}{Environment.NewLine}" +
                $"IsZForceApplied: {entity.IsZForceApplied}{Environment.NewLine}" +
-               $"ScreenClipX: {entity.ScreenClipX} {entity.ScreenClipY} {entity.ScreenClipZ}{Environment.NewLine}" +
-               $"NegXMod: {entity.NegXMod} {entity.NegYMod}{Environment.NewLine}" +
-               $"XPos: {entity.XPos} {entity.YPos} {entity.ZPos}{Environment.NewLine}" +
-               $"TileX: {entity.TileX} {entity.TileY} {entity.TileZ}{Environment.NewLine}" +
+               //
+               $"PlatformEntity: {entity.PlatformEntity}{Environment.NewLine}" +
                $"RidingEntity: {entity.RidingEntity}{Environment.NewLine}" +
                $"XCollisionEntity: {entity.XCollisionEntity}{Environment.NewLine}" +
-               $"ZEntityCollision: {entity.ZEntityCollision}{Environment.NewLine}" +
-               $"FloorHeight: {entity.FloorHeight}{Environment.NewLine}" +
-               $"ForceAdjusted: {entity.ForceAdjusted}{Environment.NewLine}" +
+               $"ZEntityCollision: {entity.ZEntityCollision >> 16}{Environment.NewLine}" +
+               $"FloorHeight: {entity.FloorHeight >> 16}{Environment.NewLine}" +
+               $"ForceAdjusted: {entity.ForceAdjusted >> 16}{Environment.NewLine}" +
                $"CollidedWithEntityZ: {entity.CollidedWithEntityZ}{Environment.NewLine}" +
                $"IsAboveGround: {entity.IsAboveGround}{Environment.NewLine}" +
                $"MapTiles: {entity.MapTiles}{Environment.NewLine}" +
@@ -212,34 +244,15 @@ public partial class FrmGame : Form
                $"PlatformUpdateFlag: {entity.PlatformUpdateFlag}{Environment.NewLine}" +
                $"CombinedVramFlagsOR: {entity.CombinedVramFlagsOR} {entity.CombinedVramFlagsAND}{Environment.NewLine}" +
                $"_18c: {entity.Slope_18c}{Environment.NewLine}" +
-               $"SpriteRef: {entity.SpriteRef}{Environment.NewLine}" +
-               $"AddedToSheet: {entity.AddedToSheet}{Environment.NewLine}" +
-               $"ActiveEffect: {entity.ActiveEffect}{Environment.NewLine}" +
-               $"DepthSortVal: {entity.DepthSortVal}{Environment.NewLine}" +
-               $"SortTop: {entity.SortTop}{Environment.NewLine}" +
+               //
                $"BalanceRecord: {entity.BalanceRecord}{Environment.NewLine}" +
                $"BalanceVal: {entity.BalanceVal}{Environment.NewLine}" +
                $"DamagedTickCounter: {entity.DamagedTickCounter}{Environment.NewLine}" +
                $"FrameColTickCounter: {entity.FrameColTickCounter}{Environment.NewLine}" +
                $"FrameCollision: {entity.FrameCollision}{Environment.NewLine}" +
-               $"ModdedXPos: {entity.ModdedXPos} {entity.ModdedYPos} {entity.ModdedZPos}{Environment.NewLine}" +
-               $"XMod: {entity.XMod} {entity.YMod} {entity.YMod}{Environment.NewLine}" +
-               $"Width: {entity.Width} {entity.Height} {entity.Depth}{Environment.NewLine}" +
-               $"FrameX: {entity.FrameX} {entity.FrameY} {entity.FrameZ}{Environment.NewLine}" +
-               $"FrameXOff: {entity.FrameXOff} {entity.FrameYOff} {entity.FrameZOff}{Environment.NewLine}" +
-               $"FrameWidth: {entity.FrameWidth} {entity.FrameDepth} {entity.FrameHeight}{Environment.NewLine}" +
+               //
                $"HitCounter: {entity.HitCounter}{Environment.NewLine}" +
-               $"TouchingEntity: {entity.TouchingEntity}{Environment.NewLine}" +
-               $"EventTrigger: {entity.EventTrigger}{Environment.NewLine}" +
-               $"MapEventProgramId: {entity.MapEventProgramId}{Environment.NewLine}" +
-               $"LogicContextEntity: {entity.LogicContextEntity}{Environment.NewLine}" +
-               $"EventProgramState: {entity.EventProgramState}{Environment.NewLine}" +
-               $"LastTargetAnimationId: {entity.LastTargetAnimationId}{Environment.NewLine}" +
-               $"LastTargetDirection: {entity.LastTargetDirection}{Environment.NewLine}" +
-               $"Bytes: {string.Join(',', entity.Bytes)}{Environment.NewLine}" +
-               $"InitialXPos: {entity.InitialXPos}{Environment.NewLine}" +
-               $"InitialYPos: {entity.InitialYPos}{Environment.NewLine}" +
-               $"AIValues: {string.Join(',', entity.AIValues)}{Environment.NewLine}";
+               $"TouchingEntity: {entity.TouchingEntity}{Environment.NewLine}";
     }
 
     [DllImport("user32.dll")]

@@ -208,37 +208,39 @@ public class GameMap
     }
 
     private readonly Dictionary<long, Bitmap> _tileCache = new();
-    public Bitmap GetTileBitmap(int tileid)
+    public Bitmap GetTileBitmap(int tileMapIndex)
     {
-        var tiledex = tileid & 0x3ff;
-        var paldex = (tileid & 0xf000) >> 12;
+        var tileId = tileMapIndex & 0x3ff;
+        var paletteId = (tileMapIndex & 0xf000) >> 12;
 
-        if (_tileCache.TryGetValue(tileid, out var bitmap))
+        if (_tileCache.TryGetValue(tileMapIndex, out var bitmap))
         {
             return bitmap;
         }
 
-        var bmp = GenerateTileBitmap(tiledex, Info.Palettes[paldex]);
-        _tileCache.Add(tileid, bmp);
+        var bmp = GenerateTileBitmap(tileId, Info.Palettes[paletteId]);
+        _tileCache.Add(tileMapIndex, bmp);
 
         return bmp;
     }
 
     public Bitmap GenerateTileBitmap(int tile, Color[] pal)
     {
-        Debug.Assert(tile < 10 * 16 * 6, "Bad tile index!", "unexpectedly large tile index of {0}", tile);
+        Debug.Assert(tile < 10 * StaticVariables.MapTileHeight * 6, "Bad tile index!", "unexpectedly large tile index of {0}", tile);
 
-        var tilebuff = new byte[24 * 16 * 4 / 8];
-        var tilex = tile % 10 * 24;
-        var tiley = tile / 10 * 16;
-        if (tile < 10 * 16 * 6)
+        var tileBuff = new byte[StaticVariables.MapTileWidth * StaticVariables.MapTileHeight * 4 / 8];
+        var tileX = tile % 10 * StaticVariables.MapTileWidth;
+        var tileY = tile / 10 * StaticVariables.MapTileHeight;
+
+        if (tile < 10 * StaticVariables.MapTileHeight * 6)
         {
-            for (var y = 0; y < 16; y++)
+            for (var y = 0; y < StaticVariables.MapTileHeight; y++)
             {
-                Buffer.BlockCopy(_tileSheetImageData, (tiley + y) * 256 / 2 + tilex / 2, tilebuff, y * 24 / 2, 24 / 2);
+                Buffer.BlockCopy(_tileSheetImageData, (tileY + y) * 256 / 2 + tileX / 2, tileBuff, y * StaticVariables.MapTileWidth / 2, StaticVariables.MapTileWidth / 2);
             }
         }
-        return ImageHelper.BitmapFromPsxBuff(tilebuff, 24, 16, 4, pal);
+
+        return ImageHelper.BitmapFromPsxBuff(tileBuff, StaticVariables.MapTileWidth, StaticVariables.MapTileHeight, 4, pal);
     }
 
     public Bitmap GenerateTileSheetBmp(Color[] pal)

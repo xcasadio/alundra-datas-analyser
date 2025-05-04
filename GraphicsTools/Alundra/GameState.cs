@@ -323,7 +323,7 @@ public class GameState
             entityRecord.YPos, //(y * 8 + 8) * 65536
             entityRecord.Height, //h << 19
             0,
-            0, //dir g_warpZones[flags & 3]
+            0, //dir g_cardinalDirectionTable[flags & 3]
             paletteIndex,
             sheetSize);
 
@@ -412,7 +412,7 @@ public class GameState
             case 1:
                 return (uint)((entity.TargetDirection + turndir) & 0x1f);
             case 2:
-                return (uint)ScriptHelper.CardinalDirTable[turndir & 0x3];
+                return (uint)StaticVariables.g_cardinalDirectionTable[turndir & 0x3];
             case 3:
                 var dfv = ScriptHelper.GetDirectionToTarget(StaticVariables.PlayerEntity.XPos - entity.XPos, StaticVariables.PlayerEntity.YPos - entity.YPos);
                 return (uint)((dfv + turndir) & 0x1f);
@@ -423,7 +423,7 @@ public class GameState
                     var val2 = (int)(0xe06a02e7 + val1);
                     var val3 = (int)(((long)val2 * 4) >> 32);
                     StaticVariables.g_gameRandomSeed = (uint)val2;
-                    var dir = ScriptHelper.CardinalDirTable[val3];//val3 here is a number between 0 and 3
+                    var dir = StaticVariables.g_cardinalDirectionTable[val3];//val3 here is a number between 0 and 3
                     return (uint)dir;
                 }
             case 5:

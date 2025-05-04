@@ -12,9 +12,9 @@ public class WallTiles
         //    flag = flag;
         //}
 
-        for (var dex = 0; dex < Count; dex++)
+        for (var i = 0; i < Count; i++)
         {
-            Tiles[dex] = br.ReadInt16();
+            Tiles[i] = br.ReadInt16();
         }
     }
     public readonly sbyte Offset;

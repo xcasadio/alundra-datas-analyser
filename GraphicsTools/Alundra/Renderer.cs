@@ -1,4 +1,6 @@
-﻿using Alundra.DatasBin;
+﻿using System.Diagnostics;
+using Alundra.DatasBin;
+using Microsoft.Win32;
 
 namespace Alundra;
 
@@ -6,28 +8,33 @@ public class Renderer
 {
     public static void Render(Graphics g, DatasBin.DatasBin datasBin, GameMap gameMap)
     {
-        var curxpos = StaticVariables.g_cameraCurrentX;// >> 16;
-        var curypos = StaticVariables.g_cameraCurrentY;// >> 16;
+        var currentXPosition = StaticVariables.g_cameraCurrentX;// >> 16;
+        var currentYPosition = StaticVariables.g_cameraCurrentY;// >> 16;
                      
-        var curxtile = curxpos / StaticVariables.MapTileWidth;
+        var curXTile = currentXPosition / StaticVariables.MapTileWidth;
 
         var sinfo = gameMap.SpriteInfo;
         var gensi = datasBin.AlundraGameMap.SpriteInfo;
 
-        for (var y = 0; y < StaticVariables.g_mapLimits; y++)
+        for (var y = 0; y < gameMap.Map.Height ;y++)
         {
             //draw tiles on this row
-            for (var x = curxtile; x < curxtile + StaticVariables.ScreenWidth / StaticVariables.MapTileWidth + 2; x++)
+            for (var x = curXTile; x < curXTile + StaticVariables.ScreenWidth / StaticVariables.MapTileWidth + 2; x++)
             {
-                //StaticVariables.g_mapLimits
-                var tile = gameMap.Map.MapTiles[y * 52 + x];
+                //&g_tileAnimDescriptorTable + (tile.Flags & 0x3ff) * 3 +
+                //    (uint)g_spriteMapTable[(byte)(&g_tileAnimDescriptorTable)[(tile.Flags & 0x3ff) * 3]].offsetX * 3;
+                
+                var tile = gameMap.Map.MapTiles[y * gameMap.Map.Width + x];
+                var tileId = tile.TileId;
+
                 //render tile
-                var dx = x * StaticVariables.MapTileWidth - curxpos;
-                var dy = (y - tile.Height) * StaticVariables.MapTileHeight - curypos;
+                var dx = x * StaticVariables.MapTileWidth - currentXPosition;
+                var dy = (y - tile.Height) * StaticVariables.MapTileHeight - currentYPosition;
 
                 if (dy > -StaticVariables.MapTileHeight && dy < StaticVariables.ScreenHeight && tile.TileId != -1)
                 {
-                    DrawTile(tile.TileId, dx, dy, g, gameMap);
+                    tileId = GetAnimatedTileId(gameMap, tileId);
+                    DrawTile(tileId, dx, dy, g, gameMap);
                 }
 
                 if (tile.WallTiles != null)
@@ -40,9 +47,12 @@ public class Renderer
                     {
                         dy += StaticVariables.MapTileHeight;
                         //render wall tile
-                        if (dy > -StaticVariables.MapTileHeight && dy < StaticVariables.ScreenHeight && wallTiles.Tiles[i] != -1)
+                        var wallTileId = wallTiles.Tiles[i];
+
+                        if (dy > -StaticVariables.MapTileHeight && dy < StaticVariables.ScreenHeight && wallTileId != -1)
                         {
-                            DrawTile(wallTiles.Tiles[i], dx, dy, g, gameMap);
+                            wallTileId = GetAnimatedTileId(gameMap, wallTileId);
+                            DrawTile(wallTileId, dx, dy, g, gameMap);
                         }
                     }
                 }
@@ -63,8 +73,8 @@ public class Renderer
                 }
 
                 //var tile = selectedGame.map.maptiles[sx + sy * selectedGame.map.width];
-                var scx = (entity.ModdedXPos >> 16) - curxpos;
-                var scy = (entity.ModdedYPos >> 16) - (entity.ModdedZPos >> 16) - curypos;
+                var scx = (entity.ModdedXPos >> 16) - currentXPosition;
+                var scy = (entity.ModdedYPos >> 16) - (entity.ModdedZPos >> 16) - currentYPosition;
 
                 if (entity.Sprite != null)
                 {
@@ -86,6 +96,24 @@ public class Renderer
                 }
             }
         }
+    }
+
+    private static short GetAnimatedTileId(GameMap gameMap, short tileId)
+    {
+        var tile = tileId & 0x3ff;
+
+        var spriteIndex = StaticVariables.g_tileAnimDescriptorTable[tile].SpriteIndex;
+        if (spriteIndex != 0)
+        {
+            var entry = gameMap.Info.SpriteMapEntries[spriteIndex];
+            if (entry.Enabled == 1)
+            {
+                //tileY + 1
+                tileId = (short)( (tileId & 0xF000) | ((tileId + 10 * entry.FrameIndex * 2) & 0x03FF));
+            }
+        }
+
+        return tileId;
     }
 
     private static void DrawSprite(GameMap gm, SiImage img, int x, int y, Graphics g)
@@ -113,9 +141,9 @@ public class Renderer
         //g.DrawImage(bmp, _pnts);
     }
 
-    private static void DrawTile(int tileid, int x, int y, Graphics g, GameMap gameMap)
+    private static void DrawTile(int tileMapIndex, int x, int y, Graphics g, GameMap gameMap)
     {
-        var bmp = gameMap.GetTileBitmap(tileid);
+        var bmp = gameMap.GetTileBitmap(tileMapIndex);
         g.DrawImage(bmp, x, y);
     }
 }

@@ -89,7 +89,7 @@ namespace GraphicsTools.Alundra
                 listBoxFont3Palette.Items.Add("palette " + i);
             }
             listBoxFont3Palette.SelectedIndex = 0;
-            
+
             pictureBoxFont3Palette.Image = new Bitmap(pictureBoxFont3Palette.Width * _palScale, pictureBoxFont3Palette.Height * _palScale, PixelFormat.Format24bppRgb);
             using var graphics = Graphics.FromImage(pictureBoxFont3Palette.Image);
             graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
@@ -98,14 +98,14 @@ namespace GraphicsTools.Alundra
             pictureBoxFont3Palette.Refresh();
         }
 
-        private Bitmap GetTile(int tileid)
+        private Bitmap GetTile(int tileId)
         {
-            if (!_cachedTiles.ContainsKey(tileid))
+            if (!_cachedTiles.ContainsKey(tileId))
             {
-                _cachedTiles.Add(tileid, _selectedGameMap.GenerateTileBitmap(tileid & 0x3ff, _selectedGameMap.Info.Palettes[(tileid & 0xf000) >> 12]));
+                _cachedTiles.Add(tileId, _selectedGameMap.GenerateTileBitmap(tileId & 0x3ff, _selectedGameMap.Info.Palettes[(tileId & 0xf000) >> 12]));
             }
 
-            return _cachedTiles[tileid];
+            return _cachedTiles[tileId];
         }
 
         private Dictionary<int, List<Bitmap>> _cachedSprites;
@@ -133,6 +133,8 @@ namespace GraphicsTools.Alundra
 
         private void LoadMap(GameMap map)
         {
+            this.SuspendLayout();
+
             _selectedGameMap = map;
             if (!_selectedGameMap.Loaded)
             {
@@ -150,8 +152,8 @@ namespace GraphicsTools.Alundra
 
             if (_selectedGameMap?.Map != null)
             {
-                hScrollMap.Maximum = _selectedGameMap.Map.Width - pctMap.Width / _mapscale / 24;// / 3;
-                vScrollMap.Maximum = _selectedGameMap.Map.Height - pctMap.Height / _mapscale / 16;// / 3;
+                hScrollMap.Maximum = _selectedGameMap.Map.Width - pctMap.Width / _mapScale / StaticVariables.MapTileWidth;
+                vScrollMap.Maximum = _selectedGameMap.Map.Height - pctMap.Height / _mapScale / StaticVariables.MapTileWidth;
             }
 
             //info
@@ -187,12 +189,28 @@ namespace GraphicsTools.Alundra
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 g.Clear(Color.Black);
                 g.DrawImage(_selectedGameMap.Info.PalettesBitmap, 0, 0, _selectedGameMap.Info.PalettesBitmap.Width * _palScale, _selectedGameMap.Info.PalettesBitmap.Height * _palScale);
+                
+                listViewSpriteMapEntries.Items.Clear();
+                foreach (var spriteMapEntry in _selectedGameMap.Info.SpriteMapEntries)
+                {
+                    var lvi = new ListViewItem([
+                        spriteMapEntry.Enabled.ToString(),
+                        spriteMapEntry.NumberOfFrame.ToString(),
+                        spriteMapEntry.TileWidth.ToString(),
+                        spriteMapEntry.FrameDuration.ToString(),
+                        spriteMapEntry.Index.ToString(),
+                        spriteMapEntry.Tick.ToString(),
+                        spriteMapEntry.FrameIndex.ToString()
+                    ]);
+                    listViewSpriteMapEntries.Items.Add(lvi);
+                }
             }
             else
             {
                 lblInfo.Text = "alundra dummy map";
                 lstPortals.Items.Clear();
                 lstMapPalettes.Items.Clear();
+                listViewSpriteMapEntries.Items.Clear();
             }
 
             //spriteinfo
@@ -319,6 +337,8 @@ namespace GraphicsTools.Alundra
 
             //spritesheet
             //triggered by palette
+
+            this.PerformLayout();
         }
 
         private int _palScale = 4;
@@ -336,8 +356,10 @@ namespace GraphicsTools.Alundra
             LoadMap(_datasBin.AlundraGameMap);
         }
 
-        private int _mapscale = 2;
-        private bool _showdebug = false;
+        private int _mapScale = 2;
+        private bool _showDebug = false;
+        private bool _showStandardTile = true;
+        private bool _showWallTile = true;
 
         private void DrawMap()
         {
@@ -345,85 +367,109 @@ namespace GraphicsTools.Alundra
             {
                 var map = _selectedGameMap.Map;
 
-                using (var g = Graphics.FromImage(pctMap.Image))
+                using var g = Graphics.FromImage(pctMap.Image);
+                var fnt = new Font(FontFamily.GenericSansSerif, 6);
+
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                g.Clear(Color.Black);
+
+                var mapHeightLimit = map.Height - vScrollMap.Value;
+                var mapWidthLimit = pctMap.Width / _mapScale / StaticVariables.MapTileWidth;
+
+                //for (var y = 0; y < mapHeightLimit; y++)
+                //{
+                //    for (var x = 0; x < mapWidthLimit; x++)
+                //    {
+                for (var y = 0; y < map.Height; y++)
                 {
-                    var fnt = new Font(FontFamily.GenericSansSerif, 6);
-                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                    g.Clear(Color.Black);
-                    for (var y = 0; y < map.Height - vScrollMap.Value; y++)
+                    for (var x = 0; x < map.Width; x++)
                     {
-                        for (var x = 0; x < pctMap.Width / _mapscale / 24; x++)
+                        //var tile = map.MapTiles[(y + vScrollMap.Value) * map.Width + x + hScrollMap.Value];
+                        var tile = map.MapTiles[y * map.Width + x];
+
+                        var dx = x * _mapScale * StaticVariables.MapTileWidth;
+                        var dy = (y - tile.Height) * _mapScale * StaticVariables.MapTileHeight;
+
+                        dx -= hScrollMap.Value * _mapScale * StaticVariables.MapTileWidth;
+                        dy -= vScrollMap.Value * _mapScale * StaticVariables.MapTileHeight;
+
+                        if (tile.TileId != -1 && _showStandardTile)
                         {
-                            var tile = map.MapTiles[(y + vScrollMap.Value) * map.Width + x + hScrollMap.Value];
+                            g.DrawImage(GetTile(tile.TileId),
+                                dx,
+                                dy,
+                                StaticVariables.MapTileWidth * _mapScale + 1,
+                                StaticVariables.MapTileHeight * _mapScale + 1);
+                        }
 
-                            var dx = x * _mapscale * 24;
-                            var dy = (y - tile.Height) * _mapscale * 16;
-                            if (tile.TileId != -1)
+                        if (tile.WallTiles != null && _showWallTile)
+                        {
+                            for (var i = 0; i < tile.WallTiles.Count; i++)
                             {
-                                g.DrawImage(GetTile(tile.TileId), dx, dy, 24 * _mapscale + 1, 16 * _mapscale + 1);
+                                if (tile.WallTiles.Tiles[i] != -1)
+                                {
+                                    g.DrawImage(GetTile(tile.WallTiles.Tiles[i]),
+                                        dx,
+                                        dy + (i - tile.WallTiles.Offset + 1) * StaticVariables.MapTileHeight * _mapScale,
+                                        StaticVariables.MapTileWidth * _mapScale + 1,
+                                        StaticVariables.MapTileHeight * _mapScale + 1);
+                                }
                             }
+                        }
 
-                            _showdebug = false;
+                        if (_showDebug)
+                        {
+                            var halfHeight = StaticVariables.MapTileHeight;
+
+                            g.DrawString(tile.Walkability.ToString(), fnt, Brushes.Red, dx, dy);
+                            g.DrawString(tile.GroundProperty.ToString(), fnt, Brushes.Red, dx + halfHeight * _mapScale, dy);
+                            g.DrawString(tile.Slope.ToString(), fnt, Brushes.Red, dx + StaticVariables.MapTileHeight * _mapScale, dy);
+                            g.DrawString(tile.Height.ToString(), fnt, Brushes.Red, dx, dy + halfHeight * _mapScale / 1.5f);
+                            g.DrawString(tile.Palette.ToString(), fnt, Brushes.Red, dx + halfHeight * _mapScale, dy + halfHeight * _mapScale / 1.5f);
+                            g.DrawString(tile.Tile.ToString(), fnt, Brushes.Red, dx + StaticVariables.MapTileHeight * _mapScale, dy + halfHeight * _mapScale / 1.5f);
+                            g.DrawString(tile.TilesOffset.ToString(), fnt, Brushes.Green, dx, dy + StaticVariables.MapTileHeight * _mapScale / 1.5f);
+
                             if (tile.WallTiles != null)
                             {
-                                for (var dex = 0; dex < tile.WallTiles.Count; dex++)
-                                {
-                                    if (tile.WallTiles.Tiles[dex] != -1)
-                                    {
-                                        g.DrawImage(GetTile(tile.WallTiles.Tiles[dex]), dx, dy + (dex - tile.WallTiles.Offset + 1) * 16 * _mapscale, 24 * _mapscale + 1, 16 * _mapscale + 1);
-                                    }
-                                }
-                            }
-                            if (_showdebug)
-                            {
-                                //g.DrawString(tile.walkability.ToString(), fnt, Brushes.Red, dx, dy);
-                                //g.DrawString(tile.groundproperty.ToString(), fnt, Brushes.Red, dx + 8 * mapscale, dy);
-                                //g.DrawString(tile.slope.ToString(), fnt, Brushes.Red, dx + 16 * mapscale, dy);
-                                //g.DrawString(tile.height.ToString(), fnt, Brushes.Red, dx, dy + 8 * mapscale / 1.5f);
-                                //g.DrawString(tile.palette.ToString(), fnt, Brushes.Red, dx + 8 * mapscale, dy + 8 * mapscale / 1.5f);
-                                //g.DrawString(tile.tile.ToString(), fnt, Brushes.Red, dx + 16 * mapscale, dy + 8 * mapscale / 1.5f);
-                                //g.DrawString(tile.tilesoffset.ToString(), fnt, Brushes.Green, dx, dy + 16 * mapscale / 1.5f);
-                                //if (tile.walltiles != null)
-                                //{
-                                //    g.DrawString(tile.walltiles.offset.ToString(), fnt, Brushes.Green, dx + 8 * mapscale, dy + 16 * mapscale / 1.5f);
-                                //    g.DrawString(tile.walltiles.count.ToString(), fnt, Brushes.Green, dx + 16 * mapscale, dy + 16 * mapscale / 1.5f);
-                                //}
-                            }
-
-                        }
-                    }
-
-                    if (chkTileXy.Checked)
-                    {
-                        for (var y = 0; y < map.Height - vScrollMap.Value; y++)
-                        {
-                            for (var x = 0; x < pctMap.Width / _mapscale / 24; x++)
-                            {
-                                var tile = map.MapTiles[(y + vScrollMap.Value) * map.Width + x + hScrollMap.Value];
-                                if (tile.TileId != -1)
-                                {
-                                    var dx = x * _mapscale * 24;
-                                    var dy = (y - tile.Height) * _mapscale * 16;
-                                    g.DrawString("x:" + (x + hScrollMap.Value).ToString("x2"), fnt, Brushes.Red, dx, dy);
-                                    g.DrawString("y:" + (y + vScrollMap.Value).ToString("x2"), fnt, Brushes.Red, dx + 8 * _mapscale, dy);
-                                    //g.DrawString(Array.IndexOf(map.maptiles,tile).ToString(), fnt, Brushes.Red, dx, dy);
-                                    //g.DrawString(tile.walkability.ToString(), fnt, Brushes.Red, dx, dy);
-                                    //g.DrawString(tile.groundproperty.ToString(), fnt, Brushes.Red, dx + 8 * mapscale, dy);
-                                    //g.DrawString(tile.slope.ToString(), fnt, Brushes.Red, dx + 16 * mapscale, dy);
-                                    //g.DrawString(tile.height.ToString(), fnt, Brushes.Red, dx, dy + 8 * mapscale / 1.5f);
-                                    //g.DrawString(tile.palette.ToString(), fnt, Brushes.Red, dx + 8 * mapscale, dy + 8 * mapscale / 1.5f);
-                                    //g.DrawString(tile.tile.ToString(), fnt, Brushes.Red, dx + 16 * mapscale, dy + 8 * mapscale / 1.5f);
-                                    //g.DrawString(tile.tilesoffset.ToString(), fnt, Brushes.Green, dx, dy + 16 * mapscale / 1.5f);
-                                    //if (tile.walltiles != null)
-                                    //{
-                                    //    g.DrawString(tile.walltiles.offset.ToString(), fnt, Brushes.Green, dx + 8 * mapscale, dy + 16 * mapscale / 1.5f);
-                                    //    g.DrawString(tile.walltiles.count.ToString(), fnt, Brushes.Green, dx + 16 * mapscale, dy + 16 * mapscale / 1.5f);
-                                    //}
-                                }
+                                g.DrawString(tile.WallTiles.Offset.ToString(), fnt, Brushes.Green, dx + halfHeight * _mapScale, dy + StaticVariables.MapTileHeight * _mapScale / 1.5f);
+                                g.DrawString(tile.WallTiles.Count.ToString(), fnt, Brushes.Green, dx + StaticVariables.MapTileHeight * _mapScale, dy + StaticVariables.MapTileHeight * _mapScale / 1.5f);
                             }
                         }
                     }
                 }
+
+                if (chkTileXy.Checked)
+                {
+                    for (var y = 0; y < map.Height - vScrollMap.Value; y++)
+                    {
+                        for (var x = 0; x < pctMap.Width / _mapScale / StaticVariables.MapTileWidth; x++)
+                        {
+                            var tile = map.MapTiles[(y + vScrollMap.Value) * map.Width + x + hScrollMap.Value];
+                            if (tile.TileId != -1)
+                            {
+                                var dx = x * _mapScale * StaticVariables.MapTileWidth;
+                                var dy = (y - tile.Height) * _mapScale * StaticVariables.MapTileHeight;
+                                g.DrawString("x:" + (x + hScrollMap.Value).ToString("x2"), fnt, Brushes.Red, dx, dy);
+                                g.DrawString("y:" + (y + vScrollMap.Value).ToString("x2"), fnt, Brushes.Red, dx + 8 * _mapScale, dy);
+
+                                //g.DrawString(Array.IndexOf(map.maptiles,tile).ToString(), fnt, Brushes.Red, dx, dy);
+                                //g.DrawString(tile.walkability.ToString(), fnt, Brushes.Red, dx, dy);
+                                //g.DrawString(tile.groundproperty.ToString(), fnt, Brushes.Red, dx + 8 * mapscale, dy);
+                                //g.DrawString(tile.slope.ToString(), fnt, Brushes.Red, dx + StaticVariables.MapTileHeight * mapscale, dy);
+                                //g.DrawString(tile.height.ToString(), fnt, Brushes.Red, dx, dy + 8 * mapscale / 1.5f);
+                                //g.DrawString(tile.palette.ToString(), fnt, Brushes.Red, dx + 8 * mapscale, dy + 8 * mapscale / 1.5f);
+                                //g.DrawString(tile.tile.ToString(), fnt, Brushes.Red, dx + StaticVariables.MapTileHeight * mapscale, dy + 8 * mapscale / 1.5f);
+                                //g.DrawString(tile.tilesoffset.ToString(), fnt, Brushes.Green, dx, dy + StaticVariables.MapTileHeight * mapscale / 1.5f);
+                                //if (tile.walltiles != null)
+                                //{
+                                //    g.DrawString(tile.walltiles.offset.ToString(), fnt, Brushes.Green, dx + 8 * mapscale, dy + StaticVariables.MapTileHeight * mapscale / 1.5f);
+                                //    g.DrawString(tile.walltiles.count.ToString(), fnt, Brushes.Green, dx + StaticVariables.MapTileHeight * mapscale, dy + StaticVariables.MapTileHeight * mapscale / 1.5f);
+                                //}
+                            }
+                        }
+                    }
+                }
+
                 pctMap.Refresh();
             }
         }
@@ -699,8 +745,8 @@ namespace GraphicsTools.Alundra
 
         private void CenterOnTile(int tilex, int tiley)
         {
-            var targetx = tilex - pctMap.Width / 24 / _mapscale / 2;
-            var targety = tiley - pctMap.Height / 16 / _mapscale / 2;
+            var targetx = tilex - pctMap.Width / 24 / _mapScale / 2;
+            var targety = tiley - pctMap.Height / 16 / _mapScale / 2;
             //scroll map to make portal visible
             if (targetx > hScrollMap.Maximum)
             {
@@ -739,10 +785,10 @@ namespace GraphicsTools.Alundra
                     if (portals[i].X2 != 0xff && portals[i].Y2 != 0xff)
                     {
                         var tile = _selectedGameMap.Map.MapTiles[portals[i].X1 + portals[i].Y1 * _selectedGameMap.Map.Width];
-                        var x1 = (portals[i].X1 - hScrollMap.Value) * 24 * _mapscale;
-                        var y1 = (portals[i].Y1 - tile.Height - vScrollMap.Value) * 16 * _mapscale;
-                        var x2 = (portals[i].X2 + 1 - hScrollMap.Value) * 24 * _mapscale;
-                        var y2 = (portals[i].Y2 - tile.Height + 1 - vScrollMap.Value) * 16 * _mapscale;
+                        var x1 = (portals[i].X1 - hScrollMap.Value) * 24 * _mapScale;
+                        var y1 = (portals[i].Y1 - tile.Height - vScrollMap.Value) * 16 * _mapScale;
+                        var x2 = (portals[i].X2 + 1 - hScrollMap.Value) * 24 * _mapScale;
+                        var y2 = (portals[i].Y2 - tile.Height + 1 - vScrollMap.Value) * 16 * _mapScale;
 
                         e.Graphics.DrawRectangle(Pens.Blue, x1, y1, x2 - x1, y2 - y1);
                         if (portals[i] == _selectedPortal)
@@ -765,8 +811,8 @@ namespace GraphicsTools.Alundra
                         var height = entities[i].Height / 2;
 
                         //var tile = selectedGame.map.maptiles[x + y * selectedGame.map.width];
-                        var x1 = (x - hScrollMap.Value) * 24 * _mapscale;
-                        var y1 = (y - height - vScrollMap.Value) * 16 * _mapscale;
+                        var x1 = (x - hScrollMap.Value) * 24 * _mapScale;
+                        var y1 = (y - height - vScrollMap.Value) * 16 * _mapScale;
                         try
                         {
 
@@ -786,7 +832,7 @@ namespace GraphicsTools.Alundra
                                         var h = img.Y4 - img.Y1;
                                         if (w != 0 && h != 0)
                                         {
-                                            e.Graphics.DrawImage(bmps[sdex], x1 + 12 * _mapscale + img.X1 * _mapscale, y1 + 8 * _mapscale + img.Y1 * _mapscale, w * _mapscale, h * _mapscale);
+                                            e.Graphics.DrawImage(bmps[sdex], x1 + 12 * _mapScale + img.X1 * _mapScale, y1 + 8 * _mapScale + img.Y1 * _mapScale, w * _mapScale, h * _mapScale);
                                         }
                                     }
                                 }
@@ -799,7 +845,7 @@ namespace GraphicsTools.Alundra
 
                         var pen = entities[i] == _selectedEntity ? Pens.Yellow : Pens.Green;
                         var brush = entities[i] == _selectedEntity ? Brushes.Yellow : Brushes.Green;
-                        e.Graphics.DrawRectangle(pen, x1, y1, 24 * _mapscale, 16 * _mapscale);
+                        e.Graphics.DrawRectangle(pen, x1, y1, 24 * _mapScale, 16 * _mapScale);
                         e.Graphics.DrawString("entity " + i, fnt, brush, x1, y1);
                     }
                 }
@@ -835,10 +881,10 @@ namespace GraphicsTools.Alundra
                     if (portals[dex].X2 != 0xff && portals[dex].Y2 != 0xff)
                     {
                         var tile = _selectedGameMap.Map.MapTiles[portals[dex].X1 + portals[dex].Y1 * _selectedGameMap.Map.Width];
-                        var x1 = (portals[dex].X1 - hScrollMap.Value) * 24 * _mapscale;
-                        var y1 = (portals[dex].Y1 - tile.Height - vScrollMap.Value) * 16 * _mapscale;
-                        var x2 = (portals[dex].X2 + 1 - hScrollMap.Value) * 24 * _mapscale;
-                        var y2 = (portals[dex].Y2 - tile.Height + 1 - vScrollMap.Value) * 16 * _mapscale;
+                        var x1 = (portals[dex].X1 - hScrollMap.Value) * 24 * _mapScale;
+                        var y1 = (portals[dex].Y1 - tile.Height - vScrollMap.Value) * 16 * _mapScale;
+                        var x2 = (portals[dex].X2 + 1 - hScrollMap.Value) * 24 * _mapScale;
+                        var y2 = (portals[dex].Y2 - tile.Height + 1 - vScrollMap.Value) * 16 * _mapScale;
                         if (e.X > x1 && e.X < x2 && e.Y > y1 && e.Y < y2)
                         {
                             SelectPortal(dex);
@@ -896,7 +942,7 @@ namespace GraphicsTools.Alundra
             return b.ToString("x2");
         }
 
-        
+
         private string ShortToString(short s)
         {
             return s.ToString("x4");
@@ -1616,6 +1662,63 @@ namespace GraphicsTools.Alundra
             //
             ////Save(@"C:\Users\casad\dev\repo\alundra-datas-analyser\ExportedDatas\alundra" + FileNameExtensions.Sprite, spriteDatas, (x, jObject) => x.Save(jObject));
             ////Save(@"C:\Users\casad\dev\repo\alundra-datas-analyser\ExportedDatas\alundra" + FileNameExtensions.Animation2d, animation2dDatas, (x, jObject) => x.Save(jObject));
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            _showStandardTile = checkBoxStatndardTile.Checked;
+            DrawMap();
+        }
+
+        private void checkBoxWallTile_CheckedChanged(object sender, EventArgs e)
+        {
+            _showWallTile = checkBoxWallTile.Checked;
+            DrawMap();
+        }
+
+        private void checkBoxDebug_CheckedChanged(object sender, EventArgs e)
+        {
+            _showDebug = checkBoxDebug.Checked;
+            DrawMap();
+        }
+
+        private void radioButtonZoom1_CheckedChanged(object sender, EventArgs e)
+        {
+            _mapScale = 1;
+            
+            if (_selectedGameMap?.Map != null)
+            {
+                hScrollMap.Maximum = _selectedGameMap.Map.Width - pctMap.Width / _mapScale / StaticVariables.MapTileWidth;
+                vScrollMap.Maximum = _selectedGameMap.Map.Height - pctMap.Height / _mapScale / StaticVariables.MapTileWidth;
+            }
+
+            DrawMap();
+        }
+
+        private void radioButtonZoom2_CheckedChanged(object sender, EventArgs e)
+        {
+            _mapScale = 2;
+            
+            if (_selectedGameMap?.Map != null)
+            {
+                hScrollMap.Maximum = _selectedGameMap.Map.Width - pctMap.Width / _mapScale / StaticVariables.MapTileWidth;
+                vScrollMap.Maximum = _selectedGameMap.Map.Height - pctMap.Height / _mapScale / StaticVariables.MapTileWidth;
+            }
+
+            DrawMap();
+        }
+
+        private void radioButtonZoom4_CheckedChanged(object sender, EventArgs e)
+        {
+            _mapScale = 4;
+            
+            if (_selectedGameMap?.Map != null)
+            {
+                hScrollMap.Maximum = _selectedGameMap.Map.Width - pctMap.Width / _mapScale / StaticVariables.MapTileWidth;
+                vScrollMap.Maximum = _selectedGameMap.Map.Height - pctMap.Height / _mapScale / StaticVariables.MapTileWidth;
+            }
+
+            DrawMap();
         }
 
         //private static void Save<T>(string fileName, List<T> spriteDatas, Action<T, JObject> saveFunction)

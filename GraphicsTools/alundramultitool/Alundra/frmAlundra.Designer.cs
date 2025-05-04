@@ -228,6 +228,15 @@
             buttonSaveSpriteSheet = new Button();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            label69 = new Label();
+            listViewSpriteMapEntries = new ListView();
+            columnHeaderSpriteMapEntryEnabled = new ColumnHeader();
+            columnHeaderSpriteMapEntryMaxOffsetY = new ColumnHeader();
+            columnHeaderSpriteMapEntryTileWidth = new ColumnHeader();
+            columnHeaderSpriteMapEntryRowCount = new ColumnHeader();
+            columnHeaderSpriteMapEntryOffsetX = new ColumnHeader();
+            columnHeaderSpriteMapEntryOffsetY = new ColumnHeader();
+            columnHeaderSpriteMapEntryOffsetZ = new ColumnHeader();
             tabPage3 = new TabPage();
             tabPage2 = new TabPage();
             tabPage4 = new TabPage();
@@ -256,6 +265,12 @@
             pictureBoxWindTx = new PictureBox();
             label63 = new Label();
             buttonSelectAlundra = new Button();
+            checkBoxStatndardTile = new CheckBox();
+            checkBoxWallTile = new CheckBox();
+            checkBoxDebug = new CheckBox();
+            radioButtonZoom1 = new RadioButton();
+            radioButtonZoom2 = new RadioButton();
+            radioButtonZoom4 = new RadioButton();
             ((System.ComponentModel.ISupportInitialize)pctMapPalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctTilesheet).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctSpritesheet).BeginInit();
@@ -2222,6 +2237,8 @@
             // 
             // tabPage1
             // 
+            tabPage1.Controls.Add(label69);
+            tabPage1.Controls.Add(listViewSpriteMapEntries);
             tabPage1.Controls.Add(label27);
             tabPage1.Controls.Add(lstMapPalettes);
             tabPage1.Controls.Add(pctMapPalettes);
@@ -2268,6 +2285,56 @@
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Spritesheet";
             tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label69
+            // 
+            label69.AutoSize = true;
+            label69.Location = new Point(7, 507);
+            label69.Margin = new Padding(4, 0, 4, 0);
+            label69.Name = "label69";
+            label69.Size = new Size(81, 15);
+            label69.TabIndex = 138;
+            label69.Text = "animated tiles";
+            // 
+            // listViewSpriteMapEntries
+            // 
+            listViewSpriteMapEntries.Columns.AddRange(new ColumnHeader[] { columnHeaderSpriteMapEntryEnabled, columnHeaderSpriteMapEntryMaxOffsetY, columnHeaderSpriteMapEntryTileWidth, columnHeaderSpriteMapEntryRowCount, columnHeaderSpriteMapEntryOffsetX, columnHeaderSpriteMapEntryOffsetY, columnHeaderSpriteMapEntryOffsetZ });
+            listViewSpriteMapEntries.Location = new Point(6, 525);
+            listViewSpriteMapEntries.MultiSelect = false;
+            listViewSpriteMapEntries.Name = "listViewSpriteMapEntries";
+            listViewSpriteMapEntries.ShowGroups = false;
+            listViewSpriteMapEntries.Size = new Size(369, 251);
+            listViewSpriteMapEntries.TabIndex = 137;
+            listViewSpriteMapEntries.UseCompatibleStateImageBehavior = false;
+            listViewSpriteMapEntries.View = View.Details;
+            // 
+            // columnHeaderSpriteMapEntryEnabled
+            // 
+            columnHeaderSpriteMapEntryEnabled.Text = "Enabled";
+            // 
+            // columnHeaderSpriteMapEntryMaxOffsetY
+            // 
+            columnHeaderSpriteMapEntryMaxOffsetY.Text = "NumberOfFrame";
+            // 
+            // columnHeaderSpriteMapEntryTileWidth
+            // 
+            columnHeaderSpriteMapEntryTileWidth.Text = "TileWidth";
+            // 
+            // columnHeaderSpriteMapEntryRowCount
+            // 
+            columnHeaderSpriteMapEntryRowCount.Text = "FrameDuration";
+            // 
+            // columnHeaderSpriteMapEntryOffsetX
+            // 
+            columnHeaderSpriteMapEntryOffsetX.Text = "Index";
+            // 
+            // columnHeaderSpriteMapEntryOffsetY
+            // 
+            columnHeaderSpriteMapEntryOffsetY.Text = "Tick";
+            // 
+            // columnHeaderSpriteMapEntryOffsetZ
+            // 
+            columnHeaderSpriteMapEntryOffsetZ.Text = "FrameIndex";
             // 
             // tabPage3
             // 
@@ -2678,11 +2745,93 @@
             buttonSelectAlundra.UseVisualStyleBackColor = true;
             buttonSelectAlundra.Click += buttonSelectAlundra_Click;
             // 
+            // checkBoxStatndardTile
+            // 
+            checkBoxStatndardTile.AutoSize = true;
+            checkBoxStatndardTile.Checked = true;
+            checkBoxStatndardTile.CheckState = CheckState.Checked;
+            checkBoxStatndardTile.Location = new Point(239, 12);
+            checkBoxStatndardTile.Margin = new Padding(4, 3, 4, 3);
+            checkBoxStatndardTile.Name = "checkBoxStatndardTile";
+            checkBoxStatndardTile.Size = new Size(127, 19);
+            checkBoxStatndardTile.TabIndex = 188;
+            checkBoxStatndardTile.Text = "show standard tiles";
+            checkBoxStatndardTile.UseVisualStyleBackColor = true;
+            checkBoxStatndardTile.CheckedChanged += checkBox1_CheckedChanged;
+            // 
+            // checkBoxWallTile
+            // 
+            checkBoxWallTile.AutoSize = true;
+            checkBoxWallTile.Checked = true;
+            checkBoxWallTile.CheckState = CheckState.Checked;
+            checkBoxWallTile.Location = new Point(374, 12);
+            checkBoxWallTile.Margin = new Padding(4, 3, 4, 3);
+            checkBoxWallTile.Name = "checkBoxWallTile";
+            checkBoxWallTile.Size = new Size(97, 19);
+            checkBoxWallTile.TabIndex = 189;
+            checkBoxWallTile.Text = "show wall tile";
+            checkBoxWallTile.UseVisualStyleBackColor = true;
+            checkBoxWallTile.CheckedChanged += checkBoxWallTile_CheckedChanged;
+            // 
+            // checkBoxDebug
+            // 
+            checkBoxDebug.AutoSize = true;
+            checkBoxDebug.Location = new Point(479, 12);
+            checkBoxDebug.Margin = new Padding(4, 3, 4, 3);
+            checkBoxDebug.Name = "checkBoxDebug";
+            checkBoxDebug.Size = new Size(91, 19);
+            checkBoxDebug.TabIndex = 190;
+            checkBoxDebug.Text = "show debug";
+            checkBoxDebug.UseVisualStyleBackColor = true;
+            checkBoxDebug.CheckedChanged += checkBoxDebug_CheckedChanged;
+            // 
+            // radioButtonZoom1
+            // 
+            radioButtonZoom1.AutoSize = true;
+            radioButtonZoom1.Location = new Point(577, 12);
+            radioButtonZoom1.Name = "radioButtonZoom1";
+            radioButtonZoom1.Size = new Size(37, 19);
+            radioButtonZoom1.TabIndex = 191;
+            radioButtonZoom1.TabStop = true;
+            radioButtonZoom1.Text = "x1";
+            radioButtonZoom1.UseVisualStyleBackColor = true;
+            radioButtonZoom1.CheckedChanged += radioButtonZoom1_CheckedChanged;
+            // 
+            // radioButtonZoom2
+            // 
+            radioButtonZoom2.AutoSize = true;
+            radioButtonZoom2.Location = new Point(620, 12);
+            radioButtonZoom2.Name = "radioButtonZoom2";
+            radioButtonZoom2.Size = new Size(37, 19);
+            radioButtonZoom2.TabIndex = 192;
+            radioButtonZoom2.TabStop = true;
+            radioButtonZoom2.Text = "x2";
+            radioButtonZoom2.UseVisualStyleBackColor = true;
+            radioButtonZoom2.CheckedChanged += radioButtonZoom2_CheckedChanged;
+            // 
+            // radioButtonZoom4
+            // 
+            radioButtonZoom4.AutoSize = true;
+            radioButtonZoom4.Location = new Point(663, 12);
+            radioButtonZoom4.Name = "radioButtonZoom4";
+            radioButtonZoom4.Size = new Size(37, 19);
+            radioButtonZoom4.TabIndex = 193;
+            radioButtonZoom4.TabStop = true;
+            radioButtonZoom4.Text = "x4";
+            radioButtonZoom4.UseVisualStyleBackColor = true;
+            radioButtonZoom4.CheckedChanged += radioButtonZoom4_CheckedChanged;
+            // 
             // FrmAlundra
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1802, 1095);
+            Controls.Add(radioButtonZoom4);
+            Controls.Add(radioButtonZoom2);
+            Controls.Add(radioButtonZoom1);
+            Controls.Add(checkBoxDebug);
+            Controls.Add(checkBoxWallTile);
+            Controls.Add(checkBoxStatndardTile);
             Controls.Add(buttonSelectAlundra);
             Controls.Add(tabControl1);
             Controls.Add(buttonSaveSpriteSheet);
@@ -2960,5 +3109,20 @@
         private Label label65;
         private Label label67;
         private PictureBox pictureBoxFont3Tim;
+        private CheckBox checkBoxStatndardTile;
+        private CheckBox checkBoxWallTile;
+        private CheckBox checkBoxDebug;
+        private RadioButton radioButtonZoom1;
+        private RadioButton radioButtonZoom2;
+        private RadioButton radioButtonZoom4;
+        private Label label69;
+        private ListView listViewSpriteMapEntries;
+        private ColumnHeader columnHeaderSpriteMapEntryEnabled;
+        private ColumnHeader columnHeaderSpriteMapEntryMaxOffsetY;
+        private ColumnHeader columnHeaderSpriteMapEntryTileWidth;
+        private ColumnHeader columnHeaderSpriteMapEntryRowCount;
+        private ColumnHeader columnHeaderSpriteMapEntryOffsetX;
+        private ColumnHeader columnHeaderSpriteMapEntryOffsetY;
+        private ColumnHeader columnHeaderSpriteMapEntryOffsetZ;
     }
 }

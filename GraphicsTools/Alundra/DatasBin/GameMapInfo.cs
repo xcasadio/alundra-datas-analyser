@@ -1,4 +1,7 @@
-﻿namespace Alundra.DatasBin;
+﻿using System.Diagnostics;
+using Alundra.Gameplay;
+
+namespace Alundra.DatasBin;
 
 public class GameMapInfo
 {
@@ -42,6 +45,51 @@ public class GameMapInfo
 
         PalettesBitmap = ImageHelper.BitmapFromPsxBuff(buff, 16, maxPalettes, 16, null);
 
+        byte[] unused = new byte[16];
+        br.Read(unused, 0, 16);
+
+        SpriteMapEntries = new SpriteMapEntry[6];
+
+        int spriteIndex = 0;
+        do
+        {
+            var val1 = br.ReadByte();
+            var val2 = br.ReadByte();
+        
+            SpriteMapEntries[spriteIndex] = new SpriteMapEntry();
+        
+            if (val1 == 0 ||
+                val2 == 0)
+            {
+                SpriteMapEntries[spriteIndex].Enabled = 0;
+                SpriteMapEntries[spriteIndex].Index = 0;
+            }
+            else
+            {
+                SpriteMapEntries[spriteIndex].Enabled = 1;
+                SpriteMapEntries[spriteIndex].NumberOfFrame = (byte)(1 << (val1 & 0x1f));
+        
+                if (SpriteMapEntries[spriteIndex].NumberOfFrame == 0)
+                {
+                    Debugger.Break();
+                    //Trap(0x1c00);
+                }
+        
+                SpriteMapEntries[spriteIndex].TileWidth = (byte)(0xa0 / SpriteMapEntries[spriteIndex].NumberOfFrame);
+                byte rowCount = val2;
+        
+                SpriteMapEntries[spriteIndex].FrameIndex = 0;
+                SpriteMapEntries[spriteIndex].Tick = 0;
+                SpriteMapEntries[spriteIndex].Index = 0;
+                SpriteMapEntries[spriteIndex].FrameDuration = rowCount;
+            }
+        
+            spriteIndex++;
+        } while (spriteIndex < 6);
+
+
+
+
         //read portals
         br.BaseStream.Position = startPosition + 1066;
         PortalFlag1 = br.ReadByte();
@@ -68,6 +116,7 @@ public class GameMapInfo
     public readonly Color[][] Palettes;
     public readonly byte PortalFlag1;
     public readonly byte PortalFlag2;
+    public readonly SpriteMapEntry[] SpriteMapEntries;
     public readonly Portal[] Portals;
     
     public readonly Bitmap PalettesBitmap;

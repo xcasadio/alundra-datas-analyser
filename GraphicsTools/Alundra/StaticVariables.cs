@@ -1,8 +1,6 @@
 ﻿using Alundra.DatasBin;
 using Alundra.Gameplay;
 using Alundra.Gameplay.Scripts;
-using System.Reflection;
-using System.Windows.Forms;
 
 namespace Alundra;
 
@@ -26,7 +24,7 @@ public static class StaticVariables
 
     public const string DATAS_BIN = "DATA\\DATAS.BIN";
 
-    // 80098694
+    //80098694
     public static string[] g_warpNames = ["0-FADE", "1-RAPID", "2-WHITE", "3-SCROLL", "4-DREAM", "5-WARP", "6-GATE", "7-NONE"];
     //800228a4
     public static byte[] BYTE_ARRAY_800228a4 = [0x08, 0x1f, 0x25, 0x26, 0x00, 0x00, 0x00, 0x00];
@@ -393,19 +391,18 @@ public static class StaticVariables
     public static readonly string[] g_damageNames = ["Normal Damage","Critical","No Effect","Error!"];
     //80098f34
     public static readonly string[] g_effectDebugFlagNames = ["A","W","I","0","-2","-2","+2","-2","-1","-1","+1","-1","0","0","-1","+1","+1","+1","-2","+2"];
-    
+    //80023654
     public static readonly short[] g_offsetXList =
     [
         0x0,unchecked((short)0xff6a),unchecked((short)0xfeda),unchecked((short)0xfe5a),unchecked((short)0xfde1),unchecked((short)0xfd81),unchecked((short)0xfd3a),unchecked((short)0xfd0f),unchecked((short)0xfd00),unchecked((short)0xfd0f),unchecked((short)0xfd3a),unchecked((short)0xfd81),unchecked((short)0xfde1),unchecked((short)0xfe5a),unchecked((short)0xfeda),unchecked((short)0xff6a),
         0x0,0x96,0x126,0x1a6,0x21f,0x27f,0x2c6,0x2f1,0x300,0x2f1,0x2c6,0x27f,0x21f,0x1a6,0x126,0x96
     ];
-
+    //80023694
     public static readonly short[] g_offsetYList =
     [
         0x200,0x1f6,0x1d9,0x1aa,0x16a,0x11c,0xc4,0x64,0x0,unchecked((short)0xff9c),unchecked((short)0xff3c),unchecked((short)0xfee4),unchecked((short)0xfe96),unchecked((short)0xfe56),unchecked((short)0xfe27),unchecked((short)0xfe0a),
         unchecked((short)0xfe00),unchecked((short)0xfe0a),unchecked((short)0xfe27),unchecked((short)0xfe56),unchecked((short)0xfe96),unchecked((short)0xfee4),unchecked((short)0xff3c),unchecked((short)0xff9c),0x0,0x64,0xc4,0x11c,0x16a,0x1aa,0x1d9,0x1f6
     ];
-
     //800270c0
     public static readonly int[] g_scriptAnimationTable =
     [
@@ -415,12 +412,15 @@ public static class StaticVariables
         0x00000004,//0x03
         0x00000000 //0x04
     ];
-
+    //80023644
+    public static readonly int[] g_cardinalDirectionTable = [0, 0x10, 0x08, 0x18];
 
     public static void Initialize()
     {
         //TODO : alreay loaded? where?
-        g_spriteDataBase = new byte[50000];
+        g_imageBuffer = new byte[50000];
+        g_imageBufferCompressed = new byte[50000];
+
         for (var i = 0; i < g_entitySlots.Length; i++)
         {
             var entity = new Entity { EntityRefId = -1 };
@@ -435,7 +435,7 @@ public static class StaticVariables
 
         for (int i = 0; i < g_mapEvents.Length; i++)
         {
-            g_mapEvents[i] = new MapEvent() { Id = i };
+            g_mapEvents[i] = new MapEvent { Id = i };
         }
 
         var index2 = 0;
@@ -768,7 +768,7 @@ public static class StaticVariables
     public static short DAT_8002357c; // 8002357C
     public static short DAT_800235e0; // 800235E0
     public static short DAT_800235e2; // 800235E2
-    public static int  g_warpZones; // 80023644
+    //public static int[]  g_cardinalDirectionTable = new int[4]; // 80023644
     //public static short[] g_offsetXList; // 80023654
     public static short DAT_8002365c; // 8002365C
     public static short DAT_80023660; // 80023660
@@ -1396,7 +1396,7 @@ public static class StaticVariables
     public static short DAT_800dc5c8; // 800DC5C8
     public static short DAT_800dcd24; // 800DCD24
     public static short g_tileVRAMClearTable; // 800DCD26
-    public static byte g_tileColorTable; // 800DCD28
+    public static TileAnimDescriptor[] g_tileAnimDescriptorTable; // 800DCD28
     public static byte DAT_800dcd29; // 800DCD29
     public static byte DAT_800dcd2a; // 800DCD2A
     public static byte DAT_800dcd2b; // 800DCD2B
@@ -1409,16 +1409,16 @@ public static class StaticVariables
     public static SPRT[] g_tileSpriteBuffer = new SPRT[600]; // 800DD878
     public static int[] INT_ARRAY_800e0758 = new int[3800]; // 800E0758
     public static int g_isCameraScrolling; // 800E42B8
-    public static short  g_drawPageTPageIDs; // 800E42BC
+    public static short[] g_drawPageTPageIDs; // 800E42BC
     //public static DR_TPAGE[] g_tileOrderingTable = new DR_TPAGE[6]; // 800E42C0
-    public static SpriteMapEntry[] g_spriteMapTable = new SpriteMapEntry[11]; // 800E42F0
+    //public static SpriteMapEntry[] g_spriteMapTable = new SpriteMapEntry[6]; // 800E42F0
     public static int g_LoadVRAMAssets_debug; // 800E431C
     public static int  g_drawPageInfoTable; // 800E4320
     public static int g_currentDrawPageParam; // 800E4324
     public static int g_cameraScrollingX; // 800E4328
     public static int g_cameraScrollingY; // 800E432C
-    public static int  g_spriteOtherPointer; // 800E4330
-    public static byte[]  g_spriteDataBase; // 800E4334
+    public static byte[] g_imageBufferCompressed; // 800E4330
+    public static byte[] g_imageBuffer = new byte[5000]; // 800E4334
     public static int g_bossCutsceneFlag; // 800E4338
     public static int g_triggerEvent1; // 800E433C
     public static int g_triggerEvent2; // 800E4340
