@@ -1,0 +1,156 @@
+﻿using Alundra.DatasBin;
+
+namespace Alundra;
+
+public class RendererHelper
+{
+    //Custom renderer
+    public static void Render(Graphics g, DatasBin.DatasBin datasBin, GameMap gameMap)
+    {
+        var currentXPosition = StaticVariables.g_cameraCurrentX;// >> 16;
+        var currentYPosition = StaticVariables.g_cameraCurrentY;// >> 16;
+                     
+        var curXTile = currentXPosition / StaticVariables.MapTileWidth;
+
+        var sinfo = gameMap.SpriteInfo;
+        var gensi = datasBin.AlundraGameMap.SpriteInfo;
+
+        for (var y = 0; y < gameMap.Map.Height ;y++)
+        {
+            //draw tiles on this row
+            for (var x = curXTile; x < curXTile + StaticVariables.ScreenWidth / StaticVariables.MapTileWidth + 2; x++)
+            {
+                //&g_tileAnimDescriptorTable + (tile.Flags & 0x3ff) * 3 +
+                //    (uint)g_spriteMapTable[(byte)(&g_tileAnimDescriptorTable)[(tile.Flags & 0x3ff) * 3]].offsetX * 3;
+                
+                var tile = gameMap.Map.MapTiles[y * gameMap.Map.Width + x];
+                var tileId = tile.TileId;
+
+                //render tile
+                var dx = x * StaticVariables.MapTileWidth - currentXPosition;
+                var dy = (y - tile.Height) * StaticVariables.MapTileHeight - currentYPosition;
+
+                if (dy > -StaticVariables.MapTileHeight && dy < StaticVariables.ScreenHeight && tile.TileId != -1)
+                {
+                    tileId = GetAnimatedTileId(gameMap, tileId);
+                    DrawTile(tileId, dx, dy, g, gameMap);
+                }
+
+                if (tile.WallTiles != null)
+                {
+                    var wallTiles = tile.WallTiles;
+                    int i;
+                    dy -= wallTiles.Offset * StaticVariables.MapTileHeight;
+
+                    for (i = 0; i < wallTiles.Count; i++)
+                    {
+                        dy += StaticVariables.MapTileHeight;
+                        //render wall tile
+                        var wallTileId = wallTiles.Tiles[i];
+
+                        if (dy > -StaticVariables.MapTileHeight && dy < StaticVariables.ScreenHeight && wallTileId != -1)
+                        {
+                            wallTileId = GetAnimatedTileId(gameMap, wallTileId);
+                            DrawTile(wallTileId, dx, dy, g, gameMap);
+                        }
+                    }
+                }
+            }
+
+            //draw sprites who are on this row
+            for (var i = 0; i < StaticVariables.g_numberOfEntity; i++)
+            {
+                var entity = StaticVariables.g_entitySlots[i];
+                if (entity.Status == 5)
+                {
+                    continue;
+                }
+
+                if (entity.TileY != y)
+                {
+                    continue;//if its not in this row, continue
+                }
+
+                //var tile = selectedGame.map.maptiles[sx + sy * selectedGame.map.width];
+                var scx = (entity.ModdedXPos >> 16) - currentXPosition;
+                var scy = (entity.ModdedYPos >> 16) - (entity.ModdedZPos >> 16) - currentYPosition;
+
+                if (entity.Sprite != null)
+                {
+                    int idex;
+
+                    var map = entity.IsMapSprite ? gameMap : datasBin.AlundraGameMap;
+
+                    if (entity.Frame == null) // why?? TODO, not initialized ?
+                    {
+                        continue;
+                    }
+
+                    var iset = entity.Frame.Images;
+                    for (idex = iset.NumberOfImages - 1; idex >= 0; idex--)
+                    {
+                        var img = iset.Images[idex];
+                        DrawSprite(map, img, scx, scy, g);
+                    }
+                }
+            }
+        }
+    }
+
+    private static short GetAnimatedTileId(GameMap gameMap, short tileId)
+    {
+        var tile = tileId & 0x3ff;
+
+        var spriteIndex = StaticVariables.g_tileAnimDescriptorTable[tile].SpriteIndex;
+        if (spriteIndex != 0)
+        {
+            var entry = gameMap.Info.SpriteMapEntries[spriteIndex];
+            if (entry.Enabled == 1)
+            {
+                //tileY + 1
+                tileId = (short)( (tileId & 0xF000) | ((tileId + 10 * entry.FrameIndex * 2) & 0x03FF));
+            }
+        }
+
+        return tileId;
+    }
+
+    private static void DrawSprite(GameMap gm, SiImage img, int x, int y, Graphics g)
+    {
+        var bmp = gm.GetSpriteBitmap(img);
+        //_pnts[0].X = x + img.X1;
+        //_pnts[0].Y = y + img.Y1;
+        //
+        //_pnts[1].X = x + img.X2;
+        //_pnts[1].Y = y + img.Y2;
+        //
+        //_pnts[2].X = x + img.X3;
+        //_pnts[2].Y = y + img.Y3;
+        //
+        //_pnts[3].X = x + img.X4;
+        //_pnts[3].Y = y + img.Y4;
+        //
+        //g.DrawImage(bmp, _pnts);
+
+        var w = img.X4 - img.X1;
+        var h = img.Y4 - img.Y1;
+        if (w != 0 && h != 0)
+        {
+            g.DrawImage(bmp, x + img.X1, y + img.Y1, w, h);
+        }
+
+        //var rectangle = new Rectangle(
+        //    x + Math.Min(img.X1, Math.Min(img.X2, Math.Min(img.X3, img.X4))), 
+        //    y + Math.Min(img.Y1, Math.Min(img.Y2, Math.Min(img.Y3, img.Y4))), 
+        //    x+ Math.Max(img.X1, Math.Max(img.X2, Math.Max(img.X3, img.X4))), 
+        //    y + Math.Max(img.Y1, Math.Max(img.Y2, Math.Max(img.Y3, img.Y4))));
+        //
+        //g.DrawImage(bmp, rectangle);
+    }
+
+    private static void DrawTile(int tileMapIndex, int x, int y, Graphics g, GameMap gameMap)
+    {
+        var bmp = gameMap.GetTileBitmap(tileMapIndex);
+        g.DrawImage(bmp, x, y);
+    }
+}

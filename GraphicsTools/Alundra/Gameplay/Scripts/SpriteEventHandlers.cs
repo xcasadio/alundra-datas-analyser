@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 
 namespace Alundra.Gameplay.Scripts;
 
@@ -371,7 +369,7 @@ public class SpriteEventHandlers
                 {
                     return;
                 }
-                _gameEngine.StartFlying(entity, 1, 0x28, 0x14);
+                _gameEngine.EntityGameplayManager.StartFlying(entity, 1, 0x28, 0x14);
                 entity.Bytes[1] = 0;
                 break;
 
@@ -454,10 +452,10 @@ public class SpriteEventHandlers
                 entity.AIValues[1] = sVar2;
                 if (sVar2 == 0)
                 {
-                    _gameEngine.StartFlying(entity, 1, 0x50, 0x1e);
+                    _gameEngine.EntityGameplayManager.StartFlying(entity, 1, 0x50, 0x1e);
                     entity.Bytes[0] = 0;
                 }
-                else if (entity.Bytes[0] == 0 && _gameEngine.TryAttackPlayer(entity, relativePositions, 2, 0x100000))
+                else if (entity.Bytes[0] == 0 && _gameEngine.EntityGameplayManager.TryAttackPlayer(entity, relativePositions, 2, 0x100000))
                 {
                     entity.TargetAnimationId = 0xd;
                     direction = (uint)ScriptHelper.GetDirectionToTarget(
@@ -469,11 +467,11 @@ public class SpriteEventHandlers
                 }
                 else if (entity.ForceAdjusted == 0)
                 {
-                    _gameEngine.HandleAnimationDirection(entity, 1, 0x200000);
+                    _gameEngine.EntityGameplayManager.HandleAnimationDirection(entity, 1, 0x200000);
                 }
                 else
                 {
-                    _gameEngine.UpdateDirectionForced(entity, 1, 4, 0x200000);
+                    _gameEngine.EntityGameplayManager.UpdateDirectionForced(entity, 1, 4, 0x200000);
                 }
                 break;
 
@@ -482,7 +480,7 @@ public class SpriteEventHandlers
                 entity.AIValues[6] = (short)direction;
                 if ((direction & 7) == 0)
                 {
-                    _gameEngine.CreateEffectEntity(0, StaticVariables.g_imageBuffer[10], 0,
+                    _gameEngine.EffectManager.CreateEffectEntity(0, StaticVariables.g_imageBuffer[10], 0,
                         entity.XPos, entity.YPos, entity.FloorHeight);
                 }
 
@@ -606,7 +604,7 @@ public class SpriteEventHandlers
                         return;
                     }
 
-                    _gameEngine.HandleAnimationDirection(entity, 1, 0);
+                    _gameEngine.EntityGameplayManager.HandleAnimationDirection(entity, 1, 0);
                     return;
                 }
 
@@ -670,7 +668,7 @@ public class SpriteEventHandlers
                     }
                     else
                     {
-                        _gameEngine.StartFlying(entity, 1, 0x78, 0x14);
+                        _gameEngine.EntityGameplayManager.StartFlying(entity, 1, 0x78, 0x14);
                     }
                 }
                 break;
@@ -772,7 +770,7 @@ public class SpriteEventHandlers
                     {
                         entity.InitialXPos = 1;
                         entity.TargetDirection = (entity.TargetDirection + 0x10) & 0x1f;
-                        _gameEngine.CreateEffectEntity(0, 9, 0, entity.XPos, entity.YPos, entity.ZPos + 0x80000);
+                        _gameEngine.EffectManager.CreateEffectEntity(0, 9, 0, entity.XPos, entity.YPos, entity.ZPos + 0x80000);
                     }
                 }
                 else

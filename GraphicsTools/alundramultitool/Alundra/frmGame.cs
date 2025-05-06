@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using Alundra;
 using Alundra.DatasBin;
 using Alundra.Gameplay;
@@ -30,7 +29,6 @@ public partial class FrmGame : Form
 
         _engine = new GameEngine(datasBin, balanceBin, soundBin, etcResR, font3);
         _engine.InitializeEngine();
-        _engine.InitializeGame();
 
         _graphics = Graphics.FromImage(_backBuffer);
         _graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;

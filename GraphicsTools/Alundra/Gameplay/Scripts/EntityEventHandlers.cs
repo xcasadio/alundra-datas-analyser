@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Reflection.Emit;
 using Alundra.DatasBin;
 
 namespace Alundra.Gameplay.Scripts;
@@ -785,7 +784,7 @@ public class EntityEventHandlers
         for (var dex = 0; dex < numEntities; dex++)
         {
             var checkme = StaticVariables.g_entitySlots[dex];
-            _gameEngine.HideEntity(checkme);
+            _gameEngine.EntityGameplayManager.HideEntity(checkme);
         }
 
         return 2;
@@ -1374,7 +1373,7 @@ public class EntityEventHandlers
         for (var i = 0; i < numEntities; i++)
         {
             var dome = StaticVariables.g_entitySlots[i];
-            dome.TargetDirection = _gameEngine.TurnEntity(entity, turncode);
+            dome.TargetDirection = _gameEngine.EntityGameplayManager.TurnEntity(entity, turncode);
         }
 
         return 3;
@@ -1391,7 +1390,7 @@ public class EntityEventHandlers
         {
             var dome = StaticVariables.g_entitySlots[i];
             dome.TargetAnimationId = (uint)animid;
-            dome.TargetDirection = _gameEngine.TurnEntity(entity, turncode);
+            dome.TargetDirection = _gameEngine.EntityGameplayManager.TurnEntity(entity, turncode);
         }
 
         return 4;
@@ -1486,7 +1485,7 @@ public class EntityEventHandlers
     public int _90_CreateEffect_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         var effectid = (byte)exp[1];
-        _gameEngine.CreateEffect_MapType(effectid, true);
+        _gameEngine.EffectManager.GameEngine.CreateEffect_MapType(effectid, true, _gameEngine.EffectManager);
         return 2;
     }
 
@@ -1613,7 +1612,7 @@ public class EntityEventHandlers
     public int _a2_CreateEffectWithPos_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         var effectid = (byte)exp[1];
-        var effect = _gameEngine.CreateEffect_MapType(effectid, true);
+        var effect = _gameEngine.EffectManager.GameEngine.CreateEffect_MapType(effectid, true, _gameEngine.EffectManager);
         if (effect == null)
         {
             return 8;
@@ -1640,7 +1639,7 @@ public class EntityEventHandlers
             return 9;
         }
 
-        var effect = _gameEngine.CreateEffect_MapType(effectid, true);
+        var effect = _gameEngine.EffectManager.GameEngine.CreateEffect_MapType(effectid, true, _gameEngine.EffectManager);
         if (effect == null)
         {
             return 9;

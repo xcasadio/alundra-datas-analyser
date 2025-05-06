@@ -2,7 +2,6 @@
 using Alundra.Gameplay;
 using Alundra.Gameplay.Scripts;
 using Alundra.Sound;
-using Alundra.Sprite;
 using Alundra.Text;
 using System.Diagnostics;
 
@@ -50,7 +49,7 @@ public class Game
 
     public void Render(Graphics g)
     {
-        Renderer.Render(g, _datasBin, _map);
+        RendererHelper.Render(g, _datasBin, _map);
     }
 
     public void LoadMap(int mapId)
