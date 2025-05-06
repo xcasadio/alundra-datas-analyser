@@ -1335,8 +1335,8 @@ public class Game
             else
             {
                 mapEvent.EventData.Sp = 0;
-                mapEvent.EventData.Exp = 0;
-                mapEvent.EventData.LogicResult = 0;
+                mapEvent.EventData.Exp[0] = 0;
+                mapEvent.EventData.Exp[9] = 0;
                 mapEvent.Entity = playerEntity;
                 mapEvent.ProgramBMap = rec.EventCodesBIndex;
             }

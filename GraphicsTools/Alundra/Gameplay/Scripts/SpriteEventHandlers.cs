@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Alundra.Gameplay.Scripts;
@@ -70,17 +71,16 @@ public class SpriteEventHandlers
 
         if (handlers.TryGetValue(eventId, out var handler))
         {
-            if (eventType != ScriptHelper.ProgramCTick && eventId != 0 && eventType != ScriptHelper.ProgramALoad && eventId != 13)
+            if (handler != AI_EmptyFunction)
             {
-                //exec of a func !!!!!!!!!
-                System.Diagnostics.Debugger.Break();
+                Debug.WriteLine($"Entity {entity.Index} exec func[{eventType}][{eventId}] => {handler.Method.Name}");
             }
 
             handler(entity);
         }
         else
         {
-            System.Diagnostics.Debugger.Break();
+            Debugger.Break();
         }
     }
 

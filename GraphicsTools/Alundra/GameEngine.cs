@@ -10,14 +10,14 @@ namespace Alundra;
 
 public class GameEngine
 {
-    private readonly DatasBin.DatasBin _datasBin;
-    public BalanceBin BalanceBin;
-    public SoundBin SoundBin;
+    public readonly DatasBin.DatasBin DatasBin;
+    public readonly BalanceBin BalanceBin;
+    public readonly SoundBin SoundBin;
     private readonly EtcResR _etcResR;
     private readonly Font3 _font3;
 
     public GameMap CurrentMap { get; private set; }
-    public GameMap AlundraMap => _datasBin.AlundraGameMap;
+    public GameMap AlundraMap => DatasBin.AlundraGameMap;
 
     //find the staticVariables for this=>
     //private int NumSprites;
@@ -27,7 +27,7 @@ public class GameEngine
 
     public GameEngine(DatasBin.DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR, Font3 font3)
     {
-        _datasBin = datasBin;
+        DatasBin = datasBin;
         BalanceBin = balanceBin;
         SoundBin = soundBin;
         _etcResR = etcResR;
@@ -80,9 +80,9 @@ public class GameEngine
                 //StaticVariables.g_imageBuffer[0xc];
                 //StaticVariables.g_imageBuffer[0xd];
                 //StaticVariables.g_imageBuffer[0xe];
-                var x = CurrentMap.SpriteInfo.Entities.Entities[0].XPos;   
-                var y = CurrentMap.SpriteInfo.Entities.Entities[0].YPos;   
-                var z = CurrentMap.SpriteInfo.Entities.Entities[0].Height; 
+                var x = CurrentMap.SpriteInfo.Entities.Entities[0].XPos;
+                var y = CurrentMap.SpriteInfo.Entities.Entities[0].YPos;
+                var z = CurrentMap.SpriteInfo.Entities.Entities[0].Height;
 
                 playerPosX = x << 3;
                 playerPosY = y << 3;
@@ -267,12 +267,12 @@ public class GameEngine
         //InitializeOrderingTables();
         InitializeTileRenderingSystem(StaticVariables.g_drawPageParam);
         InitializeAlundraSpriteResourcesFromFile(StaticVariables.DATAS_BIN,
-            _datasBin.Header.AlundraSpriteInfoOffset, _datasBin.Header.AlundraSpritesOffset,
-            _datasBin.Header.AlundraSpritesRepeatOffset, _datasBin.Header.AlundraStringTableOffset);
+            DatasBin.Header.AlundraSpriteInfoOffset, DatasBin.Header.AlundraSpritesOffset,
+            DatasBin.Header.AlundraSpritesRepeatOffset, DatasBin.Header.AlundraStringTableOffset);
         //LoadBalance_bin();
         InitDebugVars();
         //LoadAlundraStringTable(DATAS_BIN, _datasBin.Header.AlundraStringTableRepeatOffset);
-        using var reader = _datasBin.OpenBin(); //added by hand
+        using var reader = DatasBin.OpenBin(); //added by hand
         AlundraMap.Load(reader, false);
 
         IntializeTiles();
@@ -288,7 +288,7 @@ public class GameEngine
     private void InitPadController()
     {
         PadInit(0);
-        
+
         StaticVariables.g_padState1 = new PadState();
         StaticVariables.g_padState2 = new PadState();
 
@@ -322,7 +322,7 @@ public class GameEngine
     private void InitializeTileRenderingSystem(int drawPageParam)
     {
         StaticVariables.g_drawPageInfoTable = StaticVariables.g_drawPageInfoBase;
-        StaticVariables.g_drawPageTPageIDs = StaticVariables.g_tPageIds;                             
+        StaticVariables.g_drawPageTPageIDs = StaticVariables.g_tPageIds;
         StaticVariables.g_currentDrawPageParam = drawPageParam;
 
         //TODO: initialize g_tileSpriteBuffer ?
@@ -367,7 +367,7 @@ public class GameEngine
         //            *pcVar1 = (char)spriteBufferOffset;
         //            pcVar1 = pcVar1 + 3;
         //            spriteOffset = spriteIndex + 0x30;
-        //            StaticVariables.g_tileAnimDescriptorTable = (astruct *)&StaticVariables.g_tileAnimDescriptorTable->field_0x3;
+        //            StaticVariables.g_tileAnimDescriptorTable = (astruct *)&StaticVariables.g_tileAnimDescriptorTable.field_0x3;
         //            spriteIndex = spriteIndex + 0x18;
         //        } while (spriteOffset < 0x101);
         //
@@ -397,9 +397,9 @@ public class GameEngine
             do {
                 SetPolyFT4(polyFt4);
                 SetShadeTex(polyFt4,1);
-                polyFt4->r0 = 0x80;
-                polyFt4->g0 = 0x80;
-                polyFt4->b0 = 0x80;
+                polyFt4.r0 = 0x80;
+                polyFt4.g0 = 0x80;
+                polyFt4.b0 = 0x80;
                 j = j + 1;
                 polyFt4 = polyFt4 + 0x200;
             } while (j < 2);
@@ -895,7 +895,7 @@ public class GameEngine
 
         if (0 < animationBankIndex)
         {
-            //StaticVariables.g_animationData = StaticVariables.g_tile_set + (animationBankIndex + -1) * 0x10 + StaticVariables.g_tileSetMetaData->tileAnimationOffset;
+            //StaticVariables.g_animationData = StaticVariables.g_tile_set + (animationBankIndex + -1) * 0x10 + StaticVariables.g_tileSetMetaData.tileAnimationOffset;
         }
     }
 
@@ -1001,19 +1001,24 @@ public class GameEngine
             StaticVariables.g_mapEvents[i].MapEventRecord = null;
             StaticVariables.g_mapEvents[i].Entity = null;
             StaticVariables.g_mapEvents[i].EventData.Sp = 0;
-            StaticVariables.g_mapEvents[i].EventData.Exp = 0;
-            StaticVariables.g_mapEvents[i].EventData.Tick = 0;
-            for (int j = 0; j < StaticVariables.g_mapEvents[i].EventData.Variables.Length; j++)
+            StaticVariables.g_mapEvents[i].EventData.CommandIndex = 0;
+            for (int j = 0; j < StaticVariables.g_mapEvents[i].EventData.Exp.Length; j++)
             {
-                StaticVariables.g_mapEvents[i].EventData.Variables[j] = 0;
+                StaticVariables.g_mapEvents[i].EventData.Exp[j] = 0;
             }
-            StaticVariables.g_mapEvents[i].EventData.LogicResult = 0;
-            StaticVariables.g_mapEvents[i].EventData.ElapsedMs = 0;
-            StaticVariables.g_mapEvents[i].EventData.IsWaiting = 0;
-            for (int j = 0; j < StaticVariables.g_mapEvents[i].EventData.Codes.Length; j++)
-            {
-                StaticVariables.g_mapEvents[i].EventData.Codes[j] = 0;
-            }
+
+            //StaticVariables.g_mapEvents[i].EventData.Tick = 0;
+            //for (int j = 0; j < StaticVariables.g_mapEvents[i].EventData.Variables.Length; j++)
+            //{
+            //    StaticVariables.g_mapEvents[i].EventData.Variables[j] = 0;
+            //}
+            //StaticVariables.g_mapEvents[i].EventData.LogicResult = 0;
+            //StaticVariables.g_mapEvents[i].EventData.ElapsedMs = 0;
+            //StaticVariables.g_mapEvents[i].EventData.IsWaiting = 0;
+            //for (int j = 0; j < StaticVariables.g_mapEvents[i].EventData.Codes.Length; j++)
+            //{
+            //    StaticVariables.g_mapEvents[i].EventData.Codes[j] = 0;
+            //}
 
 
             i++;
@@ -1089,7 +1094,7 @@ public class GameEngine
 
             i++;
         }
-        
+
 
         //do
         //{
@@ -1220,11 +1225,11 @@ public class GameEngine
 
     public void LoadMap(int mapId)
     {
-        CurrentMap = _datasBin.GameMaps[mapId];
+        CurrentMap = DatasBin.GameMaps[mapId];
 
         if (!CurrentMap.Loaded)
         {
-            using var reader = _datasBin.OpenBin();
+            using var reader = DatasBin.OpenBin();
             CurrentMap.Load(reader, true);
         }
 
@@ -1253,10 +1258,10 @@ public class GameEngine
 
     private void InitializeEntitySlots()
     {
-        Entity entityCounter = null;
-        Entity writePtr = StaticVariables.PlayerEntity;
-        Entity readPtr = StaticVariables.g_emptyEntityForClearing;
-        Entity blockStart = writePtr;
+        //Entity entityCounter = null;
+        //Entity writePtr = StaticVariables.PlayerEntity;
+        //Entity readPtr = StaticVariables.g_emptyEntityForClearing;
+        //Entity blockStart = writePtr;
 
         //do
         //{
@@ -1287,6 +1292,12 @@ public class GameEngine
         //}
         //while ((int)entityCounter < 0x40);
 
+        for (int i = 0; i < StaticVariables.g_entitySlots.Length; i++)
+        {
+            StaticVariables.g_entitySlots[i].Index = i;
+            StaticVariables.g_entitySlots[i].EntityRefId = -1;
+        }
+
         StaticVariables.g_numberOfEntity = 0;
 
         ResetEntityState();
@@ -1312,13 +1323,14 @@ public class GameEngine
         //}
         //while (characterIndex < 0x80);
 
-        for (int i = 1; i < StaticVariables.g_entitySlots.Length; i++)
+        for (int i = 0; i < CurrentMap.SpriteInfo.Entities.Entities.Length; i++)
         {
+            //CurrentMap.SpriteInfo.Entities.Entities[i].
+
             var entity = SpawnEntity(null, i, 0);
 
-            if (entity == null)
+            if (entity != null)
             {
-                continue;
             }
         }
 
@@ -1462,7 +1474,7 @@ public class GameEngine
         }
         else
         {
-            si = _datasBin.AlundraGameMap.SpriteInfo;
+            si = DatasBin.AlundraGameMap.SpriteInfo;
             addedtosheet = 0xb;
             addedtopallette = 0x60;
         }
@@ -1482,20 +1494,28 @@ public class GameEngine
 
     private Entity AllocateEntitySlot()
     {
-        int i = 1;
-        int index = 0;
-        Entity entity = StaticVariables.g_entitySlots[index];
-
-        do
+        for (int i = 1; i < StaticVariables.g_entitySlots.Length; i++)
         {
-            i = i + 1;
-            if (entity.Status == 0)
+            if (StaticVariables.g_entitySlots[i].Status == 0)
             {
-                return entity;
+                return StaticVariables.g_entitySlots[i];
             }
-            index++;
-            entity = StaticVariables.g_entitySlots[index];
-        } while (i < 0x40);
+        }
+
+        //int i = 1;
+        //int index = i;
+        //Entity entity = StaticVariables.g_entitySlots[index];
+        //
+        //do
+        //{
+        //    i = i + 1;
+        //    if (entity.Status == 0)
+        //    {
+        //        return entity;
+        //    }
+        //    index++;
+        //    entity = StaticVariables.g_entitySlots[index];
+        //} while (i < 0x40);
 
         //DoNothing();
         return null;
@@ -1525,7 +1545,7 @@ public class GameEngine
         }
 
         entity.Sprite = sprite;
-        entity.ProgramIndexes[1] = entityId; //entityRecord;
+        entity.EntityRecord = entityRecord;
         entity.SpriteTableIndex = spriteTableIndex;
 
         if (entityRecord != null)
@@ -1538,8 +1558,7 @@ public class GameEngine
         }
 
         entity.Status = 1;
-        entity.Index2++;
-        //entity.Index = StaticVariables.g_nextEntityIndex++;
+        entity.Index2 = ++StaticVariables.g_nextEntityIndex;
 
         entity.CurrentAnimationId = ~animationId;
         entity.CurrentDirection = ~direction;
@@ -1548,12 +1567,12 @@ public class GameEngine
         //uint flags = animData.Flags;
         entity.Flags = (uint)(sprite.Header.MoreFlags | sprite.Header.CanPickup << 8 | sprite.Header.FlagsPortraitShadowtype << 16); ;
 
-        entity.SpriteProgramIndexes[0] = sprite.Header.ProgramLoad;
-        entity.SpriteProgramIndexes[1] = 0;
-        entity.SpriteProgramIndexes[2] = sprite.Header.ProgramTick;
-        entity.SpriteProgramIndexes[3] = sprite.Header.ProgramTouch;
-        entity.SpriteProgramIndexes[4] = sprite.Header.ProgramDeactivate;
-        entity.SpriteProgramIndexes[5] = sprite.Header.ProgramInteract;
+        entity.SpriteProgramIndexes[ScriptHelper.ProgramALoad] = sprite.Header.ProgramLoad;
+        entity.SpriteProgramIndexes[ScriptHelper.ProgramBMap] = 0;
+        entity.SpriteProgramIndexes[ScriptHelper.ProgramCTick] = sprite.Header.ProgramTick;
+        entity.SpriteProgramIndexes[ScriptHelper.ProgramDTouch] = sprite.Header.ProgramTouch;
+        entity.SpriteProgramIndexes[ScriptHelper.ProgramEDeactivate] = sprite.Header.ProgramDeactivate;
+        entity.SpriteProgramIndexes[ScriptHelper.ProgramFInteract] = sprite.Header.ProgramInteract;
 
         entity.AddedToPalette = paletteIndex;
         entity.AddedToSheet = sheetSize;
@@ -1657,16 +1676,15 @@ public class GameEngine
         SiFrame currentFrame = null;
         bool noSkip = true;
 
-        var frameDelay = entity.TargetAnimationId;
         entity.IsZForceApplied = 0;
+        var frameDelay = entity.TargetAnimationId;
         var animationFrameIndex = StaticVariables.g_frameIndexTable[(entity.TargetDirection + 2 & 0x1c) + entity.CurrentFrameIndex * 0x20];
 
-        if (frameDelay != entity.CurrentAnimationId)
-        {
-            noSkip = false;
-        }
+        //var directionIndex = ((entity.TargetDirection + 2) & 0x1c) >> 2;
+        //frameDelay = StaticVariables.g_frameIndexTable[directionIndex + (entity.CurrentFrameIndex << 3)];
 
-        if (animationFrameIndex != entity.CurrentAnimationId)
+        if (entity.TargetAnimationId != entity.CurrentAnimationId
+            || animationFrameIndex != entity.CurrentFrameIndex)
         {
             noSkip = false;
         }
@@ -1678,10 +1696,16 @@ public class GameEngine
 
             if (animationFrameIndex != 0)
             {
+                entity.NextFrameDelay = 0x7fffffff;
+                entity.ForceResetAnimationFlag = 1;
+
+                Debug.Assert(entity.AnimSet != null);
+                Debug.Assert(entity.Frame != null);
                 return;
             }
 
             currentFrame = entity.Frame;
+            //currentFrame = entity.AnimSet.PreloadedAnims[entity.TargetAnimationId >> 3].Frames[frameDelay];
         }
 
         while (true)
@@ -1693,12 +1717,17 @@ public class GameEngine
                 if (((uint)currentFrame.Delay & 0x80) != 0)
                 {
                     entity.NextFrameDelay = (int)(frameDelay & 0x7f);
-                    //entity.Frame = entity.AnimSet
-                    //    .PreloadedAnims[entity.TargetAnimationId]
-                    //    .Frames[entity.CurrentFrameIndex + 1];
+                    try
+                    {
+                        var frame = entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.CurrentFrameIndex + 1];
+                        entity.Frame = frame ?? entity.Frame;
+                    }
+                    catch (Exception e)
+                    {
+                        Debugger.Break();
+                    }
 
-
-                    Debug.Assert(entity.Frame != null);
+                    //Debug.Assert(entity.Frame != null);
 
                     if (currentFrame.CollisionOffset != -1)
                     {
@@ -1728,6 +1757,8 @@ public class GameEngine
                         entity.SpriteRef.NumImages = 0;
                     }
 
+                    Debug.Assert(entity.AnimSet != null);
+                    Debug.Assert(entity.Frame != null);
                     return;
                 }
 
@@ -1738,7 +1769,7 @@ public class GameEngine
 
                 if (frameDelay != 1)
                 {
-
+                    Debugger.Break();
                     throw new Exception("Character Animation Error!!");
                 }
 
@@ -1749,28 +1780,29 @@ public class GameEngine
 
             if (noSkip)
             {
-                frameDelay = (uint)(currentFrame.CollisionOffset & 0x80);
-                //frameDelay = (uint)currentFrame->transformIndexLow;
+                frameDelay = (uint)currentFrame.CollisionOffset;
+                //frameDelay = (uint)currentFrame.transformIndexLow;
 
-                if (frameDelay != 0)
+                if ((currentFrame.CollisionOffset & 0x80) != 0)
                 {
                     break;
                 }
 
-                animationFrameIndex = entity.CurrentFrameIndex;
-                entity.TargetAnimationId = frameDelay;
+                //frameDelay = entity.CurrentFrameIndex;
+                entity.TargetAnimationId = (uint)frameDelay;
                 entity.AnimCompleteCounter++;
             }
 
             LOAD_ANIMATION:
+            Debug.Assert(frameDelay < entity.Sprite.AnimSets.Length);
             var animSet = entity.Sprite.AnimSets[frameDelay]; //frameDelay * 0xe
             entity.AnimSet = animSet;
             Debug.Assert(entity.AnimSet != null);
             //frameOffset = (ushort)((int)animSet.entries + animationFrameIndex * 2);
-            var animTableOffset = entity.AnimSet.AnimationOffsets[entity.CurrentFrameIndex];
+            //var animTableOffset = entity.AnimSet.AnimationOffsets[entity.CurrentFrameIndex];
             entity.CurrentFrameIndex = animationFrameIndex;
             entity.NextFrameDelay = 0;
-            entity.CurrentAnimationId = frameDelay;
+            entity.CurrentAnimationId = (uint)frameDelay;
 
             //currentFrame = entity.AnimSet.PreloadedAnims[entity.TargetAnimationId].Frames[frameIndex];
             //currentFrame = animTableOffset[entity.CurrentFrameIndex];
@@ -1787,6 +1819,7 @@ public class GameEngine
             {
                 Debugger.Break();
             }
+
             entity.Frame = currentFrame;
             entity.FirstFrame = currentFrame;
             //entity.IsZForceApplied = animSet.isZForceApplied;
@@ -1801,8 +1834,8 @@ public class GameEngine
             else if (frameDelay + 1 < entity.BalanceRecord.NumAnimVals)
             {
                 //entity.BalanceRecord.Vals ??
-                //entity.BalanceVal = entity.BalanceRecord.AnimVals[frameDelay * 2 + 0xe];
-                entity.BalanceVal = entity.BalanceRecord.AnimVals[frameDelay];
+                //entity.BalanceVal = entity.BalanceRecord.AnimVals[frameIndex * 2 + 0xe];
+                entity.BalanceVal = entity.BalanceRecord.AnimVals[frameDelay + 1];
                 //System.Diagnostics.Debugger.Break();
             }
             else
@@ -1810,20 +1843,23 @@ public class GameEngine
                 entity.BalanceVal = entity.BalanceRecord.AnimVals[0]; // 0 ?? TODO: check if index 0
             }
 
-            //var sfxId = (uint)(byte)&animSet.pointerListOffset;
-            //
+            uint sfxId = entity.AnimSet.Sfx;
+            if ((entity.AnimSet.Flags & 0x20) != 0)
             //if (((uint)animSet.pointerListOffset & 0x2000) != 0)
-            //{
-            //    sfxId += 0x100;
-            //}
-            //
-            //PlaySoundEffect(sfxId);
+            {
+                sfxId += 0x100;
+            }
+
+            PlaySoundEffect(sfxId);
 
             noSkip = true; //imitate goto LOAD_ANIMATION
         }
 
         entity.NextFrameDelay = 0x7fffffff;
         entity.ForceResetAnimationFlag = 1;
+
+        Debug.Assert(entity.AnimSet != null);
+        Debug.Assert(entity.Frame != null);
     }
 
     public void PlaySoundEffect(uint sfxId)
@@ -2609,7 +2645,7 @@ public class GameEngine
             StaticVariables.g_gameplayTime++;
         }
         //ResetRCnt(0xf2000001);
-        //MoveImage(g_currentDrawEnv + 1,(int)g_currentDrawEnv->x,(int)g_currentDrawEnv->y);
+        //MoveImage(g_currentDrawEnv + 1,(int)g_currentDrawEnv.x,(int)g_currentDrawEnv.y);
     }
 
     private void UpdatePads()
@@ -2746,7 +2782,7 @@ public class GameEngine
         StaticVariables.g_primitive_sync = GetDisplaySyncCounter();
 
 
-        Renderer.Render(graphics, _datasBin, CurrentMap);
+        Renderer.Render(graphics, DatasBin, CurrentMap);
     }
 
     private int RenderTiles(int[] renderListBase, int offsetX, int offsetY, int offsetZ)
@@ -3189,20 +3225,20 @@ public class GameEngine
             {
                 playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap] = mapEvent.ProgramBMap;
                 playerEntity.MapEventProgramId = mapEvent.ProgramBMap;
-                playerEntity.EventProgramState = mapEvent.EventData;
+                playerEntity.EventProgramState.CopyFrom(mapEvent.EventData);
                 playerEntity.EventTrigger = medex;
                 playerEntity.LogicContextEntity = mapEvent.Entity;
 
                 _entityEventHandlers.RunEntityEventScripts(playerEntity, ScriptHelper.ProgramBMap);
 
                 mapEvent.ProgramBMap = playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap];
-                mapEvent.EventData = playerEntity.EventProgramState;
+                mapEvent.EventData.CopyFrom(playerEntity.EventProgramState);
                 mapEvent.Entity = playerEntity.LogicContextEntity;
             }
             else
             {
-                mapEvent.Id = 0;
-                mapEvent.EventData = new EventProgramState();
+                //mapEvent.Id = 0;
+                //mapEvent.EventData = new EventProgramState();
                 //mapEvent.EventData.Sp = 0;
                 //mapEvent.EventData.Exp = 0;
                 //mapEvent.EventData.LogicResult = 0;
@@ -3344,7 +3380,7 @@ public class GameEngine
         }
         else
         {
-            si = _datasBin.AlundraGameMap.SpriteInfo;
+            si = DatasBin.AlundraGameMap.SpriteInfo;
             addedtosheet = 0xb;
             addedtopallette = 0x60;
         }
@@ -3603,7 +3639,7 @@ public class GameEngine
                     }
                 }
 
-                SetXyForces(player);
+                UpdateEntityPhysics(player);
 
                 int xforcestep, yforcestep;
                 if ((player.CombinedVramFlagsOR & 0x0020) != 0)
@@ -3682,13 +3718,13 @@ public class GameEngine
                     entity.ZForce = force;
                 }
 
-                SetXyForces(entity);
+                UpdateEntityPhysics(entity);
 
                 entity.XForce = IncrementForce(entity.XForce, entity.TargetXForce, entity.XForceStep);
                 entity.YForce = IncrementForce(entity.YForce, entity.TargetYForce, entity.YForceStep);
             }
 
-            SetAdjustedXyForces(entity);
+            ApplyEntityForces(entity);
 
             entity.FinalXForce = entity.AdjustedXForce;
             entity.FinalYForce = entity.AdjustedYForce;
@@ -3696,7 +3732,7 @@ public class GameEngine
         }
     }
 
-    private void SetAdjustedXyForces(Entity entity)
+    private void ApplyEntityForces(Entity entity)
     {
         var lastinteractx = entity.InteractXForce;
         var lastinteracty = entity.InteractYForce;
@@ -3759,17 +3795,14 @@ public class GameEngine
         return targetforce;
     }
 
-    private void SetXyForces(Entity entity)
+    private void UpdateEntityPhysics(Entity entity)
     {
         if (entity.Speed != entity.AnimSet.Speed
             || entity.TargetDirection != entity.CurrentDirection)
         {
             entity.Speed = entity.AnimSet.Speed;
-
             entity.TargetXForce = StaticVariables.g_offsetXList[entity.TargetDirection] * entity.AnimSet.Speed;
-
             entity.CurrentDirection = entity.TargetDirection;
-
             entity.TargetYForce = StaticVariables.g_offsetYList[entity.TargetDirection] * entity.AnimSet.Speed;
         }
         else if (entity.Acceleration == (entity.AnimSet.Acceleration & 0xf))
@@ -3778,9 +3811,7 @@ public class GameEngine
         }
 
         entity.Acceleration = entity.AnimSet.Acceleration & 0xf;
-
         entity.XForceStep = Math.Abs(entity.TargetXForce - entity.XForce) >> entity.Acceleration;
-
         entity.YForceStep = Math.Abs(entity.TargetYForce - entity.YForce) >> entity.Acceleration;
     }
 
@@ -3791,25 +3822,25 @@ public class GameEngine
             return;
         }
 
-        for (var dex = 0; dex < StaticVariables.g_visibleEntityCount; dex++)
+        for (var i = 0; i < StaticVariables.g_visibleEntityCount; i++)
         {
-            var entity = StaticVariables.g_visibleEntities[dex];
+            var entity = StaticVariables.g_visibleEntities[i];
             entity.DepthSortVal = 0;
             entity.SortTop = entity.ModdedZPos + entity.Height;
         }
 
-        for (var dex = 0; dex < StaticVariables.g_visibleEntityCount; dex++)
+        for (var i = 0; i < StaticVariables.g_visibleEntityCount; i++)
         {
-            var entity = StaticVariables.g_visibleEntities[dex];
+            var entity = StaticVariables.g_visibleEntities[i];
             if (entity.DepthSortVal == 0)
             {
                 SetDepthSortVal(entity);
             }
         }
 
-        for (var dex = 0; dex < StaticVariables.g_visibleEntityCount; dex++)
+        for (var i = 0; i < StaticVariables.g_visibleEntityCount; i++)
         {
-            var entity = StaticVariables.g_visibleEntities[dex];
+            var entity = StaticVariables.g_visibleEntities[i];
             entity.DepthSortVal = (int)(entity.DepthSortVal & 0xffff0000) + (entity.ZPos & 0xffff);
         }
     }
@@ -4280,7 +4311,8 @@ public class GameEngine
             {
                 var entity = StaticVariables.g_entitySlots[i];
                 var eventType = -1;
-                if (entity.PlatformEntity == null && entity.Status < 5)
+
+                if (entity.EventTrigger == 0)// && entity.Status < 5)
                 {
                     switch (entity.Status)
                     {
@@ -4289,7 +4321,35 @@ public class GameEngine
                             entity.Status = 2;
                             break;
                         case 2://normal
+                            var flags = entity.Flags;
 
+                            if ((flags & 0x10) != 0)
+                            {
+                                if (entity.ActionState == 4)
+                                {
+                                    DestroyEntity(entity, 6);
+                                    eventType = -1;
+                                }
+                                else
+                                {
+                                    if ((flags & 0x20) != 0 && (entity.FloorHeight == 0) && entity.IsAboveGround == 0)
+                                    {
+                                        eventType = 3;
+                                    }
+                                    if ((flags & 0x40) != 0 && (entity.HitCounter == 0) && (entity.Height != 0))
+                                    {
+                                        eventType = 3;
+                                    }
+                                }
+                            }
+                            else if ((flags & 0x20) != 0 && (entity.FloorHeight == 0) && entity.IsAboveGround == 0)
+                            {
+                                eventType = 3;
+                            }
+
+                            entity.Status = eventType;
+
+                            /*
                             if ((entity.Flags & 0x100000) != 0)
                             {
                                 if (entity.Slope_18c == 4)
@@ -4368,7 +4428,7 @@ public class GameEngine
                                 eventType = 5;
                                 break;
                             }
-                            eventType = 2;
+                            eventType = 2;*/
                             break;
                         case 3://deactivating
                             eventType = ScriptHelper.ProgramEDeactivate;
@@ -4379,6 +4439,7 @@ public class GameEngine
                             break;
                     }
                 }
+
                 entity.EventTrigger = eventType;
             }
         }
@@ -4391,31 +4452,29 @@ public class GameEngine
             keepGoing = false;
             if (StaticVariables.g_numberOfEntity > 0)
             {
-                //foreach entity besides player
                 for (var i = 1; i < StaticVariables.g_numberOfEntity; i++)
                 {
                     var entity = StaticVariables.g_entitySlots[i];
 
-                    if (entity.EventTrigger != -1)
+                    if (entity.EventTrigger == -1) continue;
+
+                    var programIndex = entity.ProgramIndexes[entity.EventTrigger] & 0x7f;
+
+                    if (programIndex == 0)
                     {
-                        var programIndex = entity.ProgramIndexes[entity.EventTrigger] & 0x7f;
-
-                        if (programIndex != 0)
-                        {
-                            //run the eventhandler script
-                            _entityEventHandlers.RunEntityEventScripts(entity, entity.EventTrigger);
-                            entity.EventTrigger = -1;
-                        }
-                        else
-                        {
-                            var eventId = entity.SpriteProgramIndexes[entity.EventTrigger];
-                            //run the sprite event handler
-                            _entityEventHandlers.SpriteHandlers.RunSpriteHandler(entity.EventTrigger, eventId, entity);
-                            entity.EventTrigger = -1;
-                        }
-
-                        keepGoing = true;
+                        // g_entityEventFunctionsByType => AI
+                        var eventId = entity.SpriteProgramIndexes[entity.EventTrigger];
+                        _entityEventHandlers.SpriteHandlers.RunSpriteHandler(entity.EventTrigger, eventId, entity);
+                        entity.EventTrigger = -1;
                     }
+                    else
+                    {
+                        // RunScript
+                        _entityEventHandlers.RunEntityEventScripts(entity, entity.EventTrigger);
+                        entity.EventTrigger = -1;
+                    }
+
+                    keepGoing = true;
                 }
             }
 

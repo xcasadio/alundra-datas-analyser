@@ -8,7 +8,7 @@ public class EntityEventHandlers
 {
     private readonly GameEngine _gameEngine;
 
-    public delegate int EntityEventHandler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] eventCode);
+    public delegate int EntityEventHandler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState);
 
     public readonly SpriteEventHandlers SpriteHandlers;
     private readonly Dictionary<int, EntityEventHandler> _handlers = new();
@@ -91,7 +91,7 @@ public class EntityEventHandlers
     //8004205c
     public void RunEntityEventScripts(Entity entity, int logicMode)
     {
-        //EventProgramState eventProgramState;
+        EventProgramState eventProgramState = StaticVariables.g_eventProgramState;
 
         var isDebug = StaticVariables.g_debugState < 0;
         var isDebugLogicTraceEnabled = (StaticVariables.g_debugFlags & 0x10) != 0;
@@ -101,47 +101,56 @@ public class EntityEventHandlers
             switch (logicMode)
             {
                 case ScriptHelper.ProgramBMap:
-                    if (entity.EventProgramState.Sp == 0 &&
-                        entity.ProgramIndexes[ScriptHelper.ProgramBMap] != 0)
+                    eventProgramState = entity.EventProgramState;
+
+                    if (eventProgramState.Exp[0] != 0 && eventProgramState.Sp != 0)
                     {
                         entity.MapEventProgramId = logicMode;
-
-                        goto END_LOGIC_SETUP;
+                        break;
+                        //goto END_LOGIC_SETUP;
                     }
                     
-                    if (entity.ProgramIndexes[ScriptHelper.ProgramBMap] == 0)
-                    {
-                        InitializeEventData(entity, logicMode, StaticVariables.g_eventProgramState);
-                        entity.MapEventProgramId = logicMode;
-                        goto END_LOGIC_SETUP;
-                    }
+                    InitializeEventData(entity, logicMode, eventProgramState);
+                    entity.MapEventProgramId = logicMode;
                     break;
 
                 case ScriptHelper.ProgramCTick:
-                    if (entity.EventProgramState.Sp == 0)
-                        break;
+                    eventProgramState = entity.EventProgramState;
 
-                    if (entity.ProgramIndexes[ScriptHelper.ProgramBMap] == 2)
-                        goto SET_LOGIC_MODE;
+                    if (eventProgramState.Exp[0] != 0 && eventProgramState.Sp != 0) 
+                    {
+                        if (entity.MapEventProgramId != 2) 
+                        {
+                            entity.TargetAnimationId = entity.LastTargetAnimationId;
+                            entity.TargetDirection = entity.LastTargetDirection;
+                        }
 
-                    entity.LastTargetAnimationId = entity.TargetAnimationId;
-                    entity.LastTargetDirection = entity.TargetDirection;
-                    goto SET_LOGIC_MODE;
+                        entity.MapEventProgramId = logicMode;
+                        //goto SET_LOGIC_MODE;
+                    }
+
+                    break;
 
                 case ScriptHelper.ProgramFInteract:
+
                     StaticVariables.PlayerEntity.YForceStep = 0;
                     StaticVariables.PlayerEntity.XForceStep = 0;
                     StaticVariables.PlayerEntity.YForce = 0;
                     StaticVariables.PlayerEntity.XForce = 0;
+                    InitializeEventData(entity, logicMode, eventProgramState);
+                    entity.MapEventProgramId = logicMode;
                     break;
 
                 default:
-                    if (entity.ProgramIndexes[ScriptHelper.ProgramCTick] != 2)
-                        break;
-
-                    // Save previous animation state
-                    entity.LastTargetAnimationId = entity.TargetAnimationId;
-                    entity.LastTargetDirection = entity.TargetDirection;
+                    //if (entity.ProgramIndexes[ScriptHelper.ProgramCTick] != 2)
+                    if (entity.MapEventProgramId == ScriptHelper.ProgramCTick)
+                    {
+                        entity.LastTargetAnimationId = entity.TargetAnimationId;
+                        entity.LastTargetDirection = entity.TargetDirection;
+                    }
+                    
+                    InitializeEventData(entity, logicMode, eventProgramState);
+                    entity.MapEventProgramId = logicMode;
                     break;
             }
         }
@@ -178,33 +187,40 @@ public class EntityEventHandlers
             }
         }
 
-        var eventProgramState = StaticVariables.g_eventProgramState;
+        //eventProgramState = StaticVariables.g_eventProgramState;                                 
+        var wasEntityCleared = false;
+        StaticVariables.g_activeCommand = -1;
+        StaticVariables.g_activeEventProgramIndex = entity.ProgramIndexes[logicMode];
+        StaticVariables.g_clearProgramState = 0;
+        StaticVariables.g_activeEntityRefId = entity.EntityRefId;
+        StaticVariables.g_activeEventProgramType = logicMode;
 
         // Main script execution loop
         while (true)
         {
-            int command = entity.EventProgramState.Sp;
+            NextCommand(eventProgramState);
+            int command = eventProgramState.Sp;
             //if (isDebug)
             //    DebugMessageFormat(" {0:D3}", command);
 
-            if (command == 0xFF) break; // end of script
+            if (command == 0xFF) goto END_SCRIPT; // end of script
             if (command == 0x00)
             {
-                entity.EventProgramState.Variables[0] = 0;
-                entity.EventProgramState.Sp++;
                 break;
             }
 
-            var logicContextEntity = entity.LogicContextEntity ?? entity;
+            var logicContextEntity = entity.LogicContextEntity;
             var lastCommand = StaticVariables.g_activeCommand;
             StaticVariables.g_activeCommand = command;
             
-            
-            var codes = SpriteInfoEventCodes.Codes;
-            var eventCode = codes[eventProgramState.Exp];
+            //var codes = SpriteInfoEventCodes.Codes;
+            //var eventCode = codes[eventProgramState.Exp[0]];
 
             var func = _handlers[command];
-            var advanced = func(entity.LogicContextEntity, entity, eventProgramState.Exp, eventProgramState, codes);
+            var result = func(entity.LogicContextEntity, entity, eventProgramState.Exp, eventProgramState);
+
+            var name = SpriteInfoEventCodes.CommandNameByCode.GetValueOrDefault((byte)command, "");
+            Debug.WriteLine($"Entity[{entity.Index}] run command '{name}' {string.Join(',', eventProgramState.Exp)} = {result}");
 
             StaticVariables.g_lastCommand = lastCommand;
 
@@ -213,174 +229,69 @@ public class EntityEventHandlers
                 if (logicContextEntity != entity)
                 {
                     StaticVariables.g_clearProgramState = 0;
-                    logicContextEntity.EventProgramState.Sp = 0;
-                    logicContextEntity.EventProgramState.Exp = 0;
+                    ClearEventProgramState(logicContextEntity, true);
                 }
                 else
                 {
-                    entity.EventProgramState.Sp = 0;
-                    entity.EventProgramState.Exp = 0;
+                    wasEntityCleared = true;
                 }
             }
 
-            if (advanced == 0)
+            if (result == 0)
                 break;
+            
+            
+            ClearExp(entity.EventProgramState);
+            eventProgramState.CommandIndex++;
+        }
+           
+        ClearExp(eventProgramState);
+        eventProgramState.CommandIndex++;
 
-            entity.EventProgramState.Variables[0] = 0;
-            entity.EventProgramState.Sp += command;
-            //StaticVariables.Memory.WriteByte(entity.EventProgramState.ScriptPointer, command);
+        END_SCRIPT:
+        if (wasEntityCleared) 
+        {
+            ClearEventProgramState(entity, true);
         }
 
         //if (isDebug)
         //    DebugMessageFormat("\n");
     }
 
-    //8004205c RunScript
-    public void RunEntityEventScripts2(Entity entity, int eventProgramType)
+    private void NextCommand(EventProgramState eventProgramState)
     {
-        EventProgramState eventProgramState;
-
-        var isDebug = StaticVariables.g_debugState < 0;
-        var isDebugLogicTraceEnabled = (StaticVariables.g_debugFlags & 0x10) != 0;
-
-        if (eventProgramType < 6)
+        if (eventProgramState.Commands == null || eventProgramState.CommandIndex >= eventProgramState.Commands.Count)
         {
-            switch (eventProgramType)
-            {
-                case ScriptHelper.ProgramBMap:
-                    eventProgramState = entity.EventProgramState;
-                    if (eventProgramState.Exp == 0
-                        || eventProgramState.Sp == 0)
-                    {
-                        InitializeEventData(entity, eventProgramType, eventProgramState);
-                    }
-                    break;
-
-                case ScriptHelper.ProgramCTick:
-                    eventProgramState = entity.EventProgramState;
-
-                    if (eventProgramState.Exp == 0
-                        || eventProgramState.Sp == 0)
-                    {
-                        InitializeEventData(entity, eventProgramType, eventProgramState);
-                    }
-                    else
-                    {
-                        if (entity.MapEventProgramId != 2)
-                        {
-                            //TODO make sure these event vars are right
-                            entity.TargetAnimationId = entity.LastTargetAnimationId;
-                            entity.TargetDirection = entity.LastTargetDirection;
-                        }
-                    }
-                    break;
-                default:
-                    eventProgramState = StaticVariables.g_eventProgramState;
-
-                    if (entity.MapEventProgramId != 2)
-                    {
-                        entity.LastTargetAnimationId = entity.TargetAnimationId;
-                        entity.LastTargetDirection = entity.TargetDirection;
-                    }
-
-                    //why ?
-                    //if (ScriptHelper.ProgramFInteract == 5)//have to do it here because switch fallthrough isnt allowed in c#
-                    //{
-                    //    StaticVariables.PlayerEntity.YForceStep = 0;
-                    //    StaticVariables.PlayerEntity.XForceStep = 0;
-                    //    StaticVariables.PlayerEntity.XForce = 0;
-                    //    StaticVariables.PlayerEntity.YForce = 0;
-                    //}
-
-                    InitializeEventData(entity, eventProgramType, eventProgramState);
-                    break;
-            }
-        }
-        else
-        {
-            throw new Exception("Illegal logic entry!");
+            return;
         }
 
-        if (isDebug && isDebugLogicTraceEnabled)
+        var siCommand = eventProgramState.Commands[eventProgramState.CommandIndex];
+        ClearExp(eventProgramState);
+
+        eventProgramState.Sp = siCommand.Command;
+
+        for (int i = 0; i < siCommand.Parameters.Length; i++)
         {
-            if (eventProgramType == 1)
-            {
-                //StaticVariables.g_debugMessage += $"mon{entity.EventTrigger}:";
-            }
-            else
-            {
-                //StaticVariables.g_debugMessage += $"%{entity.EntityRefId:x2}({eventProgramType}):";
-            }
+            eventProgramState.Exp[i] = siCommand.Parameters[i];
+        }
+    }
+
+    private static void ClearEventProgramState(Entity entity, bool clearCommandIndex = false)
+    {
+        if (clearCommandIndex)
+        {
+            entity.EventProgramState.CommandIndex = 0;
         }
 
-        //Debug.WriteLine($"[{entity.Index}] {entity.EntityRefId} {eventProgramType}");
+        entity.EventProgramState.Sp = 0;
+        ClearExp(entity.EventProgramState);
+    }
 
-        StaticVariables.g_activeEntityRefId = entity.EntityRefId;
-        StaticVariables.g_activeEventProgramType = eventProgramType;
-        StaticVariables.g_activeCommand = -1;
-        StaticVariables.g_clearProgramState = 0;
-        StaticVariables.g_activeEventProgramIndex = entity.ProgramIndexes[eventProgramType];
-        bool sameAsSelf;
-
-        while (true)
+    private static void ClearExp(EventProgramState eventProgramState)
+    {
+        for (int i = 0; i < eventProgramState.Exp.Length; i++)
         {
-            sameAsSelf = false;
-
-            //var code = SpriteInfoEventCodes.Codes;
-            //var eventCode = code[eventProgramState.Exp];
-            var codes = SpriteInfoEventCodes.Codes;
-            var eventCode = codes[eventProgramState.Exp];
-
-            if (eventCode == 0xff)
-            {
-                break;
-            }
-
-            if (eventCode == 0)
-            {
-                eventProgramState.Tick = 0;
-                eventProgramState.Exp++;
-                break;
-            }
-
-            StaticVariables.g_lastCommand = StaticVariables.g_activeCommand;
-            StaticVariables.g_activeCommand = eventCode;
-
-            var func = _handlers[eventCode];
-            var advanced = func(entity.LogicContextEntity, entity, eventProgramState.Exp, eventProgramState, codes);
-
-            if (StaticVariables.g_clearProgramState != 0)
-            {
-                StaticVariables.g_clearProgramState = 1;
-                if (entity != entity.LogicContextEntity)
-                {
-                    entity.LogicContextEntity.EventProgramState.Sp = 0;
-                    entity.LogicContextEntity.EventProgramState.Exp = 0;
-                }
-                else
-                {
-                    sameAsSelf = true;
-                }
-            }
-
-            if (advanced == 0)
-            {
-                break;
-            }
-
-            eventProgramState.Variables[0] = 0; // eventProgramState.Tick = 0; ??
-            eventProgramState.Exp += advanced;
-        }
-
-        if (sameAsSelf)
-        {
-            eventProgramState.Sp = 0;
-            eventProgramState.Exp = 0;
-        }
-
-        if (isDebug && isDebugLogicTraceEnabled)
-        {
-            //StaticVariables.g_debugMessage += Environment.NewLine;
+            eventProgramState.Exp[i] = 0;
         }
     }
 
@@ -388,69 +299,79 @@ public class EntityEventHandlers
     {
         var codeIndex = entity.ProgramIndexes[eventProgramType];
         var spriteInfo = _gameEngine.AlundraMap.SpriteInfo;
-        var mod = 0;
 
-        if ((codeIndex & 0x80) != 0)
-        {
+        if ((codeIndex & 0x80) != 0) {
             spriteInfo = _gameEngine.CurrentMap.SpriteInfo;
-            mod = 1024 * 512;
         }
 
-        var sp = spriteInfo.EventCodes.EventCodesTable[eventProgramType][codeIndex & 0x7f] + mod;
-        eventProgramState.Sp = sp;
-        eventProgramState.Exp = sp;
+        using var br = _gameEngine.DatasBin.OpenBin();
+        eventProgramState.Commands = spriteInfo.EventCodes.GetCommands(br, entity.ProgramIndexes[eventProgramType], true);
+        eventProgramState.CommandIndex = 0;
+        eventProgramState.Sp = 0;
 
-        //some error checking here, 
-        //looking to see if the code pointers are in the correct range of where they should be
+        //for (var i = 0; i < siCommands.Count; i++)
+        //{
+        //    eventProgramState.Sp.Add(siCommands[i].Command);
+        //}
+
+        for (int i = 0; i < eventProgramState.Exp.Length; i++)
+        {
+            eventProgramState.Exp[i] = 0;
+        }
+
+        //for (int i = 0; i < siCommands[eventProgramState.CommandIndex].Parameters.Length; i++)
+        //{
+        //    eventProgramState.Exp[i] = siCommands[eventProgramState.CommandIndex].Parameters[i];
+        //}
     }
 
     //All Script_xxx functions
     //8003D158
-    public int __Unknown_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int __Unknown_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         //Debug.WriteLine("Data Logic Error!");
         return 0;
     }
 
-    public int _02_Goto_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _02_Goto_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        //var offset = (short)(code[exp + 1] + (code[exp + 2] << 8));
+        //var offset = (short)(exp[1] + (exp[2] << 8));
         //return offset;
-        return (code[1] + code[2] * 0x100 * 0x10000) >> 0x10;
+        return (exp[1] + exp[2] * 0x100 * 0x10000) >> 0x10;
     }
 
-    public int _03_BranchIfTrue_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _03_BranchIfTrue_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        if (eventProgramState.LogicResult == 0)
+        if (eventProgramState.Exp[9] == 0)
         {
             return 3;
         }
 
-        var offset = (short)(code[exp + 1] + (code[exp + 2] << 8));
+        var offset = (short)(exp[1] + (exp[2] << 8));
 
         return offset;
     }
 
-    public int _04_BranchIfFalse_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _04_BranchIfFalse_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        if (eventProgramState.LogicResult != 0)
+        if (eventProgramState.Exp[9] != 0)
         {
             return 3;
         }
 
-        var offset = (short)(code[exp + 1] + (code[exp + 2] << 8));
+        var offset = (short)(exp[1] + (exp[2] << 8));
 
         return offset;
     }
 
-    public int _05_FlagOn_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _05_FlagOn_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        if (eventProgramState.LogicResult != 0)
+        if (eventProgramState.Exp[9] != 0)
         {
             return 3;
         }
 
-        uint flagdata = (uint)(code[exp + 1] + (code[exp + 2] << 8));
+        uint flagdata = (uint)(exp[1] + (exp[2] << 8));
         //int flag = (flagdata >> 3) & 0xffc;
         var flag = (flagdata >> 5) & 0x3ff;
         uint[] flags;
@@ -472,14 +393,14 @@ public class EntityEventHandlers
         return 3;
     }
 
-    public int _06_FlagOff_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _06_FlagOff_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        if (eventProgramState.LogicResult != 0)
+        if (eventProgramState.Exp[9] != 0)
         {
             return 3;
         }
 
-        var flagdata = code[exp + 1] + (code[exp + 2] << 8);
+        var flagdata = exp[1] + (exp[2] << 8);
         //int flag = (flagdata >> 3) & 0xffc;
         var flag = (flagdata >> 5) & 0x3ff;
         uint[] flags;
@@ -501,15 +422,15 @@ public class EntityEventHandlers
         return 3;
     }
 
-    public int _07_CheckEntityInArea_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _07_CheckEntityInArea_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var entityId = code[exp + 1];
-        int x1 = code[exp + 2];
-        int x2 = code[exp + 3];
-        int y1 = code[exp + 4];
-        int y2 = code[exp + 5];
-        int z1 = code[exp + 6];
-        int z2 = code[exp + 7];
+        var entityId = exp[1];
+        int x1 = exp[2];
+        int x2 = exp[3];
+        int y1 = exp[4];
+        int y2 = exp[5];
+        int z1 = exp[6];
+        int z2 = exp[7];
         var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
         for (var i = 0; i < numEntities; i++)
         {
@@ -518,48 +439,48 @@ public class EntityEventHandlers
                                     && checkme.TileY >= y1 && checkme.TileY <= y2
                                     && checkme.TileZ >= z1 && checkme.TileZ <= z2)
             {
-                eventProgramState.LogicResult = 1;
+                eventProgramState.Exp[9] = 1;
                 return 8;
             }
         }
 
-        eventProgramState.LogicResult = 0;
+        eventProgramState.Exp[9] = 0;
 
         return 8;
     }
 
-    public int _08_Turn_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _08_Turn_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        entity.TargetDirection = (entity.TargetDirection + code[exp + 1]) & 0x1f;
+        entity.TargetDirection = (uint)((entity.TargetDirection + exp[1]) & 0x1f);
         return 2;
     }
 
-    public int _09_SetDir_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _09_SetDir_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        entity.TargetDirection = (uint)(code[exp + 1] & 0x1f);
+        entity.TargetDirection = (uint)(exp[1] & 0x1f);
         return 2;
     }
 
-    public int _0a_Reverse_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _0a_Reverse_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         entity.TargetDirection = (entity.TargetDirection + 0x10) & 0x1f;
         return 1;
     }
 
     //set animation, and block until entity has moved specified distance
-    public int _0b_AnimWaitDistance_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _0b_AnimWaitDistance_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        uint animid = code[exp + 1];
+        uint animid = (uint)exp[1];
         entity.TargetAnimationId = animid;
-        if (exp != eventProgramState.Tick)
+        if (exp[0] != eventProgramState.Exp[1])
         {
-            eventProgramState.Tick = exp;
-            eventProgramState.Variables[0] = entity.XPos;
-            eventProgramState.Variables[1] = entity.YPos;
+            eventProgramState.Exp[1] = exp[0];
+            eventProgramState.Exp[2] = entity.XPos;
+            eventProgramState.Exp[3] = entity.YPos;
             return 0;
         }
-        var difx = eventProgramState.Variables[0] - entity.XPos;
-        var dify = eventProgramState.Variables[1] - entity.YPos;
+        var difx = eventProgramState.Exp[2] - entity.XPos;
+        var dify = eventProgramState.Exp[3] - entity.YPos;
         if (difx < 0)
         {
             difx = -difx;
@@ -570,7 +491,7 @@ public class EntityEventHandlers
             dify = -dify;
         }
 
-        var distance = code[exp + 2] + (code[exp + 3] << 8);
+        var distance = exp[2] + (exp[3] << 8);
 
         if (difx >> 16 >= distance)
         {
@@ -585,7 +506,7 @@ public class EntityEventHandlers
         return 0;//keep blocking
     }
 
-    public int _0c_SetRandomDir_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _0c_SetRandomDir_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         var i = StaticVariables.g_gameRandomSeed;
         var val1 = (int)(i * 0x7d2b89dd);
@@ -597,7 +518,7 @@ public class EntityEventHandlers
         return 1;
     }
 
-    public int _0d_Dialog_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _0d_Dialog_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         if ((entity.Flags & 0x800000) != 0)//has portrait
         {
@@ -610,33 +531,33 @@ public class EntityEventHandlers
         }
         //SetName(entity.NameId);
 
-        //var ret = SetText(code[exp + 1], code[exp + 2]);
+        //var ret = SetText(exp[1], exp[2]);
 
         //if (ret > 0)
         //    return 3;
         return 0;
     }
 
-    public int _10_LoseControl_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _10_LoseControl_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         StaticVariables.g_playerControlFlags |= 0x4;
         return 1;
     }
 
-    public int _11_GainControl_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _11_GainControl_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         StaticVariables.g_playerControlFlags &= ~0x4;
         return 1;
     }
 
-    public int _12_PlaySound1_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _12_PlaySound1_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         //throw new Exception("impliment this one!");
-        int soundid = code[exp + 1];
+        int soundid = exp[1];
         return 2;
     }
 
-    public int _15_ResetZPos_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _15_ResetZPos_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         if (entity.EntityRecord == null)
         {
@@ -647,47 +568,47 @@ public class EntityEventHandlers
         return 1;
     }
 
-    public int _16_GravityOn_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _16_GravityOn_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         entity.Flags |= 0x100;
         return 1;
     }
 
-    public int _17_GravityOff_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _17_GravityOff_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         var flag = ~0x100;
         entity.Flags &= (uint)flag;
         return 1;
     }
 
-    public int _19_Deactivate_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _19_Deactivate_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         entity.Status = 3;
         return 1;
     }
 
-    public int _1a_SetAnim_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _1a_SetAnim_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        entity.TargetAnimationId = code[exp + 1];
+        entity.TargetAnimationId = (uint)exp[1];
         return 2;
     }
 
     //sets zforce
-    public int _1b_Fly_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _1b_Fly_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var force = code[exp + 1] + (code[exp + 2] << 8);
+        var force = exp[1] + (exp[2] << 8);
         force = force << 16;//sign extend
         force = force >> 8;//get it to the correct multiple
         entity.ZForce = force;
         return 2;
     }
 
-    public int _1c_WaitAnim_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _1c_WaitAnim_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        if (exp != eventProgramState.Tick)
+        if (exp[0] != eventProgramState.Exp[1])
         {
-            eventProgramState.Tick = exp;
-            eventProgramState.Variables[0] = 0;
+            eventProgramState.Exp[1] = exp[0];
+            eventProgramState.Exp[2] = 0;
             entity.AnimCompleteCounter = 0;
             return 0;
         }
@@ -699,13 +620,13 @@ public class EntityEventHandlers
 
         if (entity.ForceResetAnimationFlag != 0 || entity.AnimCompleteCounter != 0)
         {
-            eventProgramState.Variables[0]++;
+            eventProgramState.Exp[2]++;
             entity.AnimCompleteCounter = 0;
         }
 
 
-        var towait = code[exp + 1];
-        if (eventProgramState.Variables[0] >= towait)
+        var towait = exp[1];
+        if (eventProgramState.Exp[2] >= towait)
         {
             return 2;
         }
@@ -714,9 +635,9 @@ public class EntityEventHandlers
     }
 
     //collision ends it
-    public int _1d_WaitAnim2_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _1d_WaitAnim2_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var ret = _1c_WaitAnim_Handler(entity, entitySelf, exp, eventProgramState, code);
+        var ret = _1c_WaitAnim_Handler(entity, entitySelf, exp, eventProgramState);
 
         if (ret != 0)
         {
@@ -732,20 +653,20 @@ public class EntityEventHandlers
     }
 
     //wait until they have walked a certain distance, collision pauses the walk
-    public int _1e_WaitWalk_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _1e_WaitWalk_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        if (exp != eventProgramState.Tick)
+        if (exp[0] != eventProgramState.Exp[1])
         {
-            eventProgramState.Tick = exp;
-            eventProgramState.Variables[0] = entity.XPos;
-            eventProgramState.Variables[1] = entity.YPos;
+            eventProgramState.Exp[1] = exp[0];
+            eventProgramState.Exp[2] = entity.XPos;
+            eventProgramState.Exp[3] = entity.YPos;
             return 0;
         }
 
-        var x = Math.Abs(eventProgramState.Variables[0] - entity.XPos) >> 16;
-        var y = Math.Abs(eventProgramState.Variables[1] - entity.YPos) >> 16;
+        var x = Math.Abs(eventProgramState.Exp[2] - entity.XPos) >> 16;
+        var y = Math.Abs(eventProgramState.Exp[3] - entity.YPos) >> 16;
 
-        var distance = code[exp + 1] | (code[exp + 2] << 8);
+        var distance = exp[1] | (exp[2] << 8);
 
         if (x >= distance || y >= distance)
         {
@@ -756,9 +677,9 @@ public class EntityEventHandlers
     }
 
     //wait until they have walked a certain distance, collision ends the walk
-    public int _1f_WaitWalk2_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _1f_WaitWalk2_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var ret = _1e_WaitWalk_Handler(entity, entitySelf, exp, eventProgramState, code);
+        var ret = _1e_WaitWalk_Handler(entity, entitySelf, exp, eventProgramState);
 
         if (ret != 0)
         {
@@ -774,7 +695,7 @@ public class EntityEventHandlers
     }
 
     //wait until some force acts on the entity, like it bumps into something
-    public int _24_WaitForceAdjusted_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _24_WaitForceAdjusted_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         if (entity.ForceAdjusted > 0)
         {
@@ -784,7 +705,7 @@ public class EntityEventHandlers
         return 0;
     }
 
-    public int _25_WaitEntityCollisionZOr144_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _25_WaitEntityCollisionZOr144_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         if (entity.CollidedWithEntityZ != 0)
         {
@@ -799,7 +720,7 @@ public class EntityEventHandlers
         return 0;
     }
 
-    public int _26_WaitForceAdjustedOrEntityCollisionZ_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _26_WaitForceAdjustedOrEntityCollisionZ_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         if (entity.ForceAdjusted != 0)
         {
@@ -814,53 +735,53 @@ public class EntityEventHandlers
         return 0;
     }
 
-    public int _27_FacePlayer_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _27_FacePlayer_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(StaticVariables.PlayerEntity.XPos - entity.XPos, StaticVariables.PlayerEntity.YPos - entity.YPos);
         return 1;
     }
 
-    public int _28_Flag2On_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _28_Flag2On_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         entity.Flags |= 0x8;
         return 1;
     }
 
-    public int _29_Flag2Off_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _29_Flag2Off_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         var flags = ~0x8;
         entity.Flags &= (uint)flags;
         return 1;
     }
 
-    public int _2a_Flag3On_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _2a_Flag3On_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         entity.Flags |= 0x1;
         return 1;
     }
 
-    public int _2b_Flag3Off_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _2b_Flag3Off_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         var flags = ~0x1;
         entity.Flags &= (uint)flags;
         return 1;
     }
 
-    public int _2d_ActivateEntity_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _2d_ActivateEntity_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var entityId = code[exp + 1];
+        var entityId = exp[1];
         var loaded = _gameEngine.ActivateEntity(entity, entityId, 1);
         if (loaded == null)
         {
-            throw new Exception("Illigal InitData Number!!");
+            throw new Exception("Illegal InitData Number!!");
         }
 
         return 2;
     }
 
-    public int _2e_Hide_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _2e_Hide_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var entityId = code[exp + 1];
+        var entityId = exp[1];
         var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
         for (var dex = 0; dex < numEntities; dex++)
         {
@@ -871,29 +792,29 @@ public class EntityEventHandlers
         return 2;
     }
 
-    public int _2f_CheckPlayerInput_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _2f_CheckPlayerInput_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var inputid = code[exp + 3];
-        var mask = code[exp + 1] | code[exp + 2] << 8;
+        var inputid = exp[3];
+        var mask = exp[1] | exp[2] << 8;
 
         //StaticVariables.g_padState1.ButtonsHold
         //if ((_gameEngine.PlayerInput[inputid] & mask) != 0)
         if ((StaticVariables.g_padState1.ButtonsJustPressed & mask) != 0)
         {
-            eventProgramState.LogicResult = 1;
+            eventProgramState.Exp[9] = 1;
         }
         else
         {
-            eventProgramState.LogicResult = 0;
+            eventProgramState.Exp[9] = 0;
         }
 
         return 4;
     }
 
-    public int _30_IfFlagOff_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _30_IfFlagOff_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
 
-        var flagdata = code[exp + 1] + (code[exp + 2] << 8);
+        var flagdata = exp[1] + (exp[2] << 8);
         //int flag = (flagdata >> 3) & 0xffc;
         var flag = (flagdata >> 5) & 0x3ff;
         uint[] flags;
@@ -912,17 +833,17 @@ public class EntityEventHandlers
         //check the bit for this flag
         if ((flags[flag] & (1 << bittocheck)) != 0)
         {
-            int jumpoffset = (short)(code[exp + 3] | code[exp + 4] << 8);
+            int jumpoffset = (short)(exp[3] | exp[4] << 8);
             return jumpoffset;
         }
 
         return 5;
     }
 
-    public int _31_IfFlagOn_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _31_IfFlagOn_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
 
-        var flagdata = code[exp + 1] + (code[exp + 2] << 8);
+        var flagdata = exp[1] + (exp[2] << 8);
         //int flag = (flagdata >> 3) & 0xffc;
         var flag = (flagdata >> 5) & 0x3ff;
         uint[] flags;
@@ -941,21 +862,21 @@ public class EntityEventHandlers
         //check the bit for this flag
         if ((flags[flag] & (1 << bittocheck)) == 0)
         {
-            int jumpoffset = (short)(code[exp + 3] | code[exp + 4] << 8);
+            int jumpoffset = (short)(exp[3] | exp[4] << 8);
             return jumpoffset;
         }
 
         return 5;
     }
 
-    public int _32_FlagToggle_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _32_FlagToggle_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        if (eventProgramState.LogicResult != 0)
+        if (eventProgramState.Exp[9] != 0)
         {
             return 3;
         }
 
-        var flagdata = code[exp + 1] + (code[exp + 2] << 8);
+        var flagdata = exp[1] + (exp[2] << 8);
         //int flag = (flagdata >> 3) & 0xffc;
         var flag = (flagdata >> 5) & 0x3ff;
         uint[] flags;
@@ -977,11 +898,11 @@ public class EntityEventHandlers
         return 3;
     }
 
-    public int _33_CheckFlagsOn_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _33_CheckFlagsOn_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         //do this 4 times
         {
-            var flagdata = code[exp + 1] + (code[exp + 2] << 8);
+            var flagdata = exp[1] + (exp[2] << 8);
             //int flag = (flagdata >> 3) & 0xffc;
             var flag = (flagdata >> 5) & 0x3ff;
             uint[] flags;
@@ -1000,13 +921,13 @@ public class EntityEventHandlers
             //check the bit for this flag
             if ((flags[flag] & (1 << bittocheck)) == 0)
             {
-                eventProgramState.LogicResult = 0;
+                eventProgramState.Exp[9] = 0;
                 return 9;
             }
         }
 
         {
-            var flagdata = code[exp + 3] + (code[exp + 4] << 8);
+            var flagdata = exp[3] + (exp[4] << 8);
             //int flag = (flagdata >> 3) & 0xffc;
             var flag = (flagdata >> 5) & 0x3ff;
             uint[] flags;
@@ -1025,13 +946,13 @@ public class EntityEventHandlers
             //check the bit for this flag
             if ((flags[flag] & (1 << bittocheck)) == 0)
             {
-                eventProgramState.LogicResult = 0;
+                eventProgramState.Exp[9] = 0;
                 return 9;
             }
         }
 
         {
-            var flagdata = code[exp + 5] + (code[exp + 6] << 8);
+            var flagdata = exp[5] + (exp[6] << 8);
             //int flag = (flagdata >> 3) & 0xffc;
             var flag = (flagdata >> 5) & 0x3ff;
             uint[] flags;
@@ -1050,13 +971,13 @@ public class EntityEventHandlers
             //check the bit for this flag
             if ((flags[flag] & (1 << bittocheck)) == 0)
             {
-                eventProgramState.LogicResult = 0;
+                eventProgramState.Exp[9] = 0;
                 return 9;
             }
         }
 
         {
-            var flagdata = code[exp + 7] + (code[exp + 8] << 8);
+            var flagdata = exp[7] + (exp[8] << 8);
             //int flag = (flagdata >> 3) & 0xffc;
             var flag = (flagdata >> 5) & 0x3ff;
             uint[] flags;
@@ -1075,21 +996,21 @@ public class EntityEventHandlers
             //check the bit for this flag
             if ((flags[flag] & (1 << bittocheck)) == 0)
             {
-                eventProgramState.LogicResult = 0;
+                eventProgramState.Exp[9] = 0;
                 return 9;
             }
         }
 
 
-        eventProgramState.LogicResult = 1;//made it through them all
+        eventProgramState.Exp[9] = 1;//made it through them all
         return 9;
     }
 
-    public int _34_CheckFlagsOff_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _34_CheckFlagsOff_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         //do this 4 times
         {
-            var flagdata = code[exp + 1] + (code[exp + 2] << 8);
+            var flagdata = exp[1] + (exp[2] << 8);
             //int flag = (flagdata >> 3) & 0xffc;
             var flag = (flagdata >> 5) & 0x3ff;
             uint[] flags;
@@ -1108,13 +1029,13 @@ public class EntityEventHandlers
             //check the bit for this flag
             if ((flags[flag] & (1 << bittocheck)) != 0)
             {
-                eventProgramState.LogicResult = 0;
+                eventProgramState.Exp[9] = 0;
                 return 9;
             }
         }
 
         {
-            var flagdata = code[exp + 3] + (code[exp + 4] << 8);
+            var flagdata = exp[3] + (exp[4] << 8);
             //int flag = (flagdata >> 3) & 0xffc;
             var flag = (flagdata >> 5) & 0x3ff;
             uint[] flags;
@@ -1133,13 +1054,13 @@ public class EntityEventHandlers
             //check the bit for this flag
             if ((flags[flag] & (1 << bittocheck)) != 0)
             {
-                eventProgramState.LogicResult = 0;
+                eventProgramState.Exp[9] = 0;
                 return 9;
             }
         }
 
         {
-            var flagdata = code[exp + 5] + (code[exp + 6] << 8);
+            var flagdata = exp[5] + (exp[6] << 8);
             //int flag = (flagdata >> 3) & 0xffc;
             var flag = (flagdata >> 5) & 0x3ff;
             uint[] flags;
@@ -1158,13 +1079,13 @@ public class EntityEventHandlers
             //check the bit for this flag
             if ((flags[flag] & (1 << bittocheck)) != 0)
             {
-                eventProgramState.LogicResult = 0;
+                eventProgramState.Exp[9] = 0;
                 return 9;
             }
         }
 
         {
-            var flagdata = code[exp + 7] + (code[exp + 8] << 8);
+            var flagdata = exp[7] + (exp[8] << 8);
             //int flag = (flagdata >> 3) & 0xffc;
             var flag = (flagdata >> 5) & 0x3ff;
             uint[] flags;
@@ -1183,22 +1104,22 @@ public class EntityEventHandlers
             //check the bit for this flag
             if ((flags[flag] & (1 << bittocheck)) != 0)
             {
-                eventProgramState.LogicResult = 0;
+                eventProgramState.Exp[9] = 0;
                 return 9;
             }
         }
 
 
-        eventProgramState.LogicResult = 1;//made it through them all
+        eventProgramState.Exp[9] = 1;//made it through them all
         return 9;
     }
 
 
     //blocks until flag is off
-    public int _35_UntilFlagOff_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _35_UntilFlagOff_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
 
-        var flagdata = code[exp + 1] + (code[exp + 2] << 8);
+        var flagdata = exp[1] + (exp[2] << 8);
         //int flag = (flagdata >> 3) & 0xffc;
         var flag = (flagdata >> 5) & 0x3ff;
         uint[] flags;
@@ -1224,10 +1145,10 @@ public class EntityEventHandlers
     }
 
     //blocks until flag is on
-    public int _36_UntilFlagOn_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _36_UntilFlagOn_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
 
-        var flagdata = code[exp + 1] + (code[exp + 2] << 8);
+        var flagdata = exp[1] + (exp[2] << 8);
         //int flag = (flagdata >> 3) & 0xffc;
         var flag = (flagdata >> 5) & 0x3ff;
         uint[] flags;
@@ -1254,19 +1175,19 @@ public class EntityEventHandlers
 
 
     //block until specified number of ticks
-    public int _37_Wait_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _37_Wait_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        if (exp != eventProgramState.Tick)
+        if (exp[0] != eventProgramState.Exp[1])
         {
-            eventProgramState.Tick = exp;
-            eventProgramState.Variables[0] = 0;
+            eventProgramState.Exp[1] = exp[0];
+            eventProgramState.Exp[2] = 0;
             return 0;
         }
 
-        eventProgramState.Variables[0]++;
+        eventProgramState.Exp[2]++;
 
-        var towait = code[exp + 1];
-        if (eventProgramState.Variables[0] >= towait)
+        var towait = exp[1];
+        if (eventProgramState.Exp[2] >= towait)
         {
             return 2;
         }
@@ -1274,34 +1195,34 @@ public class EntityEventHandlers
         return 0;
     }
 
-    public int _3b_CheckPlayerInArea_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _3b_CheckPlayerInArea_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        int x1 = code[exp + 1];
-        int x2 = code[exp + 2];
-        int y1 = code[exp + 3];
-        int y2 = code[exp + 4];
-        int z1 = code[exp + 5];
-        int z2 = code[exp + 6];
+        int x1 = exp[1];
+        int x2 = exp[2];
+        int y1 = exp[3];
+        int y2 = exp[4];
+        int z1 = exp[5];
+        int z2 = exp[6];
 
         var checkme = StaticVariables.PlayerEntity;
         if (checkme.TileX >= x1 && checkme.TileX <= x2
                                 && checkme.TileY >= y1 && checkme.TileY <= y2
                                 && checkme.TileZ >= z1 && checkme.TileZ <= z2)
         {
-            eventProgramState.LogicResult = 1;
+            eventProgramState.Exp[9] = 1;
             return 7;
         }
 
 
-        eventProgramState.LogicResult = 0;
+        eventProgramState.Exp[9] = 0;
 
         return 7;
     }
 
-    public int _40_SetProgramIndex_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _40_SetProgramIndex_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var programid = code[exp + 1];
-        var indexval = code[exp + 2];
+        var programid = exp[1];
+        var indexval = exp[2];
 
         //somevariable = 1;
         StaticVariables.g_clearProgramState = 1;
@@ -1311,57 +1232,57 @@ public class EntityEventHandlers
         return 3;
     }
 
-    public int _41_SetSpriteProgramIndex_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _41_SetSpriteProgramIndex_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var programid = code[exp + 1];
-        var indexval = code[exp + 2];
+        var programid = exp[1];
+        var indexval = exp[2];
 
         entity.SpriteProgramIndexes[programid] = indexval;
 
         return 3;
     }
 
-    public int _45_Flag4Off_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _45_Flag4Off_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         entity.Flags &= ~(uint)0x2000;
         return 1;
     }
 
-    public int _46_Flag4On_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _46_Flag4On_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         entity.Flags |= 0x2000;
         return 1;
     }
 
-    public int _49_Restart_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _49_Restart_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        return eventProgramState.Exp - eventProgramState.Sp;
+        return eventProgramState.Exp[0] - entity.EventProgramState.Sp;
     }
 
-    public int _4a_IfTrueRestart_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _4a_IfTrueRestart_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        if (eventProgramState.LogicResult != 0)
+        if (eventProgramState.Exp[9] != 0)
         {
-            return eventProgramState.Exp - eventProgramState.Sp;
+            return eventProgramState.Exp[0] - entity.EventProgramState.Sp;
         }
 
         return 1;
     }
 
-    public int _4b_IfFalseRestart_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _4b_IfFalseRestart_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        if (eventProgramState.LogicResult == 0)
+        if (eventProgramState.Exp[9] == 0)
         {
-            return eventProgramState.Exp - eventProgramState.Sp;
+            return eventProgramState.Exp[0] - entity.EventProgramState.Sp;
         }
 
         return 1;
     }
 
-    public int _54_SetWalkable_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _54_SetWalkable_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        int tilex = code[exp + 1];
-        int tiley = code[exp + 2];
+        int tilex = exp[1];
+        int tiley = exp[2];
         if (tilex < 0)
         {
             tilex = 0;
@@ -1381,8 +1302,8 @@ public class EntityEventHandlers
             tiley = 0x3b;
         }
 
-        var walkabilitybits = code[exp + 3];
-        var groundpropertybits = code[exp + 4];
+        var walkabilitybits = (byte)exp[3];
+        var groundpropertybits = (byte)exp[4];
         var tile = _gameEngine.CurrentMap.Map.MapTiles[tilex + tiley * 52];
 
         tile.Walkability |= walkabilitybits;
@@ -1391,10 +1312,10 @@ public class EntityEventHandlers
         return 5;
     }
 
-    public int _55_SetNonWalkable_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _55_SetNonWalkable_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        int tilex = code[exp + 1];
-        int tiley = code[exp + 2];
+        int tilex = exp[1];
+        int tiley = exp[2];
         if (tilex < 0)
         {
             tilex = 0;
@@ -1414,8 +1335,8 @@ public class EntityEventHandlers
             tiley = 0x3b;
         }
 
-        var walkabilitybits = code[exp + 3];
-        var groundpropertybits = code[exp + 4];
+        var walkabilitybits = exp[3];
+        var groundpropertybits = exp[4];
         var tile = _gameEngine.CurrentMap.Map.MapTiles[tilex + tiley * 52];
 
         tile.Walkability &= (byte)~walkabilitybits;
@@ -1424,17 +1345,17 @@ public class EntityEventHandlers
         return 5;
     }
 
-    public int _58_DirectionalBranch_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _58_DirectionalBranch_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         var dir = entity.CurrentFrameIndex;
-        var jumpoffset = (short)(code[exp + entity.CurrentFrameIndex * 2 + 1] | code[exp + entity.CurrentFrameIndex * 2 + 2]);
+        var jumpoffset = (short)(exp[entity.CurrentFrameIndex * 2 + 1] | exp[entity.CurrentFrameIndex * 2 + 2]);
         return jumpoffset;
     }
 
-    public int _59_SetEntityAnim_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _59_SetEntityAnim_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var entityId = code[exp + 1];
-        int animid = code[exp + 2];
+        var entityId = exp[1];
+        int animid = exp[2];
         var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
         for (var i = 0; i < numEntities; i++)
         {
@@ -1445,10 +1366,10 @@ public class EntityEventHandlers
         return 3;
     }
 
-    public int _5a_TurnEntity_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _5a_TurnEntity_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var entityId = code[exp + 1];
-        var turncode = code[exp + 2];
+        var entityId = exp[1];
+        var turncode = exp[2];
 
         var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
         for (var i = 0; i < numEntities; i++)
@@ -1460,11 +1381,11 @@ public class EntityEventHandlers
         return 3;
     }
 
-    public int _5b_TurnEntityWithAnim_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _5b_TurnEntityWithAnim_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var entityId = code[exp + 1];
-        int animid = code[exp + 2];
-        var turncode = code[exp + 3];
+        var entityId = exp[1];
+        int animid = exp[2];
+        var turncode = exp[3];
 
         var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
         for (var i = 0; i < numEntities; i++)
@@ -1477,10 +1398,10 @@ public class EntityEventHandlers
         return 4;
     }
 
-    public int _62_EntityFlagsOn_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _62_EntityFlagsOn_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var entityId = code[exp + 1];
-        var flagbits = code[exp + 2] + (code[exp + 3] << 8);
+        var entityId = exp[1];
+        var flagbits = exp[2] + (exp[3] << 8);
 
         var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
         for (var i = 0; i < numEntities; i++)
@@ -1492,10 +1413,10 @@ public class EntityEventHandlers
         return 4;
     }
 
-    public int _63_EntityFlagsOff_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _63_EntityFlagsOff_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var entityId = code[exp + 1];
-        var flagbits = code[exp + 2] + (code[exp + 3] << 8);
+        var entityId = exp[1];
+        var flagbits = exp[2] + (exp[3] << 8);
 
         var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
         for (var i = 0; i < numEntities; i++)
@@ -1507,12 +1428,12 @@ public class EntityEventHandlers
         return 4;
     }
 
-    public int _64_SetEntityPos_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _64_SetEntityPos_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var entityId = code[exp + 1];
-        var x = (code[exp + 2] + (code[exp + 3] << 8)) << 16;
-        var y = (code[exp + 4] + (code[exp + 5] << 8)) << 16;
-        var z = (code[exp + 6] + (code[exp + 7] << 8)) << 16;
+        var entityId = exp[1];
+        var x = (exp[2] + (exp[3] << 8)) << 16;
+        var y = (exp[4] + (exp[5] << 8)) << 16;
+        var z = (exp[6] + (exp[7] << 8)) << 16;
 
         var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
         for (var i = 0; i < numEntities; i++)
@@ -1526,12 +1447,12 @@ public class EntityEventHandlers
         return 8;
     }
 
-    public int _65_MoveEntityPos_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _65_MoveEntityPos_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var entityId = code[exp + 1];
-        var x = (code[exp + 2] + (code[exp + 3] << 8)) << 16;
-        var y = (code[exp + 4] + (code[exp + 5] << 8)) << 16;
-        var z = (code[exp + 6] + (code[exp + 7] << 8)) << 16;
+        var entityId = exp[1];
+        var x = (exp[2] + (exp[3] << 8)) << 16;
+        var y = (exp[4] + (exp[5] << 8)) << 16;
+        var z = (exp[6] + (exp[7] << 8)) << 16;
 
         var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
         for (var i = 0; i < numEntities; i++)
@@ -1545,9 +1466,9 @@ public class EntityEventHandlers
         return 8;
     }
 
-    public int _67_CamFollowEntity_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _67_CamFollowEntity_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var entityId = code[exp + 1];
+        var entityId = exp[1];
 
         var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
 
@@ -1556,23 +1477,23 @@ public class EntityEventHandlers
         return 2;
     }
 
-    public int _70_Check144_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _70_Check144_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        eventProgramState.LogicResult = entity.IsAboveGround;
+        eventProgramState.Exp[9] = entity.IsAboveGround;
 
         return 2;
     }
 
-    public int _90_CreateEffect_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _90_CreateEffect_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var effectid = code[1];
+        var effectid = (byte)exp[1];
         _gameEngine.CreateEffect_MapType(effectid, true);
         return 2;
     }
 
-    public int _91_DisableEffect_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _91_DisableEffect_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var effectid = code[1];
+        var effectid = exp[1];
         foreach (var effect in StaticVariables.g_effectSlots)
         {
             if (effect.Status != 0 && effect.MapEffectId == effectid)
@@ -1584,10 +1505,10 @@ public class EntityEventHandlers
         return 2;
     }
 
-    public int _92_SetEffectAnim_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _92_SetEffectAnim_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var effectid = code[1];
-        var animid = code[2];
+        var effectid = exp[1];
+        var animid = (byte)exp[2];
         foreach (var effect in StaticVariables.g_effectSlots)
         {
             if (effect.Status != 0 && effect.MapEffectId == effectid)
@@ -1599,12 +1520,12 @@ public class EntityEventHandlers
         return 3;
     }
 
-    public int _93_SetEffectPos_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _93_SetEffectPos_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var effectid = code[1];
-        var x = (code[2] | code[3] << 8) << 16;
-        var y = (code[4] | code[5] << 8) << 16;
-        var z = (code[6] | code[7] << 8) << 16;
+        var effectid = exp[1];
+        var x = (exp[2] | exp[3] << 8) << 16;
+        var y = (exp[4] | exp[5] << 8) << 16;
+        var z = (exp[6] | exp[7] << 8) << 16;
         foreach (var effect in StaticVariables.g_effectSlots)
         {
             if (effect.Status != 0 && effect.MapEffectId == effectid)
@@ -1618,12 +1539,12 @@ public class EntityEventHandlers
         return 8;
     }
 
-    public int _94_SetEffectForces_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _94_SetEffectForces_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var effectid = code[1];
-        var x = (code[2] | code[3] << 8) << 16;
-        var y = (code[4] | code[5] << 8) << 16;
-        var z = (code[6] | code[7] << 8) << 16;
+        var effectid = exp[1];
+        var x = (exp[2] | exp[3] << 8) << 16;
+        var y = (exp[4] | exp[5] << 8) << 16;
+        var z = (exp[6] | exp[7] << 8) << 16;
         foreach (var effect in StaticVariables.g_effectSlots)
         {
             if (effect.Status != 0 && effect.MapEffectId == effectid)
@@ -1637,12 +1558,12 @@ public class EntityEventHandlers
         return 8;
     }
 
-    public int _a0_AdjustEffectPos_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _a0_AdjustEffectPos_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var effectid = code[1];
-        var x = (code[2] | code[3] << 8) << 16;
-        var y = (code[4] | code[5] << 8) << 16;
-        var z = (code[6] | code[7] << 8) << 16;
+        var effectid = exp[1];
+        var x = (exp[2] | exp[3] << 8) << 16;
+        var y = (exp[4] | exp[5] << 8) << 16;
+        var z = (exp[6] | exp[7] << 8) << 16;
         foreach (var effect in StaticVariables.g_effectSlots)
         {
             if (effect.Status != 0 && effect.MapEffectId == effectid)
@@ -1656,10 +1577,10 @@ public class EntityEventHandlers
         return 8;
     }
 
-    public int _a1_AdjustEffectPosWithEntity_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _a1_AdjustEffectPosWithEntity_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var effectid = code[1];
-        var entityId = code[2];
+        var effectid = exp[1];
+        var entityId = exp[2];
 
         var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
         if (numEntities == 0)
@@ -1669,9 +1590,9 @@ public class EntityEventHandlers
 
         var refentity = StaticVariables.g_entitySlots[0];
 
-        var x = (code[3] | code[4] << 8) << 16;
-        var y = (code[5] | code[6] << 8) << 16;
-        var z = (code[7] | code[8] << 8) << 16;
+        var x = (exp[3] | exp[4] << 8) << 16;
+        var y = (exp[5] | exp[6] << 8) << 16;
+        var z = (exp[7] | exp[8] << 8) << 16;
 
         x += refentity.XPos;
         y += refentity.YPos;
@@ -1690,18 +1611,18 @@ public class EntityEventHandlers
         return 9;
     }
 
-    public int _a2_CreateEffectWithPos_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _a2_CreateEffectWithPos_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var effectid = code[1];
+        var effectid = (byte)exp[1];
         var effect = _gameEngine.CreateEffect_MapType(effectid, true);
         if (effect == null)
         {
             return 8;
         }
 
-        var x = (code[2] | code[3] << 8) << 16;
-        var y = (code[4] | code[5] << 8) << 16;
-        var z = (code[6] | code[7] << 8) << 16;
+        var x = (exp[2] | exp[3] << 8) << 16;
+        var y = (exp[4] | exp[5] << 8) << 16;
+        var z = (exp[6] | exp[7] << 8) << 16;
 
         effect.X = x;
         effect.Y = y;
@@ -1710,10 +1631,10 @@ public class EntityEventHandlers
         return 8;
     }
 
-    public int _a3_CreateEffectWithEntityPos_Handler(Entity entity, Entity entitySelf, int exp, EventProgramState eventProgramState, byte[] code)
+    public int _a3_CreateEffectWithEntityPos_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var effectid = code[1];
-        var entityId = code[2];
+        var effectid = (byte)exp[1];
+        var entityId = exp[2];
         var numEntities = _gameEngine.GetEntityFromRefId(entity, entityId);
         if (numEntities == 0)
         {
@@ -1726,9 +1647,9 @@ public class EntityEventHandlers
             return 9;
         }
 
-        var x = (code[3] | code[4] << 8) << 16;
-        var y = (code[5] | code[6] << 8) << 16;
-        var z = (code[7] | code[8] << 8) << 16;
+        var x = (exp[3] | exp[4] << 8) << 16;
+        var y = (exp[5] | exp[6] << 8) << 16;
+        var z = (exp[7] | exp[8] << 8) << 16;
 
         effect.X = entity.XPos + x;
         effect.Y = entity.YPos + y;

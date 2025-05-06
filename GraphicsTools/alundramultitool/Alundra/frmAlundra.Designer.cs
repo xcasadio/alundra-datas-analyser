@@ -238,6 +238,19 @@
             columnHeaderSpriteMapEntryOffsetY = new ColumnHeader();
             columnHeaderSpriteMapEntryOffsetZ = new ColumnHeader();
             tabPage3 = new TabPage();
+            label79 = new Label();
+            listBoxCodesF = new ListBox();
+            label78 = new Label();
+            listBoxCodesE = new ListBox();
+            label77 = new Label();
+            listBoxCodesD = new ListBox();
+            label76 = new Label();
+            listBoxCodesC = new ListBox();
+            label75 = new Label();
+            listBoxCodesB = new ListBox();
+            label73 = new Label();
+            label71 = new Label();
+            listBoxCodesA = new ListBox();
             tabPage2 = new TabPage();
             tabPage4 = new TabPage();
             lstStringTable = new ListBox();
@@ -271,6 +284,8 @@
             radioButtonZoom1 = new RadioButton();
             radioButtonZoom2 = new RadioButton();
             radioButtonZoom4 = new RadioButton();
+            label80 = new Label();
+            listBoxCodesGlobal = new ListBox();
             ((System.ComponentModel.ISupportInitialize)pctMapPalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctTilesheet).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctSpritesheet).BeginInit();
@@ -2338,6 +2353,21 @@
             // 
             // tabPage3
             // 
+            tabPage3.Controls.Add(label80);
+            tabPage3.Controls.Add(listBoxCodesGlobal);
+            tabPage3.Controls.Add(label79);
+            tabPage3.Controls.Add(listBoxCodesF);
+            tabPage3.Controls.Add(label78);
+            tabPage3.Controls.Add(listBoxCodesE);
+            tabPage3.Controls.Add(label77);
+            tabPage3.Controls.Add(listBoxCodesD);
+            tabPage3.Controls.Add(label76);
+            tabPage3.Controls.Add(listBoxCodesC);
+            tabPage3.Controls.Add(label75);
+            tabPage3.Controls.Add(listBoxCodesB);
+            tabPage3.Controls.Add(label73);
+            tabPage3.Controls.Add(label71);
+            tabPage3.Controls.Add(listBoxCodesA);
             tabPage3.Controls.Add(label35);
             tabPage3.Controls.Add(lstSector5);
             tabPage3.Controls.Add(lbl_flags);
@@ -2419,6 +2449,124 @@
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Sprites";
             tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // label79
+            // 
+            label79.AutoSize = true;
+            label79.Location = new Point(584, 436);
+            label79.Margin = new Padding(4, 0, 4, 0);
+            label79.Name = "label79";
+            label79.Size = new Size(56, 15);
+            label79.TabIndex = 196;
+            label79.Text = "F Interact";
+            // 
+            // listBoxCodesF
+            // 
+            listBoxCodesF.FormattingEnabled = true;
+            listBoxCodesF.Location = new Point(584, 454);
+            listBoxCodesF.Name = "listBoxCodesF";
+            listBoxCodesF.Size = new Size(110, 484);
+            listBoxCodesF.TabIndex = 195;
+            // 
+            // label78
+            // 
+            label78.AutoSize = true;
+            label78.Location = new Point(468, 436);
+            label78.Margin = new Padding(4, 0, 4, 0);
+            label78.Name = "label78";
+            label78.Size = new Size(71, 15);
+            label78.TabIndex = 194;
+            label78.Text = "E Deactivate";
+            // 
+            // listBoxCodesE
+            // 
+            listBoxCodesE.FormattingEnabled = true;
+            listBoxCodesE.Location = new Point(468, 454);
+            listBoxCodesE.Name = "listBoxCodesE";
+            listBoxCodesE.Size = new Size(110, 484);
+            listBoxCodesE.TabIndex = 193;
+            // 
+            // label77
+            // 
+            label77.AutoSize = true;
+            label77.Location = new Point(352, 436);
+            label77.Margin = new Padding(4, 0, 4, 0);
+            label77.Name = "label77";
+            label77.Size = new Size(50, 15);
+            label77.TabIndex = 192;
+            label77.Text = "D Touch";
+            // 
+            // listBoxCodesD
+            // 
+            listBoxCodesD.FormattingEnabled = true;
+            listBoxCodesD.Location = new Point(352, 454);
+            listBoxCodesD.Name = "listBoxCodesD";
+            listBoxCodesD.Size = new Size(110, 484);
+            listBoxCodesD.TabIndex = 191;
+            // 
+            // label76
+            // 
+            label76.AutoSize = true;
+            label76.Location = new Point(236, 436);
+            label76.Margin = new Padding(4, 0, 4, 0);
+            label76.Name = "label76";
+            label76.Size = new Size(39, 15);
+            label76.TabIndex = 190;
+            label76.Text = "C Tick";
+            // 
+            // listBoxCodesC
+            // 
+            listBoxCodesC.FormattingEnabled = true;
+            listBoxCodesC.Location = new Point(236, 454);
+            listBoxCodesC.Name = "listBoxCodesC";
+            listBoxCodesC.Size = new Size(110, 484);
+            listBoxCodesC.TabIndex = 189;
+            // 
+            // label75
+            // 
+            label75.AutoSize = true;
+            label75.Location = new Point(120, 436);
+            label75.Margin = new Padding(4, 0, 4, 0);
+            label75.Name = "label75";
+            label75.Size = new Size(41, 15);
+            label75.TabIndex = 188;
+            label75.Text = "B Map";
+            // 
+            // listBoxCodesB
+            // 
+            listBoxCodesB.FormattingEnabled = true;
+            listBoxCodesB.Location = new Point(120, 454);
+            listBoxCodesB.Name = "listBoxCodesB";
+            listBoxCodesB.Size = new Size(110, 484);
+            listBoxCodesB.TabIndex = 187;
+            // 
+            // label73
+            // 
+            label73.AutoSize = true;
+            label73.Location = new Point(4, 411);
+            label73.Margin = new Padding(4, 0, 4, 0);
+            label73.Name = "label73";
+            label73.Size = new Size(43, 15);
+            label73.TabIndex = 186;
+            label73.Text = "Codes:";
+            // 
+            // label71
+            // 
+            label71.AutoSize = true;
+            label71.Location = new Point(4, 436);
+            label71.Margin = new Padding(4, 0, 4, 0);
+            label71.Name = "label71";
+            label71.Size = new Size(44, 15);
+            label71.TabIndex = 185;
+            label71.Text = "A Load";
+            // 
+            // listBoxCodesA
+            // 
+            listBoxCodesA.FormattingEnabled = true;
+            listBoxCodesA.Location = new Point(4, 454);
+            listBoxCodesA.Name = "listBoxCodesA";
+            listBoxCodesA.Size = new Size(110, 484);
+            listBoxCodesA.TabIndex = 184;
             // 
             // tabPage2
             // 
@@ -2788,6 +2936,7 @@
             // radioButtonZoom1
             // 
             radioButtonZoom1.AutoSize = true;
+            radioButtonZoom1.Checked = true;
             radioButtonZoom1.Location = new Point(577, 12);
             radioButtonZoom1.Name = "radioButtonZoom1";
             radioButtonZoom1.Size = new Size(37, 19);
@@ -2804,7 +2953,6 @@
             radioButtonZoom2.Name = "radioButtonZoom2";
             radioButtonZoom2.Size = new Size(37, 19);
             radioButtonZoom2.TabIndex = 192;
-            radioButtonZoom2.TabStop = true;
             radioButtonZoom2.Text = "x2";
             radioButtonZoom2.UseVisualStyleBackColor = true;
             radioButtonZoom2.CheckedChanged += radioButtonZoom2_CheckedChanged;
@@ -2816,10 +2964,27 @@
             radioButtonZoom4.Name = "radioButtonZoom4";
             radioButtonZoom4.Size = new Size(37, 19);
             radioButtonZoom4.TabIndex = 193;
-            radioButtonZoom4.TabStop = true;
             radioButtonZoom4.Text = "x4";
             radioButtonZoom4.UseVisualStyleBackColor = true;
             radioButtonZoom4.CheckedChanged += radioButtonZoom4_CheckedChanged;
+            // 
+            // label80
+            // 
+            label80.AutoSize = true;
+            label80.Location = new Point(700, 436);
+            label80.Margin = new Padding(4, 0, 4, 0);
+            label80.Name = "label80";
+            label80.Size = new Size(41, 15);
+            label80.TabIndex = 198;
+            label80.Text = "Global";
+            // 
+            // listBoxCodesGlobal
+            // 
+            listBoxCodesGlobal.FormattingEnabled = true;
+            listBoxCodesGlobal.Location = new Point(700, 454);
+            listBoxCodesGlobal.Name = "listBoxCodesGlobal";
+            listBoxCodesGlobal.Size = new Size(110, 484);
+            listBoxCodesGlobal.TabIndex = 197;
             // 
             // FrmAlundra
             // 
@@ -3124,5 +3289,20 @@
         private ColumnHeader columnHeaderSpriteMapEntryOffsetX;
         private ColumnHeader columnHeaderSpriteMapEntryOffsetY;
         private ColumnHeader columnHeaderSpriteMapEntryOffsetZ;
+        private Label label71;
+        private ListBox listBoxCodesA;
+        private Label label78;
+        private ListBox listBoxCodesE;
+        private Label label77;
+        private ListBox listBoxCodesD;
+        private Label label76;
+        private ListBox listBoxCodesC;
+        private Label label75;
+        private ListBox listBoxCodesB;
+        private Label label73;
+        private Label label79;
+        private ListBox listBoxCodesF;
+        private Label label80;
+        private ListBox listBoxCodesGlobal;
     }
 }

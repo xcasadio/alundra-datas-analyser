@@ -4,7 +4,7 @@ namespace Alundra.DatasBin;
 
 public class SpriteInfoEventCodes
 {
-    public static readonly byte[] Codes = new byte[1024 * 1024];//1mb of event codes, too much prob but oh well;
+    public static readonly byte[] Codes = new byte[1024 * 1024]; //1mb of event codes, too much prob but oh well;
 
     public SpriteInfoEventCodes(BinaryReader br, long binOffset, SpriteInfoHeader header, bool ismap)
     {
@@ -15,12 +15,12 @@ public class SpriteInfoEventCodes
         br.BaseStream.Position = binOffset + header.EventCodesAPointer;
         tableSize = header.EventCodesASize / 2;
         EventCodesATable = new short[tableSize];
-        for (var dex = 0; dex < tableSize; dex++)
+        for (var i = 0; i < tableSize; i++)
         {
-            EventCodesATable[dex] = br.ReadInt16();
-            if (firstoffset == 0 && EventCodesATable[dex] != 0)
+            EventCodesATable[i] = br.ReadInt16();
+            if (firstoffset == 0 && EventCodesATable[i] != 0)
             {
-                firstoffset = EventCodesATable[dex];
+                firstoffset = EventCodesATable[i];
             }
         }
 
@@ -28,12 +28,12 @@ public class SpriteInfoEventCodes
         br.BaseStream.Position = binOffset + header.EventCodesBPointer;
         tableSize = header.EventCodesBSize / 2;
         EventCodesBTable = new short[tableSize];
-        for (var dex = 0; dex < tableSize; dex++)
+        for (var i = 0; i < tableSize; i++)
         {
-            EventCodesBTable[dex] = br.ReadInt16();
-            if (firstoffset == 0 && EventCodesBTable[dex] != 0)
+            EventCodesBTable[i] = br.ReadInt16();
+            if (firstoffset == 0 && EventCodesBTable[i] != 0)
             {
-                firstoffset = EventCodesBTable[dex];
+                firstoffset = EventCodesBTable[i];
             }
         }
 
@@ -41,12 +41,12 @@ public class SpriteInfoEventCodes
         br.BaseStream.Position = binOffset + header.EventCodesCPointer;
         tableSize = header.EventCodesCSize / 2;
         EventCodesCTable = new short[tableSize];
-        for (var dex = 0; dex < tableSize; dex++)
+        for (var i = 0; i < tableSize; i++)
         {
-            EventCodesCTable[dex] = br.ReadInt16();
-            if (firstoffset == 0 && EventCodesCTable[dex] != 0)
+            EventCodesCTable[i] = br.ReadInt16();
+            if (firstoffset == 0 && EventCodesCTable[i] != 0)
             {
-                firstoffset = EventCodesCTable[dex];
+                firstoffset = EventCodesCTable[i];
             }
         }
 
@@ -54,12 +54,12 @@ public class SpriteInfoEventCodes
         br.BaseStream.Position = binOffset + header.EventCodesDPointer;
         tableSize = header.EventCodesDSize / 2;
         EventCodesDTable = new short[tableSize];
-        for (var dex = 0; dex < tableSize; dex++)
+        for (var i = 0; i < tableSize; i++)
         {
-            EventCodesDTable[dex] = br.ReadInt16();
-            if (firstoffset == 0 && EventCodesDTable[dex] != 0)
+            EventCodesDTable[i] = br.ReadInt16();
+            if (firstoffset == 0 && EventCodesDTable[i] != 0)
             {
-                firstoffset = EventCodesDTable[dex];
+                firstoffset = EventCodesDTable[i];
             }
         }
 
@@ -67,12 +67,12 @@ public class SpriteInfoEventCodes
         br.BaseStream.Position = binOffset + header.EventCodesEPointer;
         tableSize = header.EventCodesESize / 2;
         EventCodesETable = new short[tableSize];
-        for (var dex = 0; dex < tableSize; dex++)
+        for (var i = 0; i < tableSize; i++)
         {
-            EventCodesETable[dex] = br.ReadInt16();
-            if (firstoffset == 0 && EventCodesETable[dex] != 0)
+            EventCodesETable[i] = br.ReadInt16();
+            if (firstoffset == 0 && EventCodesETable[i] != 0)
             {
-                firstoffset = EventCodesETable[dex];
+                firstoffset = EventCodesETable[i];
             }
         }
 
@@ -86,15 +86,16 @@ public class SpriteInfoEventCodes
         }
 
         EventCodesFTable = new short[tableSize];
-        for (var dex = 0; dex < tableSize; dex++)
+        for (var i = 0; i < tableSize; i++)
         {
-            EventCodesFTable[dex] = br.ReadInt16();
+            EventCodesFTable[i] = br.ReadInt16();
         }
 
         //set binOffset for eventcodes
         _binOffset = binOffset + header.EventCodesAPointer;
         _memoryAddress = header.MemoryAddress + header.EventCodesAPointer;
-        _dataSize = header.EntitiesPointer - header.EventCodesAPointer;
+        _dataSize = (header.EntitiesPointer == 0 ? header.EventCodesFPointer: header.EntitiesPointer) - header.EventCodesAPointer;
+        Debug.Assert(_dataSize > 0);
 
         EventCodesTable.Add(EventCodesATable);
         EventCodesTable.Add(EventCodesBTable);
@@ -103,6 +104,7 @@ public class SpriteInfoEventCodes
         EventCodesTable.Add(EventCodesETable);
         EventCodesTable.Add(EventCodesFTable);
 
+        //remove this ??  =>
         var top = 0;
         if (ismap)
         {
@@ -123,408 +125,28 @@ public class SpriteInfoEventCodes
         public string Name { get; set; }
         public int Size { get; set; }
     }
-    
+
     public static SiCode GetCode(byte b)
     {
-        var size = 1;
-        var name = "";
-        switch (b)
+        if (CommandSizeByCode.TryGetValue(b, out var size))
         {
-            case 0x02:
-                name = "goto";//skips forward or back
-                size = 3;
-                break;
-            case 0x03:
-                name = "iffalse";
-                size = 3;
-                break;
-            case 0x04:
-                name = "whilefalse";//loops back until condition met
-                size = 3;
-                break;
-            case 0x05:
-                name = "flagon";//turn on a logic switch
-                size = 3;
-                break;
-            case 0x06:
-                name = "flagoff";//turn off a logic switch
-                size = 3;
-                break;
-            case 0x07:
-                name = "checkentityinarea";
-                size = 8;
-                break;
-            case 0x08:
-                name = "turn";//turn direction
-                size = 2;
-                break;
-            case 0x09:
-                name = "setdir";//set direction
-                size = 2;
-                break;
-            case 0x0a:
-                name = "reverse";//switch direction, used for paceing npcs
-                size = 1;
-                break;
-            case 0x0b:
-                name = "animwaitdistance";
-                size = 4;
-                break;
-            case 0x0c:
-                name = "setdirectionwithmath";
-                size = 1;
-                break;
-            case 0x0d:
-                name = "dialog";//show dialog
-                size = 3;
-                break;
-            case 0x10:
-                name = "losecontrol";
-                size = 1;
-                break;
-            case 0x11:
-                name = "gaincontrol";
-                size = 1;
-                break;
-            case 0x12:
-                name = "playsound1";//only 1 byte sound index
-                size = 2;
-                break;
-            case 0x15:
-                name = "resetzpos";
-                size = 1;
-                break;
-            case 0x16:
-                name = "highgravity";//fall as normal  //bit 0x100
-                size = 1;
-                break;
-            case 0x17:
-                name = "lowgravity";//used for climbing ladders and flying
-                size = 1;
-                break;
-
-            case 0x19:
-                name = "deactivate?";
-                size = 1;
-                break;
-            case 0x1a:
-                name = "setanim";//set animation
-                size = 2;
-                break;
-
-            //CURRENT IMPLEMENTATION PROGRESS
-            case 0x1b:
-                name = "fly"; //stop flying 0x0000   flying down 0xff7f     flying foward and up  0x0380
-                size = 3;
-                break;
-            case 0x1c:
-                name = "waitanim?";
-                size = 2;
-                break;
-            case 0x1d:
-                name = "waitanim2";
-                size = 2;
-                break;
-            case 0x1e:
-                name = "walk";//collision blocks/pauses the walk
-                size = 3;
-                break;
-            case 0x1f:
-                name = "walk2";//collision ends the walk
-                size = 3;
-                break;
-            case 0x24:
-                name = "waitforceadjusted";//waits until force adjust is > 0
-                size = 1;
-                break;
-            case 0x25:
-                name = "waitentitycollisionzor144";
-                size = 1;
-                break;
-            case 0x26:
-                name = "waitforceadjustedorentitycollisionz";
-                size = 1;
-                break;
-            case 0x27:
-                name = "faceplayer";
-                size = 1;
-                break;
-            case 0x28:
-                name = "gravityflag2on";//bit 0x8
-                size = 1;
-                break;
-            case 0x29:
-                name = "gravityflag2off";//bit 0x8
-                size = 1;
-                break;
-            case 0x2a:
-                name = "gravityflag3on";//bit 0x1
-                size = 1;
-                break;
-            case 0x2b:
-                name = "gravityflag3off";//bit 0x1
-                size = 1;
-                break;
-            case 0x2d:
-                name = "activateentity";//look into this event to study entity type
-                size = 2;
-                break;
-            case 0x2e:
-                name = "hide";
-                size = 2;
-                break;
-            case 0x2f:
-                name = "checkmovingindir";
-                size = 4;
-                break;
-            case 0x30:
-                name = "ifflagoff";//if a logic switch is on
-                size = 5;
-                break;
-            case 0x31:
-                name = "ifflagon";//if a logic switch is not on
-                size = 5;
-                break;
-            case 0x32:
-                name = "toggleflag";//toggle bit on a flag
-                size = 3;
-                break;
-            case 0x33:
-                name = "checkflagson";
-                size = 9;
-                break;
-            case 0x34:
-                name = "checkflagsoff";
-                size = 9;
-                break;
-            case 0x35:
-                name = "untilflagoff";//block until a flag is off
-                size = 3;
-                break;
-            case 0x36:
-                name = "untilflagon";//block until a flag is on
-                size = 3;
-                break;
-            case 0x37:
-                name = "wait";//waits for the specified time to pass
-                size = 2;
-                break;
-            case 0x38:
-                name = "registersomething?";
-                size = 5;
-                break;
-            case 0x39:
-                name = "waitfordaialog";//blocks until the dialog is finished
-                size = 1;
-                break;
-
-            case 0x3b:
-                name = "checkplayerinarea";
-                size = 7;
-                break;
-            case 0x40:
-                name = "setprogramindex";
-                size = 3;
-                break;
-            case 0x41:
-                name = "setspriteprogramindex";
-                size = 3;
-                break;
-            case 0x44:
-                name = "waitdialogchoice";
-                size = 1;
-                break;
-            case 0x45:
-                name = "gravityflag4off";//bit 0x2000
-                size = 1;
-                break;
-            case 0x46:
-                name = "gravityflag4on";//bit 0x2000
-                size = 1;
-                break;
-            case 0x49:
-                name = "restart";//seeks back to the beginning of event program
-                size = 1;
-                break;
-            case 0x4a:
-                name = "iftruerestart";
-                size = 1;
-                break;
-            case 0x4b:
-                name = "iffalserestart";
-                size = 1;
-                break;
-            case 0x4c:
-                name = "setdialogsoemthing";//*0x107200 = val
-                size = 2;
-                break;
-            case 0x4d:
-                name = "checkdialogsomething";//*0x107204 = *0x107200 & 0x4
-                size = 1;
-                break;
-            case 0x50:
-                name = "setdialogchoice";
-                size = 2;
-                break;
-            case 0x51:
-                name = "getdialogchoice";
-                size = 1;
-                break;
-
-            case 0x54:
-                name = "setwalkable";
-                size = 5;
-                break;
-            case 0x55:
-                name = "setunwalkable";
-                size = 5;
-                break;
-            case 0x58:
-                name = "directionalbranch";
-                size = 9;
-                break;
-            case 0x59:
-                name = "setentityanim";
-                size = 3;
-                break;
-            case 0x5a:
-                name = "turnentity";
-                size = 3;
-                break;
-            case 0x5b:
-                name = "turnentitywithanim";//also has anim flag for on ground or climbing, etc
-                size = 4;
-                break;
-            case 0x5c:
-                name = "dialogwithentity";
-                size = 4;
-                break;
-
-            case 0x62:
-                name = "setentitysomething?";
-                size = 4;
-                break;
-            case 0x63:
-                name = "setentitygravity";
-                size = 4;
-                break;
-            case 0x64:
-                name = "setentityposition";
-                size = 8;
-                break;
-            case 0x65:
-                name = "moveentityposition";
-                size = 8;
-                break;
-
-            case 0x67:
-                name = "followentity";
-                size = 2;
-                break;
-
-            case 0x70:
-                name = "checksomething?";
-                size = 1;
-                break;
-
-            case 0x85:
-                name = "setmaptiles";
-                size = 7;
-                break;
-
-            case 0x8b:
-                name = "spawnentity";//pulls entity to ones self and activates it at pixel offset
-                size = 9;
-                break;
-            case 0x90:
-                name = "createeffect";
-                size = 2;
-                break;
-            case 0x91:
-                name = "disableeffect";
-                size = 2;
-                break;
-            case 0x92:
-                name = "seteffectanim";
-                size = 3;
-                break;
-            case 0x93:
-                name = "seteeffectpos";
-                size = 8;
-                break;
-            case 0x94:
-                name = "seteeffectforces";
-                size = 8;
-                break;
-            case 0xa0:
-                name = "adjusteeffectpos";
-                size = 8;
-                break;
-            case 0xa1:
-                name = "seteeffectposwithentity";
-                size = 9;
-                break;
-            case 0xa2:
-                name = "createeffectwithpos";
-                size = 8;
-                break;
-            case 0xa3:
-                name = "createeffectwithentitypos";
-                size = 9;
-                break;
-            case 0xa7:
-                name = "playmusic";
-                size = 3;
-                break;
-            case 0xac:
-                name = "setgravityflagsonentity";
-                size = 4;
-                break;
-            case 0xbd:
-                name = "playsound2";//2 byte sound index
-                size = 3;
-                break;
-
-            case 0xc4:
-                name = "dialogwithentityandname";
-                size = 6;
-                break;
-
-            //non-operations
-            case 0x00:
-                name = "break";
-                size = 1;
-                break;
-            case 0xff:
-                name = "end";
-                size = 1;
-                break;
-
-            //unknowns, just get the size down
-            case 0x69:
-                size = 7;
-                break;
-            case 0x73:
-                size = 2;
-                break;
-            case 0x74:
-                size = 3;
-                break;
-            case 0x78:
-                size = 3;
-                break;
-            case 0x98:
-                size = 3;
-                break;
-
-            default:
-                Debug.Print("Unknown code " + b.ToString("x2"));
-                break;
+            return new SiCode
+            {
+                Code = b,
+                Size = size,
+                Name = CommandNameByCode.GetValueOrDefault(b, "")
+            };
         }
 
-        return new SiCode { Code = b, Size = size, Name = name };
+        return new SiCode
+        {
+            Code = b,
+            Size = 1,
+            Name = ""
+        };
+        //throw new ArgumentException($"Unknown command code: {b:X2}");
     }
-    
+
     public List<SiCommand> GetCommands(BinaryReader br, int eventCodesOffset, bool stopAtff = false, int commandsSize = 0)
     {
         var commands = new List<SiCommand>();
@@ -541,46 +163,46 @@ public class SpriteInfoEventCodes
             var sicode = GetCode(b);
             var size = sicode.Size;
             var name = sicode.Name;
-            var parms = new byte[size - 1];
+            var parameters = new byte[size - 1];
             var j = 0;
 
             while (j < size - 1)
             {
-                parms[j++] = bytes[i++];
+                parameters[j++] = bytes[i++];
             }
 
             SiCommand cmd;
             var addr = _memoryAddress + eventCodesOffset + i - size;
 
-            switch (name)
+            switch (b)
             {
-                case "walk":
-                case "walk2":
-                    cmd = new WalkCommand(b, parms, name, addr);
+                case 0x1E:
+                case 0x1F:
+                    cmd = new WalkCommand(b, parameters, name, addr);
                     break;
-                case "setentityposition":
-                    cmd = new SetPositionCommand(b, parms, name, addr);
+                case 0x64:
+                    cmd = new SetPositionCommand(b, parameters, name, addr);
                     break;
-                case "flagon":
-                case "flagoff":
-                    cmd = new SetFlagCommand(b, parms, name, addr);
+                case 0x05:
+                case 0x06:
+                    cmd = new SetFlagCommand(b, parameters, name, addr);
                     break;
-                case "if":
-                case "ifnot":
-                    cmd = new BranchCommand(b, 5, parms, name, addr);
+                //case "if":
+                //case "if not":
+                //    cmd = new BranchCommand(b, 5, parameters, name, addr);
+                //    break;
+                case 0x03:
+                case 0x04:
+                    cmd = new BranchCommand(b, 3, parameters, name, addr);
                     break;
-                case "ifno":
-                case "whilefalse":
-                    cmd = new BranchCommand(b, 3, parms, name, addr);
+                case 0x02:
+                    cmd = new JumpCommand(b, parameters, name, addr);
                     break;
-                case "goto":
-                    cmd = new JumpCommand(b, parms, name, addr);
-                    break;
-                case "directionalbranch":
-                    cmd = new DirectionBranchCommand(b, parms, name, addr);
+                case 0x58:
+                    cmd = new DirectionBranchCommand(b, parameters, name, addr);
                     break;
                 default:
-                    cmd = new SiCommand(b, size, parms, name, addr);
+                    cmd = new SiCommand(b, size, parameters, name, addr);
                     break;
             }
 
@@ -606,14 +228,14 @@ public class SpriteInfoEventCodes
             //Debug.Assert(dex < bytes.Length, "ByteCodes larger than 255");
 
             var b = br.ReadByte();
-            if (b == 0)//what does 0 mean?
+            if (b == 0) //what does 0 mean?
             {
                 bytes[i++] = b;
             }
-            else if (b == 0xff)//end
+            else if (b == 0xff) //end
             {
                 bytes[i++] = b;
-                return bytes;//for now
+                return bytes; //for now
             }
             else
             {
@@ -621,6 +243,7 @@ public class SpriteInfoEventCodes
                 //skip ahead by parameter length
             }
         }
+
         return bytes;
     }
 
@@ -635,4 +258,199 @@ public class SpriteInfoEventCodes
     public readonly short[] EventCodesFTable;
 
     public readonly List<short[]> EventCodesTable = new();
+
+
+    public static readonly Dictionary<byte, int> CommandSizeByCode = new()
+    {
+        { 0x00, 1 },
+        { 0x02, 3 },
+        { 0x03, 3 },
+        { 0x04, 3 },
+        { 0x05, 3 },
+        { 0x06, 3 },
+        { 0x07, 8 },
+        { 0x08, 2 },
+        { 0x09, 2 },
+        { 0x0A, 1 },
+        { 0x0B, 4 },
+        { 0x0C, 1 },
+        { 0x0D, 3 },
+        { 0x10, 1 },
+        { 0x11, 1 },
+        { 0x12, 2 },
+        { 0x15, 1 },
+        { 0x16, 1 },
+        { 0x17, 1 },
+        { 0x19, 1 },
+        { 0x1A, 2 },
+        { 0x1B, 3 },
+        { 0x1C, 2 },
+        { 0x1D, 2 },
+        { 0x1E, 3 },
+        { 0x1F, 3 },
+        { 0x24, 1 },
+        { 0x25, 1 },
+        { 0x26, 1 },
+        { 0x27, 1 },
+        { 0x28, 1 },
+        { 0x29, 1 },
+        { 0x2A, 1 },
+        { 0x2B, 1 },
+        { 0x2D, 2 },
+        { 0x2E, 2 },
+        { 0x2F, 4 },
+        { 0x30, 5 },
+        { 0x31, 5 },
+        { 0x32, 3 },
+        { 0x33, 9 },
+        { 0x34, 9 },
+        { 0x35, 3 },
+        { 0x36, 3 },
+        { 0x37, 2 },
+        { 0x38, 5 },
+        { 0x39, 1 },
+        { 0x3B, 7 },
+        { 0x40, 3 },
+        { 0x41, 3 },
+        { 0x44, 1 },
+        { 0x45, 1 },
+        { 0x46, 1 },
+        { 0x49, 1 },
+        { 0x4A, 1 },
+        { 0x4B, 1 },
+        { 0x4C, 2 },
+        { 0x4D, 1 },
+        { 0x50, 2 },
+        { 0x51, 1 },
+        { 0x54, 5 },
+        { 0x55, 5 },
+        { 0x58, 9 },
+        { 0x59, 3 },
+        { 0x5A, 3 },
+        { 0x5B, 4 },
+        { 0x5C, 4 },
+        { 0x62, 4 },
+        { 0x63, 4 },
+        { 0x64, 8 },
+        { 0x65, 8 },
+        { 0x67, 2 },
+        { 0x69, 7 },
+        { 0x70, 1 },
+        { 0x73, 2 },
+        { 0x74, 3 },
+        { 0x78, 3 },
+        { 0x85, 7 },
+        { 0x8B, 9 },
+        { 0x90, 2 },
+        { 0x91, 2 },
+        { 0x92, 3 },
+        { 0x93, 8 },
+        { 0x94, 8 },
+        { 0xA0, 8 },
+        { 0xA1, 9 },
+        { 0xA2, 8 },
+        { 0xA3, 9 },
+        { 0xA7, 3 },
+        { 0xAC, 4 },
+        { 0xBD, 3 },
+        { 0xC4, 6 },
+        { 0xFF, 1 },
+    };
+
+    public static readonly Dictionary<byte, string> CommandNameByCode = new()
+    {
+        { 0x00, "break" },
+        { 0x02, "goto" },
+        { 0x03, "if false" },
+        { 0x04, "while false" },
+        { 0x05, "flag on" },
+        { 0x06, "flag off" },
+        { 0x07, "check entity in area" },
+        { 0x08, "turn" },
+        { 0x09, "set dir" },
+        { 0x0A, "reverse" }, //switch direction, used for paceing npcs
+        { 0x0B, "anim wait distance" },
+        { 0x0C, "set direction with math" },
+        { 0x0D, "dialog" }, //show dialog
+        { 0x10, "lose control" },
+        { 0x11, "gain control" },
+        { 0x12, "play sound 1" }, //only 1 byte sound index
+        { 0x15, "reset z pos" },
+        { 0x16, "high gravity" }, //fall as normal  //bit 0x100
+        { 0x17, "low gravity" }, //used for climbing ladders and flying
+        { 0x19, "deactivate?" },
+        { 0x1A, "set anim" },
+        { 0x1B, "fly" }, //stop flying 0x0000   flying down 0xff7f     flying foward and up  0x0380
+        { 0x1C, "wait anim ?" },
+        { 0x1D, "wait anim 2" },
+        { 0x1E, "walk" }, //collision blocks/pauses the walk
+        { 0x1F, "walk 2" }, //collision ends the walk
+        { 0x24, "wait force adjusted" }, //waits until force adjust is > 0
+        { 0x25, "wait entity collision z or 144" },
+        { 0x26, "wait force adjusted or entity collision z" },
+        { 0x27, "face player" },
+        { 0x28, "gravity flag 2 on" }, //bit 0x8
+        { 0x29, "gravity flag 2 off" }, //bit 0x8
+        { 0x2A, "gravity flag 3 on" }, //bit 0x1
+        { 0x2B, "gravity flag 3 off" }, //bit 0x1
+        { 0x2D, "activate entity" }, //look into this event to study entity type
+        { 0x2E, "hide" },
+        { 0x2F, "check moving in dir" },
+        { 0x30, "if flag off" },
+        { 0x31, "if flag on" },
+        { 0x32, "toggle flag" }, //toggle bit on a flag
+        { 0x33, "check flags on" },
+        { 0x34, "check flags off" },
+        { 0x35, "until flag off" }, //block until a flag is off
+        { 0x36, "until flag on" },  //block until a flag is on
+        { 0x37, "wait" },
+        { 0x38, "register something?" },
+        { 0x39, "wait for dialog" }, //blocks until the dialog is finished
+        { 0x3B, "check player in area" },
+        { 0x40, "set program index" },
+        { 0x41, "set sprite program index" },
+        { 0x44, "wait dialog choice" },
+        { 0x45, "gravity flag 4 off" }, //bit 0x2000
+        { 0x46, "gravity flag 4 on" },
+        { 0x49, "restart" }, //seeks back to the beginning of event program
+        { 0x4A, "if true restart" },
+        { 0x4B, "if false restart" },
+        { 0x4C, "set dialog something" }, //*0x107200 = val
+        { 0x4D, "check dialog something" }, //*0x107204 = *0x107200 & 0x4
+        { 0x50, "set dialog choice" },
+        { 0x51, "get dialog choice" },
+        { 0x54, "set walkable" },
+        { 0x55, "set unwalkable" },
+        { 0x58, "directional branch" },
+        { 0x59, "set entity anim" },
+        { 0x5A, "turn entity" },
+        { 0x5B, "turn entity with anim" }, //also has anim flag for on ground or climbing, etc
+        { 0x5C, "dialog with entity" },
+        { 0x62, "set entity something?" },
+        { 0x63, "set entity gravity" },
+        { 0x64, "set entity position" },
+        { 0x65, "move entity position" },
+        { 0x67, "follow entity" },
+        { 0x69, "" },
+        { 0x70, "check something?" },
+        { 0x73, "" },
+        { 0x74, "" },
+        { 0x78, "" },
+        { 0x85, "set map tiles" },
+        { 0x8B, "spawn entity" },
+        { 0x90, "create effect" },
+        { 0x91, "disable effect" },
+        { 0x92, "set effect anim" },
+        { 0x93, "set effect pos" },
+        { 0x94, "set effect forces" },
+        { 0xA0, "adjusted effect pos" },
+        { 0xA1, "set e effect pos with entity" },
+        { 0xA2, "create effect with pos" },
+        { 0xA3, "create effect with entity pos" },
+        { 0xA7, "play music" },
+        { 0xAC, "set gravity flag son entity" },
+        { 0xBD, "play sound 2" }, //2 byte sound index
+        { 0xC4, "dialog with entity and name" },
+        { 0xFF, "end" },
+    };
 }

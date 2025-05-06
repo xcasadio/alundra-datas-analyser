@@ -2041,7 +2041,7 @@ public static class StaticVariables
     public static int g_initialWarpTileX; // 801EB338
     public static int g_initialWarpTileY; // 801EB33C
     public static int g_initialWarpZ; // 801EB340
-    public static uint[] g_mapFlags = new uint[22]; // 801EB344
+    public static uint[] g_mapFlags = new uint[1024]; // 801EB344 // 44
     public static int g_mapTransitionFlags; // 801EB39C
     public static int g_playerState; // 801EB3F4
     public static int g_progressStateFlags; // 801EB3F8
@@ -2061,7 +2061,7 @@ public static class StaticVariables
     public static short DAT_801eb83c; // 801EB83C
     public static short[] SHORT_ARRAY_801eb83e = new short[256]; // 801EB83E
     public static short g_currentSaveSlotNameIndex; // 801EBA3E
-    public static uint[] g_globalFlags = new uint[64]; // 801EBA40
+    public static uint[] g_globalFlags = new uint[1024]; // 801EBA40 //64
     public static byte[] g_bufferEtc = new byte[12288]; // 801EBB40
     public static int  g_bufferEtcPtr; // 801EEB40
     public static long g_randSeed; // 801EEB48

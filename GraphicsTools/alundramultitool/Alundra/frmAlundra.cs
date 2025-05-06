@@ -231,6 +231,50 @@ namespace GraphicsTools.Alundra
                 lblScrollInfo.Text = "alundra dummy map";
             }
 
+
+            listBoxCodesA.Items.Clear();
+            foreach (var code in _selectedGameMap.SpriteInfo.EventCodes.EventCodesATable)
+            {
+                listBoxCodesA.Items.Add(code);
+            }
+
+            listBoxCodesB.Items.Clear();
+            foreach (var code in _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable)
+            {
+                listBoxCodesB.Items.Add(code);
+            }
+
+            listBoxCodesC.Items.Clear();
+            foreach (var code in _selectedGameMap.SpriteInfo.EventCodes.EventCodesCTable)
+            {
+                listBoxCodesC.Items.Add(code);
+            }
+
+            listBoxCodesD.Items.Clear();
+            foreach (var code in _selectedGameMap.SpriteInfo.EventCodes.EventCodesDTable)
+            {
+                listBoxCodesD.Items.Add(code);
+            }
+
+            listBoxCodesE.Items.Clear();
+            foreach (var code in _selectedGameMap.SpriteInfo.EventCodes.EventCodesETable)
+            {
+                listBoxCodesE.Items.Add(code);
+            }
+
+            listBoxCodesF.Items.Clear();
+            foreach (var code in _selectedGameMap.SpriteInfo.EventCodes.EventCodesFTable)
+            {
+                listBoxCodesF.Items.Add(code);
+            }
+
+            //listBoxCodesGlobal.Items.Clear();
+            //foreach (var code in SpriteInfoEventCodes.Codes)
+            //{
+            //    listBoxCodesGlobal.Items.Add(code);
+            //}
+
+
             //sizes
             lblInfoSize.Text = _selectedGameMap.Header.InfoSize.ToString();
             lblMapSize.Text = _selectedGameMap.Header.MapSize.ToString();

@@ -5,7 +5,8 @@ public class SiAnimation
     public SiAnimation(BinaryReader br, SpriteTableHeader header, int memoryAddress)
     {
         MemoryAddress = memoryAddress;
-        Frames = new SiFrame[32];//32 max frames?
+        Frames = new SiFrame[64];//32 max frames?
+
         for (var i = 0; i < Frames.Length; i++)
         {
             //read two test bytes to check for the end of the list
