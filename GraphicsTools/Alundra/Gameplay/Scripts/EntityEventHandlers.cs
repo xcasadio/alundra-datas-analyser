@@ -240,7 +240,6 @@ public class EntityEventHandlers
             if (result == 0)
                 break;
             
-            
             ClearExp(entity.EventProgramState);
             eventProgramState.CommandIndex++;
         }

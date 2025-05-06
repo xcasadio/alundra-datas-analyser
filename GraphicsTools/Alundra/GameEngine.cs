@@ -275,7 +275,7 @@ public class GameEngine
         using var reader = DatasBin.OpenBin(); //added by hand
         AlundraMap.Load(reader, false);
 
-        IntializeTiles();
+        InitializeTiles();
         //InitializeDrMoveBuffers();
         LoadFontInTakiFolder();
         //InitSoundSystem();
@@ -294,7 +294,6 @@ public class GameEngine
 
         ClearPadInputStates();
     }
-
 
     void PadInit(int mode)
 
@@ -381,8 +380,7 @@ public class GameEngine
         //} while (frameIndex < 6);
     }
 
-    private void InitializeAlundraSpriteResourcesFromFile(string fileName, uint frameDataStart, uint frameDataEnd,
-        uint imageDataStart, uint imageDataEnd)
+    private void InitializeAlundraSpriteResourcesFromFile(string fileName, uint frameDataStart, uint frameDataEnd, uint imageDataStart, uint imageDataEnd)
     {
         /*POLY_FT4 *polyFt4;
         int j;
@@ -833,7 +831,7 @@ public class GameEngine
         StaticVariables.g_debugVar_WarpDestinationId = StaticVariables.g_desiredMap;
     }
 
-    private void IntializeTiles()
+    private void InitializeTiles()
     {
         //SetTile(StaticVariables.TILE_8013fb98);
         //SetTile(StaticVariables.TILE_8013fba8);
@@ -1699,8 +1697,16 @@ public class GameEngine
                 entity.NextFrameDelay = 0x7fffffff;
                 entity.ForceResetAnimationFlag = 1;
 
-                Debug.Assert(entity.AnimSet != null);
-                Debug.Assert(entity.Frame != null);
+                //Debug.Assert(entity.AnimSet != null);
+                //Debug.Assert(entity.Frame != null);
+
+                //TODO: bug => remove this only to avoid null pointer
+                if (entity.AnimSet == null && entity.Sprite != null)
+                {
+                    var animSet = entity.Sprite.AnimSets[entity.CurrentAnimationId]; //frameDelay * 0xe
+                    entity.AnimSet = animSet;
+                    entity.Frame = animSet.PreloadedAnims[entity.TargetAnimationId >> 3].Frames[frameDelay];
+                }
                 return;
             }
 
@@ -3476,9 +3482,9 @@ public class GameEngine
 
         if (StaticVariables.g_entityFollowedByCamera != null && StaticVariables.g_entityFollowedByCamera.Status <= 3)
         {
-            StaticVariables.g_cameraLookAtX = StaticVariables.g_entityFollowedByCamera.XPos + 2; // >> 16;
-            StaticVariables.g_cameraLookAtY = StaticVariables.g_entityFollowedByCamera.YPos + 2; // >> 16;
-            StaticVariables.g_cameraLookAtZ = StaticVariables.g_entityFollowedByCamera.ZPos + 2; // >> 16;
+            StaticVariables.g_cameraLookAtX = StaticVariables.g_entityFollowedByCamera.XPos >> 16;
+            StaticVariables.g_cameraLookAtY = StaticVariables.g_entityFollowedByCamera.YPos >> 16;
+            StaticVariables.g_cameraLookAtZ = StaticVariables.g_entityFollowedByCamera.ZPos >> 16;
         }
 
         UpdateVisibleEntitiesZSort();
@@ -3797,6 +3803,12 @@ public class GameEngine
 
     private void UpdateEntityPhysics(Entity entity)
     {
+        //TODO: bug with animation
+        if (entity.AnimSet == null)
+        {
+            return;
+        }
+
         if (entity.Speed != entity.AnimSet.Speed
             || entity.TargetDirection != entity.CurrentDirection)
         {
@@ -3936,11 +3948,6 @@ public class GameEngine
 
     private void UpdateBalanceRecords()
     {
-        if (StaticVariables.g_activeEntityCount <= 0)
-        {
-            return;
-        }
-
         for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
         {
             var entity = StaticVariables.g_activeEntities[i];
@@ -4287,7 +4294,7 @@ public class GameEngine
 
     private void UpdateEntitiesAnimation()
     {
-        for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
+        for (var i = 1; i < StaticVariables.g_activeEntityCount; i++)
         {
             var entity = StaticVariables.g_entitySlots[i];
             UpdateAnimation(entity);
@@ -4515,15 +4522,17 @@ public class GameEngine
             if (entity.Status == 4)
             {
                 //zero out the properties
-                entity = new Entity();
-                entity.EntityRefId = -1;
+                //entity.Index = 0;
+                //entity.Index2 = 0;
+                //...
+                entity = new Entity(); //TODO: chack if create some bug with some code save a pointer on a entity
+                entity.EntityRefId = -1; // g_emptyEntityForClearing.EntityRefId == -1
                 StaticVariables.g_entitySlots[i] = entity;
-                //entity.Index = i;
             }
 
             if (entity.Status != 0)
             {
-                max = i + 1;
+                max = i;
             }
         }
 

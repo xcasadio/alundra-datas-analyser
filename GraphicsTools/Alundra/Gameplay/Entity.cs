@@ -26,16 +26,11 @@ public class Entity
     public SiEntityRecord EntityRecord;
     public int EntityRefId;
     public readonly int[] ProgramIndexes = new int[6]; //4c
-    //public int ProgramA_Load;
-    //public int ProgramB_Map;
-    //public int ProgramC_Tick;
-    //public int ProgramD_Touch;
-    //public int ProgramE_Deactivate;
-    //public int ProgramF_Interact;
     public SpriteRecord Sprite;
     public uint SpriteTableIndex;
     public uint Flags;//0x800000 = portrait,0x0100 = gravity,0xf = ?, 0x1 = ? , 0x80 = collidable
     public readonly int[] SpriteProgramIndexes = new int[6]; //70
+
     //public int SpriteU4;
     //public int UnkownBeforeThrowType;
     //public int ThrowType;
@@ -124,11 +119,10 @@ public class Entity
     public int MapEventProgramId;//22c
     public Entity LogicContextEntity; //self
     public EventProgramState EventProgramState = new();
-    //public EventProgramState eventdata2 = new EventProgramState();
     public uint LastTargetAnimationId;//26c
     public uint LastTargetDirection;//270
     public byte[] Bytes = new byte[4];
-    public int InitialXPos;//278 //InitialXPos
+    public int InitialXPos;//278
     public int InitialYPos;
     public short[] AIValues = new short[10];//280
 
