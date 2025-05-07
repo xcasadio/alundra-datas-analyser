@@ -10,9 +10,9 @@ local entity_size = 0x294
 -- Offsets dans la structure
 local OFFSET_INDEX = 0x00
 local OFFSET_STATUS = 0x10
-local OFFSET_EVENT_TRIGGER = 0x1E8
-local OFFSET_PROGRAM_INDEXES = 0x38
-local OFFSET_SPRITE_PROGRAM_INDEXES = 0x58
+local OFFSET_EVENT_TRIGGER = 0x228
+local OFFSET_PROGRAM_INDEXES = 0x4c
+local OFFSET_SPRITE_PROGRAM_INDEXES = 0x70
 
 -- Fonction utilitaire pour lire un int32 depuis la RAM PSX
 local function read_s32_le(addr)
