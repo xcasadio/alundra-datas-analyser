@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Alundra;
 using Alundra.DatasBin;
+using Alundra.Gameplay.Scripts;
 using Alundra.Sound;
 using Alundra.Text;
 using Color = System.Drawing.Color;
@@ -955,27 +956,13 @@ namespace GraphicsTools.Alundra
             return output.Substring(0, output.Length - 1);
         }
 
-        private List<SiCommand> GetEventCodeCommands(BinaryReader br, int index, short[] eventcodestable)
-        {
-            if (index > 0 && index < 0xff)
-            {
-                var dex = index & 0x7f;
-                if (dex < eventcodestable.Length - 1)
-                {
-                    var size = eventcodestable[dex + 1] - eventcodestable[dex];
-                    return _selectedGameMap?.SpriteInfo?.EventCodes?.GetCommands(br, eventcodestable[dex], false, size);
-                }
-
-                return _selectedGameMap?.SpriteInfo?.EventCodes?.GetCommands(br, eventcodestable[dex]);
-            }
-            return [];
-        }
-
         private string GetSector1ByteCodes(BinaryReader br, int index, short[] sector1Table)
         {
             if (index > 0 && index < 0xff)
             {
-                return sector1Table[index & 0x7f].ToString("x4") + ":" + (_selectedGameMap.SpriteInfo.Header.EventCodeAddress + sector1Table[index & 0x7f]).ToString("x6") + ":" + RenderByteCodes(_selectedGameMap.SpriteInfo.EventCodes.GetByteCode(br, sector1Table[index & 0x7f]));
+                return sector1Table[index & 0x7f].ToString("x4") + ":" + 
+                       (_selectedGameMap.SpriteInfo.Header.EventCodeAddress + sector1Table[index & 0x7f]).ToString("x6") + ":" + 
+                       RenderByteCodes(_selectedGameMap.SpriteInfo.EventCodes.GetByteCode(br, sector1Table[index & 0x7f]));
             }
 
             return "0";
@@ -1457,7 +1444,7 @@ namespace GraphicsTools.Alundra
             {
                 var frm = new FrmEventProgram();
                 var br = _datasBin.OpenBin();
-                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesA_LoadIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesATable));
+                frm.Init(EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesA_LoadIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesATable, _selectedGameMap?.SpriteInfo));
                 frm.Show();
                 br.Close();
             }
@@ -1469,12 +1456,12 @@ namespace GraphicsTools.Alundra
             var br = _datasBin.OpenBin();
             if (_selectedEntity != null)
             {
-                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesB_MapIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable));
+                frm.Init(EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesB_MapIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable, _selectedGameMap?.SpriteInfo));
                 frm.Show();
             }
             else if (_selectedMapEvent != null)
             {
-                frm.Init(GetEventCodeCommands(br, _selectedMapEvent.EventCodesBIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable));
+                frm.Init(EntityEventHandlers.GetEventCodeCommands(br, _selectedMapEvent.EventCodesBIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable, _selectedGameMap?.SpriteInfo));
                 frm.Show();
             }
             br.Close();
@@ -1486,7 +1473,7 @@ namespace GraphicsTools.Alundra
             {
                 var frm = new FrmEventProgram();
                 var br = _datasBin.OpenBin();
-                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesC_TickIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesCTable));
+                frm.Init(EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesC_TickIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesCTable, _selectedGameMap?.SpriteInfo));
                 frm.Show();
                 br.Close();
             }
@@ -1498,7 +1485,7 @@ namespace GraphicsTools.Alundra
             {
                 var frm = new FrmEventProgram();
                 var br = _datasBin.OpenBin();
-                frm.Init(GetEventCodeCommands(br, _selectedEntity.EventCodesF_InteractIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesFTable));
+                frm.Init(EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesF_InteractIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesFTable, _selectedGameMap?.SpriteInfo));
                 frm.Show();
                 br.Close();
             }

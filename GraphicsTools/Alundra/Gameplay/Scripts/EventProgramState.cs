@@ -5,7 +5,9 @@ namespace Alundra.Gameplay.Scripts;
 public class EventProgramState
 {
     public int Sp; // pointer on code
-    public int[] Exp = new int[12];
+    public int[] Exp = new int[10];
+    public int Result;
+    public int _30;
     //public int Tick;
     //public readonly int[] Variables = new int[8];
     //public int LogicResult;

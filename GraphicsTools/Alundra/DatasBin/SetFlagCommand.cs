@@ -2,8 +2,8 @@
 
 public class SetFlagCommand : SiCommand
 {
-    public SetFlagCommand(byte command, byte[] parameters, string name, int memaddr)
-        : base(command, 3, parameters, name, memaddr)
+    public SetFlagCommand(byte command, byte[] parameters, string name, int memoryAddress)
+        : base(command, 3, parameters, name, memoryAddress)
     {
     }
 

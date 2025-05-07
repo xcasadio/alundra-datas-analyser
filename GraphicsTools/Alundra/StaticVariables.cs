@@ -1497,7 +1497,7 @@ public static class StaticVariables
     public static MapEvent g_emptyMapEvent = new(); // 8013D888
     public static int INT_8013d8d0; // 8013D8D0
     public static int g_activeEntityRefId; // 8013D8D4
-    public static int[] g_matchingEntitiesBuffer = new int[65]; // 8013D8D8
+    public static Entity[] g_matchingEntitiesBuffer = new Entity[65]; // 8013D8D8
     public static int g_activeEventProgramType; // 8013D9DC
     public static int g_lastCommand; // 8013D9E0
     public static EventProgramState g_eventProgramState = new EventProgramState(); // 8013D9E8

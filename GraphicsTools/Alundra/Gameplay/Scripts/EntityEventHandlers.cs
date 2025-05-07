@@ -193,12 +193,16 @@ public class EntityEventHandlers
         StaticVariables.g_clearProgramState = 0;
         StaticVariables.g_activeEntityRefId = entity.EntityRefId;
         StaticVariables.g_activeEventProgramType = logicMode;
+           
+        //int *variables = &eventProgramState.var0;
 
-        // Main script execution loop
         while (true)
         {
-            NextCommand(eventProgramState);
+            FillDataFromCommand(eventProgramState);
             int command = eventProgramState.Sp;
+                                                                
+            //command = *variables;
+
             //if (isDebug)
             //    DebugMessageFormat(" {0:D3}", command);
 
@@ -219,7 +223,11 @@ public class EntityEventHandlers
             var result = func(entity.LogicContextEntity, entity, eventProgramState.Exp, eventProgramState);
 
             var name = SpriteInfoEventCodes.CommandNameByCode.GetValueOrDefault((byte)command, "");
-            Debug.WriteLine($"Entity[{entity.Index}] run command '{name}' {string.Join(',', eventProgramState.Exp)} = {result}");
+            //if (!string.IsNullOrEmpty(name))
+            {
+                var eventTypeName = logicMode == 0 ? "ALoad" : logicMode == 1 ? "BMap" : logicMode == 2 ? "CTick" : logicMode == 3 ? "DTouch" : logicMode == 4 ? "EDeactivate" : "FInteract";
+                Debug.WriteLine($"Entity[{entity.Index}] run {eventTypeName} command#{command}'{name}' {string.Join(',', eventProgramState.Exp)} = {result}");
+            }
 
             StaticVariables.g_lastCommand = lastCommand;
 
@@ -237,11 +245,18 @@ public class EntityEventHandlers
             }
 
             if (result == 0)
-                break;
-            
+            {
+                goto END_SCRIPT;
+            }
+
             ClearExp(entity.EventProgramState);
-            eventProgramState.CommandIndex++;
-        }
+            eventProgramState.CommandIndex++;                                         
+            //eventProgramState.var1 = 0;
+            //*variables = *variables + funcResult;
+        } 
+        
+        //eventProgramState.var1 = 0;
+        //*variables = *variables + 1;
            
         ClearExp(eventProgramState);
         eventProgramState.CommandIndex++;
@@ -250,13 +265,15 @@ public class EntityEventHandlers
         if (wasEntityCleared) 
         {
             ClearEventProgramState(entity, true);
+            //eventProgramState.sp = 0;
+            //eventProgramState.var0 = 0;
         }
 
         //if (isDebug)
         //    DebugMessageFormat("\n");
     }
 
-    private void NextCommand(EventProgramState eventProgramState)
+    private void FillDataFromCommand(EventProgramState eventProgramState)
     {
         if (eventProgramState.Commands == null || eventProgramState.CommandIndex >= eventProgramState.Commands.Count)
         {
@@ -267,10 +284,11 @@ public class EntityEventHandlers
         ClearExp(eventProgramState);
 
         eventProgramState.Sp = siCommand.Command;
+        eventProgramState.Exp[0] = siCommand.Command;
 
         for (int i = 0; i < siCommand.Parameters.Length; i++)
         {
-            eventProgramState.Exp[i] = siCommand.Parameters[i];
+            eventProgramState.Exp[i + 1] = siCommand.Parameters[i];
         }
     }
 
@@ -298,12 +316,42 @@ public class EntityEventHandlers
         var codeIndex = entity.ProgramIndexes[eventProgramType];
         var spriteInfo = _gameEngine.AlundraMap.SpriteInfo;
 
-        if ((codeIndex & 0x80) != 0) {
+        if ((codeIndex & 0x80) != 0) 
+        {
             spriteInfo = _gameEngine.CurrentMap.SpriteInfo;
         }
 
+        var eventTypeName = eventProgramType == 0 ? "ALoad" : eventProgramType == 1 ? "BMap" : eventProgramType == 2 ? "CTick" : eventProgramType == 3 ? "DTouch" : eventProgramType == 4 ? "EDeactivate" : "FInteract";
+        Debug.WriteLine($"Entity[{entity.Index}] load events #{eventTypeName} index:{entity.ProgramIndexes[eventProgramType]:x2}");
+        
         using var br = _gameEngine.DatasBin.OpenBin();
-        eventProgramState.Commands = spriteInfo.EventCodes.GetCommands(br, entity.ProgramIndexes[eventProgramType], true);
+        short[] eventCodesTable = null;
+
+        switch (eventProgramType)
+        {
+            case ScriptHelper.ProgramALoad:
+                eventCodesTable = spriteInfo.EventCodes.EventCodesATable;
+                break;
+            case ScriptHelper.ProgramBMap:
+                eventCodesTable = spriteInfo.EventCodes.EventCodesBTable;
+                break;
+            case ScriptHelper.ProgramCTick:
+                eventCodesTable = spriteInfo.EventCodes.EventCodesCTable;
+                break;
+            case ScriptHelper.ProgramDTouch:
+                eventCodesTable = spriteInfo.EventCodes.EventCodesDTable;
+                break;
+            case ScriptHelper.ProgramEDeactivate:
+                eventCodesTable = spriteInfo.EventCodes.EventCodesETable;
+                break;
+            case ScriptHelper.ProgramFInteract:
+                eventCodesTable = spriteInfo.EventCodes.EventCodesFTable;
+                break;
+        }
+
+        eventProgramState.Commands = GetEventCodeCommands(br, entity.ProgramIndexes[eventProgramType], eventCodesTable, spriteInfo);
+        //eventProgramState.Commands = spriteInfo.EventCodes.GetCommands(br, entity.ProgramIndexes[eventProgramType], true);
+        //eventProgramState.Commands = spriteInfo.EventCodes.CommandsByTypes[eventProgramType];
         eventProgramState.CommandIndex = 0;
         eventProgramState.Sp = 0;
 
@@ -321,6 +369,22 @@ public class EntityEventHandlers
         //{
         //    eventProgramState.Exp[i] = siCommands[eventProgramState.CommandIndex].Parameters[i];
         //}
+    }
+    
+    public static List<SiCommand> GetEventCodeCommands(BinaryReader br, int index, short[] eventCodesTable, SpriteInfo spriteInfo)
+    {
+        if (index > 0 && index < 0xff)
+        {
+            var i = index & 0x7f;
+            if (i < eventCodesTable.Length - 1)
+            {
+                var size = eventCodesTable[i + 1] - eventCodesTable[i];
+                return spriteInfo?.EventCodes?.GetCommands(br, eventCodesTable[i], false, size);
+            }
+
+            return spriteInfo?.EventCodes?.GetCommands(br, eventCodesTable[i]);
+        }
+        return [];
     }
 
     //All Script_xxx functions
@@ -340,7 +404,7 @@ public class EntityEventHandlers
 
     public int _03_BranchIfTrue_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        if (eventProgramState.Exp[9] == 0)
+        if (eventProgramState.Result == 0)
         {
             return 3;
         }
@@ -352,7 +416,7 @@ public class EntityEventHandlers
 
     public int _04_BranchIfFalse_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        if (eventProgramState.Exp[9] != 0)
+        if (eventProgramState.Result != 0)
         {
             return 3;
         }
@@ -364,17 +428,17 @@ public class EntityEventHandlers
 
     public int _05_FlagOn_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        if (eventProgramState.Exp[9] != 0)
+        if (eventProgramState.Result != 0)
         {
             return 3;
         }
 
-        uint flagdata = (uint)(exp[1] + (exp[2] << 8));
-        //int flag = (flagdata >> 3) & 0xffc;
-        var flag = (flagdata >> 5) & 0x3ff;
+        uint flagData = (uint)(exp[1] + (exp[2] << 8));
+        //int flag = (flagData >> 3) & 0xffc;
+        var flag = (flagData >> 5) & 0x3ff;
         uint[] flags;
         //if the mapflag bit is set
-        if ((flagdata & 0x8000) != 0)
+        if ((flagData & 0x8000) != 0)
         {
             flags = StaticVariables.g_mapFlags;
         }
@@ -383,27 +447,27 @@ public class EntityEventHandlers
             flags = StaticVariables.g_globalFlags; //StaticVariables.g_globalFlags;
         }
 
-        uint bittoset = flagdata & 0x1f;
+        uint bitToSet = flagData & 0x1f;
 
         //turn on the bit for this flag
-        flags[flag] |= (uint)1 << (int)bittoset;
+        flags[flag] |= (uint)1 << (int)bitToSet;
 
         return 3;
     }
 
     public int _06_FlagOff_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        if (eventProgramState.Exp[9] != 0)
+        if (eventProgramState.Result != 0)
         {
             return 3;
         }
 
-        var flagdata = exp[1] + (exp[2] << 8);
-        //int flag = (flagdata >> 3) & 0xffc;
-        var flag = (flagdata >> 5) & 0x3ff;
+        var flagData = exp[1] + (exp[2] << 8);
+        //int flag = (flagData >> 3) & 0xffc;
+        var flag = (flagData >> 5) & 0x3ff;
         uint[] flags;
         //if the mapflag bit is set
-        if ((flagdata & 0x8000) != 0)
+        if ((flagData & 0x8000) != 0)
         {
             flags = StaticVariables.g_mapFlags;
         }
@@ -412,10 +476,10 @@ public class EntityEventHandlers
             flags = StaticVariables.g_globalFlags;
         }
 
-        var bittoset = flagdata & 0x1f;
+        var bitToSet = flagData & 0x1f;
 
         //turn off the bit for this flag
-        flags[flag] &= ~((uint)1 << (int)bittoset);
+        flags[flag] &= ~((uint)1 << (int)bitToSet);
 
         return 3;
     }
@@ -437,12 +501,12 @@ public class EntityEventHandlers
                                     && checkme.TileY >= y1 && checkme.TileY <= y2
                                     && checkme.TileZ >= z1 && checkme.TileZ <= z2)
             {
-                eventProgramState.Exp[9] = 1;
+                eventProgramState.Result = 1;
                 return 8;
             }
         }
 
-        eventProgramState.Exp[9] = 0;
+        eventProgramState.Result = 0;
 
         return 8;
     }
@@ -792,7 +856,7 @@ public class EntityEventHandlers
 
     public int _2f_CheckPlayerInput_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        var inputid = exp[3];
+        var inputId = exp[3];
         var mask = exp[1] | exp[2] << 8;
 
         //StaticVariables.g_padState1.ButtonsHold
@@ -812,12 +876,12 @@ public class EntityEventHandlers
     public int _30_IfFlagOff_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
 
-        var flagdata = exp[1] + (exp[2] << 8);
-        //int flag = (flagdata >> 3) & 0xffc;
-        var flag = (flagdata >> 5) & 0x3ff;
+        var flagData = exp[1] + (exp[2] << 8);
+        //int flag = (flagData >> 3) & 0xffc;
+        var flag = (flagData >> 5) & 0x3ff;
         uint[] flags;
         //if the mapflag bit is set
-        if ((flagdata & 0x8000) != 0)
+        if ((flagData & 0x8000) != 0)
         {
             flags = StaticVariables.g_mapFlags;
         }
@@ -826,13 +890,13 @@ public class EntityEventHandlers
             flags = StaticVariables.g_globalFlags;
         }
 
-        var bittocheck = flagdata & 0x1f;
+        var bitToCheck = flagData & 0x1f;
 
         //check the bit for this flag
-        if ((flags[flag] & (1 << bittocheck)) != 0)
+        if ((flags[flag] & (1 << bitToCheck)) != 0)
         {
-            int jumpoffset = (short)(exp[3] | exp[4] << 8);
-            return jumpoffset;
+            int jumpOffset = (short)(exp[3] | exp[4] << 8);
+            return jumpOffset;
         }
 
         return 5;
@@ -841,12 +905,12 @@ public class EntityEventHandlers
     public int _31_IfFlagOn_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
 
-        var flagdata = exp[1] + (exp[2] << 8);
-        //int flag = (flagdata >> 3) & 0xffc;
-        var flag = (flagdata >> 5) & 0x3ff;
+        var flagData = exp[1] + (exp[2] << 8);
+        //int flag = (flagData >> 3) & 0xffc;
+        var flag = (flagData >> 5) & 0x3ff;
         uint[] flags;
         //if the mapflag bit is set
-        if ((flagdata & 0x8000) != 0)
+        if ((flagData & 0x8000) != 0)
         {
             flags = StaticVariables.g_mapFlags;
         }
@@ -855,13 +919,13 @@ public class EntityEventHandlers
             flags = StaticVariables.g_globalFlags;
         }
 
-        var bittocheck = flagdata & 0x1f;
+        var bitToCheck = flagData & 0x1f;
 
         //check the bit for this flag
-        if ((flags[flag] & (1 << bittocheck)) == 0)
+        if ((flags[flag] & (1 << bitToCheck)) == 0)
         {
-            int jumpoffset = (short)(exp[3] | exp[4] << 8);
-            return jumpoffset;
+            int jumpOffset = (short)(exp[3] | exp[4] << 8);
+            return jumpOffset;
         }
 
         return 5;
@@ -874,12 +938,12 @@ public class EntityEventHandlers
             return 3;
         }
 
-        var flagdata = exp[1] + (exp[2] << 8);
-        //int flag = (flagdata >> 3) & 0xffc;
-        var flag = (flagdata >> 5) & 0x3ff;
+        var flagData = exp[1] + (exp[2] << 8);
+        //int flag = (flagData >> 3) & 0xffc;
+        var flag = (flagData >> 5) & 0x3ff;
         uint[] flags;
         //if the mapflag bit is set
-        if ((flagdata & 0x8000) != 0)
+        if ((flagData & 0x8000) != 0)
         {
             flags = StaticVariables.g_mapFlags;
         }
@@ -888,10 +952,10 @@ public class EntityEventHandlers
             flags = StaticVariables.g_globalFlags;
         }
 
-        var bittoset = flagdata & 0x1f;
+        var bitToSet = flagData & 0x1f;
 
         //toggle the bit for this flag
-        flags[flag] ^= (uint)1 << bittoset;//xor, toggles
+        flags[flag] ^= (uint)1 << bitToSet;//xor, toggles
 
         return 3;
     }
@@ -900,12 +964,12 @@ public class EntityEventHandlers
     {
         //do this 4 times
         {
-            var flagdata = exp[1] + (exp[2] << 8);
-            //int flag = (flagdata >> 3) & 0xffc;
-            var flag = (flagdata >> 5) & 0x3ff;
+            var flagData = exp[1] + (exp[2] << 8);
+            //int flag = (flagData >> 3) & 0xffc;
+            var flag = (flagData >> 5) & 0x3ff;
             uint[] flags;
             //if the mapflag bit is set
-            if ((flagdata & 0x8000) != 0)
+            if ((flagData & 0x8000) != 0)
             {
                 flags = StaticVariables.g_mapFlags;
             }
@@ -914,10 +978,10 @@ public class EntityEventHandlers
                 flags = StaticVariables.g_globalFlags;
             }
 
-            var bittocheck = flagdata & 0x1f;
+            var bitToCheck = flagData & 0x1f;
 
             //check the bit for this flag
-            if ((flags[flag] & (1 << bittocheck)) == 0)
+            if ((flags[flag] & (1 << bitToCheck)) == 0)
             {
                 eventProgramState.Exp[9] = 0;
                 return 9;
@@ -925,12 +989,12 @@ public class EntityEventHandlers
         }
 
         {
-            var flagdata = exp[3] + (exp[4] << 8);
-            //int flag = (flagdata >> 3) & 0xffc;
-            var flag = (flagdata >> 5) & 0x3ff;
+            var flagData = exp[3] + (exp[4] << 8);
+            //int flag = (flagData >> 3) & 0xffc;
+            var flag = (flagData >> 5) & 0x3ff;
             uint[] flags;
             //if the mapflag bit is set
-            if ((flagdata & 0x8000) != 0)
+            if ((flagData & 0x8000) != 0)
             {
                 flags = StaticVariables.g_mapFlags;
             }
@@ -939,10 +1003,10 @@ public class EntityEventHandlers
                 flags = StaticVariables.g_globalFlags;
             }
 
-            var bittocheck = flagdata & 0x1f;
+            var bitToCheck = flagData & 0x1f;
 
             //check the bit for this flag
-            if ((flags[flag] & (1 << bittocheck)) == 0)
+            if ((flags[flag] & (1 << bitToCheck)) == 0)
             {
                 eventProgramState.Exp[9] = 0;
                 return 9;
@@ -950,12 +1014,12 @@ public class EntityEventHandlers
         }
 
         {
-            var flagdata = exp[5] + (exp[6] << 8);
-            //int flag = (flagdata >> 3) & 0xffc;
-            var flag = (flagdata >> 5) & 0x3ff;
+            var flagData = exp[5] + (exp[6] << 8);
+            //int flag = (flagData >> 3) & 0xffc;
+            var flag = (flagData >> 5) & 0x3ff;
             uint[] flags;
             //if the mapflag bit is set
-            if ((flagdata & 0x8000) != 0)
+            if ((flagData & 0x8000) != 0)
             {
                 flags = StaticVariables.g_mapFlags;
             }
@@ -964,10 +1028,10 @@ public class EntityEventHandlers
                 flags = StaticVariables.g_globalFlags;
             }
 
-            var bittocheck = flagdata & 0x1f;
+            var bitToCheck = flagData & 0x1f;
 
             //check the bit for this flag
-            if ((flags[flag] & (1 << bittocheck)) == 0)
+            if ((flags[flag] & (1 << bitToCheck)) == 0)
             {
                 eventProgramState.Exp[9] = 0;
                 return 9;
@@ -975,12 +1039,12 @@ public class EntityEventHandlers
         }
 
         {
-            var flagdata = exp[7] + (exp[8] << 8);
-            //int flag = (flagdata >> 3) & 0xffc;
-            var flag = (flagdata >> 5) & 0x3ff;
+            var flagData = exp[7] + (exp[8] << 8);
+            //int flag = (flagData >> 3) & 0xffc;
+            var flag = (flagData >> 5) & 0x3ff;
             uint[] flags;
             //if the mapflag bit is set
-            if ((flagdata & 0x8000) != 0)
+            if ((flagData & 0x8000) != 0)
             {
                 flags = StaticVariables.g_mapFlags;
             }
@@ -989,10 +1053,10 @@ public class EntityEventHandlers
                 flags = StaticVariables.g_globalFlags;
             }
 
-            var bittocheck = flagdata & 0x1f;
+            var bitToCheck = flagData & 0x1f;
 
             //check the bit for this flag
-            if ((flags[flag] & (1 << bittocheck)) == 0)
+            if ((flags[flag] & (1 << bitToCheck)) == 0)
             {
                 eventProgramState.Exp[9] = 0;
                 return 9;
@@ -1008,12 +1072,12 @@ public class EntityEventHandlers
     {
         //do this 4 times
         {
-            var flagdata = exp[1] + (exp[2] << 8);
-            //int flag = (flagdata >> 3) & 0xffc;
-            var flag = (flagdata >> 5) & 0x3ff;
+            var flagData = exp[1] + (exp[2] << 8);
+            //int flag = (flagData >> 3) & 0xffc;
+            var flag = (flagData >> 5) & 0x3ff;
             uint[] flags;
             //if the mapflag bit is set
-            if ((flagdata & 0x8000) != 0)
+            if ((flagData & 0x8000) != 0)
             {
                 flags = StaticVariables.g_mapFlags;
             }
@@ -1022,10 +1086,10 @@ public class EntityEventHandlers
                 flags = StaticVariables.g_globalFlags;
             }
 
-            var bittocheck = flagdata & 0x1f;
+            var bitToCheck = flagData & 0x1f;
 
             //check the bit for this flag
-            if ((flags[flag] & (1 << bittocheck)) != 0)
+            if ((flags[flag] & (1 << bitToCheck)) != 0)
             {
                 eventProgramState.Exp[9] = 0;
                 return 9;
@@ -1033,12 +1097,12 @@ public class EntityEventHandlers
         }
 
         {
-            var flagdata = exp[3] + (exp[4] << 8);
-            //int flag = (flagdata >> 3) & 0xffc;
-            var flag = (flagdata >> 5) & 0x3ff;
+            var flagData = exp[3] + (exp[4] << 8);
+            //int flag = (flagData >> 3) & 0xffc;
+            var flag = (flagData >> 5) & 0x3ff;
             uint[] flags;
             //if the mapflag bit is set
-            if ((flagdata & 0x8000) != 0)
+            if ((flagData & 0x8000) != 0)
             {
                 flags = StaticVariables.g_mapFlags;
             }
@@ -1047,10 +1111,10 @@ public class EntityEventHandlers
                 flags = StaticVariables.g_globalFlags;
             }
 
-            var bittocheck = flagdata & 0x1f;
+            var bitToCheck = flagData & 0x1f;
 
             //check the bit for this flag
-            if ((flags[flag] & (1 << bittocheck)) != 0)
+            if ((flags[flag] & (1 << bitToCheck)) != 0)
             {
                 eventProgramState.Exp[9] = 0;
                 return 9;
@@ -1058,12 +1122,12 @@ public class EntityEventHandlers
         }
 
         {
-            var flagdata = exp[5] + (exp[6] << 8);
-            //int flag = (flagdata >> 3) & 0xffc;
-            var flag = (flagdata >> 5) & 0x3ff;
+            var flagData = exp[5] + (exp[6] << 8);
+            //int flag = (flagData >> 3) & 0xffc;
+            var flag = (flagData >> 5) & 0x3ff;
             uint[] flags;
             //if the mapflag bit is set
-            if ((flagdata & 0x8000) != 0)
+            if ((flagData & 0x8000) != 0)
             {
                 flags = StaticVariables.g_mapFlags;
             }
@@ -1072,10 +1136,10 @@ public class EntityEventHandlers
                 flags = StaticVariables.g_globalFlags;
             }
 
-            var bittocheck = flagdata & 0x1f;
+            var bitToCheck = flagData & 0x1f;
 
             //check the bit for this flag
-            if ((flags[flag] & (1 << bittocheck)) != 0)
+            if ((flags[flag] & (1 << bitToCheck)) != 0)
             {
                 eventProgramState.Exp[9] = 0;
                 return 9;
@@ -1083,12 +1147,12 @@ public class EntityEventHandlers
         }
 
         {
-            var flagdata = exp[7] + (exp[8] << 8);
-            //int flag = (flagdata >> 3) & 0xffc;
-            var flag = (flagdata >> 5) & 0x3ff;
+            var flagData = exp[7] + (exp[8] << 8);
+            //int flag = (flagData >> 3) & 0xffc;
+            var flag = (flagData >> 5) & 0x3ff;
             uint[] flags;
             //if the mapflag bit is set
-            if ((flagdata & 0x8000) != 0)
+            if ((flagData & 0x8000) != 0)
             {
                 flags = StaticVariables.g_mapFlags;
             }
@@ -1097,10 +1161,10 @@ public class EntityEventHandlers
                 flags = StaticVariables.g_globalFlags;
             }
 
-            var bittocheck = flagdata & 0x1f;
+            var bitToCheck = flagData & 0x1f;
 
             //check the bit for this flag
-            if ((flags[flag] & (1 << bittocheck)) != 0)
+            if ((flags[flag] & (1 << bitToCheck)) != 0)
             {
                 eventProgramState.Exp[9] = 0;
                 return 9;
@@ -1117,12 +1181,12 @@ public class EntityEventHandlers
     public int _35_UntilFlagOff_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
 
-        var flagdata = exp[1] + (exp[2] << 8);
-        //int flag = (flagdata >> 3) & 0xffc;
-        var flag = (flagdata >> 5) & 0x3ff;
+        var flagData = exp[1] + (exp[2] << 8);
+        //int flag = (flagData >> 3) & 0xffc;
+        var flag = (flagData >> 5) & 0x3ff;
         uint[] flags;
         //if the mapflag bit is set
-        if ((flagdata & 0x8000) != 0)
+        if ((flagData & 0x8000) != 0)
         {
             flags = StaticVariables.g_mapFlags;
         }
@@ -1131,10 +1195,10 @@ public class EntityEventHandlers
             flags = StaticVariables.g_globalFlags;
         }
 
-        var bittocheck = flagdata & 0x1f;
+        var bitToCheck = flagData & 0x1f;
 
         //check the bit for this flag
-        if ((flags[flag] & (1 << bittocheck)) == 0)
+        if ((flags[flag] & (1 << bitToCheck)) == 0)
         {
             return 3;
         }
@@ -1146,12 +1210,12 @@ public class EntityEventHandlers
     public int _36_UntilFlagOn_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
 
-        var flagdata = exp[1] + (exp[2] << 8);
-        //int flag = (flagdata >> 3) & 0xffc;
-        var flag = (flagdata >> 5) & 0x3ff;
+        var flagData = exp[1] + (exp[2] << 8);
+        //int flag = (flagData >> 3) & 0xffc;
+        var flag = (flagData >> 5) & 0x3ff;
         uint[] flags;
         //if the mapflag bit is set
-        if ((flagdata & 0x8000) != 0)
+        if ((flagData & 0x8000) != 0)
         {
             flags = StaticVariables.g_mapFlags;
         }
@@ -1160,10 +1224,10 @@ public class EntityEventHandlers
             flags = StaticVariables.g_globalFlags;
         }
 
-        var bittocheck = flagdata & 0x1f;
+        var bitToCheck = flagData & 0x1f;
 
         //check the bit for this flag
-        if ((flags[flag] & (1 << bittocheck)) != 0)
+        if ((flags[flag] & (1 << bitToCheck)) != 0)
         {
             return 3;
         }
@@ -1346,8 +1410,8 @@ public class EntityEventHandlers
     public int _58_DirectionalBranch_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         var dir = entity.CurrentFrameIndex;
-        var jumpoffset = (short)(exp[entity.CurrentFrameIndex * 2 + 1] | exp[entity.CurrentFrameIndex * 2 + 2]);
-        return jumpoffset;
+        var jumpOffset = (short)(exp[entity.CurrentFrameIndex * 2 + 1] | exp[entity.CurrentFrameIndex * 2 + 2]);
+        return jumpOffset;
     }
 
     public int _59_SetEntityAnim_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)

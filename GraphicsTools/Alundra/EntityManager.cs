@@ -128,7 +128,7 @@ public class EntityManager
         entity.TargetAnimationId = animationId;
         entity.TargetDirection = direction;
         //uint flags = animData.Flags;
-        entity.Flags = (uint)(sprite.Header.MoreFlags | sprite.Header.CanPickup << 8 | sprite.Header.FlagsPortraitShadowtype << 16); ;
+        entity.Flags = (uint)(sprite.Header.MoreFlags | sprite.Header.CanPickup << 8 | sprite.Header.FlagsPortraitShadowtype << 16);
 
         entity.SpriteProgramIndexes[ScriptHelper.ProgramALoad] = sprite.Header.ProgramLoad;
         entity.SpriteProgramIndexes[ScriptHelper.ProgramBMap] = 0;

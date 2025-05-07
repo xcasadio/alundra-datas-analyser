@@ -2,8 +2,8 @@
 
 public class SetPositionCommand : SiCommand
 {
-    public SetPositionCommand(byte command, byte[] parameters, string name, int memaddr)
-        : base(command, 8, parameters, name, memaddr)
+    public SetPositionCommand(byte command, byte[] parameters, string name, int memoryAddress)
+        : base(command, 8, parameters, name, memoryAddress)
     {
     }
 

@@ -2,10 +2,10 @@
 
 public class BranchCommand : SiCommand
 {
-    public BranchCommand(byte command, int size, byte[] parameters, string name, int memaddr)
-        : base(command, size, parameters, name, memaddr)
+    public BranchCommand(byte command, int size, byte[] parameters, string name, int memoryAddress)
+        : base(command, size, parameters, name, memoryAddress)
     {
-        Refoffset = (short)(parameters[size - 3] | (parameters[size - 2] << 8));
+        RefOffset = (short)(parameters[size - 3] | (parameters[size - 2] << 8));
     }
 
     public override string PrintParameters(List<SiCommand> commands)
@@ -23,7 +23,7 @@ public class BranchCommand : SiCommand
                 parms.Add(Parameters[dex].ToString("x2"));
             }
         }
-        parms.Add(Refoffset.ToString());
+        parms.Add(RefOffset.ToString());
 
         return string.Join(", ", parms);
     }

@@ -20,6 +20,7 @@ namespace GraphicsTools.Alundra
         private void FrmEventProgram_Load(object sender, EventArgs e)
         {
             var stack = new List<Stackframe>();
+
             foreach (var cmd in _commands)
             {
                 lstProgram.Items.Add(cmd.Print(stack.Count, _commands));
@@ -27,18 +28,18 @@ namespace GraphicsTools.Alundra
                 //if (cmd.command == 0xff && stack.Count == 0)
                 //    break;
                 
-                if (cmd.GetType() == typeof(BranchCommand) && cmd.Refoffset > 0)
+                if (cmd.GetType() == typeof(BranchCommand) && cmd.RefOffset > 0)
                 {
-                    stack.Add(new Stackframe { Length = cmd.Refoffset, Level = stack.Count });
+                    stack.Add(new Stackframe { Length = cmd.RefOffset, Level = stack.Count });
                 }
 
-                for (var dex = stack.Count -1;dex >= 0;dex--)
+                for (var i = stack.Count -1;i >= 0;i--)
                 {
-                    var frame = stack[dex];
+                    var frame = stack[i];
                     frame.Length -= cmd.Size;
                     if (frame.Length <= 0)
                     {
-                        stack.RemoveAt(dex);
+                        stack.RemoveAt(i);
                     }
                 }
             }
@@ -48,7 +49,7 @@ namespace GraphicsTools.Alundra
         {
             if (lstProgram.SelectedIndex >= 0)
             {
-                lblmemaddr.Text = _commands[lstProgram.SelectedIndex].Memaddr.ToString("x6");
+                lblmemaddr.Text = _commands[lstProgram.SelectedIndex].MemoryAddress.ToString("x6");
                 lblcode.Text = _commands[lstProgram.SelectedIndex].Command.ToString("x2") + "(" + string.Join(",", _commands[lstProgram.SelectedIndex].Parameters.Select(x => x.ToString("x2"))) + ")";
             }
         }

@@ -2,8 +2,8 @@
 
 public class WalkCommand : SiCommand
 {
-    public WalkCommand(byte command, byte[] parameters, string name, int memaddr)
-        : base(command, 3, parameters, name, memaddr)
+    public WalkCommand(byte command, byte[] parameters, string name, int memoryAddress)
+        : base(command, 3, parameters, name, memoryAddress)
     {
     }
 

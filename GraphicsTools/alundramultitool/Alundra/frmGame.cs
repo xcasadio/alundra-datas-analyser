@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Alundra;
 using Alundra.DatasBin;
 using Alundra.Gameplay;
@@ -24,7 +25,6 @@ public partial class FrmGame : Form
         KeyPreview = true;
 
         Load += FrmGame_Load;
-        KeyDown += FrmGame_KeyDown;
         FormClosing += FrmGame_FormClosing;
 
         _engine = new GameEngine(datasBin, balanceBin, soundBin, etcResR, font3);
@@ -39,29 +39,6 @@ public partial class FrmGame : Form
         _gameEngineTimer.Dispose();
         _refreshUiTimer.Dispose();
         _graphics.Dispose();
-    }
-
-    private void FrmGame_KeyDown(object? sender, KeyEventArgs e)
-    {
-        const int step = 10;
-
-        if (e.KeyCode == Keys.Up)
-        {
-            StaticVariables.g_cameraCurrentY -= step;
-        }
-        else if (e.KeyCode == Keys.Down)
-        {
-            StaticVariables.g_cameraCurrentY += step;
-        }
-
-        if (e.KeyCode == Keys.Left)
-        {
-            StaticVariables.g_cameraCurrentX -= step;
-        }
-        else if (e.KeyCode == Keys.Right)
-        {
-            StaticVariables.g_cameraCurrentX += step;
-        }
     }
 
     private void FrmGame_Load(object? sender, EventArgs e)
@@ -86,8 +63,8 @@ public partial class FrmGame : Form
     {
         try
         {
-            //_engine.MainUpdate(false);
-            //_engine.Render(g);
+            UpdatePad();
+
             _engine.MainLoop(_graphics);
 
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
@@ -99,7 +76,6 @@ public partial class FrmGame : Form
             MessageBox.Show(ex.ToString());
         }
     }
-
     private void RefreshUI(object sender, EventArgs e)
     {
         SuspendLayout();
@@ -131,10 +107,7 @@ public partial class FrmGame : Form
             for (int i = 0; i < StaticVariables.g_entitySlots.Length; i++)
             {
                 var entity = StaticVariables.g_entitySlots[i];
-                if (entity != null)
-                {
-                    listBoxEntities.Items.Add($"entity {entity.Index} {entity.EntityRefId}");
-                }
+                listBoxEntities.Items.Add($"entity({i}) {entity.Index} {entity.EntityRefId} {entity.Status}");
             }
         }
 
@@ -152,11 +125,6 @@ public partial class FrmGame : Form
 
         ResumeLayout();
         PerformLayout();
-    }
-
-    private void pctOut_Click(object sender, EventArgs e)
-    {
-        Focus();
     }
 
     private static string BuildEntityInformationsText(Entity entity)
@@ -265,4 +233,202 @@ public partial class FrmGame : Form
     const int SB_VERT = 0x1;
     const int WM_VSCROLL = 0x115;
     const int SB_THUMBPOSITION = 4;
+
+    //GamePad
+    [DllImport("xinput1_4.dll")]
+    private static extern int XInputGetState(int dwUserIndex, out XINPUT_STATE pState);
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct XINPUT_STATE
+    {
+        public uint dwPacketNumber;
+        public XINPUT_GAMEPAD Gamepad;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct XINPUT_GAMEPAD
+    {
+        public ushort wButtons;
+        public byte bLeftTrigger;
+        public byte bRightTrigger;
+        public short sThumbLX;
+        public short sThumbLY;
+        public short sThumbRX;
+        public short sThumbRY;
+    }
+
+    const int XINPUT_GAMEPAD_DPAD_UP        = 0x0001;
+    const int XINPUT_GAMEPAD_DPAD_DOWN      = 0x0002;
+    const int XINPUT_GAMEPAD_DPAD_LEFT      = 0x0004;
+    const int XINPUT_GAMEPAD_DPAD_RIGHT     = 0x0008;
+    const int XINPUT_GAMEPAD_START          = 0x0010;
+    const int XINPUT_GAMEPAD_BACK           = 0x0020;
+    const int XINPUT_GAMEPAD_LEFT_THUMB     = 0x0040;
+    const int XINPUT_GAMEPAD_RIGHT_THUMB    = 0x0080;
+    const int XINPUT_GAMEPAD_LEFT_SHOULDER  = 0x0100;
+    const int XINPUT_GAMEPAD_RIGHT_SHOULDER = 0x0200;
+    const int XINPUT_GAMEPAD_A              = 0x1000;
+    const int XINPUT_GAMEPAD_B              = 0x2000;
+    const int XINPUT_GAMEPAD_X              = 0x4000;
+    const int XINPUT_GAMEPAD_Y              = 0x8000;
+
+    const int LEFT_THUMB_DEADZONE = 7849;
+    const int RIGHT_THUMB_DEADZONE = 8689;
+    const int TRIGGER_THRESHOLD = 30;
+    const float MAX_THUMB_VALUE = 32767.0f;
+    const float MAX_TRIGGER_VALUE = 255.0f;
+
+    
+
+    private void UpdatePad()
+    {
+        PadManager.ButtonStates = 0;
+
+        XINPUT_STATE state;
+        int result = XInputGetState(0, out state);
+
+        if (result == 0)
+        {
+            NormalizeGamepadState(state, 
+                out float joystickLeftX, out float joystickLeftY, 
+                out float joystickRightX, out float joystickRightY, 
+                out float L2, out float R2);
+
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP) != 0 || joystickLeftY > 0.10f)
+            {
+                PadManager.ButtonStates |= PadState.Up;
+            }
+
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN) != 0 || joystickLeftY < -0.10f)
+            {
+                PadManager.ButtonStates |= PadState.Down;
+            }
+
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT) != 0 || joystickLeftX > 0.10f)
+            {
+                PadManager.ButtonStates |= PadState.Left;
+            }
+
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) != 0 || joystickLeftX < -0.10f)
+            {
+                PadManager.ButtonStates |= PadState.Right;
+            }
+
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_A) != 0)
+            {
+                PadManager.ButtonStates |= PadState.Cross;
+            }
+
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_B) != 0)
+            {
+                PadManager.ButtonStates |= PadState.Circle;
+            }
+
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_X) != 0)
+            {
+                PadManager.ButtonStates |= PadState.Square;
+            }
+
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_Y) != 0)
+            {
+                PadManager.ButtonStates |= PadState.Triangle;
+            }
+
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) != 0)
+            {
+                PadManager.ButtonStates |= PadState.R1;
+            }
+
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER) != 0)
+            {
+                PadManager.ButtonStates |= PadState.L1;
+            }
+
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_START) != 0)
+            {
+                PadManager.ButtonStates |= PadState.Start;
+            }
+
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_BACK) != 0)
+            {
+                PadManager.ButtonStates |= PadState.Select;
+            }
+
+            if (L2 > 0.0f)
+            {
+                PadManager.ButtonStates |= PadState.L2;
+            }
+
+            if (R2 > 0.0f)
+            {
+                PadManager.ButtonStates |= PadState.R2;
+            }
+
+            const int step = 10;
+            if (joystickRightY > 0.10f)
+            {
+                StaticVariables.g_cameraCurrentY -= step;
+            }
+
+            if (joystickRightY < -0.10f)
+            {
+                StaticVariables.g_cameraCurrentY += step;
+            }
+
+            if (joystickRightX > 0.10f)
+            {
+                StaticVariables.g_cameraCurrentX += step;
+            }
+
+            if (joystickRightX < -0.10f)
+            {
+                StaticVariables.g_cameraCurrentX -= step;
+            }
+        }
+    }
+
+
+    void NormalizeGamepadState(XINPUT_STATE state, 
+        out float joystickLeftX, out float joystickLeftY, 
+        out float joystickRightX, out float joystickRightY, 
+        out float L2, out float R2)
+    {
+        float lx = state.Gamepad.sThumbLX;
+        float ly = state.Gamepad.sThumbLY;
+        float leftMagnitude = (float)Math.Sqrt(lx * lx + ly * ly);
+
+        joystickLeftX = 0;
+        joystickLeftY = 0;
+        if (leftMagnitude > LEFT_THUMB_DEADZONE)
+        {
+            float normalized = (leftMagnitude - LEFT_THUMB_DEADZONE) / (MAX_THUMB_VALUE - LEFT_THUMB_DEADZONE);
+            joystickLeftX = (lx / leftMagnitude) * normalized;
+            joystickLeftY = (ly / leftMagnitude) * normalized;
+        }
+
+        float rx = state.Gamepad.sThumbRX;
+        float ry = state.Gamepad.sThumbRY;
+        float rightMagnitude = (float)Math.Sqrt(rx * rx + ry * ry);
+
+        joystickRightX = 0;
+        joystickRightY = 0;
+        if (rightMagnitude > RIGHT_THUMB_DEADZONE)
+        {
+            float normalized = (rightMagnitude - RIGHT_THUMB_DEADZONE) / (MAX_THUMB_VALUE - RIGHT_THUMB_DEADZONE);
+            joystickRightX = (rx / rightMagnitude) * normalized;
+            joystickRightY = (ry / rightMagnitude) * normalized;
+        }
+
+        float leftTrigger = state.Gamepad.bLeftTrigger;
+        float rightTrigger = state.Gamepad.bRightTrigger;
+
+        L2 = (leftTrigger > TRIGGER_THRESHOLD) ? (leftTrigger / MAX_TRIGGER_VALUE) : 0f;
+        R2 = (rightTrigger > TRIGGER_THRESHOLD) ? (rightTrigger / MAX_TRIGGER_VALUE) : 0f;
+
+        //Debug.WriteLine($"Joystick gauche : X={joystickLeftX:0.00}, Y={joystickLeftY:0.00}");
+        //Debug.WriteLine($"Joystick droit  : X={joystickRightX:0.00}, Y={joystickRightY:0.00}");
+        //Debug.WriteLine($"Gâchette gauche : {L2:0.00}");
+        //Debug.WriteLine($"Gâchette droite : {R2:0.00}");
+    }
+
 }

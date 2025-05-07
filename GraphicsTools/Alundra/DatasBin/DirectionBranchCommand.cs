@@ -2,8 +2,8 @@
 
 public class DirectionBranchCommand : SiCommand
 {
-    public DirectionBranchCommand(byte command, byte[] parameters, string name, int memaddr)
-        : base(command, 9, parameters, name, memaddr)
+    public DirectionBranchCommand(byte command, byte[] parameters, string name, int memoryAddress)
+        : base(command, 9, parameters, name, memoryAddress)
     {
 
         _offsets[0] = (short)(parameters[Size - 9] | (parameters[Size - 8] << 8));
@@ -19,11 +19,11 @@ public class DirectionBranchCommand : SiCommand
         var parms = new List<string>();
         foreach (var offset in _offsets)
         {
-            var jumpaddr = Memaddr + offset;
+            var jumpaddr = MemoryAddress + offset;
             int dex;
             for (dex = 0; dex < commands.Count; dex++)
             {
-                if (commands[dex].Memaddr == jumpaddr)
+                if (commands[dex].MemoryAddress == jumpaddr)
                 {
                     break;
                 }

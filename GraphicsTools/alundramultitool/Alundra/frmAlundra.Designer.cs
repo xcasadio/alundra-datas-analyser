@@ -238,6 +238,8 @@
             columnHeaderSpriteMapEntryOffsetY = new ColumnHeader();
             columnHeaderSpriteMapEntryOffsetZ = new ColumnHeader();
             tabPage3 = new TabPage();
+            label80 = new Label();
+            listBoxCodesGlobal = new ListBox();
             label79 = new Label();
             listBoxCodesF = new ListBox();
             label78 = new Label();
@@ -284,8 +286,6 @@
             radioButtonZoom1 = new RadioButton();
             radioButtonZoom2 = new RadioButton();
             radioButtonZoom4 = new RadioButton();
-            label80 = new Label();
-            listBoxCodesGlobal = new ListBox();
             ((System.ComponentModel.ISupportInitialize)pctMapPalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctTilesheet).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctSpritesheet).BeginInit();
@@ -975,7 +975,7 @@
             // 
             // columnHeader1
             // 
-            columnHeader1.Text = "entity";
+            columnHeader1.Text = "entity index";
             columnHeader1.Width = 54;
             // 
             // columnHeader2
@@ -1005,38 +1005,38 @@
             // 
             // columnHeader7
             // 
-            columnHeader7.Text = "load evt";
+            columnHeader7.Text = "load evt index";
             columnHeader7.Width = 76;
             // 
             // columnHeader8
             // 
-            columnHeader8.Text = "? evt";
+            columnHeader8.Text = "map evt index";
             columnHeader8.Width = 59;
             // 
             // columnHeader9
             // 
-            columnHeader9.Text = "frame evt";
+            columnHeader9.Text = "tick evt index";
             columnHeader9.Width = 78;
             // 
             // columnHeader10
             // 
-            columnHeader10.Text = "touch evt";
+            columnHeader10.Text = "touch evt index";
             columnHeader10.Width = 81;
             // 
             // columnHeader11
             // 
-            columnHeader11.Text = "? evt";
+            columnHeader11.Text = "deactivate evt index";
             columnHeader11.Width = 48;
             // 
             // columnHeader12
             // 
-            columnHeader12.Text = "interact evt";
+            columnHeader12.Text = "interact evt index";
             columnHeader12.Width = 94;
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(53, 438);
+            label2.Location = new Point(62, 438);
             label2.Margin = new Padding(4, 0, 4, 0);
             label2.Name = "label2";
             label2.Size = new Size(49, 15);
@@ -1046,7 +1046,7 @@
             // lblSector1a
             // 
             lblSector1a.AutoSize = true;
-            lblSector1a.Location = new Point(116, 438);
+            lblSector1a.Location = new Point(149, 438);
             lblSector1a.Margin = new Padding(4, 0, 4, 0);
             lblSector1a.Name = "lblSector1a";
             lblSector1a.Size = new Size(13, 15);
@@ -1056,7 +1056,7 @@
             // lblSector1b
             // 
             lblSector1b.AutoSize = true;
-            lblSector1b.Location = new Point(116, 465);
+            lblSector1b.Location = new Point(149, 465);
             lblSector1b.Margin = new Padding(4, 0, 4, 0);
             lblSector1b.Name = "lblSector1b";
             lblSector1b.Size = new Size(13, 15);
@@ -1066,17 +1066,17 @@
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(53, 465);
+            label12.Location = new Point(62, 465);
             label12.Margin = new Padding(4, 0, 4, 0);
             label12.Name = "label12";
-            label12.Size = new Size(31, 15);
+            label12.Size = new Size(50, 15);
             label12.TabIndex = 77;
-            label12.Text = "? evt";
+            label12.Text = "map evt";
             // 
             // lblSector1c
             // 
             lblSector1c.AutoSize = true;
-            lblSector1c.Location = new Point(116, 493);
+            lblSector1c.Location = new Point(149, 493);
             lblSector1c.Margin = new Padding(4, 0, 4, 0);
             lblSector1c.Name = "lblSector1c";
             lblSector1c.Size = new Size(13, 15);
@@ -1086,7 +1086,7 @@
             // label17
             // 
             label17.AutoSize = true;
-            label17.Location = new Point(53, 493);
+            label17.Location = new Point(62, 493);
             label17.Margin = new Padding(4, 0, 4, 0);
             label17.Name = "label17";
             label17.Size = new Size(57, 15);
@@ -1096,7 +1096,7 @@
             // lblSector1d
             // 
             lblSector1d.AutoSize = true;
-            lblSector1d.Location = new Point(116, 520);
+            lblSector1d.Location = new Point(149, 520);
             lblSector1d.Margin = new Padding(4, 0, 4, 0);
             lblSector1d.Name = "lblSector1d";
             lblSector1d.Size = new Size(13, 15);
@@ -1106,7 +1106,7 @@
             // label21
             // 
             label21.AutoSize = true;
-            label21.Location = new Point(53, 520);
+            label21.Location = new Point(62, 520);
             label21.Margin = new Padding(4, 0, 4, 0);
             label21.Name = "label21";
             label21.Size = new Size(57, 15);
@@ -1116,7 +1116,7 @@
             // lblSector1f
             // 
             lblSector1f.AutoSize = true;
-            lblSector1f.Location = new Point(116, 580);
+            lblSector1f.Location = new Point(150, 578);
             lblSector1f.Margin = new Padding(4, 0, 4, 0);
             lblSector1f.Name = "lblSector1f";
             lblSector1f.Size = new Size(13, 15);
@@ -1126,7 +1126,7 @@
             // label25
             // 
             label25.AutoSize = true;
-            label25.Location = new Point(52, 580);
+            label25.Location = new Point(62, 578);
             label25.Margin = new Padding(4, 0, 4, 0);
             label25.Name = "label25";
             label25.Size = new Size(66, 15);
@@ -1136,7 +1136,7 @@
             // lblSector1e
             // 
             lblSector1e.AutoSize = true;
-            lblSector1e.Location = new Point(116, 553);
+            lblSector1e.Location = new Point(149, 549);
             lblSector1e.Margin = new Padding(4, 0, 4, 0);
             lblSector1e.Name = "lblSector1e";
             lblSector1e.Size = new Size(13, 15);
@@ -1146,12 +1146,12 @@
             // label29
             // 
             label29.AutoSize = true;
-            label29.Location = new Point(53, 553);
+            label29.Location = new Point(62, 549);
             label29.Margin = new Padding(4, 0, 4, 0);
             label29.Name = "label29";
-            label29.Size = new Size(31, 15);
+            label29.Size = new Size(80, 15);
             label29.TabIndex = 83;
-            label29.Text = "? evt";
+            label29.Text = "deactivate evt";
             // 
             // label8
             // 
@@ -1229,9 +1229,9 @@
             label34.Location = new Point(7, 197);
             label34.Margin = new Padding(4, 0, 4, 0);
             label34.Name = "label34";
-            label34.Size = new Size(77, 15);
+            label34.Size = new Size(68, 15);
             label34.TabIndex = 96;
-            label34.Text = "event objects";
+            label34.Text = "map events";
             // 
             // lsvSector4
             // 
@@ -1254,42 +1254,42 @@
             // 
             // columnHeader14
             // 
-            columnHeader14.Text = "x1";
-            columnHeader14.Width = 38;
+            columnHeader14.Text = "tile x1";
+            columnHeader14.Width = 45;
             // 
             // columnHeader15
             // 
-            columnHeader15.Text = "y1";
-            columnHeader15.Width = 37;
+            columnHeader15.Text = "tile y1";
+            columnHeader15.Width = 45;
             // 
             // columnHeader16
             // 
-            columnHeader16.Text = "x2";
-            columnHeader16.Width = 38;
+            columnHeader16.Text = "tile x2";
+            columnHeader16.Width = 45;
             // 
             // columnHeader17
             // 
-            columnHeader17.Text = "y2";
-            columnHeader17.Width = 37;
+            columnHeader17.Text = "tile y2";
+            columnHeader17.Width = 45;
             // 
             // columnHeader18
             // 
-            columnHeader18.Text = "evt";
+            columnHeader18.Text = "map evt index";
             columnHeader18.Width = 36;
             // 
             // columnHeader19
             // 
-            columnHeader19.Text = "?";
+            columnHeader19.Text = "ub1";
             columnHeader19.Width = 38;
             // 
             // columnHeader20
             // 
-            columnHeader20.Text = "?";
+            columnHeader20.Text = "ub2";
             columnHeader20.Width = 40;
             // 
             // columnHeader21
             // 
-            columnHeader21.Text = "?";
+            columnHeader21.Text = "ub3";
             columnHeader21.Width = 43;
             // 
             // label35
@@ -1797,10 +1797,10 @@
             // 
             // btnSector1cCmds
             // 
-            btnSector1cCmds.Location = new Point(4, 485);
+            btnSector1cCmds.Location = new Point(7, 490);
             btnSector1cCmds.Margin = new Padding(4, 3, 4, 3);
             btnSector1cCmds.Name = "btnSector1cCmds";
-            btnSector1cCmds.Size = new Size(47, 31);
+            btnSector1cCmds.Size = new Size(47, 22);
             btnSector1cCmds.TabIndex = 141;
             btnSector1cCmds.Text = "view";
             btnSector1cCmds.UseVisualStyleBackColor = true;
@@ -1808,10 +1808,10 @@
             // 
             // btnSector1bCmds
             // 
-            btnSector1bCmds.Location = new Point(4, 457);
+            btnSector1bCmds.Location = new Point(7, 462);
             btnSector1bCmds.Margin = new Padding(4, 3, 4, 3);
             btnSector1bCmds.Name = "btnSector1bCmds";
-            btnSector1bCmds.Size = new Size(47, 31);
+            btnSector1bCmds.Size = new Size(47, 22);
             btnSector1bCmds.TabIndex = 142;
             btnSector1bCmds.Text = "view";
             btnSector1bCmds.UseVisualStyleBackColor = true;
@@ -1819,10 +1819,10 @@
             // 
             // btnSector1aCmds
             // 
-            btnSector1aCmds.Location = new Point(4, 430);
+            btnSector1aCmds.Location = new Point(7, 434);
             btnSector1aCmds.Margin = new Padding(4, 3, 4, 3);
             btnSector1aCmds.Name = "btnSector1aCmds";
-            btnSector1aCmds.Size = new Size(47, 31);
+            btnSector1aCmds.Size = new Size(47, 22);
             btnSector1aCmds.TabIndex = 143;
             btnSector1aCmds.Text = "view";
             btnSector1aCmds.UseVisualStyleBackColor = true;
@@ -1830,30 +1830,30 @@
             // 
             // btnSector1dCmds
             // 
-            btnSector1dCmds.Location = new Point(4, 515);
+            btnSector1dCmds.Location = new Point(7, 518);
             btnSector1dCmds.Margin = new Padding(4, 3, 4, 3);
             btnSector1dCmds.Name = "btnSector1dCmds";
-            btnSector1dCmds.Size = new Size(47, 31);
+            btnSector1dCmds.Size = new Size(47, 22);
             btnSector1dCmds.TabIndex = 145;
             btnSector1dCmds.Text = "view";
             btnSector1dCmds.UseVisualStyleBackColor = true;
             // 
             // btnSector1eCmds
             // 
-            btnSector1eCmds.Location = new Point(4, 541);
+            btnSector1eCmds.Location = new Point(7, 546);
             btnSector1eCmds.Margin = new Padding(4, 3, 4, 3);
             btnSector1eCmds.Name = "btnSector1eCmds";
-            btnSector1eCmds.Size = new Size(47, 31);
+            btnSector1eCmds.Size = new Size(47, 22);
             btnSector1eCmds.TabIndex = 144;
             btnSector1eCmds.Text = "view";
             btnSector1eCmds.UseVisualStyleBackColor = true;
             // 
             // btnSector1fCmds
             // 
-            btnSector1fCmds.Location = new Point(4, 572);
+            btnSector1fCmds.Location = new Point(7, 574);
             btnSector1fCmds.Margin = new Padding(4, 3, 4, 3);
             btnSector1fCmds.Name = "btnSector1fCmds";
-            btnSector1fCmds.Size = new Size(47, 31);
+            btnSector1fCmds.Size = new Size(47, 22);
             btnSector1fCmds.TabIndex = 147;
             btnSector1fCmds.Text = "view";
             btnSector1fCmds.UseVisualStyleBackColor = true;
@@ -2450,6 +2450,24 @@
             tabPage3.Text = "Sprites";
             tabPage3.UseVisualStyleBackColor = true;
             // 
+            // label80
+            // 
+            label80.AutoSize = true;
+            label80.Location = new Point(700, 436);
+            label80.Margin = new Padding(4, 0, 4, 0);
+            label80.Name = "label80";
+            label80.Size = new Size(41, 15);
+            label80.TabIndex = 198;
+            label80.Text = "Global";
+            // 
+            // listBoxCodesGlobal
+            // 
+            listBoxCodesGlobal.FormattingEnabled = true;
+            listBoxCodesGlobal.Location = new Point(700, 454);
+            listBoxCodesGlobal.Name = "listBoxCodesGlobal";
+            listBoxCodesGlobal.Size = new Size(110, 484);
+            listBoxCodesGlobal.TabIndex = 197;
+            // 
             // label79
             // 
             label79.AutoSize = true;
@@ -2967,24 +2985,6 @@
             radioButtonZoom4.Text = "x4";
             radioButtonZoom4.UseVisualStyleBackColor = true;
             radioButtonZoom4.CheckedChanged += radioButtonZoom4_CheckedChanged;
-            // 
-            // label80
-            // 
-            label80.AutoSize = true;
-            label80.Location = new Point(700, 436);
-            label80.Margin = new Padding(4, 0, 4, 0);
-            label80.Name = "label80";
-            label80.Size = new Size(41, 15);
-            label80.TabIndex = 198;
-            label80.Text = "Global";
-            // 
-            // listBoxCodesGlobal
-            // 
-            listBoxCodesGlobal.FormattingEnabled = true;
-            listBoxCodesGlobal.Location = new Point(700, 454);
-            listBoxCodesGlobal.Name = "listBoxCodesGlobal";
-            listBoxCodesGlobal.Size = new Size(110, 484);
-            listBoxCodesGlobal.TabIndex = 197;
             // 
             // FrmAlundra
             // 

@@ -2,19 +2,20 @@
 
 public class SiCommand
 {
-    public SiCommand(byte command, int size, byte[] parameters, string name, int memaddr)
+    public SiCommand(byte command, int size, byte[] parameters, string name, int memoryAddress)
     {
-        Memaddr = memaddr;
+        MemoryAddress = memoryAddress;
         Command = command;
         Parameters = parameters;
         Size = size;
         Name = name;
     }
-    public readonly int Memaddr;
+
+    public readonly int MemoryAddress;
     public readonly byte Command;
     public readonly byte[] Parameters;
     public readonly int Size;
-    public int Refoffset;
+    public int RefOffset;
 
     public readonly string Name;
 

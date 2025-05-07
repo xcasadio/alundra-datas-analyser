@@ -4,6 +4,8 @@ namespace Alundra;
 
 public class PadManager
 {
+    public static ulong ButtonStates = 0;
+
     public void UpdatePads()
     {
         var padState = PadRead();
@@ -13,7 +15,7 @@ public class PadManager
 
     private ulong PadRead()
     {
-        return 0L;
+        return ButtonStates;
     }
 
     private void UpdatePad(PadState padState, ushort buttonState)

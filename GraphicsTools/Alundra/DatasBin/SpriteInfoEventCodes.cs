@@ -1,10 +1,13 @@
-﻿using System.Diagnostics;
+﻿using Alundra.Gameplay;
+using Alundra.Gameplay.Scripts;
+using Alundra.Sprite;
+using System.Diagnostics;
 
 namespace Alundra.DatasBin;
 
 public class SpriteInfoEventCodes
 {
-    public static readonly byte[] Codes = new byte[1024 * 1024]; //1mb of event codes, too much prob but oh well;
+    //public static readonly byte[] Codes = new byte[1024 * 1024]; //1mb of event codes, too much prob but oh well;
 
     public SpriteInfoEventCodes(BinaryReader br, long binOffset, SpriteInfoHeader header, bool ismap)
     {
@@ -95,28 +98,77 @@ public class SpriteInfoEventCodes
         _binOffset = binOffset + header.EventCodesAPointer;
         _memoryAddress = header.MemoryAddress + header.EventCodesAPointer;
         _dataSize = (header.EntitiesPointer == 0 ? header.EventCodesFPointer: header.EntitiesPointer) - header.EventCodesAPointer;
-        Debug.Assert(_dataSize > 0);
+        //Debug.Assert(_dataSize > 0);
 
-        EventCodesTable.Add(EventCodesATable);
-        EventCodesTable.Add(EventCodesBTable);
-        EventCodesTable.Add(EventCodesCTable);
-        EventCodesTable.Add(EventCodesDTable);
-        EventCodesTable.Add(EventCodesETable);
-        EventCodesTable.Add(EventCodesFTable);
+        //Preload all commands
+        //optim: only load index used by the current map
+        //CommandsByTypes.Add(ScriptHelper.ProgramALoad, new List<SiCommand>());
+        //CommandsByTypes.Add(ScriptHelper.ProgramBMap, new List<SiCommand>());
+        //CommandsByTypes.Add(ScriptHelper.ProgramCTick, new List<SiCommand>());
+        //CommandsByTypes.Add(ScriptHelper.ProgramDTouch, new List<SiCommand>());
+        //CommandsByTypes.Add(ScriptHelper.ProgramEDeactivate, new List<SiCommand>());
+        //CommandsByTypes.Add(ScriptHelper.ProgramFInteract, new List<SiCommand>());
+        //
+        //foreach (var index in EventCodesATable)
+        //{
+        //    var commands = GetCommands(br, index, true);
+        //    CommandsByTypes[ScriptHelper.ProgramALoad].AddRange(commands);
+        //}
+        //
+        //foreach (var index in EventCodesBTable)
+        //{
+        //    var commands = GetCommands(br, index, true);
+        //    CommandsByTypes[ScriptHelper.ProgramBMap].AddRange(commands);
+        //}
+        //
+        //foreach (var index in EventCodesCTable)
+        //{
+        //    var commands = GetCommands(br, index, true);
+        //    CommandsByTypes[ScriptHelper.ProgramCTick].AddRange(commands);
+        //}
+        //
+        //foreach (var index in EventCodesDTable)
+        //{
+        //    var commands = GetCommands(br, index, true);
+        //    CommandsByTypes[ScriptHelper.ProgramDTouch].AddRange(commands);
+        //}
+        //
+        //foreach (var index in EventCodesETable)
+        //{
+        //    var commands = GetCommands(br, index, true);
+        //    CommandsByTypes[ScriptHelper.ProgramEDeactivate].AddRange(commands);
+        //}
+        //
+        ////TODO bug with F codes
+        ////foreach (var index in EventCodesFTable)
+        ////{
+        ////    var commands = GetCommands(br, index, true);
+        ////    CommandsByTypes[ScriptHelper.ProgramFInteract].AddRange(commands);
+        ////}
+        ////
+        //foreach (var commandsByType in CommandsByTypes)
+        //{
+        //    Debug.WriteLine($"Code type {commandsByType.Key}");
+        //
+        //    foreach (var siCommand in commandsByType.Value)
+        //    {
+        //        Debug.WriteLine($"  {siCommand.Print(2, commandsByType.Value)}");
+        //    }
+        //}
 
-        //remove this ??  =>
-        var top = 0;
-        if (ismap)
-        {
-            top += 1024 * 512;
-        }
-
-        br.BaseStream.Position = binOffset;
-        if (_dataSize > 0)
-        {
-            br.Read(Codes, top, _dataSize);
-        }
-        //half mb for global codes, half mb for map codes
+        ////remove this ??  =>
+        //var top = 0;
+        //if (ismap)
+        //{
+        //    top += 1024 * 512;
+        //}
+        //
+        //br.BaseStream.Position = binOffset;
+        //if (_dataSize > 0)
+        //{
+        //    br.Read(Codes, top, _dataSize);
+        //}
+        ////half mb for global codes, half mb for map codes
     }
 
     public class SiCode
@@ -256,9 +308,7 @@ public class SpriteInfoEventCodes
     public readonly short[] EventCodesDTable;
     public readonly short[] EventCodesETable;
     public readonly short[] EventCodesFTable;
-
-    public readonly List<short[]> EventCodesTable = new();
-
+    //public readonly Dictionary<int, List<SiCommand>> CommandsByTypes = new();
 
     public static readonly Dictionary<byte, int> CommandSizeByCode = new()
     {
