@@ -308,7 +308,7 @@ public class GameEngine
         return StaticVariables.g_fadeControl.WarpVisualId;
     }
 
-    private int GetCurrentPaletteFadeLevel()
+    public int GetCurrentPaletteFadeLevel()
     {
         return StaticVariables.g_fadeControl.MaxFadeLevel;
     }
@@ -875,7 +875,7 @@ public class GameEngine
         return entity;
     }
 
-    private Entity SpawnEntity(Entity parent, int entityId, int notCheckSpawnZone)
+    public Entity SpawnEntity(Entity parent, int entityId, int notCheckSpawnZone)
     {
         var entityRecord = CurrentMap.SpriteInfo.Entities.Entities[entityId];
 
@@ -1239,7 +1239,7 @@ public class GameEngine
         SetFadeDuration(fadeDuration);
     }
 
-    private void BeginFadeEffect(int fadeTPageIndex, int fadeDuration)
+    public void BeginFadeEffect(int fadeTPageIndex, int fadeDuration)
     {
         if (StaticVariables.g_warpStepFlags_2 == 0)
         {
@@ -1287,7 +1287,7 @@ public class GameEngine
         }
     }
 
-    private void SetFadeDuration(int fadeDuration)
+    public void SetFadeDuration(int fadeDuration)
     {
         if (StaticVariables.g_warpFlags == 0)
         {
@@ -1570,7 +1570,7 @@ public class GameEngine
         }
     }
 
-    private int IsMapUnlocked(int warpIndex)
+    public int IsMapUnlocked(int warpIndex)
     {
         int iVar1;
 
@@ -1587,7 +1587,7 @@ public class GameEngine
         return iVar1;
     }
 
-    private int StartWarpToMap(uint mapIndex)
+    public int StartWarpToMap(uint mapIndex)
     {
         int warpEntryOffset;
         short remainingWarps;
@@ -1980,7 +1980,8 @@ public class GameEngine
         return collision;
     }
 
-    public int GetEntityFromRefId(Entity ownerEntity, int entityId)
+    // 8003c954
+    public int GetNumberOfEntityByRefId(Entity ownerEntity, int entityId)
     {
         var matchCount = 0;
 
@@ -2297,5 +2298,212 @@ public class GameEngine
             }
         }
         return null;
+    }
+
+    // 8005a9e0
+    public void SetNextMapId(int mapIndex)
+    {
+        Debugger.Break();
+        var mapId = Array.IndexOf(DatasBin.Header.GameMaps, mapIndex);
+        StaticVariables.g_desiredMap = mapId;
+        /*
+        bool bVar1;
+        undefined3 extraout_var;
+        code *previousVSyncCallback;
+
+        if (((g_isCdResetRequested != 0) || ((g_cdIsReady != 0 && (g_cdDataLoaded == 0)))) &&
+            (bVar1 = IsSoundDriverReady(), CONCAT31(extraout_var,bVar1) == 0)) {
+            g_cdDataStartPtr = DAT_CDAranXa_pos + g_mapCdDataOffsets[mapIndex * 3];
+            g_cdDataEndPtr = g_cdDataStartPtr + g_mapCdDataOffsets[mapIndex * 3 + 2] * 8 + -1;
+            g_cdReadPtr = g_cdDataStartPtr;
+            previousVSyncCallback = (code *)VSyncCallback(OnCdDataStreamComplete);
+            if ((previousVSyncCallback != OnCdDataStreamComplete) && (previousVSyncCallback != (code *)0x0))
+            {
+                g_previousVSyncCallback = (int)previousVSyncCallback;
+            }
+            g_cdControlCommand = 1;
+            g_cdTrackIndex = (undefined1)g_mapCdDataOffsets[mapIndex * 3 + 1];
+            CdControlF('\r',&g_cdControlCommand);
+            g_cdReadComplete = 0;
+            g_cdInitRequired = 2;
+        }*/
+    }
+
+    // 8004b114
+    public void FUN_8004b114(int variable, int i)
+    {
+        Debugger.Break();
+    }
+
+    // 80049b7c
+    public void LoadBgm(int bgmIndex)
+    {
+        StaticVariables.g_resetSoundFlag = 0;
+        if (bgmIndex == 0) {
+            InitializeBgm(StaticVariables.g_requestedSeqId);
+        }
+        else {
+            StaticVariables.g_soundEffectState = 0x78;
+        }
+    }
+
+    // 8008f458
+    private void InitializeBgm(short seqId)
+    {
+        FUN_8008f2e8(seqId,0);
+    }
+
+    // 8008f2e8
+    private void FUN_8008f2e8(short seqId, short i)
+    {
+        Debugger.Break();
+    }
+
+    //80049af4
+    public void StopAllSound()
+    {
+        Debugger.Break();
+    }
+
+    //8004df68
+    public int FUN_8004df68()
+    {
+        Debugger.Break();
+        return 0;
+        //return (int)StaticVariables.g_fadeControl[1].currentWarpEntityId;
+    }
+
+    //8004e004
+    public void FUN_8004e004(int param_1)
+    {
+        Debugger.Break();
+        //ApplyFadeLevel(StaticVariables.g_fadeControl[1].currentWarpEntityId - param_1);
+    }
+
+    //8004dfd8
+    public void AdjustFadeLevelRelative(int relativeFadeValue)
+    { 
+        Debugger.Break();
+        //ApplyFadeLevel(relativeFadeValue + StaticVariables.g_fadeControl[1].currentWarpEntityId);
+    }
+
+    //8004df10
+    public void FUN_8004df10(int index)
+    {
+        Debugger.Break();
+        //SetFadeTargetLevel(index + StaticVariables.g_fadeControl.TargetFadeLevel);
+    }
+
+    public int HandleMapTriggerCommand(int commandId)
+    {
+        Debugger.Break();
+        return 0;
+        /*
+        int result;
+        int fadeLevel;
+
+        switch (commandId)
+        {
+            case 0:
+                result = 0;
+                break;
+            default:
+                result = IsMapRequirementMet(commandId) ? 1 : 0;
+                break;
+            case 0x45:
+                fadeLevel = 1;
+                goto ApplyFadeShortcut;
+            case 0x46:
+                fadeLevel = 5;
+                goto ApplyFadeShortcut;
+            case 0x47:
+                fadeLevel = 10;
+                goto ApplyFadeShortcut;
+            case 0x48:
+                fadeLevel = 0x1e;
+                ApplyFadeShortcut:
+                AdjustFadeLevelRelative(fadeLevel);
+                result = 1;
+                break;
+            case 0x4f:
+                IncreaseFadeLevel(1);
+                result = 1;
+                break;
+            case 0x50:
+                SpawnCamExplosionEffects();
+                result = 1;
+                break;
+            case 0x51:
+                SpawnRandomExplosionParticles();
+                result = 1;
+                break;
+            case 0x52:
+                SpawnSpinningParticleRing();
+                result = 1;
+                break;
+            case 0x53:
+                TriggerExplosionEffect(StaticVariables.g_entitySlots);
+                result = 1;
+                break;
+            case 0x54:
+                AddLifeToEntity(StaticVariables.g_entitySlots);
+                result = 1;
+                break;
+            case 0x55:
+                AddLowHpAndSpawnEffect(StaticVariables.g_entitySlots);
+                result = 1;
+                break;
+            case 0x56:
+                AddMediumHpAndSpawnEffect(StaticVariables.g_entitySlots);
+                result = 1;
+                break;
+        }
+        return result;*/
+    }
+
+    //8002d608
+    public void ChangeAeraTileProperties(int startX, int startY, int sizeX, int sizeY, int distX, int distY)
+    {
+        int distX2;
+        int x;
+        int y;
+  
+        if (startX < 0 || startY < 0 || sizeX < 0 || sizeY < 0 || distX < 0 || distY < 0) 
+        {
+            Debugger.Break();
+            //Debug.WriteLine(startX,startY,sizeX,sizeY,distX,distY);
+        }
+
+        if (0x34 < startX + sizeX || 0x3c < startY + sizeY || 0x34 < distX + sizeX || 0x3c < distY + sizeY) 
+        {
+            Debugger.Break();
+            //Debug.WriteLine(startX,startY,sizeX,sizeY,distX,distY);
+        }
+
+        y = 0;
+
+        if (0 < sizeY) 
+        {
+            do 
+            {
+                x = 0;
+                distX2 = distX;
+
+                if (0 < sizeX) 
+                {
+                    do 
+                    {
+                        var tile = CurrentMap.Map.MapTiles[distX2 + (distY + y) * 52];
+                        var tile2 = CurrentMap.Map.MapTiles[(startX + x) + (startY + y) * 52];
+                        tile.GroundProperty = tile2.GroundProperty;
+                        tile.Walkability &= tile.Walkability;
+                        x = x + 1;
+                        distX2 = distX + x;
+                    } while (x < sizeX);
+                }
+                y = y + 1;
+
+            } while (y < sizeY);
+        }
     }
 }

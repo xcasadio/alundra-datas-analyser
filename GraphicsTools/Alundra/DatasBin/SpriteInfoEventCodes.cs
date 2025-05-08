@@ -498,7 +498,7 @@ public class SpriteInfoEventCodes
         { 0xA2, "create effect with pos" },
         { 0xA3, "create effect with entity pos" },
         { 0xA7, "play music" },
-        { 0xAC, "set gravity flag son entity" },
+        { 0xAC, "set gravity flags on entity" },
         { 0xBD, "play sound 2" }, //2 byte sound index
         { 0xC4, "dialog with entity and name" },
         { 0xFF, "end" },

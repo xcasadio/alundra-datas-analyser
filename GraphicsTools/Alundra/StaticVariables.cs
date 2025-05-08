@@ -1403,7 +1403,7 @@ public static class StaticVariables
     public static byte DAT_800dcd2c; // 800DCD2C
     public static byte DAT_800dcd2d; // 800DCD2D
     public static int g_renderTileRowCount; // 800DD868
-    public static ushort  g_spriteVRAMPointer; // 800DD86C
+    public static ushort[]  g_spriteVRAMPointer; // 800DD86C
     public static int g_cameraDebugOffsetX; // 800DD870
     public static int g_cameraDebugOffsetY; // 800DD874
     public static SPRT[] g_tileSpriteBuffer = new SPRT[600]; // 800DD878
@@ -2049,7 +2049,7 @@ public static class StaticVariables
     public static int g_renderFlags; // 801EB424
     public static int DAT_801eb43c; // 801EB43C
     public static int g_debugPrintDisableFrameCounter; // 801EB440
-    public static int  g_mapIdToInternalMapIndexTable; // 801EB444
+    public static ushort[]  g_mapIdToInternalMapIndexTable = new ushort[500]; // 801EB444
     public static short DAT_801eb828; // 801EB828
     public static short DAT_801eb82a; // 801EB82A
     public static short g_fadeControl2; // 801EB82C
