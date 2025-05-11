@@ -87,18 +87,18 @@ public partial class FrmGame : Form
         labelNumberOfVisibleEntity.Text = StaticVariables.g_visibleEntityCount.ToString();
 
         labelCameraPosition.Text = $"{StaticVariables.g_cameraCurrentX} x {StaticVariables.g_cameraCurrentY}";
-        labelCamera2.Text = $"{StaticVariables.g_cameraX} x {StaticVariables.g_cameraY}";
-        labelCamera3.Text = $"{StaticVariables.g_cameraLookAtX >> 16} x {StaticVariables.g_cameraLookAtY >> 16} x {StaticVariables.g_cameraLookAtZ >> 16}";
-        labelCamera4.Text = $"{StaticVariables.g_cameraOffsetX} x {StaticVariables.g_cameraOffsetY}";
-        labelCamera5.Text = $"{StaticVariables.g_cameraDeltaX} x {StaticVariables.g_cameraDeltaY}";
+        labelCameraXY.Text = $"{StaticVariables.g_cameraX} x {StaticVariables.g_cameraY}";
+        labelCameraLookAt.Text = $"{StaticVariables.g_cameraLookAtX} x {StaticVariables.g_cameraLookAtY} x {StaticVariables.g_cameraLookAtZ}";
+        labelCameraOffset.Text = $"{StaticVariables.g_cameraOffsetX} x {StaticVariables.g_cameraOffsetY}";
+        labelCameraDelta.Text = $"{StaticVariables.g_cameraDeltaX} x {StaticVariables.g_cameraDeltaY}";
 
         labelMapId.Text = $"{StaticVariables.g_currentMap}";
         labelMapSize.Text = $"{_engine.CurrentMap?.Map.Width} x {_engine.CurrentMap?.Map.Height}";
         labelMapGravity.Text = $"{_engine.CurrentMap?.Info.Gravity}";
         labelMapNumberOfEntity.Text = $"{_engine.CurrentMap?.SpriteInfo.Entities.Entities.Count(x => x != null)}";
 
-        labelCamera6.Text = $"{StaticVariables.g_mapOffsetX} x {StaticVariables.g_mapOffsetY}";
-        labelCamera7.Text = $"{StaticVariables.g_mapScreenPosX} x {StaticVariables.g_mapScreenPosY}";
+        labelMapOffset.Text = $"{StaticVariables.g_mapOffsetX} x {StaticVariables.g_mapOffsetY}";
+        labelMapScreenPos.Text = $"{StaticVariables.g_mapScreenPosX} x {StaticVariables.g_mapScreenPosY}";
 
         if (_lastMapId != StaticVariables.g_currentMap && _engine.CurrentMap != null)
         {

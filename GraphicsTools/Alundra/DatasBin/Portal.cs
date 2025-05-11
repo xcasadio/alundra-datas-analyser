@@ -9,22 +9,19 @@ public class Portal
         X2 = br.ReadByte();
         Y2 = br.ReadByte();
         DestMapId = br.ReadInt16();
-        DestX = br.ReadByte();
-        DestY = br.ReadByte();
-        Unknown1 = br.ReadByte();
-        Unknown2 = br.ReadByte();
-        Unknown3 = br.ReadByte();
-        Unknown4 = br.ReadByte();
+        DestTileX = br.ReadByte();
+        DestTileY = br.ReadByte();
+        ZLevel = br.ReadInt16();
+        Flags = br.ReadUInt16();
     }
+
     public readonly byte X1;
     public readonly byte Y1;
     public readonly byte X2;
     public readonly byte Y2;
     public readonly short DestMapId;
-    public readonly byte DestX;
-    public readonly byte DestY;
-    public readonly byte Unknown1;
-    public readonly byte Unknown2;
-    public readonly byte Unknown3;
-    public readonly byte Unknown4;
+    public readonly byte DestTileX;
+    public readonly byte DestTileY;
+    public readonly short ZLevel;
+    public readonly ushort Flags;
 }

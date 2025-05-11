@@ -754,12 +754,10 @@ namespace GraphicsTools.Alundra
                 lblportalx2.Text = _selectedPortal.X2.ToString();
                 lblportaly2.Text = _selectedPortal.Y2.ToString();
                 lblportalmapid.Text = _selectedPortal.DestMapId.ToString();
-                lblportaldestx.Text = _selectedPortal.DestX.ToString();
-                lblportaldesty.Text = _selectedPortal.DestY.ToString();
-                lblportalu1.Text = _selectedPortal.Unknown1.ToString();
-                lblportalu2.Text = _selectedPortal.Unknown2.ToString();
-                lblportalu3.Text = _selectedPortal.Unknown3.ToString();
-                lblportalu4.Text = _selectedPortal.Unknown4.ToString();
+                lblportaldestx.Text = _selectedPortal.DestTileX.ToString();
+                lblportaldesty.Text = _selectedPortal.DestTileY.ToString();
+                lblportalu1.Text = _selectedPortal.ZLevel.ToString();
+                lblportalu2.Text = _selectedPortal.Flags.ToString();
 
                 if (!_dontcenteronportal)
                 {
@@ -781,8 +779,6 @@ namespace GraphicsTools.Alundra
                 lblportaldesty.Text = "0";
                 lblportalu1.Text = "0";
                 lblportalu2.Text = "0";
-                lblportalu3.Text = "0";
-                lblportalu4.Text = "0";
 
                 pctMap.Refresh();
             }
@@ -907,8 +903,8 @@ namespace GraphicsTools.Alundra
         {
             if (_selectedPortal != null)
             {
-                int destx = _selectedPortal.DestX;
-                int desty = _selectedPortal.DestY;
+                int destx = _selectedPortal.DestTileX;
+                int desty = _selectedPortal.DestTileY;
                 lstGameMaps.SelectedIndex = _selectedPortal.DestMapId;
 
                 var tile = _selectedGameMap.Map.MapTiles[destx + desty * _selectedGameMap.Map.Width];

@@ -454,7 +454,7 @@ public class SpriteInfoEventCodes
         { 0x35, "until flag off" }, //block until a flag is off
         { 0x36, "until flag on" },  //block until a flag is on
         { 0x37, "wait" },
-        { 0x38, "register something?" },
+        { 0x38, "register warp" },
         { 0x39, "wait for dialog" }, //blocks until the dialog is finished
         { 0x3B, "check player in area" },
         { 0x40, "set program index" },
@@ -482,7 +482,7 @@ public class SpriteInfoEventCodes
         { 0x65, "move entity position" },
         { 0x67, "follow entity" },
         { 0x69, "" },
-        { 0x70, "check something?" },
+        { 0x70, "check IsAboveGround" },
         { 0x73, "" },
         { 0x74, "" },
         { 0x78, "" },

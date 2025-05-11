@@ -414,6 +414,8 @@ public static class StaticVariables
     ];
     //80023644
     public static readonly int[] g_cardinalDirectionTable = [0, 0x10, 0x08, 0x18];
+    //80022778
+    public static byte[] BYTE_ARRAY_80022778 = [0x40, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00]; 
 
     public static void Initialize()
     {
@@ -729,8 +731,7 @@ public static class StaticVariables
     public static byte g_transitionCounter; // 80010756
     public static int  PTR_DAT_80020384; // 80020384
     public static int g_unused_800203b4; // 800203B4
-    public static short g_tileOffsetYTable; // 800203F0
-    public static int  g_tileOffsetYPtr; // 80020410
+    public static short[] g_tileOffsetYTable = new short[32]; // 800203F0
     public static int[] g_sinTable = new int[8]; // 800204F0
     public static int[] g_cosTable = new int[8]; // 800206F0
     //public static int[] g_angleLookupTable = new int[157]; // 80022488
@@ -739,7 +740,6 @@ public static class StaticVariables
     public static char[] s_L_80022704 = new char[4]; // 80022704
     public static char[] s_U_80022708 = new char[4]; // 80022708
     public static char[] s_D_8002270c = new char[4]; // 8002270C
-    public static int INT_80022778; // 80022778
     public static short[] SHORT_ARRAY_800227f4 = new short[8]; // 800227F4
     public static short[] SHORT_ARRAY_80022804 = new short[8]; // 80022804
     public static short[] g_hitSoundEffects = new short[72]; // 80022814
@@ -1338,7 +1338,7 @@ public static class StaticVariables
     public static int DAT_800c9dec; // 800C9DEC
     public static int DAT_800ca0e8; // 800CA0E8
     public static int DAT_800ca0ec; // 800CA0EC
-    public static short g_drawPageInfoBase; // 800CA0F0
+    public static short[] g_drawPageInfoBase = new short[96]; // 800CA0F0
     public static int[] g_clutTableBase = new int[24]; // 800CA1B0
     public static int[] g_uvLookupTableInit = new int[8]; // 800CA210
     public static int[] g_orderTableFrame0 = new int[372]; // 800CA230
@@ -1390,12 +1390,12 @@ public static class StaticVariables
     public static short g_tileScaleXInit; // 800DC56E
     public static short g_tileScaleYInit; // 800DC59A
     public static int g_currentMap; // 800DC5A0
-    public static short g_tileOTFlags; // 800DC5A8
+    public static short[] g_tileOTFlags = new short[960]; // 800DC5A8
     public static short DAT_800dc5aa; // 800DC5AA
     public static short DAT_800dc5b6; // 800DC5B6
     public static short DAT_800dc5c8; // 800DC5C8
     public static short DAT_800dcd24; // 800DCD24
-    public static short g_tileVRAMClearTable; // 800DCD26
+    public static short[] g_tileVRAMClearTable; // 800DCD26
     public static TileAnimDescriptor[] g_tileAnimDescriptorTable; // 800DCD28
     public static byte DAT_800dcd29; // 800DCD29
     public static byte DAT_800dcd2a; // 800DCD2A
@@ -1410,10 +1410,10 @@ public static class StaticVariables
     public static int[] INT_ARRAY_800e0758 = new int[3800]; // 800E0758
     public static int g_isCameraScrolling; // 800E42B8
     public static short[] g_drawPageTPageIDs; // 800E42BC
-    //public static DR_TPAGE[] g_tileOrderingTable = new DR_TPAGE[6]; // 800E42C0
-    //public static SpriteMapEntry[] g_spriteMapTable = new SpriteMapEntry[6]; // 800E42F0
+    public static DR_TPAGE[] g_tileOrderingTable = new DR_TPAGE[6]; // 800E42C0
+    public static SpriteMapEntry[] g_spriteMapTable = new SpriteMapEntry[6]; // 800E42F0
     public static int g_LoadVRAMAssets_debug; // 800E431C
-    public static int  g_drawPageInfoTable; // 800E4320
+    public static short[]  g_drawPageInfoTable; // 800E4320
     public static int g_currentDrawPageParam; // 800E4324
     public static int g_cameraScrollingX; // 800E4328
     public static int g_cameraScrollingY; // 800E432C

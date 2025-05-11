@@ -76,10 +76,6 @@
             label14 = new Label();
             lblportalu1 = new Label();
             label16 = new Label();
-            lblportalu4 = new Label();
-            label18 = new Label();
-            lblportalu3 = new Label();
-            label20 = new Label();
             lblportalu2 = new Label();
             label22 = new Label();
             lblportaly2 = new Label();
@@ -797,46 +793,6 @@
             label16.Size = new Size(12, 15);
             label16.TabIndex = 55;
             label16.Text = "?";
-            // 
-            // lblportalu4
-            // 
-            lblportalu4.AutoSize = true;
-            lblportalu4.Location = new Point(147, 142);
-            lblportalu4.Margin = new Padding(4, 0, 4, 0);
-            lblportalu4.Name = "lblportalu4";
-            lblportalu4.Size = new Size(13, 15);
-            lblportalu4.TabIndex = 62;
-            lblportalu4.Text = "0";
-            // 
-            // label18
-            // 
-            label18.AutoSize = true;
-            label18.Location = new Point(133, 142);
-            label18.Margin = new Padding(4, 0, 4, 0);
-            label18.Name = "label18";
-            label18.Size = new Size(12, 15);
-            label18.TabIndex = 61;
-            label18.Text = "?";
-            // 
-            // lblportalu3
-            // 
-            lblportalu3.AutoSize = true;
-            lblportalu3.Location = new Point(147, 127);
-            lblportalu3.Margin = new Padding(4, 0, 4, 0);
-            lblportalu3.Name = "lblportalu3";
-            lblportalu3.Size = new Size(13, 15);
-            lblportalu3.TabIndex = 60;
-            lblportalu3.Text = "0";
-            // 
-            // label20
-            // 
-            label20.AutoSize = true;
-            label20.Location = new Point(133, 127);
-            label20.Margin = new Padding(4, 0, 4, 0);
-            label20.Name = "label20";
-            label20.Size = new Size(12, 15);
-            label20.TabIndex = 59;
-            label20.Text = "?";
             // 
             // lblportalu2
             // 
@@ -2668,10 +2624,6 @@
             tabPage5.Controls.Add(lblportalu1);
             tabPage5.Controls.Add(label22);
             tabPage5.Controls.Add(lblportalu2);
-            tabPage5.Controls.Add(label20);
-            tabPage5.Controls.Add(lblportalu3);
-            tabPage5.Controls.Add(label18);
-            tabPage5.Controls.Add(lblportalu4);
             tabPage5.Controls.Add(label26);
             tabPage5.Controls.Add(lblportalx2);
             tabPage5.Controls.Add(label24);
@@ -3094,10 +3046,6 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label lblportalu1;
         private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label lblportalu4;
-        private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.Label lblportalu3;
-        private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label lblportalu2;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.Label lblportaly2;

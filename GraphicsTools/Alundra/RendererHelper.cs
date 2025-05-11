@@ -5,28 +5,32 @@ namespace Alundra;
 public class RendererHelper
 {
     //Custom renderer
-    public static void Render(Graphics g, DatasBin.DatasBin datasBin, GameMap gameMap)
+    public static void Render(Graphics g, DatasBin.DatasBin datasBin, GameMap gameMap, int currentRow, int camTileOffsetY)
     {
         var currentXPosition = StaticVariables.g_cameraCurrentX;// >> 16;
         var currentYPosition = StaticVariables.g_cameraCurrentY;// >> 16;
+        //var currentXPosition = 0;
+        //var currentYPosition = 0;
                      
         var curXTile = currentXPosition / StaticVariables.MapTileWidth;
+        var curYTile = 0;
+        //var curXTile = currentRow;
+        //var curYTile = camTileOffsetY;
 
         var sinfo = gameMap.SpriteInfo;
         var gensi = datasBin.AlundraGameMap.SpriteInfo;
 
-        for (var y = 0; y < gameMap.Map.Height ;y++)
+        for (var y = curYTile; y < gameMap.Map.Height ;y++)
         {
             //draw tiles on this row
             for (var x = curXTile; x < curXTile + StaticVariables.ScreenWidth / StaticVariables.MapTileWidth + 2; x++)
             {
-                //&g_tileAnimDescriptorTable + (tile.Flags & 0x3ff) * 3 +
-                //    (uint)g_spriteMapTable[(byte)(&g_tileAnimDescriptorTable)[(tile.Flags & 0x3ff) * 3]].offsetX * 3;
-                
                 var tile = gameMap.Map.MapTiles[y * gameMap.Map.Width + x];
                 var tileId = tile.TileId;
 
                 //render tile
+                //var dx = (x - currentRow) * StaticVariables.MapTileWidth - currentXPosition;
+                //var dy = (y - tile.Height - camTileOffsetY) * StaticVariables.MapTileHeight - currentYPosition;
                 var dx = x * StaticVariables.MapTileWidth - currentXPosition;
                 var dy = (y - tile.Height) * StaticVariables.MapTileHeight - currentYPosition;
 
@@ -72,6 +76,8 @@ public class RendererHelper
                 }
 
                 //var tile = selectedGame.map.maptiles[sx + sy * selectedGame.map.width];
+                //var scx = (entity.ModdedXPos >> 16) - (currentRow * StaticVariables.MapTileWidth);
+                //var scy = (entity.ModdedYPos >> 16) - (entity.ModdedZPos >> 16) - (camTileOffsetY * StaticVariables.MapTileHeight);
                 var scx = (entity.ModdedXPos >> 16) - currentXPosition;
                 var scy = (entity.ModdedYPos >> 16) - (entity.ModdedZPos >> 16) - currentYPosition;
 
@@ -81,10 +87,10 @@ public class RendererHelper
 
                     var map = entity.IsMapSprite ? gameMap : datasBin.AlundraGameMap;
 
-                    if (entity.Frame == null) // why?? TODO, not initialized ?
-                    {
-                        continue;
-                    }
+                    //if (entity.Frame == null) // why?? TODO, not initialized ?
+                    //{
+                    //    continue;
+                    //}
 
                     var iset = entity.Frame.Images;
                     for (idex = iset.NumberOfImages - 1; idex >= 0; idex--)

@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using Alundra.DatasBin;
 using Alundra.Gameplay;
 using Alundra.Gameplay.Scripts;
@@ -26,6 +28,7 @@ public class GameEngine
     private readonly Renderer _renderer;
     private readonly PadManager _padManager;
     private readonly EntityManager _entityManager;
+    private readonly PlayerManager _playerManager;
 
     public GameEngine(DatasBin.DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR, Font3 font3)
     {
@@ -42,6 +45,7 @@ public class GameEngine
         _entityManager = new EntityManager(this);
         EntityGameplayManager = new EntityGameplayManager(this);
         EffectManager = new EffectManager(this);
+        _playerManager = new PlayerManager(this);
     }
 
     public void InitializeEngine()
@@ -327,7 +331,7 @@ public class GameEngine
         GetCurrentTileIndex();
     }
 
-    private uint GetCurrentTileIndex()
+    public uint GetCurrentTileIndex()
     {
         uint tileIndex = 0xffffffff;
         int caseValue = StaticVariables.g_fadeControl.WarpVisualId - 1;
@@ -949,7 +953,7 @@ public class GameEngine
         return entity;
     }
 
-    private SpriteRecord GetSpriteFromSpriteTable(bool isMapSprite, uint spriteTableIndex, out int addedtosheet, out int addedtopallette)
+    public SpriteRecord GetSpriteFromSpriteTable(bool isMapSprite, uint spriteTableIndex, out int addedtosheet, out int addedtopallette)
     {
         SpriteInfo si;
 
@@ -1698,6 +1702,7 @@ public class GameEngine
         EffectManager.UpdateEffects();
     }
 
+    //8003c67c
     private void RunMapEvents()
     {
         if ((StaticVariables.g_playerControlFlags & 0x48) != 0)
@@ -1705,44 +1710,92 @@ public class GameEngine
             return;
         }
 
-        var medex = 0;
         var playerEntity = StaticVariables.PlayerEntity;
 
-        foreach (var mapEvent in StaticVariables.g_mapEvents)
+        for (int i = 0; i < 64; ++i)
         {
-            var eventCode = mapEvent.ProgramBMap;
-            if ((eventCode & 0x7f) == 0)
+            var currentMapEvent = StaticVariables.g_mapEvents[i];
+
+            if ((currentMapEvent.ProgramBMap & 0x7F) == 0)
             {
                 continue;
             }
 
-            var mapEventRecord = mapEvent.MapEventRecord;
-            if (playerEntity.TileX > mapEventRecord.X1 || playerEntity.TileX < mapEventRecord.X2 || playerEntity.TileY > mapEventRecord.Y1 || playerEntity.TileY < mapEventRecord.Y2)
-            {
-                playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap] = mapEvent.ProgramBMap;
-                playerEntity.MapEventProgramId = mapEvent.ProgramBMap;
-                playerEntity.EventProgramState.CopyFrom(mapEvent.EventData);
-                playerEntity.EventTrigger = medex;
-                playerEntity.LogicContextEntity = mapEvent.Entity;
+            var mapEventEntity = currentMapEvent.Entity;
+            int programId = mapEventEntity.EventTrigger;
 
-                _entityEventHandlers.RunEntityEventScripts(playerEntity, ScriptHelper.ProgramBMap);
+            var record = currentMapEvent.MapEventRecord;
+            int px = playerEntity.TileX;
+            int py = playerEntity.TileY;
 
-                mapEvent.ProgramBMap = playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap];
-                mapEvent.EventData.CopyFrom(playerEntity.EventProgramState);
-                mapEvent.Entity = playerEntity.LogicContextEntity;
-            }
-            else
+            if (px < record.X1 || px > record.X2 || py < record.Y1 || py > record.Y2)
             {
-                //mapEvent.Id = 0;
-                //mapEvent.EventData = new EventProgramState();
-                //mapEvent.EventData.Sp = 0;
-                //mapEvent.EventData.Exp = 0;
-                //mapEvent.EventData.LogicResult = 0;
-                mapEvent.Entity = playerEntity;
-                mapEvent.ProgramBMap = mapEventRecord.EventCodesBIndex;
+                mapEventEntity.ChildEntity = null;
+                mapEventEntity.EventProgramState.Sp = 0;
+                mapEventEntity.RelativeWarpOffsetX = 0;
+                mapEventEntity.Index = playerEntity.Index;
+                mapEventEntity.EventTrigger = record.EventCodesBIndex;
+                continue;
             }
-            medex++;
+
+            playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap] = currentMapEvent.ProgramBMap;
+            playerEntity.MapEventProgramId = currentMapEvent.ProgramBMap;
+
+            playerEntity.EventTrigger = i;
+            playerEntity.LogicContextEntity = mapEventEntity;
+            playerEntity.EventProgramState.CopyFrom(currentMapEvent.EventData);
+
+            RunScript(playerEntity, ScriptHelper.ProgramBMap);
+
+            currentMapEvent.EventData.CopyFrom(playerEntity.EventProgramState);
+            currentMapEvent.Entity = playerEntity.LogicContextEntity;
+            mapEventEntity.EventTrigger = playerEntity.EventTrigger;
         }
+
+
+        //var medex = 0;
+        //foreach (var mapEvent in StaticVariables.g_mapEvents)
+        //{
+        //    var eventCode = mapEvent.ProgramBMap;
+        //
+        //    if ((eventCode & 0x7f) == 0)
+        //    {
+        //        continue;
+        //    }
+        //
+        //    var mapEventRecord = mapEvent.MapEventRecord;
+        //
+        //    if (playerEntity.TileX > mapEventRecord.X1 
+        //        && playerEntity.TileX < mapEventRecord.X2 
+        //        && playerEntity.TileY > mapEventRecord.Y1 
+        //        && playerEntity.TileY < mapEventRecord.Y2)
+        //    {
+        //        playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap] = mapEvent.ProgramBMap;
+        //        playerEntity.MapEventProgramId = mapEvent.ProgramBMap;
+        //        playerEntity.EventProgramState.CopyFrom(mapEvent.EventData);
+        //        playerEntity.EventTrigger = medex;
+        //        playerEntity.LogicContextEntity = mapEvent.Entity;
+        //
+        //        _entityEventHandlers.RunEntityEventScripts(playerEntity, ScriptHelper.ProgramBMap);
+        //
+        //        mapEvent.ProgramBMap = playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap];
+        //        mapEvent.EventData.CopyFrom(playerEntity.EventProgramState);
+        //        mapEvent.Entity = playerEntity.LogicContextEntity;
+        //    }
+        //    else
+        //    {
+        //        playerEntity.Index = StaticVariables.g_entitySlots[0].Index; // ??
+        //        playerEntity.Index2 = 0;
+        //        playerEntity.RelativeWarpOffsetX = 0; // new EventProgramState();
+        //        playerEntity.ChildEntity = null;
+        //
+        //        mapEvent.Entity = playerEntity;
+        //        mapEvent.ProgramBMap = mapEventRecord.EventCodesBIndex;
+        //        playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap] = mapEventRecord.EventCodesBIndex; // ??
+        //
+        //    }
+        //    medex++;
+        //}
     }
 
     public SpriteEffectRecord GetEffectSpriteFromSpriteTable(bool isMapSprite, int spritetableindex, out int addedtosheet, out int addedtopallette)
@@ -1778,6 +1831,12 @@ public class GameEngine
             StaticVariables.g_cameraLookAtY = StaticVariables.g_entityFollowedByCamera.YPos >> 16;
             StaticVariables.g_cameraLookAtZ = StaticVariables.g_entityFollowedByCamera.ZPos >> 16;
         }
+    }
+
+    //80031b50
+    public void MovePlayer()
+    {
+        _playerManager.MovePlayer();
     }
 
     public void TriggerWarp(Entity entity)
@@ -2264,16 +2323,15 @@ public class GameEngine
         return entity;
     }
 
-    public void RunScript(Entity entity)
+    public void RunScript(Entity entity, int eventType)
     {
-        _entityEventHandlers.RunEntityEventScripts(entity, entity.EventTrigger);
+        _entityEventHandlers.RunEntityEventScripts(entity, eventType);
     }
 
     public void RunSpriteEvent(Entity entity)
     {
         var eventId = entity.SpriteProgramIndexes[entity.EventTrigger];
         _entityEventHandlers.SpriteHandlers.RunSpriteHandler(entity.EventTrigger, eventId, entity);
-        
     }
 
     public SpriteEffect CreateEffect_MapType(byte mapeffectid, bool checkBoundingbox, EffectManager effectManager)
@@ -2339,10 +2397,12 @@ public class GameEngine
     public void LoadBgm(int bgmIndex)
     {
         StaticVariables.g_resetSoundFlag = 0;
-        if (bgmIndex == 0) {
+        if (bgmIndex == 0)
+        {
             InitializeBgm(StaticVariables.g_requestedSeqId);
         }
-        else {
+        else
+        {
             StaticVariables.g_soundEffectState = 0x78;
         }
     }
@@ -2350,7 +2410,7 @@ public class GameEngine
     // 8008f458
     private void InitializeBgm(short seqId)
     {
-        FUN_8008f2e8(seqId,0);
+        FUN_8008f2e8(seqId, 0);
     }
 
     // 8008f2e8
@@ -2382,7 +2442,7 @@ public class GameEngine
 
     //8004dfd8
     public void AdjustFadeLevelRelative(int relativeFadeValue)
-    { 
+    {
         Debugger.Break();
         //ApplyFadeLevel(relativeFadeValue + StaticVariables.g_fadeControl[1].currentWarpEntityId);
     }
@@ -2461,20 +2521,31 @@ public class GameEngine
         return result;*/
     }
 
+    //8002d7b0
+    public void ChangeAreaTileProperties(int mapTileIndex)
+    {
+        Debugger.Break();
+        //spriteData = g_spriteVRAMPointer + mapTileIndex * 3 + 2;
+        var mapTile = CurrentMap.Map.MapTiles[mapTileIndex];
+
+
+        //ChangeAreaTileProperties();
+    }
+
     //8002d608
-    public void ChangeAeraTileProperties(int startX, int startY, int sizeX, int sizeY, int distX, int distY)
+    public void ChangeAreaTileProperties(int startX, int startY, int sizeX, int sizeY, int distX, int distY)
     {
         int distX2;
         int x;
         int y;
-  
-        if (startX < 0 || startY < 0 || sizeX < 0 || sizeY < 0 || distX < 0 || distY < 0) 
+
+        if (startX < 0 || startY < 0 || sizeX < 0 || sizeY < 0 || distX < 0 || distY < 0)
         {
             Debugger.Break();
             //Debug.WriteLine(startX,startY,sizeX,sizeY,distX,distY);
         }
 
-        if (0x34 < startX + sizeX || 0x3c < startY + sizeY || 0x34 < distX + sizeX || 0x3c < distY + sizeY) 
+        if (0x34 < startX + sizeX || 0x3c < startY + sizeY || 0x34 < distX + sizeX || 0x3c < distY + sizeY)
         {
             Debugger.Break();
             //Debug.WriteLine(startX,startY,sizeX,sizeY,distX,distY);
@@ -2482,21 +2553,21 @@ public class GameEngine
 
         y = 0;
 
-        if (0 < sizeY) 
+        if (0 < sizeY)
         {
-            do 
+            do
             {
                 x = 0;
                 distX2 = distX;
 
-                if (0 < sizeX) 
+                if (0 < sizeX)
                 {
-                    do 
+                    do
                     {
                         var tile = CurrentMap.Map.MapTiles[distX2 + (distY + y) * 52];
-                        var tile2 = CurrentMap.Map.MapTiles[(startX + x) + (startY + y) * 52];
+                        var tile2 = CurrentMap.Map.MapTiles[startX + x + (startY + y) * 52];
                         tile.GroundProperty = tile2.GroundProperty;
-                        tile.Walkability &= tile.Walkability;
+                        tile.Walkability = tile.Walkability;
                         x = x + 1;
                         distX2 = distX + x;
                     } while (x < sizeX);
@@ -2506,4 +2577,92 @@ public class GameEngine
             } while (y < sizeY);
         }
     }
+
+    //8003cfc8
+    public uint ResolveDirectionFromParam(Entity entity, uint encodedDir)
+    {
+        Debugger.Break();
+        return 0;
+    }
+
+    public Portal GetWarpData()
+    {
+        foreach (var infoPortal in CurrentMap.Info.Portals)
+        {
+            if (StaticVariables.g_entitySlots[0].TileX > infoPortal.X1
+                || StaticVariables.g_entitySlots[0].TileX < infoPortal.X2
+                || StaticVariables.g_entitySlots[0].TileY > infoPortal.Y1
+                || StaticVariables.g_entitySlots[0].TileY < infoPortal.Y2)
+            {
+                return infoPortal;
+            }
+        }
+
+        return null;
+    }
+
+    //8003a7b0
+    public void CheckAndTriggerTileEffect(Entity entity)
+    {
+        /*
+        if (entity.FrameCollision != null)
+        {
+            int[] worldXCoords = new int[4];
+            int[] worldYCoords = new int[4];
+            int tileZ, height;
+
+            worldXCoords[2] = StaticVariables.g_tileToWorldXTable[(short)(entity.HitBoxX >> 16)];
+            worldXCoords[0] = worldXCoords[2];
+            worldXCoords[3] = StaticVariables.g_tileToWorldXTable[(int)((entity.HitBoxX + entity.TransformWidth) >> 16)];
+            worldXCoords[1] = worldXCoords[3];
+
+            worldYCoords[1] = entity.HitBoxY >> 20;
+            worldYCoords[0] = worldYCoords[1];
+            worldYCoords[3] = (int)((entity.HitBoxY + entity.TransformDepth) >> 20);
+            worldYCoords[2] = worldYCoords[3];
+
+            tileZ = entity.HitBoxZ;
+            height = entity.TransformHeight;
+
+            int[] xCoordListPtr = worldXCoords;
+
+            for (int i = 0; i < 4; i++)
+            {
+                int tileX1 = xCoordListPtr[i];
+                if (tileX1 < 1)
+                    tileX1 = 0;
+                else if (tileX1 > 0x33)
+                    tileX1 = 0x33;
+
+                int tileX2 = worldYCoords[i];
+                if (tileX2 < 1)
+                    tileX2 = 0;
+                else if (tileX2 > 0x3B)
+                    tileX2 = 0x3B;
+
+                int index = tileX2 * 0xd0 + tileX1 * 4 + 0x302;
+                ushort* tileDataPointer = (ushort*)(StaticVariables.g_spriteVRAMPointer + index);
+
+                if ((*tileDataPointer & 2) != 0)
+                {
+                    int tileEffectZ = (StaticVariables.g_spriteVRAMPointer[index + 3] & 0xFF) << 20;
+                    if (tileZ <= tileEffectZ + 0x80000 && tileEffectZ + 0x80000 <= tileZ + height)
+                    {
+                        *tileDataPointer = (ushort)(*tileDataPointer & 0xFFFD);
+                        tileDataPointer[3] = 0xFFFF;
+
+                        int effectX = xCoordListPtr[i] * 0x180000 + 0xC0000;
+                        int effectY = worldYCoords[i] * 0x100000 + 0x80000;
+
+                        EffectManager.CreateEffectEntity(0, StaticVariables.g_sharedBuffer2[9], 0, effectX, effectY, tileEffectZ);
+                        CreateWarpEffect(0xFF, effectX, effectY, tileEffectZ);
+                        PlaySoundEffect(0x1F);
+                    }
+                }
+            }
+        }*/
+    }
+
+
+
 }

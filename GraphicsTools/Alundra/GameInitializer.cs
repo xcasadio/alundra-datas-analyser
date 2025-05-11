@@ -98,7 +98,7 @@ public class GameInitializer
         using var reader = _gameEngine.DatasBin.OpenBin(); //added by hand
         _gameEngine.AlundraMap.Load(reader, false);
 
-        InitializeTiles();
+        InitializeRenderingTiles();
         //InitializeDrMoveBuffers();
         LoadFontInTakiFolder();
         //InitSoundSystem();
@@ -300,14 +300,14 @@ public class GameInitializer
         InitializeWarpAndFadeSystem();
         if (StaticVariables.g_someDataIntoRam == 1)
         {
-            //CopyInitialDataToRAM();
+            //CopyInitialDataToRAM(); // maybe map datas already loaded ?
             playerTileX = StaticVariables.g_initialWarpTileX;
             playerTileY = StaticVariables.g_initialWarpTileY;
             playerZ = StaticVariables.g_initialWarpZ;
         }
         else
         {
-            //ClearSomeArrays();
+            ClearMapArrays();
             playerTileX = 0x16;
             if (StaticVariables.g_someDataIntoRam == 0)
             {
@@ -414,6 +414,20 @@ public class GameInitializer
         }
     }
 
+    //800814a0
+    private void ClearMapArrays()
+    {
+        for (int i = 0; i < StaticVariables.g_mapFlags.Length; i++)
+        {
+            StaticVariables.g_mapFlags[i] = 0;
+        }
+
+        for (int i = 0; i < StaticVariables.g_mapIdToInternalMapIndexTable.Length; i++)
+        {
+            StaticVariables.g_mapIdToInternalMapIndexTable[i] = (ushort)(StaticVariables.g_mapIdToInternalMapIndexTable.Length - i - 1);
+        }
+    }
+
     private void InitializeDebugVars()
     {
         StaticVariables.g_debugFlags = 0;
@@ -422,7 +436,8 @@ public class GameInitializer
         StaticVariables.g_debugVar_WarpDestinationId = StaticVariables.g_desiredMap;
     }
 
-    private void InitializeTiles()
+    //80042984
+    private void InitializeRenderingTiles()
     {
         //SetTile(StaticVariables.TILE_8013fb98);
         //SetTile(StaticVariables.TILE_8013fba8);

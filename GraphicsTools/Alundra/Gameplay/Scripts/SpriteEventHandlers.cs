@@ -51,6 +51,18 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramCTick, 4, AI_FUN_80066984);
 
         Register(ScriptHelper.ProgramCTick, 0x17, etick_17_jarsandboxes_Handler);
+
+        
+        Register(ScriptHelper.ProgramDTouch, 0, AI_EmptyFunction); // null
+        //Register(ScriptHelper.ProgramDTouch, 1, AI_EmptyFunction); // null
+        //Register(ScriptHelper.ProgramDTouch, 2, AI_EmptyFunction); // null
+        //Register(ScriptHelper.ProgramDTouch, 3, AI_EmptyFunction); // null
+        Register(ScriptHelper.ProgramDTouch, 4, AI_EmptyFunction); // null
+
+        //Register(ScriptHelper.ProgramEDeactivate, 0, );
+
+        Register(ScriptHelper.ProgramFInteract, 0, AI_EmptyFunction); // null
+        Register(ScriptHelper.ProgramFInteract, 1, Script_FInteract_FUN_8007fc64); // null
     }
 
     private void Register(int type, byte code, SpriteEventHandler handler)
@@ -579,7 +591,7 @@ public class SpriteEventHandlers
 
                 if (entity.InitialXPos != 0)
                 {
-                    entity.InitialXPos = entity.InitialXPos - 1;
+                    entity.InitialXPos -= 1;
                 }
 
                 if (entity.AIValues[1] == 0)
@@ -681,7 +693,7 @@ public class SpriteEventHandlers
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 2;
-                    entity.Flags = entity.Flags | 0x40;
+                    entity.Flags |= 0x40;
                     return;
                 }
 
@@ -849,6 +861,32 @@ public class SpriteEventHandlers
 
         entity.PlatformEntity = null;
         entity.Flags = (entity.Flags | 0x30) & 0xff7f;//turn off bit 8, turn on bits 5 and 6
+    }
+
+    #endregion
+
+    #region function type D
+
+
+
+    #endregion
+
+    #region function type E
+
+
+
+    #endregion
+
+    #region function type F
+
+    private void Script_FInteract_FUN_8007fc64(Entity entity)
+    {
+        entity.Bytes[0] = 1;
+        entity.Bytes[1] = 0;
+        entity.Bytes[2] = 0;
+        entity.Bytes[3] = 0;
+        StaticVariables.g_entitySlots[0].TargetAnimationId = 0;
+        StaticVariables.g_playerControlFlags |= 4;
     }
 
     #endregion

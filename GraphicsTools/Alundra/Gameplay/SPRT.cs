@@ -1,16 +1,17 @@
 ﻿namespace Alundra.Gameplay;
 
-public class SPRT {
-    ulong tag;
-    byte r0;
-    byte g0;
-    byte b0;
-    byte code;
-    short x0;
-    short y0;
-    byte u0;
-    byte v0;
-    ushort clut;
-    short w;
-    short h;
-};
+public class SPRT 
+{
+    public ulong tag;
+    public byte r0;
+    public byte g0;
+    public byte b0;
+    public byte code;
+    public short x0;
+    public short y0;
+    public byte u0;
+    public byte v0;
+    public ushort clut;
+    public short w;
+    public short h;
+}

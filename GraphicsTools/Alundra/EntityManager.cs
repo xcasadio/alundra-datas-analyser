@@ -234,73 +234,199 @@ public class EntityManager
         }
     }
 
+
+    // 80038ab4
     private void UpdateAnimation(Entity entity)
+    {
+        entity.IsZForceApplied = 0;
+
+        if (entity.TargetAnimationId != entity.CurrentAnimationId)
+        {
+            entity.CurrentAnimationId = entity.TargetAnimationId;
+            entity.CurrentFrameIndex = 0;
+            entity.AnimCompleteCounter = 0;
+            var animRecordPtr = entity.Sprite.AnimSets[entity.TargetAnimationId];
+            entity.AnimSet = animRecordPtr;
+            var currentFrame = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.CurrentFrameIndex];
+            entity.Frame = currentFrame;
+            entity.FirstFrame = currentFrame;
+            entity.NextFrameDelay = (currentFrame.Delay & 0x7f) * 23;
+
+            entity.AnimFlags = animRecordPtr.Flags;
+            entity.ZForce = 0;
+            entity.DepthSortVal = animRecordPtr.U6;
+            //entity.DepthSortVal = entity.SpriteRef.DepthSortVal;
+            //entity.DepthSortVal = entity.Frame.Images.Unknown;
+
+            if (entity.BalanceRecord.NumAnimVals == 0)
+            {
+                entity.BalanceVal = null;
+            }
+            else
+            {
+                var index = entity.TargetAnimationId >= entity.BalanceRecord.NumAnimVals ? 0 : entity.TargetAnimationId;
+                entity.BalanceVal = entity.BalanceRecord.AnimVals[index];
+            }
+
+            uint sfxId = entity.AnimSet.Sfx;
+            if ((entity.AnimSet.Flags & 0x20) != 0)
+                //if (((uint)animSet.pointerListOffset & 0x2000) != 0)
+            {
+                sfxId += 0x100;
+            }
+
+            _gameEngine.PlaySoundEffect(sfxId);
+
+            return;
+        }
+        
+        entity.NextFrameDelay--;
+
+        if (entity.NextFrameDelay == 0)
+        {
+            var animRecordPtr = entity.Sprite.AnimSets[entity.CurrentAnimationId];
+            entity.AnimSet = animRecordPtr;
+            var anim = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3];
+            entity.CurrentFrameIndex++;
+            if (entity.CurrentFrameIndex >= anim.NumberOfFrames)
+            {
+                entity.CurrentFrameIndex = 0;
+            }
+            
+            var currentFrame = anim.Frames[entity.CurrentFrameIndex];
+            entity.NextFrameDelay = (currentFrame.Delay & 0x7f) * 23;
+            entity.Frame = currentFrame;
+            entity.AnimCompleteCounter++;
+
+            entity.AnimFlags = animRecordPtr.Flags;
+            entity.ZForce = 0;
+            entity.DepthSortVal = animRecordPtr.U6;
+            //entity.DepthSortVal = entity.SpriteRef.DepthSortVal;
+            //entity.DepthSortVal = entity.Frame.Images.Unknown;
+
+            if (currentFrame.CollisionData != null) //currentFrame.CollisionOffset != 0xffff)
+            {
+                entity.FrameCollision = entity.Frame.CollisionData;
+                entity.FrameXOff = entity.FrameCollision.XOff << 16;
+                entity.FrameYOff = entity.FrameCollision.YOff << 16;
+                entity.FrameZOff = entity.FrameCollision.ZOff << 16;
+                entity.Width = (entity.FrameCollision.Width << 16) - 1;
+                entity.Depth = (entity.FrameCollision.Depth << 16) - 1;
+                entity.Height = (entity.FrameCollision.Height << 16) - 1;
+            }
+            else
+            {
+                entity.FrameCollision = null;
+            }
+
+            if (currentFrame.ImageSetPointer != -1)
+            {
+                entity.SpriteRef.Images = currentFrame.Images.Images;
+                entity.SpriteRef.DepthSortVal = currentFrame.Images.Unknown;
+                entity.SpriteRef.NumImages = currentFrame.Images.NumberOfImages;
+            }
+            else
+            {
+                entity.SpriteRef.Images = null;
+                entity.SpriteRef.DepthSortVal = 0;
+                entity.SpriteRef.NumImages = 0;
+            }
+        }
+    }
+
+    // 80038ab4
+    private void UpdateAnimation2(Entity entity)
     {
         SiFrame currentFrame = null;
         bool noSkip = true;
 
         entity.IsZForceApplied = 0;
-        var frameDelay = entity.TargetAnimationId;
-        var animationFrameIndex = StaticVariables.g_frameIndexTable[(entity.TargetDirection + 2 & 0x1c) + entity.CurrentFrameIndex * 0x20];
+        //var animationIndex  = entity.TargetAnimationId;
+        var animationIndex = entity.CurrentAnimationId;
+        var currentFrameIndex = -1; //StaticVariables.g_frameIndexTable[(entity.TargetDirection + 2 & 0x1c) + entity.CurrentFrameIndex * 0x20];
+
+        if (entity.Frame != null
+            && entity.AnimSet != null
+            && entity.Frame == entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.CurrentFrameIndex])
+        {
+            currentFrameIndex = entity.CurrentFrameIndex;
+        }
+
+        //entity.Sprite.AnimSets[entity.CurrentAnimationId].PreloadedAnims[]
+        //entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3].NumberOfFrames
 
         //var directionIndex = ((entity.TargetDirection + 2) & 0x1c) >> 2;
         //frameDelay = StaticVariables.g_frameIndexTable[directionIndex + (entity.CurrentFrameIndex << 3)];
 
         if (entity.TargetAnimationId != entity.CurrentAnimationId
-            || animationFrameIndex != entity.CurrentFrameIndex)
+            || currentFrameIndex != entity.CurrentFrameIndex)
         {
             noSkip = false;
         }
 
         if (noSkip)
         {
-            animationFrameIndex = entity.NextFrameDelay - 1;
-            entity.NextFrameDelay = animationFrameIndex;
+            entity.NextFrameDelay = entity.NextFrameDelay - 1;
 
-            if (animationFrameIndex != 0)
+            if (entity.NextFrameDelay != 0)
             {
-                entity.NextFrameDelay = 0x7fffffff;
-                entity.ForceResetAnimationFlag = 1;
+                //entity.NextFrameDelay = 0x7fffffff;
+                //entity.ForceResetAnimationFlag = 1;
+                //return;
+
 
                 //Debug.Assert(entity.AnimSet != null);
                 //Debug.Assert(entity.Frame != null);
-
                 //TODO: bug => remove this only to avoid null pointer
-                if (entity.AnimSet == null && entity.Sprite != null)
-                {
-                    var animSet = entity.Sprite.AnimSets[entity.CurrentAnimationId]; //frameDelay * 0xe
-                    entity.AnimSet = animSet;
-                    entity.Frame = animSet.PreloadedAnims[entity.TargetAnimationId >> 3].Frames[frameDelay];
-                }
-                return;
+                //if (entity.AnimSet == null && entity.Sprite != null)
+                //{
+                //    var animSet = entity.Sprite.AnimSets[entity.CurrentAnimationId]; //frameDelay * 0xe
+                //    entity.AnimSet = animSet;
+                //    entity.Frame = animSet.PreloadedAnims[entity.TargetAnimationId >> 3].Frames[frameDelay];
+                //}
             }
 
             currentFrame = entity.Frame;
             //currentFrame = entity.AnimSet.PreloadedAnims[entity.TargetAnimationId >> 3].Frames[frameDelay];
         }
 
+        var frameDelay = 0;
+
         while (true)
         {
             while (noSkip)
             {
-                frameDelay = currentFrame.Delay;
+                frameDelay = entity.NextFrameDelay; //currentFrame.Delay;
 
-                if (((uint)currentFrame.Delay & 0x80) != 0)
+                if (frameDelay == 0) //((uint)currentFrame.Delay & 0x80) != 0)
                 {
-                    entity.NextFrameDelay = (int)(frameDelay & 0x7f);
+                    Debug.Assert(entity.AnimSet != null);
+                    //entity.NextFrameDelay = (int)(frameDelay & 0x7f);
+                    
+                    var animSetPreloadedAnim = entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3];
+                    entity.CurrentFrameIndex++;
+
                     try
                     {
-                        var frame = entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.CurrentFrameIndex + 1];
-                        entity.Frame = frame ?? entity.Frame;
+                        var frame = animSetPreloadedAnim.Frames[entity.CurrentFrameIndex];
+                        //entity.Frame = frame ?? entity.Frame; //TODO : why we don't check if the next frame exists?
+                        if (frame == null)
+                        {
+                            entity.CurrentFrameIndex = 0;
+                            frame = animSetPreloadedAnim.Frames[entity.CurrentFrameIndex];
+                        }
+
+                        entity.Frame = frame;
+                        Debug.Assert(entity.Frame != null);
                     }
                     catch (Exception e)
                     {
                         Debugger.Break();
                     }
 
-                    //Debug.Assert(entity.Frame != null);
+                    entity.NextFrameDelay = entity.Frame.Delay; //(int)(frameDelay & 0x7f);
 
-                    if (currentFrame.CollisionOffset != -1)
+                    if (entity.Frame.CollisionOffset != -1)
                     {
                         entity.FrameCollision = entity.Frame.CollisionData;
                         entity.FrameXOff = entity.FrameCollision.XOff << 16;
@@ -315,11 +441,11 @@ public class EntityManager
                         entity.FrameCollision = null;
                     }
 
-                    if (currentFrame.ImageSetPointer != -1)
+                    if (entity.Frame.ImageSetPointer != -1)
                     {
-                        entity.SpriteRef.Images = currentFrame.Images.Images;
-                        entity.SpriteRef.DepthSortVal = currentFrame.Images.Unknown;
-                        entity.SpriteRef.NumImages = currentFrame.Images.NumberOfImages;
+                        entity.SpriteRef.Images = entity.Frame.Images.Images;
+                        entity.SpriteRef.DepthSortVal = entity.Frame.Images.Unknown;
+                        entity.SpriteRef.NumImages = entity.Frame.Images.NumberOfImages;
                     }
                     else
                     {
@@ -328,8 +454,9 @@ public class EntityManager
                         entity.SpriteRef.NumImages = 0;
                     }
 
-                    Debug.Assert(entity.AnimSet != null);
-                    Debug.Assert(entity.Frame != null);
+                    //currentFrame = entity.FirstFrame;
+                    //entity.Frame = currentFrame;
+                    entity.AnimCompleteCounter++;
                     return;
                 }
 
@@ -338,42 +465,44 @@ public class EntityManager
                     break;
                 }
 
-                if (frameDelay != 1)
+                //if (frameDelay != 1)
                 {
-                    Debugger.Break();
-                    throw new Exception("Character Animation Error!!");
+                    return;
+                    //Debugger.Break();
+                    //throw new Exception("Character Animation Error!!");
                 }
 
-                currentFrame = entity.FirstFrame;
-                entity.AnimCompleteCounter++;
-                entity.Frame = currentFrame;
+                //currentFrame = entity.FirstFrame;
+                //entity.Frame = currentFrame;
+                //entity.AnimCompleteCounter++;
             }
 
             if (noSkip)
             {
-                frameDelay = (uint)currentFrame.CollisionOffset;
+                var animationId = (uint)currentFrame.CollisionOffset & 0xFF; // low part
                 //frameDelay = (uint)currentFrame.transformIndexLow;
 
-                if ((currentFrame.CollisionOffset & 0x80) != 0)
+                if ((animationId & 0x80) != 0)
                 {
                     break;
                 }
 
                 //frameDelay = entity.CurrentFrameIndex;
-                entity.TargetAnimationId = (uint)frameDelay;
+                entity.TargetAnimationId = (uint)animationId;
                 entity.AnimCompleteCounter++;
             }
 
             LOAD_ANIMATION:
             Debug.Assert(frameDelay < entity.Sprite.AnimSets.Length);
-            var animSet = entity.Sprite.AnimSets[frameDelay]; //frameDelay * 0xe
+            entity.CurrentAnimationId = entity.TargetAnimationId;
+            var animSet = entity.Sprite.AnimSets[entity.CurrentAnimationId]; //frameDelay * 0xe
             entity.AnimSet = animSet;
             Debug.Assert(entity.AnimSet != null);
+            //entity.AnimFlags = entity.AnimSet.Flags;
             //frameOffset = (ushort)((int)animSet.entries + animationFrameIndex * 2);
             //var animTableOffset = entity.AnimSet.AnimationOffsets[entity.CurrentFrameIndex];
-            entity.CurrentFrameIndex = animationFrameIndex;
-            entity.NextFrameDelay = 0;
-            entity.CurrentAnimationId = (uint)frameDelay;
+            entity.CurrentFrameIndex = currentFrameIndex < 0 ? 0 : currentFrameIndex; // TODO : currentFrameIndex == -1
+            //entity.CurrentAnimationId = (uint)frameDelay;
 
             //currentFrame = entity.AnimSet.PreloadedAnims[entity.TargetAnimationId].Frames[frameIndex];
             //currentFrame = animTableOffset[entity.CurrentFrameIndex];
@@ -390,7 +519,8 @@ public class EntityManager
             {
                 Debugger.Break();
             }
-
+            
+            entity.NextFrameDelay = currentFrame.Delay;
             entity.Frame = currentFrame;
             entity.FirstFrame = currentFrame;
             //entity.IsZForceApplied = animSet.isZForceApplied;
@@ -416,7 +546,7 @@ public class EntityManager
 
             uint sfxId = entity.AnimSet.Sfx;
             if ((entity.AnimSet.Flags & 0x20) != 0)
-                //if (((uint)animSet.pointerListOffset & 0x2000) != 0)
+            //if (((uint)animSet.pointerListOffset & 0x2000) != 0)
             {
                 sfxId += 0x100;
             }
@@ -764,7 +894,7 @@ public class EntityManager
         if (ridingEntity.RidingEntity != null)
         {
             //TODO: bug maybe in CheckRidingEntities why overflow ???
-            //UpdateRidingEntity(ridingEntity, ridingEntity.RidingEntity);
+            UpdateRidingEntity(ridingEntity, ridingEntity.RidingEntity);
         }
 
         entity.FinalXForce += ridingEntity.AdjustedXForce;
@@ -1016,10 +1146,10 @@ public class EntityManager
     private void UpdateEntityPhysics(Entity entity)
     {
         //TODO: bug with animation
-        if (entity.AnimSet == null)
-        {
-            return;
-        }
+        //if (entity.AnimSet == null)
+        //{
+        //    return;
+        //}
 
         if (entity.Speed != entity.AnimSet.Speed
             || entity.TargetDirection != entity.CurrentDirection)
@@ -1425,11 +1555,12 @@ public class EntityManager
                 effect.Status = 1;
                 continue;
             }
-            //TODO: what is 18c, something with slope and sliding?
+
             var animid = -1;
             if ((entity.Slope_18c == 4 || entity.Slope_190 == 4)
                 && entity.Slope_18c != entity.Slope_190)
             {
+                //sliding effect
                 _gameEngine.EffectManager.CreateEffect_Type0(0, 6, 0, entity.XPos, entity.YPos, entity.CollidedWithEntityZ);
             }
 
@@ -1513,154 +1644,93 @@ public class EntityManager
         }
     }
 
-    private void MovePlayer()
-    {
-        //TODO: implement
-        //this function is MASSIVE
-        //perhaps the largest in the entire game
-    }
-
+    //800386d0
     private void UpdateEntitiesEvents()
     {
-        MovePlayer();
+        _gameEngine.MovePlayer();
 
-        if (StaticVariables.g_numberOfEntity > 0)
+        for (var i = 1; i < StaticVariables.g_numberOfEntity; i++)
         {
-            for (var i = 1; i < StaticVariables.g_numberOfEntity; i++)
+            var entity = StaticVariables.g_entitySlots[i];
+            var eventProgramType = -1;
+
+            if (entity.IsNotProcessable == 0 && entity.Status < 5)
             {
-                var entity = StaticVariables.g_entitySlots[i];
-                var eventType = -1;
-
-                if (entity.EventTrigger == 0)// && entity.Status < 5)
+                switch (entity.Status)
                 {
-                    switch (entity.Status)
-                    {
-                        case 1://loading/activating
-                            eventType = ScriptHelper.ProgramALoad;
-                            entity.Status = 2;
-                            break;
-                        case 2://normal
-                            var flags = entity.Flags;
+                    case (int)EntityStatus.Loaded:
+                        eventProgramType = ScriptHelper.ProgramALoad;
+                        entity.Status = (int)EntityStatus.Normal;
+                        break;
 
-                            if ((flags & 0x10) != 0)
+                    case (int)EntityStatus.Normal:
+                        var flags = entity.Flags;
+
+                        if ((flags & 0x10) != 0)
+                        {
+                            if (entity.ActionState == 4)
                             {
-                                if (entity.ActionState == 4)
-                                {
-                                    _gameEngine.DestroyEntity(entity, 6);
-                                    eventType = -1;
-                                }
-                                else
-                                {
-                                    if ((flags & 0x20) != 0 && (entity.FloorHeight == 0) && entity.IsAboveGround == 0)
-                                    {
-                                        eventType = 3;
-                                    }
-                                    if ((flags & 0x40) != 0 && (entity.HitCounter == 0) && (entity.Height != 0))
-                                    {
-                                        eventType = 3;
-                                    }
-                                }
-                            }
-                            else if ((flags & 0x20) != 0 && (entity.FloorHeight == 0) && entity.IsAboveGround == 0)
-                            {
-                                eventType = 3;
-                            }
-
-                            entity.Status = eventType;
-
-                            /*
-                            if ((entity.Flags & 0x100000) != 0)
-                            {
-                                if (entity.Slope_18c == 4)
-                                {
-                                    DestroyEntity(entity, 6);
-
-                                    eventType = -1;
-                                    break;
-                                }
-                            }
-
-                            if ((entity.Flags & 0x200000) != 0)
-                            {
-                                if ((entity.CombinedVramFlagsOR & 0x8004) != 0)
-                                {
-                                    DestroyEntity(entity, -1);
-
-                                    eventType = -1;
-                                    break;
-                                }
-                            }
-
-                            if ((entity.Flags & 0x10) != 0)
-                            {
-                                if (entity.ForceAdjusted != 0 || entity.IsAboveGround != 3)
-                                {
-                                    entity.Status = 3;//deactivate
-                                    eventType = ScriptHelper.ProgramEDeactivate;
-                                    break;
-                                }
-                            }
-
-                            if ((entity.Flags & 0x20) != 0)
-                            {
-                                if (entity.HitCounter != 0)
-                                {
-                                    entity.Status = 3;//decativate
-                                    eventType = ScriptHelper.ProgramEDeactivate;
-                                    break;
-                                }
-                            }
-
-                            if ((entity.Flags & 0x40) != 0)
-                            {
-                                if (entity.ForceResetAnimationFlag != 0)
-                                {
-                                    entity.Status = 3;//decativate
-                                    eventType = ScriptHelper.ProgramEDeactivate;
-                                    break;
-                                }
-                            }
-
-                            if (entity.TouchingEntity != null)
-                            {
-                                eventType = ScriptHelper.ProgramDTouch;
+                                _gameEngine.DestroyEntity(entity, 6);
+                                eventProgramType = ScriptHelper.ProgramUnknown;
                                 break;
                             }
+                        }
 
-                            //i think this gamevar is more than just activecollitionentity, 
-                            //the interact button probabaly has to be down for this to be set
-                            if (StaticVariables.g_activeCollisionEntity != entity)
-                            {
-                                eventType = 2;
-                                break;
-                            }
-                            //if it gets here it means the player is interacting with this entity
+                        if ((flags & 0x20) != 0 && (entity.ForceAdjusted & 0x8004) != 0)
+                        {
+                            _gameEngine.DestroyEntity(entity, -1);
+                            eventProgramType = ScriptHelper.ProgramUnknown;
+                            break;
+                        }
 
-                            if (entity.SpriteProgramIndexes[ScriptHelper.ProgramFInteract] != 0)
-                            {
-                                eventType = 5;
-                                break;
-                            }
+                        if ((flags & 0x10) != 0 && entity.FloorHeight == 0 && entity.IsAboveGround == 0)
+                        {
+                            entity.Status = (int)EntityStatus.Deactivated;
+                            eventProgramType = ScriptHelper.ProgramDTouch;
+                            break;
+                        }
 
-                            if (entity.ProgramIndexes[ScriptHelper.ProgramFInteract] != 0)
+                        if ((flags & 0x20) != 0 && entity.HitCounter == 0)
+                        {
+                            entity.Status = (int)EntityStatus.Deactivated;
+                            eventProgramType = ScriptHelper.ProgramDTouch;
+                            break;
+                        }
+
+                        if ((flags & 0x40) != 0 && entity.FloorHeight != 0)
+                        {
+                            entity.Status = (int)EntityStatus.Deactivated;
+                            eventProgramType = ScriptHelper.ProgramEDeactivate;
+                            break;
+                        }
+
+                        if (entity.TouchingEntity == null)
+                        {
+                            eventProgramType = ScriptHelper.ProgramDTouch;
+                            break;
+                        }
+
+                        if (StaticVariables.g_activeCollisionEntity == entity)
+                        {
+                            if (entity.PlatformUpdateFlag == 0)
                             {
-                                eventType = 5;
-                                break;
+                                if (entity.ProgramIndexes[5] == 0)
+                                {
+                                    eventProgramType = ScriptHelper.ProgramCTick;
+                                    break;
+                                }
                             }
-                            eventType = 2;*/
-                            break;
-                        case 3://deactivating
-                            eventType = ScriptHelper.ProgramEDeactivate;
-                            break;
-                        case 0:
-                        case 4:
-                            eventType = -1;
-                            break;
-                    }
+                            eventProgramType = ScriptHelper.ProgramFInteract;
+                        }
+                        break;
+
+                    case (int)EntityStatus.Deactivated:
+                        eventProgramType = ScriptHelper.ProgramEDeactivate;
+                        break;
                 }
-
-                entity.EventTrigger = eventType;
             }
+
+            entity.EventTrigger = eventProgramType;
         }
 
         //run events
@@ -1669,30 +1739,26 @@ public class EntityManager
         do
         {
             keepGoing = false;
-            if (StaticVariables.g_numberOfEntity > 0)
+            for (var i = 1; i < StaticVariables.g_numberOfEntity; i++)
             {
-                for (var i = 1; i < StaticVariables.g_numberOfEntity; i++)
+                var entity = StaticVariables.g_entitySlots[i];
+
+                if (entity.EventTrigger == ScriptHelper.ProgramUnknown) continue;
+
+                var programIndex = entity.ProgramIndexes[entity.EventTrigger] & 0x7f;
+
+                if (programIndex == 0)
                 {
-                    var entity = StaticVariables.g_entitySlots[i];
-
-                    if (entity.EventTrigger == -1) continue;
-
-                    var programIndex = entity.ProgramIndexes[entity.EventTrigger] & 0x7f;
-
-                    if (programIndex == 0)
-                    {
-                        // g_entityEventFunctionsByType => AI
-                        _gameEngine.RunSpriteEvent(entity);
-                        entity.EventTrigger = -1;
-                    }
-                    else
-                    {
-                        _gameEngine.RunScript(entity);
-                        entity.EventTrigger = -1;
-                    }
-
-                    keepGoing = true;
+                    // g_entityEventFunctionsByType => AI
+                    _gameEngine.RunSpriteEvent(entity);
                 }
+                else
+                {
+                    _gameEngine.RunScript(entity, entity.EventTrigger);
+                }
+
+                entity.EventTrigger = -1;
+                keepGoing = true;
             }
 
         } while (keepGoing);
@@ -1735,7 +1801,7 @@ public class EntityManager
                 //entity.Index = 0;
                 //entity.Index2 = 0;
                 //...
-                entity = new Entity(); //TODO: chack if create some bug with some code save a pointer on a entity
+                entity = new Entity(); //TODO: check if create bug with some code save a pointer on an entity
                 entity.EntityRefId = -1; // g_emptyEntityForClearing.EntityRefId == -1
                 StaticVariables.g_entitySlots[i] = entity;
             }
@@ -1842,7 +1908,7 @@ public class EntityManager
             var tl = _gameEngine.CurrentMap.Map.MapTiles[tileX + tileY * 52]; //entity.MapTiles[tileY * 0xd0 + tileX * 4 + 0x302];
             tileFlags = tl.Flags;
             //tileFlags = StaticVariables.g_spriteVRAMPointer + tileY * 0xd0 + tileX * 4 + 0x302;
-            if (((tileFlags & 0xc00000) == 0) || ((tileFlags & 0x80000) == 0)) goto NoCollision;
+            if ((tileFlags & 0xc00000) == 0 || (tileFlags & 0x80000) == 0) goto NoCollision;
         }
         else
         {

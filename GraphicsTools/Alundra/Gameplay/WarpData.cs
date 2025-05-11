@@ -1,13 +1,13 @@
 ﻿namespace Alundra.Gameplay;
 
 public class WarpData {
-    char tileX1;
-    char tileY1;
-    char tileX2;
-    char tileY2;
-    ushort mapId;
-    char destinationTileX;
-    char destinationTileY;
-    short zLevel;
-    ushort flags;
+    public char tileX1;
+    public char tileY1;
+    public char tileX2;
+    public char tileY2;
+    public ushort mapId;
+    public char destinationTileX;
+    public char destinationTileY;
+    public short zLevel;
+    public ushort flags;
 };

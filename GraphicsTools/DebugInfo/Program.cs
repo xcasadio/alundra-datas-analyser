@@ -184,15 +184,15 @@ internal class Program
                 continue;
             }
 
-            Log($"[{i}] {BLUE}{portal.X1}{NORMAL}x{BLUE}{portal.Y1}{NORMAL},{BLUE}{portal.X2}{NORMAL}x{BLUE}{portal.Y2}{NORMAL} -> {BLUE}{portal.DestMapId}{NORMAL} {BLUE}{portal.DestX}{NORMAL}x{BLUE}{portal.DestY}{NORMAL} ({portal.Unknown1} {portal.Unknown2} {portal.Unknown3} {portal.Unknown4})");
+            Log($"[{i}] {BLUE}{portal.X1}{NORMAL}x{BLUE}{portal.Y1}{NORMAL},{BLUE}{portal.X2}{NORMAL}x{BLUE}{portal.Y2}{NORMAL} -> {BLUE}{portal.DestMapId}{NORMAL} {BLUE}{portal.DestTileX}{NORMAL}x{BLUE}{portal.DestTileY}{NORMAL} ({portal.ZLevel} {portal.Flags})");
 
             //Log($"{BLUE}X1 {NORMAL}{portal.X1}");
             //Log($"{BLUE}Y1 {NORMAL}{portal.Y1}");
             //Log($"{BLUE}X2 {NORMAL}{portal.X2}");
             //Log($"{BLUE}Y2 {NORMAL}{portal.Y2}");
             //Log($"{BLUE}DestMapId {NORMAL}{portal.DestMapId}");
-            //Log($"{BLUE}DestX {NORMAL}{portal.DestX}");
-            //Log($"{BLUE}DestY {NORMAL}{portal.DestY}");
+            //Log($"{BLUE}DestTileX {NORMAL}{portal.DestTileX}");
+            //Log($"{BLUE}DestTileY {NORMAL}{portal.DestTileY}");
             //Log($"{BLUE}Unknown1 {NORMAL}{portal.Unknown1}");
             //Log($"{BLUE}Unknown2 {NORMAL}{portal.Unknown2}");
             //Log($"{BLUE}Unknown3 {NORMAL}{portal.Unknown3}");

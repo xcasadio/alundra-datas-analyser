@@ -2,6 +2,7 @@
 
 public static class ScriptHelper
 {
+    public const int ProgramUnknown = -1;
     public const int ProgramALoad = 0;
     public const int ProgramBMap = 1;
     public const int ProgramCTick = 2;

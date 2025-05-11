@@ -29,6 +29,9 @@ public class EventProgramState
         {
             Exp[i] = other.Exp[i];
         }
+
+        Result = other.Result;
+        _30 = other._30;
     }
 
     public override string ToString()

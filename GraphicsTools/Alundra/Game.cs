@@ -49,7 +49,7 @@ public class Game
 
     public void Render(Graphics g)
     {
-        RendererHelper.Render(g, _datasBin, _map);
+        RendererHelper.Render(g, _datasBin, _map, 0, 0);
     }
 
     public void LoadMap(int mapId)
