@@ -1,9 +1,0 @@
-0003f1b4: 8cc20000 lw r2,0x0000(r6)     r2 = r6[0]
-0003f1b8: 00000000 nop                  
-0003f1bc: 90430001 lbu r3,0x0001(r2)    
-0003f1c0: 90420002 lbu r2,0x0002(r2)    
-0003f1c4: 00031880 sll r3,r3,2          
-0003f1c8: 00641821 addu r3,r3,r4        
-0003f1cc: ac620070 sw r2,0x0070(r3)     entity[70]+(tickprogexp[1]*4) = tickprogexp[2]
-0003f1d0: 03e00008 jr r31               
-0003f1d4: 24020003 addiu r2,r0,0x0003   

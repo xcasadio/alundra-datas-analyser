@@ -1,7 +1,0 @@
-										int gravity_on_handler(entity, entityself, tickprogexp, tickprogsp)					
-0003e114: 8c82006c lw r2,0x006c(r4)     
-0003e118: 00000000 nop                  
-0003e11c: 34420100 ori r2,r2,0x0100     
-0003e120: ac82006c sw r2,0x006c(r4)     entity.gravityflags |= 0x0100
-0003e124: 03e00008 jr r31               
-0003e128: 24020001 addiu r2,r0,0x0001  

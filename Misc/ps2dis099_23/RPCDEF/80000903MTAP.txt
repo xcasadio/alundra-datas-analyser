@@ -1,5 +1,0 @@
-#
-# Let me know any info. about SifRPC.
-#
-1:sceMtapGetConnection
-

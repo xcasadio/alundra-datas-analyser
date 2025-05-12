@@ -1,6 +1,0 @@
-#ifndef ALUNDRA_UTILITIES
-#define ALUNDRA_UTILITIES
-
-
-
-#endif
