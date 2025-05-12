@@ -762,7 +762,7 @@ public class Game
                 }
 
                 //X
-                var difx = entity.FrameX - checkme.ModdedXPos;
+                var difx = entity.HitBoxX - checkme.ModdedXPos;
                 int width;
                 if (difx > 0)
                 {
@@ -770,7 +770,7 @@ public class Game
                 }
                 else
                 {
-                    difx = checkme.ModdedXPos - entity.FrameX;
+                    difx = checkme.ModdedXPos - entity.HitBoxX;
                     width = entity.FrameWidth + 1;
                 }
                 if (difx >= width)
@@ -779,7 +779,7 @@ public class Game
                 }
 
                 //Y
-                var dify = entity.FrameY - checkme.ModdedYPos;
+                var dify = entity.HitBoxY - checkme.ModdedYPos;
                 int depth;
                 if (dify > 0)
                 {
@@ -787,7 +787,7 @@ public class Game
                 }
                 else
                 {
-                    dify = checkme.ModdedYPos - entity.FrameY;
+                    dify = checkme.ModdedYPos - entity.HitBoxY;
                     depth = entity.FrameDepth + 1;
                 }
                 if (dify >= depth)
@@ -796,7 +796,7 @@ public class Game
                 }
 
                 //Z
-                var difz = entity.FrameZ - checkme.ModdedZPos;
+                var difz = entity.HitBoxZ - checkme.ModdedZPos;
                 int height;
                 if (difz > 0)
                 {
@@ -804,7 +804,7 @@ public class Game
                 }
                 else
                 {
-                    difz = checkme.ModdedZPos - entity.FrameZ;
+                    difz = checkme.ModdedZPos - entity.HitBoxZ;
                     height = entity.FrameHeight + 1;
                 }
                 if (difz >= height)
@@ -838,39 +838,39 @@ public class Game
                 entity.HitCounter++;
                 //X
                 var xr = checkme.ModdedXPos + checkme.Width;
-                if (entity.FrameX + entity.FrameWidth < xr)
+                if (entity.HitBoxX + entity.FrameWidth < xr)
                 {
-                    xr = entity.FrameX + entity.FrameWidth;
+                    xr = entity.HitBoxX + entity.FrameWidth;
                 }
 
-                var xl = entity.FrameX;
-                if (entity.FrameX < checkme.ModdedXPos)
+                var xl = entity.HitBoxX;
+                if (entity.HitBoxX < checkme.ModdedXPos)
                 {
                     xl = checkme.ModdedXPos;
                 }
 
                 //Y
                 var yr = checkme.ModdedYPos + checkme.Depth;
-                if (entity.FrameY + entity.FrameDepth < yr)
+                if (entity.HitBoxY + entity.FrameDepth < yr)
                 {
-                    yr = entity.FrameY + entity.FrameDepth;
+                    yr = entity.HitBoxY + entity.FrameDepth;
                 }
 
-                var yl = entity.FrameY;
-                if (entity.FrameY < checkme.ModdedYPos)
+                var yl = entity.HitBoxY;
+                if (entity.HitBoxY < checkme.ModdedYPos)
                 {
                     yl = checkme.ModdedYPos;
                 }
 
                 //Z
                 var zr = checkme.ModdedZPos + checkme.Height;
-                if (entity.FrameZ + entity.FrameHeight < zr)
+                if (entity.HitBoxZ + entity.FrameHeight < zr)
                 {
-                    zr = entity.FrameZ + entity.FrameHeight;
+                    zr = entity.HitBoxZ + entity.FrameHeight;
                 }
 
-                var zl = entity.FrameZ;
-                if (entity.FrameZ < checkme.ModdedZPos)
+                var zl = entity.HitBoxZ;
+                if (entity.HitBoxZ < checkme.ModdedZPos)
                 {
                     zl = checkme.ModdedZPos;
                 }

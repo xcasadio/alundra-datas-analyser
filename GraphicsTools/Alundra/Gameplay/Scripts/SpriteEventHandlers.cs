@@ -493,7 +493,7 @@ public class SpriteEventHandlers
                 if ((direction & 7) == 0)
                 {
                     _gameEngine.EffectManager.CreateEffectEntity(0, StaticVariables.g_imageBuffer[10], 0,
-                        entity.XPos, entity.YPos, entity.FloorHeight);
+                        entity.XPos, entity.YPos, entity.TerrainHeight);
                 }
 
                 if (StaticVariables.g_entitySlots[0].TouchingEntity == entity)

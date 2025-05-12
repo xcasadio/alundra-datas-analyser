@@ -11,7 +11,6 @@ public static class StaticVariables
     public const int MapTileWidth = 24;
     public const int MapTileHeight = 16;
 
-    public static int g_playerInitState;
     public static Entity PlayerEntity => g_entitySlots[0];
 
     //don't delete
@@ -386,11 +385,11 @@ public static class StaticVariables
     //80098f10
     public static readonly string[] g_directionNames = ["X", "R", "L", "U", "D"];
     //80098f64
-    public static readonly string[] g_weaponNames = ["No Effect","Sshort", "Hammer","Arrow","B","Tackle","F","I","Earth Magic","Water Magic","Fire Magic","Air Magic"];
+    public static readonly string[] g_weaponNames = ["No Effect", "Sshort", "Hammer", "Arrow", "B", "Tackle", "F", "I", "Earth Magic", "Water Magic", "Fire Magic", "Air Magic"];
     //80098f94
-    public static readonly string[] g_damageNames = ["Normal Damage","Critical","No Effect","Error!"];
+    public static readonly string[] g_damageNames = ["Normal Damage", "Critical", "No Effect", "Error!"];
     //80098f34
-    public static readonly string[] g_effectDebugFlagNames = ["A","W","I","0","-2","-2","+2","-2","-1","-1","+1","-1","0","0","-1","+1","+1","+1","-2","+2"];
+    public static readonly string[] g_effectDebugFlagNames = ["A", "W", "I", "0", "-2", "-2", "+2", "-2", "-1", "-1", "+1", "-1", "0", "0", "-1", "+1", "+1", "+1", "-2", "+2"];
     //80023654
     public static readonly short[] g_offsetXList =
     [
@@ -415,7 +414,19 @@ public static class StaticVariables
     //80023644
     public static readonly int[] g_cardinalDirectionTable = [0, 0x10, 0x08, 0x18];
     //80022778
-    public static byte[] BYTE_ARRAY_80022778 = [0x40, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00]; 
+    public static byte[] BYTE_ARRAY_80022778 = [0x40, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00];
+    //800236d4
+    public static byte[] g_heights_800236d4 = 
+    [
+        0x1, 0x2, 0x2, 0x3,
+        0x4, 0x4, 0x5, 0x6,
+        0x6, 0x7, 0x8, 0x8,
+        0x9, 0xA, 0xA, 0xB,
+        0xC, 0xC, 0xD, 0xE,
+        0xE, 0xF, 0x10, 0x10
+    ];
+
+
 
     public static void Initialize()
     {
@@ -729,7 +740,7 @@ public static class StaticVariables
     public static int DAT_8001001c; // 8001001C
     public static int g_debugVar_WarpDestRestart; // 8001004C
     public static byte g_transitionCounter; // 80010756
-    public static int  PTR_DAT_80020384; // 80020384
+    public static int PTR_DAT_80020384; // 80020384
     public static int g_unused_800203b4; // 800203B4
     public static short[] g_tileOffsetYTable = new short[32]; // 800203F0
     public static int[] g_sinTable = new int[8]; // 800204F0
@@ -780,11 +791,11 @@ public static class StaticVariables
     public static short DAT_800236a4; // 800236A4
     public static short DAT_800236c4; // 800236C4
     //public static int[] g_frameIndexTable = new int[32]; // 800237F4
-    public static char  g_unusedTextBuffer; // 80023C94
-    public static char  PTR_DAT_80023d0c; // 80023D0C
-    public static int  PTR_DAT_80023d2c; // 80023D2C
-    public static char  PTR_DAT_80023d5c; // 80023D5C
-    public static char  g_unusedTextBuffer2; // 80023D8C
+    public static char g_unusedTextBuffer; // 80023C94
+    public static char PTR_DAT_80023d0c; // 80023D0C
+    public static int PTR_DAT_80023d2c; // 80023D2C
+    public static char PTR_DAT_80023d5c; // 80023D5C
+    public static char g_unusedTextBuffer2; // 80023D8C
     public static int DAT_80023ee0; // 80023EE0
     public static int DAT_80023ee4; // 80023EE4
     public static int DAT_80023f78; // 80023F78
@@ -827,14 +838,14 @@ public static class StaticVariables
     public static int DAT_80026704; // 80026704
     public static int DAT_80026708; // 80026708
     public static int DAT_8002670c; // 8002670C
-    public static byte  PTR_DAT_80026808; // 80026808
-    public static byte  PTR_DAT_8002680c; // 8002680C
-    public static byte  PTR_DAT_80026810; // 80026810
-    public static byte  PTR_DAT_80026814; // 80026814
-    public static byte  PTR_DAT_80026818; // 80026818
-    public static byte  PTR_DAT_8002681c; // 8002681C
-    public static byte  PTR_DAT_80026820; // 80026820
-    public static byte  PTR_DAT_80026824; // 80026824
+    public static byte PTR_DAT_80026808; // 80026808
+    public static byte PTR_DAT_8002680c; // 8002680C
+    public static byte PTR_DAT_80026810; // 80026810
+    public static byte PTR_DAT_80026814; // 80026814
+    public static byte PTR_DAT_80026818; // 80026818
+    public static byte PTR_DAT_8002681c; // 8002681C
+    public static byte PTR_DAT_80026820; // 80026820
+    public static byte PTR_DAT_80026824; // 80026824
     public static int DAT_80026840; // 80026840
     public static short DAT_80026844; // 80026844
     public static byte DAT_80026846; // 80026846
@@ -874,11 +885,11 @@ public static class StaticVariables
     public static int DAT_8002799c; // 8002799C
     public static int DAT_800279a0; // 800279A0
     public static short DAT_80027a28; // 80027A28
-    public static byte  PTR_FUN_80027a54; // 80027A54
+    public static byte PTR_FUN_80027a54; // 80027A54
     public static short DAT_80027bf8; // 80027BF8
     public static short DAT_80027bfa; // 80027BFA
-    public static int  g_spawnTableX; // 80027C1C
-    public static int  g_spawnTableY; // 80027C20
+    public static int g_spawnTableX; // 80027C1C
+    public static int g_spawnTableY; // 80027C20
     public static int DAT_80027c80; // 80027C80
     public static int DAT_80027c88; // 80027C88
     //public static short[] SHORT_ARRAY_80027d18 = new short[134]; // 80027D18
@@ -896,26 +907,26 @@ public static class StaticVariables
     public static byte DAT_80028b54; // 80028B54
     public static byte DAT_80028b55; // 80028B55
     public static byte DAT_80028b57; // 80028B57
-    public static int  g_warpStepThresholdTable; // 80028B8C
+    public static int g_warpStepThresholdTable; // 80028B8C
     public static int[] g_tileAttributeXForces = new int[16]; // 80028B94
     public static int[] g_tileAttributeYForces = new int[16]; // 80028BD4
     public static int[] g_tileAttributeLUT = new int[25]; // 80028C14
     public static byte g_tileWarpInitFlags; // 80028C78
-    public static int  g_tileWarpDataActive; // 80028C79
-    public static int  g_tileWarpDataInactive; // 80028C7D
+    public static int g_tileWarpDataActive; // 80028C79
+    public static int g_tileWarpDataInactive; // 80028C7D
     public static int[] g_tileWarpTypeList = new int[82]; // 80028C81
     public static int[] g_warpBehaviorTable = new int[20]; // 80028DCC
-    public static char  g_flagNameList; // 8002960E
-    public static int  g_flagIdList; // 8002962E
+    public static char g_flagNameList; // 8002960E
+    public static int g_flagIdList; // 8002962E
     public static short DAT_80029650; // 80029650
-    public static byte  PTR_g_someDataIntoRam_80029bc4; // 80029BC4
+    public static byte PTR_g_someDataIntoRam_80029bc4; // 80029BC4
     public static byte DAT_80029bc8; // 80029BC8
     public static int DAT_80029bcc; // 80029BCC
     //public static char s_%s:_8002a17c[4]; // 8002A17C
     public static byte DAT_8002a4fc; // 8002A4FC
     public static short DAT_8002a6ac; // 8002A6AC
     public static short DAT_8002a6b0; // 8002A6B0
-        public static byte DAT_8002a6b2; // 8002A6B2
+    public static byte DAT_8002a6b2; // 8002A6B2
     //public static pointer[] g_warpNames = new pointer[12]; // 80098694
     public static int g_debugLineColor; // 800986E4
     public static int g_debugPrimColor; // 800986E8
@@ -928,7 +939,7 @@ public static class StaticVariables
     public static int DAT_80098704; // 80098704
     public static uint g_gameRandomSeed; // 80098708
     //public static int  g_spriteTableIndexes[512]; // 8009870C
-    public static Entity  g_lastValidWarpEntity; // 80098F0C
+    public static Entity g_lastValidWarpEntity; // 80098F0C
     //public static int  g_directionNames[5]; // 80098F10
     public static int DAT_80098f24; // 80098F24
     public static int g_warpDelayCounter; // 80098F28
@@ -940,14 +951,14 @@ public static class StaticVariables
     public static byte[] BYTE_ARRAY_80098fa4 = new byte[8]; // 80098FA4
     //public static int  g_scriptFunctions[255]; // 80098FAC
     public static byte[] g_mapWarpPattern = new byte[28]; // 800993A8
-    public static int  g_fontCharWidthTable; // 800993C4
+    public static int g_fontCharWidthTable; // 800993C4
     public static byte BYTE_800993d4; // 800993D4
     public static int DAT_800998b0; // 800998B0
-    public static byte  PTR_DAT_8009a7c4; // 8009A7C4
-    public static byte  PTR_DAT_8009a7d8; // 8009A7D8
-    public static byte  PTR_DAT_8009a7e0; // 8009A7E0
-    public static byte  PTR_DAT_8009a7ec; // 8009A7EC
-    public static byte[]  PTR_g_warpVelocityFlags_8009a814 = new byte[165]; // 8009A814
+    public static byte PTR_DAT_8009a7c4; // 8009A7C4
+    public static byte PTR_DAT_8009a7d8; // 8009A7D8
+    public static byte PTR_DAT_8009a7e0; // 8009A7E0
+    public static byte PTR_DAT_8009a7ec; // 8009A7EC
+    public static byte[] PTR_g_warpVelocityFlags_8009a814 = new byte[165]; // 8009A814
     public static int[] g_categoryThresholdTable = new int[8]; // 8009A834
     public static int g_isCdResetRequested; // 8009A858
     public static short[] g_textBaseX = new short[15]; // 8009CFBC
@@ -976,17 +987,17 @@ public static class StaticVariables
     public static short g_textPosOffsetY; // 800A58C2
     public static byte g_sprt; // 800A58D8
     public static byte g_fadeSomething; // 800A58D9
-    public static int[]  g_transitionFuncArgs = new int[91]; // 800A731C
-    public static byte  g_soundNameList; // 800A7488
+    public static int[] g_transitionFuncArgs = new int[91]; // 800A731C
+    public static byte g_soundNameList; // 800A7488
     //public static byte  PTR_s_(void_)NULL_800a7c58; // 800A7C58
-    public static byte  PTR_DAT_800a7c5c; // 800A7C5C
-    public static byte  PTR_DAT_800a7c60; // 800A7C60
+    public static byte PTR_DAT_800a7c5c; // 800A7C5C
+    public static byte PTR_DAT_800a7c60; // 800A7C60
     public static int DAT_800a7d2c; // 800A7D2C
     public static int DAT_800a7d30; // 800A7D30
     public static int DAT_800a7d34; // 800A7D34
-    public static int  g_seqExtraAddrTable; // 800A7F90
-    public static int  g_seqStartAddrTable; // 800A7F94
-    public static int  g_seqEndAddrTable; // 800A7F98
+    public static int g_seqExtraAddrTable; // 800A7F90
+    public static int g_seqStartAddrTable; // 800A7F94
+    public static int g_seqEndAddrTable; // 800A7F98
     public static int g_seqBodySizeTable; // 800A7F9C
     public static int DAT_800a7fa0; // 800A7FA0
     public static int[] g_sequenceOffsets = new int[7]; // 800A81C8
@@ -1006,16 +1017,16 @@ public static class StaticVariables
     public static int g_cdIsReady; // 800A82B0
     public static int g_cdReadMode; // 800A82B4
     public static int DAT_800a82b8; // 800A82B8
-    public static int  g_soundEffectData; // 800A82E8
+    public static int g_soundEffectData; // 800A82E8
     public static short g_soundPitch; // 800A82EC
     public static short g_soundNote; // 800A82EE
     public static short g_soundBankTable; // 800A82F0
     public static short g_soundEffectBankIdList; // 800A82F2
     public static int g_soundEffectMaxVoices; // 800A82F8
-    public static int  g_soundEffectToneCount; // 800A82FC
+    public static int g_soundEffectToneCount; // 800A82FC
     public static short DAT_800a8308; // 800A8308
     public static SprtGridDescriptor SprtGridDescriptor_800af664; // 800AF664
-    public static int  g_errorMarker; // 800B0000
+    public static int g_errorMarker; // 800B0000
     public static SprtGridDescriptor SprtGridDescriptor_800b06dc; // 800B06DC
     public static SprtGridDescriptor SprtGridDescriptor_800b122c; // 800B122C
     public static SprtGridDescriptor SprtGridDescriptor_800b1d7c; // 800B1D7C
@@ -1026,7 +1037,7 @@ public static class StaticVariables
     public static int DAT_800b42e0; // 800B42E0
     public static short DAT_800b42f8; // 800B42F8
     public static short DAT_800b4314; // 800B4314
-    public static byte  PTR_SprtGridDescriptor_800b44b8; // 800B44B8
+    public static byte PTR_SprtGridDescriptor_800b44b8; // 800B44B8
     public static short DAT_800b58a8; // 800B58A8
     public static short DAT_800b58aa; // 800B58AA
     public static short DAT_800b58ac; // 800B58AC
@@ -1051,8 +1062,8 @@ public static class StaticVariables
     public static short DAT_800b9e5a; // 800B9E5A
     public static short DAT_800b9e5c; // 800B9E5C
     public static short DAT_800b9e5e; // 800B9E5E
-    public static byte  PTR_GetCurrentTile_Zone1_800b9e68; // 800B9E68
-    public static byte  PTR_IsMapUnlocked_800b9e7c; // 800B9E7C
+    public static byte PTR_GetCurrentTile_Zone1_800b9e68; // 800B9E68
+    public static byte PTR_IsMapUnlocked_800b9e7c; // 800B9E7C
     public static short DAT_800b9f40; // 800B9F40
     public static short DAT_800b9fa0; // 800B9FA0
     public static short DAT_800b9fe2; // 800B9FE2
@@ -1079,7 +1090,7 @@ public static class StaticVariables
     public static int DAT_800c4194; // 800C4194
     public static int DAT_800c4198; // 800C4198
     public static int DAT_800c419c; // 800C419C
-    public static int  PTR_DAT_800c41a0; // 800C41A0
+    public static int PTR_DAT_800c41a0; // 800C41A0
     public static int DAT_800c41a4; // 800C41A4
     public static int DAT_800c41a8; // 800C41A8
     public static int DAT_800c41ac; // 800C41AC
@@ -1090,7 +1101,7 @@ public static class StaticVariables
     public static short DAT_800c41bc; // 800C41BC
     public static short DAT_800c41be; // 800C41BE
     public static int DAT_800c4210; // 800C4210
-    public static int  PTR_DAT_800c4214; // 800C4214
+    public static int PTR_DAT_800c4214; // 800C4214
     public static int DAT_800c4218; // 800C4218
     public static int DAT_800c421c; // 800C421C
     public static int DAT_800c4220; // 800C4220
@@ -1101,7 +1112,7 @@ public static class StaticVariables
     public static short DAT_800c4230; // 800C4230
     public static short DAT_800c4232; // 800C4232
     public static int DAT_800c4284; // 800C4284
-    public static int  PTR_DAT_800c4288; // 800C4288
+    public static int PTR_DAT_800c4288; // 800C4288
     public static int DAT_800c428c; // 800C428C
     public static int DAT_800c4290; // 800C4290
     public static int DAT_800c4294; // 800C4294
@@ -1112,7 +1123,7 @@ public static class StaticVariables
     public static short DAT_800c42a4; // 800C42A4
     public static short DAT_800c42a6; // 800C42A6
     public static int DAT_800c42f8; // 800C42F8
-    public static int  PTR_INT_800c42fc; // 800C42FC
+    public static int PTR_INT_800c42fc; // 800C42FC
     public static int DAT_800c4300; // 800C4300
     public static int DAT_800c4304; // 800C4304
     public static int DAT_800c4308; // 800C4308
@@ -1125,7 +1136,7 @@ public static class StaticVariables
     public static int DAT_800c436c; // 800C436C
     public static int DAT_800c4370; // 800C4370
     public static short DAT_800c4374; // 800C4374
-    public static byte  g_debugStringTable; // 800C440C
+    public static byte g_debugStringTable; // 800C440C
     public static int g_cdInitRequired; // 800C480C
     public static int g_previousVSyncCallback; // 800C4810
     public static int g_cdDataLoaded; // 800C4814
@@ -1158,9 +1169,9 @@ public static class StaticVariables
     public static int DAT_800c4918; // 800C4918
     public static int g_tileFrameCounters; // 800C491C
     public static int DAT_800c4920; // 800C4920
-    public static int  g_tileFrameUVs; // 800C4924
-    public static int  g_tile_rendering_buffer_ptr; // 800C4928
-    public static int  g_tileFrameDurations; // 800C492C
+    public static int g_tileFrameUVs; // 800C4924
+    public static int g_tile_rendering_buffer_ptr; // 800C4928
+    public static int g_tileFrameDurations; // 800C492C
     public static int g_tileAnimationFrameIndex; // 800C4930
     public static int g_tile_frame_counter; // 800C4934
     public static byte g_overlayFrame0; // 800C4938
@@ -1176,7 +1187,7 @@ public static class StaticVariables
     public static byte g_overlayFrame9; // 800C4942
     public static byte g_overlayFrame10; // 800C4943
     public static byte g_overlayFrame11; // 800C4944
-    public static int  g_debugGameTitle; // 800C4948
+    public static int g_debugGameTitle; // 800C4948
     public static int DAT_800c494c; // 800C494C
     public static int DAT_800c4950; // 800C4950
     public static int DAT_800c4954; // 800C4954
@@ -1194,8 +1205,8 @@ public static class StaticVariables
     public static int DAT_800c4990; // 800C4990
     public static int[] INT_ARRAY_800c4994 = new int[96]; // 800C4994
     public static int[] INT_ARRAY_800c4b14 = new int[8]; // 800C4B14
-    public static byte  g_entityEventType0Functions; // 800C4B34
-    public static byte  PTR_AI_UpdateEntityAI_0_800c4ff0; // 800C4FF0
+    public static byte g_entityEventType0Functions; // 800C4B34
+    public static byte PTR_AI_UpdateEntityAI_0_800c4ff0; // 800C4FF0
     public static int DAT_800c5f34; // 800C5F34
     public static int DAT_800c5f38; // 800C5F38
     public static int DAT_800c5f3c; // 800C5F3C
@@ -1204,10 +1215,10 @@ public static class StaticVariables
     public static int DAT_800c5f48; // 800C5F48
     public static int DAT_800c5f4c; // 800C5F4C
     public static int DAT_800c5f50; // 800C5F50
-    public static int  g_iconNameEtcBase; // 800C5F7C
+    public static int g_iconNameEtcBase; // 800C5F7C
     public static int[] g_warpVelocityFlags = new int[195]; // 800C5F80
-    public static int  g_tileSetEtcBase; // 800C628C
-    public static int  g_paletteSetEtcBase; // 800C6290
+    public static int g_tileSetEtcBase; // 800C628C
+    public static int g_paletteSetEtcBase; // 800C6290
     public static uint[] g_defaultWarpDestinations = new uint[483]; // 800C659C
     public static uint[] g_soundGroupByMapId = new uint[483]; // 800C6D28
     public static int DAT_800c7550; // 800C7550
@@ -1217,9 +1228,9 @@ public static class StaticVariables
     public static int g_fontBufferCount; // 800C76DC
     public static int DAT_800c76e0; // 800C76E0
     public static int g_fontSpriteCursor; // 800C80E4
-    public static byte  PTR__dws_800c810c; // 800C810C
-    public static byte  PTR__getctl_800c8114; // 800C8114
-    public static byte  PTR__otc_800c8118; // 800C8118
+    public static byte PTR__dws_800c810c; // 800C810C
+    public static byte PTR__getctl_800c8114; // 800C8114
+    public static byte PTR__otc_800c8118; // 800C8118
     public static byte DAT_800c8134; // 800C8134
     public static byte DAT_800c8135; // 800C8135
     public static byte g_debugLevel; // 800C8136
@@ -1246,13 +1257,13 @@ public static class StaticVariables
     public static int DAT_800c822c; // 800C822C
     public static int DAT_800c8230; // 800C8230
     public static int[] INT_ARRAY_800c8238 = new int[48]; // 800C8238
-    public static byte  PTR_s_CdlSync_800c82f8; // 800C82F8
-    public static byte  PTR_s_NoIntr_800c8378; // 800C8378
+    public static byte PTR_s_CdlSync_800c82f8; // 800C82F8
+    public static byte PTR_s_NoIntr_800c8378; // 800C8378
     public static int DAT_800c857c; // 800C857C
     public static byte DAT_800c85b0; // 800C85B0
     public static byte DAT_800c85b1; // 800C85B1
     public static byte DAT_800c85b2; // 800C85B2
-    public static byte  PTR_DAT_800c85b4; // 800C85B4
+    public static byte PTR_DAT_800c85b4; // 800C85B4
     public static int DAT_800c85e0; // 800C85E0
     public static int DAT_800c85e4; // 800C85E4
     public static int DAT_800c85e8; // 800C85E8
@@ -1302,7 +1313,7 @@ public static class StaticVariables
     public static int DAT_800c9788; // 800C9788
     public static int DAT_800c978c; // 800C978C
     public static short DAT_800c9790; // 800C9790
-    public static Voice  PTR_VOICE_00_LEFT_RIGHT_800c9794; // 800C9794
+    public static Voice PTR_VOICE_00_LEFT_RIGHT_800c9794; // 800C9794
     public static int DAT_800c991c; // 800C991C
     public static int DAT_800c9920; // 800C9920
     public static int DAT_800c9924; // 800C9924
@@ -1403,7 +1414,7 @@ public static class StaticVariables
     public static byte DAT_800dcd2c; // 800DCD2C
     public static byte DAT_800dcd2d; // 800DCD2D
     public static int g_renderTileRowCount; // 800DD868
-    public static ushort[]  g_spriteVRAMPointer; // 800DD86C
+    public static ushort[] g_spriteVRAMPointer; // 800DD86C
     public static int g_cameraDebugOffsetX; // 800DD870
     public static int g_cameraDebugOffsetY; // 800DD874
     public static SPRT[] g_tileSpriteBuffer = new SPRT[600]; // 800DD878
@@ -1413,7 +1424,7 @@ public static class StaticVariables
     public static DR_TPAGE[] g_tileOrderingTable = new DR_TPAGE[6]; // 800E42C0
     public static SpriteMapEntry[] g_spriteMapTable = new SpriteMapEntry[6]; // 800E42F0
     public static int g_LoadVRAMAssets_debug; // 800E431C
-    public static short[]  g_drawPageInfoTable; // 800E4320
+    public static short[] g_drawPageInfoTable; // 800E4320
     public static int g_currentDrawPageParam; // 800E4324
     public static int g_cameraScrollingX; // 800E4328
     public static int g_cameraScrollingY; // 800E432C
@@ -1433,16 +1444,16 @@ public static class StaticVariables
     //public static POLY_FT4[] g_polyFT4Table = new POLY_FT4[1024]; // 8011CE68
     public static int g_animationRawSize; // 80126E68
     public static SpriteRef[] g_spriteImages = new SpriteRef[1024]; // 80126E6C
-    public static SpriteInfoHeader  g_currentMapSpriteInfo; // 80126E70
-    public static int  g_bufferImage; // 80126E74
-    public static EntityRecord  g_initTableEntry; // 80126E78
+    public static SpriteInfoHeader g_currentMapSpriteInfo; // 80126E70
+    public static int g_bufferImage; // 80126E74
+    public static EntityRecord g_initTableEntry; // 80126E78
     public static int INT_80126e7c; // 80126E7C
     public static int INT_80126e80; // 80126E80
     public static int g_maxInitData; // 80126E84
     public static SiMapEventRecord[] g_initMapEventRecords = new SiMapEventRecord[14]; // 80126E88
-    public static SpriteInfoHeader  g_alundraSpriteInfo; // 80126EC0
-    public static int  g_animationStructs_paletteClut; // 80126EC4
-    public static SpriteRecord  g_initialAnimationTable; // 80126ECC
+    public static SpriteInfoHeader g_alundraSpriteInfo; // 80126EC0
+    public static int g_animationStructs_paletteClut; // 80126EC4
+    public static SpriteRecord g_initialAnimationTable; // 80126ECC
     public static int DAT_80126ee0; // 80126EE0
     public static int DAT_80126ef0; // 80126EF0
     public static int DAT_80126f10; // 80126F10
@@ -1463,7 +1474,7 @@ public static class StaticVariables
     public static int g_playerWarpTimer; // 80126FFC
     public static int g_gravityFlag; // 80127000
     public static int[] g_intArray_80127008 = new int[64]; // 80127008
-    public static Entity  g_activeCollisionEntity; // 80127108
+    public static Entity g_activeCollisionEntity; // 80127108
     public static uint g_currentTileFlags; // 8012710C
     public static int g_playerEffectTransitionCooldown; // 80127110
     public static int g_playerEffectStepFlags; // 80127114
@@ -1473,8 +1484,8 @@ public static class StaticVariables
     public static int g_playerEffectPhase; // 80127160
     public static int g_warpLockTimer; // 80127164
     public static short[] g_tileToWorldXTable = new short[1248]; // 80127168
-    public static Entity[]  g_activeEntities = new Entity[64]; // 80127B28
-    public static Entity[]  g_collideableEntities = new Entity[64]; // 80127C28
+    public static Entity[] g_activeEntities = new Entity[64]; // 80127B28
+    public static Entity[] g_collideableEntities = new Entity[64]; // 80127C28
     public static int g_activeEntityCount; // 80127D28
     public static int g_collideableEntitiesCount; // 80127D2C
     public static Entity[] g_entitySlots = new Entity[64]; // 80127D30
@@ -1488,7 +1499,7 @@ public static class StaticVariables
     public static int g_visibleEntityCount; // 8013435C
     public static int g_numberOfEntity; // 80134360
     public static Entity g_emptyEntityForClearing; // 80134368
-    public static Entity  g_entityFollowedByCamera; // 801345FC
+    public static Entity g_entityFollowedByCamera; // 801345FC
     public static int g_nextEntityIndex; // 80134600
     public static char[] g_messageDebug = new char[16384]; // 80134608
     public static SpriteEffect[] g_effectSlots = new SpriteEffect[128]; // 80138608
@@ -1505,15 +1516,15 @@ public static class StaticVariables
     public static int g_activeEventProgramIndex; // 8013DA24
     public static int g_activeCommand; // 8013DA28
     public static byte[] g_datasBinBuffer4 = new byte[8192]; // 8013DA30
-    public static int  g_etcAnimTableAlt; // 8013FA30
-    public static int  g_etcAnimTable; // 8013FA34
+    public static int g_etcAnimTableAlt; // 8013FA30
+    public static int g_etcAnimTable; // 8013FA34
     //public static DRAWENV  PTR_8013fa38; // 8013FA38
     public static bool g_renderEffectDoneFlag; // 8013FA60
     //public static DRAWENV  PTR_8013fabc; // 8013FABC
     public static bool g_renderEffectCompleted; // 8013FAE4
     //public static RECT  g_currentDrawEnv; // 8013FB40
     //public static DISPENV  g_currentDisplayEnv; // 8013FB44
-    public static char  g_display_overflow_message; // 8013FB48
+    public static char g_display_overflow_message; // 8013FB48
     public static uint g_gameplayTime; // 8013FB4C
     public static int g_primCount; // 8013FB50
     public static int g_lineCount; // 8013FB54
@@ -1525,11 +1536,11 @@ public static class StaticVariables
     public static int g_mapOffsetY; // 8013FB6C
     public static int g_mapScreenPosX; // 8013FB70
     public static int g_mapScreenPosY; // 8013FB74
-    public static int  g_drawScreenFunc_DrawOTags; // 8013FB78
-    public static int  g_screenUpdateFunc_ClearOrderTables; // 8013FB7C
+    public static int g_drawScreenFunc_DrawOTags; // 8013FB78
+    public static int g_screenUpdateFunc_ClearOrderTables; // 8013FB7C
     public static int INT_8013fb80; // 8013FB80
-    public static int  g_fadeTPagePrim1; // 8013FB88
-    public static int  g_fadeTPagePrim2; // 8013FB90
+    public static int g_fadeTPagePrim1; // 8013FB88
+    public static int g_fadeTPagePrim2; // 8013FB90
     //public static TILE TILE_8013fb98; // 8013FB98
     //public static TILE TILE_8013fba8; // 8013FBA8
     public static int g_warpFlags; // 8013FBB8
@@ -1605,9 +1616,9 @@ public static class StaticVariables
     public static int g_textRenderStep; // 80149BE4
     public static int g_textLineWidth; // 80149BE8
     public static int DAT_80149bec; // 80149BEC
-    public static int  g_primitiveGroup; // 80149BF8
+    public static int g_primitiveGroup; // 80149BF8
     public static short[] g_bufferTextToDisplay = new short[60]; // 80149C00
-    public static int  g_fadePrimitive; // 80149C78
+    public static int g_fadePrimitive; // 80149C78
     public static short DAT_80149c80; // 80149C80
     public static short DAT_80149c82; // 80149C82
     public static byte DAT_80149c84; // 80149C84
@@ -1640,10 +1651,10 @@ public static class StaticVariables
     public static byte[] g_bufferFONT3_tim = new byte[11000]; // 8014ACE8
     public static byte BYTE_80150000; // 80150000
     public static int g_warpFlags_2; // 80152F08
-    public static int[]  g_callbackTable = new int[91]; // 80153028
+    public static int[] g_callbackTable = new int[91]; // 80153028
     public static int g_postProcessState; // 80153194
     public static int g_currentTransitionType; // 80153198
-    public static int  g_activeTransitionCallback; // 8015319C
+    public static int g_activeTransitionCallback; // 8015319C
     public static char[] g_partialVabBodyBuffer = new char[256]; // 801531A0
     public static int DAT_80164fc0; // 80164FC0
     public static int g_vabBaseSector; // 80164FC4
@@ -1657,7 +1668,7 @@ public static class StaticVariables
     public static int DAT_80165124; // 80165124
     public static short g_requestedSeqId; // 80165128
     public static int g_resetSoundFlag; // 8016512C
-    public static int  g_animVolumeMap; // 80165130
+    public static int g_animVolumeMap; // 80165130
     public static int DAT_801660d0; // 801660D0
     public static int DAT_80166124; // 80166124
     //public static SpuReverbAttr g_spuReverbAttr; // 80166128
@@ -1672,8 +1683,8 @@ public static class StaticVariables
     public static int DAT_80175874; // 80175874
     public static int g_voiceType; // 801758D0
     public static int g_voicePitch; // 80175930
-    public static int  g_voiceVolumeLeft; // 80175990
-    public static int  g_voiceVolumeRight; // 801759F0
+    public static int g_voiceVolumeLeft; // 80175990
+    public static int g_voiceVolumeRight; // 801759F0
     public static int INT_80175a50; // 80175A50
     public static short DAT_80175cfe; // 80175CFE
     public static short[] g_loadedSequenceHandles = new short[8]; // 80175D00
@@ -1688,10 +1699,10 @@ public static class StaticVariables
     public static short g_blendAlpha; // 80175D2A
     public static byte[] BYTE_ARRAY_80175d38 = new byte[1496]; // 80175D38
     public static int g_drawFrameFlags; // 80176310
-    public static FadeControl  g_fadeControl; // 80176318
+    public static FadeControl g_fadeControl; // 80176318
     public static short[] g_warpUsageTable = new short[256]; // 8017631C
     public static int g_totalWarpEntries; // 8017638C
-    public static int  g_cdSmallBuffer; // 80176390
+    public static int g_cdSmallBuffer; // 80176390
     public static byte DAT_CDRom_8017e390; // 8017E390
     public static byte DAT_CDRom_8017e391; // 8017E391
     public static int DAT_CDRom_8017e3a0; // 8017E3A0
@@ -1702,19 +1713,19 @@ public static class StaticVariables
     public static int DAT_8017e3b8; // 8017E3B8
     //public static CdlFILE  PTR_CDFile_Datas_bin; // 8017E3C0
     public static int g_datasBinSize; // 8017E3C4
-    public static char  g_datasBinNamePart1; // 8017E3C8
-    public static char  g_datasBinNamePart2; // 8017E3CC
-    public static char  g_datasBinNamePart3; // 8017E3D0
-    public static char  g_datasBinNamePart4; // 8017E3D4
+    public static char g_datasBinNamePart1; // 8017E3C8
+    public static char g_datasBinNamePart2; // 8017E3CC
+    public static char g_datasBinNamePart3; // 8017E3D0
+    public static char g_datasBinNamePart4; // 8017E3D4
     //public static CdlFILE  PTR_CDFile_Sound_bin; // 8017E3D8
     public static int g_soundBinSize; // 8017E3DC
-    public static char  g_soundBinNamePart1; // 8017E3E0
-    public static char  g_soundBinNamePart2; // 8017E3E4
-    public static char  g_soundBinNamePart3; // 8017E3E8
-    public static char  g_soundBinNamePart4; // 8017E3EC
-    public static int  g_asyncOperationCounterPtr; // 8017E3F0
-    public static int  g_asyncCallbackArg1; // 8017E3F8
-    public static int  g_asyncCallbackArg2; // 8017E3FC
+    public static char g_soundBinNamePart1; // 8017E3E0
+    public static char g_soundBinNamePart2; // 8017E3E4
+    public static char g_soundBinNamePart3; // 8017E3E8
+    public static char g_soundBinNamePart4; // 8017E3EC
+    public static int g_asyncOperationCounterPtr; // 8017E3F0
+    public static int g_asyncCallbackArg1; // 8017E3F8
+    public static int g_asyncCallbackArg2; // 8017E3FC
     public static int DAT_8017e400; // 8017E400
     public static SPRT SPRT_8017e410; // 8017E410
     public static SPRT SPRT_8017e438; // 8017E438
@@ -1733,7 +1744,7 @@ public static class StaticVariables
     public static short SHORT_8017e63a; // 8017E63A
     public static int INT_8017e63c; // 8017E63C
     public static SPRT[] g_sprites = new SPRT[2]; // 8017E640
-    public static int  g_asyncOperationCountdown; // 8017E670
+    public static int g_asyncOperationCountdown; // 8017E670
     public static short DAT_8017e8a4; // 8017E8A4
     public static int DAT_8017e8a8; // 8017E8A8
     public static byte DAT_8017e8ac; // 8017E8AC
@@ -1795,7 +1806,7 @@ public static class StaticVariables
     public static int DAT_8017f33c; // 8017F33C
     public static byte[] BYTE_ARRAY_8017f340 = new byte[1504]; // 8017F340
     public static byte[] BYTE_ARRAY_8017f920 = new byte[276]; // 8017F920
-    public static SPRT  g_warpNameDisplaySrc; // 8017FA34
+    public static SPRT g_warpNameDisplaySrc; // 8017FA34
     public static short[] SHORT_ARRAY_8017fa3c = new short[16]; // 8017FA3C
     public static SPRT g_warpNameDisplayDst; // 8017FA5C
     public static SPRT SPRT_8017fe74; // 8017FE74
@@ -1808,7 +1819,7 @@ public static class StaticVariables
     public static int g_forbiddenWarpFlag; // 8017FEF4
     public static int INT_8017ff28; // 8017FF28
     public static short g_cameraTransitionState; // 80180070
-    public static int  g_cameraTransitionPolygons; // 80180074
+    public static int g_cameraTransitionPolygons; // 80180074
     public static byte g_transitionCameraStepValues; // 80180078
     public static byte g_transitionAlphaDuplicate1; // 80180079
     public static byte g_transitionAlphaDuplicate2; // 8018007A
@@ -1847,7 +1858,7 @@ public static class StaticVariables
     public static int g_cameraTransitionStartX; // 801800FC
     public static int g_cameraTransitionStartY; // 80180100
     public static uint[] UINT_ARRAY_80180108 = new uint[8]; // 80180108
-    public static int  PTR_80180128; // 80180128
+    public static int PTR_80180128; // 80180128
     public static int DAT_80180130; // 80180130
     public static int DAT_80180134; // 80180134
     public static int DAT_80180138; // 80180138
@@ -1897,9 +1908,9 @@ public static class StaticVariables
     public static int[] g_tileUVLookup; // 80181C80
     public static int[] g_scrollPosX = new int[400]; // 80181C88
     public static int[] g_scrollPosY = new int[400]; // 801822C8
-    public static int[]  g_renderingBuffer0 = new int[2000]; // 80182908
-    public static int[]  g_renderingBuffer1 = new int[2000]; // 80184848
-    public static TileSetMetaData  g_tile_set; // 80186788
+    public static int[] g_renderingBuffer0 = new int[2000]; // 80182908
+    public static int[] g_renderingBuffer1 = new int[2000]; // 80184848
+    public static TileSetMetaData g_tile_set; // 80186788
     public static int g_tileAnimationMode; // 8018678C
     public static int g_animationData; // 80186790
     public static int g_tileSetIsSpecialHeader; // 80186794
@@ -1909,9 +1920,9 @@ public static class StaticVariables
     public static int[] g_scrollTargetY = new int[400]; // 80187418
     public static int[] g_tile_rendering_buffer_1 = new int[2720]; // 80187A58
     public static int[] g_tile_rendering_buffer_2 = new int[2720]; // 8018A4D8
-    public static TileSetMetaData  g_tileSetMetaData; // 8018CF58
+    public static TileSetMetaData g_tileSetMetaData; // 8018CF58
     public static int g_renderingBufferIndex; // 8018CF5C
-    public static int  g_currentBuffer; // 8018CF60
+    public static int g_currentBuffer; // 8018CF60
     public static short g_paletteLookup; // 8018CF66
     public static short g_drawModeIndex; // 8018CF68
     public static short g_tilePaletteIndex; // 8018CF6A
@@ -1926,7 +1937,7 @@ public static class StaticVariables
     public static int[] g_scrollFrameCounterY = new int[400]; // 8018D5E0
     public static int[] g_scrollFactorX = new int[400]; // 8018DC20
     public static int[] g_scrollFactorY = new int[400]; // 8018E260
-    public static int  g_rendering_tile_buffer; // 8018E8A0
+    public static int g_rendering_tile_buffer; // 8018E8A0
     public static byte[] BYTE_ARRAY_8018e8a8 = new byte[1056]; // 8018E8A8
     public static int INT_8018ecc8; // 8018ECC8
     public static int DAT_8018ed68; // 8018ED68
@@ -1945,10 +1956,10 @@ public static class StaticVariables
     public static int[] INT_ARRAY_8018f0d8 = new int[72]; // 8018F0D8
     public static int[] INT_ARRAY_8018f1f8 = new int[64]; // 8018F1F8
     public static byte[] g_layerBuffer = new byte[4096]; // 80190000
-    public static Entity  g_entitySpawned; // 801910E8
+    public static Entity g_entitySpawned; // 801910E8
     public static short[] SHORT_ARRAY_801910f0 = new short[100]; // 801910F0
-    public static Entity  g_bossSpawnedEffectEntity; // 801911B8
-    public static Entity  g_bossEffectEntity; // 801911BC
+    public static Entity g_bossSpawnedEffectEntity; // 801911B8
+    public static Entity g_bossEffectEntity; // 801911BC
     public static int DAT_801911c0; // 801911C0
     public static int DAT_801911c4; // 801911C4
     public static int DAT_801911c8; // 801911C8
@@ -1960,8 +1971,8 @@ public static class StaticVariables
     public static int DAT_801911e0; // 801911E0
     public static int DAT_801911e4; // 801911E4
     public static int DAT_801911e8; // 801911E8
-    public static Entity  PTR_801911ec; // 801911EC
-    public static Entity  g_loaderEffectEntityId; // 801911F0
+    public static Entity PTR_801911ec; // 801911EC
+    public static Entity g_loaderEffectEntityId; // 801911F0
     public static short g_loaderEventDelay2; // 801911F4
     public static short g_loaderEventDelay1; // 801911F6
     public static short DAT_801911f8; // 801911F8
@@ -1969,7 +1980,7 @@ public static class StaticVariables
     public static short DAT_801911fc; // 801911FC
     public static short DAT_801911fe; // 801911FE
     public static short DAT_80191200; // 80191200
-    public static Entity  PTR_80191204; // 80191204
+    public static Entity PTR_80191204; // 80191204
     public static int g_specialEffectEntityArray; // 80191208
     public static int DAT_8019120c; // 8019120C
     public static int DAT_80191238; // 80191238
@@ -1983,7 +1994,7 @@ public static class StaticVariables
     public static int DAT_80191258; // 80191258
     public static int DAT_8019125c; // 8019125C
     public static int g_warpStatusFlag; // 80191260
-    public static Entity  PTR_801912e8; // 801912E8
+    public static Entity PTR_801912e8; // 801912E8
     public static int DAT_801912ec; // 801912EC
     public static int DAT_801912f0; // 801912F0
     public static int DAT_801912f4; // 801912F4
@@ -2008,7 +2019,7 @@ public static class StaticVariables
     public static int DAT_8019190c; // 8019190C
     public static int DAT_80191910; // 80191910
     public static int g_loaderInitialized; // 80191918
-    public static byte  g_compressedImageData; // 80191B30
+    public static byte g_compressedImageData; // 80191B30
     public static int DAT_80191b34; // 80191B34
     public static int DAT_80191b38; // 80191B38
     public static int g_mapIndexInDatasBin; // 80191B3C
@@ -2049,7 +2060,7 @@ public static class StaticVariables
     public static int g_renderFlags; // 801EB424
     public static int DAT_801eb43c; // 801EB43C
     public static int g_debugPrintDisableFrameCounter; // 801EB440
-    public static ushort[]  g_mapIdToInternalMapIndexTable = new ushort[500]; // 801EB444
+    public static ushort[] g_mapIdToInternalMapIndexTable = new ushort[500]; // 801EB444
     public static short DAT_801eb828; // 801EB828
     public static short DAT_801eb82a; // 801EB82A
     public static short g_fadeControl2; // 801EB82C
@@ -2063,7 +2074,7 @@ public static class StaticVariables
     public static short g_currentSaveSlotNameIndex; // 801EBA3E
     public static uint[] g_globalFlags = new uint[1024]; // 801EBA40 //64
     public static byte[] g_bufferEtc = new byte[12288]; // 801EBB40
-    public static int  g_bufferEtcPtr; // 801EEB40
+    public static int g_bufferEtcPtr; // 801EEB40
     public static long g_randSeed; // 801EEB48
     public static int DAT_801eeb50; // 801EEB50
     public static byte DAT_801eeb58; // 801EEB58
@@ -2154,7 +2165,7 @@ public static class StaticVariables
     public static byte DAT_801f76b9; // 801F76B9
     public static byte g_voiceLockFlag; // 801F76C8
     public static short DAT_sound_801f7710; // 801F7710
-    public static int  DAT_sound_801f7718; // 801F7718
+    public static int DAT_sound_801f7718; // 801F7718
     public static int DAT_801f7758; // 801F7758
     public static short g_volumesL; // 801F7798
     public static short g_volumesR; // 801F779A
@@ -2221,9 +2232,9 @@ public static class StaticVariables
     public static short g_voiceCommandPendingLeft; // 801F7F08
     public static short g_voiceCommandPendingRight; // 801F7F10
     public static byte[] g_heapBuffer = new byte[32732]; // 801F7F24
-    public static int  g_executable_loaded; // 801FFF00
+    public static int g_executable_loaded; // 801FFF00
 
-    
+
     public static int g_cutsceneScrollLimitY = 0;
     public static int g_cutsceneScrollLimitX = 0;
     public static int g_cutsceneScrollSpeedY = 0;

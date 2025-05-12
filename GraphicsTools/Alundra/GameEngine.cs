@@ -312,6 +312,12 @@ public class GameEngine
         return StaticVariables.g_fadeControl.WarpVisualId;
     }
 
+    // 8004dd18
+    private int GetFadeControl()
+    {
+        return StaticVariables.g_fadeControl.CurrentWarpEntityId;
+    }
+
     public int GetCurrentPaletteFadeLevel()
     {
         return StaticVariables.g_fadeControl.MaxFadeLevel;
@@ -833,10 +839,11 @@ public class GameEngine
             StaticVariables.g_animation_id, (uint)StaticVariables.g_warpTriggerType,
             (uint)StaticVariables.g_warpExtraParam,
             0xb, 0x60);
-        StaticVariables.g_playerInitState = 2;
-        //StaticVariables.g_warpTarget = GetFadeControl_WarpVisualId();
-        //StaticVariables.g_warpAnimEntity = GetFadeControl();
-        StaticVariables.g_gravityFlag = 0;
+
+        StaticVariables.g_entitySlots[0].Status = 2;
+        StaticVariables.g_entitySlots[0].HpMax = GetFadeControl_WarpVisualId();
+        StaticVariables.g_entitySlots[0].Hp = (int)GetFadeControl();
+        StaticVariables.g_activeCollisionEntity = null;
         StaticVariables.g_playerWarpTimer = 0;
         StaticVariables.g_isWarpDisabled = 0;
         StaticVariables.g_frameTimer = 0;
@@ -991,7 +998,7 @@ public class GameEngine
     //TODO all the slope stuff
     public int GetCollisionOnZ(Entity entity)
     {
-        var collision = entity.FloorHeight + 1;
+        var collision = entity.TerrainHeight + 1;
         if ((entity.Flags & 0x80) == 0)
         {
             return collision;
@@ -1969,7 +1976,7 @@ public class GameEngine
 
     public int CollideOnEntitiesZ(Entity entity)
     {
-        var collision = entity.FloorHeight + 1;
+        var collision = entity.TerrainHeight + 1;
         if ((entity.Flags & 0x80) == 0)
         {
             return collision;

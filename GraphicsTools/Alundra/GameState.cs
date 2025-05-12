@@ -341,7 +341,7 @@ public class GameState
         //    StaticVariables.g_cameraTargetX, StaticVariables.g_cameraTargetY, 
         //    StaticVariables.g_animation_id, StaticVariables.g_warpTriggerType, StaticVariables.g_warpExtraParam,
         //    0xb, 0x60);
-        StaticVariables.g_playerInitState = 2;
+        //StaticVariables.g_playerInitState = 2;
         //StaticVariables.g_warpTarget = FUN_8004dc50();
         //StaticVariables.g_warpAnimEntity = GetFadeControl();
         StaticVariables.g_gravityFlag = 0;
@@ -757,7 +757,7 @@ public class GameState
 
         var zhit = CollideWithMap(entity);
 
-        entity.FloorHeight = zhit;
+        entity.TerrainHeight = zhit;
         if (zhit + 1 >= entity.ZPos)
         {
             entity.ZPos = zhit + 1;
@@ -859,9 +859,9 @@ public class GameState
         //set of variables set by certain special frames of animation
         if (entity.FrameCollision != null)
         {
-            entity.FrameX = entity.XPos + entity.FrameXOff;
-            entity.FrameY = entity.YPos + entity.FrameYOff;
-            entity.FrameZ = entity.ZPos + entity.FrameZOff;
+            entity.HitBoxX = entity.XPos + entity.FrameXOff;
+            entity.HitBoxY = entity.YPos + entity.FrameYOff;
+            entity.HitBoxZ = entity.ZPos + entity.FrameZOff;
         }
 
         entity.TileZ = entity.ZPos >> 20; //(z >> 16) / 16
@@ -870,7 +870,7 @@ public class GameState
 
         var hitz = CollideOnEntitiesZ(entity);
         int tohit;
-        entity.ZEntityCollision = hitz;
+        entity.FloorHeight = hitz;
         entity.CollidedWithEntityZ = hitz < entity.ZPos ? 0 : 1;
         if ((entity.Flags & 0x100) != 0)
         {
@@ -948,7 +948,7 @@ public class GameState
 
     public int CollideOnEntitiesZ(Entity entity)
     {
-        var collision = entity.FloorHeight + 1;
+        var collision = entity.TerrainHeight + 1;
         if ((entity.Flags & 0x80) == 0)
         {
             return collision;

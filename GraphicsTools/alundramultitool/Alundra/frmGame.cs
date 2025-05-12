@@ -178,7 +178,7 @@ public partial class FrmGame : Form
                $"ModdedXPos: {entity.ModdedXPos >> 16} {entity.ModdedYPos >> 16} {entity.ModdedZPos >> 16}{Environment.NewLine}" +
                $"XYZMod: {entity.XMod >> 16} {entity.YMod >> 16} {entity.ZMod >> 16}{Environment.NewLine}" +
                $"Size: {entity.Width >> 16} {entity.Height >> 16} {entity.Depth >> 16}{Environment.NewLine}" +
-               $"Frame Pos: {entity.FrameX} {entity.FrameY} {entity.FrameZ}{Environment.NewLine}" +
+               $"Frame Pos: {entity.HitBoxX} {entity.HitBoxY} {entity.HitBoxZ}{Environment.NewLine}" +
                $"Frame Off: {entity.FrameXOff} {entity.FrameYOff} {entity.FrameZOff}{Environment.NewLine}" +
                $"FrameWidth: {entity.FrameWidth} {entity.FrameDepth} {entity.FrameHeight}{Environment.NewLine}" +
                $"DepthSortVal: {entity.DepthSortVal >> 16}{Environment.NewLine}" +
@@ -200,8 +200,8 @@ public partial class FrmGame : Form
                $"PlatformEntity: {entity.PlatformEntity}{Environment.NewLine}" +
                $"RidingEntity: {entity.RidingEntity}{Environment.NewLine}" +
                $"XCollisionEntity: {entity.XCollisionEntity}{Environment.NewLine}" +
-               $"ZEntityCollision: {entity.ZEntityCollision >> 16}{Environment.NewLine}" +
                $"FloorHeight: {entity.FloorHeight >> 16}{Environment.NewLine}" +
+               $"TerrainHeight: {entity.TerrainHeight >> 16}{Environment.NewLine}" +
                $"ForceAdjusted: {entity.ForceAdjusted >> 16}{Environment.NewLine}" +
                $"CollidedWithEntityZ: {entity.CollidedWithEntityZ}{Environment.NewLine}" +
                $"IsAboveGround: {entity.IsAboveGround}{Environment.NewLine}" +

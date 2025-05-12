@@ -165,7 +165,7 @@ public class EntityManager
         entity.ModdedZPos = entity.ZPos + entity.ZMod;
 
         int height = ComputeEntityGroundHeight(entity);
-        entity.FloorHeight = height;
+        entity.TerrainHeight = height;
 
         if (entity.ZPos <= height + 1)
         {
@@ -234,7 +234,6 @@ public class EntityManager
         }
     }
 
-
     // 80038ab4
     private void UpdateAnimation(Entity entity)
     {
@@ -246,8 +245,8 @@ public class EntityManager
             entity.CurrentFrameIndex = 0;
             entity.AnimCompleteCounter = 0;
             var animRecordPtr = entity.Sprite.AnimSets[entity.TargetAnimationId];
-            entity.AnimSet = animRecordPtr;
             var currentFrame = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.CurrentFrameIndex];
+            entity.AnimSet = animRecordPtr;
             entity.Frame = currentFrame;
             entity.FirstFrame = currentFrame;
             entity.NextFrameDelay = (currentFrame.Delay & 0x7f) * 23;
@@ -270,7 +269,6 @@ public class EntityManager
 
             uint sfxId = entity.AnimSet.Sfx;
             if ((entity.AnimSet.Flags & 0x20) != 0)
-                //if (((uint)animSet.pointerListOffset & 0x2000) != 0)
             {
                 sfxId += 0x100;
             }
@@ -279,7 +277,7 @@ public class EntityManager
 
             return;
         }
-        
+
         entity.NextFrameDelay--;
 
         if (entity.NextFrameDelay == 0)
@@ -292,9 +290,9 @@ public class EntityManager
             {
                 entity.CurrentFrameIndex = 0;
             }
-            
+
             var currentFrame = anim.Frames[entity.CurrentFrameIndex];
-            entity.NextFrameDelay = (currentFrame.Delay & 0x7f) * 23;
+            entity.NextFrameDelay = currentFrame.Delay & 0x7f;
             entity.Frame = currentFrame;
             entity.AnimCompleteCounter++;
 
@@ -402,7 +400,7 @@ public class EntityManager
                 {
                     Debug.Assert(entity.AnimSet != null);
                     //entity.NextFrameDelay = (int)(frameDelay & 0x7f);
-                    
+
                     var animSetPreloadedAnim = entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3];
                     entity.CurrentFrameIndex++;
 
@@ -519,7 +517,7 @@ public class EntityManager
             {
                 Debugger.Break();
             }
-            
+
             entity.NextFrameDelay = currentFrame.Delay;
             entity.Frame = currentFrame;
             entity.FirstFrame = currentFrame;
@@ -563,6 +561,7 @@ public class EntityManager
         Debug.Assert(entity.Frame != null);
     }
 
+    // 800370c4
     private int ComputeEntityGroundHeight(Entity entity)
     {
         var xs = new int[4];
@@ -579,13 +578,14 @@ public class EntityManager
         ys[2] = y2;
         xs[3] = x2;
         ys[3] = y2;
-        var highest = 0;
+        int highest = 0;
         var slopesHit = 0;
+
         for (var i = 0; i < 4; i++)
         {
             var x = xs[i];
             var y = ys[i];
-            var tilex = x / 24;
+            var tilex = x / StaticVariables.MapTileWidth;
             if (tilex > 0)
             {
                 if (tilex >= 0x34)
@@ -600,7 +600,7 @@ public class EntityManager
             {
                 tilex = 0;
             }
-            var tiley = y / 16;
+            var tiley = y / StaticVariables.MapTileHeight;
             if (tiley > 0)
             {
                 if (tiley >= 0x3c)
@@ -719,81 +719,84 @@ public class EntityManager
         return highest;
     }
 
+    // 80038064
     private void UpdateEntityCollisionData(Entity entity)
     {
         //set of variables set by certain special frames of animation
         if (entity.FrameCollision != null)
         {
-            entity.FrameX = entity.XPos + entity.FrameXOff;
-            entity.FrameY = entity.YPos + entity.FrameYOff;
-            entity.FrameZ = entity.ZPos + entity.FrameZOff;
+            entity.HitBoxX = entity.XPos + entity.FrameXOff;
+            entity.HitBoxY = entity.YPos + entity.FrameYOff;
+            entity.HitBoxZ = entity.ZPos + entity.FrameZOff;
         }
 
-        entity.TileZ = entity.ZPos >> 20; //(z >> 16) / 16
-        entity.TileX = (entity.XPos >> 16) / 24;
+        entity.TileX = (entity.XPos >> 16) / StaticVariables.MapTileWidth;
         entity.TileY = entity.YPos >> 20;
+        entity.TileZ = entity.ZPos >> 20; //(z >> 16) / 16
 
         var hitz = _gameEngine.GetCollisionOnZ(entity);
         int tohit;
-        entity.ZEntityCollision = hitz;
+        entity.FloorHeight = hitz;
         entity.CollidedWithEntityZ = hitz < entity.ZPos ? 0 : 1;
+
         if ((entity.Flags & 0x100) != 0)
         {
             tohit = 0xe00;
-            var somevals = new int[4];
-            for (var dex = 0; dex < 4; dex++)
-            {
-                var tl = entity.MapTiles[dex];
-                var fullval = tl.Walkability | tl.GroundProperty << 8 | tl.Slope << 16 | tl.Height << 24;
-                if (entity.MapHeights[dex] + 1 == entity.ModdedZPos)
-                {
+            var someVals = new int[4];
 
+            for (var i = 0; i < 4; i++)
+            {
+                var tl = entity.MapTiles[i];
+                var fullVal = tl.Walkability | tl.GroundProperty << 8 | tl.Slope << 16 | tl.Height << 24;
+
+                if (entity.MapHeights[i] + 1 == entity.ModdedZPos)
+                {
                     //var val = (tl.groundproperty & 0xe) << 8;
-                    if ((fullval & 0xe00) < tohit)
+                    if ((fullVal & 0xe00) < tohit)
                     {
-                        somevals[dex] = fullval;
-                        tohit = fullval & 0xe00;
+                        someVals[i] = fullVal;
+                        tohit = fullVal & 0xe00;
                     }
                 }
                 else
                 {
-                    somevals[dex] = 0;
+                    someVals[i] = 0;
                     tohit = 0;
                 }
             }
 
-            entity.CombinedVramFlagsOR = somevals[0] | somevals[1] | somevals[2] | somevals[3];
-            entity.CombinedVramFlagsAND = somevals[0] & somevals[1] & somevals[2] & somevals[3];
+            entity.CombinedVramFlagsOR = someVals[0] | someVals[1] | someVals[2] | someVals[3];
+            entity.CombinedVramFlagsAND = someVals[0] & someVals[1] & someVals[2] & someVals[3];
 
-            var tilex = entity.TileX;
-
-            if (tilex > 0)
+            var tileX = entity.TileX;
+            if (tileX > 0)
             {
-                if (tilex >= 0x34)
+                if (tileX >= 0x34)
                 {
-                    tilex = 0x33;
+                    tileX = 0x33;
                 }
             }
             else
             {
-                tilex = 0;
+                tileX = 0;
             }
-            var tiley = entity.TileY;
-            if (tiley > 0)
+
+            var tileY = entity.TileY;
+            if (tileY > 0)
             {
-                if (tiley >= 0x3c)
+                if (tileY >= 0x3c)
                 {
-                    tiley = 0x3b;
+                    tileY = 0x3b;
                 }
             }
             else
             {
-                tiley = 0;
+                tileY = 0;
             }
 
-            var tile = _gameEngine.CurrentMap.Map.MapTiles[tilex + tiley * 52];
-            var fullval2 = tile.Walkability | tile.GroundProperty << 8 | tile.Slope << 16 | tile.Height << 24;
-            var height = (int)(fullval2 & 0xff000000 >> 4) + 1;
+            var tile = _gameEngine.CurrentMap.Map.MapTiles[tileX + tileY * 52];
+            var fullVal2 = tile.Walkability | tile.GroundProperty << 8 | tile.Slope << 16 | tile.Height << 24;
+            var height = (int)(fullVal2 & 0xff000000 >> 4) + 1;
             var r3 = height ^ entity.ModdedZPos;
         }
         else
@@ -811,6 +814,7 @@ public class EntityManager
         entity.Slope_190 = prevtohit;
     }
 
+    // 8003b388
     public void UpdateEntities()
     {
         if ((StaticVariables.g_playerControlFlags & 0x48) == 0)
@@ -876,16 +880,16 @@ public class EntityManager
         for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
         {
             var entity = StaticVariables.g_activeEntities[i];
-            if (entity.PlatformUpdateFlag != 0)
+            if (entity.PlatformUpdateFlag == 0)
             {
-                //MoveEntity(entity);
+                MoveEntity(entity);
             }
         }
 
         for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
         {
             var entity = StaticVariables.g_activeEntities[i];
-            UpdateTile(entity);
+            UpdateTileAttributes(entity);
         }
     }
 
@@ -906,6 +910,1085 @@ public class EntityManager
         }
     }
 
+    // 80037e34
+    private void MoveEntity(Entity entity)
+    {
+        int updatedZPosition;
+        Entity platformEntity;
+
+        platformEntity = entity.PlatformEntity;
+        entity.PlatformUpdateFlag = 1;
+
+        if (platformEntity == null)
+        {
+            HandleEntityCollision(entity);
+            platformEntity = GetEntityCollisionCandidate(entity);
+            entity.XCollisionEntity = platformEntity;
+        }
+        else
+        {
+            if (platformEntity.PlatformUpdateFlag == 0)
+            {
+                MoveEntity(platformEntity);
+            }
+
+            entity.CollidedWithEntityZ = 1;
+            entity.ForceAdjusted = 1;
+            updatedZPosition = platformEntity.FloorHeight;
+            entity.XCollisionEntity = null;
+            entity.FloorHeight = updatedZPosition;
+            entity.TerrainHeight = platformEntity.TerrainHeight;
+            entity.XPos = platformEntity.XPos + platformEntity.RelativeWarpOffsetX;
+            entity.YPos = platformEntity.YPos + platformEntity.RelativeWarpOffsetY;
+            updatedZPosition = platformEntity.ZPos + platformEntity.RelativeWarpOffsetZ;
+            entity.ModdedXPos = entity.XPos + entity.XMod;
+            entity.ZPos = updatedZPosition;
+            entity.ModdedYPos = entity.YPos + entity.YMod;
+            entity.ModdedZPos = updatedZPosition + entity.ZMod;
+        }
+    }
+
+    // 800375e0
+    private void HandleEntityCollision(Entity entity)
+    {
+        bool bVar1;
+        int groundHeight;
+        int finalZVelocity;
+        int platformHeight;
+        Entity platformEntity;
+
+        finalZVelocity = entity.FinalZForce;
+
+        if (finalZVelocity < 1)
+        {
+            groundHeight = ComputeEntityGroundHeight(entity);
+            entity.TerrainHeight = groundHeight;
+
+            while ((bVar1 = CheckEntityCollisionDown(entity, out platformHeight, out platformEntity)) != false)
+            {
+                if (platformEntity == null || platformEntity.PlatformUpdateFlag != 0)
+                {
+                    entity.CollidedWithEntityZ = 1;
+                    entity.ZPos = platformHeight - entity.ZMod;
+                    if ((entity.Flags & 0x100) == 0)
+                    {
+                        return;
+                    }
+                    entity.ZForce = 0;
+                    return;
+                }
+
+                MoveEntity(platformEntity);
+            }
+        }
+        else
+        {
+            groundHeight = ComputeEntityGroundHeight(entity);
+            entity.TerrainHeight = groundHeight;
+
+            while ((bVar1 = CheckEntityCollisionUp(entity, out platformHeight, out platformEntity)) != false)
+            {
+                if (platformEntity == null || platformEntity.PlatformUpdateFlag != 0)
+                {
+                    entity.CollidedWithEntityZ = 1;
+                    entity.ZPos = platformHeight - entity.ZMod - entity.Depth;
+                    if ((entity.Flags & 0x100) == 0)
+                    {
+                        return;
+                    }
+                    entity.ZForce = 0;
+                    return;
+                }
+
+                MoveEntity(platformEntity);
+            }
+        }
+
+        entity.ZPos = entity.ZPos + finalZVelocity;
+    }
+
+    // 80036bfc
+    private bool CheckEntityCollisionDown(Entity entity, out int platformHeight, out Entity platformEntity)
+    {
+        int deltaX;
+        Entity candidateEntity;
+        int deltaY;
+        int platformTopZ;
+        Entity bestCandidate;
+        bool collisionDetected;
+        Entity[] collidableEntityPtr;
+        int entityIndex;
+
+        platformTopZ = entity.ModdedZPos + entity.FinalZForce;
+        collisionDetected = platformTopZ <= entity.TerrainHeight;
+        bestCandidate = null;
+
+        if (collisionDetected)
+        {
+            platformTopZ = entity.TerrainHeight + 1;
+        }
+
+        if ((entity.Flags & 0x80) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.PlatformEntity == null)
+        {
+            entityIndex = 0;
+            if (StaticVariables.g_collideableEntitiesCount > 0)
+            {
+                collidableEntityPtr = StaticVariables.g_collideableEntities;
+                do
+                {
+                    candidateEntity = collidableEntityPtr[entityIndex];
+                    if (entity != candidateEntity)
+                    {
+                        deltaY = candidateEntity.ModdedZPos + candidateEntity.Depth;
+
+                        if (deltaY < entity.ModdedZPos && platformTopZ <= deltaY)
+                        {
+                            deltaX = candidateEntity.ModdedXPos - entity.ModdedXPos;
+                            if (deltaX < 0)
+                            {
+                                if (entity.ModdedXPos - candidateEntity.ModdedXPos < candidateEntity.Width + 1)
+                                {
+                                    deltaX = candidateEntity.ModdedYPos - entity.ModdedYPos;
+                                    if (deltaX < 0)
+                                    {
+                                        if (entity.ModdedYPos - candidateEntity.ModdedYPos < candidateEntity.Height + 1)
+                                        {
+
+                                            platformTopZ = deltaY + 1;
+                                            collisionDetected = true;
+                                            bestCandidate = candidateEntity;
+                                        }
+                                    }
+                                    else if (deltaX < entity.Height + 1)
+                                    {
+                                        platformTopZ = deltaY + 1;
+                                        collisionDetected = true;
+                                        bestCandidate = candidateEntity;
+                                    }
+                                }
+                            }
+                            else if (deltaX < entity.Width + 1)
+                            {
+                                deltaX = candidateEntity.ModdedYPos - entity.ModdedYPos;
+                                if (deltaX < 0)
+                                {
+                                    if (entity.ModdedYPos - candidateEntity.ModdedYPos < candidateEntity.Height + 1)
+                                    {
+
+                                        platformTopZ = deltaY + 1;
+                                        collisionDetected = true;
+                                        bestCandidate = candidateEntity;
+                                    }
+                                }
+                                else if (deltaX < entity.Height + 1)
+                                {
+                                    platformTopZ = deltaY + 1;
+                                    collisionDetected = true;
+                                    bestCandidate = candidateEntity;
+                                }
+                            }
+                        }
+                    }
+                    entityIndex = entityIndex + 1;
+                } while (entityIndex < StaticVariables.g_collideableEntitiesCount);
+            }
+        }
+
+        platformHeight = platformTopZ;
+        platformEntity = bestCandidate;
+        return collisionDetected;
+    }
+
+    // 80036d94
+    private bool CheckEntityCollisionUp(Entity entity, out int platformHeight, out Entity platformEntity)
+    {
+        int deltaX;
+        int entityTopZ;
+        Entity candidateEntity;
+        int candidateZPos;
+        Entity[] collidableEntityPtr;
+        int platformCandidateZ;
+        int entityIndex;
+        bool collisionDetected;
+        Entity bestCandidate;
+
+        entityTopZ = entity.ModdedZPos + entity.Depth;
+        platformCandidateZ = entityTopZ + entity.FinalZForce;
+        collisionDetected = 0x7800000 < platformCandidateZ;
+        bestCandidate = null;
+
+        if (collisionDetected)
+        {
+            platformCandidateZ = 0x77fffff;
+        }
+
+        if ((entity.Flags & 0x80) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.PlatformEntity == null)
+        {
+            entityIndex = 0;
+            if (StaticVariables.g_collideableEntitiesCount > 0)
+            {
+                collidableEntityPtr = StaticVariables.g_collideableEntities;
+                do
+                {
+                    candidateEntity = collidableEntityPtr[entityIndex];
+                    if (entity != candidateEntity)
+                    {
+                        candidateZPos = candidateEntity.ModdedZPos;
+                        if (entityTopZ < candidateZPos && candidateZPos <= platformCandidateZ)
+                        {
+                            deltaX = candidateEntity.ModdedXPos - entity.ModdedXPos;
+                            if (deltaX < 0)
+                            {
+                                if (entity.ModdedXPos - candidateEntity.ModdedXPos < candidateEntity.Width + 1)
+                                {
+                                    deltaX = candidateEntity.ModdedYPos - entity.ModdedYPos;
+                                    if (deltaX < 0)
+                                    {
+                                        if (entity.ModdedYPos - candidateEntity.ModdedYPos < candidateEntity.Height + 1)
+                                        {
+                                            platformCandidateZ = candidateZPos - 1;
+                                            collisionDetected = true;
+                                            bestCandidate = candidateEntity;
+                                        }
+                                    }
+                                    else if (deltaX < entity.Height + 1)
+                                    {
+                                        platformCandidateZ = candidateZPos - 1;
+                                        collisionDetected = true;
+                                        bestCandidate = candidateEntity;
+                                    }
+                                }
+                            }
+                            else if (deltaX < entity.Width + 1)
+                            {
+                                deltaX = candidateEntity.ModdedYPos - entity.ModdedYPos;
+                                if (deltaX < 0)
+                                {
+                                    if (entity.ModdedYPos - candidateEntity.ModdedYPos < candidateEntity.Height + 1)
+                                    {
+                                        platformCandidateZ = candidateZPos - 1;
+                                        collisionDetected = true;
+                                        bestCandidate = candidateEntity;
+                                    }
+                                }
+                                else if (deltaX < entity.Height + 1)
+                                {
+                                    platformCandidateZ = candidateZPos - 1;
+                                    collisionDetected = true;
+                                    bestCandidate = candidateEntity;
+                                }
+                            }
+                        }
+                    }
+                    entityIndex = entityIndex + 1;
+                    collidableEntityPtr = collidableEntityPtr; // Already incremented by array index
+                } while (entityIndex < StaticVariables.g_collideableEntitiesCount);
+            }
+        }
+
+        platformHeight = platformCandidateZ;
+        platformEntity = bestCandidate;
+        return collisionDetected;
+    }
+
+    // 80037730
+    private Entity GetEntityCollisionCandidate(Entity entity)
+    {
+        int flags;
+        int dz;
+        Entity otherEntity;
+        int dy;
+        int zTolerance;
+        int dx;
+        int halfDy;
+        int halfDx;
+        Entity candidate;
+        int i;
+        int posX;
+        int posY;
+        uint[] collisionFlags = new uint[4];
+        int isStraightDir;
+        int didAdjustForObstacle;
+        int modX;
+        int posZ;
+        Entity result;
+
+        didAdjustForObstacle = 0;
+        isStraightDir = (entity.TargetDirection & 7) == 0 ? 1 : 0;
+
+        START_COLLISION_CHECK:
+        if (entity.FinalXForce == 0 && entity.FinalYForce == 0)
+        {
+            dy = entity.XPos;
+            dx = entity.XMod;
+            result = null;
+            //goto FINALIZE;
+
+            entity.ModdedXPos = dy + dx;
+            entity.ModdedYPos = entity.YPos + entity.YMod;
+            entity.ModdedZPos = entity.ZPos + entity.ZMod;
+            dy = ComputeEntityGroundHeight(entity);
+            entity.TerrainHeight = dy;
+            return result;
+        }
+
+        modX = 0;
+        candidate = null;
+        i = 0;
+        dy = entity.FinalYForce;
+        dx = entity.FinalXForce;
+
+        TRY_ADVANCE:
+        posX = entity.XPos;
+        posY = entity.YPos;
+        posZ = entity.ZPos;
+        collisionFlags[0] = 0;
+        collisionFlags[1] = 0;
+        collisionFlags[2] = 0;
+        collisionFlags[3] = 0;
+        entity.XPos += dx;
+        entity.ModdedZPos = entity.ZPos + entity.ZMod;
+        entity.YPos += dy;
+        entity.ModdedXPos = entity.XPos + entity.XMod;
+        entity.ModdedYPos = entity.YPos + entity.YMod;
+        result = candidate;
+        flags = ComputeEntityGroundHeight(entity);
+        entity.TerrainHeight = flags;
+        halfDx = dx >> 1;
+        halfDy = dy >> 1;
+
+        if ((entity.Flags & 0x100U) != 0 && entity.ZForce == 0)
+        {
+            dz = flags - entity.ModdedZPos + -1;
+            zTolerance = 0x30000;
+            if (dz < 0)
+            {
+                zTolerance = 0x30003;
+                dz = -dz;
+            }
+            if (zTolerance <= dz)
+            {
+                goto RESTORE_POS;
+            }
+
+            dz = entity.ZPos;
+            entity.ZPos = flags + 1;
+            entity.ModdedXPos = entity.XPos + entity.XMod;
+            entity.ModdedYPos = entity.YPos + entity.YMod;
+            entity.ModdedZPos = entity.ZPos + entity.ZMod;
+            otherEntity = FindEntityCollisionCandidate(entity);
+            if (otherEntity != null)
+            {
+                entity.ZPos = dz;
+                entity.ModdedXPos = entity.XPos + entity.XMod;
+                entity.ModdedZPos = dz + entity.ZMod;
+                entity.ModdedYPos = entity.YPos + entity.YMod;
+                goto RESTORE_POS;
+            }
+
+            CHECK_ENTITY_COLLISION:
+            if (entity == StaticVariables.g_entitySlots[0])
+            {
+                flags = (int)GetCollisionFlagsWithPlayer(entity, collisionFlags);
+            }
+            else
+            {
+                flags = (int)GetCollisionFlags(entity, collisionFlags);
+            }
+
+            if (flags != 0)
+            {
+                goto LAB_80037938;
+            }
+
+            modX = 1;
+            if (i == 0)
+            {
+                return result;
+            }
+
+            if (dx == -1)
+            {
+                halfDx = 0;
+            }
+
+            if (dy == -1)
+            {
+                halfDy = 0;
+            }
+
+            if (isStraightDir == 0)
+            {
+                if (halfDx == 0)
+                {
+                    return result;
+                }
+            }
+            else if (halfDx != 0)
+            {
+                i++;
+                dy = halfDy;
+                dx = halfDx;
+                goto TRY_ADVANCE;
+            }
+            if (halfDy == 0)
+            {
+                return result;
+            }
+
+            LAB_80037db8:
+            i++;
+            dy = halfDy;
+            dx = halfDx;
+            goto TRY_ADVANCE;
+        }
+
+        RESTORE_POS:
+        candidate = FindEntityCollisionCandidate(entity);
+        if (candidate == null)
+        {
+            //goto CHECK_ENTITY_COLLISION
+            if (entity == StaticVariables.g_entitySlots[0])
+            {
+                flags = (int)GetCollisionFlagsWithPlayer(entity, collisionFlags);
+            }
+            else
+            {
+                flags = (int)GetCollisionFlags(entity, collisionFlags);
+            }
+
+            if (flags != 0)
+            {
+                goto LAB_80037938;
+            }
+
+            modX = 1;
+            if (i == 0)
+            {
+                return result;
+            }
+
+            if (dx == -1)
+            {
+                halfDx = 0;
+            }
+
+            if (dy == -1)
+            {
+                halfDy = 0;
+            }
+
+            if (isStraightDir == 0)
+            {
+                if (halfDx == 0)
+                {
+                    return result;
+                }
+            }
+            else if (halfDx != 0)
+            {
+                i++;
+                dy = halfDy;
+                dx = halfDx;
+                goto TRY_ADVANCE;
+            }
+            if (halfDy == 0)
+            {
+                return result;
+            }
+
+            LAB_80037db8:
+            //i++;
+            dy = halfDy;
+            dx = halfDx;
+            goto TRY_ADVANCE;
+        }
+
+        LAB_80037938:
+        entity.XPos = posX;
+        entity.YPos = posY;
+        entity.ZPos = posZ;
+        if (dx == -1)
+        {
+            halfDx = 0;
+        }
+
+        if (dy == -1)
+        {
+            halfDy = 0;
+        }
+
+        if (isStraightDir != 0)
+        {
+            if (halfDx != 0)
+            {
+                dy = halfDy;
+                dx = halfDx;
+                goto TRY_ADVANCE;
+            }
+
+            if (halfDy == 0)
+            {
+                goto LAB_8003799c;
+            }
+
+            i++;
+            dy = halfDy;
+            dx = halfDx;
+            goto TRY_ADVANCE;
+        }
+
+        if (halfDx != 0 && halfDy != 0)
+        {
+            //goto LAB_80037db8;
+            dy = halfDy;
+            dx = halfDx;
+            goto TRY_ADVANCE;
+        }
+
+        LAB_8003799c:
+        if (modX != 0)
+        {
+            //goto LAB_80037d58;
+            dy = entity.XPos;
+            dx = entity.XMod;
+            entity.ModdedXPos = dy + dx;
+            entity.ModdedYPos = entity.YPos + entity.YMod;
+            entity.ModdedZPos = entity.ZPos + entity.ZMod;
+            dy = ComputeEntityGroundHeight(entity);
+            entity.TerrainHeight = dy;
+            return result;
+        }
+
+        if (didAdjustForObstacle == 1 || (entity.Flags & 0x2000U) != 0 || candidate != null)
+        {
+            switchD_80037a04_FINAL_OBSTACLE:
+            entity.ForceAdjusted = 1;
+            LAB_80037d58:
+            dy = entity.XPos;
+            dx = entity.XMod;
+            FINALIZE:
+            entity.ModdedXPos = dy + dx;
+            entity.ModdedYPos = entity.YPos + entity.YMod;
+            entity.ModdedZPos = entity.ZPos + entity.ZMod;
+            dy = ComputeEntityGroundHeight(entity);
+            entity.TerrainHeight = dy;
+            return result;
+        }
+
+        didAdjustForObstacle = 1;
+
+        switch (entity.TargetDirection)
+        {
+            case 0:
+                if ((collisionFlags[2] != 0 && collisionFlags[3] != 0) || collisionFlags[0] != 0 || collisionFlags[1] != 0)
+                {
+                    //goto switchD_80037a04_FINAL_OBSTACLE;
+                    entity.ForceAdjusted = 1;
+                    dy = entity.XPos;
+                    dx = entity.XMod;
+                    entity.ModdedXPos = dy + dx;
+                    entity.ModdedYPos = entity.YPos + entity.YMod;
+                    entity.ModdedZPos = entity.ZPos + entity.ZMod;
+                    dy = ComputeEntityGroundHeight(entity);
+                    entity.TerrainHeight = dy;
+                    return result;
+                }
+
+                entity.FinalYForce = 0;
+                dy = (int)collisionFlags[2];
+                dx = (int)collisionFlags[3];
+                if (collisionFlags[2] == 0)
+                {
+                    if (dx == 0)
+                    {
+                        goto START_COLLISION_CHECK;
+                    }
+                }
+                else if (collisionFlags[3] == 0)
+                {
+                    entity.FinalXForce = 0xc000;
+                    goto START_COLLISION_CHECK;
+                }
+                break;
+
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+                if (collisionFlags[0] != 0)
+                {
+                    if (collisionFlags[3] == 0)
+                    {
+                        //goto LAB_80037c70;
+                        entity.FinalXForce = 0;
+                        goto START_COLLISION_CHECK;
+                    }
+
+                    //goto switchD_80037a04_FINAL_OBSTACLE;
+                    entity.ForceAdjusted = 1;
+                    dy = entity.XPos;
+                    dx = entity.XMod;
+                    entity.ModdedXPos = dy + dx;
+                    entity.ModdedYPos = entity.YPos + entity.YMod;
+                    entity.ModdedZPos = entity.ZPos + entity.ZMod;
+                    dy = ComputeEntityGroundHeight(entity);
+                    entity.TerrainHeight = dy;
+                    return result;
+                }
+                if (collisionFlags[3] != 0)
+                {
+                    LAB_80037c88:
+                    entity.FinalYForce = 0;
+                }
+                goto START_COLLISION_CHECK;
+
+            case 8:
+                if ((collisionFlags[0] != 0 && collisionFlags[2] != 0) || collisionFlags[1] != 0 || collisionFlags[3] != 0)
+                {
+                    //goto switchD_80037a04_FINAL_OBSTACLE;
+                    entity.ForceAdjusted = 1;
+                    dy = entity.XPos;
+                    dx = entity.XMod;
+                    entity.ModdedXPos = dy + dx;
+                    entity.ModdedYPos = entity.YPos + entity.YMod;
+                    entity.ModdedZPos = entity.ZPos + entity.ZMod;
+                    dy = ComputeEntityGroundHeight(entity);
+                    entity.TerrainHeight = dy;
+                    return result;
+                }
+
+                entity.FinalXForce = 0;
+                dy = (int)collisionFlags[0];
+                dx = (int)collisionFlags[2];
+                if (collisionFlags[0] == 0)
+                {
+                    if (dx != 0)
+                    {
+                        goto code_r0x80037c3c;
+                    }
+
+                    goto START_COLLISION_CHECK;
+                }
+                if (collisionFlags[2] == 0)
+                {
+                    entity.FinalYForce = 0x8000;
+                    goto START_COLLISION_CHECK;
+                }
+                goto code_r0x80037c3c;
+
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+            case 13:
+            case 14:
+            case 15:
+                if (collisionFlags[1] == 0)
+                {
+                    if (collisionFlags[2] != 0)
+                    {
+                        entity.FinalXForce = 0;
+                    }
+                }
+                else
+                {
+                    if (collisionFlags[2] != 0)
+                    {
+                        //goto switchD_80037a04_FINAL_OBSTACLE;
+                        entity.ForceAdjusted = 1;
+                        dy = entity.XPos;
+                        dx = entity.XMod;
+                        entity.ModdedXPos = dy + dx;
+                        entity.ModdedYPos = entity.YPos + entity.YMod;
+                        entity.ModdedZPos = entity.ZPos + entity.ZMod;
+                        dy = ComputeEntityGroundHeight(entity);
+                        entity.TerrainHeight = dy;
+                        return result;
+                    }
+
+                    entity.FinalYForce = 0;
+                }
+                goto START_COLLISION_CHECK;
+
+            case 16:
+                if ((collisionFlags[0] != 0 && collisionFlags[1] != 0) || collisionFlags[2] != 0 || collisionFlags[3] != 0)
+                {
+                    //goto switchD_80037a04_FINAL_OBSTACLE;
+                    entity.ForceAdjusted = 1;
+                    dy = entity.XPos;
+                    dx = entity.XMod;
+                    entity.ModdedXPos = dy + dx;
+                    entity.ModdedYPos = entity.YPos + entity.YMod;
+                    entity.ModdedZPos = entity.ZPos + entity.ZMod;
+                    dy = ComputeEntityGroundHeight(entity);
+                    entity.TerrainHeight = dy;
+                    return result;
+                }
+
+                entity.FinalYForce = 0;
+                dy = (int)collisionFlags[0];
+                dx = (int)collisionFlags[1];
+                if (collisionFlags[0] == 0 && dx == 0)
+                {
+                    goto START_COLLISION_CHECK;
+                }
+
+                if (collisionFlags[1] == 0)
+                {
+                    entity.FinalXForce = 0xc000;
+                    goto START_COLLISION_CHECK;
+                }
+                break;
+
+            case 17:
+            case 18:
+            case 19:
+            case 20:
+            case 21:
+            case 22:
+            case 23:
+                if (collisionFlags[0] != 0 && collisionFlags[3] != 0)
+                {
+                    //goto switchD_80037a04_FINAL_OBSTACLE;
+                    entity.ForceAdjusted = 1;
+                    dy = entity.XPos;
+                    dx = entity.XMod;
+                    entity.ModdedXPos = dy + dx;
+                    entity.ModdedYPos = entity.YPos + entity.YMod;
+                    entity.ModdedZPos = entity.ZPos + entity.ZMod;
+                    dy = ComputeEntityGroundHeight(entity);
+                    entity.TerrainHeight = dy;
+                    return result;
+                }
+
+                if (collisionFlags[3] == 0)
+                {
+                    if (collisionFlags[0] != 0)
+                    {
+                        entity.FinalYForce = 0;
+                    }
+                }
+                else
+                {
+                    LAB_80037c70:
+                    entity.FinalXForce = 0;
+                }
+                goto START_COLLISION_CHECK;
+
+            case 24:
+                if ((collisionFlags[1] != 0 && collisionFlags[3] != 0) || collisionFlags[0] != 0 || collisionFlags[2] != 0)
+                {
+                    //goto switchD_80037a04_FINAL_OBSTACLE;
+                    entity.ForceAdjusted = 1;
+                    dy = entity.XPos;
+                    dx = entity.XMod;
+                    entity.ModdedXPos = dy + dx;
+                    entity.ModdedYPos = entity.YPos + entity.YMod;
+                    entity.ModdedZPos = entity.ZPos + entity.ZMod;
+                    dy = ComputeEntityGroundHeight(entity);
+                    entity.TerrainHeight = dy;
+                    return result;
+                }
+
+                entity.FinalXForce = 0;
+                dy = (int)collisionFlags[1];
+                dx = (int)collisionFlags[3];
+                if (collisionFlags[1] == 0)
+                {
+                    if (dx != 0)
+                    {
+                        goto code_r0x80037c3c;
+                    }
+
+                    goto START_COLLISION_CHECK;
+                }
+                if (collisionFlags[3] == 0)
+                {
+                    entity.FinalYForce = 0x8000;
+                    goto START_COLLISION_CHECK;
+                }
+                code_r0x80037c3c:
+                if (dy == 0)
+                {
+                    entity.FinalYForce = -0x8000;
+                }
+
+                goto START_COLLISION_CHECK;
+
+            case 25:
+            case 26:
+            case 27:
+            case 28:
+            case 29:
+            case 30:
+            case 31:
+                if (collisionFlags[1] != 0 && collisionFlags[2] != 0)
+                {
+                    //goto switchD_80037a04_FINAL_OBSTACLE;
+                    entity.ForceAdjusted = 1;
+                    dy = entity.XPos;
+                    dx = entity.XMod;
+                    entity.ModdedXPos = dy + dx;
+                    entity.ModdedYPos = entity.YPos + entity.YMod;
+                    entity.ModdedZPos = entity.ZPos + entity.ZMod;
+                    dy = ComputeEntityGroundHeight(entity);
+                    entity.TerrainHeight = dy;
+                    return result;
+                }
+
+                if (collisionFlags[2] != 0)
+                {
+                    //goto LAB_80037c88;
+                    entity.FinalYForce = 0;
+                    goto START_COLLISION_CHECK;
+                }
+
+                if (collisionFlags[1] != 0)
+                {
+                    entity.FinalXForce = 0;
+                }
+
+                goto START_COLLISION_CHECK;
+
+            default:
+                //goto switchD_80037a04_FINAL_OBSTACLE;
+                entity.ForceAdjusted = 1;
+                dy = entity.XPos;
+                dx = entity.XMod;
+                entity.ModdedXPos = dy + dx;
+                entity.ModdedYPos = entity.YPos + entity.YMod;
+                entity.ModdedZPos = entity.ZPos + entity.ZMod;
+                dy = ComputeEntityGroundHeight(entity);
+                entity.TerrainHeight = dy;
+                return result;
+        }
+
+        if (dy == 0)
+        {
+            entity.FinalXForce = -0xc000;
+        }
+        goto START_COLLISION_CHECK;
+    }
+
+    private uint GetCollisionFlagsWithPlayer(Entity entity, uint[] collisionFlags)
+    {
+        uint flags;
+        Entity entity2;
+        uint[] colFlags;
+        int index;
+        int flag;
+        bool gravityFlag;
+        int lockTimer;
+        int moddedZPos;
+
+        moddedZPos = StaticVariables.g_entitySlots[0].ModdedZPos;
+        lockTimer = StaticVariables.g_warpLockTimer;
+
+        if (StaticVariables.g_debugState > -1 || (StaticVariables.g_debugFlags & 0x80000000) == 0)
+        {
+            flag = 0x40;
+
+            if ((StaticVariables.g_entitySlots[0].Flags & 8U) != 0)
+            {
+                flag = 0x41;
+            }
+
+            if ((StaticVariables.g_entitySlots[0].Flags & 1U) != 0)
+            {
+                flag |= 0x1000;
+            }
+
+            index = 0;
+            gravityFlag = StaticVariables.g_gravityFlag < 2;
+            colFlags = collisionFlags;
+
+            for (int i = 0; i < 4; i++)
+            {
+                entity2 = StaticVariables.g_entitySlots[i];
+
+                if ((entity2.MapTiles[0].Flags & flag) != 0 || moddedZPos <= entity2.MapHeights[0])
+                {
+                    colFlags[index] = 1;
+                }
+
+                if (gravityFlag && (entity2.MapTiles[0].Flags & 0xe00) == 0x800)
+                {
+                    colFlags[index] = 1;
+                }
+
+                if (lockTimer == 0x20 
+                    && (moddedZPos != entity2.MapHeights[1] || (entity2.MapTiles[0].Flags & 0xe00) != 0x600))
+                {
+                    colFlags[index] = 1;
+                }
+            }
+
+            flags = collisionFlags[0] | collisionFlags[1] | collisionFlags[2] | collisionFlags[3];
+        }
+        else
+        {
+            flags = 0;
+        }
+
+        return flags;
+    }
+
+    // 800373e4
+    private uint GetCollisionFlags(Entity entity, uint[] flags)
+    {
+        int i;
+        ushort uVar3;
+        int moddedZPos;
+
+        uVar3 = 0x40;
+
+        if ((entity.Flags & 8U) != 0)
+        {
+            uVar3 = 0x41;
+        }
+
+        if ((entity.Flags & 1U) != 0)
+        {
+            uVar3 |= 0x1000;
+        }
+
+        moddedZPos = entity.ModdedZPos;
+        i = 0;
+
+        do
+        {
+            if ((entity.MapTiles[0].Flags & uVar3) != 0 || moddedZPos <= entity.MapHeights[0])
+            {
+                flags[i] = 1;
+            }
+
+            i += 1;
+            entity = StaticVariables.g_entitySlots[entity.Index + i];
+
+        } while (i < 4);
+
+        return flags[0] | flags[1] | flags[2] | flags[3];
+    }
+
+    // 80036f34
+    private Entity? FindEntityCollisionCandidate(Entity entity)
+    {
+        int value;
+        Entity currentEntity;
+        Entity[] collideableEntities;
+
+        if ((entity != StaticVariables.g_entitySlots[0]
+             || StaticVariables.g_debugState > -1
+             || (StaticVariables.g_debugFlags & 0x80000000) == 0)
+            && (entity.Flags & 0x80U) != 0
+            && (entity.AnimFlags & 0x80U) == 0
+            && entity.PlatformEntity == null)
+        {
+            if (StaticVariables.g_collideableEntitiesCount <= 0)
+            {
+                return null;
+            }
+
+            collideableEntities = StaticVariables.g_collideableEntities;
+
+            for (int i = 0; i < StaticVariables.g_collideableEntitiesCount; i++)
+            {
+                currentEntity = collideableEntities[i];
+
+                if (entity == currentEntity)
+                {
+                    continue;
+                }
+
+                value = currentEntity.ModdedXPos - entity.ModdedXPos;
+                if (value < 0)
+                {
+                    if (entity.ModdedXPos - currentEntity.ModdedXPos < currentEntity.Width + 1)
+                    {
+                        value = currentEntity.ModdedYPos - entity.ModdedYPos;
+                        if (value < 0)
+                        {
+                            if (entity.ModdedYPos - currentEntity.ModdedYPos < currentEntity.Height + 1)
+                            {
+                                value = currentEntity.ModdedZPos - entity.ModdedZPos;
+                                if (value < 0)
+                                {
+                                    if (entity.ModdedZPos - currentEntity.ModdedZPos < currentEntity.Depth + 1)
+                                    {
+                                        return currentEntity;
+                                    }
+                                }
+                                else if (value < entity.Depth + 1)
+                                {
+                                    return currentEntity;
+                                }
+                            }
+                        }
+                        else if (value < entity.Height + 1)
+                        {
+                            value = currentEntity.ModdedZPos - entity.ModdedZPos;
+                            if (value < 0)
+                            {
+                                if (entity.ModdedZPos - currentEntity.ModdedZPos < currentEntity.Depth + 1)
+                                {
+                                    return currentEntity;
+                                }
+                            }
+                            else if (value < entity.Depth + 1)
+                            {
+                                return currentEntity;
+                            }
+                        }
+                    }
+                }
+                else if (value < entity.Width + 1)
+                {
+                    value = currentEntity.ModdedYPos - entity.ModdedYPos;
+                    if (value < 0)
+                    {
+                        if (entity.ModdedYPos - currentEntity.ModdedYPos < currentEntity.Height + 1)
+                        {
+                            value = currentEntity.ModdedZPos - entity.ModdedZPos;
+                            if (value < 0)
+                            {
+                                if (entity.ModdedZPos - currentEntity.ModdedZPos < currentEntity.Depth + 1)
+                                {
+                                    return currentEntity;
+                                }
+                            }
+                            else if (value < entity.Depth + 1)
+                            {
+                                return currentEntity;
+                            }
+                        }
+                    }
+                    else if (value < entity.Height + 1)
+                    {
+                        value = currentEntity.ModdedZPos - entity.ModdedZPos;
+                        if (value < 0)
+                        {
+                            if (entity.ModdedZPos - currentEntity.ModdedZPos < currentEntity.Depth + 1)
+                            {
+                                return currentEntity;
+                            }
+                        }
+                        else if (value < entity.Depth + 1)
+                        {
+                            return currentEntity;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    // CheckRidingEntities
     private void CheckRidingEntities()
     {
         for (var i = 0; i < StaticVariables.g_collideableEntitiesCount; i++)
@@ -942,6 +2025,7 @@ public class EntityManager
         }
     }
 
+    // 80036828
     private void UpdateEntitiesForces()
     {
         var player = StaticVariables.PlayerEntity;
@@ -949,6 +2033,7 @@ public class EntityManager
         for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
         {
             var entity = StaticVariables.g_activeEntities[i];
+
             if (entity == player)
             {
                 if (player.IsZForceApplied != 0)
@@ -1113,7 +2198,6 @@ public class EntityManager
             yval = entity.ScreenClipY - entity.YPos;
             entity.ForceAdjusted = 1;
         }
-
 
         entity.AdjustedXForce = xval;
         entity.AdjustedYForce = yval;
@@ -1349,7 +2433,7 @@ public class EntityManager
                 }
 
                 //X
-                var difx = entity.FrameX - checkme.ModdedXPos;
+                var difx = entity.HitBoxX - checkme.ModdedXPos;
                 int width;
                 if (difx > 0)
                 {
@@ -1357,7 +2441,7 @@ public class EntityManager
                 }
                 else
                 {
-                    difx = checkme.ModdedXPos - entity.FrameX;
+                    difx = checkme.ModdedXPos - entity.HitBoxX;
                     width = entity.FrameWidth + 1;
                 }
                 if (difx >= width)
@@ -1366,7 +2450,7 @@ public class EntityManager
                 }
 
                 //Y
-                var dify = entity.FrameY - checkme.ModdedYPos;
+                var dify = entity.HitBoxY - checkme.ModdedYPos;
                 int depth;
                 if (dify > 0)
                 {
@@ -1374,7 +2458,7 @@ public class EntityManager
                 }
                 else
                 {
-                    dify = checkme.ModdedYPos - entity.FrameY;
+                    dify = checkme.ModdedYPos - entity.HitBoxY;
                     depth = entity.FrameDepth + 1;
                 }
                 if (dify >= depth)
@@ -1383,7 +2467,7 @@ public class EntityManager
                 }
 
                 //Z
-                var difz = entity.FrameZ - checkme.ModdedZPos;
+                var difz = entity.HitBoxZ - checkme.ModdedZPos;
                 int height;
                 if (difz > 0)
                 {
@@ -1391,7 +2475,7 @@ public class EntityManager
                 }
                 else
                 {
-                    difz = checkme.ModdedZPos - entity.FrameZ;
+                    difz = checkme.ModdedZPos - entity.HitBoxZ;
                     height = entity.FrameHeight + 1;
                 }
                 if (difz >= height)
@@ -1425,39 +2509,39 @@ public class EntityManager
                 entity.HitCounter++;
                 //X
                 var xr = checkme.ModdedXPos + checkme.Width;
-                if (entity.FrameX + entity.FrameWidth < xr)
+                if (entity.HitBoxX + entity.FrameWidth < xr)
                 {
-                    xr = entity.FrameX + entity.FrameWidth;
+                    xr = entity.HitBoxX + entity.FrameWidth;
                 }
 
-                var xl = entity.FrameX;
-                if (entity.FrameX < checkme.ModdedXPos)
+                var xl = entity.HitBoxX;
+                if (entity.HitBoxX < checkme.ModdedXPos)
                 {
                     xl = checkme.ModdedXPos;
                 }
 
                 //Y
                 var yr = checkme.ModdedYPos + checkme.Depth;
-                if (entity.FrameY + entity.FrameDepth < yr)
+                if (entity.HitBoxY + entity.FrameDepth < yr)
                 {
-                    yr = entity.FrameY + entity.FrameDepth;
+                    yr = entity.HitBoxY + entity.FrameDepth;
                 }
 
-                var yl = entity.FrameY;
-                if (entity.FrameY < checkme.ModdedYPos)
+                var yl = entity.HitBoxY;
+                if (entity.HitBoxY < checkme.ModdedYPos)
                 {
                     yl = checkme.ModdedYPos;
                 }
 
                 //Z
                 var zr = checkme.ModdedZPos + checkme.Height;
-                if (entity.FrameZ + entity.FrameHeight < zr)
+                if (entity.HitBoxZ + entity.FrameHeight < zr)
                 {
-                    zr = entity.FrameZ + entity.FrameHeight;
+                    zr = entity.HitBoxZ + entity.FrameHeight;
                 }
 
-                var zl = entity.FrameZ;
-                if (entity.FrameZ < checkme.ModdedZPos)
+                var zl = entity.HitBoxZ;
+                if (entity.HitBoxZ < checkme.ModdedZPos)
                 {
                     zl = checkme.ModdedZPos;
                 }
@@ -1683,7 +2767,7 @@ public class EntityManager
                             break;
                         }
 
-                        if ((flags & 0x10) != 0 && entity.FloorHeight == 0 && entity.IsAboveGround == 0)
+                        if ((flags & 0x10) != 0 && entity.TerrainHeight == 0 && entity.IsAboveGround == 0)
                         {
                             entity.Status = (int)EntityStatus.Deactivated;
                             eventProgramType = ScriptHelper.ProgramDTouch;
@@ -1697,7 +2781,7 @@ public class EntityManager
                             break;
                         }
 
-                        if ((flags & 0x40) != 0 && entity.FloorHeight != 0)
+                        if ((flags & 0x40) != 0 && entity.TerrainHeight != 0)
                         {
                             entity.Status = (int)EntityStatus.Deactivated;
                             eventProgramType = ScriptHelper.ProgramEDeactivate;
@@ -1743,7 +2827,10 @@ public class EntityManager
             {
                 var entity = StaticVariables.g_entitySlots[i];
 
-                if (entity.EventTrigger == ScriptHelper.ProgramUnknown) continue;
+                if (entity.EventTrigger == ScriptHelper.ProgramUnknown)
+                {
+                    continue;
+                }
 
                 var programIndex = entity.ProgramIndexes[entity.EventTrigger] & 0x7f;
 
@@ -1833,7 +2920,8 @@ public class EntityManager
             //processable
             if (entity.Status - 2 < 2 && entity.PlatformEntity == null)
             {
-                StaticVariables.g_activeEntities[StaticVariables.g_activeEntityCount++] = entity;
+                StaticVariables.g_activeEntities[StaticVariables.g_activeEntityCount] = entity;
+                StaticVariables.g_activeEntityCount++;
             }
 
             //collidable
@@ -1850,7 +2938,8 @@ public class EntityManager
         }
     }
 
-    private void UpdateTile(Entity entity)
+    // 80038064
+    private void UpdateTileAttributes(Entity entity)
     {
         int tileX;
         int tileY;
@@ -1861,9 +2950,9 @@ public class EntityManager
 
         if (entity.FrameCollision != null)
         {
-            entity.FrameX = entity.XPos + entity.FrameXOff;
-            entity.FrameY = entity.YPos + entity.FrameYOff;
-            entity.FrameZ = entity.ZPos + entity.FrameZOff;
+            entity.HitBoxX = entity.XPos + entity.FrameXOff;
+            entity.HitBoxY = entity.YPos + entity.FrameYOff;
+            entity.HitBoxZ = entity.ZPos + entity.FrameZOff;
         }
 
         entity.TileX = (entity.XPos >> 16) / 24;
@@ -1872,9 +2961,9 @@ public class EntityManager
 
 
         var hitz = _gameEngine.GetCollisionOnZ(entity);
-        entity.FloorHeight = hitz;
+        entity.TerrainHeight = hitz;
         entity.IsAboveGround = hitz < entity.ZPos ? 0 : 1;
-        //entity.ZEntityCollision = hitz;
+        //entity.FloorHeight = hitz;
         //entity.CollidedWithEntityZ = hitz < entity.ZPos ? 0 : 1;
 
         if ((entity.Flags & 0x100U) == 0)
@@ -1908,7 +2997,10 @@ public class EntityManager
             var tl = _gameEngine.CurrentMap.Map.MapTiles[tileX + tileY * 52]; //entity.MapTiles[tileY * 0xd0 + tileX * 4 + 0x302];
             tileFlags = tl.Flags;
             //tileFlags = StaticVariables.g_spriteVRAMPointer + tileY * 0xd0 + tileX * 4 + 0x302;
-            if ((tileFlags & 0xc00000) == 0 || (tileFlags & 0x80000) == 0) goto NoCollision;
+            if ((tileFlags & 0xc00000) == 0 || (tileFlags & 0x80000) == 0)
+            {
+                goto NoCollision;
+            }
         }
         else
         {

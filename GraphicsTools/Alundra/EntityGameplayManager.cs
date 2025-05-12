@@ -245,7 +245,7 @@ public class EntityGameplayManager
         bool needUpdate = false;
 
         zTest = currentZ + 1;
-        deltaBottomRight = entity.FloorHeight;
+        deltaBottomRight = entity.TerrainHeight;
         deltaTopLeft = deltaBottomRight - entity.MapHeights[0];
         deltaTopRight = deltaBottomRight - entity.MapHeights[1];
         deltaBottomLeft = deltaBottomRight - entity.MapHeights[2];
@@ -330,7 +330,7 @@ public class EntityGameplayManager
         byte newDirection;
 
         heightDiff = GetEntityTileHeight(entity, newAnimId & 0xff, entity.TargetDirection);
-        heightDiff = heightDiff - entity.FloorHeight;
+        heightDiff = heightDiff - entity.TerrainHeight;
 
         if (zThreshold < heightDiff || heightDiff < 1)
         {

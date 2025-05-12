@@ -631,7 +631,7 @@ public class PlayerManager
                         entityCreated = (Entity)_gameEngine.CreateEffectEntity(0, efffectId, 0,
                             StaticVariables.g_entitySlots[0].XPos,
                             StaticVariables.g_entitySlots[0].YPos,
-                            StaticVariables.g_entitySlots[0].FloorHeight);
+                            StaticVariables.g_entitySlots[0].TerrainHeight);
                     }
 
                     if (entityCreated != null)
@@ -692,7 +692,7 @@ public class PlayerManager
                     _gameEngine.CreateEffectEntity(0, efffectId, 0,
                         StaticVariables.g_entitySlots[0].XPos,
                         StaticVariables.g_entitySlots[0].YPos,
-                        StaticVariables.g_entitySlots[0].FloorHeight);
+                        StaticVariables.g_entitySlots[0].TerrainHeight);
                 if (pSVar1 != null)
                 {
                     effectEntityId = *(short*)(effectEntityId * 2 + animIndex + 0x36);
@@ -715,7 +715,7 @@ public class PlayerManager
                 pSVar1 = _gameEngine.CreateEffectEntity(0, StaticVariables.g_sharedBuffer2[10], 0,
                     StaticVariables.g_entitySlots[0].XPos,
                     StaticVariables.g_entitySlots[0].YPos,
-                    StaticVariables.g_entitySlots[0].FloorHeight);
+                    StaticVariables.g_entitySlots[0].TerrainHeight);
                 if (pSVar1 != null)
                 {
                     uVar6 = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
@@ -733,7 +733,7 @@ public class PlayerManager
                     (pSVar1 = _gameEngine.CreateEffectEntity(0, 6, 0,
                         StaticVariables.g_entitySlots[0].XPos,
                         StaticVariables.g_entitySlots[0].YPos,
-                        StaticVariables.g_entitySlots[0].FloorHeight)) == null)
+                        StaticVariables.g_entitySlots[0].TerrainHeight)) == null)
                     goto SkipEffects;
                 effectEntityId = -StaticVariables.g_entitySlots[0].XForce;
                 if (StaticVariables.g_entitySlots[0].XForce > 0)
@@ -787,7 +787,7 @@ public class PlayerManager
                             }
                             else
                             {
-                                entityCreated2 = _gameEngine.CreateEffectEntity(0, StaticVariables.g_sharedBuffer2[10], 0, StaticVariables.g_entitySlots[0].XPos, StaticVariables.g_entitySlots[0].YPos, StaticVariables.g_entitySlots[0].FloorHeight);
+                                entityCreated2 = _gameEngine.CreateEffectEntity(0, StaticVariables.g_sharedBuffer2[10], 0, StaticVariables.g_entitySlots[0].XPos, StaticVariables.g_entitySlots[0].YPos, StaticVariables.g_entitySlots[0].TerrainHeight);
                             }
                             if (entityCreated2 != null)
                             {
@@ -803,7 +803,7 @@ public class PlayerManager
                     }
                     else
                     {
-                        _gameEngine.CreateEffectEntity(0, 6, 0, StaticVariables.g_entitySlots[0].XPos, StaticVariables.g_entitySlots[0].YPos, StaticVariables.g_entitySlots[0].FloorHeight);
+                        _gameEngine.CreateEffectEntity(0, 6, 0, StaticVariables.g_entitySlots[0].XPos, StaticVariables.g_entitySlots[0].YPos, StaticVariables.g_entitySlots[0].TerrainHeight);
                     }
                     StaticVariables.DAT_80098f30 = 1;
                 }

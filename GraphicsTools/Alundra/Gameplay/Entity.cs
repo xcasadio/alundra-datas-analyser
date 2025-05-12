@@ -70,8 +70,8 @@ public class Entity
     public int TileZ;
     public Entity RidingEntity; //12c
     public Entity XCollisionEntity;
-    public int ZEntityCollision;
-    public int FloorHeight;//map collision
+    public int FloorHeight;
+    public int TerrainHeight;//map collision
 
     public int ForceAdjusted;
     public int CollidedWithEntityZ;//some boolean that has to do with if moddedzpos is greater than hity from collideentitiesz
@@ -104,9 +104,9 @@ public class Entity
     public int XMod, YMod, ZMod;
     public int Width, Depth, Height;
     //this set of vars is set when an animation has a frame with attached data
-    public int FrameX;//1fc
-    public int FrameY;//200
-    public int FrameZ;//204
+    public int HitBoxX;//1fc
+    public int HitBoxY;//200
+    public int HitBoxZ;//204
     public int FrameXOff;//208
     public int FrameYOff;//20c
     public int FrameZOff;//210
