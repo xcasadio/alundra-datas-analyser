@@ -161,16 +161,16 @@ public static class ScriptHelper
         array[1 + index] = (byte)((value >> 16) & 0xFFFF);
     }
 
-    public static readonly int[] XForceTable =
+    public static readonly uint[] XForceTable =
     [
         0x00000000,//0x00
         0x00000000,//0x01
         0x00000000,//0x02
         0x00000000,//0x03
-        unchecked((int)0xffff1000),//0x04
-        unchecked((int)0xffff1000),//0x05
-        unchecked((int)0xffff1000),//0x06
-        unchecked((int)0xfff10000),//0x07
+        0xffff1000,//0x04
+        0xffff1000,//0x05
+        0xffff1000,//0x06
+        0xfff10000,//0x07
         0x0000f000,//0x08
         0x0000f000,//0x09
         0x0000f000,//0x0a
@@ -181,22 +181,22 @@ public static class ScriptHelper
         0x00000000 //0x0f
     ];
 
-    public static readonly int[] YForceTable =
+    public static readonly uint[] YForceTable =
     [
         0x00000000,//0x00
-        unchecked((int)0xffff6000),//0x01
+        0xffff6000,//0x01
         0x0000a000,//0x02
         0x00000000,//0x03
         0x00000000,//0x04
-        unchecked((int)0xffff6000),//0x05
+        0xffff6000,//0x05
         0x0000a000,//0x06
         0x00000000,//0x07
         0x00000000,//0x08
-        unchecked((int)0xffff6000),//0x09
+        0xffff6000,//0x09
         0x0000a000,//0x0a
         0x00000000,//0x0b
         0x00000000,//0x0c
-        unchecked((int)0xffff6000),//0x0d
+        0xffff6000,//0x0d
         0x0000a000,//0x0e
         0x00000000 //0x0f
     ];

@@ -1219,16 +1219,9 @@ public class EntityManager
         START_COLLISION_CHECK:
         if (entity.FinalXForce == 0 && entity.FinalYForce == 0)
         {
-            dy = entity.XPos;
-            dx = entity.XMod;
             result = null;
             //goto FINALIZE;
-
-            entity.ModdedXPos = dy + dx;
-            entity.ModdedYPos = entity.YPos + entity.YMod;
-            entity.ModdedZPos = entity.ZPos + entity.ZMod;
-            dy = ComputeEntityGroundHeight(entity);
-            entity.TerrainHeight = dy;
+            UpdateEntityPositions(entity, false);
             return result;
         }
 
@@ -1450,29 +1443,13 @@ public class EntityManager
         if (modX != 0)
         {
             //goto LAB_80037d58;
-            dy = entity.XPos;
-            dx = entity.XMod;
-            entity.ModdedXPos = dy + dx;
-            entity.ModdedYPos = entity.YPos + entity.YMod;
-            entity.ModdedZPos = entity.ZPos + entity.ZMod;
-            dy = ComputeEntityGroundHeight(entity);
-            entity.TerrainHeight = dy;
+            UpdateEntityPositions(entity, false);
             return result;
         }
 
         if (didAdjustForObstacle == 1 || (entity.Flags & 0x2000U) != 0 || candidate != null)
         {
-            switchD_80037a04_FINAL_OBSTACLE:
-            entity.ForceAdjusted = 1;
-            LAB_80037d58:
-            dy = entity.XPos;
-            dx = entity.XMod;
-            FINALIZE:
-            entity.ModdedXPos = dy + dx;
-            entity.ModdedYPos = entity.YPos + entity.YMod;
-            entity.ModdedZPos = entity.ZPos + entity.ZMod;
-            dy = ComputeEntityGroundHeight(entity);
-            entity.TerrainHeight = dy;
+            UpdateEntityPositions(entity);
             return result;
         }
 
@@ -1484,14 +1461,7 @@ public class EntityManager
                 if ((collisionFlags[2] != 0 && collisionFlags[3] != 0) || collisionFlags[0] != 0 || collisionFlags[1] != 0)
                 {
                     //goto switchD_80037a04_FINAL_OBSTACLE;
-                    entity.ForceAdjusted = 1;
-                    dy = entity.XPos;
-                    dx = entity.XMod;
-                    entity.ModdedXPos = dy + dx;
-                    entity.ModdedYPos = entity.YPos + entity.YMod;
-                    entity.ModdedZPos = entity.ZPos + entity.ZMod;
-                    dy = ComputeEntityGroundHeight(entity);
-                    entity.TerrainHeight = dy;
+                    UpdateEntityPositions(entity);
                     return result;
                 }
 
@@ -1529,14 +1499,7 @@ public class EntityManager
                     }
 
                     //goto switchD_80037a04_FINAL_OBSTACLE;
-                    entity.ForceAdjusted = 1;
-                    dy = entity.XPos;
-                    dx = entity.XMod;
-                    entity.ModdedXPos = dy + dx;
-                    entity.ModdedYPos = entity.YPos + entity.YMod;
-                    entity.ModdedZPos = entity.ZPos + entity.ZMod;
-                    dy = ComputeEntityGroundHeight(entity);
-                    entity.TerrainHeight = dy;
+                    UpdateEntityPositions(entity);
                     return result;
                 }
                 if (collisionFlags[3] != 0)
@@ -1550,14 +1513,7 @@ public class EntityManager
                 if ((collisionFlags[0] != 0 && collisionFlags[2] != 0) || collisionFlags[1] != 0 || collisionFlags[3] != 0)
                 {
                     //goto switchD_80037a04_FINAL_OBSTACLE;
-                    entity.ForceAdjusted = 1;
-                    dy = entity.XPos;
-                    dx = entity.XMod;
-                    entity.ModdedXPos = dy + dx;
-                    entity.ModdedYPos = entity.YPos + entity.YMod;
-                    entity.ModdedZPos = entity.ZPos + entity.ZMod;
-                    dy = ComputeEntityGroundHeight(entity);
-                    entity.TerrainHeight = dy;
+                    UpdateEntityPositions(entity);
                     return result;
                 }
 
@@ -1599,14 +1555,7 @@ public class EntityManager
                     if (collisionFlags[2] != 0)
                     {
                         //goto switchD_80037a04_FINAL_OBSTACLE;
-                        entity.ForceAdjusted = 1;
-                        dy = entity.XPos;
-                        dx = entity.XMod;
-                        entity.ModdedXPos = dy + dx;
-                        entity.ModdedYPos = entity.YPos + entity.YMod;
-                        entity.ModdedZPos = entity.ZPos + entity.ZMod;
-                        dy = ComputeEntityGroundHeight(entity);
-                        entity.TerrainHeight = dy;
+                        UpdateEntityPositions(entity);
                         return result;
                     }
 
@@ -1618,14 +1567,7 @@ public class EntityManager
                 if ((collisionFlags[0] != 0 && collisionFlags[1] != 0) || collisionFlags[2] != 0 || collisionFlags[3] != 0)
                 {
                     //goto switchD_80037a04_FINAL_OBSTACLE;
-                    entity.ForceAdjusted = 1;
-                    dy = entity.XPos;
-                    dx = entity.XMod;
-                    entity.ModdedXPos = dy + dx;
-                    entity.ModdedYPos = entity.YPos + entity.YMod;
-                    entity.ModdedZPos = entity.ZPos + entity.ZMod;
-                    dy = ComputeEntityGroundHeight(entity);
-                    entity.TerrainHeight = dy;
+                    UpdateEntityPositions(entity);
                     return result;
                 }
 
@@ -1654,14 +1596,7 @@ public class EntityManager
                 if (collisionFlags[0] != 0 && collisionFlags[3] != 0)
                 {
                     //goto switchD_80037a04_FINAL_OBSTACLE;
-                    entity.ForceAdjusted = 1;
-                    dy = entity.XPos;
-                    dx = entity.XMod;
-                    entity.ModdedXPos = dy + dx;
-                    entity.ModdedYPos = entity.YPos + entity.YMod;
-                    entity.ModdedZPos = entity.ZPos + entity.ZMod;
-                    dy = ComputeEntityGroundHeight(entity);
-                    entity.TerrainHeight = dy;
+                    UpdateEntityPositions(entity);
                     return result;
                 }
 
@@ -1683,14 +1618,7 @@ public class EntityManager
                 if ((collisionFlags[1] != 0 && collisionFlags[3] != 0) || collisionFlags[0] != 0 || collisionFlags[2] != 0)
                 {
                     //goto switchD_80037a04_FINAL_OBSTACLE;
-                    entity.ForceAdjusted = 1;
-                    dy = entity.XPos;
-                    dx = entity.XMod;
-                    entity.ModdedXPos = dy + dx;
-                    entity.ModdedYPos = entity.YPos + entity.YMod;
-                    entity.ModdedZPos = entity.ZPos + entity.ZMod;
-                    dy = ComputeEntityGroundHeight(entity);
-                    entity.TerrainHeight = dy;
+                    UpdateEntityPositions(entity);
                     return result;
                 }
 
@@ -1729,14 +1657,7 @@ public class EntityManager
                 if (collisionFlags[1] != 0 && collisionFlags[2] != 0)
                 {
                     //goto switchD_80037a04_FINAL_OBSTACLE;
-                    entity.ForceAdjusted = 1;
-                    dy = entity.XPos;
-                    dx = entity.XMod;
-                    entity.ModdedXPos = dy + dx;
-                    entity.ModdedYPos = entity.YPos + entity.YMod;
-                    entity.ModdedZPos = entity.ZPos + entity.ZMod;
-                    dy = ComputeEntityGroundHeight(entity);
-                    entity.TerrainHeight = dy;
+                    UpdateEntityPositions(entity);
                     return result;
                 }
 
@@ -1756,14 +1677,7 @@ public class EntityManager
 
             default:
                 //goto switchD_80037a04_FINAL_OBSTACLE;
-                entity.ForceAdjusted = 1;
-                dy = entity.XPos;
-                dx = entity.XMod;
-                entity.ModdedXPos = dy + dx;
-                entity.ModdedYPos = entity.YPos + entity.YMod;
-                entity.ModdedZPos = entity.ZPos + entity.ZMod;
-                dy = ComputeEntityGroundHeight(entity);
-                entity.TerrainHeight = dy;
+                UpdateEntityPositions(entity);
                 return result;
         }
 
@@ -1774,10 +1688,22 @@ public class EntityManager
         goto START_COLLISION_CHECK;
     }
 
+    private void UpdateEntityPositions(Entity entity, bool clearForceAdjusted = true)
+    {
+        if (clearForceAdjusted)
+        {
+            entity.ForceAdjusted = 1;
+        }
+        entity.ModdedXPos = entity.XPos + entity.XMod;
+        entity.ModdedYPos = entity.YPos + entity.YMod;
+        entity.ModdedZPos = entity.ZPos + entity.ZMod;
+        entity.TerrainHeight = ComputeEntityGroundHeight(entity);
+    }
+
     private uint GetCollisionFlagsWithPlayer(Entity entity, uint[] collisionFlags)
     {
         uint flags;
-        Entity entity2;
+        Entity player;
         uint[] colFlags;
         int index;
         int flag;
@@ -1805,23 +1731,23 @@ public class EntityManager
             index = 0;
             gravityFlag = StaticVariables.g_gravityFlag < 2;
             colFlags = collisionFlags;
+            player = StaticVariables.g_entitySlots[0];
 
             for (int i = 0; i < 4; i++)
             {
-                entity2 = StaticVariables.g_entitySlots[i];
-
-                if ((entity2.MapTiles[0].Flags & flag) != 0 || moddedZPos <= entity2.MapHeights[0])
+                if ((player.MapTiles[i].Flags & flag) != 0 || moddedZPos <= player.MapHeights[i])
                 {
                     colFlags[index] = 1;
                 }
 
-                if (gravityFlag && (entity2.MapTiles[0].Flags & 0xe00) == 0x800)
+                if (gravityFlag && (player.MapTiles[i].Flags & 0xe00) == 0x800)
                 {
                     colFlags[index] = 1;
                 }
 
                 if (lockTimer == 0x20 
-                    && (moddedZPos != entity2.MapHeights[1] || (entity2.MapTiles[0].Flags & 0xe00) != 0x600))
+                    && moddedZPos == player.MapHeights[i] + 1 
+                    && (player.MapTiles[i].Flags & 0xe00) == 0x600)
                 {
                     colFlags[index] = 1;
                 }
@@ -1840,36 +1766,30 @@ public class EntityManager
     // 800373e4
     private uint GetCollisionFlags(Entity entity, uint[] flags)
     {
-        int i;
-        ushort uVar3;
+        ushort flag;
         int moddedZPos;
 
-        uVar3 = 0x40;
+        flag = 0x40;
 
         if ((entity.Flags & 8U) != 0)
         {
-            uVar3 = 0x41;
+            flag = 0x41;
         }
 
         if ((entity.Flags & 1U) != 0)
         {
-            uVar3 |= 0x1000;
+            flag |= 0x1000;
         }
 
         moddedZPos = entity.ModdedZPos;
-        i = 0;
 
-        do
+        for (int i = 0; i < 4; i++)
         {
-            if ((entity.MapTiles[0].Flags & uVar3) != 0 || moddedZPos <= entity.MapHeights[0])
+            if ((entity.MapTiles[i].Flags & flag) != 0 || moddedZPos <= entity.MapHeights[i])
             {
                 flags[i] = 1;
             }
-
-            i += 1;
-            entity = StaticVariables.g_entitySlots[entity.Index + i];
-
-        } while (i < 4);
+        }
 
         return flags[0] | flags[1] | flags[2] | flags[3];
     }
@@ -2001,26 +1921,52 @@ public class EntityManager
 
             for (var j = 0; j < StaticVariables.g_collideableEntitiesCount; j++)
             {
-                var entity2 = StaticVariables.g_collideableEntities[j];
-                if (entity == entity2)
+                var otherEntity = StaticVariables.g_collideableEntities[j];
+                if (entity == otherEntity)
                 {
                     continue;
                 }
 
-                if ((entity2.ModdedXPos - entity.ModdedXPos >= 0 && entity2.ModdedXPos - entity.ModdedXPos < entity.Width + 1) || (entity2.ModdedXPos - entity.ModdedXPos < 0 && entity.ModdedXPos - entity2.ModdedXPos < entity2.Width + 1))
-                {
-                    if (entity2.ModdedYPos - entity.ModdedYPos >= 0 && entity2.ModdedYPos - entity.ModdedYPos < entity.Depth + 1)
-                    {
-                        entity.RidingEntity = entity2;
-                        break;
-                    }
 
-                    if (entity2.ModdedYPos - entity.ModdedYPos < 0 && entity.ModdedYPos - entity2.ModdedYPos < entity2.Depth + 1)
+                if (otherEntity.ModdedZPos + otherEntity.Depth + 1 == entity.ModdedZPos) 
+                {
+                    if ((otherEntity.ModdedXPos - entity.ModdedXPos < 0
+                        && entity.ModdedXPos - otherEntity.ModdedXPos < otherEntity.Width + 1)
+                        || otherEntity.ModdedXPos - entity.ModdedXPos < entity.Width + 1 )
                     {
-                        entity.RidingEntity = entity2;
-                        break;
+                        var val = otherEntity.ModdedYPos - entity.ModdedYPos;
+
+                        if (val < 0) 
+                        {
+                            if (entity.ModdedYPos - otherEntity.ModdedYPos < otherEntity.Height + 1) 
+                            {
+                                entity.RidingEntity = otherEntity;
+                                break;
+                            }
+                        }
+                        else if (val < entity.Height + 1) 
+                        {
+                            entity.RidingEntity = otherEntity;
+                            break;
+                        }
                     }
                 }
+
+                //if ((otherEntity.ModdedXPos - entity.ModdedXPos >= 0 && otherEntity.ModdedXPos - entity.ModdedXPos < entity.Width + 1) 
+                //    || (otherEntity.ModdedXPos - entity.ModdedXPos < 0 && entity.ModdedXPos - otherEntity.ModdedXPos < otherEntity.Width + 1))
+                //{
+                //    if (otherEntity.ModdedYPos - entity.ModdedYPos >= 0 && otherEntity.ModdedYPos - entity.ModdedYPos < entity.Depth + 1)
+                //    {
+                //        entity.RidingEntity = otherEntity;
+                //        break;
+                //    }
+                //
+                //    if (otherEntity.ModdedYPos - entity.ModdedYPos < 0 && entity.ModdedYPos - otherEntity.ModdedYPos < otherEntity.Depth + 1)
+                //    {
+                //        entity.RidingEntity = otherEntity;
+                //        break;
+                //    }
+                //}
             }
         }
     }
@@ -2165,6 +2111,7 @@ public class EntityManager
         }
     }
 
+    // 800366fc
     private void ApplyEntityForces(Entity entity)
     {
         var lastinteractx = entity.InteractXForce;
@@ -2199,8 +2146,8 @@ public class EntityManager
             entity.ForceAdjusted = 1;
         }
 
-        entity.AdjustedXForce = xval;
-        entity.AdjustedYForce = yval;
+        entity.AdjustedXForce = (int)xval;
+        entity.AdjustedYForce = (int)yval;
     }
 
     private int IncrementForce(int force, int targetforce, int step)
@@ -2229,12 +2176,6 @@ public class EntityManager
 
     private void UpdateEntityPhysics(Entity entity)
     {
-        //TODO: bug with animation
-        //if (entity.AnimSet == null)
-        //{
-        //    return;
-        //}
-
         if (entity.Speed != entity.AnimSet.Speed
             || entity.TargetDirection != entity.CurrentDirection)
         {
