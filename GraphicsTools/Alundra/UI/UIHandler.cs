@@ -1,8 +1,10 @@
-﻿namespace Alundra.UI;
+﻿using Alundra.Gameplay;
+
+namespace Alundra.UI;
 
 public class UiHandler
 {
-    private readonly GameState _game;
+    private readonly GameEngine _gameEngine;
     private readonly EtcResR _etcResR;
     private DatasBin.DatasBin _datasbin;
     public short SavedBoxDrawerX, SavedBoxDrawerY;
@@ -15,9 +17,9 @@ public class UiHandler
     private readonly List<Color[]> _uipalettes = new();
     private BitmapDrawCommand _dialognametextcmd;
 
-    public UiHandler(GameState gameState, DatasBin.DatasBin datasbin, EtcResR etcResR, string fontfile, string palettesfile, string uifile)
+    public UiHandler(GameEngine gameEngineEngine, DatasBin.DatasBin datasbin, EtcResR etcResR, string fontfile, string palettesfile, string uifile)
     {
-        _game = gameState;
+        _gameEngine = gameEngineEngine;
         _etcResR = etcResR;
         //load palettes
         var buff = File.ReadAllBytes(fontfile);
@@ -193,9 +195,9 @@ public class UiHandler
 
         DialogNameBoxLerper.AfterX = ui.BoxAnimated.X;
         DialogNameBoxLerper.AfterY = ui.BoxAnimated.Y;
-        _game.DialogNameState = 5;
+        _gameEngine.DialogNameState = 5;
 
-        var name = _etcResR.GetEtcString(_game.DialogName);
+        var name = _etcResR.GetEtcString(_gameEngine.DialogName);
 
         _dialognametextcmd = RenderText(name, 0, (short)(ui.Y + ui.BoxAnimated.Y), 3);
 
@@ -209,17 +211,17 @@ public class UiHandler
         //it sets the clipping for the dialog box
 
 
-        if ((_game.DialogState & 0x3) != 0)
+        if ((_gameEngine.DialogState & 0x3) != 0)
         {
             var finished = LerpUiBox(ui.BoxAnimated, DialogBoxLerper);
             if (finished)
             {
-                if ((_game.DialogState & 1) != 0)
+                if ((_gameEngine.DialogState & 1) != 0)
                 {
-                    _game.DialogState &= ~1;//turn off bit 1 if its on
+                    _gameEngine.DialogState &= ~1;//turn off bit 1 if its on
                 }
 
-                if ((_game.DialogState & 2) != 0)
+                if ((_gameEngine.DialogState & 2) != 0)
                 {
                     //dialog is finished?
                     _boxDrawer1.X = SavedBoxDrawerX;
@@ -304,17 +306,17 @@ public class UiHandler
     //0x5c4ac
     private bool RenderDialogNameBox(UiRecord ui)
     {
-        if ((_game.DialogNameState & 3) != 0)
+        if ((_gameEngine.DialogNameState & 3) != 0)
         {
             var finished = LerpUiBox(ui.BoxAnimated, DialogNameBoxLerper);
             if (finished)
             {
-                if ((_game.DialogNameState & 1) != 0)
+                if ((_gameEngine.DialogNameState & 1) != 0)
                 {
-                    _game.DialogNameState &= ~1;//turn off bit 1 if its on
+                    _gameEngine.DialogNameState &= ~1;//turn off bit 1 if its on
                 }
 
-                if ((_game.DialogNameState & 2) != 0)
+                if ((_gameEngine.DialogNameState & 2) != 0)
                 {
                     //dialog is finished?
                     ui.BoxAnimated.X = SavedBoxDrawerX;
@@ -325,7 +327,7 @@ public class UiHandler
             }
         }
 
-        var text = _etcResR.GetEtcString(_game.DialogName);
+        var text = _etcResR.GetEtcString(_gameEngine.DialogName);
         var width = GetRenderedTextWidth(text);
         width = ui.BoxAnimated.Width * 8 - width;
         _dialognametextcmd.X = (short)(width / 2 + ui.BoxAnimated.X);
@@ -382,13 +384,13 @@ public class UiHandler
     public void ZeroDialogState(UiRecord ui)
     {
         ZeroDialogRecord(ui);
-        _game.DialogState = 0;
+        _gameEngine.DialogState = 0;
         StaticVariables.g_playerControlFlags &= 0xffe7;//turn off bits 4 and 5
     }
     public void ZeroDialogNameState(UiRecord ui)
     {
         ZeroDialogRecord(ui);
-        _game.DialogNameState = 0;
+        _gameEngine.DialogNameState = 0;
     }
     public bool ZeroDialogRecord(UiRecord ui)
     {
@@ -494,7 +496,7 @@ public class UiHandler
             }
         }
 
-        if ((_dialogSomething & 1) != 0 && (_game.PlayerInput[0] & 0x80) != 0)
+        if ((_dialogSomething & 1) != 0 && (StaticVariables.g_padState1.ButtonsJustPressed & PadState.Square) != 0)
         {
             doProcess = true;
         }
@@ -698,9 +700,9 @@ public class UiHandler
         {
             if (_dialogTextSfx != 4 && _dialogTextSfx >= 0)
             {
-                if (_game.SoundBin != null)
+                if (_gameEngine.SoundBin != null)
                 {
-                    _game.SoundBin.PlaySoundEffect(0x4f + _dialogTextSfx);
+                    _gameEngine.SoundBin.PlaySoundEffect(0x4f + _dialogTextSfx);
                 }
             }
         }
@@ -875,18 +877,18 @@ public class UiHandler
 
     private void SetName(int nameid)
     {
-        if ((_game.DialogNameState & 4) == 0
+        if ((_gameEngine.DialogNameState & 4) == 0
             && nameid-0x100 < 0x100
             && !string.IsNullOrEmpty(_etcResR.GetEtcString(nameid)))
         {
-            _game.DialogName = nameid;
+            _gameEngine.DialogName = nameid;
             SetUiRecordCallSetup(0xc);
         }
     }
 
     private bool IsDialogActiveInner()
     {
-        return (_game.DialogState & 4) != 0;
+        return (_gameEngine.DialogState & 4) != 0;
     }
 
     private int _dialogstatus,_dialogxpos,_dialogypos,_dialogzpos,_dialogcamxpos,_dialogcamypos;
@@ -946,7 +948,7 @@ public class UiHandler
         }
         else
         {
-            text = _game.GameMap.Strings[textid & 0x7f];
+            text = _gameEngine.CurrentMap.Strings[textid & 0x7f];
         }
 
         SetupDialogDrawCmds(text, playercontrolflag);
@@ -1003,7 +1005,7 @@ public class UiHandler
             DialogBoxLerper.Y2 = _boxDrawer1.Y;
         }
 
-        _game.DialogState = 5;
+        _gameEngine.DialogState = 5;
 
         DialogBoxLerper.AfterX = _boxDrawer1.X;
         DialogBoxLerper.AfterY = _boxDrawer1.Y;
@@ -1051,7 +1053,7 @@ public class UiHandler
         _dialogChoice = 3;
         _renderTextBuff = new byte[0x800];//zero out memory
         _dialogTextLineStartX = 0;
-        _game.SoundBin.PlaySoundEffect(6);
+        _gameEngine.SoundBin.PlaySoundEffect(6);
 
         return true;
     }
