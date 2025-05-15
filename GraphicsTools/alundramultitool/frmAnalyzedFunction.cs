@@ -1,4 +1,5 @@
-﻿using static GraphicsTools.FrmFileAnalyzer;
+﻿using alundramultitool.Decompiler;
+using static GraphicsTools.FrmFileAnalyzer;
 
 namespace alundramultitool
 {

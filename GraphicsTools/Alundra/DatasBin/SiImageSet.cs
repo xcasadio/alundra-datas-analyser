@@ -2,10 +2,10 @@
 
 public class SiImageSet
 {
-    public SiImageSet(BinaryReader br, int imagesetid, int memaddr, bool isportrait = false)
+    public SiImageSet(BinaryReader br, int imageSetId, int memoryAddress, bool isportrait = false)
     {
-        Memaddr = memaddr;
-        Imagesetid = imagesetid;
+        MemoryAddress = memoryAddress;
+        ImageSetId = imageSetId;
         Unknown = br.ReadByte();//palette?
         NumberOfImages = br.ReadByte();
         if (isportrait)
@@ -20,8 +20,8 @@ public class SiImageSet
         }
     }
 
-    public readonly int Memaddr;
-    public readonly int Imagesetid;
+    public readonly int MemoryAddress;
+    public readonly int ImageSetId;
     public readonly byte Unknown;
     public readonly byte NumberOfImages;
     public readonly SiImage[] Images;

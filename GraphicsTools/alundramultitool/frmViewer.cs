@@ -45,7 +45,7 @@ namespace GraphicsTools
             _imagedata = imagedata;
             _width = width;
             _height = height;
-            var bmp = new Bmp(width, height, 24);
+            var bmp = new PsxBitmap(width, height, 24);
             var dex = 0;
             for (var y = height - 1; y >= 0; y--)
             {
@@ -67,9 +67,9 @@ namespace GraphicsTools
                         var b = imagedata[dex++];
                         c = Color.FromArgb(r, g, b);
                     }
-                    bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.R;
-                    bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.G;
-                    bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.B;
+                    bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.R;
+                    bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.G;
+                    bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.B;
                 }
             }
             var ms = new MemoryStream();
@@ -88,7 +88,7 @@ namespace GraphicsTools
             _imagedata = imagedata;
             _width = width;
             _height = height;
-            var bmp = new Bmp(width, height, 24);
+            var bmp = new PsxBitmap(width, height, 24);
             var dex = 0;
             for (var y = height - 1; y >= 0; y--)
             {
@@ -98,13 +98,13 @@ namespace GraphicsTools
                     for (var x = 0; x < width / 2; x++)
                     {
                         var c = palette[imagedata[dex] & 0xf];
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.R;
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.G;
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.B;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.R;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.G;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.B;
                         c = palette[(imagedata[dex] & 0xf0) >> 4];
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.R;
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.G;
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.B;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.R;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.G;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.B;
                         dex++;
 
                     }
@@ -114,9 +114,9 @@ namespace GraphicsTools
                     for (var x = 0; x < width; x++)
                     {
                         var c = palette[imagedata[dex]];
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.R;
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.G;
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.B;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.R;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.G;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.B;
                         dex++;
 
                     }
@@ -130,9 +130,9 @@ namespace GraphicsTools
                         {
                             var test = (byte)(imagedata[dex] & (0x1 << shift));
                             test = (byte)(test != 0 ? 255 : 0);
-                            bmp.Pixels[y * bmp.Rowsize + bmpdex++] = test;
-                            bmp.Pixels[y * bmp.Rowsize + bmpdex++] = test;
-                            bmp.Pixels[y * bmp.Rowsize + bmpdex++] = test;
+                            bmp.Pixels[y * bmp.RowSize + bmpdex++] = test;
+                            bmp.Pixels[y * bmp.RowSize + bmpdex++] = test;
+                            bmp.Pixels[y * bmp.RowSize + bmpdex++] = test;
                         }
                         dex++;
 
@@ -151,7 +151,7 @@ namespace GraphicsTools
 
         public void Updatepalette(Color[] palette)
         {
-            var bmp = new Bmp(_width, _height, 24);
+            var bmp = new PsxBitmap(_width, _height, 24);
             var dex = 0;
             for (var y = _height - 1; y >= 0; y--)
             {
@@ -161,13 +161,13 @@ namespace GraphicsTools
                     for (var x = 0; x < _width / 2; x++)
                     {
                         var c = palette[_imagedata[dex] & 0xf];
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.R;
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.G;
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.B;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.R;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.G;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.B;
                         c = palette[(_imagedata[dex] & 0xf0) >> 4];
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.R;
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.G;
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.B;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.R;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.G;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.B;
                         dex++;
 
                     }
@@ -177,9 +177,9 @@ namespace GraphicsTools
                     for (var x = 0; x < _width; x++)
                     {
                         var c = palette[_imagedata[dex]];
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.R;
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.G;
-                        bmp.Pixels[y * bmp.Rowsize + bmpdex++] = c.B;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.R;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.G;
+                        bmp.Pixels[y * bmp.RowSize + bmpdex++] = c.B;
                         dex++;
 
                     }

@@ -131,21 +131,21 @@ public partial class FrmGame : Form
     {
         return $"Index: {entity.Index}{Environment.NewLine}" +
                $"Index2: {entity.Index2}{Environment.NewLine}" +
-               $"ChildEntity: {entity.ChildEntity}{Environment.NewLine}" +
-               $"ParentEntity: {entity.ParentEntity}{Environment.NewLine}" +
+               $"ChildEntity: #{entity.ChildEntity?.Index ?? -1}{Environment.NewLine}" +
+               $"ParentEntity: #{entity.ParentEntity?.Index ?? -1}{Environment.NewLine}" +
                //Position
-               $"Position: {entity.XPos >> 16} {entity.YPos >> 16} {entity.ZPos >> 16}{Environment.NewLine}" +
+               $"Position: {entity.XPos} {entity.YPos} {entity.ZPos} ({entity.XPos >> 16} {entity.YPos >> 16} {entity.ZPos >> 16}){Environment.NewLine}" +
                $"Initial Pos: {entity.InitialXPos} x {entity.InitialYPos}{Environment.NewLine}" +
-               $"ScreenClip: {entity.ScreenClipX >> 16} {entity.ScreenClipY >> 16} {entity.ScreenClipZ >> 16}{Environment.NewLine}" +
-               $"NegMod: {entity.NegXMod >> 16} {entity.NegYMod >> 16}{Environment.NewLine}" +
+               $"ScreenClip: {entity.ScreenClipX} {entity.ScreenClipY} {entity.ScreenClipZ} ({entity.ScreenClipX >> 16} {entity.ScreenClipY >> 16} {entity.ScreenClipZ >> 16}){Environment.NewLine}" +
+               $"NegMod: {entity.NegXMod} {entity.NegYMod} ({entity.NegXMod >> 16} {entity.NegYMod >> 16}){Environment.NewLine}" +
                $"Tile Pos: {entity.TileX} {entity.TileY} {entity.TileZ}{Environment.NewLine}" +
                //Status
                $"ActionState: {entity.ActionState}{Environment.NewLine}" +
                $"Flags: {entity.Flags}{Environment.NewLine}" +
                $"Flags2: {entity.Flags2}{Environment.NewLine}" +
                $"Status: {entity.Status}{Environment.NewLine}" +
-               $"Hp: {entity.HpMax} / {entity.Hp}{Environment.NewLine}" +
-               $"UnknownCounter: {entity.UnknownCounter}{Environment.NewLine}" +
+               $"Hp: {entity.Hp} / {entity.HpMax}{Environment.NewLine}" +
+               $"HitFrameCounter: {entity.HitFrameCounter}{Environment.NewLine}" +
                $"IsNotProcessable: {entity.IsNotProcessable}{Environment.NewLine}" +
                $"RelativeWarpOffset: {entity.RelativeWarpOffsetX} x {entity.RelativeWarpOffsetY} x {entity.RelativeWarpOffsetZ}{Environment.NewLine}" +
                $"ContentsItemId: {entity.ContentsItemId}{Environment.NewLine}" +
@@ -175,9 +175,9 @@ public partial class FrmGame : Form
                $"AnimCompleteCounter: {entity.AnimCompleteCounter}{Environment.NewLine}" +
                $"AnimFlags: {entity.AnimFlags}{Environment.NewLine}" +
                //
-               $"ModdedXPos: {entity.ModdedXPos >> 16} {entity.ModdedYPos >> 16} {entity.ModdedZPos >> 16}{Environment.NewLine}" +
-               $"XYZMod: {entity.XMod >> 16} {entity.YMod >> 16} {entity.ZMod >> 16}{Environment.NewLine}" +
-               $"Size: {entity.Width >> 16} {entity.Height >> 16} {entity.Depth >> 16}{Environment.NewLine}" +
+               $"ModdedPos: {entity.ModdedXPos} {entity.ModdedYPos} {entity.ModdedZPos} ({entity.ModdedXPos >> 16} {entity.ModdedYPos >> 16} {entity.ModdedZPos >> 16}){Environment.NewLine}" +
+               $"XYZMod: {entity.XMod} {entity.YMod} {entity.ZMod} ({entity.XMod >> 16} {entity.YMod >> 16} {entity.ZMod >> 16}){Environment.NewLine}" +
+               $"Size: {entity.Width} {entity.Height} {entity.Depth} ({entity.Width >> 16} {entity.Height >> 16} {entity.Depth >> 16}){Environment.NewLine}" +
                $"Frame Pos: {entity.HitBoxX} {entity.HitBoxY} {entity.HitBoxZ}{Environment.NewLine}" +
                $"Frame Off: {entity.FrameXOff} {entity.FrameYOff} {entity.FrameZOff}{Environment.NewLine}" +
                $"FrameWidth: {entity.FrameWidth} {entity.FrameDepth} {entity.FrameHeight}{Environment.NewLine}" +
@@ -187,28 +187,28 @@ public partial class FrmGame : Form
                $"AddedToSheet: {entity.AddedToSheet}{Environment.NewLine}" +
                $"ActiveEffect: {entity.ActiveEffect}{Environment.NewLine}" +
                //Physics
-               $"Target Forces: {entity.TargetXForce >> 16} {entity.TargetYForce >> 16}{Environment.NewLine}" +
-               $"Forces: {entity.XForce >> 16} {entity.YForce >> 16} {entity.ZForce >> 16}{Environment.NewLine}" +
-               $"Interact Force: {entity.InteractXForce >> 16} {entity.InteractYForce >> 16}{Environment.NewLine}" +
-               $"Force Step: {entity.XForceStep >> 16} {entity.YForceStep >> 16}{Environment.NewLine}" +
-               $"Adjusted Force: {entity.AdjustedXForce >> 16} {entity.AdjustedYForce >> 16}{Environment.NewLine}" +
-               $"Final Force: {entity.FinalXForce >> 16} {entity.FinalYForce >> 16} {entity.FinalZForce >> 16}{Environment.NewLine}" +
-               $"Acceleration: {entity.Acceleration >> 16}{Environment.NewLine}" +
-               $"Speed: {entity.Speed}{Environment.NewLine}" +
+               $"Target Forces: {entity.TargetXForce} {entity.TargetYForce} ({entity.TargetXForce >> 16} {entity.TargetYForce >> 16}){Environment.NewLine}" +
+               $"Forces: {entity.XForce} {entity.YForce} {entity.ZForce} ({entity.XForce >> 16} {entity.YForce >> 16} {entity.ZForce >> 16}){Environment.NewLine}" +
+               $"Interact Force: {entity.PreviousAdjustedXForce} {entity.PreviousAdjustedYForce} ({entity.PreviousAdjustedXForce >> 16} {entity.PreviousAdjustedYForce >> 16}){Environment.NewLine}" +
+               $"Force Step: {entity.XForceStep} {entity.YForceStep} ({entity.XForceStep >> 16} {entity.YForceStep >> 16}){Environment.NewLine}" +
+               $"Adjusted Force: {entity.AdjustedXForce} {entity.AdjustedYForce} ({entity.AdjustedXForce >> 16} {entity.AdjustedYForce >> 16}){Environment.NewLine}" +
+               $"Final Force: {entity.FinalXForce} {entity.FinalYForce} {entity.FinalZForce} ({entity.FinalXForce >> 16} {entity.FinalYForce >> 16} {entity.FinalZForce >> 16}){Environment.NewLine}" +
+               $"Acceleration: {entity.Acceleration}({entity.Acceleration >> 16}){Environment.NewLine}" +
+               $"Speed: {entity.Speed} ({entity.Speed >> 16}){Environment.NewLine}" +
                $"IsZForceApplied: {entity.IsZForceApplied}{Environment.NewLine}" +
+               $"ForceAdjusted: {entity.ForceAdjusted}{Environment.NewLine}" +
                //
-               $"PlatformEntity: {entity.PlatformEntity}{Environment.NewLine}" +
-               $"RidingEntity: {entity.RidingEntity}{Environment.NewLine}" +
-               $"XCollisionEntity: {entity.XCollisionEntity}{Environment.NewLine}" +
-               $"FloorHeight: {entity.FloorHeight >> 16}{Environment.NewLine}" +
-               $"TerrainHeight: {entity.TerrainHeight >> 16}{Environment.NewLine}" +
-               $"ForceAdjusted: {entity.ForceAdjusted >> 16}{Environment.NewLine}" +
+               $"PlatformEntity: #{entity.PlatformEntity?.Index ?? -1}{Environment.NewLine}" +
+               $"RidingEntity: #{entity.RidingEntity?.Index ?? -1}{Environment.NewLine}" +
+               $"XCollisionEntity: #{entity.XCollisionEntity?.Index ?? -1}{Environment.NewLine}" +
+               $"FloorHeight: {entity.FloorHeight}{Environment.NewLine}" +
+               $"TerrainHeight: {entity.TerrainHeight}{Environment.NewLine}" +
                $"CollidedWithEntityZ: {entity.CollidedWithEntityZ}{Environment.NewLine}" +
                $"IsAboveGround: {entity.IsAboveGround}{Environment.NewLine}" +
                $"MapTiles: {entity.MapTiles}{Environment.NewLine}" +
                $"MapHeights: {entity.MapHeights}{Environment.NewLine}" +
                $"PlatformUpdateFlag: {entity.PlatformUpdateFlag}{Environment.NewLine}" +
-               $"CombinedVramFlagsOR: {entity.CombinedVramFlagsOR} {entity.CombinedVramFlagsAND}{Environment.NewLine}" +
+               $"CombinedVramFlags: {entity.CombinedVramFlagsOR}|{entity.CombinedVramFlagsAND}{Environment.NewLine}" +
                $"_18c: {entity.Slope_18c}{Environment.NewLine}" +
                //
                $"BalanceRecord: {entity.BalanceRecord}{Environment.NewLine}" +

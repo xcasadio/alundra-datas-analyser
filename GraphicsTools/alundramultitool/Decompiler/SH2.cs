@@ -1,4 +1,4 @@
-﻿namespace alundramultitool
+﻿namespace alundramultitool.Decompiler
 {
     public class Sh2: InstructionSet
     {

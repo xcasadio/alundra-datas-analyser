@@ -203,7 +203,7 @@ internal class Program
 
         Log($"Map");
         Indent();
-        Log($"Width x Height {BLUE}{gameMap.Map.Width}{NORMAL}x{BLUE}{gameMap.Map.Height}{NORMAL}");
+        Log($"SizeX x SizeZ {BLUE}{gameMap.Map.Width}{NORMAL}x{BLUE}{gameMap.Map.Height}{NORMAL}");
         Log($"Width2 x Height2 {BLUE}{gameMap.Map.Width2}{NORMAL}x{BLUE}{gameMap.Map.Height2}{NORMAL}");
         Log($"WallTilesOffset {BLUE}{gameMap.Map.WallTilesOffset}{NORMAL}");
         Log($"{RED}Missing data{NORMAL}");
@@ -212,7 +212,7 @@ internal class Program
         Indent();
         foreach (var mapTile in gameMap.Map.MapTiles)
         {
-            //mapTile.Height
+            //mapTile.SizeZ
         }
         DeIndent();
         DeIndent();

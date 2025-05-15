@@ -30,7 +30,7 @@ public class RendererHelper
 
                 //render tile
                 //var dx = (x - currentRow) * StaticVariables.MapTileWidth - currentXPosition;
-                //var dy = (y - tile.Height - camTileOffsetY) * StaticVariables.MapTileHeight - currentYPosition;
+                //var dy = (y - tile.SizeZ - camTileOffsetY) * StaticVariables.MapTileHeight - currentYPosition;
                 var dx = x * StaticVariables.MapTileWidth - currentXPosition;
                 var dy = (y - tile.Height) * StaticVariables.MapTileHeight - currentYPosition;
 

@@ -1,6 +1,7 @@
 ﻿using alundramultitool;
-using GraphicsTools.LIB;
 using System.Text;
+using alundramultitool.Decompiler;
+using alundramultitool.Decompiler.LibModule;
 
 namespace GraphicsTools
 {

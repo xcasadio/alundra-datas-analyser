@@ -13,7 +13,7 @@ public class Entity
     public int Status;//0=destroyed,1=loaded,2=normal,3=deactivated,4=flagtodestroy,5=?
     public int Hp;
     public int HpMax;
-    public int UnknownCounter;//1c
+    public int HitFrameCounter;//1c
     public int IsNotProcessable;
     public int Flags2;
     public Entity PlatformEntity; //28
@@ -52,8 +52,8 @@ public class Entity
     public int AnimFlags;
     public int ZForce;//rise/fall speed
     public int TargetXForce, TargetYForce, XForce, YForce;
-    public int InteractXForce;//?cc
-    public int InteractYForce;//?d0
+    public int PreviousAdjustedXForce;//?cc
+    public int PreviousAdjustedYForce;//?d0
     public int XForceStep, YForceStep;//d4,d8
     public int AdjustedXForce, AdjustedYForce;//dc,e0
     public int FinalXForce, FinalYForce, FinalZForce;//e4,e8,ec

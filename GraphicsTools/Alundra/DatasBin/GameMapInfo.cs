@@ -16,7 +16,7 @@ public class GameMapInfo
         var startPosition = br.BaseStream.Position;
         MapId = br.ReadInt32();//0
         Gravity = br.ReadInt16();//4
-        TerminalVelocity = br.ReadInt16();//8
+        TerminalVelocity = br.ReadInt16();//6
         SlideEffectId = br.ReadByte();//a
         BalanceLevel = br.ReadByte();//b
         C = br.ReadByte();//c
@@ -85,9 +85,6 @@ public class GameMapInfo
         
             spriteIndex++;
         } while (spriteIndex < 6);
-
-
-
 
         //read portals
         br.BaseStream.Position = startPosition + 1066;

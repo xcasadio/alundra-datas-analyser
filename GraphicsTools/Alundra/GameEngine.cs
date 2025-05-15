@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
+﻿using System.Diagnostics;
 using Alundra.DatasBin;
 using Alundra.Gameplay;
 using Alundra.Gameplay.Scripts;
@@ -26,9 +24,12 @@ public class GameEngine
     private readonly EntityEventHandlers _entityEventHandlers;
     private readonly GameInitializer _gameInitializer;
     private readonly Renderer _renderer;
-    private readonly PadManager _padManager;
     private readonly EntityManager _entityManager;
     private readonly PlayerManager _playerManager;
+    private readonly PadManager _padManager;
+
+    //TODO : find the variable in StaticVariables
+    public int DialogState, DialogNameState, DialogName;
 
     public GameEngine(DatasBin.DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR, Font3 font3)
     {
@@ -531,6 +532,7 @@ public class GameEngine
         InitializeEffectSlots();
     }
 
+    // 8003c510
     private void InitializeMapEvents()
     {
         int programBMapCode;
@@ -886,6 +888,7 @@ public class GameEngine
         return entity;
     }
 
+    // 8003a1b8
     public Entity SpawnEntity(Entity parent, int entityId, int notCheckSpawnZone)
     {
         var entityRecord = CurrentMap.SpriteInfo.Entities.Entities[entityId];
@@ -1068,6 +1071,7 @@ public class GameEngine
         return collision;
     }
 
+    // 80032a40
     public void InitializeContents(Entity entity)
     {
         if (entity.EntityRecord != null)

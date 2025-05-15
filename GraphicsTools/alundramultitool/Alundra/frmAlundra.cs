@@ -113,7 +113,7 @@ namespace GraphicsTools.Alundra
 
         private List<Bitmap> GetSpriteImages(SiImageSet imgset)
         {
-            if (!_cachedSprites.ContainsKey(imgset.Imagesetid))
+            if (!_cachedSprites.ContainsKey(imgset.ImageSetId))
             {
                 var list = new List<Bitmap>();
                 for (var i = 0; i < imgset.NumberOfImages; i++)
@@ -121,10 +121,10 @@ namespace GraphicsTools.Alundra
                     list.Add(_selectedGameMap.GenerateSpriteBitmap(imgset.Images[i], _selectedGameMap.SpriteInfo.Palettes[imgset.Images[i].Palette & 0x1f]));
                 }
 
-                _cachedSprites.Add(imgset.Imagesetid, list);
+                _cachedSprites.Add(imgset.ImageSetId, list);
             }
 
-            return _cachedSprites[imgset.Imagesetid];
+            return _cachedSprites[imgset.ImageSetId];
         }
 
         private string Fix(int i)
@@ -429,7 +429,7 @@ namespace GraphicsTools.Alundra
                 {
                     for (var x = 0; x < map.Width; x++)
                     {
-                        //var tile = map.MapTiles[(y + vScrollMap.Value) * map.Width + x + hScrollMap.Value];
+                        //var tile = map.MapTiles[(y + vScrollMap.Value) * map.SizeX + x + hScrollMap.Value];
                         var tile = map.MapTiles[y * map.Width + x];
 
                         var dx = x * _mapScale * StaticVariables.MapTileWidth;
@@ -1101,13 +1101,13 @@ namespace GraphicsTools.Alundra
 
                 lbl_moreflags.Text = _selectedSector5.Header.MoreFlags.ToString("x");
                 lbl_canpickup.Text = _selectedSector5.Header.CanPickup.ToString("x");
-                lbl_flags.Text = _selectedSector5.Header.FlagsPortraitShadowtype.ToString("x");
-                lbl_offsetx.Text = _selectedSector5.Header.Xmod.ToString();
-                lbl_offsety.Text = _selectedSector5.Header.Ymod.ToString();
-                lbl_offsetz.Text = _selectedSector5.Header.Zmod.ToString();
-                lbl_width.Text = _selectedSector5.Header.Width.ToString();
-                lbl_depth.Text = _selectedSector5.Header.Depth.ToString();
-                lbl_height.Text = _selectedSector5.Header.Height.ToString();
+                lbl_flags.Text = _selectedSector5.Header.FlagsPortraitShadowType.ToString("x");
+                lbl_offsetx.Text = _selectedSector5.Header.OffsetX.ToString();
+                lbl_offsety.Text = _selectedSector5.Header.OffsetY.ToString();
+                lbl_offsetz.Text = _selectedSector5.Header.OffsetZ.ToString();
+                lbl_width.Text = _selectedSector5.Header.SizeX.ToString();
+                lbl_depth.Text = _selectedSector5.Header.SizeY.ToString();
+                lbl_height.Text = _selectedSector5.Header.SizeZ.ToString();
                 lbl_breakeffect.Text = _selectedSector5.Header.BreakEffect.ToString();
                 lbl_contents.Text = _selectedSector5.Header.Contents.ToString("x");
 
@@ -1140,7 +1140,7 @@ namespace GraphicsTools.Alundra
 
                 for (var dex = 0; dex < _selectedAnim.NumberOfFrames; dex++)
                 {
-                    lstSector5Frames.Items.Add("frame " + dex + " (imageset " + (_selectedAnim.Frames[dex].Images.Imagesetid & 0xff) + ")");
+                    lstSector5Frames.Items.Add("frame " + dex + " (imageset " + (_selectedAnim.Frames[dex].Images.ImageSetId & 0xff) + ")");
                 }
                 if (_selectedAnim.NumberOfFrames > 0)
                 {
@@ -1242,7 +1242,7 @@ namespace GraphicsTools.Alundra
             {
                 _selectedFrame = _selectedAnim.Frames[lstSector5Frames.SelectedIndex];
                 lblFrameAddr.Text = _selectedFrame.MemoryAddress.ToString("x6");
-                lblImgAddr.Text = _selectedFrame.Images.Memaddr.ToString("x6");
+                lblImgAddr.Text = _selectedFrame.Images.MemoryAddress.ToString("x6");
                 lblFrameData.Text = "delay: " + ByteToString(_selectedFrame.Delay) + " frm?: " + _selectedFrame.CollisionOffset.ToString("x4") + " imgs?: " + ByteToString(_selectedFrame.Images.Unknown);
                 //CachedSprites.Remove(selectedFrame.images.imagesetid);
                 for (var dex = 0; dex < _selectedFrame.Images.NumberOfImages; dex++)
@@ -1535,7 +1535,7 @@ namespace GraphicsTools.Alundra
 
                 if (_selectedSector5 != null)
                 {
-                    if ((_selectedSector5.Header.FlagsPortraitShadowtype & 0x80) == 0x80)
+                    if ((_selectedSector5.Header.FlagsPortraitShadowType & 0x80) == 0x80)
                     {
                         var br = _datasBin.OpenBin();
                         var portraitset = _selectedSector5.GetPortraitImageset(br);
@@ -1571,7 +1571,7 @@ namespace GraphicsTools.Alundra
                 graphics2.DrawImage(_font3.GenerateFontBitmapTim(paletteIndex), 0, 0/*-vScrollSprite.Value*/);
                 pictureBoxFont3Tim.Refresh();
 
-                //vScrollSprite.Maximum = _font3.FontBitmap.Height;
+                //vScrollSprite.Maximum = _font3.FontBitmap.SizeZ;
                 //vScrollSprite_Scroll(null, null);
             }
             pctSpritePalettes.Refresh();
@@ -1583,7 +1583,7 @@ namespace GraphicsTools.Alundra
             //int posy = 0;
             //var spriteSheet = new Bitmap(512, 512);
             //var graphics = Graphics.FromImage(spriteSheet);
-            //graphics.DrawRectangle(new Pen(Color.Transparent, 10f), 0, 0, spriteSheet.Width, spriteSheet.Height);
+            //graphics.DrawRectangle(new Pen(Color.Transparent, 10f), 0, 0, spriteSheet.SizeX, spriteSheet.SizeZ);
             //int spriteHeight = 0;
             //
             //var br = datasBin.OpenBin();
@@ -1622,7 +1622,7 @@ namespace GraphicsTools.Alundra
             //                var maxWidth = Math.Max(frame.images.images.Max(x => x.swidth), xOffset);
             //                spriteHeight = Math.Max(spriteHeight, Math.Max(frame.images.images.Max(x => x.sheight), yOffset));
             //
-            //                if (posx + maxWidth >= spriteSheet.Width) // new row
+            //                if (posx + maxWidth >= spriteSheet.SizeX) // new row
             //                {
             //                    posx = 0;
             //                    posy += spriteHeight;
@@ -1659,12 +1659,12 @@ namespace GraphicsTools.Alundra
             //                        entity.FrameXOff = entity.FrameCollision.XOff << 16;
             //                        entity.FrameYOff = entity.FrameCollision.YOff << 16;
             //                        entity.FrameZOff = entity.FrameCollision.ZOff << 16;
-            //                        entity.Width = (entity.FrameCollision.Width << 16) - 1;
-            //                        entity.Depth = (entity.FrameCollision.Depth << 16) - 1;
-            //                        entity.Height = (entity.FrameCollision.Height << 16) - 1;
+            //                        entity.SizeX = (entity.FrameCollision.SizeX << 16) - 1;
+            //                        entity.SizeY = (entity.FrameCollision.SizeY << 16) - 1;
+            //                        entity.SizeZ = (entity.FrameCollision.SizeZ << 16) - 1;
             //                     */
             //                    //TODO : depth and z
-            //                    collision2d.Shape = new ShapeRectangle(frame.CollisionData.XOff, frame.CollisionData.YOff, frame.CollisionData.Width, frame.CollisionData.Height);
+            //                    collision2d.Shape = new ShapeRectangle(frame.CollisionData.XOff, frame.CollisionData.YOff, frame.CollisionData.SizeX, frame.CollisionData.SizeZ);
             //                    spriteData.CollisionShapes.Add(collision2d);
             //                }
             //
