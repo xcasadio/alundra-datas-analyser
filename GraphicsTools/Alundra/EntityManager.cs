@@ -2107,8 +2107,8 @@ public class EntityManager
 
                     UpdateEntityPhysics(entity);
 
-                    entity.XForce = IncrementForce(entity.XForce, entity.TargetXForce, entity.XForceStep); // 2eme tour : -1536
-                    entity.YForce = IncrementForce(entity.YForce, entity.TargetYForce, entity.YForceStep); // 2eme tour 1008
+                    entity.XForce = IncrementForce(entity.XForce, entity.TargetXForce, entity.XForceStep);
+                    entity.YForce = IncrementForce(entity.YForce, entity.TargetYForce, entity.YForceStep);
 
                     //goto LABEL_ProcessFinalForces;
                     ApplyEntityForces(entity);
@@ -2130,248 +2130,34 @@ public class EntityManager
         }
     }
 
-    // 80036828
-    private void UpdateEntitiesForces2()
-    {
-        var player = StaticVariables.PlayerEntity;
-
-        for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
-        {
-            var entity = StaticVariables.g_activeEntities[i];
-
-            if (entity == player)
-            {
-                if (player.IsZForceApplied != 0)
-                {
-                    if ((player.Flags & 0x100) != 0
-                        && (player.CombinedVramFlagsOR & 0x0010) != 0
-                        && StaticVariables.g_gravityFlag <= 0)
-                    {
-                        player.ZForce = player.IsZForceApplied * 160;
-                    }
-                    else
-                    {
-                        player.ZForce = player.IsZForceApplied << 8;
-                    }
-                }
-                else
-                {
-                    if ((player.Flags & 0x0100) != 0)
-                    {
-                        var force = player.ZForce - (_gameEngine.CurrentMap.Info.Gravity << 8);
-                        if (force < 0)
-                        {
-                            force = -force;//abs
-                        }
-
-                        var terminal = _gameEngine.CurrentMap.Info.TerminalVelocity << 8;
-                        if (terminal < force)
-                        {
-                            force = terminal;
-                            if (force < 0)
-                            {
-                                force = -force;//abs
-                            }
-                        }
-                        player.ZForce = force;
-                    }
-                }
-
-                UpdateEntityPhysics(player);
-
-                int xforcestep, yforcestep;
-                if ((player.CombinedVramFlagsOR & 0x0020) != 0)
-                {
-                    long resultx = player.XForceStep * 0x1000;
-                    xforcestep = (int)(resultx >> 16);
-
-                    long resulty = player.YForceStep * 0x1000;
-                    yforcestep = (int)(resulty >> 16);
-                }
-                else
-                {
-                    xforcestep = player.XForceStep;
-                    yforcestep = player.YForceStep;
-                }
-
-                int targetxforce, targetyforce;
-                if ((player.CombinedVramFlagsOR & 0x0008) != 0
-                    && StaticVariables.g_gravityFlag <= 0)
-                {
-                    long resultx = player.TargetXForce * 0x8000;
-                    targetxforce = (int)(resultx >> 16);
-                    long resulty = player.TargetYForce * 0x8000;
-                    targetyforce = (int)(resulty >> 16);
-                }
-                else
-                {
-                    targetxforce = player.TargetXForce;
-                    targetyforce = player.TargetYForce;
-                }
-
-                player.XForce = IncrementForce(player.XForce, targetxforce, xforcestep);
-                player.YForce = IncrementForce(player.YForce, targetyforce, yforcestep);
-            }
-            else
-            {
-                if (entity.PlatformEntity != null)
-                {
-                    entity.ZForce = 0;
-                    entity.YForce = 0;
-                    entity.XForce = 0;
-                    entity.AdjustedYForce = 0;
-                    entity.AdjustedXForce = 0;
-                    entity.FinalZForce = 0;
-                    entity.FinalYForce = 0;
-                    entity.FinalXForce = 0;
-                    continue;
-                }
-
-                if (entity.IsZForceApplied != 0)
-                {
-                    if ((entity.IsZForceApplied & 0xffff) == 0x8000
-                        && (entity.Flags & 0x0100) == 0)
-                    {
-                        entity.ZForce = entity.IsZForceApplied << 8;
-                    }
-                }
-
-                if ((entity.Flags & 0x0100) != 0)
-                {
-                    //this applies gravity (limited by terminal velicity) to the z force
-                    var force = entity.ZForce - (_gameEngine.CurrentMap.Info.Gravity << 8);
-                    if (force < 0)
-                    {
-                        force = -force;//abs
-                    }
-
-                    var terminal = _gameEngine.CurrentMap.Info.TerminalVelocity << 8;
-                    if (terminal < force)
-                    {
-                        force = terminal;
-                        if (force < 0)
-                        {
-                            force = -force;//abs
-                        }
-                    }
-                    entity.ZForce = force;
-                }
-
-                UpdateEntityPhysics(entity);
-
-                entity.XForce = IncrementForce(entity.XForce, entity.TargetXForce, entity.XForceStep);
-                entity.YForce = IncrementForce(entity.YForce, entity.TargetYForce, entity.YForceStep);
-            }
-
-            ApplyEntityForces(entity);
-
-            entity.FinalXForce = entity.AdjustedXForce;
-            entity.FinalYForce = entity.AdjustedYForce;
-            entity.FinalZForce = entity.ZForce;
-        }
-    }
-
-    // 800366fc
-    private void ApplyEntityForces2(Entity entity)
-    {
-        int prevAdjustedX = entity.PreviousAdjustedXForce;
-        int prevAdjustedY = entity.PreviousAdjustedYForce;
-
-        entity.PreviousAdjustedXForce = 0;
-        entity.PreviousAdjustedYForce = 0;
-
-        int tableIndex = entity.TileAttributes & 0xF;
-        int xForceComponent = (int)ScriptHelper.XForceTable[tableIndex];
-        int yForceComponent = (int)ScriptHelper.YForceTable[tableIndex];
-
-        xForceComponent += entity.XForce;
-        yForceComponent += entity.YForce;
-
-        int shiftAmount = _gameEngine.CurrentMap.Info.Gravity; // & 0xFF;
-        xForceComponent >>= shiftAmount;
-        yForceComponent >>= shiftAmount;
-
-        xForceComponent += prevAdjustedX;
-        yForceComponent += prevAdjustedY;
-
-        int minX = entity.NegXMod;
-        int newX = entity.TargetXForce + xForceComponent;
-
-        if (newX < minX)
-        {
-            xForceComponent = minX - entity.TargetXForce;
-            entity.CollidedWithEntityZ = 1;
-        }
-        else
-        {
-            int maxX = entity.ScreenClipX;
-            if (newX > maxX)
-            {
-                xForceComponent = maxX - entity.TargetXForce;
-                entity.CollidedWithEntityZ = 1;
-            }
-        }
-
-        int minY = entity.NegYMod;
-        int newY = entity.TargetYForce + yForceComponent;
-
-        if (newY < minY)
-        {
-            yForceComponent = minY - entity.TargetYForce;
-            entity.CollidedWithEntityZ = 1;
-        }
-        else
-        {
-            int maxY = entity.ScreenClipY;
-            if (newY > maxY)
-            {
-                yForceComponent = maxY - entity.TargetYForce;
-                entity.CollidedWithEntityZ = 1;
-            }
-        }
-
-        entity.AdjustedXForce = xForceComponent;
-        entity.AdjustedYForce = yForceComponent;
-    }
-
     // 800366fc
     private void ApplyEntityForces(Entity entity)
     {
-        var lastinteractx = entity.PreviousAdjustedXForce;
-        var lastinteracty = entity.PreviousAdjustedYForce;
+        var adjustedXForce = entity.PreviousAdjustedXForce;
+        var adjustedYForce = entity.PreviousAdjustedYForce;
+        var shitfAmount = _gameEngine.CurrentMap.Info.Gravity & 0x1f;
+        var xForceComponent = entity.XForce + ScriptHelper.XForceTable[entity.TileAttributes & 0xf] >> shitfAmount;
+        xForceComponent += adjustedXForce;
+        var yForceComponent = entity.YForce + ScriptHelper.YForceTable[entity.TileAttributes & 0xf] >> shitfAmount;
+        yForceComponent += adjustedYForce;
+
         entity.PreviousAdjustedYForce = 0;
         entity.PreviousAdjustedXForce = 0;
-        var shitfAmount = _gameEngine.CurrentMap.Info.Gravity & 0x1f;
-        var xval = entity.XForce + ScriptHelper.XForceTable[entity.TileAttributes & 0xf] >> shitfAmount;
-        var yval = entity.YForce + ScriptHelper.YForceTable[entity.TileAttributes & 0xf] >> shitfAmount;
 
-        xval += lastinteractx;
-        yval += lastinteracty;
-
-        if (xval + entity.XPos < entity.NegXMod)
+        if (entity.XPos + xForceComponent < entity.NegXMod || entity.ScreenClipX < entity.XPos + xForceComponent)
         {
-            xval = entity.NegXMod - entity.XPos;
-            entity.ForceAdjusted = 1;
-        }
-        else if (xval + entity.XPos < entity.ScreenClipX)
-        {
-            xval = entity.ScreenClipX - entity.XPos;
+            xForceComponent = entity.ScreenClipX - entity.XPos;
             entity.ForceAdjusted = 1;
         }
 
-        if (yval + entity.YPos < entity.NegYMod)
+        if (entity.YPos + yForceComponent < entity.NegYMod || entity.ScreenClipY < entity.YPos + yForceComponent)
         {
-            yval = entity.NegYMod - entity.YPos;
-            entity.ForceAdjusted = 1;
-        }
-        else if (yval + entity.YPos < entity.ScreenClipY)
-        {
-            yval = entity.ScreenClipY - entity.YPos;
+            yForceComponent = entity.ScreenClipY - entity.YPos;
             entity.ForceAdjusted = 1;
         }
 
-        entity.AdjustedXForce = (int)xval;
-        entity.AdjustedYForce = (int)yval;
+        entity.AdjustedXForce = (int)xForceComponent;
+        entity.AdjustedYForce = (int)yForceComponent;
     }
 
     // 800367e4

@@ -1354,6 +1354,7 @@ public class GameEngine
         StaticVariables.g_animationCounter = 2;
     }
 
+    // 8004a09c
     private int LoadMapSounds(int mapId)
     {
         var iVar1 = GetMapWarpDestination(mapId);
