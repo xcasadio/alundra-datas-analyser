@@ -251,8 +251,7 @@ public class EntityManager
             entity.AnimSet = animRecordPtr;
             entity.Frame = currentFrame;
             entity.FirstFrame = currentFrame;
-            entity.IsZForceApplied = entity.Sprite.Header.MoreFlags;
-            //entity.NextFrameDelay = entity.Frame.Delay & 0x7f;
+            entity.IsZForceApplied = 0; //entity.Sprite.Header.MoreFlags;
 
             initializeValues = true;
 
@@ -1045,12 +1044,15 @@ public class EntityManager
         if ((entity.Flags & 0x80) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.PlatformEntity == null)
         {
             entityIndex = 0;
+
             if (StaticVariables.g_collideableEntitiesCount > 0)
             {
                 collidableEntityPtr = StaticVariables.g_collideableEntities;
+
                 do
                 {
                     candidateEntity = collidableEntityPtr[entityIndex];
+
                     if (entity != candidateEntity)
                     {
                         deltaY = candidateEntity.ModdedZPos + candidateEntity.Depth;
@@ -1058,16 +1060,17 @@ public class EntityManager
                         if (deltaY < entity.ModdedZPos && platformTopZ <= deltaY)
                         {
                             deltaX = candidateEntity.ModdedXPos - entity.ModdedXPos;
+
                             if (deltaX < 0)
                             {
                                 if (entity.ModdedXPos - candidateEntity.ModdedXPos < candidateEntity.Width + 1)
                                 {
                                     deltaX = candidateEntity.ModdedYPos - entity.ModdedYPos;
+
                                     if (deltaX < 0)
                                     {
                                         if (entity.ModdedYPos - candidateEntity.ModdedYPos < candidateEntity.Height + 1)
                                         {
-
                                             platformTopZ = deltaY + 1;
                                             collisionDetected = true;
                                             bestCandidate = candidateEntity;
@@ -1084,11 +1087,11 @@ public class EntityManager
                             else if (deltaX < entity.Width + 1)
                             {
                                 deltaX = candidateEntity.ModdedYPos - entity.ModdedYPos;
+
                                 if (deltaX < 0)
                                 {
                                     if (entity.ModdedYPos - candidateEntity.ModdedYPos < candidateEntity.Height + 1)
                                     {
-
                                         platformTopZ = deltaY + 1;
                                         collisionDetected = true;
                                         bestCandidate = candidateEntity;
@@ -1103,7 +1106,8 @@ public class EntityManager
                             }
                         }
                     }
-                    entityIndex = entityIndex + 1;
+
+                    entityIndex++;
                 } while (entityIndex < StaticVariables.g_collideableEntitiesCount);
             }
         }
@@ -1120,7 +1124,7 @@ public class EntityManager
         int entityTopZ;
         Entity candidateEntity;
         int candidateZPos;
-        Entity[] collidableEntityPtr;
+        //Entity[] collidableEntityPtr;
         int platformCandidateZ;
         int entityIndex;
         bool collisionDetected;
@@ -1136,26 +1140,33 @@ public class EntityManager
             platformCandidateZ = 0x77fffff;
         }
 
-        if ((entity.Flags & 0x80) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.PlatformEntity == null)
+        if ((entity.Flags & 0x80) != 0 
+            && (entity.AnimFlags & 0x80) == 0 
+            && entity.PlatformEntity == null)
         {
             entityIndex = 0;
             if (StaticVariables.g_collideableEntitiesCount > 0)
             {
-                collidableEntityPtr = StaticVariables.g_collideableEntities;
+                //collidableEntityPtr = StaticVariables.g_collideableEntities;
                 do
                 {
-                    candidateEntity = collidableEntityPtr[entityIndex];
+                    candidateEntity = StaticVariables.g_collideableEntities[entityIndex];
+
                     if (entity != candidateEntity)
                     {
                         candidateZPos = candidateEntity.ModdedZPos;
-                        if (entityTopZ < candidateZPos && candidateZPos <= platformCandidateZ)
+
+                        if (entityTopZ < candidateZPos 
+                            && candidateZPos <= platformCandidateZ)
                         {
                             deltaX = candidateEntity.ModdedXPos - entity.ModdedXPos;
+
                             if (deltaX < 0)
                             {
                                 if (entity.ModdedXPos - candidateEntity.ModdedXPos < candidateEntity.Width + 1)
                                 {
                                     deltaX = candidateEntity.ModdedYPos - entity.ModdedYPos;
+
                                     if (deltaX < 0)
                                     {
                                         if (entity.ModdedYPos - candidateEntity.ModdedYPos < candidateEntity.Height + 1)
@@ -1176,6 +1187,7 @@ public class EntityManager
                             else if (deltaX < entity.Width + 1)
                             {
                                 deltaX = candidateEntity.ModdedYPos - entity.ModdedYPos;
+
                                 if (deltaX < 0)
                                 {
                                     if (entity.ModdedYPos - candidateEntity.ModdedYPos < candidateEntity.Height + 1)
@@ -1195,7 +1207,6 @@ public class EntityManager
                         }
                     }
                     entityIndex = entityIndex + 1;
-                    collidableEntityPtr = collidableEntityPtr; // Already incremented by array index
                 } while (entityIndex < StaticVariables.g_collideableEntitiesCount);
             }
         }

@@ -18,6 +18,9 @@ public class EventProgramState
     
     public int CommandIndex;
     public List<SiCommand> Commands;
+    
+    public byte[] Codes;
+    public int CodeIndex = 0;
 
     public void CopyFrom(EventProgramState other)
     {

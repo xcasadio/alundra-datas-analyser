@@ -450,22 +450,25 @@ public class EntityEventHandlers
 
         while (true)
         {
-            FillDataFromCommand(eventProgramState);
-            int command = eventProgramState.Sp;
+            int[] variables = FillDataFromCommand(eventProgramState);
+            int command = variables[0];//eventProgramState.Exp[0]; // Variables[0]
 
             //if (isDebug)
             //    DebugMessageFormat(" {0:D3}", command);
 
             if (command == 0xFF)
             {
+                Debug.WriteLine($"Entity[{entity.Index}] end");
                 goto END_SCRIPT;
             }
 
             if (command == 0x00) // break, skip the loop but do the next command
             {
+                Debug.WriteLine($"Entity[{entity.Index}] break");
                 eventProgramState.Exp[1] = 0;
                 eventProgramState.CommandIndex++;
-                FillDataFromCommand(eventProgramState);
+                eventProgramState.CodeIndex++;
+                FillDataFromCommand(eventProgramState); // needed because there is a check at the beginning of the function
                 goto END_SCRIPT;
             }
 
@@ -473,15 +476,10 @@ public class EntityEventHandlers
             var lastCommand = StaticVariables.g_activeCommand;
             StaticVariables.g_activeCommand = command;
 
-            var name = SpriteInfoEventCodes.CommandNameByCode.GetValueOrDefault((byte)command, "");
-            //if (!string.IsNullOrEmpty(name))
-            {
-                var eventTypeName = logicMode == 0 ? "ALoad" : logicMode == 1 ? "BMap" : logicMode == 2 ? "CTick" : logicMode == 3 ? "DTouch" : logicMode == 4 ? "EDeactivate" : "FInteract";
-                Debug.Write($"Entity[{entity.Index}] run {eventTypeName} command 0x{command:x2}'{name}' {string.Join(',', eventProgramState.Exp)} = ");
-            }
+            LogCommand(entity, logicMode, command, variables);
 
             var func = _handlers[command];
-            var result = func(entity.LogicContextEntity, entity, eventProgramState.Exp, eventProgramState);
+            var result = (sbyte)func(entity.LogicContextEntity, entity, variables, eventProgramState);
 
             Debug.WriteLine($"{result}");
 
@@ -508,7 +506,8 @@ public class EntityEventHandlers
 
             //ClearExp(eventProgramState);
             eventProgramState.Exp[1] = 0;
-            SetNextIndex(eventProgramState, result);
+            //SetNextCommand(eventProgramState, result);
+            eventProgramState.CodeIndex += result;
         }
 
         ClearExp(eventProgramState);
@@ -521,13 +520,20 @@ public class EntityEventHandlers
         }
     }
 
-    private void SetNextIndex(EventProgramState eventProgramState, int offset)
+    private static void LogCommand(Entity entity, int logicMode, int command, int[] variables)
+    {
+        var name = SpriteInfoEventCodes.CommandNameByCode.GetValueOrDefault((byte)command, "?");
+        var eventTypeName = logicMode == 0 ? "ALoad" : logicMode == 1 ? "BMap" : logicMode == 2 ? "CTick" : logicMode == 3 ? "DTouch" : logicMode == 4 ? "EDeactivate" : "FInteract";
+        Debug.Write($"Entity[{entity.Index}] run {eventTypeName} command 0x{command:x2}'{name}' {string.Join(',', variables.Select(x => x.ToString("x2")))} = ");
+    }
+
+    private void SetNextCommand(EventProgramState eventProgramState, int offset)
     {
         if (offset < 0)
         {
-            eventProgramState.CommandIndex--;
+            //eventProgramState.CommandIndex--;
 
-            while (offset < 0 && eventProgramState.CommandIndex < 0)
+            while (offset < 0 && eventProgramState.CommandIndex >= 0)
             {
                 var siCommand = eventProgramState.Commands[eventProgramState.CommandIndex];
                 offset += siCommand.Size;
@@ -536,42 +542,79 @@ public class EntityEventHandlers
         }
         else
         {
-            while (offset > 0)
+            while (offset > 0 && eventProgramState.CommandIndex < eventProgramState.Commands.Count)
             {
                 var siCommand = eventProgramState.Commands[eventProgramState.CommandIndex];
-                eventProgramState.CommandIndex++;
                 offset -= siCommand.Size;
-
-                if (eventProgramState.CommandIndex >= eventProgramState.Commands.Count)
-                {
-                    break;
-                }
+                eventProgramState.CommandIndex++;
             }
+        }
+
+        if (eventProgramState.CommandIndex < 0)
+        {
+            Debugger.Break();
+            eventProgramState.CommandIndex = 0;
+        }
+        else if (eventProgramState.CommandIndex >= eventProgramState.Commands.Count)
+        {
+            Debugger.Break();
+            eventProgramState.CommandIndex = eventProgramState.Commands.Count - 1;
         }
 
         if (offset != 0)
         {
-            //Debugger.Break();
+            Debugger.Break();
         }
     }
 
-    private void FillDataFromCommand(EventProgramState eventProgramState)
+    private int[] FillDataFromCommand(EventProgramState eventProgramState)
     {
-        if (eventProgramState.Commands == null || eventProgramState.CommandIndex >= eventProgramState.Commands.Count)
-        {
-            return;
-        }
-
-        var siCommand = eventProgramState.Commands[eventProgramState.CommandIndex];
+        //if (eventProgramState.Commands == null || eventProgramState.CommandIndex >= eventProgramState.Commands.Count)
+        //{
+        //    return [0xFF];
+        //}
+        //
+        //var siCommand = eventProgramState.Commands[eventProgramState.CommandIndex];
         ClearExp(eventProgramState);
 
-        eventProgramState.Sp = siCommand.Command;
-        eventProgramState.Exp[0] = siCommand.Command;
+        //eventProgramState.Sp = siCommand.Command;
+        //eventProgramState.Exp[0] = siCommand.Command;
+        //
+        //for (int i = 0; i < siCommand.Parameters.Length; i++)
+        //{
+        //    eventProgramState.Exp[i + 1] = siCommand.Parameters[i];
+        //}
 
-        for (int i = 0; i < siCommand.Parameters.Length; i++)
+        if (eventProgramState.Codes == null || eventProgramState.CodeIndex >= eventProgramState.Codes.Length)
         {
-            eventProgramState.Exp[i + 1] = siCommand.Parameters[i];
+            return [0xFF];
         }
+
+        eventProgramState.Sp = eventProgramState.Codes[eventProgramState.CodeIndex];
+        //eventProgramState.Exp[0] = eventProgramState.Sp;
+
+        //int j = 1;
+        //var codeIndex = eventProgramState.CodeIndex + j;
+        //
+        //while (codeIndex < eventProgramState.Codes.Length 
+        //       && j < eventProgramState.Exp.Length)
+        //{
+        //    var value = eventProgramState.Codes[codeIndex];
+        //
+        //    if (value is 0x0 or 0xFF)
+        //    {
+        //        break;
+        //    }
+        //
+        //    eventProgramState.Exp[j] = value;
+        //    j++;
+        //    codeIndex = eventProgramState.CodeIndex + j;
+        //}
+
+        int[] variables = new int[10];
+        Array.Copy(eventProgramState.Codes, eventProgramState.CodeIndex, variables, 0, 10);
+
+        return variables;
     }
 
     private static void ClearEventProgramState(EventProgramState eventProgramState, bool clearCommandIndex = false)
@@ -583,11 +626,15 @@ public class EntityEventHandlers
 
         eventProgramState.Sp = 0;
         ClearExp(eventProgramState);
+
+        eventProgramState.Codes = null;
+        eventProgramState.CodeIndex = 0;
+        Array.Clear(eventProgramState.Exp);
     }
 
     private static void ClearExp(EventProgramState eventProgramState)
     {
-        eventProgramState.Exp[0] = 0;
+        //eventProgramState.Exp[0] = 0;
         //for (int i = 0; i < eventProgramState.Exp.Length; i++)
         //{
         //    eventProgramState.Exp[i] = 0;
@@ -608,45 +655,30 @@ public class EntityEventHandlers
         //Debug.WriteLine($"Entity[{entity.Index}] load events #{eventTypeName} index:{entity.ProgramIndexes[eventProgramType]:x2}");
 
         using var br = _gameEngine.DatasBin.OpenBin();
-        short[] eventCodesTable = null;
 
-        switch (eventProgramType)
+        short[] eventCodesTable = eventProgramType switch
         {
-            case ScriptHelper.ProgramALoad:
-                eventCodesTable = spriteInfo.EventCodes.EventCodesATable;
-                break;
+            ScriptHelper.ProgramALoad => spriteInfo.EventCodes.EventCodesATable,
+            ScriptHelper.ProgramBMap => spriteInfo.EventCodes.EventCodesBTable,
+            ScriptHelper.ProgramCTick => spriteInfo.EventCodes.EventCodesCTable,
+            ScriptHelper.ProgramDTouch => spriteInfo.EventCodes.EventCodesDTable,
+            ScriptHelper.ProgramEDeactivate => spriteInfo.EventCodes.EventCodesETable,
+            ScriptHelper.ProgramFInteract => spriteInfo.EventCodes.EventCodesFTable,
+            _ => throw new InvalidOperationException()
+        };
 
-            case ScriptHelper.ProgramBMap:
-                eventCodesTable = spriteInfo.EventCodes.EventCodesBTable;
-                break;
+        eventProgramState.Codes = GetEventCodes(br, entity.ProgramIndexes[eventProgramType], eventCodesTable, spriteInfo);
+        eventProgramState.CodeIndex = 0;
+        Array.Clear(eventProgramState.Exp);
+        eventProgramState.Sp = eventProgramState.Codes?.Length > 0 ? eventProgramState.Codes[eventProgramState.CodeIndex] : 0;
+        eventProgramState.Exp[0] = eventProgramState.Sp;
 
-            case ScriptHelper.ProgramCTick:
-                eventCodesTable = spriteInfo.EventCodes.EventCodesCTable;
-                break;
-
-            case ScriptHelper.ProgramDTouch:
-                eventCodesTable = spriteInfo.EventCodes.EventCodesDTable;
-                break;
-
-            case ScriptHelper.ProgramEDeactivate:
-                eventCodesTable = spriteInfo.EventCodes.EventCodesETable;
-                break;
-
-            case ScriptHelper.ProgramFInteract:
-                eventCodesTable = spriteInfo.EventCodes.EventCodesFTable;
-                break;
-        }
-
-        eventProgramState.Commands = GetEventCodeCommands(br, entity.ProgramIndexes[eventProgramType], eventCodesTable, spriteInfo);
-        //eventProgramState.Commands = spriteInfo.EventCodes.GetCommands(br, entity.ProgramIndexes[eventProgramType], true);
-        //eventProgramState.Commands = spriteInfo.EventCodes.CommandsByTypes[eventProgramType];
-        eventProgramState.CommandIndex = 0;
-        eventProgramState.Sp = 0;
-
-        for (int i = 0; i < eventProgramState.Exp.Length; i++)
-        {
-            eventProgramState.Exp[i] = 0;
-        }
+        //eventProgramState.Commands = GetEventCodeCommands(br, entity.ProgramIndexes[eventProgramType], eventCodesTable, spriteInfo);
+        ////eventProgramState.Commands = spriteInfo.EventCodes.GetCommands(br, entity.ProgramIndexes[eventProgramType], true);
+        ////eventProgramState.Commands = spriteInfo.EventCodes.CommandsByTypes[eventProgramType];
+        //eventProgramState.CommandIndex = 0;
+        //eventProgramState.Sp = 0;
+        //Array.Clear(eventProgramState.Exp);
     }
 
     public static List<SiCommand> GetEventCodeCommands(BinaryReader br, int index, short[] eventCodesTable, SpriteInfo spriteInfo)
@@ -665,6 +697,21 @@ public class EntityEventHandlers
         return [];
     }
 
+
+    public static byte[] GetEventCodes(BinaryReader br, int index, short[] eventCodesTable, SpriteInfo spriteInfo)
+    {
+        if (index > 0 && index < 0xff)
+        {
+            var i = index & 0x7f;
+            if (i < eventCodesTable.Length - 1)
+            {
+                var size = eventCodesTable[i + 1] - eventCodesTable[i];
+                return spriteInfo?.EventCodes?.GetByteCode(br, eventCodesTable[i]);
+            }
+        }
+        return [];
+    }
+
     //All Script_xxx functions
     //8003D158
     public int _Unknown_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
@@ -672,7 +719,7 @@ public class EntityEventHandlers
         //Debug.WriteLine("Data Logic Error!");
         return 0;
     }
-
+    /*
     public int _02_Goto_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         //var offset = (short)(exp[1] + (exp[2] << 8));
@@ -1987,7 +2034,7 @@ public class EntityEventHandlers
 
         return 9;
     }
-
+    */
     //=========================================================================================
     //=========================================================================================
     //=========================================================================================
@@ -2029,14 +2076,14 @@ public class EntityEventHandlers
     // 8003D1D8
     private int Script_4_004(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var iVar1 = 3;
+        var result = 3;
 
         if (eventProgramState.Result == 0)
         {
-            iVar1 = ((variables[1] + variables[2] * 0x100) * 0x10000) >> 0x10;
+            result = ((variables[1] + variables[2] * 0x100) * 0x10000) >> 0x10;
         }
 
-        return iVar1;
+        return result;
     }
 
     // 8003D210
@@ -2056,7 +2103,7 @@ public class EntityEventHandlers
         }
 
         var puVar3 = flags[uVar2 >> 3 & 0xffc];
-        flags[uVar2 >> 3 & 0xffc] = (puVar3 | (uint)(1 << (variables[1] & 0x1f)));
+        flags[uVar2 >> 3 & 0xffc] = puVar3 | (uint)(1 << (variables[1] & 0x1f));
 
         return 3;
     }
@@ -2111,11 +2158,10 @@ public class EntityEventHandlers
                     && previousEntity.TileZ <= zmax)
                 {
                     eventProgramState.Result = 1;
-
                     return 8;
                 }
 
-                val += -1;
+                val -= 1;
                 entity = StaticVariables.g_matchingEntitiesBuffer[val];
             } while (0 < val);
         }
@@ -2149,30 +2195,30 @@ public class EntityEventHandlers
     // 8003D468
     private int Script_11_00B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        int iVar1;
+        int result;
 
         logicEntity.TargetAnimationId = (uint)variables[1];
 
         if (eventProgramState.Exp[1] == variables[0])
         {
-            iVar1 = eventProgramState.Exp[2] - logicEntity.XPos;
-            var iVar3 = eventProgramState.Exp[3] - logicEntity.YPos;
+            var x = eventProgramState.Exp[2] - logicEntity.XPos;
+            var y = eventProgramState.Exp[3] - logicEntity.YPos;
 
-            if (iVar1 < 0)
+            if (x < 0)
             {
-                iVar1 = -iVar1;
+                x = -x;
             }
 
-            if (iVar3 < 0)
+            if (y < 0)
             {
-                iVar3 = -iVar3;
+                y = -y;
             }
 
             var uVar2 = (uint)eventProgramState.Exp[3];
-            iVar1 = 0;
-            if ((int)uVar2 <= iVar1 >> 0x10 || (int)uVar2 <= iVar3 >> 0x10)
+            result = 0;
+            if ((int)uVar2 <= x >> 0x10 || (int)uVar2 <= y >> 0x10)
             {
-                iVar1 = 4;
+                result = 4;
             }
         }
         else
@@ -2180,10 +2226,10 @@ public class EntityEventHandlers
             eventProgramState.Exp[1] = variables[0];
             eventProgramState.Exp[2] = logicEntity.XPos;
             eventProgramState.Exp[3] = logicEntity.YPos;
-            iVar1 = 0;
+            result = 0;
         }
 
-        return iVar1;
+        return result;
     }
 
     // 8003D518
@@ -2438,15 +2484,14 @@ public class EntityEventHandlers
     private int Script_33_021(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var iVar1 = Script_32_020(logicEntity, ownerEntity, variables, eventProgramState);
-        var iVar2 = iVar1;
-        iVar2 = 3;
+        var result = 3;
 
         if (iVar1 == 0 && logicEntity.CollidedWithEntityZ == 0)
         {
-            iVar2 = iVar1;
+            result = iVar1;
         }
 
-        return iVar2;
+        return result;
     }
 
     // 8003DA70
@@ -2693,7 +2738,7 @@ public class EntityEventHandlers
         result = 5;
         var mask = 1 << (variables[1] & 0x1f);
         var index = (flag >> 3) & 0xffc;
-        
+
         if ((flags[index] & mask) != 0)
         {
             result = ((variables[3] + variables[4] * 0x100) * 0x10000) >> 0x10;
@@ -3117,15 +3162,15 @@ public class EntityEventHandlers
             eventProgramState.Exp[2] = 0;
             return 0;
         }
-        
+
         eventProgramState.Exp[2]++;
-        
+
         var toWait = variables[1];
         if (eventProgramState.Exp[2] >= toWait)
         {
             return 2;
         }
-        
+
         return 0;
     }
 
@@ -3971,14 +4016,13 @@ public class EntityEventHandlers
         ushort flag;
         int num;
 
-        flag = (ushort)variables[2];
+        flag = (ushort)((variables[3] << 8) | variables[2]);
         num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
 
         for (int i = 0; i < num; i++)
         {
             var entity = StaticVariables.g_matchingEntitiesBuffer[i];
             entity.Flags |= flag;
-
         }
 
         return 4;
@@ -3989,15 +4033,14 @@ public class EntityEventHandlers
     {
         ushort flag;
         int num;
-
-        flag = (ushort)variables[2];
+        
+        flag = (ushort)((variables[3] << 8) | variables[2]);
         num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
 
         for (int i = 0; i < num; i++)
         {
             var entity = StaticVariables.g_matchingEntitiesBuffer[i];
-            entity.Flags &= ~(uint)flag | 0xffff0000;
-
+            entity.Flags &= (~(uint)flag) | 0xffff0000;
         }
 
         return 4;
@@ -5388,19 +5431,18 @@ public class EntityEventHandlers
         if (iVar8 != 0)
         {
             iVar12 = 0;
-            piVar11 = StaticVariables.g_effectSlots[0].Z;
-            iVar10 = variables;
-            bVar1 = iVar10 + 1;
-            bVar2 = iVar10 + 4;
-            bVar3 = iVar10 + 3;
+            bVar1 = variables[1];
+            bVar3 = variables[3];
+            bVar2 = variables[4];
+            bVar5 = variables[5];
+            bVar4 = variables[6];
+            bVar6 = variables[8];
+            bVar7 = variables[7];
             iVar9 = StaticVariables.g_matchingEntitiesBuffer[0].XPos;
-            bVar4 = iVar10 + 6;
-            bVar5 = iVar10 + 5;
             iVar8 = StaticVariables.g_matchingEntitiesBuffer[0].YPos;
-            bVar6 = iVar10 + 8;
-            bVar7 = iVar10 + 7;
             iVar10 = StaticVariables.g_matchingEntitiesBuffer[0].ZPos;
-
+            
+            piVar11 = StaticVariables.g_effectSlots[0].Z;
             do
             {
                 if (piVar11[9] != 0 && piVar11[-5] == (uint)bVar1)
@@ -5411,8 +5453,8 @@ public class EntityEventHandlers
                 }
 
                 iVar12 = iVar12 + 1;
-
                 piVar11 = piVar11 + 0x20;
+
             } while (iVar12 < 0x80);
         }
 
@@ -5422,13 +5464,13 @@ public class EntityEventHandlers
     // 80040F00
     private int Script_162_0A2(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var pSVar1 = _gameEngine.SpawnSpriteEffect(variables[1], 1);
+        var spriteEffect = _gameEngine.SpawnSpriteEffect(variables[1], 1);
 
-        if (pSVar1 != null)
+        if (spriteEffect != null)
         {
-            pSVar1.X = (variables[2] + variables[3] * 0x100) * 0x10000;
-            pSVar1.Y = (variables[4] + variables[5] * 0x100) * 0x10000;
-            pSVar1.Z = (variables[6] + variables[7] * 0x100) * 0x10000 + 1;
+            spriteEffect.X = (variables[2] + variables[3] * 0x100) * 0x10000;
+            spriteEffect.Y = (variables[4] + variables[5] * 0x100) * 0x10000;
+            spriteEffect.Z = (variables[6] + variables[7] * 0x100) * 0x10000 + 1;
         }
 
         return 8;
@@ -5438,17 +5480,17 @@ public class EntityEventHandlers
     private int Script_163_0A3(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var iVar2 = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[2]);
-        var pEVar1 = StaticVariables.g_matchingEntitiesBuffer[0];
+        var entity = StaticVariables.g_matchingEntitiesBuffer[0];
 
         if (iVar2 != 0)
         {
-            var pSVar3 = _gameEngine.SpawnSpriteEffect(variables[1], 1);
+            var spriteEffect = _gameEngine.SpawnSpriteEffect(variables[1], 1);
 
-            if (pSVar3 != null)
+            if (spriteEffect != null)
             {
-                pSVar3.X = pEVar1.XPos + (variables[3] + variables[4] * 0x100) * 0x10000;
-                pSVar3.Y = pEVar1.YPos + (variables[5] + variables[6] * 0x100) * 0x10000;
-                pSVar3.Z = pEVar1.ZPos + (variables[7] + variables[8] * 0x100) * 0x10000;
+                spriteEffect.X = entity.XPos + (variables[3] + variables[4] * 0x100) * 0x10000;
+                spriteEffect.Y = entity.YPos + (variables[5] + variables[6] * 0x100) * 0x10000;
+                spriteEffect.Z = entity.ZPos + (variables[7] + variables[8] * 0x100) * 0x10000;
             }
         }
 

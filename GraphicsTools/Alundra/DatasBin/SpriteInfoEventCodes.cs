@@ -7,7 +7,7 @@ namespace Alundra.DatasBin;
 
 public class SpriteInfoEventCodes
 {
-    //public static readonly byte[] Codes = new byte[1024 * 1024]; //1mb of event codes, too much prob but oh well;
+    //public readonly byte[] Codes = new byte[1024 * 1024]; //1mb of event codes, too much prob but oh well;
 
     public SpriteInfoEventCodes(BinaryReader br, long binOffset, SpriteInfoHeader header, bool ismap)
     {
@@ -168,7 +168,7 @@ public class SpriteInfoEventCodes
         //{
         //    br.Read(Codes, top, _dataSize);
         //}
-        ////half mb for global codes, half mb for map codes
+        //half mb for global codes, half mb for map codes
     }
 
     public class SiCode
@@ -205,14 +205,15 @@ public class SpriteInfoEventCodes
         //var bytes = GetByteCode(br, sector1offset);
         br.BaseStream.Position = _binOffset + eventCodesOffset;
         var bytes = new byte[_dataSize - eventCodesOffset];
+        //Debug.WriteLine($"codes bytes read {}");
         br.Read(bytes, 0, bytes.Length);
         var i = 0;
 
         while (i < bytes.Length && (commandsSize == 0 || i < commandsSize))
         {
-            var b = bytes[i++];
+            var value = bytes[i++];
 
-            var sicode = GetCode(b);
+            var sicode = GetCode(value);
             var size = sicode.Size;
             var name = sicode.Name;
             var parameters = new byte[size - 1];
@@ -224,20 +225,20 @@ public class SpriteInfoEventCodes
             }
 
             SiCommand cmd;
-            var addr = _memoryAddress + eventCodesOffset + i - size;
+            var address = _memoryAddress + eventCodesOffset + i - size;
 
-            switch (b)
+            switch (value)
             {
                 case 0x1E:
                 case 0x1F:
-                    cmd = new WalkCommand(b, parameters, name, addr);
+                    cmd = new WalkCommand(value, parameters, name, address);
                     break;
                 case 0x64:
-                    cmd = new SetPositionCommand(b, parameters, name, addr);
+                    cmd = new SetPositionCommand(value, parameters, name, address);
                     break;
                 case 0x05:
                 case 0x06:
-                    cmd = new SetFlagCommand(b, parameters, name, addr);
+                    cmd = new SetFlagCommand(value, parameters, name, address);
                     break;
                 //case "if":
                 //case "if not":
@@ -245,21 +246,21 @@ public class SpriteInfoEventCodes
                 //    break;
                 case 0x03:
                 case 0x04:
-                    cmd = new BranchCommand(b, 3, parameters, name, addr);
+                    cmd = new BranchCommand(value, 3, parameters, name, address);
                     break;
                 case 0x02:
-                    cmd = new JumpCommand(b, parameters, name, addr);
+                    cmd = new JumpCommand(value, parameters, name, address);
                     break;
                 case 0x58:
-                    cmd = new DirectionBranchCommand(b, parameters, name, addr);
+                    cmd = new DirectionBranchCommand(value, parameters, name, address);
                     break;
                 default:
-                    cmd = new SiCommand(b, size, parameters, name, addr);
+                    cmd = new SiCommand(value, size, parameters, name, address);
                     break;
             }
 
             commands.Add(cmd);
-            if (stopAtff && b == 0xff)
+            if (stopAtff && value == 0xff)
             {
                 break;
             }
@@ -268,33 +269,35 @@ public class SpriteInfoEventCodes
         return commands;
     }
 
-    public byte[] GetByteCode(BinaryReader br, int sector1Offset)
+    public byte[] GetByteCode(BinaryReader br, int sectorOffset)
     {
 
-        var bytes = new byte[_dataSize - sector1Offset];
+        var bytes = new byte[_dataSize - sectorOffset];
         var i = 0;
-        br.BaseStream.Position = _binOffset + sector1Offset;
+        br.BaseStream.Position = _binOffset + sectorOffset;
+        
+        br.Read(bytes, 0, bytes.Length);
 
-        while (i < bytes.Length)
-        {
-            //Debug.Assert(dex < bytes.Length, "ByteCodes larger than 255");
-
-            var b = br.ReadByte();
-            if (b == 0) //what does 0 mean?
-            {
-                bytes[i++] = b;
-            }
-            else if (b == 0xff) //end
-            {
-                bytes[i++] = b;
-                return bytes; //for now
-            }
-            else
-            {
-                bytes[i++] = b;
-                //skip ahead by parameter length
-            }
-        }
+        //while (i < bytes.Length)
+        //{
+        //    //Debug.Assert(dex < bytes.Length, "ByteCodes larger than 255");
+        //
+        //    var b = br.ReadByte();
+        //    if (b == 0) //what does 0 mean?
+        //    {
+        //        bytes[i++] = b;
+        //    }
+        //    else if (b == 0xff) //end
+        //    {
+        //        bytes[i++] = b;
+        //        return bytes; //for now
+        //    }
+        //    else
+        //    {
+        //        bytes[i++] = b;
+        //        //skip ahead by parameter length
+        //    }
+        //}
 
         return bytes;
     }
@@ -411,8 +414,8 @@ public class SpriteInfoEventCodes
     {
         { 0x00, "break" },
         { 0x02, "goto" },
-        { 0x03, "if false" },
-        { 0x04, "while false" },
+        { 0x03, "if true goto" },
+        { 0x04, "if false goto" },
         { 0x05, "flag on" },
         { 0x06, "flag off" },
         { 0x07, "check entity in area" },
@@ -420,7 +423,7 @@ public class SpriteInfoEventCodes
         { 0x09, "set dir" },
         { 0x0A, "reverse" }, //switch direction, used for paceing npcs
         { 0x0B, "anim wait distance" },
-        { 0x0C, "set direction with math" },
+        { 0x0C, "set random dir" },
         { 0x0D, "dialog" }, //show dialog
         { 0x10, "lose control" },
         { 0x11, "gain control" },
@@ -428,7 +431,7 @@ public class SpriteInfoEventCodes
         { 0x15, "reset z pos" },
         { 0x16, "high gravity" }, //fall as normal  //bit 0x100
         { 0x17, "low gravity" }, //used for climbing ladders and flying
-        { 0x19, "deactivate?" },
+        { 0x19, "deactivate entity" },
         { 0x1A, "set anim" },
         { 0x1B, "fly" }, //stop flying 0x0000   flying down 0xff7f     flying foward and up  0x0380
         { 0x1C, "wait anim ?" },
