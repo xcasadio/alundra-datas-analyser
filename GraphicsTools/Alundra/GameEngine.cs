@@ -554,11 +554,8 @@ public class GameEngine
             StaticVariables.g_mapEvents[i].MapEventRecord = null;
             StaticVariables.g_mapEvents[i].Entity = null;
             StaticVariables.g_mapEvents[i].EventData.Sp = 0;
-            StaticVariables.g_mapEvents[i].EventData.CommandIndex = 0;
-            for (int j = 0; j < StaticVariables.g_mapEvents[i].EventData.Exp.Length; j++)
-            {
-                StaticVariables.g_mapEvents[i].EventData.Exp[j] = 0;
-            }
+            StaticVariables.g_mapEvents[i].EventData.CodeIndex = 0;
+            Array.Clear(StaticVariables.g_mapEvents[i].EventData.Exp);
 
             //StaticVariables.g_mapEvents[i].EventData.Tick = 0;
             //for (int j = 0; j < StaticVariables.g_mapEvents[i].EventData.Variables.Length; j++)
@@ -844,7 +841,7 @@ public class GameEngine
 
         StaticVariables.g_entitySlots[0].Status = 2;
         StaticVariables.g_entitySlots[0].HpMax = GetFadeControl_WarpVisualId();
-        StaticVariables.g_entitySlots[0].Hp = (int)GetFadeControl();
+        StaticVariables.g_entitySlots[0].Hp = GetFadeControl();
         StaticVariables.g_activeCollisionEntity = null;
         StaticVariables.g_playerWarpTimer = 0;
         StaticVariables.g_isWarpDisabled = 0;
@@ -1109,13 +1106,13 @@ public class GameEngine
                 var bitToCheck = 1 << dif;
                 if ((flag & bitToCheck) != 0)
                 {
-                    entity.ContentsItemId = (uint)GetContentsItemId((short)0);
+                    entity.ContentsItemId = (uint)GetContentsItemId(0);
                     return;
                 }
             }
             if (entity.EntityRecord.Contents != 0)
             {
-                entity.ContentsItemId = (uint)GetContentsItemId((short)entity.EntityRecord.Contents);
+                entity.ContentsItemId = (uint)GetContentsItemId(entity.EntityRecord.Contents);
                 return;
             }
         }
@@ -1124,12 +1121,12 @@ public class GameEngine
             entity.ContentsGameFlag = 0;
         }
 
-        entity.ContentsItemId = (uint)GetContentsItemId((short)entity.Sprite.Header.Contents);
+        entity.ContentsItemId = (uint)GetContentsItemId(entity.Sprite.Header.Contents);
     }
 
     private int GetContentsItemId(short contentId)
     {
-        var isValid = (int)contentId < 0x100;
+        var isValid = contentId < 0x100;
 
         while (true)
         {
@@ -1143,7 +1140,7 @@ public class GameEngine
             isValid = contentId < 0x100;
         }
 
-        if (0x61 < (int)contentId)
+        if (0x61 < contentId)
         {
             return 0;
         }
@@ -1616,7 +1613,7 @@ public class GameEngine
         else
         {
             warpEntryOffset = (int)(mapIndex * 2) * 2 + StaticVariables.g_warpUsageTable[0];
-            remainingWarps = (short)StaticVariables.g_warpUsageTable[mapIndex * 2 + 1];
+            remainingWarps = StaticVariables.g_warpUsageTable[mapIndex * 2 + 1];
             remainingWarps--;
 
             if (remainingWarps == -1)
@@ -2593,10 +2590,99 @@ public class GameEngine
     //8003cfc8
     public uint ResolveDirectionFromParam(Entity entity, uint encodedDir)
     {
-        Debugger.Break();
-        return 0;
+        uint direction;
+        int facingDirection;
+        uint result;
+
+        result = encodedDir & 0x1F;
+
+        switch ((int)encodedDir >> 5)
+        {
+            case 0:
+                return result;
+
+            case 1:
+                direction = entity.TargetDirection + result;
+                goto LAB_8003d110;
+
+            case 2:
+                result = (uint)StaticVariables.g_cardinalDirectionTable[encodedDir & 3];
+                break;
+
+            case 3:
+                direction = (uint)ScriptHelper.GetDirectionToTarget(
+                    StaticVariables.PlayerEntity.XPos - entity.XPos,
+                    StaticVariables.PlayerEntity.YPos - entity.YPos);
+                direction += result;
+                goto LAB_8003d110;
+
+            case 4:
+                StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+                var rand = (int)((ulong)StaticVariables.g_gameRandomSeed * 4 >> 0x20);
+                result = (uint)StaticVariables.g_cardinalDirectionTable[rand];
+                break;
+
+            case 5:
+                StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+                result = (uint)((ulong)StaticVariables.g_gameRandomSeed * 0x20 >> 0x20);
+                break;
+
+            case 6:
+                direction = StaticVariables.PlayerEntity.TargetDirection + result;
+                LAB_8003d110:
+                result = (direction & 0x1F);
+                break;
+
+            case 7:
+                facingDirection = GetWarpFacingDirection(entity);
+                if (facingDirection == -1)
+                {
+                    return result;
+                }
+                return (uint)((facingDirection + result) & 0x1F);
+
+            default:
+                result = 0;
+                break;
+        }
+
+        return result;
     }
 
+    // 8003cf20
+    private int GetWarpFacingDirection(Entity entity)
+    {
+        int deltaX;
+
+        if (StaticVariables.g_activeCollisionEntity != entity)
+        {
+            return -1;
+        }
+
+        deltaX = StaticVariables.g_entitySlots[0].ModdedXPos - entity.ModdedXPos;
+
+        if (deltaX < 0)
+        {
+            if (-deltaX <= StaticVariables.g_entitySlots[0].Width)
+            {
+                return (int)((StaticVariables.g_entitySlots[0].YPos < entity.YPos ? 1U : 0U) << 4);
+            }
+        }
+        else if (deltaX <= entity.Width)
+        {
+            return (int)((StaticVariables.g_entitySlots[0].YPos < entity.YPos ? 1U : 0U) << 4);
+        }
+
+        deltaX = 0x18;
+        if (StaticVariables.g_entitySlots[0].XPos < entity.XPos)
+        {
+            deltaX = 0x08;
+        }
+
+        return deltaX;
+    }
+
+    // 8003166c
     public Portal GetWarpData()
     {
         foreach (var infoPortal in CurrentMap.Info.Portals)

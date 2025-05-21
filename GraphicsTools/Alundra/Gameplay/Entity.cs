@@ -118,7 +118,7 @@ public class Entity
     public int EventTrigger;//228  for the player character this holds the id of the map event that is triggering, for other entities this holds the type of event slot to trigger
     public int MapEventProgramId;//22c
     public Entity LogicContextEntity; //self
-    public EventProgramState EventProgramState = new();
+    public readonly EventProgramState EventProgramState = new();
     public uint LastTargetAnimationId;//26c
     public uint LastTargetDirection;//270
     public byte[] Bytes = new byte[4];
