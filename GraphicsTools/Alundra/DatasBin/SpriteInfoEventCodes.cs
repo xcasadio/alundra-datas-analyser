@@ -413,6 +413,7 @@ public class SpriteInfoEventCodes
     public static readonly Dictionary<byte, string> CommandNameByCode = new()
     {
         { 0x00, "break" },
+        { 0x01, "do nothing" },
         { 0x02, "goto" },
         { 0x03, "if true goto" },
         { 0x04, "if false goto" },

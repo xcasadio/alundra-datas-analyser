@@ -15,12 +15,9 @@ public class EventProgramState
     public void CopyFrom(EventProgramState other)
     {
         Sp = other.Sp;
-
-        for (int i = 0; i < Exp.Length; i++)
-        {
-            Exp[i] = other.Exp[i];
-        }
-
+        Codes = other.Codes;
+        CodeIndex = other.CodeIndex;
+        Array.Copy(other.Exp, Exp, Exp.Length);
         Result = other.Result;
         _30 = other._30;
     }

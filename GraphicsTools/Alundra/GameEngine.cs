@@ -1760,8 +1760,7 @@ public class GameEngine
             currentMapEvent.Entity = playerEntity.LogicContextEntity;
             mapEventEntity.EventTrigger = playerEntity.EventTrigger;
         }
-
-
+        
         //var medex = 0;
         //foreach (var mapEvent in StaticVariables.g_mapEvents)
         //{

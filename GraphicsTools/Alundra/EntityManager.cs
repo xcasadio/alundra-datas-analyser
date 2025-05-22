@@ -2125,7 +2125,7 @@ public class EntityManager
                     ApplyEntityForces(entity);
                     entity.FinalXForce = entity.AdjustedXForce;
                     entity.FinalYForce = entity.AdjustedYForce;
-                    entity.FinalZForce = entity.ZForce;
+                    entity.FinalZForce = entity.ZForce; //-33 024
                     continue;
                 }
 
