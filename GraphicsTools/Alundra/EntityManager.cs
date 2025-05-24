@@ -279,10 +279,6 @@ public class EntityManager
 
             if (entity.NextFrameDelay == 0)
             {
-                //var animRecordPtr = entity.Sprite.AnimSets[entity.CurrentAnimationId];
-                //entity.AnimSet = animRecordPtr;
-                //var anim = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3];
-                var animRecordPtr = entity.AnimSet;
                 var anim = entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3];
                 entity.CurrentFrameIndex++;
                 if (entity.CurrentFrameIndex >= anim.NumberOfFrames)
@@ -1140,8 +1136,8 @@ public class EntityManager
             platformCandidateZ = 0x77fffff;
         }
 
-        if ((entity.Flags & 0x80) != 0 
-            && (entity.AnimFlags & 0x80) == 0 
+        if ((entity.Flags & 0x80) != 0
+            && (entity.AnimFlags & 0x80) == 0
             && entity.PlatformEntity == null)
         {
             entityIndex = 0;
@@ -1156,7 +1152,7 @@ public class EntityManager
                     {
                         candidateZPos = candidateEntity.ModdedZPos;
 
-                        if (entityTopZ < candidateZPos 
+                        if (entityTopZ < candidateZPos
                             && candidateZPos <= platformCandidateZ)
                         {
                             deltaX = candidateEntity.ModdedXPos - entity.ModdedXPos;
@@ -2464,11 +2460,11 @@ public class EntityManager
                 {
                     if (valdex == 6 || valdex == 0xa)
                     {
-                        _gameEngine.EffectManager.CreateEffect_Type1(0, 4, 0, checkme, width, 0, 0, 0);
+                        _gameEngine.EffectManager.CreateAttachedEffect(0, 4, 0, checkme, width, 0, 0, 0);
                     }
                     if (valdex == 7 || valdex == 9)
                     {
-                        _gameEngine.EffectManager.CreateEffect_Type1(0, 5, 0, checkme, 1, 0, 0, 0);
+                        _gameEngine.EffectManager.CreateAttachedEffect(0, 5, 0, checkme, 1, 0, 0, 0);
                     }
                     checkme.TouchingEntity = entity;
                 }
@@ -2534,41 +2530,37 @@ public class EntityManager
                 continue;
             }
 
-            var baseforce = (int)(0xffff << 16);
+            var baseForce = (int)(0xffff << 16);
 
             var i = StaticVariables.g_gameRandomSeed;
             var val1 = (uint)(i * 0x7d2b89dd);
             var val2 = (uint)(0xe06a02e7 + val1);
-            var targetval = (int)(((long)val2 * 0x20001) >> 32);
+            var targetVal = (int)(((long)val2 * 0x20001) >> 32);
             StaticVariables.g_gameRandomSeed = val2;
 
-            effect.XForce = targetval + baseforce;
+            effect.XForce = targetVal + baseForce;
 
             i = StaticVariables.g_gameRandomSeed;
             val1 = (uint)(i * 0x7d2b89dd);
             val2 = (uint)(0xe06a02e7 + val1);
-            targetval = (int)(((long)val2 * 0x20001) >> 32);
+            targetVal = (int)(((long)val2 * 0x20001) >> 32);
             StaticVariables.g_gameRandomSeed = val2;
 
-            effect.YForce = targetval + baseforce;
+            effect.YForce = targetVal + baseForce;
 
             i = StaticVariables.g_gameRandomSeed;
             val1 = (uint)(i * 0x7d2b89dd);
             val2 = (uint)(0xe06a02e7 + val1);
-            targetval = (int)(((long)val2 * 0x20001) >> 32);
+            targetVal = (int)(((long)val2 * 0x20001) >> 32);
             StaticVariables.g_gameRandomSeed = val2;
 
-            effect.ZForce = targetval + baseforce;
+            effect.ZForce = targetVal + baseForce;
         }
     }
 
+    // 80038e84
     private void UpdateActiveEffects()
     {
-        if (StaticVariables.g_numberOfEntity < 0)
-        {
-            return;
-        }
-
         for (var i = 0; i < StaticVariables.g_numberOfEntity; i++)
         {
             var entity = StaticVariables.g_entitySlots[i];
@@ -2688,12 +2680,14 @@ public class EntityManager
         }
     }
 
+    // 80038e18
     private void UpdateEntitiesAnimation()
     {
         for (var i = 1; i < StaticVariables.g_activeEntityCount; i++)
         {
             var entity = StaticVariables.g_entitySlots[i];
             UpdateAnimation(entity);
+            Debug.Assert(entity.AnimSet != null);
         }
     }
 
@@ -2807,13 +2801,13 @@ public class EntityManager
 
                     case (int)EntityStatus.Normal:
                         var flags = entity.Flags;
-                        if ((flags & 0x100000) == 0 || entity.Slope_18c != 4) 
+                        if ((flags & 0x100000) == 0 || entity.Slope_18c != 4)
                         {
-                            if ((flags & 0x200000) == 0 || (entity.CombinedVramFlagsOR & 0x8004U) == 0) 
+                            if ((flags & 0x200000) == 0 || (entity.CombinedVramFlagsOR & 0x8004U) == 0)
                             {
-                                if (((flags & 0x10) != 0 && (entity.ForceAdjusted != 0 || entity.IsAboveGround != 0)) 
-                                    || ((flags & 0x20) != 0 && entity.HitCounter != 0) 
-                                    || ((flags & 0x40) != 0 && entity.ForceResetAnimationFlag != 0)) 
+                                if (((flags & 0x10) != 0 && (entity.ForceAdjusted != 0 || entity.IsAboveGround != 0))
+                                    || ((flags & 0x20) != 0 && entity.HitCounter != 0)
+                                    || ((flags & 0x40) != 0 && entity.ForceResetAnimationFlag != 0))
                                 {
                                     entity.Status = 3;
                                     eventProgramType = ScriptHelper.ProgramEDeactivate;
@@ -2837,16 +2831,18 @@ public class EntityManager
                                     }
                                 }
                             }
-                            else {
-                                _gameEngine.DestroyEntity(entity,-1);
+                            else
+                            {
+                                _gameEngine.DestroyEntity(entity, -1);
                                 eventProgramType = ScriptHelper.ProgramUnknown;
                             }
                         }
-                        else {
-                            _gameEngine.DestroyEntity(entity,6);
+                        else
+                        {
+                            _gameEngine.DestroyEntity(entity, 6);
                             eventProgramType = ScriptHelper.ProgramUnknown;
                         }
-                        
+
                         break;
 
                     case (int)EntityStatus.Deactivated:
@@ -2895,37 +2891,24 @@ public class EntityManager
     // 80038998
     private void UpdateEntitiesCounters()
     {
-        if (StaticVariables.g_numberOfEntity >= 0)
+        for (var i = 0; i <= StaticVariables.g_numberOfEntity; i++)
         {
-            for (var i = 0; i <= StaticVariables.g_numberOfEntity; i++)
+            var entity = StaticVariables.g_entitySlots[i];
+
+            entity.TouchingEntity = null;
+            entity.RidingEntity = null;
+            entity.HitCounter = 0;
+
+            entity.HitFrameCounter++;
+
+            if (entity.DamagedTickCounter != 0)
             {
-                var entity = StaticVariables.g_entitySlots[i];
-                //entity.HitFrameCounter++;
-                //if (entity.DamagedTickCounter != 0)
-                //{
-                //    entity.DamagedTickCounter--;
-                //}
-                //
-                //if (entity.FrameColTickCounter != 0)
-                //{
-                //    entity.FrameColTickCounter--;
-                //}
+                entity.DamagedTickCounter--;
+            }
 
-                entity.TouchingEntity  = null;    
-                entity.RidingEntity    = null;    
-                entity.HitCounter      = 0;       
-
-                entity.HitFrameCounter++;
-
-                if (entity.DamagedTickCounter != 0)
-                {
-                    entity.DamagedTickCounter--;
-                }
-
-                if (entity.FrameColTickCounter != 0)
-                {
-                    entity.FrameColTickCounter--;
-                }
+            if (entity.FrameColTickCounter != 0)
+            {
+                entity.FrameColTickCounter--;
             }
         }
 
@@ -2933,6 +2916,8 @@ public class EntityManager
 
     }
 
+
+    // 80038634
     private void UpdateDestroyedEntities()
     {
         var max = 0;
@@ -2942,16 +2927,14 @@ public class EntityManager
 
             if (entity.Status == 4)
             {
-                //zero out the properties
-                //entity.Index = 0;
+                entity = new Entity(); //TODO: check if create bug with some code save a pointer on an entity
+                entity.Index = i;
+                entity.EntityRefId = -1; // g_emptyEntityForClearing.EntityRefId == -1
                 //entity.Index2 = 0;
                 //...
-                entity = new Entity(); //TODO: check if create bug with some code save a pointer on an entity
-                entity.EntityRefId = -1; // g_emptyEntityForClearing.EntityRefId == -1
                 StaticVariables.g_entitySlots[i] = entity;
             }
-
-            if (entity.Status != 0)
+            else if (entity.Status != 0)
             {
                 max = i;
             }
@@ -2960,36 +2943,31 @@ public class EntityManager
         StaticVariables.g_numberOfEntity = max;
     }
 
+    // 800384f4
     private void UpdateEntityLists()
     {
         StaticVariables.g_activeEntityCount = 0;
         StaticVariables.g_collideableEntitiesCount = 0;
         StaticVariables.g_visibleEntityCount = 0;
 
-        if (StaticVariables.g_numberOfEntity < 0)
-        {
-            return;
-        }
-
         for (int i = 0; i < StaticVariables.g_numberOfEntity; i++)
         {
             var entity = StaticVariables.g_entitySlots[i];
 
             //processable
-            if (entity.Status - 2 < 2 && entity.PlatformEntity == null)
+            if (entity.Status - 2 < 2 && entity.IsNotProcessable == 0)
             {
-                StaticVariables.g_activeEntities[StaticVariables.g_activeEntityCount] = entity;
-                StaticVariables.g_activeEntityCount++;
+                StaticVariables.g_activeEntities[StaticVariables.g_activeEntityCount++] = entity;
             }
 
             //collidable
-            if ((entity.Flags & 0x80) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.PlatformEntity == null)
+            if ((entity.Flags & 0x80) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.IsNotProcessable == 0)
             {
                 StaticVariables.g_collideableEntities[StaticVariables.g_collideableEntitiesCount++] = entity;
             }
 
             //renderable
-            if (entity.Status - 2 < 2 && (entity.DamagedTickCounter & 3) != 3)//flicker effect, every 3rd frame when being damaged
+            if (entity.Status - 2 < 2 && (entity.DamagedTickCounter & 0x3) != 0x3)//flicker effect, every 3rd frame when being damaged
             {
                 StaticVariables.g_visibleEntities[StaticVariables.g_visibleEntityCount++] = entity;
             }

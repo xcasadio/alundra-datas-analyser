@@ -1847,7 +1847,8 @@ public class GameEngine
         _playerManager.MovePlayer();
     }
 
-    public void TriggerWarp(Entity entity)
+    // 8003a774
+    public void DestroyEntity(Entity entity)
     {
         SpawnEntityContents(entity);
 
@@ -1866,28 +1867,29 @@ public class GameEngine
         }
     }
 
-    public void DestroyEntity(Entity entity, int effectid)
+    // 8003a59c
+    public void DestroyEntity(Entity entity, int effectId)
     {
         SpawnEntityContents(entity);
 
         entity.Status = 4;
         entity.EventTrigger = -1;
+
         if (entity.ActiveEffect != null)
         {
-            entity.ActiveEffect.Status = 0;
             entity.ActiveEffect.Status = 0;
             //.spriteTableIndex = 0;
             entity.ActiveEffect = null;
         }
 
-        if (effectid == -1)
+        if (effectId == -1)
         {
-            effectid = entity.Sprite.Header.BreakEffect;
+            effectId = entity.Sprite.Header.BreakEffect;
         }
 
-        if (effectid != 0)
+        if (effectId != 0)
         {
-            EffectManager.CreateEffect_Type1(0, (byte)effectid, 0, entity, 1, 0, 0, 0);
+            EffectManager.CreateAttachedEffect(0, (byte)effectId, 0, entity, 1, 0, 0, 0);
         }
 
         if (entity.PlatformEntity != null)

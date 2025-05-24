@@ -59,7 +59,7 @@ public class SpriteEventHandlers
         //Register(ScriptHelper.ProgramDTouch, 3, AI_EmptyFunction); // null
         Register(ScriptHelper.ProgramDTouch, 4, AI_EmptyFunction); // null
 
-        //Register(ScriptHelper.ProgramEDeactivate, 0, );
+        Register(ScriptHelper.ProgramEDeactivate, 0, Script_Deactivate_FUN_8007ed10);
 
         Register(ScriptHelper.ProgramFInteract, 0, AI_EmptyFunction); // null
         Register(ScriptHelper.ProgramFInteract, 1, Script_FInteract_FUN_8007fc64); // null
@@ -184,7 +184,7 @@ public class SpriteEventHandlers
         var index = Array.IndexOf(StaticVariables.g_entitySlots, entity);
         for (int i = index + 1; i < index + 15; i++)
         {
-            _gameEngine.TriggerWarp(StaticVariables.g_entitySlots[i]);
+            _gameEngine.DestroyEntity(StaticVariables.g_entitySlots[i]);
         }
 
         for (int i = 0; i < 0x100; i++)
@@ -867,7 +867,11 @@ public class SpriteEventHandlers
 
     #region function type D
 
-
+    // 8007ed10
+    private void Script_Deactivate_FUN_8007ed10(Entity entity)
+    {
+        _gameEngine.DestroyEntity(entity,-1);
+    }
 
     #endregion
 
@@ -879,6 +883,7 @@ public class SpriteEventHandlers
 
     #region function type F
 
+    // 8007fc64
     private void Script_FInteract_FUN_8007fc64(Entity entity)
     {
         entity.Bytes[0] = 1;

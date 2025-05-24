@@ -62,9 +62,9 @@ public class RendererHelper
             }
 
             //draw sprites who are on this row
-            for (var i = 0; i < StaticVariables.g_numberOfEntity; i++)
+            for (var i = 0; i < StaticVariables.g_numberOfEntity; i++) // g_visibleEntityCount
             {
-                var entity = StaticVariables.g_entitySlots[i];
+                var entity = StaticVariables.g_entitySlots[i]; // g_visibleEntities
                 if (entity.Status == 5)
                 {
                     continue;
@@ -78,8 +78,8 @@ public class RendererHelper
                 //var tile = selectedGame.map.maptiles[sx + sy * selectedGame.map.width];
                 //var scx = (entity.ModdedXPos >> 16) - (currentRow * StaticVariables.MapTileWidth);
                 //var scy = (entity.ModdedYPos >> 16) - (entity.ModdedZPos >> 16) - (camTileOffsetY * StaticVariables.MapTileHeight);
-                var scx = (entity.ModdedXPos >> 16) - currentXPosition;
-                var scy = (entity.ModdedYPos >> 16) - (entity.ModdedZPos >> 16) - currentYPosition;
+                var scx = (entity.ModdedXPos >> 16) - currentXPosition + StaticVariables.MapTileWidth / 2;
+                var scy = (entity.ModdedYPos >> 16) - (entity.ModdedZPos >> 16) - currentYPosition + StaticVariables.MapTileHeight / 2;
 
                 if (entity.Sprite != null)
                 {

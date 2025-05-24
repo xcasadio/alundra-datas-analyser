@@ -35,6 +35,7 @@ public class SiCommand
         var output = index.ToString("d3") + " ";
         output += new string(' ', depth * 4);
         output += PrintName();
+        output += $"#{Command:x2} ";
         if (Command != 0 && Command != 0xff)
         {
             output += "(";

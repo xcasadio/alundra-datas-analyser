@@ -221,7 +221,7 @@ public class EffectManager
         return null;
     }
 
-    public SpriteEffect CreateEffect_Type1(byte ismapeffect, byte effectid, byte animid, Entity entity, int depthsortmod, int xoff, int yoff, int zoff)
+    public SpriteEffect CreateAttachedEffect(byte ismapeffect, byte effectid, byte animid, Entity entity, int depthsortmod, int xoff, int yoff, int zoff)
     {
         var effect = GetNextAvailableEffect();
 

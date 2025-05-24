@@ -3,7 +3,7 @@
 public enum SiAnimDir
 {
     Down = 0,
-    Up = 1,
-    Left = 2,
+    Left = 1,
+    Up = 2,
     Right = 3
 }

@@ -11,15 +11,21 @@ public class SpriteRecord
         {
             AnimSets[i] = new AnimationSet(br, memoryAddress + 32 + i * 14);
         }
-
         //preload all of the animations here
         for (int i = 0; i < AnimSets.Length; i++)
         {
-            for (int direction = 0; direction < 4; direction++)
+            for (int j = 0; j < 4; j++)
             {
+                var direction = j switch
+                {
+                    1 => 2,
+                    2 => 1,
+                    _ => j
+                };
+
                 if (AnimSets[i].AnimationOffsets[direction] != 0xffff)
                 {
-                    AnimSets[i].PreloadedAnims[direction] = GetAnimation(br, AnimSets[i].AnimationOffsets[direction]);
+                    AnimSets[i].PreloadedAnims[j] = GetAnimation(br, AnimSets[i].AnimationOffsets[direction]);
 
                     /*DBFrame* frames = (DBFrame*)&(*spr->framesdata)[spr->animsets[animdex].diroffsets[dirdex]];
                     int framedex;
