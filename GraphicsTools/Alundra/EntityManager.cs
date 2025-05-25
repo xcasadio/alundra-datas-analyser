@@ -235,7 +235,7 @@ public class EntityManager
     }
 
     // 80038ab4
-    private void UpdateAnimation(Entity entity)
+    private void UpdateAnimation2(Entity entity)
     {
         entity.IsZForceApplied = 0;
         var initializeValues = false;
@@ -279,6 +279,17 @@ public class EntityManager
 
             if (entity.NextFrameDelay == 0)
             {
+                var frameFlags = entity.Frame.CollisionOffset & 0xFF; // CollisionOffset
+                Debug.Assert(frameFlags != 13);
+                if ((frameFlags & 0x80) != 0)
+                {     
+                    entity.NextFrameDelay = 0x7fffffff;
+                    entity.ForceResetAnimationFlag = 1;
+                    return;
+                }
+                //Debug.Assert(entity.TargetAnimationId == frameFlags);
+                //entity.TargetAnimationId = (uint)frameFlags;
+
                 var anim = entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3];
                 entity.CurrentFrameIndex++;
                 if (entity.CurrentFrameIndex >= anim.NumberOfFrames)
@@ -340,232 +351,123 @@ public class EntityManager
     }
 
     // 80038ab4
-    private void UpdateAnimation2(Entity entity)
+    private void UpdateAnimation(Entity entity)
     {
-        SiFrame currentFrame = null;
-        bool noSkip = true;
+        AnimationSet? animRecordPtr;
+        SiFrame? currentFrame;
 
-        entity.IsZForceApplied = 0;
-        //var animationIndex  = entity.TargetAnimationId;
-        var animationIndex = entity.CurrentAnimationId;
-        var currentFrameIndex = -1; //StaticVariables.g_frameIndexTable[(entity.TargetDirection + 2 & 0x1c) + entity.CurrentFrameIndex * 0x20];
-
-        if (entity.Frame != null
-            && entity.AnimSet != null
-            && entity.Frame == entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.CurrentFrameIndex])
+        if (entity.CurrentAnimationId != entity.TargetAnimationId ||
+            entity.CurrentDirection != entity.TargetDirection)
         {
-            currentFrameIndex = entity.CurrentFrameIndex;
-        }
-
-        //entity.Sprite.AnimSets[entity.CurrentAnimationId].PreloadedAnims[]
-        //entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3].NumberOfFrames
-
-        //var directionIndex = ((entity.TargetDirection + 2) & 0x1c) >> 2;
-        //frameDelay = StaticVariables.g_frameIndexTable[directionIndex + (entity.CurrentFrameIndex << 3)];
-
-        if (entity.TargetAnimationId != entity.CurrentAnimationId
-            || currentFrameIndex != entity.CurrentFrameIndex)
-        {
-            noSkip = false;
-        }
-
-        if (noSkip)
-        {
-            entity.NextFrameDelay = entity.NextFrameDelay - 1;
-
-            if (entity.NextFrameDelay != 0)
-            {
-                //entity.NextFrameDelay = 0x7fffffff;
-                //entity.ForceResetAnimationFlag = 1;
-                //return;
-
-
-                //Debug.Assert(entity.AnimSet != null);
-                //Debug.Assert(entity.Frame != null);
-                //TODO: bug => remove this only to avoid null pointer
-                //if (entity.AnimSet == null && entity.Sprite != null)
-                //{
-                //    var animSet = entity.Sprite.AnimSets[entity.CurrentAnimationId]; //frameDelay * 0xe
-                //    entity.AnimSet = animSet;
-                //    entity.Frame = animSet.PreloadedAnims[entity.TargetAnimationId >> 3].Frames[frameDelay];
-                //}
-            }
-
-            currentFrame = entity.Frame;
-            //currentFrame = entity.AnimSet.PreloadedAnims[entity.TargetAnimationId >> 3].Frames[frameDelay];
-        }
-
-        var frameDelay = 0;
-
-        while (true)
-        {
-            while (noSkip)
-            {
-                frameDelay = entity.NextFrameDelay; //currentFrame.Delay;
-
-                if (frameDelay == 0) //((uint)currentFrame.Delay & 0x80) != 0)
-                {
-                    Debug.Assert(entity.AnimSet != null);
-                    //entity.NextFrameDelay = (int)(frameDelay & 0x7f);
-
-                    var animSetPreloadedAnim = entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3];
-                    entity.CurrentFrameIndex++;
-
-                    try
-                    {
-                        var frame = animSetPreloadedAnim.Frames[entity.CurrentFrameIndex];
-                        //entity.Frame = frame ?? entity.Frame; //TODO : why we don't check if the next frame exists?
-                        if (frame == null)
-                        {
-                            entity.CurrentFrameIndex = 0;
-                            frame = animSetPreloadedAnim.Frames[entity.CurrentFrameIndex];
-                        }
-
-                        entity.Frame = frame;
-                        Debug.Assert(entity.Frame != null);
-                    }
-                    catch (Exception e)
-                    {
-                        Debugger.Break();
-                    }
-
-                    entity.NextFrameDelay = entity.Frame.Delay; //(int)(frameDelay & 0x7f);
-
-                    if (entity.Frame.CollisionOffset != -1)
-                    {
-                        entity.FrameCollision = entity.Frame.CollisionData;
-                        entity.FrameXOff = entity.FrameCollision.XOff << 16;
-                        entity.FrameYOff = entity.FrameCollision.YOff << 16;
-                        entity.FrameZOff = entity.FrameCollision.ZOff << 16;
-                        entity.Width = (entity.FrameCollision.Width << 16) - 1;
-                        entity.Depth = (entity.FrameCollision.Depth << 16) - 1;
-                        entity.Height = (entity.FrameCollision.Height << 16) - 1;
-                    }
-                    else
-                    {
-                        entity.FrameCollision = null;
-                    }
-
-                    if (entity.Frame.ImageSetPointer != -1)
-                    {
-                        entity.SpriteRef.Images = entity.Frame.Images.Images;
-                        entity.SpriteRef.DepthSortVal = entity.Frame.Images.Unknown;
-                        entity.SpriteRef.NumImages = entity.Frame.Images.NumberOfImages;
-                    }
-                    else
-                    {
-                        entity.SpriteRef.Images = null;
-                        entity.SpriteRef.DepthSortVal = 0;
-                        entity.SpriteRef.NumImages = 0;
-                    }
-
-                    //currentFrame = entity.FirstFrame;
-                    //entity.Frame = currentFrame;
-                    entity.AnimCompleteCounter++;
-                    return;
-                }
-
-                if (frameDelay == 0)
-                {
-                    break;
-                }
-
-                //if (frameDelay != 1)
-                {
-                    return;
-                    //Debugger.Break();
-                    //throw new Exception("Character Animation Error!!");
-                }
-
-                //currentFrame = entity.FirstFrame;
-                //entity.Frame = currentFrame;
-                //entity.AnimCompleteCounter++;
-            }
-
-            if (noSkip)
-            {
-                var animationId = (uint)currentFrame.CollisionOffset & 0xFF; // low part
-                //frameDelay = (uint)currentFrame.transformIndexLow;
-
-                if ((animationId & 0x80) != 0)
-                {
-                    break;
-                }
-
-                //frameDelay = entity.CurrentFrameIndex;
-                entity.TargetAnimationId = (uint)animationId;
-                entity.AnimCompleteCounter++;
-            }
-
-            LOAD_ANIMATION:
-            Debug.Assert(frameDelay < entity.Sprite.AnimSets.Length);
             entity.CurrentAnimationId = entity.TargetAnimationId;
-            var animSet = entity.Sprite.AnimSets[entity.CurrentAnimationId]; //frameDelay * 0xe
-            entity.AnimSet = animSet;
-            Debug.Assert(entity.AnimSet != null);
-            //entity.AnimFlags = entity.AnimSet.Flags;
-            //frameOffset = (ushort)((int)animSet.entries + animationFrameIndex * 2);
-            //var animTableOffset = entity.AnimSet.AnimationOffsets[entity.CurrentFrameIndex];
-            entity.CurrentFrameIndex = currentFrameIndex < 0 ? 0 : currentFrameIndex; // TODO : currentFrameIndex == -1
-            //entity.CurrentAnimationId = (uint)frameDelay;
-
-            //currentFrame = entity.AnimSet.PreloadedAnims[entity.TargetAnimationId].Frames[frameIndex];
-            //currentFrame = animTableOffset[entity.CurrentFrameIndex];
-            //System.Diagnostics.Debug.Assert(animTableOffset < entity.AnimSet.PreloadedAnims.Length);
-            //System.Diagnostics.Debug.Assert(entity.CurrentFrameIndex < entity.AnimSet.PreloadedAnims[animTableOffset].Frames.Length);
-
-            //currentFrame = entity.AnimSet.PreloadedAnims[animTableOffset].Frames[entity.CurrentFrameIndex];
-            //TargetAnimationId ??
-            try
-            {
-                currentFrame = entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.CurrentFrameIndex];
-            }
-            catch (Exception e)
-            {
-                Debugger.Break();
-            }
-
-            entity.NextFrameDelay = currentFrame.Delay;
+            entity.CurrentFrameIndex = 0;
+            entity.AnimCompleteCounter = 0;
+            animRecordPtr = entity.Sprite.AnimSets[entity.TargetAnimationId];
+            currentFrame = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.CurrentFrameIndex];
+            entity.AnimSet = animRecordPtr;
             entity.Frame = currentFrame;
             entity.FirstFrame = currentFrame;
-            //entity.IsZForceApplied = animSet.isZForceApplied;
+            entity.IsZForceApplied = 0; //entity.Sprite.Header.MoreFlags;
+
+            entity.NextFrameDelay = entity.Frame.Delay & 0x7f;
             entity.ForceResetAnimationFlag = 0;
-            //entity.AnimFlags = (byte)animRecordPtr.AnimationOffsets[1];
-            entity.AnimFlags = entity.AnimSet.Flags;
+            entity.AnimFlags = entity.AnimSet.Flags; //U6
+            entity.DepthSortVal = entity.AnimSet.U6;
 
             if (entity.BalanceRecord.NumAnimVals == 0)
             {
                 entity.BalanceVal = null;
             }
-            else if (frameDelay + 1 < entity.BalanceRecord.NumAnimVals)
-            {
-                //entity.BalanceRecord.Vals ??
-                //entity.BalanceVal = entity.BalanceRecord.AnimVals[frameIndex * 2 + 0xe];
-                entity.BalanceVal = entity.BalanceRecord.AnimVals[frameDelay + 1];
-                //System.Diagnostics.Debugger.Break();
-            }
             else
             {
-                entity.BalanceVal = entity.BalanceRecord.AnimVals[0]; // 0 ?? TODO: check if index 0
+                var index = entity.TargetAnimationId >= entity.BalanceRecord.NumAnimVals ? 0 : entity.TargetAnimationId;
+                entity.BalanceVal = entity.BalanceRecord.AnimVals[index];
             }
 
             uint sfxId = entity.AnimSet.Sfx;
             if ((entity.AnimSet.Flags & 0x20) != 0)
-            //if (((uint)animSet.pointerListOffset & 0x2000) != 0)
             {
                 sfxId += 0x100;
             }
 
             _gameEngine.PlaySoundEffect(sfxId);
+        }
+        else if (entity.NextFrameDelay != 0)
+        {
+            if (--entity.NextFrameDelay != 0)
+            {
+                return;
+            }
 
-            noSkip = true; //imitate goto LOAD_ANIMATION
+            entity.Frame = entity.FirstFrame;
+            entity.AnimCompleteCounter++;
         }
 
-        entity.NextFrameDelay = 0x7fffffff;
-        entity.ForceResetAnimationFlag = 1;
+        uint frameFlags = entity.Frame.Delay;
+        if ((frameFlags & 0x80) != 0)
+        {
+            entity.NextFrameDelay = (int)(frameFlags & 0x7F);
+            animRecordPtr = entity.Sprite.AnimSets[entity.TargetAnimationId];
+            currentFrame = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.CurrentFrameIndex];
+            entity.Frame = currentFrame;
+            //entity.Frame = banks.frameTable[banks.frameTable.IndexOf(entity.frame) + 5];
+        }
+        
+        animRecordPtr = entity.Sprite.AnimSets[entity.TargetAnimationId];
+        currentFrame = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.CurrentFrameIndex];
 
-        Debug.Assert(entity.AnimSet != null);
-        Debug.Assert(entity.Frame != null);
+        if (currentFrame.CollisionData != null) //currentFrame.CollisionOffset != 0xffff)
+        {
+            entity.FrameCollision = entity.Frame.CollisionData;
+            entity.FrameXOff = entity.FrameCollision.XOff << 16;
+            entity.FrameYOff = entity.FrameCollision.YOff << 16;
+            entity.FrameZOff = entity.FrameCollision.ZOff << 16;
+            entity.Width = (entity.FrameCollision.Width << 16) - 1;
+            entity.Depth = (entity.FrameCollision.Depth << 16) - 1;
+            entity.Height = (entity.FrameCollision.Height << 16) - 1;
+        }
+        else
+        {
+            entity.FrameCollision = null;
+        }
+
+        if (currentFrame.ImageSetPointer != -1)
+        {
+            entity.SpriteRef.Images = currentFrame.Images.Images;
+            entity.SpriteRef.DepthSortVal = currentFrame.Images.Unknown;
+            entity.SpriteRef.NumImages = currentFrame.Images.NumberOfImages;
+        }
+        else
+        {
+            entity.SpriteRef.Images = null;
+            entity.SpriteRef.DepthSortVal = 0;
+            entity.SpriteRef.NumImages = 0;
+        }
+
+        //if (entity.Index2 == 8)
+        //{
+        //    if (entity.CurrentAnimationId == 12)
+        //    {
+        //        Debugger.Break();
+        //    }
+        //}
+        //
+        //if  ((entity.Frame.TransformIndexLow & 0x80) == 0)
+        //{
+        //    //entity->targetAnimationId = entity.Frame.TransformIndexLow;
+        //    //entity->animCompleteCounter = entity->animCompleteCounter + 1;
+        //}
+
+        var anim = entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3];
+        var nextFrameIndex = entity.CurrentFrameIndex + 1;
+
+        if (nextFrameIndex >= anim.NumberOfFrames)
+        {
+            nextFrameIndex = 0;
+            entity.ForceResetAnimationFlag = 1;
+        }
+
+        entity.CurrentFrameIndex = nextFrameIndex;
     }
 
     // 800370c4

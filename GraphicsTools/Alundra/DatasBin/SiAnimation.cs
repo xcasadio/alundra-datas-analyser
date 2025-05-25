@@ -19,7 +19,7 @@ public class SiAnimation
             NumberOfFrames++;
             br.BaseStream.Position -= 1;
 
-            Frames[i] = new SiFrame(br, header, memoryAddress + i * 5);
+            Frames[i] = new SiFrame(br, header, memoryAddress + i * 5); // 5 = sizeof(SiFrame)
 
             for (var j = 0; j < i; j++)
             {

@@ -4,28 +4,32 @@ public class SpriteRecord
 {
     public SpriteRecord(BinaryReader br, long binOffset, int id, int memoryAddress, int spriteInfoMemoryAddress)
     {
+        const int sizeofAnimationSet = 14;
+        const int sizeofHeader = 32;
+
         Header = new SpriteTableHeader(br, binOffset, id, memoryAddress, spriteInfoMemoryAddress);
-        AnimSets = new AnimationSet[(Header.AnimationsPointer - Header.AnimationOffsetsPointer) / 14];
+        AnimSets = new AnimationSet[(Header.AnimationsPointer - Header.AnimationOffsetsPointer) / sizeofAnimationSet];
 
         for (var i = 0; i < AnimSets.Length; i++)
         {
-            AnimSets[i] = new AnimationSet(br, memoryAddress + 32 + i * 14);
+            AnimSets[i] = new AnimationSet(br, memoryAddress + sizeofHeader + i * sizeofAnimationSet);
         }
+
         //preload all of the animations here
         for (int i = 0; i < AnimSets.Length; i++)
         {
-            for (int j = 0; j < 4; j++)
+            for (int dirIndex = 0; dirIndex < 4; dirIndex++)
             {
-                var direction = j switch
+                var direction = dirIndex switch
                 {
                     1 => 2,
                     2 => 1,
-                    _ => j
+                    _ => dirIndex
                 };
 
                 if (AnimSets[i].AnimationOffsets[direction] != 0xffff)
                 {
-                    AnimSets[i].PreloadedAnims[j] = GetAnimation(br, AnimSets[i].AnimationOffsets[direction]);
+                    AnimSets[i].PreloadedAnims[dirIndex] = GetAnimation(br, AnimSets[i].AnimationOffsets[direction]);
 
                     /*DBFrame* frames = (DBFrame*)&(*spr->framesdata)[spr->animsets[animdex].diroffsets[dirdex]];
                     int framedex;

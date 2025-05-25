@@ -44,7 +44,7 @@ public partial class FrmGame : Form
     private void FrmGame_Load(object? sender, EventArgs e)
     {
         _gameEngineTimer = new Timer();
-        _gameEngineTimer.Interval = 33; //30 FPS
+        _gameEngineTimer.Interval = 23;
         _gameEngineTimer.Tick += GameEngineTimerTick;
         _gameEngineTimer.Start();
 
