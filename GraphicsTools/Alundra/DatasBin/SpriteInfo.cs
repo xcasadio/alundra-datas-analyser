@@ -46,6 +46,7 @@ public class SpriteInfo
         for (var i = 0; i < maxPalettes; i++)
         {
             Palettes[i] = new Color[16];
+
             for (var j = 0; j < 16; j++)
             {
                 var b2 = buff[buffdex++];

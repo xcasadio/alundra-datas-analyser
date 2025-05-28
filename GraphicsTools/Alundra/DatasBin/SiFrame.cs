@@ -9,7 +9,7 @@ public class SiFrame
         MemoryAddress = memoryAddress;
 
         Delay = br.ReadByte();
-        
+
         //for debugging
         var pos = br.BaseStream.Position;
         TransformIndexLow = br.ReadByte();
@@ -21,11 +21,6 @@ public class SiFrame
 
         CollisionOffset = br.ReadInt16();
         ImageSetPointer = br.ReadUInt16() * 2;
-
-        if (TransformIndexLow == 13)
-        {
-            Debugger.Break();
-        }
 
         var streamPosition = br.BaseStream.Position;
 
@@ -39,6 +34,17 @@ public class SiFrame
         }
 
         br.BaseStream.Position = streamPosition;
+    }
+
+    // Used for transition frame
+    public SiFrame(byte flag, byte animationId, int memoryAddress)
+    {
+        MemoryAddress = memoryAddress;
+        Delay = flag;
+        TransformIndexLow = animationId;
+
+        CollisionOffset = -1;
+        ImageSetPointer = -1;
     }
 
     public readonly byte Delay;//top bit masked

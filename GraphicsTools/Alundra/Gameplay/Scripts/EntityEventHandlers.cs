@@ -4649,7 +4649,6 @@ public class EntityEventHandlers
         StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
 
         if (StaticVariables.g_gameRandomSeed * 0x100 >> 0x20 < variables[1])
-
         {
             eventProgramState.Result = 0;
         }
@@ -4664,11 +4663,14 @@ public class EntityEventHandlers
     // 800404A8
     private int Script_141_08D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var iVar1 = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        Debugger.Break();
+        return 0;
+        /*
+        var num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
 
-        if (0 < iVar1)
+        if (0 < num)
         {
-            var piVar2 = StaticVariables.g_activeEntityRefId + iVar1;
+            var piVar2 = StaticVariables.g_activeEntityRefId + num;
 
             do
             {
@@ -4678,14 +4680,15 @@ public class EntityEventHandlers
                     return 2;
                 }
 
-                iVar1 += -1;
+                num += -1;
                 piVar2 += -1;
-            } while (0 < iVar1);
+            } while (0 < num);
         }
 
         eventProgramState.Result = 0;
 
         return 2;
+        */
     }
 
     // 80040534

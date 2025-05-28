@@ -1,4 +1,6 @@
-﻿namespace Alundra.DatasBin;
+﻿using System.Diagnostics;
+
+namespace Alundra.DatasBin;
 
 public class SiAnimation
 {
@@ -10,9 +12,17 @@ public class SiAnimation
         for (var i = 0; i < Frames.Length; i++)
         {
             //read two test bytes to check for the end of the list
-            short test = br.ReadByte();
+            var test = br.ReadByte();
             if ((test & 0x80) != 0x80)
             {
+                var value = br.ReadByte();
+                //check if the frame is a transition frame
+                if ((value & 0x80) == 0 && value != 0) // TODO check value != 0
+                {
+                    NumberOfFrames++;
+                    Frames[i] = new SiFrame(test, value, memoryAddress + i * 5);
+                }
+                
                 break;
             }
 
