@@ -1,6 +1,4 @@
-﻿using Alundra.DatasBin;
-
-namespace Alundra.Gameplay.Scripts;
+﻿namespace Alundra.Gameplay.Scripts;
 
 public class EventProgramState
 {

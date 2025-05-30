@@ -6,12 +6,19 @@ namespace Alundra;
 
 public static class StaticVariables
 {
+    //editor
+    public static int EditorSelectEntityIndex { get; set; } = -1;
+
+    // custom
     public const int ScreenWidth = 320;
     public const int ScreenHeight = 224;
     public const int MapTileWidth = 24;
     public const int MapTileHeight = 16;
 
     public static Entity PlayerEntity => g_entitySlots[0];
+    
+    public static bool IsGamePaused { get; set; }
+    public static bool DoNextFrame { get; set; }
 
     //don't delete
     //can't export with Ghidra
@@ -425,8 +432,7 @@ public static class StaticVariables
         0xC, 0xC, 0xD, 0xE,
         0xE, 0xF, 0x10, 0x10
     ];
-
-
+    
 
     public static void Initialize()
     {

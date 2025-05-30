@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Alundra.DatasBin;
+using Alundra.Editor;
 using Alundra.Gameplay;
 using Alundra.Gameplay.Scripts;
 using Alundra.Sound;
@@ -9,6 +10,8 @@ namespace Alundra;
 
 public class GameEngine
 {
+    public readonly ReplayManager ReplayManager = new();
+
     public readonly DatasBin.DatasBin DatasBin;
     public readonly BalanceBin BalanceBin;
     public readonly SoundBin SoundBin;
@@ -90,7 +93,7 @@ public class GameEngine
                 //SetEtcAnimTableAlt(StaticVariables.g_compressedImageData[StaticVariables.g_animTableAlt_80191b48]);
                 //InitializeTileSet(StaticVariables.g_currentMap, StaticVariables.g_compressedImageData[StaticVariables.g_tileSet_index_80191b44]);
 
-                //_datasBin.AlundraGameMap.SpriteInfo.Entities.Entities[0].XPos
+                //_datasBin.AlundraGameMap.SpriteInfo.Entities.Entities[0].PosX
                 //StaticVariables.g_imageBuffer[0xc];
                 //StaticVariables.g_imageBuffer[0xd];
                 //StaticVariables.g_imageBuffer[0xe];
@@ -120,8 +123,27 @@ public class GameEngine
         //{
         StaticVariables.g_debugMessage = "";
         //PrintDebug();
-        _renderer.RenderScene(graphics);
-        Update(0);
+        RenderScene(graphics);
+
+        if (!StaticVariables.IsGamePaused || StaticVariables.DoNextFrame || ReplayManager.ApplyCurrentFrame)
+        {
+            if (ReplayManager.ApplyCurrentFrame)
+            {
+                ReplayManager.PlayOneFrame();
+            }
+            else
+            {
+                Update(0);
+            }
+            
+            if (ReplayManager.IsSaving)
+            {
+                ReplayManager.SaveFrame();
+            }
+
+            StaticVariables.DoNextFrame = false;
+        }
+
         //FntPrint();
         var ndDebugFrame = 1;
         if (StaticVariables.g_debugState < 0 && (StaticVariables.g_debugFlags & 0x40000000) != 0)
@@ -199,6 +221,12 @@ public class GameEngine
         }
 
         //} while (true);
+    }
+
+    // 8002bd60
+    private void RenderScene(Graphics graphics)
+    {
+        _renderer.RenderScene(graphics);
     }
 
     public int UpdateEntityFromWarpFlag(int param_1)
@@ -1835,9 +1863,9 @@ public class GameEngine
 
         if (StaticVariables.g_entityFollowedByCamera != null && StaticVariables.g_entityFollowedByCamera.Status <= 3)
         {
-            StaticVariables.g_cameraLookAtX = StaticVariables.g_entityFollowedByCamera.XPos >> 16;
-            StaticVariables.g_cameraLookAtY = StaticVariables.g_entityFollowedByCamera.YPos >> 16;
-            StaticVariables.g_cameraLookAtZ = StaticVariables.g_entityFollowedByCamera.ZPos >> 16;
+            StaticVariables.g_cameraLookAtX = StaticVariables.g_entityFollowedByCamera.PosX >> 16;
+            StaticVariables.g_cameraLookAtY = StaticVariables.g_entityFollowedByCamera.PosY >> 16;
+            StaticVariables.g_cameraLookAtZ = StaticVariables.g_entityFollowedByCamera.PosZ >> 16;
         }
     }
 
@@ -1914,14 +1942,14 @@ public class GameEngine
         //SpawnEntity(Entity parent, int initDataIndex, int checkSpawnZone)
         //SpawnEntity(Entity ownerEntity, bool ismapsprite, uint tableindex, int xpos, int ypos, int zpos, uint dir)
         var child = SpawnEntity(null, false, entity.ContentsItemId + 0x1e,
-            entity.XPos, entity.YPos, entity.ZPos, 0);
+            entity.PosX, entity.PosY, entity.PosZ, 0);
 
         if (child == null)
         {
             return 0;
         }
 
-        child.ZForce = 0xa0000;
+        child.ForceZ = 0xa0000;
         child.Bytes[0] = 1;
 
         child.Flags &= 0xff7f;
@@ -2612,8 +2640,8 @@ public class GameEngine
 
             case 3:
                 direction = (uint)ScriptHelper.GetDirectionToTarget(
-                    StaticVariables.PlayerEntity.XPos - entity.XPos,
-                    StaticVariables.PlayerEntity.YPos - entity.YPos);
+                    StaticVariables.PlayerEntity.PosX - entity.PosX,
+                    StaticVariables.PlayerEntity.PosY - entity.PosY);
                 direction += result;
                 goto LAB_8003d110;
 
@@ -2666,16 +2694,16 @@ public class GameEngine
         {
             if (-deltaX <= StaticVariables.g_entitySlots[0].Width)
             {
-                return (int)((StaticVariables.g_entitySlots[0].YPos < entity.YPos ? 1U : 0U) << 4);
+                return (int)((StaticVariables.g_entitySlots[0].PosY < entity.PosY ? 1U : 0U) << 4);
             }
         }
         else if (deltaX <= entity.Width)
         {
-            return (int)((StaticVariables.g_entitySlots[0].YPos < entity.YPos ? 1U : 0U) << 4);
+            return (int)((StaticVariables.g_entitySlots[0].PosY < entity.PosY ? 1U : 0U) << 4);
         }
 
         deltaX = 0x18;
-        if (StaticVariables.g_entitySlots[0].XPos < entity.XPos)
+        if (StaticVariables.g_entitySlots[0].PosX < entity.PosX)
         {
             deltaX = 0x08;
         }

@@ -101,7 +101,7 @@ public class SpriteEventHandlers
     // 8006174C
     public void SetSpawnFlagFromZPos(Entity entity)
     {
-        entity.AIValues[0] = (short)(entity.ZPos >> 16);
+        entity.AIValues[0] = (short)(entity.PosZ >> 16);
     }
 
     // 80061758
@@ -170,8 +170,8 @@ public class SpriteEventHandlers
     // 80061820
     public void SpawnWarpAndSetAnim(Entity entity)
     {
-        Entity spawned = _gameEngine.SpawnWarpEntity(entity, 1, 0xF5, entity.XPos + 0xF00000, 
-            entity.YPos, entity.ZPos, entity.TargetDirection);
+        Entity spawned = _gameEngine.SpawnWarpEntity(entity, 1, 0xF5, entity.PosX + 0xF00000, 
+            entity.PosY, entity.PosZ, entity.TargetDirection);
         entity.AIValues[0] = (short)spawned.Index;
         spawned.AIValues[1] = 0;
         entity.TargetAnimationId = 3;
@@ -208,7 +208,7 @@ public class SpriteEventHandlers
     public void SpawnSpecificWarpAndResetLoader(Entity entity)
     {
         Entity spawned = _gameEngine.SpawnWarpEntity(entity, 1, 0x9D,
-            entity.XPos + 0x380000, entity.YPos, entity.ZPos - 0x200000, entity.TargetDirection);
+            entity.PosX + 0x380000, entity.PosY, entity.PosZ - 0x200000, entity.TargetDirection);
         entity.AIValues.Set(0xa000, 1); //spawned;
         StaticVariables.g_loaderInitialized = 0;
     }
@@ -244,17 +244,17 @@ public class SpriteEventHandlers
     // 800619DC
     public void SetCustomByteFromZPos(Entity entity)
     {
-        entity.Bytes[0] = (byte)(entity.ZPos & 0xFF);
+        entity.Bytes[0] = (byte)(entity.PosZ & 0xFF);
     }
 
     // 800619E8
     public void SpawnWarpDropAndAdjustPosition(Entity entity)
     {
-        Entity spawned = _gameEngine.SpawnWarpEntity(entity, 1, 0xD8, entity.XPos, entity.YPos, entity.ZPos, entity.TargetDirection);
+        Entity spawned = _gameEngine.SpawnWarpEntity(entity, 1, 0xD8, entity.PosX, entity.PosY, entity.PosZ, entity.TargetDirection);
         spawned.TargetAnimationId = 5;
         entity.TargetAnimationId = 3;
-        entity.YPos -= 0x100000;
-        entity.ZPos += 0x300000;
+        entity.PosY -= 0x100000;
+        entity.PosZ += 0x300000;
     }
 
     // 80061A6C
@@ -321,7 +321,7 @@ public class SpriteEventHandlers
 
                 if (relPos[0] < 3 && relPos[1] < 3 && relPos[2] < 0x200001 && entity.Bytes[0] + 1 == 0)
                 {
-                    uVar2 = (uint)ScriptHelper.GetDirectionToTarget(StaticVariables.g_entitySlots[0].XPos - entity.XPos, StaticVariables.g_entitySlots[0].YPos - entity.YPos);
+                    uVar2 = (uint)ScriptHelper.GetDirectionToTarget(StaticVariables.g_entitySlots[0].PosX - entity.PosX, StaticVariables.g_entitySlots[0].PosY - entity.PosY);
                     entity.TargetDirection = uVar2;
                     entity.TargetAnimationId = 3;
                     entity.Bytes[1] = 1;
@@ -333,7 +333,7 @@ public class SpriteEventHandlers
                 entity.AIValues[1] = (short)((short)((ulong)StaticVariables.g_gameRandomSeed * 0x3d >> 32) + 0x3c);
                 if (relPos[0] < 4 && relPos[1] < 4)
                 {
-                    uVar2 = (uint)ScriptHelper.GetDirectionToTarget(StaticVariables.g_entitySlots[0].XPos - entity.XPos, StaticVariables.g_entitySlots[0].YPos - entity.YPos);
+                    uVar2 = (uint)ScriptHelper.GetDirectionToTarget(StaticVariables.g_entitySlots[0].PosX - entity.PosX, StaticVariables.g_entitySlots[0].PosY - entity.PosY);
                     entity.TargetDirection = uVar2;
                 }
                 goto case 3;
@@ -359,10 +359,10 @@ public class SpriteEventHandlers
 
                 StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
                 direction = (byte)ScriptHelper.DirectionTable[entity.TargetDirection]; // g_directionFlipTable //80028b34
-                entity.YForceStep = 0;
-                entity.XForceStep = 0;
-                entity.YForce = 0;
-                entity.XForce = 0;
+                entity.ForceStepY = 0;
+                entity.ForceStepX = 0;
+                entity.ForceY = 0;
+                entity.ForceX = 0;
                 entity.TargetYForce = 0;
                 entity.TargetXForce = 0;
                 entity.TargetDirection = direction;
@@ -471,8 +471,8 @@ public class SpriteEventHandlers
                 {
                     entity.TargetAnimationId = 0xd;
                     direction = (uint)ScriptHelper.GetDirectionToTarget(
-                        StaticVariables.g_entitySlots[0].XPos - entity.XPos,
-                        StaticVariables.g_entitySlots[0].YPos - entity.YPos);
+                        StaticVariables.g_entitySlots[0].PosX - entity.PosX,
+                        StaticVariables.g_entitySlots[0].PosY - entity.PosY);
                     entity.TargetDirection = direction;
                     entity.AIValues[6] = 0;
                     entity.AIValues[7] = 0;
@@ -493,7 +493,7 @@ public class SpriteEventHandlers
                 if ((direction & 7) == 0)
                 {
                     _gameEngine.EffectManager.CreateEffectEntity(0, StaticVariables.g_imageBuffer[10], 0,
-                        entity.XPos, entity.YPos, entity.TerrainHeight);
+                        entity.PosX, entity.PosY, entity.TerrainHeight);
                 }
 
                 if (StaticVariables.g_entitySlots[0].TouchingEntity == entity)
@@ -503,8 +503,8 @@ public class SpriteEventHandlers
                     {
                         entity.TargetAnimationId = 1;
                         direction = (uint)ScriptHelper.GetDirectionToTarget(
-                            entity.XPos - StaticVariables.g_entitySlots[0].XPos,
-                            entity.YPos - StaticVariables.g_entitySlots[0].YPos);
+                            entity.PosX - StaticVariables.g_entitySlots[0].PosX,
+                            entity.PosY - StaticVariables.g_entitySlots[0].PosY);
                         entity.TargetDirection = direction;
                         entity.AIValues[1] = 0x3c;
                         entity.Bytes[0] = 1;
@@ -606,10 +606,10 @@ public class SpriteEventHandlers
                     if (entity.ForceAdjusted != 0)
                     {
                         bVar1 = (byte)StaticVariables.g_directionFlipTable[entity.TargetDirection];
-                        entity.YForceStep = 0;
-                        entity.XForceStep = 0;
-                        entity.YForce = 0;
-                        entity.XForce = 0;
+                        entity.ForceStepY = 0;
+                        entity.ForceStepX = 0;
+                        entity.ForceY = 0;
+                        entity.ForceX = 0;
                         entity.TargetYForce = 0;
                         entity.TargetXForce = 0;
                         entity.TargetDirection = bVar1;
@@ -672,7 +672,7 @@ public class SpriteEventHandlers
                     if (entity.Bytes[1] == 3)
                     {
                         entity.TargetAnimationId = 3;
-                        direction = (uint)ScriptHelper.GetDirectionToTarget(StaticVariables.g_entitySlots[0].XPos - entity.XPos, StaticVariables.g_entitySlots[0].YPos - entity.YPos);
+                        direction = (uint)ScriptHelper.GetDirectionToTarget(StaticVariables.g_entitySlots[0].PosX - entity.PosX, StaticVariables.g_entitySlots[0].PosY - entity.PosY);
                         entity.TargetDirection = direction;
                         entity.AIValues[1] = 0x78;
                         entity.Bytes[2] = 0;
@@ -699,7 +699,7 @@ public class SpriteEventHandlers
 
                 LAB_80066938:
                 entity.TargetAnimationId = 3;
-                direction = (uint)ScriptHelper.GetDirectionToTarget(StaticVariables.g_entitySlots[0].XPos - entity.XPos, StaticVariables.g_entitySlots[0].YPos - entity.YPos);
+                direction = (uint)ScriptHelper.GetDirectionToTarget(StaticVariables.g_entitySlots[0].PosX - entity.PosX, StaticVariables.g_entitySlots[0].PosY - entity.PosY);
                 entity.TargetDirection = direction;
                 entity.AIValues[1] = 0x78;
                 entity.Bytes[2] = 0;
@@ -778,11 +778,11 @@ public class SpriteEventHandlers
                 entity2 = entity;
                 if (entity.IsAboveGround == 0)
                 {
-                    if (entity.ZForce > 0 && entity.InitialXPos == 0)
+                    if (entity.ForceZ > 0 && entity.InitialXPos == 0)
                     {
                         entity.InitialXPos = 1;
                         entity.TargetDirection = (entity.TargetDirection + 0x10) & 0x1f;
-                        _gameEngine.EffectManager.CreateEffectEntity(0, 9, 0, entity.XPos, entity.YPos, entity.ZPos + 0x80000);
+                        _gameEngine.EffectManager.CreateEffectEntity(0, 9, 0, entity.PosX, entity.PosY, entity.PosZ + 0x80000);
                     }
                 }
                 else

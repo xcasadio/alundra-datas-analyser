@@ -4,7 +4,7 @@ namespace Alundra;
 
 public class RendererHelper
 {
-    private static Font _font = new Font(FontFamily.GenericSansSerif, 10);
+    private static Font _font = new Font(FontFamily.GenericSansSerif, 9);
 
     //Custom renderer
     public static void Render(Graphics g, DatasBin.DatasBin datasBin, GameMap gameMap, int currentRow, int camTileOffsetY)
@@ -99,7 +99,21 @@ public class RendererHelper
                         DrawSprite(map, img, scx, scy, g);
                     }
 
-                    g.DrawString($"entity {entity.Index} ({entity.Index2})", _font, Brushes.Blue, scx - 16, scy);
+                    var brush = StaticVariables.EditorSelectEntityIndex == entity.Index ? Brushes.ForestGreen : Brushes.Blue;
+                    var text = $"#{entity.Index}-{entity.Index2}";
+                    SizeF textSize = g.MeasureString(text, _font);
+                    //background
+                    for (int dx = -1; dx <= 1; dx++)
+                    {
+                        for (int dy = -1; dy <= 1; dy++)
+                        {
+                            if (dx == 0 && dy == 0) continue;
+                            g.DrawString(text, _font, Brushes.Black, scx - textSize.Width / 2 + dx, scy + dy);
+                        }
+                    }
+                    
+                    //text
+                    g.DrawString(text, _font, brush, scx - textSize.Width / 2, scy);
                 }
             }
         }

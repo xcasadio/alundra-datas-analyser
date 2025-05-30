@@ -1,9 +1,4 @@
-﻿using Alundra.Gameplay;
-using Alundra.Gameplay.Scripts;
-using Alundra.Sprite;
-using System.Diagnostics;
-
-namespace Alundra.DatasBin;
+﻿namespace Alundra.DatasBin;
 
 public class SpriteInfoEventCodes
 {

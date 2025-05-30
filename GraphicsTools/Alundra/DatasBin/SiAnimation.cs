@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace Alundra.DatasBin;
+﻿namespace Alundra.DatasBin;
 
 public class SiAnimation
 {

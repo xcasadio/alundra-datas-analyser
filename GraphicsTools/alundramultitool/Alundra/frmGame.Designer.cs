@@ -64,11 +64,27 @@ namespace GraphicsTools.Alundra
             label21 = new Label();
             labelMapId = new Label();
             listBoxEntities = new ListBox();
-            textBoxEntityInfos = new TextBox();
+            buttonPauseGame = new Button();
+            buttonRunOneFrame = new Button();
+            propertyGridEntity = new PropertyGrid();
+            hScrollBarFrames = new HScrollBar();
+            labelFrames = new Label();
+            label8 = new Label();
+            label12 = new Label();
+            dataGridViewGlobalFlags = new DataGridView();
+            columnIndex = new DataGridViewTextBoxColumn();
+            columnValue = new DataGridViewTextBoxColumn();
+            dataGridViewMapFlags = new DataGridView();
+            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
+            buttonSaveFrames = new Button();
+            label14 = new Label();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewGlobalFlags).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewMapFlags).BeginInit();
             SuspendLayout();
             // 
             // pctOut
@@ -183,7 +199,7 @@ namespace GraphicsTools.Alundra
             groupBox2.Controls.Add(labelCameraXY);
             groupBox2.Controls.Add(label13);
             groupBox2.Controls.Add(labelCameraPosition);
-            groupBox2.Location = new Point(938, 16);
+            groupBox2.Location = new Point(938, 12);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(200, 105);
             groupBox2.TabIndex = 9;
@@ -413,30 +429,172 @@ namespace GraphicsTools.Alundra
             // 
             listBoxEntities.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listBoxEntities.FormattingEnabled = true;
-            listBoxEntities.Location = new Point(644, 242);
+            listBoxEntities.Location = new Point(644, 150);
             listBoxEntities.Name = "listBoxEntities";
-            listBoxEntities.Size = new Size(103, 499);
+            listBoxEntities.Size = new Size(103, 799);
             listBoxEntities.TabIndex = 11;
+            listBoxEntities.SelectedIndexChanged += listBoxEntities_SelectedIndexChanged;
             // 
-            // textBoxEntityInfos
+            // buttonPauseGame
             // 
-            textBoxEntityInfos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            textBoxEntityInfos.BorderStyle = BorderStyle.None;
-            textBoxEntityInfos.Location = new Point(753, 242);
-            textBoxEntityInfos.Multiline = true;
-            textBoxEntityInfos.Name = "textBoxEntityInfos";
-            textBoxEntityInfos.ReadOnly = true;
-            textBoxEntityInfos.ScrollBars = ScrollBars.Both;
-            textBoxEntityInfos.Size = new Size(295, 511);
-            textBoxEntityInfos.TabIndex = 13;
-            textBoxEntityInfos.Text = "Entity infos";
+            buttonPauseGame.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            buttonPauseGame.ForeColor = Color.FromArgb(0, 192, 0);
+            buttonPauseGame.Location = new Point(12, 454);
+            buttonPauseGame.Name = "buttonPauseGame";
+            buttonPauseGame.Size = new Size(75, 23);
+            buttonPauseGame.TabIndex = 14;
+            buttonPauseGame.Text = "Running";
+            buttonPauseGame.UseVisualStyleBackColor = true;
+            buttonPauseGame.Click += buttonPauseGame_Click;
+            // 
+            // buttonRunOneFrame
+            // 
+            buttonRunOneFrame.Location = new Point(93, 454);
+            buttonRunOneFrame.Name = "buttonRunOneFrame";
+            buttonRunOneFrame.Size = new Size(35, 23);
+            buttonRunOneFrame.TabIndex = 15;
+            buttonRunOneFrame.Text = ">|";
+            buttonRunOneFrame.UseVisualStyleBackColor = true;
+            buttonRunOneFrame.Click += buttonNextFrame_Click;
+            // 
+            // propertyGridEntity
+            // 
+            propertyGridEntity.BackColor = SystemColors.Control;
+            propertyGridEntity.Location = new Point(753, 150);
+            propertyGridEntity.Name = "propertyGridEntity";
+            propertyGridEntity.Size = new Size(385, 799);
+            propertyGridEntity.TabIndex = 16;
+            // 
+            // hScrollBarFrames
+            // 
+            hScrollBarFrames.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            hScrollBarFrames.Enabled = false;
+            hScrollBarFrames.LargeChange = 1;
+            hScrollBarFrames.Location = new Point(5, 480);
+            hScrollBarFrames.Maximum = 0;
+            hScrollBarFrames.Name = "hScrollBarFrames";
+            hScrollBarFrames.Size = new Size(310, 23);
+            hScrollBarFrames.TabIndex = 17;
+            hScrollBarFrames.Scroll += hScrollBarFrames_Scroll;
+            // 
+            // labelFrames
+            // 
+            labelFrames.AutoSize = true;
+            labelFrames.Location = new Point(265, 458);
+            labelFrames.Name = "labelFrames";
+            labelFrames.Size = new Size(65, 15);
+            labelFrames.TabIndex = 18;
+            labelFrames.Text = "Frames 0/0";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(5, 539);
+            label8.Name = "label8";
+            label8.Size = new Size(69, 15);
+            label8.TabIndex = 21;
+            label8.Text = "Global flags";
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Location = new Point(122, 539);
+            label12.Name = "label12";
+            label12.Size = new Size(59, 15);
+            label12.TabIndex = 22;
+            label12.Text = "Map flags";
+            // 
+            // dataGridViewGlobalFlags
+            // 
+            dataGridViewGlobalFlags.AllowUserToAddRows = false;
+            dataGridViewGlobalFlags.AllowUserToDeleteRows = false;
+            dataGridViewGlobalFlags.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridViewGlobalFlags.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewGlobalFlags.Columns.AddRange(new DataGridViewColumn[] { columnIndex, columnValue });
+            dataGridViewGlobalFlags.Location = new Point(8, 557);
+            dataGridViewGlobalFlags.Name = "dataGridViewGlobalFlags";
+            dataGridViewGlobalFlags.RowHeadersVisible = false;
+            dataGridViewGlobalFlags.Size = new Size(0, 392);
+            dataGridViewGlobalFlags.TabIndex = 23;
+            // 
+            // columnIndex
+            // 
+            columnIndex.HeaderText = "Index";
+            columnIndex.MinimumWidth = 40;
+            columnIndex.Name = "columnIndex";
+            columnIndex.Width = 40;
+            // 
+            // columnValue
+            // 
+            columnValue.HeaderText = "Value";
+            columnValue.MinimumWidth = 30;
+            columnValue.Name = "columnValue";
+            columnValue.Width = 60;
+            // 
+            // dataGridViewMapFlags
+            // 
+            dataGridViewMapFlags.AllowUserToAddRows = false;
+            dataGridViewMapFlags.AllowUserToDeleteRows = false;
+            dataGridViewMapFlags.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridViewMapFlags.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewMapFlags.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2 });
+            dataGridViewMapFlags.Location = new Point(122, 557);
+            dataGridViewMapFlags.Name = "dataGridViewMapFlags";
+            dataGridViewMapFlags.RowHeadersVisible = false;
+            dataGridViewMapFlags.Size = new Size(0, 392);
+            dataGridViewMapFlags.TabIndex = 24;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            dataGridViewTextBoxColumn1.HeaderText = "Index";
+            dataGridViewTextBoxColumn1.MinimumWidth = 40;
+            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            dataGridViewTextBoxColumn1.Width = 40;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            dataGridViewTextBoxColumn2.HeaderText = "Value";
+            dataGridViewTextBoxColumn2.MinimumWidth = 30;
+            dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            dataGridViewTextBoxColumn2.Width = 60;
+            // 
+            // buttonSaveFrames
+            // 
+            buttonSaveFrames.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            buttonSaveFrames.ForeColor = Color.FromArgb(0, 192, 0);
+            buttonSaveFrames.Location = new Point(518, 454);
+            buttonSaveFrames.Name = "buttonSaveFrames";
+            buttonSaveFrames.Size = new Size(120, 23);
+            buttonSaveFrames.TabIndex = 25;
+            buttonSaveFrames.Text = "Start recording";
+            buttonSaveFrames.UseVisualStyleBackColor = true;
+            buttonSaveFrames.Click += buttonSaveFrames_Click;
+            // 
+            // label14
+            // 
+            label14.AutoSize = true;
+            label14.Location = new Point(643, 132);
+            label14.Name = "label14";
+            label14.Size = new Size(45, 15);
+            label14.TabIndex = 27;
+            label14.Text = "Entities";
             // 
             // FrmGame
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1143, 756);
-            Controls.Add(textBoxEntityInfos);
+            ClientSize = new Size(1143, 954);
+            Controls.Add(label14);
+            Controls.Add(buttonSaveFrames);
+            Controls.Add(dataGridViewMapFlags);
+            Controls.Add(dataGridViewGlobalFlags);
+            Controls.Add(label12);
+            Controls.Add(label8);
+            Controls.Add(labelFrames);
+            Controls.Add(hScrollBarFrames);
+            Controls.Add(propertyGridEntity);
+            Controls.Add(buttonRunOneFrame);
+            Controls.Add(buttonPauseGame);
             Controls.Add(listBoxEntities);
             Controls.Add(groupBox3);
             Controls.Add(groupBox2);
@@ -451,6 +609,8 @@ namespace GraphicsTools.Alundra
             groupBox2.PerformLayout();
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewGlobalFlags).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewMapFlags).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -480,7 +640,6 @@ namespace GraphicsTools.Alundra
         private Label label21;
         private Label labelMapId;
         private ListBox listBoxEntities;
-        private TextBox textBoxEntityInfos;
         private Label label6;
         private Label labelCameraLookAt;
         private Label label3;
@@ -493,5 +652,20 @@ namespace GraphicsTools.Alundra
         private Label labelMapScreenPos;
         private Label label10;
         private Label labelMapOffset;
+        private Button buttonPauseGame;
+        private Button buttonRunOneFrame;
+        private PropertyGrid propertyGridEntity;
+        private HScrollBar hScrollBarFrames;
+        private Label labelFrames;
+        private Label label8;
+        private Label label12;
+        private DataGridView dataGridViewGlobalFlags;
+        private DataGridViewTextBoxColumn columnIndex;
+        private DataGridViewTextBoxColumn columnValue;
+        private DataGridView dataGridViewMapFlags;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private Button buttonSaveFrames;
+        private Label label14;
     }
 }

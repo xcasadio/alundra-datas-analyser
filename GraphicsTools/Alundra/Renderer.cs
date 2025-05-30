@@ -1,10 +1,4 @@
-﻿using Alundra.DatasBin;
-using Alundra.Gameplay;
-using System.Data.Common;
-using System;
-using System.Drawing;
-
-namespace Alundra;
+﻿namespace Alundra;
 
 public class Renderer
 {
@@ -15,6 +9,7 @@ public class Renderer
         _gameEngine = gameEngine;
     }
 
+    // 8002bd60
     public void RenderScene(Graphics graphics)
     {
         byte localScratchpad = 0;
@@ -45,6 +40,7 @@ public class Renderer
         StaticVariables.g_primitive_sync = GetDisplaySyncCounter();
     }
 
+    // 8002cda0
     private int RenderTiles(int[] renderListBase, int offsetX, int offsetY, int offsetZ, Graphics graphics)
     {
         //TODO

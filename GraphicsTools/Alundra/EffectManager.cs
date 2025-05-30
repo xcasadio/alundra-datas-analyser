@@ -171,9 +171,9 @@ public class EffectManager
             var entity = effect.AttachedEntity;
             if (entity.Status != 0)
             {
-                effect.X = entity.XPos + effect.XOff;
-                effect.Y = entity.YPos + effect.YOff;
-                effect.Z = entity.ZPos + effect.ZOff;
+                effect.X = entity.PosX + effect.XOff;
+                effect.Y = entity.PosY + effect.YOff;
+                effect.Z = entity.PosZ + effect.ZOff;
                 effect.DepthSortVal = entity.DepthSortVal + effect.DepthSortMod;
                 if (entity.Status == 4)
                 {
@@ -227,7 +227,7 @@ public class EffectManager
 
         if (effect != null)
         {
-            InitializeEffects(effect, null, -1, 1, ismapeffect, effectid, animid, entity.XPos, entity.YPos, entity.ZPos);
+            InitializeEffects(effect, null, -1, 1, ismapeffect, effectid, animid, entity.PosX, entity.PosY, entity.PosZ);
             effect.AttachedEntity = entity;
             effect.DepthSortMod = depthsortmod;
             effect.XOff = xoff;

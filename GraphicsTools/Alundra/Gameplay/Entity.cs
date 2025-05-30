@@ -13,7 +13,7 @@ public class Entity
     public int Status;//0=destroyed,1=loaded,2=normal,3=deactivated,4=flagtodestroy,5=?
     public int Hp;
     public int HpMax;
-    public int HitFrameCounter;//1c
+    public int FrameCounter;//1c
     public int IsNotProcessable;
     public int Flags2;
     public Entity PlatformEntity; //28
@@ -50,11 +50,12 @@ public class Entity
     public int ForceResetAnimationFlag;
     public int AnimCompleteCounter;
     public int AnimFlags;
-    public int ZForce;//rise/fall speed
-    public int TargetXForce, TargetYForce, XForce, YForce;
+    public int ForceZ;//rise/fall speed
+    public int TargetXForce, TargetYForce;
+    public int ForceX, ForceY;
     public int PreviousAdjustedXForce;//?cc
     public int PreviousAdjustedYForce;//?d0
-    public int XForceStep, YForceStep;//d4,d8
+    public int ForceStepX, ForceStepY;//d4,d8
     public int AdjustedXForce, AdjustedYForce;//dc,e0
     public int FinalXForce, FinalYForce, FinalZForce;//e4,e8,ec
     public int Acceleration;//f0
@@ -62,9 +63,9 @@ public class Entity
     public int IsZForceApplied;//this is probably named wrong, has to do with animation  f8
     public int ScreenClipX, ScreenClipY, ScreenClipZ;
     public int NegXMod, NegYMod;
-    public int XPos; //114
-    public int YPos;
-    public int ZPos;
+    public int PosX; //114
+    public int PosY;
+    public int PosZ;
     public int TileX;
     public int TileY;
     public int TileZ;
@@ -80,9 +81,9 @@ public class Entity
     public readonly int[] MapHeights = new int[4]; // 158
     public int PlatformUpdateFlag; //public bool DoneMoving;
     public int _16c;
-    public int HitboxOriginX;
-    public int HitboxOriginY;
-    public int HitboxOriginZ;
+    public int HitBoxOriginX;
+    public int HitBoxOriginY;
+    public int HitBoxOriginZ;
     public int _17c;
     public int CombinedVramFlagsOR;
     public int CombinedVramFlagsAND;
@@ -101,7 +102,7 @@ public class Entity
     public int FrameColTickCounter;//1d0
     public FrameCollisionData FrameCollision;//1d4
     public int ModdedXPos, ModdedYPos, ModdedZPos;
-    public int XMod, YMod, ZMod;
+    public int ModX, ModY, ModZ;
     public int Width, Depth, Height;
     //this set of vars is set when an animation has a frame with attached data
     public int HitBoxX;//1fc
@@ -127,4 +128,10 @@ public class Entity
     public short[] AIValues = new short[10];//280
 
     public bool IsMapSprite => EntityRecord == null ? false : (EntityRecord.SpriteDirection & 0x80) != 0;
+
+    
+    public Entity ShallowCopy()
+    {
+        return (Entity)MemberwiseClone();
+    }
 }

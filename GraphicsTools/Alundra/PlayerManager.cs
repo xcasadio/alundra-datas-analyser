@@ -1,5 +1,4 @@
 ﻿using Alundra.DatasBin;
-using Alundra.Gameplay;
 
 namespace Alundra;
 
@@ -510,13 +509,13 @@ public class PlayerManager
         var tileWidth = StaticVariables.MapTileWidth;
 
         int tileOffsetY = warpData.DestTileY * tileHeight +
-                          (StaticVariables.g_entitySlots[0].YPos / 2) +
+                          (StaticVariables.g_entitySlots[0].PosY / 2) +
                           warpData.Y1 * -tileHeight;
 
         targetCamY = ((tileOffsetY << 16 >> 0x14) * tileHeight + 8) << 16;
 
         int tileOffsetX = (int)(((uint)warpData.DestTileX * tileWidth +
-                                 (StaticVariables.g_entitySlots[0].XPos >> tileHeight) + warpData.X1 * -tileWidth) << 16) >> 0x0f;
+                                 (StaticVariables.g_entitySlots[0].PosX >> tileHeight) + warpData.X1 * -tileWidth) << 16) >> 0x0f;
 
         targetCamX = (StaticVariables.g_tileToWorldXTable[tileOffsetX * 2] * tileWidth + 0xc) << 16;
 
@@ -529,20 +528,20 @@ public class PlayerManager
             {
                 if (StaticVariables.g_entitySlots[0].ActionState == 0)
                 {
-                    StaticVariables.g_entitySlots[0].XPos = targetCamX;
-                    StaticVariables.g_entitySlots[0].YPos = targetCamY;
-                    StaticVariables.g_entitySlots[0].ZPos = targetCamZ;
+                    StaticVariables.g_entitySlots[0].PosX = targetCamX;
+                    StaticVariables.g_entitySlots[0].PosY = targetCamY;
+                    StaticVariables.g_entitySlots[0].PosZ = targetCamZ;
                     return;
                 }
 
                 //playerPtr = StaticVariables.g_entitySlots[0].ActionState;
-                //(playerPtr + 0x114) = (playerPtr + 0x114) + (targetCamX - StaticVariables.g_entitySlots[0].XPos);
-                //(playerPtr + 0x118) = (playerPtr + 0x118) + (targetCamY - StaticVariables.g_entitySlots[0].YPos);
-                //(playerPtr + 0x11c) = (playerPtr + 0x11c) + (targetCamZ - StaticVariables.g_entitySlots[0].ZPos);
+                //(playerPtr + 0x114) = (playerPtr + 0x114) + (targetCamX - StaticVariables.g_entitySlots[0].PosX);
+                //(playerPtr + 0x118) = (playerPtr + 0x118) + (targetCamY - StaticVariables.g_entitySlots[0].PosY);
+                //(playerPtr + 0x11c) = (playerPtr + 0x11c) + (targetCamZ - StaticVariables.g_entitySlots[0].PosZ);
 
-                StaticVariables.g_entitySlots[0].XPos = targetCamX;
-                StaticVariables.g_entitySlots[0].YPos = targetCamY;
-                StaticVariables.g_entitySlots[0].ZPos = targetCamZ;
+                StaticVariables.g_entitySlots[0].PosX = targetCamX;
+                StaticVariables.g_entitySlots[0].PosY = targetCamY;
+                StaticVariables.g_entitySlots[0].PosZ = targetCamZ;
                 return;
             }
 
@@ -598,7 +597,7 @@ public class PlayerManager
                 _gameEngine.CheckAndTriggerTileEffect(StaticVariables.g_entitySlots[0]);
                 break;
             case 0x29:
-                if ((StaticVariables.g_entitySlots[0].HitFrameCounter & 7U) == 0)
+                if ((StaticVariables.g_entitySlots[0].FrameCounter & 7U) == 0)
                 {
                     _gameEngine.PlaySoundEffect(StaticVariables.g_hitSoundEffects[StaticVariables.g_entitySlots[0].Slope_18c]);
                 }
@@ -620,7 +619,7 @@ public class PlayerManager
                     animIndex = 3;
                     frameOffset = 6;
                 }
-                if ((*(short*)(effectEntityId + frameOffset) & StaticVariables.g_entitySlots[0].HitFrameCounter) == 0)
+                if ((*(short*)(effectEntityId + frameOffset) & StaticVariables.g_entitySlots[0].FrameCounter) == 0)
                 {
                     if (efffectId == 0)
                     {
@@ -629,8 +628,8 @@ public class PlayerManager
                     else
                     {
                         entityCreated = (Entity)_gameEngine.CreateEffectEntity(0, efffectId, 0,
-                            StaticVariables.g_entitySlots[0].XPos,
-                            StaticVariables.g_entitySlots[0].YPos,
+                            StaticVariables.g_entitySlots[0].PosX,
+                            StaticVariables.g_entitySlots[0].PosY,
                             StaticVariables.g_entitySlots[0].TerrainHeight);
                     }
 
@@ -655,20 +654,20 @@ public class PlayerManager
                 break;
         }
 
-        if ((StaticVariables.g_entitySlots[0].XForce == 0) && (StaticVariables.g_entitySlots[0].YForce == 0)) goto SkipEffects;
+        if ((StaticVariables.g_entitySlots[0].ForceX == 0) && (StaticVariables.g_entitySlots[0].ForceY == 0)) goto SkipEffects;
 
         switch (StaticVariables.g_entitySlots[0].TargetAnimationId)
         {
             case 1:
             case 7:
-                if ((StaticVariables.g_entitySlots[0].HitFrameCounter & 0xfU) == 0)
+                if ((StaticVariables.g_entitySlots[0].FrameCounter & 0xfU) == 0)
                 {
                     _gameEngine.PlaySoundEffect(StaticVariables.SHORT_ARRAY_800227f4[StaticVariables.g_entitySlots[0].Slope_18c]);
                 }
                 goto SkipEffects;
             case 3:
                 effectEntityId = 0;
-                if ((StaticVariables.g_entitySlots[0].HitFrameCounter & 7U) == 0)
+                if ((StaticVariables.g_entitySlots[0].FrameCounter & 7U) == 0)
                 {
                     _gameEngine.PlaySoundEffect(StaticVariables.g_hitSoundEffects[StaticVariables.g_entitySlots[0].Slope_18c]);
                 }
@@ -687,34 +686,34 @@ public class PlayerManager
                     animIndex = -0x7ffdd7dc;
                     efffectId = StaticVariables.g_sharedBuffer2[10];
                 }
-                if ((*(short*)(animIndex + 0x34) & StaticVariables.g_entitySlots[0].HitFrameCounter) != 0) goto SkipEffects;
+                if ((*(short*)(animIndex + 0x34) & StaticVariables.g_entitySlots[0].FrameCounter) != 0) goto SkipEffects;
                 pSVar1 = (efffectId == 0) ? null :
                     _gameEngine.CreateEffectEntity(0, efffectId, 0,
-                        StaticVariables.g_entitySlots[0].XPos,
-                        StaticVariables.g_entitySlots[0].YPos,
+                        StaticVariables.g_entitySlots[0].PosX,
+                        StaticVariables.g_entitySlots[0].PosY,
                         StaticVariables.g_entitySlots[0].TerrainHeight);
                 if (pSVar1 != null)
                 {
                     effectEntityId = *(short*)(effectEntityId * 2 + animIndex + 0x36);
-                    pSVar1.XForce = StaticVariables.g_entitySlots[0].XForce * effectEntityId >> 8;
-                    pSVar1.YForce = StaticVariables.g_entitySlots[0].YForce * effectEntityId >> 8;
+                    pSVar1.ForceX = StaticVariables.g_entitySlots[0].ForceX * effectEntityId >> 8;
+                    pSVar1.ForceY = StaticVariables.g_entitySlots[0].ForceY * effectEntityId >> 8;
                     StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
                     lVar2 = (long)((ulong)StaticVariables.g_gameRandomSeed * (ulong)((int)*(short*)(animIndex + 0x3a) + 1));
                     animIndex = *(short*)(animIndex + 0x3c);
-                    pSVar1.ZForce = animIndex + (int)(lVar2 >> 32);
+                    pSVar1.ForceZ = animIndex + (int)(lVar2 >> 32);
                 }
                 break;
 
             case 0x23:
-                uVar6 = StaticVariables.g_entitySlots[0].HitFrameCounter & 7;
+                uVar6 = StaticVariables.g_entitySlots[0].FrameCounter & 7;
                 goto CaseRandomEffect;
             case 0x24:
-                uVar6 = StaticVariables.g_entitySlots[0].HitFrameCounter & 3;
+                uVar6 = StaticVariables.g_entitySlots[0].FrameCounter & 3;
                 CaseRandomEffect:
                 if (uVar6 != 0) goto SkipEffects;
                 pSVar1 = _gameEngine.CreateEffectEntity(0, StaticVariables.g_sharedBuffer2[10], 0,
-                    StaticVariables.g_entitySlots[0].XPos,
-                    StaticVariables.g_entitySlots[0].YPos,
+                    StaticVariables.g_entitySlots[0].PosX,
+                    StaticVariables.g_entitySlots[0].PosY,
                     StaticVariables.g_entitySlots[0].TerrainHeight);
                 if (pSVar1 != null)
                 {
@@ -724,29 +723,29 @@ public class PlayerManager
                     uVar1 = (ulong)StaticVariables.g_gameRandomSeed;
                     pSVar1.X += -0xc0000 + (int)(((ulong)uVar6 * 0x180001) >> 32);
                     pSVar1.Y += -0x80000 + (int)(((ulong)uVar4 * 0x100001) >> 32);
-                    animIndex = pSVar1.ZForce + 0x10000;
-                    pSVar1.ZForce = animIndex + (int)((uVar1 * 0x10001) >> 32);
+                    animIndex = pSVar1.ForceZ + 0x10000;
+                    pSVar1.ForceZ = animIndex + (int)((uVar1 * 0x10001) >> 32);
                 }
                 break;
             case 0x28:
-                if ((StaticVariables.g_entitySlots[0].HitFrameCounter & 7U) != 0 ||
+                if ((StaticVariables.g_entitySlots[0].FrameCounter & 7U) != 0 ||
                     (pSVar1 = _gameEngine.CreateEffectEntity(0, 6, 0,
-                        StaticVariables.g_entitySlots[0].XPos,
-                        StaticVariables.g_entitySlots[0].YPos,
+                        StaticVariables.g_entitySlots[0].PosX,
+                        StaticVariables.g_entitySlots[0].PosY,
                         StaticVariables.g_entitySlots[0].TerrainHeight)) == null)
                     goto SkipEffects;
-                effectEntityId = -StaticVariables.g_entitySlots[0].XForce;
-                if (StaticVariables.g_entitySlots[0].XForce > 0)
+                effectEntityId = -StaticVariables.g_entitySlots[0].ForceX;
+                if (StaticVariables.g_entitySlots[0].ForceX > 0)
                 {
                     effectEntityId += 3;
                 }
-                pSVar1.XForce = effectEntityId >> 2;
-                effectEntityId = -StaticVariables.g_entitySlots[0].YForce;
-                if (StaticVariables.g_entitySlots[0].YForce > 0)
+                pSVar1.ForceX = effectEntityId >> 2;
+                effectEntityId = -StaticVariables.g_entitySlots[0].ForceY;
+                if (StaticVariables.g_entitySlots[0].ForceY > 0)
                 {
                     effectEntityId += 3;
                 }
-                pSVar1.YForce = effectEntityId >> 2;
+                pSVar1.ForceY = effectEntityId >> 2;
                 break;
         }
 
@@ -773,7 +772,7 @@ public class PlayerManager
             case 66:
             case 70:
             case 75:
-                if (((param_1 == 0 || StaticVariables.DAT_80098f30 == 0) && StaticVariables.g_entitySlots[0].IsAboveGround != 0) && StaticVariables.g_entitySlots[0].ZForce < 1)
+                if (((param_1 == 0 || StaticVariables.DAT_80098f30 == 0) && StaticVariables.g_entitySlots[0].IsAboveGround != 0) && StaticVariables.g_entitySlots[0].ForceZ < 1)
                 {
                     _gameEngine.PlaySoundEffect((int)StaticVariables.SHORT_ARRAY_80022804[StaticVariables.g_entitySlots[0].Slope18c]);
                     if ((StaticVariables.g_entitySlots[0].Slope18c < 1) || (2 < StaticVariables.g_entitySlots[0].Slope18c && StaticVariables.g_entitySlots[0].Slope18c != 4))
@@ -787,7 +786,7 @@ public class PlayerManager
                             }
                             else
                             {
-                                entityCreated2 = _gameEngine.CreateEffectEntity(0, StaticVariables.g_sharedBuffer2[10], 0, StaticVariables.g_entitySlots[0].XPos, StaticVariables.g_entitySlots[0].YPos, StaticVariables.g_entitySlots[0].TerrainHeight);
+                                entityCreated2 = _gameEngine.CreateEffectEntity(0, StaticVariables.g_sharedBuffer2[10], 0, StaticVariables.g_entitySlots[0].PosX, StaticVariables.g_entitySlots[0].PosY, StaticVariables.g_entitySlots[0].TerrainHeight);
                             }
                             if (entityCreated2 != null)
                             {
@@ -803,7 +802,7 @@ public class PlayerManager
                     }
                     else
                     {
-                        _gameEngine.CreateEffectEntity(0, 6, 0, StaticVariables.g_entitySlots[0].XPos, StaticVariables.g_entitySlots[0].YPos, StaticVariables.g_entitySlots[0].TerrainHeight);
+                        _gameEngine.CreateEffectEntity(0, 6, 0, StaticVariables.g_entitySlots[0].PosX, StaticVariables.g_entitySlots[0].PosY, StaticVariables.g_entitySlots[0].TerrainHeight);
                     }
                     StaticVariables.DAT_80098f30 = 1;
                 }

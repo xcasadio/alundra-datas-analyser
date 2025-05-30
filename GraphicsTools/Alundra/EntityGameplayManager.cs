@@ -43,7 +43,7 @@ public class EntityGameplayManager
             case 2:
                 return (uint)StaticVariables.g_cardinalDirectionTable[turndir & 0x3];
             case 3:
-                var dfv = ScriptHelper.GetDirectionToTarget(StaticVariables.PlayerEntity.XPos - entity.XPos, StaticVariables.PlayerEntity.YPos - entity.YPos);
+                var dfv = ScriptHelper.GetDirectionToTarget(StaticVariables.PlayerEntity.PosX - entity.PosX, StaticVariables.PlayerEntity.PosY - entity.PosY);
                 return (uint)((dfv + turndir) & 0x1f);
             case 4:
             {
@@ -93,7 +93,7 @@ public class EntityGameplayManager
             || (difx < 0 && StaticVariables.PlayerEntity.Width < -difx))
         {
             //checkx
-            if (StaticVariables.PlayerEntity.XPos < entity.XPos)
+            if (StaticVariables.PlayerEntity.PosX < entity.PosX)
             {
                 return 0x08;
             }
@@ -102,7 +102,7 @@ public class EntityGameplayManager
         }
 
         //checky
-        if (StaticVariables.PlayerEntity.YPos < entity.YPos)
+        if (StaticVariables.PlayerEntity.PosY < entity.PosY)
         {
             return 0x10;
         }
@@ -117,8 +117,8 @@ public class EntityGameplayManager
         if ((uint)((ulong)StaticVariables.g_gameRandomSeed * 0x65 >> 32) < (probabilityTargeted & 0xff))
         {
             var direction = (uint)ScriptHelper.GetDirectionToTarget(
-                StaticVariables.g_entitySlots[0].XPos - entity.XPos,
-                StaticVariables.g_entitySlots[0].YPos - entity.YPos);
+                StaticVariables.g_entitySlots[0].PosX - entity.PosX,
+                StaticVariables.g_entitySlots[0].PosY - entity.PosY);
 
             entity.TargetDirection = direction;
         }
@@ -298,10 +298,10 @@ public class EntityGameplayManager
             returnValue = 1;
             newDirection = (byte)StaticVariables.g_directionFlipTable[direction];
             entity.TargetAnimationId = newAnimId & 0xff;
-            entity.YForceStep = 0;
-            entity.XForceStep = 0;
-            entity.YForce = 0;
-            entity.XForce = 0;
+            entity.ForceStepY = 0;
+            entity.ForceStepX = 0;
+            entity.ForceY = 0;
+            entity.ForceX = 0;
             entity.TargetYForce = 0;
             entity.TargetXForce = 0;
             entity.TargetDirection = newDirection;
@@ -336,10 +336,10 @@ public class EntityGameplayManager
         {
             newDirection = (byte)StaticVariables.g_directionFlipTable[entity.TargetDirection];
             entity.TargetAnimationId = newAnimId & 0xff;
-            entity.YForceStep = 0;
-            entity.XForceStep = 0;
-            entity.YForce = 0;
-            entity.XForce = 0;
+            entity.ForceStepY = 0;
+            entity.ForceStepX = 0;
+            entity.ForceY = 0;
+            entity.ForceX = 0;
             entity.TargetYForce = 0;
             entity.TargetXForce = 0;
             entity.TargetDirection = newDirection;
@@ -378,11 +378,11 @@ public class EntityGameplayManager
         ushort flagBits;
 
         xCoordsPtr = xCoords;
-        tileXIndex = entity.XPos + entity.XMod + offsetX;
+        tileXIndex = entity.PosX + entity.ModX + offsetX;
         xCoords[2] = StaticVariables.g_tileToWorldXTable[tileXIndex >> 0x10];
         xCoords[0] = StaticVariables.g_tileToWorldXTable[tileXIndex >> 0x10];
 
-        tileYIndex = entity.YPos + entity.YMod + offsetY;
+        tileYIndex = entity.PosY + entity.ModY + offsetY;
         yCoords[1] = tileYIndex >> 0x14;
         yCoords[0] = yCoords[1];
 

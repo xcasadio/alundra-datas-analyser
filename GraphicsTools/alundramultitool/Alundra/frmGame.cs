@@ -1,10 +1,10 @@
-﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
-using Alundra;
+﻿using Alundra;
 using Alundra.DatasBin;
 using Alundra.Gameplay;
 using Alundra.Sound;
 using Alundra.Text;
+using alundramultitool;
+using System.Runtime.InteropServices;
 using Timer = System.Windows.Forms.Timer;
 
 namespace GraphicsTools.Alundra;
@@ -16,8 +16,141 @@ public partial class FrmGame : Form
     private Timer _gameEngineTimer;
     private Timer _refreshUiTimer;
     private readonly Bitmap _backBuffer = new(320, 240);
-    private Graphics _graphics;
+    private readonly Graphics _graphics;
     private int _lastMapId = -1;
+    private bool _exceptionMessageShown;
+
+    private readonly Dictionary<string, string> _categories = new()
+    {
+        [nameof(Entity.Index)] = "Entity",
+        [nameof(Entity.Index2)] = "Entity",
+        [nameof(Entity.EntityRefId)] = "Entity",
+        [nameof(Entity.EntityRecord)] = "Entity",
+
+        [nameof(Entity.ChildEntity)] = "Link",
+        [nameof(Entity.ParentEntity)] = "Link",
+        [nameof(Entity.ActiveEffect)] = "Link",
+
+        [nameof(Entity.PosX)] = "Transform",
+        [nameof(Entity.PosY)] = "Transform",
+        [nameof(Entity.PosZ)] = "Transform",
+        [nameof(Entity.InitialXPos)] = "Transform",
+        [nameof(Entity.InitialYPos)] = "Transform",
+        [nameof(Entity.ScreenClipX)] = "Transform",
+        [nameof(Entity.ScreenClipY)] = "Transform",
+        [nameof(Entity.ScreenClipZ)] = "Transform",
+        [nameof(Entity.NegXMod)] = "Transform",
+        [nameof(Entity.NegYMod)] = "Transform",
+        [nameof(Entity.TileX)] = "Transform",
+        [nameof(Entity.TileY)] = "Transform",
+        [nameof(Entity.TileZ)] = "Transform",
+        [nameof(Entity.RelativeWarpOffsetX)] = "Transform",
+        [nameof(Entity.RelativeWarpOffsetY)] = "Transform",
+        [nameof(Entity.RelativeWarpOffsetZ)] = "Transform",
+
+        [nameof(Entity.HpMax)] = "Gameplay",
+        [nameof(Entity.Hp)] = "Gameplay",
+        [nameof(Entity.Flags)] = "Gameplay",
+        [nameof(Entity.Flags2)] = "Gameplay",
+        [nameof(Entity.ActionState)] = "Gameplay",
+        [nameof(Entity.Status)] = "Gameplay",
+        [nameof(Entity.IsNotProcessable)] = "Gameplay",
+        [nameof(Entity.ContentsItemId)] = "Gameplay",
+        [nameof(Entity.ContentsGameFlag)] = "Gameplay",
+
+        [nameof(Entity.ProgramIndexes)] = "Script",
+        [nameof(Entity.SpriteProgramIndexes)] = "Script",
+        [nameof(Entity.EventTrigger)] = "Script",
+        [nameof(Entity.MapEventProgramId)] = "Script",
+        [nameof(Entity.LogicContextEntity)] = "Script",
+        [nameof(Entity.EventProgramState)] = "Script",
+        [nameof(Entity.Bytes)] = "Script",
+        [nameof(Entity.AIValues)] = "Script",
+
+        [nameof(Entity.Sprite)] = "Display",
+        [nameof(Entity.SpriteRef)] = "Display",
+        [nameof(Entity.SpriteTableIndex)] = "Display",
+        [nameof(Entity.CurrentAnimationId)] = "Display",
+        [nameof(Entity.TargetAnimationId)] = "Display",
+        [nameof(Entity.LastTargetAnimationId)] = "Display",
+        [nameof(Entity.CurrentDirection)] = "Display",
+        [nameof(Entity.TargetDirection)] = "Display",
+        [nameof(Entity.LastTargetDirection)] = "Display",
+        [nameof(Entity.CurrentFrameIndex)] = "Display",
+        [nameof(Entity.AnimSet)] = "Display",
+        [nameof(Entity.Frame)] = "Display",
+        [nameof(Entity.FirstFrame)] = "Display",
+        [nameof(Entity.NextFrameDelay)] = "Display",
+        [nameof(Entity.ForceResetAnimationFlag)] = "Display",
+        [nameof(Entity.AnimCompleteCounter)] = "Display",
+        [nameof(Entity.AnimFlags)] = "Display",
+        [nameof(Entity.ModdedXPos)] = "Display",
+        [nameof(Entity.ModdedYPos)] = "Display",
+        [nameof(Entity.ModdedZPos)] = "Display",
+        [nameof(Entity.ModX)] = "Display",
+        [nameof(Entity.ModY)] = "Display",
+        [nameof(Entity.ModZ)] = "Display",
+        [nameof(Entity.Width)] = "Display",
+        [nameof(Entity.Height)] = "Display",
+        [nameof(Entity.Depth)] = "Display",
+        [nameof(Entity.FrameXOff)] = "Display",
+        [nameof(Entity.FrameYOff)] = "Display",
+        [nameof(Entity.FrameZOff)] = "Display",
+        [nameof(Entity.FrameWidth)] = "Display",
+        [nameof(Entity.FrameDepth)] = "Display",
+        [nameof(Entity.FrameHeight)] = "Display",
+        [nameof(Entity.DepthSortVal)] = "Display",
+        [nameof(Entity.SortTop)] = "Display",
+        [nameof(Entity.AddedToSheet)] = "Display",
+
+        [nameof(Entity.TargetXForce)] = "Physics forces",
+        [nameof(Entity.TargetYForce)] = "Physics forces",
+        [nameof(Entity.ForceX)] = "Physics forces",
+        [nameof(Entity.ForceY)] = "Physics forces",
+        [nameof(Entity.ForceZ)] = "Physics forces",
+        [nameof(Entity.PreviousAdjustedXForce)] = "Physics forces",
+        [nameof(Entity.PreviousAdjustedYForce)] = "Physics forces",
+        [nameof(Entity.ForceStepX)] = "Physics forces",
+        [nameof(Entity.ForceStepY)] = "Physics forces",
+        [nameof(Entity.AdjustedXForce)] = "Physics forces",
+        [nameof(Entity.AdjustedYForce)] = "Physics forces",
+        [nameof(Entity.FinalXForce)] = "Physics forces",
+        [nameof(Entity.FinalYForce)] = "Physics forces",
+        [nameof(Entity.FinalZForce)] = "Physics forces",
+        [nameof(Entity.Acceleration)] = "Physics forces",
+        [nameof(Entity.Speed)] = "Physics forces",
+        [nameof(Entity.IsZForceApplied)] = "Physics forces",
+        [nameof(Entity.ForceAdjusted)] = "Physics forces",
+
+        [nameof(Entity.PlatformEntity)] = "Physics",
+        [nameof(Entity.RidingEntity)] = "Physics",
+        [nameof(Entity.XCollisionEntity)] = "Physics",
+        [nameof(Entity.FloorHeight)] = "Physics",
+        [nameof(Entity.TerrainHeight)] = "Physics",
+        [nameof(Entity.CollidedWithEntityZ)] = "Physics",
+        [nameof(Entity.IsAboveGround)] = "Physics",
+        [nameof(Entity.MapTiles)] = "Physics",
+        [nameof(Entity.MapHeights)] = "Physics",
+        [nameof(Entity.PlatformUpdateFlag)] = "Physics",
+        [nameof(Entity.CombinedVramFlagsOR)] = "Physics",
+        [nameof(Entity.CombinedVramFlagsAND)] = "Physics",
+        [nameof(Entity.Slope_18c)] = "Physics",
+
+        [nameof(Entity.BalanceRecord)] = "Collision",
+        [nameof(Entity.BalanceVal)] = "Collision",
+        [nameof(Entity.DamagedTickCounter)] = "Collision",
+        [nameof(Entity.FrameColTickCounter)] = "Collision",
+        [nameof(Entity.FrameCollision)] = "Collision",
+        [nameof(Entity.FrameCounter)] = "Collision",
+        [nameof(Entity.HitCounter)] = "Collision",
+        [nameof(Entity.TouchingEntity)] = "Collision",
+        [nameof(Entity.HitBoxX)] = "Collision",
+        [nameof(Entity.HitBoxY)] = "Collision",
+        [nameof(Entity.HitBoxZ)] = "Collision",
+        [nameof(Entity.HitBoxOriginX)] = "Collision",
+        [nameof(Entity.HitBoxOriginY)] = "Collision",
+        [nameof(Entity.HitBoxOriginZ)] = "Collision"
+    };
 
     public FrmGame(DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR, Font3 font3)
     {
@@ -28,7 +161,6 @@ public partial class FrmGame : Form
         FormClosing += FrmGame_FormClosing;
 
         _engine = new GameEngine(datasBin, balanceBin, soundBin, etcResR, font3);
-        _engine.InitializeEngine();
 
         _graphics = Graphics.FromImage(_backBuffer);
         _graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
@@ -43,8 +175,11 @@ public partial class FrmGame : Form
 
     private void FrmGame_Load(object? sender, EventArgs e)
     {
+        _engine.InitializeEngine();
+        InitializeUI();
+
         _gameEngineTimer = new Timer();
-        _gameEngineTimer.Interval = 10;
+        _gameEngineTimer.Interval = 30; // 33
         _gameEngineTimer.Tick += GameEngineTimerTick;
         _gameEngineTimer.Start();
 
@@ -52,6 +187,19 @@ public partial class FrmGame : Form
         _refreshUiTimer.Interval = 33 * 3;
         _refreshUiTimer.Tick += RefreshUI;
         _refreshUiTimer.Start();
+    }
+
+    private void InitializeUI()
+    {
+        for (int i = 0; i < StaticVariables.g_mapFlags.Length; i++)
+        {
+            dataGridViewMapFlags.Rows.Add(i.ToString(), StaticVariables.g_mapFlags[i]);
+        }
+
+        for (int i = 0; i < StaticVariables.g_globalFlags.Length; i++)
+        {
+            dataGridViewGlobalFlags.Rows.Add(i.ToString(), StaticVariables.g_globalFlags[i]);
+        }
     }
 
     private void GameEngineTimerTick(object sender, EventArgs e)
@@ -73,14 +221,18 @@ public partial class FrmGame : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.ToString());
+            if (!_exceptionMessageShown)
+            {
+                MessageBox.Show(ex.ToString());
+                _exceptionMessageShown = true;
+            }
         }
     }
+
     private void RefreshUI(object sender, EventArgs e)
     {
         SuspendLayout();
 
-        // Mettre à jour tous tes contrôles ici
         labelNumberOfEntity.Text = StaticVariables.g_numberOfEntity.ToString();
         labelNumberOfActivatedEntity.Text = StaticVariables.g_activeEntityCount.ToString();
         labelNumberOfCollideableEntity.Text = StaticVariables.g_collideableEntitiesCount.ToString();
@@ -103,38 +255,71 @@ public partial class FrmGame : Form
         if (_lastMapId != StaticVariables.g_currentMap && _engine.CurrentMap != null)
         {
             _lastMapId = StaticVariables.g_currentMap;
+            listBoxEntities.Items.Clear();
 
             for (int i = 0; i < StaticVariables.g_entitySlots.Length; i++)
             {
                 var entity = StaticVariables.g_entitySlots[i];
-                listBoxEntities.Items.Add($"entity({i}) {entity.Index} {entity.EntityRefId} {entity.Status}");
+                listBoxEntities.Items.Add($"entity #{i}");
             }
         }
 
-        if (listBoxEntities.SelectedIndex != -1 && listBoxEntities.SelectedIndex < StaticVariables.g_entitySlots.Length)
+        if (_engine.ReplayManager.IsSaving)
         {
-            var entity = StaticVariables.g_entitySlots[listBoxEntities.SelectedIndex];
-            if (entity != null)
-            {
-                int scrollPos = GetScrollPos(textBoxEntityInfos.Handle, SB_VERT);
-                textBoxEntityInfos.Text = BuildEntityInformationsText(entity);
-                SetScrollPos(textBoxEntityInfos.Handle, SB_VERT, scrollPos, true);
-                SendMessage(textBoxEntityInfos.Handle, WM_VSCROLL, SB_THUMBPOSITION + 0x10000 * scrollPos, 0);
-            }
+            UpdateLabelFramesText();
         }
+
+        propertyGridEntity.Refresh();
+
+        RefreshMapFlags();
+        RefreshGameFlags();
 
         ResumeLayout();
         PerformLayout();
     }
 
-    private static string BuildEntityInformationsText(Entity entity)
+    private void UpdateLabelFramesText()
+    {
+        labelFrames.Text = $"Frame {_engine.ReplayManager.CurrentFrame}/{_engine.ReplayManager.FrameCount - 1}";
+    }
+
+    private void RefreshMapFlags()
+    {
+        for (int i = 0; i < StaticVariables.g_mapFlags.Length; i++)
+        {
+            var cell = dataGridViewMapFlags.Rows[i].Cells[1];
+
+            if (!(dataGridViewMapFlags.CurrentCell == cell && dataGridViewMapFlags.IsCurrentCellInEditMode)
+                && cell.Value != null && (uint)cell.Value != StaticVariables.g_mapFlags[i])
+            {
+                cell.Value = StaticVariables.g_mapFlags[i];
+            }
+        }
+    }
+
+    private void RefreshGameFlags()
+    {
+        for (int i = 0; i < StaticVariables.g_globalFlags.Length; i++)
+        {
+            var cell = dataGridViewGlobalFlags.Rows[i].Cells[1];
+
+            if (!(dataGridViewGlobalFlags.CurrentCell == cell && dataGridViewGlobalFlags.IsCurrentCellInEditMode)
+                && cell.Value != null && (uint)cell.Value != StaticVariables.g_globalFlags[i])
+            {
+                cell.Value = StaticVariables.g_globalFlags[i];
+            }
+        }
+    }
+
+    private static string BuildEntityInformationText(Entity entity)
     {
         return $"Index: {entity.Index}{Environment.NewLine}" +
                $"Index2: {entity.Index2}{Environment.NewLine}" +
+               $"EntityRefId: {entity.EntityRefId}{Environment.NewLine}" +
                $"ChildEntity: #{entity.ChildEntity?.Index ?? -1}{Environment.NewLine}" +
                $"ParentEntity: #{entity.ParentEntity?.Index ?? -1}{Environment.NewLine}" +
                //Position
-               $"Position: {entity.XPos} {entity.YPos} {entity.ZPos} ({entity.XPos >> 16} {entity.YPos >> 16} {entity.ZPos >> 16}){Environment.NewLine}" +
+               $"Position: {entity.PosX} {entity.PosY} {entity.PosZ} ({entity.PosX >> 16} {entity.PosY >> 16} {entity.PosZ >> 16}){Environment.NewLine}" +
                $"Initial Pos: {entity.InitialXPos} x {entity.InitialYPos}{Environment.NewLine}" +
                $"ScreenClip: {entity.ScreenClipX} {entity.ScreenClipY} {entity.ScreenClipZ} ({entity.ScreenClipX >> 16} {entity.ScreenClipY >> 16} {entity.ScreenClipZ >> 16}){Environment.NewLine}" +
                $"NegMod: {entity.NegXMod} {entity.NegYMod} ({entity.NegXMod >> 16} {entity.NegYMod >> 16}){Environment.NewLine}" +
@@ -145,13 +330,12 @@ public partial class FrmGame : Form
                $"Flags2: {entity.Flags2}{Environment.NewLine}" +
                $"Status: {entity.Status}{Environment.NewLine}" +
                $"Hp: {entity.Hp} / {entity.HpMax}{Environment.NewLine}" +
-               $"HitFrameCounter: {entity.HitFrameCounter}{Environment.NewLine}" +
+               $"FrameCounter: {entity.FrameCounter}{Environment.NewLine}" +
                $"IsNotProcessable: {entity.IsNotProcessable}{Environment.NewLine}" +
                $"RelativeWarpOffset: {entity.RelativeWarpOffsetX} x {entity.RelativeWarpOffsetY} x {entity.RelativeWarpOffsetZ}{Environment.NewLine}" +
                $"ContentsItemId: {entity.ContentsItemId}{Environment.NewLine}" +
                $"ContentsGameFlag: {entity.ContentsGameFlag}{Environment.NewLine}" +
                $"EntityRecord: {entity.EntityRecord}{Environment.NewLine}" +
-               $"EntityRefId: {entity.EntityRefId}{Environment.NewLine}" +
                //Script
                $"ProgramIndexes: {string.Join(',', entity.ProgramIndexes)}{Environment.NewLine}" +
                $"SpriteProgramIndexes: {string.Join(',', entity.SpriteProgramIndexes)}{Environment.NewLine}" +
@@ -176,7 +360,7 @@ public partial class FrmGame : Form
                $"AnimFlags: {entity.AnimFlags}{Environment.NewLine}" +
                //
                $"ModdedPos: {entity.ModdedXPos} {entity.ModdedYPos} {entity.ModdedZPos} ({entity.ModdedXPos >> 16} {entity.ModdedYPos >> 16} {entity.ModdedZPos >> 16}){Environment.NewLine}" +
-               $"XYZMod: {entity.XMod} {entity.YMod} {entity.ZMod} ({entity.XMod >> 16} {entity.YMod >> 16} {entity.ZMod >> 16}){Environment.NewLine}" +
+               $"XYZMod: {entity.ModX} {entity.ModY} {entity.ModZ} ({entity.ModX >> 16} {entity.ModY >> 16} {entity.ModZ >> 16}){Environment.NewLine}" +
                $"Size: {entity.Width} {entity.Height} {entity.Depth} ({entity.Width >> 16} {entity.Height >> 16} {entity.Depth >> 16}){Environment.NewLine}" +
                $"Frame Pos: {entity.HitBoxX} {entity.HitBoxY} {entity.HitBoxZ}{Environment.NewLine}" +
                $"Frame Off: {entity.FrameXOff} {entity.FrameYOff} {entity.FrameZOff}{Environment.NewLine}" +
@@ -188,9 +372,9 @@ public partial class FrmGame : Form
                $"ActiveEffect: {entity.ActiveEffect}{Environment.NewLine}" +
                //Physics
                $"Target Forces: {entity.TargetXForce} {entity.TargetYForce} ({entity.TargetXForce >> 16} {entity.TargetYForce >> 16}){Environment.NewLine}" +
-               $"Forces: {entity.XForce} {entity.YForce} {entity.ZForce} ({entity.XForce >> 16} {entity.YForce >> 16} {entity.ZForce >> 16}){Environment.NewLine}" +
+               $"Forces: {entity.ForceX} {entity.ForceY} {entity.ForceZ} ({entity.ForceX >> 16} {entity.ForceY >> 16} {entity.ForceZ >> 16}){Environment.NewLine}" +
                $"Interact Force: {entity.PreviousAdjustedXForce} {entity.PreviousAdjustedYForce} ({entity.PreviousAdjustedXForce >> 16} {entity.PreviousAdjustedYForce >> 16}){Environment.NewLine}" +
-               $"Force Step: {entity.XForceStep} {entity.YForceStep} ({entity.XForceStep >> 16} {entity.YForceStep >> 16}){Environment.NewLine}" +
+               $"Force Step: {entity.ForceStepX} {entity.ForceStepY} ({entity.ForceStepX >> 16} {entity.ForceStepY >> 16}){Environment.NewLine}" +
                $"Adjusted Force: {entity.AdjustedXForce} {entity.AdjustedYForce} ({entity.AdjustedXForce >> 16} {entity.AdjustedYForce >> 16}){Environment.NewLine}" +
                $"Final Force: {entity.FinalXForce} {entity.FinalYForce} {entity.FinalZForce} ({entity.FinalXForce >> 16} {entity.FinalYForce >> 16} {entity.FinalZForce >> 16}){Environment.NewLine}" +
                $"Acceleration: {entity.Acceleration}({entity.Acceleration >> 16}){Environment.NewLine}" +
@@ -220,6 +404,8 @@ public partial class FrmGame : Form
                $"HitCounter: {entity.HitCounter}{Environment.NewLine}" +
                $"TouchingEntity: {entity.TouchingEntity}{Environment.NewLine}";
     }
+
+    #region Pad
 
     [DllImport("user32.dll")]
     static extern int GetScrollPos(IntPtr hWnd, int nBar);
@@ -257,20 +443,20 @@ public partial class FrmGame : Form
         public short sThumbRY;
     }
 
-    const int XINPUT_GAMEPAD_DPAD_UP        = 0x0001;
-    const int XINPUT_GAMEPAD_DPAD_DOWN      = 0x0002;
-    const int XINPUT_GAMEPAD_DPAD_LEFT      = 0x0004;
-    const int XINPUT_GAMEPAD_DPAD_RIGHT     = 0x0008;
-    const int XINPUT_GAMEPAD_START          = 0x0010;
-    const int XINPUT_GAMEPAD_BACK           = 0x0020;
-    const int XINPUT_GAMEPAD_LEFT_THUMB     = 0x0040;
-    const int XINPUT_GAMEPAD_RIGHT_THUMB    = 0x0080;
-    const int XINPUT_GAMEPAD_LEFT_SHOULDER  = 0x0100;
+    const int XINPUT_GAMEPAD_DPAD_UP = 0x0001;
+    const int XINPUT_GAMEPAD_DPAD_DOWN = 0x0002;
+    const int XINPUT_GAMEPAD_DPAD_LEFT = 0x0004;
+    const int XINPUT_GAMEPAD_DPAD_RIGHT = 0x0008;
+    const int XINPUT_GAMEPAD_START = 0x0010;
+    const int XINPUT_GAMEPAD_BACK = 0x0020;
+    const int XINPUT_GAMEPAD_LEFT_THUMB = 0x0040;
+    const int XINPUT_GAMEPAD_RIGHT_THUMB = 0x0080;
+    const int XINPUT_GAMEPAD_LEFT_SHOULDER = 0x0100;
     const int XINPUT_GAMEPAD_RIGHT_SHOULDER = 0x0200;
-    const int XINPUT_GAMEPAD_A              = 0x1000;
-    const int XINPUT_GAMEPAD_B              = 0x2000;
-    const int XINPUT_GAMEPAD_X              = 0x4000;
-    const int XINPUT_GAMEPAD_Y              = 0x8000;
+    const int XINPUT_GAMEPAD_A = 0x1000;
+    const int XINPUT_GAMEPAD_B = 0x2000;
+    const int XINPUT_GAMEPAD_X = 0x4000;
+    const int XINPUT_GAMEPAD_Y = 0x8000;
 
     const int LEFT_THUMB_DEADZONE = 7849;
     const int RIGHT_THUMB_DEADZONE = 8689;
@@ -278,7 +464,7 @@ public partial class FrmGame : Form
     const float MAX_THUMB_VALUE = 32767.0f;
     const float MAX_TRIGGER_VALUE = 255.0f;
 
-    
+
 
     private void UpdatePad()
     {
@@ -289,9 +475,9 @@ public partial class FrmGame : Form
 
         if (result == 0)
         {
-            NormalizeGamepadState(state, 
-                out float joystickLeftX, out float joystickLeftY, 
-                out float joystickRightX, out float joystickRightY, 
+            NormalizeGamepadState(state,
+                out float joystickLeftX, out float joystickLeftY,
+                out float joystickRightX, out float joystickRightY,
                 out float L2, out float R2);
 
             if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP) != 0 || joystickLeftY > 0.10f)
@@ -388,9 +574,9 @@ public partial class FrmGame : Form
     }
 
 
-    void NormalizeGamepadState(XINPUT_STATE state, 
-        out float joystickLeftX, out float joystickLeftY, 
-        out float joystickRightX, out float joystickRightY, 
+    void NormalizeGamepadState(XINPUT_STATE state,
+        out float joystickLeftX, out float joystickLeftY,
+        out float joystickRightX, out float joystickRightY,
         out float L2, out float R2)
     {
         float lx = state.Gamepad.sThumbLX;
@@ -431,4 +617,75 @@ public partial class FrmGame : Form
         //Debug.WriteLine($"Gâchette droite : {R2:0.00}");
     }
 
+    #endregion
+
+    private void buttonPauseGame_Click(object sender, EventArgs e)
+    {
+        if (StaticVariables.IsGamePaused)
+        {
+            StaticVariables.IsGamePaused = false;
+            buttonPauseGame.Text = "Running";
+            buttonPauseGame.ForeColor = Color.ForestGreen;
+            buttonRunOneFrame.Enabled = false;
+            hScrollBarFrames.Enabled = false;
+        }
+        else
+        {
+            StaticVariables.IsGamePaused = true;
+            buttonPauseGame.Text = "Paused";
+            buttonPauseGame.ForeColor = Color.DarkRed;
+            buttonRunOneFrame.Enabled = true;
+            hScrollBarFrames.Enabled = true;
+        }
+    }
+
+    private void buttonNextFrame_Click(object sender, EventArgs e)
+    {
+        StaticVariables.DoNextFrame = true;
+    }
+
+    private void listBoxEntities_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        StaticVariables.EditorSelectEntityIndex = listBoxEntities.SelectedIndex;
+
+        if (StaticVariables.EditorSelectEntityIndex != -1 &&
+            StaticVariables.EditorSelectEntityIndex < StaticVariables.g_entitySlots.Length)
+        {
+            var entity = StaticVariables.g_entitySlots[StaticVariables.EditorSelectEntityIndex];
+            if (entity != null)
+            {
+                propertyGridEntity.SelectedObject = new UniversalWrapper(entity, _categories);
+            }
+        }
+    }
+
+    private void buttonSaveFrames_Click(object sender, EventArgs e)
+    {
+        if (_engine.ReplayManager.IsSaving)
+        {
+            _engine.ReplayManager.StopSaving();
+            buttonSaveFrames.Text = "Start recording";
+            buttonSaveFrames.ForeColor = Color.ForestGreen;
+            hScrollBarFrames.Enabled = true;
+        }
+        else
+        {
+            _engine.ReplayManager.StartSaving();
+            buttonSaveFrames.Text = "Stop recording";
+            buttonSaveFrames.ForeColor = Color.DarkRed;
+            hScrollBarFrames.Enabled = false;
+            _engine.ReplayManager.ApplyCurrentFrame = false;
+        }
+
+        UpdateLabelFramesText();
+        hScrollBarFrames.Maximum = Math.Max(0, _engine.ReplayManager.FrameCount - 1);
+    }
+
+    private void hScrollBarFrames_Scroll(object sender, ScrollEventArgs e)
+    {
+        _engine.ReplayManager.ApplyCurrentFrame = true;
+        _engine.ReplayManager.CurrentFrame = hScrollBarFrames.Value;
+        UpdateLabelFramesText();
+        listBoxEntities_SelectedIndexChanged(sender, e);
+    }
 }
