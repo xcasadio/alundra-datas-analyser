@@ -1,4 +1,6 @@
-﻿namespace Alundra.DatasBin;
+﻿using System.Diagnostics;
+
+namespace Alundra.DatasBin;
 
 public class SpriteRecord
 {

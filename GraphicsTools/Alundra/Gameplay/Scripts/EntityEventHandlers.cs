@@ -343,8 +343,8 @@ public class EntityEventHandlers
     {
         EventProgramState eventProgramState = StaticVariables.g_eventProgramState;
 
-        var isDebug = StaticVariables.g_debugState < 0;
-        var isDebugLogicTraceEnabled = (StaticVariables.g_debugFlags & 0x10) != 0;
+        //var isDebug = StaticVariables.g_debugState < 0;
+        //var isDebugLogicTraceEnabled = (StaticVariables.g_debugFlags & 0x10) != 0;
 
         if (logicMode < 6)
         {
@@ -355,14 +355,8 @@ public class EntityEventHandlers
 
                     if (eventProgramState.Codes != null) //.Exp[0] != 0 && eventProgramState.Sp != 0)
                     {
-                        //entity.MapEventProgramId = logicMode;
-                        //break;
                         goto SET_LOGIC_MODE;
-                        //goto END_LOGIC_SETUP;
                     }
-
-                    //InitializeEventData(entity, logicMode, eventProgramState);
-                    //entity.MapEventProgramId = logicMode;
                     break;
 
                 case ScriptHelper.ProgramCTick:
@@ -376,13 +370,8 @@ public class EntityEventHandlers
                             entity.TargetDirection = entity.LastTargetDirection;
                         }
 
-                        //entity.MapEventProgramId = logicMode;
                         goto SET_LOGIC_MODE;
                     }
-                    //else
-                    //{
-                    //    InitializeEventData(entity, logicMode, eventProgramState);
-                    //}
 
                     break;
 
@@ -392,19 +381,14 @@ public class EntityEventHandlers
                     StaticVariables.PlayerEntity.XForceStep = 0;
                     StaticVariables.PlayerEntity.YForce = 0;
                     StaticVariables.PlayerEntity.XForce = 0;
-                    //entity.MapEventProgramId = logicMode;
                     break;
 
                 default:
-                    //if (entity.ProgramIndexes[ScriptHelper.ProgramCTick] != 2)
                     if (entity.MapEventProgramId == ScriptHelper.ProgramCTick)
                     {
                         entity.LastTargetAnimationId = entity.TargetAnimationId;
                         entity.LastTargetDirection = entity.TargetDirection;
                     }
-
-                    //InitializeEventData(entity, logicMode, eventProgramState);
-                    //entity.MapEventProgramId = logicMode;
                     break;
             }
         }
@@ -419,18 +403,6 @@ public class EntityEventHandlers
         entity.MapEventProgramId = logicMode;
 
         END_LOGIC_SETUP:
-        if (isDebug)
-        {
-            if (logicMode == 1)
-            {
-                //DebugMessageFormat("mon{0:D2}:", entity.EventTrigger);
-            }
-            else
-            {
-                //DebugMessageFormat("{0:X2}({1}):", entity.SpriteProgramIndexes[0], logicMode);
-            }
-        }
-
         var wasEntityCleared = false;
         StaticVariables.g_activeCommand = -1;
         StaticVariables.g_activeEventProgramIndex = entity.ProgramIndexes[logicMode];
@@ -443,9 +415,6 @@ public class EntityEventHandlers
             int[] variables = FillDataFromCommand(eventProgramState);
             int command = variables[0];
 
-            //if (isDebug)
-            //    DebugMessageFormat(" {0:D3}", command);
-
             if (command == 0xFF)
             {
                 Debug.WriteLine($"Entity[{entity.Index}] end script");
@@ -454,6 +423,7 @@ public class EntityEventHandlers
 
             if (command == 0x00) // break, skip the loop but do the next command
             {
+                
                 Debug.WriteLine($"Entity[{entity.Index}] break");
                 eventProgramState.Exp[1] = 0;
                 eventProgramState.CodeIndex++;
@@ -483,10 +453,9 @@ public class EntityEventHandlers
                 else
                 {
                     StaticVariables.g_clearProgramState = 0;
-                    Debug.WriteLine($"Entity[{logicContextEntity.Index}] clean EventProgramState");
+                    //Debug.WriteLine($"Entity[{logicContextEntity.Index}] clean EventProgramState");
                     logicContextEntity.EventProgramState.Sp = 0;
                     logicContextEntity.EventProgramState.Codes = null;
-                    //ClearEventProgramState(logicContextEntity.EventProgramState);
                 }
             }
 
@@ -502,7 +471,7 @@ public class EntityEventHandlers
         END_SCRIPT:
         if (wasEntityCleared)
         {
-            Debug.WriteLine($"Entity[{entity.Index}] clean EventProgramState 2");
+            //Debug.WriteLine($"Entity[{entity.Index}] clean EventProgramState 2");
             eventProgramState.Sp = 0;
             eventProgramState.Codes = null;
         }
@@ -512,7 +481,7 @@ public class EntityEventHandlers
     {
         var name = SpriteInfoEventCodes.CommandNameByCode.GetValueOrDefault((byte)command, "?");
         var eventTypeName = logicMode == 0 ? "ALoad" : logicMode == 1 ? "BMap" : logicMode == 2 ? "CTick" : logicMode == 3 ? "DTouch" : logicMode == 4 ? "EDeactivate" : "FInteract";
-        Debug.Write($"Entity[{entity.Index}] run {eventTypeName} command 0x{command:x2}'{name}' {string.Join(',', variables.Select(x => x.ToString("x2")))} = ");
+        Debug.Write($"Entity[{entity.Index}] run {eventTypeName} command 0x{command:x2} '{name}' {string.Join(',', variables.Select(x => x.ToString("x2")))} = ");
     }
 
     private int[] FillDataFromCommand(EventProgramState eventProgramState)
@@ -1975,7 +1944,7 @@ public class EntityEventHandlers
     {
         uint[] flags;
 
-        var key = (uint)(variables[1] + variables[2] * 0x100);
+        var key = (uint)(variables[1] + variables[2] * 0x100);  // variables[2] << 8 | variables[1];
 
         if ((key & 0x8000) == 0)
         {
@@ -1986,7 +1955,7 @@ public class EntityEventHandlers
             flags = StaticVariables.g_globalFlags;
         }
 
-        var index = key >> 3 & 0xffc;
+        var index = (key >> 3) & 0xffc;
         var mask = (uint)(1 << (variables[1] & 0x1f));
         flags[index] |= mask;
 
@@ -2280,11 +2249,17 @@ public class EntityEventHandlers
     // 8003D8D8
     private int Script_30_01E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var curParam =  variables[0] | variables[1] <<  8 | variables[2] << 16;
-
-        if (eventProgramState.Exp[1] != curParam)
+        // 1f,30,00
+        if (variables[0] == 0x1f && variables[1] == 0x30 && variables[2] == 0x0)
         {
-            eventProgramState.Exp[1] = curParam;
+            //Debugger.Break(); // don't return 3 at the first execution
+        }
+
+        var signature =  variables[0] | (variables[1] <<  8) | (variables[2] << 16);
+
+        if (eventProgramState.Exp[1] != signature)
+        {
+            eventProgramState.Exp[1] = signature;
             eventProgramState.Exp[2] = logicEntity.XPos;
             eventProgramState.Exp[3] = logicEntity.YPos;
             return 0;
@@ -2307,7 +2282,7 @@ public class EntityEventHandlers
         dy >>= 16;
 
         var threshold =  (variables[2] << 8) | variables[1];
-        if (dx >= threshold || dy >= threshold)
+        if (threshold <= dx || threshold <= dy)
         {
             return 3;
         }
@@ -2969,11 +2944,11 @@ public class EntityEventHandlers
     private int Script_54_036(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
-        uint flagData;
+        uint key;
 
-        flagData = (uint)(variables[1] + variables[2] * 0x100); // variables[2] << 8 | variables[1];
+        key = (uint)(variables[1] + variables[2] * 0x100); // variables[2] << 8 | variables[1];
 
-        if ((flagData & 0x8000) == 0)
+        if ((key & 0x8000) == 0)
         {
             flags = StaticVariables.g_mapFlags;
         }
@@ -2983,7 +2958,7 @@ public class EntityEventHandlers
         }
 
         // 36,ea,83,5b,80,06,40,1f,10,00
-        var index = (flagData >> 3) & 0xffc;
+        var index = (key >> 3) & 0xffc;
         var mask = 1 << (variables[1] & 0x1f);
 
         if ((flags[index] & mask) != 0)

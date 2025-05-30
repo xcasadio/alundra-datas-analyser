@@ -4,6 +4,8 @@ namespace Alundra;
 
 public class RendererHelper
 {
+    private static Font _font = new Font(FontFamily.GenericSansSerif, 10);
+
     //Custom renderer
     public static void Render(Graphics g, DatasBin.DatasBin datasBin, GameMap gameMap, int currentRow, int camTileOffsetY)
     {
@@ -83,8 +85,6 @@ public class RendererHelper
 
                 if (entity.Sprite != null)
                 {
-                    int idex;
-
                     var map = entity.IsMapSprite ? gameMap : datasBin.AlundraGameMap;
 
                     //if (entity.Frame == null) // why?? TODO, not initialized ?
@@ -93,11 +93,13 @@ public class RendererHelper
                     //}
 
                     var iset = entity.Frame.Images;
-                    for (idex = iset.NumberOfImages - 1; idex >= 0; idex--)
+                    for (var idex = iset.NumberOfImages - 1; idex >= 0; idex--)
                     {
                         var img = iset.Images[idex];
                         DrawSprite(map, img, scx, scy, g);
                     }
+
+                    g.DrawString($"entity {entity.Index} ({entity.Index2})", _font, Brushes.Blue, scx - 16, scy);
                 }
             }
         }

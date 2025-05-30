@@ -295,7 +295,7 @@ public class EntityManager
             currentFrame = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.CurrentFrameIndex];
             entity.Frame = currentFrame;
         }
-        
+
         animRecordPtr = entity.Sprite.AnimSets[entity.TargetAnimationId];
         currentFrame = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.CurrentFrameIndex];
 
@@ -326,8 +326,8 @@ public class EntityManager
             entity.SpriteRef.DepthSortVal = 0;
             entity.SpriteRef.NumImages = 0;
         }
-        
-        if  ((entity.Frame.Delay & 0x80) == 0 && (entity.Frame.TransformIndexLow & 0x80) == 0)
+
+        if ((entity.Frame.Delay & 0x80) == 0 && (entity.Frame.TransformIndexLow & 0x80) == 0)
         {
             entity.TargetAnimationId = entity.Frame.TransformIndexLow;
             entity.ForceResetAnimationFlag = 1; // TODO ??
@@ -761,6 +761,7 @@ public class EntityManager
                     {
                         return;
                     }
+
                     entity.ZForce = 0;
                     return;
                 }
@@ -783,6 +784,7 @@ public class EntityManager
                     {
                         return;
                     }
+
                     entity.ZForce = 0;
                     return;
                 }
@@ -991,7 +993,409 @@ public class EntityManager
     }
 
     // 80037730
-    private Entity ComputeXYPosition(Entity entity)
+    Entity ComputeXYPosition(Entity entity)
+    {
+        Entity candidate = null;
+        int i;
+        int s6 = -1;
+        int dy, dx;
+        int groundHeight; 
+        int dz; 
+        int zTolerance;
+        int posX, posY, posZ;
+        uint[] collisionFlags = new uint[4];
+
+        int modX = 0;
+        int didAdjustForObstacle = 0;
+        int isStraightDir = ((entity.TargetDirection & 7) == 0) ? 1 : 0;
+
+        Func<Entity, uint[], uint> collisionFunc = (entity == StaticVariables.g_entitySlots[0]) ? GetCollisionFlagsWithPlayer : GetCollisionFlags;
+
+        START_COLLISION_CHECK:
+        dx = entity.FinalXForce;
+        dy = entity.FinalYForce;
+
+        if (dx == 0 && dy == 0)
+        {
+            goto FINALIZE_NO_MOVE;
+        }
+
+        modX = 0;
+        candidate = null;
+        i = 0;
+
+        TRY_ADVANCE:
+        posX = entity.XPos;
+        posY = entity.YPos;
+        posZ = entity.ZPos;
+
+        collisionFlags[0] = 0;
+        collisionFlags[1] = 0;
+        collisionFlags[2] = 0;
+        collisionFlags[3] = 0;
+
+        // applique le déplacement brut
+        entity.XPos += dx;
+        entity.YPos += dy;
+        entity.ModdedXPos = entity.XPos + entity.XMod;
+        entity.ModdedYPos = entity.YPos + entity.YMod;
+        entity.ModdedZPos = entity.ZPos + entity.ZMod;
+
+        groundHeight = ComputeEntityGroundHeight(entity);
+        entity.TerrainHeight = groundHeight;
+
+        int halfDxVal = dx >> 1;
+        int halfDyVal = dy >> 1;
+
+        // Essai de “collage” au sol si 0x100 (gravity) et pas de zForce
+        if ((entity.Flags & 0x100) != 0 && entity.ZForce == 0)
+        {
+            dz = (groundHeight - entity.ModdedZPos) - 1;
+            zTolerance = 0x30000;
+            if (dz < 0) { zTolerance = 0x30003; dz = -dz; }
+
+            if (dz < zTolerance)
+            {
+                int savedZ = entity.ZPos;
+                entity.ZPos = groundHeight + 1;
+                entity.ModdedXPos = entity.XPos + entity.XMod;
+                entity.ModdedYPos = entity.YPos + entity.YMod;
+                entity.ModdedZPos = entity.ZPos + entity.ZMod;
+
+                if (FindEntityCollisionCandidate(entity) != null)
+                {
+                    /* collision verticale : on restaure Z */
+                    entity.ZPos = savedZ;
+                    entity.ModdedZPos = savedZ + entity.ZMod;
+                    entity.ModdedXPos = entity.XPos + entity.XMod;
+                    entity.ModdedYPos = entity.YPos + entity.YMod;
+                    //goto RESTORE_POS;
+                }
+                /* sinon : on garde ce nouvel essai et on poursuit avec collision décor…   */
+            }
+            //else
+            //{
+            //    //RESTORE_POS:
+            //    // on repassera dans collision décor juste après
+            //}
+        }
+
+        CHECK_ENTITY_COLLISION:
+        uint flags = collisionFunc(entity, collisionFlags);
+
+        if (flags == 0)
+        {
+            // aucun obstacle détecté
+            modX = 1;
+
+            if (i == 0)
+            {
+                goto FINALIZE_OK;
+            }
+
+            if (dx == -1)
+            {
+                halfDxVal = 0;
+            }
+
+            if (dy == -1)
+            {
+                halfDyVal = 0;
+            }
+
+            if (isStraightDir == 0)
+            {
+                if (halfDxVal == 0)
+                {
+                    goto FINALIZE_OK;
+                }
+            }
+            else if (halfDxVal != 0)
+            {
+                i++;
+                dx = halfDxVal;
+                dy = halfDyVal;
+                goto TRY_ADVANCE;
+            }
+
+            if (halfDyVal == 0)
+            {
+                goto FINALIZE_OK;
+            }
+
+            i++;
+            dx = halfDxVal;
+            dy = halfDyVal;
+            goto TRY_ADVANCE;
+        }
+
+        LAB_80037938:
+        entity.XPos = posX;
+        entity.YPos = posY;
+        entity.ZPos = posZ;
+
+        if (dx == -1)
+        {
+            halfDxVal = 0;
+        }
+
+        if (dy == -1)
+        {
+            halfDyVal = 0;
+        }
+
+        if (isStraightDir != 0)
+        {
+            if (halfDxVal != 0)
+            {
+                dx = halfDxVal;
+                dy = halfDyVal;
+                goto TRY_ADVANCE;
+            }
+            if (halfDyVal == 0)
+            {
+                goto LAB_8003799C;
+            }
+
+            i++;
+            dx = halfDxVal;
+            dy = halfDyVal;
+            goto TRY_ADVANCE;
+        }
+        else
+        {
+            if (halfDxVal != 0 && halfDyVal != 0)
+            {
+                i++;
+                dx = halfDxVal;
+                dy = halfDyVal;
+                goto TRY_ADVANCE;
+            }
+        }
+
+        LAB_8003799C:
+        if (modX != 0)
+        {
+            goto LAB_80037D58;
+        }
+
+        if (didAdjustForObstacle == 1 || (entity.Flags & 0x2000) != 0 || candidate != null)
+        {
+            goto FINAL_OBSTACLE;
+        }
+
+        didAdjustForObstacle = 1;
+
+        switch (entity.TargetDirection)
+        {
+            case 0:
+                if ((collisionFlags[2] != 0 && collisionFlags[3] != 0) ||
+                    collisionFlags[0] != 0 || collisionFlags[1] != 0)
+                {
+                    goto FINAL_OBSTACLE;
+                }
+
+                entity.FinalYForce = 0;
+                if (collisionFlags[2] != 0 && collisionFlags[3] == 0)
+                {
+                    entity.FinalXForce = 0xC000;
+                }
+                goto START_COLLISION_CHECK;
+
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+                if (collisionFlags[0] != 0)
+                {
+                    if (collisionFlags[3] == 0)
+                    {
+                        LAB_80037C70:
+                        entity.FinalXForce = 0;
+                        goto START_COLLISION_CHECK;
+                    }
+                    goto FINAL_OBSTACLE;
+                }
+                if (collisionFlags[3] != 0)
+                {
+                    LAB_80037C88:
+                    entity.FinalYForce = 0;
+                }
+                goto START_COLLISION_CHECK;
+
+            case 8:
+                if ((collisionFlags[0] != 0 && collisionFlags[2] != 0) ||
+                    collisionFlags[1] != 0 || collisionFlags[3] != 0)
+                {
+                    goto FINAL_OBSTACLE;
+                }
+
+                entity.FinalXForce = 0;
+                if (collisionFlags[0] != 0 && collisionFlags[2] == 0)
+                {
+                    entity.FinalYForce = 0x8000;
+                }
+                else if (collisionFlags[0] == 0 && collisionFlags[2] != 0)
+                {
+                    code_r0x80037C3C:
+                    if (collisionFlags[0] == 0)
+                    {
+                        entity.FinalYForce = -0x8000;
+                    }
+                }
+                goto START_COLLISION_CHECK;
+
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+            case 13:
+            case 14:
+            case 15:
+                if (collisionFlags[1] == 0)
+                {
+                    if (collisionFlags[2] != 0)
+                    {
+                        entity.FinalXForce = 0;
+                    }
+                }
+                else
+                {
+                    if (collisionFlags[2] != 0)
+                    {
+                        goto FINAL_OBSTACLE;
+                    }
+
+                    entity.FinalYForce = 0;
+                }
+                goto START_COLLISION_CHECK;
+
+            case 16:
+                if ((collisionFlags[0] != 0 && collisionFlags[1] != 0) ||
+                    collisionFlags[2] != 0 || collisionFlags[3] != 0)
+                {
+                    goto FINAL_OBSTACLE;
+                }
+
+                entity.FinalYForce = 0;
+                if (collisionFlags[0] != 0 && collisionFlags[1] == 0)
+                {
+                    entity.FinalXForce = 0xC000;
+                }
+
+                goto START_COLLISION_CHECK;
+
+            case 17:
+            case 18:
+            case 19:
+            case 20:
+            case 21:
+            case 22:
+            case 23:
+                if (collisionFlags[0] != 0 && collisionFlags[3] != 0)
+                {
+                    goto FINAL_OBSTACLE;
+                }
+
+                if (collisionFlags[3] == 0)
+                {
+                    if (collisionFlags[0] != 0)
+                    {
+                        entity.FinalYForce = 0;
+                    }
+                }
+                else
+                {
+                    //goto LAB_80037C70; /* FinalXForce = 0 */
+                    entity.FinalXForce = 0;
+                    goto START_COLLISION_CHECK;
+                }
+                goto START_COLLISION_CHECK;
+
+            case 24:
+                if ((collisionFlags[1] != 0 && collisionFlags[3] != 0) 
+                    || collisionFlags[0] != 0 || collisionFlags[2] != 0)
+                {
+                    goto FINAL_OBSTACLE;
+                }
+
+                entity.FinalXForce = 0;
+                if (collisionFlags[1] != 0 && collisionFlags[3] == 0)
+                {
+                    entity.FinalYForce = 0x8000;
+                }
+                else if (collisionFlags[1] == 0 && collisionFlags[3] != 0)
+                {
+                    //goto code_r0x80037C3C; /* FinalYForce = -0x8000 */
+                    if (collisionFlags[0] == 0)
+                    {
+                        entity.FinalYForce = -0x8000;
+                    }
+                }
+                goto START_COLLISION_CHECK;
+
+            case 25:
+            case 26:
+            case 27:
+            case 28:
+            case 29:
+            case 30:
+            case 31:
+                if (collisionFlags[1] != 0 && collisionFlags[2] != 0)
+                {
+                    goto FINAL_OBSTACLE;
+                }
+
+                if (collisionFlags[2] != 0)
+                {
+                    //goto LAB_80037C88;
+                    entity.FinalYForce = 0;
+                }
+
+                if (collisionFlags[1] != 0)
+                {
+                    entity.FinalXForce = 0;
+                }
+
+                goto START_COLLISION_CHECK;
+
+            default:
+                goto FINAL_OBSTACLE;
+        }
+
+        LAB_80037D58:
+        //Cas “pas d’obstacle” (modX != 0)
+        dy = entity.XPos;
+        dx = (int)entity.XMod;
+        goto FINALIZE_COMMON;
+
+        FINAL_OBSTACLE:
+        entity.ForceAdjusted = 1;
+
+        FINALIZE_OK:
+        dy = entity.XPos;
+        dx = (int)entity.XMod;
+
+        FINALIZE_COMMON:
+        entity.ModdedXPos = dy + dx;
+        entity.ModdedYPos = entity.YPos + entity.YMod;
+        entity.ModdedZPos = entity.ZPos + entity.ZMod;
+        entity.TerrainHeight = ComputeEntityGroundHeight(entity);
+        return candidate;
+
+        FINALIZE_NO_MOVE:
+        entity.ModdedXPos = entity.XPos + entity.XMod;
+        entity.ModdedYPos = entity.YPos + entity.YMod;
+        entity.ModdedZPos = entity.ZPos + entity.ZMod;
+        entity.TerrainHeight = ComputeEntityGroundHeight(entity);
+        return null;
+    }
+    
+    // 80037730
+    private Entity ComputeXYPosition2(Entity entity)
     {
         int flags;
         int dz;
@@ -1899,7 +2303,7 @@ public class EntityManager
                     ApplyEntityForces(entity);
                     entity.FinalXForce = entity.AdjustedXForce;
                     entity.FinalYForce = entity.AdjustedYForce;
-                    entity.FinalZForce = entity.ZForce; //-33 024
+                    entity.FinalZForce = entity.ZForce;
                     continue;
                 }
 
@@ -1920,10 +2324,10 @@ public class EntityManager
     {
         var adjustedXForce = entity.PreviousAdjustedXForce;
         var adjustedYForce = entity.PreviousAdjustedYForce;
-        var shitfAmount = _gameEngine.CurrentMap.Info.Gravity & 0x1f;
-        var xForceComponent = entity.XForce + ScriptHelper.XForceTable[entity.TileAttributes & 0xf] >> shitfAmount;
+        var shiftAmount = _gameEngine.CurrentMap.Info.Gravity & 0x1f;
+        var xForceComponent = entity.XForce + ScriptHelper.XForceTable[entity.TileAttributes & 0xf] >> shiftAmount;
+        var yForceComponent = entity.YForce + ScriptHelper.YForceTable[entity.TileAttributes & 0xf] >> shiftAmount;
         xForceComponent += adjustedXForce;
-        var yForceComponent = entity.YForce + ScriptHelper.YForceTable[entity.TileAttributes & 0xf] >> shitfAmount;
         yForceComponent += adjustedYForce;
 
         entity.PreviousAdjustedYForce = 0;
