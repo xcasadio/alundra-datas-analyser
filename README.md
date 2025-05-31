@@ -4,12 +4,6 @@
   <img src="./gitHub/alundra-logo.jpg">
 </p>
 
-![GitHub Repo stars](https://img.shields.io/github/stars/xcasadio/alundra-datas-analyser)
-![GitHub Forks](https://img.shields.io/github/forks/xcasadio/alundra-datas-analyser)
-![Build Status](https://img.shields.io/github/actions/workflow/status/your-org/alundra-datas-analyser/build.yml?branch=main)
-![License](https://img.shields.io/github/license/your-org/alundra-datas-analyser)
-![Contributions](https://img.shields.io/github/contributors/your-org/alundra-datas-analyser)
-
 > **Reverse‑engineering the original *Alundra* PlayStation game in C# and rebuild it with CasaEngineMonoGame. Based on [surixurient](https://github.com/surixurient/alundra)**
 
 ---
@@ -105,8 +99,6 @@ The analyze has been done with the french version of Alundra.
 * [ ] **Event scripting VM** – interpret map triggers and cut‑scene events.
 * [ ] **Collision system parity** – replicate original tile & entity collisions.
 * [ ] **Save‑state importer** – convert original memory card saves to JSON.
-
-See the open [issues](https://github.com/your-org/alundra-datas-analyser/issues) for more.
 
 ---
 
