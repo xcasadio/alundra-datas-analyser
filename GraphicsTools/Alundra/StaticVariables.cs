@@ -8,6 +8,8 @@ public static class StaticVariables
 {
     //editor
     public static int EditorSelectEntityIndex { get; set; } = -1;
+    public static bool IsGamePaused { get; set; }
+    public static bool DoNextFrame { get; set; }
 
     // custom
     public const int ScreenWidth = 320;
@@ -16,9 +18,6 @@ public static class StaticVariables
     public const int MapTileHeight = 16;
 
     public static Entity PlayerEntity => g_entitySlots[0];
-    
-    public static bool IsGamePaused { get; set; }
-    public static bool DoNextFrame { get; set; }
 
     //don't delete
     //can't export with Ghidra
