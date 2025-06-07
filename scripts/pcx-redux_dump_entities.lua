@@ -1,38 +1,42 @@
------------------------------------------------------------------
---  Alundra – Full Entity dump per frame (PCSX-Redux + LuaJIT) --
------------------------------------------------------------------
+-- Alundra Full Entity dump per frame
+-- Works with french version of Alundra
 
 PCSX  = PCSX
 ffi   = ffi
 imgui = imgui
 json  = require("json")
 
-local BASE_ADDR    = 0x80127D30   -- french version of Alundra
-local ENTITY_SIZE  = 0x294        -- 660 octets
-local ENTITY_COUNT = 17
+local BASE_ADDR    = 0x80127D30
+local ENTITY_SIZE  = 0x294
+local ENTITY_COUNT = 64
 local OUTPUT_DIR   = "D:/development/repo/Alundra Remake/dump"
 
 local mem = PCSX.getMemPtr()
 os.execute('mkdir "' .. OUTPUT_DIR .. '"')
-local frame_no = 0
 
+local frame_no = 0
+local recording = false
 
 local function u32(addr) return ffi.cast("uint32_t*", mem + (addr-0x80000000))[0] end
 local function s32(addr) return ffi.cast("int32_t*" , mem + (addr-0x80000000))[0] end
 local function s16(addr) return ffi.cast("int16_t*" , mem + (addr-0x80000000))[0] end
 local function ptr(addr) return u32(addr) end
-
-local function int_array(addr, n)
-  local t = {}
-  for i = 0, n-1 do t[i+1] = s32(addr + i*4) end
-  return t
+local function idx_from_ptr(p)
+  if p < BASE_ADDR or p >= BASE_ADDR + ENTITY_COUNT * ENTITY_SIZE then return nil end
+  local d = p - BASE_ADDR
+  if d % ENTITY_SIZE ~= 0 then return nil end
+  return d / ENTITY_SIZE
 end
 
-local function short_array(addr, n)
-  local t = {}
-  for i = 0, n-1 do t[i+1] = s16(addr + i*2) end
-  return t
+local function ptr_as_index(a)
+  local p = u32(a)
+  local idx = idx_from_ptr(p)
+  return idx or string.format("0x%08X", p)
 end
+
+local function int_array(a,n)  local t={} for i=0,n-1 do t[i+1]=s32(a+i*4) end return t end
+local function uint_array(a,n) local t={} for i=0,n-1 do t[i+1]=u32(a+i*4) end return t end
+local function short_array(a,n)local t={} for i=0,n-1 do t[i+1]=s16(a+i*2) end return t end
 
 local function sprite_ref(addr)
   return {
@@ -62,7 +66,6 @@ end
 local function read_entity(addr)
   local E = {}
 
-  -- 0x00 – 0x48
   E.index                = s32(addr+0x00)
   E.index2               = s32(addr+0x04)
   E.childEntity          = ptr(addr+0x08)
@@ -93,11 +96,11 @@ local function read_entity(addr)
   E.targetAnimationId    = u32(addr+0x88)
   E.targetDirection      = u32(addr+0x8C)
   E.currentAnimationId   = u32(addr+0x90)
-  E.currentDirection     = u32(addr+0x94)
-  E.currentFrameIndex    = s32(addr+0x98)
+  E.currentDirection     = u32(addr+0x94)  E.currentFrameIndex    = s32(addr+0x98)
   E.animSet              = ptr(addr+0x9C)
-  E.initialFrame         = ptr(addr+0xA0)
-  E.frame                = ptr(addr+0xA4)
+  local initialFrame = ptr(addr+0xA0)
+  local frame = ptr(addr+0xA4)
+  E.frameIndex           = initialFrame ~= 0 and frame ~= 0 and (frame - initialFrame) / 0x5 or -1
   E.nextFrameDelay       = s32(addr+0xA8)
   E.forceResetAnimationFlag = s32(addr+0xAC)
   E.animCompleteCounter  = s32(addr+0xB0)
@@ -218,26 +221,145 @@ local function read_entity(addr)
   return E
 end
 
----------------------------------------------------------------
--- Hook principal : appelé par PCSX-Redux chaque frame
----------------------------------------------------------------
-function DrawImguiFrame()
-  frame_no = frame_no + 1
+-- {name, addr, kind, count}
+local G = {
+  {"g_mapFlags",               0x801EB344, "u32arr", 1024},
+  {"g_globalFlags",            0x801EBA40, "u32arr", 1024},
+  {"g_gameRandomSeed",         0x80098708, "u32"},
+  {"g_lastWarpEntityIndex",    0x800986F0, "s32"},
+  {"g_tileAnimFrameCounter",   0x800986FC, "s32"},
+  {"DAT_80098f24",             0x80098F24, "s32"},
+  {"g_soundFadeTimer",         0x800A825E, "s16"},
+  {"INT_ARRAY_800a8284",       0x800A8284, "s32arr", 10},
+  {"g_globalTransitionState",  0x800C4980, "s32"},
+  {"g_defaultWarpDestinations",0x800C659C, "u32arr", 483},
+  {"g_soundGroupByMapId",      0x800C6D28, "u32arr", 483},
+  {"g_orderingTableBuffer",    0x800CC050, "s32arr", 4},
+  {"g_warpDelayFrames",        0x800DC4B4, "s32"},
+  {"g_playerControlFlags",     0x800DC4B8, "s32"},
+  {"g_isWarpDisabled",         0x800DC4C0, "s32"},
+  {"g_isGameEnding",           0x800DC4C4, "s32"},
+  {"g_warpType",               0x800DC4C8, "s32"},
+  {"g_desiredMap",             0x800DC4CC, "s32"},
+  {"g_warpTriggerType",        0x800DC4D0, "s32"},
+  {"g_warpExtraParam",         0x800DC4D4, "s32"},
+  {"g_cameraTargetX",          0x800DC4D8, "s32"},
+  {"g_cameraTargetY",          0x800DC4DC, "s32"},
+  {"g_animation_id",           0x800DC4E0, "s32"},
+  {"g_currentMap",             0x800DC5A0, "s32"},
+  {"g_isCameraScrolling",      0x800E42B8, "s32"},
+  {"g_cameraScrollingX",       0x800E4328, "s32"},
+  {"g_cameraScrollingY",       0x800E432C, "s32"},
+  {"g_bossCutsceneFlag",       0x800E4338, "s32"},
+  {"g_cutsceneScrollLimitX",   0x800E433C, "s32"},
+  {"g_cutsceneScrollLimitY",   0x800E4340, "s32"},
+  {"g_cutsceneScrollSpeedX",   0x800E4344, "s32"},
+  {"g_cutsceneScrollSpeedY",   0x800E4348, "s32"},
+  {"g_cameraOffsetX",          0x800E434C, "s32"},
+  {"g_cameraOffsetY",          0x800E4350, "s32"},
+  {"g_cutsceneXReachedMin",    0x800E4354, "s32"},
+  {"g_cutsceneYReachedMin",    0x800E4358, "s32"},
+  {"g_gravityFlag",            0x80127000, "s32"},
+  {"g_activeCollisionEntity",  0x80127108, "eptr"},
+  {"g_warpLockTimer",          0x80127164, "s32"},
+  {"g_activeEntityCount",      0x80127D28, "s32"},
+  {"g_collideableEntitiesCount",0x80127D2C,"s32"},
+  {"g_cameraLookAtX",          0x80134350, "s32"},
+  {"g_cameraLookAtY",          0x80134354, "s32"},
+  {"g_cameraLookAtZ",          0x80134358, "s32"},
+  {"g_visibleEntityCount",     0x8013435C, "s32"},
+  {"g_numberOfEntity",         0x80134360, "s32"},
+  {"g_nextEntityIndex",        0x80134600, "s32"},
+  {"g_mapOffsetX",             0x8013FB68, "s32"},
+  {"g_mapOffsetY",             0x8013FB6C, "s32"},
+  {"g_mapScreenPosX",          0x8013FB70, "s32"},
+  {"g_mapScreenPosY",          0x8013FB74, "s32"},
+  {"g_warpFlags",              0x8013FBB8, "s32"},
+  {"g_playerLastX",            0x8013FBBC, "s32"},
+  {"g_playerLastY",            0x8013FBC0, "s32"},
+  {"g_playerLastZ",            0x8013FBC4, "s32"},
+  {"g_cameraDeltaX",           0x801800D8, "s32"},
+  {"g_cameraDeltaY",           0x801800DC, "s32"},
+  {"g_cameraCurrentX",         0x801800E0, "s32"},
+  {"g_cameraCurrentY",         0x801800E4, "s32"},
+  {"g_cameraX",                0x801800E8, "s32"},
+  {"g_cameraY",                0x801800EC, "s32"},
+  {"g_savedGameplayTime",      0x801EB330, "u32"},
+  {"g_initialWarpMap",         0x801EB334, "s32"},
+  {"g_initialWarpTileX",       0x801EB338, "s32"},
+  {"g_initialWarpTileY",       0x801EB33C, "s32"},
+  {"g_initialWarpZ",           0x801EB340, "s32"},
+  {"g_systemFlags",            0x801EB410, "s32"},
+}
 
-  local out = {}
+local function read_global(g)
+  local name, addr, kind, count = table.unpack(g)
+  if kind == "s32"  then return s32(addr)
+  elseif kind == "u32" then return u32(addr)
+  elseif kind == "s16" then return s16(addr)
+  elseif kind == "u32arr" then return uint_array(addr, count)
+  elseif kind == "s32arr" then return int_array(addr, count)
+  elseif kind == "eptr" then
+    local p = u32(addr)
+    local idx = idx_from_ptr(p)
+    return idx or string.format("0x%08X", p)
+  end
+end
+
+local function clear_output_dir()
+  -- Windows : rmdir /S /Q ; Linux/mac : rm -rf
+  if package.config:sub(1,1) == '\\' then
+    os.execute('rmdir /S /Q "' .. OUTPUT_DIR .. '"')
+  else
+    os.execute('rm -rf "' .. OUTPUT_DIR .. '"')
+  end
+  os.execute('mkdir "' .. OUTPUT_DIR .. '"')
+end
+
+function DrawImguiFrame()
+
+  imgui.Begin("Alundra – Entity Saver", true)
+
+    if imgui.Button("Start recording") then
+      clear_output_dir()
+      frame_no  = 0
+      recording = true
+    end
+    imgui.SameLine()
+    
+    if imgui.Button("Stop recording") then
+      recording = false
+    end
+    imgui.SameLine()
+    
+    imgui.TextUnformatted(recording
+        and string.format("Recording… (frame %d)", frame_no)
+        or  "Paused")
+		
+
+	imgui.TextUnformatted(string.format("Output directory %s", OUTPUT_DIR))
+
+  imgui.End()
+  
+  if not recording then return end
+  
+  frame_no = frame_no + 1
+  local dump  = { entities = {}, globals = {} }
+  
+  -- entities
   for i = 0, ENTITY_COUNT - 1 do
-    out[i+1] = read_entity(BASE_ADDR + i * ENTITY_SIZE)
+    dump.entities[i+1] = read_entity(BASE_ADDR + i * ENTITY_SIZE)
+  end
+
+  -- globals
+  for _,g in ipairs(G) do
+    dump.globals[g[1]] = read_global(g)
   end
 
   local filepath = string.format("%s/alundra_frame_%06d.json", OUTPUT_DIR, frame_no)
   local f = io.open(filepath, "w")
   if f then
-    f:write(json.encode(out))
+    f:write(json.encode(dump))
     f:close()
   end
-
-  if imgui.Begin("Alundra – Entity Saver", true) then
-    imgui.TextUnformatted(string.format("Frame %6d | %s", frame_no, filepath))
-  end
-  imgui.End()
 end
