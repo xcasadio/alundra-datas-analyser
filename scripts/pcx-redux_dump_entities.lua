@@ -223,73 +223,77 @@ end
 
 -- {name, addr, kind, count}
 local G = {
-  {"g_mapFlags",               0x801EB344, "u32arr", 1024},
-  {"g_globalFlags",            0x801EBA40, "u32arr", 1024},
-  {"g_gameRandomSeed",         0x80098708, "u32"},
-  {"g_lastWarpEntityIndex",    0x800986F0, "s32"},
-  {"g_tileAnimFrameCounter",   0x800986FC, "s32"},
-  {"DAT_80098f24",             0x80098F24, "s32"},
-  {"g_soundFadeTimer",         0x800A825E, "s16"},
-  {"INT_ARRAY_800a8284",       0x800A8284, "s32arr", 10},
-  {"g_globalTransitionState",  0x800C4980, "s32"},
-  {"g_defaultWarpDestinations",0x800C659C, "u32arr", 483},
-  {"g_soundGroupByMapId",      0x800C6D28, "u32arr", 483},
-  {"g_orderingTableBuffer",    0x800CC050, "s32arr", 4},
-  {"g_warpDelayFrames",        0x800DC4B4, "s32"},
-  {"g_playerControlFlags",     0x800DC4B8, "s32"},
-  {"g_isWarpDisabled",         0x800DC4C0, "s32"},
-  {"g_isGameEnding",           0x800DC4C4, "s32"},
-  {"g_warpType",               0x800DC4C8, "s32"},
-  {"g_desiredMap",             0x800DC4CC, "s32"},
-  {"g_warpTriggerType",        0x800DC4D0, "s32"},
-  {"g_warpExtraParam",         0x800DC4D4, "s32"},
-  {"g_cameraTargetX",          0x800DC4D8, "s32"},
-  {"g_cameraTargetY",          0x800DC4DC, "s32"},
-  {"g_animation_id",           0x800DC4E0, "s32"},
-  {"g_currentMap",             0x800DC5A0, "s32"},
-  {"g_isCameraScrolling",      0x800E42B8, "s32"},
-  {"g_cameraScrollingX",       0x800E4328, "s32"},
-  {"g_cameraScrollingY",       0x800E432C, "s32"},
-  {"g_bossCutsceneFlag",       0x800E4338, "s32"},
-  {"g_cutsceneScrollLimitX",   0x800E433C, "s32"},
-  {"g_cutsceneScrollLimitY",   0x800E4340, "s32"},
-  {"g_cutsceneScrollSpeedX",   0x800E4344, "s32"},
-  {"g_cutsceneScrollSpeedY",   0x800E4348, "s32"},
-  {"g_cameraOffsetX",          0x800E434C, "s32"},
-  {"g_cameraOffsetY",          0x800E4350, "s32"},
-  {"g_cutsceneXReachedMin",    0x800E4354, "s32"},
-  {"g_cutsceneYReachedMin",    0x800E4358, "s32"},
-  {"g_gravityFlag",            0x80127000, "s32"},
-  {"g_activeCollisionEntity",  0x80127108, "eptr"},
-  {"g_warpLockTimer",          0x80127164, "s32"},
-  {"g_activeEntityCount",      0x80127D28, "s32"},
-  {"g_collideableEntitiesCount",0x80127D2C,"s32"},
-  {"g_cameraLookAtX",          0x80134350, "s32"},
-  {"g_cameraLookAtY",          0x80134354, "s32"},
-  {"g_cameraLookAtZ",          0x80134358, "s32"},
-  {"g_visibleEntityCount",     0x8013435C, "s32"},
-  {"g_numberOfEntity",         0x80134360, "s32"},
-  {"g_nextEntityIndex",        0x80134600, "s32"},
-  {"g_mapOffsetX",             0x8013FB68, "s32"},
-  {"g_mapOffsetY",             0x8013FB6C, "s32"},
-  {"g_mapScreenPosX",          0x8013FB70, "s32"},
-  {"g_mapScreenPosY",          0x8013FB74, "s32"},
-  {"g_warpFlags",              0x8013FBB8, "s32"},
-  {"g_playerLastX",            0x8013FBBC, "s32"},
-  {"g_playerLastY",            0x8013FBC0, "s32"},
-  {"g_playerLastZ",            0x8013FBC4, "s32"},
-  {"g_cameraDeltaX",           0x801800D8, "s32"},
-  {"g_cameraDeltaY",           0x801800DC, "s32"},
-  {"g_cameraCurrentX",         0x801800E0, "s32"},
-  {"g_cameraCurrentY",         0x801800E4, "s32"},
-  {"g_cameraX",                0x801800E8, "s32"},
-  {"g_cameraY",                0x801800EC, "s32"},
-  {"g_savedGameplayTime",      0x801EB330, "u32"},
-  {"g_initialWarpMap",         0x801EB334, "s32"},
-  {"g_initialWarpTileX",       0x801EB338, "s32"},
-  {"g_initialWarpTileY",       0x801EB33C, "s32"},
-  {"g_initialWarpZ",           0x801EB340, "s32"},
-  {"g_systemFlags",            0x801EB410, "s32"},
+  {"g_mapFlags",                0x801EB344, "u32arr", 1024},
+  {"g_globalFlags",             0x801EBA40, "u32arr", 1024},
+  {"g_gameRandomSeed",          0x80098708, "u32"},
+  {"g_lastWarpEntityIndex",     0x800986F0, "s32"},
+  {"g_tileAnimFrameCounter",    0x800986FC, "s32"},
+  {"DAT_80098f24",              0x80098F24, "s32"},
+  {"g_soundFadeTimer",          0x800A825E, "s16"},
+  {"INT_ARRAY_800a8284",        0x800A8284, "s32arr", 10},
+  {"g_globalTransitionState",   0x800C4980, "s32"},
+  {"g_defaultWarpDestinations", 0x800C659C, "u32arr", 483},
+  {"g_soundGroupByMapId",       0x800C6D28, "u32arr", 483},
+  {"g_orderingTableBuffer",     0x800CC050, "s32arr", 4},
+  {"g_warpDelayFrames",         0x800DC4B4, "s32"},
+  {"g_playerControlFlags",      0x800DC4B8, "s32"},
+  {"g_isWarpDisabled",          0x800DC4C0, "s32"},
+  {"g_isGameEnding",            0x800DC4C4, "s32"},
+  {"g_warpType",                0x800DC4C8, "s32"},
+  {"g_desiredMap",              0x800DC4CC, "s32"},
+  {"g_warpTriggerType",         0x800DC4D0, "s32"},
+  {"g_warpExtraParam",          0x800DC4D4, "s32"},
+  {"g_cameraTargetX",           0x800DC4D8, "s32"},
+  {"g_cameraTargetY",           0x800DC4DC, "s32"},
+  {"g_animation_id",            0x800DC4E0, "s32"},
+  {"g_currentMap",              0x800DC5A0, "s32"},
+  {"g_isCameraScrolling",       0x800E42B8, "s32"},
+  {"g_cameraScrollingX",        0x800E4328, "s32"},
+  {"g_cameraScrollingY",        0x800E432C, "s32"},
+  {"g_bossCutsceneFlag",        0x800E4338, "s32"},
+  {"g_cutsceneScrollLimitX",    0x800E433C, "s32"},
+  {"g_cutsceneScrollLimitY",    0x800E4340, "s32"},
+  {"g_cutsceneScrollSpeedX",    0x800E4344, "s32"},
+  {"g_cutsceneScrollSpeedY",    0x800E4348, "s32"},
+  {"g_cameraOffsetX",           0x800E434C, "s32"},
+  {"g_cameraOffsetY",           0x800E4350, "s32"},
+  {"g_cutsceneXReachedMin",     0x800E4354, "s32"},
+  {"g_cutsceneYReachedMin",     0x800E4358, "s32"},
+  {"g_padState1",               0x80126F18, "padstate"},
+  {"g_gravityFlag",             0x80127000, "s32"},
+  {"g_activeCollisionEntity",   0x80127108, "eptr"},
+  {"g_warpLockTimer",           0x80127164, "s32"},
+  {"g_activeEntities",          0x80127B28, "eptrarr", 64},
+  {"g_collideableEntities",     0x80127C28, "eptrarr", 64},
+  {"g_activeEntityCount",       0x80127D28, "s32"},
+  {"g_collideableEntitiesCount",0x80127D2C, "s32"},
+  {"g_visibleEntities",         0x80134250, "eptrarr", 64},
+  {"g_cameraLookAtX",           0x80134350, "s32"},
+  {"g_cameraLookAtY",           0x80134354, "s32"},
+  {"g_cameraLookAtZ",           0x80134358, "s32"},
+  {"g_visibleEntityCount",      0x8013435C, "s32"},
+  {"g_numberOfEntity",          0x80134360, "s32"},
+  {"g_nextEntityIndex",         0x80134600, "s32"},
+  {"g_mapOffsetX",              0x8013FB68, "s32"},
+  {"g_mapOffsetY",              0x8013FB6C, "s32"},
+  {"g_mapScreenPosX",           0x8013FB70, "s32"},
+  {"g_mapScreenPosY",           0x8013FB74, "s32"},
+  {"g_warpFlags",               0x8013FBB8, "s32"},
+  {"g_playerLastX",             0x8013FBBC, "s32"},
+  {"g_playerLastY",             0x8013FBC0, "s32"},
+  {"g_playerLastZ",             0x8013FBC4, "s32"},
+  {"g_cameraDeltaX",            0x801800D8, "s32"},
+  {"g_cameraDeltaY",            0x801800DC, "s32"},
+  {"g_cameraCurrentX",          0x801800E0, "s32"},
+  {"g_cameraCurrentY",          0x801800E4, "s32"},
+  {"g_cameraX",                 0x801800E8, "s32"},
+  {"g_cameraY",                 0x801800EC, "s32"},
+  {"g_savedGameplayTime",       0x801EB330, "u32"},
+  {"g_initialWarpMap",          0x801EB334, "s32"},
+  {"g_initialWarpTileX",        0x801EB338, "s32"},
+  {"g_initialWarpTileY",        0x801EB33C, "s32"},
+  {"g_initialWarpZ",            0x801EB340, "s32"},
+  {"g_systemFlags",             0x801EB410, "s32"},
 }
 
 local function read_global(g)
@@ -299,10 +303,37 @@ local function read_global(g)
   elseif kind == "s16" then return s16(addr)
   elseif kind == "u32arr" then return uint_array(addr, count)
   elseif kind == "s32arr" then return int_array(addr, count)
+  elseif kind == "padstate" then
+    return {
+      maxNbFrameHeld = u32(addr + 0x0),
+      repeatInterval = u32(addr + 0x4),
+      isOverThanMaxNbFrameHeld = u32(addr + 0x8),
+      numberOfFrameHold = u32(addr + 0xC),
+      buttonsHold = s16(addr + 0x10),
+      buttonsJustPressed = s16(addr + 0x12),
+      buttonReleased = s16(addr + 0x14),
+      buttonsJustPressedByInterval = s16(addr + 0x16)
+    }
   elseif kind == "eptr" then
     local p = u32(addr)
-    local idx = idx_from_ptr(p)
-    return idx or string.format("0x%08X", p)
+    if p == 0 then
+      return -1
+    else
+      local idx = idx_from_ptr(p)
+      return idx or string.format("0x%08X", p)
+    end
+  elseif kind == "eptrarr" then
+    local result = {}
+    for i = 0, count - 1 do
+      local p = u32(addr + i * 4)
+      if p == 0 then
+        result[i+1] = -1
+      else
+        local idx = idx_from_ptr(p)
+        result[i+1] = idx or string.format("0x%08X", p)
+      end
+    end
+    return result
   end
 end
 
@@ -340,11 +371,10 @@ function DrawImguiFrame()
 	imgui.TextUnformatted(string.format("Output directory %s", OUTPUT_DIR))
 
   imgui.End()
-  
-  if not recording then return end
+    if not recording then return end
   
   frame_no = frame_no + 1
-  local dump  = { entities = {}, globals = {} }
+  local dump  = { entities = {} }
   
   -- entities
   for i = 0, ENTITY_COUNT - 1 do
@@ -353,7 +383,7 @@ function DrawImguiFrame()
 
   -- globals
   for _,g in ipairs(G) do
-    dump.globals[g[1]] = read_global(g)
+    dump[g[1]] = read_global(g)
   end
 
   local filepath = string.format("%s/alundra_frame_%06d.json", OUTPUT_DIR, frame_no)
