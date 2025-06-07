@@ -30,101 +30,136 @@ public static class FrameSnapshotLoader
         }
 
         var frameSnapshot = new FrameSnapshot();
+        frameSnapshot.CopyFromMemory(); // TODO : remove
 
-        for (int i = 0; i < dump.entities.Count && i < StaticVariables.g_entitySlots.Length; i++)
+        //frameSnapshot.Entities = new Entity[StaticVariables.g_entitySlots.Length];
+        for (int i = 0; i < frameSnapshot.Entities.Length; i++)
         {
-            dump.entities[i].CopyToEntity(StaticVariables.g_entitySlots[i]);
+            // TODO : create a new entity
+            // we use frameSnapshot.CopyFromMemory() to copy all assets
+            //frameSnapshot.Entities[i] = new Entity();
+
+            if (i < dump.entities.Count)
+            {
+                dump.entities[i].CopyToEntity(frameSnapshot.Entities[i]);
+            }
         }
 
-        StaticVariables.g_gameRandomSeed = dump.g_gameRandomSeed;
-        StaticVariables.g_lastWarpEntityIndex = dump.g_lastWarpEntityIndex;
-        StaticVariables.g_tileAnimFrameCounter = dump.g_TileAnimFrameCounter;
-        StaticVariables.DAT_80098f24 = dump.DAT_80098f24;
-        //Array.Copy(dump.INT_ARRAY_800a8284, StaticVariables.INT_ARRAY_800a8284, dump.INT_ARRAY_800a8284.Length);
-        StaticVariables.g_soundFadeTimer = dump.g_soundFadeTimer;
-        StaticVariables.g_globalTransitionState = dump.g_globalTransitionState;
-        //Array.Copy(dump.g_defaultWarpDestinations, StaticVariables.g_defaultWarpDestinations, dump.g_defaultWarpDestinations.Length);
-        //Array.Copy(dump.g_soundGroupByMapId, StaticVariables.g_soundGroupByMapId, dump.g_soundGroupByMapId.Length);
-        //Array.Copy(dump.g_orderingTableBuffer, StaticVariables.g_orderingTableBuffer, dump.g_orderingTableBuffer.Length);
-        StaticVariables.g_warpDelayFrames = dump.g_warpDelayFrames;
-        StaticVariables.g_playerControlFlags = dump.g_playerControlFlags;
-        StaticVariables.g_isWarpDisabled = dump.g_isWarpDisabled;
-        StaticVariables.g_warpType = dump.g_warpType;
-        StaticVariables.g_desiredMap = dump.g_desiredMap;
-        StaticVariables.g_warpTriggerType = dump.g_warpTriggerType;
-        StaticVariables.g_warpExtraParam = dump.g_warpExtraParam;
-        StaticVariables.g_cameraTargetX = dump.g_cameraTargetX;
-        StaticVariables.g_cameraTargetY = dump.g_cameraTargetY;
-        StaticVariables.g_animation_id = dump.g_animationId;
-        StaticVariables.g_currentMap = dump.g_currentMap;
-        StaticVariables.g_isCameraScrolling = dump.g_isCameraScrolling;
-        StaticVariables.g_cameraScrollingX = dump.g_cameraScrollingX;
-        StaticVariables.g_cameraScrollingY = dump.g_cameraScrollingY;
-        StaticVariables.g_bossCutsceneFlag = dump.g_bossCutsceneFlag;
-        StaticVariables.g_cameraOffsetX = dump.g_cameraOffsetX;
-        StaticVariables.g_cameraOffsetY = dump.g_cameraOffsetY;
-        //StaticVariables.g_padState1 = dump.g_padState1.Copy();
-        StaticVariables.g_gravityFlag = dump.g_gravityFlag;
-        StaticVariables.g_activeCollisionEntity = GetEntityFromIndex(dump.g_activeCollisionEntity);
-        StaticVariables.g_warpLockTimer = dump.g_warpLockTimer;
-        for (int i = 0; i < dump.g_activeEntities.Length; i++)
+        frameSnapshot.MapFlags = dump.g_mapFlags;
+        frameSnapshot.GlobalFlags = dump.g_globalFlags;
+        frameSnapshot.GameRandomSeed = dump.g_gameRandomSeed;
+        frameSnapshot.LastWarpEntityIndex = dump.g_lastWarpEntityIndex;
+        frameSnapshot.TileAnimFrameCounter = dump.g_TileAnimFrameCounter;
+        frameSnapshot.DAT_80098f24 = dump.DAT_80098f24;
+        frameSnapshot.INT_ARRAY_800a8284 = dump.INT_ARRAY_800a8284;
+        frameSnapshot.SoundFadeTimer = dump.g_soundFadeTimer;
+        frameSnapshot.GlobalTransitionState = dump.g_globalTransitionState;
+        frameSnapshot.DefaultWarpDestinations = dump.g_defaultWarpDestinations;
+        frameSnapshot.SoundGroupByMapId = dump.g_soundGroupByMapId;
+        frameSnapshot.OrderingTableBuffer = dump.g_orderingTableBuffer;
+        frameSnapshot.WarpDelayFrames = dump.g_warpDelayFrames;
+        frameSnapshot.PlayerControlFlags = dump.g_playerControlFlags;
+        frameSnapshot.IsWarpDisabled = dump.g_isWarpDisabled;
+        frameSnapshot.WarpType = dump.g_warpType;
+        frameSnapshot.DesiredMap = dump.g_desiredMap;
+        frameSnapshot.WarpTriggerType = dump.g_warpTriggerType;
+        frameSnapshot.WarpExtraParam = dump.g_warpExtraParam;
+        frameSnapshot.CameraTargetX = dump.g_cameraTargetX;
+        frameSnapshot.CameraTargetY = dump.g_cameraTargetY;
+        frameSnapshot.AnimationId = dump.g_animationId;
+        frameSnapshot.CurrentMap = dump.g_currentMap;
+        frameSnapshot.IsCameraScrolling = dump.g_isCameraScrolling;
+        frameSnapshot.CameraScrollingX = dump.g_cameraScrollingX;
+        frameSnapshot.CameraScrollingY = dump.g_cameraScrollingY;
+        frameSnapshot.BossCutsceneFlag = dump.g_bossCutsceneFlag;
+        frameSnapshot.CameraOffsetX = dump.g_cameraOffsetX;
+        frameSnapshot.CameraOffsetY = dump.g_cameraOffsetY;
+
+        if (dump.g_padState1 != null)
         {
-            StaticVariables.g_activeEntities[i] = GetEntityFromIndex(dump.g_activeEntities[i]);
+            frameSnapshot.PadState1 = dump.g_padState1;
         }
-        for (int i = 0; i < dump.g_collideableEntities.Length; i++)
+
+        frameSnapshot.GravityFlag = dump.g_gravityFlag;
+
+        frameSnapshot.ActiveCollisionEntity = GetEntityFromIndex(dump.g_activeCollisionEntity, frameSnapshot.Entities);
+        frameSnapshot.WarpLockTimer = dump.g_warpLockTimer;
+
+        frameSnapshot.ActiveEntities = new Entity[dump.g_activeEntities?.Length ?? 0];
+        for (int i = 0; i < frameSnapshot.ActiveEntities.Length; i++)
         {
-            StaticVariables.g_collideableEntities[i] = GetEntityFromIndex(dump.g_collideableEntities[i]);
+            frameSnapshot.ActiveEntities[i] = GetEntityFromIndex(dump.g_activeEntities[i], frameSnapshot.Entities);
         }
-        StaticVariables.g_activeEntityCount = dump.g_activeEntityCount;
-        StaticVariables.g_collideableEntitiesCount = dump.g_collideableEntitiesCount;
-        for (int i = 0; i < dump.g_visibleEntities.Length; i++)
+
+        frameSnapshot.CollideableEntities = new Entity[dump.g_collideableEntities?.Length ?? 0];
+        for (int i = 0; i < frameSnapshot.CollideableEntities.Length; i++)
         {
-            StaticVariables.g_visibleEntities[i] = GetEntityFromIndex(dump.g_visibleEntities[i]);
+            frameSnapshot.CollideableEntities[i] = GetEntityFromIndex(dump.g_collideableEntities[i], frameSnapshot.Entities);
         }
-        StaticVariables.g_cameraLookAtX = dump.g_cameraLookAtX;
-        StaticVariables.g_cameraLookAtY = dump.g_cameraLookAtY;
-        StaticVariables.g_cameraLookAtZ = dump.g_cameraLookAtZ;
-        StaticVariables.g_visibleEntityCount = dump.g_visibleEntityCount;
-        StaticVariables.g_numberOfEntity = dump.g_numberOfEntity;
-        StaticVariables.g_entityFollowedByCamera = GetEntityFromIndex(dump.g_entityFollowedByCamera);
-        StaticVariables.g_nextEntityIndex = dump.g_nextEntityIndex;
-        //Array.Copy(dump.g_mapEvents, StaticVariables.g_mapEvents, dump.g_mapEvents.Length);
-        //StaticVariables.g_eventProgramState.CopyFrom(dump.g_eventProgramState);
-        StaticVariables.g_mapOffsetX = dump.g_mapOffsetX;
-        StaticVariables.g_mapOffsetY = dump.g_mapOffsetY;
-        StaticVariables.g_mapScreenPosX = dump.g_mapScreenPosX;
-        StaticVariables.g_mapScreenPosY = dump.g_mapScreenPosY;
-        StaticVariables.g_warpFlags = dump.g_warpFlags;
-        StaticVariables.g_playerLastX = dump.g_playerLastX;
-        StaticVariables.g_playerLastY = dump.g_playerLastY;
-        StaticVariables.g_playerLastZ = dump.g_playerLastZ;
-        StaticVariables.g_playerStartX = dump.g_playerStartX;
-        StaticVariables.g_playerStartY = dump.g_playerStartY;
-        StaticVariables.g_playerStartZ = dump.g_playerStartZ;
-        StaticVariables.g_cameraDeltaX = dump.g_cameraDeltaX;
-        StaticVariables.g_cameraDeltaY = dump.g_cameraDeltaY;
-        StaticVariables.g_cameraCurrentX = dump.g_cameraCurrentX;
-        StaticVariables.g_cameraCurrentY = dump.g_cameraCurrentY;
-        StaticVariables.g_cameraX = dump.g_cameraX;
-        StaticVariables.g_cameraY = dump.g_cameraY;
-        StaticVariables.g_cutsceneScrollLimitX = dump.g_cutsceneScrollLimitX;
-        StaticVariables.g_cutsceneScrollLimitY = dump.g_cutsceneScrollLimitY;
-        StaticVariables.g_cutsceneScrollSpeedX = dump.g_cutsceneScrollSpeedX;
-        StaticVariables.g_cutsceneScrollSpeedY = dump.g_cutsceneScrollSpeedY;
-        StaticVariables.g_cutsceneXReachedMin = dump.g_cutsceneXReachedMin;
-        StaticVariables.g_cutsceneYReachedMin = dump.g_cutsceneYReachedMin;
+
+        frameSnapshot.ActiveEntityCount = dump.g_activeEntityCount;
+        frameSnapshot.CollideableEntitiesCount = dump.g_collideableEntitiesCount;
+
+        frameSnapshot.VisibleEntities = new Entity[dump.g_visibleEntities?.Length ?? 0];
+        for (int i = 0; i < frameSnapshot.VisibleEntities.Length; i++)
+        {
+            frameSnapshot.VisibleEntities[i] = GetEntityFromIndex(dump.g_visibleEntities[i], frameSnapshot.Entities);
+        }
+
+        frameSnapshot.CameraLookAtX = dump.g_cameraLookAtX;
+        frameSnapshot.CameraLookAtY = dump.g_cameraLookAtY;
+        frameSnapshot.CameraLookAtZ = dump.g_cameraLookAtZ;
+        frameSnapshot.VisibleEntityCount = dump.g_visibleEntityCount;
+        frameSnapshot.NumberOfEntity = dump.g_numberOfEntity;
+        frameSnapshot.EntityFollowedByCamera = GetEntityFromIndex(dump.g_entityFollowedByCamera, frameSnapshot.Entities);
+        frameSnapshot.NextEntityIndex = dump.g_nextEntityIndex;
+
+        frameSnapshot.MapEvents = dump.g_mapEvents;
+
+        if (dump.g_eventProgramState != null)
+        {
+            frameSnapshot.EventProgramState = dump.g_eventProgramState;
+        }
+        else
+        {
+            frameSnapshot.EventProgramState = new EventProgramState();
+        }
+
+        frameSnapshot.MapOffsetX = dump.g_mapOffsetX;
+        frameSnapshot.MapOffsetY = dump.g_mapOffsetY;
+        frameSnapshot.MapScreenPosX = dump.g_mapScreenPosX;
+        frameSnapshot.MapScreenPosY = dump.g_mapScreenPosY;
+        frameSnapshot.WarpFlags = dump.g_warpFlags;
+        frameSnapshot.PlayerLastX = dump.g_playerLastX;
+        frameSnapshot.PlayerLastY = dump.g_playerLastY;
+        frameSnapshot.PlayerLastZ = dump.g_playerLastZ;
+        frameSnapshot.PlayerStartX = dump.g_playerStartX;
+        frameSnapshot.PlayerStartY = dump.g_playerStartY;
+        frameSnapshot.PlayerStartZ = dump.g_playerStartZ;
+        frameSnapshot.CameraDeltaX = dump.g_cameraDeltaX;
+        frameSnapshot.CameraDeltaY = dump.g_cameraDeltaY;
+        frameSnapshot.CameraCurrentX = dump.g_cameraCurrentX;
+        frameSnapshot.CameraCurrentY = dump.g_cameraCurrentY;
+        frameSnapshot.CameraX = dump.g_cameraX;
+        frameSnapshot.CameraY = dump.g_cameraY;
+        frameSnapshot.CutsceneScrollLimitX = dump.g_cutsceneScrollLimitX;
+        frameSnapshot.CutsceneScrollLimitY = dump.g_cutsceneScrollLimitY;
+        frameSnapshot.CutsceneScrollSpeedX = dump.g_cutsceneScrollSpeedX;
+        frameSnapshot.CutsceneScrollSpeedY = dump.g_cutsceneScrollSpeedY;
+        frameSnapshot.CutsceneXReachedMin = dump.g_cutsceneXReachedMin;
+        frameSnapshot.CutsceneYReachedMin = dump.g_cutsceneYReachedMin;
 
         return frameSnapshot;
     }
 
-    private static Entity GetEntityFromIndex(int index)
+    private static Entity GetEntityFromIndex(int index, Entity[] entities)
     {
-        if (index == -1 || index >= StaticVariables.g_entitySlots.Length)
+        if (index == -1 || index >= entities.Length)
         {
             return null;
         }
 
-        return StaticVariables.g_entitySlots[index];
+        return entities[index];
     }
 
     private class FrameDump

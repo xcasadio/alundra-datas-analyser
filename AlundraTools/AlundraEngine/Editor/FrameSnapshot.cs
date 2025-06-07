@@ -5,78 +5,78 @@ namespace AlundraEngine.Editor;
 
 public class FrameSnapshot
 {
-    private uint[] MapFlags { get; set; }
-    private uint[] GlobalFlags { get; set; }
-    private Entity[] Entities { get; set; }
-    private uint GameRandomSeed { get; set; }
+    public Entity[] Entities { get; set; }
 
-    private int LastWarpEntityIndex { get; set; }
-    private int TileAnimFrameCounter { get; set; }
-    private int DAT_80098f24 { get; set; }
-    private int[] INT_ARRAY_800a8284 { get; set; }
-    private short SoundFadeTimer { get; set; }
-    private int GlobalTransitionState { get; set; }
-    private uint[] DefaultWarpDestinations { get; set; }
-    private uint[] SoundGroupByMapId { get; set; }
-    private int[] OrderingTableBuffer { get; set; }
-    private int WarpDelayFrames { get; set; }
-    private int PlayerControlFlags { get; set; }
-    private int IsWarpDisabled { get; set; }
-    private int WarpType { get; set; }
-    private int DesiredMap { get; set; }
-    private int WarpTriggerType { get; set; }
-    private int WarpExtraParam { get; set; }
-    private int CameraTargetX { get; set; }
-    private int CameraTargetY { get; set; }
-    private int AnimationId { get; set; }
-    private int CurrentMap { get; set; }
-    private int IsCameraScrolling { get; set; }
-    private int CameraScrollingX { get; set; }
-    private int CameraScrollingY { get; set; }
-    private int BossCutsceneFlag { get; set; }
-    private int CameraOffsetX { get; set; }
-    private int CameraOffsetY { get; set; }
-    private PadState PadState1 { get; set; }
-    private int GravityFlag { get; set; }
-    private Entity ActiveCollisionEntity { get; set; }
-    private int WarpLockTimer { get; set; }
-    private Entity[] ActiveEntities { get; set; }
-    private Entity[] CollideableEntities { get; set; }
-    private int ActiveEntityCount { get; set; }
-    private int CollideableEntitiesCount { get; set; }
-    private Entity[] VisibleEntities { get; set; }
-    private int CameraLookAtX { get; set; }
-    private int CameraLookAtY { get; set; }
-    private int CameraLookAtZ { get; set; }
-    private int VisibleEntityCount { get; set; }
-    private int NumberOfEntity { get; set; }
-    private Entity EntityFollowedByCamera { get; set; }
-    private int NextEntityIndex { get; set; }
-    private MapEvent[] MapEvents { get; set; }
-    private EventProgramState EventProgramState { get; set; }
-    private int MapOffsetX { get; set; }
-    private int MapOffsetY { get; set; }
-    private int MapScreenPosX { get; set; }
-    private int MapScreenPosY { get; set; }
-    private int WarpFlags { get; set; }
-    private int PlayerLastX { get; set; }
-    private int PlayerLastY { get; set; }
-    private int PlayerLastZ { get; set; }
-    private int PlayerStartX { get; set; }
-    private int PlayerStartY { get; set; }
-    private int PlayerStartZ { get; set; }
-    private int CameraDeltaX { get; set; }
-    private int CameraDeltaY { get; set; }
-    private int CameraCurrentX { get; set; }
-    private int CameraCurrentY { get; set; }
-    private int CameraX { get; set; }
-    private int CameraY { get; set; }
-    private int CutsceneScrollLimitX { get; set; }
-    private int CutsceneScrollLimitY { get; set; }
-    private int CutsceneScrollSpeedX { get; set; }
-    private int CutsceneScrollSpeedY { get; set; }
-    private int CutsceneXReachedMin { get; set; }
-    private int CutsceneYReachedMin { get; set; }
+    public uint GameRandomSeed { get; set; }
+    public uint[] MapFlags { get; set; }
+    public uint[] GlobalFlags { get; set; }
+    public int LastWarpEntityIndex { get; set; }
+    public int TileAnimFrameCounter { get; set; }
+    public int DAT_80098f24 { get; set; }
+    public int[] INT_ARRAY_800a8284 { get; set; }
+    public short SoundFadeTimer { get; set; }
+    public int GlobalTransitionState { get; set; }
+    public uint[] DefaultWarpDestinations { get; set; }
+    public uint[] SoundGroupByMapId { get; set; }
+    public int[] OrderingTableBuffer { get; set; }
+    public int WarpDelayFrames { get; set; }
+    public int PlayerControlFlags { get; set; }
+    public int IsWarpDisabled { get; set; }
+    public int WarpType { get; set; }
+    public int DesiredMap { get; set; }
+    public int WarpTriggerType { get; set; }
+    public int WarpExtraParam { get; set; }
+    public int CameraTargetX { get; set; }
+    public int CameraTargetY { get; set; }
+    public int AnimationId { get; set; }
+    public int CurrentMap { get; set; }
+    public int IsCameraScrolling { get; set; }
+    public int CameraScrollingX { get; set; }
+    public int CameraScrollingY { get; set; }
+    public int BossCutsceneFlag { get; set; }
+    public int CameraOffsetX { get; set; }
+    public int CameraOffsetY { get; set; }
+    public PadState PadState1 { get; set; }
+    public int GravityFlag { get; set; }
+    public Entity ActiveCollisionEntity { get; set; }
+    public int WarpLockTimer { get; set; }
+    public Entity[] ActiveEntities { get; set; }
+    public Entity[] CollideableEntities { get; set; }
+    public int ActiveEntityCount { get; set; }
+    public int CollideableEntitiesCount { get; set; }
+    public Entity[] VisibleEntities { get; set; }
+    public int CameraLookAtX { get; set; }
+    public int CameraLookAtY { get; set; }
+    public int CameraLookAtZ { get; set; }
+    public int VisibleEntityCount { get; set; }
+    public int NumberOfEntity { get; set; }
+    public Entity EntityFollowedByCamera { get; set; }
+    public int NextEntityIndex { get; set; }
+    public MapEvent[] MapEvents { get; set; }
+    public EventProgramState EventProgramState { get; set; }
+    public int MapOffsetX { get; set; }
+    public int MapOffsetY { get; set; }
+    public int MapScreenPosX { get; set; }
+    public int MapScreenPosY { get; set; }
+    public int WarpFlags { get; set; }
+    public int PlayerLastX { get; set; }
+    public int PlayerLastY { get; set; }
+    public int PlayerLastZ { get; set; }
+    public int PlayerStartX { get; set; }
+    public int PlayerStartY { get; set; }
+    public int PlayerStartZ { get; set; }
+    public int CameraDeltaX { get; set; }
+    public int CameraDeltaY { get; set; }
+    public int CameraCurrentX { get; set; }
+    public int CameraCurrentY { get; set; }
+    public int CameraX { get; set; }
+    public int CameraY { get; set; }
+    public int CutsceneScrollLimitX { get; set; }
+    public int CutsceneScrollLimitY { get; set; }
+    public int CutsceneScrollSpeedX { get; set; }
+    public int CutsceneScrollSpeedY { get; set; }
+    public int CutsceneXReachedMin { get; set; }
+    public int CutsceneYReachedMin { get; set; }
 
     public void CopyToMemory()
     {
@@ -132,7 +132,7 @@ public class FrameSnapshot
         StaticVariables.g_numberOfEntity = NumberOfEntity;
         StaticVariables.g_entityFollowedByCamera = EntityFollowedByCamera;
         StaticVariables.g_nextEntityIndex = NextEntityIndex;
-        Array.Copy(MapEvents, StaticVariables.g_mapEvents, MapEvents.Length);
+        //Array.Copy(MapEvents, StaticVariables.g_mapEvents, MapEvents.Length);
         StaticVariables.g_eventProgramState.CopyFrom(EventProgramState);
         StaticVariables.g_mapOffsetX = MapOffsetX;
         StaticVariables.g_mapOffsetY = MapOffsetY;
