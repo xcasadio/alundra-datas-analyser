@@ -27,4 +27,9 @@ public class PadState
     public ushort ButtonsJustPressed;
     public ushort ButtonReleased;
     public ushort ButtonsJustPressedByInterval;
-};
+
+    public PadState Copy()
+    {
+        return (PadState)MemberwiseClone();
+    }
+}

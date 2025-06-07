@@ -431,11 +431,21 @@ public static class StaticVariables
         0xC, 0xC, 0xD, 0xE,
         0xE, 0xF, 0x10, 0x10
     ];
-    
+    // 80028B34
+    public static byte[] g_directionFlipTable = [0x18, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x08, 0x08, 0x08, 0x08, 0x10, 0x10, 0x10, 0x10, 0x10, 0x18, 0x18, 0x18, 0x18, 0x18, 0x10, 0x10, 0x10, 0x10, 0x18, 0x18, 0x18, 0x18];
+    // 80028DCC
+    public static int[] g_warpBehaviorTable =
+    [
+        0x0000, 0x0045, 0x0000, 0x0037,
+        0x018F, 0x004A, 0x004A, 0x004B,
+        0x0000, 0x004C, 0x0049, 0x0003,
+        0x0003, 0x0003, 0x0003, 0x0003,
+        0x0000, 0x0000, 0x0000, 0x0000 
+    ];
 
     public static void Initialize()
     {
-        //TODO : alreay loaded? where?
+        //TODO : already loaded? where?
         g_imageBuffer = new byte[50000];
         g_imageBufferCompressed = new byte[50000];
 
@@ -908,7 +918,7 @@ public static class StaticVariables
     public static int DAT_80028104; // 80028104
     public static int DAT_80028108; // 80028108
     public static short[] SHORT_ARRAY_80028334 = new short[1024]; // 80028334
-    public static int[] g_directionFlipTable = new int[8]; // 80028B34
+    //public static byte[] g_directionFlipTable = new byte[32]; // 80028B34
     public static byte DAT_80028b54; // 80028B54
     public static byte DAT_80028b55; // 80028B55
     public static byte DAT_80028b57; // 80028B57
@@ -920,7 +930,7 @@ public static class StaticVariables
     public static int g_tileWarpDataActive; // 80028C79
     public static int g_tileWarpDataInactive; // 80028C7D
     public static int[] g_tileWarpTypeList = new int[82]; // 80028C81
-    public static int[] g_warpBehaviorTable = new int[20]; // 80028DCC
+    //public static int[] g_warpBehaviorTable = new int[20]; // 80028DCC
     public static char g_flagNameList; // 8002960E
     public static int g_flagIdList; // 8002962E
     public static short DAT_80029650; // 80029650
@@ -2240,10 +2250,10 @@ public static class StaticVariables
     public static int g_executable_loaded; // 801FFF00
 
 
-    public static int g_cutsceneScrollLimitY = 0;
-    public static int g_cutsceneScrollLimitX = 0;
-    public static int g_cutsceneScrollSpeedY = 0;
-    public static int g_cutsceneScrollSpeedX = 0;
-    public static int g_cutsceneXReachedMin = 0;
-    public static int g_cutsceneYReachedMin = 0;
+    public static int g_cutsceneScrollLimitX = 0; // 800e433c
+    public static int g_cutsceneScrollLimitY = 0; // 800e4340
+    public static int g_cutsceneScrollSpeedX = 0; // 800e4344
+    public static int g_cutsceneScrollSpeedY = 0; // 800e4348
+    public static int g_cutsceneXReachedMin = 0; // 800e4354
+    public static int g_cutsceneYReachedMin = 0; // 800e4358
 }

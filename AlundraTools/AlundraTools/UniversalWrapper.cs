@@ -7,11 +7,13 @@ public class UniversalWrapper : ICustomTypeDescriptor
 {
     private readonly object _instance;
     private readonly Dictionary<string, string> _categories;
+    private readonly Dictionary<string, string> _descriptors;
 
-    public UniversalWrapper(object instance, Dictionary<string, string> categories = null)
+    public UniversalWrapper(object instance, Dictionary<string, string> categories = null, Dictionary<string, string> descriptors = null)
     {
         _instance = instance;
         _categories = categories ?? new Dictionary<string, string>();
+        _descriptors = descriptors ?? new Dictionary<string, string>();
     }
 
     public AttributeCollection GetAttributes() => TypeDescriptor.GetAttributes(_instance);
@@ -34,15 +36,17 @@ public class UniversalWrapper : ICustomTypeDescriptor
         {
             if (prop.CanRead)
             {
-                string category = _categories.TryGetValue(prop.Name, out var cat) ? cat : null;
-                props.Add(new ReflectionPropertyDescriptor(_instance, prop, category));
+                string category = _categories.GetValueOrDefault(prop.Name);
+                var isShifted = _descriptors.GetValueOrDefault(prop.Name) != null;
+                props.Add(new ReflectionPropertyDescriptor(_instance, prop, category, isShifted));
             }
         }
 
         foreach (var field in _instance.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance))
         {
-            string category = _categories.TryGetValue(field.Name, out var cat) ? cat : null;
-            props.Add(new ReflectionFieldDescriptor(_instance, field, category));
+            string category = _categories.GetValueOrDefault(field.Name);
+            var isShifted = _descriptors.GetValueOrDefault(field.Name) != null;
+            props.Add(new ReflectionFieldDescriptor(_instance, field, category, isShifted));
         }
 
         return new PropertyDescriptorCollection(props.ToArray());
@@ -56,19 +60,53 @@ public class ReflectionPropertyDescriptor : PropertyDescriptor
     private readonly object _instance;
     private readonly PropertyInfo _property;
     private readonly string _category;
+    private readonly bool _isShifted;
 
-    public ReflectionPropertyDescriptor(object instance, PropertyInfo property, string category)
+    public ReflectionPropertyDescriptor(object instance, PropertyInfo property, string category, bool isShifted = false)
         : base(property.Name, null)
     {
         _instance = instance;
         _property = property;
         _category = category;
+        _isShifted = isShifted;
     }
+
+    public override object GetValue(object component)
+    {
+        if (!_isShifted)
+        {
+            return _property.GetValue(_instance);
+        }
+
+        int rawValue = (int)_property.GetValue(_instance);
+        int shiftedValue = rawValue >> 16;
+        return rawValue + " (" + shiftedValue + ")";
+    }
+
+    public override void SetValue(object component, object value)
+    {
+        if (!_isShifted)
+        {
+            _property.SetValue(_instance, value);
+            return;
+        }
+
+        if (value is string stringValue)
+        {
+            if (int.TryParse(stringValue.Split('(')[0].Trim(), out int newValue))
+            {
+                _property.SetValue(_instance, newValue);
+            }
+        }
+        else
+        {
+            _property.SetValue(component, value);
+        }
+    }
+
 
     public override string Category => _category ?? base.Category;
     public override Type PropertyType => _property.PropertyType;
-    public override void SetValue(object component, object value) => _property.SetValue(_instance, value);
-    public override object GetValue(object component) => _property.GetValue(_instance);
     public override bool IsReadOnly => !_property.CanWrite;
     public override Type ComponentType => _instance.GetType();
     public override bool CanResetValue(object component) => false;
@@ -81,19 +119,52 @@ public class ReflectionFieldDescriptor : PropertyDescriptor
     private readonly object _instance;
     private readonly FieldInfo _field;
     private readonly string _category;
+    private readonly bool _isShifted;
 
-    public ReflectionFieldDescriptor(object instance, FieldInfo field, string category)
+    public ReflectionFieldDescriptor(object instance, FieldInfo field, string category, bool isShifted = false)
         : base(field.Name, null)
     {
         _instance = instance;
         _field = field;
         _category = category;
+        _isShifted = isShifted;
+    }
+
+    public override object GetValue(object component)
+    {
+        if (!_isShifted)
+        {
+            return _field.GetValue(_instance);
+        }
+
+        int rawValue = (int)_field.GetValue(_instance);
+        int shiftedValue = rawValue >> 16;
+        return rawValue + " (" + shiftedValue + ")";
+    }
+
+    public override void SetValue(object component, object value)
+    {
+        if (!_isShifted)
+        {
+            _field.SetValue(_instance, value);
+            return;
+        }
+
+        if (value is string stringValue)
+        {
+            if (int.TryParse(stringValue.Split('(')[0].Trim(), out int newValue))
+            {
+                _field.SetValue(_instance, newValue);
+            }
+        }
+        else
+        {
+            _field.SetValue(component, value);
+        }
     }
 
     public override string Category => _category ?? base.Category;
     public override Type PropertyType => _field.FieldType;
-    public override void SetValue(object component, object value) => _field.SetValue(_instance, value);
-    public override object GetValue(object component) => _field.GetValue(_instance);
     public override bool IsReadOnly => _field.IsInitOnly;
     public override Type ComponentType => _instance.GetType();
     public override bool CanResetValue(object component) => false;

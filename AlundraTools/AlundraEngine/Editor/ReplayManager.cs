@@ -1,4 +1,6 @@
-﻿namespace AlundraEngine.Editor;
+﻿using System.Text.RegularExpressions;
+
+namespace AlundraEngine.Editor;
 
 public class ReplayManager
 {
@@ -9,6 +11,8 @@ public class ReplayManager
     public bool ApplyCurrentFrame { get; set; }
     public int CurrentFrame { get; set; }
     public int FrameCount => Frames.Count;
+
+    private readonly Regex FrameRegex = new(@"^alundra_frame_(\d{6})\.json$", RegexOptions.IgnoreCase);
 
     public void StartSaving()
     {
@@ -31,12 +35,42 @@ public class ReplayManager
             return;
         }
 
-        Frames.Add(new FrameSnapshot());
+        var frameSnapshot = new FrameSnapshot();
+        Frames.Add(frameSnapshot);
+        frameSnapshot.CopyFromMemory();
     }
 
     public void PlayOneFrame()
     {
         Frames[CurrentFrame].CopyToMemory();
         ApplyCurrentFrame = false;
+    }
+
+    public void LoadFromDump(string directoryPath)
+    {
+        var files = GetSortedFrameFiles(directoryPath);
+
+        Frames.Clear();
+
+        foreach (var file in files)
+        {
+            Frames.Add(FrameSnapshotLoader.LoadFromJson(file));
+        }
+    }
+
+    private List<string> GetSortedFrameFiles(string directoryPath)
+    {
+        return Directory
+            .EnumerateFiles(directoryPath, "alundra_frame_*.json")
+            .Select(path => new FileInfo(path))
+            .Where(fi => FrameRegex.IsMatch(fi.Name))
+            .Select(fi => new
+            {
+                FilePath = fi.FullName,
+                FrameNumber = int.Parse(FrameRegex.Match(fi.Name).Groups[1].Value)
+            })
+            .OrderBy(x => x.FrameNumber)
+            .Select(x => x.FilePath)
+            .ToList();
     }
 }

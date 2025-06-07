@@ -79,6 +79,7 @@ namespace AlundraTools.AlundraTools
             dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
             buttonSaveFrames = new Button();
             label14 = new Label();
+            buttonLoadDump = new Button();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -91,8 +92,9 @@ namespace AlundraTools.AlundraTools
             // 
             pctOut.BackColor = Color.Black;
             pctOut.Location = new Point(0, 0);
+            pctOut.Margin = new Padding(3, 4, 3, 4);
             pctOut.Name = "pctOut";
-            pctOut.Size = new Size(640, 448);
+            pctOut.Size = new Size(731, 597);
             pctOut.SizeMode = PictureBoxSizeMode.StretchImage;
             pctOut.TabIndex = 0;
             pctOut.TabStop = false;
@@ -108,9 +110,11 @@ namespace AlundraTools.AlundraTools
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(labelNumberOfEntity);
-            groupBox1.Location = new Point(646, 12);
+            groupBox1.Location = new Point(738, 16);
+            groupBox1.Margin = new Padding(3, 4, 3, 4);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(143, 90);
+            groupBox1.Padding = new Padding(3, 4, 3, 4);
+            groupBox1.Size = new Size(163, 120);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Entities";
@@ -118,72 +122,72 @@ namespace AlundraTools.AlundraTools
             // labelNumberOfVisibleEntity
             // 
             labelNumberOfVisibleEntity.AutoSize = true;
-            labelNumberOfVisibleEntity.Location = new Point(77, 64);
+            labelNumberOfVisibleEntity.Location = new Point(88, 85);
             labelNumberOfVisibleEntity.Name = "labelNumberOfVisibleEntity";
-            labelNumberOfVisibleEntity.Size = new Size(13, 15);
+            labelNumberOfVisibleEntity.Size = new Size(17, 20);
             labelNumberOfVisibleEntity.TabIndex = 8;
             labelNumberOfVisibleEntity.Text = "0";
             // 
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(6, 64);
+            label7.Location = new Point(7, 85);
             label7.Name = "label7";
-            label7.Size = new Size(50, 15);
+            label7.Size = new Size(64, 20);
             label7.TabIndex = 7;
             label7.Text = "# visible";
             // 
             // labelNumberOfCollideableEntity
             // 
             labelNumberOfCollideableEntity.AutoSize = true;
-            labelNumberOfCollideableEntity.Location = new Point(77, 49);
+            labelNumberOfCollideableEntity.Location = new Point(88, 65);
             labelNumberOfCollideableEntity.Name = "labelNumberOfCollideableEntity";
-            labelNumberOfCollideableEntity.Size = new Size(13, 15);
+            labelNumberOfCollideableEntity.Size = new Size(17, 20);
             labelNumberOfCollideableEntity.TabIndex = 6;
             labelNumberOfCollideableEntity.Text = "0";
             // 
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(6, 49);
+            label5.Location = new Point(7, 65);
             label5.Name = "label5";
-            label5.Size = new Size(74, 15);
+            label5.Size = new Size(96, 20);
             label5.TabIndex = 5;
             label5.Text = "# collideable";
             // 
             // labelNumberOfActivatedEntity
             // 
             labelNumberOfActivatedEntity.AutoSize = true;
-            labelNumberOfActivatedEntity.Location = new Point(77, 34);
+            labelNumberOfActivatedEntity.Location = new Point(88, 45);
             labelNumberOfActivatedEntity.Name = "labelNumberOfActivatedEntity";
-            labelNumberOfActivatedEntity.Size = new Size(13, 15);
+            labelNumberOfActivatedEntity.Size = new Size(17, 20);
             labelNumberOfActivatedEntity.TabIndex = 4;
             labelNumberOfActivatedEntity.Text = "0";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(6, 34);
+            label2.Location = new Point(7, 45);
             label2.Name = "label2";
-            label2.Size = new Size(65, 15);
+            label2.Size = new Size(83, 20);
             label2.TabIndex = 3;
             label2.Text = "# activated";
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(6, 19);
+            label1.Location = new Point(7, 25);
             label1.Name = "label1";
-            label1.Size = new Size(50, 15);
+            label1.Size = new Size(62, 20);
             label1.TabIndex = 1;
             label1.Text = "# entity:";
             // 
             // labelNumberOfEntity
             // 
             labelNumberOfEntity.AutoSize = true;
-            labelNumberOfEntity.Location = new Point(77, 19);
+            labelNumberOfEntity.Location = new Point(88, 25);
             labelNumberOfEntity.Name = "labelNumberOfEntity";
-            labelNumberOfEntity.Size = new Size(13, 15);
+            labelNumberOfEntity.Size = new Size(17, 20);
             labelNumberOfEntity.TabIndex = 0;
             labelNumberOfEntity.Text = "0";
             // 
@@ -199,9 +203,11 @@ namespace AlundraTools.AlundraTools
             groupBox2.Controls.Add(labelCameraXY);
             groupBox2.Controls.Add(label13);
             groupBox2.Controls.Add(labelCameraPosition);
-            groupBox2.Location = new Point(938, 12);
+            groupBox2.Location = new Point(1072, 16);
+            groupBox2.Margin = new Padding(3, 4, 3, 4);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(200, 105);
+            groupBox2.Padding = new Padding(3, 4, 3, 4);
+            groupBox2.Size = new Size(229, 140);
             groupBox2.TabIndex = 9;
             groupBox2.TabStop = false;
             groupBox2.Text = "Camera";
@@ -209,126 +215,126 @@ namespace AlundraTools.AlundraTools
             // label11
             // 
             label11.AutoSize = true;
-            label11.Location = new Point(6, 79);
+            label11.Location = new Point(7, 105);
             label11.Name = "label11";
-            label11.Size = new Size(33, 15);
+            label11.Size = new Size(43, 20);
             label11.TabIndex = 9;
             label11.Text = "delta";
             // 
             // labelCameraDelta
             // 
             labelCameraDelta.AutoSize = true;
-            labelCameraDelta.Location = new Point(77, 79);
+            labelCameraDelta.Location = new Point(88, 105);
             labelCameraDelta.Name = "labelCameraDelta";
-            labelCameraDelta.Size = new Size(13, 15);
+            labelCameraDelta.Size = new Size(17, 20);
             labelCameraDelta.TabIndex = 8;
             labelCameraDelta.Text = "0";
             // 
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(6, 64);
+            label9.Location = new Point(7, 85);
             label9.Name = "label9";
-            label9.Size = new Size(37, 15);
+            label9.Size = new Size(47, 20);
             label9.TabIndex = 7;
             label9.Text = "offset";
             // 
             // labelCameraOffset
             // 
             labelCameraOffset.AutoSize = true;
-            labelCameraOffset.Location = new Point(77, 64);
+            labelCameraOffset.Location = new Point(88, 85);
             labelCameraOffset.Name = "labelCameraOffset";
-            labelCameraOffset.Size = new Size(13, 15);
+            labelCameraOffset.Size = new Size(17, 20);
             labelCameraOffset.TabIndex = 6;
             labelCameraOffset.Text = "0";
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(6, 49);
+            label6.Location = new Point(7, 65);
             label6.Name = "label6";
-            label6.Size = new Size(43, 15);
+            label6.Size = new Size(55, 20);
             label6.TabIndex = 5;
             label6.Text = "look at";
             // 
             // labelCameraLookAt
             // 
             labelCameraLookAt.AutoSize = true;
-            labelCameraLookAt.Location = new Point(77, 49);
+            labelCameraLookAt.Location = new Point(88, 65);
             labelCameraLookAt.Name = "labelCameraLookAt";
-            labelCameraLookAt.Size = new Size(13, 15);
+            labelCameraLookAt.Size = new Size(17, 20);
             labelCameraLookAt.TabIndex = 4;
             labelCameraLookAt.Text = "0";
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(6, 34);
+            label3.Location = new Point(7, 45);
             label3.Name = "label3";
-            label3.Size = new Size(50, 15);
+            label3.Size = new Size(63, 20);
             label3.TabIndex = 3;
             label3.Text = "position";
             // 
             // labelCameraXY
             // 
             labelCameraXY.AutoSize = true;
-            labelCameraXY.Location = new Point(77, 34);
+            labelCameraXY.Location = new Point(88, 45);
             labelCameraXY.Name = "labelCameraXY";
-            labelCameraXY.Size = new Size(13, 15);
+            labelCameraXY.Size = new Size(17, 20);
             labelCameraXY.TabIndex = 2;
             labelCameraXY.Text = "0";
             // 
             // label13
             // 
             label13.AutoSize = true;
-            label13.Location = new Point(6, 19);
+            label13.Location = new Point(7, 25);
             label13.Name = "label13";
-            label13.Size = new Size(67, 15);
+            label13.Size = new Size(83, 20);
             label13.TabIndex = 1;
             label13.Text = "current pos";
             // 
             // labelCameraPosition
             // 
             labelCameraPosition.AutoSize = true;
-            labelCameraPosition.Location = new Point(77, 19);
+            labelCameraPosition.Location = new Point(88, 25);
             labelCameraPosition.Name = "labelCameraPosition";
-            labelCameraPosition.Size = new Size(13, 15);
+            labelCameraPosition.Size = new Size(17, 20);
             labelCameraPosition.TabIndex = 0;
             labelCameraPosition.Text = "0";
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(6, 94);
+            label4.Location = new Point(7, 125);
             label4.Name = "label4";
-            label4.Size = new Size(63, 15);
+            label4.Size = new Size(79, 20);
             label4.TabIndex = 13;
             label4.Text = "screen pos";
             // 
             // labelMapScreenPos
             // 
             labelMapScreenPos.AutoSize = true;
-            labelMapScreenPos.Location = new Point(77, 94);
+            labelMapScreenPos.Location = new Point(88, 125);
             labelMapScreenPos.Name = "labelMapScreenPos";
-            labelMapScreenPos.Size = new Size(13, 15);
+            labelMapScreenPos.Size = new Size(17, 20);
             labelMapScreenPos.TabIndex = 12;
             labelMapScreenPos.Text = "0";
             // 
             // label10
             // 
             label10.AutoSize = true;
-            label10.Location = new Point(6, 79);
+            label10.Location = new Point(7, 105);
             label10.Name = "label10";
-            label10.Size = new Size(59, 15);
+            label10.Size = new Size(75, 20);
             label10.TabIndex = 11;
             label10.Text = "pos offset";
             // 
             // labelMapOffset
             // 
             labelMapOffset.AutoSize = true;
-            labelMapOffset.Location = new Point(77, 79);
+            labelMapOffset.Location = new Point(88, 105);
             labelMapOffset.Name = "labelMapOffset";
-            labelMapOffset.Size = new Size(13, 15);
+            labelMapOffset.Size = new Size(17, 20);
             labelMapOffset.TabIndex = 10;
             labelMapOffset.Text = "0";
             // 
@@ -346,9 +352,11 @@ namespace AlundraTools.AlundraTools
             groupBox3.Controls.Add(label19);
             groupBox3.Controls.Add(label21);
             groupBox3.Controls.Add(labelMapId);
-            groupBox3.Location = new Point(795, 12);
+            groupBox3.Location = new Point(909, 16);
+            groupBox3.Margin = new Padding(3, 4, 3, 4);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(137, 128);
+            groupBox3.Padding = new Padding(3, 4, 3, 4);
+            groupBox3.Size = new Size(157, 171);
             groupBox3.TabIndex = 10;
             groupBox3.TabStop = false;
             groupBox3.Text = "Map";
@@ -356,72 +364,72 @@ namespace AlundraTools.AlundraTools
             // labelMapNumberOfEntity
             // 
             labelMapNumberOfEntity.AutoSize = true;
-            labelMapNumberOfEntity.Location = new Point(77, 64);
+            labelMapNumberOfEntity.Location = new Point(88, 85);
             labelMapNumberOfEntity.Name = "labelMapNumberOfEntity";
-            labelMapNumberOfEntity.Size = new Size(13, 15);
+            labelMapNumberOfEntity.Size = new Size(17, 20);
             labelMapNumberOfEntity.TabIndex = 8;
             labelMapNumberOfEntity.Text = "0";
             // 
             // label15
             // 
             label15.AutoSize = true;
-            label15.Location = new Point(6, 64);
+            label15.Location = new Point(7, 85);
             label15.Name = "label15";
-            label15.Size = new Size(47, 15);
+            label15.Size = new Size(59, 20);
             label15.TabIndex = 7;
             label15.Text = "# entity";
             // 
             // labelMapGravity
             // 
             labelMapGravity.AutoSize = true;
-            labelMapGravity.Location = new Point(77, 49);
+            labelMapGravity.Location = new Point(88, 65);
             labelMapGravity.Name = "labelMapGravity";
-            labelMapGravity.Size = new Size(13, 15);
+            labelMapGravity.Size = new Size(17, 20);
             labelMapGravity.TabIndex = 6;
             labelMapGravity.Text = "0";
             // 
             // label17
             // 
             label17.AutoSize = true;
-            label17.Location = new Point(6, 49);
+            label17.Location = new Point(7, 65);
             label17.Name = "label17";
-            label17.Size = new Size(43, 15);
+            label17.Size = new Size(54, 20);
             label17.TabIndex = 5;
             label17.Text = "gravity";
             // 
             // labelMapSize
             // 
             labelMapSize.AutoSize = true;
-            labelMapSize.Location = new Point(77, 34);
+            labelMapSize.Location = new Point(88, 45);
             labelMapSize.Name = "labelMapSize";
-            labelMapSize.Size = new Size(13, 15);
+            labelMapSize.Size = new Size(17, 20);
             labelMapSize.TabIndex = 4;
             labelMapSize.Text = "0";
             // 
             // label19
             // 
             label19.AutoSize = true;
-            label19.Location = new Point(6, 34);
+            label19.Location = new Point(7, 45);
             label19.Name = "label19";
-            label19.Size = new Size(29, 15);
+            label19.Size = new Size(37, 20);
             label19.TabIndex = 3;
             label19.Text = "size:";
             // 
             // label21
             // 
             label21.AutoSize = true;
-            label21.Location = new Point(6, 19);
+            label21.Location = new Point(7, 25);
             label21.Name = "label21";
-            label21.Size = new Size(20, 15);
+            label21.Size = new Size(25, 20);
             label21.TabIndex = 1;
             label21.Text = "id:";
             // 
             // labelMapId
             // 
             labelMapId.AutoSize = true;
-            labelMapId.Location = new Point(77, 19);
+            labelMapId.Location = new Point(88, 25);
             labelMapId.Name = "labelMapId";
-            labelMapId.Size = new Size(13, 15);
+            labelMapId.Size = new Size(17, 20);
             labelMapId.TabIndex = 0;
             labelMapId.Text = "0";
             // 
@@ -429,9 +437,10 @@ namespace AlundraTools.AlundraTools
             // 
             listBoxEntities.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listBoxEntities.FormattingEnabled = true;
-            listBoxEntities.Location = new Point(644, 150);
+            listBoxEntities.Location = new Point(736, 200);
+            listBoxEntities.Margin = new Padding(3, 4, 3, 4);
             listBoxEntities.Name = "listBoxEntities";
-            listBoxEntities.Size = new Size(103, 799);
+            listBoxEntities.Size = new Size(117, 1064);
             listBoxEntities.TabIndex = 11;
             listBoxEntities.SelectedIndexChanged += listBoxEntities_SelectedIndexChanged;
             // 
@@ -439,9 +448,10 @@ namespace AlundraTools.AlundraTools
             // 
             buttonPauseGame.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             buttonPauseGame.ForeColor = Color.FromArgb(0, 192, 0);
-            buttonPauseGame.Location = new Point(12, 454);
+            buttonPauseGame.Location = new Point(14, 605);
+            buttonPauseGame.Margin = new Padding(3, 4, 3, 4);
             buttonPauseGame.Name = "buttonPauseGame";
-            buttonPauseGame.Size = new Size(75, 23);
+            buttonPauseGame.Size = new Size(86, 31);
             buttonPauseGame.TabIndex = 14;
             buttonPauseGame.Text = "Running";
             buttonPauseGame.UseVisualStyleBackColor = true;
@@ -449,9 +459,10 @@ namespace AlundraTools.AlundraTools
             // 
             // buttonRunOneFrame
             // 
-            buttonRunOneFrame.Location = new Point(93, 454);
+            buttonRunOneFrame.Location = new Point(106, 605);
+            buttonRunOneFrame.Margin = new Padding(3, 4, 3, 4);
             buttonRunOneFrame.Name = "buttonRunOneFrame";
-            buttonRunOneFrame.Size = new Size(35, 23);
+            buttonRunOneFrame.Size = new Size(40, 31);
             buttonRunOneFrame.TabIndex = 15;
             buttonRunOneFrame.Text = ">|";
             buttonRunOneFrame.UseVisualStyleBackColor = true;
@@ -460,9 +471,10 @@ namespace AlundraTools.AlundraTools
             // propertyGridEntity
             // 
             propertyGridEntity.BackColor = SystemColors.Control;
-            propertyGridEntity.Location = new Point(753, 150);
+            propertyGridEntity.Location = new Point(861, 200);
+            propertyGridEntity.Margin = new Padding(3, 4, 3, 4);
             propertyGridEntity.Name = "propertyGridEntity";
-            propertyGridEntity.Size = new Size(385, 799);
+            propertyGridEntity.Size = new Size(440, 1065);
             propertyGridEntity.TabIndex = 16;
             // 
             // hScrollBarFrames
@@ -470,37 +482,37 @@ namespace AlundraTools.AlundraTools
             hScrollBarFrames.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             hScrollBarFrames.Enabled = false;
             hScrollBarFrames.LargeChange = 1;
-            hScrollBarFrames.Location = new Point(5, 480);
+            hScrollBarFrames.Location = new Point(6, 640);
             hScrollBarFrames.Maximum = 0;
             hScrollBarFrames.Name = "hScrollBarFrames";
-            hScrollBarFrames.Size = new Size(310, 23);
+            hScrollBarFrames.Size = new Size(354, 23);
             hScrollBarFrames.TabIndex = 17;
             hScrollBarFrames.Scroll += hScrollBarFrames_Scroll;
             // 
             // labelFrames
             // 
             labelFrames.AutoSize = true;
-            labelFrames.Location = new Point(265, 458);
+            labelFrames.Location = new Point(303, 611);
             labelFrames.Name = "labelFrames";
-            labelFrames.Size = new Size(65, 15);
+            labelFrames.Size = new Size(82, 20);
             labelFrames.TabIndex = 18;
             labelFrames.Text = "Frames 0/0";
             // 
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(5, 539);
+            label8.Location = new Point(6, 719);
             label8.Name = "label8";
-            label8.Size = new Size(69, 15);
+            label8.Size = new Size(89, 20);
             label8.TabIndex = 21;
             label8.Text = "Global flags";
             // 
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(122, 539);
+            label12.Location = new Point(139, 719);
             label12.Name = "label12";
-            label12.Size = new Size(59, 15);
+            label12.Size = new Size(75, 20);
             label12.TabIndex = 22;
             label12.Text = "Map flags";
             // 
@@ -511,10 +523,12 @@ namespace AlundraTools.AlundraTools
             dataGridViewGlobalFlags.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dataGridViewGlobalFlags.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewGlobalFlags.Columns.AddRange(new DataGridViewColumn[] { columnIndex, columnValue });
-            dataGridViewGlobalFlags.Location = new Point(8, 557);
+            dataGridViewGlobalFlags.Location = new Point(9, 743);
+            dataGridViewGlobalFlags.Margin = new Padding(3, 4, 3, 4);
             dataGridViewGlobalFlags.Name = "dataGridViewGlobalFlags";
             dataGridViewGlobalFlags.RowHeadersVisible = false;
-            dataGridViewGlobalFlags.Size = new Size(0, 392);
+            dataGridViewGlobalFlags.RowHeadersWidth = 51;
+            dataGridViewGlobalFlags.Size = new Size(0, 523);
             dataGridViewGlobalFlags.TabIndex = 23;
             // 
             // columnIndex
@@ -538,10 +552,12 @@ namespace AlundraTools.AlundraTools
             dataGridViewMapFlags.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dataGridViewMapFlags.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewMapFlags.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2 });
-            dataGridViewMapFlags.Location = new Point(122, 557);
+            dataGridViewMapFlags.Location = new Point(139, 743);
+            dataGridViewMapFlags.Margin = new Padding(3, 4, 3, 4);
             dataGridViewMapFlags.Name = "dataGridViewMapFlags";
             dataGridViewMapFlags.RowHeadersVisible = false;
-            dataGridViewMapFlags.Size = new Size(0, 392);
+            dataGridViewMapFlags.RowHeadersWidth = 51;
+            dataGridViewMapFlags.Size = new Size(0, 523);
             dataGridViewMapFlags.TabIndex = 24;
             // 
             // dataGridViewTextBoxColumn1
@@ -562,9 +578,10 @@ namespace AlundraTools.AlundraTools
             // 
             buttonSaveFrames.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             buttonSaveFrames.ForeColor = Color.FromArgb(0, 192, 0);
-            buttonSaveFrames.Location = new Point(518, 454);
+            buttonSaveFrames.Location = new Point(432, 605);
+            buttonSaveFrames.Margin = new Padding(3, 4, 3, 4);
             buttonSaveFrames.Name = "buttonSaveFrames";
-            buttonSaveFrames.Size = new Size(120, 23);
+            buttonSaveFrames.Size = new Size(137, 31);
             buttonSaveFrames.TabIndex = 25;
             buttonSaveFrames.Text = "Start recording";
             buttonSaveFrames.UseVisualStyleBackColor = true;
@@ -573,17 +590,28 @@ namespace AlundraTools.AlundraTools
             // label14
             // 
             label14.AutoSize = true;
-            label14.Location = new Point(643, 132);
+            label14.Location = new Point(735, 176);
             label14.Name = "label14";
-            label14.Size = new Size(45, 15);
+            label14.Size = new Size(57, 20);
             label14.TabIndex = 27;
             label14.Text = "Entities";
             // 
+            // buttonLoadDump
+            // 
+            buttonLoadDump.Location = new Point(636, 606);
+            buttonLoadDump.Name = "buttonLoadDump";
+            buttonLoadDump.Size = new Size(94, 29);
+            buttonLoadDump.TabIndex = 28;
+            buttonLoadDump.Text = "Load dump";
+            buttonLoadDump.UseVisualStyleBackColor = true;
+            buttonLoadDump.Click += buttonLoadDump_Click;
+            // 
             // FrmGame
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1143, 954);
+            ClientSize = new Size(1306, 1272);
+            Controls.Add(buttonLoadDump);
             Controls.Add(label14);
             Controls.Add(buttonSaveFrames);
             Controls.Add(dataGridViewMapFlags);
@@ -600,6 +628,7 @@ namespace AlundraTools.AlundraTools
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Controls.Add(pctOut);
+            Margin = new Padding(3, 4, 3, 4);
             Name = "FrmGame";
             Text = "Alundra Game";
             ((System.ComponentModel.ISupportInitialize)pctOut).EndInit();
@@ -667,5 +696,6 @@ namespace AlundraTools.AlundraTools
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private Button buttonSaveFrames;
         private Label label14;
+        private Button buttonLoadDump;
     }
 }

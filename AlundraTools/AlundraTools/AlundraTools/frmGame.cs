@@ -10,7 +10,6 @@ namespace AlundraTools.AlundraTools;
 
 public partial class FrmGame : Form
 {
-    //private readonly Game _engine;
     private readonly GameEngine _engine;
     private Timer _gameEngineTimer;
     private Timer _refreshUiTimer;
@@ -149,6 +148,47 @@ public partial class FrmGame : Form
         [nameof(Entity.HitBoxOriginX)] = "Collision",
         [nameof(Entity.HitBoxOriginY)] = "Collision",
         [nameof(Entity.HitBoxOriginZ)] = "Collision"
+    };
+
+    private readonly Dictionary<string, string> _descriptors = new()
+    {
+        [nameof(Entity.PosX)] = "Transform",
+        [nameof(Entity.PosY)] = "Transform",
+        [nameof(Entity.PosZ)] = "Transform",
+        [nameof(Entity.ScreenClipX)] = "Transform",
+        [nameof(Entity.ScreenClipY)] = "Transform",
+        [nameof(Entity.ScreenClipZ)] = "Transform",
+        [nameof(Entity.NegXMod)] = "Transform",
+        [nameof(Entity.NegYMod)] = "Transform",
+        [nameof(Entity.ModdedXPos)] = "Display",
+        [nameof(Entity.ModdedYPos)] = "Display",
+        [nameof(Entity.ModdedZPos)] = "Display",
+        [nameof(Entity.ModX)] = "Display",
+        [nameof(Entity.ModY)] = "Display",
+        [nameof(Entity.ModZ)] = "Display",
+        [nameof(Entity.Width)] = "Display",
+        [nameof(Entity.Height)] = "Display",
+        [nameof(Entity.Depth)] = "Display",
+        [nameof(Entity.DepthSortVal)] = "Display",
+        [nameof(Entity.SortTop)] = "Display",
+        [nameof(Entity.TargetXForce)] = "Physics forces",
+        [nameof(Entity.TargetYForce)] = "Physics forces",
+        [nameof(Entity.ForceX)] = "Physics forces",
+        [nameof(Entity.ForceY)] = "Physics forces",
+        [nameof(Entity.ForceZ)] = "Physics forces",
+        [nameof(Entity.PreviousAdjustedXForce)] = "Physics forces",
+        [nameof(Entity.PreviousAdjustedYForce)] = "Physics forces",
+        [nameof(Entity.ForceStepX)] = "Physics forces",
+        [nameof(Entity.ForceStepY)] = "Physics forces",
+        [nameof(Entity.AdjustedXForce)] = "Physics forces",
+        [nameof(Entity.AdjustedYForce)] = "Physics forces",
+        [nameof(Entity.FinalXForce)] = "Physics forces",
+        [nameof(Entity.FinalYForce)] = "Physics forces",
+        [nameof(Entity.FinalZForce)] = "Physics forces",
+        [nameof(Entity.Acceleration)] = "Physics forces",
+        [nameof(Entity.Speed)] = "Physics forces",
+        [nameof(Entity.FloorHeight)] = "Physics",
+        [nameof(Entity.TerrainHeight)] = "Physics"
     };
 
     public FrmGame(DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR, Font3 font3)
@@ -622,24 +662,35 @@ public partial class FrmGame : Form
     {
         if (StaticVariables.IsGamePaused)
         {
-            StaticVariables.IsGamePaused = false;
-            buttonPauseGame.Text = "Running";
-            buttonPauseGame.ForeColor = Color.ForestGreen;
-            buttonRunOneFrame.Enabled = false;
-            hScrollBarFrames.Enabled = false;
+            PlayGame();
         }
         else
         {
-            StaticVariables.IsGamePaused = true;
-            buttonPauseGame.Text = "Paused";
-            buttonPauseGame.ForeColor = Color.DarkRed;
-            buttonRunOneFrame.Enabled = true;
-            hScrollBarFrames.Enabled = true;
+            PauseGame();
         }
+    }
+
+    private void PauseGame()
+    {
+        StaticVariables.IsGamePaused = true;
+        buttonPauseGame.Text = "Paused";
+        buttonPauseGame.ForeColor = Color.DarkRed;
+        buttonRunOneFrame.Enabled = true;
+        hScrollBarFrames.Enabled = true;
+    }
+
+    private void PlayGame()
+    {
+        StaticVariables.IsGamePaused = false;
+        buttonPauseGame.Text = "Running";
+        buttonPauseGame.ForeColor = Color.ForestGreen;
+        buttonRunOneFrame.Enabled = false;
+        hScrollBarFrames.Enabled = false;
     }
 
     private void buttonNextFrame_Click(object sender, EventArgs e)
     {
+        PauseGame();
         StaticVariables.DoNextFrame = true;
     }
 
@@ -653,7 +704,7 @@ public partial class FrmGame : Form
             var entity = StaticVariables.g_entitySlots[StaticVariables.EditorSelectEntityIndex];
             if (entity != null)
             {
-                propertyGridEntity.SelectedObject = new UniversalWrapper(entity, _categories);
+                propertyGridEntity.SelectedObject = new UniversalWrapper(entity, _categories, _descriptors);
             }
         }
     }
@@ -676,6 +727,11 @@ public partial class FrmGame : Form
             _engine.ReplayManager.ApplyCurrentFrame = false;
         }
 
+        UpdateReplayMangerControls();
+    }
+
+    private void UpdateReplayMangerControls()
+    {
         UpdateLabelFramesText();
         hScrollBarFrames.Maximum = Math.Max(0, _engine.ReplayManager.FrameCount - 1);
     }
@@ -687,4 +743,22 @@ public partial class FrmGame : Form
         UpdateLabelFramesText();
         listBoxEntities_SelectedIndexChanged(sender, e);
     }
+
+    private void buttonLoadDump_Click(object sender, EventArgs e)
+    {
+        using var folderBrowserDialog = new FolderBrowserDialog
+        {
+            Description = "Choose the dump folder",
+            UseDescriptionForTitle = true,
+            SelectedPath = @"D:\development\repo\Alundra Remake\dump\"
+        };
+
+        if (folderBrowserDialog.ShowDialog(this) == DialogResult.OK)
+        {
+            PauseGame();
+            _engine.ReplayManager.LoadFromDump(folderBrowserDialog.SelectedPath);
+            UpdateReplayMangerControls();
+        }
+    }
+
 }

@@ -62,7 +62,7 @@ public class Entity
     public int Speed;//f4
     public int IsZForceApplied;//this is probably named wrong, has to do with animation  f8
     public int ScreenClipX, ScreenClipY, ScreenClipZ;
-    public int NegXMod, NegYMod;
+    public int NegXMod, NegYMod, NegZMod;
     public int PosX; //114
     public int PosY;
     public int PosZ;
@@ -130,8 +130,164 @@ public class Entity
     public bool IsMapSprite => EntityRecord == null ? false : (EntityRecord.SpriteDirection & 0x80) != 0;
 
     
-    public Entity ShallowCopy()
+    public void CopyFrom(Entity other)
     {
-        return (Entity)MemberwiseClone();
+        if (other == null) return;
+
+        Index = other.Index;
+        Index2 = other.Index2;
+        ChildEntity = other.ChildEntity;
+        ParentEntity = other.ParentEntity;
+        Status = other.Status;
+        Hp = other.Hp;
+        HpMax = other.HpMax;
+        FrameCounter = other.FrameCounter;
+        IsNotProcessable = other.IsNotProcessable;
+        Flags2 = other.Flags2;
+        PlatformEntity = other.PlatformEntity;
+        ActionState = other.ActionState;
+        RelativeWarpOffsetX = other.RelativeWarpOffsetX;
+        RelativeWarpOffsetY = other.RelativeWarpOffsetY;
+        RelativeWarpOffsetZ = other.RelativeWarpOffsetZ;
+        ContentsItemId = other.ContentsItemId;
+        ContentsGameFlag = other.ContentsGameFlag;
+        EntityRecord = other.EntityRecord;
+        EntityRefId = other.EntityRefId;
+        for (int i = 0; i < ProgramIndexes.Length; i++)
+        {
+            ProgramIndexes[i] = other.ProgramIndexes[i];
+        }
+
+        Sprite = other.Sprite;
+        SpriteTableIndex = other.SpriteTableIndex;
+        Flags = other.Flags;
+        for (int i = 0; i < SpriteProgramIndexes.Length; i++)
+        {
+            SpriteProgramIndexes[i] = other.SpriteProgramIndexes[i];
+        }
+
+        TargetAnimationId = other.TargetAnimationId;
+        TargetDirection = other.TargetDirection;
+        CurrentAnimationId = other.CurrentAnimationId;
+        CurrentDirection = other.CurrentDirection;
+        CurrentFrameIndex = other.CurrentFrameIndex;
+        AnimSet = other.AnimSet;
+        FirstFrame = other.FirstFrame;
+        Frame = other.Frame;
+        NextFrameDelay = other.NextFrameDelay;
+        ForceResetAnimationFlag = other.ForceResetAnimationFlag;
+        AnimCompleteCounter = other.AnimCompleteCounter;
+        AnimFlags = other.AnimFlags;
+        ForceZ = other.ForceZ;
+        TargetXForce = other.TargetXForce;
+        TargetYForce = other.TargetYForce;
+        ForceX = other.ForceX;
+        ForceY = other.ForceY;
+        PreviousAdjustedXForce = other.PreviousAdjustedXForce;
+        PreviousAdjustedYForce = other.PreviousAdjustedYForce;
+        ForceStepX = other.ForceStepX;
+        ForceStepY = other.ForceStepY;
+        AdjustedXForce = other.AdjustedXForce;
+        AdjustedYForce = other.AdjustedYForce;
+        FinalXForce = other.FinalXForce;
+        FinalYForce = other.FinalYForce;
+        FinalZForce = other.FinalZForce;
+        Acceleration = other.Acceleration;
+        Speed = other.Speed;
+        IsZForceApplied = other.IsZForceApplied;
+        ScreenClipX = other.ScreenClipX;
+        ScreenClipY = other.ScreenClipY;
+        ScreenClipZ = other.ScreenClipZ;
+        NegXMod = other.NegXMod;
+        NegYMod = other.NegYMod;
+        PosX = other.PosX;
+        PosY = other.PosY;
+        PosZ = other.PosZ;
+        TileX = other.TileX;
+        TileY = other.TileY;
+        TileZ = other.TileZ;
+        RidingEntity = other.RidingEntity;
+        XCollisionEntity = other.XCollisionEntity;
+        FloorHeight = other.FloorHeight;
+        TerrainHeight = other.TerrainHeight;
+        ForceAdjusted = other.ForceAdjusted;
+        CollidedWithEntityZ = other.CollidedWithEntityZ;
+        IsAboveGround = other.IsAboveGround;
+        for (int i = 0; i < MapTiles.Length; i++)
+        {
+            MapTiles[i] = other.MapTiles[i];
+        }
+
+        for (int i = 0; i < MapHeights.Length; i++)
+        {
+            MapHeights[i] = other.MapHeights[i];
+        }
+
+        PlatformUpdateFlag = other.PlatformUpdateFlag;
+        _16c = other._16c;
+        HitBoxOriginX = other.HitBoxOriginX;
+        HitBoxOriginY = other.HitBoxOriginY;
+        HitBoxOriginZ = other.HitBoxOriginZ;
+        _17c = other._17c;
+        CombinedVramFlagsOR = other.CombinedVramFlagsOR;
+        CombinedVramFlagsAND = other.CombinedVramFlagsAND;
+        TileAttributes = other.TileAttributes;
+        Slope_18c = other.Slope_18c;
+        Slope_190 = other.Slope_190;
+        SpriteRef.X = other.SpriteRef.X;
+        SpriteRef.Y = other.SpriteRef.Y;
+        SpriteRef.Z = other.SpriteRef.Z;
+        AddedToSheet = other.AddedToSheet;
+        AddedToPalette = other.AddedToPalette;
+        ActiveEffect = other.ActiveEffect;
+        DepthSortVal = other.DepthSortVal;
+        SortTop = other.SortTop;
+        BalanceRecord = other.BalanceRecord;
+        BalanceVal = other.BalanceVal;
+        DamagedTickCounter = other.DamagedTickCounter;
+        FrameColTickCounter = other.FrameColTickCounter;
+        FrameCollision = other.FrameCollision;
+        ModdedXPos = other.ModdedXPos;
+        ModdedYPos = other.ModdedYPos;
+        ModdedZPos = other.ModdedZPos;
+        ModX = other.ModX;
+        ModY = other.ModY;
+        ModZ = other.ModZ;
+        Width = other.Width;
+        Depth = other.Depth;
+        Height = other.Height;
+        HitBoxX = other.HitBoxX;
+        HitBoxY = other.HitBoxY;
+        HitBoxZ = other.HitBoxZ;
+        FrameXOff = other.FrameXOff;
+        FrameYOff = other.FrameYOff;
+        FrameZOff = other.FrameZOff;
+        FrameWidth = other.FrameWidth;
+        FrameDepth = other.FrameDepth;
+        FrameHeight = other.FrameHeight;
+        HitCounter = other.HitCounter;
+        TouchingEntity = other.TouchingEntity;
+        EventTrigger = other.EventTrigger;
+        MapEventProgramId = other.MapEventProgramId;
+        LogicContextEntity = other.LogicContextEntity;
+        EventProgramState.CopyFrom(other.EventProgramState);
+        LastTargetAnimationId = other.LastTargetAnimationId;
+        LastTargetDirection = other.LastTargetDirection;
+        for (int i = 0; i < Bytes.Length; i++)
+        {
+            Bytes[i] = other.Bytes[i];
+        }
+
+        InitialXPos = other.InitialXPos;
+        InitialYPos = other.InitialYPos;
+        for (int i = 0; i < AIValues.Length; i++)
+        {
+            AIValues[i] = other.AIValues[i];
+        }
+    }
+
+    public void Clear()
+    {
+        //throw new NotImplementedException();
     }
 }

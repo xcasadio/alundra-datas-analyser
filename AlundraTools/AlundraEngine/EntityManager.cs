@@ -3109,12 +3109,13 @@ public class EntityManager
 
             if (entity.Status == 4)
             {
-                entity = new Entity(); //TODO: check if create bug with some code save a pointer on an entity
+                //entity = new Entity(); //TODO: check if create bug with some code save a pointer on an entity
+                entity.Clear();
                 entity.Index = i;
                 entity.EntityRefId = -1; // g_emptyEntityForClearing.EntityRefId == -1
                 //entity.Index2 = 0;
                 //...
-                StaticVariables.g_entitySlots[i] = entity;
+                //StaticVariables.g_entitySlots[i] = entity;
             }
             else if (entity.Status != 0)
             {
