@@ -850,6 +850,8 @@ public class GameEngine
 
             if (entity != null)
             {
+                entity.SpriteInfoEntityIndex = i;
+                Debug.WriteLine($"Spawn entity #{entity.Index} ref {entity.Index2}");
             }
         }
 
@@ -914,9 +916,9 @@ public class GameEngine
     }
 
     // 8003a1b8
-    public Entity SpawnEntity(Entity parent, int entityId, int notCheckSpawnZone)
+    public Entity SpawnEntity(Entity parent, int spriteInfoEntityIndex, int notCheckSpawnZone)
     {
-        var entityRecord = CurrentMap.SpriteInfo.Entities.Entities[entityId];
+        var entityRecord = CurrentMap.SpriteInfo.Entities.Entities[spriteInfoEntityIndex];
 
         if (entityRecord == null)
         {
@@ -964,24 +966,26 @@ public class GameEngine
         var entity = _entityManager.AllocateEntitySlot();
         if (entity == null)
         {
+            Debugger.Break();
             return null;
         }
 
         int spriteTableIndex = entityRecord.SpriteTableIndex;
         if (isMapSprite)
         {
-            spriteTableIndex += 0x100;
+            spriteTableIndex |= 0x100;
         }
 
         var directionIndex = entityRecord.SpriteDirection & 3;
 
-        _entityManager.InitializeEntity(entity, parent, spriteRecord,
-            entityRecord, (uint)spriteTableIndex, entityId,
-            (entityRecord.XPos * 0xc + 0xc) * 0x10000, //(x * 12 + 12) * 65536
-            (entityRecord.YPos * 8 + 8) * 0x10000, //(y * 8 + 8) * 65536
-            entityRecord.Height << 0x13, //h << 19
+        _entityManager.InitializeEntity(
+            entity, parent, 
+            spriteRecord, entityRecord, (uint)spriteTableIndex, spriteInfoEntityIndex,
+            (entityRecord.XPos * 0xc + 0xc) * 0x10000,
+            (entityRecord.YPos * 8 + 8) * 0x10000,
+            entityRecord.Height << 0x13,
             0,
-            (uint)StaticVariables.g_cardinalDirectionTable[directionIndex], //dir g_cardinalDirectionTable[flags & 3]
+            (uint)StaticVariables.g_cardinalDirectionTable[directionIndex],
             paletteIndex,
             sheetSize);
 

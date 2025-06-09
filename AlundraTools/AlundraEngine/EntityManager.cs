@@ -59,6 +59,7 @@ public class EntityManager
         }
     }
 
+    // 80039ad0
     public Entity AllocateEntitySlot()
     {
         for (int i = 1; i < StaticVariables.g_entitySlots.Length; i++)
@@ -69,22 +70,8 @@ public class EntityManager
             }
         }
 
-        //int i = 1;
-        //int index = i;
-        //Entity entity = StaticVariables.g_entitySlots[index];
-        //
-        //do
-        //{
-        //    i = i + 1;
-        //    if (entity.Status == 0)
-        //    {
-        //        return entity;
-        //    }
-        //    index++;
-        //    entity = StaticVariables.g_entitySlots[index];
-        //} while (i < 0x40);
+        Debugger.Break();
 
-        //DoNothing();
         return null;
     }
 
@@ -94,7 +81,7 @@ public class EntityManager
     {
         if (StaticVariables.g_numberOfEntity < entity.Index)
         {
-            StaticVariables.g_numberOfEntity = entity.Index;
+            StaticVariables.g_numberOfEntity = entity.Index + 1;
         }
 
         entity.ParentEntity = parentEntity;
@@ -3199,7 +3186,7 @@ public class EntityManager
     // 80038634
     private void UpdateDestroyedEntities()
     {
-        var max = 0;
+        var max = 0; // always player
         for (var i = 0; i < StaticVariables.g_entitySlots.Length; i++)
         {
             var entity = StaticVariables.g_entitySlots[i];
@@ -3220,7 +3207,7 @@ public class EntityManager
             }
         }
 
-        StaticVariables.g_numberOfEntity = max;
+        StaticVariables.g_numberOfEntity = max + 1;
     }
 
     // 800384f4

@@ -90,7 +90,7 @@ public class RendererHelper
                 {
                     var map = entity.IsMapSprite ? gameMap : datasBin.AlundraGameMap;
 
-                    //if (entity.Frame != null) // why?? TODO, not initialized ?
+                    if (entity.Frame != null) // why?? TODO, not initialized ?
                     {
                         var iset = entity.Frame.Images;
                         for (var idex = iset.NumberOfImages - 1; idex >= 0; idex--)

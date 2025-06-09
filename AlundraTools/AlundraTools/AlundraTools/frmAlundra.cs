@@ -1140,7 +1140,14 @@ namespace AlundraTools.AlundraTools
 
                 for (var dex = 0; dex < _selectedAnim.NumberOfFrames; dex++)
                 {
-                    lstSector5Frames.Items.Add("frame " + dex + " (imageset " + (_selectedAnim.Frames[dex].Images.ImageSetId & 0xff) + ")");
+                    if (_selectedAnim.Frames[dex].Images == null)
+                    {
+                        lstSector5Frames.Items.Add("frame " + dex + "transition");
+                    }
+                    else
+                    {
+                        lstSector5Frames.Items.Add("frame " + dex + " (imageset " + (_selectedAnim.Frames[dex].Images.ImageSetId & 0xff) + ")");
+                    }
                 }
                 if (_selectedAnim.NumberOfFrames > 0)
                 {

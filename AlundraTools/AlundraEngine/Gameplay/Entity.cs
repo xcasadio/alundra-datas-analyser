@@ -6,6 +6,9 @@ namespace AlundraEngine.Gameplay;
 
 public class Entity
 {
+    //for debugging
+    public int SpriteInfoEntityIndex;
+
     public int Index;
     public int Index2;
     public Entity ChildEntity; ////UnknownBeforeOwnerEntity;
@@ -129,7 +132,6 @@ public class Entity
 
     public bool IsMapSprite => EntityRecord == null ? false : (EntityRecord.SpriteDirection & 0x80) != 0;
 
-    
     public void CopyFrom(Entity other)
     {
         if (other == null) return;

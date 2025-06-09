@@ -555,9 +555,9 @@ public class EntityEventHandlers
         if (index > 0 && index < 0xff)
         {
             var i = index & 0x7f;
-            if (i < eventCodesTable.Length - 1)
+            if (i < eventCodesTable.Length)
             {
-                var size = eventCodesTable[i + 1] - eventCodesTable[i];
+                //var size = eventCodesTable[i + 1] - eventCodesTable[i];
                 return spriteInfo?.EventCodes?.GetByteCode(br, eventCodesTable[i]);
             }
         }
@@ -3903,29 +3903,18 @@ public class EntityEventHandlers
     // 8003F6C8
     private int Script_101_065(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        byte bVar1;
-        byte bVar2;
-        byte bVar3;
-        byte bVar4;
-        byte bVar5;
-        byte bVar6;
-        int num;
+        int x = ((variables[3] << 8) | variables[2]) << 16;
+        int y = ((variables[5] << 8) | variables[4]) << 16;
+        int z = ((variables[7] << 8) | variables[6]) << 16;
 
-        bVar2 = (byte)variables[2];
-        bVar1 = (byte)variables[3];
-        bVar4 = (byte)variables[4];
-        bVar3 = (byte)variables[5];
-        bVar6 = (byte)variables[6];
-        bVar5 = (byte)variables[7];
-
-        num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
 
         for (int i = 0; i < num; i++)
         {
             var entity = StaticVariables.g_matchingEntitiesBuffer[i];
-            entity.PosX = (int)(entity.PosX + (bVar2 + (uint)bVar1 * 0x100) * 0x10000);
-            entity.PosY = (int)(entity.PosY + (bVar6 + (uint)bVar5 * 0x100) * 0x10000);
-            entity.PosZ = (int)(entity.PosZ + (bVar4 + (uint)bVar3 * 0x100) * 0x10000);
+            entity.PosX += x;
+            entity.PosY += y;
+            entity.PosZ += z;
         }
 
         return 8;
