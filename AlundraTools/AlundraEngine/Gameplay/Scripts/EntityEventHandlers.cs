@@ -3883,23 +3883,18 @@ public class EntityEventHandlers
     // 8003F610
     private int Script_100_064(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Entity entity;
-        ushort x;
-        ushort y;
-        ushort z;
-
-        x = (ushort)variables[2];
-        y = (ushort)variables[4];
-        z = (ushort)variables[6];
+        int x = ((variables[3] << 8) | variables[2]) << 16;
+        int y = ((variables[5] << 8) | variables[4]) << 16;
+        int z = (((variables[7] << 8) | variables[6]) << 16) + 0x10000;
 
         var count = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
 
         for (int i = 0; i < count; i++)
         {
-            entity = StaticVariables.g_matchingEntitiesBuffer[i];
-            entity.PosX = x << 16;
-            entity.PosY = y << 16;
-            entity.PosZ = (z << 16) + 0x10000;
+            var entity = StaticVariables.g_matchingEntitiesBuffer[i];
+            entity.PosX = x;
+            entity.PosY = y;
+            entity.PosZ = z;
         }
 
         return 8;
