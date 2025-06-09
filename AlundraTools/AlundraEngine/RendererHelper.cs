@@ -1,4 +1,5 @@
 ﻿using AlundraEngine.DatasBin;
+using System.Drawing;
 
 namespace AlundraEngine;
 
@@ -9,6 +10,8 @@ public class RendererHelper
     //Custom renderer
     public static void Render(Graphics g, DatasBin.DatasBin datasBin, GameMap gameMap, int currentRow, int camTileOffsetY)
     {
+        var textToRender = new List<TextDisplayParameter>();
+
         var currentXPosition = StaticVariables.g_cameraCurrentX;// >> 16;
         var currentYPosition = StaticVariables.g_cameraCurrentY;// >> 16;
         //var currentXPosition = 0;
@@ -87,35 +90,41 @@ public class RendererHelper
                 {
                     var map = entity.IsMapSprite ? gameMap : datasBin.AlundraGameMap;
 
-                    //if (entity.Frame == null) // why?? TODO, not initialized ?
-                    //{
-                    //    continue;
-                    //}
-
-                    var iset = entity.Frame.Images;
-                    for (var idex = iset.NumberOfImages - 1; idex >= 0; idex--)
+                    //if (entity.Frame != null) // why?? TODO, not initialized ?
                     {
-                        var img = iset.Images[idex];
-                        DrawSprite(map, img, scx, scy, g);
+                        var iset = entity.Frame.Images;
+                        for (var idex = iset.NumberOfImages - 1; idex >= 0; idex--)
+                        {
+                            var img = iset.Images[idex];
+                            DrawSprite(map, img, scx, scy, g);
+                        }
                     }
 
                     var brush = StaticVariables.EditorSelectEntityIndex == entity.Index ? Brushes.ForestGreen : Brushes.Blue;
                     var text = $"#{entity.Index}-{entity.Index2}";
                     SizeF textSize = g.MeasureString(text, _font);
-                    //background
-                    for (int dx = -1; dx <= 1; dx++)
-                    {
-                        for (int dy = -1; dy <= 1; dy++)
-                        {
-                            if (dx == 0 && dy == 0) continue;
-                            g.DrawString(text, _font, Brushes.Black, scx - textSize.Width / 2 + dx, scy + dy);
-                        }
-                    }
                     
-                    //text
-                    g.DrawString(text, _font, brush, scx - textSize.Width / 2, scy);
+                    textToRender.Add(new TextDisplayParameter()
+                    {
+                        Text = text, Color = brush, X = scx - textSize.Width / 2, Y = scy
+                    });
                 }
             }
+        }
+
+        foreach (var textDisplayParameter in textToRender)
+        {
+            //background
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dy = -1; dy <= 1; dy++)
+                {
+                    if (dx == 0 && dy == 0) continue;
+                    g.DrawString(textDisplayParameter.Text, _font, Brushes.Black, textDisplayParameter.X + dx, textDisplayParameter.Y + dy);
+                }
+            }
+
+            g.DrawString(textDisplayParameter.Text, _font, textDisplayParameter.Color, textDisplayParameter.X, textDisplayParameter.Y);
         }
     }
 
@@ -175,4 +184,12 @@ public class RendererHelper
         var bmp = gameMap.GetTileBitmap(tileMapIndex);
         g.DrawImage(bmp, x, y);
     }
+}
+
+public class TextDisplayParameter
+{
+    public string Text { get; set; }
+    public Brush Color { get; set; }
+    public float X { get; set; }
+    public float Y { get; set; }
 }

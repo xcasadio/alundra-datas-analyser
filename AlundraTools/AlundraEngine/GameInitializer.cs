@@ -376,10 +376,12 @@ public class GameInitializer
         int i = 0;
         int index = 0;
 
-        //StaticVariables.g_fadeControl = StaticVariables.g_fadeControl2;
+        StaticVariables.g_initialFadeControl = new FadeControl();
+        StaticVariables.g_fadeControl = StaticVariables.g_initialFadeControl;
+        StaticVariables.g_initialFadeControl.TargetFadeLevel = 1;
+        StaticVariables.g_initialFadeControl.MaxFadeLevel = 1;
         //StaticVariables.g_warpUsageTable = StaticVariables.DAT_801eb83e;
         StaticVariables.DAT_801eb82e = 1;
-        StaticVariables.g_fadeControl2 = 1;
         StaticVariables.DAT_801eb832 = 0;
         StaticVariables.DAT_801eb830 = 0;
         StaticVariables.DAT_801eb834 = 0;

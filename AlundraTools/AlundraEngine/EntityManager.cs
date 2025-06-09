@@ -1,8 +1,9 @@
-﻿using System.Diagnostics;
-using AlundraEngine.DatasBin;
+﻿using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Sound;
+using System;
+using System.Diagnostics;
 
 namespace AlundraEngine;
 
@@ -371,20 +372,19 @@ public class EntityManager
             var x = xs[i];
             var y = ys[i];
             var tilex = x / StaticVariables.MapTileWidth;
+
             if (tilex > 0)
             {
                 if (tilex >= 0x34)
                 {
                     tilex = 0x33;
                 }
-
-                tilex = tilex << 16;
-                tilex = tilex >> 16;
             }
             else
             {
                 tilex = 0;
             }
+
             var tiley = y / StaticVariables.MapTileHeight;
             if (tiley > 0)
             {
@@ -392,28 +392,26 @@ public class EntityManager
                 {
                     tiley = 0x3b;
                 }
-
-                tiley = tiley << 16;
-                tiley = tiley >> 16;
             }
             else
             {
                 tiley = 0;
             }
+
             //int offset = (tilex * 8) + (tiley * 8 * 52);
             var tile = _gameEngine.CurrentMap.Map.MapTiles[tiley * 52 + tilex];
             entity.MapTiles[i] = tile;
             int height;
             if ((tile.Slope & 0x3) != 0)
             {
-                height = tile.Height * 16;//puts it in pixels
+                height = tile.Height * 16;
                 //bunch of slope stuff
                 switch (tile.Slope & 0x3)
                 {
                     case 1:
                         if ((slopesHit & 6) != 0)//it already hit 2 or 3
                         {
-                            height += StaticVariables.MapTileHeight;//add a tile;
+                            height += StaticVariables.MapTileHeight;
                         }
                         else
                         {
@@ -432,10 +430,11 @@ public class EntityManager
                         }
                         slopesHit |= 1;
                         break;
+
                     case 2:
                         if ((slopesHit & 5) != 0)//it already hit 1 or 3
                         {
-                            height += StaticVariables.MapTileHeight;//add a tile;
+                            height += StaticVariables.MapTileHeight;
                         }
                         else
                         {
@@ -443,48 +442,23 @@ public class EntityManager
                             var mx2 = mx / StaticVariables.MapTileWidth;
                             mx2 = mx2 * StaticVariables.MapTileWidth;
                             var remainder = mx - mx2;
-                            // remainder = 0x17 - remainder;
-
-                            //var result = (int)((float)remainder / 0x18 * StaticVariables.MapTileHeight);
-                            var result = StaticVariables.g_heights_800236d4[0x17 - remainder % 0x18];
-
-                            /*var result = (int)((mx * (long)0x2aaaaaab)>>32);//get the high dword
-                            int neg = result >> 31;
-                            int res2 = result >> 2;//divide by 4
-                            res2 = res2 - neg;
-                            res2 = res2 * 3;
-                            res2 = mx - res2;
-                            res2 = 0x17 - res2;
-                            res2 = res2 * 4;
-                            //result = 0x236d4[res2];some lookuptable of heights based on width*/
+                            var result = StaticVariables.g_heights_800236d4[0x17 - remainder % 0x18]; 
                             height += result;
                         }
                         slopesHit |= 2;
                         break;
+
                     case 3:
                         if ((slopesHit & 3) != 0)//it already hit 1 or 2
                         {
-                            height += 0x10;
+                            height += StaticVariables.MapTileHeight;
                         }
                         else
                         {
                             var mx = xs[i];
                             var mx2 = mx / StaticVariables.MapTileWidth;
                             mx2 = mx2 * StaticVariables.MapTileWidth;
-                            var remainder = mx - mx2;
-                            //remainder = 0x17 - remainder;
-
-                            //var result = (int)((float)remainder / 0x18 * StaticVariables.MapTileHeight);
-                            var result = StaticVariables.g_heights_800236d4[remainder % 0x18];
-                            /*var result = (int)((mx * (long)0x2aaaaaab) >> 32);//get the high dword
-                            int neg = result >> 31;
-                            int res2 = result >> 2;//divide by 4
-                            res2 = res2 - neg;
-                            res2 = res2 * 3;
-                            res2 = mx - res2;
-                            //res2 = 0x17 - res2; (only diff with other slope is subtracting it from 23, which is tilewidth-1)
-                            res2 = res2 * 4;
-                            //result = 0x236d4[res2];some lookuptable*/
+                            var remainder = mx - mx2;var result = StaticVariables.g_heights_800236d4[remainder % 0x18];
                             height += result;
                         }
                         slopesHit |= 4;
@@ -504,8 +478,123 @@ public class EntityManager
                 highest = height;
             }
         }
+
+        entity.TerrainHeight = highest;
+
         return highest;
     }
+
+    private int ComputeEntityGroundHeight2(Entity entity)
+    {
+        // 0 = plein/vide, 1 = rampe douce, 2 = falaise, 3 = rampe raide
+        const uint TILE_TYPE_MASK = 0x03;
+        const uint TF_SOLID = 0x01;
+        const uint TF_SLOPE = 0x02;
+        const uint TF_CLIFF = 0x04;
+
+        var xs = new int[4];
+        var ys = new int[4];
+        var x1 = (entity.PosX + entity.ModX) >> 16;
+        var x2 = (entity.PosX + entity.ModX + entity.Width) >> 16;
+        var y1 = (entity.PosY + entity.ModY) >> 16;
+        var y2 = (entity.PosY + entity.ModY + entity.Depth) >> 16;
+        xs[0] = x1;
+        ys[0] = y1;
+        xs[1] = x2;
+        ys[1] = y1;
+        xs[2] = x1;
+        ys[2] = y2;
+        xs[3] = x2;
+        ys[3] = y2;
+        int highest = 0;
+        uint slopesHit = 0;
+
+        for (var i = 0; i < 4; i++)
+        {
+            var x = xs[i];
+            var y = ys[i];
+            var tileX = x / StaticVariables.MapTileWidth;
+
+            if (tileX > 0)
+            {
+                if (tileX >= 0x34)
+                {
+                    tileX = 0x33;
+                }
+            }
+            else
+            {
+                tileX = 0;
+            }
+
+            var tileY = y / StaticVariables.MapTileHeight;
+            if (tileY > 0)
+            {
+                if (tileY >= 0x3c)
+                {
+                    tileY = 0x3b;
+                }
+            }
+            else
+            {
+                tileY = 0;
+            }
+
+            //int offset = (tilex * 8) + (tiley * 8 * 52);
+            var tile = _gameEngine.CurrentMap.Map.MapTiles[tileY * 52 + tileX];
+            entity.MapTiles[i] = tile;
+            int height = (tile.Height - 1) * 16;//puts it in pixels
+                                                //bunch of slope stuff
+            switch (tile.Slope & TILE_TYPE_MASK)
+            {
+                case 0:  /* bloc plein ou vide “normal” */
+                    /* rien de spécial, juste le décalage brut */
+                    break;
+
+                case 1: /* rampe douce : +StaticVariables.MapTileHeight si bloqué sur X ou Y */
+                    if ((slopesHit & (TF_SOLID | TF_CLIFF)) == 0)
+                    {
+                        /* rampe accessible si l’on n’est pas déjà en collision latérale */
+                        /* sinon on force un cran de plus :                      */
+                        height += StaticVariables.MapTileHeight;
+                    }
+                    slopesHit |= TF_SLOPE;
+                    break;
+
+                case 2:/* falaise / obstacle raide */
+                    slopesHit |= TF_CLIFF;
+                    height += StaticVariables.MapTileHeight;
+                    break;
+
+                case 3:/* rampe raide : même calcul que falaise + bit pente   */
+                    slopesHit |= (TF_SLOPE | TF_CLIFF);
+                    height += StaticVariables.MapTileHeight;
+                    break;
+            }
+
+            /* -- e. Conversion d’éventuelles “mini-marches” (table 0x236d4) -- */
+            if (tile.Slope == 2 || tile.Slope == 3)
+            {
+                /* la table d’échelons est indexée par (X mod 16)             */
+                int xFine = (xs[i] & 0xF);
+                /* 0x17-xFine… puis ×4… */
+                height += StaticVariables.g_heights_800236d4[(0x17 - xFine) * 4];
+            }
+
+            entity.MapHeights[i] = height;
+
+            if (height > highest)
+            {
+                highest = height;
+            }
+        }
+
+        entity.TerrainHeight = highest;
+        entity.Flags = (entity.Flags & ~(uint)0x7) | slopesHit;
+
+        return highest;
+    }
+
     /*
     // 80038064
     private void UpdateTileAttributes(Entity entity)
@@ -999,8 +1088,8 @@ public class EntityManager
         int i;
         int s6 = -1;
         int dy, dx;
-        int groundHeight; 
-        int dz; 
+        int groundHeight;
+        int dz;
         int zTolerance;
         int posX, posY, posZ;
         uint[] collisionFlags = new uint[4];
@@ -1052,7 +1141,10 @@ public class EntityManager
         {
             dz = (groundHeight - entity.ModdedZPos) - 1;
             zTolerance = 0x30000;
-            if (dz < 0) { zTolerance = 0x30003; dz = -dz; }
+            if (dz < 0)
+            {
+                zTolerance = 0x30003; dz = -dz;
+            }
 
             if (dz < zTolerance)
             {
@@ -1316,7 +1408,7 @@ public class EntityManager
                 goto START_COLLISION_CHECK;
 
             case 24:
-                if ((collisionFlags[1] != 0 && collisionFlags[3] != 0) 
+                if ((collisionFlags[1] != 0 && collisionFlags[3] != 0)
                     || collisionFlags[0] != 0 || collisionFlags[2] != 0)
                 {
                     goto FINAL_OBSTACLE;
@@ -1393,7 +1485,7 @@ public class EntityManager
         entity.TerrainHeight = ComputeEntityGroundHeight(entity);
         return null;
     }
-    
+
     // 80037730
     private Entity ComputeXYPosition2(Entity entity)
     {
@@ -1975,12 +2067,12 @@ public class EntityManager
 
         flag = 0x40;
 
-        if ((entity.Flags & 8U) != 0)
+        if ((entity.Flags & 0x8) != 0) // 0x8 = « traverse cliff ? »
         {
             flag = 0x41;
         }
 
-        if ((entity.Flags & 1U) != 0)
+        if ((entity.Flags & 0x1) != 0) // 0x1 = « prend en compte les trous »
         {
             flag |= 0x1000;
         }
@@ -1989,7 +2081,12 @@ public class EntityManager
 
         for (int i = 0; i < 4; i++)
         {
-            if ((entity.MapTiles[i].Flags & flag) != 0 || moddedZPos <= entity.MapHeights[i])
+            flags[i] = 0;
+
+            if ((entity.MapTiles[i].Flags & flag) == 0  // != 0
+               && entity.MapHeights[i] >= moddedZPos) // la case est plus basse
+            //if ((entity.MapTiles[i].Flags & flag) != 0 
+            //    || moddedZPos <= entity.MapHeights[i])
             {
                 flags[i] = 1;
             }

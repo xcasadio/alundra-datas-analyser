@@ -147,8 +147,8 @@ public class FrameSnapshot
         StaticVariables.g_playerStartZ = PlayerStartZ;
         StaticVariables.g_cameraDeltaX = CameraDeltaX;
         StaticVariables.g_cameraDeltaY = CameraDeltaY;
-        StaticVariables.g_cameraCurrentX = CameraCurrentX;
-        StaticVariables.g_cameraCurrentY = CameraCurrentY;
+        //StaticVariables.g_cameraCurrentX = CameraCurrentX;
+        //StaticVariables.g_cameraCurrentY = CameraCurrentY;
         StaticVariables.g_cameraX = CameraX;
         StaticVariables.g_cameraY = CameraY;
         StaticVariables.g_cutsceneScrollLimitX = CutsceneScrollLimitX;
