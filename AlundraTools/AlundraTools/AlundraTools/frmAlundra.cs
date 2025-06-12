@@ -658,7 +658,7 @@ namespace AlundraTools.AlundraTools
         {
             if (_selectedGameMap != null)
             {
-                AnalyzeAt(_selectedGameMap.Header.MapBlockOffset, _selectedGameMap.Map.Memaddr);
+                AnalyzeAt(_selectedGameMap.Header.MapBlockOffset, _selectedGameMap.Map.MemoryAddress);
             }
         }
 

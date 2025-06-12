@@ -472,8 +472,8 @@ public static class FrameSnapshotLoader
             //entity.PaletteIndex = paletteIndex;
             //entity.SheetSize = sheetSize;
             //entity.ActiveEffect = activeEffect;
-            entity.DepthSortVal = zSortValue;
-            entity.SortTop = zSortDepth;
+            entity.ZSortValue = zSortValue;
+            entity.ZSortDepth = zSortDepth;
             //entity.BalanceRecord = balanceRecord;
             //entity.BalanceAnimValRef = balanceAnimValRef;
             entity.DamagedTickCounter = damagedTickCounter;
@@ -534,7 +534,7 @@ public static class FrameSnapshotLoader
     //    public void CopyToSpriteRef(SpriteRef spriteRef)
     //    {
     //        spriteRef.Images = images;
-    //        spriteRef.DepthSortVal = depthSortVal;
+    //        spriteRef.ZSortValue = depthSortVal;
     //        spriteRef.NumImages = numImages;
     //        spriteRef.X = x;
     //        spriteRef.Y = y;

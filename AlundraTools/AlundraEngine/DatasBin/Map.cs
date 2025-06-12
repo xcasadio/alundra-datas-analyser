@@ -2,9 +2,9 @@
 
 public class Map
 {
-    public Map(BinaryReader br, int memaddr)
+    public Map(BinaryReader br, int memoryAddress)
     {
-        Memaddr = memaddr;
+        MemoryAddress = memoryAddress;
         var binoffset = br.BaseStream.Position;
 
         Width = br.ReadByte();
@@ -28,7 +28,7 @@ public class Map
             MapTiles[i].LoadWallTiles(br, binoffset + WallTilesOffset);
         }
     }
-    public readonly int Memaddr;
+    public readonly int MemoryAddress;
 
     public readonly int Width;
     public readonly int Height;

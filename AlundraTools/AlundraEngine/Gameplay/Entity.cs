@@ -97,8 +97,8 @@ public class Entity
     //public int field91_0x1ac; // 1ac => SpriteRef
     public int AddedToSheet, AddedToPalette;//represents offset where the pallets and sheets are in memory for map vs global sprites, prob not used with my engine
     public SpriteEffect ActiveEffect;
-    public int DepthSortVal;//1bc
-    public int SortTop;//1c0
+    public int ZSortValue;//1bc
+    public int ZSortDepth;//1c0
     public BalanceRecord BalanceRecord;//1c4
     public BalanceAnimValRef BalanceVal;//1c8
     public int DamagedTickCounter;//1cc
@@ -242,8 +242,8 @@ public class Entity
         AddedToSheet = other.AddedToSheet;
         AddedToPalette = other.AddedToPalette;
         ActiveEffect = other.ActiveEffect;
-        DepthSortVal = other.DepthSortVal;
-        SortTop = other.SortTop;
+        ZSortValue = other.ZSortValue;
+        ZSortDepth = other.ZSortDepth;
         BalanceRecord = other.BalanceRecord;
         BalanceVal = other.BalanceVal;
         DamagedTickCounter = other.DamagedTickCounter;

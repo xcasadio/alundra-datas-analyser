@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using System.Text;
 using AlundraEngine;
 using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay;
@@ -39,6 +40,7 @@ public partial class FrmGame : Form
         [nameof(Entity.ScreenClipZ)] = "Transform",
         [nameof(Entity.NegXMod)] = "Transform",
         [nameof(Entity.NegYMod)] = "Transform",
+        [nameof(Entity.NegZMod)] = "Transform",
         [nameof(Entity.TileX)] = "Transform",
         [nameof(Entity.TileY)] = "Transform",
         [nameof(Entity.TileZ)] = "Transform",
@@ -97,8 +99,8 @@ public partial class FrmGame : Form
         [nameof(Entity.FrameWidth)] = "Display",
         [nameof(Entity.FrameDepth)] = "Display",
         [nameof(Entity.FrameHeight)] = "Display",
-        [nameof(Entity.DepthSortVal)] = "Display",
-        [nameof(Entity.SortTop)] = "Display",
+        [nameof(Entity.ZSortValue)] = "Display",
+        [nameof(Entity.ZSortDepth)] = "Display",
         [nameof(Entity.AddedToSheet)] = "Display",
 
         [nameof(Entity.TargetXForce)] = "Physics forces",
@@ -169,8 +171,8 @@ public partial class FrmGame : Form
         [nameof(Entity.Width)] = "Display",
         [nameof(Entity.Height)] = "Display",
         [nameof(Entity.Depth)] = "Display",
-        [nameof(Entity.DepthSortVal)] = "Display",
-        [nameof(Entity.SortTop)] = "Display",
+        [nameof(Entity.ZSortValue)] = "Display",
+        [nameof(Entity.ZSortDepth)] = "Display",
         [nameof(Entity.TargetXForce)] = "Physics forces",
         [nameof(Entity.TargetYForce)] = "Physics forces",
         [nameof(Entity.ForceX)] = "Physics forces",
@@ -404,8 +406,8 @@ public partial class FrmGame : Form
                $"Frame Pos: {entity.HitBoxX} {entity.HitBoxY} {entity.HitBoxZ}{Environment.NewLine}" +
                $"Frame Off: {entity.FrameXOff} {entity.FrameYOff} {entity.FrameZOff}{Environment.NewLine}" +
                $"FrameWidth: {entity.FrameWidth} {entity.FrameDepth} {entity.FrameHeight}{Environment.NewLine}" +
-               $"DepthSortVal: {entity.DepthSortVal >> 16}{Environment.NewLine}" +
-               $"SortTop: {entity.SortTop >> 16}{Environment.NewLine}" +
+               $"ZSortValue: {entity.ZSortValue >> 16}{Environment.NewLine}" +
+               $"ZSortDepth: {entity.ZSortDepth >> 16}{Environment.NewLine}" +
                //
                $"AddedToSheet: {entity.AddedToSheet}{Environment.NewLine}" +
                $"ActiveEffect: {entity.ActiveEffect}{Environment.NewLine}" +
@@ -761,4 +763,54 @@ public partial class FrmGame : Form
         }
     }
 
+    private void buttonExtractToCsv_Click(object sender, EventArgs e)
+    {
+        var openFileDialog = new OpenFileDialog();
+
+        if (openFileDialog.ShowDialog(this) == DialogResult.OK)
+        {
+            var content = new StringBuilder();
+            content.AppendLine("Flags;PosX;PosY;PosZ;NegXMod;NegYMod;NegZMod;TileX;TileY;TileZ;ModdedXPos;ModdedYPos;ModdedZPos;ModX;ModY;ModZ;Width;Height;Depth;FrameXOff;FrameYOff;FrameZOff;FrameWidth;FrameDepth;FrameHeight;ZSortValue;ZSortDepth");
+
+            foreach (var frame in _engine.ReplayManager.Frames)
+            {
+                var entity = frame.Entities[11];
+                
+                content.Append($"{entity.Flags};");
+
+                content.Append($"{entity.PosX};");
+                content.Append($"{entity.PosY};");
+                content.Append($"{entity.PosZ};");
+
+                content.Append($"{entity.NegXMod};");
+                content.Append($"{entity.NegYMod};");
+                content.Append($"{entity.NegZMod};");
+                content.Append($"{entity.TileX};");
+                content.Append($"{entity.TileY};");
+                content.Append($"{entity.TileZ};");
+                content.Append($"{entity.ModdedXPos};");
+                content.Append($"{entity.ModdedYPos};");
+                content.Append($"{entity.ModdedZPos};");
+
+                content.Append($"{entity.ModX};");
+                content.Append($"{entity.ModY};");
+                content.Append($"{entity.ModZ};");
+                content.Append($"{entity.Width};");
+                content.Append($"{entity.Height};");
+                content.Append($"{entity.Depth};");
+                content.Append($"{entity.FrameXOff};");
+                content.Append($"{entity.FrameYOff};");
+                content.Append($"{entity.FrameZOff};");
+                content.Append($"{entity.FrameWidth};");
+                content.Append($"{entity.FrameDepth};");
+                content.Append($"{entity.FrameHeight};");
+                content.Append($"{entity.ZSortValue};");
+                content.Append($"{entity.ZSortDepth}");
+
+                content.AppendLine();
+            }
+
+            File.WriteAllText(openFileDialog.FileName, content.ToString());
+        }
+    }
 }

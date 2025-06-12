@@ -80,6 +80,7 @@ namespace AlundraTools.AlundraTools
             buttonSaveFrames = new Button();
             label14 = new Label();
             buttonLoadDump = new Button();
+            buttonExtractToCsv = new Button();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -485,7 +486,7 @@ namespace AlundraTools.AlundraTools
             hScrollBarFrames.Location = new Point(6, 640);
             hScrollBarFrames.Maximum = 0;
             hScrollBarFrames.Name = "hScrollBarFrames";
-            hScrollBarFrames.Size = new Size(354, 23);
+            hScrollBarFrames.Size = new Size(724, 23);
             hScrollBarFrames.TabIndex = 17;
             hScrollBarFrames.Scroll += hScrollBarFrames_Scroll;
             // 
@@ -528,7 +529,7 @@ namespace AlundraTools.AlundraTools
             dataGridViewGlobalFlags.Name = "dataGridViewGlobalFlags";
             dataGridViewGlobalFlags.RowHeadersVisible = false;
             dataGridViewGlobalFlags.RowHeadersWidth = 51;
-            dataGridViewGlobalFlags.Size = new Size(0, 523);
+            dataGridViewGlobalFlags.Size = new Size(124, 523);
             dataGridViewGlobalFlags.TabIndex = 23;
             // 
             // columnIndex
@@ -557,7 +558,7 @@ namespace AlundraTools.AlundraTools
             dataGridViewMapFlags.Name = "dataGridViewMapFlags";
             dataGridViewMapFlags.RowHeadersVisible = false;
             dataGridViewMapFlags.RowHeadersWidth = 51;
-            dataGridViewMapFlags.Size = new Size(0, 523);
+            dataGridViewMapFlags.Size = new Size(134, 523);
             dataGridViewMapFlags.TabIndex = 24;
             // 
             // dataGridViewTextBoxColumn1
@@ -606,11 +607,22 @@ namespace AlundraTools.AlundraTools
             buttonLoadDump.UseVisualStyleBackColor = true;
             buttonLoadDump.Click += buttonLoadDump_Click;
             // 
+            // buttonExtractToCsv
+            // 
+            buttonExtractToCsv.Location = new Point(560, 679);
+            buttonExtractToCsv.Name = "buttonExtractToCsv";
+            buttonExtractToCsv.Size = new Size(171, 29);
+            buttonExtractToCsv.TabIndex = 29;
+            buttonExtractToCsv.Text = "Extract frames to csv";
+            buttonExtractToCsv.UseVisualStyleBackColor = true;
+            buttonExtractToCsv.Click += buttonExtractToCsv_Click;
+            // 
             // FrmGame
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1306, 1272);
+            Controls.Add(buttonExtractToCsv);
             Controls.Add(buttonLoadDump);
             Controls.Add(label14);
             Controls.Add(buttonSaveFrames);
@@ -697,5 +709,6 @@ namespace AlundraTools.AlundraTools
         private Button buttonSaveFrames;
         private Label label14;
         private Button buttonLoadDump;
+        private Button buttonExtractToCsv;
     }
 }

@@ -244,7 +244,7 @@ public class EntityManager
             entity.NextFrameDelay = entity.Frame.Delay & 0x7f;
             entity.ForceResetAnimationFlag = 0;
             entity.AnimFlags = entity.AnimSet.Flags; // TODO U6 ??
-            entity.DepthSortVal = entity.AnimSet.U6; // TODO U6 ??
+            entity.ZSortValue = entity.AnimSet.U6; // TODO U6 ??
 
             if (entity.BalanceRecord.NumAnimVals == 0)
             {
@@ -342,7 +342,7 @@ public class EntityManager
         var x1 = (entity.PosX + entity.ModX) >> 16;
         var x2 = (entity.PosX + entity.ModX + entity.Width) >> 16;
         var y1 = (entity.PosY + entity.ModY) >> 16;
-        var y2 = (entity.PosY + entity.ModY + entity.Depth) >> 16;
+        var y2 = (entity.PosY + entity.ModY + entity.Height) >> 16;
         xs[0] = x1;
         ys[0] = y1;
         xs[1] = x2;
@@ -358,41 +358,43 @@ public class EntityManager
         {
             var x = xs[i];
             var y = ys[i];
-            var tilex = x / StaticVariables.MapTileWidth;
+            var tileX = x / StaticVariables.MapTileWidth;
 
-            if (tilex > 0)
+            if (tileX > 0)
             {
-                if (tilex >= 0x34)
+                if (tileX >= 0x34)
                 {
-                    tilex = 0x33;
+                    tileX = 0x33;
                 }
             }
             else
             {
-                tilex = 0;
+                tileX = 0;
             }
 
-            var tiley = y / StaticVariables.MapTileHeight;
-            if (tiley > 0)
+            var tileY = y / StaticVariables.MapTileHeight;
+            if (tileY > 0)
             {
-                if (tiley >= 0x3c)
+                if (tileY >= 0x3c)
                 {
-                    tiley = 0x3b;
+                    tileY = 0x3b;
                 }
             }
             else
             {
-                tiley = 0;
+                tileY = 0;
             }
 
             //int offset = (tilex * 8) + (tiley * 8 * 52);
-            var tile = _gameEngine.CurrentMap.Map.MapTiles[tiley * 52 + tilex];
+            var mapWidth = _gameEngine.CurrentMap.Map.Width;
+            var tile = _gameEngine.CurrentMap.Map.MapTiles[tileY * mapWidth + tileX];
             entity.MapTiles[i] = tile;
             int height;
+
             if ((tile.Slope & 0x3) != 0)
             {
                 height = tile.Height * 16;
-                //bunch of slope stuff
+
                 switch (tile.Slope & 0x3)
                 {
                     case 1:
@@ -445,7 +447,8 @@ public class EntityManager
                             var mx = xs[i];
                             var mx2 = mx / StaticVariables.MapTileWidth;
                             mx2 = mx2 * StaticVariables.MapTileWidth;
-                            var remainder = mx - mx2;var result = StaticVariables.g_heights_800236d4[remainder % 0x18];
+                            var remainder = mx - mx2;
+                            var result = StaticVariables.g_heights_800236d4[remainder % 0x18];
                             height += result;
                         }
                         slopesHit |= 4;
@@ -460,13 +463,14 @@ public class EntityManager
             }
 
             entity.MapHeights[i] = height;
+
             if (highest < height)
             {
                 highest = height;
             }
         }
 
-        entity.TerrainHeight = highest;
+        //entity.TerrainHeight = highest;
 
         return highest;
     }
@@ -706,7 +710,7 @@ public class EntityManager
             {
                 var entity = StaticVariables.g_visibleEntities[i];
 
-                entity.SpriteRef.DepthSortVal = entity.DepthSortVal;
+                entity.SpriteRef.DepthSortVal = entity.ZSortValue;
                 entity.SpriteRef.X = entity.PosX;
                 entity.SpriteRef.Y = entity.PosY;
                 entity.SpriteRef.Z = entity.PosZ;
@@ -1162,9 +1166,8 @@ public class EntityManager
         CHECK_ENTITY_COLLISION:
         uint flags = collisionFunc(entity, collisionFlags);
 
-        if (flags == 0)
+        if (flags == 0) // aucun obstacle détecté
         {
-            // aucun obstacle détecté
             modX = 1;
 
             if (i == 0)
@@ -2070,7 +2073,7 @@ public class EntityManager
         {
             flags[i] = 0;
 
-            if ((entity.MapTiles[i].Flags & flag) == 0  // != 0
+            if ((entity.MapTiles[i].Flags & flag) != 0  // != 0
                && entity.MapHeights[i] >= moddedZPos) // la case est plus basse
             //if ((entity.MapTiles[i].Flags & flag) != 0 
             //    || moddedZPos <= entity.MapHeights[i])
@@ -2484,6 +2487,7 @@ public class EntityManager
         entity.ForceStepY = Math.Abs(entity.TargetYForce - entity.ForceY) >> entity.Acceleration;
     }
 
+    // 800399b8
     private void UpdateVisibleEntitiesZSort()
     {
         if (StaticVariables.g_visibleEntityCount <= 0)
@@ -2494,51 +2498,52 @@ public class EntityManager
         for (var i = 0; i < StaticVariables.g_visibleEntityCount; i++)
         {
             var entity = StaticVariables.g_visibleEntities[i];
-            entity.DepthSortVal = 0;
-            entity.SortTop = entity.ModdedZPos + entity.Height;
+            entity.ZSortValue = 0;
+            entity.ZSortDepth = entity.ModdedZPos + entity.Depth;
         }
 
         for (var i = 0; i < StaticVariables.g_visibleEntityCount; i++)
         {
             var entity = StaticVariables.g_visibleEntities[i];
-            if (entity.DepthSortVal == 0)
+            if (entity.ZSortValue == 0)
             {
-                SetDepthSortVal(entity);
+                ComputeZSortValue(entity);
             }
         }
 
         for (var i = 0; i < StaticVariables.g_visibleEntityCount; i++)
         {
             var entity = StaticVariables.g_visibleEntities[i];
-            entity.DepthSortVal = (int)(entity.DepthSortVal & 0xffff0000) + (entity.PosZ & 0xffff);
+            entity.ZSortValue = (int)(entity.ZSortValue & 0xffff0000) + (entity.PosZ & 0xffff); // 41287762
         }
     }
 
-    private void SetDepthSortVal(Entity entity)
+    // 800397ac
+    private int ComputeZSortValue(Entity entity)
     {
-        if (entity.DepthSortVal != 0)
+        if (entity.ZSortValue != 0)
         {
-            return;
+            return entity.ZSortValue;
         }
 
-        var sortval = entity.PosY + (entity.SpriteRef.NumImages << 16);
+        var sortval = entity.PosY + (entity.SpriteRef.DepthSortVal << 16);
         if ((entity.Flags & 0x80) != 0
             || (entity.AnimFlags & 0x80) != 0)
         {
-            entity.DepthSortVal = sortval;
-            return;
+            entity.ZSortValue = sortval;
+            return sortval;
         }
 
         if (entity.PlatformEntity != null)
         {
-            if (entity.PlatformEntity.DepthSortVal == 0)
+            if (entity.PlatformEntity.ZSortValue == 0)
             {
-                SetDepthSortVal(entity.PlatformEntity);
+                sortval = ComputeZSortValue(entity.PlatformEntity);
             }
-            if (sortval < entity.PlatformEntity.DepthSortVal)
+            if (sortval < entity.PlatformEntity.ZSortValue)
             {
-                entity.DepthSortVal = entity.PlatformEntity.DepthSortVal;
-                return;
+                entity.ZSortValue = entity.PlatformEntity.ZSortValue;
+                return entity.PlatformEntity.ZSortValue;
             }
         }
 
@@ -2550,7 +2555,7 @@ public class EntityManager
                 continue;
             }
 
-            if (checkme.SortTop >= entity.SortTop)
+            if (checkme.ZSortDepth >= entity.ZSortDepth)
             {
                 continue;
             }
@@ -2589,18 +2594,20 @@ public class EntityManager
                 }
             }
 
-            if (checkme.DepthSortVal == 0)
+            if (checkme.ZSortValue == 0)
             {
-                SetDepthSortVal(checkme);
+                sortval = ComputeZSortValue(checkme);
             }
 
-            if (sortval < checkme.DepthSortVal)
+            if (sortval < checkme.ZSortValue)
             {
-                sortval = checkme.DepthSortVal;
+                sortval = checkme.ZSortValue;
             }
         }
 
-        entity.DepthSortVal = sortval;
+        entity.ZSortValue = sortval;
+
+        return sortval;
     }
 
     private void UpdateBalanceRecords()
