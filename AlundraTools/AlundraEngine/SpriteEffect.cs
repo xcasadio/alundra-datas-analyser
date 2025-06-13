@@ -24,7 +24,7 @@ public class SpriteEffect
     public int YForce;//y
     public int ZForce;//z
     public int DepthSortMod;//60
-    public int DepthSortVal;//stored to 1c, is it a depth sorting id? 64
+    public int ZSortValue;//stored to 1c, is it a depth sorting id? 64
     public int Status;//68  2 is active
     public byte TargetIsMapSprite;//6c
     public byte CurrentIsMapSprite;//6d

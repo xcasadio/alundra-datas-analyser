@@ -770,7 +770,7 @@ public partial class FrmGame : Form
         if (openFileDialog.ShowDialog(this) == DialogResult.OK)
         {
             var content = new StringBuilder();
-            content.AppendLine("Flags;PosX;PosY;PosZ;NegXMod;NegYMod;NegZMod;TileX;TileY;TileZ;ModdedXPos;ModdedYPos;ModdedZPos;ModX;ModY;ModZ;Width;Height;Depth;FrameXOff;FrameYOff;FrameZOff;FrameWidth;FrameDepth;FrameHeight;ZSortValue;ZSortDepth");
+            content.AppendLine("Flags;PosX;PosY;PosZ;NegXMod;NegYMod;NegZMod;ModdedXPos;ModdedYPos;ModdedZPos;ModX;ModY;ModZ;Width;Height;Depth;TerrainHeight;FloorHeight;ZSortValue;ZSortDepth;MapHeights[0];MapHeights[1];MapHeights[2];MapHeights[3];FinalXForce;FinalYForce;FinalZForce;ForceStepX;ForceStepY;AdjustedXForce;AdjustedYForce;ForceAdjusted");
 
             foreach (var frame in _engine.ReplayManager.Frames)
             {
@@ -785,9 +785,6 @@ public partial class FrmGame : Form
                 content.Append($"{entity.NegXMod};");
                 content.Append($"{entity.NegYMod};");
                 content.Append($"{entity.NegZMod};");
-                content.Append($"{entity.TileX};");
-                content.Append($"{entity.TileY};");
-                content.Append($"{entity.TileZ};");
                 content.Append($"{entity.ModdedXPos};");
                 content.Append($"{entity.ModdedYPos};");
                 content.Append($"{entity.ModdedZPos};");
@@ -798,14 +795,24 @@ public partial class FrmGame : Form
                 content.Append($"{entity.Width};");
                 content.Append($"{entity.Height};");
                 content.Append($"{entity.Depth};");
-                content.Append($"{entity.FrameXOff};");
-                content.Append($"{entity.FrameYOff};");
-                content.Append($"{entity.FrameZOff};");
-                content.Append($"{entity.FrameWidth};");
-                content.Append($"{entity.FrameDepth};");
-                content.Append($"{entity.FrameHeight};");
+                content.Append($"{entity.TerrainHeight};");
+                content.Append($"{entity.FloorHeight};");
                 content.Append($"{entity.ZSortValue};");
-                content.Append($"{entity.ZSortDepth}");
+                content.Append($"{entity.ZSortDepth};");
+
+                for (int i = 0; i < 4; i++)
+                {
+                    content.Append($"{entity.MapHeights[i]};");
+                }
+
+                content.Append($"{entity.FinalXForce};");
+                content.Append($"{entity.FinalYForce};");
+                content.Append($"{entity.FinalZForce};");
+                content.Append($"{entity.ForceStepX};");
+                content.Append($"{entity.ForceStepY};");
+                content.Append($"{entity.AdjustedXForce};");
+                content.Append($"{entity.AdjustedYForce};");
+                content.Append($"{entity.ForceAdjusted}");
 
                 content.AppendLine();
             }

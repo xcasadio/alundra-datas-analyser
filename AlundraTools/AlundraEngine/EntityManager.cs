@@ -359,6 +359,8 @@ public class EntityManager
             var x = xs[i];
             var y = ys[i];
             var tileX = x / StaticVariables.MapTileWidth;
+            //On PSX hardware we avoid using division, so we use a lookup table instead.
+            //Debug.Assert(StaticVariables.g_tileToWorldXTable[x] == tileX); 
 
             if (tileX > 0)
             {
@@ -372,7 +374,7 @@ public class EntityManager
                 tileX = 0;
             }
 
-            var tileY = y / StaticVariables.MapTileHeight;
+            var tileY = y >> 4; // StaticVariables.MapTileHeight;
             if (tileY > 0)
             {
                 if (tileY >= 0x3c)
@@ -385,82 +387,45 @@ public class EntityManager
                 tileY = 0;
             }
 
-            //int offset = (tilex * 8) + (tiley * 8 * 52);
             var mapWidth = _gameEngine.CurrentMap.Map.Width;
             var tile = _gameEngine.CurrentMap.Map.MapTiles[tileY * mapWidth + tileX];
             entity.MapTiles[i] = tile;
-            int height;
+            int height = (tile.Height);
 
-            if ((tile.Slope & 0x3) != 0)
+            switch (tile.Slope & 0x3)
             {
-                height = tile.Height * 16;
+                case 0:
+                    height <<= 4;
+                    break;
+                case 1:
+                    if ((slopesHit & 6) == 0)
+                    {
+                        var result = StaticVariables.g_heights_800236d4[0x17 - ys[i] % 0x18];
+                        height = ((tile.Height - 1) << 4) + result;
+                    }
+                    slopesHit |= 1;
+                    break;
 
-                switch (tile.Slope & 0x3)
-                {
-                    case 1:
-                        if ((slopesHit & 6) != 0)//it already hit 2 or 3
-                        {
-                            height += StaticVariables.MapTileHeight;
-                        }
-                        else
-                        {
-                            var my = ys[i];
-                            var result = height + StaticVariables.MapTileHeight;
-                            var my2 = my;
-                            if (my < 0)
-                            {
-                                my2 = my + 15;
-                            }
+                case 2:
+                    if ((slopesHit & 5) == 0)//it already hit 1 or 3
+                    {
+                        var result = StaticVariables.g_heights_800236d4[0x17 - xs[i] % 0x18];
+                        height = ((tile.Height - 1) << 4) + result;
+                    }
+                    slopesHit |= 2;
+                    break;
 
-                            my2 = my2 / StaticVariables.MapTileHeight;
-                            my2 = my2 * StaticVariables.MapTileHeight;
-                            var remainder = my - my2;
-                            height = result - remainder;
-                        }
-                        slopesHit |= 1;
-                        break;
-
-                    case 2:
-                        if ((slopesHit & 5) != 0)//it already hit 1 or 3
-                        {
-                            height += StaticVariables.MapTileHeight;
-                        }
-                        else
-                        {
-                            var mx = xs[i];
-                            var mx2 = mx / StaticVariables.MapTileWidth;
-                            mx2 = mx2 * StaticVariables.MapTileWidth;
-                            var remainder = mx - mx2;
-                            var result = StaticVariables.g_heights_800236d4[0x17 - remainder % 0x18]; 
-                            height += result;
-                        }
-                        slopesHit |= 2;
-                        break;
-
-                    case 3:
-                        if ((slopesHit & 3) != 0)//it already hit 1 or 2
-                        {
-                            height += StaticVariables.MapTileHeight;
-                        }
-                        else
-                        {
-                            var mx = xs[i];
-                            var mx2 = mx / StaticVariables.MapTileWidth;
-                            mx2 = mx2 * StaticVariables.MapTileWidth;
-                            var remainder = mx - mx2;
-                            var result = StaticVariables.g_heights_800236d4[remainder % 0x18];
-                            height += result;
-                        }
-                        slopesHit |= 4;
-                        break;
-                }
-
-                height = height << 16;//shift it over to fixed float
+                case 3:
+                    if ((slopesHit & 3) == 0)//it already hit 1 or 2
+                    {
+                        var result = StaticVariables.g_heights_800236d4[xs[i] % 0x18];
+                        height += result;
+                    }
+                    slopesHit |= 4;
+                    break;
             }
-            else
-            {
-                height = (tile.Height * 16) << 16;//put in pixels then shift over to fixed float
-            }
+
+            height = height << 16;
 
             entity.MapHeights[i] = height;
 
@@ -470,118 +435,7 @@ public class EntityManager
             }
         }
 
-        //entity.TerrainHeight = highest;
-
-        return highest;
-    }
-
-    private int ComputeEntityGroundHeight2(Entity entity)
-    {
-        // 0 = plein/vide, 1 = rampe douce, 2 = falaise, 3 = rampe raide
-        const uint TILE_TYPE_MASK = 0x03;
-        const uint TF_SOLID = 0x01;
-        const uint TF_SLOPE = 0x02;
-        const uint TF_CLIFF = 0x04;
-
-        var xs = new int[4];
-        var ys = new int[4];
-        var x1 = (entity.PosX + entity.ModX) >> 16;
-        var x2 = (entity.PosX + entity.ModX + entity.Width) >> 16;
-        var y1 = (entity.PosY + entity.ModY) >> 16;
-        var y2 = (entity.PosY + entity.ModY + entity.Depth) >> 16;
-        xs[0] = x1;
-        ys[0] = y1;
-        xs[1] = x2;
-        ys[1] = y1;
-        xs[2] = x1;
-        ys[2] = y2;
-        xs[3] = x2;
-        ys[3] = y2;
-        int highest = 0;
-        uint slopesHit = 0;
-
-        for (var i = 0; i < 4; i++)
-        {
-            var x = xs[i];
-            var y = ys[i];
-            var tileX = x / StaticVariables.MapTileWidth;
-
-            if (tileX > 0)
-            {
-                if (tileX >= 0x34)
-                {
-                    tileX = 0x33;
-                }
-            }
-            else
-            {
-                tileX = 0;
-            }
-
-            var tileY = y / StaticVariables.MapTileHeight;
-            if (tileY > 0)
-            {
-                if (tileY >= 0x3c)
-                {
-                    tileY = 0x3b;
-                }
-            }
-            else
-            {
-                tileY = 0;
-            }
-
-            //int offset = (tilex * 8) + (tiley * 8 * 52);
-            var tile = _gameEngine.CurrentMap.Map.MapTiles[tileY * 52 + tileX];
-            entity.MapTiles[i] = tile;
-            int height = (tile.Height - 1) * 16;//puts it in pixels
-                                                //bunch of slope stuff
-            switch (tile.Slope & TILE_TYPE_MASK)
-            {
-                case 0:  /* bloc plein ou vide “normal” */
-                    /* rien de spécial, juste le décalage brut */
-                    break;
-
-                case 1: /* rampe douce : +StaticVariables.MapTileHeight si bloqué sur X ou Y */
-                    if ((slopesHit & (TF_SOLID | TF_CLIFF)) == 0)
-                    {
-                        /* rampe accessible si l’on n’est pas déjà en collision latérale */
-                        /* sinon on force un cran de plus :                      */
-                        height += StaticVariables.MapTileHeight;
-                    }
-                    slopesHit |= TF_SLOPE;
-                    break;
-
-                case 2:/* falaise / obstacle raide */
-                    slopesHit |= TF_CLIFF;
-                    height += StaticVariables.MapTileHeight;
-                    break;
-
-                case 3:/* rampe raide : même calcul que falaise + bit pente   */
-                    slopesHit |= (TF_SLOPE | TF_CLIFF);
-                    height += StaticVariables.MapTileHeight;
-                    break;
-            }
-
-            /* -- e. Conversion d’éventuelles “mini-marches” (table 0x236d4) -- */
-            if (tile.Slope == 2 || tile.Slope == 3)
-            {
-                /* la table d’échelons est indexée par (X mod 16)             */
-                int xFine = (xs[i] & 0xF);
-                /* 0x17-xFine… puis ×4… */
-                height += StaticVariables.g_heights_800236d4[(0x17 - xFine) * 4];
-            }
-
-            entity.MapHeights[i] = height;
-
-            if (height > highest)
-            {
-                highest = height;
-            }
-        }
-
-        entity.TerrainHeight = highest;
-        entity.Flags = (entity.Flags & ~(uint)0x7) | slopesHit;
+        entity.FloorHeight = highest;
 
         return highest;
     }
@@ -682,6 +536,7 @@ public class EntityManager
         entity.Slope_190 = prevtohit;
     }
     */
+
     // 8003b388
     public void UpdateEntities()
     {
@@ -1118,8 +973,8 @@ public class EntityManager
         entity.PosX += dx;
         entity.PosY += dy;
         entity.ModdedXPos = entity.PosX + entity.ModX;
-        entity.ModdedYPos = entity.PosY + entity.ModY;
-        entity.ModdedZPos = entity.PosZ + entity.ModZ;
+        entity.ModdedYPos = entity.PosY + entity.ModY; // -> 47235072 = 47628288 + -393216
+        entity.ModdedZPos = entity.PosZ + entity.ModZ; // 5242881 -> 5308417
 
         groundHeight = ComputeEntityGroundHeight(entity);
         entity.TerrainHeight = groundHeight;
@@ -1134,13 +989,14 @@ public class EntityManager
             zTolerance = 0x30000;
             if (dz < 0)
             {
-                zTolerance = 0x30003; dz = -dz;
+                zTolerance = 0x30003;
+                dz = -dz;
             }
 
             if (dz < zTolerance)
             {
                 int savedZ = entity.PosZ;
-                entity.PosZ = groundHeight + 1;
+                entity.PosZ = groundHeight + 1; //5242881 -> 5308417
                 entity.ModdedXPos = entity.PosX + entity.ModX;
                 entity.ModdedYPos = entity.PosY + entity.ModY;
                 entity.ModdedZPos = entity.PosZ + entity.ModZ;
@@ -1474,504 +1330,6 @@ public class EntityManager
         entity.ModdedZPos = entity.PosZ + entity.ModZ;
         entity.TerrainHeight = ComputeEntityGroundHeight(entity);
         return null;
-    }
-
-    // 80037730
-    private Entity ComputeXYPosition2(Entity entity)
-    {
-        int flags;
-        int dz;
-        Entity otherEntity;
-        int dy;
-        int zTolerance;
-        int dx;
-        int halfDy;
-        int halfDx;
-        Entity candidate;
-        int i;
-        int posX;
-        int posY;
-        uint[] collisionFlags = new uint[4];
-        int isStraightDir;
-        int didAdjustForObstacle;
-        int modX;
-        int posZ;
-        Entity result;
-
-        didAdjustForObstacle = 0;
-        isStraightDir = (entity.TargetDirection & 7) == 0 ? 1 : 0;
-
-        START_COLLISION_CHECK:
-        if (entity.FinalXForce == 0 && entity.FinalYForce == 0)
-        {
-            result = null;
-            //goto FINALIZE;
-            UpdateEntityPositions(entity, false);
-            return result;
-        }
-
-        modX = 0;
-        candidate = null;
-        i = 0;
-        dy = entity.FinalYForce;
-        dx = entity.FinalXForce;
-
-        TRY_ADVANCE:
-        posX = entity.PosX;
-        posY = entity.PosY;
-        posZ = entity.PosZ;
-        collisionFlags[0] = 0;
-        collisionFlags[1] = 0;
-        collisionFlags[2] = 0;
-        collisionFlags[3] = 0;
-        entity.PosX += dx;
-        entity.PosY += dy;
-        entity.ModdedXPos = entity.PosX + entity.ModX;
-        entity.ModdedYPos = entity.PosY + entity.ModY;
-        entity.ModdedZPos = entity.PosZ + entity.ModZ;
-        result = candidate;
-        var groundHeight = ComputeEntityGroundHeight(entity);
-        entity.TerrainHeight = groundHeight;
-        halfDx = dx >> 1;
-        halfDy = dy >> 1;
-
-        if ((entity.Flags & 0x100U) != 0 && entity.ForceZ == 0)
-        {
-            dz = groundHeight - entity.ModdedZPos + -1;
-            zTolerance = 0x30000;
-            if (dz < 0)
-            {
-                zTolerance = 0x30003;
-                dz = -dz;
-            }
-            if (zTolerance <= dz)
-            {
-                goto RESTORE_POS;
-            }
-
-            dz = entity.PosZ;
-            entity.PosZ = groundHeight + 1;
-            entity.ModdedXPos = entity.PosX + entity.ModX;
-            entity.ModdedYPos = entity.PosY + entity.ModY;
-            entity.ModdedZPos = entity.PosZ + entity.ModZ;
-            otherEntity = FindEntityCollisionCandidate(entity);
-            if (otherEntity != null)
-            {
-                entity.PosZ = dz;
-                entity.ModdedXPos = entity.PosX + entity.ModX;
-                entity.ModdedZPos = dz + entity.ModZ;
-                entity.ModdedYPos = entity.PosY + entity.ModY;
-                goto RESTORE_POS;
-            }
-
-            CHECK_ENTITY_COLLISION:
-            if (entity == StaticVariables.g_entitySlots[0])
-            {
-                flags = (int)GetCollisionFlagsWithPlayer(entity, collisionFlags);
-            }
-            else
-            {
-                flags = (int)GetCollisionFlags(entity, collisionFlags);
-            }
-
-            if (flags != 0)
-            {
-                goto LAB_80037938;
-            }
-
-            modX = 1;
-            if (i == 0)
-            {
-                return result;
-            }
-
-            if (dx == -1)
-            {
-                halfDx = 0;
-            }
-
-            if (dy == -1)
-            {
-                halfDy = 0;
-            }
-
-            if (isStraightDir == 0)
-            {
-                if (halfDx == 0)
-                {
-                    return result;
-                }
-            }
-            else if (halfDx != 0)
-            {
-                i++;
-                dy = halfDy;
-                dx = halfDx;
-                goto TRY_ADVANCE;
-            }
-            if (halfDy == 0)
-            {
-                return result;
-            }
-
-            LAB_80037db8:
-            i++;
-            dy = halfDy;
-            dx = halfDx;
-            goto TRY_ADVANCE;
-        }
-
-        RESTORE_POS:
-        candidate = FindEntityCollisionCandidate(entity);
-        if (candidate == null)
-        {
-            //goto CHECK_ENTITY_COLLISION
-            if (entity == StaticVariables.g_entitySlots[0])
-            {
-                flags = (int)GetCollisionFlagsWithPlayer(entity, collisionFlags);
-            }
-            else
-            {
-                flags = (int)GetCollisionFlags(entity, collisionFlags);
-            }
-
-            if (flags != 0)
-            {
-                goto LAB_80037938;
-            }
-
-            modX = 1;
-            if (i == 0)
-            {
-                return result;
-            }
-
-            if (dx == -1)
-            {
-                halfDx = 0;
-            }
-
-            if (dy == -1)
-            {
-                halfDy = 0;
-            }
-
-            if (isStraightDir == 0)
-            {
-                if (halfDx == 0)
-                {
-                    return result;
-                }
-            }
-            else if (halfDx != 0)
-            {
-                i++;
-                dy = halfDy;
-                dx = halfDx;
-                goto TRY_ADVANCE;
-            }
-            if (halfDy == 0)
-            {
-                return result;
-            }
-
-            LAB_80037db8:
-            //i++;
-            dy = halfDy;
-            dx = halfDx;
-            goto TRY_ADVANCE;
-        }
-
-        LAB_80037938:
-        entity.PosX = posX;
-        entity.PosY = posY;
-        entity.PosZ = posZ;
-        if (dx == -1)
-        {
-            halfDx = 0;
-        }
-
-        if (dy == -1)
-        {
-            halfDy = 0;
-        }
-
-        if (isStraightDir != 0)
-        {
-            if (halfDx != 0)
-            {
-                dy = halfDy;
-                dx = halfDx;
-                goto TRY_ADVANCE;
-            }
-
-            if (halfDy == 0)
-            {
-                goto LAB_8003799c;
-            }
-
-            i++;
-            dy = halfDy;
-            dx = halfDx;
-            goto TRY_ADVANCE;
-        }
-
-        if (halfDx != 0 && halfDy != 0)
-        {
-            //goto LAB_80037db8;
-            dy = halfDy;
-            dx = halfDx;
-            goto TRY_ADVANCE;
-        }
-
-        LAB_8003799c:
-        if (modX != 0)
-        {
-            //goto LAB_80037d58;
-            UpdateEntityPositions(entity, false);
-            return result;
-        }
-
-        if (didAdjustForObstacle == 1 || (entity.Flags & 0x2000U) != 0 || candidate != null)
-        {
-            UpdateEntityPositions(entity);
-            return result;
-        }
-
-        didAdjustForObstacle = 1;
-
-        switch (entity.TargetDirection)
-        {
-            case 0:
-                if ((collisionFlags[2] != 0 && collisionFlags[3] != 0) || collisionFlags[0] != 0 || collisionFlags[1] != 0)
-                {
-                    //goto switchD_80037a04_FINAL_OBSTACLE;
-                    UpdateEntityPositions(entity);
-                    return result;
-                }
-
-                entity.FinalYForce = 0;
-                dy = (int)collisionFlags[2];
-                dx = (int)collisionFlags[3];
-                if (collisionFlags[2] == 0)
-                {
-                    if (dx == 0)
-                    {
-                        goto START_COLLISION_CHECK;
-                    }
-                }
-                else if (collisionFlags[3] == 0)
-                {
-                    entity.FinalXForce = 0xc000;
-                    goto START_COLLISION_CHECK;
-                }
-                break;
-
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-                if (collisionFlags[0] != 0)
-                {
-                    if (collisionFlags[3] == 0)
-                    {
-                        //goto LAB_80037c70;
-                        entity.FinalXForce = 0;
-                        goto START_COLLISION_CHECK;
-                    }
-
-                    //goto switchD_80037a04_FINAL_OBSTACLE;
-                    UpdateEntityPositions(entity);
-                    return result;
-                }
-                if (collisionFlags[3] != 0)
-                {
-                    LAB_80037c88:
-                    entity.FinalYForce = 0;
-                }
-                goto START_COLLISION_CHECK;
-
-            case 8:
-                if ((collisionFlags[0] != 0 && collisionFlags[2] != 0) || collisionFlags[1] != 0 || collisionFlags[3] != 0)
-                {
-                    //goto switchD_80037a04_FINAL_OBSTACLE;
-                    UpdateEntityPositions(entity);
-                    return result;
-                }
-
-                entity.FinalXForce = 0;
-                dy = (int)collisionFlags[0];
-                dx = (int)collisionFlags[2];
-                if (collisionFlags[0] == 0)
-                {
-                    if (dx != 0)
-                    {
-                        goto code_r0x80037c3c;
-                    }
-
-                    goto START_COLLISION_CHECK;
-                }
-                if (collisionFlags[2] == 0)
-                {
-                    entity.FinalYForce = 0x8000;
-                    goto START_COLLISION_CHECK;
-                }
-                goto code_r0x80037c3c;
-
-            case 9:
-            case 10:
-            case 11:
-            case 12:
-            case 13:
-            case 14:
-            case 15:
-                if (collisionFlags[1] == 0)
-                {
-                    if (collisionFlags[2] != 0)
-                    {
-                        entity.FinalXForce = 0;
-                    }
-                }
-                else
-                {
-                    if (collisionFlags[2] != 0)
-                    {
-                        //goto switchD_80037a04_FINAL_OBSTACLE;
-                        UpdateEntityPositions(entity);
-                        return result;
-                    }
-
-                    entity.FinalYForce = 0;
-                }
-                goto START_COLLISION_CHECK;
-
-            case 16:
-                if ((collisionFlags[0] != 0 && collisionFlags[1] != 0) || collisionFlags[2] != 0 || collisionFlags[3] != 0)
-                {
-                    //goto switchD_80037a04_FINAL_OBSTACLE;
-                    UpdateEntityPositions(entity);
-                    return result;
-                }
-
-                entity.FinalYForce = 0;
-                dy = (int)collisionFlags[0];
-                dx = (int)collisionFlags[1];
-                if (collisionFlags[0] == 0 && dx == 0)
-                {
-                    goto START_COLLISION_CHECK;
-                }
-
-                if (collisionFlags[1] == 0)
-                {
-                    entity.FinalXForce = 0xc000;
-                    goto START_COLLISION_CHECK;
-                }
-                break;
-
-            case 17:
-            case 18:
-            case 19:
-            case 20:
-            case 21:
-            case 22:
-            case 23:
-                if (collisionFlags[0] != 0 && collisionFlags[3] != 0)
-                {
-                    //goto switchD_80037a04_FINAL_OBSTACLE;
-                    UpdateEntityPositions(entity);
-                    return result;
-                }
-
-                if (collisionFlags[3] == 0)
-                {
-                    if (collisionFlags[0] != 0)
-                    {
-                        entity.FinalYForce = 0;
-                    }
-                }
-                else
-                {
-                    LAB_80037c70:
-                    entity.FinalXForce = 0;
-                }
-                goto START_COLLISION_CHECK;
-
-            case 24:
-                if ((collisionFlags[1] != 0 && collisionFlags[3] != 0) || collisionFlags[0] != 0 || collisionFlags[2] != 0)
-                {
-                    //goto switchD_80037a04_FINAL_OBSTACLE;
-                    UpdateEntityPositions(entity);
-                    return result;
-                }
-
-                entity.FinalXForce = 0;
-                dy = (int)collisionFlags[1];
-                dx = (int)collisionFlags[3];
-                if (collisionFlags[1] == 0)
-                {
-                    if (dx != 0)
-                    {
-                        goto code_r0x80037c3c;
-                    }
-
-                    goto START_COLLISION_CHECK;
-                }
-                if (collisionFlags[3] == 0)
-                {
-                    entity.FinalYForce = 0x8000;
-                    goto START_COLLISION_CHECK;
-                }
-                code_r0x80037c3c:
-                if (dy == 0)
-                {
-                    entity.FinalYForce = -0x8000;
-                }
-
-                goto START_COLLISION_CHECK;
-
-            case 25:
-            case 26:
-            case 27:
-            case 28:
-            case 29:
-            case 30:
-            case 31:
-                if (collisionFlags[1] != 0 && collisionFlags[2] != 0)
-                {
-                    //goto switchD_80037a04_FINAL_OBSTACLE;
-                    UpdateEntityPositions(entity);
-                    return result;
-                }
-
-                if (collisionFlags[2] != 0)
-                {
-                    //goto LAB_80037c88;
-                    entity.FinalYForce = 0;
-                    goto START_COLLISION_CHECK;
-                }
-
-                if (collisionFlags[1] != 0)
-                {
-                    entity.FinalXForce = 0;
-                }
-
-                goto START_COLLISION_CHECK;
-
-            default:
-                //goto switchD_80037a04_FINAL_OBSTACLE;
-                UpdateEntityPositions(entity);
-                return result;
-        }
-
-        if (dy == 0)
-        {
-            entity.FinalXForce = -0xc000;
-        }
-
-        goto START_COLLISION_CHECK;
     }
 
     private void UpdateEntityPositions(Entity entity, bool clearForceAdjusted = true)
@@ -2514,7 +1872,7 @@ public class EntityManager
         for (var i = 0; i < StaticVariables.g_visibleEntityCount; i++)
         {
             var entity = StaticVariables.g_visibleEntities[i];
-            entity.ZSortValue = (int)(entity.ZSortValue & 0xffff0000) + (entity.PosZ & 0xffff); // 41287762
+            entity.ZSortValue = (int)(entity.ZSortValue & 0xffff0000) + (entity.PosZ >> 16);
         }
     }
 
@@ -2526,21 +1884,22 @@ public class EntityManager
             return entity.ZSortValue;
         }
 
-        var sortval = entity.PosY + (entity.SpriteRef.DepthSortVal << 16);
+        var sortValue = entity.PosY + (entity.SpriteRef.DepthSortVal << 16);
         if ((entity.Flags & 0x80) != 0
             || (entity.AnimFlags & 0x80) != 0)
         {
-            entity.ZSortValue = sortval;
-            return sortval;
+            entity.ZSortValue = sortValue; // 47824896
+            return sortValue;
         }
 
         if (entity.PlatformEntity != null)
         {
             if (entity.PlatformEntity.ZSortValue == 0)
             {
-                sortval = ComputeZSortValue(entity.PlatformEntity);
+                sortValue = ComputeZSortValue(entity.PlatformEntity);
             }
-            if (sortval < entity.PlatformEntity.ZSortValue)
+
+            if (sortValue < entity.PlatformEntity.ZSortValue)
             {
                 entity.ZSortValue = entity.PlatformEntity.ZSortValue;
                 return entity.PlatformEntity.ZSortValue;
@@ -2549,19 +1908,19 @@ public class EntityManager
 
         for (var dex = 0; dex < StaticVariables.g_collideableEntitiesCount; dex++)
         {
-            var checkme = StaticVariables.g_collideableEntities[dex];
-            if (checkme == entity)
+            var otherEntity = StaticVariables.g_collideableEntities[dex];
+            if (otherEntity == entity)
             {
                 continue;
             }
 
-            if (checkme.ZSortDepth >= entity.ZSortDepth)
+            if (otherEntity.ZSortDepth >= entity.ZSortDepth)
             {
                 continue;
             }
 
             //X
-            var x = checkme.PosX + checkme.ModX - entity.ModdedXPos;
+            var x = otherEntity.PosX + otherEntity.ModX - entity.ModdedXPos;
             if (x >= 0)
             {
                 if (x >= entity.Width + 1)
@@ -2571,14 +1930,14 @@ public class EntityManager
             }
             else
             {
-                if (entity.ModdedXPos - (checkme.PosX + checkme.ModX) >= checkme.Width + 1)
+                if (entity.ModdedXPos - (otherEntity.PosX + otherEntity.ModX) >= otherEntity.Width + 1)
                 {
                     continue;
                 }
             }
 
             //Y
-            var y = checkme.PosY + checkme.ModY - entity.ModdedYPos;
+            var y = otherEntity.PosY + otherEntity.ModY - entity.ModdedYPos;
             if (y >= 0)
             {
                 if (y >= entity.Depth + 1)
@@ -2588,26 +1947,26 @@ public class EntityManager
             }
             else
             {
-                if (entity.ModdedYPos - (checkme.PosY + checkme.ModY) >= checkme.Depth + 1)
+                if (entity.ModdedYPos - (otherEntity.PosY + otherEntity.ModY) >= otherEntity.Depth + 1)
                 {
                     continue;
                 }
             }
 
-            if (checkme.ZSortValue == 0)
+            if (otherEntity.ZSortValue == 0)
             {
-                sortval = ComputeZSortValue(checkme);
+                sortValue = ComputeZSortValue(otherEntity);
             }
 
-            if (sortval < checkme.ZSortValue)
+            if (sortValue < otherEntity.ZSortValue)
             {
-                sortval = checkme.ZSortValue;
+                sortValue = otherEntity.ZSortValue;
             }
         }
 
-        entity.ZSortValue = sortval;
+        entity.ZSortValue = sortValue;
 
-        return sortval;
+        return sortValue;
     }
 
     private void UpdateBalanceRecords()
