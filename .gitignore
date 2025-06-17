@@ -13,3 +13,4 @@ Release/
 obj/
 .vs/
 deploy/
+.idea/
