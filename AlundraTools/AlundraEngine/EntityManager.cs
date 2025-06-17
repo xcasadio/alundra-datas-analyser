@@ -77,7 +77,8 @@ public class EntityManager
 
     // 80039d04
     public void InitializeEntity(Entity entity, Entity parentEntity, SpriteRecord sprite, SiEntityRecord entityRecord,
-        uint spriteTableIndex, int entityId, int x, int y, int z, uint animationId, uint direction, int paletteIndex, int sheetSize)
+        uint spriteTableIndex, int entityId, int x, int y, int z, uint animationId, uint direction, int paletteIndex,
+        int sheetSize)
     {
         if (StaticVariables.g_numberOfEntity < entity.Index)
         {
@@ -93,6 +94,7 @@ public class EntityManager
             {
                 linkedEntity = parentEntity;
             }
+
             entity.ChildEntity = linkedEntity;
         }
 
@@ -117,7 +119,8 @@ public class EntityManager
         entity.TargetAnimationId = animationId;
         entity.TargetDirection = direction;
         //uint flags = animData.Flags;
-        entity.Flags = (uint)(sprite.Header.MoreFlags | sprite.Header.CanPickup << 8 | sprite.Header.FlagsPortraitShadowType << 16);
+        entity.Flags = (uint)(sprite.Header.MoreFlags | sprite.Header.CanPickup << 8 |
+                              sprite.Header.FlagsPortraitShadowType << 16);
 
         entity.SpriteProgramIndexes[ScriptHelper.ProgramALoad] = sprite.Header.ProgramLoad;
         entity.SpriteProgramIndexes[ScriptHelper.ProgramBMap] = 0;
@@ -130,7 +133,9 @@ public class EntityManager
         entity.AddedToSheet = sheetSize;
 
         //BalanceRecord balanceRecord = GetSpriteAnimationPtr(entity.SpriteTableIndex);
-        BalanceRecord balanceRecord = _gameEngine.BalanceBin.GetBalanceRecordFromSpriteIndex((int)spriteTableIndex, _gameEngine.CurrentMap.Info.BalanceLevel);
+        BalanceRecord balanceRecord =
+            _gameEngine.BalanceBin.GetBalanceRecordFromSpriteIndex((int)spriteTableIndex,
+                _gameEngine.CurrentMap.Info.BalanceLevel);
         entity.BalanceRecord = balanceRecord;
         byte balanceHp = balanceRecord.Hp;
         entity.HpMax = balanceHp;
@@ -183,7 +188,8 @@ public class EntityManager
     }
 
     // 80039c40
-    private void SetEntityDimensions(Entity entity, int offsetX, int offsetY, int offsetZ, int sizeX, int sizeY, int sizeZ)
+    private void SetEntityDimensions(Entity entity, int offsetX, int offsetY, int offsetZ, int sizeX, int sizeY,
+        int sizeZ)
     {
         entity.NegXMod = -(offsetX << 16);
         entity.NegYMod = -(offsetY << 16);
@@ -403,24 +409,27 @@ public class EntityManager
                         var result = StaticVariables.g_heights_800236d4[0x17 - ys[i] % 0x18];
                         height = ((tile.Height - 1) << 4) + result;
                     }
+
                     slopesHit |= 1;
                     break;
 
                 case 2:
-                    if ((slopesHit & 5) == 0)//it already hit 1 or 3
+                    if ((slopesHit & 5) == 0) //it already hit 1 or 3
                     {
                         var result = StaticVariables.g_heights_800236d4[0x17 - xs[i] % 0x18];
                         height = ((tile.Height - 1) << 4) + result;
                     }
+
                     slopesHit |= 2;
                     break;
 
                 case 3:
-                    if ((slopesHit & 3) == 0)//it already hit 1 or 2
+                    if ((slopesHit & 3) == 0) //it already hit 1 or 2
                     {
                         var result = StaticVariables.g_heights_800236d4[xs[i] % 0x18];
                         height += result;
                     }
+
                     slopesHit |= 4;
                     break;
             }
@@ -919,6 +928,7 @@ public class EntityManager
                             }
                         }
                     }
+
                     entityIndex = entityIndex + 1;
                 } while (entityIndex < StaticVariables.g_collideableEntitiesCount);
             }
@@ -946,7 +956,8 @@ public class EntityManager
         int didAdjustForObstacle = 0;
         int isStraightDir = (entity.TargetDirection & 7) == 0 ? 1 : 0;
 
-        Func<Entity, uint[], uint> collisionFunc = entity == StaticVariables.g_entitySlots[0] ? GetCollisionFlagsWithPlayer : GetCollisionFlags;
+        Func<Entity, uint[], uint> collisionFunc =
+            entity == StaticVariables.g_entitySlots[0] ? GetCollisionFlagsWithPlayer : GetCollisionFlags;
 
         START_COLLISION_CHECK:
         dx = entity.FinalXForce;
@@ -1091,6 +1102,7 @@ public class EntityManager
                 dy = halfDyVal;
                 goto TRY_ADVANCE;
             }
+
             if (halfDyVal == 0)
             {
                 goto LAB_8003799C;
@@ -1139,6 +1151,7 @@ public class EntityManager
                 {
                     entity.FinalXForce = 0xC000;
                 }
+
                 goto START_COLLISION_CHECK;
 
             case 1:
@@ -1156,13 +1169,16 @@ public class EntityManager
                         entity.FinalXForce = 0;
                         goto START_COLLISION_CHECK;
                     }
+
                     goto FINAL_OBSTACLE;
                 }
+
                 if (collisionFlags[3] != 0)
                 {
                     LAB_80037C88:
                     entity.FinalYForce = 0;
                 }
+
                 goto START_COLLISION_CHECK;
 
             case 8:
@@ -1185,6 +1201,7 @@ public class EntityManager
                         entity.FinalYForce = -0x8000;
                     }
                 }
+
                 goto START_COLLISION_CHECK;
 
             case 9:
@@ -1210,6 +1227,7 @@ public class EntityManager
 
                     entity.FinalYForce = 0;
                 }
+
                 goto START_COLLISION_CHECK;
 
             case 16:
@@ -1252,6 +1270,7 @@ public class EntityManager
                     entity.FinalXForce = 0;
                     goto START_COLLISION_CHECK;
                 }
+
                 goto START_COLLISION_CHECK;
 
             case 24:
@@ -1274,6 +1293,7 @@ public class EntityManager
                         entity.FinalYForce = -0x8000;
                     }
                 }
+
                 goto START_COLLISION_CHECK;
 
             case 25:
@@ -1339,6 +1359,7 @@ public class EntityManager
         {
             entity.ForceAdjusted = 1;
         }
+
         entity.ModdedXPos = entity.PosX + entity.ModX;
         entity.ModdedYPos = entity.PosY + entity.ModY;
         entity.ModdedZPos = entity.PosZ + entity.ModZ;
@@ -1432,10 +1453,10 @@ public class EntityManager
         {
             flags[i] = 0;
 
-            if ((entity.MapTiles[i].Flags & flag) != 0  // != 0
-               && entity.MapHeights[i] >= moddedZPos) // la case est plus basse
-            //if ((entity.MapTiles[i].Flags & flag) != 0 
-            //    || moddedZPos <= entity.MapHeights[i])
+            if ((entity.MapTiles[i].Flags & flag) != 0 // != 0
+                && entity.MapHeights[i] >= moddedZPos) // la case est plus basse
+                //if ((entity.MapTiles[i].Flags & flag) != 0 
+                //    || moddedZPos <= entity.MapHeights[i])
             {
                 flags[i] = 1;
             }
@@ -1451,7 +1472,8 @@ public class EntityManager
         Entity currentEntity;
         Entity[] collideableEntities;
 
-        if ((entity != StaticVariables.g_entitySlots[0] || StaticVariables.g_debugState > -1 || (StaticVariables.g_debugFlags & 0x80000000) == 0)
+        if ((entity != StaticVariables.g_entitySlots[0] || StaticVariables.g_debugState > -1 ||
+             (StaticVariables.g_debugFlags & 0x80000000) == 0)
             && (entity.Flags & 0x80U) != 0
             && (entity.AnimFlags & 0x80U) == 0
             && entity.PlatformEntity == null)
@@ -1578,7 +1600,7 @@ public class EntityManager
                 if (otherEntity.ModdedZPos + otherEntity.Depth + 1 == entity.ModdedZPos)
                 {
                     if ((otherEntity.ModdedXPos - entity.ModdedXPos < 0
-                        && entity.ModdedXPos - otherEntity.ModdedXPos < otherEntity.Width + 1)
+                         && entity.ModdedXPos - otherEntity.ModdedXPos < otherEntity.Width + 1)
                         || otherEntity.ModdedXPos - entity.ModdedXPos < entity.Width + 1)
                     {
                         var val = otherEntity.ModdedYPos - entity.ModdedYPos;
@@ -1657,7 +1679,7 @@ public class EntityManager
                 }
                 else if ((entity.Flags & 0x100U) == 0
                          || (entity.CombinedVramFlagsOR & 0x10U) == 0
-                            || 0 < StaticVariables.g_gravityFlag)
+                         || 0 < StaticVariables.g_gravityFlag)
                 {
                     entity.ForceZ = entity.IsZForceApplied << 8;
                 }
@@ -1819,6 +1841,7 @@ public class EntityManager
                 }
             }
         }
+
         return force;
     }
 
@@ -2042,6 +2065,7 @@ public class EntityManager
                     difx = checkme.ModdedXPos - entity.HitBoxX;
                     width = entity.FrameWidth + 1;
                 }
+
                 if (difx >= width)
                 {
                     continue;
@@ -2059,6 +2083,7 @@ public class EntityManager
                     dify = checkme.ModdedYPos - entity.HitBoxY;
                     depth = entity.FrameDepth + 1;
                 }
+
                 if (dify >= depth)
                 {
                     continue;
@@ -2076,6 +2101,7 @@ public class EntityManager
                     difz = checkme.ModdedZPos - entity.HitBoxZ;
                     height = entity.FrameHeight + 1;
                 }
+
                 if (difz >= height)
                 {
                     continue;
@@ -2095,10 +2121,12 @@ public class EntityManager
                     {
                         _gameEngine.EffectManager.CreateAttachedEffect(0, 4, 0, checkme, width, 0, 0, 0);
                     }
+
                     if (valdex == 7 || valdex == 9)
                     {
                         _gameEngine.EffectManager.CreateAttachedEffect(0, 5, 0, checkme, 1, 0, 0, 0);
                     }
+
                     checkme.TouchingEntity = entity;
                 }
 
@@ -2204,8 +2232,10 @@ public class EntityManager
                     entity.ActiveEffect.Status = 0;
                     entity.ActiveEffect = null;
                 }
+
                 continue;
             }
+
             var effect = entity.ActiveEffect;
             if (effect == null)
             {
@@ -2239,7 +2269,8 @@ public class EntityManager
                 && entity.Slope_18c != entity.Slope_190)
             {
                 //sliding effect
-                _gameEngine.EffectManager.CreateEffect_Type0(0, 6, 0, entity.PosX, entity.PosY, entity.CollidedWithEntityZ);
+                _gameEngine.EffectManager.CreateEffect_Type0(0, 6, 0, entity.PosX, entity.PosY,
+                    entity.CollidedWithEntityZ);
             }
 
             if (entity.Slope_18c >= 8)
@@ -2271,7 +2302,8 @@ public class EntityManager
                         continue;
                     }
 
-                    _gameEngine.EffectManager.CreateEffect_Type0(0, 0x15, 0, entity.PosX, entity.PosY, entity.CollidedWithEntityZ);
+                    _gameEngine.EffectManager.CreateEffect_Type0(0, 0x15, 0, entity.PosX, entity.PosY,
+                        entity.CollidedWithEntityZ);
                     continue;
                 case 3:
                     if ((entity.FrameCounter & 0x7) != 0)
@@ -2284,7 +2316,8 @@ public class EntityManager
                         break;
                     }
 
-                    _gameEngine.EffectManager.CreateEffect_Type0(0, _gameEngine.CurrentMap.Info.SlideEffectId, 0, entity.PosX, entity.PosY, entity.CollidedWithEntityZ);
+                    _gameEngine.EffectManager.CreateEffect_Type0(0, _gameEngine.CurrentMap.Info.SlideEffectId, 0,
+                        entity.PosX, entity.PosY, entity.CollidedWithEntityZ);
                     break;
                 default:
                     break;
@@ -2328,7 +2361,7 @@ public class EntityManager
     private void UpdateEntitiesEvents()
     {
         _gameEngine.MovePlayer();
-        
+
         for (var i = 1; i < StaticVariables.g_numberOfEntity; i++)
         {
             var entity = StaticVariables.g_entitySlots[i];
@@ -2433,7 +2466,6 @@ public class EntityManager
                 entity.EventTrigger = -1;
                 keepGoing = true;
             }
-
         } while (keepGoing);
     }
 
@@ -2462,7 +2494,6 @@ public class EntityManager
         }
 
         //displays debug records here
-
     }
 
 
@@ -2517,7 +2548,8 @@ public class EntityManager
             }
 
             //renderable
-            if (entity.Status - 2 < 2 && (entity.DamagedTickCounter & 0x3) != 0x3)//flicker effect, every 3rd frame when being damaged
+            if (entity.Status - 2 < 2 &&
+                (entity.DamagedTickCounter & 0x3) != 0x3) //flicker effect, every 3rd frame when being damaged
             {
                 StaticVariables.g_visibleEntities[StaticVariables.g_visibleEntityCount++] = entity;
             }
@@ -2581,7 +2613,8 @@ public class EntityManager
             }
 
 
-            var tl = _gameEngine.CurrentMap.Map.MapTiles[tileX + tileY * 52]; //entity.MapTiles[tileY * 0xd0 + tileX * 4 + 0x302];
+            var tl = _gameEngine.CurrentMap.Map
+                .MapTiles[tileX + tileY * 52]; //entity.MapTiles[tileY * 0xd0 + tileX * 4 + 0x302];
             tileFlags = tl.Flags;
             //tileFlags = StaticVariables.g_spriteVRAMPointer + tileY * 0xd0 + tileX * 4 + 0x302;
             if ((tileFlags & 0xc00000) == 0 || (tileFlags & 0x80000) == 0)
@@ -2610,6 +2643,7 @@ public class EntityManager
                     tempFlags[i] = 0;
                     bestFlagMask = 0;
                 }
+
                 i = i + 1;
             } while (i < 4);
 
@@ -2637,7 +2671,8 @@ public class EntityManager
                 tileY = 0x3b;
             }
 
-            var tl = _gameEngine.CurrentMap.Map.MapTiles[tileX + tileY * 52]; //entity.MapTiles[tileY * 0xd0 + tileX * 4 + 0x302];
+            var tl = _gameEngine.CurrentMap.Map
+                .MapTiles[tileX + tileY * 52]; //entity.MapTiles[tileY * 0xd0 + tileX * 4 + 0x302];
             tileFlags = (uint)(tl.Walkability | tl.GroundProperty << 8 | tl.Slope << 16 | tl.Height << 24);
             //tileFlags = StaticVariables.g_spriteVRAMPointer + tileY * 0xd0 + tileX * 4 + 0x302;
 
@@ -2645,11 +2680,13 @@ public class EntityManager
             {
                 goto NoCollision;
             }
+
             tileAttr = 0x40000;
             if (((tileFlags & 0xff000000) >> 4) + 1 != entity.ModdedZPos)
             {
                 tileAttr = 0x80000;
             }
+
             if ((tileFlags & tileAttr) == 0)
             {
                 goto NoCollision;
@@ -2708,22 +2745,29 @@ public class EntityManager
                     }
                     else
                     {
-                        debugStr += $"      O{StaticVariables.g_balanceParams} + A{StaticVariables.g_balanceHp - StaticVariables.g_balanceParams} = T{StaticVariables.g_balanceParams}";
+                        debugStr +=
+                            $"      O{StaticVariables.g_balanceParams} + A{StaticVariables.g_balanceHp - StaticVariables.g_balanceParams} = T{StaticVariables.g_balanceParams}";
                     }
+
                     debugStr += $" (Parm) {StaticVariables.g_balanceMultiplier}\n\r";
                 }
+
                 if (damage == null)
                 {
-                    debugStr += $"              {StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} DEAD\n\r";
+                    debugStr +=
+                        $"              {StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} DEAD\n\r";
                     entity.Hp = 0;
                 }
                 else
                 {
-                    debugStr += $"               {StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} N{damage}\n\r";
+                    debugStr +=
+                        $"               {StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} N{damage}\n\r";
                     entity.Hp = damage;
                 }
+
                 goto END;
             }
+
             debugStr += "   Balance patamator error(Result)No Damage\n\r";
 
             StaticVariables.g_messageDebug += debugStr;
@@ -2759,14 +2803,14 @@ public class EntityManager
         if (targetEntity != null && balanceConfig != null)
         {
             balanceId = balanceConfig.Val;
-            
+
             if (balanceId != 0)
             {
                 // TODO understand this
                 //int entityId = targetEntity + (balanceId & 0xf);
                 //byte balanceMultiplier = targetEntity.Bytes[2];
                 balanceMultiplier = 1;
-                
+
                 if ((balanceMultiplier & 0xc0) == 0)
                 {
                     adjustedHpValue = balanceConfig.U2;
@@ -2821,6 +2865,7 @@ public class EntityManager
                     {
                         newHp = hp - i;
                     }
+
                     hp = newHp;
 
                     if (StaticVariables.g_debugState < 0 && (StaticVariables.g_debugFlags & 0x800) != 0)
@@ -2842,6 +2887,7 @@ public class EntityManager
                         StaticVariables.g_balanceHpTotal = balanceConfig.Val;
                         StaticVariables.g_balanceMultiplier = balanceMultiplier;
                     }
+
                     hp = 0;
                 }
             }
