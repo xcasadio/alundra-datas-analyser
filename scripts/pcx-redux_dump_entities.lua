@@ -17,9 +17,12 @@ os.execute('mkdir "' .. OUTPUT_DIR .. '"')
 local frame_no = 0
 local recording = false
 
+local function s8(addr)  return ffi.cast("int8_t*",   mem + (addr-0x80000000))[0]end
+local function u8(addr)  return ffi.cast("uint8_t*",  mem + (addr-0x80000000))[0]end
+local function s16(addr) return ffi.cast("int16_t*" , mem + (addr-0x80000000))[0] end
 local function u32(addr) return ffi.cast("uint32_t*", mem + (addr-0x80000000))[0] end
 local function s32(addr) return ffi.cast("int32_t*" , mem + (addr-0x80000000))[0] end
-local function s16(addr) return ffi.cast("int16_t*" , mem + (addr-0x80000000))[0] end
+
 local function ptr(addr) return u32(addr) end
 local function idx_from_ptr(p)
   if p < BASE_ADDR or p >= BASE_ADDR + ENTITY_COUNT * ENTITY_SIZE then return nil end
@@ -146,7 +149,7 @@ local function read_entity(addr)
   E.collidedWithEntityZ  = s32(addr+0x140)
   E.isAboveGround        = s32(addr+0x144)
 
-  E.mapTiles             = int_array(addr+0x148 , 4)
+  E.mapTiles             = serializeMapTiles(addr+0x148)
   E.mapHeights           = int_array(addr+0x158 , 4)
 
   E.platformUpdateFlag   = s32(addr+0x168)
@@ -221,6 +224,25 @@ local function read_entity(addr)
   return E
 end
 
+function serializeMapTiles(addr)
+    local serializedMapTiles = {}
+    for i = 1, 4 do
+        local mapTileAddr = addr + (i - 1) * 0xc
+        local mapTile = {
+            walkability = u8(mapTileAddr),
+            groundProperty = u8(mapTileAddr + 0x1),
+            slope = u8(mapTileAddr + 0x2),
+            height = u8(mapTileAddr + 0x3),
+            tileId = s16(mapTileAddr + 0x4),
+            palette = s16(mapTileAddr + 0x6),
+            tile = s16(mapTileAddr + 0x8),
+            tilesOffset = s16(mapTileAddr + 0xA)
+        }
+        table.insert(serializedMapTiles, mapTile)
+    end
+    return serializedMapTiles
+end
+
 -- {name, addr, kind, count}
 local G = {
   {"g_mapFlags",                0x801EB344, "u32arr", 1024},
@@ -273,6 +295,7 @@ local G = {
   {"g_cameraLookAtZ",           0x80134358, "s32"},
   {"g_visibleEntityCount",      0x8013435C, "s32"},
   {"g_numberOfEntity",          0x80134360, "s32"},
+  {"g_entityFollowedByCamera",  0x801345fc, "eptr"},
   {"g_nextEntityIndex",         0x80134600, "s32"},
   {"g_mapOffsetX",              0x8013FB68, "s32"},
   {"g_mapOffsetY",              0x8013FB6C, "s32"},
