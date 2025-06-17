@@ -52,7 +52,7 @@ public partial class FrmGame : Form
         [nameof(Entity.Hp)] = "Gameplay",
         [nameof(Entity.Flags)] = "Gameplay",
         [nameof(Entity.Flags2)] = "Gameplay",
-        [nameof(Entity.ActionState)] = "Gameplay",
+        [nameof(Entity.WarpEntity)] = "Gameplay",
         [nameof(Entity.Status)] = "Gameplay",
         [nameof(Entity.IsNotProcessable)] = "Gameplay",
         [nameof(Entity.ContentsItemId)] = "Gameplay",
@@ -366,7 +366,7 @@ public partial class FrmGame : Form
                $"NegMod: {entity.NegXMod} {entity.NegYMod} ({entity.NegXMod >> 16} {entity.NegYMod >> 16}){Environment.NewLine}" +
                $"Tile Pos: {entity.TileX} {entity.TileY} {entity.TileZ}{Environment.NewLine}" +
                //Status
-               $"ActionState: {entity.ActionState}{Environment.NewLine}" +
+               $"WarpEntity: {entity.WarpEntity}{Environment.NewLine}" +
                $"Flags: {entity.Flags}{Environment.NewLine}" +
                $"Flags2: {entity.Flags2}{Environment.NewLine}" +
                $"Status: {entity.Status}{Environment.NewLine}" +

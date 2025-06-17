@@ -2,6 +2,10 @@
 
 public class MapTile
 {
+    // TODO: remove, for debugging purpose
+    public int TileX { get; set; }
+    public int TileY { get; set; }
+
     public MapTile(BinaryReader br)
     {
         long i = br.ReadUInt32();

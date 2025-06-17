@@ -18,6 +18,8 @@ public class Map
         for (var i = 0; i < MapTiles.Length; i++)
         {
             MapTiles[i] = new MapTile(br);
+            MapTiles[i].TileY = i / Width;
+            MapTiles[i].TileX = i % Width;
         }
 
         WallTilesOffset = (int)(br.BaseStream.Position - binoffset);

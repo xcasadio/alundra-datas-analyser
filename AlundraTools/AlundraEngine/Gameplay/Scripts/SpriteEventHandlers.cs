@@ -734,7 +734,7 @@ public class SpriteEventHandlers
                 entity.Flags2 = 0;
                 if (entity.PlatformEntity != null)
                 {
-                    entity.PlatformEntity.ActionState = 0;
+                    entity.PlatformEntity.WarpEntity = null;
                 }
                 entity.PlatformEntity = null;
                 return;
@@ -856,7 +856,7 @@ public class SpriteEventHandlers
 
         if (entity.PlatformEntity != null)//redudant check
         {
-            entity.ActionState = 0;
+            entity.WarpEntity = null;
         }
 
         entity.PlatformEntity = null;

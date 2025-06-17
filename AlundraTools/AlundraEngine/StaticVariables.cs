@@ -1,6 +1,7 @@
 ﻿using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
+using AlundraEngine.Sound;
 
 namespace AlundraEngine;
 
@@ -442,6 +443,255 @@ public static class StaticVariables
         0x0003, 0x0003, 0x0003, 0x0003,
         0x0000, 0x0000, 0x0000, 0x0000 
     ];
+    // 80028B8C
+    public static short[] g_warpStepThresholdTable = [0x0000, 0x0100, 0x0200, 0x0300];
+    // 80028C14
+    public static byte[] g_tileAttributeLUT =
+    [
+        0x00, 0x00, 0x01, 0x02,  // [0-3]
+        0x03, 0x08, 0x09, 0x0A,  // [4-7]
+        0x0B, 0x06, 0x07, 0x00,  // [8-11]
+        0x00, 0x00, 0x05, 0x00,  // [12-15]
+        0x04, 0x00, 0x00, 0x00,  // [16-19]
+        0x00, 0x00, 0x00, 0x00,  // [20-23]
+        0x00, 0x00, 0x00, 0x00,  // [24-27]
+        0x00, 0x00, 0x00, 0x00,  // [28-31]
+        0x00, 0x00, 0x00, 0x00,  // [32-35]
+        0x00, 0x00, 0x00, 0x00,  // [36-39]
+        0x00, 0x00, 0x00, 0x00,  // [40-43]
+        0x00, 0x00, 0x00, 0x00,  // [44-47]
+        0x00, 0x00, 0x00, 0x00,  // [48-51]
+        0x00, 0x00, 0x00, 0x00,  // [52-55]
+        0x00, 0x00, 0x00, 0x00,  // [56-59]
+        0x00, 0x00, 0x00, 0x00,  // [60-63]
+        0x00, 0x00, 0x00, 0x00,  // [64-67]
+        0x00, 0x00, 0x00, 0x00,  // [68-71]
+        0x00, 0x00, 0x00, 0x00,  // [72-75]
+        0x00, 0x00, 0x00, 0x00,  // [76-79]
+        0x00, 0x00, 0x00, 0x00,  // [80-83]
+        0x00, 0x00, 0x00, 0x00,  // [84-87]
+        0x00, 0x00, 0x00, 0x00,  // [88-91]
+        0x00, 0x00, 0x00, 0x00,  // [92-95]
+        0x00, 0x00, 0x00, 0x00   // [96-99]
+    ];
+    // 800B9FE8
+    public static readonly short[] g_tileMapWarpSections =
+    [
+        0x0000, 0x0000, 0x0000, 0x0000,       // [0-3]
+        unchecked((short)0xFFFF), 0x0001, 0x0001, 0x0000,  // [4-7]
+        0x0001, 0x001F, 0x0001, 0x0001,       // [8-11]
+        0x0001, 0x0001, 0x0020, 0x0001,       // [12-15]
+        0x0001, 0x0002, 0x0001, 0x0021,       // [16-19]
+        0x0001, 0x0001, 0x0003, 0x0001,       // [20-23]
+        0x0022, 0x0002, 0x0001, 0x0000,       // [24-27]
+        0x0001, 0x0023, 0x0002, 0x0001,       // [28-31]
+        0x0001, 0x0001, 0x0024, 0x0006,       // [32-35]
+        0x0001, 0x0001, 0x0001, 0x0025,       // [36-39]
+        0x0001, 0x0001, 0x0004, 0x0001,       // [40-43]
+        0x0026, 0x0003, 0x0001, 0x0000,       // [44-47]
+        0x0001, 0x0027, 0x0003, 0x0001,       // [48-51]
+        0x0001, 0x0001, 0x0028, 0x0003,       // [52-55]
+        0x0001, 0x0002, 0x0001, 0x0029,       // [56-59]
+        0x0003, 0x0001, 0x0003, 0x0001,       // [60-63]
+        0x002A, 0x0004, 0x0001, 0x0000,       // [64-67]
+        0x0001, 0x002B, 0x0004, 0x0001,       // [68-71]
+        0x0001, 0x0001, 0x002C, 0x0005,       // [72-75]
+        0x0001, 0x0000, 0x0001, 0x002D,       // [76-79]
+        0x0005, 0x0001, 0x0001, 0x0001,       // [80-83]
+        0x002E, 0x0007, 0x0001, 0x0000,       // [84-87]
+        0x0001, 0x002F, 0x0007, 0x0001,       // [88-91]
+        0x0001, 0x0001, 0x0030, 0x0007,       // [92-95]
+        0x0001, 0x0002, 0x0001, 0x0031,       // [96-99]
+        0x0007, 0x0001, 0x0003, 0x0001,       // [100-103]
+        0x0032, 0x0008, 0x0001, 0x0000,       // [104-107]
+        0x0001, 0x0033, 0x0008, 0x0001,       // [108-111]
+        0x0001, 0x0001, 0x0034, 0x0008,       // [112-115]
+        0x0001, 0x0002, 0x0001, 0x0035,       // [116-119]
+        0x0008, 0x0001, 0x0003, 0x0001,       // [120-123]
+        0x0036, 0x0009, 0x0001, 0x0000,       // [124-127]
+        0x0001, 0x0037, 0x0009, 0x0001,       // [128-131]
+        0x0001, 0x0001, 0x0038, 0x0009,       // [132-135]
+        0x0001, 0x0002, 0x0001, 0x0039,       // [136-139]
+        0x0009, 0x0001, 0x0003, 0x0001,       // [140-143]
+        0x003A, 0x000A, 0x0001, 0x0000,       // [144-147]
+        0x0001, 0x003B, 0x000A, 0x0001,       // [148-151]
+        0x0000, 0x0001, 0x003C, 0x001D,       // [152-155]
+        0x0000, 0x0000, 0x0001, 0x003D,       // [156-159]
+        0x001A, 0x0000, 0x0000, 0x0001,       // [160-163]
+        0x003E, 0x001C, 0x0000, 0x0000,       // [164-167]
+        0x0001, 0x003F, 0x0000, 0x0000,       // [168-171]
+        0x0000, 0x0001, 0x0040, 0x000B,       // [172-175]
+        0x0001, 0x0000, 0x0001, 0x0041,       // [176-179]
+        0x000C, 0x0000, 0x0000, 0x0009,       // [180-183]
+        0x0042, 0x000D, 0x0000, 0x0000,       // [184-187]
+        0x0001, 0x0043, 0x000F, 0x0000,       // [188-191]
+        0x0000, 0x0001, 0x0044, 0x001E,       // [192-195]
+        0x0000, 0x0000, 0x0001, 0x0045,       // [196-199]
+        0x001B, 0x0000, 0x0002, 0x0001,       // [200-203]
+        0x0046, 0x000E, 0x0000, 0x0000,       // [204-207]
+        0x0001, 0x0047, 0x000F, 0x0000,       // [208-211]
+        0x0002, 0x0001, 0x0048, 0x0010,       // [212-215]
+        0x0001, 0x0000, 0x0001, 0x0049,       // [216-219]
+        0x0010, 0x0001, 0x0001, 0x0001,       // [220-223]
+        0x004A, 0x0011, 0x0001, 0x0000,       // [224-227]
+        0x0001, 0x004B, 0x0011, 0x0001,       // [228-231]
+        0x0001, 0x0001, 0x004C, 0x0012,       // [232-235]
+        0x0001, 0x0000, 0x0001, 0x004D,       // [236-239]
+        0x0012, 0x0001, 0x0001, 0x0001,       // [240-243]
+        0x004E, 0x0013, 0x0001, 0x0000,       // [244-247]
+        0x0001, 0x004F, 0x0013, 0x0001,       // [248-251]
+        0x0001, 0x0001, 0x0050, 0x0014,       // [252-255]
+        0x0001, 0x0000, 0x0001, 0x0051,       // [256-259]
+        0x0014, 0x0001, 0x0001, 0x0001,       // [260-263]
+        0x0052, 0x0015, 0x0001, 0x0000,       // [264-267]
+        0x0001, 0x0053, 0x001F, 0x0001,       // [268-271]
+        0x0001, 0x0001, 0x0054, 0x0016,       // [272-275]
+        0x0001, 0x0000, 0x0001, 0x0055,       // [276-279]
+        0x0016, 0x0001, 0x0001, 0x0001,       // [280-283]
+        0x0056, 0x001C, 0x0000, 0x0000,       // [284-287]
+        0x0001, 0x0057, 0x0000, 0x0000,       // [288-291]
+        0x0001, 0x0000, 0x0058, 0x0017,       // [292-295]
+        0x0001, 0x0000, 0x0001, 0x0059,       // [296-299]
+        0x001C, 0x0000, 0x0000, 0x0001,       // [300-303]
+        0x005A, 0x0000, 0x0000, 0x0000,       // [304-307]
+        0x0063, 0x005B, 0x0018, 0x0000,       // [308-311]
+        0x0000, 0x0001, 0x005C, 0x0018,       // [312-315]
+        0x0000, 0x0001, 0x0001, 0x005D,       // [316-319]
+        0x0018, 0x0000, 0x0002, 0x0001,       // [320-323]
+        0x005E, 0x0018, 0x0000, 0x0003,       // [324-327]
+        0x0001, 0x005F, 0x0018, 0x0000,       // [328-331]
+        0x0003, 0x0001, 0x0060, 0x0018,       // [332-335]
+        0x0000, 0x0004, 0x0001, 0x0061,       // [336-339]
+        0x0018, 0x0000, 0x0005, 0x0001,       // [340-343]
+        0x0062, 0x0019, 0x0000, 0x0001,       // [344-347]
+        0x0000, 0x0063, 0x0019, 0x0000,       // [348-351]
+        0x0002, 0x0000, 0x0064, 0x0019,       // [352-355]
+        0x0000, 0x000A, 0x0000, 0x0065,       // [356-359]
+        0x0019, 0x0000, 0x001E, 0x0000,       // [360-363]
+        0x0066, 0x001C, 0x0000, 0x0000,       // [364-367]
+        0x0001, 0x0067, 0x001C, 0x0000,       // [368-371]
+        0x0000, 0x0001, 0x0068, 0x001C,       // [372-375]
+        0x0000, 0x0000, 0x0001, 0x0069,       // [376-379]
+        0x001C, 0x0000, 0x0000, 0x0001,       // [380-383]
+        0x006A, 0x001C, 0x0000, 0x0000,       // [384-387]
+        0x0001, 0x006B, 0x001C, 0x0000,       // [388-391]
+        0x0000, 0x0001, 0x006C, 0x0000,       // [392-395]
+        0x0000, 0x0000, 0x0000, 0x006D,       // [396-399]
+        0x0000, 0x0000, 0x0000, 0x0000,       // [400-403]
+        0x006E, 0x0000, 0x0000, 0x0000,       // [404-407]
+        0x0000, 0x006F, 0x0000, 0x0000,       // [408-411]
+        0x0000, 0x0000, 0x0070, 0x0000,       // [412-415]
+        0x0000, 0x0000, 0x0000, 0x0071,       // [416-419]
+        0x0000, 0x0000, 0x0000, 0x0000,       // [420-423]
+        0x0072, 0x0000, 0x0000, 0x0000,       // [424-427]
+        0x0000, 0x0073, 0x0000, 0x0000,       // [428-431]
+        0x0000, 0x0000, 0x0074, 0x001C,       // [432-435]
+        0x0000, 0x0000, 0x0001, 0x0075,       // [436-439]
+        0x001C, 0x0000, 0x0000, 0x0001,       // [440-443]
+        0x0076, 0x001C, 0x0000, 0x0000,       // [444-447]
+        0x0001, 0x0077, 0x0000, 0x0000,       // [448-451]
+        0x0000, 0x0000, unchecked((short)0xFFFF), 0x0000,  // [452-455]
+        0x0000, 0x0000, 0x0000, unchecked((short)0xFFFF),  // [456-459]
+        0x0000, 0x0000, 0x0000, 0x0000,       // [460-463]
+        unchecked((short)0xFFFF), 0x0000, 0x0000, 0x0000,  // [464-467]
+        0x0000, unchecked((short)0xFFFF), 0x0000, 0x0000,  // [468-471]
+        0x0000, 0x0000, unchecked((short)0xFFFF), 0x0000,  // [472-475]
+        0x0000, 0x0000, 0x0000, unchecked((short)0xFFFF),  // [476-479]
+        0x0000, 0x0000, 0x0000, 0x0000,       // [480-483]
+        unchecked((short)0xFFFF), 0x0000, 0x0000, 0x0000,  // [484-487]
+        0x0000, unchecked((short)0xFFFF), 0x0000, 0x0000,  // [488-491]
+        0x0000, 0x0000, unchecked((short)0xFFFF), 0x0000,  // [492-495]
+        0x0000, 0x0000, 0x0000, unchecked((short)0xFFFF),  // [496-499]
+        0x0000, 0x0000, 0x0000, 0x0000,       // [500-503]
+        0x0010, 0x0040, 0x00E0, 0x0000,       // [504-507]
+        0x0008, 0x0008, 0x0000, 0x0000,       // [508-511]
+        0x0000, 0x0000, 0x0018, 0x0040,       // [512-515]
+        0x00E8, 0x0000, 0x0008, 0x0008,       // [516-519]
+        0x0000, 0x0000, 0x0000, 0x0000,       // [520-523]
+        0x0020, 0x0040, 0x00F0, 0x0000,       // [524-527]
+        0x0008, 0x0008, 0x0000, 0x0000,       // [528-531]
+        0x0000, 0x0000, 0x0028, 0x0040,       // [532-535]
+        0x0078, 0x0000, 0x0008, 0x0008,       // [536-539]
+        0x0000, 0x0000, 0x0000, 0x0000,       // [540-543]
+        0x0030, 0x0040, 0x0080, 0x0000,       // [544-547]
+        0x0008, 0x0008, 0x0000, 0x0000,       // [548-551]
+        0x0000, 0x0000, 0x0038, 0x0040,       // [552-555]
+        0x0088, 0x0000, 0x0008, 0x0008,       // [556-559]
+        0x0000, 0x0000, 0x0000, 0x0000,       // [560-563]
+        0x0040, 0x0040, 0x0090, 0x0000,       // [564-567]
+        0x0008, 0x0008, 0x0000, 0x0000,       // [568-571]
+        0x0000, 0x0000, 0x0048, 0x0040,       // [572-575]
+        0x0098, 0x0000, 0x0008, 0x0008,       // [576-579]
+        0x0000, 0x0000, 0x0000, 0x0000,       // [580-583]
+        0x0050, 0x0040, 0x00A0, 0x0000,       // [584-587]
+        0x0008, 0x0008, 0x0000, 0x0000,       // [588-591]
+        0x0000, 0x0000, 0x0058, 0x0040,       // [592-595]
+        0x10A0, 0x0000, 0x0008, 0x0008,       // [596-599]
+        0x0000, 0x0000, 0x0000, 0x0000,       // [600-603]
+        0x0060, 0x0040, 0x10A8, 0x0000,       // [604-607]
+        0x0008, 0x0008, 0x0000, 0x0000,       // [608-611]
+        0x0000, 0x0000, 0x0068, 0x0040,       // [612-615]
+        0x00B8, 0x0000, 0x0008, 0x0008,       // [616-619]
+        0x0000, 0x0000, 0x0000, 0x0000,       // [620-623]
+        0x0070, 0x0040, 0x00C0, 0x0000,       // [624-627]
+        0x0008, 0x0008, 0x0000, 0x0000,       // [628-631]
+        0x0000, 0x0000, 0x0078, 0x0040,       // [632-635]
+        0x0078, 0x0000, 0x0008, 0x0008,       // [636-639]
+        0x0000, 0x0000                        // [640-641]
+    ];
+    // 800C5F7C
+    public static int[] g_iconNameEtcBase =
+    [
+        0, 0, 0, 0x01810000, 0, 0x01010000, 0, 0x01010000,
+        0, 0x01010000, 0, 0x01010000, 0, 0x01010000, 0, 0x01010000,
+        0, 0x01010000, 0, 0x01010000, 0, 0x01010000, 0, 0,
+        0, 0, 0, 0, 0, 0x01010000, 0, 0,
+        0, 0x01010000, 0, 0x01820000, 0, 0x01020000, 0, 0x01020000,
+        0, 0x01020000, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0x01800000, 0, 0x01000000, 0, 0x01000000,
+        0, 0x01000000, 0, 0, 0, 0, 0, 0x01000000,
+        0, 0x01000000, 0, 0x01003400, 0, 0, 0, 0x01000000,
+        0, 0x09003401, 0, 0x01003401, 0, 0x01003401, 0, 0x01003401,
+        0, 0x01000000, 0, 0x01003401, 0, 0, 0, 0x01000000,
+        0, 0x01000000, 0, 0x01000000, 0, 0x01000000, 0, 0x01000000,
+        0, 0x01000000, 0, 0x01000000, 0, 0x01000000, 0, 0x01030000,
+        0, 0x01030000, 0, 0x01030000, 0, 0x01030000, 0, 0x01030000,
+        0, 0x01030000, 0, 0x01000000, 0, 0, 0, 0x01000000,
+        0, 0x01000000, 0, 0x09003400, 0, 0x01000000, 0, 0x01000000,
+        0, 0x01000000, 0, 0x01000000, 0, 0x01000000, 0, 0x01000000,
+        0, 0x01000000, 0, 0x00003501, 0, 0x00003501, 0, 0x00003501,
+        0, 0x00003501, 0, 0x01000000, 0, 0x01000000, 0, 0x01000000,
+        0, 0x01000000, 0, 0x01000000, 0, 0x01000000, 0, 0x00003400,
+        0, 0, 0, 0x00003601, 0, 0x00003601, 0, 0,
+        0, 0, 0, 0x00003401, 0, 0x00003401, 0, 0x00003401,
+        0, 0, 0, 0x01003400, 0, 0x01000000, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0
+    ];
+    // 80022814
+    public static short[] g_hitSoundEffects =
+    [
+        0x0C, 0x15, 0x13, 0x10,   // [0-3]
+        0x15, 0x00, 0x0C, 0x00,   // [4-7]
+        0x07, 0x07, 0x03, 0x03,   // [8-11]
+        0x100, 0x180, 0x200, 0x280,   // [12-15]
+        0x180, unchecked((short)0xFF40), 0x180, unchecked((short)0xFF40),   // [16-19]
+        0x180, unchecked((short)0xFFA0), 0x180, unchecked((short)0xFEE0),   // [20-23]
+        0x100, unchecked((short)0xFF40), 0x100, unchecked((short)0xFFC0),   // [24-27]
+        0x100, unchecked((short)0xFF80), 0x100, unchecked((short)0xFF80),   // [28-31]
+        0x20, 0x20, 0x03, unchecked((short)0xFF80),   // [32-35]
+        0x20, 0x7FFF, 0x4000, 0x00,   // [36-39]
+        0x0F, 0x0F, 0x07, 0x07,   // [40-43]
+        0x100, 0x140, 0x180, 0x1C0,   // [44-47]
+        0xC0, unchecked((short)0xFFA0), 0xC0, unchecked((short)0xFFA0),   // [48-51]
+        0xC0, 0x00, 0xC0, unchecked((short)0xFF40),   // [52-55]
+        0x80, unchecked((short)0xFF80), 0x80, 0x00,   // [56-59]
+        0x80, unchecked((short)0xFFC0), 0x80, unchecked((short)0xFFC0),   // [60-63]
+        0x00, 0x00, 0x07, unchecked((short)0xFFC0),   // [64-67]
+        0x00, 0x00, 0x00, 0x00    // [68-71]
+    ];
+    // 800227F4
+    public static short[] SHORT_ARRAY_800227f4 = [0x0, 0x14, 0x12, 0x10, 0x0, 0x0, 0x0, 0x0];
 
     public static void Initialize()
     {
@@ -766,9 +1016,9 @@ public static class StaticVariables
     public static char[] s_L_80022704 = new char[4]; // 80022704
     public static char[] s_U_80022708 = new char[4]; // 80022708
     public static char[] s_D_8002270c = new char[4]; // 8002270C
-    public static short[] SHORT_ARRAY_800227f4 = new short[8]; // 800227F4
+    //public static short[] SHORT_ARRAY_800227f4 = new short[8]; // 800227F4
     public static short[] SHORT_ARRAY_80022804 = new short[8]; // 80022804
-    public static short[] g_hitSoundEffects = new short[72]; // 80022814
+    //public static short[] g_hitSoundEffects = new short[72]; // 80022814
     //public static byte[] BYTE_ARRAY_800228a4 = new byte[8]; // 800228A4
     public static char[] s_ARM_80022be4 = new char[84]; // 80022BE4
     //public static uint[] UINT_ARRAY_80022c6c = new uint[16]; // 80022C6C
@@ -922,10 +1172,9 @@ public static class StaticVariables
     public static byte DAT_80028b54; // 80028B54
     public static byte DAT_80028b55; // 80028B55
     public static byte DAT_80028b57; // 80028B57
-    public static int g_warpStepThresholdTable; // 80028B8C
+    //public static short[] g_warpStepThresholdTable; // 80028B8C
     public static int[] g_tileAttributeXForces = new int[16]; // 80028B94
     public static int[] g_tileAttributeYForces = new int[16]; // 80028BD4
-    public static int[] g_tileAttributeLUT = new int[25]; // 80028C14
     public static byte g_tileWarpInitFlags; // 80028C78
     public static int g_tileWarpDataActive; // 80028C79
     public static int g_tileWarpDataInactive; // 80028C7D
@@ -1082,21 +1331,6 @@ public static class StaticVariables
     public static short DAT_800b9f40; // 800B9F40
     public static short DAT_800b9fa0; // 800B9FA0
     public static short DAT_800b9fe2; // 800B9FE2
-    public static short g_tilemapWarpSections; // 800B9FE8
-    public static short DAT_800b9fea; // 800B9FEA
-    public static short[] g_tileMapWarpSections = new short[128]; // 800B9FEC
-    public static short DAT_800bcb30; // 800BCB30
-    public static short DAT_800bcb32; // 800BCB32
-    public static short DAT_800bcb34; // 800BCB34
-    public static short DAT_800bcb36; // 800BCB36
-    public static short DAT_800bf2a0; // 800BF2A0
-    public static short DAT_800bf2a2; // 800BF2A2
-    public static short DAT_800bf2a4; // 800BF2A4
-    public static short DAT_800bf2a6; // 800BF2A6
-    public static short DAT_800c1a10; // 800C1A10
-    public static short DAT_800c1a12; // 800C1A12
-    public static short DAT_800c1a14; // 800C1A14
-    public static short DAT_800c1a16; // 800C1A16
     public static char[] g_entitySpriteNamesTable = new char[372]; // 800C400C
     public static int INT_800c4180; // 800C4180
     public static short DAT_800c4184; // 800C4184
@@ -1230,7 +1464,7 @@ public static class StaticVariables
     public static int DAT_800c5f48; // 800C5F48
     public static int DAT_800c5f4c; // 800C5F4C
     public static int DAT_800c5f50; // 800C5F50
-    public static int g_iconNameEtcBase; // 800C5F7C
+    //public static int[] g_iconNameEtcBase; // 800C5F7C
     public static int[] g_warpVelocityFlags = new int[195]; // 800C5F80
     public static int g_tileSetEtcBase; // 800C628C
     public static int g_paletteSetEtcBase; // 800C6290
@@ -1488,7 +1722,7 @@ public static class StaticVariables
     public static int g_frameTimer; // 80126FF8
     public static int g_playerWarpTimer; // 80126FFC
     public static int g_gravityFlag; // 80127000
-    public static int[] g_intArray_80127008 = new int[64]; // 80127008
+    public static BalanceRecord[] g_intArray_80127008 = new BalanceRecord[2]; // 80127008
     public static Entity g_activeCollisionEntity; // 80127108
     public static uint g_currentTileFlags; // 8012710C
     public static int g_playerEffectTransitionCooldown; // 80127110
@@ -1516,7 +1750,7 @@ public static class StaticVariables
     public static Entity g_emptyEntityForClearing; // 80134368
     public static Entity g_entityFollowedByCamera; // 801345FC
     public static int g_nextEntityIndex; // 80134600
-    public static char[] g_messageDebug = new char[16384]; // 80134608
+    public static string g_messageDebug = string.Empty;// new char[16384]; // 80134608
     public static SpriteEffect[] g_effectSlots = new SpriteEffect[128]; // 80138608
     public static MapEvent[] g_mapEvents = new MapEvent[64]; // 8013C688
     public static int[] g_monitorData = new int[3]; // 8013C68C
@@ -1585,13 +1819,13 @@ public static class StaticVariables
     public static int g_itemIdThreshold; // 80143DF0
     public static byte[] g_balanceBinBuffer = new byte[12288]; // 80143DF8
     public static int g_balanceAnimIndex; // 80146DF8
-    public static int g_balanceEffectSourceList; // 80146E00
+    public static BalanceRecord[] g_balanceEffectSources; // 80146E00
     public static int[] g_items = new int[5]; // 80146E04
-    public static short g_balanceEffectHpTotal; // 80146E18
-    public static short g_balanceEffectParams; // 80146E1A
-    public static short g_balanceEffectHp; // 80146E1C
-    public static short g_balanceEffectParams_2; // 80146E1E
-    public static short g_balanceEffectResult; // 80146E20
+    public static short g_balanceHpTotal; // 80146E18
+    public static short g_balanceParams; // 80146E1A
+    public static short g_balanceHp; // 80146E1C
+    public static short g_balanceMultiplier; // 80146E1E
+    public static short g_balanceResult; // 80146E20
     public static short[] g_clutTable = new short[16]; // 80146E28
     public static short g_tpageOverlayA; // 80146E48
     public static short g_tpageWind1; // 80146E4A
@@ -1715,7 +1949,7 @@ public static class StaticVariables
     public static byte[] BYTE_ARRAY_80175d38 = new byte[1496]; // 80175D38
     public static int g_drawFrameFlags; // 80176310
     public static FadeControl g_fadeControl; // 80176318
-    public static short[] g_warpUsageTable = new short[256]; // 8017631C
+    public static short[] g_warpUsageTable = new short[256]; // 8017631C point to 801eb83e
     public static int g_totalWarpEntries; // 8017638C
     public static int g_cdSmallBuffer; // 80176390
     public static byte DAT_CDRom_8017e390; // 8017E390

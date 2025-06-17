@@ -4382,7 +4382,7 @@ public class EntityEventHandlers
     // 8003FF34
     private int Script_132_084(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var iVar1 = _gameEngine.StartWarpToMap((uint)variables[1]);
+        var iVar1 = _gameEngine.StartWarpToMap(variables[1]);
 
         if (iVar1 == -1)
         {

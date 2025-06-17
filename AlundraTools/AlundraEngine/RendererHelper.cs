@@ -90,7 +90,7 @@ public class RendererHelper
                 {
                     var map = entity.IsMapSprite ? gameMap : datasBin.AlundraGameMap;
 
-                    if (entity.Frame != null) // why?? TODO, not initialized ?
+                    //if (entity.Frame?.Images != null) // why?? TODO, not initialized when we load a dump?
                     {
                         var iset = entity.Frame.Images;
                         for (var idex = iset.NumberOfImages - 1; idex >= 0; idex--)
@@ -119,7 +119,11 @@ public class RendererHelper
             {
                 for (int dy = -1; dy <= 1; dy++)
                 {
-                    if (dx == 0 && dy == 0) continue;
+                    if (dx == 0 && dy == 0)
+                    {
+                        continue;
+                    }
+
                     g.DrawString(textDisplayParameter.Text, _font, Brushes.Black, textDisplayParameter.X + dx, textDisplayParameter.Y + dy);
                 }
             }

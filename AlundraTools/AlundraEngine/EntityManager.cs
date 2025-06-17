@@ -335,7 +335,7 @@ public class EntityManager
     }
 
     // 800370c4
-    private int ComputeEntityGroundHeight(Entity entity)
+    public int ComputeEntityGroundHeight(Entity entity)
     {
         var xs = new int[4];
         var ys = new int[4];
@@ -390,7 +390,7 @@ public class EntityManager
             var mapWidth = _gameEngine.CurrentMap.Map.Width;
             var tile = _gameEngine.CurrentMap.Map.MapTiles[tileY * mapWidth + tileX];
             entity.MapTiles[i] = tile;
-            int height = (tile.Height);
+            int height = tile.Height;
 
             switch (tile.Slope & 0x3)
             {
@@ -574,6 +574,7 @@ public class EntityManager
         }
     }
 
+    // 80038364
     private void UpdateEntitiesPhysics()
     {
         for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
@@ -616,6 +617,7 @@ public class EntityManager
         }
     }
 
+    // 80037364
     private void UpdateRidingEntity(Entity entity, Entity ridingEntity)
     {
         if (ridingEntity.RidingEntity != null)
@@ -942,9 +944,9 @@ public class EntityManager
 
         int modX = 0;
         int didAdjustForObstacle = 0;
-        int isStraightDir = ((entity.TargetDirection & 7) == 0) ? 1 : 0;
+        int isStraightDir = (entity.TargetDirection & 7) == 0 ? 1 : 0;
 
-        Func<Entity, uint[], uint> collisionFunc = (entity == StaticVariables.g_entitySlots[0]) ? GetCollisionFlagsWithPlayer : GetCollisionFlags;
+        Func<Entity, uint[], uint> collisionFunc = entity == StaticVariables.g_entitySlots[0] ? GetCollisionFlagsWithPlayer : GetCollisionFlags;
 
         START_COLLISION_CHECK:
         dx = entity.FinalXForce;
@@ -969,7 +971,6 @@ public class EntityManager
         collisionFlags[2] = 0;
         collisionFlags[3] = 0;
 
-        // applique le déplacement brut
         entity.PosX += dx;
         entity.PosY += dy;
         entity.ModdedXPos = entity.PosX + entity.ModX;
@@ -985,7 +986,7 @@ public class EntityManager
         // Essai de “collage” au sol si 0x100 (gravity) et pas de zForce
         if ((entity.Flags & 0x100) != 0 && entity.ForceZ == 0)
         {
-            dz = (groundHeight - entity.ModdedZPos) - 1;
+            dz = groundHeight - entity.ModdedZPos - 1;
             zTolerance = 0x30000;
             if (dz < 0)
             {
@@ -1307,7 +1308,7 @@ public class EntityManager
         LAB_80037D58:
         //Cas “pas d’obstacle” (modX != 0)
         dy = entity.PosX;
-        dx = (int)entity.ModX;
+        dx = entity.ModX;
         goto FINALIZE_COMMON;
 
         FINAL_OBSTACLE:
@@ -1315,7 +1316,7 @@ public class EntityManager
 
         FINALIZE_OK:
         dy = entity.PosX;
-        dx = (int)entity.ModX;
+        dx = entity.ModX;
 
         FINALIZE_COMMON:
         entity.ModdedXPos = dy + dx;
@@ -1344,7 +1345,7 @@ public class EntityManager
         entity.TerrainHeight = ComputeEntityGroundHeight(entity);
     }
 
-    private uint GetCollisionFlagsWithPlayer(Entity entity, uint[] collisionFlags)
+    public uint GetCollisionFlagsWithPlayer(Entity entity, uint[] collisionFlags)
     {
         uint flags;
         Entity player;
@@ -1444,7 +1445,7 @@ public class EntityManager
     }
 
     // 80036f34
-    private Entity? FindEntityCollisionCandidate(Entity entity)
+    public Entity? FindEntityCollisionCandidate(Entity entity)
     {
         int value;
         Entity currentEntity;
@@ -2162,31 +2163,31 @@ public class EntityManager
                 continue;
             }
 
-            var baseForce = (int)(0xffff << 16);
+            var baseForce = 0xffff << 16;
 
             var i = StaticVariables.g_gameRandomSeed;
-            var val1 = (uint)(i * 0x7d2b89dd);
-            var val2 = (uint)(0xe06a02e7 + val1);
+            var val1 = i * 0x7d2b89dd;
+            var val2 = 0xe06a02e7 + val1;
             var targetVal = (int)(((long)val2 * 0x20001) >> 32);
             StaticVariables.g_gameRandomSeed = val2;
 
-            effect.XForce = targetVal + baseForce;
+            effect.ForceX = targetVal + baseForce;
 
             i = StaticVariables.g_gameRandomSeed;
-            val1 = (uint)(i * 0x7d2b89dd);
-            val2 = (uint)(0xe06a02e7 + val1);
+            val1 = i * 0x7d2b89dd;
+            val2 = 0xe06a02e7 + val1;
             targetVal = (int)(((long)val2 * 0x20001) >> 32);
             StaticVariables.g_gameRandomSeed = val2;
 
-            effect.YForce = targetVal + baseForce;
+            effect.ForceY = targetVal + baseForce;
 
             i = StaticVariables.g_gameRandomSeed;
-            val1 = (uint)(i * 0x7d2b89dd);
-            val2 = (uint)(0xe06a02e7 + val1);
+            val1 = i * 0x7d2b89dd;
+            val2 = 0xe06a02e7 + val1;
             targetVal = (int)(((long)val2 * 0x20001) >> 32);
             StaticVariables.g_gameRandomSeed = val2;
 
-            effect.ZForce = targetVal + baseForce;
+            effect.ForceZ = targetVal + baseForce;
         }
     }
 
@@ -2315,7 +2316,7 @@ public class EntityManager
     // 80038e18
     private void UpdateEntitiesAnimation()
     {
-        for (var i = 1; i < StaticVariables.g_activeEntityCount; i++)
+        for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
         {
             var entity = StaticVariables.g_entitySlots[i];
             UpdateAnimation(entity);
@@ -2327,91 +2328,7 @@ public class EntityManager
     private void UpdateEntitiesEvents()
     {
         _gameEngine.MovePlayer();
-        /*
-        for (var i = 1; i < StaticVariables.g_numberOfEntity; i++)
-        {
-            var entity = StaticVariables.g_entitySlots[i];
-            var eventProgramType = -1;
-
-            if (entity.IsNotProcessable == 0 && entity.Status < 5)
-            {
-                switch (entity.Status)
-                {
-                    case (int)EntityStatus.Loaded:
-                        eventProgramType = ScriptHelper.ProgramALoad;
-                        entity.Status = (int)EntityStatus.Normal;
-                        break;
-
-                    case (int)EntityStatus.Normal:
-                        var flags = entity.Flags;
-
-                        if ((flags & 0x10) != 0)
-                        {
-                            if (entity.ActionState == 4)
-                            {
-                                _gameEngine.DestroyEntity(entity, 6);
-                                eventProgramType = ScriptHelper.ProgramUnknown;
-                                break;
-                            }
-                        }
-
-                        if ((flags & 0x20) != 0 && (entity.ForceAdjusted & 0x8004) != 0)
-                        {
-                            _gameEngine.DestroyEntity(entity, -1);
-                            eventProgramType = ScriptHelper.ProgramUnknown;
-                            break;
-                        }
-
-                        if ((flags & 0x10) != 0 && entity.TerrainHeight == 0 && entity.IsAboveGround == 0)
-                        {
-                            entity.Status = (int)EntityStatus.Deactivated;
-                            eventProgramType = ScriptHelper.ProgramDTouch;
-                            break;
-                        }
-
-                        if ((flags & 0x20) != 0 && entity.HitCounter == 0)
-                        {
-                            entity.Status = (int)EntityStatus.Deactivated;
-                            eventProgramType = ScriptHelper.ProgramDTouch;
-                            break;
-                        }
-
-                        if ((flags & 0x40) != 0 && entity.TerrainHeight != 0)
-                        {
-                            entity.Status = (int)EntityStatus.Deactivated;
-                            eventProgramType = ScriptHelper.ProgramEDeactivate;
-                            break;
-                        }
-
-                        if (entity.TouchingEntity == null)
-                        {
-                            eventProgramType = ScriptHelper.ProgramDTouch;
-                            break;
-                        }
-
-                        if (StaticVariables.g_activeCollisionEntity == entity)
-                        {
-                            if (entity.PlatformUpdateFlag == 0)
-                            {
-                                if (entity.ProgramIndexes[5] == 0)
-                                {
-                                    eventProgramType = ScriptHelper.ProgramCTick;
-                                    break;
-                                }
-                            }
-                            eventProgramType = ScriptHelper.ProgramFInteract;
-                        }
-                        break;
-
-                    case (int)EntityStatus.Deactivated:
-                        eventProgramType = ScriptHelper.ProgramEDeactivate;
-                        break;
-                }
-            }
-
-            entity.EventTrigger = eventProgramType;
-        }
-        */
+        
         for (var i = 1; i < StaticVariables.g_numberOfEntity; i++)
         {
             var entity = StaticVariables.g_entitySlots[i];
@@ -2755,5 +2672,181 @@ public class EntityManager
         NoCollision:
         entity.TileAttributes = 0;
         goto FinishUpdate;
+    }
+
+    // 8003a374
+    public bool UpdateEntityFacingDirection(Entity entity)
+    {
+        int damage;
+        int strLength;
+        BalanceRecord balanceRecord;
+        string debugStr = string.Empty;
+
+        if (entity == StaticVariables.PlayerEntity)
+        {
+            balanceRecord = StaticVariables.g_intArray_80127008[0];
+        }
+        else
+        {
+            /* Structure liée à la cible, probablement un script/AI */
+            balanceRecord = entity.BalanceRecord;
+        }
+
+        /* Entité liée à l'effet ou au contexte de dégâts */
+        damage = ResolveBalanceTarget(balanceRecord.AnimVals[0], entity.TouchingEntity, entity.Hp);
+
+        if (StaticVariables.g_debugState < 0 && (StaticVariables.g_debugFlags & 0x800) != 0)
+        {
+            //debugStr = StaticVariables.g_messageDebug + entity.index * 0x100;
+            if (StaticVariables.g_balanceHpTotal != -1)
+            {
+                if ((StaticVariables.g_balanceMultiplier & 0xc0U) == 0)
+                {
+                    if ((StaticVariables.g_balanceHpTotal & 0x80U) == 0)
+                    {
+                        debugStr += $"                     {StaticVariables.g_balanceHp}";
+                    }
+                    else
+                    {
+                        debugStr += $"      O{StaticVariables.g_balanceParams} + A{StaticVariables.g_balanceHp - StaticVariables.g_balanceParams} = T{StaticVariables.g_balanceParams}";
+                    }
+                    debugStr += $" (Parm) {StaticVariables.g_balanceMultiplier}\n\r";
+                }
+                if (damage == null)
+                {
+                    debugStr += $"              {StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} DEAD\n\r";
+                    entity.Hp = 0;
+                }
+                else
+                {
+                    debugStr += $"               {StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} N{damage}\n\r";
+                    entity.Hp = damage;
+                }
+                goto END;
+            }
+            debugStr += "   Balance patamator error(Result)No Damage\n\r";
+
+            StaticVariables.g_messageDebug += debugStr;
+        }
+
+        entity.Hp = damage;
+
+        END:
+        //DisplayHpDebugString();
+        //DisplayHpDebugString();
+        //DoNothing();
+        return damage == null;
+    }
+
+    // 8004464c
+    private int ResolveBalanceTarget(BalanceAnimValRef balanceConfig, Entity targetEntity, int hp)
+    {
+        BalanceAnimValRef values;
+        BalanceRecord[] balanceSources;
+        BalanceRecord animPtr;
+        int i;
+        int adjustedHpValue;
+        int newHp;
+        byte balanceId;
+        byte balanceMultiplier;
+        bool isReduced;
+
+        if (StaticVariables.g_debugState < 0 && (StaticVariables.g_debugFlags & 0x800) != 0)
+        {
+            StaticVariables.g_balanceHpTotal = -1;
+        }
+
+        if (targetEntity != null && balanceConfig != null)
+        {
+            balanceId = balanceConfig.Val;
+            
+            if (balanceId != 0)
+            {
+                // TODO understand this
+                //int entityId = targetEntity + (balanceId & 0xf);
+                //byte balanceMultiplier = targetEntity.Bytes[2];
+                balanceMultiplier = 1;
+                
+                if ((balanceMultiplier & 0xc0) == 0)
+                {
+                    adjustedHpValue = balanceConfig.U2;
+
+                    if ((balanceId & 0x80) != 0)
+                    {
+                        i = 0;
+                        balanceSources = StaticVariables.g_balanceEffectSources;
+
+                        do
+                        {
+                            animPtr = balanceSources[i];
+
+                            if (animPtr != null)
+                            {
+                                if (animPtr.NumAnimVals == 0)
+                                {
+                                    values = null;
+                                }
+                                else if (StaticVariables.g_balanceAnimIndex + 1 < animPtr.NumAnimVals)
+                                {
+                                    values = animPtr.AnimVals[(StaticVariables.g_balanceAnimIndex << 1) + 0xf + 2];
+                                    //values = animPtr.AnimVals[StaticVariables.g_balanceAnimIndex * 2 + 0xe];
+                                }
+                                else
+                                {
+                                    values = animPtr.AnimVals[0];
+                                }
+
+                                if (values != null)
+                                {
+                                    adjustedHpValue = adjustedHpValue + values.Val;
+                                }
+                            }
+
+                            i = i + 1;
+                        } while (i < 3);
+                    }
+
+                    i = (adjustedHpValue * balanceMultiplier) >> 4;
+                    isReduced = i < hp;
+
+                    if (i == 0)
+                    {
+                        i = 1;
+                        isReduced = 1 < hp;
+                    }
+
+                    newHp = 0;
+
+                    if (isReduced)
+                    {
+                        newHp = hp - i;
+                    }
+                    hp = newHp;
+
+                    if (StaticVariables.g_debugState < 0 && (StaticVariables.g_debugFlags & 0x800) != 0)
+                    {
+                        StaticVariables.g_balanceHp = (short)adjustedHpValue;
+                        StaticVariables.g_balanceParams = balanceConfig.U2;
+                        StaticVariables.g_balanceResult = (short)i;
+                        StaticVariables.g_balanceHpTotal = balanceConfig.Val;
+                        StaticVariables.g_balanceMultiplier = balanceMultiplier;
+                    }
+                }
+                else if ((balanceMultiplier & 0xc0) == 0x40)
+                {
+                    if (StaticVariables.g_debugState < 0 && (StaticVariables.g_debugFlags & 0x800) != 0)
+                    {
+                        StaticVariables.g_balanceHp = 0;
+                        StaticVariables.g_balanceParams = 0;
+                        StaticVariables.g_balanceResult = (short)hp;
+                        StaticVariables.g_balanceHpTotal = balanceConfig.Val;
+                        StaticVariables.g_balanceMultiplier = balanceMultiplier;
+                    }
+                    hp = 0;
+                }
+            }
+        }
+
+        return hp;
     }
 }

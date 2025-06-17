@@ -244,7 +244,7 @@ public static class FrameSnapshotLoader
         public int isNotProcessable { get; set; }
         public int flags2 { get; set; }
         public int platformEntity { get; set; }
-        public int actionState { get; set; }
+        public Entity warpEntity { get; set; }
         public int relativeWarpOffsetX { get; set; }
         public int relativeWarpOffsetY { get; set; }
         public int relativeWarpOffsetZ { get; set; }
@@ -379,7 +379,7 @@ public static class FrameSnapshotLoader
             entity.IsNotProcessable = isNotProcessable;
             entity.Flags2 = flags2;
             entity.PlatformEntity = StaticVariables.g_entitySlots[platformEntity];
-            entity.ActionState = actionState;
+            entity.WarpEntity = warpEntity;
             entity.RelativeWarpOffsetX = relativeWarpOffsetX;
             entity.RelativeWarpOffsetY = relativeWarpOffsetY;
             entity.RelativeWarpOffsetZ = relativeWarpOffsetZ;
@@ -388,11 +388,17 @@ public static class FrameSnapshotLoader
             //entity.EntityRecord = entityRecord;
             entity.EntityRefId = entityRefId;
             if (programIndexes != null && entity.ProgramIndexes != null)
+            {
                 Array.Copy(programIndexes, entity.ProgramIndexes, Math.Min(programIndexes.Length, entity.ProgramIndexes.Length));
+            }
+
             //entity.SpriteRecord = spriteRecord;
             entity.SpriteTableIndex = spriteTableIndex;
             if (spriteProgramIndexes != null && entity.SpriteProgramIndexes != null)
+            {
                 Array.Copy(spriteProgramIndexes, entity.SpriteProgramIndexes, Math.Min(spriteProgramIndexes.Length, entity.SpriteProgramIndexes.Length));
+            }
+
             entity.TargetAnimationId = targetAnimationId;
             entity.TargetDirection = targetDirection;
             entity.CurrentAnimationId = currentAnimationId;
@@ -454,7 +460,10 @@ public static class FrameSnapshotLoader
             //if (mapTiles != null && entity.MapTiles != null)
             //    Array.Copy(mapTiles, entity.MapTiles, Math.Min(mapTiles.Length, entity.MapTiles.Length));
             if (mapHeights != null && entity.MapHeights != null)
+            {
                 Array.Copy(mapHeights, entity.MapHeights, Math.Min(mapHeights.Length, entity.MapHeights.Length));
+            }
+
             entity.PlatformUpdateFlag = platformUpdateFlag;
             entity._16c = _16c;
             entity.HitBoxOriginX = hitboxOriginX;
@@ -507,7 +516,10 @@ public static class FrameSnapshotLoader
             entity.InitialXPos = initialXPos;
             entity.InitialYPos = initialYPos;
             if (aiValues != null && entity.AIValues != null)
+            {
                 Array.Copy(aiValues, entity.AIValues, aiValues.Length);
+            }
+
             entity.Status = status;
             entity.Flags = flags;
             entity.Depth = depth;

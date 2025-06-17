@@ -3,6 +3,6 @@
 public class FadeControl {
     public short CurrentWarpEntityId;
     public short WarpVisualId;
-    public short TargetFadeLevel;
-    public short MaxFadeLevel;
+    public short TargetLevel;
+    public short MaxTargetLevel;
 };

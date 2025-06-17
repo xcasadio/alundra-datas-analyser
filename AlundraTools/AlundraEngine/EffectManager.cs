@@ -158,9 +158,9 @@ public class EffectManager
     {
         if (effect.UpdateMode == 0)
         {
-            effect.X += effect.XForce; //forces?
-            effect.Y += effect.YForce;
-            effect.Z += effect.ZForce;
+            effect.X += effect.ForceX; //forces?
+            effect.Y += effect.ForceY;
+            effect.Z += effect.ForceZ;
             //some kind of unique id? maybe its used for zsorting
             effect.ZSortValue = (int)(effect.Y & 0xffff0000) + (effect.Z >> 16) + (effect.SpriteRef.DepthSortVal << 16);
             return;
@@ -190,9 +190,9 @@ public class EffectManager
             return;
         }
         //param3== 1 falls through to here, and param3 == 3 is here
-        effect.X += effect.XForce; //forces?
-        effect.Y += effect.YForce;
-        effect.Z += effect.ZForce;
+        effect.X += effect.ForceX; //forces?
+        effect.Y += effect.ForceY;
+        effect.Z += effect.ForceZ;
 
         if (effect.AttachedEntity.Status != 0)
         {
@@ -264,77 +264,20 @@ public class EffectManager
         return null;
     }
 
-    public void InitializeEffects(SpriteEffect effect, MapEffectRecord mapEffectRecord, int mapeffectid, int effecttype, byte ismapeffect, byte effectid, byte animid, int x, int y, int z)
-    {
-        //initialize
-        effect.MapEffectRecord = null;
-        effect.SpriteEffectRecord = null;
-        effect.SpriteRef = new SpriteRef();
-        effect.SheetSize = 0;
-        effect.PaletteIndex = 0;
-        effect.MapEffectId = 0;
-        effect.UpdateMode = 0;
-        effect.AttachedEntity = null;
-        effect.X = 0;
-        effect.Y = 0;
-        effect.Z = 0;
-        effect.XOff = 0;
-        effect.YOff = 0;
-        effect.ZOff = 0;
-        effect.XForce = 0;
-        effect.YForce = 0;
-        effect.ZForce = 0;
-        effect.DepthSortMod = 0;
-        effect.ZSortValue = 0;
-        effect.Status = 0;
-        effect.TargetIsMapSprite = 0;
-        effect.CurrentIsMapSprite = 0;
-        effect.TargetSpriteTableIndex = 0;
-        effect.CurrentSpriteTableIndex = 0;
-        effect.TargetAnimation = 0;
-        effect.CurrentAnimation = 0;
-        effect.Frame = null;
-        effect.InitialFrame = null;
-        effect.Delay = 0;
-        effect.DestroyFlag = 0;
-
-        effect.AnimIndex = 0;
-
-
-        effect.MapEffectRecord = mapEffectRecord;
-        if (mapEffectRecord != null)
-        {
-            effect.MapEffectId = mapeffectid;
-        }
-        else
-        {
-            effect.MapEffectId = -1;
-        }
-
-        effect.Status = 2;
-        effect.CurrentSpriteTableIndex = (byte)~effectid;
-        effect.TargetIsMapSprite = ismapeffect;
-        effect.CurrentIsMapSprite = (byte)~ismapeffect;
-        effect.TargetSpriteTableIndex = effectid;
-        effect.TargetAnimation = animid;
-        effect.CurrentAnimation = (byte)~animid;
-        effect.X = x;
-        effect.Y = y;
-        effect.Z = z;
-    }
-
+    // 8003bdd8
     public SpriteEffect CreateEffectEntity(int behaviorFlags, byte spriteTableIndex, byte animationIndex, int x, int y, int z)
     {
         SpriteEffect effect = GetFreeEffect();
 
         if (effect != null)
         {
-            InitEffectEntity(effect, null, -1, 0, behaviorFlags, spriteTableIndex, animationIndex, x, y, z);
+            InitializeEffects(effect, null, -1, 0, behaviorFlags, spriteTableIndex, animationIndex, x, y, z);
         }
 
         return effect;
     }
 
+    // 8003b9c4
     public SpriteEffect GetFreeEffect()
     {
         SpriteEffect slot;
@@ -356,7 +299,9 @@ public class EffectManager
         return null;
     }
 
-    public void InitEffectEntity(SpriteEffect effect, MapEffectRecord mapEffectRecord, int effectId, int updateMode,
+    // 8003bb14
+    public void InitializeEffects(SpriteEffect effect, MapEffectRecord mapEffectRecord, 
+        int effectId, int updateMode,
         int behaviorFlag, byte spriteTableIndex, byte animationIndex, int x, int y, int z)
     {
         MapEffectRecord pMVar1;
@@ -366,6 +311,7 @@ public class EffectManager
         SpriteEffect pEffect;
         int originalId;
 
+        Debugger.Break();
         //baseTemplate = StaticVariables.DAT_8013c608;
         originalId = effect.Id;
         //pEffect = effect;
@@ -407,5 +353,109 @@ public class EffectManager
         effect.X = x;
         effect.Y = y;
         effect.Z = z;
+    }
+
+    // 8003bb14
+    public void InitializeEffects(SpriteEffect effect, MapEffectRecord mapEffectRecord,
+        int mapeffectid, int effecttype, byte ismapeffect, byte effectid, byte animid,
+        int x, int y, int z)
+    {
+        //initialize
+        effect.MapEffectRecord = null;
+        effect.SpriteEffectRecord = null;
+        effect.SpriteRef = new SpriteRef();
+        effect.SheetSize = 0;
+        effect.PaletteIndex = 0;
+        effect.MapEffectId = 0;
+        effect.UpdateMode = 0;
+        effect.AttachedEntity = null;
+        effect.X = 0;
+        effect.Y = 0;
+        effect.Z = 0;
+        effect.XOff = 0;
+        effect.YOff = 0;
+        effect.ZOff = 0;
+        effect.ForceX = 0;
+        effect.ForceY = 0;
+        effect.ForceZ = 0;
+        effect.DepthSortMod = 0;
+        effect.ZSortValue = 0;
+        effect.Status = 0;
+        effect.TargetIsMapSprite = 0;
+        effect.CurrentIsMapSprite = 0;
+        effect.TargetSpriteTableIndex = 0;
+        effect.CurrentSpriteTableIndex = 0;
+        effect.TargetAnimation = 0;
+        effect.CurrentAnimation = 0;
+        effect.Frame = null;
+        effect.InitialFrame = null;
+        effect.Delay = 0;
+        effect.DestroyFlag = 0;
+
+        effect.AnimIndex = 0;
+
+
+        effect.MapEffectRecord = mapEffectRecord;
+        if (mapEffectRecord != null)
+        {
+            effect.MapEffectId = mapeffectid;
+        }
+        else
+        {
+            effect.MapEffectId = -1;
+        }
+
+        effect.Status = 2;
+        effect.CurrentSpriteTableIndex = (byte)~effectid;
+        effect.TargetIsMapSprite = ismapeffect;
+        effect.CurrentIsMapSprite = (byte)~ismapeffect;
+        effect.TargetSpriteTableIndex = effectid;
+        effect.TargetAnimation = animid;
+        effect.CurrentAnimation = (byte)~animid;
+        effect.X = x;
+        effect.Y = y;
+        effect.Z = z;
+    }
+
+    // 80032c7c
+    public int CreateWarpEffect(uint actionId, int x, int y, int z)
+    {
+        var resolvedAction = _gameEngine.GetContentsItemId((short)actionId);
+
+        if (resolvedAction == 0)
+        {
+            return 0;
+        }
+
+        if (_gameEngine.CheckItemId((uint)resolvedAction))
+        {
+            return 0;
+        }
+
+        Entity warpEntity = _gameEngine.SpawnWarpEntity(null, 0, (uint)(resolvedAction + 0x1e), x, y, z, 0);
+
+        if (warpEntity == null)
+        {
+            return 0;
+        }
+
+        warpEntity.ForceZ = 0xA0000;
+        warpEntity.Bytes[0] = 1;
+        warpEntity.Bytes[1] = 0;
+        warpEntity.Bytes[2] = 0;
+        warpEntity.Bytes[3] = 0;
+        warpEntity.Flags &= 0xffffff7f; // ~0x80
+        
+        var initPosX = StaticVariables.g_iconNameEtcBase[resolvedAction * 2 + 1] == 0 ? -1 : 600;
+
+        warpEntity.InitialXPos = initPosX;
+        warpEntity.InitialYPos = 0;
+        warpEntity.AIValues[0] = 0;
+        warpEntity.AIValues[1] = 0;
+        warpEntity.AIValues[2] = 0;
+        warpEntity.AIValues[3] = 10;
+        _gameEngine.PlaySoundEffect(0x54);
+
+        return 1;
     }
 }

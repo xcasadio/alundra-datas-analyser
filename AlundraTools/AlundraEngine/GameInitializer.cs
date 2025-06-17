@@ -1,5 +1,6 @@
 ﻿using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay;
+using System.Diagnostics;
 
 namespace AlundraEngine;
 
@@ -287,6 +288,7 @@ public class GameInitializer
         StaticVariables.g_emptyEntityForClearing.EntityRefId = -1;
     }
 
+    // 80031700
     private void InitializeGameStateFromWarpTrigger()
     {
         int iconIndex;
@@ -346,18 +348,35 @@ public class GameInitializer
             StaticVariables.g_lastVisitedMapId = 0xffffffff;
             StaticVariables.g_currentSaveSlotNameIndex = 0;
             StaticVariables.g_savedGameplayTime = 0;
-            //do
-            //{
-            //    if ((*(byte*)((int)iconEtcEntryPtr + 6) & 0x80) != 0)
-            //    {
-            //        GetMapUnlockRequirement(iconIndex);
-            //    }
-            //    iconIndex = iconIndex + 1;
-            //    iconEtcEntryPtr = iconEtcEntryPtr + 2;
-            //} while (iconIndex < 0x62);
+            do
+            {
+                var value = StaticVariables.g_iconNameEtcBase[iconIndex * 2 + 1] >> 16;
+                value &= 0xFF;
+                if ((value & 0x80) != 0)
+                {
+                    GetMapUnlockRequirement(iconIndex);
+                }
+                iconIndex = iconIndex + 1;
+                //iconEtcEntryPtr = iconEtcEntryPtr + 2;
+            } while (iconIndex < 0x62);
             _gameEngine.LoadWarpVisuals(1);
             //InitializeExtraSystemState();
         }
+
+        for (int i = 0; i < StaticVariables.g_warpUsageTable.Length; i++)
+        {
+            if (i == 3 || i == 35 || i == 51)
+            {
+                Debug.Assert(StaticVariables.g_warpUsageTable[3] == 1);
+                Debug.Assert(StaticVariables.g_warpUsageTable[35] == 1);
+                Debug.Assert(StaticVariables.g_warpUsageTable[51] == 1);
+            }
+            else
+            {
+                Debug.Assert(StaticVariables.g_warpUsageTable[i] == 0);
+            }
+        }
+
         StaticVariables.g_warpTriggerType = 0x36;
         StaticVariables.g_warpType = 0;
         StaticVariables.g_warpExtraParam = 0;
@@ -371,6 +390,43 @@ public class GameInitializer
         StaticVariables.g_gameplayTime = StaticVariables.g_savedGameplayTime;
     }
 
+    // 8004e530
+    private int GetMapUnlockRequirement(int warpIndex)
+    {
+        // Check if warpIndex is valid
+        if (warpIndex < 0 || warpIndex >= StaticVariables.g_totalWarpEntries)
+        {
+            Debugger.Break();
+            Debug.WriteLine("Invalid warp index in GetMapUnlockRequirement");
+            return 0;
+        }
+
+        // Calculate the pointer into g_warpUsageTable based on warpIndex
+        // In the assembly: warpEntryPtr = (warpIndex * 4) + g_warpUsageTable
+        int warpEntryPtr = warpIndex * 2; // Each entry is 2 shorts (4 bytes)
+
+        // Get the current usage count from g_warpUsageTable
+        short currentUsage = StaticVariables.g_warpUsageTable[warpEntryPtr + 1];
+
+        // Calculate index into g_tileMapWarpSections
+        // In the assembly: (warpIndex * 4 + warpIndex) * 2 + g_tileMapWarpSections
+        int tileMapSectionIndex = (warpIndex * 5); // 4 + 1 = 5, * 2 was for byte offset, not needed in C#
+
+        // Get the unlock requirement value from g_tileMapWarpSections
+        short unlockRequirement = StaticVariables.g_tileMapWarpSections[tileMapSectionIndex + 3];
+
+        // If current usage doesn't match the requirement, increment it
+        if (currentUsage != unlockRequirement)
+        {
+            StaticVariables.g_warpUsageTable[warpEntryPtr + 1] = (short)(currentUsage + 1);
+            return currentUsage + 1;
+        }
+
+        // Otherwise, return the warpIndex value
+        return warpIndex;
+    }
+
+    // 8004dac0
     private void InitializeWarpAndFadeSystem()
     {
         int i = 0;
@@ -378,8 +434,8 @@ public class GameInitializer
 
         StaticVariables.g_initialFadeControl = new FadeControl();
         StaticVariables.g_fadeControl = StaticVariables.g_initialFadeControl;
-        StaticVariables.g_initialFadeControl.TargetFadeLevel = 1;
-        StaticVariables.g_initialFadeControl.MaxFadeLevel = 1;
+        StaticVariables.g_initialFadeControl.TargetLevel = 1;
+        StaticVariables.g_initialFadeControl.MaxTargetLevel = 1;
         //StaticVariables.g_warpUsageTable = StaticVariables.DAT_801eb83e;
         StaticVariables.DAT_801eb82e = 1;
         StaticVariables.DAT_801eb832 = 0;

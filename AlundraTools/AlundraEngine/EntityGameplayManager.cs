@@ -23,7 +23,7 @@ public class EntityGameplayManager
         }
         if (entity.PlatformEntity != null)
         {
-            entity.PlatformEntity.ActionState = 0;
+            entity.PlatformEntity.WarpEntity = null;
         }
     }
 
@@ -253,9 +253,17 @@ public class EntityGameplayManager
 
         if (zTest < deltaTopLeft)
         {
-            if (deltaTopRight <= zTest) needHandle = true;
+            if (deltaTopRight <= zTest)
+            {
+                needHandle = true;
+            }
+
             direction = entity.TargetDirection;
-            if (0xe < direction - 9) needSkip = true;
+            if (0xe < direction - 9)
+            {
+                needSkip = true;
+            }
+
             needUpdate = true;
         }
         else
@@ -270,7 +278,11 @@ public class EntityGameplayManager
                 if (zTest < deltaBottomRight)
                 {
                     direction = entity.TargetDirection;
-                    if (direction - 0x11 < 0xf) needUpdate = true;
+                    if (direction - 0x11 < 0xf)
+                    {
+                        needUpdate = true;
+                    }
+
                     needHandle = true;
                 }
             }
@@ -287,7 +299,10 @@ public class EntityGameplayManager
                 }
 
                 direction = entity.TargetDirection;
-                if ((int)direction < 0x10) needUpdate = true;
+                if ((int)direction < 0x10)
+                {
+                    needUpdate = true;
+                }
             }
 
             returnValue = 0;
@@ -317,7 +332,10 @@ public class EntityGameplayManager
                 }
 
                 direction = entity.TargetDirection;
-                if (0x10 < direction - 8) needUpdate = true;
+                if (0x10 < direction - 8)
+                {
+                    needUpdate = true;
+                }
             }
         }
 

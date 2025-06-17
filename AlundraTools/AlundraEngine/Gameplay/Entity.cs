@@ -20,7 +20,7 @@ public class Entity
     public int IsNotProcessable;
     public int Flags2;
     public Entity PlatformEntity; //28
-    public int ActionState;
+    public Entity WarpEntity;
     public int RelativeWarpOffsetX;
     public int RelativeWarpOffsetY;
     public int RelativeWarpOffsetZ;
@@ -134,7 +134,10 @@ public class Entity
 
     public void CopyFrom(Entity other)
     {
-        if (other == null) return;
+        if (other == null)
+        {
+            return;
+        }
 
         Index = other.Index;
         Index2 = other.Index2;
@@ -147,7 +150,7 @@ public class Entity
         IsNotProcessable = other.IsNotProcessable;
         Flags2 = other.Flags2;
         PlatformEntity = other.PlatformEntity;
-        ActionState = other.ActionState;
+        WarpEntity = other.WarpEntity;
         RelativeWarpOffsetX = other.RelativeWarpOffsetX;
         RelativeWarpOffsetY = other.RelativeWarpOffsetY;
         RelativeWarpOffsetZ = other.RelativeWarpOffsetZ;

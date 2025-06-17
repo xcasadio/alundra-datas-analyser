@@ -108,7 +108,7 @@ public class GameMapInfo
     public readonly byte D;
     public readonly byte E;
     public readonly byte F;
-    public readonly short _10;
+    public readonly short _10; // TODO short or byte ??
     public readonly Color[][] Palettes;
     public readonly byte PortalFlag1;
     public readonly byte PortalFlag2;

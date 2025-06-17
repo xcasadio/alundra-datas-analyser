@@ -1,4 +1,8 @@
 ﻿using AlundraEngine.DatasBin;
+using AlundraEngine.Gameplay;
+using System;
+using System.Diagnostics;
+using AlundraEngine.Gameplay.Scripts;
 
 namespace AlundraEngine;
 
@@ -13,19 +17,19 @@ public class PlayerManager
 
     //80031b50
     public void MovePlayer()
-    {/*
+    {
         int currentTileIndex;
-        int iVar1;
+        int slope;
         uint uVar2;
         uint dir;
 
         StaticVariables.g_activeCollisionEntity = null;
         currentTileIndex = (int)_gameEngine.GetCurrentTileIndex();
-        iVar1 = StaticVariables.g_entitySlots[0].Slope_18c;
-        StaticVariables.g_currentTileFlags = (uint)StaticVariables.g_tileAttributeLUT[currentTileIndex];
+        slope = StaticVariables.PlayerEntity.Slope_18c;
+        StaticVariables.g_currentTileFlags = StaticVariables.g_tileAttributeLUT[currentTileIndex];
         CheckAndExecuteWarp();
 
-        if (StaticVariables.g_entitySlots[0].IsNotProcessable != 0)
+        if (StaticVariables.PlayerEntity.IsNotProcessable != 0)
         {
             StaticVariables.g_playerWarpTimer = 0;
             StaticVariables.g_playerEffectTransitionCooldown = 0;
@@ -37,78 +41,98 @@ public class PlayerManager
             PreparePlayerForWarpEntry(1);
             StaticVariables.g_playerWarpTimer = 0;
             StaticVariables.g_playerEffectTransitionCooldown = 0;
-            _gameEngine.UpdatePlayerWarpDirection(1);
-            _gameEngine.AnimateWarpEffect();
+            UpdatePlayerWarpDirection(1);
+            AnimateWarpEffect();
 
-            if ((StaticVariables.g_playerControlFlags == 0x20) &&
-                (dir = _gameEngine.FindWarpFacingDirection()) != 0xffffffff)
+            if (StaticVariables.g_playerControlFlags == 0x20)
             {
-                StaticVariables.g_entitySlots[0].DamagedTickCounter = 0x78;
+                dir = FindWarpFacingDirection();
+
+                if (dir != 0xffffffff)
+                {
+                    StaticVariables.PlayerEntity.DamagedTickCounter = 0x78;
+                }
             }
 
             goto END;
         }
 
-        StaticVariables.g_entitySlots[0].Flags |= 0x100;
-        _gameEngine.PreparePlayerForWarpEntry(0);
-        dir = _gameEngine.FindWarpFacingDirection();
+        StaticVariables.PlayerEntity.Flags |= 0x100;
+        PreparePlayerForWarpEntry(0);
+        dir = FindWarpFacingDirection();
 
         if (dir != 0xffffffff)
         {
             StaticVariables.g_playerWarpTimer = 0;
             StaticVariables.g_playerEffectTransitionCooldown = 0;
-            _gameEngine.UpdatePlayerWarpDirection(2);
-            _gameEngine.MaybeStartWarpAnimation();
-            StaticVariables.g_entitySlots[0].TargetAnimationId = 0x31;
+            UpdatePlayerWarpDirection(2);
+            MaybeStartWarpAnimation();
+            StaticVariables.PlayerEntity.TargetAnimationId = 0x31;
 
-            if (iVar1 == 4)
+            if (slope == 4)
             {
-                StaticVariables.g_entitySlots[0].TargetAnimationId = 0x3a;
+                StaticVariables.PlayerEntity.TargetAnimationId = 0x3a;
             }
 
-            StaticVariables.g_entitySlots[0].DamagedTickCounter = 0x78;
-            StaticVariables.g_entitySlots[0].TargetDirection = dir;
+            StaticVariables.PlayerEntity.DamagedTickCounter = 0x78;
+            StaticVariables.PlayerEntity.TargetDirection = dir;
             goto END;
         }
 
-        if (StaticVariables.g_entitySlots[0].Hp == 0)
+        if (StaticVariables.PlayerEntity.Hp == 0)
         {
             StaticVariables.g_playerWarpTimer = 0;
             StaticVariables.g_playerEffectTransitionCooldown = 0;
-            _gameEngine.UpdatePlayerWarpDirection(2);
-            _gameEngine.AnimateWarpEffect();
+            UpdatePlayerWarpDirection(2);
+            AnimateWarpEffect();
 
-            switch (StaticVariables.g_entitySlots[0].TargetAnimationId)
+            switch (StaticVariables.PlayerEntity.TargetAnimationId)
             {
                 case 0x1c:
-                    if (iVar1 == 4)
-                        StaticVariables.g_entitySlots[0].TargetAnimationId = 0x3c;
-                    else if (StaticVariables.g_entitySlots[0].ForceResetAnimationFlag != 0)
-                        StaticVariables.g_entitySlots[0].TargetAnimationId = 0x39;
+                    if (slope == 4)
+                    {
+                        StaticVariables.PlayerEntity.TargetAnimationId = 0x3c;
+                    }
+                    else if (StaticVariables.PlayerEntity.ForceResetAnimationFlag != 0)
+                    {
+                        StaticVariables.PlayerEntity.TargetAnimationId = 0x39;
+                    }
+
                     break;
 
                 case 0x31:
                 case 0x39:
-                    if (iVar1 == 4)
-                        StaticVariables.g_entitySlots[0].TargetAnimationId = 0x3c;
+                    if (slope == 4)
+                    {
+                        StaticVariables.PlayerEntity.TargetAnimationId = 0x3c;
+                    }
+
                     break;
 
                 case 0x3a:
                 case 0x3c:
-                    if (iVar1 != 4)
-                        StaticVariables.g_entitySlots[0].TargetAnimationId = 0x39;
+                    if (slope != 4)
+                    {
+                        StaticVariables.PlayerEntity.TargetAnimationId = 0x39;
+                    }
+
                     break;
 
                 case 0x3b:
-                    if (iVar1 == 4 && StaticVariables.g_entitySlots[0].ForceResetAnimationFlag != 0)
-                        StaticVariables.g_entitySlots[0].TargetAnimationId = 0x3c;
+                    if (slope == 4 && StaticVariables.PlayerEntity.ForceResetAnimationFlag != 0)
+                    {
+                        StaticVariables.PlayerEntity.TargetAnimationId = 0x3c;
+                    }
                     else
-                        StaticVariables.g_entitySlots[0].TargetAnimationId = 0x39;
+                    {
+                        StaticVariables.PlayerEntity.TargetAnimationId = 0x39;
+                    }
+
                     break;
 
                 case 0x4e:
                 case 0x4f:
-                    if (StaticVariables.g_entitySlots[0].ForceResetAnimationFlag != 0)
+                    if (StaticVariables.PlayerEntity.ForceResetAnimationFlag != 0)
                     {
                         currentTileIndex = _gameEngine.IsMapUnlocked(0x27);
                         if (currentTileIndex == 0)
@@ -122,59 +146,70 @@ public class PlayerManager
                             break;
                         }
                         _gameEngine.PlayCutscene(0x27);
-                        if (iVar1 == 4)
-                            goto LAB_80032830;
+                        if (slope == 4)
+                        {
+                            StaticVariables.PlayerEntity.TargetAnimationId = 0x1d;
+                            goto END;
+                        }
                         else
-                            goto LAB_80031e7c;
+                        {
+                            StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                            goto END;
+                        }
                     }
                     break;
 
                 default:
-                    if (iVar1 == 4)
-                        StaticVariables.g_entitySlots[0].TargetAnimationId = 0x3c;
+                    if (slope == 4)
+                    {
+                        StaticVariables.PlayerEntity.TargetAnimationId = 0x3c;
+                    }
                     else
-                        StaticVariables.g_entitySlots[0].TargetAnimationId = 0x39;
+                    {
+                        StaticVariables.PlayerEntity.TargetAnimationId = 0x39;
+                    }
+
                     break;
             }
 
             goto END;
         }
 
-        if ((StaticVariables.g_entitySlots[0].TileAttributes & 0x80U) != 0)
+        if ((StaticVariables.PlayerEntity.TileAttributes & 0x80U) != 0)
         {
             StaticVariables.g_playerWarpTimer = 0;
             StaticVariables.g_playerEffectTransitionCooldown = 0;
-            _gameEngine.AnimateWarpEffect();
-            _gameEngine.UpdatePlayerWarpDirection(1);
+            AnimateWarpEffect();
+            UpdatePlayerWarpDirection(1);
 
-            if (iVar1 == 4)
+            if (slope == 4)
             {
                 LAB_80032830:
-                StaticVariables.g_entitySlots[0].TargetAnimationId = 0x1d;
+                StaticVariables.PlayerEntity.TargetAnimationId = 0x1d;
                 goto END;
             }
 
-            if (StaticVariables.g_entitySlots[0].IsAboveGround == 0)
+            if (StaticVariables.PlayerEntity.IsAboveGround == 0)
             {
                 LAB_8003279c:
-                StaticVariables.g_entitySlots[0].TargetAnimationId = 0x2d;
+                StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
                 goto END;
             }
 
             LAB_80031e7c:
-            StaticVariables.g_entitySlots[0].TargetAnimationId = 0;
+            StaticVariables.PlayerEntity.TargetAnimationId = 0;
             goto END;
         }
 
-        _gameEngine.MaybeStartWarpAnimation();
+        MaybeStartWarpAnimation();
         uVar2 = (uint)(StaticVariables.g_padState1.ButtonsHold >> 12);
         dir = StaticVariables.UINT_ARRAY_80022c6c[uVar2];
         if (StaticVariables.UINT_ARRAY_80022c6c[uVar2] == 0xffffffff)
         {
-            dir = StaticVariables.g_entitySlots[0].TargetDirection;
+            dir = StaticVariables.PlayerEntity.TargetDirection;
         }
 
-        switch (iVar1)
+        switch (slope)
         {
             case 0:
             case 1:
@@ -186,45 +221,50 @@ public class PlayerManager
             case 4:
                 StaticVariables.g_playerWarpTimer = 0;
                 StaticVariables.g_playerEffectTransitionCooldown = 0;
-                _gameEngine.UpdatePlayerWarpDirection(2);
-                switch (StaticVariables.g_entitySlots[0].TargetAnimationId)
+                UpdatePlayerWarpDirection(2);
+                switch (StaticVariables.PlayerEntity.TargetAnimationId)
                 {
                     default:
-                        goto switchD_80032650_caseD_d;
+                        AnimateWarpEffect();
+                        goto END;
                     case 0xf:
                     case 0x1d:
-                        StaticVariables.g_entitySlots[0].TargetDirection = dir;
-                        iVar1 = _gameEngine.TryHandleWarpTrigger();
+                        StaticVariables.PlayerEntity.TargetDirection = dir;
+                        slope = TryHandleWarpTrigger();
 
-                        if (iVar1 == 0) goto END;
-
-                        iVar1 = _gameEngine.CheckWarpTrigger();
-
-                        if (iVar1 != 0)
+                        if (slope == 0)
                         {
-                            if (iVar1 == 2)
+                            goto END;
+                        }
+
+                        slope = CheckWarpTrigger();
+
+                        if (slope != 0)
+                        {
+                            if (slope == 2)
                             {
-                                StaticVariables.g_entitySlots[0].TargetAnimationId = 0x1d;
+                                StaticVariables.PlayerEntity.TargetAnimationId = 0x1d;
                             }
                             goto END;
                         }
 
                         if ((StaticVariables.g_padState1.ButtonsJustPressed & 0xd0) != 0)
                         {
-                            StaticVariables.g_entitySlots[0].TargetAnimationId = 0x28;
+                            StaticVariables.PlayerEntity.TargetAnimationId = 0x28;
                             goto END;
                         }
 
                         if (uVar2 != 0)
                         {
-                            StaticVariables.g_entitySlots[0].TargetAnimationId = 0xf;
+                            StaticVariables.PlayerEntity.TargetAnimationId = 0xf;
                             goto END;
                         }
-                        goto LAB_80032830;
+                        StaticVariables.PlayerEntity.TargetAnimationId = 0x1d;
+                        goto END;
                     case 0x1c:
                     case 0x31:
                     case 0x3e:
-                        StaticVariables.g_entitySlots[0].TargetDirection = StaticVariables.g_entitySlots[0].TargetDirection + 0x10 & 0x1f;
+                        StaticVariables.PlayerEntity.TargetDirection = StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
                         goto case 0;
                     case 0:
                     case 1:
@@ -283,68 +323,654 @@ public class PlayerManager
                     case 0x4b:
                     case 0x4e:
                     case 0x4f:
-                        StaticVariables.g_entitySlots[0].TargetAnimationId = 0x1d;
+                        StaticVariables.PlayerEntity.TargetAnimationId = 0x1d;
                         break;
                     case 0x28:
                     case 0x3a:
+                        TryHandleWarpTrigger();
+                        goto END;
                         break;
                     case 0x3b:
-                        iVar1 = _gameEngine.TryHandleWarpTrigger();
-                        if (iVar1 != 0)
+                        slope = TryHandleWarpTrigger();
+                        if (slope != 0)
                         {
-                            if (StaticVariables.g_entitySlots[0].ForceResetAnimationFlag == 1)
+                            if (StaticVariables.PlayerEntity.ForceResetAnimationFlag == 1)
                             {
-                                StaticVariables.g_entitySlots[0].TargetAnimationId = 0x1d;
-                                StaticVariables.g_entitySlots[0].TargetDirection = StaticVariables.g_entitySlots[0].TargetDirection + 0x10 & 0x1f;
+                                StaticVariables.PlayerEntity.TargetAnimationId = 0x1d;
+                                StaticVariables.PlayerEntity.TargetDirection = StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
                             }
                             goto END;
                         }
-                        goto LAB_8003270c;
+                        StaticVariables.PlayerEntity.TargetDirection = StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
+                        goto END;
                 }
-                goto switchD_80032650_caseD_28;
+                TryHandleWarpTrigger();
+                goto END;
             case 6:
-                if ((((uVar2 != 0) && (dir == 0x10)) &&
-                     (StaticVariables.g_entitySlots[0].TargetDirection == 0x10)) &&
-                    ((StaticVariables.g_entitySlots[0].ForceAdjusted != 0 && (StaticVariables.g_entitySlots[0].ActionState == 0))))
+                if (uVar2 != 0 
+                    && dir == 0x10 
+                    && StaticVariables.PlayerEntity.TargetDirection == 0x10 
+                    && StaticVariables.PlayerEntity.ForceAdjusted != 0 
+                    && StaticVariables.PlayerEntity.WarpEntity == null)
                 {
-                    StaticVariables.g_entitySlots[0].TargetAnimationId = 0xe;
+                    StaticVariables.PlayerEntity.TargetAnimationId = 0xe;
                 }
                 break;
             default:
                 goto END;
         }
 
-        _gameEngine.UpdatePlayerWarpEffect();
-        _gameEngine.UpdateWarpStepProgression();
-        _gameEngine.UpdatePlayerWarpDirection(0);
-
-
-
-
-        //===================================== TODO
-
-
-
-
+        UpdatePlayerWarpEffect();
+        UpdateWarpStepProgression();
+        UpdatePlayerWarpDirection(0);
 
         END:
-        _gameEngine.UpdateWarpEffectState();
-        _gameEngine.UpdateEntityFromWarpFlag(StaticVariables.g_entitySlots[0].HpMax);
-        _gameEngine.FinalizeWarpEntities((short)StaticVariables.g_entitySlots[0].Hp);
-        return;
+        UpdateWarpEffectState();
+        _gameEngine.UpdateEntityFromWarpFlag(StaticVariables.PlayerEntity.HpMax);
+        _gameEngine.FinalizeWarpEntities((short)StaticVariables.PlayerEntity.Hp);
+    }
 
-        switchD_80031dac_caseD_f:
-        if (StaticVariables.g_entitySlots[0].IsAboveGround == 0)
+    // 800307e8
+    private void UpdateWarpEffectState()
+    {
+        // Vérifie si la carte est déverrouillée pour différents indices de warp
+        if (_gameEngine.IsMapUnlocked(0x1C) != 0)
         {
-            StaticVariables.g_entitySlots[0].TargetAnimationId = 0x2d;
+            StaticVariables.g_gravityFlag = 3;
+        }
+        else if (_gameEngine.IsMapUnlocked(0x1B) != 0)
+        {
+            StaticVariables.g_gravityFlag = 2;
+        }
+        else if (_gameEngine.IsMapUnlocked(0x1A) != 0)
+        {
+            StaticVariables.g_gravityFlag = 1;
         }
         else
         {
-            StaticVariables.g_entitySlots[0].TargetAnimationId = 0;
+            StaticVariables.g_gravityFlag = 0;
         }
-        switchD_80032650_caseD_28:
-        StaticVariables.TryHandleWarpTrigger();
-        goto END;*/
+
+        // Initialisation des tableaux d'objets et d'armes
+        int iconIndex = 0x61; // Index 97
+        int requiredFlag = 2;
+        int iconBase = 0;
+
+        // Nettoie le tableau des items
+        StaticVariables.g_items[0] = 0;
+        StaticVariables.g_items[1] = 0;
+        StaticVariables.g_items[2] = 0;
+        StaticVariables.g_items[3] = 0;
+        StaticVariables.g_items[4] = 0;
+        StaticVariables.g_balanceEffectSources = null;
+
+        // Parcourt les icônes en commençant par l'index 97
+        int iconOffset = 97 * 8 + 6; // Offset dans le tableau g_iconNameEtcBase
+        while (iconIndex >= 0)
+        {
+            // Vérifie le bit 0x7F du troisième byte (index+2) de l'icône
+            byte iconFlags = (byte)(StaticVariables.g_iconNameEtcBase[iconOffset / 4] & 0x7F);
+
+            if (iconFlags == requiredFlag && _gameEngine.IsMapUnlocked(iconIndex) != 0)
+            {
+                var itemData = _gameEngine.GetItemDataPointer(iconIndex);
+                //StaticVariables.g_balanceEffectSources = itemData;
+                StaticVariables.g_items[0] = iconIndex + 0x1E;
+                break;
+            }
+
+            iconIndex--;
+            iconOffset -= 8;
+        }
+
+        // Vérification des tuiles actuelles
+        int currentTileIndex = (int)_gameEngine.GetCurrentTileIndex();
+        if (currentTileIndex > 0 && currentTileIndex < 0x61)
+        {
+            byte tileIconFlags = (byte)(StaticVariables.g_iconNameEtcBase[(currentTileIndex * 8 + 6) / 4] & 0x7F);
+
+            if (tileIconFlags == 1)
+            {
+                var itemData = _gameEngine.GetItemDataPointer(currentTileIndex);
+                StaticVariables.g_items[2] = itemData;
+                StaticVariables.g_items[3] = currentTileIndex + 0x1E;
+            }
+        }
+
+        // Vérification des warps déclenchés
+        int triggeredWarpMapId = _gameEngine.GetTriggeredWarpMapId();
+        if (triggeredWarpMapId > 0 && triggeredWarpMapId < 0x61)
+        {
+            byte warpIconFlags = (byte)(StaticVariables.g_iconNameEtcBase[(triggeredWarpMapId * 8 + 6) / 4] & 0x7F);
+
+            if (warpIconFlags == 3)
+            {
+                var itemData = _gameEngine.GetItemDataPointer(triggeredWarpMapId);
+                StaticVariables.g_items[3] = itemData;
+                StaticVariables.g_items[4] = triggeredWarpMapId + 0x1E;
+            }
+        }
+
+        // Copie les données d'effet de balance
+        if (StaticVariables.g_balanceEffectSources != null)
+        {
+            // Copie de g_balanceEffectSources vers g_intArray_80127008
+            Array.Copy(StaticVariables.g_balanceEffectSources, 0, StaticVariables.g_intArray_80127008, 0, 0xF0 / 4);
+        }
+        else if (StaticVariables.PlayerEntity.BalanceRecord != null)
+        {
+            StaticVariables.g_intArray_80127008[0] = StaticVariables.PlayerEntity.BalanceRecord;
+            // Copie de la BalanceRecord du joueur vers g_intArray_80127008
+            //Array.Copy(StaticVariables.PlayerEntity.BalanceRecord, 0, StaticVariables.g_intArray_80127008, 0, 0xF0 / 4);
+        }
+
+        // Gestion des valeurs d'effet pour l'animation
+        if (StaticVariables.g_playerControlFlags == 0 && StaticVariables.PlayerEntity.IsNotProcessable == 0 &&
+            StaticVariables.g_padState1.ButtonsHold == 0)
+        {
+            // Si le joueur a des points de vie et n'a pas sa vie au maximum
+            if (StaticVariables.PlayerEntity.Hp != 0 && StaticVariables.PlayerEntity.Hp < StaticVariables.PlayerEntity.HpMax)
+            {
+                // Parcourt les effets et incrémente les HP en fonction des animations
+                for (int i = 0; i < 3; i++)
+                {
+                    if (StaticVariables.g_items[i] != null && StaticVariables.g_items[i] != 0)
+                    {
+                        byte animationFrames = StaticVariables.g_intArray_80127008[i * 2].Hp;
+
+                        if (animationFrames != 0)
+                        {
+                            StaticVariables.INT_ARRAY_80126fe8[i]++;
+
+                            if (animationFrames <= StaticVariables.INT_ARRAY_80126fe8[i])
+                            {
+                                StaticVariables.INT_ARRAY_80126fe8[i] = 0;
+                                StaticVariables.PlayerEntity.Hp++;
+                            }
+                        }
+                        else
+                        {
+                            StaticVariables.INT_ARRAY_80126fe8[i] = 0;
+                        }
+                    }
+                    else
+                    {
+                        StaticVariables.INT_ARRAY_80126fe8[i] = 0;
+                    }
+                }
+
+                // Vérification que les HP ne dépassent pas le maximum
+                if (StaticVariables.PlayerEntity.Hp > StaticVariables.PlayerEntity.HpMax)
+                {
+                    StaticVariables.PlayerEntity.Hp = StaticVariables.PlayerEntity.HpMax;
+                }
+            }
+        }
+        else
+        {
+            // Réinitialise les compteurs d'effets si le joueur est sous contrôle
+            StaticVariables.INT_ARRAY_80126fe8[0] = 0;
+            StaticVariables.INT_ARRAY_80126fe8[1] = 0;
+            StaticVariables.INT_ARRAY_80126fe8[2] = 0;
+        }
+
+        // Affichage des informations de debug si nécessaire
+        if (StaticVariables.g_debugState < 0 && (StaticVariables.g_debugFlags & 0x400) != 0)
+        {
+            //// Code pour l'affichage des informations de debug
+            //bool debugHeaderPrinted = false;
+            //
+            //// Affiche les informations sur les effets actifs
+            //for (int i = 0; i < 3; i++)
+            //{
+            //    if (StaticVariables.g_items[i] != null && StaticVariables.g_items[i] != 0)
+            //    {
+            //        if (!debugHeaderPrinted)
+            //        {
+            //            StaticVariables.g_debugMessage += "\n";
+            //            debugHeaderPrinted = true;
+            //        }
+            //
+            //        byte numAnimVals = (byte)((StaticVariables.g_intArray_80127008[i * 2] >> 16) & 0xFF);
+            //        byte animVal = (byte)((StaticVariables.g_intArray_80127008[i * 2 + 1] >> 8) & 0xFF);
+            //        var effectType = StaticVariables.g_effectDebugFlagNames[i];
+            //
+            //        if (numAnimVals != 0)
+            //        {
+            //            if (animVal != 0)
+            //            {
+            //                StaticVariables.g_debugMessage += string.Format("{0}({1:D2}/A{2:D3}/T{3:D3})",
+            //                    effectType, StaticVariables.g_items[i] - 0x1E, animVal, StaticVariables.INT_ARRAY_80126fe8[i]);
+            //            }
+            //            else
+            //            {
+            //                StaticVariables.g_debugMessage += string.Format("{0}({1:D2}/A{2:D3})",
+            //                    effectType, StaticVariables.g_items[i] - 0x1E, animVal);
+            //            }
+            //        }
+            //        else if (numAnimVals != 0)
+            //        {
+            //            StaticVariables.g_debugMessage += string.Format("{0}({1:D2}/T{2:D3})",
+            //                effectType, StaticVariables.g_items[i] - 0x1E, StaticVariables.INT_ARRAY_80126fe8[i]);
+            //        }
+            //        else
+            //        {
+            //            StaticVariables.g_debugMessage += string.Format("{0}({1:D2})",
+            //                effectType, StaticVariables.g_items[i] - 0x1E);
+            //        }
+            //    }
+            //}
+            //
+            //if (debugHeaderPrinted)
+            //{
+            //    StaticVariables.g_debugMessage += "\n";
+            //}
+            //
+            // Affiche les informations sur les sources d'effets
+            //if (StaticVariables.g_balanceEffectSources != null)
+            //{
+            //    _gameEngine.AppendHexVisualDebugLine(StaticVariables.g_balanceEffectSources, "ARM");
+            //}
+            //else
+            //{
+            //    _gameEngine.AppendHexVisualDebugLine(StaticVariables.PlayerEntity.BalanceRecord, "ALN");
+            //}
+            //
+            //if (StaticVariables.g_items[2] != null && StaticVariables.g_items[2] != 0)
+            //{
+            //    _gameEngine.AppendHexVisualDebugLine(StaticVariables.g_items[2], "WEP");
+            //}
+            //
+            //if (StaticVariables.g_items[3] != null && StaticVariables.g_items[3] != 0)
+            //{
+            //    _gameEngine.AppendHexVisualDebugLine(StaticVariables.g_items[3], "ITM");
+            //}
+            //
+            //_gameEngine.AppendHexVisualDebugLine(StaticVariables.g_intArray_80127008, "DEF");
+        }
+    }
+
+    // 8002f768
+    private void UpdateWarpStepProgression()
+    {
+        Debugger.Break();
+    }
+
+    // 8002f49c
+    private void UpdatePlayerWarpEffect()
+    {
+        Debugger.Break();
+    }
+
+    // 8002e910
+    private int CheckWarpTrigger()
+    {
+        Debugger.Break();
+        return 0;
+    }
+
+    // 8002ed64
+    private int TryHandleWarpTrigger()
+    {
+        Debugger.Break();
+        return 0;
+    }
+
+    // 8003634c
+    private int MaybeStartWarpAnimation()
+    {
+        int iVar1;
+
+        if (StaticVariables.g_warpLockTimer == 0)
+        {
+            iVar1 = 1;
+        }
+        else
+        {
+            switch (StaticVariables.g_warpLockTimer)
+            {
+                case 0x1f:
+                    iVar1 = FUN_80035204();
+                    break;
+                case 0x20:
+                    iVar1 = FUN_80035260();
+                    break;
+                default:
+                    iVar1 = 1;
+                    break;
+                case 0x23:
+                    iVar1 = FUN_800352c4();
+                    break;
+                case 0x2b:
+                    iVar1 = FUN_80035320();
+                    break;
+                case 0x2c:
+                    iVar1 = FUN_800354d0();
+                    break;
+                case 0x2d:
+                case 0x2e:
+                    iVar1 = ProcessPlayerEffectSequence(StaticVariables.g_warpLockTimer);
+                    break;
+                case 0x2f:
+                    iVar1 = FUN_80035a84();
+                    break;
+                case 0x30:
+                    iVar1 = FUN_80035c64();
+                    break;
+                case 0x31:
+                    iVar1 = FUN_80035eb0();
+                    break;
+                case 0x32:
+                    iVar1 = FUN_80036218();
+                    break;
+            }
+
+            if (StaticVariables.g_playerEffectCurrentFrame < 0x7fffffff)
+            {
+                StaticVariables.g_playerEffectCurrentFrame = StaticVariables.g_playerEffectCurrentFrame + 1;
+            }
+
+            if (iVar1 != 0)
+            {
+                StaticVariables.g_warpLockTimer = 0;
+            }
+        }
+
+        return iVar1;
+    }
+
+    private int FUN_80036218()
+    {
+
+        Debugger.Break();
+        return 0;
+    }
+
+    private int FUN_80035eb0()
+    {
+
+        Debugger.Break();
+        return 0;
+    }
+
+    private int FUN_80035c64()
+    {
+
+        Debugger.Break();
+        return 0;
+    }
+
+    private int FUN_80035a84()
+    {
+
+        Debugger.Break();
+        return 0;
+    }
+
+    private int ProcessPlayerEffectSequence(int timer)
+    {
+
+        Debugger.Break();
+        return 0;
+    }
+
+    private int FUN_800354d0()
+    {
+
+        Debugger.Break();
+        return 0;
+    }
+
+    private int FUN_80035320()
+    {
+
+        Debugger.Break();
+        return 0;
+    }
+
+    private int FUN_800352c4()
+    {
+
+        Debugger.Break();
+        return 0;
+    }
+
+    private int FUN_80035260()
+    {
+
+        Debugger.Break();
+        return 0;
+    }
+
+    private int FUN_80035204()
+    {
+        Debugger.Break();
+        return 0;
+    }
+
+    // 80031a68
+    private uint FindWarpFacingDirection()
+    {
+        uint direction;
+        uint entryType;
+        int iVar1;
+        int hp;
+        Entity entity2;
+
+        var player = StaticVariables.PlayerEntity;
+
+        entity2 = player.TouchingEntity;
+        if (player.TouchingEntity == null)
+        {
+            direction = 0xffffffff;
+            if (player.DamagedTickCounter == 0)
+            {
+                direction = 0xffffffff;
+                if (StaticVariables.g_gravityFlag < 3)
+                {
+                    entryType = (uint)((player.CombinedVramFlagsOR & 0x180U) >> 7);
+                    direction = 0xffffffff;
+
+                    if (entryType != 0)
+                    {
+                        iVar1 = StaticVariables.g_warpStepThresholdTable[entryType];
+                        hp = 0;
+
+                        if (iVar1 < player.Hp)
+                        {
+                            hp = player.Hp - iVar1;
+                        }
+
+                        direction = player.TargetDirection + 0x10 & 0x1f;
+                        player.Hp = hp;
+                    }
+                }
+            }
+        }
+        else
+        {
+            _gameEngine.EntityManager.UpdateEntityFacingDirection(player);
+            direction = (uint)ScriptHelper.GetDirectionToTarget(player.PosX - entity2.PosX, player.PosY - entity2.PosY);
+        }
+        return direction;
+    }
+
+    // 8002f884
+    private void UpdatePlayerWarpDirection(int mode)
+    {
+        int dx, dy, dz;          /* s2, s1, s0               */
+        Entity warpEntity;             /* a3  – pointeur entité-warp*/
+        int newDx, newDy, newDz; /* registres temporaires     */
+        int v0, v1;              /* registre de travail       */
+
+        /* ---------- prologue (push RA/s0-s2) ------------------- */
+
+        /* récupère le pointeur vers l’entité “effet de warp”      */
+        warpEntity = StaticVariables.PlayerEntity.WarpEntity;             /* lw */
+
+        /* si aucune entité-warp active, on saute directement      */
+        if (warpEntity == null)                                          /* beq */
+        {
+            goto LAB_8002FAF0;
+        }
+
+        /* si le champ byte 0x0E de balanceRecord est 0 ET mode=1,
+           on réinterprète l’appel comme mode=0                    */
+        v0 = warpEntity.BalanceRecord.NumAnimVals; // 0x0E
+        if (v0 == 0 && mode == 1)                                     /* bne / beq */
+        {
+            mode = 0;
+        }
+
+        /**********************  CAS mode == 0  ********************/
+        if (mode == 0)                                                /* beq */
+        {
+            LAB_8002F8E0:
+            /* joueur (slot-0)                                     */
+            Entity player = StaticVariables.PlayerEntity;
+
+            /* delta X, Y, Z entre entité-warp et joueur           */
+            dx = warpEntity.PosX - player.PosX;
+            dy = warpEntity.PosY - player.PosY;
+            dz = warpEntity.PosZ - player.PosZ;
+
+            /* |dx|, |dy|                                          */
+            v1 = dx >= 0 ? dx : -dx;
+            newDy = dy >= 0 ? dy : -dy;
+
+            /* newDz = dz − 0x0020_0000  (0xFFE0 0000)             */
+            newDz = dz - 0x200000;
+            if (newDz < 0)                                           /* bgez */
+            {
+                newDz = 0x200000 - dz;
+            }
+
+            /* si max(|dx|,|dy|) >= newDz  → on “snap” sur X/Y     */
+            if (v1 >= newDy)                                         /* slt */
+            {
+                /* v1 garde |dx| */
+            }
+            else
+            {
+                v1 = newDy;
+            }
+
+            if (v1 < newDz)                                          /* slt */
+            {   /* assez proche sur Z, on amortit X & Y            */
+                /* StepTowards( dx, 0, 0x0001_0000 )               */
+                dx = StepTowards(dx, 0, 0x00010000);
+                /* StepTowards( dy, 0, 0x0001_0000 )               */
+                dy = StepTowards(dy, 0, 0x00010000);
+            }
+            /* StepTowards( dz, 0x0020_0000, 0x0001_0000 )         */
+            dz = StepTowards(dz, 0x00200000, 0x00010000);
+
+            /* stocke les offsets relatifs du joueur               */
+            player.RelativeWarpOffsetX = dx;
+            player.RelativeWarpOffsetY = dy;
+            player.RelativeWarpOffsetZ = dz;
+            goto LAB_8002FAF0;
+        }
+
+        /**********************  CAS mode == 1  ********************/
+        if (mode == 1)                                                /* beq */
+        {
+            LAB_8002F9AC:
+            /* si byte 0x0E non-nul → gestion “delay”              */
+            v0 = warpEntity.BalanceRecord.NumAnimVals; // 0x0E
+            if (v0 == 0)                                             /* beq */
+            {
+                goto LAB_8002FAF0;
+            }
+
+            /* incrémente g_warpDelayCounter (max 5)               */
+            if (StaticVariables.g_warpDelayCounter < 5)
+            {
+                StaticVariables.g_warpDelayCounter++;
+                goto LAB_8002FAAC;                                   /* saute stockage offsets */
+            }
+
+            /* recalcul des deltas avec le joueur ---------------- */
+            var player = StaticVariables.PlayerEntity;
+            dx = warpEntity.PosX - player.PosX;
+            dy = warpEntity.PosY - player.PosY;
+            dz = warpEntity.PosZ - player.PosZ;
+
+            /* |dx|,|dy|,|dz|                                      */
+            newDx = dx >= 0 ? dx : -dx;
+            newDy = dy >= 0 ? dy : -dy;
+            newDz = dz >= 0 ? dz : -dz;
+
+            /* si déjà très proche (<0x0000_FFFF) sur chaque axe,
+               on détruit l’entité-warp et termine                 */
+            if (newDx < 0x0000FFFF && newDy < 0x0000FFFF && newDz < 0x0000FFFF)
+            {
+                _gameEngine.DestroyEntity(warpEntity);
+                goto LAB_8002FAF8;
+            }
+
+            /* sinon, amortissement avec step 0x0002_0000          */
+            dx = StepTowards(dx, 0, 0x00020000);
+            dy = StepTowards(dy, 0, 0x00020000);
+            dz = StepTowards(dz, 0, 0x00020000);
+
+            /* stocke dans le joueur                               */
+            player.RelativeWarpOffsetX = dx;
+            player.RelativeWarpOffsetY = dy;
+            player.RelativeWarpOffsetZ = dz;
+            LAB_8002FAAC:
+            /* rien d’autre, on sort                               */
+            goto LAB_8002FAF8;
+        }
+
+        /**********************  CAS mode == -1  *******************/
+        LAB_8002FAB4:                                                     /* (mode autre) */
+        {
+            var player = StaticVariables.PlayerEntity;
+
+            warpEntity.Flags2 = -1; // TODO flags2 ??
+            warpEntity.TargetDirection = player.TargetDirection;
+
+            warpEntity.PosX = player.PosX;
+            warpEntity.PosY = player.PosY;
+            warpEntity.PosZ = player.PosZ + 0x00200000;
+
+            goto LAB_8002FAF0;
+        }
+
+        /**********************  FIN COMMUNES **********************/
+        LAB_8002FAF0:
+        /* réinitialise le compte à rebours global                */
+        StaticVariables.g_warpDelayCounter = 0;
+
+        LAB_8002FAF8:                                                     /* épilogue */
+        return;
+    }
+
+    // 8002f854
+    private int StepTowards(int current, int target, int maxStep)
+    {
+        int absDelta;
+        int delta;
+
+        delta = target - current;
+        absDelta = delta;
+        if (delta < 0)
+        {
+            absDelta = -delta;
+        }
+
+        if (maxStep <= absDelta)
+        {
+            target = current + maxStep;
+
+            if (delta < 1)
+            {
+                target = current - maxStep;
+            }
+        }
+
+        return target;
     }
 
     // 8002f120
@@ -358,11 +984,11 @@ public class PlayerManager
         string fmt;
         uint uVar3;
 
-        combinedVramFlagsAnd = StaticVariables.g_entitySlots[0].CombinedVramFlagsAND;
+        combinedVramFlagsAnd = StaticVariables.PlayerEntity.CombinedVramFlagsAND;
 
-        if ((StaticVariables.g_debugState < 0)
-            && ((StaticVariables.g_debugFlags & 4) != 0)
-            && ((StaticVariables.g_debugFlags & 0x8000004) != 0x8000004))
+        if (StaticVariables.g_debugState < 0
+            && (StaticVariables.g_debugFlags & 4) != 0
+            && (StaticVariables.g_debugFlags & 0x8000004) != 0x8000004)
         {
             if (StaticVariables.g_isWarpDisabled == 0)
             {
@@ -371,7 +997,7 @@ public class PlayerManager
 
                 if ((combinedVramFlagsAnd & 4U) == 0)
                 {
-                    if (((combinedVramFlagsAnd & 0x8000U) == 0) || (StaticVariables.g_playerControlFlags != 0))
+                    if ((combinedVramFlagsAnd & 0x8000U) == 0 || StaticVariables.g_playerControlFlags != 0)
                     {
                         //buffer = StaticVariables.g_debugMessage + combinedVramFlagsAnd;
                         //fmt = "None)\n";
@@ -392,8 +1018,8 @@ public class PlayerManager
 
                             ushort requiredInput = StaticVariables.BYTE_ARRAY_80022778[uVar3 * 2];
 
-                            if (((StaticVariables.g_padState1.ButtonsHold & requiredInput) == 0)
-                                || (StaticVariables.g_entitySlots[0].CurrentFrameIndex != uVar3))
+                            if ((StaticVariables.g_padState1.ButtonsHold & requiredInput) == 0
+                                || StaticVariables.PlayerEntity.CurrentFrameIndex != uVar3)
                             {
                                 //buffer = StaticVariables.g_debugMessage + combinedVramFlagsAnd;
                                 //fmt = "Warp Not Ready!\n";
@@ -446,12 +1072,13 @@ public class PlayerManager
             return;
         }
 
-        if ((StaticVariables.g_entitySlots[0].CombinedVramFlagsAND & 4U) == 0)
+        if ((StaticVariables.PlayerEntity.CombinedVramFlagsAND & 4U) == 0)
         {
-            if ((StaticVariables.g_entitySlots[0].CombinedVramFlagsAND & 0x8000U) == 0)
+            if ((StaticVariables.PlayerEntity.CombinedVramFlagsAND & 0x8000U) == 0)
             {
                 return;
             }
+
             if (StaticVariables.g_playerControlFlags != 0)
             {
                 return;
@@ -470,7 +1097,8 @@ public class PlayerManager
             {
                 return;
             }
-            if (StaticVariables.g_entitySlots[0].CurrentFrameIndex != uVar3)
+
+            if (StaticVariables.PlayerEntity.CurrentFrameIndex != uVar3)
             {
                 return;
             }
@@ -491,6 +1119,7 @@ public class PlayerManager
         HandleWarpTransition(warpData, 0x36, combinedVramFlagsAnd);
     }
 
+    // 80031340
     private void HandleWarpTransition(Portal warpData, int warpType, int extraData)
     {
         int targetCamZ;
@@ -509,13 +1138,13 @@ public class PlayerManager
         var tileWidth = StaticVariables.MapTileWidth;
 
         int tileOffsetY = warpData.DestTileY * tileHeight +
-                          (StaticVariables.g_entitySlots[0].PosY / 2) +
+                          StaticVariables.PlayerEntity.PosY / 2 +
                           warpData.Y1 * -tileHeight;
 
         targetCamY = ((tileOffsetY << 16 >> 0x14) * tileHeight + 8) << 16;
 
         int tileOffsetX = (int)(((uint)warpData.DestTileX * tileWidth +
-                                 (StaticVariables.g_entitySlots[0].PosX >> tileHeight) + warpData.X1 * -tileWidth) << 16) >> 0x0f;
+                                 (StaticVariables.PlayerEntity.PosX >> tileHeight) + warpData.X1 * -tileWidth) << 16) >> 0x0f;
 
         targetCamX = (StaticVariables.g_tileToWorldXTable[tileOffsetX * 2] * tileWidth + 0xc) << 16;
 
@@ -526,22 +1155,22 @@ public class PlayerManager
         {
             if (StaticVariables.g_desiredMap == StaticVariables.g_currentMap)
             {
-                if (StaticVariables.g_entitySlots[0].ActionState == 0)
+                if (StaticVariables.PlayerEntity.WarpEntity == null)
                 {
-                    StaticVariables.g_entitySlots[0].PosX = targetCamX;
-                    StaticVariables.g_entitySlots[0].PosY = targetCamY;
-                    StaticVariables.g_entitySlots[0].PosZ = targetCamZ;
+                    StaticVariables.PlayerEntity.PosX = targetCamX;
+                    StaticVariables.PlayerEntity.PosY = targetCamY;
+                    StaticVariables.PlayerEntity.PosZ = targetCamZ;
                     return;
                 }
 
-                //playerPtr = StaticVariables.g_entitySlots[0].ActionState;
-                //(playerPtr + 0x114) = (playerPtr + 0x114) + (targetCamX - StaticVariables.g_entitySlots[0].PosX);
-                //(playerPtr + 0x118) = (playerPtr + 0x118) + (targetCamY - StaticVariables.g_entitySlots[0].PosY);
-                //(playerPtr + 0x11c) = (playerPtr + 0x11c) + (targetCamZ - StaticVariables.g_entitySlots[0].PosZ);
+                //playerPtr = StaticVariables.PlayerEntity.WarpEntity;
+                //(playerPtr + 0x114) = (playerPtr + 0x114) + (targetCamX - StaticVariables.PlayerEntity.PosX);
+                //(playerPtr + 0x118) = (playerPtr + 0x118) + (targetCamY - StaticVariables.PlayerEntity.PosY);
+                //(playerPtr + 0x11c) = (playerPtr + 0x11c) + (targetCamZ - StaticVariables.PlayerEntity.PosZ);
 
-                StaticVariables.g_entitySlots[0].PosX = targetCamX;
-                StaticVariables.g_entitySlots[0].PosY = targetCamY;
-                StaticVariables.g_entitySlots[0].PosZ = targetCamZ;
+                StaticVariables.PlayerEntity.PosX = targetCamX;
+                StaticVariables.PlayerEntity.PosY = targetCamY;
+                StaticVariables.PlayerEntity.PosZ = targetCamZ;
                 return;
             }
 
@@ -559,27 +1188,23 @@ public class PlayerManager
 
     // 8002fb14
     public void PreparePlayerForWarpEntry(int param_1)
-    {/*
-        int frameOffset;
-        Entity entityCreated;
-        SpriteEffect pSVar1;
-        Entity entityCreated2;
-        byte efffectId;
-        uint uVar4;
-        int[] piVar5;
-        uint uVar6;
-        int animIndex;
-        int effectEntityId;
-        int[] local_50 = new int[4];
-        int[] local_40 = new int[4];
-        long local_30;
-        long uStack_28;
-        long lVar2;
-        ulong uVar1;
+    {
+        // Variables locales pour stocker les états et résultats temporaires
+        int effectEntityId = 0;
+        byte effectId = 0;
+        int animIndex = 0;
+        int frameOffset = 0;
+        SpriteEffect entityCreated = null;
+        SpriteEffect spriteEffect = null;
 
-        switch (StaticVariables.g_entitySlots[0].TargetAnimationId)
+        // Récupération de l'animation actuelle du joueur
+        uint playerAnimId = StaticVariables.PlayerEntity.TargetAnimationId;
+
+        // Traitement en fonction de l'animation actuelle du joueur
+        switch (playerAnimId)
         {
-            case 4:
+            // Cas où l'animation du joueur nécessite un déclenchement des effets de tuile
+            case 4:  // Ces valeurs correspondent à différentes animations de mouvement
             case 0x10:
             case 0x12:
             case 0x14:
@@ -594,163 +1219,249 @@ public class PlayerManager
             case 0x46:
             case 0x49:
             case 0x4b:
-                _gameEngine.CheckAndTriggerTileEffect(StaticVariables.g_entitySlots[0]);
+                _gameEngine.CheckAndTriggerTileEffect(StaticVariables.PlayerEntity);
                 break;
+
+            // Animation de type "frappe"
             case 0x29:
-                if ((StaticVariables.g_entitySlots[0].FrameCounter & 7U) == 0)
+                // Jouer un son à intervalle régulier
+                if ((StaticVariables.PlayerEntity.FrameCounter & 7) == 0)
                 {
-                    _gameEngine.PlaySoundEffect(StaticVariables.g_hitSoundEffects[StaticVariables.g_entitySlots[0].Slope_18c]);
+                    _gameEngine.PlaySoundEffect((uint)StaticVariables.g_hitSoundEffects[StaticVariables.PlayerEntity.Slope_18c]);
                 }
-                if ((StaticVariables.g_entitySlots[0].Slope_18c - 1U < 2) || (StaticVariables.g_entitySlots[0].Slope_18c == 4))
+
+                // Déterminer le type d'effet à créer en fonction du type de terrain (pente)
+                if ((StaticVariables.PlayerEntity.Slope_18c - 1 < 2) || (StaticVariables.PlayerEntity.Slope_18c == 4))
                 {
-                    effectEntityId = -0x7ffdd79c;
-                    efffectId = 6;
+                    effectEntityId = 0; // Utilise les données d'effet standard
+                    effectId = 6;
                 }
                 else
                 {
-                    effectEntityId = -0x7ffdd7dc;
-                    efffectId = StaticVariables.g_sharedBuffer2[10];
+                    effectEntityId = 1; // Utilise les données d'effet alternatif
+                    effectId = (byte)_gameEngine.CurrentMap.Info._10;
                 }
-                animIndex = StaticVariables.g_entitySlots[0].AnimCompleteCounter - 1;
-                if (animIndex < 0) break;
+
+                // Calcul du retard d'animation
+                animIndex = StaticVariables.PlayerEntity.AnimCompleteCounter - 1;
+                if (animIndex < 0)
+                {
+                    break;
+                }
+
                 frameOffset = animIndex * 2;
                 if (animIndex > 3)
                 {
                     animIndex = 3;
                     frameOffset = 6;
                 }
-                if ((*(short*)(effectEntityId + frameOffset) & StaticVariables.g_entitySlots[0].FrameCounter) == 0)
-                {
-                    if (efffectId == 0)
-                    {
-                        entityCreated = null;
-                    }
-                    else
-                    {
-                        entityCreated = (Entity)_gameEngine.CreateEffectEntity(0, efffectId, 0,
-                            StaticVariables.g_entitySlots[0].PosX,
-                            StaticVariables.g_entitySlots[0].PosY,
-                            StaticVariables.g_entitySlots[0].TerrainHeight);
-                    }
 
-                    if (entityCreated != null)
-                    {
-                        frameOffset = effectEntityId + StaticVariables.g_entitySlots[0].CurrentFrameIndex * 4;
-                        animIndex = *(short*)(effectEntityId + 8 + animIndex * 2);
-                        uVar6 = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                        entityCreated.ProgramIndexes[2] =
-                            *(short*)(frameOffset + 0x12) * animIndex +
-                            (int)(((ulong)uVar6 * (ulong)(*(short*)(frameOffset + 0x10) * animIndex + 1)) >> 32);
-                        uVar6 = uVar6 * 0x7d2b89dd + 0xe06a02e7;
-                        entityCreated.ProgramIndexes[3] =
-                            *(short*)(frameOffset + 0x26) * animIndex +
-                            (int)(((ulong)uVar6 * (ulong)(*(short*)(frameOffset + 0x24) * animIndex + 1)) >> 32);
-                        StaticVariables.g_gameRandomSeed = uVar6 * 0x7d2b89dd + 0xe06a02e7;
-                        lVar2 = (long)((ulong)StaticVariables.g_gameRandomSeed *
-                            (ulong)(*(short*)(effectEntityId + 0x30) * animIndex + 1));
-                        entityCreated.ProgramIndexes[4] = *(short*)(effectEntityId + 0x32) * animIndex + (int)(lVar2 >> 32);
-                    }
+                // Si le compteur de frame n'est pas dans la plage des effets, ne rien faire
+                if ((StaticVariables.g_hitSoundEffects[effectEntityId + frameOffset] & StaticVariables.PlayerEntity.FrameCounter) != 0)
+                {
+                    break;
+                }
+
+                // Créer un effet à la position du joueur
+                if (effectId != 0)
+                {
+                    spriteEffect = _gameEngine.EffectManager.CreateEffectEntity(
+                        0,
+                        effectId,
+                        0,
+                        StaticVariables.PlayerEntity.PosX,
+                        StaticVariables.PlayerEntity.PosY,
+                        StaticVariables.PlayerEntity.TerrainHeight);
+                }
+
+                // Si l'effet a été créé avec succès, configurer ses propriétés
+                if (spriteEffect != null)
+                {
+                    // Calculer les forces aléatoires pour l'effet
+                    frameOffset = effectEntityId + StaticVariables.PlayerEntity.CurrentFrameIndex * 4;
+                    int randomMult = StaticVariables.g_hitSoundEffects[animIndex * 2 + 8];
+
+                    // Générer des valeurs aléatoires pour les forces
+                    StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+
+                    // Appliquer les forces dans différentes directions avec des composantes aléatoires
+                    spriteEffect.ForceX = StaticVariables.g_hitSoundEffects[frameOffset + 0x12] * randomMult +
+                        (int)(((ulong)StaticVariables.g_gameRandomSeed * (ulong)(StaticVariables.g_hitSoundEffects[frameOffset + 0x10] * randomMult + 1)) >> 32);
+
+                    StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+
+                    spriteEffect.ForceY = StaticVariables.g_hitSoundEffects[frameOffset + 0x26] * randomMult +
+                        (int)(((ulong)StaticVariables.g_gameRandomSeed * (ulong)(StaticVariables.g_hitSoundEffects[frameOffset + 0x24] * randomMult + 1)) >> 32);
+
+                    StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+
+                    spriteEffect.ForceZ = StaticVariables.g_hitSoundEffects[effectEntityId + 0x32] * randomMult +
+                        (int)(((ulong)StaticVariables.g_gameRandomSeed * (ulong)(StaticVariables.g_hitSoundEffects[effectEntityId + 0x30] * randomMult + 1)) >> 32);
                 }
                 break;
         }
 
-        if ((StaticVariables.g_entitySlots[0].ForceX == 0) && (StaticVariables.g_entitySlots[0].ForceY == 0)) goto SkipEffects;
-
-        switch (StaticVariables.g_entitySlots[0].TargetAnimationId)
+        // Vérifier si le joueur est en mouvement
+        if (StaticVariables.PlayerEntity.ForceX == 0 && StaticVariables.PlayerEntity.ForceY == 0)
         {
+            goto SkipEffects;
+        }
+
+        // Traitement des effets pour le joueur en mouvement
+        switch (StaticVariables.PlayerEntity.TargetAnimationId)
+        {
+            // Animations de marche/course - jouer des sons de pas
             case 1:
             case 7:
-                if ((StaticVariables.g_entitySlots[0].FrameCounter & 0xfU) == 0)
+                if ((StaticVariables.PlayerEntity.FrameCounter & 0xf) == 0)
                 {
-                    _gameEngine.PlaySoundEffect(StaticVariables.SHORT_ARRAY_800227f4[StaticVariables.g_entitySlots[0].Slope_18c]);
+                    _gameEngine.PlaySoundEffect((uint)StaticVariables.SHORT_ARRAY_800227f4[StaticVariables.PlayerEntity.Slope_18c]);
                 }
                 goto SkipEffects;
+
+            // Animation de type "coup"
             case 3:
                 effectEntityId = 0;
-                if ((StaticVariables.g_entitySlots[0].FrameCounter & 7U) == 0)
+                if ((StaticVariables.PlayerEntity.FrameCounter & 7) == 0)
                 {
-                    _gameEngine.PlaySoundEffect(StaticVariables.g_hitSoundEffects[StaticVariables.g_entitySlots[0].Slope_18c]);
+                    _gameEngine.PlaySoundEffect((uint)StaticVariables.g_hitSoundEffects[StaticVariables.PlayerEntity.Slope_18c]);
                 }
                 goto CaseEffect;
+
+            // Autres animations qui produisent des effets
             case 4:
             case 0x2a:
                 effectEntityId = 1;
                 CaseEffect:
-                if ((StaticVariables.g_entitySlots[0].Slope_18c - 1U < 2) || (StaticVariables.g_entitySlots[0].Slope_18c == 4))
+                // Déterminer le type d'effet en fonction du type de terrain
+                if ((StaticVariables.PlayerEntity.Slope_18c - 1 < 2) || (StaticVariables.PlayerEntity.Slope_18c == 4))
                 {
-                    animIndex = -0x7ffdd79c;
-                    efffectId = 6;
+                    animIndex = 0;
+                    effectId = 6;
                 }
                 else
                 {
-                    animIndex = -0x7ffdd7dc;
-                    efffectId = StaticVariables.g_sharedBuffer2[10];
+                    animIndex = 1;
+                    effectId = (byte)_gameEngine.CurrentMap.Info._10;
                 }
-                if ((*(short*)(animIndex + 0x34) & StaticVariables.g_entitySlots[0].FrameCounter) != 0) goto SkipEffects;
-                pSVar1 = (efffectId == 0) ? null :
-                    _gameEngine.CreateEffectEntity(0, efffectId, 0,
-                        StaticVariables.g_entitySlots[0].PosX,
-                        StaticVariables.g_entitySlots[0].PosY,
-                        StaticVariables.g_entitySlots[0].TerrainHeight);
-                if (pSVar1 != null)
+
+                // Vérifier si on doit créer un effet pour cette frame
+                if ((StaticVariables.g_hitSoundEffects[animIndex + 0x34] & StaticVariables.PlayerEntity.FrameCounter) != 0)
                 {
-                    effectEntityId = *(short*)(effectEntityId * 2 + animIndex + 0x36);
-                    pSVar1.ForceX = StaticVariables.g_entitySlots[0].ForceX * effectEntityId >> 8;
-                    pSVar1.ForceY = StaticVariables.g_entitySlots[0].ForceY * effectEntityId >> 8;
+                    goto SkipEffects;
+                }
+
+                // Créer un effet à la position du joueur
+                if (effectId != 0)
+                {
+                    spriteEffect = _gameEngine.EffectManager.CreateEffectEntity(
+                        0,
+                        effectId,
+                        0,
+                        StaticVariables.PlayerEntity.PosX,
+                        StaticVariables.PlayerEntity.PosY,
+                        StaticVariables.PlayerEntity.TerrainHeight);
+                }
+
+                // Si l'effet a été créé, lui donner une force proportionnelle à celle du joueur
+                if (spriteEffect != null)
+                {
+                    int forceMult = StaticVariables.g_hitSoundEffects[effectEntityId * 2 + animIndex + 0x36];
+                    spriteEffect.ForceX = (StaticVariables.PlayerEntity.ForceX * forceMult) >> 8;
+                    spriteEffect.ForceY = (StaticVariables.PlayerEntity.ForceY * forceMult) >> 8;
+
+                    // Ajouter une composante aléatoire à la force verticale
                     StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                    lVar2 = (long)((ulong)StaticVariables.g_gameRandomSeed * (ulong)((int)*(short*)(animIndex + 0x3a) + 1));
-                    animIndex = *(short*)(animIndex + 0x3c);
-                    pSVar1.ForceZ = animIndex + (int)(lVar2 >> 32);
+                    int zOffset = StaticVariables.g_hitSoundEffects[animIndex + 0x3c];
+                    spriteEffect.ForceZ = zOffset + (int)(((ulong)StaticVariables.g_gameRandomSeed * (ulong)(StaticVariables.g_hitSoundEffects[animIndex + 0x3a] + 1)) >> 32);
                 }
                 break;
 
+            // Animation de glissade ou de course rapide
             case 0x23:
-                uVar6 = StaticVariables.g_entitySlots[0].FrameCounter & 7;
-                goto CaseRandomEffect;
-            case 0x24:
-                uVar6 = StaticVariables.g_entitySlots[0].FrameCounter & 3;
-                CaseRandomEffect:
-                if (uVar6 != 0) goto SkipEffects;
-                pSVar1 = _gameEngine.CreateEffectEntity(0, StaticVariables.g_sharedBuffer2[10], 0,
-                    StaticVariables.g_entitySlots[0].PosX,
-                    StaticVariables.g_entitySlots[0].PosY,
-                    StaticVariables.g_entitySlots[0].TerrainHeight);
-                if (pSVar1 != null)
+                if ((StaticVariables.PlayerEntity.FrameCounter & 7) != 0)
                 {
-                    uVar6 = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                    uVar4 = uVar6 * 0x7d2b89dd + 0xe06a02e7;
-                    StaticVariables.g_gameRandomSeed = uVar4 * 0x7d2b89dd + 0xe06a02e7;
-                    uVar1 = (ulong)StaticVariables.g_gameRandomSeed;
-                    pSVar1.X += -0xc0000 + (int)(((ulong)uVar6 * 0x180001) >> 32);
-                    pSVar1.Y += -0x80000 + (int)(((ulong)uVar4 * 0x100001) >> 32);
-                    animIndex = pSVar1.ForceZ + 0x10000;
-                    pSVar1.ForceZ = animIndex + (int)((uVar1 * 0x10001) >> 32);
+                    goto SkipEffects;
+                }
+
+                goto CaseRandomEffect;
+
+            case 0x24:
+                if ((StaticVariables.PlayerEntity.FrameCounter & 3) != 0)
+                {
+                    goto SkipEffects;
+                }
+
+                CaseRandomEffect:
+                // Créer un effet de poussière/particule
+                spriteEffect = _gameEngine.EffectManager.CreateEffectEntity(
+                    0,
+                    (byte)_gameEngine.CurrentMap.Info._10,
+                    0,
+                    StaticVariables.PlayerEntity.PosX,
+                    StaticVariables.PlayerEntity.PosY,
+                    StaticVariables.PlayerEntity.TerrainHeight);
+
+                if (spriteEffect != null)
+                {
+                    // Générer des positions aléatoires autour du joueur
+                    StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+                    uint randomSeed1 = StaticVariables.g_gameRandomSeed;
+
+                    StaticVariables.g_gameRandomSeed = randomSeed1 * 0x7d2b89dd + 0xe06a02e7;
+                    uint randomSeed2 = StaticVariables.g_gameRandomSeed;
+
+                    StaticVariables.g_gameRandomSeed = randomSeed2 * 0x7d2b89dd + 0xe06a02e7;
+
+                    // Appliquer les offsets aléatoires à la position de l'effet
+                    spriteEffect.X += -0xc0000 + (int)(((ulong)randomSeed1 * 0x180001) >> 32);
+                    spriteEffect.Y += -0x80000 + (int)(((ulong)randomSeed2 * 0x100001) >> 32);
+                    spriteEffect.ForceZ += 0x10000 + (int)(((ulong)StaticVariables.g_gameRandomSeed * 0x10001) >> 32);
                 }
                 break;
+
+            // Animation de glissade
             case 0x28:
-                if ((StaticVariables.g_entitySlots[0].FrameCounter & 7U) != 0 ||
-                    (pSVar1 = _gameEngine.CreateEffectEntity(0, 6, 0,
-                        StaticVariables.g_entitySlots[0].PosX,
-                        StaticVariables.g_entitySlots[0].PosY,
-                        StaticVariables.g_entitySlots[0].TerrainHeight)) == null)
+                if ((StaticVariables.PlayerEntity.FrameCounter & 7) != 0)
+                {
                     goto SkipEffects;
-                effectEntityId = -StaticVariables.g_entitySlots[0].ForceX;
-                if (StaticVariables.g_entitySlots[0].ForceX > 0)
-                {
-                    effectEntityId += 3;
                 }
-                pSVar1.ForceX = effectEntityId >> 2;
-                effectEntityId = -StaticVariables.g_entitySlots[0].ForceY;
-                if (StaticVariables.g_entitySlots[0].ForceY > 0)
+
+                spriteEffect = _gameEngine.EffectManager.CreateEffectEntity(
+                    0,
+                    6,
+                    0,
+                    StaticVariables.PlayerEntity.PosX,
+                    StaticVariables.PlayerEntity.PosY,
+                    StaticVariables.PlayerEntity.TerrainHeight);
+
+                if (spriteEffect == null)
                 {
-                    effectEntityId += 3;
+                    goto SkipEffects;
                 }
-                pSVar1.ForceY = effectEntityId >> 2;
+
+                // Calculer les forces opposées au mouvement du joueur (effet de friction)
+                int effectXForce = -StaticVariables.PlayerEntity.ForceX;
+                if (StaticVariables.PlayerEntity.ForceX > 0)
+                {
+                    effectXForce += 3;
+                }
+
+                spriteEffect.ForceX = effectXForce >> 2;
+
+                int effectYForce = -StaticVariables.PlayerEntity.ForceY;
+                if (StaticVariables.PlayerEntity.ForceY > 0)
+                {
+                    effectYForce += 3;
+                }
+
+                spriteEffect.ForceY = effectYForce >> 2;
                 break;
         }
 
         SkipEffects:
-        switch (StaticVariables.g_entitySlots[0].TargetAnimationId)
+        // Traitement des animations d'atterrissage et de saut
+        switch (StaticVariables.PlayerEntity.TargetAnimationId)
         {
             case 2:
             case 6:
@@ -772,125 +1483,268 @@ public class PlayerManager
             case 66:
             case 70:
             case 75:
-                if (((param_1 == 0 || StaticVariables.DAT_80098f30 == 0) && StaticVariables.g_entitySlots[0].IsAboveGround != 0) && StaticVariables.g_entitySlots[0].ForceZ < 1)
+                // Si on est en mode normal (param_1 == 0) et que le joueur est au sol
+                if ((param_1 == 0 || StaticVariables.DAT_80098f30 == 0) &&
+                    StaticVariables.PlayerEntity.IsAboveGround != 0 &&
+                    StaticVariables.PlayerEntity.ForceZ < 1)
                 {
-                    _gameEngine.PlaySoundEffect((int)StaticVariables.SHORT_ARRAY_80022804[StaticVariables.g_entitySlots[0].Slope18c]);
-                    if ((StaticVariables.g_entitySlots[0].Slope18c < 1) || (2 < StaticVariables.g_entitySlots[0].Slope18c && StaticVariables.g_entitySlots[0].Slope18c != 4))
+                    // Jouer un son d'atterrissage
+                    _gameEngine.PlaySoundEffect((uint)StaticVariables.SHORT_ARRAY_80022804[StaticVariables.PlayerEntity.Slope_18c]);
+
+                    // Créer des effets visuels d'atterrissage en fonction du type de terrain
+                    if (StaticVariables.PlayerEntity.Slope_18c < 1 || (2 < StaticVariables.PlayerEntity.Slope_18c && StaticVariables.PlayerEntity.Slope_18c != 4))
                     {
-                        effectEntityId = 0;
-                        do
+                        // Créer plusieurs particules pour les terrains normaux
+                        for (int i = 0; i < 3; i++)
                         {
-                            if (StaticVariables.g_sharedBuffer2[10] == 0)
+                            if (_gameEngine.CurrentMap.Info._10 != 0)
                             {
-                                entityCreated2 = null;
+                                entityCreated = _gameEngine.EffectManager.CreateEffectEntity(
+                                    0,
+                                    (byte)_gameEngine.CurrentMap.Info._10,
+                                    0,
+                                    StaticVariables.PlayerEntity.PosX,
+                                    StaticVariables.PlayerEntity.PosY,
+                                    StaticVariables.PlayerEntity.TerrainHeight);
+
+                                if (entityCreated != null)
+                                {
+                                    // Générer des mouvements aléatoires
+                                    StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+                                    entityCreated.ForceX = (int)(((ulong)StaticVariables.g_gameRandomSeed * 0x30001) >> 32) - 0x18000;
+
+                                    StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+                                    entityCreated.ForceY = (int)(((ulong)StaticVariables.g_gameRandomSeed * 0x20001) >> 32) - 0x10000;
+                                }
                             }
-                            else
-                            {
-                                entityCreated2 = _gameEngine.CreateEffectEntity(0, StaticVariables.g_sharedBuffer2[10], 0, StaticVariables.g_entitySlots[0].PosX, StaticVariables.g_entitySlots[0].PosY, StaticVariables.g_entitySlots[0].TerrainHeight);
-                            }
-                            if (entityCreated2 != null)
-                            {
-                                uVar6 = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                                local_30 = (long)uVar6 * 0x30001;
-                                StaticVariables.g_gameRandomSeed = uVar6 * 0x7d2b89dd + 0xe06a02e7;
-                                uVar1 = (ulong)StaticVariables.g_gameRandomSeed;
-                                entityCreated2.ProgramIndexes[2] = (int)(local_30 >> 32) - 0x18000;
-                                entityCreated2.ProgramIndexes[3] = (int)(uVar1 * 0x20001 >> 32) - 0x10000;
-                            }
-                            effectEntityId++;
-                        } while (effectEntityId < 3);
+                        }
                     }
                     else
                     {
-                        _gameEngine.CreateEffectEntity(0, 6, 0, StaticVariables.g_entitySlots[0].PosX, StaticVariables.g_entitySlots[0].PosY, StaticVariables.g_entitySlots[0].TerrainHeight);
+                        // Créer un effet unique pour les pentes
+                        _gameEngine.EffectManager.CreateEffectEntity(
+                            0,
+                            6,
+                            0,
+                            StaticVariables.PlayerEntity.PosX,
+                            StaticVariables.PlayerEntity.PosY,
+                            StaticVariables.PlayerEntity.TerrainHeight);
                     }
+
                     StaticVariables.DAT_80098f30 = 1;
                 }
                 break;
+
             default:
                 StaticVariables.DAT_80098f30 = 0;
                 break;
         }
 
+        // En mode normal (pas en mode préparation pour l'entrée de warp)
         if (param_1 == 0)
         {
-            if ((StaticVariables.g_entitySlots[0].HP != 0) && (StaticVariables.g_entitySlots[0].HP * 5 <= StaticVariables.g_entitySlots[0].HPMax) && (--StaticVariables.DAT_80098f2c == -1))
+            // Gestion du son de battement de cœur quand les HP sont bas
+            if (StaticVariables.PlayerEntity.Hp != 0 &&
+                StaticVariables.PlayerEntity.Hp * 5 <= StaticVariables.PlayerEntity.HpMax)
             {
-                _gameEngine.PlaySoundEffect(400);
-                StaticVariables.DAT_80098f2c = 0x2d;
-            }
+                StaticVariables.DAT_80098f2c--;
 
-            if (StaticVariables.g_entitySlots[0].TargetAnimationId == 0x16)
-            {
-                effectEntityId = 0;
-            }
-            else if ((int)StaticVariables.g_entitySlots[0].TargetAnimationId < 0x17)
-            {
-                effectEntityId = 0;
-                if (StaticVariables.g_entitySlots[0].TargetAnimationId != 0x12)
+                if (StaticVariables.DAT_80098f2c == -1)
                 {
-                    return;
+                    _gameEngine.PlaySoundEffect(400); // Son de battement de cœur
+                    StaticVariables.DAT_80098f2c = 0x2d; // Réinitialiser le compteur
                 }
             }
-            else if (StaticVariables.g_entitySlots[0].TargetAnimationId == 0x40)
+
+            // Déterminer le type d'attaque en fonction de l'animation
+            int attackType = -1;
+
+            if (StaticVariables.PlayerEntity.TargetAnimationId == 0x16)
             {
-                effectEntityId = 1;
+                attackType = 0;
+            }
+            else if (StaticVariables.PlayerEntity.TargetAnimationId == 0x12)
+            {
+                attackType = 0;
+            }
+            else if (StaticVariables.PlayerEntity.TargetAnimationId == 0x40)
+            {
+                attackType = 1;
+            }
+            else if (StaticVariables.PlayerEntity.TargetAnimationId == 0x42)
+            {
+                attackType = 1;
             }
             else
             {
-                effectEntityId = 1;
-                if (StaticVariables.g_entitySlots[0].TargetAnimationId != 0x42)
-                {
-                    return;
-                }
+                return; // Sortir si ce n'est pas une animation d'attaque
             }
 
-            if (StaticVariables.g_entitySlots[0].HitCounter == 0)
+            // Ne faire l'attaque que si le compteur de coup est à 0
+            if (StaticVariables.PlayerEntity.HitCounter == 0)
             {
-                if (StaticVariables.g_entitySlots[0].FrameCollisionData != null)
+                // Vérifier les collisions avec les tuiles
+                if (StaticVariables.PlayerEntity.FrameCollision != null)
                 {
-                    piVar5 = local_50;
-                    local_50[2] = (int)StaticVariables.g_tileToWorldXTable[StaticVariables.g_entitySlots[0].HitBoxX >> 0x10];
-                    local_50[0] = (int)StaticVariables.g_tileToWorldXTable[StaticVariables.g_entitySlots[0].HitBoxX >> 0x10];
-                    local_40[3] = (int)(StaticVariables.g_entitySlots[0].HitBoxY + StaticVariables.g_entitySlots[0].TransformDepth) >> 0x14;
-                    local_40[1] = StaticVariables.g_entitySlots[0].HitBoxY >> 0x14;
-                    local_40[0] = StaticVariables.g_entitySlots[0].HitBoxY >> 0x14;
-                    local_40[2] = local_40[3];
-                    local_50[3] = (int)StaticVariables.g_tileToWorldXTable[(int)(StaticVariables.g_entitySlots[0].HitBoxX + StaticVariables.g_entitySlots[0].TransformWidth) >> 0x10];
-                    local_50[1] = (int)StaticVariables.g_tileToWorldXTable[(int)(StaticVariables.g_entitySlots[0].HitBoxX + StaticVariables.g_entitySlots[0].TransformWidth) >> 0x10];
+                    int[] worldXCoords = new int[4];
+                    int[] worldYCoords = new int[4];
 
+                    // Convertir les coordonnées de la boîte de collision en coordonnées de tuile
+                    worldXCoords[0] = StaticVariables.g_tileToWorldXTable[StaticVariables.PlayerEntity.HitBoxX >> 16];
+                    worldXCoords[2] = worldXCoords[0];
+                    worldXCoords[1] = StaticVariables.g_tileToWorldXTable[(StaticVariables.PlayerEntity.HitBoxX + StaticVariables.PlayerEntity.FrameWidth) >> 16];
+                    worldXCoords[3] = worldXCoords[1];
+
+                    worldYCoords[0] = StaticVariables.PlayerEntity.HitBoxY >> 20;
+                    worldYCoords[1] = worldYCoords[0];
+                    worldYCoords[2] = (StaticVariables.PlayerEntity.HitBoxY + StaticVariables.PlayerEntity.FrameDepth) >> 20;
+                    worldYCoords[3] = worldYCoords[2];
+
+                    // Parcourir les coins de la boîte de collision
                     for (int i = 0; i < 4; i++)
                     {
-                        animIndex = piVar5[i];
-                        if (animIndex < 1) animIndex = 0;
-                        else if (0x33 < animIndex) animIndex = 0x33;
-
-                        frameOffset = piVar5[i + 4];
-                        if (frameOffset < 1) frameOffset = 0;
-                        else if (0x3b < frameOffset) frameOffset = 0x3b;
-
-                        if ((StaticVariables.g_entitySlots[0].HitBoxZ < ((int)((uint)StaticVariables.g_spriteVRAMPointer[frameOffset * 0xd0 + animIndex * 4 + 0x302 + 3]) << 0x14)) || ((StaticVariables.g_spriteVRAMPointer[frameOffset * 0xd0 + animIndex * 4 + 0x302] & 0x40) != 0))
+                        // Limiter les coordonnées aux bornes de la carte
+                        int tileX = worldXCoords[i];
+                        if (tileX < 1)
                         {
-                            if (StaticVariables.g_entitySlots[0].IsAboveGround == 0)
+                            tileX = 0;
+                        }
+                        else if (tileX > 0x33)
+                        {
+                            tileX = 0x33;
+                        }
+
+                        int tileY = worldYCoords[i];
+                        if (tileY < 1)
+                        {
+                            tileY = 0;
+                        }
+                        else if (tileY > 0x3B)
+                        {
+                            tileY = 0x3B;
+                        }
+
+                        // Calculer l'index de la tuile
+                        int tileIndex = tileY * 0xd0 + tileX * 4 + 0x302;
+
+                        // Vérifier si la tuile a un attribut d'effet (bit 1)
+                        if ((StaticVariables.g_spriteVRAMPointer[tileIndex] & 2) != 0)
+                        {
+                            // Vérifier si la hauteur de la boîte de collision croise la hauteur de l'effet
+                            int tileEffectZ = (StaticVariables.g_spriteVRAMPointer[tileIndex + 3] & 0xFF) << 20;
+
+                            if (StaticVariables.PlayerEntity.HitBoxZ <= tileEffectZ + 0x80000 &&
+                                tileEffectZ + 0x80000 <= StaticVariables.PlayerEntity.HitBoxZ + StaticVariables.PlayerEntity.FrameHeight)
                             {
-                                StaticVariables.g_entitySlots[0].TargetAnimationId = StaticVariables.BYTE_ARRAY_800228a4[effectEntityId * 2 + 1];
-                                return;
+                                // Désactiver l'effet pour éviter de le déclencher plusieurs fois
+                                StaticVariables.g_spriteVRAMPointer[tileIndex] &= 0xFFFD;
+                                StaticVariables.g_spriteVRAMPointer[tileIndex + 3] = 0xFFFF;
+
+                                // Calculer la position de l'effet
+                                int effectX = worldXCoords[i] * 0x180000 + 0xC0000;
+                                int effectY = worldYCoords[i] * 0x100000 + 0x80000;
+
+                                // Créer l'effet visuel
+                                _gameEngine.EffectManager.CreateEffectEntity(
+                                    0,
+                                    _gameEngine.CurrentMap.Info.F,
+                                    0,
+                                    effectX,
+                                    effectY,
+                                    tileEffectZ);
+
+                                // Déclencher l'effet de warp si nécessaire
+                                _gameEngine.EffectManager.CreateWarpEffect(0xFF, effectX, effectY, tileEffectZ);
+
+                                // Jouer un son d'effet
+                                _gameEngine.PlaySoundEffect(0x1F);
                             }
-                            StaticVariables.g_entitySlots[0].TargetAnimationId = StaticVariables.BYTE_ARRAY_800228a4[effectEntityId * 2];
-                            return;
                         }
                     }
                 }
             }
-            else if (StaticVariables.g_entitySlots[0].IsAboveGround == 0)
-            {
-                StaticVariables.g_entitySlots[0].TargetAnimationId = StaticVariables.BYTE_ARRAY_800228a4[effectEntityId * 2 + 1];
-            }
             else
             {
-                StaticVariables.g_entitySlots[0].TargetAnimationId = StaticVariables.BYTE_ARRAY_800228a4[effectEntityId * 2];
+                // Si on est en train de prendre un coup, ajuster l'animation en fonction de si on est au sol
+                if (StaticVariables.PlayerEntity.IsAboveGround == 0)
+                {
+                    StaticVariables.PlayerEntity.TargetAnimationId = StaticVariables.BYTE_ARRAY_800228a4[attackType * 2 + 1];
+                }
+                else
+                {
+                    StaticVariables.PlayerEntity.TargetAnimationId = StaticVariables.BYTE_ARRAY_800228a4[attackType * 2];
+                }
             }
-        }*/
+        }
     }
 
+    // 800350c0
+    public void AnimateWarpEffect()
+    {
+        if (StaticVariables.g_warpLockTimer != 0)
+        {
+            switch (StaticVariables.g_warpLockTimer)
+            {
+                case 0x1f:
+                    FUN_80034acc();
+                    break;
+                case 0x23:
+                    FUN_80034b54();
+                    break;
+                case 0x2c:
+                    FUN_80034bdc();
+                    break;
+                case 0x2d:
+                case 0x2e:
+                    FUN_80034c54();
+                    break;
+                case 0x2f:
+                    FUN_80034d2c();
+                    break;
+                case 0x30:
+                    FUN_80034e08();
+                    break;
+                case 0x32:
+                    FUN_80034ec4();
+                    break;
+            }
+
+            StaticVariables.g_warpLockTimer = 0;
+        }
+    }
+
+    private void FUN_80034ec4()
+    {
+        Debugger.Break();
+    }
+
+    private void FUN_80034e08()
+    {
+        Debugger.Break();
+    }
+
+    private void FUN_80034d2c()
+    {
+        Debugger.Break();
+    }
+
+    private void FUN_80034c54()
+    {
+        Debugger.Break();
+    }
+
+    private void FUN_80034bdc()
+    {
+        Debugger.Break();
+    }
+
+    private void FUN_80034b54()
+    {
+        Debugger.Break();
+    }
+
+    private void FUN_80034acc()
+    {
+        Debugger.Break();
+    }
 }
