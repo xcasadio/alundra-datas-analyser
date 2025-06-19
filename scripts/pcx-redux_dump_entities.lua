@@ -227,16 +227,14 @@ end
 function serializeMapTiles(addr)
     local serializedMapTiles = {}
     for i = 1, 4 do
-        local mapTileAddr = addr + (i - 1) * 0xc
+        local mapTileAddr = addr + (i - 1) * 0x8
         local mapTile = {
             walkability = u8(mapTileAddr),
             groundProperty = u8(mapTileAddr + 0x1),
             slope = u8(mapTileAddr + 0x2),
             height = u8(mapTileAddr + 0x3),
             tileId = s16(mapTileAddr + 0x4),
-            palette = s16(mapTileAddr + 0x6),
-            tile = s16(mapTileAddr + 0x8),
-            tilesOffset = s16(mapTileAddr + 0xA)
+            tilesOffset = s16(mapTileAddr + 0x6)
         }
         table.insert(serializedMapTiles, mapTile)
     end
