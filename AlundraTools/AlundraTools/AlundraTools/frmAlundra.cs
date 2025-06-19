@@ -413,7 +413,7 @@ namespace AlundraTools.AlundraTools
                 var map = _selectedGameMap.Map;
 
                 using var g = Graphics.FromImage(pctMap.Image);
-                var fnt = new Font(FontFamily.GenericSansSerif, 6);
+                var fnt = new Font(FontFamily.GenericSansSerif, 8);
 
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 g.Clear(Color.Black);
@@ -494,8 +494,8 @@ namespace AlundraTools.AlundraTools
                             {
                                 var dx = x * _mapScale * StaticVariables.MapTileWidth;
                                 var dy = (y - tile.Height) * _mapScale * StaticVariables.MapTileHeight;
-                                g.DrawString("x:" + (x + hScrollMap.Value).ToString("x2"), fnt, Brushes.Red, dx, dy);
-                                g.DrawString("y:" + (y + vScrollMap.Value).ToString("x2"), fnt, Brushes.Red, dx + 8 * _mapScale, dy);
+                                var text = (x + hScrollMap.Value).ToString("x2") + "x" + (y + vScrollMap.Value).ToString("x2");
+                                g.DrawString(text, fnt, Brushes.Red, dx, dy);
 
                                 //g.DrawString(Array.IndexOf(map.maptiles,tile).ToString(), fnt, Brushes.Red, dx, dy);
                                 //g.DrawString(tile.walkability.ToString(), fnt, Brushes.Red, dx, dy);
@@ -1582,120 +1582,6 @@ namespace AlundraTools.AlundraTools
                 //vScrollSprite_Scroll(null, null);
             }
             pctSpritePalettes.Refresh();
-        }
-
-        private void buttonSaveSpriteSheet_Click(object sender, EventArgs e)
-        {
-            //int posx = 0;
-            //int posy = 0;
-            //var spriteSheet = new Bitmap(512, 512);
-            //var graphics = Graphics.FromImage(spriteSheet);
-            //graphics.DrawRectangle(new Pen(Color.Transparent, 10f), 0, 0, spriteSheet.SizeX, spriteSheet.SizeZ);
-            //int spriteHeight = 0;
-            //
-            //var br = datasBin.OpenBin();
-            //var spriteDatas = new List<SpriteData>();
-            //var animation2dDatas = new List<Animation2dData>();
-            //
-            //int animationIndex = 0;
-            //
-            //foreach (var spriteRecord in selectedGame.spriteinfo.sprites.Where(x => x != null))
-            //{
-            //    foreach (var animSet in spriteRecord.animsets)
-            //    {
-            //        var animationOffsets = new[]
-            //        {
-            //            animSet.downoffset,
-            //            animSet.upoffset,
-            //            animSet.leftoffset,
-            //            animSet.rightoffset,
-            //        };
-            //
-            //        for (var index = 0; index < animationOffsets.Length; index++)
-            //        {
-            //            var animationOffset = animationOffsets[index];
-            //            var animation2dData = new Animation2dData();
-            //            animation2dData.Name = $"animation_{animationIndex}_{(index == 0 ? "down" : index == 1 ? "up" : index == 2 ? "left" : "right")}";
-            //            animation2dDatas.Add(animation2dData);
-            //            var animation = spriteRecord.GetAnimation(br, animationOffset);
-            //
-            //            for (int frameIndex = 0; frameIndex < animation.numframes; frameIndex++)
-            //            {
-            //                var frame = animation.frames[frameIndex];
-            //                var bmps = GetSpriteImages(frame.images);
-            //                int xOffset = Math.Abs((int)frame.images.images.Min(x => Math.Min(x.x1, x.x2)));
-            //                int yOffset = Math.Abs((int)frame.images.images.Min(x => Math.Min(x.y1, x.y2)));
-            //
-            //                var maxWidth = Math.Max(frame.images.images.Max(x => x.swidth), xOffset);
-            //                spriteHeight = Math.Max(spriteHeight, Math.Max(frame.images.images.Max(x => x.sheight), yOffset));
-            //
-            //                if (posx + maxWidth >= spriteSheet.SizeX) // new row
-            //                {
-            //                    posx = 0;
-            //                    posy += spriteHeight;
-            //                    spriteHeight = 0;
-            //                }
-            //
-            //                for (int dex = frame.images.numimages - 1; dex >= 0; dex--)
-            //                {
-            //                    var img = frame.images.images[dex];
-            //                    if (img != null)
-            //                    {
-            //                        int w = img.x4 - img.x1;
-            //                        int h = img.y4 - img.y1;
-            //                        if (w != 0 && h != 0)
-            //                        {
-            //                            graphics.DrawImage(bmps[dex], posx + img.x1 + xOffset, posy + img.y1 + yOffset,
-            //                                w, h);
-            //                        }
-            //                    }
-            //                }
-            //
-            //                var spriteData = new SpriteData();
-            //                //spriteData.SpriteSheetFileName = "alundra.png";
-            //                spriteData.Name = $"animation_{animationIndex}_sprite_{frameIndex}_{(index == 0 ? "down" : index == 1 ? "up" : index == 2 ? "left" : "right")}"; ;
-            //                spriteData.Origin = new Microsoft.Xna.Framework.Point(maxWidth - xOffset, yOffset - frame.images.images.Max(x => x.sheight));
-            //                spriteData.PositionInTexture = new Microsoft.Xna.Framework.Rectangle(posx, posy, maxWidth + 1, yOffset);
-            //
-            //                if (frame.CollisionData != null)
-            //                {
-            //                    var collision2d = new Collision2d();
-            //                    collision2d.CollisionHitType = CollisionHitType.Defense;
-            //                    /*
-            //                        entity.FrameCollision = entity.Frame.CollisionData;
-            //                        entity.FrameXOff = entity.FrameCollision.XOff << 16;
-            //                        entity.FrameYOff = entity.FrameCollision.YOff << 16;
-            //                        entity.FrameZOff = entity.FrameCollision.ZOff << 16;
-            //                        entity.SizeX = (entity.FrameCollision.SizeX << 16) - 1;
-            //                        entity.SizeY = (entity.FrameCollision.SizeY << 16) - 1;
-            //                        entity.SizeZ = (entity.FrameCollision.SizeZ << 16) - 1;
-            //                     */
-            //                    //TODO : depth and z
-            //                    collision2d.Shape = new ShapeRectangle(frame.CollisionData.XOff, frame.CollisionData.YOff, frame.CollisionData.SizeX, frame.CollisionData.SizeZ);
-            //                    spriteData.CollisionShapes.Add(collision2d);
-            //                }
-            //
-            //                spriteDatas.Add(spriteData);
-            //
-            //                var frameData = new FrameData();
-            //                animation2dData.Frames.Add(frameData);
-            //                frameData.Duration = (animation.frames[frameIndex].delay & 0x7f) * 0.016f;
-            //                frameData.SpriteId = spriteData.Id;
-            //
-            //                posx += maxWidth;
-            //            }
-            //
-            //            animationIndex++;
-            //        }
-            //    }
-            //}
-            //
-            //br.Close();
-            //
-            //spriteSheet.Save(@"C:\Users\casad\dev\repo\alundra-datas-analyser\ExportedDatas\alundra.png", ImageFormat.Png);
-            //
-            ////Save(@"C:\Users\casad\dev\repo\alundra-datas-analyser\ExportedDatas\alundra" + FileNameExtensions.Sprite, spriteDatas, (x, jObject) => x.Save(jObject));
-            ////Save(@"C:\Users\casad\dev\repo\alundra-datas-analyser\ExportedDatas\alundra" + FileNameExtensions.Animation2d, animation2dDatas, (x, jObject) => x.Save(jObject));
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)

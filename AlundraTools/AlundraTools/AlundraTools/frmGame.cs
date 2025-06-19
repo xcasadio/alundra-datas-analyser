@@ -154,43 +154,44 @@ public partial class FrmGame : Form
 
     private readonly Dictionary<string, string> _descriptors = new()
     {
-        [nameof(Entity.PosX)] = "Transform",
-        [nameof(Entity.PosY)] = "Transform",
-        [nameof(Entity.PosZ)] = "Transform",
-        [nameof(Entity.ScreenClipX)] = "Transform",
-        [nameof(Entity.ScreenClipY)] = "Transform",
-        [nameof(Entity.ScreenClipZ)] = "Transform",
-        [nameof(Entity.NegXMod)] = "Transform",
-        [nameof(Entity.NegYMod)] = "Transform",
-        [nameof(Entity.ModdedXPos)] = "Display",
-        [nameof(Entity.ModdedYPos)] = "Display",
-        [nameof(Entity.ModdedZPos)] = "Display",
-        [nameof(Entity.ModX)] = "Display",
-        [nameof(Entity.ModY)] = "Display",
-        [nameof(Entity.ModZ)] = "Display",
-        [nameof(Entity.Width)] = "Display",
-        [nameof(Entity.Height)] = "Display",
-        [nameof(Entity.Depth)] = "Display",
-        [nameof(Entity.ZSortValue)] = "Display",
-        [nameof(Entity.ZSortDepth)] = "Display",
-        [nameof(Entity.TargetXForce)] = "Physics forces",
-        [nameof(Entity.TargetYForce)] = "Physics forces",
-        [nameof(Entity.ForceX)] = "Physics forces",
-        [nameof(Entity.ForceY)] = "Physics forces",
-        [nameof(Entity.ForceZ)] = "Physics forces",
-        [nameof(Entity.PreviousAdjustedXForce)] = "Physics forces",
-        [nameof(Entity.PreviousAdjustedYForce)] = "Physics forces",
-        [nameof(Entity.ForceStepX)] = "Physics forces",
-        [nameof(Entity.ForceStepY)] = "Physics forces",
-        [nameof(Entity.AdjustedXForce)] = "Physics forces",
-        [nameof(Entity.AdjustedYForce)] = "Physics forces",
-        [nameof(Entity.FinalXForce)] = "Physics forces",
-        [nameof(Entity.FinalYForce)] = "Physics forces",
-        [nameof(Entity.FinalZForce)] = "Physics forces",
-        [nameof(Entity.Acceleration)] = "Physics forces",
-        [nameof(Entity.Speed)] = "Physics forces",
-        [nameof(Entity.FloorHeight)] = "Physics",
-        [nameof(Entity.TerrainHeight)] = "Physics"
+        [nameof(Entity.PosX)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.PosY)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.PosZ)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ScreenClipX)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ScreenClipY)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ScreenClipZ)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.NegXMod)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.NegYMod)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ModdedXPos)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ModdedYPos)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ModdedZPos)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ModX)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ModY)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ModZ)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.Width)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.Height)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.Depth)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ZSortValue)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ZSortDepth)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.TargetXForce)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.TargetYForce)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ForceX)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ForceY)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ForceZ)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.PreviousAdjustedXForce)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.PreviousAdjustedYForce)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ForceStepX)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ForceStepY)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.AdjustedXForce)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.AdjustedYForce)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.FinalXForce)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.FinalYForce)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.FinalZForce)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.Acceleration)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.Speed)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.FloorHeight)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.TerrainHeight)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.MapTiles)] = nameof(MapTilesFieldDescriptor)
     };
 
     public FrmGame(DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR, Font3 font3)
@@ -740,6 +741,11 @@ public partial class FrmGame : Form
 
     private void hScrollBarFrames_Scroll(object sender, ScrollEventArgs e)
     {
+        if (_engine.ReplayManager.FrameCount == 0)
+        {
+            return;
+        }
+
         _engine.ReplayManager.ApplyCurrentFrame = true;
         _engine.ReplayManager.CurrentFrame = hScrollBarFrames.Value;
         UpdateLabelFramesText();
@@ -770,31 +776,35 @@ public partial class FrmGame : Form
         if (openFileDialog.ShowDialog(this) == DialogResult.OK)
         {
             var content = new StringBuilder();
-            content.AppendLine("Flags;PosX;PosY;PosZ;NegXMod;NegYMod;NegZMod;ModdedXPos;ModdedYPos;ModdedZPos;ModX;ModY;ModZ;Width;Height;Depth;TerrainHeight;FloorHeight;ZSortValue;ZSortDepth;MapHeights[0];MapHeights[1];MapHeights[2];MapHeights[3];FinalXForce;FinalYForce;FinalZForce;ForceStepX;ForceStepY;AdjustedXForce;AdjustedYForce;ForceAdjusted");
+            content.Append("Flags;PosX;PosY;PosZ;");
+            content.Append("ModdedXPos;ModdedYPos;ModdedZPos;");
+            content.Append("TerrainHeight;FloorHeight;ZSortValue;ZSortDepth;");
+            content.Append("MapHeights[0];MapHeights[1];MapHeights[2];MapHeights[3];");
+            // MapTiles
+            for (int i = 0; i < 4; i++)
+            {
+                content.Append($"{i}.Walk;{i}.Ground;{i}.Slope;{i}.Height;{i}.TileId;{i}.Palette;{i}.Tile;{i}.TilesOffset;");
+            }
+
+            content.Append("NegXMod;NegYMod;NegZMod;");
+            content.Append("ModX;ModY;ModZ;Width;Height;Depth;");
+            content.Append("FinalXForce;FinalYForce;FinalZForce;ForceStepX;ForceStepY;AdjustedXForce;AdjustedYForce;ForceAdjusted");
+
+            content.AppendLine();
 
             foreach (var frame in _engine.ReplayManager.Frames)
             {
                 var entity = frame.Entities[11];
-                
+
                 content.Append($"{entity.Flags};");
 
                 content.Append($"{entity.PosX};");
                 content.Append($"{entity.PosY};");
                 content.Append($"{entity.PosZ};");
 
-                content.Append($"{entity.NegXMod};");
-                content.Append($"{entity.NegYMod};");
-                content.Append($"{entity.NegZMod};");
                 content.Append($"{entity.ModdedXPos};");
                 content.Append($"{entity.ModdedYPos};");
                 content.Append($"{entity.ModdedZPos};");
-
-                content.Append($"{entity.ModX};");
-                content.Append($"{entity.ModY};");
-                content.Append($"{entity.ModZ};");
-                content.Append($"{entity.Width};");
-                content.Append($"{entity.Height};");
-                content.Append($"{entity.Depth};");
                 content.Append($"{entity.TerrainHeight};");
                 content.Append($"{entity.FloorHeight};");
                 content.Append($"{entity.ZSortValue};");
@@ -804,6 +814,30 @@ public partial class FrmGame : Form
                 {
                     content.Append($"{entity.MapHeights[i]};");
                 }
+
+                for (int i = 0; i < 4; i++)
+                {
+                    var mapTile = entity.MapTiles[i];
+
+                    content.Append($"{mapTile?.Walkability};");
+                    content.Append($"{mapTile?.GroundProperty};");
+                    content.Append($"{mapTile?.Slope};");
+                    content.Append($"{mapTile?.Height};");
+                    content.Append($"{mapTile?.TileId};");
+                    content.Append($"{mapTile?.Palette};");
+                    content.Append($"{mapTile?.Tile};");
+                    content.Append($"{mapTile?.TilesOffset};");
+                }
+
+                content.Append($"{entity.NegXMod};");
+                content.Append($"{entity.NegYMod};");
+                content.Append($"{entity.NegZMod};");
+                content.Append($"{entity.ModX};");
+                content.Append($"{entity.ModY};");
+                content.Append($"{entity.ModZ};");
+                content.Append($"{entity.Width};");
+                content.Append($"{entity.Height};");
+                content.Append($"{entity.Depth};");
 
                 content.Append($"{entity.FinalXForce};");
                 content.Append($"{entity.FinalYForce};");
@@ -819,5 +853,15 @@ public partial class FrmGame : Form
 
             File.WriteAllText(openFileDialog.FileName, content.ToString());
         }
+    }
+
+    private void checkBoxDisplayEntityId_CheckedChanged(object sender, EventArgs e)
+    {
+        StaticVariables.DisplayEntityId = checkBoxDisplayEntityId.Checked;
+    }
+
+    private void checkBoxTileXY_CheckedChanged(object sender, EventArgs e)
+    {
+        StaticVariables.DisplayTileXY = checkBoxTileXY.Checked;
     }
 }

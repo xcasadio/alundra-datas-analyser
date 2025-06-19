@@ -83,7 +83,7 @@ public class SpriteEventHandlers
         {
             if (handler != AI_EmptyFunction)
             {
-                Debug.WriteLine($"Entity {entity.Index} exec func[{eventType}][{eventId}] => {handler.Method.Name}");
+                //Debug.WriteLine($"Entity {entity.Index} exec func[{eventType}][{eventId}] => {handler.Method.Name}");
             }
 
             handler(entity);

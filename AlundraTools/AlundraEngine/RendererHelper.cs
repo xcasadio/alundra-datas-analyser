@@ -5,7 +5,8 @@ namespace AlundraEngine;
 
 public class RendererHelper
 {
-    private static Font _font = new Font(FontFamily.GenericSansSerif, 9);
+    private static readonly Font FontEntityId = new Font(FontFamily.GenericSansSerif, 9f);
+    private static readonly Font FontTileInfo = new Font(FontFamily.GenericSansSerif, 5.5f);
 
     //Custom renderer
     public static void Render(Graphics g, DatasBin.DatasBin datasBin, GameMap gameMap, int currentRow, int camTileOffsetY)
@@ -43,6 +44,20 @@ public class RendererHelper
                 {
                     tileId = GetAnimatedTileId(gameMap, tileId);
                     DrawTile(tileId, dx, dy, g, gameMap);
+
+                    if (StaticVariables.DisplayTileXY)
+                    {
+                        var text = $"{x}x{y}";
+                        var textSize = g.MeasureString(text, FontTileInfo);
+                        textToRender.Add(new TextDisplayParameter
+                        {
+                            Text = text,
+                            Font = FontTileInfo,
+                            Color = Brushes.White,
+                            X = dx + (StaticVariables.MapTileWidth + textSize.Width) / 2f,
+                            Y = dy + (StaticVariables.MapTileHeight + textSize.Height) / 2f
+                        });
+                    }
                 }
 
                 if (tile.WallTiles != null)
@@ -61,6 +76,21 @@ public class RendererHelper
                         {
                             wallTileId = GetAnimatedTileId(gameMap, wallTileId);
                             DrawTile(wallTileId, dx, dy, g, gameMap);
+
+                            if (StaticVariables.DisplayTileXY)
+                            {
+                                var text = $"{x}x{y}";
+                                var textSize = g.MeasureString(text, FontTileInfo);
+
+                                textToRender.Add(new TextDisplayParameter
+                                {
+                                    Text = text,
+                                    Font = FontTileInfo,
+                                    Color = Brushes.White,
+                                    X = dx + (StaticVariables.MapTileWidth + textSize.Width) / 2f,
+                                    Y = dy + (StaticVariables.MapTileHeight + textSize.Height) / 2f
+                                });
+                            }
                         }
                     }
                 }
@@ -90,7 +120,7 @@ public class RendererHelper
                 {
                     var map = entity.IsMapSprite ? gameMap : datasBin.AlundraGameMap;
 
-                    //if (entity.Frame?.Images != null) // why?? TODO, not initialized when we load a dump?
+                    if (entity.Frame?.Images != null) // why?? TODO, not initialized when we load a dump?
                     {
                         var iset = entity.Frame.Images;
                         for (var idex = iset.NumberOfImages - 1; idex >= 0; idex--)
@@ -100,14 +130,23 @@ public class RendererHelper
                         }
                     }
 
-                    var brush = StaticVariables.EditorSelectEntityIndex == entity.Index ? Brushes.ForestGreen : Brushes.Blue;
-                    var text = $"#{entity.Index}-{entity.Index2}";
-                    SizeF textSize = g.MeasureString(text, _font);
-                    
-                    textToRender.Add(new TextDisplayParameter()
+                    if (StaticVariables.DisplayEntityId)
                     {
-                        Text = text, Color = brush, X = scx - textSize.Width / 2, Y = scy
-                    });
+                        var brush = StaticVariables.EditorSelectEntityIndex == entity.Index
+                            ? Brushes.ForestGreen
+                            : Brushes.Blue;
+                        var text = $"#{entity.Index}";
+                        var textSize = g.MeasureString(text, FontEntityId);
+
+                        textToRender.Add(new TextDisplayParameter
+                        {
+                            Text = text,
+                            Font = FontEntityId,
+                            Color = brush,
+                            X = scx - textSize.Width / 2,
+                            Y = scy
+                        });
+                    }
                 }
             }
         }
@@ -124,11 +163,11 @@ public class RendererHelper
                         continue;
                     }
 
-                    g.DrawString(textDisplayParameter.Text, _font, Brushes.Black, textDisplayParameter.X + dx, textDisplayParameter.Y + dy);
+                    g.DrawString(textDisplayParameter.Text, textDisplayParameter.Font, Brushes.Black, textDisplayParameter.X + dx, textDisplayParameter.Y + dy);
                 }
             }
 
-            g.DrawString(textDisplayParameter.Text, _font, textDisplayParameter.Color, textDisplayParameter.X, textDisplayParameter.Y);
+            g.DrawString(textDisplayParameter.Text, textDisplayParameter.Font, textDisplayParameter.Color, textDisplayParameter.X, textDisplayParameter.Y);
         }
     }
 
@@ -193,6 +232,7 @@ public class RendererHelper
 public class TextDisplayParameter
 {
     public string Text { get; set; }
+    public Font Font { get; set; }
     public Brush Color { get; set; }
     public float X { get; set; }
     public float Y { get; set; }

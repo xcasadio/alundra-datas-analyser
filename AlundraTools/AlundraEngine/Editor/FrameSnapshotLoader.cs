@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
+using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
 
@@ -305,7 +306,7 @@ public static class FrameSnapshotLoader
         public int forceAdjusted { get; set; }
         public int collidedWithEntityZ { get; set; }
         public int isAboveGround { get; set; }
-        public int[] mapTiles { get; set; }
+        public MapTileJson[] mapTiles { get; set; }
         public int[] mapHeights { get; set; }
         public int platformUpdateFlag { get; set; }
         public int _16c { get; set; }
@@ -457,8 +458,25 @@ public static class FrameSnapshotLoader
             entity.ForceAdjusted = forceAdjusted;
             entity.CollidedWithEntityZ = collidedWithEntityZ;
             entity.IsAboveGround = isAboveGround;
-            //if (mapTiles != null && entity.MapTiles != null)
-            //    Array.Copy(mapTiles, entity.MapTiles, Math.Min(mapTiles.Length, entity.MapTiles.Length));
+            if (mapTiles != null)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    if (mapTiles[i] != null)
+                    {
+                        entity.MapTiles[i] = new MapTile();
+                        entity.MapTiles[i].Walkability = mapTiles[i].Walkability;
+                        entity.MapTiles[i].GroundProperty = mapTiles[i].GroundProperty;
+                        entity.MapTiles[i].Slope = mapTiles[i].Slope;
+                        entity.MapTiles[i].Height = mapTiles[i].Height;
+                        entity.MapTiles[i].TileId = mapTiles[i].TileId;
+                        entity.MapTiles[i].Palette = mapTiles[i].Palette;
+                        entity.MapTiles[i].Tile = mapTiles[i].Tile;
+                        entity.MapTiles[i].TilesOffset = mapTiles[i].TilesOffset;
+                    }
+                }
+            }
+
             if (mapHeights != null && entity.MapHeights != null)
             {
                 Array.Copy(mapHeights, entity.MapHeights, Math.Min(mapHeights.Length, entity.MapHeights.Length));
@@ -587,4 +605,19 @@ public static class FrameSnapshotLoader
     //        state.parameters = parameters;
     //    }
     //}
+
+    public class MapTileJson
+    {
+        public byte Walkability { get; set; }
+        public byte GroundProperty { get; set; }
+        public byte Slope { get; set; }
+        public byte Height { get; set; }
+        public short TileId { get; set; }
+        public short Palette { get; set; }
+        public short Tile { get; set; }
+        public short TilesOffset { get; set; }
+        //public WallTiles WallTiles;
+
+        public uint Flags => (uint)(Walkability | (GroundProperty << 8) | (Slope << 16) | (Height << 24));
+    }
 }

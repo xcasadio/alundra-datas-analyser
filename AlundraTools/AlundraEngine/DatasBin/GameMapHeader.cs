@@ -3,7 +3,8 @@
 public class GameMapHeader
 {
     public GameMapHeader(DbHeader header)
-    {//alundra gamemap, just has sprites
+    {
+        //alundra gamemap, just has sprites
         InfoBlockOffset = -1;
         MapBlockOffset = -1;
         TileSheetsOffset = -1;

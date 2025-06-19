@@ -812,6 +812,14 @@ public class GameEngine
         }
 
         LoadMap(CurrentMap);
+
+        //TODO : remove this debug code
+        //var mapTiles = this.CurrentMap.Map.MapTiles;
+        //
+        //for (var i = 0; i < mapTiles.Length; i++)
+        //{
+        //    Debug.WriteLine($"{mapTiles[i].TileX}:{mapTiles[i].TileY} {mapTiles[i].Walkability} {mapTiles[i].GroundProperty} {mapTiles[i].Slope} {mapTiles[i].Height} {mapTiles[i].TileId} {mapTiles[i].TilesOffset}");
+        //}
     }
 
     public void LoadMap(GameMap map)
@@ -875,7 +883,7 @@ public class GameEngine
             if (entity != null)
             {
                 entity.SpriteInfoEntityIndex = i;
-                Debug.WriteLine($"Spawn entity #{entity.Index} ref {entity.Index2}");
+                //Debug.WriteLine($"Spawn entity #{entity.Index} ref {entity.Index2}");
             }
         }
 
@@ -1052,9 +1060,11 @@ public class GameEngine
     }
 
     //TODO all the slope stuff
+    // 80037f28
     public int GetCollisionOnZ(Entity entity)
     {
         var collision = entity.TerrainHeight + 1;
+
         if ((entity.Flags & 0x80) == 0)
         {
             return collision;
@@ -1077,50 +1087,51 @@ public class GameEngine
 
         for (var dex = 0; dex < StaticVariables.g_collideableEntitiesCount; dex++)
         {
-            var checkme = StaticVariables.g_collideableEntities[dex];
+            var otherEntity = StaticVariables.g_collideableEntities[dex];
 
-            if (checkme == entity)
+            if (otherEntity == entity)
             {
                 continue;
             }
 
-            if (checkme.ModdedZPos + checkme.Height >= entity.ModdedZPos
-                || checkme.ModdedZPos + checkme.Height < collision)
+            if (otherEntity.ModdedZPos + otherEntity.Height >= entity.ModdedZPos
+                || otherEntity.ModdedZPos + otherEntity.Height < collision)
             {
                 continue;
             }
 
-            if (checkme.ModdedXPos - entity.ModdedXPos >= 0)
+            if (otherEntity.ModdedXPos - entity.ModdedXPos >= 0)
             {
-                if (checkme.ModdedXPos - entity.ModdedXPos >= entity.Width + 1)
+                if (otherEntity.ModdedXPos - entity.ModdedXPos >= entity.Width + 1)
                 {
                     continue;
                 }
             }
             else
             {
-                if (entity.ModdedXPos - checkme.ModdedXPos >= checkme.Width + 1)
+                if (entity.ModdedXPos - otherEntity.ModdedXPos >= otherEntity.Width + 1)
                 {
                     continue;
                 }
             }
 
-            if (checkme.ModdedYPos - entity.ModdedYPos >= 0)
+            if (otherEntity.ModdedYPos - entity.ModdedYPos >= 0)
             {
-                if (checkme.ModdedYPos - entity.ModdedYPos < entity.Depth + 1)
+                if (otherEntity.ModdedYPos - entity.ModdedYPos < entity.Depth + 1)
                 {
-                    collision = checkme.ModdedZPos + checkme.Height;
+                    collision = otherEntity.ModdedZPos + otherEntity.Height;
                 }
             }
             else
             {
-                if (entity.ModdedYPos - checkme.ModdedYPos < checkme.Depth + 1)
+                if (entity.ModdedYPos - otherEntity.ModdedYPos < otherEntity.Depth + 1)
                 {
-                    collision = checkme.ModdedZPos + checkme.Height;
+                    collision = otherEntity.ModdedZPos + otherEntity.Height;
                 }
             }
 
         }
+
         return collision;
     }
 

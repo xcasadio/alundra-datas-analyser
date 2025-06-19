@@ -6,6 +6,10 @@ public class MapTile
     public int TileX { get; set; }
     public int TileY { get; set; }
 
+    public MapTile()
+    {
+    }
+
     public MapTile(BinaryReader br)
     {
         long i = br.ReadUInt32();
@@ -42,12 +46,12 @@ public class MapTile
 
     public byte Walkability;
     public byte GroundProperty;
-    public readonly byte Slope;
-    public readonly byte Height;
-    public readonly short TileId;
+    public byte Slope;
+    public byte Height;
+    public short TileId;
     public short Palette;
     public short Tile;
-    public readonly short TilesOffset;
+    public short TilesOffset;
     public WallTiles WallTiles;
 
     public uint Flags => (uint)(Walkability | (GroundProperty << 8) | (Slope << 16) | (Height << 24));

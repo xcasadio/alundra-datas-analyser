@@ -76,6 +76,7 @@ public partial class MainForm : Form
     {
         var ofd = new OpenFileDialog();
         ofd.Filter = "DATAS.BIN|DATAS.BIN|All Files (*.*)|*.*";
+        ofd.FileName = @"D:\development\repo\Alundra Remake\Alundra (France)\Alundra (France)_extracted\DATA";
         ofd.ShowDialog();
         if (!string.IsNullOrWhiteSpace(ofd.FileName))
         {

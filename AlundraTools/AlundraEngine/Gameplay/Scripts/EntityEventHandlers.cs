@@ -416,14 +416,14 @@ public class EntityEventHandlers
 
             if (command == 0xFF)
             {
-                Debug.WriteLine($"Entity[{entity.Index}] end script");
+                //Debug.WriteLine($"Entity[{entity.Index}] end script");
                 goto END_SCRIPT;
             }
 
             if (command == 0x00) // break, skip the loop but do the next command
             {
                 
-                Debug.WriteLine($"Entity[{entity.Index}] break");
+                //Debug.WriteLine($"Entity[{entity.Index}] break");
                 eventProgramState.Exp[1] = 0;
                 eventProgramState.CodeIndex++;
                 FillDataFromCommand(eventProgramState); // needed because there is a check at the beginning of the function
@@ -439,7 +439,7 @@ public class EntityEventHandlers
             var func = _handlers[command];
             var result = (sbyte)func(entity.LogicContextEntity, entity, variables, eventProgramState);
 
-            Debug.WriteLine($"{result}");
+            //Debug.WriteLine($"{result}");
 
             StaticVariables.g_lastCommand = lastCommand;
 
@@ -480,7 +480,7 @@ public class EntityEventHandlers
     {
         var name = SpriteInfoEventCodes.CommandNameByCode.GetValueOrDefault((byte)command, "?");
         var eventTypeName = logicMode == 0 ? "ALoad" : logicMode == 1 ? "BMap" : logicMode == 2 ? "CTick" : logicMode == 3 ? "DTouch" : logicMode == 4 ? "EDeactivate" : "FInteract";
-        Debug.Write($"Entity[{entity.Index}] run {eventTypeName} command 0x{command:x2} '{name}' {string.Join(',', variables.Select(x => x.ToString("x2")))} = ");
+        //Debug.Write($"Entity[{entity.Index}] run {eventTypeName} command 0x{command:x2} '{name}' {string.Join(',', variables.Select(x => x.ToString("x2")))} = ");
     }
 
     private int[] FillDataFromCommand(EventProgramState eventProgramState)

@@ -364,9 +364,10 @@ public class EntityManager
         {
             var x = xs[i];
             var y = ys[i];
-            var tileX = x / StaticVariables.MapTileWidth;
+            var tileX = Math.Min((x / StaticVariables.MapTileWidth), 51);
             //On PSX hardware we avoid using division, so we use a lookup table instead.
-            //Debug.Assert(StaticVariables.g_tileToWorldXTable[x] == tileX); 
+            x = Math.Clamp(x, 0, StaticVariables.g_tileToWorldXTable.Length - 1);
+            Debug.Assert(StaticVariables.g_tileToWorldXTable[x] == tileX); 
 
             if (tileX > 0)
             {
@@ -403,21 +404,30 @@ public class EntityManager
                 case 0:
                     height <<= 4;
                     break;
-                case 1:
+
+                case 1: //pente descendante
                     if ((slopesHit & 6) == 0)
                     {
-                        var result = StaticVariables.g_heights_800236d4[0x17 - ys[i] % 0x18];
+                        var result = StaticVariables.g_heights_800236d4[/*0x17 - */ys[i] % 0x18];
                         height = ((tile.Height - 1) << 4) + result;
+                    }
+                    else
+                    {
+                        height += StaticVariables.MapTileHeight;
                     }
 
                     slopesHit |= 1;
                     break;
 
-                case 2:
+                case 2: //pente montante
                     if ((slopesHit & 5) == 0) //it already hit 1 or 3
                     {
                         var result = StaticVariables.g_heights_800236d4[0x17 - xs[i] % 0x18];
                         height = ((tile.Height - 1) << 4) + result;
+                    }
+                    else
+                    {
+                        height += StaticVariables.MapTileHeight;
                     }
 
                     slopesHit |= 2;
@@ -428,6 +438,10 @@ public class EntityManager
                     {
                         var result = StaticVariables.g_heights_800236d4[xs[i] % 0x18];
                         height += result;
+                    }
+                    else
+                    {
+                        height += StaticVariables.MapTileHeight;
                     }
 
                     slopesHit |= 4;

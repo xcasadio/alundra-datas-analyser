@@ -1,4 +1,6 @@
-﻿namespace AlundraEngine.DatasBin;
+﻿using System.Diagnostics;
+
+namespace AlundraEngine.DatasBin;
 
 public class Map
 {
@@ -18,8 +20,10 @@ public class Map
         for (var i = 0; i < MapTiles.Length; i++)
         {
             MapTiles[i] = new MapTile(br);
+
+            //TODO : remove, for debugging purpose
             MapTiles[i].TileY = i / Width;
-            MapTiles[i].TileX = i % Width;
+            MapTiles[i].TileX = (i % Width) - 1;
         }
 
         WallTilesOffset = (int)(br.BaseStream.Position - binoffset);

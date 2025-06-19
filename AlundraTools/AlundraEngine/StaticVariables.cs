@@ -12,6 +12,10 @@ public static class StaticVariables
     public static bool IsGamePaused { get; set; }
     public static bool DoNextFrame { get; set; }
 
+    //editor debuggin display
+    public static bool DisplayEntityId { get; set; }
+    public static bool DisplayTileXY { get; set; }
+
     // custom
     public const int ScreenWidth = 320;
     public const int ScreenHeight = 224;

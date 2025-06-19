@@ -81,12 +81,16 @@ namespace AlundraTools.AlundraTools
             label14 = new Label();
             buttonLoadDump = new Button();
             buttonExtractToCsv = new Button();
+            checkBoxDisplayEntityId = new CheckBox();
+            groupBox4 = new GroupBox();
+            checkBoxTileXY = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewGlobalFlags).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridViewMapFlags).BeginInit();
+            groupBox4.SuspendLayout();
             SuspendLayout();
             // 
             // pctOut
@@ -471,6 +475,7 @@ namespace AlundraTools.AlundraTools
             // 
             // propertyGridEntity
             // 
+            propertyGridEntity.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             propertyGridEntity.BackColor = SystemColors.Control;
             propertyGridEntity.Location = new Point(861, 200);
             propertyGridEntity.Margin = new Padding(3, 4, 3, 4);
@@ -617,11 +622,45 @@ namespace AlundraTools.AlundraTools
             buttonExtractToCsv.UseVisualStyleBackColor = true;
             buttonExtractToCsv.Click += buttonExtractToCsv_Click;
             // 
+            // checkBoxDisplayEntityId
+            // 
+            checkBoxDisplayEntityId.AutoSize = true;
+            checkBoxDisplayEntityId.Location = new Point(6, 26);
+            checkBoxDisplayEntityId.Name = "checkBoxDisplayEntityId";
+            checkBoxDisplayEntityId.Size = new Size(136, 24);
+            checkBoxDisplayEntityId.TabIndex = 30;
+            checkBoxDisplayEntityId.Text = "display entity id";
+            checkBoxDisplayEntityId.UseVisualStyleBackColor = true;
+            checkBoxDisplayEntityId.CheckedChanged += checkBoxDisplayEntityId_CheckedChanged;
+            // 
+            // groupBox4
+            // 
+            groupBox4.Controls.Add(checkBoxTileXY);
+            groupBox4.Controls.Add(checkBoxDisplayEntityId);
+            groupBox4.Location = new Point(480, 719);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Size = new Size(250, 125);
+            groupBox4.TabIndex = 31;
+            groupBox4.TabStop = false;
+            groupBox4.Text = "Debugging";
+            // 
+            // checkBoxTileXY
+            // 
+            checkBoxTileXY.AutoSize = true;
+            checkBoxTileXY.Location = new Point(6, 56);
+            checkBoxTileXY.Name = "checkBoxTileXY";
+            checkBoxTileXY.Size = new Size(121, 24);
+            checkBoxTileXY.TabIndex = 31;
+            checkBoxTileXY.Text = "display tile xy";
+            checkBoxTileXY.UseVisualStyleBackColor = true;
+            checkBoxTileXY.CheckedChanged += checkBoxTileXY_CheckedChanged;
+            // 
             // FrmGame
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1306, 1272);
+            Controls.Add(groupBox4);
             Controls.Add(buttonExtractToCsv);
             Controls.Add(buttonLoadDump);
             Controls.Add(label14);
@@ -652,6 +691,8 @@ namespace AlundraTools.AlundraTools
             groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewGlobalFlags).EndInit();
             ((System.ComponentModel.ISupportInitialize)dataGridViewMapFlags).EndInit();
+            groupBox4.ResumeLayout(false);
+            groupBox4.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -710,5 +751,8 @@ namespace AlundraTools.AlundraTools
         private Label label14;
         private Button buttonLoadDump;
         private Button buttonExtractToCsv;
+        private CheckBox checkBoxDisplayEntityId;
+        private GroupBox groupBox4;
+        private CheckBox checkBoxTileXY;
     }
 }
