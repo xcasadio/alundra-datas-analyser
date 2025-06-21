@@ -783,12 +783,15 @@ public partial class FrmGame : Form
             // MapTiles
             for (int i = 0; i < 4; i++)
             {
-                content.Append($"{i}.Walk;{i}.Ground;{i}.Slope;{i}.Height;{i}.TileId;{i}.Palette;{i}.Tile;{i}.TilesOffset;");
+                //content.Append($"{i}.Walk;{i}.Ground;{i}.Slope;{i}.Height;{i}.TileId;{i}.Palette;{i}.Tile;{i}.TilesOffset;");
             }
-
             content.Append("NegXMod;NegYMod;NegZMod;");
             content.Append("ModX;ModY;ModZ;Width;Height;Depth;");
-            content.Append("FinalXForce;FinalYForce;FinalZForce;ForceStepX;ForceStepY;AdjustedXForce;AdjustedYForce;ForceAdjusted");
+            content.Append("FinalXForce;FinalYForce;FinalZForce;ForceStepX;ForceStepY;");
+            content.Append("TargetXForce;TargetYForce;");
+            content.Append("AdjustedXForce;AdjustedYForce;ForceAdjusted;");
+            content.Append("Speed;Acceleration;IsZForceApplied;");
+            content.Append("Width;Height;Depth");
 
             content.AppendLine();
 
@@ -815,19 +818,19 @@ public partial class FrmGame : Form
                     content.Append($"{entity.MapHeights[i]};");
                 }
 
-                for (int i = 0; i < 4; i++)
-                {
-                    var mapTile = entity.MapTiles[i];
-
-                    content.Append($"{mapTile?.Walkability};");
-                    content.Append($"{mapTile?.GroundProperty};");
-                    content.Append($"{mapTile?.Slope};");
-                    content.Append($"{mapTile?.Height};");
-                    content.Append($"{mapTile?.TileId};");
-                    content.Append($"{mapTile?.Palette};");
-                    content.Append($"{mapTile?.Tile};");
-                    content.Append($"{mapTile?.TilesOffset};");
-                }
+                //for (int i = 0; i < 4; i++)
+                //{
+                //    var mapTile = entity.MapTiles[i];
+                //
+                //    content.Append($"{mapTile?.Walkability};");
+                //    content.Append($"{mapTile?.GroundProperty};");
+                //    content.Append($"{mapTile?.Slope};");
+                //    content.Append($"{mapTile?.Height};");
+                //    content.Append($"{mapTile?.TileId};");
+                //    content.Append($"{mapTile?.Palette};");
+                //    content.Append($"{mapTile?.Tile};");
+                //    content.Append($"{mapTile?.TilesOffset};");
+                //}
 
                 content.Append($"{entity.NegXMod};");
                 content.Append($"{entity.NegYMod};");
@@ -842,11 +845,21 @@ public partial class FrmGame : Form
                 content.Append($"{entity.FinalXForce};");
                 content.Append($"{entity.FinalYForce};");
                 content.Append($"{entity.FinalZForce};");
+                content.Append($"{entity.TargetXForce};");
+                content.Append($"{entity.TargetYForce};");
                 content.Append($"{entity.ForceStepX};");
                 content.Append($"{entity.ForceStepY};");
                 content.Append($"{entity.AdjustedXForce};");
                 content.Append($"{entity.AdjustedYForce};");
-                content.Append($"{entity.ForceAdjusted}");
+                content.Append($"{entity.ForceAdjusted};");
+
+                content.Append($"{entity.Speed};");
+                content.Append($"{entity.Acceleration};");
+                content.Append($"{entity.IsZForceApplied};");
+
+                content.Append($"{entity.Width};");
+                content.Append($"{entity.Height};");
+                content.Append($"{entity.Depth}");
 
                 content.AppendLine();
             }

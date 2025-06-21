@@ -229,6 +229,7 @@ public class GameEngine
         _renderer.RenderScene(graphics);
     }
 
+    // 8004dc68
     public int UpdateEntityFromWarpFlag(int param_1)
     {
         if (param_1 < 0x33)
@@ -250,6 +251,7 @@ public class GameEngine
         return StaticVariables.g_fadeControl.WarpVisualId;
     }
 
+    // 8004dd30
     public int FinalizeWarpEntities(short warpEntityId)
     {
         if (StaticVariables.g_fadeControl.WarpVisualId < warpEntityId)
@@ -268,6 +270,7 @@ public class GameEngine
         return StaticVariables.g_fadeControl.CurrentWarpEntityId;
     }
 
+    // 8004ddf4
     public int SetMaxFadeLevel(short maxFadeLevel)
     {
         if (maxFadeLevel < 5)
@@ -289,6 +292,7 @@ public class GameEngine
         return StaticVariables.g_fadeControl.MaxTargetLevel;
     }
 
+    // 8004debc
     public int SetFadeTargetLevel(short targetLevel)
     {
         if (StaticVariables.g_fadeControl.MaxTargetLevel < targetLevel)
@@ -307,6 +311,7 @@ public class GameEngine
         return StaticVariables.g_fadeControl.TargetLevel;
     }
 
+    // 8004df80
     public int ApplyFadeLevel(short newFadeValue)
     {
         if (newFadeValue < 10000)
@@ -328,15 +333,17 @@ public class GameEngine
         return StaticVariables.g_fadeControl.CurrentWarpEntityId;
     }
 
+    // 8004b730
     public void SetupPostWarpGraphics()
     {
-        StaticVariables.INT_ARRAY_800a8284[0] = GetFadeControl_WarpVisualId();
+        StaticVariables.INT_ARRAY_800a8284[0] = GetFadeControlWarpVisualId();
         StaticVariables.INT_ARRAY_800a8284[1] = StaticVariables.INT_ARRAY_800a8284[0];
         StaticVariables.INT_ARRAY_800a8284[3] = GetCurrentPaletteFadeLevel();
         StaticVariables.INT_ARRAY_800a8284[2] = StaticVariables.INT_ARRAY_800a8284[3];
     }
 
-    private int GetFadeControl_WarpVisualId()
+    // 8004e78c
+    private int GetFadeControlWarpVisualId()
     {
         return StaticVariables.g_fadeControl.WarpVisualId;
     }
@@ -347,11 +354,13 @@ public class GameEngine
         return StaticVariables.g_fadeControl.CurrentWarpEntityId;
     }
 
+    // 8004dddc
     public int GetCurrentPaletteFadeLevel()
     {
         return StaticVariables.g_fadeControl.MaxTargetLevel;
     }
 
+    // 8004e484
     public void LoadWarpVisuals(ushort warpVisualId)
     {
         if (warpVisualId == 0xffffffff || warpVisualId - 1 < 6)
@@ -366,6 +375,7 @@ public class GameEngine
         GetCurrentTileIndex();
     }
 
+    // 8004e030
     public uint GetCurrentTileIndex()
     {
         uint tileIndex = 0xffffffff;
@@ -902,7 +912,7 @@ public class GameEngine
             0xb, 0x60);
 
         StaticVariables.g_entitySlots[0].Status = 2;
-        StaticVariables.g_entitySlots[0].HpMax = GetFadeControl_WarpVisualId();
+        StaticVariables.g_entitySlots[0].HpMax = GetFadeControlWarpVisualId();
         StaticVariables.g_entitySlots[0].Hp = GetFadeControl();
         StaticVariables.g_activeCollisionEntity = null;
         StaticVariables.g_playerWarpTimer = 0;
@@ -910,7 +920,7 @@ public class GameEngine
         StaticVariables.g_frameTimer = 0;
         //var tileIndex = GetCurrentTileIndex();
         //StaticVariables.g_currentTileFlags = StaticVariables.g_tileAttributeLUT[tileIndex];
-        StaticVariables.g_playerEffectTransitionCooldown = 0;
+        Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
         ResetWarpLockTimer();
     }
 
@@ -2760,10 +2770,10 @@ public class GameEngine
     {
         foreach (var infoPortal in CurrentMap.Info.Portals)
         {
-            if (StaticVariables.g_entitySlots[0].TileX > infoPortal.X1
-                || StaticVariables.g_entitySlots[0].TileX < infoPortal.X2
-                || StaticVariables.g_entitySlots[0].TileY > infoPortal.Y1
-                || StaticVariables.g_entitySlots[0].TileY < infoPortal.Y2)
+            if (StaticVariables.PlayerEntity.TileX > infoPortal.X1
+                || StaticVariables.PlayerEntity.TileX < infoPortal.X2
+                || StaticVariables.PlayerEntity.TileY > infoPortal.Y1
+                || StaticVariables.PlayerEntity.TileY < infoPortal.Y2)
             {
                 return infoPortal;
             }

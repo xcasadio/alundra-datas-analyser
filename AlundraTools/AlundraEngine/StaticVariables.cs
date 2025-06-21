@@ -1729,7 +1729,7 @@ public static class StaticVariables
     public static BalanceRecord[] g_intArray_80127008 = new BalanceRecord[2]; // 80127008
     public static Entity g_activeCollisionEntity; // 80127108
     public static uint g_currentTileFlags; // 8012710C
-    public static int g_playerEffectTransitionCooldown; // 80127110
+    public static byte[] g_playerEffectTransitionCooldown = new byte[4]; // 80127110
     public static int g_playerEffectStepFlags; // 80127114
     public static int g_playerEffectTimer; // 80127118
     public static Entity[] g_spawnedWarpEntity = new Entity[16]; // 8012711C

@@ -413,7 +413,7 @@ public class EntityManager
                     }
                     else
                     {
-                        height += StaticVariables.MapTileHeight;
+                        //height += StaticVariables.MapTileHeight;
                     }
 
                     slopesHit |= 1;
@@ -427,7 +427,7 @@ public class EntityManager
                     }
                     else
                     {
-                        height += StaticVariables.MapTileHeight;
+                        //height += StaticVariables.MapTileHeight;
                     }
 
                     slopesHit |= 2;
@@ -441,7 +441,7 @@ public class EntityManager
                     }
                     else
                     {
-                        height += StaticVariables.MapTileHeight;
+                        //height += StaticVariables.MapTileHeight;
                     }
 
                     slopesHit |= 4;
@@ -452,13 +452,26 @@ public class EntityManager
 
             entity.MapHeights[i] = height;
 
+/*
+5242880	5242880	5242880	5242880 -- POSY == 41320448
+5308416	5308416	5242880	5242880
+5373952	5373952	5242880	5242880
+5505024	5505024	5242880	5242880
+5570560	5570560	5242880	5242880
+5636096	5636096	5242880	5242880
+5701632	5701632	5242880	5242880
+5832704	5832704	5242880	5242880
+5898240	5898240	5242880	5242880
+5963776	5963776	5242880	5242880
+6029312	6029312	5308416	5308416
+6160384	6160384	5373952	5373952
+*/
+
             if (highest < height)
             {
                 highest = height;
             }
         }
-
-        entity.FloorHeight = highest;
 
         return highest;
     }
@@ -1910,7 +1923,7 @@ public class EntityManager
         for (var i = 0; i < StaticVariables.g_visibleEntityCount; i++)
         {
             var entity = StaticVariables.g_visibleEntities[i];
-            entity.ZSortValue = (int)(entity.ZSortValue & 0xffff0000) + (entity.PosZ >> 16);
+            entity.ZSortValue = (int)(entity.ZSortValue & 0xffff0000) + ((entity.PosZ >> 16) & 0xFFFF);
         }
     }
 
@@ -1922,11 +1935,12 @@ public class EntityManager
             return entity.ZSortValue;
         }
 
-        var sortValue = entity.PosY + (entity.SpriteRef.DepthSortVal << 16);
+        var sortValue = entity.PosY + (entity.Frame.Images.Unknown << 16);
+
         if ((entity.Flags & 0x80) != 0
             || (entity.AnimFlags & 0x80) != 0)
         {
-            entity.ZSortValue = sortValue; // 47824896
+            entity.ZSortValue = sortValue;
             return sortValue;
         }
 
@@ -2594,7 +2608,7 @@ public class EntityManager
 
 
         var hitz = _gameEngine.GetCollisionOnZ(entity);
-        entity.TerrainHeight = hitz;
+        entity.FloorHeight = hitz;
         entity.IsAboveGround = hitz < entity.PosZ ? 0 : 1;
         //entity.FloorHeight = hitz;
         //entity.CollidedWithEntityZ = hitz < entity.PosZ ? 0 : 1;

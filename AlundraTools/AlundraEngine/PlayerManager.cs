@@ -32,7 +32,7 @@ public class PlayerManager
         if (StaticVariables.PlayerEntity.IsNotProcessable != 0)
         {
             StaticVariables.g_playerWarpTimer = 0;
-            StaticVariables.g_playerEffectTransitionCooldown = 0;
+            Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
             goto END;
         }
 
@@ -40,7 +40,7 @@ public class PlayerManager
         {
             PreparePlayerForWarpEntry(1);
             StaticVariables.g_playerWarpTimer = 0;
-            StaticVariables.g_playerEffectTransitionCooldown = 0;
+            Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
             UpdatePlayerWarpDirection(1);
             AnimateWarpEffect();
 
@@ -64,7 +64,7 @@ public class PlayerManager
         if (dir != 0xffffffff)
         {
             StaticVariables.g_playerWarpTimer = 0;
-            StaticVariables.g_playerEffectTransitionCooldown = 0;
+            Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
             UpdatePlayerWarpDirection(2);
             MaybeStartWarpAnimation();
             StaticVariables.PlayerEntity.TargetAnimationId = 0x31;
@@ -82,7 +82,7 @@ public class PlayerManager
         if (StaticVariables.PlayerEntity.Hp == 0)
         {
             StaticVariables.g_playerWarpTimer = 0;
-            StaticVariables.g_playerEffectTransitionCooldown = 0;
+            Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
             UpdatePlayerWarpDirection(2);
             AnimateWarpEffect();
 
@@ -178,7 +178,7 @@ public class PlayerManager
         if ((StaticVariables.PlayerEntity.TileAttributes & 0x80U) != 0)
         {
             StaticVariables.g_playerWarpTimer = 0;
-            StaticVariables.g_playerEffectTransitionCooldown = 0;
+            Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
             AnimateWarpEffect();
             UpdatePlayerWarpDirection(1);
 
@@ -220,7 +220,7 @@ public class PlayerManager
                 break;
             case 4:
                 StaticVariables.g_playerWarpTimer = 0;
-                StaticVariables.g_playerEffectTransitionCooldown = 0;
+                Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
                 UpdatePlayerWarpDirection(2);
                 switch (StaticVariables.PlayerEntity.TargetAnimationId)
                 {
@@ -593,7 +593,48 @@ public class PlayerManager
     // 8002f768
     private void UpdateWarpStepProgression()
     {
-        Debugger.Break();
+        if (StaticVariables.g_playerEffectTransitionCooldown[0] != 0)
+        {
+            if (StaticVariables.g_playerEffectTransitionCooldown[1] == 0)
+            {
+                Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
+                return;
+            }
+        }
+
+        var player = StaticVariables.g_entitySlots[0];
+        var animId = player.TargetAnimationId;
+        var warpType = StaticVariables.g_tileWarpTypeList != null && animId < StaticVariables.g_tileWarpTypeList.Length
+            ? StaticVariables.g_tileWarpTypeList[animId]
+            : (byte)0;
+
+        if (warpType == 0)
+        {
+            Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
+            return;
+        }
+
+        int requiredSteps = StaticVariables.g_playerEffectTransitionCooldown[2];
+        int stepCounter = StaticVariables.g_playerEffectStepFlags;
+
+        if (stepCounter < requiredSteps)
+        {
+            StaticVariables.g_playerEffectStepFlags = stepCounter + 1;
+            return;
+        }
+
+        int posX = player.PosX;
+        int posY = player.PosY;
+        int posZ = player.PosZ;
+        int zOffset = (StaticVariables.g_playerEffectTransitionCooldown[3] << 16);
+        int direction = 0;
+        if (StaticVariables.g_cardinalDirectionTable != null && player.CurrentFrameIndex < StaticVariables.g_cardinalDirectionTable.Length)
+            direction = StaticVariables.g_cardinalDirectionTable[player.CurrentFrameIndex];
+
+        _gameEngine.SpawnWarpEntity(player, 0, StaticVariables.g_playerEffectTransitionCooldown[1],
+            posX, posY, posZ + zOffset, (uint)direction);
+        Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
+        StaticVariables.g_playerEffectStepFlags = 0;
     }
 
     // 8002f49c

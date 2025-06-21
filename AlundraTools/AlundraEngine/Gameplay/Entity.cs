@@ -11,25 +11,25 @@ public class Entity
 
     public int Index;
     public int Index2;
-    public Entity ChildEntity; ////UnknownBeforeOwnerEntity;
-    public Entity ParentEntity; //OwnerEntity;
+    public Entity? ChildEntity; ////UnknownBeforeOwnerEntity;
+    public Entity? ParentEntity; //OwnerEntity;
     public int Status;//0=destroyed,1=loaded,2=normal,3=deactivated,4=flagtodestroy,5=?
     public int Hp;
     public int HpMax;
     public int FrameCounter;//1c
     public int IsNotProcessable;
     public int Flags2;
-    public Entity PlatformEntity; //28
-    public Entity WarpEntity;
+    public Entity? PlatformEntity; //28
+    public Entity? WarpEntity;
     public int RelativeWarpOffsetX;
     public int RelativeWarpOffsetY;
     public int RelativeWarpOffsetZ;
     public uint ContentsItemId; //3c
     public int ContentsGameFlag;
-    public SiEntityRecord EntityRecord;
+    public SiEntityRecord? EntityRecord;
     public int EntityRefId;
     public readonly int[] ProgramIndexes = new int[6]; //4c
-    public SpriteRecord Sprite;
+    public SpriteRecord? Sprite;
     public uint SpriteTableIndex;
     public uint Flags;//0x800000 = portrait,0x0100 = gravity,0xf = ?, 0x1 = ? , 0x80 = collidable
     public readonly int[] SpriteProgramIndexes = new int[6]; //70
@@ -46,9 +46,9 @@ public class Entity
     public uint CurrentAnimationId;
     public uint CurrentDirection;
     public int CurrentFrameIndex;
-    public AnimationSet AnimSet;
-    public SiFrame FirstFrame;
-    public SiFrame Frame;
+    public AnimationSet? AnimSet;
+    public SiFrame? FirstFrame;
+    public SiFrame? Frame;
     public int NextFrameDelay;
     public int ForceResetAnimationFlag;
     public int AnimCompleteCounter;
@@ -72,8 +72,8 @@ public class Entity
     public int TileX;
     public int TileY;
     public int TileZ;
-    public Entity RidingEntity; //12c
-    public Entity XCollisionEntity;
+    public Entity? RidingEntity; //12c
+    public Entity? XCollisionEntity;
     public int FloorHeight;
     public int TerrainHeight;//map collision
 
@@ -96,14 +96,14 @@ public class Entity
     public SpriteRef SpriteRef = new SpriteRef();//194 
     //public int field91_0x1ac; // 1ac => SpriteRef
     public int AddedToSheet, AddedToPalette;//represents offset where the pallets and sheets are in memory for map vs global sprites, prob not used with my engine
-    public SpriteEffect ActiveEffect;
+    public SpriteEffect? ActiveEffect;
     public int ZSortValue;//1bc
     public int ZSortDepth;//1c0
-    public BalanceRecord BalanceRecord;//1c4
-    public BalanceAnimValRef BalanceVal;//1c8
+    public BalanceRecord? BalanceRecord;//1c4
+    public BalanceAnimValRef? BalanceVal;//1c8
     public int DamagedTickCounter;//1cc
     public int FrameColTickCounter;//1d0
-    public FrameCollisionData FrameCollision;//1d4
+    public FrameCollisionData? FrameCollision;//1d4
     public int ModdedXPos, ModdedYPos, ModdedZPos;
     public int ModX, ModY, ModZ;
     public int Width, Depth, Height;
@@ -118,7 +118,7 @@ public class Entity
     public int FrameDepth;//218
     public int FrameHeight;//21c
     public int HitCounter;//220
-    public Entity TouchingEntity;//224
+    public Entity? TouchingEntity;//224
     public int EventTrigger;//228  for the player character this holds the id of the map event that is triggering, for other entities this holds the type of event slot to trigger
     public int MapEventProgramId;//22c
     public Entity LogicContextEntity; //self
