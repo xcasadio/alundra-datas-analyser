@@ -434,7 +434,7 @@ public class EntityEventHandlers
             var lastCommand = StaticVariables.g_activeCommand;
             StaticVariables.g_activeCommand = command;
 
-            LogCommand(entity, logicMode, command, variables);
+            //LogCommand(entity, logicMode, command, variables);
 
             var func = _handlers[command];
             var result = (sbyte)func(entity.LogicContextEntity, entity, variables, eventProgramState);
@@ -480,7 +480,7 @@ public class EntityEventHandlers
     {
         var name = SpriteInfoEventCodes.CommandNameByCode.GetValueOrDefault((byte)command, "?");
         var eventTypeName = logicMode == 0 ? "ALoad" : logicMode == 1 ? "BMap" : logicMode == 2 ? "CTick" : logicMode == 3 ? "DTouch" : logicMode == 4 ? "EDeactivate" : "FInteract";
-        //Debug.Write($"Entity[{entity.Index}] run {eventTypeName} command 0x{command:x2} '{name}' {string.Join(',', variables.Select(x => x.ToString("x2")))} = ");
+        Debug.Write($"Entity[{entity.Index}] run {eventTypeName} command 0x{command:x2} '{name}' {string.Join(',', variables.Select(x => x.ToString("x2")))} = ");
     }
 
     private int[] FillDataFromCommand(EventProgramState eventProgramState)

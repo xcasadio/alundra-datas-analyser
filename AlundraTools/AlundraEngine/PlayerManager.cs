@@ -202,7 +202,7 @@ public class PlayerManager
         }
 
         MaybeStartWarpAnimation();
-        uVar2 = (uint)(StaticVariables.g_padState1.ButtonsHold >> 12);
+        uVar2 = (uint)(StaticVariables.g_padState1.ButtonsHold >> 0xc);
         dir = StaticVariables.UINT_ARRAY_80022c6c[uVar2];
         if (StaticVariables.UINT_ARRAY_80022c6c[uVar2] == 0xffffffff)
         {
@@ -1507,23 +1507,23 @@ public class PlayerManager
             case 2:
             case 6:
             case 10:
-            case 11:
-            case 20:
-            case 21:
-            case 22:
-            case 23:
-            case 31:
-            case 38:
-            case 43:
-            case 44:
-            case 45:
-            case 46:
-            case 47:
-            case 48:
-            case 65:
-            case 66:
-            case 70:
-            case 75:
+            case 0xb:
+            case 0x14:
+            case 0x15:
+            case 0x16:
+            case 0x17:
+            case 0x1f:
+            case 0x26:
+            case 0x2b:
+            case 0x2c:
+            case 0x2d:
+            case 0x2e:
+            case 0x2f:
+            case 0x30:
+            case 0x41:
+            case 0x42:
+            case 0x46:
+            case 0x4b:
                 // Si on est en mode normal (param_1 == 0) et que le joueur est au sol
                 if ((param_1 == 0 || StaticVariables.DAT_80098f30 == 0) &&
                     StaticVariables.PlayerEntity.IsAboveGround != 0 &&
@@ -1584,7 +1584,7 @@ public class PlayerManager
         // En mode normal (pas en mode préparation pour l'entrée de warp)
         if (param_1 == 0)
         {
-            // Gestion du son de battement de cœur quand les HP sont bas
+            // Gestion du son de battement de coeur quand les HP sont bas
             if (StaticVariables.PlayerEntity.Hp != 0 &&
                 StaticVariables.PlayerEntity.Hp * 5 <= StaticVariables.PlayerEntity.HpMax)
             {
