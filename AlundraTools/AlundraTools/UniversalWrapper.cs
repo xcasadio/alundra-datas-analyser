@@ -216,6 +216,11 @@ public class MapTilesFieldDescriptor : ReflectionFieldDescriptor
         var mapTiles = (MapTile[])_field.GetValue(_instance);
         var mapTile = mapTiles[_index];
 
+        if (mapTile == null)
+        {
+            return null;
+        }
+
         return $"{mapTile.TileX}x{mapTile.TileY} {mapTile.Walkability} {mapTile.GroundProperty} {mapTile.Slope} {mapTile.Height} {mapTile.TileId} {mapTile.TilesOffset}";
     }
 
