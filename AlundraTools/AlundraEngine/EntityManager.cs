@@ -249,8 +249,7 @@ public class EntityManager
 
             entity.NextFrameDelay = entity.Frame.Delay & 0x7f;
             entity.ForceResetAnimationFlag = 0;
-            entity.AnimFlags = entity.AnimSet.Flags; // TODO U6 ??
-            entity.ZSortValue = entity.AnimSet.U6; // TODO U6 ??
+            entity.AnimFlags = entity.AnimSet.U6; // TODO U6 ??
 
             if (entity.BalanceRecord.NumAnimVals == 0)
             {
@@ -299,9 +298,9 @@ public class EntityManager
             entity.FrameXOff = entity.FrameCollision.XOff << 16;
             entity.FrameYOff = entity.FrameCollision.YOff << 16;
             entity.FrameZOff = entity.FrameCollision.ZOff << 16;
-            entity.Width = (entity.FrameCollision.Width << 16) - 1;
-            entity.Depth = (entity.FrameCollision.Depth << 16) - 1;
-            entity.Height = (entity.FrameCollision.Height << 16) - 1;
+            entity.FrameWidth = (entity.FrameCollision.Width << 16) - 1;
+            entity.FrameDepth = (entity.FrameCollision.Depth << 16) - 1;
+            entity.FrameHeight = (entity.FrameCollision.Height << 16) - 1;
         }
         else
         {
@@ -364,12 +363,12 @@ public class EntityManager
         {
             var x = xs[i];
             var y = ys[i];
-            var tileX = Math.Min((x / StaticVariables.MapTileWidth), 51);
+            var tileX = Math.Min(x / StaticVariables.MapTileWidth, 51);
             //On PSX hardware we avoid using division, so we use a lookup table instead.
             //x = Math.Clamp(x, 0, StaticVariables.g_tileToWorldXTable.Length - 1);
             //Debug.Assert(StaticVariables.g_tileToWorldXTable[x] == tileX); 
 
-            tileX = Math.Clamp(tileX, 0, 0x33); // Ensure tileX is within bounds
+            tileX = Math.Clamp(tileX, 0, 0x33);
             var tileY = y >> 4;
             tileY = Math.Clamp(tileY, 0, 0x3b);
 
@@ -378,7 +377,7 @@ public class EntityManager
             entity.MapTiles[i] = tile;
             int height = tile.Height;
 
-            height = (tile.Height) << 4;
+            height = tile.Height << 4;
 
             switch (tile.Slope & 0x3)
             {
@@ -387,8 +386,8 @@ public class EntityManager
                     //height = (tile.Height - 1) << 4;
                     break;
 
-                case 1: //Stairs
-                    if ((slopesHit & 6) == 0)
+                case 1: //Stairs up/down
+                    if ((slopesHit & 0x6) == 0)
                     {
                         int yInTile = ys[i];
                         int yMod = yInTile % 16;
@@ -402,13 +401,14 @@ public class EntityManager
                     slopesHit |= 1;
                     break;
 
-                case 2: //ladders entering
+                case 2: //ladders entering or stair side down
                     if ((slopesHit & 0x5) == 0) //it already hit 1 or 3
                     {
-                        // Utilisation de la table des hauteurs
                         int xPos = xs[i];
                         int remainder = xPos % 24;
-                        height += StaticVariables.g_heights_800236d4[23 - remainder];
+                        //height += StaticVariables.g_heights_800236d4[23 - remainder];
+                        int xIndex = (23 - (xs[i] % 24)) % 24;
+                        height = ((tile.Height - 1) << 4) + StaticVariables.g_heights_800236d4[xIndex];
                     }
                     else
                     {
@@ -421,10 +421,9 @@ public class EntityManager
                 case 3: //ladders exiting
                     if ((slopesHit & 0x3) == 0)
                     {
-                        // Même logique que le type 2 mais sans inversion de l'index
                         int xPos = xs[i];
                         int remainder = xPos % 24;
-                        height += StaticVariables.g_heights_800236d4[remainder]; // Index direct
+                        height = ((tile.Height - 1) << 4) + StaticVariables.g_heights_800236d4[remainder];
                     }
                     else
                     {
@@ -436,179 +435,11 @@ public class EntityManager
             }
 
             height = height << 16;
-            //height = (height << 4) << 16;
 
-            /*
-            5242880	5242880	5242880	5242880 -- POSY == 41320448
-            5308416	5308416	5242880	5242880
-            5373952	5373952	5242880	5242880
-            5505024	5505024	5242880	5242880
-            5570560	5570560	5242880	5242880
-            5636096	5636096	5242880	5242880
-            5701632	5701632	5242880	5242880
-            5832704	5832704	5242880	5242880
-            5898240	5898240	5242880	5242880
-            5963776	5963776	5242880	5242880
-            6029312	6029312	5308416	5308416
-            6160384	6160384	5373952	5373952
-            */
-
-            if (entity.Index == 11 && entity.PosY == 41238528)
-            {
-                //Debugger.Break();
-            }
-
-            entity.MapHeights[i] = height;
-
-            if (highest < height)
-            {
-                highest = height;
-            }
-        }
-
-        return highest;
-    }
-
-    // 800370c4
-    public int ComputeEntityGroundHeight2(Entity entity)
-    {
-        var xs = new int[4];
-        var ys = new int[4];
-        var x1 = (entity.PosX + entity.ModX) >> 16;
-        var x2 = (entity.PosX + entity.ModX + entity.Width) >> 16;
-        var y1 = (entity.PosY + entity.ModY) >> 16;
-        var y2 = (entity.PosY + entity.ModY + entity.Height) >> 16;
-        xs[0] = x1;
-        ys[0] = y1;
-        xs[1] = x2;
-        ys[1] = y1;
-        xs[2] = x1;
-        ys[2] = y2;
-        xs[3] = x2;
-        ys[3] = y2;
-        int highest = 0;
-        var slopesHit = 0;
-
-        for (var i = 0; i < 4; i++)
-        {
-            var x = xs[i];
-            var y = ys[i];
-            var tileX = Math.Min((x / StaticVariables.MapTileWidth), 51);
-            //On PSX hardware we avoid using division, so we use a lookup table instead.
-            //x = Math.Clamp(x, 0, StaticVariables.g_tileToWorldXTable.Length - 1);
-            //Debug.Assert(StaticVariables.g_tileToWorldXTable[x] == tileX); 
-
-            if (tileX > 0)
-            {
-                if (tileX >= 0x34)
-                {
-                    tileX = 0x33;
-                }
-            }
-            else
-            {
-                tileX = 0;
-            }
-
-            var tileY = y >> 4; // StaticVariables.MapTileHeight;
-            if (tileY > 0)
-            {
-                if (tileY >= 0x3c)
-                {
-                    tileY = 0x3b;
-                }
-            }
-            else
-            {
-                tileY = 0;
-            }
-
-            var mapWidth = _gameEngine.CurrentMap.Map.Width;
-            var tile = _gameEngine.CurrentMap.Map.MapTiles[tileY * mapWidth + tileX];
-            entity.MapTiles[i] = tile;
-            const int FIXED_POINT_DIV3 = 0x2aaaab;
-            int height = tile.Height;
-
-            switch (tile.Slope & 0x3)
-            {
-                case 0: //tuile plate
-                    height <<= 4; // height = (tileHeight - 1) << 4;
-                    break;
-
-                case 1: //Pente avec interpolation basée sur la position Y
-                    if ((slopesHit & 6) == 0)
-                    {
-                        int modX = xs[i]; //xs
-                        int div = modX / 3;
-                        int remain = modX - div * 3;
-                        int offset = (0x17 - remain) << 2;
-                        int heightAdd = StaticVariables.g_heights_800236d4[offset >> 2];
-
-                        //var result = StaticVariables.g_heights_800236d4[ys[i] % 0x18];
-                        var result2 = StaticVariables.g_heights_800236d4[0x17 - (ys[i] % 0x18)];
-                        //Debug.Assert(heightAdd == result2);
-
-                        height = ((tile.Height - 1) << 4) + result2; //heightAdd;
-                    }
-                    else
-                    {
-                        //height += StaticVariables.MapTileHeight;
-                    }
-
-                    slopesHit |= 1;
-                    break;
-
-                case 2: //Pente complexe utilisant une table de hauteurs
-                    if ((slopesHit & 5) == 0) //it already hit 1 or 3
-                    {
-                        var result = StaticVariables.g_heights_800236d4[0x17 - ys[i] % 0x18];
-                        height = ((tile.Height - 1) << 4) + result;
-                    }
-                    else
-                    {
-                        //height += StaticVariables.MapTileHeight;
-                    }
-
-                    slopesHit |= 2;
-                    break;
-
-                case 3: // Variante de la pente type 2
-                    if ((slopesHit & 3) == 0)
-                    {
-                        var result = StaticVariables.g_heights_800236d4[ys[i] % 0x18];
-                        height += result;
-                    }
-                    else
-                    {
-                        //height += StaticVariables.MapTileHeight;
-                    }
-
-                    slopesHit |= 4;
-                    break;
-            }
-
-            height = height << 16;
-            //height = (height << 4) << 16;
-
-            /*
-            5242880	5242880	5242880	5242880 -- POSY == 41320448
-            5308416	5308416	5242880	5242880
-            5373952	5373952	5242880	5242880
-            5505024	5505024	5242880	5242880
-            5570560	5570560	5242880	5242880
-            5636096	5636096	5242880	5242880
-            5701632	5701632	5242880	5242880
-            5832704	5832704	5242880	5242880
-            5898240	5898240	5242880	5242880
-            5963776	5963776	5242880	5242880
-            6029312	6029312	5308416	5308416
-            6160384	6160384	5373952	5373952
-            */
-
-            if (entity.Index == 11 && entity.PosY == 41320448)
-            {
-                //Debugger.Break();
-            }
+            //if (entity.Index == 11 && entity.PosY == 41238528)
+            //{
+            //    //Debugger.Break();
+            //}
 
             entity.MapHeights[i] = height;
 
@@ -715,7 +546,7 @@ public class EntityManager
         if (entity.IsZForceApplied == 0)
         {
             entity.ForceZ = ridingEntity.FinalZForce;
-            entity.FinalYForce = ridingEntity.FinalZForce;
+            entity.FinalZForce = ridingEntity.FinalZForce;
         }
     }
 
