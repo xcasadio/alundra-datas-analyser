@@ -7,7 +7,7 @@ namespace AlundraEngine.Gameplay;
 public class Entity
 {
     //for debugging
-    public int SpriteInfoEntityIndex;
+    public int EventProgramStateSp => EventProgramState.Sp;
 
     public int Index;
     public int Index2;

@@ -241,7 +241,7 @@ public static class FrameSnapshotLoader
 
     private class EntityJson
     {
-        public int hitFrameCounter { get; set; }
+        public int frameCounter { get; set; }
         public int isNotProcessable { get; set; }
         public int flags2 { get; set; }
         public int platformEntity { get; set; }
@@ -352,6 +352,7 @@ public static class FrameSnapshotLoader
         public int mapEventProgramId { get; set; }
         public uint logicContextEntity { get; set; }
         //public EventProgramStateJson eventProgramState { get; set; }
+        public int eventProgramState { get; set; }
         public string _268 { get; set; }
         public string _269 { get; set; }
         public string _26A { get; set; }
@@ -376,7 +377,7 @@ public static class FrameSnapshotLoader
 
         public void CopyToEntity(Entity entity)
         {
-            entity.FrameCounter = hitFrameCounter;
+            entity.FrameCounter = frameCounter;
             entity.IsNotProcessable = isNotProcessable;
             entity.Flags2 = flags2;
             entity.PlatformEntity = StaticVariables.g_entitySlots[platformEntity];
@@ -411,7 +412,7 @@ public static class FrameSnapshotLoader
                 && frameIndex != -1)
             {
                 var animRecordPtr = entity.Sprite.AnimSets[currentAnimationId];
-                var currentFrame = animRecordPtr.PreloadedAnims[currentDirection >> 3].Frames[frameIndex];
+                var currentFrame = animRecordPtr.PreloadedAnims[targetDirection >> 3].Frames[frameIndex];
                 entity.AnimSet = animRecordPtr;
                 entity.Frame = currentFrame;
                 entity.FirstFrame = currentFrame;
@@ -526,6 +527,7 @@ public static class FrameSnapshotLoader
             entity.EventTrigger = eventTrigger;
             entity.MapEventProgramId = mapEventProgramId;
             //entity.LogicContextEntity = logicContextEntity;
+            entity.EventProgramState.Sp = eventProgramState;
             //if (eventProgramState != null && entity.EventProgramState != null)
             //    eventProgramState.CopyToEventProgramState(entity.EventProgramState);
             // Les champs _268, _269, _26A, _26B, bytes sont ignorés (données brutes)

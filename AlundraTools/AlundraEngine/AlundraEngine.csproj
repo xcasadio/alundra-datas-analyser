@@ -8,4 +8,8 @@
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="EPPlus" Version="8.0.6" />
+  </ItemGroup>
+
 </Project>

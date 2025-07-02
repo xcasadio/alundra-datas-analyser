@@ -84,6 +84,7 @@ namespace AlundraTools.AlundraTools
             checkBoxDisplayEntityId = new CheckBox();
             groupBox4 = new GroupBox();
             checkBoxTileXY = new CheckBox();
+            buttonCompareWithDump = new Button();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -655,11 +656,22 @@ namespace AlundraTools.AlundraTools
             checkBoxTileXY.UseVisualStyleBackColor = true;
             checkBoxTileXY.CheckedChanged += checkBoxTileXY_CheckedChanged;
             // 
+            // buttonCompareWithDump
+            // 
+            buttonCompareWithDump.Location = new Point(544, 871);
+            buttonCompareWithDump.Name = "buttonCompareWithDump";
+            buttonCompareWithDump.Size = new Size(171, 29);
+            buttonCompareWithDump.TabIndex = 32;
+            buttonCompareWithDump.Text = "Compare with dump";
+            buttonCompareWithDump.UseVisualStyleBackColor = true;
+            buttonCompareWithDump.Click += buttonCompareWithDump_Click;
+            // 
             // FrmGame
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1306, 1272);
+            Controls.Add(buttonCompareWithDump);
             Controls.Add(groupBox4);
             Controls.Add(buttonExtractToCsv);
             Controls.Add(buttonLoadDump);
@@ -754,5 +766,6 @@ namespace AlundraTools.AlundraTools
         private CheckBox checkBoxDisplayEntityId;
         private GroupBox groupBox4;
         private CheckBox checkBoxTileXY;
+        private Button buttonCompareWithDump;
     }
 }

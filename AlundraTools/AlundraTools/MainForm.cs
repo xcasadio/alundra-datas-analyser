@@ -46,24 +46,27 @@ public partial class MainForm : Form
         var ofd = new OpenFileDialog();
         ofd.Title = "Select DATAS.BIN";
         ofd.Filter = "DATAS.BIN|DATAS.BIN|All Files (*.*)|*.*";
-        ofd.ShowDialog();
+        ofd.InitialDirectory = @"D:\development\repo\Alundra Remake\Alundra (France)\Alundra (France)_extracted\DATA";
 
-        if (!string.IsNullOrWhiteSpace(ofd.FileName))
+        if (ofd.ShowDialog() == DialogResult.OK)
         {
-            DebugSymbols.Init();
-            var frmAlundra = new FrmAlundra();
-            frmAlundra.Show();
-            var datasBin = new DatasBin(ofd.FileName);
-            var dataFolder = Path.GetDirectoryName(ofd.FileName);
-            var balanceFile = Path.Combine(dataFolder, "BALANCE.BIN");
-            var balanceBin = new BalanceBin(balanceFile);
-            var soundBinFileName = Path.Combine(dataFolder, "SOUND.BIN");
-            var soundBin = new SoundBin(soundBinFileName);
-            var etcResRFileName = Path.Combine(dataFolder, "ETC_RES.R");
-            var etcResR = new EtcResR(etcResRFileName);
-            var font3 = new Font3(Path.Combine(dataFolder, "..", "TAKI\\SCREEN"));
+            if (!string.IsNullOrWhiteSpace(ofd.FileName))
+            {
+                DebugSymbols.Init();
+                var frmAlundra = new FrmAlundra();
+                frmAlundra.Show();
+                var datasBin = new DatasBin(ofd.FileName);
+                var dataFolder = Path.GetDirectoryName(ofd.FileName);
+                var balanceFile = Path.Combine(dataFolder, "BALANCE.BIN");
+                var balanceBin = new BalanceBin(balanceFile);
+                var soundBinFileName = Path.Combine(dataFolder, "SOUND.BIN");
+                var soundBin = new SoundBin(soundBinFileName);
+                var etcResRFileName = Path.Combine(dataFolder, "ETC_RES.R");
+                var etcResR = new EtcResR(etcResRFileName);
+                var font3 = new Font3(Path.Combine(dataFolder, "..", "TAKI\\SCREEN"));
 
-            frmAlundra.Init(datasBin, balanceBin, soundBin, etcResR, font3);
+                frmAlundra.Init(datasBin, balanceBin, soundBin, etcResR, font3);
+            }
         }
     }
 
@@ -76,8 +79,8 @@ public partial class MainForm : Form
     {
         var ofd = new OpenFileDialog();
         ofd.Filter = "DATAS.BIN|DATAS.BIN|All Files (*.*)|*.*";
-        ofd.FileName = @"D:\development\repo\Alundra Remake\Alundra (France)\Alundra (France)_extracted\DATA";
-        
+        ofd.InitialDirectory = @"D:\development\repo\Alundra Remake\Alundra (France)\Alundra (France)_extracted\DATA";
+
         if (ofd.ShowDialog() == DialogResult.OK)
         {
             if (!string.IsNullOrWhiteSpace(ofd.FileName))
@@ -90,7 +93,7 @@ public partial class MainForm : Form
                 var font3Folder = Path.Combine(dataFolder, "..", "TAKI\\SCREEN");
 
                 var frmGame = new FrmGame(
-                    new DatasBin(ofd.FileName),
+                    datasBin,
                     new BalanceBin(balanceFile),
                     new SoundBin(soundFile),
                     new EtcResR(etcResRFileName),

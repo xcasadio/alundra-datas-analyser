@@ -892,8 +892,7 @@ public class GameEngine
 
             if (entity != null)
             {
-                entity.SpriteInfoEntityIndex = i;
-                //Debug.WriteLine($"Spawn entity #{entity.Index} ref {entity.Index2}");
+
             }
         }
 
@@ -1129,14 +1128,14 @@ public class GameEngine
             {
                 if (otherEntity.ModdedYPos - entity.ModdedYPos < entity.Depth + 1)
                 {
-                    collision = otherEntity.ModdedZPos + otherEntity.Height;
+                    collision = otherEntity.ModdedZPos + otherEntity.Depth;
                 }
             }
             else
             {
                 if (entity.ModdedYPos - otherEntity.ModdedYPos < otherEntity.Depth + 1)
                 {
-                    collision = otherEntity.ModdedZPos + otherEntity.Height;
+                    collision = otherEntity.ModdedZPos + otherEntity.Depth; 
                 }
             }
 

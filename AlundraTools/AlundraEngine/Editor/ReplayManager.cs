@@ -12,7 +12,7 @@ public class ReplayManager
     public int CurrentFrame { get; set; }
     public int FrameCount => Frames.Count;
 
-    private readonly Regex FrameRegex = new(@"^alundra_frame_(\d{6})\.json$", RegexOptions.IgnoreCase);
+    private static readonly Regex FrameRegex = new(@"^alundra_frame_(\d{6})\.json$", RegexOptions.IgnoreCase);
 
     public void StartSaving()
     {
@@ -48,17 +48,23 @@ public class ReplayManager
 
     public void LoadFromDump(string directoryPath)
     {
-        var files = GetSortedFrameFiles(directoryPath);
-
         Frames.Clear();
-
-        foreach (var file in files)
-        {
-            Frames.Add(FrameSnapshotLoader.LoadFromJson(file));
-        }
+        Frames.AddRange(LoadDump(directoryPath));
     }
 
-    private List<string> GetSortedFrameFiles(string directoryPath)
+    public static List<FrameSnapshot> LoadDump(string directoryPath)
+    {
+        var files = GetSortedFrameFiles(directoryPath);
+        var frameSnapshots = new List<FrameSnapshot>();
+        foreach (var file in files)
+        {
+            frameSnapshots.Add(FrameSnapshotLoader.LoadFromJson(file));
+        }
+
+        return frameSnapshots;
+    }
+
+    private static List<string> GetSortedFrameFiles(string directoryPath)
     {
         return Directory
             .EnumerateFiles(directoryPath, "alundra_frame_*.json")

@@ -1,10 +1,11 @@
-﻿using System.Runtime.InteropServices;
-using System.Text;
-using AlundraEngine;
+﻿using AlundraEngine;
 using AlundraEngine.DatasBin;
+using AlundraEngine.Editor;
 using AlundraEngine.Gameplay;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
+using System.Runtime.InteropServices;
+using System.Text;
 using Timer = System.Windows.Forms.Timer;
 
 namespace AlundraTools.AlundraTools;
@@ -775,7 +776,9 @@ public partial class FrmGame : Form
 
         if (openFileDialog.ShowDialog(this) == DialogResult.OK)
         {
+            //EntityComparer.ExportComparisonToExcel(originalList, decompiledList, "EntitiesComparison.xlsx");
             var content = new StringBuilder();
+            content.Append("#;");
             content.Append("Flags;PosX;PosY;PosZ;");
             content.Append("ModdedXPos;ModdedYPos;ModdedZPos;");
             content.Append("TerrainHeight;FloorHeight;ZSortValue;ZSortDepth;");
@@ -791,13 +794,14 @@ public partial class FrmGame : Form
             content.Append("TargetXForce;TargetYForce;");
             content.Append("AdjustedXForce;AdjustedYForce;ForceAdjusted;");
             content.Append("Speed;Acceleration;IsZForceApplied;");
-            content.Append("Width;Height;Depth");
 
             content.AppendLine();
 
             foreach (var frame in _engine.ReplayManager.Frames)
             {
-                var entity = frame.Entities[11];
+                var entity = frame.Entities[8];
+
+                content.Append($"{entity.FrameCounter};");
 
                 content.Append($"{entity.Flags};");
 
@@ -857,10 +861,6 @@ public partial class FrmGame : Form
                 content.Append($"{entity.Acceleration};");
                 content.Append($"{entity.IsZForceApplied};");
 
-                content.Append($"{entity.Width};");
-                content.Append($"{entity.Height};");
-                content.Append($"{entity.Depth}");
-
                 content.AppendLine();
             }
 
@@ -876,5 +876,85 @@ public partial class FrmGame : Form
     private void checkBoxTileXY_CheckedChanged(object sender, EventArgs e)
     {
         StaticVariables.DisplayTileXY = checkBoxTileXY.Checked;
+    }
+
+    private void buttonCompareWithDump_Click(object sender, EventArgs e)
+    {
+        if (_engine.ReplayManager.FrameCount > 0)
+        {
+            using var folderBrowserDialog = new FolderBrowserDialog
+            {
+                Description = "Choose the dump folder",
+                UseDescriptionForTitle = true,
+                SelectedPath = @"D:\development\repo\Alundra Remake\dump\"
+            };
+
+            if (folderBrowserDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                using var excelFileDialog = new SaveFileDialog();
+
+                excelFileDialog.Title = "Select output excel file";
+                excelFileDialog.Filter = "xlsx Files (*.xlsx)|*.xlsx";
+
+                if (excelFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    var frames = ReplayManager.LoadDump(folderBrowserDialog.SelectedPath);
+                    CompareData(frames, excelFileDialog.FileName, _engine.ReplayManager.Frames);
+                }
+            }
+        }
+    }
+
+    private void CompareData(List<FrameSnapshot> frames, string fileName, List<FrameSnapshot> decompFrames)
+    {
+        var originalStart = frames[0].Entities[0].FrameCounter;
+        var originalEnd = frames[^1].Entities[0].FrameCounter;
+        var decompStart = decompFrames[0].Entities[0].FrameCounter;
+        var decompEnd = decompFrames[^1].Entities[0].FrameCounter;
+
+        var start = Math.Max(originalStart, decompStart);
+        var end = Math.Min(originalEnd, decompEnd);
+
+        for (int i = 0; i < frames.Count; i++)
+        {
+            if (frames[i].Entities[0].FrameCounter == start)
+            {
+                originalStart = i;
+                break;
+            }
+        }
+
+        for (int i = frames.Count - 1; i >= 0; i--)
+        {
+            if (frames[i].Entities[0].FrameCounter == end)
+            {
+                originalEnd = i;
+                break;
+            }
+        }
+
+        frames = frames.Slice(originalStart, originalEnd - originalStart);
+
+        for (int i = 0; i < decompFrames.Count; i++)
+        {
+            if (decompFrames[i].Entities[0].FrameCounter == start)
+            {
+                originalStart = i;
+                break;
+            }
+        }
+
+        for (int i = decompFrames.Count - 1; i >= 0; i--)
+        {
+            if (decompFrames[i].Entities[0].FrameCounter == end)
+            {
+                originalEnd = i;
+                break;
+            }
+        }
+
+        decompFrames = decompFrames.Slice(originalStart, originalEnd - originalStart);
+
+        FrameSnapshotComparer.ExportComparisonToExcel(frames, decompFrames, fileName);
     }
 }
