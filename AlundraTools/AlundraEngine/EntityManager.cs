@@ -1484,7 +1484,7 @@ public class EntityManager
         return null;
     }
 
-    // CheckRidingEntities
+    // 800364c8
     private void CheckRidingEntities()
     {
         for (var i = 0; i < StaticVariables.g_collideableEntitiesCount; i++)
@@ -1495,53 +1495,63 @@ public class EntityManager
                 continue;
             }
 
+            int entityModdedXPos = entity.ModdedXPos;
+            int entityModdedYPos = entity.ModdedYPos;
+            int entityModdedZPos = entity.ModdedZPos;
+
+            int entityWidth = entity.Width + 1;
+            int entityHeight = entity.Height + 1; 
+            int entityDepth = entity.Depth + 1;
+
+            int entityMaxY = entity.ModdedYPos;
+            int entityMaxYExtra = entity.Depth; // 0x1f8 is depth, attention: voir le code binaire, ici c'est additionné pour obtenir maxY
+            int entityMaxYWithExtra = entityMaxY + entityMaxYExtra;
+
+            entity.RidingEntity = null;
+
             for (var j = 0; j < StaticVariables.g_collideableEntitiesCount; j++)
             {
-                var otherEntity = StaticVariables.g_collideableEntities[j];
-                if (entity == otherEntity)
+                if (i == j)
                 {
                     continue;
                 }
 
-                if (otherEntity.ModdedZPos + otherEntity.Depth + 1 == entity.ModdedZPos)
-                {
-                    if ((otherEntity.ModdedXPos - entity.ModdedXPos < 0
-                         && entity.ModdedXPos - otherEntity.ModdedXPos < otherEntity.Width + 1)
-                        || otherEntity.ModdedXPos - entity.ModdedXPos < entity.Width + 1)
-                    {
-                        var val = otherEntity.ModdedYPos - entity.ModdedYPos;
+                var other = StaticVariables.g_collideableEntities[j];
 
-                        if (val < 0)
-                        {
-                            if (entity.ModdedYPos - otherEntity.ModdedYPos < otherEntity.Height + 1)
-                            {
-                                entity.RidingEntity = otherEntity;
-                                break;
-                            }
-                        }
-                        else if (val < entity.Height + 1)
-                        {
-                            entity.RidingEntity = otherEntity;
-                            break;
-                        }
-                    }
+                int otherMaxY = other.ModdedYPos + other.Depth + 1;
+                if (otherMaxY != entityMaxY)
+                    continue;
+
+                // Y overlap
+                int yDiff = other.ModdedXPos - entityModdedXPos;
+                if (yDiff < 0)
+                {
+                    int val = other.Width + 1;
+                    if (!(entityModdedXPos - other.ModdedXPos < val))
+                        continue;
+                }
+                else
+                {
+                    if (!(yDiff < entityWidth))
+                        continue;
                 }
 
-                //if ((otherEntity.ModdedXPos - entity.ModdedXPos >= 0 && otherEntity.ModdedXPos - entity.ModdedXPos < entity.SizeX + 1) 
-                //    || (otherEntity.ModdedXPos - entity.ModdedXPos < 0 && entity.ModdedXPos - otherEntity.ModdedXPos < otherEntity.SizeX + 1))
-                //{
-                //    if (otherEntity.ModdedYPos - entity.ModdedYPos >= 0 && otherEntity.ModdedYPos - entity.ModdedYPos < entity.SizeY + 1)
-                //    {
-                //        entity.RidingEntity = otherEntity;
-                //        break;
-                //    }
-                //
-                //    if (otherEntity.ModdedYPos - entity.ModdedYPos < 0 && entity.ModdedYPos - otherEntity.ModdedYPos < otherEntity.SizeY + 1)
-                //    {
-                //        entity.RidingEntity = otherEntity;
-                //        break;
-                //    }
-                //}
+                // Z overlap
+                int zDiff = other.ModdedZPos - entityModdedZPos;
+                if (zDiff < 0)
+                {
+                    int val = other.Height + 1;
+                    if (!(entityModdedZPos - other.ModdedZPos < val))
+                        continue;
+                }
+                else
+                {
+                    if (!(zDiff < entityHeight))
+                        continue;
+                }
+
+                entity.RidingEntity = other;
+                break;
             }
         }
     }
@@ -2414,7 +2424,6 @@ public class EntityManager
 
             if (entity.Status == 4)
             {
-                //entity = new Entity(); //TODO: check if create bug with some code save a pointer on an entity
                 entity.Clear();
                 entity.Index = i;
                 entity.EntityRefId = -1; // g_emptyEntityForClearing.EntityRefId == -1
