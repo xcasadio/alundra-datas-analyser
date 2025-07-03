@@ -849,7 +849,7 @@ public class EntityManager
     Entity ComputeXYPosition(Entity entity)
     {
         Entity candidate = null;
-        int i;
+        int i = 0;
         int s6 = -1;
         int dy, dx;
         int groundHeight;
@@ -891,8 +891,8 @@ public class EntityManager
         entity.PosX += dx;
         entity.PosY += dy;
         entity.ModdedXPos = entity.PosX + entity.ModX;
-        entity.ModdedYPos = entity.PosY + entity.ModY; // -> 47235072 = 47628288 + -393216
-        entity.ModdedZPos = entity.PosZ + entity.ModZ; // 5242881 -> 5308417
+        entity.ModdedYPos = entity.PosY + entity.ModY;
+        entity.ModdedZPos = entity.PosZ + entity.ModZ;
 
         groundHeight = ComputeEntityGroundHeight(entity);
         entity.TerrainHeight = groundHeight;
@@ -900,7 +900,7 @@ public class EntityManager
         int halfDxVal = dx >> 1;
         int halfDyVal = dy >> 1;
 
-        // Essai de “collage” au sol si 0x100 (gravity) et pas de zForce
+        // Ground snapping logic
         if ((entity.Flags & 0x100) != 0 && entity.ForceZ == 0)
         {
             dz = groundHeight - entity.ModdedZPos - 1;
@@ -914,27 +914,19 @@ public class EntityManager
             if (dz < zTolerance)
             {
                 int savedZ = entity.PosZ;
-                entity.PosZ = groundHeight + 1; //5242881 -> 5308417
+                entity.PosZ = groundHeight + 1;
                 entity.ModdedXPos = entity.PosX + entity.ModX;
                 entity.ModdedYPos = entity.PosY + entity.ModY;
                 entity.ModdedZPos = entity.PosZ + entity.ModZ;
 
                 if (FindEntityCollisionCandidate(entity) != null)
                 {
-                    /* collision verticale : on restaure Z */
                     entity.PosZ = savedZ;
                     entity.ModdedZPos = savedZ + entity.ModZ;
                     entity.ModdedXPos = entity.PosX + entity.ModX;
                     entity.ModdedYPos = entity.PosY + entity.ModY;
-                    //goto RESTORE_POS;
                 }
-                /* sinon : on garde ce nouvel essai et on poursuit avec collision décor…   */
             }
-            //else
-            //{
-            //    //RESTORE_POS:
-            //    // on repassera dans collision décor juste après
-            //}
         }
 
         CHECK_ENTITY_COLLISION:
@@ -985,7 +977,7 @@ public class EntityManager
             goto TRY_ADVANCE;
         }
 
-        LAB_80037938:
+        // Restaurer position après collision
         entity.PosX = posX;
         entity.PosY = posY;
         entity.PosZ = posZ;
@@ -1232,7 +1224,6 @@ public class EntityManager
         }
 
         LAB_80037D58:
-        //Cas “pas d’obstacle” (modX != 0)
         dy = entity.PosX;
         dx = entity.ModX;
         goto FINALIZE_COMMON;
@@ -1243,6 +1234,7 @@ public class EntityManager
         FINALIZE_OK:
         dy = entity.PosX;
         dx = entity.ModX;
+        goto FINALIZE_COMMON;
 
         FINALIZE_COMMON:
         entity.ModdedXPos = dy + dx;
@@ -1257,19 +1249,6 @@ public class EntityManager
         entity.ModdedZPos = entity.PosZ + entity.ModZ;
         entity.TerrainHeight = ComputeEntityGroundHeight(entity);
         return null;
-    }
-
-    private void UpdateEntityPositions(Entity entity, bool clearForceAdjusted = true)
-    {
-        if (clearForceAdjusted)
-        {
-            entity.ForceAdjusted = 1;
-        }
-
-        entity.ModdedXPos = entity.PosX + entity.ModX;
-        entity.ModdedYPos = entity.PosY + entity.ModY;
-        entity.ModdedZPos = entity.PosZ + entity.ModZ;
-        entity.TerrainHeight = ComputeEntityGroundHeight(entity);
     }
 
     public uint GetCollisionFlagsWithPlayer(Entity entity, uint[] collisionFlags)
@@ -1358,11 +1337,10 @@ public class EntityManager
         for (int i = 0; i < 4; i++)
         {
             flags[i] = 0;
+            var tile = entity.MapTiles[i];
+            var tileFlag = (uint)tile.Walkability;
 
-            if ((entity.MapTiles[i].Flags & flag) != 0 // != 0
-                && entity.MapHeights[i] >= moddedZPos) // la case est plus basse
-                                                       //if ((entity.MapTiles[i].Flags & flag) != 0 
-                                                       //    || moddedZPos <= entity.MapHeights[i])
+            if ((tileFlag & flag) != 0 || entity.MapHeights[i] >= moddedZPos) // la case est plus basse
             {
                 flags[i] = 1;
             }
