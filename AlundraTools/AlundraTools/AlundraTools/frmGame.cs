@@ -957,4 +957,9 @@ public partial class FrmGame : Form
 
         FrameSnapshotComparer.ExportComparisonToExcel(frames, decompFrames, fileName);
     }
+
+    private void buttonControlAlundra_Click(object sender, EventArgs e)
+    {
+        StaticVariables.g_playerControlFlags &= 0xfffffffb;
+    }
 }

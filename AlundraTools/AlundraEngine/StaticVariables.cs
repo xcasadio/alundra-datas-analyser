@@ -2317,9 +2317,6 @@ public static class StaticVariables
     public static short DAT_801eb828; // 801EB828
     public static short DAT_801eb82a; // 801EB82A
     public static FadeControl g_initialFadeControl; // 801EB82C
-    public static short DAT_801eb82e; // 801EB82E
-    public static short DAT_801eb830; // 801EB830
-    public static short DAT_801eb832; // 801EB832
     public static short DAT_801eb834; // 801EB834
     public static short DAT_801eb83a; // 801EB83A
     public static short DAT_801eb83c; // 801EB83C

@@ -369,7 +369,7 @@ public class EntityManager
             //Debug.Assert(StaticVariables.g_tileToWorldXTable[x] == tileX); 
 
             tileX = Math.Clamp(tileX, 0, 0x33);
-            var tileY = y >> 4;
+            var tileY = y / StaticVariables.MapTileHeight;
             tileY = Math.Clamp(tileY, 0, 0x3b);
 
             var mapWidth = _gameEngine.CurrentMap.Map.Width;
@@ -377,42 +377,38 @@ public class EntityManager
             entity.MapTiles[i] = tile;
             int height = tile.Height;
 
-            height = tile.Height << 4;
+            height = tile.Height * StaticVariables.MapTileHeight;
 
             switch (tile.Slope & 0x3)
             {
                 case 0: //normal tile
-                    //height <<= 4;
-                    //height = (tile.Height - 1) << 4;
                     break;
 
                 case 1: //Stairs up/down
                     if ((slopesHit & 0x6) == 0)
                     {
                         int yInTile = ys[i];
-                        int yMod = yInTile % 16;
-                        height = ((tile.Height - 1) << 4) + 0x10 - yMod;
+                        int yMod = yInTile % StaticVariables.MapTileHeight;
+                        height = (tile.Height - 1) * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight - yMod;
                     }
                     else
                     {
-                        height += 0x10;
+                        height += StaticVariables.MapTileHeight;
                     }
 
                     slopesHit |= 1;
                     break;
 
                 case 2: //ladders entering or stair side down
-                    if ((slopesHit & 0x5) == 0) //it already hit 1 or 3
+                    if ((slopesHit & 0x5) == 0)
                     {
                         int xPos = xs[i];
-                        int remainder = xPos % 24;
-                        //height += StaticVariables.g_heights_800236d4[23 - remainder];
-                        int xIndex = (23 - (xs[i] % 24)) % 24;
-                        height = ((tile.Height - 1) << 4) + StaticVariables.g_heights_800236d4[xIndex];
+                        int xIndex = (23 - xs[i] % StaticVariables.MapTileWidth) % StaticVariables.MapTileWidth;
+                        height = (tile.Height - 1) * StaticVariables.MapTileHeight + StaticVariables.g_heights_800236d4[xIndex];
                     }
                     else
                     {
-                        height += 0x10;
+                        height += StaticVariables.MapTileHeight;
                     }
 
                     slopesHit |= 2;
@@ -422,25 +418,19 @@ public class EntityManager
                     if ((slopesHit & 0x3) == 0)
                     {
                         int xPos = xs[i];
-                        int remainder = xPos % 24;
-                        height = ((tile.Height - 1) << 4) + StaticVariables.g_heights_800236d4[remainder];
+                        int remainder = xPos % StaticVariables.MapTileWidth;
+                        height = (tile.Height - 1) * StaticVariables.MapTileHeight + StaticVariables.g_heights_800236d4[remainder];
                     }
                     else
                     {
-                        height += 0x10;
+                        height += StaticVariables.MapTileHeight;
                     }
 
                     slopesHit |= 4;
                     break;
             }
 
-            height = height << 16;
-
-            //if (entity.Index == 11 && entity.PosY == 41238528)
-            //{
-            //    //Debugger.Break();
-            //}
-
+            height <<= 16;
             entity.MapHeights[i] = height;
 
             if (highest < height)
@@ -474,7 +464,7 @@ public class EntityManager
 
         UpdateVisibleEntitiesZSort();
 
-        if (StaticVariables.g_visibleEntityCount > 0) // add spriterefs
+        if (StaticVariables.g_visibleEntityCount > 0)
         {
             for (var i = 0; i < StaticVariables.g_visibleEntityCount; i++)
             {
@@ -752,7 +742,6 @@ public class EntityManager
         int entityTopZ;
         Entity candidateEntity;
         int candidateZPos;
-        //Entity[] collidableEntityPtr;
         int platformCandidateZ;
         int entityIndex;
         bool collisionDetected;
@@ -775,7 +764,6 @@ public class EntityManager
             entityIndex = 0;
             if (StaticVariables.g_collideableEntitiesCount > 0)
             {
-                //collidableEntityPtr = StaticVariables.g_collideableEntities;
                 do
                 {
                     candidateEntity = StaticVariables.g_collideableEntities[entityIndex];
@@ -977,7 +965,7 @@ public class EntityManager
             goto TRY_ADVANCE;
         }
 
-        // Restaurer position après collision
+        // restore position
         entity.PosX = posX;
         entity.PosY = posY;
         entity.PosZ = posZ;
@@ -1164,7 +1152,7 @@ public class EntityManager
                 }
                 else
                 {
-                    //goto LAB_80037C70; /* FinalXForce = 0 */
+                    //goto LAB_80037C70;
                     entity.FinalXForce = 0;
                     goto START_COLLISION_CHECK;
                 }
@@ -1185,7 +1173,7 @@ public class EntityManager
                 }
                 else if (collisionFlags[1] == 0 && collisionFlags[3] != 0)
                 {
-                    //goto code_r0x80037C3C; /* FinalYForce = -0x8000 */
+                    //goto code_r0x80037C3C;
                     if (collisionFlags[0] == 0)
                     {
                         entity.FinalYForce = -0x8000;
@@ -1286,6 +1274,7 @@ public class EntityManager
 
             for (int i = 0; i < 4; i++)
             {
+                //TODO : Flags or walkability ?
                 if ((player.MapTiles[i].Flags & flag) != 0 || moddedZPos <= player.MapHeights[i])
                 {
                     colFlags[index] = 1;
@@ -1327,7 +1316,7 @@ public class EntityManager
             flag = 0x41;
         }
 
-        if ((entity.Flags & 0x1) != 0) // 0x1 = « prend en compte les trous »
+        if ((entity.Flags & 0x1) != 0) // 0x1 = hole
         {
             flag |= 0x1000;
         }
@@ -2431,7 +2420,6 @@ public class EntityManager
 
             //processable
             if (entity.Status >= 2 && entity.Status <= 3 && entity.IsNotProcessable == 0)
-            //if (entity.Status - 2 < 2 && entity.IsNotProcessable == 0)
             {
                 StaticVariables.g_activeEntities[StaticVariables.g_activeEntityCount++] = entity;
             }
@@ -2480,7 +2468,6 @@ public class EntityManager
         var hitz = _gameEngine.GetCollisionOnZ(entity);
         entity.FloorHeight = hitz;
         entity.IsAboveGround = hitz < entity.PosZ ? 0 : 1;
-        //entity.FloorHeight = hitz;
         //entity.CollidedWithEntityZ = hitz < entity.PosZ ? 0 : 1;
 
         if ((entity.Flags & 0x100U) == 0)
@@ -2512,9 +2499,7 @@ public class EntityManager
 
 
             var mapTile = _gameEngine.CurrentMap.Map.MapTiles[tileX + tileY * _gameEngine.CurrentMap.Map.Width];
-            //entity.MapTiles[tileY * 0xd0 + tileX * 4 + 0x302];
             tileFlags = mapTile.Flags;
-            //tileFlags = StaticVariables.g_spriteVRAMPointer + tileY * 0xd0 + tileX * 4 + 0x302;
             if ((tileFlags & 0xc00000) == 0 || (tileFlags & 0x80000) == 0)
             {
                 goto NoCollision;
@@ -2569,7 +2554,7 @@ public class EntityManager
                 tileY = 0x3b;
             }
 
-            var tl = _gameEngine.CurrentMap.Map.MapTiles[tileX + tileY * 52]; //entity.MapTiles[tileY * 0xd0 + tileX * 4 + 0x302];
+            var tl = _gameEngine.CurrentMap.Map.MapTiles[tileX + tileY * 52];
             tileFlags = (uint)(tl.Walkability | tl.GroundProperty << 8 | tl.Slope << 16 | tl.Height << 24);
             //tileFlags = StaticVariables.g_spriteVRAMPointer + tileY * 0xd0 + tileX * 4 + 0x302;
 
@@ -2622,16 +2607,13 @@ public class EntityManager
         }
         else
         {
-            /* Structure liée à la cible, probablement un script/AI */
             balanceRecord = entity.BalanceRecord;
         }
 
-        /* Entité liée à l'effet ou au contexte de dégâts */
         damage = ResolveBalanceTarget(balanceRecord.AnimVals[0], entity.TouchingEntity, entity.Hp);
 
         if (StaticVariables.g_debugState < 0 && (StaticVariables.g_debugFlags & 0x800) != 0)
         {
-            //debugStr = StaticVariables.g_messageDebug + entity.index * 0x100;
             if (StaticVariables.g_balanceHpTotal != -1)
             {
                 if ((StaticVariables.g_balanceMultiplier & 0xc0U) == 0)
@@ -2730,7 +2712,6 @@ public class EntityManager
                                 else if (StaticVariables.g_balanceAnimIndex + 1 < animPtr.NumAnimVals)
                                 {
                                     values = animPtr.AnimVals[(StaticVariables.g_balanceAnimIndex << 1) + 0xf + 2];
-                                    //values = animPtr.AnimVals[StaticVariables.g_balanceAnimIndex * 2 + 0xe];
                                 }
                                 else
                                 {

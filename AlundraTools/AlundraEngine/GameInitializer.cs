@@ -434,12 +434,11 @@ public class GameInitializer
 
         StaticVariables.g_initialFadeControl = new FadeControl();
         StaticVariables.g_fadeControl = StaticVariables.g_initialFadeControl;
-        StaticVariables.g_initialFadeControl.TargetLevel = 1;
-        StaticVariables.g_initialFadeControl.MaxTargetLevel = 1;
+        StaticVariables.g_initialFadeControl.WarpVisualId = 1;
+        StaticVariables.g_initialFadeControl.CurrentWarpEntityId = 1;
+        StaticVariables.g_initialFadeControl.MaxTargetLevel = 0;
+        StaticVariables.g_initialFadeControl.TargetLevel = 0;
         //StaticVariables.g_warpUsageTable = StaticVariables.DAT_801eb83e;
-        StaticVariables.DAT_801eb82e = 1;
-        StaticVariables.DAT_801eb832 = 0;
-        StaticVariables.DAT_801eb830 = 0;
         StaticVariables.DAT_801eb834 = 0;
         StaticVariables.DAT_801eb83a = 0;
         StaticVariables.DAT_801eb83c = 0;

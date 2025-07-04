@@ -58,6 +58,7 @@ public class GameEngine
         _gameInitializer.Initialize();
     }
 
+    // 8002bfe0
     public void MainLoop(Graphics graphics)
     {
         //InitializeGame();
@@ -318,19 +319,19 @@ public class GameEngine
         {
             if (newFadeValue < 0)
             {
-                StaticVariables.g_fadeControl.CurrentWarpEntityId = 0;
+                StaticVariables.SHORT_ARRAY_801eb83e[0] = 0;
             }
             else
             {
-                StaticVariables.g_fadeControl.CurrentWarpEntityId = newFadeValue;
+                StaticVariables.SHORT_ARRAY_801eb83e[0] = newFadeValue;
             }
         }
         else
         {
-            StaticVariables.g_fadeControl.CurrentWarpEntityId = 9999;
+            StaticVariables.SHORT_ARRAY_801eb83e[0] = 9999;
         }
 
-        return StaticVariables.g_fadeControl.CurrentWarpEntityId;
+        return StaticVariables.SHORT_ARRAY_801eb83e[0];
     }
 
     // 8004b730
@@ -365,7 +366,7 @@ public class GameEngine
     {
         if (warpVisualId == 0xffffffff || warpVisualId - 1 < 6)
         {
-            StaticVariables.g_fadeControl.WarpVisualId = (short)warpVisualId;
+            StaticVariables.SHORT_ARRAY_801eb83e[1] = (short)warpVisualId;
         }
         else
         {
@@ -379,7 +380,8 @@ public class GameEngine
     public uint GetCurrentTileIndex()
     {
         uint tileIndex = 0xffffffff;
-        int caseValue = StaticVariables.g_fadeControl.WarpVisualId - 1;
+        int caseValue = StaticVariables.SHORT_ARRAY_801eb83e[1] - 1; // * 0x10000) >> 0x10
+        //caseValue = ((StaticVariables.SHORT_ARRAY_801eb83e[1] - 1) * 0x10000) >> 0x10;
 
         switch (caseValue)
         {
@@ -910,9 +912,9 @@ public class GameEngine
             (uint)StaticVariables.g_warpExtraParam,
             0xb, 0x60);
 
-        StaticVariables.g_entitySlots[0].Status = 2;
-        StaticVariables.g_entitySlots[0].HpMax = GetFadeControlWarpVisualId();
-        StaticVariables.g_entitySlots[0].Hp = GetFadeControl();
+        StaticVariables.PlayerEntity.Status = 2;
+        StaticVariables.PlayerEntity.HpMax = GetFadeControlWarpVisualId();
+        StaticVariables.PlayerEntity.Hp = GetFadeControl();
         StaticVariables.g_activeCollisionEntity = null;
         StaticVariables.g_playerWarpTimer = 0;
         StaticVariables.g_isWarpDisabled = 0;

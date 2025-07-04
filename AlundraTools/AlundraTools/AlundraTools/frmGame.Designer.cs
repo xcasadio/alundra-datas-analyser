@@ -85,6 +85,7 @@ namespace AlundraTools.AlundraTools
             groupBox4 = new GroupBox();
             checkBoxTileXY = new CheckBox();
             buttonCompareWithDump = new Button();
+            buttonControlAlundra = new Button();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -666,11 +667,22 @@ namespace AlundraTools.AlundraTools
             buttonCompareWithDump.UseVisualStyleBackColor = true;
             buttonCompareWithDump.Click += buttonCompareWithDump_Click;
             // 
+            // buttonControlAlundra
+            // 
+            buttonControlAlundra.Location = new Point(544, 941);
+            buttonControlAlundra.Name = "buttonControlAlundra";
+            buttonControlAlundra.Size = new Size(171, 29);
+            buttonControlAlundra.TabIndex = 33;
+            buttonControlAlundra.Text = "Control alundra";
+            buttonControlAlundra.UseVisualStyleBackColor = true;
+            buttonControlAlundra.Click += buttonControlAlundra_Click;
+            // 
             // FrmGame
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1306, 1272);
+            Controls.Add(buttonControlAlundra);
             Controls.Add(buttonCompareWithDump);
             Controls.Add(groupBox4);
             Controls.Add(buttonExtractToCsv);
@@ -767,5 +779,6 @@ namespace AlundraTools.AlundraTools
         private GroupBox groupBox4;
         private CheckBox checkBoxTileXY;
         private Button buttonCompareWithDump;
+        private Button buttonControlAlundra;
     }
 }

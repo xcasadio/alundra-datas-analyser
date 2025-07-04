@@ -1229,7 +1229,8 @@ namespace AlundraTools.AlundraTools
                     _curframe = 0;
                 }
 
-                _animtimer.Interval = (_selectedAnim.Frames[_curframe].Delay & 0x7f) * 23;
+                var delay = Math.Max(_selectedAnim.Frames[_curframe].Delay & 0x7f, 1);
+                _animtimer.Interval = delay * 23;
 
                 pctAnim.Refresh();
                 _animtimer.Enabled = true;
@@ -1315,6 +1316,12 @@ namespace AlundraTools.AlundraTools
                 if (_selectedAnim != null && _selectedAnim.NumberOfFrames > 0)
                 {
                     var frame = _selectedAnim.Frames[_curframe];
+
+                    if (frame.Images == null)
+                    {
+                        return;
+                    }
+
                     var bmps = GetSpriteImages(frame.Images);
                     var posx = pctAnim.Width / 2;
                     var posy = pctAnim.Height / 2;
