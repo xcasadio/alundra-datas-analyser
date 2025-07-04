@@ -180,7 +180,7 @@ public static class FrameSnapshotLoader
         public uint[] g_soundGroupByMapId { get; set; }
         public int[] g_orderingTableBuffer { get; set; }
         public int g_warpDelayFrames { get; set; }
-        public int g_playerControlFlags { get; set; }
+        public uint g_playerControlFlags { get; set; }
         public int g_isWarpDisabled { get; set; }
         public int g_warpType { get; set; }
         public int g_desiredMap { get; set; }

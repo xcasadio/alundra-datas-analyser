@@ -846,7 +846,7 @@ public class EntityManager
     }
 
     // 80037730
-    Entity ComputeXYPosition(Entity entity)
+    private Entity ComputeXYPosition(Entity entity)
     {
         Entity candidate = null;
         int i = 0;
@@ -2246,7 +2246,7 @@ public class EntityManager
     {
         for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
         {
-            var entity = StaticVariables.g_entitySlots[i];
+            var entity = StaticVariables.g_activeEntities[i];
             UpdateAnimation(entity);
             Debug.Assert(entity.AnimSet != null);
         }
@@ -2404,10 +2404,6 @@ public class EntityManager
             {
                 entity.Clear();
                 entity.Index = i;
-                entity.EntityRefId = -1; // g_emptyEntityForClearing.EntityRefId == -1
-                //entity.Index2 = 0;
-                //...
-                //StaticVariables.g_entitySlots[i] = entity;
             }
             else if (entity.Status != 0)
             {
@@ -2425,12 +2421,17 @@ public class EntityManager
         StaticVariables.g_collideableEntitiesCount = 0;
         StaticVariables.g_visibleEntityCount = 0;
 
+        Array.Clear(StaticVariables.g_activeEntities);
+        Array.Clear(StaticVariables.g_collideableEntities);
+        Array.Clear(StaticVariables.g_visibleEntities);
+
         for (int i = 0; i < StaticVariables.g_numberOfEntity; i++)
         {
             var entity = StaticVariables.g_entitySlots[i];
 
             //processable
-            if (entity.Status - 2 < 2 && entity.IsNotProcessable == 0)
+            if (entity.Status >= 2 && entity.Status <= 3 && entity.IsNotProcessable == 0)
+            //if (entity.Status - 2 < 2 && entity.IsNotProcessable == 0)
             {
                 StaticVariables.g_activeEntities[StaticVariables.g_activeEntityCount++] = entity;
             }
@@ -2442,7 +2443,7 @@ public class EntityManager
             }
 
             //renderable
-            if (entity.Status - 2 < 2 &&
+            if (entity.Status >= 2 && entity.Status <= 3 &&
                 (entity.DamagedTickCounter & 0x3) != 0x3) //flicker effect, every 3rd frame when being damaged
             {
                 StaticVariables.g_visibleEntities[StaticVariables.g_visibleEntityCount++] = entity;

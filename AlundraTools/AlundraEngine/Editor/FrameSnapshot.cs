@@ -20,7 +20,7 @@ public class FrameSnapshot
     public uint[] SoundGroupByMapId { get; set; }
     public int[] OrderingTableBuffer { get; set; }
     public int WarpDelayFrames { get; set; }
-    public int PlayerControlFlags { get; set; }
+    public uint PlayerControlFlags { get; set; }
     public int IsWarpDisabled { get; set; }
     public int WarpType { get; set; }
     public int DesiredMap { get; set; }

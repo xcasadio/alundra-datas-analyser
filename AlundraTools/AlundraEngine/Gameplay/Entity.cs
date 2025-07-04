@@ -293,6 +293,154 @@ public class Entity
 
     public void Clear()
     {
-        //throw new NotImplementedException();
+        Index = 0;
+        Index2 = 0;
+        ChildEntity = null;
+        ParentEntity = null;
+        Status = 0;
+        Hp = 0;
+        HpMax = 0;
+        FrameCounter = 0;
+        IsNotProcessable = 0;
+        Flags2 = 0;
+        PlatformEntity = null;
+        WarpEntity = null;
+        RelativeWarpOffsetX = 0;
+        RelativeWarpOffsetY = 0;
+        RelativeWarpOffsetZ = 0;
+        ContentsItemId = 0;
+        ContentsGameFlag = 0;
+        EntityRecord = null;
+        EntityRefId = 0;
+
+        Array.Clear(ProgramIndexes);
+
+        Sprite = null;
+        SpriteTableIndex = 0;
+        Flags = 0;
+
+        Array.Clear(SpriteProgramIndexes);
+
+        TargetAnimationId = 0;
+        TargetDirection = 0;
+        CurrentAnimationId = 0;
+        CurrentDirection = 0;
+        CurrentFrameIndex = 0;
+        AnimSet = null;
+        FirstFrame = null;
+        Frame = null;
+        NextFrameDelay = 0;
+        ForceResetAnimationFlag = 0;
+        AnimCompleteCounter = 0;
+        AnimFlags = 0;
+        ForceZ = 0;
+        TargetXForce = 0;
+        TargetYForce = 0;
+        ForceX = 0;
+        ForceY = 0;
+        PreviousAdjustedXForce = 0;
+        PreviousAdjustedYForce = 0;
+        ForceStepX = 0;
+        ForceStepY = 0;
+        AdjustedXForce = 0;
+        AdjustedYForce = 0;
+        FinalXForce = 0;
+        FinalYForce = 0;
+        FinalZForce = 0;
+        Acceleration = 0;
+        Speed = 0;
+        IsZForceApplied = 0;
+        ScreenClipX = 0;
+        ScreenClipY = 0;
+        ScreenClipZ = 0;
+        NegXMod = 0;
+        NegYMod = 0;
+        NegZMod = 0;
+        PosX = 0;
+        PosY = 0;
+        PosZ = 0;
+        TileX = 0;
+        TileY = 0;
+        TileZ = 0;
+        RidingEntity = null;
+        XCollisionEntity = null;
+        FloorHeight = 0;
+        TerrainHeight = 0;
+        ForceAdjusted = 0;
+        CollidedWithEntityZ = 0;
+        IsAboveGround = 0;
+
+        Array.Clear(MapTiles);
+        Array.Clear(MapHeights);
+
+        PlatformUpdateFlag = 0;
+        _16c = 0;
+        HitBoxOriginX = 0;
+        HitBoxOriginY = 0;
+        HitBoxOriginZ = 0;
+        _17c = 0;
+        CombinedVramFlagsOR = 0;
+        CombinedVramFlagsAND = 0;
+        TileAttributes = 0;
+        Slope_18c = 0;
+        Slope_190 = 0;
+
+        SpriteRef.Images = null;
+        SpriteRef.X = 0;
+        SpriteRef.Y = 0;
+        SpriteRef.Z = 0;
+        SpriteRef.DepthSortVal = 0;
+        SpriteRef.NumImages = 0;
+
+        AddedToSheet = 0;
+        AddedToPalette = 0;
+        ActiveEffect = null;
+        ZSortValue = 0;
+        ZSortDepth = 0;
+        BalanceRecord = null;
+        BalanceVal = null;
+        DamagedTickCounter = 0;
+        FrameColTickCounter = 0;
+        FrameCollision = null;
+        ModdedXPos = 0;
+        ModdedYPos = 0;
+        ModdedZPos = 0;
+        ModX = 0;
+        ModY = 0;
+        ModZ = 0;
+        Width = 0;
+        Depth = 0;
+        Height = 0;
+        HitBoxX = 0;
+        HitBoxY = 0;
+        HitBoxZ = 0;
+        FrameXOff = 0;
+        FrameYOff = 0;
+        FrameZOff = 0;
+        FrameWidth = 0;
+        FrameDepth = 0;
+        FrameHeight = 0;
+        HitCounter = 0;
+        TouchingEntity = null;
+        EventTrigger = 0;
+        MapEventProgramId = 0;
+        LogicContextEntity = null;
+
+        EventProgramState.Sp = 0;
+        Array.Clear(EventProgramState.Exp);
+        EventProgramState.Result = 0;
+        EventProgramState._30 = 0;
+        EventProgramState.Codes = null;
+        EventProgramState.CodeIndex = 0;
+
+        LastTargetAnimationId = 0;
+        LastTargetDirection = 0;
+
+        Array.Clear(Bytes);
+
+        InitialXPos = 0;
+        InitialYPos = 0;
+
+        Array.Clear(AIValues);
     }
 }

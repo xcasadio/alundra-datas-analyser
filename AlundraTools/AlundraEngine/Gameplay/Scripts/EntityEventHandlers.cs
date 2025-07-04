@@ -421,8 +421,7 @@ public class EntityEventHandlers
             }
 
             if (command == 0x00) // break, skip the loop but do the next command
-            {
-                
+            { 
                 //Debug.WriteLine($"Entity[{entity.Index}] break");
                 eventProgramState.Exp[1] = 0;
                 eventProgramState.CodeIndex++;
@@ -470,7 +469,7 @@ public class EntityEventHandlers
         END_SCRIPT:
         if (wasEntityCleared)
         {
-            //Debug.WriteLine($"Entity[{entity.Index}] clean EventProgramState 2");
+            Debug.WriteLine($"Entity[{entity.Index}] clean EventProgramState 2");
             eventProgramState.Sp = 0;
             eventProgramState.Codes = null;
         }
@@ -2140,7 +2139,7 @@ public class EntityEventHandlers
     // 8003D6A4
     private int Script_17_011(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        StaticVariables.g_playerControlFlags = (int)(StaticVariables.g_playerControlFlags & 0xfffffffb);
+        StaticVariables.g_playerControlFlags &= 0xfffffffb;
         return 1;
     }
 
@@ -2248,12 +2247,6 @@ public class EntityEventHandlers
     // 8003D8D8
     private int Script_30_01E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        // 1f,30,00
-        if (variables[0] == 0x1f && variables[1] == 0x30 && variables[2] == 0x0)
-        {
-            //Debugger.Break(); // don't return 3 at the first execution
-        }
-
         var signature =  variables[0] | (variables[1] <<  8) | (variables[2] << 16);
 
         if (eventProgramState.Exp[1] != signature)
@@ -2281,6 +2274,7 @@ public class EntityEventHandlers
         dy >>= 16;
 
         var threshold =  (variables[2] << 8) | variables[1];
+
         if (threshold <= dx || threshold <= dy)
         {
             return 3;
@@ -2495,9 +2489,9 @@ public class EntityEventHandlers
     // 8003DCC4
     private int Script_45_02D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var pEVar1 = _gameEngine.SpawnEntity(logicEntity, variables[1], 1);
+        var entity = _gameEngine.SpawnEntity(logicEntity, variables[1], 1);
 
-        if (pEVar1 == null)
+        if (entity == null)
         {
             //_gameEngine.PrintCommandMap();
             Debugger.Break();
@@ -5927,7 +5921,7 @@ public class EntityEventHandlers
     // 80041D18
     private int Script_193_0C1(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        StaticVariables.g_playerControlFlags = (int)(StaticVariables.g_playerControlFlags & 0xffffff7f);
+        StaticVariables.g_playerControlFlags &= 0xffffff7f;
         return 1;
     }
 

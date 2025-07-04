@@ -1634,7 +1634,7 @@ public static class StaticVariables
     public static int INT_800dc4ac; // 800DC4AC
     public static int INT_800dc4b0; // 800DC4B0
     public static int g_warpDelayFrames; // 800DC4B4
-    public static int g_playerControlFlags; // 800DC4B8
+    public static uint g_playerControlFlags; // 800DC4B8
     public static int g_isWarpDisabled; // 800DC4C0
     public static int g_isGameEnding; // 800DC4C4
     public static int g_warpType; // 800DC4C8
