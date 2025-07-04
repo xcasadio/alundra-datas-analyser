@@ -901,6 +901,7 @@ public class GameEngine
         StaticVariables.g_entityFollowedByCamera = StaticVariables.PlayerEntity;
     }
 
+    //80031974
     private void ResetEntityState()
     {
         var spriteRecord = GetSpriteFromSpriteTable(false, 0, out _, out _);
@@ -918,18 +919,20 @@ public class GameEngine
         StaticVariables.g_activeCollisionEntity = null;
         StaticVariables.g_playerWarpTimer = 0;
         StaticVariables.g_isWarpDisabled = 0;
-        StaticVariables.g_frameTimer = 0;
-        //var tileIndex = GetCurrentTileIndex();
-        //StaticVariables.g_currentTileFlags = StaticVariables.g_tileAttributeLUT[tileIndex];
+        StaticVariables.g_playerWarpEffect = null;
+        var tileIndex = GetCurrentTileIndex();
+        StaticVariables.g_currentTileFlags = StaticVariables.g_tileAttributeLUT[tileIndex];
         Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
         ResetWarpLockTimer();
     }
 
+    //8003295c
     private void ResetWarpLockTimer()
     {
         StaticVariables.g_warpLockTimer = 0;
     }
 
+    //8003a1b8
     public Entity SpawnEntity(Entity ownerEntity, bool isMapSprite, uint tableIndex, int xpos, int ypos, int zpos, uint dir)
     {
         int paletteIndex, sheetSize;

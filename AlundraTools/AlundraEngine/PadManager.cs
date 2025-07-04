@@ -23,7 +23,7 @@ public class PadManager
         uint numberOfFrameHold;
 
         padState.ButtonsJustPressed = (ushort)(buttonState & (buttonState ^ padState.ButtonsHold));
-        padState.ButtonReleased = (ushort)(padState.ButtonsHold & (buttonState ^ padState.ButtonsHold));
+        padState.ButtonsReleased = (ushort)(padState.ButtonsHold & (buttonState ^ padState.ButtonsHold));
 
         if (padState.ButtonsHold != buttonState || padState.ButtonsHold == 0)
         {

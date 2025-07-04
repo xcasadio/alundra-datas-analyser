@@ -138,7 +138,7 @@ public class GameInitializer
         StaticVariables.g_padState1.NumberOfFrameHold = 0;
         StaticVariables.g_padState1.ButtonsHold = 0;
         StaticVariables.g_padState1.ButtonsJustPressed = 0;
-        StaticVariables.g_padState1.ButtonReleased = 0;
+        StaticVariables.g_padState1.ButtonsReleased = 0;
         StaticVariables.g_padState1.ButtonsJustPressedByInterval = 0;
     }
 

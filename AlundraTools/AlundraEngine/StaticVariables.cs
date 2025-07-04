@@ -1723,7 +1723,7 @@ public static class StaticVariables
     public static int g_lastWarpFacing; // 80126F64
     public static char[] CHAR_80126f68 = new char[128]; // 80126F68
     public static int[] INT_ARRAY_80126fe8 = new int[4]; // 80126FE8
-    public static int g_frameTimer; // 80126FF8
+    public static SpriteEffect g_playerWarpEffect; // 80126FF8
     public static int g_playerWarpTimer; // 80126FFC
     public static int g_gravityFlag; // 80127000
     public static BalanceRecord[] g_intArray_80127008 = new BalanceRecord[2]; // 80127008

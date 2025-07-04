@@ -2530,7 +2530,7 @@ public class EntityEventHandlers
         {
             0 => StaticVariables.g_padState1.ButtonsHold,
             1 => StaticVariables.g_padState1.ButtonsJustPressed,
-            2 => StaticVariables.g_padState1.ButtonReleased,
+            2 => StaticVariables.g_padState1.ButtonsReleased,
             _ => StaticVariables.g_padState1.ButtonsJustPressedByInterval
         };
 
@@ -5655,7 +5655,7 @@ public class EntityEventHandlers
         /*
         StaticVariables.g_padState1.ButtonsHold = (ushort)variables[0][1] + (ushort)variables[0][2] * 0x100;
         StaticVariables.g_padState1.ButtonsJustPressed = (ushort)variables[3] + (ushort)variables[4] * 0x100;
-        StaticVariables.g_padState1.ButtonReleased = (ushort)variables[5] + (ushort)variables[6] * 0x100;
+        StaticVariables.g_padState1.ButtonsReleased = (ushort)variables[5] + (ushort)variables[6] * 0x100;
         StaticVariables.g_padState1.ButtonsJustPressedByInterval = (ushort)variables[7] + (ushort)variables[8] * 0x100;
         return 9;*/
     }

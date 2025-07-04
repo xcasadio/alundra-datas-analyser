@@ -25,7 +25,7 @@ public class PadState
     public uint NumberOfFrameHold;
     public ushort ButtonsHold;
     public ushort ButtonsJustPressed;
-    public ushort ButtonReleased;
+    public ushort ButtonsReleased;
     public ushort ButtonsJustPressedByInterval;
 
     public PadState Copy()
