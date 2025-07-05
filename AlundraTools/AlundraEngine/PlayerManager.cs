@@ -79,6 +79,7 @@ public class PlayerManager
             goto END;
         }
 
+        //death
         if (StaticVariables.PlayerEntity.Hp == 0)
         {
             StaticVariables.g_playerWarpTimer = 0;
@@ -327,8 +328,6 @@ public class PlayerManager
                         break;
                     case 0x28:
                     case 0x3a:
-                        TryHandleWarpTrigger();
-                        goto END;
                         break;
                     case 0x3b:
                         slope = TryHandleWarpTrigger();
@@ -364,10 +363,741 @@ public class PlayerManager
         UpdateWarpStepProgression();
         UpdatePlayerWarpDirection(0);
 
+        int iVar2;
+
+        switch (StaticVariables.PlayerEntity.TargetAnimationId)
+        {
+            case 0:
+            case 1:
+                StaticVariables.PlayerEntity.TargetDirection = dir;
+                iVar2 = TryHandleWarpTrigger();
+                if (iVar2 == 0 || FUN_8002eeac() != 0)
+                {
+                    break;
+                }
+
+                iVar2 = CheckWarpTrigger();
+                if (iVar2 != 0)
+                {
+                    if (iVar2 != 2)
+                    {
+                        break;
+                    }
+
+                    //goto LAB_80031e7c;
+                    StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                    goto END;
+                }
+                goto LAB_80031ea8;
+            case 2:
+            case 0x2b:
+            case 0x2c:
+            case 0x2d:
+                StaticVariables.PlayerEntity.TargetDirection = dir;
+                iVar2 = TryHandleWarpTrigger();
+                if (iVar2 == 0 || FUN_8002eeac() != 0)
+                {
+                    break;
+                }
+
+                LAB_80031ea8:
+                iVar2 = CheckTileWarpTrigger();
+                if (iVar2 != 0)
+                {
+                    break;
+                }
+
+                if (StaticVariables.PlayerEntity.IsAboveGround == 0)
+                {
+                    if (uVar2 != 0)
+                    {
+                        StaticVariables.PlayerEntity.TargetAnimationId = 0x2c;
+                        break;
+                    }
+                    goto LAB_80032604;
+                }
+                if ((StaticVariables.g_padState1.ButtonsJustPressed & 0x40) != 0)
+                {
+                    if ((StaticVariables.PlayerEntity.CombinedVramFlagsOR & 0x4000U) == 0)
+                    {
+                        if (uVar2 == 0)
+                        {
+                            StaticVariables.PlayerEntity.TargetAnimationId = 0x2b;
+                        }
+                        else
+                        {
+                            StaticVariables.PlayerEntity.TargetAnimationId = 2;
+                        }
+                    }
+                    break;
+                }
+                if ((StaticVariables.g_padState1.ButtonsHold & 0x10) != 0)
+                {
+                    StaticVariables.PlayerEntity.TargetAnimationId = 0x29;
+                    StaticVariables.PlayerEntity.AnimCompleteCounter = 0;
+                    break;
+                }
+                if (uVar2 != 0)
+                {
+                    StaticVariables.PlayerEntity.TargetAnimationId = 1;
+                    break;
+                }
+                goto LAB_800325e0;
+            case 3:
+                iVar2 = FUN_8002eeac();
+                if (iVar2 != 0)
+                {
+                    break;
+                }
+
+                if (StaticVariables.PlayerEntity.IsAboveGround != 0)
+                {
+                    if (StaticVariables.PlayerEntity.ForceAdjusted == 0)
+                    {
+                        if (uVar2 == 0)
+                        {
+                            StaticVariables.PlayerEntity.TargetAnimationId = 0x2a;
+                            StaticVariables.INT_ARRAY_80126fe8[3] = 1;
+                        }
+                        else if ((StaticVariables.g_padState1.ButtonsHold & 0x10) == 0 ||
+                                (dir != StaticVariables.UINT_ARRAY_80022cec[StaticVariables.PlayerEntity.CurrentFrameIndex * 3] &&
+                                 dir != StaticVariables.UINT_ARRAY_80022cec[StaticVariables.PlayerEntity.CurrentFrameIndex * 3 + 1] &&
+                                 dir != StaticVariables.UINT_ARRAY_80022cec[StaticVariables.PlayerEntity.CurrentFrameIndex * 3 + 2]))
+                        {
+                            StaticVariables.PlayerEntity.TargetAnimationId = 0x2a;
+                            StaticVariables.INT_ARRAY_80126fe8[3] = 0;
+                        }
+                        else if ((StaticVariables.g_padState1.ButtonsHold & 0xe0) != 0)
+                        {
+                            StaticVariables.PlayerEntity.TargetAnimationId = 4;
+                        }
+                    }
+                    else
+                    {
+                        _gameEngine.EffectManager.CreateEffectEntity(
+                            0, 9, 0,
+                            StaticVariables.PlayerEntity.PosX, 
+                            StaticVariables.PlayerEntity.PosY,
+                            StaticVariables.PlayerEntity.PosZ + 0x100000);
+                        StaticVariables.PlayerEntity.TargetAnimationId = 0x3e;
+                        StaticVariables.PlayerEntity.TargetDirection = StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
+                    }
+                    break;
+                }
+                goto LAB_8003279c;
+            case 4:
+            case 8:
+            case 9:
+            case 0x10:
+            case 0x11:
+            case 0x12:
+            case 0x13:
+            case 0x18:
+            case 0x19:
+            case 0x25:
+            case 0x3f:
+            case 0x40:
+            case 0x44:
+            case 0x49:
+                if (StaticVariables.PlayerEntity.IsAboveGround == 0)
+                {
+                    StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                }
+                //goto switchD_80032650_caseD_28;
+                TryHandleWarpTrigger();
+                goto END;
+            case 5:
+                iVar2 = TryHandleWarpTrigger();
+                if (iVar2 == 0)
+                {
+                    break;
+                }
+
+                if (StaticVariables.PlayerEntity.WarpEntity != null)
+                {
+                    if (StaticVariables.PlayerEntity.IsAboveGround == 0)
+                    {
+                        StaticVariables.PlayerEntity.TargetAnimationId = 0x30;
+                    }
+                    break;
+                }
+                goto LAB_80032604;
+            case 6:
+            case 7:
+            case 0xc:
+            case 0x2e:
+            case 0x2f:
+            case 0x30:
+                StaticVariables.PlayerEntity.TargetDirection = dir;
+                iVar2 = TryHandleWarpTrigger();
+                var warpEntity = StaticVariables.PlayerEntity.WarpEntity;
+                if (iVar2 == 0)
+                {
+                    break;
+                }
+
+                if (StaticVariables.PlayerEntity.WarpEntity != null)
+                {
+                    if ((StaticVariables.g_padState1.ButtonsJustPressed & 0x80) == 0)
+                    {
+                        if ((StaticVariables.PlayerEntity.WarpEntity.Flags & 0x600U) == 0x600)
+                        {
+                            StaticVariables.PlayerEntity.TargetAnimationId = 0x30;
+                            if (StaticVariables.PlayerEntity.IsAboveGround != 0)
+                            {
+                                StaticVariables.PlayerEntity.TargetAnimationId = 0xc;
+                            }
+                        }
+                        else if (StaticVariables.PlayerEntity.IsAboveGround == 0)
+                        {
+                            if (uVar2 == 0)
+                            {
+                                StaticVariables.PlayerEntity.TargetAnimationId = 0x30;
+                            }
+                            else
+                            {
+                                StaticVariables.PlayerEntity.TargetAnimationId = 0x2f;
+                            }
+                        }
+                        else if ((StaticVariables.g_padState1.ButtonsJustPressed & 0x40) == 0)
+                        {
+                            if (uVar2 == 0)
+                            {
+                                StaticVariables.PlayerEntity.TargetAnimationId = 0xc;
+                            }
+                            else
+                            {
+                                StaticVariables.PlayerEntity.TargetAnimationId = 7;
+                            }
+                        }
+                        else if ((StaticVariables.PlayerEntity.CombinedVramFlagsOR & 0x4000U) == 0)
+                        {
+                            if (uVar2 == 0)
+                            {
+                                StaticVariables.PlayerEntity.TargetAnimationId = 0x2e;
+                            }
+                            else
+                            {
+                                StaticVariables.PlayerEntity.TargetAnimationId = 6;
+                            }
+                        }
+                    }
+                    else if ((StaticVariables.PlayerEntity.CombinedVramFlagsOR & 0x2000U) == 0)
+                    {
+                        StaticVariables.PlayerEntity.WarpEntity.TargetDirection =
+                            (uint)StaticVariables.g_cardinalDirectionTable[StaticVariables.PlayerEntity.CurrentFrameIndex];
+                        warpEntity.PosX = StaticVariables.PlayerEntity.PosX;
+                        warpEntity.PosY = StaticVariables.PlayerEntity.PosY;
+                        warpEntity.PosZ = StaticVariables.PlayerEntity.PosZ + 0x200000;
+                        if (StaticVariables.PlayerEntity.IsAboveGround == 0)
+                        {
+                            StaticVariables.PlayerEntity.TargetAnimationId = 10;
+                            if (uVar2 != 0)
+                            {
+                                warpEntity.Flags2 = 3;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            StaticVariables.PlayerEntity.TargetAnimationId = 9;
+                            if (uVar2 == 0)
+                            {
+                                warpEntity.Flags2 = 1;
+                                break;
+                            }
+                        }
+                        warpEntity.Flags2 = 2;
+                    }
+                    break;
+                }
+
+                if (StaticVariables.PlayerEntity.IsAboveGround != 0)
+                {
+                    //goto LAB_80031e7c;
+                    StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                    goto END;
+                }
+                LAB_8003279c:
+                StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                break;
+            case 10:
+            case 0x14:
+            case 0x15:
+            case 0x16:
+            case 0x17:
+            case 0x1f:
+            case 0x26:
+            case 0x41:
+            case 0x42:
+            case 0x46:
+            case 0x4b:
+                if (StaticVariables.PlayerEntity.IsAboveGround != 0)
+                {
+                    StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                }
+                //goto switchD_80032650_caseD_28;
+                TryHandleWarpTrigger();
+                goto END;
+            case 0xb:
+                iVar2 = TryHandleWarpTrigger();
+                if (iVar2 == 0)
+                {
+                    break;
+                }
+
+                if (StaticVariables.PlayerEntity.WarpEntity != null)
+                {
+                    if (StaticVariables.PlayerEntity.IsAboveGround != 0)
+                    {
+                        StaticVariables.PlayerEntity.TargetAnimationId = 0xc;
+                    }
+                    break;
+                }
+                goto LAB_800325e0;
+            default:
+                AnimateWarpEffect();
+                break;
+            case 0xe:
+            case 0x35:
+                iVar2 = TryHandleWarpTrigger();
+                if (iVar2 == 0 || FUN_8002eeac() != 0)
+                {
+                    break;
+                }
+
+                if (uVar2 != 0 && dir != 0 && dir != 0x10)
+                {
+                    StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                    break;
+                }
+                StaticVariables.PlayerEntity.TargetDirection = 0x10;
+                if (uVar2 == 0)
+                {
+                    StaticVariables.PlayerEntity.TargetAnimationId = 0x35;
+                    StaticVariables.PlayerEntity.ForceZ = 0;
+                    LAB_800322a8:
+                    StaticVariables.PlayerEntity.Flags = StaticVariables.PlayerEntity.Flags & 0xfffffeff;
+                }
+                else
+                {
+                    if (dir == 0)
+                    {
+                        if (StaticVariables.PlayerEntity.FloorHeight + 1 < StaticVariables.PlayerEntity.PosZ)
+                        {
+                            StaticVariables.PlayerEntity.ForceZ = -0x10000;
+                            LAB_8003229c:
+                            StaticVariables.PlayerEntity.TargetAnimationId = 0xe;
+                            //goto LAB_800322a8;             
+                            StaticVariables.PlayerEntity.Flags &= 0xfffffeff;
+                            goto END;
+                        }
+                    }
+                    else
+                    {
+                        if (dir != 0x10)
+                        {
+                            break;
+                        }
+
+                        iVar2 = _gameEngine.EntityGameplayManager.GetTileHeightAtOffset(StaticVariables.PlayerEntity, 0, -0x10000);
+                        if (StaticVariables.PlayerEntity.PosZ <= iVar2)
+                        {
+                            StaticVariables.PlayerEntity.ForceZ = 0x10000;
+                            //goto LAB_8003229c;
+                            StaticVariables.PlayerEntity.TargetAnimationId = 0xe;
+                            StaticVariables.PlayerEntity.Flags &= 0xfffffeff;
+                            goto END;
+                        }
+                    }
+                    LAB_80031e7c:
+                    StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                }
+                break;
+            case 0xf:
+            case 0x1d:
+            case 0x28:
+            case 0x39:
+            case 0x3c:
+            case 0x4e:
+            case 0x4f:
+                //goto switchD_80031dac_caseD_f;
+                if (StaticVariables.PlayerEntity.IsAboveGround == 0)
+                {
+                    StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                }
+                else
+                {
+                    StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                }
+                TryHandleWarpTrigger();
+                goto END;
+            case 0x1c:
+            case 0x3e:
+                iVar2 = TryHandleWarpTrigger();
+                if (iVar2 == 0)
+                {
+                    StaticVariables.PlayerEntity.TargetDirection = StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
+                    break;
+                }
+                if (StaticVariables.PlayerEntity.ForceResetAnimationFlag != 1)
+                {
+                    break;
+                }
+
+                StaticVariables.PlayerEntity.TargetDirection = StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
+                if (StaticVariables.PlayerEntity.IsAboveGround == 0)
+                {
+                    StaticVariables.PlayerEntity.TargetAnimationId = (uint)StaticVariables.PlayerEntity.ForceResetAnimationFlag;
+                    break;
+                }
+                goto LAB_80032594;
+            case 0x20:
+            case 0x24:
+                iVar2 = TryHandleWarpTrigger();
+                if (iVar2 == 0 || StaticVariables.g_warpLockTimer == 0x20)
+                {
+                    break;
+                }
+
+                goto LAB_8003253c;
+            case 0x21:
+            case 0x31:
+            case 0x34:
+                //goto switchD_80032650_caseD_28;
+                TryHandleWarpTrigger();
+                goto END;
+            case 0x22:
+            case 0x23:
+                StaticVariables.PlayerEntity.TargetDirection = dir;
+                iVar2 = TryHandleWarpTrigger();
+                if (iVar2 == 0)
+                {
+                    break;
+                }
+
+                if (StaticVariables.g_warpLockTimer == 0x20)
+                {
+                    if ((StaticVariables.g_padState1.ButtonsJustPressed & 0xd0) == 0)
+                    {
+                        if (uVar2 == 0)
+                        {
+                            StaticVariables.PlayerEntity.TargetAnimationId = 0x22;
+                        }
+                        else
+                        {
+                            StaticVariables.PlayerEntity.TargetAnimationId = 0x23;
+                        }
+                    }
+                    else
+                    {
+                        StaticVariables.PlayerEntity.TargetAnimationId = 0x24;
+                    }
+                    break;
+                }
+                LAB_8003253c:
+                if (StaticVariables.PlayerEntity.IsAboveGround == 0)
+                {
+                    StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                    break;
+                }
+                goto LAB_800325e0;
+            case 0x29:
+                iVar2 = TryHandleWarpTrigger();
+
+                if (iVar2 == 0 
+                    || FUN_8002eeac() != 0 
+                    || CheckTileWarpTrigger()  != 0)
+                {
+                    break;
+                }
+
+                if (StaticVariables.PlayerEntity.IsAboveGround == 0)
+                {
+                    StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                    StaticVariables.PlayerEntity.TargetDirection = dir;
+                    break;
+                }
+                StaticVariables.PlayerEntity.TargetDirection = dir;
+                if ((StaticVariables.g_padState1.ButtonsHold & 0x10) != 0)
+                {
+                    StaticVariables.PlayerEntity.TargetDirection = dir;
+                    if (StaticVariables.PlayerEntity.AnimCompleteCounter != 0 &&
+                       StaticVariables.UINT_ARRAY_80022cac[uVar2] != 0xffffffff)
+                    {
+                        StaticVariables.PlayerEntity.TargetAnimationId = 3;
+                        StaticVariables.PlayerEntity.TargetDirection = StaticVariables.UINT_ARRAY_80022cac[uVar2];
+                    }
+                    break;
+                }
+                LAB_80032594:
+                StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                break;
+            case 0x2a:
+                iVar2 = TryHandleWarpTrigger();
+                if (iVar2 != 0 && FUN_8002eeac() == 0)
+                {
+                    if (StaticVariables.PlayerEntity.IsAboveGround == 0)
+                    {
+                        StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                    }
+                    else if (StaticVariables.INT_ARRAY_80126fe8[3] != 0)
+                    {
+                        if (StaticVariables.PlayerEntity.ForceAdjusted == 0 &&
+                           (StaticVariables.g_padState1.ButtonsHold & 0x10) != 0)
+                        {
+                            StaticVariables.INT_ARRAY_80126fe8[3] = StaticVariables.INT_ARRAY_80126fe8[3] + 1; 
+
+                            if (10 < StaticVariables.INT_ARRAY_80126fe8[3])
+                            {
+                                if (StaticVariables.UINT_ARRAY_80022cac[uVar2] != 0xffffffff)
+                                {
+                                    StaticVariables.PlayerEntity.TargetAnimationId = 3;
+                                    StaticVariables.PlayerEntity.TargetDirection = StaticVariables.UINT_ARRAY_80022cac[uVar2];
+                                }
+                                break;
+                            }
+                            if (uVar2 == 0)
+                            {
+                                break;
+                            }
+                        }
+                        StaticVariables.INT_ARRAY_80126fe8[3] = 0;
+                    }
+                }
+                break;
+            case 0x32:
+            case 0x33:
+                iVar2 = TryHandleWarpTrigger();
+                if (iVar2 == 0 || StaticVariables.g_warpLockTimer - 0x2bU < 8)
+                {
+                    break;
+                }
+
+                if (StaticVariables.PlayerEntity.IsAboveGround == 0)
+                {
+                    goto LAB_80032604;
+                }
+
+                LAB_800325e0:
+                StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                break;
+            case 0x36:
+                if (StaticVariables.PlayerEntity.IsAboveGround != 0)
+                {
+                    break;
+                }
+
+                LAB_80032604:
+                StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                break;
+            case 0x3a:
+            case 0x3b:
+                StaticVariables.PlayerEntity.TargetDirection = StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
+                //goto switchD_80031dac_caseD_f;
+                if (StaticVariables.PlayerEntity.IsAboveGround == 0)
+                {
+                    StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                }
+                else
+                {
+                    StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                }
+                TryHandleWarpTrigger();
+                goto END;
+        }
+
         END:
         UpdateWarpEffectState();
         _gameEngine.UpdateEntityFromWarpFlag(StaticVariables.PlayerEntity.HpMax);
         _gameEngine.FinalizeWarpEntities((short)StaticVariables.PlayerEntity.Hp);
+    }
+
+    //8002eaf4
+    private int CheckTileWarpTrigger()
+    {
+        if ((StaticVariables.PlayerEntity.CombinedVramFlagsOR & 0x2000) != 0)
+        {
+            return 0;
+        }
+
+        if ((StaticVariables.g_padState1.ButtonsReleased & 0x0080) == 0)
+        {
+            return 0;
+        }
+
+        if (StaticVariables.g_playerWarpTimer >= 0x3C)
+        {
+            return 0;
+        }
+
+        if (StaticVariables.PlayerEntity.IsAboveGround != 0)
+        {
+            return 0;
+        }
+
+        for (int s0 = 0; s0 < 16; s0++)
+        {
+            // on lit posY et posZ+0x10 pour positionner l’effet
+            int y = StaticVariables.PlayerEntity.PosY;
+            int z = StaticVariables.PlayerEntity.PosZ + 0x10;
+
+            // on crée l’effet 3D
+            var effect = _gameEngine.EffectManager.CreateEffectEntity(
+                0, 0x10, 0,
+                StaticVariables.PlayerEntity.PosX,
+                StaticVariables.PlayerEntity.PosY,
+                StaticVariables.PlayerEntity.PosZ + 0x100000
+                );
+            if (effect != null)
+            {
+                // on ajuste les 16 primitives du sprite selon les listes d’offset
+                for (int i = 0; i < 16; i++)
+                {
+                    Debugger.Break(); //TODO check i
+                    effect.ForceX = StaticVariables.g_offsetXList[i];
+                    effect.ForceY = StaticVariables.g_offsetYList[i];
+                }
+            }
+        }
+
+        _gameEngine.PlaySoundEffect(0x2B);
+
+        // 7) Calcul de l’index de tileWarpData dans la table (bit-bashing fidèle)
+        var flags = StaticVariables.g_currentTileFlags;
+        var baseIdx = (flags << 1) + flags;              // flags*3
+        baseIdx = (baseIdx << 2) + baseIdx;              // baseIdx*5 → flags*15
+        int tableBase = unchecked((int)0x80030000) - 0x7387;
+        var warpData = tableBase + baseIdx + 8;          // +8 pour g_tileWarpInitFlags
+        byte warpType = StaticVariables.g_tileWarpInitFlags[warpData];
+
+        // 8) Si on vient juste d’appuyer (buttonsJustPressed & 0x80), on décale de +4
+        if ((StaticVariables.g_padState1.ButtonsJustPressed & 0x0080) != 0)
+        {
+            if (StaticVariables.PlayerEntity.IsAboveGround != 0)
+            {
+                return 0;
+            }
+
+            var tb = StaticVariables.g_currentTileFlags;
+            var idx = (tb << 1) + tb;
+            idx = (idx << 2) + idx;                        // tb*15
+            warpData = tableBase + idx + 4;                // +4 pour l’autre liste
+        }
+
+        // 9) Activation ou désactivation du warp
+        byte active = StaticVariables.g_tileWarpInitFlags[warpData];
+        if (active != 0)
+        {
+            // désactive l’effet : on mémorise cooldown et on zappe les flags
+            StaticVariables.g_playerEffectTransitionCooldown[0] = (byte)warpData;
+            StaticVariables.g_playerEffectStepFlags = 0;
+        }
+        else
+        {
+            // active l’animation de transition sur l’entité 0
+            StaticVariables.PlayerEntity.TargetAnimationId = (byte)warpData;
+            _gameEngine.PlaySoundEffect(3);
+        }
+
+        return 0;
+    }
+
+    //8002eeac
+    private int FUN_8002eeac()
+    {
+        var player = StaticVariables.PlayerEntity;
+
+        if (player.WarpEntity != null)
+        {
+            player.TargetAnimationId = (byte)(player.IsAboveGround == 1 ? 0x0C : 0x30);
+            return 1;
+        }
+
+        if (player.XCollisionEntity != null)
+        {
+            if ((StaticVariables.g_padState1.ButtonsJustPressed & 0x0080) != 0)
+            {
+                return TryTriggerWarpFromEntity(player.XCollisionEntity);
+            }
+        }
+
+        int count = StaticVariables.g_numberOfEntity;
+        if (count < 0)
+        {
+            return 0;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            ref var entity = ref StaticVariables.g_entitySlots[i];
+
+            // status ∈ {2, 3}  <=> (status - 2) in [0,1]
+            int status = entity.Status - 2;
+            if (status >= 0 && status < 2)
+            {
+                if (entity.IsNotProcessable == 0)
+                {
+                    if (entity.RidingEntity == StaticVariables.PlayerEntity)
+                    {
+                        int res = TryTriggerWarpFromEntity(entity);
+                        if (res != 0)
+                        {
+                            return res;
+                        }
+                    }
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    //8002edbc
+    private int TryTriggerWarpFromEntity(Entity entity)
+    {
+        var platformFlagBits = (entity.Flags & 0x600) >> 9;
+        int result = 1;
+
+        if (platformFlagBits == 1)
+        {
+            goto TriggerWarp;
+        }
+
+        if (platformFlagBits == 0)
+        {
+            return 0;
+        }
+
+        // Si bits ∈ {2,3} ⇒ test de déverrouillage de la carte (warpIndex = 0x3B)
+        if (platformFlagBits < 4)
+        {
+            var isUnlocked = _gameEngine.IsMapUnlocked(0x3B);
+            if (isUnlocked != 0)
+            {
+                return 0;
+            }
+
+            goto TriggerWarp;
+        }
+
+        // Cas bits ≥ 4 (impossible avec le masque 0x600) : retourne le résultat par défaut
+        return result;
+
+        TriggerWarp:
+        StaticVariables.PlayerEntity.WarpEntity = entity;
+        entity.PlatformEntity = StaticVariables.PlayerEntity;
+
+        // Selon isAboveGround, on choisit l’animation 0x0C ou 0x30
+        var above = StaticVariables.PlayerEntity.IsAboveGround;
+        StaticVariables.PlayerEntity.TargetAnimationId = (byte)(above != 0 ? 0x0C : 0x30);
+
+        // On calcule les offsets relatifs X, Y, Z
+        StaticVariables.PlayerEntity.RelativeWarpOffsetX = entity.PosX - StaticVariables.PlayerEntity.PosX;
+        StaticVariables.PlayerEntity.RelativeWarpOffsetY = entity.PosY - StaticVariables.PlayerEntity.PosY;
+        StaticVariables.PlayerEntity.RelativeWarpOffsetZ = entity.PosZ - StaticVariables.PlayerEntity.PosZ;
+
+        return result;
     }
 
     // 800307e8
@@ -602,7 +1332,7 @@ public class PlayerManager
             }
         }
 
-        var player = StaticVariables.g_entitySlots[0];
+        var player = StaticVariables.PlayerEntity;
         var animId = player.TargetAnimationId;
         var warpType = StaticVariables.g_tileWarpTypeList != null && animId < StaticVariables.g_tileWarpTypeList.Length
             ? StaticVariables.g_tileWarpTypeList[animId]
@@ -626,10 +1356,12 @@ public class PlayerManager
         int posX = player.PosX;
         int posY = player.PosY;
         int posZ = player.PosZ;
-        int zOffset = (StaticVariables.g_playerEffectTransitionCooldown[3] << 16);
+        int zOffset = StaticVariables.g_playerEffectTransitionCooldown[3] << 16;
         int direction = 0;
         if (StaticVariables.g_cardinalDirectionTable != null && player.CurrentFrameIndex < StaticVariables.g_cardinalDirectionTable.Length)
+        {
             direction = StaticVariables.g_cardinalDirectionTable[player.CurrentFrameIndex];
+        }
 
         _gameEngine.SpawnWarpEntity(player, 0, StaticVariables.g_playerEffectTransitionCooldown[1],
             posX, posY, posZ + zOffset, (uint)direction);
@@ -637,10 +1369,151 @@ public class PlayerManager
         StaticVariables.g_playerEffectStepFlags = 0;
     }
 
-    // 8002f49c
-    private void UpdatePlayerWarpEffect()
+    //8002f49c
+    private int UpdatePlayerWarpEffect()
     {
-        Debugger.Break();
+        // Check if specific pad button (0x80) is held or was just released
+        bool buttonHeld = (StaticVariables.g_padState1.ButtonsHold & 0x80) != 0;
+        bool buttonReleased = (StaticVariables.g_padState1.ButtonsReleased & 0x80) != 0;
+
+        if (buttonHeld || buttonReleased)
+        {
+            // Get current tile flags and check warp initialization flags
+            uint currentTileFlags = StaticVariables.g_currentTileFlags;
+            uint tileWarpInitFlag = (uint)StaticVariables.g_tileWarpInitFlags[currentTileFlags];
+
+            if (tileWarpInitFlag != 0)
+            {
+                // Check if player animation has warp type
+                uint playerAnimId = StaticVariables.PlayerEntity.TargetAnimationId;
+                byte warpType = 0;
+                if (StaticVariables.g_tileWarpTypeList != null && playerAnimId < StaticVariables.g_tileWarpTypeList.Length)
+                {
+                    warpType = (byte)StaticVariables.g_tileWarpTypeList[playerAnimId];
+                }
+
+                if (warpType != 0)
+                {
+                    // Increment warp timer (max 0x3C = 60)
+                    if (StaticVariables.g_playerWarpTimer < 0x3C)
+                    {
+                        StaticVariables.g_playerWarpTimer++;
+                    }
+                }
+                else
+                {
+                    StaticVariables.g_playerWarpTimer = 0;
+                }
+            }
+            else
+            {
+                StaticVariables.g_playerWarpTimer = 0;
+            }
+        }
+        else
+        {
+            StaticVariables.g_playerWarpTimer = 0;
+        }
+
+        // Main effect processing logic
+        if (StaticVariables.g_playerWarpTimer >= 0x0B) // Timer threshold of 11
+        {
+            // Check if we need to create/manage frame timer effect
+            if (StaticVariables.g_playerWarpEffect == null)
+            {
+                // Create attached effect type 3 with specific parameters
+                var attachedEffect = _gameEngine.EffectManager.CreateAttachedEffect(
+                    0,    // ismapeffect
+                    3,    // effectid  
+                    0,    // animid
+                    StaticVariables.PlayerEntity, // entity
+                    0x10000, // depthsortmod
+                    0,    // xoff
+                    0,    // yoff
+                    0     // zoff
+                );
+
+                StaticVariables.g_playerWarpEffect = attachedEffect;
+            }
+            else
+            {
+                // Check if effect should be destroyed
+                if (StaticVariables.g_playerWarpEffect.Status == 0)
+                {
+                    StaticVariables.g_playerWarpEffect = null;
+                    return StaticVariables.g_playerWarpTimer;
+                }
+            }
+
+            // Process frame-based effects every 4 frames
+            if ((StaticVariables.PlayerEntity.FrameCounter & 0x3) == 0)
+            {
+                if (StaticVariables.g_playerWarpTimer < 0x3C) // Less than 60
+                {
+                    // Play sound effect
+                    _gameEngine.PlaySoundEffect(0x2A); // Sound ID 42
+                }
+                else
+                {
+                    // Create effect entity at player position
+                    var spriteEffect = _gameEngine.EffectManager.CreateEffectEntity(
+                        0,    // behaviorFlags
+                        0x10, // spriteTableIndex (16)
+                        0,    // animationIndex
+                        StaticVariables.PlayerEntity.PosX,
+                        StaticVariables.PlayerEntity.PosY,
+                        StaticVariables.PlayerEntity.PosZ + 0x100000 // Z offset
+                    );
+
+                    if (spriteEffect != null)
+                    {
+                        // Generate random sound effect (0x1AC or 0x1AD)
+                        uint soundId = (StaticVariables.PlayerEntity.FrameCounter & 0x7) == 0 ? 0x1ADU : 0x1ACU;
+                        _gameEngine.PlaySoundEffect(soundId);
+
+                        // Generate random forces using game's random seed
+                        StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+                        uint randomSeed1 = StaticVariables.g_gameRandomSeed;
+
+                        StaticVariables.g_gameRandomSeed = randomSeed1 * 0x7d2b89dd + 0xe06a02e7;
+                        uint randomSeed2 = StaticVariables.g_gameRandomSeed;
+
+                        // Calculate random force components
+                        // Complex math for random X force
+                        ulong temp1 = (ulong)randomSeed1 * 0x60001;
+                        int randomXComponent = (int)(temp1 >> 32);
+                        randomXComponent -= 0x30000; // Bias
+                        int adjustedXForce = randomXComponent * 5;
+
+                        // Complex math for random Y force  
+                        StaticVariables.g_gameRandomSeed = randomSeed2 * 0x7d2b89dd + 0xe06a02e7;
+                        ulong temp2 = (ulong)StaticVariables.g_gameRandomSeed * 0x40001;
+                        int randomYComponent = (int)(temp2 >> 32);
+                        randomYComponent -= 0x20000; // Bias
+                        int adjustedYForce = randomYComponent * 5;
+
+                        // Apply forces relative to player's current forces
+                        spriteEffect.ForceX = spriteEffect.ForceX + adjustedXForce;
+                        spriteEffect.ForceY = spriteEffect.ForceY + adjustedYForce;
+
+                        // Subtract player forces to create relative motion
+                        spriteEffect.ForceX = StaticVariables.PlayerEntity.ForceX - randomXComponent;
+                        spriteEffect.ForceY = StaticVariables.PlayerEntity.ForceY - randomYComponent;
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Timer below threshold - clean up effects
+            if (StaticVariables.g_playerWarpEffect != null)
+            {
+                StaticVariables.g_playerWarpEffect.Status = 0; // Destroy effect
+                StaticVariables.g_playerWarpEffect = null;
+            }
+        }
+
+        return StaticVariables.g_playerWarpTimer;
     }
 
     // 8002e910
@@ -1272,7 +2145,7 @@ public class PlayerManager
                 }
 
                 // Déterminer le type d'effet à créer en fonction du type de terrain (pente)
-                if ((StaticVariables.PlayerEntity.Slope_18c - 1 < 2) || (StaticVariables.PlayerEntity.Slope_18c == 4))
+                if (StaticVariables.PlayerEntity.Slope_18c - 1 < 2 || StaticVariables.PlayerEntity.Slope_18c == 4)
                 {
                     effectEntityId = 0; // Utilise les données d'effet standard
                     effectId = 6;
@@ -1375,7 +2248,7 @@ public class PlayerManager
                 effectEntityId = 1;
                 CaseEffect:
                 // Déterminer le type d'effet en fonction du type de terrain
-                if ((StaticVariables.PlayerEntity.Slope_18c - 1 < 2) || (StaticVariables.PlayerEntity.Slope_18c == 4))
+                if (StaticVariables.PlayerEntity.Slope_18c - 1 < 2 || StaticVariables.PlayerEntity.Slope_18c == 4)
                 {
                     animIndex = 0;
                     effectId = 6;

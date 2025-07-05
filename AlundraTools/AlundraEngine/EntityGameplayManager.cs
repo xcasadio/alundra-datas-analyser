@@ -384,7 +384,7 @@ public class EntityGameplayManager
         return height;
     }
 
-    private int GetTileHeightAtOffset(Entity entity, int offsetX, int offsetY)
+    public int GetTileHeightAtOffset(Entity entity, int offsetX, int offsetY)
     {
         int tileXIndex;
         uint uVar1;
