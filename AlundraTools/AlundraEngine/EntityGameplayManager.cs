@@ -384,6 +384,7 @@ public class EntityGameplayManager
         return height;
     }
 
+    //8003a9e0
     public int GetTileHeightAtOffset(Entity entity, int offsetX, int offsetY)
     {
         int tileXIndex;
@@ -418,9 +419,9 @@ public class EntityGameplayManager
 
         uVar2 = 0;
 
-        while (true)
+        for (var coordIndex = 0; coordIndex < 4; coordIndex++)
         {
-            tileXIndex = xCoordsPtr[0];
+            tileXIndex = xCoordsPtr[coordIndex];
             if (tileXIndex < 1)
             {
                 tileXIndex = 0;
@@ -430,7 +431,7 @@ public class EntityGameplayManager
                 tileXIndex = 0x33;
             }
 
-            tileYIndex = xCoordsPtr[4];
+            tileYIndex = xCoordsPtr[coordIndex];
             if (tileYIndex < 1)
             {
                 tileYIndex = 0;

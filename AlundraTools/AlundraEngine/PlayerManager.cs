@@ -936,11 +936,11 @@ public class PlayerManager
             return 0;
         }
 
-        for (int s0 = 0; s0 < 16; s0++)
+        for (var s0 = 0; s0 < 16; s0++)
         {
             // on lit posY et posZ+0x10 pour positionner l’effet
-            int y = StaticVariables.PlayerEntity.PosY;
-            int z = StaticVariables.PlayerEntity.PosZ + 0x10;
+            var y = StaticVariables.PlayerEntity.PosY;
+            var z = StaticVariables.PlayerEntity.PosZ + 0x10;
 
             // on crée l’effet 3D
             var effect = _gameEngine.EffectManager.CreateEffectEntity(
@@ -952,7 +952,7 @@ public class PlayerManager
             if (effect != null)
             {
                 // on ajuste les 16 primitives du sprite selon les listes d’offset
-                for (int i = 0; i < 16; i++)
+                for (var i = 0; i < 16; i++)
                 {
                     Debugger.Break(); //TODO check i
                     effect.ForceX = StaticVariables.g_offsetXList[i];
@@ -967,9 +967,9 @@ public class PlayerManager
         var flags = StaticVariables.g_currentTileFlags;
         var baseIdx = (flags << 1) + flags;              // flags*3
         baseIdx = (baseIdx << 2) + baseIdx;              // baseIdx*5 → flags*15
-        int tableBase = unchecked((int)0x80030000) - 0x7387;
+        var tableBase = unchecked((int)0x80030000) - 0x7387;
         var warpData = tableBase + baseIdx + 8;          // +8 pour g_tileWarpInitFlags
-        byte warpType = StaticVariables.g_tileWarpInitFlags[warpData];
+        var warpType = StaticVariables.g_tileWarpInitFlags[warpData];
 
         // 8) Si on vient juste d’appuyer (buttonsJustPressed & 0x80), on décale de +4
         if ((StaticVariables.g_padState1.ButtonsJustPressed & 0x0080) != 0)
@@ -986,7 +986,7 @@ public class PlayerManager
         }
 
         // 9) Activation ou désactivation du warp
-        byte active = StaticVariables.g_tileWarpInitFlags[warpData];
+        var active = StaticVariables.g_tileWarpInitFlags[warpData];
         if (active != 0)
         {
             // désactive l’effet : on mémorise cooldown et on zappe les flags
@@ -1022,25 +1022,25 @@ public class PlayerManager
             }
         }
 
-        int count = StaticVariables.g_numberOfEntity;
+        var count = StaticVariables.g_numberOfEntity;
         if (count < 0)
         {
             return 0;
         }
 
-        for (int i = 0; i < count; i++)
+        for (var i = 0; i < count; i++)
         {
             ref var entity = ref StaticVariables.g_entitySlots[i];
 
             // status ∈ {2, 3}  <=> (status - 2) in [0,1]
-            int status = entity.Status - 2;
+            var status = entity.Status - 2;
             if (status >= 0 && status < 2)
             {
                 if (entity.IsNotProcessable == 0)
                 {
                     if (entity.RidingEntity == StaticVariables.PlayerEntity)
                     {
-                        int res = TryTriggerWarpFromEntity(entity);
+                        var res = TryTriggerWarpFromEntity(entity);
                         if (res != 0)
                         {
                             return res;
@@ -1057,7 +1057,7 @@ public class PlayerManager
     private int TryTriggerWarpFromEntity(Entity entity)
     {
         var platformFlagBits = (entity.Flags & 0x600) >> 9;
-        int result = 1;
+        var result = 1;
 
         if (platformFlagBits == 1)
         {
@@ -1122,9 +1122,9 @@ public class PlayerManager
         }
 
         // Initialisation des tableaux d'objets et d'armes
-        int iconIndex = 0x61; // Index 97
-        int requiredFlag = 2;
-        int iconBase = 0;
+        var iconIndex = 0x61; // Index 97
+        var requiredFlag = 2;
+        var iconBase = 0;
 
         // Nettoie le tableau des items
         StaticVariables.g_items[0] = 0;
@@ -1135,11 +1135,11 @@ public class PlayerManager
         StaticVariables.g_balanceEffectSources = null;
 
         // Parcourt les icônes en commençant par l'index 97
-        int iconOffset = 97 * 8 + 6; // Offset dans le tableau g_iconNameEtcBase
+        var iconOffset = 97 * 8 + 6; // Offset dans le tableau g_iconNameEtcBase
         while (iconIndex >= 0)
         {
             // Vérifie le bit 0x7F du troisième byte (index+2) de l'icône
-            byte iconFlags = (byte)(StaticVariables.g_iconNameEtcBase[iconOffset / 4] & 0x7F);
+            var iconFlags = (byte)(StaticVariables.g_iconNameEtcBase[iconOffset / 4] & 0x7F);
 
             if (iconFlags == requiredFlag && _gameEngine.IsMapUnlocked(iconIndex) != 0)
             {
@@ -1154,10 +1154,10 @@ public class PlayerManager
         }
 
         // Vérification des tuiles actuelles
-        int currentTileIndex = (int)_gameEngine.GetCurrentTileIndex();
+        var currentTileIndex = (int)_gameEngine.GetCurrentTileIndex();
         if (currentTileIndex > 0 && currentTileIndex < 0x61)
         {
-            byte tileIconFlags = (byte)(StaticVariables.g_iconNameEtcBase[(currentTileIndex * 8 + 6) / 4] & 0x7F);
+            var tileIconFlags = (byte)(StaticVariables.g_iconNameEtcBase[(currentTileIndex * 8 + 6) / 4] & 0x7F);
 
             if (tileIconFlags == 1)
             {
@@ -1168,10 +1168,10 @@ public class PlayerManager
         }
 
         // Vérification des warps déclenchés
-        int triggeredWarpMapId = _gameEngine.GetTriggeredWarpMapId();
+        var triggeredWarpMapId = _gameEngine.GetTriggeredWarpMapId();
         if (triggeredWarpMapId > 0 && triggeredWarpMapId < 0x61)
         {
-            byte warpIconFlags = (byte)(StaticVariables.g_iconNameEtcBase[(triggeredWarpMapId * 8 + 6) / 4] & 0x7F);
+            var warpIconFlags = (byte)(StaticVariables.g_iconNameEtcBase[(triggeredWarpMapId * 8 + 6) / 4] & 0x7F);
 
             if (warpIconFlags == 3)
             {
@@ -1202,11 +1202,11 @@ public class PlayerManager
             if (StaticVariables.PlayerEntity.Hp != 0 && StaticVariables.PlayerEntity.Hp < StaticVariables.PlayerEntity.HpMax)
             {
                 // Parcourt les effets et incrémente les HP en fonction des animations
-                for (int i = 0; i < 3; i++)
+                for (var i = 0; i < 3; i++)
                 {
                     if (StaticVariables.g_items[i] != null && StaticVariables.g_items[i] != 0)
                     {
-                        byte animationFrames = StaticVariables.g_intArray_80127008[i * 2].Hp;
+                        var animationFrames = StaticVariables.g_intArray_80127008[i * 2].Hp;
 
                         if (animationFrames != 0)
                         {
@@ -1345,7 +1345,7 @@ public class PlayerManager
         }
 
         int requiredSteps = StaticVariables.g_playerEffectTransitionCooldown[2];
-        int stepCounter = StaticVariables.g_playerEffectStepFlags;
+        var stepCounter = StaticVariables.g_playerEffectStepFlags;
 
         if (stepCounter < requiredSteps)
         {
@@ -1353,11 +1353,11 @@ public class PlayerManager
             return;
         }
 
-        int posX = player.PosX;
-        int posY = player.PosY;
-        int posZ = player.PosZ;
-        int zOffset = StaticVariables.g_playerEffectTransitionCooldown[3] << 16;
-        int direction = 0;
+        var posX = player.PosX;
+        var posY = player.PosY;
+        var posZ = player.PosZ;
+        var zOffset = StaticVariables.g_playerEffectTransitionCooldown[3] << 16;
+        var direction = 0;
         if (StaticVariables.g_cardinalDirectionTable != null && player.CurrentFrameIndex < StaticVariables.g_cardinalDirectionTable.Length)
         {
             direction = StaticVariables.g_cardinalDirectionTable[player.CurrentFrameIndex];
@@ -1373,19 +1373,19 @@ public class PlayerManager
     private int UpdatePlayerWarpEffect()
     {
         // Check if specific pad button (0x80) is held or was just released
-        bool buttonHeld = (StaticVariables.g_padState1.ButtonsHold & 0x80) != 0;
-        bool buttonReleased = (StaticVariables.g_padState1.ButtonsReleased & 0x80) != 0;
+        var buttonHeld = (StaticVariables.g_padState1.ButtonsHold & 0x80) != 0;
+        var buttonReleased = (StaticVariables.g_padState1.ButtonsReleased & 0x80) != 0;
 
         if (buttonHeld || buttonReleased)
         {
             // Get current tile flags and check warp initialization flags
-            uint currentTileFlags = StaticVariables.g_currentTileFlags;
-            uint tileWarpInitFlag = (uint)StaticVariables.g_tileWarpInitFlags[currentTileFlags];
+            var currentTileFlags = StaticVariables.g_currentTileFlags;
+            var tileWarpInitFlag = (uint)StaticVariables.g_tileWarpInitFlags[currentTileFlags];
 
             if (tileWarpInitFlag != 0)
             {
                 // Check if player animation has warp type
-                uint playerAnimId = StaticVariables.PlayerEntity.TargetAnimationId;
+                var playerAnimId = StaticVariables.PlayerEntity.TargetAnimationId;
                 byte warpType = 0;
                 if (StaticVariables.g_tileWarpTypeList != null && playerAnimId < StaticVariables.g_tileWarpTypeList.Length)
                 {
@@ -1468,29 +1468,29 @@ public class PlayerManager
                     if (spriteEffect != null)
                     {
                         // Generate random sound effect (0x1AC or 0x1AD)
-                        uint soundId = (StaticVariables.PlayerEntity.FrameCounter & 0x7) == 0 ? 0x1ADU : 0x1ACU;
+                        var soundId = (StaticVariables.PlayerEntity.FrameCounter & 0x7) == 0 ? 0x1ADU : 0x1ACU;
                         _gameEngine.PlaySoundEffect(soundId);
 
                         // Generate random forces using game's random seed
                         StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                        uint randomSeed1 = StaticVariables.g_gameRandomSeed;
+                        var randomSeed1 = StaticVariables.g_gameRandomSeed;
 
                         StaticVariables.g_gameRandomSeed = randomSeed1 * 0x7d2b89dd + 0xe06a02e7;
-                        uint randomSeed2 = StaticVariables.g_gameRandomSeed;
+                        var randomSeed2 = StaticVariables.g_gameRandomSeed;
 
                         // Calculate random force components
                         // Complex math for random X force
-                        ulong temp1 = (ulong)randomSeed1 * 0x60001;
-                        int randomXComponent = (int)(temp1 >> 32);
+                        var temp1 = (ulong)randomSeed1 * 0x60001;
+                        var randomXComponent = (int)(temp1 >> 32);
                         randomXComponent -= 0x30000; // Bias
-                        int adjustedXForce = randomXComponent * 5;
+                        var adjustedXForce = randomXComponent * 5;
 
                         // Complex math for random Y force  
                         StaticVariables.g_gameRandomSeed = randomSeed2 * 0x7d2b89dd + 0xe06a02e7;
-                        ulong temp2 = (ulong)StaticVariables.g_gameRandomSeed * 0x40001;
-                        int randomYComponent = (int)(temp2 >> 32);
+                        var temp2 = (ulong)StaticVariables.g_gameRandomSeed * 0x40001;
+                        var randomYComponent = (int)(temp2 >> 32);
                         randomYComponent -= 0x20000; // Bias
-                        int adjustedYForce = randomYComponent * 5;
+                        var adjustedYForce = randomYComponent * 5;
 
                         // Apply forces relative to player's current forces
                         spriteEffect.ForceX = spriteEffect.ForceX + adjustedXForce;
@@ -1519,8 +1519,69 @@ public class PlayerManager
     // 8002e910
     private int CheckWarpTrigger()
     {
-        Debugger.Break();
-        return 0;
+        var playerEntity = StaticVariables.PlayerEntity;
+        var currentWarpEntity = playerEntity.XCollisionEntity;
+
+        if (currentWarpEntity != null)
+        {
+            if ((currentWarpEntity.Flags & 0x8000) != 0)
+            {
+                StaticVariables.g_lastValidWarpEntity = currentWarpEntity;
+                StaticVariables.g_lastWarpFacing = currentWarpEntity.EntityRefId;
+                StaticVariables.g_lastWarpTargetX = currentWarpEntity.PosX;
+                StaticVariables.g_lastWarpTargetY = currentWarpEntity.PosY;
+                StaticVariables.g_lastWarpTargetZ = currentWarpEntity.PosZ;
+                StaticVariables.g_lastWarpCamX = playerEntity.PosX;
+                StaticVariables.g_lastWarpCamY = playerEntity.PosY;
+                StaticVariables.g_lastWarpCamZ = playerEntity.PosZ;
+                StaticVariables.g_lastWarpDirection = (int)playerEntity.TargetDirection;
+            }
+        }
+        else
+        {
+            var lastValidWarp = StaticVariables.g_lastValidWarpEntity;
+
+            if (lastValidWarp != null)
+            {
+                if (lastValidWarp.EntityRefId == StaticVariables.g_lastWarpFacing &&
+                    lastValidWarp.PosX == StaticVariables.g_lastWarpTargetX &&
+                    lastValidWarp.PosY == StaticVariables.g_lastWarpTargetY &&
+                    lastValidWarp.PosZ == StaticVariables.g_lastWarpTargetZ &&
+                    playerEntity.PosX == StaticVariables.g_lastWarpCamX &&
+                    playerEntity.PosY == StaticVariables.g_lastWarpCamY &&
+                    playerEntity.PosZ == StaticVariables.g_lastWarpCamZ &&
+                    playerEntity.TargetDirection == StaticVariables.g_lastWarpDirection)
+                {
+                    currentWarpEntity = lastValidWarp;
+                }
+                else
+                {
+                    StaticVariables.g_lastValidWarpEntity = null;
+                }
+            }
+        }
+
+        if (currentWarpEntity == null)
+        {
+            return 0;
+        }
+
+        if (currentWarpEntity.Hp == 0 && currentWarpEntity.TouchingEntity == null)
+        {
+            return 0;
+        }
+
+        if ((currentWarpEntity.Flags & 0x8000) != 0)
+        {
+            if ((StaticVariables.g_padState1.ButtonsJustPressed & 0x80) != 0)
+            {
+                StaticVariables.g_activeCollisionEntity = currentWarpEntity;
+                return 2;
+            }
+        }
+
+        StaticVariables.g_activeCollisionEntity = currentWarpEntity;
+        return 1;
     }
 
     // 8002ed64
@@ -1544,10 +1605,142 @@ public class PlayerManager
     //8003499c
     private int HandleWarpEvent()
     {
+        var mapId = _gameEngine.GetTriggeredWarpMapId();
         
+        if (mapId >= 0x62)
+        {
+            goto DefaultCase;
+        }
+        
+        if (StaticVariables.g_warpLockTimer != 0 && StaticVariables.g_warpLockTimer != mapId)
+        {
+            goto DefaultCase;
+        }
+        
+        var switchValue = mapId - 0x1f;
+        
+        if (switchValue >= 0x14)
+        {
+            goto DefaultCase;
+        }
+        
+        int result;
+        
+        switch (switchValue)
+        {
+            case 0: // mapId == 0x1f
+                result = TrySpawnWarpEntity(mapId);
+                break;
+                
+            case 1: // mapId == 0x20
+                result = FUN_80034320(mapId);
+                break;
+                
+            case 4: // mapId == 0x23
+                result = FUN_8003453c(mapId);
+                break;
+                
+            case 5: // mapId == 0x24
+                FUN_80034680(mapId);
+                return 1;
+                
+            case 6: // mapId == 0x25
+                TryWarpToMap(mapId);
+                return 1;
+                
+            case 7: // mapId == 0x26
+                HandleWarpTrigger(mapId);
+                return 1;
+                
+            case 8: // mapId == 0x27
+                _gameEngine.PlayCutscene(mapId);
+                return 1;
+                
+            case 10: // mapId == 0x29
+                TryWarpWithExplosionEffect(mapId);
+                return 1;
+                
+            case 13: // mapId == 0x2c
+            case 14: // mapId == 0x2d
+            case 15: // mapId == 0x2e
+            case 16: // mapId == 0x2f
+            case 17: // mapId == 0x30
+            case 18: // mapId == 0x31
+            case 19: // mapId == 0x32
+            case 12: // mapId == 0x2b
+                result = TryStartMapWarp(mapId);
+                break;
+                
+            default:
+                goto DefaultCase;
+        }
+        
+        if (result == 0)
+        {
+            StaticVariables.g_warpLockTimer = mapId;
+            StaticVariables.g_playerEffectCurrentFrame = 0;
+            StaticVariables.g_playerEffectPhase = 0;
+        }
+        
+        return result;
+        
+        DefaultCase:
+        _gameEngine.PlaySoundEffect(3);
+        return 1;
     }
 
-    // 8003634c
+    //80034224
+    private int TrySpawnWarpEntity(int mapId)
+    {
+        Debugger.Break();
+        return 0;
+    }
+
+    //80034320
+    private int FUN_80034320(int mapId)
+    {
+        Debugger.Break();
+        return 0;
+    }
+
+    //8003453c
+    private int FUN_8003453c(int mapId)
+    {
+        Debugger.Break();
+        return 0;
+    }
+
+    //80034680
+    private void FUN_80034680(int mapId)
+    {
+        Debugger.Break();
+    }
+
+    //800346f0
+    private void TryWarpToMap(int mapId)
+    {
+        Debugger.Break();
+    }
+
+    //80034760
+    private void HandleWarpTrigger(int mapId)
+    {
+        Debugger.Break();
+    }
+
+    private void TryWarpWithExplosionEffect(int mapId)
+    {
+        Debugger.Break();
+    }
+
+    //80034870
+    private int TryStartMapWarp(int mapId)
+    {
+        Debugger.Break();
+        return 0;
+    }
+
+    //8003634c
     private int MaybeStartWarpAnimation()
     {
         int iVar1;
@@ -1758,7 +1951,7 @@ public class PlayerManager
         {
             LAB_8002F8E0:
             /* joueur (slot-0)                                     */
-            Entity player = StaticVariables.PlayerEntity;
+            var player = StaticVariables.PlayerEntity;
 
             /* delta X, Y, Z entre entité-warp et joueur           */
             dx = warpEntity.PosX - player.PosX;
@@ -2068,13 +2261,13 @@ public class PlayerManager
         var tileHeight = StaticVariables.MapTileHeight;
         var tileWidth = StaticVariables.MapTileWidth;
 
-        int tileOffsetY = warpData.DestTileY * tileHeight +
+        var tileOffsetY = warpData.DestTileY * tileHeight +
                           StaticVariables.PlayerEntity.PosY / 2 +
                           warpData.Y1 * -tileHeight;
 
         targetCamY = ((tileOffsetY << 16 >> 0x14) * tileHeight + 8) << 16;
 
-        int tileOffsetX = (int)(((uint)warpData.DestTileX * tileWidth +
+        var tileOffsetX = (int)(((uint)warpData.DestTileX * tileWidth +
                                  (StaticVariables.PlayerEntity.PosX >> tileHeight) + warpData.X1 * -tileWidth) << 16) >> 0x0f;
 
         targetCamX = (StaticVariables.g_tileToWorldXTable[tileOffsetX * 2] * tileWidth + 0xc) << 16;
@@ -2121,15 +2314,15 @@ public class PlayerManager
     public void PreparePlayerForWarpEntry(int param_1)
     {
         // Variables locales pour stocker les états et résultats temporaires
-        int effectEntityId = 0;
+        var effectEntityId = 0;
         byte effectId = 0;
-        int animIndex = 0;
-        int frameOffset = 0;
+        var animIndex = 0;
+        var frameOffset = 0;
         SpriteEffect entityCreated = null;
         SpriteEffect spriteEffect = null;
 
         // Récupération de l'animation actuelle du joueur
-        uint playerAnimId = StaticVariables.PlayerEntity.TargetAnimationId;
+        var playerAnimId = StaticVariables.PlayerEntity.TargetAnimationId;
 
         // Traitement en fonction de l'animation actuelle du joueur
         switch (playerAnimId)
@@ -2337,10 +2530,10 @@ public class PlayerManager
                 {
                     // Générer des positions aléatoires autour du joueur
                     StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                    uint randomSeed1 = StaticVariables.g_gameRandomSeed;
+                    var randomSeed1 = StaticVariables.g_gameRandomSeed;
 
                     StaticVariables.g_gameRandomSeed = randomSeed1 * 0x7d2b89dd + 0xe06a02e7;
-                    uint randomSeed2 = StaticVariables.g_gameRandomSeed;
+                    var randomSeed2 = StaticVariables.g_gameRandomSeed;
 
                     StaticVariables.g_gameRandomSeed = randomSeed2 * 0x7d2b89dd + 0xe06a02e7;
 
@@ -2372,7 +2565,7 @@ public class PlayerManager
                 }
 
                 // Calculer les forces opposées au mouvement du joueur (effet de friction)
-                int effectXForce = -StaticVariables.PlayerEntity.ForceX;
+                var effectXForce = -StaticVariables.PlayerEntity.ForceX;
                 if (StaticVariables.PlayerEntity.ForceX > 0)
                 {
                     effectXForce += 3;
@@ -2380,7 +2573,7 @@ public class PlayerManager
 
                 spriteEffect.ForceX = effectXForce >> 2;
 
-                int effectYForce = -StaticVariables.PlayerEntity.ForceY;
+                var effectYForce = -StaticVariables.PlayerEntity.ForceY;
                 if (StaticVariables.PlayerEntity.ForceY > 0)
                 {
                     effectYForce += 3;
@@ -2426,7 +2619,7 @@ public class PlayerManager
                     if (StaticVariables.PlayerEntity.Slope_18c < 1 || (2 < StaticVariables.PlayerEntity.Slope_18c && StaticVariables.PlayerEntity.Slope_18c != 4))
                     {
                         // Créer plusieurs particules pour les terrains normaux
-                        for (int i = 0; i < 3; i++)
+                        for (var i = 0; i < 3; i++)
                         {
                             if (_gameEngine.CurrentMap.Info._10 != 0)
                             {
@@ -2488,7 +2681,7 @@ public class PlayerManager
             }
 
             // Déterminer le type d'attaque en fonction de l'animation
-            int attackType = -1;
+            var attackType = -1;
 
             if (StaticVariables.PlayerEntity.TargetAnimationId == 0x16)
             {
@@ -2517,8 +2710,8 @@ public class PlayerManager
                 // Vérifier les collisions avec les tuiles
                 if (StaticVariables.PlayerEntity.FrameCollision != null)
                 {
-                    int[] worldXCoords = new int[4];
-                    int[] worldYCoords = new int[4];
+                    var worldXCoords = new int[4];
+                    var worldYCoords = new int[4];
 
                     // Convertir les coordonnées de la boîte de collision en coordonnées de tuile
                     worldXCoords[0] = StaticVariables.g_tileToWorldXTable[StaticVariables.PlayerEntity.HitBoxX >> 16];
@@ -2532,10 +2725,10 @@ public class PlayerManager
                     worldYCoords[3] = worldYCoords[2];
 
                     // Parcourir les coins de la boîte de collision
-                    for (int i = 0; i < 4; i++)
+                    for (var i = 0; i < 4; i++)
                     {
                         // Limiter les coordonnées aux bornes de la carte
-                        int tileX = worldXCoords[i];
+                        var tileX = worldXCoords[i];
                         if (tileX < 1)
                         {
                             tileX = 0;
@@ -2545,7 +2738,7 @@ public class PlayerManager
                             tileX = 0x33;
                         }
 
-                        int tileY = worldYCoords[i];
+                        var tileY = worldYCoords[i];
                         if (tileY < 1)
                         {
                             tileY = 0;
@@ -2556,13 +2749,13 @@ public class PlayerManager
                         }
 
                         // Calculer l'index de la tuile
-                        int tileIndex = tileY * 0xd0 + tileX * 4 + 0x302;
+                        var tileIndex = tileY * 0xd0 + tileX * 4 + 0x302;
 
                         // Vérifier si la tuile a un attribut d'effet (bit 1)
                         if ((StaticVariables.g_spriteVRAMPointer[tileIndex] & 2) != 0)
                         {
                             // Vérifier si la hauteur de la boîte de collision croise la hauteur de l'effet
-                            int tileEffectZ = (StaticVariables.g_spriteVRAMPointer[tileIndex + 3] & 0xFF) << 20;
+                            var tileEffectZ = (StaticVariables.g_spriteVRAMPointer[tileIndex + 3] & 0xFF) << 20;
 
                             if (StaticVariables.PlayerEntity.HitBoxZ <= tileEffectZ + 0x80000 &&
                                 tileEffectZ + 0x80000 <= StaticVariables.PlayerEntity.HitBoxZ + StaticVariables.PlayerEntity.FrameHeight)
@@ -2572,8 +2765,8 @@ public class PlayerManager
                                 StaticVariables.g_spriteVRAMPointer[tileIndex + 3] = 0xFFFF;
 
                                 // Calculer la position de l'effet
-                                int effectX = worldXCoords[i] * 0x180000 + 0xC0000;
-                                int effectY = worldYCoords[i] * 0x100000 + 0x80000;
+                                var effectX = worldXCoords[i] * 0x180000 + 0xC0000;
+                                var effectY = worldYCoords[i] * 0x100000 + 0x80000;
 
                                 // Créer l'effet visuel
                                 _gameEngine.EffectManager.CreateEffectEntity(
