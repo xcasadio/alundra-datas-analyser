@@ -533,14 +533,14 @@ public partial class FrmGame : Form
                 PadManager.ButtonStates |= PadState.Down;
             }
 
-            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT) != 0 || joystickLeftX > 0.10f)
-            {
-                PadManager.ButtonStates |= PadState.Right;
-            }
-
-            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) != 0 || joystickLeftX < -0.10f)
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT) != 0 || joystickLeftX < -0.10f)
             {
                 PadManager.ButtonStates |= PadState.Left;
+            }
+
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) != 0 || joystickLeftX > 0.10f)
+            {
+                PadManager.ButtonStates |= PadState.Right;
             }
 
             if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_A) != 0)
