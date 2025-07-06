@@ -276,8 +276,13 @@ public class EntityManager
                 return;
             }
 
-            entity.Frame = entity.FirstFrame;
-            entity.AnimCompleteCounter++;
+            //if (entity.Index == 0 && entity.TargetAnimationId == 54 /*&& entity.CurrentFrameIndex >= 3*/)
+            //{
+            //    Debugger.Break();
+            //}
+
+            //entity.Frame = entity.FirstFrame;
+            //entity.AnimCompleteCounter++;
         }
 
         uint frameFlags = entity.Frame.Delay;
@@ -334,6 +339,16 @@ public class EntityManager
         {
             nextFrameIndex = 0;
             entity.ForceResetAnimationFlag = 1;
+
+            entity.Frame = entity.FirstFrame;
+            entity.AnimCompleteCounter++;
+        }
+        else
+        {
+            if (entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[nextFrameIndex] == null)
+            {
+                entity.Frame = entity.FirstFrame;
+            }
         }
 
         entity.CurrentFrameIndex = nextFrameIndex;

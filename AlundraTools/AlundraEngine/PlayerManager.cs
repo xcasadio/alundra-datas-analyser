@@ -1526,8 +1526,25 @@ public class PlayerManager
     // 8002ed64
     private int TryHandleWarpTrigger()
     {
-        Debugger.Break();
-        return 0;
+        if ((StaticVariables.g_padState1.ButtonsJustPressed & PadState.Circle) != 0)
+        {
+            if (StaticVariables.g_playerControlFlags == 0)
+            {
+                return HandleWarpEvent();
+            }
+            else
+            {
+                _gameEngine.PlaySoundEffect(3);
+            }
+        }
+
+        return 1;
+    }
+
+    //8003499c
+    private int HandleWarpEvent()
+    {
+        
     }
 
     // 8003634c
