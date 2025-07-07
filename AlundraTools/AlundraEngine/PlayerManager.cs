@@ -348,10 +348,10 @@ public class PlayerManager
                 TryUseItem();
                 goto END;
             case 6:
-                if (uVar2 != 0 
-                    && dir == 0x10 
-                    && StaticVariables.PlayerEntity.TargetDirection == 0x10 
-                    && StaticVariables.PlayerEntity.ForceAdjusted != 0 
+                if (uVar2 != 0
+                    && dir == 0x10
+                    && StaticVariables.PlayerEntity.TargetDirection == 0x10
+                    && StaticVariables.PlayerEntity.ForceAdjusted != 0
                     && StaticVariables.PlayerEntity.WarpEntity == null)
                 {
                     StaticVariables.PlayerEntity.TargetAnimationId = 0xe;
@@ -478,7 +478,7 @@ public class PlayerManager
                     {
                         _gameEngine.EffectManager.CreateEffectEntity(
                             0, 9, 0,
-                            StaticVariables.PlayerEntity.PosX, 
+                            StaticVariables.PlayerEntity.PosX,
                             StaticVariables.PlayerEntity.PosY,
                             StaticVariables.PlayerEntity.PosZ + 0x100000);
                         StaticVariables.PlayerEntity.TargetAnimationId = 0x3e;
@@ -807,9 +807,9 @@ public class PlayerManager
             case 0x29:
                 iVar2 = TryUseItem();
 
-                if (iVar2 == 0 
-                    || FUN_8002eeac() != 0 
-                    || CheckTileWarpTrigger()  != 0)
+                if (iVar2 == 0
+                    || FUN_8002eeac() != 0
+                    || CheckTileWarpTrigger() != 0)
                 {
                     break;
                 }
@@ -848,7 +848,7 @@ public class PlayerManager
                         if (StaticVariables.PlayerEntity.ForceAdjusted == 0 &&
                            (StaticVariables.g_padState1.ButtonsHold & 0x10) != 0)
                         {
-                            StaticVariables.INT_ARRAY_80126fe8[3] = StaticVariables.INT_ARRAY_80126fe8[3] + 1; 
+                            StaticVariables.INT_ARRAY_80126fe8[3] = StaticVariables.INT_ARRAY_80126fe8[3] + 1;
 
                             if (10 < StaticVariables.INT_ARRAY_80126fe8[3])
                             {
@@ -1814,60 +1814,60 @@ public class PlayerManager
     private int UseItem()
     {
         var mapId = _gameEngine.GetTriggeredWarpMapId();
-        
+
         if (mapId >= 0x62)
         {
             goto DefaultCase;
         }
-        
+
         if (StaticVariables.g_warpLockTimer != 0 && StaticVariables.g_warpLockTimer != mapId)
         {
             goto DefaultCase;
         }
-        
+
         var switchValue = mapId - 0x1f;
-        
+
         if (switchValue >= 0x14)
         {
             goto DefaultCase;
         }
-        
+
         int result;
-        
+
         switch (switchValue)
         {
             case 0: // mapId == 0x1f
                 result = TrySpawnWarpEntity(mapId);
                 break;
-                
+
             case 1: // mapId == 0x20
                 result = FUN_80034320(mapId);
                 break;
-                
+
             case 4: // mapId == 0x23
                 result = FUN_8003453c(mapId);
                 break;
-                
+
             case 5: // mapId == 0x24
                 FUN_80034680(mapId);
                 return 1;
-                
+
             case 6: // mapId == 0x25
                 TryWarpToMap(mapId);
                 return 1;
-                
+
             case 7: // mapId == 0x26
                 UseMagicalItem(mapId);
                 return 1;
-                
+
             case 8: // mapId == 0x27
                 PlayCutscene(mapId);
                 return 1;
-                
+
             case 10: // mapId == 0x29
                 TryWarpWithExplosionEffect(mapId);
                 return 1;
-                
+
             case 13: // mapId == 0x2c
             case 14: // mapId == 0x2d
             case 15: // mapId == 0x2e
@@ -1878,20 +1878,20 @@ public class PlayerManager
             case 12: // mapId == 0x2b
                 result = TryStartMapWarp(mapId);
                 break;
-                
+
             default:
                 goto DefaultCase;
         }
-        
+
         if (result == 0)
         {
             StaticVariables.g_warpLockTimer = mapId;
             StaticVariables.g_playerEffectCurrentFrame = 0;
             StaticVariables.g_playerEffectPhase = 0;
         }
-        
+
         return result;
-        
+
         DefaultCase:
         _gameEngine.PlaySoundEffect(3);
         return 1;
@@ -2145,55 +2145,43 @@ public class PlayerManager
     // 8002f884
     private void UpdatePlayerWarpDirection(int mode)
     {
-        int dx, dy, dz;          /* s2, s1, s0               */
-        Entity warpEntity;             /* a3  – pointeur entité-warp*/
-        int newDx, newDy, newDz; /* registres temporaires     */
-        int v0, v1;              /* registre de travail       */
+        int dx, dy, dz;
+        Entity warpEntity;
+        int newDx, newDy, newDz;
+        int v0, v1;
 
-        /* ---------- prologue (push RA/s0-s2) ------------------- */
+        warpEntity = StaticVariables.PlayerEntity.WarpEntity;
 
-        /* récupère le pointeur vers l’entité “effet de warp”      */
-        warpEntity = StaticVariables.PlayerEntity.WarpEntity;             /* lw */
-
-        /* si aucune entité-warp active, on saute directement      */
-        if (warpEntity == null)                                          /* beq */
+        if (warpEntity == null)
         {
             goto LAB_8002FAF0;
         }
 
-        /* si le champ byte 0x0E de balanceRecord est 0 ET mode=1,
-           on réinterprète l’appel comme mode=0                    */
         v0 = warpEntity.BalanceRecord.NumAnimVals; // 0x0E
-        if (v0 == 0 && mode == 1)                                     /* bne / beq */
+        if (v0 == 0 && mode == 1)
         {
             mode = 0;
         }
 
-        /**********************  CAS mode == 0  ********************/
-        if (mode == 0)                                                /* beq */
+        if (mode == 0)
         {
             LAB_8002F8E0:
-            /* joueur (slot-0)                                     */
             var player = StaticVariables.PlayerEntity;
 
-            /* delta X, Y, Z entre entité-warp et joueur           */
             dx = warpEntity.PosX - player.PosX;
             dy = warpEntity.PosY - player.PosY;
             dz = warpEntity.PosZ - player.PosZ;
 
-            /* |dx|, |dy|                                          */
             v1 = dx >= 0 ? dx : -dx;
             newDy = dy >= 0 ? dy : -dy;
 
-            /* newDz = dz − 0x0020_0000  (0xFFE0 0000)             */
             newDz = dz - 0x200000;
-            if (newDz < 0)                                           /* bgez */
+            if (newDz < 0)
             {
                 newDz = 0x200000 - dz;
             }
 
-            /* si max(|dx|,|dy|) >= newDz  → on “snap” sur X/Y     */
-            if (v1 >= newDy)                                         /* slt */
+            if (v1 >= newDy)
             {
                 /* v1 garde |dx| */
             }
@@ -2202,48 +2190,40 @@ public class PlayerManager
                 v1 = newDy;
             }
 
-            if (v1 < newDz)                                          /* slt */
-            {   /* assez proche sur Z, on amortit X & Y            */
-                /* StepTowards( dx, 0, 0x0001_0000 )               */
-                dx = StepTowards(dx, 0, 0x00010000);
-                /* StepTowards( dy, 0, 0x0001_0000 )               */
+            if (v1 < newDz)
+            {   /* assez proche sur Z, on amortit X & Y */
                 dy = StepTowards(dy, 0, 0x00010000);
             }
-            /* StepTowards( dz, 0x0020_0000, 0x0001_0000 )         */
+
             dz = StepTowards(dz, 0x00200000, 0x00010000);
 
-            /* stocke les offsets relatifs du joueur               */
             player.RelativeWarpOffsetX = dx;
             player.RelativeWarpOffsetY = dy;
             player.RelativeWarpOffsetZ = dz;
             goto LAB_8002FAF0;
         }
 
-        /**********************  CAS mode == 1  ********************/
-        if (mode == 1)                                                /* beq */
+        if (mode == 1)
         {
             LAB_8002F9AC:
             /* si byte 0x0E non-nul → gestion “delay”              */
-            v0 = warpEntity.BalanceRecord.NumAnimVals; // 0x0E
-            if (v0 == 0)                                             /* beq */
+            v0 = warpEntity.BalanceRecord.NumAnimVals;
+            if (v0 == 0)
             {
                 goto LAB_8002FAF0;
             }
 
-            /* incrémente g_warpDelayCounter (max 5)               */
             if (StaticVariables.g_warpDelayCounter < 5)
             {
                 StaticVariables.g_warpDelayCounter++;
-                goto LAB_8002FAAC;                                   /* saute stockage offsets */
+                goto LAB_8002FAAC;
             }
 
-            /* recalcul des deltas avec le joueur ---------------- */
             var player = StaticVariables.PlayerEntity;
             dx = warpEntity.PosX - player.PosX;
             dy = warpEntity.PosY - player.PosY;
             dz = warpEntity.PosZ - player.PosZ;
 
-            /* |dx|,|dy|,|dz|                                      */
             newDx = dx >= 0 ? dx : -dx;
             newDy = dy >= 0 ? dy : -dy;
             newDz = dz >= 0 ? dz : -dz;
@@ -2261,17 +2241,15 @@ public class PlayerManager
             dy = StepTowards(dy, 0, 0x00020000);
             dz = StepTowards(dz, 0, 0x00020000);
 
-            /* stocke dans le joueur                               */
             player.RelativeWarpOffsetX = dx;
             player.RelativeWarpOffsetY = dy;
             player.RelativeWarpOffsetZ = dz;
+
             LAB_8002FAAC:
-            /* rien d’autre, on sort                               */
             goto LAB_8002FAF8;
         }
 
-        /**********************  CAS mode == -1  *******************/
-        LAB_8002FAB4:                                                     /* (mode autre) */
+        LAB_8002FAB4:
         {
             var player = StaticVariables.PlayerEntity;
 
@@ -2285,12 +2263,10 @@ public class PlayerManager
             goto LAB_8002FAF0;
         }
 
-        /**********************  FIN COMMUNES **********************/
         LAB_8002FAF0:
-        /* réinitialise le compte à rebours global                */
         StaticVariables.g_warpDelayCounter = 0;
 
-        LAB_8002FAF8:                                                     /* épilogue */
+        LAB_8002FAF8:
         return;
     }
 
