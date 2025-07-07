@@ -1636,7 +1636,7 @@ public static class StaticVariables
     public static int g_debugState; // 800DC058
     public static uint g_debugFlags; // 800DC05C
     public static int g_debugFrameDelay; // 800DC060
-    public static int g_debugVar_WarpDestinationId; // 800DC064
+    public static int g_debug_desiredMapId; // 800DC064
     public static int g_warpIndex; // 800DC068
     public static int g_debugVar_NbFrameBreak; // 800DC06C
     public static int g_mapLimits; // 800DC070

@@ -284,12 +284,12 @@ public class GameInitializer
         } while (index2 < 0x34);
         newEntity = null;
 
-        InitializeGameStateFromWarpTrigger();
+        InitializeGameState();
         StaticVariables.g_emptyEntityForClearing.EntityRefId = -1;
     }
 
     // 80031700
-    private void InitializeGameStateFromWarpTrigger()
+    private void InitializeGameState()
     {
         int iconIndex;
         int iconEtcEntryPtr;
@@ -299,7 +299,7 @@ public class GameInitializer
 
         StaticVariables.g_warpTriggerType = 0;
         StaticVariables.g_gravityFlag = 0;
-        InitializeWarpAndFadeSystem();
+        InitializePlayerStatsAndItems();
         if (StaticVariables.g_someDataIntoRam == 1)
         {
             //CopyInitialDataToRAM(); // maybe map datas already loaded ?
@@ -380,8 +380,8 @@ public class GameInitializer
         StaticVariables.g_warpTriggerType = 0x36;
         StaticVariables.g_warpType = 0;
         StaticVariables.g_warpExtraParam = 0;
-        StaticVariables.g_cameraLookAtX = (playerTileX * 0x18 + 0xc) * 0x10000;
-        StaticVariables.g_cameraLookAtY = (playerTileY * 0x10 + 8) * 0x10000;
+        StaticVariables.g_cameraLookAtX = (playerTileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) * 0x10000;
+        StaticVariables.g_cameraLookAtY = (playerTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
         StaticVariables.g_cameraLookAtZ = playerZ << 0x14;
         StaticVariables.g_desiredMap = StaticVariables.g_initialWarpMap;
         StaticVariables.g_cameraTargetX = (StaticVariables.g_initialWarpTileX * 0x18 + 0xc) * 0x10000;
@@ -405,7 +405,6 @@ public class GameInitializer
         // In the assembly: warpEntryPtr = (warpIndex * 4) + g_numberOfItems
         int warpEntryPtr = warpIndex * 2; // Each entry is 2 shorts (4 bytes)
 
-        // Get the current usage count from g_numberOfItems
         short currentUsage = StaticVariables.g_numberOfItems[warpEntryPtr + 1];
 
         // Calculate index into g_tileMapWarpSections
@@ -427,7 +426,7 @@ public class GameInitializer
     }
 
     // 8004dac0
-    private void InitializeWarpAndFadeSystem()
+    private void InitializePlayerStatsAndItems()
     {
         int i = 0;
         int index = 0;
@@ -484,12 +483,13 @@ public class GameInitializer
         }
     }
 
+    //8002ab50
     private void InitializeDebugVars()
     {
         StaticVariables.g_debugFlags = 0;
         StaticVariables.g_debugState = 0;
         StaticVariables.g_debugVar_NbFrameBreak = 0x10;
-        StaticVariables.g_debugVar_WarpDestinationId = StaticVariables.g_desiredMap;
+        StaticVariables.g_debug_desiredMapId = StaticVariables.g_desiredMap;
     }
 
     //80042984

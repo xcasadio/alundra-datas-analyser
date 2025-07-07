@@ -245,7 +245,7 @@ public class EntityManager
             entity.AnimSet = animRecordPtr;
             entity.Frame = currentFrame;
             entity.FirstFrame = currentFrame;
-            entity.IsZForceApplied = 0; // TODO entity.Sprite.Header.MoreFlags;
+            entity.IsZForceApplied = animRecordPtr.IsZForceApplied;
 
             entity.NextFrameDelay = entity.Frame.Delay & 0x7f;
             entity.ForceResetAnimationFlag = 0;

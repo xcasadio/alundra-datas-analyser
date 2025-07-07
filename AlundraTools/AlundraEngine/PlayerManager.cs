@@ -418,7 +418,8 @@ public class PlayerManager
                     }
                     goto LAB_80032604;
                 }
-                if ((StaticVariables.g_padState1.ButtonsJustPressed & 0x40) != 0)
+
+                if ((StaticVariables.g_padState1.ButtonsJustPressed & PadState.Cross) != 0)
                 {
                     if ((StaticVariables.PlayerEntity.CombinedVramFlagsOR & 0x4000U) == 0)
                     {
@@ -433,18 +434,23 @@ public class PlayerManager
                     }
                     break;
                 }
-                if ((StaticVariables.g_padState1.ButtonsHold & 0x10) != 0)
+
+                if ((StaticVariables.g_padState1.ButtonsHold & PadState.Triangle) != 0)
                 {
                     StaticVariables.PlayerEntity.TargetAnimationId = 0x29;
                     StaticVariables.PlayerEntity.AnimCompleteCounter = 0;
                     break;
                 }
+
                 if (uVar2 != 0)
                 {
                     StaticVariables.PlayerEntity.TargetAnimationId = 1;
-                    break;
+                    goto END;
                 }
-                goto LAB_800325e0;
+                //goto LAB_800325e0;
+
+                StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                break;
             case 3:
                 iVar2 = FUN_8002eeac();
                 if (iVar2 != 0)
@@ -461,7 +467,7 @@ public class PlayerManager
                             StaticVariables.PlayerEntity.TargetAnimationId = 0x2a;
                             StaticVariables.INT_ARRAY_80126fe8[3] = 1;
                         }
-                        else if ((StaticVariables.g_padState1.ButtonsHold & 0x10) == 0 ||
+                        else if ((StaticVariables.g_padState1.ButtonsHold & PadState.Triangle) == 0 ||
                                 (dir != StaticVariables.UINT_ARRAY_80022cec[StaticVariables.PlayerEntity.CurrentFrameIndex * 3] &&
                                  dir != StaticVariables.UINT_ARRAY_80022cec[StaticVariables.PlayerEntity.CurrentFrameIndex * 3 + 1] &&
                                  dir != StaticVariables.UINT_ARRAY_80022cec[StaticVariables.PlayerEntity.CurrentFrameIndex * 3 + 2]))
@@ -540,7 +546,7 @@ public class PlayerManager
 
                 if (StaticVariables.PlayerEntity.WarpEntity != null)
                 {
-                    if ((StaticVariables.g_padState1.ButtonsJustPressed & 0x80) == 0)
+                    if ((StaticVariables.g_padState1.ButtonsJustPressed & PadState.Square) == 0)
                     {
                         if ((StaticVariables.PlayerEntity.WarpEntity.Flags & 0x600U) == 0x600)
                         {
@@ -561,7 +567,7 @@ public class PlayerManager
                                 StaticVariables.PlayerEntity.TargetAnimationId = 0x2f;
                             }
                         }
-                        else if ((StaticVariables.g_padState1.ButtonsJustPressed & 0x40) == 0)
+                        else if ((StaticVariables.g_padState1.ButtonsJustPressed & PadState.Cross) == 0)
                         {
                             if (uVar2 == 0)
                             {
@@ -846,7 +852,7 @@ public class PlayerManager
                     else if (StaticVariables.INT_ARRAY_80126fe8[3] != 0)
                     {
                         if (StaticVariables.PlayerEntity.ForceAdjusted == 0 &&
-                           (StaticVariables.g_padState1.ButtonsHold & 0x10) != 0)
+                           (StaticVariables.g_padState1.ButtonsHold & PadState.Triangle) != 0)
                         {
                             StaticVariables.INT_ARRAY_80126fe8[3] = StaticVariables.INT_ARRAY_80126fe8[3] + 1;
 
@@ -909,6 +915,8 @@ public class PlayerManager
                 goto END;
         }
 
+        //StaticVariables.PlayerEntity.TargetAnimationId = 0;
+
         END:
         UpdateItemEffectState();
         _gameEngine.PlayerManager.SetPlayerHpMax(StaticVariables.PlayerEntity.HpMax);
@@ -923,7 +931,8 @@ public class PlayerManager
             return 0;
         }
 
-        if ((StaticVariables.g_padState1.ButtonsReleased & PadState.Square) == 0)
+        if ((StaticVariables.g_padState1.ButtonsReleased & PadState.Square) == 0
+            && (StaticVariables.g_padState1.ButtonsJustPressed & PadState.Square) == 0)
         {
             return 0;
         }
@@ -933,12 +942,12 @@ public class PlayerManager
             return 0;
         }
 
-        if (StaticVariables.PlayerEntity.IsAboveGround != 0)
+        if (StaticVariables.PlayerEntity.IsAboveGround == 0)
         {
             return 0;
         }
 
-        for (var s0 = 0; s0 < 16; s0++)
+        for (var i = 0; i < 16; i++)
         {
             // on lit posY et posZ+0x10 pour positionner l’effet
             var y = StaticVariables.PlayerEntity.PosY;
@@ -954,57 +963,49 @@ public class PlayerManager
 
             if (effect != null)
             {
-                // on ajuste les 16 primitives du sprite selon les listes d’offset
-                for (var i = 0; i < 16; i++)
-                {
-                    Debugger.Break(); //TODO check i
-                    effect.ForceX = StaticVariables.g_offsetXList[i];
-                    effect.ForceY = StaticVariables.g_offsetYList[i];
-                }
+                effect.ForceX = StaticVariables.g_offsetXList[i * 2] * 0x1c0; //448
+                effect.ForceY = StaticVariables.g_offsetYList[i * 2] * 0x1c0; //448
             }
         }
 
         _gameEngine.PlaySoundEffect(0x2B);
 
-        Debugger.Break();
+        //Debugger.Break();
 
         var flags = StaticVariables.g_currentTileFlags;
-        var baseIdx = (flags << 1) + flags;              // flags*3
-        baseIdx = (baseIdx << 2) + baseIdx;              // baseIdx*5 → flags*15
-        var tableBase = unchecked((int)0x80030000) - 0x7387;
-        var warpData = tableBase + baseIdx + 8;          // +8 pour g_tileWarpInitFlags
-        var warpType = StaticVariables.g_tileWarpInitFlags[warpData];
+        var baseIdx = flags * 13;
+        baseIdx = baseIdx + 5; 
+        var warpData = baseIdx;
+        warpData = StaticVariables.g_tileWarpInitFlags[warpData];
 
-        // 8) Si on vient juste d’appuyer (buttonsJustPressed & 0x80), on décale de +4
-        if ((StaticVariables.g_padState1.ButtonsJustPressed & 0x0080) != 0)
+        if ((StaticVariables.g_padState1.ButtonsJustPressed & PadState.Square) != 0)
         {
-            if (StaticVariables.PlayerEntity.IsAboveGround != 0)
+            if (StaticVariables.PlayerEntity.IsAboveGround == 0)
             {
                 return 0;
             }
 
             var tb = StaticVariables.g_currentTileFlags;
-            var idx = (tb << 1) + tb;
-            idx = (idx << 2) + idx;                        // tb*15
-            warpData = tableBase + idx + 4;                // +4 pour l’autre liste
+            var idx = tb * 13 + 1;
+            warpData = idx;
         }
 
-        // 9) Activation ou désactivation du warp
         var active = StaticVariables.g_tileWarpInitFlags[warpData];
-        if (active != 0)
+        if (active == 0)
         {
-            // désactive l’effet : on mémorise cooldown et on zappe les flags
-            StaticVariables.g_playerEffectTransitionCooldown[0] = (byte)warpData;
+            StaticVariables.g_playerEffectTransitionCooldown[0] = StaticVariables.g_tileWarpInitFlags[warpData];
+            StaticVariables.g_playerEffectTransitionCooldown[1] = StaticVariables.g_tileWarpInitFlags[warpData + 1];
+            StaticVariables.g_playerEffectTransitionCooldown[2] = StaticVariables.g_tileWarpInitFlags[warpData + 2];
+            StaticVariables.g_playerEffectTransitionCooldown[3] = StaticVariables.g_tileWarpInitFlags[warpData + 3];
             StaticVariables.g_playerEffectStepFlags = 0;
         }
         else
         {
-            // active l’animation de transition sur l’entité 0
-            StaticVariables.PlayerEntity.TargetAnimationId = (byte)warpData;
+            StaticVariables.PlayerEntity.TargetAnimationId = (byte)active;
             _gameEngine.PlaySoundEffect(3);
         }
 
-        return 0;
+        return 1;
     }
 
     //8002eeac
