@@ -24,11 +24,11 @@ public class GameEngine
     public EntityGameplayManager EntityGameplayManager { get; }
     public EffectManager EffectManager { get; }
     public EntityManager EntityManager { get; }
+    public PlayerManager PlayerManager { get; }
 
     private readonly EntityEventHandlers _entityEventHandlers;
     private readonly GameInitializer _gameInitializer;
     private readonly Renderer _renderer;
-    private readonly PlayerManager _playerManager;
     private readonly PadManager _padManager;
 
     //TODO : find the variable in StaticVariables
@@ -49,7 +49,7 @@ public class GameEngine
         EntityManager = new EntityManager(this);
         EntityGameplayManager = new EntityGameplayManager(this);
         EffectManager = new EffectManager(this);
-        _playerManager = new PlayerManager(this);
+        PlayerManager = new PlayerManager(this);
     }
 
     public void InitializeEngine()
@@ -230,240 +230,92 @@ public class GameEngine
         _renderer.RenderScene(graphics);
     }
 
-    // 8004dc68
-    public int UpdateEntityFromWarpFlag(int param_1)
-    {
-        if (param_1 < 0x33)
-        {
-            if (param_1 < 0)
-            {
-                StaticVariables.g_fadeControl.WarpVisualId = 0;
-            }
-            else
-            {
-                StaticVariables.g_fadeControl.WarpVisualId = (short)param_1;
-            }
-        }
-        else
-        {
-            StaticVariables.g_fadeControl.WarpVisualId = 0x32;
-        }
-
-        return StaticVariables.g_fadeControl.WarpVisualId;
-    }
-
-    // 8004dd30
-    public int FinalizeWarpEntities(short warpEntityId)
-    {
-        if (StaticVariables.g_fadeControl.WarpVisualId < warpEntityId)
-        {
-            StaticVariables.g_fadeControl.CurrentWarpEntityId = StaticVariables.g_fadeControl.WarpVisualId;
-        }
-        else if (warpEntityId < 0)
-        {
-            StaticVariables.g_fadeControl.CurrentWarpEntityId = 0;
-        }
-        else
-        {
-            StaticVariables.g_fadeControl.CurrentWarpEntityId = warpEntityId;
-        }
-
-        return StaticVariables.g_fadeControl.CurrentWarpEntityId;
-    }
-
-    // 8004ddf4
-    public int SetMaxFadeLevel(short maxFadeLevel)
-    {
-        if (maxFadeLevel < 5)
-        {
-            if (maxFadeLevel < 0)
-            {
-                StaticVariables.g_fadeControl.MaxTargetLevel = 0;
-            }
-            else
-            {
-                StaticVariables.g_fadeControl.MaxTargetLevel = maxFadeLevel;
-            }
-        }
-        else
-        {
-            StaticVariables.g_fadeControl.MaxTargetLevel = 4;
-        }
-
-        return StaticVariables.g_fadeControl.MaxTargetLevel;
-    }
-
-    // 8004debc
-    public int SetFadeTargetLevel(short targetLevel)
-    {
-        if (StaticVariables.g_fadeControl.MaxTargetLevel < targetLevel)
-        {
-            StaticVariables.g_fadeControl.TargetLevel = StaticVariables.g_fadeControl.MaxTargetLevel;
-        }
-        else if (targetLevel < 0)
-        {
-            StaticVariables.g_fadeControl.TargetLevel = 0;
-        }
-        else
-        {
-            StaticVariables.g_fadeControl.TargetLevel = targetLevel;
-        }
-
-        return StaticVariables.g_fadeControl.TargetLevel;
-    }
-
-    // 8004df80
-    public int ApplyFadeLevel(short newFadeValue)
-    {
-        if (newFadeValue < 10000)
-        {
-            if (newFadeValue < 0)
-            {
-                StaticVariables.SHORT_ARRAY_801eb83e[0] = 0;
-            }
-            else
-            {
-                StaticVariables.SHORT_ARRAY_801eb83e[0] = newFadeValue;
-            }
-        }
-        else
-        {
-            StaticVariables.SHORT_ARRAY_801eb83e[0] = 9999;
-        }
-
-        return StaticVariables.SHORT_ARRAY_801eb83e[0];
-    }
-
-    // 8004b730
-    public void SetupPostWarpGraphics()
-    {
-        StaticVariables.INT_ARRAY_800a8284[0] = GetFadeControlWarpVisualId();
-        StaticVariables.INT_ARRAY_800a8284[1] = StaticVariables.INT_ARRAY_800a8284[0];
-        StaticVariables.INT_ARRAY_800a8284[3] = GetCurrentPaletteFadeLevel();
-        StaticVariables.INT_ARRAY_800a8284[2] = StaticVariables.INT_ARRAY_800a8284[3];
-    }
-
-    // 8004e78c
-    private int GetFadeControlWarpVisualId()
-    {
-        return StaticVariables.g_fadeControl.WarpVisualId;
-    }
-
-    // 8004dd18
-    private int GetFadeControl()
-    {
-        return StaticVariables.g_fadeControl.CurrentWarpEntityId;
-    }
-
-    // 8004dddc
-    public int GetCurrentPaletteFadeLevel()
-    {
-        return StaticVariables.g_fadeControl.MaxTargetLevel;
-    }
-
-    // 8004e484
-    public void LoadWarpVisuals(ushort warpVisualId)
-    {
-        if (warpVisualId == 0xffffffff || warpVisualId - 1 < 6)
-        {
-            StaticVariables.SHORT_ARRAY_801eb83e[1] = (short)warpVisualId;
-        }
-        else
-        {
-            //LogDebugMessage(StaticVariables.g_logMessage_InvalidWarpVisualId, WarpVisualId);
-        }
-
-        GetCurrentTileIndex();
-    }
-
     // 8004e030
-    public uint GetCurrentTileIndex()
+    public uint GetItemIdFromCurrentWeapon()
     {
-        uint tileIndex = 0xffffffff;
-        int caseValue = StaticVariables.SHORT_ARRAY_801eb83e[1] - 1; // * 0x10000) >> 0x10
-        //caseValue = ((StaticVariables.SHORT_ARRAY_801eb83e[1] - 1) * 0x10000) >> 0x10;
+        var itemId = 0xffffffff;
 
-        switch (caseValue)
+        switch (StaticVariables.g_playerStats.WeaponId - 1)
         {
             case 0:
-                tileIndex = GetCurrentTile_Zone1();
+                itemId = GetItemFromKind_1();
                 break;
             case 1:
-                tileIndex = GetCurrentTile_Zone2();
+                itemId = GetItemFromKind_2();
                 break;
             case 2:
-                tileIndex = GetCurrentTile_Zone3();
+                itemId = GetItemFromKind_3();
                 break;
             case 3:
-                tileIndex = GetCurrentTile_Zone4();
+                itemId = GetItemFromKind_4();
                 break;
             case 4:
-                tileIndex = GetCurrentTile_Zone5();
+                itemId = GetItemFromKind_5();
                 break;
             case 5:
-                tileIndex = GetCurrentTile_Zone6();
+                itemId = GetItemFromKind_6();
                 break;
         }
 
-        return tileIndex;
+        return itemId;
     }
 
-    private uint GetCurrentTile_Zone1()
+    private uint GetItemFromKind_1()
     {
-        return SelectTileMapSection(1);
+        return GetItemFromKind(1);
     }
 
-    private uint GetCurrentTile_Zone2()
+    private uint GetItemFromKind_2()
     {
-        return SelectTileMapSection(2);
+        return GetItemFromKind(2);
     }
 
-    private uint GetCurrentTile_Zone3()
+    private uint GetItemFromKind_3()
     {
-        return SelectTileMapSection(3);
+        return GetItemFromKind(3);
     }
 
-    private uint GetCurrentTile_Zone4()
+    private uint GetItemFromKind_4()
     {
-        return SelectTileMapSection(4);
+        return GetItemFromKind(4);
     }
 
-    private uint GetCurrentTile_Zone5()
+    private uint GetItemFromKind_5()
     {
-        return SelectTileMapSection(5);
+        return GetItemFromKind(5);
     }
 
-    private uint GetCurrentTile_Zone6()
+    private uint GetItemFromKind_6()
     {
-        return SelectTileMapSection(6);
+        return GetItemFromKind(6);
     }
 
     // 8004e18c
-    private uint SelectTileMapSection(uint sectionId)
+    private uint GetItemFromKind(uint itemId)
     {
-        // Check if sectionId is valid (less than 0x20)
-        if (sectionId >= 0x20)
+        // Check if itemId is valid (less than 0x20)
+        if (itemId >= 0x20)
         {
             Debugger.Break();
-            Debug.WriteLine($"Invalid tile map section ID: {sectionId}");
+            Debug.WriteLine($"Invalid tile map section ID: {itemId}");
             return 0xFFFFFFFF; // Return -1 as uint
         }
 
-        int bestMatchIndex = -1;
-        int currentIndex = 0;
+        var bestMatchIndex = -1;
+        var currentIndex = 0;
 
         // Loop through up to 0x80 (128) section entries
         while (currentIndex < 0x80)
         {
             // Get the section ID from the current entry in g_tileMapWarpSections
             // Each entry is 10 bytes (5 shorts), with the first short being the section ID
-            short entrySectionId = StaticVariables.g_tileMapWarpSections[currentIndex * 5];
+            var entrySectionId = StaticVariables.g_tileMapWarpSections[currentIndex * 5];
 
-            // Check if this entry matches our target sectionId
-            if (entrySectionId == sectionId)
+            // Check if this entry matches our target itemId
+            if (entrySectionId == itemId)
             {
                 // Check if this warp is enabled (usage count > 0)
-                short usageCount = StaticVariables.g_warpUsageTable[currentIndex * 2 + 1];
+                var usageCount = StaticVariables.g_numberOfItems[currentIndex * 2 + 1];
 
                 if (usageCount > 0)
                 {
@@ -474,7 +326,7 @@ public class GameEngine
 
                         // Check bit 0 of the second short in the entry
                         // If bit 0 is not set, return this index immediately
-                        short flags = StaticVariables.g_tileMapWarpSections[currentIndex * 5 + 1];
+                        var flags = StaticVariables.g_tileMapWarpSections[currentIndex * 5 + 1];
                         if ((flags & 0x1) == 0)
                         {
                             return (uint)currentIndex;
@@ -484,8 +336,8 @@ public class GameEngine
                     {
                         // We already have a match, check if this one has higher priority
                         // Compare priority value (the third short in each entry)
-                        short currentPriority = StaticVariables.g_tileMapWarpSections[currentIndex * 5 + 2];
-                        short bestPriority = StaticVariables.g_tileMapWarpSections[bestMatchIndex * 5 + 2];
+                        var currentPriority = StaticVariables.g_tileMapWarpSections[currentIndex * 5 + 2];
+                        var bestPriority = StaticVariables.g_tileMapWarpSections[bestMatchIndex * 5 + 2];
 
                         if (bestPriority < currentPriority)
                         {
@@ -551,8 +403,8 @@ public class GameEngine
 
     private void ClearGlobalFlags()
     {
-        int iVar2 = 0x3f;
-        int piVar1 = 0x3f;
+        var iVar2 = 0x3f;
+        var piVar1 = 0x3f;
 
         do
         {
@@ -574,8 +426,8 @@ public class GameEngine
 
     private void InitializeItems(int param_1)
     {
-        int iVar2 = 2;
-        int piVar1 = 2;
+        var iVar2 = 2;
+        var piVar1 = 2;
 
         StaticVariables.g_itemIdThreshold = param_1;
 
@@ -600,7 +452,7 @@ public class GameEngine
     private void InitializeMapEvents()
     {
         int programBMapCode;
-        int i = 0;
+        var i = 0;
         MapEvent mapEventDest;
         MapEvent emptyMapEvent;
         //SiMapEventRecord mapEventRecord;
@@ -883,7 +735,7 @@ public class GameEngine
         //}
         //while (characterIndex < 0x80);
 
-        for (int i = 0; i < CurrentMap.SpriteInfo.Entities.Entities.Length; i++)
+        for (var i = 0; i < CurrentMap.SpriteInfo.Entities.Entities.Length; i++)
         {
             if (CurrentMap.SpriteInfo.Entities.Entities[i] == null)
             {
@@ -914,13 +766,13 @@ public class GameEngine
             0xb, 0x60);
 
         StaticVariables.PlayerEntity.Status = 2;
-        StaticVariables.PlayerEntity.HpMax = GetFadeControlWarpVisualId();
-        StaticVariables.PlayerEntity.Hp = GetFadeControl();
+        StaticVariables.PlayerEntity.HpMax = PlayerManager.GetPlayerHpMax();
+        StaticVariables.PlayerEntity.Hp = PlayerManager.GetPlayerHp();
         StaticVariables.g_activeCollisionEntity = null;
         StaticVariables.g_playerWarpTimer = 0;
         StaticVariables.g_isWarpDisabled = 0;
         StaticVariables.g_playerWarpEffect = null;
-        var tileIndex = GetCurrentTileIndex();
+        var tileIndex = GetItemIdFromCurrentWeapon();
         StaticVariables.g_currentTileFlags = StaticVariables.g_tileAttributeLUT[tileIndex];
         Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
         ResetWarpLockTimer();
@@ -1481,7 +1333,7 @@ public class GameEngine
     private uint GetMapWarpDestination(int mapId)
     {
         uint currentMapId;
-        int warpDataIndex = 0;
+        var warpDataIndex = 0;
 
         if (StaticVariables.g_warpMapList[0] != 0)
         {
@@ -1599,7 +1451,7 @@ public class GameEngine
 
         _padManager.UpdatePads();
 
-        int entityBeforeWarp = StaticVariables.g_lastWarpEntityIndex;
+        var entityBeforeWarp = StaticVariables.g_lastWarpEntityIndex;
         int finalEntity;
 
         if (StaticVariables.g_playerControlFlags == 0 &&
@@ -1617,16 +1469,16 @@ public class GameEngine
 
                 if (StaticVariables.PlayerEntity.Hp != 0)
                 {
-                    var canWarp = IsMapUnlocked(0x27);
-                    if (canWarp != 0)
+                    var itemCount = GetNumberOfItem(0x27);
+                    if (itemCount != 0)
                     {
-                        StartWarpToMap(0x27);
+                        PlayerManager.UseItem(0x27);
                     }
                     StaticVariables.g_lastWarpEntityIndex = 0;
                     StaticVariables.PlayerEntity.Hp = 0;
                     //StaticVariables.PlayerEntity.DamagedTickCounter = entityBeforeWarp;
                     StaticVariables.INT_ARRAY_800a8284[0] = 0;
-                    FinalizeWarpEntities(0);
+                    PlayerManager.SetPlayerHp(0);
                     finalEntity = StaticVariables.g_lastWarpEntityIndex;
                 }
             }
@@ -1668,52 +1520,22 @@ public class GameEngine
         }
     }
 
-    public int IsMapUnlocked(int warpIndex)
+    //8004e428
+    public int GetNumberOfItem(int warpIndex)
     {
-        int iVar1;
+        int nbItem;
 
-        if (warpIndex < 0 || StaticVariables.g_totalWarpEntries <= warpIndex)
+        if (warpIndex < 0 || StaticVariables.g_itemsCount <= warpIndex)
         {
             //LogDebugMessage(StaticVariables.g_buffer_isMapUnlocked, warpIndex);
-            iVar1 = 0;
+            nbItem = 0;
         }
         else
         {
-            iVar1 = StaticVariables.g_warpUsageTable[warpIndex * 2 + 1];
+            nbItem = StaticVariables.g_numberOfItems[warpIndex * 2 + 1];
         }
 
-        return iVar1;
-    }
-
-    // 8004e5c4
-    public int StartWarpToMap(int mapIndex)
-    {
-        int warpEntryOffset;
-        short remainingWarps;
-
-        if (mapIndex < 0 || StaticVariables.g_totalWarpEntries <= mapIndex)
-        {
-            //LogDebugMessage(StaticVariables.g_logMessage_InvalidWarpVisualId + 0x54, mapIndex);
-            warpEntryOffset = 0;
-        }
-        else
-        {
-            warpEntryOffset = (mapIndex * 2) * 2 + StaticVariables.g_warpUsageTable[0];
-            remainingWarps = StaticVariables.g_warpUsageTable[mapIndex * 2 + 1];
-            remainingWarps--;
-
-            if (remainingWarps == -1)
-            {
-                warpEntryOffset = -1;
-            }
-            else
-            {
-                StaticVariables.g_warpUsageTable[mapIndex * 2 + 1] = remainingWarps;
-                warpEntryOffset = remainingWarps;
-            }
-        }
-
-        return warpEntryOffset;
+        return nbItem;
     }
 
     private int TriggerDebugZone()
@@ -1807,7 +1629,7 @@ public class GameEngine
 
         var playerEntity = StaticVariables.PlayerEntity;
 
-        for (int i = 0; i < 64; ++i)
+        for (var i = 0; i < 64; ++i)
         {
             var currentMapEvent = StaticVariables.g_mapEvents[i];
 
@@ -1817,11 +1639,11 @@ public class GameEngine
             }
 
             var mapEventEntity = currentMapEvent.Entity;
-            int programId = mapEventEntity.EventTrigger;
+            var programId = mapEventEntity.EventTrigger;
 
             var record = currentMapEvent.MapEventRecord;
-            int px = playerEntity.TileX;
-            int py = playerEntity.TileY;
+            var px = playerEntity.TileX;
+            var py = playerEntity.TileY;
 
             if (px < record.X1 || px > record.X2 || py < record.Y1 || py > record.Y2)
             {
@@ -1930,7 +1752,7 @@ public class GameEngine
     //80031b50
     public void MovePlayer()
     {
-        _playerManager.MovePlayer();
+        PlayerManager.MovePlayer();
     }
 
     // 8003a774
@@ -2039,7 +1861,7 @@ public class GameEngine
                 return false;
             }
         }
-        var ret = GetCurrentPaletteFadeLevel();
+        var ret = PlayerManager.GetPlayerMpMax();
         return ret < 1 ? true : false;
     }
 
@@ -2526,28 +2348,26 @@ public class GameEngine
     {
         Debugger.Break();
         return 0;
-        //return (int)StaticVariables.g_fadeControl[1].currentWarpEntityId;
+        //return (int)StaticVariables.g_playerStats[1].currentWarpEntityId;
     }
 
     //8004e004
     public void FUN_8004e004(int param_1)
     {
         Debugger.Break();
-        //ApplyFadeLevel(StaticVariables.g_fadeControl[1].currentWarpEntityId - param_1);
+        //SetMoney(StaticVariables.g_playerStats[1].currentWarpEntityId - param_1);
     }
 
     //8004dfd8
-    public void AdjustFadeLevelRelative(int relativeFadeValue)
+    public void AddMoney(int amount)
     {
-        Debugger.Break();
-        //ApplyFadeLevel(relativeFadeValue + StaticVariables.g_fadeControl[1].currentWarpEntityId);
+        PlayerManager.SetMoney((short)(amount + StaticVariables.g_playerStats.MoneyAmount));
     }
 
     //8004df10
-    public void FUN_8004df10(int index)
+    public void SpendMoney(int amount)
     {
-        Debugger.Break();
-        //SetFadeTargetLevel(index + StaticVariables.g_fadeControl.TargetLevel);
+        PlayerManager.SetMoney((short)(StaticVariables.g_playerStats.MoneyAmount - amount));
     }
 
     public int HandleMapTriggerCommand(int commandId)
@@ -2578,7 +2398,7 @@ public class GameEngine
             case 0x48:
                 fadeLevel = 0x1e;
                 ApplyFadeShortcut:
-                AdjustFadeLevelRelative(fadeLevel);
+                AddMoney(fadeLevel);
                 result = 1;
                 break;
             case 0x4f:
@@ -2848,49 +2668,24 @@ public class GameEngine
         }*/
     }
 
-    // 800347d4
-    public int PlayCutscene(int mapId)
-    {
-        int iVar1;
-        int iVar2;
-
-        if (StaticVariables.PlayerEntity.HpMax <= StaticVariables.PlayerEntity.Hp)
-        {
-            iVar1 = GetMaxUnlockedMap();
-            iVar2 = GetCurrentPaletteFadeLevel();
-            if (iVar2 <= iVar1)
-            {
-                PlaySoundEffect(3);
-                return 1;
-            }
-        }
-        FUN_80033a2c(StaticVariables.PlayerEntity);
-        PlaySoundEffect(0x30);
-        StartWarpToMap(mapId);
-        return 1;
-    }
-
     // 80033a2c
-    private void FUN_80033a2c(Entity entity)
+    public void FUN_80033a2c(Entity entity)
     {
-        // Set entity's HP to its max HP
         entity.Hp = entity.HpMax;
-
-        // Set fade target level
-        SetFadeTargetLevel((short)GetCurrentPaletteFadeLevel());
+        PlayerManager.SetPlayerMp((short)PlayerManager.GetPlayerMpMax());
 
         // Create first set of effects in a loop (8 effects total)
-        for (int i = 0; i < 8; i++)
+        for (var i = 0; i < 8; i++)
         {
             // Create an effect at player position with effect ID 14 (0xE)
-            bool useFlag = (i & 1) == 0;
-            int flag = useFlag ? 0 : 1;
+            var useFlag = (i & 1) == 0;
+            var flag = useFlag ? 0 : 1;
 
             // Get player position
-            int playerY = StaticVariables.g_entitySlots[0].PosY;
+            var playerY = StaticVariables.g_entitySlots[0].PosY;
 
             // Create an effect entity
-            SpriteEffect effect = EffectManager.CreateEffectEntity(
+            var effect = EffectManager.CreateEffectEntity(
                 0,              // behaviorFlags
                 14,             // spriteTableIndex (0xE)
                 (byte)flag,     // animationIndex
@@ -2903,20 +2698,20 @@ public class GameEngine
             if (effect != null)
             {
                 // Add offset to X and Y position based on index
-                short xOffset = StaticVariables.g_offsetXList[i];
-                short yOffset = StaticVariables.g_offsetYList[i];
+                var xOffset = StaticVariables.g_offsetXList[i];
+                var yOffset = StaticVariables.g_offsetYList[i];
 
                 // Apply offsets to effect position
                 effect.X += xOffset << 11;
                 effect.Y += yOffset << 11;
 
                 // Calculate effect index based on loop counter
-                int effectIndex = ((i << 2) + 8) & 0x1F;
+                var effectIndex = ((i << 2) + 8) & 0x1F;
                 effectIndex <<= 1;
 
                 // Apply additional offsets and force values
-                short xForce = StaticVariables.g_offsetXList[effectIndex / 2 + 4];
-                short yForce = StaticVariables.g_offsetYList[effectIndex / 2 + 4];
+                var xForce = StaticVariables.g_offsetXList[effectIndex / 2 + 4];
+                var yForce = StaticVariables.g_offsetYList[effectIndex / 2 + 4];
 
                 // Set effect parameters
                 effect.ForceZ = 0x30000;
@@ -2926,10 +2721,10 @@ public class GameEngine
         }
 
         // Create second set of random-positioned effects (4 effects total)
-        for (int i = 0; i < 4; i++)
+        for (var i = 0; i < 4; i++)
         {
             // Create another effect entity
-            SpriteEffect effect = EffectManager.CreateEffectEntity(
+            var effect = EffectManager.CreateEffectEntity(
                 0,              // behaviorFlags
                 14,             // spriteTableIndex (0xE)
                 (byte)i,        // animationIndex (use loop counter as animation index)
@@ -2953,9 +2748,9 @@ public class GameEngine
         }
 
         // Create third set of effects
-        for (int i = 0; i < 4; i++)
+        for (var i = 0; i < 4; i++)
         {
-            SpriteEffect effect = EffectManager.CreateEffectEntity(
+            var effect = EffectManager.CreateEffectEntity(
                 0,              // behaviorFlags
                 14,             // spriteTableIndex (0xE)
                 2,              // animationIndex fixed at 2
@@ -2982,14 +2777,8 @@ public class GameEngine
     private int GenerateRandomOffset(uint seed, uint maskValue)
     {
         // Generate a value between -0x18000 and +0x18000 using high bits of the seed
-        int highBits = (int)(((ulong)seed * 0x30001) >> 32);
+        var highBits = (int)(((ulong)seed * 0x30001) >> 32);
         return (highBits - 0x18000) & (int)maskValue;
-    }
-
-    // 8004dea4
-    private int GetMaxUnlockedMap()
-    {
-        return StaticVariables.g_fadeControl.TargetLevel;
     }
 
     // 800445c0
@@ -3021,44 +2810,40 @@ public class GameEngine
         // Return the array of balance records
         return currentRecord;
     }
-
     // 8004e0f8
     public int GetTriggeredWarpMapId()
     {
-        short warpId = StaticVariables.g_fadeControl.CurrentWarpEntityId;
-        int isUnlocked = IsMapUnlocked(warpId);
+        var itemId = StaticVariables.g_playerStats.Hp;
+        var numberOfItem = GetNumberOfItem(itemId);
 
-        if (isUnlocked == 0)
+        if (numberOfItem == 0)
         {
             return -1;
         }
 
         // Calcul de l'indice dans la table g_tileMapWarpSections
         // (warpId * 5) est l'indice multiplié par la taille de chaque entrée
-        var sectionId = StaticVariables.g_tileMapWarpSections[warpId * 5];
+        var sectionId = StaticVariables.g_tileMapWarpSections[itemId * 5];
 
-        uint tileMapSectionIndex = SelectTileMapSection((uint)sectionId);
-        FUN_8004e4d8(tileMapSectionIndex);
-        return warpId;
+        var tileMapSectionIndex = GetItemFromKind((uint)sectionId);
+        SetCurrentItemId(tileMapSectionIndex);
+        return itemId;
     }
 
     // 8004e4d8
-    private void FUN_8004e4d8(uint tileMapSectionIndex)
+    private void SetCurrentItemId(uint itemId)
     {
-        if ((int)tileMapSectionIndex < 0)
+        if ((int)itemId < 0 || itemId >= StaticVariables.g_itemsCount)
         {
             Debugger.Break();
-            Debug.WriteLine("Invalid tile map section index in FUN_8004e4d8");
             return;
         }
 
-        if (tileMapSectionIndex >= StaticVariables.g_totalWarpEntries)
-        {
-            Debugger.Break();
-            Debug.WriteLine("Invalid tile map section index in FUN_8004e4d8");
-            return;
-        }
+        StaticVariables.g_playerStats.CurrentItemId = (short)itemId;
+    }
 
-        StaticVariables.g_fadeControl.CurrentWarpEntityId = (short)tileMapSectionIndex;
+    public void SpawnSpinningParticleRing()
+    {
+        Debugger.Break();
     }
 }

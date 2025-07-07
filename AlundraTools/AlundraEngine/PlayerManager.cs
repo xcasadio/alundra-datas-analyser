@@ -24,7 +24,7 @@ public class PlayerManager
         uint dir;
 
         StaticVariables.g_activeCollisionEntity = null;
-        currentTileIndex = (int)_gameEngine.GetCurrentTileIndex();
+        currentTileIndex = (int)_gameEngine.GetItemIdFromCurrentWeapon();
         slope = StaticVariables.PlayerEntity.Slope_18c;
         StaticVariables.g_currentTileFlags = StaticVariables.g_tileAttributeLUT[currentTileIndex];
         CheckAndExecuteWarp();
@@ -135,7 +135,7 @@ public class PlayerManager
                 case 0x4f:
                     if (StaticVariables.PlayerEntity.ForceResetAnimationFlag != 0)
                     {
-                        currentTileIndex = _gameEngine.IsMapUnlocked(0x27);
+                        currentTileIndex = _gameEngine.GetNumberOfItem(0x27);
                         if (currentTileIndex == 0)
                         {
                             StaticVariables.g_isGameEnding = 1;
@@ -146,7 +146,9 @@ public class PlayerManager
                             StaticVariables.g_playerControlFlags |= 4;
                             break;
                         }
-                        _gameEngine.PlayCutscene(0x27);
+
+                        PlayCutscene(0x27);
+
                         if (slope == 4)
                         {
                             StaticVariables.PlayerEntity.TargetAnimationId = 0x1d;
@@ -231,7 +233,7 @@ public class PlayerManager
                     case 0xf:
                     case 0x1d:
                         StaticVariables.PlayerEntity.TargetDirection = dir;
-                        slope = TryHandleWarpTrigger();
+                        slope = TryUseItem();
 
                         if (slope == 0)
                         {
@@ -330,7 +332,7 @@ public class PlayerManager
                     case 0x3a:
                         break;
                     case 0x3b:
-                        slope = TryHandleWarpTrigger();
+                        slope = TryUseItem();
                         if (slope != 0)
                         {
                             if (StaticVariables.PlayerEntity.ForceResetAnimationFlag == 1)
@@ -343,7 +345,7 @@ public class PlayerManager
                         StaticVariables.PlayerEntity.TargetDirection = StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
                         goto END;
                 }
-                TryHandleWarpTrigger();
+                TryUseItem();
                 goto END;
             case 6:
                 if (uVar2 != 0 
@@ -370,7 +372,7 @@ public class PlayerManager
             case 0:
             case 1:
                 StaticVariables.PlayerEntity.TargetDirection = dir;
-                iVar2 = TryHandleWarpTrigger();
+                iVar2 = TryUseItem();
                 if (iVar2 == 0 || FUN_8002eeac() != 0)
                 {
                     break;
@@ -394,7 +396,7 @@ public class PlayerManager
             case 0x2c:
             case 0x2d:
                 StaticVariables.PlayerEntity.TargetDirection = dir;
-                iVar2 = TryHandleWarpTrigger();
+                iVar2 = TryUseItem();
                 if (iVar2 == 0 || FUN_8002eeac() != 0)
                 {
                     break;
@@ -504,10 +506,10 @@ public class PlayerManager
                     StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
                 }
                 //goto switchD_80032650_caseD_28;
-                TryHandleWarpTrigger();
+                TryUseItem();
                 goto END;
             case 5:
-                iVar2 = TryHandleWarpTrigger();
+                iVar2 = TryUseItem();
                 if (iVar2 == 0)
                 {
                     break;
@@ -529,7 +531,7 @@ public class PlayerManager
             case 0x2f:
             case 0x30:
                 StaticVariables.PlayerEntity.TargetDirection = dir;
-                iVar2 = TryHandleWarpTrigger();
+                iVar2 = TryUseItem();
                 var warpEntity = StaticVariables.PlayerEntity.WarpEntity;
                 if (iVar2 == 0)
                 {
@@ -637,10 +639,10 @@ public class PlayerManager
                     StaticVariables.PlayerEntity.TargetAnimationId = 0;
                 }
                 //goto switchD_80032650_caseD_28;
-                TryHandleWarpTrigger();
+                TryUseItem();
                 goto END;
             case 0xb:
-                iVar2 = TryHandleWarpTrigger();
+                iVar2 = TryUseItem();
                 if (iVar2 == 0)
                 {
                     break;
@@ -660,7 +662,7 @@ public class PlayerManager
                 break;
             case 0xe:
             case 0x35:
-                iVar2 = TryHandleWarpTrigger();
+                iVar2 = TryUseItem();
                 if (iVar2 == 0 || FUN_8002eeac() != 0)
                 {
                     break;
@@ -730,11 +732,11 @@ public class PlayerManager
                 {
                     StaticVariables.PlayerEntity.TargetAnimationId = 0;
                 }
-                TryHandleWarpTrigger();
+                TryUseItem();
                 goto END;
             case 0x1c:
             case 0x3e:
-                iVar2 = TryHandleWarpTrigger();
+                iVar2 = TryUseItem();
                 if (iVar2 == 0)
                 {
                     StaticVariables.PlayerEntity.TargetDirection = StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
@@ -754,7 +756,7 @@ public class PlayerManager
                 goto LAB_80032594;
             case 0x20:
             case 0x24:
-                iVar2 = TryHandleWarpTrigger();
+                iVar2 = TryUseItem();
                 if (iVar2 == 0 || StaticVariables.g_warpLockTimer == 0x20)
                 {
                     break;
@@ -765,12 +767,12 @@ public class PlayerManager
             case 0x31:
             case 0x34:
                 //goto switchD_80032650_caseD_28;
-                TryHandleWarpTrigger();
+                TryUseItem();
                 goto END;
             case 0x22:
             case 0x23:
                 StaticVariables.PlayerEntity.TargetDirection = dir;
-                iVar2 = TryHandleWarpTrigger();
+                iVar2 = TryUseItem();
                 if (iVar2 == 0)
                 {
                     break;
@@ -803,7 +805,7 @@ public class PlayerManager
                 }
                 goto LAB_800325e0;
             case 0x29:
-                iVar2 = TryHandleWarpTrigger();
+                iVar2 = TryUseItem();
 
                 if (iVar2 == 0 
                     || FUN_8002eeac() != 0 
@@ -834,7 +836,7 @@ public class PlayerManager
                 StaticVariables.PlayerEntity.TargetAnimationId = 0;
                 break;
             case 0x2a:
-                iVar2 = TryHandleWarpTrigger();
+                iVar2 = TryUseItem();
                 if (iVar2 != 0 && FUN_8002eeac() == 0)
                 {
                     if (StaticVariables.PlayerEntity.IsAboveGround == 0)
@@ -868,7 +870,7 @@ public class PlayerManager
                 break;
             case 0x32:
             case 0x33:
-                iVar2 = TryHandleWarpTrigger();
+                iVar2 = TryUseItem();
                 if (iVar2 == 0 || StaticVariables.g_warpLockTimer - 0x2bU < 8)
                 {
                     break;
@@ -903,14 +905,14 @@ public class PlayerManager
                 {
                     StaticVariables.PlayerEntity.TargetAnimationId = 0;
                 }
-                TryHandleWarpTrigger();
+                TryUseItem();
                 goto END;
         }
 
         END:
-        UpdateWarpEffectState();
-        _gameEngine.UpdateEntityFromWarpFlag(StaticVariables.PlayerEntity.HpMax);
-        _gameEngine.FinalizeWarpEntities((short)StaticVariables.PlayerEntity.Hp);
+        UpdateItemEffectState();
+        _gameEngine.PlayerManager.SetPlayerHpMax(StaticVariables.PlayerEntity.HpMax);
+        _gameEngine.PlayerManager.SetPlayerHp((short)StaticVariables.PlayerEntity.Hp);
     }
 
     //8002eaf4
@@ -921,7 +923,7 @@ public class PlayerManager
             return 0;
         }
 
-        if ((StaticVariables.g_padState1.ButtonsReleased & 0x0080) == 0)
+        if ((StaticVariables.g_padState1.ButtonsReleased & PadState.Square) == 0)
         {
             return 0;
         }
@@ -940,7 +942,7 @@ public class PlayerManager
         {
             // on lit posY et posZ+0x10 pour positionner l’effet
             var y = StaticVariables.PlayerEntity.PosY;
-            var z = StaticVariables.PlayerEntity.PosZ + 0x10;
+            var z = StaticVariables.PlayerEntity.PosZ + StaticVariables.MapTileHeight;
 
             // on crée l’effet 3D
             var effect = _gameEngine.EffectManager.CreateEffectEntity(
@@ -949,6 +951,7 @@ public class PlayerManager
                 StaticVariables.PlayerEntity.PosY,
                 StaticVariables.PlayerEntity.PosZ + 0x100000
                 );
+
             if (effect != null)
             {
                 // on ajuste les 16 primitives du sprite selon les listes d’offset
@@ -963,7 +966,8 @@ public class PlayerManager
 
         _gameEngine.PlaySoundEffect(0x2B);
 
-        // 7) Calcul de l’index de tileWarpData dans la table (bit-bashing fidèle)
+        Debugger.Break();
+
         var flags = StaticVariables.g_currentTileFlags;
         var baseIdx = (flags << 1) + flags;              // flags*3
         baseIdx = (baseIdx << 2) + baseIdx;              // baseIdx*5 → flags*15
@@ -1016,7 +1020,8 @@ public class PlayerManager
 
         if (player.XCollisionEntity != null)
         {
-            if ((StaticVariables.g_padState1.ButtonsJustPressed & 0x0080) != 0)
+            //interact with something
+            if ((StaticVariables.g_padState1.ButtonsJustPressed & PadState.Square) != 0)
             {
                 return TryTriggerWarpFromEntity(player.XCollisionEntity);
             }
@@ -1072,8 +1077,7 @@ public class PlayerManager
         // Si bits ∈ {2,3} ⇒ test de déverrouillage de la carte (warpIndex = 0x3B)
         if (platformFlagBits < 4)
         {
-            var isUnlocked = _gameEngine.IsMapUnlocked(0x3B);
-            if (isUnlocked != 0)
+            if (_gameEngine.GetNumberOfItem(0x3B) != 0)
             {
                 return 0;
             }
@@ -1088,11 +1092,9 @@ public class PlayerManager
         StaticVariables.PlayerEntity.WarpEntity = entity;
         entity.PlatformEntity = StaticVariables.PlayerEntity;
 
-        // Selon isAboveGround, on choisit l’animation 0x0C ou 0x30
         var above = StaticVariables.PlayerEntity.IsAboveGround;
         StaticVariables.PlayerEntity.TargetAnimationId = (byte)(above != 0 ? 0x0C : 0x30);
 
-        // On calcule les offsets relatifs X, Y, Z
         StaticVariables.PlayerEntity.RelativeWarpOffsetX = entity.PosX - StaticVariables.PlayerEntity.PosX;
         StaticVariables.PlayerEntity.RelativeWarpOffsetY = entity.PosY - StaticVariables.PlayerEntity.PosY;
         StaticVariables.PlayerEntity.RelativeWarpOffsetZ = entity.PosZ - StaticVariables.PlayerEntity.PosZ;
@@ -1101,18 +1103,17 @@ public class PlayerManager
     }
 
     // 800307e8
-    private void UpdateWarpEffectState()
+    private void UpdateItemEffectState()
     {
-        // Vérifie si la carte est déverrouillée pour différents indices de warp
-        if (_gameEngine.IsMapUnlocked(0x1C) != 0)
+        if (_gameEngine.GetNumberOfItem(0x1C) != 0)
         {
             StaticVariables.g_gravityFlag = 3;
         }
-        else if (_gameEngine.IsMapUnlocked(0x1B) != 0)
+        else if (_gameEngine.GetNumberOfItem(0x1B) != 0)
         {
             StaticVariables.g_gravityFlag = 2;
         }
-        else if (_gameEngine.IsMapUnlocked(0x1A) != 0)
+        else if (_gameEngine.GetNumberOfItem(0x1A) != 0)
         {
             StaticVariables.g_gravityFlag = 1;
         }
@@ -1121,12 +1122,10 @@ public class PlayerManager
             StaticVariables.g_gravityFlag = 0;
         }
 
-        // Initialisation des tableaux d'objets et d'armes
         var iconIndex = 0x61; // Index 97
         var requiredFlag = 2;
         var iconBase = 0;
 
-        // Nettoie le tableau des items
         StaticVariables.g_items[0] = 0;
         StaticVariables.g_items[1] = 0;
         StaticVariables.g_items[2] = 0;
@@ -1141,7 +1140,7 @@ public class PlayerManager
             // Vérifie le bit 0x7F du troisième byte (index+2) de l'icône
             var iconFlags = (byte)(StaticVariables.g_iconNameEtcBase[iconOffset / 4] & 0x7F);
 
-            if (iconFlags == requiredFlag && _gameEngine.IsMapUnlocked(iconIndex) != 0)
+            if (iconFlags == requiredFlag && _gameEngine.GetNumberOfItem(iconIndex) != 0)
             {
                 var itemData = _gameEngine.GetItemDataPointer(iconIndex);
                 //StaticVariables.g_balanceEffectSources = itemData;
@@ -1154,7 +1153,7 @@ public class PlayerManager
         }
 
         // Vérification des tuiles actuelles
-        var currentTileIndex = (int)_gameEngine.GetCurrentTileIndex();
+        var currentTileIndex = (int)_gameEngine.GetItemIdFromCurrentWeapon();
         if (currentTileIndex > 0 && currentTileIndex < 0x61)
         {
             var tileIconFlags = (byte)(StaticVariables.g_iconNameEtcBase[(currentTileIndex * 8 + 6) / 4] & 0x7F);
@@ -1584,14 +1583,223 @@ public class PlayerManager
         return 1;
     }
 
+
+    // 8004df80
+    public int SetMoney(short amount)
+    {
+        if (amount < 10000)
+        {
+            if (amount < 0)
+            {
+                StaticVariables.g_playerStats.MoneyAmount = 0;
+            }
+            else
+            {
+                StaticVariables.g_playerStats.MoneyAmount = amount;
+            }
+        }
+        else
+        {
+            StaticVariables.g_playerStats.MoneyAmount = 9999;
+        }
+
+        return StaticVariables.g_playerStats.MoneyAmount;
+    }
+
+    // 8004b730
+    public void InitializeHpAndMp()
+    {
+        StaticVariables.INT_ARRAY_800a8284[0] = GetPlayerHpMax();
+        StaticVariables.INT_ARRAY_800a8284[1] = StaticVariables.INT_ARRAY_800a8284[0];
+        StaticVariables.INT_ARRAY_800a8284[3] = GetPlayerMpMax();
+        StaticVariables.INT_ARRAY_800a8284[2] = StaticVariables.INT_ARRAY_800a8284[3];
+    }
+
+    // 8004e78c
+    public int GetPlayerHpMax()
+    {
+        return StaticVariables.g_playerStats.HpMax;
+    }
+
+    // 8004dd18
+    public int GetPlayerHp()
+    {
+        return StaticVariables.g_playerStats.Hp;
+    }
+
+    // 8004dc68
+    public int SetPlayerHpMax(int hpMax)
+    {
+        //Set HP
+        if (hpMax < 0x33)
+        {
+            if (hpMax < 0)
+            {
+                StaticVariables.g_playerStats.HpMax = 0;
+            }
+            else
+            {
+                StaticVariables.g_playerStats.HpMax = (short)hpMax;
+            }
+        }
+        else
+        {
+            StaticVariables.g_playerStats.HpMax = 0x32;
+        }
+
+        return StaticVariables.g_playerStats.HpMax;
+    }
+
+    // 8004dd30
+    public int SetPlayerHp(short amount)
+    {
+        //set HP
+        if (StaticVariables.g_playerStats.HpMax < amount)
+        {
+            StaticVariables.g_playerStats.Hp = StaticVariables.g_playerStats.HpMax;
+        }
+        else if (amount < 0)
+        {
+            StaticVariables.g_playerStats.Hp = 0;
+        }
+        else
+        {
+            StaticVariables.g_playerStats.Hp = amount;
+        }
+
+        return StaticVariables.g_playerStats.Hp;
+    }
+
+    //8004dea4
+    private int GetPlayerMp()
+    {
+        return StaticVariables.g_playerStats.Mp;
+    }
+
+    // 8004dddc
+    public int GetPlayerMpMax()
+    {
+        return StaticVariables.g_playerStats.MpMax;
+    }
+
+    // 8004ddf4
+    public int SetPlayerMpMax(short mpMax)
+    {
+        if (mpMax < 5)
+        {
+            if (mpMax < 0)
+            {
+                StaticVariables.g_playerStats.MpMax = 0;
+            }
+            else
+            {
+                StaticVariables.g_playerStats.MpMax = mpMax;
+            }
+        }
+        else
+        {
+            StaticVariables.g_playerStats.MpMax = 4;
+        }
+
+        return StaticVariables.g_playerStats.MpMax;
+    }
+
+    // 8004debc
+    public int SetPlayerMp(short amount)
+    {
+        if (StaticVariables.g_playerStats.MpMax < amount)
+        {
+            StaticVariables.g_playerStats.Mp = StaticVariables.g_playerStats.MpMax;
+        }
+        else if (amount < 0)
+        {
+            StaticVariables.g_playerStats.Mp = 0;
+        }
+        else
+        {
+            StaticVariables.g_playerStats.Mp = amount;
+        }
+
+        return StaticVariables.g_playerStats.Mp;
+    }
+
+    // 8004e484
+    public void SetPlayerWeaponId(ushort weaponId)
+    {
+        if (weaponId == 0xffffffff || weaponId - 1 < 6)
+        {
+            StaticVariables.g_playerStats.WeaponId = (short)weaponId;
+        }
+        else
+        {
+            //LogDebugMessage(StaticVariables.g_logMessage_InvalidWarpVisualId, HpMax);
+        }
+
+        _gameEngine.GetItemIdFromCurrentWeapon();
+    }
+
+    // 800347d4
+    public int PlayCutscene(int itemId)
+    {
+        int iVar1;
+        int iVar2;
+
+        if (StaticVariables.PlayerEntity.HpMax <= StaticVariables.PlayerEntity.Hp)
+        {
+            iVar1 = GetPlayerMp();
+            iVar2 = GetPlayerMpMax();
+            if (iVar2 <= iVar1)
+            {
+                _gameEngine.PlaySoundEffect(3);
+                return 1;
+            }
+        }
+
+        _gameEngine.FUN_80033a2c(StaticVariables.PlayerEntity);
+        _gameEngine.PlaySoundEffect(0x30);
+        UseItem(itemId);
+        return 1;
+    }
+
+    //8004e5c4
+    public int UseItem(int itemId)
+    {
+        int remainingItem;
+        short itemCount;
+
+        if (itemId < 0 || StaticVariables.g_itemsCount <= itemId)
+        {
+            //LogDebugMessage(StaticVariables.g_logMessage_InvalidWarpVisualId + 0x54, itemId);
+            remainingItem = 0;
+        }
+        else
+        {
+            remainingItem = (itemId * 2) * 2 + StaticVariables.g_numberOfItems[0];
+            itemCount = StaticVariables.g_numberOfItems[itemId * 2 + 1];
+            itemCount--;
+
+            if (itemCount == -1)
+            {
+                remainingItem = -1;
+            }
+            else
+            {
+                StaticVariables.g_numberOfItems[itemId * 2 + 1] = itemCount;
+                remainingItem = itemCount;
+            }
+        }
+
+        return remainingItem;
+    }
+
     // 8002ed64
-    private int TryHandleWarpTrigger()
+    private int TryUseItem()
     {
         if ((StaticVariables.g_padState1.ButtonsJustPressed & PadState.Circle) != 0)
         {
             if (StaticVariables.g_playerControlFlags == 0)
             {
-                return HandleWarpEvent();
+                return UseItem();
             }
             else
             {
@@ -1603,7 +1811,7 @@ public class PlayerManager
     }
 
     //8003499c
-    private int HandleWarpEvent()
+    private int UseItem()
     {
         var mapId = _gameEngine.GetTriggeredWarpMapId();
         
@@ -1649,11 +1857,11 @@ public class PlayerManager
                 return 1;
                 
             case 7: // mapId == 0x26
-                HandleWarpTrigger(mapId);
+                UseMagicalItem(mapId);
                 return 1;
                 
             case 8: // mapId == 0x27
-                _gameEngine.PlayCutscene(mapId);
+                PlayCutscene(mapId);
                 return 1;
                 
             case 10: // mapId == 0x29
@@ -1723,9 +1931,24 @@ public class PlayerManager
     }
 
     //80034760
-    private void HandleWarpTrigger(int mapId)
+    private int UseMagicalItem(int itemId)
     {
-        Debugger.Break();
+        int mp;
+        int mpMax;
+
+        mp = GetPlayerMp();
+        mpMax = GetPlayerMpMax();
+        if (mp < mpMax)
+        {
+            _gameEngine.SpawnSpinningParticleRing();
+            _gameEngine.PlaySoundEffect(0x30);
+            UseItem(itemId);
+        }
+        else
+        {
+            _gameEngine.PlaySoundEffect(3);
+        }
+        return 1;
     }
 
     private void TryWarpWithExplosionEffect(int mapId)
@@ -2664,10 +2887,9 @@ public class PlayerManager
                 break;
         }
 
-        // En mode normal (pas en mode préparation pour l'entrée de warp)
         if (param_1 == 0)
         {
-            // Gestion du son de battement de coeur quand les HP sont bas
+            // heartBeat
             if (StaticVariables.PlayerEntity.Hp != 0 &&
                 StaticVariables.PlayerEntity.Hp * 5 <= StaticVariables.PlayerEntity.HpMax)
             {
@@ -2675,7 +2897,7 @@ public class PlayerManager
 
                 if (StaticVariables.DAT_80098f2c == -1)
                 {
-                    _gameEngine.PlaySoundEffect(400); // Son de battement de cœur
+                    _gameEngine.PlaySoundEffect(400);
                     StaticVariables.DAT_80098f2c = 0x2d; // Réinitialiser le compteur
                 }
             }

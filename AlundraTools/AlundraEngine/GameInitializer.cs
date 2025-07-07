@@ -321,11 +321,11 @@ public class GameInitializer
                 StaticVariables.g_initialWarpTileY = 0x3b;
                 StaticVariables.g_initialWarpZ = 0;
                 StaticVariables.g_warpExtraParam = 0;
-                _gameEngine.UpdateEntityFromWarpFlag(10);
-                _gameEngine.FinalizeWarpEntities(10);
-                _gameEngine.SetMaxFadeLevel(0);
-                _gameEngine.SetFadeTargetLevel(0);
-                _gameEngine.ApplyFadeLevel(0);
+                _gameEngine.PlayerManager.SetPlayerHpMax(10);
+                _gameEngine.PlayerManager.SetPlayerHp(10);
+                _gameEngine.PlayerManager.SetPlayerMpMax(0);
+                _gameEngine.PlayerManager.SetPlayerMp(0);
+                _gameEngine.PlayerManager.SetMoney(0);
             }
             else
             {
@@ -336,12 +336,12 @@ public class GameInitializer
                 StaticVariables.g_initialWarpTileY = 0x1d;
                 StaticVariables.g_initialWarpZ = 10;
                 StaticVariables.g_warpExtraParam = 0;
-                _gameEngine.UpdateEntityFromWarpFlag(0x2d);
-                _gameEngine.FinalizeWarpEntities(0x26);
-                _gameEngine.SetMaxFadeLevel(3);
-                _gameEngine.SetFadeTargetLevel(2);
-                _gameEngine.ApplyFadeLevel(0x873);
-                _gameEngine.SetupPostWarpGraphics();
+                _gameEngine.PlayerManager.SetPlayerHpMax(0x2d);
+                _gameEngine.PlayerManager.SetPlayerHp(0x26);
+                _gameEngine.PlayerManager.SetPlayerMpMax(3);
+                _gameEngine.PlayerManager.SetPlayerMp(2);
+                _gameEngine.PlayerManager.SetMoney(0x873);
+                _gameEngine.PlayerManager.InitializeHpAndMp();
             }
             iconIndex = 0;
             //iconEtcEntryPtr = &StaticVariables.g_iconNameEtcBase;
@@ -359,21 +359,21 @@ public class GameInitializer
                 iconIndex = iconIndex + 1;
                 //iconEtcEntryPtr = iconEtcEntryPtr + 2;
             } while (iconIndex < 0x62);
-            _gameEngine.LoadWarpVisuals(1);
+            _gameEngine.PlayerManager.SetPlayerWeaponId(1);
             //InitializeExtraSystemState();
         }
 
-        for (int i = 0; i < StaticVariables.g_warpUsageTable.Length; i++)
+        for (int i = 0; i < StaticVariables.g_numberOfItems.Length; i++)
         {
             if (i == 3 || i == 35 || i == 51)
             {
-                Debug.Assert(StaticVariables.g_warpUsageTable[3] == 1);
-                Debug.Assert(StaticVariables.g_warpUsageTable[35] == 1);
-                Debug.Assert(StaticVariables.g_warpUsageTable[51] == 1);
+                Debug.Assert(StaticVariables.g_numberOfItems[3] == 1);
+                Debug.Assert(StaticVariables.g_numberOfItems[35] == 1);
+                Debug.Assert(StaticVariables.g_numberOfItems[51] == 1);
             }
             else
             {
-                Debug.Assert(StaticVariables.g_warpUsageTable[i] == 0);
+                Debug.Assert(StaticVariables.g_numberOfItems[i] == 0);
             }
         }
 
@@ -394,19 +394,19 @@ public class GameInitializer
     private int GetMapUnlockRequirement(int warpIndex)
     {
         // Check if warpIndex is valid
-        if (warpIndex < 0 || warpIndex >= StaticVariables.g_totalWarpEntries)
+        if (warpIndex < 0 || warpIndex >= StaticVariables.g_itemsCount)
         {
             Debugger.Break();
             Debug.WriteLine("Invalid warp index in GetMapUnlockRequirement");
             return 0;
         }
 
-        // Calculate the pointer into g_warpUsageTable based on warpIndex
-        // In the assembly: warpEntryPtr = (warpIndex * 4) + g_warpUsageTable
+        // Calculate the pointer into g_numberOfItems based on warpIndex
+        // In the assembly: warpEntryPtr = (warpIndex * 4) + g_numberOfItems
         int warpEntryPtr = warpIndex * 2; // Each entry is 2 shorts (4 bytes)
 
-        // Get the current usage count from g_warpUsageTable
-        short currentUsage = StaticVariables.g_warpUsageTable[warpEntryPtr + 1];
+        // Get the current usage count from g_numberOfItems
+        short currentUsage = StaticVariables.g_numberOfItems[warpEntryPtr + 1];
 
         // Calculate index into g_tileMapWarpSections
         // In the assembly: (warpIndex * 4 + warpIndex) * 2 + g_tileMapWarpSections
@@ -418,7 +418,7 @@ public class GameInitializer
         // If current usage doesn't match the requirement, increment it
         if (currentUsage != unlockRequirement)
         {
-            StaticVariables.g_warpUsageTable[warpEntryPtr + 1] = (short)(currentUsage + 1);
+            StaticVariables.g_numberOfItems[warpEntryPtr + 1] = (short)(currentUsage + 1);
             return currentUsage + 1;
         }
 
@@ -432,16 +432,15 @@ public class GameInitializer
         int i = 0;
         int index = 0;
 
-        StaticVariables.g_initialFadeControl = new FadeControl();
-        StaticVariables.g_fadeControl = StaticVariables.g_initialFadeControl;
-        StaticVariables.g_initialFadeControl.WarpVisualId = 1;
-        StaticVariables.g_initialFadeControl.CurrentWarpEntityId = 1;
-        StaticVariables.g_initialFadeControl.MaxTargetLevel = 0;
-        StaticVariables.g_initialFadeControl.TargetLevel = 0;
-        //StaticVariables.g_warpUsageTable = StaticVariables.DAT_801eb83e;
-        StaticVariables.DAT_801eb834 = 0;
-        StaticVariables.DAT_801eb83a = 0;
-        StaticVariables.DAT_801eb83c = 0;
+        StaticVariables.g_initialPlayerStats = new PlayerStats();
+        StaticVariables.g_playerStats = StaticVariables.g_initialPlayerStats;
+        StaticVariables.g_initialPlayerStats.HpMax = 1;
+        StaticVariables.g_initialPlayerStats.Hp = 1;
+        StaticVariables.g_initialPlayerStats.MpMax = 0;
+        StaticVariables.g_initialPlayerStats.Mp = 0;
+        StaticVariables.g_initialPlayerStats.MoneyAmount = 0;
+        StaticVariables.g_initialPlayerStats.field_e = 0;
+        StaticVariables.g_initialPlayerStats.field_10 = 0;
 
         //while (i < 0x80)
         //{
@@ -459,13 +458,13 @@ public class GameInitializer
         }
 
         i = 0;
-        StaticVariables.g_totalWarpEntries = 99;
+        StaticVariables.g_itemsCount = 99;
         index = 0;
 
         while (i < 0x80)
         {
-            StaticVariables.g_warpUsageTable[index] = 0;
-            StaticVariables.g_warpUsageTable[index + 1] = 0;
+            StaticVariables.g_numberOfItems[index] = 0;
+            StaticVariables.g_numberOfItems[index + 1] = 0;
             i++;
             index += 2;
         }

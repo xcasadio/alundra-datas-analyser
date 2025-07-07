@@ -4359,7 +4359,7 @@ public class EntityEventHandlers
     // 8003FEC8
     private int Script_131_083(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var iVar1 = _gameEngine.IsMapUnlocked(variables[1]);
+        var iVar1 = _gameEngine.GetNumberOfItem(variables[1]);
 
         if (iVar1 < variables[2])
         {
@@ -4376,7 +4376,7 @@ public class EntityEventHandlers
     // 8003FF34
     private int Script_132_084(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var iVar1 = _gameEngine.StartWarpToMap(variables[1]);
+        var iVar1 = _gameEngine.PlayerManager.UseItem(variables[1]);
 
         if (iVar1 == -1)
         {
@@ -4984,14 +4984,14 @@ public class EntityEventHandlers
     // 80040A2C
     private int Script_151_097(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.FUN_8004df10(variables[1]);
+        _gameEngine.SpendMoney(variables[1]);
         return 2;
     }
 
     // 80040A58
     private int Script_152_098(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.AdjustFadeLevelRelative(variables[1]);
+        _gameEngine.AddMoney(variables[1]);
         return 3;
     }
 
@@ -5913,7 +5913,7 @@ public class EntityEventHandlers
         Debugger.Break();
         return 0;
         /*
-        _gameEngine.LoadWarpVisuals(variables[1] + 1);
+        _gameEngine.SetPlayerWeaponId(variables[1] + 1);
         StaticVariables.g_playerControlFlags = StaticVariables.g_playerControlFlags | 0x80;
         return 2;*/
     }
@@ -5951,9 +5951,9 @@ public class EntityEventHandlers
         /*
         int targetLevel;
         StaticVariables.g_entitySlots[0].Hp = StaticVariables.g_entitySlots[0].HpMax;
-        targetLevel = _gameEngine.GetCurrentPaletteFadeLevel();
-        _gameEngine.SetFadeTargetLevel(targetLevel);
-        _gameEngine.SetupPostWarpGraphics();
+        targetLevel = _gameEngine.GetPlayerMpMax();
+        _gameEngine.SetPlayerMp(targetLevel);
+        _gameEngine.InitializeHpAndMp();
         */
         return 1;
     }

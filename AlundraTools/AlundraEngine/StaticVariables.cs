@@ -735,7 +735,7 @@ public static class StaticVariables
         g_isGameEnding = 1; //force initialization
         g_gameRandomSeed = 0xB017C93D;
         g_tileToWorldXTable = new short[1248];
-        g_fadeControl = new FadeControl();
+        g_playerStats = new PlayerStats();
         g_emptyEntityForClearing = new Entity();
 
         for (int i = 0; i < g_mapEvents.Length; i++)
@@ -1123,7 +1123,7 @@ public static class StaticVariables
     public static char CHAR_82h_80026160; // 80026160
     public static char[] s_O_8002657c = new char[48]; // 8002657C
     public static char[] g_debugMessage_SelectTileMapSection = new char[32]; // 800265EC
-    public static char[] g_buffer_isMapUnlocked = new char[20]; // 8002660C
+    public static char[] g_buffer_nbOfItem = new char[20]; // 8002660C
     public static char[] g_logMessage_InvalidWarpVisualId = new char[136]; // 80026620
     public static int DAT_800266fc; // 800266FC
     public static int DAT_80026700; // 80026700
@@ -1975,9 +1975,9 @@ public static class StaticVariables
     public static short g_blendAlpha; // 80175D2A
     public static byte[] BYTE_ARRAY_80175d38 = new byte[1496]; // 80175D38
     public static int g_drawFrameFlags; // 80176310
-    public static FadeControl g_fadeControl; // 80176318
-    public static short[] g_warpUsageTable = new short[256]; // 8017631C point to 801eb83e
-    public static int g_totalWarpEntries; // 8017638C
+    public static PlayerStats g_playerStats; // 80176318
+    public static short[] g_numberOfItems = new short[256]; // 8017631C point to 801eb83e
+    public static int g_itemsCount; // 8017638C
     public static int g_cdSmallBuffer; // 80176390
     public static byte DAT_CDRom_8017e390; // 8017E390
     public static byte DAT_CDRom_8017e391; // 8017E391
@@ -2339,7 +2339,7 @@ public static class StaticVariables
     public static ushort[] g_mapIdToInternalMapIndexTable = new ushort[500]; // 801EB444
     public static short DAT_801eb828; // 801EB828
     public static short DAT_801eb82a; // 801EB82A
-    public static FadeControl g_initialFadeControl; // 801EB82C
+    public static PlayerStats g_initialPlayerStats; // 801EB82C
     public static short DAT_801eb834; // 801EB834
     public static short DAT_801eb83a; // 801EB83A
     public static short DAT_801eb83c; // 801EB83C

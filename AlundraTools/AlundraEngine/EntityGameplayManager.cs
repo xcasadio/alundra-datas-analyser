@@ -387,28 +387,25 @@ public class EntityGameplayManager
     //8003a9e0
     public int GetTileHeightAtOffset(Entity entity, int offsetX, int offsetY)
     {
-        int tileXIndex;
+        int tileX;
         uint uVar1;
-        int tileYIndex;
+        int tileY;
         int[] xCoords = new int[4];
         int[] yCoords = new int[4];
         int[] xCoordsPtr;
-        uint uVar2;
+        uint maxHeight;
         ushort flagBits;
 
-        xCoordsPtr = xCoords;
-        tileXIndex = entity.PosX + entity.ModX + offsetX;
-        xCoords[2] = StaticVariables.g_tileToWorldXTable[tileXIndex >> 0x10];
-        xCoords[0] = StaticVariables.g_tileToWorldXTable[tileXIndex >> 0x10];
+        tileX = entity.PosX + entity.ModX + offsetX;
+        xCoords[2] = StaticVariables.g_tileToWorldXTable[tileX >> 0x10];
+        xCoords[0] = StaticVariables.g_tileToWorldXTable[tileX >> 0x10];
+        xCoords[3] = StaticVariables.g_tileToWorldXTable[(tileX + entity.Width) >> 0x10];
+        xCoords[1] = StaticVariables.g_tileToWorldXTable[(tileX + entity.Width) >> 0x10];
 
-        tileYIndex = entity.PosY + entity.ModY + offsetY;
-        yCoords[1] = tileYIndex >> 0x14;
+        tileY = entity.PosY + entity.ModY + offsetY;
+        yCoords[1] = tileY >> 0x14;
         yCoords[0] = yCoords[1];
-
-        xCoords[3] = StaticVariables.g_tileToWorldXTable[(tileXIndex + entity.Width) >> 0x10];
-        xCoords[1] = StaticVariables.g_tileToWorldXTable[(tileXIndex + entity.Width) >> 0x10];
-
-        yCoords[3] = (tileYIndex + entity.Height) >> 0x14;
+        yCoords[3] = (tileY + entity.Height) >> 0x14;
         yCoords[2] = yCoords[3];
 
         flagBits = (ushort)((entity.Flags & 8U) != 0 ? 1 : 0);
@@ -417,52 +414,44 @@ public class EntityGameplayManager
             flagBits |= 0x1000;
         }
 
-        uVar2 = 0;
+        maxHeight = 0;
 
         for (var coordIndex = 0; coordIndex < 4; coordIndex++)
         {
-            tileXIndex = xCoordsPtr[coordIndex];
-            if (tileXIndex < 1)
+            tileX = xCoords[coordIndex];
+            if (tileX < 1)
             {
-                tileXIndex = 0;
+                tileX = 0;
             }
-            else if (tileXIndex > 0x33)
+            else if (tileX > 0x33)
             {
-                tileXIndex = 0x33;
-            }
-
-            tileYIndex = xCoordsPtr[coordIndex];
-            if (tileYIndex < 1)
-            {
-                tileYIndex = 0;
-            }
-            else if (tileYIndex > 0x3b)
-            {
-                tileYIndex = 0x3b;
+                tileX = 0x33;
             }
 
-            int tileOffset = tileYIndex * 0xd0 + tileXIndex * 4 + 0x302;
-
-            if ((_gameEngine.CurrentMap.Map.MapTiles[tileOffset].GroundProperty & flagBits) != 0)
-                //if ((StaticVariables.g_spriteVRAMPointer[tileOffset] & flagBits) != 0)
+            tileY = yCoords[coordIndex];
+            if (tileY < 1)
             {
-                break;
+                tileY = 0;
+            }
+            else if (tileY > 0x3b)
+            {
+                tileY = 0x3b;
             }
 
-            //uVar1 = StaticVariables.g_spriteVRAMPointer[tileOffset + 3];
-            uVar1 = _gameEngine.CurrentMap.Map.MapTiles[tileOffset + 3].GroundProperty;
-            if (uVar2 < uVar1)
+            var mapWidth = _gameEngine.CurrentMap.Map.Width;
+            var tile = _gameEngine.CurrentMap.Map.MapTiles[tileY * mapWidth + tileX];
+
+            if ((tile.Walkability & flagBits) != 0)
             {
-                uVar2 = uVar1;
+                return 0x7800000;
             }
 
-            xCoordsPtr = xCoordsPtr.Skip(1).ToArray();
-            if (xCoordsPtr.Length == 0)
+            if (maxHeight < tile.Height)
             {
-                return (int)(uVar2 << 0x14);
+                maxHeight = tile.Height;
             }
         }
-
-        return 0x7800000;
+        
+        return (int)(maxHeight << 0x14);
     }
 }
