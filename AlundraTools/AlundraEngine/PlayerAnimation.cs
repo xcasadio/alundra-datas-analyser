@@ -1,0 +1,105 @@
+﻿namespace AlundraEngine;
+
+public enum PlayerAnimation
+{
+    Idle = 0x00,
+    Moving = 0x01,
+    StartJumpWhileMoving = 0x02,
+    Sprint = 0x03,
+    SprintDash = 0x04,
+    PickupObject = 0x05,
+    StartJumpWithObjectWhileMoving = 0x06,
+    MovingWithObject = 0x07,
+    FlailHitIron = 0x08,
+    ThrowObject = 0x09,
+    ThrowObjectWhileJumping = 0x0A,
+    Reserved0B = 0x0B,
+    HoldObject = 0x0C,
+    Sleeping = 0x0D,
+    Climbing = 0x0E,
+    SwimmingSlow = 0x0F,
+
+    AttackSwordDaggerLegend = 0x10,
+    AttackWandIceChargedFireCharged = 0x11,
+    AttackFlailIron = 0x12,
+    AttackBowHunterWillowCharged = 0x13,
+    JumpAttackSwordDagger = 0x14,
+    JumpAttackWandIceFire = 0x15,
+    JumpAttackFlailIron = 0x16,
+    JumpAttackBowHunterWillow = 0x17,
+    ChargeAttackSword = 0x18,
+    ChargeAttackFlailSteel = 0x19,
+
+    InMineCart = 0x1A,
+    InMineCartMoving = 0x1B,
+    DamageKnockback = 0x1C,
+    SwimmingStill = 0x1D,
+    MineCartStopping = 0x1E,
+    Reserved1F = 0x1F,
+
+    EnterSand = 0x20,
+    ExitSand = 0x21,
+    InSand = 0x22,
+    InSandMoving = 0x23,
+    InSandDash = 0x24,
+    FlailHitWallSteel = 0x25,
+    Reserved26 = 0x26,
+    FlailDashHitWallSteel = 0x27,
+    SwimmingDash = 0x28,
+    PrepareSprint = 0x29,
+    StopSprint = 0x2A,
+    StartJump = 0x2B,
+    JumpMoving = 0x2C,
+    Jump = 0x2D,
+    StartJumpWithObject = 0x2E,
+    JumpMovingWithObject = 0x2F,
+    JumpWithObject = 0x30,
+    DamageTaken = 0x31,
+    StartSpellCast = 0x32,
+    LoopSpellCast = 0x33,
+    EndSpellCast = 0x34,
+    ClimbStill = 0x35,
+    LoadingMap = 0x36,
+    MineCartMovingFast = 0x37,
+    Reserved38 = 0x38, // (???) Throw Object
+    Reserved39 = 0x39,
+    DamageTakenSwimming = 0x3A,
+    DamageKnockbackSwimming = 0x3B,
+    Reserved3C = 0x3C,
+    Reserved3D = 0x3D, // (???) Throw Object while jumping
+    SprintAgainstWall = 0x3E,
+
+    AttackSword = 0x3F, // (Sword)
+    AttackFlailSteel = 0x40,
+    JumpAttackSword = 0x41, // (Sword)
+    JumpAttackFlailSteel = 0x42,
+    ChargedAttackFlailIron = 0x43,
+    AttackSwordFiendBlade = 0x44,
+    Reserved45 = 0x45, // (???) Attack Flail (Iron)
+    JumpAttackSwordFiendBlade = 0x46,
+    Reserved47 = 0x47, // (???) Jump Attack Flail (Iron)
+    ChargedAttackFlailShortIron = 0x48,
+    AttackSwordHoly = 0x49,
+    Reserved4A = 0x4A, // (???) Attack Flail (Iron)
+    JumpAttackSwordHoly = 0x4B,
+    Reserved4C = 0x4C, // (???) Jump Attack Flail (Iron)
+    Reserved4D = 0x4D, // (???) Charged Attack Flail short (Iron)
+    Dead = 0x4E,
+    Reserved4F = 0x4F,
+
+    StartPrayMourn = 0x50,
+    PrayMourn = 0x51,
+    StopPrayMourn = 0x52,
+    WakingUpLaying = 0x53,
+    AwakeLaying = 0x54,
+    ShakeHeadLaying = 0x55,
+    Reserved56 = 0x56,
+
+    MonsterAlundraOO = 0x57,
+    GetThrownAway = 0x58,
+    EndEarthquake = 0x59,
+    StartEarthquake = 0x5A,
+    StartVictoryPose = 0x5B,
+    VictoryPose = 0x5C,
+    VictoryPoseShine = 0x5D,
+}

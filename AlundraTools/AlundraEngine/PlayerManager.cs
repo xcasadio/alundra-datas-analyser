@@ -20,7 +20,7 @@ public class PlayerManager
     {
         int currentTileIndex;
         int slope;
-        uint uVar2;
+        uint buttonsHold;
         uint dir;
 
         StaticVariables.g_activeCollisionEntity = null;
@@ -205,9 +205,9 @@ public class PlayerManager
         }
 
         MaybeStartWarpAnimation();
-        uVar2 = (uint)(StaticVariables.g_padState1.ButtonsHold >> 0xc);
-        dir = StaticVariables.UINT_ARRAY_80022c6c[uVar2];
-        if (StaticVariables.UINT_ARRAY_80022c6c[uVar2] == 0xffffffff)
+        buttonsHold = (uint)(StaticVariables.g_padState1.ButtonsHold >> 0xc);
+        dir = StaticVariables.UINT_ARRAY_80022c6c[buttonsHold];
+        if (StaticVariables.UINT_ARRAY_80022c6c[buttonsHold] == 0xffffffff)
         {
             dir = StaticVariables.PlayerEntity.TargetDirection;
         }
@@ -257,7 +257,7 @@ public class PlayerManager
                             goto END;
                         }
 
-                        if (uVar2 != 0)
+                        if (buttonsHold != 0)
                         {
                             StaticVariables.PlayerEntity.TargetAnimationId = 0xf;
                             goto END;
@@ -348,7 +348,7 @@ public class PlayerManager
                 TryUseItem();
                 goto END;
             case 6:
-                if (uVar2 != 0
+                if (buttonsHold != 0
                     && dir == 0x10
                     && StaticVariables.PlayerEntity.TargetDirection == 0x10
                     && StaticVariables.PlayerEntity.ForceAdjusted != 0
@@ -387,7 +387,7 @@ public class PlayerManager
                     }
 
                     //goto LAB_80031e7c;
-                    StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Idle;
                     goto END;
                 }
                 goto LAB_80031ea8;
@@ -411,7 +411,7 @@ public class PlayerManager
 
                 if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                 {
-                    if (uVar2 != 0)
+                    if (buttonsHold != 0)
                     {
                         StaticVariables.PlayerEntity.TargetAnimationId = 0x2c;
                         break;
@@ -423,9 +423,9 @@ public class PlayerManager
                 {
                     if ((StaticVariables.PlayerEntity.CombinedVramFlagsOR & 0x4000U) == 0)
                     {
-                        if (uVar2 == 0)
+                        if (buttonsHold == 0)
                         {
-                            StaticVariables.PlayerEntity.TargetAnimationId = 0x2b;
+                            StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.StartJump;
                         }
                         else
                         {
@@ -442,14 +442,14 @@ public class PlayerManager
                     break;
                 }
 
-                if (uVar2 != 0)
+                if (buttonsHold != 0)
                 {
-                    StaticVariables.PlayerEntity.TargetAnimationId = 1;
+                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Moving;
                     goto END;
                 }
                 //goto LAB_800325e0;
 
-                StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Idle;
                 break;
             case 3:
                 iVar2 = FUN_8002eeac();
@@ -462,7 +462,7 @@ public class PlayerManager
                 {
                     if (StaticVariables.PlayerEntity.ForceAdjusted == 0)
                     {
-                        if (uVar2 == 0)
+                        if (buttonsHold == 0)
                         {
                             StaticVariables.PlayerEntity.TargetAnimationId = 0x2a;
                             StaticVariables.INT_ARRAY_80126fe8[3] = 1;
@@ -509,7 +509,7 @@ public class PlayerManager
             case 0x49:
                 if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                 {
-                    StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                 }
                 //goto switchD_80032650_caseD_28;
                 TryUseItem();
@@ -558,7 +558,7 @@ public class PlayerManager
                         }
                         else if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                         {
-                            if (uVar2 == 0)
+                            if (buttonsHold == 0)
                             {
                                 StaticVariables.PlayerEntity.TargetAnimationId = 0x30;
                             }
@@ -569,7 +569,7 @@ public class PlayerManager
                         }
                         else if ((StaticVariables.g_padState1.ButtonsJustPressed & PadState.Cross) == 0)
                         {
-                            if (uVar2 == 0)
+                            if (buttonsHold == 0)
                             {
                                 StaticVariables.PlayerEntity.TargetAnimationId = 0xc;
                             }
@@ -580,7 +580,7 @@ public class PlayerManager
                         }
                         else if ((StaticVariables.PlayerEntity.CombinedVramFlagsOR & 0x4000U) == 0)
                         {
-                            if (uVar2 == 0)
+                            if (buttonsHold == 0)
                             {
                                 StaticVariables.PlayerEntity.TargetAnimationId = 0x2e;
                             }
@@ -600,7 +600,7 @@ public class PlayerManager
                         if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                         {
                             StaticVariables.PlayerEntity.TargetAnimationId = 10;
-                            if (uVar2 != 0)
+                            if (buttonsHold != 0)
                             {
                                 warpEntity.Flags2 = 3;
                                 break;
@@ -609,7 +609,7 @@ public class PlayerManager
                         else
                         {
                             StaticVariables.PlayerEntity.TargetAnimationId = 9;
-                            if (uVar2 == 0)
+                            if (buttonsHold == 0)
                             {
                                 warpEntity.Flags2 = 1;
                                 break;
@@ -674,13 +674,13 @@ public class PlayerManager
                     break;
                 }
 
-                if (uVar2 != 0 && dir != 0 && dir != 0x10)
+                if (buttonsHold != 0 && dir != 0 && dir != 0x10)
                 {
                     StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
                     break;
                 }
                 StaticVariables.PlayerEntity.TargetDirection = 0x10;
-                if (uVar2 == 0)
+                if (buttonsHold == 0)
                 {
                     StaticVariables.PlayerEntity.TargetAnimationId = 0x35;
                     StaticVariables.PlayerEntity.ForceZ = 0;
@@ -788,7 +788,7 @@ public class PlayerManager
                 {
                     if ((StaticVariables.g_padState1.ButtonsJustPressed & 0xd0) == 0)
                     {
-                        if (uVar2 == 0)
+                        if (buttonsHold == 0)
                         {
                             StaticVariables.PlayerEntity.TargetAnimationId = 0x22;
                         }
@@ -831,10 +831,10 @@ public class PlayerManager
                 {
                     StaticVariables.PlayerEntity.TargetDirection = dir;
                     if (StaticVariables.PlayerEntity.AnimCompleteCounter != 0 &&
-                       StaticVariables.UINT_ARRAY_80022cac[uVar2] != 0xffffffff)
+                       StaticVariables.UINT_ARRAY_80022cac[buttonsHold] != 0xffffffff)
                     {
                         StaticVariables.PlayerEntity.TargetAnimationId = 3;
-                        StaticVariables.PlayerEntity.TargetDirection = StaticVariables.UINT_ARRAY_80022cac[uVar2];
+                        StaticVariables.PlayerEntity.TargetDirection = StaticVariables.UINT_ARRAY_80022cac[buttonsHold];
                     }
                     break;
                 }
@@ -858,14 +858,14 @@ public class PlayerManager
 
                             if (10 < StaticVariables.INT_ARRAY_80126fe8[3])
                             {
-                                if (StaticVariables.UINT_ARRAY_80022cac[uVar2] != 0xffffffff)
+                                if (StaticVariables.UINT_ARRAY_80022cac[buttonsHold] != 0xffffffff)
                                 {
                                     StaticVariables.PlayerEntity.TargetAnimationId = 3;
-                                    StaticVariables.PlayerEntity.TargetDirection = StaticVariables.UINT_ARRAY_80022cac[uVar2];
+                                    StaticVariables.PlayerEntity.TargetDirection = StaticVariables.UINT_ARRAY_80022cac[buttonsHold];
                                 }
                                 break;
                             }
-                            if (uVar2 == 0)
+                            if (buttonsHold == 0)
                             {
                                 break;
                             }

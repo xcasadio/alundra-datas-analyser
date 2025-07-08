@@ -360,7 +360,6 @@ public class EffectManager
         int mapeffectid, int effecttype, byte ismapeffect, byte effectid, byte animid,
         int x, int y, int z)
     {
-        //initialize
         effect.MapEffectRecord = null;
         effect.SpriteEffectRecord = null;
         effect.SpriteRef = new SpriteRef();

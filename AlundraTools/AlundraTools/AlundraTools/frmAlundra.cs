@@ -1142,7 +1142,7 @@ namespace AlundraTools.AlundraTools
                 {
                     if (_selectedAnim.Frames[dex].Images == null)
                     {
-                        lstSector5Frames.Items.Add("frame " + dex + "transition");
+                        lstSector5Frames.Items.Add("frame " + dex + " transition");
                     }
                     else
                     {
@@ -1250,16 +1250,29 @@ namespace AlundraTools.AlundraTools
             {
                 _selectedFrame = _selectedAnim.Frames[lstSector5Frames.SelectedIndex];
                 lblFrameAddr.Text = _selectedFrame.MemoryAddress.ToString("x6");
-                lblImgAddr.Text = _selectedFrame.Images.MemoryAddress.ToString("x6");
-                lblFrameData.Text = "delay: " + ByteToString(_selectedFrame.Delay) + " frm?: " + _selectedFrame.CollisionOffset.ToString("x4") + " imgs?: " + ByteToString(_selectedFrame.Images.Unknown);
+                lblFrameData.Text = "delay: " + ByteToString(_selectedFrame.Delay) + " frm?: " +
+                                    _selectedFrame.CollisionOffset.ToString("x4");
                 //CachedSprites.Remove(selectedFrame.images.imagesetid);
-                for (var dex = 0; dex < _selectedFrame.Images.NumberOfImages; dex++)
+
+                if (_selectedFrame.Images != null)
                 {
-                    lstSector5Images.Items.Add("image " + dex);
+                    lblImgAddr.Text = _selectedFrame.Images.MemoryAddress.ToString("x6");
+                    for (var dex = 0; dex < _selectedFrame.Images.NumberOfImages; dex++)
+                    {
+                        lstSector5Images.Items.Add("image " + dex);
+                    }
+                    if (_selectedFrame.Images.NumberOfImages > 0)
+                    {
+                        lstSector5Images.SelectedIndex = 0;
+                    }
+
+                    lblFrameData.Text += " imgs?: " + ByteToString(_selectedFrame.Images.Unknown);
                 }
-                if (_selectedFrame.Images.NumberOfImages > 0)
+                else
                 {
-                    lstSector5Images.SelectedIndex = 0;
+                    lblImgAddr.Text = string.Empty;
+                    lstSector5Images.Items.Clear();
+                    lstSector5Images.SelectedIndex = -1;
                 }
             }
 
@@ -1355,7 +1368,7 @@ namespace AlundraTools.AlundraTools
             try
             {
                 e.Graphics.Clear(Color.Black);
-                if (_selectedFrame != null)
+                if (_selectedFrame?.Images != null)
                 {
                     var bmps = GetSpriteImages(_selectedFrame.Images);
                     var posx = pctFrame.Width / 2;
