@@ -354,7 +354,7 @@ public class GameInitializer
                 value &= 0xFF;
                 if ((value & 0x80) != 0)
                 {
-                    GetMapUnlockRequirement(iconIndex);
+                    GetItemUnlockRequirement(iconIndex);
                 }
                 iconIndex = iconIndex + 1;
                 //iconEtcEntryPtr = iconEtcEntryPtr + 2;
@@ -391,38 +391,28 @@ public class GameInitializer
     }
 
     // 8004e530
-    private int GetMapUnlockRequirement(int warpIndex)
+    private int GetItemUnlockRequirement(int itemId)
     {
-        // Check if warpIndex is valid
-        if (warpIndex < 0 || warpIndex >= StaticVariables.g_itemsCount)
+        if (itemId < 0 || itemId >= StaticVariables.g_itemsCount)
         {
             Debugger.Break();
-            Debug.WriteLine("Invalid warp index in GetMapUnlockRequirement");
+            Debug.WriteLine("Invalid itemId in GetItemUnlockRequirement");
             return 0;
         }
 
-        // Calculate the pointer into g_numberOfItems based on warpIndex
-        // In the assembly: warpEntryPtr = (warpIndex * 4) + g_numberOfItems
-        int warpEntryPtr = warpIndex * 2; // Each entry is 2 shorts (4 bytes)
-
-        short currentUsage = StaticVariables.g_numberOfItems[warpEntryPtr + 1];
-
-        // Calculate index into g_tileMapWarpSections
-        // In the assembly: (warpIndex * 4 + warpIndex) * 2 + g_tileMapWarpSections
-        int tileMapSectionIndex = (warpIndex * 5); // 4 + 1 = 5, * 2 was for byte offset, not needed in C#
-
-        // Get the unlock requirement value from g_tileMapWarpSections
-        short unlockRequirement = StaticVariables.g_tileMapWarpSections[tileMapSectionIndex + 3];
+        int itemIdIndex = itemId * 2; // In the assembly: itemIdIndex = (itemId * 4) + g_numberOfItems
+        short currentUsage = StaticVariables.g_numberOfItems[itemIdIndex + 1];
+        int itemPropertyId = (itemId * 5);
+        short unlockRequirement = StaticVariables.g_itemsProperties[itemPropertyId + 3];
 
         // If current usage doesn't match the requirement, increment it
         if (currentUsage != unlockRequirement)
         {
-            StaticVariables.g_numberOfItems[warpEntryPtr + 1] = (short)(currentUsage + 1);
+            StaticVariables.g_numberOfItems[itemIdIndex + 1] = (short)(currentUsage + 1);
             return currentUsage + 1;
         }
 
-        // Otherwise, return the warpIndex value
-        return warpIndex;
+        return itemId;
     }
 
     // 8004dac0
@@ -438,8 +428,8 @@ public class GameInitializer
         StaticVariables.g_initialPlayerStats.MpMax = 0;
         StaticVariables.g_initialPlayerStats.Mp = 0;
         StaticVariables.g_initialPlayerStats.MoneyAmount = 0;
-        StaticVariables.g_initialPlayerStats.field_e = 0;
-        StaticVariables.g_initialPlayerStats.field_10 = 0;
+        StaticVariables.g_initialPlayerStats.FalconTemp = 0;
+        StaticVariables.g_initialPlayerStats.Falcon = 0;
 
         //while (i < 0x80)
         //{

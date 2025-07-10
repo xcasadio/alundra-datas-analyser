@@ -238,106 +238,95 @@ public class GameEngine
         switch (StaticVariables.g_playerStats.WeaponId - 1)
         {
             case 0:
-                itemId = GetItemFromKind_1();
+                itemId = GetWeaponIdFromSlot1();
                 break;
             case 1:
-                itemId = GetItemFromKind_2();
+                itemId = GetWeaponIdFromSlot2();
                 break;
             case 2:
-                itemId = GetItemFromKind_3();
+                itemId = GetWeaponIdFromSlot3();
                 break;
             case 3:
-                itemId = GetItemFromKind_4();
+                itemId = GetWeaponIdFromSlot4();
                 break;
             case 4:
-                itemId = GetItemFromKind_5();
+                itemId = GetWeaponIdFromSlot5();
                 break;
             case 5:
-                itemId = GetItemFromKind_6();
+                itemId = GetWeaponIdFromSlot6();
                 break;
         }
 
         return itemId;
     }
 
-    private uint GetItemFromKind_1()
+    private uint GetWeaponIdFromSlot1()
     {
-        return GetItemFromKind(1);
+        return GetWeaponIdFromSlot(1);
     }
 
-    private uint GetItemFromKind_2()
+    private uint GetWeaponIdFromSlot2()
     {
-        return GetItemFromKind(2);
+        return GetWeaponIdFromSlot(2);
     }
 
-    private uint GetItemFromKind_3()
+    private uint GetWeaponIdFromSlot3()
     {
-        return GetItemFromKind(3);
+        return GetWeaponIdFromSlot(3);
     }
 
-    private uint GetItemFromKind_4()
+    private uint GetWeaponIdFromSlot4()
     {
-        return GetItemFromKind(4);
+        return GetWeaponIdFromSlot(4);
     }
 
-    private uint GetItemFromKind_5()
+    private uint GetWeaponIdFromSlot5()
     {
-        return GetItemFromKind(5);
+        return GetWeaponIdFromSlot(5);
     }
 
-    private uint GetItemFromKind_6()
+    private uint GetWeaponIdFromSlot6()
     {
-        return GetItemFromKind(6);
+        return GetWeaponIdFromSlot(6);
     }
 
     // 8004e18c
-    private uint GetItemFromKind(uint itemId)
+    private uint GetWeaponIdFromSlot(uint weaponTypeId)
     {
-        // Check if itemId is valid (less than 0x20)
-        if (itemId >= 0x20)
+        if (weaponTypeId >= 0x20)
         {
             Debugger.Break();
-            Debug.WriteLine($"Invalid tile map section ID: {itemId}");
-            return 0xFFFFFFFF; // Return -1 as uint
+            Debug.WriteLine($"Invalid weaponTypeId: {weaponTypeId}");
+            return 0xFFFFFFFF;
         }
 
-        var bestMatchIndex = -1;
-        var currentIndex = 0;
+        uint bestMatchIndex = 0xFFFFFFFF;
+        uint currentIndex = 0;
 
-        // Loop through up to 0x80 (128) section entries
         while (currentIndex < 0x80)
         {
-            // Get the section ID from the current entry in g_tileMapWarpSections
-            // Each entry is 10 bytes (5 shorts), with the first short being the section ID
-            var entrySectionId = StaticVariables.g_tileMapWarpSections[currentIndex * 5];
+            var entrySectionId = StaticVariables.g_itemsProperties[currentIndex * 5];
 
-            // Check if this entry matches our target itemId
-            if (entrySectionId == itemId)
+            if (entrySectionId == weaponTypeId)
             {
-                // Check if this warp is enabled (usage count > 0)
                 var usageCount = StaticVariables.g_numberOfItems[currentIndex * 2 + 1];
 
                 if (usageCount > 0)
                 {
-                    if (bestMatchIndex == -1)
+                    if (bestMatchIndex == 0xFFFFFFFF)
                     {
-                        // This is the first match we've found
                         bestMatchIndex = currentIndex;
 
-                        // Check bit 0 of the second short in the entry
-                        // If bit 0 is not set, return this index immediately
-                        var flags = StaticVariables.g_tileMapWarpSections[currentIndex * 5 + 1];
+                        var flags = StaticVariables.g_itemsProperties[currentIndex * 5 + 1];
                         if ((flags & 0x1) == 0)
                         {
-                            return (uint)currentIndex;
+                            return currentIndex;
                         }
                     }
                     else
                     {
-                        // We already have a match, check if this one has higher priority
-                        // Compare priority value (the third short in each entry)
-                        var currentPriority = StaticVariables.g_tileMapWarpSections[currentIndex * 5 + 2];
-                        var bestPriority = StaticVariables.g_tileMapWarpSections[bestMatchIndex * 5 + 2];
+                        var currentPriority = StaticVariables.g_itemsProperties[currentIndex * 5 + 2];
+                        var bestPriority = StaticVariables.g_itemsProperties[bestMatchIndex * 5 + 2];
 
                         if (bestPriority < currentPriority)
                         {
@@ -350,7 +339,7 @@ public class GameEngine
             currentIndex++;
         }
 
-        return (uint)bestMatchIndex;
+        return bestMatchIndex;
     }
 
     public void SetTileAnimationMode(int animationMode, int animationBankIndex)
@@ -362,6 +351,7 @@ public class GameEngine
 
         if (0 < animationBankIndex)
         {
+            Debugger.Break();
             //StaticVariables.g_animationData = StaticVariables.g_tile_set + (animationBankIndex + -1) * 0x10 + StaticVariables.g_tileSetMetaData.tileAnimationOffset;
         }
     }
@@ -772,8 +762,8 @@ public class GameEngine
         StaticVariables.g_playerWarpTimer = 0;
         StaticVariables.g_isWarpDisabled = 0;
         StaticVariables.g_playerWarpEffect = null;
-        var tileIndex = GetItemIdFromCurrentWeapon();
-        StaticVariables.g_currentTileFlags = StaticVariables.g_tileAttributeLUT[tileIndex];
+        var weaponItemId = GetItemIdFromCurrentWeapon();
+        StaticVariables.g_currentWeaponFlags = StaticVariables.g_weaponFlagsByItemId[weaponItemId];
         Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
         ResetWarpLockTimer();
     }
@@ -1457,7 +1447,7 @@ public class GameEngine
         if (StaticVariables.g_playerControlFlags == 0 &&
             StaticVariables.PlayerEntity.IsNotProcessable == 0 &&
             StaticVariables.g_warpLockTimer == 0 &&
-            StaticVariables.g_padState1.ButtonsHold == 0x900 &&
+            StaticVariables.g_padState1.ButtonsHold == (PadState.Start | PadState.Select) &&
             StaticVariables.g_warpDelayFrames == 0 &&
             StaticVariables.g_globalTransitionState == 0)
         {
@@ -1501,9 +1491,9 @@ public class GameEngine
         if (StaticVariables.g_playerControlFlags == 0 &&
             StaticVariables.PlayerEntity.IsNotProcessable == 0 &&
             StaticVariables.g_warpLockTimer == 0 &&
-            (StaticVariables.g_padState1.ButtonsJustPressed & 0x803) != 0 &&
+            (StaticVariables.g_padState1.ButtonsJustPressed & PadState.OpenInventory) != 0 &&
             StaticVariables.g_warpDelayFrames == 0 &&
-            (StaticVariables.g_padState1.ButtonsHold & 0x100) == 0 &&
+            (StaticVariables.g_padState1.ButtonsHold & PadState.Select) == 0 &&
             StaticVariables.g_globalTransitionState == 0 &&
             TriggerDebugZone() == 0)
         {
@@ -2609,6 +2599,8 @@ public class GameEngine
     //8003a7b0
     public void CheckAndTriggerTileEffect(Entity entity)
     {
+        //TODO
+        Debugger.Break();
         /*
         if (entity.FrameCollision != null)
         {
@@ -2821,11 +2813,11 @@ public class GameEngine
             return -1;
         }
 
-        // Calcul de l'indice dans la table g_tileMapWarpSections
+        // Calcul de l'indice dans la table g_itemsProperties
         // (warpId * 5) est l'indice multiplié par la taille de chaque entrée
-        var sectionId = StaticVariables.g_tileMapWarpSections[itemId * 5];
+        var sectionId = StaticVariables.g_itemsProperties[itemId * 5];
 
-        var tileMapSectionIndex = GetItemFromKind((uint)sectionId);
+        var tileMapSectionIndex = GetWeaponIdFromSlot((uint)sectionId);
         SetCurrentItemId(tileMapSectionIndex);
         return itemId;
     }

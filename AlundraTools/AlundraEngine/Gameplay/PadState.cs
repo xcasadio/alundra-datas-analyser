@@ -19,6 +19,8 @@ public class PadState
     public const uint Down = 0x4000;
     public const uint Left = 0x8000;
 
+    public static uint OpenInventory => R2 | L2 | Start;
+
     public uint MaxNbFrameHeld;
     public uint RepeatInterval;
     public uint IsOverThanMaxNbFrameHeld;

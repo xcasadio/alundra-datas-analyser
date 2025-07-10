@@ -18,16 +18,18 @@ public class PlayerManager
     //80031b50
     public void MovePlayer()
     {
-        int currentTileIndex;
+        int weaponId;
         int slope;
         uint buttonsHold;
         uint dir;
 
         StaticVariables.g_activeCollisionEntity = null;
-        currentTileIndex = (int)_gameEngine.GetItemIdFromCurrentWeapon();
-        slope = StaticVariables.PlayerEntity.Slope_18c;
-        StaticVariables.g_currentTileFlags = StaticVariables.g_tileAttributeLUT[currentTileIndex];
+        weaponId = (int)_gameEngine.GetItemIdFromCurrentWeapon();
+        //weapon slot : 0 6 8 5 0 10
+        //si sword niveau 1 alors 1
+        StaticVariables.g_currentWeaponFlags = StaticVariables.g_weaponFlagsByItemId[weaponId];
         CheckAndExecuteWarp();
+        slope = StaticVariables.PlayerEntity.Slope_18c;
 
         if (StaticVariables.PlayerEntity.IsNotProcessable != 0)
         {
@@ -135,8 +137,8 @@ public class PlayerManager
                 case 0x4f:
                     if (StaticVariables.PlayerEntity.ForceResetAnimationFlag != 0)
                     {
-                        currentTileIndex = _gameEngine.GetNumberOfItem(0x27);
-                        if (currentTileIndex == 0)
+                        weaponId = _gameEngine.GetNumberOfItem(0x27);
+                        if (weaponId == 0)
                         {
                             StaticVariables.g_isGameEnding = 1;
                             StaticVariables.g_warpType = 8;
@@ -206,8 +208,8 @@ public class PlayerManager
 
         MaybeStartWarpAnimation();
         buttonsHold = (uint)(StaticVariables.g_padState1.ButtonsHold >> 0xc);
-        dir = StaticVariables.UINT_ARRAY_80022c6c[buttonsHold];
-        if (StaticVariables.UINT_ARRAY_80022c6c[buttonsHold] == 0xffffffff)
+        dir = StaticVariables.g_directionByButtons[buttonsHold];
+        if (StaticVariables.g_directionByButtons[buttonsHold] == 0xffffffff)
         {
             dir = StaticVariables.PlayerEntity.TargetDirection;
         }
@@ -246,23 +248,23 @@ public class PlayerManager
                         {
                             if (slope == 2)
                             {
-                                StaticVariables.PlayerEntity.TargetAnimationId = 0x1d;
+                                StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.SwimmingStill;
                             }
                             goto END;
                         }
 
                         if ((StaticVariables.g_padState1.ButtonsJustPressed & 0xd0) != 0)
                         {
-                            StaticVariables.PlayerEntity.TargetAnimationId = 0x28;
+                            StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.SwimmingDash;
                             goto END;
                         }
 
                         if (buttonsHold != 0)
                         {
-                            StaticVariables.PlayerEntity.TargetAnimationId = 0xf;
+                            StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.SwimmingSlow;
                             goto END;
                         }
-                        StaticVariables.PlayerEntity.TargetAnimationId = 0x1d;
+                        StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.SwimmingStill;
                         goto END;
                     case 0x1c:
                     case 0x31:
@@ -326,7 +328,7 @@ public class PlayerManager
                     case 0x4b:
                     case 0x4e:
                     case 0x4f:
-                        StaticVariables.PlayerEntity.TargetAnimationId = 0x1d;
+                        StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.SwimmingStill;
                         break;
                     case 0x28:
                     case 0x3a:
@@ -337,7 +339,7 @@ public class PlayerManager
                         {
                             if (StaticVariables.PlayerEntity.ForceResetAnimationFlag == 1)
                             {
-                                StaticVariables.PlayerEntity.TargetAnimationId = 0x1d;
+                                StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.SwimmingStill;
                                 StaticVariables.PlayerEntity.TargetDirection = StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
                             }
                             goto END;
@@ -354,15 +356,15 @@ public class PlayerManager
                     && StaticVariables.PlayerEntity.ForceAdjusted != 0
                     && StaticVariables.PlayerEntity.WarpEntity == null)
                 {
-                    StaticVariables.PlayerEntity.TargetAnimationId = 0xe;
+                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Climbing;
                 }
                 break;
             default:
                 goto END;
         }
 
-        UpdatePlayerWarpEffect();
-        UpdateWarpStepProgression();
+        UpdatePlayerWeaponEffect();
+        UpdateWeaponStepProgression();
         UpdatePlayerWarpDirection(0);
 
         int iVar2;
@@ -372,8 +374,7 @@ public class PlayerManager
             case 0:
             case 1:
                 StaticVariables.PlayerEntity.TargetDirection = dir;
-                iVar2 = TryUseItem();
-                if (iVar2 == 0 || FUN_8002eeac() != 0)
+                if (TryUseItem() == 0 || PlayerTryAction() != 0)
                 {
                     break;
                 }
@@ -396,14 +397,13 @@ public class PlayerManager
             case 0x2c:
             case 0x2d:
                 StaticVariables.PlayerEntity.TargetDirection = dir;
-                iVar2 = TryUseItem();
-                if (iVar2 == 0 || FUN_8002eeac() != 0)
+                if (TryUseItem() == 0 || PlayerTryAction() != 0)
                 {
                     break;
                 }
 
                 LAB_80031ea8:
-                iVar2 = CheckTileWarpTrigger();
+                iVar2 = PlayerTryAttack();
                 if (iVar2 != 0)
                 {
                     break;
@@ -413,7 +413,7 @@ public class PlayerManager
                 {
                     if (buttonsHold != 0)
                     {
-                        StaticVariables.PlayerEntity.TargetAnimationId = 0x2c;
+                        StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.JumpMoving;
                         break;
                     }
                     goto LAB_80032604;
@@ -429,7 +429,7 @@ public class PlayerManager
                         }
                         else
                         {
-                            StaticVariables.PlayerEntity.TargetAnimationId = 2;
+                            StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.StartJumpWhileMoving;
                         }
                     }
                     break;
@@ -437,7 +437,7 @@ public class PlayerManager
 
                 if ((StaticVariables.g_padState1.ButtonsHold & PadState.Triangle) != 0)
                 {
-                    StaticVariables.PlayerEntity.TargetAnimationId = 0x29;
+                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.PrepareSprint;
                     StaticVariables.PlayerEntity.AnimCompleteCounter = 0;
                     break;
                 }
@@ -452,7 +452,7 @@ public class PlayerManager
                 StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Idle;
                 break;
             case 3:
-                iVar2 = FUN_8002eeac();
+                iVar2 = PlayerTryAction();
                 if (iVar2 != 0)
                 {
                     break;
@@ -464,7 +464,7 @@ public class PlayerManager
                     {
                         if (buttonsHold == 0)
                         {
-                            StaticVariables.PlayerEntity.TargetAnimationId = 0x2a;
+                            StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.StopSprint;
                             StaticVariables.INT_ARRAY_80126fe8[3] = 1;
                         }
                         else if ((StaticVariables.g_padState1.ButtonsHold & PadState.Triangle) == 0 ||
@@ -472,12 +472,12 @@ public class PlayerManager
                                  dir != StaticVariables.UINT_ARRAY_80022cec[StaticVariables.PlayerEntity.CurrentFrameIndex * 3 + 1] &&
                                  dir != StaticVariables.UINT_ARRAY_80022cec[StaticVariables.PlayerEntity.CurrentFrameIndex * 3 + 2]))
                         {
-                            StaticVariables.PlayerEntity.TargetAnimationId = 0x2a;
+                            StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.StopSprint;
                             StaticVariables.INT_ARRAY_80126fe8[3] = 0;
                         }
                         else if ((StaticVariables.g_padState1.ButtonsHold & 0xe0) != 0)
                         {
-                            StaticVariables.PlayerEntity.TargetAnimationId = 4;
+                            StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.SprintDash;
                         }
                     }
                     else
@@ -487,7 +487,7 @@ public class PlayerManager
                             StaticVariables.PlayerEntity.PosX,
                             StaticVariables.PlayerEntity.PosY,
                             StaticVariables.PlayerEntity.PosZ + 0x100000);
-                        StaticVariables.PlayerEntity.TargetAnimationId = 0x3e;
+                        StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.SprintAgainstWall;
                         StaticVariables.PlayerEntity.TargetDirection = StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
                     }
                     break;
@@ -525,7 +525,7 @@ public class PlayerManager
                 {
                     if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                     {
-                        StaticVariables.PlayerEntity.TargetAnimationId = 0x30;
+                        StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.JumpWithObject;
                     }
                     break;
                 }
@@ -550,56 +550,57 @@ public class PlayerManager
                     {
                         if ((StaticVariables.PlayerEntity.WarpEntity.Flags & 0x600U) == 0x600)
                         {
-                            StaticVariables.PlayerEntity.TargetAnimationId = 0x30;
+                            StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.JumpWithObject;
+
                             if (StaticVariables.PlayerEntity.IsAboveGround != 0)
                             {
-                                StaticVariables.PlayerEntity.TargetAnimationId = 0xc;
+                                StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.HoldObject;
                             }
                         }
                         else if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                         {
                             if (buttonsHold == 0)
                             {
-                                StaticVariables.PlayerEntity.TargetAnimationId = 0x30;
+                                StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.JumpWithObject;
                             }
                             else
                             {
-                                StaticVariables.PlayerEntity.TargetAnimationId = 0x2f;
+                                StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.JumpMovingWithObject;
                             }
                         }
                         else if ((StaticVariables.g_padState1.ButtonsJustPressed & PadState.Cross) == 0)
                         {
                             if (buttonsHold == 0)
                             {
-                                StaticVariables.PlayerEntity.TargetAnimationId = 0xc;
+                                StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.HoldObject;
                             }
                             else
                             {
-                                StaticVariables.PlayerEntity.TargetAnimationId = 7;
+                                StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.MovingWithObject;
                             }
                         }
                         else if ((StaticVariables.PlayerEntity.CombinedVramFlagsOR & 0x4000U) == 0)
                         {
                             if (buttonsHold == 0)
                             {
-                                StaticVariables.PlayerEntity.TargetAnimationId = 0x2e;
+                                StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.StartJumpWithObject;
                             }
                             else
                             {
-                                StaticVariables.PlayerEntity.TargetAnimationId = 6;
+                                StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.StartJumpWithObjectWhileMoving;
                             }
                         }
                     }
                     else if ((StaticVariables.PlayerEntity.CombinedVramFlagsOR & 0x2000U) == 0)
                     {
                         StaticVariables.PlayerEntity.WarpEntity.TargetDirection =
-                            (uint)StaticVariables.g_cardinalDirectionTable[StaticVariables.PlayerEntity.CurrentFrameIndex];
+                            (uint)StaticVariables.g_cardinalDirectionTable[StaticVariables.PlayerEntity.CurrentFrameIndex & 0x3];
                         warpEntity.PosX = StaticVariables.PlayerEntity.PosX;
                         warpEntity.PosY = StaticVariables.PlayerEntity.PosY;
                         warpEntity.PosZ = StaticVariables.PlayerEntity.PosZ + 0x200000;
                         if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                         {
-                            StaticVariables.PlayerEntity.TargetAnimationId = 10;
+                            StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.ThrowObjectWhileJumping;
                             if (buttonsHold != 0)
                             {
                                 warpEntity.Flags2 = 3;
@@ -608,7 +609,7 @@ public class PlayerManager
                         }
                         else
                         {
-                            StaticVariables.PlayerEntity.TargetAnimationId = 9;
+                            StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.ThrowObject;
                             if (buttonsHold == 0)
                             {
                                 warpEntity.Flags2 = 1;
@@ -623,11 +624,11 @@ public class PlayerManager
                 if (StaticVariables.PlayerEntity.IsAboveGround != 0)
                 {
                     //goto LAB_80031e7c;
-                    StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Idle;
                     goto END;
                 }
                 LAB_8003279c:
-                StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                 break;
             case 10:
             case 0x14:
@@ -642,7 +643,7 @@ public class PlayerManager
             case 0x4b:
                 if (StaticVariables.PlayerEntity.IsAboveGround != 0)
                 {
-                    StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Idle;
                 }
                 //goto switchD_80032650_caseD_28;
                 TryUseItem();
@@ -658,7 +659,7 @@ public class PlayerManager
                 {
                     if (StaticVariables.PlayerEntity.IsAboveGround != 0)
                     {
-                        StaticVariables.PlayerEntity.TargetAnimationId = 0xc;
+                        StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.HoldObject;
                     }
                     break;
                 }
@@ -669,23 +670,23 @@ public class PlayerManager
             case 0xe:
             case 0x35:
                 iVar2 = TryUseItem();
-                if (iVar2 == 0 || FUN_8002eeac() != 0)
+                if (iVar2 == 0 || PlayerTryAction() != 0)
                 {
                     break;
                 }
 
                 if (buttonsHold != 0 && dir != 0 && dir != 0x10)
                 {
-                    StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                     break;
                 }
                 StaticVariables.PlayerEntity.TargetDirection = 0x10;
                 if (buttonsHold == 0)
                 {
-                    StaticVariables.PlayerEntity.TargetAnimationId = 0x35;
+                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.ClimbStill;
                     StaticVariables.PlayerEntity.ForceZ = 0;
                     LAB_800322a8:
-                    StaticVariables.PlayerEntity.Flags = StaticVariables.PlayerEntity.Flags & 0xfffffeff;
+                    StaticVariables.PlayerEntity.Flags &= 0xfffffeff;
                 }
                 else
                 {
@@ -695,7 +696,7 @@ public class PlayerManager
                         {
                             StaticVariables.PlayerEntity.ForceZ = -0x10000;
                             LAB_8003229c:
-                            StaticVariables.PlayerEntity.TargetAnimationId = 0xe;
+                            StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Climbing;
                             //goto LAB_800322a8;             
                             StaticVariables.PlayerEntity.Flags &= 0xfffffeff;
                             goto END;
@@ -713,13 +714,13 @@ public class PlayerManager
                         {
                             StaticVariables.PlayerEntity.ForceZ = 0x10000;
                             //goto LAB_8003229c;
-                            StaticVariables.PlayerEntity.TargetAnimationId = 0xe;
+                            StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Climbing;
                             StaticVariables.PlayerEntity.Flags &= 0xfffffeff;
                             goto END;
                         }
                     }
                     LAB_80031e7c:
-                    StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Idle;
                 }
                 break;
             case 0xf:
@@ -732,11 +733,11 @@ public class PlayerManager
                 //goto switchD_80031dac_caseD_f;
                 if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                 {
-                    StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                 }
                 else
                 {
-                    StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Idle;
                 }
                 TryUseItem();
                 goto END;
@@ -790,23 +791,23 @@ public class PlayerManager
                     {
                         if (buttonsHold == 0)
                         {
-                            StaticVariables.PlayerEntity.TargetAnimationId = 0x22;
+                            StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.InSand;
                         }
                         else
                         {
-                            StaticVariables.PlayerEntity.TargetAnimationId = 0x23;
+                            StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.InSandMoving;
                         }
                     }
                     else
                     {
-                        StaticVariables.PlayerEntity.TargetAnimationId = 0x24;
+                        StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.InSandDash;
                     }
                     break;
                 }
                 LAB_8003253c:
                 if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                 {
-                    StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                     break;
                 }
                 goto LAB_800325e0;
@@ -814,53 +815,53 @@ public class PlayerManager
                 iVar2 = TryUseItem();
 
                 if (iVar2 == 0
-                    || FUN_8002eeac() != 0
-                    || CheckTileWarpTrigger() != 0)
+                    || PlayerTryAction() != 0
+                    || PlayerTryAttack() != 0)
                 {
                     break;
                 }
 
                 if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                 {
-                    StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                     StaticVariables.PlayerEntity.TargetDirection = dir;
                     break;
                 }
                 StaticVariables.PlayerEntity.TargetDirection = dir;
-                if ((StaticVariables.g_padState1.ButtonsHold & 0x10) != 0)
+                if ((StaticVariables.g_padState1.ButtonsHold & PadState.Triangle) != 0)
                 {
                     StaticVariables.PlayerEntity.TargetDirection = dir;
                     if (StaticVariables.PlayerEntity.AnimCompleteCounter != 0 &&
                        StaticVariables.UINT_ARRAY_80022cac[buttonsHold] != 0xffffffff)
                     {
-                        StaticVariables.PlayerEntity.TargetAnimationId = 3;
+                        StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Sprint;
                         StaticVariables.PlayerEntity.TargetDirection = StaticVariables.UINT_ARRAY_80022cac[buttonsHold];
                     }
                     break;
                 }
                 LAB_80032594:
-                StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Idle;
                 break;
             case 0x2a:
                 iVar2 = TryUseItem();
-                if (iVar2 != 0 && FUN_8002eeac() == 0)
+                if (iVar2 != 0 && PlayerTryAction() == 0)
                 {
                     if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                     {
-                        StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                        StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                     }
                     else if (StaticVariables.INT_ARRAY_80126fe8[3] != 0)
                     {
                         if (StaticVariables.PlayerEntity.ForceAdjusted == 0 &&
                            (StaticVariables.g_padState1.ButtonsHold & PadState.Triangle) != 0)
                         {
-                            StaticVariables.INT_ARRAY_80126fe8[3] = StaticVariables.INT_ARRAY_80126fe8[3] + 1;
+                            StaticVariables.INT_ARRAY_80126fe8[3] += 1;
 
                             if (10 < StaticVariables.INT_ARRAY_80126fe8[3])
                             {
                                 if (StaticVariables.UINT_ARRAY_80022cac[buttonsHold] != 0xffffffff)
                                 {
-                                    StaticVariables.PlayerEntity.TargetAnimationId = 3;
+                                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Sprint;
                                     StaticVariables.PlayerEntity.TargetDirection = StaticVariables.UINT_ARRAY_80022cac[buttonsHold];
                                 }
                                 break;
@@ -888,7 +889,7 @@ public class PlayerManager
                 }
 
                 LAB_800325e0:
-                StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Idle;
                 break;
             case 0x36:
                 if (StaticVariables.PlayerEntity.IsAboveGround != 0)
@@ -897,7 +898,7 @@ public class PlayerManager
                 }
 
                 LAB_80032604:
-                StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                 break;
             case 0x3a:
             case 0x3b:
@@ -905,11 +906,11 @@ public class PlayerManager
                 //goto switchD_80031dac_caseD_f;
                 if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                 {
-                    StaticVariables.PlayerEntity.TargetAnimationId = 0x2d;
+                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                 }
                 else
                 {
-                    StaticVariables.PlayerEntity.TargetAnimationId = 0;
+                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Idle;
                 }
                 TryUseItem();
                 goto END;
@@ -924,7 +925,7 @@ public class PlayerManager
     }
 
     //8002eaf4
-    private int CheckTileWarpTrigger()
+    private int PlayerTryAttack()
     {
         if ((StaticVariables.PlayerEntity.CombinedVramFlagsOR & 0x2000) != 0)
         {
@@ -949,16 +950,14 @@ public class PlayerManager
 
         for (var i = 0; i < 16; i++)
         {
-            // on lit posY et posZ+0x10 pour positionner l’effet
             var y = StaticVariables.PlayerEntity.PosY;
             var z = StaticVariables.PlayerEntity.PosZ + StaticVariables.MapTileHeight;
 
-            // on crée l’effet 3D
             var effect = _gameEngine.EffectManager.CreateEffectEntity(
                 0, 0x10, 0,
                 StaticVariables.PlayerEntity.PosX,
                 StaticVariables.PlayerEntity.PosY,
-                StaticVariables.PlayerEntity.PosZ + 0x100000
+                StaticVariables.PlayerEntity.PosZ + 0x10
                 );
 
             if (effect != null)
@@ -972,11 +971,9 @@ public class PlayerManager
 
         //Debugger.Break();
 
-        var flags = StaticVariables.g_currentTileFlags;
-        var baseIdx = flags * 13;
-        baseIdx = baseIdx + 5; 
-        var warpData = baseIdx;
-        warpData = StaticVariables.g_tileWarpInitFlags[warpData];
+        var weaponIndex = StaticVariables.g_currentWeaponFlags;
+        var idx = (weaponIndex << 1) + weaponIndex;
+        weaponIndex = (idx << 2) + weaponIndex;
 
         if ((StaticVariables.g_padState1.ButtonsJustPressed & PadState.Square) != 0)
         {
@@ -985,23 +982,32 @@ public class PlayerManager
                 return 0;
             }
 
-            var tb = StaticVariables.g_currentTileFlags;
-            var idx = tb * 13 + 1;
-            warpData = idx;
+            weaponIndex += 1;
+        }
+        else
+        {
+            weaponIndex += 5;
         }
 
-        var active = StaticVariables.g_tileWarpInitFlags[warpData];
-        if (active == 0)
+        //weaponIndex += 9;
+        //anim id
+        //sword 16
+        //flail 18
+        //bow 19
+        //ice 17
+
+        var animId = StaticVariables.g_weaponInitFlags[weaponIndex];
+        if (animId == (int)PlayerAnimation.Idle)
         {
-            StaticVariables.g_playerEffectTransitionCooldown[0] = StaticVariables.g_tileWarpInitFlags[warpData];
-            StaticVariables.g_playerEffectTransitionCooldown[1] = StaticVariables.g_tileWarpInitFlags[warpData + 1];
-            StaticVariables.g_playerEffectTransitionCooldown[2] = StaticVariables.g_tileWarpInitFlags[warpData + 2];
-            StaticVariables.g_playerEffectTransitionCooldown[3] = StaticVariables.g_tileWarpInitFlags[warpData + 3];
+            StaticVariables.g_playerEffectTransitionCooldown[0] = StaticVariables.g_weaponInitFlags[weaponIndex];
+            StaticVariables.g_playerEffectTransitionCooldown[1] = StaticVariables.g_weaponInitFlags[weaponIndex + 1];
+            StaticVariables.g_playerEffectTransitionCooldown[2] = StaticVariables.g_weaponInitFlags[weaponIndex + 2];
+            StaticVariables.g_playerEffectTransitionCooldown[3] = StaticVariables.g_weaponInitFlags[weaponIndex + 3];
             StaticVariables.g_playerEffectStepFlags = 0;
         }
         else
         {
-            StaticVariables.PlayerEntity.TargetAnimationId = (byte)active;
+            StaticVariables.PlayerEntity.TargetAnimationId = animId;
             _gameEngine.PlaySoundEffect(3);
         }
 
@@ -1009,13 +1015,13 @@ public class PlayerManager
     }
 
     //8002eeac
-    private int FUN_8002eeac()
+    private int PlayerTryAction()
     {
         var player = StaticVariables.PlayerEntity;
 
         if (player.WarpEntity != null)
         {
-            player.TargetAnimationId = (byte)(player.IsAboveGround == 1 ? 0x0C : 0x30);
+            player.TargetAnimationId = (byte)(player.IsAboveGround == 1 ? (int)PlayerAnimation.HoldObject : (int)PlayerAnimation.JumpWithObject);
             return 1;
         }
 
@@ -1024,7 +1030,7 @@ public class PlayerManager
             //interact with something
             if ((StaticVariables.g_padState1.ButtonsJustPressed & PadState.Square) != 0)
             {
-                return TryTriggerWarpFromEntity(player.XCollisionEntity);
+                return PlayerTryInteractWithEntity(player.XCollisionEntity);
             }
         }
 
@@ -1046,7 +1052,7 @@ public class PlayerManager
                 {
                     if (entity.RidingEntity == StaticVariables.PlayerEntity)
                     {
-                        var res = TryTriggerWarpFromEntity(entity);
+                        var res = PlayerTryInteractWithEntity(entity);
                         if (res != 0)
                         {
                             return res;
@@ -1060,7 +1066,7 @@ public class PlayerManager
     }
 
     //8002edbc
-    private int TryTriggerWarpFromEntity(Entity entity)
+    private int PlayerTryInteractWithEntity(Entity entity)
     {
         var platformFlagBits = (entity.Flags & 0x600) >> 9;
         var result = 1;
@@ -1094,7 +1100,7 @@ public class PlayerManager
         entity.PlatformEntity = StaticVariables.PlayerEntity;
 
         var above = StaticVariables.PlayerEntity.IsAboveGround;
-        StaticVariables.PlayerEntity.TargetAnimationId = (byte)(above != 0 ? 0x0C : 0x30);
+        StaticVariables.PlayerEntity.TargetAnimationId = (byte)(above != 0 ? (int)PlayerAnimation.HoldObject : (int)PlayerAnimation.JumpWithObject);
 
         StaticVariables.PlayerEntity.RelativeWarpOffsetX = entity.PosX - StaticVariables.PlayerEntity.PosX;
         StaticVariables.PlayerEntity.RelativeWarpOffsetY = entity.PosY - StaticVariables.PlayerEntity.PosY;
@@ -1134,7 +1140,6 @@ public class PlayerManager
         StaticVariables.g_items[4] = 0;
         StaticVariables.g_balanceEffectSources = null;
 
-        // Parcourt les icônes en commençant par l'index 97
         var iconOffset = 97 * 8 + 6; // Offset dans le tableau g_iconNameEtcBase
         while (iconIndex >= 0)
         {
@@ -1153,7 +1158,6 @@ public class PlayerManager
             iconOffset -= 8;
         }
 
-        // Vérification des tuiles actuelles
         var currentTileIndex = (int)_gameEngine.GetItemIdFromCurrentWeapon();
         if (currentTileIndex > 0 && currentTileIndex < 0x61)
         {
@@ -1167,7 +1171,6 @@ public class PlayerManager
             }
         }
 
-        // Vérification des warps déclenchés
         var triggeredWarpMapId = _gameEngine.GetTriggeredWarpMapId();
         if (triggeredWarpMapId > 0 && triggeredWarpMapId < 0x61)
         {
@@ -1181,7 +1184,6 @@ public class PlayerManager
             }
         }
 
-        // Copie les données d'effet de balance
         if (StaticVariables.g_balanceEffectSources != null)
         {
             // Copie de g_balanceEffectSources vers g_intArray_80127008
@@ -1194,14 +1196,13 @@ public class PlayerManager
             //Array.Copy(StaticVariables.PlayerEntity.BalanceRecord, 0, StaticVariables.g_intArray_80127008, 0, 0xF0 / 4);
         }
 
-        // Gestion des valeurs d'effet pour l'animation
-        if (StaticVariables.g_playerControlFlags == 0 && StaticVariables.PlayerEntity.IsNotProcessable == 0 &&
-            StaticVariables.g_padState1.ButtonsHold == 0)
+        if (StaticVariables.g_playerControlFlags == 0 
+            && StaticVariables.PlayerEntity.IsNotProcessable == 0 
+            && StaticVariables.g_padState1.ButtonsHold == 0)
         {
-            // Si le joueur a des points de vie et n'a pas sa vie au maximum
-            if (StaticVariables.PlayerEntity.Hp != 0 && StaticVariables.PlayerEntity.Hp < StaticVariables.PlayerEntity.HpMax)
+            if (StaticVariables.PlayerEntity.Hp != 0 
+                && StaticVariables.PlayerEntity.Hp < StaticVariables.PlayerEntity.HpMax)
             {
-                // Parcourt les effets et incrémente les HP en fonction des animations
                 for (var i = 0; i < 3; i++)
                 {
                     if (StaticVariables.g_items[i] != null && StaticVariables.g_items[i] != 0)
@@ -1229,7 +1230,6 @@ public class PlayerManager
                     }
                 }
 
-                // Vérification que les HP ne dépassent pas le maximum
                 if (StaticVariables.PlayerEntity.Hp > StaticVariables.PlayerEntity.HpMax)
                 {
                     StaticVariables.PlayerEntity.Hp = StaticVariables.PlayerEntity.HpMax;
@@ -1238,13 +1238,11 @@ public class PlayerManager
         }
         else
         {
-            // Réinitialise les compteurs d'effets si le joueur est sous contrôle
             StaticVariables.INT_ARRAY_80126fe8[0] = 0;
             StaticVariables.INT_ARRAY_80126fe8[1] = 0;
             StaticVariables.INT_ARRAY_80126fe8[2] = 0;
         }
 
-        // Affichage des informations de debug si nécessaire
         if (StaticVariables.g_debugState < 0 && (StaticVariables.g_debugFlags & 0x400) != 0)
         {
             //// Code pour l'affichage des informations de debug
@@ -1321,7 +1319,7 @@ public class PlayerManager
     }
 
     // 8002f768
-    private void UpdateWarpStepProgression()
+    private void UpdateWeaponStepProgression()
     {
         if (StaticVariables.g_playerEffectTransitionCooldown[0] != 0)
         {
@@ -1333,12 +1331,9 @@ public class PlayerManager
         }
 
         var player = StaticVariables.PlayerEntity;
-        var animId = player.TargetAnimationId;
-        var warpType = StaticVariables.g_tileWarpTypeList != null && animId < StaticVariables.g_tileWarpTypeList.Length
-            ? StaticVariables.g_tileWarpTypeList[animId]
-            : (byte)0;
+        var initFlag = StaticVariables.g_weaponInitFlags[player.TargetAnimationId * 2 + 0x9d];
 
-        if (warpType == 0)
+        if (initFlag == 0)
         {
             Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
             return;
@@ -1353,46 +1348,32 @@ public class PlayerManager
             return;
         }
 
-        var posX = player.PosX;
-        var posY = player.PosY;
-        var posZ = player.PosZ;
         var zOffset = StaticVariables.g_playerEffectTransitionCooldown[3] << 16;
-        var direction = 0;
-        if (StaticVariables.g_cardinalDirectionTable != null && player.CurrentFrameIndex < StaticVariables.g_cardinalDirectionTable.Length)
-        {
-            direction = StaticVariables.g_cardinalDirectionTable[player.CurrentFrameIndex];
-        }
+        var direction = StaticVariables.g_cardinalDirectionTable[player.CurrentFrameIndex & 0x3];
 
         _gameEngine.SpawnWarpEntity(player, 0, StaticVariables.g_playerEffectTransitionCooldown[1],
-            posX, posY, posZ + zOffset, (uint)direction);
+            player.PosX, player.PosY, player.PosZ + zOffset, (uint)direction);
         Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
         StaticVariables.g_playerEffectStepFlags = 0;
     }
 
     //8002f49c
-    private int UpdatePlayerWarpEffect()
+    private int UpdatePlayerWeaponEffect()
     {
-        // Check if specific pad button (0x80) is held or was just released
-        var buttonHeld = (StaticVariables.g_padState1.ButtonsHold & 0x80) != 0;
-        var buttonReleased = (StaticVariables.g_padState1.ButtonsReleased & 0x80) != 0;
+        var buttonHeld = (StaticVariables.g_padState1.ButtonsHold & PadState.Square) != 0;
+        var buttonReleased = (StaticVariables.g_padState1.ButtonsReleased & PadState.Square) != 0;
 
         if (buttonHeld || buttonReleased)
         {
-            // Get current tile flags and check warp initialization flags
-            var currentTileFlags = StaticVariables.g_currentTileFlags;
-            var tileWarpInitFlag = (uint)StaticVariables.g_tileWarpInitFlags[currentTileFlags];
+            var currentWeaponFlags = StaticVariables.g_currentWeaponFlags;
+            var weaponInitFlag = (uint)StaticVariables.g_weaponInitFlags[currentWeaponFlags];
 
-            if (tileWarpInitFlag != 0)
+            if (weaponInitFlag != 0)
             {
-                // Check if player animation has warp type
                 var playerAnimId = StaticVariables.PlayerEntity.TargetAnimationId;
-                byte warpType = 0;
-                if (StaticVariables.g_tileWarpTypeList != null && playerAnimId < StaticVariables.g_tileWarpTypeList.Length)
-                {
-                    warpType = (byte)StaticVariables.g_tileWarpTypeList[playerAnimId];
-                }
+                byte initFlag = StaticVariables.g_weaponInitFlags[playerAnimId * 2 + 0x9c];
 
-                if (warpType != 0)
+                if (initFlag != 0)
                 {
                     // Increment warp timer (max 0x3C = 60)
                     if (StaticVariables.g_playerWarpTimer < 0x3C)
@@ -1493,8 +1474,8 @@ public class PlayerManager
                         var adjustedYForce = randomYComponent * 5;
 
                         // Apply forces relative to player's current forces
-                        spriteEffect.ForceX = spriteEffect.ForceX + adjustedXForce;
-                        spriteEffect.ForceY = spriteEffect.ForceY + adjustedYForce;
+                        spriteEffect.ForceX += adjustedXForce;
+                        spriteEffect.ForceY += adjustedYForce;
 
                         // Subtract player forces to create relative motion
                         spriteEffect.ForceX = StaticVariables.PlayerEntity.ForceX - randomXComponent;
@@ -2015,7 +1996,7 @@ public class PlayerManager
 
             if (StaticVariables.g_playerEffectCurrentFrame < 0x7fffffff)
             {
-                StaticVariables.g_playerEffectCurrentFrame = StaticVariables.g_playerEffectCurrentFrame + 1;
+                StaticVariables.g_playerEffectCurrentFrame += 1;
             }
 
             if (iVar1 != 0)
@@ -2316,7 +2297,7 @@ public class PlayerManager
         {
             if (StaticVariables.g_isWarpDisabled == 0)
             {
-                StaticVariables.DAT_80098f24 = StaticVariables.DAT_80098f24 + 1;
+                StaticVariables.DAT_80098f24 += 1;
                 //StaticVariables.g_debugMessage += "Attr     : %08X("  + combinedVramFlagsAnd;
 
                 if ((combinedVramFlagsAnd & 4U) == 0)
@@ -2513,7 +2494,6 @@ public class PlayerManager
     // 8002fb14
     public void PreparePlayerForWarpEntry(int param_1)
     {
-        // Variables locales pour stocker les états et résultats temporaires
         var effectEntityId = 0;
         byte effectId = 0;
         var animIndex = 0;
@@ -2521,34 +2501,28 @@ public class PlayerManager
         SpriteEffect entityCreated = null;
         SpriteEffect spriteEffect = null;
 
-        // Récupération de l'animation actuelle du joueur
-        var playerAnimId = StaticVariables.PlayerEntity.TargetAnimationId;
-
-        // Traitement en fonction de l'animation actuelle du joueur
-        switch (playerAnimId)
+        switch (StaticVariables.PlayerEntity.TargetAnimationId)
         {
-            // Cas où l'animation du joueur nécessite un déclenchement des effets de tuile
-            case 4:  // Ces valeurs correspondent à différentes animations de mouvement
-            case 0x10:
-            case 0x12:
-            case 0x14:
-            case 0x16:
-            case 0x18:
-            case 0x19:
-            case 0x3f:
-            case 0x40:
-            case 0x41:
-            case 0x42:
-            case 0x44:
-            case 0x46:
-            case 0x49:
-            case 0x4b:
+            case (int)PlayerAnimation.SprintDash:
+            case (int)PlayerAnimation.AttackSwordDaggerLegend:
+            case (int)PlayerAnimation.AttackFlailIron:
+            case (int)PlayerAnimation.JumpAttackSwordDagger:
+            case (int)PlayerAnimation.JumpAttackFlailIron:
+            case (int)PlayerAnimation.ChargeAttackSword:
+            case (int)PlayerAnimation.ChargeAttackFlailSteel:
+            case (int)PlayerAnimation.AttackSword:
+            case (int)PlayerAnimation.AttackFlailSteel:
+            case (int)PlayerAnimation.JumpAttackSword:
+            case (int)PlayerAnimation.JumpAttackFlailSteel:
+            case (int)PlayerAnimation.AttackSwordFiendBlade:
+            case (int)PlayerAnimation.JumpAttackSwordFiendBlade:
+            case (int)PlayerAnimation.AttackSwordHoly:
+            case (int)PlayerAnimation.JumpAttackSwordHoly:
                 _gameEngine.CheckAndTriggerTileEffect(StaticVariables.PlayerEntity);
                 break;
 
             // Animation de type "frappe"
             case 0x29:
-                // Jouer un son à intervalle régulier
                 if ((StaticVariables.PlayerEntity.FrameCounter & 7) == 0)
                 {
                     _gameEngine.PlaySoundEffect((uint)StaticVariables.g_hitSoundEffects[StaticVariables.PlayerEntity.Slope_18c]);
@@ -2634,9 +2608,8 @@ public class PlayerManager
         // Traitement des effets pour le joueur en mouvement
         switch (StaticVariables.PlayerEntity.TargetAnimationId)
         {
-            // Animations de marche/course - jouer des sons de pas
-            case 1:
-            case 7:
+            case (int)PlayerAnimation.Moving:
+            case (int)PlayerAnimation.MovingWithObject:
                 if ((StaticVariables.PlayerEntity.FrameCounter & 0xf) == 0)
                 {
                     _gameEngine.PlaySoundEffect((uint)StaticVariables.SHORT_ARRAY_800227f4[StaticVariables.PlayerEntity.Slope_18c]);
@@ -2644,7 +2617,7 @@ public class PlayerManager
                 goto SkipEffects;
 
             // Animation de type "coup"
-            case 3:
+            case (int)PlayerAnimation.Sprint:
                 effectEntityId = 0;
                 if ((StaticVariables.PlayerEntity.FrameCounter & 7) == 0)
                 {
@@ -2813,7 +2786,7 @@ public class PlayerManager
                     StaticVariables.PlayerEntity.ForceZ < 1)
                 {
                     // Jouer un son d'atterrissage
-                    _gameEngine.PlaySoundEffect((uint)StaticVariables.SHORT_ARRAY_80022804[StaticVariables.PlayerEntity.Slope_18c]);
+                    _gameEngine.PlaySoundEffect((uint)StaticVariables.g_hitSfxIdByTileSlope[StaticVariables.PlayerEntity.Slope_18c]);
 
                     // Créer des effets visuels d'atterrissage en fonction du type de terrain
                     if (StaticVariables.PlayerEntity.Slope_18c < 1 || (2 < StaticVariables.PlayerEntity.Slope_18c && StaticVariables.PlayerEntity.Slope_18c != 4))
@@ -2833,7 +2806,6 @@ public class PlayerManager
 
                                 if (entityCreated != null)
                                 {
-                                    // Générer des mouvements aléatoires
                                     StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
                                     entityCreated.ForceX = (int)(((ulong)StaticVariables.g_gameRandomSeed * 0x30001) >> 32) - 0x18000;
 
@@ -2879,28 +2851,27 @@ public class PlayerManager
                 }
             }
 
-            // Déterminer le type d'attaque en fonction de l'animation
             var attackType = -1;
 
-            if (StaticVariables.PlayerEntity.TargetAnimationId == 0x16)
+            if (StaticVariables.PlayerEntity.TargetAnimationId == (int)PlayerAnimation.JumpAttackFlailIron)
             {
                 attackType = 0;
             }
-            else if (StaticVariables.PlayerEntity.TargetAnimationId == 0x12)
+            else if (StaticVariables.PlayerEntity.TargetAnimationId == (int)PlayerAnimation.AttackFlailIron)
             {
                 attackType = 0;
             }
-            else if (StaticVariables.PlayerEntity.TargetAnimationId == 0x40)
+            else if (StaticVariables.PlayerEntity.TargetAnimationId == (int)PlayerAnimation.AttackFlailSteel)
             {
                 attackType = 1;
             }
-            else if (StaticVariables.PlayerEntity.TargetAnimationId == 0x42)
+            else if (StaticVariables.PlayerEntity.TargetAnimationId == (int)PlayerAnimation.JumpAttackFlailSteel)
             {
                 attackType = 1;
             }
             else
             {
-                return; // Sortir si ce n'est pas une animation d'attaque
+                return;
             }
 
             // Ne faire l'attaque que si le compteur de coup est à 0
@@ -2926,7 +2897,6 @@ public class PlayerManager
                     // Parcourir les coins de la boîte de collision
                     for (var i = 0; i < 4; i++)
                     {
-                        // Limiter les coordonnées aux bornes de la carte
                         var tileX = worldXCoords[i];
                         if (tileX < 1)
                         {
@@ -2947,27 +2917,25 @@ public class PlayerManager
                             tileY = 0x3B;
                         }
 
-                        // Calculer l'index de la tuile
-                        var tileIndex = tileY * 0xd0 + tileX * 4 + 0x302;
+                        var mapWidth = _gameEngine.CurrentMap.Map.Width;
+                        var tile = _gameEngine.CurrentMap.Map.MapTiles[tileY * mapWidth + tileX];
 
-                        // Vérifier si la tuile a un attribut d'effet (bit 1)
-                        if ((StaticVariables.g_spriteVRAMPointer[tileIndex] & 2) != 0)
+                        if ((tile.Walkability & 2) != 0)
                         {
                             // Vérifier si la hauteur de la boîte de collision croise la hauteur de l'effet
-                            var tileEffectZ = (StaticVariables.g_spriteVRAMPointer[tileIndex + 3] & 0xFF) << 20;
+                            var tileEffectZ = (tile.Height & 0xFF) << 20;
 
                             if (StaticVariables.PlayerEntity.HitBoxZ <= tileEffectZ + 0x80000 &&
                                 tileEffectZ + 0x80000 <= StaticVariables.PlayerEntity.HitBoxZ + StaticVariables.PlayerEntity.FrameHeight)
                             {
                                 // Désactiver l'effet pour éviter de le déclencher plusieurs fois
-                                StaticVariables.g_spriteVRAMPointer[tileIndex] &= 0xFFFD;
-                                StaticVariables.g_spriteVRAMPointer[tileIndex + 3] = 0xFFFF;
+                                //TODO
+                                //tile.GroundProperty &= 0xFFFD;
+                                //tile.Height = 0xFFFF;
 
-                                // Calculer la position de l'effet
                                 var effectX = worldXCoords[i] * 0x180000 + 0xC0000;
                                 var effectY = worldYCoords[i] * 0x100000 + 0x80000;
 
-                                // Créer l'effet visuel
                                 _gameEngine.EffectManager.CreateEffectEntity(
                                     0,
                                     _gameEngine.CurrentMap.Info.F,
@@ -2975,11 +2943,7 @@ public class PlayerManager
                                     effectX,
                                     effectY,
                                     tileEffectZ);
-
-                                // Déclencher l'effet de warp si nécessaire
                                 _gameEngine.EffectManager.CreateWarpEffect(0xFF, effectX, effectY, tileEffectZ);
-
-                                // Jouer un son d'effet
                                 _gameEngine.PlaySoundEffect(0x1F);
                             }
                         }
@@ -2988,14 +2952,13 @@ public class PlayerManager
             }
             else
             {
-                // Si on est en train de prendre un coup, ajuster l'animation en fonction de si on est au sol
                 if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                 {
-                    StaticVariables.PlayerEntity.TargetAnimationId = StaticVariables.BYTE_ARRAY_800228a4[attackType * 2 + 1];
+                    StaticVariables.PlayerEntity.TargetAnimationId = StaticVariables.g_flailHitAnimations[attackType * 2 + 1];
                 }
                 else
                 {
-                    StaticVariables.PlayerEntity.TargetAnimationId = StaticVariables.BYTE_ARRAY_800228a4[attackType * 2];
+                    StaticVariables.PlayerEntity.TargetAnimationId = StaticVariables.g_flailHitAnimations[attackType * 2];
                 }
             }
         }

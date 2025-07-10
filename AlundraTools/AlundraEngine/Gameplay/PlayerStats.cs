@@ -8,6 +8,6 @@ public class PlayerStats {
     public short MoneyAmount;
     public short WeaponId;
     public short CurrentItemId;
-    public short field_e;
-    public short field_10;
+    public short FalconTemp;
+    public short Falcon;
 };

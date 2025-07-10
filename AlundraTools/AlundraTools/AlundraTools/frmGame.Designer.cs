@@ -86,6 +86,30 @@ namespace AlundraTools.AlundraTools
             checkBoxTileXY = new CheckBox();
             buttonCompareWithDump = new Button();
             buttonControlAlundra = new Button();
+            tabControl1 = new TabControl();
+            tabPageGlobal = new TabPage();
+            tabPage2 = new TabPage();
+            comboBoxNumberOfItem = new ComboBox();
+            label28 = new Label();
+            numericUpDownNumberOfItem = new NumericUpDown();
+            comboBoxWeapon = new ComboBox();
+            label27 = new Label();
+            label18 = new Label();
+            numericUpDownFalcon2 = new NumericUpDown();
+            label16 = new Label();
+            comboBoxItem = new ComboBox();
+            label26 = new Label();
+            numericUpDownFalcon1 = new NumericUpDown();
+            label25 = new Label();
+            numericUpDownMoney = new NumericUpDown();
+            label24 = new Label();
+            numericUpDownHp = new NumericUpDown();
+            label23 = new Label();
+            numericUpDownMpMax = new NumericUpDown();
+            label22 = new Label();
+            numericUpDownMp = new NumericUpDown();
+            label20 = new Label();
+            numericUpDownHpMax = new NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -93,6 +117,17 @@ namespace AlundraTools.AlundraTools
             ((System.ComponentModel.ISupportInitialize)dataGridViewGlobalFlags).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridViewMapFlags).BeginInit();
             groupBox4.SuspendLayout();
+            tabControl1.SuspendLayout();
+            tabPageGlobal.SuspendLayout();
+            tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownNumberOfItem).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownFalcon2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownFalcon1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMoney).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownHp).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMpMax).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMp).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownHpMax).BeginInit();
             SuspendLayout();
             // 
             // pctOut
@@ -117,7 +152,7 @@ namespace AlundraTools.AlundraTools
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(labelNumberOfEntity);
-            groupBox1.Location = new Point(738, 16);
+            groupBox1.Location = new Point(6, 7);
             groupBox1.Margin = new Padding(3, 4, 3, 4);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(3, 4, 3, 4);
@@ -210,7 +245,7 @@ namespace AlundraTools.AlundraTools
             groupBox2.Controls.Add(labelCameraXY);
             groupBox2.Controls.Add(label13);
             groupBox2.Controls.Add(labelCameraPosition);
-            groupBox2.Location = new Point(1072, 16);
+            groupBox2.Location = new Point(340, 7);
             groupBox2.Margin = new Padding(3, 4, 3, 4);
             groupBox2.Name = "groupBox2";
             groupBox2.Padding = new Padding(3, 4, 3, 4);
@@ -359,7 +394,7 @@ namespace AlundraTools.AlundraTools
             groupBox3.Controls.Add(label19);
             groupBox3.Controls.Add(label21);
             groupBox3.Controls.Add(labelMapId);
-            groupBox3.Location = new Point(909, 16);
+            groupBox3.Location = new Point(177, 7);
             groupBox3.Margin = new Padding(3, 4, 3, 4);
             groupBox3.Name = "groupBox3";
             groupBox3.Padding = new Padding(3, 4, 3, 4);
@@ -444,10 +479,10 @@ namespace AlundraTools.AlundraTools
             // 
             listBoxEntities.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listBoxEntities.FormattingEnabled = true;
-            listBoxEntities.Location = new Point(736, 200);
+            listBoxEntities.Location = new Point(4, 191);
             listBoxEntities.Margin = new Padding(3, 4, 3, 4);
             listBoxEntities.Name = "listBoxEntities";
-            listBoxEntities.Size = new Size(117, 1064);
+            listBoxEntities.Size = new Size(117, 784);
             listBoxEntities.TabIndex = 11;
             listBoxEntities.SelectedIndexChanged += listBoxEntities_SelectedIndexChanged;
             // 
@@ -479,15 +514,14 @@ namespace AlundraTools.AlundraTools
             // 
             propertyGridEntity.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             propertyGridEntity.BackColor = SystemColors.Control;
-            propertyGridEntity.Location = new Point(861, 200);
+            propertyGridEntity.Location = new Point(129, 191);
             propertyGridEntity.Margin = new Padding(3, 4, 3, 4);
             propertyGridEntity.Name = "propertyGridEntity";
-            propertyGridEntity.Size = new Size(440, 1065);
+            propertyGridEntity.Size = new Size(452, 793);
             propertyGridEntity.TabIndex = 16;
             // 
             // hScrollBarFrames
             // 
-            hScrollBarFrames.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             hScrollBarFrames.Enabled = false;
             hScrollBarFrames.LargeChange = 1;
             hScrollBarFrames.Location = new Point(6, 640);
@@ -528,7 +562,7 @@ namespace AlundraTools.AlundraTools
             // 
             dataGridViewGlobalFlags.AllowUserToAddRows = false;
             dataGridViewGlobalFlags.AllowUserToDeleteRows = false;
-            dataGridViewGlobalFlags.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridViewGlobalFlags.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             dataGridViewGlobalFlags.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewGlobalFlags.Columns.AddRange(new DataGridViewColumn[] { columnIndex, columnValue });
             dataGridViewGlobalFlags.Location = new Point(9, 743);
@@ -536,7 +570,7 @@ namespace AlundraTools.AlundraTools
             dataGridViewGlobalFlags.Name = "dataGridViewGlobalFlags";
             dataGridViewGlobalFlags.RowHeadersVisible = false;
             dataGridViewGlobalFlags.RowHeadersWidth = 51;
-            dataGridViewGlobalFlags.Size = new Size(124, 523);
+            dataGridViewGlobalFlags.Size = new Size(124, 299);
             dataGridViewGlobalFlags.TabIndex = 23;
             // 
             // columnIndex
@@ -557,7 +591,7 @@ namespace AlundraTools.AlundraTools
             // 
             dataGridViewMapFlags.AllowUserToAddRows = false;
             dataGridViewMapFlags.AllowUserToDeleteRows = false;
-            dataGridViewMapFlags.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridViewMapFlags.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             dataGridViewMapFlags.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewMapFlags.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2 });
             dataGridViewMapFlags.Location = new Point(139, 743);
@@ -565,7 +599,7 @@ namespace AlundraTools.AlundraTools
             dataGridViewMapFlags.Name = "dataGridViewMapFlags";
             dataGridViewMapFlags.RowHeadersVisible = false;
             dataGridViewMapFlags.RowHeadersWidth = 51;
-            dataGridViewMapFlags.Size = new Size(134, 523);
+            dataGridViewMapFlags.Size = new Size(134, 299);
             dataGridViewMapFlags.TabIndex = 24;
             // 
             // dataGridViewTextBoxColumn1
@@ -598,7 +632,7 @@ namespace AlundraTools.AlundraTools
             // label14
             // 
             label14.AutoSize = true;
-            label14.Location = new Point(735, 176);
+            label14.Location = new Point(3, 167);
             label14.Name = "label14";
             label14.Size = new Size(57, 20);
             label14.TabIndex = 27;
@@ -677,17 +711,260 @@ namespace AlundraTools.AlundraTools
             buttonControlAlundra.UseVisualStyleBackColor = true;
             buttonControlAlundra.Click += buttonControlAlundra_Click;
             // 
+            // tabControl1
+            // 
+            tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tabControl1.Controls.Add(tabPageGlobal);
+            tabControl1.Controls.Add(tabPage2);
+            tabControl1.Location = new Point(733, 12);
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(595, 1024);
+            tabControl1.TabIndex = 34;
+            // 
+            // tabPageGlobal
+            // 
+            tabPageGlobal.Controls.Add(label14);
+            tabPageGlobal.Controls.Add(groupBox1);
+            tabPageGlobal.Controls.Add(groupBox2);
+            tabPageGlobal.Controls.Add(groupBox3);
+            tabPageGlobal.Controls.Add(listBoxEntities);
+            tabPageGlobal.Controls.Add(propertyGridEntity);
+            tabPageGlobal.Location = new Point(4, 29);
+            tabPageGlobal.Name = "tabPageGlobal";
+            tabPageGlobal.Padding = new Padding(3);
+            tabPageGlobal.Size = new Size(587, 991);
+            tabPageGlobal.TabIndex = 0;
+            tabPageGlobal.Text = "Global";
+            tabPageGlobal.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            tabPage2.Controls.Add(comboBoxNumberOfItem);
+            tabPage2.Controls.Add(label28);
+            tabPage2.Controls.Add(numericUpDownNumberOfItem);
+            tabPage2.Controls.Add(comboBoxWeapon);
+            tabPage2.Controls.Add(label27);
+            tabPage2.Controls.Add(label18);
+            tabPage2.Controls.Add(numericUpDownFalcon2);
+            tabPage2.Controls.Add(label16);
+            tabPage2.Controls.Add(comboBoxItem);
+            tabPage2.Controls.Add(label26);
+            tabPage2.Controls.Add(numericUpDownFalcon1);
+            tabPage2.Controls.Add(label25);
+            tabPage2.Controls.Add(numericUpDownMoney);
+            tabPage2.Controls.Add(label24);
+            tabPage2.Controls.Add(numericUpDownHp);
+            tabPage2.Controls.Add(label23);
+            tabPage2.Controls.Add(numericUpDownMpMax);
+            tabPage2.Controls.Add(label22);
+            tabPage2.Controls.Add(numericUpDownMp);
+            tabPage2.Controls.Add(label20);
+            tabPage2.Controls.Add(numericUpDownHpMax);
+            tabPage2.Location = new Point(4, 29);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(587, 991);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Player status";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // comboBoxNumberOfItem
+            // 
+            comboBoxNumberOfItem.FormattingEnabled = true;
+            comboBoxNumberOfItem.Location = new Point(76, 352);
+            comboBoxNumberOfItem.Name = "comboBoxNumberOfItem";
+            comboBoxNumberOfItem.Size = new Size(151, 28);
+            comboBoxNumberOfItem.TabIndex = 20;
+            // 
+            // label28
+            // 
+            label28.AutoSize = true;
+            label28.Location = new Point(6, 355);
+            label28.Name = "label28";
+            label28.Size = new Size(70, 20);
+            label28.TabIndex = 18;
+            label28.Text = "# of Item";
+            // 
+            // numericUpDownNumberOfItem
+            // 
+            numericUpDownNumberOfItem.Location = new Point(233, 352);
+            numericUpDownNumberOfItem.Maximum = new decimal(new int[] { 9, 0, 0, 0 });
+            numericUpDownNumberOfItem.Name = "numericUpDownNumberOfItem";
+            numericUpDownNumberOfItem.Size = new Size(84, 27);
+            numericUpDownNumberOfItem.TabIndex = 19;
+            numericUpDownNumberOfItem.ValueChanged += numericUpDownNumberOfItem_ValueChanged;
+            // 
+            // comboBoxWeapon
+            // 
+            comboBoxWeapon.FormattingEnabled = true;
+            comboBoxWeapon.Items.AddRange(new object[] { "1-sword", "3-Flail", "2-Bow", "4-Ice wand", "5-Fire wand", "6-Spirit wand" });
+            comboBoxWeapon.Location = new Point(76, 239);
+            comboBoxWeapon.Name = "comboBoxWeapon";
+            comboBoxWeapon.Size = new Size(151, 28);
+            comboBoxWeapon.TabIndex = 0;
+            comboBoxWeapon.SelectedIndexChanged += comboBoxWeapon_SelectedIndexChanged;
+            // 
+            // label27
+            // 
+            label27.AutoSize = true;
+            label27.Location = new Point(6, 210);
+            label27.Name = "label27";
+            label27.Size = new Size(63, 20);
+            label27.TabIndex = 16;
+            label27.Text = "Falcon 2";
+            // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.Location = new Point(6, 274);
+            label18.Name = "label18";
+            label18.Size = new Size(39, 20);
+            label18.TabIndex = 3;
+            label18.Text = "Item";
+            // 
+            // numericUpDownFalcon2
+            // 
+            numericUpDownFalcon2.Location = new Point(76, 206);
+            numericUpDownFalcon2.Name = "numericUpDownFalcon2";
+            numericUpDownFalcon2.Size = new Size(150, 27);
+            numericUpDownFalcon2.TabIndex = 17;
+            numericUpDownFalcon2.ValueChanged += numericUpDownFalcon2_ValueChanged;
+            // 
+            // label16
+            // 
+            label16.AutoSize = true;
+            label16.Location = new Point(6, 242);
+            label16.Name = "label16";
+            label16.Size = new Size(64, 20);
+            label16.TabIndex = 1;
+            label16.Text = "Weapon";
+            // 
+            // comboBoxItem
+            // 
+            comboBoxItem.FormattingEnabled = true;
+            comboBoxItem.Location = new Point(76, 271);
+            comboBoxItem.Name = "comboBoxItem";
+            comboBoxItem.Size = new Size(151, 28);
+            comboBoxItem.TabIndex = 2;
+            comboBoxItem.SelectedIndexChanged += comboBoxItem_SelectedIndexChanged;
+            // 
+            // label26
+            // 
+            label26.AutoSize = true;
+            label26.Location = new Point(6, 177);
+            label26.Name = "label26";
+            label26.Size = new Size(63, 20);
+            label26.TabIndex = 14;
+            label26.Text = "Falcon 1";
+            // 
+            // numericUpDownFalcon1
+            // 
+            numericUpDownFalcon1.Location = new Point(76, 173);
+            numericUpDownFalcon1.Name = "numericUpDownFalcon1";
+            numericUpDownFalcon1.Size = new Size(150, 27);
+            numericUpDownFalcon1.TabIndex = 15;
+            numericUpDownFalcon1.ValueChanged += numericUpDownFalcon1_ValueChanged;
+            // 
+            // label25
+            // 
+            label25.AutoSize = true;
+            label25.Location = new Point(6, 144);
+            label25.Name = "label25";
+            label25.Size = new Size(54, 20);
+            label25.TabIndex = 12;
+            label25.Text = "Money";
+            // 
+            // numericUpDownMoney
+            // 
+            numericUpDownMoney.Location = new Point(76, 140);
+            numericUpDownMoney.Maximum = new decimal(new int[] { 30000, 0, 0, 0 });
+            numericUpDownMoney.Name = "numericUpDownMoney";
+            numericUpDownMoney.Size = new Size(150, 27);
+            numericUpDownMoney.TabIndex = 13;
+            numericUpDownMoney.ValueChanged += numericUpDownMoney_ValueChanged;
+            // 
+            // label24
+            // 
+            label24.AutoSize = true;
+            label24.Location = new Point(6, 44);
+            label24.Name = "label24";
+            label24.Size = new Size(28, 20);
+            label24.TabIndex = 10;
+            label24.Text = "HP";
+            // 
+            // numericUpDownHp
+            // 
+            numericUpDownHp.Location = new Point(76, 42);
+            numericUpDownHp.Name = "numericUpDownHp";
+            numericUpDownHp.Size = new Size(150, 27);
+            numericUpDownHp.TabIndex = 11;
+            numericUpDownHp.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            numericUpDownHp.ValueChanged += numericUpDownHp_ValueChanged;
+            // 
+            // label23
+            // 
+            label23.AutoSize = true;
+            label23.Location = new Point(6, 78);
+            label23.Name = "label23";
+            label23.Size = new Size(62, 20);
+            label23.TabIndex = 8;
+            label23.Text = "MP max";
+            // 
+            // numericUpDownMpMax
+            // 
+            numericUpDownMpMax.Location = new Point(76, 74);
+            numericUpDownMpMax.Name = "numericUpDownMpMax";
+            numericUpDownMpMax.Size = new Size(150, 27);
+            numericUpDownMpMax.TabIndex = 9;
+            numericUpDownMpMax.ValueChanged += numericUpDownMpMax_ValueChanged;
+            // 
+            // label22
+            // 
+            label22.AutoSize = true;
+            label22.Location = new Point(6, 111);
+            label22.Name = "label22";
+            label22.Size = new Size(30, 20);
+            label22.TabIndex = 6;
+            label22.Text = "MP";
+            // 
+            // numericUpDownMp
+            // 
+            numericUpDownMp.Location = new Point(76, 107);
+            numericUpDownMp.Name = "numericUpDownMp";
+            numericUpDownMp.Size = new Size(150, 27);
+            numericUpDownMp.TabIndex = 7;
+            numericUpDownMp.ValueChanged += numericUpDownMp_ValueChanged;
+            // 
+            // label20
+            // 
+            label20.AutoSize = true;
+            label20.Location = new Point(6, 13);
+            label20.Name = "label20";
+            label20.Size = new Size(60, 20);
+            label20.TabIndex = 4;
+            label20.Text = "HP max";
+            // 
+            // numericUpDownHpMax
+            // 
+            numericUpDownHpMax.Location = new Point(76, 9);
+            numericUpDownHpMax.Name = "numericUpDownHpMax";
+            numericUpDownHpMax.Size = new Size(150, 27);
+            numericUpDownHpMax.TabIndex = 5;
+            numericUpDownHpMax.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            numericUpDownHpMax.ValueChanged += numericUpDownHpMax_ValueChanged;
+            // 
             // FrmGame
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1306, 1272);
+            ClientSize = new Size(1329, 1048);
+            Controls.Add(tabControl1);
             Controls.Add(buttonControlAlundra);
             Controls.Add(buttonCompareWithDump);
             Controls.Add(groupBox4);
             Controls.Add(buttonExtractToCsv);
             Controls.Add(buttonLoadDump);
-            Controls.Add(label14);
             Controls.Add(buttonSaveFrames);
             Controls.Add(dataGridViewMapFlags);
             Controls.Add(dataGridViewGlobalFlags);
@@ -695,13 +972,8 @@ namespace AlundraTools.AlundraTools
             Controls.Add(label8);
             Controls.Add(labelFrames);
             Controls.Add(hScrollBarFrames);
-            Controls.Add(propertyGridEntity);
             Controls.Add(buttonRunOneFrame);
             Controls.Add(buttonPauseGame);
-            Controls.Add(listBoxEntities);
-            Controls.Add(groupBox3);
-            Controls.Add(groupBox2);
-            Controls.Add(groupBox1);
             Controls.Add(pctOut);
             Margin = new Padding(3, 4, 3, 4);
             Name = "FrmGame";
@@ -717,6 +989,19 @@ namespace AlundraTools.AlundraTools
             ((System.ComponentModel.ISupportInitialize)dataGridViewMapFlags).EndInit();
             groupBox4.ResumeLayout(false);
             groupBox4.PerformLayout();
+            tabControl1.ResumeLayout(false);
+            tabPageGlobal.ResumeLayout(false);
+            tabPageGlobal.PerformLayout();
+            tabPage2.ResumeLayout(false);
+            tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownNumberOfItem).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownFalcon2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownFalcon1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMoney).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownHp).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMpMax).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownMp).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownHpMax).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -780,5 +1065,29 @@ namespace AlundraTools.AlundraTools
         private CheckBox checkBoxTileXY;
         private Button buttonCompareWithDump;
         private Button buttonControlAlundra;
+        private TabControl tabControl1;
+        private TabPage tabPageGlobal;
+        private TabPage tabPage2;
+        private ComboBox comboBoxWeapon;
+        private Label label18;
+        private Label label16;
+        private ComboBox comboBoxItem;
+        private Label label27;
+        private NumericUpDown numericUpDownFalcon2;
+        private Label label26;
+        private NumericUpDown numericUpDownFalcon1;
+        private Label label25;
+        private NumericUpDown numericUpDownMoney;
+        private Label label24;
+        private NumericUpDown numericUpDownHp;
+        private Label label23;
+        private NumericUpDown numericUpDownMpMax;
+        private Label label22;
+        private NumericUpDown numericUpDownMp;
+        private Label label20;
+        private NumericUpDown numericUpDownHpMax;
+        private Label label28;
+        private NumericUpDown numericUpDownNumberOfItem;
+        private ComboBox comboBoxNumberOfItem;
     }
 }

@@ -962,4 +962,91 @@ public partial class FrmGame : Form
     {
         StaticVariables.g_playerControlFlags &= 0xfffffffb;
     }
+
+    private void numericUpDownHpMax_ValueChanged(object sender, EventArgs e)
+    {
+        StaticVariables.g_initialPlayerStats.HpMax = (short)numericUpDownHpMax.Value;
+        //g_playerStats ??
+    }
+
+    private void numericUpDownHp_ValueChanged(object sender, EventArgs e)
+    {
+        StaticVariables.g_initialPlayerStats.HpMax = (short)numericUpDownHp.Value;
+    }
+
+    private void numericUpDownMpMax_ValueChanged(object sender, EventArgs e)
+    {
+        StaticVariables.g_initialPlayerStats.MpMax = (short)numericUpDownMpMax.Value;
+    }
+
+    private void numericUpDownMp_ValueChanged(object sender, EventArgs e)
+    {
+        StaticVariables.g_initialPlayerStats.Mp = (short)numericUpDownMp.Value;
+    }
+
+    private void numericUpDownMoney_ValueChanged(object sender, EventArgs e)
+    {
+        StaticVariables.g_initialPlayerStats.MoneyAmount = (short)numericUpDownMoney.Value;
+    }
+
+    private void numericUpDownFalcon1_ValueChanged(object sender, EventArgs e)
+    {
+        StaticVariables.g_initialPlayerStats.Falcon = (short)numericUpDownFalcon1.Value;
+    }
+
+    private void numericUpDownFalcon2_ValueChanged(object sender, EventArgs e)
+    {
+        StaticVariables.g_initialPlayerStats.FalconTemp = (short)numericUpDownFalcon2.Value;
+    }
+
+    private void comboBoxWeapon_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (comboBoxWeapon.SelectedIndex != -1)
+        {
+            var weaponName = comboBoxWeapon.SelectedItem as string;
+            var weaponIndex = int.Parse(weaponName.Split("-")[0]);
+            StaticVariables.g_initialPlayerStats.WeaponId = (byte)weaponIndex;
+
+            //Ensure we have one weapon of specified type
+            if (weaponIndex == 1) //chain
+            {
+
+            }
+            else if (weaponIndex == 3) //chain
+            {
+                StaticVariables.g_numberOfItems[9 * 2 + 1] = 1;
+                //StaticVariables.g_numberOfItems[10 * 2 + 1] = 1;
+                //StaticVariables.g_numberOfItems[11 * 2 + 1] = 1;
+                //StaticVariables.g_numberOfItems[12 * 2 + 1] = 1;
+            }
+            else if (weaponIndex == 2) //bow
+            {
+                StaticVariables.g_numberOfItems[5 * 2 + 1] = 1;
+                //StaticVariables.g_numberOfItems[6 * 2 + 1] = 1;
+            }
+            else if (weaponIndex == 4) //ice
+            {
+                StaticVariables.g_numberOfItems[14 * 2 + 1] = 1;
+            }
+            else if (weaponIndex == 5) //fire
+            {
+                StaticVariables.g_numberOfItems[15 * 2 + 1] = 1;
+                //StaticVariables.g_numberOfItems[16 * 2 + 1] = 1;
+            }
+            else if (weaponIndex == 6) //spirit wand
+            {
+                StaticVariables.g_numberOfItems[7 * 2 + 1] = 1;
+            }
+        }
+    }
+
+    private void comboBoxItem_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void numericUpDownNumberOfItem_ValueChanged(object sender, EventArgs e)
+    {
+
+    }
 }

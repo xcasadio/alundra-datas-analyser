@@ -32,7 +32,7 @@ public enum PlayerAnimation
 
     InMineCart = 0x1A,
     InMineCartMoving = 0x1B,
-    DamageKnockback = 0x1C,
+    DamageKnockBack = 0x1C,
     SwimmingStill = 0x1D,
     MineCartStopping = 0x1E,
     Reserved1F = 0x1F,
@@ -64,7 +64,7 @@ public enum PlayerAnimation
     Reserved38 = 0x38, // (???) Throw Object
     Reserved39 = 0x39,
     DamageTakenSwimming = 0x3A,
-    DamageKnockbackSwimming = 0x3B,
+    DamageKnockBackSwimming = 0x3B,
     Reserved3C = 0x3C,
     Reserved3D = 0x3D, // (???) Throw Object while jumping
     SprintAgainstWall = 0x3E,
