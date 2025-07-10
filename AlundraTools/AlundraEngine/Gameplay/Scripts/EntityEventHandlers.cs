@@ -4665,7 +4665,7 @@ public class EntityEventHandlers
     // 800405A8
     private int Script_144_090(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.SpawnSpriteEffect(variables[1], 1);
+        _gameEngine.EffectManager.SpawnSpriteEffect(variables[1], 1);
         return 2;
     }
 
@@ -5279,7 +5279,7 @@ public class EntityEventHandlers
     // 80040F00
     private int Script_162_0A2(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var spriteEffect = _gameEngine.SpawnSpriteEffect(variables[1], 1);
+        var spriteEffect = _gameEngine.EffectManager.SpawnSpriteEffect(variables[1], 1);
 
         if (spriteEffect != null)
         {
@@ -5299,7 +5299,7 @@ public class EntityEventHandlers
 
         if (iVar2 != 0)
         {
-            var spriteEffect = _gameEngine.SpawnSpriteEffect(variables[1], 1);
+            var spriteEffect = _gameEngine.EffectManager.SpawnSpriteEffect(variables[1], 1);
 
             if (spriteEffect != null)
             {

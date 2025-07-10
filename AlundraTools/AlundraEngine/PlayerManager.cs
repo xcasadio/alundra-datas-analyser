@@ -927,89 +927,80 @@ public class PlayerManager
     //8002eaf4
     private int PlayerTryAttack()
     {
-        if ((StaticVariables.PlayerEntity.CombinedVramFlagsOR & 0x2000) != 0)
+        int i;
+        byte animId;
+
+        var weaponFlagsIndex = StaticVariables.g_currentWeaponFlags * 13;
+
+        if ((StaticVariables.PlayerEntity.CombinedVramFlagsOR & 0x2000U) != 0)
         {
             return 0;
         }
-
-        if ((StaticVariables.g_padState1.ButtonsReleased & PadState.Square) == 0
-            && (StaticVariables.g_padState1.ButtonsJustPressed & PadState.Square) == 0)
+        if ((StaticVariables.g_padState1.ButtonsReleased & 0x80) == 0)
         {
-            return 0;
-        }
-
-        if (StaticVariables.g_playerWarpTimer >= 0x3C)
-        {
-            return 0;
-        }
-
-        if (StaticVariables.PlayerEntity.IsAboveGround == 0)
-        {
-            return 0;
-        }
-
-        for (var i = 0; i < 16; i++)
-        {
-            var y = StaticVariables.PlayerEntity.PosY;
-            var z = StaticVariables.PlayerEntity.PosZ + StaticVariables.MapTileHeight;
-
-            var effect = _gameEngine.EffectManager.CreateEffectEntity(
-                0, 0x10, 0,
-                StaticVariables.PlayerEntity.PosX,
-                StaticVariables.PlayerEntity.PosY,
-                StaticVariables.PlayerEntity.PosZ + 0x10
-                );
-
-            if (effect != null)
+            if ((StaticVariables.g_padState1.ButtonsJustPressed & 0x80) == 0)
             {
-                effect.ForceX = StaticVariables.g_offsetXList[i * 2] * 0x1c0; //448
-                effect.ForceY = StaticVariables.g_offsetYList[i * 2] * 0x1c0; //448
+                return 0;
+            }
+            if (StaticVariables.PlayerEntity.IsAboveGround == 0)
+            {
+                weaponFlagsIndex += 5;
+                animId = StaticVariables.g_weaponInitFlags[weaponFlagsIndex];
+            }
+            else
+            {
+                weaponFlagsIndex += 1;
+                animId = StaticVariables.g_weaponInitFlags[weaponFlagsIndex];
+            }
+
+            if (animId == 0)
+            {
+                _gameEngine.PlaySoundEffect(3);
+                return 0;
             }
         }
-
-        _gameEngine.PlaySoundEffect(0x2B);
-
-        //Debugger.Break();
-
-        var weaponIndex = StaticVariables.g_currentWeaponFlags;
-        var idx = (weaponIndex << 1) + weaponIndex;
-        weaponIndex = (idx << 2) + weaponIndex;
-
-        if ((StaticVariables.g_padState1.ButtonsJustPressed & PadState.Square) != 0)
+        else
         {
+            if (StaticVariables.g_playerWarpTimer < 0x3c)
+            {
+                return 0;
+            }
+
+            i = 0;
+
             if (StaticVariables.PlayerEntity.IsAboveGround == 0)
             {
                 return 0;
             }
 
-            weaponIndex += 1;
-        }
-        else
-        {
-            weaponIndex += 5;
+            do
+            {
+                var effect = _gameEngine.EffectManager.CreateEffectEntity(
+                    0, 0x10, 0,
+                    StaticVariables.PlayerEntity.PosX,
+                    StaticVariables.PlayerEntity.PosY,
+                    StaticVariables.PlayerEntity.PosZ + 0x10 //0x100000
+                ); 
+
+                if (effect != null)
+                {
+                    effect.ForceX = StaticVariables.g_offsetXList[i * 2] * 0x1c0; //448
+                    effect.ForceY = StaticVariables.g_offsetYList[i * 2] * 0x1c0; //448
+                }
+                i = i + 1;
+            } while (i < 0x10);
+
+            _gameEngine.PlaySoundEffect(0x2b);
+            animId = StaticVariables.g_weaponInitFlags[StaticVariables.g_currentWeaponFlags * 0xd + 9];
+            weaponFlagsIndex += 9;
         }
 
-        //weaponIndex += 9;
-        //anim id
-        //sword 16
-        //flail 18
-        //bow 19
-        //ice 17
-
-        var animId = StaticVariables.g_weaponInitFlags[weaponIndex];
-        if (animId == (int)PlayerAnimation.Idle)
-        {
-            StaticVariables.g_playerEffectTransitionCooldown[0] = StaticVariables.g_weaponInitFlags[weaponIndex];
-            StaticVariables.g_playerEffectTransitionCooldown[1] = StaticVariables.g_weaponInitFlags[weaponIndex + 1];
-            StaticVariables.g_playerEffectTransitionCooldown[2] = StaticVariables.g_weaponInitFlags[weaponIndex + 2];
-            StaticVariables.g_playerEffectTransitionCooldown[3] = StaticVariables.g_weaponInitFlags[weaponIndex + 3];
-            StaticVariables.g_playerEffectStepFlags = 0;
-        }
-        else
-        {
-            StaticVariables.PlayerEntity.TargetAnimationId = animId;
-            _gameEngine.PlaySoundEffect(3);
-        }
+        StaticVariables.PlayerEntity.TargetAnimationId = animId;
+        StaticVariables.g_playerEffectStepFlags = 0;
+        StaticVariables.g_playerEffectTransitionCooldown[0] = StaticVariables.g_weaponInitFlags[weaponFlagsIndex + 0];
+        StaticVariables.g_playerEffectTransitionCooldown[1] = StaticVariables.g_weaponInitFlags[weaponFlagsIndex + 1];
+        StaticVariables.g_playerEffectTransitionCooldown[2] = StaticVariables.g_weaponInitFlags[weaponFlagsIndex + 2];
+        StaticVariables.g_playerEffectTransitionCooldown[3] = StaticVariables.g_weaponInitFlags[weaponFlagsIndex + 3];
 
         return 1;
     }

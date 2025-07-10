@@ -41,4 +41,45 @@ public class SpriteEffect
     public byte _7f;
 
     public int AnimIndex = 0;//use this extra field because we arent using frame pointers that we can simply ++ to the next one
+
+    //reset all fields
+    public void Reset()
+    {
+        Id = 0;
+        MapEffectRecord = null;
+        SpriteEffectRecord = null;
+        SpriteRef.Reset();
+        _24 = 0;
+        SheetSize = 0;
+        PaletteIndex = 0;
+        MapEffectId = 0;
+        UpdateMode = 0;
+        AttachedEntity = null;
+        X = 0;
+        Y = 0; 
+        Z = 0;
+        XOff = 0;
+        YOff = 0;
+        ZOff = 0;
+        ForceX = 0;
+        ForceY = 0;
+        ForceZ = 0;
+        DepthSortMod = 0;
+        ZSortValue = 0;
+        Status = 0;
+        TargetIsMapSprite = 0;
+        CurrentIsMapSprite = 0;
+        TargetSpriteTableIndex = 0;
+        CurrentSpriteTableIndex = 0;
+        TargetAnimation = 0;
+        CurrentAnimation = 0;
+        _72 = 0;
+        Frame = null;
+        InitialFrame = null;
+        Delay = 0;
+        DestroyFlag = 0;
+        _7e = 0;
+        _7f = 0;
+        AnimIndex = 0;
+    }
 }

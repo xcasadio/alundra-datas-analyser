@@ -49,6 +49,7 @@ public class GameMapInfo
 
         SpriteMapEntries = new SpriteMapEntry[6];
 
+        //InitializeMapSpriteTable 8002cc58
         int spriteIndex = 0;
         do
         {

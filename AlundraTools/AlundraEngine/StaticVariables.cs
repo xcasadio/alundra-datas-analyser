@@ -1781,7 +1781,7 @@ public static class StaticVariables
     public static int INT_80126e7c; // 80126E7C
     public static int INT_80126e80; // 80126E80
     public static int g_maxInitData; // 80126E84
-    public static SiMapEventRecord[] g_initMapEventRecords = new SiMapEventRecord[14]; // 80126E88
+    //public static SiMapEventRecord[] g_initMapEventRecords = new SiMapEventRecord[14]; // 80126E88
     public static SpriteInfoHeader g_alundraSpriteInfo; // 80126EC0
     public static int g_animationStructs_paletteClut; // 80126EC4
     public static SpriteRecord g_initialAnimationTable; // 80126ECC

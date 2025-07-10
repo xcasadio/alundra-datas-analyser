@@ -60,6 +60,7 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramDTouch, 4, AI_EmptyFunction); // null
 
         Register(ScriptHelper.ProgramEDeactivate, 0, Script_Deactivate_FUN_8007ed10);
+        Register(ScriptHelper.ProgramEDeactivate, 17, AI_UpdateArrows);
 
         Register(ScriptHelper.ProgramFInteract, 0, AI_EmptyFunction); // null
         Register(ScriptHelper.ProgramFInteract, 1, Script_FInteract_FUN_8007fc64); // null
@@ -297,11 +298,9 @@ public class SpriteEventHandlers
     // 80065ED4
     private void AI_UpdateEntityAI_IdleSkittish(Entity entity)
     {
-        ulong uVar1;
         short delay;
         uint uVar2;
         int[] relPos = new int[6];
-        byte direction;
         short duration;
 
         ScriptHelper.CalculateEntityRelativePosition(entity, relPos);
@@ -350,7 +349,7 @@ public class SpriteEventHandlers
                 if (entity.ForceAdjusted == 0)
                 {
                     StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                    uVar1 = (ulong)StaticVariables.g_gameRandomSeed;
+                    var uVar1 = (ulong)StaticVariables.g_gameRandomSeed;
                     entity.TargetAnimationId = 0;
                     entity.AIValues[1] = (short)((short)((uVar1 * 0x2000) >> 32) & 0x7f);
                     entity.TargetDirection = (uint)((uVar1 * 0x2000) >> 40);
@@ -358,7 +357,7 @@ public class SpriteEventHandlers
                 }
 
                 StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                direction = (byte)ScriptHelper.DirectionTable[entity.TargetDirection]; // g_directionFlipTable //80028b34
+                var direction = (byte)ScriptHelper.DirectionTable[entity.TargetDirection]; // g_directionFlipTable //80028b34
                 entity.ForceStepY = 0;
                 entity.ForceStepX = 0;
                 entity.ForceY = 0;
@@ -441,7 +440,6 @@ public class SpriteEventHandlers
     private void AI_UpdateEntityAI_CuriousFlying(Entity entity)
     {
         bool bVar1;
-        short sVar2;
         uint direction;
         int[] relativePositions = new int[6];
 
@@ -460,7 +458,7 @@ public class SpriteEventHandlers
                 goto SetNewAnim;
 
             case 1:
-                sVar2 = (short)(entity.AIValues[1] - 1);
+                var sVar2 = (short)(entity.AIValues[1] - 1);
                 entity.AIValues[1] = sVar2;
                 if (sVar2 == 0)
                 {
@@ -573,7 +571,6 @@ public class SpriteEventHandlers
     // 800665a0
     private void AI_UpdateEntityAI_1(Entity entity)
     {
-        byte bVar1;
         short frameTimer;
         uint direction;
         int[] relPos = new int[6];
@@ -605,7 +602,7 @@ public class SpriteEventHandlers
                 {
                     if (entity.ForceAdjusted != 0)
                     {
-                        bVar1 = (byte)StaticVariables.g_directionFlipTable[entity.TargetDirection];
+                        var bVar1 = (byte)StaticVariables.g_directionFlipTable[entity.TargetDirection];
                         entity.ForceStepY = 0;
                         entity.ForceStepX = 0;
                         entity.ForceY = 0;
@@ -867,10 +864,127 @@ public class SpriteEventHandlers
 
     #region function type D
 
-    // 8007ed10
+    //8007ed10
     private void Script_Deactivate_FUN_8007ed10(Entity entity)
     {
         _gameEngine.DestroyEntity(entity,-1);
+    }
+
+    //8007f420
+    void AI_UpdateArrows(Entity entity)
+    {
+        int entityTargetIndex = 0;
+        int currentEntityIndex = 0;
+        bool withinY;
+
+        if (entity.TargetAnimationId == 1)
+        {
+            if (entity.ForceResetAnimationFlag == 1)
+            {
+                _gameEngine.DestroyEntity(entity, -1);
+            }
+        }
+        else
+        {
+            if (entity.HitCounter != 0)
+            {
+                var flags = entity.Flags;
+                var collisionMask = (flags & 2) << 2;
+
+                if ((flags & 4) != 0)
+                {
+                    collisionMask |= 1;
+                }
+
+                if ((flags & 0x1000) != 0)
+                {
+                    collisionMask |= 0x800;
+                }
+
+                var noValidCollisionFound = true;
+
+                if (collisionMask != 0)
+                {
+                    var entityIndex = 0;
+
+                    if (-1 < StaticVariables.g_numberOfEntity)
+                    {
+                        do
+                        {
+                            var currentEntity = StaticVariables.g_entitySlots[currentEntityIndex];
+                            var entityTarget = StaticVariables.g_entitySlots[entityTargetIndex];
+
+                            if ((((entity != currentEntity) && ((entityTarget.ProgramIndexes[0] & 0x40U) == 0)) &&
+                                (entityTarget.MapHeights[3] == 0)) && ((entityTarget.Index2 & collisionMask) != 0))
+                            {
+                                var withinX = entity.HitBoxX - entityTarget.HitBoxOriginX;
+
+                                if (withinX < 0)
+                                {
+                                    withinY = entityTarget.HitBoxOriginX - entity.HitBoxX <
+                                              (int)(entity.FrameWidth + 1);
+                                }
+                                else
+                                {
+                                    withinY = withinX < entityTarget.TileAttributes + 1;
+                                }
+
+                                if (withinY)
+                                {
+                                    withinX = entity.HitBoxY - entityTarget.HitBoxOriginY;
+                                    if (withinX < 0)
+                                    {
+                                        withinY = entityTarget.HitBoxOriginY - entity.HitBoxY <
+                                                  (int)(entity.FrameDepth + 1);
+                                    }
+                                    else
+                                    {
+                                        withinY = withinX < entityTarget.Slope_18c + 1;
+                                    }
+
+                                    if (withinY)
+                                    {
+                                        withinX = entity.HitBoxZ - entityTarget.HitBoxOriginZ;
+
+                                        if (withinX < 0)
+                                        {
+                                            withinY = entityTarget.HitBoxOriginZ - entity.HitBoxZ <
+                                                      (int)(entity.FrameHeight + 1);
+                                        }
+                                        else
+                                        {
+                                            withinY = withinX < entityTarget.Slope_190 + 1;
+                                        }
+
+                                        if ((withinY) && (entityTarget.Index != 0x1ad))
+                                        {
+                                            noValidCollisionFound = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            entityIndex += 1;
+                            entityTargetIndex += 1;
+                            currentEntityIndex += 1;
+
+                        } while (entityIndex <= StaticVariables.g_numberOfEntity);
+                    }
+
+                    if (noValidCollisionFound)
+                    {
+                        entity.Status = 2;
+                        return;
+                    }
+                }
+
+                _gameEngine.DestroyEntity(entity, -1);
+            }
+
+            entity.TargetAnimationId = 1;
+            entity.TargetDirection = entity.TargetDirection + 0x10 & 0x1f;
+            entity.Flags = entity.Flags & 0xffffffcfU | 0x140;
+        }
     }
 
     #endregion

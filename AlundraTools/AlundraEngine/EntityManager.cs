@@ -2569,8 +2569,8 @@ public class EntityManager
                 tileY = 0x3b;
             }
 
-            var tl = _gameEngine.CurrentMap.Map.MapTiles[tileX + tileY * 52];
-            tileFlags = (uint)(tl.Walkability | tl.GroundProperty << 8 | tl.Slope << 16 | tl.Height << 24);
+            var tile = _gameEngine.CurrentMap.Map.MapTiles[tileX + tileY * _gameEngine.CurrentMap.Map.Width];
+            tileFlags = (uint)(tile.Walkability | tile.GroundProperty << 8 | tile.Slope << 16 | tile.Height << 24);
             //tileFlags = StaticVariables.g_spriteVRAMPointer + tileY * 0xd0 + tileX * 4 + 0x302;
 
             if ((tileFlags & 0xc00000) == 0)

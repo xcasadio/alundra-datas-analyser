@@ -429,13 +429,14 @@ public class GameEngine
         } while (iVar2 >= 0);
     }
 
+    //8002dfe4
     private void LoadMapAndInitializeEntities(uint[] bufferImage)
     {
         //LoadImageArea(StaticVariables.g_bufferImage, 0x40, 0x1e0, 0x40);
         //LoadCompressedImageToBuffer(bufferImage, 0x140, 0, 5, StaticVariables.g_bufferImage2);
         InitializeEntitySlots();
         InitializeMapEvents();
-        InitializeEffectSlots();
+        EffectManager.InitializeEffectSlots();
     }
 
     // 8003c510
@@ -587,72 +588,6 @@ public class GameEngine
         //    //MonitorFlags = MonitorFlags + 8; //.Skip(8).ToArray();
         //    //entity = entity.ChildEntity;
         //} while (i < 0x80);
-    }
-
-    private void InitializeEffectSlots()
-    {
-        SpriteEffect effect;
-        int val;
-        int effectIndex;
-        int[] effectInitTable;
-
-        EffectManager.InitializeEffectSlots();
-
-        effectIndex = 0;
-
-        foreach (var mapEventRecord in StaticVariables.g_initMapEventRecords)
-        {
-            effect = SpawnSpriteEffect(effectIndex, 0);
-
-            if (effect == null
-                && (StaticVariables.g_debugState & 0x80000000U) != 0
-                && (StaticVariables.g_debugFlags & 0x20) != 0)
-            {
-                //PrintInfo();
-            }
-
-            effectIndex++;
-        }
-    }
-
-    public SpriteEffect SpawnSpriteEffect(int effectId, int checkSpawnArea)
-    {
-        MapEffectRecord effectStatus;
-        SpriteEffect effect;
-        byte bVar1;
-
-        effectStatus = GetMapEffectRecord(effectId, checkSpawnArea == 1);
-        effect = null;
-
-        if (effectStatus != null)
-        {
-            bVar1 = effectStatus.Flags;
-            if (checkSpawnArea != 0 || (bVar1 & 0x40) != 0)
-            {
-                effect = EffectManager.GetFreeEffect();
-                if (effect == null)
-                {
-                    effect = null;
-                }
-                else
-                {
-                    EffectManager.InitializeEffects(
-                        effect,
-                        effectStatus,
-                        effectId,
-                        0,
-                        bVar1 & 0x80,
-                        effectStatus.EffectId,
-                        effectStatus.AnimId,
-                        (int)(((uint)effectStatus.X * 12 + 12) * 0x10000),
-                        (int)(((uint)effectStatus.Y * 8 + 8) * 0x10000),
-                        (int)((uint)effectStatus.Z << 0x13)
-                    );
-                }
-            }
-        }
-
-        return effect;
     }
 
     public void LoadMap(int mapId)
@@ -1855,26 +1790,6 @@ public class GameEngine
         return ret < 1 ? true : false;
     }
 
-    private MapEffectRecord GetMapEffectRecord(int id, bool checkBoundingBox)
-    {
-        if (id < CurrentMap.SpriteInfo.MapEffectRecords.Length)
-        {
-            var record = CurrentMap.SpriteInfo.MapEffectRecords[id];
-            if (checkBoundingBox)
-            {
-                var playerEntity = StaticVariables.PlayerEntity;
-                if (playerEntity.TileX < record.X1 || playerEntity.TileX > record.X2
-                                        || playerEntity.TileY < record.Y1 || playerEntity.TileY > record.Y2)
-                {
-                    return null;
-                }
-            }
-
-            return record;
-        }
-        return null;
-    }
-
     public int CollideOnEntitiesZ(Entity entity)
     {
         var collision = entity.TerrainHeight + 1;
@@ -2242,29 +2157,6 @@ public class GameEngine
         _entityEventHandlers.SpriteHandlers.RunSpriteHandler(entity.EventTrigger, eventId, entity);
     }
 
-    public SpriteEffect CreateEffect_MapType(byte mapeffectid, bool checkBoundingbox, EffectManager effectManager)
-    {
-        var record = this.GetMapEffectRecord(mapeffectid, checkBoundingbox);
-        if (record != null)
-        {
-            if (!checkBoundingbox && (record.Flags & 0x40) == 0)
-            {
-                return null;
-            }
-
-            var effect = effectManager.GetNextAvailableEffect();
-
-            if (effect != null)
-            {
-                effectManager.InitializeEffects(effect, record, mapeffectid, 0,
-                    (byte)((record.Flags & 0x80) >> 7), record.EffectId, record.AnimId,
-                    (record.X * 12 + 12) << 16, (record.Y * 8 + 8) << 16, record.Z << 19);
-
-                return effect;
-            }
-        }
-        return null;
-    }
 
     // 8005a9e0
     public void SetNextMapId(int mapIndex)
@@ -2599,9 +2491,6 @@ public class GameEngine
     //8003a7b0
     public void CheckAndTriggerTileEffect(Entity entity)
     {
-        //TODO
-        Debugger.Break();
-        /*
         if (entity.FrameCollision != null)
         {
             int[] worldXCoords = new int[4];
@@ -2610,54 +2499,67 @@ public class GameEngine
 
             worldXCoords[2] = StaticVariables.g_tileToWorldXTable[(short)(entity.HitBoxX >> 16)];
             worldXCoords[0] = worldXCoords[2];
-            worldXCoords[3] = StaticVariables.g_tileToWorldXTable[(int)((entity.HitBoxX + entity.TransformWidth) >> 16)];
+            worldXCoords[3] = StaticVariables.g_tileToWorldXTable[(int)((entity.HitBoxX + entity.FrameWidth) >> 16)];
             worldXCoords[1] = worldXCoords[3];
 
             worldYCoords[1] = entity.HitBoxY >> 20;
             worldYCoords[0] = worldYCoords[1];
-            worldYCoords[3] = (int)((entity.HitBoxY + entity.TransformDepth) >> 20);
+            worldYCoords[3] = (int)((entity.HitBoxY + entity.FrameDepth) >> 20);
             worldYCoords[2] = worldYCoords[3];
 
             tileZ = entity.HitBoxZ;
-            height = entity.TransformHeight;
-
-            int[] xCoordListPtr = worldXCoords;
+            height = entity.FrameHeight;
 
             for (int i = 0; i < 4; i++)
             {
-                int tileX1 = xCoordListPtr[i];
-                if (tileX1 < 1)
-                    tileX1 = 0;
-                else if (tileX1 > 0x33)
-                    tileX1 = 0x33;
-
-                int tileX2 = worldYCoords[i];
-                if (tileX2 < 1)
-                    tileX2 = 0;
-                else if (tileX2 > 0x3B)
-                    tileX2 = 0x3B;
-
-                int index = tileX2 * 0xd0 + tileX1 * 4 + 0x302;
-                ushort* tileDataPointer = (ushort*)(StaticVariables.g_spriteVRAMPointer + index);
-
-                if ((*tileDataPointer & 2) != 0)
+                int tileX = worldXCoords[i];
+                if (tileX < 1)
                 {
-                    int tileEffectZ = (StaticVariables.g_spriteVRAMPointer[index + 3] & 0xFF) << 20;
+                    tileX = 0;
+                }
+                else if (tileX > 0x33)
+                {
+                    tileX = 0x33;
+                }
+
+                int tileY = worldYCoords[i];
+                if (tileY < 1)
+                {
+                    tileY = 0;
+                }
+                else if (tileY > 0x3B)
+                {
+                    tileY = 0x3B;
+                }
+
+                var mapWidth = CurrentMap.Map.Width;
+                var tile = CurrentMap.Map.MapTiles[tileY * mapWidth + tileX];
+                var tileFlags = (tile.Walkability | tile.GroundProperty << 8);
+
+                if ((tileFlags & 2) != 0)
+                {
+                    int tileEffectZ = (tile.Height & 0xFF) << 20;
+                    //tileEffectZ = tile.Height * 0x100000;
+
                     if (tileZ <= tileEffectZ + 0x80000 && tileEffectZ + 0x80000 <= tileZ + height)
                     {
-                        *tileDataPointer = (ushort)(*tileDataPointer & 0xFFFD);
-                        tileDataPointer[3] = 0xFFFF;
+                        tile.Walkability = (byte)(tileFlags & 0xFFFD);
+                        tile.Height = (byte)((tileFlags & 0xFFFF) >> 8);
+                        tile.TilesOffset = -1;
 
-                        int effectX = xCoordListPtr[i] * 0x180000 + 0xC0000;
+                        int effectX = worldXCoords[i] * 0x180000 + 0xC0000;
                         int effectY = worldYCoords[i] * 0x100000 + 0x80000;
 
-                        EffectManager.CreateEffectEntity(0, StaticVariables.g_sharedBuffer2[9], 0, effectX, effectY, tileEffectZ);
-                        CreateWarpEffect(0xFF, effectX, effectY, tileEffectZ);
+                        EffectManager.CreateEffectEntity(0,
+                            CurrentMap.Info.SlideEffectId, 
+                            0, 
+                            effectX, effectY, tileEffectZ);
+                        EffectManager.CreateWarpEffect(0xFF, effectX, effectY, tileEffectZ);
                         PlaySoundEffect(0x1F);
                     }
                 }
             }
-        }*/
+        }
     }
 
     // 80033a2c
