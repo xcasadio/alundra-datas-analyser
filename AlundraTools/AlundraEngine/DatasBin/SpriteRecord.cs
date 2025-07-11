@@ -20,6 +20,7 @@ public class SpriteRecord
         {
             for (int dirIndex = 0; dirIndex < 4; dirIndex++)
             {
+                //TODO check direction
                 var direction = dirIndex switch
                 {
                     1 => 2,

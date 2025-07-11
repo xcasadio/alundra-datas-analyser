@@ -799,7 +799,7 @@ public class GameEngine
             spriteTableIndex |= 0x100;
         }
 
-        var directionIndex = entityRecord.SpriteDirection & 3;
+        var directionIndex = entityRecord.SpriteDirection & 0x3;
 
         EntityManager.InitializeEntity(
             entity, parent, 

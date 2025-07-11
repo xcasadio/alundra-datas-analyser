@@ -3024,7 +3024,7 @@ public class EntityEventHandlers
     // 8003E484
     private int Script_58_03A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        logicEntity.TargetDirection = (uint)StaticVariables.g_cardinalDirectionTable[variables[1] & 3];
+        logicEntity.TargetDirection = (uint)StaticVariables.g_cardinalDirectionTable[variables[1] & 0x3];
         return 2;
     }
 
