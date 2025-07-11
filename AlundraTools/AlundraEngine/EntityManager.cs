@@ -283,6 +283,17 @@ public class EntityManager
 
             //entity.Frame = entity.FirstFrame;
             //entity.AnimCompleteCounter++;
+
+
+            if (entity.Frame.Delay == 0 || (entity.Frame.Delay & 0x80) == 0)
+            {
+                if ((entity.Frame.TransformIndexLow & 0x80) != 0)
+                {
+                    entity.NextFrameDelay = 0x7fffffff;
+                    entity.ForceResetAnimationFlag = 1;
+                    return;
+                }
+            }
         }
 
         uint frameFlags = entity.Frame.Delay;
@@ -315,21 +326,23 @@ public class EntityManager
         if (currentFrame.ImageSetPointer != -1)
         {
             entity.SpriteRef.Images = currentFrame.Images.Images;
-            entity.SpriteRef.DepthSortVal = currentFrame.Images.Unknown;
+            entity.SpriteRef.DepthSortValue = currentFrame.Images.Unknown;
             entity.SpriteRef.NumImages = currentFrame.Images.NumberOfImages;
         }
         else
         {
             entity.SpriteRef.Images = null;
-            entity.SpriteRef.DepthSortVal = 0;
+            entity.SpriteRef.DepthSortValue = 0;
             entity.SpriteRef.NumImages = 0;
         }
 
-        if ((entity.Frame.Delay & 0x80) == 0 && (entity.Frame.TransformIndexLow & 0x80) == 0)
+        if ((entity.Frame.Delay & 0x80) == 0)
         {
-            entity.TargetAnimationId = entity.Frame.TransformIndexLow;
-            entity.ForceResetAnimationFlag = 1; // TODO ??
-            UpdateAnimation(entity); // recursive call to update the animation
+            if ((entity.Frame.TransformIndexLow & 0x80) == 0)
+            {
+                entity.TargetAnimationId = entity.Frame.TransformIndexLow;
+                UpdateAnimation(entity); // recursive call to update the animation
+            }
         }
 
         var anim = entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3];
@@ -338,8 +351,7 @@ public class EntityManager
         if (nextFrameIndex >= anim.NumberOfFrames)
         {
             nextFrameIndex = 0;
-            entity.ForceResetAnimationFlag = 1;
-
+            //entity.ForceResetAnimationFlag = 1;
             entity.Frame = entity.FirstFrame;
             entity.AnimCompleteCounter++;
         }
@@ -485,7 +497,7 @@ public class EntityManager
             {
                 var entity = StaticVariables.g_visibleEntities[i];
 
-                entity.SpriteRef.DepthSortVal = entity.ZSortValue;
+                entity.SpriteRef.DepthSortValue = entity.ZSortValue;
                 entity.SpriteRef.X = entity.PosX;
                 entity.SpriteRef.Y = entity.PosY;
                 entity.SpriteRef.Z = entity.PosZ;
@@ -1482,7 +1494,7 @@ public class EntityManager
             int entityModdedZPos = entity.ModdedZPos;
 
             int entityWidth = entity.Width + 1;
-            int entityHeight = entity.Height + 1; 
+            int entityHeight = entity.Height + 1;
             int entityDepth = entity.Depth + 1;
 
             int entityMaxY = entity.ModdedYPos;
@@ -2282,11 +2294,18 @@ public class EntityManager
 
                     case (int)EntityStatus.Normal:
                         var flags = entity.Flags;
+                        //flags = 73844
                         if ((flags & 0x100000) == 0 || entity.Slope_18c != 4)
                         {
+                            //CombinedVramFlagsOR == 0
                             if ((flags & 0x200000) == 0 || (entity.CombinedVramFlagsOR & 0x8004U) == 0)
                             {
-                                if (((flags & 0x10) != 0 && (entity.ForceAdjusted != 0 || entity.IsAboveGround != 0))
+                                //ForceAdjusted = 1
+                                //IsAboveGround = 0
+                                //ForceResetAnimationFlag = 0
+                                //HitCounter = 0
+                                if (
+                                    ((flags & 0x10) != 0 && (entity.ForceAdjusted != 0 || entity.IsAboveGround != 0))
                                     || ((flags & 0x20) != 0 && entity.HitCounter != 0)
                                     || ((flags & 0x40) != 0 && entity.ForceResetAnimationFlag != 0))
                                 {
@@ -2526,13 +2545,15 @@ public class EntityManager
 
             do
             {
-                tileFlags = entity.MapTiles[i].Flags & 0xe00;
-                if (entity.MapHeights[0] + 1 == entity.ModdedZPos)
+                tileFlags = entity.MapTiles[i].Flags;
+
+                if (entity.MapHeights[i] + 1 == entity.ModdedZPos)
                 {
-                    tempFlags[i] = entity.MapTiles[0].Flags;
+                    tempFlags[i] = entity.MapTiles[i].Flags;
+
                     if (tileFlags < bestFlagMask)
                     {
-                        bestFlagMask = tileFlags;
+                        bestFlagMask = tileFlags & 0xe00;
                     }
                 }
                 else
@@ -2541,7 +2562,7 @@ public class EntityManager
                     bestFlagMask = 0;
                 }
 
-                i = i + 1;
+                i += 1;
             } while (i < 4);
 
             entity.CombinedVramFlagsOR = (int)(tempFlags[0] | tempFlags[1] | tempFlags[2] | tempFlags[3]);
@@ -2588,7 +2609,7 @@ public class EntityManager
             }
         }
 
-        tileAttr = 1U << ((int)(tileFlags >> 0x14) & 3);
+        tileAttr = 0x1U << ((int)(tileFlags >> 0x14) & 0x3);
         entity.TileAttributes = (int)tileAttr;
         if ((tileFlags & 0x800000) != 0)
         {
@@ -2596,9 +2617,8 @@ public class EntityManager
         }
 
         FinishUpdate:
-        tileX = entity.Slope_18c;
+        entity.Slope_190 = entity.Slope_18c;
         entity.Slope_18c = (int)bestFlagMask >> 9;
-        entity.Slope_190 = tileX;
         return;
 
         NoCollision:

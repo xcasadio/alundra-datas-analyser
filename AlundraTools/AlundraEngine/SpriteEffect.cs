@@ -23,8 +23,8 @@ public class SpriteEffect
     public int ForceX;//x forces?
     public int ForceY;//y
     public int ForceZ;//z
-    public int DepthSortMod;//60
-    public int ZSortValue;//stored to 1c, is it a depth sorting id? 64
+    public int DepthSortOffset;//60
+    public int DepthSortValue;//stored to 1c, is it a depth sorting id? 64
     public int Status;//68  2 is active
     public byte TargetIsMapSprite;//6c
     public byte CurrentIsMapSprite;//6d
@@ -64,8 +64,8 @@ public class SpriteEffect
         ForceX = 0;
         ForceY = 0;
         ForceZ = 0;
-        DepthSortMod = 0;
-        ZSortValue = 0;
+        DepthSortOffset = 0;
+        DepthSortValue = 0;
         Status = 0;
         TargetIsMapSprite = 0;
         CurrentIsMapSprite = 0;

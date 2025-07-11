@@ -20,7 +20,6 @@ public class PlayerManager
     {
         int weaponId;
         int slope;
-        uint buttonsHold;
         uint dir;
 
         StaticVariables.g_activeCollisionEntity = null;
@@ -133,8 +132,8 @@ public class PlayerManager
 
                     break;
 
-                case 0x4e:
-                case 0x4f:
+                case (int)PlayerAnimation.Dead:
+                case (int)PlayerAnimation.Reserved4F:
                     if (StaticVariables.PlayerEntity.ForceResetAnimationFlag != 0)
                     {
                         weaponId = _gameEngine.GetNumberOfItem(0x27);
@@ -154,12 +153,10 @@ public class PlayerManager
                         if (slope == 4)
                         {
                             StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.SwimmingStill;
-                            goto END;
                         }
                         else
                         {
                             StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Idle;
-                            goto END;
                         }
                     }
                     break;
@@ -201,7 +198,7 @@ public class PlayerManager
         }
 
         MaybeStartWarpAnimation();
-        buttonsHold = (uint)(StaticVariables.g_padState1.ButtonsHold >> 0xc);
+        var buttonsHold = (uint)(StaticVariables.g_padState1.ButtonsHold >> 0xc);
         dir = StaticVariables.g_directionByButtons[buttonsHold];
 
         if (StaticVariables.g_directionByButtons[buttonsHold] == 0xffffffff)
@@ -674,10 +671,9 @@ public class PlayerManager
                 }
                 goto LAB_800325e0;
 
-            case 0xe:
-            case 0x35:
-                iVar2 = TryUseItem();
-                if (iVar2 == 0 || PlayerTryAction() != 0)
+            case (int)PlayerAnimation.Climbing:
+            case (int)PlayerAnimation.ClimbStill:
+                if (TryUseItem() == 0 || PlayerTryAction() != 0)
                 {
                     break;
                 }
@@ -687,7 +683,9 @@ public class PlayerManager
                     StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                     break;
                 }
+
                 StaticVariables.PlayerEntity.TargetDirection = 0x10;
+
                 if (buttonsHold == 0)
                 {
                     StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.ClimbStill;
@@ -730,13 +728,14 @@ public class PlayerManager
                     StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Idle;
                 }
                 break;
-            case 0xf:
-            case 0x1d:
-            case 0x28:
-            case 0x39:
-            case 0x3c:
-            case 0x4e:
-            case 0x4f:
+
+            case (int)PlayerAnimation.SwimmingSlow:
+            case (int)PlayerAnimation.SwimmingStill:
+            case (int)PlayerAnimation.SwimmingDash:
+            case (int)PlayerAnimation.Reserved39:
+            case (int)PlayerAnimation.Reserved3C:
+            case (int)PlayerAnimation.Dead:
+            case (int)PlayerAnimation.Reserved4F:
                 //goto switchD_80031dac_caseD_f;
                 if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                 {
@@ -748,46 +747,50 @@ public class PlayerManager
                 }
                 TryUseItem();
                 goto END;
-            case 0x1c:
-            case 0x3e:
-                iVar2 = TryUseItem();
-                if (iVar2 == 0)
+
+            case (int)PlayerAnimation.DamageKnockBack:
+            case (int)PlayerAnimation.SprintAgainstWall:
+                if (TryUseItem() == 0)
                 {
                     StaticVariables.PlayerEntity.TargetDirection = StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
                     break;
                 }
+
                 if (StaticVariables.PlayerEntity.ForceResetAnimationFlag != 1)
                 {
                     break;
                 }
 
                 StaticVariables.PlayerEntity.TargetDirection = StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
+                
                 if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                 {
                     StaticVariables.PlayerEntity.TargetAnimationId = (uint)StaticVariables.PlayerEntity.ForceResetAnimationFlag;
                     break;
                 }
                 goto LAB_80032594;
-            case 0x20:
-            case 0x24:
-                iVar2 = TryUseItem();
-                if (iVar2 == 0 || StaticVariables.g_warpLockTimer == 0x20)
+
+            case (int)PlayerAnimation.EnterSand:
+            case (int)PlayerAnimation.InSandDash:
+                if (TryUseItem() == 0 || StaticVariables.g_warpLockTimer == 0x20)
                 {
                     break;
                 }
 
                 goto LAB_8003253c;
-            case 0x21:
-            case 0x31:
-            case 0x34:
+
+            case (int)PlayerAnimation.ExitSand:
+            case (int)PlayerAnimation.DamageTaken:
+            case (int)PlayerAnimation.EndSpellCast:
                 //goto switchD_80032650_caseD_28;
                 TryUseItem();
                 goto END;
-            case 0x22:
-            case 0x23:
+
+            case (int)PlayerAnimation.InSand:
+            case (int)PlayerAnimation.InSandMoving:
                 StaticVariables.PlayerEntity.TargetDirection = dir;
-                iVar2 = TryUseItem();
-                if (iVar2 == 0)
+
+                if (TryUseItem() == 0)
                 {
                     break;
                 }
@@ -811,17 +814,18 @@ public class PlayerManager
                     }
                     break;
                 }
+
                 LAB_8003253c:
                 if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                 {
                     StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                     break;
                 }
-                goto LAB_800325e0;
-            case 0x29:
-                iVar2 = TryUseItem();
 
-                if (iVar2 == 0
+                goto LAB_800325e0;
+
+            case (int)PlayerAnimation.PrepareSprint:
+                if (TryUseItem() == 0
                     || PlayerTryAction() != 0
                     || PlayerTryAttack() != 0)
                 {
@@ -834,24 +838,28 @@ public class PlayerManager
                     StaticVariables.PlayerEntity.TargetDirection = dir;
                     break;
                 }
+
                 StaticVariables.PlayerEntity.TargetDirection = dir;
+
                 if ((StaticVariables.g_padState1.ButtonsHold & PadState.Triangle) != 0)
                 {
                     StaticVariables.PlayerEntity.TargetDirection = dir;
+
                     if (StaticVariables.PlayerEntity.AnimCompleteCounter != 0 &&
-                       StaticVariables.UINT_ARRAY_80022cac[buttonsHold] != 0xffffffff)
+                       StaticVariables.g_dashDirections[buttonsHold] != 0xffffffff)
                     {
                         StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Sprint;
-                        StaticVariables.PlayerEntity.TargetDirection = StaticVariables.UINT_ARRAY_80022cac[buttonsHold];
+                        StaticVariables.PlayerEntity.TargetDirection = StaticVariables.g_dashDirections[buttonsHold];
                     }
                     break;
                 }
+
                 LAB_80032594:
                 StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Idle;
                 break;
-            case 0x2a:
-                iVar2 = TryUseItem();
-                if (iVar2 != 0 && PlayerTryAction() == 0)
+
+            case (int)PlayerAnimation.StopSprint:
+                if (TryUseItem() != 0 && PlayerTryAction() == 0)
                 {
                     if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                     {
@@ -866,26 +874,28 @@ public class PlayerManager
 
                             if (10 < StaticVariables.INT_ARRAY_80126fe8[3])
                             {
-                                if (StaticVariables.UINT_ARRAY_80022cac[buttonsHold] != 0xffffffff)
+                                if (StaticVariables.g_dashDirections[buttonsHold] != 0xffffffff)
                                 {
                                     StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Sprint;
-                                    StaticVariables.PlayerEntity.TargetDirection = StaticVariables.UINT_ARRAY_80022cac[buttonsHold];
+                                    StaticVariables.PlayerEntity.TargetDirection = StaticVariables.g_dashDirections[buttonsHold];
                                 }
                                 break;
                             }
+
                             if (buttonsHold == 0)
                             {
                                 break;
                             }
                         }
+
                         StaticVariables.INT_ARRAY_80126fe8[3] = 0;
                     }
                 }
                 break;
-            case 0x32:
-            case 0x33:
-                iVar2 = TryUseItem();
-                if (iVar2 == 0 || StaticVariables.g_warpLockTimer - 0x2bU < 8)
+
+            case (int)PlayerAnimation.StartSpellCast:
+            case (int)PlayerAnimation.LoopSpellCast:
+                if (TryUseItem() == 0 || StaticVariables.g_warpLockTimer - 0x2bU < 8)
                 {
                     break;
                 }
@@ -898,7 +908,8 @@ public class PlayerManager
                 LAB_800325e0:
                 StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Idle;
                 break;
-            case 0x36:
+
+            case (int)PlayerAnimation.LoadingMap:
                 if (StaticVariables.PlayerEntity.IsAboveGround != 0)
                 {
                     break;
@@ -907,8 +918,9 @@ public class PlayerManager
                 LAB_80032604:
                 StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                 break;
-            case 0x3a:
-            case 0x3b:
+
+            case (int)PlayerAnimation.DamageTakenSwimming:
+            case (int)PlayerAnimation.DamageKnockBackSwimming:
                 StaticVariables.PlayerEntity.TargetDirection = StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
                 //goto switchD_80031dac_caseD_f;
                 if (StaticVariables.PlayerEntity.IsAboveGround == 0)
@@ -919,6 +931,7 @@ public class PlayerManager
                 {
                     StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Idle;
                 }
+
                 TryUseItem();
                 goto END;
 

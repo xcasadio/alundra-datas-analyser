@@ -389,7 +389,7 @@ public class Entity
         SpriteRef.X = 0;
         SpriteRef.Y = 0;
         SpriteRef.Z = 0;
-        SpriteRef.DepthSortVal = 0;
+        SpriteRef.DepthSortValue = 0;
         SpriteRef.NumImages = 0;
 
         AddedToSheet = 0;

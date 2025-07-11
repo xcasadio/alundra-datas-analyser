@@ -136,6 +136,8 @@ public partial class FrmGame : Form
         [nameof(Entity.CombinedVramFlagsOR)] = "Physics",
         [nameof(Entity.CombinedVramFlagsAND)] = "Physics",
         [nameof(Entity.Slope_18c)] = "Physics",
+        [nameof(Entity.Slope_190)] = "Physics",
+        [nameof(Entity.TileAttributes)] = "Physics",
 
         [nameof(Entity.BalanceRecord)] = "Collision",
         [nameof(Entity.BalanceVal)] = "Collision",
@@ -408,7 +410,7 @@ public partial class FrmGame : Form
                $"Frame Pos: {entity.HitBoxX} {entity.HitBoxY} {entity.HitBoxZ}{Environment.NewLine}" +
                $"Frame Off: {entity.FrameXOff} {entity.FrameYOff} {entity.FrameZOff}{Environment.NewLine}" +
                $"FrameWidth: {entity.FrameWidth} {entity.FrameDepth} {entity.FrameHeight}{Environment.NewLine}" +
-               $"ZSortValue: {entity.ZSortValue >> 16}{Environment.NewLine}" +
+               $"DepthSortValue: {entity.ZSortValue >> 16}{Environment.NewLine}" +
                $"ZSortDepth: {entity.ZSortDepth >> 16}{Environment.NewLine}" +
                //
                $"AddedToSheet: {entity.AddedToSheet}{Environment.NewLine}" +
@@ -781,7 +783,7 @@ public partial class FrmGame : Form
             content.Append("#;");
             content.Append("Flags;PosX;PosY;PosZ;");
             content.Append("ModdedXPos;ModdedYPos;ModdedZPos;");
-            content.Append("TerrainHeight;FloorHeight;ZSortValue;ZSortDepth;");
+            content.Append("TerrainHeight;FloorHeight;DepthSortValue;ZSortDepth;");
             content.Append("MapHeights[0];MapHeights[1];MapHeights[2];MapHeights[3];");
             // MapTiles
             for (int i = 0; i < 4; i++)

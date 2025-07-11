@@ -138,13 +138,11 @@ public class EffectManager
                 UpdateEffectPosition(effect);
             }
 
-            effect.SpriteRef.DepthSortVal = effect.ZSortValue;
+            effect.SpriteRef.DepthSortValue = effect.DepthSortValue;
             effect.SpriteRef.X = effect.X;
             effect.SpriteRef.Y = effect.Y;
             effect.SpriteRef.Z = effect.Z;
             StaticVariables.g_spriteImages[StaticVariables.g_spriteNumberOfImage++] = effect.SpriteRef;
-            //StaticVariables.g_currentEntitySpriteImages++;
-            //StaticVariables.g_spriteNumberOfImage++;
         }
     }
 
@@ -208,12 +206,12 @@ public class EffectManager
                 if (frame?.Images != null)
                 {
                     effect.SpriteRef.Images = frame.Images.Images;
-                    effect.SpriteRef.DepthSortVal = frame.Images.Unknown;
+                    effect.SpriteRef.DepthSortValue = frame.Images.Unknown;
                     effect.SpriteRef.NumImages = frame.Images.NumberOfImages;
                     return;
                 }
                 effect.SpriteRef.Images = null;
-                effect.SpriteRef.DepthSortVal = 0;
+                effect.SpriteRef.DepthSortValue = 0;
                 effect.SpriteRef.NumImages = 0;
                 return;
             }
@@ -246,7 +244,7 @@ public class EffectManager
             effect.Y += effect.ForceY;
             effect.Z += effect.ForceZ;
             //some kind of unique id? maybe its used for zsorting
-            effect.ZSortValue = (int)(effect.Y & 0xffff0000) + (effect.Z >> 16) + (effect.SpriteRef.DepthSortVal << 16);
+            effect.DepthSortValue = (int)(effect.Y & 0xffff0000) + (effect.Z >> 16) + (effect.SpriteRef.DepthSortValue << 16);
             return;
         }
 
@@ -258,7 +256,7 @@ public class EffectManager
                 effect.X = entity.PosX + effect.XOff;
                 effect.Y = entity.PosY + effect.YOff;
                 effect.Z = entity.PosZ + effect.ZOff;
-                effect.ZSortValue = entity.ZSortValue + effect.DepthSortMod;
+                effect.DepthSortValue = entity.ZSortValue + effect.DepthSortOffset;
                 if (entity.Status == 4)
                 {
                     effect.UpdateMode = 2;
@@ -280,7 +278,7 @@ public class EffectManager
 
         if (effect.AttachedEntity.Status != 0)
         {
-            effect.ZSortValue = effect.AttachedEntity.ZSortValue + effect.DepthSortMod;
+            effect.DepthSortValue = effect.AttachedEntity.ZSortValue + effect.DepthSortOffset;
 
             if (effect.AttachedEntity.Status == 4)
             {
@@ -313,7 +311,7 @@ public class EffectManager
         {
             InitializeEffects(effect, null, -1, 1, ismapeffect, effectid, animid, entity.PosX, entity.PosY, entity.PosZ);
             effect.AttachedEntity = entity;
-            effect.DepthSortMod = depthsortmod;
+            effect.DepthSortOffset = depthsortmod;
             effect.XOff = xoff;
             effect.YOff = yoff;
             effect.ZOff = zoff;
@@ -330,7 +328,7 @@ public class EffectManager
         {
             InitializeEffects(effect, null, -1, 3, ismapeffect, effectid, animid, x, y, z);
             effect.AttachedEntity = entity;
-            effect.DepthSortMod = depthsortmod;
+            effect.DepthSortOffset = depthsortmod;
             return effect;
         }
         return null;

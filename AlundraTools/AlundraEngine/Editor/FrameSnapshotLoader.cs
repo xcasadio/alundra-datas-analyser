@@ -566,7 +566,7 @@ public static class FrameSnapshotLoader
     //    public void CopyToSpriteRef(SpriteRef spriteRef)
     //    {
     //        spriteRef.Images = images;
-    //        spriteRef.ZSortValue = depthSortVal;
+    //        spriteRef.DepthSortValue = depthSortVal;
     //        spriteRef.NumImages = numImages;
     //        spriteRef.X = x;
     //        spriteRef.Y = y;

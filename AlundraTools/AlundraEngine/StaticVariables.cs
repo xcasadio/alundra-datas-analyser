@@ -1104,8 +1104,21 @@ public static class StaticVariables
     //public static byte[] g_flailHitAnimations = new byte[8]; // 800228A4
     public static char[] s_ARM_80022be4 = new char[84]; // 80022BE4
     //public static uint[] g_directionByButtons = new uint[16]; // 80022C6C
-    public static uint[] UINT_ARRAY_80022cac = new uint[16]; // 80022CAC
-    public static uint[] UINT_ARRAY_80022cec = new uint[12]; // 80022CEC
+    // 80022CAC
+    public static readonly uint[] g_dashDirections =
+    [
+        0xFFFFFFFF, 0x00000010, 0x00000018, 0xFFFFFFFF,
+        0x00000000, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
+        0x00000008, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
+        0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF
+    ]; 
+    // 80022CEC
+    public static readonly uint[] UINT_ARRAY_80022cec =
+    [
+        /* 0x00 */ 0x0000001C, 0x00000000, 0x00000004, 0x0000000C,
+        /* 0x04 */ 0x00000010, 0x00000014, 0x00000004, 0x00000008,
+        /* 0x08 */ 0x0000000C, 0x00000014, 0x00000018, 0x0000001C
+    ];
     public static int PTR_LAB_80022d1c; // 80022D1C
     public static int PTR_HandleWarpExitDecision_80022fbc; // 80022FBC
     public static short DAT_8002343c; // 8002343C

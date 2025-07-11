@@ -995,7 +995,7 @@ public class SpriteEventHandlers
     {
         int entityTargetIndex = 0;
 
-        if (entity.TargetAnimationId == 1)
+        if (entity.TargetAnimationId == 1) //after hit a wall (turn around)
         {
             if (entity.ForceResetAnimationFlag == 1)
             {
