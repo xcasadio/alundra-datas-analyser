@@ -9,11 +9,13 @@ public static class StaticVariables
 {
     //editor
     public static int EditorSelectEntityIndex { get; set; } = -1;
+    public static int EditorSelectEffectIndex { get; set; } = -1;
     public static bool IsGamePaused { get; set; }
     public static bool DoNextFrame { get; set; }
 
     //editor debuggin display
     public static bool DisplayEntityId { get; set; }
+    public static bool DisplayEffectId { get; set; }
     public static bool DisplayTileXY { get; set; }
 
     // custom

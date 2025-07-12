@@ -86,12 +86,9 @@ namespace AlundraTools.AlundraTools
             checkBoxTileXY = new CheckBox();
             buttonCompareWithDump = new Button();
             buttonControlAlundra = new Button();
-            tabControl1 = new TabControl();
+            tabControlEffect = new TabControl();
             tabPageGlobal = new TabPage();
             tabPage2 = new TabPage();
-            comboBoxNumberOfItem = new ComboBox();
-            label28 = new Label();
-            numericUpDownNumberOfItem = new NumericUpDown();
             comboBoxWeapon = new ComboBox();
             label27 = new Label();
             label18 = new Label();
@@ -110,6 +107,11 @@ namespace AlundraTools.AlundraTools
             numericUpDownMp = new NumericUpDown();
             label20 = new Label();
             numericUpDownHpMax = new NumericUpDown();
+            tabPage1 = new TabPage();
+            label28 = new Label();
+            listBoxEffects = new ListBox();
+            propertyGridEffect = new PropertyGrid();
+            checkBoxDisplayEffectId = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -117,10 +119,9 @@ namespace AlundraTools.AlundraTools
             ((System.ComponentModel.ISupportInitialize)dataGridViewGlobalFlags).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridViewMapFlags).BeginInit();
             groupBox4.SuspendLayout();
-            tabControl1.SuspendLayout();
+            tabControlEffect.SuspendLayout();
             tabPageGlobal.SuspendLayout();
             tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownNumberOfItem).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownFalcon2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownFalcon1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownMoney).BeginInit();
@@ -128,6 +129,7 @@ namespace AlundraTools.AlundraTools
             ((System.ComponentModel.ISupportInitialize)numericUpDownMpMax).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownMp).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownHpMax).BeginInit();
+            tabPage1.SuspendLayout();
             SuspendLayout();
             // 
             // pctOut
@@ -671,11 +673,12 @@ namespace AlundraTools.AlundraTools
             // 
             // groupBox4
             // 
+            groupBox4.Controls.Add(checkBoxDisplayEffectId);
             groupBox4.Controls.Add(checkBoxTileXY);
             groupBox4.Controls.Add(checkBoxDisplayEntityId);
-            groupBox4.Location = new Point(480, 719);
+            groupBox4.Location = new Point(544, 719);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(250, 125);
+            groupBox4.Size = new Size(186, 125);
             groupBox4.TabIndex = 31;
             groupBox4.TabStop = false;
             groupBox4.Text = "Debugging";
@@ -683,7 +686,7 @@ namespace AlundraTools.AlundraTools
             // checkBoxTileXY
             // 
             checkBoxTileXY.AutoSize = true;
-            checkBoxTileXY.Location = new Point(6, 56);
+            checkBoxTileXY.Location = new Point(6, 86);
             checkBoxTileXY.Name = "checkBoxTileXY";
             checkBoxTileXY.Size = new Size(121, 24);
             checkBoxTileXY.TabIndex = 31;
@@ -711,16 +714,17 @@ namespace AlundraTools.AlundraTools
             buttonControlAlundra.UseVisualStyleBackColor = true;
             buttonControlAlundra.Click += buttonControlAlundra_Click;
             // 
-            // tabControl1
+            // tabControlEffect
             // 
-            tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tabControl1.Controls.Add(tabPageGlobal);
-            tabControl1.Controls.Add(tabPage2);
-            tabControl1.Location = new Point(733, 12);
-            tabControl1.Name = "tabControl1";
-            tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(595, 1024);
-            tabControl1.TabIndex = 34;
+            tabControlEffect.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tabControlEffect.Controls.Add(tabPageGlobal);
+            tabControlEffect.Controls.Add(tabPage2);
+            tabControlEffect.Controls.Add(tabPage1);
+            tabControlEffect.Location = new Point(733, 12);
+            tabControlEffect.Name = "tabControlEffect";
+            tabControlEffect.SelectedIndex = 0;
+            tabControlEffect.Size = new Size(595, 1024);
+            tabControlEffect.TabIndex = 34;
             // 
             // tabPageGlobal
             // 
@@ -740,9 +744,6 @@ namespace AlundraTools.AlundraTools
             // 
             // tabPage2
             // 
-            tabPage2.Controls.Add(comboBoxNumberOfItem);
-            tabPage2.Controls.Add(label28);
-            tabPage2.Controls.Add(numericUpDownNumberOfItem);
             tabPage2.Controls.Add(comboBoxWeapon);
             tabPage2.Controls.Add(label27);
             tabPage2.Controls.Add(label18);
@@ -768,32 +769,6 @@ namespace AlundraTools.AlundraTools
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Player status";
             tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // comboBoxNumberOfItem
-            // 
-            comboBoxNumberOfItem.FormattingEnabled = true;
-            comboBoxNumberOfItem.Location = new Point(76, 352);
-            comboBoxNumberOfItem.Name = "comboBoxNumberOfItem";
-            comboBoxNumberOfItem.Size = new Size(151, 28);
-            comboBoxNumberOfItem.TabIndex = 20;
-            // 
-            // label28
-            // 
-            label28.AutoSize = true;
-            label28.Location = new Point(6, 355);
-            label28.Name = "label28";
-            label28.Size = new Size(70, 20);
-            label28.TabIndex = 18;
-            label28.Text = "# of Item";
-            // 
-            // numericUpDownNumberOfItem
-            // 
-            numericUpDownNumberOfItem.Location = new Point(233, 352);
-            numericUpDownNumberOfItem.Maximum = new decimal(new int[] { 9, 0, 0, 0 });
-            numericUpDownNumberOfItem.Name = "numericUpDownNumberOfItem";
-            numericUpDownNumberOfItem.Size = new Size(84, 27);
-            numericUpDownNumberOfItem.TabIndex = 19;
-            numericUpDownNumberOfItem.ValueChanged += numericUpDownNumberOfItem_ValueChanged;
             // 
             // comboBoxWeapon
             // 
@@ -843,6 +818,7 @@ namespace AlundraTools.AlundraTools
             // comboBoxItem
             // 
             comboBoxItem.FormattingEnabled = true;
+            comboBoxItem.Items.AddRange(new object[] { "30-Spring Bean", "31-Sand Cape", "33-Curious Key variant (unused)", "34-Bomb", "35-Herbs", "36-Strength Elixyr", "37-Magic Elixyr", "38-Wonder Essence", "39-Aqua Cape", "40-Stenght Tonic", "41-System error (unused)", "42-Earth Scroll", "43-Earth Book", "44-Water Scroll", "45-Water Book", "46-Fire Scroll", "47-Fire Book", "48-Wind Scroll", "49-Wind Book", "50-Olga's Ring", "51-Oak's Ring (unused)", "52-Silver Armlet", "53-Nava's Charm", "54-Recovery Ring", "55-Refresher (unused)", "57-Save book (unused)", "58-Power Glove" });
             comboBoxItem.Location = new Point(76, 271);
             comboBoxItem.Name = "comboBoxItem";
             comboBoxItem.Size = new Size(151, 28);
@@ -954,12 +930,66 @@ namespace AlundraTools.AlundraTools
             numericUpDownHpMax.Value = new decimal(new int[] { 10, 0, 0, 0 });
             numericUpDownHpMax.ValueChanged += numericUpDownHpMax_ValueChanged;
             // 
+            // tabPage1
+            // 
+            tabPage1.Controls.Add(label28);
+            tabPage1.Controls.Add(listBoxEffects);
+            tabPage1.Controls.Add(propertyGridEffect);
+            tabPage1.Location = new Point(4, 29);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(587, 991);
+            tabPage1.TabIndex = 2;
+            tabPage1.Text = "Effects";
+            tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label28
+            // 
+            label28.AutoSize = true;
+            label28.Location = new Point(6, 167);
+            label28.Name = "label28";
+            label28.Size = new Size(53, 20);
+            label28.TabIndex = 30;
+            label28.Text = "Effects";
+            // 
+            // listBoxEffects
+            // 
+            listBoxEffects.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            listBoxEffects.FormattingEnabled = true;
+            listBoxEffects.Location = new Point(7, 191);
+            listBoxEffects.Margin = new Padding(3, 4, 3, 4);
+            listBoxEffects.Name = "listBoxEffects";
+            listBoxEffects.Size = new Size(117, 784);
+            listBoxEffects.TabIndex = 28;
+            listBoxEffects.SelectedIndexChanged += listBoxEffects_SelectedIndexChanged;
+            // 
+            // propertyGridEffect
+            // 
+            propertyGridEffect.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            propertyGridEffect.BackColor = SystemColors.Control;
+            propertyGridEffect.Location = new Point(132, 191);
+            propertyGridEffect.Margin = new Padding(3, 4, 3, 4);
+            propertyGridEffect.Name = "propertyGridEffect";
+            propertyGridEffect.Size = new Size(452, 793);
+            propertyGridEffect.TabIndex = 29;
+            // 
+            // checkBoxDisplayEffectId
+            // 
+            checkBoxDisplayEffectId.AutoSize = true;
+            checkBoxDisplayEffectId.Location = new Point(6, 56);
+            checkBoxDisplayEffectId.Name = "checkBoxDisplayEffectId";
+            checkBoxDisplayEffectId.Size = new Size(137, 24);
+            checkBoxDisplayEffectId.TabIndex = 32;
+            checkBoxDisplayEffectId.Text = "display effect id";
+            checkBoxDisplayEffectId.UseVisualStyleBackColor = true;
+            checkBoxDisplayEffectId.CheckedChanged += checkBoxDisplayEffectId_CheckedChanged;
+            // 
             // FrmGame
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1329, 1048);
-            Controls.Add(tabControl1);
+            Controls.Add(tabControlEffect);
             Controls.Add(buttonControlAlundra);
             Controls.Add(buttonCompareWithDump);
             Controls.Add(groupBox4);
@@ -989,12 +1019,11 @@ namespace AlundraTools.AlundraTools
             ((System.ComponentModel.ISupportInitialize)dataGridViewMapFlags).EndInit();
             groupBox4.ResumeLayout(false);
             groupBox4.PerformLayout();
-            tabControl1.ResumeLayout(false);
+            tabControlEffect.ResumeLayout(false);
             tabPageGlobal.ResumeLayout(false);
             tabPageGlobal.PerformLayout();
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownNumberOfItem).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownFalcon2).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownFalcon1).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownMoney).EndInit();
@@ -1002,6 +1031,8 @@ namespace AlundraTools.AlundraTools
             ((System.ComponentModel.ISupportInitialize)numericUpDownMpMax).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownMp).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownHpMax).EndInit();
+            tabPage1.ResumeLayout(false);
+            tabPage1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1065,7 +1096,7 @@ namespace AlundraTools.AlundraTools
         private CheckBox checkBoxTileXY;
         private Button buttonCompareWithDump;
         private Button buttonControlAlundra;
-        private TabControl tabControl1;
+        private TabControl tabControlEffect;
         private TabPage tabPageGlobal;
         private TabPage tabPage2;
         private ComboBox comboBoxWeapon;
@@ -1086,8 +1117,10 @@ namespace AlundraTools.AlundraTools
         private NumericUpDown numericUpDownMp;
         private Label label20;
         private NumericUpDown numericUpDownHpMax;
+        private TabPage tabPage1;
         private Label label28;
-        private NumericUpDown numericUpDownNumberOfItem;
-        private ComboBox comboBoxNumberOfItem;
+        private ListBox listBoxEffects;
+        private PropertyGrid propertyGridEffect;
+        private CheckBox checkBoxDisplayEffectId;
     }
 }

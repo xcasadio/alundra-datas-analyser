@@ -16,8 +16,6 @@ public class EffectManager
     // 8003c1a4
     public void InitializeEffectSlots()
     {
-        SpriteEffect effect;
-
         foreach (var spriteEffect in StaticVariables.g_effectSlots)
         {
             spriteEffect.Status = 0;
@@ -240,7 +238,7 @@ public class EffectManager
     {
         if (effect.UpdateMode == 0)
         {
-            effect.X += effect.ForceX; //forces?
+            effect.X += effect.ForceX;
             effect.Y += effect.ForceY;
             effect.Z += effect.ForceZ;
             //some kind of unique id? maybe its used for zsorting
@@ -271,6 +269,7 @@ public class EffectManager
         {
             return;
         }
+
         //param3== 1 falls through to here, and param3 == 3 is here
         effect.X += effect.ForceX; //forces?
         effect.Y += effect.ForceY;
@@ -291,7 +290,8 @@ public class EffectManager
         }
     }
 
-    public SpriteEffect CreateEffect_Type0(byte ismapeffect, byte effectid, byte animid, int x, int y, int z)
+    //8003bdd8
+    public SpriteEffect CreateEffectEntity(byte ismapeffect, byte effectid, byte animid, int x, int y, int z)
     {
         var effect = GetNextAvailableEffect();
 
@@ -300,9 +300,11 @@ public class EffectManager
             InitializeEffects(effect, null, -1, 0, ismapeffect, effectid, animid, x, y, z);
             return effect;
         }
+
         return null;
     }
 
+    //8003be74
     public SpriteEffect CreateAttachedEffect(byte ismapeffect, byte effectid, byte animid, Entity entity, int depthsortmod, int xoff, int yoff, int zoff)
     {
         var effect = GetNextAvailableEffect();
@@ -320,7 +322,8 @@ public class EffectManager
         return null;
     }
 
-    public SpriteEffect CreateEffect_Type3(byte ismapeffect, byte effectid, byte animid, Entity entity, int depthsortmod, int x, int y, int z)
+    //8003bfe8
+    public SpriteEffect CreateDetachedEffect(byte ismapeffect, byte effectid, byte animid, Entity entity, int depthsortmod, int x, int y, int z)
     {
         var effect = GetNextAvailableEffect();
 
@@ -334,6 +337,7 @@ public class EffectManager
         return null;
     }
 
+    //8003b9c4
     public SpriteEffect GetNextAvailableEffect()
     {
         foreach (var effect in StaticVariables.g_effectSlots)
@@ -385,14 +389,12 @@ public class EffectManager
     // 8003bb14
     public void InitializeEffects(
         SpriteEffect effect, MapEffectRecord mapEffectRecord, 
-        int effectId, int updateMode,
-        int behaviorFlag, byte spriteTableIndex, byte animationIndex, int x, int y, int z)
+        int effectId, int updateMode, int behaviorFlag, 
+        byte spriteTableIndex, byte animationIndex, 
+        int x, int y, int z)
     {
         var originalId = effect.Id;
-
-        //reset all fields with g_emptySpriteEffect
-        effect.Reset();
-
+        effect.Reset(); //reset all fields with g_emptySpriteEffect
         effect.Id = originalId;
         effect.MapEffectRecord = mapEffectRecord;
 

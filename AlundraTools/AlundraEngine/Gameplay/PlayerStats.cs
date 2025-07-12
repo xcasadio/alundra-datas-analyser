@@ -7,7 +7,7 @@ public class PlayerStats {
     public short MpMax;
     public short MoneyAmount;
     public short WeaponId;
-    public short CurrentItemId;
+    public short ItemId;
     public short FalconTemp;
     public short Falcon;
 };

@@ -235,10 +235,20 @@ public class GameInitializer
         //ReadFileFromCDIntoBuffer(fileName,&g_compressedImageData,imageDataStart,imageDataEnd - imageDataStart);
         //LoadCompressedImageToBuffer(&g_compressedImageData,0x140,0x100,8,(u_long *)&g_bufferImage2);
         //DoNothing();
-        //InitSpriteGroupIndex();
+        InitializeEffects();
         InitializeSpriteTileLayouts();
     }
 
+    //8003c17c
+    private void InitializeEffects()
+    {
+        for (int i = 0; i < StaticVariables.g_effectSlots.Length; i++)
+        {
+            StaticVariables.g_effectSlots[i].Id = i;
+        }
+    }
+
+    //8003b0e8
     private void InitializeSpriteTileLayouts()
     {
         int entityLinkPtr;

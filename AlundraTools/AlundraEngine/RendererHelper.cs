@@ -1,5 +1,8 @@
 ﻿using AlundraEngine.DatasBin;
+using AlundraEngine.Gameplay;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Drawing.Imaging.Effects;
 
 namespace AlundraEngine;
 
@@ -118,6 +121,49 @@ public class RendererHelper
 
                 if (entity.Sprite != null)
                 {
+                    //display attached effect
+                    if (entity.ActiveEffect?.Status == 2)
+                    {
+                        var effect = entity.ActiveEffect;
+
+                        var eX = (effect.X >> 16) - currentXPosition;
+                        var eY = (effect.Y >> 16) - (effect.Z >> 16) - currentYPosition;
+
+                        //if (effect.Sprite != null)
+                        {
+                            var mapSprite = effect.CurrentIsMapSprite == 1 ? gameMap : datasBin.AlundraGameMap;
+
+                            if (effect.Frame?.Images != null) // why?? TODO, not initialized when we load a dump?
+                            {
+                                var iset = effect.Frame.Images;
+                                for (var idex = iset.NumberOfImages - 1; idex >= 0; idex--)
+                                {
+                                    var img = iset.Images[idex];
+                                    DrawSprite(mapSprite, img, eX, eY, g, 0.5f);
+                                }
+                            }
+                        }
+
+                        if (StaticVariables.DisplayEffectId)
+                        {
+                            var brush = StaticVariables.EditorSelectEffectIndex == effect.Id
+                                ? Brushes.LightSeaGreen
+                                : Brushes.DarkViolet;
+                            var text = $"#{effect.Id}";
+                            var textSize = g.MeasureString(text, FontEntityId);
+
+                            textToRender.Add(new TextDisplayParameter
+                            {
+                                Text = text,
+                                Font = FontEntityId,
+                                Color = brush,
+                                X = scx - textSize.Width / 2,
+                                Y = scy
+                            });
+                        }
+                    }
+
+                    //display entity
                     var map = entity.IsMapSprite ? gameMap : datasBin.AlundraGameMap;
 
                     if (entity.Frame?.Images != null) // why?? TODO, not initialized when we load a dump?
@@ -148,6 +194,52 @@ public class RendererHelper
                         });
                     }
                 }
+            }
+        }
+
+        for (var i = 0; i < StaticVariables.g_effectSlots.Length; i++)
+        {
+            var effect = StaticVariables.g_effectSlots[i];
+
+            if (effect.Status != 2 || effect.AttachedEntity != null)
+            {
+                continue;
+            }
+            
+            var scx = (effect.X >> 16) - currentXPosition;
+            var scy = (effect.Y >> 16) - (effect.Z >> 16) - currentYPosition;
+        
+            //if (effect.Sprite != null)
+            {
+                var map = effect.CurrentIsMapSprite == 1 ? gameMap : datasBin.AlundraGameMap;
+        
+                if (effect.Frame?.Images != null) // why?? TODO, not initialized when we load a dump?
+                {
+                    var iset = effect.Frame.Images;
+                    for (var idex = iset.NumberOfImages - 1; idex >= 0; idex--)
+                    {
+                        var img = iset.Images[idex];
+                        DrawSprite(map, img, scx, scy, g);
+                    }
+                }
+            }
+
+            if (StaticVariables.DisplayEffectId)
+            {
+                var brush = StaticVariables.EditorSelectEffectIndex == effect.Id
+                    ? Brushes.LightSeaGreen
+                    : Brushes.DarkViolet;
+                var text = $"#{effect.Id}";
+                var textSize = g.MeasureString(text, FontEntityId);
+
+                textToRender.Add(new TextDisplayParameter
+                {
+                    Text = text,
+                    Font = FontEntityId,
+                    Color = brush,
+                    X = scx - textSize.Width / 2,
+                    Y = scy
+                });
             }
         }
 
@@ -189,27 +281,26 @@ public class RendererHelper
         return tileId;
     }
 
-    private static void DrawSprite(GameMap gm, SiImage img, int x, int y, Graphics g)
+    private static void DrawSprite(GameMap gm, SiImage img, int x, int y, Graphics g, float alpha = 1f)
     {
-        var bmp = gm.GetSpriteBitmap(img);
-        //_pnts[0].X = x + img.X1;
-        //_pnts[0].Y = y + img.Y1;
-        //
-        //_pnts[1].X = x + img.X2;
-        //_pnts[1].Y = y + img.Y2;
-        //
-        //_pnts[2].X = x + img.X3;
-        //_pnts[2].Y = y + img.Y3;
-        //
-        //_pnts[3].X = x + img.X4;
-        //_pnts[3].Y = y + img.Y4;
-        //
-        //g.DrawImage(bmp, _pnts);
+        ColorMatrix cm = new ColorMatrix
+        {
+            Matrix33 = alpha
+        };
 
+        using ImageAttributes imageAttributesa = new ImageAttributes();
+        imageAttributesa.SetColorMatrix(cm, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
+        var bmp = gm.GetSpriteBitmap(img);
         var w = img.X4 - img.X1;
         var h = img.Y4 - img.Y1;
+
         if (w != 0 && h != 0)
         {
+            //Rectangle destRect = new Rectangle(x + img.X1, y + img.Y1, w, h);
+            //g.DrawImage(bmp, destRect, 0, 0, w, h,
+            //    GraphicsUnit.Pixel, imageAttributesa);
+
             g.DrawImage(bmp, x + img.X1, y + img.Y1, w, h);
         }
 

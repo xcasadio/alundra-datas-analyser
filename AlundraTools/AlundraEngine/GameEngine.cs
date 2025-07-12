@@ -2086,7 +2086,11 @@ public class GameEngine
             spriteTable += 0x100;
         }
 
-        EntityManager.InitializeEntity(entity, ownerEntity, sprite, data, spriteTable, entityId, x, y, z, 0, dir, addedtosheet, addedtopalette);
+        EntityManager.InitializeEntity(entity, ownerEntity, 
+            sprite, data, spriteTable, entityId,
+            x, y, z, 
+            0, dir, 
+            addedtosheet, addedtopalette);
 
         return entity;
     }
@@ -2097,7 +2101,8 @@ public class GameEngine
 
         if (entityId < 0 || CurrentMap.SpriteInfo.Entities.Entities.Length <= entityId) // StaticVariables.g_maxInitData
         {
-            throw new Exception("Illegal character initial data!!");
+            Debugger.Break();
+            //"Illegal character initial data!!
             res = null;
         }
         else
@@ -2112,22 +2117,19 @@ public class GameEngine
         return res;
     }
 
+    //80039f58
     public Entity SpawnWarpEntity(Entity parentEntity, int entityType, uint subtype, int posX, int posY, int posZ, uint direction)
     {
         SpriteRecord spriteRecord;
-        Entity entityResult;
-        Entity entity;
+        Entity entityResult = null;
         int paletteIndex;
         int sheetSize;
 
         spriteRecord = GetSpriteFromSpriteTable(entityType == 1, subtype, out paletteIndex, out sheetSize);
 
-        entity = null;
-
         if (spriteRecord != null)
         {
             entityResult = EntityManager.AllocateEntitySlot();
-            entity = null;
 
             if (entityResult != null)
             {
@@ -2136,14 +2138,15 @@ public class GameEngine
                     subtype = subtype + 0x100;
                 }
 
-                EntityManager.InitializeEntity(entityResult, parentEntity, spriteRecord, null, subtype, -1,
-                    posX, posY, posZ, 0, direction, paletteIndex, sheetSize);
-
-                entity = entityResult;
+                EntityManager.InitializeEntity(entityResult, parentEntity, 
+                    spriteRecord, null, subtype, -1,
+                    posX, posY, posZ, 
+                    0, direction, 
+                    paletteIndex, sheetSize);
             }
         }
 
-        return entity;
+        return entityResult;
     }
 
     public void RunScript(Entity entity, int eventType)
@@ -2733,7 +2736,7 @@ public class GameEngine
             return;
         }
 
-        StaticVariables.g_playerStats.CurrentItemId = (short)itemId;
+        StaticVariables.g_playerStats.ItemId = (short)itemId;
     }
 
     public void SpawnSpinningParticleRing()

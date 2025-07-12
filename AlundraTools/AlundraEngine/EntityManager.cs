@@ -234,6 +234,8 @@ public class EntityManager
         AnimationSet? animRecordPtr;
         SiFrame? currentFrame;
 
+        entity.IsZForceApplied = 0;
+
         if (entity.CurrentAnimationId != entity.TargetAnimationId ||
             entity.CurrentDirection != entity.TargetDirection)
         {
@@ -420,6 +422,7 @@ public class EntityManager
                     }
                     else
                     {
+                        Debugger.Break();
                         height += StaticVariables.MapTileHeight;
                     }
 
@@ -435,6 +438,7 @@ public class EntityManager
                     }
                     else
                     {
+                        Debugger.Break();
                         height += StaticVariables.MapTileHeight;
                     }
 
@@ -450,6 +454,7 @@ public class EntityManager
                     }
                     else
                     {
+                        Debugger.Break();
                         height += StaticVariables.MapTileHeight;
                     }
 
@@ -1906,6 +1911,8 @@ public class EntityManager
 
     private void UpdateBalanceRecords()
     {
+        //TODO this
+        //Debugger.Break();
         for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
         {
             var entity = StaticVariables.g_activeEntities[i];
@@ -2096,7 +2103,7 @@ public class EntityManager
         //creates two poofs moving away from the impact at random speed and direction
         for (var dex = 0; dex < 2; dex++)
         {
-            var effect = _gameEngine.EffectManager.CreateEffect_Type0(0, 9, 0, x, y, z);
+            var effect = _gameEngine.EffectManager.CreateEffectEntity((byte)0, 9, 0, x, y, z);
             if (effect == null)
             {
                 continue;
@@ -2148,9 +2155,14 @@ public class EntityManager
             }
 
             var effect = entity.ActiveEffect;
+
             if (effect == null)
             {
-                effect = _gameEngine.EffectManager.CreateEffect_Type3(0, 0, 0, entity, -1, 0, 0, 0);
+                effect = _gameEngine.EffectManager.CreateDetachedEffect(
+                    0, 0, 0, 
+                    entity, -1, 
+                    0, 0, 0);
+
                 if (effect == null)
                 {
                     continue;
@@ -2159,29 +2171,21 @@ public class EntityManager
                 entity.ActiveEffect = effect;
             }
 
-            if (((entity.Flags >> 16) & 7) == 0)
-            {
-                continue;
-            }
-
-            if ((entity.AnimFlags & 0x10) != 0)
-            {
-                continue;
-            }
-
-            if (entity.PlatformEntity != null)
+            if ((entity.Flags & 0x7) == 0
+                || (entity.AnimFlags & 0x10) != 0
+                || entity.PlatformEntity != null)
             {
                 effect.Status = 1;
                 continue;
             }
 
-            var animid = -1;
             if ((entity.Slope_18c == 4 || entity.Slope_190 == 4)
                 && entity.Slope_18c != entity.Slope_190)
             {
                 //sliding effect
-                _gameEngine.EffectManager.CreateEffect_Type0(0, 6, 0, entity.PosX, entity.PosY,
-                    entity.CollidedWithEntityZ);
+                var slidingEffect = _gameEngine.EffectManager.CreateEffectEntity(
+                    (byte)0, 6, 0, 
+                    entity.PosX, entity.PosY, entity.FloorHeight);
             }
 
             if (entity.Slope_18c >= 8)
@@ -2189,33 +2193,14 @@ public class EntityManager
                 continue;
             }
 
-            switch (entity.Slope_18c)
+            switch (entity.Slope_18c & 0x7)
             {
                 case 1:
                 case 2:
                     effect.TargetIsMapSprite = 0;
                     effect.TargetSpriteTableIndex = 1;
-                    effect.TargetAnimation = (byte)animid;
-                    effect.Status = 2;
-                    effect.X = entity.PosX;
-                    effect.Y = entity.PosY;
-                    effect.Z = entity.CollidedWithEntityZ;
-                    continue;
-                case 4:
-                    effect.Status = 1;
-                    if ((entity.FrameCounter & 7) != 0)
-                    {
-                        continue;
-                    }
+                    break;
 
-                    if ((entity.ForceX | entity.ForceY) == 0)
-                    {
-                        continue;
-                    }
-
-                    _gameEngine.EffectManager.CreateEffect_Type0(0, 0x15, 0, entity.PosX, entity.PosY,
-                        entity.CollidedWithEntityZ);
-                    continue;
                 case 3:
                     if ((entity.FrameCounter & 0x7) != 0)
                     {
@@ -2227,33 +2212,53 @@ public class EntityManager
                         break;
                     }
 
-                    _gameEngine.EffectManager.CreateEffect_Type0(0, _gameEngine.CurrentMap.Info.SlideEffectId, 0,
-                        entity.PosX, entity.PosY, entity.CollidedWithEntityZ);
+                    _gameEngine.EffectManager.CreateEffectEntity(
+                        (byte)0, _gameEngine.CurrentMap.Info.SlideEffectId, 0,
+                        entity.PosX, entity.PosY, entity.FloorHeight);
                     break;
-                default:
+
+                //case 0:
+                //case 5:
+                //case 6:
+                //case 7:
+                //    break;
+
+                case 4:
+                    effect.Status = 1;
+                    if ((entity.FrameCounter & 7) != 0)
+                    {
+                        break;
+                    }
+
+                    if ((entity.ForceX | entity.ForceY) == 0)
+                    {
+                        break;
+                    }
+
+                    _gameEngine.EffectManager.CreateEffectEntity(
+                        (byte)0, 0x15, 0, 
+                        entity.PosX, entity.PosY, entity.FloorHeight);
                     break;
             }
 
-            animid -= (entity.PosZ - entity.CollidedWithEntityZ) >> 20;
+            var animId = 5 - (entity.ModdedZPos - entity.FloorHeight) >> 20;
 
-            if (animid >= 6)
+            if (animId >= 6)
             {
-                animid = 5;
+                animId = 5;
             }
-            else if (animid < 0)
+            else if (animId < 0)
             {
-                animid = 0;
+                animId = 0;
             }
 
             effect.TargetIsMapSprite = 0;
             effect.TargetSpriteTableIndex = 0;
-
-            effect.TargetAnimation = (byte)animid;
+            effect.TargetAnimation = (byte)animId;
             effect.Status = 2;
-
             effect.X = entity.PosX;
             effect.Y = entity.PosY;
-            effect.Z = entity.CollidedWithEntityZ;
+            effect.Z = entity.FloorHeight;
         }
     }
 
@@ -2551,7 +2556,7 @@ public class EntityManager
                 {
                     tempFlags[i] = entity.MapTiles[i].Flags;
 
-                    if (tileFlags < bestFlagMask)
+                    if ((tileFlags & 0xe00) < bestFlagMask)
                     {
                         bestFlagMask = tileFlags & 0xe00;
                     }

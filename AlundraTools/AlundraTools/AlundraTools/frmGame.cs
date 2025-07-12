@@ -300,12 +300,19 @@ public partial class FrmGame : Form
         if (_lastMapId != StaticVariables.g_currentMap && _engine.CurrentMap != null)
         {
             _lastMapId = StaticVariables.g_currentMap;
-            listBoxEntities.Items.Clear();
 
+            listBoxEntities.Items.Clear();
             for (int i = 0; i < StaticVariables.g_entitySlots.Length; i++)
             {
                 var entity = StaticVariables.g_entitySlots[i];
                 listBoxEntities.Items.Add($"entity #{i}");
+            }
+
+            listBoxEffects.Items.Clear();
+            for (int i = 0; i < StaticVariables.g_effectSlots.Length; i++)
+            {
+                var effect = StaticVariables.g_effectSlots[i];
+                listBoxEffects.Items.Add($"effect #{i}");
             }
         }
 
@@ -315,6 +322,7 @@ public partial class FrmGame : Form
         }
 
         propertyGridEntity.Refresh();
+        propertyGridEffect.Refresh();
 
         RefreshMapFlags();
         RefreshGameFlags();
@@ -354,100 +362,6 @@ public partial class FrmGame : Form
                 cell.Value = StaticVariables.g_globalFlags[i];
             }
         }
-    }
-
-    private static string BuildEntityInformationText(Entity entity)
-    {
-        return $"Index: {entity.Index}{Environment.NewLine}" +
-               $"Index2: {entity.Index2}{Environment.NewLine}" +
-               $"EntityRefId: {entity.EntityRefId}{Environment.NewLine}" +
-               $"ChildEntity: #{entity.ChildEntity?.Index ?? -1}{Environment.NewLine}" +
-               $"ParentEntity: #{entity.ParentEntity?.Index ?? -1}{Environment.NewLine}" +
-               //Position
-               $"Position: {entity.PosX} {entity.PosY} {entity.PosZ} ({entity.PosX >> 16} {entity.PosY >> 16} {entity.PosZ >> 16}){Environment.NewLine}" +
-               $"Initial Pos: {entity.InitialXPos} x {entity.InitialYPos}{Environment.NewLine}" +
-               $"ScreenClip: {entity.ScreenClipX} {entity.ScreenClipY} {entity.ScreenClipZ} ({entity.ScreenClipX >> 16} {entity.ScreenClipY >> 16} {entity.ScreenClipZ >> 16}){Environment.NewLine}" +
-               $"NegMod: {entity.NegXMod} {entity.NegYMod} ({entity.NegXMod >> 16} {entity.NegYMod >> 16}){Environment.NewLine}" +
-               $"Tile Pos: {entity.TileX} {entity.TileY} {entity.TileZ}{Environment.NewLine}" +
-               //Status
-               $"WarpEntity: {entity.WarpEntity}{Environment.NewLine}" +
-               $"Flags: {entity.Flags}{Environment.NewLine}" +
-               $"Flags2: {entity.Flags2}{Environment.NewLine}" +
-               $"Status: {entity.Status}{Environment.NewLine}" +
-               $"Hp: {entity.Hp} / {entity.HpMax}{Environment.NewLine}" +
-               $"FrameCounter: {entity.FrameCounter}{Environment.NewLine}" +
-               $"IsNotProcessable: {entity.IsNotProcessable}{Environment.NewLine}" +
-               $"RelativeWarpOffset: {entity.RelativeWarpOffsetX} x {entity.RelativeWarpOffsetY} x {entity.RelativeWarpOffsetZ}{Environment.NewLine}" +
-               $"ContentsItemId: {entity.ContentsItemId}{Environment.NewLine}" +
-               $"ContentsGameFlag: {entity.ContentsGameFlag}{Environment.NewLine}" +
-               $"EntityRecord: {entity.EntityRecord}{Environment.NewLine}" +
-               //Script
-               $"ProgramIndexes: {string.Join(',', entity.ProgramIndexes)}{Environment.NewLine}" +
-               $"SpriteProgramIndexes: {string.Join(',', entity.SpriteProgramIndexes)}{Environment.NewLine}" +
-               $"EventTrigger: {entity.EventTrigger}{Environment.NewLine}" +
-               $"MapEventProgramId: {entity.MapEventProgramId}{Environment.NewLine}" +
-               $"LogicContextEntity: {entity.LogicContextEntity}{Environment.NewLine}" +
-               $"EventProgramState: {entity.EventProgramState}{Environment.NewLine}" +
-               $"Bytes: {string.Join(',', entity.Bytes)}{Environment.NewLine}" +
-               $"AIValues: {string.Join(',', entity.AIValues)}{Environment.NewLine}" +
-               //Display
-               $"Sprite: {entity.Sprite}{Environment.NewLine}" +
-               $"SpriteRef: {entity.SpriteRef}{Environment.NewLine}" +
-               $"SpriteTableIndex: {entity.SpriteTableIndex}{Environment.NewLine}" +
-               $"AnimationId: {entity.CurrentAnimationId} => {entity.TargetAnimationId} ({entity.LastTargetAnimationId}){Environment.NewLine}" +
-               $"Direction: {entity.CurrentDirection} => {entity.TargetDirection} ({entity.LastTargetDirection}){Environment.NewLine}" +
-               $"FrameIndex: {entity.CurrentFrameIndex}{Environment.NewLine}" +
-               $"AnimSet: {entity.AnimSet}{Environment.NewLine}" +
-               $"Frame: {entity.Frame} / {entity.FirstFrame}{Environment.NewLine}" +
-               $"NextFrameDelay: {entity.NextFrameDelay}{Environment.NewLine}" +
-               $"ForceResetAnimationFlag: {entity.ForceResetAnimationFlag}{Environment.NewLine}" +
-               $"AnimCompleteCounter: {entity.AnimCompleteCounter}{Environment.NewLine}" +
-               $"AnimFlags: {entity.AnimFlags}{Environment.NewLine}" +
-               //
-               $"ModdedPos: {entity.ModdedXPos} {entity.ModdedYPos} {entity.ModdedZPos} ({entity.ModdedXPos >> 16} {entity.ModdedYPos >> 16} {entity.ModdedZPos >> 16}){Environment.NewLine}" +
-               $"XYZMod: {entity.ModX} {entity.ModY} {entity.ModZ} ({entity.ModX >> 16} {entity.ModY >> 16} {entity.ModZ >> 16}){Environment.NewLine}" +
-               $"Size: {entity.Width} {entity.Height} {entity.Depth} ({entity.Width >> 16} {entity.Height >> 16} {entity.Depth >> 16}){Environment.NewLine}" +
-               $"Frame Pos: {entity.HitBoxX} {entity.HitBoxY} {entity.HitBoxZ}{Environment.NewLine}" +
-               $"Frame Off: {entity.FrameXOff} {entity.FrameYOff} {entity.FrameZOff}{Environment.NewLine}" +
-               $"FrameWidth: {entity.FrameWidth} {entity.FrameDepth} {entity.FrameHeight}{Environment.NewLine}" +
-               $"DepthSortValue: {entity.ZSortValue >> 16}{Environment.NewLine}" +
-               $"ZSortDepth: {entity.ZSortDepth >> 16}{Environment.NewLine}" +
-               //
-               $"AddedToSheet: {entity.AddedToSheet}{Environment.NewLine}" +
-               $"ActiveEffect: {entity.ActiveEffect}{Environment.NewLine}" +
-               //Physics
-               $"Target Forces: {entity.TargetXForce} {entity.TargetYForce} ({entity.TargetXForce >> 16} {entity.TargetYForce >> 16}){Environment.NewLine}" +
-               $"Forces: {entity.ForceX} {entity.ForceY} {entity.ForceZ} ({entity.ForceX >> 16} {entity.ForceY >> 16} {entity.ForceZ >> 16}){Environment.NewLine}" +
-               $"Interact Force: {entity.PreviousAdjustedXForce} {entity.PreviousAdjustedYForce} ({entity.PreviousAdjustedXForce >> 16} {entity.PreviousAdjustedYForce >> 16}){Environment.NewLine}" +
-               $"Force Step: {entity.ForceStepX} {entity.ForceStepY} ({entity.ForceStepX >> 16} {entity.ForceStepY >> 16}){Environment.NewLine}" +
-               $"Adjusted Force: {entity.AdjustedXForce} {entity.AdjustedYForce} ({entity.AdjustedXForce >> 16} {entity.AdjustedYForce >> 16}){Environment.NewLine}" +
-               $"Final Force: {entity.FinalXForce} {entity.FinalYForce} {entity.FinalZForce} ({entity.FinalXForce >> 16} {entity.FinalYForce >> 16} {entity.FinalZForce >> 16}){Environment.NewLine}" +
-               $"Acceleration: {entity.Acceleration}({entity.Acceleration >> 16}){Environment.NewLine}" +
-               $"Speed: {entity.Speed} ({entity.Speed >> 16}){Environment.NewLine}" +
-               $"IsZForceApplied: {entity.IsZForceApplied}{Environment.NewLine}" +
-               $"ForceAdjusted: {entity.ForceAdjusted}{Environment.NewLine}" +
-               //
-               $"PlatformEntity: #{entity.PlatformEntity?.Index ?? -1}{Environment.NewLine}" +
-               $"RidingEntity: #{entity.RidingEntity?.Index ?? -1}{Environment.NewLine}" +
-               $"XCollisionEntity: #{entity.XCollisionEntity?.Index ?? -1}{Environment.NewLine}" +
-               $"FloorHeight: {entity.FloorHeight}{Environment.NewLine}" +
-               $"TerrainHeight: {entity.TerrainHeight}{Environment.NewLine}" +
-               $"CollidedWithEntityZ: {entity.CollidedWithEntityZ}{Environment.NewLine}" +
-               $"IsAboveGround: {entity.IsAboveGround}{Environment.NewLine}" +
-               $"MapTiles: {entity.MapTiles}{Environment.NewLine}" +
-               $"MapHeights: {entity.MapHeights}{Environment.NewLine}" +
-               $"PlatformUpdateFlag: {entity.PlatformUpdateFlag}{Environment.NewLine}" +
-               $"CombinedVramFlags: {entity.CombinedVramFlagsOR}|{entity.CombinedVramFlagsAND}{Environment.NewLine}" +
-               $"_18c: {entity.Slope_18c}{Environment.NewLine}" +
-               //
-               $"BalanceRecord: {entity.BalanceRecord}{Environment.NewLine}" +
-               $"BalanceVal: {entity.BalanceVal}{Environment.NewLine}" +
-               $"DamagedTickCounter: {entity.DamagedTickCounter}{Environment.NewLine}" +
-               $"FrameColTickCounter: {entity.FrameColTickCounter}{Environment.NewLine}" +
-               $"FrameCollision: {entity.FrameCollision}{Environment.NewLine}" +
-               //
-               $"HitCounter: {entity.HitCounter}{Environment.NewLine}" +
-               $"TouchingEntity: {entity.TouchingEntity}{Environment.NewLine}";
     }
 
     #region Pad
@@ -715,6 +629,22 @@ public partial class FrmGame : Form
         }
     }
 
+
+    private void listBoxEffects_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        StaticVariables.EditorSelectEffectIndex = listBoxEffects.SelectedIndex;
+
+        if (StaticVariables.EditorSelectEffectIndex != -1 &&
+            StaticVariables.EditorSelectEffectIndex < StaticVariables.g_effectSlots.Length)
+        {
+            var effect = StaticVariables.g_effectSlots[StaticVariables.EditorSelectEffectIndex];
+            if (effect != null)
+            {
+                propertyGridEffect.SelectedObject = new UniversalWrapper(effect, _categories, _descriptors);
+            }
+        }
+    }
+
     private void buttonSaveFrames_Click(object sender, EventArgs e)
     {
         if (_engine.ReplayManager.IsSaving)
@@ -875,6 +805,12 @@ public partial class FrmGame : Form
         StaticVariables.DisplayEntityId = checkBoxDisplayEntityId.Checked;
     }
 
+
+    private void checkBoxDisplayEffectId_CheckedChanged(object sender, EventArgs e)
+    {
+        StaticVariables.DisplayEffectId = checkBoxDisplayEffectId.Checked;
+    }
+
     private void checkBoxTileXY_CheckedChanged(object sender, EventArgs e)
     {
         StaticVariables.DisplayTileXY = checkBoxTileXY.Checked;
@@ -1010,21 +946,21 @@ public partial class FrmGame : Form
             StaticVariables.g_initialPlayerStats.WeaponId = (byte)weaponIndex;
 
             //Ensure we have one weapon of specified type
-            if (weaponIndex == 1) //chain
+            if (weaponIndex == 1) //sword
             {
 
             }
             else if (weaponIndex == 3) //chain
             {
                 StaticVariables.g_numberOfItems[9 * 2 + 1] = 1;
-                //StaticVariables.g_numberOfItems[10 * 2 + 1] = 1;
+                StaticVariables.g_numberOfItems[10 * 2 + 1] = 1;
                 //StaticVariables.g_numberOfItems[11 * 2 + 1] = 1;
                 //StaticVariables.g_numberOfItems[12 * 2 + 1] = 1;
             }
             else if (weaponIndex == 2) //bow
             {
                 StaticVariables.g_numberOfItems[5 * 2 + 1] = 1;
-                //StaticVariables.g_numberOfItems[6 * 2 + 1] = 1;
+                StaticVariables.g_numberOfItems[6 * 2 + 1] = 1;
             }
             else if (weaponIndex == 4) //ice
             {
@@ -1044,11 +980,10 @@ public partial class FrmGame : Form
 
     private void comboBoxItem_SelectedIndexChanged(object sender, EventArgs e)
     {
+        var itemName = comboBoxItem.SelectedItem as string;
+        var itemIndex = int.Parse(itemName.Split("-")[0]);
 
-    }
-
-    private void numericUpDownNumberOfItem_ValueChanged(object sender, EventArgs e)
-    {
-
+        StaticVariables.g_initialPlayerStats.ItemId = (byte)(itemIndex + 1);
+        StaticVariables.g_numberOfItems[itemIndex * 2 + 1] = 1; // number of item
     }
 }
