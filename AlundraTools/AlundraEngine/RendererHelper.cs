@@ -283,34 +283,100 @@ public class RendererHelper
 
     private static void DrawSprite(GameMap gm, SiImage img, int x, int y, Graphics g, float alpha = 1f)
     {
-        ColorMatrix cm = new ColorMatrix
-        {
-            Matrix33 = alpha
-        };
-
-        using ImageAttributes imageAttributesa = new ImageAttributes();
-        imageAttributesa.SetColorMatrix(cm, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-
         var bmp = gm.GetSpriteBitmap(img);
         var w = img.X4 - img.X1;
         var h = img.Y4 - img.Y1;
 
-        if (w != 0 && h != 0)
+        if (w == 0 || h == 0)
         {
-            //Rectangle destRect = new Rectangle(x + img.X1, y + img.Y1, w, h);
-            //g.DrawImage(bmp, destRect, 0, 0, w, h,
-            //    GraphicsUnit.Pixel, imageAttributesa);
-
-            g.DrawImage(bmp, x + img.X1, y + img.Y1, w, h);
+            return;
         }
 
-        //var rectangle = new Rectangle(
-        //    x + Math.Min(img.X1, Math.Min(img.X2, Math.Min(img.X3, img.X4))), 
-        //    y + Math.Min(img.Y1, Math.Min(img.Y2, Math.Min(img.Y3, img.Y4))), 
-        //    x+ Math.Max(img.X1, Math.Max(img.X2, Math.Max(img.X3, img.X4))), 
-        //    y + Math.Max(img.Y1, Math.Max(img.Y2, Math.Max(img.Y3, img.Y4))));
-        //
-        //g.DrawImage(bmp, rectangle);
+        // Déterminer les dimensions et la position en tenant compte des valeurs négatives (miroir)
+        var absW = Math.Abs(w);
+        var absH = Math.Abs(h);
+        var drawX = x + (w < 0 ? img.X4 : img.X1);
+        var drawY = y + (h < 0 ? img.Y4 : img.Y1);
+
+        // Déterminer les transformations de miroir
+        var flipX = w < 0;
+        var flipY = h < 0;
+
+        // Si alpha est différent de 1.0, utiliser ImageAttributes pour la transparence
+        if (Math.Abs(alpha - 1.0f) > 0.001f)
+        {
+            ColorMatrix cm = new ColorMatrix
+            {
+                Matrix33 = alpha
+            };
+
+            using ImageAttributes imageAttributes = new ImageAttributes();
+            imageAttributes.SetColorMatrix(cm, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
+            Rectangle destRect = new Rectangle(drawX, drawY, absW, absH);
+            
+            // Gérer les effets de miroir avec les transformations graphiques
+            if (flipX || flipY)
+            {
+                var state = g.Save();
+                
+                // Appliquer les transformations de miroir
+                if (flipX && flipY)
+                {
+                    g.ScaleTransform(-1, -1);
+                    g.TranslateTransform(-(drawX * 2 + absW), -(drawY * 2 + absH));
+                }
+                else if (flipX)
+                {
+                    g.ScaleTransform(-1, 1);
+                    g.TranslateTransform(-(drawX * 2 + absW), 0);
+                }
+                else if (flipY)
+                {
+                    g.ScaleTransform(1, -1);
+                    g.TranslateTransform(0, -(drawY * 2 + absH));
+                }
+
+                g.DrawImage(bmp, destRect, 0, 0, bmp.Width, bmp.Height, GraphicsUnit.Pixel, imageAttributes);
+                g.Restore(state);
+            }
+            else
+            {
+                g.DrawImage(bmp, destRect, 0, 0, bmp.Width, bmp.Height, GraphicsUnit.Pixel, imageAttributes);
+            }
+        }
+        else
+        {
+            // Alpha = 1.0, pas besoin d'ImageAttributes
+            if (flipX || flipY)
+            {
+                var state = g.Save();
+                
+                // Appliquer les transformations de miroir
+                if (flipX && flipY)
+                {
+                    g.ScaleTransform(-1, -1);
+                    g.TranslateTransform(-(drawX * 2 + absW), -(drawY * 2 + absH));
+                }
+                else if (flipX)
+                {
+                    g.ScaleTransform(-1, 1);
+                    g.TranslateTransform(-(drawX * 2 + absW), 0);
+                }
+                else if (flipY)
+                {
+                    g.ScaleTransform(1, -1);
+                    g.TranslateTransform(0, -(drawY * 2 + absH));
+                }
+
+                g.DrawImage(bmp, drawX, drawY, absW, absH);
+                g.Restore(state);
+            }
+            else
+            {
+                g.DrawImage(bmp, drawX, drawY, absW, absH);
+            }
+        }
     }
 
     private static void DrawTile(int tileMapIndex, int x, int y, Graphics g, GameMap gameMap)
