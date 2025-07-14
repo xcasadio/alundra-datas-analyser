@@ -447,9 +447,7 @@ public class PlayerManager
                 break;
 
             case (int)PlayerAnimation.Sprint:
-                iVar2 = PlayerTryAction();
-
-                if (iVar2 != 0)
+                if (PlayerTryAction() != 0)
                 {
                     break;
                 }
@@ -458,15 +456,23 @@ public class PlayerManager
                 {
                     if (StaticVariables.PlayerEntity.ForceAdjusted == 0)
                     {
+                        var dirIndex = (StaticVariables.PlayerEntity.CurrentDirection >> 3);
+                        dirIndex = dirIndex switch
+                        {
+                            1 => 2,
+                            2 => 1,
+                            _ => dirIndex
+                        } * 3;
+
                         if (buttonsHold == 0)
                         {
                             StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.StopSprint;
                             StaticVariables.INT_ARRAY_80126fe8[3] = 1;
                         }
                         else if ((StaticVariables.g_padState1.ButtonsHold & PadState.Triangle) == 0 ||
-                                (dir != StaticVariables.UINT_ARRAY_80022cec[StaticVariables.PlayerEntity.CurrentFrameIndex * 3] &&
-                                 dir != StaticVariables.UINT_ARRAY_80022cec[StaticVariables.PlayerEntity.CurrentFrameIndex * 3 + 1] &&
-                                 dir != StaticVariables.UINT_ARRAY_80022cec[StaticVariables.PlayerEntity.CurrentFrameIndex * 3 + 2]))
+                                (dir != StaticVariables.UINT_ARRAY_80022cec[dirIndex] &&
+                                 dir != StaticVariables.UINT_ARRAY_80022cec[dirIndex + 1] &&
+                                 dir != StaticVariables.UINT_ARRAY_80022cec[dirIndex + 2]))
                         {
                             StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.StopSprint;
                             StaticVariables.INT_ARRAY_80126fe8[3] = 0;
@@ -765,7 +771,8 @@ public class PlayerManager
                 
                 if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                 {
-                    StaticVariables.PlayerEntity.TargetAnimationId = (uint)StaticVariables.PlayerEntity.ForceResetAnimationFlag;
+                    StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
+                        //(uint)StaticVariables.PlayerEntity.ForceResetAnimationFlag;
                     break;
                 }
                 goto LAB_80032594;
@@ -2672,7 +2679,8 @@ public class PlayerManager
             case (int)PlayerAnimation.StopSprint:
                 effectEntityId = 1;
                 CaseEffect:
-                if (StaticVariables.PlayerEntity.Slope_18c - 1 < 2 || StaticVariables.PlayerEntity.Slope_18c == 4)
+                if (StaticVariables.PlayerEntity.Slope_18c - 1 < 2 
+                    || StaticVariables.PlayerEntity.Slope_18c == 4)
                 {
                     animIndex = 0;
                     effectId = 6;
@@ -2708,8 +2716,8 @@ public class PlayerManager
 
                     // Ajouter une composante aléatoire à la force verticale
                     StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                    int zOffset = StaticVariables.g_hitSoundEffects[animIndex + 0x3c];
-                    spriteEffect.ForceZ = zOffset + (int)((StaticVariables.g_gameRandomSeed * (ulong)(StaticVariables.g_hitSoundEffects[animIndex + 0x3a] + 1)) >> 32);
+                    int zOffset = (int)((StaticVariables.g_gameRandomSeed * (ulong)(StaticVariables.g_hitSoundEffects[animIndex + 0x3a] + 1)) >> 32);
+                    spriteEffect.ForceZ = StaticVariables.g_hitSoundEffects[animIndex + 0x3c] + zOffset;
                 }
                 break;
 

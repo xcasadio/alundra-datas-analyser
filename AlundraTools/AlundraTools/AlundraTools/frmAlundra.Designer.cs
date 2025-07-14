@@ -1294,7 +1294,7 @@
             pctAnim.Location = new Point(337, 377);
             pctAnim.Margin = new Padding(5, 4, 5, 4);
             pctAnim.Name = "pctAnim";
-            pctAnim.Size = new Size(121, 131);
+            pctAnim.Size = new Size(171, 131);
             pctAnim.TabIndex = 101;
             pctAnim.TabStop = false;
             pctAnim.Paint += pctAnim_Paint;
@@ -1541,7 +1541,7 @@
             // 
             // pctImage
             // 
-            pctImage.Location = new Point(655, 377);
+            pctImage.Location = new Point(782, 377);
             pctImage.Margin = new Padding(5, 4, 5, 4);
             pctImage.Name = "pctImage";
             pctImage.Size = new Size(165, 131);
@@ -1553,10 +1553,10 @@
             // 
             lstSector5Frames.FormattingEnabled = true;
             lstSector5Frames.HorizontalScrollbar = true;
-            lstSector5Frames.Location = new Point(490, 203);
+            lstSector5Frames.Location = new Point(574, 203);
             lstSector5Frames.Margin = new Padding(5, 4, 5, 4);
             lstSector5Frames.Name = "lstSector5Frames";
-            lstSector5Frames.Size = new Size(185, 144);
+            lstSector5Frames.Size = new Size(181, 144);
             lstSector5Frames.TabIndex = 127;
             lstSector5Frames.SelectedIndexChanged += lstSector5Frames_SelectedIndexChanged;
             // 
@@ -1564,19 +1564,19 @@
             // 
             lstSector5Images.FormattingEnabled = true;
             lstSector5Images.HorizontalScrollbar = true;
-            lstSector5Images.Location = new Point(698, 203);
+            lstSector5Images.Location = new Point(782, 203);
             lstSector5Images.Margin = new Padding(5, 4, 5, 4);
             lstSector5Images.Name = "lstSector5Images";
-            lstSector5Images.Size = new Size(121, 144);
+            lstSector5Images.Size = new Size(165, 144);
             lstSector5Images.TabIndex = 129;
             lstSector5Images.SelectedIndexChanged += lstSector5Images_SelectedIndexChanged;
             // 
             // pctFrame
             // 
-            pctFrame.Location = new Point(494, 377);
+            pctFrame.Location = new Point(574, 377);
             pctFrame.Margin = new Padding(5, 4, 5, 4);
             pctFrame.Name = "pctFrame";
-            pctFrame.Size = new Size(153, 131);
+            pctFrame.Size = new Size(181, 131);
             pctFrame.TabIndex = 128;
             pctFrame.TabStop = false;
             pctFrame.Paint += pctFrame_Paint;
@@ -1584,7 +1584,7 @@
             // label37
             // 
             label37.AutoSize = true;
-            label37.Location = new Point(490, 177);
+            label37.Location = new Point(574, 177);
             label37.Margin = new Padding(5, 0, 5, 0);
             label37.Name = "label37";
             label37.Size = new Size(54, 20);
@@ -1594,7 +1594,7 @@
             // label39
             // 
             label39.AutoSize = true;
-            label39.Location = new Point(694, 177);
+            label39.Location = new Point(782, 177);
             label39.Margin = new Padding(5, 0, 5, 0);
             label39.Name = "label39";
             label39.Size = new Size(57, 20);
@@ -1713,7 +1713,7 @@
             // lblFrameData
             // 
             lblFrameData.AutoSize = true;
-            lblFrameData.Location = new Point(490, 353);
+            lblFrameData.Location = new Point(574, 353);
             lblFrameData.Margin = new Padding(5, 0, 5, 0);
             lblFrameData.Name = "lblFrameData";
             lblFrameData.Size = new Size(17, 20);
@@ -1723,7 +1723,7 @@
             // lblImageData
             // 
             lblImageData.AutoSize = true;
-            lblImageData.Location = new Point(697, 353);
+            lblImageData.Location = new Point(781, 353);
             lblImageData.Margin = new Padding(5, 0, 5, 0);
             lblImageData.Name = "lblImageData";
             lblImageData.Size = new Size(17, 20);
@@ -1869,7 +1869,7 @@
             // lblFrameAddr
             // 
             lblFrameAddr.AutoSize = true;
-            lblFrameAddr.Location = new Point(618, 177);
+            lblFrameAddr.Location = new Point(638, 177);
             lblFrameAddr.Margin = new Padding(5, 0, 5, 0);
             lblFrameAddr.Name = "lblFrameAddr";
             lblFrameAddr.Size = new Size(57, 20);
@@ -1879,7 +1879,7 @@
             // lblImgAddr
             // 
             lblImgAddr.AutoSize = true;
-            lblImgAddr.Location = new Point(762, 177);
+            lblImgAddr.Location = new Point(849, 177);
             lblImgAddr.Margin = new Padding(5, 0, 5, 0);
             lblImgAddr.Name = "lblImgAddr";
             lblImgAddr.Size = new Size(57, 20);

@@ -286,13 +286,24 @@ public class EntityManager
             //entity.Frame = entity.FirstFrame;
             //entity.AnimCompleteCounter++;
 
+            var preloadedAnim = entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3];
 
-            if (entity.Frame.Delay == 0 || (entity.Frame.Delay & 0x80) == 0)
+            if (entity.CurrentFrameIndex == preloadedAnim.Frames.Length - 2)
             {
-                if ((entity.Frame.TransformIndexLow & 0x80) != 0)
+                var lastFrame = preloadedAnim.Frames[entity.CurrentFrameIndex + 1];
+
+                if ((lastFrame.Delay & 0x80) == 0)
                 {
-                    entity.NextFrameDelay = 0x7fffffff;
-                    entity.ForceResetAnimationFlag = 1;
+                    if ((lastFrame.TransformIndexLow & 0x80) != 0)
+                    {
+                        entity.NextFrameDelay = 0x7fffffff;
+                        entity.ForceResetAnimationFlag = 1;
+                        return;
+                    }
+
+                    entity.TargetAnimationId = lastFrame.TransformIndexLow;
+                    UpdateAnimation(entity); // recursive call to update the animation
+
                     return;
                 }
             }
@@ -338,14 +349,14 @@ public class EntityManager
             entity.SpriteRef.NumImages = 0;
         }
 
-        if ((entity.Frame.Delay & 0x80) == 0)
-        {
-            if ((entity.Frame.TransformIndexLow & 0x80) == 0)
-            {
-                entity.TargetAnimationId = entity.Frame.TransformIndexLow;
-                UpdateAnimation(entity); // recursive call to update the animation
-            }
-        }
+        //if ((entity.Frame.Delay & 0x80) == 0)
+        //{
+        //    if ((entity.Frame.TransformIndexLow & 0x80) == 0)
+        //    {
+        //        entity.TargetAnimationId = entity.Frame.TransformIndexLow;
+        //        UpdateAnimation(entity); // recursive call to update the animation
+        //    }
+        //}
 
         var anim = entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3];
         var nextFrameIndex = entity.CurrentFrameIndex + 1;
@@ -2159,8 +2170,8 @@ public class EntityManager
             if (effect == null)
             {
                 effect = _gameEngine.EffectManager.CreateDetachedEffect(
-                    0, 0, 0, 
-                    entity, -1, 
+                    0, 0, 0,
+                    entity, -1,
                     0, 0, 0);
 
                 if (effect == null)
@@ -2184,7 +2195,7 @@ public class EntityManager
             {
                 //sliding effect
                 var slidingEffect = _gameEngine.EffectManager.CreateEffectEntity(
-                    (byte)0, 6, 0, 
+                    (byte)0, 6, 0,
                     entity.PosX, entity.PosY, entity.FloorHeight);
             }
 
@@ -2236,7 +2247,7 @@ public class EntityManager
                     }
 
                     _gameEngine.EffectManager.CreateEffectEntity(
-                        (byte)0, 0x15, 0, 
+                        (byte)0, 0x15, 0,
                         entity.PosX, entity.PosY, entity.FloorHeight);
                     break;
             }
