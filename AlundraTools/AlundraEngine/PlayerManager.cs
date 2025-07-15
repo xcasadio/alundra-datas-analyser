@@ -39,7 +39,7 @@ public class PlayerManager
 
         if ((StaticVariables.g_playerControlFlags & 0x34U) != 0)
         {
-            PreparePlayerForWarpEntry(1);
+            UpdatePlayerAnimationEffects(1);
             StaticVariables.g_playerWarpTimer = 0;
             Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
             UpdatePlayerWarpDirection(1);
@@ -59,7 +59,7 @@ public class PlayerManager
         }
 
         StaticVariables.PlayerEntity.Flags |= 0x100;
-        PreparePlayerForWarpEntry(0);
+        UpdatePlayerAnimationEffects(0);
         dir = FindWarpFacingDirection();
 
         if (dir != 0xffffffff)
@@ -2532,7 +2532,7 @@ public class PlayerManager
     }
 
     // 8002fb14
-    public void PreparePlayerForWarpEntry(int param_1)
+    public void UpdatePlayerAnimationEffects(int mode)
     {
         var effectEntityId = 0;
         byte effectId = 0;
@@ -2568,8 +2568,7 @@ public class PlayerManager
                     _gameEngine.PlaySoundEffect(sfxId);
                 }
 
-                if (StaticVariables.PlayerEntity.Slope_18c - 1 < 2 
-                    || StaticVariables.PlayerEntity.Slope_18c == 4)
+                if (IsSlopeInAquaticTile())
                 {
                     effectEntityId = 40;
                     effectId = 6;
@@ -2577,7 +2576,7 @@ public class PlayerManager
                 else
                 {
                     effectEntityId = 8;
-                    effectId = (byte)_gameEngine.CurrentMap.Info._10;
+                    effectId = _gameEngine.CurrentMap.Info.C; //slideEffectId ?
                 }
 
                 animIndex = StaticVariables.PlayerEntity.AnimCompleteCounter - 1;
@@ -2611,43 +2610,28 @@ public class PlayerManager
 
                 if (spriteEffect != null)
                 {
-                    //frameOffset = effectEntityId + ((StaticVariables.PlayerEntity.AnimCompleteCounter - 1) << 1);
-                    //int randomMult = StaticVariables.g_hitSoundEffects[animIndex * 2 + 8];
-                    //
-                    //StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                    //var rand = StaticVariables.g_gameRandomSeed;
-                    //var val1 = StaticVariables.g_hitSoundEffects[frameOffset + 0x12];
-                    //var val2 = StaticVariables.g_hitSoundEffects[frameOffset + 0x10];
-                    //spriteEffect.ForceX = val1 * randomMult + (int)((rand * (ulong)(val2 * randomMult + 1)) >> 32);
-                    //
-                    //StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                    //rand = StaticVariables.g_gameRandomSeed;
-                    //val1 = StaticVariables.g_hitSoundEffects[frameOffset + 0x26];
-                    //val2 = StaticVariables.g_hitSoundEffects[frameOffset + 0x24];
-                    //spriteEffect.ForceY = val1 * randomMult + (int)((rand * (ulong)(val2 * randomMult + 1)) >> 32);
-                    //
-                    //StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                    //rand = StaticVariables.g_gameRandomSeed;
-                    //val1 = StaticVariables.g_hitSoundEffects[frameOffset + 0x32];
-                    //val2 = StaticVariables.g_hitSoundEffects[frameOffset + 0x30];
-                    //spriteEffect.ForceZ = val1 * randomMult + (int)((rand * (ulong)(val2 * randomMult + 1)) >> 32);
-
-                    frameOffset = StaticVariables.g_entitySlots[0].CurrentFrameIndex;
+                    frameOffset = StaticVariables.PlayerEntity.CurrentFrameIndex;
                     animIndex = StaticVariables.g_hitSoundEffects[effectEntityId + animIndex + 4];
                     
-                    var uVar6 = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                    spriteEffect.ForceX = StaticVariables.g_hitSoundEffects[effectEntityId + StaticVariables.g_entitySlots[0].CurrentFrameIndex * 2 + 9] * animIndex +
-                        (int)(uVar6 * (StaticVariables.g_hitSoundEffects[effectEntityId + StaticVariables.g_entitySlots[0].CurrentFrameIndex * 2 + 8] * animIndex + 1) >> 0x20);
+                    var rand = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+                    var index = effectEntityId + StaticVariables.PlayerEntity.CurrentFrameIndex * 2 + 9;
+                    var index2 = effectEntityId + StaticVariables.PlayerEntity.CurrentFrameIndex * 2 + 8;
+                    spriteEffect.ForceX = 
+                        StaticVariables.g_hitSoundEffects[index] * animIndex +
+                        (int)((rand * (StaticVariables.g_hitSoundEffects[index2] * animIndex + 1)) >> 0x20);
                     
-                    uVar6 = uVar6 * 0x7d2b89dd + 0xe06a02e7;
-                    spriteEffect.ForceY = (int)(StaticVariables.g_hitSoundEffects[effectEntityId + frameOffset * 2 + 0x13] * animIndex +
-                        (uVar6 * (StaticVariables.g_hitSoundEffects[effectEntityId + frameOffset * 2 + 0x12] * animIndex + 1) >> 0x20));
+                    rand = rand * 0x7d2b89dd + 0xe06a02e7;
+                    index = effectEntityId + frameOffset * 2 + 0x13;
+                    index2 = effectEntityId + frameOffset * 2 + 0x12;
+                    spriteEffect.ForceY = (int)(StaticVariables.g_hitSoundEffects[index] * animIndex +
+                                                ((rand * (StaticVariables.g_hitSoundEffects[index2] * animIndex + 1)) >> 0x20));
                     
-                    StaticVariables.g_gameRandomSeed = uVar6 * 0x7d2b89dd + 0xe06a02e7;
-                    uVar6 = (uint)(StaticVariables.g_gameRandomSeed * (StaticVariables.g_hitSoundEffects[effectEntityId +0x18] * animIndex + 1));
-                    uVar6 = (uint)(uVar6 >> 0x20);
-                    spriteEffect.ForceZ = (int)(StaticVariables.g_hitSoundEffects[effectEntityId + 0x19] * animIndex + uVar6);
-
+                    StaticVariables.g_gameRandomSeed = rand * 0x7d2b89dd + 0xe06a02e7;
+                    rand = StaticVariables.g_gameRandomSeed;
+                    index = effectEntityId + 0x19;
+                    index2 = effectEntityId + 0x18;
+                    spriteEffect.ForceZ = (int)(StaticVariables.g_hitSoundEffects[index] * animIndex +
+                        (uint)(rand * (StaticVariables.g_hitSoundEffects[index2] * animIndex + 1)) >> 0x20);
                 }
                 break;
         }
@@ -2678,20 +2662,20 @@ public class PlayerManager
             case (int)PlayerAnimation.SprintDash:
             case (int)PlayerAnimation.StopSprint:
                 effectEntityId = 1;
+
                 CaseEffect:
-                if (StaticVariables.PlayerEntity.Slope_18c - 1 < 2 
-                    || StaticVariables.PlayerEntity.Slope_18c == 4)
+                if (IsSlopeInAquaticTile())
                 {
-                    animIndex = 0;
+                    animIndex = 40;
                     effectId = 6;
                 }
                 else
                 {
-                    animIndex = 1;
-                    effectId = (byte)_gameEngine.CurrentMap.Info._10;
+                    animIndex = 8;
+                    effectId = _gameEngine.CurrentMap.Info.C;
                 }
 
-                if ((StaticVariables.g_hitSoundEffects[animIndex + 0x34] & StaticVariables.PlayerEntity.FrameCounter) != 0)
+                if ((StaticVariables.g_hitSoundEffects[animIndex /*+ 0x34*/] & StaticVariables.PlayerEntity.FrameCounter) != 0)
                 {
                     goto SkipEffects;
                 }
@@ -2704,7 +2688,7 @@ public class PlayerManager
                         0,
                         StaticVariables.PlayerEntity.PosX,
                         StaticVariables.PlayerEntity.PosY,
-                        StaticVariables.PlayerEntity.TerrainHeight);
+                        StaticVariables.PlayerEntity.FloorHeight);
                 }
 
                 // Si l'effet a été créé, lui donner une force proportionnelle à celle du joueur
@@ -2822,8 +2806,8 @@ public class PlayerManager
             case (int)PlayerAnimation.JumpAttackFlailSteel:
             case (int)PlayerAnimation.JumpAttackSwordFiendBlade:
             case (int)PlayerAnimation.JumpAttackSwordHoly:
-                // Si on est en mode normal (param_1 == 0) et que le joueur est au sol
-                if ((param_1 == 0 || StaticVariables.DAT_80098f30 == 0) 
+                // Si on est en mode normal (mode == 0) et que le joueur est au sol
+                if ((mode == 0 || StaticVariables.DAT_80098f30 == 0) 
                     && StaticVariables.PlayerEntity.IsAboveGround != 0 
                     && StaticVariables.PlayerEntity.ForceZ < 1)
                 {
@@ -2878,7 +2862,7 @@ public class PlayerManager
                 break;
         }
 
-        if (param_1 == 0)
+        if (mode == 0)
         {
             // heartBeat
             if (StaticVariables.PlayerEntity.Hp != 0 &&
@@ -3001,6 +2985,13 @@ public class PlayerManager
                 }
             }
         }
+    }
+
+    private static bool IsSlopeInAquaticTile()
+    {
+        return (StaticVariables.PlayerEntity.Slope_18c >= 1 
+                && StaticVariables.PlayerEntity.Slope_18c <= 2)
+               || StaticVariables.PlayerEntity.Slope_18c == 4;
     }
 
     // 800350c0

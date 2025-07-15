@@ -219,7 +219,7 @@ public class RendererHelper
                     for (var idex = iset.NumberOfImages - 1; idex >= 0; idex--)
                     {
                         var img = iset.Images[idex];
-                        DrawSprite(map, img, scx, scy, g);
+                        DrawSprite(map, img, scx, scy, g, 0.8f);
                     }
                 }
             }
