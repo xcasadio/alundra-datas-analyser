@@ -150,87 +150,101 @@ public class EffectManager
         if (effect.CurrentSpriteTableIndex != effect.TargetSpriteTableIndex
             || effect.CurrentIsMapSprite != effect.TargetIsMapSprite)
         {
-            int addtosheet, addtopal;
-            var record = _gameEngine.GetEffectSpriteFromSpriteTable(effect.TargetIsMapSprite != 0, effect.TargetSpriteTableIndex, out addtosheet, out addtopal);
+            var record = _gameEngine.GetEffectSpriteFromSpriteTable(
+                effect.TargetIsMapSprite != 0,
+                effect.TargetSpriteTableIndex,
+                out var sheetSize, out var paletteIndex);
+
             if (record == null)
             {
                 effect.DestroyFlag = 1;
                 effect.SpriteRef.Images = null;
                 effect.SpriteRef.NumImages = 0;
-                //field after numimages = 0
+                effect.SpriteRef.DepthSortValue = 0;
                 return;
             }
 
             effect.SpriteEffectRecord = record;
+            effect.SheetSize = sheetSize;
+            effect.PaletteIndex = paletteIndex;
             effect.CurrentIsMapSprite = effect.TargetIsMapSprite;
             effect.CurrentSpriteTableIndex = effect.TargetSpriteTableIndex;
 
-            effect.SheetSize = addtosheet;
-            effect.PaletteIndex = addtopal;
             effect.CurrentAnimation = (byte)~effect.TargetAnimation;
         }
 
         if (effect.CurrentAnimation != effect.TargetAnimation)
         {
-            var animation = effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnimation];
-            effect.AnimIndex = 0;
-            var nframe = animation.Frames[effect.AnimIndex];
+            var anim = effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnimation];
+            effect.Frame = anim.Frames[0];
+            effect.InitialFrame = effect.Frame;
+
             effect.CurrentAnimation = effect.TargetAnimation;
             effect.Delay = 0;
             effect.DestroyFlag = 0;
-            effect.InitialFrame = nframe;
-            effect.Frame = nframe;
-            Debug.Assert(nframe != null);
+            effect.AnimIndex = 0;
         }
         else
         {
             effect.Delay--;
+
             if ((effect.Delay & 0xff) != 0)
             {
-                return;
+                return; // Pas encore temps de changer de frame
+            }
+
+            if (effect.Delay == 0)
+            {
+                effect.AnimIndex++;
             }
         }
 
-        do
+        // Boucle de traitement des frames
+        while (true)
         {
-            var frame = effect.Frame;
-            if ((frame.Delay & 0x80) != 00)
+            var frameData = effect.Frame;
+
+            if ((frameData.Delay & 0x80) != 0)
             {
                 //effect.AnimIndex++;
                 var anim = effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnimation];
-                frame = anim.Frames[effect.AnimIndex];
-                effect.Frame = frame;
-                Debug.Assert(frame != null);
-                if (frame?.Images != null)
+                effect.Frame = anim.Frames[effect.AnimIndex];
+                effect.Delay = (byte)(frameData.Delay & 0x7f);
+                var imageOffset = (frameData.ImageSetPointer >> 8) | ((frameData.ImageSetPointer & 0xff) << 8);
+
+                if (effect.Frame.Images != null) // (imageOffset != 0xffff)
                 {
-                    effect.SpriteRef.Images = frame.Images.Images;
-                    effect.SpriteRef.DepthSortValue = frame.Images.Unknown;
-                    effect.SpriteRef.NumImages = frame.Images.NumberOfImages;
-                    return;
+                    effect.SpriteRef.Images = effect.Frame.Images.Images;
+                    effect.SpriteRef.DepthSortValue = effect.Frame.Images.Unknown;
+                    effect.SpriteRef.NumImages = effect.Frame.Images.NumberOfImages;
                 }
-                effect.SpriteRef.Images = null;
-                effect.SpriteRef.DepthSortValue = 0;
-                effect.SpriteRef.NumImages = 0;
+                else
+                {
+                    effect.SpriteRef.Images = null;
+                    effect.SpriteRef.DepthSortValue = 0;
+                    effect.SpriteRef.NumImages = 0;
+                }
                 return;
             }
-            if (frame.Delay != 0)
+
+            if (frameData.Delay == 0)
             {
-                if (frame.Delay == 1)
-                {
-                    //repeat
-                    effect.AnimIndex = 0;
-                    effect.Frame = effect.InitialFrame;
-                    continue;
-                }
-                throw new Exception("Error with Effect Animation!");
+                effect.Delay = 0xff; // Animation non-répétitive, marquer pour destruction
+                effect.DestroyFlag = 1;
+                return;
             }
 
-            //its 0  which means its non repeating so flag for destroy
-            effect.Delay = 0xff;
-            effect.DestroyFlag = 1;
-            return;
-        } while (true);
-
+            if (frameData.Delay == 1) //loop
+            {
+                effect.AnimIndex = 0;
+                effect.Frame = effect.InitialFrame;
+            }
+            else
+            {
+                Debugger.Break();
+                throw new Exception("Effect Animation Error!!");
+            }
+        }
     }
 
     //8003c284

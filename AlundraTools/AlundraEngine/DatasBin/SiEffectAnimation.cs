@@ -2,35 +2,42 @@
 
 public class SiEffectAnimation
 {
-    public SiEffectAnimation(BinaryReader br, int effectid, int binoffset, int memaddr)
+    public SiEffectAnimation(BinaryReader br, int effectid, int binoffset, int memoryAddress)
     {
-        Memaddr = memaddr;
-        Frames = new SiEffectFrame[32];//32 max frames?
-        for (var dex = 0; dex < Frames.Length; dex++)
+        MemoryAddress = memoryAddress;
+        Frames = new SiEffectFrame[32];//we can compute the number of frames before
+
+        for (var i = 0; i < Frames.Length; i++)
         {
-            //read test bytes to check for the end of the list
-            short test = br.ReadByte();
-            if ((test & 0x80) != 0x80)
+            var test = br.ReadByte();
+
+            if ((test & 0x80) == 0) // != 0x80
             {
+                var value = br.ReadByte();
+                //check if the frame is a transition frame
+
+                //if ((value & 0x80) == 0 /*&& value != 0*/) // TODO check value != 0
+                NumberOfFrames++;
+                Frames[i] = new SiEffectFrame(test, value, memoryAddress + i * 3);
                 break;
             }
 
-            Numframes++;
+            NumberOfFrames++;
             br.BaseStream.Position -= 1;
 
-            Frames[dex] = new SiEffectFrame(br, effectid, binoffset, memaddr + dex * 3);
+            Frames[i] = new SiEffectFrame(br, effectid, binoffset, memoryAddress + i * 3);
 
-            for (var dex2 = 0; dex2 < dex; dex2++)
+            for (var j = 0; j < i; j++)
             {
-                if (Frames[dex2].ImageSetPointer == Frames[dex].ImageSetPointer)
+                if (Frames[j].ImageSetPointer == Frames[i].ImageSetPointer)
                 {
-                    Frames[dex].Images = Frames[dex2].Images;
+                    Frames[i].Images = Frames[j].Images;
                     break;
                 }
             }
         }
     }
-    public int Memaddr;
-    public int Numframes;
+    public int MemoryAddress;
+    public int NumberOfFrames;
     public readonly SiEffectFrame[] Frames;
 }

@@ -1711,7 +1711,6 @@ public class GameEngine
         if (entity.ActiveEffect != null)
         {
             entity.ActiveEffect.Status = 0;
-            //.spriteTableIndex = 0;
             entity.ActiveEffect = null;
         }
 

@@ -3,6 +3,7 @@ using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Sound;
 using System;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 
 namespace AlundraEngine;
@@ -292,7 +293,13 @@ public class EntityManager
             {
                 var lastFrame = preloadedAnim.Frames[entity.CurrentFrameIndex + 1];
 
-                if ((lastFrame.Delay & 0x80) == 0)
+                if (lastFrame.Delay == 1)
+                {
+                    entity.CurrentFrameIndex = 0;
+                    entity.Frame = entity.FirstFrame;
+                    entity.AnimCompleteCounter++;
+                }
+                else if ((lastFrame.Delay & 0x80) == 0)
                 {
                     if ((lastFrame.TransformIndexLow & 0x80) != 0)
                     {

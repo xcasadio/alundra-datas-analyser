@@ -439,22 +439,24 @@ public partial class FrmGame : Form
                 out float joystickRightX, out float joystickRightY,
                 out float L2, out float R2);
 
-            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP) != 0 || joystickLeftY > 0.10f)
+            var joystickThreshold = 0.20f;
+
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP) != 0 || joystickLeftY > joystickThreshold)
             {
                 PadManager.ButtonStates |= PadState.Up;
             }
 
-            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN) != 0 || joystickLeftY < -0.10f)
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN) != 0 || joystickLeftY < -joystickThreshold)
             {
                 PadManager.ButtonStates |= PadState.Down;
             }
 
-            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT) != 0 || joystickLeftX < -0.10f)
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT) != 0 || joystickLeftX < -joystickThreshold)
             {
                 PadManager.ButtonStates |= PadState.Left;
             }
 
-            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) != 0 || joystickLeftX > 0.10f)
+            if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) != 0 || joystickLeftX > joystickThreshold)
             {
                 PadManager.ButtonStates |= PadState.Right;
             }
@@ -510,22 +512,22 @@ public partial class FrmGame : Form
             }
 
             const int step = 10;
-            if (joystickRightY > 0.10f)
+            if (joystickRightY > joystickThreshold)
             {
                 StaticVariables.g_cameraCurrentY -= step;
             }
 
-            if (joystickRightY < -0.10f)
+            if (joystickRightY < -joystickThreshold)
             {
                 StaticVariables.g_cameraCurrentY += step;
             }
 
-            if (joystickRightX > 0.10f)
+            if (joystickRightX > joystickThreshold)
             {
                 StaticVariables.g_cameraCurrentX += step;
             }
 
-            if (joystickRightX < -0.10f)
+            if (joystickRightX < -joystickThreshold)
             {
                 StaticVariables.g_cameraCurrentX -= step;
             }

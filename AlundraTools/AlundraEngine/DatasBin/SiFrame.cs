@@ -8,14 +8,12 @@ public class SiFrame
 
         Delay = br.ReadByte();
 
-        //for debugging
         var pos = br.BaseStream.Position;
         TransformIndexLow = br.ReadByte();
         TransformIndexHigh = br.ReadByte();
         SpriteIndexLow = br.ReadByte();
         SpriteIndexHigh = br.ReadByte();
         br.BaseStream.Position = pos;
-        //
 
         CollisionOffset = br.ReadInt16();
         ImageSetPointer = br.ReadUInt16() * 2;
