@@ -2694,7 +2694,7 @@ public class PlayerManager
                 // Si l'effet a été créé, lui donner une force proportionnelle à celle du joueur
                 if (spriteEffect != null)
                 {
-                    int forceMult = StaticVariables.g_hitSoundEffects[effectEntityId * 2 + animIndex + 0x36];
+                    int forceMult = StaticVariables.g_hitSoundEffects[effectEntityId * 2 + animIndex/*+ 0x36*/];
                     spriteEffect.ForceX = (StaticVariables.PlayerEntity.ForceX * forceMult) >> 8;
                     spriteEffect.ForceY = (StaticVariables.PlayerEntity.ForceY * forceMult) >> 8;
 
