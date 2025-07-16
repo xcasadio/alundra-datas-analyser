@@ -380,7 +380,8 @@ public class EntityEventHandlers
 
         eventProgramState.Sp = eventProgramState.Codes[eventProgramState.CodeIndex];
         int[] variables = new int[10];
-        Array.Copy(eventProgramState.Codes, eventProgramState.CodeIndex, variables, 0, 10);
+        var length = Math.Min(10, eventProgramState.Codes.Length - eventProgramState.CodeIndex);
+        Array.Copy(eventProgramState.Codes, eventProgramState.CodeIndex, variables, 0, length);
         return variables;
     }
 
