@@ -270,7 +270,7 @@ public class EntityManager
                 sfxId += 0x100;
             }
 
-            _gameEngine.PlaySoundEffect(sfxId);
+            _gameEngine.SoundManager.PlaySoundEffect(sfxId);
         }
         else if (entity.NextFrameDelay != 0)
         {
@@ -423,6 +423,20 @@ public class EntityManager
             var tile = _gameEngine.CurrentMap.Map.MapTiles[tileY * mapWidth + tileX];
             entity.MapTiles[i] = tile;
             int height = tile.Height;
+
+            /*
+            for (int j = 0; j < _gameEngine.CurrentMap.Map.MapTiles.Length; j++)
+            {
+                if (_gameEngine.CurrentMap.Map.MapTiles[j].Flags == 84180992)
+                {
+                    Debugger.Break();
+                }
+
+                if (_gameEngine.CurrentMap.Map.MapTiles[j].GroundProperty == 128)
+                {
+                    Debugger.Break();
+                }
+            }*/
 
             height = tile.Height * StaticVariables.MapTileHeight;
 
@@ -887,6 +901,7 @@ public class EntityManager
     private Entity ComputeXYPosition(Entity entity)
     {
         Entity candidate = null;
+        Entity entity2 = null;
         int i = 0;
         int s6 = -1;
         int dy, dx;
@@ -957,13 +972,19 @@ public class EntityManager
                 entity.ModdedYPos = entity.PosY + entity.ModY;
                 entity.ModdedZPos = entity.PosZ + entity.ModZ;
 
+                entity2 = candidate;
                 if (FindEntityCollisionCandidate(entity) != null)
                 {
                     entity.PosZ = savedZ;
                     entity.ModdedZPos = savedZ + entity.ModZ;
                     entity.ModdedXPos = entity.PosX + entity.ModX;
                     entity.ModdedYPos = entity.PosY + entity.ModY;
+                    goto RESTORE_POS;
                 }
+            }
+            else
+            {
+                goto RESTORE_POS;
             }
         }
 
@@ -1001,6 +1022,7 @@ public class EntityManager
                 i++;
                 dx = halfDxVal;
                 dy = halfDyVal;
+                candidate = entity2;
                 goto TRY_ADVANCE;
             }
 
@@ -1012,10 +1034,17 @@ public class EntityManager
             i++;
             dx = halfDxVal;
             dy = halfDyVal;
+            candidate = entity2;
             goto TRY_ADVANCE;
         }
+            
+        goto LAB_80037938;
 
-        // restore position
+        RESTORE_POS:
+        entity2 = FindEntityCollisionCandidate(entity);
+        if (entity2 == null) goto CHECK_ENTITY_COLLISION;
+
+        LAB_80037938:
         entity.PosX = posX;
         entity.PosY = posY;
         entity.PosZ = posZ;
@@ -1286,7 +1315,7 @@ public class EntityManager
         entity.ModdedYPos = entity.PosY + entity.ModY;
         entity.ModdedZPos = entity.PosZ + entity.ModZ;
         entity.TerrainHeight = ComputeEntityGroundHeight(entity);
-        return null;
+        return candidate;
     }
 
     public uint GetCollisionFlagsWithPlayer(Entity entity, uint[] collisionFlags)
@@ -2518,14 +2547,13 @@ public class EntityManager
         ////On PSX hardware we avoid using division, so we use a lookup table instead.
         //x = Math.Clamp(x, 0, StaticVariables.g_tileToWorldXTable.Length - 1);
         entity.TileX = (entity.PosX >> 16) / StaticVariables.MapTileWidth;
-        entity.TileY = entity.PosY >> 20;
+        entity.TileY = (entity.PosY >> 16) / StaticVariables.MapTileHeight;
         entity.TileZ = entity.PosZ >> 20;
 
 
         var hitz = _gameEngine.GetCollisionOnZ(entity);
         entity.FloorHeight = hitz;
         entity.IsAboveGround = hitz < entity.PosZ ? 0 : 1;
-        //entity.CollidedWithEntityZ = hitz < entity.PosZ ? 0 : 1;
 
         if ((entity.Flags & 0x100U) == 0)
         {

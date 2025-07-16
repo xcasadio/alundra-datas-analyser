@@ -1,4 +1,6 @@
-﻿namespace AlundraEngine.DatasBin;
+﻿using System.Diagnostics;
+
+namespace AlundraEngine.DatasBin;
 
 public class MapTile
 {
@@ -12,28 +14,33 @@ public class MapTile
 
     public MapTile(BinaryReader br)
     {
-        long i = br.ReadUInt32();
+        //long i = br.ReadUInt32();
 
-        Walkability = (byte)(i & 0xff);
-        i >>= 8;
-        GroundProperty = (byte)(i & 0xff);
-        i >>= 8;
-        Slope = (byte)(i & 0xff);
-        i >>= 8;
-        Height = (byte)(i & 0xff);
+        Walkability = br.ReadByte();
+        GroundProperty = br.ReadByte();
+        Slope = br.ReadByte();
+        Height = br.ReadByte();
 
-        i = br.ReadUInt16();
-        TileId = (short)i;
 
-        if (i == 0xffff)
+        //Walkability = (byte)(i & 0xff);
+        //i >>= 8;
+        //GroundProperty = (byte)(i & 0xff);
+        //i >>= 8;
+        //Slope = (byte)(i & 0xff);
+        //i >>= 8;
+        //Height = (byte)(i & 0xff);
+
+        TileId = br.ReadUInt16();
+
+        if (TileId == 0xffff)
         {
             Palette = -1;
             Tile = -1;
         }
         else
         {
-            Palette = (short)((i & 0xf000) >> 12);
-            Tile = (short)(i & 0x3ff);
+            Palette = (short)((TileId & 0xf000) >> 12);
+            Tile = (short)(TileId & 0x3ff);
         }
 
         TilesOffset = br.ReadInt16();
@@ -48,7 +55,7 @@ public class MapTile
     public byte GroundProperty;
     public byte Slope;
     public byte Height;
-    public short TileId;
+    public ushort TileId;
     public short Palette;
     public short Tile;
     public short TilesOffset;

@@ -438,7 +438,7 @@ namespace AlundraTools.AlundraTools
                         dx -= hScrollMap.Value * _mapScale * StaticVariables.MapTileWidth;
                         dy -= vScrollMap.Value * _mapScale * StaticVariables.MapTileHeight;
 
-                        if (tile.TileId != -1 && _showStandardTile)
+                        if (tile.TileId != 0xFFFF && _showStandardTile)
                         {
                             g.DrawImage(GetTile(tile.TileId),
                                 dx,
@@ -490,7 +490,7 @@ namespace AlundraTools.AlundraTools
                         for (var x = 0; x < pctMap.Width / _mapScale / StaticVariables.MapTileWidth; x++)
                         {
                             var tile = map.MapTiles[(y + vScrollMap.Value) * map.Width + x + hScrollMap.Value];
-                            if (tile.TileId != -1)
+                            if (tile.TileId != 0xFFFF)
                             {
                                 var dx = x * _mapScale * StaticVariables.MapTileWidth;
                                 var dy = (y - tile.Height) * _mapScale * StaticVariables.MapTileHeight;
@@ -730,7 +730,7 @@ namespace AlundraTools.AlundraTools
             DrawMap();
         }
 
-        private Portal? _selectedPortal;
+        private WarpData? _selectedPortal;
         private bool _dontcenteronportal = false;
 
         private void SelectPortal(int portaldex)

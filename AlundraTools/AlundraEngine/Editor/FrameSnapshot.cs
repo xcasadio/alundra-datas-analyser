@@ -108,7 +108,7 @@ public class FrameSnapshot
         StaticVariables.g_warpExtraParam = WarpExtraParam;
         StaticVariables.g_cameraTargetX = CameraTargetX;
         StaticVariables.g_cameraTargetY = CameraTargetY;
-        StaticVariables.g_animation_id = AnimationId;
+        StaticVariables.g_cameraTargetZ = AnimationId;
         StaticVariables.g_currentMap = CurrentMap;
         StaticVariables.g_isCameraScrolling = IsCameraScrolling;
         StaticVariables.g_cameraScrollingX = CameraScrollingX;
@@ -193,7 +193,7 @@ public class FrameSnapshot
         WarpExtraParam = StaticVariables.g_warpExtraParam;
         CameraTargetX = StaticVariables.g_cameraTargetX;
         CameraTargetY = StaticVariables.g_cameraTargetY;
-        AnimationId = StaticVariables.g_animation_id;
+        AnimationId = StaticVariables.g_cameraTargetZ;
         CurrentMap = StaticVariables.g_currentMap;
         IsCameraScrolling = StaticVariables.g_isCameraScrolling;
         CameraScrollingX = StaticVariables.g_cameraScrollingX;

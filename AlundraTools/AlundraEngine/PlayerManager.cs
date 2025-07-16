@@ -3,6 +3,7 @@ using AlundraEngine.Gameplay;
 using System;
 using System.Diagnostics;
 using AlundraEngine.Gameplay.Scripts;
+using WarpData = AlundraEngine.DatasBin.WarpData;
 
 namespace AlundraEngine;
 
@@ -456,7 +457,7 @@ public class PlayerManager
                 {
                     if (StaticVariables.PlayerEntity.ForceAdjusted == 0)
                     {
-                        var dirIndex = (StaticVariables.PlayerEntity.CurrentDirection >> 3);
+                        var dirIndex = StaticVariables.PlayerEntity.CurrentDirection >> 3;
                         dirIndex = dirIndex switch
                         {
                             1 => 2,
@@ -986,7 +987,7 @@ public class PlayerManager
 
             if (animId == 0)
             {
-                _gameEngine.PlaySoundEffect(3);
+                _gameEngine.SoundManager.PlaySoundEffect(3);
                 return 0;
             }
         }
@@ -1023,7 +1024,7 @@ public class PlayerManager
 
             } while (i < 0x10);
 
-            _gameEngine.PlaySoundEffect(0x2b);
+            _gameEngine.SoundManager.PlaySoundEffect(0x2b);
             animId = StaticVariables.g_weaponInitFlags[StaticVariables.g_currentWeaponFlags * 0xd + 9];
             weaponFlagsIndex += 9;
         }
@@ -1104,7 +1105,7 @@ public class PlayerManager
             return 0;
         }
 
-        // Si bits ∈ {2,3} ⇒ test de déverrouillage de la carte (warpIndex = 0x3B)
+        // have keys ?
         if (platformFlagBits < 4)
         {
             if (_gameEngine.GetNumberOfItem(0x3B) != 0)
@@ -1115,7 +1116,6 @@ public class PlayerManager
             goto TriggerWarp;
         }
 
-        // Cas bits ≥ 4 (impossible avec le masque 0x600) : retourne le résultat par défaut
         return result;
 
         TriggerWarp:
@@ -1472,7 +1472,7 @@ public class PlayerManager
                 if (StaticVariables.g_playerWarpTimer < 0x3C) // Less than 60
                 {
                     // Play sound effect
-                    _gameEngine.PlaySoundEffect(0x2A); // Sound ID 42
+                    _gameEngine.SoundManager.PlaySoundEffect(0x2A); // Sound ID 42
                 }
                 else
                 {
@@ -1490,7 +1490,7 @@ public class PlayerManager
                     {
                         // Generate random sound effect (0x1AC or 0x1AD)
                         var soundId = (StaticVariables.PlayerEntity.FrameCounter & 0x7) == 0 ? 0x1ADU : 0x1ACU;
-                        _gameEngine.PlaySoundEffect(soundId);
+                        _gameEngine.SoundManager.PlaySoundEffect(soundId);
 
                         // Generate random forces using game's random seed
                         StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
@@ -1772,13 +1772,13 @@ public class PlayerManager
             iVar2 = GetPlayerMpMax();
             if (iVar2 <= iVar1)
             {
-                _gameEngine.PlaySoundEffect(3);
+                _gameEngine.SoundManager.PlaySoundEffect(3);
                 return 1;
             }
         }
 
         _gameEngine.FUN_80033a2c(StaticVariables.PlayerEntity);
-        _gameEngine.PlaySoundEffect(0x30);
+        _gameEngine.SoundManager.PlaySoundEffect(0x30);
         UseItem(itemId);
         return 1;
     }
@@ -1796,7 +1796,7 @@ public class PlayerManager
         }
         else
         {
-            remainingItem = (itemId * 2) * 2 + StaticVariables.g_numberOfItems[0];
+            remainingItem = itemId * 2 * 2 + StaticVariables.g_numberOfItems[0];
             itemCount = StaticVariables.g_numberOfItems[itemId * 2 + 1];
             itemCount--;
 
@@ -1825,7 +1825,7 @@ public class PlayerManager
             }
             else
             {
-                _gameEngine.PlaySoundEffect(3);
+                _gameEngine.SoundManager.PlaySoundEffect(3);
             }
         }
 
@@ -1915,7 +1915,7 @@ public class PlayerManager
         return result;
 
         DefaultCase:
-        _gameEngine.PlaySoundEffect(3);
+        _gameEngine.SoundManager.PlaySoundEffect(3);
         return 1;
     }
 
@@ -1963,12 +1963,12 @@ public class PlayerManager
         if (mp < mpMax)
         {
             _gameEngine.SpawnSpinningParticleRing();
-            _gameEngine.PlaySoundEffect(0x30);
+            _gameEngine.SoundManager.PlaySoundEffect(0x30);
             UseItem(itemId);
         }
         else
         {
-            _gameEngine.PlaySoundEffect(3);
+            _gameEngine.SoundManager.PlaySoundEffect(3);
         }
         return 1;
     }
@@ -2321,13 +2321,12 @@ public class PlayerManager
     // 8002f120
     private void CheckAndExecuteWarp()
     {
-        Portal warpData;
+        WarpData warpData;
         int iVar1;
-        Portal portal;
         int combinedVramFlagsAnd;
         string buffer;
         string fmt;
-        uint uVar3;
+        uint direction;
 
         combinedVramFlagsAnd = StaticVariables.PlayerEntity.CombinedVramFlagsAND;
 
@@ -2350,21 +2349,21 @@ public class PlayerManager
                     else
                     {
                         //string.Format(StaticVariables.g_debugMessage + combinedVramFlagsAnd, "Warp)\n");
-                        portal = _gameEngine.GetWarpData();
-                        if (portal == null)
+                        warpData = _gameEngine.GetWarpData();
+                        if (warpData == null)
                         {
                             //buffer = StaticVariables.g_debugMessage + combinedVramFlagsAnd;
                             //fmt = "No WarpData.\n";
                         }
                         else
                         {
-                            uVar3 = (uint)(portal.Flags >> 14);
+                            direction = (uint)(warpData.Flags >> 14);
                             //_gameEngine.PrintDebugWarpInfo(pbVar2, (int)uVar3);
 
-                            ushort requiredInput = StaticVariables.BYTE_ARRAY_80022778[uVar3 * 2];
+                            ushort requiredInput = StaticVariables.BYTE_ARRAY_80022778[direction * 2];
 
                             if ((StaticVariables.g_padState1.ButtonsHold & requiredInput) == 0
-                                || StaticVariables.PlayerEntity.CurrentFrameIndex != uVar3)
+                                || StaticVariables.PlayerEntity.CurrentFrameIndex != direction)
                             {
                                 //buffer = StaticVariables.g_debugMessage + combinedVramFlagsAnd;
                                 //fmt = "Warp Not Ready!\n";
@@ -2385,8 +2384,8 @@ public class PlayerManager
                 else
                 {
                     //string.Format(StaticVariables.g_debugMessage + combinedVramFlagsAnd, "Hole)\n");
-                    portal = _gameEngine.GetWarpData();
-                    if (portal == null)
+                    warpData = _gameEngine.GetWarpData();
+                    if (warpData == null)
                     {
                         //buffer = StaticVariables.g_debugMessage + combinedVramFlagsAnd;
                         //fmt = "No WarpData.\n";
@@ -2435,20 +2434,27 @@ public class PlayerManager
                 return;
             }
 
-            uVar3 = (uint)(warpData.Flags >> 14);
-            ushort requiredInput = StaticVariables.BYTE_ARRAY_80022778[uVar3 * 2];
+            direction = (uint)(warpData.Flags >> 14);
+            ushort requiredInput = StaticVariables.BYTE_ARRAY_80022778[direction * 2];
 
-            if ((StaticVariables.g_padState1.ButtonsHold & requiredInput) == 0)
+            if (((StaticVariables.g_padState1.ButtonsHold >> 8) & requiredInput) == 0)
             {
                 return;
             }
 
-            if (StaticVariables.PlayerEntity.CurrentFrameIndex != uVar3)
+            direction = direction switch
+            {
+                1 => 2,
+                2 => 1,
+                _ => direction
+            };
+
+            if (StaticVariables.PlayerEntity.CurrentDirection >> 3 != direction)
             {
                 return;
             }
 
-            combinedVramFlagsAnd = StaticVariables.g_cardinalDirectionTable[((warpData.Flags & 0x3000) >> 10) * 4];
+            combinedVramFlagsAnd = StaticVariables.g_cardinalDirectionTable[(warpData.Flags & 0x3000) >> 11];
         }
         else
         {
@@ -2458,77 +2464,66 @@ public class PlayerManager
                 return;
             }
 
-            combinedVramFlagsAnd = StaticVariables.g_cardinalDirectionTable[((warpData.Flags & 0x3000) >> 10) * 4];
+            combinedVramFlagsAnd = StaticVariables.g_cardinalDirectionTable[(warpData.Flags & 0x3000) >> 11];
         }
 
         HandleWarpTransition(warpData, 0x36, combinedVramFlagsAnd);
     }
 
     // 80031340
-    private void HandleWarpTransition(Portal warpData, int warpType, int extraData)
+    private void HandleWarpTransition(WarpData warpData, int warpType, int extraData)
     {
-        int targetCamZ;
-        int targetCamX;
-        int targetCamY;
-
         if (StaticVariables.g_isWarpDisabled != 0)
-        {
             return;
-        }
 
         StaticVariables.g_warpType = (warpData.Flags & 0x70) >> 4;
-        StaticVariables.g_desiredMap = (short)StaticVariables.g_mapIdToInternalMapIndexTable[warpData.DestMapId];
 
-        var tileHeight = StaticVariables.MapTileHeight;
-        var tileWidth = StaticVariables.MapTileWidth;
+        int internalMapIdx = StaticVariables.g_mapIdToInternalMapIndexTable[warpData.DestMapId];
+        StaticVariables.g_desiredMap = warpData.DestMapId;
 
-        var tileOffsetY = warpData.DestTileY * tileHeight +
-                          StaticVariables.PlayerEntity.PosY / 2 +
-                          warpData.Y1 * -tileHeight;
+        Entity playerEntity = StaticVariables.g_entitySlots[0];
 
-        targetCamY = ((tileOffsetY << 16 >> 0x14) * tileHeight + 8) << 16;
+        int deltaX = warpData.DestTileX * StaticVariables.MapTileWidth + (playerEntity.PosX >> 16) - warpData.X1 * StaticVariables.MapTileWidth;
+        int deltaY = warpData.DestTileY * StaticVariables.MapTileHeight + (playerEntity.PosY >> 16) - warpData.Y1 * StaticVariables.MapTileHeight;
+        
 
-        var tileOffsetX = (int)(((uint)warpData.DestTileX * tileWidth +
-                                 (StaticVariables.PlayerEntity.PosX >> tileHeight) + warpData.X1 * -tileWidth) << 16) >> 0x0f;
+        int tileX = StaticVariables.g_tileToWorldXTable[deltaX];
+        deltaY /= StaticVariables.MapTileHeight;
 
-        targetCamX = (StaticVariables.g_tileToWorldXTable[tileOffsetX * 2] * tileWidth + 0xc) << 16;
+        int targetCamX = (tileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) << 16;
+        int targetCamY = (deltaY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) << 16;
+        int targetCamZ = warpData.ZLevel << 20;
 
-        StaticVariables.g_warpEntryBehavior = StaticVariables.g_warpBehaviorTable[warpData.Flags & 0xf];
-        targetCamZ = warpData.ZLevel << 16;
+        StaticVariables.g_warpEntryBehavior = StaticVariables.g_warpBehaviorTable[warpData.Flags & 0xF];
 
         if (StaticVariables.g_warpType == 3)
         {
-            if (StaticVariables.g_desiredMap == StaticVariables.g_currentMap)
+            if (internalMapIdx != StaticVariables.g_currentMap)
             {
-                if (StaticVariables.PlayerEntity.WarpEntity == null)
-                {
-                    StaticVariables.PlayerEntity.PosX = targetCamX;
-                    StaticVariables.PlayerEntity.PosY = targetCamY;
-                    StaticVariables.PlayerEntity.PosZ = targetCamZ;
-                    return;
-                }
-
-                //playerPtr = StaticVariables.PlayerEntity.WarpEntity;
-                //(playerPtr + 0x114) = (playerPtr + 0x114) + (targetCamX - StaticVariables.PlayerEntity.PosX);
-                //(playerPtr + 0x118) = (playerPtr + 0x118) + (targetCamY - StaticVariables.PlayerEntity.PosY);
-                //(playerPtr + 0x11c) = (playerPtr + 0x11c) + (targetCamZ - StaticVariables.PlayerEntity.PosZ);
-
-                StaticVariables.PlayerEntity.PosX = targetCamX;
-                StaticVariables.PlayerEntity.PosY = targetCamY;
-                StaticVariables.PlayerEntity.PosZ = targetCamZ;
-                return;
+                //_gameEngine.DoNothing();
+                StaticVariables.g_warpType = 0;
+            }
+            else if (playerEntity.WarpEntity != null)
+            {
+                Entity warpEntity = playerEntity.WarpEntity;
+                warpEntity.PosX += targetCamX - playerEntity.PosX;
+                warpEntity.PosY += targetCamY - playerEntity.PosY;
+                warpEntity.PosZ += targetCamZ - playerEntity.PosZ;
             }
 
-            //_gameEngine.DoNothing();
-            StaticVariables.g_warpType = 0;
+            playerEntity.PosX = targetCamX;
+            playerEntity.PosY = targetCamY;
+            playerEntity.PosZ = targetCamZ;
         }
-
-        StaticVariables.g_isGameEnding = 1;
-        StaticVariables.g_warpTriggerType = warpType;
-        StaticVariables.g_warpExtraParam = extraData;
-        StaticVariables.g_cameraTargetX = targetCamX;
-        StaticVariables.g_cameraTargetY = targetCamY;
-        StaticVariables.g_animation_id = targetCamZ;
+        else
+        {
+            StaticVariables.g_isGameEnding = 1;
+            StaticVariables.g_warpTriggerType = warpType;
+            StaticVariables.g_warpExtraParam = extraData;
+            StaticVariables.g_cameraTargetX = targetCamX;
+            StaticVariables.g_cameraTargetY = targetCamY;
+            StaticVariables.g_cameraTargetZ = targetCamZ;
+        }
     }
 
     // 8002fb14
@@ -2565,7 +2560,7 @@ public class PlayerManager
                 if ((StaticVariables.PlayerEntity.FrameCounter & 0x7) == 0)
                 {
                     var sfxId = (uint)StaticVariables.g_hitSoundEffects[StaticVariables.PlayerEntity.Slope_18c];
-                    _gameEngine.PlaySoundEffect(sfxId);
+                    _gameEngine.SoundManager.PlaySoundEffect(sfxId);
                 }
 
                 if (IsSlopeInAquaticTile())
@@ -2647,7 +2642,7 @@ public class PlayerManager
             case (int)PlayerAnimation.MovingWithObject:
                 if ((StaticVariables.PlayerEntity.FrameCounter & 0xf) == 0)
                 {
-                    _gameEngine.PlaySoundEffect((uint)StaticVariables.SHORT_ARRAY_800227f4[StaticVariables.PlayerEntity.Slope_18c]);
+                    _gameEngine.SoundManager.PlaySoundEffect((uint)StaticVariables.SHORT_ARRAY_800227f4[StaticVariables.PlayerEntity.Slope_18c]);
                 }
                 goto SkipEffects;
 
@@ -2655,7 +2650,7 @@ public class PlayerManager
                 effectEntityId = 0;
                 if ((StaticVariables.PlayerEntity.FrameCounter & 7) == 0)
                 {
-                    _gameEngine.PlaySoundEffect((uint)StaticVariables.g_hitSoundEffects[StaticVariables.PlayerEntity.Slope_18c]);
+                    _gameEngine.SoundManager.PlaySoundEffect((uint)StaticVariables.g_hitSoundEffects[StaticVariables.PlayerEntity.Slope_18c]);
                 }
                 goto CaseEffect;
 
@@ -2812,7 +2807,7 @@ public class PlayerManager
                     && StaticVariables.PlayerEntity.ForceZ < 1)
                 {
                     // Jouer un son d'atterrissage
-                    _gameEngine.PlaySoundEffect((uint)StaticVariables.g_hitSfxIdByTileSlope[StaticVariables.PlayerEntity.Slope_18c]);
+                    _gameEngine.SoundManager.PlaySoundEffect((uint)StaticVariables.g_hitSfxIdByTileSlope[StaticVariables.PlayerEntity.Slope_18c]);
 
                     // Créer des effets visuels d'atterrissage en fonction du type de terrain
                     if (StaticVariables.PlayerEntity.Slope_18c < 1 || (2 < StaticVariables.PlayerEntity.Slope_18c && StaticVariables.PlayerEntity.Slope_18c != 4))
@@ -2872,7 +2867,7 @@ public class PlayerManager
 
                 if (StaticVariables.DAT_80098f2c == -1)
                 {
-                    _gameEngine.PlaySoundEffect(400);
+                    _gameEngine.SoundManager.PlaySoundEffect(400);
                     StaticVariables.DAT_80098f2c = 0x2d; // Réinitialiser le compteur
                 }
             }
@@ -2967,7 +2962,7 @@ public class PlayerManager
                                     effectY,
                                     tileEffectZ);
                                 _gameEngine.EffectManager.CreateWarpEffect(0xFF, effectX, effectY, tileEffectZ);
-                                _gameEngine.PlaySoundEffect(0x1F);
+                                _gameEngine.SoundManager.PlaySoundEffect(0x1F);
                             }
                         }
                     }

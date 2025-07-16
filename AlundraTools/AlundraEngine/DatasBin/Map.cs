@@ -23,7 +23,7 @@ public class Map
 
             //TODO : remove, for debugging purpose
             MapTiles[i].TileY = i / Width;
-            MapTiles[i].TileX = (i % Width) - 1;
+            MapTiles[i].TileX = (i % Width);
         }
 
         WallTilesOffset = (int)(br.BaseStream.Position - binoffset);

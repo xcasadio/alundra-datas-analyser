@@ -439,7 +439,7 @@ public partial class FrmGame : Form
                 out float joystickRightX, out float joystickRightY,
                 out float L2, out float R2);
 
-            var joystickThreshold = 0.20f;
+            var joystickThreshold = 0.50f;
 
             if ((state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP) != 0 || joystickLeftY > joystickThreshold)
             {

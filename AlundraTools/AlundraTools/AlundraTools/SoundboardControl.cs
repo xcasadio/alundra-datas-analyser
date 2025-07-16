@@ -17,9 +17,9 @@ namespace AlundraTools.AlundraTools
             _soundBin = soundBin;
 
             lstGlobalSfx.Items.Clear();
-            for (var dex = 0; dex < _soundBin.GlobalVabHeader.Header.Vs; dex++)
+            for (var i = 0; i < _soundBin.GlobalVabHeader.Header.Vs; i++)
             {
-                lstGlobalSfx.Items.Add("AlundraGameMap VAG " + dex);
+                lstGlobalSfx.Items.Add($"{i} AlundraGameMap VAG");
             }
 
             lsvSfx.Items.Clear();
@@ -54,9 +54,9 @@ namespace AlundraTools.AlundraTools
             _soundBin.OpenMap(mapId);
             lstMapSfx.Items.Clear();
 
-            for (var dex = 0; dex < _soundBin.MapVabHeader.Header.Vs; dex++)
+            for (var i = 0; i < _soundBin.MapVabHeader.Header.Vs; i++)
             {
-                lstMapSfx.Items.Add("Map VAG " + dex);
+                lstMapSfx.Items.Add($"{i} Map VAG");
             }
         }
 

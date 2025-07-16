@@ -1736,7 +1736,7 @@ public static class StaticVariables
     public static int g_warpExtraParam; // 800DC4D4
     public static int g_cameraTargetX; // 800DC4D8
     public static int g_cameraTargetY; // 800DC4DC
-    public static int g_animation_id; // 800DC4E0
+    public static int g_cameraTargetZ; // 800DC4E0
     public static int INT_800dc4e4; // 800DC4E4
     public static int g_warpEntryBehavior; // 800DC4E8
     public static short g_tPageFadeLUT; // 800DC4F0
@@ -2394,10 +2394,10 @@ public static class StaticVariables
     public static int DAT_801eb304; // 801EB304
     public static char[] g_menuStatusText = new char[32]; // 801EB310
     public static uint g_savedGameplayTime; // 801EB330
-    public static int g_initialWarpMap; // 801EB334
-    public static int g_initialWarpTileX; // 801EB338
-    public static int g_initialWarpTileY; // 801EB33C
-    public static int g_initialWarpZ; // 801EB340
+    public static int g_initialMapId; // 801EB334
+    public static int g_initialCameraTileX; // 801EB338
+    public static int g_initialCameraTileY; // 801EB33C
+    public static int g_initialCameraTileZ; // 801EB340
     public static uint[] g_mapFlags = new uint[1024]; // 801EB344 // 44
     public static int g_mapTransitionFlags; // 801EB39C
     public static int g_playerState; // 801EB3F4

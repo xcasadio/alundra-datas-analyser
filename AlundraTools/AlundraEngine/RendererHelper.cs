@@ -26,6 +26,9 @@ public class RendererHelper
         //var curXTile = currentRow;
         //var curYTile = camTileOffsetY;
 
+        curXTile = Math.Max(0, curXTile);
+        curXTile = Math.Min(gameMap.Map.Width, curXTile);
+
         var sinfo = gameMap.SpriteInfo;
         var gensi = datasBin.AlundraGameMap.SpriteInfo;
 
@@ -43,7 +46,7 @@ public class RendererHelper
                 var dx = x * StaticVariables.MapTileWidth - currentXPosition;
                 var dy = (y - tile.Height) * StaticVariables.MapTileHeight - currentYPosition;
 
-                if (dy > -StaticVariables.MapTileHeight && dy < StaticVariables.ScreenHeight && tile.TileId != -1)
+                if (dy > -StaticVariables.MapTileHeight && dy < StaticVariables.ScreenHeight && tile.TileId != 0xffff)
                 {
                     tileId = GetAnimatedTileId(gameMap, tileId);
                     DrawTile(tileId, dx, dy, g, gameMap);
@@ -73,9 +76,9 @@ public class RendererHelper
                     {
                         dy += StaticVariables.MapTileHeight;
                         //render wall tile
-                        var wallTileId = wallTiles.Tiles[i];
+                        var wallTileId = (ushort)wallTiles.Tiles[i];
 
-                        if (dy > -StaticVariables.MapTileHeight && dy < StaticVariables.ScreenHeight && wallTileId != -1)
+                        if (dy > -StaticVariables.MapTileHeight && dy < StaticVariables.ScreenHeight && wallTileId != 0xffff)
                         {
                             wallTileId = GetAnimatedTileId(gameMap, wallTileId);
                             DrawTile(wallTileId, dx, dy, g, gameMap);
@@ -263,7 +266,7 @@ public class RendererHelper
         }
     }
 
-    private static short GetAnimatedTileId(GameMap gameMap, short tileId)
+    private static ushort GetAnimatedTileId(GameMap gameMap, ushort tileId)
     {
         var tile = tileId & 0x3ff;
 
@@ -274,7 +277,7 @@ public class RendererHelper
             if (entry.Enabled == 1)
             {
                 //tileY + 1
-                tileId = (short)( (tileId & 0xF000) | ((tileId + 10 * entry.FrameIndex * 2) & 0x03FF));
+                tileId = (ushort)((tileId & 0xF000) | ((tileId + 10 * entry.FrameIndex * 2) & 0x03FF));
             }
         }
 

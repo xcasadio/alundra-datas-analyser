@@ -4,7 +4,6 @@ public class SiMapEventRecord
 {
     public SiMapEventRecord(BinaryReader br)
     {
-
         X1 = br.ReadByte();
         Y1 = br.ReadByte();
         X2 = br.ReadByte();

@@ -288,7 +288,7 @@ public class SpriteEventHandlers
             baseEntity = next;
         }
 
-        _gameEngine.PlaySoundEffect(0x19C);
+        _gameEngine.SoundManager.PlaySoundEffect(0x19C);
         StaticVariables.g_loaderInitialized = 0;
     }
 
@@ -750,13 +750,14 @@ public class SpriteEventHandlers
             {
                 if (entity.IsAboveGround != 0 || entity.HitCounter != 0)
                 {
-                    _gameEngine.PlaySoundEffect(0x18);
+                    _gameEngine.SoundManager.PlaySoundEffect(0x18);
                     entity.InitialXPos = 0;
                     value = 0;
                     entity2 = entity;
                     do
                     {
-                        if ((entity2.MapTiles[0].Walkability & 0x1001) == 0x1001)
+                        var tile = entity2.MapTiles[value];
+                        if (((tile.Walkability | (tile.GroundProperty << 8))  & 0x1001) == 0x1001)
                         {
                             break;
                         }
@@ -787,7 +788,8 @@ public class SpriteEventHandlers
                 {
                     do
                     {
-                        if ((entity2.MapTiles[0].Walkability & 0x1001) == 0x1001)
+                        var tile = entity2.MapTiles[value];
+                        if (((tile.Walkability | (tile.GroundProperty << 8)) & 0x1001) == 0x1001)
                         {
                             entity.Status = 3;
                         }

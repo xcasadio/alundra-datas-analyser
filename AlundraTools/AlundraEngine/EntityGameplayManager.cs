@@ -12,21 +12,6 @@ public class EntityGameplayManager
         _gameEngine = gameEngine;
     }
 
-    public void HideEntity(Entity entity)
-    {
-        entity.Status = 4;
-        entity.EventTrigger = -1;
-        if (entity.ActiveEffect != null)
-        {
-            entity.ActiveEffect.Status = 0;
-            entity.ActiveEffect = null;
-        }
-        if (entity.PlatformEntity != null)
-        {
-            entity.PlatformEntity.WarpEntity = null;
-        }
-    }
-
     public uint TurnEntity(Entity entity, int turnCode)
     {
         var turndir = turnCode & 0x1f;
@@ -40,11 +25,14 @@ public class EntityGameplayManager
         {
             case 1:
                 return (uint)((entity.TargetDirection + turndir) & 0x1f);
+
             case 2:
                 return (uint)StaticVariables.g_cardinalDirectionTable[turndir & 0x3];
+
             case 3:
                 var dfv = ScriptHelper.GetDirectionToTarget(StaticVariables.PlayerEntity.PosX - entity.PosX, StaticVariables.PlayerEntity.PosY - entity.PosY);
                 return (uint)((dfv + turndir) & 0x1f);
+
             case 4:
             {
                 var i = StaticVariables.g_gameRandomSeed;
@@ -55,6 +43,7 @@ public class EntityGameplayManager
                 var dir = StaticVariables.g_cardinalDirectionTable[val3];//val3 here is a number between 0 and 3
                 return (uint)dir;
             }
+
             case 5:
             {
                 var i = StaticVariables.g_gameRandomSeed;
@@ -64,16 +53,18 @@ public class EntityGameplayManager
                 StaticVariables.g_gameRandomSeed = (uint)val2;
                 return (uint)val2;
             }
+
             case 6:
                 return (uint)((StaticVariables.PlayerEntity.TargetDirection + turndir) & 0x1f);
+
             case 7:
                 var ret = GetCardinalDirToPlayer(entity);
                 if (ret != -1)
                 {
                     return (uint)((ret + turndir) & 0x1f);
                 }
-
                 break;
+
             case 0:
                 break;
         }

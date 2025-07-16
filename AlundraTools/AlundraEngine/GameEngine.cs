@@ -1,10 +1,12 @@
-﻿using System.Diagnostics;
-using AlundraEngine.DatasBin;
+﻿using AlundraEngine.DatasBin;
 using AlundraEngine.Editor;
 using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
+using System;
+using System.Diagnostics;
+using WarpData = AlundraEngine.DatasBin.WarpData;
 
 namespace AlundraEngine;
 
@@ -14,7 +16,6 @@ public class GameEngine
 
     public readonly DatasBin.DatasBin DatasBin;
     public readonly BalanceBin BalanceBin;
-    public readonly SoundBin SoundBin;
     private readonly EtcResR _etcResR;
     private readonly Font3 _font3;
 
@@ -25,6 +26,9 @@ public class GameEngine
     public EffectManager EffectManager { get; }
     public EntityManager EntityManager { get; }
     public PlayerManager PlayerManager { get; }
+    public SoundManager SoundManager { get; }
+    public SoundBin SoundBin { get; }
+    public CdManager CdManager { get; }
 
     private readonly EntityEventHandlers _entityEventHandlers;
     private readonly GameInitializer _gameInitializer;
@@ -50,6 +54,7 @@ public class GameEngine
         EntityGameplayManager = new EntityGameplayManager(this);
         EffectManager = new EffectManager(this);
         PlayerManager = new PlayerManager(this);
+        SoundManager = new SoundManager(this);
     }
 
     public void InitializeEngine()
@@ -598,6 +603,7 @@ public class GameEngine
         {
             using var reader = DatasBin.OpenBin();
             CurrentMap.Load(reader, true);
+            SoundBin.OpenMap(mapId);
         }
 
         LoadMap(CurrentMap);
@@ -685,8 +691,10 @@ public class GameEngine
 
         EntityManager.InitializeEntity(StaticVariables.PlayerEntity, null,
             spriteRecord, null, 0, -1,
-            StaticVariables.g_cameraTargetX, StaticVariables.g_cameraTargetY,
-            StaticVariables.g_animation_id, (uint)StaticVariables.g_warpTriggerType,
+            StaticVariables.g_cameraTargetX, 
+            StaticVariables.g_cameraTargetY,
+            StaticVariables.g_cameraTargetZ, 
+            (uint)StaticVariables.g_warpTriggerType,
             (uint)StaticVariables.g_warpExtraParam,
             0xb, 0x60);
 
@@ -843,11 +851,6 @@ public class GameEngine
 
         var sprite = si.Sprites[spriteTableIndex];
         return sprite;
-    }
-
-    public void PlaySoundEffect(uint sfxId)
-    {
-        //TODO
     }
 
     //TODO all the slope stuff
@@ -1216,46 +1219,12 @@ public class GameEngine
     // 8004a09c
     private int LoadMapSounds(int mapId)
     {
-        var iVar1 = GetMapWarpDestination(mapId);
-
-        if (iVar1 != 0)
-        {
-            int iVar2 = StaticVariables.g_currentMapSoundIndex;
-            iVar1 = GetMapWarpDestination(mapId);
-
-            if (iVar2 != iVar1)
-            {
-                if (StaticVariables.g_requestedSeqId >= 0)
-                {
-                    //InitBgm(StaticVariables.g_requestedSeqId);
-                    //ResetSomethingSound(StaticVariables.g_requestedSeqId);
-                }
-
-                iVar1 = GetMapWarpDestination(mapId);
-                if (iVar1 != 0x2d)
-                {
-                    iVar1 = GetMapWarpDestination(mapId);
-                    //MaybeLoadSound(iVar1, 0);
-                }
-
-                //FUN_8008f808(StaticVariables.g_requestedSeqId, 0x7f, 10);
-            }
-        }
-
-        //iVar1 = GetSoundGroupBbyMapId(mapId);
-        //
-        //if (StaticVariables.g_currentSoundGroup != iVar1)
-        //{
-        //    FUN_800489c8(mapId);
-        //}
-        //
-        //FUN_8005ac90();
+        SoundManager.LoadMapSounds(mapId);
         _renderer.PrepareBufferFlip();
-
         return 1;
     }
 
-    private uint GetMapWarpDestination(int mapId)
+    public uint GetMapWarpDestination(int mapId)
     {
         uint currentMapId;
         var warpDataIndex = 0;
@@ -1554,7 +1523,7 @@ public class GameEngine
 
         var playerEntity = StaticVariables.PlayerEntity;
 
-        for (var i = 0; i < 64; ++i)
+        for (var i = 0; i < StaticVariables.g_mapEvents.Length; ++i)
         {
             var currentMapEvent = StaticVariables.g_mapEvents[i];
 
@@ -2189,44 +2158,6 @@ public class GameEngine
         }*/
     }
 
-    // 8004b114
-    public void FUN_8004b114(int variable, int i)
-    {
-        Debugger.Break();
-    }
-
-    // 80049b7c
-    public void LoadBgm(int bgmIndex)
-    {
-        StaticVariables.g_resetSoundFlag = 0;
-        if (bgmIndex == 0)
-        {
-            InitializeBgm(StaticVariables.g_requestedSeqId);
-        }
-        else
-        {
-            StaticVariables.g_soundEffectState = 0x78;
-        }
-    }
-
-    // 8008f458
-    private void InitializeBgm(short seqId)
-    {
-        FUN_8008f2e8(seqId, 0);
-    }
-
-    // 8008f2e8
-    private void FUN_8008f2e8(short seqId, short i)
-    {
-        Debugger.Break();
-    }
-
-    //80049af4
-    public void StopAllSound()
-    {
-        Debugger.Break();
-    }
-
     //8004df68
     public int FUN_8004df68()
     {
@@ -2326,7 +2257,7 @@ public class GameEngine
     {
         Debugger.Break();
         //spriteData = g_spriteVRAMPointer + mapTileIndex * 3 + 2;
-        var mapTile = CurrentMap.Map.MapTiles[mapTileIndex];
+        //var mapTile = CurrentMap.Map.MapTiles[mapTileIndex];
 
 
         //ChangeAreaTileProperties();
@@ -2355,6 +2286,9 @@ public class GameEngine
 
         if (0 < sizeY)
         {
+            var map = CurrentMap.Map;
+            var mapWidth = CurrentMap.Map.Width;
+
             do
             {
                 x = 0;
@@ -2364,15 +2298,20 @@ public class GameEngine
                 {
                     do
                     {
-                        var tile = CurrentMap.Map.MapTiles[distX2 + (distY + y) * 52];
-                        var tile2 = CurrentMap.Map.MapTiles[startX + x + (startY + y) * 52];
-                        tile.GroundProperty = tile2.GroundProperty;
-                        tile.Walkability = tile.Walkability;
-                        x = x + 1;
+                        var tile1 = map.MapTiles[distX2 + (distY + y) * mapWidth];
+                        var tile2 = map.MapTiles[startX + x + (startY + y) * mapWidth];
+                        tile1.Walkability = tile2.Walkability;
+                        tile1.GroundProperty = tile2.GroundProperty;
+                        tile1.Height = tile2.Height;
+                        tile1.TileId = tile2.TileId;
+                        tile1.TilesOffset = tile2.TilesOffset;
+
+                        x++;
                         distX2 = distX + x;
                     } while (x < sizeX);
                 }
-                y = y + 1;
+
+                y++;
 
             } while (y < sizeY);
         }
@@ -2404,18 +2343,18 @@ public class GameEngine
                 direction = (uint)ScriptHelper.GetDirectionToTarget(
                     StaticVariables.PlayerEntity.PosX - entity.PosX,
                     StaticVariables.PlayerEntity.PosY - entity.PosY);
-                direction += result;
+                direction = direction + encodedDir;
                 goto LAB_8003d110;
 
             case 4:
                 StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                var rand = (int)((ulong)StaticVariables.g_gameRandomSeed * 4 >> 0x20);
+                var rand = (int)((ulong)(StaticVariables.g_gameRandomSeed * 4) >> 0x20);
                 result = (uint)StaticVariables.g_cardinalDirectionTable[rand];
                 break;
 
             case 5:
                 StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                result = (uint)((ulong)StaticVariables.g_gameRandomSeed * 0x20 >> 0x20);
+                result = (uint)((ulong)(StaticVariables.g_gameRandomSeed * 0x20) >> 0x20);
                 break;
 
             case 6:
@@ -2474,14 +2413,14 @@ public class GameEngine
     }
 
     // 8003166c
-    public Portal GetWarpData()
+    public WarpData GetWarpData()
     {
         foreach (var infoPortal in CurrentMap.Info.Portals)
         {
-            if (StaticVariables.PlayerEntity.TileX > infoPortal.X1
-                || StaticVariables.PlayerEntity.TileX < infoPortal.X2
-                || StaticVariables.PlayerEntity.TileY > infoPortal.Y1
-                || StaticVariables.PlayerEntity.TileY < infoPortal.Y2)
+            if (StaticVariables.PlayerEntity.TileX >= infoPortal.X1
+                && StaticVariables.PlayerEntity.TileX <= infoPortal.X2
+                && StaticVariables.PlayerEntity.TileY >= infoPortal.Y1
+                && StaticVariables.PlayerEntity.TileY <= infoPortal.Y2)
             {
                 return infoPortal;
             }
@@ -2557,7 +2496,7 @@ public class GameEngine
                             0, 
                             effectX, effectY, tileEffectZ);
                         EffectManager.CreateWarpEffect(0xFF, effectX, effectY, tileEffectZ);
-                        PlaySoundEffect(0x1F);
+                        SoundManager.PlaySoundEffect(0x1F);
                     }
                 }
             }
@@ -2741,5 +2680,96 @@ public class GameEngine
     public void SpawnSpinningParticleRing()
     {
         Debugger.Break();
+    }
+
+    //80057c84
+    public void ApplyCameraEffect(int x, int y, int z, 
+        int destX, int destY, 
+        byte uvX, byte uvY, 
+        short width, short height, 
+        short textureId1, short textureId2)
+
+    {
+        StaticVariables.g_cameraTransitionStartX = 8;
+        StaticVariables.g_cameraTransitionStartY = 0x74;
+        InitCameraTransitionEffect(x, y, z, destX, destY, uvX, uvY, width, height, textureId1, textureId2);
+    }
+
+    //80057cf0
+    public void InitCameraTransitionEffect(
+        int srcX, int srcY, int srcZ, 
+        int dstXPtr, int dstYPtr, 
+        byte uvX, byte uvY, 
+        short width, short height,
+        short textureId1, short textureId2)
+    {
+        short puVar1;
+        //int** poly;
+        int i;
+        byte uvBottom;
+        byte uvRight;
+
+        puVar1 = StaticVariables.g_cameraTransitionState;
+
+        if (StaticVariables.g_cameraTransitionState == 0)
+        {
+            i = 0;
+            uvRight = (byte)(uvX + width);
+            //poly = &StaticVariables.g_cameraTransitionPolygons;
+            uvBottom = (byte)(uvY + height);
+            StaticVariables.g_cameraTransitionDstYPtr = dstYPtr;
+            StaticVariables.g_cameraTransitionState = 5;
+            StaticVariables.g_cameraTransitionSrcX = srcX;
+            StaticVariables.g_cameraTransitionSrcY = srcY;
+            StaticVariables.g_cameraTransitionSrcZ = srcZ;
+            StaticVariables.g_cameraTransitionDstXPtr = dstXPtr;
+
+            /*
+            do
+            {
+                SetPolyFT4((POLY_FT4*)poly);
+                ((POLY_FT4*)poly)->r0 = 0xff;
+                ((POLY_FT4*)poly)->g0 = 0xff;
+                ((POLY_FT4*)poly)->b0 = 0xff;
+                ((POLY_FT4*)poly)->$2 = uvY;
+                ((POLY_FT4*)poly)->u1 = uvRight;
+                ((POLY_FT4*)poly)->$3 = uvY;
+                ((POLY_FT4*)poly)->v2 = uvBottom;
+                ((POLY_FT4*)poly)->u3 = uvRight;
+                ((POLY_FT4*)poly)->v3 = uvBottom;
+                ((POLY_FT4*)poly)->x0 = 100;
+                ((POLY_FT4*)poly)->y0 = 100;
+                ((POLY_FT4*)poly)->x1 = width + 100;
+                ((POLY_FT4*)poly)->y1 = 100;
+                ((POLY_FT4*)poly)->x2 = 100;
+                ((POLY_FT4*)poly)->u0 = uvX;
+                ((POLY_FT4*)poly)->u2 = uvX;
+                ((POLY_FT4*)poly)->x3 = width + 100;
+                ((POLY_FT4*)poly)->y2 = height + 100;
+                ((POLY_FT4*)poly)->y3 = height + 100;
+                poly = (int**)((int)poly + 0x28);
+                puVar1[9] = textureId1;
+                puVar1[0xd] = textureId2;
+                puVar1 = puVar1 + 0x14;
+                i = i + 1;
+            } while (i < 2);
+            */
+
+            StaticVariables.g_cameraDeltaX = -(StaticVariables.g_cameraTransitionSrcX + 2)
+            -StaticVariables.g_cameraTransitionDstXPtr;
+
+            StaticVariables.g_cameraX = StaticVariables.g_cameraDeltaX - StaticVariables.g_cameraTransitionStartX;
+            StaticVariables.g_cameraTransitionHalfWidth = 0x30;
+            StaticVariables.g_cameraTransitionHalfHeight = 0x38;
+            StaticVariables.g_cameraCurrentX = StaticVariables.g_cameraTransitionStartX;
+            StaticVariables.g_cameraCurrentY = StaticVariables.g_cameraTransitionStartY;
+            StaticVariables.g_cameraTransitionStepValue = 0xf;
+            StaticVariables.g_cameraDeltaY =
+                 (((StaticVariables.g_cameraTransitionSrcY + 2) 
+                   - StaticVariables.g_cameraTransitionDstYPtr) 
+                  - (StaticVariables.g_cameraTransitionSrcZ + 2))
+                 - 0x20;
+            StaticVariables.g_cameraY = StaticVariables.g_cameraDeltaY - StaticVariables.g_cameraTransitionStartY;
+        }
     }
 }

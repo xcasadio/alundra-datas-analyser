@@ -614,7 +614,7 @@ public static class FrameSnapshotLoader
         public byte GroundProperty { get; set; }
         public byte Slope { get; set; }
         public byte Height { get; set; }
-        public short TileId { get; set; }
+        public ushort TileId { get; set; }
         public short Palette { get; set; }
         public short Tile { get; set; }
         public short TilesOffset { get; set; }

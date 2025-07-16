@@ -471,7 +471,7 @@ public class EffectManager
         warpEntity.AIValues[1] = 0;
         warpEntity.AIValues[2] = 0;
         warpEntity.AIValues[3] = 10;
-        _gameEngine.PlaySoundEffect(0x54);
+        _gameEngine.SoundManager.PlaySoundEffect(0x54);
 
         return 1;
     }

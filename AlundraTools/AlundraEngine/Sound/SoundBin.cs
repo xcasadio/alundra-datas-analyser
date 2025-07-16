@@ -185,6 +185,7 @@ public class SoundBin
     {
         return PlaySfxInner(sfx, GlobalVabHeader, _globalSfxVabBodyBuff, pitch, is8Bit, out loopStart, out loopEnd, out repeat);
     }
+
     public byte[] PlayMapSfx(int sfx, int pitch, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
     {
         return PlaySfxInner(sfx, MapVabHeader, _mapSfxVabBodyBuff, pitch, is8Bit, out loopStart, out loopEnd, out repeat);
@@ -200,7 +201,7 @@ public class SoundBin
         return PlaySfxInner(attr.Vag, header, bodybuff, pitch, is8Bit, out loopStart, out loopEnd, out repeat);
     }
 
-    private byte[] PlaySfxInner(int sfx, VabHeader header, byte[]bodybuff, int pitch, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
+    private byte[] PlaySfxInner(int sfx, VabHeader header, byte[] bodybuff, int pitch, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
     {
         var pos = 0;
         for (var dex = 0; dex < sfx; dex++)
@@ -218,7 +219,7 @@ public class SoundBin
 
         var buff = new byte[blocks * SamplesPerBlock * bytespersample];
         int blockloopstart, blockloopend;
-        DecodeAdpcm(bodybuff, pos, length, buff, is8Bit, out blockloopstart,out blockloopend, out repeat);
+        DecodeAdpcm(bodybuff, pos, length, buff, is8Bit, out blockloopstart, out blockloopend, out repeat);
         if ((blockloopend == -1 || blockloopstart == -1) && length != 0)
         {
             //this is not good, all samples should have loop points set, even if they arent used
@@ -233,13 +234,15 @@ public class SoundBin
     }
 
     private System.Media.SoundPlayer _sp;
+
     public void PlayWave(Stream s)
     {
         _sp = new System.Media.SoundPlayer(s);
         //sp.PlayLooping();
         _sp.Play();
     }
-    public static void DecodeAdpcm(byte[]adpcm, int pos, int len, byte[] pcm, bool is8Bit, out int loopstart, out int loopend, out bool looprepeat)
+
+    public static void DecodeAdpcm(byte[] adpcm, int pos, int len, byte[] pcm, bool is8Bit, out int loopstart, out int loopend, out bool looprepeat)
     {
         loopstart = loopend = -1;
         looprepeat = false;
@@ -253,7 +256,7 @@ public class SoundBin
         var numblocks = len / 16;
         var dpos = pos;
         var block = new AdpcmBlock();
-        for (var dex = 0;dex<numblocks;dex++)
+        for (var dex = 0; dex < numblocks; dex++)
         {
             block.Fill(adpcm, dpos);
             if (block.IsLoopstart)
@@ -275,7 +278,7 @@ public class SoundBin
                     loopend = dex;
                     looprepeat = block.IsLooprepeat;
                 }
-                else if (dex != loopend+1)
+                else if (dex != loopend + 1)
                 {
                     //this is a problem, why does this sample have multiple ends?
                     throw new Exception("sample has multiple end blocks.");
@@ -294,7 +297,7 @@ public class SoundBin
             var filterNeg = filterTableNeg[filterIndex];
             lastSamples[0] = adpcmLastSamples[0];
             lastSamples[1] = adpcmLastSamples[1];
-            for (var sdex = 0;sdex<SamplesPerBlock;sdex++)
+            for (var sdex = 0; sdex < SamplesPerBlock; sdex++)
             {
                 var nib = block.Data[sdex / 2] >> (sdex % 2 * 4) & 0xf;
                 var sample = (short)(nib << 12) >> shift;
@@ -334,7 +337,7 @@ public class SoundBin
         public byte ShiftFilter;
         public byte Flags;//1=loop end,2=loop repeat,4=loop start
         public readonly byte[] Data = new byte[SamplesPerBlock / 2];
-        public void Fill(byte[]adpcm, int pos)
+        public void Fill(byte[] adpcm, int pos)
         {
             ShiftFilter = adpcm[pos++];
             Flags = adpcm[pos++];
@@ -345,7 +348,8 @@ public class SoundBin
         public bool IsLoopend { get { return (Flags & 1) != 0; } }
         public bool IsLooprepeat { get { return (Flags & 2) != 0; } }
     }
-    public static MemoryStream WriteWavFile(byte[] sampleData,int start, int length, int sampleRate, bool is8Bit)
+
+    public static MemoryStream WriteWavFile(byte[] sampleData, int start, int length, int sampleRate, bool is8Bit)
     {
         var ms = new MemoryStream();
 
@@ -401,7 +405,7 @@ public class SoundBin
 
 
 
-        for (var dex = start; dex < length-1; dex += bps/8)
+        for (var dex = start; dex < length - 1; dex += bps / 8)
         {
             if (is8Bit)
             {
@@ -429,31 +433,35 @@ public class SoundBin
         public VabHeader(BinaryReader br)
         {
             Header = new VabHdr(br);
-            for(var dex = 0;dex<128;dex++)
+            for (var i = 0; i < 128; i++)
             {
-                ProgAttributes[dex] = new ProgAtr(br);
+                ProgAttributes[i] = new ProgAtr(br);
             }
+
             VagAttributes = new VagAtr[Header.Ps][];
+
             for (var programdex = 0; programdex < Header.Ps; programdex++)
             {
                 //16 is max number of tones
                 VagAttributes[programdex] = new VagAtr[16];
-                for (var tonedex= 0; tonedex < 16; tonedex++)
+                for (var tonedex = 0; tonedex < 16; tonedex++)
                 {
                     VagAttributes[programdex][tonedex] = new VagAtr(br);
                 }
             }
-            for (var dex= 0;dex<256;dex++)
+
+            for (var dex = 0; dex < 256; dex++)
             {
                 VagOffsetTable[dex] = br.ReadUInt16();//its bit shifted so needs to be << 3 when using the offset;
             }
         }
+
         public readonly VabHdr Header;
         public readonly ProgAtr[] ProgAttributes = new ProgAtr[128];
         public readonly VagAtr[][] VagAttributes;
         public readonly ushort[] VagOffsetTable = new ushort[256];
         //int[] VagOffsetTable = new int[256];
-            
+
         public class VabHdr//32 byte
         {
             public int Form;//always VABp
@@ -486,6 +494,7 @@ public class SoundBin
                 Reserved1 = br.ReadInt32();
             }
         }
+
         public class ProgAtr//16 bytes
         {
             public readonly byte Tones;//# of tones
@@ -510,6 +519,7 @@ public class SoundBin
                 Reserved2 = br.ReadInt32();
             }
         }
+
         public class VagAtr//32 bytes
         {
             public byte Prior;//tone priority
@@ -562,9 +572,10 @@ public class SoundBin
             }
         }
     }
+
     public byte[] VoicesAreActive = new byte[24];
     public VoiceInfo VoiceInfo = new();
-        
+
     public class SfxRecord
     {
         public SfxRecord(byte[] data)
@@ -575,8 +586,8 @@ public class SoundBin
             ToneNumber = br.ReadInt16();
             Note = br.ReadInt16();
             Flags = br.ReadInt16();
-            SeqNum= br.ReadInt16();
-            RefSfxId  = br.ReadInt16();
+            SeqNum = br.ReadInt16();
+            RefSfxId = br.ReadInt16();
             Unknown1 = br.ReadInt16();
             MaxVoices = br.ReadInt16();
             Unknown2 = br.ReadInt16();
@@ -593,7 +604,7 @@ public class SoundBin
         public readonly short MaxVoices;
         public readonly short Unknown2;
         public readonly short NumTones;
-            
+
     }
     public static readonly int SfxVabHeaderOffset = 0x800;
     public static readonly int SfxVabBodyOffset = 0x3000;

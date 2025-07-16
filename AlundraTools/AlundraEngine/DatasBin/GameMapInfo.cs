@@ -92,10 +92,10 @@ public class GameMapInfo
         PortalFlag1 = br.ReadByte();
         PortalFlag2 = br.ReadByte();
         var maxPortals = 64;
-        Portals = new Portal[maxPortals];
+        Portals = new WarpData[maxPortals];
         for (var i = 0; i < Portals.Length; i++)
         {
-            Portals[i] = new Portal(br);
+            Portals[i] = new WarpData(br);
         }
     }
 
@@ -114,7 +114,7 @@ public class GameMapInfo
     public readonly byte PortalFlag1;
     public readonly byte PortalFlag2;
     public readonly SpriteMapEntry[] SpriteMapEntries;
-    public readonly Portal[] Portals;
+    public readonly WarpData[] Portals;
     
     public readonly Bitmap PalettesBitmap;
 }

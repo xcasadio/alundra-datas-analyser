@@ -313,9 +313,9 @@ public class GameInitializer
         if (StaticVariables.g_someDataIntoRam == 1)
         {
             //CopyInitialDataToRAM(); // maybe map datas already loaded ?
-            playerTileX = StaticVariables.g_initialWarpTileX;
-            playerTileY = StaticVariables.g_initialWarpTileY;
-            playerZ = StaticVariables.g_initialWarpZ;
+            playerTileX = StaticVariables.g_initialCameraTileX;
+            playerTileY = StaticVariables.g_initialCameraTileY;
+            playerZ = StaticVariables.g_initialCameraTileZ;
         }
         else
         {
@@ -326,10 +326,10 @@ public class GameInitializer
                 playerTileX = 0x21;
                 playerTileY = 0x23;
                 playerZ = 0;
-                StaticVariables.g_initialWarpMap = 0x185;
-                StaticVariables.g_initialWarpTileX = 0x21;
-                StaticVariables.g_initialWarpTileY = 0x3b;
-                StaticVariables.g_initialWarpZ = 0;
+                StaticVariables.g_initialMapId = 0x185;
+                StaticVariables.g_initialCameraTileX = 0x21;
+                StaticVariables.g_initialCameraTileY = 0x3b;
+                StaticVariables.g_initialCameraTileZ = 0;
                 StaticVariables.g_warpExtraParam = 0;
                 _gameEngine.PlayerManager.SetPlayerHpMax(10);
                 _gameEngine.PlayerManager.SetPlayerHp(10);
@@ -341,10 +341,10 @@ public class GameInitializer
             {
                 playerTileY = 0x1d;
                 playerZ = 10;
-                StaticVariables.g_initialWarpMap = 0xb;
-                StaticVariables.g_initialWarpTileX = 0x16;
-                StaticVariables.g_initialWarpTileY = 0x1d;
-                StaticVariables.g_initialWarpZ = 10;
+                StaticVariables.g_initialMapId = 0xb;
+                StaticVariables.g_initialCameraTileX = 0x16;
+                StaticVariables.g_initialCameraTileY = 0x1d;
+                StaticVariables.g_initialCameraTileZ = 10;
                 StaticVariables.g_warpExtraParam = 0;
                 _gameEngine.PlayerManager.SetPlayerHpMax(0x2d);
                 _gameEngine.PlayerManager.SetPlayerHp(0x26);
@@ -373,30 +373,16 @@ public class GameInitializer
             //InitializeExtraSystemState();
         }
 
-        for (int i = 0; i < StaticVariables.g_numberOfItems.Length; i++)
-        {
-            if (i == 3 || i == 35 || i == 51)
-            {
-                Debug.Assert(StaticVariables.g_numberOfItems[3] == 1);
-                Debug.Assert(StaticVariables.g_numberOfItems[35] == 1);
-                Debug.Assert(StaticVariables.g_numberOfItems[51] == 1);
-            }
-            else
-            {
-                Debug.Assert(StaticVariables.g_numberOfItems[i] == 0);
-            }
-        }
-
         StaticVariables.g_warpTriggerType = 0x36;
         StaticVariables.g_warpType = 0;
         StaticVariables.g_warpExtraParam = 0;
         StaticVariables.g_cameraLookAtX = (playerTileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) * 0x10000;
         StaticVariables.g_cameraLookAtY = (playerTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
         StaticVariables.g_cameraLookAtZ = playerZ << 0x14;
-        StaticVariables.g_desiredMap = StaticVariables.g_initialWarpMap;
-        StaticVariables.g_cameraTargetX = (StaticVariables.g_initialWarpTileX * 0x18 + 0xc) * 0x10000;
-        StaticVariables.g_cameraTargetY = (StaticVariables.g_initialWarpTileY * 0x10 + 8) * 0x10000;
-        StaticVariables.g_animation_id = StaticVariables.g_initialWarpZ << 0x14;
+        StaticVariables.g_desiredMap = StaticVariables.g_initialMapId;
+        StaticVariables.g_cameraTargetX = (StaticVariables.g_initialCameraTileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) * 0x10000;
+        StaticVariables.g_cameraTargetY = (StaticVariables.g_initialCameraTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
+        StaticVariables.g_cameraTargetZ = StaticVariables.g_initialCameraTileZ << 0x14;
         StaticVariables.g_gameplayTime = StaticVariables.g_savedGameplayTime;
     }
 

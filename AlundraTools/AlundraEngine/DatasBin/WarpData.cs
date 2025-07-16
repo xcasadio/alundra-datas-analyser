@@ -1,8 +1,8 @@
 ﻿namespace AlundraEngine.DatasBin;
 
-public class Portal
+public class WarpData
 {
-    public Portal(BinaryReader br)
+    public WarpData(BinaryReader br)
     {
         X1 = br.ReadByte();
         Y1 = br.ReadByte();
