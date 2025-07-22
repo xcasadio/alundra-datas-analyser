@@ -77,7 +77,7 @@ public class Renderer
 
         var nbColumns = 0xf;
         var newCamRow = StaticVariables.g_cameraScrollingX / 0x18;
-        var col = StaticVariables.g_cameraScrollingX % 0x18; // division par 15, approximation
+        var col = StaticVariables.g_cameraScrollingX % 0x18; // divide by 15, approximation
 
         if (col < StaticVariables.MapTileHeight)
         {
@@ -137,6 +137,7 @@ public class Renderer
 
         if (layerFlag != StaticVariables.g_LoadVRAMAssets_debug)
         {
+            //load text to render tile information
             //_gameEngine.LoadVRAMAssets();
         }
 

@@ -40,6 +40,8 @@ namespace AlundraTools.AlundraTools
             label1 = new Label();
             labelNumberOfEntity = new Label();
             groupBox2 = new GroupBox();
+            label29 = new Label();
+            labelCameraScrolling = new Label();
             label11 = new Label();
             labelCameraDelta = new Label();
             label9 = new Label();
@@ -83,6 +85,7 @@ namespace AlundraTools.AlundraTools
             buttonExtractToCsv = new Button();
             checkBoxDisplayEntityId = new CheckBox();
             groupBox4 = new GroupBox();
+            checkBoxDisplayEffectId = new CheckBox();
             checkBoxTileXY = new CheckBox();
             buttonCompareWithDump = new Button();
             buttonControlAlundra = new Button();
@@ -111,7 +114,7 @@ namespace AlundraTools.AlundraTools
             label28 = new Label();
             listBoxEffects = new ListBox();
             propertyGridEffect = new PropertyGrid();
-            checkBoxDisplayEffectId = new CheckBox();
+            checkBoxUseDebugCamera = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -237,6 +240,8 @@ namespace AlundraTools.AlundraTools
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(label29);
+            groupBox2.Controls.Add(labelCameraScrolling);
             groupBox2.Controls.Add(label11);
             groupBox2.Controls.Add(labelCameraDelta);
             groupBox2.Controls.Add(label9);
@@ -251,10 +256,28 @@ namespace AlundraTools.AlundraTools
             groupBox2.Margin = new Padding(3, 4, 3, 4);
             groupBox2.Name = "groupBox2";
             groupBox2.Padding = new Padding(3, 4, 3, 4);
-            groupBox2.Size = new Size(229, 140);
+            groupBox2.Size = new Size(229, 171);
             groupBox2.TabIndex = 9;
             groupBox2.TabStop = false;
             groupBox2.Text = "Camera";
+            // 
+            // label29
+            // 
+            label29.AutoSize = true;
+            label29.Location = new Point(7, 125);
+            label29.Name = "label29";
+            label29.Size = new Size(65, 20);
+            label29.TabIndex = 11;
+            label29.Text = "scrolling";
+            // 
+            // labelCameraScrolling
+            // 
+            labelCameraScrolling.AutoSize = true;
+            labelCameraScrolling.Location = new Point(88, 125);
+            labelCameraScrolling.Name = "labelCameraScrolling";
+            labelCameraScrolling.Size = new Size(17, 20);
+            labelCameraScrolling.TabIndex = 10;
+            labelCameraScrolling.Text = "0";
             // 
             // label11
             // 
@@ -673,15 +696,27 @@ namespace AlundraTools.AlundraTools
             // 
             // groupBox4
             // 
+            groupBox4.Controls.Add(checkBoxUseDebugCamera);
             groupBox4.Controls.Add(checkBoxDisplayEffectId);
             groupBox4.Controls.Add(checkBoxTileXY);
             groupBox4.Controls.Add(checkBoxDisplayEntityId);
             groupBox4.Location = new Point(544, 719);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(186, 125);
+            groupBox4.Size = new Size(186, 153);
             groupBox4.TabIndex = 31;
             groupBox4.TabStop = false;
             groupBox4.Text = "Debugging";
+            // 
+            // checkBoxDisplayEffectId
+            // 
+            checkBoxDisplayEffectId.AutoSize = true;
+            checkBoxDisplayEffectId.Location = new Point(6, 56);
+            checkBoxDisplayEffectId.Name = "checkBoxDisplayEffectId";
+            checkBoxDisplayEffectId.Size = new Size(137, 24);
+            checkBoxDisplayEffectId.TabIndex = 32;
+            checkBoxDisplayEffectId.Text = "display effect id";
+            checkBoxDisplayEffectId.UseVisualStyleBackColor = true;
+            checkBoxDisplayEffectId.CheckedChanged += checkBoxDisplayEffectId_CheckedChanged;
             // 
             // checkBoxTileXY
             // 
@@ -696,7 +731,7 @@ namespace AlundraTools.AlundraTools
             // 
             // buttonCompareWithDump
             // 
-            buttonCompareWithDump.Location = new Point(544, 871);
+            buttonCompareWithDump.Location = new Point(544, 968);
             buttonCompareWithDump.Name = "buttonCompareWithDump";
             buttonCompareWithDump.Size = new Size(171, 29);
             buttonCompareWithDump.TabIndex = 32;
@@ -706,7 +741,7 @@ namespace AlundraTools.AlundraTools
             // 
             // buttonControlAlundra
             // 
-            buttonControlAlundra.Location = new Point(544, 941);
+            buttonControlAlundra.Location = new Point(544, 1003);
             buttonControlAlundra.Name = "buttonControlAlundra";
             buttonControlAlundra.Size = new Size(171, 29);
             buttonControlAlundra.TabIndex = 33;
@@ -973,16 +1008,16 @@ namespace AlundraTools.AlundraTools
             propertyGridEffect.Size = new Size(452, 793);
             propertyGridEffect.TabIndex = 29;
             // 
-            // checkBoxDisplayEffectId
+            // checkBoxUseDebugCamera
             // 
-            checkBoxDisplayEffectId.AutoSize = true;
-            checkBoxDisplayEffectId.Location = new Point(6, 56);
-            checkBoxDisplayEffectId.Name = "checkBoxDisplayEffectId";
-            checkBoxDisplayEffectId.Size = new Size(137, 24);
-            checkBoxDisplayEffectId.TabIndex = 32;
-            checkBoxDisplayEffectId.Text = "display effect id";
-            checkBoxDisplayEffectId.UseVisualStyleBackColor = true;
-            checkBoxDisplayEffectId.CheckedChanged += checkBoxDisplayEffectId_CheckedChanged;
+            checkBoxUseDebugCamera.AutoSize = true;
+            checkBoxUseDebugCamera.Location = new Point(6, 116);
+            checkBoxUseDebugCamera.Name = "checkBoxUseDebugCamera";
+            checkBoxUseDebugCamera.Size = new Size(153, 24);
+            checkBoxUseDebugCamera.TabIndex = 33;
+            checkBoxUseDebugCamera.Text = "use debug camera";
+            checkBoxUseDebugCamera.UseVisualStyleBackColor = true;
+            checkBoxUseDebugCamera.CheckedChanged += checkBoxUseDebugCamera_CheckedChanged;
             // 
             // FrmGame
             // 
@@ -1122,5 +1157,8 @@ namespace AlundraTools.AlundraTools
         private ListBox listBoxEffects;
         private PropertyGrid propertyGridEffect;
         private CheckBox checkBoxDisplayEffectId;
+        private Label label29;
+        private Label labelCameraScrolling;
+        private CheckBox checkBoxUseDebugCamera;
     }
 }

@@ -301,15 +301,13 @@ public class EntityEventHandlers
 
             if (command == 0xFF)
             {
-                if (entity.Index == 0)
-                    Debug.WriteLine($"Entity[{entity.Index}] end script");
+                //Debug.WriteLine($"Entity[{entity.Index}] end script");
                 goto END_SCRIPT;
             }
 
             if (command == 0x00) // break, skip the loop but do the next command
             {
-                if (entity.Index == 0)
-                    Debug.WriteLine($"Entity[{entity.Index}] break");
+                //Debug.WriteLine($"Entity[{entity.Index}] break");
                 eventProgramState.Exp[1] = 0;
                 eventProgramState.CodeIndex++;
                 FillDataFromCommand(eventProgramState); // needed because there is a check at the beginning of the function
@@ -320,14 +318,12 @@ public class EntityEventHandlers
             var lastCommand = StaticVariables.g_activeCommand;
             StaticVariables.g_activeCommand = command;
             
-            if (entity.Index == 0)
-                LogCommand(entity, logicMode, command, variables);
+            //LogCommand(entity, logicMode, command, variables);
 
             var func = _handlers[command];
             var result = (sbyte)func(entity.LogicContextEntity, entity, variables, eventProgramState);
             
-            if (entity.Index == 0)
-                Debug.WriteLine($"{result}");
+            //Debug.WriteLine($"{result}");
 
             StaticVariables.g_lastCommand = lastCommand;
 
@@ -376,6 +372,11 @@ public class EntityEventHandlers
         if (eventProgramState.Codes == null || eventProgramState.CodeIndex >= eventProgramState.Codes.Length)
         {
             return [0xFF];
+        }
+
+        if (eventProgramState.CodeIndex < 0)
+        {
+            Debugger.Break();
         }
 
         eventProgramState.Sp = eventProgramState.Codes[eventProgramState.CodeIndex];
@@ -5194,8 +5195,7 @@ public class EntityEventHandlers
     // 80041CA0
     private int Script_191_0BF(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-        //_gameEngine.SoundManager.FUN_80049794(variables[1], variables[3], variables[4]);
+        _gameEngine.SoundManager.FUN_80049794(variables[1], variables[3], variables[4]);
         return 5;
     }
 

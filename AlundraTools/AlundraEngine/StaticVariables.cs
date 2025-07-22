@@ -12,6 +12,7 @@ public static class StaticVariables
     public static int EditorSelectEffectIndex { get; set; } = -1;
     public static bool IsGamePaused { get; set; }
     public static bool DoNextFrame { get; set; }
+    public static bool UseDebugCamera { get; set; }
 
     //editor debuggin display
     public static bool DisplayEntityId { get; set; }

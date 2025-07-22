@@ -288,6 +288,7 @@ public partial class FrmGame : Form
         labelCameraLookAt.Text = $"{StaticVariables.g_cameraLookAtX} x {StaticVariables.g_cameraLookAtY} x {StaticVariables.g_cameraLookAtZ}";
         labelCameraOffset.Text = $"{StaticVariables.g_cameraOffsetX} x {StaticVariables.g_cameraOffsetY}";
         labelCameraDelta.Text = $"{StaticVariables.g_cameraDeltaX} x {StaticVariables.g_cameraDeltaY}";
+        labelCameraScrolling.Text = $"{StaticVariables.g_cameraScrollingX} x {StaticVariables.g_cameraScrollingY}";
 
         labelMapId.Text = $"{StaticVariables.g_currentMap}";
         labelMapSize.Text = $"{_engine.CurrentMap?.Map.Width} x {_engine.CurrentMap?.Map.Height}";
@@ -987,5 +988,10 @@ public partial class FrmGame : Form
 
         StaticVariables.g_initialPlayerStats.ItemId = (byte)(itemIndex + 1);
         StaticVariables.g_numberOfItems[itemIndex * 2 + 1] = 1; // number of item
+    }
+
+    private void checkBoxUseDebugCamera_CheckedChanged(object sender, EventArgs e)
+    {
+        StaticVariables.UseDebugCamera = checkBoxUseDebugCamera.Checked;
     }
 }

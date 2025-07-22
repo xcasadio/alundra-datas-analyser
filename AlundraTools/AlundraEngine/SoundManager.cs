@@ -160,4 +160,69 @@ public class SoundManager
         //
         //FUN_8005ac90();
     }
+
+    //80049794
+    public void FUN_80049794(int param_1, int param_2, int param_3)
+    {
+        //TODO
+        /*
+        int s4 = param_1;
+        int s7 = param_2;
+        int s8 = param_3;
+
+        int s0;
+        int toneCount;
+        int voiceId;
+        int s1 = 0;
+
+        var soundEffectData = StaticVariables.g_soundEffectData;
+
+        if (soundEffectData[s4].Id == -1)
+        {
+            s0 = s4;
+            param_1 = StaticVariables.g_mainSoundDriver;
+            param_2 = soundEffectData[s4].Pitch;
+        }
+        else
+        {
+            param_2 = StaticVariables.g_currentSoundGroup;
+            s0 = _gameEngine.FUN_80048a14(s4, param_2);
+            param_1 = StaticVariables.g_altSoundDriver;
+            param_2 = soundEffectData[s0].Pitch;
+        }
+
+        _gameEngine.FUN_800901a8((short)param_1, (short)param_2, out var localData);
+
+        toneCount = soundEffectData[s0].ToneCount;
+        if (toneCount > 0)
+        {
+            do
+            {
+                voiceId = _gameEngine.FUN_8004974c(s4, soundEffectData[s0].Pitch + s1);
+
+                if (voiceId != -1)
+                {
+                    int volumeRight = StaticVariables.g_voiceVolumeRight[voiceId];
+                    int volumeLeft = StaticVariables.g_voiceVolumeLeft[voiceId];
+
+                    int t1 = (volumeRight < 65) ? volumeRight : (127 - volumeRight);
+                    int t0 = (volumeRight < 64) ? volumeRight : 63;
+
+                    int volCalc1 = (s7 + 1) * (s7 + 1);
+                    int volCalc2 = (volumeLeft + 1) * (volumeLeft + 1);
+
+                    int combinedVolume = (((volCalc1 - 1) * (volCalc2 - 1)) * 0x800209) >> 13;
+
+                    int volFinal = (((combinedVolume + localData.Field) >> 13) * (localData.OtherField - 1)) * 0x800209 >> 13;
+                    int volRightFinal = ((((t1 * t1 * volFinal) >> 13) * (volCalc2 - 1)) * 0x800209) >> 13;
+                    int volLeftFinal = ((((t0 * t0 * volFinal) >> 13) * volCalc2) * 0x800209) >> 13;
+
+                    SetVoiceVolume((short)voiceId, (short)(volRightFinal >> 11), (short)(volLeftFinal >> 11));
+                }
+
+                s1++;
+            }
+            while (s1 < toneCount);
+        }*/
+    }
 }

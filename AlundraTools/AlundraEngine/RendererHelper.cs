@@ -1,9 +1,5 @@
-﻿using System.Diagnostics;
-using AlundraEngine.DatasBin;
-using AlundraEngine.Gameplay;
-using System.Drawing;
+﻿using AlundraEngine.DatasBin;
 using System.Drawing.Imaging;
-using System.Drawing.Imaging.Effects;
 
 namespace AlundraEngine;
 
@@ -17,11 +13,15 @@ public class RendererHelper
     {
         var textToRender = new List<TextDisplayParameter>();
 
-        var currentXPosition = StaticVariables.g_cameraCurrentX;// >> 16;
-        var currentYPosition = StaticVariables.g_cameraCurrentY;// >> 16;
-        //var currentXPosition = 0;
-        //var currentYPosition = 0;
-                     
+        var currentXPosition = StaticVariables.g_cameraScrollingX;
+        var currentYPosition = StaticVariables.g_cameraScrollingY;
+
+        if (StaticVariables.UseDebugCamera)
+        {
+            currentXPosition = StaticVariables.g_cameraCurrentX;
+            currentYPosition = StaticVariables.g_cameraCurrentY;
+        }
+
         var curXTile = currentXPosition / StaticVariables.MapTileWidth;
         var curYTile = 0;
         //var curXTile = currentRow;
@@ -42,8 +42,6 @@ public class RendererHelper
                 var tileId = tile.TileId;
 
                 //render tile
-                //var dx = (x - currentRow) * StaticVariables.MapTileWidth - currentXPosition;
-                //var dy = (y - tile.SizeZ - camTileOffsetY) * StaticVariables.MapTileHeight - currentYPosition;
                 var dx = x * StaticVariables.MapTileWidth - currentXPosition;
                 var dy = (y - tile.Height) * StaticVariables.MapTileHeight - currentYPosition;
 
