@@ -2276,7 +2276,10 @@ public class GameEngine
             //Debug.WriteLine(startX,startY,sizeX,sizeY,distX,distY);
         }
 
-        if (0x34 < startX + sizeX || 0x3c < startY + sizeY || 0x34 < distX + sizeX || 0x3c < distY + sizeY)
+        if (0x34 < startX + sizeX 
+            || 0x3c < startY + sizeY 
+            || 0x34 < distX + sizeX 
+            || 0x3c < distY + sizeY)
         {
             Debugger.Break();
             //Debug.WriteLine(startX,startY,sizeX,sizeY,distX,distY);
@@ -2298,13 +2301,24 @@ public class GameEngine
                 {
                     do
                     {
-                        var tile1 = map.MapTiles[distX2 + (distY + y) * mapWidth];
-                        var tile2 = map.MapTiles[startX + x + (startY + y) * mapWidth];
-                        tile1.Walkability = tile2.Walkability;
-                        tile1.GroundProperty = tile2.GroundProperty;
-                        tile1.Height = tile2.Height;
-                        tile1.TileId = tile2.TileId;
-                        tile1.TilesOffset = tile2.TilesOffset;
+                        var tileDestination = map.MapTiles[distX2 + (distY + y) * mapWidth];
+                        var tileSource = map.MapTiles[startX + x + (startY + y) * mapWidth];
+                        tileDestination.Walkability = tileSource.Walkability;
+                        tileDestination.GroundProperty = tileSource.GroundProperty;
+                        tileDestination.Height = tileSource.Height;
+                        tileDestination.TileId = tileSource.TileId;
+                        tileDestination.TilesOffset = tileSource.TilesOffset;
+
+                        if (tileSource.WallTiles != null)
+                        {
+                            tileDestination.WallTiles.Offset = tileSource.WallTiles.Offset;
+
+                            var length = Math.Min(tileSource.WallTiles.Tiles.Length, tileDestination.WallTiles.Tiles.Length);
+                            for (int i = 0; i < length; i++)
+                            {
+                                tileDestination.WallTiles.Tiles[i] = tileSource.WallTiles.Tiles[i];
+                            }
+                        }
 
                         x++;
                         distX2 = distX + x;
@@ -2360,7 +2374,7 @@ public class GameEngine
             case 6:
                 direction = StaticVariables.PlayerEntity.TargetDirection + result;
                 LAB_8003d110:
-                result = (direction & 0x1F);
+                result = direction & 0x1F;
                 break;
 
             case 7:
@@ -2475,7 +2489,7 @@ public class GameEngine
 
                 var mapWidth = CurrentMap.Map.Width;
                 var tile = CurrentMap.Map.MapTiles[tileY * mapWidth + tileX];
-                var tileFlags = (tile.Walkability | tile.GroundProperty << 8);
+                var tileFlags = tile.Walkability | tile.GroundProperty << 8;
 
                 if ((tileFlags & 2) != 0)
                 {
@@ -2765,9 +2779,9 @@ public class GameEngine
             StaticVariables.g_cameraCurrentY = StaticVariables.g_cameraTransitionStartY;
             StaticVariables.g_cameraTransitionStepValue = 0xf;
             StaticVariables.g_cameraDeltaY =
-                 (((StaticVariables.g_cameraTransitionSrcY + 2) 
-                   - StaticVariables.g_cameraTransitionDstYPtr) 
-                  - (StaticVariables.g_cameraTransitionSrcZ + 2))
+                 StaticVariables.g_cameraTransitionSrcY + 2 
+                 - StaticVariables.g_cameraTransitionDstYPtr 
+                 - (StaticVariables.g_cameraTransitionSrcZ + 2)
                  - 0x20;
             StaticVariables.g_cameraY = StaticVariables.g_cameraDeltaY - StaticVariables.g_cameraTransitionStartY;
         }

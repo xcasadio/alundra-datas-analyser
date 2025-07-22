@@ -451,7 +451,7 @@ namespace AlundraTools.AlundraTools
                         {
                             for (var i = 0; i < tile.WallTiles.Count; i++)
                             {
-                                if (tile.WallTiles.Tiles[i] != -1)
+                                if (tile.WallTiles.Tiles[i] != -0xFFFF)
                                 {
                                     g.DrawImage(GetTile(tile.WallTiles.Tiles[i]),
                                         dx,

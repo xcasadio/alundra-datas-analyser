@@ -1,4 +1,5 @@
-﻿using AlundraEngine.DatasBin;
+﻿using System.Diagnostics;
+using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -76,7 +77,7 @@ public class RendererHelper
                     {
                         dy += StaticVariables.MapTileHeight;
                         //render wall tile
-                        var wallTileId = (ushort)wallTiles.Tiles[i];
+                        var wallTileId = wallTiles.Tiles[i];
 
                         if (dy > -StaticVariables.MapTileHeight && dy < StaticVariables.ScreenHeight && wallTileId != 0xffff)
                         {
