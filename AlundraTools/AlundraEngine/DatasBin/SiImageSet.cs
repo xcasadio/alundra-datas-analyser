@@ -6,7 +6,7 @@ public class SiImageSet
     {
         MemoryAddress = memoryAddress;
         ImageSetId = imageSetId;
-        Unknown = br.ReadByte();//palette?
+        DepthSortValue = br.ReadByte();
         NumberOfImages = br.ReadByte();
         if (isportrait)
         {
@@ -22,7 +22,7 @@ public class SiImageSet
 
     public readonly int MemoryAddress;
     public readonly int ImageSetId;
-    public readonly byte Unknown;
+    public readonly byte DepthSortValue;
     public readonly byte NumberOfImages;
     public readonly SiImage[] Images;
 }

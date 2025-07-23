@@ -6,9 +6,6 @@ namespace AlundraEngine.Gameplay;
 
 public class Entity
 {
-    //for debugging
-    public int EventProgramStateSp => EventProgramState.Sp;
-
     public int Index;
     public int Index2;
     public Entity? ChildEntity; ////UnknownBeforeOwnerEntity;
@@ -29,18 +26,10 @@ public class Entity
     public SiEntityRecord? EntityRecord;
     public int EntityRefId;
     public readonly int[] ProgramIndexes = new int[6]; //4c
-    public SpriteRecord? Sprite;
+    public SpriteRecord? SpriteRecord;
     public uint SpriteTableIndex;
     public uint Flags;//0x800000 = portrait,0x0100 = gravity,0xf = ?, 0x1 = ? , 0x80 = collidable
     public readonly int[] SpriteProgramIndexes = new int[6]; //70
-
-    //public int SpriteU4;
-    //public int UnkownBeforeThrowType;
-    //public int ThrowType;
-    //public int SpriteU6;
-    //public int BreakSound;
-    //public int SpriteU8;
-
     public uint TargetAnimationId;
     public uint TargetDirection;
     public uint CurrentAnimationId;
@@ -54,18 +43,18 @@ public class Entity
     public int AnimCompleteCounter;
     public int AnimFlags;
     public int ForceZ;//rise/fall speed
-    public int TargetXForce, TargetYForce;
+    public int TargetForceX, TargetForceY;
     public int ForceX, ForceY;
-    public int PreviousAdjustedXForce;//?cc
-    public int PreviousAdjustedYForce;//?d0
+    public int PreviousAdjustedForceX;//?cc
+    public int PreviousAdjustedForceY;//?d0
     public int ForceStepX, ForceStepY;//d4,d8
-    public int AdjustedXForce, AdjustedYForce;//dc,e0
-    public int FinalXForce, FinalYForce, FinalZForce;//e4,e8,ec
+    public int AdjustedForceX, AdjustedForceY;//dc,e0
+    public int FinalForceX, FinalForceY, FinalForceZ;//e4,e8,ec
     public int Acceleration;//f0
     public int Speed;//f4
     public int IsZForceApplied;//this is probably named wrong, has to do with animation  f8
     public int ScreenClipX, ScreenClipY, ScreenClipZ;
-    public int NegXMod, NegYMod, NegZMod;
+    public int NegModX, NegModY, NegModZ;
     public int PosX; //114
     public int PosY;
     public int PosZ;
@@ -76,8 +65,7 @@ public class Entity
     public Entity? XCollisionEntity;
     public int FloorHeight;
     public int TerrainHeight;//map collision
-
-    public int ForceAdjusted;
+    public int ForceAdjusted;//0x13c
     public int CollidedWithEntityZ;//some boolean that has to do with if moddedzpos is greater than hity from collideentitiesz
     public int IsAboveGround;//collided with something
     public readonly MapTile[] MapTiles = new MapTile[4];
@@ -95,34 +83,38 @@ public class Entity
     public int Slope_190; // slopesomethingprev?
     public SpriteRef SpriteRef = new SpriteRef();//194 
     //public int field91_0x1ac; // 1ac => SpriteRef
-    public int AddedToSheet, AddedToPalette;//represents offset where the pallets and sheets are in memory for map vs global sprites, prob not used with my engine
+    public int SpriteSheetOffset, PaletteOffset;//represents offset where the pallets and sheets are in memory for map vs global sprites, prob not used with my engine
     public SpriteEffect? ActiveEffect;
     public int ZSortValue;//1bc
     public int ZSortDepth;//1c0
     public BalanceRecord? BalanceRecord;//1c4
-    public BalanceAnimValRef? BalanceVal;//1c8
+    public BalanceAnimValRef? BalanceAnimValRef;//1c8
     public int DamagedTickCounter;//1cc
-    public int FrameColTickCounter;//1d0
+    public int FrameCollisionTickCounter;//1d0
     public FrameCollisionData? FrameCollision;//1d4
-    public int ModdedXPos, ModdedYPos, ModdedZPos;
+    public int ModdedPosX, ModdedPosY, ModdedPosZ;
     public int ModX, ModY, ModZ;
     public int Width, Depth, Height;
     //this set of vars is set when an animation has a frame with attached data
     public int HitBoxX;//1fc
     public int HitBoxY;//200
     public int HitBoxZ;//204
-    public int FrameXOff;//208
-    public int FrameYOff;//20c
-    public int FrameZOff;//210
-    public int FrameWidth;//214
-    public int FrameDepth;//218
-    public int FrameHeight;//21c
+    public int CollisionOffsetX;//208
+    public int CollisionOffsetY;//20c
+    public int CollisionOffsetZ;//210
+    public int CollisionWidth;//214
+    public int CollisionDepth;//218
+    public int CollisionHeight;//21c
     public int HitCounter;//220
     public Entity? TouchingEntity;//224
     public int EventTrigger;//228  for the player character this holds the id of the map event that is triggering, for other entities this holds the type of event slot to trigger
     public int MapEventProgramId;//22c
     public Entity LogicContextEntity; //self
     public readonly EventProgramState EventProgramState = new();
+    public byte _268;//0x268
+    public byte _269;//0x269
+    public byte _26a;//0x26a
+    public byte _26b;//0x26b
     public uint LastTargetAnimationId;//26c
     public uint LastTargetDirection;//270
     public byte[] Bytes = new byte[4];
@@ -130,7 +122,7 @@ public class Entity
     public int InitialYPos;
     public short[] AIValues = new short[10];//280
 
-    public bool IsMapSprite => EntityRecord == null ? false : (EntityRecord.SpriteDirection & 0x80) != 0;
+    public bool IsMapSprite => EntityRecord != null && (EntityRecord.SpriteDirection & 0x80) != 0;
 
     public void CopyFrom(Entity other)
     {
@@ -163,7 +155,7 @@ public class Entity
             ProgramIndexes[i] = other.ProgramIndexes[i];
         }
 
-        Sprite = other.Sprite;
+        SpriteRecord = other.SpriteRecord;
         SpriteTableIndex = other.SpriteTableIndex;
         Flags = other.Flags;
         for (int i = 0; i < SpriteProgramIndexes.Length; i++)
@@ -184,27 +176,27 @@ public class Entity
         AnimCompleteCounter = other.AnimCompleteCounter;
         AnimFlags = other.AnimFlags;
         ForceZ = other.ForceZ;
-        TargetXForce = other.TargetXForce;
-        TargetYForce = other.TargetYForce;
+        TargetForceX = other.TargetForceX;
+        TargetForceY = other.TargetForceY;
         ForceX = other.ForceX;
         ForceY = other.ForceY;
-        PreviousAdjustedXForce = other.PreviousAdjustedXForce;
-        PreviousAdjustedYForce = other.PreviousAdjustedYForce;
+        PreviousAdjustedForceX = other.PreviousAdjustedForceX;
+        PreviousAdjustedForceY = other.PreviousAdjustedForceY;
         ForceStepX = other.ForceStepX;
         ForceStepY = other.ForceStepY;
-        AdjustedXForce = other.AdjustedXForce;
-        AdjustedYForce = other.AdjustedYForce;
-        FinalXForce = other.FinalXForce;
-        FinalYForce = other.FinalYForce;
-        FinalZForce = other.FinalZForce;
+        AdjustedForceX = other.AdjustedForceX;
+        AdjustedForceY = other.AdjustedForceY;
+        FinalForceX = other.FinalForceX;
+        FinalForceY = other.FinalForceY;
+        FinalForceZ = other.FinalForceZ;
         Acceleration = other.Acceleration;
         Speed = other.Speed;
         IsZForceApplied = other.IsZForceApplied;
         ScreenClipX = other.ScreenClipX;
         ScreenClipY = other.ScreenClipY;
         ScreenClipZ = other.ScreenClipZ;
-        NegXMod = other.NegXMod;
-        NegYMod = other.NegYMod;
+        NegModX = other.NegModX;
+        NegModY = other.NegModY;
         PosX = other.PosX;
         PosY = other.PosY;
         PosZ = other.PosZ;
@@ -242,19 +234,19 @@ public class Entity
         SpriteRef.X = other.SpriteRef.X;
         SpriteRef.Y = other.SpriteRef.Y;
         SpriteRef.Z = other.SpriteRef.Z;
-        AddedToSheet = other.AddedToSheet;
-        AddedToPalette = other.AddedToPalette;
+        SpriteSheetOffset = other.SpriteSheetOffset;
+        PaletteOffset = other.PaletteOffset;
         ActiveEffect = other.ActiveEffect;
         ZSortValue = other.ZSortValue;
         ZSortDepth = other.ZSortDepth;
         BalanceRecord = other.BalanceRecord;
-        BalanceVal = other.BalanceVal;
+        BalanceAnimValRef = other.BalanceAnimValRef;
         DamagedTickCounter = other.DamagedTickCounter;
-        FrameColTickCounter = other.FrameColTickCounter;
+        FrameCollisionTickCounter = other.FrameCollisionTickCounter;
         FrameCollision = other.FrameCollision;
-        ModdedXPos = other.ModdedXPos;
-        ModdedYPos = other.ModdedYPos;
-        ModdedZPos = other.ModdedZPos;
+        ModdedPosX = other.ModdedPosX;
+        ModdedPosY = other.ModdedPosY;
+        ModdedPosZ = other.ModdedPosZ;
         ModX = other.ModX;
         ModY = other.ModY;
         ModZ = other.ModZ;
@@ -264,12 +256,12 @@ public class Entity
         HitBoxX = other.HitBoxX;
         HitBoxY = other.HitBoxY;
         HitBoxZ = other.HitBoxZ;
-        FrameXOff = other.FrameXOff;
-        FrameYOff = other.FrameYOff;
-        FrameZOff = other.FrameZOff;
-        FrameWidth = other.FrameWidth;
-        FrameDepth = other.FrameDepth;
-        FrameHeight = other.FrameHeight;
+        CollisionOffsetX = other.CollisionOffsetX;
+        CollisionOffsetY = other.CollisionOffsetY;
+        CollisionOffsetZ = other.CollisionOffsetZ;
+        CollisionWidth = other.CollisionWidth;
+        CollisionDepth = other.CollisionDepth;
+        CollisionHeight = other.CollisionHeight;
         HitCounter = other.HitCounter;
         TouchingEntity = other.TouchingEntity;
         EventTrigger = other.EventTrigger;
@@ -315,7 +307,7 @@ public class Entity
 
         Array.Clear(ProgramIndexes);
 
-        Sprite = null;
+        SpriteRecord = null;
         SpriteTableIndex = 0;
         Flags = 0;
 
@@ -334,28 +326,28 @@ public class Entity
         AnimCompleteCounter = 0;
         AnimFlags = 0;
         ForceZ = 0;
-        TargetXForce = 0;
-        TargetYForce = 0;
+        TargetForceX = 0;
+        TargetForceY = 0;
         ForceX = 0;
         ForceY = 0;
-        PreviousAdjustedXForce = 0;
-        PreviousAdjustedYForce = 0;
+        PreviousAdjustedForceX = 0;
+        PreviousAdjustedForceY = 0;
         ForceStepX = 0;
         ForceStepY = 0;
-        AdjustedXForce = 0;
-        AdjustedYForce = 0;
-        FinalXForce = 0;
-        FinalYForce = 0;
-        FinalZForce = 0;
+        AdjustedForceX = 0;
+        AdjustedForceY = 0;
+        FinalForceX = 0;
+        FinalForceY = 0;
+        FinalForceZ = 0;
         Acceleration = 0;
         Speed = 0;
         IsZForceApplied = 0;
         ScreenClipX = 0;
         ScreenClipY = 0;
         ScreenClipZ = 0;
-        NegXMod = 0;
-        NegYMod = 0;
-        NegZMod = 0;
+        NegModX = 0;
+        NegModY = 0;
+        NegModZ = 0;
         PosX = 0;
         PosY = 0;
         PosZ = 0;
@@ -390,21 +382,21 @@ public class Entity
         SpriteRef.Y = 0;
         SpriteRef.Z = 0;
         SpriteRef.DepthSortValue = 0;
-        SpriteRef.NumImages = 0;
+        SpriteRef.NumberOfImages = 0;
 
-        AddedToSheet = 0;
-        AddedToPalette = 0;
+        SpriteSheetOffset = 0;
+        PaletteOffset = 0;
         ActiveEffect = null;
         ZSortValue = 0;
         ZSortDepth = 0;
         BalanceRecord = null;
-        BalanceVal = null;
+        BalanceAnimValRef = null;
         DamagedTickCounter = 0;
-        FrameColTickCounter = 0;
+        FrameCollisionTickCounter = 0;
         FrameCollision = null;
-        ModdedXPos = 0;
-        ModdedYPos = 0;
-        ModdedZPos = 0;
+        ModdedPosX = 0;
+        ModdedPosY = 0;
+        ModdedPosZ = 0;
         ModX = 0;
         ModY = 0;
         ModZ = 0;
@@ -414,12 +406,12 @@ public class Entity
         HitBoxX = 0;
         HitBoxY = 0;
         HitBoxZ = 0;
-        FrameXOff = 0;
-        FrameYOff = 0;
-        FrameZOff = 0;
-        FrameWidth = 0;
-        FrameDepth = 0;
-        FrameHeight = 0;
+        CollisionOffsetX = 0;
+        CollisionOffsetY = 0;
+        CollisionOffsetZ = 0;
+        CollisionWidth = 0;
+        CollisionDepth = 0;
+        CollisionHeight = 0;
         HitCounter = 0;
         TouchingEntity = null;
         EventTrigger = 0;

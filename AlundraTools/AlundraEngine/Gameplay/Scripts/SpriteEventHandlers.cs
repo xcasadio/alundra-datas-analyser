@@ -363,8 +363,8 @@ public class SpriteEventHandlers
                 entity.ForceStepX = 0;
                 entity.ForceY = 0;
                 entity.ForceX = 0;
-                entity.TargetYForce = 0;
-                entity.TargetXForce = 0;
+                entity.TargetForceY = 0;
+                entity.TargetForceX = 0;
                 entity.TargetDirection = direction;
                 delay = (short)((StaticVariables.g_gameRandomSeed * 0x1f >> 32) + 0x1e);
                 goto case 4;
@@ -608,8 +608,8 @@ public class SpriteEventHandlers
                         entity.ForceStepX = 0;
                         entity.ForceY = 0;
                         entity.ForceX = 0;
-                        entity.TargetYForce = 0;
-                        entity.TargetXForce = 0;
+                        entity.TargetForceY = 0;
+                        entity.TargetForceX = 0;
                         entity.TargetDirection = bVar1;
                         return;
                     }
@@ -1038,12 +1038,12 @@ public class SpriteEventHandlers
                                 && entityTarget.BalanceRecord.Vals[5] == 0 
                                 && (entityTarget.Flags & collisionMask) != 0)
                             {
-                                var withinX = entity.HitBoxX - entityTarget.HitBoxOriginX; //entityTarget.ModdedXPos
+                                var withinX = entity.HitBoxX - entityTarget.HitBoxOriginX; //entityTarget.ModdedPosX
                                 bool withinY;
                                 
                                 if (withinX < 0)
                                 {
-                                    withinY = entityTarget.HitBoxOriginX - entity.HitBoxX < entity.FrameWidth + 1;
+                                    withinY = entityTarget.HitBoxOriginX - entity.HitBoxX < entity.CollisionWidth + 1;
                                 }
                                 else
                                 {
@@ -1056,7 +1056,7 @@ public class SpriteEventHandlers
 
                                     if (withinX < 0)
                                     {
-                                        withinY = entityTarget.HitBoxOriginY - entity.HitBoxY < entity.FrameDepth + 1;
+                                        withinY = entityTarget.HitBoxOriginY - entity.HitBoxY < entity.CollisionDepth + 1;
                                     }
                                     else
                                     {
@@ -1069,7 +1069,7 @@ public class SpriteEventHandlers
 
                                         if (withinX < 0)
                                         {
-                                            withinY = entityTarget.HitBoxOriginZ - entity.HitBoxZ < entity.FrameHeight + 1;
+                                            withinY = entityTarget.HitBoxOriginZ - entity.HitBoxZ < entity.CollisionHeight + 1;
                                         }
                                         else
                                         {

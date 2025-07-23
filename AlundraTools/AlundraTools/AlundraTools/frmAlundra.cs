@@ -451,7 +451,7 @@ namespace AlundraTools.AlundraTools
                         {
                             for (var i = 0; i < tile.WallTiles.Count; i++)
                             {
-                                if (tile.WallTiles.Tiles[i] != -0xFFFF)
+                                if (tile.WallTiles.Tiles[i] != 0xFFFF)
                                 {
                                     g.DrawImage(GetTile(tile.WallTiles.Tiles[i]),
                                         dx,
@@ -1266,7 +1266,7 @@ namespace AlundraTools.AlundraTools
                         lstSector5Images.SelectedIndex = 0;
                     }
 
-                    lblFrameData.Text += " imgs?: " + ByteToString(_selectedFrame.Images.Unknown);
+                    lblFrameData.Text += " imgs?: " + ByteToString(_selectedFrame.Images.DepthSortValue);
                 }
                 else
                 {

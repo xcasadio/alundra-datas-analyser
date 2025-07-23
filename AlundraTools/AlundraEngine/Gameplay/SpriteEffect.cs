@@ -1,7 +1,6 @@
 ﻿using AlundraEngine.DatasBin;
-using AlundraEngine.Gameplay;
 
-namespace AlundraEngine;
+namespace AlundraEngine.Gameplay;
 
 //0x80 byte record
 public class SpriteEffect

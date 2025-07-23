@@ -1,6 +1,6 @@
 ﻿using AlundraEngine.DatasBin;
 
-namespace AlundraEngine;
+namespace AlundraEngine.Gameplay;
 
 public class SpriteRef
 {
@@ -9,7 +9,7 @@ public class SpriteRef
     public int Y;//8				//14
     public int Z;//c				//18
     public int DepthSortValue;//0x10		//1c
-    public int NumImages;//0x14		//20
+    public int NumberOfImages;//0x14		//20
 
     public void Reset()
     {
@@ -18,6 +18,6 @@ public class SpriteRef
         Y = 0;
         Z = 0;
         DepthSortValue = 0;
-        NumImages = 0;
+        NumberOfImages = 0;
     }
 }

@@ -191,7 +191,7 @@ public class SpriteInfoEventCodes
             Size = 1,
             Name = ""
         };
-        //throw new ArgumentException($"Unknown command code: {b:X2}");
+        //throw new ArgumentException($"DepthSortValue command code: {b:X2}");
     }
 
     public List<SiCommand> GetCommands(BinaryReader br, int eventCodesOffset, bool stopAtff = false, int commandsSize = 0)

@@ -15,7 +15,7 @@ public class GameInitializer
 
     public void Initialize()
     {
-        short tPagePtr = StaticVariables.g_tPageFadeLUT;
+        //short tPagePtr = StaticVariables.g_tPageFadeLUT;
         ushort tPage;
         ushort clutPtr;
         int screenX;

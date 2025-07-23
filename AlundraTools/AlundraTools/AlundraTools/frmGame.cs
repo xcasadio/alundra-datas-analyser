@@ -39,9 +39,9 @@ public partial class FrmGame : Form
         [nameof(Entity.ScreenClipX)] = "Transform",
         [nameof(Entity.ScreenClipY)] = "Transform",
         [nameof(Entity.ScreenClipZ)] = "Transform",
-        [nameof(Entity.NegXMod)] = "Transform",
-        [nameof(Entity.NegYMod)] = "Transform",
-        [nameof(Entity.NegZMod)] = "Transform",
+        [nameof(Entity.NegModX)] = "Transform",
+        [nameof(Entity.NegModY)] = "Transform",
+        [nameof(Entity.NegModZ)] = "Transform",
         [nameof(Entity.TileX)] = "Transform",
         [nameof(Entity.TileY)] = "Transform",
         [nameof(Entity.TileZ)] = "Transform",
@@ -68,7 +68,7 @@ public partial class FrmGame : Form
         [nameof(Entity.Bytes)] = "Script",
         [nameof(Entity.AIValues)] = "Script",
 
-        [nameof(Entity.Sprite)] = "Display",
+        [nameof(Entity.SpriteRecord)] = "Display",
         [nameof(Entity.SpriteRef)] = "Display",
         [nameof(Entity.SpriteTableIndex)] = "Display",
         [nameof(Entity.CurrentAnimationId)] = "Display",
@@ -85,39 +85,39 @@ public partial class FrmGame : Form
         [nameof(Entity.ForceResetAnimationFlag)] = "Display",
         [nameof(Entity.AnimCompleteCounter)] = "Display",
         [nameof(Entity.AnimFlags)] = "Display",
-        [nameof(Entity.ModdedXPos)] = "Display",
-        [nameof(Entity.ModdedYPos)] = "Display",
-        [nameof(Entity.ModdedZPos)] = "Display",
+        [nameof(Entity.ModdedPosX)] = "Display",
+        [nameof(Entity.ModdedPosY)] = "Display",
+        [nameof(Entity.ModdedPosZ)] = "Display",
         [nameof(Entity.ModX)] = "Display",
         [nameof(Entity.ModY)] = "Display",
         [nameof(Entity.ModZ)] = "Display",
         [nameof(Entity.Width)] = "Display",
         [nameof(Entity.Height)] = "Display",
         [nameof(Entity.Depth)] = "Display",
-        [nameof(Entity.FrameXOff)] = "Display",
-        [nameof(Entity.FrameYOff)] = "Display",
-        [nameof(Entity.FrameZOff)] = "Display",
-        [nameof(Entity.FrameWidth)] = "Display",
-        [nameof(Entity.FrameDepth)] = "Display",
-        [nameof(Entity.FrameHeight)] = "Display",
+        [nameof(Entity.CollisionOffsetX)] = "Display",
+        [nameof(Entity.CollisionOffsetY)] = "Display",
+        [nameof(Entity.CollisionOffsetZ)] = "Display",
+        [nameof(Entity.CollisionWidth)] = "Display",
+        [nameof(Entity.CollisionDepth)] = "Display",
+        [nameof(Entity.CollisionHeight)] = "Display",
         [nameof(Entity.ZSortValue)] = "Display",
         [nameof(Entity.ZSortDepth)] = "Display",
-        [nameof(Entity.AddedToSheet)] = "Display",
+        [nameof(Entity.SpriteSheetOffset)] = "Display",
 
-        [nameof(Entity.TargetXForce)] = "Physics forces",
-        [nameof(Entity.TargetYForce)] = "Physics forces",
+        [nameof(Entity.TargetForceX)] = "Physics forces",
+        [nameof(Entity.TargetForceY)] = "Physics forces",
         [nameof(Entity.ForceX)] = "Physics forces",
         [nameof(Entity.ForceY)] = "Physics forces",
         [nameof(Entity.ForceZ)] = "Physics forces",
-        [nameof(Entity.PreviousAdjustedXForce)] = "Physics forces",
-        [nameof(Entity.PreviousAdjustedYForce)] = "Physics forces",
+        [nameof(Entity.PreviousAdjustedForceX)] = "Physics forces",
+        [nameof(Entity.PreviousAdjustedForceY)] = "Physics forces",
         [nameof(Entity.ForceStepX)] = "Physics forces",
         [nameof(Entity.ForceStepY)] = "Physics forces",
-        [nameof(Entity.AdjustedXForce)] = "Physics forces",
-        [nameof(Entity.AdjustedYForce)] = "Physics forces",
-        [nameof(Entity.FinalXForce)] = "Physics forces",
-        [nameof(Entity.FinalYForce)] = "Physics forces",
-        [nameof(Entity.FinalZForce)] = "Physics forces",
+        [nameof(Entity.AdjustedForceX)] = "Physics forces",
+        [nameof(Entity.AdjustedForceY)] = "Physics forces",
+        [nameof(Entity.FinalForceX)] = "Physics forces",
+        [nameof(Entity.FinalForceY)] = "Physics forces",
+        [nameof(Entity.FinalForceZ)] = "Physics forces",
         [nameof(Entity.Acceleration)] = "Physics forces",
         [nameof(Entity.Speed)] = "Physics forces",
         [nameof(Entity.IsZForceApplied)] = "Physics forces",
@@ -140,9 +140,9 @@ public partial class FrmGame : Form
         [nameof(Entity.TileAttributes)] = "Physics",
 
         [nameof(Entity.BalanceRecord)] = "Collision",
-        [nameof(Entity.BalanceVal)] = "Collision",
+        [nameof(Entity.BalanceAnimValRef)] = "Collision",
         [nameof(Entity.DamagedTickCounter)] = "Collision",
-        [nameof(Entity.FrameColTickCounter)] = "Collision",
+        [nameof(Entity.FrameCollisionTickCounter)] = "Collision",
         [nameof(Entity.FrameCollision)] = "Collision",
         [nameof(Entity.FrameCounter)] = "Collision",
         [nameof(Entity.HitCounter)] = "Collision",
@@ -163,11 +163,11 @@ public partial class FrmGame : Form
         [nameof(Entity.ScreenClipX)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.ScreenClipY)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.ScreenClipZ)] = nameof(ShiftedFieldDescriptor),
-        [nameof(Entity.NegXMod)] = nameof(ShiftedFieldDescriptor),
-        [nameof(Entity.NegYMod)] = nameof(ShiftedFieldDescriptor),
-        [nameof(Entity.ModdedXPos)] = nameof(ShiftedFieldDescriptor),
-        [nameof(Entity.ModdedYPos)] = nameof(ShiftedFieldDescriptor),
-        [nameof(Entity.ModdedZPos)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.NegModX)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.NegModY)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ModdedPosX)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ModdedPosY)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ModdedPosZ)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.ModX)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.ModY)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.ModZ)] = nameof(ShiftedFieldDescriptor),
@@ -176,20 +176,20 @@ public partial class FrmGame : Form
         [nameof(Entity.Depth)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.ZSortValue)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.ZSortDepth)] = nameof(ShiftedFieldDescriptor),
-        [nameof(Entity.TargetXForce)] = nameof(ShiftedFieldDescriptor),
-        [nameof(Entity.TargetYForce)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.TargetForceX)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.TargetForceY)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.ForceX)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.ForceY)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.ForceZ)] = nameof(ShiftedFieldDescriptor),
-        [nameof(Entity.PreviousAdjustedXForce)] = nameof(ShiftedFieldDescriptor),
-        [nameof(Entity.PreviousAdjustedYForce)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.PreviousAdjustedForceX)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.PreviousAdjustedForceY)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.ForceStepX)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.ForceStepY)] = nameof(ShiftedFieldDescriptor),
-        [nameof(Entity.AdjustedXForce)] = nameof(ShiftedFieldDescriptor),
-        [nameof(Entity.AdjustedYForce)] = nameof(ShiftedFieldDescriptor),
-        [nameof(Entity.FinalXForce)] = nameof(ShiftedFieldDescriptor),
-        [nameof(Entity.FinalYForce)] = nameof(ShiftedFieldDescriptor),
-        [nameof(Entity.FinalZForce)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.AdjustedForceX)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.AdjustedForceY)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.FinalForceX)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.FinalForceY)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.FinalForceZ)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.Acceleration)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.Speed)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.FloorHeight)] = nameof(ShiftedFieldDescriptor),
@@ -715,7 +715,7 @@ public partial class FrmGame : Form
             var content = new StringBuilder();
             content.Append("#;");
             content.Append("Flags;PosX;PosY;PosZ;");
-            content.Append("ModdedXPos;ModdedYPos;ModdedZPos;");
+            content.Append("ModdedPosX;ModdedPosY;ModdedPosZ;");
             content.Append("TerrainHeight;FloorHeight;DepthSortValue;ZSortDepth;");
             content.Append("MapHeights[0];MapHeights[1];MapHeights[2];MapHeights[3];");
             // MapTiles
@@ -723,11 +723,11 @@ public partial class FrmGame : Form
             {
                 //content.Append($"{i}.Walk;{i}.Ground;{i}.Slope;{i}.Height;{i}.TileId;{i}.Palette;{i}.Tile;{i}.TilesOffset;");
             }
-            content.Append("NegXMod;NegYMod;NegZMod;");
+            content.Append("NegModX;NegModY;NegModZ;");
             content.Append("ModX;ModY;ModZ;Width;Height;Depth;");
-            content.Append("FinalXForce;FinalYForce;FinalZForce;ForceStepX;ForceStepY;");
-            content.Append("TargetXForce;TargetYForce;");
-            content.Append("AdjustedXForce;AdjustedYForce;ForceAdjusted;");
+            content.Append("FinalForceX;FinalForceY;FinalForceZ;ForceStepX;ForceStepY;");
+            content.Append("TargetForceX;TargetForceY;");
+            content.Append("AdjustedForceX;AdjustedForceY;ForceAdjusted;");
             content.Append("Speed;Acceleration;IsZForceApplied;");
 
             content.AppendLine();
@@ -744,9 +744,9 @@ public partial class FrmGame : Form
                 content.Append($"{entity.PosY};");
                 content.Append($"{entity.PosZ};");
 
-                content.Append($"{entity.ModdedXPos};");
-                content.Append($"{entity.ModdedYPos};");
-                content.Append($"{entity.ModdedZPos};");
+                content.Append($"{entity.ModdedPosX};");
+                content.Append($"{entity.ModdedPosY};");
+                content.Append($"{entity.ModdedPosZ};");
                 content.Append($"{entity.TerrainHeight};");
                 content.Append($"{entity.FloorHeight};");
                 content.Append($"{entity.ZSortValue};");
@@ -771,9 +771,9 @@ public partial class FrmGame : Form
                 //    content.Append($"{mapTile?.TilesOffset};");
                 //}
 
-                content.Append($"{entity.NegXMod};");
-                content.Append($"{entity.NegYMod};");
-                content.Append($"{entity.NegZMod};");
+                content.Append($"{entity.NegModX};");
+                content.Append($"{entity.NegModY};");
+                content.Append($"{entity.NegModZ};");
                 content.Append($"{entity.ModX};");
                 content.Append($"{entity.ModY};");
                 content.Append($"{entity.ModZ};");
@@ -781,15 +781,15 @@ public partial class FrmGame : Form
                 content.Append($"{entity.Height};");
                 content.Append($"{entity.Depth};");
 
-                content.Append($"{entity.FinalXForce};");
-                content.Append($"{entity.FinalYForce};");
-                content.Append($"{entity.FinalZForce};");
-                content.Append($"{entity.TargetXForce};");
-                content.Append($"{entity.TargetYForce};");
+                content.Append($"{entity.FinalForceX};");
+                content.Append($"{entity.FinalForceY};");
+                content.Append($"{entity.FinalForceZ};");
+                content.Append($"{entity.TargetForceX};");
+                content.Append($"{entity.TargetForceY};");
                 content.Append($"{entity.ForceStepX};");
                 content.Append($"{entity.ForceStepY};");
-                content.Append($"{entity.AdjustedXForce};");
-                content.Append($"{entity.AdjustedYForce};");
+                content.Append($"{entity.AdjustedForceX};");
+                content.Append($"{entity.AdjustedForceY};");
                 content.Append($"{entity.ForceAdjusted};");
 
                 content.Append($"{entity.Speed};");

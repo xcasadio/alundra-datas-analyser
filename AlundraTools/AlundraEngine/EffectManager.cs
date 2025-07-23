@@ -159,7 +159,7 @@ public class EffectManager
             {
                 effect.DestroyFlag = 1;
                 effect.SpriteRef.Images = null;
-                effect.SpriteRef.NumImages = 0;
+                effect.SpriteRef.NumberOfImages = 0;
                 effect.SpriteRef.DepthSortValue = 0;
                 return;
             }
@@ -215,14 +215,14 @@ public class EffectManager
                 if (effect.Frame.Images != null) // (imageOffset != 0xffff)
                 {
                     effect.SpriteRef.Images = effect.Frame.Images.Images;
-                    effect.SpriteRef.DepthSortValue = effect.Frame.Images.Unknown;
-                    effect.SpriteRef.NumImages = effect.Frame.Images.NumberOfImages;
+                    effect.SpriteRef.DepthSortValue = effect.Frame.Images.DepthSortValue;
+                    effect.SpriteRef.NumberOfImages = effect.Frame.Images.NumberOfImages;
                 }
                 else
                 {
                     effect.SpriteRef.Images = null;
                     effect.SpriteRef.DepthSortValue = 0;
-                    effect.SpriteRef.NumImages = 0;
+                    effect.SpriteRef.NumberOfImages = 0;
                 }
                 return;
             }

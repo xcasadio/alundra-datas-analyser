@@ -33,7 +33,7 @@ public class SiEffectFrame
 
     public int MemoryAddress;
     public readonly byte Delay;//top bit masked
-    //public short Unknown;//-1
+    //public short DepthSortValue;//-1
     public readonly int ImageSetPointer;
     public readonly byte TransformIndexLow;
 

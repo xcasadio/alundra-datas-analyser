@@ -78,7 +78,7 @@ public class EntityGameplayManager
             return -1;
         }
 
-        var difx = StaticVariables.PlayerEntity.ModdedXPos - entity.ModdedXPos;
+        var difx = StaticVariables.PlayerEntity.ModdedPosX - entity.ModdedPosX;
 
         if ((difx >= 0 && entity.Width < difx)
             || (difx < 0 && StaticVariables.PlayerEntity.Width < -difx))
@@ -308,8 +308,8 @@ public class EntityGameplayManager
             entity.ForceStepX = 0;
             entity.ForceY = 0;
             entity.ForceX = 0;
-            entity.TargetYForce = 0;
-            entity.TargetXForce = 0;
+            entity.TargetForceY = 0;
+            entity.TargetForceX = 0;
             entity.TargetDirection = newDirection;
         }
 
@@ -349,8 +349,8 @@ public class EntityGameplayManager
             entity.ForceStepX = 0;
             entity.ForceY = 0;
             entity.ForceX = 0;
-            entity.TargetYForce = 0;
-            entity.TargetXForce = 0;
+            entity.TargetForceY = 0;
+            entity.TargetForceX = 0;
             entity.TargetDirection = newDirection;
         }
         else
@@ -367,7 +367,7 @@ public class EntityGameplayManager
         uint stepDistance;
 
         //stepDistance = entity.SpriteRecord.AnimationOffsetsPointer[animIndex * 0xe + 8];
-        stepDistance = entity.Sprite.AnimSets[animIndex].U6; // TODO check which property => flag or acceleration...
+        stepDistance = entity.SpriteRecord.AnimSets[animIndex].U6; // TODO check which property => flag or acceleration...
         height = GetTileHeightAtOffset(entity,
             StaticVariables.g_offsetXList[direction] * (int)stepDistance,
             StaticVariables.g_offsetYList[direction] * (int)stepDistance);

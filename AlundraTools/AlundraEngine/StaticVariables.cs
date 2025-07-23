@@ -1323,7 +1323,7 @@ public static class StaticVariables
     public static byte[] PTR_g_warpVelocityFlags_8009a814 = new byte[165]; // 8009A814
     public static int[] g_categoryThresholdTable = new int[8]; // 8009A834
     public static int g_isCdResetRequested; // 8009A858
-    public static short[] g_textBaseX = new short[15]; // 8009CFBC
+    public static ushort[] g_textBaseX = new ushort[15]; // 8009CFBC
     public static ushort g_clutTableIndex; // 8009CFDA
     public static byte DAT_8009cfec; // 8009CFEC
     public static byte DAT_8009cfed; // 8009CFED
@@ -1349,7 +1349,7 @@ public static class StaticVariables
     public static short g_textPosOffsetY; // 800A58C2
     public static byte g_sprt; // 800A58D8
     public static byte g_fadeSomething; // 800A58D9
-    public static int[] g_transitionFuncArgs = new int[91]; // 800A731C
+    public static CallBackInfo[] g_transitionFuncArgs = new CallBackInfo[13]; // 800A731C
     public static byte g_soundNameList; // 800A7488
     //public static byte  PTR_s_(void_)NULL_800a7c58; // 800A7C58
     public static byte PTR_DAT_800a7c5c; // 800A7C5C
@@ -1740,7 +1740,7 @@ public static class StaticVariables
     public static int g_cameraTargetZ; // 800DC4E0
     public static int INT_800dc4e4; // 800DC4E4
     public static int g_warpEntryBehavior; // 800DC4E8
-    public static short g_tPageFadeLUT; // 800DC4F0
+    public static short[] g_tPageFadeLUT = new short[5]; // 800DC4F0
     public static short[] g_tPageIds = new short[14]; // 800DC4FA
     public static short g_drawModeIndexInit; // 800DC516
     public static short g_tpage; // 800DC51C
@@ -1940,10 +1940,10 @@ public static class StaticVariables
     public static int g_etcTextCursorBlink; // 80146FA8
     public static int g_etcTextSpeed; // 80146FAC
     public static int g_etcTextMode; // 80146FB0
-    public static short g_etcTextX; // 80146FB4
-    public static short g_etcTextY; // 80146FB6
-    public static short g_etcTextStartX; // 80146FB8
-    public static short g_etcTextStartY; // 80146FBA
+    public static ushort g_etcTextX; // 80146FB4
+    public static ushort g_etcTextY; // 80146FB6
+    public static ushort g_etcTextStartX; // 80146FB8
+    public static ushort g_etcTextStartY; // 80146FBA
     public static short g_etcTextXOrigin; // 80146FC0
     public static short g_etcTextYOrigin; // 80146FC2
     public static int g_textPosX; // 801490C8
@@ -1998,10 +1998,10 @@ public static class StaticVariables
     public static byte[] g_bufferFONT3_tim = new byte[11000]; // 8014ACE8
     public static byte BYTE_80150000; // 80150000
     public static int g_warpFlags_2; // 80152F08
-    public static int[] g_callbackTable = new int[91]; // 80153028
+    public static CallBackInfo[] g_callbackTable = new CallBackInfo[13]; // 80153028
     public static int g_postProcessState; // 80153194
     public static int g_currentTransitionType; // 80153198
-    public static int g_activeTransitionCallback; // 8015319C
+    public static CallBackInfo g_activeTransitionCallback; // 8015319C
     public static char[] g_partialVabBodyBuffer = new char[256]; // 801531A0
     public static int DAT_80164fc0; // 80164FC0
     public static int g_vabBaseSector; // 80164FC4

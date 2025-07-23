@@ -2904,12 +2904,12 @@ public class PlayerManager
 
                     worldXCoords[0] = StaticVariables.g_tileToWorldXTable[StaticVariables.PlayerEntity.HitBoxX >> 16];
                     worldXCoords[2] = worldXCoords[0];
-                    worldXCoords[1] = StaticVariables.g_tileToWorldXTable[(StaticVariables.PlayerEntity.HitBoxX + StaticVariables.PlayerEntity.FrameWidth) >> 16];
+                    worldXCoords[1] = StaticVariables.g_tileToWorldXTable[(StaticVariables.PlayerEntity.HitBoxX + StaticVariables.PlayerEntity.CollisionWidth) >> 16];
                     worldXCoords[3] = worldXCoords[1];
 
                     worldYCoords[0] = StaticVariables.PlayerEntity.HitBoxY >> 20;
                     worldYCoords[1] = worldYCoords[0];
-                    worldYCoords[2] = (StaticVariables.PlayerEntity.HitBoxY + StaticVariables.PlayerEntity.FrameDepth) >> 20;
+                    worldYCoords[2] = (StaticVariables.PlayerEntity.HitBoxY + StaticVariables.PlayerEntity.CollisionDepth) >> 20;
                     worldYCoords[3] = worldYCoords[2];
 
                     for (var i = 0; i < 4; i++)
@@ -2943,7 +2943,7 @@ public class PlayerManager
                             var tileEffectZ = (tile.Height & 0xFF) << 20;
 
                             if (StaticVariables.PlayerEntity.HitBoxZ <= tileEffectZ + 0x80000 &&
-                                tileEffectZ + 0x80000 <= StaticVariables.PlayerEntity.HitBoxZ + StaticVariables.PlayerEntity.FrameHeight)
+                                tileEffectZ + 0x80000 <= StaticVariables.PlayerEntity.HitBoxZ + StaticVariables.PlayerEntity.CollisionHeight)
                             {
                                 // Désactiver l'effet pour éviter de le déclencher plusieurs fois
                                 //TODO

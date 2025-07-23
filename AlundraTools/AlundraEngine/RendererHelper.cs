@@ -116,12 +116,12 @@ public class RendererHelper
                 }
 
                 //var tile = selectedGame.map.maptiles[sx + sy * selectedGame.map.width];
-                //var scx = (entity.ModdedXPos >> 16) - (currentRow * StaticVariables.MapTileWidth);
-                //var scy = (entity.ModdedYPos >> 16) - (entity.ModdedZPos >> 16) - (camTileOffsetY * StaticVariables.MapTileHeight);
-                var scx = (entity.ModdedXPos >> 16) - currentXPosition + StaticVariables.MapTileWidth / 2;
-                var scy = (entity.ModdedYPos >> 16) - (entity.ModdedZPos >> 16) - currentYPosition + StaticVariables.MapTileHeight / 2;
+                //var scx = (entity.ModdedPosX >> 16) - (currentRow * StaticVariables.MapTileWidth);
+                //var scy = (entity.ModdedPosY >> 16) - (entity.ModdedPosZ >> 16) - (camTileOffsetY * StaticVariables.MapTileHeight);
+                var scx = (entity.ModdedPosX >> 16) - currentXPosition + StaticVariables.MapTileWidth / 2;
+                var scy = (entity.ModdedPosY >> 16) - (entity.ModdedPosZ >> 16) - currentYPosition + StaticVariables.MapTileHeight / 2;
 
-                if (entity.Sprite != null)
+                if (entity.SpriteRecord != null)
                 {
                     //display attached effect
                     if (entity.ActiveEffect?.Status == 2)
@@ -131,7 +131,7 @@ public class RendererHelper
                         var eX = (effect.X >> 16) - currentXPosition;
                         var eY = (effect.Y >> 16) - (effect.Z >> 16) - currentYPosition;
 
-                        //if (effect.Sprite != null)
+                        //if (effect.SpriteRecord != null)
                         {
                             var mapSprite = effect.CurrentIsMapSprite == 1 ? gameMap : datasBin.AlundraGameMap;
 
@@ -211,7 +211,7 @@ public class RendererHelper
             var scx = (effect.X >> 16) - currentXPosition;
             var scy = (effect.Y >> 16) - (effect.Z >> 16) - currentYPosition;
         
-            //if (effect.Sprite != null)
+            //if (effect.SpriteRecord != null)
             {
                 var map = effect.CurrentIsMapSprite == 1 ? gameMap : datasBin.AlundraGameMap;
         

@@ -99,7 +99,7 @@ public class EntityManager
             entity.ChildEntity = linkedEntity;
         }
 
-        entity.Sprite = sprite;
+        entity.SpriteRecord = sprite;
         entity.EntityRecord = entityRecord;
         entity.SpriteTableIndex = spriteTableIndex;
 
@@ -130,8 +130,8 @@ public class EntityManager
         entity.SpriteProgramIndexes[ScriptHelper.ProgramEDeactivate] = sprite.Header.ProgramDeactivate;
         entity.SpriteProgramIndexes[ScriptHelper.ProgramFInteract] = sprite.Header.ProgramInteract;
 
-        entity.AddedToPalette = paletteIndex;
-        entity.AddedToSheet = sheetSize;
+        entity.PaletteOffset = paletteIndex;
+        entity.SpriteSheetOffset = sheetSize;
 
         //BalanceRecord balanceRecord = GetSpriteAnimationPtr(entity.SpriteTableIndex);
         BalanceRecord balanceRecord =
@@ -154,9 +154,9 @@ public class EntityManager
 
         UpdateAnimation(entity);
 
-        entity.ModdedXPos = entity.PosX + entity.ModX;
-        entity.ModdedYPos = entity.PosY + entity.ModY;
-        entity.ModdedZPos = entity.PosZ + entity.ModZ;
+        entity.ModdedPosX = entity.PosX + entity.ModX;
+        entity.ModdedPosY = entity.PosY + entity.ModY;
+        entity.ModdedPosZ = entity.PosZ + entity.ModZ;
 
         int height = ComputeEntityGroundHeight(entity);
         entity.TerrainHeight = height;
@@ -164,9 +164,9 @@ public class EntityManager
         if (entity.PosZ <= height + 1)
         {
             entity.PosZ = height + 1;
-            entity.ModdedXPos = entity.PosX + entity.ModX;
-            entity.ModdedYPos = entity.PosY + entity.ModY;
-            entity.ModdedZPos = entity.PosZ + entity.ModZ;
+            entity.ModdedPosX = entity.PosX + entity.ModX;
+            entity.ModdedPosY = entity.PosY + entity.ModY;
+            entity.ModdedPosZ = entity.PosZ + entity.ModZ;
         }
 
         UpdateTileAttributes(entity);
@@ -192,8 +192,8 @@ public class EntityManager
     private void SetEntityDimensions(Entity entity, int offsetX, int offsetY, int offsetZ, int sizeX, int sizeY,
         int sizeZ)
     {
-        entity.NegXMod = -(offsetX << 16);
-        entity.NegYMod = -(offsetY << 16);
+        entity.NegModX = -(offsetX << 16);
+        entity.NegModY = -(offsetY << 16);
         entity.ModX = offsetX << 16;
         entity.ModY = offsetY << 16;
         entity.ModZ = offsetZ << 16;
@@ -243,7 +243,7 @@ public class EntityManager
             entity.CurrentAnimationId = entity.TargetAnimationId;
             entity.CurrentFrameIndex = 0;
             entity.AnimCompleteCounter = 0;
-            animRecordPtr = entity.Sprite.AnimSets[entity.TargetAnimationId];
+            animRecordPtr = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
             currentFrame = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.CurrentFrameIndex];
             entity.AnimSet = animRecordPtr;
             entity.Frame = currentFrame;
@@ -256,12 +256,12 @@ public class EntityManager
 
             if (entity.BalanceRecord.NumAnimVals == 0)
             {
-                entity.BalanceVal = null;
+                entity.BalanceAnimValRef = null;
             }
             else
             {
                 var index = entity.TargetAnimationId >= entity.BalanceRecord.NumAnimVals ? 0 : entity.TargetAnimationId;
-                entity.BalanceVal = entity.BalanceRecord.AnimVals[index];
+                entity.BalanceAnimValRef = entity.BalanceRecord.AnimVals[index];
             }
 
             uint sfxId = entity.AnimSet.Sfx;
@@ -320,23 +320,23 @@ public class EntityManager
         if ((frameFlags & 0x80) != 0)
         {
             entity.NextFrameDelay = (int)(frameFlags & 0x7F);
-            animRecordPtr = entity.Sprite.AnimSets[entity.TargetAnimationId];
+            animRecordPtr = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
             currentFrame = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.CurrentFrameIndex];
             entity.Frame = currentFrame;
         }
 
-        animRecordPtr = entity.Sprite.AnimSets[entity.TargetAnimationId];
+        animRecordPtr = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
         currentFrame = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.CurrentFrameIndex];
 
         if (currentFrame.CollisionData != null)
         {
             entity.FrameCollision = entity.Frame.CollisionData;
-            entity.FrameXOff = entity.FrameCollision.XOff << 16;
-            entity.FrameYOff = entity.FrameCollision.YOff << 16;
-            entity.FrameZOff = entity.FrameCollision.ZOff << 16;
-            entity.FrameWidth = (entity.FrameCollision.Width << 16) - 1;
-            entity.FrameDepth = (entity.FrameCollision.Depth << 16) - 1;
-            entity.FrameHeight = (entity.FrameCollision.Height << 16) - 1;
+            entity.CollisionOffsetX = entity.FrameCollision.OffsetX << 16;
+            entity.CollisionOffsetY = entity.FrameCollision.OffsetY << 16;
+            entity.CollisionOffsetZ = entity.FrameCollision.OffsetZ << 16;
+            entity.CollisionWidth = (entity.FrameCollision.Width << 16) - 1;
+            entity.CollisionDepth = (entity.FrameCollision.Depth << 16) - 1;
+            entity.CollisionHeight = (entity.FrameCollision.Height << 16) - 1;
         }
         else
         {
@@ -346,14 +346,14 @@ public class EntityManager
         if (currentFrame.ImageSetPointer != -1)
         {
             entity.SpriteRef.Images = currentFrame.Images.Images;
-            entity.SpriteRef.DepthSortValue = currentFrame.Images.Unknown;
-            entity.SpriteRef.NumImages = currentFrame.Images.NumberOfImages;
+            entity.SpriteRef.DepthSortValue = currentFrame.Images.DepthSortValue;
+            entity.SpriteRef.NumberOfImages = currentFrame.Images.NumberOfImages;
         }
         else
         {
             entity.SpriteRef.Images = null;
             entity.SpriteRef.DepthSortValue = 0;
-            entity.SpriteRef.NumImages = 0;
+            entity.SpriteRef.NumberOfImages = 0;
         }
 
         //if ((entity.Frame.Delay & 0x80) == 0)
@@ -553,9 +553,9 @@ public class EntityManager
             entity.CollidedWithEntityZ = 0;
             entity.ForceAdjusted = 0;
 
-            entity.ModdedXPos = entity.PosX + entity.ModX;
-            entity.ModdedYPos = entity.PosY + entity.ModY;
-            entity.ModdedZPos = entity.PosZ + entity.ModZ;
+            entity.ModdedPosX = entity.PosX + entity.ModX;
+            entity.ModdedPosY = entity.PosY + entity.ModY;
+            entity.ModdedPosZ = entity.PosZ + entity.ModZ;
         }
 
         CheckRidingEntities();
@@ -595,12 +595,12 @@ public class EntityManager
             UpdateRidingEntity(ridingEntity, ridingEntity.RidingEntity);
         }
 
-        entity.FinalXForce += ridingEntity.AdjustedXForce;
-        entity.FinalYForce += ridingEntity.AdjustedYForce;
+        entity.FinalForceX += ridingEntity.AdjustedForceX;
+        entity.FinalForceY += ridingEntity.AdjustedForceY;
         if (entity.IsZForceApplied == 0)
         {
-            entity.ForceZ = ridingEntity.FinalZForce;
-            entity.FinalZForce = ridingEntity.FinalZForce;
+            entity.ForceZ = ridingEntity.FinalForceZ;
+            entity.FinalForceZ = ridingEntity.FinalForceZ;
         }
     }
 
@@ -635,10 +635,10 @@ public class EntityManager
             entity.PosX = platformEntity.PosX + platformEntity.RelativeWarpOffsetX;
             entity.PosY = platformEntity.PosY + platformEntity.RelativeWarpOffsetY;
             updatedZPosition = platformEntity.PosZ + platformEntity.RelativeWarpOffsetZ;
-            entity.ModdedXPos = entity.PosX + entity.ModX;
+            entity.ModdedPosX = entity.PosX + entity.ModX;
             entity.PosZ = updatedZPosition;
-            entity.ModdedYPos = entity.PosY + entity.ModY;
-            entity.ModdedZPos = updatedZPosition + entity.ModZ;
+            entity.ModdedPosY = entity.PosY + entity.ModY;
+            entity.ModdedPosZ = updatedZPosition + entity.ModZ;
         }
     }
 
@@ -650,7 +650,7 @@ public class EntityManager
         int platformHeight;
         Entity platformEntity;
 
-        finalZVelocity = entity.FinalZForce;
+        finalZVelocity = entity.FinalForceZ;
 
         if (finalZVelocity < 1)
         {
@@ -714,7 +714,7 @@ public class EntityManager
         Entity[] collidableEntityPtr;
         int entityIndex;
 
-        platformTopZ = entity.ModdedZPos + entity.FinalZForce;
+        platformTopZ = entity.ModdedPosZ + entity.FinalForceZ;
         collisionDetected = platformTopZ <= entity.TerrainHeight;
         bestCandidate = null;
 
@@ -737,21 +737,21 @@ public class EntityManager
 
                     if (entity != candidateEntity)
                     {
-                        deltaY = candidateEntity.ModdedZPos + candidateEntity.Depth;
+                        deltaY = candidateEntity.ModdedPosZ + candidateEntity.Depth;
 
-                        if (deltaY < entity.ModdedZPos && platformTopZ <= deltaY)
+                        if (deltaY < entity.ModdedPosZ && platformTopZ <= deltaY)
                         {
-                            deltaX = candidateEntity.ModdedXPos - entity.ModdedXPos;
+                            deltaX = candidateEntity.ModdedPosX - entity.ModdedPosX;
 
                             if (deltaX < 0)
                             {
-                                if (entity.ModdedXPos - candidateEntity.ModdedXPos < candidateEntity.Width + 1)
+                                if (entity.ModdedPosX - candidateEntity.ModdedPosX < candidateEntity.Width + 1)
                                 {
-                                    deltaX = candidateEntity.ModdedYPos - entity.ModdedYPos;
+                                    deltaX = candidateEntity.ModdedPosY - entity.ModdedPosY;
 
                                     if (deltaX < 0)
                                     {
-                                        if (entity.ModdedYPos - candidateEntity.ModdedYPos < candidateEntity.Height + 1)
+                                        if (entity.ModdedPosY - candidateEntity.ModdedPosY < candidateEntity.Height + 1)
                                         {
                                             platformTopZ = deltaY + 1;
                                             collisionDetected = true;
@@ -768,11 +768,11 @@ public class EntityManager
                             }
                             else if (deltaX < entity.Width + 1)
                             {
-                                deltaX = candidateEntity.ModdedYPos - entity.ModdedYPos;
+                                deltaX = candidateEntity.ModdedPosY - entity.ModdedPosY;
 
                                 if (deltaX < 0)
                                 {
-                                    if (entity.ModdedYPos - candidateEntity.ModdedYPos < candidateEntity.Height + 1)
+                                    if (entity.ModdedPosY - candidateEntity.ModdedPosY < candidateEntity.Height + 1)
                                     {
                                         platformTopZ = deltaY + 1;
                                         collisionDetected = true;
@@ -811,8 +811,8 @@ public class EntityManager
         bool collisionDetected;
         Entity bestCandidate;
 
-        entityTopZ = entity.ModdedZPos + entity.Depth;
-        platformCandidateZ = entityTopZ + entity.FinalZForce;
+        entityTopZ = entity.ModdedPosZ + entity.Depth;
+        platformCandidateZ = entityTopZ + entity.FinalForceZ;
         collisionDetected = 0x7800000 < platformCandidateZ;
         bestCandidate = null;
 
@@ -834,22 +834,22 @@ public class EntityManager
 
                     if (entity != candidateEntity)
                     {
-                        candidateZPos = candidateEntity.ModdedZPos;
+                        candidateZPos = candidateEntity.ModdedPosZ;
 
                         if (entityTopZ < candidateZPos
                             && candidateZPos <= platformCandidateZ)
                         {
-                            deltaX = candidateEntity.ModdedXPos - entity.ModdedXPos;
+                            deltaX = candidateEntity.ModdedPosX - entity.ModdedPosX;
 
                             if (deltaX < 0)
                             {
-                                if (entity.ModdedXPos - candidateEntity.ModdedXPos < candidateEntity.Width + 1)
+                                if (entity.ModdedPosX - candidateEntity.ModdedPosX < candidateEntity.Width + 1)
                                 {
-                                    deltaX = candidateEntity.ModdedYPos - entity.ModdedYPos;
+                                    deltaX = candidateEntity.ModdedPosY - entity.ModdedPosY;
 
                                     if (deltaX < 0)
                                     {
-                                        if (entity.ModdedYPos - candidateEntity.ModdedYPos < candidateEntity.Height + 1)
+                                        if (entity.ModdedPosY - candidateEntity.ModdedPosY < candidateEntity.Height + 1)
                                         {
                                             platformCandidateZ = candidateZPos - 1;
                                             collisionDetected = true;
@@ -866,11 +866,11 @@ public class EntityManager
                             }
                             else if (deltaX < entity.Width + 1)
                             {
-                                deltaX = candidateEntity.ModdedYPos - entity.ModdedYPos;
+                                deltaX = candidateEntity.ModdedPosY - entity.ModdedPosY;
 
                                 if (deltaX < 0)
                                 {
-                                    if (entity.ModdedYPos - candidateEntity.ModdedYPos < candidateEntity.Height + 1)
+                                    if (entity.ModdedPosY - candidateEntity.ModdedPosY < candidateEntity.Height + 1)
                                     {
                                         platformCandidateZ = candidateZPos - 1;
                                         collisionDetected = true;
@@ -919,8 +919,8 @@ public class EntityManager
             entity == StaticVariables.g_entitySlots[0] ? GetCollisionFlagsWithPlayer : GetCollisionFlags;
 
         START_COLLISION_CHECK:
-        dx = entity.FinalXForce;
-        dy = entity.FinalYForce;
+        dx = entity.FinalForceX;
+        dy = entity.FinalForceY;
 
         if (dx == 0 && dy == 0)
         {
@@ -943,9 +943,9 @@ public class EntityManager
 
         entity.PosX += dx;
         entity.PosY += dy;
-        entity.ModdedXPos = entity.PosX + entity.ModX;
-        entity.ModdedYPos = entity.PosY + entity.ModY;
-        entity.ModdedZPos = entity.PosZ + entity.ModZ;
+        entity.ModdedPosX = entity.PosX + entity.ModX;
+        entity.ModdedPosY = entity.PosY + entity.ModY;
+        entity.ModdedPosZ = entity.PosZ + entity.ModZ;
 
         groundHeight = ComputeEntityGroundHeight(entity);
         entity.TerrainHeight = groundHeight;
@@ -956,7 +956,7 @@ public class EntityManager
         // Ground snapping logic
         if ((entity.Flags & 0x100) != 0 && entity.ForceZ == 0)
         {
-            dz = groundHeight - entity.ModdedZPos - 1;
+            dz = groundHeight - entity.ModdedPosZ - 1;
             zTolerance = 0x30000;
             if (dz < 0)
             {
@@ -968,17 +968,17 @@ public class EntityManager
             {
                 int savedZ = entity.PosZ;
                 entity.PosZ = groundHeight + 1;
-                entity.ModdedXPos = entity.PosX + entity.ModX;
-                entity.ModdedYPos = entity.PosY + entity.ModY;
-                entity.ModdedZPos = entity.PosZ + entity.ModZ;
+                entity.ModdedPosX = entity.PosX + entity.ModX;
+                entity.ModdedPosY = entity.PosY + entity.ModY;
+                entity.ModdedPosZ = entity.PosZ + entity.ModZ;
 
                 entity2 = candidate;
                 if (FindEntityCollisionCandidate(entity) != null)
                 {
                     entity.PosZ = savedZ;
-                    entity.ModdedZPos = savedZ + entity.ModZ;
-                    entity.ModdedXPos = entity.PosX + entity.ModX;
-                    entity.ModdedYPos = entity.PosY + entity.ModY;
+                    entity.ModdedPosZ = savedZ + entity.ModZ;
+                    entity.ModdedPosX = entity.PosX + entity.ModX;
+                    entity.ModdedPosY = entity.PosY + entity.ModY;
                     goto RESTORE_POS;
                 }
             }
@@ -1111,10 +1111,10 @@ public class EntityManager
                     goto FINAL_OBSTACLE;
                 }
 
-                entity.FinalYForce = 0;
+                entity.FinalForceY = 0;
                 if (collisionFlags[2] != 0 && collisionFlags[3] == 0)
                 {
-                    entity.FinalXForce = 0xC000;
+                    entity.FinalForceX = 0xC000;
                 }
 
                 goto START_COLLISION_CHECK;
@@ -1131,7 +1131,7 @@ public class EntityManager
                     if (collisionFlags[3] == 0)
                     {
                         LAB_80037C70:
-                        entity.FinalXForce = 0;
+                        entity.FinalForceX = 0;
                         goto START_COLLISION_CHECK;
                     }
 
@@ -1141,7 +1141,7 @@ public class EntityManager
                 if (collisionFlags[3] != 0)
                 {
                     LAB_80037C88:
-                    entity.FinalYForce = 0;
+                    entity.FinalForceY = 0;
                 }
 
                 goto START_COLLISION_CHECK;
@@ -1153,17 +1153,17 @@ public class EntityManager
                     goto FINAL_OBSTACLE;
                 }
 
-                entity.FinalXForce = 0;
+                entity.FinalForceX = 0;
                 if (collisionFlags[0] != 0 && collisionFlags[2] == 0)
                 {
-                    entity.FinalYForce = 0x8000;
+                    entity.FinalForceY = 0x8000;
                 }
                 else if (collisionFlags[0] == 0 && collisionFlags[2] != 0)
                 {
                     code_r0x80037C3C:
                     if (collisionFlags[0] == 0)
                     {
-                        entity.FinalYForce = -0x8000;
+                        entity.FinalForceY = -0x8000;
                     }
                 }
 
@@ -1180,7 +1180,7 @@ public class EntityManager
                 {
                     if (collisionFlags[2] != 0)
                     {
-                        entity.FinalXForce = 0;
+                        entity.FinalForceX = 0;
                     }
                 }
                 else
@@ -1190,7 +1190,7 @@ public class EntityManager
                         goto FINAL_OBSTACLE;
                     }
 
-                    entity.FinalYForce = 0;
+                    entity.FinalForceY = 0;
                 }
 
                 goto START_COLLISION_CHECK;
@@ -1202,10 +1202,10 @@ public class EntityManager
                     goto FINAL_OBSTACLE;
                 }
 
-                entity.FinalYForce = 0;
+                entity.FinalForceY = 0;
                 if (collisionFlags[0] != 0 && collisionFlags[1] == 0)
                 {
-                    entity.FinalXForce = 0xC000;
+                    entity.FinalForceX = 0xC000;
                 }
 
                 goto START_COLLISION_CHECK;
@@ -1226,13 +1226,13 @@ public class EntityManager
                 {
                     if (collisionFlags[0] != 0)
                     {
-                        entity.FinalYForce = 0;
+                        entity.FinalForceY = 0;
                     }
                 }
                 else
                 {
                     //goto LAB_80037C70;
-                    entity.FinalXForce = 0;
+                    entity.FinalForceX = 0;
                     goto START_COLLISION_CHECK;
                 }
 
@@ -1245,17 +1245,17 @@ public class EntityManager
                     goto FINAL_OBSTACLE;
                 }
 
-                entity.FinalXForce = 0;
+                entity.FinalForceX = 0;
                 if (collisionFlags[1] != 0 && collisionFlags[3] == 0)
                 {
-                    entity.FinalYForce = 0x8000;
+                    entity.FinalForceY = 0x8000;
                 }
                 else if (collisionFlags[1] == 0 && collisionFlags[3] != 0)
                 {
                     //goto code_r0x80037C3C;
                     if (collisionFlags[0] == 0)
                     {
-                        entity.FinalYForce = -0x8000;
+                        entity.FinalForceY = -0x8000;
                     }
                 }
 
@@ -1276,12 +1276,12 @@ public class EntityManager
                 if (collisionFlags[2] != 0)
                 {
                     //goto LAB_80037C88;
-                    entity.FinalYForce = 0;
+                    entity.FinalForceY = 0;
                 }
 
                 if (collisionFlags[1] != 0)
                 {
-                    entity.FinalXForce = 0;
+                    entity.FinalForceX = 0;
                 }
 
                 goto START_COLLISION_CHECK;
@@ -1304,16 +1304,16 @@ public class EntityManager
         goto FINALIZE_COMMON;
 
         FINALIZE_COMMON:
-        entity.ModdedXPos = dy + dx;
-        entity.ModdedYPos = entity.PosY + entity.ModY;
-        entity.ModdedZPos = entity.PosZ + entity.ModZ;
+        entity.ModdedPosX = dy + dx;
+        entity.ModdedPosY = entity.PosY + entity.ModY;
+        entity.ModdedPosZ = entity.PosZ + entity.ModZ;
         entity.TerrainHeight = ComputeEntityGroundHeight(entity);
         return candidate;
 
         FINALIZE_NO_MOVE:
-        entity.ModdedXPos = entity.PosX + entity.ModX;
-        entity.ModdedYPos = entity.PosY + entity.ModY;
-        entity.ModdedZPos = entity.PosZ + entity.ModZ;
+        entity.ModdedPosX = entity.PosX + entity.ModX;
+        entity.ModdedPosY = entity.PosY + entity.ModY;
+        entity.ModdedPosZ = entity.PosZ + entity.ModZ;
         entity.TerrainHeight = ComputeEntityGroundHeight(entity);
         return candidate;
     }
@@ -1329,7 +1329,7 @@ public class EntityManager
         int lockTimer;
         int moddedZPos;
 
-        moddedZPos = StaticVariables.g_entitySlots[0].ModdedZPos;
+        moddedZPos = StaticVariables.g_entitySlots[0].ModdedPosZ;
         lockTimer = StaticVariables.g_warpLockTimer;
 
         if (StaticVariables.g_debugState > -1 || (StaticVariables.g_debugFlags & 0x80000000) == 0)
@@ -1400,7 +1400,7 @@ public class EntityManager
             flag |= 0x1000;
         }
 
-        moddedZPos = entity.ModdedZPos;
+        moddedZPos = entity.ModdedPosZ;
 
         for (int i = 0; i < 4; i++)
         {
@@ -1446,20 +1446,20 @@ public class EntityManager
                     continue;
                 }
 
-                value = currentEntity.ModdedXPos - entity.ModdedXPos;
+                value = currentEntity.ModdedPosX - entity.ModdedPosX;
                 if (value < 0)
                 {
-                    if (entity.ModdedXPos - currentEntity.ModdedXPos < currentEntity.Width + 1)
+                    if (entity.ModdedPosX - currentEntity.ModdedPosX < currentEntity.Width + 1)
                     {
-                        value = currentEntity.ModdedYPos - entity.ModdedYPos;
+                        value = currentEntity.ModdedPosY - entity.ModdedPosY;
                         if (value < 0)
                         {
-                            if (entity.ModdedYPos - currentEntity.ModdedYPos < currentEntity.Height + 1)
+                            if (entity.ModdedPosY - currentEntity.ModdedPosY < currentEntity.Height + 1)
                             {
-                                value = currentEntity.ModdedZPos - entity.ModdedZPos;
+                                value = currentEntity.ModdedPosZ - entity.ModdedPosZ;
                                 if (value < 0)
                                 {
-                                    if (entity.ModdedZPos - currentEntity.ModdedZPos < currentEntity.Depth + 1)
+                                    if (entity.ModdedPosZ - currentEntity.ModdedPosZ < currentEntity.Depth + 1)
                                     {
                                         return currentEntity;
                                     }
@@ -1472,10 +1472,10 @@ public class EntityManager
                         }
                         else if (value < entity.Height + 1)
                         {
-                            value = currentEntity.ModdedZPos - entity.ModdedZPos;
+                            value = currentEntity.ModdedPosZ - entity.ModdedPosZ;
                             if (value < 0)
                             {
-                                if (entity.ModdedZPos - currentEntity.ModdedZPos < currentEntity.Depth + 1)
+                                if (entity.ModdedPosZ - currentEntity.ModdedPosZ < currentEntity.Depth + 1)
                                 {
                                     return currentEntity;
                                 }
@@ -1489,15 +1489,15 @@ public class EntityManager
                 }
                 else if (value < entity.Width + 1)
                 {
-                    value = currentEntity.ModdedYPos - entity.ModdedYPos;
+                    value = currentEntity.ModdedPosY - entity.ModdedPosY;
                     if (value < 0)
                     {
-                        if (entity.ModdedYPos - currentEntity.ModdedYPos < currentEntity.Height + 1)
+                        if (entity.ModdedPosY - currentEntity.ModdedPosY < currentEntity.Height + 1)
                         {
-                            value = currentEntity.ModdedZPos - entity.ModdedZPos;
+                            value = currentEntity.ModdedPosZ - entity.ModdedPosZ;
                             if (value < 0)
                             {
-                                if (entity.ModdedZPos - currentEntity.ModdedZPos < currentEntity.Depth + 1)
+                                if (entity.ModdedPosZ - currentEntity.ModdedPosZ < currentEntity.Depth + 1)
                                 {
                                     return currentEntity;
                                 }
@@ -1510,10 +1510,10 @@ public class EntityManager
                     }
                     else if (value < entity.Height + 1)
                     {
-                        value = currentEntity.ModdedZPos - entity.ModdedZPos;
+                        value = currentEntity.ModdedPosZ - entity.ModdedPosZ;
                         if (value < 0)
                         {
-                            if (entity.ModdedZPos - currentEntity.ModdedZPos < currentEntity.Depth + 1)
+                            if (entity.ModdedPosZ - currentEntity.ModdedPosZ < currentEntity.Depth + 1)
                             {
                                 return currentEntity;
                             }
@@ -1541,15 +1541,15 @@ public class EntityManager
                 continue;
             }
 
-            int entityModdedXPos = entity.ModdedXPos;
-            int entityModdedYPos = entity.ModdedYPos;
-            int entityModdedZPos = entity.ModdedZPos;
+            int entityModdedXPos = entity.ModdedPosX;
+            int entityModdedYPos = entity.ModdedPosY;
+            int entityModdedZPos = entity.ModdedPosZ;
 
             int entityWidth = entity.Width + 1;
             int entityHeight = entity.Height + 1;
             int entityDepth = entity.Depth + 1;
 
-            int entityMaxY = entity.ModdedYPos;
+            int entityMaxY = entity.ModdedPosY;
             int entityMaxYExtra = entity.Depth; // 0x1f8 is depth, attention: voir le code binaire, ici c'est additionné pour obtenir maxY
             int entityMaxYWithExtra = entityMaxY + entityMaxYExtra;
 
@@ -1564,16 +1564,16 @@ public class EntityManager
 
                 var other = StaticVariables.g_collideableEntities[j];
 
-                int otherMaxY = other.ModdedYPos + other.Depth + 1;
+                int otherMaxY = other.ModdedPosY + other.Depth + 1;
                 if (otherMaxY != entityMaxY)
                     continue;
 
                 // Y overlap
-                int yDiff = other.ModdedXPos - entityModdedXPos;
+                int yDiff = other.ModdedPosX - entityModdedXPos;
                 if (yDiff < 0)
                 {
                     int val = other.Width + 1;
-                    if (!(entityModdedXPos - other.ModdedXPos < val))
+                    if (!(entityModdedXPos - other.ModdedPosX < val))
                         continue;
                 }
                 else
@@ -1583,11 +1583,11 @@ public class EntityManager
                 }
 
                 // Z overlap
-                int zDiff = other.ModdedZPos - entityModdedZPos;
+                int zDiff = other.ModdedPosZ - entityModdedZPos;
                 if (zDiff < 0)
                 {
                     int val = other.Height + 1;
-                    if (!(entityModdedZPos - other.ModdedZPos < val))
+                    if (!(entityModdedZPos - other.ModdedPosZ < val))
                         continue;
                 }
                 else
@@ -1666,19 +1666,19 @@ public class EntityManager
                         (uint)(((long)entity.ForceStepY * 0x1000) >> 0x20) << 0x10;
                 }
 
-                targetXForce = (uint)entity.TargetXForce;
-                targetYForce = (uint)entity.TargetYForce;
+                targetXForce = (uint)entity.TargetForceX;
+                targetYForce = (uint)entity.TargetForceY;
 
                 if ((entity.CombinedVramFlagsOR & 8U) != 0
                     && StaticVariables.g_gravityFlag < 1)
                 {
                     targetXForce =
-                        (uint)(((long)entity.TargetXForce * 0x8000) >> 0x10) |
-                        (uint)(((long)entity.TargetXForce * 0x8000) >> 0x20) << 0x10;
+                        (uint)(((long)entity.TargetForceX * 0x8000) >> 0x10) |
+                        (uint)(((long)entity.TargetForceX * 0x8000) >> 0x20) << 0x10;
 
                     targetYForce =
-                        (uint)(((long)entity.TargetYForce * 0x8000) >> 0x10) |
-                        (uint)(((long)entity.TargetYForce * 0x8000) >> 0x20) << 0x10;
+                        (uint)(((long)entity.TargetForceY * 0x8000) >> 0x10) |
+                        (uint)(((long)entity.TargetForceY * 0x8000) >> 0x20) << 0x10;
                 }
 
                 entity.ForceX = IncrementForce(entity.ForceX, (int)targetXForce, (int)xForce);
@@ -1686,9 +1686,9 @@ public class EntityManager
 
                 //LABEL_ProcessFinalForces:
                 ApplyEntityForces(entity);
-                entity.FinalXForce = entity.AdjustedXForce;
-                entity.FinalYForce = entity.AdjustedYForce;
-                entity.FinalZForce = entity.ForceZ;
+                entity.FinalForceX = entity.AdjustedForceX;
+                entity.FinalForceY = entity.AdjustedForceY;
+                entity.FinalForceZ = entity.ForceZ;
             }
             else
             {
@@ -1726,25 +1726,25 @@ public class EntityManager
 
                     UpdateEntityPhysics(entity);
 
-                    entity.ForceX = IncrementForce(entity.ForceX, entity.TargetXForce, entity.ForceStepX);
-                    entity.ForceY = IncrementForce(entity.ForceY, entity.TargetYForce, entity.ForceStepY);
+                    entity.ForceX = IncrementForce(entity.ForceX, entity.TargetForceX, entity.ForceStepX);
+                    entity.ForceY = IncrementForce(entity.ForceY, entity.TargetForceY, entity.ForceStepY);
 
                     //goto LABEL_ProcessFinalForces;
                     ApplyEntityForces(entity);
-                    entity.FinalXForce = entity.AdjustedXForce;
-                    entity.FinalYForce = entity.AdjustedYForce;
-                    entity.FinalZForce = entity.ForceZ;
+                    entity.FinalForceX = entity.AdjustedForceX;
+                    entity.FinalForceY = entity.AdjustedForceY;
+                    entity.FinalForceZ = entity.ForceZ;
                     continue;
                 }
 
                 entity.ForceZ = 0;
                 entity.ForceY = 0;
                 entity.ForceX = 0;
-                entity.AdjustedYForce = 0;
-                entity.AdjustedXForce = 0;
-                entity.FinalZForce = 0;
-                entity.FinalYForce = 0;
-                entity.FinalXForce = 0;
+                entity.AdjustedForceY = 0;
+                entity.AdjustedForceX = 0;
+                entity.FinalForceZ = 0;
+                entity.FinalForceY = 0;
+                entity.FinalForceX = 0;
             }
         }
     }
@@ -1752,31 +1752,31 @@ public class EntityManager
     // 800366fc
     private void ApplyEntityForces(Entity entity)
     {
-        var adjustedXForce = entity.PreviousAdjustedXForce;
-        var adjustedYForce = entity.PreviousAdjustedYForce;
+        var adjustedXForce = entity.PreviousAdjustedForceX;
+        var adjustedYForce = entity.PreviousAdjustedForceY;
         var shiftAmount = _gameEngine.CurrentMap.Info.Gravity & 0x1f;
         var xForceComponent = entity.ForceX + ScriptHelper.XForceTable[entity.TileAttributes & 0xf] >> shiftAmount;
         var yForceComponent = entity.ForceY + ScriptHelper.YForceTable[entity.TileAttributes & 0xf] >> shiftAmount;
         xForceComponent += adjustedXForce;
         yForceComponent += adjustedYForce;
 
-        entity.PreviousAdjustedYForce = 0;
-        entity.PreviousAdjustedXForce = 0;
+        entity.PreviousAdjustedForceY = 0;
+        entity.PreviousAdjustedForceX = 0;
 
-        if (entity.PosX + xForceComponent < entity.NegXMod || entity.ScreenClipX < entity.PosX + xForceComponent)
+        if (entity.PosX + xForceComponent < entity.NegModX || entity.ScreenClipX < entity.PosX + xForceComponent)
         {
             xForceComponent = entity.ScreenClipX - entity.PosX;
             entity.ForceAdjusted = 1;
         }
 
-        if (entity.PosY + yForceComponent < entity.NegYMod || entity.ScreenClipY < entity.PosY + yForceComponent)
+        if (entity.PosY + yForceComponent < entity.NegModY || entity.ScreenClipY < entity.PosY + yForceComponent)
         {
             yForceComponent = entity.ScreenClipY - entity.PosY;
             entity.ForceAdjusted = 1;
         }
 
-        entity.AdjustedXForce = (int)xForceComponent;
-        entity.AdjustedYForce = (int)yForceComponent;
+        entity.AdjustedForceX = (int)xForceComponent;
+        entity.AdjustedForceY = (int)yForceComponent;
     }
 
     // 800367e4
@@ -1822,13 +1822,13 @@ public class EntityManager
         {
             entity.CurrentDirection = entity.TargetDirection;
             entity.Speed = entity.AnimSet.Speed;
-            entity.TargetXForce = StaticVariables.g_offsetXList[entity.TargetDirection] * entity.AnimSet.Speed;
-            entity.TargetYForce = StaticVariables.g_offsetYList[entity.TargetDirection] * entity.AnimSet.Speed;
+            entity.TargetForceX = StaticVariables.g_offsetXList[entity.TargetDirection] * entity.AnimSet.Speed;
+            entity.TargetForceY = StaticVariables.g_offsetYList[entity.TargetDirection] * entity.AnimSet.Speed;
         }
 
         entity.Acceleration = entity.AnimSet.U6 & 0xf; // acceleration ?
-        entity.ForceStepX = Math.Abs(entity.TargetXForce - entity.ForceX) >> entity.Acceleration;
-        entity.ForceStepY = Math.Abs(entity.TargetYForce - entity.ForceY) >> entity.Acceleration;
+        entity.ForceStepX = Math.Abs(entity.TargetForceX - entity.ForceX) >> entity.Acceleration;
+        entity.ForceStepY = Math.Abs(entity.TargetForceY - entity.ForceY) >> entity.Acceleration;
     }
 
     // 800399b8
@@ -1843,7 +1843,7 @@ public class EntityManager
         {
             var entity = StaticVariables.g_visibleEntities[i];
             entity.ZSortValue = 0;
-            entity.ZSortDepth = entity.ModdedZPos + entity.Depth;
+            entity.ZSortDepth = entity.ModdedPosZ + entity.Depth;
         }
 
         for (var i = 0; i < StaticVariables.g_visibleEntityCount; i++)
@@ -1870,7 +1870,7 @@ public class EntityManager
             return entity.ZSortValue;
         }
 
-        var sortValue = entity.PosY + (entity.Frame.Images.Unknown << 16);
+        var sortValue = entity.PosY + (entity.Frame.Images.DepthSortValue << 16);
 
         if ((entity.Flags & 0x80) != 0
             || (entity.AnimFlags & 0x80) != 0)
@@ -1907,7 +1907,7 @@ public class EntityManager
             }
 
             //X
-            var x = otherEntity.PosX + otherEntity.ModX - entity.ModdedXPos;
+            var x = otherEntity.PosX + otherEntity.ModX - entity.ModdedPosX;
             if (x >= 0)
             {
                 if (x >= entity.Width + 1)
@@ -1917,14 +1917,14 @@ public class EntityManager
             }
             else
             {
-                if (entity.ModdedXPos - (otherEntity.PosX + otherEntity.ModX) >= otherEntity.Width + 1)
+                if (entity.ModdedPosX - (otherEntity.PosX + otherEntity.ModX) >= otherEntity.Width + 1)
                 {
                     continue;
                 }
             }
 
             //Y
-            var y = otherEntity.PosY + otherEntity.ModY - entity.ModdedYPos;
+            var y = otherEntity.PosY + otherEntity.ModY - entity.ModdedPosY;
             if (y >= 0)
             {
                 if (y >= entity.Depth + 1)
@@ -1934,7 +1934,7 @@ public class EntityManager
             }
             else
             {
-                if (entity.ModdedYPos - (otherEntity.PosY + otherEntity.ModY) >= otherEntity.Depth + 1)
+                if (entity.ModdedPosY - (otherEntity.PosY + otherEntity.ModY) >= otherEntity.Depth + 1)
                 {
                     continue;
                 }
@@ -1969,12 +1969,12 @@ public class EntityManager
                 continue;
             }
 
-            if (entity.BalanceVal == null)
+            if (entity.BalanceAnimValRef == null)
             {
                 continue;
             }
 
-            if (entity.BalanceVal.Val == 0)
+            if (entity.BalanceAnimValRef.Val == 0)
             {
                 continue;
             }
@@ -1998,7 +1998,7 @@ public class EntityManager
                     continue;
                 }
 
-                if (checkme.FrameColTickCounter != 0)
+                if (checkme.FrameCollisionTickCounter != 0)
                 {
                     continue;
                 }
@@ -2019,7 +2019,7 @@ public class EntityManager
                 }
 
                 //X
-                var difx = entity.HitBoxX - checkme.ModdedXPos;
+                var difx = entity.HitBoxX - checkme.ModdedPosX;
                 int width;
                 if (difx > 0)
                 {
@@ -2027,8 +2027,8 @@ public class EntityManager
                 }
                 else
                 {
-                    difx = checkme.ModdedXPos - entity.HitBoxX;
-                    width = entity.FrameWidth + 1;
+                    difx = checkme.ModdedPosX - entity.HitBoxX;
+                    width = entity.CollisionWidth + 1;
                 }
 
                 if (difx >= width)
@@ -2037,7 +2037,7 @@ public class EntityManager
                 }
 
                 //Y
-                var dify = entity.HitBoxY - checkme.ModdedYPos;
+                var dify = entity.HitBoxY - checkme.ModdedPosY;
                 int depth;
                 if (dify > 0)
                 {
@@ -2045,8 +2045,8 @@ public class EntityManager
                 }
                 else
                 {
-                    dify = checkme.ModdedYPos - entity.HitBoxY;
-                    depth = entity.FrameDepth + 1;
+                    dify = checkme.ModdedPosY - entity.HitBoxY;
+                    depth = entity.CollisionDepth + 1;
                 }
 
                 if (dify >= depth)
@@ -2055,7 +2055,7 @@ public class EntityManager
                 }
 
                 //Z
-                var difz = entity.HitBoxZ - checkme.ModdedZPos;
+                var difz = entity.HitBoxZ - checkme.ModdedPosZ;
                 int height;
                 if (difz > 0)
                 {
@@ -2063,8 +2063,8 @@ public class EntityManager
                 }
                 else
                 {
-                    difz = checkme.ModdedZPos - entity.HitBoxZ;
-                    height = entity.FrameHeight + 1;
+                    difz = checkme.ModdedPosZ - entity.HitBoxZ;
+                    height = entity.CollisionHeight + 1;
                 }
 
                 if (difz >= height)
@@ -2077,7 +2077,7 @@ public class EntityManager
                 {
                 DEBUG THING
                 }*/
-                var valdex = entity.BalanceVal.Val & 0xf;
+                var valdex = entity.BalanceAnimValRef.Val & 0xf;
                 var val = checkme.BalanceRecord.Vals[valdex];
 
                 if ((val & 0xc0) != 0x80)
@@ -2095,46 +2095,46 @@ public class EntityManager
                     checkme.TouchingEntity = entity;
                 }
 
-                checkme.FrameColTickCounter = 0x19;
+                checkme.FrameCollisionTickCounter = 0x19;
 
                 entity.HitCounter++;
                 //X
-                var xr = checkme.ModdedXPos + checkme.Width;
-                if (entity.HitBoxX + entity.FrameWidth < xr)
+                var xr = checkme.ModdedPosX + checkme.Width;
+                if (entity.HitBoxX + entity.CollisionWidth < xr)
                 {
-                    xr = entity.HitBoxX + entity.FrameWidth;
+                    xr = entity.HitBoxX + entity.CollisionWidth;
                 }
 
                 var xl = entity.HitBoxX;
-                if (entity.HitBoxX < checkme.ModdedXPos)
+                if (entity.HitBoxX < checkme.ModdedPosX)
                 {
-                    xl = checkme.ModdedXPos;
+                    xl = checkme.ModdedPosX;
                 }
 
                 //Y
-                var yr = checkme.ModdedYPos + checkme.Depth;
-                if (entity.HitBoxY + entity.FrameDepth < yr)
+                var yr = checkme.ModdedPosY + checkme.Depth;
+                if (entity.HitBoxY + entity.CollisionDepth < yr)
                 {
-                    yr = entity.HitBoxY + entity.FrameDepth;
+                    yr = entity.HitBoxY + entity.CollisionDepth;
                 }
 
                 var yl = entity.HitBoxY;
-                if (entity.HitBoxY < checkme.ModdedYPos)
+                if (entity.HitBoxY < checkme.ModdedPosY)
                 {
-                    yl = checkme.ModdedYPos;
+                    yl = checkme.ModdedPosY;
                 }
 
                 //Z
-                var zr = checkme.ModdedZPos + checkme.Height;
-                if (entity.HitBoxZ + entity.FrameHeight < zr)
+                var zr = checkme.ModdedPosZ + checkme.Height;
+                if (entity.HitBoxZ + entity.CollisionHeight < zr)
                 {
-                    zr = entity.HitBoxZ + entity.FrameHeight;
+                    zr = entity.HitBoxZ + entity.CollisionHeight;
                 }
 
                 var zl = entity.HitBoxZ;
-                if (entity.HitBoxZ < checkme.ModdedZPos)
+                if (entity.HitBoxZ < checkme.ModdedPosZ)
                 {
-                    zl = checkme.ModdedZPos;
+                    zl = checkme.ModdedPosZ;
                 }
 
                 var x = (xl + xr) / 2;
@@ -2288,7 +2288,7 @@ public class EntityManager
                     break;
             }
 
-            var animId = 5 - (entity.ModdedZPos - entity.FloorHeight) >> 20;
+            var animId = 5 - (entity.ModdedPosZ - entity.FloorHeight) >> 20;
 
             if (animId >= 6)
             {
@@ -2457,9 +2457,9 @@ public class EntityManager
                 entity.DamagedTickCounter--;
             }
 
-            if (entity.FrameColTickCounter != 0)
+            if (entity.FrameCollisionTickCounter != 0)
             {
-                entity.FrameColTickCounter--;
+                entity.FrameCollisionTickCounter--;
             }
         }
 
@@ -2537,9 +2537,9 @@ public class EntityManager
 
         if (entity.FrameCollision != null)
         {
-            entity.HitBoxX = entity.PosX + entity.FrameXOff;
-            entity.HitBoxY = entity.PosY + entity.FrameYOff;
-            entity.HitBoxZ = entity.PosZ + entity.FrameZOff;
+            entity.HitBoxX = entity.PosX + entity.CollisionOffsetX;
+            entity.HitBoxY = entity.PosY + entity.CollisionOffsetY;
+            entity.HitBoxZ = entity.PosZ + entity.CollisionOffsetZ;
         }
 
         //var x = entity.PosX >> 16;
@@ -2598,7 +2598,7 @@ public class EntityManager
             {
                 tileFlags = entity.MapTiles[i].Flags;
 
-                if (entity.MapHeights[i] + 1 == entity.ModdedZPos)
+                if (entity.MapHeights[i] + 1 == entity.ModdedPosZ)
                 {
                     tempFlags[i] = entity.MapTiles[i].Flags;
 
@@ -2649,7 +2649,7 @@ public class EntityManager
             }
 
             tileAttr = 0x40000;
-            if (((tileFlags & 0xff000000) >> 4) + 1 != entity.ModdedZPos)
+            if (((tileFlags & 0xff000000) >> 4) + 1 != entity.ModdedPosZ)
             {
                 tileAttr = 0x80000;
             }
