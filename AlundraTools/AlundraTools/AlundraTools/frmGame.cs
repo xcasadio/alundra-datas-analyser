@@ -15,7 +15,7 @@ public partial class FrmGame : Form
     private readonly GameEngine _engine;
     private Timer _gameEngineTimer;
     private Timer _refreshUiTimer;
-    private readonly Bitmap _backBuffer = new(320, 240);
+    private readonly Bitmap _backBuffer = new(StaticVariables.ScreenWidth, StaticVariables.ScreenHeight);
     private readonly Graphics _graphics;
     private int _lastMapId = -1;
     private bool _exceptionMessageShown;

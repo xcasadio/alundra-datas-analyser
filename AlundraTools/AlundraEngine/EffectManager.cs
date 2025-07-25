@@ -353,7 +353,7 @@ public class EffectManager
     }
 
     //8003b9c4
-    public SpriteEffect GetNextAvailableEffect()
+    public SpriteEffect? GetNextAvailableEffect()
     {
         foreach (var effect in StaticVariables.g_effectSlots)
         {
@@ -362,13 +362,14 @@ public class EffectManager
                 return effect;
             }
         }
+
         return null;
     }
 
     // 8003bdd8
-    public SpriteEffect CreateEffectEntity(int behaviorFlags, byte spriteTableIndex, byte animationIndex, int x, int y, int z)
+    public SpriteEffect? CreateEffectEntity(int behaviorFlags, byte spriteTableIndex, byte animationIndex, int x, int y, int z)
     {
-        SpriteEffect effect = GetFreeEffect();
+        var effect = GetFreeEffect();
 
         if (effect != null)
         {
@@ -379,7 +380,7 @@ public class EffectManager
     }
 
     // 8003b9c4
-    public SpriteEffect GetFreeEffect()
+    public SpriteEffect? GetFreeEffect()
     {
         int i = 0;
 
@@ -403,7 +404,7 @@ public class EffectManager
 
     // 8003bb14
     public void InitializeEffects(
-        SpriteEffect effect, MapEffectRecord mapEffectRecord, 
+        SpriteEffect effect, MapEffectRecord? mapEffectRecord, 
         int effectId, int updateMode, int behaviorFlag, 
         byte spriteTableIndex, byte animationIndex, 
         int x, int y, int z)

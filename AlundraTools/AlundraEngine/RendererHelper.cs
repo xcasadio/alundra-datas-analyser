@@ -1,4 +1,5 @@
-﻿using AlundraEngine.DatasBin;
+﻿using System.Diagnostics;
+using AlundraEngine.DatasBin;
 using System.Drawing.Imaging;
 
 namespace AlundraEngine;
@@ -33,7 +34,7 @@ public class RendererHelper
         var sinfo = gameMap.SpriteInfo;
         var gensi = datasBin.AlundraGameMap.SpriteInfo;
 
-        for (var y = curYTile; y < gameMap.Map.Height ;y++)
+        for (var y = curYTile; y < gameMap.Map.Height; y++)
         {
             //draw tiles on this row
             for (var x = curXTile; x < curXTile + StaticVariables.ScreenWidth / StaticVariables.MapTileWidth + 2; x++)
@@ -45,26 +46,35 @@ public class RendererHelper
                 var dx = x * StaticVariables.MapTileWidth - currentXPosition;
                 var dy = (y - tile.Height) * StaticVariables.MapTileHeight - currentYPosition;
 
-                if (dy > -StaticVariables.MapTileHeight && dy < StaticVariables.ScreenHeight && tile.TileId != 0xffff)
+                if (y == 32)
                 {
-                    tileId = GetAnimatedTileId(gameMap, tileId);
-                    DrawTile(tileId, dx, dy, g, gameMap);
-
-                    if (StaticVariables.DisplayTileXY)
-                    {
-                        var text = $"{x}x{y}";
-                        var textSize = g.MeasureString(text, FontTileInfo);
-                        textToRender.Add(new TextDisplayParameter
-                        {
-                            Text = text,
-                            Font = FontTileInfo,
-                            Color = Brushes.White,
-                            X = dx + (StaticVariables.MapTileWidth + textSize.Width) / 2f,
-                            Y = dy + (StaticVariables.MapTileHeight + textSize.Height) / 2f
-                        });
-                    }
+                    //Debugger.Break();
                 }
 
+                if (tile.TileId != 0xffff)
+                {
+                    if (dy > -StaticVariables.MapTileHeight 
+                        && dy < StaticVariables.ScreenHeight)
+                    {
+                        tileId = GetAnimatedTileId(gameMap, tileId);
+                        DrawTile(tileId, dx, dy, g, gameMap);
+
+                        if (StaticVariables.DisplayTileXY)
+                        {
+                            var text = $"{x}x{y}";
+                            var textSize = g.MeasureString(text, FontTileInfo);
+                            textToRender.Add(new TextDisplayParameter
+                            {
+                                Text = text,
+                                Font = FontTileInfo,
+                                Color = Brushes.White,
+                                X = dx + (StaticVariables.MapTileWidth + textSize.Width) / 2f,
+                                Y = dy + (StaticVariables.MapTileHeight + textSize.Height) / 2f
+                            });
+                        }
+                    }
+                }
+                
                 if (tile.WallTiles != null)
                 {
                     var wallTiles = tile.WallTiles;
@@ -74,10 +84,11 @@ public class RendererHelper
                     for (i = 0; i < wallTiles.Count; i++)
                     {
                         dy += StaticVariables.MapTileHeight;
-                        //render wall tile
                         var wallTileId = wallTiles.Tiles[i];
 
-                        if (dy > -StaticVariables.MapTileHeight && dy < StaticVariables.ScreenHeight && wallTileId != 0xffff)
+                        if (wallTileId != 0xffff 
+                            && dy > -StaticVariables.MapTileHeight 
+                            && dy < StaticVariables.ScreenHeight)
                         {
                             wallTileId = GetAnimatedTileId(gameMap, wallTileId);
                             DrawTile(wallTileId, dx, dy, g, gameMap);
@@ -97,6 +108,7 @@ public class RendererHelper
                                 });
                             }
                         }
+
                     }
                 }
             }
@@ -207,14 +219,14 @@ public class RendererHelper
             {
                 continue;
             }
-            
+
             var scx = (effect.X >> 16) - currentXPosition;
             var scy = (effect.Y >> 16) - (effect.Z >> 16) - currentYPosition;
-        
+
             //if (effect.SpriteRecord != null)
             {
                 var map = effect.CurrentIsMapSprite == 1 ? gameMap : datasBin.AlundraGameMap;
-        
+
                 if (effect.Frame?.Images != null) // why?? TODO, not initialized when we load a dump?
                 {
                     var iset = effect.Frame.Images;
@@ -316,12 +328,12 @@ public class RendererHelper
             imageAttributes.SetColorMatrix(cm, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
             Rectangle destRect = new Rectangle(drawX, drawY, absW, absH);
-            
+
             // Gérer les effets de miroir avec les transformations graphiques
             if (flipX || flipY)
             {
                 var state = g.Save();
-                
+
                 // Appliquer les transformations de miroir
                 if (flipX && flipY)
                 {
@@ -353,7 +365,7 @@ public class RendererHelper
             if (flipX || flipY)
             {
                 var state = g.Save();
-                
+
                 // Appliquer les transformations de miroir
                 if (flipX && flipY)
                 {

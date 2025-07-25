@@ -7,8 +7,8 @@ namespace AlundraEngine.Gameplay;
 public class SpriteEffect
 {
     public int Id;//0
-    public MapEffectRecord MapEffectRecord;//4
-    public SpriteEffectRecord SpriteEffectRecord;//8
+    public MapEffectRecord? MapEffectRecord;//4
+    public SpriteEffectRecord? SpriteEffectRecord;//8
     public SpriteRef SpriteRef = new();//c-20
     public int _24;
     public int SheetSize;//28
