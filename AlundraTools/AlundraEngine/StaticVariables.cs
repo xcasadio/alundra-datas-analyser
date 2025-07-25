@@ -427,11 +427,29 @@ public static class StaticVariables
     //800270c0
     public static readonly int[] g_scriptAnimationTable =
     [
-        0x00000000,//0x00
-        0x00000003,//0x01
-        0x00000001,//0x02
-        0x00000004,//0x03
-        0x00000000 //0x04
+        0x00000000,
+        0x00000003,
+        0x00000001,
+        0x00000004,
+        0x00000000 
+    ];
+
+    //80027400
+    public static readonly int[] g_scriptAnimationTable2 =
+    [
+        0x00000000,
+        0x00000003,
+        0x00000001,
+        0x00000004,
+        0x00000000 
+    ];
+    //800281dc
+    public static readonly int[] g_scriptAnimationTable3 =
+    [
+        0x00000000,
+        0x00000003,
+        0x00000001,
+        0x00000004,
     ];
     //80023644
     public static readonly int[] g_cardinalDirectionTable = [0, 0x10, 0x08, 0x18];

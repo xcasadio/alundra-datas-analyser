@@ -1,4 +1,5 @@
 ﻿using AlundraEngine.DatasBin;
+using System;
 
 namespace AlundraEngine.Gameplay;
 
@@ -16,9 +17,9 @@ public class SpriteEffect
     public int UpdateMode;//34 //effecttype?
     public Entity? AttachedEntity;//38 pointer to something// attached to an entity?
     public int X, Y, Z;//3c,40,44
-    public int XOff;//48
-    public int YOff;//4c
-    public int ZOff;//50
+    public int OffsetX;//48
+    public int OffsetY;//4c
+    public int OffsetZ;//50
     public int ForceX;//x forces?
     public int ForceY;//y
     public int ForceZ;//z
@@ -33,8 +34,8 @@ public class SpriteEffect
     public byte CurrentAnimation;                //71
     public short _72;
     public SiEffectFrame? Frame;   //74
-    public SiEffectFrame? InitialFrame;      //78
-    public byte Delay;                  //7c
+    public SiEffectFrame? FirstFrame;      //78
+    public byte NextFrameDelay;                  //7c
     public byte DestroyFlag;            //7d  if this is set true the effect is destroyed on next update (status = 0)
     public byte _7e;
     public byte _7f;
@@ -57,9 +58,9 @@ public class SpriteEffect
         X = 0;
         Y = 0; 
         Z = 0;
-        XOff = 0;
-        YOff = 0;
-        ZOff = 0;
+        OffsetX = 0;
+        OffsetY = 0;
+        OffsetZ = 0;
         ForceX = 0;
         ForceY = 0;
         ForceZ = 0;
@@ -74,11 +75,16 @@ public class SpriteEffect
         CurrentAnimation = 0;
         _72 = 0;
         Frame = null;
-        InitialFrame = null;
-        Delay = 0;
+        FirstFrame = null;
+        NextFrameDelay = 0;
         DestroyFlag = 0;
         _7e = 0;
         _7f = 0;
         AnimIndex = 0;
+    }
+
+    public override string ToString()
+    {
+        return $"#{Id} #{MapEffectId}";
     }
 }

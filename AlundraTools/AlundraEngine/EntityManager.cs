@@ -2,8 +2,6 @@
 using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Sound;
-using System;
-using System.ComponentModel.Design;
 using System.Diagnostics;
 
 namespace AlundraEngine;
@@ -17,44 +15,12 @@ public class EntityManager
         _gameEngine = gameEngine;
     }
 
+    //8003b24c
     public void InitializeEntitySlots()
     {
-        //Entity entityCounter = null;
-        //Entity writePtr = StaticVariables.PlayerEntity;
-        //Entity readPtr = StaticVariables.g_emptyEntityForClearing;
-        //Entity blockStart = writePtr;
-
-        //do
-        //{
-        //    do
-        //    {
-        //        Entity ent1 = readPtr.NextEntity;
-        //        Entity ent2 = readPtr.ChildEntity;
-        //        Entity ent3 = readPtr.ParentEntity;
-        //
-        //        writePtr.PreviousEntity = readPtr.PreviousEntity;
-        //        writePtr.NextEntity = ent1;
-        //        writePtr.ChildEntity = ent2;
-        //        writePtr.ParentEntity = ent3;
-        //
-        //        readPtr = readPtr.Status;
-        //        writePtr = writePtr.Status;
-        //    }
-        //    while (readPtr != StaticVariables.g_emptyEntityForClearing.SpawnedGameFlag[4]);
-        //
-        //    writePtr = (Entity)StaticVariables.g_emptyEntityForClearing.SpawnedGameFlag[4];
-        //
-        //    blockStart.PreviousEntity = entityCounter;
-        //    entityCounter = (Entity)((int)entityCounter.PreviousEntity + 1);
-        //
-        //    writePtr = blockStart + 1;
-        //    readPtr = StaticVariables.g_emptyEntityForClearing;
-        //    blockStart = writePtr;
-        //}
-        //while ((int)entityCounter < 0x40);
-
         for (int i = 0; i < StaticVariables.g_entitySlots.Length; i++)
         {
+            StaticVariables.g_entitySlots[i].Clear();
             StaticVariables.g_entitySlots[i].Index = i;
             StaticVariables.g_entitySlots[i].EntityRefId = -1;
         }
@@ -356,7 +322,7 @@ public class EntityManager
             entity.SpriteRef.NumberOfImages = 0;
         }
 
-        //if ((entity.Frame.Delay & 0x80) == 0)
+        //if ((entity.Frame.NextFrameDelay & 0x80) == 0)
         //{
         //    if ((entity.Frame.TransformIndexLow & 0x80) == 0)
         //    {
@@ -626,17 +592,17 @@ public class EntityManager
                 MoveEntity(platformEntity);
             }
 
+            updatedZPosition = platformEntity.PosZ + platformEntity.RelativeWarpOffsetZ;
+
             entity.CollidedWithEntityZ = 1;
             entity.ForceAdjusted = 1;
-            updatedZPosition = platformEntity.FloorHeight;
             entity.XCollisionEntity = null;
-            entity.FloorHeight = updatedZPosition;
+            entity.FloorHeight = platformEntity.FloorHeight;
             entity.TerrainHeight = platformEntity.TerrainHeight;
             entity.PosX = platformEntity.PosX + platformEntity.RelativeWarpOffsetX;
             entity.PosY = platformEntity.PosY + platformEntity.RelativeWarpOffsetY;
-            updatedZPosition = platformEntity.PosZ + platformEntity.RelativeWarpOffsetZ;
-            entity.ModdedPosX = entity.PosX + entity.ModX;
             entity.PosZ = updatedZPosition;
+            entity.ModdedPosX = entity.PosX + entity.ModX;
             entity.ModdedPosY = entity.PosY + entity.ModY;
             entity.ModdedPosZ = updatedZPosition + entity.ModZ;
         }
@@ -901,7 +867,6 @@ public class EntityManager
     private Entity ComputeXYPosition(Entity entity)
     {
         Entity candidate = null;
-        Entity entity2 = null;
         int i = 0;
         int s6 = -1;
         int dy, dx;
@@ -916,7 +881,7 @@ public class EntityManager
         int isStraightDir = (entity.TargetDirection & 7) == 0 ? 1 : 0;
 
         Func<Entity, uint[], uint> collisionFunc =
-            entity == StaticVariables.g_entitySlots[0] ? GetCollisionFlagsWithPlayer : GetCollisionFlags;
+            entity == StaticVariables.PlayerEntity ? GetCollisionFlagsWithPlayer : GetCollisionFlags;
 
         START_COLLISION_CHECK:
         dx = entity.FinalForceX;
@@ -972,8 +937,8 @@ public class EntityManager
                 entity.ModdedPosY = entity.PosY + entity.ModY;
                 entity.ModdedPosZ = entity.PosZ + entity.ModZ;
 
-                entity2 = candidate;
-                if (FindEntityCollisionCandidate(entity) != null)
+                candidate = FindEntityCollisionCandidate(entity);
+                if (candidate != null)
                 {
                     entity.PosZ = savedZ;
                     entity.ModdedPosZ = savedZ + entity.ModZ;
@@ -1022,7 +987,6 @@ public class EntityManager
                 i++;
                 dx = halfDxVal;
                 dy = halfDyVal;
-                candidate = entity2;
                 goto TRY_ADVANCE;
             }
 
@@ -1034,15 +998,14 @@ public class EntityManager
             i++;
             dx = halfDxVal;
             dy = halfDyVal;
-            candidate = entity2;
             goto TRY_ADVANCE;
         }
             
         goto LAB_80037938;
 
         RESTORE_POS:
-        entity2 = FindEntityCollisionCandidate(entity);
-        if (entity2 == null) goto CHECK_ENTITY_COLLISION;
+        candidate = FindEntityCollisionCandidate(entity);
+        if (candidate == null) goto CHECK_ENTITY_COLLISION;
 
         LAB_80037938:
         entity.PosX = posX;
@@ -1329,19 +1292,19 @@ public class EntityManager
         int lockTimer;
         int moddedZPos;
 
-        moddedZPos = StaticVariables.g_entitySlots[0].ModdedPosZ;
+        moddedZPos = StaticVariables.PlayerEntity.ModdedPosZ;
         lockTimer = StaticVariables.g_warpLockTimer;
 
         if (StaticVariables.g_debugState > -1 || (StaticVariables.g_debugFlags & 0x80000000) == 0)
         {
             flag = 0x40;
 
-            if ((StaticVariables.g_entitySlots[0].Flags & 8U) != 0)
+            if ((StaticVariables.PlayerEntity.Flags & 8U) != 0)
             {
                 flag = 0x41;
             }
 
-            if ((StaticVariables.g_entitySlots[0].Flags & 1U) != 0)
+            if ((StaticVariables.PlayerEntity.Flags & 1U) != 0)
             {
                 flag |= 0x1000;
             }
@@ -1349,7 +1312,7 @@ public class EntityManager
             index = 0;
             gravityFlag = StaticVariables.g_gravityFlag < 2;
             colFlags = collisionFlags;
-            player = StaticVariables.g_entitySlots[0];
+            player = StaticVariables.PlayerEntity;
 
             for (int i = 0; i < 4; i++)
             {
@@ -1424,7 +1387,7 @@ public class EntityManager
         Entity currentEntity;
         Entity[] collideableEntities;
 
-        if ((entity != StaticVariables.g_entitySlots[0] || StaticVariables.g_debugState > -1 ||
+        if ((entity != StaticVariables.PlayerEntity || StaticVariables.g_debugState > -1 ||
              (StaticVariables.g_debugFlags & 0x80000000) == 0)
             && (entity.Flags & 0x80U) != 0
             && (entity.AnimFlags & 0x80U) == 0

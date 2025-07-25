@@ -112,14 +112,16 @@ public class SoundManager
             return;
         }
 
-        if ((sfxId & 0x100) != 0)
-        {
-            _gameEngine.SoundBin.PlayMapSfx(((int)sfxId & 0x0FF) - 43, 11025, false, out _, out _, out _);
-        }
-        else
-        {
-            _gameEngine.SoundBin.PlaySfx((int)sfxId, 11025, false, out _, out _, out _);
-        }
+        _gameEngine.SoundBin.PlaySoundEffect((int)sfxId);
+
+        //if ((sfxId & 0x100) != 0)
+        //{
+        //    _gameEngine.SoundBin.PlayMapSfx(((int)sfxId & 0x0FF) - 43, 11025, false, out _, out _, out _);
+        //}
+        //else
+        //{
+        //    _gameEngine.SoundBin.PlaySfx((int)sfxId, 11025, false, out _, out _, out _);
+        //}
     }
 
     //8004a09c

@@ -49,8 +49,9 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramCTick, 2, AI_UpdateEntityAI_CuriousFlying);
         Register(ScriptHelper.ProgramCTick, 3, AI_UpdateEntityAI_1);
         Register(ScriptHelper.ProgramCTick, 4, AI_FUN_80066984);
-        Register(ScriptHelper.ProgramCTick, 0x17, etick_17_jarsandboxes_Handler);
+        Register(ScriptHelper.ProgramCTick, 23, AI_FUN_8006b848);
         Register(ScriptHelper.ProgramCTick, 60, AI_UpdateIceProjectile);
+        Register(ScriptHelper.ProgramCTick, 70, AI_FUN_8007b7b0);
 
 
         Register(ScriptHelper.ProgramDTouch, 0, AI_EmptyFunction); // null
@@ -60,6 +61,7 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramDTouch, 4, AI_EmptyFunction); // null
 
         Register(ScriptHelper.ProgramEDeactivate, 0, Script_Deactivate_FUN_8007ed10);
+        Register(ScriptHelper.ProgramEDeactivate, 2, AI_FUN_8007ed30); // null
         Register(ScriptHelper.ProgramEDeactivate, 9, AI_HandleIceLightHitEffect);
         Register(ScriptHelper.ProgramEDeactivate, 17, AI_UpdateArrows);
 
@@ -732,7 +734,7 @@ public class SpriteEventHandlers
                 entity.Flags2 = 0;
                 if (entity.PlatformEntity != null)
                 {
-                    entity.PlatformEntity.WarpEntity = null;
+                    entity.PlatformEntity.CarriedEntity = null;
                 }
                 entity.PlatformEntity = null;
                 return;
@@ -829,9 +831,9 @@ public class SpriteEventHandlers
         LAB_80066be0:
         entity.TargetAnimationId = 0;
     }
-    
-    //8007b7b0
-    public void etick_17_jarsandboxes_Handler(Entity entity)
+
+    //8006b848
+    void AI_FUN_8006b848(Entity entity)
     {
         if (entity.PlatformEntity == null)
         {
@@ -840,27 +842,56 @@ public class SpriteEventHandlers
 
         if (entity.Flags2 == 0)
         {
-            entity.TargetAnimationId = 0;
+            entity.TargetAnimationId = 0; // idle carried
             return;
         }
 
 
         if (entity.Flags2 == -1)
         {
-            entity.TargetAnimationId = 3;
+            entity.TargetAnimationId = 3; //begin throw
         }
         else
         {
-            entity.TargetAnimationId = (uint)StaticVariables.g_scriptAnimationTable[entity.Flags2];
+            //same as g_scriptAnimationTable
+            entity.TargetAnimationId = (uint)StaticVariables.g_scriptAnimationTable2[entity.Flags2];
         }
 
-        if (entity.PlatformEntity != null)//redudant check
+        entity.PlatformEntity.CarriedEntity = null;
+        entity.PlatformEntity = null;
+        entity.Flags = (entity.Flags | 0x30) & 0xffffff7f;//turn off bit 8, turn on bits 5 and 6
+    }
+
+    //8007b7b0
+    //etick_17_jarsandboxes_Handler
+    public void AI_FUN_8007b7b0(Entity entity)
+    {
+        Debugger.Break();
+
+        if (entity.PlatformEntity == null)
         {
-            entity.WarpEntity = null;
+            return;
+        }
+
+        if (entity.Flags2 == 0)
+        {
+            entity.TargetAnimationId = (int)PlayerAnimation.Idle;
+            return;
+        }
+
+
+        if (entity.Flags2 == -1)
+        {
+            entity.TargetAnimationId = (int)PlayerAnimation.Sprint;
+        }
+        else
+        {
+            //same as g_scriptAnimationTable
+            entity.TargetAnimationId = (uint)StaticVariables.g_scriptAnimationTable3[entity.Flags2];
         }
 
         entity.PlatformEntity = null;
-        entity.Flags = (entity.Flags | 0x30) & 0xff7f;//turn off bit 8, turn on bits 5 and 6
+        entity.Flags = (entity.Flags | 0x34) & 0xffffff7f;//turn off bit 8, turn on bits 5 and 6
     }
 
     //8007a8a0
@@ -900,6 +931,21 @@ public class SpriteEventHandlers
     private void Script_Deactivate_FUN_8007ed10(Entity entity)
     {
         _gameEngine.DestroyEntity(entity,-1);
+    }
+
+    //8007ed30
+    void AI_FUN_8007ed30(Entity entity)
+    {
+        if ((entity.TargetAnimationId == 2 && entity.ForceResetAnimationFlag == 1) 
+            || (entity.CombinedVramFlagsAND & 4U) != 0)
+        {
+            _gameEngine.DestroyEntity(entity, -1);
+        }
+        else
+        {
+            entity.TargetAnimationId = 2;
+            entity.Flags = entity.Flags & 0xffffffcfU | 0x40;
+        }
     }
 
     //8007ef50

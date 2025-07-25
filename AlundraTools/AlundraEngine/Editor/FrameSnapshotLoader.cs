@@ -381,7 +381,7 @@ public static class FrameSnapshotLoader
             entity.IsNotProcessable = isNotProcessable;
             entity.Flags2 = flags2;
             entity.PlatformEntity = StaticVariables.g_entitySlots[platformEntity];
-            entity.WarpEntity = warpEntity;
+            entity.CarriedEntity = warpEntity;
             entity.RelativeWarpOffsetX = relativeWarpOffsetX;
             entity.RelativeWarpOffsetY = relativeWarpOffsetY;
             entity.RelativeWarpOffsetZ = relativeWarpOffsetZ;

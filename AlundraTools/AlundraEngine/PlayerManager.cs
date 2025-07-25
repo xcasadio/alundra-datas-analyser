@@ -1,6 +1,4 @@
-﻿using AlundraEngine.DatasBin;
-using AlundraEngine.Gameplay;
-using System;
+﻿using AlundraEngine.Gameplay;
 using System.Diagnostics;
 using AlundraEngine.Gameplay.Scripts;
 using WarpData = AlundraEngine.DatasBin.WarpData;
@@ -43,7 +41,7 @@ public class PlayerManager
             UpdatePlayerAnimationEffects(1);
             StaticVariables.g_playerWarpTimer = 0;
             Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
-            UpdatePlayerWarpDirection(1);
+            UpdatePlayerCarriedEntity(1);
             AnimateWarpEffect();
 
             if (StaticVariables.g_playerControlFlags == 0x20)
@@ -67,7 +65,7 @@ public class PlayerManager
         {
             StaticVariables.g_playerWarpTimer = 0;
             Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
-            UpdatePlayerWarpDirection(2);
+            UpdatePlayerCarriedEntity(2);
             MaybeStartWarpAnimation();
             StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.DamageTaken;
 
@@ -86,7 +84,7 @@ public class PlayerManager
         {
             StaticVariables.g_playerWarpTimer = 0;
             Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
-            UpdatePlayerWarpDirection(2);
+            UpdatePlayerCarriedEntity(2);
             AnimateWarpEffect();
 
             switch (StaticVariables.PlayerEntity.TargetAnimationId)
@@ -177,7 +175,7 @@ public class PlayerManager
             StaticVariables.g_playerWarpTimer = 0;
             Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
             AnimateWarpEffect();
-            UpdatePlayerWarpDirection(1);
+            UpdatePlayerCarriedEntity(1);
 
             if (slope == 4)
             {
@@ -219,7 +217,7 @@ public class PlayerManager
             case 4:
                 StaticVariables.g_playerWarpTimer = 0;
                 Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
-                UpdatePlayerWarpDirection(2);
+                UpdatePlayerCarriedEntity(2);
                 switch (StaticVariables.PlayerEntity.TargetAnimationId)
                 {
                     default:
@@ -346,7 +344,7 @@ public class PlayerManager
                     && dir == 0x10
                     && StaticVariables.PlayerEntity.TargetDirection == 0x10
                     && StaticVariables.PlayerEntity.ForceAdjusted != 0
-                    && StaticVariables.PlayerEntity.WarpEntity == null)
+                    && StaticVariables.PlayerEntity.CarriedEntity == null)
                 {
                     StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Climbing;
                 }
@@ -357,7 +355,7 @@ public class PlayerManager
 
         UpdatePlayerWeaponEffect();
         UpdateWeaponStepProgression();
-        UpdatePlayerWarpDirection(0);
+        UpdatePlayerCarriedEntity(0);
 
         int iVar2;
 
@@ -527,7 +525,7 @@ public class PlayerManager
                     break;
                 }
 
-                if (StaticVariables.PlayerEntity.WarpEntity != null)
+                if (StaticVariables.PlayerEntity.CarriedEntity != null)
                 {
                     if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                     {
@@ -544,18 +542,18 @@ public class PlayerManager
             case (int)PlayerAnimation.JumpMovingWithObject:
             case (int)PlayerAnimation.JumpWithObject:
                 StaticVariables.PlayerEntity.TargetDirection = dir;
-                var warpEntity = StaticVariables.PlayerEntity.WarpEntity;
+                var carriedEntity = StaticVariables.PlayerEntity.CarriedEntity;
 
                 if (TryUseItem() == 0)
                 {
                     break;
                 }
 
-                if (StaticVariables.PlayerEntity.WarpEntity != null)
+                if (StaticVariables.PlayerEntity.CarriedEntity != null)
                 {
                     if ((StaticVariables.g_padState1.ButtonsJustPressed & PadState.Square) == 0)
                     {
-                        if ((StaticVariables.PlayerEntity.WarpEntity.Flags & 0x600U) == 0x600)
+                        if ((StaticVariables.PlayerEntity.CarriedEntity.Flags & 0x600U) == 0x600)
                         {
                             StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.JumpWithObject;
 
@@ -600,11 +598,11 @@ public class PlayerManager
                     }
                     else if ((StaticVariables.PlayerEntity.CombinedVramFlagsOR & 0x2000U) == 0)
                     {
-                        var direction = (uint)StaticVariables.g_cardinalDirectionTable[StaticVariables.PlayerEntity.CurrentDirection >> 3];
-                        StaticVariables.PlayerEntity.WarpEntity.TargetDirection = direction;
-                        warpEntity.PosX = StaticVariables.PlayerEntity.PosX;
-                        warpEntity.PosY = StaticVariables.PlayerEntity.PosY;
-                        warpEntity.PosZ = StaticVariables.PlayerEntity.PosZ + 0x200000;
+                        var direction = StaticVariables.PlayerEntity.CurrentDirection; //(uint)StaticVariables.g_cardinalDirectionTable[StaticVariables.PlayerEntity.CurrentDirection >> 3];
+                        StaticVariables.PlayerEntity.CarriedEntity.TargetDirection = direction;
+                        carriedEntity.PosX = StaticVariables.PlayerEntity.PosX;
+                        carriedEntity.PosY = StaticVariables.PlayerEntity.PosY;
+                        carriedEntity.PosZ = StaticVariables.PlayerEntity.PosZ + 0x200000;
 
                         if (StaticVariables.PlayerEntity.IsAboveGround == 0)
                         {
@@ -612,7 +610,7 @@ public class PlayerManager
                             
                             if (buttonsHold != 0)
                             {
-                                warpEntity.Flags2 = 3;
+                                carriedEntity.Flags2 = 3;
                                 break;
                             }
                         }
@@ -622,12 +620,12 @@ public class PlayerManager
                             
                             if (buttonsHold == 0)
                             {
-                                warpEntity.Flags2 = 1;
+                                carriedEntity.Flags2 = 1;
                                 break;
                             }
                         }
 
-                        warpEntity.Flags2 = 2;
+                        carriedEntity.Flags2 = 2;
                     }
                     break;
                 }
@@ -668,7 +666,7 @@ public class PlayerManager
                     break;
                 }
 
-                if (StaticVariables.PlayerEntity.WarpEntity != null)
+                if (StaticVariables.PlayerEntity.CarriedEntity != null)
                 {
                     if (StaticVariables.PlayerEntity.IsAboveGround != 0)
                     {
@@ -1044,7 +1042,7 @@ public class PlayerManager
     {
         var player = StaticVariables.PlayerEntity;
 
-        if (player.WarpEntity != null)
+        if (player.CarriedEntity != null)
         {
             player.TargetAnimationId = (byte)(player.IsAboveGround == 1 ? (int)PlayerAnimation.HoldObject : (int)PlayerAnimation.JumpWithObject);
             return 1;
@@ -1119,11 +1117,19 @@ public class PlayerManager
         return result;
 
         TriggerWarp:
-        StaticVariables.PlayerEntity.WarpEntity = entity;
+        StaticVariables.PlayerEntity.CarriedEntity = entity;
         entity.PlatformEntity = StaticVariables.PlayerEntity;
 
         var above = StaticVariables.PlayerEntity.IsAboveGround;
-        StaticVariables.PlayerEntity.TargetAnimationId = (byte)(above != 0 ? (int)PlayerAnimation.HoldObject : (int)PlayerAnimation.JumpWithObject);
+
+        if (entity.RidingEntity == StaticVariables.PlayerEntity)
+        {
+            StaticVariables.PlayerEntity.TargetAnimationId = (byte)(above != 0 ? (int)PlayerAnimation.HoldObject : (int)PlayerAnimation.JumpWithObject);
+        }
+        else
+        {
+            StaticVariables.PlayerEntity.TargetAnimationId = (byte)(above != 0 ? (int)PlayerAnimation.PickupObject : (int)PlayerAnimation.Reserved0B);
+        }
 
         StaticVariables.PlayerEntity.RelativeWarpOffsetX = entity.PosX - StaticVariables.PlayerEntity.PosX;
         StaticVariables.PlayerEntity.RelativeWarpOffsetY = entity.PosY - StaticVariables.PlayerEntity.PosY;
@@ -2165,22 +2171,20 @@ public class PlayerManager
     }
 
     // 8002f884
-    private void UpdatePlayerWarpDirection(int mode)
+    private void UpdatePlayerCarriedEntity(int mode)
     {
         int dx, dy, dz;
-        Entity warpEntity;
+        Entity carriedEntity;
         int newDx, newDy, newDz;
-        int v0, v1;
 
-        warpEntity = StaticVariables.PlayerEntity.WarpEntity;
+        carriedEntity = StaticVariables.PlayerEntity.CarriedEntity;
 
-        if (warpEntity == null)
+        if (carriedEntity == null)
         {
             goto LAB_8002FAF0;
         }
 
-        v0 = warpEntity.BalanceRecord.NumAnimVals; // 0x0E
-        if (v0 == 0 && mode == 1)
+        if (carriedEntity.BalanceRecord.NumAnimVals == 0 && mode == 1)
         {
             mode = 0;
         }
@@ -2190,29 +2194,29 @@ public class PlayerManager
             LAB_8002F8E0:
             var player = StaticVariables.PlayerEntity;
 
-            dx = warpEntity.PosX - player.PosX;
-            dy = warpEntity.PosY - player.PosY;
-            dz = warpEntity.PosZ - player.PosZ;
+            dx = carriedEntity.PosX - player.PosX;
+            dy = carriedEntity.PosY - player.PosY;
+            dz = carriedEntity.PosZ - player.PosZ;
 
-            v1 = dx >= 0 ? dx : -dx;
+            newDx = dx >= 0 ? dx : -dx;
             newDy = dy >= 0 ? dy : -dy;
-
             newDz = dz - 0x200000;
+
             if (newDz < 0)
             {
                 newDz = 0x200000 - dz;
             }
 
-            if (v1 >= newDy)
+            if (newDx >= newDy)
             {
                 /* v1 garde |dx| */
             }
             else
             {
-                v1 = newDy;
+                newDx = newDy;
             }
 
-            if (v1 < newDz)
+            if (newDx < newDz)
             {   /* assez proche sur Z, on amortit X & Y */
                 dy = StepTowards(dy, 0, 0x00010000);
             }
@@ -2228,9 +2232,7 @@ public class PlayerManager
         if (mode == 1)
         {
             LAB_8002F9AC:
-            /* si byte 0x0E non-nul → gestion “delay”              */
-            v0 = warpEntity.BalanceRecord.NumAnimVals;
-            if (v0 == 0)
+            if (carriedEntity.BalanceRecord.NumAnimVals == 0)
             {
                 goto LAB_8002FAF0;
             }
@@ -2242,9 +2244,9 @@ public class PlayerManager
             }
 
             var player = StaticVariables.PlayerEntity;
-            dx = warpEntity.PosX - player.PosX;
-            dy = warpEntity.PosY - player.PosY;
-            dz = warpEntity.PosZ - player.PosZ;
+            dx = carriedEntity.PosX - player.PosX;
+            dy = carriedEntity.PosY - player.PosY;
+            dz = carriedEntity.PosZ - player.PosZ;
 
             newDx = dx >= 0 ? dx : -dx;
             newDy = dy >= 0 ? dy : -dy;
@@ -2254,7 +2256,7 @@ public class PlayerManager
                on détruit l’entité-warp et termine                 */
             if (newDx < 0x0000FFFF && newDy < 0x0000FFFF && newDz < 0x0000FFFF)
             {
-                _gameEngine.DestroyEntity(warpEntity);
+                _gameEngine.DestroyEntity(carriedEntity);
                 goto LAB_8002FAF8;
             }
 
@@ -2275,12 +2277,12 @@ public class PlayerManager
         {
             var player = StaticVariables.PlayerEntity;
 
-            warpEntity.Flags2 = -1; // TODO flags2 ??
-            warpEntity.TargetDirection = player.TargetDirection;
+            carriedEntity.Flags2 = -1; // TODO flags2 ??
+            carriedEntity.TargetDirection = player.TargetDirection;
 
-            warpEntity.PosX = player.PosX;
-            warpEntity.PosY = player.PosY;
-            warpEntity.PosZ = player.PosZ + 0x00200000;
+            carriedEntity.PosX = player.PosX;
+            carriedEntity.PosY = player.PosY;
+            carriedEntity.PosZ = player.PosZ + 0x00200000;
 
             goto LAB_8002FAF0;
         }
@@ -2503,9 +2505,9 @@ public class PlayerManager
                 //_gameEngine.DoNothing();
                 StaticVariables.g_warpType = 0;
             }
-            else if (playerEntity.WarpEntity != null)
+            else if (playerEntity.CarriedEntity != null)
             {
-                Entity warpEntity = playerEntity.WarpEntity;
+                Entity warpEntity = playerEntity.CarriedEntity;
                 warpEntity.PosX += targetCamX - playerEntity.PosX;
                 warpEntity.PosY += targetCamY - playerEntity.PosY;
                 warpEntity.PosZ += targetCamZ - playerEntity.PosZ;

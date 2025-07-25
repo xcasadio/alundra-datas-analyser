@@ -1,7 +1,4 @@
-﻿using AlundraEngine.Text;
-using System;
-
-namespace AlundraEngine;
+﻿namespace AlundraEngine;
 
 public class EtcResR
 {

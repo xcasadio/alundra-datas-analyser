@@ -96,17 +96,19 @@ public class GameMap
         {
             br.BaseStream.Position = Offset + Header.StringTableOffset;
             Strings = new string[128];
-            var stringoffsets = new short[128];
+            var stringOffsets = new short[128];
+
             for (var i = 0; i < 128; i++)
             {
-                stringoffsets[i] = br.ReadInt16();
+                stringOffsets[i] = br.ReadInt16();
             }
+
             for (var i = 0; i < 128; i++)
             {
-                if (stringoffsets[i] != -1)
+                if (stringOffsets[i] != -1)
                 {
                     Strings[i] = "";
-                    br.BaseStream.Position = Offset + Header.StringTableOffset + stringoffsets[i];
+                    br.BaseStream.Position = Offset + Header.StringTableOffset + stringOffsets[i];
                     var c = br.ReadChar();
                     while (c != '\0')
                     {
@@ -114,7 +116,7 @@ public class GameMap
                         c = br.ReadChar();
                     }
 
-                    Strings[i] = TextInterpreter.DecodeString(Strings[i]);
+                    //Strings[i] = TextInterpreter.DecodeString(Strings[i]);
                 }
             }
 

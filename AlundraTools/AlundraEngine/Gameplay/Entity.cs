@@ -17,7 +17,7 @@ public class Entity
     public int IsNotProcessable;
     public int Flags2;
     public Entity? PlatformEntity; //28
-    public Entity? WarpEntity;
+    public Entity? CarriedEntity;
     public int RelativeWarpOffsetX;
     public int RelativeWarpOffsetY;
     public int RelativeWarpOffsetZ;
@@ -142,7 +142,7 @@ public class Entity
         IsNotProcessable = other.IsNotProcessable;
         Flags2 = other.Flags2;
         PlatformEntity = other.PlatformEntity;
-        WarpEntity = other.WarpEntity;
+        CarriedEntity = other.CarriedEntity;
         RelativeWarpOffsetX = other.RelativeWarpOffsetX;
         RelativeWarpOffsetY = other.RelativeWarpOffsetY;
         RelativeWarpOffsetZ = other.RelativeWarpOffsetZ;
@@ -296,7 +296,7 @@ public class Entity
         IsNotProcessable = 0;
         Flags2 = 0;
         PlatformEntity = null;
-        WarpEntity = null;
+        CarriedEntity = null;
         RelativeWarpOffsetX = 0;
         RelativeWarpOffsetY = 0;
         RelativeWarpOffsetZ = 0;
@@ -434,5 +434,10 @@ public class Entity
         InitialYPos = 0;
 
         Array.Clear(AIValues);
+    }
+
+    public override string ToString()
+    {
+        return $"#{Index} #{Index2}";
     }
 }

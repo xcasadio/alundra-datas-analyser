@@ -177,23 +177,23 @@ public class EffectManager
         {
             var anim = effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnimation];
             effect.Frame = anim.Frames[0];
-            effect.InitialFrame = effect.Frame;
+            effect.FirstFrame = effect.Frame;
 
             effect.CurrentAnimation = effect.TargetAnimation;
-            effect.Delay = 0;
+            effect.NextFrameDelay = 0;
             effect.DestroyFlag = 0;
             effect.AnimIndex = 0;
         }
         else
         {
-            effect.Delay--;
+            effect.NextFrameDelay--;
 
-            if ((effect.Delay & 0xff) != 0)
+            if ((effect.NextFrameDelay & 0xff) != 0)
             {
                 return; // Pas encore temps de changer de frame
             }
 
-            if (effect.Delay == 0)
+            if (effect.NextFrameDelay == 0)
             {
                 effect.AnimIndex++;
             }
@@ -209,7 +209,7 @@ public class EffectManager
                 //effect.AnimIndex++;
                 var anim = effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnimation];
                 effect.Frame = anim.Frames[effect.AnimIndex];
-                effect.Delay = (byte)(frameData.Delay & 0x7f);
+                effect.NextFrameDelay = (byte)(frameData.Delay & 0x7f);
                 var imageOffset = (frameData.ImageSetPointer >> 8) | ((frameData.ImageSetPointer & 0xff) << 8);
 
                 if (effect.Frame.Images != null) // (imageOffset != 0xffff)
@@ -229,7 +229,7 @@ public class EffectManager
 
             if (frameData.Delay == 0)
             {
-                effect.Delay = 0xff; // Animation non-répétitive, marquer pour destruction
+                effect.NextFrameDelay = 0xff; // Animation non-répétitive, marquer pour destruction
                 effect.DestroyFlag = 1;
                 return;
             }
@@ -237,7 +237,7 @@ public class EffectManager
             if (frameData.Delay == 1) //loop
             {
                 effect.AnimIndex = 0;
-                effect.Frame = effect.InitialFrame;
+                effect.Frame = effect.FirstFrame;
             }
             else
             {
@@ -265,9 +265,9 @@ public class EffectManager
             var entity = effect.AttachedEntity;
             if (entity.Status != 0)
             {
-                effect.X = entity.PosX + effect.XOff;
-                effect.Y = entity.PosY + effect.YOff;
-                effect.Z = entity.PosZ + effect.ZOff;
+                effect.X = entity.PosX + effect.OffsetX;
+                effect.Y = entity.PosY + effect.OffsetY;
+                effect.Z = entity.PosZ + effect.OffsetZ;
                 effect.DepthSortValue = entity.ZSortValue + effect.DepthSortOffset;
                 if (entity.Status == 4)
                 {
@@ -328,11 +328,12 @@ public class EffectManager
             InitializeEffects(effect, null, -1, 1, ismapeffect, effectid, animid, entity.PosX, entity.PosY, entity.PosZ);
             effect.AttachedEntity = entity;
             effect.DepthSortOffset = depthsortmod;
-            effect.XOff = xoff;
-            effect.YOff = yoff;
-            effect.ZOff = zoff;
+            effect.OffsetX = xoff;
+            effect.OffsetY = yoff;
+            effect.OffsetZ = zoff;
             return effect;
         }
+
         return null;
     }
 

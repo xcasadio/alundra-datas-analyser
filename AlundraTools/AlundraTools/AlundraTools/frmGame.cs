@@ -20,7 +20,7 @@ public partial class FrmGame : Form
     private int _lastMapId = -1;
     private bool _exceptionMessageShown;
 
-    private readonly Dictionary<string, string> _categories = new()
+    private readonly Dictionary<string, string> _entityCategories = new()
     {
         [nameof(Entity.Index)] = "Entity",
         [nameof(Entity.Index2)] = "Entity",
@@ -53,7 +53,7 @@ public partial class FrmGame : Form
         [nameof(Entity.Hp)] = "Gameplay",
         [nameof(Entity.Flags)] = "Gameplay",
         [nameof(Entity.Flags2)] = "Gameplay",
-        [nameof(Entity.WarpEntity)] = "Gameplay",
+        [nameof(Entity.CarriedEntity)] = "Gameplay",
         [nameof(Entity.Status)] = "Gameplay",
         [nameof(Entity.IsNotProcessable)] = "Gameplay",
         [nameof(Entity.ContentsItemId)] = "Gameplay",
@@ -155,11 +155,14 @@ public partial class FrmGame : Form
         [nameof(Entity.HitBoxOriginZ)] = "Collision"
     };
 
-    private readonly Dictionary<string, string> _descriptors = new()
+    private readonly Dictionary<string, string> _entityDescriptors = new()
     {
         [nameof(Entity.PosX)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.PosY)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.PosZ)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.RelativeWarpOffsetX)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.RelativeWarpOffsetY)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.RelativeWarpOffsetZ)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.ScreenClipX)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.ScreenClipY)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.ScreenClipZ)] = nameof(ShiftedFieldDescriptor),
@@ -196,6 +199,46 @@ public partial class FrmGame : Form
         [nameof(Entity.TerrainHeight)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.MapTiles)] = nameof(MapTilesFieldDescriptor)
     };
+
+    private readonly Dictionary<string, string> _effectCategories = new()
+    {
+        [nameof(SpriteEffect.Id)] = "Effect",
+
+        [nameof(SpriteEffect.AttachedEntity)] = "Link",
+
+        [nameof(SpriteEffect.X)] = "Transform",
+        [nameof(SpriteEffect.Y)] = "Transform",
+        [nameof(SpriteEffect.Z)] = "Transform",
+        [nameof(SpriteEffect.OffsetX)] = "Transform",
+        [nameof(SpriteEffect.OffsetY)] = "Transform",
+        [nameof(SpriteEffect.OffsetZ)] = "Transform",
+
+        [nameof(SpriteEffect.Status)] = "Gameplay",
+        [nameof(SpriteEffect.DestroyFlag)] = "Gameplay",
+
+        [nameof(SpriteEffect.SpriteRef)] = "Display",
+        [nameof(SpriteEffect.Frame)] = "Display",
+        [nameof(SpriteEffect.FirstFrame)] = "Display",
+        [nameof(SpriteEffect.NextFrameDelay)] = "Display",
+        [nameof(SpriteEffect.DepthSortValue)] = "Display",
+        [nameof(SpriteEffect.DepthSortOffset)] = "Display",
+
+        [nameof(SpriteEffect.ForceX)] = "Physics forces",
+        [nameof(SpriteEffect.ForceY)] = "Physics forces",
+        [nameof(SpriteEffect.ForceZ)] = "Physics forces"
+    };
+
+    private readonly Dictionary<string, string> _effectDescriptors = new()
+    {
+        [nameof(SpriteEffect.X)] = nameof(ShiftedFieldDescriptor),
+        [nameof(SpriteEffect.Y)] = nameof(ShiftedFieldDescriptor),
+        [nameof(SpriteEffect.Z)] = nameof(ShiftedFieldDescriptor),
+        [nameof(SpriteEffect.DepthSortValue)] = nameof(ShiftedFieldDescriptor),
+        [nameof(SpriteEffect.ForceX)] = nameof(ShiftedFieldDescriptor),
+        [nameof(SpriteEffect.ForceY)] = nameof(ShiftedFieldDescriptor),
+        [nameof(SpriteEffect.ForceZ)] = nameof(ShiftedFieldDescriptor)
+    };
+
 
     public FrmGame(DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR, Font3 font3)
     {
@@ -627,7 +670,7 @@ public partial class FrmGame : Form
             var entity = StaticVariables.g_entitySlots[StaticVariables.EditorSelectEntityIndex];
             if (entity != null)
             {
-                propertyGridEntity.SelectedObject = new UniversalWrapper(entity, _categories, _descriptors);
+                propertyGridEntity.SelectedObject = new UniversalWrapper(entity, _entityCategories, _entityDescriptors);
             }
         }
     }
@@ -643,7 +686,7 @@ public partial class FrmGame : Form
             var effect = StaticVariables.g_effectSlots[StaticVariables.EditorSelectEffectIndex];
             if (effect != null)
             {
-                propertyGridEffect.SelectedObject = new UniversalWrapper(effect, _categories, _descriptors);
+                propertyGridEffect.SelectedObject = new UniversalWrapper(effect, _effectCategories, _effectDescriptors);
             }
         }
     }

@@ -4,7 +4,6 @@ using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
-using System;
 using System.Diagnostics;
 using WarpData = AlundraEngine.DatasBin.WarpData;
 
@@ -1665,7 +1664,7 @@ public class GameEngine
 
         if (entity.PlatformEntity != null)
         {
-            entity.PlatformEntity.WarpEntity = null;
+            entity.PlatformEntity.CarriedEntity = null;
         }
     }
 
@@ -1695,8 +1694,7 @@ public class GameEngine
 
         if (entity.PlatformEntity != null)
         {
-            //TODO: figure out what 2c is
-            entity.PlatformEntity.WarpEntity = null;
+            entity.PlatformEntity.CarriedEntity = null;
         }
     }
 
@@ -2838,9 +2836,9 @@ public class GameEngine
     }
 
     //800423f8
-    public int TryPlayEtcAnimation(uint animationId, int animationMode)
+    public int TryPlayEtcAnimation(uint textId, int animationMode)
     {
-        int[] tableBase;
+        string[] strings;
 
         if (IsWarpInProgress())
         {
@@ -2848,17 +2846,20 @@ public class GameEngine
         }
 
         Debugger.Break();
-        //tableBase = StaticVariables.g_etcAnimTable;
-        //
-        //if ((animationId & 0x80) != 0)
-        //{
-        //    tableBase = StaticVariables.g_etcAnimTableAlt;
-        //}
-        //
-        //var uVar1 = tableBase[(animationId & 0x7f) * 2];
-        //
-        //SetupEtcAnimation();
-        //PlayEtcAnimation(tableBase[uVar1], animationMode);
+
+        strings = AlundraMap.Strings;
+        //tableBase = StaticVariables.g_etcAnimTable; //alundra string table
+        
+        if ((textId & 0x80) != 0)
+        {
+            strings = CurrentMap.Strings;
+            //tableBase = StaticVariables.g_etcAnimTableAlt; //currentmapstringtable
+        }
+
+        var text = strings[(textId & 0x7f) * 2];
+        
+        SetupEtcAnimation();
+        PlayEtcAnimation(text, animationMode);
 
         return 1;
     }

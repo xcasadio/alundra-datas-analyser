@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace AlundraEngine.DatasBin;
+﻿namespace AlundraEngine.DatasBin;
 
 public class MapTile
 {
