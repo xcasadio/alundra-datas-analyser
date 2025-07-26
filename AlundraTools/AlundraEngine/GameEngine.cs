@@ -1395,7 +1395,7 @@ public class GameEngine
 
                 if (StaticVariables.PlayerEntity.Hp != 0)
                 {
-                    var itemCount = GetNumberOfItem(0x27);
+                    var itemCount = PlayerManager.GetNumberOfItem(0x27);
                     if (itemCount != 0)
                     {
                         PlayerManager.UseItem(0x27);
@@ -1444,24 +1444,6 @@ public class GameEngine
         {
             StaticVariables.g_isGameEnding = 0;
         }
-    }
-
-    //8004e428
-    public int GetNumberOfItem(int warpIndex)
-    {
-        int nbItem;
-
-        if (warpIndex < 0 || StaticVariables.g_itemsCount <= warpIndex)
-        {
-            //LogDebugMessage(StaticVariables.g_buffer_isMapUnlocked, warpIndex);
-            nbItem = 0;
-        }
-        else
-        {
-            nbItem = StaticVariables.g_numberOfItems[warpIndex * 2 + 1];
-        }
-
-        return nbItem;
     }
 
     private int TriggerDebugZone()
@@ -2116,100 +2098,6 @@ public class GameEngine
         }*/
     }
 
-    //8004df68
-    public int FUN_8004df68()
-    {
-        Debugger.Break();
-        return 0;
-        //return (int)StaticVariables.g_playerStats[1].currentWarpEntityId;
-    }
-
-    //8004e004
-    public void FUN_8004e004(int param_1)
-    {
-        Debugger.Break();
-        //SetMoney(StaticVariables.g_playerStats[1].currentWarpEntityId - param_1);
-    }
-
-    //8004dfd8
-    public void AddMoney(int amount)
-    {
-        PlayerManager.SetMoney((short)(amount + StaticVariables.g_playerStats.MoneyAmount));
-    }
-
-    //8004df10
-    public void SpendMoney(int amount)
-    {
-        PlayerManager.SetMoney((short)(StaticVariables.g_playerStats.MoneyAmount - amount));
-    }
-
-    public int HandleMapTriggerCommand(int commandId)
-    {
-        Debugger.Break();
-        return 0;
-        /*
-        int result;
-        int fadeLevel;
-
-        switch (commandId)
-        {
-            case 0:
-                result = 0;
-                break;
-            default:
-                result = IsMapRequirementMet(commandId) ? 1 : 0;
-                break;
-            case 0x45:
-                fadeLevel = 1;
-                goto ApplyFadeShortcut;
-            case 0x46:
-                fadeLevel = 5;
-                goto ApplyFadeShortcut;
-            case 0x47:
-                fadeLevel = 10;
-                goto ApplyFadeShortcut;
-            case 0x48:
-                fadeLevel = 0x1e;
-                ApplyFadeShortcut:
-                AddMoney(fadeLevel);
-                result = 1;
-                break;
-            case 0x4f:
-                IncreaseFadeLevel(1);
-                result = 1;
-                break;
-            case 0x50:
-                SpawnCamExplosionEffects();
-                result = 1;
-                break;
-            case 0x51:
-                SpawnRandomExplosionParticles();
-                result = 1;
-                break;
-            case 0x52:
-                SpawnSpinningParticleRing();
-                result = 1;
-                break;
-            case 0x53:
-                TriggerExplosionEffect(StaticVariables.g_entitySlots);
-                result = 1;
-                break;
-            case 0x54:
-                AddLifeToEntity(StaticVariables.g_entitySlots);
-                result = 1;
-                break;
-            case 0x55:
-                AddLowHpAndSpawnEffect(StaticVariables.g_entitySlots);
-                result = 1;
-                break;
-            case 0x56:
-                AddMediumHpAndSpawnEffect(StaticVariables.g_entitySlots);
-                result = 1;
-                break;
-        }
-        return result;*/
-    }
-
     //8002d7b0
     public void ChangeAreaTileProperties(int mapTileIndex)
     {
@@ -2617,11 +2505,12 @@ public class GameEngine
         // Return the array of balance records
         return currentRecord;
     }
+
     // 8004e0f8
     public int GetTriggeredWarpMapId()
     {
-        var itemId = StaticVariables.g_playerStats.Hp;
-        var numberOfItem = GetNumberOfItem(itemId);
+        var itemId = StaticVariables.g_playerStats.ItemId;
+        var numberOfItem = PlayerManager.GetNumberOfItem(itemId);
 
         if (numberOfItem == 0)
         {
@@ -2632,8 +2521,8 @@ public class GameEngine
         // (warpId * 5) est l'indice multiplié par la taille de chaque entrée
         var sectionId = StaticVariables.g_itemsProperties[itemId * 5];
 
-        var tileMapSectionIndex = GetWeaponIdFromSlot((uint)sectionId);
-        SetCurrentItemId(tileMapSectionIndex);
+        var weaponId = GetWeaponIdFromSlot((uint)sectionId);
+        SetCurrentItemId(weaponId);
         return itemId;
     }
 
@@ -2837,7 +2726,7 @@ public class GameEngine
     }
 
     //800450f0
-    private int PlayEtcAnimation(string scriptText, int animationMode)
+    public int PlayEtcAnimation(string scriptText, int animationMode)
     {
         if (SetTransitionType(animationMode) == 0)
         {
@@ -2950,5 +2839,11 @@ public class GameEngine
         SoundManager.PlaySoundEffect(6);
 
         return 1;
+    }
+
+    //8004507c
+    public void SetEtcAnimationMode(int mode)
+    {
+        StaticVariables.g_etcAnimationMode = mode;
     }
 }

@@ -76,4 +76,22 @@ public class CdManager
         return 1; //iVar3 == 2 ? 1 : 0;
     }
 
+    //8005a7d4
+    public bool FUN_8005a7d4()
+    {
+        bool bVar1;
+
+        return true;
+
+        if ((StaticVariables.g_isCdResetRequested == 0) && ((StaticVariables.g_cdIsReady == 0 || (StaticVariables.g_cdDataLoaded != 0))))
+        {
+            bVar1 = false;
+        }
+        else
+        {
+            bVar1 = StaticVariables.g_cdInitRequired != 0;
+        }
+
+        return bVar1;
+    }
 }

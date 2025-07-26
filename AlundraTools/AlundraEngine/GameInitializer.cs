@@ -364,7 +364,7 @@ public class GameInitializer
                 value &= 0xFF;
                 if ((value & 0x80) != 0)
                 {
-                    GetItemUnlockRequirement(iconIndex);
+                    _gameEngine.PlayerManager.AddOneItemIfUnlocked(iconIndex);
                 }
                 iconIndex = iconIndex + 1;
                 //iconEtcEntryPtr = iconEtcEntryPtr + 2;
@@ -384,31 +384,6 @@ public class GameInitializer
         StaticVariables.g_cameraTargetY = (StaticVariables.g_initialCameraTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
         StaticVariables.g_cameraTargetZ = StaticVariables.g_initialCameraTileZ << 0x14;
         StaticVariables.g_gameplayTime = StaticVariables.g_savedGameplayTime;
-    }
-
-    // 8004e530
-    private int GetItemUnlockRequirement(int itemId)
-    {
-        if (itemId < 0 || itemId >= StaticVariables.g_itemsCount)
-        {
-            Debugger.Break();
-            Debug.WriteLine("Invalid itemId in GetItemUnlockRequirement");
-            return 0;
-        }
-
-        int itemIdIndex = itemId * 2; // In the assembly: itemIdIndex = (itemId * 4) + g_numberOfItems
-        short currentUsage = StaticVariables.g_numberOfItems[itemIdIndex + 1];
-        int itemPropertyId = (itemId * 5);
-        short unlockRequirement = StaticVariables.g_itemsProperties[itemPropertyId + 3];
-
-        // If current usage doesn't match the requirement, increment it
-        if (currentUsage != unlockRequirement)
-        {
-            StaticVariables.g_numberOfItems[itemIdIndex + 1] = (short)(currentUsage + 1);
-            return currentUsage + 1;
-        }
-
-        return itemId;
     }
 
     // 8004dac0

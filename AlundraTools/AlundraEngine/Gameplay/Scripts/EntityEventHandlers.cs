@@ -2823,11 +2823,8 @@ public class EntityEventHandlers
     // 8003EAD4
     private int Script_SetEtcAnimationMode(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-        return 0;
-        /*
         _gameEngine.SetEtcAnimationMode(variables[1]);
-        return 2;*/
+        return 2;
     }
 
     // 8003EB00
@@ -3783,7 +3780,7 @@ public class EntityEventHandlers
     // 8003FE7C
     private int Script_130_082(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var succes = _gameEngine.HandleMapTriggerCommand(variables[1]);
+        var succes = _gameEngine.PlayerManager.HandleMapTriggerCommand(variables[1]);
 
         if (succes == 0)
         {
@@ -3800,7 +3797,7 @@ public class EntityEventHandlers
     // 8003FEC8
     private int Script_131_083(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var iVar1 = _gameEngine.GetNumberOfItem(variables[1]);
+        var iVar1 = _gameEngine.PlayerManager.GetNumberOfItem(variables[1]);
 
         if (iVar1 < variables[2])
         {
@@ -4336,21 +4333,21 @@ public class EntityEventHandlers
     // 80040A2C
     private int Script_151_097(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.SpendMoney(variables[1]);
+        _gameEngine.PlayerManager.SpendMoney(variables[1]);
         return 2;
     }
 
     // 80040A58
     private int Script_152_098(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.AddMoney(variables[1]);
+        _gameEngine.PlayerManager.AddMoney(variables[1]);
         return 3;
     }
 
     // 80040A8C
     private int Script_153_099(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var iVar1 = _gameEngine.FUN_8004df68();
+        var iVar1 = _gameEngine.PlayerManager.FUN_8004df68();
 
         if (iVar1 < variables[1])
         {
@@ -4358,7 +4355,7 @@ public class EntityEventHandlers
         }
         else
         {
-            _gameEngine.FUN_8004e004(variables[1]);
+            _gameEngine.PlayerManager.FUN_8004e004(variables[1]);
 
             eventProgramState.Result = 1;
         }
@@ -4369,7 +4366,7 @@ public class EntityEventHandlers
     // 80040B00
     private int Script_154_09A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var iVar1 = _gameEngine.FUN_8004df68();
+        var iVar1 = _gameEngine.PlayerManager.FUN_8004df68();
 
         if (iVar1 < variables[1])
         {
@@ -5072,15 +5069,11 @@ public class EntityEventHandlers
     // 80041A44
     private int Script_186_0BA(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-        return 0;
-        /*
         bool bVar1;
-        undefined3 extraout_var;
-        bVar1 = _gameEngine.FUN_8005a7d4();
-        eventProgramState.Result = _gameEngine.CONCAT31(extraout_var, bVar1);
+        bVar1 = _gameEngine.CdManager.FUN_8005a7d4();
+        eventProgramState.Result = bVar1 ? 1 : 0;
 
-        return 1;*/
+        return 1;
     }
 
     // 80041A74
