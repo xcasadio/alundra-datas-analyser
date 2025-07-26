@@ -301,6 +301,8 @@ public partial class FrmGame : Form
         {
             UpdatePad();
 
+            _graphics.Clear(Color.Black);
+            
             _engine.MainLoop(_graphics);
 
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;

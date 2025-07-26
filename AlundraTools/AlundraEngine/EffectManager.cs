@@ -182,7 +182,7 @@ public class EffectManager
             effect.CurrentAnimation = effect.TargetAnimation;
             effect.NextFrameDelay = 0;
             effect.DestroyFlag = 0;
-            effect.AnimIndex = 0;
+            effect.CurrentFrameIndex = 0;
         }
         else
         {
@@ -195,7 +195,7 @@ public class EffectManager
 
             if (effect.NextFrameDelay == 0)
             {
-                effect.AnimIndex++;
+                effect.CurrentFrameIndex++;
             }
         }
 
@@ -206,9 +206,9 @@ public class EffectManager
 
             if ((frameData.Delay & 0x80) != 0)
             {
-                //effect.AnimIndex++;
+                //effect.CurrentFrameIndex++;
                 var anim = effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnimation];
-                effect.Frame = anim.Frames[effect.AnimIndex];
+                effect.Frame = anim.Frames[effect.CurrentFrameIndex];
                 effect.NextFrameDelay = (byte)(frameData.Delay & 0x7f);
                 var imageOffset = (frameData.ImageSetPointer >> 8) | ((frameData.ImageSetPointer & 0xff) << 8);
 
@@ -236,7 +236,7 @@ public class EffectManager
 
             if (frameData.Delay == 1) //loop
             {
-                effect.AnimIndex = 0;
+                effect.CurrentFrameIndex = 0;
                 effect.Frame = effect.FirstFrame;
             }
             else

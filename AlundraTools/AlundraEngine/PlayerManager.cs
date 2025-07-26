@@ -2207,17 +2207,14 @@ public class PlayerManager
                 newDz = 0x200000 - dz;
             }
 
-            if (newDx >= newDy)
-            {
-                /* v1 garde |dx| */
-            }
-            else
+            if (newDx < newDy)
             {
                 newDx = newDy;
             }
 
             if (newDx < newDz)
             {   /* assez proche sur Z, on amortit X & Y */
+                dx = StepTowards(dx, 0, 0x00010000);
                 dy = StepTowards(dy, 0, 0x00010000);
             }
 

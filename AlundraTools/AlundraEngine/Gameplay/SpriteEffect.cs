@@ -40,7 +40,7 @@ public class SpriteEffect
     public byte _7e;
     public byte _7f;
 
-    public int AnimIndex = 0;//use this extra field because we arent using frame pointers that we can simply ++ to the next one
+    public int CurrentFrameIndex = 0;//use this extra field because we arent using frame pointers that we can simply ++ to the next one
 
     //reset all fields
     public void Reset()
@@ -80,7 +80,7 @@ public class SpriteEffect
         DestroyFlag = 0;
         _7e = 0;
         _7f = 0;
-        AnimIndex = 0;
+        CurrentFrameIndex = 0;
     }
 
     public override string ToString()
