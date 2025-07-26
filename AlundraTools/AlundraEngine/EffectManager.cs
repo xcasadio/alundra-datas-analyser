@@ -439,7 +439,7 @@ public class EffectManager
     // 80032c7c
     public int CreateWarpEffect(uint actionId, int x, int y, int z)
     {
-        var resolvedAction = _gameEngine.GetContentsItemId((short)actionId);
+        var resolvedAction = _gameEngine.GetContentsItemId((ushort)actionId);
 
         if (resolvedAction == 0)
         {

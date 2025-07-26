@@ -4,6 +4,7 @@ using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
+using System;
 using System.Diagnostics;
 using WarpData = AlundraEngine.DatasBin.WarpData;
 
@@ -931,60 +932,88 @@ public class GameEngine
     // 80032a40
     public void InitializeContents(Entity entity)
     {
-        if (entity.EntityRecord != null)
+        if (entity.EntityRecord == null)
         {
-            int u7 = entity.EntityRecord.U7;
+            entity.ContentsGameFlag = 0;
+        }
+        else
+        {
+            int contents = entity.EntityRecord._10; //_10
 
-            if ((u7 & 0x7ffff) >= 800)
+            if ((contents & 0x7ff) >= 800)
             {
-                u7 = 0;
+                contents = 0;
             }
 
-            entity.ContentsGameFlag = u7;
-            if (u7 != 0)
+            entity.ContentsGameFlag = contents;
+            if (contents != 0)
             {
-                var flagid = ((u7 >> 3) & 0xffc) >> 2;
-
+                var index = ((contents >> 3) & 0xffc) >> 2; // >> 2 ??
                 uint flag;
-                if ((u7 & 0x8000) != 0)
+
+                if ((contents & 0x8000) != 0)
                 {
-                    flag = StaticVariables.g_mapFlags[flagid];
+                    flag = StaticVariables.g_mapFlags[index];
                 }
                 else
                 {
-                    flag = StaticVariables.g_globalFlags[flagid];
+                    flag = StaticVariables.g_globalFlags[index];
                 }
 
-                var val = u7;
-                if (u7 < 0)
+                var val = contents;
+
+                if (contents < 0)
                 {
-                    val = u7 + 0x1f;
+                    val = contents + 0x1f;
                 }
+
                 var val2 = val >> 5;
                 val2 = val2 << 5;
                 var dif = val - val2;
                 var bitToCheck = 1 << dif;
+
                 if ((flag & bitToCheck) != 0)
                 {
-                    entity.ContentsItemId = (uint)GetContentsItemId(0);
+                    entity.ContentsItemId = (uint)GetContentsItemId(entity.EntityRecord.Contents);
+                    return;
+                }
+
+
+
+
+                uint[] flags;
+
+                if ((contents & 0x8000) == 0)
+                {
+                    flags = StaticVariables.g_mapFlags;
+                }
+                else
+                {
+                    flags = StaticVariables.g_globalFlags;
+                }
+
+                index = (contents >> 3) & 0xffc;
+                var mask = 1 << (val & 0x1f);
+
+                if ((flags[index] & mask) == 0)
+                {
+                    entity.ContentsItemId = (uint)GetContentsItemId(entity.EntityRecord.Contents);
                     return;
                 }
             }
+
             if (entity.EntityRecord.Contents != 0)
             {
                 entity.ContentsItemId = (uint)GetContentsItemId(entity.EntityRecord.Contents);
                 return;
             }
         }
-        else
-        {
-            entity.ContentsGameFlag = 0;
-        }
 
-        entity.ContentsItemId = (uint)GetContentsItemId(entity.SpriteRecord.Header.Contents);
+        entity.ContentsItemId = (uint)GetContentsItemId((ushort)entity.SpriteRecord.Header.Contents);
     }
 
-    public int GetContentsItemId(short contentId)
+    //80032968
+    public int GetContentsItemId(ushort contentId)
     {
         var isValid = contentId < 0x100;
 
@@ -994,13 +1023,16 @@ public class GameEngine
             {
                 return 0;
             }
+
             if ((contentId & 0x80) == 0)
             {
                 break;
             }
 
             StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-            contentId = (short)((contentId & 0x7f) * 0x10 + -0x7ffd71f4 + StaticVariables.g_gameRandomSeed * 0x10 >> 0x20);
+            uint rand = StaticVariables.g_gameRandomSeed >> 28;
+            var index = ((contentId & 0x7F) << 4) | rand;
+            contentId = StaticVariables.g_itemRandomTable[index];
             isValid = contentId < 0x100;
         }
 
@@ -1012,6 +1044,7 @@ public class GameEngine
         return contentId;
     }
 
+    //800440fc
     private void WarpPlayer(int posX, int posY, int posZ, int transitionType)
     {
         int drawPage;
@@ -1698,6 +1731,7 @@ public class GameEngine
         }
     }
 
+    //80032b90
     private int SpawnEntityContents(Entity entity)
     {
         if (entity.ContentsItemId == 0)
@@ -1705,127 +1739,53 @@ public class GameEngine
             return 0;
         }
 
-        if (!CheckItemId(entity.ContentsItemId))
+        if (CheckItemId(entity.ContentsItemId))
         {
             return 0;
         }
 
-        //SpawnEntity(Entity parent, int initDataIndex, int checkSpawnZone)
-        //SpawnEntity(Entity ownerEntity, bool ismapsprite, uint tableindex, int xpos, int ypos, int zpos, uint dir)
-        var child = SpawnEntity(null, false, entity.ContentsItemId + 0x1e,
+        var spawnedEntity = SpawnWarpEntity(null, 0, entity.ContentsItemId + 0x1e,
             entity.PosX, entity.PosY, entity.PosZ, 0);
 
-        if (child == null)
+        if (spawnedEntity == null)
         {
             return 0;
         }
 
-        child.ForceZ = 0xa0000;
-        child.Bytes[0] = 1;
+        spawnedEntity.ForceZ = 0xa0000;
+        spawnedEntity.Bytes[0] = 1;
+        spawnedEntity.Bytes[1] = 0;
+        spawnedEntity.Bytes[2] = 0;
+        spawnedEntity.Bytes[3] = 0;
+        spawnedEntity.Flags &= 0xffffff7f;
 
-        child.Flags &= 0xff7f;
+        var x = 600;
+        if (StaticVariables.g_numberOfItems[entity.ContentsItemId * 2 + 1] == 0)
+        {
+            x = -1;
+        }
 
-        //TODO: implement this lookuptable
-        /*int result = lookuptable[entity.ContentsItemId * 8];*/
+        spawnedEntity.InitialXPos = x;
+        spawnedEntity.InitialYPos = 0;
+        spawnedEntity.AIValues[0] = (short)(entity.ContentsGameFlag & 0xFFFF);
+        spawnedEntity.AIValues[1] = (short)((entity.ContentsGameFlag >> 16) & 0xFFFF); spawnedEntity.AIValues[2] = 0;
+        spawnedEntity.AIValues[3] = 10;
 
-        //if (result == 0)
-        //    result = -1;
-
-        //child.InitialXPos = result;
-
-        child.InitialYPos = 0;
-
-        child.Bytes.Set(0xa0000);
-
-        //TODO sfx
-        //PlaySoundEffect(0x54);
-        child.AIValues.Set(entity.ContentsGameFlag);
+        SoundManager.PlaySoundEffect(0x54);
         return 1;
     }
 
-    public bool CheckItemId(uint itemid)
+    //80032a00
+    public bool CheckItemId(uint itemId)
     {
-        if (itemid != 0x26)
+        if (itemId == 0x26 
+            || itemId == 0x51 
+            || itemId == 0x52)
         {
-            if (itemid - 0x51 >= 2)
-            {
-                return false;
-            }
-        }
-        var ret = PlayerManager.GetPlayerMpMax();
-        return ret < 1 ? true : false;
-    }
-
-    public int CollideOnEntitiesZ(Entity entity)
-    {
-        var collision = entity.TerrainHeight + 1;
-        if ((entity.Flags & 0x80) == 0)
-        {
-            return collision;
+            return PlayerManager.GetPlayerMpMax() == 0;
         }
 
-        if ((entity.AnimFlags & 0x80) != 0)
-        {
-            return collision;
-        }
-
-        if (entity.PlatformEntity != null)
-        {
-            return collision;
-        }
-
-        if (StaticVariables.g_collideableEntitiesCount <= 0)
-        {
-            return collision;
-        }
-
-        for (var dex = 0; dex < StaticVariables.g_collideableEntitiesCount; dex++)
-        {
-            var checkme = StaticVariables.g_collideableEntities[dex];
-
-            if (checkme == entity)
-            {
-                continue;
-            }
-
-            if (checkme.ModdedPosZ + checkme.Height >= entity.ModdedPosZ
-                || checkme.ModdedPosZ + checkme.Height < collision)
-            {
-                continue;
-            }
-
-            if (checkme.ModdedPosX - entity.ModdedPosX >= 0)
-            {
-                if (checkme.ModdedPosX - entity.ModdedPosX >= entity.Width + 1)
-                {
-                    continue;
-                }
-            }
-            else
-            {
-                if (entity.ModdedPosX - checkme.ModdedPosX >= checkme.Width + 1)
-                {
-                    continue;
-                }
-            }
-
-            if (checkme.ModdedPosY - entity.ModdedPosY >= 0)
-            {
-                if (checkme.ModdedPosY - entity.ModdedPosY < entity.Depth + 1)
-                {
-                    collision = checkme.ModdedPosZ + checkme.Height;
-                }
-            }
-            else
-            {
-                if (entity.ModdedPosY - checkme.ModdedPosY < checkme.Depth + 1)
-                {
-                    collision = checkme.ModdedPosZ + checkme.Height;
-                }
-            }
-
-        }
-        return collision;
+        return false;
     }
 
     // 8003c954

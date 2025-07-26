@@ -22,6 +22,11 @@ public class RendererHelper
             currentXPosition = StaticVariables.g_cameraCurrentX;
             currentYPosition = StaticVariables.g_cameraCurrentY;
         }
+        else
+        {
+            StaticVariables.g_cameraCurrentX = StaticVariables.g_cameraScrollingX;
+            StaticVariables.g_cameraCurrentY = StaticVariables.g_cameraScrollingY;
+        }
 
         var curXTile = currentXPosition / StaticVariables.MapTileWidth;
         var curYTile = 0;
@@ -135,6 +140,7 @@ public class RendererHelper
 
                 if (entity.SpriteRecord != null)
                 {
+                    /*
                     //display attached effect
                     if (entity.ActiveEffect?.Status == 2)
                     {
@@ -175,7 +181,7 @@ public class RendererHelper
                                 Y = scy
                             });
                         }
-                    }
+                    }*/
 
                     //display entity
                     var map = entity.IsMapSprite ? gameMap : datasBin.AlundraGameMap;
@@ -215,7 +221,12 @@ public class RendererHelper
         {
             var effect = StaticVariables.g_effectSlots[i];
 
-            if (effect.Status != 2 || effect.AttachedEntity != null)
+            if (effect.Id == 8)
+            {
+                //Debugger.Break();
+            }
+
+            if (effect.Status != 2 /*|| effect.AttachedEntity != null*/)
             {
                 continue;
             }

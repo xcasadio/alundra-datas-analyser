@@ -2387,7 +2387,6 @@ public class EntityEventHandlers
             flags = StaticVariables.g_globalFlags;
         }
 
-        // 36,ea,83,5b,80,06,40,1f,10,00
         var index = (key >> 3) & 0xffc;
         var mask = 1 << (variables[1] & 0x1f);
 

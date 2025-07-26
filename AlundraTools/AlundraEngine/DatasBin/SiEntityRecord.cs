@@ -22,11 +22,13 @@ public class SiEntityRecord
         EventCodesD_TouchIndex = br.ReadByte();
         EventCodesE_DeactivateIndex = br.ReadByte();
         EventCodesF_InteractIndex = br.ReadByte();
-        U7 = br.ReadByte();//10
-        U7 = (short)(U7 | (br.ReadByte() << 8));
-        //u8 = br.ReadByte();//11
-        Contents = br.ReadByte();//12
-        U10 = br.ReadByte();//13
+        //U7 = br.ReadByte();//10
+        //U7 = (short)(U7 | (br.ReadByte() << 8));
+        ////u8 = br.ReadByte();//11
+        //Contents = br.ReadByte();//12
+        //U10 = br.ReadByte();//13
+        _10 = br.ReadUInt16();
+        Contents = br.ReadUInt16();
 
     }
 
@@ -61,11 +63,12 @@ public class SiEntityRecord
         return null;
     }
     public readonly int MemoryAddress;
+
     public readonly byte XMin;//if character isnt within this bounding box, dont activate the entity
     public readonly byte YMin;
-    public readonly byte XMax;//33
-    public readonly byte YMax;//3b
-    public readonly byte IsEnabled;//1
+    public readonly byte XMax;//0x2
+    public readonly byte YMax;
+    public readonly byte IsEnabled;
     public readonly byte SpriteDirection;//0,c0,c1,c2,c3,80
     public readonly byte SpriteTableIndex;
     public readonly byte XPos;//divide by 2
@@ -76,10 +79,9 @@ public class SiEntityRecord
     public readonly byte EventCodesC_TickIndex;
     public readonly byte EventCodesD_TouchIndex;
     public readonly byte EventCodesE_DeactivateIndex;
-    public readonly byte EventCodesF_InteractIndex;
-    public readonly short U7;
-    //public byte u8;
-    public readonly short Contents;
-    public readonly byte U10;
+    public readonly byte EventCodesF_InteractIndex; //0xf
+    //public readonly ushort U7;
+    public readonly ushort _10;
+    public readonly ushort Contents;
 
 }

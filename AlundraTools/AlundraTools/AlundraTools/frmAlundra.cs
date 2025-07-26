@@ -336,7 +336,7 @@ namespace AlundraTools.AlundraTools
                             entity.EventCodesE_DeactivateIndex.ToString("x2"),
                             entity.EventCodesF_InteractIndex.ToString("x2")
                     ]);
-                    lvi.ToolTipText = ByteToString((byte)(entity.U7 & 0xff)) + ByteToString((byte)((entity.U7 & 0xff00) >> 8)) + ShortToString(entity.Contents) + ByteToString(entity.U10) + ByteToString(entity.XMin) + ByteToString(entity.YMin);
+                    lvi.ToolTipText = ShortToString(entity.Contents) + " " + ShortToString(entity._10) + " " + ByteToString(entity.XMin) + " " + ByteToString(entity.YMin);
                     lsvEntities.Items.Add(lvi);
                 }
             }
@@ -969,6 +969,11 @@ namespace AlundraTools.AlundraTools
             return b.ToString("x2");
         }
 
+
+        private string ShortToString(ushort s)
+        {
+            return s.ToString("x4");
+        }
 
         private string ShortToString(short s)
         {

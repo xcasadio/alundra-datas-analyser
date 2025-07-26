@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace AlundraEngine.Gameplay.Scripts;
 
@@ -43,6 +44,8 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramALoad, 20, SetCustomByteFromZPos);
         Register(ScriptHelper.ProgramALoad, 21, SpawnWarpDropAndAdjustPosition);
         Register(ScriptHelper.ProgramALoad, 22, SpawnVerticalWarpColumns);
+        Register(ScriptHelper.ProgramALoad, 254, FUN_80061bcc);
+        Register(ScriptHelper.ProgramALoad, 255, FUN_80061bd4);
 
         Register(ScriptHelper.ProgramCTick, 0, AI_EmptyFunction); // null
         Register(ScriptHelper.ProgramCTick, 1, AI_UpdateEntityAI_IdleSkittish);
@@ -52,21 +55,20 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramCTick, 23, AI_FUN_8006b848);
         Register(ScriptHelper.ProgramCTick, 60, AI_UpdateIceProjectile);
         Register(ScriptHelper.ProgramCTick, 70, AI_FUN_8007b7b0);
+        Register(ScriptHelper.ProgramCTick, 255, FUN_8007c174);
 
 
         Register(ScriptHelper.ProgramDTouch, 0, AI_EmptyFunction); // null
-        //Register(ScriptHelper.ProgramDTouch, 1, AI_EmptyFunction); // null
-        //Register(ScriptHelper.ProgramDTouch, 2, AI_EmptyFunction); // null
-        //Register(ScriptHelper.ProgramDTouch, 3, AI_EmptyFunction); // null
         Register(ScriptHelper.ProgramDTouch, 4, AI_EmptyFunction); // null
 
         Register(ScriptHelper.ProgramEDeactivate, 0, Script_Deactivate_FUN_8007ed10);
-        Register(ScriptHelper.ProgramEDeactivate, 2, AI_FUN_8007ed30); // null
+        Register(ScriptHelper.ProgramEDeactivate, 2, AI_FUN_8007ed30);
         Register(ScriptHelper.ProgramEDeactivate, 9, AI_HandleIceLightHitEffect);
         Register(ScriptHelper.ProgramEDeactivate, 17, AI_UpdateArrows);
 
         Register(ScriptHelper.ProgramFInteract, 0, AI_EmptyFunction); // null
-        Register(ScriptHelper.ProgramFInteract, 1, Script_FInteract_FUN_8007fc64); // null
+        Register(ScriptHelper.ProgramFInteract, 1, Script_FInteract_FUN_8007fc64);
+        Register(ScriptHelper.ProgramFInteract, 255, FUN_8007fc88);
     }
 
     private void Register(int type, byte code, SpriteEventHandler handler)
@@ -174,7 +176,7 @@ public class SpriteEventHandlers
     // 80061820
     public void SpawnWarpAndSetAnim(Entity entity)
     {
-        Entity spawned = _gameEngine.SpawnWarpEntity(entity, 1, 0xF5, entity.PosX + 0xF00000, 
+        Entity spawned = _gameEngine.SpawnWarpEntity(entity, 1, 0xF5, entity.PosX + 0xF00000,
             entity.PosY, entity.PosZ, entity.TargetDirection);
         entity.AIValues[0] = (short)spawned.Index;
         spawned.AIValues[1] = 0;
@@ -292,6 +294,85 @@ public class SpriteEventHandlers
 
         _gameEngine.SoundManager.PlaySoundEffect(0x19C);
         StaticVariables.g_loaderInitialized = 0;
+    }
+
+    //80061bcc
+    private void FUN_80061bcc(Entity entity)
+    {
+        //do nothing
+    }
+
+    //80061bd4
+    private void FUN_80061bd4(Entity entity)
+    {
+        ushort contentFlags;
+        uint[] flags;
+        int iVar3;
+
+        if (entity.SpriteTableIndex == 0x1e)
+        {
+            if (entity.ContentsItemId == 0)
+            {
+                entity.TargetAnimationId = 1;
+            }
+
+            return;
+        }
+
+        if (entity.Bytes[0] == 1)
+        {
+            return;
+        }
+
+        if (entity.Bytes[0] == 2)
+        {
+            if (entity.AIValues[4] == 1)
+            {
+                if (entity.AIValues[4] != 0)
+                {
+                    _gameEngine.SetNextMapId(0xb);
+                }
+            }
+            else
+            {
+                entity.Status = 1;
+            }
+
+            return;
+        }
+
+        entity.Flags &= 0xffffff7f;
+
+        if (entity.ContentsGameFlag != 0)
+        {
+            contentFlags = (ushort)entity.ContentsGameFlag;
+
+            if ((contentFlags & 0x8000) == 0)
+            {
+                flags = StaticVariables.g_mapFlags;
+            }
+            else
+            {
+                flags = StaticVariables.g_globalFlags;
+            }
+
+
+            var index = (contentFlags >> 3) & 0xffc;
+            var mask = 1 << (entity.ContentsGameFlag & 0x1f);
+
+            if ((flags[index] & mask) == 0)
+            {
+                _gameEngine.DestroyEntity(entity);
+                return;
+            }
+        }
+
+        entity.AIValues[0] = -1;
+        entity.AIValues[1] = -1;
+        entity.AIValues[2] = 0;
+        entity.AIValues[3] = 0;
+        entity.InitialXPos = entity.ContentsGameFlag;
+        entity.InitialYPos = 0;
     }
 
     #endregion
@@ -759,7 +840,7 @@ public class SpriteEventHandlers
                     do
                     {
                         var tile = entity2.MapTiles[value];
-                        if (((tile.Walkability | (tile.GroundProperty << 8))  & 0x1001) == 0x1001)
+                        if (((tile.Walkability | (tile.GroundProperty << 8)) & 0x1001) == 0x1001)
                         {
                             break;
                         }
@@ -862,6 +943,35 @@ public class SpriteEventHandlers
         entity.Flags = (entity.Flags | 0x30) & 0xffffff7f;//turn off bit 8, turn on bits 5 and 6
     }
 
+    //8007a8a0
+    public void AI_UpdateIceProjectile(Entity entity)
+    {
+        if ((entity.FrameCounter & 0x3) == 0)
+        {
+            var offsetZ = 0;
+            byte spriteTableIndex = 0x12;
+
+            if (entity.SpriteTableIndex - 0xb < 2)
+            {
+                spriteTableIndex = 0x11;
+                offsetZ = 0x80000; // << 19
+            }
+
+            var spriteEffect = _gameEngine.EffectManager.CreateEffectEntity(
+                0, spriteTableIndex, 0,
+                entity.PosX,
+                entity.PosY,
+                entity.PosZ + offsetZ);
+
+            if (spriteEffect != null)
+            {
+                spriteEffect.ForceX = -entity.ForceX;
+                spriteEffect.ForceY = -entity.ForceY;
+                spriteEffect.ForceZ = -entity.ForceZ;
+            }
+        }
+    }
+
     //8007b7b0
     //etick_17_jarsandboxes_Handler
     public void AI_FUN_8007b7b0(Entity entity)
@@ -894,33 +1004,10 @@ public class SpriteEventHandlers
         entity.Flags = (entity.Flags | 0x34) & 0xffffff7f;//turn off bit 8, turn on bits 5 and 6
     }
 
-    //8007a8a0
-    public void AI_UpdateIceProjectile(Entity entity)
+    //8007c174
+    public void FUN_8007c174(Entity entity)
     {
-        if ((entity.FrameCounter & 0x3) == 0)
-        {
-            var offsetZ = 0;
-            byte spriteTableIndex = 0x12;
-
-            if (entity.SpriteTableIndex - 0xb < 2)
-            {
-                spriteTableIndex = 0x11;
-                offsetZ = 0x80000; // << 19
-            }
-
-            var spriteEffect = _gameEngine.EffectManager.CreateEffectEntity(
-                0, spriteTableIndex, 0, 
-                entity.PosX, 
-                entity.PosY,
-                entity.PosZ + offsetZ);
-
-            if (spriteEffect != null)
-            {
-                spriteEffect.ForceX = -entity.ForceX;
-                spriteEffect.ForceY = -entity.ForceY;
-                spriteEffect.ForceZ = -entity.ForceZ;
-            }
-        }
+        Debugger.Break();
     }
 
     #endregion
@@ -930,13 +1017,13 @@ public class SpriteEventHandlers
     //8007ed10
     private void Script_Deactivate_FUN_8007ed10(Entity entity)
     {
-        _gameEngine.DestroyEntity(entity,-1);
+        _gameEngine.DestroyEntity(entity, -1);
     }
 
     //8007ed30
     void AI_FUN_8007ed30(Entity entity)
     {
-        if ((entity.TargetAnimationId == 2 && entity.ForceResetAnimationFlag == 1) 
+        if ((entity.TargetAnimationId == 2 && entity.ForceResetAnimationFlag == 1)
             || (entity.CombinedVramFlagsAND & 4U) != 0)
         {
             _gameEngine.DestroyEntity(entity, -1);
@@ -979,7 +1066,7 @@ public class SpriteEventHandlers
                 }
 
                 effectEntity = _gameEngine.EffectManager.CreateEffectEntity(
-                    0, spriteTableIndex, 0, 
+                    0, spriteTableIndex, 0,
                     entity.PosX, entity.PosY, entity.PosZ + isSmallSprite * 0x80000);
 
                 if (effectEntity != null)
@@ -1014,7 +1101,7 @@ public class SpriteEventHandlers
                 do
                 {
                     effectEntity = _gameEngine.EffectManager.CreateEffectEntity(
-                        0, spriteTableIndex, 0, 
+                        0, spriteTableIndex, 0,
                         entity.PosX, entity.PosY, entity.PosZ);
 
                     if (effectEntity != null)
@@ -1081,12 +1168,12 @@ public class SpriteEventHandlers
 
                             if (entity != entityTarget
                                 && (entityTarget.AnimFlags & 0x40) == 0
-                                && entityTarget.BalanceRecord.Vals[5] == 0 
+                                && entityTarget.BalanceRecord.Vals[5] == 0
                                 && (entityTarget.Flags & collisionMask) != 0)
                             {
                                 var withinX = entity.HitBoxX - entityTarget.HitBoxOriginX; //entityTarget.ModdedPosX
                                 bool withinY;
-                                
+
                                 if (withinX < 0)
                                 {
                                     withinY = entityTarget.HitBoxOriginX - entity.HitBoxX < entity.CollisionWidth + 1;
@@ -1172,6 +1259,12 @@ public class SpriteEventHandlers
         entity.Bytes[3] = 0;
         StaticVariables.g_entitySlots[0].TargetAnimationId = 0;
         StaticVariables.g_playerControlFlags |= 4;
+    }
+
+    //8007fc88
+    private void FUN_8007fc88(Entity entity)
+    {
+        Debugger.Break();
     }
 
     #endregion
