@@ -1076,7 +1076,7 @@ public class SpriteEventHandlers
                 if (entity.AIValues[4] == 0)
                 {
                     entity.InitialYPos += 2;
-                    uVar6 = StaticVariables.g_iconNameEtcBase[(int)(itemId * 8 + 5)];
+                    uVar6 = StaticVariables.g_iconNameEtcBase[(int)(itemId + 1)]; //itemId * 8 + 5
 
                     if (uVar6 == 0)
                     {
@@ -1219,9 +1219,8 @@ public class SpriteEventHandlers
                     StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetEtcString(0x45);
                 }
 
-                Debugger.Break();
                 _gameEngine.FUN_80032b28((uint)entity.ContentsGameFlag); //AIValues
-                uVar6 = StaticVariables.g_iconNameEtcBase[(int)(itemId * 8 + 5)];
+                uVar6 = StaticVariables.g_iconNameEtcBase[(int)(itemId + 1)]; //itemId * 8 + 5
 
                 if (uVar6 != 0)
                 {
