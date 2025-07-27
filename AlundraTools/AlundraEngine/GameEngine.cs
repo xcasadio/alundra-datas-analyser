@@ -16,7 +16,7 @@ public class GameEngine
 
     public readonly DatasBin.DatasBin DatasBin;
     public readonly BalanceBin BalanceBin;
-    private readonly EtcResR _etcResR;
+    public readonly EtcResR EtcResR;
     private readonly Font3 _font3;
 
     public GameMap CurrentMap { get; private set; }
@@ -43,7 +43,7 @@ public class GameEngine
         DatasBin = datasBin;
         BalanceBin = balanceBin;
         SoundBin = soundBin;
-        _etcResR = etcResR;
+        EtcResR = etcResR;
         _font3 = font3;
 
         _entityEventHandlers = new EntityEventHandlers(this);
@@ -419,12 +419,12 @@ public class GameEngine
         //LoadVRAMAssets();
     }
 
-    private void InitializeItems(int param_1)
+    private void InitializeItems(int threshold)
     {
         var iVar2 = 2;
         var piVar1 = 2;
 
-        StaticVariables.g_itemIdThreshold = param_1;
+        StaticVariables.g_itemIdThreshold = threshold;
 
         do
         {
@@ -948,40 +948,8 @@ public class GameEngine
             entity.ContentsGameFlag = contents;
             if (contents != 0)
             {
-                var index = ((contents >> 3) & 0xffc) >> 2; // >> 2 ??
-                uint flag;
-
-                if ((contents & 0x8000) != 0)
-                {
-                    flag = StaticVariables.g_mapFlags[index];
-                }
-                else
-                {
-                    flag = StaticVariables.g_globalFlags[index];
-                }
-
-                var val = contents;
-
-                if (contents < 0)
-                {
-                    val = contents + 0x1f;
-                }
-
-                var val2 = val >> 5;
-                val2 = val2 << 5;
-                var dif = val - val2;
-                var bitToCheck = 1 << dif;
-
-                if ((flag & bitToCheck) != 0)
-                {
-                    entity.ContentsItemId = (uint)GetContentsItemId(entity.EntityRecord.Contents);
-                    return;
-                }
-
-
-
-
                 uint[] flags;
+                var val = contents;
 
                 if ((contents & 0x8000) == 0)
                 {
@@ -992,7 +960,7 @@ public class GameEngine
                     flags = StaticVariables.g_globalFlags;
                 }
 
-                index = (contents >> 3) & 0xffc;
+                var index = (contents >> 3) & 0xffc;
                 var mask = 1 << (val & 0x1f);
 
                 if ((flags[index] & mask) == 0)
@@ -1608,7 +1576,7 @@ public class GameEngine
         //    }
         //    else
         //    {
-        //        playerEntity.Index = StaticVariables.g_entitySlots[0].Index; // ??
+        //        playerEntity.Index = StaticVariables.PlayerEntity.Index; // ??
         //        playerEntity.Index2 = 0;
         //        playerEntity.RelativeWarpOffsetX = 0; // new EventProgramState();
         //        playerEntity.ChildEntity = null;
@@ -2249,22 +2217,22 @@ public class GameEngine
             return -1;
         }
 
-        deltaX = StaticVariables.g_entitySlots[0].ModdedPosX - entity.ModdedPosX;
+        deltaX = StaticVariables.PlayerEntity.ModdedPosX - entity.ModdedPosX;
 
         if (deltaX < 0)
         {
-            if (-deltaX <= StaticVariables.g_entitySlots[0].Width)
+            if (-deltaX <= StaticVariables.PlayerEntity.Width)
             {
-                return (int)((StaticVariables.g_entitySlots[0].PosY < entity.PosY ? 1U : 0U) << 4);
+                return (int)((StaticVariables.PlayerEntity.PosY < entity.PosY ? 1U : 0U) << 4);
             }
         }
         else if (deltaX <= entity.Width)
         {
-            return (int)((StaticVariables.g_entitySlots[0].PosY < entity.PosY ? 1U : 0U) << 4);
+            return (int)((StaticVariables.PlayerEntity.PosY < entity.PosY ? 1U : 0U) << 4);
         }
 
         deltaX = 0x18;
-        if (StaticVariables.g_entitySlots[0].PosX < entity.PosX)
+        if (StaticVariables.PlayerEntity.PosX < entity.PosX)
         {
             deltaX = 0x08;
         }
@@ -2377,16 +2345,16 @@ public class GameEngine
             var flag = useFlag ? 0 : 1;
 
             // Get player position
-            var playerY = StaticVariables.g_entitySlots[0].PosY;
+            var playerY = StaticVariables.PlayerEntity.PosY;
 
             // Create an effect entity
             var effect = EffectManager.CreateEffectEntity(
                 0,              // behaviorFlags
                 14,             // spriteTableIndex (0xE)
                 (byte)flag,     // animationIndex
-                StaticVariables.g_entitySlots[0].PosX,    // x position
+                StaticVariables.PlayerEntity.PosX,    // x position
                 playerY,        // y position
-                StaticVariables.g_entitySlots[0].PosZ + 0x80000  // z position (slightly above player)
+                StaticVariables.PlayerEntity.PosZ + 0x80000  // z position (slightly above player)
             );
 
             // If effect was created successfully, set its parameters
@@ -2423,9 +2391,9 @@ public class GameEngine
                 0,              // behaviorFlags
                 14,             // spriteTableIndex (0xE)
                 (byte)i,        // animationIndex (use loop counter as animation index)
-                StaticVariables.g_entitySlots[0].PosX,    // x position
-                StaticVariables.g_entitySlots[0].PosY,    // y position
-                StaticVariables.g_entitySlots[0].PosZ + 0x100000  // z position (higher above player)
+                StaticVariables.PlayerEntity.PosX,    // x position
+                StaticVariables.PlayerEntity.PosY,    // y position
+                StaticVariables.PlayerEntity.PosZ + 0x100000  // z position (higher above player)
             );
 
             if (effect != null)
@@ -2449,9 +2417,9 @@ public class GameEngine
                 0,              // behaviorFlags
                 14,             // spriteTableIndex (0xE)
                 2,              // animationIndex fixed at 2
-                StaticVariables.g_entitySlots[0].PosX,    // x position
-                StaticVariables.g_entitySlots[0].PosY,    // y position
-                StaticVariables.g_entitySlots[0].PosZ + 0x100000  // z position (higher above player)
+                StaticVariables.PlayerEntity.PosX,    // x position
+                StaticVariables.PlayerEntity.PosY,    // y position
+                StaticVariables.PlayerEntity.PosZ + 0x100000  // z position (higher above player)
             );
 
             if (effect != null)
@@ -2845,5 +2813,28 @@ public class GameEngine
     public void SetEtcAnimationMode(int mode)
     {
         StaticVariables.g_etcAnimationMode = mode;
+    }
+
+    //80032b28
+    public void FUN_80032b28(uint flag)
+    {
+        uint[] flags;
+        uint value;
+
+        if (flag == 0)
+        {
+            return;
+        }
+
+        if ((flag & 0x8000) == 0)
+        {
+            flags = StaticVariables.g_mapFlags;
+        }
+        else
+        {
+            flags = StaticVariables.g_globalFlags;
+        }
+
+        flags[(flag >> 3) & 0xffc] |= (uint)(1 << (int)(flag & 0x1f));
     }
 }

@@ -92,6 +92,10 @@ namespace AlundraTools.AlundraTools
             buttonControlAlundra = new Button();
             tabControlEffect = new TabControl();
             tabPageGlobal = new TabPage();
+            tabPageEffects = new TabPage();
+            label28 = new Label();
+            listBoxEffects = new ListBox();
+            propertyGridEffect = new PropertyGrid();
             tabPagePlayerStatus = new TabPage();
             comboBoxWeapon = new ComboBox();
             label27 = new Label();
@@ -111,11 +115,17 @@ namespace AlundraTools.AlundraTools
             numericUpDownMp = new NumericUpDown();
             label20 = new Label();
             numericUpDownHpMax = new NumericUpDown();
-            tabPageEffects = new TabPage();
-            label28 = new Label();
-            listBoxEffects = new ListBox();
-            propertyGridEffect = new PropertyGrid();
             tabPageDebug = new TabPage();
+            buttonRestoreHpAndMp = new Button();
+            buttonRestoreHp = new Button();
+            buttonIncreaseHp = new Button();
+            buttonRestoreMp = new Button();
+            buttonAddLowHp = new Button();
+            buttonAddMediumHp = new Button();
+            buttonIncreaseHpMax = new Button();
+            buttonIncreaseMp = new Button();
+            buttonIncreaseMpMax = new Button();
+            buttonAddHugeHp = new Button();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -125,6 +135,7 @@ namespace AlundraTools.AlundraTools
             groupBox4.SuspendLayout();
             tabControlEffect.SuspendLayout();
             tabPageGlobal.SuspendLayout();
+            tabPageEffects.SuspendLayout();
             tabPagePlayerStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownFalcon2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownFalcon1).BeginInit();
@@ -133,7 +144,6 @@ namespace AlundraTools.AlundraTools
             ((System.ComponentModel.ISupportInitialize)numericUpDownMpMax).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownMp).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownHpMax).BeginInit();
-            tabPageEffects.SuspendLayout();
             tabPageDebug.SuspendLayout();
             SuspendLayout();
             // 
@@ -791,6 +801,49 @@ namespace AlundraTools.AlundraTools
             tabPageGlobal.Text = "Global";
             tabPageGlobal.UseVisualStyleBackColor = true;
             // 
+            // tabPageEffects
+            // 
+            tabPageEffects.Controls.Add(label28);
+            tabPageEffects.Controls.Add(listBoxEffects);
+            tabPageEffects.Controls.Add(propertyGridEffect);
+            tabPageEffects.Location = new Point(4, 29);
+            tabPageEffects.Name = "tabPageEffects";
+            tabPageEffects.Padding = new Padding(3);
+            tabPageEffects.Size = new Size(535, 1024);
+            tabPageEffects.TabIndex = 2;
+            tabPageEffects.Text = "Effects";
+            tabPageEffects.UseVisualStyleBackColor = true;
+            // 
+            // label28
+            // 
+            label28.AutoSize = true;
+            label28.Location = new Point(2, 3);
+            label28.Name = "label28";
+            label28.Size = new Size(53, 20);
+            label28.TabIndex = 30;
+            label28.Text = "Effects";
+            // 
+            // listBoxEffects
+            // 
+            listBoxEffects.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            listBoxEffects.FormattingEnabled = true;
+            listBoxEffects.Location = new Point(3, 27);
+            listBoxEffects.Margin = new Padding(3, 4, 3, 4);
+            listBoxEffects.Name = "listBoxEffects";
+            listBoxEffects.Size = new Size(117, 984);
+            listBoxEffects.TabIndex = 28;
+            listBoxEffects.SelectedIndexChanged += listBoxEffects_SelectedIndexChanged;
+            // 
+            // propertyGridEffect
+            // 
+            propertyGridEffect.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            propertyGridEffect.BackColor = SystemColors.Control;
+            propertyGridEffect.Location = new Point(128, 27);
+            propertyGridEffect.Margin = new Padding(3, 4, 3, 4);
+            propertyGridEffect.Name = "propertyGridEffect";
+            propertyGridEffect.Size = new Size(400, 990);
+            propertyGridEffect.TabIndex = 29;
+            // 
             // tabPagePlayerStatus
             // 
             tabPagePlayerStatus.Controls.Add(comboBoxWeapon);
@@ -814,7 +867,7 @@ namespace AlundraTools.AlundraTools
             tabPagePlayerStatus.Location = new Point(4, 29);
             tabPagePlayerStatus.Name = "tabPagePlayerStatus";
             tabPagePlayerStatus.Padding = new Padding(3);
-            tabPagePlayerStatus.Size = new Size(893, 1024);
+            tabPagePlayerStatus.Size = new Size(535, 1024);
             tabPagePlayerStatus.TabIndex = 1;
             tabPagePlayerStatus.Text = "Player status";
             tabPagePlayerStatus.UseVisualStyleBackColor = true;
@@ -979,51 +1032,18 @@ namespace AlundraTools.AlundraTools
             numericUpDownHpMax.Value = new decimal(new int[] { 10, 0, 0, 0 });
             numericUpDownHpMax.ValueChanged += numericUpDownHpMax_ValueChanged;
             // 
-            // tabPageEffects
-            // 
-            tabPageEffects.Controls.Add(label28);
-            tabPageEffects.Controls.Add(listBoxEffects);
-            tabPageEffects.Controls.Add(propertyGridEffect);
-            tabPageEffects.Location = new Point(4, 29);
-            tabPageEffects.Name = "tabPageEffects";
-            tabPageEffects.Padding = new Padding(3);
-            tabPageEffects.Size = new Size(893, 1024);
-            tabPageEffects.TabIndex = 2;
-            tabPageEffects.Text = "Effects";
-            tabPageEffects.UseVisualStyleBackColor = true;
-            // 
-            // label28
-            // 
-            label28.AutoSize = true;
-            label28.Location = new Point(2, 3);
-            label28.Name = "label28";
-            label28.Size = new Size(53, 20);
-            label28.TabIndex = 30;
-            label28.Text = "Effects";
-            // 
-            // listBoxEffects
-            // 
-            listBoxEffects.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            listBoxEffects.FormattingEnabled = true;
-            listBoxEffects.Location = new Point(3, 27);
-            listBoxEffects.Margin = new Padding(3, 4, 3, 4);
-            listBoxEffects.Name = "listBoxEffects";
-            listBoxEffects.Size = new Size(117, 984);
-            listBoxEffects.TabIndex = 28;
-            listBoxEffects.SelectedIndexChanged += listBoxEffects_SelectedIndexChanged;
-            // 
-            // propertyGridEffect
-            // 
-            propertyGridEffect.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            propertyGridEffect.BackColor = SystemColors.Control;
-            propertyGridEffect.Location = new Point(128, 27);
-            propertyGridEffect.Margin = new Padding(3, 4, 3, 4);
-            propertyGridEffect.Name = "propertyGridEffect";
-            propertyGridEffect.Size = new Size(758, 990);
-            propertyGridEffect.TabIndex = 29;
-            // 
             // tabPageDebug
             // 
+            tabPageDebug.Controls.Add(buttonAddHugeHp);
+            tabPageDebug.Controls.Add(buttonRestoreHpAndMp);
+            tabPageDebug.Controls.Add(buttonRestoreHp);
+            tabPageDebug.Controls.Add(buttonIncreaseHp);
+            tabPageDebug.Controls.Add(buttonRestoreMp);
+            tabPageDebug.Controls.Add(buttonAddLowHp);
+            tabPageDebug.Controls.Add(buttonAddMediumHp);
+            tabPageDebug.Controls.Add(buttonIncreaseHpMax);
+            tabPageDebug.Controls.Add(buttonIncreaseMp);
+            tabPageDebug.Controls.Add(buttonIncreaseMpMax);
             tabPageDebug.Controls.Add(label8);
             tabPageDebug.Controls.Add(buttonControlAlundra);
             tabPageDebug.Controls.Add(label12);
@@ -1037,6 +1057,106 @@ namespace AlundraTools.AlundraTools
             tabPageDebug.TabIndex = 3;
             tabPageDebug.Text = "Debug";
             tabPageDebug.UseVisualStyleBackColor = true;
+            // 
+            // buttonRestoreHpAndMp
+            // 
+            buttonRestoreHpAndMp.Location = new Point(327, 254);
+            buttonRestoreHpAndMp.Name = "buttonRestoreHpAndMp";
+            buttonRestoreHpAndMp.Size = new Size(171, 29);
+            buttonRestoreHpAndMp.TabIndex = 42;
+            buttonRestoreHpAndMp.Text = "Restore Hp and Mp";
+            buttonRestoreHpAndMp.UseVisualStyleBackColor = true;
+            buttonRestoreHpAndMp.Click += buttonRestoreHpAndMp_Click;
+            // 
+            // buttonRestoreHp
+            // 
+            buttonRestoreHp.Location = new Point(327, 454);
+            buttonRestoreHp.Name = "buttonRestoreHp";
+            buttonRestoreHp.Size = new Size(171, 29);
+            buttonRestoreHp.TabIndex = 41;
+            buttonRestoreHp.Text = "Restore Hp";
+            buttonRestoreHp.UseVisualStyleBackColor = true;
+            buttonRestoreHp.Click += buttonRestoreHp_Click;
+            // 
+            // buttonIncreaseHp
+            // 
+            buttonIncreaseHp.Location = new Point(327, 489);
+            buttonIncreaseHp.Name = "buttonIncreaseHp";
+            buttonIncreaseHp.Size = new Size(171, 29);
+            buttonIncreaseHp.TabIndex = 40;
+            buttonIncreaseHp.Text = "Increase Hp";
+            buttonIncreaseHp.UseVisualStyleBackColor = true;
+            buttonIncreaseHp.Click += buttonIncreaseHp_Click;
+            // 
+            // buttonRestoreMp
+            // 
+            buttonRestoreMp.Location = new Point(327, 337);
+            buttonRestoreMp.Name = "buttonRestoreMp";
+            buttonRestoreMp.Size = new Size(171, 29);
+            buttonRestoreMp.TabIndex = 39;
+            buttonRestoreMp.Text = "Restore Mp";
+            buttonRestoreMp.UseVisualStyleBackColor = true;
+            buttonRestoreMp.Click += buttonRestoreMp_Click;
+            // 
+            // buttonAddLowHp
+            // 
+            buttonAddLowHp.Location = new Point(327, 524);
+            buttonAddLowHp.Name = "buttonAddLowHp";
+            buttonAddLowHp.Size = new Size(171, 29);
+            buttonAddLowHp.TabIndex = 38;
+            buttonAddLowHp.Text = "Add low Hp";
+            buttonAddLowHp.UseVisualStyleBackColor = true;
+            buttonAddLowHp.Click += buttonAddLowHp_Click;
+            // 
+            // buttonAddMediumHp
+            // 
+            buttonAddMediumHp.Location = new Point(327, 559);
+            buttonAddMediumHp.Name = "buttonAddMediumHp";
+            buttonAddMediumHp.Size = new Size(171, 29);
+            buttonAddMediumHp.TabIndex = 37;
+            buttonAddMediumHp.Text = "Add medium Hp";
+            buttonAddMediumHp.UseVisualStyleBackColor = true;
+            buttonAddMediumHp.Click += buttonAddMediumHp_Click;
+            // 
+            // buttonIncreaseHpMax
+            // 
+            buttonIncreaseHpMax.Location = new Point(327, 419);
+            buttonIncreaseHpMax.Name = "buttonIncreaseHpMax";
+            buttonIncreaseHpMax.Size = new Size(171, 29);
+            buttonIncreaseHpMax.TabIndex = 36;
+            buttonIncreaseHpMax.Text = "Increase Hp Max";
+            buttonIncreaseHpMax.UseVisualStyleBackColor = true;
+            buttonIncreaseHpMax.Click += buttonIncreaseHpMax_Click;
+            // 
+            // buttonIncreaseMp
+            // 
+            buttonIncreaseMp.Location = new Point(327, 372);
+            buttonIncreaseMp.Name = "buttonIncreaseMp";
+            buttonIncreaseMp.Size = new Size(171, 29);
+            buttonIncreaseMp.TabIndex = 35;
+            buttonIncreaseMp.Text = "Increase Mp";
+            buttonIncreaseMp.UseVisualStyleBackColor = true;
+            buttonIncreaseMp.Click += buttonIncreaseMp_Click;
+            // 
+            // buttonIncreaseMpMax
+            // 
+            buttonIncreaseMpMax.Location = new Point(327, 302);
+            buttonIncreaseMpMax.Name = "buttonIncreaseMpMax";
+            buttonIncreaseMpMax.Size = new Size(171, 29);
+            buttonIncreaseMpMax.TabIndex = 34;
+            buttonIncreaseMpMax.Text = "Increase Mp Max";
+            buttonIncreaseMpMax.UseVisualStyleBackColor = true;
+            buttonIncreaseMpMax.Click += buttonIncreaseMpMax_Click;
+            // 
+            // buttonAddHugeHp
+            // 
+            buttonAddHugeHp.Location = new Point(327, 594);
+            buttonAddHugeHp.Name = "buttonAddHugeHp";
+            buttonAddHugeHp.Size = new Size(171, 29);
+            buttonAddHugeHp.TabIndex = 43;
+            buttonAddHugeHp.Text = "Add huge Hp";
+            buttonAddHugeHp.UseVisualStyleBackColor = true;
+            buttonAddHugeHp.Click += buttonAddHugeHp_Click;
             // 
             // FrmGame
             // 
@@ -1070,6 +1190,8 @@ namespace AlundraTools.AlundraTools
             tabControlEffect.ResumeLayout(false);
             tabPageGlobal.ResumeLayout(false);
             tabPageGlobal.PerformLayout();
+            tabPageEffects.ResumeLayout(false);
+            tabPageEffects.PerformLayout();
             tabPagePlayerStatus.ResumeLayout(false);
             tabPagePlayerStatus.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownFalcon2).EndInit();
@@ -1079,8 +1201,6 @@ namespace AlundraTools.AlundraTools
             ((System.ComponentModel.ISupportInitialize)numericUpDownMpMax).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownMp).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownHpMax).EndInit();
-            tabPageEffects.ResumeLayout(false);
-            tabPageEffects.PerformLayout();
             tabPageDebug.ResumeLayout(false);
             tabPageDebug.PerformLayout();
             ResumeLayout(false);
@@ -1176,5 +1296,15 @@ namespace AlundraTools.AlundraTools
         private Label labelCameraScrolling;
         private CheckBox checkBoxUseDebugCamera;
         private TabPage tabPageDebug;
+        private Button buttonIncreaseMpMax;
+        private Button buttonIncreaseMp;
+        private Button buttonIncreaseHpMax;
+        private Button buttonAddLowHp;
+        private Button buttonAddMediumHp;
+        private Button buttonRestoreMp;
+        private Button buttonIncreaseHp;
+        private Button buttonRestoreHpAndMp;
+        private Button buttonRestoreHp;
+        private Button buttonAddHugeHp;
     }
 }

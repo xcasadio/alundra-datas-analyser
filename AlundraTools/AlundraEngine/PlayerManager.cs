@@ -1700,13 +1700,13 @@ public class PlayerManager
     }
 
     //8004df10
-    void IncreaseMp(int amount)
+    public void IncreaseMp(int amount)
     {
         SetPlayerMp((short)(amount + StaticVariables.g_playerStats.Mp));
     }
 
     //8004de4c
-    void IncreaseMpMax(int amount)
+    public void IncreaseMpMax(int amount)
     {
         SetPlayerMpMax((short)(amount + StaticVariables.g_playerStats.MpMax));
     }
@@ -2486,14 +2486,16 @@ public class PlayerManager
     private void HandleWarpTransition(WarpData warpData, int warpType, int extraData)
     {
         if (StaticVariables.g_isWarpDisabled != 0)
+        {
             return;
+        }
 
         StaticVariables.g_warpType = (warpData.Flags & 0x70) >> 4;
 
         int internalMapIdx = StaticVariables.g_mapIdToInternalMapIndexTable[warpData.DestMapId];
         StaticVariables.g_desiredMap = warpData.DestMapId;
 
-        Entity playerEntity = StaticVariables.g_entitySlots[0];
+        Entity playerEntity = StaticVariables.PlayerEntity;
 
         int deltaX = warpData.DestTileX * StaticVariables.MapTileWidth + (playerEntity.PosX >> 16) - warpData.X1 * StaticVariables.MapTileWidth;
         int deltaY = warpData.DestTileY * StaticVariables.MapTileHeight + (playerEntity.PosY >> 16) - warpData.Y1 * StaticVariables.MapTileHeight;
@@ -2824,7 +2826,6 @@ public class PlayerManager
                     // Créer des effets visuels d'atterrissage en fonction du type de terrain
                     if (StaticVariables.PlayerEntity.Slope_18c < 1 || (2 < StaticVariables.PlayerEntity.Slope_18c && StaticVariables.PlayerEntity.Slope_18c != 4))
                     {
-                        // Créer plusieurs particules pour les terrains normaux
                         for (var i = 0; i < 3; i++)
                         {
                             if (_gameEngine.CurrentMap.Info._10 != 0)
@@ -3078,7 +3079,6 @@ public class PlayerManager
         Debugger.Break();
     }
 
-
     //8004df68
     public int FUN_8004df68()
     {
@@ -3290,7 +3290,7 @@ public class PlayerManager
     }
 
     //80032eec
-    private void AddLowHpAndSpawnEffect(Entity entity)
+    public void AddLowHpAndSpawnEffect(Entity entity)
     {
         int amountHp;
         SpriteEffect effect;
@@ -3330,7 +3330,7 @@ public class PlayerManager
     }
 
     //80032f84
-    private void AddMediumHpAndSpawnEffect(Entity entity)
+    public void AddMediumHpAndSpawnEffect(Entity entity)
     {
         SpriteEffect effect;
         uint rand1;
@@ -3406,7 +3406,7 @@ public class PlayerManager
     }
 
     //8003382c
-    private void IncreaseMpMaxAndCreateEffect(Entity entity)
+    public void IncreaseMpMaxAndCreateEffect(Entity entity)
     {
         ulong uVar1;
         int effectParams;
@@ -3466,9 +3466,9 @@ public class PlayerManager
     }
 
     //800335ac
-    private void IncreaseMpAndCreateEffect(Entity entity)
+    public void IncreaseMpAndCreateEffect(Entity entity)
     {
-        SpriteEffect pEffect;
+        SpriteEffect effect;
         uint nextSeed;
         int i;
         int randOffsetX;
@@ -3479,19 +3479,20 @@ public class PlayerManager
 
         do
         {
-            pEffect = _gameEngine.EffectManager.CreateEffectEntity(
+            effect = _gameEngine.EffectManager.CreateEffectEntity(
                 0, 0xe, 2, 
                 entity.PosX, entity.PosY, entity.PosZ + 0x100000);
 
-            if (pEffect != null)
+            if (effect != null)
             {
                 nextSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
                 StaticVariables.g_gameRandomSeed = nextSeed * 0x7d2b89dd + 0xe06a02e7;
                 randProductZ = StaticVariables.g_gameRandomSeed;
                 randOffsetX = (int)((ulong)(nextSeed * 0x20001) >> 0x20);
-                pEffect.ForceX = randOffsetX + -0x10000;
-                pEffect.ForceY = (int)((randProductZ * 0x30001) >> 0x20) + -0x18000;
-                pEffect.ForceZ = 0x20000;
+
+                effect.ForceX = randOffsetX + -0x10000;
+                effect.ForceY = (int)((randProductZ * 0x30001) >> 0x20) + -0x18000;
+                effect.ForceZ = 0x20000;
             }
 
             i += 1;
@@ -3500,7 +3501,7 @@ public class PlayerManager
     }
 
     //800336f0
-    private void RestoreMpAndCreateEffect(Entity entity)
+    public void RestoreMpAndCreateEffect(Entity entity)
     {
         int index;
         SpriteEffect pEffect;
@@ -3534,7 +3535,7 @@ public class PlayerManager
     }
 
     //800333ac
-    private void IncreaseHpMaxAndCreateEffect(Entity entity)
+    public void IncreaseHpMaxAndCreateEffect(Entity entity)
     {
         SpriteEffect pEffect;
         SpriteEffect sparkEffect;
@@ -3594,5 +3595,305 @@ public class PlayerManager
             i += 1;
 
         } while (i < 4);
+    }
+
+    //80032e50
+    public void IncreaseHpAndCreateEffect(Entity entity)
+    {
+        int newHp;
+        SpriteEffect effect;
+        int hpMax;
+
+        hpMax = entity.HpMax;
+        newHp = hpMax;
+
+        if (hpMax < 0)
+        {
+            newHp = hpMax + 3;
+        }
+
+        newHp >>= 2;
+
+        if (newHp < 5)
+        {
+            newHp = 5;
+        }
+
+        newHp = entity.Hp + newHp;
+
+        if (hpMax < newHp)
+        {
+            newHp = hpMax;
+        }
+        entity.Hp = newHp;
+        effect = _gameEngine.EffectManager.CreateEffectEntity(
+            0, 0xe, 0, 
+            entity.PosX, entity.PosY, entity.PosZ + 0x100000);
+
+        if (effect != null)
+        {
+            effect.ForceZ = 0x20000;
+        }
+    }
+
+    //80033274
+    public void RestoreHpAndCreateEffect(Entity entity)
+    {
+        SpriteEffect effect;
+        uint indexMask;
+        int i;
+
+        i = 0;
+        indexMask = 8;
+        entity.Hp = entity.HpMax;
+
+        do
+        {
+            effect = _gameEngine.EffectManager.CreateEffectEntity(
+                0, 0xe, 0,
+                entity.PosX, entity.PosY, entity.PosZ + 0x80000);
+
+            if (effect != null)
+            {
+                var offsetXNext = StaticVariables.g_offsetXList[indexMask & 0x1f];
+                var offsetYNext = StaticVariables.g_offsetYList[indexMask & 0x1f];
+
+                effect.X += offsetXNext * 0x800;
+                effect.Y += offsetYNext * 0x800;
+                effect.ForceX = offsetXNext * 0x1c0;
+                effect.ForceY = offsetYNext * 0x1c0;
+                effect.ForceZ = 0x30000;
+            }
+
+            indexMask += 4;
+            i += 1;
+
+        } while (i < 8);
+    }
+
+    //80033a2c
+    public void RestoreHpAndMpAndCreateEffect(Entity entity)
+    {
+        ulong rand;
+        SpriteEffect effect;
+        SpriteEffect effect2;
+        SpriteEffect effect3;
+        int i;
+
+        i = 0;
+        entity.Hp = entity.HpMax;
+        SetPlayerMp((short)GetPlayerMpMax());
+
+        do
+        {
+            var animId = (byte)(((i & 1) == 0 ? 1 : 0) << 1);
+
+            effect = _gameEngine.EffectManager.CreateEffectEntity(0, 0xe, animId,
+                entity.PosX, entity.PosY, entity.PosZ + 0x80000);
+
+            if (effect != null)
+            {
+                effect.X += StaticVariables.g_offsetXList[i * 4] * 0x800;
+                effect.Y += StaticVariables.g_offsetYList[i * 4] * 0x800;
+                effect.ForceX = StaticVariables.g_offsetXList[i * 4 + 8 & 0x1f] * 0x1c0;
+                effect.ForceY = StaticVariables.g_offsetYList[i * 4 + 8 & 0x1f] * 0x1c0;
+                effect.ForceZ = 0x30000;
+            }
+
+            i += 1;
+
+        } while (i < 8);
+
+        i = 0;
+
+        do
+        {
+            effect2 = _gameEngine.EffectManager.CreateEffectEntity(0, 0xe, 0,
+                entity.PosX, entity.PosY, entity.PosZ + 0x100000);
+
+            if (effect2 != null)
+            {
+                var seed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+                StaticVariables.g_gameRandomSeed = seed * 0x7d2b89dd + 0xe06a02e7;
+                rand = StaticVariables.g_gameRandomSeed;
+
+                effect2.ForceZ = 0x40000;
+                effect2.ForceX = (int)(seed * 0x20001 >> 0x20) + -0x10000;
+                effect2.ForceY = (int)(rand * 0x30001 >> 0x20) + -0x18000;
+            }
+
+            effect3 = _gameEngine.EffectManager.CreateEffectEntity(0, 0xe, 2,
+                entity.PosX, entity.PosY, entity.PosZ + 0x100000);
+
+            if (effect3 != null)
+            {
+                var seed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+                StaticVariables.g_gameRandomSeed = seed * 0x7d2b89dd + 0xe06a02e7;
+                rand = StaticVariables.g_gameRandomSeed;
+
+                effect3.ForceZ = 0x20000;
+                effect3.ForceX = (int)(seed * 0x20001 >> 0x20) + -0x10000;
+                effect3.ForceY = (int)(rand * 0x30001 >> 0x20) + -0x18000;
+            }
+
+            i += 1;
+
+        } while (i < 4);
+    }
+
+    //800330fc
+    public void AddHugeHpAndSpawnEffect(Entity entity)
+    {
+        SpriteEffect effect;
+        uint rand;
+        int hpMax;
+        int i;
+        int calculatedVelocity;
+        ulong seed;
+
+        hpMax = entity.HpMax;
+        i = hpMax / 2;
+
+        if (i < 10)
+        {
+            i = 10;
+        }
+
+        i = entity.Hp + i;
+
+        if (hpMax < i)
+        {
+            i = hpMax;
+        }
+
+        entity.Hp = i;
+        i = 0;
+
+        do
+        {
+            effect = _gameEngine.EffectManager.CreateEffectEntity(0, 0xe, 0,
+                entity.PosX, entity.PosY, entity.PosZ + 0x100000);
+
+            if (effect != null)
+            {
+                rand = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+                StaticVariables.g_gameRandomSeed = rand * 0x7d2b89dd + 0xe06a02e7;
+                seed = StaticVariables.g_gameRandomSeed;
+                calculatedVelocity = (int)((ulong)rand * 0x20001 >> 0x20);
+
+                effect.ForceX = calculatedVelocity + -0x10000;
+                effect.ForceY = (int)(seed * 0x30001 >> 0x20) + -0x18000;
+                effect.ForceZ = 0x20000;
+            }
+
+            i = i + 1;
+
+        } while (i < 4);
+    }
+
+    //80033f00
+    public bool FUN_80033f00(Entity entity, int itemId)
+    {
+        bool result;
+
+        switch (itemId)
+        {
+            case 0:
+                return false;
+
+            case 0x24:
+                result = IsMapRequirementMet(itemId);
+                if (result == false)
+                {
+                    IncreaseHpAndCreateEffect(entity);
+                }
+                break;
+
+            case 0x25:
+                result = IsMapRequirementMet(itemId);
+                if (result == false)
+                {
+                    RestoreHpAndCreateEffect(entity);
+                }
+                break;
+
+            case 0x26:
+                result = IsMapRequirementMet(itemId);
+                if (result == false)
+                {
+                    IncreaseMpAndCreateEffect(entity);
+                }
+                break;
+
+            case 0x27:
+                result = IsMapRequirementMet(itemId);
+                if (result == false)
+                {
+                    RestoreHpAndMpAndCreateEffect(entity);
+                }
+                break;
+
+            case 0x29:
+                result = IsMapRequirementMet(itemId);
+                if (result == false)
+                {
+                    AddHugeHpAndSpawnEffect(entity);
+                }
+                break;
+
+            case 0x45:
+                AddMoney(1);
+                break;
+
+            case 0x46:
+                AddMoney(5);
+                break;
+
+            case 0x47:
+                AddMoney(10);
+                break;
+            case 0x48:
+
+                AddMoney(0x1e);
+                break;
+            case 0x4f:
+
+                IncreaseFalcon2(1);
+                break;
+
+            case 0x50:
+                IncreaseMpMaxAndCreateEffect(entity);
+                break;
+
+            case 0x51:
+                IncreaseMpAndCreateEffect(entity);
+                break;
+
+            case 0x52:
+                RestoreMpAndCreateEffect(entity);
+                break;
+
+            case 0x53:
+                IncreaseHpMaxAndCreateEffect(entity);
+                break;
+
+            case 0x54:
+                AddLifeToEntity(entity);
+                break;
+
+            case 0x55:
+                AddLowHpAndSpawnEffect(entity);
+                break;
+
+            case 0x56:
+                AddMediumHpAndSpawnEffect(entity);
+                break;
+
+            default:
+                AddOneItemIfUnlocked(itemId);
+                break;
+        }
+
+        return StaticVariables.g_iconNameEtcBase[itemId * 2 + 1] == 0;
     }
 }

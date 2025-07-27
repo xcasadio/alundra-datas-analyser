@@ -302,7 +302,7 @@ public partial class FrmGame : Form
             UpdatePad();
 
             _graphics.Clear(Color.Black);
-            
+
             _engine.MainLoop(_graphics);
 
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
@@ -1038,5 +1038,55 @@ public partial class FrmGame : Form
     private void checkBoxUseDebugCamera_CheckedChanged(object sender, EventArgs e)
     {
         StaticVariables.UseDebugCamera = checkBoxUseDebugCamera.Checked;
+    }
+
+    private void buttonRestoreHpAndMp_Click(object sender, EventArgs e)
+    {
+        _engine.PlayerManager.RestoreHpAndMpAndCreateEffect(StaticVariables.PlayerEntity);
+    }
+
+    private void buttonIncreaseMpMax_Click(object sender, EventArgs e)
+    {
+        _engine.PlayerManager.IncreaseMpMaxAndCreateEffect(StaticVariables.PlayerEntity);
+    }
+
+    private void buttonRestoreMp_Click(object sender, EventArgs e)
+    {
+        _engine.PlayerManager.RestoreMpAndCreateEffect(StaticVariables.PlayerEntity);
+    }
+
+    private void buttonIncreaseMp_Click(object sender, EventArgs e)
+    {
+        _engine.PlayerManager.IncreaseMpAndCreateEffect(StaticVariables.PlayerEntity);
+    }
+
+    private void buttonIncreaseHpMax_Click(object sender, EventArgs e)
+    {
+        _engine.PlayerManager.IncreaseHpMaxAndCreateEffect(StaticVariables.PlayerEntity);
+    }
+
+    private void buttonRestoreHp_Click(object sender, EventArgs e)
+    {
+        _engine.PlayerManager.RestoreHpAndCreateEffect(StaticVariables.PlayerEntity);
+    }
+
+    private void buttonIncreaseHp_Click(object sender, EventArgs e)
+    {
+        _engine.PlayerManager.IncreaseHpAndCreateEffect(StaticVariables.PlayerEntity);
+    }
+
+    private void buttonAddLowHp_Click(object sender, EventArgs e)
+    {
+        _engine.PlayerManager.AddLowHpAndSpawnEffect(StaticVariables.PlayerEntity);
+    }
+
+    private void buttonAddMediumHp_Click(object sender, EventArgs e)
+    {
+        _engine.PlayerManager.AddMediumHpAndSpawnEffect(StaticVariables.PlayerEntity);
+    }
+
+    private void buttonAddHugeHp_Click(object sender, EventArgs e)
+    {
+        _engine.PlayerManager.AddHugeHpAndSpawnEffect(StaticVariables.PlayerEntity);
     }
 }

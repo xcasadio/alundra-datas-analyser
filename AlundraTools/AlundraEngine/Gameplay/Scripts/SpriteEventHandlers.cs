@@ -1007,15 +1007,13 @@ public class SpriteEventHandlers
     //8007c174
     public void FUN_8007c174(Entity entity)
     {
-        byte pbVar1;
         bool bVar2;
-        int piVar3;
         int initialYPos;
-        Entity pEVar5;
-        uint uVar6;
+        Entity entity2;
+        int uVar6;
 
-        pbVar1 = StaticVariables.g_sharedBuffer2;
-        var iconIndex = entity.SpriteTableIndex - 0x1e;
+        //Debugger.Break();
+        var itemId = entity.SpriteTableIndex - 0x1e;
 
         if (entity.Bytes[0] == 2)
         {
@@ -1061,40 +1059,41 @@ public class SpriteEventHandlers
                 if (entity.AIValues[2] == 0)
                 {
                     entity.InitialYPos += 2;
-                    piVar3 = _gameEngine.GetEtcSectionPtr(0x4e);
-                    strcpy(StaticVariables.DAT_80191268, (char*)piVar3);
-                    strcat(StaticVariables.DAT_80191268, (char*)g_iconNameEtcBase[iconIndex  * 2]);
-                    piVar3 = GetEtcSectionPtr(0x4f);
-                    strcat(StaticVariables.DAT_80191268, (char*)piVar3);
+                    StaticVariables.g_dropItemTextBuffer = _gameEngine.EtcResR.GetEtcString(0x4e);
+                    StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetIconName((int)itemId);
+                    StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetEtcString(0x4f);
 
                     LAB_8007c320:
-                    _gameEngine.PlayEtcAnimation(StaticVariables.DAT_80191268, 1);
+                    _gameEngine.PlayEtcAnimation(StaticVariables.g_dropItemTextBuffer, 1);
                     return;
                 }
 
-                piVar3 = _gameEngine.GetEtcSectionPtr(0x4c);
-                strcpy(StaticVariables.DAT_80191268, (char*)piVar3);
-                strcat(StaticVariables.DAT_80191268, (char*)g_iconNameEtcBase[iconIndex  * 2]);
-                piVar3 = _gameEngine.GetEtcSectionPtr(0x4d);
-                strcat(StaticVariables.DAT_80191268, (char*)piVar3);
+
+                StaticVariables.g_dropItemTextBuffer = _gameEngine.EtcResR.GetEtcString(0x4c);
+                StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetIconName((int)itemId);
+                StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetEtcString(0x4d);
 
                 if (entity.AIValues[4] == 0)
                 {
                     entity.InitialYPos += 2;
-                    uVar6 = (uint)*(byte*)((int)g_iconNameEtcBase + iconIndex  * 8 + 5);
+                    uVar6 = StaticVariables.g_iconNameEtcBase[(int)(itemId * 8 + 5)];
 
                     if (uVar6 == 0)
                     {
-                        piVar3 = _gameEngine.GetEtcSectionPtr(0x46);
-                        strcat(&DAT_80191268, (char*)piVar3);
+                        StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetEtcString(0x46);
                     }
 
-                    _gameEngine.SoundManager.PlaySoundEffect(uVar6);
-                    goto LAB_8007c320;
+                    _gameEngine.SoundManager.PlaySoundEffect((uint)uVar6);
+                    //goto LAB_8007c320;
+                    _gameEngine.PlayEtcAnimation(StaticVariables.g_dropItemTextBuffer, 1);
+                    return;
                 }
 
                 entity.InitialYPos += 1;
-                goto LAB_8007c684;
+                //goto LAB_8007c684;
+                _gameEngine.PlayEtcAnimation(StaticVariables.g_dropItemTextBuffer, 1);
+                _gameEngine.SetEtcAnimationMode(4);
+                return;
             }
 
             if (initialYPos != 2)
@@ -1115,24 +1114,28 @@ public class SpriteEventHandlers
             }
             else
             {
-                _gameEngine.PlayerManager.FUN_80033dbc(StaticVariables.PlayerEntity, iconIndex );
-                _gameEngine.FUN_80032b28(entity.AIValues + 0x40);
+                _gameEngine.PlayerManager.FUN_80033dbc(StaticVariables.PlayerEntity, itemId );
+                _gameEngine.FUN_80032b28((uint)entity.ContentsGameFlag);
             }
 
-            pEVar5 = (Entity)entity.aiValues;
+            Debugger.Break();
+            entity2 = null;
+            //entity2 = entity.AIValues[0];
         }
         else
         {
-            if ((entity.IsAboveGround != 0) && (entity.AIValues[2]) != 0)
+            if (entity.IsAboveGround != 0 && entity.AIValues[2] != 0)
             {
                 initialYPos = entity.AIValues[2] * 0xc >> 4;
-                entity.AIValues[2] = initialYPos;
+                entity.AIValues[2] = (short)initialYPos;
 
-                if (initialYPos <= (pbVar1 + 4) << 8))
+                //StaticVariables.g_sharedBuffer2 + 4 => _gameEngine.CurrentMap.Info.Gravity
+                if (initialYPos <= _gameEngine.CurrentMap.Info.Gravity << 8)
                 {
                     entity.AIValues[2] = 0;
                     entity.AIValues[3] = 0;
                 }
+
                 entity.ForceZ = entity.AIValues[2];
             }
 
@@ -1141,6 +1144,7 @@ public class SpriteEventHandlers
             if (1 < entity.InitialXPos + 1U)
             {
                 entity.InitialXPos = initialYPos;
+
                 if (initialYPos == 0)
                 {
                     goto LAB_8007c740;
@@ -1156,9 +1160,7 @@ public class SpriteEventHandlers
 
             if (initialYPos == 1)
             {
-                bVar2 = _gameEngine.IsWarpInProgress();
-
-                if (bVar2)
+                if (_gameEngine.IsWarpInProgress())
                 {
                     return;
                 }
@@ -1205,46 +1207,46 @@ public class SpriteEventHandlers
                     return;
                 }
 
-                initialYPos = _gameEngine.FUN_80033f00(StaticVariables.PlayerEntity, iconIndex );
+                var res = _gameEngine.PlayerManager.FUN_80033f00(StaticVariables.PlayerEntity, (int)itemId);
 
-                if ((initialYPos == 0) && (entity.Bytes[0] != 0))
+                if (res == false && entity.Bytes[0] != 0)
                 {
-                    StaticVariables.DAT_80191268 = '\0';
+                    StaticVariables.g_dropItemTextBuffer = string.Empty;
                 }
                 else
                 {
-                    strcpy(StaticVariables.DAT_80191268, StaticVariables.g_iconNameEtcBase[iconIndex  * 2]);
-                    piVar3 = _gameEngine.GetEtcSectionPtr(0x45);
-                    strcat(StaticVariables.DAT_80191268, piVar3);
+                    StaticVariables.g_dropItemTextBuffer = _gameEngine.EtcResR.GetIconName((int)itemId);
+                    StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetEtcString(0x45);
                 }
 
-                _gameEngine.FUN_80032b28(entity.aiValues);
-                uVar6 = (g_iconNameEtcBase + iconIndex  * 8 + 5);
+                Debugger.Break();
+                _gameEngine.FUN_80032b28((uint)entity.ContentsGameFlag); //AIValues
+                uVar6 = StaticVariables.g_iconNameEtcBase[(int)(itemId * 8 + 5)];
 
                 if (uVar6 != 0)
                 {
-                    _gameEngine.SoundManager.PlaySoundEffect(uVar6);
+                    _gameEngine.SoundManager.PlaySoundEffect((uint)uVar6);
 
-                    if (StaticVariables.DAT_80191268 != '\0')
+                    if (StaticVariables.g_dropItemTextBuffer.Length > 0)
                     {
-                        _gameEngine.PlayEtcAnimation(StaticVariables.DAT_80191268, 0);
+                        _gameEngine.PlayEtcAnimation(StaticVariables.g_dropItemTextBuffer, 0);
                     }
                     entity.InitialYPos += 2;
                     return;
                 }
 
                 entity.InitialYPos += 1;
-                _gameEngine.FUN_8003ad30();
+                _gameEngine.EntityManager.FUN_8003ad30(entity);
                 _gameEngine.SoundManager.LoadBgm(0);
                 _gameEngine.SetNextMapId(0xb);
 
-                if (StaticVariables.DAT_80191268 == '\0')
+                if (StaticVariables.g_dropItemTextBuffer.Length == 0)
                 {
                     goto LAB_8007c68c;
                 }
 
                 LAB_8007c684:
-                _gameEngine.PlayEtcAnimation(StaticVariables.DAT_80191268, 1);
+                _gameEngine.PlayEtcAnimation(StaticVariables.g_dropItemTextBuffer, 1);
 
                 LAB_8007c68c:
                 _gameEngine.SetEtcAnimationMode(4);
@@ -1267,7 +1269,18 @@ public class SpriteEventHandlers
 
             if (initialYPos == 2)
             {
-                goto LAB_8007c6f4;
+                //goto LAB_8007c6f4;
+                bVar2 = _gameEngine.CdManager.FUN_8005a7d4();
+
+                if (bVar2)
+                {
+                    return;
+                }
+
+                entity.InitialYPos += 1;
+                _gameEngine.SetEtcAnimationMode(3);
+                _gameEngine.SoundManager.StopAllSound();
+                return;
             }
 
             if (initialYPos != 3)
@@ -1276,7 +1289,7 @@ public class SpriteEventHandlers
             }
 
             bVar2 = _gameEngine.IsWarpInProgress();
-            pEVar5 = entity;
+            entity2 = entity;
 
             if (bVar2)
             {
@@ -1284,7 +1297,7 @@ public class SpriteEventHandlers
             }
         }
 
-        _gameEngine.FUN_8003adac(pEVar5);
+        _gameEngine.EntityManager.FUN_8003adac(entity2);
 
         LAB_8007c740:
         _gameEngine.DestroyEntity(entity);

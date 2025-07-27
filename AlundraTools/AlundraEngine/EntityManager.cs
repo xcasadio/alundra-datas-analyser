@@ -2820,4 +2820,75 @@ public class EntityManager
 
         return hp;
     }
+
+    //8003ad30
+    public int FUN_8003ad30(Entity entity)
+    {
+        Entity entity2;
+        Entity currentEntity;
+        int i;
+        int result;
+        int maxEntity;
+
+        maxEntity = StaticVariables.g_numberOfEntity;
+        result = 0;
+        i = 0;
+        var j = 0;
+
+        if (-1 < StaticVariables.g_numberOfEntity)
+        {
+            currentEntity = StaticVariables.PlayerEntity;
+            entity2 = StaticVariables.PlayerEntity;
+
+            do
+            {
+                if (entity2 != entity 
+                    && currentEntity.Status - 2 < 2 
+                    && currentEntity.IsNotProcessable == 0)
+                {
+                    currentEntity = entity;
+                    result = result + 1;
+                    j = entity.Index;
+                }
+
+                i = i + 1;
+                currentEntity = StaticVariables.g_entitySlots[j];
+                entity2 = StaticVariables.g_entitySlots[i];
+            } while (i <= maxEntity);
+        }
+
+        return result;
+    }
+
+    //8003adac
+    public int FUN_8003adac(Entity entity)
+    {
+        Entity entity2;
+        int i;
+        int result;
+        int maxEntity;
+
+        maxEntity = StaticVariables.g_numberOfEntity;
+        result = 0;
+        i = 0;
+
+        if (-1 < StaticVariables.g_numberOfEntity)
+        {
+            entity2 = StaticVariables.g_entitySlots[0];
+
+            do
+            {
+                if (entity2 == entity)
+                {
+                    entity2.IsNotProcessable = 0;
+                    result = result + 1;
+                }
+
+                i = i + 1;
+                entity2 = StaticVariables.g_entitySlots[i];
+            } while (i <= maxEntity);
+        }
+
+        return result;
+    }
 }

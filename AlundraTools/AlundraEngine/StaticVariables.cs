@@ -2492,6 +2492,7 @@ public static class StaticVariables
     public static int DAT_80191258; // 80191258
     public static int DAT_8019125c; // 8019125C
     public static int g_warpStatusFlag; // 80191260
+    public static string g_dropItemTextBuffer;
     public static Entity PTR_801912e8; // 801912E8
     public static int DAT_801912ec; // 801912EC
     public static int DAT_801912f0; // 801912F0

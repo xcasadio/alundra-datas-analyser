@@ -100,8 +100,8 @@ public class GameMapInfo
     }
 
     public readonly int MemoryAddress;
-    public readonly int MapId;
-    public readonly short Gravity;
+    public readonly int MapId; //0
+    public readonly short Gravity; //4
     public readonly short TerminalVelocity;
     public readonly byte SlideEffectId;
     public readonly byte BalanceLevel;

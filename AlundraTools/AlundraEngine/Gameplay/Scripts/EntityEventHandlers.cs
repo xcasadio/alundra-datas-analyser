@@ -1884,7 +1884,7 @@ public class EntityEventHandlers
     // 8003DBD4
     private int Script_39_027(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var dir = (uint)ScriptHelper.GetDirectionToTarget(StaticVariables.g_entitySlots[0].PosX - logicEntity.PosX, StaticVariables.g_entitySlots[0].PosY - logicEntity.PosY);
+        var dir = (uint)ScriptHelper.GetDirectionToTarget(StaticVariables.PlayerEntity.PosX - logicEntity.PosX, StaticVariables.PlayerEntity.PosY - logicEntity.PosY);
         logicEntity.TargetDirection = dir;
         return 1;
     }
@@ -2467,12 +2467,12 @@ public class EntityEventHandlers
     // 8003E4B4
     private int Script_59_03B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        if (StaticVariables.g_entitySlots[0].TileX >= variables[1]
-            && StaticVariables.g_entitySlots[0].TileX <= variables[2]
-            && StaticVariables.g_entitySlots[0].TileY >= variables[3]
-            && StaticVariables.g_entitySlots[0].TileY <= variables[4]
-            && StaticVariables.g_entitySlots[0].TileZ >= variables[5]
-            && StaticVariables.g_entitySlots[0].TileZ <= variables[6] )
+        if (StaticVariables.PlayerEntity.TileX >= variables[1]
+            && StaticVariables.PlayerEntity.TileX <= variables[2]
+            && StaticVariables.PlayerEntity.TileY >= variables[3]
+            && StaticVariables.PlayerEntity.TileY <= variables[4]
+            && StaticVariables.PlayerEntity.TileZ >= variables[5]
+            && StaticVariables.PlayerEntity.TileZ <= variables[6] )
         {
             eventProgramState.Result = 1;
         }
@@ -2498,7 +2498,7 @@ public class EntityEventHandlers
 
         if (-1 < StaticVariables.g_numberOfEntity)
         {
-            piVar2 = StaticVariables.g_entitySlots[0].TileZ;
+            piVar2 = StaticVariables.PlayerEntity.TileZ;
 
             do
             {
@@ -2541,7 +2541,7 @@ public class EntityEventHandlers
 
         if (-1 < StaticVariables.g_numberOfEntity)
         {
-            piVar2 = StaticVariables.g_entitySlots[0].TileZ;
+            piVar2 = StaticVariables.PlayerEntity.TileZ;
 
             do
             {
@@ -2572,7 +2572,7 @@ public class EntityEventHandlers
     // 8003E708
     private int Script_62_03E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        if (StaticVariables.g_entitySlots[0].RidingEntity == logicEntity)
+        if (StaticVariables.PlayerEntity.RidingEntity == logicEntity)
         {
             eventProgramState.Result = 1;
         }
@@ -2596,7 +2596,7 @@ public class EntityEventHandlers
 
         if (-1 < StaticVariables.g_numberOfEntity)
         {
-            ppEVar1 = StaticVariables.g_entitySlots[0].RidingEntity;
+            ppEVar1 = StaticVariables.PlayerEntity.RidingEntity;
 
             do
             {
@@ -2636,7 +2636,7 @@ public class EntityEventHandlers
     // 8003E808
     private int Script_66_042(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        ownerEntity.LogicContextEntity = StaticVariables.g_entitySlots[0];
+        ownerEntity.LogicContextEntity = StaticVariables.PlayerEntity;
 
         return 1;
     }
@@ -2853,7 +2853,7 @@ public class EntityEventHandlers
         }
         else
         {
-            _gameEngine.HandleWarpTransition(warpData, StaticVariables.g_entitySlots[0].TargetAnimationId, StaticVariables.g_entitySlots[0].TargetDirection);
+            _gameEngine.HandleWarpTransition(warpData, StaticVariables.PlayerEntity.TargetAnimationId, StaticVariables.PlayerEntity.TargetDirection);
             eventProgramState.Result = 1;
         }
 
@@ -2876,9 +2876,9 @@ public class EntityEventHandlers
         {
             if (StaticVariables.g_desiredMap == StaticVariables.g_currentMap)
             {
-                StaticVariables.g_entitySlots[0].PosX = x;
-                StaticVariables.g_entitySlots[0].PosY = y;
-                StaticVariables.g_entitySlots[0].PosZ = z + 1;
+                StaticVariables.PlayerEntity.PosX = x;
+                StaticVariables.PlayerEntity.PosY = y;
+                StaticVariables.PlayerEntity.PosZ = z + 1;
                 return 8;
             }
 
@@ -2890,8 +2890,8 @@ public class EntityEventHandlers
         StaticVariables.g_cameraTargetZ = z;
         StaticVariables.g_cameraTargetY = y;
         StaticVariables.g_cameraTargetX = x;
-        StaticVariables.g_warpExtraParam = (int)StaticVariables.g_entitySlots[0].TargetDirection;
-        StaticVariables.g_warpTriggerType = (int)StaticVariables.g_entitySlots[0].TargetAnimationId;
+        StaticVariables.g_warpExtraParam = (int)StaticVariables.PlayerEntity.TargetDirection;
+        StaticVariables.g_warpTriggerType = (int)StaticVariables.PlayerEntity.TargetAnimationId;
         StaticVariables.g_isGameEnding = 1;
 
         return 8;
@@ -2987,7 +2987,7 @@ public class EntityEventHandlers
         return 0;
         /*
         int pbVar1;
-        pbVar1 = variables + StaticVariables.g_entitySlots[0].CurrentFrameIndex * 2 + 1;
+        pbVar1 = variables + StaticVariables.PlayerEntity.CurrentFrameIndex * 2 + 1;
         return (int)((pbVar1 + (uint)pbVar1[1] * 0x100) * 0x10000) >> 0x10;*/
     }
 
@@ -4210,7 +4210,7 @@ public class EntityEventHandlers
 
             if (-1 < StaticVariables.g_numberOfEntity)
             {
-                puVar4 = StaticVariables.g_entitySlots[0].TransformHeight;
+                puVar4 = StaticVariables.PlayerEntity.TransformHeight;
 
                 do
                 {
@@ -5153,11 +5153,11 @@ public class EntityEventHandlers
     // 80041C00
     private int Script_188_0BC(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        StaticVariables.g_entitySlots[0].HpMax += variables[1];
+        StaticVariables.PlayerEntity.HpMax += variables[1];
 
-        if (0x32 < StaticVariables.g_entitySlots[0].HpMax)
+        if (0x32 < StaticVariables.PlayerEntity.HpMax)
         {
-            StaticVariables.g_entitySlots[0].HpMax = 0x32;
+            StaticVariables.PlayerEntity.HpMax = 0x32;
         }
 
         return 2;
@@ -5225,7 +5225,7 @@ public class EntityEventHandlers
     {
         Debugger.Break();
         
-        StaticVariables.g_entitySlots[0].Hp = StaticVariables.g_entitySlots[0].HpMax;
+        StaticVariables.PlayerEntity.Hp = StaticVariables.PlayerEntity.HpMax;
         var targetLevel = _gameEngine.PlayerManager.GetPlayerMpMax();
         _gameEngine.PlayerManager.SetPlayerMp((short)targetLevel);
         _gameEngine.PlayerManager.InitializeHpAndMp();

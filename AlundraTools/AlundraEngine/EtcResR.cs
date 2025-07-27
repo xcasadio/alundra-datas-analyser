@@ -47,7 +47,7 @@ public class EtcResR
             int paletteOffset = (i + 0x300) * 2;
 
             //IconNameTable[i * 2] = i; //iconNameOffset / 1024;//buffer[iconNameOffset];
-            StaticVariables.g_iconNameEtcBase[i * 2] = i;
+            StaticVariables.g_iconNameEtcBase[i * 2] = (byte)i;
             TileTable[i * 2] = buffer[tileSetOffset * 2];
             PaletteTable[i * 2] = buffer[paletteOffset * 2];
         }
@@ -75,7 +75,12 @@ public class EtcResR
     {
         return Strings[StaticVariables.g_iconNameEtcBase[id * 2]];
     }
-
+    /*
+    public int GetValueByOffset(int offset)
+    {
+        return StaticVariables.g_iconNameEtcBase[offset];
+    }
+    */
     public string GetEtcString(int id)
     {
         return Strings[id];

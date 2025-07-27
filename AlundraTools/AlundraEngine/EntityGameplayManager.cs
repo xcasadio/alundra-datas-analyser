@@ -108,8 +108,8 @@ public class EntityGameplayManager
         if ((uint)((ulong)StaticVariables.g_gameRandomSeed * 0x65 >> 32) < (probabilityTargeted & 0xff))
         {
             var direction = (uint)ScriptHelper.GetDirectionToTarget(
-                StaticVariables.g_entitySlots[0].PosX - entity.PosX,
-                StaticVariables.g_entitySlots[0].PosY - entity.PosY);
+                StaticVariables.PlayerEntity.PosX - entity.PosX,
+                StaticVariables.PlayerEntity.PosY - entity.PosY);
 
             entity.TargetDirection = direction;
         }
