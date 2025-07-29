@@ -1089,4 +1089,40 @@ public partial class FrmGame : Form
     {
         _engine.PlayerManager.AddHugeHpAndSpawnEffect(StaticVariables.PlayerEntity);
     }
+
+    private void comboBoxRandomItem_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (comboBoxRandomItem.SelectedIndex == -1)
+        {
+            return;
+        }
+
+        var itemId = byte.Parse(comboBoxRandomItem.SelectedItem.ToString());
+
+        for (int i = 0; i < 100; i++)
+        {
+            StaticVariables.g_itemRandomTable[i] = itemId;
+        }
+    }
+
+    private void buttonSpawnItem_Click(object sender, EventArgs e)
+    {
+        if (comboBoxSpawnItemId.SelectedIndex == -1)
+        {
+            return;
+        }
+
+        var itemId = byte.Parse(comboBoxSpawnItemId.SelectedItem.ToString());
+
+        var entity = new Entity
+        {
+            ContentsItemId = itemId,
+            ContentsGameFlag = 0,
+            PosX = StaticVariables.PlayerEntity.PosX + (24 << 16),
+            PosY = StaticVariables.PlayerEntity.PosY,
+            PosZ = StaticVariables.PlayerEntity.PosZ,
+        };
+        _engine.SpawnEntityContents(entity);
+
+    }
 }

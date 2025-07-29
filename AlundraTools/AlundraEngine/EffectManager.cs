@@ -437,42 +437,42 @@ public class EffectManager
     }
 
     // 80032c7c
-    public int CreateWarpEffect(uint actionId, int x, int y, int z)
+    public int CreateWarpEffect(uint contentId, int x, int y, int z)
     {
-        var resolvedAction = _gameEngine.GetContentsItemId((ushort)actionId);
+        var itemId = _gameEngine.GetContentsItemId((ushort)contentId);
 
-        if (resolvedAction == 0)
+        if (itemId == 0)
         {
             return 0;
         }
 
-        if (_gameEngine.CheckItemId((uint)resolvedAction))
+        if (_gameEngine.CheckItemId((uint)itemId))
         {
             return 0;
         }
 
-        Entity warpEntity = _gameEngine.SpawnWarpEntity(null, 0, (uint)(resolvedAction + 0x1e), x, y, z, 0);
+        Entity itemEntity = _gameEngine.SpawnWarpEntity(null, 0, (uint)(itemId + 0x1e), x, y, z, 0);
 
-        if (warpEntity == null)
+        if (itemEntity == null)
         {
             return 0;
         }
 
-        warpEntity.ForceZ = 0xA0000;
-        warpEntity.Bytes[0] = 1;
-        warpEntity.Bytes[1] = 0;
-        warpEntity.Bytes[2] = 0;
-        warpEntity.Bytes[3] = 0;
-        warpEntity.Flags &= 0xffffff7f; // ~0x80
+        itemEntity.ForceZ = 0xA0000;
+        itemEntity.Bytes[0] = 1;
+        itemEntity.Bytes[1] = 0;
+        itemEntity.Bytes[2] = 0;
+        itemEntity.Bytes[3] = 0;
+        itemEntity.Flags &= 0xffffff7f; // ~0x80
         
-        var initPosX = StaticVariables.g_iconNameEtcBase[resolvedAction * 2 + 1] == 0 ? -1 : 600;
+        var initPosX = StaticVariables.g_iconNameEtcBase[itemId * 2 + 1] == 0 ? -1 : 600;
 
-        warpEntity.InitialXPos = initPosX;
-        warpEntity.InitialYPos = 0;
-        warpEntity.AIValues[0] = 0;
-        warpEntity.AIValues[1] = 0;
-        warpEntity.AIValues[2] = 0;
-        warpEntity.AIValues[3] = 10;
+        itemEntity.InitialXPos = initPosX;
+        itemEntity.InitialYPos = 0;
+        itemEntity.AIValues[0] = 0;
+        itemEntity.AIValues[1] = 0;
+        itemEntity.AIValues[2] = 0;
+        itemEntity.AIValues[3] = 10;
         _gameEngine.SoundManager.PlaySoundEffect(0x54);
 
         return 1;

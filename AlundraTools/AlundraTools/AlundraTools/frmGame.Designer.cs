@@ -116,6 +116,11 @@ namespace AlundraTools.AlundraTools
             label20 = new Label();
             numericUpDownHpMax = new NumericUpDown();
             tabPageDebug = new TabPage();
+            comboBoxSpawnItemId = new ComboBox();
+            buttonSpawnItem = new Button();
+            label30 = new Label();
+            comboBoxRandomItem = new ComboBox();
+            buttonAddHugeHp = new Button();
             buttonRestoreHpAndMp = new Button();
             buttonRestoreHp = new Button();
             buttonIncreaseHp = new Button();
@@ -125,7 +130,6 @@ namespace AlundraTools.AlundraTools
             buttonIncreaseHpMax = new Button();
             buttonIncreaseMp = new Button();
             buttonIncreaseMpMax = new Button();
-            buttonAddHugeHp = new Button();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -607,7 +611,7 @@ namespace AlundraTools.AlundraTools
             dataGridViewGlobalFlags.Name = "dataGridViewGlobalFlags";
             dataGridViewGlobalFlags.RowHeadersVisible = false;
             dataGridViewGlobalFlags.RowHeadersWidth = 51;
-            dataGridViewGlobalFlags.Size = new Size(124, 837);
+            dataGridViewGlobalFlags.Size = new Size(124, 587);
             dataGridViewGlobalFlags.TabIndex = 23;
             // 
             // columnIndex
@@ -636,7 +640,7 @@ namespace AlundraTools.AlundraTools
             dataGridViewMapFlags.Name = "dataGridViewMapFlags";
             dataGridViewMapFlags.RowHeadersVisible = false;
             dataGridViewMapFlags.RowHeadersWidth = 51;
-            dataGridViewMapFlags.Size = new Size(134, 837);
+            dataGridViewMapFlags.Size = new Size(134, 587);
             dataGridViewMapFlags.TabIndex = 24;
             // 
             // dataGridViewTextBoxColumn1
@@ -1034,6 +1038,10 @@ namespace AlundraTools.AlundraTools
             // 
             // tabPageDebug
             // 
+            tabPageDebug.Controls.Add(comboBoxSpawnItemId);
+            tabPageDebug.Controls.Add(buttonSpawnItem);
+            tabPageDebug.Controls.Add(label30);
+            tabPageDebug.Controls.Add(comboBoxRandomItem);
             tabPageDebug.Controls.Add(buttonAddHugeHp);
             tabPageDebug.Controls.Add(buttonRestoreHpAndMp);
             tabPageDebug.Controls.Add(buttonRestoreHp);
@@ -1057,6 +1065,54 @@ namespace AlundraTools.AlundraTools
             tabPageDebug.TabIndex = 3;
             tabPageDebug.Text = "Debug";
             tabPageDebug.UseVisualStyleBackColor = true;
+            // 
+            // comboBoxSpawnItemId
+            // 
+            comboBoxSpawnItemId.FormattingEnabled = true;
+            comboBoxSpawnItemId.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86", "246", "249", "253", "254" });
+            comboBoxSpawnItemId.Location = new Point(150, 687);
+            comboBoxSpawnItemId.Name = "comboBoxSpawnItemId";
+            comboBoxSpawnItemId.Size = new Size(123, 28);
+            comboBoxSpawnItemId.TabIndex = 48;
+            // 
+            // buttonSpawnItem
+            // 
+            buttonSpawnItem.Location = new Point(9, 686);
+            buttonSpawnItem.Name = "buttonSpawnItem";
+            buttonSpawnItem.Size = new Size(124, 29);
+            buttonSpawnItem.TabIndex = 47;
+            buttonSpawnItem.Text = "Spawn item";
+            buttonSpawnItem.UseVisualStyleBackColor = true;
+            buttonSpawnItem.Click += buttonSpawnItem_Click;
+            // 
+            // label30
+            // 
+            label30.AutoSize = true;
+            label30.Location = new Point(9, 655);
+            label30.Name = "label30";
+            label30.Size = new Size(135, 20);
+            label30.TabIndex = 46;
+            label30.Text = "Force random item";
+            // 
+            // comboBoxRandomItem
+            // 
+            comboBoxRandomItem.FormattingEnabled = true;
+            comboBoxRandomItem.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86", "246", "249", "253", "254" });
+            comboBoxRandomItem.Location = new Point(150, 652);
+            comboBoxRandomItem.Name = "comboBoxRandomItem";
+            comboBoxRandomItem.Size = new Size(123, 28);
+            comboBoxRandomItem.TabIndex = 45;
+            comboBoxRandomItem.SelectedIndexChanged += comboBoxRandomItem_SelectedIndexChanged;
+            // 
+            // buttonAddHugeHp
+            // 
+            buttonAddHugeHp.Location = new Point(327, 594);
+            buttonAddHugeHp.Name = "buttonAddHugeHp";
+            buttonAddHugeHp.Size = new Size(171, 29);
+            buttonAddHugeHp.TabIndex = 43;
+            buttonAddHugeHp.Text = "Add huge Hp";
+            buttonAddHugeHp.UseVisualStyleBackColor = true;
+            buttonAddHugeHp.Click += buttonAddHugeHp_Click;
             // 
             // buttonRestoreHpAndMp
             // 
@@ -1147,16 +1203,6 @@ namespace AlundraTools.AlundraTools
             buttonIncreaseMpMax.Text = "Increase Mp Max";
             buttonIncreaseMpMax.UseVisualStyleBackColor = true;
             buttonIncreaseMpMax.Click += buttonIncreaseMpMax_Click;
-            // 
-            // buttonAddHugeHp
-            // 
-            buttonAddHugeHp.Location = new Point(327, 594);
-            buttonAddHugeHp.Name = "buttonAddHugeHp";
-            buttonAddHugeHp.Size = new Size(171, 29);
-            buttonAddHugeHp.TabIndex = 43;
-            buttonAddHugeHp.Text = "Add huge Hp";
-            buttonAddHugeHp.UseVisualStyleBackColor = true;
-            buttonAddHugeHp.Click += buttonAddHugeHp_Click;
             // 
             // FrmGame
             // 
@@ -1306,5 +1352,10 @@ namespace AlundraTools.AlundraTools
         private Button buttonRestoreHpAndMp;
         private Button buttonRestoreHp;
         private Button buttonAddHugeHp;
+        private ComboBox comboBoxRandomItem;
+        private Button buttonForceRandomItem;
+        private Label label30;
+        private ComboBox comboBoxSpawnItemId;
+        private Button buttonSpawnItem;
     }
 }

@@ -5,8 +5,6 @@ namespace AlundraEngine.UI;
 public class UiHandler
 {
     private readonly GameEngine _gameEngine;
-    private readonly EtcResR _etcResR;
-    private DatasBin.DatasBin _datasbin;
     public short SavedBoxDrawerX, SavedBoxDrawerY;
     public int DialogChoiceUnknown1;//0x1072ec
     public int DialogChoiceUnknown2;//0x1072cc
@@ -17,10 +15,9 @@ public class UiHandler
     private readonly List<Color[]> _uipalettes = new();
     private BitmapDrawCommand _dialognametextcmd;
 
-    public UiHandler(GameEngine gameEngineEngine, DatasBin.DatasBin datasbin, EtcResR etcResR, string fontfile, string palettesfile, string uifile)
+    public UiHandler(GameEngine gameEngineEngine, string fontfile, string palettesfile, string uifile)
     {
         _gameEngine = gameEngineEngine;
-        _etcResR = etcResR;
         //load palettes
         var buff = File.ReadAllBytes(fontfile);
         for (var pdex = 0; pdex + 32 < buff.Length; pdex += 32)
@@ -47,9 +44,9 @@ public class UiHandler
     private Bitmap GetUiBitmap(UiDrawCmd cmd)
     {
         var pal = _uipalettes[cmd.Uipaletteindex];
-        if (_spriteCache.ContainsKey(cmd.Signature))
+        if (_spriteCache.TryGetValue(cmd.Signature, out var bitmap))
         {
-            return _spriteCache[cmd.Signature];
+            return bitmap;
         }
 
         var bmp = UiHelper.GenerateBitmap(cmd, pal, _uiimagedata);
@@ -95,12 +92,15 @@ public class UiHandler
         Height = 0x4,
         Boxcommands = new UiDrawCmd[][] { UiHelper.DialogNameBoxDrawCommands }
     };
+
     public readonly List<UiRecord> Records = new();
+
     public void RegisterUiRecord(UiBoxAnimated boxanimated, short x, short y, short width, short height, UiFunction setup, UiFunction render, int unknown)
     {
         var rec = new UiRecord { BoxAnimated = boxanimated, X = x, Y = y, Width = width, Height = height, SetupFunc = setup, RenderFunc = render, UnknownVal = unknown };
         Records.Add(rec);
     }
+
     public UiHandler()
     {
         //0 dialog box
@@ -197,7 +197,7 @@ public class UiHandler
         DialogNameBoxLerper.AfterY = ui.BoxAnimated.Y;
         _gameEngine.DialogNameState = 5;
 
-        var name = _etcResR.GetEtcString(_gameEngine.DialogName);
+        var name = _gameEngine.EtcResR.GetEtcString(_gameEngine.DialogName);
 
         _dialognametextcmd = RenderText(name, 0, (short)(ui.Y + ui.BoxAnimated.Y), 3);
 
@@ -327,7 +327,7 @@ public class UiHandler
             }
         }
 
-        var text = _etcResR.GetEtcString(_gameEngine.DialogName);
+        var text = _gameEngine.EtcResR.GetEtcString(_gameEngine.DialogName);
         var width = GetRenderedTextWidth(text);
         width = ui.BoxAnimated.Width * 8 - width;
         _dialognametextcmd.X = (short)(width / 2 + ui.BoxAnimated.X);
@@ -879,7 +879,7 @@ public class UiHandler
     {
         if ((_gameEngine.DialogNameState & 4) == 0
             && nameid-0x100 < 0x100
-            && !string.IsNullOrEmpty(_etcResR.GetEtcString(nameid)))
+            && !string.IsNullOrEmpty(_gameEngine.EtcResR.GetEtcString(nameid)))
         {
             _gameEngine.DialogName = nameid;
             SetUiRecordCallSetup(0xc);
@@ -943,8 +943,7 @@ public class UiHandler
         string text;
         if ((textid & 0x80) != 0)
         {
-                
-            text = _datasbin.AlundraGameMap.Strings[textid & 0x7f];
+            text = _gameEngine.DatasBin.AlundraGameMap.Strings[textid & 0x7f];
         }
         else
         {

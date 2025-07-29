@@ -6,6 +6,7 @@ using AlundraEngine.Sound;
 using AlundraEngine.Text;
 using System;
 using System.Diagnostics;
+using AlundraEngine.UI;
 using WarpData = AlundraEngine.DatasBin.WarpData;
 
 namespace AlundraEngine;
@@ -22,13 +23,13 @@ public class GameEngine
     public GameMap CurrentMap { get; private set; }
     public GameMap AlundraMap => DatasBin.AlundraGameMap;
 
+    public CdManager CdManager { get; }
     public EntityGameplayManager EntityGameplayManager { get; }
     public EffectManager EffectManager { get; }
     public EntityManager EntityManager { get; }
     public PlayerManager PlayerManager { get; }
     public SoundManager SoundManager { get; }
     public SoundBin SoundBin { get; }
-    public CdManager CdManager { get; }
 
     private readonly EntityEventHandlers _entityEventHandlers;
     private readonly GameInitializer _gameInitializer;
@@ -50,6 +51,8 @@ public class GameEngine
         _gameInitializer = new GameInitializer(this);
         _renderer = new Renderer(this);
         _padManager = new PadManager();
+
+        CdManager = new CdManager(this);
         EntityManager = new EntityManager(this);
         EntityGameplayManager = new EntityGameplayManager(this);
         EffectManager = new EffectManager(this);
@@ -823,19 +826,20 @@ public class GameEngine
         return entity;
     }
 
+    //80039b28
     public SpriteRecord GetSpriteFromSpriteTable(bool isMapSprite, uint spriteTableIndex, out int addedtosheet, out int addedtopallette)
     {
-        SpriteInfo si;
+        SpriteInfo spriteInfo;
 
         if (isMapSprite)
         {
-            si = CurrentMap.SpriteInfo;
+            spriteInfo = CurrentMap.SpriteInfo;
             addedtosheet = 0;
             addedtopallette = 0x20;
         }
         else
         {
-            si = DatasBin.AlundraGameMap.SpriteInfo;
+            spriteInfo = DatasBin.AlundraGameMap.SpriteInfo;
             addedtosheet = 0xb;
             addedtopallette = 0x60;
         }
@@ -844,12 +848,12 @@ public class GameEngine
             throw new Exception("Illegal Character Race!");
         }
 
-        if (spriteTableIndex >= si.SpriteTable.Length)
+        if (spriteTableIndex >= spriteInfo.SpriteTable.Length)
         {
             throw new Exception("Illegal Character Race!");
         }
 
-        var sprite = si.Sprites[spriteTableIndex];
+        var sprite = spriteInfo.Sprites[spriteTableIndex];
         return sprite;
     }
 
@@ -938,7 +942,7 @@ public class GameEngine
         }
         else
         {
-            int contents = entity.EntityRecord._10; //_10
+            int contents = entity.EntityRecord._10;
 
             if ((contents & 0x7ff) >= 800)
             {
@@ -1682,7 +1686,7 @@ public class GameEngine
     }
 
     //80032b90
-    private int SpawnEntityContents(Entity entity)
+    public int SpawnEntityContents(Entity entity)
     {
         if (entity.ContentsItemId == 0)
         {
@@ -1710,15 +1714,16 @@ public class GameEngine
         spawnedEntity.Flags &= 0xffffff7f;
 
         var x = 600;
-        if (StaticVariables.g_numberOfItems[entity.ContentsItemId * 2 + 1] == 0)
+        if (StaticVariables.g_iconNameEtcBase[(entity.ContentsItemId * 8 + 4) / 4] == 0)
         {
             x = -1;
         }
 
-        spawnedEntity.InitialXPos = x;
-        spawnedEntity.InitialYPos = 0;
+        spawnedEntity.InitialXPos = x; // compteur/delai
+        spawnedEntity.InitialYPos = 0; // etat
         spawnedEntity.AIValues[0] = (short)(entity.ContentsGameFlag & 0xFFFF);
-        spawnedEntity.AIValues[1] = (short)((entity.ContentsGameFlag >> 16) & 0xFFFF); spawnedEntity.AIValues[2] = 0;
+        spawnedEntity.AIValues[1] = (short)((entity.ContentsGameFlag >> 16) & 0xFFFF); 
+        spawnedEntity.AIValues[2] = 0;
         spawnedEntity.AIValues[3] = 10;
 
         SoundManager.PlaySoundEffect(0x54);

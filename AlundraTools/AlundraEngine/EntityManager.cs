@@ -57,6 +57,7 @@ public class EntityManager
         if (parentEntity != null)
         {
             Entity linkedEntity = parentEntity.ChildEntity;
+
             if (parentEntity.ChildEntity == null)
             {
                 linkedEntity = parentEntity;
@@ -139,6 +140,7 @@ public class EntityManager
         _gameEngine.InitializeContents(entity);
     }
 
+    //8004201c
     private void InitializeCodePrograms(Entity entity)
     {
         entity.LogicContextEntity = entity;
@@ -155,8 +157,9 @@ public class EntityManager
     }
 
     // 80039c40
-    private void SetEntityDimensions(Entity entity, int offsetX, int offsetY, int offsetZ, int sizeX, int sizeY,
-        int sizeZ)
+    private void SetEntityDimensions(Entity entity, 
+        int offsetX, int offsetY, int offsetZ, 
+        int sizeX, int sizeY, int sizeZ)
     {
         entity.NegModX = -(offsetX << 16);
         entity.NegModY = -(offsetY << 16);

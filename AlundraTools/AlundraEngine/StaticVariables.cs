@@ -3,6 +3,7 @@ using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Sound;
 using System.Collections.ObjectModel;
+using AlundraEngine.UI;
 
 namespace AlundraEngine;
 
@@ -929,6 +930,31 @@ public static class StaticVariables
         0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00
     ];
+    // 8009CFBC
+    public static ushort[] g_textBaseX =
+    [
+        0x0010, 0x00A8, 0x0024, 0x0007,
+        0xA85C, 0x8009, 0xBC0C, 0x8009,
+        0x0000, 0x0000, 0x0000, 0x0000,
+        0x0000, 0x0000, 0x2800
+    ];
+    //800A731C
+    public static CallBackInfo[] g_transitionFuncArgs =
+    [
+        new CallBackInfo { Flags = 0, Data = g_textBaseX, X1 = 0x10, Y1 = 0x05, X2 = 0x20, Y2 = 0x06, FuncA = UIManager.Func_80048304, FuncB = UIManager.Func_80046ef0, Arg = 0 },
+        new CallBackInfo { Flags = 0, Data = null,        X1 = 0x00, Y1 = 0x00, X2 = 0x28, Y2 = 0x04, FuncA = UIManager.Func_8004b770, FuncB = UIManager.Func_8004bea4, Arg = 0xFFFFFFFF },
+        new CallBackInfo { Flags = 0, Data = g_textBaseX, X1 = 0x08, Y1 = 0x0C, X2 = 0x20, Y2 = 0x04, FuncA = UIManager.Func_80048304, FuncB = UIManager.Func_8004f628, Arg = 0 },
+        new CallBackInfo { Flags = 0, Data = null,        X1 = 0x10, Y1 = 0x08, X2 = 0x20, Y2 = 0x04, FuncA = null,         FuncB = UIManager.Func_800501fc, Arg = 0x05 },
+        new CallBackInfo { Flags = 0, Data = null,        X1 = 0x10, Y1 = 0x08, X2 = 0x20, Y2 = 0x04, FuncA = UIManager.Func_800537f0, FuncB = UIManager.Func_80053328, Arg = 0xFFFFFFFF },
+        new CallBackInfo { Flags = 0, Data = g_textBaseX, X1 = 0x10, Y1 = 0x0C, X2 = 0x20, Y2 = 0x04, FuncA = UIManager.Func_80048304, FuncB = UIManager.Func_8004a8a8, Arg = 0 },
+        new CallBackInfo { Flags = 0, Data = null,        X1 = 0x10, Y1 = 0x08, X2 = 0x20, Y2 = 0x04, FuncA = null,         FuncB = UIManager.Func_80054f1c, Arg = 0 },
+        new CallBackInfo { Flags = 0, Data = g_textBaseX, X1 = 0x10, Y1 = 0x08, X2 = 0x20, Y2 = 0x04, FuncA = UIManager.Func_80048304, FuncB = null,         Arg = 0 },
+        new CallBackInfo { Flags = 0, Data = g_textBaseX, X1 = 0x10, Y1 = 0x0C, X2 = 0x20, Y2 = 0x04, FuncA = UIManager.Func_80048304, FuncB = UIManager.Func_8004afe8, Arg = 0 },
+        new CallBackInfo { Flags = 0, Data = g_textBaseX, X1 = 0x10, Y1 = 0x0C, X2 = 0x20, Y2 = 0x04, FuncA = UIManager.Func_80048304, FuncB = UIManager.Func_80050ec8, Arg = 0 },
+        new CallBackInfo { Flags = 0, Data = null,        X1 = 0x10, Y1 = 0x0C, X2 = 0x20, Y2 = 0x04, FuncA = null,         FuncB = UIManager.Func_800583ec, Arg = 0 },
+        new CallBackInfo { Flags = 0, Data = g_textBaseX, X1 = 0x08, Y1 = 0x0C, X2 = 0x20, Y2 = 0x04, FuncA = UIManager.Func_80048304, FuncB = UIManager.Func_80051550, Arg = 0 },
+        new CallBackInfo { Flags = 0, Data = g_textPosBaseX, X1 = 0x10, Y1 = 0x08, X2 = 0x20, Y2 = 0x04, FuncA = UIManager.Func_8005a268, FuncB = UIManager.Func_8005a3e0, Arg = 0x05 }
+    ];
 
     public static void Initialize()
     {
@@ -1474,7 +1500,6 @@ public static class StaticVariables
     public static byte[] PTR_g_warpVelocityFlags_8009a814 = new byte[165]; // 8009A814
     public static int[] g_categoryThresholdTable = new int[8]; // 8009A834
     public static int g_isCdResetRequested; // 8009A858
-    public static ushort[] g_textBaseX = new ushort[15]; // 8009CFBC
     public static ushort g_clutTableIndex; // 8009CFDA
     public static byte DAT_8009cfec; // 8009CFEC
     public static byte DAT_8009cfed; // 8009CFED
@@ -1500,7 +1525,7 @@ public static class StaticVariables
     public static short g_textPosOffsetY; // 800A58C2
     public static byte g_sprt; // 800A58D8
     public static byte g_fadeSomething; // 800A58D9
-    public static CallBackInfo[] g_transitionFuncArgs = new CallBackInfo[13]; // 800A731C
+    //public static CallBackInfo[] g_transitionFuncArgs = new CallBackInfo[13]; // 800A731C
     public static byte g_soundNameList; // 800A7488
     //public static byte  PTR_s_(void_)NULL_800a7c58; // 800A7C58
     public static byte PTR_DAT_800a7c5c; // 800A7C5C

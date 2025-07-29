@@ -2,6 +2,13 @@
 
 public class CdManager
 {
+    private readonly GameEngine _gameEngine;
+
+    public CdManager(GameEngine gameEngine)
+    {
+        _gameEngine = gameEngine;
+    }
+
     //8005a724
     public void InitCDReading()
     {

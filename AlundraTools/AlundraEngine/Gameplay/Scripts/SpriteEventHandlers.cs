@@ -307,7 +307,6 @@ public class SpriteEventHandlers
     {
         ushort contentFlags;
         uint[] flags;
-        int iVar3;
 
         if (entity.SpriteTableIndex == 0x1e)
         {
@@ -1007,7 +1006,6 @@ public class SpriteEventHandlers
     //8007c174
     public void FUN_8007c174(Entity entity)
     {
-        bool bVar2;
         int initialYPos;
         Entity entity2;
         int uVar6;
@@ -1028,9 +1026,7 @@ public class SpriteEventHandlers
             if (initialYPos == 1)
             {
                 LAB_8007c6f4:
-                bVar2 = _gameEngine.CdManager.FUN_8005a7d4();
-
-                if (bVar2)
+                if (_gameEngine.CdManager.FUN_8005a7d4())
                 {
                     return;
                 }
@@ -1049,9 +1045,8 @@ public class SpriteEventHandlers
                 }
 
                 entity.ForceZ = 0;
-                bVar2 = _gameEngine.IsWarpInProgress();
 
-                if (bVar2)
+                if (_gameEngine.IsWarpInProgress())
                 {
                     return;
                 }
@@ -1101,9 +1096,7 @@ public class SpriteEventHandlers
                 return;
             }
 
-            bVar2 = _gameEngine.IsWarpInProgress();
-
-            if (bVar2)
+            if (_gameEngine.IsWarpInProgress())
             {
                 return;
             }
@@ -1126,11 +1119,11 @@ public class SpriteEventHandlers
         {
             if (entity.IsAboveGround != 0 && entity.AIValues[2] != 0)
             {
-                initialYPos = entity.AIValues[2] * 0xc >> 4;
-                entity.AIValues[2] = (short)initialYPos;
+                var value = entity.AIValues[2] * 0xc >> 4;
+                entity.AIValues[2] = (short)value;
 
                 //StaticVariables.g_sharedBuffer2 + 4 => _gameEngine.CurrentMap.Info.Gravity
-                if (initialYPos <= _gameEngine.CurrentMap.Info.Gravity << 8)
+                if (value <= _gameEngine.CurrentMap.Info.Gravity << 8)
                 {
                     entity.AIValues[2] = 0;
                     entity.AIValues[3] = 0;
@@ -1139,18 +1132,18 @@ public class SpriteEventHandlers
                 entity.ForceZ = entity.AIValues[2];
             }
 
-            initialYPos = entity.InitialXPos + -1;
+            var initialXPos = entity.InitialXPos + -1;
 
-            if (1 < entity.InitialXPos + 1U)
+            if (1 < entity.InitialXPos + 1)
             {
-                entity.InitialXPos = initialYPos;
+                entity.InitialXPos = initialXPos;
 
-                if (initialYPos == 0)
+                if (initialXPos == 0)
                 {
                     goto LAB_8007c740;
                 }
 
-                if (initialYPos == 0x78)
+                if (initialXPos == 0x78)
                 {
                     entity.DamagedTickCounter = 0x78;
                 }
@@ -1258,10 +1251,12 @@ public class SpriteEventHandlers
                 {
                     return;
                 }
+
                 if (0 < entity.ForceZ)
                 {
                     return;
                 }
+
                 entity.InitialYPos = 1;
                 return;
             }
@@ -1269,9 +1264,7 @@ public class SpriteEventHandlers
             if (initialYPos == 2)
             {
                 //goto LAB_8007c6f4;
-                bVar2 = _gameEngine.CdManager.FUN_8005a7d4();
-
-                if (bVar2)
+                if (_gameEngine.CdManager.FUN_8005a7d4())
                 {
                     return;
                 }
@@ -1287,10 +1280,9 @@ public class SpriteEventHandlers
                 return;
             }
 
-            bVar2 = _gameEngine.IsWarpInProgress();
             entity2 = entity;
 
-            if (bVar2)
+            if (_gameEngine.IsWarpInProgress())
             {
                 return;
             }
