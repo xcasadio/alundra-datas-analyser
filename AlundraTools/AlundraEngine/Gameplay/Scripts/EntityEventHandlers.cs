@@ -1534,7 +1534,7 @@ public class EntityEventHandlers
     private int Script_13_00D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
-        return 0;
+        return 3;
         /*
         if ((logicEntity.Flags & 0x800000U) != 0) // has portrait
         {
@@ -2406,21 +2406,6 @@ public class EntityEventHandlers
         command = variables[0];
         result = 0;
 
-        //if (eventProgramState.Exp[1] == command) 
-        //{
-        //    // If still processing the same command, check if the repeat count was reached eventProgramState.Exp[2] == variables[1]
-        //    result = ((eventProgramState.Exp[2] < (variables[1])? 1 : 0) ^ 1) << 1;
-        //    eventProgramState.Exp[2] += 1;
-        //}
-        //else
-        //{
-        //    eventProgramState.Exp[1] = command;
-        //    eventProgramState.Exp[2] = 0;
-        //}
-        //
-        //return result;
-
-
         if (command != eventProgramState.Exp[1])
         {
             eventProgramState.Exp[1] = command;
@@ -2429,8 +2414,8 @@ public class EntityEventHandlers
         }
 
         eventProgramState.Exp[2]++;
-
         var toWait = variables[1];
+
         if (eventProgramState.Exp[2] >= toWait)
         {
             return 2;
@@ -2449,12 +2434,7 @@ public class EntityEventHandlers
     // 8003E464
     private int Script_57_039(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-        return 0;
-        /*
-        int iVar1;
-        iVar1 = _gameEngine.FUN_8004248c();
-        return (uint)(iVar1 == 0);*/
+        return _gameEngine.FUN_8004248c() == 0 ? 0 : 1;
     }
 
     // 8003E484

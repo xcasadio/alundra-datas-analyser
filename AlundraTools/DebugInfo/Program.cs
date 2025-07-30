@@ -185,10 +185,10 @@ internal class Program
 
             Log($"[{i}] {BLUE}{portal.X1}{NORMAL}x{BLUE}{portal.Y1}{NORMAL},{BLUE}{portal.X2}{NORMAL}x{BLUE}{portal.Y2}{NORMAL} -> {BLUE}{portal.DestMapId}{NORMAL} {BLUE}{portal.DestTileX}{NORMAL}x{BLUE}{portal.DestTileY}{NORMAL} ({portal.ZLevel} {portal.Flags})");
 
-            //Log($"{BLUE}X1 {NORMAL}{portal.X1}");
-            //Log($"{BLUE}Y1 {NORMAL}{portal.Y1}");
-            //Log($"{BLUE}X2 {NORMAL}{portal.X2}");
-            //Log($"{BLUE}Y2 {NORMAL}{portal.Y2}");
+            //Log($"{BLUE}X {NORMAL}{portal.X}");
+            //Log($"{BLUE}Y {NORMAL}{portal.Y}");
+            //Log($"{BLUE}Width {NORMAL}{portal.Width}");
+            //Log($"{BLUE}Height {NORMAL}{portal.Height}");
             //Log($"{BLUE}DestMapId {NORMAL}{portal.DestMapId}");
             //Log($"{BLUE}DestTileX {NORMAL}{portal.DestTileX}");
             //Log($"{BLUE}DestTileY {NORMAL}{portal.DestTileY}");

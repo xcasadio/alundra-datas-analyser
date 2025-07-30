@@ -15,9 +15,9 @@ public class UiHandler
     private readonly List<Color[]> _uipalettes = new();
     private BitmapDrawCommand _dialognametextcmd;
 
-    public UiHandler(GameEngine gameEngineEngine, string fontfile, string palettesfile, string uifile)
+    public UiHandler(GameEngine gameEngine, string fontfile, string palettesfile, string uifile)
     {
-        _gameEngine = gameEngineEngine;
+        _gameEngine = gameEngine;
         //load palettes
         var buff = File.ReadAllBytes(fontfile);
         for (var pdex = 0; pdex + 32 < buff.Length; pdex += 32)
@@ -419,7 +419,7 @@ public class UiHandler
 
         var tempstr = text;
             
-        RenderTextInner(tempstr, buff, 0x3c0, linenum * 16 + 0x120, 0, 0, 0x100, 0x10);
+        RenderTextBitmap(tempstr, buff, 0x3c0, linenum * 16 + 0x120, 0, 0, 0x100, 0x10);
         var cmd = new UiDrawCmd { X = x, Y = y, U = 0, V = 0, W = 255, H = 16, Uipaletteindex = 8 };
         var bdc = new BitmapDrawCommand { X = x, Y = y };
         bdc.Bmp = UiHelper.GenerateBitmap(cmd, _uipalettes[8], buff);
@@ -431,8 +431,6 @@ public class UiHandler
     private int _1072Fc, _1072dc, _107214, _1072E0, _1072E4, _107228,_1072d4,_1072d8;
     private int _107210;
     private byte[] _renderTextBuff = new byte[0x800];
-    private int _dialogRenderCharCounter;
-    private int _dialogTextLineStartX;
     private readonly int[] _107220 = new int[8];
     private int _dialogLetterWait, _dialogLetterWaitRemaining;
     private int _dialogSomethingBit3On;
@@ -441,7 +439,7 @@ public class UiHandler
     private int _dialogTextBufferPos;
     private int _dialogChoice;
     private int _1072F0, _1072F4;
-    private int _dialogTextSfx;
+
     public void RenderDialogText()
     {
         if ((_dialogSomething & 8) != 0)
@@ -457,8 +455,8 @@ public class UiHandler
             _1072dc |= 8;
 
             {//near_end
-                _dialogRenderCharCounter = 0;
-                _dialogTextLineStartX = 0;
+                StaticVariables.g_textRenderStep = 0;
+                StaticVariables.g_textLineStartX = 0;
                 _renderTextBuff = new byte[0x800];
 
                 if (_107214 == 2)
@@ -557,10 +555,10 @@ public class UiHandler
                     }
 
                     var wierdv = (_107210 + _107214 - (((_107210 + _107214) * 0x55555556) >> 32) * 3) * 8 + 0x120;
-                    RenderTextInner(val.ToString(), _renderTextBuff, 0x3c0, wierdv, _dialogTextLineStartX, 0, 0x100, 0x10);
+                    RenderTextBitmap(val.ToString(), _renderTextBuff, 0x3c0, wierdv, StaticVariables.g_textLineStartX, 0, 0x100, 0x10);
 
                     var inf = UiHelper.FontCharInfos[(int)val];
-                    _dialogTextLineStartX += inf.Width;
+                    StaticVariables.g_textLineStartX += inf.Width;
                     return;
                 case 'Y':
                     _dialogTextBufferPos++;
@@ -602,8 +600,8 @@ public class UiHandler
                 case 'N':
                     _dialogTextBufferPos++;
                 {//near_end
-                    _dialogRenderCharCounter = 0;
-                    _dialogTextLineStartX = 0;
+                    StaticVariables.g_textRenderStep = 0;
+                    StaticVariables.g_textLineStartX = 0;
                     _renderTextBuff = new byte[0x800];
 
                     if (_107214 == 2)
@@ -633,27 +631,27 @@ public class UiHandler
                     _dialogTextBufferPos++;
                     return;
                 case 'B':
-                    _dialogTextSfx = -1;
+                    StaticVariables.g_currentVoiceSfxId = -1;
                     _dialogTextBufferPos++;
                     continue;
                 case 'C':
-                    _dialogTextSfx = 0;
+                    StaticVariables.g_currentVoiceSfxId = 0;
                     _dialogTextBufferPos++;
                     continue;
                 case 'D':
-                    _dialogTextSfx = 1;
+                    StaticVariables.g_currentVoiceSfxId = 1;
                     _dialogTextBufferPos++;
                     continue;
                 case 'E':
-                    _dialogTextSfx = 2;
+                    StaticVariables.g_currentVoiceSfxId = 2;
                     _dialogTextBufferPos++;
                     continue;
                 case 'F':
-                    _dialogTextSfx = 3;
+                    StaticVariables.g_currentVoiceSfxId = 3;
                     _dialogTextBufferPos++;
                     continue;
                 case 'G':
-                    _dialogTextSfx = 4;
+                    StaticVariables.g_currentVoiceSfxId = 4;
                     _dialogTextBufferPos++;
                     continue;
                 case 'M':
@@ -692,27 +690,25 @@ public class UiHandler
         var txt = _dialogTextBuffer[_dialogTextBufferPos++].ToString();
 
         var wierdval = (_107210 + _107214 - (((_107210 + _107214) * 0x55555556) >> 32) * 3) * 8 + 0x120;
-        RenderTextInner(txt, _renderTextBuff, 0x3c0, wierdval, _dialogTextLineStartX, 0, 0x100, 0x10);
+        RenderTextBitmap(txt, _renderTextBuff, 0x3c0, wierdval, StaticVariables.g_textLineStartX, 0, 0x100, 0x10);
 
         var info = UiHelper.FontCharInfos[(int)txt[0]];
-        _dialogTextLineStartX += info.Width;
-        if ((_dialogRenderCharCounter & 1) == 0)//every other
+        StaticVariables.g_textLineStartX += info.Width;
+
+        if ((StaticVariables.g_textRenderStep & 1) == 0)//every other
         {
-            if (_dialogTextSfx != 4 && _dialogTextSfx >= 0)
+            if (StaticVariables.g_currentVoiceSfxId != 4 && StaticVariables.g_currentVoiceSfxId >= 0)
             {
-                if (_gameEngine.SoundBin != null)
-                {
-                    _gameEngine.SoundBin.PlaySoundEffect(0x4f + _dialogTextSfx);
-                }
+                _gameEngine.SoundManager.PlaySoundEffect((uint)(0x4f + StaticVariables.g_currentVoiceSfxId));
             }
         }
 
-        _dialogRenderCharCounter++;
+        StaticVariables.g_textRenderStep++;
 
 
     }
 
-    public void RenderTextInner(string linetext, byte[]outputbitmap,int vramx, int vramy, int startx, int starty, int outputbitmapwidth, int outputbitmapheight)
+    public void RenderTextBitmap(string linetext, byte[]outputbitmap,int vramx, int vramy, int startx, int starty, int outputbitmapwidth, int outputbitmapheight)
     {
         var x = startx;
         var dex = 0;
@@ -1023,11 +1019,11 @@ public class UiHandler
         DialogChoiceUnknown2 = 0;
         _1072d0 = 0;
         _dialogSomethingBit3On = 0;
-        _dialogTextSfx = -1;
+        StaticVariables.g_currentVoiceSfxId = -1;
         _107210 = 0;
         _107214 = 0;
         _dialogTextBufferPos = 0;
-        _dialogRenderCharCounter = 0;
+        StaticVariables.g_textRenderStep = 0;
         for (var linedex = 0;linedex<3;linedex++)
         {
             _107220[linedex] = 0;
@@ -1051,7 +1047,7 @@ public class UiHandler
         _1072dc = 3;
         _dialogChoice = 3;
         _renderTextBuff = new byte[0x800];//zero out memory
-        _dialogTextLineStartX = 0;
+        StaticVariables.g_textLineStartX = 0;
         _gameEngine.SoundBin.PlaySoundEffect(6);
 
         return true;

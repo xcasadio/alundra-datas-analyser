@@ -1,6 +1,7 @@
 ﻿using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay;
 using System.Diagnostics;
+using AlundraEngine.UI;
 
 namespace AlundraEngine;
 
@@ -471,19 +472,81 @@ public class GameInitializer
         //StaticVariables.TILE_8013fb98.h = 0xf0;
     }
 
+    //80044be4
     private void LoadFontInTakiFolder()
     {
         //ClearOrderTable(StaticVariables.g_orderTableTaki,10);
         //ClearOrderTable(StaticVariables.g_orderTableTaki2,10);
-        //LoadTakiScreenWind.tx();
-        //LoadtakiScreenWind.cl();
+        //LoadTakiScreenWind_tx();
+        LoadtakiScreenWind_cl();
         //LoadFONT3.tim();
-        //InitializeTextSpriteTiles();
+        InitializeTextSpriteTiles();
         //DrawSync(0);
         //ResetTransitionSystem();
         InitializeCameraTransitionState();
     }
 
+    //80044b48
+    private void LoadtakiScreenWind_cl()
+    {
+        //StaticVariables.g_clutTable = _gameEngine.Font3.Palettes
+        //LoadImage => _gameEngine.Font3.FontBitmap
+        //clutRect.x = 0x120;
+        //clutRect.y = 0x1e0;
+        //clutRect.w = 0x10;
+        //clutRect.h = 0x10;
+    }
+
+    //8005a0c8
+    private void InitializeTextSpriteTiles()
+    {
+        int tileX;
+        int tileY;
+        TextTilesConfiguration tilesConfiguration;
+        int surfaceIndex;
+
+        surfaceIndex = 0;
+        StaticVariables.g_etcDisplayFlags = 0;
+        tilesConfiguration = StaticVariables.g_textTilesConfiguration;
+
+        do
+        {
+            tileY = 0;
+
+            if (0 < tilesConfiguration.Height)
+            {
+                do
+                {
+                    tileX = 0;
+
+                    if (0 < tilesConfiguration.Width)
+                    {
+                        SPRT[] sprites = (surfaceIndex == 0) ? tilesConfiguration.SpritesA : tilesConfiguration.SpritesB;
+
+                        do
+                        {
+                            var tileIndex = tileY * tilesConfiguration.Width + tileX;
+                            var sprite = sprites[tileIndex];
+                            //SetSprt(sprite);
+                            //SetSemiTrans(sprite, 0);
+                            //SetShadeTex(sprite, 1);
+                            sprite.clut = StaticVariables.g_clutTable[0]; //TODO Font3.Palettes[0];
+
+                            tileX = tileX + 1;
+                        } while (tileX < tilesConfiguration.Width);
+                    }
+
+                    tileY = tileY + 1;
+
+                } while (tileY < tilesConfiguration.Height);
+            }
+
+            surfaceIndex = surfaceIndex + 1;
+
+        } while (surfaceIndex < 2);
+    }
+
+    //80057b64
     private void InitializeCameraTransitionState()
     {
         StaticVariables.g_cameraTransitionState = 0;

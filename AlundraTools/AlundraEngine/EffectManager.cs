@@ -34,7 +34,7 @@ public class EffectManager
         //var effectIndex = 0;
         //var mapEventRecord = _gameEngine.CurrentMap.SpriteInfo.MapEffectRecords[effectIndex];
         ////var mapEventRecord = StaticVariables.g_initMapEventRecords[effectIndex];
-        //var val = (uint)(mapEventRecord.X1 | (mapEventRecord.Y1 << 8) | (mapEventRecord.X2 << 16) | (mapEventRecord.Y2 << 24));
+        //var val = (uint)(mapEventRecord.X | (mapEventRecord.Y << 8) | (mapEventRecord.Width << 16) | (mapEventRecord.Height << 24));
         //
         //while (val != 0)
         //{
@@ -50,7 +50,7 @@ public class EffectManager
         //    effectIndex += 1;
         //    //mapEventRecord = StaticVariables.g_initMapEventRecords[effectIndex];
         //    mapEventRecord = _gameEngine.CurrentMap.SpriteInfo.MapEffectRecords[effectIndex];
-        //    val = (uint)(mapEventRecord.X1 | (mapEventRecord.Y1 << 8) | (mapEventRecord.X2 << 16) | (mapEventRecord.Y2 << 24));
+        //    val = (uint)(mapEventRecord.X | (mapEventRecord.Y << 8) | (mapEventRecord.Width << 16) | (mapEventRecord.Height << 24));
         //}
     }
 

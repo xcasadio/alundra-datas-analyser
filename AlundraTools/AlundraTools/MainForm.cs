@@ -61,13 +61,26 @@ public partial class MainForm : Form
                 var balanceBin = new BalanceBin(balanceFile);
                 var soundBinFileName = Path.Combine(dataFolder, "SOUND.BIN");
                 var soundBin = new SoundBin(soundBinFileName);
-                var etcResRFileName = Path.Combine(dataFolder, "ETC_RES.R");
+                var etcResRFileName = GetEtcRFileName(dataFolder);
                 var etcResR = new EtcResR(etcResRFileName);
                 var font3 = new Font3(Path.Combine(dataFolder, "..", "TAKI\\SCREEN"));
 
                 frmAlundra.Init(datasBin, balanceBin, soundBin, etcResR, font3);
             }
         }
+    }
+
+    private static string GetEtcRFileName(string dataFolder)
+    {
+        //"ETC_RES.R"
+        var files = Directory.GetFiles(dataFolder, "*.R");
+
+        if (files.Length == 0)
+        {
+            throw new FileNotFoundException($"ETC_XXX.R file not found in the specified data folder {dataFolder}.");
+        }
+
+        return Path.Combine(dataFolder, files[0]);
     }
 
     private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -89,7 +102,7 @@ public partial class MainForm : Form
                 var dataFolder = Path.GetDirectoryName(ofd.FileName);
                 var soundFile = Path.Combine(dataFolder, "SOUND.BIN");
                 var balanceFile = Path.Combine(dataFolder, "BALANCE.BIN");
-                var etcResRFileName = Path.Combine(dataFolder, "ETC_RES.R");
+                var etcResRFileName = GetEtcRFileName(dataFolder);
                 var font3Folder = Path.Combine(dataFolder, "..", "TAKI\\SCREEN");
 
                 var frmGame = new FrmGame(

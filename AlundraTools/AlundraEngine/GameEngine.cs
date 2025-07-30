@@ -18,7 +18,7 @@ public class GameEngine
     public readonly DatasBin.DatasBin DatasBin;
     public readonly BalanceBin BalanceBin;
     public readonly EtcResR EtcResR;
-    private readonly Font3 _font3;
+    public readonly Font3 Font3;
 
     public GameMap CurrentMap { get; private set; }
     public GameMap AlundraMap => DatasBin.AlundraGameMap;
@@ -30,6 +30,7 @@ public class GameEngine
     public PlayerManager PlayerManager { get; }
     public SoundManager SoundManager { get; }
     public SoundBin SoundBin { get; }
+    public UIManager UIManager { get; }
 
     private readonly EntityEventHandlers _entityEventHandlers;
     private readonly GameInitializer _gameInitializer;
@@ -45,7 +46,7 @@ public class GameEngine
         BalanceBin = balanceBin;
         SoundBin = soundBin;
         EtcResR = etcResR;
-        _font3 = font3;
+        Font3 = font3;
 
         _entityEventHandlers = new EntityEventHandlers(this);
         _gameInitializer = new GameInitializer(this);
@@ -58,11 +59,12 @@ public class GameEngine
         EffectManager = new EffectManager(this);
         PlayerManager = new PlayerManager(this);
         SoundManager = new SoundManager(this);
+        UIManager = new UIManager(this);
     }
 
     public void InitializeEngine()
     {
-        StaticVariables.Initialize();
+        StaticVariables.Initialize(this);
         _gameInitializer.Initialize();
     }
 
@@ -106,9 +108,18 @@ public class GameEngine
                 //StaticVariables.g_imageBuffer[0xc];
                 //StaticVariables.g_imageBuffer[0xd];
                 //StaticVariables.g_imageBuffer[0xe];
-                var x = CurrentMap.SpriteInfo.Entities.Entities[0].XPos;
-                var y = CurrentMap.SpriteInfo.Entities.Entities[0].YPos;
-                var z = CurrentMap.SpriteInfo.Entities.Entities[0].Height;
+
+                byte x = 0;
+                byte y = 0;
+                byte z = 0;
+
+                //when alundra dies, the map hasn't entities
+                if (CurrentMap.SpriteInfo.Entities.Entities[0] != null)
+                {
+                    x = CurrentMap.SpriteInfo.Entities.Entities[0].XPos;
+                    y = CurrentMap.SpriteInfo.Entities.Entities[0].YPos;
+                    z = CurrentMap.SpriteInfo.Entities.Entities[0].Height;
+                }
 
                 playerPosX = x << 3;
                 playerPosY = y << 3;
@@ -1561,10 +1572,10 @@ public class GameEngine
         //
         //    var mapEventRecord = mapEvent.MapEventRecord;
         //
-        //    if (playerEntity.TileX > mapEventRecord.X1 
-        //        && playerEntity.TileX < mapEventRecord.X2 
-        //        && playerEntity.TileY > mapEventRecord.Y1 
-        //        && playerEntity.TileY < mapEventRecord.Y2)
+        //    if (playerEntity.TileX > mapEventRecord.X 
+        //        && playerEntity.TileX < mapEventRecord.Width 
+        //        && playerEntity.TileY > mapEventRecord.Y 
+        //        && playerEntity.TileY < mapEventRecord.Height)
         //    {
         //        playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap] = mapEvent.ProgramBMap;
         //        playerEntity.MapEventProgramId = mapEvent.ProgramBMap;
@@ -2616,46 +2627,10 @@ public class GameEngine
              && StaticVariables.g_entitySpriteNamesTable[spriteTableIndex * 4] != '\0')
         {
             StaticVariables.g_entitySpriteNameTableIndex = spriteTableIndex;
-            SetTransitionType(0xc);
+            _renderer.SetTransitionType(0xc);
         }
     }
 
-    //80047f94
-    private int SetTransitionType(int transitionType)
-    {
-        int result = 1;
-
-        if (transitionType >= 13)
-        {
-            return 0;
-        }
-
-        var transitionFuncArgs = StaticVariables.g_transitionFuncArgs[transitionType];
-        var callbackData = StaticVariables.g_callbackTable[transitionType];
-
-        StaticVariables.g_activeTransitionCallback = callbackData;
-        StaticVariables.g_currentTransitionType = transitionType;
-
-        callbackData.Flags = transitionFuncArgs.Flags;
-        callbackData.Data = transitionFuncArgs.Data;
-        callbackData.X1 = transitionFuncArgs.X1;
-        callbackData.Y1 = transitionFuncArgs.Y1;
-        callbackData.X2 = transitionFuncArgs.X2;
-        callbackData.Y2 = transitionFuncArgs.Y2;
-        callbackData.FuncA = transitionFuncArgs.FuncA;
-        callbackData.FuncB = transitionFuncArgs.FuncB;
-        callbackData.Arg = transitionFuncArgs.Arg;
-
-        // Active le flag de transition dans le callback
-        callbackData.Flags |= 0x0001;
-
-        if (transitionFuncArgs.FuncA != null)
-        {
-            transitionFuncArgs.FuncA.Invoke();
-        }
-
-        return result;
-    }
 
     //800423f8
     public int TryPlayEtcAnimation(uint textId, int animationMode)
@@ -2701,13 +2676,14 @@ public class GameEngine
     //800450f0
     public int PlayEtcAnimation(string scriptText, int animationMode)
     {
-        if (SetTransitionType(animationMode) == 0)
+        if (_renderer.SetTransitionType(0) == 0)
         {
             return 0;
         }
 
         if (scriptText.Length >= 0x960)
         {
+            Debugger.Break();
             var message = "the sub text is too long"; //サブテキストが長すぎます!
             Array.Copy(StaticVariables.g_scriptBuffer, message.ToCharArray(), message.Length);
         }
@@ -2717,38 +2693,40 @@ public class GameEngine
         }
 
         // Configure le mode texte pour l’animation
-        StaticVariables.g_etcTextCursorBlink = 0;
-        StaticVariables.g_etcTextMode = 2;
-        StaticVariables.g_etcTextSpeed = 0xF;
+        StaticVariables.g_textToDisplay.tick = 0;
+        StaticVariables.g_textToDisplay.mode = 2;
+        StaticVariables.g_textToDisplay.speed = 0xF;
 
         // Configure les coordonnées de départ du texte (X, Y)
-        // selon g_textBaseX[] qui contient des offsets
-        var baseX = StaticVariables.g_textBaseX[0];
+        // selon g_textTilesConfiguration2[] qui contient des offsets
+        var baseX = StaticVariables.g_textTilesConfiguration2.X;
         if (baseX < 0)
         {
-            var offset = StaticVariables.g_textBaseX[2];
-            baseX = (ushort)(StaticVariables.g_textBaseX[0] - (offset << 3));
+            var offset = StaticVariables.g_textTilesConfiguration2.Width;
+            baseX = (short)(StaticVariables.g_textTilesConfiguration2.X - (offset << 3));
         }
 
-        StaticVariables.g_etcTextX = baseX;
-        StaticVariables.g_etcTextY = 0xF0; // position Y fixe
-        var startX = StaticVariables.g_textBaseX[0];
+        StaticVariables.g_textToDisplay.x = baseX;
+        StaticVariables.g_textToDisplay.y = 0xF0; // position Y fixe
+
+        var startX = StaticVariables.g_textTilesConfiguration2.X;
 
         if (startX < 0)
         {
-            var offset = StaticVariables.g_textBaseX[2];
-            startX = (ushort)(StaticVariables.g_textBaseX[0] - (offset << 3));
+            var offset = StaticVariables.g_textTilesConfiguration2.Width;
+            startX = (short)(StaticVariables.g_textTilesConfiguration2.X - (offset << 3));
         }
-        StaticVariables.g_etcTextStartX = startX;
 
-        var startY = StaticVariables.g_textBaseX[1];
+        StaticVariables.g_textToDisplay.startX = startX;
+
+        var startY = StaticVariables.g_textTilesConfiguration2.Y;
 
         if (startY < 0)
         {
-            var offset = StaticVariables.g_textBaseX[3];
-            startY = (ushort)(StaticVariables.g_textBaseX[1] - (offset << 3));
+            var offset = StaticVariables.g_textTilesConfiguration2.Height;
+            startY = (short)(StaticVariables.g_textTilesConfiguration2.Y - (offset << 3));
         }
-        StaticVariables.g_etcTextStartY = startY;
+        StaticVariables.g_textToDisplay.startY = startY;
 
         StaticVariables.g_playerControlFlags |= (uint)(animationMode == 1 ? 0x10 : 0x8);
 
@@ -2805,7 +2783,7 @@ public class GameEngine
         StaticVariables.g_textDelay = 1;
         StaticVariables.g_debugFlags_2 = 3;
         StaticVariables.g_etcAnimationMode = 3;
-        StaticVariables.g_textRenderState = 0;
+        StaticVariables.g_textLineStartX = 0;
         StaticVariables.g_textHoldState = 0;
         //*(uint32_t*)0x80159cd4 = 0; // variable globale mystérieuse remise à 0
         Array.Clear(StaticVariables.g_textBuffer);
@@ -2841,5 +2819,11 @@ public class GameEngine
         }
 
         flags[(flag >> 3) & 0xffc] |= (uint)(1 << (int)(flag & 0x1f));
+    }
+
+    //8004248c
+    public int FUN_8004248c()
+    {
+        return IsWarpInProgress() ? 1 : 0;
     }
 }

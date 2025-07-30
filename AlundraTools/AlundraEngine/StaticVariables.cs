@@ -930,33 +930,886 @@ public static class StaticVariables
         0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00
     ];
+    //800a4ffc
+    public static readonly SPRT[] g_font1_A = new SPRT[]
+    {
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x40, y0 = (short)0x90, u0 = 0xE0,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x48, y0 = (short)0x90, u0 = 0xE8,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x50, y0 = (short)0x90, u0 = 0xF0,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x58, y0 = (short)0x90, u0 = 0x78,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x60, y0 = (short)0x90, u0 = 0x80,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x68, y0 = (short)0x90, u0 = 0x88,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x70, y0 = (short)0x90, u0 = 0x90,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x78, y0 = (short)0x90, u0 = 0x98,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x80, y0 = (short)0x90, u0 = 0xA0,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x88, y0 = (short)0x90, u0 = 0xA8,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x90, y0 = (short)0x90, u0 = 0xB0,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x98, y0 = (short)0x90, u0 = 0xE0,
+            v0 = 0x18, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0xA0, y0 = (short)0x90, u0 = 0xE8,
+            v0 = 0x18, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0xA8, y0 = (short)0x90, u0 = 0xF0,
+            v0 = 0x18, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x40, y0 = (short)0x98, u0 = 0xE0,
+            v0 = 0x8, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x48, y0 = (short)0x98, u0 = 0xE8,
+            v0 = 0x8, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x50, y0 = (short)0x98, u0 = 0xF0,
+            v0 = 0x8, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x58, y0 = (short)0x98, u0 = 0x10,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x60, y0 = (short)0x98, u0 = 0x18,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x68, y0 = (short)0x98, u0 = 0x20,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x70, y0 = (short)0x98, u0 = 0x28,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x78, y0 = (short)0x98, u0 = 0x30,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x80, y0 = (short)0x98, u0 = 0x38,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x88, y0 = (short)0x98, u0 = 0x40,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x90, y0 = (short)0x98, u0 = 0x48,
+            v0 = 0x0, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x98, y0 = (short)0x98, u0 = 0xE0,
+            v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0xA0, y0 = (short)0x98, u0 = 0xE8,
+            v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0xA8, y0 = (short)0x98, u0 = 0xF0,
+            v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x40, y0 = (short)0xA0, u0 = 0x60,
+            v0 = 0x18, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x48, y0 = (short)0xA0, u0 = 0x68,
+            v0 = 0x18, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x50, y0 = (short)0xA0, u0 = 0x70,
+            v0 = 0x18, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x58, y0 = (short)0xA0, u0 = 0x10,
+            v0 = 0x8, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x60, y0 = (short)0xA0, u0 = 0x18,
+            v0 = 0x8, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x68, y0 = (short)0xA0, u0 = 0x20,
+            v0 = 0x8, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x70, y0 = (short)0xA0, u0 = 0x28,
+            v0 = 0x8, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x78, y0 = (short)0xA0, u0 = 0x30,
+            v0 = 0x8, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x80, y0 = (short)0xA0, u0 = 0x38,
+            v0 = 0x8, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x88, y0 = (short)0xA0, u0 = 0x40,
+            v0 = 0x8, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x90, y0 = (short)0xA0, u0 = 0x48,
+            v0 = 0x8, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x98, y0 = (short)0xA0, u0 = 0xC8,
+            v0 = 0x18, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0xA0, y0 = (short)0xA0, u0 = 0xD0,
+            v0 = 0x18, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0xA8, y0 = (short)0xA0, u0 = 0xD8,
+            v0 = 0x18, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x40, y0 = (short)0xA8, u0 = 0x60,
+            v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x48, y0 = (short)0xA8, u0 = 0x68,
+            v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x50, y0 = (short)0xA8, u0 = 0x70,
+            v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x58, y0 = (short)0xA8, u0 = 0x78,
+            v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x60, y0 = (short)0xA8, u0 = 0x80,
+            v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x68, y0 = (short)0xA8, u0 = 0x88,
+            v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x70, y0 = (short)0xA8, u0 = 0x90,
+            v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x78, y0 = (short)0xA8, u0 = 0x98,
+            v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x80, y0 = (short)0xA8, u0 = 0xA0,
+            v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x88, y0 = (short)0xA8, u0 = 0xA8,
+            v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x90, y0 = (short)0xA8, u0 = 0xB0,
+            v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x98, y0 = (short)0xA8, u0 = 0xC8,
+            v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0xA0, y0 = (short)0xA8, u0 = 0xD0,
+            v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
+        },
+        new SPRT
+        {
+            tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0xA8, y0 = (short)0xA8, u0 = 0xD8,
+            v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
+        }
+    };
+    //800a545c
+    public static readonly SPRT[] g_font1_B = new SPRT[]
+{
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x40, y0 = (short)0x90, u0 = 0xE0, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x48, y0 = (short)0x90, u0 = 0xE8, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x50, y0 = (short)0x90, u0 = 0xF0, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x58, y0 = (short)0x90, u0 = 0x78, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x60, y0 = (short)0x90, u0 = 0x80, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x68, y0 = (short)0x90, u0 = 0x88, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x70, y0 = (short)0x90, u0 = 0x90, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x78, y0 = (short)0x90, u0 = 0x98, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x80, y0 = (short)0x90, u0 = 0xA0, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x88, y0 = (short)0x90, u0 = 0xA8, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x90, y0 = (short)0x90, u0 = 0xB0, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x98, y0 = (short)0x90, u0 = 0xE0, v0 = 0x18, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0xA0, y0 = (short)0x90, u0 = 0xE8, v0 = 0x18, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0xA8, y0 = (short)0x90, u0 = 0xF0, v0 = 0x18, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x40, y0 = (short)0x98, u0 = 0xE0, v0 = 0x08, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x48, y0 = (short)0x98, u0 = 0xE8, v0 = 0x08, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x50, y0 = (short)0x98, u0 = 0xF0, v0 = 0x08, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x58, y0 = (short)0x98, u0 = 0x10, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x60, y0 = (short)0x98, u0 = 0x18, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x68, y0 = (short)0x98, u0 = 0x20, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x70, y0 = (short)0x98, u0 = 0x28, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x78, y0 = (short)0x98, u0 = 0x30, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x80, y0 = (short)0x98, u0 = 0x38, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x88, y0 = (short)0x98, u0 = 0x40, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x90, y0 = (short)0x98, u0 = 0x48, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x98, y0 = (short)0x98, u0 = 0xE0, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0xA0, y0 = (short)0x98, u0 = 0xE8, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0xA8, y0 = (short)0x98, u0 = 0xF0, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x40, y0 = (short)0xA0, u0 = 0x60, v0 = 0x18, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x48, y0 = (short)0xA0, u0 = 0x68, v0 = 0x18, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x50, y0 = (short)0xA0, u0 = 0x70, v0 = 0x18, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x58, y0 = (short)0xA0, u0 = 0x10, v0 = 0x08, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x60, y0 = (short)0xA0, u0 = 0x18, v0 = 0x08, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x68, y0 = (short)0xA0, u0 = 0x20, v0 = 0x08, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x70, y0 = (short)0xA0, u0 = 0x28, v0 = 0x08, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x78, y0 = (short)0xA0, u0 = 0x30, v0 = 0x08, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x80, y0 = (short)0xA0, u0 = 0x38, v0 = 0x08, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x88, y0 = (short)0xA0, u0 = 0x40, v0 = 0x08, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x90, y0 = (short)0xA0, u0 = 0x48, v0 = 0x08, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x98, y0 = (short)0xA0, u0 = 0xC8, v0 = 0x18, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0xA0, y0 = (short)0xA0, u0 = 0xD0, v0 = 0x18, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0xA8, y0 = (short)0xA0, u0 = 0xD8, v0 = 0x18, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x40, y0 = (short)0xA8, u0 = 0x60, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x48, y0 = (short)0xA8, u0 = 0x68, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x50, y0 = (short)0xA8, u0 = 0x70, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x58, y0 = (short)0xA8, u0 = 0x78, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x60, y0 = (short)0xA8, u0 = 0x80, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x68, y0 = (short)0xA8, u0 = 0x88, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x70, y0 = (short)0xA8, u0 = 0x90, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x78, y0 = (short)0xA8, u0 = 0x98, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x80, y0 = (short)0xA8, u0 = 0xA0, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x88, y0 = (short)0xA8, u0 = 0xA8, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x90, y0 = (short)0xA8, u0 = 0xB0, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x98, y0 = (short)0xA8, u0 = 0xC8, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0xA0, y0 = (short)0xA8, u0 = 0xD0, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0xA8, y0 = (short)0xA8, u0 = 0xD8, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
+};
+    // 800A58BC
+    public static TextTilesConfiguration g_textTilesConfiguration = new TextTilesConfiguration
+    {
+        X = 0x40,
+        Y = 0x8C,
+        Width = 0xE,
+        Height = 0x4,
+        SpritesA = g_font1_A,
+        SpritesB = g_font1_B,
+    };
+    //8009a85c
+    public static SPRT[] g_font2_A =
+    [
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x10, y0 = (short)0xA8, u0 = (byte)0xE0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x18, y0 = (short)0xA8, u0 = (byte)0xE8, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x20, y0 = (short)0xA8, u0 = (byte)0xF0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x28, y0 = (short)0xA8, u0 = (byte)0x78, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x30, y0 = (short)0xA8, u0 = (byte)0x80, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x38, y0 = (short)0xA8, u0 = (byte)0x88, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x40, y0 = (short)0xA8, u0 = (byte)0x90, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x48, y0 = (short)0xA8, u0 = (byte)0x98, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x50, y0 = (short)0xA8, u0 = (byte)0xA0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x58, y0 = (short)0xA8, u0 = (byte)0xA0, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x60, y0 = (short)0xA8, u0 = (byte)0xA8, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x68, y0 = (short)0xA8, u0 = (byte)0xB8, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x70, y0 = (short)0xA8, u0 = (byte)0xC0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x78, y0 = (short)0xA8, u0 = (byte)0x78, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x80, y0 = (short)0xA8, u0 = (byte)0x80, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x88, y0 = (short)0xA8, u0 = (byte)0x88, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x90, y0 = (short)0xA8, u0 = (byte)0x90, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x98, y0 = (short)0xA8, u0 = (byte)0x98, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA0, y0 = (short)0xA8, u0 = (byte)0xA0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA8, y0 = (short)0xA8, u0 = (byte)0xA8, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB0, y0 = (short)0xA8, u0 = (byte)0xB0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB8, y0 = (short)0xA8, u0 = (byte)0xB8, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC0, y0 = (short)0xA8, u0 = (byte)0xC0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC8, y0 = (short)0xA8, u0 = (byte)0x78, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD0, y0 = (short)0xA8, u0 = (byte)0x80, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD8, y0 = (short)0xA8, u0 = (byte)0x88, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE0, y0 = (short)0xA8, u0 = (byte)0x90, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE8, y0 = (short)0xA8, u0 = (byte)0x98, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF0, y0 = (short)0xA8, u0 = (byte)0xA0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF8, y0 = (short)0xA8, u0 = (byte)0xA8, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x100, y0 = (short)0xA8, u0 = (byte)0xB0, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x108, y0 = (short)0xA8, u0 = (byte)0xB8, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x110, y0 = (short)0xA8, u0 = (byte)0xC0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x118, y0 = (short)0xA8, u0 = (byte)0xE0, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x120, y0 = (short)0xA8, u0 = (byte)0xE8, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x128, y0 = (short)0xA8, u0 = (byte)0xF0, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x10, y0 = (short)0xB0, u0 = (byte)0xE0, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x18, y0 = (short)0xB0, u0 = (byte)0xE8, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x20, y0 = (short)0xB0, u0 = (byte)0xF0, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x28, y0 = (short)0xB0, u0 = (byte)0x10, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x30, y0 = (short)0xB0, u0 = (byte)0x18, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x38, y0 = (short)0xB0, u0 = (byte)0x20, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x40, y0 = (short)0xB0, u0 = (byte)0x28, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x48, y0 = (short)0xB0, u0 = (byte)0x30, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x50, y0 = (short)0xB0, u0 = (byte)0x38, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x58, y0 = (short)0xB0, u0 = (byte)0x40, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x60, y0 = (short)0xB0, u0 = (byte)0x48, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x68, y0 = (short)0xB0, u0 = (byte)0x50, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x70, y0 = (short)0xB0, u0 = (byte)0x58, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x78, y0 = (short)0xB0, u0 = (byte)0x10, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x80, y0 = (short)0xB0, u0 = (byte)0x18, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x88, y0 = (short)0xB0, u0 = (byte)0x20, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x90, y0 = (short)0xB0, u0 = (byte)0x28, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x98, y0 = (short)0xB0, u0 = (byte)0x30, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA0, y0 = (short)0xB0, u0 = (byte)0x38, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA8, y0 = (short)0xB0, u0 = (byte)0x40, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB0, y0 = (short)0xB0, u0 = (byte)0x48, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB8, y0 = (short)0xB0, u0 = (byte)0x50, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC0, y0 = (short)0xB0, u0 = (byte)0x58, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC8, y0 = (short)0xB0, u0 = (byte)0x10, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD0, y0 = (short)0xB0, u0 = (byte)0x18, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD8, y0 = (short)0xB0, u0 = (byte)0x20, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE0, y0 = (short)0xB0, u0 = (byte)0x28, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE8, y0 = (short)0xB0, u0 = (byte)0x30, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF0, y0 = (short)0xB0, u0 = (byte)0x38, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF8, y0 = (short)0xB0, u0 = (byte)0x40, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x100, y0 = (short)0xB0, u0 = (byte)0x48, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x108, y0 = (short)0xB0, u0 = (byte)0x50, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x110, y0 = (short)0xB0, u0 = (byte)0x58, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x118, y0 = (short)0xB0, u0 = (byte)0xE0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x120, y0 = (short)0xB0, u0 = (byte)0xE8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x128, y0 = (short)0xB0, u0 = (byte)0xF0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x10, y0 = (short)0xB8, u0 = (byte)0x60, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x18, y0 = (short)0xB8, u0 = (byte)0x68, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x20, y0 = (short)0xB8, u0 = (byte)0x70, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x28, y0 = (short)0xB8, u0 = (byte)0x10, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x30, y0 = (short)0xB8, u0 = (byte)0x18, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x38, y0 = (short)0xB8, u0 = (byte)0x20, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x40, y0 = (short)0xB8, u0 = (byte)0x28, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x48, y0 = (short)0xB8, u0 = (byte)0x30, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x50, y0 = (short)0xB8, u0 = (byte)0x38, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x58, y0 = (short)0xB8, u0 = (byte)0x40, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x60, y0 = (short)0xB8, u0 = (byte)0x48, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x68, y0 = (short)0xB8, u0 = (byte)0x50, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x70, y0 = (short)0xB8, u0 = (byte)0x58, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x78, y0 = (short)0xB8, u0 = (byte)0x10, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x80, y0 = (short)0xB8, u0 = (byte)0x18, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x88, y0 = (short)0xB8, u0 = (byte)0x20, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x90, y0 = (short)0xB8, u0 = (byte)0x28, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x98, y0 = (short)0xB8, u0 = (byte)0x30, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA0, y0 = (short)0xB8, u0 = (byte)0x38, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA8, y0 = (short)0xB8, u0 = (byte)0x40, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB0, y0 = (short)0xB8, u0 = (byte)0x48, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB8, y0 = (short)0xB8, u0 = (byte)0x50, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC0, y0 = (short)0xB8, u0 = (byte)0x58, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC8, y0 = (short)0xB8, u0 = (byte)0x10, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD0, y0 = (short)0xB8, u0 = (byte)0x18, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD8, y0 = (short)0xB8, u0 = (byte)0x20, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE0, y0 = (short)0xB8, u0 = (byte)0x28, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE8, y0 = (short)0xB8, u0 = (byte)0x30, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF0, y0 = (short)0xB8, u0 = (byte)0x38, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF8, y0 = (short)0xB8, u0 = (byte)0x40, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x100, y0 = (short)0xB8, u0 = (byte)0x48, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x108, y0 = (short)0xB8, u0 = (byte)0x50, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x110, y0 = (short)0xB8, u0 = (byte)0x58, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x118, y0 = (short)0xB8, u0 = (byte)0xC8, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x120, y0 = (short)0xB8, u0 = (byte)0xD0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x128, y0 = (short)0xB8, u0 = (byte)0xD8, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x10, y0 = (short)0xC0, u0 = (byte)0x60, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x18, y0 = (short)0xC0, u0 = (byte)0x68, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x20, y0 = (short)0xC0, u0 = (byte)0x70, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x28, y0 = (short)0xC0, u0 = (byte)0x10, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x30, y0 = (short)0xC0, u0 = (byte)0x18, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x38, y0 = (short)0xC0, u0 = (byte)0x20, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x40, y0 = (short)0xC0, u0 = (byte)0x28, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x48, y0 = (short)0xC0, u0 = (byte)0x30, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x50, y0 = (short)0xC0, u0 = (byte)0x38, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x58, y0 = (short)0xC0, u0 = (byte)0x40, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x60, y0 = (short)0xC0, u0 = (byte)0x48, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x68, y0 = (short)0xC0, u0 = (byte)0x50, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x70, y0 = (short)0xC0, u0 = (byte)0x58, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x78, y0 = (short)0xC0, u0 = (byte)0x10, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x80, y0 = (short)0xC0, u0 = (byte)0x18, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x88, y0 = (short)0xC0, u0 = (byte)0x20, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x90, y0 = (short)0xC0, u0 = (byte)0x28, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x98, y0 = (short)0xC0, u0 = (byte)0x30, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA0, y0 = (short)0xC0, u0 = (byte)0x38, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA8, y0 = (short)0xC0, u0 = (byte)0x40, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB0, y0 = (short)0xC0, u0 = (byte)0x48, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB8, y0 = (short)0xC0, u0 = (byte)0x50, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC0, y0 = (short)0xC0, u0 = (byte)0x58, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC8, y0 = (short)0xC0, u0 = (byte)0x10, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD0, y0 = (short)0xC0, u0 = (byte)0x18, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD8, y0 = (short)0xC0, u0 = (byte)0x20, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE0, y0 = (short)0xC0, u0 = (byte)0x28, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE8, y0 = (short)0xC0, u0 = (byte)0x30, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF0, y0 = (short)0xC0, u0 = (byte)0x38, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF8, y0 = (short)0xC0, u0 = (byte)0x40, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x100, y0 = (short)0xC0, u0 = (byte)0x48, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x108, y0 = (short)0xC0, u0 = (byte)0x50, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x110, y0 = (short)0xC0, u0 = (byte)0x58, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x118, y0 = (short)0xC0, u0 = (byte)0xC8, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x120, y0 = (short)0xC0, u0 = (byte)0xD0, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x128, y0 = (short)0xC0, u0 = (byte)0xD8, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x10, y0 = (short)0xC8, u0 = (byte)0x60, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x18, y0 = (short)0xC8, u0 = (byte)0x68, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x20, y0 = (short)0xC8, u0 = (byte)0x70, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x28, y0 = (short)0xC8, u0 = (byte)0x10, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x30, y0 = (short)0xC8, u0 = (byte)0x18, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x38, y0 = (short)0xC8, u0 = (byte)0x20, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x40, y0 = (short)0xC8, u0 = (byte)0x28, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x48, y0 = (short)0xC8, u0 = (byte)0x30, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x50, y0 = (short)0xC8, u0 = (byte)0x38, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x58, y0 = (short)0xC8, u0 = (byte)0x40, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x60, y0 = (short)0xC8, u0 = (byte)0x48, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x68, y0 = (short)0xC8, u0 = (byte)0x50, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x70, y0 = (short)0xC8, u0 = (byte)0x58, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x78, y0 = (short)0xC8, u0 = (byte)0x10, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x80, y0 = (short)0xC8, u0 = (byte)0x18, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x88, y0 = (short)0xC8, u0 = (byte)0x20, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x90, y0 = (short)0xC8, u0 = (byte)0x28, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x98, y0 = (short)0xC8, u0 = (byte)0x30, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA0, y0 = (short)0xC8, u0 = (byte)0x38, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA8, y0 = (short)0xC8, u0 = (byte)0x40, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB0, y0 = (short)0xC8, u0 = (byte)0x48, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB8, y0 = (short)0xC8, u0 = (byte)0x50, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC0, y0 = (short)0xC8, u0 = (byte)0x58, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC8, y0 = (short)0xC8, u0 = (byte)0x10, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD0, y0 = (short)0xC8, u0 = (byte)0x18, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD8, y0 = (short)0xC8, u0 = (byte)0x20, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE0, y0 = (short)0xC8, u0 = (byte)0x28, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE8, y0 = (short)0xC8, u0 = (byte)0x30, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF0, y0 = (short)0xC8, u0 = (byte)0x38, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF8, y0 = (short)0xC8, u0 = (byte)0x40, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x100, y0 = (short)0xC8, u0 = (byte)0x48, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x108, y0 = (short)0xC8, u0 = (byte)0x50, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x110, y0 = (short)0xC8, u0 = (byte)0x58, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x118, y0 = (short)0xC8, u0 = (byte)0xC8, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x120, y0 = (short)0xC8, u0 = (byte)0xD0, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x128, y0 = (short)0xC8, u0 = (byte)0xD8, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x10, y0 = (short)0xD0, u0 = (byte)0x60, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x18, y0 = (short)0xD0, u0 = (byte)0x68, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x20, y0 = (short)0xD0, u0 = (byte)0x70, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x28, y0 = (short)0xD0, u0 = (byte)0x10, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x30, y0 = (short)0xD0, u0 = (byte)0x18, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x38, y0 = (short)0xD0, u0 = (byte)0x20, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x40, y0 = (short)0xD0, u0 = (byte)0x28, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x48, y0 = (short)0xD0, u0 = (byte)0x30, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x50, y0 = (short)0xD0, u0 = (byte)0x38, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x58, y0 = (short)0xD0, u0 = (byte)0x40, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x60, y0 = (short)0xD0, u0 = (byte)0x48, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x68, y0 = (short)0xD0, u0 = (byte)0x50, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x70, y0 = (short)0xD0, u0 = (byte)0x58, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x78, y0 = (short)0xD0, u0 = (byte)0x10, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x80, y0 = (short)0xD0, u0 = (byte)0x18, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x88, y0 = (short)0xD0, u0 = (byte)0x20, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x90, y0 = (short)0xD0, u0 = (byte)0x28, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x98, y0 = (short)0xD0, u0 = (byte)0x30, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA0, y0 = (short)0xD0, u0 = (byte)0x38, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA8, y0 = (short)0xD0, u0 = (byte)0x40, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB0, y0 = (short)0xD0, u0 = (byte)0x48, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB8, y0 = (short)0xD0, u0 = (byte)0x50, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC0, y0 = (short)0xD0, u0 = (byte)0x58, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC8, y0 = (short)0xD0, u0 = (byte)0x10, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD0, y0 = (short)0xD0, u0 = (byte)0x18, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD8, y0 = (short)0xD0, u0 = (byte)0x20, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE0, y0 = (short)0xD0, u0 = (byte)0x28, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE8, y0 = (short)0xD0, u0 = (byte)0x30, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF0, y0 = (short)0xD0, u0 = (byte)0x38, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF8, y0 = (short)0xD0, u0 = (byte)0x40, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x100, y0 = (short)0xD0, u0 = (byte)0x48, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x108, y0 = (short)0xD0, u0 = (byte)0x50, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x110, y0 = (short)0xD0, u0 = (byte)0x58, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x118, y0 = (short)0xD0, u0 = (byte)0xC8, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x120, y0 = (short)0xD0, u0 = (byte)0xD0, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x128, y0 = (short)0xD0, u0 = (byte)0xD8, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x10, y0 = (short)0xD8, u0 = (byte)0x60, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x18, y0 = (short)0xD8, u0 = (byte)0x68, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x20, y0 = (short)0xD8, u0 = (byte)0x70, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x28, y0 = (short)0xD8, u0 = (byte)0x78, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x30, y0 = (short)0xD8, u0 = (byte)0x80, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x38, y0 = (short)0xD8, u0 = (byte)0x88, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x40, y0 = (short)0xD8, u0 = (byte)0x90, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x48, y0 = (short)0xD8, u0 = (byte)0x98, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x50, y0 = (short)0xD8, u0 = (byte)0xA0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x58, y0 = (short)0xD8, u0 = (byte)0xA8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x60, y0 = (short)0xD8, u0 = (byte)0xB0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x68, y0 = (short)0xD8, u0 = (byte)0xB8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x70, y0 = (short)0xD8, u0 = (byte)0xC0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x78, y0 = (short)0xD8, u0 = (byte)0x78, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x80, y0 = (short)0xD8, u0 = (byte)0x80, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x88, y0 = (short)0xD8, u0 = (byte)0x88, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x90, y0 = (short)0xD8, u0 = (byte)0x80, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x98, y0 = (short)0xD8, u0 = (byte)0x98, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA0, y0 = (short)0xD8, u0 = (byte)0xA0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA8, y0 = (short)0xD8, u0 = (byte)0xA8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB0, y0 = (short)0xD8, u0 = (byte)0xB0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB8, y0 = (short)0xD8, u0 = (byte)0xB8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC0, y0 = (short)0xD8, u0 = (byte)0xC0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC8, y0 = (short)0xD8, u0 = (byte)0x78, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD0, y0 = (short)0xD8, u0 = (byte)0x80, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD8, y0 = (short)0xD8, u0 = (byte)0x88, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE0, y0 = (short)0xD8, u0 = (byte)0x90, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE8, y0 = (short)0xD8, u0 = (byte)0x98, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF0, y0 = (short)0xD8, u0 = (byte)0xA0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF8, y0 = (short)0xD8, u0 = (byte)0xA8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x100, y0 = (short)0xD8, u0 = (byte)0xB0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x108, y0 = (short)0xD8, u0 = (byte)0xB8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x110, y0 = (short)0xD8, u0 = (byte)0xC0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x118, y0 = (short)0xD8, u0 = (byte)0xC8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x120, y0 = (short)0xD8, u0 = (byte)0xD0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x128, y0 = (short)0xD8, u0 = (byte)0xD8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 }
+        ];
+    //8009bc0c
+    public static SPRT[] g_font2_B =
+    [
+        new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x10, y0 = (short)0xA8, u0 = (byte)0xE0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x18, y0 = (short)0xA8, u0 = (byte)0xE8, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x20, y0 = (short)0xA8, u0 = (byte)0xF0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x28, y0 = (short)0xA8, u0 = (byte)0x78, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x30, y0 = (short)0xA8, u0 = (byte)0x80, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x38, y0 = (short)0xA8, u0 = (byte)0x88, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x40, y0 = (short)0xA8, u0 = (byte)0x90, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x48, y0 = (short)0xA8, u0 = (byte)0x98, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x50, y0 = (short)0xA8, u0 = (byte)0xA0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x58, y0 = (short)0xA8, u0 = (byte)0xA0, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x60, y0 = (short)0xA8, u0 = (byte)0xA8, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x68, y0 = (short)0xA8, u0 = (byte)0xB8, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x70, y0 = (short)0xA8, u0 = (byte)0xC0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x78, y0 = (short)0xA8, u0 = (byte)0x78, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x80, y0 = (short)0xA8, u0 = (byte)0x80, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x88, y0 = (short)0xA8, u0 = (byte)0x88, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x90, y0 = (short)0xA8, u0 = (byte)0x90, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x98, y0 = (short)0xA8, u0 = (byte)0x98, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA0, y0 = (short)0xA8, u0 = (byte)0xA0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA8, y0 = (short)0xA8, u0 = (byte)0xA8, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB0, y0 = (short)0xA8, u0 = (byte)0xB0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB8, y0 = (short)0xA8, u0 = (byte)0xB8, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC0, y0 = (short)0xA8, u0 = (byte)0xC0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC8, y0 = (short)0xA8, u0 = (byte)0x78, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD0, y0 = (short)0xA8, u0 = (byte)0x80, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD8, y0 = (short)0xA8, u0 = (byte)0x88, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE0, y0 = (short)0xA8, u0 = (byte)0x90, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE8, y0 = (short)0xA8, u0 = (byte)0x98, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF0, y0 = (short)0xA8, u0 = (byte)0xA0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF8, y0 = (short)0xA8, u0 = (byte)0xA8, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x100, y0 = (short)0xA8, u0 = (byte)0xB0, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x108, y0 = (short)0xA8, u0 = (byte)0xB8, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x110, y0 = (short)0xA8, u0 = (byte)0xC0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x118, y0 = (short)0xA8, u0 = (byte)0xE0, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x120, y0 = (short)0xA8, u0 = (byte)0xE8, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x128, y0 = (short)0xA8, u0 = (byte)0xF0, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x10, y0 = (short)0xB0, u0 = (byte)0xE0, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x18, y0 = (short)0xB0, u0 = (byte)0xE8, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x20, y0 = (short)0xB0, u0 = (byte)0xF0, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x28, y0 = (short)0xB0, u0 = (byte)0x10, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x30, y0 = (short)0xB0, u0 = (byte)0x18, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x38, y0 = (short)0xB0, u0 = (byte)0x20, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x40, y0 = (short)0xB0, u0 = (byte)0x28, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x48, y0 = (short)0xB0, u0 = (byte)0x30, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x50, y0 = (short)0xB0, u0 = (byte)0x38, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x58, y0 = (short)0xB0, u0 = (byte)0x40, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x60, y0 = (short)0xB0, u0 = (byte)0x48, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x68, y0 = (short)0xB0, u0 = (byte)0x50, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x70, y0 = (short)0xB0, u0 = (byte)0x58, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x78, y0 = (short)0xB0, u0 = (byte)0x10, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x80, y0 = (short)0xB0, u0 = (byte)0x18, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x88, y0 = (short)0xB0, u0 = (byte)0x20, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x90, y0 = (short)0xB0, u0 = (byte)0x28, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x98, y0 = (short)0xB0, u0 = (byte)0x30, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA0, y0 = (short)0xB0, u0 = (byte)0x38, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA8, y0 = (short)0xB0, u0 = (byte)0x40, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB0, y0 = (short)0xB0, u0 = (byte)0x48, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB8, y0 = (short)0xB0, u0 = (byte)0x50, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC0, y0 = (short)0xB0, u0 = (byte)0x58, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC8, y0 = (short)0xB0, u0 = (byte)0x10, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD0, y0 = (short)0xB0, u0 = (byte)0x18, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD8, y0 = (short)0xB0, u0 = (byte)0x20, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE0, y0 = (short)0xB0, u0 = (byte)0x28, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE8, y0 = (short)0xB0, u0 = (byte)0x30, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF0, y0 = (short)0xB0, u0 = (byte)0x38, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF8, y0 = (short)0xB0, u0 = (byte)0x40, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x100, y0 = (short)0xB0, u0 = (byte)0x48, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x108, y0 = (short)0xB0, u0 = (byte)0x50, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x110, y0 = (short)0xB0, u0 = (byte)0x58, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x118, y0 = (short)0xB0, u0 = (byte)0xE0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x120, y0 = (short)0xB0, u0 = (byte)0xE8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x128, y0 = (short)0xB0, u0 = (byte)0xF0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x10, y0 = (short)0xB8, u0 = (byte)0x60, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x18, y0 = (short)0xB8, u0 = (byte)0x68, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x20, y0 = (short)0xB8, u0 = (byte)0x70, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x28, y0 = (short)0xB8, u0 = (byte)0x10, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x30, y0 = (short)0xB8, u0 = (byte)0x18, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x38, y0 = (short)0xB8, u0 = (byte)0x20, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x40, y0 = (short)0xB8, u0 = (byte)0x28, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x48, y0 = (short)0xB8, u0 = (byte)0x30, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x50, y0 = (short)0xB8, u0 = (byte)0x38, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x58, y0 = (short)0xB8, u0 = (byte)0x40, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x60, y0 = (short)0xB8, u0 = (byte)0x48, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x68, y0 = (short)0xB8, u0 = (byte)0x50, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x70, y0 = (short)0xB8, u0 = (byte)0x58, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x78, y0 = (short)0xB8, u0 = (byte)0x10, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x80, y0 = (short)0xB8, u0 = (byte)0x18, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x88, y0 = (short)0xB8, u0 = (byte)0x20, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x90, y0 = (short)0xB8, u0 = (byte)0x28, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x98, y0 = (short)0xB8, u0 = (byte)0x30, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA0, y0 = (short)0xB8, u0 = (byte)0x38, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA8, y0 = (short)0xB8, u0 = (byte)0x40, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB0, y0 = (short)0xB8, u0 = (byte)0x48, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB8, y0 = (short)0xB8, u0 = (byte)0x50, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC0, y0 = (short)0xB8, u0 = (byte)0x58, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC8, y0 = (short)0xB8, u0 = (byte)0x10, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD0, y0 = (short)0xB8, u0 = (byte)0x18, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD8, y0 = (short)0xB8, u0 = (byte)0x20, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE0, y0 = (short)0xB8, u0 = (byte)0x28, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE8, y0 = (short)0xB8, u0 = (byte)0x30, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF0, y0 = (short)0xB8, u0 = (byte)0x38, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF8, y0 = (short)0xB8, u0 = (byte)0x40, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x100, y0 = (short)0xB8, u0 = (byte)0x48, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x108, y0 = (short)0xB8, u0 = (byte)0x50, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x110, y0 = (short)0xB8, u0 = (byte)0x58, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x118, y0 = (short)0xB8, u0 = (byte)0xC8, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x120, y0 = (short)0xB8, u0 = (byte)0xD0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x128, y0 = (short)0xB8, u0 = (byte)0xD8, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x10, y0 = (short)0xC0, u0 = (byte)0x60, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x18, y0 = (short)0xC0, u0 = (byte)0x68, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x20, y0 = (short)0xC0, u0 = (byte)0x70, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x28, y0 = (short)0xC0, u0 = (byte)0x10, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x30, y0 = (short)0xC0, u0 = (byte)0x18, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x38, y0 = (short)0xC0, u0 = (byte)0x20, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x40, y0 = (short)0xC0, u0 = (byte)0x28, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x48, y0 = (short)0xC0, u0 = (byte)0x30, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x50, y0 = (short)0xC0, u0 = (byte)0x38, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x58, y0 = (short)0xC0, u0 = (byte)0x40, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x60, y0 = (short)0xC0, u0 = (byte)0x48, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x68, y0 = (short)0xC0, u0 = (byte)0x50, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x70, y0 = (short)0xC0, u0 = (byte)0x58, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x78, y0 = (short)0xC0, u0 = (byte)0x10, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x80, y0 = (short)0xC0, u0 = (byte)0x18, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x88, y0 = (short)0xC0, u0 = (byte)0x20, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x90, y0 = (short)0xC0, u0 = (byte)0x28, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x98, y0 = (short)0xC0, u0 = (byte)0x30, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA0, y0 = (short)0xC0, u0 = (byte)0x38, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA8, y0 = (short)0xC0, u0 = (byte)0x40, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB0, y0 = (short)0xC0, u0 = (byte)0x48, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB8, y0 = (short)0xC0, u0 = (byte)0x50, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC0, y0 = (short)0xC0, u0 = (byte)0x58, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC8, y0 = (short)0xC0, u0 = (byte)0x10, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD0, y0 = (short)0xC0, u0 = (byte)0x18, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD8, y0 = (short)0xC0, u0 = (byte)0x20, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE0, y0 = (short)0xC0, u0 = (byte)0x28, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE8, y0 = (short)0xC0, u0 = (byte)0x30, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF0, y0 = (short)0xC0, u0 = (byte)0x38, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF8, y0 = (short)0xC0, u0 = (byte)0x40, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x100, y0 = (short)0xC0, u0 = (byte)0x48, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x108, y0 = (short)0xC0, u0 = (byte)0x50, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x110, y0 = (short)0xC0, u0 = (byte)0x58, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x118, y0 = (short)0xC0, u0 = (byte)0xC8, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x120, y0 = (short)0xC0, u0 = (byte)0xD0, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x128, y0 = (short)0xC0, u0 = (byte)0xD8, v0 = (byte)0x8, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x10, y0 = (short)0xC8, u0 = (byte)0x60, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x18, y0 = (short)0xC8, u0 = (byte)0x68, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x20, y0 = (short)0xC8, u0 = (byte)0x70, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x28, y0 = (short)0xC8, u0 = (byte)0x10, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x30, y0 = (short)0xC8, u0 = (byte)0x18, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x38, y0 = (short)0xC8, u0 = (byte)0x20, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x40, y0 = (short)0xC8, u0 = (byte)0x28, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x48, y0 = (short)0xC8, u0 = (byte)0x30, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x50, y0 = (short)0xC8, u0 = (byte)0x38, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x58, y0 = (short)0xC8, u0 = (byte)0x40, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x60, y0 = (short)0xC8, u0 = (byte)0x48, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x68, y0 = (short)0xC8, u0 = (byte)0x50, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x70, y0 = (short)0xC8, u0 = (byte)0x58, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x78, y0 = (short)0xC8, u0 = (byte)0x10, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x80, y0 = (short)0xC8, u0 = (byte)0x18, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x88, y0 = (short)0xC8, u0 = (byte)0x20, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x90, y0 = (short)0xC8, u0 = (byte)0x28, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x98, y0 = (short)0xC8, u0 = (byte)0x30, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA0, y0 = (short)0xC8, u0 = (byte)0x38, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA8, y0 = (short)0xC8, u0 = (byte)0x40, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB0, y0 = (short)0xC8, u0 = (byte)0x48, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB8, y0 = (short)0xC8, u0 = (byte)0x50, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC0, y0 = (short)0xC8, u0 = (byte)0x58, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC8, y0 = (short)0xC8, u0 = (byte)0x10, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD0, y0 = (short)0xC8, u0 = (byte)0x18, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD8, y0 = (short)0xC8, u0 = (byte)0x20, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE0, y0 = (short)0xC8, u0 = (byte)0x28, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE8, y0 = (short)0xC8, u0 = (byte)0x30, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF0, y0 = (short)0xC8, u0 = (byte)0x38, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF8, y0 = (short)0xC8, u0 = (byte)0x40, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x100, y0 = (short)0xC8, u0 = (byte)0x48, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x108, y0 = (short)0xC8, u0 = (byte)0x50, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x110, y0 = (short)0xC8, u0 = (byte)0x58, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x118, y0 = (short)0xC8, u0 = (byte)0xC8, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x120, y0 = (short)0xC8, u0 = (byte)0xD0, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x128, y0 = (short)0xC8, u0 = (byte)0xD8, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x10, y0 = (short)0xD0, u0 = (byte)0x60, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x18, y0 = (short)0xD0, u0 = (byte)0x68, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x20, y0 = (short)0xD0, u0 = (byte)0x70, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x28, y0 = (short)0xD0, u0 = (byte)0x10, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x30, y0 = (short)0xD0, u0 = (byte)0x18, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x38, y0 = (short)0xD0, u0 = (byte)0x20, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x40, y0 = (short)0xD0, u0 = (byte)0x28, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x48, y0 = (short)0xD0, u0 = (byte)0x30, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x50, y0 = (short)0xD0, u0 = (byte)0x38, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x58, y0 = (short)0xD0, u0 = (byte)0x40, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x60, y0 = (short)0xD0, u0 = (byte)0x48, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x68, y0 = (short)0xD0, u0 = (byte)0x50, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x70, y0 = (short)0xD0, u0 = (byte)0x58, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x78, y0 = (short)0xD0, u0 = (byte)0x10, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x80, y0 = (short)0xD0, u0 = (byte)0x18, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x88, y0 = (short)0xD0, u0 = (byte)0x20, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x90, y0 = (short)0xD0, u0 = (byte)0x28, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x98, y0 = (short)0xD0, u0 = (byte)0x30, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA0, y0 = (short)0xD0, u0 = (byte)0x38, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA8, y0 = (short)0xD0, u0 = (byte)0x40, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB0, y0 = (short)0xD0, u0 = (byte)0x48, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB8, y0 = (short)0xD0, u0 = (byte)0x50, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC0, y0 = (short)0xD0, u0 = (byte)0x58, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC8, y0 = (short)0xD0, u0 = (byte)0x10, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD0, y0 = (short)0xD0, u0 = (byte)0x18, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD8, y0 = (short)0xD0, u0 = (byte)0x20, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE0, y0 = (short)0xD0, u0 = (byte)0x28, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE8, y0 = (short)0xD0, u0 = (byte)0x30, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF0, y0 = (short)0xD0, u0 = (byte)0x38, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF8, y0 = (short)0xD0, u0 = (byte)0x40, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x100, y0 = (short)0xD0, u0 = (byte)0x48, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x108, y0 = (short)0xD0, u0 = (byte)0x50, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x110, y0 = (short)0xD0, u0 = (byte)0x58, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x118, y0 = (short)0xD0, u0 = (byte)0xC8, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x120, y0 = (short)0xD0, u0 = (byte)0xD0, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x128, y0 = (short)0xD0, u0 = (byte)0xD8, v0 = (byte)0x18, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x10, y0 = (short)0xD8, u0 = (byte)0x60, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x18, y0 = (short)0xD8, u0 = (byte)0x68, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x20, y0 = (short)0xD8, u0 = (byte)0x70, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x28, y0 = (short)0xD8, u0 = (byte)0x78, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x30, y0 = (short)0xD8, u0 = (byte)0x80, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x38, y0 = (short)0xD8, u0 = (byte)0x88, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x40, y0 = (short)0xD8, u0 = (byte)0x90, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x48, y0 = (short)0xD8, u0 = (byte)0x98, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x50, y0 = (short)0xD8, u0 = (byte)0xA0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x58, y0 = (short)0xD8, u0 = (byte)0xA8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x60, y0 = (short)0xD8, u0 = (byte)0xB0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x68, y0 = (short)0xD8, u0 = (byte)0xB8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x70, y0 = (short)0xD8, u0 = (byte)0xC0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x78, y0 = (short)0xD8, u0 = (byte)0x78, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x80, y0 = (short)0xD8, u0 = (byte)0x80, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x88, y0 = (short)0xD8, u0 = (byte)0x88, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x90, y0 = (short)0xD8, u0 = (byte)0x80, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x98, y0 = (short)0xD8, u0 = (byte)0x98, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA0, y0 = (short)0xD8, u0 = (byte)0xA0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xA8, y0 = (short)0xD8, u0 = (byte)0xA8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB0, y0 = (short)0xD8, u0 = (byte)0xB0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xB8, y0 = (short)0xD8, u0 = (byte)0xB8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC0, y0 = (short)0xD8, u0 = (byte)0xC0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xC8, y0 = (short)0xD8, u0 = (byte)0x78, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD0, y0 = (short)0xD8, u0 = (byte)0x80, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xD8, y0 = (short)0xD8, u0 = (byte)0x88, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE0, y0 = (short)0xD8, u0 = (byte)0x90, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xE8, y0 = (short)0xD8, u0 = (byte)0x98, v0 = (byte)0x10, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF0, y0 = (short)0xD8, u0 = (byte)0xA0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0xF8, y0 = (short)0xD8, u0 = (byte)0xA8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x100, y0 = (short)0xD8, u0 = (byte)0xB0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x108, y0 = (short)0xD8, u0 = (byte)0xB8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x110, y0 = (short)0xD8, u0 = (byte)0xC0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x118, y0 = (short)0xD8, u0 = (byte)0xC8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x120, y0 = (short)0xD8, u0 = (byte)0xD0, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
+    new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x128, y0 = (short)0xD8, u0 = (byte)0xD8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 }
+    ];
     // 8009CFBC
-    public static ushort[] g_textBaseX =
-    [
-        0x0010, 0x00A8, 0x0024, 0x0007,
-        0xA85C, 0x8009, 0xBC0C, 0x8009,
-        0x0000, 0x0000, 0x0000, 0x0000,
-        0x0000, 0x0000, 0x2800
-    ];
-    //800A731C
-    public static CallBackInfo[] g_transitionFuncArgs =
-    [
-        new CallBackInfo { Flags = 0, Data = g_textBaseX, X1 = 0x10, Y1 = 0x05, X2 = 0x20, Y2 = 0x06, FuncA = UIManager.Func_80048304, FuncB = UIManager.Func_80046ef0, Arg = 0 },
-        new CallBackInfo { Flags = 0, Data = null,        X1 = 0x00, Y1 = 0x00, X2 = 0x28, Y2 = 0x04, FuncA = UIManager.Func_8004b770, FuncB = UIManager.Func_8004bea4, Arg = 0xFFFFFFFF },
-        new CallBackInfo { Flags = 0, Data = g_textBaseX, X1 = 0x08, Y1 = 0x0C, X2 = 0x20, Y2 = 0x04, FuncA = UIManager.Func_80048304, FuncB = UIManager.Func_8004f628, Arg = 0 },
-        new CallBackInfo { Flags = 0, Data = null,        X1 = 0x10, Y1 = 0x08, X2 = 0x20, Y2 = 0x04, FuncA = null,         FuncB = UIManager.Func_800501fc, Arg = 0x05 },
-        new CallBackInfo { Flags = 0, Data = null,        X1 = 0x10, Y1 = 0x08, X2 = 0x20, Y2 = 0x04, FuncA = UIManager.Func_800537f0, FuncB = UIManager.Func_80053328, Arg = 0xFFFFFFFF },
-        new CallBackInfo { Flags = 0, Data = g_textBaseX, X1 = 0x10, Y1 = 0x0C, X2 = 0x20, Y2 = 0x04, FuncA = UIManager.Func_80048304, FuncB = UIManager.Func_8004a8a8, Arg = 0 },
-        new CallBackInfo { Flags = 0, Data = null,        X1 = 0x10, Y1 = 0x08, X2 = 0x20, Y2 = 0x04, FuncA = null,         FuncB = UIManager.Func_80054f1c, Arg = 0 },
-        new CallBackInfo { Flags = 0, Data = g_textBaseX, X1 = 0x10, Y1 = 0x08, X2 = 0x20, Y2 = 0x04, FuncA = UIManager.Func_80048304, FuncB = null,         Arg = 0 },
-        new CallBackInfo { Flags = 0, Data = g_textBaseX, X1 = 0x10, Y1 = 0x0C, X2 = 0x20, Y2 = 0x04, FuncA = UIManager.Func_80048304, FuncB = UIManager.Func_8004afe8, Arg = 0 },
-        new CallBackInfo { Flags = 0, Data = g_textBaseX, X1 = 0x10, Y1 = 0x0C, X2 = 0x20, Y2 = 0x04, FuncA = UIManager.Func_80048304, FuncB = UIManager.Func_80050ec8, Arg = 0 },
-        new CallBackInfo { Flags = 0, Data = null,        X1 = 0x10, Y1 = 0x0C, X2 = 0x20, Y2 = 0x04, FuncA = null,         FuncB = UIManager.Func_800583ec, Arg = 0 },
-        new CallBackInfo { Flags = 0, Data = g_textBaseX, X1 = 0x08, Y1 = 0x0C, X2 = 0x20, Y2 = 0x04, FuncA = UIManager.Func_80048304, FuncB = UIManager.Func_80051550, Arg = 0 },
-        new CallBackInfo { Flags = 0, Data = g_textPosBaseX, X1 = 0x10, Y1 = 0x08, X2 = 0x20, Y2 = 0x04, FuncA = UIManager.Func_8005a268, FuncB = UIManager.Func_8005a3e0, Arg = 0x05 }
-    ];
+    public static TextTilesConfiguration g_textTilesConfiguration2 = new TextTilesConfiguration
+    {
+        X = 0x10,
+        Y = 0xA8,
+        Width = 0x24,
+        Height = 0x7,
+        SpritesA = g_font2_A,
+        SpritesB = g_font2_B,
+    };
 
-    public static void Initialize()
+    public static CallBackInfo[] g_transitionFuncArgs; //800A731C
+
+    public static void Initialize(GameEngine gameEngine)
     {
         //TODO : already loaded? where?
         g_imageBuffer = new byte[50000];
@@ -1001,6 +1854,80 @@ public static class StaticVariables
         {
             g_effectSlots[i] = new SpriteEffect { Status = 0 };
         }
+
+        for (int i = 0; i < g_callbackTable.Length; i++)
+        {
+            g_callbackTable[i] = new CallBackInfo();
+        }
+
+        g_transitionFuncArgs =
+        [
+            new CallBackInfo
+            {
+                Flags = 0, Data = g_textTilesConfiguration2, X = 0x10, Y = 0x05, Width = 0x20, Height = 0x06,
+                InitializeFunc = gameEngine.UIManager.Func_80048304, RenderFunc = gameEngine.UIManager.Func_80046ef0, Arg = 0
+            },
+            new CallBackInfo
+            {
+                Flags = 0, Data = null, X = 0x00, Y = 0x00, Width = 0x28, Height = 0x04,
+                InitializeFunc = gameEngine.UIManager.Func_8004b770, RenderFunc = gameEngine.UIManager.Func_8004bea4, Arg = 0xFFFFFFFF
+            },
+            new CallBackInfo
+            {
+                Flags = 0, Data = g_textTilesConfiguration2, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
+                InitializeFunc = gameEngine.UIManager.Func_80048304, RenderFunc = gameEngine.UIManager.Func_8004f628, Arg = 0
+            },
+            new CallBackInfo
+            {
+                Flags = 0, Data = null, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04, InitializeFunc = null,
+                RenderFunc = gameEngine.UIManager.Func_800501fc, Arg = 0x05
+            },
+            new CallBackInfo
+            {
+                Flags = 0, Data = null, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
+                InitializeFunc = gameEngine.UIManager.Func_800537f0, RenderFunc = gameEngine.UIManager.Func_80053328, Arg = 0xFFFFFFFF
+            },
+            new CallBackInfo
+            {
+                Flags = 0, Data = g_textTilesConfiguration2, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
+                InitializeFunc = gameEngine.UIManager.Func_80048304, RenderFunc = gameEngine.UIManager.Func_8004a8a8, Arg = 0
+            },
+            new CallBackInfo
+            {
+                Flags = 0, Data = null, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04, InitializeFunc = null,
+                RenderFunc = gameEngine.UIManager.Func_80054f1c, Arg = 0
+            },
+            new CallBackInfo
+            {
+                Flags = 0, Data = g_textTilesConfiguration2, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
+                InitializeFunc = gameEngine.UIManager.Func_80048304, RenderFunc = null, Arg = 0
+            },
+            new CallBackInfo
+            {
+                Flags = 0, Data = g_textTilesConfiguration2, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
+                InitializeFunc = gameEngine.UIManager.Func_80048304, RenderFunc = gameEngine.UIManager.Func_8004afe8, Arg = 0
+            },
+            new CallBackInfo
+            {
+                Flags = 0, Data = g_textTilesConfiguration2, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
+                InitializeFunc = gameEngine.UIManager.Func_80048304, RenderFunc = gameEngine.UIManager.Func_80050ec8, Arg = 0
+            },
+            new CallBackInfo
+            {
+                Flags = 0, Data = null, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04, InitializeFunc = null,
+                RenderFunc = gameEngine.UIManager.Func_800583ec, Arg = 0
+            },
+            new CallBackInfo
+            {
+                Flags = 0, Data = g_textTilesConfiguration2, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
+                InitializeFunc = gameEngine.UIManager.Func_80048304, RenderFunc = gameEngine.UIManager.Func_80051550, Arg = 0
+            },
+            new CallBackInfo
+            {
+                Flags = 0, Data = g_textTilesConfiguration, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
+                InitializeFunc = gameEngine.UIManager.Func_8005a268, RenderFunc = gameEngine.UIManager.Func_8005a3e0, Arg = 0x05
+            }
+        ];
     }
 
     //
@@ -1490,7 +2417,7 @@ public static class StaticVariables
     public static byte[] BYTE_ARRAY_80098fa4 = new byte[8]; // 80098FA4
     //public static int  g_scriptFunctions[255]; // 80098FAC
     public static byte[] g_mapWarpPattern = new byte[28]; // 800993A8
-    public static int g_fontCharWidthTable; // 800993C4
+    public static int[] g_fontCharWidthTable; // 800993C4
     public static byte BYTE_800993d4; // 800993D4
     public static int DAT_800998b0; // 800998B0
     public static byte PTR_DAT_8009a7c4; // 8009A7C4
@@ -1519,12 +2446,6 @@ public static class StaticVariables
     public static byte DAT_800a3314; // 800A3314
     public static byte DAT_800a3315; // 800A3315
     public static short DAT_800a500a; // 800A500A
-    public static short g_textPosBaseX; // 800A58BC
-    public static short g_textPosBaseY; // 800A58BE
-    public static short g_textPosOffsetX; // 800A58C0
-    public static short g_textPosOffsetY; // 800A58C2
-    public static byte g_sprt; // 800A58D8
-    public static byte g_fadeSomething; // 800A58D9
     //public static CallBackInfo[] g_transitionFuncArgs = new CallBackInfo[13]; // 800A731C
     public static byte g_soundNameList; // 800A7488
     //public static byte  PTR_s_(void_)NULL_800a7c58; // 800A7C58
@@ -2100,7 +3021,7 @@ public static class StaticVariables
     public static short g_balanceHp; // 80146E1C
     public static short g_balanceMultiplier; // 80146E1E
     public static short g_balanceResult; // 80146E20
-    public static short[] g_clutTable = new short[16]; // 80146E28
+    public static ushort[] g_clutTable = new ushort[16]; // 80146E28 see Font3.Palettes
     public static short g_tpageOverlayA; // 80146E48
     public static short g_tpageWind1; // 80146E4A
     public static short g_tpageWind2; // 80146E4C
@@ -2113,15 +3034,7 @@ public static class StaticVariables
     public static int g_bufferIndex; // 80146F50
     public static ulong[] g_orderTableTaki = new ulong[10]; // 80146F58
     public static ulong[] g_orderTableTaki2 = new ulong[10]; // 80146F80
-    public static int g_etcTextCursorBlink; // 80146FA8
-    public static int g_etcTextSpeed; // 80146FAC
-    public static int g_etcTextMode; // 80146FB0
-    public static ushort g_etcTextX; // 80146FB4
-    public static ushort g_etcTextY; // 80146FB6
-    public static ushort g_etcTextStartX; // 80146FB8
-    public static ushort g_etcTextStartY; // 80146FBA
-    public static short g_etcTextXOrigin; // 80146FC0
-    public static short g_etcTextYOrigin; // 80146FC2
+    public static TextToDisplay g_textToDisplay = new TextToDisplay(); // 80146FA8
     public static int g_textPosX; // 801490C8
     public static int g_textPosY; // 801490CC
     public static short g_textOffsetX; // 801490D0
@@ -2137,7 +3050,7 @@ public static class StaticVariables
     public static int g_textLineIndex; // 80149BDC
     public static int g_textCursor; // 80149BE0
     public static int g_textRenderStep; // 80149BE4
-    public static int g_textLineWidth; // 80149BE8
+    public static int[] g_textLineWidth = new int[3]; // 80149BE8
     public static int DAT_80149bec; // 80149BEC
     public static int g_primitiveGroup; // 80149BF8
     public static short[] g_bufferTextToDisplay = new short[60]; // 80149C00
@@ -2169,7 +3082,7 @@ public static class StaticVariables
     public static int DAT_80149cd4; // 80149CD4
     public static int g_textCategoryIndex; // 80149CD8
     public static int g_currentVoiceSfxId; // 80149CDC
-    public static int g_textRenderState; // 80149CE0
+    public static int g_textLineStartX; // 80149CE0
     public static char[] g_textBuffer = new char[2048]; // 80149CE8
     public static byte[] g_bufferFONT3_tim = new byte[11000]; // 8014ACE8
     public static byte BYTE_80150000; // 80150000
@@ -2394,7 +3307,7 @@ public static class StaticVariables
     public static int INT_80180238; // 80180238
     public static int INT_8018023c; // 8018023C
     public static short g_etcDisplayFlags; // 80180240
-    public static int g_etcTextCursorBlink_2; // 80180244
+    public static TextToDisplay g_textToDisplay2 = new TextToDisplay(); // 80180244
     public static int g_etcTextSpeed_2; // 80180248
     public static int g_etcTextMode_2; // 8018024C
     public static short g_etcTextX_2; // 80180250
@@ -2481,6 +3394,7 @@ public static class StaticVariables
     public static byte[] g_layerBuffer = new byte[4096]; // 80190000
     public static Entity g_entitySpawned; // 801910E8
     public static short[] SHORT_ARRAY_801910f0 = new short[100]; // 801910F0
+    public static int g_postProcessingState; //80191098
     public static Entity g_bossSpawnedEffectEntity; // 801911B8
     public static Entity g_bossEffectEntity; // 801911BC
     public static int DAT_801911c0; // 801911C0
@@ -2527,21 +3441,9 @@ public static class StaticVariables
     public static int DAT_80191300; // 80191300
     public static int DAT_80191304; // 80191304
     public static short[] g_loaderDirectionHistory = new short[256]; // 80191308
-    public static short DAT_8019130a; // 8019130A
-    public static short DAT_80191462; // 80191462
     public static short[] DAT_80191508 = new short[256]; // 80191508
-    public static short DAT_8019150a; // 8019150A
-    public static short DAT_801915ae; // 801915AE
-    public static short DAT_801915b0; // 801915B0
-    public static short DAT_80191662; // 80191662
     public static short[] DAT_80191708 = new short[256]; // 80191708
-    public static short DAT_8019170a; // 8019170A
-    public static short DAT_801917ae; // 801917AE
-    public static short DAT_801917b0; // 801917B0
-    public static short DAT_80191862; // 80191862
-    public static int DAT_80191908; // 80191908
-    public static int DAT_8019190c; // 8019190C
-    public static int DAT_80191910; // 80191910
+    public static int[] INT_ARRAY_80191908 = new int[4]; // 80191908
     public static int g_loaderInitialized; // 80191918
     public static byte g_compressedImageData; // 80191B30
     public static int DAT_80191b34; // 80191B34

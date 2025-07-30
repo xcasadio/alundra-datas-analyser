@@ -1,4 +1,6 @@
-﻿namespace AlundraEngine;
+﻿using AlundraEngine.UI;
+
+namespace AlundraEngine;
 
 public class Renderer
 {
@@ -53,13 +55,13 @@ public class Renderer
                 (offsetX - (StaticVariables.g_cameraScrollingX + 0xa0) >> 4) + StaticVariables.g_cameraOffsetX + StaticVariables.g_cameraDebugOffsetX;
             StaticVariables.g_cameraScrollingY =
                 StaticVariables.g_cameraScrollingY +
-                ((offsetY - offsetZ) - (StaticVariables.g_cameraScrollingY + 0x88) >> 4) + StaticVariables.g_cameraOffsetY +
+                (offsetY - offsetZ - (StaticVariables.g_cameraScrollingY + 0x88) >> 4) + StaticVariables.g_cameraOffsetY +
                 StaticVariables.g_cameraDebugOffsetY;
         }
         else
         {
             StaticVariables.g_isCameraScrolling = 0;
-            StaticVariables.g_cameraScrollingY = (offsetY - offsetZ) - 0x88;
+            StaticVariables.g_cameraScrollingY = offsetY - offsetZ - 0x88;
             StaticVariables.g_cameraScrollingX = offsetX - 0xa0;
         }
 
@@ -402,6 +404,7 @@ public class Renderer
         }
     }
 
+    //8002e130
     private int RenderEntitiesMaybe(int i, int gCameraScrollingX, int gCameraScrollingY)
     {
         //todo
@@ -430,16 +433,154 @@ public class Renderer
         //todo
     }
 
-    private void UpdatePostProcessingEffects()
+    //8005ec98
+    private int UpdatePostProcessingEffects()
     {
-        //todo
+        var result = StaticVariables.g_globalTransitionState == 1;
+
+        if (StaticVariables.g_globalTransitionState != 0)
+        {
+            result = StaticVariables.g_postProcessingState < 3;
+
+            if (StaticVariables.g_postProcessingState == 2)
+            {
+                RunFadeEffect();
+            }
+            else if (StaticVariables.g_postProcessingState == 0)
+            {
+                result = true;
+
+                if (StaticVariables.g_postProcessingState == 3)
+                {
+                    result = RunWaveEffect() != 0;
+                }
+            }
+            else
+            {
+                result = true;
+
+                if (StaticVariables.g_postProcessingState == 1)
+                {
+                    RunFadeEffect();
+                }
+            }
+        }
+
+        return result ? 1 : 0;
     }
 
+    //8005f458
+    private void RunFadeEffect()
+    {
+
+    }
+
+    //8005ed2c
+    private int RunWaveEffect()
+    {
+        return 0;
+    }
+
+    //80048054
     private void SwapBuffersAndDraw()
     {
-        //todo
+        int i;
+
+        if ((StaticVariables.g_renderFlags & 0x800000U) != 0)
+        {
+            ActivateSpecialRenderMode(7);
+            StaticVariables.g_renderFlags = (int)(StaticVariables.g_renderFlags & 0xff7fffff);
+        }
+
+        if ((StaticVariables.g_systemFlags & 0x40000000U) == 0)
+        {
+            InitializeFrame();
+        }
+
+        if ((StaticVariables.g_renderFlags & 0x200000U) != 0)
+        {
+            StaticVariables.g_renderFlags = (int)(StaticVariables.g_renderFlags & 0xffdfffff);
+            StaticVariables.g_systemFlags = StaticVariables.g_systemFlags | 0x40000000;
+            PrepareBufferFlip();
+        }
+
+        if ((StaticVariables.g_renderFlags & 0x400000U) != 0)
+        {
+            ResetDrawFrameFlags();
+            StaticVariables.g_systemFlags = (int)(StaticVariables.g_systemFlags & 0xbfffffff);
+            StaticVariables.g_renderFlags = (int)(StaticVariables.g_renderFlags & 0xffbfffff);
+        }
+
+        i = 0;
+
+        do
+        {
+            var callback = StaticVariables.g_callbackTable[i];
+            StaticVariables.g_activeTransitionCallback = callback;
+
+            if ((callback.Flags & 1) != 0 && callback.RenderFunc != null)
+            {
+                callback.RenderFunc.Invoke(StaticVariables.g_activeTransitionCallback);
+            }
+
+            i = i + 1;
+
+        } while (i < 0xd);
+
+        if (StaticVariables.g_postProcessState != 0)
+        {
+            if (StaticVariables.g_postProcessState == 1 /*&& _DAT_801530d0 == 0*/)
+            {
+                StaticVariables.g_postProcessState = 0;
+                StartFadeOut();
+            }
+
+            if (StaticVariables.g_postProcessState == 2
+                && (short)StaticVariables.g_callbackTable[4].Flags == 0)
+            {
+                StaticVariables.g_postProcessState = 0;
+                //TriggerDebugZone();
+            }
+        }
     }
 
+    //8005abe0
+    private void ActivateSpecialRenderMode(int mode)
+    {
+        /*
+          CdlLOC aCStack_18 [2];
+           u_char auStack_10 [8];
+           
+           if ((g_isCdResetRequested != 0) || ((g_cdIsReady != 0 && (g_cdDataLoaded == 0)))) {
+             g_cdDataStartPtr = DAT_CDAranXa_pos + g_mapCdDataOffsets[mode * 3];
+             CdIntToPos(g_cdDataStartPtr,aCStack_18);
+             CdControl('\x02',&aCStack_18[0].minute,auStack_10);
+             CdControl('\x15',(u_char *)0x0,auStack_10);
+           }
+         */
+    }
+
+    //8004bd9c
+    private void InitializeFrame()
+    {
+        if ((StaticVariables.g_drawFrameFlags & 3U) == 1)
+        {
+            /* Active un état de "dessin en cours" */
+            StaticVariables.g_drawState = 2;
+            StaticVariables.g_fadeTimer = 0;
+            /* Vitesse ou niveau de fondu */
+            StaticVariables.g_fadeStep = 0xf;
+            StaticVariables.g_blendRed = 0;
+            StaticVariables.g_blendGreen = 0x10;
+            StaticVariables.g_blendBlue = 0;
+            /* Probablement une inversion du volume ou intensité alpha ?
+               g_drawFrameFlags |= 2 => Marque que la frame a été traitée */
+            StaticVariables.g_blendAlpha = (short)~(StaticVariables.g_soundFadeTimer << 3);
+            StaticVariables.g_drawFrameFlags = StaticVariables.g_drawFrameFlags | 2;
+        }
+    }
+
+    //8004be0c
     public void PrepareBufferFlip()
     {
         if ((StaticVariables.g_systemFlags & 0x40000000U) != 0 && StaticVariables.g_drawFrameFlags == 0)
@@ -456,53 +597,44 @@ public class Renderer
         }
     }
 
-    private int SetTransitionType(int transitionType)
+    //80047f94
+    public int SetTransitionType(int transitionType)
     {
-        int miscParam;
-        int[] callbackData;
-        int[] dataArgs;
-        int[] drawArgs;
-        int[] updateArgs;
+        int result = 1;
 
-        if (transitionType < 0xd)
+        if (transitionType >= 13)
         {
-            //int index = transitionType * 7;
-            //callbackData = StaticVariables.g_callbackTable[index];
-            //dataArgs = StaticVariables.g_transitionFuncArgs[index + 1];
-            //drawArgs = StaticVariables.g_transitionFuncArgs[index + 2];
-            //updateArgs = StaticVariables.g_transitionFuncArgs[index + 3];
-            //
-            //StaticVariables.g_activeTransitionCallback = callbackData;
-            //StaticVariables.g_callbackTable[index] = StaticVariables.g_transitionFuncArgs[index];
-            //StaticVariables.g_callbackTable[index + 1] = dataArgs;
-            //StaticVariables.g_callbackTable[index + 2] = drawArgs;
-            //StaticVariables.g_callbackTable[index + 3] = updateArgs;
-            //
-            //dataArgs = StaticVariables.g_transitionFuncArgs[index + 5];
-            //drawArgs = StaticVariables.g_transitionFuncArgs[index + 6];
-            //
-            //StaticVariables.g_callbackTable[index + 4] = StaticVariables.g_transitionFuncArgs[index + 4];
-            //StaticVariables.g_callbackTable[index + 5] = dataArgs;
-            //StaticVariables.g_callbackTable[index + 6] = drawArgs;
-            //
-            //StaticVariables.g_activeTransitionCallback[0] = StaticVariables.g_activeTransitionCallback[0] | 1;
-            //StaticVariables.g_currentTransitionType = transitionType;
-            //
-            //if (StaticVariables.g_callbackTable[index + 4] != null)
-            //{
-            //    StaticVariables.g_callbackTable[index + 4](StaticVariables.g_activeTransitionCallback);
-            //}
-
-            miscParam = 1;
-        }
-        else
-        {
-            miscParam = 0;
+            return 0;
         }
 
-        return miscParam;
+        var transitionFuncArgs = StaticVariables.g_transitionFuncArgs[transitionType];
+        var callbackData = StaticVariables.g_callbackTable[transitionType];
+
+        StaticVariables.g_activeTransitionCallback = callbackData;
+        StaticVariables.g_currentTransitionType = transitionType;
+
+        callbackData.Flags = transitionFuncArgs.Flags;
+        callbackData.Data = transitionFuncArgs.Data;
+        callbackData.X = transitionFuncArgs.X;
+        callbackData.Y = transitionFuncArgs.Y;
+        callbackData.Width = transitionFuncArgs.Width;
+        callbackData.Height = transitionFuncArgs.Height;
+        callbackData.InitializeFunc = transitionFuncArgs.InitializeFunc;
+        callbackData.RenderFunc = transitionFuncArgs.RenderFunc;
+        callbackData.Arg = transitionFuncArgs.Arg;
+
+        // Active le flag de transition dans le callback
+        callbackData.Flags |= 0x0001;
+
+        if (transitionFuncArgs.InitializeFunc != null)
+        {
+            transitionFuncArgs.InitializeFunc.Invoke(callbackData);
+        }
+
+        return result;
     }
 
+    //80042748
     public void ResetDebugRenderingState()
     {
         //DISPENV *dispENv;
@@ -515,5 +647,45 @@ public class Renderer
         StaticVariables.g_primCount = 0;
         StaticVariables.g_lineCount = 0;
         //ResetRCnt(0xf2000001);
+    }
+
+    //8004be00
+    private void ResetDrawFrameFlags()
+    {
+        StaticVariables.g_drawFrameFlags = 0;
+    }
+
+    //80052618
+    private int StartFadeOut()
+    {
+        var player = StaticVariables.PlayerEntity;
+
+        InitializeFrame();
+        SetTransitionType(4);
+        //var sprite = GetFadeSettings(0);
+        //InitCameraTransition(-player.PosX, -player.PosY, -player.PosZ,
+        //    -StaticVariables.g_cameraScrollingX, -StaticVariables.g_cameraScrollingY,
+        //    sprite.U, sprite.V, sprite.Witdh, sprite.Height);
+        _gameEngine.SoundManager.PlaySoundEffect(4);
+        return 1;
+    }
+
+    //80057b40
+    private int GetFadeSettings(int index)
+    {
+        //return (((g_initialAnimationTable->animationSet).animationOffsets + index * 2 + -0x10) + 0xc) + 2;
+        return -1;
+    }
+
+    //80057c18
+    private void InitCameraTransition(int srcX, int srcY, int srcZ,
+        int dstX, int dstY,
+        sbyte u, sbyte v,
+        ushort width,
+        ushort height)
+    {
+        StaticVariables.g_cameraTransitionStartX = 0xf8;
+        StaticVariables.g_cameraTransitionStartY = 0x68;
+        _gameEngine.InitCameraTransitionEffect(srcX, srcY, srcZ, dstX, dstY, (byte)u, (byte)v, 0x30, 0x38, (short)width, (short)height);
     }
 }

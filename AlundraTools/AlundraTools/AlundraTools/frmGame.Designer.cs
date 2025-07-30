@@ -1069,7 +1069,7 @@ namespace AlundraTools.AlundraTools
             // comboBoxSpawnItemId
             // 
             comboBoxSpawnItemId.FormattingEnabled = true;
-            comboBoxSpawnItemId.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86", "246", "249", "253", "254" });
+            comboBoxSpawnItemId.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86" });
             comboBoxSpawnItemId.Location = new Point(150, 687);
             comboBoxSpawnItemId.Name = "comboBoxSpawnItemId";
             comboBoxSpawnItemId.Size = new Size(123, 28);
@@ -1097,7 +1097,7 @@ namespace AlundraTools.AlundraTools
             // comboBoxRandomItem
             // 
             comboBoxRandomItem.FormattingEnabled = true;
-            comboBoxRandomItem.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86", "246", "249", "253", "254" });
+            comboBoxRandomItem.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86" });
             comboBoxRandomItem.Location = new Point(150, 652);
             comboBoxRandomItem.Name = "comboBoxRandomItem";
             comboBoxRandomItem.Size = new Size(123, 28);

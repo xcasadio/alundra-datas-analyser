@@ -1603,7 +1603,7 @@ namespace AlundraTools.AlundraTools
                 graphics2.DrawImage(_font3.GenerateFontBitmapTim(paletteIndex), 0, 0/*-vScrollSprite.Value*/);
                 pictureBoxFont3Tim.Refresh();
 
-                //vScrollSprite.Maximum = _font3.FontBitmap.SizeZ;
+                //vScrollSprite.Maximum = Font3.FontBitmap.SizeZ;
                 //vScrollSprite_Scroll(null, null);
             }
             pctSpritePalettes.Refresh();

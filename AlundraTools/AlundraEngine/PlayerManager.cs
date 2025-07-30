@@ -3896,4 +3896,31 @@ public class PlayerManager
 
         return StaticVariables.g_iconNameEtcBase[itemId * 2 + 1] == 0;
     }
+
+    //8004e7a4
+    public int GetNumberOfFalconTemp()
+    {
+        return StaticVariables.g_playerStats.FalconTemp;
+    }
+
+    //8004e78c
+    public int GetNumberOfFalcon()
+    {
+        return StaticVariables.g_playerStats.Falcon;
+    }
+
+    //8004e738
+    public void UpdateNumberOfFalcon()
+    {
+        PlayerStats playerStats = StaticVariables.g_playerStats;
+        StaticVariables.g_playerStats.Falcon += StaticVariables.g_playerStats.FalconTemp;
+        playerStats.FalconTemp = 0;
+
+        if (0x32 < playerStats.Falcon)
+        {
+            playerStats.Falcon = 0x32;
+        }
+
+        StaticVariables.g_progressStateFlags = (int)(StaticVariables.g_progressStateFlags & 0xfffffbff);
+    }
 }
