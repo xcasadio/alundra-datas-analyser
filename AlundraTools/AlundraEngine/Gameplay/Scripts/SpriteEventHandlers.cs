@@ -1054,19 +1054,18 @@ public class SpriteEventHandlers
                 if (entity.AIValues[2] == 0)
                 {
                     entity.InitialYPos += 2;
-                    StaticVariables.g_dropItemTextBuffer = _gameEngine.EtcResR.GetEtcString(0x4e);
+                    StaticVariables.g_dropItemTextBuffer = _gameEngine.EtcResR.GetDescriptionString(0x4e);
                     StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetIconName((int)itemId);
-                    StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetEtcString(0x4f);
+                    StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetDescriptionString(0x4f);
 
                     LAB_8007c320:
                     _gameEngine.PlayEtcAnimation(StaticVariables.g_dropItemTextBuffer, 1);
                     return;
                 }
 
-
-                StaticVariables.g_dropItemTextBuffer = _gameEngine.EtcResR.GetEtcString(0x4c);
+                StaticVariables.g_dropItemTextBuffer = _gameEngine.EtcResR.GetDescriptionString(0x4c);
                 StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetIconName((int)itemId);
-                StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetEtcString(0x4d);
+                StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetDescriptionString(0x4d);
 
                 if (entity.AIValues[4] == 0)
                 {
@@ -1075,7 +1074,7 @@ public class SpriteEventHandlers
 
                     if (uVar6 == 0)
                     {
-                        StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetEtcString(0x46);
+                        StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetDescriptionString(0x46);
                     }
 
                     _gameEngine.SoundManager.PlaySoundEffect((uint)uVar6);
@@ -1209,7 +1208,7 @@ public class SpriteEventHandlers
                 else
                 {
                     StaticVariables.g_dropItemTextBuffer = _gameEngine.EtcResR.GetIconName((int)itemId);
-                    StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetEtcString(0x45);
+                    StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetDescriptionString(0x45);
                 }
 
                 _gameEngine.FUN_80032b28((uint)entity.ContentsGameFlag); //AIValues

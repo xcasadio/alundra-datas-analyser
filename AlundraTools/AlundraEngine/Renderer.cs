@@ -1,4 +1,5 @@
-﻿using AlundraEngine.UI;
+﻿using System.Diagnostics;
+using AlundraEngine.UI;
 
 namespace AlundraEngine;
 
@@ -565,18 +566,14 @@ public class Renderer
     {
         if ((StaticVariables.g_drawFrameFlags & 3U) == 1)
         {
-            /* Active un état de "dessin en cours" */
             StaticVariables.g_drawState = 2;
             StaticVariables.g_fadeTimer = 0;
-            /* Vitesse ou niveau de fondu */
             StaticVariables.g_fadeStep = 0xf;
             StaticVariables.g_blendRed = 0;
             StaticVariables.g_blendGreen = 0x10;
             StaticVariables.g_blendBlue = 0;
-            /* Probablement une inversion du volume ou intensité alpha ?
-               g_drawFrameFlags |= 2 => Marque que la frame a été traitée */
             StaticVariables.g_blendAlpha = (short)~(StaticVariables.g_soundFadeTimer << 3);
-            StaticVariables.g_drawFrameFlags = StaticVariables.g_drawFrameFlags | 2;
+            StaticVariables.g_drawFrameFlags |= 2;
         }
     }
 
@@ -662,6 +659,7 @@ public class Renderer
 
         InitializeFrame();
         SetTransitionType(4);
+        Debugger.Break();
         //var sprite = GetFadeSettings(0);
         //InitCameraTransition(-player.PosX, -player.PosY, -player.PosZ,
         //    -StaticVariables.g_cameraScrollingX, -StaticVariables.g_cameraScrollingY,

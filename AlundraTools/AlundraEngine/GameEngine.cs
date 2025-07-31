@@ -2569,6 +2569,7 @@ public class GameEngine
             StaticVariables.g_cameraTransitionSrcZ = srcZ;
             StaticVariables.g_cameraTransitionDstXPtr = dstXPtr;
 
+            Debugger.Break();
             /*
             do
             {
@@ -2685,11 +2686,11 @@ public class GameEngine
         {
             Debugger.Break();
             var message = "the sub text is too long"; //サブテキストが長すぎます!
-            Array.Copy(StaticVariables.g_scriptBuffer, message.ToCharArray(), message.Length);
+            Array.Copy(message.ToCharArray(), StaticVariables.g_scriptBuffer, message.Length);
         }
         else
         {
-            Array.Copy(StaticVariables.g_scriptBuffer, scriptText.ToCharArray(), scriptText.Length);
+            Array.Copy(scriptText.ToCharArray(), StaticVariables.g_scriptBuffer, scriptText.Length);
         }
 
         // Configure le mode texte pour l’animation

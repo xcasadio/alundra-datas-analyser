@@ -2707,7 +2707,7 @@
             // label59
             // 
             label59.AutoSize = true;
-            label59.Location = new Point(446, 4);
+            label59.Location = new Point(573, 4);
             label59.Name = "label59";
             label59.Size = new Size(86, 20);
             label59.TabIndex = 7;
@@ -2716,16 +2716,16 @@
             // listBoxEtcStringTable
             // 
             listBoxEtcStringTable.FormattingEnabled = true;
-            listBoxEtcStringTable.Location = new Point(446, 28);
+            listBoxEtcStringTable.Location = new Point(573, 28);
             listBoxEtcStringTable.Margin = new Padding(3, 4, 3, 4);
             listBoxEtcStringTable.Name = "listBoxEtcStringTable";
-            listBoxEtcStringTable.Size = new Size(139, 424);
+            listBoxEtcStringTable.Size = new Size(330, 424);
             listBoxEtcStringTable.TabIndex = 6;
             // 
             // label55
             // 
             label55.AutoSize = true;
-            label55.Location = new Point(299, 4);
+            label55.Location = new Point(152, 4);
             label55.Name = "label55";
             label55.Size = new Size(92, 20);
             label55.TabIndex = 5;
@@ -2734,7 +2734,7 @@
             // listBoxEtcPaletteTable
             // 
             listBoxEtcPaletteTable.FormattingEnabled = true;
-            listBoxEtcPaletteTable.Location = new Point(299, 28);
+            listBoxEtcPaletteTable.Location = new Point(152, 28);
             listBoxEtcPaletteTable.Margin = new Padding(3, 4, 3, 4);
             listBoxEtcPaletteTable.Name = "listBoxEtcPaletteTable";
             listBoxEtcPaletteTable.Size = new Size(139, 424);
@@ -2743,7 +2743,7 @@
             // label51
             // 
             label51.AutoSize = true;
-            label51.Location = new Point(153, 4);
+            label51.Location = new Point(297, 4);
             label51.Name = "label51";
             label51.Size = new Size(116, 20);
             label51.TabIndex = 3;
@@ -2752,10 +2752,10 @@
             // listBoxEtcIconNameTable
             // 
             listBoxEtcIconNameTable.FormattingEnabled = true;
-            listBoxEtcIconNameTable.Location = new Point(153, 28);
+            listBoxEtcIconNameTable.Location = new Point(297, 28);
             listBoxEtcIconNameTable.Margin = new Padding(3, 4, 3, 4);
             listBoxEtcIconNameTable.Name = "listBoxEtcIconNameTable";
-            listBoxEtcIconNameTable.Size = new Size(139, 424);
+            listBoxEtcIconNameTable.Size = new Size(270, 424);
             listBoxEtcIconNameTable.TabIndex = 2;
             // 
             // label45

@@ -111,28 +111,28 @@ internal class Program
         Log("Tile");
         foreach (var value in etcResR.TileTable)
         {
-            Log($"{i++} {MAGENTA}{value} {BLUE}{etcResR.Strings[value]} {GREEN}{etcResR.Strings[etcResR.StringTable[value]]}{NORMAL}");
+            Log($"{i++} {MAGENTA}{value} {BLUE}{etcResR.Strings[value]}{NORMAL}");
         }
 
         i = 0;
         Log("IconNameTable");
         foreach (var value in etcResR.IconNameTable)
         {
-            Log($"{i++} {MAGENTA}{value} {BLUE}{etcResR.Strings[value]} {GREEN}{etcResR.Strings[etcResR.StringTable[value]]}{NORMAL}");
+            Log($"{i++} {MAGENTA}{value}{NORMAL}");
         }
 
         i = 0;
         Log("PaletteTable");
         foreach (var value in etcResR.PaletteTable)
         {
-            Log($"{i++} {MAGENTA}{value} {BLUE}{etcResR.Strings[value]} {GREEN}{etcResR.Strings[etcResR.StringTable[value]]}{NORMAL}");
+            Log($"{i++} {MAGENTA}{value} {BLUE}{etcResR.Strings[value]}{NORMAL}");
         }
 
         i = 0;
         Log("StringTableOffset");
         foreach (var value in etcResR.StringTable)
         {
-            Log($"{i++} {MAGENTA}{value} {BLUE}{etcResR.Strings[value]} {GREEN}{etcResR.Strings[etcResR.StringTable[value]]}{NORMAL}");
+            Log($"{i++} {MAGENTA}{value}{NORMAL}");
         }
 
         i = 0;

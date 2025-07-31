@@ -54,29 +54,34 @@ namespace AlundraTools.AlundraTools
 
         private void InitEtcControls()
         {
-            foreach (var value in _etcResR.TileTable)
+            for (var i = 0; i < _etcResR.TileTable.Length; i++)
             {
-                listBoxEtcTileTable.Items.Add(value);
+                var value = _etcResR.TileTable[i];
+                listBoxEtcTileTable.Items.Add($"#{i}-{value}");
             }
 
-            foreach (var value in _etcResR.IconNameTable)
+            for (var i = 0; i < _etcResR.IconNameTable.Length; i++)
             {
-                listBoxEtcIconNameTable.Items.Add(value);
+                var value = _etcResR.IconNameTable[i];
+                listBoxEtcIconNameTable.Items.Add($"#{i}-{value} {_etcResR.IconNameTable[i]}");
             }
 
-            foreach (var value in _etcResR.PaletteTable)
+            for (var i = 0; i < _etcResR.PaletteTable.Length; i++)
             {
-                listBoxEtcPaletteTable.Items.Add(value);
+                var value = _etcResR.PaletteTable[i];
+                listBoxEtcPaletteTable.Items.Add($"#{i}-{value}");
             }
 
-            foreach (var value in _etcResR.StringTable)
+            for (var i = 0; i < _etcResR.StringTable.Length; i++)
             {
-                listBoxEtcStringTable.Items.Add(value);
+                var value = _etcResR.StringTable[i];
+                listBoxEtcStringTable.Items.Add($"#{i}-{value}");
             }
 
-            foreach (var value in _etcResR.Strings.Where(x => x != null))
+            for (var i = 0; i < _etcResR.Strings.Length; i++)
             {
-                listBoxEtcStrings.Items.Add(value);
+                var value = _etcResR.Strings[i];
+                listBoxEtcStrings.Items.Add($"#{i}-{value}");
             }
         }
 

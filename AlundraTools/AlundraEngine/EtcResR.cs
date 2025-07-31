@@ -1,31 +1,46 @@
-﻿namespace AlundraEngine;
+﻿using System.Diagnostics;
+using System.IO.Compression;
+
+namespace AlundraEngine;
 
 public class EtcResR
 {
     private readonly string _fileName;
 
+    private readonly short[] _indexTable;
     public readonly short[] TileTable = new short[196];
-    public readonly int[] IconNameTable = new int[196];
+    public readonly string[] IconNameTable = new string[196];
     public readonly short[] PaletteTable = new short[196];
-    public readonly short[] StringTable = new short[256];
 
+    public readonly string[] StringTable = new string[256];
     public readonly string[] Strings = new string[512];
+    public readonly string[] DescriptionStrings = new string[256];
 
     public EtcResR(string fileName)
     {
         _fileName = fileName;
-        var buffer = File.ReadAllBytes(fileName);
 
-        var ressources = new byte[128]; // TODO : what is it ??
+        using var br = new BinaryReader(File.OpenRead(fileName));
+        _indexTable = new short[1024];
 
-        for (int i = 0; i < 64; i++)
+        for (int i = 0; i < 1024; i++)
         {
-            ressources[i] = buffer[i * 2];
+            _indexTable[i] = br.ReadInt16();
         }
+
+        var buffer = File.ReadAllBytes(fileName);
 
         for (int i = 0; i < 0x100; i++)
         {
-            StringTable[i] = buffer[(i + 0x100) * 2];
+            int offset = _indexTable[i + 0x100];
+            StringTable[i] = ReadString(buffer, ref offset);
+        }
+
+
+        for (int i = 0; i < 0x100; i++)
+        {
+            int offset = _indexTable[i];
+            DescriptionStrings[i] = ReadString(buffer, ref offset);
         }
 
         int x = 0;
@@ -42,18 +57,19 @@ public class EtcResR
 
         for (int i = 0; i < 0x62; i++)
         {
-            int iconNameOffset = (i + 0x200) * 2;
-            int tileSetOffset = (i + 0x280) * 2;
-            int paletteOffset = (i + 0x300) * 2;
+            int iconNameOffset = _indexTable[i + 0x200];
+            int tileSetOffset = _indexTable[i + 0x280];
+            int paletteOffset = _indexTable[i + 0x300];
 
-            //IconNameTable[i * 2] = i; //iconNameOffset / 1024;//buffer[iconNameOffset];
-            StaticVariables.g_iconNameEtcBase[i * 2] = (byte)i;
-            TileTable[i * 2] = buffer[tileSetOffset * 2];
-            PaletteTable[i * 2] = buffer[paletteOffset * 2];
+            var offset = iconNameOffset;
+            IconNameTable[i * 2] = ReadString(buffer, ref offset);
+            //StaticVariables.g_iconNameEtcBase[i * 2] = (byte)i;
+            TileTable[i * 2] = buffer[tileSetOffset];
+            PaletteTable[i * 2] = buffer[paletteOffset];
         }
 
-        //l = 0x3ff * 2;
-        //var gameTitle = ReadString(buffer, ref l); // "BESLES-01135ALUNDRA "
+        l = _indexTable[0x3ff];
+        var gameTitle = ReadString(buffer, ref l); // "BESLES-01135ALUNDRA " => BESLES-01198ALUNDRA
     }
 
     private static string ReadString(byte[] buffer, ref int l)
@@ -73,16 +89,29 @@ public class EtcResR
 
     public string GetIconName(int id)
     {
-        return Strings[StaticVariables.g_iconNameEtcBase[id * 2]];
+        return IconNameTable[id * 2];
     }
-    /*
-    public int GetValueByOffset(int offset)
-    {
-        return StaticVariables.g_iconNameEtcBase[offset];
-    }
-    */
+
     public string GetEtcString(int id)
     {
+        Debugger.Break();
+
+        /*
+        0 < id < 0x100 (256) => DescriptionStrings
+        0x100 (256) < id < 0x200 (512) => StringTable
+        0x400 (1024) < id < => Strings
+         */
+
+        var buffer = File.ReadAllBytes(_fileName);
+
+        int offset = _indexTable[id];
+        var value = ReadString(buffer, ref offset);
+
         return Strings[id];
+    }
+
+    public string GetDescriptionString(int id)
+    {
+        return DescriptionStrings[id];
     }
 }

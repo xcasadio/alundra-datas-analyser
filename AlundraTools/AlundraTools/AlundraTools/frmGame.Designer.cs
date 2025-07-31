@@ -130,6 +130,8 @@ namespace AlundraTools.AlundraTools
             buttonIncreaseHpMax = new Button();
             buttonIncreaseMp = new Button();
             buttonIncreaseMpMax = new Button();
+            textBoxTextDisplayed = new TextBox();
+            label31 = new Label();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -1038,6 +1040,8 @@ namespace AlundraTools.AlundraTools
             // 
             // tabPageDebug
             // 
+            tabPageDebug.Controls.Add(label31);
+            tabPageDebug.Controls.Add(textBoxTextDisplayed);
             tabPageDebug.Controls.Add(comboBoxSpawnItemId);
             tabPageDebug.Controls.Add(buttonSpawnItem);
             tabPageDebug.Controls.Add(label30);
@@ -1204,6 +1208,26 @@ namespace AlundraTools.AlundraTools
             buttonIncreaseMpMax.UseVisualStyleBackColor = true;
             buttonIncreaseMpMax.Click += buttonIncreaseMpMax_Click;
             // 
+            // textBoxTextDisplayed
+            // 
+            textBoxTextDisplayed.BorderStyle = BorderStyle.FixedSingle;
+            textBoxTextDisplayed.Location = new Point(9, 773);
+            textBoxTextDisplayed.Multiline = true;
+            textBoxTextDisplayed.Name = "textBoxTextDisplayed";
+            textBoxTextDisplayed.ReadOnly = true;
+            textBoxTextDisplayed.Size = new Size(245, 72);
+            textBoxTextDisplayed.TabIndex = 49;
+            textBoxTextDisplayed.Text = "\r\n";
+            // 
+            // label31
+            // 
+            label31.AutoSize = true;
+            label31.Location = new Point(6, 750);
+            label31.Name = "label31";
+            label31.Size = new Size(104, 20);
+            label31.TabIndex = 50;
+            label31.Text = "Text displayed";
+            // 
             // FrmGame
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -1357,5 +1381,7 @@ namespace AlundraTools.AlundraTools
         private Label label30;
         private ComboBox comboBoxSpawnItemId;
         private Button buttonSpawnItem;
+        private Label label31;
+        private TextBox textBoxTextDisplayed;
     }
 }

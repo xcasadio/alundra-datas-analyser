@@ -562,17 +562,23 @@ public class UIManager
                         //goto LAB_8004635c;
                     }
 
-                    currentLineIndex = StaticVariables.g_textCursor;
-
+                    var currentTextCursorValue = StaticVariables.g_scriptBuffer[StaticVariables.g_textCursor + 1];
+                    
                     if (currentChar != '\\')
                     {
+                        currentLineIndex = StaticVariables.g_textCursor;
+                        //we want to go to the default case to simulate the goto 'LAB_80046ccc'
+                        currentTextCursorValue = '@';
+
                         //goto LAB_80046ccc;
                         Debugger.Break();
                     }
-
-                    currentLineIndex = StaticVariables.g_textCursor + 1;
-
-                    switch (StaticVariables.g_scriptBuffer[StaticVariables.g_textCursor + 1])
+                    else
+                    {
+                        currentLineIndex = StaticVariables.g_textCursor + 1;
+                    }
+                    
+                    switch (currentTextCursorValue)
                     {
                         case '0':
                         case '1':

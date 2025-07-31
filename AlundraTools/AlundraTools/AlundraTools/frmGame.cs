@@ -367,6 +367,8 @@ public partial class FrmGame : Form
             UpdateLabelFramesText();
         }
 
+        textBoxTextDisplayed.Text = new string(StaticVariables.g_scriptBuffer);
+
         propertyGridEntity.Refresh();
         propertyGridEffect.Refresh();
 
