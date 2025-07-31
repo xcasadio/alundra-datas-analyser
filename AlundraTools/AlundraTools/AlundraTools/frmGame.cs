@@ -367,13 +367,12 @@ public partial class FrmGame : Form
             UpdateLabelFramesText();
         }
 
-        textBoxTextDisplayed.Text = new string(StaticVariables.g_scriptBuffer);
-
         propertyGridEntity.Refresh();
         propertyGridEffect.Refresh();
 
         RefreshMapFlags();
         RefreshGameFlags();
+        RefreshTextControls();
 
         ResumeLayout();
         PerformLayout();
@@ -410,6 +409,23 @@ public partial class FrmGame : Form
                 cell.Value = StaticVariables.g_globalFlags[i];
             }
         }
+    }
+
+    private void RefreshTextControls()
+    {
+        var dialogText = new string(StaticVariables.g_scriptBuffer);
+        textBoxFullText.Text = dialogText;
+        textBoxTextInDialog.Text = dialogText.Substring(0, StaticVariables.g_textCursor);
+
+        labelTextFlag.Text = StaticVariables.g_textFlags.ToString();
+        labelTextAutoAdvance.Text = StaticVariables.g_textAutoAdvanceFlag.ToString();
+        labelTextDelayReset.Text = StaticVariables.g_textDelayReset.ToString();
+        labelTextDelay.Text = StaticVariables.g_textDelay.ToString();
+        labelTextBufferX.Text = StaticVariables.g_textBufferX.ToString();
+        labelLineIndex.Text = StaticVariables.g_textLineIndex.ToString();
+        labelTextCursor.Text = StaticVariables.g_textCursor.ToString();
+        labelTextRenderStep.Text = StaticVariables.g_textRenderStep.ToString();
+        labelTextLinesWidth.Text = string.Join(',', StaticVariables.g_textLineWidth);
     }
 
     #region Pad

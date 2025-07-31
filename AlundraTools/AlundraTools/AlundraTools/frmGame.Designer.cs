@@ -89,14 +89,28 @@ namespace AlundraTools.AlundraTools
             checkBoxDisplayEffectId = new CheckBox();
             checkBoxTileXY = new CheckBox();
             buttonCompareWithDump = new Button();
-            buttonControlAlundra = new Button();
             tabControlEffect = new TabControl();
-            tabPageGlobal = new TabPage();
+            tabPageEntities = new TabPage();
             tabPageEffects = new TabPage();
             label28 = new Label();
             listBoxEffects = new ListBox();
             propertyGridEffect = new PropertyGrid();
             tabPagePlayerStatus = new TabPage();
+            buttonControlAlundra = new Button();
+            comboBoxSpawnItemId = new ComboBox();
+            buttonSpawnItem = new Button();
+            label30 = new Label();
+            comboBoxRandomItem = new ComboBox();
+            buttonAddHugeHp = new Button();
+            buttonRestoreHpAndMp = new Button();
+            buttonRestoreHp = new Button();
+            buttonIncreaseHp = new Button();
+            buttonRestoreMp = new Button();
+            buttonAddLowHp = new Button();
+            buttonAddMediumHp = new Button();
+            buttonIncreaseHpMax = new Button();
+            buttonIncreaseMp = new Button();
+            buttonIncreaseMpMax = new Button();
             comboBoxWeapon = new ComboBox();
             label27 = new Label();
             label18 = new Label();
@@ -116,22 +130,29 @@ namespace AlundraTools.AlundraTools
             label20 = new Label();
             numericUpDownHpMax = new NumericUpDown();
             tabPageDebug = new TabPage();
-            comboBoxSpawnItemId = new ComboBox();
-            buttonSpawnItem = new Button();
-            label30 = new Label();
-            comboBoxRandomItem = new ComboBox();
-            buttonAddHugeHp = new Button();
-            buttonRestoreHpAndMp = new Button();
-            buttonRestoreHp = new Button();
-            buttonIncreaseHp = new Button();
-            buttonRestoreMp = new Button();
-            buttonAddLowHp = new Button();
-            buttonAddMediumHp = new Button();
-            buttonIncreaseHpMax = new Button();
-            buttonIncreaseMp = new Button();
-            buttonIncreaseMpMax = new Button();
-            textBoxTextDisplayed = new TextBox();
+            groupBox5 = new GroupBox();
+            labelTextLinesWidth = new Label();
+            label45 = new Label();
+            labelTextRenderStep = new Label();
+            label47 = new Label();
+            labelTextCursor = new Label();
+            label49 = new Label();
+            labelLineIndex = new Label();
+            label43 = new Label();
+            labelTextBufferX = new Label();
+            label41 = new Label();
+            labelTextDelay = new Label();
             label31 = new Label();
+            textBoxFullText = new TextBox();
+            label33 = new Label();
+            labelTextDelayReset = new Label();
+            label35 = new Label();
+            labelTextAutoAdvance = new Label();
+            label37 = new Label();
+            label38 = new Label();
+            labelTextFlag = new Label();
+            label32 = new Label();
+            textBoxTextInDialog = new TextBox();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -140,7 +161,7 @@ namespace AlundraTools.AlundraTools
             ((System.ComponentModel.ISupportInitialize)dataGridViewMapFlags).BeginInit();
             groupBox4.SuspendLayout();
             tabControlEffect.SuspendLayout();
-            tabPageGlobal.SuspendLayout();
+            tabPageEntities.SuspendLayout();
             tabPageEffects.SuspendLayout();
             tabPagePlayerStatus.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownFalcon2).BeginInit();
@@ -151,6 +172,7 @@ namespace AlundraTools.AlundraTools
             ((System.ComponentModel.ISupportInitialize)numericUpDownMp).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownHpMax).BeginInit();
             tabPageDebug.SuspendLayout();
+            groupBox5.SuspendLayout();
             SuspendLayout();
             // 
             // pctOut
@@ -613,7 +635,7 @@ namespace AlundraTools.AlundraTools
             dataGridViewGlobalFlags.Name = "dataGridViewGlobalFlags";
             dataGridViewGlobalFlags.RowHeadersVisible = false;
             dataGridViewGlobalFlags.RowHeadersWidth = 51;
-            dataGridViewGlobalFlags.Size = new Size(124, 587);
+            dataGridViewGlobalFlags.Size = new Size(124, 373);
             dataGridViewGlobalFlags.TabIndex = 23;
             // 
             // columnIndex
@@ -642,7 +664,7 @@ namespace AlundraTools.AlundraTools
             dataGridViewMapFlags.Name = "dataGridViewMapFlags";
             dataGridViewMapFlags.RowHeadersVisible = false;
             dataGridViewMapFlags.RowHeadersWidth = 51;
-            dataGridViewMapFlags.Size = new Size(134, 587);
+            dataGridViewMapFlags.Size = new Size(134, 373);
             dataGridViewMapFlags.TabIndex = 24;
             // 
             // dataGridViewTextBoxColumn1
@@ -768,20 +790,10 @@ namespace AlundraTools.AlundraTools
             buttonCompareWithDump.UseVisualStyleBackColor = true;
             buttonCompareWithDump.Click += buttonCompareWithDump_Click;
             // 
-            // buttonControlAlundra
-            // 
-            buttonControlAlundra.Location = new Point(327, 198);
-            buttonControlAlundra.Name = "buttonControlAlundra";
-            buttonControlAlundra.Size = new Size(171, 29);
-            buttonControlAlundra.TabIndex = 33;
-            buttonControlAlundra.Text = "Control alundra";
-            buttonControlAlundra.UseVisualStyleBackColor = true;
-            buttonControlAlundra.Click += buttonControlAlundra_Click;
-            // 
             // tabControlEffect
             // 
             tabControlEffect.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tabControlEffect.Controls.Add(tabPageGlobal);
+            tabControlEffect.Controls.Add(tabPageEntities);
             tabControlEffect.Controls.Add(tabPageEffects);
             tabControlEffect.Controls.Add(tabPagePlayerStatus);
             tabControlEffect.Controls.Add(tabPageDebug);
@@ -791,21 +803,21 @@ namespace AlundraTools.AlundraTools
             tabControlEffect.Size = new Size(543, 1057);
             tabControlEffect.TabIndex = 34;
             // 
-            // tabPageGlobal
+            // tabPageEntities
             // 
-            tabPageGlobal.Controls.Add(label14);
-            tabPageGlobal.Controls.Add(groupBox1);
-            tabPageGlobal.Controls.Add(groupBox2);
-            tabPageGlobal.Controls.Add(groupBox3);
-            tabPageGlobal.Controls.Add(listBoxEntities);
-            tabPageGlobal.Controls.Add(propertyGridEntity);
-            tabPageGlobal.Location = new Point(4, 29);
-            tabPageGlobal.Name = "tabPageGlobal";
-            tabPageGlobal.Padding = new Padding(3);
-            tabPageGlobal.Size = new Size(535, 1024);
-            tabPageGlobal.TabIndex = 0;
-            tabPageGlobal.Text = "Global";
-            tabPageGlobal.UseVisualStyleBackColor = true;
+            tabPageEntities.Controls.Add(label14);
+            tabPageEntities.Controls.Add(groupBox1);
+            tabPageEntities.Controls.Add(groupBox2);
+            tabPageEntities.Controls.Add(groupBox3);
+            tabPageEntities.Controls.Add(listBoxEntities);
+            tabPageEntities.Controls.Add(propertyGridEntity);
+            tabPageEntities.Location = new Point(4, 29);
+            tabPageEntities.Name = "tabPageEntities";
+            tabPageEntities.Padding = new Padding(3);
+            tabPageEntities.Size = new Size(535, 1024);
+            tabPageEntities.TabIndex = 0;
+            tabPageEntities.Text = "Entities";
+            tabPageEntities.UseVisualStyleBackColor = true;
             // 
             // tabPageEffects
             // 
@@ -852,6 +864,21 @@ namespace AlundraTools.AlundraTools
             // 
             // tabPagePlayerStatus
             // 
+            tabPagePlayerStatus.Controls.Add(buttonControlAlundra);
+            tabPagePlayerStatus.Controls.Add(comboBoxSpawnItemId);
+            tabPagePlayerStatus.Controls.Add(buttonSpawnItem);
+            tabPagePlayerStatus.Controls.Add(label30);
+            tabPagePlayerStatus.Controls.Add(comboBoxRandomItem);
+            tabPagePlayerStatus.Controls.Add(buttonAddHugeHp);
+            tabPagePlayerStatus.Controls.Add(buttonRestoreHpAndMp);
+            tabPagePlayerStatus.Controls.Add(buttonRestoreHp);
+            tabPagePlayerStatus.Controls.Add(buttonIncreaseHp);
+            tabPagePlayerStatus.Controls.Add(buttonRestoreMp);
+            tabPagePlayerStatus.Controls.Add(buttonAddLowHp);
+            tabPagePlayerStatus.Controls.Add(buttonAddMediumHp);
+            tabPagePlayerStatus.Controls.Add(buttonIncreaseHpMax);
+            tabPagePlayerStatus.Controls.Add(buttonIncreaseMp);
+            tabPagePlayerStatus.Controls.Add(buttonIncreaseMpMax);
             tabPagePlayerStatus.Controls.Add(comboBoxWeapon);
             tabPagePlayerStatus.Controls.Add(label27);
             tabPagePlayerStatus.Controls.Add(label18);
@@ -877,6 +904,154 @@ namespace AlundraTools.AlundraTools
             tabPagePlayerStatus.TabIndex = 1;
             tabPagePlayerStatus.Text = "Player status";
             tabPagePlayerStatus.UseVisualStyleBackColor = true;
+            // 
+            // buttonControlAlundra
+            // 
+            buttonControlAlundra.Location = new Point(357, 417);
+            buttonControlAlundra.Name = "buttonControlAlundra";
+            buttonControlAlundra.Size = new Size(171, 29);
+            buttonControlAlundra.TabIndex = 63;
+            buttonControlAlundra.Text = "Control alundra";
+            buttonControlAlundra.UseVisualStyleBackColor = true;
+            buttonControlAlundra.Click += buttonControlAlundra_Click;
+            // 
+            // comboBoxSpawnItemId
+            // 
+            comboBoxSpawnItemId.FormattingEnabled = true;
+            comboBoxSpawnItemId.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86" });
+            comboBoxSpawnItemId.Location = new Point(147, 369);
+            comboBoxSpawnItemId.Name = "comboBoxSpawnItemId";
+            comboBoxSpawnItemId.Size = new Size(123, 28);
+            comboBoxSpawnItemId.TabIndex = 62;
+            // 
+            // buttonSpawnItem
+            // 
+            buttonSpawnItem.Location = new Point(6, 368);
+            buttonSpawnItem.Name = "buttonSpawnItem";
+            buttonSpawnItem.Size = new Size(124, 29);
+            buttonSpawnItem.TabIndex = 61;
+            buttonSpawnItem.Text = "Spawn item";
+            buttonSpawnItem.UseVisualStyleBackColor = true;
+            buttonSpawnItem.Click += buttonSpawnItem_Click;
+            // 
+            // label30
+            // 
+            label30.AutoSize = true;
+            label30.Location = new Point(6, 337);
+            label30.Name = "label30";
+            label30.Size = new Size(135, 20);
+            label30.TabIndex = 60;
+            label30.Text = "Force random item";
+            // 
+            // comboBoxRandomItem
+            // 
+            comboBoxRandomItem.FormattingEnabled = true;
+            comboBoxRandomItem.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86" });
+            comboBoxRandomItem.Location = new Point(147, 334);
+            comboBoxRandomItem.Name = "comboBoxRandomItem";
+            comboBoxRandomItem.Size = new Size(123, 28);
+            comboBoxRandomItem.TabIndex = 59;
+            comboBoxRandomItem.SelectedIndexChanged += comboBoxItem_SelectedIndexChanged;
+            // 
+            // buttonAddHugeHp
+            // 
+            buttonAddHugeHp.Location = new Point(357, 347);
+            buttonAddHugeHp.Name = "buttonAddHugeHp";
+            buttonAddHugeHp.Size = new Size(171, 29);
+            buttonAddHugeHp.TabIndex = 58;
+            buttonAddHugeHp.Text = "Add huge Hp";
+            buttonAddHugeHp.UseVisualStyleBackColor = true;
+            buttonAddHugeHp.Click += buttonAddHugeHp_Click;
+            // 
+            // buttonRestoreHpAndMp
+            // 
+            buttonRestoreHpAndMp.Location = new Point(357, 7);
+            buttonRestoreHpAndMp.Name = "buttonRestoreHpAndMp";
+            buttonRestoreHpAndMp.Size = new Size(171, 29);
+            buttonRestoreHpAndMp.TabIndex = 57;
+            buttonRestoreHpAndMp.Text = "Restore Hp and Mp";
+            buttonRestoreHpAndMp.UseVisualStyleBackColor = true;
+            buttonRestoreHpAndMp.Click += buttonRestoreHpAndMp_Click;
+            // 
+            // buttonRestoreHp
+            // 
+            buttonRestoreHp.Location = new Point(357, 207);
+            buttonRestoreHp.Name = "buttonRestoreHp";
+            buttonRestoreHp.Size = new Size(171, 29);
+            buttonRestoreHp.TabIndex = 56;
+            buttonRestoreHp.Text = "Restore Hp";
+            buttonRestoreHp.UseVisualStyleBackColor = true;
+            buttonRestoreHp.Click += buttonRestoreHp_Click;
+            // 
+            // buttonIncreaseHp
+            // 
+            buttonIncreaseHp.Location = new Point(357, 242);
+            buttonIncreaseHp.Name = "buttonIncreaseHp";
+            buttonIncreaseHp.Size = new Size(171, 29);
+            buttonIncreaseHp.TabIndex = 55;
+            buttonIncreaseHp.Text = "Increase Hp";
+            buttonIncreaseHp.UseVisualStyleBackColor = true;
+            buttonIncreaseHp.Click += buttonIncreaseHp_Click;
+            // 
+            // buttonRestoreMp
+            // 
+            buttonRestoreMp.Location = new Point(357, 90);
+            buttonRestoreMp.Name = "buttonRestoreMp";
+            buttonRestoreMp.Size = new Size(171, 29);
+            buttonRestoreMp.TabIndex = 54;
+            buttonRestoreMp.Text = "Restore Mp";
+            buttonRestoreMp.UseVisualStyleBackColor = true;
+            buttonRestoreMp.Click += buttonRestoreMp_Click;
+            // 
+            // buttonAddLowHp
+            // 
+            buttonAddLowHp.Location = new Point(357, 277);
+            buttonAddLowHp.Name = "buttonAddLowHp";
+            buttonAddLowHp.Size = new Size(171, 29);
+            buttonAddLowHp.TabIndex = 53;
+            buttonAddLowHp.Text = "Add low Hp";
+            buttonAddLowHp.UseVisualStyleBackColor = true;
+            buttonAddLowHp.Click += buttonAddLowHp_Click;
+            // 
+            // buttonAddMediumHp
+            // 
+            buttonAddMediumHp.Location = new Point(357, 312);
+            buttonAddMediumHp.Name = "buttonAddMediumHp";
+            buttonAddMediumHp.Size = new Size(171, 29);
+            buttonAddMediumHp.TabIndex = 52;
+            buttonAddMediumHp.Text = "Add medium Hp";
+            buttonAddMediumHp.UseVisualStyleBackColor = true;
+            buttonAddMediumHp.Click += buttonAddMediumHp_Click;
+            // 
+            // buttonIncreaseHpMax
+            // 
+            buttonIncreaseHpMax.Location = new Point(357, 172);
+            buttonIncreaseHpMax.Name = "buttonIncreaseHpMax";
+            buttonIncreaseHpMax.Size = new Size(171, 29);
+            buttonIncreaseHpMax.TabIndex = 51;
+            buttonIncreaseHpMax.Text = "Increase Hp Max";
+            buttonIncreaseHpMax.UseVisualStyleBackColor = true;
+            buttonIncreaseHpMax.Click += buttonIncreaseHpMax_Click;
+            // 
+            // buttonIncreaseMp
+            // 
+            buttonIncreaseMp.Location = new Point(357, 125);
+            buttonIncreaseMp.Name = "buttonIncreaseMp";
+            buttonIncreaseMp.Size = new Size(171, 29);
+            buttonIncreaseMp.TabIndex = 50;
+            buttonIncreaseMp.Text = "Increase Mp";
+            buttonIncreaseMp.UseVisualStyleBackColor = true;
+            buttonIncreaseMp.Click += buttonIncreaseMp_Click;
+            // 
+            // buttonIncreaseMpMax
+            // 
+            buttonIncreaseMpMax.Location = new Point(357, 55);
+            buttonIncreaseMpMax.Name = "buttonIncreaseMpMax";
+            buttonIncreaseMpMax.Size = new Size(171, 29);
+            buttonIncreaseMpMax.TabIndex = 49;
+            buttonIncreaseMpMax.Text = "Increase Mp Max";
+            buttonIncreaseMpMax.UseVisualStyleBackColor = true;
+            buttonIncreaseMpMax.Click += buttonIncreaseMpMax_Click;
             // 
             // comboBoxWeapon
             // 
@@ -1040,24 +1215,8 @@ namespace AlundraTools.AlundraTools
             // 
             // tabPageDebug
             // 
-            tabPageDebug.Controls.Add(label31);
-            tabPageDebug.Controls.Add(textBoxTextDisplayed);
-            tabPageDebug.Controls.Add(comboBoxSpawnItemId);
-            tabPageDebug.Controls.Add(buttonSpawnItem);
-            tabPageDebug.Controls.Add(label30);
-            tabPageDebug.Controls.Add(comboBoxRandomItem);
-            tabPageDebug.Controls.Add(buttonAddHugeHp);
-            tabPageDebug.Controls.Add(buttonRestoreHpAndMp);
-            tabPageDebug.Controls.Add(buttonRestoreHp);
-            tabPageDebug.Controls.Add(buttonIncreaseHp);
-            tabPageDebug.Controls.Add(buttonRestoreMp);
-            tabPageDebug.Controls.Add(buttonAddLowHp);
-            tabPageDebug.Controls.Add(buttonAddMediumHp);
-            tabPageDebug.Controls.Add(buttonIncreaseHpMax);
-            tabPageDebug.Controls.Add(buttonIncreaseMp);
-            tabPageDebug.Controls.Add(buttonIncreaseMpMax);
+            tabPageDebug.Controls.Add(groupBox5);
             tabPageDebug.Controls.Add(label8);
-            tabPageDebug.Controls.Add(buttonControlAlundra);
             tabPageDebug.Controls.Add(label12);
             tabPageDebug.Controls.Add(dataGridViewGlobalFlags);
             tabPageDebug.Controls.Add(groupBox4);
@@ -1070,163 +1229,240 @@ namespace AlundraTools.AlundraTools
             tabPageDebug.Text = "Debug";
             tabPageDebug.UseVisualStyleBackColor = true;
             // 
-            // comboBoxSpawnItemId
+            // groupBox5
             // 
-            comboBoxSpawnItemId.FormattingEnabled = true;
-            comboBoxSpawnItemId.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86" });
-            comboBoxSpawnItemId.Location = new Point(150, 687);
-            comboBoxSpawnItemId.Name = "comboBoxSpawnItemId";
-            comboBoxSpawnItemId.Size = new Size(123, 28);
-            comboBoxSpawnItemId.TabIndex = 48;
+            groupBox5.Controls.Add(textBoxTextInDialog);
+            groupBox5.Controls.Add(label32);
+            groupBox5.Controls.Add(labelTextLinesWidth);
+            groupBox5.Controls.Add(label45);
+            groupBox5.Controls.Add(labelTextRenderStep);
+            groupBox5.Controls.Add(label47);
+            groupBox5.Controls.Add(labelTextCursor);
+            groupBox5.Controls.Add(label49);
+            groupBox5.Controls.Add(labelLineIndex);
+            groupBox5.Controls.Add(label43);
+            groupBox5.Controls.Add(labelTextBufferX);
+            groupBox5.Controls.Add(label41);
+            groupBox5.Controls.Add(labelTextDelay);
+            groupBox5.Controls.Add(label31);
+            groupBox5.Controls.Add(textBoxFullText);
+            groupBox5.Controls.Add(label33);
+            groupBox5.Controls.Add(labelTextDelayReset);
+            groupBox5.Controls.Add(label35);
+            groupBox5.Controls.Add(labelTextAutoAdvance);
+            groupBox5.Controls.Add(label37);
+            groupBox5.Controls.Add(label38);
+            groupBox5.Controls.Add(labelTextFlag);
+            groupBox5.Location = new Point(12, 547);
+            groupBox5.Margin = new Padding(3, 4, 3, 4);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Padding = new Padding(3, 4, 3, 4);
+            groupBox5.Size = new Size(474, 225);
+            groupBox5.TabIndex = 51;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "Text";
             // 
-            // buttonSpawnItem
+            // labelTextLinesWidth
             // 
-            buttonSpawnItem.Location = new Point(9, 686);
-            buttonSpawnItem.Name = "buttonSpawnItem";
-            buttonSpawnItem.Size = new Size(124, 29);
-            buttonSpawnItem.TabIndex = 47;
-            buttonSpawnItem.Text = "Spawn item";
-            buttonSpawnItem.UseVisualStyleBackColor = true;
-            buttonSpawnItem.Click += buttonSpawnItem_Click;
+            labelTextLinesWidth.AutoSize = true;
+            labelTextLinesWidth.Location = new Point(111, 186);
+            labelTextLinesWidth.Name = "labelTextLinesWidth";
+            labelTextLinesWidth.Size = new Size(17, 20);
+            labelTextLinesWidth.TabIndex = 60;
+            labelTextLinesWidth.Text = "0";
             // 
-            // label30
+            // label45
             // 
-            label30.AutoSize = true;
-            label30.Location = new Point(9, 655);
-            label30.Name = "label30";
-            label30.Size = new Size(135, 20);
-            label30.TabIndex = 46;
-            label30.Text = "Force random item";
+            label45.AutoSize = true;
+            label45.Location = new Point(7, 186);
+            label45.Name = "label45";
+            label45.Size = new Size(80, 20);
+            label45.TabIndex = 59;
+            label45.Text = "lines width";
             // 
-            // comboBoxRandomItem
+            // labelTextRenderStep
             // 
-            comboBoxRandomItem.FormattingEnabled = true;
-            comboBoxRandomItem.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86" });
-            comboBoxRandomItem.Location = new Point(150, 652);
-            comboBoxRandomItem.Name = "comboBoxRandomItem";
-            comboBoxRandomItem.Size = new Size(123, 28);
-            comboBoxRandomItem.TabIndex = 45;
-            comboBoxRandomItem.SelectedIndexChanged += comboBoxRandomItem_SelectedIndexChanged;
+            labelTextRenderStep.AutoSize = true;
+            labelTextRenderStep.Location = new Point(111, 166);
+            labelTextRenderStep.Name = "labelTextRenderStep";
+            labelTextRenderStep.Size = new Size(17, 20);
+            labelTextRenderStep.TabIndex = 58;
+            labelTextRenderStep.Text = "0";
             // 
-            // buttonAddHugeHp
+            // label47
             // 
-            buttonAddHugeHp.Location = new Point(327, 594);
-            buttonAddHugeHp.Name = "buttonAddHugeHp";
-            buttonAddHugeHp.Size = new Size(171, 29);
-            buttonAddHugeHp.TabIndex = 43;
-            buttonAddHugeHp.Text = "Add huge Hp";
-            buttonAddHugeHp.UseVisualStyleBackColor = true;
-            buttonAddHugeHp.Click += buttonAddHugeHp_Click;
+            label47.AutoSize = true;
+            label47.Location = new Point(7, 166);
+            label47.Name = "label47";
+            label47.Size = new Size(84, 20);
+            label47.TabIndex = 57;
+            label47.Text = "render step";
             // 
-            // buttonRestoreHpAndMp
+            // labelTextCursor
             // 
-            buttonRestoreHpAndMp.Location = new Point(327, 254);
-            buttonRestoreHpAndMp.Name = "buttonRestoreHpAndMp";
-            buttonRestoreHpAndMp.Size = new Size(171, 29);
-            buttonRestoreHpAndMp.TabIndex = 42;
-            buttonRestoreHpAndMp.Text = "Restore Hp and Mp";
-            buttonRestoreHpAndMp.UseVisualStyleBackColor = true;
-            buttonRestoreHpAndMp.Click += buttonRestoreHpAndMp_Click;
+            labelTextCursor.AutoSize = true;
+            labelTextCursor.Location = new Point(111, 146);
+            labelTextCursor.Name = "labelTextCursor";
+            labelTextCursor.Size = new Size(17, 20);
+            labelTextCursor.TabIndex = 56;
+            labelTextCursor.Text = "0";
             // 
-            // buttonRestoreHp
+            // label49
             // 
-            buttonRestoreHp.Location = new Point(327, 454);
-            buttonRestoreHp.Name = "buttonRestoreHp";
-            buttonRestoreHp.Size = new Size(171, 29);
-            buttonRestoreHp.TabIndex = 41;
-            buttonRestoreHp.Text = "Restore Hp";
-            buttonRestoreHp.UseVisualStyleBackColor = true;
-            buttonRestoreHp.Click += buttonRestoreHp_Click;
+            label49.AutoSize = true;
+            label49.Location = new Point(7, 146);
+            label49.Name = "label49";
+            label49.Size = new Size(49, 20);
+            label49.TabIndex = 55;
+            label49.Text = "cursor";
             // 
-            // buttonIncreaseHp
+            // labelLineIndex
             // 
-            buttonIncreaseHp.Location = new Point(327, 489);
-            buttonIncreaseHp.Name = "buttonIncreaseHp";
-            buttonIncreaseHp.Size = new Size(171, 29);
-            buttonIncreaseHp.TabIndex = 40;
-            buttonIncreaseHp.Text = "Increase Hp";
-            buttonIncreaseHp.UseVisualStyleBackColor = true;
-            buttonIncreaseHp.Click += buttonIncreaseHp_Click;
+            labelLineIndex.AutoSize = true;
+            labelLineIndex.Location = new Point(111, 126);
+            labelLineIndex.Name = "labelLineIndex";
+            labelLineIndex.Size = new Size(17, 20);
+            labelLineIndex.TabIndex = 54;
+            labelLineIndex.Text = "0";
             // 
-            // buttonRestoreMp
+            // label43
             // 
-            buttonRestoreMp.Location = new Point(327, 337);
-            buttonRestoreMp.Name = "buttonRestoreMp";
-            buttonRestoreMp.Size = new Size(171, 29);
-            buttonRestoreMp.TabIndex = 39;
-            buttonRestoreMp.Text = "Restore Mp";
-            buttonRestoreMp.UseVisualStyleBackColor = true;
-            buttonRestoreMp.Click += buttonRestoreMp_Click;
+            label43.AutoSize = true;
+            label43.Location = new Point(7, 126);
+            label43.Name = "label43";
+            label43.Size = new Size(73, 20);
+            label43.TabIndex = 53;
+            label43.Text = "line index";
             // 
-            // buttonAddLowHp
+            // labelTextBufferX
             // 
-            buttonAddLowHp.Location = new Point(327, 524);
-            buttonAddLowHp.Name = "buttonAddLowHp";
-            buttonAddLowHp.Size = new Size(171, 29);
-            buttonAddLowHp.TabIndex = 38;
-            buttonAddLowHp.Text = "Add low Hp";
-            buttonAddLowHp.UseVisualStyleBackColor = true;
-            buttonAddLowHp.Click += buttonAddLowHp_Click;
+            labelTextBufferX.AutoSize = true;
+            labelTextBufferX.Location = new Point(111, 106);
+            labelTextBufferX.Name = "labelTextBufferX";
+            labelTextBufferX.Size = new Size(17, 20);
+            labelTextBufferX.TabIndex = 52;
+            labelTextBufferX.Text = "0";
             // 
-            // buttonAddMediumHp
+            // label41
             // 
-            buttonAddMediumHp.Location = new Point(327, 559);
-            buttonAddMediumHp.Name = "buttonAddMediumHp";
-            buttonAddMediumHp.Size = new Size(171, 29);
-            buttonAddMediumHp.TabIndex = 37;
-            buttonAddMediumHp.Text = "Add medium Hp";
-            buttonAddMediumHp.UseVisualStyleBackColor = true;
-            buttonAddMediumHp.Click += buttonAddMediumHp_Click;
+            label41.AutoSize = true;
+            label41.Location = new Point(7, 106);
+            label41.Name = "label41";
+            label41.Size = new Size(62, 20);
+            label41.TabIndex = 51;
+            label41.Text = "buffer X";
             // 
-            // buttonIncreaseHpMax
+            // labelTextDelay
             // 
-            buttonIncreaseHpMax.Location = new Point(327, 419);
-            buttonIncreaseHpMax.Name = "buttonIncreaseHpMax";
-            buttonIncreaseHpMax.Size = new Size(171, 29);
-            buttonIncreaseHpMax.TabIndex = 36;
-            buttonIncreaseHpMax.Text = "Increase Hp Max";
-            buttonIncreaseHpMax.UseVisualStyleBackColor = true;
-            buttonIncreaseHpMax.Click += buttonIncreaseHpMax_Click;
-            // 
-            // buttonIncreaseMp
-            // 
-            buttonIncreaseMp.Location = new Point(327, 372);
-            buttonIncreaseMp.Name = "buttonIncreaseMp";
-            buttonIncreaseMp.Size = new Size(171, 29);
-            buttonIncreaseMp.TabIndex = 35;
-            buttonIncreaseMp.Text = "Increase Mp";
-            buttonIncreaseMp.UseVisualStyleBackColor = true;
-            buttonIncreaseMp.Click += buttonIncreaseMp_Click;
-            // 
-            // buttonIncreaseMpMax
-            // 
-            buttonIncreaseMpMax.Location = new Point(327, 302);
-            buttonIncreaseMpMax.Name = "buttonIncreaseMpMax";
-            buttonIncreaseMpMax.Size = new Size(171, 29);
-            buttonIncreaseMpMax.TabIndex = 34;
-            buttonIncreaseMpMax.Text = "Increase Mp Max";
-            buttonIncreaseMpMax.UseVisualStyleBackColor = true;
-            buttonIncreaseMpMax.Click += buttonIncreaseMpMax_Click;
-            // 
-            // textBoxTextDisplayed
-            // 
-            textBoxTextDisplayed.BorderStyle = BorderStyle.FixedSingle;
-            textBoxTextDisplayed.Location = new Point(9, 773);
-            textBoxTextDisplayed.Multiline = true;
-            textBoxTextDisplayed.Name = "textBoxTextDisplayed";
-            textBoxTextDisplayed.ReadOnly = true;
-            textBoxTextDisplayed.Size = new Size(245, 72);
-            textBoxTextDisplayed.TabIndex = 49;
-            textBoxTextDisplayed.Text = "\r\n";
+            labelTextDelay.AutoSize = true;
+            labelTextDelay.Location = new Point(111, 86);
+            labelTextDelay.Name = "labelTextDelay";
+            labelTextDelay.Size = new Size(17, 20);
+            labelTextDelay.TabIndex = 8;
+            labelTextDelay.Text = "0";
             // 
             // label31
             // 
             label31.AutoSize = true;
-            label31.Location = new Point(6, 750);
+            label31.Location = new Point(221, 24);
             label31.Name = "label31";
             label31.Size = new Size(104, 20);
             label31.TabIndex = 50;
             label31.Text = "Text displayed";
+            // 
+            // textBoxFullText
+            // 
+            textBoxFullText.BorderStyle = BorderStyle.FixedSingle;
+            textBoxFullText.Location = new Point(221, 146);
+            textBoxFullText.Multiline = true;
+            textBoxFullText.Name = "textBoxFullText";
+            textBoxFullText.ReadOnly = true;
+            textBoxFullText.Size = new Size(245, 72);
+            textBoxFullText.TabIndex = 49;
+            textBoxFullText.Text = "\r\n";
+            // 
+            // label33
+            // 
+            label33.AutoSize = true;
+            label33.Location = new Point(7, 86);
+            label33.Name = "label33";
+            label33.Size = new Size(45, 20);
+            label33.TabIndex = 7;
+            label33.Text = "delay";
+            // 
+            // labelTextDelayReset
+            // 
+            labelTextDelayReset.AutoSize = true;
+            labelTextDelayReset.Location = new Point(111, 66);
+            labelTextDelayReset.Name = "labelTextDelayReset";
+            labelTextDelayReset.Size = new Size(17, 20);
+            labelTextDelayReset.TabIndex = 6;
+            labelTextDelayReset.Text = "0";
+            // 
+            // label35
+            // 
+            label35.AutoSize = true;
+            label35.Location = new Point(7, 66);
+            label35.Name = "label35";
+            label35.Size = new Size(81, 20);
+            label35.TabIndex = 5;
+            label35.Text = "delay reset";
+            // 
+            // labelTextAutoAdvance
+            // 
+            labelTextAutoAdvance.AutoSize = true;
+            labelTextAutoAdvance.Location = new Point(111, 46);
+            labelTextAutoAdvance.Name = "labelTextAutoAdvance";
+            labelTextAutoAdvance.Size = new Size(17, 20);
+            labelTextAutoAdvance.TabIndex = 4;
+            labelTextAutoAdvance.Text = "0";
+            // 
+            // label37
+            // 
+            label37.AutoSize = true;
+            label37.Location = new Point(7, 46);
+            label37.Name = "label37";
+            label37.Size = new Size(98, 20);
+            label37.TabIndex = 3;
+            label37.Text = "auto advance";
+            // 
+            // label38
+            // 
+            label38.AutoSize = true;
+            label38.Location = new Point(7, 26);
+            label38.Name = "label38";
+            label38.Size = new Size(38, 20);
+            label38.TabIndex = 1;
+            label38.Text = "flag:";
+            // 
+            // labelTextFlag
+            // 
+            labelTextFlag.AutoSize = true;
+            labelTextFlag.Location = new Point(111, 26);
+            labelTextFlag.Name = "labelTextFlag";
+            labelTextFlag.Size = new Size(17, 20);
+            labelTextFlag.TabIndex = 0;
+            labelTextFlag.Text = "0";
+            // 
+            // label32
+            // 
+            label32.AutoSize = true;
+            label32.Location = new Point(221, 123);
+            label32.Name = "label32";
+            label32.Size = new Size(61, 20);
+            label32.TabIndex = 61;
+            label32.Text = "Full text";
+            // 
+            // textBoxTextInDialog
+            // 
+            textBoxTextInDialog.BorderStyle = BorderStyle.FixedSingle;
+            textBoxTextInDialog.Location = new Point(223, 47);
+            textBoxTextInDialog.Multiline = true;
+            textBoxTextInDialog.Name = "textBoxTextInDialog";
+            textBoxTextInDialog.ReadOnly = true;
+            textBoxTextInDialog.Size = new Size(245, 72);
+            textBoxTextInDialog.TabIndex = 62;
+            textBoxTextInDialog.Text = "\r\n";
             // 
             // FrmGame
             // 
@@ -1258,8 +1494,8 @@ namespace AlundraTools.AlundraTools
             groupBox4.ResumeLayout(false);
             groupBox4.PerformLayout();
             tabControlEffect.ResumeLayout(false);
-            tabPageGlobal.ResumeLayout(false);
-            tabPageGlobal.PerformLayout();
+            tabPageEntities.ResumeLayout(false);
+            tabPageEntities.PerformLayout();
             tabPageEffects.ResumeLayout(false);
             tabPageEffects.PerformLayout();
             tabPagePlayerStatus.ResumeLayout(false);
@@ -1273,6 +1509,8 @@ namespace AlundraTools.AlundraTools
             ((System.ComponentModel.ISupportInitialize)numericUpDownHpMax).EndInit();
             tabPageDebug.ResumeLayout(false);
             tabPageDebug.PerformLayout();
+            groupBox5.ResumeLayout(false);
+            groupBox5.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1335,9 +1573,8 @@ namespace AlundraTools.AlundraTools
         private GroupBox groupBox4;
         private CheckBox checkBoxTileXY;
         private Button buttonCompareWithDump;
-        private Button buttonControlAlundra;
         private TabControl tabControlEffect;
-        private TabPage tabPageGlobal;
+        private TabPage tabPageEntities;
         private TabPage tabPagePlayerStatus;
         private ComboBox comboBoxWeapon;
         private Label label18;
@@ -1366,22 +1603,44 @@ namespace AlundraTools.AlundraTools
         private Label labelCameraScrolling;
         private CheckBox checkBoxUseDebugCamera;
         private TabPage tabPageDebug;
-        private Button buttonIncreaseMpMax;
-        private Button buttonIncreaseMp;
-        private Button buttonIncreaseHpMax;
-        private Button buttonAddLowHp;
-        private Button buttonAddMediumHp;
-        private Button buttonRestoreMp;
-        private Button buttonIncreaseHp;
-        private Button buttonRestoreHpAndMp;
-        private Button buttonRestoreHp;
-        private Button buttonAddHugeHp;
-        private ComboBox comboBoxRandomItem;
         private Button buttonForceRandomItem;
-        private Label label30;
+        private Label label31;
+        private TextBox textBoxFullText;
+        private Button buttonControlAlundra;
         private ComboBox comboBoxSpawnItemId;
         private Button buttonSpawnItem;
-        private Label label31;
-        private TextBox textBoxTextDisplayed;
+        private Label label30;
+        private ComboBox comboBoxRandomItem;
+        private Button buttonAddHugeHp;
+        private Button buttonRestoreHpAndMp;
+        private Button buttonRestoreHp;
+        private Button buttonIncreaseHp;
+        private Button buttonRestoreMp;
+        private Button buttonAddLowHp;
+        private Button buttonAddMediumHp;
+        private Button buttonIncreaseHpMax;
+        private Button buttonIncreaseMp;
+        private Button buttonIncreaseMpMax;
+        private GroupBox groupBox5;
+        private Label labelTextLinesWidth;
+        private Label label45;
+        private Label labelTextRenderStep;
+        private Label label47;
+        private Label labelTextCursor;
+        private Label label49;
+        private Label labelLineIndex;
+        private Label label43;
+        private Label labelTextBufferX;
+        private Label label41;
+        private Label labelTextDelay;
+        private Label label33;
+        private Label labelTextDelayReset;
+        private Label label35;
+        private Label labelTextAutoAdvance;
+        private Label label37;
+        private Label label38;
+        private Label labelTextFlag;
+        private TextBox textBoxTextInDialog;
+        private Label label32;
     }
 }
