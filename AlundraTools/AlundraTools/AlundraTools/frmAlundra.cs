@@ -123,7 +123,8 @@ namespace AlundraTools.AlundraTools
                 var list = new List<Bitmap>();
                 for (var i = 0; i < imgset.NumberOfImages; i++)
                 {
-                    list.Add(_selectedGameMap.GenerateSpriteBitmap(imgset.Images[i], _selectedGameMap.SpriteInfo.Palettes[imgset.Images[i].Palette & 0x1f]));
+                    var palette = imgset.Images[i].Palette;
+                    list.Add(_selectedGameMap.GenerateSpriteBitmap(imgset.Images[i], _selectedGameMap.SpriteInfo.Palettes[palette & 0x1f]));
                 }
 
                 _cachedSprites.Add(imgset.ImageSetId, list);
@@ -1148,18 +1149,23 @@ namespace AlundraTools.AlundraTools
                 animtimer_Tick(null, null);
                 br.Close();
 
-                for (var dex = 0; dex < _selectedAnim.NumberOfFrames; dex++)
+                if (_selectedAnim.Frames != null)
                 {
-                    if (_selectedAnim.Frames[dex].Images == null)
+                    for (var dex = 0; dex < _selectedAnim.NumberOfFrames; dex++)
                     {
-                        lstSector5Frames.Items.Add("frame " + dex + " transition");
+                        if (_selectedAnim.Frames[dex].Images == null)
+                        {
+                            lstSector5Frames.Items.Add("frame " + dex + " transition");
+                        }
+                        else
+                        {
+                            lstSector5Frames.Items.Add("frame " + dex + " (imageset " + (_selectedAnim.Frames[dex].Images.ImageSetId & 0xff) + ")");
+                        }
                     }
-                    else
-                    {
-                        lstSector5Frames.Items.Add("frame " + dex + " (imageset " + (_selectedAnim.Frames[dex].Images.ImageSetId & 0xff) + ")");
-                    }
+
                 }
-                if (_selectedAnim.NumberOfFrames > 0)
+
+                if (lstSector5Frames.Items.Count > 0)
                 {
                     lstSector5Frames.SelectedIndex = 0;
                 }
@@ -1231,7 +1237,7 @@ namespace AlundraTools.AlundraTools
         private void animtimer_Tick(object sender, EventArgs e)
         {
             _animtimer.Enabled = false;
-            if (_selectedAnim != null && _selectedAnim.NumberOfFrames > 0)
+            if (_selectedAnim != null && _selectedAnim.NumberOfFrames > 0 && _selectedAnim.Frames != null)
             {
                 _curframe++;
                 if (_curframe >= _selectedAnim.NumberOfFrames)

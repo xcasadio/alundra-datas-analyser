@@ -1,5 +1,6 @@
-﻿using System.Diagnostics;
-using AlundraEngine.DatasBin;
+﻿using AlundraEngine.DatasBin;
+using AlundraEngine.Gameplay;
+using System.Diagnostics;
 using System.Drawing.Imaging;
 
 namespace AlundraEngine;
@@ -119,13 +120,18 @@ public class RendererHelper
             }
 
             //draw sprites who are on this row
-            for (var i = 0; i < StaticVariables.g_numberOfEntity; i++) // g_visibleEntityCount
+
+            //for (var i = 0; i < StaticVariables.g_numberOfEntity; i++) // g_visibleEntityCount
+            //{
+            //   entity = StaticVariables.g_entitySlots[i]; // g_visibleEntities
+            //  if (entity.Status == 5)
+            //  {
+            //      continue;
+            //  }
+
+            for (var i = 0; i < StaticVariables.g_visibleEntityCount; i++) // g_visibleEntityCount
             {
-                var entity = StaticVariables.g_entitySlots[i]; // g_visibleEntities
-                if (entity.Status == 5)
-                {
-                    continue;
-                }
+                var entity = StaticVariables.g_visibleEntities[i]; // g_visibleEntities
 
                 if (entity.TileY != y)
                 {

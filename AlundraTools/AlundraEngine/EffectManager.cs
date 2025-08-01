@@ -467,8 +467,8 @@ public class EffectManager
         
         var initPosX = StaticVariables.g_iconNameEtcBase[itemId * 2 + 1] == 0 ? -1 : 600;
 
-        itemEntity.InitialXPos = initPosX;
-        itemEntity.InitialYPos = 0;
+        itemEntity.ItemDelay = initPosX;
+        itemEntity.ItemState = 0;
         itemEntity.AIValues[0] = 0;
         itemEntity.AIValues[1] = 0;
         itemEntity.AIValues[2] = 0;

@@ -1,5 +1,6 @@
-﻿using System.Diagnostics;
-using AlundraEngine.DatasBin;
+﻿using AlundraEngine.DatasBin;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace AlundraEngine.Gameplay.Scripts;
 
@@ -1533,38 +1534,56 @@ public class EntityEventHandlers
     // 8003D578
     private int Script_13_00D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-        return 3;
-        /*
         if ((logicEntity.Flags & 0x800000U) != 0) // has portrait
         {
-            var iVar2 = logicEntity.SpriteRecord.Header.FramesPointer;
+            //var iVar2 = logicEntity.SpriteRecord.Header.FramesPointer;
+            //
+            ////WrapsDialogSetupPortrait
+            //_gameEngine.ApplyCameraEffect(
+            //    logicEntity.PosX, logicEntity.PosY, logicEntity.PosZ,
+            //    StaticVariables.g_cameraScrollingX, StaticVariables.g_cameraScrollingY,
+            //
+            //    (iVar2 + 4), (iVar2 + 5), (ushort)(iVar2 + 6), (ushort)(iVar2 + 7),
+            //    StaticVariables.g_drawPageInfoBase[logicEntity.SheetSize + ((iVar2 + 3) & 0x3f)],
+            //    StaticVariables.g_tPageFadeLUT[logicEntity.PaletteIndex + ((iVar2 + 2) & 7)]);
 
-            //WrapsDialogSetupPortrait
-            _gameEngine.ApplyCameraEffect(logicEntity.PosX, logicEntity.PosY, logicEntity.PosZ,
+            Debugger.Break();
+
+            using var binaryReader = _gameEngine.DatasBin.OpenBin();
+            var imgset = logicEntity.SpriteRecord.GetPortraitImageset(binaryReader);
+            var img = imgset.Images[0];
+            var bmp = _gameEngine.CurrentMap.GenerateSpriteBitmap(
+                imgset.Images[0],
+                _gameEngine.CurrentMap.SpriteInfo.Palettes[imgset.Images[0].Palette & 0x1f]);
+
+            _gameEngine.ApplyCameraEffect(
+                logicEntity.PosX, logicEntity.PosY, logicEntity.PosZ,
                 StaticVariables.g_cameraScrollingX, StaticVariables.g_cameraScrollingY,
-                (iVar2 + 4), (iVar2 + 5), (ushort)(iVar2 + 6), (ushort)(iVar2 + 7),
-                StaticVariables.g_drawPageInfoBase[logicEntity.SheetSize + ((iVar2 + 3) & 0x3f)],
-                StaticVariables.g_tPageFadeLUT[logicEntity.PaletteIndex + ((iVar2 + 2) & 7)]);
-            
+                img.Sx, img.Sy, img.Swidth, img.Sheight,
+                StaticVariables.g_drawPageInfoBase[logicEntity.SpriteSheetOffset + ((img.Spritesheet) & 0x3f)],
+                StaticVariables.g_tPageFadeLUT[logicEntity.PaletteOffset + ((img.Palette) & 7)]);
+
             //TODO get it from memory, not disk
             //SIImageSet portrait = entity.SpriteRecord.GetPortraitImageset(datasReader);
             //var img = portrait.Images[0];
             //var bmps = gameState.GetSpriteImages(portrait);
             //var bmp = bmps[0];
-            //WrapsDialogSetupPortrait(entity.PosX, entity.PosY, entity.PosZ, gameState.g_cameraCurrentX, gameState.g_cameraCurrentY, img.Sx, img.Sy, img.Swidth, img.Sheight, bmp);
+            //WrapsDialogSetupPortrait(entity.PosX, entity.PosY, entity.PosZ,
+            //  gameState.g_cameraCurrentX, gameState.g_cameraCurrentY,
+            //  img.Sx, img.Sy, img.Swidth, img.Sheight, bmp);
         }
 
-        _gameEngine.TriggerVisualUpdate(logicEntity.SpriteTableIndex); //SetName(entity.NameId);
-
-        var res = _gameEngine.TryPlayEtcAnimation(variables[1], variables[2]);  // SetText(exp[1], exp[2]);
+        Debugger.Break();
+        _gameEngine.TriggerVisualUpdate((int)logicEntity.SpriteTableIndex);
+        var res = _gameEngine.TryPlayEtcAnimation((uint)variables[1], variables[2]);  
+        // SetText(exp[1], exp[2]);
 
         if (res == 0)
         {
             return 0;
         }
 
-        return 3;*/
+        return 3;
     }
 
     // 8003D688

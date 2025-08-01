@@ -244,7 +244,7 @@ public class SpriteEventHandlers
     // 800619D0
     public void SetCustomByteFromProgramIndex(Entity entity)
     {
-        entity.InitialXPos = entity.ProgramIndexes[2]; //Bytes[0] + 1
+        entity.ItemDelay = entity.ProgramIndexes[2]; //Bytes[0] + 1
     }
 
     // 800619DC
@@ -267,8 +267,8 @@ public class SpriteEventHandlers
     public void SpawnVerticalWarpColumns(Entity entity)
     {
         int z = 0xF40000;
-        entity.InitialYPos = 1;
-        entity.InitialXPos = 1;
+        entity.ItemState = 1;
+        entity.ItemDelay = 1;
         Entity baseEntity = _gameEngine.SpawnWarpEntity(entity, 1, 0xD1, 0x2400000, 0x2600000, z, 0);
         baseEntity.Bytes[0] = 0;
         for (int i = 0; i < 7; i++)
@@ -370,8 +370,8 @@ public class SpriteEventHandlers
         entity.AIValues[1] = -1;
         entity.AIValues[2] = 0;
         entity.AIValues[3] = 0;
-        entity.InitialXPos = entity.ContentsGameFlag;
-        entity.InitialYPos = 0;
+        entity.ItemDelay = entity.ContentsGameFlag;
+        entity.ItemState = 0;
     }
 
     #endregion
@@ -669,9 +669,9 @@ public class SpriteEventHandlers
                     entity.AIValues[1] = (short)(entity.AIValues[1] - 1);
                 }
 
-                if (entity.InitialXPos != 0)
+                if (entity.ItemDelay != 0)
                 {
-                    entity.InitialXPos -= 1;
+                    entity.ItemDelay -= 1;
                 }
 
                 if (entity.AIValues[1] == 0)
@@ -681,7 +681,7 @@ public class SpriteEventHandlers
                     entity.AIValues[1] = (short)((StaticVariables.g_gameRandomSeed * 0x1f >> 0x20) + 0xb4);
                 }
 
-                if (entity.InitialXPos != 0 || 2 < relPos[0] || 2 < relPos[1] || 0x100000 < relPos[2])
+                if (entity.ItemDelay != 0 || 2 < relPos[0] || 2 < relPos[1] || 0x100000 < relPos[2])
                 {
                     if (entity.ForceAdjusted != 0)
                     {
@@ -721,12 +721,12 @@ public class SpriteEventHandlers
                         }
 
                         entity.AIValues[1] = 0x3c;
-                        entity.InitialXPos = 0x3c;
+                        entity.ItemDelay = 0x3c;
                     }
                     else
                     {
                         StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                        entity.InitialXPos = 0;
+                        entity.ItemDelay = 0;
                         entity.TargetAnimationId = 6;
                         entity.AIValues[1] = (short)((StaticVariables.g_gameRandomSeed * 0x1f >> 0x20) + 0xb4);
                     }
@@ -833,7 +833,7 @@ public class SpriteEventHandlers
                 if (entity.IsAboveGround != 0 || entity.HitCounter != 0)
                 {
                     _gameEngine.SoundManager.PlaySoundEffect(0x18);
-                    entity.InitialXPos = 0;
+                    entity.ItemDelay = 0;
                     value = 0;
                     entity2 = entity;
                     do
@@ -859,9 +859,9 @@ public class SpriteEventHandlers
                 entity2 = entity;
                 if (entity.IsAboveGround == 0)
                 {
-                    if (entity.ForceZ > 0 && entity.InitialXPos == 0)
+                    if (entity.ForceZ > 0 && entity.ItemDelay == 0)
                     {
-                        entity.InitialXPos = 1;
+                        entity.ItemDelay = 1;
                         entity.TargetDirection = (entity.TargetDirection + 0x10) & 0x1f;
                         _gameEngine.EffectManager.CreateEffectEntity(0, 9, 0, entity.PosX, entity.PosY, entity.PosZ + 0x80000);
                     }
@@ -1006,7 +1006,7 @@ public class SpriteEventHandlers
     //8007c174
     public void FUN_8007c174(Entity entity)
     {
-        int initialYPos;
+        int itemState;
         Entity entity2;
         int uVar6;
 
@@ -1015,15 +1015,15 @@ public class SpriteEventHandlers
 
         if (entity.Bytes[0] == 2)
         {
-            if (entity.InitialXPos != 0)
+            if (entity.ItemDelay != 0)
             {
-                entity.InitialXPos += -1;
+                entity.ItemDelay += -1;
                 return;
             }
 
-            initialYPos = entity.InitialYPos;
+            itemState = entity.ItemState;
 
-            if (initialYPos == 1)
+            if (itemState == 1)
             {
                 LAB_8007c6f4:
                 if (_gameEngine.CdManager.FUN_8005a7d4())
@@ -1031,15 +1031,15 @@ public class SpriteEventHandlers
                     return;
                 }
 
-                entity.InitialYPos += 1;
+                entity.ItemState += 1;
                 _gameEngine.SetEtcAnimationMode(3);
                 _gameEngine.SoundManager.StopAllSound();
                 return;
             }
 
-            if (initialYPos < 2)
+            if (itemState < 2)
             {
-                if (initialYPos != 0)
+                if (itemState != 0)
                 {
                     return;
                 }
@@ -1053,7 +1053,7 @@ public class SpriteEventHandlers
 
                 if (entity.AIValues[2] == 0)
                 {
-                    entity.InitialYPos += 2;
+                    entity.ItemState += 2;
                     StaticVariables.g_dropItemTextBuffer = _gameEngine.EtcResR.GetDescriptionString(0x4e);
                     StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetIconName((int)itemId);
                     StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetDescriptionString(0x4f);
@@ -1069,7 +1069,7 @@ public class SpriteEventHandlers
 
                 if (entity.AIValues[4] == 0)
                 {
-                    entity.InitialYPos += 2;
+                    entity.ItemState += 2;
                     uVar6 = StaticVariables.g_iconNameEtcBase[(int)(itemId + 1)]; //itemId * 8 + 5
 
                     if (uVar6 == 0)
@@ -1083,14 +1083,14 @@ public class SpriteEventHandlers
                     return;
                 }
 
-                entity.InitialYPos += 1;
+                entity.ItemState += 1;
                 //goto LAB_8007c684;
                 _gameEngine.PlayEtcAnimation(StaticVariables.g_dropItemTextBuffer, 1);
                 _gameEngine.SetEtcAnimationMode(4);
                 return;
             }
 
-            if (initialYPos != 2)
+            if (itemState != 2)
             {
                 return;
             }
@@ -1131,70 +1131,70 @@ public class SpriteEventHandlers
                 entity.ForceZ = entity.AIValues[2];
             }
 
-            var initialXPos = entity.InitialXPos + -1;
+            var delay = entity.ItemDelay + -1;
 
-            if (1 < entity.InitialXPos + 1)
+            if (1 < entity.ItemDelay + 1)
             {
-                entity.InitialXPos = initialXPos;
+                entity.ItemDelay = delay;
 
-                if (initialXPos == 0)
+                if (delay == 0)
                 {
                     goto LAB_8007c740;
                 }
 
-                if (initialXPos == 0x78)
+                if (delay == 0x78)
                 {
                     entity.DamagedTickCounter = 0x78;
                 }
             }
 
-            initialYPos = entity.InitialYPos;
+            itemState = entity.ItemState;
 
-            if (initialYPos == 1)
+            if (itemState == 1)
             {
                 if (_gameEngine.IsWarpInProgress())
                 {
                     return;
                 }
 
-                initialYPos = entity.ModdedPosX - StaticVariables.PlayerEntity.ModdedPosX;
+                var y = entity.ModdedPosX - StaticVariables.PlayerEntity.ModdedPosX;
 
-                if (initialYPos < 0)
+                if (y < 0)
                 {
                     if (entity.Width + 1 <= StaticVariables.PlayerEntity.ModdedPosX - entity.ModdedPosX)
                     {
                         return;
                     }
                 }
-                else if (StaticVariables.PlayerEntity.Width + 1 <= initialYPos)
+                else if (StaticVariables.PlayerEntity.Width + 1 <= y)
                 {
                     return;
                 }
 
-                initialYPos = entity.ModdedPosY - StaticVariables.PlayerEntity.ModdedPosY;
+                y = entity.ModdedPosY - StaticVariables.PlayerEntity.ModdedPosY;
 
-                if (initialYPos < 0)
+                if (y < 0)
                 {
                     if (entity.Height + 1 <= StaticVariables.PlayerEntity.ModdedPosY - entity.ModdedPosY)
                     {
                         return;
                     }
                 }
-                else if (StaticVariables.PlayerEntity.Height + 1 <= initialYPos)
+                else if (StaticVariables.PlayerEntity.Height + 1 <= y)
                 {
                     return;
                 }
 
-                initialYPos = entity.ModdedPosZ - StaticVariables.PlayerEntity.ModdedPosZ;
+                y = entity.ModdedPosZ - StaticVariables.PlayerEntity.ModdedPosZ;
 
-                if (initialYPos < 0)
+                if (y < 0)
                 {
                     if (entity.Depth + 1 <= StaticVariables.PlayerEntity.ModdedPosZ - entity.ModdedPosZ)
                     {
                         return;
                     }
                 }
-                else if (StaticVariables.PlayerEntity.Depth + 1 <= initialYPos)
+                else if (StaticVariables.PlayerEntity.Depth + 1 <= y)
                 {
                     return;
                 }
@@ -1222,11 +1222,11 @@ public class SpriteEventHandlers
                     {
                         _gameEngine.PlayEtcAnimation(StaticVariables.g_dropItemTextBuffer, 0);
                     }
-                    entity.InitialYPos += 2;
+                    entity.ItemState += 2;
                     return;
                 }
 
-                entity.InitialYPos += 1;
+                entity.ItemState += 1;
                 _gameEngine.EntityManager.FUN_8003ad30(entity);
                 _gameEngine.SoundManager.LoadBgm(0);
                 _gameEngine.SetNextMapId(0xb);
@@ -1244,9 +1244,9 @@ public class SpriteEventHandlers
                 return;
             }
 
-            if (initialYPos < 2)
+            if (itemState < 2)
             {
-                if (initialYPos != 0)
+                if (itemState != 0)
                 {
                     return;
                 }
@@ -1256,11 +1256,11 @@ public class SpriteEventHandlers
                     return;
                 }
 
-                entity.InitialYPos = 1;
+                entity.ItemState = 1;
                 return;
             }
 
-            if (initialYPos == 2)
+            if (itemState == 2)
             {
                 //goto LAB_8007c6f4;
                 if (_gameEngine.CdManager.FUN_8005a7d4())
@@ -1268,13 +1268,13 @@ public class SpriteEventHandlers
                     return;
                 }
 
-                entity.InitialYPos += 1;
+                entity.ItemState += 1;
                 _gameEngine.SetEtcAnimationMode(3);
                 _gameEngine.SoundManager.StopAllSound();
                 return;
             }
 
-            if (initialYPos != 3)
+            if (itemState != 3)
             {
                 return;
             }

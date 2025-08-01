@@ -185,25 +185,25 @@ public class UIManager
     }
 
     //80054f1c
-    public void Func_80054f1c(CallBackInfo callBackInfo)
+    public void Fun_80054f1c(CallBackInfo callBackInfo)
     {
         Debugger.Break();
     }
 
     //8004afe8
-    public void Func_8004afe8(CallBackInfo callBackInfo)
+    public void Fun_8004afe8(CallBackInfo callBackInfo)
     {
         Debugger.Break();
     }
 
     //80050ec8
-    public void Func_80050ec8(CallBackInfo callBackInfo)
+    public void Fun_80050ec8(CallBackInfo callBackInfo)
     {
         Debugger.Break();
     }
 
     //800583ec
-    public void Func_800583ec(CallBackInfo callBackInfo)
+    public void Fun_800583ec(CallBackInfo callBackInfo)
     {
         Debugger.Break();
     }
@@ -215,13 +215,53 @@ public class UIManager
     }
 
     //8005a268
-    public void Func_8005a268(CallBackInfo callBackInfo)
+    public void Fun_8005a268(CallBackInfo callBackInfo)
     {
         Debugger.Break();
+
+        var textTileConfig = callBackInfo.Data;
+
+        StaticVariables.g_textToDisplay2.mode = 2;
+        StaticVariables.g_textToDisplay2.tick = 0;
+        StaticVariables.g_textToDisplay2.speed = 0xf;
+        StaticVariables.g_textToDisplay2.x = 0x140;
+        StaticVariables.g_textToDisplay2.y = textTileConfig.Y;
+        StaticVariables.g_textToDisplay2.startX = textTileConfig.X;
+        StaticVariables.g_textToDisplay2.startY = textTileConfig.Y;
+
+        if (textTileConfig.X < 0)
+        {
+            StaticVariables.g_textToDisplay2.startX = (short)(StaticVariables.g_textToDisplay2.startX + textTileConfig.Width * -8);
+        }
+
+        if (textTileConfig.Y < 0)
+        {
+            StaticVariables.g_textToDisplay2.y = (short)(StaticVariables.g_textToDisplay2.y + textTileConfig.Height * -8);
+            StaticVariables.g_textToDisplay2.startY = (short)(StaticVariables.g_textToDisplay2.startY + textTileConfig.Height * -8);
+        }
+
+        StaticVariables.g_textToDisplay2.originX = textTileConfig.X;
+        StaticVariables.g_textToDisplay2.originY = textTileConfig.Y;
+        StaticVariables.g_etcDisplayFlags = 5;
+
+        //TODO debug in psx redux
+
+        char[] text = ['T', 'O', 'D', 'O'];
+        var textId = StaticVariables.g_entitySpriteNamesTable[StaticVariables.g_entitySpriteNameTableIndex * 4];
+        
+        _gameEngine.Renderer.DisplayIconName(
+            StaticVariables.SPRT_80180260,
+            text,
+            6,
+            0,
+            (short)(textTileConfig.Height + textTileConfig.Y),
+            3);
+
+        //return 1;
     }
 
     //8005a3e0
-    public void Func_8005a3e0(CallBackInfo callBackInfo)
+    public void Fun_8005a3e0(CallBackInfo callBackInfo)
     {
         Debugger.Break();
     }

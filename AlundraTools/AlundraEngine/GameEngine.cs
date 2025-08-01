@@ -28,13 +28,13 @@ public class GameEngine
     public EffectManager EffectManager { get; }
     public EntityManager EntityManager { get; }
     public PlayerManager PlayerManager { get; }
+    public Renderer Renderer { get; }
     public SoundManager SoundManager { get; }
     public SoundBin SoundBin { get; }
     public UIManager UIManager { get; }
 
     private readonly EntityEventHandlers _entityEventHandlers;
     private readonly GameInitializer _gameInitializer;
-    private readonly Renderer _renderer;
     private readonly PadManager _padManager;
 
     //TODO : find the variable in StaticVariables
@@ -50,7 +50,7 @@ public class GameEngine
 
         _entityEventHandlers = new EntityEventHandlers(this);
         _gameInitializer = new GameInitializer(this);
-        _renderer = new Renderer(this);
+        Renderer = new Renderer(this);
         _padManager = new PadManager();
 
         CdManager = new CdManager(this);
@@ -133,10 +133,10 @@ public class GameEngine
             LoadMapAndInitializeEntities(null/*StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b40*/);
             WarpPlayer(playerPosX, playerPosY, playerPosZ, StaticVariables.g_warpType);
             InitializeTileAnimationSystem();
-            _renderer.PrepareBufferFlip();
+            Renderer.PrepareBufferFlip();
             LoadMapSounds(StaticVariables.g_currentMap);
             Update(1);
-            _renderer.ResetDebugRenderingState();
+            Renderer.ResetDebugRenderingState();
         }
 
         //do
@@ -246,7 +246,7 @@ public class GameEngine
     // 8002bd60
     private void RenderScene(Graphics graphics)
     {
-        _renderer.RenderScene(graphics);
+        Renderer.RenderScene(graphics);
     }
 
     // 8004e030
@@ -838,21 +838,21 @@ public class GameEngine
     }
 
     //80039b28
-    public SpriteRecord GetSpriteFromSpriteTable(bool isMapSprite, uint spriteTableIndex, out int addedtosheet, out int addedtopallette)
+    public SpriteRecord GetSpriteFromSpriteTable(bool isMapSprite, uint spriteTableIndex, out int paletteOffset, out int sheetSize)
     {
         SpriteInfo spriteInfo;
 
         if (isMapSprite)
         {
             spriteInfo = CurrentMap.SpriteInfo;
-            addedtosheet = 0;
-            addedtopallette = 0x20;
+            paletteOffset = 0;
+            sheetSize = 0x20;
         }
         else
         {
             spriteInfo = DatasBin.AlundraGameMap.SpriteInfo;
-            addedtosheet = 0xb;
-            addedtopallette = 0x60;
+            paletteOffset = 0xb;
+            sheetSize = 0x60;
         }
         if (spriteTableIndex < 0)
         {
@@ -1235,7 +1235,7 @@ public class GameEngine
     private int LoadMapSounds(int mapId)
     {
         SoundManager.LoadMapSounds(mapId);
-        _renderer.PrepareBufferFlip();
+        Renderer.PrepareBufferFlip();
         return 1;
     }
 
@@ -1724,14 +1724,14 @@ public class GameEngine
         spawnedEntity.Bytes[3] = 0;
         spawnedEntity.Flags &= 0xffffff7f;
 
-        var x = 600;
+        var delay = 600;
         if (StaticVariables.g_iconNameEtcBase[(entity.ContentsItemId * 8 + 4) / 4] == 0)
         {
-            x = -1;
+            delay = -1;
         }
 
-        spawnedEntity.InitialXPos = x; // compteur/delai
-        spawnedEntity.InitialYPos = 0; // etat
+        spawnedEntity.ItemDelay = delay;
+        spawnedEntity.ItemState = 0;
         spawnedEntity.AIValues[0] = (short)(entity.ContentsGameFlag & 0xFFFF);
         spawnedEntity.AIValues[1] = (short)((entity.ContentsGameFlag >> 16) & 0xFFFF); 
         spawnedEntity.AIValues[2] = 0;
@@ -2052,13 +2052,10 @@ public class GameEngine
         _entityEventHandlers.SpriteHandlers.RunSpriteHandler(entity.EventTrigger, eventId, entity);
     }
 
-
     // 8005a9e0
     public void SetNextMapId(int mapIndex)
     {
         Debugger.Break();
-        var mapId = Array.IndexOf(DatasBin.Header.GameMaps, mapIndex);
-        StaticVariables.g_desiredMap = mapId;
         /*
         bool bVar1;
         undefined3 extraout_var;
@@ -2623,15 +2620,14 @@ public class GameEngine
     public void TriggerVisualUpdate(int spriteTableIndex)
     {
         if ((StaticVariables.g_etcDisplayFlags & 4) == 0
-              && spriteTableIndex - 0x100U < 0x100
-             && StaticVariables.g_entitySpriteNamesTable[spriteTableIndex * 4] != 0
-             && StaticVariables.g_entitySpriteNamesTable[spriteTableIndex * 4] != '\0')
+            && spriteTableIndex - 0x100U < 0x100
+            && StaticVariables.g_entitySpriteNamesTable[spriteTableIndex * 4] != 0
+            && StaticVariables.g_entitySpriteNamesTable[spriteTableIndex * 4] != '\0')
         {
             StaticVariables.g_entitySpriteNameTableIndex = spriteTableIndex;
-            _renderer.SetTransitionType(0xc);
+            Renderer.SetTransitionType(0xc);
         }
     }
-
 
     //800423f8
     public int TryPlayEtcAnimation(uint textId, int animationMode)
@@ -2654,7 +2650,7 @@ public class GameEngine
             //tableBase = StaticVariables.g_etcAnimTableAlt; //currentmapstringtable
         }
 
-        var text = strings[(textId & 0x7f) * 2];
+        var text = strings[(textId & 0x7f)];
         
         SetupEtcAnimation();
         PlayEtcAnimation(text, animationMode);
@@ -2677,7 +2673,7 @@ public class GameEngine
     //800450f0
     public int PlayEtcAnimation(string scriptText, int animationMode)
     {
-        if (_renderer.SetTransitionType(0) == 0)
+        if (Renderer.SetTransitionType(0) == 0)
         {
             return 0;
         }

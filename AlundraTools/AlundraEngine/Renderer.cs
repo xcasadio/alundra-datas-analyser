@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using AlundraEngine.Gameplay;
 using AlundraEngine.UI;
 
 namespace AlundraEngine;
@@ -685,5 +686,14 @@ public class Renderer
         StaticVariables.g_cameraTransitionStartX = 0xf8;
         StaticVariables.g_cameraTransitionStartY = 0x68;
         _gameEngine.InitCameraTransitionEffect(srcX, srcY, srcZ, dstX, dstY, (byte)u, (byte)v, 0x30, 0x38, (short)width, (short)height);
+    }
+
+    //800472d0
+    public void DisplayIconName(SPRT sprite, 
+        char[] text, int textLength, 
+        short textCoordDstX, 
+        short textCoordDstY, int displayMode)
+    {
+        Debugger.Break();
     }
 }

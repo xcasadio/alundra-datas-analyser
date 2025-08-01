@@ -2483,8 +2483,10 @@ public class EntityManager
             }
 
             //renderable
-            if (entity.Status >= 2 && entity.Status <= 3 &&
-                (entity.DamagedTickCounter & 0x3) != 0x3) //flicker effect, every 3rd frame when being damaged
+            if (entity.Status >= 2 
+                && entity.Status <= 3
+                //flicker effect, every 3rd frame when being damaged
+                && (entity.DamagedTickCounter & 0x3) != 0x3) 
             {
                 StaticVariables.g_visibleEntities[StaticVariables.g_visibleEntityCount++] = entity;
             }

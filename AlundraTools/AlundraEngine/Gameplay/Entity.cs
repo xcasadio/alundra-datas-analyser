@@ -118,8 +118,8 @@ public class Entity
     public uint LastTargetAnimationId;//26c
     public uint LastTargetDirection;//270
     public byte[] Bytes = new byte[4];
-    public int InitialXPos;//278
-    public int InitialYPos;
+    public int ItemDelay;//278
+    public int ItemState;
     public short[] AIValues = new short[10];//280
 
     public bool IsMapSprite => EntityRecord != null && (EntityRecord.SpriteDirection & 0x80) != 0;
@@ -275,8 +275,8 @@ public class Entity
             Bytes[i] = other.Bytes[i];
         }
 
-        InitialXPos = other.InitialXPos;
-        InitialYPos = other.InitialYPos;
+        ItemDelay = other.ItemDelay;
+        ItemState = other.ItemState;
         for (int i = 0; i < AIValues.Length; i++)
         {
             AIValues[i] = other.AIValues[i];
@@ -430,8 +430,8 @@ public class Entity
 
         Array.Clear(Bytes);
 
-        InitialXPos = 0;
-        InitialYPos = 0;
+        ItemDelay = 0;
+        ItemState = 0;
 
         Array.Clear(AIValues);
     }
