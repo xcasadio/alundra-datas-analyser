@@ -40,79 +40,64 @@ local OFFSET_SPRITE_PROGRAM_INDEXES = 0x70
 
 local OFFSET_SPRITE_PROGRAM_INDEXES = 0x70
 
--- Fonction utilitaire pour lire un int32 depuis la RAM PSX
 local function read_s32_le(addr)
     local ptr = ffi.cast("int32_t*", memory + (addr - 0x80000000))
     return ptr[0]
 end
 
+local function write_byte(addr, value)
+    local ptr = ffi.cast("uint8_t*", memory + (addr - 0x80000000))
+    ptr[0] = value
+end
+
+-- Variables pour la combobox
+local items = {
+    {value = 36, name = "36-Herbs"},
+    {value = 37, name = "37-Strength Elixyr"},
+    {value = 41, name = "41-System error (unused)"},
+    {value = 69, name = "69-"},
+    {value = 70, name = "70-"},
+    {value = 71, name = "71-"},
+    {value = 72, name = "72-"},
+    {value = 79, name = "79-Gilded Falcon"},
+    {value = 80, name = "80-Magic Seed"},
+    {value = 81, name = "81-Small Crystal"},
+    {value = 82, name = "82-Large Crystal"},
+    {value = 83, name = "83-Life Vessel"},
+    {value = 84, name = "84-Dew of Life"},
+    {value = 85, name = "85-Drop of Life"},
+    {value = 86, name = "86-Water of Life"}
+}
+
+local selected_item_index = 1
+local inventory_address = 0x80028e0c
 
 function DrawImguiFrame()
-    imgui.Begin("Alundra Tools", true)
-	
-	--for i = 0, 9 do
-	--	local entity_addr = base_address + i * entity_size
-	--	local index = read_s32_le(entity_addr + OFFSET_INDEX)
-	--	local status = read_s32_le(entity_addr + OFFSET_STATUS)
-	--	local eventTrigger = read_s32_le(entity_addr + OFFSET_EVENT_TRIGGER)
-	--
-	--	local programIndexes = {}
-	--	local spriteProgramIndexes = {}
-	--
-	--	for j = 0, 5 do
-	--		programIndexes[j+1] = read_s32_le(entity_addr + OFFSET_PROGRAM_INDEXES + j * 4)
-	--		spriteProgramIndexes[j+1] = read_s32_le(entity_addr + OFFSET_SPRITE_PROGRAM_INDEXES + j * 4)
-	--	end
-	--
-	--	imgui.TextUnformatted(string.format(
-	--		"Entity %02d | Index: %d | Status: %d | EVT: %d",
-	--		i, index, status, eventTrigger
-	--	))
-	--	imgui.TextUnformatted("  Prog: [" .. table.concat(programIndexes, ", ") .. "]")
-	--	imgui.TextUnformatted("  Spr:  [" .. table.concat(spriteProgramIndexes, ", ") .. "]")
-	--	imgui.Separator()
-	--end
-	
-	--for i = 0, 9 do
-	local i = 6
-		local entity_addr = base_address + i * entity_size
-		local index2 = read_s32_le(entity_addr + OFFSET_INDEX2)
-		local targetAnimID = read_s32_le(entity_addr + OFFSET_TARGET_ANIMATION_ID)
-		local tagertDir = read_s32_le(entity_addr + OFFSET_TARGET_DIRECTION)
-		local currentAnimID = read_s32_le(entity_addr + OFFSET_CURRENT_ANIMATION_ID)
-		local currentDir = read_s32_le(entity_addr + OFFSET_CURRENT_DIRECTION)
-		
-		local Z_FORCE = read_s32_le(entity_addr + OFFSET_Z_FORCE)
-		local X_FORCE = read_s32_le(entity_addr + OFFSET_X_FORCE)
-		local Y_FORCE = read_s32_le(entity_addr + OFFSET_Y_FORCE)
-		local TARGET_X_FORCE = read_s32_le(entity_addr + OFFSET_TARGET_X_FORCE)
-		local TARGET_Y_FORCE = read_s32_le(entity_addr + OFFSET_TARGET_Y_FORCE)
-		local previousAdjustedXForce = read_s32_le(entity_addr + OFFSET_previousAdjustedXForce)
-		local previousAdjustedYForce = read_s32_le(entity_addr + OFFSET_previousAdjustedYForce)
-		local xForceStep	           = read_s32_le(entity_addr + OFFSET_xForceStep	          )
-		local yForceStep	           = read_s32_le(entity_addr + OFFSET_yForceStep	          )
-		local adjustedXForce	       = read_s32_le(entity_addr + OFFSET_adjustedXForce	      )
-		local adjustedYForce	       = read_s32_le(entity_addr + OFFSET_adjustedYForce	      )
-		local finalXForce	           = read_s32_le(entity_addr + OFFSET_finalXForce	          )
-		local finalyForce	           = read_s32_le(entity_addr + OFFSET_finalyForce	          )
-		local finalZForce	           = read_s32_le(entity_addr + OFFSET_finalZForce	          )
-		
-		local acceleration	       = read_s32_le(entity_addr + OFFSET_acceleration	      )
-		local speed	               = read_s32_le(entity_addr + OFFSET_speed	              )
-	
-	
-		imgui.TextUnformatted(string.format(
-			"Entity %02d | Index2: %d | anim: %d => %d| dir: %d => %d| acc %d| speed %d| forces %d %d %d| target: %d %d| prev: %d %d| step: %d %d",
-			i, index2, currentAnimID, targetAnimID, currentDir, tagertDir, acceleration, speed, X_FORCE, Y_FORCE, Z_FORCE, TARGET_X_FORCE, TARGET_Y_FORCE, previousAdjustedXForce, previousAdjustedYForce, xForceStep, yForceStep		
-		))
-		
-		imgui.TextUnformatted(string.format(
-			"adj %d %d| final: %d %d %d",
-			adjustedXForce, adjustedYForce, finalXForce, finalyForce, finalZForce			
-		))
-		
-		imgui.Separator()
-	--end
-		
+    if imgui.Begin("Alundra Tools") then
+        
+        -- Combobox pour sélectionner un élément
+        if imgui.BeginCombo("Change random item", items[selected_item_index].name) then
+            for i, item in ipairs(items) do
+                local is_selected = (selected_item_index == i)
+                if imgui.Selectable(item.name, is_selected) then
+                    selected_item_index = i
+                end
+                if is_selected then
+                    imgui.SetItemDefaultFocus()
+                end
+            end
+            imgui.EndCombo()
+        end
+        
+        imgui.Spacing()
+        
+        if imgui.Button("force probablity to 100%") then
+            local selected_value = items[selected_item_index].value
+            for i = 0, 99 do
+                write_byte(inventory_address + i, selected_value)
+            end
+        end
+        
+    end
     imgui.End()
 end
