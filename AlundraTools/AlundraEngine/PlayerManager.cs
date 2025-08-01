@@ -1548,17 +1548,17 @@ public class PlayerManager
     private int CheckWarpTrigger()
     {
         var playerEntity = StaticVariables.PlayerEntity;
-        var currentWarpEntity = playerEntity.XCollisionEntity;
+        var collidedEntity = playerEntity.XCollisionEntity;
 
-        if (currentWarpEntity != null)
+        if (collidedEntity != null)
         {
-            if ((currentWarpEntity.Flags & 0x8000) != 0)
+            if ((collidedEntity.Flags & 0x8000) != 0)
             {
-                StaticVariables.g_lastValidWarpEntity = currentWarpEntity;
-                StaticVariables.g_lastWarpFacing = currentWarpEntity.EntityRefId;
-                StaticVariables.g_lastWarpTargetX = currentWarpEntity.PosX;
-                StaticVariables.g_lastWarpTargetY = currentWarpEntity.PosY;
-                StaticVariables.g_lastWarpTargetZ = currentWarpEntity.PosZ;
+                StaticVariables.g_lastValidWarpEntity = collidedEntity;
+                StaticVariables.g_lastWarpFacing = collidedEntity.EntityRefId;
+                StaticVariables.g_lastWarpTargetX = collidedEntity.PosX;
+                StaticVariables.g_lastWarpTargetY = collidedEntity.PosY;
+                StaticVariables.g_lastWarpTargetZ = collidedEntity.PosZ;
                 StaticVariables.g_lastWarpCamX = playerEntity.PosX;
                 StaticVariables.g_lastWarpCamY = playerEntity.PosY;
                 StaticVariables.g_lastWarpCamZ = playerEntity.PosZ;
@@ -1580,7 +1580,7 @@ public class PlayerManager
                     playerEntity.PosZ == StaticVariables.g_lastWarpCamZ &&
                     playerEntity.TargetDirection == StaticVariables.g_lastWarpDirection)
                 {
-                    currentWarpEntity = lastValidWarp;
+                    collidedEntity = lastValidWarp;
                 }
                 else
                 {
@@ -1589,26 +1589,26 @@ public class PlayerManager
             }
         }
 
-        if (currentWarpEntity == null)
+        if (collidedEntity == null)
         {
             return 0;
         }
 
-        if (currentWarpEntity.Hp == 0 && currentWarpEntity.TouchingEntity == null)
+        if (collidedEntity.ProgramIndexes[5] != 0 && collidedEntity.SpriteProgramIndexes[5] != 0)
         {
             return 0;
         }
 
-        if ((currentWarpEntity.Flags & 0x8000) != 0)
+        if ((collidedEntity.Flags & 0x8000) != 0)
         {
             if ((StaticVariables.g_padState1.ButtonsJustPressed & 0x80) != 0)
             {
-                StaticVariables.g_activeCollisionEntity = currentWarpEntity;
+                StaticVariables.g_activeCollisionEntity = collidedEntity;
                 return 2;
             }
         }
 
-        StaticVariables.g_activeCollisionEntity = currentWarpEntity;
+        StaticVariables.g_activeCollisionEntity = collidedEntity;
         return 1;
     }
 

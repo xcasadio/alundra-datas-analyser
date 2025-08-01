@@ -57,7 +57,6 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramCTick, 70, AI_FUN_8007b7b0);
         Register(ScriptHelper.ProgramCTick, 255, FUN_8007c174);
 
-
         Register(ScriptHelper.ProgramDTouch, 0, AI_EmptyFunction); // null
         Register(ScriptHelper.ProgramDTouch, 4, AI_EmptyFunction); // null
 
@@ -987,7 +986,6 @@ public class SpriteEventHandlers
             entity.TargetAnimationId = (int)PlayerAnimation.Idle;
             return;
         }
-
 
         if (entity.Flags2 == -1)
         {

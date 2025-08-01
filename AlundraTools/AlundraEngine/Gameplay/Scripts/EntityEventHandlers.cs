@@ -3008,29 +3008,22 @@ public class EntityEventHandlers
     {
         Debugger.Break();
         return 0;
-        /*
+        
         int bVar1;
-        int iVar2;
+        int num;
         int iVar3;
         int piVar4;
 
-        bVar1 = variables[2];
-        iVar2 = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
 
-        if (0 < iVar2)
+        for (var i = 0; i < num; i++)
         {
-            piVar4 = StaticVariables.g_activeEntityRefId + iVar2;
-
-            do
-            {
-                iVar3 = piVar4;
-                piVar4 = piVar4 + -1;
-                iVar2 = iVar2 + -1;
-                (iVar3 + 0x88) = bVar1;
-            } while (0 < iVar2);
+            var entity = StaticVariables.g_matchingEntitiesBuffer[i];
+            entity.TargetAnimationId = (uint)variables[2];
         }
 
-        return 3;*/
+
+        return 3;
     }
 
     // 8003EEF4

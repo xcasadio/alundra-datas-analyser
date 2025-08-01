@@ -1704,7 +1704,7 @@ public class GameEngine
             return 0;
         }
 
-        if (CheckItemId(entity.ContentsItemId))
+        if (CanDropMpItems(entity.ContentsItemId))
         {
             return 0;
         }
@@ -1742,7 +1742,7 @@ public class GameEngine
     }
 
     //80032a00
-    public bool CheckItemId(uint itemId)
+    public bool CanDropMpItems(uint itemId)
     {
         if (itemId == 0x26 
             || itemId == 0x51 

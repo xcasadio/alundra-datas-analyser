@@ -446,7 +446,7 @@ public class EffectManager
             return 0;
         }
 
-        if (_gameEngine.CheckItemId((uint)itemId))
+        if (_gameEngine.CanDropMpItems((uint)itemId))
         {
             return 0;
         }
