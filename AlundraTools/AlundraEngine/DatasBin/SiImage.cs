@@ -4,12 +4,15 @@ namespace AlundraEngine.DatasBin;
 
 public class SiImage
 {
+    //private static int paletteMax = 0;
+
     public readonly long Signature;
 
     public SiImage(BinaryReader br)
     {
         Spritesheet = br.ReadByte();
         Palette = br.ReadByte();
+        //paletteMax = Math.Max(paletteMax, Palette);
         Sx = br.ReadByte();
         Sy = br.ReadByte();
         Swidth = br.ReadByte();

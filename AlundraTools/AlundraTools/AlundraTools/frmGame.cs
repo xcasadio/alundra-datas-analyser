@@ -1115,7 +1115,8 @@ public partial class FrmGame : Form
             return;
         }
 
-        var itemId = byte.Parse(comboBoxRandomItem.SelectedItem.ToString());
+        var value = comboBoxRandomItem.SelectedItem.ToString().Split('-')[0];
+        var itemId = byte.Parse(value);
 
         for (int i = 0; i < 100; i++)
         {
@@ -1130,7 +1131,8 @@ public partial class FrmGame : Form
             return;
         }
 
-        var itemId = byte.Parse(comboBoxSpawnItemId.SelectedItem.ToString());
+        var value = comboBoxSpawnItemId.SelectedItem.ToString().Split('-')[0];
+        var itemId = byte.Parse(value);
 
         var entity = new Entity
         {
@@ -1140,7 +1142,7 @@ public partial class FrmGame : Form
             PosY = StaticVariables.PlayerEntity.PosY,
             PosZ = StaticVariables.PlayerEntity.PosZ,
         };
-        _engine.SpawnEntityContents(entity);
 
+        _engine.SpawnEntityContents(entity);
     }
 }

@@ -38,7 +38,7 @@ public class SpriteInfo
 
         //read palettes
         br.BaseStream.Position = _binOffset + Header.SpritePalettesPointer;
-        var maxPalettes = 32;
+        var maxPalettes = 41; //32;
         Palettes = new Color[maxPalettes][];
         var buff = new byte[maxPalettes * 16 * 2];
         br.Read(buff, 0, buff.Length);

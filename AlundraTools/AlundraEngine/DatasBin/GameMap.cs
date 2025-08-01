@@ -134,8 +134,8 @@ public class GameMap
         }
 
         //TODO : palette why we need to do this => img.Palette > 31 ?
-        var imgPalette = img.Palette > 31 ? 30 : img.Palette; // & 0x1f;
-        var pal = SpriteInfo.Palettes[imgPalette];
+        //var imgPalette = img.Palette > 31 ? 30 : img.Palette; // & 0x1f;
+        var pal = SpriteInfo.Palettes[img.Palette]; // img.Palette & 0x1f;
         var bmp = GenerateSpriteBitmap(img, pal);
         _spriteCache.Add(img.Signature, bmp);
 
