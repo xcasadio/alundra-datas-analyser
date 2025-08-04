@@ -15,7 +15,7 @@ public class UIManager
     }
 
     //80048304
-    public void Func_80048304(CallBackInfo callBackInfo)
+    public void FUN_80048304(CallBackInfo callBackInfo)
     {
         //TODO : same as InitializeTextSpriteTiles ? => 8005a0c8
         int tileX;
@@ -67,7 +67,7 @@ public class UIManager
     //80046ef0
     public void Func_80046ef0(CallBackInfo callBackInfo)
     {
-        //Debugger.Break();
+        Debugger.Break();
         int y;
         int height;
         //DISPENV local_28;
@@ -139,11 +139,164 @@ public class UIManager
     //80045988
     private void FUN_80045988(CallBackInfo callbackInfo)
     {
-        Debugger.Break();
+        bool doAdavance;
+        ulong uVar2;
+        int iVar3;
+        short[] psVar4;
+        int index;
+        int iVar5;
+        uint[] puVar6;
+        uint[] puVar7;
+        int iVar8;
+        int iVar9;
+        short sVar10;
+        int iVar11;
+        short sVar12;
+        int iVar13;
+        int iVar14;
+        //RECT rect;
+
+        iVar5 = StaticVariables.g_textBufferX;
+
+        if (StaticVariables.g_textChoiceIndex == StaticVariables.g_textNextChoice)
+        {
+            doAdavance = (StaticVariables.g_debugFlags_2 & 8) != 0;
+
+            if (doAdavance)
+            {
+                StaticVariables.g_debugFlags_2 &= 0xfffffff7;
+            }
+
+            if ((StaticVariables.g_debugFlags_2 & 2) != 0 
+                && (StaticVariables.g_padState1.ButtonsJustPressed & 0x80) != 0)
+            {
+                doAdavance = true;
+            }
+
+            if ((StaticVariables.g_debugFlags_2 & 1) != 0)
+            {
+                StaticVariables.g_textSelectionConfirmed += -1;
+
+                if (StaticVariables.g_textSelectionConfirmed == 0)
+                {
+                    doAdavance = true;
+                }
+            }
+
+            if ((StaticVariables.g_debugFlags_2 & 4) != 0 
+                && StaticVariables.g_textAutoAdvanceFlag_2 == 1)
+            {
+                doAdavance = true;
+                StaticVariables.g_textAutoAdvanceFlag_2 = 0;
+            }
+
+            if (!doAdavance)
+            {
+                StaticVariables.g_textHoldState = 0;
+                goto LAB_80045aa0;
+            }
+        }
+
+        StaticVariables.g_textChoiceIndex += -1;
+
+        LAB_80045aa0:
+        iVar13 = 0;
+        sVar12 = 0;
+
+        do
+        {
+            //uVar2 = StaticVariables.g_drawModes[0x14].tag;
+            iVar11 = 0;
+            iVar8 = 0;
+            sVar10 = 0;
+            iVar3 = (iVar5 + iVar13) % 3;
+            iVar9 = iVar3 * 0x28;
+
+            do
+            {
+                if (StaticVariables.g_textLineWidth[iVar3] == 0)
+                {
+                    index = (StaticVariables.g_textNextChoice - StaticVariables.g_textChoiceIndex) * 0x10;
+                    //iVar14 = index / StaticVariables.g_textNextChoice;
+
+                    if (StaticVariables.g_textNextChoice == 0)
+                    {
+                        Debugger.Break();
+                        //trap(0x1c00);
+                    }
+
+                    if (StaticVariables.g_textNextChoice == -1 && index == -0x80000000)
+                    {
+                        Debugger.Break();
+                        //trap(0x1800);
+                    }
+
+                    //index = iVar8 + iVar9 + uVar2 * 0x14;
+                    //StaticVariables.g_bufferTextToDisplay[index] = callbackInfo.Data.X + callbackInfo.Data.Width;
+                    //StaticVariables.g_bufferTextToDisplay[index + 1] = (*(short*)(callbackInfo._0 + 10) + *(short*)(*(int*)(callbackInfo._0 + 4) + 2) + sVar10 + sVar12) - (short)iVar14;
+                }
+                else
+                {
+                    index = (StaticVariables.g_textNextChoice - StaticVariables.g_textChoiceIndex) * 0x10;
+                    //iVar14 = index / StaticVariables.g_textNextChoice;
+
+                    if (StaticVariables.g_textNextChoice == 0)
+                    {
+                        Debugger.Break();
+                        //trap(0x1c00);
+                    }
+
+                    if (StaticVariables.g_textNextChoice == -1 && index == -0x80000000)
+                    {
+                        Debugger.Break();
+                        //trap(0x1800);
+                    }
+
+                    //psVar4 = *(short**)(callbackInfo._0 + 4);
+                    //index = iVar8 + iVar9 + uVar2 * 0x14;
+                    //StaticVariables.g_bufferTextToDisplay[index] = *psVar4 + (short)((psVar4[2] * 8 - StaticVariables.g_textLineWidth[iVar3]) / 2);
+                    //StaticVariables.g_bufferTextToDisplay[index + 1] = (*(short*)(callbackInfo._0 + 10) + *(short*)(*(int*)(callbackInfo._0 + 4) + 2) + sVar10 + sVar12) - (short)iVar14;
+                }
+
+                //iVar14 = iVar8 + iVar9 + uVar2 * 0x14;
+                //index = iVar8 + iVar9 + uVar2 * 0x14;
+                iVar8 += 0x14;
+                sVar10 += -1;
+                //puVar7 = (uint*)((int)&StaticVariables.g_primitiveGroup + iVar14);
+                //puVar6 = (uint*)(&DAT_80146f60 + uVar2 * 0x28);
+                iVar11 += 1;
+                /* Probable PsyQ macro: addPrim(). */
+                //*puVar7 = *puVar7 & 0xff000000 | *puVar6 & 0xffffff;
+                //*puVar6 = *puVar6 & 0xff000000 | (int)StaticVariables.g_primitiveGroup[index] & 0xffffffU;
+            } while (iVar11 < 1);
+
+            iVar13 += 1;
+            sVar12 += 0x10;
+        } while (iVar13 < 3);
+
+        //puVar6 = (uint*)(&DAT_80153010 + StaticVariables.g_drawModes[0x14].tag * 0xc);
+        //puVar7 = (uint*)(&DAT_80146f60 + StaticVariables.g_drawModes[0x14].tag * 0x28);
+        /* Probable PsyQ macro: addPrim(). */
+        //*puVar6 = *puVar6 & 0xff000000 | *puVar7 & 0xffffff;
+        doAdavance = StaticVariables.g_textChoiceIndex == 0;
+        //*puVar7 = *puVar7 & 0xff000000 | (uint)puVar6 & 0xffffff; //addPrim()
+
+        if (doAdavance)
+        {
+            StaticVariables.g_textBufferX = (StaticVariables.g_textBufferX + 1) % 3;
+            StaticVariables.g_textMessageConfirmed = 0;
+            iVar5 = StaticVariables.g_textBufferX + 2;
+            StaticVariables.g_textLineWidth[(StaticVariables.g_textBufferX + StaticVariables.g_textLineIndex) % 3] = 0;
+            //rect.x = 0x3c0;
+            //rect.y = ((short)iVar5 + ((short)((ulong)((long)iVar5 * 0x55555556) >> 0x20) - (short)(iVar5 >> 0x1f)) * -3) * 0x10 + 0x120;
+            //rect.w = 0x40;
+            //rect.h = 0x10;
+            //ClearImage(&rect, '\0', '\0', '\0');
+        }
     }
 
     //8004b770
-    public void Func_8004b770(CallBackInfo callBackInfo)
+    public void FUN_8004b770(CallBackInfo callBackInfo)
     {
         Debugger.Break();
     }
@@ -161,13 +314,150 @@ public class UIManager
     }
 
     //800501fc
-    public void Func_800501fc(CallBackInfo callBackInfo)
+    //display yes or no dialog box
+    public void FUN_800501fc(CallBackInfo callBackInfo)
     {
-        Debugger.Break();
+        long puVar1;
+        int witdh;
+        char pcVar2;
+        short psVar3;
+        SPRT sprite;
+        int tileConfig;
+        int i;
+        int iVar4;
+        string[] buffer6;
+        int iVar5;
+        int iVar6;
+        int k;
+        int iVar7;
+        char[] buffer = new char[256];
+        int j;
+        int local_34;
+        int local_30;
+        int local_2c;
+        char c;
+
+        tileConfig = 0;
+        //sprite = StaticVariables.g_sprites;
+        buffer6 = StaticVariables.g_asyncCallbackArgs2;
+        i = 0;
+        j = 0;
+
+        while (tileConfig < 2)
+        {
+            var scan = StaticVariables.g_asyncCallbackArgs[tileConfig];
+            var w = buffer[j];
+
+            for (; ; )
+            {
+                c = scan[i++];
+
+                if (c == '{')
+                {
+                    buffer[j++] = (char)(scan[i++] + 0x50);
+                }
+                else if (c == '}')
+                { 
+                    buffer[j++] = (char)(scan[i++] + 0x90);
+                }
+                else if (c == 0x00)
+                {
+                    buffer[j] = (char)0;
+                    StaticVariables.g_asyncCallbackArgs[tileConfig] = new string(buffer);
+                    ++tileConfig;
+                    break;
+                }
+                else
+                {
+                    buffer[j++] = c;
+                }
+            }
+        }
+
+        Array.Clear(StaticVariables.CHAR_ARRAY_8014a4e8);
+        RenderTextBitmap(StaticVariables.g_asyncCallbackArgs2[0].ToCharArray(), StaticVariables.CHAR_ARRAY_8014a4e8, 0x3c0, 0x1d0, 0, 0, 0x80, 0x10);
+        Array.Clear(StaticVariables.CHAR_ARRAY_8014a4e8);
+        RenderTextBitmap(StaticVariables.g_asyncCallbackArgs2[1].ToCharArray(), StaticVariables.CHAR_ARRAY_8014a4e8, 0x3e0, 0x1d0, 0, 0, 0x80, 0x10);
+        
+        j = 0;
+        local_2c = 0;
+
+        do
+        {
+            i = 0;
+            tileConfig = 0;
+
+            do
+            {
+                k = 0;
+                iVar6 = 0;
+                iVar5 = 0;
+
+                do
+                {
+                    witdh = CalculateTextWidthFromScript(StaticVariables.g_asyncCallbackArgs2[i].ToCharArray());
+                    iVar4 = iVar6 + tileConfig + local_2c;
+                    StaticVariables.SPRT_ARRAY_8017e674[iVar4].w = (short)witdh;
+                    StaticVariables.SPRT_ARRAY_8017e674[iVar4].h = 0x10;
+                    StaticVariables.SPRT_ARRAY_8017e674[iVar4].u0 = (byte)(i << 7);
+                    StaticVariables.SPRT_ARRAY_8017e674[iVar4].v0 = 0xd0;
+                    StaticVariables.SPRT_ARRAY_8017e674[iVar4].clut = StaticVariables.g_clutTable[8];
+                    //sprite = StaticVariables.SPRT_ARRAY_8017e674[iVar5 + local_2c + tileConfig];
+                    //SetSprt(sprites);
+                    //SetSemiTrans(sprites, 0);
+                    //SetShadeTex(sprites, 1);
+                    iVar6 = iVar6 + 0x3c;
+                    iVar5 = iVar5 + 0x3c;
+                    k = k + 1;
+
+                } while (k < 1);
+
+                tileConfig = tileConfig + 0x3c;
+                i = i + 1;
+
+            } while (i < 2);
+
+            local_2c = local_2c + 0x78;
+            j = j + 1;
+
+        } while (j < 2);
+
+        StaticVariables.g_textToDisplay3.mode = 2;
+        StaticVariables.g_textToDisplay3.tick = 0;
+        StaticVariables.g_textToDisplay3.speed = 0xf;
+        StaticVariables.g_textToDisplay3.x = 0x140;
+        StaticVariables.g_textToDisplay3.y = callBackInfo.Data.Y;
+
+        if (callBackInfo.Data.Y < 0)
+        {
+            StaticVariables.g_textToDisplay3.y = (short)(StaticVariables.g_textToDisplay3.y + (callBackInfo.Height + 6) * -8);
+        }
+
+        StaticVariables.g_textToDisplay3.startX = callBackInfo.Data.X;
+
+        if (callBackInfo.Data.X < 0)
+        {
+            StaticVariables.g_textToDisplay3.startX = (short)(StaticVariables.g_textToDisplay3.startX + callBackInfo.Width * -8);
+        }
+
+        StaticVariables.g_textToDisplay3.startY = callBackInfo.Data.Y;
+
+        if (callBackInfo.Data.Y < 0)
+        {
+            StaticVariables.g_textToDisplay3.startY = (short)(StaticVariables.g_textToDisplay3.startY + callBackInfo.Data.Height * -8);
+        }
+
+        StaticVariables.g_textToDisplay3.originX = callBackInfo.Data.X;
+        StaticVariables.g_textToDisplay3.originY = callBackInfo.Data.Y;
+
+        RenderTextTilesStep(callBackInfo.Data, StaticVariables.g_textToDisplay3);
+
+        callBackInfo.RenderFunc = FUN_800501a4;
+        FUN_80048304(callBackInfo);
     }
 
     //800537f0
-    public void Func_800537f0(CallBackInfo callBackInfo)
+    public void FUN_800537f0(CallBackInfo callBackInfo)
     {
         Debugger.Break();
     }
@@ -185,7 +475,7 @@ public class UIManager
     }
 
     //80054f1c
-    public void Fun_80054f1c(CallBackInfo callBackInfo)
+    public void FUN_80054f1c(CallBackInfo callBackInfo)
     {
         Debugger.Break();
     }
@@ -203,7 +493,7 @@ public class UIManager
     }
 
     //800583ec
-    public void Fun_800583ec(CallBackInfo callBackInfo)
+    public void FUN_800583ec(CallBackInfo callBackInfo)
     {
         Debugger.Break();
     }
@@ -215,7 +505,7 @@ public class UIManager
     }
 
     //8005a268
-    public void Fun_8005a268(CallBackInfo callBackInfo)
+    public void FUN_8005a268(CallBackInfo callBackInfo)
     {
         Debugger.Break();
 
@@ -244,14 +534,11 @@ public class UIManager
         StaticVariables.g_textToDisplay2.originY = textTileConfig.Y;
         StaticVariables.g_etcDisplayFlags = 5;
 
-        //TODO debug in psx redux
-
-        char[] text = ['T', 'O', 'D', 'O'];
-        var textId = StaticVariables.g_entitySpriteNamesTable[StaticVariables.g_entitySpriteNameTableIndex * 4];
+        var text = StaticVariables.g_entitySpriteNamesTable[StaticVariables.g_entitySpriteNameTableIndex];
         
         _gameEngine.Renderer.DisplayIconName(
             StaticVariables.SPRT_80180260,
-            text,
+            text.ToCharArray(),
             6,
             0,
             (short)(textTileConfig.Height + textTileConfig.Y),
@@ -264,6 +551,223 @@ public class UIManager
     public void Fun_8005a3e0(CallBackInfo callBackInfo)
     {
         Debugger.Break();
+    }
+
+    //800501a4
+    private void FUN_800501a4(CallBackInfo callBackInfo)
+    {
+        int res = RenderTextTilesStep(callBackInfo.Data, StaticVariables.g_textToDisplay3);
+        if (res != 0)
+        {
+            callBackInfo.RenderFunc = FUN_8004ffa8;
+        }
+
+        FUN_8004fce8(callBackInfo);
+    }
+
+    //8004ffa8
+    private void FUN_8004ffa8(CallBackInfo callBackInfo)
+    {
+        RenderTextTilesStep(callBackInfo.Data, StaticVariables.g_textToDisplay3);
+        
+        if ((StaticVariables.g_padState1.ButtonsJustPressed & 0x40) != 0)
+        {
+            StaticVariables.g_textToDisplay3.mode = 2;
+            StaticVariables.g_textToDisplay3.tick = 0;
+            StaticVariables.g_textToDisplay3.speed = 0xf;
+            StaticVariables.g_textToDisplay3.x = callBackInfo.Data.X;
+            //StaticVariables.g_sprites[0].tag = StaticVariables.g_asyncOperationCountdown + 1;
+
+            if (callBackInfo.Data.X < 0)
+            {
+                StaticVariables.g_textToDisplay3.x = (short)(StaticVariables.g_textToDisplay3.x + callBackInfo.Data.Width * -8);
+            }
+
+            StaticVariables.g_textToDisplay3.y = callBackInfo.Data.Y;
+
+            if (callBackInfo.Data.Y < 0)
+            {
+                StaticVariables.g_textToDisplay3.y = (short)(StaticVariables.g_textToDisplay3.y + callBackInfo.Data.Height * -8);
+            }
+
+            StaticVariables.g_textToDisplay3.startX = 0x140;
+            StaticVariables.g_textToDisplay3.startY = callBackInfo.Data.Y;
+
+            if (callBackInfo.Data.Y < 0)
+            {
+                StaticVariables.g_textToDisplay3.startY = (short)(StaticVariables.g_textToDisplay3.startY + callBackInfo.Data.Height * -8);
+            }
+
+            _gameEngine.SoundManager.PlaySoundEffect(5);
+            uint iVar1 = 3;
+
+            if (StaticVariables.g_sprites[0].tag == 1)
+            {
+                iVar1 = 2;
+            }
+
+            _gameEngine.SoundManager.PlaySoundEffect(iVar1);
+            callBackInfo.RenderFunc = FUN_8004fefc;
+        }
+
+        if ((StaticVariables.g_padState1.ButtonsJustPressedByInterval & 0x8000) != 0)
+        {
+            if (StaticVariables.g_asyncOperationCountdown == 1)
+            {
+                _gameEngine.SoundManager.PlaySoundEffect(1);
+            }
+
+            StaticVariables.g_asyncOperationCountdown = 0;
+        }
+
+        if ((StaticVariables.g_padState1.ButtonsJustPressedByInterval & 0x2000) != 0)
+        {
+            if (StaticVariables.g_asyncOperationCountdown == 0)
+            {
+                _gameEngine.SoundManager.PlaySoundEffect(1);
+            }
+
+            StaticVariables.g_asyncOperationCountdown = 1;
+        }
+
+        FUN_8004fce8(callBackInfo);
+    }
+
+    //8004fefc
+    private void FUN_8004fefc(CallBackInfo callBackInfo)
+    {
+        int iVar1;
+
+        iVar1 = RenderTextTilesStep(callBackInfo.Data, StaticVariables.g_textToDisplay3);
+
+        if (iVar1 == 1)
+        {
+            callBackInfo.Data.X = StaticVariables.g_textToDisplay3.originX;
+            callBackInfo.Data.Y = StaticVariables.g_textToDisplay3.originY;
+            FUN_80047cb0(callBackInfo);
+            Debugger.Break();
+            //StaticVariables.g_asyncCallback(StaticVariables.g_sprites[0].tag);
+        }
+        else
+        {
+            FUN_8004fce8(callBackInfo);
+        }
+    }
+
+    //8004fce8
+    private void FUN_8004fce8(CallBackInfo callBackInfo)
+    {
+        short sVar1;
+        short sVar2;
+        ulong uVar3;
+        int iVar4;
+        uint puVar5;
+        int iVar6;
+        uint puVar7;
+        int j;
+        int iVar8;
+        SPRT pSVar9;
+        SPRT sprite;
+        int i;
+        short sVar10;
+
+        sVar2 = (short)StaticVariables.g_asyncOperationCountdown;
+        iVar4 = StaticVariables.g_asyncCallbackArgs2[StaticVariables.g_asyncOperationCountdown].Length;
+
+        Debugger.Break();
+        //ApplyFadeTransform(StaticVariables.g_sprites,
+        //    (short)(callBackInfo.Data.X + callBackInfo.Data.Width + sVar2 * 0x30 + iVar4 * 4 + -8),
+        //    (short)(callBackInfo.Data.Height + callBackInfo.Data.Y + -0x10),
+        //    StaticVariables.g_drawModes[0x14].tag);
+
+        FUN_800507e4(StaticVariables.g_sprites);
+
+        Debugger.Break();
+        //uVar3 = StaticVariables.g_drawModes[0x14].tag;
+        //i = 0;
+        //sprite = StaticVariables.SPRT_ARRAY_8017e674;
+        //iVar4 = 0;
+        //sVar10 = 0;
+        //
+        //do
+        //{
+        //    j = 0;
+        //    iVar6 = uVar3 * 0x78 + iVar4;
+        //
+        //    do
+        //    {
+        //        StaticVariables.SPRT_ARRAY_8017e674[iVar6].x0 = (short)(callBackInfo.Data.Width + callBackInfo.Data.X + sVar10);
+        //        StaticVariables.SPRT_ARRAY_8017e674[iVar6].y0 = (short)(callBackInfo.Data.Height + callBackInfo.Data.Y - j);
+        //        j = j + 1;
+        //        iVar6 = iVar6 + 1;
+        //    } while (j < 1);
+        //
+        //    j = 0;
+        //    iVar8 = uVar3 * 0x28;
+        //    iVar6 = 0;
+        //    pSVar9 = sprite + uVar3 * 6;
+        //
+        //    do
+        //    {
+        //        puVar7 = (StaticVariables.DAT_80146f70 + iVar8);
+        //        iVar8 = iVar8 + 4;
+        //        puVar5 = (uint*)((int)StaticVariables.SPRT_ARRAY_8017e674[uVar3 * 6].tag + iVar6 + iVar4);
+        //        j = j + 1;
+        //        /* Probable PsyQ macro: addPrim(). */
+        //        //*puVar5 = *puVar5 & 0xff000000 | *puVar7 & 0xffffff;
+        //        //*puVar7 = *puVar7 & 0xff000000 | (uint)pSVar9 & 0xffffff;
+        //        iVar6 = iVar6 + 0x3c;
+        //        pSVar9 = pSVar9 + 3;
+        //    } while (j < 1);
+        //
+        //    sprite = sprite + 3;
+        //    iVar4 = iVar4 + 0x3c;
+        //    i = i + 1;
+        //    sVar10 = sVar10 + 0x30;
+        //
+        //} while (i < 2);
+    }
+
+    //800507e4
+    private void FUN_800507e4(SPRT[] sprites)
+    {
+        SPRT pSVar1;
+        SPRT pSVar2;
+        int value;
+        uint uVar3;
+        uint puVar4;
+
+        value = sprites[0].r0 + 1;
+        sprites[0].r0 = (byte)value;
+
+        if (value == 0x28)
+        {
+            sprites[0].r0 = 0;
+            sprites[0].g0 = 0;
+            sprites[0].b0 = 0;
+            sprites[0].code = 0;
+        }
+
+        Debugger.Break();
+        //sprites[StaticVariables.g_drawModes[0x14].tag + 1].tag = StaticVariables.BYTE_800a58d8[(sprites[0].r0 / 10) * 0x28];
+        //sprites[StaticVariables.g_drawModes[0x14].tag + 1].tag + 1 = StaticVariables.DAT_800a58d9[(sprites[0].r0 / 10) * 0x28];
+        //puVar4 = StaticVariables.DAT_80146f6c[StaticVariables.g_drawModes[0x14].tag * 0x28];
+        //pSVar1 = sprites[StaticVariables.g_drawModes[0x14].tag];
+        //uVar3._0_2_ = sprites[StaticVariables.g_drawModes[0x14].tag].x0;
+        //uVar3._2_2_ = sprites[StaticVariables.g_drawModes[0x14].tag].y0;
+        ///* Probable PsyQ macro: addPrim(). */
+        ////uVar3 = uVar3 & 0xff000000 | *puVar4 & 0xffffff;
+        //pSVar2 = sprites + StaticVariables.g_drawModes[0x14].tag;
+        //pSVar2.x0 = (short)uVar3;
+        //pSVar2.y0 = (short)(uVar3 >> 0x10);
+        ////*puVar4 = *puVar4 & 0xff000000 | (uint)&pSVar1.x0 & 0xffffff;
+    }
+
+    //800506dc
+    private void ApplyFadeTransform(SPRT[] sprites, short width, short height, int index)
+    {
+        sprites[index].w = width;
+        sprites[index].h = height;
     }
 
     //80045e60
@@ -511,7 +1015,7 @@ public class UIManager
         char pcVar2;
         uint puVar3;
         int fontWidth;
-        byte[] textBuffer = new byte[8];
+        char[] textBuffer = new char[8];
         char[] numericString = new char[16];
         char[] acStack_1c48 = new char[2400];
         char[] acStack_12e8 = new char[2400];
@@ -575,15 +1079,14 @@ public class UIManager
                         StaticVariables.g_textCursor += 2;
                         currentLineIndex = StaticVariables.g_textBufferX + StaticVariables.g_textLineIndex >> 0x1f;
                         fontWidth = (StaticVariables.g_textBufferX + StaticVariables.g_textLineIndex) / 3 + currentLineIndex;
-                        textBuffer[0] = (byte)(StaticVariables.g_scriptBuffer[cursor] + 0x50);
+                        textBuffer[0] = (char)(StaticVariables.g_scriptBuffer[cursor] + 0x50);
                         
                         LAB_8004635c:
-                        textBuffer[1] = 0;
+                        textBuffer[1] = '\0';
 
-                        Debugger.Break();
-                        //RenderTextBitmap(textBuffer, StaticVariables.g_textBuffer, 0x3c0,
-                        //                 (short)((uint)(((StaticVariables.g_textBufferX + StaticVariables.g_textLineIndex + (fontWidth - currentLineIndex) * -3) * 0x10 + 0x120) * 0x10000) >> 0x10), 
-                        //                 (short)StaticVariables.g_textLineStartX, 0, 0x100, 0x10);
+                        RenderTextBitmap(textBuffer, StaticVariables.g_textBuffer, 0x3c0,
+                                         (short)((uint)(((StaticVariables.g_textBufferX + StaticVariables.g_textLineIndex + (fontWidth - currentLineIndex) * -3) * 0x10 + 0x120) * 0x10000) >> 0x10), 
+                                         (short)StaticVariables.g_textLineStartX, 0, 0x100, 0x10);
 
                         StaticVariables.g_textLineStartX += StaticVariables.g_fontCharWidthTable[textBuffer[0] * 5];
                         return;
@@ -595,7 +1098,7 @@ public class UIManager
                         StaticVariables.g_textCursor += 2;
                         currentLineIndex = StaticVariables.g_textBufferX + StaticVariables.g_textLineIndex >> 0x1f;
                         fontWidth = (StaticVariables.g_textBufferX + StaticVariables.g_textLineIndex) / 3 + currentLineIndex;
-                        textBuffer[0] = (byte)(StaticVariables.g_scriptBuffer[cursor] + 0x90);
+                        textBuffer[0] = (char)(StaticVariables.g_scriptBuffer[cursor] + 0x90);
                         
                         Debugger.Break();
                         return;
@@ -713,7 +1216,7 @@ public class UIManager
                             {
                                 cursor = StaticVariables.g_textCursor + 3;
 
-                                if ((StaticVariables.g_scriptBuffer[StaticVariables.g_textCursor + 3] == 'E'))
+                                if (StaticVariables.g_scriptBuffer[StaticVariables.g_textCursor + 3] == 'E')
                                 {
                                     StaticVariables.g_textFlags = 4;
                                     cursor = StaticVariables.g_textCursor + 4;
@@ -807,7 +1310,7 @@ public class UIManager
                                 value = -0x27;
                             }
 
-                            textBuffer[0] = (byte)(StaticVariables.g_scriptBuffer[StaticVariables.g_textCursor + 2] + value);
+                            textBuffer[0] = (char)(StaticVariables.g_scriptBuffer[StaticVariables.g_textCursor + 2] + value);
                             currentLineIndex = StaticVariables.g_textBufferX + StaticVariables.g_textLineIndex >> 0x1f;
                             fontWidth = (StaticVariables.g_textBufferX + StaticVariables.g_textLineIndex) / 3 + currentLineIndex;
                             StaticVariables.g_textCursor += 3;
@@ -979,7 +1482,7 @@ public class UIManager
 
                             if (shouldRender == false)
                             {
-                                textBuffer[0] = (byte)StaticVariables.g_scriptBuffer[StaticVariables.g_textCursor];
+                                textBuffer[0] = (char)StaticVariables.g_scriptBuffer[StaticVariables.g_textCursor];
                                 StaticVariables.g_textCursor += 1;
                             }
                             else
@@ -987,16 +1490,15 @@ public class UIManager
                                 //DoNothing();
                                 //DoNothing();
                                 //DoNothing();
-                                textBuffer[0] = 0x3f;
+                                textBuffer[0] = (char)0x3f;
                                 StaticVariables.g_textCursor += 2;
                             }
 
-                            textBuffer[1] = 0;
+                            textBuffer[1] = '\0';
 
-                            Debugger.Break();
-                            //RenderTextBitmap(textBuffer, StaticVariables.g_textBuffer, 0x3c0,
-                            //                 (short)((uint)(((StaticVariables.g_textBufferX + StaticVariables.g_textLineIndex) % 3 * 0x10 + 0x120) *
-                            //                               0x10000) >> 0x10), (short)StaticVariables.g_textLineStartX, 0, 0x100, 0x10);
+                            RenderTextBitmap(textBuffer, StaticVariables.g_textBuffer, 0x3c0,
+                                (short)((uint)(((StaticVariables.g_textBufferX + StaticVariables.g_textLineIndex) % 3 * 0x10 + 0x120) * 0x10000) >> 0x10), 
+                                (short)StaticVariables.g_textLineStartX, 0, 0x100, 0x10);
 
                             StaticVariables.g_textLineStartX += StaticVariables.g_fontCharWidthTable[(uint)textBuffer[0] * 5];
 
@@ -1104,6 +1606,129 @@ public class UIManager
         StaticVariables.g_textLineIndex = currentLineIndex;
     }
 
+    //800478c4
+    private void RenderTextBitmap(char[] formattedText, char[] buffer,
+        short posX, short posY, short textWidth,
+        short textLineOffset, short drawWidth, short drawHeight)
+    {
+        int i = 0;
+        byte fontPixel;
+        int bufferWidth2;
+        byte bufferOffset;
+        uint glyphStartBit;
+        uint charIndex;
+        uint fontColumn;
+        uint fontPixelOffset;
+        int lineByteOffset;
+        int drawY;
+        int iVar1;
+        int glyphRow;
+        int bufferWidth;
+        Rectangle drawRect = new Rectangle();
+        short posX_;
+
+        Debugger.Break();
+
+        if (formattedText[i] != '\0')
+        {
+            bufferWidth = (int)drawWidth;
+            posX_ = posX;
+
+            do
+            {
+                charIndex = formattedText[i];
+                glyphRow = 0;
+                glyphStartBit = (uint)StaticVariables.g_fontCharWidthTable[charIndex * 5 + 2];
+                bufferWidth2 = StaticVariables.g_fontCharWidthTable[charIndex * 5 + 3] * 0x80 + (int)glyphStartBit / 2 + -0x7feb52d8;
+                
+                if (0 < StaticVariables.g_fontCharWidthTable[charIndex * 5 + 1])
+                {
+                    do
+                    {
+                        iVar1 = 0;
+
+                        if (0 < StaticVariables.g_fontCharWidthTable[charIndex * 5])
+                        {
+                            drawY = textLineOffset + glyphRow;
+                            lineByteOffset = glyphRow * 0x80;
+                            fontColumn = glyphStartBit & 1;
+                            fontPixelOffset = (uint)textWidth;
+
+                            do
+                            {
+                                if (0xff < (int)fontPixelOffset) break;
+
+                                if ((fontPixelOffset & 1) == 0)
+                                {
+                                    bufferOffset = (byte)(buffer[bufferWidth *
+                                                                 (drawY + StaticVariables.g_fontCharWidthTable
+                                                                     [formattedText[i] * 5 + 4]) / 2 +
+                                                                 (int)fontPixelOffset / 2] & 0xf0);
+
+                                    if ((fontColumn & 1) == 0)
+                                    {
+                                        fontPixel = (byte)((bufferWidth2 + lineByteOffset + (int)fontColumn / 2) & 0xf);
+                                    }
+                                    else
+                                    {
+                                        fontPixel = (byte)((bufferWidth2 + lineByteOffset + (int)fontColumn / 2) >> 4);
+                                    }
+                                }
+                                else
+                                {
+                                    bufferOffset = (byte)(buffer[bufferWidth * (drawY + StaticVariables.g_fontCharWidthTable[charIndex * 5 + 4]) / 2 + (int)fontPixelOffset / 2] & 0xf);
+
+                                    if ((fontColumn & 1) == 0)
+                                    {
+                                        fontPixel = (byte)(((bufferWidth2 + lineByteOffset + (int)fontColumn / 2) & 0xf) << 4);
+                                    }
+                                    else
+                                    {
+                                        fontPixel = (byte)((bufferWidth2 + lineByteOffset + (int)fontColumn / 2) & 0xf0);
+                                    }
+                                }
+
+                                buffer[bufferWidth * (drawY + StaticVariables.g_fontCharWidthTable[formattedText[i] * 5 + 4]) / 2 + (int)fontPixelOffset / 2] = (char)(bufferOffset | fontPixel);
+                                fontPixelOffset = fontPixelOffset + 1;
+                                charIndex = formattedText[i];
+                                iVar1 = iVar1 + 1;
+                                fontColumn = fontColumn + 1;
+                            } while (iVar1 < StaticVariables.g_fontCharWidthTable[charIndex * 5]);
+                        }
+
+                        charIndex = formattedText[i];
+                        glyphRow = glyphRow + 1;
+
+                    } while (glyphRow < StaticVariables.g_fontCharWidthTable[charIndex * 5 + 1]);
+                }
+
+                bufferWidth2 = bufferWidth;
+
+                if (bufferWidth < 0)
+                {
+                    bufferWidth2 = bufferWidth + 3;
+                }
+
+                drawRect.X = posX_;
+                drawRect.Width = (short)(bufferWidth2 >> 2);
+                drawRect.Height = drawHeight;
+                drawRect.Y = posY;
+                LoadImage(drawRect, buffer);
+                //DrawSync(0);
+                bufferOffset = (byte)formattedText[i];
+                i++;
+                textWidth = (short)(textWidth + StaticVariables.g_fontCharWidthTable[(uint)bufferOffset * 5]);
+            } while (formattedText[i] != 0);
+        }
+    }
+
+    //80084f90
+    private void LoadImage(Rectangle rectangle, char[] buffer)
+    {
+        //Debug.WriteLine("LoadImage: " + rectangle);
+        //Debugger.Break();
+    }
+
     //8004f304
     private bool ContainsSpecialTextFormatting(char c)
     {
@@ -1133,7 +1758,7 @@ public class UIManager
                 fontWidth = StaticVariables.g_fontCharWidthTable[(text[1] + 0x50) * 5];
                 index += 2;
                 LAB_800478a0:
-                totalWidth = totalWidth + fontWidth;
+                totalWidth += fontWidth;
             }
             else
             {
@@ -1143,7 +1768,7 @@ public class UIManager
                     index += 2;
 
                     //goto LAB_800478a0;
-                    totalWidth = totalWidth + fontWidth;
+                    totalWidth += fontWidth;
                 }
                 else if (currentChar != 0x5c)
                 {
@@ -1151,7 +1776,7 @@ public class UIManager
                     index += 1;
 
                     //goto LAB_800478a0;
-                    totalWidth = totalWidth + fontWidth;
+                    totalWidth += fontWidth;
                 }
                 else
                 {
@@ -1211,7 +1836,7 @@ public class UIManager
                             fontWidth = StaticVariables.g_fontCharWidthTable[fontWidth * 5];
                             index += 3;
                             //goto LAB_800478a0;
-                            totalWidth = totalWidth + fontWidth;
+                            totalWidth += fontWidth;
                             break;
 
                         case 0x58:
@@ -1311,7 +1936,7 @@ public class UIManager
         }
         else
         {
-            StaticVariables.g_progressStateFlags = StaticVariables.g_progressStateFlags | 0x800;
+            StaticVariables.g_progressStateFlags |= 0x800;
         }
     }
 
@@ -1384,7 +2009,7 @@ public class UIManager
         if (StaticVariables.g_textHoldState != 0)
         {
             // Compteur 0..39 (reboucle comme dans l’ASM)
-            StaticVariables.g_textHoldState = (StaticVariables.g_textHoldState + 1);
+            StaticVariables.g_textHoldState = StaticVariables.g_textHoldState + 1;
 
             if (StaticVariables.g_textHoldState >= HOLD_MAX)
             {

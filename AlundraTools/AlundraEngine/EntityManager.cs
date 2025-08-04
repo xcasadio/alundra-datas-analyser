@@ -1959,6 +1959,7 @@ public class EntityManager
             for (var j = 0; j < StaticVariables.g_activeEntityCount; j++)
             {
                 var checkme = StaticVariables.g_activeEntities[j];
+
                 if (checkme == entity)
                 {
                     continue;
@@ -2043,6 +2044,7 @@ public class EntityManager
                 {
                 DEBUG THING
                 }*/
+
                 var valdex = entity.BalanceAnimValRef.Val & 0xf;
                 var val = checkme.BalanceRecord.Vals[valdex];
 
@@ -2062,8 +2064,8 @@ public class EntityManager
                 }
 
                 checkme.FrameCollisionTickCounter = 0x19;
-
                 entity.HitCounter++;
+
                 //X
                 var xr = checkme.ModdedPosX + checkme.Width;
                 if (entity.HitBoxX + entity.CollisionWidth < xr)

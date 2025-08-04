@@ -1573,7 +1573,7 @@ public class EntityEventHandlers
             //  img.Sx, img.Sy, img.Swidth, img.Sheight, bmp);
         }
 
-        Debugger.Break();
+        //Debugger.Break();
         _gameEngine.TriggerVisualUpdate((int)logicEntity.SpriteTableIndex);
         var res = _gameEngine.TryPlayEtcAnimation((uint)variables[1], variables[2]);  
         // SetText(exp[1], exp[2]);
@@ -2665,13 +2665,6 @@ public class EntityEventHandlers
     // 8003E88C
     private int Script_68_044(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-        return 0;
-        /*
-        int piVar1;
-        int piVar2;
-        int iVar3;
-
         if (eventProgramState.Exp[1] == variables[0])
         {
             if (StaticVariables.INT_8013d8d0 != 0)
@@ -2692,19 +2685,19 @@ public class EntityEventHandlers
         {
             StaticVariables.INT_8013d8d0 = 0;
 
-            piVar1 = _gameEngine.GetEtcSectionPtr(0x43);
-            piVar2 = _gameEngine.GetEtcSectionPtr(0x44);
-            iVar3 = _gameEngine.StartWarpWithCheck(piVar1, piVar2, StaticVariables.INT_8013d8d0);
+            var arg1 = _gameEngine.EtcResR.GetDescriptionString(0x43);
+            var arg2 = _gameEngine.EtcResR.GetDescriptionString(0x44);
+            var res = _gameEngine.InitializeAsyncOperation(arg1, arg2, ref StaticVariables.INT_8013d8d0);
 
-            if (iVar3 == 0)
+            if (res == 0)
             {
                 return 0;
             }
 
-            eventProgramState.Exp[1] = variables;
+            eventProgramState.Exp[1] = variables[0];
         }
 
-        return 0;*/
+        return 0;
     }
 
     // 8003E954
@@ -3006,22 +2999,13 @@ public class EntityEventHandlers
     // 8003EE8C
     private int Script_89_059(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-        return 0;
-        
-        int bVar1;
-        int num;
-        int iVar3;
-        int piVar4;
-
-        num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
 
         for (var i = 0; i < num; i++)
         {
             var entity = StaticVariables.g_matchingEntitiesBuffer[i];
             entity.TargetAnimationId = (uint)variables[2];
         }
-
 
         return 3;
     }

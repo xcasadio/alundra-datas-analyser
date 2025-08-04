@@ -1008,7 +1008,7 @@ public class SpriteEventHandlers
         Entity entity2;
         int uVar6;
 
-        //Debugger.Break();
+        Debugger.Break();
         var itemId = entity.SpriteTableIndex - 0x1e;
 
         if (entity.Bytes[0] == 2)

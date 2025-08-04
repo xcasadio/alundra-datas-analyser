@@ -479,10 +479,10 @@ public class GameInitializer
         //ClearOrderTable(StaticVariables.g_orderTableTaki2,10);
         //LoadTakiScreenWind_tx();
         LoadtakiScreenWind_cl();
-        //LoadFONT3.tim();
+        LoadFONT3_tim();
         InitializeTextSpriteTiles();
         //DrawSync(0);
-        //ResetTransitionSystem();
+        ResetTransitionSystem();
         InitializeCameraTransitionState();
     }
 
@@ -495,6 +495,21 @@ public class GameInitializer
         //clutRect.y = 0x1e0;
         //clutRect.w = 0x10;
         //clutRect.h = 0x10;
+    }
+
+    //80044f88
+    private void LoadFONT3_tim()
+    {
+        StaticVariables.g_textState = 4;
+        StaticVariables.g_textPosX = 0;
+        StaticVariables.g_textPosY = 0;
+        StaticVariables.g_textOffsetX = 0;
+        StaticVariables.g_textOffsetY = 0;
+        StaticVariables.g_textCurrentPage = 0;
+        StaticVariables.g_textNextChoice = 8;
+        StaticVariables.g_textSelectionNext = 10;
+        StaticVariables.g_textBufferSize = 0x168;
+        //ReadFileFromCDIntoBuffer("taki\\screen\\FONT3.tim", (u_long*)g_bufferFONT3_tim, 0, 0x8220);
     }
 
     //8005a0c8
@@ -544,6 +559,16 @@ public class GameInitializer
             surfaceIndex = surfaceIndex + 1;
 
         } while (surfaceIndex < 2);
+    }
+
+    //80047c50
+    private void ResetTransitionSystem()
+    {
+        StaticVariables.g_currentTransitionType = 0;
+        StaticVariables.g_activeTransitionCallback = null;
+        //ClearScreenEffectState();
+        //FUN_80054a34();
+        //FUN_80058394();
     }
 
     //80057b64

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay;
 using AlundraEngine.UI;
 
@@ -661,7 +662,7 @@ public class Renderer
         InitializeFrame();
         SetTransitionType(4);
         Debugger.Break();
-        //var sprite = GetFadeSettings(0);
+        //var sprite = GetAnimationImageByIndex(0);
         //InitCameraTransition(-player.PosX, -player.PosY, -player.PosZ,
         //    -StaticVariables.g_cameraScrollingX, -StaticVariables.g_cameraScrollingY,
         //    sprite.U, sprite.V, sprite.Witdh, sprite.Height);
@@ -670,10 +671,10 @@ public class Renderer
     }
 
     //80057b40
-    private int GetFadeSettings(int index)
+    private SiImage GetAnimationImageByIndex(int index)
     {
         //return (((g_initialAnimationTable->animationSet).animationOffsets + index * 2 + -0x10) + 0xc) + 2;
-        return -1;
+        return null;
     }
 
     //80057c18
@@ -695,5 +696,32 @@ public class Renderer
         short textCoordDstY, int displayMode)
     {
         Debugger.Break();
+    }
+
+    //800506fc
+    public void InitFadeOverlaySprites(SPRT[] sprites)
+    {
+        SPRT sprite;
+        int i = 0;
+
+        do
+        {
+            /*
+            sprite = sprites[i];
+            sprite.r0 = '\x10';
+            sprite.g0 = '\0';
+            sprite.b0 = '\x10';
+            sprite.code = '\0';
+            sprite.tag = BYTE_800a58d8;
+            sprite.tag[1] = DAT_800a58d9;
+            sprite.tag[2] = StaticVariables.g_clutTable[8];
+
+            SetSprt(sprite);
+            SetSemiTrans(sprite, 0);
+            SetShadeTex(sprite, 1);
+            ApplyFadeTransform(sprites, 0, 0, i);
+            */
+            i = i + 1;
+        } while (i < 2);
     }
 }

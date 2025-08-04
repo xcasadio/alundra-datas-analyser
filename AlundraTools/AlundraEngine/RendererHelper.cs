@@ -51,12 +51,7 @@ public class RendererHelper
                 //render tile
                 var dx = x * StaticVariables.MapTileWidth - currentXPosition;
                 var dy = (y - tile.Height) * StaticVariables.MapTileHeight - currentYPosition;
-
-                if (y == 32)
-                {
-                    //Debugger.Break();
-                }
-
+                
                 if (tile.TileId != 0xffff)
                 {
                     if (dy > -StaticVariables.MapTileHeight 
@@ -226,12 +221,7 @@ public class RendererHelper
         for (var i = 0; i < StaticVariables.g_effectSlots.Length; i++)
         {
             var effect = StaticVariables.g_effectSlots[i];
-
-            if (effect.Id == 8)
-            {
-                //Debugger.Break();
-            }
-
+            
             if (effect.Status != 2 /*|| effect.AttachedEntity != null*/)
             {
                 continue;

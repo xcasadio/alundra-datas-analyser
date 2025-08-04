@@ -2621,8 +2621,10 @@ public class GameEngine
     {
         if ((StaticVariables.g_etcDisplayFlags & 4) == 0
             && spriteTableIndex - 0x100U < 0x100
-            && StaticVariables.g_entitySpriteNamesTable[spriteTableIndex * 4] != 0
-            && StaticVariables.g_entitySpriteNamesTable[spriteTableIndex * 4] != '\0')
+            && StaticVariables.g_entitySpriteNamesTable[spriteTableIndex] != null
+            //&& StaticVariables.g_entitySpriteNamesTable[spriteTableIndex * 4] != 0
+            //&& StaticVariables.g_entitySpriteNamesTable[spriteTableIndex * 4] != '\0'
+            )
         {
             StaticVariables.g_entitySpriteNameTableIndex = spriteTableIndex;
             Renderer.SetTransitionType(0xc);
@@ -2639,7 +2641,7 @@ public class GameEngine
             return 0;
         }
 
-        Debugger.Break();
+        //Debugger.Break();
 
         strings = AlundraMap.Strings;
         //tableBase = StaticVariables.g_etcAnimTable; //alundra string table
@@ -2739,32 +2741,42 @@ public class GameEngine
         StaticVariables.g_textCursor = 0;
         StaticVariables.g_textRenderStep = 0;
 
+        var yOffset = 0x20;
+
         // Prépare les primitives graphiques pour afficher le texte
         // (boucle pour remplir un groupe de SPRT avec SetSprt/SetSemiTrans/SetShadeTex)
-        // Cela crée un fond noir semi-transparent avec des blocs de 0x10x0xFF
+        // Cela crée un fond noir semi-transparent avec des blocs de 16*255 0x10 x 0xFF
         for (int group = 0; group < 3; ++group)
         {
             for (int y = 0; y < 2; ++y)
             {
-                for (int x = 0; x <= 0; ++x)
+                var yOffset2 = yOffset;
+
+                for (int x = 0; x < 1; ++x)
                 {
+                    Debug.WriteLine("PlayEtcAnimation: " + $"{0xff},{0x10},{0},{yOffset2}");
+
                     /*
-                       fadePrim = (SPRT *)((int)pPrimGroup + primitiveIndex + textLen);
+                       fadePrim = StaticVariables.g_primitiveGroup[primitiveIndex + textLen];
                        primOffset = (x + success) * 0x14 + textLen;
-                       *(undefined2 *)((int)g_bufferTextToDisplay + primOffset + 8) = 0xff;
-                       *(undefined2 *)((int)g_bufferTextToDisplay + primOffset + 10) = 0x10;
-                       *(undefined1 *)((int)g_bufferTextToDisplay + primOffset + 4) = 0;
-                       *(char *)((int)g_bufferTextToDisplay + primOffset + 5) = (char)yOffset2;
+                       StaticVariables.g_bufferTextToDisplay[primOffset + 8] = 0xff;
+                       StaticVariables.g_bufferTextToDisplay[primOffset + 10] = 0x10;
+                       StaticVariables.g_bufferTextToDisplay[primOffset + 4] = 0;
+                       StaticVariables.g_bufferTextToDisplay[primOffset + 5] = (char)yOffset2;
+
                        SetSprt(fadePrim);
                        SetSemiTrans(fadePrim,0);
                        SetShadeTex(fadePrim,1);
+
                        primitiveIndex = primitiveIndex + 0x14;
                        clutIndex = 8 - x;
                        x = x + 1;
-                       *(short *)((int)g_bufferTextToDisplay + primOffset + 6) = g_clutTable[clutIndex];
+                       StaticVariables.g_bufferTextToDisplay[primOffset + 6] = StaticVariables.g_clutTable[clutIndex];
                      */
                 }
             }
+
+            yOffset += 0x10;
         }
 
         // Efface une zone d’écran pour préparer l’affichage
@@ -2782,7 +2794,6 @@ public class GameEngine
         StaticVariables.g_etcAnimationMode = 3;
         StaticVariables.g_textLineStartX = 0;
         StaticVariables.g_textHoldState = 0;
-        //*(uint32_t*)0x80159cd4 = 0; // variable globale mystérieuse remise à 0
         Array.Clear(StaticVariables.g_textBuffer);
         SoundManager.PlaySoundEffect(6);
 
@@ -2822,5 +2833,33 @@ public class GameEngine
     public int FUN_8004248c()
     {
         return IsWarpInProgress() ? 1 : 0;
+    }
+
+    //80050ba8
+    public int InitializeAsyncOperation(string arg1, string arg2, ref int operationCounter)
+    {
+        StaticVariables.g_asyncCallbackArgs[0] = arg1;
+        StaticVariables.g_asyncCallbackArgs[1] = arg2;
+        StartAsyncCallback(AsyncCallbackHandler, 1, ref StaticVariables.g_asyncCallbackArgs);
+        StaticVariables.g_asyncOperationCounterPtr = operationCounter;
+        StaticVariables.g_asyncOperationCountdown = 0;
+        return 1;
+    }
+
+    //800505fc
+    private void StartAsyncCallback(Action<int> asyncCallbackHandler, short i, ref string[] args)
+    {
+        StaticVariables.g_asyncCallbackCounter = i;
+        StaticVariables.g_asyncCallback = asyncCallbackHandler;
+        StaticVariables.g_asyncCallbackArgs2 = args;
+        Renderer.InitFadeOverlaySprites(StaticVariables.g_sprites);
+        SoundManager.PlaySoundEffect(4);
+        Renderer.SetTransitionType(3);
+    }
+
+    //80050b98
+    void AsyncCallbackHandler(int counter)
+    {
+        StaticVariables.g_asyncOperationCounterPtr = counter;
     }
 }

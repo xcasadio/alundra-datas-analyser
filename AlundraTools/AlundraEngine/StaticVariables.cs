@@ -1891,33 +1891,7 @@ public static class StaticVariables
         0x00, 0x06, 0x10, 0xD0, 0xF0, 0x00, 0x07, 0x10, 0xE0, 0xF0, 0x00, 0x06, 0x10, 0xF0, 0xF0, 0x00,
     ];
     // 800C400C
-    public static byte[] g_entitySpriteNamesTable =
-    [
-        0x98, 0x00, (byte)'p', 0x00, 0x98, (byte)' ', 0x00, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0xA0, 0x00, (byte)'p', 0x00, 0xA0, (byte)' ', 0x00, 0x00, 0x08, 0x00, 0x08, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xA8, 0x00, (byte)'p', 0x00, 0xA8, (byte)' ', 0x00, 0x00,
-        0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xB0, 0x00, (byte)'p', 0x00,
-        0xB0, (byte)' ', 0x00, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0xB8, 0x00, (byte)'p', 0x00, 0xB8, (byte)' ', 0x00, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0xC0, 0x00, (byte)'p', 0x00, 0xC0, (byte)' ', 0x00, 0x00, 0x08, 0x00, 0x08, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC8, 0x00, (byte)'p', 0x00, (byte)'x', (byte)' ', 0x00, 0x00,
-        0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xD0, 0x00, (byte)'p', 0x00,
-        0x80, (byte)' ', 0x00, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0xD8, 0x00, (byte)'p', 0x00, 0xB8, (byte)' ', 0x00, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0xE0, 0x00, (byte)'p', 0x00, 0xC0, (byte)' ', 0x00, 0x00, 0x08, 0x00, 0x08, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xE8, 0x00, (byte)'p', 0x00, (byte)'x', (byte)' ', 0x00, 0x00,
-        0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x00, (byte)'p', 0x00,
-        0x80, 0x10, 0x00, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0xF8, 0x00, (byte)'p', 0x00, 0x88, (byte)' ', 0x00, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x01, (byte)'p', 0x00, 0x80, (byte)' ', 0x00, 0x00, 0x08, 0x00, 0x08, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x01, (byte)'p', 0x00, 0x98, (byte)' ', 0x00, 0x00,
-        0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x01, (byte)'p', 0x00,
-        0xF8, (byte)'0', 0x00, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x18, 0x01, (byte)'p', 0x00, 0xC8, (byte)' ', 0x00, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, (byte)' ', 0x01, (byte)'p', 0x00, 0xD0, (byte)' ', 0x00, 0x00, 0x08, 0x00, 0x08, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x28, 0x01, (byte)'p', 0x00, 0xD8, (byte)' ', 0x00, 0x00,
-        0x08, 0x00, 0x08, 0x00
-    ];
+    public static string?[] g_entitySpriteNamesTable = new string?[512];
 
     public static void Initialize(GameEngine gameEngine)
     {
@@ -1975,69 +1949,131 @@ public static class StaticVariables
             new CallBackInfo
             {
                 Flags = 0, Data = g_textTilesConfiguration2, X = 0x10, Y = 0x05, Width = 0x20, Height = 0x06,
-                InitializeFunc = gameEngine.UIManager.Func_80048304, RenderFunc = gameEngine.UIManager.Func_80046ef0, Arg = 0
+                InitializeFunc = gameEngine.UIManager.FUN_80048304, RenderFunc = gameEngine.UIManager.Func_80046ef0, Arg = 0
             },
             new CallBackInfo
             {
                 Flags = 0, Data = null, X = 0x00, Y = 0x00, Width = 0x28, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.Func_8004b770, RenderFunc = gameEngine.UIManager.Func_8004bea4, Arg = 0xFFFFFFFF
+                InitializeFunc = gameEngine.UIManager.FUN_8004b770, RenderFunc = gameEngine.UIManager.Func_8004bea4, Arg = 0xFFFFFFFF
             },
             new CallBackInfo
             {
                 Flags = 0, Data = g_textTilesConfiguration2, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.Func_80048304, RenderFunc = gameEngine.UIManager.Func_8004f628, Arg = 0
+                InitializeFunc = gameEngine.UIManager.FUN_80048304, RenderFunc = gameEngine.UIManager.Func_8004f628, Arg = 0
             },
             new CallBackInfo
             {
                 Flags = 0, Data = null, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04, InitializeFunc = null,
-                RenderFunc = gameEngine.UIManager.Func_800501fc, Arg = 0x05
+                RenderFunc = gameEngine.UIManager.FUN_800501fc, Arg = 0x05
             },
             new CallBackInfo
             {
                 Flags = 0, Data = null, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.Func_800537f0, RenderFunc = gameEngine.UIManager.Func_80053328, Arg = 0xFFFFFFFF
+                InitializeFunc = gameEngine.UIManager.FUN_800537f0, RenderFunc = gameEngine.UIManager.Func_80053328, Arg = 0xFFFFFFFF
             },
             new CallBackInfo
             {
                 Flags = 0, Data = g_textTilesConfiguration2, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.Func_80048304, RenderFunc = gameEngine.UIManager.Func_8004a8a8, Arg = 0
+                InitializeFunc = gameEngine.UIManager.FUN_80048304, RenderFunc = gameEngine.UIManager.Func_8004a8a8, Arg = 0
             },
             new CallBackInfo
             {
                 Flags = 0, Data = null, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04, InitializeFunc = null,
-                RenderFunc = gameEngine.UIManager.Fun_80054f1c, Arg = 0
+                RenderFunc = gameEngine.UIManager.FUN_80054f1c, Arg = 0
             },
             new CallBackInfo
             {
                 Flags = 0, Data = g_textTilesConfiguration2, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.Func_80048304, RenderFunc = null, Arg = 0
+                InitializeFunc = gameEngine.UIManager.FUN_80048304, RenderFunc = null, Arg = 0
             },
             new CallBackInfo
             {
                 Flags = 0, Data = g_textTilesConfiguration2, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.Func_80048304, RenderFunc = gameEngine.UIManager.Fun_8004afe8, Arg = 0
+                InitializeFunc = gameEngine.UIManager.FUN_80048304, RenderFunc = gameEngine.UIManager.Fun_8004afe8, Arg = 0
             },
             new CallBackInfo
             {
                 Flags = 0, Data = g_textTilesConfiguration2, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.Func_80048304, RenderFunc = gameEngine.UIManager.Fun_80050ec8, Arg = 0
+                InitializeFunc = gameEngine.UIManager.FUN_80048304, RenderFunc = gameEngine.UIManager.Fun_80050ec8, Arg = 0
             },
             new CallBackInfo
             {
                 Flags = 0, Data = null, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04, InitializeFunc = null,
-                RenderFunc = gameEngine.UIManager.Fun_800583ec, Arg = 0
+                RenderFunc = gameEngine.UIManager.FUN_800583ec, Arg = 0
             },
             new CallBackInfo
             {
                 Flags = 0, Data = g_textTilesConfiguration2, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.Func_80048304, RenderFunc = gameEngine.UIManager.Func_80051550, Arg = 0
+                InitializeFunc = gameEngine.UIManager.FUN_80048304, RenderFunc = gameEngine.UIManager.Func_80051550, Arg = 0
             },
             new CallBackInfo
             {
                 Flags = 0, Data = g_textTilesConfiguration, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.Fun_8005a268, RenderFunc = gameEngine.UIManager.Fun_8005a3e0, Arg = 0x05
+                InitializeFunc = gameEngine.UIManager.FUN_8005a268, RenderFunc = gameEngine.UIManager.Fun_8005a3e0, Arg = 0x05
             }
         ];
+
+        g_entitySpriteNamesTable[256] = "BIZEN";
+        g_entitySpriteNamesTable[257] = "TOSTIA";
+        g_entitySpriteNamesTable[258] = "TULAS";
+        g_entitySpriteNamesTable[259] = "ESTUS";
+        g_entitySpriteNamesTable[260] = "JESS";
+        g_entitySpriteNamesTable[261] = "RONAN";
+        g_entitySpriteNamesTable[262] = "SYBILL";
+        g_entitySpriteNamesTable[263] = "SEALA";
+        g_entitySpriteNamesTable[264] = "OLEN";
+        g_entitySpriteNamesTable[265] = "PUCK";
+        g_entitySpriteNamesTable[266] = "NUINDA";
+        g_entitySpriteNamesTable[267] = "ZULIM";
+        g_entitySpriteNamesTable[268] = "SEPTIMUS";
+        g_entitySpriteNamesTable[269] = "NASIA";
+        g_entitySpriteNamesTable[270] = "MORAUS";
+        g_entitySpriteNamesTable[271] = "BONAR";
+        g_entitySpriteNamesTable[272] = "MEIZAN";
+        g_entitySpriteNamesTable[273] = "KLINE";
+        g_entitySpriteNamesTable[274] = "GILES";
+        g_entitySpriteNamesTable[275] = "KISHA";
+        g_entitySpriteNamesTable[276] = "ELENE";
+        g_entitySpriteNamesTable[277] = "USTO";
+        g_entitySpriteNamesTable[278] = "BERGUS";
+        g_entitySpriteNamesTable[279] = "NESTUS";
+        g_entitySpriteNamesTable[280] = "MARTIS";
+        g_entitySpriteNamesTable[281] = "IRONY";
+        g_entitySpriteNamesTable[282] = "WENDEL";
+        g_entitySpriteNamesTable[283] = "YARD";
+        g_entitySpriteNamesTable[284] = "NOLAN";
+        g_entitySpriteNamesTable[285] = "NAVE";
+        g_entitySpriteNamesTable[286] = "KAIT";
+        g_entitySpriteNamesTable[287] = "LUTAS";
+        g_entitySpriteNamesTable[288] = "FEIN";
+        g_entitySpriteNamesTable[302] = "MEIN";
+
+        g_entitySpriteNamesTable[331] = "ELENE";
+        g_entitySpriteNamesTable[332] = "BONAR";
+        g_entitySpriteNamesTable[333] = "MORAUS";
+        g_entitySpriteNamesTable[334] = "NASIA";
+        g_entitySpriteNamesTable[339] = "SARA";
+        g_entitySpriteNamesTable[349] = "MEIN";
+        g_entitySpriteNamesTable[354] = "LARBUS";
+        g_entitySpriteNamesTable[366] = "ZIL";
+        g_entitySpriteNamesTable[372] = "STINA";
+        g_entitySpriteNamesTable[378] = "MIMING";
+        g_entitySpriteNamesTable[379] = "BONAR";
+        g_entitySpriteNamesTable[399] = "KeySmith";
+        g_entitySpriteNamesTable[400] = "MEIA";
+        g_entitySpriteNamesTable[411] = "NVE";
+        g_entitySpriteNamesTable[412] = "VIRDA";
+        g_entitySpriteNamesTable[416] = "KOUHEI";
+        g_entitySpriteNamesTable[417] = "MERICK";
+        g_entitySpriteNamesTable[418] = "MELZAS";
+        g_entitySpriteNamesTable[426] = "MELZAS";
+        g_entitySpriteNamesTable[432] = "WILDA";
+        g_entitySpriteNamesTable[444] = "LARS";
+        g_entitySpriteNamesTable[446] = "RONAN";
+        g_entitySpriteNamesTable[493] = "NILUDE";
+        g_entitySpriteNamesTable[495] = "NILUDE";
+        g_entitySpriteNamesTable[506] = "ZAZAN";
+        g_entitySpriteNamesTable[509] = "ZOLDIA";
     }
 
     //
@@ -3160,9 +3196,9 @@ public static class StaticVariables
     public static int g_textRenderStep; // 80149BE4
     public static int[] g_textLineWidth = new int[3]; // 80149BE8
     public static int DAT_80149bec; // 80149BEC
-    public static int g_primitiveGroup; // 80149BF8
+    public static SPRT[] g_primitiveGroup = new SPRT[6]; // 80149BF8
     public static short[] g_bufferTextToDisplay = new short[60]; // 80149C00
-    public static int g_fadePrimitive; // 80149C78
+    public static SPRT[] g_fadePrimitive = new SPRT[2]; // 80149C78
     public static short DAT_80149c80; // 80149C80
     public static short DAT_80149c82; // 80149C82
     public static byte DAT_80149c84; // 80149C84
@@ -3192,6 +3228,7 @@ public static class StaticVariables
     public static int g_currentVoiceSfxId; // 80149CDC
     public static int g_textLineStartX; // 80149CE0
     public static char[] g_textBuffer = new char[2048]; // 80149CE8
+    public static char[] CHAR_ARRAY_8014a4e8 = new char[2048]; // 8014a4e8
     public static byte[] g_bufferFONT3_tim = new byte[11000]; // 8014ACE8
     public static byte BYTE_80150000; // 80150000
     public static int g_warpFlags_2; // 80152F08
@@ -3268,8 +3305,7 @@ public static class StaticVariables
     public static char g_soundBinNamePart3; // 8017E3E8
     public static char g_soundBinNamePart4; // 8017E3EC
     public static int g_asyncOperationCounterPtr; // 8017E3F0
-    public static int g_asyncCallbackArg1; // 8017E3F8
-    public static int g_asyncCallbackArg2; // 8017E3FC
+    public static string[] g_asyncCallbackArgs = new string[2]; // 8017E3F8
     public static int DAT_8017e400; // 8017E400
     public static SPRT SPRT_8017e410; // 8017E410
     public static SPRT SPRT_8017e438; // 8017E438
@@ -3289,13 +3325,11 @@ public static class StaticVariables
     public static int INT_8017e63c; // 8017E63C
     public static SPRT[] g_sprites = new SPRT[2]; // 8017E640
     public static int g_asyncOperationCountdown; // 8017E670
-    public static short DAT_8017e8a4; // 8017E8A4
-    public static int DAT_8017e8a8; // 8017E8A8
-    public static byte DAT_8017e8ac; // 8017E8AC
-    public static byte DAT_8017e8ad; // 8017E8AD
-    public static byte DAT_8017e8ae; // 8017E8AE
-    public static byte DAT_8017e8b3; // 8017E8B3
-    public static int DAT_8017e8bc; // 8017E8BC
+    public static SPRT[] SPRT_ARRAY_8017e674 = new SPRT[28]; // 8017e674
+    public static short g_asyncCallbackCounter; // 8017E8A4
+    public static Action<int> g_asyncCallback; // 8017E8A8
+    public static string[] g_asyncCallbackArgs2 = new string[2]; // 8017E8AC
+    public static TextToDisplay g_textToDisplay3 = new TextToDisplay(); // 8017E8BC
     public static int DAT_8017e8c0; // 8017E8C0
     public static int DAT_8017e8c4; // 8017E8C4
     public static short DAT_8017e8c8; // 8017E8C8
