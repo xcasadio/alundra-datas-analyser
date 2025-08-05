@@ -1,6 +1,8 @@
-﻿namespace AlundraEngine.Gameplay;
+﻿using System;
 
-public class SPRT 
+namespace AlundraEngine.Gameplay;
+
+public class SPRT
 {
     public ulong tag;
     public byte r0;

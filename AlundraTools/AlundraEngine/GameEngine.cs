@@ -1414,7 +1414,7 @@ public class GameEngine
             StaticVariables.g_warpDelayFrames == 0 &&
             (StaticVariables.g_padState1.ButtonsHold & PadState.Select) == 0 &&
             StaticVariables.g_globalTransitionState == 0 &&
-            TriggerDebugZone() == 0)
+            DisplayInventory() == 0)
         {
             StaticVariables.g_isGameEnding = 1;
         }
@@ -1429,57 +1429,78 @@ public class GameEngine
         }
     }
 
-    private int TriggerDebugZone()
+    //80055570
+    private int DisplayInventory()
     {
-        //uint isSpecialWarpTriggered;
-        //
-        //if (StaticVariables.g_forbiddenWarpFlag == 0)
-        //{
-        //    isSpecialWarpTriggered = CheckSpecialWarpCondition(0);
-        //    if (isSpecialWarpTriggered != 0)
-        //    {
-        //        return 1;
-        //    }
-        //
-        //    isSpecialWarpTriggered = CheckSpecialWarpCondition(0xb);
-        //    if (isSpecialWarpTriggered != 0)
-        //    {
-        //        return 1;
-        //    }
-        //
-        //    if (StaticVariables.g_cdIsReady == 0)
-        //    {
-        //        if ((StaticVariables.g_playerTileAttribute & 0x2000) != 0)
-        //        {
-        //            TriggerWarpTypeA();
-        //            return 1;
-        //        }
-        //        if ((StaticVariables.g_playerTileAttribute & 0x8000) != 0)
-        //        {
-        //            TriggerWarpTypeB();
-        //            return 0;
-        //        }
-        //        if ((StaticVariables.g_playerTileAttribute & 0x1000) != 0)
-        //        {
-        //            StartFadeOut();
-        //            return 1;
-        //        }
-        //        if ((StaticVariables.g_playerTileAttribute & 0x4000) != 0)
-        //        {
-        //            TriggerWarpTypeC();
-        //            return 1;
-        //        }
-        //    }
-        //
-        //    InitializeFrame();
-        //    SetTransitionType(6);
-        //    GetFadeSettings(0);
-        //    InitCameraTransition();
-        //    DisplayWarpNames();
-        //    PlaySoundEffect(4);
-        //}
+        uint isSpecialWarpTriggered;
+        
+        if (StaticVariables.g_forbiddenWarpFlag == 0)
+        {
+            isSpecialWarpTriggered = CheckSpecialWarpCondition(0);
+            if (isSpecialWarpTriggered != 0)
+            {
+                return 1;
+            }
+        
+            isSpecialWarpTriggered = CheckSpecialWarpCondition(0xb);
+            if (isSpecialWarpTriggered != 0)
+            {
+                return 1;
+            }
+        
+            if (StaticVariables.g_cdIsReady == 0)
+            {
+                if ((StaticVariables.g_padState1.ButtonsHold & PadState.Right) != 0)
+                {
+                    TriggerWarpTypeA();
+                    return 1;
+                }
+                if ((StaticVariables.g_padState1.ButtonsHold & PadState.Left) != 0)
+                {
+                    //TriggerWarpTypeB();
+                    return 0;
+                }
+                if ((StaticVariables.g_padState1.ButtonsHold & PadState.Up) != 0)
+                {
+                    //StartFadeOut();
+                    return 1;
+                }
+                if ((StaticVariables.g_padState1.ButtonsHold & PadState.Down) != 0)
+                {
+                    //TriggerWarpTypeC();
+                    return 1;
+                }
+            }
+
+            Renderer.InitializeFrame();
+            Renderer.SetTransitionType(6);
+            var sprite = Renderer.GetAnimationImageByIndex(0);
+            //InitCameraTransition(-player.PosX, -player.PosY, -player.PosZ,
+            //    -StaticVariables.g_cameraScrollingX, -StaticVariables.g_cameraScrollingY,
+            //    sprite.U, sprite.V, sprite.Witdh, sprite.Height);
+            //DisplayWarpNames();
+            SoundManager.PlaySoundEffect(4);
+        }
 
         return 1;
+    }
+
+    //80047c8c
+    private uint CheckSpecialWarpCondition(int index)
+    {
+        return (uint)StaticVariables.g_callbackTable[index].Flags & 1;
+    }
+
+    //80051f1c
+    private void TriggerWarpTypeA()
+    {
+        StaticVariables.DAT_8017e8d8 = 0;
+        StaticVariables.DAT_8017e990 = 0;
+        StaticVariables.DAT_8017e9ac = 0;
+        StaticVariables.DAT_8017e998 = 0x4f824f82;
+        StaticVariables.DAT_8017e99c = 0x4f82;
+        StaticVariables.DAT_8017e99e = 0;
+        Renderer.SetTransitionType(0xb);
     }
 
     private void UpdateWorld()
@@ -1733,7 +1754,7 @@ public class GameEngine
         spawnedEntity.ItemDelay = delay;
         spawnedEntity.ItemState = 0;
         spawnedEntity.AIValues[0] = (short)(entity.ContentsGameFlag & 0xFFFF);
-        spawnedEntity.AIValues[1] = (short)((entity.ContentsGameFlag >> 16) & 0xFFFF); 
+        spawnedEntity.AIValues[1] = (short)((entity.ContentsGameFlag >> 16) & 0xFFFF);
         spawnedEntity.AIValues[2] = 0;
         spawnedEntity.AIValues[3] = 10;
 
@@ -1744,8 +1765,8 @@ public class GameEngine
     //80032a00
     public bool CanDropMpItems(uint itemId)
     {
-        if (itemId == 0x26 
-            || itemId == 0x51 
+        if (itemId == 0x26
+            || itemId == 0x51
             || itemId == 0x52)
         {
             return PlayerManager.GetPlayerMpMax() == 0;
@@ -2546,7 +2567,6 @@ public class GameEngine
         short textureId1, short textureId2)
     {
         short puVar1;
-        //int** poly;
         int i;
         byte uvBottom;
         byte uvRight;
@@ -2557,7 +2577,6 @@ public class GameEngine
         {
             i = 0;
             uvRight = (byte)(uvX + width);
-            //poly = &StaticVariables.g_cameraTransitionPolygons;
             uvBottom = (byte)(uvY + height);
             StaticVariables.g_cameraTransitionDstYPtr = dstYPtr;
             StaticVariables.g_cameraTransitionState = 5;
@@ -2567,36 +2586,39 @@ public class GameEngine
             StaticVariables.g_cameraTransitionDstXPtr = dstXPtr;
 
             Debugger.Break();
-            /*
+            
             do
             {
-                SetPolyFT4((POLY_FT4*)poly);
-                ((POLY_FT4*)poly)->r0 = 0xff;
-                ((POLY_FT4*)poly)->g0 = 0xff;
-                ((POLY_FT4*)poly)->b0 = 0xff;
-                ((POLY_FT4*)poly)->$2 = uvY;
-                ((POLY_FT4*)poly)->u1 = uvRight;
-                ((POLY_FT4*)poly)->$3 = uvY;
-                ((POLY_FT4*)poly)->v2 = uvBottom;
-                ((POLY_FT4*)poly)->u3 = uvRight;
-                ((POLY_FT4*)poly)->v3 = uvBottom;
-                ((POLY_FT4*)poly)->x0 = 100;
-                ((POLY_FT4*)poly)->y0 = 100;
-                ((POLY_FT4*)poly)->x1 = width + 100;
-                ((POLY_FT4*)poly)->y1 = 100;
-                ((POLY_FT4*)poly)->x2 = 100;
-                ((POLY_FT4*)poly)->u0 = uvX;
-                ((POLY_FT4*)poly)->u2 = uvX;
-                ((POLY_FT4*)poly)->x3 = width + 100;
-                ((POLY_FT4*)poly)->y2 = height + 100;
-                ((POLY_FT4*)poly)->y3 = height + 100;
-                poly = (int**)((int)poly + 0x28);
-                puVar1[9] = textureId1;
-                puVar1[0xd] = textureId2;
-                puVar1 = puVar1 + 0x14;
+                var poly = StaticVariables.g_spriteInventoryAlundraPotrait[i];
+
+                //SetPolyFT4((POLY_FT4*)poly);
+                poly.r0 = 0xff;
+                poly.g0 = 0xff;
+                poly.b0 = 0xff;
+                poly._2 = uvY;
+                poly.u1 = uvRight;
+                poly._3 = uvY;
+                poly.v2 = uvBottom;
+                poly.u3 = uvRight;
+                poly.v3 = uvBottom;
+                poly.x0 = 100;
+                poly.y0 = 100;
+                poly.x1 = (short)(width + 100);
+                poly.y1 = 100;
+                poly.x2 = 100;
+                poly.u0 = uvX;
+                poly.u2 = uvX;
+                poly.x3 = (short)(width + 100);
+                poly.y2 = (short)(height + 100);
+                poly.y3 = (short)(height + 100);
+                
+                //puVar1[9] = textureId1;
+                //puVar1[0xd] = textureId2;
+                //puVar1 = puVar1 + 0x14;
+
                 i = i + 1;
             } while (i < 2);
-            */
+            
 
             StaticVariables.g_cameraDeltaX = -(StaticVariables.g_cameraTransitionSrcX + 2)
             - StaticVariables.g_cameraTransitionDstXPtr;
@@ -2645,7 +2667,7 @@ public class GameEngine
 
         strings = AlundraMap.Strings;
         //tableBase = StaticVariables.g_etcAnimTable; //alundra string table
-        
+
         if ((textId & 0x80) != 0)
         {
             strings = CurrentMap.Strings;
@@ -2653,7 +2675,7 @@ public class GameEngine
         }
 
         var text = strings[(textId & 0x7f)];
-        
+
         SetupEtcAnimation();
         PlayEtcAnimation(text, animationMode);
 
@@ -2741,43 +2763,55 @@ public class GameEngine
         StaticVariables.g_textCursor = 0;
         StaticVariables.g_textRenderStep = 0;
 
-        var yOffset = 0x20;
+        byte yOffset = 0x20;
 
-        // Prépare les primitives graphiques pour afficher le texte
-        // (boucle pour remplir un groupe de SPRT avec SetSprt/SetSemiTrans/SetShadeTex)
-        // Cela crée un fond noir semi-transparent avec des blocs de 16*255 0x10 x 0xFF
+        // 3 lines to display the text in the dialog box
         for (int group = 0; group < 3; ++group)
         {
             for (int y = 0; y < 2; ++y)
             {
-                var yOffset2 = yOffset;
-
                 for (int x = 0; x < 1; ++x)
                 {
-                    Debug.WriteLine("PlayEtcAnimation: " + $"{0xff},{0x10},{0},{yOffset2}");
+                    //var sprt = StaticVariables.g_textFullLinesSprites[x + y * 2];
+                    var index = x + y + group;
 
-                    /*
-                       fadePrim = StaticVariables.g_primitiveGroup[primitiveIndex + textLen];
-                       primOffset = (x + success) * 0x14 + textLen;
-                       StaticVariables.g_bufferTextToDisplay[primOffset + 8] = 0xff;
-                       StaticVariables.g_bufferTextToDisplay[primOffset + 10] = 0x10;
-                       StaticVariables.g_bufferTextToDisplay[primOffset + 4] = 0;
-                       StaticVariables.g_bufferTextToDisplay[primOffset + 5] = (char)yOffset2;
+                    StaticVariables.g_textFullLinesSprites[index].w = 0xff;
+                    StaticVariables.g_textFullLinesSprites[index].h = 0x10;
+                    StaticVariables.g_textFullLinesSprites[index].u0 = 0;
+                    StaticVariables.g_textFullLinesSprites[index].v0 = yOffset;
 
-                       SetSprt(fadePrim);
-                       SetSemiTrans(fadePrim,0);
-                       SetShadeTex(fadePrim,1);
+                    //SetSprt(sprt);
+                    //SetSemiTrans(sprt, 0);
+                    //SetShadeTex(sprt, 1);
 
-                       primitiveIndex = primitiveIndex + 0x14;
-                       clutIndex = 8 - x;
-                       x = x + 1;
-                       StaticVariables.g_bufferTextToDisplay[primOffset + 6] = StaticVariables.g_clutTable[clutIndex];
-                     */
+                    var clutIndex = 8 - x;
+                    x = x + 1;
+                    StaticVariables.g_textFullLinesSprites[index].clut = StaticVariables.g_clutTable[clutIndex];
                 }
             }
 
             yOffset += 0x10;
         }
+
+        //dialog cursor
+        var i = 0;
+
+        do
+        {
+            StaticVariables.g_cursorTextSprites[i].w = 0x10;
+            StaticVariables.g_cursorTextSprites[i].h = 0x10;
+            StaticVariables.g_cursorTextSprites[i].u0 = StaticVariables.g_dialogCursorTextureU;
+            StaticVariables.g_cursorTextSprites[i].v0 = StaticVariables.g_dialogCursorTextureV;
+            StaticVariables.g_cursorTextSprites[i].x0 = 0;
+            StaticVariables.g_cursorTextSprites[i].y0 = 0;
+            StaticVariables.g_cursorTextSprites[i].clut = StaticVariables.g_clutTable[8];
+
+            //SetSprt(StaticVariables.g_cursorTextSprites[i]);
+            //SetSemiTrans(StaticVariables.g_cursorTextSprites[i], 0);
+            //SetShadeTex(StaticVariables.g_cursorTextSprites[i], 1);
+
+            i = i + 1;
+        } while (i < 2);
 
         // Efface une zone d’écran pour préparer l’affichage
         //RECT clearRect;

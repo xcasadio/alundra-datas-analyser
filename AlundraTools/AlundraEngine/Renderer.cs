@@ -564,7 +564,7 @@ public class Renderer
     }
 
     //8004bd9c
-    private void InitializeFrame()
+    public void InitializeFrame()
     {
         if ((StaticVariables.g_drawFrameFlags & 3U) == 1)
         {
@@ -662,7 +662,7 @@ public class Renderer
         InitializeFrame();
         SetTransitionType(4);
         Debugger.Break();
-        //var sprite = GetAnimationImageByIndex(0);
+        var sprite = GetAnimationImageByIndex(0);
         //InitCameraTransition(-player.PosX, -player.PosY, -player.PosZ,
         //    -StaticVariables.g_cameraScrollingX, -StaticVariables.g_cameraScrollingY,
         //    sprite.U, sprite.V, sprite.Witdh, sprite.Height);
@@ -671,9 +671,9 @@ public class Renderer
     }
 
     //80057b40
-    private SiImage GetAnimationImageByIndex(int index)
+    public SiImage GetAnimationImageByIndex(int index)
     {
-        //return (((g_initialAnimationTable->animationSet).animationOffsets + index * 2 + -0x10) + 0xc) + 2;
+        //return (((g_initialAnimationTable.animationSet).animationOffsets + index * 2 + -0x10) + 0xc) + 2;
         return null;
     }
 
@@ -692,8 +692,8 @@ public class Renderer
     //800472d0
     public void DisplayIconName(SPRT sprite, 
         char[] text, int textLength, 
-        short textCoordDstX, 
-        short textCoordDstY, int displayMode)
+        short textCoordDstX, short textCoordDstY, 
+        int displayMode)
     {
         Debugger.Break();
     }
@@ -701,27 +701,87 @@ public class Renderer
     //800506fc
     public void InitFadeOverlaySprites(SPRT[] sprites)
     {
-        SPRT sprite;
         int i = 0;
 
         do
         {
-            /*
-            sprite = sprites[i];
-            sprite.r0 = '\x10';
-            sprite.g0 = '\0';
-            sprite.b0 = '\x10';
-            sprite.code = '\0';
-            sprite.tag = BYTE_800a58d8;
-            sprite.tag[1] = DAT_800a58d9;
-            sprite.tag[2] = StaticVariables.g_clutTable[8];
+            var sprite = sprites[i];
+            sprite.x0 = 0x10;
+            sprite.y0 = 0;
+            sprite.w = 0x10;
+            sprite.h = 0;
+            sprite.u0 = StaticVariables.g_dialogCursorTextureU;
+            sprite.v0 = StaticVariables.g_dialogCursorTextureV;
+            sprite.clut = StaticVariables.g_clutTable[8];
 
-            SetSprt(sprite);
-            SetSemiTrans(sprite, 0);
-            SetShadeTex(sprite, 1);
+            //SetSprt(sprite);
+            //SetSemiTrans(sprite, 0);
+            //SetShadeTex(sprite, 1);
             ApplyFadeTransform(sprites, 0, 0, i);
-            */
+            
             i = i + 1;
         } while (i < 2);
+    }
+
+    //800506dc
+    private void ApplyFadeTransform(SPRT[] sprites, short width, short height, int index)
+    {
+        sprites[index].w = width;
+        sprites[index].h = height;
+    }
+
+    //80054a34
+    public void InitializeInventorySpriteNumberOf()
+    {
+        
+    }
+
+    //800548a4
+    void FUN_800548a4(TextTilesConfiguration textTilesConfig)
+    {
+        int index;
+        int col;
+        int row;
+        TextTilesConfiguration tileConfig;
+        int mode;
+        short w;
+
+        mode = 0;
+        tileConfig = textTilesConfig;
+
+        do
+        {
+            row = 0;
+
+            if (0 < textTilesConfig.Height)
+            {
+                do
+                {
+                    col = 0;
+
+                    if (0 < textTilesConfig.Width)
+                    {
+                        do
+                        {
+                            var sprites = mode == 0 ? tileConfig.SpritesA : tileConfig.SpritesB;
+
+                            index = row * textTilesConfig.Width + col;
+
+                            //SetSprt(sprites[index]);
+                            //SetSemiTrans(sprites[index], 0);
+                            //SetShadeTex(sprites[index], 1);
+
+                            sprites[index].clut = StaticVariables.g_clutTable[sprites[index].clut];
+
+                            col = col + 1;
+                        } while (col < textTilesConfig.Width);
+                    }
+
+                    row = row + 1;
+                } while (row < textTilesConfig.Height);
+            }
+
+            mode = mode + 1;
+        } while (mode < 2);
     }
 }

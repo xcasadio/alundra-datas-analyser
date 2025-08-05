@@ -152,7 +152,7 @@ public class UIManager
         short sVar10;
         int iVar11;
         short sVar12;
-        int iVar13;
+        int line;
         int iVar14;
         //RECT rect;
 
@@ -200,7 +200,7 @@ public class UIManager
         StaticVariables.g_textChoiceIndex += -1;
 
         LAB_80045aa0:
-        iVar13 = 0;
+        line = 0;
         sVar12 = 0;
 
         do
@@ -209,70 +209,59 @@ public class UIManager
             iVar11 = 0;
             iVar8 = 0;
             sVar10 = 0;
-            iVar3 = (iVar5 + iVar13) % 3;
+            iVar3 = (iVar5 + line) % 3;
             iVar9 = iVar3 * 0x28;
 
             do
             {
+                if (StaticVariables.g_textNextChoice == 0)
+                {
+                    Debugger.Break();
+                    //trap(0x1c00);
+                }
+
+                index = (StaticVariables.g_textNextChoice - StaticVariables.g_textChoiceIndex) * 0x10;
+
+                if (StaticVariables.g_textNextChoice == -1 && index == -0x80000000)
+                {
+                    Debugger.Break();
+                    //trap(0x1800);
+                }
+
+                iVar14 = index / StaticVariables.g_textNextChoice;
+                index = iVar8 + iVar9 /*+ uVar2 * 0x14*/;
+                var sprite = StaticVariables.g_textFullLinesSprites[index];
+
                 if (StaticVariables.g_textLineWidth[iVar3] == 0)
                 {
-                    index = (StaticVariables.g_textNextChoice - StaticVariables.g_textChoiceIndex) * 0x10;
-                    //iVar14 = index / StaticVariables.g_textNextChoice;
-
-                    if (StaticVariables.g_textNextChoice == 0)
-                    {
-                        Debugger.Break();
-                        //trap(0x1c00);
-                    }
-
-                    if (StaticVariables.g_textNextChoice == -1 && index == -0x80000000)
-                    {
-                        Debugger.Break();
-                        //trap(0x1800);
-                    }
-
-                    //index = iVar8 + iVar9 + uVar2 * 0x14;
-                    //StaticVariables.g_bufferTextToDisplay[index] = callbackInfo.Data.X + callbackInfo.Data.Width;
-                    //StaticVariables.g_bufferTextToDisplay[index + 1] = (*(short*)(callbackInfo._0 + 10) + *(short*)(*(int*)(callbackInfo._0 + 4) + 2) + sVar10 + sVar12) - (short)iVar14;
+                    sprite.x0 = (short)(callbackInfo.Data.X + callbackInfo.Data.Width);
+                    sprite.y0 = (short)(callbackInfo.Data.Y + callbackInfo.Data.Height + sVar10 + sVar12 - iVar14);
                 }
                 else
                 {
-                    index = (StaticVariables.g_textNextChoice - StaticVariables.g_textChoiceIndex) * 0x10;
-                    //iVar14 = index / StaticVariables.g_textNextChoice;
-
-                    if (StaticVariables.g_textNextChoice == 0)
-                    {
-                        Debugger.Break();
-                        //trap(0x1c00);
-                    }
-
-                    if (StaticVariables.g_textNextChoice == -1 && index == -0x80000000)
-                    {
-                        Debugger.Break();
-                        //trap(0x1800);
-                    }
-
-                    //psVar4 = *(short**)(callbackInfo._0 + 4);
-                    //index = iVar8 + iVar9 + uVar2 * 0x14;
-                    //StaticVariables.g_bufferTextToDisplay[index] = *psVar4 + (short)((psVar4[2] * 8 - StaticVariables.g_textLineWidth[iVar3]) / 2);
-                    //StaticVariables.g_bufferTextToDisplay[index + 1] = (*(short*)(callbackInfo._0 + 10) + *(short*)(*(int*)(callbackInfo._0 + 4) + 2) + sVar10 + sVar12) - (short)iVar14;
+                    sprite.x0 = (short)(callbackInfo.Data.X + (callbackInfo.Data.Width * 8 - StaticVariables.g_textLineWidth[iVar3]) / 2);
+                    sprite.y0 = (short)(callbackInfo.Data.Y + callbackInfo.Data.Height + sVar10 + sVar12 - iVar14);
                 }
 
-                //iVar14 = iVar8 + iVar9 + uVar2 * 0x14;
-                //index = iVar8 + iVar9 + uVar2 * 0x14;
+                sprite.u0 = (byte)(line * 0x40);
+                sprite.v0 = 0xD0;
+                sprite.w = 0x10;
+                sprite.h = 0x10;
+                sprite.clut = StaticVariables.g_clutTable[8];
+
                 iVar8 += 0x14;
                 sVar10 += -1;
-                //puVar7 = (uint*)((int)&StaticVariables.g_primitiveGroup + iVar14);
+                //puVar7 = (uint*)((int)&StaticVariables.g_textFullLinesSprites + iVar14);
                 //puVar6 = (uint*)(&DAT_80146f60 + uVar2 * 0x28);
                 iVar11 += 1;
                 /* Probable PsyQ macro: addPrim(). */
                 //*puVar7 = *puVar7 & 0xff000000 | *puVar6 & 0xffffff;
-                //*puVar6 = *puVar6 & 0xff000000 | (int)StaticVariables.g_primitiveGroup[index] & 0xffffffU;
+                //*puVar6 = *puVar6 & 0xff000000 | (int)StaticVariables.g_textFullLinesSprites[index] & 0xffffffU;
             } while (iVar11 < 1);
 
-            iVar13 += 1;
+            line += 1;
             sVar12 += 0x10;
-        } while (iVar13 < 3);
+        } while (line < 3);
 
         //puVar6 = (uint*)(&DAT_80153010 + StaticVariables.g_drawModes[0x14].tag * 0xc);
         //puVar7 = (uint*)(&DAT_80146f60 + StaticVariables.g_drawModes[0x14].tag * 0x28);
@@ -406,19 +395,19 @@ public class UIManager
                     //SetSprt(sprites);
                     //SetSemiTrans(sprites, 0);
                     //SetShadeTex(sprites, 1);
-                    iVar6 = iVar6 + 0x3c;
-                    iVar5 = iVar5 + 0x3c;
-                    k = k + 1;
+                    iVar6 += 0x3c;
+                    iVar5 += 0x3c;
+                    k += 1;
 
                 } while (k < 1);
 
-                tileConfig = tileConfig + 0x3c;
-                i = i + 1;
+                tileConfig += 0x3c;
+                i += 1;
 
             } while (i < 2);
 
-            local_2c = local_2c + 0x78;
-            j = j + 1;
+            local_2c += 0x78;
+            j += 1;
 
         } while (j < 2);
 
@@ -474,10 +463,273 @@ public class UIManager
         Debugger.Break();
     }
 
-    //80054f1c
+    //80054f1c Inventory display
     public void FUN_80054f1c(CallBackInfo callBackInfo)
     {
-        Debugger.Break();
+        StaticVariables.g_forbiddenWarpFlag = 5;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].mode = 2;
+        StaticVariables.DAT_8017feec = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].speed = 0xf;
+        StaticVariables.g_playerControlFlags = StaticVariables.g_playerControlFlags | 8;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].x = (short)~(StaticVariables.TextTilesConfiguration_800b58a8.Width << 3);
+        
+        if (StaticVariables.TextTilesConfiguration_800b58a8.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].y =
+                 (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y + StaticVariables.TextTilesConfiguration_800b58a8.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].y = StaticVariables.TextTilesConfiguration_800b58a8.Y;
+        }
+        
+        if (StaticVariables.TextTilesConfiguration_800b58a8.X < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].startX =
+                 (short)(StaticVariables.TextTilesConfiguration_800b58a8.X + StaticVariables.TextTilesConfiguration_800b58a8.Width * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].startX = StaticVariables.TextTilesConfiguration_800b58a8.X;
+        }
+        
+        if (StaticVariables.TextTilesConfiguration_800b58a8.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].startY =
+                 (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y + StaticVariables.TextTilesConfiguration_800b58a8.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].startY = StaticVariables.TextTilesConfiguration_800b58a8.Y;
+        }
+        
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].speed = 0xf;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].x = ~(StaticVariables.TextTilesConfiguration_800b8360.width << 3);
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].originX = StaticVariables.TextTilesConfiguration_800b58a8.X;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].originY = StaticVariables.TextTilesConfiguration_800b58a8.Y;
+        
+        if (StaticVariables.TextTilesConfiguration_800b8360.y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].y =
+                 StaticVariables.TextTilesConfiguration_800b8360.y + StaticVariables.TextTilesConfiguration_800b8360.height * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].y = StaticVariables.TextTilesConfiguration_800b8360.y;
+        }
+        
+        if (StaticVariables.TextTilesConfiguration_800b8360.x < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].startX =
+                 StaticVariables.TextTilesConfiguration_800b8360.x + StaticVariables.TextTilesConfiguration_800b8360.width * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].startX = StaticVariables.TextTilesConfiguration_800b8360.x;
+        }
+        
+        if (StaticVariables.TextTilesConfiguration_800b8360.y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].startY =
+                 StaticVariables.TextTilesConfiguration_800b8360.y + StaticVariables.TextTilesConfiguration_800b8360.height * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].startY = StaticVariables.TextTilesConfiguration_800b8360.y;
+        }
+        
+        StaticVariables.TextToDisplay_ARRAY_8017f920[2].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[2].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[2].speed = 0xf;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[2].x = 0x140;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].originX = StaticVariables.TextTilesConfiguration_800b8360.x;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].originY = StaticVariables.TextTilesConfiguration_800b8360.y;
+        
+        if (StaticVariables.TextTilesConfiguration_800b8eb0.y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].y =
+                 StaticVariables.TextTilesConfiguration_800b8eb0.y + StaticVariables.TextTilesConfiguration_800b8eb0.height * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].y = StaticVariables.TextTilesConfiguration_800b8eb0.y;
+        }
+        
+        if (StaticVariables.TextTilesConfiguration_800b8eb0.x < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].startX =
+                 StaticVariables.TextTilesConfiguration_800b8eb0.x + StaticVariables.TextTilesConfiguration_800b8eb0.width * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].startX = StaticVariables.TextTilesConfiguration_800b8eb0.x;
+        }
+        
+        if (StaticVariables.TextTilesConfiguration_800b8eb0.y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].startY =
+                 StaticVariables.TextTilesConfiguration_800b8eb0.y + StaticVariables.TextTilesConfiguration_800b8eb0.height * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].startY = StaticVariables.TextTilesConfiguration_800b8eb0.y;
+        }
+        
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].speed = 0xf;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].x = 0x140;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[2].originX = StaticVariables.TextTilesConfiguration_800b8eb0.x;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[2].originY = StaticVariables.TextTilesConfiguration_800b8eb0.y;
+        
+        if (StaticVariables.TextTilesConfiguration_800b9a00.y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].y =
+                 StaticVariables.TextTilesConfiguration_800b9a00.y + StaticVariables.TextTilesConfiguration_800b9a00.height * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].y = StaticVariables.TextTilesConfiguration_800b9a00.y;
+        }
+        
+        if (StaticVariables.TextTilesConfiguration_800b9a00.x < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].startX =
+                 StaticVariables.TextTilesConfiguration_800b9a00.x + StaticVariables.TextTilesConfiguration_800b9a00.width * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].startX = StaticVariables.TextTilesConfiguration_800b9a00.x;
+        }
+        
+        if (StaticVariables.TextTilesConfiguration_800b9a00.y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].startY =
+                 StaticVariables.TextTilesConfiguration_800b9a00.y + StaticVariables.TextTilesConfiguration_800b9a00.height * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].startY = StaticVariables.TextTilesConfiguration_800b9a00.y;
+        }
+        
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].speed = 0xf;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].x = 0x140;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].originX = StaticVariables.TextTilesConfiguration_800b9a00.x;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].originY = StaticVariables.TextTilesConfiguration_800b9a00.y;
+        
+        if (StaticVariables.TextTilesConfiguration_800b9a10.y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].y =
+                 StaticVariables.TextTilesConfiguration_800b9a10.y + StaticVariables.TextTilesConfiguration_800b9a10.height * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].y = StaticVariables.TextTilesConfiguration_800b9a10.y;
+        }
+        
+        if (StaticVariables.TextTilesConfiguration_800b9a10.x < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].startX =
+                 StaticVariables.TextTilesConfiguration_800b9a10.x + StaticVariables.TextTilesConfiguration_800b9a10.width * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].startX = StaticVariables.TextTilesConfiguration_800b9a10.x;
+        }
+        
+        if (StaticVariables.TextTilesConfiguration_800b9a10.y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].startY =
+                 StaticVariables.TextTilesConfiguration_800b9a10.y + StaticVariables.TextTilesConfiguration_800b9a10.height * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].startY = StaticVariables.TextTilesConfiguration_800b9a10.y;
+        }
+        
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].speed = 0xf;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].x = 0x140;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].originX = StaticVariables.TextTilesConfiguration_800b9a10.x;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].originY = StaticVariables.TextTilesConfiguration_800b9a10.y;
+        
+        if (StaticVariables.TextTilesConfiguration_800b9e58.y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].y =
+                 StaticVariables.TextTilesConfiguration_800b9e58.y + StaticVariables.TextTilesConfiguration_800b9e58.height * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].y = StaticVariables.TextTilesConfiguration_800b9e58.y;
+        }
+        
+        if (StaticVariables.TextTilesConfiguration_800b9e58.x < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].startX =
+                 StaticVariables.TextTilesConfiguration_800b9e58.x + StaticVariables.TextTilesConfiguration_800b9e58.width * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].startX = StaticVariables.TextTilesConfiguration_800b9e58.x;
+        }
+        
+        if (StaticVariables.TextTilesConfiguration_800b9e58.y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].startY =
+                 StaticVariables.TextTilesConfiguration_800b9e58.y + StaticVariables.TextTilesConfiguration_800b9e58.height * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].startY = StaticVariables.TextTilesConfiguration_800b9e58.y;
+        }
+        
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].speed = 0xf;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].originX = StaticVariables.TextTilesConfiguration_800b9e58.x;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].originY = StaticVariables.TextTilesConfiguration_800b9e58.y;
+        
+        if (StaticVariables.TextTilesConfiguration2.x < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].x =
+                 StaticVariables.TextTilesConfiguration2.x + StaticVariables.TextTilesConfiguration2.width * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].x = StaticVariables.TextTilesConfiguration2.x;
+        }
+        
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].y = 0xf0;
+        
+        if (StaticVariables.TextTilesConfiguration2.x < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].startX =
+                 StaticVariables.TextTilesConfiguration2.x + StaticVariables.TextTilesConfiguration2.width * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].startX = StaticVariables.TextTilesConfiguration2.x;
+        }
+        
+        if (StaticVariables.TextTilesConfiguration2.y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].startY =
+                 StaticVariables.TextTilesConfiguration2.y + StaticVariables.TextTilesConfiguration2.height * -8;
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].startY = StaticVariables.TextTilesConfiguration2.y;
+        }
+        
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].originX = StaticVariables.TextTilesConfiguration2.x;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].originY = StaticVariables.TextTilesConfiguration2.y;
+        callBackInfo.RenderFunc = FUN_80056598;
     }
 
     //8004afe8
@@ -761,13 +1013,6 @@ public class UIManager
         //pSVar2.x0 = (short)uVar3;
         //pSVar2.y0 = (short)(uVar3 >> 0x10);
         ////*puVar4 = *puVar4 & 0xff000000 | (uint)&pSVar1.x0 & 0xffffff;
-    }
-
-    //800506dc
-    private void ApplyFadeTransform(SPRT[] sprites, short width, short height, int index)
-    {
-        sprites[index].w = width;
-        sprites[index].h = height;
     }
 
     //80045e60
@@ -1689,15 +1934,15 @@ public class UIManager
                                 }
 
                                 buffer[bufferWidth * (drawY + StaticVariables.g_fontCharWidthTable[formattedText[i] * 5 + 4]) / 2 + (int)fontPixelOffset / 2] = (char)(bufferOffset | fontPixel);
-                                fontPixelOffset = fontPixelOffset + 1;
+                                fontPixelOffset += 1;
                                 charIndex = formattedText[i];
-                                iVar1 = iVar1 + 1;
-                                fontColumn = fontColumn + 1;
+                                iVar1 += 1;
+                                fontColumn += 1;
                             } while (iVar1 < StaticVariables.g_fontCharWidthTable[charIndex * 5]);
                         }
 
                         charIndex = formattedText[i];
-                        glyphRow = glyphRow + 1;
+                        glyphRow += 1;
 
                     } while (glyphRow < StaticVariables.g_fontCharWidthTable[charIndex * 5 + 1]);
                 }
@@ -1988,8 +2233,8 @@ public class UIManager
             var startY = blk.Y + blk.Height + offsetY + lineYAccum;
 
             // Écritures équivalentes aux sh @ +0x08/+0x0A dans le bloc per‑line du buffer
-            StaticVariables.g_bufferTextToDisplay[bufferIndex + logical * 20] = (short)startX;
-            StaticVariables.g_bufferTextToDisplay[bufferIndex + 1 + logical * 20] = (short)startY;
+            StaticVariables.g_textFullLinesSprites[bufferIndex + logical * 20].x0 = (short)startX;
+            StaticVariables.g_textFullLinesSprites[bufferIndex + logical * 20].y0 = (short)startY;
 
             // --- Chaînage des primitives de texte (équivalent addPrim dans l’ASM) ---
             // Dans le moteur original : addPrim( OrderTableSlot(buf, logical, primOffset), TextGroup(buf, logical)+primOffset )
@@ -2009,7 +2254,7 @@ public class UIManager
         if (StaticVariables.g_textHoldState != 0)
         {
             // Compteur 0..39 (reboucle comme dans l’ASM)
-            StaticVariables.g_textHoldState = StaticVariables.g_textHoldState + 1;
+            StaticVariables.g_textHoldState += 1;
 
             if (StaticVariables.g_textHoldState >= HOLD_MAX)
             {
