@@ -279,27 +279,27 @@ public class GameEngine
         return itemId;
     }
 
-    private uint GetWeaponIdFromSlot1()
+    public uint GetWeaponIdFromSlot1()
     {
         return GetWeaponIdFromSlot(1);
     }
 
-    private uint GetWeaponIdFromSlot2()
+    public uint GetWeaponIdFromSlot2()
     {
         return GetWeaponIdFromSlot(2);
     }
 
-    private uint GetWeaponIdFromSlot3()
+    public uint GetWeaponIdFromSlot3()
     {
         return GetWeaponIdFromSlot(3);
     }
 
-    private uint GetWeaponIdFromSlot4()
+    public uint GetWeaponIdFromSlot4()
     {
         return GetWeaponIdFromSlot(4);
     }
 
-    private uint GetWeaponIdFromSlot5()
+    public uint GetWeaponIdFromSlot5()
     {
         return GetWeaponIdFromSlot(5);
     }
@@ -2529,7 +2529,7 @@ public class GameEngine
     }
 
     // 8004e4d8
-    private void SetCurrentItemId(uint itemId)
+    public void SetCurrentItemId(uint itemId)
     {
         if ((int)itemId < 0 || itemId >= StaticVariables.g_itemsCount)
         {

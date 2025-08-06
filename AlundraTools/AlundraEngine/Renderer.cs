@@ -690,7 +690,7 @@ public class Renderer
     }
 
     //800472d0
-    public void DisplayIconName(SPRT sprite, 
+    public void DisplayIconName(SPRT[] sprites, 
         char[] text, int textLength, 
         short textCoordDstX, short textCoordDstY, 
         int displayMode)
