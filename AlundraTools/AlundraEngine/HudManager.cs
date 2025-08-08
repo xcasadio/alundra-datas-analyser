@@ -1,4 +1,5 @@
-﻿using AlundraEngine.DatasBin;
+﻿using System.Diagnostics;
+using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay;
 using AlundraEngine.Graphics;
 using AlundraEngine.UI;
@@ -34,12 +35,11 @@ public class HudManager
         do
         {
             var textToDisplay = StaticVariables.TextToDisplay_ARRAY_8017f920[i];
-            //sprite = StaticVariables.SPRT_ARRAY_8017fe74[i];
-
             textToDisplay.x = 8;
             textToDisplay.y = 0x10;
             textToDisplay.mode = StaticVariables.g_clutTable[StaticVariables.g_clutTableIndex];
 
+            //sprite = StaticVariables.SPRT_ARRAY_8017fe74[i];
             //SetSprt(sprite);
             //SetSemiTrans(sprite, 0);
             //SetShadeTex(sprite, 1);
@@ -125,7 +125,7 @@ public class HudManager
             FUN_80050908(cursorAnim, 0, 0, index);
             cursorAnim.Sprites[index].clut = StaticVariables.g_clutTable[0];
 
-            index = index + 1;
+            index += 1;
 
         } while (index < 2);
     }
@@ -133,8 +133,8 @@ public class HudManager
     //80050908
     private void FUN_80050908(InventoryCursorAnimation cursorAnim, short x, short y, int index)
     {
-        cursorAnim.Sprites[index].x0 = (short)(StaticVariables.g_inventoryCursorAnimSpriteX[(cursorAnim.FrameDelay / 10) * 4] + x);
-        cursorAnim.Sprites[index].y0 = (short)(StaticVariables.g_inventoryCursorAnimSpriteY[(cursorAnim.FrameDelay / 10) * 4] + y);
+        cursorAnim.Sprites[index].x0 = (short)(StaticVariables.g_inventoryCursorAnimSpriteX[cursorAnim.FrameDelay / 10 * 4] + x);
+        cursorAnim.Sprites[index].y0 = (short)(StaticVariables.g_inventoryCursorAnimSpriteY[cursorAnim.FrameDelay / 10 * 4] + y);
 
     }
 
@@ -167,12 +167,12 @@ public class HudManager
                         index = row * textTilesConfig.Width + col;
                         textTilesConfig.SpritesA[index].clut = StaticVariables.g_clutTable[textTilesConfig.SpritesA[index].clut];
                         textTilesConfig.SpritesB[index].clut = StaticVariables.g_clutTable[textTilesConfig.SpritesB[index].clut];
-                        col = col + 1;
+                        col += 1;
 
                     } while (col < textTilesConfig.Width);
                 }
 
-                row = row + 1;
+                row += 1;
 
             } while (row < textTilesConfig.Height);
         }
@@ -269,7 +269,7 @@ public class HudManager
                 //puVar1[0xd] = textureId2;
                 //puVar1 = puVar1 + 0x14;
 
-                i = i + 1;
+                i += 1;
             } while (i < 2);
 
             //GraphicManager.DrawPolyFt4(0xff, 0xff, 0xff,
@@ -280,7 +280,7 @@ public class HudManager
             //    width + 100, 
             //    height + 100, image);
 
-            StaticVariables.g_hudDeltaX = (StaticVariables.g_hudTransitionSrcX + 2)
+            StaticVariables.g_hudDeltaX = StaticVariables.g_hudTransitionSrcX + 2
                                           - StaticVariables.g_hudTransitionDstXPtr;
 
             StaticVariables.g_hudX = StaticVariables.g_hudDeltaX - StaticVariables.g_hudTransitionStartX;
@@ -346,8 +346,8 @@ public class HudManager
             goto FinalizeTransitionUpdate;
         }
 
-        cameraX = (short)(((StaticVariables.g_hudTransitionStepValue * StaticVariables.g_hudX) / 0xf) + cameraX);
-        cameraY = (short)(((StaticVariables.g_hudTransitionStepValue * StaticVariables.g_hudY) / 0xf) + cameraY);
+        cameraX = (short)(StaticVariables.g_hudTransitionStepValue * StaticVariables.g_hudX / 0xf + cameraX);
+        cameraY = (short)(StaticVariables.g_hudTransitionStepValue * StaticVariables.g_hudY / 0xf + cameraY);
 
         if ((StaticVariables.g_hudTransitionState & 1) == 0)
         {
@@ -361,7 +361,7 @@ public class HudManager
                 divisionHalfWidth = (int)((ulong)((long)iVar5 * -0x77777777) >> 0x20);
                 scaledHalfHeight = StaticVariables.g_hudTransitionHalfHeight * StaticVariables.g_hudTransitionStepValue;
                 divisionHalfHeight = (int)((ulong)((long)scaledHalfHeight * -0x77777777) >> 0x20);
-                alphaValue = (char)(((0xf - StaticVariables.g_hudTransitionStepValue) * 0x80) / 0xf);
+                alphaValue = (char)((0xf - StaticVariables.g_hudTransitionStepValue) * 0x80 / 0xf);
 
                 //goto ComputeOffsets;
                 uVar4 = (char)(alphaValue + '\x7f');
@@ -376,14 +376,14 @@ public class HudManager
             divisionHalfWidth = (int)((ulong)((long)iVar5 * -0x77777777) >> 0x20);
             scaledHalfHeight = StaticVariables.g_hudTransitionHalfHeight * (0xf - StaticVariables.g_hudTransitionStepValue);
             divisionHalfHeight = (int)((ulong)((long)scaledHalfHeight * -0x77777777) >> 0x20);
-            alphaValue = (char)((StaticVariables.g_hudTransitionStepValue * 0x80) / 0xf);
+            alphaValue = (char)(StaticVariables.g_hudTransitionStepValue * 0x80 / 0xf);
             ComputeOffsets:
             uVar4 = (char)(alphaValue + '\x7f');
             offsetX = (short)((short)(divisionHalfWidth + iVar5 >> 3) - (short)(iVar5 >> 0x1f));
             offsetY = (short)((short)(divisionHalfHeight + scaledHalfHeight >> 3) - (short)(scaledHalfHeight >> 0x1f));
         }
 
-        StaticVariables.g_hudTransitionStepValue = StaticVariables.g_hudTransitionStepValue + -1;
+        StaticVariables.g_hudTransitionStepValue += -1;
 
         FinalizeTransitionUpdate:
 
@@ -504,7 +504,7 @@ public class HudManager
         StaticVariables.DAT_8017feec = 0;
         StaticVariables.TextToDisplay_ARRAY_8017f920[0].tick = 0;
         StaticVariables.TextToDisplay_ARRAY_8017f920[0].speed = 0xf;
-        StaticVariables.g_playerControlFlags = StaticVariables.g_playerControlFlags | 8;
+        StaticVariables.g_playerControlFlags |= 8;
         StaticVariables.TextToDisplay_ARRAY_8017f920[0].x = (short)~(StaticVariables.TextTilesConfiguration_800b58a8.Width << 3);
 
         if (StaticVariables.TextTilesConfiguration_800b58a8.Y < 0)
@@ -808,7 +808,7 @@ public class HudManager
             if ((StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.Right) != 0)
             {
                 iVar1 = StaticVariables.g_inventorySelectedSlotId + 1;
-                if (iVar1 == (iVar1 / 6) * 6)
+                if (iVar1 == iVar1 / 6 * 6)
                 {
                     iVar1 = StaticVariables.g_inventorySelectedSlotId - 5;
                 }
@@ -820,7 +820,7 @@ public class HudManager
             if ((StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.Left) != 0)
             {
                 iVar1 = StaticVariables.g_inventorySelectedSlotId - 1;
-                if (StaticVariables.g_inventorySelectedSlotId == (StaticVariables.g_inventorySelectedSlotId / 6) * 6)
+                if (StaticVariables.g_inventorySelectedSlotId == StaticVariables.g_inventorySelectedSlotId / 6 * 6)
                 {
                     iVar1 = StaticVariables.g_inventorySelectedSlotId + 5;
                 }
@@ -851,7 +851,7 @@ public class HudManager
             if ((StaticVariables.g_padState1.ButtonsJustPressedByInterval & (PadState.R1 | PadState.L1)) != 0)
             {
                 FUN_800556dc();
-                StaticVariables.g_playerControlFlags = StaticVariables.g_playerControlFlags | 8;
+                StaticVariables.g_playerControlFlags |= 8;
                 _gameEngine.HudManager.UpdateHudTransitionState();
                 StaticVariables.g_postProcessState = 1;
             }
@@ -893,36 +893,198 @@ public class HudManager
 
                     if ((StaticVariables.g_postProcessState & 1U) == 0)
                     {
-                        StaticVariables.g_playerControlFlags = StaticVariables.g_playerControlFlags & 0xfffffff7;
+                        StaticVariables.g_playerControlFlags &= 0xfffffff7;
                     }
 
                     FUN_80047cb0(callbackInfo);
-
                     return;
                 }
             }
         }
 
-        //FUN_80050908(StaticVariables.DAT_8017fef8,
-        //    StaticVariables.TextTilesConfiguration_800b58a8.X +
-        //    StaticVariables.UINT_ARRAY_800b9f28[StaticVariables.g_inventorySelectedSlotId] + 0x12,
-        //    StaticVariables.TextTilesConfiguration_800b58a8.Y +
-        //    StaticVariables.UINT_ARRAY_800b9f28[StaticVariables.g_inventorySelectedSlotId] + -8, 
-        //    StaticVariables.g_drawModes[0x14].tag);
-        //FUN_80050a74(StaticVariables.DAT_8017fef8);
-        //FUN_80056a98();
-        //FUN_80056fb4();
-        //FUN_80055d78(StaticVariables.TextTilesConfiguration_800b58a8);
-        //FUN_80055d78(StaticVariables.TextTilesConfiguration_800b8360);
-        //FUN_80055d78(StaticVariables.g_textTilesConfiguration_800b8eb0);
-        //FUN_80055d78(StaticVariables.TextTilesConfiguration_800b9a00);
-        //FUN_80055d78(StaticVariables.TextTilesConfiguration_800b9a10);
-        //FUN_80055d78(StaticVariables.TextTilesConfiguration_800b9e58);
-        //FUN_80055d78(StaticVariables.g_textTilesConfiguration2);
-        //FUN_800562dc();
-        //FUN_80055fe8();
+        FUN_80050908(StaticVariables.g_inventoryCursorAnimation,
+            (short)(StaticVariables.TextTilesConfiguration_800b58a8.X +
+                    StaticVariables.UINT_ARRAY_800b9f28[StaticVariables.g_inventorySelectedSlotId] + 0x12),
+            (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y +
+                    StaticVariables.UINT_ARRAY_800b9f28[StaticVariables.g_inventorySelectedSlotId] + -8), 
+            /*StaticVariables.g_drawModes[0x14].tag*/0);
+        FUN_80050a74(StaticVariables.g_inventoryCursorAnimation);
+        FUN_80056a98();
+        FUN_80056fb4();
+        FUN_80055d78(StaticVariables.TextTilesConfiguration_800b58a8);
+        FUN_80055d78(StaticVariables.TextTilesConfiguration_800b8360);
+        FUN_80055d78(StaticVariables.g_textTilesConfiguration_800b8eb0);
+        FUN_80055d78(StaticVariables.TextTilesConfiguration_800b9a00);
+        FUN_80055d78(StaticVariables.TextTilesConfiguration_800b9a10);
+        FUN_80055d78(StaticVariables.TextTilesConfiguration_800b9e58);
+        FUN_80055d78(StaticVariables.g_textTilesConfiguration2);
+        FUN_800562dc();
+        FUN_80055fe8();
     }
 
+    //80056a98
+    private void FUN_80056a98()
+    {
+        ulong uVar1;
+        int value;
+        int iVar2;
+        uint uVar3;
+        int iVar4;
+        uint puVar5;
+        uint puVar6;
+        int iVar8;
+        int i;
+        short sVar10;
+        int divisor;
+        SPRT sprite;
+
+        divisor = 1000;
+        value = _gameEngine.PlayerManager.GetMoney();
+        i = 0;
+        sVar10 = 0x18;
+        iVar8 = 0;
+
+        do
+        {
+            if (divisor == 0)
+            {
+                Debugger.Break();
+                //trap(0x1c00);
+            }
+
+            if (divisor == -1 && value == -0x80000000)
+            {
+                Debugger.Break();
+                //trap(0x1800);
+            }
+
+            sprite = StaticVariables.g_spriteInventoryMoney[i];
+
+            iVar2 = ((value / divisor) % 10) * 0x14;
+            sprite.u0 = StaticVariables.BYTE_ARRAY_8009cfd8[iVar2];
+            sprite.v0 = StaticVariables.BYTE_ARRAY_8009cfd8[iVar2 + 1];
+            sprite.x0 = (short)(StaticVariables.TextTilesConfiguration_800b9e58.X + sVar10);
+            sprite.y0 = (short)(StaticVariables.TextTilesConfiguration_800b9e58.Y + 4);
+
+            var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
+            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+
+            //puVar5 = (StaticVariables.sprite.tag + iVar8);
+            //uVar3 = *puVar5;
+            //puVar6 = StaticVariables.DAT_80146f6c[i];
+            /* Probable PsyQ macro: addPrim(). */
+            //*puVar5 = uVar3 & 0xff000000 | *puVar6 & 0xffffff;
+            //*puVar6 = *puVar6 & 0xff000000 | (uint)sprite & 0xffffff;
+            divisor = divisor / 10;
+            i = i + 1;
+        } while (i < 4);
+
+        divisor = 10;
+        value = _gameEngine.PlayerManager.GetNumberOfItem(0x3d);
+        i = 0;
+
+        do
+        {
+            if (divisor == 0)
+            {
+                Debugger.Break();
+                //trap(0x1c00);
+            }
+
+            if (divisor == -1 && value == -0x80000000)
+            {
+                Debugger.Break();
+                //trap(0x1800);
+            }
+
+            sprite = StaticVariables.g_spriteInventoryNumberOfKeys[i];
+
+            iVar2 = ((value / divisor) % 10) * 0x14;
+            sprite.u0 = StaticVariables.BYTE_ARRAY_8009cfd8[iVar2];
+            sprite.v0 = StaticVariables.BYTE_ARRAY_8009cfd8[iVar2 + 1];
+            sprite.x0 = (short)(StaticVariables.TextTilesConfiguration_800b9e58.X + sVar10 + 0x10);
+            sprite.y0 = (short)(StaticVariables.TextTilesConfiguration_800b9e58.Y + 0x34);
+
+            var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
+            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+
+            //puVar5 = (StaticVariables.sprite.tag + iVar8);
+            //uVar3 = *puVar5;
+            //puVar6 = StaticVariables.DAT_80146f6c[i];
+            /* Probable PsyQ macro: addPrim(). */
+            //*puVar5 = uVar3 & 0xff000000 | *puVar6 & 0xffffff;
+            //*puVar6 = *puVar6 & 0xff000000 | (uint)sprite & 0xffffff;
+            divisor = divisor / 10;
+            i = i + 1;
+        } while (i < 2);
+
+        divisor = 10;
+        value = _gameEngine.PlayerManager.GetNumberOfFalcon();
+        i = _gameEngine.PlayerManager.GetNumberOfFalconTemp();
+
+        do
+        {
+
+            if (divisor == 0)
+            {
+                Debugger.Break();
+                //trap(0x1c00);
+            }
+
+            if (divisor == -1 && value == -0x80000000)
+            {
+                Debugger.Break();
+                //trap(0x1800);
+            }
+
+            sprite = StaticVariables.g_spriteInventoryNumberOfFalcon[i];
+
+            iVar2 = ((value / divisor) % 10) * 0x14;
+            sprite.u0 = StaticVariables.BYTE_ARRAY_8009cfd8[iVar2];
+            sprite.v0 = StaticVariables.BYTE_ARRAY_8009cfd8[iVar2 + 1];
+            sprite.x0 = (short)(StaticVariables.TextTilesConfiguration_800b9e58.X + sVar10 + 0x10);
+            sprite.y0 = (short)(StaticVariables.TextTilesConfiguration_800b9e58.Y + 0x34);
+
+            var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
+            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+
+            //puVar5 = (StaticVariables.sprite.tag + iVar8);
+            //uVar3 = *puVar5;
+            //puVar6 = StaticVariables.DAT_80146f6c[i];
+            /* Probable PsyQ macro: addPrim(). */
+            //*puVar5 = uVar3 & 0xff000000 | *puVar6 & 0xffffff;
+            //*puVar6 = *puVar6 & 0xff000000 | (uint)sprite & 0xffffff;
+            divisor = divisor / 10;
+            i = i + 1;
+        } while (iVar2 < 2);
+    }
+
+    //80050a74
+    private void FUN_80050a74(InventoryCursorAnimation cursorAnim)
+    {
+        cursorAnim.FrameDelay += 1;
+
+        if (cursorAnim.FrameDelay == 0x28)
+        {
+            cursorAnim.FrameDelay = 0;
+        }
+
+        cursorAnim.Sprites[0].u0 = (byte)(StaticVariables.g_inventoryCursorTextureU + cursorAnim.FrameDelay / 10 * 0x28);
+        cursorAnim.Sprites[0].v0 = (byte)(StaticVariables.g_inventoryCursorTextureV + cursorAnim.FrameDelay / 10 * 0x28);
+
+        cursorAnim.Sprites[1].u0 = (byte)(StaticVariables.g_inventoryCursorTextureU + cursorAnim.FrameDelay / 10 * 0x28);
+        cursorAnim.Sprites[1].v0 = (byte)(StaticVariables.g_inventoryCursorTextureV + cursorAnim.FrameDelay / 10 * 0x28);
+
+        //puVar2 = StaticVariables.DAT_80146f6c[g_drawModes[0x14].tag * 0x28];
+        //pSVar3 = cursorAnim.Sprites[StaticVariables.g_drawModes[0x14].tag];
+        /* Probable PsyQ macro: addPrim(). */
+        //cursorAnim.sprites[g_drawModes[0x14].tag].tag = cursorAnim.sprites[g_drawModes[0x14].tag].tag & 0xff000000 | *puVar2 & 0xffffff;
+        //*puVar2 = *puVar2 & 0xff000000 | (uint)pSVar3 & 0xffffff;
+
+        var bitmap = _gameEngine.Font3.GenerateFontBitmapFromSprite(cursorAnim.Sprites[0]);
+        Debugger.Break();
+        _gameEngine.Renderer.AddSprite(cursorAnim.Sprites[0], int.MaxValue, bitmap);
+    }
 
     //8005795c
     private void FUN_8005795c()
@@ -1175,8 +1337,8 @@ public class HudManager
         int iVar1;
         int iVar2;
 
-        if ((StaticVariables.g_isCdResetRequested != 0)
-            || ((StaticVariables.g_cdIsReady != 0 && (StaticVariables.g_cdDataLoaded == 0))))
+        if (StaticVariables.g_isCdResetRequested != 0
+            || (StaticVariables.g_cdIsReady != 0 && StaticVariables.g_cdDataLoaded == 0))
         {
             iVar1 = _gameEngine.SetItemIdFromCurrentItemId();
             if (iVar1 == 0x2f)
@@ -1213,7 +1375,7 @@ public class HudManager
     //800556dc
     private void FUN_800556dc()
     {
-        StaticVariables.g_forbiddenWarpFlag = StaticVariables.g_forbiddenWarpFlag | 2;
+        StaticVariables.g_forbiddenWarpFlag |= 2;
         _gameEngine.SoundManager.PlaySoundEffect(5);
         StaticVariables.TextToDisplay_ARRAY_8017f920[0].mode = 2;
         StaticVariables.TextToDisplay_ARRAY_8017f920[0].tick = 0;

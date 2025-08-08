@@ -3082,30 +3082,21 @@ public class PlayerManager
     }
 
     //8004df68
-    public int FUN_8004df68()
+    public int GetMoney()
     {
-        Debugger.Break();
-        return 0;
-        //return (int)StaticVariables.g_playerStats[1].currentWarpEntityId;
+        return (int)StaticVariables.g_playerStats.MoneyAmount;
     }
 
     //8004e004
-    public void FUN_8004e004(int param_1)
+    public void SpendMoney(int amount)
     {
-        Debugger.Break();
-        //SetMoney(StaticVariables.g_playerStats[1].currentWarpEntityId - param_1);
+        SetMoney((short)(StaticVariables.g_playerStats.MoneyAmount - amount));
     }
 
     //8004dfd8
     public void AddMoney(int amount)
     {
         SetMoney((short)(amount + StaticVariables.g_playerStats.MoneyAmount));
-    }
-
-    //8004df10
-    public void SpendMoney(int amount)
-    {
-        SetMoney((short)(StaticVariables.g_playerStats.MoneyAmount - amount));
     }
 
     //80034108

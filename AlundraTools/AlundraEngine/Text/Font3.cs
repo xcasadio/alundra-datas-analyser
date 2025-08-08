@@ -7,7 +7,7 @@ public class Font3
 {
     public Color[][] Palettes;
     public Bitmap PalettesBitmap;
-    public Bitmap FontBitmap;
+    public Bitmap HudBitmap;
     public Bitmap FontBitmapTim;
     //character tiles description
 
@@ -21,6 +21,11 @@ public class Font3
         LoadImageTim(folderName);
     }
 
+    public Bitmap GenerateHudBitmapFromSprite(SPRT sprite)
+    {
+        return GenerateHudBitmap(sprite.x0, sprite.y0, sprite.w, sprite.h, sprite.clut);
+    }
+
     public Bitmap GenerateHudBitmap(int paletteIndex)
     {
         return GenerateHudBitmap(Palettes[paletteIndex]);
@@ -28,8 +33,18 @@ public class Font3
 
     public Bitmap GenerateHudBitmap(Color[] pal)
     {
-        FontBitmap = ImageHelper.BitmapFromPsxBuff(_hudImageData, 256, 256, 4, pal);
-        return FontBitmap;
+        HudBitmap = GenerateFontBitmapTim(0, 0, 256, 256, pal);
+        return HudBitmap;
+    }
+
+    public Bitmap GenerateHudBitmap(int x, int y, int w, int h, int paletteIndex)
+    {
+        return GenerateHudBitmap(x, y, w, h, Palettes[paletteIndex]);
+    }
+
+    public Bitmap GenerateHudBitmap(int x, int y, int w, int h, Color[] pal)
+    {
+        return ImageHelper.BitmapFromPsxBuff(_hudImageData, w, h, 4, pal);
     }
 
     public Bitmap GenerateFontBitmapFromSprite(SPRT sprite)
@@ -44,7 +59,8 @@ public class Font3
 
     public Bitmap GenerateFontBitmapTim(Color[] pal)
     {
-        return GenerateFontBitmapTim(0, 0, 256, 256, pal);
+        FontBitmapTim = GenerateFontBitmapTim(0, 0, 256, 256, pal);
+        return FontBitmapTim;
     }
 
     public Bitmap GenerateFontBitmapTim(int x, int y, int w, int h, int paletteIndex)
@@ -54,8 +70,7 @@ public class Font3
 
     public Bitmap GenerateFontBitmapTim(int x, int y, int w, int h, Color[] pal)
     {
-        FontBitmapTim = ImageHelper.BitmapFromPsxBuff(_fontImageDataTim, w, h, 4, pal);
-        return FontBitmapTim;
+        return ImageHelper.BitmapFromPsxBuff(_fontImageDataTim, w, h, 4, pal);
     }
 
     private void LoadPalette(string folderName)

@@ -4324,16 +4324,15 @@ public class EntityEventHandlers
     // 80040A8C
     private int Script_153_099(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var iVar1 = _gameEngine.PlayerManager.FUN_8004df68();
+        var money = _gameEngine.PlayerManager.GetMoney();
 
-        if (iVar1 < variables[1])
+        if (money < variables[1])
         {
             eventProgramState.Result = 0;
         }
         else
         {
-            _gameEngine.PlayerManager.FUN_8004e004(variables[1]);
-
+            _gameEngine.PlayerManager.SpendMoney(variables[1]);
             eventProgramState.Result = 1;
         }
 
@@ -4343,7 +4342,7 @@ public class EntityEventHandlers
     // 80040B00
     private int Script_154_09A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var iVar1 = _gameEngine.PlayerManager.FUN_8004df68();
+        var iVar1 = _gameEngine.PlayerManager.GetMoney();
 
         if (iVar1 < variables[1])
         {
