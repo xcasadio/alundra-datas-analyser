@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AlundraEngine.Gameplay;
+﻿namespace AlundraEngine.Graphics;
 
 public class SPRT
 {

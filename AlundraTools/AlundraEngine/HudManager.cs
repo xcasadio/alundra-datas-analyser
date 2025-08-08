@@ -1,5 +1,6 @@
 ﻿using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay;
+using AlundraEngine.UI;
 
 namespace AlundraEngine;
 
@@ -58,9 +59,9 @@ public class HudManager
             uvRight = (byte)(uvX + width);
             uvBottom = (byte)(uvY + height);
             StaticVariables.g_hudTransitionState = 5;
-            StaticVariables.g_hudTransitionSrcX = srcX;
-            StaticVariables.g_hudTransitionSrcY = srcY;
-            StaticVariables.g_hudTransitionSrcZ = srcZ;
+            StaticVariables.g_hudTransitionSrcX = srcX >> 16;
+            StaticVariables.g_hudTransitionSrcY = srcY >> 16;
+            StaticVariables.g_hudTransitionSrcZ = srcZ >> 16;
             StaticVariables.g_hudTransitionDstXPtr = dstXPtr;
             StaticVariables.g_hudTransitionDstYPtr = dstYPtr;
 
@@ -114,7 +115,7 @@ public class HudManager
             //    width + 100, 
             //    height + 100, image);
 
-            StaticVariables.g_hudDeltaX = -(StaticVariables.g_hudTransitionSrcX + 2)
+            StaticVariables.g_hudDeltaX = (StaticVariables.g_hudTransitionSrcX + 2)
                                           - StaticVariables.g_hudTransitionDstXPtr;
 
             StaticVariables.g_hudX = StaticVariables.g_hudDeltaX - StaticVariables.g_hudTransitionStartX;
@@ -327,5 +328,980 @@ public class HudManager
         }
 
         return 1;
+    }
+
+
+    //80054f1c Inventory display
+    public void FUN_80054f1c(CallBackInfo callBackInfo)
+    {
+        StaticVariables.g_forbiddenWarpFlag = 5;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].mode = 2;
+        StaticVariables.DAT_8017feec = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].speed = 0xf;
+        StaticVariables.g_playerControlFlags = StaticVariables.g_playerControlFlags | 8;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].x = (short)~(StaticVariables.TextTilesConfiguration_800b58a8.Width << 3);
+
+        if (StaticVariables.TextTilesConfiguration_800b58a8.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].y =
+                 (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y + StaticVariables.TextTilesConfiguration_800b58a8.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].y = StaticVariables.TextTilesConfiguration_800b58a8.Y;
+        }
+
+        if (StaticVariables.TextTilesConfiguration_800b58a8.X < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].startX =
+                 (short)(StaticVariables.TextTilesConfiguration_800b58a8.X + StaticVariables.TextTilesConfiguration_800b58a8.Width * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].startX = StaticVariables.TextTilesConfiguration_800b58a8.X;
+        }
+
+        if (StaticVariables.TextTilesConfiguration_800b58a8.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].startY =
+                 (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y + StaticVariables.TextTilesConfiguration_800b58a8.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].startY = StaticVariables.TextTilesConfiguration_800b58a8.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].originX = StaticVariables.TextTilesConfiguration_800b58a8.X;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].originY = StaticVariables.TextTilesConfiguration_800b58a8.Y;
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].speed = 0xf;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].x = (short)~(StaticVariables.TextTilesConfiguration_800b8360.Width << 3);
+
+        if (StaticVariables.TextTilesConfiguration_800b8360.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].y =
+                 (short)(StaticVariables.TextTilesConfiguration_800b8360.Y + StaticVariables.TextTilesConfiguration_800b8360.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].y = StaticVariables.TextTilesConfiguration_800b8360.Y;
+        }
+
+        if (StaticVariables.TextTilesConfiguration_800b8360.X < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].startX =
+                 (short)(StaticVariables.TextTilesConfiguration_800b8360.X + StaticVariables.TextTilesConfiguration_800b8360.Width * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].startX = StaticVariables.TextTilesConfiguration_800b8360.X;
+        }
+
+        if (StaticVariables.TextTilesConfiguration_800b8360.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].startY =
+                 (short)(StaticVariables.TextTilesConfiguration_800b8360.Y + StaticVariables.TextTilesConfiguration_800b8360.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].startY = StaticVariables.TextTilesConfiguration_800b8360.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].originX = StaticVariables.TextTilesConfiguration_800b8360.X;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].originY = StaticVariables.TextTilesConfiguration_800b8360.Y;
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[2].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[2].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[2].speed = 0xf;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[2].x = 0x140;
+
+        if (StaticVariables.g_textTilesConfiguration_800b8eb0.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].y =
+                 (short)(StaticVariables.g_textTilesConfiguration_800b8eb0.Y + StaticVariables.g_textTilesConfiguration_800b8eb0.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].y = StaticVariables.g_textTilesConfiguration_800b8eb0.Y;
+        }
+
+        if (StaticVariables.g_textTilesConfiguration_800b8eb0.X < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].startX =
+                 (short)(StaticVariables.g_textTilesConfiguration_800b8eb0.X + StaticVariables.g_textTilesConfiguration_800b8eb0.Width * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].startX = StaticVariables.g_textTilesConfiguration_800b8eb0.X;
+        }
+
+        if (StaticVariables.g_textTilesConfiguration_800b8eb0.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].startY =
+                 (short)(StaticVariables.g_textTilesConfiguration_800b8eb0.Y + StaticVariables.g_textTilesConfiguration_800b8eb0.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].startY = StaticVariables.g_textTilesConfiguration_800b8eb0.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[2].originX = StaticVariables.g_textTilesConfiguration_800b8eb0.X;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[2].originY = StaticVariables.g_textTilesConfiguration_800b8eb0.Y;
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].speed = 0xf;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].x = 0x140;
+
+        if (StaticVariables.TextTilesConfiguration_800b9a00.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].y =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9a00.Y + StaticVariables.TextTilesConfiguration_800b9a00.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].y = StaticVariables.TextTilesConfiguration_800b9a00.Y;
+        }
+
+        if (StaticVariables.TextTilesConfiguration_800b9a00.X < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].startX =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9a00.X + StaticVariables.TextTilesConfiguration_800b9a00.Width * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].startX = StaticVariables.TextTilesConfiguration_800b9a00.X;
+        }
+
+        if (StaticVariables.TextTilesConfiguration_800b9a00.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].startY =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9a00.Y + StaticVariables.TextTilesConfiguration_800b9a00.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].startY = StaticVariables.TextTilesConfiguration_800b9a00.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].originX = StaticVariables.TextTilesConfiguration_800b9a00.X;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].originY = StaticVariables.TextTilesConfiguration_800b9a00.Y;
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].speed = 0xf;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].x = 0x140;
+
+        if (StaticVariables.TextTilesConfiguration_800b9a10.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].y =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9a10.Y + StaticVariables.TextTilesConfiguration_800b9a10.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].y = StaticVariables.TextTilesConfiguration_800b9a10.Y;
+        }
+
+        if (StaticVariables.TextTilesConfiguration_800b9a10.X < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].startX =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9a10.X + StaticVariables.TextTilesConfiguration_800b9a10.Width * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].startX = StaticVariables.TextTilesConfiguration_800b9a10.X;
+        }
+
+        if (StaticVariables.TextTilesConfiguration_800b9a10.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].startY =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9a10.Y + StaticVariables.TextTilesConfiguration_800b9a10.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].startY = StaticVariables.TextTilesConfiguration_800b9a10.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].originX = StaticVariables.TextTilesConfiguration_800b9a10.X;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].originY = StaticVariables.TextTilesConfiguration_800b9a10.Y;
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].speed = 0xf;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].x = 0x140;
+
+        if (StaticVariables.TextTilesConfiguration_800b9e58.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].y =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9e58.Y + StaticVariables.TextTilesConfiguration_800b9e58.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].y = StaticVariables.TextTilesConfiguration_800b9e58.Y;
+        }
+
+        if (StaticVariables.TextTilesConfiguration_800b9e58.X < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].startX =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9e58.X + StaticVariables.TextTilesConfiguration_800b9e58.Width * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].startX = StaticVariables.TextTilesConfiguration_800b9e58.X;
+        }
+
+        if (StaticVariables.TextTilesConfiguration_800b9e58.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].startY =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9e58.Y + StaticVariables.TextTilesConfiguration_800b9e58.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].startY = StaticVariables.TextTilesConfiguration_800b9e58.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].originX = StaticVariables.TextTilesConfiguration_800b9e58.X;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].originY = StaticVariables.TextTilesConfiguration_800b9e58.Y;
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].speed = 0xf;
+
+        if (StaticVariables.g_textTilesConfiguration2.X < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].x =
+                 (short)(StaticVariables.g_textTilesConfiguration2.X + StaticVariables.g_textTilesConfiguration2.Width * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].x = StaticVariables.g_textTilesConfiguration2.X;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].y = 0xf0;
+
+        if (StaticVariables.g_textTilesConfiguration2.X < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].startX =
+                 (short)(StaticVariables.g_textTilesConfiguration2.X + StaticVariables.g_textTilesConfiguration2.Width * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].startX = StaticVariables.g_textTilesConfiguration2.X;
+        }
+
+        if (StaticVariables.g_textTilesConfiguration2.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].startY =
+                 (short)(StaticVariables.g_textTilesConfiguration2.Y + StaticVariables.g_textTilesConfiguration2.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].startY = StaticVariables.g_textTilesConfiguration2.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].originX = StaticVariables.g_textTilesConfiguration2.X;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].originY = StaticVariables.g_textTilesConfiguration2.Y;
+
+        callBackInfo.RenderFunc = FUN_80056598;
+    }
+
+    //80056598
+    private void FUN_80056598(CallBackInfo callbackInfo)
+    {
+        int iVar1;
+        int iVar2;
+
+        if ((StaticVariables.g_forbiddenWarpFlag & 6U) == 0)
+        {
+            if ((StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.Down) != 0)
+            {
+                iVar1 = StaticVariables.g_inventorySelectedSlotId + 6;
+                iVar2 = StaticVariables.g_inventorySelectedSlotId - 0x12;
+                StaticVariables.g_inventorySelectedSlotId = iVar1;
+                if (0x17 < iVar1)
+                {
+                    StaticVariables.g_inventorySelectedSlotId = iVar2;
+                }
+                _gameEngine.SoundManager.PlaySoundEffect(1);
+                StaticVariables.DAT_8017feec = 0;
+            }
+
+            if ((StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.Up) != 0)
+            {
+                iVar1 = StaticVariables.g_inventorySelectedSlotId - 6;
+                if (StaticVariables.g_inventorySelectedSlotId - 6 < 0)
+                {
+                    iVar1 = StaticVariables.g_inventorySelectedSlotId + 0x12;
+                }
+                StaticVariables.g_inventorySelectedSlotId = iVar1;
+                _gameEngine.SoundManager.PlaySoundEffect(1);
+                StaticVariables.DAT_8017feec = 0;
+            }
+
+            if ((StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.Right) != 0)
+            {
+                iVar1 = StaticVariables.g_inventorySelectedSlotId + 1;
+                if (iVar1 == (iVar1 / 6) * 6)
+                {
+                    iVar1 = StaticVariables.g_inventorySelectedSlotId - 5;
+                }
+                StaticVariables.g_inventorySelectedSlotId = iVar1;
+                _gameEngine.SoundManager.PlaySoundEffect(1);
+                StaticVariables.DAT_8017feec = 0;
+            }
+
+            if ((StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.Left) != 0)
+            {
+                iVar1 = StaticVariables.g_inventorySelectedSlotId - 1;
+                if (StaticVariables.g_inventorySelectedSlotId == (StaticVariables.g_inventorySelectedSlotId / 6) * 6)
+                {
+                    iVar1 = StaticVariables.g_inventorySelectedSlotId + 5;
+                }
+                StaticVariables.g_inventorySelectedSlotId = iVar1;
+                _gameEngine.SoundManager.PlaySoundEffect(1);
+                StaticVariables.DAT_8017feec = 0;
+            }
+
+            if ((StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.Cross) != 0)
+            {
+                if (StaticVariables.g_inventorySelectedSlotId < 6)
+                {
+                    FUN_8005795c();
+                }
+                else
+                {
+                    FUN_80057854();
+                }
+            }
+
+            if ((StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.OpenInventory) != 0)
+            {
+                FUN_800556dc();
+                _gameEngine.HudManager.UpdateHudTransitionState();
+                _gameEngine.GraphicManager.PrepareBufferFlip();
+            }
+
+            if ((StaticVariables.g_padState1.ButtonsJustPressedByInterval & (PadState.R1 | PadState.L1)) != 0)
+            {
+                FUN_800556dc();
+                StaticVariables.g_playerControlFlags = StaticVariables.g_playerControlFlags | 8;
+                _gameEngine.HudManager.UpdateHudTransitionState();
+                StaticVariables.g_postProcessState = 1;
+            }
+        }
+        else
+        {
+            _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.TextTilesConfiguration_800b58a8, StaticVariables.TextToDisplay_ARRAY_8017f920[0]);
+            _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.TextTilesConfiguration_800b8360, StaticVariables.TextToDisplay_ARRAY_8017f920[1]);
+            _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.g_textTilesConfiguration_800b8eb0, StaticVariables.TextToDisplay_ARRAY_8017f920[2]);
+            _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.TextTilesConfiguration_800b9a00, StaticVariables.TextToDisplay_ARRAY_8017f920[3]);
+            _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.TextTilesConfiguration_800b9a10, StaticVariables.TextToDisplay_ARRAY_8017f920[4]);
+            _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.g_textTilesConfiguration2, StaticVariables.TextToDisplay_ARRAY_8017f920[6]);
+            iVar1 = _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.TextTilesConfiguration_800b9e58, StaticVariables.TextToDisplay_ARRAY_8017f920[5]);
+
+            if (iVar1 == 1)
+            {
+                if ((StaticVariables.g_forbiddenWarpFlag & 4U) != 0)
+                {
+                    StaticVariables.g_forbiddenWarpFlag = (int)(StaticVariables.g_forbiddenWarpFlag & 0xfffffffb);
+                }
+
+                if ((StaticVariables.g_forbiddenWarpFlag & 2U) != 0)
+                {
+                    StaticVariables.g_forbiddenWarpFlag = 0;
+                    StaticVariables.TextTilesConfiguration_800b58a8.X = StaticVariables.TextToDisplay_ARRAY_8017f920[0].originX;
+                    StaticVariables.TextTilesConfiguration_800b58a8.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[0].originY;
+                    StaticVariables.TextTilesConfiguration_800b8360.X = StaticVariables.TextToDisplay_ARRAY_8017f920[1].originX;
+                    StaticVariables.TextTilesConfiguration_800b8360.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[1].originY;
+                    StaticVariables.g_textTilesConfiguration_800b8eb0.X = StaticVariables.TextToDisplay_ARRAY_8017f920[2].originX;
+                    StaticVariables.g_textTilesConfiguration_800b8eb0.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[2].originY;
+                    StaticVariables.TextTilesConfiguration_800b9a00.X = StaticVariables.TextToDisplay_ARRAY_8017f920[3].originX;
+                    StaticVariables.TextTilesConfiguration_800b9a00.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[3].originY;
+                    StaticVariables.TextTilesConfiguration_800b9a10.X = StaticVariables.TextToDisplay_ARRAY_8017f920[4].originX;
+                    StaticVariables.TextTilesConfiguration_800b9a10.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[4].originY;
+                    StaticVariables.TextTilesConfiguration_800b9e58.X = StaticVariables.TextToDisplay_ARRAY_8017f920[5].originX;
+                    StaticVariables.TextTilesConfiguration_800b9e58.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[5].originY;
+                    StaticVariables.g_textTilesConfiguration2.X = StaticVariables.TextToDisplay_ARRAY_8017f920[6].originX;
+                    StaticVariables.g_textTilesConfiguration2.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[6].originY;
+
+                    if ((StaticVariables.g_postProcessState & 1U) == 0)
+                    {
+                        StaticVariables.g_playerControlFlags = StaticVariables.g_playerControlFlags & 0xfffffff7;
+                    }
+
+                    FUN_80047cb0(callbackInfo);
+
+                    return;
+                }
+            }
+        }
+
+        //FUN_80050908(StaticVariables.DAT_8017fef8,
+        //    StaticVariables.TextTilesConfiguration_800b58a8.X +
+        //    StaticVariables.UINT_ARRAY_800b9f28[StaticVariables.g_inventorySelectedSlotId] + 0x12,
+        //    StaticVariables.TextTilesConfiguration_800b58a8.Y +
+        //    StaticVariables.UINT_ARRAY_800b9f28[StaticVariables.g_inventorySelectedSlotId] + -8, 
+        //    StaticVariables.g_drawModes[0x14].tag);
+        //FUN_80050a74(StaticVariables.DAT_8017fef8);
+        //FUN_80056a98();
+        //FUN_80056fb4();
+        //FUN_80055d78(StaticVariables.TextTilesConfiguration_800b58a8);
+        //FUN_80055d78(StaticVariables.TextTilesConfiguration_800b8360);
+        //FUN_80055d78(StaticVariables.g_textTilesConfiguration_800b8eb0);
+        //FUN_80055d78(StaticVariables.TextTilesConfiguration_800b9a00);
+        //FUN_80055d78(StaticVariables.TextTilesConfiguration_800b9a10);
+        //FUN_80055d78(StaticVariables.TextTilesConfiguration_800b9e58);
+        //FUN_80055d78(StaticVariables.g_textTilesConfiguration2);
+        //FUN_800562dc();
+        //FUN_80055fe8();
+    }
+
+
+    //8005795c
+    private void FUN_8005795c()
+    {
+        uint iVar1;
+        uint iVar2;
+        ushort uVar3;
+
+        switch (StaticVariables.g_inventorySelectedSlotId)
+        {
+            case 0:
+                iVar2 = _gameEngine.GetWeaponIdFromSlot1();
+                iVar1 = _gameEngine.GetItemIdFromCurrentWeapon();
+
+                if (iVar1 == iVar2)
+                {
+                    DisplayWarpNames();
+                    return;
+                }
+
+                uVar3 = 1;
+                goto joined_r0x800579e0;
+
+            case 1:
+                iVar1 = _gameEngine.GetWeaponIdFromSlot3();
+                iVar2 = _gameEngine.GetItemIdFromCurrentWeapon();
+
+                if (iVar2 == iVar1)
+                {
+                    DisplayWarpNames();
+                    return;
+                }
+
+                if (iVar1 != -1)
+                {
+                    _gameEngine.SoundManager.PlaySoundEffect(2);
+                    uVar3 = 3;
+                    //LAB_80057b04:
+                    _gameEngine.PlayerManager.SetPlayerWeaponId(uVar3);
+                    DisplayWarpNames();
+                    return;
+                }
+                break;
+
+            case 2:
+                iVar2 = _gameEngine.GetWeaponIdFromSlot2();
+                iVar1 = _gameEngine.GetItemIdFromCurrentWeapon();
+
+                if (iVar1 == iVar2)
+                {
+                    DisplayWarpNames();
+                    return;
+                }
+
+                uVar3 = 2;
+                joined_r0x800579e0:
+                if (iVar2 != -1)
+                {
+                    _gameEngine.PlayerManager.SetPlayerWeaponId(uVar3);
+                    _gameEngine.SoundManager.PlaySoundEffect(2);
+                    DisplayWarpNames();
+                    return;
+                }
+                break;
+
+            case 3:
+                iVar1 = _gameEngine.GetWeaponIdFromSlot4();
+                iVar2 = _gameEngine.GetItemIdFromCurrentWeapon();
+
+                if (iVar2 == iVar1)
+                {
+                    DisplayWarpNames();
+                    return;
+                }
+
+                if (iVar1 != -1)
+                {
+                    _gameEngine.SoundManager.PlaySoundEffect(2);
+                    uVar3 = 4;
+                    _gameEngine.PlayerManager.SetPlayerWeaponId(uVar3);
+                    DisplayWarpNames();
+                    return;
+                }
+                break;
+
+            case 4:
+                iVar1 = _gameEngine.GetWeaponIdFromSlot5();
+                iVar2 = _gameEngine.GetItemIdFromCurrentWeapon();
+
+                if (iVar2 == iVar1)
+                {
+                    DisplayWarpNames();
+                    return;
+                }
+
+                if (iVar1 != -1)
+                {
+                    _gameEngine.SoundManager.PlaySoundEffect(2);
+                    uVar3 = 5;
+                    _gameEngine.PlayerManager.SetPlayerWeaponId(uVar3);
+                    DisplayWarpNames();
+                    return;
+                }
+                break;
+
+            case 5:
+                iVar1 = (uint)_gameEngine.PlayerManager.GetNumberOfItem((int)StaticVariables.UINT_ARRAY_800b9ec8[StaticVariables.g_inventorySelectedSlotId]);
+                iVar2 = _gameEngine.GetItemIdFromCurrentWeapon();
+
+                if (iVar2 == StaticVariables.UINT_ARRAY_800b9ec8[StaticVariables.g_inventorySelectedSlotId])
+                {
+                    DisplayWarpNames();
+                    return;
+                }
+
+                if (iVar1 != 0)
+                {
+                    _gameEngine.SoundManager.PlaySoundEffect(2);
+                    uVar3 = 6;
+                    _gameEngine.PlayerManager.SetPlayerWeaponId(uVar3);
+                    DisplayWarpNames();
+                    return;
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        _gameEngine.SoundManager.PlaySoundEffect(3);
+        DisplayWarpNames();
+    }
+
+    //80055c84
+    private void DisplayWarpNames()
+    {
+        uint currentTileIndex;
+        string sourceWarpName;
+
+        currentTileIndex = _gameEngine.GetItemIdFromCurrentWeapon(); //StaticVariables.g_iconNameEtcBase[currentTileIndex * 2]
+
+        if (currentTileIndex != -1)
+        {
+            sourceWarpName = _gameEngine.EtcResR.GetIconName((int)currentTileIndex);
+
+            _gameEngine.GraphicManager.DisplayIconName(
+                StaticVariables.g_ItemNameSprites,
+                sourceWarpName.ToCharArray(),
+                0x20,
+                StaticVariables.g_textTilesConfiguration_800b8eb0.X,
+                (short)(StaticVariables.g_textTilesConfiguration_800b8eb0.Y + 8),
+                0);
+        }
+        currentTileIndex = (uint)_gameEngine.SetItemIdFromCurrentItemId();
+
+        if (currentTileIndex == -1)
+        {
+            sourceWarpName = "       ";
+        }
+        else
+        {
+            sourceWarpName = _gameEngine.EtcResR.GetIconName((int)currentTileIndex);// StaticVariables.g_iconNameEtcBase[currentTileIndex * 2];
+        }
+
+        _gameEngine.GraphicManager.DisplayIconName([StaticVariables.g_ItemNameSprites[2]],
+            sourceWarpName.ToCharArray(),
+            0x20,
+            StaticVariables.TextTilesConfiguration_800b9a00.X,
+            StaticVariables.TextTilesConfiguration_800b9a00.Y,
+            1);
+    }
+
+    //80047cb0
+    public int FUN_80047cb0(CallBackInfo callBackInfo)
+    {
+        callBackInfo.Flags = 0;
+        return 1;
+    }
+
+
+
+    //80057854
+    private void FUN_80057854()
+    {
+        uint currentItemId;
+        int iVar2;
+        uint slotId;
+
+        slotId = StaticVariables.UINT_ARRAY_800b9ec8[StaticVariables.g_inventorySelectedSlotId];
+        if (slotId != 0)
+        {
+            if (slotId == 0xffffffff)
+            {
+                //PTR_GetWeaponIdFromSlot1_800b9e68
+                slotId = StaticVariables.g_inventorySelectedSlotId switch
+                {
+                    1 => _gameEngine.GetWeaponIdFromSlot1(),
+                    2 => _gameEngine.GetWeaponIdFromSlot3(),
+                    3 => _gameEngine.GetWeaponIdFromSlot2(),
+                    4 => _gameEngine.GetWeaponIdFromSlot4(),
+                    5 => _gameEngine.GetWeaponIdFromSlot5(),
+                    _ => slotId
+                };
+
+                if (slotId == 0xffffffff)
+                {
+                    LAB_80057938:
+                    _gameEngine.SoundManager.PlaySoundEffect(3);
+                    return;
+                }
+
+                currentItemId = (uint)_gameEngine.SetItemIdFromCurrentItemId();
+
+                if (currentItemId == slotId)
+                {
+                    return;
+                }
+            }
+            else
+            {
+                iVar2 = _gameEngine.PlayerManager.GetNumberOfItem((int)slotId);
+
+                if (iVar2 == 0)
+                {
+                    //goto LAB_80057938;
+                    _gameEngine.SoundManager.PlaySoundEffect(3);
+                    return;
+                }
+
+                currentItemId = (uint)_gameEngine.SetItemIdFromCurrentItemId();
+                slotId = StaticVariables.UINT_ARRAY_800b9ec8[StaticVariables.g_inventorySelectedSlotId];
+
+                if (currentItemId == slotId)
+                {
+                    return;
+                }
+            }
+
+            _gameEngine.SetCurrentItemId(slotId);
+            _gameEngine.SoundManager.PlaySoundEffect(2);
+        }
+
+        DisplayWarpNames();
+        FUN_8005ac90();
+    }
+
+    //8005ac90
+    private void FUN_8005ac90()
+    {
+        int iVar1;
+        int iVar2;
+
+        if ((StaticVariables.g_isCdResetRequested != 0)
+            || ((StaticVariables.g_cdIsReady != 0 && (StaticVariables.g_cdDataLoaded == 0))))
+        {
+            iVar1 = _gameEngine.SetItemIdFromCurrentItemId();
+            if (iVar1 == 0x2f)
+            {
+                iVar2 = 2;
+            }
+            else if (iVar1 < 0x30)
+            {
+                if (iVar1 == 0x2b)
+                {
+                    iVar2 = 0;
+                }
+                else
+                {
+                    iVar2 = 1;
+                    if (iVar1 != 0x2c)
+                    {
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                iVar2 = 3;
+                if (iVar1 != 0x30)
+                {
+                    return;
+                }
+            }
+            //SetCdReadPosition(iVar2);
+        }
+    }
+
+    //800556dc
+    private void FUN_800556dc()
+    {
+        StaticVariables.g_forbiddenWarpFlag = StaticVariables.g_forbiddenWarpFlag | 2;
+        _gameEngine.SoundManager.PlaySoundEffect(5);
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].speed = 0xf;
+
+        if (StaticVariables.TextTilesConfiguration_800b58a8.X < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].x =
+                 (short)(StaticVariables.TextTilesConfiguration_800b58a8.X + StaticVariables.TextTilesConfiguration_800b58a8.Width * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].x = StaticVariables.TextTilesConfiguration_800b58a8.X;
+        }
+
+        if (StaticVariables.TextTilesConfiguration_800b58a8.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].y =
+                 (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y + StaticVariables.TextTilesConfiguration_800b58a8.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].y = StaticVariables.TextTilesConfiguration_800b58a8.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].startX =
+             (short)~(StaticVariables.TextTilesConfiguration_800b58a8.Width << 3);
+
+        if (StaticVariables.TextTilesConfiguration_800b58a8.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].startY =
+                 (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y + StaticVariables.TextTilesConfiguration_800b58a8.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].startY = StaticVariables.TextTilesConfiguration_800b58a8.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].speed = 0xf;
+
+        if (StaticVariables.TextTilesConfiguration_800b8360.X < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].x =
+                 (short)(StaticVariables.TextTilesConfiguration_800b8360.X + StaticVariables.TextTilesConfiguration_800b8360.Width * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].x = StaticVariables.TextTilesConfiguration_800b8360.X;
+        }
+
+        if (StaticVariables.TextTilesConfiguration_800b8360.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].y =
+                 (short)(StaticVariables.TextTilesConfiguration_800b8360.Y + StaticVariables.TextTilesConfiguration_800b8360.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].y = StaticVariables.TextTilesConfiguration_800b8360.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].startX =
+             (short)~(ushort)((int)StaticVariables.TextTilesConfiguration_800b8360.Width << 3);
+
+        if (StaticVariables.TextTilesConfiguration_800b8360.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].startY =
+                 (short)(StaticVariables.TextTilesConfiguration_800b8360.Y + StaticVariables.TextTilesConfiguration_800b8360.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].startY = StaticVariables.TextTilesConfiguration_800b8360.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[2].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[2].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[2].speed = 0xf;
+
+        if (StaticVariables.g_textTilesConfiguration_800b8eb0.X < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].x =
+                 (short)(StaticVariables.g_textTilesConfiguration_800b8eb0.X + StaticVariables.g_textTilesConfiguration_800b8eb0.Width * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].x = StaticVariables.g_textTilesConfiguration_800b8eb0.X;
+        }
+
+        if (StaticVariables.g_textTilesConfiguration_800b8eb0.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].y =
+                 (short)(StaticVariables.g_textTilesConfiguration_800b8eb0.Y + StaticVariables.g_textTilesConfiguration_800b8eb0.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].y = StaticVariables.g_textTilesConfiguration_800b8eb0.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[2].startX = 0x140;
+
+        if (StaticVariables.g_textTilesConfiguration_800b8eb0.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].startY =
+                 (short)(StaticVariables.g_textTilesConfiguration_800b8eb0.Y + StaticVariables.g_textTilesConfiguration_800b8eb0.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[2].startY = StaticVariables.g_textTilesConfiguration_800b8eb0.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].speed = 0xf;
+
+        if (StaticVariables.TextTilesConfiguration_800b9a00.X < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].x =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9a00.X + StaticVariables.TextTilesConfiguration_800b9a00.Width * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].x = StaticVariables.TextTilesConfiguration_800b9a00.X;
+        }
+
+        if (StaticVariables.TextTilesConfiguration_800b9a00.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].y =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9a00.Y + StaticVariables.TextTilesConfiguration_800b9a00.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].y = StaticVariables.TextTilesConfiguration_800b9a00.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].startX = 0x140;
+
+        if (StaticVariables.TextTilesConfiguration_800b9a00.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].startY =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9a00.Y + StaticVariables.TextTilesConfiguration_800b9a00.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].startY = StaticVariables.TextTilesConfiguration_800b9a00.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].speed = 0xf;
+
+        if (StaticVariables.TextTilesConfiguration_800b9a10.X < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].x =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9a10.X + StaticVariables.TextTilesConfiguration_800b9a10.Width * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].x = StaticVariables.TextTilesConfiguration_800b9a10.X;
+        }
+
+        if (StaticVariables.TextTilesConfiguration_800b9a10.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].y =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9a10.Y + StaticVariables.TextTilesConfiguration_800b9a10.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].y = StaticVariables.TextTilesConfiguration_800b9a10.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].startX = 0x140;
+
+        if (StaticVariables.TextTilesConfiguration_800b9a10.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].startY =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9a10.Y + StaticVariables.TextTilesConfiguration_800b9a10.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].startY = StaticVariables.TextTilesConfiguration_800b9a10.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].speed = 0xf;
+
+        if (StaticVariables.TextTilesConfiguration_800b9e58.X < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].x =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9e58.X + StaticVariables.TextTilesConfiguration_800b9e58.Width * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].x = StaticVariables.TextTilesConfiguration_800b9e58.X;
+        }
+
+        if (StaticVariables.TextTilesConfiguration_800b9e58.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].y =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9e58.Y + StaticVariables.TextTilesConfiguration_800b9e58.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].y = StaticVariables.TextTilesConfiguration_800b9e58.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].startX = 0x140;
+
+        if (StaticVariables.TextTilesConfiguration_800b9e58.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].startY =
+                 (short)(StaticVariables.TextTilesConfiguration_800b9e58.Y + StaticVariables.TextTilesConfiguration_800b9e58.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].startY = StaticVariables.TextTilesConfiguration_800b9e58.Y;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].mode = 2;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].tick = 0;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].speed = 0xf;
+
+        if (StaticVariables.g_textTilesConfiguration2.X < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].x =
+                 (short)(StaticVariables.g_textTilesConfiguration2.X + StaticVariables.g_textTilesConfiguration2.Width * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].x = StaticVariables.g_textTilesConfiguration2.X;
+        }
+
+        if (StaticVariables.g_textTilesConfiguration2.Y < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].y =
+                 (short)(StaticVariables.g_textTilesConfiguration2.Y + StaticVariables.g_textTilesConfiguration2.Height * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].y = StaticVariables.g_textTilesConfiguration2.Y;
+        }
+
+        if (StaticVariables.g_textTilesConfiguration2.X < 0)
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].startX =
+                 (short)(StaticVariables.g_textTilesConfiguration2.X + StaticVariables.g_textTilesConfiguration2.Width * -8);
+        }
+        else
+        {
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].startX = StaticVariables.g_textTilesConfiguration2.X;
+        }
+
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].startY = 0xf0;
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace AlundraEngine.Gameplay;
+﻿namespace AlundraEngine.Graphics;
 
 public class POLY_FT4
 {

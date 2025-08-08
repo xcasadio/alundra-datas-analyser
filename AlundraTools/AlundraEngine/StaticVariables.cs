@@ -3,6 +3,7 @@ using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Sound;
 using System.Collections.ObjectModel;
+using AlundraEngine.Graphics;
 using AlundraEngine.UI;
 
 namespace AlundraEngine;
@@ -4964,7 +4965,8 @@ public static class StaticVariables
     public static int DAT_8017feec; // 8017FEEC
     public static int DAT_8017fef0; // 8017FEF0
     public static int g_forbiddenWarpFlag; // 8017FEF4
-    public static int INT_8017ff28; // 8017FF28
+    public static InventoryCursorAnimation g_inventoryCursorAnimation = new InventoryCursorAnimation(); // 8017fef8
+    public static int g_inventorySelectedSlotId; // 8017FF28
     public static short g_hudTransitionState; // 80180070
     public static POLY_FT4[] g_spriteInventoryAlundraPotrait = new POLY_FT4[2]; // 80180074
     public static int g_hudTransitionSrcX; // 801800C4
