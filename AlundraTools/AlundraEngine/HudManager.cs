@@ -43,7 +43,11 @@ public class HudManager
             //SetSprt(sprite);
             //SetSemiTrans(sprite, 0);
             //SetShadeTex(sprite, 1);
+
+            i++;
         } while (i < 9);
+
+        i = 0;
 
         do
         {
@@ -59,7 +63,7 @@ public class HudManager
             sprite.g0 = 0x80;
             sprite.b0 = 0x80;
 
-            i = i + 1;
+            i++;
         } while (i < 8);
 
         i = 0;
@@ -77,7 +81,7 @@ public class HudManager
             sprite.g0 = 0x80;
             sprite.b0 = 0x80;
 
-            i = i + 1;
+            i++;
         } while (i < 4);
 
         i = 0;
@@ -96,7 +100,7 @@ public class HudManager
             sprite.g0 = 0x80;
             sprite.b0 = 0x80;
 
-            i = i + 1;
+            i++;
         } while (i < 4);
     }
 
