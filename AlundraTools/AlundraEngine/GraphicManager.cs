@@ -19,7 +19,7 @@ public class GraphicManager
     }
 
     // 8002bd60
-    public void RenderScene(Graphics graphics)
+    public void RenderScene(System.Drawing.Graphics graphics)
     {
         byte localScratchpad = 0;
         StaticVariables.g_unusedByteArray = localScratchpad;
@@ -50,7 +50,7 @@ public class GraphicManager
     }
 
     // 8002cda0
-    private int RenderTiles(int[] renderListBase, int offsetX, int offsetY, int offsetZ, Graphics graphics)
+    private int RenderTiles(int[] renderListBase, int offsetX, int offsetY, int offsetZ, System.Drawing.Graphics graphics)
     {
         //TODO
         ResetTileAnimationState();
@@ -988,12 +988,6 @@ public class GraphicManager
     {
         sprites[index].w = width;
         sprites[index].h = height;
-    }
-
-    //80054a34
-    public void InitializeInventorySpriteNumberOf()
-    {
-
     }
 
     //800548a4

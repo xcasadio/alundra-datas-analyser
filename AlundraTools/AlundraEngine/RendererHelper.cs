@@ -11,7 +11,7 @@ public class RendererHelper
     private static readonly Font FontTileInfo = new Font(FontFamily.GenericSansSerif, 5.5f);
 
     //Custom renderer
-    public static void Render(Graphics g, GameEngine gameEngine, int currentRow, int camTileOffsetY)
+    public static void Render(System.Drawing.Graphics g, GameEngine gameEngine, int currentRow, int camTileOffsetY)
     {
         DatasBin.DatasBin datasBin = gameEngine.DatasBin;
         GameMap gameMap = gameEngine.CurrentMap;
@@ -311,7 +311,7 @@ public class RendererHelper
         return tileId;
     }
 
-    private static void DrawSprite(GameMap gm, SiImage img, int x, int y, Graphics g, float alpha = 1f)
+    private static void DrawSprite(GameMap gm, SiImage img, int x, int y, System.Drawing.Graphics g, float alpha = 1f)
     {
         var bmp = gm.GetSpriteBitmap(img);
         var w = img.X4 - img.X1;
@@ -409,7 +409,7 @@ public class RendererHelper
         }
     }
 
-    private static void DrawTile(int tileMapIndex, int x, int y, Graphics g, GameMap gameMap)
+    private static void DrawTile(int tileMapIndex, int x, int y, System.Drawing.Graphics g, GameMap gameMap)
     {
         var bmp = gameMap.GetTileBitmap(tileMapIndex);
         g.DrawImage(bmp, x, y);

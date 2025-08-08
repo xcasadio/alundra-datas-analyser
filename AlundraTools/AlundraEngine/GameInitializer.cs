@@ -559,7 +559,7 @@ public class GameInitializer
         StaticVariables.g_currentTransitionType = 0;
         StaticVariables.g_activeTransitionCallback = null;
         //ClearScreenEffectState();
-        _gameEngine.GraphicManager.InitializeInventorySpriteNumberOf();
+        _gameEngine.HudManager.InitializeInventorySpriteNumberOf();
         //FUN_80058394();
     }
 

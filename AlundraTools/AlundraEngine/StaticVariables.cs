@@ -40,6 +40,22 @@ public static class StaticVariables
 
     public const string DATAS_BIN = "DATA\\DATAS.BIN";
 
+    //800a82c8
+    public static readonly byte[] g_inventoryCursorAnimSpriteX = new byte[16]
+    {
+        0x00, 0x00, 0x00, 0x00,
+        0xFF, 0xFF, 0xFF, 0xFF,
+        0xFE, 0xFF, 0xFF, 0xFF,
+        0xFE, 0xFF, 0xFF, 0xFF
+    };
+    //800a82d8
+    public static readonly byte[] g_inventoryCursorAnimSpriteY = new byte[16]
+    {
+        0x00, 0x00, 0x00, 0x00,
+        0x01, 0x00, 0x00, 0x00,
+        0x02, 0x00, 0x00, 0x00,
+        0x02, 0x00, 0x00, 0x00
+    };
     //80098694
     public static string[] g_warpNames = ["0-FADE", "1-RAPID", "2-WHITE", "3-SCROLL", "4-DREAM", "5-WARP", "6-GATE", "7-NONE"];
     //800228a4
@@ -3450,7 +3466,7 @@ public static class StaticVariables
             new CallBackInfo
             {
                 Flags = 0, Data = null, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04, InitializeFunc = null,
-                RenderFunc = gameEngine.UIManager.FUN_80054f1c, Arg = 0
+                RenderFunc = gameEngine.HudManager.FUN_80054f1c, Arg = 0
             },
             new CallBackInfo
             {
@@ -4148,8 +4164,8 @@ public static class StaticVariables
     public static TextTilesConfiguration SprtGridDescriptor_800b122c; // 800B122C
     public static TextTilesConfiguration SprtGridDescriptor_800b1d7c; // 800B1D7C
     public static TextTilesConfiguration SprtGridDescriptor_800b287c; // 800B287C
-    public static byte DAT_800b2898; // 800B2898
-    public static byte DAT_800b2899; // 800B2899
+    public static byte g_inventoryCursorTextureU = 0xB0; // 800B2898
+    public static byte g_inventoryCursorTextureV = 0xA0; // 800B2899
     public static int DAT_800b42dc; // 800B42DC
     public static int DAT_800b42e0; // 800B42E0
     public static short DAT_800b42f8; // 800B42F8
@@ -4957,16 +4973,16 @@ public static class StaticVariables
     public static SPRT[] g_ItemNameSprites = new SPRT[4]; // 8017FA34
     public static short[] SHORT_ARRAY_8017fa3c = new short[16]; // 8017FA3C
     public static SPRT g_warpNameDisplayDst; // 8017FA5C
-    public static SPRT SPRT_8017fe74; // 8017FE74
-    public static short DAT_8017feac; // 8017FEAC
-    public static short DAT_8017fec0; // 8017FEC0
-    public static short DAT_8017fed4; // 8017FED4
-    public static short DAT_8017fee8; // 8017FEE8
+    public static SPRT[] SPRT_8017fe74 = Enumerable.Repeat(new SPRT(), 2).ToArray(); // 8017FE74
+    public static SPRT[] g_spriteInventoryText = Enumerable.Repeat(new SPRT(), 4).ToArray(); // 8017fe9c
     public static int DAT_8017feec; // 8017FEEC
     public static int DAT_8017fef0; // 8017FEF0
     public static int g_forbiddenWarpFlag; // 8017FEF4
     public static InventoryCursorAnimation g_inventoryCursorAnimation = new InventoryCursorAnimation(); // 8017fef8
     public static int g_inventorySelectedSlotId; // 8017FF28
+    public static SPRT[] g_spriteInventoryMoney = Enumerable.Repeat(new SPRT(), 8).ToArray(); // 8017FF2C
+    public static SPRT[] g_spriteInventoryNumberOfKeys = Enumerable.Repeat(new SPRT(), 4).ToArray(); // 8017ffcc
+    public static SPRT[] g_spriteInventoryNumberOfFalcon = Enumerable.Repeat(new SPRT(), 4).ToArray(); // 8018001c
     public static short g_hudTransitionState; // 80180070
     public static POLY_FT4[] g_spriteInventoryAlundraPotrait = new POLY_FT4[2]; // 80180074
     public static int g_hudTransitionSrcX; // 801800C4

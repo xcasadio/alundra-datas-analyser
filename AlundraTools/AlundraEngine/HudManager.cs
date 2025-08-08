@@ -1,5 +1,6 @@
 ﻿using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay;
+using AlundraEngine.Graphics;
 using AlundraEngine.UI;
 
 namespace AlundraEngine;
@@ -11,6 +12,166 @@ public class HudManager
     public HudManager(GameEngine gameEngine)
     {
         _gameEngine = gameEngine;
+    }
+
+    //80054a34
+    public void InitializeInventorySpriteNumberOf()
+    {
+        SPRT sprite;
+
+        FUN_800548a4(StaticVariables.TextTilesConfiguration_800b58a8);
+        FUN_800548a4(StaticVariables.TextTilesConfiguration_800b8360);
+        FUN_800548a4(StaticVariables.g_textTilesConfiguration_800b8eb0);
+        FUN_800548a4(StaticVariables.TextTilesConfiguration_800b9a00);
+        FUN_800548a4(StaticVariables.TextTilesConfiguration_800b9a10);
+        FUN_800548a4(StaticVariables.TextTilesConfiguration_800b9e58);
+        StaticVariables.g_forbiddenWarpFlag = 0;
+        StaticVariables.g_inventorySelectedSlotId = 0;
+        FUN_80050998(StaticVariables.g_inventoryCursorAnimation);
+
+        var i = 0;
+
+        do
+        {
+            var textToDisplay = StaticVariables.TextToDisplay_ARRAY_8017f920[i];
+            //sprite = StaticVariables.SPRT_ARRAY_8017fe74[i];
+
+            textToDisplay.x = 8;
+            textToDisplay.y = 0x10;
+            textToDisplay.mode = StaticVariables.g_clutTable[StaticVariables.g_clutTableIndex];
+
+            //SetSprt(sprite);
+            //SetSemiTrans(sprite, 0);
+            //SetShadeTex(sprite, 1);
+        } while (i < 9);
+
+        do
+        {
+            //SetSprt(sprite2);
+            //SetSemiTrans(sprite2, 0);
+            //SetShadeTex(sprite2, 1);
+
+            sprite = StaticVariables.g_spriteInventoryMoney[i];
+            sprite.w = 8;
+            sprite.h = 0x10;
+            sprite.clut = StaticVariables.g_clutTable[StaticVariables.g_clutTableIndex];
+            sprite.r0 = 0x80;
+            sprite.g0 = 0x80;
+            sprite.b0 = 0x80;
+
+            i = i + 1;
+        } while (i < 8);
+
+        i = 0;
+
+        do
+        {
+            //SetSprt(sprite2);
+            //SetSemiTrans(sprite2, 0);
+            //SetShadeTex(sprite2, 1);
+            sprite = StaticVariables.g_spriteInventoryNumberOfKeys[i];
+            sprite.w = 8;
+            sprite.h = 0x10;
+            sprite.clut = StaticVariables.g_clutTable[StaticVariables.g_clutTableIndex];
+            sprite.r0 = 0x80;
+            sprite.g0 = 0x80;
+            sprite.b0 = 0x80;
+
+            i = i + 1;
+        } while (i < 4);
+
+        i = 0;
+
+        do
+        {
+            //SetSprt(sprite2);
+            //SetSemiTrans(sprite2, 0);
+            //SetShadeTex(sprite2, 1);
+
+            sprite = StaticVariables.g_spriteInventoryNumberOfFalcon[i];
+            sprite.w = 8;
+            sprite.h = 0x10;
+            sprite.clut = StaticVariables.g_clutTable[StaticVariables.g_clutTableIndex];
+            sprite.r0 = 0x80;
+            sprite.g0 = 0x80;
+            sprite.b0 = 0x80;
+
+            i = i + 1;
+        } while (i < 4);
+    }
+
+    //80050998
+    private void FUN_80050998(InventoryCursorAnimation cursorAnim)
+    {
+        int index;
+        int iVar2;
+
+        index = 0;
+        iVar2 = 8;
+
+        do
+        {
+            cursorAnim.Sprites[index].w = 0x10;
+            cursorAnim.Sprites[index].h = 0x10;
+            cursorAnim.Sprites[index].u0 = StaticVariables.g_inventoryCursorTextureU;
+            cursorAnim.Sprites[index].v0 = StaticVariables.g_inventoryCursorTextureV;
+            //SetSprt(p);
+            //SetSemiTrans(p, 0);
+            //SetShadeTex(p, 1);
+            FUN_80050908(cursorAnim, 0, 0, index);
+            cursorAnim.Sprites[index].clut = StaticVariables.g_clutTable[0];
+
+            index = index + 1;
+
+        } while (index < 2);
+    }
+
+    //80050908
+    private void FUN_80050908(InventoryCursorAnimation cursorAnim, short x, short y, int index)
+    {
+        cursorAnim.Sprites[index].x0 = (short)(StaticVariables.g_inventoryCursorAnimSpriteX[(cursorAnim.FrameDelay / 10) * 4] + x);
+        cursorAnim.Sprites[index].y0 = (short)(StaticVariables.g_inventoryCursorAnimSpriteY[(cursorAnim.FrameDelay / 10) * 4] + y);
+
+    }
+
+    //800548a4
+    private void FUN_800548a4(TextTilesConfiguration textTilesConfig)
+    {
+        int index;
+        int col;
+        int row;
+        int mode;
+        short w;
+
+        row = 0;
+
+        if (0 < textTilesConfig.Height)
+        {
+            do
+            {
+                w = textTilesConfig.Width;
+                col = 0;
+
+                if (0 < textTilesConfig.Width)
+                {
+                    do
+                    {
+                        //SetSprt(tileConfig.spritesA + row * w + col);
+                        //SetSemiTrans(tileConfig.spritesA + row * textTilesConfig.width + col, 0);
+                        //SetShadeTex(tileConfig.spritesA + row * textTilesConfig.width + col, 1);
+
+                        index = row * textTilesConfig.Width + col;
+                        textTilesConfig.SpritesA[index].clut = StaticVariables.g_clutTable[textTilesConfig.SpritesA[index].clut];
+                        textTilesConfig.SpritesB[index].clut = StaticVariables.g_clutTable[textTilesConfig.SpritesB[index].clut];
+                        col = col + 1;
+
+                    } while (col < textTilesConfig.Width);
+                }
+
+                row = row + 1;
+
+            } while (row < textTilesConfig.Height);
+        }
     }
 
     //80057c84
@@ -99,7 +260,7 @@ public class HudManager
 
                 poly.x3 = (short)(width + 100);
                 poly.y3 = (short)(height + 100);
-                
+
                 //puVar1[9] = textureId1;
                 //puVar1[0xd] = textureId2;
                 //puVar1 = puVar1 + 0x14;

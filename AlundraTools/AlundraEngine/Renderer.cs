@@ -26,7 +26,7 @@ public class Renderer(GameEngine gameEngine)
         _sprites[depthSortValue].Add(sprite);
     }
 
-    public void Render(Graphics graphics)
+    public void Render(System.Drawing.Graphics graphics)
     {
         foreach (var kvp in _sprites)
         {
@@ -37,7 +37,7 @@ public class Renderer(GameEngine gameEngine)
         }
     }
 
-    private void RenderSprite(Graphics graphics, Sprite sprite)
+    private void RenderSprite(System.Drawing.Graphics graphics, Sprite sprite)
     {
         if (Math.Abs(sprite.Alpha - 1.0f) > 0.001f)
         {

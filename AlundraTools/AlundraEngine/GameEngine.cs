@@ -77,7 +77,7 @@ public class GameEngine
     }
 
     // 8002bfe0
-    public void MainLoop(Graphics graphics)
+    public void MainLoop(System.Drawing.Graphics graphics)
     {
         //InitializeGame();
         StaticVariables.g_spriteNumberOfImage = 0;
@@ -252,7 +252,7 @@ public class GameEngine
     }
 
     // 8002bd60
-    private void RenderScene(Graphics graphics)
+    private void RenderScene(System.Drawing.Graphics graphics)
     {
         GraphicManager.RenderScene(graphics);
     }
