@@ -36,4 +36,9 @@ public class TextToDisplay
     public byte _17;
     public short originX;
     public short originY;
+
+    public override string ToString()
+    {
+        return $"{tick} {speed}  {mode}  {x}  {y}  {startX}  {startY}  {originX}  {originY}";
+    }
 }

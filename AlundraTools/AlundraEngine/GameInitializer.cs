@@ -207,28 +207,14 @@ public class GameInitializer
 
     private void InitializeAlundraSpriteResourcesFromFile(string fileName, uint frameDataStart, uint frameDataEnd, uint imageDataStart, uint imageDataEnd)
     {
-        /*POLY_FT4 *polyFt4;
-        int j;
-        POLY_FT4 **pPolyFt4;
-        int i;
+        for (int i = 0; i < StaticVariables.g_alundraSprites.Length; i++)
+        {
+            var poly = StaticVariables.g_alundraSprites[i];
+            poly.r0 = 255;
+            poly.g0 = 255;
+            poly.b0 = 255;
+        }
 
-        i = 0;
-        pPolyFt4 = &g_polyFT4Table;
-        do {
-            j = 0;
-            polyFt4 = (POLY_FT4 *)pPolyFt4;
-            do {
-                SetPolyFT4(polyFt4);
-                SetShadeTex(polyFt4,1);
-                polyFt4.r0 = 0x80;
-                polyFt4.g0 = 0x80;
-                polyFt4.b0 = 0x80;
-                j = j + 1;
-                polyFt4 = polyFt4 + 0x200;
-            } while (j < 2);
-            i = i + 1;
-            pPolyFt4 = (POLY_FT4 **)((int)pPolyFt4 + 0x28);
-        } while (i < 0x200);*/
         //ReadFileFromCDIntoBuffer(fileName,(u_long *)g_animationRawData,frameDataStart,frameDataEnd - frameDataStart);
         StaticVariables.g_animationRawSize = (int)(frameDataEnd - frameDataStart);
         //InitAnimationData(StaticVariables.g_animationStructs, StaticVariables.g_animationRawData);
@@ -545,7 +531,12 @@ public class GameInitializer
                             //SetSprt(sprite);
                             //SetSemiTrans(sprite, 0);
                             //SetShadeTex(sprite, 1);
-                            sprite.clut = StaticVariables.g_clutTable[0]; //TODO Font3.Palettes[0];
+                            sprite.clut = StaticVariables.g_clutTable[0];
+
+                            //TODO cache images with u and v coordinates
+                            _gameEngine.Font3.GenerateFontBitmapTim(StaticVariables.g_clutTable[0]);
+
+                            //_gameEngine.Renderer.AddSprite(sprite, int.MaxValue, _gameEngine.Font3.GenerateFontBitmapTim(StaticVariables.g_clutTable[0]));
 
                             tileX = tileX + 1;
                         } while (tileX < tilesConfiguration.Width);
@@ -567,16 +558,16 @@ public class GameInitializer
         StaticVariables.g_currentTransitionType = 0;
         StaticVariables.g_activeTransitionCallback = null;
         //ClearScreenEffectState();
-        _gameEngine.Renderer.InitializeInventorySpriteNumberOf();
+        _gameEngine.GraphicManager.InitializeInventorySpriteNumberOf();
         //FUN_80058394();
     }
 
     //80057b64
     private void InitializeCameraTransitionState()
     {
-        StaticVariables.g_cameraTransitionState = 0;
-        StaticVariables.g_cameraTransitionStartX = 8;
-        StaticVariables.g_cameraTransitionStartY = 0x78;
+        StaticVariables.g_hudTransitionState = 0;
+        StaticVariables.g_hudTransitionStartX = 8;
+        StaticVariables.g_hudTransitionStartY = 0x78;
     }
 
     private void InitializeTileRenderer(int tPageX, int tPageY, int paletteX, int paletteY, short drawMode,

@@ -7,7 +7,6 @@ using AlundraEngine.Text;
 using System;
 using System.Diagnostics;
 using AlundraEngine.UI;
-using WarpData = AlundraEngine.DatasBin.WarpData;
 
 namespace AlundraEngine;
 
@@ -28,10 +27,16 @@ public class GameEngine
     public EffectManager EffectManager { get; }
     public EntityManager EntityManager { get; }
     public PlayerManager PlayerManager { get; }
+    public GraphicManager GraphicManager { get; }
     public Renderer Renderer { get; }
     public SoundManager SoundManager { get; }
     public SoundBin SoundBin { get; }
     public UIManager UIManager { get; }
+
+    public HudManager HudManager
+    {
+        get { return _hudManager; }
+    }
 
     private readonly EntityEventHandlers _entityEventHandlers;
     private readonly GameInitializer _gameInitializer;
@@ -39,6 +44,7 @@ public class GameEngine
 
     //TODO : find the variable in StaticVariables
     public int DialogState, DialogNameState, DialogName;
+    private readonly HudManager _hudManager;
 
     public GameEngine(DatasBin.DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR, Font3 font3)
     {
@@ -50,16 +56,18 @@ public class GameEngine
 
         _entityEventHandlers = new EntityEventHandlers(this);
         _gameInitializer = new GameInitializer(this);
-        Renderer = new Renderer(this);
         _padManager = new PadManager();
 
         CdManager = new CdManager(this);
         EntityManager = new EntityManager(this);
         EntityGameplayManager = new EntityGameplayManager(this);
         EffectManager = new EffectManager(this);
+        GraphicManager = new GraphicManager(this);
         PlayerManager = new PlayerManager(this);
+        Renderer = new Renderer(this);
         SoundManager = new SoundManager(this);
         UIManager = new UIManager(this);
+        _hudManager = new HudManager(this);
     }
 
     public void InitializeEngine()
@@ -133,10 +141,10 @@ public class GameEngine
             LoadMapAndInitializeEntities(null/*StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b40*/);
             WarpPlayer(playerPosX, playerPosY, playerPosZ, StaticVariables.g_warpType);
             InitializeTileAnimationSystem();
-            Renderer.PrepareBufferFlip();
+            GraphicManager.PrepareBufferFlip();
             LoadMapSounds(StaticVariables.g_currentMap);
             Update(1);
-            Renderer.ResetDebugRenderingState();
+            GraphicManager.ResetDebugRenderingState();
         }
 
         //do
@@ -246,7 +254,7 @@ public class GameEngine
     // 8002bd60
     private void RenderScene(Graphics graphics)
     {
-        Renderer.RenderScene(graphics);
+        GraphicManager.RenderScene(graphics);
     }
 
     // 8004e030
@@ -281,41 +289,41 @@ public class GameEngine
 
     public uint GetWeaponIdFromSlot1()
     {
-        return GetWeaponIdFromSlot(1);
+        return GetItemIdFromSlotId(1);
     }
 
     public uint GetWeaponIdFromSlot2()
     {
-        return GetWeaponIdFromSlot(2);
+        return GetItemIdFromSlotId(2);
     }
 
     public uint GetWeaponIdFromSlot3()
     {
-        return GetWeaponIdFromSlot(3);
+        return GetItemIdFromSlotId(3);
     }
 
     public uint GetWeaponIdFromSlot4()
     {
-        return GetWeaponIdFromSlot(4);
+        return GetItemIdFromSlotId(4);
     }
 
     public uint GetWeaponIdFromSlot5()
     {
-        return GetWeaponIdFromSlot(5);
+        return GetItemIdFromSlotId(5);
     }
 
     private uint GetWeaponIdFromSlot6()
     {
-        return GetWeaponIdFromSlot(6);
+        return GetItemIdFromSlotId(6);
     }
 
     // 8004e18c
-    private uint GetWeaponIdFromSlot(uint weaponTypeId)
+    private uint GetItemIdFromSlotId(uint slotId)
     {
-        if (weaponTypeId >= 0x20)
+        if (slotId >= 0x20)
         {
             Debugger.Break();
-            Debug.WriteLine($"Invalid weaponTypeId: {weaponTypeId}");
+            Debug.WriteLine($"Invalid slotId: {slotId}");
             return 0xFFFFFFFF;
         }
 
@@ -326,7 +334,7 @@ public class GameEngine
         {
             var entrySectionId = StaticVariables.g_itemsProperties[currentIndex * 5];
 
-            if (entrySectionId == weaponTypeId)
+            if (entrySectionId == slotId)
             {
                 var usageCount = StaticVariables.g_numberOfItems[currentIndex * 2 + 1];
 
@@ -811,7 +819,6 @@ public class GameEngine
         var entity = EntityManager.AllocateEntitySlot();
         if (entity == null)
         {
-            Debugger.Break();
             return null;
         }
 
@@ -1235,7 +1242,7 @@ public class GameEngine
     private int LoadMapSounds(int mapId)
     {
         SoundManager.LoadMapSounds(mapId);
-        Renderer.PrepareBufferFlip();
+        GraphicManager.PrepareBufferFlip();
         return 1;
     }
 
@@ -1414,7 +1421,7 @@ public class GameEngine
             StaticVariables.g_warpDelayFrames == 0 &&
             (StaticVariables.g_padState1.ButtonsHold & PadState.Select) == 0 &&
             StaticVariables.g_globalTransitionState == 0 &&
-            DisplayInventory() == 0)
+            HudManager.DisplayInventory() == 0)
         {
             StaticVariables.g_isGameEnding = 1;
         }
@@ -1429,70 +1436,14 @@ public class GameEngine
         }
     }
 
-    //80055570
-    private int DisplayInventory()
-    {
-        uint isSpecialWarpTriggered;
-        
-        if (StaticVariables.g_forbiddenWarpFlag == 0)
-        {
-            isSpecialWarpTriggered = CheckSpecialWarpCondition(0);
-            if (isSpecialWarpTriggered != 0)
-            {
-                return 1;
-            }
-        
-            isSpecialWarpTriggered = CheckSpecialWarpCondition(0xb);
-            if (isSpecialWarpTriggered != 0)
-            {
-                return 1;
-            }
-        
-            if (StaticVariables.g_cdIsReady == 0)
-            {
-                if ((StaticVariables.g_padState1.ButtonsHold & PadState.Right) != 0)
-                {
-                    TriggerWarpTypeA();
-                    return 1;
-                }
-                if ((StaticVariables.g_padState1.ButtonsHold & PadState.Left) != 0)
-                {
-                    //TriggerWarpTypeB();
-                    return 0;
-                }
-                if ((StaticVariables.g_padState1.ButtonsHold & PadState.Up) != 0)
-                {
-                    //StartFadeOut();
-                    return 1;
-                }
-                if ((StaticVariables.g_padState1.ButtonsHold & PadState.Down) != 0)
-                {
-                    //TriggerWarpTypeC();
-                    return 1;
-                }
-            }
-
-            Renderer.InitializeFrame();
-            Renderer.SetTransitionType(6);
-            var sprite = Renderer.GetAnimationImageByIndex(0);
-            //InitCameraTransition(-player.PosX, -player.PosY, -player.PosZ,
-            //    -StaticVariables.g_cameraScrollingX, -StaticVariables.g_cameraScrollingY,
-            //    sprite.U, sprite.V, sprite.Witdh, sprite.Height);
-            //DisplayWarpNames();
-            SoundManager.PlaySoundEffect(4);
-        }
-
-        return 1;
-    }
-
     //80047c8c
-    private uint CheckSpecialWarpCondition(int index)
+    public uint CheckSpecialWarpCondition(int index)
     {
         return (uint)StaticVariables.g_callbackTable[index].Flags & 1;
     }
 
     //80051f1c
-    private void TriggerWarpTypeA()
+    public void TriggerWarpTypeA()
     {
         StaticVariables.DAT_8017e8d8 = 0;
         StaticVariables.DAT_8017e990 = 0;
@@ -1500,7 +1451,7 @@ public class GameEngine
         StaticVariables.DAT_8017e998 = 0x4f824f82;
         StaticVariables.DAT_8017e99c = 0x4f82;
         StaticVariables.DAT_8017e99e = 0;
-        Renderer.SetTransitionType(0xb);
+        GraphicManager.SetTransitionType(0xb);
     }
 
     private void UpdateWorld()
@@ -2509,23 +2460,21 @@ public class GameEngine
     }
 
     // 8004e0f8
-    public int GetTriggeredWarpMapId()
+    public int SetItemIdFromCurrentItemId()
     {
-        var itemId = StaticVariables.g_playerStats.ItemId;
-        var numberOfItem = PlayerManager.GetNumberOfItem(itemId);
+        var currentItemId = StaticVariables.g_playerStats.ItemId;
+        var numberOfItem = PlayerManager.GetNumberOfItem(currentItemId);
 
         if (numberOfItem == 0)
         {
             return -1;
         }
 
-        // Calcul de l'indice dans la table g_itemsProperties
-        // (warpId * 5) est l'indice multiplié par la taille de chaque entrée
-        var sectionId = StaticVariables.g_itemsProperties[itemId * 5];
+        var slotId = StaticVariables.g_itemsProperties[currentItemId * 5];
+        var itemId = GetItemIdFromSlotId((uint)slotId);
+        SetCurrentItemId(itemId);
 
-        var weaponId = GetWeaponIdFromSlot((uint)sectionId);
-        SetCurrentItemId(weaponId);
-        return itemId;
+        return currentItemId;
     }
 
     // 8004e4d8
@@ -2540,103 +2489,9 @@ public class GameEngine
         StaticVariables.g_playerStats.ItemId = (short)itemId;
     }
 
-    public void SpawnSpinningParticleRing()
-    {
-        Debugger.Break();
-    }
-
     //80057c84
-    public void ApplyCameraEffect(int x, int y, int z,
-        int destX, int destY,
-        byte uvX, byte uvY,
-        short width, short height,
-        short textureId1, short textureId2)
-
-    {
-        StaticVariables.g_cameraTransitionStartX = 8;
-        StaticVariables.g_cameraTransitionStartY = 0x74;
-        InitCameraTransitionEffect(x, y, z, destX, destY, uvX, uvY, width, height, textureId1, textureId2);
-    }
 
     //80057cf0
-    public void InitCameraTransitionEffect(
-        int srcX, int srcY, int srcZ,
-        int dstXPtr, int dstYPtr,
-        byte uvX, byte uvY,
-        short width, short height,
-        short textureId1, short textureId2)
-    {
-        short puVar1;
-        int i;
-        byte uvBottom;
-        byte uvRight;
-
-        puVar1 = StaticVariables.g_cameraTransitionState;
-
-        if (StaticVariables.g_cameraTransitionState == 0)
-        {
-            i = 0;
-            uvRight = (byte)(uvX + width);
-            uvBottom = (byte)(uvY + height);
-            StaticVariables.g_cameraTransitionDstYPtr = dstYPtr;
-            StaticVariables.g_cameraTransitionState = 5;
-            StaticVariables.g_cameraTransitionSrcX = srcX;
-            StaticVariables.g_cameraTransitionSrcY = srcY;
-            StaticVariables.g_cameraTransitionSrcZ = srcZ;
-            StaticVariables.g_cameraTransitionDstXPtr = dstXPtr;
-
-            Debugger.Break();
-            
-            do
-            {
-                var poly = StaticVariables.g_spriteInventoryAlundraPotrait[i];
-
-                //SetPolyFT4((POLY_FT4*)poly);
-                poly.r0 = 0xff;
-                poly.g0 = 0xff;
-                poly.b0 = 0xff;
-                poly._2 = uvY;
-                poly.u1 = uvRight;
-                poly._3 = uvY;
-                poly.v2 = uvBottom;
-                poly.u3 = uvRight;
-                poly.v3 = uvBottom;
-                poly.x0 = 100;
-                poly.y0 = 100;
-                poly.x1 = (short)(width + 100);
-                poly.y1 = 100;
-                poly.x2 = 100;
-                poly.u0 = uvX;
-                poly.u2 = uvX;
-                poly.x3 = (short)(width + 100);
-                poly.y2 = (short)(height + 100);
-                poly.y3 = (short)(height + 100);
-                
-                //puVar1[9] = textureId1;
-                //puVar1[0xd] = textureId2;
-                //puVar1 = puVar1 + 0x14;
-
-                i = i + 1;
-            } while (i < 2);
-            
-
-            StaticVariables.g_cameraDeltaX = -(StaticVariables.g_cameraTransitionSrcX + 2)
-            - StaticVariables.g_cameraTransitionDstXPtr;
-
-            StaticVariables.g_cameraX = StaticVariables.g_cameraDeltaX - StaticVariables.g_cameraTransitionStartX;
-            StaticVariables.g_cameraTransitionHalfWidth = 0x30;
-            StaticVariables.g_cameraTransitionHalfHeight = 0x38;
-            StaticVariables.g_cameraCurrentX = StaticVariables.g_cameraTransitionStartX;
-            StaticVariables.g_cameraCurrentY = StaticVariables.g_cameraTransitionStartY;
-            StaticVariables.g_cameraTransitionStepValue = 0xf;
-            StaticVariables.g_cameraDeltaY =
-                 StaticVariables.g_cameraTransitionSrcY + 2
-                 - StaticVariables.g_cameraTransitionDstYPtr
-                 - (StaticVariables.g_cameraTransitionSrcZ + 2)
-                 - 0x20;
-            StaticVariables.g_cameraY = StaticVariables.g_cameraDeltaY - StaticVariables.g_cameraTransitionStartY;
-        }
-    }
 
     //80059f6c
     public void TriggerVisualUpdate(int spriteTableIndex)
@@ -2649,7 +2504,7 @@ public class GameEngine
             )
         {
             StaticVariables.g_entitySpriteNameTableIndex = spriteTableIndex;
-            Renderer.SetTransitionType(0xc);
+            GraphicManager.SetTransitionType(0xc);
         }
     }
 
@@ -2663,8 +2518,6 @@ public class GameEngine
             return 0;
         }
 
-        //Debugger.Break();
-
         strings = AlundraMap.Strings;
         //tableBase = StaticVariables.g_etcAnimTable; //alundra string table
 
@@ -2674,7 +2527,7 @@ public class GameEngine
             //tableBase = StaticVariables.g_etcAnimTableAlt; //currentmapstringtable
         }
 
-        var text = strings[(textId & 0x7f)];
+        var text = strings[textId & 0x7f];
 
         SetupEtcAnimation();
         PlayEtcAnimation(text, animationMode);
@@ -2691,13 +2544,13 @@ public class GameEngine
     //8008167c
     private void SetupEtcAnimation()
     {
-        //empty function ???
+        //empty function
     }
 
     //800450f0
     public int PlayEtcAnimation(string scriptText, int animationMode)
     {
-        if (Renderer.SetTransitionType(0) == 0)
+        if (GraphicManager.SetTransitionType(0) == 0)
         {
             return 0;
         }
@@ -2772,21 +2625,22 @@ public class GameEngine
             {
                 for (int x = 0; x < 1; ++x)
                 {
-                    //var sprt = StaticVariables.g_textFullLinesSprites[x + y * 2];
                     var index = x + y + group;
 
-                    StaticVariables.g_textFullLinesSprites[index].w = 0xff;
-                    StaticVariables.g_textFullLinesSprites[index].h = 0x10;
-                    StaticVariables.g_textFullLinesSprites[index].u0 = 0;
-                    StaticVariables.g_textFullLinesSprites[index].v0 = yOffset;
+                    var sprite = StaticVariables.g_textFullLinesSprites[index];
+                    sprite.w = 0xff;
+                    sprite.h = 0x10;
+                    sprite.u0 = 0;
+                    sprite.v0 = yOffset;
+                    sprite.clut = StaticVariables.g_clutTable[8 - x];
 
                     //SetSprt(sprt);
                     //SetSemiTrans(sprt, 0);
                     //SetShadeTex(sprt, 1);
 
-                    var clutIndex = 8 - x;
+                    Renderer.AddSprite(sprite, int.MaxValue, Font3.GenerateFontBitmapTim(StaticVariables.g_clutTable[8 - x]));
+
                     x = x + 1;
-                    StaticVariables.g_textFullLinesSprites[index].clut = StaticVariables.g_clutTable[clutIndex];
                 }
             }
 
@@ -2798,17 +2652,20 @@ public class GameEngine
 
         do
         {
-            StaticVariables.g_cursorTextSprites[i].w = 0x10;
-            StaticVariables.g_cursorTextSprites[i].h = 0x10;
-            StaticVariables.g_cursorTextSprites[i].u0 = StaticVariables.g_dialogCursorTextureU;
-            StaticVariables.g_cursorTextSprites[i].v0 = StaticVariables.g_dialogCursorTextureV;
-            StaticVariables.g_cursorTextSprites[i].x0 = 0;
-            StaticVariables.g_cursorTextSprites[i].y0 = 0;
-            StaticVariables.g_cursorTextSprites[i].clut = StaticVariables.g_clutTable[8];
+            var sprite = StaticVariables.g_cursorTextSprites[i];
+            sprite.w = 0x10;
+            sprite.h = 0x10;
+            sprite.u0 = StaticVariables.g_dialogCursorTextureU;
+            sprite.v0 = StaticVariables.g_dialogCursorTextureV;
+            sprite.x0 = 0;
+            sprite.y0 = 0;
+            sprite.clut = StaticVariables.g_clutTable[8];
 
-            //SetSprt(StaticVariables.g_cursorTextSprites[i]);
-            //SetSemiTrans(StaticVariables.g_cursorTextSprites[i], 0);
-            //SetShadeTex(StaticVariables.g_cursorTextSprites[i], 1);
+            //SetSprt(sprite);
+            //SetSemiTrans(sprite, 0);
+            //SetShadeTex(sprite, 1);
+
+            Renderer.AddSprite(sprite, int.MaxValue, Font3.GenerateHudBitmap(StaticVariables.g_clutTable[8]));
 
             i = i + 1;
         } while (i < 2);
@@ -2886,9 +2743,9 @@ public class GameEngine
         StaticVariables.g_asyncCallbackCounter = i;
         StaticVariables.g_asyncCallback = asyncCallbackHandler;
         StaticVariables.g_asyncCallbackArgs2 = args;
-        Renderer.InitFadeOverlaySprites(StaticVariables.g_sprites);
+        GraphicManager.InitializeFadeOverlaySprites(StaticVariables.g_sprites);
         SoundManager.PlaySoundEffect(4);
-        Renderer.SetTransitionType(3);
+        GraphicManager.SetTransitionType(3);
     }
 
     //80050b98

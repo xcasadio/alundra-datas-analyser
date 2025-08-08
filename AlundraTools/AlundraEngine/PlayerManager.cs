@@ -1201,16 +1201,16 @@ public class PlayerManager
             }
         }
 
-        var triggeredWarpMapId = _gameEngine.GetTriggeredWarpMapId();
-        if (triggeredWarpMapId > 0 && triggeredWarpMapId < 0x61)
+        var currentItemId = _gameEngine.SetItemIdFromCurrentItemId();
+        if (currentItemId > 0 && currentItemId < 0x61)
         {
-            var warpIconFlags = (byte)(StaticVariables.g_iconNameEtcBase[(triggeredWarpMapId * 8 + 6) / 4] & 0x7F);
+            var warpIconFlags = (byte)(StaticVariables.g_iconNameEtcBase[(currentItemId * 8 + 6) / 4] & 0x7F);
 
             if (warpIconFlags == 3)
             {
-                var itemData = _gameEngine.GetItemDataPointer(triggeredWarpMapId);
+                var itemData = _gameEngine.GetItemDataPointer(currentItemId);
                 StaticVariables.g_items[3] = itemData;
-                StaticVariables.g_items[4] = triggeredWarpMapId + 0x1E;
+                StaticVariables.g_items[4] = currentItemId + 0x1E;
             }
         }
 
@@ -1854,7 +1854,7 @@ public class PlayerManager
     //8003499c
     private int UseItem()
     {
-        var mapId = _gameEngine.GetTriggeredWarpMapId();
+        var mapId = _gameEngine.SetItemIdFromCurrentItemId();
 
         if (mapId >= 0x62)
         {
@@ -1979,9 +1979,10 @@ public class PlayerManager
 
         mp = GetPlayerMp();
         mpMax = GetPlayerMpMax();
+
         if (mp < mpMax)
         {
-            _gameEngine.SpawnSpinningParticleRing();
+            _gameEngine.PlayerManager.RestoreMpAndCreateEffect(StaticVariables.PlayerEntity);
             _gameEngine.SoundManager.PlaySoundEffect(0x30);
             UseItem(itemId);
         }
@@ -1989,6 +1990,7 @@ public class PlayerManager
         {
             _gameEngine.SoundManager.PlaySoundEffect(3);
         }
+
         return 1;
     }
 

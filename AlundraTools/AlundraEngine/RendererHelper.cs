@@ -11,23 +11,26 @@ public class RendererHelper
     private static readonly Font FontTileInfo = new Font(FontFamily.GenericSansSerif, 5.5f);
 
     //Custom renderer
-    public static void Render(Graphics g, DatasBin.DatasBin datasBin, GameMap gameMap, int currentRow, int camTileOffsetY)
+    public static void Render(Graphics g, GameEngine gameEngine, int currentRow, int camTileOffsetY)
     {
+        DatasBin.DatasBin datasBin = gameEngine.DatasBin;
+        GameMap gameMap = gameEngine.CurrentMap;
+
         var textToRender = new List<TextDisplayParameter>();
 
         var currentXPosition = StaticVariables.g_cameraScrollingX;
         var currentYPosition = StaticVariables.g_cameraScrollingY;
 
-        if (StaticVariables.UseDebugCamera)
-        {
-            currentXPosition = StaticVariables.g_cameraCurrentX;
-            currentYPosition = StaticVariables.g_cameraCurrentY;
-        }
-        else
-        {
-            StaticVariables.g_cameraCurrentX = StaticVariables.g_cameraScrollingX;
-            StaticVariables.g_cameraCurrentY = StaticVariables.g_cameraScrollingY;
-        }
+        //if (StaticVariables.UseDebugCamera)
+        //{
+        //    currentXPosition = StaticVariables.g_hudCurrentX;
+        //    currentYPosition = StaticVariables.g_hudCurrentY;
+        //}
+        //else
+        //{
+        //    StaticVariables.g_hudCurrentX = StaticVariables.g_cameraScrollingX;
+        //    StaticVariables.g_hudCurrentY = StaticVariables.g_cameraScrollingY;
+        //}
 
         var curXTile = currentXPosition / StaticVariables.MapTileWidth;
         var curYTile = 0;
@@ -263,6 +266,12 @@ public class RendererHelper
                 });
             }
         }
+
+        gameEngine.Renderer.Render(g);
+        gameEngine.Renderer.Clear();
+
+
+
 
         foreach (var textDisplayParameter in textToRender)
         {

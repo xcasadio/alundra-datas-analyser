@@ -1342,7 +1342,7 @@ namespace AlundraTools.AlundraTools
             try
             {
                 e.Graphics.Clear(Color.Black);
-                if (_selectedAnim != null && _selectedAnim.NumberOfFrames > 0)
+                if (_selectedAnim?.Frames != null && _selectedAnim.NumberOfFrames > 0)
                 {
                     var frame = _selectedAnim.Frames[_curframe];
 
@@ -1604,7 +1604,7 @@ namespace AlundraTools.AlundraTools
                 using var graphics = Graphics.FromImage(pictureBoxWindTx.Image);
                 graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 graphics.Clear(Color.Black);
-                graphics.DrawImage(_font3.GenerateFontBitmap(paletteIndex), 0, 0/*-vScrollSprite.Value*/);
+                graphics.DrawImage(_font3.GenerateHudBitmap(paletteIndex), 0, 0/*-vScrollSprite.Value*/);
                 pictureBoxWindTx.Refresh();
 
                 pictureBoxFont3Tim.Image = new Bitmap(pictureBoxFont3Tim.Width, pictureBoxFont3Tim.Height, PixelFormat.Format24bppRgb);

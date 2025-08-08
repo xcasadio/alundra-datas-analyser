@@ -48,7 +48,8 @@ public class UIManager
                             //SetSprt(sprite);
                             //SetSemiTrans(sprite, 0);
                             //SetShadeTex(sprite, 1);
-                            sprite.clut = StaticVariables.g_clutTable[0]; //TODO Font3.Palettes[0];
+                            sprite.clut = StaticVariables.g_clutTable[0];
+                            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, _gameEngine.Font3.GenerateFontBitmapTim(StaticVariables.g_clutTable[0]));
 
                             tileX += 1;
                         } while (tileX < tilesConfiguration.Width);
@@ -210,7 +211,7 @@ public class UIManager
             iVar8 = 0;
             sVar10 = 0;
             iVar3 = (iVar5 + line) % 3;
-            iVar9 = iVar3 * 0x28;
+            iVar9 = iVar3/* * 0x28*/;
 
             do
             {
@@ -310,10 +311,9 @@ public class UIManager
         int witdh;
         char pcVar2;
         short psVar3;
-        SPRT sprite;
         int tileConfig;
         int i;
-        int iVar4;
+        int index;
         string[] buffer6;
         int iVar5;
         int iVar6;
@@ -385,16 +385,21 @@ public class UIManager
                 do
                 {
                     witdh = CalculateTextWidthFromScript(StaticVariables.g_asyncCallbackArgs2[i].ToCharArray());
-                    iVar4 = iVar6 + tileConfig + local_2c;
-                    StaticVariables.SPRT_ARRAY_8017e674[iVar4].w = (short)witdh;
-                    StaticVariables.SPRT_ARRAY_8017e674[iVar4].h = 0x10;
-                    StaticVariables.SPRT_ARRAY_8017e674[iVar4].u0 = (byte)(i << 7);
-                    StaticVariables.SPRT_ARRAY_8017e674[iVar4].v0 = 0xd0;
-                    StaticVariables.SPRT_ARRAY_8017e674[iVar4].clut = StaticVariables.g_clutTable[8];
+                    index = iVar6 + tileConfig + local_2c;
+                    var sprite = StaticVariables.SPRT_ARRAY_8017e674[index];
+                    sprite.w = (short)witdh;
+                    sprite.h = 0x10;
+                    sprite.u0 = (byte)(i << 7);
+                    sprite.v0 = 0xd0;
+                    var clut = StaticVariables.g_clutTable[8];
+                    sprite.clut = clut;
                     //sprite = StaticVariables.SPRT_ARRAY_8017e674[iVar5 + local_2c + tileConfig];
                     //SetSprt(sprites);
                     //SetSemiTrans(sprites, 0);
                     //SetShadeTex(sprites, 1);
+
+                    _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, _gameEngine.Font3.GenerateFontBitmapTim(clut));
+
                     iVar6 += 0x3c;
                     iVar5 += 0x3c;
                     k += 1;
@@ -811,15 +816,15 @@ public class UIManager
             if ((StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.OpenInventory) != 0)
             {
                 FUN_800556dc();
-                UpdateCameraTransitionState();
-                _gameEngine.Renderer.PrepareBufferFlip();
+                _gameEngine.HudManager.UpdateHudTransitionState();
+                _gameEngine.GraphicManager.PrepareBufferFlip();
             }
 
             if ((StaticVariables.g_padState1.ButtonsJustPressedByInterval & (PadState.R1 | PadState.L1)) != 0)
             {
                 FUN_800556dc();
                 StaticVariables.g_playerControlFlags = StaticVariables.g_playerControlFlags | 8;
-                UpdateCameraTransitionState();
+                _gameEngine.HudManager.UpdateHudTransitionState();
                 StaticVariables.g_postProcessState = 1;
             }
         }
@@ -1282,6 +1287,7 @@ public class UIManager
         DisplayWarpNames();
     }
 
+    //80055c84
     private void DisplayWarpNames()
     {
         uint currentTileIndex;
@@ -1293,15 +1299,15 @@ public class UIManager
         {
             sourceWarpName = _gameEngine.EtcResR.GetIconName((int)currentTileIndex);
 
-            _gameEngine.Renderer.DisplayIconName(
-                StaticVariables.g_warpNameDisplaySrc,
+            _gameEngine.GraphicManager.DisplayIconName(
+                StaticVariables.g_ItemNameSprites,
                 sourceWarpName.ToCharArray(), 
                 0x20,
                 StaticVariables.g_textTilesConfiguration_800b8eb0.X,
                 (short)(StaticVariables.g_textTilesConfiguration_800b8eb0.Y + 8), 
                 0);
         }
-        currentTileIndex = (uint)_gameEngine.GetTriggeredWarpMapId();
+        currentTileIndex = (uint)_gameEngine.SetItemIdFromCurrentItemId();
 
         if (currentTileIndex == -1)
         {
@@ -1312,7 +1318,7 @@ public class UIManager
             sourceWarpName = _gameEngine.EtcResR.GetIconName((int)currentTileIndex);// StaticVariables.g_iconNameEtcBase[currentTileIndex * 2];
         }
 
-        _gameEngine.Renderer.DisplayIconName([StaticVariables.g_warpNameDisplaySrc[2]],
+        _gameEngine.GraphicManager.DisplayIconName([StaticVariables.g_ItemNameSprites[2]],
             sourceWarpName.ToCharArray(), 
             0x20, 
             StaticVariables.TextTilesConfiguration_800b9a00.X,
@@ -1323,56 +1329,61 @@ public class UIManager
     //80057854
     private void FUN_80057854()
     {
-        uint uVar1;
+        uint currentItemId;
         int iVar2;
-        uint uVar3;
+        uint slotId;
 
-        uVar3 = StaticVariables.UINT_ARRAY_800b9ec8[StaticVariables.INT_8017ff28];
-        if (uVar3 != 0)
+        slotId = StaticVariables.UINT_ARRAY_800b9ec8[StaticVariables.INT_8017ff28];
+        if (slotId != 0)
         {
-            if (uVar3 == 0xffffffff)
+            if (slotId == 0xffffffff)
             {
                 //PTR_GetWeaponIdFromSlot1_800b9e68
-                uVar3 = StaticVariables.INT_8017ff28 switch
+                slotId = StaticVariables.INT_8017ff28 switch
                 {
                     1 => _gameEngine.GetWeaponIdFromSlot1(),
                     2 => _gameEngine.GetWeaponIdFromSlot3(),
                     3 => _gameEngine.GetWeaponIdFromSlot2(),
                     4 => _gameEngine.GetWeaponIdFromSlot4(),
                     5 => _gameEngine.GetWeaponIdFromSlot5(),
-                    _ => uVar3
+                    _ => slotId
                 };
 
-                if (uVar3 == 0xffffffff)
+                if (slotId == 0xffffffff)
                 {
                     LAB_80057938:
                     _gameEngine.SoundManager.PlaySoundEffect(3);
                     return;
                 }
-                uVar1 = (uint)_gameEngine.GetTriggeredWarpMapId();
-                if (uVar1 == uVar3)
+
+                currentItemId = (uint)_gameEngine.SetItemIdFromCurrentItemId();
+
+                if (currentItemId == slotId)
                 {
                     return;
                 }
             }
             else
             {
-                iVar2 = _gameEngine.PlayerManager.GetNumberOfItem((int)uVar3);
+                iVar2 = _gameEngine.PlayerManager.GetNumberOfItem((int)slotId);
+
                 if (iVar2 == 0)
                 {
                     //goto LAB_80057938;
                     _gameEngine.SoundManager.PlaySoundEffect(3);
                     return;
                 }
-                uVar1 = (uint)_gameEngine.GetTriggeredWarpMapId();
-                uVar3 = StaticVariables.UINT_ARRAY_800b9ec8[StaticVariables.INT_8017ff28];
-                if (uVar1 == uVar3)
+
+                currentItemId = (uint)_gameEngine.SetItemIdFromCurrentItemId();
+                slotId = StaticVariables.UINT_ARRAY_800b9ec8[StaticVariables.INT_8017ff28];
+
+                if (currentItemId == slotId)
                 {
                     return;
                 }
             }
 
-            _gameEngine.SetCurrentItemId(uVar3);
+            _gameEngine.SetCurrentItemId(slotId);
             _gameEngine.SoundManager.PlaySoundEffect(2);
         }
 
@@ -1389,7 +1400,7 @@ public class UIManager
         if ((StaticVariables.g_isCdResetRequested != 0) 
             || ((StaticVariables.g_cdIsReady != 0 && (StaticVariables.g_cdDataLoaded == 0))))
         {
-            iVar1 = _gameEngine.GetTriggeredWarpMapId();
+            iVar1 = _gameEngine.SetItemIdFromCurrentItemId();
             if (iVar1 == 0x2f)
             {
                 iVar2 = 2;
@@ -1477,7 +1488,7 @@ public class UIManager
 
         var text = StaticVariables.g_entitySpriteNamesTable[StaticVariables.g_entitySpriteNameTableIndex];
         
-        _gameEngine.Renderer.DisplayIconName(
+        _gameEngine.GraphicManager.DisplayIconName(
             StaticVariables.SPRT_80180260,
             text.ToCharArray(),
             6,
@@ -1735,8 +1746,8 @@ public class UIManager
             StaticVariables.g_warpFlags_2 |= 2;
 
             _gameEngine.SoundManager.PlaySoundEffect(7);
-            ResetEtcTextAnimationState();
-            UpdateCameraTransitionState();
+            ResetHudTransitionState();
+            _gameEngine.HudManager.UpdateHudTransitionState();
 
             StaticVariables.g_textToDisplay.mode = 2;
             StaticVariables.g_textToDisplay.tick = 0;
@@ -1775,7 +1786,7 @@ public class UIManager
     }
 
     //80059fe0
-    private void ResetEtcTextAnimationState()
+    private void ResetHudTransitionState()
     {
         if ((StaticVariables.g_etcDisplayFlags & 4U) != 0)
         {
@@ -1813,24 +1824,6 @@ public class UIManager
         else
         {
             StaticVariables.g_textToDisplay2.startY = StaticVariables.g_textTilesConfiguration.Y;
-        }
-    }
-
-    //80057b84
-    private void UpdateCameraTransitionState()
-    {
-        if (StaticVariables.g_cameraTransitionState != 0)
-        {
-            StaticVariables.g_cameraCurrentX = StaticVariables.g_cameraTransitionSrcX + 2 - StaticVariables.g_cameraTransitionDstXPtr;
-            StaticVariables.g_cameraDeltaX = StaticVariables.g_cameraTransitionStartX;
-            StaticVariables.g_cameraX = StaticVariables.g_cameraTransitionStartX - StaticVariables.g_cameraCurrentX;
-            StaticVariables.g_cameraDeltaY = StaticVariables.g_cameraTransitionStartY;
-            StaticVariables.g_cameraTransitionState = 2;
-            StaticVariables.g_cameraCurrentY = 
-                StaticVariables.g_cameraTransitionSrcY + 2 - StaticVariables.g_cameraTransitionDstYPtr -
-                (StaticVariables.g_cameraTransitionSrcZ + 2) + -0x20;
-            StaticVariables.g_cameraY = StaticVariables.g_cameraTransitionStartY - StaticVariables.g_cameraCurrentY;
-            StaticVariables.g_cameraTransitionStepValue = 0xf;
         }
     }
 
@@ -1893,7 +1886,6 @@ public class UIManager
             }
 
             y = textTilesConfiguration.Y;
-            Debugger.Break();
             var i = 0;
             result = 0;
 
@@ -1906,11 +1898,15 @@ public class UIManager
                     if (x < textTilesConfiguration.Width * 8 + x)
                     {
                         sprt = textTilesConfiguration.SpritesA[StaticVariables.g_bufferIndex + i];
+                        var sprtB = textTilesConfiguration.SpritesB[StaticVariables.g_bufferIndex + i];
 
                         do
                         {
                             sprt.x0 = (short)x;
                             sprt.y0 = (short)y;
+
+                            sprtB.x0 = (short)x;
+                            sprtB.y0 = (short)y;
 
                             x += 8;
                             i++;
@@ -2541,7 +2537,7 @@ public class UIManager
     }
 
     //800478c4
-    private void RenderTextBitmap(char[] formattedText, char[] buffer,
+    public void RenderTextBitmap(char[] formattedText, char[] buffer,
         short posX, short posY, short textWidth,
         short textLineOffset, short drawWidth, short drawHeight)
     {
@@ -2667,7 +2663,7 @@ public class UIManager
     }
 
     //8004f304
-    private bool ContainsSpecialTextFormatting(char c)
+    public bool ContainsSpecialTextFormatting(char c)
     {
         int result;
 
@@ -2925,8 +2921,8 @@ public class UIManager
             var startY = blk.Y + blk.Height + offsetY + lineYAccum;
 
             // Écritures équivalentes aux sh @ +0x08/+0x0A dans le bloc per‑line du buffer
-            StaticVariables.g_textFullLinesSprites[bufferIndex + logical * 20].x0 = (short)startX;
-            StaticVariables.g_textFullLinesSprites[bufferIndex + logical * 20].y0 = (short)startY;
+            StaticVariables.g_textFullLinesSprites[bufferIndex + logical * 2].x0 = (short)startX;
+            StaticVariables.g_textFullLinesSprites[bufferIndex + logical * 2].y0 = (short)startY;
 
             // --- Chaînage des primitives de texte (équivalent addPrim dans l’ASM) ---
             // Dans le moteur original : addPrim( OrderTableSlot(buf, logical, primOffset), TextGroup(buf, logical)+primOffset )
@@ -2986,4 +2982,5 @@ public class UIManager
             //addPrim(ot_curr(), fade);
         }
     }
+
 }

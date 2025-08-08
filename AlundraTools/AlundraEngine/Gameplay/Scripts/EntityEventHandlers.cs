@@ -479,7 +479,7 @@ public class EntityEventHandlers
             //var img = portrait.Images[0];
             //var bmps = gameState.GetSpriteImages(portrait);
             //var bmp = bmps[0];
-            //WrapsDialogSetupPortrait(entity.PosX, entity.PosY, entity.PosZ, gameState.g_cameraCurrentX, gameState.g_cameraCurrentY, img.Sx, img.Sy, img.Swidth, img.Sheight, bmp);
+            //WrapsDialogSetupPortrait(entity.PosX, entity.PosY, entity.PosZ, gameState.g_hudCurrentX, gameState.g_hudCurrentY, img.Sx, img.Sy, img.Swidth, img.Sheight, bmp);
         }
         //SetName(entity.NameId);
 
@@ -1539,7 +1539,7 @@ public class EntityEventHandlers
             //var iVar2 = logicEntity.SpriteRecord.Header.FramesPointer;
             //
             ////WrapsDialogSetupPortrait
-            //_gameEngine.ApplyCameraEffect(
+            //_gameEngine.StartHudTransition(
             //    logicEntity.PosX, logicEntity.PosY, logicEntity.PosZ,
             //    StaticVariables.g_cameraScrollingX, StaticVariables.g_cameraScrollingY,
             //
@@ -1556,12 +1556,13 @@ public class EntityEventHandlers
                 imgset.Images[0],
                 _gameEngine.CurrentMap.SpriteInfo.Palettes[imgset.Images[0].Palette & 0x1f]);
 
-            _gameEngine.ApplyCameraEffect(
+            _gameEngine.HudManager.StartHudTransition(
                 logicEntity.PosX, logicEntity.PosY, logicEntity.PosZ,
                 StaticVariables.g_cameraScrollingX, StaticVariables.g_cameraScrollingY,
                 img.Sx, img.Sy, img.Swidth, img.Sheight,
-                StaticVariables.g_drawPageInfoBase[logicEntity.SpriteSheetOffset + ((img.Spritesheet) & 0x3f)],
-                StaticVariables.g_tPageFadeLUT[logicEntity.PaletteOffset + ((img.Palette) & 7)]);
+                /*StaticVariables.g_drawPageInfoBase[logicEntity.SpriteSheetOffset + ((img.Spritesheet) & 0x3f)],
+                StaticVariables.g_tPageFadeLUT[logicEntity.PaletteOffset + ((img.Palette) & 7)]*/
+                img);
 
             //TODO get it from memory, not disk
             //SIImageSet portrait = entity.SpriteRecord.GetPortraitImageset(datasReader);
@@ -1569,7 +1570,7 @@ public class EntityEventHandlers
             //var bmps = gameState.GetSpriteImages(portrait);
             //var bmp = bmps[0];
             //WrapsDialogSetupPortrait(entity.PosX, entity.PosY, entity.PosZ,
-            //  gameState.g_cameraCurrentX, gameState.g_cameraCurrentY,
+            //  gameState.g_hudCurrentX, gameState.g_hudCurrentY,
             //  img.Sx, img.Sy, img.Swidth, img.Sheight, bmp);
         }
 
@@ -3069,7 +3070,7 @@ public class EntityEventHandlers
             if ((StaticVariables.g_matchingEntitiesBuffer[0].Flags & 0x800000U) != 0)
             {
                 matchCount = StaticVariables.g_matchingEntitiesBuffer[0].SpriteRecord.Header.FramesPointer;
-                _gameEngine.ApplyCameraEffect(StaticVariables.g_matchingEntitiesBuffer[0].PosX, StaticVariables.g_matchingEntitiesBuffer[0].PosY, StaticVariables.g_matchingEntitiesBuffer[0].PosZ, -0x7ff1bcd8, -0x7ff1bcd4, (u_char*)(matchCount + 4), (u_char*)(matchCount + 5), (ushort)(matchCount + 6), (ushort)(matchCount + 7), (StaticVariables.g_drawPageInfoBase)StaticVariables.[g_matchingEntitiesBuffer[0].SheetSize + ((matchCount + 3) & 0x3f)], (StaticVariables.g_tPageFadeLUT)StaticVariables.[g_matchingEntitiesBuffer[0].PaletteIndex + ((matchCount + 2) & 7)]);
+                _gameEngine.StartHudTransition(StaticVariables.g_matchingEntitiesBuffer[0].PosX, StaticVariables.g_matchingEntitiesBuffer[0].PosY, StaticVariables.g_matchingEntitiesBuffer[0].PosZ, -0x7ff1bcd8, -0x7ff1bcd4, (u_char*)(matchCount + 4), (u_char*)(matchCount + 5), (ushort)(matchCount + 6), (ushort)(matchCount + 7), (StaticVariables.g_drawPageInfoBase)StaticVariables.[g_matchingEntitiesBuffer[0].SheetSize + ((matchCount + 3) & 0x3f)], (StaticVariables.g_tPageFadeLUT)StaticVariables.[g_matchingEntitiesBuffer[0].PaletteIndex + ((matchCount + 2) & 7)]);
             }
 
             _gameEngine.TriggerVisualUpdate(matchedEntity.SpriteTableIndex);
@@ -5220,13 +5221,15 @@ public class EntityEventHandlers
             {
                 var targetEntity = StaticVariables.g_matchingEntitiesBuffer[0];
 
-                var textureIndex = (eventProgramState.Exp[2] & 0x07) + targetEntity.PaletteOffset;
-                var textureId = StaticVariables.g_tPageFadeLUT[textureIndex];
+                //var textureIndex = (eventProgramState.Exp[2] & 0x07) + targetEntity.PaletteOffset;
+                //var textureId = StaticVariables.g_tPageFadeLUT[textureIndex];
 
-                var spriteSheetOffset = targetEntity.SpriteSheetOffset + (eventProgramState.Exp[3] & 0x3F);
-                var textureId2 = StaticVariables.g_drawPageInfoBase[spriteSheetOffset];
+                //var spriteSheetOffset = targetEntity.SpriteSheetOffset + (eventProgramState.Exp[3] & 0x3F);
+                //var textureId2 = StaticVariables.g_drawPageInfoBase[spriteSheetOffset];
 
-                _gameEngine.ApplyCameraEffect(
+                var image = targetEntity.Frame.Images.Images[targetEntity.CurrentFrameIndex];
+
+                _gameEngine.HudManager.StartHudTransition(
                     targetEntity.PosX, 
                     targetEntity.PosY,
                     targetEntity.PosZ, 
@@ -5236,8 +5239,7 @@ public class EntityEventHandlers
                     (byte)eventProgramState.Exp[5],
                     (short)eventProgramState.Exp[6],
                     (short)eventProgramState.Exp[7],
-                    textureId,
-                    textureId2);
+                    image);
             }
 
             int spriteUpdateId = variables[2] | (variables[3] << 8);

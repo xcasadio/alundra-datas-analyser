@@ -1,4 +1,6 @@
-﻿namespace AlundraEngine.Text;
+﻿using AlundraEngine.Gameplay;
+
+namespace AlundraEngine.Text;
 
 public class Font3
 {
@@ -8,7 +10,7 @@ public class Font3
     public Bitmap FontBitmapTim;
     //character tiles description
 
-    private byte[] _fontImageData;
+    private byte[] _hudImageData;
     private byte[] _fontImageDataTim;
 
     public Font3(string folderName)
@@ -17,16 +19,41 @@ public class Font3
         LoadImage(folderName);
         LoadImageTim(folderName);
     }
-    
-    public Bitmap GenerateFontBitmap(Color[] pal)
+
+    public Bitmap GenerateHudBitmap(int paletteIndex)
     {
-        FontBitmap = ImageHelper.BitmapFromPsxBuff(_fontImageData, 256, 256, 4, pal);
+        return GenerateHudBitmap(Palettes[paletteIndex]);
+    }
+
+    public Bitmap GenerateHudBitmap(Color[] pal)
+    {
+        FontBitmap = ImageHelper.BitmapFromPsxBuff(_hudImageData, 256, 256, 4, pal);
         return FontBitmap;
+    }
+
+    public Bitmap GenerateFontBitmapFromSprite(SPRT sprite)
+    {
+        return GenerateFontBitmapTim(sprite.x0, sprite.y0, sprite.w, sprite.h, sprite.clut);
+    }
+
+    public Bitmap GenerateFontBitmapTim(int paletteIndex)
+    {
+        return GenerateFontBitmapTim(Palettes[paletteIndex]);
     }
 
     public Bitmap GenerateFontBitmapTim(Color[] pal)
     {
-        FontBitmapTim = ImageHelper.BitmapFromPsxBuff(_fontImageDataTim, 256, 256, 4, pal);
+        return GenerateFontBitmapTim(0, 0, 256, 256, pal);
+    }
+
+    public Bitmap GenerateFontBitmapTim(int x, int y, int w, int h, int paletteIndex)
+    {
+        return GenerateFontBitmapTim(x, y, w, h, Palettes[paletteIndex]);
+    }
+
+    public Bitmap GenerateFontBitmapTim(int x, int y, int w, int h, Color[] pal)
+    {
+        FontBitmapTim = ImageHelper.BitmapFromPsxBuff(_fontImageDataTim, w, h, 4, pal);
         return FontBitmapTim;
     }
 
@@ -54,7 +81,7 @@ public class Font3
 
     private void LoadImage(string folderName)
     {
-        _fontImageData = File.ReadAllBytes(Path.Combine(folderName, "WIND.TX"));
+        _hudImageData = File.ReadAllBytes(Path.Combine(folderName, "WIND.TX"));
     }
 
     private void LoadImageTim(string folderName)

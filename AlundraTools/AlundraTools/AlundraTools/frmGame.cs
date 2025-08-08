@@ -328,11 +328,9 @@ public partial class FrmGame : Form
         labelNumberOfCollideableEntity.Text = StaticVariables.g_collideableEntitiesCount.ToString();
         labelNumberOfVisibleEntity.Text = StaticVariables.g_visibleEntityCount.ToString();
 
-        labelCameraPosition.Text = $"{StaticVariables.g_cameraCurrentX} x {StaticVariables.g_cameraCurrentY}";
-        labelCameraXY.Text = $"{StaticVariables.g_cameraX} x {StaticVariables.g_cameraY}";
+        labelCameraPosition.Text = $"{StaticVariables.g_hudCurrentX} x {StaticVariables.g_hudCurrentY}";
         labelCameraLookAt.Text = $"{StaticVariables.g_cameraLookAtX} x {StaticVariables.g_cameraLookAtY} x {StaticVariables.g_cameraLookAtZ}";
         labelCameraOffset.Text = $"{StaticVariables.g_cameraOffsetX} x {StaticVariables.g_cameraOffsetY}";
-        labelCameraDelta.Text = $"{StaticVariables.g_cameraDeltaX} x {StaticVariables.g_cameraDeltaY}";
         labelCameraScrolling.Text = $"{StaticVariables.g_cameraScrollingX} x {StaticVariables.g_cameraScrollingY}";
 
         labelMapId.Text = $"{StaticVariables.g_currentMap}";
@@ -372,7 +370,8 @@ public partial class FrmGame : Form
 
         RefreshMapFlags();
         RefreshGameFlags();
-        RefreshTextControls();
+        RefreshDialogControls();
+        RefreshHudControls();
 
         ResumeLayout();
         PerformLayout();
@@ -411,7 +410,7 @@ public partial class FrmGame : Form
         }
     }
 
-    private void RefreshTextControls()
+    private void RefreshDialogControls()
     {
         var dialogText = new string(StaticVariables.g_scriptBuffer);
         textBoxFullText.Text = dialogText;
@@ -426,6 +425,23 @@ public partial class FrmGame : Form
         labelTextCursor.Text = StaticVariables.g_textCursor.ToString();
         labelTextRenderStep.Text = StaticVariables.g_textRenderStep.ToString();
         labelTextLinesWidth.Text = string.Join(',', StaticVariables.g_textLineWidth);
+    }
+
+    private void RefreshHudControls()
+    {
+        labelHudActivate.Text = StaticVariables.g_warpFlags_2.ToString();
+        labelHudDebug.Text = StaticVariables.g_textToDisplay + "-" +
+                             StaticVariables.g_textToDisplay2 + "-" +
+                             StaticVariables.g_textToDisplay3 + "-" +
+                             string.Join("-", StaticVariables.TextToDisplay_ARRAY_8017f920.Select(x => x.ToString()));
+
+        var poly = StaticVariables.g_spriteInventoryAlundraPotrait[0];
+        textBoxHudPoly.Text = $"{poly.x0} {poly.y0} {poly.u0} {poly._2}\n";
+        var sprt = StaticVariables.g_cursorTextSprites[0];
+        textBoxHudPoly.Text += $"{sprt.x0} {sprt.y0} {sprt.w} {sprt.h} {sprt.u0} {sprt.v0}";
+
+        labelHudXY.Text = $"{StaticVariables.g_hudX >> 16} x {StaticVariables.g_hudY >> 16}";
+        labelHudDelta.Text = $"{StaticVariables.g_hudDeltaX >> 16} x {StaticVariables.g_hudDeltaY >> 16}";
     }
 
     #region Pad
@@ -578,22 +594,22 @@ public partial class FrmGame : Form
             const int step = 10;
             if (joystickRightY > joystickThreshold)
             {
-                StaticVariables.g_cameraCurrentY -= step;
+                StaticVariables.g_cameraDebugOffsetY -= step;
             }
 
             if (joystickRightY < -joystickThreshold)
             {
-                StaticVariables.g_cameraCurrentY += step;
+                StaticVariables.g_cameraDebugOffsetY += step;
             }
 
             if (joystickRightX > joystickThreshold)
             {
-                StaticVariables.g_cameraCurrentX += step;
+                StaticVariables.g_cameraDebugOffsetX += step;
             }
 
             if (joystickRightX < -joystickThreshold)
             {
-                StaticVariables.g_cameraCurrentX -= step;
+                StaticVariables.g_cameraDebugOffsetX -= step;
             }
         }
     }
@@ -1056,6 +1072,12 @@ public partial class FrmGame : Form
     private void checkBoxUseDebugCamera_CheckedChanged(object sender, EventArgs e)
     {
         StaticVariables.UseDebugCamera = checkBoxUseDebugCamera.Checked;
+
+        if (StaticVariables.UseDebugCamera == false)
+        {
+            StaticVariables.g_cameraDebugOffsetX = 0;
+            StaticVariables.g_cameraDebugOffsetY = 0;
+        }
     }
 
     private void buttonRestoreHpAndMp_Click(object sender, EventArgs e)

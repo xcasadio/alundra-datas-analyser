@@ -43,13 +43,13 @@ namespace AlundraTools.AlundraTools
             label29 = new Label();
             labelCameraScrolling = new Label();
             label11 = new Label();
-            labelCameraDelta = new Label();
+            labelHudDelta = new Label();
             label9 = new Label();
             labelCameraOffset = new Label();
             label6 = new Label();
             labelCameraLookAt = new Label();
             label3 = new Label();
-            labelCameraXY = new Label();
+            labelHudXY = new Label();
             label13 = new Label();
             labelCameraPosition = new Label();
             label4 = new Label();
@@ -97,10 +97,6 @@ namespace AlundraTools.AlundraTools
             propertyGridEffect = new PropertyGrid();
             tabPagePlayerStatus = new TabPage();
             buttonControlAlundra = new Button();
-            comboBoxSpawnItemId = new ComboBox();
-            buttonSpawnItem = new Button();
-            label30 = new Label();
-            comboBoxRandomItem = new ComboBox();
             buttonAddHugeHp = new Button();
             buttonRestoreHpAndMp = new Button();
             buttonRestoreHp = new Button();
@@ -130,7 +126,21 @@ namespace AlundraTools.AlundraTools
             label20 = new Label();
             numericUpDownHpMax = new NumericUpDown();
             tabPageDebug = new TabPage();
+            comboBoxSpawnItemId = new ComboBox();
+            buttonSpawnItem = new Button();
+            label30 = new Label();
+            comboBoxRandomItem = new ComboBox();
+            tabPageHud = new TabPage();
+            groupBoxHud = new GroupBox();
+            textBoxHudPoly = new TextBox();
+            label39 = new Label();
+            label36 = new Label();
+            labelHudDebug = new Label();
+            label34 = new Label();
+            labelHudActivate = new Label();
             groupBox5 = new GroupBox();
+            textBoxTextInDialog = new TextBox();
+            label32 = new Label();
             labelTextLinesWidth = new Label();
             label45 = new Label();
             labelTextRenderStep = new Label();
@@ -151,8 +161,6 @@ namespace AlundraTools.AlundraTools
             label37 = new Label();
             label38 = new Label();
             labelTextFlag = new Label();
-            label32 = new Label();
-            textBoxTextInDialog = new TextBox();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -172,6 +180,8 @@ namespace AlundraTools.AlundraTools
             ((System.ComponentModel.ISupportInitialize)numericUpDownMp).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownHpMax).BeginInit();
             tabPageDebug.SuspendLayout();
+            tabPageHud.SuspendLayout();
+            groupBoxHud.SuspendLayout();
             groupBox5.SuspendLayout();
             SuspendLayout();
             // 
@@ -282,14 +292,10 @@ namespace AlundraTools.AlundraTools
             // 
             groupBox2.Controls.Add(label29);
             groupBox2.Controls.Add(labelCameraScrolling);
-            groupBox2.Controls.Add(label11);
-            groupBox2.Controls.Add(labelCameraDelta);
             groupBox2.Controls.Add(label9);
             groupBox2.Controls.Add(labelCameraOffset);
             groupBox2.Controls.Add(label6);
             groupBox2.Controls.Add(labelCameraLookAt);
-            groupBox2.Controls.Add(label3);
-            groupBox2.Controls.Add(labelCameraXY);
             groupBox2.Controls.Add(label13);
             groupBox2.Controls.Add(labelCameraPosition);
             groupBox2.Location = new Point(340, 7);
@@ -304,7 +310,7 @@ namespace AlundraTools.AlundraTools
             // label29
             // 
             label29.AutoSize = true;
-            label29.Location = new Point(7, 125);
+            label29.Location = new Point(6, 85);
             label29.Name = "label29";
             label29.Size = new Size(65, 20);
             label29.TabIndex = 11;
@@ -313,7 +319,7 @@ namespace AlundraTools.AlundraTools
             // labelCameraScrolling
             // 
             labelCameraScrolling.AutoSize = true;
-            labelCameraScrolling.Location = new Point(88, 125);
+            labelCameraScrolling.Location = new Point(87, 85);
             labelCameraScrolling.Name = "labelCameraScrolling";
             labelCameraScrolling.Size = new Size(17, 20);
             labelCameraScrolling.TabIndex = 10;
@@ -322,25 +328,25 @@ namespace AlundraTools.AlundraTools
             // label11
             // 
             label11.AutoSize = true;
-            label11.Location = new Point(7, 105);
+            label11.Location = new Point(7, 211);
             label11.Name = "label11";
             label11.Size = new Size(43, 20);
             label11.TabIndex = 9;
             label11.Text = "delta";
             // 
-            // labelCameraDelta
+            // labelHudDelta
             // 
-            labelCameraDelta.AutoSize = true;
-            labelCameraDelta.Location = new Point(88, 105);
-            labelCameraDelta.Name = "labelCameraDelta";
-            labelCameraDelta.Size = new Size(17, 20);
-            labelCameraDelta.TabIndex = 8;
-            labelCameraDelta.Text = "0";
+            labelHudDelta.AutoSize = true;
+            labelHudDelta.Location = new Point(111, 211);
+            labelHudDelta.Name = "labelHudDelta";
+            labelHudDelta.Size = new Size(17, 20);
+            labelHudDelta.TabIndex = 8;
+            labelHudDelta.Text = "0";
             // 
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(7, 85);
+            label9.Location = new Point(6, 65);
             label9.Name = "label9";
             label9.Size = new Size(47, 20);
             label9.TabIndex = 7;
@@ -349,7 +355,7 @@ namespace AlundraTools.AlundraTools
             // labelCameraOffset
             // 
             labelCameraOffset.AutoSize = true;
-            labelCameraOffset.Location = new Point(88, 85);
+            labelCameraOffset.Location = new Point(87, 65);
             labelCameraOffset.Name = "labelCameraOffset";
             labelCameraOffset.Size = new Size(17, 20);
             labelCameraOffset.TabIndex = 6;
@@ -358,7 +364,7 @@ namespace AlundraTools.AlundraTools
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(7, 65);
+            label6.Location = new Point(6, 45);
             label6.Name = "label6";
             label6.Size = new Size(55, 20);
             label6.TabIndex = 5;
@@ -367,7 +373,7 @@ namespace AlundraTools.AlundraTools
             // labelCameraLookAt
             // 
             labelCameraLookAt.AutoSize = true;
-            labelCameraLookAt.Location = new Point(88, 65);
+            labelCameraLookAt.Location = new Point(87, 45);
             labelCameraLookAt.Name = "labelCameraLookAt";
             labelCameraLookAt.Size = new Size(17, 20);
             labelCameraLookAt.TabIndex = 4;
@@ -376,25 +382,25 @@ namespace AlundraTools.AlundraTools
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(7, 45);
+            label3.Location = new Point(7, 191);
             label3.Name = "label3";
             label3.Size = new Size(63, 20);
             label3.TabIndex = 3;
             label3.Text = "position";
             // 
-            // labelCameraXY
+            // labelHudXY
             // 
-            labelCameraXY.AutoSize = true;
-            labelCameraXY.Location = new Point(88, 45);
-            labelCameraXY.Name = "labelCameraXY";
-            labelCameraXY.Size = new Size(17, 20);
-            labelCameraXY.TabIndex = 2;
-            labelCameraXY.Text = "0";
+            labelHudXY.AutoSize = true;
+            labelHudXY.Location = new Point(111, 191);
+            labelHudXY.Name = "labelHudXY";
+            labelHudXY.Size = new Size(17, 20);
+            labelHudXY.TabIndex = 2;
+            labelHudXY.Text = "0";
             // 
             // label13
             // 
             label13.AutoSize = true;
-            label13.Location = new Point(7, 25);
+            label13.Location = new Point(6, 25);
             label13.Name = "label13";
             label13.Size = new Size(83, 20);
             label13.TabIndex = 1;
@@ -403,7 +409,7 @@ namespace AlundraTools.AlundraTools
             // labelCameraPosition
             // 
             labelCameraPosition.AutoSize = true;
-            labelCameraPosition.Location = new Point(88, 25);
+            labelCameraPosition.Location = new Point(87, 25);
             labelCameraPosition.Name = "labelCameraPosition";
             labelCameraPosition.Size = new Size(17, 20);
             labelCameraPosition.TabIndex = 0;
@@ -740,7 +746,7 @@ namespace AlundraTools.AlundraTools
             groupBox4.Controls.Add(checkBoxDisplayEffectId);
             groupBox4.Controls.Add(checkBoxTileXY);
             groupBox4.Controls.Add(checkBoxDisplayEntityId);
-            groupBox4.Location = new Point(327, 36);
+            groupBox4.Location = new Point(279, 36);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new Size(186, 153);
             groupBox4.TabIndex = 31;
@@ -797,6 +803,7 @@ namespace AlundraTools.AlundraTools
             tabControlEffect.Controls.Add(tabPageEffects);
             tabControlEffect.Controls.Add(tabPagePlayerStatus);
             tabControlEffect.Controls.Add(tabPageDebug);
+            tabControlEffect.Controls.Add(tabPageHud);
             tabControlEffect.Location = new Point(1286, 12);
             tabControlEffect.Name = "tabControlEffect";
             tabControlEffect.SelectedIndex = 0;
@@ -865,10 +872,6 @@ namespace AlundraTools.AlundraTools
             // tabPagePlayerStatus
             // 
             tabPagePlayerStatus.Controls.Add(buttonControlAlundra);
-            tabPagePlayerStatus.Controls.Add(comboBoxSpawnItemId);
-            tabPagePlayerStatus.Controls.Add(buttonSpawnItem);
-            tabPagePlayerStatus.Controls.Add(label30);
-            tabPagePlayerStatus.Controls.Add(comboBoxRandomItem);
             tabPagePlayerStatus.Controls.Add(buttonAddHugeHp);
             tabPagePlayerStatus.Controls.Add(buttonRestoreHpAndMp);
             tabPagePlayerStatus.Controls.Add(buttonRestoreHp);
@@ -914,44 +917,6 @@ namespace AlundraTools.AlundraTools
             buttonControlAlundra.Text = "Control alundra";
             buttonControlAlundra.UseVisualStyleBackColor = true;
             buttonControlAlundra.Click += buttonControlAlundra_Click;
-            // 
-            // comboBoxSpawnItemId
-            // 
-            comboBoxSpawnItemId.FormattingEnabled = true;
-            comboBoxSpawnItemId.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86" });
-            comboBoxSpawnItemId.Location = new Point(147, 369);
-            comboBoxSpawnItemId.Name = "comboBoxSpawnItemId";
-            comboBoxSpawnItemId.Size = new Size(123, 28);
-            comboBoxSpawnItemId.TabIndex = 62;
-            // 
-            // buttonSpawnItem
-            // 
-            buttonSpawnItem.Location = new Point(6, 368);
-            buttonSpawnItem.Name = "buttonSpawnItem";
-            buttonSpawnItem.Size = new Size(124, 29);
-            buttonSpawnItem.TabIndex = 61;
-            buttonSpawnItem.Text = "Spawn item";
-            buttonSpawnItem.UseVisualStyleBackColor = true;
-            buttonSpawnItem.Click += buttonSpawnItem_Click;
-            // 
-            // label30
-            // 
-            label30.AutoSize = true;
-            label30.Location = new Point(6, 337);
-            label30.Name = "label30";
-            label30.Size = new Size(135, 20);
-            label30.TabIndex = 60;
-            label30.Text = "Force random item";
-            // 
-            // comboBoxRandomItem
-            // 
-            comboBoxRandomItem.FormattingEnabled = true;
-            comboBoxRandomItem.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86" });
-            comboBoxRandomItem.Location = new Point(147, 334);
-            comboBoxRandomItem.Name = "comboBoxRandomItem";
-            comboBoxRandomItem.Size = new Size(123, 28);
-            comboBoxRandomItem.TabIndex = 59;
-            comboBoxRandomItem.SelectedIndexChanged += comboBoxItem_SelectedIndexChanged;
             // 
             // buttonAddHugeHp
             // 
@@ -1215,12 +1180,15 @@ namespace AlundraTools.AlundraTools
             // 
             // tabPageDebug
             // 
-            tabPageDebug.Controls.Add(groupBox5);
             tabPageDebug.Controls.Add(label8);
+            tabPageDebug.Controls.Add(comboBoxSpawnItemId);
             tabPageDebug.Controls.Add(label12);
             tabPageDebug.Controls.Add(dataGridViewGlobalFlags);
+            tabPageDebug.Controls.Add(buttonSpawnItem);
             tabPageDebug.Controls.Add(groupBox4);
             tabPageDebug.Controls.Add(dataGridViewMapFlags);
+            tabPageDebug.Controls.Add(label30);
+            tabPageDebug.Controls.Add(comboBoxRandomItem);
             tabPageDebug.Location = new Point(4, 29);
             tabPageDebug.Name = "tabPageDebug";
             tabPageDebug.Padding = new Padding(3);
@@ -1229,8 +1197,135 @@ namespace AlundraTools.AlundraTools
             tabPageDebug.Text = "Debug";
             tabPageDebug.UseVisualStyleBackColor = true;
             // 
+            // comboBoxSpawnItemId
+            // 
+            comboBoxSpawnItemId.FormattingEnabled = true;
+            comboBoxSpawnItemId.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86" });
+            comboBoxSpawnItemId.Location = new Point(150, 456);
+            comboBoxSpawnItemId.Name = "comboBoxSpawnItemId";
+            comboBoxSpawnItemId.Size = new Size(123, 28);
+            comboBoxSpawnItemId.TabIndex = 62;
+            // 
+            // buttonSpawnItem
+            // 
+            buttonSpawnItem.Location = new Point(9, 455);
+            buttonSpawnItem.Name = "buttonSpawnItem";
+            buttonSpawnItem.Size = new Size(124, 29);
+            buttonSpawnItem.TabIndex = 61;
+            buttonSpawnItem.Text = "Spawn item";
+            buttonSpawnItem.UseVisualStyleBackColor = true;
+            buttonSpawnItem.Click += buttonSpawnItem_Click;
+            // 
+            // label30
+            // 
+            label30.AutoSize = true;
+            label30.Location = new Point(9, 424);
+            label30.Name = "label30";
+            label30.Size = new Size(135, 20);
+            label30.TabIndex = 60;
+            label30.Text = "Force random item";
+            // 
+            // comboBoxRandomItem
+            // 
+            comboBoxRandomItem.FormattingEnabled = true;
+            comboBoxRandomItem.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86" });
+            comboBoxRandomItem.Location = new Point(150, 421);
+            comboBoxRandomItem.Name = "comboBoxRandomItem";
+            comboBoxRandomItem.Size = new Size(123, 28);
+            comboBoxRandomItem.TabIndex = 59;
+            comboBoxRandomItem.SelectedIndexChanged += comboBoxItem_SelectedIndexChanged;
+            // 
+            // tabPageHud
+            // 
+            tabPageHud.Controls.Add(groupBoxHud);
+            tabPageHud.Controls.Add(groupBox5);
+            tabPageHud.Location = new Point(4, 29);
+            tabPageHud.Name = "tabPageHud";
+            tabPageHud.Padding = new Padding(3);
+            tabPageHud.Size = new Size(535, 1024);
+            tabPageHud.TabIndex = 4;
+            tabPageHud.Text = "HUD";
+            tabPageHud.UseVisualStyleBackColor = true;
+            // 
+            // groupBoxHud
+            // 
+            groupBoxHud.Controls.Add(textBoxHudPoly);
+            groupBoxHud.Controls.Add(label39);
+            groupBoxHud.Controls.Add(label11);
+            groupBoxHud.Controls.Add(label36);
+            groupBoxHud.Controls.Add(labelHudDebug);
+            groupBoxHud.Controls.Add(labelHudDelta);
+            groupBoxHud.Controls.Add(label34);
+            groupBoxHud.Controls.Add(labelHudActivate);
+            groupBoxHud.Controls.Add(label3);
+            groupBoxHud.Controls.Add(labelHudXY);
+            groupBoxHud.Location = new Point(6, 239);
+            groupBoxHud.Name = "groupBoxHud";
+            groupBoxHud.Size = new Size(522, 356);
+            groupBoxHud.TabIndex = 52;
+            groupBoxHud.TabStop = false;
+            groupBoxHud.Text = "HUD";
+            // 
+            // textBoxHudPoly
+            // 
+            textBoxHudPoly.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            textBoxHudPoly.BorderStyle = BorderStyle.FixedSingle;
+            textBoxHudPoly.Location = new Point(111, 77);
+            textBoxHudPoly.Multiline = true;
+            textBoxHudPoly.Name = "textBoxHudPoly";
+            textBoxHudPoly.ReadOnly = true;
+            textBoxHudPoly.Size = new Size(405, 96);
+            textBoxHudPoly.TabIndex = 63;
+            textBoxHudPoly.Text = "\r\n";
+            // 
+            // label39
+            // 
+            label39.AutoSize = true;
+            label39.Location = new Point(7, 77);
+            label39.Name = "label39";
+            label39.Size = new Size(41, 20);
+            label39.TabIndex = 66;
+            label39.Text = "poly:";
+            // 
+            // label36
+            // 
+            label36.AutoSize = true;
+            label36.Location = new Point(7, 43);
+            label36.Name = "label36";
+            label36.Size = new Size(55, 20);
+            label36.TabIndex = 64;
+            label36.Text = "debug:";
+            // 
+            // labelHudDebug
+            // 
+            labelHudDebug.AutoSize = true;
+            labelHudDebug.Location = new Point(111, 43);
+            labelHudDebug.Name = "labelHudDebug";
+            labelHudDebug.Size = new Size(17, 20);
+            labelHudDebug.TabIndex = 65;
+            labelHudDebug.Text = "0";
+            // 
+            // label34
+            // 
+            label34.AutoSize = true;
+            label34.Location = new Point(7, 23);
+            label34.Name = "label34";
+            label34.Size = new Size(44, 20);
+            label34.TabIndex = 63;
+            label34.Text = "state:";
+            // 
+            // labelHudActivate
+            // 
+            labelHudActivate.AutoSize = true;
+            labelHudActivate.Location = new Point(111, 23);
+            labelHudActivate.Name = "labelHudActivate";
+            labelHudActivate.Size = new Size(17, 20);
+            labelHudActivate.TabIndex = 63;
+            labelHudActivate.Text = "0";
+            // 
             // groupBox5
             // 
+            groupBox5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             groupBox5.Controls.Add(textBoxTextInDialog);
             groupBox5.Controls.Add(label32);
             groupBox5.Controls.Add(labelTextLinesWidth);
@@ -1253,14 +1348,35 @@ namespace AlundraTools.AlundraTools
             groupBox5.Controls.Add(label37);
             groupBox5.Controls.Add(label38);
             groupBox5.Controls.Add(labelTextFlag);
-            groupBox5.Location = new Point(12, 547);
+            groupBox5.Location = new Point(6, 7);
             groupBox5.Margin = new Padding(3, 4, 3, 4);
             groupBox5.Name = "groupBox5";
             groupBox5.Padding = new Padding(3, 4, 3, 4);
-            groupBox5.Size = new Size(474, 225);
+            groupBox5.Size = new Size(523, 225);
             groupBox5.TabIndex = 51;
             groupBox5.TabStop = false;
-            groupBox5.Text = "Text";
+            groupBox5.Text = "Dialog";
+            // 
+            // textBoxTextInDialog
+            // 
+            textBoxTextInDialog.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            textBoxTextInDialog.BorderStyle = BorderStyle.FixedSingle;
+            textBoxTextInDialog.Location = new Point(207, 47);
+            textBoxTextInDialog.Multiline = true;
+            textBoxTextInDialog.Name = "textBoxTextInDialog";
+            textBoxTextInDialog.ReadOnly = true;
+            textBoxTextInDialog.Size = new Size(310, 72);
+            textBoxTextInDialog.TabIndex = 62;
+            textBoxTextInDialog.Text = "\r\n";
+            // 
+            // label32
+            // 
+            label32.AutoSize = true;
+            label32.Location = new Point(205, 123);
+            label32.Name = "label32";
+            label32.Size = new Size(61, 20);
+            label32.TabIndex = 61;
+            label32.Text = "Full text";
             // 
             // labelTextLinesWidth
             // 
@@ -1364,7 +1480,7 @@ namespace AlundraTools.AlundraTools
             // label31
             // 
             label31.AutoSize = true;
-            label31.Location = new Point(221, 24);
+            label31.Location = new Point(205, 24);
             label31.Name = "label31";
             label31.Size = new Size(104, 20);
             label31.TabIndex = 50;
@@ -1372,12 +1488,13 @@ namespace AlundraTools.AlundraTools
             // 
             // textBoxFullText
             // 
+            textBoxFullText.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             textBoxFullText.BorderStyle = BorderStyle.FixedSingle;
-            textBoxFullText.Location = new Point(221, 146);
+            textBoxFullText.Location = new Point(205, 146);
             textBoxFullText.Multiline = true;
             textBoxFullText.Name = "textBoxFullText";
             textBoxFullText.ReadOnly = true;
-            textBoxFullText.Size = new Size(245, 72);
+            textBoxFullText.Size = new Size(312, 72);
             textBoxFullText.TabIndex = 49;
             textBoxFullText.Text = "\r\n";
             // 
@@ -1444,26 +1561,6 @@ namespace AlundraTools.AlundraTools
             labelTextFlag.TabIndex = 0;
             labelTextFlag.Text = "0";
             // 
-            // label32
-            // 
-            label32.AutoSize = true;
-            label32.Location = new Point(221, 123);
-            label32.Name = "label32";
-            label32.Size = new Size(61, 20);
-            label32.TabIndex = 61;
-            label32.Text = "Full text";
-            // 
-            // textBoxTextInDialog
-            // 
-            textBoxTextInDialog.BorderStyle = BorderStyle.FixedSingle;
-            textBoxTextInDialog.Location = new Point(223, 47);
-            textBoxTextInDialog.Multiline = true;
-            textBoxTextInDialog.Name = "textBoxTextInDialog";
-            textBoxTextInDialog.ReadOnly = true;
-            textBoxTextInDialog.Size = new Size(245, 72);
-            textBoxTextInDialog.TabIndex = 62;
-            textBoxTextInDialog.Text = "\r\n";
-            // 
             // FrmGame
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -1509,6 +1606,9 @@ namespace AlundraTools.AlundraTools
             ((System.ComponentModel.ISupportInitialize)numericUpDownHpMax).EndInit();
             tabPageDebug.ResumeLayout(false);
             tabPageDebug.PerformLayout();
+            tabPageHud.ResumeLayout(false);
+            groupBoxHud.ResumeLayout(false);
+            groupBoxHud.PerformLayout();
             groupBox5.ResumeLayout(false);
             groupBox5.PerformLayout();
             ResumeLayout(false);
@@ -1543,9 +1643,9 @@ namespace AlundraTools.AlundraTools
         private Label label6;
         private Label labelCameraLookAt;
         private Label label3;
-        private Label labelCameraXY;
+        private Label labelHudXY;
         private Label label11;
-        private Label labelCameraDelta;
+        private Label labelHudDelta;
         private Label label9;
         private Label labelCameraOffset;
         private Label label4;
@@ -1642,5 +1742,13 @@ namespace AlundraTools.AlundraTools
         private Label labelTextFlag;
         private TextBox textBoxTextInDialog;
         private Label label32;
+        private TabPage tabPageHud;
+        private GroupBox groupBoxHud;
+        private Label label34;
+        private Label labelHudActivate;
+        private Label label36;
+        private Label labelHudDebug;
+        private TextBox textBoxHudPoly;
+        private Label label39;
     }
 }
