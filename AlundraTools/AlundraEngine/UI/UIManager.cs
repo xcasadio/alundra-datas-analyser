@@ -1,8 +1,9 @@
 ﻿using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay;
+using AlundraEngine.Graphics;
 using System;
 using System.Diagnostics;
-using AlundraEngine.Graphics;
+using static AlundraEngine.Renderer;
 
 namespace AlundraEngine.UI;
 
@@ -50,7 +51,8 @@ public class UIManager
                             //SetSemiTrans(sprite, 0);
                             //SetShadeTex(sprite, 1);
                             sprite.clut = StaticVariables.g_clutTable[0];
-                            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, _gameEngine.Font3.GenerateFontBitmapTim(StaticVariables.g_clutTable[0]));
+                            var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
+                            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
                             tileX += 1;
                         } while (tileX < tilesConfiguration.Width);
@@ -259,6 +261,10 @@ public class UIManager
                 /* Probable PsyQ macro: addPrim(). */
                 //*puVar7 = *puVar7 & 0xff000000 | *puVar6 & 0xffffff;
                 //*puVar6 = *puVar6 & 0xff000000 | (int)StaticVariables.g_textFullLinesSprites[index] & 0xffffffU;
+
+                var bitmap2 = _gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
+                _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap2);
+
             } while (iVar11 < 1);
 
             line += 1;
@@ -269,8 +275,14 @@ public class UIManager
         //puVar7 = (uint*)(&DAT_80146f60 + StaticVariables.g_drawModes[0x14].tag * 0x28);
         /* Probable PsyQ macro: addPrim(). */
         //*puVar6 = *puVar6 & 0xff000000 | *puVar7 & 0xffffff;
-        doAdavance = StaticVariables.g_textChoiceIndex == 0;
         //*puVar7 = *puVar7 & 0xff000000 | (uint)puVar6 & 0xffffff; //addPrim()
+
+
+        //TODO find the sprite
+        //var bitmap = _gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
+        //_gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+
+        doAdavance = StaticVariables.g_textChoiceIndex == 0;
 
         if (doAdavance)
         {

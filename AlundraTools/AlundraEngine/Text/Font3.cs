@@ -44,7 +44,15 @@ public class Font3
 
     public Bitmap GenerateHudBitmap(int x, int y, int w, int h, Color[] pal)
     {
-        return ImageHelper.BitmapFromPsxBuff(_hudImageData, x, y, w, h, 4, pal);
+        if (HudBitmap == null)
+        {
+            HudBitmap = ImageHelper.BitmapFromPsxBuff(_hudImageData, 0, 0, 256, 256, 4, pal);
+        }
+
+        var rect = new Rectangle(x, y, w, h);
+        return HudBitmap.Clone(rect, HudBitmap.PixelFormat);
+
+        //return ImageHelper.BitmapFromPsxBuff(_hudImageData, x, y, w, h, 4, pal);
     }
 
     public Bitmap GenerateFontBitmapFromSprite(SPRT sprite)
@@ -70,7 +78,15 @@ public class Font3
 
     public Bitmap GenerateFontBitmapTim(int x, int y, int w, int h, Color[] pal)
     {
-        return ImageHelper.BitmapFromPsxBuff(_fontImageDataTim, x, y, w, h, 4, pal);
+        if (FontBitmapTim == null)
+        {
+            FontBitmapTim = ImageHelper.BitmapFromPsxBuff(_fontImageDataTim, 0, 0, 256, 256, 4, pal);
+        }
+
+        var rect = new Rectangle(x, y, w, h);
+        return FontBitmapTim.Clone(rect, FontBitmapTim.PixelFormat);
+
+        //return ImageHelper.BitmapFromPsxBuff(_fontImageDataTim, x, y, w, h, 4, pal);
     }
 
     private void LoadPalette(string folderName)

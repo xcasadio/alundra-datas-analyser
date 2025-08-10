@@ -906,7 +906,7 @@ public class HudManager
             (short)(StaticVariables.TextTilesConfiguration_800b58a8.X +
                     StaticVariables.UINT_ARRAY_800b9f28[StaticVariables.g_inventorySelectedSlotId] + 0x12),
             (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y +
-                    StaticVariables.UINT_ARRAY_800b9f28[StaticVariables.g_inventorySelectedSlotId] + -8), 
+                    StaticVariables.UINT_ARRAY_800b9f28[StaticVariables.g_inventorySelectedSlotId] + -8),
             /*StaticVariables.g_drawModes[0x14].tag*/0);
         FUN_80050a74(StaticVariables.g_inventoryCursorAnimation);
         FUN_80056a98();
@@ -970,9 +970,9 @@ public class HudManager
             iVar2 = 0x20;
 
             LAB_8005616c:
-            _gameEngine.GraphicManager.DisplayIconName(StaticVariables.g_spriteInventoryText, 
-                text.ToCharArray(), 
-                iVar2, 
+            _gameEngine.GraphicManager.DisplayIconName(StaticVariables.g_spriteInventoryText,
+                text.ToCharArray(),
+                iVar2,
                 StaticVariables.g_textTilesConfiguration2.X,
                 StaticVariables.g_textTilesConfiguration2.Y, 2);
             StaticVariables.INT_8017fef0 = 0;
@@ -996,7 +996,7 @@ public class HudManager
                 else
                 {
                     //var text = _gameEngine.EtcResR.GetDescriptionString((int)itemId); //StaticVariables.g_iconNameEtcBase[itemId * 2];
-                    FUN_80055f48(0, 
+                    FUN_80055f48(0,
                         StaticVariables.INT_8017feec,
                         text[StaticVariables.INT_8017feec]);
                     uVar1 = 0;
@@ -1061,10 +1061,10 @@ public class HudManager
                         var text3 = _gameEngine.EtcResR.GetIconName((int)itemId);//StaticVariables.g_paletteSetEtcBase
 
                         _gameEngine.GraphicManager.DisplayIconName(sprites,
-                            text3.ToCharArray(), 
+                            text3.ToCharArray(),
                             0x40,
-                            StaticVariables.g_textTilesConfiguration2.X, 
-                            StaticVariables.g_textTilesConfiguration2.Y, 
+                            StaticVariables.g_textTilesConfiguration2.X,
+                            StaticVariables.g_textTilesConfiguration2.Y,
                             3);
                         StaticVariables.INT_8017fef0 = 0;
                         StaticVariables.INT_8017feec = StaticVariables.INT_8017feec + 1;
@@ -1168,7 +1168,7 @@ public class HudManager
 
             do
             {
-                StaticVariables.g_spriteInventoryText[i].w = 
+                StaticVariables.g_spriteInventoryText[i].w =
                     (short)(StaticVariables.g_spriteInventoryText[i].w + StaticVariables.g_fontCharWidthTable[(c & 0xff) * 5]);
                 StaticVariables.g_spriteInventoryText[i + 1].w =
                     (short)(StaticVariables.g_spriteInventoryText[i + 1].w + StaticVariables.g_fontCharWidthTable[(c & 0xff) * 5]);
@@ -1237,31 +1237,37 @@ public class HudManager
         //iVar10 = -0x7fe805a4; StaticVariables.g_ItemNameSprites[2]
         //puVar8 = StaticVariables.DAT_80146f60 + StaticVariables.g_drawModes[0x14].tag * 0x28);
 
-        do
-        {
-            //sprite = StaticVariables.g_ItemNameSprites[i];
-            //puVar7 = StaticVariables.g_ItemNameSprites[0]. + i;
-            /* Probable PsyQ macro: addPrim(). */
-            //pSVar4 = pSVar12 + uVar3;
-            //*puVar7 = *puVar7 & 0xff000000 | *puVar8 & 0xffffff;
 
-            //puVar7 = StaticVariables.g_ItemNameSprites[2]. + i;
-            //*puVar8 = *puVar8 & 0xff000000 | (uint)pSVar4 & 0xffffff;
-            //*puVar7 = *puVar7 & 0xff000000 | (uint)pSVar4 & 0xffffff;
-            //*puVar8 = *puVar8 & 0xff000000 | uVar6 & 0xffffff;
+        //puVar7 = StaticVariables.g_ItemNameSprites[0]. + i;
+        /* Probable PsyQ macro: addPrim(). */
+        //pSVar4 = pSVar12 + uVar3;
+        //*puVar7 = *puVar7 & 0xff000000 | *puVar8 & 0xffffff;
 
-            i = i + 1;
+        //puVar7 = StaticVariables.g_ItemNameSprites[2]. + i;
+        //*puVar8 = *puVar8 & 0xff000000 | (uint)pSVar4 & 0xffffff;
+        //*puVar7 = *puVar7 & 0xff000000 | (uint)pSVar4 & 0xffffff;
+        //*puVar8 = *puVar8 & 0xff000000 | uVar6 & 0xffffff;
 
-        } while (i < 1);
+        sprite = StaticVariables.g_ItemNameSprites[0];
+        var bitmap = _gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
+        _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+
+        sprite = StaticVariables.g_ItemNameSprites[2];
+        bitmap = _gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
+        _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+
 
         for (i = 0; i < 2; i++)
         {
             sprite = StaticVariables.g_ItemNameSprites[i];
-            var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
+            bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
             _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
         }
 
-        //TODO : DAT_8017fa9c sprite ??
+        
+        sprite = StaticVariables.g_ItemNameSprites[5];
+        bitmap = _gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
+        _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
         //puVar7 = StaticVariables.DAT_8017fa9c + g_drawModes[0x14].tag * 0xc);
         //puVar8 = StaticVariables.DAT_80146f60 + g_drawModes[0x14].tag * 0x28);
@@ -1344,7 +1350,7 @@ public class HudManager
             //StaticVariables.TextToDisplay_ARRAY_8017f920[index]. = 0x80;
             //StaticVariables.TextToDisplay_ARRAY_8017f920[index].0xd0 = 0x30;
             //StaticVariables.TextToDisplay_ARRAY_8017f920[index].0xd1 = 0x98;
-                                                           
+
             StaticVariables.TextToDisplay_ARRAY_8017f920[index].startX = 0x18; //0xd4
             StaticVariables.TextToDisplay_ARRAY_8017f920[index].startY = 0x20; //0xd6
 
@@ -1374,7 +1380,7 @@ public class HudManager
                     if (local_40 == 1 && local_3c == 0)
                     {
                         //special case herbs : number of item is displayed
-                        var numOfItem = _gameEngine.PlayerManager.GetNumberOfItem(0x24); 
+                        var numOfItem = _gameEngine.PlayerManager.GetNumberOfItem(0x24);
 
                         if (numOfItem != 0)
                         {
@@ -1704,7 +1710,6 @@ public class HudManager
         //*puVar2 = *puVar2 & 0xff000000 | (uint)pSVar3 & 0xffffff;
 
         var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(cursorAnim.Sprites[0]);
-        //Debugger.Break();
         _gameEngine.Renderer.AddSprite(cursorAnim.Sprites[0], int.MaxValue, bitmap);
     }
 
