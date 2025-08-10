@@ -53,16 +53,23 @@ public static class ImageHelper
 
     public static Bitmap BitmapFromPsxBuff(byte[] imagedata, int width, int height, int bpp, Color[] pal)
     {
+        return BitmapFromPsxBuff(imagedata, 0, 0, width, height, bpp, pal);
+    }
+
+    public static Bitmap BitmapFromPsxBuff(byte[] imagedata, int u, int v, int width, int height, int bpp, Color[] pal)
+    {
         //bmp bmp = new bmp(width, height, 32);
         var rowsize = (32 * width + 31) / 32 * 4;
         var pixels = new byte[rowsize * Math.Abs(height)];
 
         if (bpp == 16)
         {
-            var dex = 0;
+            var dex = u + v * width;
+
             for (var y = 0; y < height; y++)
             {
                 var bmpdex = 0;
+
                 for (var x = 0; x < width; x++)
                 {
                     var b2 = imagedata[dex++];
@@ -78,11 +85,12 @@ public static class ImageHelper
         }
         else if (bpp == 4 && pal != null)
         {
+            var dex = u + v * width;
 
-            var dex = 0;
             for (var y = 0; y < height; y++)
             {
                 var bmpdex = 0;
+
                 for (var x = 0; x < width / 2; x++)
                 {
                     var c = pal[imagedata[dex] & 0xf];

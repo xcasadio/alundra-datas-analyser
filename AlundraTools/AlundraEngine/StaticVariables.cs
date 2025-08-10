@@ -2853,7 +2853,6 @@ public static class StaticVariables
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B8, y0 = 0x00A0, u0 = 0x50, v0 = 0x80, clut = 0x0006, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00C0, y0 = 0x00A0, u0 = 0x68, v0 = 0x80, clut = 0x0005, w = 0x0008, h = 0x0008 }
 };
-
     // 800993C4
     public static int[] g_fontCharWidthTable =
     [
@@ -2940,7 +2939,6 @@ public static class StaticVariables
     ];
     // 800C400C
     public static string?[] g_entitySpriteNamesTable = new string?[512];
-
     //800b8370
     public static readonly SPRT[] SPRT_ARRAY_800b8370 = new SPRT[72]
     {
@@ -3612,17 +3610,7 @@ public static class StaticVariables
         g_entitySpriteNamesTable[495] = "NILUDE";
         g_entitySpriteNamesTable[506] = "ZAZAN";
         g_entitySpriteNamesTable[509] = "ZOLDIA";
-
-        for (int i = 0; i < g_textFullLinesSprites.Length; i++)
-        {
-            g_textFullLinesSprites[i] = new SPRT();
-        }
-
-        for (int i = 0; i < g_cursorTextSprites.Length; i++)
-        {
-            g_cursorTextSprites[i] = new SPRT();
-        }
-
+        
         g_textTilesConfiguration_800b8eb0 = new TextTilesConfiguration
         {
             X = 0xb0,
@@ -3632,26 +3620,6 @@ public static class StaticVariables
             SpritesA = SPRT_ARRAY_800b8370,
             SpritesB = SPRT_ARRAY_800b8910
         };
-
-        for (int i = 0; i < TextToDisplay_ARRAY_8017f920.Length; i++)
-        {
-            TextToDisplay_ARRAY_8017f920[i] = new TextToDisplay();
-        }
-
-        for (int i = 0; i < g_spriteInventoryAlundraPotrait.Length; i++)
-        {
-            g_spriteInventoryAlundraPotrait[i] = new POLY_FT4();
-        }
-
-        for (int i = 0; i < g_ItemNameSprites.Length; i++)
-        {
-            g_ItemNameSprites[i] = new SPRT();
-        }
-
-        for (int i = 0; i < g_alundraSprites.Length; i++)
-        {
-            g_alundraSprites[i] = new POLY_FT4();
-        }
     }
 
     //
@@ -4287,23 +4255,22 @@ public static class StaticVariables
     //800b9f28
     public static readonly uint[] UINT_ARRAY_800b9f28 = new uint[]
     {
-        0x00000008u, 0x00000020u, 0x00000038u, 0x00000050u, // [0..3]
-        0x00000068u, 0x00000080u                              // [4..5]
-    };
-    //800b9f40
-    public static readonly uint[] UINT_ARRAY_800b9f40 = new uint[]
-    {
-        0x00000008u, 0x00000020u, 0x00000038u, 0x00000050u, // [0..3]
-        0x00000068u, 0x00000080u, 0x00000008u, 0x00000020u, // [4..7]
-        0x00000038u, 0x00000050u, 0x00000068u, 0x00000080u, // [8..11]
-        0x00000008u, 0x00000020u, 0x00000038u, 0x00000050u, // [12..15]
-        0x00000068u, 0x00000080u                              // [16..17]
+        0x08u, 0x20u, 0x38u, 0x50u,
+        0x68u, 0x80u, 0x08u, 0x20u, 
+        0x38u, 0x50u, 0x68u, 0x80u, 
+        0x08u, 0x20u, 0x38u, 0x50u, 
+        0x68u, 0x80u, 0x08u, 0x20u, 
+        0x38u, 0x50u, 0x68u, 0x80u  
     };
     //800b9f88
     public static readonly uint[] UINT_ARRAY_800b9f88 = new uint[]
     {
-        0x00000008u, 0x00000008u, 0x00000008u, 0x00000008u,
-        0x00000008u, 0x00000008u
+        0x08, 0x08, 0x08, 0x08,
+        0x08, 0x08, 0x38, 0x38,
+        0x38, 0x38, 0x38, 0x38,
+        0x54, 0x54, 0x54, 0x54,
+        0x54, 0x54, 0x70, 0x70,
+        0x70, 0x70, 0x70, 0x70
     };
     public static byte PTR_IsMapUnlocked_800b9e7c; // 800B9E7C
     public static short DAT_800b9f40; // 800B9F40
@@ -4575,9 +4542,9 @@ public static class StaticVariables
     public static int DAT_800c9dec; // 800C9DEC
     public static int DAT_800ca0e8; // 800CA0E8
     public static int DAT_800ca0ec; // 800CA0EC
-    public static short[] g_drawPageInfoBase = new short[96]; // 800CA0F0
-    public static int[] g_clutTableBase = new int[24]; // 800CA1B0
-    public static int[] g_uvLookupTableInit = new int[8]; // 800CA210
+    public static ushort[] g_drawPageInfoBase = new ushort[96]; // 800CA0F0
+    public static ushort[] g_clutTableBase = new ushort[48]; // 800CA1B0
+    public static ushort[] g_uvLookupTableInit = new ushort[16]; // 800CA210
     public static int[] g_orderTableFrame0 = new int[372]; // 800CA230
     public static int[] g_orderTableFrame1 = new int[964]; // 800CB140
     public static int[] g_orderingTableBuffer = new int[4]; // 800CC050
@@ -4650,7 +4617,7 @@ public static class StaticVariables
     public static DR_TPAGE[] g_tileOrderingTable = new DR_TPAGE[6]; // 800E42C0
     public static SpriteMapEntry[] g_spriteMapTable = new SpriteMapEntry[6]; // 800E42F0
     public static int g_LoadVRAMAssets_debug; // 800E431C
-    public static short[] g_drawPageInfoTable; // 800E4320
+    public static ushort[] g_drawPageInfoTable; // 800E4320
     public static int g_currentDrawPageParam; // 800E4324
     public static int g_cameraScrollingX; // 800E4328
     public static int g_cameraScrollingY; // 800E432C
@@ -4667,7 +4634,7 @@ public static class StaticVariables
     public static int INT_800e4358; // 800E4358
     public static int[] g_animationRawData = new int[58050]; // 800E4360
     public static int g_spriteNumberOfImage; // 8011ce60
-    public static POLY_FT4[] g_alundraSprites = new POLY_FT4[1024]; // 8011CE68
+    public static POLY_FT4[] g_alundraSprites = Enumerable.Repeat(new POLY_FT4(), 1024).ToArray(); // 8011CE68
     public static int g_animationRawSize; // 80126E68
     public static SpriteRef[] g_spriteImages = new SpriteRef[1024]; // 80126E6C
     public static SpriteInfoHeader g_currentMapSpriteInfo; // 80126E70
@@ -4834,8 +4801,8 @@ public static class StaticVariables
     public static int g_textRenderStep; // 80149BE4
     public static int[] g_textLineWidth = new int[3]; // 80149BE8
     public static int DAT_80149bec; // 80149BEC
-    public static SPRT[] g_textFullLinesSprites = new SPRT[6]; // 80149BF8
-    public static SPRT[] g_cursorTextSprites = new SPRT[2]; // 80149C78
+    public static SPRT[] g_textFullLinesSprites = Enumerable.Repeat(new SPRT(), 6).ToArray(); // 80149BF8
+    public static SPRT[] g_cursorTextSprites = Enumerable.Repeat(new SPRT(), 2).ToArray(); // 80149C78
     public static short DAT_80149c80; // 80149C80
     public static short DAT_80149c82; // 80149C82
     public static byte DAT_80149c84; // 80149C84
@@ -5020,14 +4987,16 @@ public static class StaticVariables
     public static int DAT_8017f338; // 8017F338
     public static int DAT_8017f33c; // 8017F33C
     public static byte[] BYTE_ARRAY_8017f340 = new byte[1504]; // 8017F340
-    public static TextToDisplay[] TextToDisplay_ARRAY_8017f920 = new TextToDisplay[9]; // 8017F920
-    public static SPRT[] g_ItemNameSprites = new SPRT[4]; // 8017FA34
+    public static TextToDisplay[] TextToDisplay_ARRAY_8017f920 = Enumerable.Repeat(new TextToDisplay(), 9).ToArray(); // 8017F920
+    public static SPRT[] g_ItemNameSprites = Enumerable.Repeat(new SPRT(), 6).ToArray(); // 8017FA34
     public static short[] SHORT_ARRAY_8017fa3c = new short[16]; // 8017FA3C
     public static SPRT g_warpNameDisplayDst; // 8017FA5C
-    public static SPRT[] SPRT_8017fe74 = Enumerable.Repeat(new SPRT(), 2).ToArray(); // 8017FE74
+    public static SPRT[] g_spriteInventoryItems = Enumerable.Repeat(new SPRT(), 24).ToArray(); //8017fab4
+    //public static SPRT[] g_spriteInventoryItems = Enumerable.Repeat(new SPRT(), 18).ToArray(); //8017fb2c
+    public static SPRT[] SPRT_ARRAY_8017fe74 = Enumerable.Repeat(new SPRT(), 2).ToArray(); // 8017FE74
     public static SPRT[] g_spriteInventoryText = Enumerable.Repeat(new SPRT(), 4).ToArray(); // 8017fe9c
-    public static int DAT_8017feec; // 8017FEEC
-    public static int DAT_8017fef0; // 8017FEF0
+    public static int INT_8017feec; // 8017FEEC
+    public static int INT_8017fef0; // 8017FEF0
     public static int g_forbiddenWarpFlag; // 8017FEF4
     public static InventoryCursorAnimation g_inventoryCursorAnimation = new InventoryCursorAnimation(); // 8017fef8
     public static int g_inventorySelectedSlotId; // 8017FF28
@@ -5035,7 +5004,7 @@ public static class StaticVariables
     public static SPRT[] g_spriteInventoryNumberOfKeys = Enumerable.Repeat(new SPRT(), 4).ToArray(); // 8017ffcc
     public static SPRT[] g_spriteInventoryNumberOfFalcon = Enumerable.Repeat(new SPRT(), 4).ToArray(); // 8018001c
     public static short g_hudTransitionState; // 80180070
-    public static POLY_FT4[] g_spriteInventoryAlundraPotrait = new POLY_FT4[2]; // 80180074
+    public static POLY_FT4[] g_spriteInventoryAlundraPotrait = Enumerable.Repeat(new POLY_FT4(), 2).ToArray(); // 80180074
     public static int g_hudTransitionSrcX; // 801800C4
     public static int g_hudTransitionSrcY; // 801800C8
     public static int g_hudTransitionSrcZ; // 801800CC
@@ -5099,7 +5068,7 @@ public static class StaticVariables
     public static int g_paletteY; // 80181BEC
     public static int[] g_extendedOverlayDrawBuffers = new int[30]; // 80181BF0
     //public static DR_MODE[] g_drawModes2 = new DR_MODE[2]; // 80181C68
-    public static int[] g_tileUVLookup; // 80181C80
+    public static ushort[] g_tileUVLookup; // 80181C80
     public static int[] g_scrollPosX = new int[400]; // 80181C88
     public static int[] g_scrollPosY = new int[400]; // 801822C8
     public static int[] g_renderingBuffer0 = new int[2000]; // 80182908

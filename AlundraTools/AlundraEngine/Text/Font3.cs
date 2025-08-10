@@ -23,7 +23,7 @@ public class Font3
 
     public Bitmap GenerateHudBitmapFromSprite(SPRT sprite)
     {
-        return GenerateHudBitmap(sprite.x0, sprite.y0, sprite.w, sprite.h, sprite.clut);
+        return GenerateHudBitmap(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut);
     }
 
     public Bitmap GenerateHudBitmap(int paletteIndex)
@@ -33,7 +33,7 @@ public class Font3
 
     public Bitmap GenerateHudBitmap(Color[] pal)
     {
-        HudBitmap = GenerateFontBitmapTim(0, 0, 256, 256, pal);
+        HudBitmap = GenerateHudBitmap(0, 0, 256, 256, pal);
         return HudBitmap;
     }
 
@@ -44,12 +44,12 @@ public class Font3
 
     public Bitmap GenerateHudBitmap(int x, int y, int w, int h, Color[] pal)
     {
-        return ImageHelper.BitmapFromPsxBuff(_hudImageData, w, h, 4, pal);
+        return ImageHelper.BitmapFromPsxBuff(_hudImageData, x, y, w, h, 4, pal);
     }
 
     public Bitmap GenerateFontBitmapFromSprite(SPRT sprite)
     {
-        return GenerateFontBitmapTim(sprite.x0, sprite.y0, sprite.w, sprite.h, sprite.clut);
+        return GenerateFontBitmapTim(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut);
     }
 
     public Bitmap GenerateFontBitmapTim(int paletteIndex)
@@ -70,7 +70,7 @@ public class Font3
 
     public Bitmap GenerateFontBitmapTim(int x, int y, int w, int h, Color[] pal)
     {
-        return ImageHelper.BitmapFromPsxBuff(_fontImageDataTim, w, h, 4, pal);
+        return ImageHelper.BitmapFromPsxBuff(_fontImageDataTim, x, y, w, h, 4, pal);
     }
 
     private void LoadPalette(string folderName)

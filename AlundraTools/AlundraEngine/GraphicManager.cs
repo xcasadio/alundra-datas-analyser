@@ -893,7 +893,7 @@ public class GraphicManager
             }
             else
             {
-                Array.Copy(formattedText, text, formattedText.Length);
+                Array.Copy(formattedText, text, text.Length);
                 useStyledText = true;
             }
 
@@ -932,7 +932,8 @@ public class GraphicManager
                     sprite.y0 = y;
                     sprite.clut = clut;
 
-                    _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, _gameEngine.Font3.GenerateFontBitmapTim(clut));
+                    var generateFontBitmapTim = _gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
+                    _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, generateFontBitmapTim);
 
                     y = (short)(y - 1);
                     i = i + 1;
@@ -1069,5 +1070,11 @@ public class GraphicManager
 
         var bitmap = _gameEngine.AlundraMap.GetSpriteBitmap(image);
         _gameEngine.Renderer.AddSprite(minX, minY, width, height, int.MaxValue, bitmap, 1.0f);
+    }
+
+    //8004e168
+    public int GetItemTextureIdByItemId(int itemId)
+    {
+        return StaticVariables.g_itemsProperties[itemId * 5 + 4];
     }
 }

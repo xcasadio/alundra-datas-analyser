@@ -23,7 +23,7 @@ public class PlayerManager
         uint dir;
 
         StaticVariables.g_activeCollisionEntity = null;
-        weaponId = (int)_gameEngine.GetItemIdFromCurrentWeapon();
+        weaponId = (int)_gameEngine.PlayerManager.GetItemIdFromCurrentWeapon();
         //weapon slot : 0 6 8 5 0 10
         //si sword niveau 1 alors 1
         StaticVariables.g_currentWeaponFlags = StaticVariables.g_weaponFlagsByItemId[weaponId];
@@ -1188,7 +1188,7 @@ public class PlayerManager
             iconOffset -= 8;
         }
 
-        var currentTileIndex = (int)_gameEngine.GetItemIdFromCurrentWeapon();
+        var currentTileIndex = (int)_gameEngine.PlayerManager.GetItemIdFromCurrentWeapon();
         if (currentTileIndex > 0 && currentTileIndex < 0x61)
         {
             var tileIconFlags = (byte)(StaticVariables.g_iconNameEtcBase[(currentTileIndex * 8 + 6) / 4] & 0x7F);
@@ -1201,16 +1201,16 @@ public class PlayerManager
             }
         }
 
-        var currentItemId = _gameEngine.SetItemIdFromCurrentItemId();
+        var currentItemId = _gameEngine.PlayerManager.SetItemIdFromCurrentItemId();
         if (currentItemId > 0 && currentItemId < 0x61)
         {
             var warpIconFlags = (byte)(StaticVariables.g_iconNameEtcBase[(currentItemId * 8 + 6) / 4] & 0x7F);
 
             if (warpIconFlags == 3)
             {
-                var itemData = _gameEngine.GetItemDataPointer(currentItemId);
+                var itemData = _gameEngine.GetItemDataPointer((int)currentItemId);
                 StaticVariables.g_items[3] = itemData;
-                StaticVariables.g_items[4] = currentItemId + 0x1E;
+                StaticVariables.g_items[4] = (int)(currentItemId + 0x1E);
             }
         }
 
@@ -1776,11 +1776,11 @@ public class PlayerManager
             //LogDebugMessage(StaticVariables.g_logMessage_InvalidWarpVisualId, HpMax);
         }
 
-        _gameEngine.GetItemIdFromCurrentWeapon();
+        _gameEngine.PlayerManager.GetItemIdFromCurrentWeapon();
     }
 
     // 800347d4
-    public int PlayCutscene(int itemId)
+    public int PlayCutscene(uint itemId)
     {
         int iVar1;
         int iVar2;
@@ -1803,7 +1803,7 @@ public class PlayerManager
     }
 
     //8004e5c4
-    public int UseItem(int itemId)
+    public int UseItem(uint itemId)
     {
         int remainingItem;
         short itemCount;
@@ -1815,7 +1815,7 @@ public class PlayerManager
         }
         else
         {
-            remainingItem = itemId * 2 * 2 + StaticVariables.g_numberOfItems[0];
+            remainingItem = (int)(itemId * 2 * 2 + StaticVariables.g_numberOfItems[0]);
             itemCount = StaticVariables.g_numberOfItems[itemId * 2 + 1];
             itemCount--;
 
@@ -1854,19 +1854,19 @@ public class PlayerManager
     //8003499c
     private int UseItem()
     {
-        var mapId = _gameEngine.SetItemIdFromCurrentItemId();
+        var itemId = _gameEngine.PlayerManager.SetItemIdFromCurrentItemId();
 
-        if (mapId >= 0x62)
+        if (itemId >= 0x62)
         {
             goto DefaultCase;
         }
 
-        if (StaticVariables.g_warpLockTimer != 0 && StaticVariables.g_warpLockTimer != mapId)
+        if (StaticVariables.g_warpLockTimer != 0 && StaticVariables.g_warpLockTimer != itemId)
         {
             goto DefaultCase;
         }
 
-        var switchValue = mapId - 0x1f;
+        var switchValue = itemId - 0x1f;
 
         if (switchValue >= 0x14)
         {
@@ -1878,35 +1878,35 @@ public class PlayerManager
         switch (switchValue)
         {
             case 0: // mapId == 0x1f
-                result = TrySpawnWarpEntity(mapId);
+                result = TrySpawnWarpEntity(itemId);
                 break;
 
             case 1: // mapId == 0x20
-                result = FUN_80034320(mapId);
+                result = FUN_80034320(itemId);
                 break;
 
             case 4: // mapId == 0x23
-                result = FUN_8003453c(mapId);
+                result = FUN_8003453c(itemId);
                 break;
 
             case 5: // mapId == 0x24
-                FUN_80034680(mapId);
+                FUN_80034680(itemId);
                 return 1;
 
             case 6: // mapId == 0x25
-                TryWarpToMap(mapId);
+                TryWarpToMap(itemId);
                 return 1;
 
             case 7: // mapId == 0x26
-                UseMagicalItem(mapId);
+                UseMagicalItem(itemId);
                 return 1;
 
             case 8: // mapId == 0x27
-                PlayCutscene(mapId);
+                PlayCutscene(itemId);
                 return 1;
 
             case 10: // mapId == 0x29
-                TryWarpWithExplosionEffect(mapId);
+                TryWarpWithExplosionEffect(itemId);
                 return 1;
 
             case 13: // mapId == 0x2c
@@ -1917,7 +1917,7 @@ public class PlayerManager
             case 18: // mapId == 0x31
             case 19: // mapId == 0x32
             case 12: // mapId == 0x2b
-                result = TryStartMapWarp(mapId);
+                result = TryStartMapWarp(itemId);
                 break;
 
             default:
@@ -1926,7 +1926,7 @@ public class PlayerManager
 
         if (result == 0)
         {
-            StaticVariables.g_warpLockTimer = mapId;
+            StaticVariables.g_warpLockTimer = (int)itemId;
             StaticVariables.g_playerEffectCurrentFrame = 0;
             StaticVariables.g_playerEffectPhase = 0;
         }
@@ -1939,40 +1939,40 @@ public class PlayerManager
     }
 
     //80034224
-    private int TrySpawnWarpEntity(int mapId)
+    private int TrySpawnWarpEntity(uint itemId)
     {
         Debugger.Break();
         return 0;
     }
 
     //80034320
-    private int FUN_80034320(int mapId)
+    private int FUN_80034320(uint itemId)
     {
         Debugger.Break();
         return 0;
     }
 
     //8003453c
-    private int FUN_8003453c(int mapId)
+    private int FUN_8003453c(uint itemId)
     {
         Debugger.Break();
         return 0;
     }
 
     //80034680
-    private void FUN_80034680(int mapId)
+    private void FUN_80034680(uint itemId)
     {
         Debugger.Break();
     }
 
     //800346f0
-    private void TryWarpToMap(int mapId)
+    private void TryWarpToMap(uint itemId)
     {
         Debugger.Break();
     }
 
     //80034760
-    private int UseMagicalItem(int itemId)
+    private int UseMagicalItem(uint itemId)
     {
         int mp;
         int mpMax;
@@ -1994,13 +1994,13 @@ public class PlayerManager
         return 1;
     }
 
-    private void TryWarpWithExplosionEffect(int mapId)
+    private void TryWarpWithExplosionEffect(uint itemId)
     {
         Debugger.Break();
     }
 
     //80034870
-    private int TryStartMapWarp(int mapId)
+    private int TryStartMapWarp(uint itemId)
     {
         Debugger.Break();
         return 0;
@@ -3206,6 +3206,153 @@ public class PlayerManager
 
         return nbItem;
     }
+
+
+
+    // 8004e0f8
+    public uint SetItemIdFromCurrentItemId()
+    {
+        var currentItemId = StaticVariables.g_playerStats.ItemId;
+        var numberOfItem = GetNumberOfItem(currentItemId);
+
+        if (numberOfItem == 0)
+        {
+            return 0xffffffff;
+        }
+
+        var slotId = StaticVariables.g_itemsProperties[currentItemId * 5];
+        var itemId = GetItemIdFromSlotId((uint)slotId);
+        SetCurrentItemId(itemId);
+
+        return (uint)currentItemId;
+    }
+
+
+    // 8004e18c
+    public uint GetItemIdFromSlotId(uint slotId)
+    {
+        if (slotId >= 0x20)
+        {
+            Debugger.Break();
+            Debug.WriteLine($"Invalid slotId: {slotId}");
+            return 0xFFFFFFFF;
+        }
+
+        uint bestMatchIndex = 0xFFFFFFFF;
+        uint currentIndex = 0;
+
+        while (currentIndex < 0x80)
+        {
+            var entrySectionId = StaticVariables.g_itemsProperties[currentIndex * 5];
+
+            if (entrySectionId == slotId)
+            {
+                var usageCount = StaticVariables.g_numberOfItems[currentIndex * 2 + 1];
+
+                if (usageCount > 0)
+                {
+                    if (bestMatchIndex == 0xFFFFFFFF)
+                    {
+                        bestMatchIndex = currentIndex;
+
+                        var flags = StaticVariables.g_itemsProperties[currentIndex * 5 + 1];
+                        if ((flags & 0x1) == 0)
+                        {
+                            return currentIndex;
+                        }
+                    }
+                    else
+                    {
+                        var currentPriority = StaticVariables.g_itemsProperties[currentIndex * 5 + 2];
+                        var bestPriority = StaticVariables.g_itemsProperties[bestMatchIndex * 5 + 2];
+
+                        if (bestPriority < currentPriority)
+                        {
+                            bestMatchIndex = currentIndex;
+                        }
+                    }
+                }
+            }
+
+            currentIndex++;
+        }
+
+        return bestMatchIndex;
+    }
+
+    // 8004e4d8
+    public void SetCurrentItemId(uint itemId)
+    {
+        if ((int)itemId < 0 || itemId >= StaticVariables.g_itemsCount)
+        {
+            Debugger.Break();
+            return;
+        }
+
+        StaticVariables.g_playerStats.ItemId = (short)itemId;
+    }
+
+
+    // 8004e030
+    public uint GetItemIdFromCurrentWeapon()
+    {
+        var itemId = 0xffffffff;
+
+        switch (StaticVariables.g_playerStats.WeaponId - 1)
+        {
+            case 0:
+                itemId = GetWeaponIdFromSlot1();
+                break;
+            case 1:
+                itemId = GetWeaponIdFromSlot2();
+                break;
+            case 2:
+                itemId = GetWeaponIdFromSlot3();
+                break;
+            case 3:
+                itemId = GetWeaponIdFromSlot4();
+                break;
+            case 4:
+                itemId = GetWeaponIdFromSlot5();
+                break;
+            case 5:
+                itemId = GetWeaponIdFromSlot6();
+                break;
+        }
+
+        return itemId;
+    }
+
+    public uint GetWeaponIdFromSlot1()
+    {
+        return GetItemIdFromSlotId(1);
+    }
+
+    public uint GetWeaponIdFromSlot2()
+    {
+        return GetItemIdFromSlotId(2);
+    }
+
+    public uint GetWeaponIdFromSlot3()
+    {
+        return GetItemIdFromSlotId(3);
+    }
+
+    public uint GetWeaponIdFromSlot4()
+    {
+        return GetItemIdFromSlotId(4);
+    }
+
+    public uint GetWeaponIdFromSlot5()
+    {
+        return GetItemIdFromSlotId(5);
+    }
+
+    private uint GetWeaponIdFromSlot6()
+    {
+        return GetItemIdFromSlotId(6);
+    }
+
 
     // 80033dbc
     public void FUN_80033dbc(Entity entity, uint itemId)

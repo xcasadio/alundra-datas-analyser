@@ -61,20 +61,44 @@ public class GameInitializer
         //    screenY = 0;
         //} while (clutLoopIndex < 4);
         //clutLoopIndex = 0;
-        //do
-        //{
-        //    largestEntryIndex = 0x1e0;
-        //    clutPtr = &g_drawPageInfoBase + screenY;
-        //    do
-        //    {
-        //        tPage = GetClut(clutLoopIndex, largestEntryIndex);
-        //        *clutPtr = tPage;
-        //        largestEntryIndex = largestEntryIndex + 1;
-        //        clutPtr = clutPtr + 1;
-        //        screenY = screenY + 1;
-        //    } while (largestEntryIndex < 0x200);
-        //    clutLoopIndex = clutLoopIndex + 0x40;
-        //} while (clutLoopIndex < 0x140);
+
+        var table = new ushort[160];
+        screenY = 0;
+
+        do
+        {
+            largestEntryIndex = 0x1e0;
+
+            do
+            {
+                var clut = GetClut(clutLoopIndex, largestEntryIndex);
+                table[screenY] = clut;
+                largestEntryIndex += 1;
+                screenY += 1;
+            } while (largestEntryIndex < 0x200);
+
+            clutLoopIndex += 0x40;
+        } while (clutLoopIndex < 0x140);
+
+        for (int i = 0; i < StaticVariables.g_drawPageInfoBase.Length; i++)
+        {
+            StaticVariables.g_drawPageInfoBase[i] = table[i];
+        }
+
+        var offset = StaticVariables.g_drawPageInfoBase.Length;
+
+        for (int i = 0; i < StaticVariables.g_clutTableBase.Length; i++)
+        {
+            StaticVariables.g_clutTableBase[i] = table[offset + i];
+        }
+
+        offset = StaticVariables.g_drawPageInfoBase.Length + StaticVariables.g_clutTableBase.Length;
+
+        for (int i = 0; i < StaticVariables.g_uvLookupTableInit.Length; i++)
+        {
+            StaticVariables.g_uvLookupTableInit[i] = table[offset + i];
+        }
+
         //datasBinHeader = &g_datasBinHeaderOffset;
         //ReadFileFromCDIntoBuffer(DATAS_BIN, (u_long*)&g_datasBinHeaderOffset, 0, 0x7b8);
         //clutLoopIndex = 0;
@@ -109,6 +133,11 @@ public class GameInitializer
             StaticVariables.g_drawModeIndexInit, StaticVariables.g_paletteIndexInit, StaticVariables.g_tileScaleXInit,
             StaticVariables.g_tileScaleYInit, StaticVariables.g_uvLookupTableInit);
         StaticVariables.g_currentMap = ~StaticVariables.g_desiredMap;
+    }
+
+    private ushort GetClut(int x, int y)
+    {
+        return (ushort)((y << 6) | (x >> 4) & 0x3f);
     }
 
     private void InitializePadController()
@@ -274,11 +303,11 @@ public class GameInitializer
             {
                 StaticVariables.g_tileToWorldXTable[innerTileIndex] = (short)index2; //useless => why an array ? (x / 24) is used
                 //currentEntity = StaticVariables.g_numberOfEntity;
-                tileOffset = tileOffset + 1;
+                tileOffset += 1;
                 innerTileIndex = layoutIndex + tileOffset;
             } while (tileOffset < 0x18);
-            index2 = index2 + 1;
-            layoutIndex = layoutIndex + 0x18;
+            index2 += 1;
+            layoutIndex += 0x18;
         } while (index2 < 0x34);
         newEntity = null;
 
@@ -354,7 +383,7 @@ public class GameInitializer
                 {
                     _gameEngine.PlayerManager.AddOneItemIfUnlocked(iconIndex);
                 }
-                iconIndex = iconIndex + 1;
+                iconIndex += 1;
                 //iconEtcEntryPtr = iconEtcEntryPtr + 2;
             } while (iconIndex < 0x62);
             _gameEngine.PlayerManager.SetPlayerWeaponId(1);
@@ -539,16 +568,16 @@ public class GameInitializer
 
                             //_gameEngine.Renderer.AddSprite(sprite, int.MaxValue, _gameEngine.Font3.GenerateFontBitmapTim(StaticVariables.g_clutTable[0]));
 
-                            tileX = tileX + 1;
+                            tileX += 1;
                         } while (tileX < tilesConfiguration.Width);
                     }
 
-                    tileY = tileY + 1;
+                    tileY += 1;
 
                 } while (tileY < tilesConfiguration.Height);
             }
 
-            surfaceIndex = surfaceIndex + 1;
+            surfaceIndex += 1;
 
         } while (surfaceIndex < 2);
     }
@@ -572,7 +601,7 @@ public class GameInitializer
     }
 
     private void InitializeTileRenderer(int tPageX, int tPageY, int paletteX, int paletteY, short drawMode,
-        short paletteIndex, short tileScaleX, short tileScaleY, int[] uvLookupTablePtr)
+        short paletteIndex, short tileScaleX, short tileScaleY, ushort[] uvLookupTablePtr)
     {
         StaticVariables.g_renderingBufferIndex = 0;
         StaticVariables.g_drawModeIndex = drawMode;

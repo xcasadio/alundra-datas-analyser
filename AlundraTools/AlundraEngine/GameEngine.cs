@@ -79,7 +79,6 @@ public class GameEngine
     // 8002bfe0
     public void MainLoop(System.Drawing.Graphics graphics)
     {
-        //InitializeGame();
         StaticVariables.g_spriteNumberOfImage = 0;
 
         byte isEffectRunning = 0;
@@ -257,117 +256,6 @@ public class GameEngine
         GraphicManager.RenderScene(graphics);
     }
 
-    // 8004e030
-    public uint GetItemIdFromCurrentWeapon()
-    {
-        var itemId = 0xffffffff;
-
-        switch (StaticVariables.g_playerStats.WeaponId - 1)
-        {
-            case 0:
-                itemId = GetWeaponIdFromSlot1();
-                break;
-            case 1:
-                itemId = GetWeaponIdFromSlot2();
-                break;
-            case 2:
-                itemId = GetWeaponIdFromSlot3();
-                break;
-            case 3:
-                itemId = GetWeaponIdFromSlot4();
-                break;
-            case 4:
-                itemId = GetWeaponIdFromSlot5();
-                break;
-            case 5:
-                itemId = GetWeaponIdFromSlot6();
-                break;
-        }
-
-        return itemId;
-    }
-
-    public uint GetWeaponIdFromSlot1()
-    {
-        return GetItemIdFromSlotId(1);
-    }
-
-    public uint GetWeaponIdFromSlot2()
-    {
-        return GetItemIdFromSlotId(2);
-    }
-
-    public uint GetWeaponIdFromSlot3()
-    {
-        return GetItemIdFromSlotId(3);
-    }
-
-    public uint GetWeaponIdFromSlot4()
-    {
-        return GetItemIdFromSlotId(4);
-    }
-
-    public uint GetWeaponIdFromSlot5()
-    {
-        return GetItemIdFromSlotId(5);
-    }
-
-    private uint GetWeaponIdFromSlot6()
-    {
-        return GetItemIdFromSlotId(6);
-    }
-
-    // 8004e18c
-    private uint GetItemIdFromSlotId(uint slotId)
-    {
-        if (slotId >= 0x20)
-        {
-            Debugger.Break();
-            Debug.WriteLine($"Invalid slotId: {slotId}");
-            return 0xFFFFFFFF;
-        }
-
-        uint bestMatchIndex = 0xFFFFFFFF;
-        uint currentIndex = 0;
-
-        while (currentIndex < 0x80)
-        {
-            var entrySectionId = StaticVariables.g_itemsProperties[currentIndex * 5];
-
-            if (entrySectionId == slotId)
-            {
-                var usageCount = StaticVariables.g_numberOfItems[currentIndex * 2 + 1];
-
-                if (usageCount > 0)
-                {
-                    if (bestMatchIndex == 0xFFFFFFFF)
-                    {
-                        bestMatchIndex = currentIndex;
-
-                        var flags = StaticVariables.g_itemsProperties[currentIndex * 5 + 1];
-                        if ((flags & 0x1) == 0)
-                        {
-                            return currentIndex;
-                        }
-                    }
-                    else
-                    {
-                        var currentPriority = StaticVariables.g_itemsProperties[currentIndex * 5 + 2];
-                        var bestPriority = StaticVariables.g_itemsProperties[bestMatchIndex * 5 + 2];
-
-                        if (bestPriority < currentPriority)
-                        {
-                            bestMatchIndex = currentIndex;
-                        }
-                    }
-                }
-            }
-
-            currentIndex++;
-        }
-
-        return bestMatchIndex;
-    }
 
     public void SetTileAnimationMode(int animationMode, int animationBankIndex)
     {
@@ -727,7 +615,7 @@ public class GameEngine
         StaticVariables.g_playerWarpTimer = 0;
         StaticVariables.g_isWarpDisabled = 0;
         StaticVariables.g_playerWarpEffect = null;
-        var weaponItemId = GetItemIdFromCurrentWeapon();
+        var weaponItemId = PlayerManager.GetItemIdFromCurrentWeapon();
         StaticVariables.g_currentWeaponFlags = StaticVariables.g_weaponFlagsByItemId[weaponItemId];
         Array.Clear(StaticVariables.g_playerEffectTransitionCooldown);
         ResetWarpLockTimer();
@@ -2458,40 +2346,6 @@ public class GameEngine
         // Return the array of balance records
         return currentRecord;
     }
-
-    // 8004e0f8
-    public int SetItemIdFromCurrentItemId()
-    {
-        var currentItemId = StaticVariables.g_playerStats.ItemId;
-        var numberOfItem = PlayerManager.GetNumberOfItem(currentItemId);
-
-        if (numberOfItem == 0)
-        {
-            return -1;
-        }
-
-        var slotId = StaticVariables.g_itemsProperties[currentItemId * 5];
-        var itemId = GetItemIdFromSlotId((uint)slotId);
-        SetCurrentItemId(itemId);
-
-        return currentItemId;
-    }
-
-    // 8004e4d8
-    public void SetCurrentItemId(uint itemId)
-    {
-        if ((int)itemId < 0 || itemId >= StaticVariables.g_itemsCount)
-        {
-            Debugger.Break();
-            return;
-        }
-
-        StaticVariables.g_playerStats.ItemId = (short)itemId;
-    }
-
-    //80057c84
-
-    //80057cf0
 
     //80059f6c
     public void TriggerVisualUpdate(int spriteTableIndex)

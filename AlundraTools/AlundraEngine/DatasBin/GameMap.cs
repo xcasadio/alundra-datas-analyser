@@ -148,12 +148,13 @@ public class GameMap
         int swidth = img.Swidth;
         var readwidth = swidth;
         int outputwidth = img.Swidth;
+
         if (outputwidth % 8 > 0)//make output interval of 8
         {
             outputwidth += 8 - outputwidth % 8;
         }
 
-        if (shiftleft)//make sure theres an extra byte if shifting left
+        if (shiftleft)//make sure there is an extra byte if shifting left
         {
             readwidth++;
         }
