@@ -12,7 +12,7 @@ public class UiBoxAnimated
     public UiDrawCmd[][] Boxcommands = new UiDrawCmd[0xa][];//drawareaid is an index into this
 }
 
-public class TextTilesConfiguration
+public class UIBoxConfiguration
 {
     public short X;
     public short Y;

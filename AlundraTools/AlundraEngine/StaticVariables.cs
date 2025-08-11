@@ -1292,7 +1292,7 @@ public static class StaticVariables
     new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0xA8, y0 = (short)0xA8, u0 = 0xD8, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
 };
     // 800A58BC
-    public static TextTilesConfiguration g_textTilesConfiguration = new TextTilesConfiguration
+    public static UIBoxConfiguration g_textTilesConfiguration = new UIBoxConfiguration
     {
         X = 0x40,
         Y = 0x8C,
@@ -1302,7 +1302,7 @@ public static class StaticVariables
         SpritesB = g_font1_B,
     };
     //8009a85c
-    public static SPRT[] g_font2_A =
+    public static SPRT[] g_dialogMessageBackgroundSpritesA =
     [
         new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x10, y0 = (short)0xA8, u0 = (byte)0xE0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
         new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x18, y0 = (short)0xA8, u0 = (byte)0xE8, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
@@ -1558,7 +1558,7 @@ public static class StaticVariables
         new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x128, y0 = (short)0xD8, u0 = (byte)0xD8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 }
         ];
     //8009bc0c
-    public static SPRT[] g_font2_B =
+    public static SPRT[] g_dialogMessageBackgroundSpritesB =
     [
         new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x10, y0 = (short)0xA8, u0 = (byte)0xE0, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
     new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x18, y0 = (short)0xA8, u0 = (byte)0xE8, v0 = (byte)0x0, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 },
@@ -1814,14 +1814,14 @@ public static class StaticVariables
     new SPRT { tag = 0x0UL, r0 = (byte)0x0, g0 = (byte)0x0, b0 = (byte)0x0, code = (byte)0x0, x0 = (short)0x128, y0 = (short)0xD8, u0 = (byte)0xD8, v0 = (byte)0x20, clut = (ushort)0x0, w = (short)0x8, h = (short)0x8 }
     ];
     // 8009CFBC
-    public static TextTilesConfiguration g_textTilesConfiguration2 = new TextTilesConfiguration
+    public static UIBoxConfiguration g_uiBoxDialogMessageBackground = new UIBoxConfiguration
     {
         X = 0x10,
         Y = 0xA8,
         Width = 0x24,
         Height = 0x7,
-        SpritesA = g_font2_A,
-        SpritesB = g_font2_B,
+        SpritesA = g_dialogMessageBackgroundSpritesA,
+        SpritesB = g_dialogMessageBackgroundSpritesB,
     };
     //800b44f8
     public static readonly SPRT[] SPRT_ARRAY_800b44f8 = new SPRT[]
@@ -3428,6 +3428,45 @@ public static class StaticVariables
         0x48, 0x28
     };
 
+    // 800a58d8
+    public static readonly byte[] g_dialogCursorTextureUV = new byte[]
+    {
+        0xB0, 0x38, 0x05, 0x00,
+        0x08, 0x00, 0x08, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x08, 0x00, 0x00, 0x00,
+
+        0xB8, 0x38, 0x05, 0x00,
+        0x08, 0x00, 0x08, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x10, 0x00, 0x00, 0x00,
+
+        0xC0, 0x38, 0x05, 0x00,
+        0x08, 0x00, 0x08, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x18, 0x00, 0x00, 0x00,
+
+        0xC8, 0x38, 0x05, 0x00,
+        0x08, 0x00, 0x08, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x20, 0x00, 0x00, 0x00,
+
+        0xD0, 0x38, 0x05, 0x00,
+        0x08, 0x00, 0x08, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x28, 0x00, 0x00, 0x00,
+
+        0xD8, 0x38, 0x05, 0x00,
+        0x08, 0x00, 0x08, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00
+    };
+
 
     public static void Initialize(GameEngine gameEngine)
     {
@@ -3484,8 +3523,8 @@ public static class StaticVariables
         [
             new CallBackInfo
             {
-                Flags = 0, Data = g_textTilesConfiguration2, X = 0x10, Y = 0x05, Width = 0x20, Height = 0x06,
-                InitializeFunc = gameEngine.UIManager.FUN_80048304, RenderFunc = gameEngine.UIManager.Func_80046ef0, Arg = 0
+                Flags = 0, Data = g_uiBoxDialogMessageBackground, X = 0x10, Y = 0x05, Width = 0x20, Height = 0x06,
+                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Func_80046ef0, Arg = 0
             },
             new CallBackInfo
             {
@@ -3494,8 +3533,8 @@ public static class StaticVariables
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_textTilesConfiguration2, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.FUN_80048304, RenderFunc = gameEngine.UIManager.Func_8004f628, Arg = 0
+                Flags = 0, Data = g_uiBoxDialogMessageBackground, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
+                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Func_8004f628, Arg = 0
             },
             new CallBackInfo
             {
@@ -3509,8 +3548,8 @@ public static class StaticVariables
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_textTilesConfiguration2, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.FUN_80048304, RenderFunc = gameEngine.UIManager.Func_8004a8a8, Arg = 0
+                Flags = 0, Data = g_uiBoxDialogMessageBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
+                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Func_8004a8a8, Arg = 0
             },
             new CallBackInfo
             {
@@ -3519,18 +3558,18 @@ public static class StaticVariables
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_textTilesConfiguration2, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.FUN_80048304, RenderFunc = null, Arg = 0
+                Flags = 0, Data = g_uiBoxDialogMessageBackground, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
+                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = null, Arg = 0
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_textTilesConfiguration2, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.FUN_80048304, RenderFunc = gameEngine.UIManager.Fun_8004afe8, Arg = 0
+                Flags = 0, Data = g_uiBoxDialogMessageBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
+                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Fun_8004afe8, Arg = 0
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_textTilesConfiguration2, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.FUN_80048304, RenderFunc = gameEngine.UIManager.Fun_80050ec8, Arg = 0
+                Flags = 0, Data = g_uiBoxDialogMessageBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
+                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Fun_80050ec8, Arg = 0
             },
             new CallBackInfo
             {
@@ -3539,8 +3578,8 @@ public static class StaticVariables
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_textTilesConfiguration2, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.FUN_80048304, RenderFunc = gameEngine.UIManager.Func_80051550, Arg = 0
+                Flags = 0, Data = g_uiBoxDialogMessageBackground, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
+                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Func_80051550, Arg = 0
             },
             new CallBackInfo
             {
@@ -3611,7 +3650,7 @@ public static class StaticVariables
         g_entitySpriteNamesTable[506] = "ZAZAN";
         g_entitySpriteNamesTable[509] = "ZOLDIA";
         
-        g_textTilesConfiguration_800b8eb0 = new TextTilesConfiguration
+        g_textTilesConfiguration_800b8eb0 = new UIBoxConfiguration
         {
             X = 0xb0,
             Y = 0x10,
@@ -4137,8 +4176,6 @@ public static class StaticVariables
     public static byte DAT_800a3314; // 800A3314
     public static byte DAT_800a3315; // 800A3315
     public static short DAT_800a500a; // 800A500A
-    public static byte g_dialogCursorTextureU = 0xB0; // 800a58d8
-    public static byte g_dialogCursorTextureV = 0x38; // 800a58d9
     public static CallBackInfo[] g_transitionFuncArgs; // 800A731C
     public static byte g_soundNameList; // 800A7488
     //public static byte  PTR_s_(void_)NULL_800a7c58; // 800A7C58
@@ -4177,12 +4214,12 @@ public static class StaticVariables
     public static int g_soundEffectMaxVoices; // 800A82F8
     public static int g_soundEffectToneCount; // 800A82FC
     public static short DAT_800a8308; // 800A8308
-    public static TextTilesConfiguration SprtGridDescriptor_800af664; // 800AF664
+    public static UIBoxConfiguration SprtGridDescriptor_800af664; // 800AF664
     public static int g_errorMarker; // 800B0000
-    public static TextTilesConfiguration SprtGridDescriptor_800b06dc; // 800B06DC
-    public static TextTilesConfiguration SprtGridDescriptor_800b122c; // 800B122C
-    public static TextTilesConfiguration SprtGridDescriptor_800b1d7c; // 800B1D7C
-    public static TextTilesConfiguration SprtGridDescriptor_800b287c; // 800B287C
+    public static UIBoxConfiguration SprtGridDescriptor_800b06dc; // 800B06DC
+    public static UIBoxConfiguration SprtGridDescriptor_800b122c; // 800B122C
+    public static UIBoxConfiguration SprtGridDescriptor_800b1d7c; // 800B1D7C
+    public static UIBoxConfiguration SprtGridDescriptor_800b287c; // 800B287C
     public static byte g_inventoryCursorTextureU = 0xB0; // 800B2898
     public static byte g_inventoryCursorTextureV = 0xA0; // 800B2899
     public static int DAT_800b42dc; // 800B42DC
@@ -4191,18 +4228,18 @@ public static class StaticVariables
     public static short DAT_800b4314; // 800B4314
     public static byte PTR_SprtGridDescriptor_800b44b8; // 800B44B8
     // 800B58A8
-    public static TextTilesConfiguration TextTilesConfiguration_800b58a8 = new TextTilesConfiguration
+    public static UIBoxConfiguration TextTilesConfiguration_800b58a8 = new UIBoxConfiguration
     {
         X = 0x8, Y = 0x10, Width = 0x15, Height = 0x6, SpritesA = SPRT_ARRAY_800b44f8, SpritesB = SPRT_ARRAY_800b4ed0
     };
     // 800B8360
-    public static TextTilesConfiguration TextTilesConfiguration_800b8360 = new TextTilesConfiguration
+    public static UIBoxConfiguration TextTilesConfiguration_800b8360 = new UIBoxConfiguration
     {
         X = 0x8, Y = 0x40, Width = 0x15, Height = 0xD, SpritesA = SPRT_ARRAY_800b58b8, SpritesB = SPRT_ARRAY_800b6e0c
 
     }; 
     // 800B8EB0
-    public static TextTilesConfiguration g_textTilesConfiguration_800b8eb0 = new TextTilesConfiguration
+    public static UIBoxConfiguration g_textTilesConfiguration_800b8eb0 = new UIBoxConfiguration
     {
         X = 0xB0,
         Y = 0x10,
@@ -4212,7 +4249,7 @@ public static class StaticVariables
         SpritesB = SPRT_ARRAY_800b8910
     };
     // 800B9A00
-    public static TextTilesConfiguration TextTilesConfiguration_800b9a00 = new TextTilesConfiguration
+    public static UIBoxConfiguration TextTilesConfiguration_800b9a00 = new UIBoxConfiguration
     {
         X = 0xB0,
         Y = 0x40,
@@ -4222,7 +4259,7 @@ public static class StaticVariables
         SpritesB = SPRT_ARRAY_800b9460
     };
     // 800B9A10
-    public static TextTilesConfiguration TextTilesConfiguration_800b9a10 = new TextTilesConfiguration
+    public static UIBoxConfiguration TextTilesConfiguration_800b9a10 = new UIBoxConfiguration
     {
         X = 0xF0,
         Y = 0x70,
@@ -4232,7 +4269,7 @@ public static class StaticVariables
         SpritesB = null
     };
     // 800B9E58
-    public static TextTilesConfiguration TextTilesConfiguration_800b9e58 = new TextTilesConfiguration
+    public static UIBoxConfiguration TextTilesConfiguration_800b9e58 = new UIBoxConfiguration
     {
         X = 0xB0,
         Y = 0x60,
@@ -4827,7 +4864,7 @@ public static class StaticVariables
     public static int g_textBufferSize; // 80149CC8
     public static int g_textHoldState_2; // 80149CCC
     public static int g_textHoldState; // 80149CD0
-    public static int DAT_80149cd4; // 80149CD4
+    public static int INT_80149cd4; // 80149CD4
     public static int g_textCategoryIndex; // 80149CD8
     public static int g_currentVoiceSfxId; // 80149CDC
     public static int g_textLineStartX; // 80149CE0
@@ -4927,7 +4964,7 @@ public static class StaticVariables
     public static short SHORT_8017e638; // 8017E638
     public static short SHORT_8017e63a; // 8017E63A
     public static int INT_8017e63c; // 8017E63C
-    public static SPRT[] g_sprites = new SPRT[2]; // 8017E640
+    public static SPRT[] g_sprites = Enumerable.Repeat(new SPRT(), 2).ToArray(); // 8017E640
     public static int g_asyncOperationCountdown; // 8017E670
     public static SPRT[] SPRT_ARRAY_8017e674 = new SPRT[28]; // 8017e674
     public static short g_asyncCallbackCounter; // 8017E8A4
@@ -4991,8 +5028,7 @@ public static class StaticVariables
     public static SPRT[] g_ItemNameSprites = Enumerable.Repeat(new SPRT(), 6).ToArray(); // 8017FA34
     public static short[] SHORT_ARRAY_8017fa3c = new short[16]; // 8017FA3C
     public static SPRT g_warpNameDisplayDst; // 8017FA5C
-    public static SPRT[] g_spriteInventoryItems = Enumerable.Repeat(new SPRT(), 24).ToArray(); //8017fab4
-    //public static SPRT[] g_spriteInventoryItems = Enumerable.Repeat(new SPRT(), 18).ToArray(); //8017fb2c
+    public static SPRT[] g_spriteInventoryItems = Enumerable.Repeat(new SPRT(), 24).ToArray(); // 8017fab4
     public static SPRT[] SPRT_ARRAY_8017fe74 = Enumerable.Repeat(new SPRT(), 2).ToArray(); // 8017FE74
     public static SPRT[] g_spriteInventoryText = Enumerable.Repeat(new SPRT(), 4).ToArray(); // 8017fe9c
     public static int INT_8017feec; // 8017FEEC

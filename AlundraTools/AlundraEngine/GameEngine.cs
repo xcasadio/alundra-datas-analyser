@@ -2426,33 +2426,33 @@ public class GameEngine
         StaticVariables.g_textToDisplay.speed = 0xF;
 
         // Configure les coordonnées de départ du texte (X, Y)
-        // selon g_textTilesConfiguration2[] qui contient des offsets
-        var baseX = StaticVariables.g_textTilesConfiguration2.X;
+        // selon g_uiBoxDialogMessageBackground[] qui contient des offsets
+        var baseX = StaticVariables.g_uiBoxDialogMessageBackground.X;
         if (baseX < 0)
         {
-            var offset = StaticVariables.g_textTilesConfiguration2.Width;
-            baseX = (short)(StaticVariables.g_textTilesConfiguration2.X - (offset << 3));
+            var offset = StaticVariables.g_uiBoxDialogMessageBackground.Width;
+            baseX = (short)(StaticVariables.g_uiBoxDialogMessageBackground.X - (offset << 3));
         }
 
         StaticVariables.g_textToDisplay.x = baseX;
         StaticVariables.g_textToDisplay.y = 0xF0; // position Y fixe
 
-        var startX = StaticVariables.g_textTilesConfiguration2.X;
+        var startX = StaticVariables.g_uiBoxDialogMessageBackground.X;
 
         if (startX < 0)
         {
-            var offset = StaticVariables.g_textTilesConfiguration2.Width;
-            startX = (short)(StaticVariables.g_textTilesConfiguration2.X - (offset << 3));
+            var offset = StaticVariables.g_uiBoxDialogMessageBackground.Width;
+            startX = (short)(StaticVariables.g_uiBoxDialogMessageBackground.X - (offset << 3));
         }
 
         StaticVariables.g_textToDisplay.startX = startX;
 
-        var startY = StaticVariables.g_textTilesConfiguration2.Y;
+        var startY = StaticVariables.g_uiBoxDialogMessageBackground.Y;
 
         if (startY < 0)
         {
-            var offset = StaticVariables.g_textTilesConfiguration2.Height;
-            startY = (short)(StaticVariables.g_textTilesConfiguration2.Y - (offset << 3));
+            var offset = StaticVariables.g_uiBoxDialogMessageBackground.Height;
+            startY = (short)(StaticVariables.g_uiBoxDialogMessageBackground.Y - (offset << 3));
         }
         StaticVariables.g_textToDisplay.startY = startY;
 
@@ -2492,7 +2492,8 @@ public class GameEngine
                     //SetSemiTrans(sprt, 0);
                     //SetShadeTex(sprt, 1);
 
-                    Renderer.AddSprite(sprite, int.MaxValue, Font3.GenerateFontBitmapTim(StaticVariables.g_clutTable[8 - x]));
+                    var bitmap = Font3.GenerateFontBitmapFromSprite(sprite);
+                    Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
                     x = x + 1;
                 }
@@ -2509,8 +2510,8 @@ public class GameEngine
             var sprite = StaticVariables.g_cursorTextSprites[i];
             sprite.w = 0x10;
             sprite.h = 0x10;
-            sprite.u0 = StaticVariables.g_dialogCursorTextureU;
-            sprite.v0 = StaticVariables.g_dialogCursorTextureV;
+            sprite.u0 = StaticVariables.g_dialogCursorTextureUV[0];
+            sprite.v0 = StaticVariables.g_dialogCursorTextureUV[1];
             sprite.x0 = 0;
             sprite.y0 = 0;
             sprite.clut = StaticVariables.g_clutTable[8];
@@ -2519,7 +2520,8 @@ public class GameEngine
             //SetSemiTrans(sprite, 0);
             //SetShadeTex(sprite, 1);
 
-            Renderer.AddSprite(sprite, int.MaxValue, Font3.GenerateHudBitmap(StaticVariables.g_clutTable[8]));
+            var bitmap = Font3.GenerateHudBitmapFromSprite(sprite);
+            Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
             i = i + 1;
         } while (i < 2);

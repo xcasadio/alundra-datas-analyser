@@ -139,7 +139,7 @@ public class HudManager
     }
 
     //800548a4
-    private void FUN_800548a4(TextTilesConfiguration textTilesConfig)
+    private void FUN_800548a4(UIBoxConfiguration textTilesConfig)
     {
         int index;
         int col;
@@ -734,40 +734,40 @@ public class HudManager
         StaticVariables.TextToDisplay_ARRAY_8017f920[6].tick = 0;
         StaticVariables.TextToDisplay_ARRAY_8017f920[6].speed = 0xf;
 
-        if (StaticVariables.g_textTilesConfiguration2.X < 0)
+        if (StaticVariables.g_uiBoxDialogMessageBackground.X < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[6].x =
-                 (short)(StaticVariables.g_textTilesConfiguration2.X + StaticVariables.g_textTilesConfiguration2.Width * -8);
+                 (short)(StaticVariables.g_uiBoxDialogMessageBackground.X + StaticVariables.g_uiBoxDialogMessageBackground.Width * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[6].x = StaticVariables.g_textTilesConfiguration2.X;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].x = StaticVariables.g_uiBoxDialogMessageBackground.X;
         }
 
         StaticVariables.TextToDisplay_ARRAY_8017f920[6].y = 0xf0;
 
-        if (StaticVariables.g_textTilesConfiguration2.X < 0)
+        if (StaticVariables.g_uiBoxDialogMessageBackground.X < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[6].startX =
-                 (short)(StaticVariables.g_textTilesConfiguration2.X + StaticVariables.g_textTilesConfiguration2.Width * -8);
+                 (short)(StaticVariables.g_uiBoxDialogMessageBackground.X + StaticVariables.g_uiBoxDialogMessageBackground.Width * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[6].startX = StaticVariables.g_textTilesConfiguration2.X;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].startX = StaticVariables.g_uiBoxDialogMessageBackground.X;
         }
 
-        if (StaticVariables.g_textTilesConfiguration2.Y < 0)
+        if (StaticVariables.g_uiBoxDialogMessageBackground.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[6].startY =
-                 (short)(StaticVariables.g_textTilesConfiguration2.Y + StaticVariables.g_textTilesConfiguration2.Height * -8);
+                 (short)(StaticVariables.g_uiBoxDialogMessageBackground.Y + StaticVariables.g_uiBoxDialogMessageBackground.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[6].startY = StaticVariables.g_textTilesConfiguration2.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].startY = StaticVariables.g_uiBoxDialogMessageBackground.Y;
         }
 
-        StaticVariables.TextToDisplay_ARRAY_8017f920[6].originX = StaticVariables.g_textTilesConfiguration2.X;
-        StaticVariables.TextToDisplay_ARRAY_8017f920[6].originY = StaticVariables.g_textTilesConfiguration2.Y;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].originX = StaticVariables.g_uiBoxDialogMessageBackground.X;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[6].originY = StaticVariables.g_uiBoxDialogMessageBackground.Y;
 
         callBackInfo.RenderFunc = FUN_80056598;
     }
@@ -863,7 +863,7 @@ public class HudManager
             _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.g_textTilesConfiguration_800b8eb0, StaticVariables.TextToDisplay_ARRAY_8017f920[2]);
             _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.TextTilesConfiguration_800b9a00, StaticVariables.TextToDisplay_ARRAY_8017f920[3]);
             _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.TextTilesConfiguration_800b9a10, StaticVariables.TextToDisplay_ARRAY_8017f920[4]);
-            _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.g_textTilesConfiguration2, StaticVariables.TextToDisplay_ARRAY_8017f920[6]);
+            _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.g_uiBoxDialogMessageBackground, StaticVariables.TextToDisplay_ARRAY_8017f920[6]);
             iVar1 = _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.TextTilesConfiguration_800b9e58, StaticVariables.TextToDisplay_ARRAY_8017f920[5]);
 
             if (iVar1 == 1)
@@ -888,8 +888,8 @@ public class HudManager
                     StaticVariables.TextTilesConfiguration_800b9a10.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[4].originY;
                     StaticVariables.TextTilesConfiguration_800b9e58.X = StaticVariables.TextToDisplay_ARRAY_8017f920[5].originX;
                     StaticVariables.TextTilesConfiguration_800b9e58.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[5].originY;
-                    StaticVariables.g_textTilesConfiguration2.X = StaticVariables.TextToDisplay_ARRAY_8017f920[6].originX;
-                    StaticVariables.g_textTilesConfiguration2.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[6].originY;
+                    StaticVariables.g_uiBoxDialogMessageBackground.X = StaticVariables.TextToDisplay_ARRAY_8017f920[6].originX;
+                    StaticVariables.g_uiBoxDialogMessageBackground.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[6].originY;
 
                     if ((StaticVariables.g_postProcessState & 1U) == 0)
                     {
@@ -917,7 +917,7 @@ public class HudManager
         FUN_80055d78(StaticVariables.TextTilesConfiguration_800b9a00);
         FUN_80055d78(StaticVariables.TextTilesConfiguration_800b9a10);
         FUN_80055d78(StaticVariables.TextTilesConfiguration_800b9e58);
-        FUN_80055d78(StaticVariables.g_textTilesConfiguration2);
+        FUN_80055d78(StaticVariables.g_uiBoxDialogMessageBackground);
         FUN_800562dc();
         FUN_80055fe8();
     }
@@ -973,8 +973,8 @@ public class HudManager
             _gameEngine.GraphicManager.DisplayIconName(StaticVariables.g_spriteInventoryText,
                 text.ToCharArray(),
                 iVar2,
-                StaticVariables.g_textTilesConfiguration2.X,
-                StaticVariables.g_textTilesConfiguration2.Y, 2);
+                StaticVariables.g_uiBoxDialogMessageBackground.X,
+                StaticVariables.g_uiBoxDialogMessageBackground.Y, 2);
             StaticVariables.INT_8017fef0 = 0;
             StaticVariables.g_spriteInventoryText[0].w = 0;
             StaticVariables.g_spriteInventoryText[1].w = 0;
@@ -1019,8 +1019,8 @@ public class HudManager
                     _gameEngine.GraphicManager.DisplayIconName(StaticVariables.g_spriteInventoryText,
                         text.ToCharArray(),
                         iVar2,
-                        StaticVariables.g_textTilesConfiguration2.X,
-                        StaticVariables.g_textTilesConfiguration2.Y, 2);
+                        StaticVariables.g_uiBoxDialogMessageBackground.X,
+                        StaticVariables.g_uiBoxDialogMessageBackground.Y, 2);
                     StaticVariables.INT_8017fef0 = 0;
                     StaticVariables.g_spriteInventoryText[0].w = 0;
                     StaticVariables.g_spriteInventoryText[1].w = 0;
@@ -1063,8 +1063,8 @@ public class HudManager
                         _gameEngine.GraphicManager.DisplayIconName(sprites,
                             text3.ToCharArray(),
                             0x40,
-                            StaticVariables.g_textTilesConfiguration2.X,
-                            StaticVariables.g_textTilesConfiguration2.Y,
+                            StaticVariables.g_uiBoxDialogMessageBackground.X,
+                            StaticVariables.g_uiBoxDialogMessageBackground.Y,
                             3);
                         StaticVariables.INT_8017fef0 = 0;
                         StaticVariables.INT_8017feec = StaticVariables.INT_8017feec + 1;
@@ -1121,8 +1121,8 @@ public class HudManager
         do
         {
             iVar8 = iVar8 + 1;
-            StaticVariables.g_spriteInventoryText[iVar4].x0 = (short)(StaticVariables.g_textTilesConfiguration2.X + 0x10);
-            sVar1 = (short)(StaticVariables.g_textTilesConfiguration2.Y + sVar6 + index * 0x10);
+            StaticVariables.g_spriteInventoryText[iVar4].x0 = (short)(StaticVariables.g_uiBoxDialogMessageBackground.X + 0x10);
+            sVar1 = (short)(StaticVariables.g_uiBoxDialogMessageBackground.Y + sVar6 + index * 0x10);
             StaticVariables.g_spriteInventoryText[iVar4].y0 = sVar1;
             //uVar2 = StaticVariables.g_drawModes[0x14].tag;
             iVar4 = iVar4 + 1;
@@ -1277,7 +1277,7 @@ public class HudManager
     }
 
     //80055d78
-    private void FUN_80055d78(TextTilesConfiguration textTileConfig)
+    private void FUN_80055d78(UIBoxConfiguration textTileConfig)
     {
         ulong uVar1;
         SPRT sprite;
@@ -2229,34 +2229,34 @@ public class HudManager
         StaticVariables.TextToDisplay_ARRAY_8017f920[6].tick = 0;
         StaticVariables.TextToDisplay_ARRAY_8017f920[6].speed = 0xf;
 
-        if (StaticVariables.g_textTilesConfiguration2.X < 0)
+        if (StaticVariables.g_uiBoxDialogMessageBackground.X < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[6].x =
-                 (short)(StaticVariables.g_textTilesConfiguration2.X + StaticVariables.g_textTilesConfiguration2.Width * -8);
+                 (short)(StaticVariables.g_uiBoxDialogMessageBackground.X + StaticVariables.g_uiBoxDialogMessageBackground.Width * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[6].x = StaticVariables.g_textTilesConfiguration2.X;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].x = StaticVariables.g_uiBoxDialogMessageBackground.X;
         }
 
-        if (StaticVariables.g_textTilesConfiguration2.Y < 0)
+        if (StaticVariables.g_uiBoxDialogMessageBackground.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[6].y =
-                 (short)(StaticVariables.g_textTilesConfiguration2.Y + StaticVariables.g_textTilesConfiguration2.Height * -8);
+                 (short)(StaticVariables.g_uiBoxDialogMessageBackground.Y + StaticVariables.g_uiBoxDialogMessageBackground.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[6].y = StaticVariables.g_textTilesConfiguration2.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].y = StaticVariables.g_uiBoxDialogMessageBackground.Y;
         }
 
-        if (StaticVariables.g_textTilesConfiguration2.X < 0)
+        if (StaticVariables.g_uiBoxDialogMessageBackground.X < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[6].startX =
-                 (short)(StaticVariables.g_textTilesConfiguration2.X + StaticVariables.g_textTilesConfiguration2.Width * -8);
+                 (short)(StaticVariables.g_uiBoxDialogMessageBackground.X + StaticVariables.g_uiBoxDialogMessageBackground.Width * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[6].startX = StaticVariables.g_textTilesConfiguration2.X;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[6].startX = StaticVariables.g_uiBoxDialogMessageBackground.X;
         }
 
         StaticVariables.TextToDisplay_ARRAY_8017f920[6].startY = 0xf0;

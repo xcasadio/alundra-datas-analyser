@@ -533,7 +533,7 @@ public class GameInitializer
     {
         int tileX;
         int tileY;
-        TextTilesConfiguration tilesConfiguration;
+        UIBoxConfiguration tilesConfiguration;
         int surfaceIndex;
 
         surfaceIndex = 0;
@@ -564,8 +564,7 @@ public class GameInitializer
                             sprite.clut = StaticVariables.g_clutTable[0];
 
                             //TODO cache images with u and v coordinates
-                            _gameEngine.Font3.GenerateFontBitmapTim(StaticVariables.g_clutTable[0]);
-
+                            //_gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
                             //_gameEngine.Renderer.AddSprite(sprite, int.MaxValue, _gameEngine.Font3.GenerateFontBitmapTim(StaticVariables.g_clutTable[0]));
 
                             tileX += 1;

@@ -496,7 +496,7 @@ public class GraphicManager
     {
         ulong uVar1;
         uint puVar2;
-        TextTilesConfiguration tilesConfiguration;
+        UIBoxConfiguration tilesConfiguration;
         SPRT sprite;
         int j;
         CallBackInfo callbackTable;
@@ -533,11 +533,12 @@ public class GraphicManager
                             //pSVar3.tag = pSVar3.tag & 0xff000000 | *(uint*)((int)StaticVariables.g_drawModes + iVar4 + callbackTable.arg * 4 + 0xf8) & 0xffffff;
                             //puVar2 = (uint*)((int)StaticVariables.g_drawModes + iVar4 + callbackTable.arg * 4 + 0xf8);
                             //*puVar2 = *puVar2 & 0xff000000 | (uint)pSVar3 & 0xffffff;
-                            var bitmap = _gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
+                            
+                            var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
                             _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
-                            bitmap = _gameEngine.Font3.GenerateFontBitmapFromSprite(spriteB);
-                            _gameEngine.Renderer.AddSprite(spriteB, int.MaxValue, bitmap);
+                            //bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(spriteB);
+                            //_gameEngine.Renderer.AddSprite(spriteB, int.MaxValue, bitmap);
 
                             j = j + 1;
                         } while (j < primitiveCount);
@@ -967,8 +968,8 @@ public class GraphicManager
             sprite.y0 = 0;
             sprite.w = 0x10;
             sprite.h = 0;
-            sprite.u0 = StaticVariables.g_dialogCursorTextureU;
-            sprite.v0 = StaticVariables.g_dialogCursorTextureV;
+            sprite.u0 = StaticVariables.g_dialogCursorTextureUV[0];
+            sprite.v0 = StaticVariables.g_dialogCursorTextureUV[1];
             var clut = StaticVariables.g_clutTable[8];
             sprite.clut = clut;
 
@@ -978,7 +979,8 @@ public class GraphicManager
 
             ApplyFadeTransform(sprites, 0, 0, i);
 
-            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, _gameEngine.Font3.GenerateHudBitmap(clut));
+            //var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
+            //_gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
             i = i + 1;
         } while (i < 2);
@@ -992,12 +994,12 @@ public class GraphicManager
     }
 
     //800548a4
-    void FUN_800548a4(TextTilesConfiguration textTilesConfig)
+    void FUN_800548a4(UIBoxConfiguration textTilesConfig)
     {
         int index;
         int col;
         int row;
-        TextTilesConfiguration tileConfig;
+        UIBoxConfiguration tileConfig;
         int mode;
         short w;
 
@@ -1029,7 +1031,8 @@ public class GraphicManager
                             var clut = StaticVariables.g_clutTable[sprite.clut];
                             sprite.clut = clut;
 
-                            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, _gameEngine.Font3.GenerateHudBitmap(clut));
+                            var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
+                            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
                             col = col + 1;
                         } while (col < textTilesConfig.Width);

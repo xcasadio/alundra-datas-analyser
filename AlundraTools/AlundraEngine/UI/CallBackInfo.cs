@@ -3,7 +3,7 @@
 public class CallBackInfo //UiRecord
 {
     public int Flags;
-    public TextTilesConfiguration? Data;
+    public UIBoxConfiguration? Data;
     public short X;	
     public short Y;	
     public short Width;	
