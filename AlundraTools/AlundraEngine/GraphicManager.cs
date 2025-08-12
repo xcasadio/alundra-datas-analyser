@@ -920,7 +920,7 @@ public class GraphicManager
 
                 do
                 {
-                    var sprite = sprites[i + j * 2];
+                    var sprite = sprites[j];
                     sprite.w = 0xff;
                     sprite.h = 0x10;
                     sprite.u0 = (byte)'\0';

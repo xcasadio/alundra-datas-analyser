@@ -114,4 +114,9 @@ public class EtcResR
     {
         return DescriptionStrings[id];
     }
+
+    public string GetItemDescription(int itemId)
+    {
+        return Strings[itemId + 240 - 1];
+    }
 }

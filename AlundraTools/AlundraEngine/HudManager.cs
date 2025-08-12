@@ -783,7 +783,7 @@ public class HudManager
 
         if ((_gameEngine.StaticVariables.g_forbiddenWarpFlag & 6U) == 0)
         {
-            if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.Down) != 0)
+            if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressed & PadState.Down) != 0)
             {
                 iVar1 = _gameEngine.StaticVariables.g_inventorySelectedSlotId + 6;
                 iVar2 = _gameEngine.StaticVariables.g_inventorySelectedSlotId - 0x12;
@@ -796,7 +796,7 @@ public class HudManager
                 _gameEngine.StaticVariables.INT_8017feec = 0;
             }
 
-            if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.Up) != 0)
+            if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressed & PadState.Up) != 0)
             {
                 iVar1 = _gameEngine.StaticVariables.g_inventorySelectedSlotId - 6;
                 if (_gameEngine.StaticVariables.g_inventorySelectedSlotId - 6 < 0)
@@ -808,7 +808,7 @@ public class HudManager
                 _gameEngine.StaticVariables.INT_8017feec = 0;
             }
 
-            if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.Right) != 0)
+            if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressed & PadState.Right) != 0)
             {
                 iVar1 = _gameEngine.StaticVariables.g_inventorySelectedSlotId + 1;
                 if (iVar1 == iVar1 / 6 * 6)
@@ -820,7 +820,7 @@ public class HudManager
                 _gameEngine.StaticVariables.INT_8017feec = 0;
             }
 
-            if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.Left) != 0)
+            if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressed & PadState.Left) != 0)
             {
                 iVar1 = _gameEngine.StaticVariables.g_inventorySelectedSlotId - 1;
                 if (_gameEngine.StaticVariables.g_inventorySelectedSlotId == _gameEngine.StaticVariables.g_inventorySelectedSlotId / 6 * 6)
@@ -832,7 +832,7 @@ public class HudManager
                 _gameEngine.StaticVariables.INT_8017feec = 0;
             }
 
-            if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.Cross) != 0)
+            if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressed & PadState.Cross) != 0)
             {
                 if (_gameEngine.StaticVariables.g_inventorySelectedSlotId < 6)
                 {
@@ -950,7 +950,7 @@ public class HudManager
                 _ => weaponId
             };
 
-            itemId = _gameEngine.PlayerManager.GetItemIdFromSlotId((uint)weaponId);
+            itemId = _gameEngine.PlayerManager.GetItemIdFromSlotId((uint)weaponId + 1);
 
             if (itemId == 0xffffffff)
             {
@@ -1015,7 +1015,7 @@ public class HudManager
             {
                 if (_gameEngine.StaticVariables.INT_8017feec == 0x4d)
                 {
-                    var text = _gameEngine.EtcResR.GetEtcString((int)itemId);//_gameEngine.StaticVariables.g_iconNameEtcBase[itemId * 2];
+                    var text = _gameEngine.EtcResR.GetItemDescription((int)itemId);//_gameEngine.StaticVariables.g_iconNameEtcBase[itemId * 2];
                     //text = _gameEngine.StaticVariables.g_tileSetEtcBase[itemId * 2];
                     text = text.PadRight(0x40);
                     iVar2 = 0x40;
@@ -1035,21 +1035,20 @@ public class HudManager
 
                 if (_gameEngine.StaticVariables.INT_8017feec - 0x4eU < 0x40)
                 {
-                    Debugger.Break();
                     uVar1 = 0;
-                    var text = _gameEngine.EtcResR.GetEtcString((int)itemId);//_gameEngine.StaticVariables.g_tileSetEtcBase[itemId * 2];
-                    /*
-                    if (_gameEngine.StaticVariables.g_tileSetEtcBase)[itemId * 2] + _gameEngine.StaticVariables.INT_8017feec + -0x4e) == '\0')
+                    var text = _gameEngine.EtcResR.GetItemDescription((int)itemId);//_gameEngine.StaticVariables.g_tileSetEtcBase[itemId * 2];
+
+                    if (_gameEngine.StaticVariables.INT_8017feec - 0x4e >= text.Length)
                     {
                         _gameEngine.StaticVariables.INT_8017feec = 0x8e;
                     }
                     else
                     {
-                        FUN_80055f48(0, 
-                            _gameEngine.StaticVariables.INT_8017feec + -0x4d,
-                            _gameEngine.StaticVariables.g_tileSetEtcBase[itemId * 2] + _gameEngine.StaticVariables.INT_8017feec + -0x4e);
+                        FUN_80055f48(0,
+                            _gameEngine.StaticVariables.INT_8017feec - 0x4d,
+                            text[_gameEngine.StaticVariables.INT_8017feec - 0x4e]);
                         uVar1 = 0;
-                    }*/
+                    }
                 }
                 else
                 {
@@ -1058,9 +1057,7 @@ public class HudManager
                         SPRT[] sprites =
                         [
                             _gameEngine.StaticVariables.g_spriteInventoryText[2],
-                            _gameEngine.StaticVariables.g_spriteInventoryText[3],
-                            _gameEngine.StaticVariables.g_spriteInventoryText[4],
-                            _gameEngine.StaticVariables.g_spriteInventoryText[5]
+                            _gameEngine.StaticVariables.g_spriteInventoryText[3]
                         ];
 
                         var text3 = _gameEngine.EtcResR.GetIconName((int)itemId);//_gameEngine.StaticVariables.g_paletteSetEtcBase
@@ -1082,16 +1079,18 @@ public class HudManager
 
                     if (_gameEngine.StaticVariables.INT_8017feec - 0x8fU < 0x40)
                     {
-                        Debugger.Break();
-                        //if (_gameEngine.StaticVariables.g_paletteSetEtcBase[itemId * 2] + _gameEngine.StaticVariables.INT_8017feec + -0x8f == '\0')
-                        //{
-                        //    _gameEngine.StaticVariables.INT_8017feec = 0xcf;
-                        //}
-                        //else
-                        //{
-                        //    FUN_80055f48(1, _gameEngine.StaticVariables.INT_8017feec + -0x90,
-                        //        _gameEngine.StaticVariables.g_paletteSetEtcBase)[itemId * 2] + _gameEngine.StaticVariables.INT_8017feec + -0x8f));
-                        //}
+                        var text = _gameEngine.EtcResR.GetItemDescription((int)itemId);
+
+                        if (_gameEngine.StaticVariables.INT_8017feec - 0x8f >= text.Length)
+                        {
+                            _gameEngine.StaticVariables.INT_8017feec = 0xcf;
+                        }
+                        else
+                        {
+                            FUN_80055f48(0,
+                                _gameEngine.StaticVariables.INT_8017feec - 0x90,
+                                text[_gameEngine.StaticVariables.INT_8017feec - 0x8f]);
+                        }
                     }
                     else if (_gameEngine.StaticVariables.INT_8017feec != 0xcf)
                     {
@@ -1111,52 +1110,31 @@ public class HudManager
     private void FUN_80055e30(int index)
     {
         short sVar1;
-        ulong uVar2;
-        uint puVar3;
-        int iVar4;
-        uint uVar5;
-        short sVar6;
         SPRT sprite;
-        int iVar8;
-        uint puVar9;
 
-        iVar8 = 0;
-        sVar6 = 0xc;
-        iVar4 = index; // * 0x28 + _gameEngine.StaticVariables.g_drawModes[0x14].tag * 0x14;
+        _gameEngine.StaticVariables.g_spriteInventoryText[index].x0 = (short)(_gameEngine.StaticVariables.g_uiBoxDialogMessageBackground.X + 0x10);
+        sVar1 = (short)(_gameEngine.StaticVariables.g_uiBoxDialogMessageBackground.Y + 0xc + index * 0x10);
+        _gameEngine.StaticVariables.g_spriteInventoryText[index].y0 = sVar1;
 
-        do
-        {
-            iVar8 = iVar8 + 1;
-            _gameEngine.StaticVariables.g_spriteInventoryText[iVar4].x0 = (short)(_gameEngine.StaticVariables.g_uiBoxDialogMessageBackground.X + 0x10);
-            sVar1 = (short)(_gameEngine.StaticVariables.g_uiBoxDialogMessageBackground.Y + sVar6 + index * 0x10);
-            _gameEngine.StaticVariables.g_spriteInventoryText[iVar4].y0 = sVar1;
-            //uVar2 = _gameEngine.StaticVariables.g_drawModes[0x14].tag;
-            iVar4 = iVar4 + 1;
-            sVar6 = (short)(sVar6 - 1);
-        } while (iVar8 < 1);
+        sprite = _gameEngine.StaticVariables.g_spriteInventoryText[index];
+        var bitmap = _gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
+        _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
-        iVar8 = 0;
+        //uVar2 = _gameEngine.StaticVariables.g_drawModes[0x14].tag;
         //puVar9 = _gameEngine.StaticVariables.DAT_80146f5c + _gameEngine.StaticVariables.g_drawModes[0x14].tag * 0x28);
-        iVar4 = 0;
 
-        do
-        {
-            sprite = _gameEngine.StaticVariables.g_spriteInventoryText[index * 2 + iVar8];
+        //uVar5 = (uint)pSVar7 & 0xffffff;
+        //pSVar7 = pSVar7 + 1;
+        //puVar3 = _gameEngine.StaticVariables.g_spriteInventoryText[uVar2 + index * 2].tag + iVar4);
 
-            //uVar5 = (uint)pSVar7 & 0xffffff;
-            //pSVar7 = pSVar7 + 1;
-            //puVar3 = _gameEngine.StaticVariables.g_spriteInventoryText[uVar2 + index * 2].tag + iVar4);
+        /* Probable PsyQ macro: addPrim(). */
+        //*puVar3 = *puVar3 & 0xff000000 | *puVar9 & 0xffffff;
+        //*puVar9 = *puVar9 & 0xff000000 | uVar5;
 
-            /* Probable PsyQ macro: addPrim(). */
-            //*puVar3 = *puVar3 & 0xff000000 | *puVar9 & 0xffffff;
-            //*puVar9 = *puVar9 & 0xff000000 | uVar5;
+        //sprite = _gameEngine.StaticVariables.g_spriteInventoryText[index * 2];
+        //bitmap = _gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
+        //_gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
-            var bitmap = _gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
-            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
-
-            iVar4 = iVar4 + 1;
-            iVar8 = iVar8 + 1;
-        } while (iVar8 < 1);
     }
 
     //80055f48
@@ -1266,11 +1244,15 @@ public class HudManager
         var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
         _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
+        sprite = _gameEngine.StaticVariables.g_ItemNameSprites[1];
+        bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
+        _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+
         sprite = _gameEngine.StaticVariables.g_ItemNameSprites[2];
         bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
         _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
-        sprite = _gameEngine.StaticVariables.g_ItemNameSprites[4];
+        sprite = _gameEngine.StaticVariables.g_ItemNameSprites[3];
         bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
         _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
@@ -1327,6 +1309,7 @@ public class HudManager
     }
 
     //80056fb4
+    //display item icons
     private void FUN_80056fb4()
     {
         ulong uVar1;
@@ -1450,7 +1433,7 @@ public class HudManager
 
                         if (textureId == 0xffffffff)
                         {
-                            textureId = _gameEngine.PlayerManager.GetItemIdFromCurrentWeapon();
+                            textureId = _gameEngine.PlayerManager.GetItemIdFromSlotId((uint)offset + 1);
                         }
                         else
                         {
