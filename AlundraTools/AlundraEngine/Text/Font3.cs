@@ -9,8 +9,9 @@ public class Font3
     public Bitmap PalettesBitmap;
     public Bitmap HudBitmap;
     public Bitmap FontBitmapTim;
-    //character tiles description
 
+    private readonly Dictionary<int, Bitmap> _hudBitmapByPalette = new();
+    private readonly Dictionary<int, Bitmap> _fontBitmapByPalette = new();
     private byte[] _hudImageData;
     private byte[] _fontImageDataTim;
 
@@ -44,15 +45,16 @@ public class Font3
 
     public Bitmap GenerateHudBitmap(int x, int y, int w, int h, Color[] pal)
     {
-        if (HudBitmap == null)
+        var key = pal.GetHashCode();
+
+        if (!_hudBitmapByPalette.TryGetValue(key, out var bitmap))
         {
-            HudBitmap = ImageHelper.BitmapFromPsxBuff(_hudImageData, 0, 0, 256, 256, 4, pal);
+            bitmap = ImageHelper.BitmapFromPsxBuff(_hudImageData, 0, 0, 256, 256, 4, pal);
+            _hudBitmapByPalette.Add(key, bitmap);
         }
 
         var rect = new Rectangle(x, y, w, h);
-        return HudBitmap.Clone(rect, HudBitmap.PixelFormat);
-
-        //return ImageHelper.BitmapFromPsxBuff(_hudImageData, x, y, w, h, 4, pal);
+        return bitmap.Clone(rect, bitmap.PixelFormat);
     }
 
     public Bitmap GenerateFontBitmapFromSprite(SPRT sprite)
@@ -77,16 +79,17 @@ public class Font3
     }
 
     public Bitmap GenerateFontBitmapTim(int x, int y, int w, int h, Color[] pal)
-    {
-        if (FontBitmapTim == null)
+    { 
+        var key = pal.GetHashCode();
+
+        if (!_fontBitmapByPalette.TryGetValue(key, out var bitmap))
         {
-            FontBitmapTim = ImageHelper.BitmapFromPsxBuff(_fontImageDataTim, 0, 0, 256, 256, 4, pal);
+            bitmap = ImageHelper.BitmapFromPsxBuff(_fontImageDataTim, 0, 0, 256, 256, 4, pal);
+            _fontBitmapByPalette.Add(key, bitmap);
         }
 
         var rect = new Rectangle(x, y, w, h);
-        return FontBitmapTim.Clone(rect, FontBitmapTim.PixelFormat);
-
-        //return ImageHelper.BitmapFromPsxBuff(_fontImageDataTim, x, y, w, h, 4, pal);
+        return bitmap.Clone(rect, bitmap.PixelFormat);
     }
 
     private void LoadPalette(string folderName)

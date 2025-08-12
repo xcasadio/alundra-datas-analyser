@@ -2486,7 +2486,7 @@ public class GameEngine
                     sprite.h = 0x10;
                     sprite.u0 = 0;
                     sprite.v0 = yOffset;
-                    sprite.clut = StaticVariables.g_clutTable[8 - x];
+                    sprite.clut = (ushort)(8 - x); // StaticVariables.g_clutTable[8 - x]);
 
                     //SetSprt(sprt);
                     //SetSemiTrans(sprt, 0);
@@ -2514,7 +2514,7 @@ public class GameEngine
             sprite.v0 = StaticVariables.g_dialogCursorTextureUV[1];
             sprite.x0 = 0;
             sprite.y0 = 0;
-            sprite.clut = StaticVariables.g_clutTable[8];
+            sprite.clut = 8; //StaticVariables.g_clutTable[8];
 
             //SetSprt(sprite);
             //SetSemiTrans(sprite, 0);

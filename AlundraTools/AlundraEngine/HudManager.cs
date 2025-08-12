@@ -2,6 +2,7 @@
 using AlundraEngine.Gameplay;
 using AlundraEngine.Graphics;
 using AlundraEngine.UI;
+using System;
 using System.Diagnostics;
 using static AlundraEngine.Renderer;
 
@@ -21,12 +22,12 @@ public class HudManager
     {
         SPRT sprite;
 
-        FUN_800548a4(StaticVariables.TextTilesConfiguration_800b58a8);
-        FUN_800548a4(StaticVariables.TextTilesConfiguration_800b8360);
+        FUN_800548a4(StaticVariables.g_UiBoxesInventory);
+        FUN_800548a4(StaticVariables.UIBoxConfiguration_800b8360);
         FUN_800548a4(StaticVariables.g_textTilesConfiguration_800b8eb0);
-        FUN_800548a4(StaticVariables.TextTilesConfiguration_800b9a00);
-        FUN_800548a4(StaticVariables.TextTilesConfiguration_800b9a10);
-        FUN_800548a4(StaticVariables.TextTilesConfiguration_800b9e58);
+        FUN_800548a4(StaticVariables.UIBoxConfiguration_800b9a00);
+        FUN_800548a4(StaticVariables.UIBoxConfiguration_800b9a10);
+        FUN_800548a4(StaticVariables.UIBoxConfiguration_800b9e58);
         StaticVariables.g_forbiddenWarpFlag = 0;
         StaticVariables.g_inventorySelectedSlotId = 0;
         FUN_80050998(StaticVariables.g_inventoryCursorAnimation);
@@ -58,7 +59,7 @@ public class HudManager
             sprite = StaticVariables.g_spriteInventoryMoney[i];
             sprite.w = 8;
             sprite.h = 0x10;
-            sprite.clut = StaticVariables.g_clutTable[StaticVariables.g_clutTableIndex];
+            sprite.clut = 5; //StaticVariables.g_clutTableIndex; //StaticVariables.g_clutTable[StaticVariables.g_clutTableIndex];
             sprite.r0 = 0x80;
             sprite.g0 = 0x80;
             sprite.b0 = 0x80;
@@ -76,7 +77,7 @@ public class HudManager
             sprite = StaticVariables.g_spriteInventoryNumberOfKeys[i];
             sprite.w = 8;
             sprite.h = 0x10;
-            sprite.clut = StaticVariables.g_clutTable[StaticVariables.g_clutTableIndex];
+            sprite.clut = 5; //StaticVariables.g_clutTableIndex; //StaticVariables.g_clutTable[StaticVariables.g_clutTableIndex];
             sprite.r0 = 0x80;
             sprite.g0 = 0x80;
             sprite.b0 = 0x80;
@@ -95,7 +96,7 @@ public class HudManager
             sprite = StaticVariables.g_spriteInventoryNumberOfFalcon[i];
             sprite.w = 8;
             sprite.h = 0x10;
-            sprite.clut = StaticVariables.g_clutTable[StaticVariables.g_clutTableIndex];
+            sprite.clut = 5; //StaticVariables.g_clutTableIndex; //StaticVariables.g_clutTable[StaticVariables.g_clutTableIndex];
             sprite.r0 = 0x80;
             sprite.g0 = 0x80;
             sprite.b0 = 0x80;
@@ -115,15 +116,16 @@ public class HudManager
 
         do
         {
-            cursorAnim.Sprites[index].w = 0x10;
-            cursorAnim.Sprites[index].h = 0x10;
-            cursorAnim.Sprites[index].u0 = StaticVariables.g_inventoryCursorTextureU;
-            cursorAnim.Sprites[index].v0 = StaticVariables.g_inventoryCursorTextureV;
+            var sprite = cursorAnim.Sprites[index];
+            sprite.w = 0x10;
+            sprite.h = 0x10;
+            sprite.u0 = StaticVariables.g_inventoryCursorTextureU;
+            sprite.v0 = StaticVariables.g_inventoryCursorTextureV;
             //SetSprt(p);
             //SetSemiTrans(p, 0);
             //SetShadeTex(p, 1);
             FUN_80050908(cursorAnim, 0, 0, index);
-            cursorAnim.Sprites[index].clut = StaticVariables.g_clutTable[0];
+            sprite.clut = 0; //StaticVariables.g_clutTable[0];
 
             index += 1;
 
@@ -133,9 +135,8 @@ public class HudManager
     //80050908
     private void FUN_80050908(InventoryCursorAnimation cursorAnim, short x, short y, int index)
     {
-        cursorAnim.Sprites[index].x0 = (short)(StaticVariables.g_inventoryCursorAnimSpriteX[cursorAnim.FrameDelay / 10 * 4] + x);
-        cursorAnim.Sprites[index].y0 = (short)(StaticVariables.g_inventoryCursorAnimSpriteY[cursorAnim.FrameDelay / 10 * 4] + y);
-
+        cursorAnim.Sprites[index].x0 = (short)(StaticVariables.g_inventoryCursorAnimSpriteX[cursorAnim.FrameDelay / 10] + x);
+        cursorAnim.Sprites[index].y0 = (short)(StaticVariables.g_inventoryCursorAnimSpriteY[cursorAnim.FrameDelay / 10] + y);
     }
 
     //800548a4
@@ -165,8 +166,10 @@ public class HudManager
                         //SetShadeTex(tileConfig.spritesA + row * textTilesConfig.width + col, 1);
 
                         index = row * textTilesConfig.Width + col;
-                        textTilesConfig.SpritesA[index].clut = StaticVariables.g_clutTable[textTilesConfig.SpritesA[index].clut];
-                        textTilesConfig.SpritesB[index].clut = StaticVariables.g_clutTable[textTilesConfig.SpritesB[index].clut];
+                        var clut = textTilesConfig.SpritesA[index].clut;
+                        //clut = StaticVariables.g_clutTable[textTilesConfig.SpritesA[index].clut];
+                        textTilesConfig.SpritesA[index].clut = clut;
+                        //textTilesConfig.SpritesB[index].clut = StaticVariables.g_clutTable[textTilesConfig.SpritesB[index].clut];
                         col += 1;
 
                     } while (col < textTilesConfig.Width);
@@ -505,78 +508,78 @@ public class HudManager
         StaticVariables.TextToDisplay_ARRAY_8017f920[0].tick = 0;
         StaticVariables.TextToDisplay_ARRAY_8017f920[0].speed = 0xf;
         StaticVariables.g_playerControlFlags |= 8;
-        StaticVariables.TextToDisplay_ARRAY_8017f920[0].x = (short)~(StaticVariables.TextTilesConfiguration_800b58a8.Width << 3);
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].x = (short)~(StaticVariables.g_UiBoxesInventory.Width << 3);
 
-        if (StaticVariables.TextTilesConfiguration_800b58a8.Y < 0)
+        if (StaticVariables.g_UiBoxesInventory.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[0].y =
-                 (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y + StaticVariables.TextTilesConfiguration_800b58a8.Height * -8);
+                 (short)(StaticVariables.g_UiBoxesInventory.Y + StaticVariables.g_UiBoxesInventory.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[0].y = StaticVariables.TextTilesConfiguration_800b58a8.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].y = StaticVariables.g_UiBoxesInventory.Y;
         }
 
-        if (StaticVariables.TextTilesConfiguration_800b58a8.X < 0)
+        if (StaticVariables.g_UiBoxesInventory.X < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[0].startX =
-                 (short)(StaticVariables.TextTilesConfiguration_800b58a8.X + StaticVariables.TextTilesConfiguration_800b58a8.Width * -8);
+                 (short)(StaticVariables.g_UiBoxesInventory.X + StaticVariables.g_UiBoxesInventory.Width * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[0].startX = StaticVariables.TextTilesConfiguration_800b58a8.X;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].startX = StaticVariables.g_UiBoxesInventory.X;
         }
 
-        if (StaticVariables.TextTilesConfiguration_800b58a8.Y < 0)
+        if (StaticVariables.g_UiBoxesInventory.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[0].startY =
-                 (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y + StaticVariables.TextTilesConfiguration_800b58a8.Height * -8);
+                 (short)(StaticVariables.g_UiBoxesInventory.Y + StaticVariables.g_UiBoxesInventory.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[0].startY = StaticVariables.TextTilesConfiguration_800b58a8.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].startY = StaticVariables.g_UiBoxesInventory.Y;
         }
 
-        StaticVariables.TextToDisplay_ARRAY_8017f920[0].originX = StaticVariables.TextTilesConfiguration_800b58a8.X;
-        StaticVariables.TextToDisplay_ARRAY_8017f920[0].originY = StaticVariables.TextTilesConfiguration_800b58a8.Y;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].originX = StaticVariables.g_UiBoxesInventory.X;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[0].originY = StaticVariables.g_UiBoxesInventory.Y;
 
         StaticVariables.TextToDisplay_ARRAY_8017f920[1].mode = 2;
         StaticVariables.TextToDisplay_ARRAY_8017f920[1].tick = 0;
         StaticVariables.TextToDisplay_ARRAY_8017f920[1].speed = 0xf;
-        StaticVariables.TextToDisplay_ARRAY_8017f920[1].x = (short)~(StaticVariables.TextTilesConfiguration_800b8360.Width << 3);
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].x = (short)~(StaticVariables.UIBoxConfiguration_800b8360.Width << 3);
 
-        if (StaticVariables.TextTilesConfiguration_800b8360.Y < 0)
+        if (StaticVariables.UIBoxConfiguration_800b8360.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[1].y =
-                 (short)(StaticVariables.TextTilesConfiguration_800b8360.Y + StaticVariables.TextTilesConfiguration_800b8360.Height * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b8360.Y + StaticVariables.UIBoxConfiguration_800b8360.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[1].y = StaticVariables.TextTilesConfiguration_800b8360.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].y = StaticVariables.UIBoxConfiguration_800b8360.Y;
         }
 
-        if (StaticVariables.TextTilesConfiguration_800b8360.X < 0)
+        if (StaticVariables.UIBoxConfiguration_800b8360.X < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[1].startX =
-                 (short)(StaticVariables.TextTilesConfiguration_800b8360.X + StaticVariables.TextTilesConfiguration_800b8360.Width * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b8360.X + StaticVariables.UIBoxConfiguration_800b8360.Width * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[1].startX = StaticVariables.TextTilesConfiguration_800b8360.X;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].startX = StaticVariables.UIBoxConfiguration_800b8360.X;
         }
 
-        if (StaticVariables.TextTilesConfiguration_800b8360.Y < 0)
+        if (StaticVariables.UIBoxConfiguration_800b8360.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[1].startY =
-                 (short)(StaticVariables.TextTilesConfiguration_800b8360.Y + StaticVariables.TextTilesConfiguration_800b8360.Height * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b8360.Y + StaticVariables.UIBoxConfiguration_800b8360.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[1].startY = StaticVariables.TextTilesConfiguration_800b8360.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].startY = StaticVariables.UIBoxConfiguration_800b8360.Y;
         }
 
-        StaticVariables.TextToDisplay_ARRAY_8017f920[1].originX = StaticVariables.TextTilesConfiguration_800b8360.X;
-        StaticVariables.TextToDisplay_ARRAY_8017f920[1].originY = StaticVariables.TextTilesConfiguration_800b8360.Y;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].originX = StaticVariables.UIBoxConfiguration_800b8360.X;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[1].originY = StaticVariables.UIBoxConfiguration_800b8360.Y;
 
         StaticVariables.TextToDisplay_ARRAY_8017f920[2].mode = 2;
         StaticVariables.TextToDisplay_ARRAY_8017f920[2].tick = 0;
@@ -621,114 +624,114 @@ public class HudManager
         StaticVariables.TextToDisplay_ARRAY_8017f920[3].speed = 0xf;
         StaticVariables.TextToDisplay_ARRAY_8017f920[3].x = 0x140;
 
-        if (StaticVariables.TextTilesConfiguration_800b9a00.Y < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9a00.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[3].y =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9a00.Y + StaticVariables.TextTilesConfiguration_800b9a00.Height * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9a00.Y + StaticVariables.UIBoxConfiguration_800b9a00.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[3].y = StaticVariables.TextTilesConfiguration_800b9a00.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].y = StaticVariables.UIBoxConfiguration_800b9a00.Y;
         }
 
-        if (StaticVariables.TextTilesConfiguration_800b9a00.X < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9a00.X < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[3].startX =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9a00.X + StaticVariables.TextTilesConfiguration_800b9a00.Width * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9a00.X + StaticVariables.UIBoxConfiguration_800b9a00.Width * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[3].startX = StaticVariables.TextTilesConfiguration_800b9a00.X;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].startX = StaticVariables.UIBoxConfiguration_800b9a00.X;
         }
 
-        if (StaticVariables.TextTilesConfiguration_800b9a00.Y < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9a00.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[3].startY =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9a00.Y + StaticVariables.TextTilesConfiguration_800b9a00.Height * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9a00.Y + StaticVariables.UIBoxConfiguration_800b9a00.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[3].startY = StaticVariables.TextTilesConfiguration_800b9a00.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].startY = StaticVariables.UIBoxConfiguration_800b9a00.Y;
         }
 
-        StaticVariables.TextToDisplay_ARRAY_8017f920[3].originX = StaticVariables.TextTilesConfiguration_800b9a00.X;
-        StaticVariables.TextToDisplay_ARRAY_8017f920[3].originY = StaticVariables.TextTilesConfiguration_800b9a00.Y;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].originX = StaticVariables.UIBoxConfiguration_800b9a00.X;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[3].originY = StaticVariables.UIBoxConfiguration_800b9a00.Y;
 
         StaticVariables.TextToDisplay_ARRAY_8017f920[4].mode = 2;
         StaticVariables.TextToDisplay_ARRAY_8017f920[4].tick = 0;
         StaticVariables.TextToDisplay_ARRAY_8017f920[4].speed = 0xf;
         StaticVariables.TextToDisplay_ARRAY_8017f920[4].x = 0x140;
 
-        if (StaticVariables.TextTilesConfiguration_800b9a10.Y < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9a10.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[4].y =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9a10.Y + StaticVariables.TextTilesConfiguration_800b9a10.Height * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9a10.Y + StaticVariables.UIBoxConfiguration_800b9a10.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[4].y = StaticVariables.TextTilesConfiguration_800b9a10.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].y = StaticVariables.UIBoxConfiguration_800b9a10.Y;
         }
 
-        if (StaticVariables.TextTilesConfiguration_800b9a10.X < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9a10.X < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[4].startX =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9a10.X + StaticVariables.TextTilesConfiguration_800b9a10.Width * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9a10.X + StaticVariables.UIBoxConfiguration_800b9a10.Width * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[4].startX = StaticVariables.TextTilesConfiguration_800b9a10.X;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].startX = StaticVariables.UIBoxConfiguration_800b9a10.X;
         }
 
-        if (StaticVariables.TextTilesConfiguration_800b9a10.Y < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9a10.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[4].startY =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9a10.Y + StaticVariables.TextTilesConfiguration_800b9a10.Height * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9a10.Y + StaticVariables.UIBoxConfiguration_800b9a10.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[4].startY = StaticVariables.TextTilesConfiguration_800b9a10.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].startY = StaticVariables.UIBoxConfiguration_800b9a10.Y;
         }
 
-        StaticVariables.TextToDisplay_ARRAY_8017f920[4].originX = StaticVariables.TextTilesConfiguration_800b9a10.X;
-        StaticVariables.TextToDisplay_ARRAY_8017f920[4].originY = StaticVariables.TextTilesConfiguration_800b9a10.Y;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].originX = StaticVariables.UIBoxConfiguration_800b9a10.X;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[4].originY = StaticVariables.UIBoxConfiguration_800b9a10.Y;
 
         StaticVariables.TextToDisplay_ARRAY_8017f920[5].mode = 2;
         StaticVariables.TextToDisplay_ARRAY_8017f920[5].tick = 0;
         StaticVariables.TextToDisplay_ARRAY_8017f920[5].speed = 0xf;
         StaticVariables.TextToDisplay_ARRAY_8017f920[5].x = 0x140;
 
-        if (StaticVariables.TextTilesConfiguration_800b9e58.Y < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9e58.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[5].y =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9e58.Y + StaticVariables.TextTilesConfiguration_800b9e58.Height * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9e58.Y + StaticVariables.UIBoxConfiguration_800b9e58.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[5].y = StaticVariables.TextTilesConfiguration_800b9e58.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].y = StaticVariables.UIBoxConfiguration_800b9e58.Y;
         }
 
-        if (StaticVariables.TextTilesConfiguration_800b9e58.X < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9e58.X < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[5].startX =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9e58.X + StaticVariables.TextTilesConfiguration_800b9e58.Width * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9e58.X + StaticVariables.UIBoxConfiguration_800b9e58.Width * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[5].startX = StaticVariables.TextTilesConfiguration_800b9e58.X;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].startX = StaticVariables.UIBoxConfiguration_800b9e58.X;
         }
 
-        if (StaticVariables.TextTilesConfiguration_800b9e58.Y < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9e58.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[5].startY =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9e58.Y + StaticVariables.TextTilesConfiguration_800b9e58.Height * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9e58.Y + StaticVariables.UIBoxConfiguration_800b9e58.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[5].startY = StaticVariables.TextTilesConfiguration_800b9e58.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].startY = StaticVariables.UIBoxConfiguration_800b9e58.Y;
         }
 
-        StaticVariables.TextToDisplay_ARRAY_8017f920[5].originX = StaticVariables.TextTilesConfiguration_800b9e58.X;
-        StaticVariables.TextToDisplay_ARRAY_8017f920[5].originY = StaticVariables.TextTilesConfiguration_800b9e58.Y;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].originX = StaticVariables.UIBoxConfiguration_800b9e58.X;
+        StaticVariables.TextToDisplay_ARRAY_8017f920[5].originY = StaticVariables.UIBoxConfiguration_800b9e58.Y;
 
         StaticVariables.TextToDisplay_ARRAY_8017f920[6].mode = 2;
         StaticVariables.TextToDisplay_ARRAY_8017f920[6].tick = 0;
@@ -841,14 +844,14 @@ public class HudManager
                 }
             }
 
-            if ((StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.OpenInventory) != 0)
+            if ((StaticVariables.g_padState1.ButtonsJustPressed & PadState.OpenInventory) != 0)
             {
                 FUN_800556dc();
                 _gameEngine.HudManager.UpdateHudTransitionState();
                 _gameEngine.GraphicManager.PrepareBufferFlip();
             }
 
-            if ((StaticVariables.g_padState1.ButtonsJustPressedByInterval & (PadState.R1 | PadState.L1)) != 0)
+            if ((StaticVariables.g_padState1.ButtonsJustPressed & (PadState.R1 | PadState.L1)) != 0)
             {
                 FUN_800556dc();
                 StaticVariables.g_playerControlFlags |= 8;
@@ -858,13 +861,13 @@ public class HudManager
         }
         else
         {
-            _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.TextTilesConfiguration_800b58a8, StaticVariables.TextToDisplay_ARRAY_8017f920[0]);
-            _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.TextTilesConfiguration_800b8360, StaticVariables.TextToDisplay_ARRAY_8017f920[1]);
+            _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.g_UiBoxesInventory, StaticVariables.TextToDisplay_ARRAY_8017f920[0]);
+            _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.UIBoxConfiguration_800b8360, StaticVariables.TextToDisplay_ARRAY_8017f920[1]);
             _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.g_textTilesConfiguration_800b8eb0, StaticVariables.TextToDisplay_ARRAY_8017f920[2]);
-            _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.TextTilesConfiguration_800b9a00, StaticVariables.TextToDisplay_ARRAY_8017f920[3]);
-            _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.TextTilesConfiguration_800b9a10, StaticVariables.TextToDisplay_ARRAY_8017f920[4]);
+            _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.UIBoxConfiguration_800b9a00, StaticVariables.TextToDisplay_ARRAY_8017f920[3]);
+            _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.UIBoxConfiguration_800b9a10, StaticVariables.TextToDisplay_ARRAY_8017f920[4]);
             _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.g_uiBoxDialogMessageBackground, StaticVariables.TextToDisplay_ARRAY_8017f920[6]);
-            iVar1 = _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.TextTilesConfiguration_800b9e58, StaticVariables.TextToDisplay_ARRAY_8017f920[5]);
+            iVar1 = _gameEngine.UIManager.RenderTextTilesStep(StaticVariables.UIBoxConfiguration_800b9e58, StaticVariables.TextToDisplay_ARRAY_8017f920[5]);
 
             if (iVar1 == 1)
             {
@@ -876,20 +879,22 @@ public class HudManager
                 if ((StaticVariables.g_forbiddenWarpFlag & 2U) != 0)
                 {
                     StaticVariables.g_forbiddenWarpFlag = 0;
-                    StaticVariables.TextTilesConfiguration_800b58a8.X = StaticVariables.TextToDisplay_ARRAY_8017f920[0].originX;
-                    StaticVariables.TextTilesConfiguration_800b58a8.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[0].originY;
-                    StaticVariables.TextTilesConfiguration_800b8360.X = StaticVariables.TextToDisplay_ARRAY_8017f920[1].originX;
-                    StaticVariables.TextTilesConfiguration_800b8360.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[1].originY;
+                    StaticVariables.g_UiBoxesInventory.X = StaticVariables.TextToDisplay_ARRAY_8017f920[0].originX;
+                    StaticVariables.g_UiBoxesInventory.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[0].originY;
+                    StaticVariables.UIBoxConfiguration_800b8360.X = StaticVariables.TextToDisplay_ARRAY_8017f920[1].originX;
+                    StaticVariables.UIBoxConfiguration_800b8360.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[1].originY;
                     StaticVariables.g_textTilesConfiguration_800b8eb0.X = StaticVariables.TextToDisplay_ARRAY_8017f920[2].originX;
                     StaticVariables.g_textTilesConfiguration_800b8eb0.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[2].originY;
-                    StaticVariables.TextTilesConfiguration_800b9a00.X = StaticVariables.TextToDisplay_ARRAY_8017f920[3].originX;
-                    StaticVariables.TextTilesConfiguration_800b9a00.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[3].originY;
-                    StaticVariables.TextTilesConfiguration_800b9a10.X = StaticVariables.TextToDisplay_ARRAY_8017f920[4].originX;
-                    StaticVariables.TextTilesConfiguration_800b9a10.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[4].originY;
-                    StaticVariables.TextTilesConfiguration_800b9e58.X = StaticVariables.TextToDisplay_ARRAY_8017f920[5].originX;
-                    StaticVariables.TextTilesConfiguration_800b9e58.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[5].originY;
+                    StaticVariables.UIBoxConfiguration_800b9a00.X = StaticVariables.TextToDisplay_ARRAY_8017f920[3].originX;
+                    StaticVariables.UIBoxConfiguration_800b9a00.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[3].originY;
+                    StaticVariables.UIBoxConfiguration_800b9a10.X = StaticVariables.TextToDisplay_ARRAY_8017f920[4].originX;
+                    StaticVariables.UIBoxConfiguration_800b9a10.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[4].originY;
+                    StaticVariables.UIBoxConfiguration_800b9e58.X = StaticVariables.TextToDisplay_ARRAY_8017f920[5].originX;
+                    StaticVariables.UIBoxConfiguration_800b9e58.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[5].originY;
                     StaticVariables.g_uiBoxDialogMessageBackground.X = StaticVariables.TextToDisplay_ARRAY_8017f920[6].originX;
                     StaticVariables.g_uiBoxDialogMessageBackground.Y = StaticVariables.TextToDisplay_ARRAY_8017f920[6].originY;
+
+                    Debug.WriteLine($"end {StaticVariables.UIBoxConfiguration_800b9e58}");
 
                     if ((StaticVariables.g_postProcessState & 1U) == 0)
                     {
@@ -903,20 +908,18 @@ public class HudManager
         }
 
         FUN_80050908(StaticVariables.g_inventoryCursorAnimation,
-            (short)(StaticVariables.TextTilesConfiguration_800b58a8.X +
-                    StaticVariables.UINT_ARRAY_800b9f28[StaticVariables.g_inventorySelectedSlotId] + 0x12),
-            (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y +
-                    StaticVariables.UINT_ARRAY_800b9f28[StaticVariables.g_inventorySelectedSlotId] + -8),
-            /*StaticVariables.g_drawModes[0x14].tag*/0);
+            (short)(StaticVariables.g_UiBoxesInventory.X + StaticVariables.g_uiBoxesInventoryAnimationOffsetX[StaticVariables.g_inventorySelectedSlotId] + 0x12),
+            (short)(StaticVariables.g_UiBoxesInventory.Y + StaticVariables.g_uiBoxesInventoryAnimationOffsetY[StaticVariables.g_inventorySelectedSlotId] - 8),
+            0);
         FUN_80050a74(StaticVariables.g_inventoryCursorAnimation);
         FUN_80056a98();
         FUN_80056fb4();
-        FUN_80055d78(StaticVariables.TextTilesConfiguration_800b58a8);
-        FUN_80055d78(StaticVariables.TextTilesConfiguration_800b8360);
+        FUN_80055d78(StaticVariables.g_UiBoxesInventory);
+        FUN_80055d78(StaticVariables.UIBoxConfiguration_800b8360);
         FUN_80055d78(StaticVariables.g_textTilesConfiguration_800b8eb0);
-        FUN_80055d78(StaticVariables.TextTilesConfiguration_800b9a00);
-        FUN_80055d78(StaticVariables.TextTilesConfiguration_800b9a10);
-        FUN_80055d78(StaticVariables.TextTilesConfiguration_800b9e58);
+        FUN_80055d78(StaticVariables.UIBoxConfiguration_800b9a00);
+        FUN_80055d78(StaticVariables.UIBoxConfiguration_800b9a10);
+        FUN_80055d78(StaticVariables.UIBoxConfiguration_800b9e58);
         FUN_80055d78(StaticVariables.g_uiBoxDialogMessageBackground);
         FUN_800562dc();
         FUN_80055fe8();
@@ -966,7 +969,8 @@ public class HudManager
 
         if (StaticVariables.INT_8017feec == 0)
         {
-            var text = _gameEngine.EtcResR.GetEtcString((int)itemId);//StaticVariables.g_iconNameEtcBase[itemId * 2];
+            var text = _gameEngine.EtcResR.GetIconName((int)itemId);//StaticVariables.g_iconNameEtcBase[itemId * 2];
+            text = text.PadRight(0x20);
             iVar2 = 0x20;
 
             LAB_8005616c:
@@ -984,9 +988,9 @@ public class HudManager
         {
             if (StaticVariables.INT_8017feec - 1U < 0x10)
             {
-                var text = _gameEngine.EtcResR.GetEtcString((int)itemId);//StaticVariables.g_iconNameEtcBase[itemId * 2];
-
-                Debugger.Break(); //text.Length == StaticVariables.INT_8017feec - 1
+                var text = _gameEngine.EtcResR.GetIconName((int)itemId);//StaticVariables.g_iconNameEtcBase[itemId * 2];
+                text = text.PadRight(0x11);
+                //Debugger.Break(); //text.Length == StaticVariables.INT_8017feec - 1
 
                 if (text[StaticVariables.INT_8017feec - 1] == '\0')
                 {
@@ -1013,6 +1017,7 @@ public class HudManager
                 {
                     var text = _gameEngine.EtcResR.GetEtcString((int)itemId);//StaticVariables.g_iconNameEtcBase[itemId * 2];
                     //text = StaticVariables.g_tileSetEtcBase[itemId * 2];
+                    text = text.PadRight(0x40);
                     iVar2 = 0x40;
                     //goto LAB_8005616c;
 
@@ -1059,6 +1064,7 @@ public class HudManager
                         ];
 
                         var text3 = _gameEngine.EtcResR.GetIconName((int)itemId);//StaticVariables.g_paletteSetEtcBase
+                        text3 = text3.PadRight(0x40);
 
                         _gameEngine.GraphicManager.DisplayIconName(sprites,
                             text3.ToCharArray(),
@@ -1200,7 +1206,7 @@ public class HudManager
         //DISPENV dispEnv;
 
         //GetDispEnv(&dispEnv);
-        x = (int)StaticVariables.g_textTilesConfiguration_800b8eb0.X;
+        x = StaticVariables.g_textTilesConfiguration_800b8eb0.X;
 
         if (0x13f < x)
         {
@@ -1217,7 +1223,7 @@ public class HudManager
         //dispEnv.disp.w = (short)w;
         //dispEnv.disp.y = dispEnv.disp.y + g_textTilesConfiguration_800b8eb0.y;
         //dispEnv.disp.x = dispEnv.disp.x + (short)iVar9;
-        //dispEnv.disp.h =(TextTilesConfiguration_800b9a00.y - g_textTilesConfiguration_800b8eb0.y) + TextTilesConfiguration_800b9a00.height * 8;
+        //dispEnv.disp.h =(UIBoxConfiguration_800b9a00.y - g_textTilesConfiguration_800b8eb0.y) + UIBoxConfiguration_800b9a00.height * 8;
         //SetDrawArea((DR_AREA*)(&UNK_8017fa84 + g_drawModes[0x14].tag * 0xc), &dispEnv.disp);
         //SetDrawArea((DR_AREA*)(&DAT_8017fa9c + g_drawModes[0x14].tag * 0xc), &dispEnv.disp);
         uVar2 = 0; //StaticVariables.g_drawModes[0x14].tag;
@@ -1227,8 +1233,8 @@ public class HudManager
         {
             StaticVariables.g_ItemNameSprites[i].x0 = (short)(StaticVariables.g_textTilesConfiguration_800b8eb0.X + 0x10);
             StaticVariables.g_ItemNameSprites[i].y0 = (short)(StaticVariables.g_textTilesConfiguration_800b8eb0.Y + -i + 8);
-            StaticVariables.g_ItemNameSprites[i + 2].x0 = (short)(StaticVariables.TextTilesConfiguration_800b9a00.X + 0x10);
-            StaticVariables.g_ItemNameSprites[i + 2].y0 = (short)(StaticVariables.TextTilesConfiguration_800b9a00.Y + -i + 8);
+            StaticVariables.g_ItemNameSprites[i + 2].x0 = (short)(StaticVariables.UIBoxConfiguration_800b9a00.X + 0x10);
+            StaticVariables.g_ItemNameSprites[i + 2].y0 = (short)(StaticVariables.UIBoxConfiguration_800b9a00.Y + -i + 8);
             //uVar3 = StaticVariables.g_drawModes[0x14].tag;
             i = i + 1;
         } while (i < 1);
@@ -1298,18 +1304,15 @@ public class HudManager
                     //puVar3 = StaticVariables.g_drawModes + uVar1 * 0x28 + 0xf8;
                     do
                     {
-                        sprite = textTileConfig.SpritesA[h * textTileConfig.Width + w];
-                        w = w + 1;
-
                         /* Probable PsyQ macro: addPrim(). */
                         //pSVar2->tag = pSVar2->tag & 0xff000000 | *puVar3 & 0xffffff;
                         //*puVar3 = *puVar3 & 0xff000000 | (uint)pSVar2 & 0xffffff;
                         //pSVar2 = pSVar2 + 1;
-
-                        //TODO : display something ?
+                        sprite = textTileConfig.SpritesA[h * textTileConfig.Width + w];
                         var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
                         _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
+                        w = w + 1;
                     } while (w < textTileConfig.Width);
                 }
 
@@ -1355,8 +1358,8 @@ public class HudManager
             StaticVariables.TextToDisplay_ARRAY_8017f920[index].startY = 0x20; //0xd6
 
             var clutIndexFromTable = StaticVariables.BYTE_ARRAY_8009cfd8[2] | (StaticVariables.BYTE_ARRAY_8009cfd8[3] << 8);
-            var clutValue = StaticVariables.g_clutTable[clutIndexFromTable];
-            StaticVariables.TextToDisplay_ARRAY_8017f920[i].mode = clutValue;
+            var clutValue = clutIndexFromTable; //StaticVariables.g_clutTable[clutIndexFromTable];
+            //StaticVariables.TextToDisplay_ARRAY_8017f920[i].mode = clutValue;
 
             //SetSprt((SPRT*)(g_drawModes[0x14].tag * 0x28 + iVar9));
             //SetSemiTrans((void*)(iVar6 + iVar9), 0);
@@ -1387,8 +1390,8 @@ public class HudManager
                             var sprite = StaticVariables.g_spriteInventoryItems[6];
 
                             InitializeSpriteWithImage(sprite, 0x24,
-                                       (short)(StaticVariables.TextTilesConfiguration_800b58a8.X + StaticVariables.UINT_ARRAY_800b9f28[6]),
-                                       (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y + StaticVariables.UINT_ARRAY_800b9f88[6]));
+                                       (short)(StaticVariables.g_UiBoxesInventory.X + StaticVariables.g_uiBoxesInventoryAnimationOffsetX[6]),
+                                       (short)(StaticVariables.g_UiBoxesInventory.Y + StaticVariables.g_uiBoxesInventoryAnimationOffsetY[6]));
 
                             i = (int)_gameEngine.PlayerManager.SetItemIdFromCurrentItemId();
 
@@ -1399,8 +1402,8 @@ public class HudManager
                             if (i == 0x24) //herbs
                             {
                                 //puVar5 = StaticVariables.TextToDisplay_ARRAY_8017f920[7];
-                                StaticVariables.TextToDisplay_ARRAY_8017f920[7].x = (short)(StaticVariables.TextTilesConfiguration_800b58a8.X + StaticVariables.UINT_ARRAY_800b9f28[6]);
-                                StaticVariables.TextToDisplay_ARRAY_8017f920[7].y = (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y + StaticVariables.UINT_ARRAY_800b9f88[6]);
+                                StaticVariables.TextToDisplay_ARRAY_8017f920[7].x = (short)(StaticVariables.g_UiBoxesInventory.X + StaticVariables.g_uiBoxesInventoryAnimationOffsetX[6]);
+                                StaticVariables.TextToDisplay_ARRAY_8017f920[7].y = (short)(StaticVariables.g_UiBoxesInventory.Y + StaticVariables.g_uiBoxesInventoryAnimationOffsetY[6]);
                                 //puVar3 = (uint*)((int)g_drawModes + i + 0xf8);
                                 /* Probable PsyQ macro: addPrim(). */
                                 //*puVar5 = *puVar5 & 0xff000000 | *puVar3 & 0xffffff;
@@ -1412,8 +1415,8 @@ public class HudManager
 
                             //uVar1 = g_drawModes[0x14].tag;
                             sprite = StaticVariables.SPRT_ARRAY_8017fe74[0];
-                            StaticVariables.SPRT_ARRAY_8017fe74[0].x0 = (short)(StaticVariables.TextTilesConfiguration_800b58a8.X + StaticVariables.UINT_ARRAY_800b9f28[6] + 0x10);
-                            StaticVariables.SPRT_ARRAY_8017fe74[0].y0 = (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y + StaticVariables.UINT_ARRAY_800b9f88[6] + 0x10);
+                            StaticVariables.SPRT_ARRAY_8017fe74[0].x0 = (short)(StaticVariables.g_UiBoxesInventory.X + StaticVariables.g_uiBoxesInventoryAnimationOffsetX[6] + 0x10);
+                            StaticVariables.SPRT_ARRAY_8017fe74[0].y0 = (short)(StaticVariables.g_UiBoxesInventory.Y + StaticVariables.g_uiBoxesInventoryAnimationOffsetY[6] + 0x10);
                             //SetSprt(pSVar4);
                             StaticVariables.SPRT_ARRAY_8017fe74[0].r0 = 0x90;
                             StaticVariables.SPRT_ARRAY_8017fe74[0].g0 = 0x90;
@@ -1461,45 +1464,45 @@ public class HudManager
 
                             InitializeSpriteWithImage(sprite,
                                        (int)textureId,
-                                       (short)(StaticVariables.TextTilesConfiguration_800b58a8.X + StaticVariables.UINT_ARRAY_800b9f28[offset]),
-                                       (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y + StaticVariables.UINT_ARRAY_800b9f88[offset]));
+                                       (short)(StaticVariables.g_UiBoxesInventory.X + StaticVariables.g_uiBoxesInventoryAnimationOffsetX[offset]),
+                                       (short)(StaticVariables.g_UiBoxesInventory.Y + StaticVariables.g_uiBoxesInventoryAnimationOffsetY[offset]));
 
                             uVar2 = _gameEngine.PlayerManager.GetItemIdFromCurrentWeapon();
 
                             if (local_40 == 0 && textureId == uVar2)
                             {
                                 //textToDisplay = StaticVariables.TextToDisplay_ARRAY_8017f920[7];
-                                StaticVariables.TextToDisplay_ARRAY_8017f920[7].x = (short)(StaticVariables.TextTilesConfiguration_800b58a8.X + StaticVariables.UINT_ARRAY_800b9f28[local_3c]);
-                                StaticVariables.TextToDisplay_ARRAY_8017f920[7].y = (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y + StaticVariables.UINT_ARRAY_800b9f88[local_3c]);
+                                StaticVariables.TextToDisplay_ARRAY_8017f920[7].x = (short)(StaticVariables.g_UiBoxesInventory.X + StaticVariables.g_uiBoxesInventoryAnimationOffsetX[local_3c]);
+                                StaticVariables.TextToDisplay_ARRAY_8017f920[7].y = (short)(StaticVariables.g_UiBoxesInventory.Y + StaticVariables.g_uiBoxesInventoryAnimationOffsetY[local_3c]);
                                 //puVar3 = (uint*)((int)g_drawModes + i + 0xf8);
                                 /* Probable PsyQ macro: addPrim(). */
                                 //*puVar5 = *puVar5 & 0xff000000 | *puVar3 & 0xffffff;
                                 //*puVar3 = *puVar3 & 0xff000000 | (uint)puVar5 & 0xffffff;
 
-                                var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-                                _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+                                //var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
+                                //_gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
                             }
 
                             i = offset << 2;
 
                             if (0 < local_40)
                             {
-                                uVar2 = (uint)_gameEngine.PlayerManager.SetItemIdFromCurrentItemId();
+                                uVar2 = _gameEngine.PlayerManager.SetItemIdFromCurrentItemId();
                                 i = offset; // * 4;
 
                                 if (textureId == uVar2)
                                 {
                                     //i = g_drawModes[0x14].tag * 0x28;
                                     //textToDisplay = StaticVariables.TextToDisplay_ARRAY_8017f920[7];
-                                    StaticVariables.TextToDisplay_ARRAY_8017f920[7].x = (short)(StaticVariables.TextTilesConfiguration_800b58a8.X + StaticVariables.UINT_ARRAY_800b9f28[offset]);
-                                    StaticVariables.TextToDisplay_ARRAY_8017f920[7].y = (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y + StaticVariables.UINT_ARRAY_800b9f88[offset]);
+                                    StaticVariables.TextToDisplay_ARRAY_8017f920[7].x = (short)(StaticVariables.g_UiBoxesInventory.X + StaticVariables.g_uiBoxesInventoryAnimationOffsetX[offset]);
+                                    StaticVariables.TextToDisplay_ARRAY_8017f920[7].y = (short)(StaticVariables.g_UiBoxesInventory.Y + StaticVariables.g_uiBoxesInventoryAnimationOffsetY[offset]);
                                     //puVar5 = StaticVariables.g_drawModes + i + 0xf8);
                                     /* Probable PsyQ macro: addPrim(). */
                                     //*puVar3 = *puVar3 & 0xff000000 | *puVar5 & 0xffffff;
                                     //*puVar5 = *puVar5 & 0xff000000 | (uint)puVar3 & 0xffffff;
 
-                                    var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-                                    _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+                                    //var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
+                                    //_gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
                                     i = offset << 2;
                                 }
@@ -1511,7 +1514,12 @@ public class HudManager
                             sprite.g0 = 0x90;
                             sprite.b0 = 0x90;
 
-                            var bitmap3 = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
+
+                            index = _gameEngine.GraphicManager.GetItemTextureIdByItemId((int)textureId);
+                            var image = _gameEngine.GraphicManager.GetAnimationImageByIndex(index);
+
+                            var bitmap3 = _gameEngine.AlundraMap.GetSpriteBitmap(image);
+                            //var bitmap3 = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
                             _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap3);
 
                             //i = StaticVariables.g_drawModes[0x14].tag * 0x1e0;
@@ -1553,6 +1561,7 @@ public class HudManager
             sprt.v0 = image.Sy;
             sprt.w = image.Swidth;
             sprt.h = image.Sheight;
+            //sprt.clut = image.Palette;
             //sprt.clut = StaticVariables.g_clutTableBase[image.Palette]; //why ? => number bigger than 30000
             //SetSprt(sprt);
         }
@@ -1565,14 +1574,14 @@ public class HudManager
         int iVar2;
         int iVar8;
         int i;
-        short sVar10;
+        short offsetX;
         int divisor;
         SPRT sprite;
 
         divisor = 1000;
         value = _gameEngine.PlayerManager.GetMoney();
         i = 0;
-        sVar10 = 0x18;
+        offsetX = 0x18;
 
         do
         {
@@ -1593,8 +1602,8 @@ public class HudManager
             iVar2 = value / divisor % 10 * 0x14;
             sprite.u0 = StaticVariables.BYTE_ARRAY_8009cfd8[iVar2];
             sprite.v0 = StaticVariables.BYTE_ARRAY_8009cfd8[iVar2 + 1];
-            sprite.x0 = (short)(StaticVariables.TextTilesConfiguration_800b9e58.X + sVar10);
-            sprite.y0 = (short)(StaticVariables.TextTilesConfiguration_800b9e58.Y + 4);
+            sprite.x0 = (short)(StaticVariables.UIBoxConfiguration_800b9e58.X + offsetX);
+            sprite.y0 = (short)(StaticVariables.UIBoxConfiguration_800b9e58.Y + 4);
 
             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
             _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
@@ -1605,12 +1614,14 @@ public class HudManager
             //*puVar5 = uVar3 & 0xff000000 | *puVar6 & 0xffffff;
             //*puVar6 = *puVar6 & 0xff000000 | (uint)sprite & 0xffffff;
             divisor = divisor / 10;
+            offsetX = (short)(offsetX + 8);
             i = i + 1;
         } while (i < 4);
 
         divisor = 10;
         value = _gameEngine.PlayerManager.GetNumberOfItem(0x3d);
         i = 0;
+        offsetX = 0x18;
 
         do
         {
@@ -1631,8 +1642,8 @@ public class HudManager
             iVar2 = value / divisor % 10 * 0x14;
             sprite.u0 = StaticVariables.BYTE_ARRAY_8009cfd8[iVar2];
             sprite.v0 = StaticVariables.BYTE_ARRAY_8009cfd8[iVar2 + 1];
-            sprite.x0 = (short)(StaticVariables.TextTilesConfiguration_800b9e58.X + sVar10 + 0x10);
-            sprite.y0 = (short)(StaticVariables.TextTilesConfiguration_800b9e58.Y + 0x34);
+            sprite.x0 = (short)(StaticVariables.UIBoxConfiguration_800b9e58.X + offsetX + 0x10);
+            sprite.y0 = (short)(StaticVariables.UIBoxConfiguration_800b9e58.Y + 0x34);
 
             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
             _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
@@ -1644,12 +1655,14 @@ public class HudManager
             //*puVar5 = uVar3 & 0xff000000 | *puVar6 & 0xffffff;
             //*puVar6 = *puVar6 & 0xff000000 | (uint)sprite & 0xffffff;
             divisor = divisor / 10;
+            offsetX = (short)(offsetX + 8);
             i = i + 1;
         } while (i < 2);
 
         divisor = 10;
         value = _gameEngine.PlayerManager.GetNumberOfFalcon();
         i = _gameEngine.PlayerManager.GetNumberOfFalconTemp();
+        offsetX = 0x18;
 
         do
         {
@@ -1670,8 +1683,8 @@ public class HudManager
             iVar2 = value / divisor % 10 * 0x14;
             sprite.u0 = StaticVariables.BYTE_ARRAY_8009cfd8[iVar2];
             sprite.v0 = StaticVariables.BYTE_ARRAY_8009cfd8[iVar2 + 1];
-            sprite.x0 = (short)(StaticVariables.TextTilesConfiguration_800b9e58.X + sVar10 + 0x10);
-            sprite.y0 = (short)(StaticVariables.TextTilesConfiguration_800b9e58.Y + 0x34);
+            sprite.x0 = (short)(StaticVariables.UIBoxConfiguration_800b9e58.X + offsetX + 0x10);
+            sprite.y0 = (short)(StaticVariables.UIBoxConfiguration_800b9e58.Y + 0x1c);
 
             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
             _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
@@ -1683,6 +1696,7 @@ public class HudManager
             //*puVar5 = uVar3 & 0xff000000 | *puVar6 & 0xffffff;
             //*puVar6 = *puVar6 & 0xff000000 | (uint)sprite & 0xffffff;
             divisor = divisor / 10;
+            offsetX = (short)(offsetX + 8);
             i = i + 1;
         } while (i < 2);
     }
@@ -1709,8 +1723,9 @@ public class HudManager
         //cursorAnim.sprites[g_drawModes[0x14].tag].tag = cursorAnim.sprites[g_drawModes[0x14].tag].tag & 0xff000000 | *puVar2 & 0xffffff;
         //*puVar2 = *puVar2 & 0xff000000 | (uint)pSVar3 & 0xffffff;
 
-        var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(cursorAnim.Sprites[0]);
-        _gameEngine.Renderer.AddSprite(cursorAnim.Sprites[0], int.MaxValue, bitmap);
+        var sprite = cursorAnim.Sprites[0];
+        var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
+        _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
     }
 
     //8005795c
@@ -1881,8 +1896,8 @@ public class HudManager
         _gameEngine.GraphicManager.DisplayIconName(sprites,
             sourceWarpName.ToCharArray(),
             0x20,
-            StaticVariables.TextTilesConfiguration_800b9a00.X,
-            StaticVariables.TextTilesConfiguration_800b9a00.Y,
+            StaticVariables.UIBoxConfiguration_800b9a00.X,
+            StaticVariables.UIBoxConfiguration_800b9a00.Y,
             1);
     }
 
@@ -1925,7 +1940,7 @@ public class HudManager
                     return;
                 }
 
-                currentItemId = (uint)_gameEngine.PlayerManager.SetItemIdFromCurrentItemId();
+                currentItemId = _gameEngine.PlayerManager.SetItemIdFromCurrentItemId();
 
                 if (currentItemId == slotId)
                 {
@@ -1943,7 +1958,7 @@ public class HudManager
                     return;
                 }
 
-                currentItemId = (uint)_gameEngine.PlayerManager.SetItemIdFromCurrentItemId();
+                currentItemId = _gameEngine.PlayerManager.SetItemIdFromCurrentItemId();
                 slotId = StaticVariables.UINT_ARRAY_800b9ec8[StaticVariables.g_inventorySelectedSlotId];
 
                 if (currentItemId == slotId)
@@ -2011,74 +2026,74 @@ public class HudManager
         StaticVariables.TextToDisplay_ARRAY_8017f920[0].tick = 0;
         StaticVariables.TextToDisplay_ARRAY_8017f920[0].speed = 0xf;
 
-        if (StaticVariables.TextTilesConfiguration_800b58a8.X < 0)
+        if (StaticVariables.g_UiBoxesInventory.X < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[0].x =
-                 (short)(StaticVariables.TextTilesConfiguration_800b58a8.X + StaticVariables.TextTilesConfiguration_800b58a8.Width * -8);
+                 (short)(StaticVariables.g_UiBoxesInventory.X + StaticVariables.g_UiBoxesInventory.Width * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[0].x = StaticVariables.TextTilesConfiguration_800b58a8.X;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].x = StaticVariables.g_UiBoxesInventory.X;
         }
 
-        if (StaticVariables.TextTilesConfiguration_800b58a8.Y < 0)
+        if (StaticVariables.g_UiBoxesInventory.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[0].y =
-                 (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y + StaticVariables.TextTilesConfiguration_800b58a8.Height * -8);
+                 (short)(StaticVariables.g_UiBoxesInventory.Y + StaticVariables.g_UiBoxesInventory.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[0].y = StaticVariables.TextTilesConfiguration_800b58a8.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].y = StaticVariables.g_UiBoxesInventory.Y;
         }
 
         StaticVariables.TextToDisplay_ARRAY_8017f920[0].startX =
-             (short)~(StaticVariables.TextTilesConfiguration_800b58a8.Width << 3);
+             (short)~(StaticVariables.g_UiBoxesInventory.Width << 3);
 
-        if (StaticVariables.TextTilesConfiguration_800b58a8.Y < 0)
+        if (StaticVariables.g_UiBoxesInventory.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[0].startY =
-                 (short)(StaticVariables.TextTilesConfiguration_800b58a8.Y + StaticVariables.TextTilesConfiguration_800b58a8.Height * -8);
+                 (short)(StaticVariables.g_UiBoxesInventory.Y + StaticVariables.g_UiBoxesInventory.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[0].startY = StaticVariables.TextTilesConfiguration_800b58a8.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[0].startY = StaticVariables.g_UiBoxesInventory.Y;
         }
 
         StaticVariables.TextToDisplay_ARRAY_8017f920[1].mode = 2;
         StaticVariables.TextToDisplay_ARRAY_8017f920[1].tick = 0;
         StaticVariables.TextToDisplay_ARRAY_8017f920[1].speed = 0xf;
 
-        if (StaticVariables.TextTilesConfiguration_800b8360.X < 0)
+        if (StaticVariables.UIBoxConfiguration_800b8360.X < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[1].x =
-                 (short)(StaticVariables.TextTilesConfiguration_800b8360.X + StaticVariables.TextTilesConfiguration_800b8360.Width * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b8360.X + StaticVariables.UIBoxConfiguration_800b8360.Width * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[1].x = StaticVariables.TextTilesConfiguration_800b8360.X;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].x = StaticVariables.UIBoxConfiguration_800b8360.X;
         }
 
-        if (StaticVariables.TextTilesConfiguration_800b8360.Y < 0)
+        if (StaticVariables.UIBoxConfiguration_800b8360.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[1].y =
-                 (short)(StaticVariables.TextTilesConfiguration_800b8360.Y + StaticVariables.TextTilesConfiguration_800b8360.Height * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b8360.Y + StaticVariables.UIBoxConfiguration_800b8360.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[1].y = StaticVariables.TextTilesConfiguration_800b8360.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].y = StaticVariables.UIBoxConfiguration_800b8360.Y;
         }
 
         StaticVariables.TextToDisplay_ARRAY_8017f920[1].startX =
-             (short)~(ushort)((int)StaticVariables.TextTilesConfiguration_800b8360.Width << 3);
+             (short)~(ushort)(StaticVariables.UIBoxConfiguration_800b8360.Width << 3);
 
-        if (StaticVariables.TextTilesConfiguration_800b8360.Y < 0)
+        if (StaticVariables.UIBoxConfiguration_800b8360.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[1].startY =
-                 (short)(StaticVariables.TextTilesConfiguration_800b8360.Y + StaticVariables.TextTilesConfiguration_800b8360.Height * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b8360.Y + StaticVariables.UIBoxConfiguration_800b8360.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[1].startY = StaticVariables.TextTilesConfiguration_800b8360.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[1].startY = StaticVariables.UIBoxConfiguration_800b8360.Y;
         }
 
         StaticVariables.TextToDisplay_ARRAY_8017f920[2].mode = 2;
@@ -2121,108 +2136,108 @@ public class HudManager
         StaticVariables.TextToDisplay_ARRAY_8017f920[3].tick = 0;
         StaticVariables.TextToDisplay_ARRAY_8017f920[3].speed = 0xf;
 
-        if (StaticVariables.TextTilesConfiguration_800b9a00.X < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9a00.X < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[3].x =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9a00.X + StaticVariables.TextTilesConfiguration_800b9a00.Width * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9a00.X + StaticVariables.UIBoxConfiguration_800b9a00.Width * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[3].x = StaticVariables.TextTilesConfiguration_800b9a00.X;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].x = StaticVariables.UIBoxConfiguration_800b9a00.X;
         }
 
-        if (StaticVariables.TextTilesConfiguration_800b9a00.Y < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9a00.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[3].y =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9a00.Y + StaticVariables.TextTilesConfiguration_800b9a00.Height * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9a00.Y + StaticVariables.UIBoxConfiguration_800b9a00.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[3].y = StaticVariables.TextTilesConfiguration_800b9a00.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].y = StaticVariables.UIBoxConfiguration_800b9a00.Y;
         }
 
         StaticVariables.TextToDisplay_ARRAY_8017f920[3].startX = 0x140;
 
-        if (StaticVariables.TextTilesConfiguration_800b9a00.Y < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9a00.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[3].startY =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9a00.Y + StaticVariables.TextTilesConfiguration_800b9a00.Height * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9a00.Y + StaticVariables.UIBoxConfiguration_800b9a00.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[3].startY = StaticVariables.TextTilesConfiguration_800b9a00.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[3].startY = StaticVariables.UIBoxConfiguration_800b9a00.Y;
         }
 
         StaticVariables.TextToDisplay_ARRAY_8017f920[4].mode = 2;
         StaticVariables.TextToDisplay_ARRAY_8017f920[4].tick = 0;
         StaticVariables.TextToDisplay_ARRAY_8017f920[4].speed = 0xf;
 
-        if (StaticVariables.TextTilesConfiguration_800b9a10.X < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9a10.X < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[4].x =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9a10.X + StaticVariables.TextTilesConfiguration_800b9a10.Width * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9a10.X + StaticVariables.UIBoxConfiguration_800b9a10.Width * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[4].x = StaticVariables.TextTilesConfiguration_800b9a10.X;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].x = StaticVariables.UIBoxConfiguration_800b9a10.X;
         }
 
-        if (StaticVariables.TextTilesConfiguration_800b9a10.Y < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9a10.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[4].y =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9a10.Y + StaticVariables.TextTilesConfiguration_800b9a10.Height * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9a10.Y + StaticVariables.UIBoxConfiguration_800b9a10.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[4].y = StaticVariables.TextTilesConfiguration_800b9a10.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].y = StaticVariables.UIBoxConfiguration_800b9a10.Y;
         }
 
         StaticVariables.TextToDisplay_ARRAY_8017f920[4].startX = 0x140;
 
-        if (StaticVariables.TextTilesConfiguration_800b9a10.Y < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9a10.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[4].startY =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9a10.Y + StaticVariables.TextTilesConfiguration_800b9a10.Height * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9a10.Y + StaticVariables.UIBoxConfiguration_800b9a10.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[4].startY = StaticVariables.TextTilesConfiguration_800b9a10.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[4].startY = StaticVariables.UIBoxConfiguration_800b9a10.Y;
         }
 
         StaticVariables.TextToDisplay_ARRAY_8017f920[5].mode = 2;
         StaticVariables.TextToDisplay_ARRAY_8017f920[5].tick = 0;
         StaticVariables.TextToDisplay_ARRAY_8017f920[5].speed = 0xf;
 
-        if (StaticVariables.TextTilesConfiguration_800b9e58.X < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9e58.X < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[5].x =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9e58.X + StaticVariables.TextTilesConfiguration_800b9e58.Width * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9e58.X + StaticVariables.UIBoxConfiguration_800b9e58.Width * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[5].x = StaticVariables.TextTilesConfiguration_800b9e58.X;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].x = StaticVariables.UIBoxConfiguration_800b9e58.X;
         }
 
-        if (StaticVariables.TextTilesConfiguration_800b9e58.Y < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9e58.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[5].y =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9e58.Y + StaticVariables.TextTilesConfiguration_800b9e58.Height * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9e58.Y + StaticVariables.UIBoxConfiguration_800b9e58.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[5].y = StaticVariables.TextTilesConfiguration_800b9e58.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].y = StaticVariables.UIBoxConfiguration_800b9e58.Y;
         }
 
         StaticVariables.TextToDisplay_ARRAY_8017f920[5].startX = 0x140;
 
-        if (StaticVariables.TextTilesConfiguration_800b9e58.Y < 0)
+        if (StaticVariables.UIBoxConfiguration_800b9e58.Y < 0)
         {
             StaticVariables.TextToDisplay_ARRAY_8017f920[5].startY =
-                 (short)(StaticVariables.TextTilesConfiguration_800b9e58.Y + StaticVariables.TextTilesConfiguration_800b9e58.Height * -8);
+                 (short)(StaticVariables.UIBoxConfiguration_800b9e58.Y + StaticVariables.UIBoxConfiguration_800b9e58.Height * -8);
         }
         else
         {
-            StaticVariables.TextToDisplay_ARRAY_8017f920[5].startY = StaticVariables.TextTilesConfiguration_800b9e58.Y;
+            StaticVariables.TextToDisplay_ARRAY_8017f920[5].startY = StaticVariables.UIBoxConfiguration_800b9e58.Y;
         }
 
         StaticVariables.TextToDisplay_ARRAY_8017f920[6].mode = 2;

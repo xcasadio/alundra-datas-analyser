@@ -30,33 +30,31 @@ public class PadManager
             padState.IsOverThanMaxNbFrameHeld = 0;
             padState.NumberOfFrameHold = 0;
             padState.ButtonsJustPressedByInterval = padState.ButtonsJustPressed;
-            padState.ButtonsHold = buttonState;
-            return;
+            goto LAB_8002e304;
         }
-
         if (padState.IsOverThanMaxNbFrameHeld == 0)
         {
             numberOfFrameHold = padState.NumberOfFrameHold;
-
             if (numberOfFrameHold < padState.MaxNbFrameHeld)
             {
                 LAB_8002e2fc:
                 padState.NumberOfFrameHold = numberOfFrameHold + 1;
                 padState.ButtonsJustPressedByInterval = 0;
+                //goto LAB_8002e304;
                 padState.ButtonsHold = buttonState;
                 return;
             }
-
             padState.IsOverThanMaxNbFrameHeld = 1;
         }
         else
         {
             numberOfFrameHold = padState.NumberOfFrameHold;
-
             if (numberOfFrameHold < padState.RepeatInterval)
             {
+                //goto LAB_8002e2fc; 
                 padState.NumberOfFrameHold = numberOfFrameHold + 1;
                 padState.ButtonsJustPressedByInterval = 0;
+                //goto LAB_8002e304;
                 padState.ButtonsHold = buttonState;
                 return;
             }
@@ -64,6 +62,8 @@ public class PadManager
 
         padState.NumberOfFrameHold = 0;
         padState.ButtonsJustPressedByInterval = buttonState;
+
+        LAB_8002e304:
         padState.ButtonsHold = buttonState;
     }
 }

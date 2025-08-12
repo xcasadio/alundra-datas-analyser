@@ -51,7 +51,7 @@ public class UIManager
                             //SetSprt(sprite);
                             //SetSemiTrans(sprite, 0);
                             //SetShadeTex(sprite, 1);
-                            sprite.clut = StaticVariables.g_clutTable[0];
+                            sprite.clut = 0; //StaticVariables.g_clutTable[0];
                             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
                             _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
@@ -252,7 +252,7 @@ public class UIManager
                 sprite.v0 = 0xD0;
                 sprite.w = 0x10;
                 sprite.h = 0x10;
-                sprite.clut = StaticVariables.g_clutTable[8];
+                sprite.clut = 8; //StaticVariables.g_clutTable[8];
 
                 iVar8 += 0x14;
                 sVar10 += -1;
@@ -405,8 +405,7 @@ public class UIManager
                     sprite.h = 0x10;
                     sprite.u0 = (byte)(i << 7);
                     sprite.v0 = 0xd0;
-                    var clut = StaticVariables.g_clutTable[8];
-                    sprite.clut = clut;
+                    sprite.clut = 8;//StaticVariables.g_clutTable[8];
                     //sprite = StaticVariables.SPRT_ARRAY_8017e674[iVar5 + local_2c + tileConfig];
                     //SetSprt(sprites);
                     //SetSemiTrans(sprites, 0);
@@ -482,8 +481,6 @@ public class UIManager
     {
         Debugger.Break();
     }
-
-
 
     //8004afe8
     public void Fun_8004afe8(CallBackInfo callBackInfo)
@@ -881,7 +878,7 @@ public class UIManager
     }
 
     //80047dd0
-    public int RenderTextTilesStep(UIBoxConfiguration textTilesConfiguration, TextToDisplay textToDisplay)
+    public int RenderTextTilesStep(UIBoxConfiguration uiBoxConfiguration, TextToDisplay textToDisplay)
     {
         int result;
         int x;
@@ -890,87 +887,66 @@ public class UIManager
 
         if (textToDisplay.mode == 0)
         {
-            result = 1;
+            return 1;
+        }
+
+        if (textToDisplay.tick == textToDisplay.speed)
+        {
+            uiBoxConfiguration.X = textToDisplay.startX;
+            uiBoxConfiguration.Y = textToDisplay.startY;
+            textToDisplay.mode -= 1;
+
+            if (uiBoxConfiguration == StaticVariables.UIBoxConfiguration_800b9e58)
+            {
+                Debug.WriteLine($"end {uiBoxConfiguration} - {textToDisplay}");
+            }
         }
         else
         {
-            y = textToDisplay.speed;
+            int xInterp = textToDisplay.x + ((textToDisplay.startX - textToDisplay.x) * textToDisplay.tick) / textToDisplay.speed;
+            int yInterp = textToDisplay.y + ((textToDisplay.startY - textToDisplay.y) * textToDisplay.tick) / textToDisplay.speed;
+            uiBoxConfiguration.X = (short)xInterp;
+            uiBoxConfiguration.Y = (short)yInterp;
 
-            if (textToDisplay.tick == y)
+            if (uiBoxConfiguration == StaticVariables.UIBoxConfiguration_800b9e58)
             {
-                textTilesConfiguration.X = textToDisplay.startX;
-                textTilesConfiguration.Y = textToDisplay.startY;
-                textToDisplay.mode += -1;
-            }
-            else
-            {
-                x = (textToDisplay.startX - textToDisplay.x) * textToDisplay.tick;
-
-                if (y == 0)
-                {
-                    Debugger.Break();
-                    //trap(0x1c00);
-                }
-
-                if (y == -1 && x == -0x80000000)
-                {
-                    Debugger.Break();
-                    //trap(0x1800);
-                }
-
-                textTilesConfiguration.X = (short)(textToDisplay.x + (short)(x / y));
-                x = (textToDisplay.startY - textToDisplay.y) * textToDisplay.tick;
-                y = textToDisplay.speed;
-
-                if (y == 0)
-                {
-                    Debugger.Break();
-                    //trap(0x1c00);
-                }
-
-                if (y == -1 && x == -0x80000000)
-                {
-                    Debugger.Break();
-                    //trap(0x1800);
-                }
-
-                textTilesConfiguration.Y = (short)(textToDisplay.y + (short)(x / y));
-                textToDisplay.tick += 1;
+                Debug.WriteLine($"move {uiBoxConfiguration} - {textToDisplay}");
             }
 
-            y = textTilesConfiguration.Y;
-            var i = 0;
-            result = 0;
+            textToDisplay.tick += 1;
+        }
 
-            if (y < textTilesConfiguration.Height * 8 + y)
+        y = uiBoxConfiguration.Y;
+        var i = 0;
+        result = 0;
+
+        if (y < uiBoxConfiguration.Height * 8 + y)
+        {
+            do
             {
-                do
-                {
-                    x = textTilesConfiguration.X;
+                x = uiBoxConfiguration.X;
 
-                    if (x < textTilesConfiguration.Width * 8 + x)
+                if (x < uiBoxConfiguration.Width * 8 + x)
+                {
+                    do
                     {
-                        sprt = textTilesConfiguration.SpritesA[StaticVariables.g_bufferIndex + i];
-                        var sprtB = textTilesConfiguration.SpritesB[StaticVariables.g_bufferIndex + i];
+                        //sprt = uiBoxConfiguration.SpritesA[i];
+                        //sprt.x0 = (short)x;
+                        //sprt.y0 = (short)y;
+                            
+                        // //var sprtB = uiBoxConfiguration.SpritesB[i];
+                        //sprtB.x0 = (short)x;
+                        //sprtB.y0 = (short)y;
 
-                        do
-                        {
-                            sprt.x0 = (short)x;
-                            sprt.y0 = (short)y;
+                        x += 8;
+                        i++;
+                    } while (x < uiBoxConfiguration.Width * 8 + uiBoxConfiguration.X);
+                }
 
-                            sprtB.x0 = (short)x;
-                            sprtB.y0 = (short)y;
+                y += 8;
+                result = 0;
 
-                            x += 8;
-                            i++;
-                        } while (x < textTilesConfiguration.Width * 8 + textTilesConfiguration.X);
-                    }
-
-                    y += 8;
-                    result = 0;
-
-                } while (y < textTilesConfiguration.Height * 8 + textTilesConfiguration.Y);
-            }
+            } while (y < uiBoxConfiguration.Height * 8 + uiBoxConfiguration.Y);
         }
 
         return result;

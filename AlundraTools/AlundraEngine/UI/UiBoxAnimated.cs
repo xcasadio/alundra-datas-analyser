@@ -1,5 +1,7 @@
 ﻿using AlundraEngine.Gameplay;
 using AlundraEngine.Graphics;
+using static System.Windows.Forms.AxHost;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace AlundraEngine.UI;
 
@@ -20,6 +22,11 @@ public class UIBoxConfiguration
     public short Height;
     public SPRT[] SpritesA;
     public SPRT[] SpritesB;
+
+    public override string ToString()
+    {
+        return $"x:{X} y:{Y} w:{Width}  h:{Height}";
+    }
 }
 
 public class TextToDisplay
@@ -40,6 +47,6 @@ public class TextToDisplay
 
     public override string ToString()
     {
-        return $"{tick} {speed}  {mode}  {x}  {y}  {startX}  {startY}  {originX}  {originY}";
+        return $"t:{tick} s:{speed} m:{mode} x:{x} y:{y} sx:{startX} sy:{startY} ox:{originX} oy:{originY}";
     }
 }

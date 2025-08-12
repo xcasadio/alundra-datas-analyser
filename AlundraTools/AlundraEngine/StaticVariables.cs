@@ -41,21 +41,15 @@ public static class StaticVariables
     public const string DATAS_BIN = "DATA\\DATAS.BIN";
 
     //800a82c8
-    public static readonly byte[] g_inventoryCursorAnimSpriteX = new byte[16]
-    {
-        0x00, 0x00, 0x00, 0x00,
-        0xFF, 0xFF, 0xFF, 0xFF,
-        0xFE, 0xFF, 0xFF, 0xFF,
-        0xFE, 0xFF, 0xFF, 0xFF
-    };
+    public static readonly short[] g_inventoryCursorAnimSpriteX =
+    [
+        0x0000, 0x0000, -1, -1, -2, -1, -2, -1
+    ];
     //800a82d8
-    public static readonly byte[] g_inventoryCursorAnimSpriteY = new byte[16]
-    {
-        0x00, 0x00, 0x00, 0x00,
-        0x01, 0x00, 0x00, 0x00,
-        0x02, 0x00, 0x00, 0x00,
-        0x02, 0x00, 0x00, 0x00
-    };
+    public static readonly short[] g_inventoryCursorAnimSpriteY =
+    [
+        0x0000, 0x0000, 0x0001, 0x0000, 0x0002, 0x0000, 0x0002, 0x0000
+    ];
     //80098694
     public static string[] g_warpNames = ["0-FADE", "1-RAPID", "2-WHITE", "3-SCROLL", "4-DREAM", "5-WARP", "6-GATE", "7-NONE"];
     //800228a4
@@ -948,8 +942,8 @@ public static class StaticVariables
         0x00, 0x00, 0x00, 0x00
     ];
     //800a4ffc
-    public static readonly SPRT[] g_font1_A = new SPRT[]
-    {
+    public static readonly SPRT[] g_font1_A =
+    [
         new SPRT
         {
             tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0x40, y0 = (short)0x90, u0 = 0xE0,
@@ -1230,11 +1224,11 @@ public static class StaticVariables
             tag = 0x0, r0 = 0x0, g0 = 0x0, b0 = 0x0, code = 0x0, x0 = (short)0xA8, y0 = (short)0xA8, u0 = 0xD8,
             v0 = 0x20, clut = 0x0, w = (short)0x8, h = (short)0x8
         }
-    };
+    ];
     //800a545c
-    public static readonly SPRT[] g_font1_B = new SPRT[]
-{
-    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x40, y0 = (short)0x90, u0 = 0xE0, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
+    public static readonly SPRT[] g_font1_B =
+    [
+        new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x40, y0 = (short)0x90, u0 = 0xE0, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
     new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x48, y0 = (short)0x90, u0 = 0xE8, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
     new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x50, y0 = (short)0x90, u0 = 0xF0, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
     new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x58, y0 = (short)0x90, u0 = 0x78, v0 = 0x00, clut = 0, w = (short)0x08, h = (short)0x08 },
@@ -1289,8 +1283,8 @@ public static class StaticVariables
     new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x90, y0 = (short)0xA8, u0 = 0xB0, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
     new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x98, y0 = (short)0xA8, u0 = 0xC8, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
     new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0xA0, y0 = (short)0xA8, u0 = 0xD0, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
-    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0xA8, y0 = (short)0xA8, u0 = 0xD8, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 },
-};
+    new SPRT { tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0xA8, y0 = (short)0xA8, u0 = 0xD8, v0 = 0x20, clut = 0, w = (short)0x08, h = (short)0x08 }
+    ];
     // 800A58BC
     public static UIBoxConfiguration g_textTilesConfiguration = new UIBoxConfiguration
     {
@@ -1824,8 +1818,8 @@ public static class StaticVariables
         SpritesB = g_dialogMessageBackgroundSpritesB,
     };
     //800b44f8
-    public static readonly SPRT[] SPRT_ARRAY_800b44f8 = new SPRT[]
-    {
+    public static readonly SPRT[] SPRT_ARRAY_800b44f8 =
+    [
         new SPRT { tag=0, r0=0, g0=0, b0=0, code=0, x0=0x0008, y0=0x0010, u0=0xB0, v0=0x48, clut=0x0003, w=0x0008, h=0x0008 },
         new SPRT { tag=0, r0=0, g0=0, b0=0, code=0, x0=0x0010, y0=0x0010, u0=0xB8, v0=0x48, clut=0x0003, w=0x0008, h=0x0008 },
         new SPRT { tag=0, r0=0, g0=0, b0=0, code=0, x0=0x0018, y0=0x0010, u0=0xC0, v0=0x48, clut=0x0003, w=0x0008, h=0x0008 },
@@ -1951,12 +1945,12 @@ public static class StaticVariables
         new SPRT { tag=0, r0=0, g0=0, b0=0, code=0, x0=0x0090, y0=0x0038, u0=0xD8, v0=0x80, clut=0x0003, w=0x0008, h=0x0008 }, // 122
         new SPRT { tag=0, r0=0, g0=0, b0=0, code=0, x0=0x0098, y0=0x0038, u0=0xE0, v0=0x80, clut=0x0003, w=0x0008, h=0x0008 }, // 123
         new SPRT { tag=0, r0=0, g0=0, b0=0, code=0, x0=0x00A0, y0=0x0038, u0=0xE8, v0=0x80, clut=0x0003, w=0x0008, h=0x0008 }, // 124
-        new SPRT { tag=0, r0=0, g0=0, b0=0, code=0, x0=0x00A8, y0=0x0038, u0=0xF8, v0=0x80, clut=0x0003, w=0x0008, h=0x0008 }, // 125
-    };
+        new SPRT { tag=0, r0=0, g0=0, b0=0, code=0, x0=0x00A8, y0=0x0038, u0=0xF8, v0=0x80, clut=0x0003, w=0x0008, h=0x0008 } // 125
+    ];
     //800b4ed0
-    public static readonly SPRT[] SPRT_ARRAY_800b4ed0 = new SPRT[]
-        {
-    new SPRT { tag = 0u, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x08, y0 = 0x10, u0 = 0xB0, v0 = 0x48, clut = 0x0003, w = 0x08, h = 0x08 }, // 0
+    public static readonly SPRT[] SPRT_ARRAY_800b4ed0 =
+    [
+        new SPRT { tag = 0u, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x08, y0 = 0x10, u0 = 0xB0, v0 = 0x48, clut = 0x0003, w = 0x08, h = 0x08 }, // 0
     new SPRT { tag = 0u, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x10, y0 = 0x10, u0 = 0xB8, v0 = 0x48, clut = 0x0003, w = 0x08, h = 0x08 }, // 1
     new SPRT { tag = 0u, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x18, y0 = 0x10, u0 = 0xC0, v0 = 0x48, clut = 0x0003, w = 0x08, h = 0x08 }, // 2
     new SPRT { tag = 0u, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x20, y0 = 0x10, u0 = 0xC8, v0 = 0x48, clut = 0x0003, w = 0x08, h = 0x08 }, // 3
@@ -2081,12 +2075,12 @@ public static class StaticVariables
     new SPRT { tag = 0u, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x90, y0 = 0x38, u0 = 0xB8, v0 = 0x80, clut = 0x0003, w = 0x08, h = 0x08 }, // 122
     new SPRT { tag = 0u, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x98, y0 = 0x38, u0 = 0xC0, v0 = 0x80, clut = 0x0003, w = 0x08, h = 0x08 }, // 123
     new SPRT { tag = 0u, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0xA0, y0 = 0x38, u0 = 0xC8, v0 = 0x80, clut = 0x0003, w = 0x08, h = 0x08 }, // 124
-    new SPRT { tag = 0u, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0xA8, y0 = 0x38, u0 = 0xF8, v0 = 0x80, clut = 0x0003, w = 0x08, h = 0x08 }, // 125
+    new SPRT { tag = 0u, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0xA8, y0 = 0x38, u0 = 0xF8, v0 = 0x80, clut = 0x0003, w = 0x08, h = 0x08 } // 125
 
-        };
+    ];
     //800b58b8
-    public static readonly SPRT[] SPRT_ARRAY_800b58b8 = new SPRT[]
-    {
+    public static readonly SPRT[] SPRT_ARRAY_800b58b8 =
+    [
         new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x0008, y0=0x0040, u0=0xB0, v0=0x48, clut=0x0003, w=0x0008, h=0x0008 },
         new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x0010, y0=0x0040, u0=0xB8, v0=0x48, clut=0x0003, w=0x0008, h=0x0008 },
         new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x0018, y0=0x0040, u0=0xC0, v0=0x48, clut=0x0003, w=0x0008, h=0x0008 },
@@ -2359,11 +2353,11 @@ public static class StaticVariables
         new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x0090, y0=0x00A0, u0=0xC8, v0=0x80, clut=0x0003, w=0x0008, h=0x0008 },
         new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x0098, y0=0x00A0, u0=0xD0, v0=0x80, clut=0x0003, w=0x0008, h=0x0008 },
         new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x00A0, y0=0x00A0, u0=0xD8, v0=0x80, clut=0x0003, w=0x0008, h=0x0008 },
-        new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x00A8, y0=0x00A0, u0=0xF8, v0=0x80, clut=0x0003, w=0x0008, h=0x0008 },
-    };
+        new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x00A8, y0=0x00A0, u0=0xF8, v0=0x80, clut=0x0003, w=0x0008, h=0x0008 }
+    ];
     //800b6e0c
-    public static readonly SPRT[] SPRT_ARRAY_800b6e0c = new SPRT[]
-    {
+    public static readonly SPRT[] SPRT_ARRAY_800b6e0c =
+    [
         new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x0008, y0 = 0x0040, u0 = (byte)0xB0, v0 = (byte)0x48, clut = (ushort)0x0003, w = unchecked((short)0x0008), h = unchecked((short)0x0008) },
         new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x0010, y0 = 0x0040, u0 = (byte)0xB8, v0 = (byte)0x48, clut = (ushort)0x0003, w = unchecked((short)0x0008), h = unchecked((short)0x0008) },
         new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x0018, y0 = 0x0040, u0 = (byte)0xC0, v0 = (byte)0x48, clut = (ushort)0x0003, w = unchecked((short)0x0008), h = unchecked((short)0x0008) },
@@ -2636,13 +2630,13 @@ public static class StaticVariables
         new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x0090, y0 = 0x00A0, u0 = (byte)0xC8, v0 = (byte)0x80, clut = (ushort)0x0003, w = unchecked((short)0x0008), h = unchecked((short)0x0008) },
         new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x0098, y0 = 0x00A0, u0 = (byte)0xD0, v0 = (byte)0x80, clut = (ushort)0x0003, w = unchecked((short)0x0008), h = unchecked((short)0x0008) },
         new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00A0, y0 = 0x00A0, u0 = (byte)0xD8, v0 = (byte)0x80, clut = (ushort)0x0003, w = unchecked((short)0x0008), h = unchecked((short)0x0008) },
-        new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00A8, y0 = 0x00A0, u0 = (byte)0xF8, v0 = (byte)0x80, clut = (ushort)0x0003, w = unchecked((short)0x0008), h = unchecked((short)0x0008) },
+        new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00A8, y0 = 0x00A0, u0 = (byte)0xF8, v0 = (byte)0x80, clut = (ushort)0x0003, w = unchecked((short)0x0008), h = unchecked((short)0x0008) }
 
-    };
+    ];
     //800b8ec0
-    public static readonly SPRT[] SPRT_ARRAY_800b8ec0 = new SPRT[72]
-{
-    new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B0, y0 = 0x0040, u0 = 0xE0, v0 = 0x00, clut = 0x0000, w = 0x0008, h = 0x0008 },
+    public static readonly SPRT[] SPRT_ARRAY_800b8ec0 =
+    [
+        new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B0, y0 = 0x0040, u0 = 0xE0, v0 = 0x00, clut = 0x0000, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B8, y0 = 0x0040, u0 = 0xE8, v0 = 0x00, clut = 0x0000, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00C0, y0 = 0x0040, u0 = 0xF0, v0 = 0x00, clut = 0x0000, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00C8, y0 = 0x0040, u0 = 0x78, v0 = 0x00, clut = 0x0000, w = 0x0008, h = 0x0008 },
@@ -2714,11 +2708,11 @@ public static class StaticVariables
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x0128, y0 = 0x0058, u0 = 0xC8, v0 = 0x20, clut = 0x0000, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x0130, y0 = 0x0058, u0 = 0xD0, v0 = 0x20, clut = 0x0000, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x0138, y0 = 0x0058, u0 = 0xD8, v0 = 0x20, clut = 0x0000, w = 0x0008, h = 0x0008 }
-};
+    ];
     //800b9460
-    public static readonly SPRT[] SPRT_ARRAY_800b9460 = new SPRT[72]
-{
-    new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B0, y0 = 0x0040, u0 = 0xE0, v0 = 0x00, clut = 0x0000, w = 0x0008, h = 0x0008 },
+    public static readonly SPRT[] SPRT_ARRAY_800b9460 =
+    [
+        new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B0, y0 = 0x0040, u0 = 0xE0, v0 = 0x00, clut = 0x0000, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B8, y0 = 0x0040, u0 = 0xE8, v0 = 0x00, clut = 0x0000, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00C0, y0 = 0x0040, u0 = 0xF0, v0 = 0x00, clut = 0x0000, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00C8, y0 = 0x0040, u0 = 0x78, v0 = 0x00, clut = 0x0000, w = 0x0008, h = 0x0008 },
@@ -2790,11 +2784,11 @@ public static class StaticVariables
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x0128, y0 = 0x0058, u0 = 0xC8, v0 = 0x20, clut = 0x0000, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x0130, y0 = 0x0058, u0 = 0xD0, v0 = 0x20, clut = 0x0000, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x0138, y0 = 0x0058, u0 = 0xD8, v0 = 0x20, clut = 0x0000, w = 0x0008, h = 0x0008 }
-};
+    ];
     //800b9a20
-    public static readonly SPRT[] SPRT_ARRAY_800b9a20 = new SPRT[27]
-{
-    new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B0, y0 = 0x0060, u0 = 0x38, v0 = 0x70, clut = 0x0006, w = 0x0008, h = 0x0008 },
+    public static readonly SPRT[] SPRT_ARRAY_800b9a20 =
+    [
+        new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B0, y0 = 0x0060, u0 = 0x38, v0 = 0x70, clut = 0x0006, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B8, y0 = 0x0060, u0 = 0x40, v0 = 0x70, clut = 0x0006, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00C0, y0 = 0x0060, u0 = 0x68, v0 = 0x70, clut = 0x0005, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B0, y0 = 0x0068, u0 = 0x38, v0 = 0x78, clut = 0x0006, w = 0x0008, h = 0x0008 },
@@ -2821,11 +2815,11 @@ public static class StaticVariables
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B0, y0 = 0x00A0, u0 = 0x48, v0 = 0x80, clut = 0x0006, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B8, y0 = 0x00A0, u0 = 0x50, v0 = 0x80, clut = 0x0006, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00C0, y0 = 0x00A0, u0 = 0x68, v0 = 0x80, clut = 0x0005, w = 0x0008, h = 0x0008 }
-};
+    ];
     //800b9c3c
-    public static readonly SPRT[] SPRT_ARRAY_800b9c3c = new SPRT[27]
-{
-    new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B0, y0 = 0x0060, u0 = 0x38, v0 = 0x70, clut = 0x0006, w = 0x0008, h = 0x0008 },
+    public static readonly SPRT[] SPRT_ARRAY_800b9c3c =
+    [
+        new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B0, y0 = 0x0060, u0 = 0x38, v0 = 0x70, clut = 0x0006, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B8, y0 = 0x0060, u0 = 0x40, v0 = 0x70, clut = 0x0006, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00C0, y0 = 0x0060, u0 = 0x68, v0 = 0x70, clut = 0x0005, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B0, y0 = 0x0068, u0 = 0x38, v0 = 0x78, clut = 0x0006, w = 0x0008, h = 0x0008 },
@@ -2852,7 +2846,7 @@ public static class StaticVariables
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B0, y0 = 0x00A0, u0 = 0x48, v0 = 0x80, clut = 0x0006, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B8, y0 = 0x00A0, u0 = 0x50, v0 = 0x80, clut = 0x0006, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00C0, y0 = 0x00A0, u0 = 0x68, v0 = 0x80, clut = 0x0005, w = 0x0008, h = 0x0008 }
-};
+    ];
     // 800993C4
     public static int[] g_fontCharWidthTable =
     [
@@ -2940,8 +2934,8 @@ public static class StaticVariables
     // 800C400C
     public static string?[] g_entitySpriteNamesTable = new string?[512];
     //800b8370
-    public static readonly SPRT[] SPRT_ARRAY_800b8370 = new SPRT[72]
-    {
+    public static readonly SPRT[] SPRT_ARRAY_800b8370 =
+    [
         // [0]
         new SPRT
         {
@@ -3373,13 +3367,13 @@ public static class StaticVariables
         {
             tag = 0UL, r0 = 0, g0 = 0, b0 = 0, code = 0, x0 = (short)0x0138, y0 = (short)0x0028, u0 = (byte)0xD8,
             v0 = (byte)0x20, clut = 0, w = (short)0x0008, h = (short)0x0008
-        },
-    };
+        }
+    ];
     //800b8910
     public static readonly SPRT[] SPRT_ARRAY_800b8910 = (SPRT[])SPRT_ARRAY_800b8370.Clone();
     //8009cfd8
-    public static readonly byte[] BYTE_ARRAY_8009cfd8 = new byte[]
-    {
+    public static readonly byte[] BYTE_ARRAY_8009cfd8 =
+    [
         0x00, 0x28, 0x05, 0x00,
         0x08, 0x00, 0x08, 0x00,
         0x00, 0x00, 0x00, 0x00,
@@ -3426,11 +3420,11 @@ public static class StaticVariables
         0x00, 0x00, 0x00, 0x00,
         0x48, 0x00, 0x00, 0x00,
         0x48, 0x28
-    };
+    ];
 
     // 800a58d8
-    public static readonly byte[] g_dialogCursorTextureUV = new byte[]
-    {
+    public static readonly byte[] g_dialogCursorTextureUV =
+    [
         0xB0, 0x38, 0x05, 0x00,
         0x08, 0x00, 0x08, 0x00,
         0x00, 0x00, 0x00, 0x00,
@@ -3465,7 +3459,7 @@ public static class StaticVariables
         0x08, 0x00, 0x08, 0x00,
         0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00
-    };
+    ];
 
 
     public static void Initialize(GameEngine gameEngine)
@@ -4228,12 +4222,12 @@ public static class StaticVariables
     public static short DAT_800b4314; // 800B4314
     public static byte PTR_SprtGridDescriptor_800b44b8; // 800B44B8
     // 800B58A8
-    public static UIBoxConfiguration TextTilesConfiguration_800b58a8 = new UIBoxConfiguration
+    public static UIBoxConfiguration g_UiBoxesInventory = new UIBoxConfiguration
     {
         X = 0x8, Y = 0x10, Width = 0x15, Height = 0x6, SpritesA = SPRT_ARRAY_800b44f8, SpritesB = SPRT_ARRAY_800b4ed0
     };
     // 800B8360
-    public static UIBoxConfiguration TextTilesConfiguration_800b8360 = new UIBoxConfiguration
+    public static UIBoxConfiguration UIBoxConfiguration_800b8360 = new UIBoxConfiguration
     {
         X = 0x8, Y = 0x40, Width = 0x15, Height = 0xD, SpritesA = SPRT_ARRAY_800b58b8, SpritesB = SPRT_ARRAY_800b6e0c
 
@@ -4249,7 +4243,7 @@ public static class StaticVariables
         SpritesB = SPRT_ARRAY_800b8910
     };
     // 800B9A00
-    public static UIBoxConfiguration TextTilesConfiguration_800b9a00 = new UIBoxConfiguration
+    public static UIBoxConfiguration UIBoxConfiguration_800b9a00 = new UIBoxConfiguration
     {
         X = 0xB0,
         Y = 0x40,
@@ -4259,7 +4253,7 @@ public static class StaticVariables
         SpritesB = SPRT_ARRAY_800b9460
     };
     // 800B9A10
-    public static UIBoxConfiguration TextTilesConfiguration_800b9a10 = new UIBoxConfiguration
+    public static UIBoxConfiguration UIBoxConfiguration_800b9a10 = new UIBoxConfiguration
     {
         X = 0xF0,
         Y = 0x70,
@@ -4269,7 +4263,7 @@ public static class StaticVariables
         SpritesB = null
     };
     // 800B9E58
-    public static UIBoxConfiguration TextTilesConfiguration_800b9e58 = new UIBoxConfiguration
+    public static UIBoxConfiguration UIBoxConfiguration_800b9e58 = new UIBoxConfiguration
     {
         X = 0xB0,
         Y = 0x60,
@@ -4280,35 +4274,35 @@ public static class StaticVariables
     };
     public static byte PTR_GetCurrentTile_Zone1_800b9e68; // 800B9E68
     //800b9ec8
-    public static readonly uint[] UINT_ARRAY_800b9ec8 = new uint[]
-    {
+    public static readonly uint[] UINT_ARRAY_800b9ec8 =
+    [
         0xFFFFFFFFu, 0xFFFFFFFFu, 0xFFFFFFFFu, 0xFFFFFFFFu, // [0..3]
         0xFFFFFFFFu, 0x00000007u, 0x00000024u, 0x00000029u, // [4..7]
         0x00000025u, 0x00000026u, 0x00000027u, 0xFFFFFFFFu, // [8..11]
         0xFFFFFFFFu, 0xFFFFFFFFu, 0xFFFFFFFFu, 0xFFFFFFFFu, // [12..15]
         0x00000020u, 0x00000028u, 0x00000036u, 0x0000003Bu, // [16..19]
         0x0000001Fu, 0xFFFFFFFFu, 0xFFFFFFFFu, 0xFFFFFFFFu  // [20..23]
-    };
+    ];
     //800b9f28
-    public static readonly uint[] UINT_ARRAY_800b9f28 = new uint[]
-    {
+    public static readonly uint[] g_uiBoxesInventoryAnimationOffsetX =
+    [
         0x08u, 0x20u, 0x38u, 0x50u,
         0x68u, 0x80u, 0x08u, 0x20u, 
         0x38u, 0x50u, 0x68u, 0x80u, 
         0x08u, 0x20u, 0x38u, 0x50u, 
         0x68u, 0x80u, 0x08u, 0x20u, 
-        0x38u, 0x50u, 0x68u, 0x80u  
-    };
+        0x38u, 0x50u, 0x68u, 0x80u
+    ];
     //800b9f88
-    public static readonly uint[] UINT_ARRAY_800b9f88 = new uint[]
-    {
+    public static readonly uint[] g_uiBoxesInventoryAnimationOffsetY =
+    [
         0x08, 0x08, 0x08, 0x08,
         0x08, 0x08, 0x38, 0x38,
         0x38, 0x38, 0x38, 0x38,
         0x54, 0x54, 0x54, 0x54,
         0x54, 0x54, 0x70, 0x70,
         0x70, 0x70, 0x70, 0x70
-    };
+    ];
     public static byte PTR_IsMapUnlocked_800b9e7c; // 800B9E7C
     public static short DAT_800b9f40; // 800B9F40
     public static short DAT_800b9fa0; // 800B9FA0

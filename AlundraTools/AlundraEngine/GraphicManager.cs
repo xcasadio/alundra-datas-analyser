@@ -928,10 +928,9 @@ public class GraphicManager
                     //SetSprt(spritePtr);
                     //SetSemiTrans(spritePtr, 0);
                     //SetShadeTex(spritePtr, 1);
-                    clut = StaticVariables.g_clutTable[8 - i];
                     sprite.x0 = textCoordDstX;
                     sprite.y0 = y;
-                    sprite.clut = clut;
+                    sprite.clut = (ushort)(8 - i); //StaticVariables.g_clutTable[8 - i]
 
                     var generateFontBitmapTim = _gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
                     _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, generateFontBitmapTim);
@@ -970,8 +969,7 @@ public class GraphicManager
             sprite.h = 0;
             sprite.u0 = StaticVariables.g_dialogCursorTextureUV[0];
             sprite.v0 = StaticVariables.g_dialogCursorTextureUV[1];
-            var clut = StaticVariables.g_clutTable[8];
-            sprite.clut = clut;
+            sprite.clut = 8;//StaticVariables.g_clutTable[8];
 
             //SetSprt(sprite);
             //SetSemiTrans(sprite, 0);
@@ -1028,8 +1026,8 @@ public class GraphicManager
                             //SetShadeTex(sprites[index], 1);
 
                             var sprite = sprites[index];
-                            var clut = StaticVariables.g_clutTable[sprite.clut];
-                            sprite.clut = clut;
+                            //var clut = StaticVariables.g_clutTable[sprite.clut];
+                            //sprite.clut = clut;
 
                             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
                             _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);

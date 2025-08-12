@@ -561,7 +561,7 @@ public class GameInitializer
                             //SetSprt(sprite);
                             //SetSemiTrans(sprite, 0);
                             //SetShadeTex(sprite, 1);
-                            sprite.clut = StaticVariables.g_clutTable[0];
+                            sprite.clut = 0; //StaticVariables.g_clutTable[0];
 
                             //TODO cache images with u and v coordinates
                             //_gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
