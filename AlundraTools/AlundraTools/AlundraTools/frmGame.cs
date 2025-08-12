@@ -12,7 +12,7 @@ namespace AlundraTools.AlundraTools;
 
 public partial class FrmGame : Form
 {
-    private readonly GameEngine _engine;
+    private readonly GameEngine _gameEngine;
     private Timer _gameEngineTimer;
     private Timer _refreshUiTimer;
     private readonly Bitmap _backBuffer = new(StaticVariables.ScreenWidth, StaticVariables.ScreenHeight);
@@ -248,7 +248,7 @@ public partial class FrmGame : Form
         Load += FrmGame_Load;
         FormClosing += FrmGame_FormClosing;
 
-        _engine = new GameEngine(datasBin, balanceBin, soundBin, etcResR, font3);
+        _gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcResR, font3);
 
         _graphics = Graphics.FromImage(_backBuffer);
         _graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
@@ -263,7 +263,7 @@ public partial class FrmGame : Form
 
     private void FrmGame_Load(object? sender, EventArgs e)
     {
-        _engine.InitializeEngine();
+        _gameEngine.InitializeEngine();
         InitializeUI();
 
         _gameEngineTimer = new Timer();
@@ -279,14 +279,14 @@ public partial class FrmGame : Form
 
     private void InitializeUI()
     {
-        for (int i = 0; i < StaticVariables.g_mapFlags.Length; i++)
+        for (int i = 0; i < _gameEngine.StaticVariables.g_mapFlags.Length; i++)
         {
-            dataGridViewMapFlags.Rows.Add(i.ToString(), StaticVariables.g_mapFlags[i]);
+            dataGridViewMapFlags.Rows.Add(i.ToString(), _gameEngine.StaticVariables.g_mapFlags[i]);
         }
 
-        for (int i = 0; i < StaticVariables.g_globalFlags.Length; i++)
+        for (int i = 0; i < _gameEngine.StaticVariables.g_globalFlags.Length; i++)
         {
-            dataGridViewGlobalFlags.Rows.Add(i.ToString(), StaticVariables.g_globalFlags[i]);
+            dataGridViewGlobalFlags.Rows.Add(i.ToString(), _gameEngine.StaticVariables.g_globalFlags[i]);
         }
     }
 
@@ -303,7 +303,7 @@ public partial class FrmGame : Form
 
             _graphics.Clear(Color.Black);
 
-            _engine.MainLoop(_graphics);
+            _gameEngine.MainLoop(_graphics);
 
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             e.Graphics.Clear(Color.Black);
@@ -323,44 +323,44 @@ public partial class FrmGame : Form
     {
         SuspendLayout();
 
-        labelNumberOfEntity.Text = StaticVariables.g_numberOfEntity.ToString();
-        labelNumberOfActivatedEntity.Text = StaticVariables.g_activeEntityCount.ToString();
-        labelNumberOfCollideableEntity.Text = StaticVariables.g_collideableEntitiesCount.ToString();
-        labelNumberOfVisibleEntity.Text = StaticVariables.g_visibleEntityCount.ToString();
+        labelNumberOfEntity.Text = _gameEngine.StaticVariables.g_numberOfEntity.ToString();
+        labelNumberOfActivatedEntity.Text = _gameEngine.StaticVariables.g_activeEntityCount.ToString();
+        labelNumberOfCollideableEntity.Text = _gameEngine.StaticVariables.g_collideableEntitiesCount.ToString();
+        labelNumberOfVisibleEntity.Text = _gameEngine.StaticVariables.g_visibleEntityCount.ToString();
 
-        labelCameraPosition.Text = $"{StaticVariables.g_hudCurrentX} x {StaticVariables.g_hudCurrentY}";
-        labelCameraLookAt.Text = $"{StaticVariables.g_cameraLookAtX} x {StaticVariables.g_cameraLookAtY} x {StaticVariables.g_cameraLookAtZ}";
-        labelCameraOffset.Text = $"{StaticVariables.g_cameraOffsetX} x {StaticVariables.g_cameraOffsetY}";
-        labelCameraScrolling.Text = $"{StaticVariables.g_cameraScrollingX} x {StaticVariables.g_cameraScrollingY}";
+        labelCameraPosition.Text = $"{_gameEngine.StaticVariables.g_hudCurrentX} x {_gameEngine.StaticVariables.g_hudCurrentY}";
+        labelCameraLookAt.Text = $"{_gameEngine.StaticVariables.g_cameraLookAtX} x {_gameEngine.StaticVariables.g_cameraLookAtY} x {_gameEngine.StaticVariables.g_cameraLookAtZ}";
+        labelCameraOffset.Text = $"{_gameEngine.StaticVariables.g_cameraOffsetX} x {_gameEngine.StaticVariables.g_cameraOffsetY}";
+        labelCameraScrolling.Text = $"{_gameEngine.StaticVariables.g_cameraScrollingX} x {_gameEngine.StaticVariables.g_cameraScrollingY}";
 
-        labelMapId.Text = $"{StaticVariables.g_currentMap}";
-        labelMapSize.Text = $"{_engine.CurrentMap?.Map.Width} x {_engine.CurrentMap?.Map.Height}";
-        labelMapGravity.Text = $"{_engine.CurrentMap?.Info.Gravity}";
-        labelMapNumberOfEntity.Text = $"{_engine.CurrentMap?.SpriteInfo.Entities.Entities.Count(x => x != null)}";
+        labelMapId.Text = $"{_gameEngine.StaticVariables.g_currentMap}";
+        labelMapSize.Text = $"{_gameEngine.CurrentMap?.Map.Width} x {_gameEngine.CurrentMap?.Map.Height}";
+        labelMapGravity.Text = $"{_gameEngine.CurrentMap?.Info.Gravity}";
+        labelMapNumberOfEntity.Text = $"{_gameEngine.CurrentMap?.SpriteInfo.Entities.Entities.Count(x => x != null)}";
 
-        labelMapOffset.Text = $"{StaticVariables.g_mapOffsetX} x {StaticVariables.g_mapOffsetY}";
-        labelMapScreenPos.Text = $"{StaticVariables.g_mapScreenPosX} x {StaticVariables.g_mapScreenPosY}";
+        labelMapOffset.Text = $"{_gameEngine.StaticVariables.g_mapOffsetX} x {_gameEngine.StaticVariables.g_mapOffsetY}";
+        labelMapScreenPos.Text = $"{_gameEngine.StaticVariables.g_mapScreenPosX} x {_gameEngine.StaticVariables.g_mapScreenPosY}";
 
-        if (_lastMapId != StaticVariables.g_currentMap && _engine.CurrentMap != null)
+        if (_lastMapId != _gameEngine.StaticVariables.g_currentMap && _gameEngine.CurrentMap != null)
         {
-            _lastMapId = StaticVariables.g_currentMap;
+            _lastMapId = _gameEngine.StaticVariables.g_currentMap;
 
             listBoxEntities.Items.Clear();
-            for (int i = 0; i < StaticVariables.g_entitySlots.Length; i++)
+            for (int i = 0; i < _gameEngine.StaticVariables.g_entitySlots.Length; i++)
             {
-                var entity = StaticVariables.g_entitySlots[i];
+                var entity = _gameEngine.StaticVariables.g_entitySlots[i];
                 listBoxEntities.Items.Add($"entity #{i}");
             }
 
             listBoxEffects.Items.Clear();
-            for (int i = 0; i < StaticVariables.g_effectSlots.Length; i++)
+            for (int i = 0; i < _gameEngine.StaticVariables.g_effectSlots.Length; i++)
             {
-                var effect = StaticVariables.g_effectSlots[i];
+                var effect = _gameEngine.StaticVariables.g_effectSlots[i];
                 listBoxEffects.Items.Add($"effect #{i}");
             }
         }
 
-        if (_engine.ReplayManager.IsSaving)
+        if (_gameEngine.ReplayManager.IsSaving)
         {
             UpdateLabelFramesText();
         }
@@ -379,69 +379,69 @@ public partial class FrmGame : Form
 
     private void UpdateLabelFramesText()
     {
-        labelFrames.Text = $"Frame {_engine.ReplayManager.CurrentFrame}/{_engine.ReplayManager.FrameCount - 1}";
+        labelFrames.Text = $"Frame {_gameEngine.ReplayManager.CurrentFrame}/{_gameEngine.ReplayManager.FrameCount - 1}";
     }
 
     private void RefreshMapFlags()
     {
-        for (int i = 0; i < StaticVariables.g_mapFlags.Length; i++)
+        for (int i = 0; i < _gameEngine.StaticVariables.g_mapFlags.Length; i++)
         {
             var cell = dataGridViewMapFlags.Rows[i].Cells[1];
 
             if (!(dataGridViewMapFlags.CurrentCell == cell && dataGridViewMapFlags.IsCurrentCellInEditMode)
-                && cell.Value != null && (uint)cell.Value != StaticVariables.g_mapFlags[i])
+                && cell.Value != null && (uint)cell.Value != _gameEngine.StaticVariables.g_mapFlags[i])
             {
-                cell.Value = StaticVariables.g_mapFlags[i];
+                cell.Value = _gameEngine.StaticVariables.g_mapFlags[i];
             }
         }
     }
 
     private void RefreshGameFlags()
     {
-        for (int i = 0; i < StaticVariables.g_globalFlags.Length; i++)
+        for (int i = 0; i < _gameEngine.StaticVariables.g_globalFlags.Length; i++)
         {
             var cell = dataGridViewGlobalFlags.Rows[i].Cells[1];
 
             if (!(dataGridViewGlobalFlags.CurrentCell == cell && dataGridViewGlobalFlags.IsCurrentCellInEditMode)
-                && cell.Value != null && (uint)cell.Value != StaticVariables.g_globalFlags[i])
+                && cell.Value != null && (uint)cell.Value != _gameEngine.StaticVariables.g_globalFlags[i])
             {
-                cell.Value = StaticVariables.g_globalFlags[i];
+                cell.Value = _gameEngine.StaticVariables.g_globalFlags[i];
             }
         }
     }
 
     private void RefreshDialogControls()
     {
-        var dialogText = new string(StaticVariables.g_scriptBuffer);
+        var dialogText = new string(_gameEngine.StaticVariables.g_scriptBuffer);
         textBoxFullText.Text = dialogText;
-        textBoxTextInDialog.Text = dialogText.Substring(0, StaticVariables.g_textCursor);
+        textBoxTextInDialog.Text = dialogText.Substring(0, _gameEngine.StaticVariables.g_textCursor);
 
-        labelTextFlag.Text = StaticVariables.g_textFlags.ToString();
-        labelTextAutoAdvance.Text = StaticVariables.g_textAutoAdvanceFlag.ToString();
-        labelTextDelayReset.Text = StaticVariables.g_textDelayReset.ToString();
-        labelTextDelay.Text = StaticVariables.g_textDelay.ToString();
-        labelTextBufferX.Text = StaticVariables.g_textBufferX.ToString();
-        labelLineIndex.Text = StaticVariables.g_textLineIndex.ToString();
-        labelTextCursor.Text = StaticVariables.g_textCursor.ToString();
-        labelTextRenderStep.Text = StaticVariables.g_textRenderStep.ToString();
-        labelTextLinesWidth.Text = string.Join(',', StaticVariables.g_textLineWidth);
+        labelTextFlag.Text = _gameEngine.StaticVariables.g_textFlags.ToString();
+        labelTextAutoAdvance.Text = _gameEngine.StaticVariables.g_textAutoAdvanceFlag.ToString();
+        labelTextDelayReset.Text = _gameEngine.StaticVariables.g_textDelayReset.ToString();
+        labelTextDelay.Text = _gameEngine.StaticVariables.g_textDelay.ToString();
+        labelTextBufferX.Text = _gameEngine.StaticVariables.g_textBufferX.ToString();
+        labelLineIndex.Text = _gameEngine.StaticVariables.g_textLineIndex.ToString();
+        labelTextCursor.Text = _gameEngine.StaticVariables.g_textCursor.ToString();
+        labelTextRenderStep.Text = _gameEngine.StaticVariables.g_textRenderStep.ToString();
+        labelTextLinesWidth.Text = string.Join(',', _gameEngine.StaticVariables.g_textLineWidth);
     }
 
     private void RefreshHudControls()
     {
-        labelHudActivate.Text = StaticVariables.g_warpFlags_2.ToString();
-        labelHudDebug.Text = StaticVariables.g_textToDisplay + "-" +
-                             StaticVariables.g_textToDisplay2 + "-" +
-                             StaticVariables.g_textToDisplay3 + "-" +
-                             string.Join("-", StaticVariables.TextToDisplay_ARRAY_8017f920.Select(x => x.ToString()));
+        labelHudActivate.Text = _gameEngine.StaticVariables.g_warpFlags_2.ToString();
+        labelHudDebug.Text = _gameEngine.StaticVariables.g_textToDisplay + "-" +
+                             _gameEngine.StaticVariables.g_textToDisplay2 + "-" +
+                             _gameEngine.StaticVariables.g_textToDisplay3 + "-" +
+                             string.Join("-", _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920.Select(x => x.ToString()));
 
-        var poly = StaticVariables.g_spriteInventoryAlundraPotrait[0];
+        var poly = _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[0];
         textBoxHudPoly.Text = $"{poly.x0} {poly.y0} {poly.u0} {poly._2}\n";
-        var sprt = StaticVariables.g_cursorTextSprites[0];
+        var sprt = _gameEngine.StaticVariables.g_cursorTextSprites[0];
         textBoxHudPoly.Text += $"{sprt.x0} {sprt.y0} {sprt.w} {sprt.h} {sprt.u0} {sprt.v0}";
 
-        labelHudXY.Text = $"{StaticVariables.g_hudX >> 16} x {StaticVariables.g_hudY >> 16}";
-        labelHudDelta.Text = $"{StaticVariables.g_hudDeltaX >> 16} x {StaticVariables.g_hudDeltaY >> 16}";
+        labelHudXY.Text = $"{_gameEngine.StaticVariables.g_hudX >> 16} x {_gameEngine.StaticVariables.g_hudY >> 16}";
+        labelHudDelta.Text = $"{_gameEngine.StaticVariables.g_hudDeltaX >> 16} x {_gameEngine.StaticVariables.g_hudDeltaY >> 16}";
     }
 
     #region Pad
@@ -594,22 +594,22 @@ public partial class FrmGame : Form
             const int step = 10;
             if (joystickRightY > joystickThreshold)
             {
-                StaticVariables.g_cameraDebugOffsetY -= step;
+                _gameEngine.StaticVariables.g_cameraDebugOffsetY -= step;
             }
 
             if (joystickRightY < -joystickThreshold)
             {
-                StaticVariables.g_cameraDebugOffsetY += step;
+                _gameEngine.StaticVariables.g_cameraDebugOffsetY += step;
             }
 
             if (joystickRightX > joystickThreshold)
             {
-                StaticVariables.g_cameraDebugOffsetX += step;
+                _gameEngine.StaticVariables.g_cameraDebugOffsetX += step;
             }
 
             if (joystickRightX < -joystickThreshold)
             {
-                StaticVariables.g_cameraDebugOffsetX -= step;
+                _gameEngine.StaticVariables.g_cameraDebugOffsetX -= step;
             }
         }
     }
@@ -662,7 +662,7 @@ public partial class FrmGame : Form
 
     private void buttonPauseGame_Click(object sender, EventArgs e)
     {
-        if (StaticVariables.IsGamePaused)
+        if (_gameEngine.StaticVariables.IsGamePaused)
         {
             PlayGame();
         }
@@ -674,7 +674,7 @@ public partial class FrmGame : Form
 
     private void PauseGame()
     {
-        StaticVariables.IsGamePaused = true;
+        _gameEngine.StaticVariables.IsGamePaused = true;
         buttonPauseGame.Text = "Paused";
         buttonPauseGame.ForeColor = Color.DarkRed;
         buttonRunOneFrame.Enabled = true;
@@ -683,7 +683,7 @@ public partial class FrmGame : Form
 
     private void PlayGame()
     {
-        StaticVariables.IsGamePaused = false;
+        _gameEngine.StaticVariables.IsGamePaused = false;
         buttonPauseGame.Text = "Running";
         buttonPauseGame.ForeColor = Color.ForestGreen;
         buttonRunOneFrame.Enabled = false;
@@ -693,17 +693,17 @@ public partial class FrmGame : Form
     private void buttonNextFrame_Click(object sender, EventArgs e)
     {
         PauseGame();
-        StaticVariables.DoNextFrame = true;
+        _gameEngine.StaticVariables.DoNextFrame = true;
     }
 
     private void listBoxEntities_SelectedIndexChanged(object sender, EventArgs e)
     {
-        StaticVariables.EditorSelectEntityIndex = listBoxEntities.SelectedIndex;
+        _gameEngine.StaticVariables.EditorSelectEntityIndex = listBoxEntities.SelectedIndex;
 
-        if (StaticVariables.EditorSelectEntityIndex != -1 &&
-            StaticVariables.EditorSelectEntityIndex < StaticVariables.g_entitySlots.Length)
+        if (_gameEngine.StaticVariables.EditorSelectEntityIndex != -1 &&
+            _gameEngine.StaticVariables.EditorSelectEntityIndex < _gameEngine.StaticVariables.g_entitySlots.Length)
         {
-            var entity = StaticVariables.g_entitySlots[StaticVariables.EditorSelectEntityIndex];
+            var entity = _gameEngine.StaticVariables.g_entitySlots[_gameEngine.StaticVariables.EditorSelectEntityIndex];
             if (entity != null)
             {
                 propertyGridEntity.SelectedObject = new UniversalWrapper(entity, _entityCategories, _entityDescriptors);
@@ -714,12 +714,12 @@ public partial class FrmGame : Form
 
     private void listBoxEffects_SelectedIndexChanged(object sender, EventArgs e)
     {
-        StaticVariables.EditorSelectEffectIndex = listBoxEffects.SelectedIndex;
+        _gameEngine.StaticVariables.EditorSelectEffectIndex = listBoxEffects.SelectedIndex;
 
-        if (StaticVariables.EditorSelectEffectIndex != -1 &&
-            StaticVariables.EditorSelectEffectIndex < StaticVariables.g_effectSlots.Length)
+        if (_gameEngine.StaticVariables.EditorSelectEffectIndex != -1 &&
+            _gameEngine.StaticVariables.EditorSelectEffectIndex < _gameEngine.StaticVariables.g_effectSlots.Length)
         {
-            var effect = StaticVariables.g_effectSlots[StaticVariables.EditorSelectEffectIndex];
+            var effect = _gameEngine.StaticVariables.g_effectSlots[_gameEngine.StaticVariables.EditorSelectEffectIndex];
             if (effect != null)
             {
                 propertyGridEffect.SelectedObject = new UniversalWrapper(effect, _effectCategories, _effectDescriptors);
@@ -729,20 +729,20 @@ public partial class FrmGame : Form
 
     private void buttonSaveFrames_Click(object sender, EventArgs e)
     {
-        if (_engine.ReplayManager.IsSaving)
+        if (_gameEngine.ReplayManager.IsSaving)
         {
-            _engine.ReplayManager.StopSaving();
+            _gameEngine.ReplayManager.StopSaving();
             buttonSaveFrames.Text = "Start recording";
             buttonSaveFrames.ForeColor = Color.ForestGreen;
             hScrollBarFrames.Enabled = true;
         }
         else
         {
-            _engine.ReplayManager.StartSaving();
+            _gameEngine.ReplayManager.StartSaving();
             buttonSaveFrames.Text = "Stop recording";
             buttonSaveFrames.ForeColor = Color.DarkRed;
             hScrollBarFrames.Enabled = false;
-            _engine.ReplayManager.ApplyCurrentFrame = false;
+            _gameEngine.ReplayManager.ApplyCurrentFrame = false;
         }
 
         UpdateReplayMangerControls();
@@ -751,18 +751,18 @@ public partial class FrmGame : Form
     private void UpdateReplayMangerControls()
     {
         UpdateLabelFramesText();
-        hScrollBarFrames.Maximum = Math.Max(0, _engine.ReplayManager.FrameCount - 1);
+        hScrollBarFrames.Maximum = Math.Max(0, _gameEngine.ReplayManager.FrameCount - 1);
     }
 
     private void hScrollBarFrames_Scroll(object sender, ScrollEventArgs e)
     {
-        if (_engine.ReplayManager.FrameCount == 0)
+        if (_gameEngine.ReplayManager.FrameCount == 0)
         {
             return;
         }
 
-        _engine.ReplayManager.ApplyCurrentFrame = true;
-        _engine.ReplayManager.CurrentFrame = hScrollBarFrames.Value;
+        _gameEngine.ReplayManager.ApplyCurrentFrame = true;
+        _gameEngine.ReplayManager.CurrentFrame = hScrollBarFrames.Value;
         UpdateLabelFramesText();
         listBoxEntities_SelectedIndexChanged(sender, e);
     }
@@ -779,7 +779,7 @@ public partial class FrmGame : Form
         if (folderBrowserDialog.ShowDialog(this) == DialogResult.OK)
         {
             PauseGame();
-            _engine.ReplayManager.LoadFromDump(folderBrowserDialog.SelectedPath);
+            _gameEngine.ReplayManager.LoadFromDump(folderBrowserDialog.SelectedPath, _gameEngine);
             UpdateReplayMangerControls();
         }
     }
@@ -811,7 +811,7 @@ public partial class FrmGame : Form
 
             content.AppendLine();
 
-            foreach (var frame in _engine.ReplayManager.Frames)
+            foreach (var frame in _gameEngine.ReplayManager.Frames)
             {
                 var entity = frame.Entities[8];
 
@@ -884,23 +884,23 @@ public partial class FrmGame : Form
 
     private void checkBoxDisplayEntityId_CheckedChanged(object sender, EventArgs e)
     {
-        StaticVariables.DisplayEntityId = checkBoxDisplayEntityId.Checked;
+        _gameEngine.StaticVariables.DisplayEntityId = checkBoxDisplayEntityId.Checked;
     }
 
 
     private void checkBoxDisplayEffectId_CheckedChanged(object sender, EventArgs e)
     {
-        StaticVariables.DisplayEffectId = checkBoxDisplayEffectId.Checked;
+        _gameEngine.StaticVariables.DisplayEffectId = checkBoxDisplayEffectId.Checked;
     }
 
     private void checkBoxTileXY_CheckedChanged(object sender, EventArgs e)
     {
-        StaticVariables.DisplayTileXY = checkBoxTileXY.Checked;
+        _gameEngine.StaticVariables.DisplayTileXY = checkBoxTileXY.Checked;
     }
 
     private void buttonCompareWithDump_Click(object sender, EventArgs e)
     {
-        if (_engine.ReplayManager.FrameCount > 0)
+        if (_gameEngine.ReplayManager.FrameCount > 0)
         {
             using var folderBrowserDialog = new FolderBrowserDialog
             {
@@ -918,8 +918,8 @@ public partial class FrmGame : Form
 
                 if (excelFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    var frames = ReplayManager.LoadDump(folderBrowserDialog.SelectedPath);
-                    CompareData(frames, excelFileDialog.FileName, _engine.ReplayManager.Frames);
+                    var frames = ReplayManager.LoadDump(folderBrowserDialog.SelectedPath, _gameEngine);
+                    CompareData(frames, excelFileDialog.FileName, _gameEngine.ReplayManager.Frames);
                 }
             }
         }
@@ -980,43 +980,43 @@ public partial class FrmGame : Form
 
     private void buttonControlAlundra_Click(object sender, EventArgs e)
     {
-        StaticVariables.g_playerControlFlags &= 0xfffffffb;
+        _gameEngine.StaticVariables.g_playerControlFlags &= 0xfffffffb;
     }
 
     private void numericUpDownHpMax_ValueChanged(object sender, EventArgs e)
     {
-        StaticVariables.g_initialPlayerStats.HpMax = (short)numericUpDownHpMax.Value;
+        _gameEngine.StaticVariables.g_initialPlayerStats.HpMax = (short)numericUpDownHpMax.Value;
         //g_playerStats ??
     }
 
     private void numericUpDownHp_ValueChanged(object sender, EventArgs e)
     {
-        StaticVariables.g_initialPlayerStats.HpMax = (short)numericUpDownHp.Value;
+        _gameEngine.StaticVariables.g_initialPlayerStats.HpMax = (short)numericUpDownHp.Value;
     }
 
     private void numericUpDownMpMax_ValueChanged(object sender, EventArgs e)
     {
-        StaticVariables.g_initialPlayerStats.MpMax = (short)numericUpDownMpMax.Value;
+        _gameEngine.StaticVariables.g_initialPlayerStats.MpMax = (short)numericUpDownMpMax.Value;
     }
 
     private void numericUpDownMp_ValueChanged(object sender, EventArgs e)
     {
-        StaticVariables.g_initialPlayerStats.Mp = (short)numericUpDownMp.Value;
+        _gameEngine.StaticVariables.g_initialPlayerStats.Mp = (short)numericUpDownMp.Value;
     }
 
     private void numericUpDownMoney_ValueChanged(object sender, EventArgs e)
     {
-        StaticVariables.g_initialPlayerStats.MoneyAmount = (short)numericUpDownMoney.Value;
+        _gameEngine.StaticVariables.g_initialPlayerStats.MoneyAmount = (short)numericUpDownMoney.Value;
     }
 
     private void numericUpDownFalcon1_ValueChanged(object sender, EventArgs e)
     {
-        StaticVariables.g_initialPlayerStats.Falcon = (short)numericUpDownFalcon1.Value;
+        _gameEngine.StaticVariables.g_initialPlayerStats.Falcon = (short)numericUpDownFalcon1.Value;
     }
 
     private void numericUpDownFalcon2_ValueChanged(object sender, EventArgs e)
     {
-        StaticVariables.g_initialPlayerStats.FalconTemp = (short)numericUpDownFalcon2.Value;
+        _gameEngine.StaticVariables.g_initialPlayerStats.FalconTemp = (short)numericUpDownFalcon2.Value;
     }
 
     private void comboBoxWeapon_SelectedIndexChanged(object sender, EventArgs e)
@@ -1025,7 +1025,7 @@ public partial class FrmGame : Form
         {
             var weaponName = comboBoxWeapon.SelectedItem as string;
             var weaponIndex = int.Parse(weaponName.Split("-")[0]);
-            StaticVariables.g_initialPlayerStats.WeaponId = (byte)weaponIndex;
+            _gameEngine.StaticVariables.g_initialPlayerStats.WeaponId = (byte)weaponIndex;
 
             //Ensure we have one weapon of specified type
             if (weaponIndex == 1) //sword
@@ -1034,28 +1034,28 @@ public partial class FrmGame : Form
             }
             else if (weaponIndex == 3) //chain
             {
-                StaticVariables.g_numberOfItems[9 * 2 + 1] = 1;
-                StaticVariables.g_numberOfItems[10 * 2 + 1] = 1;
-                //StaticVariables.g_numberOfItems[11 * 2 + 1] = 1;
-                //StaticVariables.g_numberOfItems[12 * 2 + 1] = 1;
+                _gameEngine.StaticVariables.g_numberOfItems[9 * 2 + 1] = 1;
+                _gameEngine.StaticVariables.g_numberOfItems[10 * 2 + 1] = 1;
+                //_gameEngine.StaticVariables.g_numberOfItems[11 * 2 + 1] = 1;
+                //_gameEngine.StaticVariables.g_numberOfItems[12 * 2 + 1] = 1;
             }
             else if (weaponIndex == 2) //bow
             {
-                StaticVariables.g_numberOfItems[5 * 2 + 1] = 1;
-                StaticVariables.g_numberOfItems[6 * 2 + 1] = 1;
+                _gameEngine.StaticVariables.g_numberOfItems[5 * 2 + 1] = 1;
+                _gameEngine.StaticVariables.g_numberOfItems[6 * 2 + 1] = 1;
             }
             else if (weaponIndex == 4) //ice
             {
-                StaticVariables.g_numberOfItems[14 * 2 + 1] = 1;
+                _gameEngine.StaticVariables.g_numberOfItems[14 * 2 + 1] = 1;
             }
             else if (weaponIndex == 5) //fire
             {
-                StaticVariables.g_numberOfItems[15 * 2 + 1] = 1;
-                //StaticVariables.g_numberOfItems[16 * 2 + 1] = 1;
+                _gameEngine.StaticVariables.g_numberOfItems[15 * 2 + 1] = 1;
+                //_gameEngine.StaticVariables.g_numberOfItems[16 * 2 + 1] = 1;
             }
             else if (weaponIndex == 6) //spirit wand
             {
-                StaticVariables.g_numberOfItems[7 * 2 + 1] = 1;
+                _gameEngine.StaticVariables.g_numberOfItems[7 * 2 + 1] = 1;
             }
         }
     }
@@ -1065,69 +1065,69 @@ public partial class FrmGame : Form
         var itemName = comboBoxItem.SelectedItem as string;
         var itemIndex = int.Parse(itemName.Split("-")[0]);
 
-        StaticVariables.g_initialPlayerStats.ItemId = (byte)(itemIndex + 1);
-        StaticVariables.g_numberOfItems[itemIndex * 2 + 1] = 1; // number of item
+        _gameEngine.StaticVariables.g_initialPlayerStats.ItemId = (byte)(itemIndex + 1);
+        _gameEngine.StaticVariables.g_numberOfItems[itemIndex * 2 + 1] = 1; // number of item
     }
 
     private void checkBoxUseDebugCamera_CheckedChanged(object sender, EventArgs e)
     {
-        StaticVariables.UseDebugCamera = checkBoxUseDebugCamera.Checked;
+        _gameEngine.StaticVariables.UseDebugCamera = checkBoxUseDebugCamera.Checked;
 
-        if (StaticVariables.UseDebugCamera == false)
+        if (_gameEngine.StaticVariables.UseDebugCamera == false)
         {
-            StaticVariables.g_cameraDebugOffsetX = 0;
-            StaticVariables.g_cameraDebugOffsetY = 0;
+            _gameEngine.StaticVariables.g_cameraDebugOffsetX = 0;
+            _gameEngine.StaticVariables.g_cameraDebugOffsetY = 0;
         }
     }
 
     private void buttonRestoreHpAndMp_Click(object sender, EventArgs e)
     {
-        _engine.PlayerManager.RestoreHpAndMpAndCreateEffect(StaticVariables.PlayerEntity);
+        _gameEngine.PlayerManager.RestoreHpAndMpAndCreateEffect(_gameEngine.StaticVariables.PlayerEntity);
     }
 
     private void buttonIncreaseMpMax_Click(object sender, EventArgs e)
     {
-        _engine.PlayerManager.IncreaseMpMaxAndCreateEffect(StaticVariables.PlayerEntity);
+        _gameEngine.PlayerManager.IncreaseMpMaxAndCreateEffect(_gameEngine.StaticVariables.PlayerEntity);
     }
 
     private void buttonRestoreMp_Click(object sender, EventArgs e)
     {
-        _engine.PlayerManager.RestoreMpAndCreateEffect(StaticVariables.PlayerEntity);
+        _gameEngine.PlayerManager.RestoreMpAndCreateEffect(_gameEngine.StaticVariables.PlayerEntity);
     }
 
     private void buttonIncreaseMp_Click(object sender, EventArgs e)
     {
-        _engine.PlayerManager.IncreaseMpAndCreateEffect(StaticVariables.PlayerEntity);
+        _gameEngine.PlayerManager.IncreaseMpAndCreateEffect(_gameEngine.StaticVariables.PlayerEntity);
     }
 
     private void buttonIncreaseHpMax_Click(object sender, EventArgs e)
     {
-        _engine.PlayerManager.IncreaseHpMaxAndCreateEffect(StaticVariables.PlayerEntity);
+        _gameEngine.PlayerManager.IncreaseHpMaxAndCreateEffect(_gameEngine.StaticVariables.PlayerEntity);
     }
 
     private void buttonRestoreHp_Click(object sender, EventArgs e)
     {
-        _engine.PlayerManager.RestoreHpAndCreateEffect(StaticVariables.PlayerEntity);
+        _gameEngine.PlayerManager.RestoreHpAndCreateEffect(_gameEngine.StaticVariables.PlayerEntity);
     }
 
     private void buttonIncreaseHp_Click(object sender, EventArgs e)
     {
-        _engine.PlayerManager.IncreaseHpAndCreateEffect(StaticVariables.PlayerEntity);
+        _gameEngine.PlayerManager.IncreaseHpAndCreateEffect(_gameEngine.StaticVariables.PlayerEntity);
     }
 
     private void buttonAddLowHp_Click(object sender, EventArgs e)
     {
-        _engine.PlayerManager.AddLowHpAndSpawnEffect(StaticVariables.PlayerEntity);
+        _gameEngine.PlayerManager.AddLowHpAndSpawnEffect(_gameEngine.StaticVariables.PlayerEntity);
     }
 
     private void buttonAddMediumHp_Click(object sender, EventArgs e)
     {
-        _engine.PlayerManager.AddMediumHpAndSpawnEffect(StaticVariables.PlayerEntity);
+        _gameEngine.PlayerManager.AddMediumHpAndSpawnEffect(_gameEngine.StaticVariables.PlayerEntity);
     }
 
     private void buttonAddHugeHp_Click(object sender, EventArgs e)
     {
-        _engine.PlayerManager.AddHugeHpAndSpawnEffect(StaticVariables.PlayerEntity);
+        _gameEngine.PlayerManager.AddHugeHpAndSpawnEffect(_gameEngine.StaticVariables.PlayerEntity);
     }
 
     private void comboBoxRandomItem_SelectedIndexChanged(object sender, EventArgs e)
@@ -1142,7 +1142,7 @@ public partial class FrmGame : Form
 
         for (int i = 0; i < 100; i++)
         {
-            StaticVariables.g_itemRandomTable[i] = itemId;
+            _gameEngine.StaticVariables.g_itemRandomTable[i] = itemId;
         }
     }
 
@@ -1160,11 +1160,11 @@ public partial class FrmGame : Form
         {
             ContentsItemId = itemId,
             ContentsGameFlag = 0,
-            PosX = StaticVariables.PlayerEntity.PosX + (24 << 16),
-            PosY = StaticVariables.PlayerEntity.PosY,
-            PosZ = StaticVariables.PlayerEntity.PosZ,
+            PosX = _gameEngine.StaticVariables.PlayerEntity.PosX + (24 << 16),
+            PosY = _gameEngine.StaticVariables.PlayerEntity.PosY,
+            PosZ = _gameEngine.StaticVariables.PlayerEntity.PosZ,
         };
 
-        _engine.SpawnEntityContents(entity);
+        _gameEngine.SpawnEntityContents(entity);
     }
 }

@@ -385,7 +385,7 @@ public class UiHandler
     {
         ZeroDialogRecord(ui);
         _gameEngine.DialogState = 0;
-        StaticVariables.g_playerControlFlags &= 0xffe7;//turn off bits 4 and 5
+        _gameEngine.StaticVariables.g_playerControlFlags &= 0xffe7;//turn off bits 4 and 5
     }
     public void ZeroDialogNameState(UiRecord ui)
     {
@@ -455,8 +455,8 @@ public class UiHandler
             _1072dc |= 8;
 
             {//near_end
-                StaticVariables.g_textRenderStep = 0;
-                StaticVariables.g_textLineStartX = 0;
+                _gameEngine.StaticVariables.g_textRenderStep = 0;
+                _gameEngine.StaticVariables.g_textLineStartX = 0;
                 _renderTextBuff = new byte[0x800];
 
                 if (_107214 == 2)
@@ -494,7 +494,7 @@ public class UiHandler
             }
         }
 
-        if ((_dialogSomething & 1) != 0 && (StaticVariables.g_padState1.ButtonsJustPressed & PadState.Square) != 0)
+        if ((_dialogSomething & 1) != 0 && (_gameEngine.StaticVariables.g_padState1.ButtonsJustPressed & PadState.Square) != 0)
         {
             doProcess = true;
         }
@@ -555,10 +555,10 @@ public class UiHandler
                     }
 
                     var wierdv = (_107210 + _107214 - (((_107210 + _107214) * 0x55555556) >> 32) * 3) * 8 + 0x120;
-                    RenderTextBitmap(val.ToString(), _renderTextBuff, 0x3c0, wierdv, StaticVariables.g_textLineStartX, 0, 0x100, 0x10);
+                    RenderTextBitmap(val.ToString(), _renderTextBuff, 0x3c0, wierdv, _gameEngine.StaticVariables.g_textLineStartX, 0, 0x100, 0x10);
 
                     var inf = UiHelper.FontCharInfos[(int)val];
-                    StaticVariables.g_textLineStartX += inf.Width;
+                    _gameEngine.StaticVariables.g_textLineStartX += inf.Width;
                     return;
                 case 'Y':
                     _dialogTextBufferPos++;
@@ -600,8 +600,8 @@ public class UiHandler
                 case 'N':
                     _dialogTextBufferPos++;
                 {//near_end
-                    StaticVariables.g_textRenderStep = 0;
-                    StaticVariables.g_textLineStartX = 0;
+                    _gameEngine.StaticVariables.g_textRenderStep = 0;
+                    _gameEngine.StaticVariables.g_textLineStartX = 0;
                     _renderTextBuff = new byte[0x800];
 
                     if (_107214 == 2)
@@ -631,27 +631,27 @@ public class UiHandler
                     _dialogTextBufferPos++;
                     return;
                 case 'B':
-                    StaticVariables.g_currentVoiceSfxId = -1;
+                    _gameEngine.StaticVariables.g_currentVoiceSfxId = -1;
                     _dialogTextBufferPos++;
                     continue;
                 case 'C':
-                    StaticVariables.g_currentVoiceSfxId = 0;
+                    _gameEngine.StaticVariables.g_currentVoiceSfxId = 0;
                     _dialogTextBufferPos++;
                     continue;
                 case 'D':
-                    StaticVariables.g_currentVoiceSfxId = 1;
+                    _gameEngine.StaticVariables.g_currentVoiceSfxId = 1;
                     _dialogTextBufferPos++;
                     continue;
                 case 'E':
-                    StaticVariables.g_currentVoiceSfxId = 2;
+                    _gameEngine.StaticVariables.g_currentVoiceSfxId = 2;
                     _dialogTextBufferPos++;
                     continue;
                 case 'F':
-                    StaticVariables.g_currentVoiceSfxId = 3;
+                    _gameEngine.StaticVariables.g_currentVoiceSfxId = 3;
                     _dialogTextBufferPos++;
                     continue;
                 case 'G':
-                    StaticVariables.g_currentVoiceSfxId = 4;
+                    _gameEngine.StaticVariables.g_currentVoiceSfxId = 4;
                     _dialogTextBufferPos++;
                     continue;
                 case 'M':
@@ -690,20 +690,20 @@ public class UiHandler
         var txt = _dialogTextBuffer[_dialogTextBufferPos++].ToString();
 
         var wierdval = (_107210 + _107214 - (((_107210 + _107214) * 0x55555556) >> 32) * 3) * 8 + 0x120;
-        RenderTextBitmap(txt, _renderTextBuff, 0x3c0, wierdval, StaticVariables.g_textLineStartX, 0, 0x100, 0x10);
+        RenderTextBitmap(txt, _renderTextBuff, 0x3c0, wierdval, _gameEngine.StaticVariables.g_textLineStartX, 0, 0x100, 0x10);
 
         var info = UiHelper.FontCharInfos[(int)txt[0]];
-        StaticVariables.g_textLineStartX += info.Width;
+        _gameEngine.StaticVariables.g_textLineStartX += info.Width;
 
-        if ((StaticVariables.g_textRenderStep & 1) == 0)//every other
+        if ((_gameEngine.StaticVariables.g_textRenderStep & 1) == 0)//every other
         {
-            if (StaticVariables.g_currentVoiceSfxId != 4 && StaticVariables.g_currentVoiceSfxId >= 0)
+            if (_gameEngine.StaticVariables.g_currentVoiceSfxId != 4 && _gameEngine.StaticVariables.g_currentVoiceSfxId >= 0)
             {
-                _gameEngine.SoundManager.PlaySoundEffect((uint)(0x4f + StaticVariables.g_currentVoiceSfxId));
+                _gameEngine.SoundManager.PlaySoundEffect((uint)(0x4f + _gameEngine.StaticVariables.g_currentVoiceSfxId));
             }
         }
 
-        StaticVariables.g_textRenderStep++;
+        _gameEngine.StaticVariables.g_textRenderStep++;
 
 
     }
@@ -1007,11 +1007,11 @@ public class UiHandler
 
         if (playercontrolflag==1)
         {
-            StaticVariables.g_playerControlFlags |= 0x10;
+            _gameEngine.StaticVariables.g_playerControlFlags |= 0x10;
         }
         else
         {
-            StaticVariables.g_playerControlFlags |= 8;
+            _gameEngine.StaticVariables.g_playerControlFlags |= 8;
         }
 
         DialogChoiceUnknown1 = 0;
@@ -1019,11 +1019,11 @@ public class UiHandler
         DialogChoiceUnknown2 = 0;
         _1072d0 = 0;
         _dialogSomethingBit3On = 0;
-        StaticVariables.g_currentVoiceSfxId = -1;
+        _gameEngine.StaticVariables.g_currentVoiceSfxId = -1;
         _107210 = 0;
         _107214 = 0;
         _dialogTextBufferPos = 0;
-        StaticVariables.g_textRenderStep = 0;
+        _gameEngine.StaticVariables.g_textRenderStep = 0;
         for (var linedex = 0;linedex<3;linedex++)
         {
             _107220[linedex] = 0;
@@ -1047,7 +1047,7 @@ public class UiHandler
         _1072dc = 3;
         _dialogChoice = 3;
         _renderTextBuff = new byte[0x800];//zero out memory
-        StaticVariables.g_textLineStartX = 0;
+        _gameEngine.StaticVariables.g_textLineStartX = 0;
         _gameEngine.SoundBin.PlaySoundEffect(6);
 
         return true;

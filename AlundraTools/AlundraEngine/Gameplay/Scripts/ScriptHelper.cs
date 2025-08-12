@@ -85,15 +85,15 @@ public static class ScriptHelper
         return ret & 0x1f;
     }
 
-    public static void CalculateEntityRelativePosition(Entity entity, int[] relativePositions)
+    public static void CalculateEntityRelativePosition(Entity entity, Entity playerEntity,int[] relativePositions)
     {
         int deltaX;
         int deltaZ;
         int deltaY;
 
-        deltaX = entity.TileX - StaticVariables.PlayerEntity.TileX;
-        deltaY = entity.TileY - StaticVariables.PlayerEntity.TileY;
-        deltaZ = entity.TerrainHeight - StaticVariables.PlayerEntity.TerrainHeight;
+        deltaX = entity.TileX - playerEntity.TileX;
+        deltaY = entity.TileY - playerEntity.TileY;
+        deltaZ = entity.TerrainHeight - playerEntity.TerrainHeight;
 
         relativePositions[3] = deltaX;
 

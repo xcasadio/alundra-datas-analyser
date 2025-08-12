@@ -28,7 +28,7 @@ public class ReplayManager
         IsSaving = false;
     }
 
-    public void SaveFrame()
+    public void SaveFrame(GameEngine gameEngine)
     {
         if (!IsSaving)
         {
@@ -37,28 +37,28 @@ public class ReplayManager
 
         var frameSnapshot = new FrameSnapshot();
         Frames.Add(frameSnapshot);
-        frameSnapshot.CopyFromMemory();
+        frameSnapshot.CopyFromMemory(gameEngine);
     }
 
-    public void PlayOneFrame()
+    public void PlayOneFrame(GameEngine gameEngine)
     {
-        Frames[CurrentFrame].CopyToMemory();
+        Frames[CurrentFrame].CopyToMemory(gameEngine);
         ApplyCurrentFrame = false;
     }
 
-    public void LoadFromDump(string directoryPath)
+    public void LoadFromDump(string directoryPath, GameEngine gameEngine)
     {
         Frames.Clear();
-        Frames.AddRange(LoadDump(directoryPath));
+        Frames.AddRange(LoadDump(directoryPath, gameEngine));
     }
 
-    public static List<FrameSnapshot> LoadDump(string directoryPath)
+    public static List<FrameSnapshot> LoadDump(string directoryPath, GameEngine gameEngine)
     {
         var files = GetSortedFrameFiles(directoryPath);
         var frameSnapshots = new List<FrameSnapshot>();
         foreach (var file in files)
         {
-            frameSnapshots.Add(FrameSnapshotLoader.LoadFromJson(file));
+            frameSnapshots.Add(FrameSnapshotLoader.LoadFromJson(file, gameEngine));
         }
 
         return frameSnapshots;

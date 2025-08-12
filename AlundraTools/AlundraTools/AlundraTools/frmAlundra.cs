@@ -160,7 +160,7 @@ namespace AlundraTools.AlundraTools
             if (_selectedGameMap?.Map != null)
             {
                 hScrollMap.Maximum = _selectedGameMap.Map.Width - pctMap.Width / _mapScale / StaticVariables.MapTileWidth;
-                vScrollMap.Maximum = _selectedGameMap.Map.Height - pctMap.Height / _mapScale / StaticVariables.MapTileWidth;
+                vScrollMap.Maximum = _selectedGameMap.Map.Height - pctMap.Height / _mapScale / StaticVariables.MapTileHeight;
             }
 
             //info

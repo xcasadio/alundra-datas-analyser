@@ -18,22 +18,22 @@ public class EntityManager
     //8003b24c
     public void InitializeEntitySlots()
     {
-        for (int i = 0; i < StaticVariables.g_entitySlots.Length; i++)
+        for (int i = 0; i < _gameEngine.StaticVariables.g_entitySlots.Length; i++)
         {
-            StaticVariables.g_entitySlots[i].Clear();
-            StaticVariables.g_entitySlots[i].Index = i;
-            StaticVariables.g_entitySlots[i].EntityRefId = -1;
+            _gameEngine.StaticVariables.g_entitySlots[i].Clear();
+            _gameEngine.StaticVariables.g_entitySlots[i].Index = i;
+            _gameEngine.StaticVariables.g_entitySlots[i].EntityRefId = -1;
         }
     }
 
     // 80039ad0
     public Entity AllocateEntitySlot()
     {
-        for (int i = 1; i < StaticVariables.g_entitySlots.Length; i++)
+        for (int i = 1; i < _gameEngine.StaticVariables.g_entitySlots.Length; i++)
         {
-            if (StaticVariables.g_entitySlots[i].Status == 0)
+            if (_gameEngine.StaticVariables.g_entitySlots[i].Status == 0)
             {
-                return StaticVariables.g_entitySlots[i];
+                return _gameEngine.StaticVariables.g_entitySlots[i];
             }
         }
 
@@ -47,9 +47,9 @@ public class EntityManager
         uint spriteTableIndex, int entityId, int x, int y, int z, uint animationId, uint direction, int paletteIndex,
         int sheetSize)
     {
-        if (StaticVariables.g_numberOfEntity < entity.Index)
+        if (_gameEngine.StaticVariables.g_numberOfEntity < entity.Index)
         {
-            StaticVariables.g_numberOfEntity = entity.Index + 1;
+            _gameEngine.StaticVariables.g_numberOfEntity = entity.Index + 1;
         }
 
         entity.ParentEntity = parentEntity;
@@ -80,7 +80,7 @@ public class EntityManager
         }
 
         entity.Status = 1;
-        entity.Index2 = ++StaticVariables.g_nextEntityIndex;
+        entity.Index2 = ++_gameEngine.StaticVariables.g_nextEntityIndex;
 
         entity.CurrentAnimationId = ~animationId;
         entity.CurrentDirection = ~direction;
@@ -381,8 +381,8 @@ public class EntityManager
             var y = ys[i];
             var tileX = Math.Min(x / StaticVariables.MapTileWidth, 51);
             //On PSX hardware we avoid using division, so we use a lookup table instead.
-            //x = Math.Clamp(x, 0, StaticVariables.g_tileToWorldXTable.Length - 1);
-            //Debug.Assert(StaticVariables.g_tileToWorldXTable[x] == tileX); 
+            //x = Math.Clamp(x, 0, _gameEngine.StaticVariables.g_tileToWorldXTable.Length - 1);
+            //Debug.Assert(_gameEngine.StaticVariables.g_tileToWorldXTable[x] == tileX); 
 
             tileX = Math.Clamp(tileX, 0, 0x33);
             var tileY = y / StaticVariables.MapTileHeight;
@@ -435,7 +435,7 @@ public class EntityManager
                     {
                         int xPos = xs[i];
                         int xIndex = (23 - xs[i] % StaticVariables.MapTileWidth) % StaticVariables.MapTileWidth;
-                        height = (tile.Height - 1) * StaticVariables.MapTileHeight + StaticVariables.g_heights_800236d4[xIndex];
+                        height = (tile.Height - 1) * StaticVariables.MapTileHeight + _gameEngine.StaticVariables.g_heights_800236d4[xIndex];
                     }
                     else
                     {
@@ -451,7 +451,7 @@ public class EntityManager
                     {
                         int xPos = xs[i];
                         int remainder = xPos % StaticVariables.MapTileWidth;
-                        height = (tile.Height - 1) * StaticVariables.MapTileHeight + StaticVariables.g_heights_800236d4[remainder];
+                        height = (tile.Height - 1) * StaticVariables.MapTileHeight + _gameEngine.StaticVariables.g_heights_800236d4[remainder];
                     }
                     else
                     {
@@ -478,7 +478,7 @@ public class EntityManager
     // 8003b388
     public void UpdateEntities()
     {
-        if ((StaticVariables.g_playerControlFlags & 0x48) == 0)
+        if ((_gameEngine.StaticVariables.g_playerControlFlags & 0x48) == 0)
         {
             UpdateDestroyedEntities();
             UpdateEntitiesEvents();
@@ -497,17 +497,17 @@ public class EntityManager
 
         UpdateVisibleEntitiesZSort();
 
-        if (StaticVariables.g_visibleEntityCount > 0)
+        if (_gameEngine.StaticVariables.g_visibleEntityCount > 0)
         {
-            for (var i = 0; i < StaticVariables.g_visibleEntityCount; i++)
+            for (var i = 0; i < _gameEngine.StaticVariables.g_visibleEntityCount; i++)
             {
-                var entity = StaticVariables.g_visibleEntities[i];
+                var entity = _gameEngine.StaticVariables.g_visibleEntities[i];
 
                 entity.SpriteRef.DepthSortValue = entity.ZSortValue;
                 entity.SpriteRef.X = entity.PosX;
                 entity.SpriteRef.Y = entity.PosY;
                 entity.SpriteRef.Z = entity.PosZ;
-                StaticVariables.g_spriteImages[StaticVariables.g_spriteNumberOfImage++] = entity.SpriteRef;
+                _gameEngine.StaticVariables.g_spriteImages[_gameEngine.StaticVariables.g_spriteNumberOfImage++] = entity.SpriteRef;
             }
         }
     }
@@ -515,9 +515,9 @@ public class EntityManager
     // 80038364
     private void UpdateEntitiesPhysics()
     {
-        for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
+        for (var i = 0; i < _gameEngine.StaticVariables.g_activeEntityCount; i++)
         {
-            var entity = StaticVariables.g_activeEntities[i];
+            var entity = _gameEngine.StaticVariables.g_activeEntities[i];
             entity.PlatformUpdateFlag = 0;
             entity.CollidedWithEntityZ = 0;
             entity.ForceAdjusted = 0;
@@ -530,27 +530,27 @@ public class EntityManager
         CheckRidingEntities();
         UpdateEntitiesForces();
 
-        for (var i = 0; i < StaticVariables.g_collideableEntitiesCount; i++)
+        for (var i = 0; i < _gameEngine.StaticVariables.g_collideableEntitiesCount; i++)
         {
-            var entity = StaticVariables.g_collideableEntities[i];
+            var entity = _gameEngine.StaticVariables.g_collideableEntities[i];
             if (entity.RidingEntity != null)
             {
                 UpdateRidingEntity(entity, entity.RidingEntity);
             }
         }
 
-        for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
+        for (var i = 0; i < _gameEngine.StaticVariables.g_activeEntityCount; i++)
         {
-            var entity = StaticVariables.g_activeEntities[i];
+            var entity = _gameEngine.StaticVariables.g_activeEntities[i];
             if (entity.PlatformUpdateFlag == 0)
             {
                 MoveEntity(entity);
             }
         }
 
-        for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
+        for (var i = 0; i < _gameEngine.StaticVariables.g_activeEntityCount; i++)
         {
-            var entity = StaticVariables.g_activeEntities[i];
+            var entity = _gameEngine.StaticVariables.g_activeEntities[i];
             UpdateTileAttributes(entity);
         }
     }
@@ -696,9 +696,9 @@ public class EntityManager
         {
             entityIndex = 0;
 
-            if (StaticVariables.g_collideableEntitiesCount > 0)
+            if (_gameEngine.StaticVariables.g_collideableEntitiesCount > 0)
             {
-                collidableEntityPtr = StaticVariables.g_collideableEntities;
+                collidableEntityPtr = _gameEngine.StaticVariables.g_collideableEntities;
 
                 do
                 {
@@ -759,7 +759,7 @@ public class EntityManager
                     }
 
                     entityIndex++;
-                } while (entityIndex < StaticVariables.g_collideableEntitiesCount);
+                } while (entityIndex < _gameEngine.StaticVariables.g_collideableEntitiesCount);
             }
         }
 
@@ -795,11 +795,11 @@ public class EntityManager
             && entity.PlatformEntity == null)
         {
             entityIndex = 0;
-            if (StaticVariables.g_collideableEntitiesCount > 0)
+            if (_gameEngine.StaticVariables.g_collideableEntitiesCount > 0)
             {
                 do
                 {
-                    candidateEntity = StaticVariables.g_collideableEntities[entityIndex];
+                    candidateEntity = _gameEngine.StaticVariables.g_collideableEntities[entityIndex];
 
                     if (entity != candidateEntity)
                     {
@@ -857,7 +857,7 @@ public class EntityManager
                     }
 
                     entityIndex = entityIndex + 1;
-                } while (entityIndex < StaticVariables.g_collideableEntitiesCount);
+                } while (entityIndex < _gameEngine.StaticVariables.g_collideableEntitiesCount);
             }
         }
 
@@ -884,7 +884,7 @@ public class EntityManager
         int isStraightDir = (entity.TargetDirection & 7) == 0 ? 1 : 0;
 
         Func<Entity, uint[], uint> collisionFunc =
-            entity == StaticVariables.PlayerEntity ? GetCollisionFlagsWithPlayer : GetCollisionFlags;
+            entity == _gameEngine.StaticVariables.PlayerEntity ? GetCollisionFlagsWithPlayer : GetCollisionFlags;
 
         START_COLLISION_CHECK:
         dx = entity.FinalForceX;
@@ -1295,27 +1295,27 @@ public class EntityManager
         int lockTimer;
         int moddedZPos;
 
-        moddedZPos = StaticVariables.PlayerEntity.ModdedPosZ;
-        lockTimer = StaticVariables.g_warpLockTimer;
+        moddedZPos = _gameEngine.StaticVariables.PlayerEntity.ModdedPosZ;
+        lockTimer = _gameEngine.StaticVariables.g_warpLockTimer;
 
-        if (StaticVariables.g_debugState > -1 || (StaticVariables.g_debugFlags & 0x80000000) == 0)
+        if (_gameEngine.StaticVariables.g_debugState > -1 || (_gameEngine.StaticVariables.g_debugFlags & 0x80000000) == 0)
         {
             flag = 0x40;
 
-            if ((StaticVariables.PlayerEntity.Flags & 8U) != 0)
+            if ((_gameEngine.StaticVariables.PlayerEntity.Flags & 8U) != 0)
             {
                 flag = 0x41;
             }
 
-            if ((StaticVariables.PlayerEntity.Flags & 1U) != 0)
+            if ((_gameEngine.StaticVariables.PlayerEntity.Flags & 1U) != 0)
             {
                 flag |= 0x1000;
             }
 
             index = 0;
-            gravityFlag = StaticVariables.g_gravityFlag < 2;
+            gravityFlag = _gameEngine.StaticVariables.g_gravityFlag < 2;
             colFlags = collisionFlags;
-            player = StaticVariables.PlayerEntity;
+            player = _gameEngine.StaticVariables.PlayerEntity;
 
             for (int i = 0; i < 4; i++)
             {
@@ -1390,20 +1390,20 @@ public class EntityManager
         Entity currentEntity;
         Entity[] collideableEntities;
 
-        if ((entity != StaticVariables.PlayerEntity || StaticVariables.g_debugState > -1 ||
-             (StaticVariables.g_debugFlags & 0x80000000) == 0)
+        if ((entity != _gameEngine.StaticVariables.PlayerEntity || _gameEngine.StaticVariables.g_debugState > -1 ||
+             (_gameEngine.StaticVariables.g_debugFlags & 0x80000000) == 0)
             && (entity.Flags & 0x80U) != 0
             && (entity.AnimFlags & 0x80U) == 0
             && entity.PlatformEntity == null)
         {
-            if (StaticVariables.g_collideableEntitiesCount <= 0)
+            if (_gameEngine.StaticVariables.g_collideableEntitiesCount <= 0)
             {
                 return null;
             }
 
-            collideableEntities = StaticVariables.g_collideableEntities;
+            collideableEntities = _gameEngine.StaticVariables.g_collideableEntities;
 
-            for (int i = 0; i < StaticVariables.g_collideableEntitiesCount; i++)
+            for (int i = 0; i < _gameEngine.StaticVariables.g_collideableEntitiesCount; i++)
             {
                 currentEntity = collideableEntities[i];
 
@@ -1499,9 +1499,9 @@ public class EntityManager
     // 800364c8
     private void CheckRidingEntities()
     {
-        for (var i = 0; i < StaticVariables.g_collideableEntitiesCount; i++)
+        for (var i = 0; i < _gameEngine.StaticVariables.g_collideableEntitiesCount; i++)
         {
-            var entity = StaticVariables.g_collideableEntities[i];
+            var entity = _gameEngine.StaticVariables.g_collideableEntities[i];
             if ((entity.Flags & 0x4100) != 0x0100)
             {
                 continue;
@@ -1521,14 +1521,14 @@ public class EntityManager
 
             entity.RidingEntity = null;
 
-            for (var j = 0; j < StaticVariables.g_collideableEntitiesCount; j++)
+            for (var j = 0; j < _gameEngine.StaticVariables.g_collideableEntitiesCount; j++)
             {
                 if (i == j)
                 {
                     continue;
                 }
 
-                var other = StaticVariables.g_collideableEntities[j];
+                var other = _gameEngine.StaticVariables.g_collideableEntities[j];
 
                 int otherMaxY = other.ModdedPosY + other.Depth + 1;
                 if (otherMaxY != entityMaxY)
@@ -1579,11 +1579,11 @@ public class EntityManager
         uint yForce;
         int spriteZForceAbs;
 
-        for (int i = 0; i < StaticVariables.g_activeEntityCount; i++)
+        for (int i = 0; i < _gameEngine.StaticVariables.g_activeEntityCount; i++)
         {
-            var entity = StaticVariables.g_activeEntities[i];
+            var entity = _gameEngine.StaticVariables.g_activeEntities[i];
 
-            if (entity == StaticVariables.PlayerEntity)
+            if (entity == _gameEngine.StaticVariables.PlayerEntity)
             {
                 if (entity.IsZForceApplied == 0)
                 {
@@ -1607,7 +1607,7 @@ public class EntityManager
                 }
                 else if ((entity.Flags & 0x100U) == 0
                          || (entity.CombinedVramFlagsOR & 0x10U) == 0
-                         || 0 < StaticVariables.g_gravityFlag)
+                         || 0 < _gameEngine.StaticVariables.g_gravityFlag)
                 {
                     entity.ForceZ = entity.IsZForceApplied << 8;
                 }
@@ -1636,7 +1636,7 @@ public class EntityManager
                 targetYForce = (uint)entity.TargetForceY;
 
                 if ((entity.CombinedVramFlagsOR & 8U) != 0
-                    && StaticVariables.g_gravityFlag < 1)
+                    && _gameEngine.StaticVariables.g_gravityFlag < 1)
                 {
                     targetXForce =
                         (uint)(((long)entity.TargetForceX * 0x8000) >> 0x10) |
@@ -1788,8 +1788,8 @@ public class EntityManager
         {
             entity.CurrentDirection = entity.TargetDirection;
             entity.Speed = entity.AnimSet.Speed;
-            entity.TargetForceX = StaticVariables.g_offsetXList[entity.TargetDirection] * entity.AnimSet.Speed;
-            entity.TargetForceY = StaticVariables.g_offsetYList[entity.TargetDirection] * entity.AnimSet.Speed;
+            entity.TargetForceX = _gameEngine.StaticVariables.g_offsetXList[entity.TargetDirection] * entity.AnimSet.Speed;
+            entity.TargetForceY = _gameEngine.StaticVariables.g_offsetYList[entity.TargetDirection] * entity.AnimSet.Speed;
         }
 
         entity.Acceleration = entity.AnimSet.U6 & 0xf; // acceleration ?
@@ -1800,30 +1800,30 @@ public class EntityManager
     // 800399b8
     private void UpdateVisibleEntitiesZSort()
     {
-        if (StaticVariables.g_visibleEntityCount <= 0)
+        if (_gameEngine.StaticVariables.g_visibleEntityCount <= 0)
         {
             return;
         }
 
-        for (var i = 0; i < StaticVariables.g_visibleEntityCount; i++)
+        for (var i = 0; i < _gameEngine.StaticVariables.g_visibleEntityCount; i++)
         {
-            var entity = StaticVariables.g_visibleEntities[i];
+            var entity = _gameEngine.StaticVariables.g_visibleEntities[i];
             entity.ZSortValue = 0;
             entity.ZSortDepth = entity.ModdedPosZ + entity.Depth;
         }
 
-        for (var i = 0; i < StaticVariables.g_visibleEntityCount; i++)
+        for (var i = 0; i < _gameEngine.StaticVariables.g_visibleEntityCount; i++)
         {
-            var entity = StaticVariables.g_visibleEntities[i];
+            var entity = _gameEngine.StaticVariables.g_visibleEntities[i];
             if (entity.ZSortValue == 0)
             {
                 ComputeZSortValue(entity);
             }
         }
 
-        for (var i = 0; i < StaticVariables.g_visibleEntityCount; i++)
+        for (var i = 0; i < _gameEngine.StaticVariables.g_visibleEntityCount; i++)
         {
-            var entity = StaticVariables.g_visibleEntities[i];
+            var entity = _gameEngine.StaticVariables.g_visibleEntities[i];
             entity.ZSortValue = (int)(entity.ZSortValue & 0xffff0000) + ((entity.PosZ >> 16) & 0xFFFF);
         }
     }
@@ -1859,9 +1859,9 @@ public class EntityManager
             }
         }
 
-        for (var dex = 0; dex < StaticVariables.g_collideableEntitiesCount; dex++)
+        for (var dex = 0; dex < _gameEngine.StaticVariables.g_collideableEntitiesCount; dex++)
         {
-            var otherEntity = StaticVariables.g_collideableEntities[dex];
+            var otherEntity = _gameEngine.StaticVariables.g_collideableEntities[dex];
             if (otherEntity == entity)
             {
                 continue;
@@ -1926,9 +1926,9 @@ public class EntityManager
     {
         //TODO this
         //Debugger.Break();
-        for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
+        for (var i = 0; i < _gameEngine.StaticVariables.g_activeEntityCount; i++)
         {
-            var entity = StaticVariables.g_activeEntities[i];
+            var entity = _gameEngine.StaticVariables.g_activeEntities[i];
 
             if (entity.FrameCollision == null)
             {
@@ -1956,9 +1956,9 @@ public class EntityManager
                 continue;
             }
 
-            for (var j = 0; j < StaticVariables.g_activeEntityCount; j++)
+            for (var j = 0; j < _gameEngine.StaticVariables.g_activeEntityCount; j++)
             {
-                var checkme = StaticVariables.g_activeEntities[j];
+                var checkme = _gameEngine.StaticVariables.g_activeEntities[j];
 
                 if (checkme == entity)
                 {
@@ -2126,27 +2126,27 @@ public class EntityManager
 
             var baseForce = 0xffff << 16;
 
-            var i = StaticVariables.g_gameRandomSeed;
+            var i = _gameEngine.StaticVariables.g_gameRandomSeed;
             var val1 = i * 0x7d2b89dd;
             var val2 = 0xe06a02e7 + val1;
             var targetVal = (int)(((long)val2 * 0x20001) >> 32);
-            StaticVariables.g_gameRandomSeed = val2;
+            _gameEngine.StaticVariables.g_gameRandomSeed = val2;
 
             effect.ForceX = targetVal + baseForce;
 
-            i = StaticVariables.g_gameRandomSeed;
+            i = _gameEngine.StaticVariables.g_gameRandomSeed;
             val1 = i * 0x7d2b89dd;
             val2 = 0xe06a02e7 + val1;
             targetVal = (int)(((long)val2 * 0x20001) >> 32);
-            StaticVariables.g_gameRandomSeed = val2;
+            _gameEngine.StaticVariables.g_gameRandomSeed = val2;
 
             effect.ForceY = targetVal + baseForce;
 
-            i = StaticVariables.g_gameRandomSeed;
+            i = _gameEngine.StaticVariables.g_gameRandomSeed;
             val1 = i * 0x7d2b89dd;
             val2 = 0xe06a02e7 + val1;
             targetVal = (int)(((long)val2 * 0x20001) >> 32);
-            StaticVariables.g_gameRandomSeed = val2;
+            _gameEngine.StaticVariables.g_gameRandomSeed = val2;
 
             effect.ForceZ = targetVal + baseForce;
         }
@@ -2155,9 +2155,9 @@ public class EntityManager
     // 80038e84
     private void UpdateActiveEffects()
     {
-        for (var i = 0; i < StaticVariables.g_numberOfEntity; i++)
+        for (var i = 0; i < _gameEngine.StaticVariables.g_numberOfEntity; i++)
         {
-            var entity = StaticVariables.g_entitySlots[i];
+            var entity = _gameEngine.StaticVariables.g_entitySlots[i];
             if (entity.Status - 2 >= 2 || (entity.DamagedTickCounter & 3) == 3)
             {
                 if (entity.ActiveEffect != null)
@@ -2280,9 +2280,9 @@ public class EntityManager
     // 80038e18
     private void UpdateEntitiesAnimation()
     {
-        for (var i = 0; i < StaticVariables.g_activeEntityCount; i++)
+        for (var i = 0; i < _gameEngine.StaticVariables.g_activeEntityCount; i++)
         {
-            var entity = StaticVariables.g_activeEntities[i];
+            var entity = _gameEngine.StaticVariables.g_activeEntities[i];
             UpdateAnimation(entity);
             Debug.Assert(entity.AnimSet != null);
         }
@@ -2293,9 +2293,9 @@ public class EntityManager
     {
         _gameEngine.MovePlayer();
 
-        for (var i = 1; i < StaticVariables.g_numberOfEntity; i++)
+        for (var i = 1; i < _gameEngine.StaticVariables.g_numberOfEntity; i++)
         {
-            var entity = StaticVariables.g_entitySlots[i];
+            var entity = _gameEngine.StaticVariables.g_entitySlots[i];
             var eventProgramType = -1;
 
             if (entity.IsNotProcessable == 0)
@@ -2340,7 +2340,7 @@ public class EntityManager
                                 {
                                     eventProgramType = ScriptHelper.ProgramCTick;
 
-                                    if (StaticVariables.g_activeCollisionEntity == entity)
+                                    if (_gameEngine.StaticVariables.g_activeCollisionEntity == entity)
                                     {
                                         eventProgramType = ScriptHelper.ProgramFInteract;
 
@@ -2380,9 +2380,9 @@ public class EntityManager
         do
         {
             keepGoing = false;
-            for (var i = 1; i < StaticVariables.g_numberOfEntity; i++)
+            for (var i = 1; i < _gameEngine.StaticVariables.g_numberOfEntity; i++)
             {
-                var entity = StaticVariables.g_entitySlots[i];
+                var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
                 if (entity.EventTrigger == ScriptHelper.ProgramUnknown)
                 {
@@ -2410,9 +2410,9 @@ public class EntityManager
     // 80038998
     private void UpdateEntitiesCounters()
     {
-        for (var i = 0; i <= StaticVariables.g_numberOfEntity; i++)
+        for (var i = 0; i <= _gameEngine.StaticVariables.g_numberOfEntity; i++)
         {
-            var entity = StaticVariables.g_entitySlots[i];
+            var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
             entity.TouchingEntity = null;
             entity.RidingEntity = null;
@@ -2439,9 +2439,9 @@ public class EntityManager
     private void UpdateDestroyedEntities()
     {
         var max = 0; // always player
-        for (var i = 0; i < StaticVariables.g_entitySlots.Length; i++)
+        for (var i = 0; i < _gameEngine.StaticVariables.g_entitySlots.Length; i++)
         {
-            var entity = StaticVariables.g_entitySlots[i];
+            var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
             if (entity.Status == 4)
             {
@@ -2454,34 +2454,34 @@ public class EntityManager
             }
         }
 
-        StaticVariables.g_numberOfEntity = max + 1;
+        _gameEngine.StaticVariables.g_numberOfEntity = max + 1;
     }
 
     // 800384f4
     private void UpdateEntityLists()
     {
-        StaticVariables.g_activeEntityCount = 0;
-        StaticVariables.g_collideableEntitiesCount = 0;
-        StaticVariables.g_visibleEntityCount = 0;
+        _gameEngine.StaticVariables.g_activeEntityCount = 0;
+        _gameEngine.StaticVariables.g_collideableEntitiesCount = 0;
+        _gameEngine.StaticVariables.g_visibleEntityCount = 0;
 
-        Array.Clear(StaticVariables.g_activeEntities);
-        Array.Clear(StaticVariables.g_collideableEntities);
-        Array.Clear(StaticVariables.g_visibleEntities);
+        Array.Clear(_gameEngine.StaticVariables.g_activeEntities);
+        Array.Clear(_gameEngine.StaticVariables.g_collideableEntities);
+        Array.Clear(_gameEngine.StaticVariables.g_visibleEntities);
 
-        for (int i = 0; i < StaticVariables.g_numberOfEntity; i++)
+        for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntity; i++)
         {
-            var entity = StaticVariables.g_entitySlots[i];
+            var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
             //processable
             if (entity.Status >= 2 && entity.Status <= 3 && entity.IsNotProcessable == 0)
             {
-                StaticVariables.g_activeEntities[StaticVariables.g_activeEntityCount++] = entity;
+                _gameEngine.StaticVariables.g_activeEntities[_gameEngine.StaticVariables.g_activeEntityCount++] = entity;
             }
 
             //collidable
             if ((entity.Flags & 0x80) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.IsNotProcessable == 0)
             {
-                StaticVariables.g_collideableEntities[StaticVariables.g_collideableEntitiesCount++] = entity;
+                _gameEngine.StaticVariables.g_collideableEntities[_gameEngine.StaticVariables.g_collideableEntitiesCount++] = entity;
             }
 
             //renderable
@@ -2490,7 +2490,7 @@ public class EntityManager
                 //flicker effect, every 3rd frame when being damaged
                 && (entity.DamagedTickCounter & 0x3) != 0x3) 
             {
-                StaticVariables.g_visibleEntities[StaticVariables.g_visibleEntityCount++] = entity;
+                _gameEngine.StaticVariables.g_visibleEntities[_gameEngine.StaticVariables.g_visibleEntityCount++] = entity;
             }
         }
     }
@@ -2515,7 +2515,7 @@ public class EntityManager
         //var x = entity.PosX >> 16;
         //tileX = Math.Min((x / StaticVariables.MapTileWidth), 51);
         ////On PSX hardware we avoid using division, so we use a lookup table instead.
-        //x = Math.Clamp(x, 0, StaticVariables.g_tileToWorldXTable.Length - 1);
+        //x = Math.Clamp(x, 0, _gameEngine.StaticVariables.g_tileToWorldXTable.Length - 1);
         entity.TileX = (entity.PosX >> 16) / StaticVariables.MapTileWidth;
         entity.TileY = (entity.PosY >> 16) / StaticVariables.MapTileHeight;
         entity.TileZ = entity.PosZ >> 20;
@@ -2655,9 +2655,9 @@ public class EntityManager
         BalanceRecord balanceRecord;
         string debugStr = string.Empty;
 
-        if (entity == StaticVariables.PlayerEntity)
+        if (entity == _gameEngine.StaticVariables.PlayerEntity)
         {
-            balanceRecord = StaticVariables.g_intArray_80127008[0];
+            balanceRecord = _gameEngine.StaticVariables.g_intArray_80127008[0];
         }
         else
         {
@@ -2666,35 +2666,35 @@ public class EntityManager
 
         damage = ResolveBalanceTarget(balanceRecord.AnimVals[0], entity.TouchingEntity, entity.Hp);
 
-        if (StaticVariables.g_debugState < 0 && (StaticVariables.g_debugFlags & 0x800) != 0)
+        if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
         {
-            if (StaticVariables.g_balanceHpTotal != -1)
+            if (_gameEngine.StaticVariables.g_balanceHpTotal != -1)
             {
-                if ((StaticVariables.g_balanceMultiplier & 0xc0U) == 0)
+                if ((_gameEngine.StaticVariables.g_balanceMultiplier & 0xc0U) == 0)
                 {
-                    if ((StaticVariables.g_balanceHpTotal & 0x80U) == 0)
+                    if ((_gameEngine.StaticVariables.g_balanceHpTotal & 0x80U) == 0)
                     {
-                        debugStr += $"                     {StaticVariables.g_balanceHp}";
+                        debugStr += $"                     {_gameEngine.StaticVariables.g_balanceHp}";
                     }
                     else
                     {
                         debugStr +=
-                            $"      O{StaticVariables.g_balanceParams} + A{StaticVariables.g_balanceHp - StaticVariables.g_balanceParams} = T{StaticVariables.g_balanceParams}";
+                            $"      O{_gameEngine.StaticVariables.g_balanceParams} + A{_gameEngine.StaticVariables.g_balanceHp - _gameEngine.StaticVariables.g_balanceParams} = T{_gameEngine.StaticVariables.g_balanceParams}";
                     }
 
-                    debugStr += $" (Parm) {StaticVariables.g_balanceMultiplier}\n\r";
+                    debugStr += $" (Parm) {_gameEngine.StaticVariables.g_balanceMultiplier}\n\r";
                 }
 
                 if (damage == null)
                 {
                     debugStr +=
-                        $"              {StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} DEAD\n\r";
+                        $"              {_gameEngine.StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} DEAD\n\r";
                     entity.Hp = 0;
                 }
                 else
                 {
                     debugStr +=
-                        $"               {StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} N{damage}\n\r";
+                        $"               {_gameEngine.StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} N{damage}\n\r";
                     entity.Hp = damage;
                 }
 
@@ -2703,7 +2703,7 @@ public class EntityManager
 
             debugStr += "   Balance patamator error(Result)No Damage\n\r";
 
-            StaticVariables.g_messageDebug += debugStr;
+            _gameEngine.StaticVariables.g_messageDebug += debugStr;
         }
 
         entity.Hp = damage;
@@ -2728,9 +2728,9 @@ public class EntityManager
         byte balanceMultiplier;
         bool isReduced;
 
-        if (StaticVariables.g_debugState < 0 && (StaticVariables.g_debugFlags & 0x800) != 0)
+        if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
         {
-            StaticVariables.g_balanceHpTotal = -1;
+            _gameEngine.StaticVariables.g_balanceHpTotal = -1;
         }
 
         if (targetEntity != null && balanceConfig != null)
@@ -2751,7 +2751,7 @@ public class EntityManager
                     if ((balanceId & 0x80) != 0)
                     {
                         i = 0;
-                        balanceSources = StaticVariables.g_balanceEffectSources;
+                        balanceSources = _gameEngine.StaticVariables.g_balanceEffectSources;
 
                         do
                         {
@@ -2763,9 +2763,9 @@ public class EntityManager
                                 {
                                     values = null;
                                 }
-                                else if (StaticVariables.g_balanceAnimIndex + 1 < animPtr.NumAnimVals)
+                                else if (_gameEngine.StaticVariables.g_balanceAnimIndex + 1 < animPtr.NumAnimVals)
                                 {
-                                    values = animPtr.AnimVals[(StaticVariables.g_balanceAnimIndex << 1) + 0xf + 2];
+                                    values = animPtr.AnimVals[(_gameEngine.StaticVariables.g_balanceAnimIndex << 1) + 0xf + 2];
                                 }
                                 else
                                 {
@@ -2800,24 +2800,24 @@ public class EntityManager
 
                     hp = newHp;
 
-                    if (StaticVariables.g_debugState < 0 && (StaticVariables.g_debugFlags & 0x800) != 0)
+                    if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
                     {
-                        StaticVariables.g_balanceHp = (short)adjustedHpValue;
-                        StaticVariables.g_balanceParams = balanceConfig.U2;
-                        StaticVariables.g_balanceResult = (short)i;
-                        StaticVariables.g_balanceHpTotal = balanceConfig.Val;
-                        StaticVariables.g_balanceMultiplier = balanceMultiplier;
+                        _gameEngine.StaticVariables.g_balanceHp = (short)adjustedHpValue;
+                        _gameEngine.StaticVariables.g_balanceParams = balanceConfig.U2;
+                        _gameEngine.StaticVariables.g_balanceResult = (short)i;
+                        _gameEngine.StaticVariables.g_balanceHpTotal = balanceConfig.Val;
+                        _gameEngine.StaticVariables.g_balanceMultiplier = balanceMultiplier;
                     }
                 }
                 else if ((balanceMultiplier & 0xc0) == 0x40)
                 {
-                    if (StaticVariables.g_debugState < 0 && (StaticVariables.g_debugFlags & 0x800) != 0)
+                    if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
                     {
-                        StaticVariables.g_balanceHp = 0;
-                        StaticVariables.g_balanceParams = 0;
-                        StaticVariables.g_balanceResult = (short)hp;
-                        StaticVariables.g_balanceHpTotal = balanceConfig.Val;
-                        StaticVariables.g_balanceMultiplier = balanceMultiplier;
+                        _gameEngine.StaticVariables.g_balanceHp = 0;
+                        _gameEngine.StaticVariables.g_balanceParams = 0;
+                        _gameEngine.StaticVariables.g_balanceResult = (short)hp;
+                        _gameEngine.StaticVariables.g_balanceHpTotal = balanceConfig.Val;
+                        _gameEngine.StaticVariables.g_balanceMultiplier = balanceMultiplier;
                     }
 
                     hp = 0;
@@ -2837,15 +2837,15 @@ public class EntityManager
         int result;
         int maxEntity;
 
-        maxEntity = StaticVariables.g_numberOfEntity;
+        maxEntity = _gameEngine.StaticVariables.g_numberOfEntity;
         result = 0;
         i = 0;
         var j = 0;
 
-        if (-1 < StaticVariables.g_numberOfEntity)
+        if (-1 < _gameEngine.StaticVariables.g_numberOfEntity)
         {
-            currentEntity = StaticVariables.PlayerEntity;
-            entity2 = StaticVariables.PlayerEntity;
+            currentEntity = _gameEngine.StaticVariables.PlayerEntity;
+            entity2 = _gameEngine.StaticVariables.PlayerEntity;
 
             do
             {
@@ -2859,8 +2859,8 @@ public class EntityManager
                 }
 
                 i = i + 1;
-                currentEntity = StaticVariables.g_entitySlots[j];
-                entity2 = StaticVariables.g_entitySlots[i];
+                currentEntity = _gameEngine.StaticVariables.g_entitySlots[j];
+                entity2 = _gameEngine.StaticVariables.g_entitySlots[i];
             } while (i <= maxEntity);
         }
 
@@ -2875,13 +2875,13 @@ public class EntityManager
         int result;
         int maxEntity;
 
-        maxEntity = StaticVariables.g_numberOfEntity;
+        maxEntity = _gameEngine.StaticVariables.g_numberOfEntity;
         result = 0;
         i = 0;
 
-        if (-1 < StaticVariables.g_numberOfEntity)
+        if (-1 < _gameEngine.StaticVariables.g_numberOfEntity)
         {
-            entity2 = StaticVariables.g_entitySlots[0];
+            entity2 = _gameEngine.StaticVariables.g_entitySlots[0];
 
             do
             {
@@ -2892,7 +2892,7 @@ public class EntityManager
                 }
 
                 i = i + 1;
-                entity2 = StaticVariables.g_entitySlots[i];
+                entity2 = _gameEngine.StaticVariables.g_entitySlots[i];
             } while (i <= maxEntity);
         }
 

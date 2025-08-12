@@ -18,18 +18,18 @@ public class RendererHelper
 
         var textToRender = new List<TextDisplayParameter>();
 
-        var currentXPosition = StaticVariables.g_cameraScrollingX;
-        var currentYPosition = StaticVariables.g_cameraScrollingY;
+        var currentXPosition = gameEngine.StaticVariables.g_cameraScrollingX;
+        var currentYPosition = gameEngine.StaticVariables.g_cameraScrollingY;
 
-        //if (StaticVariables.UseDebugCamera)
+        //if (gameEngine.StaticVariables.UseDebugCamera)
         //{
-        //    currentXPosition = StaticVariables.g_hudCurrentX;
-        //    currentYPosition = StaticVariables.g_hudCurrentY;
+        //    currentXPosition = gameEngine.StaticVariables.g_hudCurrentX;
+        //    currentYPosition = gameEngine.StaticVariables.g_hudCurrentY;
         //}
         //else
         //{
-        //    StaticVariables.g_hudCurrentX = StaticVariables.g_cameraScrollingX;
-        //    StaticVariables.g_hudCurrentY = StaticVariables.g_cameraScrollingY;
+        //    gameEngine.StaticVariables.g_hudCurrentX = gameEngine.StaticVariables.g_cameraScrollingX;
+        //    gameEngine.StaticVariables.g_hudCurrentY = gameEngine.StaticVariables.g_cameraScrollingY;
         //}
 
         var curXTile = currentXPosition / StaticVariables.MapTileWidth;
@@ -60,10 +60,10 @@ public class RendererHelper
                     if (dy > -StaticVariables.MapTileHeight 
                         && dy < StaticVariables.ScreenHeight)
                     {
-                        tileId = GetAnimatedTileId(gameMap, tileId);
+                        tileId = GetAnimatedTileId(gameEngine, gameMap, tileId);
                         DrawTile(tileId, dx, dy, g, gameMap);
 
-                        if (StaticVariables.DisplayTileXY)
+                        if (gameEngine.StaticVariables.DisplayTileXY)
                         {
                             var text = $"{x}x{y}";
                             var textSize = g.MeasureString(text, FontTileInfo);
@@ -94,10 +94,10 @@ public class RendererHelper
                             && dy > -StaticVariables.MapTileHeight 
                             && dy < StaticVariables.ScreenHeight)
                         {
-                            wallTileId = GetAnimatedTileId(gameMap, wallTileId);
+                            wallTileId = GetAnimatedTileId(gameEngine, gameMap, wallTileId);
                             DrawTile(wallTileId, dx, dy, g, gameMap);
 
-                            if (StaticVariables.DisplayTileXY)
+                            if (gameEngine.StaticVariables.DisplayTileXY)
                             {
                                 var text = $"{x}x{y}";
                                 var textSize = g.MeasureString(text, FontTileInfo);
@@ -119,17 +119,17 @@ public class RendererHelper
 
             //draw sprites who are on this row
 
-            //for (var i = 0; i < StaticVariables.g_numberOfEntity; i++) // g_visibleEntityCount
+            //for (var i = 0; i < gameEngine.StaticVariables.g_numberOfEntity; i++) // g_visibleEntityCount
             //{
-            //   entity = StaticVariables.g_entitySlots[i]; // g_visibleEntities
+            //   entity = gameEngine.StaticVariables.g_entitySlots[i]; // g_visibleEntities
             //  if (entity.Status == 5)
             //  {
             //      continue;
             //  }
 
-            for (var i = 0; i < StaticVariables.g_visibleEntityCount; i++) // g_visibleEntityCount
+            for (var i = 0; i < gameEngine.StaticVariables.g_visibleEntityCount; i++) // g_visibleEntityCount
             {
-                var entity = StaticVariables.g_visibleEntities[i]; // g_visibleEntities
+                var entity = gameEngine.StaticVariables.g_visibleEntities[i]; // g_visibleEntities
 
                 if (entity.TileY != y)
                 {
@@ -168,9 +168,9 @@ public class RendererHelper
                             }
                         }
 
-                        if (StaticVariables.DisplayEffectId)
+                        if (gameEngine.StaticVariables.DisplayEffectId)
                         {
-                            var brush = StaticVariables.EditorSelectEffectIndex == effect.Id
+                            var brush = gameEngine.StaticVariables.EditorSelectEffectIndex == effect.Id
                                 ? Brushes.LightSeaGreen
                                 : Brushes.DarkViolet;
                             var text = $"#{effect.Id}";
@@ -200,9 +200,9 @@ public class RendererHelper
                         }
                     }
 
-                    if (StaticVariables.DisplayEntityId)
+                    if (gameEngine.StaticVariables.DisplayEntityId)
                     {
-                        var brush = StaticVariables.EditorSelectEntityIndex == entity.Index
+                        var brush = gameEngine.StaticVariables.EditorSelectEntityIndex == entity.Index
                             ? Brushes.ForestGreen
                             : Brushes.Blue;
                         var text = $"#{entity.Index}";
@@ -221,9 +221,9 @@ public class RendererHelper
             }
         }
 
-        for (var i = 0; i < StaticVariables.g_effectSlots.Length; i++)
+        for (var i = 0; i < gameEngine.StaticVariables.g_effectSlots.Length; i++)
         {
-            var effect = StaticVariables.g_effectSlots[i];
+            var effect = gameEngine.StaticVariables.g_effectSlots[i];
             
             if (effect.Status != 2 /*|| effect.AttachedEntity != null*/)
             {
@@ -248,9 +248,9 @@ public class RendererHelper
                 }
             }
 
-            if (StaticVariables.DisplayEffectId)
+            if (gameEngine.StaticVariables.DisplayEffectId)
             {
-                var brush = StaticVariables.EditorSelectEffectIndex == effect.Id
+                var brush = gameEngine.StaticVariables.EditorSelectEffectIndex == effect.Id
                     ? Brushes.LightSeaGreen
                     : Brushes.DarkViolet;
                 var text = $"#{effect.Id}";
@@ -269,7 +269,6 @@ public class RendererHelper
 
         gameEngine.Renderer.Render(g);
         gameEngine.Renderer.Clear();
-
 
 
 
@@ -293,11 +292,11 @@ public class RendererHelper
         }
     }
 
-    private static ushort GetAnimatedTileId(GameMap gameMap, ushort tileId)
+    private static ushort GetAnimatedTileId(GameEngine gameEngine, GameMap gameMap, ushort tileId)
     {
         var tile = tileId & 0x3ff;
 
-        var spriteIndex = StaticVariables.g_tileAnimDescriptorTable[tile].SpriteIndex;
+        var spriteIndex = gameEngine.StaticVariables.g_tileAnimDescriptorTable[tile].SpriteIndex;
         if (spriteIndex != 0)
         {
             var entry = gameMap.Info.SpriteMapEntries[spriteIndex];

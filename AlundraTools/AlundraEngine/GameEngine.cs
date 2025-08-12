@@ -31,12 +31,9 @@ public class GameEngine
     public Renderer Renderer { get; }
     public SoundManager SoundManager { get; }
     public SoundBin SoundBin { get; }
+    public StaticVariables StaticVariables { get; }
     public UIManager UIManager { get; }
-
-    public HudManager HudManager
-    {
-        get { return _hudManager; }
-    }
+    public HudManager HudManager { get; }
 
     private readonly EntityEventHandlers _entityEventHandlers;
     private readonly GameInitializer _gameInitializer;
@@ -44,7 +41,6 @@ public class GameEngine
 
     //TODO : find the variable in StaticVariables
     public int DialogState, DialogNameState, DialogName;
-    private readonly HudManager _hudManager;
 
     public GameEngine(DatasBin.DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR, Font3 font3)
     {
@@ -56,7 +52,7 @@ public class GameEngine
 
         _entityEventHandlers = new EntityEventHandlers(this);
         _gameInitializer = new GameInitializer(this);
-        _padManager = new PadManager();
+        _padManager = new PadManager(this);
 
         CdManager = new CdManager(this);
         EntityManager = new EntityManager(this);
@@ -66,8 +62,9 @@ public class GameEngine
         PlayerManager = new PlayerManager(this);
         Renderer = new Renderer(this);
         SoundManager = new SoundManager(this);
+        StaticVariables = new StaticVariables();
         UIManager = new UIManager(this);
-        _hudManager = new HudManager(this);
+        HudManager = new HudManager(this);
     }
 
     public void InitializeEngine()
@@ -156,7 +153,7 @@ public class GameEngine
         {
             if (ReplayManager.ApplyCurrentFrame)
             {
-                ReplayManager.PlayOneFrame();
+                ReplayManager.PlayOneFrame(this);
             }
             else
             {
@@ -165,7 +162,7 @@ public class GameEngine
 
             if (ReplayManager.IsSaving)
             {
-                ReplayManager.SaveFrame();
+                ReplayManager.SaveFrame(this);
             }
 
             StaticVariables.DoNextFrame = false;

@@ -4,13 +4,19 @@ namespace AlundraEngine;
 
 public class PadManager
 {
+    private readonly GameEngine _gameEngine;
     public static ulong ButtonStates = 0;
+
+    public PadManager(GameEngine gameEngine)
+    {
+        _gameEngine = gameEngine;
+    }
 
     public void UpdatePads()
     {
         var padState = PadRead();
-        UpdatePad(StaticVariables.g_padState1, (ushort)padState);
-        UpdatePad(StaticVariables.g_padState2, (ushort)(padState >> 0x10));
+        UpdatePad(_gameEngine.StaticVariables.g_padState1, (ushort)padState);
+        UpdatePad(_gameEngine.StaticVariables.g_padState2, (ushort)(padState >> 0x10));
     }
 
     private ulong PadRead()

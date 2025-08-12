@@ -20,26 +20,26 @@ public class SoundManager
         {
             if (soundIndex == 0)
             {
-                StaticVariables.g_currentMapSoundIndex = 0;
-                InitializeBgm(StaticVariables.g_requestedSeqId);
-                ResetSomethingSound(StaticVariables.g_requestedSeqId);
-                MaybeFreeSound(StaticVariables.g_currentVabId);
+                _gameEngine.StaticVariables.g_currentMapSoundIndex = 0;
+                InitializeBgm(_gameEngine.StaticVariables.g_requestedSeqId);
+                ResetSomethingSound(_gameEngine.StaticVariables.g_requestedSeqId);
+                MaybeFreeSound(_gameEngine.StaticVariables.g_currentVabId);
             }
-            else if (StaticVariables.g_cdIsReady == 0)
+            else if (_gameEngine.StaticVariables.g_cdIsReady == 0)
             {
                 MaybeLoadSound(soundIndex, stopAllSound);
 
                 if (stopAllSound == 0)
                 {
-                    StaticVariables.g_resetSoundFlag = 0;
+                    _gameEngine.StaticVariables.g_resetSoundFlag = 0;
                 }
             }
             else
             {
                 _gameEngine.CdManager.InitCDReading();
-                StaticVariables.g_soundLoadState = 1;
-                StaticVariables.g_currentMapSoundIndex = (short)soundIndex;
-                StaticVariables.g_forceStopAllSound = stopAllSound;
+                _gameEngine.StaticVariables.g_soundLoadState = 1;
+                _gameEngine.StaticVariables.g_currentMapSoundIndex = (short)soundIndex;
+                _gameEngine.StaticVariables.g_forceStopAllSound = stopAllSound;
             }
         }
     }
@@ -65,14 +65,14 @@ public class SoundManager
     // 80049b7c
     public void LoadBgm(int bgmIndex)
     {
-        StaticVariables.g_resetSoundFlag = 0;
+        _gameEngine.StaticVariables.g_resetSoundFlag = 0;
         if (bgmIndex == 0)
         {
-            InitializeBgm(StaticVariables.g_requestedSeqId);
+            InitializeBgm(_gameEngine.StaticVariables.g_requestedSeqId);
         }
         else
         {
-            StaticVariables.g_soundEffectState = 0x78;
+            _gameEngine.StaticVariables.g_soundEffectState = 0x78;
         }
     }
     
@@ -97,7 +97,7 @@ public class SoundManager
     //800490fc or 80049634 ???
     public void PlaySoundEffect(uint sfxId)
     {
-        if (StaticVariables.g_soundEffectState != 0)
+        if (_gameEngine.StaticVariables.g_soundEffectState != 0)
         {
             return;
         }
@@ -131,15 +131,15 @@ public class SoundManager
 
         if (iVar1 != 0)
         {
-            int iVar2 = StaticVariables.g_currentMapSoundIndex;
+            int iVar2 = _gameEngine.StaticVariables.g_currentMapSoundIndex;
             iVar1 = _gameEngine.GetMapWarpDestination(mapId);
 
             if (iVar2 != iVar1)
             {
-                if (StaticVariables.g_requestedSeqId >= 0)
+                if (_gameEngine.StaticVariables.g_requestedSeqId >= 0)
                 {
-                    InitializeBgm(StaticVariables.g_requestedSeqId);
-                    ResetSomethingSound(StaticVariables.g_requestedSeqId);
+                    InitializeBgm(_gameEngine.StaticVariables.g_requestedSeqId);
+                    ResetSomethingSound(_gameEngine.StaticVariables.g_requestedSeqId);
                 }
 
                 iVar1 = _gameEngine.GetMapWarpDestination(mapId);
@@ -149,13 +149,13 @@ public class SoundManager
                     MaybeLoadSound((int)iVar1, 0);
                 }
 
-                //FUN_8008f808(StaticVariables.g_requestedSeqId, 0x7f, 10);
+                //FUN_8008f808(_gameEngine.StaticVariables.g_requestedSeqId, 0x7f, 10);
             }
         }
 
         //iVar1 = GetSoundGroupBbyMapId(mapId);
         //
-        //if (StaticVariables.g_currentSoundGroup != iVar1)
+        //if (_gameEngine.StaticVariables.g_currentSoundGroup != iVar1)
         //{
         //    FUN_800489c8(mapId);
         //}
@@ -177,19 +177,19 @@ public class SoundManager
         int voiceId;
         int s1 = 0;
 
-        var soundEffectData = StaticVariables.g_soundEffectData;
+        var soundEffectData = _gameEngine.StaticVariables.g_soundEffectData;
 
         if (soundEffectData[s4].Id == -1)
         {
             s0 = s4;
-            param_1 = StaticVariables.g_mainSoundDriver;
+            param_1 = _gameEngine.StaticVariables.g_mainSoundDriver;
             param_2 = soundEffectData[s4].Pitch;
         }
         else
         {
-            param_2 = StaticVariables.g_currentSoundGroup;
+            param_2 = _gameEngine.StaticVariables.g_currentSoundGroup;
             s0 = _gameEngine.FUN_80048a14(s4, param_2);
-            param_1 = StaticVariables.g_altSoundDriver;
+            param_1 = _gameEngine.StaticVariables.g_altSoundDriver;
             param_2 = soundEffectData[s0].Pitch;
         }
 
@@ -204,8 +204,8 @@ public class SoundManager
 
                 if (voiceId != -1)
                 {
-                    int volumeRight = StaticVariables.g_voiceVolumeRight[voiceId];
-                    int volumeLeft = StaticVariables.g_voiceVolumeLeft[voiceId];
+                    int volumeRight = _gameEngine.StaticVariables.g_voiceVolumeRight[voiceId];
+                    int volumeLeft = _gameEngine.StaticVariables.g_voiceVolumeLeft[voiceId];
 
                     int t1 = (volumeRight < 65) ? volumeRight : (127 - volumeRight);
                     int t0 = (volumeRight < 64) ? volumeRight : 63;

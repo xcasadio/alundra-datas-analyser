@@ -27,35 +27,35 @@ public class EntityGameplayManager
                 return (uint)((entity.TargetDirection + turndir) & 0x1f);
 
             case 2:
-                return (uint)StaticVariables.g_cardinalDirectionTable[turndir & 0x3];
+                return (uint)_gameEngine.StaticVariables.g_cardinalDirectionTable[turndir & 0x3];
 
             case 3:
-                var dfv = ScriptHelper.GetDirectionToTarget(StaticVariables.PlayerEntity.PosX - entity.PosX, StaticVariables.PlayerEntity.PosY - entity.PosY);
+                var dfv = ScriptHelper.GetDirectionToTarget(_gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX, _gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
                 return (uint)((dfv + turndir) & 0x1f);
 
             case 4:
             {
-                var i = StaticVariables.g_gameRandomSeed;
+                var i = _gameEngine.StaticVariables.g_gameRandomSeed;
                 var val1 = (int)(i * 0x7d2b89dd);
                 var val2 = (int)(0xe06a02e7 + val1);
                 var val3 = (int)(((long)val2 * 4) >> 32);
-                StaticVariables.g_gameRandomSeed = (uint)val2;
-                var dir = StaticVariables.g_cardinalDirectionTable[val3];//val3 here is a number between 0 and 3
+                _gameEngine.StaticVariables.g_gameRandomSeed = (uint)val2;
+                var dir = _gameEngine.StaticVariables.g_cardinalDirectionTable[val3];//val3 here is a number between 0 and 3
                 return (uint)dir;
             }
 
             case 5:
             {
-                var i = StaticVariables.g_gameRandomSeed;
+                var i = _gameEngine.StaticVariables.g_gameRandomSeed;
                 var val1 = (int)(i * 0x7d2b89dd);
                 var val2 = (int)(0xe06a02e7 + val1);
                 var val3 = (int)(((long)val2 * 0x20) >> 32);
-                StaticVariables.g_gameRandomSeed = (uint)val2;
+                _gameEngine.StaticVariables.g_gameRandomSeed = (uint)val2;
                 return (uint)val2;
             }
 
             case 6:
-                return (uint)((StaticVariables.PlayerEntity.TargetDirection + turndir) & 0x1f);
+                return (uint)((_gameEngine.StaticVariables.PlayerEntity.TargetDirection + turndir) & 0x1f);
 
             case 7:
                 var ret = GetCardinalDirToPlayer(entity);
@@ -73,18 +73,18 @@ public class EntityGameplayManager
 
     public int GetCardinalDirToPlayer(Entity entity)
     {
-        if (entity == StaticVariables.g_activeCollisionEntity)
+        if (entity == _gameEngine.StaticVariables.g_activeCollisionEntity)
         {
             return -1;
         }
 
-        var difx = StaticVariables.PlayerEntity.ModdedPosX - entity.ModdedPosX;
+        var difx = _gameEngine.StaticVariables.PlayerEntity.ModdedPosX - entity.ModdedPosX;
 
         if ((difx >= 0 && entity.Width < difx)
-            || (difx < 0 && StaticVariables.PlayerEntity.Width < -difx))
+            || (difx < 0 && _gameEngine.StaticVariables.PlayerEntity.Width < -difx))
         {
             //checkx
-            if (StaticVariables.PlayerEntity.PosX < entity.PosX)
+            if (_gameEngine.StaticVariables.PlayerEntity.PosX < entity.PosX)
             {
                 return 0x08;
             }
@@ -93,7 +93,7 @@ public class EntityGameplayManager
         }
 
         //checky
-        if (StaticVariables.PlayerEntity.PosY < entity.PosY)
+        if (_gameEngine.StaticVariables.PlayerEntity.PosY < entity.PosY)
         {
             return 0x10;
         }
@@ -103,28 +103,28 @@ public class EntityGameplayManager
 
     public void StartFlying(Entity entity, uint animationId, short baseDelay, uint probabilityTargeted)
     {
-        StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+        _gameEngine.StaticVariables.g_gameRandomSeed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
 
-        if ((uint)((ulong)StaticVariables.g_gameRandomSeed * 0x65 >> 32) < (probabilityTargeted & 0xff))
+        if ((uint)((ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x65 >> 32) < (probabilityTargeted & 0xff))
         {
             var direction = (uint)ScriptHelper.GetDirectionToTarget(
-                StaticVariables.PlayerEntity.PosX - entity.PosX,
-                StaticVariables.PlayerEntity.PosY - entity.PosY);
+                _gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                _gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
 
             entity.TargetDirection = direction;
         }
         else
         {
-            StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-            entity.TargetDirection = (uint)((ulong)StaticVariables.g_gameRandomSeed * 0x20 >> 32);
+            _gameEngine.StaticVariables.g_gameRandomSeed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+            entity.TargetDirection = (uint)((ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x20 >> 32);
         }
 
         entity.TargetAnimationId = animationId & 0xff;
 
         if (baseDelay != 0)
         {
-            StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-            var delay = (short)((ulong)StaticVariables.g_gameRandomSeed * 0x10 >> 32) + baseDelay;
+            _gameEngine.StaticVariables.g_gameRandomSeed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+            var delay = (short)((ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x10 >> 32) + baseDelay;
             entity.AIValues.Set(delay, 1);
         }
     }
@@ -302,7 +302,7 @@ public class EntityGameplayManager
         if (needUpdate)
         {
             returnValue = 1;
-            newDirection = (byte)StaticVariables.g_directionFlipTable[direction];
+            newDirection = (byte)_gameEngine.StaticVariables.g_directionFlipTable[direction];
             entity.TargetAnimationId = newAnimId & 0xff;
             entity.ForceStepY = 0;
             entity.ForceStepX = 0;
@@ -343,7 +343,7 @@ public class EntityGameplayManager
 
         if (zThreshold < heightDiff || heightDiff < 1)
         {
-            newDirection = (byte)StaticVariables.g_directionFlipTable[entity.TargetDirection];
+            newDirection = (byte)_gameEngine.StaticVariables.g_directionFlipTable[entity.TargetDirection];
             entity.TargetAnimationId = newAnimId & 0xff;
             entity.ForceStepY = 0;
             entity.ForceStepX = 0;
@@ -369,8 +369,8 @@ public class EntityGameplayManager
         //stepDistance = entity.SpriteRecord.AnimationOffsetsPointer[animIndex * 0xe + 8];
         stepDistance = entity.SpriteRecord.AnimSets[animIndex].U6; // TODO check which property => flag or acceleration...
         height = GetTileHeightAtOffset(entity,
-            StaticVariables.g_offsetXList[direction] * (int)stepDistance,
-            StaticVariables.g_offsetYList[direction] * (int)stepDistance);
+            _gameEngine.StaticVariables.g_offsetXList[direction] * (int)stepDistance,
+            _gameEngine.StaticVariables.g_offsetYList[direction] * (int)stepDistance);
 
         return height;
     }
@@ -388,10 +388,10 @@ public class EntityGameplayManager
         ushort flagBits;
 
         tileX = entity.PosX + entity.ModX + offsetX;
-        xCoords[2] = StaticVariables.g_tileToWorldXTable[tileX >> 0x10];
-        xCoords[0] = StaticVariables.g_tileToWorldXTable[tileX >> 0x10];
-        xCoords[3] = StaticVariables.g_tileToWorldXTable[(tileX + entity.Width) >> 0x10];
-        xCoords[1] = StaticVariables.g_tileToWorldXTable[(tileX + entity.Width) >> 0x10];
+        xCoords[2] = _gameEngine.StaticVariables.g_tileToWorldXTable[tileX >> 0x10];
+        xCoords[0] = _gameEngine.StaticVariables.g_tileToWorldXTable[tileX >> 0x10];
+        xCoords[3] = _gameEngine.StaticVariables.g_tileToWorldXTable[(tileX + entity.Width) >> 0x10];
+        xCoords[1] = _gameEngine.StaticVariables.g_tileToWorldXTable[(tileX + entity.Width) >> 0x10];
 
         tileY = entity.PosY + entity.ModY + offsetY;
         yCoords[1] = tileY >> 0x14;

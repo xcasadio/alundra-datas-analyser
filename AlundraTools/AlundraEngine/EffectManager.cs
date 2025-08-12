@@ -16,7 +16,7 @@ public class EffectManager
     // 8003c1a4
     public void InitializeEffectSlots()
     {
-        foreach (var spriteEffect in StaticVariables.g_effectSlots)
+        foreach (var spriteEffect in _gameEngine.StaticVariables.g_effectSlots)
         {
             spriteEffect.Status = 0;
         }
@@ -33,22 +33,22 @@ public class EffectManager
 
         //var effectIndex = 0;
         //var mapEventRecord = _gameEngine.CurrentMap.SpriteInfo.MapEffectRecords[effectIndex];
-        ////var mapEventRecord = StaticVariables.g_initMapEventRecords[effectIndex];
+        ////var mapEventRecord = _gameEngine.StaticVariables.g_initMapEventRecords[effectIndex];
         //var val = (uint)(mapEventRecord.X | (mapEventRecord.Y << 8) | (mapEventRecord.Width << 16) | (mapEventRecord.Height << 24));
         //
         //while (val != 0)
         //{
         //    var effectSlotPtr = SpawnSpriteEffect(effectIndex, 0);
         //    if (effectSlotPtr == null 
-        //        && (StaticVariables.g_debugState & 0x80000000U) != 0 
-        //        && (StaticVariables.g_debugFlags & 0x20) != 0)
+        //        && (_gameEngine.StaticVariables.g_debugState & 0x80000000U) != 0 
+        //        && (_gameEngine.StaticVariables.g_debugFlags & 0x20) != 0)
         //    {
         //        Debugger.Break();
         //        //PrintInfo();
         //    }
         //
         //    effectIndex += 1;
-        //    //mapEventRecord = StaticVariables.g_initMapEventRecords[effectIndex];
+        //    //mapEventRecord = _gameEngine.StaticVariables.g_initMapEventRecords[effectIndex];
         //    mapEventRecord = _gameEngine.CurrentMap.SpriteInfo.MapEffectRecords[effectIndex];
         //    val = (uint)(mapEventRecord.X | (mapEventRecord.Y << 8) | (mapEventRecord.Width << 16) | (mapEventRecord.Height << 24));
         //}
@@ -99,7 +99,7 @@ public class EffectManager
             var record = _gameEngine.CurrentMap.SpriteInfo.MapEffectRecords[id];
             if (checkBoundingBox)
             {
-                var playerEntity = StaticVariables.PlayerEntity;
+                var playerEntity = _gameEngine.StaticVariables.PlayerEntity;
                 if (playerEntity.TileX < record.X1 
                     || playerEntity.TileX > record.X2
                     || playerEntity.TileY < record.Y1 
@@ -117,14 +117,14 @@ public class EffectManager
     //8003c410
     public void UpdateEffects()
     {
-        foreach (var effect in StaticVariables.g_effectSlots)
+        foreach (var effect in _gameEngine.StaticVariables.g_effectSlots)
         {
             if (effect.Status != 2)
             {
                 continue;
             }
 
-            if ((StaticVariables.g_playerControlFlags & 0x48) == 0)
+            if ((_gameEngine.StaticVariables.g_playerControlFlags & 0x48) == 0)
             {
                 if (effect.DestroyFlag != 0)
                 {
@@ -140,7 +140,7 @@ public class EffectManager
             effect.SpriteRef.X = effect.X;
             effect.SpriteRef.Y = effect.Y;
             effect.SpriteRef.Z = effect.Z;
-            StaticVariables.g_spriteImages[StaticVariables.g_spriteNumberOfImage++] = effect.SpriteRef;
+            _gameEngine.StaticVariables.g_spriteImages[_gameEngine.StaticVariables.g_spriteNumberOfImage++] = effect.SpriteRef;
         }
     }
 
@@ -355,7 +355,7 @@ public class EffectManager
     //8003b9c4
     public SpriteEffect? GetNextAvailableEffect()
     {
-        foreach (var effect in StaticVariables.g_effectSlots)
+        foreach (var effect in _gameEngine.StaticVariables.g_effectSlots)
         {
             if (effect.Status == 0)
             {
@@ -386,7 +386,7 @@ public class EffectManager
 
         do
         {
-            var slot = StaticVariables.g_effectSlots[i];
+            var slot = _gameEngine.StaticVariables.g_effectSlots[i];
 
             if (slot.Status == 0)
             {
@@ -465,7 +465,7 @@ public class EffectManager
         itemEntity.Bytes[3] = 0;
         itemEntity.Flags &= 0xffffff7f; // ~0x80
         
-        var initPosX = StaticVariables.g_iconNameEtcBase[itemId * 2 + 1] == 0 ? -1 : 600;
+        var initPosX = _gameEngine.StaticVariables.g_iconNameEtcBase[itemId * 2 + 1] == 0 ? -1 : 600;
 
         itemEntity.ItemDelay = initPosX;
         itemEntity.ItemState = 0;

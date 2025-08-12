@@ -8,7 +8,7 @@ namespace AlundraEngine.Editor;
 
 public static class FrameSnapshotLoader
 {
-    public static FrameSnapshot LoadFromJson(string filePath)
+    public static FrameSnapshot LoadFromJson(string filePath, GameEngine gameEngine)
     {
         string json = File.ReadAllText(filePath);
 
@@ -31,9 +31,9 @@ public static class FrameSnapshotLoader
         }
 
         var frameSnapshot = new FrameSnapshot();
-        frameSnapshot.CopyFromMemory(); // TODO : remove
+        frameSnapshot.CopyFromMemory(gameEngine); // TODO : remove
 
-        //frameSnapshot.Entities = new Entity[StaticVariables.g_entitySlots.Length];
+        //frameSnapshot.Entities = new Entity[_gameEngine.StaticVariables.g_entitySlots.Length];
         for (int i = 0; i < frameSnapshot.Entities.Length; i++)
         {
             // TODO : create a new entity
@@ -42,7 +42,7 @@ public static class FrameSnapshotLoader
 
             if (i < dump.entities.Count)
             {
-                dump.entities[i].CopyToEntity(frameSnapshot.Entities[i]);
+                dump.entities[i].CopyToEntity(frameSnapshot.Entities[i], gameEngine);
             }
         }
 
@@ -375,12 +375,12 @@ public static class FrameSnapshotLoader
         public int hp { get; set; }
         public int hpMax { get; set; }
 
-        public void CopyToEntity(Entity entity)
+        public void CopyToEntity(Entity entity, GameEngine gameEngine)
         {
             entity.FrameCounter = frameCounter;
             entity.IsNotProcessable = isNotProcessable;
             entity.Flags2 = flags2;
-            entity.PlatformEntity = StaticVariables.g_entitySlots[platformEntity];
+            entity.PlatformEntity = gameEngine.StaticVariables.g_entitySlots[platformEntity];
             entity.CarriedEntity = warpEntity;
             entity.RelativeWarpOffsetX = relativeWarpOffsetX;
             entity.RelativeWarpOffsetY = relativeWarpOffsetY;

@@ -63,7 +63,7 @@ public class EtcResR
 
             var offset = iconNameOffset;
             IconNameTable[i * 2] = ReadString(buffer, ref offset);
-            //StaticVariables.g_iconNameEtcBase[i * 2] = (byte)i;
+            //_gameEngine.StaticVariables.g_iconNameEtcBase[i * 2] = (byte)i;
             TileTable[i * 2] = buffer[tileSetOffset];
             PaletteTable[i * 2] = buffer[paletteOffset];
         }
