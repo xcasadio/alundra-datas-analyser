@@ -535,7 +535,7 @@ public class GraphicManager
                             //*puVar2 = *puVar2 & 0xff000000 | (uint)pSVar3 & 0xffffff;
                             
                             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-                            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+                            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue - 1, bitmap);
 
                             //bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(spriteB);
                             //_gameEngine.Renderer.AddSprite(spriteB, int.MaxValue, bitmap);
@@ -740,26 +740,27 @@ public class GraphicManager
             return 0;
         }
 
-        var transitionFuncArgs = _gameEngine.StaticVariables.g_transitionFuncArgs[transitionType];
+        var sourceCallbackInfo = _gameEngine.StaticVariables.g_initialCallbackTable[transitionType];
         var callbackData = _gameEngine.StaticVariables.g_callbackTable[transitionType];
 
         _gameEngine.StaticVariables.g_activeTransitionCallback = callbackData;
         _gameEngine.StaticVariables.g_currentTransitionType = transitionType;
 
-        callbackData.Flags = transitionFuncArgs.Flags;
-        callbackData.Data = transitionFuncArgs.Data;
-        callbackData.X = transitionFuncArgs.X;
-        callbackData.Y = transitionFuncArgs.Y;
-        callbackData.Width = transitionFuncArgs.Width;
-        callbackData.Height = transitionFuncArgs.Height;
-        callbackData.InitializeFunc = transitionFuncArgs.InitializeFunc;
-        callbackData.RenderFunc = transitionFuncArgs.RenderFunc;
-        callbackData.Arg = transitionFuncArgs.Arg;
+        callbackData.Id = sourceCallbackInfo.Id;
+        callbackData.Flags = sourceCallbackInfo.Flags;
+        callbackData.Data = sourceCallbackInfo.Data;
+        callbackData.X = sourceCallbackInfo.X;
+        callbackData.Y = sourceCallbackInfo.Y;
+        callbackData.Width = sourceCallbackInfo.Width;
+        callbackData.Height = sourceCallbackInfo.Height;
+        callbackData.InitializeFunc = sourceCallbackInfo.InitializeFunc;
+        callbackData.RenderFunc = sourceCallbackInfo.RenderFunc;
+        callbackData.Arg = sourceCallbackInfo.Arg;
         callbackData.Flags |= 0x0001;
 
-        if (transitionFuncArgs.InitializeFunc != null)
+        if (sourceCallbackInfo.InitializeFunc != null)
         {
-            transitionFuncArgs.InitializeFunc.Invoke(callbackData);
+            sourceCallbackInfo.InitializeFunc.Invoke(callbackData);
         }
 
         return result;

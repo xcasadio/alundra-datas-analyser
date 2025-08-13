@@ -3687,11 +3687,6 @@ public class StaticVariables
             g_effectSlots[i] = new SpriteEffect { Status = 0 };
         }
 
-        for (int i = 0; i < g_callbackTable.Length; i++)
-        {
-            g_callbackTable[i] = new CallBackInfo();
-        }
-
         g_entitySpriteNamesTable[256] = "BIZEN";
         g_entitySpriteNamesTable[257] = "TOSTIA";
         g_entitySpriteNamesTable[258] = "TULAS";
@@ -3849,71 +3844,71 @@ public class StaticVariables
 
 
 
-        g_transitionFuncArgs =
+        g_initialCallbackTable =
         [
             new CallBackInfo
             {
-                Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x05, Width = 0x20, Height = 0x06,
+                Id = 0, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x05, Width = 0x20, Height = 0x06,
                 InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Func_80046ef0, Arg = 0
             },
             new CallBackInfo
             {
-                Flags = 0, Data = null, X = 0x00, Y = 0x00, Width = 0x28, Height = 0x04,
+                Id = 1, Flags = 0, Data = null, X = 0x00, Y = 0x00, Width = 0x28, Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.FUN_8004b770, RenderFunc = gameEngine.UIManager.Func_8004bea4, Arg = 0xFFFFFFFF
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
+                Id = 2, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Func_8004f628, Arg = 0
             },
             new CallBackInfo
             {
-                Flags = 0, Data = null, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04, InitializeFunc = null,
+                Id = 3, Flags = 0, Data = null, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04, InitializeFunc = null,
                 RenderFunc = gameEngine.UIManager.FUN_800501fc, Arg = 0x05
             },
             new CallBackInfo
             {
-                Flags = 0, Data = null, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
+                Id = 4, Flags = 0, Data = null, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.FUN_800537f0, RenderFunc = gameEngine.UIManager.Func_80053328, Arg = 0xFFFFFFFF
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
+                Id = 5, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Func_8004a8a8, Arg = 0
             },
             new CallBackInfo
             {
-                Flags = 0, Data = null, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04, InitializeFunc = null,
+                Id = 6, Flags = 0, Data = null, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04, InitializeFunc = null,
                 RenderFunc = gameEngine.HudManager.FUN_80054f1c, Arg = 0
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
+                Id = 7, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = null, Arg = 0
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
+                Id = 8, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Fun_8004afe8, Arg = 0
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
+                Id = 9, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Fun_80050ec8, Arg = 0
             },
             new CallBackInfo
             {
-                Flags = 0, Data = null, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04, InitializeFunc = null,
+                Id = 10, Flags = 0, Data = null, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04, InitializeFunc = null,
                 RenderFunc = gameEngine.UIManager.FUN_800583ec, Arg = 0
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
+                Id = 11, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Func_80051550, Arg = 0
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_textTilesConfiguration, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
+                Id = 12, Flags = 0, Data = g_textTilesConfiguration, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.FUN_8005a268, RenderFunc = gameEngine.UIManager.Fun_8005a3e0, Arg = 0x05
             }
         ];
@@ -4434,7 +4429,7 @@ public class StaticVariables
     public byte DAT_800a3314; // 800A3314
     public byte DAT_800a3315; // 800A3315
     public short DAT_800a500a; // 800A500A
-    public CallBackInfo[] g_transitionFuncArgs; // 800A731C
+    public CallBackInfo[] g_initialCallbackTable; // 800A731C
     public byte g_soundNameList; // 800A7488
     //public byte  PTR_s_(void_)NULL_800a7c58; // 800A7C58
     public byte PTR_DAT_800a7c5c; // 800A7C5C
@@ -5037,7 +5032,7 @@ public class StaticVariables
     public int g_bufferIndex; // 80146F50
     public ulong[] g_orderTableTaki = new ulong[10]; // 80146F58
     public ulong[] g_orderTableTaki2 = new ulong[10]; // 80146F80
-    public TextToDisplay g_textToDisplay = new TextToDisplay(); // 80146FA8
+    public TextToDisplay g_backgroundMessageAnimation = new TextToDisplay(); // 80146FA8
     public int g_textPosX; // 801490C8
     public int g_textPosY; // 801490CC
     public short g_textOffsetX; // 801490D0
@@ -5090,7 +5085,7 @@ public class StaticVariables
     public byte[] g_bufferFONT3_tim = new byte[11000]; // 8014ACE8
     public byte BYTE_80150000; // 80150000
     public int g_warpFlags_2; // 80152F08
-    public CallBackInfo[] g_callbackTable = new CallBackInfo[13]; // 80153028
+    public CallBackInfo[] g_callbackTable = Enumerable.Range(0, 13).Select(x => new CallBackInfo()).ToArray(); // 80153028
     public int g_postProcessState; // 80153194
     public int g_currentTransitionType; // 80153198
     public CallBackInfo g_activeTransitionCallback; // 8015319C

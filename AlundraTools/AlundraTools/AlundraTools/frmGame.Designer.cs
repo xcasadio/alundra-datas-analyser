@@ -42,16 +42,16 @@ namespace AlundraTools.AlundraTools
             groupBox2 = new GroupBox();
             label29 = new Label();
             labelCameraScrolling = new Label();
-            label11 = new Label();
-            labelHudDelta = new Label();
             label9 = new Label();
             labelCameraOffset = new Label();
             label6 = new Label();
             labelCameraLookAt = new Label();
-            label3 = new Label();
-            labelHudXY = new Label();
             label13 = new Label();
             labelCameraPosition = new Label();
+            label11 = new Label();
+            labelHudDelta = new Label();
+            label3 = new Label();
+            labelHudXY = new Label();
             label4 = new Label();
             labelMapScreenPos = new Label();
             label10 = new Label();
@@ -325,24 +325,6 @@ namespace AlundraTools.AlundraTools
             labelCameraScrolling.TabIndex = 10;
             labelCameraScrolling.Text = "0";
             // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Location = new Point(7, 211);
-            label11.Name = "label11";
-            label11.Size = new Size(43, 20);
-            label11.TabIndex = 9;
-            label11.Text = "delta";
-            // 
-            // labelHudDelta
-            // 
-            labelHudDelta.AutoSize = true;
-            labelHudDelta.Location = new Point(111, 211);
-            labelHudDelta.Name = "labelHudDelta";
-            labelHudDelta.Size = new Size(17, 20);
-            labelHudDelta.TabIndex = 8;
-            labelHudDelta.Text = "0";
-            // 
             // label9
             // 
             label9.AutoSize = true;
@@ -379,24 +361,6 @@ namespace AlundraTools.AlundraTools
             labelCameraLookAt.TabIndex = 4;
             labelCameraLookAt.Text = "0";
             // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(7, 191);
-            label3.Name = "label3";
-            label3.Size = new Size(63, 20);
-            label3.TabIndex = 3;
-            label3.Text = "position";
-            // 
-            // labelHudXY
-            // 
-            labelHudXY.AutoSize = true;
-            labelHudXY.Location = new Point(111, 191);
-            labelHudXY.Name = "labelHudXY";
-            labelHudXY.Size = new Size(17, 20);
-            labelHudXY.TabIndex = 2;
-            labelHudXY.Text = "0";
-            // 
             // label13
             // 
             label13.AutoSize = true;
@@ -414,6 +378,42 @@ namespace AlundraTools.AlundraTools
             labelCameraPosition.Size = new Size(17, 20);
             labelCameraPosition.TabIndex = 0;
             labelCameraPosition.Text = "0";
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Location = new Point(6, 83);
+            label11.Name = "label11";
+            label11.Size = new Size(43, 20);
+            label11.TabIndex = 9;
+            label11.Text = "delta";
+            // 
+            // labelHudDelta
+            // 
+            labelHudDelta.AutoSize = true;
+            labelHudDelta.Location = new Point(110, 83);
+            labelHudDelta.Name = "labelHudDelta";
+            labelHudDelta.Size = new Size(17, 20);
+            labelHudDelta.TabIndex = 8;
+            labelHudDelta.Text = "0";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(6, 63);
+            label3.Name = "label3";
+            label3.Size = new Size(63, 20);
+            label3.TabIndex = 3;
+            label3.Text = "position";
+            // 
+            // labelHudXY
+            // 
+            labelHudXY.AutoSize = true;
+            labelHudXY.Location = new Point(110, 63);
+            labelHudXY.Name = "labelHudXY";
+            labelHudXY.Size = new Size(17, 20);
+            labelHudXY.TabIndex = 2;
+            labelHudXY.Text = "0";
             // 
             // label4
             // 
@@ -1270,18 +1270,18 @@ namespace AlundraTools.AlundraTools
             // 
             textBoxHudPoly.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             textBoxHudPoly.BorderStyle = BorderStyle.FixedSingle;
-            textBoxHudPoly.Location = new Point(111, 77);
+            textBoxHudPoly.Location = new Point(111, 103);
             textBoxHudPoly.Multiline = true;
             textBoxHudPoly.Name = "textBoxHudPoly";
             textBoxHudPoly.ReadOnly = true;
-            textBoxHudPoly.Size = new Size(405, 96);
+            textBoxHudPoly.Size = new Size(398, 183);
             textBoxHudPoly.TabIndex = 63;
             textBoxHudPoly.Text = "\r\n";
             // 
             // label39
             // 
             label39.AutoSize = true;
-            label39.Location = new Point(7, 77);
+            label39.Location = new Point(7, 103);
             label39.Name = "label39";
             label39.Size = new Size(41, 20);
             label39.TabIndex = 66;

@@ -2,6 +2,9 @@
 
 public class CallBackInfo //UiRecord
 {
+    //debug purpose
+    public int Id;
+
     public int Flags;
     public UIBoxConfiguration? Data;
     public short X;	

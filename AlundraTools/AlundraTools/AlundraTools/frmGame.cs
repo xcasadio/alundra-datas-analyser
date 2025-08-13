@@ -430,15 +430,13 @@ public partial class FrmGame : Form
     private void RefreshHudControls()
     {
         labelHudActivate.Text = _gameEngine.StaticVariables.g_warpFlags_2.ToString();
-        labelHudDebug.Text = _gameEngine.StaticVariables.g_textToDisplay + "-" +
-                             _gameEngine.StaticVariables.g_textToDisplay2 + "-" +
-                             _gameEngine.StaticVariables.g_textToDisplay3 + "-" +
-                             string.Join("-", _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920.Select(x => x.ToString()));
-
-        var poly = _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[0];
-        textBoxHudPoly.Text = $"{poly.x0} {poly.y0} {poly.u0} {poly._2}\n";
-        var sprt = _gameEngine.StaticVariables.g_cursorTextSprites[0];
-        textBoxHudPoly.Text += $"{sprt.x0} {sprt.y0} {sprt.w} {sprt.h} {sprt.u0} {sprt.v0}";
+        textBoxHudPoly.Text = _gameEngine.StaticVariables.g_backgroundMessageAnimation + Environment.NewLine +
+                              _gameEngine.StaticVariables.g_textToDisplay2 + Environment.NewLine +
+                              _gameEngine.StaticVariables.g_textToDisplay3 + Environment.NewLine +
+                              string.Join(Environment.NewLine, _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920.Select(x => x.ToString()));
+        
+        //var sprt = _gameEngine.StaticVariables.g_cursorTextSprites[0];
+        //labelHudDebug.Text += $"{sprt}";
 
         labelHudXY.Text = $"{_gameEngine.StaticVariables.g_hudX >> 16} x {_gameEngine.StaticVariables.g_hudY >> 16}";
         labelHudDelta.Text = $"{_gameEngine.StaticVariables.g_hudDeltaX >> 16} x {_gameEngine.StaticVariables.g_hudDeltaY >> 16}";

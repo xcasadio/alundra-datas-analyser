@@ -14,4 +14,9 @@ public class SPRT
     public ushort clut;
     public short w;
     public short h;
+
+    public override string ToString()
+    {
+        return $"x0:{x0} y0:{y0} u0:{u0} v0:{v0} w:{w} h:{h} c:{clut} r0:{r0} g0:{g0} b0:{b0}";
+    }
 }

@@ -125,7 +125,7 @@ public class UIManager
         }
         else
         {
-            y = UpdateUiBoxesPosition(callBackInfo.Data, _gameEngine.StaticVariables.g_textToDisplay);
+            y = UpdateUiBoxesPosition(callBackInfo.Data, _gameEngine.StaticVariables.g_backgroundMessageAnimation);
 
             if (y == 1)
             {
@@ -136,8 +136,8 @@ public class UIManager
 
                 if ((_gameEngine.StaticVariables.g_warpFlags_2 & 2) != 0)
                 {
-                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X = _gameEngine.StaticVariables.g_textToDisplay.originX;
-                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y = _gameEngine.StaticVariables.g_textToDisplay.originY;
+                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X = _gameEngine.StaticVariables.g_backgroundMessageAnimation.originX;
+                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y = _gameEngine.StaticVariables.g_backgroundMessageAnimation.originY;
                     FUN_8004501c(callBackInfo);
                     return; // 0;
                 }
@@ -823,39 +823,39 @@ public class UIManager
             ResetHudTransitionState();
             _gameEngine.HudManager.UpdateHudTransitionState();
 
-            _gameEngine.StaticVariables.g_textToDisplay.mode = 2;
-            _gameEngine.StaticVariables.g_textToDisplay.tick = 0;
-            _gameEngine.StaticVariables.g_textToDisplay.speed = 0xf;
+            _gameEngine.StaticVariables.g_backgroundMessageAnimation.mode = 2;
+            _gameEngine.StaticVariables.g_backgroundMessageAnimation.tick = 0;
+            _gameEngine.StaticVariables.g_backgroundMessageAnimation.speed = 0xf;
 
             if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X < 0)
             {
-                _gameEngine.StaticVariables.g_textToDisplay.x = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X + _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width * -8);
+                _gameEngine.StaticVariables.g_backgroundMessageAnimation.x = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X + _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width * -8);
             }
             else
             {
-                _gameEngine.StaticVariables.g_textToDisplay.x = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
+                _gameEngine.StaticVariables.g_backgroundMessageAnimation.x = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
             }
 
             if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y < 0)
             {
-                _gameEngine.StaticVariables.g_textToDisplay.y = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y + _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Height * -8);
+                _gameEngine.StaticVariables.g_backgroundMessageAnimation.y = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y + _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Height * -8);
             }
 
             else
             {
-                _gameEngine.StaticVariables.g_textToDisplay.y = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y;
+                _gameEngine.StaticVariables.g_backgroundMessageAnimation.y = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y;
             }
 
             if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X < 0)
             {
-                _gameEngine.StaticVariables.g_textToDisplay.startX = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X + _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width * -8);
+                _gameEngine.StaticVariables.g_backgroundMessageAnimation.startX = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X + _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width * -8);
             }
             else
             {
-                _gameEngine.StaticVariables.g_textToDisplay.startX = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
+                _gameEngine.StaticVariables.g_backgroundMessageAnimation.startX = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
             }
 
-            _gameEngine.StaticVariables.g_textToDisplay.startY = 0xf0;
+            _gameEngine.StaticVariables.g_backgroundMessageAnimation.startY = 0xf0;
         }
     }
 
@@ -1467,9 +1467,10 @@ public class UIManager
                             //    0x3c0, (short)((uint)(((_gameEngine.StaticVariables.g_textBufferX + _gameEngine.StaticVariables.g_textLineIndex) % 3 * 0x10 + 0x120) * 0x10000) >> 0x10),
                             //    (short)_gameEngine.StaticVariables.g_textLineStartX, 0, 0x100, 0x10);
 
+                            var textY = (_gameEngine.StaticVariables.g_textLineIndex % 3) * 0x10; // + 0x120;
                             RenderTextBitmap(textBuffer, _gameEngine.StaticVariables.g_textBuffer,
                                 0, 
-                                (short)((_gameEngine.StaticVariables.g_textLineIndex % 3) * 0x10 + 0x120),
+                                (short)textY,
                                 (short)_gameEngine.StaticVariables.g_textLineStartX, 
                                 0, 0x10, 0x10);
 
@@ -1966,13 +1967,13 @@ public class UIManager
 
             if (_gameEngine.StaticVariables.g_textLineWidth[currentLine] == 0)
             {
-                sprite.x0 = (short)(callbackInfo.X + callbackInfo.Width);
-                sprite.y0 = (short)(callbackInfo.Height + callbackInfo.Y + 2 + offsetY + sVar6);
+                sprite.x0 = (short)(callbackInfo.Data.X + callbackInfo.Data.Width);
+                sprite.y0 = (short)(callbackInfo.Data.Y + callbackInfo.Height + offsetY + sVar6);
             }
             else
             {
-                sprite.x0 = (short)(callbackInfo.X + (callbackInfo.Width * 8 - _gameEngine.StaticVariables.g_textLineWidth[currentLine]) / 2);
-                sprite.y0 = (short)(callbackInfo.Height + callbackInfo.Y + 2 + offsetY + sVar6);
+                sprite.x0 = (short)(callbackInfo.Data.X + (callbackInfo.Data.Width * 8 - _gameEngine.StaticVariables.g_textLineWidth[currentLine]) / 2);
+                sprite.y0 = (short)(callbackInfo.Data.Y + callbackInfo.Data.Height + offsetY + sVar6);
             }
 
             //offsetY = offsetY + -1;
@@ -2006,6 +2007,7 @@ public class UIManager
 
         holdActive = _gameEngine.StaticVariables.g_textHoldState != 0;
 
+        //display waiting cursor
         if (holdActive)
         {
             _gameEngine.StaticVariables.INT_80149cd4 += 1;
@@ -2017,9 +2019,9 @@ public class UIManager
 
             _gameEngine.StaticVariables.g_cursorTextSprites[0].u0 = _gameEngine.StaticVariables.g_dialogCursorTextureUV[(_gameEngine.StaticVariables.INT_80149cd4 / 10) * 0x28];
             _gameEngine.StaticVariables.g_cursorTextSprites[0].v0 = _gameEngine.StaticVariables.g_dialogCursorTextureUV[(_gameEngine.StaticVariables.INT_80149cd4 / 10) * 0x28 + 1];
-            _gameEngine.StaticVariables.g_cursorTextSprites[0].x0 = (short)(callbackInfo.X + callbackInfo.Width * 8 - 0x10);
-            _gameEngine.StaticVariables.g_cursorTextSprites[0].y0 = (short)(callbackInfo.Y + 2 + (callbackInfo.Height + 6) * 8 - 0x18);
-
+            _gameEngine.StaticVariables.g_cursorTextSprites[0].x0 = (short)(callbackInfo.Data.X + callbackInfo.Data.Width * 8 - 0x10);
+            _gameEngine.StaticVariables.g_cursorTextSprites[0].y0 = (short)(callbackInfo.Data.Y + (callbackInfo.Data.Height) * 8 - 0x18);
+            
             //uVar1 = g_drawModes[0x14].tag;
             //psVar3 = (callbackInfo.X);
             //pSVar4 = _gameEngine.StaticVariables.g_cursorTextSprites[0];
@@ -2054,9 +2056,9 @@ public class UIManager
         }
 
         // Configure le mode texte pour l’animation
-        _gameEngine.StaticVariables.g_textToDisplay.tick = 0;
-        _gameEngine.StaticVariables.g_textToDisplay.mode = 2;
-        _gameEngine.StaticVariables.g_textToDisplay.speed = 0xF;
+        _gameEngine.StaticVariables.g_backgroundMessageAnimation.tick = 0;
+        _gameEngine.StaticVariables.g_backgroundMessageAnimation.mode = 2;
+        _gameEngine.StaticVariables.g_backgroundMessageAnimation.speed = 0xF;
 
         // Configure les coordonnées de départ du texte (X, Y)
         // selon g_uiBoxesInventoryDescriptionBackground[] qui contient des offsets
@@ -2067,8 +2069,8 @@ public class UIManager
             baseX = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X - (offset << 3));
         }
 
-        _gameEngine.StaticVariables.g_textToDisplay.x = baseX;
-        _gameEngine.StaticVariables.g_textToDisplay.y = 0xF0; // position Y fixe
+        _gameEngine.StaticVariables.g_backgroundMessageAnimation.x = baseX;
+        _gameEngine.StaticVariables.g_backgroundMessageAnimation.y = 0xF0; // position Y fixe
 
         var startX = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
 
@@ -2078,7 +2080,7 @@ public class UIManager
             startX = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X - (offset << 3));
         }
 
-        _gameEngine.StaticVariables.g_textToDisplay.startX = startX;
+        _gameEngine.StaticVariables.g_backgroundMessageAnimation.startX = startX;
 
         var startY = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y;
 
@@ -2088,7 +2090,7 @@ public class UIManager
             startY = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y - (offset << 3));
         }
 
-        _gameEngine.StaticVariables.g_textToDisplay.startY = startY;
+        _gameEngine.StaticVariables.g_backgroundMessageAnimation.startY = startY;
         _gameEngine.StaticVariables.g_playerControlFlags |= (uint)(animationMode == 1 ? 0x10 : 0x8);
 
         // Réinitialise divers états liés au texte
