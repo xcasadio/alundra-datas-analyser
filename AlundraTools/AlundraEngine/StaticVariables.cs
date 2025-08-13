@@ -1804,7 +1804,7 @@ public class StaticVariables
     ];
 
     // 8009CFBC
-    public UIBoxConfiguration g_uiBoxDialogMessageBackground;
+    public UIBoxConfiguration g_uiBoxesInventoryDescriptionBackground;
 
     //800b44f8
     public readonly SPRT[] SPRT_ARRAY_800b44f8 =
@@ -3412,43 +3412,119 @@ public class StaticVariables
     ];
 
     // 800a58d8
-    public readonly byte[] g_dialogCursorTextureUV =
-    [
-        0xB0, 0x38, 0x05, 0x00,
-        0x08, 0x00, 0x08, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x08, 0x00, 0x00, 0x00,
+    public readonly byte[] g_dialogCursorTextureUV = new byte[]
+{
+    0xB0, 0x38, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x08, 0x00, 0x00, 0x00,
 
-        0xB8, 0x38, 0x05, 0x00,
-        0x08, 0x00, 0x08, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x10, 0x00, 0x00, 0x00,
+    0xB8, 0x38, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x10, 0x00, 0x00, 0x00,
 
-        0xC0, 0x38, 0x05, 0x00,
-        0x08, 0x00, 0x08, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x18, 0x00, 0x00, 0x00,
+    0xC0, 0x38, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x18, 0x00, 0x00, 0x00,
 
-        0xC8, 0x38, 0x05, 0x00,
-        0x08, 0x00, 0x08, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x20, 0x00, 0x00, 0x00,
+    0xC8, 0x38, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x20, 0x00, 0x00, 0x00,
 
-        0xD0, 0x38, 0x05, 0x00,
-        0x08, 0x00, 0x08, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x28, 0x00, 0x00, 0x00,
+    0xD0, 0x38, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x28, 0x00, 0x00, 0x00,
 
-        0xD8, 0x38, 0x05, 0x00,
-        0x08, 0x00, 0x08, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00
-    ];
+    0xD8, 0x38, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x30, 0x00, 0x00, 0x00,
+
+    0xE0, 0x38, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x38, 0x00, 0x00, 0x00,
+
+    0xE8, 0x38, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x40, 0x00, 0x00, 0x00,
+
+    0x00, 0x00, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+
+    0x48, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+
+    0x50, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+
+    0x58, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+
+    0x60, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+
+    0x68, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+
+    0x70, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+
+    0x78, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+
+    0x80, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+
+    0x88, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x05, 0x00,
+    0x08, 0x00, 0x08, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
+
+    0x90, 0x00, 0x00, 0x00,
+    0x00
+};
+
 
     // 800B2898
     public readonly byte[] g_inventoryCursorTextureUVs = new byte[361]
@@ -3678,7 +3754,7 @@ public class StaticVariables
         g_entitySpriteNamesTable[506] = "ZAZAN";
         g_entitySpriteNamesTable[509] = "ZOLDIA";
 
-        g_textTilesConfiguration_800b8eb0 = new UIBoxConfiguration
+        g_UiBoxesInventoryWeaponNameBackground = new UIBoxConfiguration
         {
             X = 0xb0,
             Y = 0x10,
@@ -3698,7 +3774,7 @@ public class StaticVariables
             SpritesB = g_font1_B,
         };
 
-        g_uiBoxDialogMessageBackground = new UIBoxConfiguration
+        g_uiBoxesInventoryDescriptionBackground = new UIBoxConfiguration
         {
             X = 0x10,
             Y = 0xA8,
@@ -3710,7 +3786,7 @@ public class StaticVariables
 
         SPRT_ARRAY_800b8910 = (SPRT[])SPRT_ARRAY_800b8370.Clone();
 
-        g_UiBoxesInventory = new UIBoxConfiguration
+        g_UiBoxesInventoryWeaponBackground = new UIBoxConfiguration
         {
             X = 0x8,
             Y = 0x10,
@@ -3720,7 +3796,7 @@ public class StaticVariables
             SpritesB = SPRT_ARRAY_800b4ed0
         };
 
-        UIBoxConfiguration_800b8360 = new UIBoxConfiguration
+        g_UiBoxesInventoryItemBackground = new UIBoxConfiguration
         {
             X = 0x8,
             Y = 0x40,
@@ -3731,7 +3807,7 @@ public class StaticVariables
 
         };
 
-        g_textTilesConfiguration_800b8eb0 = new UIBoxConfiguration
+        g_UiBoxesInventoryWeaponNameBackground = new UIBoxConfiguration
         {
             X = 0xB0,
             Y = 0x10,
@@ -3741,7 +3817,7 @@ public class StaticVariables
             SpritesB = SPRT_ARRAY_800b8910
         };
 
-        UIBoxConfiguration_800b9a00 = new UIBoxConfiguration
+        g_UiBoxesInventoryItemNameBackground = new UIBoxConfiguration
         {
             X = 0xB0,
             Y = 0x40,
@@ -3761,7 +3837,7 @@ public class StaticVariables
             SpritesB = null
         };
 
-        UIBoxConfiguration_800b9e58 = new UIBoxConfiguration
+        g_UiBoxesInventoryMoneyFalconKeyIcons = new UIBoxConfiguration
         {
             X = 0xB0,
             Y = 0x60,
@@ -3777,7 +3853,7 @@ public class StaticVariables
         [
             new CallBackInfo
             {
-                Flags = 0, Data = g_uiBoxDialogMessageBackground, X = 0x10, Y = 0x05, Width = 0x20, Height = 0x06,
+                Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x05, Width = 0x20, Height = 0x06,
                 InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Func_80046ef0, Arg = 0
             },
             new CallBackInfo
@@ -3787,7 +3863,7 @@ public class StaticVariables
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_uiBoxDialogMessageBackground, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
+                Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Func_8004f628, Arg = 0
             },
             new CallBackInfo
@@ -3802,7 +3878,7 @@ public class StaticVariables
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_uiBoxDialogMessageBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
+                Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Func_8004a8a8, Arg = 0
             },
             new CallBackInfo
@@ -3812,17 +3888,17 @@ public class StaticVariables
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_uiBoxDialogMessageBackground, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
+                Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = null, Arg = 0
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_uiBoxDialogMessageBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
+                Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Fun_8004afe8, Arg = 0
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_uiBoxDialogMessageBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
+                Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Fun_80050ec8, Arg = 0
             },
             new CallBackInfo
@@ -3832,7 +3908,7 @@ public class StaticVariables
             },
             new CallBackInfo
             {
-                Flags = 0, Data = g_uiBoxDialogMessageBackground, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
+                Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Func_80051550, Arg = 0
             },
             new CallBackInfo
@@ -4408,17 +4484,17 @@ public class StaticVariables
     public short DAT_800b4314; // 800B4314
     public byte PTR_SprtGridDescriptor_800b44b8; // 800B44B8
     // 800B58A8
-    public UIBoxConfiguration g_UiBoxesInventory;
+    public UIBoxConfiguration g_UiBoxesInventoryWeaponBackground;
     // 800B8360
-    public UIBoxConfiguration UIBoxConfiguration_800b8360;
+    public UIBoxConfiguration g_UiBoxesInventoryItemBackground;
     // 800B8EB0
-    public UIBoxConfiguration g_textTilesConfiguration_800b8eb0;
+    public UIBoxConfiguration g_UiBoxesInventoryWeaponNameBackground;
     // 800B9A00
-    public UIBoxConfiguration UIBoxConfiguration_800b9a00;
+    public UIBoxConfiguration g_UiBoxesInventoryItemNameBackground;
     // 800B9A10
     public UIBoxConfiguration UIBoxConfiguration_800b9a10;
     // 800B9E58
-    public UIBoxConfiguration UIBoxConfiguration_800b9e58;
+    public UIBoxConfiguration g_UiBoxesInventoryMoneyFalconKeyIcons;
     public byte PTR_GetCurrentTile_Zone1_800b9e68; // 800B9E68
     //800b9ec8
     public readonly uint[] UINT_ARRAY_800b9ec8 =
@@ -5172,7 +5248,7 @@ public class StaticVariables
     public SPRT[] g_spriteInventoryItems = Enumerable.Range(0, 24).Select(x => new SPRT()).ToArray(); // 8017fab4
     public SPRT[] SPRT_ARRAY_8017fe74 = Enumerable.Range(0, 2).Select(x => new SPRT()).ToArray(); // 8017FE74
     public SPRT[] g_spriteInventoryText = Enumerable.Range(0, 4).Select(x => new SPRT()).ToArray(); // 8017fe9c
-    public int INT_8017feec; // 8017FEEC
+    public int g_inventoryCursorText; // 8017FEEC
     public int INT_8017fef0; // 8017FEF0
     public int g_forbiddenWarpFlag; // 8017FEF4
     public InventoryCursorAnimation g_inventoryCursorAnimation = new InventoryCursorAnimation(); // 8017fef8

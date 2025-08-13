@@ -11,9 +11,10 @@ public class Font3
     public Bitmap FontBitmapTim;
 
     private readonly Dictionary<int, Bitmap> _hudBitmapByPalette = new();
-    private readonly Dictionary<int, Bitmap> _fontBitmapByPalette = new();
+    //private readonly Dictionary<int, Bitmap> _fontBitmapByPalette = new();
+    private readonly Dictionary<int, Bitmap> _fontBitmapBySprite = new();
     private byte[] _hudImageData;
-    private byte[] _fontImageDataTim;
+    //private byte[] _fontImageDataTim;
 
     public Font3(string folderName)
     {
@@ -69,8 +70,7 @@ public class Font3
 
     public Bitmap GenerateFontBitmapTim(Color[] pal)
     {
-        FontBitmapTim = GenerateFontBitmapTim(0, 0, 256, 256, pal);
-        return FontBitmapTim;
+        return GenerateFontBitmapTim(0, 0, 256, 256, pal);
     }
 
     public Bitmap GenerateFontBitmapTim(int x, int y, int w, int h, int paletteIndex)
@@ -80,16 +80,27 @@ public class Font3
 
     public Bitmap GenerateFontBitmapTim(int x, int y, int w, int h, Color[] pal)
     { 
-        var key = pal.GetHashCode();
+        //var key = pal.GetHashCode();
+        //
+        //if (!_fontBitmapByPalette.TryGetValue(key, out var bitmap))
+        //{
+        //    bitmap = ImageHelper.BitmapFromPsxBuff(_fontImageDataTim, 0, 0, 256, 256, 4, pal);
+        //    _fontBitmapByPalette.Add(key, bitmap);
+        //}
 
-        if (!_fontBitmapByPalette.TryGetValue(key, out var bitmap))
+        //var rect = new Rectangle(x, y, w, h);
+        //return bitmap.Clone(rect, bitmap.PixelFormat);
+
+        var key = (x << 24) | (y << 16) | (w << 8) | h;
+
+        if (!_fontBitmapBySprite.TryGetValue(key, out var bitmap))
         {
-            bitmap = ImageHelper.BitmapFromPsxBuff(_fontImageDataTim, 0, 0, 256, 256, 4, pal);
-            _fontBitmapByPalette.Add(key, bitmap);
+            var rect = new Rectangle(x, y, w, h);
+            bitmap = FontBitmapTim.Clone(rect, FontBitmapTim.PixelFormat); 
+            _fontBitmapBySprite.Add(key, bitmap);
         }
 
-        var rect = new Rectangle(x, y, w, h);
-        return bitmap.Clone(rect, bitmap.PixelFormat);
+        return bitmap;
     }
 
     private void LoadPalette(string folderName)
@@ -121,6 +132,8 @@ public class Font3
 
     private void LoadImageTim(string folderName)
     {
-        _fontImageDataTim = File.ReadAllBytes(Path.Combine(folderName, "FONT3.TIM"));
+        FontBitmapTim = TimReader.LoadTim(Path.Combine(folderName, "FONT3.TIM"), 
+            0, Color.FromArgb(255, 156, 165, 132));
+        //_fontImageDataTim = File.ReadAllBytes(Path.Combine(folderName, "FONT3.TIM"));
     }
 }

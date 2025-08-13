@@ -223,7 +223,7 @@ internal class Program
         {
             if (!string.IsNullOrWhiteSpace(@string))
             {
-                Log(TextInterpreter.DecodeString(@string));
+                Log(TextDecoder.DecodeString(@string));
             }
         }
         DeIndent();

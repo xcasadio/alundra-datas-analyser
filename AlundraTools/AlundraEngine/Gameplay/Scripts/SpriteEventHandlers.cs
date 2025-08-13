@@ -1002,13 +1002,14 @@ public class SpriteEventHandlers
     }
 
     //8007c174
+    //Item
     public void FUN_8007c174(Entity entity)
     {
         int itemState;
         Entity entity2;
         int uVar6;
 
-        Debugger.Break();
+        //Debugger.Break();
         var itemId = entity.SpriteTableIndex - 0x1e;
 
         if (entity.Bytes[0] == 2)
@@ -1057,7 +1058,7 @@ public class SpriteEventHandlers
                     _gameEngine.StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcResR.GetDescriptionString(0x4f);
 
                     LAB_8007c320:
-                    _gameEngine.PlayEtcAnimation(_gameEngine.StaticVariables.g_dropItemTextBuffer, 1);
+                    _gameEngine.UIManager.InitializeDialogMessage(_gameEngine.StaticVariables.g_dropItemTextBuffer, 1);
                     return;
                 }
 
@@ -1077,13 +1078,13 @@ public class SpriteEventHandlers
 
                     _gameEngine.SoundManager.PlaySoundEffect((uint)uVar6);
                     //goto LAB_8007c320;
-                    _gameEngine.PlayEtcAnimation(_gameEngine.StaticVariables.g_dropItemTextBuffer, 1);
+                    _gameEngine.UIManager.InitializeDialogMessage(_gameEngine.StaticVariables.g_dropItemTextBuffer, 1);
                     return;
                 }
 
                 entity.ItemState += 1;
                 //goto LAB_8007c684;
-                _gameEngine.PlayEtcAnimation(_gameEngine.StaticVariables.g_dropItemTextBuffer, 1);
+                _gameEngine.UIManager.InitializeDialogMessage(_gameEngine.StaticVariables.g_dropItemTextBuffer, 1);
                 _gameEngine.SetEtcAnimationMode(4);
                 return;
             }
@@ -1218,7 +1219,7 @@ public class SpriteEventHandlers
 
                     if (_gameEngine.StaticVariables.g_dropItemTextBuffer.Length > 0)
                     {
-                        _gameEngine.PlayEtcAnimation(_gameEngine.StaticVariables.g_dropItemTextBuffer, 0);
+                        _gameEngine.UIManager.InitializeDialogMessage(_gameEngine.StaticVariables.g_dropItemTextBuffer, 0);
                     }
                     entity.ItemState += 2;
                     return;
@@ -1235,7 +1236,7 @@ public class SpriteEventHandlers
                 }
 
                 LAB_8007c684:
-                _gameEngine.PlayEtcAnimation(_gameEngine.StaticVariables.g_dropItemTextBuffer, 1);
+                _gameEngine.UIManager.InitializeDialogMessage(_gameEngine.StaticVariables.g_dropItemTextBuffer, 1);
 
                 LAB_8007c68c:
                 _gameEngine.SetEtcAnimationMode(4);

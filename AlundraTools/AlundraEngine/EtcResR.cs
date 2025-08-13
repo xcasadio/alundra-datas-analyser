@@ -50,7 +50,7 @@ public class EtcResR
             var str = ReadString(buffer, ref l);
             if (!string.IsNullOrEmpty(str))
             {
-                Strings[x++] = str; //TextInterpreter.DecodeString(str);
+                Strings[x++] = str; //TextDecoder.DecodeString(str);
             }
             l++;
         }

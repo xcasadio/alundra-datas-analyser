@@ -17,13 +17,17 @@ public class Renderer(GameEngine gameEngine)
     public void AddSprite(int x, int y, int width, int height, int depthSortValue, Bitmap bitmap, float alpha = 1.0f)
     {
         var sprite = new Sprite(x, y, width, height, depthSortValue, bitmap, alpha);
+        AddSprite(sprite);
+    }
 
-        if (!_sprites.ContainsKey(depthSortValue))
+    public void AddSprite(Sprite sprite)
+    {
+        if (!_sprites.ContainsKey(sprite.DepthSortValue))
         {
-            _sprites[depthSortValue] = new List<Sprite>();
+            _sprites[sprite.DepthSortValue] = [];
         }
 
-        _sprites[depthSortValue].Add(sprite);
+        _sprites[sprite.DepthSortValue].Add(sprite);
     }
 
     public void Render(System.Drawing.Graphics graphics)
