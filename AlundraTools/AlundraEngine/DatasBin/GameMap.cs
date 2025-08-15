@@ -116,7 +116,7 @@ public class GameMap
                         c = br.ReadChar();
                     }
 
-                    //Strings[i] = TextDecoder.DecodeString(Strings[i]);
+                    Strings[i] = TextDecoder.DecodeString(Strings[i]);
                 }
             }
 

@@ -163,7 +163,7 @@ public class GameInitializer
     private void ClearPadInputStates()
     {
         _gameEngine.StaticVariables.g_padState1.ButtonsHold = 0;
-        _gameEngine.StaticVariables.g_padState1.MaxNbFrameHeld = 0;
+        //_gameEngine.StaticVariables.g_padState1.MaxNbFrameHeld = 0;
         _gameEngine.StaticVariables.g_padState1.RepeatInterval = 0;
         _gameEngine.StaticVariables.g_padState1.IsOverThanMaxNbFrameHeld = 0;
         _gameEngine.StaticVariables.g_padState1.NumberOfFrameHold = 0;
@@ -586,7 +586,7 @@ public class GameInitializer
     {
         _gameEngine.StaticVariables.g_currentTransitionType = 0;
         _gameEngine.StaticVariables.g_activeTransitionCallback = null;
-        //ClearScreenEffectState();
+        //InitializeSubInventory();
         _gameEngine.HudManager.InitializeInventorySpriteNumberOf();
         //FUN_80058394();
     }

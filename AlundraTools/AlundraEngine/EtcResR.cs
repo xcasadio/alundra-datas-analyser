@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO.Compression;
+using AlundraEngine.Text;
 
 namespace AlundraEngine;
 
@@ -50,7 +51,7 @@ public class EtcResR
             var str = ReadString(buffer, ref l);
             if (!string.IsNullOrEmpty(str))
             {
-                Strings[x++] = str; //TextDecoder.DecodeString(str);
+                Strings[x++] = str;
             }
             l++;
         }
@@ -84,7 +85,7 @@ public class EtcResR
             c = (char)buffer[l];
         }
 
-        return str;
+        return TextDecoder.DecodeString(str);
     }
 
     public string GetIconName(int id)
@@ -105,7 +106,7 @@ public class EtcResR
         var buffer = File.ReadAllBytes(_fileName);
 
         int offset = _indexTable[id];
-        var value = ReadString(buffer, ref offset);
+        //var value = ReadString(buffer, ref offset);
 
         return Strings[id];
     }

@@ -436,7 +436,7 @@ public class GraphicManager
         // GetDispEnv(&displayEnv);
         // SetDrawArea(&drawArea,&displayEnv.disp);
         FUN_800481f8();
-        _gameEngine.HudManager.FUN_80058134(/*_gameEngine.StaticVariables.DAT_80146f64[g_drawModes[0x14].tag * 0x28]*/); //SPRT ??
+        _gameEngine.HudManager.DisplayInventoryAlundraPortrait(/*_gameEngine.StaticVariables.DAT_80146f64[g_drawModes[0x14].tag * 0x28]*/); //SPRT ??
         // uVar1 = g_drawModes[0x14].tag;
         // primitiveStart = g_drawModes + g_drawModes[0x14].tag * 10 + 4;
         // iVar3 = g_drawModes[0x14].tag * 0x28;
@@ -505,8 +505,6 @@ public class GraphicManager
         int primitiveCount;
 
         i = 0;
-        uVar1 = 0;//_gameEngine.StaticVariables.g_drawModes[0x14].tag;
-        iVar4 = 1;//_gameEngine.StaticVariables.g_drawModes[0x14].tag * 0x28;
 
         do
         {
@@ -536,9 +534,6 @@ public class GraphicManager
                             
                             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
                             _gameEngine.Renderer.AddSprite(sprite, int.MaxValue - 1, bitmap);
-
-                            //bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(spriteB);
-                            //_gameEngine.Renderer.AddSprite(spriteB, int.MaxValue, bitmap);
 
                             j = j + 1;
                         } while (j < primitiveCount);
@@ -676,7 +671,7 @@ public class GraphicManager
                 && (short)_gameEngine.StaticVariables.g_callbackTable[4].Flags == 0)
             {
                 _gameEngine.StaticVariables.g_postProcessState = 0;
-                //TriggerDebugZone();
+                _gameEngine.HudManager.DisplayInventory();
             }
         }
     }
@@ -847,7 +842,7 @@ public class GraphicManager
     }
 
     //800506dc
-    private void ApplyFadeTransform(SPRT[] sprites, short width, short height, int index)
+    public void ApplyFadeTransform(SPRT[] sprites, short width, short height, int index)
     {
         sprites[index].w = width;
         sprites[index].h = height;

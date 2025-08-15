@@ -2,10 +2,10 @@
 
 public class PadState
 {
-    public const uint R2 = 0x0001;
-    public const uint L2 = 0x0002;
-    public const uint R1 = 0x0004;
-    public const uint L1 = 0x0008;
+    public const uint L2 = 0x0001;
+    public const uint R2 = 0x0002;
+    public const uint L1 = 0x0004;
+    public const uint R1 = 0x0008;
     public const uint Triangle = 0x0010;
     public const uint Circle = 0x0020;
     public const uint Cross = 0x0040;
@@ -21,7 +21,7 @@ public class PadState
 
     public static uint OpenInventory => R2 | L2 | Start;
 
-    public uint MaxNbFrameHeld;
+    public uint MaxNbFrameHeld = 20;
     public uint RepeatInterval;
     public uint IsOverThanMaxNbFrameHeld;
     public uint NumberOfFrameHold;

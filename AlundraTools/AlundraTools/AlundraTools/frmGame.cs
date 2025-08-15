@@ -372,6 +372,7 @@ public partial class FrmGame : Form
         RefreshGameFlags();
         RefreshDialogControls();
         RefreshHudControls();
+        RefreshPadControls();
 
         ResumeLayout();
         PerformLayout();
@@ -440,6 +441,18 @@ public partial class FrmGame : Form
 
         labelHudXY.Text = $"{_gameEngine.StaticVariables.g_hudX >> 16} x {_gameEngine.StaticVariables.g_hudY >> 16}";
         labelHudDelta.Text = $"{_gameEngine.StaticVariables.g_hudDeltaX >> 16} x {_gameEngine.StaticVariables.g_hudDeltaY >> 16}";
+    }
+
+    private void RefreshPadControls()
+    {
+        labelPadMaxNbHeld.Text = _gameEngine.StaticVariables.g_padState1.MaxNbFrameHeld.ToString();
+        labelPadRepeatInterval.Text = _gameEngine.StaticVariables.g_padState1.RepeatInterval.ToString();
+        labelPadIsOver.Text = _gameEngine.StaticVariables.g_padState1.IsOverThanMaxNbFrameHeld.ToString();
+        labelPadNumberFrameHold.Text = _gameEngine.StaticVariables.g_padState1.NumberOfFrameHold.ToString();
+        labelPadButtonHold.Text = _gameEngine.StaticVariables.g_padState1.ButtonsHold.ToString();
+        labelPadButtonJustPressed.Text = _gameEngine.StaticVariables.g_padState1.ButtonsJustPressed.ToString();
+        labelPadButtonReleased.Text = _gameEngine.StaticVariables.g_padState1.ButtonsReleased.ToString();
+        labelPadButtonJustPressedByInterval.Text = _gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval.ToString();
     }
 
     #region Pad

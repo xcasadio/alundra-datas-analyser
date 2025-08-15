@@ -3292,13 +3292,11 @@ public class PlayerManager
         _gameEngine.StaticVariables.g_playerStats.ItemId = (short)itemId;
     }
 
-
-    // 8004e030
-    public uint GetItemIdFromCurrentWeapon()
+    public uint GetWeaponIdBySlotId(int slotId)
     {
         var itemId = 0xffffffff;
 
-        switch (_gameEngine.StaticVariables.g_playerStats.WeaponId - 1)
+        switch (slotId)
         {
             case 0:
                 itemId = GetWeaponIdFromSlot1();
@@ -3321,6 +3319,12 @@ public class PlayerManager
         }
 
         return itemId;
+    }
+
+    // 8004e030
+    public uint GetItemIdFromCurrentWeapon()
+    {
+        return GetWeaponIdBySlotId(_gameEngine.StaticVariables.g_playerStats.WeaponId - 1);
     }
 
     public uint GetWeaponIdFromSlot1()
