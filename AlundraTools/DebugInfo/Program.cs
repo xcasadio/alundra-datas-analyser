@@ -109,23 +109,23 @@ internal class Program
     {
         int i = 0;
         Log("Tile");
-        foreach (var value in etcResR.TileTable)
+        foreach (var value in etcResR.DescriptionItems)
         {
-            Log($"{i++} {MAGENTA}{value} {BLUE}{etcResR.Strings[value]}{NORMAL}");
+            Log($"{i++} {MAGENTA}{value} {BLUE}{value}{NORMAL}");
         }
 
         i = 0;
-        Log("IconNameTable");
-        foreach (var value in etcResR.IconNameTable)
+        Log("IconNames");
+        foreach (var value in etcResR.IconNames)
         {
             Log($"{i++} {MAGENTA}{value}{NORMAL}");
         }
 
         i = 0;
-        Log("PaletteTable");
-        foreach (var value in etcResR.PaletteTable)
+        Log("OtherStrings");
+        foreach (var value in etcResR.OtherStrings)
         {
-            Log($"{i++} {MAGENTA}{value} {BLUE}{etcResR.Strings[value]}{NORMAL}");
+            Log($"{i++} {MAGENTA}{value} {BLUE}{value}{NORMAL}");
         }
 
         i = 0;

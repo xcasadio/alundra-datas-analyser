@@ -54,21 +54,21 @@ namespace AlundraTools.AlundraTools
 
         private void InitEtcControls()
         {
-            for (var i = 0; i < _etcResR.TileTable.Length; i++)
+            for (var i = 0; i < _etcResR.DescriptionItems.Length; i++)
             {
-                var value = _etcResR.TileTable[i];
+                var value = _etcResR.DescriptionItems[i];
                 listBoxEtcTileTable.Items.Add($"#{i}-{value}");
             }
 
-            for (var i = 0; i < _etcResR.IconNameTable.Length; i++)
+            for (var i = 0; i < _etcResR.IconNames.Length; i++)
             {
-                var value = _etcResR.IconNameTable[i];
-                listBoxEtcIconNameTable.Items.Add($"#{i}-{value} {_etcResR.IconNameTable[i]}");
+                var value = _etcResR.IconNames[i];
+                listBoxEtcIconNameTable.Items.Add($"#{i}-{value} {_etcResR.IconNames[i]}");
             }
 
-            for (var i = 0; i < _etcResR.PaletteTable.Length; i++)
+            for (var i = 0; i < _etcResR.OtherStrings.Length; i++)
             {
-                var value = _etcResR.PaletteTable[i];
+                var value = _etcResR.OtherStrings[i];
                 listBoxEtcPaletteTable.Items.Add($"#{i}-{value}");
             }
 

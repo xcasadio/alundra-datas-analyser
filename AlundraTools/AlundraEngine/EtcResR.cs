@@ -9,9 +9,9 @@ public class EtcResR
     private readonly string _fileName;
 
     private readonly short[] _indexTable;
-    public readonly short[] TileTable = new short[196];
-    public readonly string[] IconNameTable = new string[196];
-    public readonly short[] PaletteTable = new short[196];
+    public readonly string[] DescriptionItems = new string[196];
+    public readonly string[] IconNames = new string[196];
+    public readonly string[] OtherStrings = new string[196];
 
     public readonly string[] StringTable = new string[256];
     public readonly string[] Strings = new string[512];
@@ -59,14 +59,16 @@ public class EtcResR
         for (int i = 0; i < 0x62; i++)
         {
             int iconNameOffset = _indexTable[i + 0x200];
-            int tileSetOffset = _indexTable[i + 0x280];
-            int paletteOffset = _indexTable[i + 0x300];
+            int descriptionOffset = _indexTable[i + 0x280];
+            int OtherStringOffset = _indexTable[i + 0x300];
 
             var offset = iconNameOffset;
-            IconNameTable[i * 2] = ReadString(buffer, ref offset);
+            IconNames[i * 2] = ReadString(buffer, ref offset);
             //_gameEngine.StaticVariables.g_iconNameEtcBase[i * 2] = (byte)i;
-            TileTable[i * 2] = buffer[tileSetOffset];
-            PaletteTable[i * 2] = buffer[paletteOffset];
+            offset = descriptionOffset;
+            DescriptionItems[i * 2] = ReadString(buffer, ref offset);
+            offset = OtherStringOffset;
+            OtherStrings[i * 2] = ReadString(buffer, ref offset);
         }
 
         l = _indexTable[0x3ff];
@@ -88,9 +90,9 @@ public class EtcResR
         return TextDecoder.DecodeString(str);
     }
 
-    public string GetIconName(int id)
+    public string GetItemName(int id)
     {
-        return IconNameTable[id * 2];
+        return IconNames[id * 2];
     }
 
     public string GetEtcString(int id)
@@ -111,13 +113,13 @@ public class EtcResR
         return Strings[id];
     }
 
-    public string GetDescriptionString(int id)
+    public string GetOtherString(int id)
     {
-        return DescriptionStrings[id];
+        return OtherStrings[id];
     }
 
     public string GetItemDescription(int itemId)
     {
-        return Strings[itemId + 240 - 1];
+        return DescriptionItems[itemId * 2];
     }
 }

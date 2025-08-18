@@ -4025,7 +4025,7 @@ public class StaticVariables
             new CallBackInfo
             {
                 Id = 4, Flags = 0, Data = null, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.FUN_800537f0, RenderFunc = gameEngine.UIManager.Func_80053328, Arg = 0xFFFFFFFF
+                InitializeFunc = gameEngine.HudManager.InitializeSubInventory, RenderFunc = gameEngine.UIManager.Func_80053328, Arg = 0xFFFFFFFF
             },
             new CallBackInfo
             {
@@ -4623,17 +4623,17 @@ public class StaticVariables
     public int g_soundEffectMaxVoices; // 800A82F8
     public int g_soundEffectToneCount; // 800A82FC
     public short DAT_800a8308; // 800A8308
-    public UIBoxConfiguration SprtGridDescriptor_800af664; // 800AF664
-    public int g_errorMarker; // 800B0000
-    public UIBoxConfiguration SprtGridDescriptor_800b06dc; // 800B06DC
-    public UIBoxConfiguration SprtGridDescriptor_800b122c; // 800B122C
-    public UIBoxConfiguration SprtGridDescriptor_800b1d7c; // 800B1D7C
-    public UIBoxConfiguration SprtGridDescriptor_800b287c; // 800B287C
+    public UIBoxConfiguration UIBoxConfiguration_800af664; // 800AF664
+    public UIBoxConfiguration UIBoxConfiguration_800b06dc; // 800B06DC
+    public UIBoxConfiguration UIBoxConfiguration_800b122c; // 800B122C
+    public UIBoxConfiguration UIBoxConfiguration_800b1d7c; // 800B1D7C
+    public UIBoxConfiguration UIBoxConfiguration_800b287c; // 800B287C
     public int DAT_800b42dc; // 800B42DC
     public int DAT_800b42e0; // 800B42E0
     public short DAT_800b42f8; // 800B42F8
     public short DAT_800b4314; // 800B4314
-    public byte PTR_SprtGridDescriptor_800b44b8; // 800B44B8
+    //public byte PTR_SprtGridDescriptor_800b44b8; // 800B44B8
+    public uint[] UINT_ARRAY_800b44f0 = new uint[] { 7, 9 };
     // 800B58A8
     public UIBoxConfiguration g_UiBoxesInventoryWeaponBackground;
     // 800B8360
@@ -5391,7 +5391,16 @@ public class StaticVariables
     public short DAT_8017f334; // 8017F334
     public int DAT_8017f338; // 8017F338
     public int DAT_8017f33c; // 8017F33C
-    public byte[] BYTE_ARRAY_8017f340 = new byte[1504]; // 8017F340
+    public int INT_8017f340; // 8017F340
+    public TextToDisplay TextToDisplay_8017f344 = new TextToDisplay(); // 8017F344
+    public TextToDisplay TextToDisplay_8017f360 = new TextToDisplay(); // 8017F360
+    public TextToDisplay TextToDisplay_8017f37c = new TextToDisplay(); // 8017F37c
+    public TextToDisplay TextToDisplay_8017f398 = new TextToDisplay(); // 8017F398
+    public TextToDisplay TextToDisplay_8017f3b4 = new TextToDisplay(); // 8017F3b4
+    public TextToDisplay TextToDisplay_8017f3d0 = new TextToDisplay(); // 8017F3d0
+    public TextToDisplay TextToDisplay_8017f3ec = new TextToDisplay(); // 8017F3ec
+    public SPRT[] SPRT_ARRAY_8017f480 = Enumerable.Range(0, 4).Select(x => new SPRT()).ToArray(); //8017f480
+    public int INT_8017f788; // 8017f788
     public TextToDisplay[] TextToDisplay_ARRAY_8017f920 = Enumerable.Range(0, 7).Select(x => new TextToDisplay()).ToArray(); // 8017F920
     public SPRT[] g_itemSelectedRectangle = Enumerable.Range(0, 2).Select(x => new SPRT()).ToArray(); // 8017f9e4
     public SPRT[] g_ItemNameSprites = Enumerable.Range(0, 6).Select(x => new SPRT()).ToArray(); // 8017FA34

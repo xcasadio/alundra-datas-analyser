@@ -483,12 +483,6 @@ public class UIManager
         DisplayDialogBackgroundText(callBackInfo);
     }
 
-    //800537f0
-    public void FUN_800537f0(CallBackInfo callBackInfo)
-    {
-        Debugger.Break();
-    }
-
     //80053328
     public void Func_80053328(CallBackInfo callBackInfo)
     {
