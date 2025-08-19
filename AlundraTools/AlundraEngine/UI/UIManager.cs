@@ -483,11 +483,6 @@ public class UIManager
         DisplayDialogBackgroundText(callBackInfo);
     }
 
-    //80053328
-    public void Func_80053328(CallBackInfo callBackInfo)
-    {
-        Debugger.Break();
-    }
 
     //8004a8a8
     public void Func_8004a8a8(CallBackInfo callBackInfo)
@@ -661,7 +656,7 @@ public class UIManager
         {
             callBackInfo.Data.X = _gameEngine.StaticVariables.g_textToDisplay3.originX;
             callBackInfo.Data.Y = _gameEngine.StaticVariables.g_textToDisplay3.originY;
-            _gameEngine.HudManager.FUN_80047cb0(callBackInfo);
+            _gameEngine.MainInventoryManager.FUN_80047cb0(callBackInfo);
             Debugger.Break();
             //_gameEngine.StaticVariables.g_asyncCallback(_gameEngine.StaticVariables.g_sprites[0]);
         }
@@ -772,7 +767,7 @@ public class UIManager
 
             _gameEngine.SoundManager.PlaySoundEffect(7);
             ResetHudTransitionState();
-            _gameEngine.HudManager.UpdateHudTransitionState();
+            _gameEngine.MainInventoryManager.UpdateHudTransitionState();
 
             _gameEngine.StaticVariables.g_backgroundMessageAnimation.mode = 2;
             _gameEngine.StaticVariables.g_backgroundMessageAnimation.tick = 0;
@@ -914,7 +909,7 @@ public class UIManager
     //8004501c
     private void FUN_8004501c(CallBackInfo callBackInfo)
     {
-        _gameEngine.HudManager.FUN_80047cb0(callBackInfo);
+        _gameEngine.MainInventoryManager.FUN_80047cb0(callBackInfo);
         _gameEngine.StaticVariables.g_warpFlags_2 = 0;
         _gameEngine.StaticVariables.g_playerControlFlags &= 0xffffffe7;
     }

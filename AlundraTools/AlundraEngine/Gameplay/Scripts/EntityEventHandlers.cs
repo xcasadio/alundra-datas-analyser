@@ -1556,7 +1556,7 @@ public class EntityEventHandlers
                 imgset.Images[0],
                 _gameEngine.CurrentMap.SpriteInfo.Palettes[imgset.Images[0].Palette & 0x1f]);
 
-            _gameEngine.HudManager.StartHudTransition(
+            _gameEngine.MainInventoryManager.StartHudTransition(
                 logicEntity.PosX, logicEntity.PosY, logicEntity.PosZ,
                 _gameEngine.StaticVariables.g_cameraScrollingX, _gameEngine.StaticVariables.g_cameraScrollingY,
                 img.Sx, img.Sy, img.Swidth, img.Sheight,
@@ -5228,7 +5228,7 @@ public class EntityEventHandlers
 
                 var image = targetEntity.Frame.Images.Images[targetEntity.CurrentFrameIndex];
 
-                _gameEngine.HudManager.StartHudTransition(
+                _gameEngine.MainInventoryManager.StartHudTransition(
                     targetEntity.PosX, 
                     targetEntity.PosY,
                     targetEntity.PosZ, 

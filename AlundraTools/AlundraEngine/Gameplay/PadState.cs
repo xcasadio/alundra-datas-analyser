@@ -20,8 +20,9 @@ public class PadState
     public const uint Left = 0x8000;
 
     public static uint OpenInventory => R2 | L2 | Start;
+    public static uint OpenSubInventory => R1 | L1;
 
-    public uint MaxNbFrameHeld = 20;
+    public readonly uint MaxNbFrameHeld = 20;
     public uint RepeatInterval;
     public uint IsOverThanMaxNbFrameHeld;
     public uint NumberOfFrameHold;

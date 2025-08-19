@@ -109,7 +109,7 @@ public class GraphicManager
             currentRow = _gameEngine.StaticVariables.g_cameraScrollingY + 0xf;
         }
 
-        currentRow = currentRow >> 4;
+        currentRow >>= 4;
         var camTileOffsetY = (short)_gameEngine.StaticVariables.g_cameraScrollingY + (short)currentRow * -StaticVariables.MapTileHeight;
 
         //for (int i = 0; i < 0x3C0; i++) 
@@ -436,7 +436,7 @@ public class GraphicManager
         // GetDispEnv(&displayEnv);
         // SetDrawArea(&drawArea,&displayEnv.disp);
         FUN_800481f8();
-        _gameEngine.HudManager.DisplayInventoryAlundraPortrait(/*_gameEngine.StaticVariables.DAT_80146f64[g_drawModes[0x14].tag * 0x28]*/); //SPRT ??
+        _gameEngine.MainInventoryManager.DisplayInventoryAlundraPortrait(/*_gameEngine.StaticVariables.DAT_80146f64[g_drawModes[0x14].tag * 0x28]*/); //SPRT ??
         // uVar1 = g_drawModes[0x14].tag;
         // primitiveStart = g_drawModes + g_drawModes[0x14].tag * 10 + 4;
         // iVar3 = g_drawModes[0x14].tag * 0x28;
@@ -535,13 +535,13 @@ public class GraphicManager
                             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
                             _gameEngine.Renderer.AddSprite(sprite, int.MaxValue - 1, bitmap);
 
-                            j = j + 1;
+                            j += 1;
                         } while (j < primitiveCount);
                     }
                 }
             }
 
-            i = i + 1;
+            i += 1;
 
         } while (i < 0xd);
     }
@@ -632,7 +632,7 @@ public class GraphicManager
         if ((_gameEngine.StaticVariables.g_renderFlags & 0x200000U) != 0)
         {
             _gameEngine.StaticVariables.g_renderFlags = (int)(_gameEngine.StaticVariables.g_renderFlags & 0xffdfffff);
-            _gameEngine.StaticVariables.g_systemFlags = _gameEngine.StaticVariables.g_systemFlags | 0x40000000;
+            _gameEngine.StaticVariables.g_systemFlags |= 0x40000000;
             PrepareBufferFlip();
         }
 
@@ -655,13 +655,14 @@ public class GraphicManager
                 callback.RenderFunc.Invoke(_gameEngine.StaticVariables.g_activeTransitionCallback);
             }
 
-            i = i + 1;
+            i += 1;
 
         } while (i < 0xd);
 
         if (_gameEngine.StaticVariables.g_postProcessState != 0)
         {
-            if (_gameEngine.StaticVariables.g_postProcessState == 1 /*&& _DAT_801530d0 == 0*/)
+            if (_gameEngine.StaticVariables.g_postProcessState == 1 
+                && (short)_gameEngine.StaticVariables.g_callbackTable[6].Flags == 0)
             {
                 _gameEngine.StaticVariables.g_postProcessState = 0;
                 StartFadeOut();
@@ -671,7 +672,7 @@ public class GraphicManager
                 && (short)_gameEngine.StaticVariables.g_callbackTable[4].Flags == 0)
             {
                 _gameEngine.StaticVariables.g_postProcessState = 0;
-                _gameEngine.HudManager.DisplayInventory();
+                _gameEngine.MainInventoryManager.DisplayInventory();
             }
         }
     }
@@ -721,7 +722,7 @@ public class GraphicManager
             _gameEngine.StaticVariables.g_blendRed = 0;
             _gameEngine.StaticVariables.g_blendBlue = 0;
             _gameEngine.StaticVariables.g_drawFrameFlags = 5;
-            _gameEngine.StaticVariables.g_blendGreen = (short)~(ushort)(_gameEngine.StaticVariables.g_soundFadeTimer << 3);
+            _gameEngine.StaticVariables.g_blendGreen = (short)~(_gameEngine.StaticVariables.g_soundFadeTimer << 3);
         }
     }
 
@@ -789,9 +790,8 @@ public class GraphicManager
 
         InitializeFrame();
         SetTransitionType(4);
-        Debugger.Break();
         var image = GetAnimationImageByIndex(0);
-        _gameEngine.HudManager.InitializeHudTransitionVariablesAndSetStart(
+        _gameEngine.MainInventoryManager.InitializeHudTransitionVariablesAndSetStart(
             player.PosX, player.PosY, player.PosZ,
             _gameEngine.StaticVariables.g_cameraScrollingX, _gameEngine.StaticVariables.g_cameraScrollingY,
             (sbyte)image.Sx, (sbyte)image.Sy, /*image.Swidth, image.Sheight,*/ image);
@@ -834,10 +834,7 @@ public class GraphicManager
 
             ApplyFadeTransform(sprites, 0, 0, i);
 
-            //var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-            //_gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
-
-            i = i + 1;
+            i += 1;
         } while (i < 2);
     }
 
@@ -889,15 +886,15 @@ public class GraphicManager
                             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
                             _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
-                            col = col + 1;
+                            col += 1;
                         } while (col < textTilesConfig.Width);
                     }
 
-                    row = row + 1;
+                    row += 1;
                 } while (row < textTilesConfig.Height);
             }
 
-            mode = mode + 1;
+            mode += 1;
         } while (mode < 2);
     }
 
@@ -934,5 +931,30 @@ public class GraphicManager
     public int GetItemTextureIdByItemId(int itemId)
     {
         return _gameEngine.StaticVariables.g_itemsProperties[itemId * 5 + 4];
+    }
+
+    //8004da0c
+    public void InitializeSpriteWithImage(SPRT sprt, int textureId, short x, short y)
+    {
+        int index;
+        SiImage image;
+
+        if (textureId != -1)
+        {
+            sprt.x0 = x;
+            sprt.y0 = y;
+            index = GetItemTextureIdByItemId(textureId);
+            image = GetAnimationImageByIndex(index);
+            sprt.r0 = 0x80;
+            sprt.g0 = 0x80;
+            sprt.b0 = 0x80;
+            sprt.u0 = image.Sx;
+            sprt.v0 = image.Sy;
+            sprt.w = image.Swidth;
+            sprt.h = image.Sheight;
+            //sprt.clut = image.Palette;
+            //sprt.clut = _gameEngine.StaticVariables.g_clutTableBase[image.Palette]; //why ? => number bigger than 30000
+            //SetSprt(sprt);
+        }
     }
 }

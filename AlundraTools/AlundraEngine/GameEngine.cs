@@ -33,7 +33,8 @@ public class GameEngine
     public SoundBin SoundBin { get; }
     public StaticVariables StaticVariables { get; }
     public UIManager UIManager { get; }
-    public HudManager HudManager { get; }
+    public MainInventoryManager MainInventoryManager { get; }
+    public SubInventoryManager SubInventoryManager { get; }
 
     private readonly EntityEventHandlers _entityEventHandlers;
     private readonly GameInitializer _gameInitializer;
@@ -64,7 +65,8 @@ public class GameEngine
         SoundManager = new SoundManager(this);
         StaticVariables = new StaticVariables();
         UIManager = new UIManager(this);
-        HudManager = new HudManager(this);
+        MainInventoryManager = new MainInventoryManager(this);
+        SubInventoryManager = new SubInventoryManager(this);
     }
 
     public void InitializeEngine()
@@ -450,10 +452,6 @@ public class GameEngine
             }
             else
             {
-                //entity.MapEventProgramId = mapEventRecord.EventCodesBIndex;
-                //entity.AIValues[6] = mapEventRecord;
-                //entity.AIValues[8] = (short)programBMapCode;
-
                 StaticVariables.g_mapEvents[i].Entity = StaticVariables.PlayerEntity;
                 StaticVariables.g_mapEvents[i].MapEventRecord = mapEventRecord;
                 StaticVariables.g_mapEvents[i].ProgramBMap = programBMapCode;
@@ -463,43 +461,6 @@ public class GameEngine
 
             i++;
         }
-
-
-        //do
-        //{
-        //    mapEventRecord = StaticVariables.g_initMapEventRecords[i];
-        //
-        //    if (mapEventRecord == null)
-        //    {
-        //        return;
-        //    }
-        //
-        //    programBMapCode = mapEventRecord.EventCodesBIndex;
-        //
-        //    if (programBMapCode == 0)
-        //    {
-        //        if (StaticVariables.g_debugState < 0 && (StaticVariables.g_debugFlags & 0x20) != 0)
-        //        {
-        //            //PrintInfo();
-        //        }
-        //    }
-        //    else
-        //    {
-        //        //entity.MapEventProgramId = mapEventRecord.EventCodesBIndex;
-        //        //entity.AIValues[6] = mapEventRecord;
-        //        //entity.AIValues[8] = (short)programBMapCode;
-        //
-        //        StaticVariables.g_mapEvents[i].Entity = entity;
-        //        StaticVariables.g_mapEvents[i].MapEventRecord = mapEventRecord;
-        //        StaticVariables.g_mapEvents[i].ProgramBMap = programBMapCode;
-        //        StaticVariables.g_mapEvents[i].EventData = new EventProgramState();
-        //        StaticVariables.g_mapEvents[i].Id = i;
-        //    }
-        //
-        //    i++;
-        //    //MonitorFlags = MonitorFlags + 8; //.Skip(8).ToArray();
-        //    //entity = entity.ChildEntity;
-        //} while (i < 0x80);
     }
 
     public void LoadMap(int mapId)
@@ -514,14 +475,6 @@ public class GameEngine
         }
 
         LoadMap(CurrentMap);
-
-        //TODO : remove this debug code
-        //var mapTiles = this.CurrentMap.Map.MapTiles;
-        //
-        //for (var i = 0; i < mapTiles.Length; i++)
-        //{
-        //    Debug.WriteLine($"{mapTiles[i].TileX}:{mapTiles[i].TileY} {mapTiles[i].Walkability} {mapTiles[i].GroundProperty} {mapTiles[i].Slope} {mapTiles[i].Height} {mapTiles[i].TileId} {mapTiles[i].TilesOffset}");
-        //}
     }
 
     public void LoadMap(GameMap map)
@@ -551,27 +504,6 @@ public class GameEngine
         StaticVariables.g_numberOfEntity = 0;
 
         ResetEntityState();
-
-        //int characterIndex = 0;
-        //EntityRecord[] initTableEntry = StaticVariables.g_initTableEntry;
-        //
-        //do
-        //{
-        //    EntityRecord entityRecord = initTableEntry[characterIndex];
-        //    if (entityRecord == null)
-        //    {
-        //        break;
-        //    }
-        //
-        //    Entity spawnedEntity = SpawnEntity(characterIndex, 0);
-        //    if (spawnedEntity == null && StaticVariables.g_debugState < 0 && (StaticVariables.g_debugFlags & 0x20) != 0)
-        //    {
-        //        //PrintInfo();
-        //    }
-        //
-        //    characterIndex++;
-        //}
-        //while (characterIndex < 0x80);
 
         for (var i = 0; i < CurrentMap.SpriteInfo.Entities.Entities.Length; i++)
         {
@@ -760,8 +692,7 @@ public class GameEngine
         return sprite;
     }
 
-    //TODO all the slope stuff
-    // 80037f28
+    //80037f28
     public int GetCollisionOnZ(Entity entity)
     {
         var collision = entity.TerrainHeight + 1;
@@ -1189,35 +1120,321 @@ public class GameEngine
         StaticVariables.g_warpStepFlags_2 = 0;
         StaticVariables.g_warpFlags = 0;
 
-        //switch (warpType)
+        switch (warpType)
+        {
+            case 0:
+            case 9:
+                InitStandardWarpEffect();
+                break;
+            case 2:
+            case 10:
+                InitUnknownWarpEffect();
+                break;
+            case 4:
+                InitInstantWarpEffect();
+                break;
+            case 5:
+                InitFadeOutWarp();
+                break;
+            case 6:
+                InitSpecialWarpEffect();
+                break;
+            case 8:
+                InitializeMapChangeWarp();
+                break;
+            case 11:
+                InitializeCutsceneWarp();
+                break;
+            default:
+                FUN_80042f18();
+                break;
+        }
+    }
+
+    //80043540
+    private void InitializeCutsceneWarp()
+    {
+        //DR_MOVE effectPtr, effectPtr2;
+        //int i = 0;
+        //
+        //do
         //{
-        //    case 0:
-        //    case 9:
-        //        InitStandardWarpEffect();
-        //        break;
-        //    default:
-        //        FUN_80042f18();
-        //        break;
-        //    case 2:
-        //    case 10:
-        //        InitUnknownWarpEffect();
-        //        break;
-        //    case 4:
-        //        InitInstantWarpEffect();
-        //        break;
-        //    case 5:
-        //        InitFadeOutWarp();
-        //        break;
-        //    case 6:
-        //        InitSpecialWarpEffect();
-        //        break;
-        //    case 8:
-        //        InitializeMapChangeWarp();
-        //        break;
-        //    case 11:
-        //        InitializeCutsceneWarp();
-        //        break;
-        //}
+        //    effectPtr = StaticVariables.g_drMoveBuffer[i];
+        //    effectPtr2 = StaticVariables.g_drMoveBuffer[300 + i];
+        //    effectPtr2.x0 = 0;
+        //    effectPtr.x0 = 0;
+        //    effectPtr2.w = 0x140;
+        //    effectPtr.w = 0x140;
+        //    effectPtr2.h = 1;
+        //    effectPtr.h = 1;
+        //    effectPtr2.sx = 0x140;
+        //    effectPtr.sx = 0x140;
+        //    i = i + 1;
+        //} while (i < 0xf0);
+
+        StaticVariables.g_warpEffectBuffer[1] = (StaticVariables.g_warpEffectBuffer[1] & 0x0000_FFFF) | (0xEF << 16);
+        StaticVariables.g_targetFadeColorR = 0xff0000;
+        StaticVariables.g_targetFadeColorG = 0xff0000;
+        StaticVariables.g_targetFadeColorB = 0xff0000;
+        StaticVariables.g_currentFadeColorR = 0;
+        StaticVariables.g_currentFadeColorG = 0;
+        StaticVariables.g_currentFadeColorB = 0;
+        StaticVariables.g_warpStepFlags_2 = 1;
+        ApplyScreenFade(2, 300);
+    }
+
+    //80043458
+    private void InitializeMapChangeWarp()
+    {
+        int rowIndex;
+        int columnOffset;
+        int warpPatternPtr = 0;
+        uint columnIndex;
+        int frameOffset;
+        int tableOffset;
+
+        frameOffset = 0;
+        tableOffset = 0;
+        do
+        {
+            columnIndex = 0;
+            columnOffset = tableOffset;
+
+            do
+            {
+                if ((columnIndex & 1) == 0)
+                {
+                    rowIndex = (0xe - frameOffset) * 2 + StaticVariables.g_mapWarpPattern[warpPatternPtr];
+                }
+                else
+                {
+                    rowIndex = frameOffset * 2 + StaticVariables.g_mapWarpPattern[warpPatternPtr];
+                }
+
+                StaticVariables.g_warpEffectBuffer[columnOffset] = rowIndex;
+                StaticVariables.g_warpEffectBuffer[columnOffset + 4] = 0;
+                columnOffset = columnOffset + 8;
+                columnIndex = columnIndex + 1;
+                warpPatternPtr = warpPatternPtr + 1;
+
+            } while ((int)columnIndex < 0x14);
+
+            frameOffset = frameOffset + 1;
+            tableOffset = tableOffset + 0xa0;
+
+        } while (frameOffset < 0xf);
+
+        StaticVariables.g_targetFadeColorR = 0xf00000;
+        StaticVariables.g_targetFadeColorG = 0xf00000;
+        StaticVariables.g_currentFadeColorR = 0;
+        StaticVariables.g_currentFadeColorG = 0;
+        StaticVariables.g_currentFadeColorB = 0;
+        StaticVariables.g_targetFadeColorB = 0;
+        StaticVariables.g_fadeFrameCounter = 1;
+        StaticVariables.g_warpStepFlags_2 = 1;
+        StaticVariables.g_playerStartZ = 0;
+        StaticVariables.g_playerStartY = 0;
+        StaticVariables.g_playerStartX = 0;
+        ApplyScreenFade(2, 0xb4);
+    }
+
+    //800432a4
+    private void InitSpecialWarpEffect()
+    {
+        ulong uVar1;
+        int iVar2;
+        uint uVar3;
+        int iVar4;
+        int iVar5;
+        int iVar6;
+        int iVar7;
+
+        iVar6 = 0;
+        iVar7 = 0;
+
+        do
+        {
+            iVar4 = 0;
+            iVar5 = iVar7;
+
+            do
+            {
+                if (iVar4 < 10)
+                {
+                    iVar2 = iVar4 + 7;
+                }
+                else
+                {
+                    iVar2 = 0x1a - iVar4;
+                }
+
+                if (7 - iVar6 < 0)
+                {
+                    iVar2 = (iVar2 + 7) - iVar6;
+                }
+                else
+                {
+                    iVar2 = iVar2 + -7 + iVar6;
+                }
+
+                StaticVariables.g_warpEffectBuffer[iVar5] = iVar2 * -2;
+                uVar3 = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+                StaticVariables.g_gameRandomSeed = uVar3 * 0x7d2b89dd + 0xe06a02e7;
+                uVar1 = StaticVariables.g_gameRandomSeed;
+                iVar4 = iVar4 + 1;
+                StaticVariables.g_warpEffectBuffer[iVar5 + 4] = 0x40 - (short)((ulong)uVar3 * 0x81 >> 0x20);
+                StaticVariables.g_warpEffectBuffer[iVar5 + 6] = -0x10 - (short)(uVar1 * 0x41 >> 0x20);
+                iVar5 = iVar5 + 8;
+            } while (iVar4 < 0x14);
+
+            iVar6 = iVar6 + 1;
+            iVar7 = iVar7 + 0xa0;
+
+        } while (iVar6 < 0xf);
+
+        StaticVariables.g_playerLastY = 0xff0000;
+        StaticVariables.g_playerLastX = 0xff0000;
+        StaticVariables.g_playerLastZ = 0;
+        StaticVariables.g_playerStartZ = 0;
+        StaticVariables.g_playerStartY = 0;
+        StaticVariables.g_playerStartX = 0;
+        StaticVariables.g_warpFlags = 1;
+        StaticVariables.g_targetFadeColorG = 0xff0000;
+        StaticVariables.g_targetFadeColorB = 0xff0000;
+        StaticVariables.g_currentFadeColorR = 0;
+        StaticVariables.g_currentFadeColorG = 0;
+        StaticVariables.g_currentFadeColorB = 0;
+        StaticVariables.g_targetFadeColorR = 0;
+        StaticVariables.g_fadeFrameCounter = 1;
+        StaticVariables.g_warpStepFlags_2 = 1;
+        ApplyScreenFade(2, 100);
+    }
+
+    //8004320c
+    private void InitFadeOutWarp()
+    {
+        //DR_MOVE* drMovePtr;
+        //int entityIndex;
+        //
+        //entityIndex = 0;
+        //drMovePtr = g_drMoveBuffer;
+        //
+        //do
+        //{
+        //    drMovePtr[300].h = 1;
+        //    drMovePtr->h = 1;
+        //    drMovePtr[300].sy = (short)entityIndex;
+        //    drMovePtr->sy = (short)entityIndex;
+        //    entityIndex = entityIndex + 1;
+        //    drMovePtr = drMovePtr + 1;
+        //} while (entityIndex < 0xf0);
+
+        StaticVariables.g_warpEffectBuffer[0] = 0;
+        StaticVariables.g_targetFadeColorR = 0xff0000;
+        StaticVariables.g_targetFadeColorG = 0xff0000;
+        StaticVariables.g_targetFadeColorB = 0xff0000;
+        StaticVariables.g_currentFadeColorR = 0;
+        StaticVariables.g_currentFadeColorG = 0;
+        StaticVariables.g_currentFadeColorB = 0;
+        StaticVariables.g_fadeFrameCounter = 1;
+        StaticVariables.g_warpStepFlags_2 = 1;
+        StaticVariables.g_playerStartZ = 0;
+        StaticVariables.g_playerStartY = 0;
+        StaticVariables.g_playerStartX = 0;
+        ApplyScreenFade(2, 0x1e);
+    }
+
+    //80042f3c
+    private void InitStandardWarpEffect()
+    {
+        StaticVariables.g_targetFadeColorR = 0xff0000;
+        StaticVariables.g_targetFadeColorG = 0xff0000;
+        StaticVariables.g_targetFadeColorB = 0xff0000;
+        StaticVariables.g_currentFadeColorR = 0;
+        StaticVariables.g_currentFadeColorG = 0;
+        StaticVariables.g_currentFadeColorB = 0;
+        StaticVariables.g_warpStepFlags_2 = 1;
+        ApplyScreenFade(2,0x10);
+    }
+
+    //80042f8c
+    private void InitUnknownWarpEffect()
+    {
+        StaticVariables.g_targetFadeColorR = 0xff0000;
+        StaticVariables.g_targetFadeColorG = 0xff0000;
+        StaticVariables.g_targetFadeColorB = 0xff0000;
+        StaticVariables.g_currentFadeColorR = 0;
+        StaticVariables.g_currentFadeColorG = 0;
+        StaticVariables.g_currentFadeColorB = 0;
+        StaticVariables.g_warpStepFlags_2 = 1;
+        ApplyScreenFade(1, 0x10);
+    }
+
+    //80042fdc
+    private void InitInstantWarpEffect()
+    {
+        ulong randomSeed1;
+        ulong randomSeed2;
+        ulong randomSeed3;
+        int innerLoopCounter;
+        int offsetY;
+        int offsetX;
+        int iterationCounter;
+        int outerLoopCounter;
+        int tableOffset;
+
+        outerLoopCounter = 0;
+        offsetY = -0x70;
+        tableOffset = 0;
+
+        do
+        {
+            innerLoopCounter = 0;
+            offsetX = -0x98;
+            iterationCounter = tableOffset;
+
+            do
+            {
+                randomSeed1 = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+                randomSeed2 = randomSeed1 * 0x7d2b89dd + 0xe06a02e7;
+                randomSeed3 = randomSeed2 * 0x7d2b89dd + 0xe06a02e7;
+                StaticVariables.g_gameRandomSeed = (uint)(randomSeed3 * 0x7d2b89dd + 0xe06a02e7);
+                Debugger.Break();
+                //innerLoopCounter = innerLoopCounter + 1;
+                StaticVariables.g_warpEffectBuffer[iterationCounter] = -(short)(randomSeed1 * 0x15 >> 0x20) - (short)(offsetX * offsetX + offsetY * offsetY >> 10);
+                StaticVariables.g_warpEffectBuffer[iterationCounter + 2] = (short)(randomSeed2 * 0x15 >> 0x20) + 0x14;
+                StaticVariables.g_warpEffectBuffer[iterationCounter + 4] = (short)(randomSeed3 * 0x130 >> 0x20);
+                StaticVariables.g_warpEffectBuffer[iterationCounter + 6] = (short)(StaticVariables.g_gameRandomSeed * 0xe0 >> 0x20);
+                
+                offsetX = offsetX + 0x10;
+                iterationCounter = iterationCounter + 8;
+                innerLoopCounter = innerLoopCounter + 1;
+            } while (innerLoopCounter < 0x14);
+
+            offsetY = offsetY + 0x10;
+            outerLoopCounter = outerLoopCounter + 1;
+            tableOffset = tableOffset + 0xa0;
+
+        } while (outerLoopCounter < 0xf);
+
+        StaticVariables.g_targetFadeColorR = 0x400000;
+        StaticVariables.g_targetFadeColorG = 0x400000;
+        StaticVariables.g_targetFadeColorB = 0x200000;
+        StaticVariables.g_fadeFrameCounter = 1;
+        StaticVariables.g_warpStepFlags_2 = 1;
+        StaticVariables.g_currentFadeColorR = 0;
+        StaticVariables.g_currentFadeColorG = 0;
+        StaticVariables.g_currentFadeColorB = 0;
+        StaticVariables.g_playerStartZ = 0xff0000;
+        StaticVariables.g_playerStartY = 0xff0000;
+        StaticVariables.g_playerStartX = 0xff0000;
+        ApplyScreenFade(1, 0x50);
+    }
+
+    //80042f18
+    private void FUN_80042f18()
+    {
+        ApplyScreenFade(2, 1);
     }
 
     public void EndGame()
@@ -1306,7 +1523,7 @@ public class GameEngine
             StaticVariables.g_warpDelayFrames == 0 &&
             (StaticVariables.g_padState1.ButtonsHold & PadState.Select) == 0 &&
             StaticVariables.g_globalTransitionState == 0 &&
-            HudManager.DisplayInventory() == 0)
+            MainInventoryManager.DisplayInventory() == 0)
         {
             StaticVariables.g_isGameEnding = 1;
         }

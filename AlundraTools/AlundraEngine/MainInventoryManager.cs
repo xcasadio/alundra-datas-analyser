@@ -8,7 +8,7 @@ using static AlundraEngine.Renderer;
 
 namespace AlundraEngine;
 
-public class HudManager
+public class MainInventoryManager
 {
     private readonly GameEngine _gameEngine;
 
@@ -16,7 +16,7 @@ public class HudManager
     public readonly List<Sprite>[] InventoryWeaponDescriptionLinesSprites = [new(), new()];
     public readonly List<Sprite> InventoryItemNameSprites = new();
 
-    public HudManager(GameEngine gameEngine)
+    public MainInventoryManager(GameEngine gameEngine)
     {
         _gameEngine = gameEngine;
     }
@@ -24,7 +24,6 @@ public class HudManager
     //80054a34
     public void InitializeInventorySpriteNumberOf()
     {
-        //var textToDisplay = _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920[i];
         FUN_800548a4(_gameEngine.StaticVariables.g_UiBoxesInventoryWeaponBackground);
         FUN_800548a4(_gameEngine.StaticVariables.g_UiBoxesInventoryItemBackground);
         FUN_800548a4(_gameEngine.StaticVariables.g_UiBoxesInventoryWeaponNameBackground);
@@ -109,7 +108,7 @@ public class HudManager
     }
 
     //80050998
-    private void FUN_80050998(InventoryCursorAnimation cursorAnim)
+    public void FUN_80050998(InventoryCursorAnimation cursorAnim)
     {
         int index;
         int iVar2;
@@ -136,7 +135,7 @@ public class HudManager
     }
 
     //80050908
-    private void UpdateCursorSpritePosition(InventoryCursorAnimation cursorAnim, short x, short y, int index)
+    public void UpdateCursorSpritePosition(InventoryCursorAnimation cursorAnim, short x, short y, int index)
     {
         cursorAnim.Sprites[index].x0 = (short)(_gameEngine.StaticVariables.g_inventoryCursorAnimSpriteX[cursorAnim.FrameDelay / 10] + x);
         cursorAnim.Sprites[index].y0 = (short)(_gameEngine.StaticVariables.g_inventoryCursorAnimSpriteY[cursorAnim.FrameDelay / 10] + y);
@@ -205,7 +204,7 @@ public class HudManager
     {
         _gameEngine.StaticVariables.g_hudTransitionStartX = 0xf8;
         _gameEngine.StaticVariables.g_hudTransitionStartY = 0x68;
-        _gameEngine.HudManager.InitializeHudTransitionVariables(srcX, srcY, srcZ,
+        _gameEngine.MainInventoryManager.InitializeHudTransitionVariables(srcX, srcY, srcZ,
             dstX, dstY, (byte)u, (byte)v, 0x30, 0x38, image);
     }
 
@@ -235,8 +234,6 @@ public class HudManager
             _gameEngine.StaticVariables.g_hudTransitionSrcZ = srcZ >> 16;
             _gameEngine.StaticVariables.g_hudTransitionDstXPtr = dstXPtr;
             _gameEngine.StaticVariables.g_hudTransitionDstYPtr = dstYPtr;
-
-            //Debugger.Break();
 
             do
             {
@@ -434,7 +431,7 @@ public class HudManager
         //SetDrawArea((DR_AREA*)(UINT_ARRAY_80180108 + g_drawModes[0x14].tag * 3), &DStack_28.disp);
         if (_gameEngine.StaticVariables.g_hudTransitionState != 0)
         {
-            _gameEngine.HudManager.UpdateHudTransitionVariables();
+            _gameEngine.MainInventoryManager.UpdateHudTransitionVariables();
             var image = _gameEngine.GraphicManager.GetAnimationImageByIndex(0); // alundra portrait
             _gameEngine.GraphicManager.DrawPolyFt4(_gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[0], image);
             //pPVar1 = _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait + g_drawModes[0x14].tag;
@@ -780,17 +777,16 @@ public class HudManager
     //80056598
     private void FUN_80056598(CallBackInfo callbackInfo)
     {
-        int iVar1;
-        int iVar2;
+        int slot;
 
         if ((_gameEngine.StaticVariables.g_forbiddenWarpFlag & 6U) == 0)
         {
             if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.Down) != 0)
             {
-                iVar1 = _gameEngine.StaticVariables.g_inventorySelectedSlotId + 6;
-                iVar2 = _gameEngine.StaticVariables.g_inventorySelectedSlotId - 0x12;
-                _gameEngine.StaticVariables.g_inventorySelectedSlotId = iVar1;
-                if (0x17 < iVar1)
+                slot = _gameEngine.StaticVariables.g_inventorySelectedSlotId + 6;
+                var iVar2 = _gameEngine.StaticVariables.g_inventorySelectedSlotId - 0x12;
+                _gameEngine.StaticVariables.g_inventorySelectedSlotId = slot;
+                if (0x17 < slot)
                 {
                     _gameEngine.StaticVariables.g_inventorySelectedSlotId = iVar2;
                 }
@@ -800,36 +796,36 @@ public class HudManager
 
             if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.Up) != 0)
             {
-                iVar1 = _gameEngine.StaticVariables.g_inventorySelectedSlotId - 6;
+                slot = _gameEngine.StaticVariables.g_inventorySelectedSlotId - 6;
                 if (_gameEngine.StaticVariables.g_inventorySelectedSlotId - 6 < 0)
                 {
-                    iVar1 = _gameEngine.StaticVariables.g_inventorySelectedSlotId + 0x12;
+                    slot = _gameEngine.StaticVariables.g_inventorySelectedSlotId + 0x12;
                 }
-                _gameEngine.StaticVariables.g_inventorySelectedSlotId = iVar1;
+                _gameEngine.StaticVariables.g_inventorySelectedSlotId = slot;
                 _gameEngine.SoundManager.PlaySoundEffect(1);
                 _gameEngine.StaticVariables.g_inventoryCursorText = 0;
             }
 
             if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.Right) != 0)
             {
-                iVar1 = _gameEngine.StaticVariables.g_inventorySelectedSlotId + 1;
-                if (iVar1 == iVar1 / 6 * 6)
+                slot = _gameEngine.StaticVariables.g_inventorySelectedSlotId + 1;
+                if (slot == slot / 6 * 6)
                 {
-                    iVar1 = _gameEngine.StaticVariables.g_inventorySelectedSlotId - 5;
+                    slot = _gameEngine.StaticVariables.g_inventorySelectedSlotId - 5;
                 }
-                _gameEngine.StaticVariables.g_inventorySelectedSlotId = iVar1;
+                _gameEngine.StaticVariables.g_inventorySelectedSlotId = slot;
                 _gameEngine.SoundManager.PlaySoundEffect(1);
                 _gameEngine.StaticVariables.g_inventoryCursorText = 0;
             }
 
             if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.Left) != 0)
             {
-                iVar1 = _gameEngine.StaticVariables.g_inventorySelectedSlotId - 1;
+                slot = _gameEngine.StaticVariables.g_inventorySelectedSlotId - 1;
                 if (_gameEngine.StaticVariables.g_inventorySelectedSlotId == _gameEngine.StaticVariables.g_inventorySelectedSlotId / 6 * 6)
                 {
-                    iVar1 = _gameEngine.StaticVariables.g_inventorySelectedSlotId + 5;
+                    slot = _gameEngine.StaticVariables.g_inventorySelectedSlotId + 5;
                 }
-                _gameEngine.StaticVariables.g_inventorySelectedSlotId = iVar1;
+                _gameEngine.StaticVariables.g_inventorySelectedSlotId = slot;
                 _gameEngine.SoundManager.PlaySoundEffect(1);
                 _gameEngine.StaticVariables.g_inventoryCursorText = 0;
             }
@@ -849,15 +845,15 @@ public class HudManager
             if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.OpenInventory) != 0)
             {
                 FUN_800556dc();
-                _gameEngine.HudManager.UpdateHudTransitionState();
+                _gameEngine.MainInventoryManager.UpdateHudTransitionState();
                 _gameEngine.GraphicManager.PrepareBufferFlip();
             }
 
-            if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & (PadState.R1 | PadState.L1)) != 0)
+            if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.OpenSubInventory) != 0)
             {
                 FUN_800556dc();
                 _gameEngine.StaticVariables.g_playerControlFlags |= 8;
-                _gameEngine.HudManager.UpdateHudTransitionState();
+                _gameEngine.MainInventoryManager.UpdateHudTransitionState();
                 _gameEngine.StaticVariables.g_postProcessState = 1;
             }
         }
@@ -869,9 +865,9 @@ public class HudManager
             _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.g_UiBoxesInventoryItemNameBackground, _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920[3]);
             _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.UIBoxConfiguration_800b9a10, _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920[4]);
             _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground, _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920[6]);
-            iVar1 = _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons, _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920[5]);
+            slot = _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons, _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920[5]);
 
-            if (iVar1 == 1)
+            if (slot == 1)
             {
                 if ((_gameEngine.StaticVariables.g_forbiddenWarpFlag & 4U) != 0)
                 {
@@ -1390,7 +1386,7 @@ public class HudManager
                         {
                             var sprite = _gameEngine.StaticVariables.g_spriteInventoryItems[6];
 
-                            InitializeSpriteWithImage(sprite, (int)itemId,
+                            _gameEngine.GraphicManager.InitializeSpriteWithImage(sprite, (int)itemId,
                                        (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryWeaponBackground.X + _gameEngine.StaticVariables.g_uiBoxesInventoryAnimationOffsetX[6]),
                                        (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryWeaponBackground.Y + _gameEngine.StaticVariables.g_uiBoxesInventoryAnimationOffsetY[6]));
 
@@ -1470,7 +1466,7 @@ public class HudManager
                         {
                             var sprite = _gameEngine.StaticVariables.g_spriteInventoryItems[offset];
 
-                            InitializeSpriteWithImage(sprite,
+                            _gameEngine.GraphicManager.InitializeSpriteWithImage(sprite,
                                        (int)textureId,
                                        (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryWeaponBackground.X + _gameEngine.StaticVariables.g_uiBoxesInventoryAnimationOffsetX[offset]),
                                        (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryWeaponBackground.Y + _gameEngine.StaticVariables.g_uiBoxesInventoryAnimationOffsetY[offset]));
@@ -1543,31 +1539,6 @@ public class HudManager
             row += 1;
 
         } while (row < 4);
-    }
-
-    //8004da0c
-    private void InitializeSpriteWithImage(SPRT sprt, int textureId, short x, short y)
-    {
-        int index;
-        SiImage image;
-
-        if (textureId != -1)
-        {
-            sprt.x0 = x;
-            sprt.y0 = y;
-            index = _gameEngine.GraphicManager.GetItemTextureIdByItemId(textureId);
-            image = _gameEngine.GraphicManager.GetAnimationImageByIndex(index);
-            sprt.r0 = 0x80;
-            sprt.g0 = 0x80;
-            sprt.b0 = 0x80;
-            sprt.u0 = image.Sx;
-            sprt.v0 = image.Sy;
-            sprt.w = image.Swidth;
-            sprt.h = image.Sheight;
-            //sprt.clut = image.Palette;
-            //sprt.clut = _gameEngine.StaticVariables.g_clutTableBase[image.Palette]; //why ? => number bigger than 30000
-            //SetSprt(sprt);
-        }
     }
 
     //80056a98
@@ -1684,7 +1655,7 @@ public class HudManager
     }
 
     //80050a74
-    private void DisplayInventoryCursor(InventoryCursorAnimation cursorAnim)
+    public void DisplayInventoryCursor(InventoryCursorAnimation cursorAnim)
     {
         cursorAnim.FrameDelay += 1;
 
@@ -2255,306 +2226,4 @@ public class HudManager
         _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920[6].startY = 0xf0;
     }
 
-
-
-    //800537f0
-    public void InitializeSubInventory(CallBackInfo callBackInfo)
-    {
-        _gameEngine.StaticVariables.INT_8017f340 = 5;
-        _gameEngine.StaticVariables.INT_8017f788 = 0;
-        _gameEngine.StaticVariables.TextToDisplay_8017f344.mode = 2;
-        _gameEngine.StaticVariables.TextToDisplay_8017f344.tick = 0;
-        _gameEngine.StaticVariables.TextToDisplay_8017f344.speed = 0xf;
-        _gameEngine.StaticVariables.g_playerControlFlags |= 8;
-        _gameEngine.StaticVariables.TextToDisplay_8017f344.x = (short)~(ushort)(_gameEngine.StaticVariables.UIBoxConfiguration_800af664.Width << 3);
-
-        if (_gameEngine.StaticVariables.UIBoxConfiguration_800af664.Y < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f344.y =
-                 (short)(_gameEngine.StaticVariables.UIBoxConfiguration_800af664.Y + _gameEngine.StaticVariables.UIBoxConfiguration_800af664.Height * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f344.y = _gameEngine.StaticVariables.UIBoxConfiguration_800af664.Y;
-        }
-
-        if (_gameEngine.StaticVariables.UIBoxConfiguration_800af664.X < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f344.startX =
-                 (short)(_gameEngine.StaticVariables.UIBoxConfiguration_800af664.X + _gameEngine.StaticVariables.UIBoxConfiguration_800af664.Width * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f344.startX = _gameEngine.StaticVariables.UIBoxConfiguration_800af664.X;
-        }
-
-        if (_gameEngine.StaticVariables.UIBoxConfiguration_800af664.Y < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f344.startY =
-                 (short)(_gameEngine.StaticVariables.UIBoxConfiguration_800af664.Y + _gameEngine.StaticVariables.UIBoxConfiguration_800af664.Height * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f344.startY = _gameEngine.StaticVariables.UIBoxConfiguration_800af664.Y;
-        }
-
-        _gameEngine.StaticVariables.TextToDisplay_8017f360.mode = 2;
-        _gameEngine.StaticVariables.TextToDisplay_8017f360.tick = 0;
-        _gameEngine.StaticVariables.TextToDisplay_8017f360.speed = 0xf;
-        _gameEngine.StaticVariables.TextToDisplay_8017f360.x = (short)~(ushort)(_gameEngine.StaticVariables.UIBoxConfiguration_800b06dc.Width << 3);
-        _gameEngine.StaticVariables.TextToDisplay_8017f344.originX = _gameEngine.StaticVariables.UIBoxConfiguration_800af664.X;
-        _gameEngine.StaticVariables.TextToDisplay_8017f344.originY = _gameEngine.StaticVariables.UIBoxConfiguration_800af664.Y;
-
-        if (_gameEngine.StaticVariables.UIBoxConfiguration_800b06dc.Y < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f360.y =
-                 (short)(_gameEngine.StaticVariables.UIBoxConfiguration_800b06dc.Y + _gameEngine.StaticVariables.UIBoxConfiguration_800b06dc.Height * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f360.y = _gameEngine.StaticVariables.UIBoxConfiguration_800b06dc.Y;
-        }
-
-        if (_gameEngine.StaticVariables.UIBoxConfiguration_800b06dc.X < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f360.startX =
-                 (short)(_gameEngine.StaticVariables.UIBoxConfiguration_800b06dc.X + _gameEngine.StaticVariables.UIBoxConfiguration_800b06dc.Width * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f360.startX = _gameEngine.StaticVariables.UIBoxConfiguration_800b06dc.X;
-        }
-
-        if (_gameEngine.StaticVariables.UIBoxConfiguration_800b06dc.Y < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f360.startY =
-                 (short)(_gameEngine.StaticVariables.UIBoxConfiguration_800b06dc.Y + _gameEngine.StaticVariables.UIBoxConfiguration_800b06dc.Height * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f360.startY = _gameEngine.StaticVariables.UIBoxConfiguration_800b06dc.Y;
-        }
-
-        _gameEngine.StaticVariables.TextToDisplay_8017f37c.mode = 2;
-        _gameEngine.StaticVariables.TextToDisplay_8017f37c.tick = 0;
-        _gameEngine.StaticVariables.TextToDisplay_8017f37c.speed = 0xf;
-        _gameEngine.StaticVariables.TextToDisplay_8017f37c.x = 0x140;
-        _gameEngine.StaticVariables.TextToDisplay_8017f360.originX = _gameEngine.StaticVariables.UIBoxConfiguration_800b06dc.X;
-        _gameEngine.StaticVariables.TextToDisplay_8017f360.originY = _gameEngine.StaticVariables.UIBoxConfiguration_800b06dc.Y;
-
-        if (_gameEngine.StaticVariables.UIBoxConfiguration_800b122c.Y < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f37c.y =
-                 (short)(_gameEngine.StaticVariables.UIBoxConfiguration_800b122c.Y + _gameEngine.StaticVariables.UIBoxConfiguration_800b122c.Height * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f37c.y = _gameEngine.StaticVariables.UIBoxConfiguration_800b122c.Y;
-        }
-
-        if (_gameEngine.StaticVariables.UIBoxConfiguration_800b122c.X < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f37c.startX =
-                 (short)(_gameEngine.StaticVariables.UIBoxConfiguration_800b122c.X + _gameEngine.StaticVariables.UIBoxConfiguration_800b122c.Width * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f37c.startX = _gameEngine.StaticVariables.UIBoxConfiguration_800b122c.X;
-        }
-
-        if (_gameEngine.StaticVariables.UIBoxConfiguration_800b122c.Y < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f37c.startY =
-                 (short)(_gameEngine.StaticVariables.UIBoxConfiguration_800b122c.Y + _gameEngine.StaticVariables.UIBoxConfiguration_800b122c.Height * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f37c.startY = _gameEngine.StaticVariables.UIBoxConfiguration_800b122c.Y;
-        }
-
-        _gameEngine.StaticVariables.TextToDisplay_8017f398.mode = 2;
-        _gameEngine.StaticVariables.TextToDisplay_8017f398.tick = 0;
-        _gameEngine.StaticVariables.TextToDisplay_8017f398.speed = 0xf;
-        _gameEngine.StaticVariables.TextToDisplay_8017f398.x = 0x140;
-        _gameEngine.StaticVariables.TextToDisplay_8017f37c.originX = _gameEngine.StaticVariables.UIBoxConfiguration_800b122c.X;
-        _gameEngine.StaticVariables.TextToDisplay_8017f37c.originY = _gameEngine.StaticVariables.UIBoxConfiguration_800b122c.Y;
-
-        if (_gameEngine.StaticVariables.UIBoxConfiguration_800b1d7c.Y < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f398.y =
-                 (short)(_gameEngine.StaticVariables.UIBoxConfiguration_800b1d7c.Y + _gameEngine.StaticVariables.UIBoxConfiguration_800b122c.Height * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f398.y = _gameEngine.StaticVariables.UIBoxConfiguration_800b1d7c.Y;
-        }
-
-        if (_gameEngine.StaticVariables.UIBoxConfiguration_800b1d7c.X < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f398.startX =
-                 (short)(_gameEngine.StaticVariables.UIBoxConfiguration_800b1d7c.X + _gameEngine.StaticVariables.UIBoxConfiguration_800b1d7c.Width * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f398.startX = _gameEngine.StaticVariables.UIBoxConfiguration_800b1d7c.X;
-        }
-
-        if (_gameEngine.StaticVariables.UIBoxConfiguration_800b1d7c.Y < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f398.startY =
-                 (short)(_gameEngine.StaticVariables.UIBoxConfiguration_800b1d7c.Y + _gameEngine.StaticVariables.UIBoxConfiguration_800b122c.Height * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f398.startY = _gameEngine.StaticVariables.UIBoxConfiguration_800b1d7c.Y;
-        }
-
-        _gameEngine.StaticVariables.TextToDisplay_8017f3b4.mode = 2;
-        _gameEngine.StaticVariables.TextToDisplay_8017f3b4.tick = 0;
-        _gameEngine.StaticVariables.TextToDisplay_8017f3b4.speed = 0xf;
-        _gameEngine.StaticVariables.TextToDisplay_8017f3b4.x = 0x140;
-        _gameEngine.StaticVariables.TextToDisplay_8017f398.originX = _gameEngine.StaticVariables.UIBoxConfiguration_800b1d7c.X;
-        _gameEngine.StaticVariables.TextToDisplay_8017f398.originY = _gameEngine.StaticVariables.UIBoxConfiguration_800b1d7c.Y;
-
-        if (_gameEngine.StaticVariables.UIBoxConfiguration_800b287c.Y < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3b4.y =
-                 (short)(_gameEngine.StaticVariables.UIBoxConfiguration_800b287c.Y + _gameEngine.StaticVariables.UIBoxConfiguration_800b287c.Height * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3b4.y = _gameEngine.StaticVariables.UIBoxConfiguration_800b287c.Y;
-        }
-
-        if (_gameEngine.StaticVariables.UIBoxConfiguration_800b287c.X < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3b4.startX =
-                 (short)(_gameEngine.StaticVariables.UIBoxConfiguration_800b287c.X + _gameEngine.StaticVariables.UIBoxConfiguration_800b287c.Width * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3b4.startX = _gameEngine.StaticVariables.UIBoxConfiguration_800b287c.X;
-        }
-
-        if (_gameEngine.StaticVariables.UIBoxConfiguration_800b287c.Y < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3b4.startY =
-                 (short)(_gameEngine.StaticVariables.UIBoxConfiguration_800b287c.Y + _gameEngine.StaticVariables.UIBoxConfiguration_800b287c.Height * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3b4.startY = _gameEngine.StaticVariables.UIBoxConfiguration_800b287c.Y;
-        }
-
-        _gameEngine.StaticVariables.TextToDisplay_8017f3ec.mode = 2;
-        _gameEngine.StaticVariables.TextToDisplay_8017f3ec.tick = 0;
-        _gameEngine.StaticVariables.TextToDisplay_8017f3ec.speed = 0xf;
-        _gameEngine.StaticVariables.TextToDisplay_8017f3ec.x = 0x140;
-        _gameEngine.StaticVariables.TextToDisplay_8017f3b4.originX = _gameEngine.StaticVariables.UIBoxConfiguration_800b287c.X;
-        _gameEngine.StaticVariables.TextToDisplay_8017f3b4.originY = _gameEngine.StaticVariables.UIBoxConfiguration_800b287c.Y;
-
-        if (_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3ec.y =
-                 (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y + _gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Height * -8)
-            ;
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3ec.y = _gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y;
-        }
-
-        if (_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.X < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3ec.startX =
-                 (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.X + _gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Width * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3ec.startX = _gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.X;
-        }
-
-        if (_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3ec.startY =
-                 (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y + _gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Height * -8)
-            ;
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3ec.startY = _gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y;
-        }
-
-        _gameEngine.StaticVariables.TextToDisplay_8017f3d0.mode = 2;
-        _gameEngine.StaticVariables.TextToDisplay_8017f3d0.tick = 0;
-        _gameEngine.StaticVariables.TextToDisplay_8017f3d0.speed = 0xf;
-        _gameEngine.StaticVariables.TextToDisplay_8017f3ec.originX = _gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.X;
-        _gameEngine.StaticVariables.TextToDisplay_8017f3ec.originY = _gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y;
-
-        if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3d0.x =
-                 (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X +
-                         _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3d0.x = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
-        }
-
-        _gameEngine.StaticVariables.TextToDisplay_8017f3d0.y = 0xf0;
-
-        if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3d0.startX =
-                 (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X +
-                         _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3d0.startX = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
-        }
-
-        if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y < 0)
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3d0.startY =
-                 (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y +
-                         _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Height * -8);
-        }
-        else
-        {
-            _gameEngine.StaticVariables.TextToDisplay_8017f3d0.startY = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y;
-        }
-
-        _gameEngine.StaticVariables.TextToDisplay_8017f3d0.originX = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
-        _gameEngine.StaticVariables.TextToDisplay_8017f3d0.originY = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y;
-
-        FUN_80052f24(0);
-        FUN_80052f24(1);
-    }
-
-    //80052f24
-    private void FUN_80052f24(int param_1)
-    {
-        int itemId;
-
-        itemId = (int)_gameEngine.PlayerManager.GetItemIdFromSlotId(_gameEngine.StaticVariables.UINT_ARRAY_800b44f0[param_1]);
-
-        if (itemId != -1)
-        {
-            SPRT[] sprites =
-            [
-                _gameEngine.StaticVariables.SPRT_ARRAY_8017f480[param_1 * 2],
-                _gameEngine.StaticVariables.SPRT_ARRAY_8017f480[param_1 * 2 + 1]
-            ];
-
-            var itemName = _gameEngine.EtcResR.GetItemName(itemId);
-
-            _gameEngine.UIManager.DisplayIconName(sprites,
-                InventoryItemNameSprites,
-                itemName.ToCharArray(),
-                0x20, 0x140, 0,
-                param_1);
-        }
-    }
 }

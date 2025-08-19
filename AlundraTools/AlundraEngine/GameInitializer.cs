@@ -586,9 +586,61 @@ public class GameInitializer
     {
         _gameEngine.StaticVariables.g_currentTransitionType = 0;
         _gameEngine.StaticVariables.g_activeTransitionCallback = null;
-        //InitializeSubInventory();
-        _gameEngine.HudManager.InitializeInventorySpriteNumberOf();
-        //FUN_80058394();
+        _gameEngine.SubInventoryManager.InitializeSubInventorySprite();
+        _gameEngine.MainInventoryManager.InitializeInventorySpriteNumberOf();
+        FUN_80058394();
+    }
+
+    //80058394
+    private void FUN_80058394()
+    {
+        FUN_80058204(_gameEngine.StaticVariables.UIBoxConfiguration_800bcb30);
+        FUN_80058204(_gameEngine.StaticVariables.UIBoxConfiguration_800bf2a0);
+        FUN_80058204(_gameEngine.StaticVariables.UIBoxConfiguration_800c1a10);
+        FUN_80058204(_gameEngine.StaticVariables.UIBoxConfiguration_800c4180);
+    }
+
+    //80058204
+    private void FUN_80058204(UIBoxConfiguration uiBoxConfig)
+    {
+        short sVar1;
+        int index;
+        int w;
+        int h;
+        int i;
+        i = 0;
+
+        //do
+        //{
+            h = 0;
+
+            if (0 < uiBoxConfig.Height)
+            {
+                do
+                {
+                    w = 0;
+
+                    if (0 < uiBoxConfig.Width)
+                    {
+                        do
+                        {
+                            index = h * uiBoxConfig.Width + w;
+                            var sprite = uiBoxConfig.SpritesA[index];
+                            //SetSprt(sprite);
+                            //SetSemiTrans(sprite, 0);
+                            //SetShadeTex(sprite, 1);
+                            //sprite.clut = g_clutTable[sprite.clut];
+
+                            w = w + 1;
+                        } while (w < uiBoxConfig.Width);
+                    }
+
+                    h = h + 1;
+                } while (h < uiBoxConfig.Height);
+            }
+
+            i = i + 1;
+        //} while (i < 2);
     }
 
     //80057b64
