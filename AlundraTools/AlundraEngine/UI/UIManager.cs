@@ -511,7 +511,70 @@ public class UIManager
     //80051550
     public void Func_80051550(CallBackInfo callBackInfo)
     {
-        Debugger.Break();
+        short psVar1;
+        int iVar2;
+
+        iVar2 = 4;
+        _gameEngine.StaticVariables.UINT_8017e8d8 = 0xffffffff;
+        _gameEngine.StaticVariables.SHORT_8017e8dc = 0;
+        _gameEngine.StaticVariables.g_playerControlFlags = _gameEngine.StaticVariables.g_playerControlFlags | 8;
+        Array.Clear(_gameEngine.StaticVariables.SHORT_ARRAY_8017e8de);
+
+        iVar2 = _gameEngine.StaticVariables.DAT_8017e998;
+
+        if (0x10 < (iVar2 - (iVar2 >> 0x1f)) * 0x8000 >> 0x10)
+        {
+            _gameEngine.StaticVariables.DAT_8017e9a8 = 0;
+        }
+
+        FUN_80047cc4(callBackInfo.Data, callBackInfo.Data.X, callBackInfo.Data.Y);
+        SPRT[] sprites = [_gameEngine.StaticVariables.SPRT_ARRAY_8017e938[2], _gameEngine.StaticVariables.SPRT_ARRAY_8017e938[3]];
+        _gameEngine.GraphicManager.InitializeFadeOverlaySprites(sprites);
+        callBackInfo.RenderFunc = _gameEngine.SubInventoryManager.FUN_80051624;
+    }
+
+    //80047cc4
+    private void FUN_80047cc4(UIBoxConfiguration uiBoxConfig, short startX, short startY)
+    {
+        int index;
+        int w;
+        int h;
+        int x;
+        int width;
+
+        h = 0;
+
+        if (0 < uiBoxConfig.Height)
+        {
+            do
+            {
+                width = uiBoxConfig.Width;
+                w = 0;
+                x = startX;
+
+                if (0 < uiBoxConfig.Width)
+                {
+                    do
+                    {
+                        index = h * uiBoxConfig.Width + w;
+                        var sprite = uiBoxConfig.SpritesA[index];
+                        sprite.x0 = (short)x;
+                        sprite.y0 = startY; 
+                        
+                        sprite = uiBoxConfig.SpritesB[index];
+                        sprite.x0 = (short)x;
+                        sprite.y0 = startY;
+
+                        w = w + 1;
+                        x = x + 8;
+                    } while (w < uiBoxConfig.Width);
+                }
+
+                h = h + 1;
+                startY = (short)(startY + 8);
+
+            } while (h < uiBoxConfig.Height);
+        }
     }
 
     //8005a268
@@ -732,7 +795,7 @@ public class UIManager
         //puVar4 = DAT_80146f6c;
         /* Probable PsyQ macro: addPrim(). */
         //uVar3 = uVar3 & 0xff000000 | *puVar4 & 0xffffff;
-        //*puVar4 = *puVar4 & 0xff000000 | (uint)&pSVar1->x0 & 0xffffff;
+        //*puVar4 = *puVar4 & 0xff000000 | (uint)&pSVar1.x0 & 0xffffff;
     }
 
     //80045e60
@@ -1985,7 +2048,7 @@ public class UIManager
             //pSVar4 = _gameEngine.StaticVariables.g_cursorTextSprites[0];
             //pOrderTable = _gameEngine.StaticVariables.g_drawModes + uVar1 * 0x28 + 0xf8);
             /* Probable PsyQ macro: addPrim(). */
-            //pSVar4->tag = pSVar4->tag & 0xff000000 | *pOrderTable & 0xffffff;
+            //pSVar4.tag = pSVar4.tag & 0xff000000 | *pOrderTable & 0xffffff;
             //*pOrderTable = *pOrderTable & 0xff000000 | (uint)pSVar4 & 0xffffff;
 
             var sprite = _gameEngine.StaticVariables.g_cursorTextSprites[0];
@@ -2153,6 +2216,11 @@ public class UIManager
         short textCoordDstX, short textCoordDstY,
         int displayMode)
     {
+        if (text.Length == 0)
+        {
+            return;
+        }
+
         int i;
         short y;
         int j;

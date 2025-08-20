@@ -216,12 +216,10 @@ public class MainInventoryManager
         short width, short height,
         SiImage image)
     {
-        short puVar1;
         int i;
         byte uvBottom;
         byte uvRight;
 
-        puVar1 = _gameEngine.StaticVariables.g_hudTransitionState;
 
         if (_gameEngine.StaticVariables.g_hudTransitionState == 0)
         {
@@ -305,7 +303,6 @@ public class MainInventoryManager
     public void UpdateHudTransitionVariables()
     {
         ushort uVar1;
-        ulong uVar2;
         char uVar4;
         short cameraY;
         short offsetY;
@@ -317,7 +314,6 @@ public class MainInventoryManager
         int scaledHalfHeight;
         char alphaValue;
 
-        uVar2 = 0; //_gameEngine.StaticVariables.g_drawModes[0x14].tag;
         offsetX = 0;
         offsetY = 0;
         uVar4 = '\0';
@@ -390,17 +386,18 @@ public class MainInventoryManager
 
         FinalizeTransitionUpdate:
 
-        _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[uVar2].r0 = (byte)uVar4;
-        _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[uVar2].g0 = (byte)uVar4;
-        _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[uVar2].b0 = (byte)uVar4;
-        _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[uVar2].x0 = cameraX;
-        _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[uVar2].y0 = cameraY;
-        _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[uVar2].x1 = (short)(cameraX + offsetX);
-        _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[uVar2].y1 = cameraY;
-        _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[uVar2].x2 = cameraX;
-        _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[uVar2].y2 = (short)(cameraY + offsetY);
-        _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[uVar2].x3 = (short)(cameraX + offsetX);
-        _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[uVar2].y3 = (short)(cameraY + offsetY);
+        var polyFt4 = _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[0];
+        polyFt4.r0 = (byte)uVar4;
+        polyFt4.g0 = (byte)uVar4;
+        polyFt4.b0 = (byte)uVar4;
+        polyFt4.x0 = cameraX;
+        polyFt4.y0 = cameraY;
+        polyFt4.x1 = (short)(cameraX + offsetX);
+        polyFt4.y1 = cameraY;
+        polyFt4.x2 = cameraX;
+        polyFt4.y2 = (short)(cameraY + offsetY);
+        polyFt4.x3 = (short)(cameraX + offsetX);
+        polyFt4.y3 = (short)(cameraY + offsetY);
     }
 
     //80057b84
@@ -468,16 +465,19 @@ public class MainInventoryManager
                 }
                 if ((_gameEngine.StaticVariables.g_padState1.ButtonsHold & PadState.Left) != 0)
                 {
+                    Debugger.Break();
                     //TriggerWarpTypeB();
                     return 0;
                 }
                 if ((_gameEngine.StaticVariables.g_padState1.ButtonsHold & PadState.Up) != 0)
                 {
+                    Debugger.Break();
                     //StartFadeOut();
                     return 1;
                 }
                 if ((_gameEngine.StaticVariables.g_padState1.ButtonsHold & PadState.Down) != 0)
                 {
+                    Debugger.Break();
                     //TriggerWarpTypeC();
                     return 1;
                 }
@@ -502,11 +502,11 @@ public class MainInventoryManager
     public void FUN_80054f1c(CallBackInfo callBackInfo)
     {
         _gameEngine.StaticVariables.g_forbiddenWarpFlag = 5;
-        _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920[0].mode = 2;
         _gameEngine.StaticVariables.g_inventoryCursorText = 0;
+        _gameEngine.StaticVariables.g_playerControlFlags |= 8;
+        _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920[0].mode = 2;
         _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920[0].tick = 0;
         _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920[0].speed = 0xf;
-        _gameEngine.StaticVariables.g_playerControlFlags |= 8;
         _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920[0].x = (short)~(_gameEngine.StaticVariables.g_UiBoxesInventoryWeaponBackground.Width << 3);
 
         if (_gameEngine.StaticVariables.g_UiBoxesInventoryWeaponBackground.Y < 0)

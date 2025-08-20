@@ -435,7 +435,7 @@ public partial class FrmGame : Form
                               _gameEngine.StaticVariables.g_textToDisplay2 + Environment.NewLine +
                               _gameEngine.StaticVariables.g_textToDisplay3 + Environment.NewLine +
                               string.Join(Environment.NewLine, _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920.Select(x => x.ToString()));
-        
+
         //var sprt = _gameEngine.StaticVariables.g_cursorTextSprites[0];
         //labelHudDebug.Text += $"{sprt}";
 
@@ -1030,6 +1030,11 @@ public partial class FrmGame : Form
         _gameEngine.StaticVariables.g_initialPlayerStats.FalconTemp = (short)numericUpDownFalcon2.Value;
     }
 
+    private void numericUpDownKeys_ValueChanged(object sender, EventArgs e)
+    {
+        //_gameEngine.StaticVariables.g_initialPlayerStats. = (short)numericUpDownKeys.Value;
+    }
+
     private void comboBoxWeapon_SelectedIndexChanged(object sender, EventArgs e)
     {
         if (comboBoxWeapon.SelectedIndex != -1)
@@ -1177,5 +1182,13 @@ public partial class FrmGame : Form
         };
 
         _gameEngine.SpawnEntityContents(entity);
+    }
+
+    private void buttonAllItems_Click(object sender, EventArgs e)
+    {
+        for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfItems.Length / 2; i++)
+        {
+            _gameEngine.StaticVariables.g_numberOfItems[i * 2 + 1] = 1;
+        }
     }
 }

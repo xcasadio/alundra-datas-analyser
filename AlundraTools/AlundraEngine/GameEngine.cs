@@ -1547,7 +1547,7 @@ public class GameEngine
     //80051f1c
     public void TriggerWarpTypeA()
     {
-        StaticVariables.DAT_8017e8d8 = 0;
+        StaticVariables.UINT_8017e8d8 = 0;
         StaticVariables.DAT_8017e990 = 0;
         StaticVariables.DAT_8017e9ac = 0;
         StaticVariables.DAT_8017e998 = 0x4f824f82;

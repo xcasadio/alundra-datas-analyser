@@ -96,6 +96,8 @@ namespace AlundraTools.AlundraTools
             listBoxEffects = new ListBox();
             propertyGridEffect = new PropertyGrid();
             tabPagePlayerStatus = new TabPage();
+            label53 = new Label();
+            numericUpDownKeys = new NumericUpDown();
             buttonControlAlundra = new Button();
             buttonAddHugeHp = new Button();
             buttonRestoreHpAndMp = new Button();
@@ -126,6 +128,23 @@ namespace AlundraTools.AlundraTools
             label20 = new Label();
             numericUpDownHpMax = new NumericUpDown();
             tabPageDebug = new TabPage();
+            groupBox6 = new GroupBox();
+            labelPadButtonJustPressedByInterval = new Label();
+            labelPadButtonReleased = new Label();
+            labelPadButtonJustPressed = new Label();
+            labelPadButtonHold = new Label();
+            labelPadNumberFrameHold = new Label();
+            labelPadIsOver = new Label();
+            labelPadRepeatInterval = new Label();
+            labelPadMaxNbHeld = new Label();
+            label52 = new Label();
+            label51 = new Label();
+            label50 = new Label();
+            label48 = new Label();
+            label46 = new Label();
+            label44 = new Label();
+            label42 = new Label();
+            label40 = new Label();
             comboBoxSpawnItemId = new ComboBox();
             buttonSpawnItem = new Button();
             label30 = new Label();
@@ -161,23 +180,7 @@ namespace AlundraTools.AlundraTools
             label37 = new Label();
             label38 = new Label();
             labelTextFlag = new Label();
-            groupBox6 = new GroupBox();
-            label40 = new Label();
-            label42 = new Label();
-            label44 = new Label();
-            label46 = new Label();
-            label48 = new Label();
-            label50 = new Label();
-            label51 = new Label();
-            label52 = new Label();
-            labelPadButtonJustPressedByInterval = new Label();
-            labelPadButtonReleased = new Label();
-            labelPadButtonJustPressed = new Label();
-            labelPadButtonHold = new Label();
-            labelPadNumberFrameHold = new Label();
-            labelPadIsOver = new Label();
-            labelPadRepeatInterval = new Label();
-            labelPadMaxNbHeld = new Label();
+            buttonAllItems = new Button();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -189,6 +192,7 @@ namespace AlundraTools.AlundraTools
             tabPageEntities.SuspendLayout();
             tabPageEffects.SuspendLayout();
             tabPagePlayerStatus.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownKeys).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownFalcon2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownFalcon1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownMoney).BeginInit();
@@ -197,10 +201,10 @@ namespace AlundraTools.AlundraTools
             ((System.ComponentModel.ISupportInitialize)numericUpDownMp).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownHpMax).BeginInit();
             tabPageDebug.SuspendLayout();
+            groupBox6.SuspendLayout();
             tabPageHud.SuspendLayout();
             groupBoxHud.SuspendLayout();
             groupBox5.SuspendLayout();
-            groupBox6.SuspendLayout();
             SuspendLayout();
             // 
             // pctOut
@@ -889,6 +893,9 @@ namespace AlundraTools.AlundraTools
             // 
             // tabPagePlayerStatus
             // 
+            tabPagePlayerStatus.Controls.Add(buttonAllItems);
+            tabPagePlayerStatus.Controls.Add(label53);
+            tabPagePlayerStatus.Controls.Add(numericUpDownKeys);
             tabPagePlayerStatus.Controls.Add(buttonControlAlundra);
             tabPagePlayerStatus.Controls.Add(buttonAddHugeHp);
             tabPagePlayerStatus.Controls.Add(buttonRestoreHpAndMp);
@@ -925,6 +932,23 @@ namespace AlundraTools.AlundraTools
             tabPagePlayerStatus.TabIndex = 1;
             tabPagePlayerStatus.Text = "Player status";
             tabPagePlayerStatus.UseVisualStyleBackColor = true;
+            // 
+            // label53
+            // 
+            label53.AutoSize = true;
+            label53.Location = new Point(6, 243);
+            label53.Name = "label53";
+            label53.Size = new Size(39, 20);
+            label53.TabIndex = 64;
+            label53.Text = "Keys";
+            // 
+            // numericUpDownKeys
+            // 
+            numericUpDownKeys.Location = new Point(76, 239);
+            numericUpDownKeys.Name = "numericUpDownKeys";
+            numericUpDownKeys.Size = new Size(150, 27);
+            numericUpDownKeys.TabIndex = 65;
+            numericUpDownKeys.ValueChanged += numericUpDownKeys_ValueChanged;
             // 
             // buttonControlAlundra
             // 
@@ -1040,7 +1064,7 @@ namespace AlundraTools.AlundraTools
             // 
             comboBoxWeapon.FormattingEnabled = true;
             comboBoxWeapon.Items.AddRange(new object[] { "1-sword", "3-Flail", "2-Bow", "4-Ice wand", "5-Fire wand", "6-Spirit wand" });
-            comboBoxWeapon.Location = new Point(76, 239);
+            comboBoxWeapon.Location = new Point(76, 278);
             comboBoxWeapon.Name = "comboBoxWeapon";
             comboBoxWeapon.Size = new Size(151, 28);
             comboBoxWeapon.TabIndex = 0;
@@ -1058,7 +1082,7 @@ namespace AlundraTools.AlundraTools
             // label18
             // 
             label18.AutoSize = true;
-            label18.Location = new Point(6, 274);
+            label18.Location = new Point(6, 313);
             label18.Name = "label18";
             label18.Size = new Size(39, 20);
             label18.TabIndex = 3;
@@ -1075,7 +1099,7 @@ namespace AlundraTools.AlundraTools
             // label16
             // 
             label16.AutoSize = true;
-            label16.Location = new Point(6, 242);
+            label16.Location = new Point(6, 281);
             label16.Name = "label16";
             label16.Size = new Size(64, 20);
             label16.TabIndex = 1;
@@ -1085,7 +1109,7 @@ namespace AlundraTools.AlundraTools
             // 
             comboBoxItem.FormattingEnabled = true;
             comboBoxItem.Items.AddRange(new object[] { "30-Spring Bean", "31-Sand Cape", "33-Curious Key variant (unused)", "34-Bomb", "35-Herbs", "36-Strength Elixyr", "37-Magic Elixyr", "38-Wonder Essence", "39-Aqua Cape", "40-Stenght Tonic", "41-System error (unused)", "42-Earth Scroll", "43-Earth Book", "44-Water Scroll", "45-Water Book", "46-Fire Scroll", "47-Fire Book", "48-Wind Scroll", "49-Wind Book", "50-Olga's Ring", "51-Oak's Ring (unused)", "52-Silver Armlet", "53-Nava's Charm", "54-Recovery Ring", "55-Refresher (unused)", "57-Save book (unused)", "58-Power Glove" });
-            comboBoxItem.Location = new Point(76, 271);
+            comboBoxItem.Location = new Point(76, 310);
             comboBoxItem.Name = "comboBoxItem";
             comboBoxItem.Size = new Size(151, 28);
             comboBoxItem.TabIndex = 2;
@@ -1215,6 +1239,176 @@ namespace AlundraTools.AlundraTools
             tabPageDebug.TabIndex = 3;
             tabPageDebug.Text = "Debug";
             tabPageDebug.UseVisualStyleBackColor = true;
+            // 
+            // groupBox6
+            // 
+            groupBox6.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox6.Controls.Add(labelPadButtonJustPressedByInterval);
+            groupBox6.Controls.Add(labelPadButtonReleased);
+            groupBox6.Controls.Add(labelPadButtonJustPressed);
+            groupBox6.Controls.Add(labelPadButtonHold);
+            groupBox6.Controls.Add(labelPadNumberFrameHold);
+            groupBox6.Controls.Add(labelPadIsOver);
+            groupBox6.Controls.Add(labelPadRepeatInterval);
+            groupBox6.Controls.Add(labelPadMaxNbHeld);
+            groupBox6.Controls.Add(label52);
+            groupBox6.Controls.Add(label51);
+            groupBox6.Controls.Add(label50);
+            groupBox6.Controls.Add(label48);
+            groupBox6.Controls.Add(label46);
+            groupBox6.Controls.Add(label44);
+            groupBox6.Controls.Add(label42);
+            groupBox6.Controls.Add(label40);
+            groupBox6.Location = new Point(279, 195);
+            groupBox6.Name = "groupBox6";
+            groupBox6.Size = new Size(249, 193);
+            groupBox6.TabIndex = 63;
+            groupBox6.TabStop = false;
+            groupBox6.Text = "Pad";
+            // 
+            // labelPadButtonJustPressedByInterval
+            // 
+            labelPadButtonJustPressedByInterval.AutoSize = true;
+            labelPadButtonJustPressedByInterval.Location = new Point(124, 163);
+            labelPadButtonJustPressedByInterval.Name = "labelPadButtonJustPressedByInterval";
+            labelPadButtonJustPressedByInterval.Size = new Size(17, 20);
+            labelPadButtonJustPressedByInterval.TabIndex = 15;
+            labelPadButtonJustPressedByInterval.Text = "0";
+            // 
+            // labelPadButtonReleased
+            // 
+            labelPadButtonReleased.AutoSize = true;
+            labelPadButtonReleased.Location = new Point(124, 143);
+            labelPadButtonReleased.Name = "labelPadButtonReleased";
+            labelPadButtonReleased.Size = new Size(17, 20);
+            labelPadButtonReleased.TabIndex = 14;
+            labelPadButtonReleased.Text = "0";
+            // 
+            // labelPadButtonJustPressed
+            // 
+            labelPadButtonJustPressed.AutoSize = true;
+            labelPadButtonJustPressed.Location = new Point(124, 123);
+            labelPadButtonJustPressed.Name = "labelPadButtonJustPressed";
+            labelPadButtonJustPressed.Size = new Size(17, 20);
+            labelPadButtonJustPressed.TabIndex = 13;
+            labelPadButtonJustPressed.Text = "0";
+            // 
+            // labelPadButtonHold
+            // 
+            labelPadButtonHold.AutoSize = true;
+            labelPadButtonHold.Location = new Point(124, 103);
+            labelPadButtonHold.Name = "labelPadButtonHold";
+            labelPadButtonHold.Size = new Size(17, 20);
+            labelPadButtonHold.TabIndex = 12;
+            labelPadButtonHold.Text = "0";
+            // 
+            // labelPadNumberFrameHold
+            // 
+            labelPadNumberFrameHold.AutoSize = true;
+            labelPadNumberFrameHold.Location = new Point(124, 83);
+            labelPadNumberFrameHold.Name = "labelPadNumberFrameHold";
+            labelPadNumberFrameHold.Size = new Size(17, 20);
+            labelPadNumberFrameHold.TabIndex = 11;
+            labelPadNumberFrameHold.Text = "0";
+            // 
+            // labelPadIsOver
+            // 
+            labelPadIsOver.AutoSize = true;
+            labelPadIsOver.Location = new Point(124, 63);
+            labelPadIsOver.Name = "labelPadIsOver";
+            labelPadIsOver.Size = new Size(17, 20);
+            labelPadIsOver.TabIndex = 10;
+            labelPadIsOver.Text = "0";
+            // 
+            // labelPadRepeatInterval
+            // 
+            labelPadRepeatInterval.AutoSize = true;
+            labelPadRepeatInterval.Location = new Point(124, 43);
+            labelPadRepeatInterval.Name = "labelPadRepeatInterval";
+            labelPadRepeatInterval.Size = new Size(17, 20);
+            labelPadRepeatInterval.TabIndex = 9;
+            labelPadRepeatInterval.Text = "0";
+            // 
+            // labelPadMaxNbHeld
+            // 
+            labelPadMaxNbHeld.AutoSize = true;
+            labelPadMaxNbHeld.Location = new Point(124, 23);
+            labelPadMaxNbHeld.Name = "labelPadMaxNbHeld";
+            labelPadMaxNbHeld.Size = new Size(17, 20);
+            labelPadMaxNbHeld.TabIndex = 8;
+            labelPadMaxNbHeld.Text = "0";
+            // 
+            // label52
+            // 
+            label52.AutoSize = true;
+            label52.Location = new Point(6, 163);
+            label52.Name = "label52";
+            label52.Size = new Size(122, 20);
+            label52.TabIndex = 7;
+            label52.Text = "Just pressed inter";
+            // 
+            // label51
+            // 
+            label51.AutoSize = true;
+            label51.Location = new Point(6, 143);
+            label51.Name = "label51";
+            label51.Size = new Size(69, 20);
+            label51.TabIndex = 6;
+            label51.Text = "Released";
+            // 
+            // label50
+            // 
+            label50.AutoSize = true;
+            label50.Location = new Point(6, 123);
+            label50.Name = "label50";
+            label50.Size = new Size(88, 20);
+            label50.TabIndex = 5;
+            label50.Text = "Just pressed";
+            // 
+            // label48
+            // 
+            label48.AutoSize = true;
+            label48.Location = new Point(6, 103);
+            label48.Name = "label48";
+            label48.Size = new Size(42, 20);
+            label48.TabIndex = 4;
+            label48.Text = "Hold";
+            // 
+            // label46
+            // 
+            label46.AutoSize = true;
+            label46.Location = new Point(6, 83);
+            label46.Name = "label46";
+            label46.Size = new Size(95, 20);
+            label46.TabIndex = 3;
+            label46.Text = "# frame hold";
+            // 
+            // label44
+            // 
+            label44.AutoSize = true;
+            label44.Location = new Point(6, 63);
+            label44.Name = "label44";
+            label44.Size = new Size(52, 20);
+            label44.TabIndex = 2;
+            label44.Text = "Is over";
+            // 
+            // label42
+            // 
+            label42.AutoSize = true;
+            label42.Location = new Point(6, 43);
+            label42.Name = "label42";
+            label42.Size = new Size(109, 20);
+            label42.TabIndex = 1;
+            label42.Text = "Repeat Interval";
+            // 
+            // label40
+            // 
+            label40.AutoSize = true;
+            label40.Location = new Point(6, 23);
+            label40.Name = "label40";
+            label40.Size = new Size(91, 20);
+            label40.TabIndex = 0;
+            label40.Text = "Max nb held";
             // 
             // comboBoxSpawnItemId
             // 
@@ -1580,175 +1774,15 @@ namespace AlundraTools.AlundraTools
             labelTextFlag.TabIndex = 0;
             labelTextFlag.Text = "0";
             // 
-            // groupBox6
+            // buttonAllItems
             // 
-            groupBox6.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            groupBox6.Controls.Add(labelPadButtonJustPressedByInterval);
-            groupBox6.Controls.Add(labelPadButtonReleased);
-            groupBox6.Controls.Add(labelPadButtonJustPressed);
-            groupBox6.Controls.Add(labelPadButtonHold);
-            groupBox6.Controls.Add(labelPadNumberFrameHold);
-            groupBox6.Controls.Add(labelPadIsOver);
-            groupBox6.Controls.Add(labelPadRepeatInterval);
-            groupBox6.Controls.Add(labelPadMaxNbHeld);
-            groupBox6.Controls.Add(label52);
-            groupBox6.Controls.Add(label51);
-            groupBox6.Controls.Add(label50);
-            groupBox6.Controls.Add(label48);
-            groupBox6.Controls.Add(label46);
-            groupBox6.Controls.Add(label44);
-            groupBox6.Controls.Add(label42);
-            groupBox6.Controls.Add(label40);
-            groupBox6.Location = new Point(279, 195);
-            groupBox6.Name = "groupBox6";
-            groupBox6.Size = new Size(249, 193);
-            groupBox6.TabIndex = 63;
-            groupBox6.TabStop = false;
-            groupBox6.Text = "Pad";
-            // 
-            // label40
-            // 
-            label40.AutoSize = true;
-            label40.Location = new Point(6, 23);
-            label40.Name = "label40";
-            label40.Size = new Size(91, 20);
-            label40.TabIndex = 0;
-            label40.Text = "Max nb held";
-            // 
-            // label42
-            // 
-            label42.AutoSize = true;
-            label42.Location = new Point(6, 43);
-            label42.Name = "label42";
-            label42.Size = new Size(109, 20);
-            label42.TabIndex = 1;
-            label42.Text = "Repeat Interval";
-            // 
-            // label44
-            // 
-            label44.AutoSize = true;
-            label44.Location = new Point(6, 63);
-            label44.Name = "label44";
-            label44.Size = new Size(52, 20);
-            label44.TabIndex = 2;
-            label44.Text = "Is over";
-            // 
-            // label46
-            // 
-            label46.AutoSize = true;
-            label46.Location = new Point(6, 83);
-            label46.Name = "label46";
-            label46.Size = new Size(95, 20);
-            label46.TabIndex = 3;
-            label46.Text = "# frame hold";
-            // 
-            // label48
-            // 
-            label48.AutoSize = true;
-            label48.Location = new Point(6, 103);
-            label48.Name = "label48";
-            label48.Size = new Size(42, 20);
-            label48.TabIndex = 4;
-            label48.Text = "Hold";
-            // 
-            // label50
-            // 
-            label50.AutoSize = true;
-            label50.Location = new Point(6, 123);
-            label50.Name = "label50";
-            label50.Size = new Size(88, 20);
-            label50.TabIndex = 5;
-            label50.Text = "Just pressed";
-            // 
-            // label51
-            // 
-            label51.AutoSize = true;
-            label51.Location = new Point(6, 143);
-            label51.Name = "label51";
-            label51.Size = new Size(69, 20);
-            label51.TabIndex = 6;
-            label51.Text = "Released";
-            // 
-            // label52
-            // 
-            label52.AutoSize = true;
-            label52.Location = new Point(6, 163);
-            label52.Name = "label52";
-            label52.Size = new Size(122, 20);
-            label52.TabIndex = 7;
-            label52.Text = "Just pressed inter";
-            // 
-            // labelPadButtonJustPressedByInterval
-            // 
-            labelPadButtonJustPressedByInterval.AutoSize = true;
-            labelPadButtonJustPressedByInterval.Location = new Point(124, 163);
-            labelPadButtonJustPressedByInterval.Name = "labelPadButtonJustPressedByInterval";
-            labelPadButtonJustPressedByInterval.Size = new Size(17, 20);
-            labelPadButtonJustPressedByInterval.TabIndex = 15;
-            labelPadButtonJustPressedByInterval.Text = "0";
-            // 
-            // labelPadButtonReleased
-            // 
-            labelPadButtonReleased.AutoSize = true;
-            labelPadButtonReleased.Location = new Point(124, 143);
-            labelPadButtonReleased.Name = "labelPadButtonReleased";
-            labelPadButtonReleased.Size = new Size(17, 20);
-            labelPadButtonReleased.TabIndex = 14;
-            labelPadButtonReleased.Text = "0";
-            // 
-            // labelPadButtonJustPressed
-            // 
-            labelPadButtonJustPressed.AutoSize = true;
-            labelPadButtonJustPressed.Location = new Point(124, 123);
-            labelPadButtonJustPressed.Name = "labelPadButtonJustPressed";
-            labelPadButtonJustPressed.Size = new Size(17, 20);
-            labelPadButtonJustPressed.TabIndex = 13;
-            labelPadButtonJustPressed.Text = "0";
-            // 
-            // labelPadButtonHold
-            // 
-            labelPadButtonHold.AutoSize = true;
-            labelPadButtonHold.Location = new Point(124, 103);
-            labelPadButtonHold.Name = "labelPadButtonHold";
-            labelPadButtonHold.Size = new Size(17, 20);
-            labelPadButtonHold.TabIndex = 12;
-            labelPadButtonHold.Text = "0";
-            // 
-            // labelPadNumberFrameHold
-            // 
-            labelPadNumberFrameHold.AutoSize = true;
-            labelPadNumberFrameHold.Location = new Point(124, 83);
-            labelPadNumberFrameHold.Name = "labelPadNumberFrameHold";
-            labelPadNumberFrameHold.Size = new Size(17, 20);
-            labelPadNumberFrameHold.TabIndex = 11;
-            labelPadNumberFrameHold.Text = "0";
-            // 
-            // labelPadIsOver
-            // 
-            labelPadIsOver.AutoSize = true;
-            labelPadIsOver.Location = new Point(124, 63);
-            labelPadIsOver.Name = "labelPadIsOver";
-            labelPadIsOver.Size = new Size(17, 20);
-            labelPadIsOver.TabIndex = 10;
-            labelPadIsOver.Text = "0";
-            // 
-            // labelPadRepeatInterval
-            // 
-            labelPadRepeatInterval.AutoSize = true;
-            labelPadRepeatInterval.Location = new Point(124, 43);
-            labelPadRepeatInterval.Name = "labelPadRepeatInterval";
-            labelPadRepeatInterval.Size = new Size(17, 20);
-            labelPadRepeatInterval.TabIndex = 9;
-            labelPadRepeatInterval.Text = "0";
-            // 
-            // labelPadMaxNbHeld
-            // 
-            labelPadMaxNbHeld.AutoSize = true;
-            labelPadMaxNbHeld.Location = new Point(124, 23);
-            labelPadMaxNbHeld.Name = "labelPadMaxNbHeld";
-            labelPadMaxNbHeld.Size = new Size(17, 20);
-            labelPadMaxNbHeld.TabIndex = 8;
-            labelPadMaxNbHeld.Text = "0";
+            buttonAllItems.Location = new Point(6, 359);
+            buttonAllItems.Name = "buttonAllItems";
+            buttonAllItems.Size = new Size(221, 29);
+            buttonAllItems.TabIndex = 66;
+            buttonAllItems.Text = "All items";
+            buttonAllItems.UseVisualStyleBackColor = true;
+            buttonAllItems.Click += buttonAllItems_Click;
             // 
             // FrmGame
             // 
@@ -1786,6 +1820,7 @@ namespace AlundraTools.AlundraTools
             tabPageEffects.PerformLayout();
             tabPagePlayerStatus.ResumeLayout(false);
             tabPagePlayerStatus.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownKeys).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownFalcon2).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownFalcon1).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownMoney).EndInit();
@@ -1795,13 +1830,13 @@ namespace AlundraTools.AlundraTools
             ((System.ComponentModel.ISupportInitialize)numericUpDownHpMax).EndInit();
             tabPageDebug.ResumeLayout(false);
             tabPageDebug.PerformLayout();
+            groupBox6.ResumeLayout(false);
+            groupBox6.PerformLayout();
             tabPageHud.ResumeLayout(false);
             groupBoxHud.ResumeLayout(false);
             groupBoxHud.PerformLayout();
             groupBox5.ResumeLayout(false);
             groupBox5.PerformLayout();
-            groupBox6.ResumeLayout(false);
-            groupBox6.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1958,5 +1993,8 @@ namespace AlundraTools.AlundraTools
         private Label label48;
         private Label label46;
         private Label label44;
+        private Label label53;
+        private NumericUpDown numericUpDownKeys;
+        private Button buttonAllItems;
     }
 }
