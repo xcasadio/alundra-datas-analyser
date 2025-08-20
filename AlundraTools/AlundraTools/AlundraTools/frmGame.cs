@@ -1032,7 +1032,7 @@ public partial class FrmGame : Form
 
     private void numericUpDownKeys_ValueChanged(object sender, EventArgs e)
     {
-        //_gameEngine.StaticVariables.g_initialPlayerStats. = (short)numericUpDownKeys.Value;
+        _gameEngine.StaticVariables.g_numberOfItems[0x3d * 2 + 1] = (short)numericUpDownKeys.Value;
     }
 
     private void comboBoxWeapon_SelectedIndexChanged(object sender, EventArgs e)
@@ -1186,9 +1186,6 @@ public partial class FrmGame : Form
 
     private void buttonAllItems_Click(object sender, EventArgs e)
     {
-        for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfItems.Length / 2; i++)
-        {
-            _gameEngine.StaticVariables.g_numberOfItems[i * 2 + 1] = 1;
-        }
+        Array.Fill<short>(_gameEngine.StaticVariables.g_numberOfItems, 1);
     }
 }

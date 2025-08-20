@@ -3241,7 +3241,7 @@ public class PlayerManager
         uint bestMatchIndex = 0xFFFFFFFF;
         uint currentIndex = 0;
 
-        while (currentIndex < 0x80)
+        while (currentIndex < 99)//0x80)
         {
             var entrySectionId = _gameEngine.StaticVariables.g_itemsProperties[currentIndex * 5];
 

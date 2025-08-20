@@ -12,9 +12,9 @@ public class SubInventoryManager
 {
     private readonly GameEngine _gameEngine;
 
-    public readonly List<Renderer.Sprite> InventoryWeaponNameSprites = new();
-    public readonly List<Renderer.Sprite>[] InventoryWeaponDescriptionLinesSprites = [new(), new()];
-    public readonly List<Renderer.Sprite> InventoryItemNameSprites = new();
+    public readonly List<Renderer.Sprite> InventoryArmoryNameSprites = new();
+    public readonly List<Renderer.Sprite> InventoryBootNameSprites = new();
+    public readonly List<Renderer.Sprite>[] InventoryItemDescriptionLinesSprites = [new(), new()];
 
     public SubInventoryManager(GameEngine gameEngine)
     {
@@ -298,29 +298,31 @@ public class SubInventoryManager
     }
 
     //80052f24
-    private void FUN_80052f24(int param_1)
+    private void FUN_80052f24(int index)
     {
         int itemId;
 
-        itemId = (int)_gameEngine.PlayerManager.GetItemIdFromSlotId(_gameEngine.StaticVariables.UINT_ARRAY_800b44f0[param_1]);
+        itemId = (int)_gameEngine.PlayerManager.GetItemIdFromSlotId(_gameEngine.StaticVariables.UINT_ARRAY_800b44f0[index]);
 
         if (itemId != -1)
         {
             SPRT[] sprites =
             [
-                _gameEngine.StaticVariables.SPRT_ARRAY_8017f480[param_1 * 2],
-                _gameEngine.StaticVariables.SPRT_ARRAY_8017f480[param_1 * 2 + 1]
+                _gameEngine.StaticVariables.SPRT_ARRAY_8017f480[index * 2],
+                _gameEngine.StaticVariables.SPRT_ARRAY_8017f480[index * 2 + 1]
             ];
 
+            var nameSprites = index == 1 ? InventoryBootNameSprites : InventoryArmoryNameSprites;
+            nameSprites.Clear();
             var itemName = _gameEngine.EtcResR.GetItemName(itemId);
 
             _gameEngine.UIManager.DisplayIconName(sprites,
-                InventoryItemNameSprites,
+                nameSprites,
                 itemName.ToCharArray(),
                 0x20,
                 0, //0x140,
                 0,
-                param_1);
+                index);
         }
     }
 
@@ -523,14 +525,14 @@ public class SubInventoryManager
 
         if (_gameEngine.StaticVariables.INT_8017f788 == 0)
         {
-            InventoryItemNameSprites.Clear();
+            InventoryItemDescriptionLinesSprites[0].Clear();
             text = _gameEngine.EtcResR.GetItemName(iVar1); //_gameEngine.StaticVariables.g_iconNameEtcBase[iVar1 * 2];
             iVar1 = 0x20;
 
             LAB_8005420c:
             _gameEngine.UIManager.DisplayIconName(
                 _gameEngine.StaticVariables.SPRT_ARRAY_8017f738,
-                InventoryItemNameSprites,
+                InventoryItemDescriptionLinesSprites[0],
                 text.ToCharArray(),
                 iVar1,
                 0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
@@ -588,7 +590,7 @@ public class SubInventoryManager
                         //goto LAB_8005420c;
                         _gameEngine.UIManager.DisplayIconName(
                             _gameEngine.StaticVariables.SPRT_ARRAY_8017f738,
-                            InventoryWeaponDescriptionLinesSprites[0],
+                            InventoryItemDescriptionLinesSprites[0],
                             text.ToCharArray(),
                             iVar1,
                             0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
@@ -620,12 +622,13 @@ public class SubInventoryManager
                     {
                         if (_gameEngine.StaticVariables.INT_8017f788 == 0x8e)
                         {
+                            InventoryItemDescriptionLinesSprites[1].Clear();
                             //var name = _gameEngine.EtcResR.GetItemDescription(iVar1);//_gameEngine.StaticVariables.g_DescriptionEtcBase[iVar1 * 2];
                             SPRT[] sprites = [_gameEngine.StaticVariables.SPRT_ARRAY_8017f738[2], _gameEngine.StaticVariables.SPRT_ARRAY_8017f738[3]];
 
                             _gameEngine.UIManager.DisplayIconName(
                                 sprites,
-                                InventoryWeaponDescriptionLinesSprites[0],
+                                InventoryItemDescriptionLinesSprites[1],
                                 description.ToCharArray(),
                                 0x40,
                                 0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
@@ -716,7 +719,7 @@ public class SubInventoryManager
         //var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
         //_gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
-        foreach (var spr in InventoryWeaponDescriptionLinesSprites[index])
+        foreach (var spr in InventoryItemDescriptionLinesSprites[index])
         {
             _gameEngine.Renderer.AddSprite(spr.X + sprite.x0, spr.Y + sprite.y0,
                 spr.Width, spr.Height,
@@ -1123,7 +1126,9 @@ public class SubInventoryManager
             sprite.x0 = (short)(uiBoxConfig.X + 0x10);
             sprite.y0 = (short)(uiBoxConfig.Y + 8);
 
-            foreach (var spr in InventoryItemNameSprites)
+            var sprites = slotId == 0 ? InventoryArmoryNameSprites : InventoryBootNameSprites;
+
+            foreach (var spr in sprites)
             {
                 _gameEngine.Renderer.AddSprite(spr.X + sprite.x0, spr.Y + sprite.y0,
                     spr.Width, spr.Height,
@@ -1642,7 +1647,7 @@ public class SubInventoryManager
 
                 _gameEngine.UIManager.DisplayIconName(
                     _gameEngine.StaticVariables.SPRT_ARRAY_8017e8e8,
-                    InventoryItemNameSprites,
+                    InventoryArmoryNameSprites,
                     buffer,
                     5,
                     0, //(short)(callBackInfo.Data.X + callBackInfo.Data.Width + 100),
@@ -1677,7 +1682,7 @@ public class SubInventoryManager
 
                 _gameEngine.UIManager.DisplayIconName(
                     _gameEngine.StaticVariables.SPRT_ARRAY_8017e938,
-                    InventoryItemNameSprites,
+                    InventoryArmoryNameSprites,
                     name.ToCharArray(),//_gameEngine.StaticVariables.CHAR_ARRAY_8017e998, 
                     5,
                     0, //(short)(callBackInfo.Data.X + callBackInfo.Data.Width + 0x10),
@@ -1719,7 +1724,7 @@ public class SubInventoryManager
 
                 _gameEngine.UIManager.DisplayIconName(
                     sprites,
-                    InventoryItemNameSprites,
+                    InventoryArmoryNameSprites,
                     puVar10.ToString().ToCharArray(),
                     5,
                     0, //(short)(callBackInfo.Data.X + callBackInfo.Data.Width + 200),
