@@ -16,7 +16,7 @@ public class GameEngine
 
     public readonly DatasBin.DatasBin DatasBin;
     public readonly BalanceBin BalanceBin;
-    public readonly EtcResR EtcResR;
+    public readonly EtcRes EtcRes;
     public readonly Font3 Font3;
 
     public GameMap CurrentMap { get; private set; }
@@ -43,12 +43,12 @@ public class GameEngine
     //TODO : find the variable in StaticVariables
     public int DialogState, DialogNameState, DialogName;
 
-    public GameEngine(DatasBin.DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR, Font3 font3)
+    public GameEngine(DatasBin.DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcRes etcRes, Font3 font3)
     {
         DatasBin = datasBin;
         BalanceBin = balanceBin;
         SoundBin = soundBin;
-        EtcResR = etcResR;
+        EtcRes = etcRes;
         Font3 = font3;
 
         _entityEventHandlers = new EntityEventHandlers(this);

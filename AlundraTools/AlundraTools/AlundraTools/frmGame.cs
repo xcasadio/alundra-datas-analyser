@@ -240,7 +240,7 @@ public partial class FrmGame : Form
     };
 
 
-    public FrmGame(DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR, Font3 font3)
+    public FrmGame(DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcRes etcRes, Font3 font3)
     {
         InitializeComponent();
         KeyPreview = true;
@@ -248,7 +248,7 @@ public partial class FrmGame : Form
         Load += FrmGame_Load;
         FormClosing += FrmGame_FormClosing;
 
-        _gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcResR, font3);
+        _gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3);
 
         _graphics = Graphics.FromImage(_backBuffer);
         _graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;

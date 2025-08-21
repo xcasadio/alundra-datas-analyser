@@ -61,16 +61,25 @@ public partial class MainForm : Form
                 var balanceBin = new BalanceBin(balanceFile);
                 var soundBinFileName = Path.Combine(dataFolder, "SOUND.BIN");
                 var soundBin = new SoundBin(soundBinFileName);
-                var etcResRFileName = GetEtcRFileName(dataFolder);
-                var etcResR = new EtcResR(etcResRFileName);
                 var font3 = new Font3(Path.Combine(dataFolder, "..", "TAKI\\SCREEN"));
+                var etcResFileName = GetEtcFileName(dataFolder);
+                EtcRes etcRes;
 
-                frmAlundra.Init(datasBin, balanceBin, soundBin, etcResR, font3);
+                if (Path.GetFileName(etcResFileName).Contains("usa"))
+                {
+                    etcRes = new EtcResUsa(etcResFileName);
+                }
+                else
+                {
+                    etcRes = new EtcResR(etcResFileName);
+                }
+
+                frmAlundra.Init(datasBin, balanceBin, soundBin, etcRes, font3);
             }
         }
     }
 
-    private static string GetEtcRFileName(string dataFolder)
+    private static string GetEtcFileName(string dataFolder)
     {
         //"ETC_RES.R"
         var files = Directory.GetFiles(dataFolder, "*.R");
@@ -102,14 +111,24 @@ public partial class MainForm : Form
                 var dataFolder = Path.GetDirectoryName(ofd.FileName);
                 var soundFile = Path.Combine(dataFolder, "SOUND.BIN");
                 var balanceFile = Path.Combine(dataFolder, "BALANCE.BIN");
-                var etcResRFileName = GetEtcRFileName(dataFolder);
                 var font3Folder = Path.Combine(dataFolder, "..", "TAKI\\SCREEN");
+                var etcResFileName = GetEtcFileName(dataFolder);
+                EtcRes etcRes;
+
+                if (Path.GetFileName(etcResFileName).Contains("usa"))
+                {
+                    etcRes = new EtcResUsa(etcResFileName);
+                }
+                else
+                {
+                    etcRes = new EtcResR(etcResFileName);
+                }
 
                 var frmGame = new FrmGame(
                     datasBin,
                     new BalanceBin(balanceFile),
                     new SoundBin(soundFile),
-                    new EtcResR(etcResRFileName),
+                    etcRes,
                     new Font3(font3Folder));
                 frmGame.Show();
             }

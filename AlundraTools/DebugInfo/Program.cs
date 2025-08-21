@@ -33,7 +33,7 @@ internal class Program
         DisplaySoundListNames();
 
         //var etcResRFileName = Path.Combine(dataFolder, "ETC_RES.R");
-        //var etcResR = new EtcResR(etcResRFileName);
+        //var etcResR = new EtcRes(etcResRFileName);
         //DisplayInfoEtcResR(etcResR);
 
         //var datasBinFileName = Path.Combine(dataFolder, "DATAS.BIN");

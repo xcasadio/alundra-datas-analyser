@@ -2,11 +2,19 @@
 
 namespace AlundraEngine;
 
-public class EtcResR : EtcRes
+public class EtcResUsa : EtcRes
 {
     private readonly string _fileName;
 
-    public EtcResR(string fileName)
+    public readonly string[] DescriptionItems = new string[196];
+    public readonly string[] IconNames = new string[196];
+    public readonly string[] OtherStrings = new string[196];
+
+    public readonly string[] StringTable = new string[256];
+    public readonly string[] Strings = new string[512];
+    public readonly string[] DescriptionStrings = new string[256];
+
+    public EtcResUsa(string fileName)
     {
         _fileName = fileName;
 
@@ -59,11 +67,8 @@ public class EtcResR : EtcRes
             offset = OtherStringOffset;
             OtherStrings[i * 2] = ReadString(buffer, ref offset);
         }
-
-        l = indexTable[0x3ff];
-        var gameTitle = ReadString(buffer, ref l); // "BESLES-01135ALUNDRA " => BESLES-01198ALUNDRA
     }
-    
+
     public override string GetItemName(int id)
     {
         return IconNames[id * 2];

@@ -1,10 +1,12 @@
 ﻿using AlundraEngine.Gameplay;
 using AlundraEngine.Graphics;
+using AlundraEngine.Text;
 using AlundraEngine.UI;
 using OfficeOpenXml.DataValidation.Exceptions;
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using static AlundraEngine.Renderer;
 
 namespace AlundraEngine;
 
@@ -314,7 +316,7 @@ public class SubInventoryManager
 
             var nameSprites = index == 1 ? InventoryBootNameSprites : InventoryArmoryNameSprites;
             nameSprites.Clear();
-            var itemName = _gameEngine.EtcResR.GetItemName(itemId);
+            var itemName = _gameEngine.EtcRes.GetItemName(itemId);
 
             _gameEngine.UIManager.DisplayIconName(sprites,
                 nameSprites,
@@ -451,20 +453,20 @@ public class SubInventoryManager
             0); //_gameEngine.StaticVariables.g_drawModes[0x14].tag);
 
         _gameEngine.MainInventoryManager.DisplayInventoryCursor(_gameEngine.StaticVariables.InventoryCursorAnimation_8017f704);
-        FUN_80053144(0, _gameEngine.StaticVariables.UIBoxConfiguration_800b122c);
-        FUN_80053144(1, _gameEngine.StaticVariables.UIBoxConfiguration_800b1d7c);
-        FUN_80052fb4(0, _gameEngine.StaticVariables.UIBoxConfiguration_800b287c);
-        FUN_80052fb4(1, _gameEngine.StaticVariables.UIBoxConfiguration_800b287c);
-        FUN_80052dd8(_gameEngine.StaticVariables.UIBoxConfiguration_800af664);
-        FUN_80052c64(_gameEngine.StaticVariables.UIBoxConfiguration_800b06dc);
-        FUN_80053270(_gameEngine.StaticVariables.UIBoxConfiguration_800af664);
-        FUN_80053270(_gameEngine.StaticVariables.UIBoxConfiguration_800b06dc);
-        FUN_80053270(_gameEngine.StaticVariables.UIBoxConfiguration_800b122c);
-        FUN_80053270(_gameEngine.StaticVariables.UIBoxConfiguration_800b1d7c);
-        FUN_80053270(_gameEngine.StaticVariables.UIBoxConfiguration_800b287c);
-        FUN_80053270(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground);
-        FUN_80053270(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons);
-        FUN_80053fdc();
+        FUN_80053144(0, _gameEngine.StaticVariables.UIBoxConfiguration_800b122c); // armor text
+        FUN_80053144(1, _gameEngine.StaticVariables.UIBoxConfiguration_800b1d7c); // boots text
+        FUN_80052fb4(0, _gameEngine.StaticVariables.UIBoxConfiguration_800b287c); // armor icon
+        FUN_80052fb4(1, _gameEngine.StaticVariables.UIBoxConfiguration_800b287c); // boots icon
+        FUN_80052dd8(_gameEngine.StaticVariables.UIBoxConfiguration_800af664); // armory icon
+        FUN_80052c64(_gameEngine.StaticVariables.UIBoxConfiguration_800b06dc); // key items icon
+        FUN_80053270(_gameEngine.StaticVariables.UIBoxConfiguration_800af664); // armory background
+        FUN_80053270(_gameEngine.StaticVariables.UIBoxConfiguration_800b06dc); // key item background
+        FUN_80053270(_gameEngine.StaticVariables.UIBoxConfiguration_800b122c); // armor text background
+        FUN_80053270(_gameEngine.StaticVariables.UIBoxConfiguration_800b1d7c); // boots text background
+        FUN_80053270(_gameEngine.StaticVariables.UIBoxConfiguration_800b287c); // armor/boots icon background
+        FUN_80053270(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground); // description text/background
+        FUN_80053270(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons); // money/falcon/keys icon
+        FUN_80053fdc(); // item description
         DisplayAmountOfMoneyFalconKeys2();
     }
 
@@ -496,7 +498,7 @@ public class SubInventoryManager
         {
             if (uVar4 < -2)
             {
-                iVar1 = _gameEngine.StaticVariables.DAT_8017f628 + (-3 - uVar4) * 4;
+                iVar1 = _gameEngine.StaticVariables.INT_ARRAY_8017f628[-3 - uVar4];
             }
             else
             {
@@ -526,18 +528,18 @@ public class SubInventoryManager
         if (_gameEngine.StaticVariables.INT_8017f788 == 0)
         {
             InventoryItemDescriptionLinesSprites[0].Clear();
-            text = _gameEngine.EtcResR.GetItemName(iVar1); //_gameEngine.StaticVariables.g_iconNameEtcBase[iVar1 * 2];
+            text = _gameEngine.EtcRes.GetItemName(iVar1); //_gameEngine.StaticVariables.g_iconNameEtcBase[iVar1 * 2];
             iVar1 = 0x20;
 
             LAB_8005420c:
-            _gameEngine.UIManager.DisplayIconName(
-                _gameEngine.StaticVariables.SPRT_ARRAY_8017f738,
-                InventoryItemDescriptionLinesSprites[0],
-                text.ToCharArray(),
-                iVar1,
-                0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
-                0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y, 
-                2);
+            //_gameEngine.UIManager.DisplayIconName(
+            //    _gameEngine.StaticVariables.SPRT_ARRAY_8017f738,
+            //    InventoryItemDescriptionLinesSprites[0],
+            //    text.ToCharArray(),
+            //    iVar1,
+            //    0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
+            //    0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y, 
+            //    2);
             _gameEngine.StaticVariables.INT_8017f78c = 0;
             _gameEngine.StaticVariables.SPRT_ARRAY_8017f738[0].w = 0;
             _gameEngine.StaticVariables.SPRT_ARRAY_8017f738[1].w = 0;
@@ -545,17 +547,27 @@ public class SubInventoryManager
         }
         else
         {
-            var itemName = _gameEngine.EtcResR.GetItemName(iVar1); //_gameEngine.StaticVariables.g_iconNameEtcBase[iVar1 * 2];
+            var itemName = _gameEngine.EtcRes.GetItemName(iVar1); //_gameEngine.StaticVariables.g_iconNameEtcBase[iVar1 * 2];
 
             if (_gameEngine.StaticVariables.INT_8017f788 - 1U < 0x10)
             {
-                if (itemName.Length >= _gameEngine.StaticVariables.INT_8017f788 - 1)
+                if (itemName.Length <= _gameEngine.StaticVariables.INT_8017f788 - 1)
                 {
                     _gameEngine.StaticVariables.INT_8017f788 = 0x11;
                     uVar5 = 0;
                 }
                 else
                 {
+                    InventoryItemDescriptionLinesSprites[0].Clear();
+                    _gameEngine.UIManager.DisplayIconName(
+                        _gameEngine.StaticVariables.SPRT_ARRAY_8017f738,
+                        InventoryItemDescriptionLinesSprites[0],
+                        itemName.Substring(0, _gameEngine.StaticVariables.INT_8017f788).ToCharArray(),
+                        iVar1,
+                        0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
+                        0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y, 
+                        2);
+
                     FUN_80053f3c(0,
                         _gameEngine.StaticVariables.INT_8017f788,
                         itemName[_gameEngine.StaticVariables.INT_8017f788 - 1]);
@@ -581,21 +593,22 @@ public class SubInventoryManager
                 }
                 else
                 {
-                    var description = _gameEngine.EtcResR.GetItemDescription(iVar1); //(_gameEngine.StaticVariables.g_itemDescriptionsEtc)[iVar1 * 2];
+                    var description = _gameEngine.EtcRes.GetItemDescription(iVar1); //(_gameEngine.StaticVariables.g_itemDescriptionsEtc)[iVar1 * 2];
 
                     if (_gameEngine.StaticVariables.INT_8017f788 == 0x4d)
                     {
                         text = description;
                         iVar1 = 0x40;
                         //goto LAB_8005420c;
-                        _gameEngine.UIManager.DisplayIconName(
-                            _gameEngine.StaticVariables.SPRT_ARRAY_8017f738,
-                            InventoryItemDescriptionLinesSprites[0],
-                            text.ToCharArray(),
-                            iVar1,
-                            0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
-                            0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y,
-                            2);
+                        InventoryItemDescriptionLinesSprites[0].Clear();
+                        //_gameEngine.UIManager.DisplayIconName(
+                        //    _gameEngine.StaticVariables.SPRT_ARRAY_8017f738,
+                        //    InventoryItemDescriptionLinesSprites[0],
+                        //    text.ToCharArray(),
+                        //    iVar1,
+                        //    0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
+                        //    0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y,
+                        //    2);
                         _gameEngine.StaticVariables.INT_8017f78c = 0;
                         _gameEngine.StaticVariables.SPRT_ARRAY_8017f738[0].w = 0;
                         _gameEngine.StaticVariables.SPRT_ARRAY_8017f738[1].w = 0;
@@ -606,12 +619,22 @@ public class SubInventoryManager
                     if (_gameEngine.StaticVariables.INT_8017f788 - 0x4eU < 0x40)
                     {
                         uVar5 = 0;
-                        if (description.Length >= _gameEngine.StaticVariables.INT_8017f788 - 0x4e)
+                        if (description.Length <= _gameEngine.StaticVariables.INT_8017f788 - 0x4e)
                         {
                             _gameEngine.StaticVariables.INT_8017f788 = 0x8e;
                         }
                         else
                         {
+                            InventoryItemDescriptionLinesSprites[0].Clear();
+                            _gameEngine.UIManager.DisplayIconName(
+                                _gameEngine.StaticVariables.SPRT_ARRAY_8017f738,
+                                InventoryItemDescriptionLinesSprites[0],
+                                description.Substring(0, _gameEngine.StaticVariables.INT_8017f788 - 0x4d).ToCharArray(),
+                                iVar1,
+                                0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
+                                0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y,
+                                2);
+
                             FUN_80053f3c(0,
                                 _gameEngine.StaticVariables.INT_8017f788 + -0x4d,
                                 description[_gameEngine.StaticVariables.INT_8017f788 - 0x4e]);
@@ -622,18 +645,18 @@ public class SubInventoryManager
                     {
                         if (_gameEngine.StaticVariables.INT_8017f788 == 0x8e)
                         {
-                            InventoryItemDescriptionLinesSprites[1].Clear();
-                            //var name = _gameEngine.EtcResR.GetItemDescription(iVar1);//_gameEngine.StaticVariables.g_DescriptionEtcBase[iVar1 * 2];
+                            //var name = _gameEngine.EtcRes.GetItemDescription(iVar1);//_gameEngine.StaticVariables.g_DescriptionEtcBase[iVar1 * 2];
                             SPRT[] sprites = [_gameEngine.StaticVariables.SPRT_ARRAY_8017f738[2], _gameEngine.StaticVariables.SPRT_ARRAY_8017f738[3]];
 
-                            _gameEngine.UIManager.DisplayIconName(
-                                sprites,
-                                InventoryItemDescriptionLinesSprites[1],
-                                description.ToCharArray(),
-                                0x40,
-                                0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
-                                0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y, 
-                                3);
+                            InventoryItemDescriptionLinesSprites[1].Clear();
+                            //_gameEngine.UIManager.DisplayIconName(
+                            //    sprites,
+                            //    InventoryItemDescriptionLinesSprites[1],
+                            //    description.ToCharArray(),
+                            //    0x40,
+                            //    0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
+                            //    0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y, 
+                            //    3);
                             _gameEngine.StaticVariables.INT_8017f78c = 0;
                             _gameEngine.StaticVariables.INT_8017f788 += 1;
                             FUN_80053e54(0);
@@ -650,6 +673,18 @@ public class SubInventoryManager
                             }
                             else
                             {
+                                SPRT[] sprites = [_gameEngine.StaticVariables.SPRT_ARRAY_8017f738[2], _gameEngine.StaticVariables.SPRT_ARRAY_8017f738[3]];
+
+                                InventoryItemDescriptionLinesSprites[1].Clear();
+                                _gameEngine.UIManager.DisplayIconName(
+                                    sprites,
+                                    InventoryItemDescriptionLinesSprites[1],
+                                    description.Substring(0, (int)(_gameEngine.StaticVariables.INT_8017f788 - 0x8fU)).ToCharArray(),
+                                    0x40,
+                                    0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
+                                    0, //_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y, 
+                                    3);
+
                                 FUN_80053f3c(1,
                                     (int)(_gameEngine.StaticVariables.INT_8017f788 - 0x8fU),
                                     description[_gameEngine.StaticVariables.INT_8017f788 - 0x90]);
@@ -671,7 +706,7 @@ public class SubInventoryManager
     }
 
     //80053f3c
-    private void FUN_80053f3c(int index, int param_2, uint c)
+    private void FUN_80053f3c(int index, int param_2, char c)
     {
         if (_gameEngine.StaticVariables.INT_8017f78c == 0)
         {
@@ -683,6 +718,18 @@ public class SubInventoryManager
             sprite.w = (short)(sprite.w + width);
             sprite = _gameEngine.StaticVariables.SPRT_ARRAY_8017f738[index + 1];
             sprite.w = (short)(sprite.w + width);
+
+            /*
+            var charValue = TextDecoder.ConvertCp850ToLatin1(c);
+
+            var bitmap = _gameEngine.Font3.GenerateFontBitmapTim(
+                (charValue % 16) * 16,
+                (charValue / 16) * 16,
+                16, 16, 8);
+
+            InventoryItemDescriptionLinesSprites[index].Add(new Sprite(
+                sprite.w, index * 0x10,
+                16, 16, int.MaxValue, bitmap));*/
         }
         else
         {
@@ -1249,12 +1296,14 @@ public class SubInventoryManager
 
         do
         {
-            //_gameEngine.StaticVariables.g_subInventoryState = -1;
+            _gameEngine.StaticVariables.INT_ARRAY_8017f628[i] = -1;
 
             itemId = FUN_8004e640(itemId + 1, 0x1c);
 
             if (itemId != -1)
             {
+                _gameEngine.StaticVariables.INT_ARRAY_8017f628[i] = itemId;
+
                 var sprite = _gameEngine.StaticVariables.SPRT_ARRAY_8017f63c[i];
                 _gameEngine.GraphicManager.InitializeSpriteWithImage(sprite, itemId, 0, 0);
                 sprite.x0 = (short)(uiBoxConfig.X + i * 0x20 + 8);
@@ -1285,10 +1334,9 @@ public class SubInventoryManager
         {
             if (startIndex < _gameEngine.StaticVariables.g_itemsCount)
             {
-                var property = _gameEngine.StaticVariables.g_itemsProperties[startIndex * 5];
-
                 do
                 {
+                    var property = _gameEngine.StaticVariables.g_itemsProperties[startIndex * 5];
                     var quantity = _gameEngine.StaticVariables.g_numberOfItems[startIndex * 2 + 1];
 
                     if ((property == wantedPropertyId) && (0 < quantity))

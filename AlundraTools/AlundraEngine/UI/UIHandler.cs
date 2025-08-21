@@ -197,7 +197,7 @@ public class UiHandler
         DialogNameBoxLerper.AfterY = ui.BoxAnimated.Y;
         _gameEngine.DialogNameState = 5;
 
-        var name = _gameEngine.EtcResR.GetEtcString(_gameEngine.DialogName);
+        var name = _gameEngine.EtcRes.GetEtcString(_gameEngine.DialogName);
 
         _dialognametextcmd = RenderText(name, 0, (short)(ui.Y + ui.BoxAnimated.Y), 3);
 
@@ -327,7 +327,7 @@ public class UiHandler
             }
         }
 
-        var text = _gameEngine.EtcResR.GetEtcString(_gameEngine.DialogName);
+        var text = _gameEngine.EtcRes.GetEtcString(_gameEngine.DialogName);
         var width = GetRenderedTextWidth(text);
         width = ui.BoxAnimated.Width * 8 - width;
         _dialognametextcmd.X = (short)(width / 2 + ui.BoxAnimated.X);
@@ -875,7 +875,7 @@ public class UiHandler
     {
         if ((_gameEngine.DialogNameState & 4) == 0
             && nameid-0x100 < 0x100
-            && !string.IsNullOrEmpty(_gameEngine.EtcResR.GetEtcString(nameid)))
+            && !string.IsNullOrEmpty(_gameEngine.EtcRes.GetEtcString(nameid)))
         {
             _gameEngine.DialogName = nameid;
             SetUiRecordCallSetup(0xc);

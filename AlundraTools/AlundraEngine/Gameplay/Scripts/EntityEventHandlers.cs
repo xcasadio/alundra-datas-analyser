@@ -2686,8 +2686,8 @@ public class EntityEventHandlers
         {
             _gameEngine.StaticVariables.INT_8013d8d0 = 0;
 
-            var arg1 = _gameEngine.EtcResR.GetOtherString(0x43);
-            var arg2 = _gameEngine.EtcResR.GetOtherString(0x44);
+            var arg1 = _gameEngine.EtcRes.GetOtherString(0x43);
+            var arg2 = _gameEngine.EtcRes.GetOtherString(0x44);
             var res = _gameEngine.InitializeAsyncOperation(arg1, arg2, ref _gameEngine.StaticVariables.INT_8013d8d0);
 
             if (res == 0)

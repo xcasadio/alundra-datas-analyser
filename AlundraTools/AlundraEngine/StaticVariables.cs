@@ -5518,7 +5518,7 @@ public class StaticVariables
     public SPRT[] SPRT_ARRAY_8017f408 = Enumerable.Range(0, 4).Select(x => new SPRT()).ToArray(); //8017f408
     public SPRT[] SPRT_ARRAY_8017f480 = Enumerable.Range(0, 4).Select(x => new SPRT()).ToArray(); //8017f480
     public SPRT[] SPRT_ARRAY_8017f4f8 = Enumerable.Range(0, 7).Select(x => new SPRT()).ToArray(); //8017f4f8
-    public int DAT_8017f628; // 8017f628
+    public int[] INT_ARRAY_8017f628 = new int[5]; // 8017f628
     public SPRT[] SPRT_ARRAY_8017f63c = Enumerable.Range(0, 6).Select(x => new SPRT()).ToArray(); //8017f63c
     public InventoryCursorAnimation InventoryCursorAnimation_8017f704 = new InventoryCursorAnimation(); // 8017F704
     public int INT_8017f734; // 8017f734

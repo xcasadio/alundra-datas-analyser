@@ -24,9 +24,9 @@ namespace AlundraTools.AlundraTools
 
         private DatasBin _datasBin;
 
-        public void Init(DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcResR etcResR, Font3 font3)
+        public void Init(DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcRes etcRes, Font3 font3)
         {
-            _etcResR = etcResR;
+            _etcRes = etcRes;
             _datasBin = datasBin;
             _font3 = font3;
 
@@ -54,33 +54,33 @@ namespace AlundraTools.AlundraTools
 
         private void InitEtcControls()
         {
-            for (var i = 0; i < _etcResR.DescriptionItems.Length; i++)
+            for (var i = 0; i < _etcRes.DescriptionItems.Length; i++)
             {
-                var value = _etcResR.DescriptionItems[i];
+                var value = _etcRes.DescriptionItems[i];
                 listBoxEtcTileTable.Items.Add($"#{i}-{value}");
             }
 
-            for (var i = 0; i < _etcResR.IconNames.Length; i++)
+            for (var i = 0; i < _etcRes.IconNames.Length; i++)
             {
-                var value = _etcResR.IconNames[i];
-                listBoxEtcIconNameTable.Items.Add($"#{i}-{value} {_etcResR.IconNames[i]}");
+                var value = _etcRes.IconNames[i];
+                listBoxEtcIconNameTable.Items.Add($"#{i}-{value} {_etcRes.IconNames[i]}");
             }
 
-            for (var i = 0; i < _etcResR.OtherStrings.Length; i++)
+            for (var i = 0; i < _etcRes.OtherStrings.Length; i++)
             {
-                var value = _etcResR.OtherStrings[i];
+                var value = _etcRes.OtherStrings[i];
                 listBoxEtcPaletteTable.Items.Add($"#{i}-{value}");
             }
 
-            for (var i = 0; i < _etcResR.StringTable.Length; i++)
+            for (var i = 0; i < _etcRes.StringTable.Length; i++)
             {
-                var value = _etcResR.StringTable[i];
+                var value = _etcRes.StringTable[i];
                 listBoxEtcStringTable.Items.Add($"#{i}-{value}");
             }
 
-            for (var i = 0; i < _etcResR.Strings.Length; i++)
+            for (var i = 0; i < _etcRes.Strings.Length; i++)
             {
-                var value = _etcResR.Strings[i];
+                var value = _etcRes.Strings[i];
                 listBoxEtcStrings.Items.Add($"#{i}-{value}");
             }
         }
@@ -1539,7 +1539,7 @@ namespace AlundraTools.AlundraTools
         }
 
         private string _dumpfile = "";
-        private EtcResR _etcResR;
+        private EtcRes _etcRes;
         private Font3 _font3;
 
         private void btnAnalyzeEntity_Click(object sender, EventArgs e)

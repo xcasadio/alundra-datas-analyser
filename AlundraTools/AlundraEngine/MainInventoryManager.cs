@@ -960,7 +960,7 @@ public class MainInventoryManager
 
         if (_gameEngine.StaticVariables.g_inventoryCursorText == 0)
         {
-            var text = _gameEngine.EtcResR.GetItemName((int)itemId);//_gameEngine.StaticVariables.g_iconNameEtcBase[itemId * 2];
+            var text = _gameEngine.EtcRes.GetItemName((int)itemId);//_gameEngine.StaticVariables.g_iconNameEtcBase[itemId * 2];
             //text = text.PadRight(0x20);
             text = text.Substring(0, _gameEngine.StaticVariables.g_inventoryCursorText);
             iVar2 = 0x20;
@@ -985,7 +985,7 @@ public class MainInventoryManager
         {
             if (_gameEngine.StaticVariables.g_inventoryCursorText - 1U < 0x10)
             {
-                var text = _gameEngine.EtcResR.GetItemName((int)itemId);//_gameEngine.StaticVariables.g_iconNameEtcBase[itemId * 2];
+                var text = _gameEngine.EtcRes.GetItemName((int)itemId);//_gameEngine.StaticVariables.g_iconNameEtcBase[itemId * 2];
                 //text = text.PadRight(0x11);
                 var initialLength = text.Length;
                 var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText);
@@ -999,7 +999,7 @@ public class MainInventoryManager
                 }
                 else
                 {
-                    //var text = _gameEngine.EtcResR.GetOtherString((int)itemId); //_gameEngine.StaticVariables.g_iconNameEtcBase[itemId * 2];
+                    //var text = _gameEngine.EtcRes.GetOtherString((int)itemId); //_gameEngine.StaticVariables.g_iconNameEtcBase[itemId * 2];
                     FUN_80055f48(0, 0, ' ');
                         //_gameEngine.StaticVariables.g_inventoryCursorText,
                         //text[_gameEngine.StaticVariables.g_inventoryCursorText - 1]);
@@ -1025,7 +1025,7 @@ public class MainInventoryManager
             {
                 if (_gameEngine.StaticVariables.g_inventoryCursorText == 0x4d)
                 {
-                    var text = _gameEngine.EtcResR.GetItemDescription((int)itemId);//_gameEngine.StaticVariables.g_iconNameEtcBase[itemId * 2];
+                    var text = _gameEngine.EtcRes.GetItemDescription((int)itemId);//_gameEngine.StaticVariables.g_iconNameEtcBase[itemId * 2];
                     //text = _gameEngine.StaticVariables.g_tileSetEtcBase[itemId * 2];
                     //text = text.PadRight(0x40);var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText);
                     var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText);
@@ -1052,7 +1052,7 @@ public class MainInventoryManager
                 if (_gameEngine.StaticVariables.g_inventoryCursorText - 0x4eU < 0x40)
                 {
                     uVar1 = 0;
-                    var text = _gameEngine.EtcResR.GetItemDescription((int)itemId);//_gameEngine.StaticVariables.g_tileSetEtcBase[itemId * 2];
+                    var text = _gameEngine.EtcRes.GetItemDescription((int)itemId);//_gameEngine.StaticVariables.g_tileSetEtcBase[itemId * 2];
                     var initialLength = text.Length;
                     var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText - 0x04d);
                     text = text.Substring(0, length);
@@ -1091,7 +1091,7 @@ public class MainInventoryManager
 
                         InventoryWeaponDescriptionLinesSprites[1].Clear();
 
-                        //var text3 = _gameEngine.EtcResR.GetItemDescription((int)itemId);//_gameEngine.StaticVariables.g_paletteSetEtcBase
+                        //var text3 = _gameEngine.EtcRes.GetItemDescription((int)itemId);//_gameEngine.StaticVariables.g_paletteSetEtcBase
                         ////text3 = text3.PadRight(0x40);
                         ////var initialLength = text3.Length;
                         //var length = Math.Min(text3.Length - 1, _gameEngine.StaticVariables.g_inventoryCursorText);
@@ -1117,7 +1117,7 @@ public class MainInventoryManager
 
                     if (_gameEngine.StaticVariables.g_inventoryCursorText - 0x8fU < 0x40)
                     {
-                        var text = _gameEngine.EtcResR.GetItemDescription((int)itemId);
+                        var text = _gameEngine.EtcRes.GetItemDescription((int)itemId);
                         var initialLength = text.Length;
                         var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText);
                         text = text.Substring(0, length);
@@ -1823,7 +1823,7 @@ public class MainInventoryManager
 
         if (currentTileIndex != 0xffffffff)
         {
-            sourceWarpName = _gameEngine.EtcResR.GetItemName((int)currentTileIndex);
+            sourceWarpName = _gameEngine.EtcRes.GetItemName((int)currentTileIndex);
 
             InventoryWeaponNameSprites.Clear();
             _gameEngine.UIManager.DisplayIconName(
@@ -1844,7 +1844,7 @@ public class MainInventoryManager
         }
         else
         {
-            sourceWarpName = _gameEngine.EtcResR.GetItemName((int)currentTileIndex);// _gameEngine.StaticVariables.g_iconNameEtcBase[currentTileIndex * 2];
+            sourceWarpName = _gameEngine.EtcRes.GetItemName((int)currentTileIndex);// _gameEngine.StaticVariables.g_iconNameEtcBase[currentTileIndex * 2];
         }
 
         SPRT[] sprites = [_gameEngine.StaticVariables.g_ItemNameSprites[2], _gameEngine.StaticVariables.g_ItemNameSprites[3], _gameEngine.StaticVariables.g_ItemNameSprites[4], _gameEngine.StaticVariables.g_ItemNameSprites[5]];
