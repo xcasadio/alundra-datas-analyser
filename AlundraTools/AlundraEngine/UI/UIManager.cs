@@ -138,8 +138,8 @@ public class UIManager
 
                 if ((_gameEngine.StaticVariables.g_warpFlags_2 & 2) != 0)
                 {
-                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X = _gameEngine.StaticVariables.g_backgroundMessageAnimation.startX;
-                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y = _gameEngine.StaticVariables.g_backgroundMessageAnimation.startY;
+                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X = _gameEngine.StaticVariables.g_backgroundMessageAnimation.originX;
+                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y = _gameEngine.StaticVariables.g_backgroundMessageAnimation.originY;
                     FUN_8004501c(callBackInfo);
                     return; // 0;
                 }
@@ -2071,8 +2071,8 @@ public class UIManager
             Array.Copy(scriptText.ToCharArray(), _gameEngine.StaticVariables.g_scriptBuffer, scriptText.Length);
         }
 
-        _gameEngine.StaticVariables.g_backgroundMessageAnimation.tick = 0;
         _gameEngine.StaticVariables.g_backgroundMessageAnimation.mode = 2;
+        _gameEngine.StaticVariables.g_backgroundMessageAnimation.tick = 0;
         _gameEngine.StaticVariables.g_backgroundMessageAnimation.speed = 0xF;
 
         var baseX = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
@@ -2089,8 +2089,8 @@ public class UIManager
 
         if (startX < 0)
         {
-            var offset = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width;
-            startX = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X - (offset << 3));
+            var width = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width;
+            startX = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X - width * 8);
         }
 
         _gameEngine.StaticVariables.g_backgroundMessageAnimation.startX = startX;
@@ -2099,14 +2099,17 @@ public class UIManager
 
         if (startY < 0)
         {
-            var offset = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Height;
-            startY = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y - (offset << 3));
+            var height = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Height;
+            startY = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y - height * 8);
         }
 
         _gameEngine.StaticVariables.g_backgroundMessageAnimation.startY = startY;
+        _gameEngine.StaticVariables.g_backgroundMessageAnimation.originX = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
+        _gameEngine.StaticVariables.g_backgroundMessageAnimation.originY = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y;
+        
+        _gameEngine.StaticVariables.g_warpFlags_2 = 5;
         _gameEngine.StaticVariables.g_playerControlFlags |= (uint)(animationMode == 1 ? 0x10 : 0x8);
 
-        // Réinitialise divers états liés au texte
         _gameEngine.StaticVariables.g_textPrimitives = 0;
         _gameEngine.StaticVariables.g_textHoldState_2 = 0;
         _gameEngine.StaticVariables.g_textMessageConfirmed = 0;
