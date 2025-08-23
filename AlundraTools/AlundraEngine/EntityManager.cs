@@ -2314,16 +2314,11 @@ public class EntityManager
 
                     case (int)EntityStatus.Normal:
                         var flags = entity.Flags;
-                        //flags = 73844
+
                         if ((flags & 0x100000) == 0 || entity.Slope_18c != 4)
                         {
-                            //CombinedVramFlagsOR == 0
                             if ((flags & 0x200000) == 0 || (entity.CombinedVramFlagsOR & 0x8004U) == 0)
                             {
-                                //ForceAdjusted = 1
-                                //IsAboveGround = 0
-                                //ForceResetAnimationFlag = 0
-                                //HitCounter = 0
                                 if (
                                     ((flags & 0x10) != 0 && (entity.ForceAdjusted != 0 || entity.IsAboveGround != 0))
                                     || ((flags & 0x20) != 0 && entity.HitCounter != 0)
@@ -2333,7 +2328,7 @@ public class EntityManager
                                     eventProgramType = ScriptHelper.ProgramEDeactivate;
                                     break;
                                 }
-
+                                
                                 eventProgramType = ScriptHelper.ProgramDTouch;
 
                                 if (entity.TouchingEntity == null)
@@ -2342,14 +2337,17 @@ public class EntityManager
 
                                     if (_gameEngine.StaticVariables.g_activeCollisionEntity == entity)
                                     {
-                                        eventProgramType = ScriptHelper.ProgramFInteract;
-
-                                        if (entity.SpriteProgramIndexes[5] == 0 && entity.ProgramIndexes[5] == 0)
+                                        if (entity.ProgramIndexes[5] != 0)
+                                        {
+                                            eventProgramType = ScriptHelper.ProgramFInteract;
+                                        }
+                                        else if (entity.SpriteProgramIndexes[5] != 0)
                                         {
                                             eventProgramType = ScriptHelper.ProgramCTick;
                                         }
                                     }
                                 }
+                                
                             }
                             else
                             {
