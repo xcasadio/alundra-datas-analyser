@@ -431,16 +431,19 @@ public partial class FrmGame : Form
     private void RefreshHudControls()
     {
         labelHudActivate.Text = _gameEngine.StaticVariables.g_warpFlags_2.ToString();
-        textBoxHudPoly.Text = _gameEngine.StaticVariables.g_backgroundMessageAnimation + Environment.NewLine +
-                              _gameEngine.StaticVariables.g_textToDisplay2 + Environment.NewLine +
-                              _gameEngine.StaticVariables.g_textToDisplay3 + Environment.NewLine +
-                              string.Join(Environment.NewLine, _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920.Select(x => x.ToString()));
+        //textBoxHudPoly.Text = _gameEngine.StaticVariables.g_backgroundMessageAnimation + Environment.NewLine +
+        //                      _gameEngine.StaticVariables.g_textToDisplay2 + Environment.NewLine +
+        //                      _gameEngine.StaticVariables.g_textToDisplay3 + Environment.NewLine +
+        //                      string.Join(Environment.NewLine, _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920.Select(x => x.ToString()));
 
         //var sprt = _gameEngine.StaticVariables.g_cursorTextSprites[0];
         //labelHudDebug.Text += $"{sprt}";
 
         labelHudXY.Text = $"{_gameEngine.StaticVariables.g_hudX >> 16} x {_gameEngine.StaticVariables.g_hudY >> 16}";
         labelHudDelta.Text = $"{_gameEngine.StaticVariables.g_hudDeltaX >> 16} x {_gameEngine.StaticVariables.g_hudDeltaY >> 16}";
+
+        labelHudDebug1.Text = _gameEngine.StaticVariables.g_backgroundMessageAnimation.ToString();
+        labelHudDebug2.Text = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.ToString();
     }
 
     private void RefreshPadControls()

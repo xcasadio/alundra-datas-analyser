@@ -96,9 +96,9 @@ namespace AlundraTools.AlundraTools
             listBoxEffects = new ListBox();
             propertyGridEffect = new PropertyGrid();
             tabPagePlayerStatus = new TabPage();
+            buttonAllItems = new Button();
             label53 = new Label();
             numericUpDownKeys = new NumericUpDown();
-            buttonControlAlundra = new Button();
             buttonAddHugeHp = new Button();
             buttonRestoreHpAndMp = new Button();
             buttonRestoreHp = new Button();
@@ -146,6 +146,7 @@ namespace AlundraTools.AlundraTools
             label42 = new Label();
             label40 = new Label();
             comboBoxSpawnItemId = new ComboBox();
+            buttonControlAlundra = new Button();
             buttonSpawnItem = new Button();
             label30 = new Label();
             comboBoxRandomItem = new ComboBox();
@@ -158,6 +159,10 @@ namespace AlundraTools.AlundraTools
             label34 = new Label();
             labelHudActivate = new Label();
             groupBox5 = new GroupBox();
+            labelHudDebug2 = new Label();
+            label57 = new Label();
+            labelHudDebug1 = new Label();
+            label55 = new Label();
             textBoxTextInDialog = new TextBox();
             label32 = new Label();
             labelTextLinesWidth = new Label();
@@ -180,7 +185,6 @@ namespace AlundraTools.AlundraTools
             label37 = new Label();
             label38 = new Label();
             labelTextFlag = new Label();
-            buttonAllItems = new Button();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -896,7 +900,6 @@ namespace AlundraTools.AlundraTools
             tabPagePlayerStatus.Controls.Add(buttonAllItems);
             tabPagePlayerStatus.Controls.Add(label53);
             tabPagePlayerStatus.Controls.Add(numericUpDownKeys);
-            tabPagePlayerStatus.Controls.Add(buttonControlAlundra);
             tabPagePlayerStatus.Controls.Add(buttonAddHugeHp);
             tabPagePlayerStatus.Controls.Add(buttonRestoreHpAndMp);
             tabPagePlayerStatus.Controls.Add(buttonRestoreHp);
@@ -933,6 +936,16 @@ namespace AlundraTools.AlundraTools
             tabPagePlayerStatus.Text = "Player status";
             tabPagePlayerStatus.UseVisualStyleBackColor = true;
             // 
+            // buttonAllItems
+            // 
+            buttonAllItems.Location = new Point(6, 359);
+            buttonAllItems.Name = "buttonAllItems";
+            buttonAllItems.Size = new Size(221, 29);
+            buttonAllItems.TabIndex = 66;
+            buttonAllItems.Text = "All items";
+            buttonAllItems.UseVisualStyleBackColor = true;
+            buttonAllItems.Click += buttonAllItems_Click;
+            // 
             // label53
             // 
             label53.AutoSize = true;
@@ -949,16 +962,6 @@ namespace AlundraTools.AlundraTools
             numericUpDownKeys.Size = new Size(150, 27);
             numericUpDownKeys.TabIndex = 65;
             numericUpDownKeys.ValueChanged += numericUpDownKeys_ValueChanged;
-            // 
-            // buttonControlAlundra
-            // 
-            buttonControlAlundra.Location = new Point(357, 417);
-            buttonControlAlundra.Name = "buttonControlAlundra";
-            buttonControlAlundra.Size = new Size(171, 29);
-            buttonControlAlundra.TabIndex = 63;
-            buttonControlAlundra.Text = "Control alundra";
-            buttonControlAlundra.UseVisualStyleBackColor = true;
-            buttonControlAlundra.Click += buttonControlAlundra_Click;
             // 
             // buttonAddHugeHp
             // 
@@ -1225,6 +1228,7 @@ namespace AlundraTools.AlundraTools
             tabPageDebug.Controls.Add(groupBox6);
             tabPageDebug.Controls.Add(label8);
             tabPageDebug.Controls.Add(comboBoxSpawnItemId);
+            tabPageDebug.Controls.Add(buttonControlAlundra);
             tabPageDebug.Controls.Add(label12);
             tabPageDebug.Controls.Add(dataGridViewGlobalFlags);
             tabPageDebug.Controls.Add(buttonSpawnItem);
@@ -1419,6 +1423,16 @@ namespace AlundraTools.AlundraTools
             comboBoxSpawnItemId.Size = new Size(123, 28);
             comboBoxSpawnItemId.TabIndex = 62;
             // 
+            // buttonControlAlundra
+            // 
+            buttonControlAlundra.Location = new Point(9, 527);
+            buttonControlAlundra.Name = "buttonControlAlundra";
+            buttonControlAlundra.Size = new Size(171, 29);
+            buttonControlAlundra.TabIndex = 63;
+            buttonControlAlundra.Text = "Control alundra";
+            buttonControlAlundra.UseVisualStyleBackColor = true;
+            buttonControlAlundra.Click += buttonControlAlundra_Click;
+            // 
             // buttonSpawnItem
             // 
             buttonSpawnItem.Location = new Point(9, 455);
@@ -1472,7 +1486,7 @@ namespace AlundraTools.AlundraTools
             groupBoxHud.Controls.Add(labelHudActivate);
             groupBoxHud.Controls.Add(label3);
             groupBoxHud.Controls.Add(labelHudXY);
-            groupBoxHud.Location = new Point(6, 239);
+            groupBoxHud.Location = new Point(6, 454);
             groupBoxHud.Name = "groupBoxHud";
             groupBoxHud.Size = new Size(522, 356);
             groupBoxHud.TabIndex = 52;
@@ -1539,6 +1553,10 @@ namespace AlundraTools.AlundraTools
             // groupBox5
             // 
             groupBox5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox5.Controls.Add(labelHudDebug2);
+            groupBox5.Controls.Add(label57);
+            groupBox5.Controls.Add(labelHudDebug1);
+            groupBox5.Controls.Add(label55);
             groupBox5.Controls.Add(textBoxTextInDialog);
             groupBox5.Controls.Add(label32);
             groupBox5.Controls.Add(labelTextLinesWidth);
@@ -1565,10 +1583,46 @@ namespace AlundraTools.AlundraTools
             groupBox5.Margin = new Padding(3, 4, 3, 4);
             groupBox5.Name = "groupBox5";
             groupBox5.Padding = new Padding(3, 4, 3, 4);
-            groupBox5.Size = new Size(523, 225);
+            groupBox5.Size = new Size(523, 388);
             groupBox5.TabIndex = 51;
             groupBox5.TabStop = false;
             groupBox5.Text = "Dialog";
+            // 
+            // labelHudDebug2
+            // 
+            labelHudDebug2.AutoSize = true;
+            labelHudDebug2.Location = new Point(115, 323);
+            labelHudDebug2.Name = "labelHudDebug2";
+            labelHudDebug2.Size = new Size(17, 20);
+            labelHudDebug2.TabIndex = 66;
+            labelHudDebug2.Text = "0";
+            // 
+            // label57
+            // 
+            label57.AutoSize = true;
+            label57.Location = new Point(11, 323);
+            label57.Name = "label57";
+            label57.Size = new Size(80, 20);
+            label57.TabIndex = 65;
+            label57.Text = "lines width";
+            // 
+            // labelHudDebug1
+            // 
+            labelHudDebug1.AutoSize = true;
+            labelHudDebug1.Location = new Point(115, 303);
+            labelHudDebug1.Name = "labelHudDebug1";
+            labelHudDebug1.Size = new Size(17, 20);
+            labelHudDebug1.TabIndex = 64;
+            labelHudDebug1.Text = "0";
+            // 
+            // label55
+            // 
+            label55.AutoSize = true;
+            label55.Location = new Point(11, 303);
+            label55.Name = "label55";
+            label55.Size = new Size(80, 20);
+            label55.TabIndex = 63;
+            label55.Text = "lines width";
             // 
             // textBoxTextInDialog
             // 
@@ -1578,14 +1632,15 @@ namespace AlundraTools.AlundraTools
             textBoxTextInDialog.Multiline = true;
             textBoxTextInDialog.Name = "textBoxTextInDialog";
             textBoxTextInDialog.ReadOnly = true;
-            textBoxTextInDialog.Size = new Size(310, 72);
+            textBoxTextInDialog.ScrollBars = ScrollBars.Vertical;
+            textBoxTextInDialog.Size = new Size(310, 99);
             textBoxTextInDialog.TabIndex = 62;
             textBoxTextInDialog.Text = "\r\n";
             // 
             // label32
             // 
             label32.AutoSize = true;
-            label32.Location = new Point(205, 123);
+            label32.Location = new Point(205, 161);
             label32.Name = "label32";
             label32.Size = new Size(61, 20);
             label32.TabIndex = 61;
@@ -1703,11 +1758,12 @@ namespace AlundraTools.AlundraTools
             // 
             textBoxFullText.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             textBoxFullText.BorderStyle = BorderStyle.FixedSingle;
-            textBoxFullText.Location = new Point(205, 146);
+            textBoxFullText.Location = new Point(205, 184);
             textBoxFullText.Multiline = true;
             textBoxFullText.Name = "textBoxFullText";
             textBoxFullText.ReadOnly = true;
-            textBoxFullText.Size = new Size(312, 72);
+            textBoxFullText.ScrollBars = ScrollBars.Vertical;
+            textBoxFullText.Size = new Size(312, 105);
             textBoxFullText.TabIndex = 49;
             textBoxFullText.Text = "\r\n";
             // 
@@ -1773,16 +1829,6 @@ namespace AlundraTools.AlundraTools
             labelTextFlag.Size = new Size(17, 20);
             labelTextFlag.TabIndex = 0;
             labelTextFlag.Text = "0";
-            // 
-            // buttonAllItems
-            // 
-            buttonAllItems.Location = new Point(6, 359);
-            buttonAllItems.Name = "buttonAllItems";
-            buttonAllItems.Size = new Size(221, 29);
-            buttonAllItems.TabIndex = 66;
-            buttonAllItems.Text = "All items";
-            buttonAllItems.UseVisualStyleBackColor = true;
-            buttonAllItems.Click += buttonAllItems_Click;
             // 
             // FrmGame
             // 
@@ -1996,5 +2042,11 @@ namespace AlundraTools.AlundraTools
         private Label label53;
         private NumericUpDown numericUpDownKeys;
         private Button buttonAllItems;
+        private Label label56;
+        private Label label57;
+        private Label label54;
+        private Label label55;
+        private Label labelHudDebug2;
+        private Label labelHudDebug1;
     }
 }

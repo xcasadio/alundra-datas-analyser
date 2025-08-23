@@ -233,7 +233,7 @@ public class PlayerManager
                             goto END;
                         }
 
-                        slope = CheckWarpTrigger();
+                        slope = CheckEntityInteraction();
 
                         if (slope != 0)
                         {
@@ -370,7 +370,7 @@ public class PlayerManager
                     break;
                 }
 
-                iVar2 = CheckWarpTrigger();
+                iVar2 = CheckEntityInteraction();
                 if (iVar2 != 0)
                 {
                     if (iVar2 != 2)
@@ -1545,71 +1545,77 @@ public class PlayerManager
     }
 
     // 8002e910
-    private int CheckWarpTrigger()
+    private int CheckEntityInteraction()
     {
+        int res; 
         var playerEntity = _gameEngine.StaticVariables.PlayerEntity;
-        var collidedEntity = playerEntity.XCollisionEntity;
+        Entity collidedEntity;
 
-        if (collidedEntity != null)
-        {
-            if ((collidedEntity.Flags & 0x8000) != 0)
-            {
-                _gameEngine.StaticVariables.g_lastValidWarpEntity = collidedEntity;
-                _gameEngine.StaticVariables.g_lastWarpFacing = collidedEntity.EntityRefId;
-                _gameEngine.StaticVariables.g_lastWarpTargetX = collidedEntity.PosX;
-                _gameEngine.StaticVariables.g_lastWarpTargetY = collidedEntity.PosY;
-                _gameEngine.StaticVariables.g_lastWarpTargetZ = collidedEntity.PosZ;
-                _gameEngine.StaticVariables.g_lastWarpCamX = playerEntity.PosX;
-                _gameEngine.StaticVariables.g_lastWarpCamY = playerEntity.PosY;
-                _gameEngine.StaticVariables.g_lastWarpCamZ = playerEntity.PosZ;
-                _gameEngine.StaticVariables.g_lastWarpDirection = (int)playerEntity.TargetDirection;
-            }
-        }
-        else
-        {
-            var lastValidWarp = _gameEngine.StaticVariables.g_lastValidWarpEntity;
+        collidedEntity = playerEntity.XCollisionEntity;
 
-            if (lastValidWarp != null)
+        if (playerEntity.XCollisionEntity == null)
+        {
+            if (_gameEngine.StaticVariables.g_lastValidWarpEntity == null ||
+                (_gameEngine.StaticVariables.g_lastValidWarpEntity.Index2 ==
+                 _gameEngine.StaticVariables.g_lastWarpFacing &&
+                 _gameEngine.StaticVariables.g_lastValidWarpEntity.PosX ==
+                 _gameEngine.StaticVariables.g_lastWarpTargetX &&
+                 _gameEngine.StaticVariables.g_lastValidWarpEntity.PosY ==
+                 _gameEngine.StaticVariables.g_lastWarpTargetY &&
+                 _gameEngine.StaticVariables.g_lastValidWarpEntity.PosZ ==
+                 _gameEngine.StaticVariables.g_lastWarpTargetZ &&
+                 playerEntity.PosX == _gameEngine.StaticVariables.g_lastWarpCamX &&
+                 playerEntity.PosY == _gameEngine.StaticVariables.g_lastWarpCamY &&
+                 playerEntity.PosZ == _gameEngine.StaticVariables.g_lastWarpCamZ))
             {
-                if (lastValidWarp.EntityRefId == _gameEngine.StaticVariables.g_lastWarpFacing &&
-                    lastValidWarp.PosX == _gameEngine.StaticVariables.g_lastWarpTargetX &&
-                    lastValidWarp.PosY == _gameEngine.StaticVariables.g_lastWarpTargetY &&
-                    lastValidWarp.PosZ == _gameEngine.StaticVariables.g_lastWarpTargetZ &&
-                    playerEntity.PosX == _gameEngine.StaticVariables.g_lastWarpCamX &&
-                    playerEntity.PosY == _gameEngine.StaticVariables.g_lastWarpCamY &&
-                    playerEntity.PosZ == _gameEngine.StaticVariables.g_lastWarpCamZ &&
-                    playerEntity.TargetDirection == _gameEngine.StaticVariables.g_lastWarpDirection)
+                collidedEntity = _gameEngine.StaticVariables.g_lastValidWarpEntity;
+
+                if (playerEntity.TargetDirection == _gameEngine.StaticVariables.g_lastWarpDirection)
                 {
-                    collidedEntity = lastValidWarp;
-                }
-                else
-                {
-                    _gameEngine.StaticVariables.g_lastValidWarpEntity = null;
+                    goto FinalCheck;
                 }
             }
         }
-
-        if (collidedEntity == null)
+        else if ((playerEntity.XCollisionEntity.Flags & 0x8000U) != 0)
         {
-            return 0;
+            _gameEngine.StaticVariables.g_lastWarpFacing = playerEntity.XCollisionEntity.Index2;
+            _gameEngine.StaticVariables.g_lastValidWarpEntity = playerEntity.XCollisionEntity;
+            _gameEngine.StaticVariables.g_lastWarpTargetX = playerEntity.XCollisionEntity.PosX;
+            _gameEngine.StaticVariables.g_lastWarpTargetY = playerEntity.XCollisionEntity.PosY;
+            _gameEngine.StaticVariables.g_lastWarpTargetZ = playerEntity.XCollisionEntity.PosZ;
+            _gameEngine.StaticVariables.g_lastWarpCamX = playerEntity.PosX;
+            _gameEngine.StaticVariables.g_lastWarpCamY = playerEntity.PosY;
+            _gameEngine.StaticVariables.g_lastWarpCamZ = playerEntity.PosZ;
+            _gameEngine.StaticVariables.g_lastWarpDirection = playerEntity.TargetDirection;
+            goto FinalCheck;
         }
 
-        if (collidedEntity.ProgramIndexes[5] != 0 && collidedEntity.SpriteProgramIndexes[5] != 0)
-        {
-            return 0;
-        }
+        _gameEngine.StaticVariables.g_lastValidWarpEntity = null;
+        collidedEntity = playerEntity.XCollisionEntity;
 
-        if ((collidedEntity.Flags & 0x8000) != 0)
+        FinalCheck:
+        res = 0;
+
+        if (collidedEntity != null &&
+            (collidedEntity.ProgramIndexes[5] != 0 || collidedEntity.SpriteProgramIndexes[5] != 0))
         {
-            if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressed & 0x80) != 0)
+            if ((collidedEntity.Flags & 0x8000U) == 0)
             {
+                res = 1;
                 _gameEngine.StaticVariables.g_activeCollisionEntity = collidedEntity;
-                return 2;
+            }
+            else if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressed & 0x80) == 0)
+            {
+                res = 0;
+            }
+            else
+            {
+                res = 2;
+                _gameEngine.StaticVariables.g_activeCollisionEntity = collidedEntity;
             }
         }
 
-        _gameEngine.StaticVariables.g_activeCollisionEntity = collidedEntity;
-        return 1;
+        return res;
     }
 
 
@@ -3537,7 +3543,7 @@ public class PlayerManager
 
         int itemIdIndex = itemId * 2; // In the assembly: itemIdIndex = (itemId * 4) + g_numberOfItems
         short currentUsage = _gameEngine.StaticVariables.g_numberOfItems[itemIdIndex + 1];
-        int itemPropertyId = (itemId * 5);
+        int itemPropertyId = itemId * 5;
         short unlockRequirement = _gameEngine.StaticVariables.g_itemsProperties[itemPropertyId + 3];
 
         if (currentUsage != unlockRequirement)

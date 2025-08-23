@@ -4068,7 +4068,7 @@ public class StaticVariables
                 new CallBackInfo
             {
                 Id = 0, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x05, Width = 0x20, Height = 0x06,
-                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Func_80046ef0, Arg = 0
+                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Fun_80046ef0, Arg = 0
             },
             new CallBackInfo
             {
@@ -5171,7 +5171,7 @@ public class StaticVariables
     public int g_lastWarpCamX; // 80126F48
     public int g_lastWarpCamY; // 80126F4C
     public int g_lastWarpCamZ; // 80126F50
-    public int g_lastWarpDirection; // 80126F54
+    public uint g_lastWarpDirection; // 80126F54
     public int g_lastWarpTargetX; // 80126F58
     public int g_lastWarpTargetY; // 80126F5C
     public int g_lastWarpTargetZ; // 80126F60

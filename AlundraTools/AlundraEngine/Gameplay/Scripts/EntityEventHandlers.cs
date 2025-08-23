@@ -418,10 +418,10 @@ public class EntityEventHandlers
         if (index > 0 && index < 0xff)
         {
             var i = index & 0x7f;
-            if (i < eventCodesTable.Length - 1)
+            if (i < eventCodesTable.Length - 2)
             {
                 var j = i + 1;
-                while (j < eventCodesTable.Length && eventCodesTable[j] == 0)
+                while (j < eventCodesTable.Length - 1 && eventCodesTable[j] == 0)
                 {
                     j++;
                 }
@@ -2686,8 +2686,8 @@ public class EntityEventHandlers
         {
             _gameEngine.StaticVariables.INT_8013d8d0 = 0;
 
-            var arg1 = _gameEngine.EtcRes.GetOtherString(0x43);
-            var arg2 = _gameEngine.EtcRes.GetOtherString(0x44);
+            var arg1 = _gameEngine.EtcRes.GetEtcString(0x43);
+            var arg2 = _gameEngine.EtcRes.GetEtcString(0x44);
             var res = _gameEngine.InitializeAsyncOperation(arg1, arg2, ref _gameEngine.StaticVariables.INT_8013d8d0);
 
             if (res == 0)

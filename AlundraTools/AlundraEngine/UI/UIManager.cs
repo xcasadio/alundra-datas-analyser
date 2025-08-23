@@ -4,7 +4,6 @@ using AlundraEngine.Graphics;
 using AlundraEngine.Text;
 using System;
 using System.Diagnostics;
-using System.Reflection;
 using static AlundraEngine.Renderer;
 
 namespace AlundraEngine.UI;
@@ -13,13 +12,9 @@ public class UIManager
 {
     private readonly GameEngine _gameEngine;
 
-    public readonly string[] DialogLines = ["", "", ""];
     public readonly List<Sprite>[] DialogLinesSprites = [new(), new(), new()];
-    public string DialogCharacterName = "";
     public readonly List<Sprite> DialogCharacterNameSprites = new();
-    public string DialogChoice = "";
     public readonly List<Sprite> DialogChoiceSprites = new();
-
 
     public UIManager(GameEngine gameEngine)
     {
@@ -84,7 +79,7 @@ public class UIManager
     }
 
     //80046ef0
-    public void Func_80046ef0(CallBackInfo callBackInfo)
+    public void Fun_80046ef0(CallBackInfo callBackInfo)
     {
         //Debugger.Break();
         int y;
@@ -143,8 +138,8 @@ public class UIManager
 
                 if ((_gameEngine.StaticVariables.g_warpFlags_2 & 2) != 0)
                 {
-                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X = _gameEngine.StaticVariables.g_backgroundMessageAnimation.originX;
-                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y = _gameEngine.StaticVariables.g_backgroundMessageAnimation.originY;
+                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X = _gameEngine.StaticVariables.g_backgroundMessageAnimation.startX;
+                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y = _gameEngine.StaticVariables.g_backgroundMessageAnimation.startY;
                     FUN_8004501c(callBackInfo);
                     return; // 0;
                 }
@@ -379,7 +374,7 @@ public class UIManager
 
         //Debugger.Break();
 
-        DialogChoice = _gameEngine.StaticVariables.g_asyncCallbackArgs2[0] + _gameEngine.StaticVariables.g_asyncCallbackArgs2[1];
+        //DialogChoice = _gameEngine.StaticVariables.g_asyncCallbackArgs2[0] + _gameEngine.StaticVariables.g_asyncCallbackArgs2[1];
         DialogChoiceSprites.Clear();
 
         Array.Clear(_gameEngine.StaticVariables.CHAR_ARRAY_8014a4e8);
