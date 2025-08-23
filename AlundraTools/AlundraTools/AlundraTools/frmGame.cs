@@ -442,8 +442,8 @@ public partial class FrmGame : Form
         labelHudXY.Text = $"{_gameEngine.StaticVariables.g_hudX >> 16} x {_gameEngine.StaticVariables.g_hudY >> 16}";
         labelHudDelta.Text = $"{_gameEngine.StaticVariables.g_hudDeltaX >> 16} x {_gameEngine.StaticVariables.g_hudDeltaY >> 16}";
 
-        labelHudDebug1.Text = _gameEngine.StaticVariables.g_backgroundMessageAnimation.ToString();
-        labelHudDebug2.Text = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.ToString();
+        //labelHudDebug1.Text = _gameEngine.StaticVariables.g_backgroundMessageAnimation.ToString();
+        //labelHudDebug2.Text = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.ToString();
     }
 
     private void RefreshPadControls()

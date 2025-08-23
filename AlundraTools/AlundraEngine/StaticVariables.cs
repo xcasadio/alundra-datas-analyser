@@ -5581,7 +5581,7 @@ public class StaticVariables
     public short g_etcTextY_2; // 80180252
     public short g_etcTextStartX_2; // 80180254
     public short g_etcTextStartY_2; // 80180256
-    public SPRT[] SPRT_80180260 = new SPRT[2];
+    public SPRT[] g_messageCharacterPortrait = Enumerable.Range(0, 2).Select(x => new SPRT()).ToArray();
     public int g_entitySpriteNameTableIndex; // 80180288
     public int g_cdDataStartPtr; // 801802A8
     public int g_cdDataEndPtr; // 801802AC

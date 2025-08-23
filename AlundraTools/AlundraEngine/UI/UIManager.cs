@@ -256,7 +256,9 @@ public class UIManager
 
             foreach (var spr in DialogLinesSprites[index])
             {
-                _gameEngine.Renderer.AddSprite(spr.X + sprite.x0, spr.Y + sprite.y0,
+                _gameEngine.Renderer.AddSprite(
+                    spr.X + callbackInfo.Data.Width,
+                    /*spr.Y +*/index * 0x10 + sprite.y0,
                     spr.Width, spr.Height,
                     int.MaxValue, spr.Bitmap, spr.Alpha);
             }
@@ -268,7 +270,7 @@ public class UIManager
             //*puVar6 = *puVar6 & 0xff000000 | (int)_gameEngine.StaticVariables.g_textFullLinesSprites[index] & 0xffffffU;
 
             line += 1;
-            heightOffset += 0x10;
+            //heightOffset += 0x10; //already added somewhere...
         } while (line < 3);
 
         //puVar6 = (uint*)(&DAT_80153010 + _gameEngine.StaticVariables.g_drawModes[0x14].tag * 0xc);
@@ -285,7 +287,13 @@ public class UIManager
             _gameEngine.StaticVariables.g_textBufferX = (_gameEngine.StaticVariables.g_textBufferX + 1) % 3;
             index = (_gameEngine.StaticVariables.g_textBufferX + _gameEngine.StaticVariables.g_textLineIndex) % 3;
             _gameEngine.StaticVariables.g_textLineWidth[index] = 0;
-            DialogLinesSprites[index].Clear();
+            //DialogLinesSprites[index].Clear();
+
+            DialogLinesSprites[0].Clear();
+            DialogLinesSprites[0].AddRange(DialogLinesSprites[1]);
+            DialogLinesSprites[1].Clear();
+            DialogLinesSprites[1].AddRange(DialogLinesSprites[2]);
+            DialogLinesSprites[2].Clear();
 
             //iVar5 = _gameEngine.StaticVariables.g_textBufferX + 2;
             //rect.x = 0x3c0;
@@ -606,7 +614,7 @@ public class UIManager
 
         DialogCharacterNameSprites.Clear();
         _gameEngine.UIManager.DisplayIconName(
-            _gameEngine.StaticVariables.SPRT_80180260,
+            _gameEngine.StaticVariables.g_messageCharacterPortrait,
             DialogCharacterNameSprites,
             text.ToCharArray(),
             6,
@@ -947,6 +955,11 @@ public class UIManager
                     do
                     {
                         sprt = uiBoxConfiguration.SpritesA[i];
+                        sprt.x0 = (short)x;
+                        sprt.y0 = (short)y;
+
+
+                        sprt = uiBoxConfiguration.SpritesB[i];
                         sprt.x0 = (short)x;
                         sprt.y0 = (short)y;
 
@@ -2005,9 +2018,12 @@ public class UIManager
             //*pOrderTable = *pOrderTable & 0xff000000 | _gameEngine.StaticVariables.g_textFullLinesSprites[uVar1 + currentLine * 2].tag + iVar5 & 0xffffffU;
             //uVar2 = _gameEngine.StaticVariables.g_drawModes[0x14].tag;
 
+
             foreach (var spr in DialogLinesSprites[lineIndex])
             {
-                _gameEngine.Renderer.AddSprite(spr.X + sprite.x0, spr.Y + sprite.y0,
+                _gameEngine.Renderer.AddSprite(
+                    spr.X + callbackInfo.Data.Width,
+                    /*spr.Y*/lineIndex * 0x10 + sprite.y0,
                     spr.Width, spr.Height,
                     int.MaxValue, spr.Bitmap, spr.Alpha);
             }
