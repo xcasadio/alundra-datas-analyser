@@ -525,7 +525,7 @@ public class GraphicManager
                         do
                         {
                             sprite = tilesConfiguration.SpritesA[j];
-                            var spriteB = tilesConfiguration.SpritesB[j];
+                            //var spriteB = tilesConfiguration.SpritesB[j];
 
                             /* Probable PsyQ macro: addPrim(). */
                             //pSVar3.tag = pSVar3.tag & 0xff000000 | *(uint*)((int)_gameEngine.StaticVariables.g_drawModes + iVar4 + callbackTable.arg * 4 + 0xf8) & 0xffffff;

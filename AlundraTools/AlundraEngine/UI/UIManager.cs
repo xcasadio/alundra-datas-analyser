@@ -324,7 +324,7 @@ public class UIManager
 
     //800501fc
     //display yes or no dialog box
-    public void FUN_800501fc(CallBackInfo callBackInfo)
+    public void DisplayMessageChoice(CallBackInfo callBackInfo)
     {
         long puVar1;
         int witdh;
@@ -388,13 +388,15 @@ public class UIManager
         Array.Clear(_gameEngine.StaticVariables.CHAR_ARRAY_8014a4e8);
         RenderTextBitmap(_gameEngine.StaticVariables.g_asyncCallbackArgs2[0].ToCharArray(),
             DialogChoiceSprites,
-            0x3c0, 0x1d0,
+            0, //0x3c0, 
+            0, //0x1d0,
             0, 0, 0x80, 0x10);
 
         Array.Clear(_gameEngine.StaticVariables.CHAR_ARRAY_8014a4e8);
         RenderTextBitmap(_gameEngine.StaticVariables.g_asyncCallbackArgs2[1].ToCharArray(),
             DialogChoiceSprites,
-            0x3e0, 0x1d0,
+            0, //0x3e0, 
+            0,//0x1d0,
             0, 0, 0x80, 0x10);
 
         j = 0;
@@ -431,7 +433,9 @@ public class UIManager
 
                     foreach (var spr in DialogChoiceSprites)
                     {
-                        _gameEngine.Renderer.AddSprite(spr.X + sprite.x0, spr.Y + sprite.y0,
+                        _gameEngine.Renderer.AddSprite(
+                            spr.X + sprite.x0, 
+                            spr.Y + sprite.y0,
                             spr.Width, spr.Height,
                             int.MaxValue, spr.Bitmap, spr.Alpha);
                     }
@@ -2084,6 +2088,7 @@ public class UIManager
         }
         else
         {
+            Array.Clear(_gameEngine.StaticVariables.g_scriptBuffer);
             Array.Copy(scriptText.ToCharArray(), _gameEngine.StaticVariables.g_scriptBuffer, scriptText.Length);
         }
 

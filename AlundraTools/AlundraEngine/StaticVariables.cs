@@ -3758,7 +3758,7 @@ public class StaticVariables
     new SPRT { tag = 0u, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x0128, y0 = 0x00A8, u0 = 0xD8, v0 = 0x20, clut = 0x0000, w = 0x08, h = 0x08 },
 };
 
-    public UIBoxConfiguration g_uiBoxesConfiguration_800a4fec; //800a4fec
+    public UIBoxConfiguration g_uiBoxesConfigurationBackgroundMessageChoice; //800a4fec
 
     public void Initialize(GameEngine gameEngine)
     {
@@ -3961,7 +3961,7 @@ public class StaticVariables
             SpritesB = SPRT_ARRAY_800b9c3c
         };
 
-        g_uiBoxesConfiguration_800a4fec = new UIBoxConfiguration
+        g_uiBoxesConfigurationBackgroundMessageChoice = new UIBoxConfiguration
         {
             X = 0xB0,
             Y = 0x90,
@@ -4082,8 +4082,8 @@ public class StaticVariables
             },
             new CallBackInfo
             {
-                Id = 3, Flags = 0, Data = g_uiBoxesConfiguration_800a4fec, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04, InitializeFunc = null,
-                RenderFunc = gameEngine.UIManager.FUN_800501fc, Arg = 0x05
+                Id = 3, Flags = 0, Data = g_uiBoxesConfigurationBackgroundMessageChoice, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04, InitializeFunc = null,
+                RenderFunc = gameEngine.UIManager.DisplayMessageChoice, Arg = 0x05
             },
             new CallBackInfo
             {
