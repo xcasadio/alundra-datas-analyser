@@ -85,13 +85,38 @@ public class SoundManager
     // 8008f2e8
     private void FUN_8008f2e8(short seqId, short i)
     {
-        Debugger.Break();
+        //Debugger.Break();
     }
 
     //80049af4
     public void StopAllSound()
     {
         Debugger.Break();
+
+        if (-1 < _gameEngine.StaticVariables.g_currentMapSoundIndex)
+        {
+            if (_gameEngine.StaticVariables.g_soundEffectState != 0)
+            {
+                //SpuSetKey(0, 0xffffff);
+                //VSync(0);
+                _gameEngine.StaticVariables.g_soundEffectState = 0;
+            }
+
+            FUN_8008b878(0x7f, 0x7f);
+            //SetSeqVolume(_gameEngine.StaticVariables.g_requestedSeqId, 0x7f, 0x7f);
+            //PlaySeq(_gameEngine.StaticVariables.g_requestedSeqId, '\x01', 1);
+        }
+    }
+
+    //8008b878
+    private void FUN_8008b878(int volumeLeft, int volumeRight)
+    {
+        //SpuCommonAttr local_30;
+        //
+        //local_30.mask = 3;
+        //local_30.mvol.left = param_1 * 0x81;
+        //local_30.mvol.right = param_2 * 0x81;
+        //SpuSetCommonAttr(&local_30);
     }
 
     //800490fc or 80049634 ???

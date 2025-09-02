@@ -4846,9 +4846,21 @@ public class StaticVariables
     public short DAT_800c4374; // 800C4374
     public byte g_characterNameTable; // 800C440C
     public int g_cdInitRequired; // 800C480C
-    public int g_previousVSyncCallback; // 800C4810
+    public Action g_previousVSyncCallback; // 800C4810
     public int g_cdDataLoaded; // 800C4814
-    public int[] g_mapCdDataOffsets = new int[39]; // 800C4818
+    public int[] g_mapCdDataOffsets = new int[] // 800C4818
+    {
+        0x0000, 0x0000, 0x002B, 0x0000,
+        0x0001, 0x0076, 0x0000, 0x0002,
+        0x003E, 0x0000, 0x0003, 0x004C,
+        0x0000, 0x0004, 0x002B, 0x0000,
+        0x0005, 0x0046, 0x0000, 0x0006,
+        0x0039, 0x0000, 0x0007, 0x00F5,
+        0x0A00, 0x0000, 0x01F1, 0x0A00,
+        0x0001, 0x01D6, 0x0A00, 0x0002,
+        0x0078, 0x0A00, 0x0003, 0x00B5,
+        0x0A00, 0x0004, 0x00DE
+    };
     public int g_tile_frame_counter_by_layer; // 800C48B4
     public int DAT_800c48b8; // 800C48B8
     public int g_tile_frame_counter_by_layer_2; // 800C48BC

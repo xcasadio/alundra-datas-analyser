@@ -57,19 +57,19 @@ namespace AlundraTools.AlundraTools
             for (var i = 0; i < _etcRes.DescriptionItems.Length; i++)
             {
                 var value = _etcRes.DescriptionItems[i];
-                listBoxEtcTileTable.Items.Add($"#{i}-{value}");
+                listBoxEtcDescriptionItemTable.Items.Add($"#{i}-{value}");
             }
 
             for (var i = 0; i < _etcRes.IconNames.Length; i++)
             {
                 var value = _etcRes.IconNames[i];
-                listBoxEtcIconNameTable.Items.Add($"#{i}-{value} {_etcRes.IconNames[i]}");
+                listBoxEtcIconNameTable.Items.Add($"#{i}-{value}");
             }
 
             for (var i = 0; i < _etcRes.OtherStrings.Length; i++)
             {
                 var value = _etcRes.OtherStrings[i];
-                listBoxEtcPaletteTable.Items.Add($"#{i}-{value}");
+                listBoxEtcOtherStringTable.Items.Add($"#{i}-{value}");
             }
 
             for (var i = 0; i < _etcRes.StringTable.Length; i++)

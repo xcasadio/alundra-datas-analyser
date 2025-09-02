@@ -1,4 +1,6 @@
-﻿namespace AlundraEngine;
+﻿using System;
+
+namespace AlundraEngine;
 
 public class CdManager
 {
@@ -88,7 +90,7 @@ public class CdManager
     {
         bool bVar1;
 
-        return true;
+        return false;
 
         if ((_gameEngine.StaticVariables.g_isCdResetRequested == 0) && ((_gameEngine.StaticVariables.g_cdIsReady == 0 || (_gameEngine.StaticVariables.g_cdDataLoaded != 0))))
         {
@@ -100,5 +102,263 @@ public class CdManager
         }
 
         return bVar1;
+    }
+
+    //8004b104
+    public bool IsSoundDriverReady()
+    {
+        return _gameEngine.StaticVariables.g_soundLoadState != 0;
+    }
+
+    //8005ad38
+    public void OnCdDataStreamComplete()
+    {
+        //int syncResult;
+        //u_char uVar1;
+        //CdlLOC aCStack_30[2];
+        //u_char syncStatusBuffer[5];
+        //CdlLOC tempPosition[2];
+        //int tempCdTimer;
+        //
+        //if (_gameEngine.StaticVariables.g_isCdResetRequested == 0)
+        //{
+        //    if (_gameEngine.StaticVariables.g_cdIsReady == 0)
+        //    {
+        //        return;
+        //    }
+        //
+        //    if (_gameEngine.StaticVariables.g_cdDataLoaded != 0)
+        //    {
+        //        return;
+        //    }
+        //}
+        //
+        //if ((_gameEngine.StaticVariables.g_cdInitRequired & 2U) != 0)
+        //{
+        //    syncResult = CdSync(1, syncStatusBuffer);
+        //    if (syncResult == 5)
+        //    {
+        //        CdControlF('\r', &_gameEngine.StaticVariables.g_cdControlCommand);
+        //        tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //    }
+        //    else
+        //    {
+        //        tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //        if (syncResult == 2)
+        //        {
+        //            _gameEngine.StaticVariables.g_cdInitRequired = 4;
+        //            tempPosition[0].track = 0xc9;
+        //            CdControlF('\x0e', &tempPosition[0].track);
+        //            tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //        }
+        //    }
+        //    goto END;
+        //}
+        //
+        //if ((_gameEngine.StaticVariables.g_cdInitRequired & 4U) == 0)
+        //{
+        //    if ((_gameEngine.StaticVariables.g_cdInitRequired & 0x40U) == 0)
+        //    {
+        //        if ((_gameEngine.StaticVariables.g_cdInitRequired & 0x10U) == 0)
+        //        {
+        //            if ((_gameEngine.StaticVariables.g_cdInitRequired & 0x20U) == 0)
+        //            {
+        //                if ((_gameEngine.StaticVariables.g_cdInitRequired & 1U) != 0)
+        //                {
+        //                    tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay + -1;
+        //
+        //                    if (_gameEngine.StaticVariables.g_cdStreamDelay == 0)
+        //                    {
+        //                        syncResult = CdSync(1, syncStatusBuffer);
+        //
+        //                        if (syncResult == 5)
+        //                        {
+        //                            CdControlF('\x06', (u_char*)0x0);
+        //                            _gameEngine.StaticVariables.g_cdReadComplete = 1;
+        //                            tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //                        }
+        //                        else
+        //                        {
+        //                            tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //                            
+        //                            if (syncResult == 2)
+        //                            {
+        //                                if (_gameEngine.StaticVariables.g_cdReadComplete == 1)
+        //                                {
+        //                                    CdControlF('\x11', (u_char*)0x0);
+        //                                    _gameEngine.StaticVariables.g_cdReadComplete = 0;
+        //                                    tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //                                }
+        //                                else if (_gameEngine.StaticVariables.g_cdReadPtr < _gameEngine.StaticVariables.g_cdDataEndPtr)
+        //                                {
+        //                                    tempCdTimer = CdPosToInt(tempPosition);
+        //                                    if (0 < tempCdTimer)
+        //                                    {
+        //                                        _gameEngine.StaticVariables.g_cdReadPtr = tempCdTimer;
+        //                                    }
+        //                                    CdControlF('\x11', (u_char*)0x0);
+        //                                    _gameEngine.StaticVariables.g_cdStreamDelay = 5;
+        //                                    tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //                                }
+        //                                else
+        //                                {
+        //                                    CdControlF('\v', (u_char*)0x0);
+        //                                    _gameEngine.StaticVariables.g_cdInitRequired = 0x80;
+        //                                    tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //                                }
+        //                            }
+        //                        }
+        //                    }
+        //                    goto END;
+        //                }
+        //
+        //                if ((_gameEngine.StaticVariables.g_cdInitRequired & 0x80U) != 0)
+        //                {
+        //                    tempCdTimer = CdSync(1, syncStatusBuffer);
+        //                    if (tempCdTimer == 5)
+        //                    {
+        //                        CdControlF('\v', (u_char*)0x0);
+        //                    }
+        //                    else if (tempCdTimer == 2)
+        //                    {
+        //                        tempPosition[0].track = 0x80;
+        //                        CdControlF('\x0e', &tempPosition[0].track);
+        //                        _gameEngine.StaticVariables.g_cdInitRequired = 0x100;
+        //                    }
+        //                }
+        //
+        //                if ((_gameEngine.StaticVariables.g_cdInitRequired & 0x100U) != 0)
+        //                {
+        //                    tempCdTimer = CdSync(1, syncStatusBuffer);
+        //                    if (tempCdTimer == 5)
+        //                    {
+        //                        tempPosition[0].track = 0x80;
+        //                        CdControlF('\x0e', &tempPosition[0].track);
+        //                    }
+        //                    else if (tempCdTimer == 2)
+        //                    {
+        //                        CdControlF('\t', (u_char*)0x0);
+        //                        _gameEngine.StaticVariables.g_cdInitRequired = 8;
+        //                    }
+        //                }
+        //
+        //                tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //
+        //                if ((_gameEngine.StaticVariables.g_cdInitRequired & 8U) == 0) goto END;
+        //
+        //                syncResult = CdSync(1, syncStatusBuffer);
+        //
+        //                if (syncResult != 5)
+        //                {
+        //                    tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //
+        //                    if (syncResult == 2)
+        //                    {
+        //                        if (_gameEngine.StaticVariables.g_previousVSyncCallback != null)
+        //                        {
+        //                            VSyncCallback(_gameEngine.StaticVariables.g_previousVSyncCallback);
+        //                        }
+        //
+        //                        _gameEngine.StaticVariables.g_cdInitRequired = 0;
+        //                        tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //                    }
+        //                    goto END;
+        //                }
+        //                uVar1 = '\t';
+        //            }
+        //            else
+        //            {
+        //                syncResult = CdSync(1, syncStatusBuffer);
+        //
+        //                if (syncResult != 5)
+        //                {
+        //                    tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //
+        //                    if (syncResult == 2)
+        //                    {
+        //                        _gameEngine.StaticVariables.g_cdInitRequired = 1;
+        //                        _gameEngine.StaticVariables.g_cdReadPtr = _gameEngine.StaticVariables.g_cdDataStartPtr;
+        //                        CdIntToPos(_gameEngine.StaticVariables.g_cdDataStartPtr, aCStack_30);
+        //                        CdControlF('\x06', (u_char*)0x0);
+        //                        _gameEngine.StaticVariables.g_cdStreamDelay = 0x14;
+        //                        tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //                    }
+        //                    goto END;
+        //                }
+        //
+        //                _gameEngine.StaticVariables.g_cdInitRequired = 0x20;
+        //                uVar1 = '\f';
+        //            }
+        //        }
+        //        else
+        //        {
+        //            syncResult = CdSync(1, syncStatusBuffer);
+        //
+        //            if (syncResult == 5)
+        //            {
+        //                CdIntToPos(_gameEngine.StaticVariables.g_cdDataStartPtr, aCStack_30);
+        //                uVar1 = '\x15';
+        //            }
+        //            else
+        //            {
+        //                tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //                if (syncResult != 2) goto END;
+        //                _gameEngine.StaticVariables.g_cdInitRequired = 0x20;
+        //                uVar1 = '\f';
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        syncResult = CdSync(1, syncStatusBuffer);
+        //
+        //        if (syncResult == 5)
+        //        {
+        //            uVar1 = '\x02';
+        //            goto LAB_8005ae90;
+        //        }
+        //
+        //        tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //        if (syncResult != 2) goto END;
+        //        _gameEngine.StaticVariables.g_cdInitRequired = 0x10;
+        //        _gameEngine.StaticVariables.g_cdReadPtr = g_cdDataStartPtr;
+        //        CdIntToPos(_gameEngine.StaticVariables.g_cdDataStartPtr, aCStack_30);
+        //        uVar1 = '\x15';
+        //    }
+        //    CdControlF(uVar1, (u_char*)0x0);
+        //    tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //}
+        //else
+        //{
+        //    syncResult = CdSync(1, syncStatusBuffer);
+        //
+        //    if (syncResult != 5)
+        //    {
+        //        tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //        if (syncResult == 2)
+        //        {
+        //            _gameEngine.StaticVariables.g_cdInitRequired = 0x40;
+        //            _gameEngine.StaticVariables.g_cdReadPtr = _gameEngine.StaticVariables.g_cdDataStartPtr;
+        //            CdIntToPos(_gameEngine.StaticVariables.g_cdDataStartPtr, aCStack_30);
+        //            CdControlF('\x02', &aCStack_30[0].minute);
+        //            tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //        }
+        //        goto END;
+        //    }
+        //    uVar1 = '\x0e';
+        //    LAB_8005ae90:
+        //    tempPosition[0].track = 0xc9;
+        //    CdControlF(uVar1, &tempPosition[0].track);
+        //    tempCdTimer = _gameEngine.StaticVariables.g_cdStreamDelay;
+        //}
+
+        END:
+        _gameEngine.StaticVariables.g_cdStreamDelay = 0; //tempCdTimer;
+
+        if (_gameEngine.StaticVariables.g_previousVSyncCallback != null &&
+           _gameEngine.StaticVariables.g_previousVSyncCallback != OnCdDataStreamComplete)
+        {
+            _gameEngine.StaticVariables.g_previousVSyncCallback();
+        }
     }
 }

@@ -261,11 +261,11 @@
             label59 = new Label();
             listBoxEtcStringTable = new ListBox();
             label55 = new Label();
-            listBoxEtcPaletteTable = new ListBox();
+            listBoxEtcOtherStringTable = new ListBox();
             label51 = new Label();
             listBoxEtcIconNameTable = new ListBox();
             label45 = new Label();
-            listBoxEtcTileTable = new ListBox();
+            listBoxEtcDescriptionItemTable = new ListBox();
             tabPage8 = new TabPage();
             label67 = new Label();
             pictureBoxFont3Tim = new PictureBox();
@@ -2671,11 +2671,11 @@
             tabPage7.Controls.Add(label59);
             tabPage7.Controls.Add(listBoxEtcStringTable);
             tabPage7.Controls.Add(label55);
-            tabPage7.Controls.Add(listBoxEtcPaletteTable);
+            tabPage7.Controls.Add(listBoxEtcOtherStringTable);
             tabPage7.Controls.Add(label51);
             tabPage7.Controls.Add(listBoxEtcIconNameTable);
             tabPage7.Controls.Add(label45);
-            tabPage7.Controls.Add(listBoxEtcTileTable);
+            tabPage7.Controls.Add(listBoxEtcDescriptionItemTable);
             tabPage7.Location = new Point(4, 29);
             tabPage7.Margin = new Padding(3, 4, 3, 4);
             tabPage7.Name = "tabPage7";
@@ -2707,7 +2707,7 @@
             // label59
             // 
             label59.AutoSize = true;
-            label59.Location = new Point(573, 4);
+            label59.Location = new Point(792, 3);
             label59.Name = "label59";
             label59.Size = new Size(86, 20);
             label59.TabIndex = 7;
@@ -2716,46 +2716,46 @@
             // listBoxEtcStringTable
             // 
             listBoxEtcStringTable.FormattingEnabled = true;
-            listBoxEtcStringTable.Location = new Point(573, 28);
+            listBoxEtcStringTable.Location = new Point(792, 28);
             listBoxEtcStringTable.Margin = new Padding(3, 4, 3, 4);
             listBoxEtcStringTable.Name = "listBoxEtcStringTable";
-            listBoxEtcStringTable.Size = new Size(330, 424);
+            listBoxEtcStringTable.Size = new Size(174, 424);
             listBoxEtcStringTable.TabIndex = 6;
             // 
             // label55
             // 
             label55.AutoSize = true;
-            label55.Location = new Point(152, 4);
+            label55.Location = new Point(263, 4);
             label55.Name = "label55";
-            label55.Size = new Size(92, 20);
+            label55.Size = new Size(93, 20);
             label55.TabIndex = 5;
-            label55.Text = "Palette table";
+            label55.Text = "Other strings";
             // 
-            // listBoxEtcPaletteTable
+            // listBoxEtcOtherStringTable
             // 
-            listBoxEtcPaletteTable.FormattingEnabled = true;
-            listBoxEtcPaletteTable.Location = new Point(152, 28);
-            listBoxEtcPaletteTable.Margin = new Padding(3, 4, 3, 4);
-            listBoxEtcPaletteTable.Name = "listBoxEtcPaletteTable";
-            listBoxEtcPaletteTable.Size = new Size(139, 424);
-            listBoxEtcPaletteTable.TabIndex = 4;
+            listBoxEtcOtherStringTable.FormattingEnabled = true;
+            listBoxEtcOtherStringTable.Location = new Point(263, 28);
+            listBoxEtcOtherStringTable.Margin = new Padding(3, 4, 3, 4);
+            listBoxEtcOtherStringTable.Name = "listBoxEtcOtherStringTable";
+            listBoxEtcOtherStringTable.Size = new Size(262, 424);
+            listBoxEtcOtherStringTable.TabIndex = 4;
             // 
             // label51
             // 
             label51.AutoSize = true;
-            label51.Location = new Point(297, 4);
+            label51.Location = new Point(531, 4);
             label51.Name = "label51";
-            label51.Size = new Size(116, 20);
+            label51.Size = new Size(84, 20);
             label51.TabIndex = 3;
-            label51.Text = "Icon name table";
+            label51.Text = "Icon names";
             // 
             // listBoxEtcIconNameTable
             // 
             listBoxEtcIconNameTable.FormattingEnabled = true;
-            listBoxEtcIconNameTable.Location = new Point(297, 28);
+            listBoxEtcIconNameTable.Location = new Point(531, 28);
             listBoxEtcIconNameTable.Margin = new Padding(3, 4, 3, 4);
             listBoxEtcIconNameTable.Name = "listBoxEtcIconNameTable";
-            listBoxEtcIconNameTable.Size = new Size(270, 424);
+            listBoxEtcIconNameTable.Size = new Size(255, 424);
             listBoxEtcIconNameTable.TabIndex = 2;
             // 
             // label45
@@ -2763,18 +2763,18 @@
             label45.AutoSize = true;
             label45.Location = new Point(7, 4);
             label45.Name = "label45";
-            label45.Size = new Size(71, 20);
+            label45.Size = new Size(125, 20);
             label45.TabIndex = 1;
-            label45.Text = "Tile table";
+            label45.Text = "Description Items";
             // 
-            // listBoxEtcTileTable
+            // listBoxEtcDescriptionItemTable
             // 
-            listBoxEtcTileTable.FormattingEnabled = true;
-            listBoxEtcTileTable.Location = new Point(7, 28);
-            listBoxEtcTileTable.Margin = new Padding(3, 4, 3, 4);
-            listBoxEtcTileTable.Name = "listBoxEtcTileTable";
-            listBoxEtcTileTable.Size = new Size(139, 424);
-            listBoxEtcTileTable.TabIndex = 0;
+            listBoxEtcDescriptionItemTable.FormattingEnabled = true;
+            listBoxEtcDescriptionItemTable.Location = new Point(7, 28);
+            listBoxEtcDescriptionItemTable.Margin = new Padding(3, 4, 3, 4);
+            listBoxEtcDescriptionItemTable.Name = "listBoxEtcDescriptionItemTable";
+            listBoxEtcDescriptionItemTable.Size = new Size(250, 424);
+            listBoxEtcDescriptionItemTable.TabIndex = 0;
             // 
             // tabPage8
             // 
@@ -3221,11 +3221,11 @@
         private Label label59;
         private ListBox listBoxEtcStringTable;
         private Label label55;
-        private ListBox listBoxEtcPaletteTable;
+        private ListBox listBoxEtcOtherStringTable;
         private Label label51;
         private ListBox listBoxEtcIconNameTable;
         private Label label45;
-        private ListBox listBoxEtcTileTable;
+        private ListBox listBoxEtcDescriptionItemTable;
         private TabPage tabPage8;
         private ListBox listBoxFont3Palette;
         private PictureBox pictureBoxWindTx;

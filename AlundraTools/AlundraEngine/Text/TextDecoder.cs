@@ -47,11 +47,9 @@ public class TextDecoder
         return message;
     }
 
-    // Conversion CP850 -> Latin-1 (ISO-8859-1) pour les caractères étendus utiles.
-    // Si un code n'est pas présent dans ce dictionnaire, on le laisse tel quel.
+    // Convertion CP850 -> Latin-1 (ISO-8859-1) 
     static readonly Dictionary<byte, int> Cp850ToLatin1 = new()
     {
-        // Lettres accentuées fréquentes
         {128, 199}, // Ç
         {129, 252}, // ü
         {130, 233}, // é
@@ -80,7 +78,6 @@ public class TextDecoder
         {153, 214}, // Ö
         {154, 220}, // Ü
 
-        // Accents ibériques utiles
         {160, 225}, // á
         {161, 237}, // í
         {162, 243}, // ó
@@ -88,12 +85,10 @@ public class TextDecoder
         {164, 241}, // ñ
         {165, 209}, // Ñ
 
-        // Majuscules accentuées additionnelles
         {181, 193}, // Á
         {182, 194}, // Â
         {183, 192}, // À
 
-        // Ponctuation/monnaies courantes (si utilisées dans le jeu)
         {155, 162}, // ¢
         {156, 163}, // £
         {157, 165}, // ¥
@@ -107,8 +102,6 @@ public class TextDecoder
         {174, 171}, // «
         {175, 187}, // »
         {184, 169}, // ©
-        // ⚠️ D’autres codes CP850 (traits, box-drawing, etc.) existent mais ne sont
-        // pas forcément présents dans la planche ; ajoute-les au besoin.
     };
 
     public static char DecodeCharacter(char c)

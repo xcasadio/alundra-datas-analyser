@@ -2823,11 +2823,8 @@ public class EntityEventHandlers
     // 8003EB00
     private int Script_TryActivateTextHoldState(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-        return 0;
-        /*
-        _gameEngine.TryActivateTextHoldState();
-        return 1;*/
+        _gameEngine.UIManager.TryActivateTextHoldState();
+        return 1;
     }
 
     // 8003EB20
@@ -5038,7 +5035,7 @@ public class EntityEventHandlers
     // 80041A18
     private int Script_185_0B9(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.SetNextMapId(variables[1]);
+        _gameEngine.StartCdStreaming(variables[1]);
         return 2;
     }
 

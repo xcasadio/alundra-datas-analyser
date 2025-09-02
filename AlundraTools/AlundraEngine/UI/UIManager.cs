@@ -2381,4 +2381,13 @@ public class UIManager
     {
         Debugger.Break();
     }
+
+    //80045054
+    public void TryActivateTextHoldState()
+    {
+        if ((_gameEngine.StaticVariables.g_etcAnimationMode & 4U) != 0)
+        {
+            _gameEngine.StaticVariables.g_textHoldState_2 = 1;
+        }
+    }
 }

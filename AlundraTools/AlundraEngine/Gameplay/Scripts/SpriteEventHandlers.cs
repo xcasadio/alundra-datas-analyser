@@ -328,7 +328,7 @@ public class SpriteEventHandlers
             {
                 if (entity.AIValues[4] != 0)
                 {
-                    _gameEngine.SetNextMapId(0xb);
+                    _gameEngine.StartCdStreaming(0xb);
                 }
             }
             else
@@ -1228,7 +1228,7 @@ public class SpriteEventHandlers
                 entity.ItemState += 1;
                 _gameEngine.EntityManager.FUN_8003ad30(entity);
                 _gameEngine.SoundManager.LoadBgm(0);
-                _gameEngine.SetNextMapId(0xb);
+                _gameEngine.StartCdStreaming(0xb);
 
                 if (_gameEngine.StaticVariables.g_dropItemTextBuffer.Length == 0)
                 {

@@ -1270,7 +1270,7 @@ public class GameEngine
 
                 if (7 - iVar6 < 0)
                 {
-                    iVar2 = (iVar2 + 7) - iVar6;
+                    iVar2 = iVar2 + 7 - iVar6;
                 }
                 else
                 {
@@ -2127,30 +2127,31 @@ public class GameEngine
     }
 
     // 8005a9e0
-    public void SetNextMapId(int mapIndex)
+    public void StartCdStreaming(int mapIndex)
     {
-        Debugger.Break();
-        /*
         bool bVar1;
-        undefined3 extraout_var;
-        code *previousVSyncCallback;
+        Action previousVSyncCallback;
 
-        if (((g_isCdResetRequested != 0) || ((g_cdIsReady != 0 && (g_cdDataLoaded == 0)))) &&
-            (bVar1 = IsSoundDriverReady(), CONCAT31(extraout_var,bVar1) == 0)) {
-            g_cdDataStartPtr = DAT_CDAranXa_pos + g_mapCdDataOffsets[mapIndex * 3];
-            g_cdDataEndPtr = g_cdDataStartPtr + g_mapCdDataOffsets[mapIndex * 3 + 2] * 8 + -1;
-            g_cdReadPtr = g_cdDataStartPtr;
-            previousVSyncCallback = (code *)VSyncCallback(OnCdDataStreamComplete);
-            if ((previousVSyncCallback != OnCdDataStreamComplete) && (previousVSyncCallback != (code *)0x0))
+        if ((StaticVariables.g_isCdResetRequested != 0
+             || (StaticVariables.g_cdIsReady != 0 && StaticVariables.g_cdDataLoaded == 0))
+            && CdManager.IsSoundDriverReady() == false) 
+        {
+            StaticVariables.g_cdDataStartPtr = StaticVariables.DAT_CDAranXa_pos + StaticVariables.g_mapCdDataOffsets[mapIndex * 3];
+            StaticVariables.g_cdDataEndPtr = StaticVariables.g_cdDataStartPtr + StaticVariables.g_mapCdDataOffsets[mapIndex * 3 + 2] * 8 + -1;
+            StaticVariables.g_cdReadPtr = StaticVariables.g_cdDataStartPtr;
+            previousVSyncCallback = CdManager.OnCdDataStreamComplete;
+
+            if (previousVSyncCallback != CdManager.OnCdDataStreamComplete
+                && previousVSyncCallback != null)
             {
-                g_previousVSyncCallback = (int)previousVSyncCallback;
+                StaticVariables.g_previousVSyncCallback = previousVSyncCallback;
             }
-            g_cdControlCommand = 1;
-            g_cdTrackIndex = (undefined1)g_mapCdDataOffsets[mapIndex * 3 + 1];
-            CdControlF('\r',&g_cdControlCommand);
-            g_cdReadComplete = 0;
-            g_cdInitRequired = 2;
-        }*/
+            StaticVariables.g_cdControlCommand = 1;
+            StaticVariables.g_cdTrackIndex = (byte)StaticVariables.g_mapCdDataOffsets[mapIndex * 3 + 1];
+            //CdControlF('\r',&StaticVariables.g_cdControlCommand);
+            StaticVariables.g_cdReadComplete = 0;
+            StaticVariables.g_cdInitRequired = 2;
+        }
     }
 
     //8002d7b0
