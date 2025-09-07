@@ -5,7 +5,6 @@ namespace AlundraEngine;
 public class EtcResR : EtcRes
 {
     private readonly string _fileName;
-    private readonly short[] _indexTable;
     private readonly Dictionary<int, string> _stringByIndex = new();
 
     public EtcResR(string fileName)
@@ -13,18 +12,18 @@ public class EtcResR : EtcRes
         _fileName = fileName;
 
         using var br = new BinaryReader(File.OpenRead(fileName));
-        _indexTable = new short[1024];
+        IndexTable = new short[1024];
 
         for (int i = 0; i < 1024; i++)
         {
-            _indexTable[i] = br.ReadInt16();
+            IndexTable[i] = br.ReadInt16();
         }
 
         var buffer = File.ReadAllBytes(fileName);
 
         for (int i = 0; i < 0x100; i++)
         {
-            int offset = _indexTable[i + 0x100];
+            int offset = IndexTable[i + 0x100];
             StringTable[i] = ReadString(buffer, ref offset);
             _stringByIndex.Add(offset, StringTable[i]);
         }
@@ -32,7 +31,7 @@ public class EtcResR : EtcRes
 
         for (int i = 0; i < 0x100; i++)
         {
-            int offset = _indexTable[i];
+            int offset = IndexTable[i];
             DescriptionStrings[i] = ReadString(buffer, ref offset);
             _stringByIndex.Add(offset, DescriptionStrings[i]);
         }
@@ -54,9 +53,9 @@ public class EtcResR : EtcRes
 
         for (int i = 0; i < 0x62; i++)
         {
-            int iconNameOffset = _indexTable[i + 0x200];
-            int descriptionOffset = _indexTable[i + 0x280];
-            int otherStringOffset = _indexTable[i + 0x300];
+            int iconNameOffset = IndexTable[i + 0x200];
+            int descriptionOffset = IndexTable[i + 0x280];
+            int otherStringOffset = IndexTable[i + 0x300];
 
             var offset = iconNameOffset;
             IconNames[i * 2] = ReadString(buffer, ref offset);
@@ -82,7 +81,7 @@ public class EtcResR : EtcRes
 
     public override string GetEtcString(int id)
     {
-        return _stringByIndex[_indexTable[id]];
+        return _stringByIndex[IndexTable[id]];
 
         //Debugger.Break();
 

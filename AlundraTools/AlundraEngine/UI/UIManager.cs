@@ -630,9 +630,117 @@ public class UIManager
     }
 
     //8005a3e0
-    public void Fun_8005a3e0(CallBackInfo callBackInfo)
+    public void Fun_8005a3e0(CallBackInfo callbackInfo)
     {
         Debugger.Break();
+
+        short sVar1;
+        ulong uVar2;
+        int i;
+        int iVar4;
+        int iVar5;
+        short psVar6;
+        SPRT pSVar7;
+        SPRT puVar8;
+        uint puVar9;
+        SPRT pSVar10;
+        //DISPENV local_30;
+
+        if ((_gameEngine.StaticVariables.g_etcDisplayFlags & 3U) != 0)
+        {
+            i = UpdateUiBoxesPosition(callbackInfo.Data, _gameEngine.StaticVariables.g_textToDisplay2);
+
+            if (i == 1)
+            {
+                {
+                    if ((_gameEngine.StaticVariables.g_etcDisplayFlags & 1U) != 0)
+                    {
+                        _gameEngine.StaticVariables.g_etcDisplayFlags = (short)(_gameEngine.StaticVariables.g_etcDisplayFlags & 0xfffe);
+                    }
+
+                    if ((_gameEngine.StaticVariables.g_etcDisplayFlags & 2U) != 0)
+                    {
+                        callbackInfo.Data.X = _gameEngine.StaticVariables.g_textToDisplay2.originX;
+                        callbackInfo.Data.Y = _gameEngine.StaticVariables.g_textToDisplay2.originY;
+                        FUN_8005a244(callbackInfo);
+                        return; // 0;
+                    }
+                }
+            }
+        }
+
+        i = 0;
+
+        do
+        {
+            var text =
+                _gameEngine.StaticVariables.g_entitySpriteNamesTable[
+                    _gameEngine.StaticVariables.g_entitySpriteNameTableIndex];
+            //_gameEngine.StaticVariables.SPRT_ARRAY_800c2dd0[0xe9].x0 + _gameEngine.StaticVariables.g_entitySpriteNameTableIndex * 2
+
+            iVar4 = CalculateTextWidthFromScript(text.ToCharArray());
+            //uVar2 = g_drawModes[0x14].tag;
+            //iVar5 = iVar3 + g_drawModes[0x14].tag;
+            //psVar6 = callbackInfo.Data.X;
+            _gameEngine.StaticVariables.g_messageCharacterPortrait[i].x0 = (short)(callbackInfo.Data.X + (callbackInfo.Data.Width * 8 - iVar4) / 2);
+            sVar1 = (short)i;
+            _gameEngine.StaticVariables.g_messageCharacterPortrait[i].y0 = (short)(callbackInfo.Data.Y + callbackInfo.Data.Height - sVar1);
+
+            i = i + 1;
+        } while (i < 1);
+
+        iVar4 = 0;
+        //puVar9 = _gameEngine.StaticVariables.DAT_80146f70[uVar2 * 0x28];
+        //pSVar10 = _gameEngine.StaticVariables.g_messageCharacterPortrait;
+        i = 0; //uVar2 * 0x14;
+
+        do
+        {
+            //pSVar7 = pSVar10 + uVar2;
+            //pSVar10 = pSVar10 + 1;
+            puVar8 = _gameEngine.StaticVariables.g_messageCharacterPortrait[i];
+
+            i = i + 1;
+            iVar4 = iVar4 + 1;
+            //*puVar8 = *puVar8 & 0xff000000 | *puVar9 & 0xffffff;
+            //*puVar9 = *puVar9 & 0xff000000 | (uint)pSVar7 & 0xffffff;
+        } while (iVar4 < 1);
+
+        //GetDispEnv(&local_30);
+        //local_30.disp.x = local_30.disp.x + *(short*)(callbackInfo->_0 + 8) + **(short**)(callbackInfo->_0 + 4);
+        //local_30.disp.y = local_30.disp.y + *(short*)(callbackInfo->_0 + 10) + *(short*)(*(int*)(callbackInfo->_0 + 4) + 2);
+        //local_30.disp.w = *(short*)(callbackInfo->_0 + 0xc) * 8 + 2;
+        //local_30.disp.h = *(short*)(callbackInfo->_0 + 0xe) * 8 + 2;
+        //
+        //if (0x13f < local_30.disp.x)
+        //{
+        //    local_30.disp.x = 0x140;
+        //}
+        //
+        //if (0x13f < (int)local_30.disp.x + (int)local_30.disp.w)
+        //{
+        //    local_30.disp.w = 0x140 - local_30.disp.x;
+        //}
+        //
+        //SetDrawArea((DR_AREA*)(&DAT_80180290 + g_drawModes[0x14].tag * 0xc), &local_30.disp);
+
+        //puVar8 = (uint*)(&DAT_80180290 + g_drawModes[0x14].tag * 0xc);
+        //puVar9 = (uint*)(&DAT_80146f70 + g_drawModes[0x14].tag * 0x28);
+        //*puVar8 = *puVar8 & 0xff000000 | *puVar9 & 0xffffff;
+        //*puVar9 = *puVar9 & 0xff000000 | (uint)puVar8 & 0xffffff;
+    }
+
+    //8005a244
+    private void FUN_8005a244(CallBackInfo callBackInfo)
+    {
+        FUN_80047cb0(callBackInfo);
+        _gameEngine.StaticVariables.g_etcDisplayFlags = 0;
+    }
+
+    //80047cb0
+    private void FUN_80047cb0(CallBackInfo callBackInfo)
+    {
+        callBackInfo.Data.X = 0;
     }
 
     //800501a4
@@ -796,8 +904,8 @@ public class UIManager
             //sprites[0].code = 0;
         }
         
-        sprite.u0 = _gameEngine.StaticVariables.g_dialogCursorTextureUV[(sprite.r0 / 10) * 0x28];
-        sprite.v0 = _gameEngine.StaticVariables.g_dialogCursorTextureUV[(int)((sprite.r0 / 10) * 0.28 + 1)];
+        sprite.u0 = _gameEngine.StaticVariables.g_dialogCursorTextureUV[sprite.r0 / 10 * 0x28];
+        sprite.v0 = _gameEngine.StaticVariables.g_dialogCursorTextureUV[(int)(sprite.r0 / 10 * 0.28 + 1)];
 
         //puVar4 = DAT_80146f6c;
         /* Probable PsyQ macro: addPrim(). */
@@ -937,8 +1045,8 @@ public class UIManager
         }
         else
         {
-            int xInterp = textToDisplay.x + ((textToDisplay.startX - textToDisplay.x) * textToDisplay.tick) / textToDisplay.speed;
-            int yInterp = textToDisplay.y + ((textToDisplay.startY - textToDisplay.y) * textToDisplay.tick) / textToDisplay.speed;
+            int xInterp = textToDisplay.x + (textToDisplay.startX - textToDisplay.x) * textToDisplay.tick / textToDisplay.speed;
+            int yInterp = textToDisplay.y + (textToDisplay.startY - textToDisplay.y) * textToDisplay.tick / textToDisplay.speed;
             uiBoxConfiguration.X = (short)xInterp;
             uiBoxConfiguration.Y = (short)yInterp;
             textToDisplay.tick += 1;
@@ -1072,7 +1180,7 @@ public class UIManager
                         RenderTextBitmap(textBuffer,
                             DialogLinesSprites[_gameEngine.StaticVariables.g_textLineIndex % 3], //_gameEngine.StaticVariables.g_textBuffer,
                             0,
-                            (short)((_gameEngine.StaticVariables.g_textLineIndex % 3) * 0x10 + 0x120),
+                            (short)(_gameEngine.StaticVariables.g_textLineIndex % 3 * 0x10 + 0x120),
                             (short)_gameEngine.StaticVariables.g_textLineStartX,
                             0, 0x10, 0x10);
 
@@ -1094,7 +1202,7 @@ public class UIManager
                         RenderTextBitmap(textBuffer,
                             DialogLinesSprites[_gameEngine.StaticVariables.g_textLineIndex % 3], //_gameEngine.StaticVariables.g_textBuffer,
                             0,
-                            (short)((_gameEngine.StaticVariables.g_textLineIndex % 3) * 0x10 + 0x120),
+                            (short)(_gameEngine.StaticVariables.g_textLineIndex % 3 * 0x10 + 0x120),
                             (short)_gameEngine.StaticVariables.g_textLineStartX,
                             0, 0x10, 0x10);
 
@@ -1497,7 +1605,7 @@ public class UIManager
                             //    0x3c0, (short)((uint)(((_gameEngine.StaticVariables.g_textBufferX + _gameEngine.StaticVariables.g_textLineIndex) % 3 * 0x10 + 0x120) * 0x10000) >> 0x10),
                             //    (short)_gameEngine.StaticVariables.g_textLineStartX, 0, 0x100, 0x10);
 
-                            var textY = (_gameEngine.StaticVariables.g_textLineIndex % 3) * 0x10; // + 0x120;
+                            var textY = _gameEngine.StaticVariables.g_textLineIndex % 3 * 0x10; // + 0x120;
                             RenderTextBitmap(textBuffer,
                                 DialogLinesSprites[_gameEngine.StaticVariables.g_textLineIndex % 3], //_gameEngine.StaticVariables.g_textBuffer,
                                 0,
@@ -1739,8 +1847,8 @@ public class UIManager
                     var charValue = TextDecoder.ConvertCp850ToLatin1(charIndex);
 
                     var bitmap = _gameEngine.Font3.GenerateFontBitmapTim(
-                        (charValue % 16) * 16,
-                        (charValue / 16) * 16,
+                        charValue % 16 * 16,
+                        charValue / 16 * 16,
                         16, 16, 8);
 
                     sprites.Add(new Sprite(
@@ -2053,10 +2161,10 @@ public class UIManager
                 _gameEngine.StaticVariables.INT_80149cd4 = 0;
             }
 
-            _gameEngine.StaticVariables.g_cursorTextSprites[0].u0 = _gameEngine.StaticVariables.g_dialogCursorTextureUV[(_gameEngine.StaticVariables.INT_80149cd4 / 10) * 0x28];
-            _gameEngine.StaticVariables.g_cursorTextSprites[0].v0 = _gameEngine.StaticVariables.g_dialogCursorTextureUV[(_gameEngine.StaticVariables.INT_80149cd4 / 10) * 0x28 + 1];
+            _gameEngine.StaticVariables.g_cursorTextSprites[0].u0 = _gameEngine.StaticVariables.g_dialogCursorTextureUV[_gameEngine.StaticVariables.INT_80149cd4 / 10 * 0x28];
+            _gameEngine.StaticVariables.g_cursorTextSprites[0].v0 = _gameEngine.StaticVariables.g_dialogCursorTextureUV[_gameEngine.StaticVariables.INT_80149cd4 / 10 * 0x28 + 1];
             _gameEngine.StaticVariables.g_cursorTextSprites[0].x0 = (short)(callbackInfo.Data.X + callbackInfo.Data.Width * 8 - 0x10);
-            _gameEngine.StaticVariables.g_cursorTextSprites[0].y0 = (short)(callbackInfo.Data.Y + (callbackInfo.Data.Height) * 8 - 0x18);
+            _gameEngine.StaticVariables.g_cursorTextSprites[0].y0 = (short)(callbackInfo.Data.Y + callbackInfo.Data.Height * 8 - 0x18);
 
             //uVar1 = g_drawModes[0x14].tag;
             //psVar3 = (callbackInfo.X);
@@ -2100,7 +2208,7 @@ public class UIManager
         if (baseX < 0)
         {
             var offset = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width;
-            baseX = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X - (offset * 8));
+            baseX = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X - offset * 8);
         }
 
         _gameEngine.StaticVariables.g_backgroundMessageAnimation.x = baseX;

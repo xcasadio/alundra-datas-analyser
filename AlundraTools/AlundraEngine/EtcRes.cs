@@ -12,6 +12,8 @@ public abstract class EtcRes
     public readonly string[] Strings = new string[512];
     public readonly string[] DescriptionStrings = new string[256];
 
+    protected short[] IndexTable;
+
     public abstract string GetItemName(int id);
     public abstract string GetEtcString(int id);
     public abstract string GetOtherString(int id);

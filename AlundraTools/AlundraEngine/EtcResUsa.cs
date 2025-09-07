@@ -6,14 +6,6 @@ public class EtcResUsa : EtcRes
 {
     private readonly string _fileName;
 
-    public readonly string[] DescriptionItems = new string[196];
-    public readonly string[] IconNames = new string[196];
-    public readonly string[] OtherStrings = new string[196];
-
-    public readonly string[] StringTable = new string[256];
-    public readonly string[] Strings = new string[512];
-    public readonly string[] DescriptionStrings = new string[256];
-
     public EtcResUsa(string fileName)
     {
         _fileName = fileName;
@@ -38,7 +30,11 @@ public class EtcResUsa : EtcRes
         for (int i = 0; i < 0x100; i++)
         {
             int offset = indexTable[i];
-            DescriptionStrings[i] = ReadString(buffer, ref offset);
+
+            if (offset != -1)
+            {
+                DescriptionStrings[i] = ReadString(buffer, ref offset);
+            }
         }
 
         int x = 0;
@@ -60,12 +56,26 @@ public class EtcResUsa : EtcRes
             int OtherStringOffset = indexTable[i + 0x300];
 
             var offset = iconNameOffset;
-            IconNames[i * 2] = ReadString(buffer, ref offset);
-            //_gameEngine.StaticVariables.g_iconNameEtcBase[i * 2] = (byte)i;
+
+            if (offset != -1)
+            {
+                IconNames[i * 2] = ReadString(buffer, ref offset);
+                //_gameEngine.StaticVariables.g_iconNameEtcBase[i * 2] = (byte)i;
+            }
+
             offset = descriptionOffset;
-            DescriptionItems[i * 2] = ReadString(buffer, ref offset);
+
+            if (offset != -1)
+            {
+                DescriptionItems[i * 2] = ReadString(buffer, ref offset);
+            }
+
             offset = OtherStringOffset;
-            OtherStrings[i * 2] = ReadString(buffer, ref offset);
+
+            if (offset != -1)
+            {
+                OtherStrings[i * 2] = ReadString(buffer, ref offset);
+            }
         }
     }
 

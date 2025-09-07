@@ -2,9 +2,6 @@
 
 public class CallBackInfo //UiRecord
 {
-    //debug purpose
-    public int Id;
-
     public int Flags;
     public UIBoxConfiguration? Data;
     public short X;	
@@ -14,4 +11,6 @@ public class CallBackInfo //UiRecord
     public Action<CallBackInfo>? InitializeFunc;
     public Action<CallBackInfo>? RenderFunc;
     public uint Arg;
+
+    public int Id;//debug purpose, ignore it
 }

@@ -65,7 +65,7 @@ public partial class MainForm : Form
                 var etcResFileName = GetEtcFileName(dataFolder);
                 EtcRes etcRes;
 
-                if (Path.GetFileName(etcResFileName).Contains("usa"))
+                if (Path.GetFileName(etcResFileName).Contains("usa", StringComparison.InvariantCultureIgnoreCase))
                 {
                     etcRes = new EtcResUsa(etcResFileName);
                 }
@@ -115,7 +115,7 @@ public partial class MainForm : Form
                 var etcResFileName = GetEtcFileName(dataFolder);
                 EtcRes etcRes;
 
-                if (Path.GetFileName(etcResFileName).Contains("usa"))
+                if (Path.GetFileName(etcResFileName).Contains("usa", StringComparison.InvariantCultureIgnoreCase))
                 {
                     etcRes = new EtcResUsa(etcResFileName);
                 }
