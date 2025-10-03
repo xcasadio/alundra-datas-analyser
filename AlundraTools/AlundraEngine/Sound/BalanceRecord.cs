@@ -5,7 +5,7 @@ public class BalanceRecord
     public readonly byte Level;//0
     public readonly byte OffsetToNextLevel;//1
     public readonly byte Hp;//2 
-    public readonly byte[] Vals = new byte[11];//supposed to be at 2
+    public readonly byte[] Values = new byte[11];//supposed to be at 2
     //but i think ill put it at 3 and subtract q from the indexvals
     //3
     //4
@@ -31,7 +31,7 @@ public class BalanceRecord
         Level = br.ReadByte();
         OffsetToNextLevel = br.ReadByte();
         Hp = br.ReadByte();
-        br.Read(Vals, 0, 11);
+        br.Read(Values, 0, 11);
         NumAnimVals = br.ReadByte();
 
         if (NumAnimVals > 0)

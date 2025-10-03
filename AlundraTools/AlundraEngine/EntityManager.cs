@@ -1922,10 +1922,9 @@ public class EntityManager
         return sortValue;
     }
 
+    //80039300
     private void UpdateBalanceRecords()
     {
-        //TODO this
-        //Debugger.Break();
         for (var i = 0; i < _gameEngine.StaticVariables.g_activeEntityCount; i++)
         {
             var entity = _gameEngine.StaticVariables.g_activeEntities[i];
@@ -1958,43 +1957,43 @@ public class EntityManager
 
             for (var j = 0; j < _gameEngine.StaticVariables.g_activeEntityCount; j++)
             {
-                var checkme = _gameEngine.StaticVariables.g_activeEntities[j];
+                var otherEntity = _gameEngine.StaticVariables.g_activeEntities[j];
 
-                if (checkme == entity)
+                if (otherEntity == entity)
                 {
                     continue;
                 }
 
-                if (checkme.FrameCollisionTickCounter != 0)
+                if (otherEntity.FrameCollisionTickCounter != 0)
                 {
                     continue;
                 }
 
-                if (checkme.DamagedTickCounter != 0)
+                if (otherEntity.DamagedTickCounter != 0)
                 {
                     continue;
                 }
 
-                if ((checkme.AnimFlags & 0x40) != 0)
+                if ((otherEntity.AnimFlags & 0x40) != 0)
                 {
                     continue;
                 }
 
-                if ((checkme.Flags & flags) == 0)
+                if ((otherEntity.Flags & flags) == 0)
                 {
                     continue;
                 }
 
                 //X
-                var difx = entity.HitBoxX - checkme.ModdedPosX;
+                var difx = entity.HitBoxX - otherEntity.ModdedPosX;
                 int width;
                 if (difx > 0)
                 {
-                    width = checkme.Width + 1;
+                    width = otherEntity.Width + 1;
                 }
                 else
                 {
-                    difx = checkme.ModdedPosX - entity.HitBoxX;
+                    difx = otherEntity.ModdedPosX - entity.HitBoxX;
                     width = entity.CollisionWidth + 1;
                 }
 
@@ -2004,15 +2003,15 @@ public class EntityManager
                 }
 
                 //Y
-                var dify = entity.HitBoxY - checkme.ModdedPosY;
+                var dify = entity.HitBoxY - otherEntity.ModdedPosY;
                 int depth;
                 if (dify > 0)
                 {
-                    depth = checkme.Depth + 1;
+                    depth = otherEntity.Depth + 1;
                 }
                 else
                 {
-                    dify = checkme.ModdedPosY - entity.HitBoxY;
+                    dify = otherEntity.ModdedPosY - entity.HitBoxY;
                     depth = entity.CollisionDepth + 1;
                 }
 
@@ -2022,15 +2021,15 @@ public class EntityManager
                 }
 
                 //Z
-                var difz = entity.HitBoxZ - checkme.ModdedPosZ;
+                var difz = entity.HitBoxZ - otherEntity.ModdedPosZ;
                 int height;
                 if (difz > 0)
                 {
-                    height = checkme.Height + 1;
+                    height = otherEntity.Height + 1;
                 }
                 else
                 {
-                    difz = checkme.ModdedPosZ - entity.HitBoxZ;
+                    difz = otherEntity.ModdedPosZ - entity.HitBoxZ;
                     height = entity.CollisionHeight + 1;
                 }
 
@@ -2039,70 +2038,77 @@ public class EntityManager
                     continue;
                 }
 
-                /*if (game._1ac468 < 0
-                    && (game._1ac46c & 0x800) != 0)
-                {
-                DEBUG THING
-                }*/
+                Debugger.Break();
 
-                var valdex = entity.BalanceAnimValRef.Val & 0xf;
-                var val = checkme.BalanceRecord.Vals[valdex];
+                var balanceValueIndex = entity.BalanceAnimValRef.Val & 0xf;
+                var val = otherEntity.BalanceRecord.Values[balanceValueIndex];
+
+                if (_gameEngine.StaticVariables.g_debugState < 0
+                    && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
+                {
+                    _gameEngine.StaticVariables.g_messageDebug += // + otherEntity->index * 0x100
+                        string.Format("{0} (Race) {1}\n\r{2} (Attr) {3}\n\r",
+                            _gameEngine.StaticVariables.g_spriteTableIndexes[entity.SpriteTableIndex],
+                            _gameEngine.StaticVariables.g_spriteTableIndexes[otherEntity.SpriteTableIndex],
+                            _gameEngine.StaticVariables.g_weaponNames[balanceValueIndex],
+                            _gameEngine.StaticVariables.g_damageNames[otherEntity.BalanceRecord.Values[balanceValueIndex - 1] >> 6]);
+                }
 
                 if ((val & 0xc0) != 0x80)
                 {
-                    if (valdex == 6 || valdex == 0xa)
+                    if (balanceValueIndex == 6 || balanceValueIndex == 0xa)
                     {
-                        _gameEngine.EffectManager.CreateAttachedEffect(0, 4, 0, checkme, width, 0, 0, 0);
+                        _gameEngine.EffectManager.CreateAttachedEffect(0, 4, 0, otherEntity, width, 0, 0, 0);
                     }
 
-                    if (valdex == 7 || valdex == 9)
+                    if (balanceValueIndex == 7 || balanceValueIndex == 9)
                     {
-                        _gameEngine.EffectManager.CreateAttachedEffect(0, 5, 0, checkme, 1, 0, 0, 0);
+                        _gameEngine.EffectManager.CreateAttachedEffect(0, 5, 0, otherEntity, 1, 0, 0, 0);
                     }
 
-                    checkme.TouchingEntity = entity;
+                    otherEntity.TouchingEntity = entity;
                 }
 
-                checkme.FrameCollisionTickCounter = 0x19;
+                otherEntity.FrameCollisionTickCounter = 0x19;
                 entity.HitCounter++;
 
                 //X
-                var xr = checkme.ModdedPosX + checkme.Width;
+                var xr = otherEntity.ModdedPosX + otherEntity.Width;
                 if (entity.HitBoxX + entity.CollisionWidth < xr)
                 {
                     xr = entity.HitBoxX + entity.CollisionWidth;
                 }
 
                 var xl = entity.HitBoxX;
-                if (entity.HitBoxX < checkme.ModdedPosX)
+                if (entity.HitBoxX < otherEntity.ModdedPosX)
                 {
-                    xl = checkme.ModdedPosX;
+                    xl = otherEntity.ModdedPosX;
                 }
 
                 //Y
-                var yr = checkme.ModdedPosY + checkme.Depth;
+                var yr = otherEntity.ModdedPosY + otherEntity.Depth;
                 if (entity.HitBoxY + entity.CollisionDepth < yr)
                 {
                     yr = entity.HitBoxY + entity.CollisionDepth;
                 }
 
                 var yl = entity.HitBoxY;
-                if (entity.HitBoxY < checkme.ModdedPosY)
+                if (entity.HitBoxY < otherEntity.ModdedPosY)
                 {
-                    yl = checkme.ModdedPosY;
+                    yl = otherEntity.ModdedPosY;
                 }
 
                 //Z
-                var zr = checkme.ModdedPosZ + checkme.Height;
+                var zr = otherEntity.ModdedPosZ + otherEntity.Height;
                 if (entity.HitBoxZ + entity.CollisionHeight < zr)
                 {
                     zr = entity.HitBoxZ + entity.CollisionHeight;
                 }
 
                 var zl = entity.HitBoxZ;
-                if (entity.HitBoxZ < checkme.ModdedPosZ)
+                if (entity.HitBoxZ < otherEntity.ModdedPosZ)
                 {
-                    zl = checkme.ModdedPosZ;
+                    zl = otherEntity.ModdedPosZ;
                 }
 
                 var x = (xl + xr) / 2;

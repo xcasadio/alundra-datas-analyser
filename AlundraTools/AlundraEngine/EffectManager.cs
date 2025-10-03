@@ -437,9 +437,9 @@ public class EffectManager
     }
 
     // 80032c7c
-    public int CreateWarpEffect(uint contentId, int x, int y, int z)
+    public int RandomlySpawnItem(uint contentId, int x, int y, int z)
     {
-        var itemId = _gameEngine.GetContentsItemId((ushort)contentId);
+        var itemId = _gameEngine.ChooseRandomlyAnItem((ushort)contentId);
 
         if (itemId == 0)
         {

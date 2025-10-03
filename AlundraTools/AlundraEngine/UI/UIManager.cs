@@ -2280,7 +2280,6 @@ public class UIManager
                     //SetShadeTex(sprt, 1);
 
                     //display a buffer created with text
-                    //TODO find a way to create 3 bitmap to draw the text
                     //var bitmap = Font3.GenerateFontBitmapFromSprite(sprite);
                     //Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 

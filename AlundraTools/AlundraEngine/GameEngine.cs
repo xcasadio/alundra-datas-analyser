@@ -803,23 +803,23 @@ public class GameEngine
 
                 if ((flags[index] & mask) == 0)
                 {
-                    entity.ContentsItemId = (uint)GetContentsItemId(entity.EntityRecord.Contents);
+                    entity.ContentsItemId = (uint)ChooseRandomlyAnItem(entity.EntityRecord.Contents);
                     return;
                 }
             }
 
             if (entity.EntityRecord.Contents != 0)
             {
-                entity.ContentsItemId = (uint)GetContentsItemId(entity.EntityRecord.Contents);
+                entity.ContentsItemId = (uint)ChooseRandomlyAnItem(entity.EntityRecord.Contents);
                 return;
             }
         }
 
-        entity.ContentsItemId = (uint)GetContentsItemId((ushort)entity.SpriteRecord.Header.Contents);
+        entity.ContentsItemId = (uint)ChooseRandomlyAnItem((ushort)entity.SpriteRecord.Header.Contents);
     }
 
     //80032968
-    public int GetContentsItemId(ushort contentId)
+    public int ChooseRandomlyAnItem(ushort contentId)
     {
         var isValid = contentId < 0x100;
 
@@ -2411,7 +2411,7 @@ public class GameEngine
                             CurrentMap.Info.SlideEffectId,
                             0,
                             effectX, effectY, tileEffectZ);
-                        EffectManager.CreateWarpEffect(0xFF, effectX, effectY, tileEffectZ);
+                        EffectManager.RandomlySpawnItem(0xFF, effectX, effectY, tileEffectZ);
                         SoundManager.PlaySoundEffect(0x1F);
                     }
                 }

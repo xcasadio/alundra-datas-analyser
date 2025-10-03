@@ -4577,14 +4577,12 @@ public class StaticVariables
     public byte DAT_80028b54; // 80028B54
     public byte DAT_80028b55; // 80028B55
     public byte DAT_80028b57; // 80028B57
-    //public short[] g_warpStepThresholdTable; // 80028B8C
     public int[] g_tileAttributeXForces = new int[16]; // 80028B94
     public int[] g_tileAttributeYForces = new int[16]; // 80028BD4
     //public byte g_weaponInitFlags; // 80028C78
     //public int g_tileWarpDataActive; // 80028C79
     //public int g_tileWarpDataInactive; // 80028C7D
     //public int[] g_weaponInitFlags = new int[82]; // 80028C81
-    //public int[] g_warpBehaviorTable = new int[20]; // 80028DCC
     public char g_flagNameList; // 8002960E
     public int g_flagIdList; // 8002962E
     public short DAT_80029650; // 80029650
@@ -4596,7 +4594,6 @@ public class StaticVariables
     public short DAT_8002a6ac; // 8002A6AC
     public short DAT_8002a6b0; // 8002A6B0
     public byte DAT_8002a6b2; // 8002A6B2
-    //public pointer[] g_warpNames = new pointer[12]; // 80098694
     public int g_debugLineColor; // 800986E4
     public int g_debugPrimColor; // 800986E8
     public int g_debugActorColor; // 800986EC
@@ -4672,7 +4669,6 @@ public class StaticVariables
     public int g_seqBodySizeTable; // 800A7F9C
     public int DAT_800a7fa0; // 800A7FA0
     public int[] g_sequenceOffsets = new int[7]; // 800A81C8
-    //public uint[] g_warpMapList = new uint[24]; // 800A81E4
     public short g_currentVabId; // 800A8244
     public short g_mainSoundDriver; // 800A8246
     public short g_altSoundDriver; // 800A8248
@@ -7486,8 +7482,6 @@ public class StaticVariables
     public UIBoxConfiguration UIBoxConfiguration_800c4180;
 
 
-
-
     public readonly SPRT[] SPRT_ARRAY_800ba3d0 = new SPRT[] {
             new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x0010, y0=0x0040, u0=0xE0, v0=0x00, clut=0x0000, w=0x0008, h=0x0008 },
             new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x0018, y0=0x0040, u0=0xE8, v0=0x00, clut=0x0000, w=0x0008, h=0x0008 },
@@ -9528,6 +9522,5 @@ public class StaticVariables
             new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x0128, y0=0x0070, u0=0xD8, v0=0x20, clut=0x0000, w=0x0008, h=0x0008 }
         };
 
-
-
+    public readonly string[] g_spriteTableIndexes = new string[512];
 }

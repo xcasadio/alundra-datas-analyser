@@ -2982,7 +2982,7 @@ public class PlayerManager
                                     effectX,
                                     effectY,
                                     tileEffectZ);
-                                _gameEngine.EffectManager.CreateWarpEffect(0xFF, effectX, effectY, tileEffectZ);
+                                _gameEngine.EffectManager.RandomlySpawnItem(0xFF, effectX, effectY, tileEffectZ);
                                 _gameEngine.SoundManager.PlaySoundEffect(0x1F);
                             }
                         }

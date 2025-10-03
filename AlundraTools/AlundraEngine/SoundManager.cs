@@ -91,8 +91,6 @@ public class SoundManager
     //80049af4
     public void StopAllSound()
     {
-        Debugger.Break();
-
         if (-1 < _gameEngine.StaticVariables.g_currentMapSoundIndex)
         {
             if (_gameEngine.StaticVariables.g_soundEffectState != 0)

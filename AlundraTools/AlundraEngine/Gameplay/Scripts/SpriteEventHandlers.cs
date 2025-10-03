@@ -1450,7 +1450,7 @@ public class SpriteEventHandlers
 
                             if (entity != entityTarget
                                 && (entityTarget.AnimFlags & 0x40) == 0
-                                && entityTarget.BalanceRecord.Vals[5] == 0
+                                && entityTarget.BalanceRecord.Values[5] == 0
                                 && (entityTarget.Flags & collisionMask) != 0)
                             {
                                 var withinX = entity.HitBoxX - entityTarget.HitBoxOriginX; //entityTarget.ModdedPosX
