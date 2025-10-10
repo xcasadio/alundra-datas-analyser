@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #Export functions and static variables 
 #@author Xavier Casadio
-#@category Export
+#@category Alundra.Export
 #@keybinding
 #@menupath
 #@toolbar
