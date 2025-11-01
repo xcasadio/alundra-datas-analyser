@@ -1045,7 +1045,7 @@ public class SpriteEventHandlers
 
                 entity.ForceZ = 0;
 
-                if (_gameEngine.IsWarpInProgress())
+                if (_gameEngine.IsDialogInProgress())
                 {
                     return;
                 }
@@ -1094,7 +1094,7 @@ public class SpriteEventHandlers
                 return;
             }
 
-            if (_gameEngine.IsWarpInProgress())
+            if (_gameEngine.IsDialogInProgress())
             {
                 return;
             }
@@ -1151,7 +1151,7 @@ public class SpriteEventHandlers
 
             if (itemState == 1)
             {
-                if (_gameEngine.IsWarpInProgress())
+                if (_gameEngine.IsDialogInProgress())
                 {
                     return;
                 }
@@ -1280,7 +1280,7 @@ public class SpriteEventHandlers
 
             entity2 = entity;
 
-            if (_gameEngine.IsWarpInProgress())
+            if (_gameEngine.IsDialogInProgress())
             {
                 return;
             }

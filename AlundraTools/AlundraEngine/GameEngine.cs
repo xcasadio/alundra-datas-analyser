@@ -2582,7 +2582,7 @@ public class GameEngine
     {
         string[] strings;
 
-        if (IsWarpInProgress())
+        if (IsDialogInProgress())
         {
             return 0;
         }
@@ -2605,9 +2605,9 @@ public class GameEngine
     }
 
     //80045004
-    public bool IsWarpInProgress()
+    public bool IsDialogInProgress()
     {
-        return (StaticVariables.g_warpFlags_2 & 4) != 0;
+        return (StaticVariables.g_dialog_flags & 4) != 0;
     }
 
     //8008167c
@@ -2648,9 +2648,9 @@ public class GameEngine
     }
 
     //8004248c
-    public int FUN_8004248c()
+    public int Script_IsDialogInProgress()
     {
-        return IsWarpInProgress() ? 1 : 0;
+        return IsDialogInProgress() ? 1 : 0;
     }
 
     //80050ba8

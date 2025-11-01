@@ -1532,6 +1532,7 @@ public class EntityEventHandlers
     }
 
     // 8003D578
+    //open dialog
     private int Script_13_00D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         if ((logicEntity.Flags & 0x800000U) != 0) // has portrait
@@ -2454,7 +2455,7 @@ public class EntityEventHandlers
     // 8003E464
     private int Script_57_039(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        return _gameEngine.FUN_8004248c() == 0 ? 0 : 1;
+        return _gameEngine.Script_IsDialogInProgress() == 0 ? 0 : 1;
     }
 
     // 8003E484
@@ -2664,6 +2665,7 @@ public class EntityEventHandlers
     }
 
     // 8003E88C
+    //wait dialog choice
     private int Script_68_044(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         if (eventProgramState.Exp[1] == variables[0])

@@ -430,7 +430,7 @@ public partial class FrmGame : Form
 
     private void RefreshHudControls()
     {
-        labelHudActivate.Text = _gameEngine.StaticVariables.g_warpFlags_2.ToString();
+        labelHudActivate.Text = _gameEngine.StaticVariables.g_dialog_flags.ToString();
         //textBoxHudPoly.Text = _gameEngine.StaticVariables.g_backgroundMessageAnimation + Environment.NewLine +
         //                      _gameEngine.StaticVariables.g_textToDisplay2 + Environment.NewLine +
         //                      _gameEngine.StaticVariables.g_textToDisplay3 + Environment.NewLine +

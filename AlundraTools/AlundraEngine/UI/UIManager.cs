@@ -108,7 +108,7 @@ public class UIManager
 
         //SetDrawArea((DR_AREA*)(&DAT_80153010 + g_drawModes[0x14].tag * 0xc), &local_28.disp);
 
-        if ((_gameEngine.StaticVariables.g_warpFlags_2 & 3) == 0)
+        if ((_gameEngine.StaticVariables.g_dialog_flags & 3) == 0)
         {
             if (_gameEngine.StaticVariables.g_textPrimitives == 0)
             {
@@ -131,12 +131,12 @@ public class UIManager
 
             if (y == 1)
             {
-                if ((_gameEngine.StaticVariables.g_warpFlags_2 & 1) != 0)
+                if ((_gameEngine.StaticVariables.g_dialog_flags & 1) != 0)
                 {
-                    _gameEngine.StaticVariables.g_warpFlags_2 = (int)(_gameEngine.StaticVariables.g_warpFlags_2 & 0xfffffffe);
+                    _gameEngine.StaticVariables.g_dialog_flags = (int)(_gameEngine.StaticVariables.g_dialog_flags & 0xfffffffe);
                 }
 
-                if ((_gameEngine.StaticVariables.g_warpFlags_2 & 2) != 0)
+                if ((_gameEngine.StaticVariables.g_dialog_flags & 2) != 0)
                 {
                     _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X = _gameEngine.StaticVariables.g_backgroundMessageAnimation.originX;
                     _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y = _gameEngine.StaticVariables.g_backgroundMessageAnimation.originY;
@@ -941,7 +941,7 @@ public class UIManager
 
         if (shouldAdvance != 0)
         {
-            _gameEngine.StaticVariables.g_warpFlags_2 |= 2;
+            _gameEngine.StaticVariables.g_dialog_flags |= 2;
 
             _gameEngine.SoundManager.PlaySoundEffect(7);
             ResetHudTransitionState();
@@ -1093,7 +1093,7 @@ public class UIManager
     private void FUN_8004501c(CallBackInfo callBackInfo)
     {
         _gameEngine.MainInventoryManager.FUN_80047cb0(callBackInfo);
-        _gameEngine.StaticVariables.g_warpFlags_2 = 0;
+        _gameEngine.StaticVariables.g_dialog_flags = 0;
         _gameEngine.StaticVariables.g_playerControlFlags &= 0xffffffe7;
     }
 
@@ -1216,7 +1216,7 @@ public class UIManager
                     {
                         currentLineIndex = _gameEngine.StaticVariables.g_textCursor;
                         //we want to go to the default case to simulate the goto 'LAB_80046ccc'
-                        //currentTextCursorValue = '@';
+                        currentTextCursorValue = '@';
 
                         //goto LAB_80046ccc;
                         //Debugger.Break();
@@ -2236,7 +2236,7 @@ public class UIManager
         _gameEngine.StaticVariables.g_backgroundMessageAnimation.originX = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
         _gameEngine.StaticVariables.g_backgroundMessageAnimation.originY = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y;
         
-        _gameEngine.StaticVariables.g_warpFlags_2 = 5;
+        _gameEngine.StaticVariables.g_dialog_flags = 5;
         _gameEngine.StaticVariables.g_playerControlFlags |= (uint)(animationMode == 1 ? 0x10 : 0x8);
 
         _gameEngine.StaticVariables.g_textPrimitives = 0;
