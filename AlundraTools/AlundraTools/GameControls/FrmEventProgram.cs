@@ -22,23 +22,23 @@ namespace AlundraTools.GameControls
         {
             var stack = new List<Stackframe>();
 
-            foreach (var cmd in _commands)
+            foreach (var command in _commands)
             {
-                lstProgram.Items.Add(cmd.Print(stack.Count, _commands));
-                eventListView1.AddItem(new LabelEvent(cmd.PrintEvent(stack.Count, _commands)));
+                lstProgram.Items.Add(command.Print(stack.Count, _commands));
+                eventListView1.AddItem(new LabelScriptEvent(command.Command, command.PrintEvent(stack.Count, _commands), "test"));
 
                 //if (cmd.command == 0xff && stack.Count == 0)
                 //    break;
                 
-                if (cmd.GetType() == typeof(BranchCommand) && cmd.RefOffset > 0)
+                if (command.GetType() == typeof(BranchCommand) && command.RefOffset > 0)
                 {
-                    stack.Add(new Stackframe { Length = cmd.RefOffset, Level = stack.Count });
+                    stack.Add(new Stackframe { Length = command.RefOffset, Level = stack.Count });
                 }
 
                 for (var i = stack.Count -1;i >= 0;i--)
                 {
                     var frame = stack[i];
-                    frame.Length -= cmd.Size;
+                    frame.Length -= command.Size;
                     if (frame.Length <= 0)
                     {
                         stack.RemoveAt(i);

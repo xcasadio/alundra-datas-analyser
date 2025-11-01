@@ -9,6 +9,6 @@ public class WalkCommand : SiCommand
 
     public override string PrintParameters(List<SiCommand> commands)
     {
-        return (Parameters[0] | (Parameters[1] << 8)).ToString("x4");
+        return (Parameters[0] | (Parameters[1] << 8)).ToString("x4").TrimStart('0');
     }
 }

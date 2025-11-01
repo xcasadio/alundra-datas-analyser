@@ -20,7 +20,7 @@ public partial class MainForm : Form
     private void MainForm_Load(object? sender, EventArgs e)
     {
         //toolStripMenuItem1_Click(this, EventArgs.Empty);
-        EventTemplateRegistry.Register<LabelEvent>(ev => new LabelEventView(ev));
+        EventTemplateRegistry.Register<LabelScriptEvent>(ev => new LabelScriptEventView(ev));
 
     }
 

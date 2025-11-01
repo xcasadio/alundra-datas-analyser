@@ -28,7 +28,7 @@ public class SiCommand
         output += new string(' ', depth * 4);
         output += PrintName();
         output += $"({PrintCode()})";
-        if (Command != 0 && Command != 0xff)
+        if (HasParameters)
         {
             output += $" ({PrintParameters(commands)})";
         }
@@ -39,8 +39,7 @@ public class SiCommand
     {
         var output = new string(' ', depth * 4);
         output += PrintName();
-        output += $"[{PrintCode()}]";
-        if (Command != 0 && Command != 0xff)
+        if (HasParameters)
         {
             output += $" ({PrintParameters(commands)})";
         }
@@ -58,6 +57,11 @@ public class SiCommand
     }
 
     public virtual string PrintParameters(List<SiCommand> commands)
+    {
+        return string.Join(", ", Parameters.Select(x => x.ToString("x2")));
+    }
+
+    public virtual string Description(List<SiCommand> commands)
     {
         return string.Join(", ", Parameters.Select(x => x.ToString("x2")));
     }

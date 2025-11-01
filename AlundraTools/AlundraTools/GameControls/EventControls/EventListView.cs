@@ -8,14 +8,14 @@ public class EventListView : UserControl
         AutoScroll = true
     };
 
-    private readonly List<object> _items = [];
+    private readonly List<ScriptEvent> _items = [];
 
     public EventListView()
     {
         Controls.Add(_stack);
     }
 
-    public void SetItems(IEnumerable<object> eventsEnum)
+    public void SetItems(IEnumerable<ScriptEvent> eventsEnum)
     {
         SuspendLayout();
         _stack.SuspendLayout();
@@ -33,7 +33,7 @@ public class EventListView : UserControl
         ResumeLayout();
     }
 
-    public void AddItem(object ev)
+    public void AddItem(ScriptEvent ev)
     {
         if (!EventTemplateRegistry.TryCreate(ev, out var content))
         {
@@ -42,12 +42,12 @@ public class EventListView : UserControl
         var rowIndex = _items.Count;
         _items.Add(ev);
         var row = new EventRowControl { Dock = DockStyle.Top };
-        row.Bind(rowIndex, content);
+        row.Bind(rowIndex, ev.Code, content);
         _stack.Controls.Add(row);
         _stack.Controls.SetChildIndex(row, 0);
     }
 
-    public void AddItems(IEnumerable<object> eventsEnum)
+    public void AddItems(IEnumerable<ScriptEvent> eventsEnum)
     {
         foreach (var ev in eventsEnum)
         {

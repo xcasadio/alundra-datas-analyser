@@ -13,7 +13,7 @@ public class BranchCommand : SiCommand
         var parms = new List<string>();
         if (Size == 5)
         {
-            parms.Add((Parameters[Size - 5] | (Parameters[Size - 4] << 8)).ToString("x4"));
+            parms.Add((Parameters[Size - 5] | (Parameters[Size - 4] << 8)).ToString("x4").TrimStart('0'));
         }
         else
         {
