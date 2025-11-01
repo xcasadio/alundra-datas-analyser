@@ -1,4 +1,6 @@
-﻿namespace AlundraTools.AlundraTools
+﻿using AlundraTools.GameControls.EventControls;
+
+namespace AlundraTools.GameControls
 {
     partial class FrmEventProgram
     {
@@ -35,6 +37,7 @@
             lblcode = new Label();
             txtFind = new TextBox();
             btnFind = new Button();
+            eventListView1 = new EventListView();
             SuspendLayout();
             // 
             // lstProgram
@@ -106,11 +109,19 @@
             btnFind.UseVisualStyleBackColor = true;
             btnFind.Click += btnFind_Click;
             // 
+            // eventListView1
+            // 
+            eventListView1.Location = new Point(460, 18);
+            eventListView1.Name = "eventListView1";
+            eventListView1.Size = new Size(420, 584);
+            eventListView1.TabIndex = 7;
+            // 
             // FrmEventProgram
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(456, 635);
+            ClientSize = new Size(1006, 645);
+            Controls.Add(eventListView1);
             Controls.Add(btnFind);
             Controls.Add(txtFind);
             Controls.Add(label1);
@@ -136,5 +147,6 @@
         private System.Windows.Forms.Label lblcode;
         private System.Windows.Forms.TextBox txtFind;
         private System.Windows.Forms.Button btnFind;
+        private EventListView eventListView1;
     }
 }

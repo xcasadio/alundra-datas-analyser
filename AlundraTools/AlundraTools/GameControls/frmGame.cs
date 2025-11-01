@@ -1,14 +1,14 @@
-﻿using AlundraEngine;
+﻿using System.Runtime.InteropServices;
+using System.Text;
+using AlundraEngine;
 using AlundraEngine.DatasBin;
 using AlundraEngine.Editor;
 using AlundraEngine.Gameplay;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
-using System.Runtime.InteropServices;
-using System.Text;
 using Timer = System.Windows.Forms.Timer;
 
-namespace AlundraTools.AlundraTools;
+namespace AlundraTools.GameControls;
 
 public partial class FrmGame : Form
 {

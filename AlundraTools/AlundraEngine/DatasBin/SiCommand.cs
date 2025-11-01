@@ -2,6 +2,8 @@
 
 public class SiCommand
 {
+    public bool HasParameters => Parameters is { Length: > 0 } && Command != 0 && Command != 0xff;
+
     public SiCommand(byte command, int size, byte[] parameters, string name, int memoryAddress)
     {
         MemoryAddress = memoryAddress;
@@ -19,29 +21,44 @@ public class SiCommand
 
     public readonly string Name;
 
-    public string PrintName()
-    {
-        return !string.IsNullOrEmpty(Name) ? Name : Command.ToString("x2");
-    }
-
-    public virtual string PrintParameters(List<SiCommand> commands)
-    {
-        return string.Join(", ", Parameters.Select(x => x.ToString("x2")));
-    }
-
     public string Print(int depth, List<SiCommand> commands)
     {
         var index = commands.IndexOf(this);
         var output = index.ToString("d3") + " ";
         output += new string(' ', depth * 4);
         output += PrintName();
-        output += $"#{Command:x2} ";
+        output += $"({PrintCode()})";
         if (Command != 0 && Command != 0xff)
         {
-            output += "(";
-            output += PrintParameters(commands);
-            output += ")";
+            output += $" ({PrintParameters(commands)})";
         }
         return output;
+    }
+
+    public string PrintEvent(int depth, List<SiCommand> commands)
+    {
+        var output = new string(' ', depth * 4);
+        output += PrintName();
+        output += $"[{PrintCode()}]";
+        if (Command != 0 && Command != 0xff)
+        {
+            output += $" ({PrintParameters(commands)})";
+        }
+        return output;
+    }
+
+    public string PrintName()
+    {
+        return !string.IsNullOrEmpty(Name) ? Name : "<no name>";
+    }
+
+    public string PrintCode()
+    {
+        return $"{Command} (0x{Command:x2})";
+    }
+
+    public virtual string PrintParameters(List<SiCommand> commands)
+    {
+        return string.Join(", ", Parameters.Select(x => x.ToString("x2")));
     }
 }

@@ -8,7 +8,7 @@ using AlundraEngine.Text;
 using Color = System.Drawing.Color;
 using Timer = System.Windows.Forms.Timer;
 
-namespace AlundraTools.AlundraTools
+namespace AlundraTools.GameControls
 {
     public partial class FrmAlundra : Form
     {

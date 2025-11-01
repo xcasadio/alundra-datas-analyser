@@ -1,9 +1,11 @@
-﻿using System.Text.Json;
-using AlundraEngine;
+﻿using AlundraEngine;
 using AlundraEngine.DatasBin;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
-using AlundraTools.AlundraTools;
+using AlundraTools.GameControls;
+using AlundraTools.GameControls.EventControls;
+using Microsoft.Win32;
+using System.Text.Json;
 
 namespace AlundraTools;
 
@@ -18,6 +20,8 @@ public partial class MainForm : Form
     private void MainForm_Load(object? sender, EventArgs e)
     {
         //toolStripMenuItem1_Click(this, EventArgs.Empty);
+        EventTemplateRegistry.Register<LabelEvent>(ev => new LabelEventView(ev));
+
     }
 
     private void analyzeFileToolStripMenuItem_Click(object sender, EventArgs e)

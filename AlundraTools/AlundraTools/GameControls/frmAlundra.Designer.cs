@@ -1,4 +1,4 @@
-﻿namespace AlundraTools.AlundraTools
+﻿namespace AlundraTools.GameControls
 {
     partial class FrmAlundra
     {

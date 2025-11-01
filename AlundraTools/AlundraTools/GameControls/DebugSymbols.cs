@@ -1,6 +1,6 @@
 ﻿using AlundraEngine.DatasBin;
 
-namespace AlundraTools.AlundraTools
+namespace AlundraTools.GameControls
 {
     public static class DebugSymbols
     {

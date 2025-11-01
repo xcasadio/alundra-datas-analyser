@@ -1,6 +1,6 @@
 ﻿using AlundraEngine.Sound;
 
-namespace AlundraTools.AlundraTools
+namespace AlundraTools.GameControls
 {
     public partial class SoundboardControl : UserControl
     {

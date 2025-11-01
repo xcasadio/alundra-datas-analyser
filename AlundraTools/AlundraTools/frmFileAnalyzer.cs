@@ -3,8 +3,8 @@ using System.Text;
 using AlundraEngine;
 using AlundraEngine.DatasBin;
 using AlundraEngine.UI;
-using AlundraTools.AlundraTools;
 using AlundraTools.Decompiler;
+using AlundraTools.GameControls;
 
 namespace AlundraTools
 {

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace AlundraTools.AlundraTools;
+namespace AlundraTools.GameControls;
 
 public class EditorConfiguration
 {

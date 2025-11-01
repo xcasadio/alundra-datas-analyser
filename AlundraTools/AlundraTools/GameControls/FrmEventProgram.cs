@@ -1,6 +1,7 @@
 ﻿using AlundraEngine.DatasBin;
+using AlundraTools.GameControls.EventControls;
 
-namespace AlundraTools.AlundraTools
+namespace AlundraTools.GameControls
 {
     public partial class FrmEventProgram : Form
     {
@@ -24,6 +25,7 @@ namespace AlundraTools.AlundraTools
             foreach (var cmd in _commands)
             {
                 lstProgram.Items.Add(cmd.Print(stack.Count, _commands));
+                eventListView1.AddItem(new LabelEvent(cmd.PrintEvent(stack.Count, _commands)));
 
                 //if (cmd.command == 0xff && stack.Count == 0)
                 //    break;

@@ -1,7 +1,7 @@
 ﻿using System.Text;
-using AlundraTools.AlundraTools;
 using AlundraTools.Decompiler;
 using AlundraTools.Decompiler.LibModule;
+using AlundraTools.GameControls;
 
 namespace AlundraTools
 {
