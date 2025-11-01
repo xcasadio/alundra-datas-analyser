@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugInfo", "DebugInfo\Debu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlundraEngine", "AlundraEngine\AlundraEngine.csproj", "{653979E7-BC74-4F8C-9BE3-4832C7A37044}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlundraGame", "AlundraGame\AlundraGame.csproj", "{372FAA57-FFE1-4FC4-AA59-C3DD407FE4CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{653979E7-BC74-4F8C-9BE3-4832C7A37044}.Release|x64.Build.0 = Release|Any CPU
 		{653979E7-BC74-4F8C-9BE3-4832C7A37044}.Release|x86.ActiveCfg = Release|Any CPU
 		{653979E7-BC74-4F8C-9BE3-4832C7A37044}.Release|x86.Build.0 = Release|Any CPU
+		{372FAA57-FFE1-4FC4-AA59-C3DD407FE4CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{372FAA57-FFE1-4FC4-AA59-C3DD407FE4CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{372FAA57-FFE1-4FC4-AA59-C3DD407FE4CE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{372FAA57-FFE1-4FC4-AA59-C3DD407FE4CE}.Debug|x64.Build.0 = Debug|Any CPU
+		{372FAA57-FFE1-4FC4-AA59-C3DD407FE4CE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{372FAA57-FFE1-4FC4-AA59-C3DD407FE4CE}.Debug|x86.Build.0 = Debug|Any CPU
+		{372FAA57-FFE1-4FC4-AA59-C3DD407FE4CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{372FAA57-FFE1-4FC4-AA59-C3DD407FE4CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{372FAA57-FFE1-4FC4-AA59-C3DD407FE4CE}.Release|x64.ActiveCfg = Release|Any CPU
+		{372FAA57-FFE1-4FC4-AA59-C3DD407FE4CE}.Release|x64.Build.0 = Release|Any CPU
+		{372FAA57-FFE1-4FC4-AA59-C3DD407FE4CE}.Release|x86.ActiveCfg = Release|Any CPU
+		{372FAA57-FFE1-4FC4-AA59-C3DD407FE4CE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
