@@ -50,6 +50,11 @@ local function write_byte(addr, value)
     ptr[0] = value
 end
 
+local function write_s16_le(addr, value)
+    local ptr = ffi.cast("int16_t*", memory + (addr - 0x80000000))
+    ptr[0] = value
+end
+
 -- Variables pour la combobox
 local items = {
     {value = 36, name = "36-Herbs"},
@@ -95,6 +100,15 @@ function DrawImguiFrame()
             local selected_value = items[selected_item_index].value
             for i = 0, 99 do
                 write_byte(inventory_address + i, selected_value)
+            end
+        end
+        
+        imgui.Spacing()
+        
+        if imgui.Button("Fill array 801eb8d0 with 1") then
+            local array_address = 0x801eb8d0
+            for i = 0, 255 do
+                write_s16_le(array_address + (i * 2), 1)
             end
         end
         

@@ -53,16 +53,23 @@ local function sprite_ref(addr)
 end
 
 local function event_prog_state(addr)
-  return {
-    sp         = ptr(addr+0x00),
-    parameters = ptr(addr+0x04),
-    var1       = s32(addr+0x08),  var2 = s32(addr+0x0C),
-    var3       = s32(addr+0x10),  var4 = s32(addr+0x14),
-    var5       = s32(addr+0x18),  var6 = s32(addr+0x1C),
-    var7       = s32(addr+0x20),  var8 = s32(addr+0x24),
-    var9       = s32(addr+0x28),  result = s32(addr+0x2C),
-    _30        = s32(addr+0x30),
-  }
+  local sp_ptr = ptr(addr+0x00)
+  return sp_ptr ~= 0 and s32(sp_ptr) or nil
+  --return {
+  --  sp         = ptr(addr+0x00),
+  --  parameters = ptr(addr+0x04),
+  --  var1       = s32(addr+0x08),  
+  --  var2       = s32(addr+0x0C),
+  --  var3       = s32(addr+0x10),  
+  --  var4       = s32(addr+0x14),
+  --  var5       = s32(addr+0x18),  
+  --  var6       = s32(addr+0x1C),
+  --  var7       = s32(addr+0x20),  
+  --  var8       = s32(addr+0x24),
+  --  var9       = s32(addr+0x28),  
+  --  result     = s32(addr+0x2C),
+  --  _30        = s32(addr+0x30),
+  --}
 end
 
 
@@ -76,7 +83,7 @@ local function read_entity(addr)
   E.status               = s32(addr+0x10)
   E.hp                   = s32(addr+0x14)
   E.hpMax                = s32(addr+0x18)
-  E.hitFrameCounter      = s32(addr+0x1C)
+  E.frameCounter      = s32(addr+0x1C)
   E.isNotProcessable     = s32(addr+0x20)
   E.flags2               = s32(addr+0x24)
   E.platformEntity       = ptr(addr+0x28)
