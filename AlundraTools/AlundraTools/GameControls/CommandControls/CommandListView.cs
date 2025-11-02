@@ -1,6 +1,6 @@
-﻿namespace AlundraTools.GameControls.EventControls;
+﻿namespace AlundraTools.GameControls.CommandControls;
 
-public class EventListView : UserControl
+public class CommandListView : UserControl
 {
     private readonly Panel _stack = new()
     {
@@ -8,14 +8,14 @@ public class EventListView : UserControl
         AutoScroll = true
     };
 
-    private readonly List<ScriptEvent> _items = [];
+    private readonly List<CommandModel> _items = [];
 
-    public EventListView()
+    public CommandListView()
     {
         Controls.Add(_stack);
     }
 
-    public void SetItems(IEnumerable<ScriptEvent> eventsEnum)
+    public void SetItems(IEnumerable<CommandModel> eventsEnum)
     {
         SuspendLayout();
         _stack.SuspendLayout();
@@ -33,21 +33,21 @@ public class EventListView : UserControl
         ResumeLayout();
     }
 
-    public void AddItem(ScriptEvent ev)
+    public void AddItem(CommandModel ev)
     {
-        if (!EventTemplateRegistry.TryCreate(ev, out var content))
+        if (!CommandTemplateRegistry.TryCreate(ev, out var content))
         {
             content = CreateFallback(ev);
         }
         var rowIndex = _items.Count;
         _items.Add(ev);
-        var row = new EventRowControl { Dock = DockStyle.Top };
+        var row = new CommandRowControl { Dock = DockStyle.Top };
         row.Bind(rowIndex, ev.Code, content);
         _stack.Controls.Add(row);
         _stack.Controls.SetChildIndex(row, 0);
     }
 
-    public void AddItems(IEnumerable<ScriptEvent> eventsEnum)
+    public void AddItems(IEnumerable<CommandModel> eventsEnum)
     {
         foreach (var ev in eventsEnum)
         {

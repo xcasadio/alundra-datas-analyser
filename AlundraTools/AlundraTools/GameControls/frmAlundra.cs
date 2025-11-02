@@ -1481,7 +1481,7 @@ namespace AlundraTools.GameControls
         {
             if (_selectedEntity != null)
             {
-                var frm = new FrmEventProgram();
+                var frm = new CommandsViewerForm();
                 var br = _datasBin.OpenBin();
                 frm.Init(EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesA_LoadIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesATable, _selectedGameMap?.SpriteInfo));
                 frm.Show();
@@ -1491,7 +1491,7 @@ namespace AlundraTools.GameControls
 
         private void btnSector1bCmds_Click(object sender, EventArgs e)
         {
-            var frm = new FrmEventProgram();
+            var frm = new CommandsViewerForm();
             var br = _datasBin.OpenBin();
             if (_selectedEntity != null)
             {
@@ -1510,7 +1510,7 @@ namespace AlundraTools.GameControls
         {
             if (_selectedEntity != null)
             {
-                var frm = new FrmEventProgram();
+                var frm = new CommandsViewerForm();
                 var br = _datasBin.OpenBin();
                 frm.Init(EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesC_TickIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesCTable, _selectedGameMap?.SpriteInfo));
                 frm.Show();
@@ -1522,7 +1522,7 @@ namespace AlundraTools.GameControls
         {
             if (_selectedEntity != null)
             {
-                var frm = new FrmEventProgram();
+                var frm = new CommandsViewerForm();
                 var br = _datasBin.OpenBin();
                 frm.Init(EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesF_InteractIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesFTable, _selectedGameMap?.SpriteInfo));
                 frm.Show();

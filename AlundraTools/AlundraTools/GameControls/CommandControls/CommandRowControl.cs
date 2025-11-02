@@ -1,12 +1,12 @@
-﻿namespace AlundraTools.GameControls.EventControls;
+﻿namespace AlundraTools.GameControls.CommandControls;
 
-public class EventRowControl : UserControl
+public class CommandRowControl : UserControl
 {
     private readonly Label _lblIndex = new() { AutoSize = false, TextAlign = ContentAlignment.MiddleRight, Width = 48, Dock = DockStyle.Left };
     private readonly Label _lblCode = new() { AutoSize = false, TextAlign = ContentAlignment.MiddleLeft, Width = 80, Dock = DockStyle.Left };
     private readonly Panel _host = new() { Dock = DockStyle.Fill };
 
-    public EventRowControl()
+    public CommandRowControl()
     {
         Height = 40;
         Padding = new Padding(0, 1, 0, 1);

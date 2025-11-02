@@ -1,14 +1,14 @@
-﻿namespace AlundraTools.GameControls.EventControls;
+﻿namespace AlundraTools.GameControls.CommandControls;
 
-public record ScriptEvent(byte Code, string? ToolTipText);
+public record CommandModel(byte Code, string? ToolTipText);
 
-public record LabelScriptEvent(byte Code, string Text, string? ToolTipText) : ScriptEvent(Code, ToolTipText);
+public record CommandModelLabel(byte Code, string Text, string? ToolTipText) : CommandModel(Code, ToolTipText);
 
-public class LabelScriptEventView : UserControl
+public class CommandLabelView : UserControl
 {
     private readonly ToolTip _toolTip = new();
 
-    public LabelScriptEventView(LabelScriptEvent scriptEvent)
+    public CommandLabelView(CommandModelLabel scriptEvent)
     {
         Height = 36;
         var label = new Label
@@ -17,7 +17,8 @@ public class LabelScriptEventView : UserControl
             Text = scriptEvent.Text,
             AutoEllipsis = true,
             TextAlign = ContentAlignment.MiddleLeft,
-            Padding = new Padding(6, 0, 0, 0)
+            Padding = new Padding(6, 0, 0, 0),
+            UseMnemonic = false
         };
 
         Controls.Add(label);

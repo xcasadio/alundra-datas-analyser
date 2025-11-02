@@ -4,29 +4,28 @@ public class SiCommand
 {
     public bool HasParameters => Parameters is { Length: > 0 } && Command != 0 && Command != 0xff;
 
-    public SiCommand(byte command, int size, byte[] parameters, string name, int memoryAddress)
+    public SiCommand(byte command, byte[] parameters, string name, int memoryAddress)
     {
         MemoryAddress = memoryAddress;
         Command = command;
         Parameters = parameters;
-        Size = size;
+        Size = SpriteInfoEventCodes.CommandSizeByCodes.GetValueOrDefault(command, 1);
         Name = name;
     }
 
+    public readonly string Name;
     public readonly int MemoryAddress;
     public readonly byte Command;
     public readonly byte[] Parameters;
     public readonly int Size;
     public int RefOffset;
 
-    public readonly string Name;
-
     public string Print(int depth, List<SiCommand> commands)
     {
         var index = commands.IndexOf(this);
         var output = index.ToString("d3") + " ";
         output += new string(' ', depth * 4);
-        output += PrintName();
+        output += PrintName(commands);
         output += $"({PrintCode()})";
         if (HasParameters)
         {
@@ -38,7 +37,7 @@ public class SiCommand
     public string PrintEvent(int depth, List<SiCommand> commands)
     {
         var output = new string(' ', depth * 4);
-        output += PrintName();
+        output += PrintName(commands);
         if (HasParameters)
         {
             output += $" ({PrintParameters(commands)})";
@@ -46,7 +45,7 @@ public class SiCommand
         return output;
     }
 
-    public string PrintName()
+    public virtual string PrintName(List<SiCommand> commands)
     {
         return !string.IsNullOrEmpty(Name) ? Name : "<no name>";
     }
@@ -63,6 +62,11 @@ public class SiCommand
 
     public virtual string Description(List<SiCommand> commands)
     {
-        return string.Join(", ", Parameters.Select(x => x.ToString("x2")));
+        if (SpriteInfoEventCodes.CommandPropertiesByCode.TryGetValue(Command, out var commandProperties))
+        {
+            return commandProperties.Description;
+        }
+
+        return string.Empty;
     }
 }

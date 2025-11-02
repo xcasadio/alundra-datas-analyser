@@ -1,4 +1,6 @@
-﻿namespace AlundraEngine.DatasBin;
+﻿using AlundraEngine.Gameplay.Scripts;
+using static AlundraEngine.Gameplay.Scripts.EntityEventHandlers;
+namespace AlundraEngine.DatasBin;
 
 public class SpriteInfoEventCodes
 {
@@ -92,7 +94,8 @@ public class SpriteInfoEventCodes
         //set binOffset for eventcodes
         _binOffset = binOffset + header.EventCodesAPointer;
         _memoryAddress = header.MemoryAddress + header.EventCodesAPointer;
-        _dataSize = (header.EntitiesPointer == 0 ? header.EventCodesFPointer: header.EntitiesPointer) - header.EventCodesAPointer;
+        _dataSize = (header.EntitiesPointer == 0 ? header.EventCodesFPointer : header.EntitiesPointer) -
+                    header.EventCodesAPointer;
         //Debug.Assert(_dataSize > 0);
 
         //Preload all commands
@@ -175,7 +178,7 @@ public class SpriteInfoEventCodes
 
     public static SiCode GetCode(byte b)
     {
-        if (CommandSizeByCode.TryGetValue(b, out var size))
+        if (CommandSizeByCodes.TryGetValue(b, out var size))
         {
             return new SiCode
             {
@@ -194,13 +197,13 @@ public class SpriteInfoEventCodes
         //throw new ArgumentException($"DepthSortValue command code: {b:Width}");
     }
 
-    public List<SiCommand> GetCommands(BinaryReader br, int eventCodesOffset, bool stopAtff = false, int commandsSize = 0)
+    public List<SiCommand> GetCommands(BinaryReader br, int eventCodesOffset, bool stopAtff = false,
+        int commandsSize = 0)
     {
         var commands = new List<SiCommand>();
         //var bytes = GetByteCode(br, sector1offset);
         br.BaseStream.Position = _binOffset + eventCodesOffset;
         var bytes = new byte[_dataSize - eventCodesOffset];
-        //Debug.WriteLine($"codes bytes read {}");
         br.Read(bytes, 0, bytes.Length);
         var i = 0;
 
@@ -221,39 +224,7 @@ public class SpriteInfoEventCodes
 
             SiCommand cmd;
             var address = _memoryAddress + eventCodesOffset + i - size;
-
-            switch (value)
-            {
-                case 0x1E:
-                case 0x1F:
-                    cmd = new WalkCommand(value, parameters, name, address);
-                    break;
-                case 0x64:
-                    cmd = new SetPositionCommand(value, parameters, name, address);
-                    break;
-                case 0x05:
-                case 0x06:
-                    cmd = new SetFlagCommand(value, parameters, name, address);
-                    break;
-                //case "if":
-                //case "if not":
-                //    cmd = new BranchCommand(b, 5, parameters, name, addr);
-                //    break;
-                case 0x03:
-                case 0x04:
-                    cmd = new BranchCommand(value, 3, parameters, name, address);
-                    break;
-                case 0x02:
-                    cmd = new JumpCommand(value, parameters, name, address);
-                    break;
-                case 0x58:
-                    cmd = new DirectionBranchCommand(value, parameters, name, address);
-                    break;
-                default:
-                    cmd = new SiCommand(value, size, parameters, name, address);
-                    break;
-            }
-
+            cmd = new SiCommand(value, parameters, name, address);
             commands.Add(cmd);
             if (stopAtff && value == 0xff)
             {
@@ -270,7 +241,7 @@ public class SpriteInfoEventCodes
         var bytes = new byte[_dataSize - sectorOffset];
         var i = 0;
         br.BaseStream.Position = _binOffset + sectorOffset;
-        
+
         br.Read(bytes, 0, bytes.Length);
 
         //while (i < bytes.Length)
@@ -308,7 +279,7 @@ public class SpriteInfoEventCodes
     public readonly short[] EventCodesFTable;
     //public readonly Dictionary<int, List<SiCommand>> CommandsByTypes = new();
 
-    public static readonly Dictionary<byte, int> CommandSizeByCode = new()
+    public static readonly Dictionary<byte, int> CommandSizeByCodes = new()
     {
         { 0x00, 1 },
         { 0x02, 3 },
@@ -445,13 +416,13 @@ public class SpriteInfoEventCodes
         { 0x2D, "activate entity" }, //look into this event to study entity type
         { 0x2E, "hide" },
         { 0x2F, "check moving in dir" },
-        { 0x30, "if flag off" },
-        { 0x31, "if flag on" },
+        { 0x30, "if flag on" },
+        { 0x31, "if flag off" },
         { 0x32, "toggle flag" }, //toggle bit on a flag
         { 0x33, "check flags on" },
         { 0x34, "check flags off" },
         { 0x35, "until flag off" }, //block until a flag is off
-        { 0x36, "until flag on" },  //block until a flag is on
+        { 0x36, "until flag on" }, //block until a flag is on
         { 0x37, "wait" },
         { 0x38, "register warp" },
         { 0x39, "wait for dialog" }, //blocks until the dialog is finished
@@ -493,7 +464,7 @@ public class SpriteInfoEventCodes
         { 0x93, "set effect pos" },
         { 0x94, "set effect forces" },
         { 0xA0, "adjusted effect pos" },
-        { 0xA1, "set e effect pos with entity" },
+        { 0xA1, "set effect pos with entity" },
         { 0xA2, "create effect with pos" },
         { 0xA3, "create effect with entity pos" },
         { 0xA7, "play music" },
@@ -505,101 +476,112 @@ public class SpriteInfoEventCodes
 
     public record CommandProperties(byte Code, int Size, string Name, string Description);
 
+    private static string CreateDescription(byte code, string desc)
+    {
+        var handlers =  GetHandlerNameByCodes();
+        if (handlers.TryGetValue(code, out var handlerName))
+        {
+            return $"{handlerName}(...) {desc}";
+        }
+
+        return desc;
+    }
+
     public static readonly Dictionary<byte, CommandProperties> CommandPropertiesByCode = new()
     {
-        {0x00, new(0x00, CommandSizeByCode[0x00], "break", "") },
-        {0x01, new(0x01,1, "do nothing", "") },
-        {0x02, new(0x02, CommandSizeByCode[0x02], "goto", "") },
-        {0x03, new(0x03, CommandSizeByCode[0x03], "if true goto", "") },
-        {0x04, new(0x04, CommandSizeByCode[0x04], "if false goto", "") },
-        {0x05, new(0x05, CommandSizeByCode[0x05], "flag on", "") },
-        {0x06, new(0x06, CommandSizeByCode[0x06], "flag off", "") },
-        {0x07, new(0x07, CommandSizeByCode[0x07], "check entity in area", "") },
-        {0x08, new(0x08, CommandSizeByCode[0x08], "turn", "") },
-        {0x09, new(0x09, CommandSizeByCode[0x09], "set dir", "") },
-        {0x0A, new(0x0A, CommandSizeByCode[0x0A], "reverse", "switch direction, used for pacing NPCs") },
-        {0x0B, new(0x0B, CommandSizeByCode[0x0B], "anim wait distance", "") },
-        {0x0C, new(0x0C, CommandSizeByCode[0x0C], "set random dir", "") },
-        {0x0D, new(0x0D, CommandSizeByCode[0x0D], "dialog", "show dialog") },
-        {0x10, new(0x10, CommandSizeByCode[0x10], "lose control", "") },
-        {0x11, new(0x11, CommandSizeByCode[0x11], "gain control", "") },
-        {0x12, new(0x12, CommandSizeByCode[0x12], "play sound1", "only1 byte sound index") },
-        {0x15, new(0x15, CommandSizeByCode[0x15], "reset z pos", "") },
-        {0x16, new(0x16, CommandSizeByCode[0x16], "high gravity", "fall as normal (bit 0x100)") },
-        {0x17, new(0x17, CommandSizeByCode[0x17], "low gravity", "used for climbing ladders and flying") },
-        {0x19, new(0x19, CommandSizeByCode[0x19], "deactivate entity", "") },
-        {0x1A, new(0x1A, CommandSizeByCode[0x1A], "set anim", "") },
-        {0x1B, new(0x1B, CommandSizeByCode[0x1B], "fly", "stop flying 0x0000; down 0xff7f; forward & up 0x0380") },
-        {0x1C, new(0x1C, CommandSizeByCode[0x1C], "wait anim ?", "") },
-        {0x1D, new(0x1D, CommandSizeByCode[0x1D], "wait anim2", "") },
-        {0x1E, new(0x1E, CommandSizeByCode[0x1E], "walk", "collision blocks/pauses the walk") },
-        {0x1F, new(0x1F, CommandSizeByCode[0x1F], "walk2", "collision ends the walk") },
-        {0x24, new(0x24, CommandSizeByCode[0x24], "wait force adjusted", "waits until force adjust is > 0") },
-        {0x25, new(0x25, CommandSizeByCode[0x25], "wait entity collision z or144", "") },
-        {0x26, new(0x26, CommandSizeByCode[0x26], "wait force adjusted or entity collision z", "") },
-        {0x27, new(0x27, CommandSizeByCode[0x27], "face player", "") },
-        {0x28, new(0x28, CommandSizeByCode[0x28], "gravity flag2 on", "bit 0x8") },
-        {0x29, new(0x29, CommandSizeByCode[0x29], "gravity flag2 off", "bit 0x8") },
-        {0x2A, new(0x2A, CommandSizeByCode[0x2A], "gravity flag3 on", "bit 0x1") },
-        {0x2B, new(0x2B, CommandSizeByCode[0x2B], "gravity flag3 off", "bit 0x1") },
-        {0x2D, new(0x2D, CommandSizeByCode[0x2D], "activate entity", "look into this event to study entity type") },
-        {0x2E, new(0x2E, CommandSizeByCode[0x2E], "hide", "") },
-        {0x2F, new(0x2F, CommandSizeByCode[0x2F], "check moving in dir", "") },
-        {0x30, new(0x30, CommandSizeByCode[0x30], "if flag off", "") },
-        {0x31, new(0x31, CommandSizeByCode[0x31], "if flag on", "") },
-        {0x32, new(0x32, CommandSizeByCode[0x32], "toggle flag", "toggle bit on a flag") },
-        {0x33, new(0x33, CommandSizeByCode[0x33], "check flags on", "") },
-        {0x34, new(0x34, CommandSizeByCode[0x34], "check flags off", "") },
-        {0x35, new(0x35, CommandSizeByCode[0x35], "until flag off", "block until a flag is off") },
-        {0x36, new(0x36, CommandSizeByCode[0x36], "until flag on", "block until a flag is on") },
-        {0x37, new(0x37, CommandSizeByCode[0x37], "wait", "") },
-        {0x38, new(0x38, CommandSizeByCode[0x38], "register warp", "") },
-        {0x39, new(0x39, CommandSizeByCode[0x39], "wait for dialog", "blocks until the dialog is finished") },
-        {0x3B, new(0x3B, CommandSizeByCode[0x3B], "check player in area", "") },
-        {0x40, new(0x40, CommandSizeByCode[0x40], "set program index", "") },
-        {0x41, new(0x41, CommandSizeByCode[0x41], "set sprite program index", "") },
-        {0x44, new(0x44, CommandSizeByCode[0x44], "wait dialog choice", "") },
-        {0x45, new(0x45, CommandSizeByCode[0x45], "gravity flag4 off", "bit0x2000") },
-        {0x46, new(0x46, CommandSizeByCode[0x46], "gravity flag4 on", "") },
-        {0x49, new(0x49, CommandSizeByCode[0x49], "restart", "seeks back to the beginning of event program") },
-        {0x4A, new(0x4A, CommandSizeByCode[0x4A], "if true restart", "") },
-        {0x4B, new(0x4B, CommandSizeByCode[0x4B], "if false restart", "") },
-        {0x4C, new(0x4C, CommandSizeByCode[0x4C], "set dialog something", "*0x107200 = val") },
-        {0x4D, new(0x4D, CommandSizeByCode[0x4D], "check dialog something", "*0x107204 = *0x107200 &0x4") },
-        {0x50, new(0x50, CommandSizeByCode[0x50], "set dialog choice", "") },
-        {0x51, new(0x51, CommandSizeByCode[0x51], "get dialog choice", "") },
-        {0x54, new(0x54, CommandSizeByCode[0x54], "set walkable", "") },
-        {0x55, new(0x55, CommandSizeByCode[0x55], "set unwalkable", "") },
-        {0x58, new(0x58, CommandSizeByCode[0x58], "directional branch", "") },
-        {0x59, new(0x59, CommandSizeByCode[0x59], "set entity anim", "") },
-        {0x5A, new(0x5A, CommandSizeByCode[0x5A], "turn entity", "") },
-        {0x5B, new(0x5B, CommandSizeByCode[0x5B], "turn entity with anim", "also has anim flag for on ground or climbing, etc") },
-        {0x5C, new(0x5C, CommandSizeByCode[0x5C], "dialog with entity", "") },
-        {0x62, new(0x62, CommandSizeByCode[0x62], "set entities flags", "") },
-        {0x63, new(0x63, CommandSizeByCode[0x63], "set entities gravity", "") },
-        {0x64, new(0x64, CommandSizeByCode[0x64], "set entities position", "") },
-        {0x65, new(0x65, CommandSizeByCode[0x65], "move entity position", "") },
-        {0x67, new(0x67, CommandSizeByCode[0x67], "follow entity", "") },
-        {0x69, new(0x69, CommandSizeByCode[0x69], "camera look at", "") },
-        {0x70, new(0x70, CommandSizeByCode[0x70], "check IsAboveGround", "") },
-        {0x73, new(0x73, CommandSizeByCode[0x73], "", "") },
-        {0x74, new(0x74, CommandSizeByCode[0x74], "", "") },
-        {0x78, new(0x78, CommandSizeByCode[0x78], "", "") },
-        {0x85, new(0x85, CommandSizeByCode[0x85], "set map tiles", "") },
-        {0x8B, new(0x8B, CommandSizeByCode[0x8B], "spawn entity", "") },
-        {0x90, new(0x90, CommandSizeByCode[0x90], "create effect", "") },
-        {0x91, new(0x91, CommandSizeByCode[0x91], "disable effect", "") },
-        {0x92, new(0x92, CommandSizeByCode[0x92], "set effect anim", "") },
-        {0x93, new(0x93, CommandSizeByCode[0x93], "set effect pos", "") },
-        {0x94, new(0x94, CommandSizeByCode[0x94], "set effect forces", "") },
-        {0xA0, new(0xA0, CommandSizeByCode[0xA0], "adjusted effect pos", "") },
-        {0xA1, new(0xA1, CommandSizeByCode[0xA1], "set e effect pos with entity", "") },
-        {0xA2, new(0xA2, CommandSizeByCode[0xA2], "create effect with pos", "") },
-        {0xA3, new(0xA3, CommandSizeByCode[0xA3], "create effect with entity pos", "") },
-        {0xA7, new(0xA7, CommandSizeByCode[0xA7], "play music", "") },
-        {0xAC, new(0xAC, CommandSizeByCode[0xAC], "set gravity flags on entity", "") },
-        {0xBD, new(0xBD, CommandSizeByCode[0xBD], "play sound2", "2 byte sound index") },
-        {0xC4, new(0xC4, CommandSizeByCode[0xC4], "dialog with entity and name", "") },
-        {0xFF, new(0xFF, CommandSizeByCode[0xFF], "end", "") },
+        { 0x00, new(0x00, CommandSizeByCodes[0x00], "Break", CreateDescription(0x00, "")) },
+        { 0x01, new(0x01, 1, "Do nothing", CreateDescription(0x01, "")) },
+        { 0x02, new(0x02, CommandSizeByCodes[0x02], "Goto", CreateDescription(0x02, "")) },
+        { 0x03, new(0x03, CommandSizeByCodes[0x03], "If true goto", CreateDescription(0x03, "")) },
+        { 0x04, new(0x04, CommandSizeByCodes[0x04], "If false goto", CreateDescription(0x04, "")) },
+        { 0x05, new(0x05, CommandSizeByCodes[0x05], "Flag on", CreateDescription(0x05, "")) },
+        { 0x06, new(0x06, CommandSizeByCodes[0x06], "Flag off", CreateDescription(0x06, "")) },
+        { 0x07, new(0x07, CommandSizeByCodes[0x07], "Check entity in area", CreateDescription(0x07, "")) },
+        { 0x08, new(0x08, CommandSizeByCodes[0x08], "Turn", CreateDescription(0x08, "")) },
+        { 0x09, new(0x09, CommandSizeByCodes[0x09], "Set dir", CreateDescription(0x09, "")) },
+        { 0x0A, new(0x0A, CommandSizeByCodes[0x0A], "Reverse", CreateDescription(0x0A, "switch direction, used for pacing NPCs")) },
+        { 0x0B, new(0x0B, CommandSizeByCodes[0x0B], "Anim wait distance", CreateDescription(0x0B, "")) },
+        { 0x0C, new(0x0C, CommandSizeByCodes[0x0C], "Set random dir", CreateDescription(0x0C, "")) },
+        { 0x0D, new(0x0D, CommandSizeByCodes[0x0D], "Dialog", CreateDescription(0x0D, "show dialog")) },
+        { 0x10, new(0x10, CommandSizeByCodes[0x10], "Lose control", CreateDescription(0x10, "")) },
+        { 0x11, new(0x11, CommandSizeByCodes[0x11], "Gain control", CreateDescription(0x11, "")) },
+        { 0x12, new(0x12, CommandSizeByCodes[0x12], "Play sound1", CreateDescription(0x12, "only1 byte sound index")) },
+        { 0x15, new(0x15, CommandSizeByCodes[0x15], "Reset z pos", CreateDescription(0x15, "")) },
+        { 0x16, new(0x16, CommandSizeByCodes[0x16], "High gravity", CreateDescription(0x16, "fall as normal (bit0x100)")) },
+        { 0x17, new(0x17, CommandSizeByCodes[0x17], "Low gravity", CreateDescription(0x17, "used for climbing ladders and flying")) },
+        { 0x19, new(0x19, CommandSizeByCodes[0x19], "Deactivate entity", CreateDescription(0x19, "")) },
+        { 0x1A, new(0x1A, CommandSizeByCodes[0x1A], "Set anim", CreateDescription(0x1A, "")) },
+        { 0x1B, new(0x1B, CommandSizeByCodes[0x1B], "Fly", CreateDescription(0x1B, "stop flying0x0000; down0xff7f; forward & up0x0380")) },
+        { 0x1C, new(0x1C, CommandSizeByCodes[0x1C], "Wait anim ?", CreateDescription(0x1C, "")) },
+        { 0x1D, new(0x1D, CommandSizeByCodes[0x1D], "Wait anim2", CreateDescription(0x1D, "")) },
+        { 0x1E, new(0x1E, CommandSizeByCodes[0x1E], "Walk", CreateDescription(0x1E, "collision blocks/pauses the walk")) },
+        { 0x1F, new(0x1F, CommandSizeByCodes[0x1F], "Walk2", CreateDescription(0x1F, "collision ends the walk")) },
+        { 0x24, new(0x24, CommandSizeByCodes[0x24], "Wait force adjusted", CreateDescription(0x24, "waits until force adjust is >0")) },
+        { 0x25, new(0x25, CommandSizeByCodes[0x25], "Wait entity collision z or144", CreateDescription(0x25, "")) },
+        { 0x26, new(0x26, CommandSizeByCodes[0x26], "Wait force adjusted or entity collision z", CreateDescription(0x26, "")) },
+        { 0x27, new(0x27, CommandSizeByCodes[0x27], "Face player", CreateDescription(0x27, "")) },
+        { 0x28, new(0x28, CommandSizeByCodes[0x28], "Gravity flag2 on", CreateDescription(0x28, "bit0x8")) },
+        { 0x29, new(0x29, CommandSizeByCodes[0x29], "Gravity flag2 off", CreateDescription(0x29, "bit0x8")) },
+        { 0x2A, new(0x2A, CommandSizeByCodes[0x2A], "Gravity flag3 on", CreateDescription(0x2A, "bit0x1")) },
+        { 0x2B, new(0x2B, CommandSizeByCodes[0x2B], "Gravity flag3 off", CreateDescription(0x2B, "bit0x1")) },
+        { 0x2D, new(0x2D, CommandSizeByCodes[0x2D], "Activate entity", CreateDescription(0x2D, "look into this event to study entity type")) },
+        { 0x2E, new(0x2E, CommandSizeByCodes[0x2E], "Hide", CreateDescription(0x2E, "")) },
+        { 0x2F, new(0x2F, CommandSizeByCodes[0x2F], "Check moving in dir", CreateDescription(0x2F, "")) },
+        { 0x30, new(0x30, CommandSizeByCodes[0x30], "If flag off", CreateDescription(0x30, "")) },
+        { 0x31, new(0x31, CommandSizeByCodes[0x31], "If flag on", CreateDescription(0x31, "")) },
+        { 0x32, new(0x32, CommandSizeByCodes[0x32], "Toggle flag", CreateDescription(0x32, "toggle bit on a flag")) },
+        { 0x33, new(0x33, CommandSizeByCodes[0x33], "Check flags on", CreateDescription(0x33, "")) },
+        { 0x34, new(0x34, CommandSizeByCodes[0x34], "Check flags off", CreateDescription(0x34, "")) },
+        { 0x35, new(0x35, CommandSizeByCodes[0x35], "Until flag off", CreateDescription(0x35, "block until a flag is off")) },
+        { 0x36, new(0x36, CommandSizeByCodes[0x36], "Until flag on", CreateDescription(0x36, "block until a flag is on")) },
+        { 0x37, new(0x37, CommandSizeByCodes[0x37], "Wait", CreateDescription(0x37, "")) },
+        { 0x38, new(0x38, CommandSizeByCodes[0x38], "Register warp", CreateDescription(0x38, "")) },
+        { 0x39, new(0x39, CommandSizeByCodes[0x39], "Wait for dialog", CreateDescription(0x39, "blocks until the dialog is finished")) },
+        { 0x3B, new(0x3B, CommandSizeByCodes[0x3B], "Check player in area", CreateDescription(0x3B, "")) },
+        { 0x40, new(0x40, CommandSizeByCodes[0x40], "Set program index", CreateDescription(0x40, "")) },
+        { 0x41, new(0x41, CommandSizeByCodes[0x41], "Set sprite program index", CreateDescription(0x41, "")) },
+        { 0x44, new(0x44, CommandSizeByCodes[0x44], "Wait dialog choice", CreateDescription(0x44, "")) },
+        { 0x45, new(0x45, CommandSizeByCodes[0x45], "Gravity flag4 off", CreateDescription(0x45, "bit0x2000")) },
+        { 0x46, new(0x46, CommandSizeByCodes[0x46], "Gravity flag4 on", CreateDescription(0x46, "")) },
+        { 0x49, new(0x49, CommandSizeByCodes[0x49], "Restart", CreateDescription(0x49, "seeks back to the beginning of event program")) },
+        { 0x4A, new(0x4A, CommandSizeByCodes[0x4A], "If true restart", CreateDescription(0x4A, "")) },
+        { 0x4B, new(0x4B, CommandSizeByCodes[0x4B], "If false restart", CreateDescription(0x4B, "")) },
+        { 0x4C, new(0x4C, CommandSizeByCodes[0x4C], "Set dialog something", CreateDescription(0x4C, "*0x107200 = val")) },
+        { 0x4D, new(0x4D, CommandSizeByCodes[0x4D], "Check dialog something", CreateDescription(0x4D, "*0x107204 = *0x107200 &0x4")) },
+        { 0x50, new(0x50, CommandSizeByCodes[0x50], "Set dialog choice", CreateDescription(0x50, "")) },
+        { 0x51, new(0x51, CommandSizeByCodes[0x51], "Get dialog choice", CreateDescription(0x51, "")) },
+        { 0x54, new(0x54, CommandSizeByCodes[0x54], "Set walkable", CreateDescription(0x54, "")) },
+        { 0x55, new(0x55, CommandSizeByCodes[0x55], "Set unwalkable", CreateDescription(0x55, "")) },
+        { 0x58, new(0x58, CommandSizeByCodes[0x58], "Directional branch", CreateDescription(0x58, "")) },
+        { 0x59, new(0x59, CommandSizeByCodes[0x59], "Set entity anim", CreateDescription(0x59, "")) },
+        { 0x5A, new(0x5A, CommandSizeByCodes[0x5A], "Turn entity", CreateDescription(0x5A, "")) },
+        { 0x5B, new(0x5B, CommandSizeByCodes[0x5B], "Turn entity with anim", CreateDescription(0x5B, "also has anim flag for on ground or climbing, etc")) },
+        { 0x5C, new(0x5C, CommandSizeByCodes[0x5C], "Dialog with entity", CreateDescription(0x5C, "")) },
+        { 0x62, new(0x62, CommandSizeByCodes[0x62], "Set entities flags", CreateDescription(0x62, "")) },
+        { 0x63, new(0x63, CommandSizeByCodes[0x63], "Set entities gravity", CreateDescription(0x63, "")) },
+        { 0x64, new(0x64, CommandSizeByCodes[0x64], "Set entities position", CreateDescription(0x64, "")) },
+        { 0x65, new(0x65, CommandSizeByCodes[0x65], "Move entity position", CreateDescription(0x65, "")) },
+        { 0x67, new(0x67, CommandSizeByCodes[0x67], "Follow entity", CreateDescription(0x67, "")) },
+        { 0x69, new(0x69, CommandSizeByCodes[0x69], "Camera look at", CreateDescription(0x69, "")) },
+        { 0x70, new(0x70, CommandSizeByCodes[0x70], "Check IsAboveGround", CreateDescription(0x70, "")) },
+        { 0x73, new(0x73, CommandSizeByCodes[0x73], "", CreateDescription(0x73, "")) },
+        { 0x74, new(0x74, CommandSizeByCodes[0x74], "", CreateDescription(0x74, "")) },
+        { 0x78, new(0x78, CommandSizeByCodes[0x78], "", CreateDescription(0x78, "")) },
+        { 0x85, new(0x85, CommandSizeByCodes[0x85], "Set map tiles", CreateDescription(0x85, "")) },
+        { 0x8B, new(0x8B, CommandSizeByCodes[0x8B], "Spawn entity", CreateDescription(0x8B, "")) },
+        { 0x90, new(0x90, CommandSizeByCodes[0x90], "Create effect", CreateDescription(0x90, "")) },
+        { 0x91, new(0x91, CommandSizeByCodes[0x91], "Disable effect", CreateDescription(0x91, "")) },
+        { 0x92, new(0x92, CommandSizeByCodes[0x92], "Set effect anim", CreateDescription(0x92, "")) },
+        { 0x93, new(0x93, CommandSizeByCodes[0x93], "Set effect pos", CreateDescription(0x93, "")) },
+        { 0x94, new(0x94, CommandSizeByCodes[0x94], "Set effect forces", CreateDescription(0x94, "")) },
+        { 0xA0, new(0xA0, CommandSizeByCodes[0xA0], "Adjusted effect pos", CreateDescription(0xA0, "")) },
+        { 0xA1, new(0xA1, CommandSizeByCodes[0xA1], "Set effect pos with entity", CreateDescription(0xA1, "")) },
+        { 0xA2, new(0xA2, CommandSizeByCodes[0xA2], "Create effect with pos", CreateDescription(0xA2, "")) },
+        { 0xA3, new(0xA3, CommandSizeByCodes[0xA3], "Create effect with entity pos", CreateDescription(0xA3, "")) },
+        { 0xA7, new(0xA7, CommandSizeByCodes[0xA7], "Play music", CreateDescription(0xA7, "")) },
+        { 0xAC, new(0xAC, CommandSizeByCodes[0xAC], "Set gravity flags on entity", CreateDescription(0xAC, "")) },
+        { 0xBD, new(0xBD, CommandSizeByCodes[0xBD], "Play sound2", CreateDescription(0xBD, "2 byte sound index")) },
+        { 0xC4, new(0xC4, CommandSizeByCodes[0xC4], "Dialog with entity and name", CreateDescription(0xC4, "")) },
+        { 0xFF, new(0xFF, CommandSizeByCodes[0xFF], "End", CreateDescription(0xFF, "")) },
     };
 }

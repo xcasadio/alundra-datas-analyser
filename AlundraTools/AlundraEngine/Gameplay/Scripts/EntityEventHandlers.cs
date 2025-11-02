@@ -36,7 +36,7 @@ public class EntityEventHandlers
         _handlers[0x0A] = Script_10_00A;
         _handlers[0x0B] = Script_11_00B;
         _handlers[0x0C] = Script_12_00C;
-        _handlers[0x0D] = Script_13_00D;
+        _handlers[0x0D] = Script_OpenDialog_13_00D;
         _handlers[0x0E] = Script_DoNothing;
         _handlers[0x0F] = Script_DoNothing;
         _handlers[0x10] = Script_16_010;
@@ -1381,9 +1381,9 @@ public class EntityEventHandlers
     {
         uint[] flags;
 
-        var key = (uint)(variables[1] + variables[2] * 0x100);  // variables[2] << 8 | variables[1];
+        var flag = (uint)(variables[1] + variables[2] * 0x100);  // variables[2] << 8 | variables[1];
 
-        if ((key & 0x8000) == 0)
+        if ((flag & 0x8000) == 0)
         {
             flags = _gameEngine.StaticVariables.g_mapFlags;
         }
@@ -1392,7 +1392,7 @@ public class EntityEventHandlers
             flags = _gameEngine.StaticVariables.g_globalFlags;
         }
 
-        var index = (key >> 3) & 0xffc;
+        var index = (flag >> 3) & 0xffc;
         var mask = (uint)(1 << (variables[1] & 0x1f));
         flags[index] |= mask;
 
@@ -1404,9 +1404,9 @@ public class EntityEventHandlers
     {
         uint[] flags;
 
-        var uVar2 = (uint)(variables[1] + variables[2] * 0x100);
+        var flag = (uint)(variables[1] + variables[2] * 0x100);
 
-        if ((uVar2 & 0x8000) == 0)
+        if ((flag & 0x8000) == 0)
         {
             flags = _gameEngine.StaticVariables.g_mapFlags;
         }
@@ -1415,8 +1415,8 @@ public class EntityEventHandlers
             flags = _gameEngine.StaticVariables.g_globalFlags;
         }
 
-        var puVar3 = flags[uVar2 >> 3 & 0xffc];
-        flags[uVar2 >> 3 & 0xffc] = (uint)(puVar3 & ~(1 << (variables[1] & 0x1f)));
+        var index = flag >> 3 & 0xffc;
+        flags[index] = (uint)(flags[index] & ~(1 << (variables[1] & 0x1f)));
 
         return 3;
     }
@@ -1533,7 +1533,7 @@ public class EntityEventHandlers
 
     // 8003D578
     //open dialog
-    private int Script_13_00D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    private int Script_OpenDialog_13_00D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         if ((logicEntity.Flags & 0x800000U) != 0) // has portrait
         {
@@ -5251,4 +5251,216 @@ public class EntityEventHandlers
 
         return 6;
     }
+
+
+    public static Dictionary<int, string> GetHandlerNameByCodes()
+    {
+        Dictionary<int, string> handlerNameByCodes = new();
+
+        for (var i = 0; i <= 0xff; i++)
+        {
+            handlerNameByCodes.Add(i, nameof(_Unknown_Handler));
+        }
+
+        handlerNameByCodes[0x00] = nameof(Script_DoNothing);
+        handlerNameByCodes[0x01] = nameof(Script_DoNothing);
+        handlerNameByCodes[0x02] = nameof(Script_2_002);
+        handlerNameByCodes[0x03] = nameof(Script_3_003);
+        handlerNameByCodes[0x04] = nameof(Script_4_004);
+        handlerNameByCodes[0x05] = nameof(Script_5_005);
+        handlerNameByCodes[0x06] = nameof(Script_6_006);
+        handlerNameByCodes[0x07] = nameof(Script_7_007);
+        handlerNameByCodes[0x08] = nameof(Script_8_008);
+        handlerNameByCodes[0x09] = nameof(Script_9_009);
+        handlerNameByCodes[0x0A] = nameof(Script_10_00A);
+        handlerNameByCodes[0x0B] = nameof(Script_11_00B);
+        handlerNameByCodes[0x0C] = nameof(Script_12_00C);
+        handlerNameByCodes[0x0D] = nameof(Script_OpenDialog_13_00D);
+        handlerNameByCodes[0x0E] = nameof(Script_DoNothing);
+        handlerNameByCodes[0x0F] = nameof(Script_DoNothing);
+        handlerNameByCodes[0x10] = nameof(Script_16_010);
+        handlerNameByCodes[0x11] = nameof(Script_17_011);
+        handlerNameByCodes[0x12] = nameof(Script_18_012);
+        handlerNameByCodes[0x13] = nameof(Script_DoNothing);
+        handlerNameByCodes[0x14] = nameof(Script_DoNothing2);
+        handlerNameByCodes[0x15] = nameof(Script_21_015);
+        handlerNameByCodes[0x16] = nameof(Script_22_016);
+        handlerNameByCodes[0x17] = nameof(Script_23_017);
+        handlerNameByCodes[0x18] = nameof(Script_DoNothing);
+        handlerNameByCodes[0x19] = nameof(Script_25_019);
+        handlerNameByCodes[0x1A] = nameof(Script_26_01A);
+        handlerNameByCodes[0x1B] = nameof(Script_27_01B);
+        handlerNameByCodes[0x1C] = nameof(Script_28_01C);
+        handlerNameByCodes[0x1D] = nameof(Script_29_01D);
+        handlerNameByCodes[0x1E] = nameof(Script_30_01E);
+        handlerNameByCodes[0x1F] = nameof(Script_31_01F);
+        handlerNameByCodes[0x20] = nameof(Script_32_020);
+        handlerNameByCodes[0x21] = nameof(Script_33_021);
+        handlerNameByCodes[0x22] = nameof(Script_34_022);
+        handlerNameByCodes[0x23] = nameof(Script_35_023);
+        handlerNameByCodes[0x24] = nameof(Script_36_024);
+        handlerNameByCodes[0x25] = nameof(Script_37_025);
+        handlerNameByCodes[0x26] = nameof(Script_38_026);
+        handlerNameByCodes[0x27] = nameof(Script_39_027);
+        handlerNameByCodes[0x28] = nameof(Script_40_028);
+        handlerNameByCodes[0x29] = nameof(Script_41_029);
+        handlerNameByCodes[0x2A] = nameof(Script_42_02A);
+        handlerNameByCodes[0x2B] = nameof(Script_43_02B);
+        handlerNameByCodes[0x2C] = nameof(Script_44_02C);
+        handlerNameByCodes[0x2D] = nameof(Script_45_02D);
+        handlerNameByCodes[0x2E] = nameof(Script_46_02E);
+        handlerNameByCodes[0x2F] = nameof(Script_47_02F);
+        handlerNameByCodes[0x30] = nameof(Script_48_030);
+        handlerNameByCodes[0x31] = nameof(Script_49_031);
+        handlerNameByCodes[0x32] = nameof(Script_50_032);
+        handlerNameByCodes[0x33] = nameof(Script_51_033);
+        handlerNameByCodes[0x34] = nameof(Script_52_034);
+        handlerNameByCodes[0x35] = nameof(Script_53_035);
+        handlerNameByCodes[0x36] = nameof(Script_54_036);
+        handlerNameByCodes[0x37] = nameof(Script_55_037);
+        handlerNameByCodes[0x38] = nameof(Script_56_038);
+        handlerNameByCodes[0x39] = nameof(Script_57_039);
+        handlerNameByCodes[0x3A] = nameof(Script_58_03A);
+        handlerNameByCodes[0x3B] = nameof(Script_59_03B);
+        handlerNameByCodes[0x3C] = nameof(Script_60_03C);
+        handlerNameByCodes[0x3D] = nameof(Script_61_03D);
+        handlerNameByCodes[0x3E] = nameof(Script_62_03E);
+        handlerNameByCodes[0x3F] = nameof(Script_63_03F);
+        handlerNameByCodes[0x40] = nameof(Script_64_040);
+        handlerNameByCodes[0x41] = nameof(Script_65_041);
+        handlerNameByCodes[0x42] = nameof(Script_66_042);
+        handlerNameByCodes[0x43] = nameof(Script_67_043);
+        handlerNameByCodes[0x44] = nameof(Script_68_044);
+        handlerNameByCodes[0x45] = nameof(Script_69_045);
+        handlerNameByCodes[0x46] = nameof(Script_70_046);
+        handlerNameByCodes[0x47] = nameof(Script_71_047);
+        handlerNameByCodes[0x48] = nameof(Script_72_048);
+        handlerNameByCodes[0x49] = nameof(Script_73_049);
+        handlerNameByCodes[0x4A] = nameof(Script_74_04A);
+        handlerNameByCodes[0x4B] = nameof(Script_75_04B);
+        handlerNameByCodes[0x4C] = nameof(Script_76_04C);
+        handlerNameByCodes[0x4D] = nameof(Script_77_04D);
+        handlerNameByCodes[0x4E] = nameof(Script_78_04E);
+        handlerNameByCodes[0x4F] = nameof(Script_ActivateDebugTextAutoAdvance);
+        handlerNameByCodes[0x50] = nameof(Script_SetEtcAnimationMode);
+        handlerNameByCodes[0x51] = nameof(Script_TryActivateTextHoldState);
+        handlerNameByCodes[0x52] = nameof(Script_82_052);
+        handlerNameByCodes[0x53] = nameof(Script_83_053);
+        handlerNameByCodes[0x54] = nameof(Script_84_054);
+        handlerNameByCodes[0x55] = nameof(Script_85_055);
+        handlerNameByCodes[0x56] = nameof(Script_86_056);
+        handlerNameByCodes[0x57] = nameof(Script_87_057);
+        handlerNameByCodes[0x58] = nameof(Script_88_058);
+        handlerNameByCodes[0x59] = nameof(Script_89_059);
+        handlerNameByCodes[0x5A] = nameof(Script_90_05A);
+        handlerNameByCodes[0x5B] = nameof(Script_91_05B);
+        handlerNameByCodes[0x5C] = nameof(Script_UpdateCameraToEntityAndCheckCondition);
+        handlerNameByCodes[0x5D] = nameof(Script_93_05D);
+        handlerNameByCodes[0x5E] = nameof(Script_94_05E);
+        handlerNameByCodes[0x5F] = nameof(Script_WaitForAnimOrDistance);
+        handlerNameByCodes[0x60] = nameof(Script_96_060);
+        handlerNameByCodes[0x61] = nameof(Script_97_061);
+        handlerNameByCodes[0x62] = nameof(Script_98_062);
+        handlerNameByCodes[0x63] = nameof(Script_99_063);
+        handlerNameByCodes[0x64] = nameof(Script_100_064);
+        handlerNameByCodes[0x65] = nameof(Script_101_065);
+        handlerNameByCodes[0x66] = nameof(Script_CopyLogicContextAndAssignScript);
+        handlerNameByCodes[0x67] = nameof(Script_103_067);
+        handlerNameByCodes[0x68] = nameof(Script_104_068);
+        handlerNameByCodes[0x69] = nameof(Script_105_069);
+        handlerNameByCodes[0x6A] = nameof(Script_106_06A);
+        handlerNameByCodes[0x6B] = nameof(Script_107_06B);
+        handlerNameByCodes[0x6C] = nameof(Script_108_06C);
+        handlerNameByCodes[0x6D] = nameof(Script_109_06D);
+        handlerNameByCodes[0x6E] = nameof(Script_110_06E);
+        handlerNameByCodes[0x6F] = nameof(Script_111_06F);
+        handlerNameByCodes[0x70] = nameof(Script_112_070);
+        handlerNameByCodes[0x71] = nameof(Script_113_071);
+        handlerNameByCodes[0x72] = nameof(Script_114_072);
+        handlerNameByCodes[0x73] = nameof(Script_115_073);
+        handlerNameByCodes[0x74] = nameof(Script_116_074);
+        handlerNameByCodes[0x75] = nameof(Script_117_075);
+        handlerNameByCodes[0x76] = nameof(Script_118_076);
+        handlerNameByCodes[0x77] = nameof(Script_119_077);
+        handlerNameByCodes[0x78] = nameof(Script_120_078);
+        handlerNameByCodes[0x79] = nameof(Script_121_079);
+        handlerNameByCodes[0x7A] = nameof(Script_122_07A);
+        handlerNameByCodes[0x7B] = nameof(Script_123_07B);
+        handlerNameByCodes[0x7C] = nameof(Script_124_07C);
+        handlerNameByCodes[0x7D] = nameof(Script_125_07D);
+        handlerNameByCodes[0x7E] = nameof(Script_126_07E);
+        handlerNameByCodes[0x7F] = nameof(Script_127_07F);
+        handlerNameByCodes[0x80] = nameof(Script_128_080);
+        handlerNameByCodes[0x81] = nameof(Script_129_081);
+        handlerNameByCodes[0x82] = nameof(Script_130_082);
+        handlerNameByCodes[0x83] = nameof(Script_131_083);
+        handlerNameByCodes[0x84] = nameof(Script_132_084);
+        handlerNameByCodes[0x85] = nameof(Script_133_085);
+        handlerNameByCodes[0x86] = nameof(Script_134_086);
+        handlerNameByCodes[0x87] = nameof(Script_135_087);
+        handlerNameByCodes[0x88] = nameof(Script_136_088);
+        handlerNameByCodes[0x89] = nameof(Script_137_089);
+        handlerNameByCodes[0x8A] = nameof(Script_138_08A);
+        handlerNameByCodes[0x8B] = nameof(Script_139_08B);
+        handlerNameByCodes[0x8C] = nameof(Script_140_08C);
+        handlerNameByCodes[0x8D] = nameof(Script_141_08D);
+        handlerNameByCodes[0x8E] = nameof(Script_142_08E);
+        handlerNameByCodes[0x8F] = nameof(Script_143_08F);
+        handlerNameByCodes[0x90] = nameof(Script_144_090);
+        handlerNameByCodes[0x91] = nameof(Script_145_091);
+        handlerNameByCodes[0x92] = nameof(Script_146_092);
+        handlerNameByCodes[0x93] = nameof(Script_147_093);
+        handlerNameByCodes[0x94] = nameof(Script_148_094);
+        handlerNameByCodes[0x95] = nameof(Script_149_095);
+        handlerNameByCodes[0x96] = nameof(Script_150_096);
+        handlerNameByCodes[0x97] = nameof(Script_151_097);
+        handlerNameByCodes[0x98] = nameof(Script_152_098);
+        handlerNameByCodes[0x99] = nameof(Script_153_099);
+        handlerNameByCodes[0x9A] = nameof(Script_154_09A);
+        handlerNameByCodes[0x9B] = nameof(Script_155_09B);
+        handlerNameByCodes[0x9C] = nameof(Script_156_09C);
+        handlerNameByCodes[0x9D] = nameof(Script_157_09D);
+        handlerNameByCodes[0x9E] = nameof(Script_158_09E);
+        handlerNameByCodes[0x9F] = nameof(Script_159_09F);
+        handlerNameByCodes[0xA0] = nameof(Script_160_0A0);
+        handlerNameByCodes[0xA1] = nameof(Script_161_0A1);
+        handlerNameByCodes[0xA2] = nameof(Script_162_0A2);
+        handlerNameByCodes[0xA3] = nameof(Script_163_0A3);
+        handlerNameByCodes[0xA4] = nameof(Script_164_0A4);
+        handlerNameByCodes[0xA5] = nameof(Script_165_0A5);
+        handlerNameByCodes[0xA6] = nameof(Script_166_0A6);
+        handlerNameByCodes[0xA7] = nameof(Script_167_0A7);
+        handlerNameByCodes[0xA8] = nameof(Script_168_0A8);
+        handlerNameByCodes[0xA9] = nameof(Script_169_0A9);
+        handlerNameByCodes[0xAA] = nameof(Script_170_0AA);
+        handlerNameByCodes[0xAB] = nameof(Script_171_0AB);
+        handlerNameByCodes[0xAC] = nameof(Script_172_0AC);
+        handlerNameByCodes[0xAD] = nameof(Script_173_0AD);
+        handlerNameByCodes[0xAE] = nameof(Script_174_0AE);
+        handlerNameByCodes[0xAF] = nameof(Script_175_0AF);
+        handlerNameByCodes[0xB0] = nameof(Script_176_0B0);
+        handlerNameByCodes[0xB1] = nameof(Script_177_0B1);
+        handlerNameByCodes[0xB2] = nameof(Script_CompareEntityGroupsForMatch);
+        handlerNameByCodes[0xB3] = nameof(Script_UpdatePadState);
+        handlerNameByCodes[0xB4] = nameof(Script_180_0B4);
+        handlerNameByCodes[0xB5] = nameof(Script_181_0B5);
+        handlerNameByCodes[0xB6] = nameof(Script_182_0B6);
+        handlerNameByCodes[0xB7] = nameof(Script_183_0B7);
+        handlerNameByCodes[0xB8] = nameof(Script_184_0B8);
+        handlerNameByCodes[0xB9] = nameof(Script_185_0B9);
+        handlerNameByCodes[0xBA] = nameof(Script_186_0BA);
+        handlerNameByCodes[0xBB] = nameof(Script_187_0BB);
+        handlerNameByCodes[0xBC] = nameof(Script_188_0BC);
+        handlerNameByCodes[0xBD] = nameof(Script_189_0BD);
+        handlerNameByCodes[0xBE] = nameof(Script_190_0BE);
+        handlerNameByCodes[0xBF] = nameof(Script_191_0BF);
+        handlerNameByCodes[0xC0] = nameof(Script_192_0C0);
+        handlerNameByCodes[0xC1] = nameof(Script_193_0C1);
+        handlerNameByCodes[0xC2] = nameof(Script_194_0C2);
+        handlerNameByCodes[0xC3] = nameof(Script_195_0C3);
+        handlerNameByCodes[0xC4] = nameof(Script_196_0C4);
+
+        return handlerNameByCodes;
+    }
+
 }

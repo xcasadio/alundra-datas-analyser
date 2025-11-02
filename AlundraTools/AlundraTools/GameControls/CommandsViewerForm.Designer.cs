@@ -1,8 +1,8 @@
-﻿using AlundraTools.GameControls.EventControls;
+﻿using AlundraTools.GameControls.CommandControls;
 
 namespace AlundraTools.GameControls
 {
-    partial class FrmEventProgram
+    partial class CommandsViewerForm
     {
         /// <summary>
         /// Required designer variable.
@@ -37,7 +37,7 @@ namespace AlundraTools.GameControls
             lblcode = new Label();
             txtFind = new TextBox();
             btnFind = new Button();
-            eventListView1 = new EventListView();
+            treeView1 = new TreeView();
             SuspendLayout();
             // 
             // lstProgram
@@ -109,19 +109,21 @@ namespace AlundraTools.GameControls
             btnFind.UseVisualStyleBackColor = true;
             btnFind.Click += btnFind_Click;
             // 
-            // eventListView1
+            // treeView1
             // 
-            eventListView1.Location = new Point(460, 18);
-            eventListView1.Name = "eventListView1";
-            eventListView1.Size = new Size(420, 584);
-            eventListView1.TabIndex = 7;
+            treeView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            treeView1.Location = new Point(450, 18);
+            treeView1.Name = "treeView1";
+            treeView1.ShowNodeToolTips = true;
+            treeView1.Size = new Size(544, 615);
+            treeView1.TabIndex = 7;
             // 
-            // FrmEventProgram
+            // CommandsViewerForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1006, 645);
-            Controls.Add(eventListView1);
+            Controls.Add(treeView1);
             Controls.Add(btnFind);
             Controls.Add(txtFind);
             Controls.Add(label1);
@@ -130,9 +132,9 @@ namespace AlundraTools.GameControls
             Controls.Add(lblmemaddr);
             Controls.Add(lstProgram);
             Margin = new Padding(4, 5, 4, 5);
-            Name = "FrmEventProgram";
-            Text = "FrmEventProgram";
-            Load += FrmEventProgram_Load;
+            Name = "CommandsViewerForm";
+            Text = "CommandsViewerForm";
+            Load += CommandsViewerForm_Load;
             ResumeLayout(false);
             PerformLayout();
 
@@ -147,6 +149,6 @@ namespace AlundraTools.GameControls
         private System.Windows.Forms.Label lblcode;
         private System.Windows.Forms.TextBox txtFind;
         private System.Windows.Forms.Button btnFind;
-        private EventListView eventListView1;
+        private TreeView treeView1;
     }
 }

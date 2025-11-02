@@ -3,9 +3,9 @@ using AlundraEngine.DatasBin;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
 using AlundraTools.GameControls;
-using AlundraTools.GameControls.EventControls;
 using Microsoft.Win32;
 using System.Text.Json;
+using AlundraTools.GameControls.CommandControls;
 
 namespace AlundraTools;
 
@@ -20,7 +20,7 @@ public partial class MainForm : Form
     private void MainForm_Load(object? sender, EventArgs e)
     {
         //toolStripMenuItem1_Click(this, EventArgs.Empty);
-        EventTemplateRegistry.Register<LabelScriptEvent>(ev => new LabelScriptEventView(ev));
+        CommandTemplateRegistry.Register<CommandModelLabel>(ev => new CommandLabelView(ev));
 
     }
 

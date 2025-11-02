@@ -1,13 +1,15 @@
-﻿namespace AlundraEngine.DatasBin;
+﻿using AlundraEngine.DatasBin;
 
-public class SetPositionCommand : SiCommand
+namespace AlundraTools.GameControls.CommandControls.Commands;
+
+public class SetPositionCommand : CommandBase
 {
     public SetPositionCommand(byte command, byte[] parameters, string name, int memoryAddress)
-        : base(command, 8, parameters, name, memoryAddress)
+        : base(command, parameters, name, memoryAddress)
     {
     }
 
-    public override string PrintParameters(List<SiCommand> commands)
+    public override string PrintParameters()
     {
         var parms = new List<string>();
 

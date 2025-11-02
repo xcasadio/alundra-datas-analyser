@@ -1,6 +1,6 @@
-﻿namespace AlundraTools.GameControls.EventControls;
+﻿namespace AlundraTools.GameControls.CommandControls;
 
-public static class EventTemplateRegistry
+public static class CommandTemplateRegistry
 {
     private static readonly Dictionary<Type, Func<object, Control>> _factories = new();
 
