@@ -4,13 +4,13 @@ namespace AlundraTools.GameControls.CommandControls.Commands;
 
 public class CommandBase
 {
-    public readonly string Name;
     public readonly int MemoryAddress;
     public readonly byte Command;
     public readonly byte[] Parameters;
     public readonly int Size;
     public int RefOffset;
 
+    public string Name { get; protected set; }
     public bool HasParameters => Parameters is { Length: > 0 } && Command != 0 && Command != 0xff;
 
     public CommandBase(byte command, byte[] parameters, string name, int memoryAddress)
@@ -22,27 +22,29 @@ public class CommandBase
         Name = name;
     }
 
-    public string PrintEvent()
+    public virtual int Build(int i, List<SiCommand> commands)
     {
-        var output = PrintName();
-        if (HasParameters)
-        {
-            output += $" ({PrintParameters()})";
-        }
-        return output;
+        return i;
     }
 
-    public string PrintCode()
+    private string PrintCode()
     {
         return $"{Command} (0x{Command:x2})";
     }
 
-    public virtual string PrintName()
+    public string PrintName()
     {
-        return !string.IsNullOrEmpty(Name) ? Name : "<no name>";
+        var output = !string.IsNullOrEmpty(Name) ? Name : "<no name>";
+        
+        if (HasParameters)
+        {
+            output += $" ({PrintParameters()})";
+        }
+
+        return output;
     }
 
-    public virtual string PrintParameters()
+    protected virtual string PrintParameters()
     {
         return string.Join(", ", Parameters.Select(x => x.ToString("x2")));
     }
@@ -62,11 +64,6 @@ public class CommandBase
         }
 
         return $"Code={PrintCode()} {description}";
-    }
-
-    public virtual int Build(int i, List<SiCommand> commands)
-    {
-        return i;
     }
 
     protected int GetCommandNameByOffset(int offset, List<SiCommand> commands)

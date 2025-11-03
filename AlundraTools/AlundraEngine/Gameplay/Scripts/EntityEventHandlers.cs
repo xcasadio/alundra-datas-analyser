@@ -2361,45 +2361,12 @@ public class EntityEventHandlers
     // 8003E2DC
     private int Script_53_035(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-        return 0;
-        /*
-        uint[] piVar1;
-
-        int iVar2;
-
-        uint uVar3;
-
-        uVar3 = variables[1] + variables[2] * 0x100;
-
-        if ((uVar3 & 0x8000) == 0)
-        {
-            piVar1 = _gameEngine.StaticVariables.g_mapFlags;
-        }
-        else
-        {
-            piVar1 = _gameEngine.StaticVariables.g_globalFlags;
-        }
-
-        iVar2 = 0;
-
-        if (((uint)((uVar3 >> 3 & 0xffc) + piVar1) & 1 << (variables[1] & 0x1f)) == 0)
-        {
-            iVar2 = 3;
-        }
-
-        return iVar2;*/
-    }
-
-    // 8003E35C
-    private int Script_54_036(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
-    {
         uint[] flags;
-        uint key;
+        uint flag;
 
-        key = (uint)(variables[1] + variables[2] * 0x100); // variables[2] << 8 | variables[1];
+        flag = (uint)(variables[1] + variables[2] * 0x100); // variables[2] << 8 | variables[1];
 
-        if ((key & 0x8000) == 0)
+        if ((flag & 0x8000) == 0)
         {
             flags = _gameEngine.StaticVariables.g_mapFlags;
         }
@@ -2408,7 +2375,35 @@ public class EntityEventHandlers
             flags = _gameEngine.StaticVariables.g_globalFlags;
         }
 
-        var index = (key >> 3) & 0xffc;
+        var index = (flag >> 3) & 0xffc;
+        var mask = 1 << (variables[1] & 0x1f);
+
+        if ((flags[index] & mask) == 0)
+        {
+            return 3;
+        }
+
+        return 0;
+    }
+
+    // 8003E35C
+    private int Script_54_036(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    {
+        uint[] flags;
+        uint flag;
+
+        flag = (uint)(variables[1] + variables[2] * 0x100); // variables[2] << 8 | variables[1];
+
+        if ((flag & 0x8000) == 0)
+        {
+            flags = _gameEngine.StaticVariables.g_mapFlags;
+        }
+        else
+        {
+            flags = _gameEngine.StaticVariables.g_globalFlags;
+        }
+
+        var index = (flag >> 3) & 0xffc;
         var mask = 1 << (variables[1] & 0x1f);
 
         if ((flags[index] & mask) != 0)

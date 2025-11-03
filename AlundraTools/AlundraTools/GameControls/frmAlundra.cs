@@ -1483,7 +1483,8 @@ namespace AlundraTools.GameControls
             {
                 var frm = new CommandsViewerForm();
                 var br = _datasBin.OpenBin();
-                frm.Init(EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesA_LoadIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesATable, _selectedGameMap?.SpriteInfo));
+                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesA_LoadIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesATable, _selectedGameMap?.SpriteInfo);
+                frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap);
                 frm.Show();
                 br.Close();
             }
@@ -1495,12 +1496,14 @@ namespace AlundraTools.GameControls
             var br = _datasBin.OpenBin();
             if (_selectedEntity != null)
             {
-                frm.Init(EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesB_MapIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable, _selectedGameMap?.SpriteInfo));
+                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesB_MapIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable, _selectedGameMap?.SpriteInfo);
+                frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap);
                 frm.Show();
             }
             else if (_selectedMapEvent != null)
             {
-                frm.Init(EntityEventHandlers.GetEventCodeCommands(br, _selectedMapEvent.EventCodesBIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable, _selectedGameMap?.SpriteInfo));
+                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br, _selectedMapEvent.EventCodesBIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable, _selectedGameMap?.SpriteInfo);
+                frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap);
                 frm.Show();
             }
             br.Close();
@@ -1512,7 +1515,8 @@ namespace AlundraTools.GameControls
             {
                 var frm = new CommandsViewerForm();
                 var br = _datasBin.OpenBin();
-                frm.Init(EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesC_TickIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesCTable, _selectedGameMap?.SpriteInfo));
+                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesC_TickIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesCTable, _selectedGameMap?.SpriteInfo);
+                frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap);
                 frm.Show();
                 br.Close();
             }
@@ -1524,7 +1528,8 @@ namespace AlundraTools.GameControls
             {
                 var frm = new CommandsViewerForm();
                 var br = _datasBin.OpenBin();
-                frm.Init(EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesF_InteractIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesFTable, _selectedGameMap?.SpriteInfo));
+                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesF_InteractIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesFTable, _selectedGameMap?.SpriteInfo);
+                frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap);
                 frm.Show();
                 br.Close();
             }

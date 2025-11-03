@@ -2,116 +2,87 @@
 using AlundraEngine.DatasBin.Commands;
 using AlundraTools.GameControls.CommandControls;
 using AlundraTools.GameControls.CommandControls.Commands;
+using Microsoft.VisualBasic;
 
 namespace AlundraTools.GameControls
 {
     public partial class CommandsViewerForm : Form
     {
         private List<SiCommand> _commands;
+        private GameMap? _alundraGameMap;
+        private GameMap? _currentGameMap;
 
         public CommandsViewerForm()
         {
             InitializeComponent();
         }
 
-        public void Init(List<SiCommand> commands)
+        public void Init(List<SiCommand> commands, GameMap? alundraGameMap, GameMap? currentGameMap)
         {
             _commands = commands;
+            _alundraGameMap = alundraGameMap;
+            _currentGameMap = currentGameMap;
         }
 
         private void CommandsViewerForm_Load(object sender, EventArgs e)
         {
             var commandBases = CommandsBuilder.Convert(_commands);
+            int index = 0;
 
             foreach (var commandBase in commandBases)
             {
-                CreateTreeViewNode(commandBase);
+                CreateTreeViewNode(ref index, commandBase);
+                index++;
             }
 
             treeView1.ExpandAll();
-
-            //var stack = new List<Stackframe>();
-            //
-            //foreach (var command in _commands)
-            //{
-            //    lstProgram.Items.Add(command.Print(stack.Count, _commands));
-            //    _commandListView1.AddItem(new CommandModelLabel(command.Command, command.PrintEvent(stack.Count, _commands), command.Description(_commands)));
-            //
-            //    //if (cmd.command == 0xff && stack.Count == 0)
-            //    //    break;
-            //    
-            //    if (command.GetType() == typeof(BranchCommand) && command.RefOffset > 0)
-            //    {
-            //        stack.Add(new Stackframe { Length = command.RefOffset, Level = stack.Count });
-            //    }
-            //
-            //    for (var i = stack.Count -1;i >= 0;i--)
-            //    {
-            //        var frame = stack[i];
-            //        frame.Length -= command.Size;
-            //        if (frame.Length <= 0)
-            //        {
-            //            stack.RemoveAt(i);
-            //        }
-            //    }
-            //}
         }
 
-        private void CreateTreeViewNode(CommandBase commandBase, TreeNode? parentNode = null)
+        private void CreateTreeViewNode(ref int index, CommandBase commandBase, TreeNode? parentNode = null)
         {
             TreeNodeCollection nodes = parentNode == null ? treeView1.Nodes : parentNode.Nodes;
-            parentNode = nodes.Add(commandBase.GetHashCode().ToString(), commandBase.PrintEvent());
+            parentNode = nodes.Add(index.ToString(), $"{index:D2} - {commandBase.PrintName()}");
             parentNode.ToolTipText = commandBase.Description();
+            parentNode.Tag = commandBase;
 
-            if (commandBase is ContainerCommand container)
+            if (commandBase is not ContainerCommand container)
             {
-                foreach (var child in container.Children)
+                return;
+            }
+
+            foreach (var child in container.Children)
+            {
+                index++;
+                CreateTreeViewNode(ref index, child, parentNode);
+            }
+        }
+
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            textBox1.Text = "";
+
+            if (e.Node != null)
+            {
+                if (e.Node.Tag is DialogCommand dialogCommand)
                 {
-                    CreateTreeViewNode(child, parentNode);
+                    var strings = _alundraGameMap?.Strings;
+                    var map = "";
+
+                    if ((dialogCommand.TextId & 0x80) != 0)
+                    {
+                        strings = _currentGameMap?.Strings;
+                        map = "current";
+                    }
+                    else
+                    {
+                        map = "alundra";
+                    }
+
+                    textBox1.Text = $@"Text load from {map} map =>{Environment.NewLine}";
+                    var text = strings?[dialogCommand.TextId & 0x7f];
+                    textBox1.Text += text;
                 }
             }
         }
-
-        private void lstProgram_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (lstProgram.SelectedIndex >= 0)
-            {
-                lblmemaddr.Text = _commands[lstProgram.SelectedIndex].MemoryAddress.ToString("x6");
-                lblcode.Text = _commands[lstProgram.SelectedIndex].Command.ToString("x2") + "(" + string.Join(",", _commands[lstProgram.SelectedIndex].Parameters.Select(x => x.ToString("x2"))) + ")";
-            }
-        }
-
-        private int ParseNum(string num)
-        {
-            var i = 0;
-            if (num.StartsWith("0x"))
-            {
-                int.TryParse(num.Replace("0x", ""), System.Globalization.NumberStyles.AllowHexSpecifier, null, out i);
-            }
-            else
-            {
-                int.TryParse(num, out i);
-            }
-            return i;
-        }
-
-        private void btnFind_Click(object sender, EventArgs e)
-        {
-            var code = ParseNum(txtFind.Text);
-            for (var dex = lstProgram.SelectedIndex + 1; dex < lstProgram.Items.Count; dex++)
-            {
-                if (_commands[dex].Command == code)
-                {
-                    lstProgram.SelectedIndex = dex;
-                    break;
-                }
-            }
-        }
-    }
-
-    internal class Stackframe
-    {
-        public int Level;
-        public int Length;
     }
 }

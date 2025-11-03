@@ -24,7 +24,9 @@ public abstract class ContainerCommand : CommandBase
                 break;
             }
 
-            children.Add(CommandsBuilder.Convert(commands[j]));
+            var commandBase = CommandsBuilder.Convert(commands[j]);
+            commandBase.Build(j, commands);
+            children.Add(commandBase);
         }
 
         Children = children.ToArray();

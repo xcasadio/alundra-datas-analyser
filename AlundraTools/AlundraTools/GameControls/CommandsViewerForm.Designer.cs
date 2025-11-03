@@ -30,125 +30,74 @@ namespace AlundraTools.GameControls
         /// </summary>
         private void InitializeComponent()
         {
-            lstProgram = new ListBox();
-            lblmemaddr = new Label();
-            lablel1 = new Label();
-            label1 = new Label();
-            lblcode = new Label();
-            txtFind = new TextBox();
-            btnFind = new Button();
             treeView1 = new TreeView();
+            splitContainer1 = new SplitContainer();
+            textBox1 = new TextBox();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
             SuspendLayout();
-            // 
-            // lstProgram
-            // 
-            lstProgram.FormattingEnabled = true;
-            lstProgram.Location = new Point(16, 18);
-            lstProgram.Margin = new Padding(4, 5, 4, 5);
-            lstProgram.Name = "lstProgram";
-            lstProgram.Size = new Size(345, 584);
-            lstProgram.TabIndex = 0;
-            lstProgram.SelectedIndexChanged += lstProgram_SelectedIndexChanged;
-            // 
-            // lblmemaddr
-            // 
-            lblmemaddr.AutoSize = true;
-            lblmemaddr.Location = new Point(55, 609);
-            lblmemaddr.Margin = new Padding(4, 0, 4, 0);
-            lblmemaddr.Name = "lblmemaddr";
-            lblmemaddr.Size = new Size(17, 20);
-            lblmemaddr.TabIndex = 1;
-            lblmemaddr.Text = "0";
-            // 
-            // lablel1
-            // 
-            lablel1.AutoSize = true;
-            lablel1.Location = new Point(16, 609);
-            lablel1.Margin = new Padding(4, 0, 4, 0);
-            lablel1.Name = "lablel1";
-            lablel1.Size = new Size(43, 20);
-            lablel1.TabIndex = 2;
-            lablel1.Text = "addr:";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(152, 609);
-            label1.Margin = new Padding(4, 0, 4, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(45, 20);
-            label1.TabIndex = 4;
-            label1.Text = "code:";
-            // 
-            // lblcode
-            // 
-            lblcode.AutoSize = true;
-            lblcode.Location = new Point(195, 609);
-            lblcode.Margin = new Padding(4, 0, 4, 0);
-            lblcode.Name = "lblcode";
-            lblcode.Size = new Size(17, 20);
-            lblcode.TabIndex = 3;
-            lblcode.Text = "0";
-            // 
-            // txtFind
-            // 
-            txtFind.Location = new Point(371, 18);
-            txtFind.Margin = new Padding(4, 5, 4, 5);
-            txtFind.Name = "txtFind";
-            txtFind.Size = new Size(71, 27);
-            txtFind.TabIndex = 5;
-            // 
-            // btnFind
-            // 
-            btnFind.Location = new Point(371, 58);
-            btnFind.Margin = new Padding(4, 5, 4, 5);
-            btnFind.Name = "btnFind";
-            btnFind.Size = new Size(72, 35);
-            btnFind.TabIndex = 6;
-            btnFind.Text = "find";
-            btnFind.UseVisualStyleBackColor = true;
-            btnFind.Click += btnFind_Click;
             // 
             // treeView1
             // 
-            treeView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            treeView1.Location = new Point(450, 18);
+            treeView1.Dock = DockStyle.Fill;
+            treeView1.Location = new Point(0, 0);
             treeView1.Name = "treeView1";
             treeView1.ShowNodeToolTips = true;
-            treeView1.Size = new Size(544, 615);
+            treeView1.Size = new Size(521, 553);
             treeView1.TabIndex = 7;
+            treeView1.AfterSelect += treeView1_AfterSelect;
+            // 
+            // splitContainer1
+            // 
+            splitContainer1.Dock = DockStyle.Fill;
+            splitContainer1.Location = new Point(0, 0);
+            splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            splitContainer1.Panel1.Controls.Add(treeView1);
+            // 
+            // splitContainer1.Panel2
+            // 
+            splitContainer1.Panel2.Controls.Add(textBox1);
+            splitContainer1.Size = new Size(933, 553);
+            splitContainer1.SplitterDistance = 521;
+            splitContainer1.TabIndex = 8;
+            // 
+            // textBox1
+            // 
+            textBox1.Dock = DockStyle.Fill;
+            textBox1.Location = new Point(0, 0);
+            textBox1.Multiline = true;
+            textBox1.Name = "textBox1";
+            textBox1.ReadOnly = true;
+            textBox1.Size = new Size(408, 553);
+            textBox1.TabIndex = 0;
             // 
             // CommandsViewerForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1006, 645);
-            Controls.Add(treeView1);
-            Controls.Add(btnFind);
-            Controls.Add(txtFind);
-            Controls.Add(label1);
-            Controls.Add(lblcode);
-            Controls.Add(lablel1);
-            Controls.Add(lblmemaddr);
-            Controls.Add(lstProgram);
+            ClientSize = new Size(933, 553);
+            Controls.Add(splitContainer1);
             Margin = new Padding(4, 5, 4, 5);
             Name = "CommandsViewerForm";
             Text = "CommandsViewerForm";
             Load += CommandsViewerForm_Load;
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
             ResumeLayout(false);
-            PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.ListBox lstProgram;
-        private System.Windows.Forms.Label lblmemaddr;
-        private System.Windows.Forms.Label lablel1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label lblcode;
-        private System.Windows.Forms.TextBox txtFind;
-        private System.Windows.Forms.Button btnFind;
         private TreeView treeView1;
+        private SplitContainer splitContainer1;
+        private TextBox textBox1;
     }
 }

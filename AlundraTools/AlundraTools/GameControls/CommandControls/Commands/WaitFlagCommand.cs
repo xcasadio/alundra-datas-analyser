@@ -2,20 +2,22 @@
 
 namespace AlundraTools.GameControls.CommandControls.Commands;
 
-public class SetFlagCommand : CommandBase
+public class WaitFlagCommand : CommandBase
 {
-    public SetFlagCommand(byte command, byte[] parameters, string name, int memoryAddress)
-        : base(command, parameters, name, memoryAddress)
+    public WaitFlagCommand(byte code, byte[] parameters, string name, int memoryAddress) :
+        base(code, parameters, name, memoryAddress)
+
     {
     }
 
     public override int Build(int i, List<SiCommand> commands)
     {
-        var name = $"Flag {(Command == 0x5 ? "on" : "off")} ";
+        var name = "Wait ";
         var flag = (uint)(Parameters[0] + Parameters[1] * 0x100);
         name += (flag & 0x8000) == 0 ? "MapFlags" : "GlobalFlags";
         name += $"[{(flag >> 3) & 0xffc}]";
-        name += $" with mask {1 << (Parameters[0] & 0x1f)}";
+        name += $" & {1 << (Parameters[0] & 0x1f)} is ";
+        name += $"{(Command == 0x36 ? "off" : "on")}";
         Name = name;
 
         return base.Build(i, commands);

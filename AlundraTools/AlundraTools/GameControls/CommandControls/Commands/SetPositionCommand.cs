@@ -1,6 +1,4 @@
-﻿using AlundraEngine.DatasBin;
-
-namespace AlundraTools.GameControls.CommandControls.Commands;
+﻿namespace AlundraTools.GameControls.CommandControls.Commands;
 
 public class SetPositionCommand : CommandBase
 {
@@ -9,7 +7,7 @@ public class SetPositionCommand : CommandBase
     {
     }
 
-    public override string PrintParameters()
+    protected override string PrintParameters()
     {
         var parms = new List<string>();
 

@@ -20,8 +20,6 @@ public partial class MainForm : Form
     private void MainForm_Load(object? sender, EventArgs e)
     {
         //toolStripMenuItem1_Click(this, EventArgs.Empty);
-        CommandTemplateRegistry.Register<CommandModelLabel>(ev => new CommandLabelView(ev));
-
     }
 
     private void analyzeFileToolStripMenuItem_Click(object sender, EventArgs e)

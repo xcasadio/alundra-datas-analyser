@@ -1,13 +1,12 @@
-﻿using System.Reflection;
-using AlundraEngine;
-using AlundraEngine.DatasBin;
+﻿using AlundraEngine.DatasBin;
 
 namespace AlundraTools.GameControls.CommandControls.Commands;
 
 public class GotoIfFlagCommand : ContainerCommand
 {
-    public string CustomName { get; private set; }
-    public override int LastCommandMemoryAddress => MemoryAddress + (((Parameters[2] + Parameters[3] * 0x100) * 0x10000) >> 0x10);
+    private int _lastCommandMemoryAddress;
+
+    public override int LastCommandMemoryAddress => _lastCommandMemoryAddress;
 
     public GotoIfFlagCommand(byte command, byte[] parameters, string name, int memoryAddress)
         : base(command, parameters, name, memoryAddress)
@@ -15,12 +14,7 @@ public class GotoIfFlagCommand : ContainerCommand
         RefOffset = (short)(parameters[0] | (parameters[1] << 8));
     }
 
-    public override string PrintName()
-    {
-        return CustomName;
-    }
-
-    public override string PrintParameters()
+    protected override string PrintParameters()
     {
         return string.Join(", ", Parameters.Select(x => x.ToString("x2")));
     }
@@ -33,16 +27,19 @@ public class GotoIfFlagCommand : ContainerCommand
         name += $"[{(flag >> 3) & 0xffc}]";
         name += $" & {1 << (Parameters[0] & 0x1f)} is ";
         name += $"{(Command == 0x30 ? "off" : "on")}"; 
-        //name += " goto ";
-        //var offset = ((Parameters[2] + Parameters[3] * 0x100) * 0x10000) >> 0x10;
-        //var index = GetCommandNameByOffset(offset, commands);
-        //name += $"{(index == -1 ? "?" : $"{index}")}";
-        ////name += $" ({commands[index].Name})";
-        //name += " else goto ";
-        //index = GetCommandNameByOffset(Size, commands);
-        //name += $"{(index == -1 ? "?" : $"{index}")}";
-        ////name += $" ({commands[index].Name})";
-        CustomName = name;
+        //TODO remove this
+        name += " goto ";
+        var offset = ((Parameters[2] + Parameters[3] * 0x100) * 0x10000) >> 0x10;
+        var index = GetCommandNameByOffset(offset, commands);
+        name += $"{(index == -1 ? "?" : $"{index}")}";
+        name += $" ({commands[index].Name})";
+        name += " else goto ";
+        index = GetCommandNameByOffset(Size, commands);
+        name += $"{(index == -1 ? "?" : $"{index}")}";
+        name += $" ({commands[index].Name})";
+        Name = name;
+
+        _lastCommandMemoryAddress = MemoryAddress + Math.Max(offset, Size);
 
         return base.Build(i, commands);
     }

@@ -1604,7 +1604,7 @@ public class GameEngine
             }
 
             var mapEventEntity = currentMapEvent.Entity;
-            var programId = mapEventEntity.EventTrigger;
+            var programId = mapEventEntity.MapEventProgramId;
 
             var record = currentMapEvent.MapEventRecord;
             var px = playerEntity.TileX;
@@ -1616,7 +1616,8 @@ public class GameEngine
                 mapEventEntity.EventProgramState.Sp = 0;
                 mapEventEntity.RelativeWarpOffsetX = 0;
                 mapEventEntity.Index = playerEntity.Index;
-                mapEventEntity.EventTrigger = record.EventCodesBIndex;
+                //mapEventEntity.MapEventProgramId = record.EventCodesBIndex;
+                //mapEventEntity.EventTrigger = record.EventCodesBIndex;
                 continue;
             }
 
@@ -1631,52 +1632,10 @@ public class GameEngine
 
             currentMapEvent.EventData.CopyFrom(playerEntity.EventProgramState);
             currentMapEvent.Entity = playerEntity.LogicContextEntity;
-            mapEventEntity.EventTrigger = playerEntity.EventTrigger;
+            currentMapEvent.ProgramBMap = playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap];
+            //mapEventEntity.EventTrigger = playerEntity.EventTrigger;
         }
 
-        //var medex = 0;
-        //foreach (var mapEvent in StaticVariables.g_mapEvents)
-        //{
-        //    var eventCode = mapEvent.ProgramBMap;
-        //
-        //    if ((eventCode & 0x7f) == 0)
-        //    {
-        //        continue;
-        //    }
-        //
-        //    var mapEventRecord = mapEvent.MapEventRecord;
-        //
-        //    if (playerEntity.TileX > mapEventRecord.X 
-        //        && playerEntity.TileX < mapEventRecord.Width 
-        //        && playerEntity.TileY > mapEventRecord.Y 
-        //        && playerEntity.TileY < mapEventRecord.Height)
-        //    {
-        //        playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap] = mapEvent.ProgramBMap;
-        //        playerEntity.MapEventProgramId = mapEvent.ProgramBMap;
-        //        playerEntity.EventProgramState.CopyFrom(mapEvent.EventData);
-        //        playerEntity.EventTrigger = medex;
-        //        playerEntity.LogicContextEntity = mapEvent.Entity;
-        //
-        //        _entityEventHandlers.RunEntityEventScripts(playerEntity, ScriptHelper.ProgramBMap);
-        //
-        //        mapEvent.ProgramBMap = playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap];
-        //        mapEvent.EventData.CopyFrom(playerEntity.EventProgramState);
-        //        mapEvent.Entity = playerEntity.LogicContextEntity;
-        //    }
-        //    else
-        //    {
-        //        playerEntity.Index = StaticVariables.PlayerEntity.Index; // ??
-        //        playerEntity.Index2 = 0;
-        //        playerEntity.RelativeWarpOffsetX = 0; // new EventProgramState();
-        //        playerEntity.ChildEntity = null;
-        //
-        //        mapEvent.Entity = playerEntity;
-        //        mapEvent.ProgramBMap = mapEventRecord.EventCodesBIndex;
-        //        playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap] = mapEventRecord.EventCodesBIndex; // ??
-        //
-        //    }
-        //    medex++;
-        //}
     }
 
     public SpriteEffectRecord GetEffectSpriteFromSpriteTable(bool isMapSprite, int spritetableindex, out int addedtosheet, out int addedtopallette)
