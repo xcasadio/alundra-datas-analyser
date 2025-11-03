@@ -46,7 +46,7 @@ public class RendererHelper
         for (var y = curYTile; y < gameMap.Map.Height; y++)
         {
             //draw tiles on this row
-            for (var x = curXTile; x < curXTile + StaticVariables.ScreenWidth / StaticVariables.MapTileWidth + 2; x++)
+            for (var x = curXTile; x < curXTile + StaticVariables.ScreenWidth / StaticVariables.MapTileWidth + 2 && x < gameMap.Map.Width; x++)
             {
                 var tile = gameMap.Map.MapTiles[y * gameMap.Map.Width + x];
                 var tileId = tile.TileId;

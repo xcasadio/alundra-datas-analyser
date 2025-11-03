@@ -791,10 +791,13 @@ public class GraphicManager
         InitializeFrame();
         SetTransitionType(4);
         var image = GetAnimationImageByIndex(0);
+        var bitmap = _gameEngine.AlundraMap.GenerateSpriteBitmap(image,
+            _gameEngine.AlundraMap.SpriteInfo.Palettes[image.Palette & 0x1f]);
+
         _gameEngine.MainInventoryManager.InitializeHudTransitionVariablesAndSetStart(
             player.PosX, player.PosY, player.PosZ,
             _gameEngine.StaticVariables.g_cameraScrollingX, _gameEngine.StaticVariables.g_cameraScrollingY,
-            (sbyte)image.Sx, (sbyte)image.Sy, /*image.Swidth, image.Sheight,*/ image);
+            (sbyte)image.Sx, (sbyte)image.Sy, /*image.Swidth, image.Sheight,*/ bitmap);
         _gameEngine.SoundManager.PlaySoundEffect(4);
         return 1;
     }
@@ -898,7 +901,7 @@ public class GraphicManager
         } while (mode < 2);
     }
 
-    public void DrawPolyFt4(POLY_FT4 polyFt4, SiImage image)
+    public void DrawPolyFt4(POLY_FT4 polyFt4, Bitmap image)
     {
         DrawPolyFt4(polyFt4.r0, polyFt4.b0, polyFt4.b0,
             polyFt4.x0, polyFt4.y0,
@@ -913,7 +916,7 @@ public class GraphicManager
             int x0, int y0,
             int x1, int y1,
             int x2, int y2,
-            int x3, int y3, SiImage image)
+            int x3, int y3, Bitmap image)
     {
         var minX = Math.Min(Math.Min(x0, x1), Math.Min(x2, x3));
         var maxX = Math.Max(Math.Max(x0, x1), Math.Max(x2, x3));
@@ -923,8 +926,8 @@ public class GraphicManager
         var width = maxX - minX;
         var height = maxY - minY;
 
-        var bitmap = _gameEngine.AlundraMap.GetSpriteBitmap(image);
-        _gameEngine.Renderer.AddSprite(minX, minY, width, height, int.MaxValue, bitmap, 1.0f);
+        //var bitmap = _gameEngine.AlundraMap.GetSpriteBitmap(image);
+        _gameEngine.Renderer.AddSprite(minX, minY, width, height, int.MaxValue, image, 1.0f);
     }
 
     //8004e168

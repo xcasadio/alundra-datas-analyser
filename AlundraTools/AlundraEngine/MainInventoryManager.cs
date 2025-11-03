@@ -188,7 +188,7 @@ public class MainInventoryManager
         int destX, int destY,
         byte uvX, byte uvY,
         short width, short height,
-        SiImage image)
+        Bitmap image)
 
     {
         _gameEngine.StaticVariables.g_hudTransitionStartX = 8;
@@ -200,7 +200,7 @@ public class MainInventoryManager
     public void InitializeHudTransitionVariablesAndSetStart(int srcX, int srcY, int srcZ,
         int dstX, int dstY,
         sbyte u, sbyte v,
-        SiImage image)
+        Bitmap image)
     {
         _gameEngine.StaticVariables.g_hudTransitionStartX = 0xf8;
         _gameEngine.StaticVariables.g_hudTransitionStartY = 0x68;
@@ -214,7 +214,7 @@ public class MainInventoryManager
         int dstXPtr, int dstYPtr,
         byte uvX, byte uvY,
         short width, short height,
-        SiImage image)
+        Bitmap image)
     {
         int i;
         byte uvBottom;
@@ -233,9 +233,11 @@ public class MainInventoryManager
             _gameEngine.StaticVariables.g_hudTransitionDstXPtr = dstXPtr;
             _gameEngine.StaticVariables.g_hudTransitionDstYPtr = dstYPtr;
 
+            _gameEngine.StaticVariables.g_spriteCharacterPortraitImage = image;
+
             do
             {
-                var poly = _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[i];
+                var poly = _gameEngine.StaticVariables.g_spriteCharacterPortrait[i];
 
                 //SetPolyFT4((POLY_FT4*)poly);
                 poly.r0 = 0xff;
@@ -386,7 +388,7 @@ public class MainInventoryManager
 
         FinalizeTransitionUpdate:
 
-        var polyFt4 = _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[0];
+        var polyFt4 = _gameEngine.StaticVariables.g_spriteCharacterPortrait[0];
         polyFt4.r0 = (byte)uVar4;
         polyFt4.g0 = (byte)uVar4;
         polyFt4.b0 = (byte)uVar4;
@@ -429,9 +431,11 @@ public class MainInventoryManager
         if (_gameEngine.StaticVariables.g_hudTransitionState != 0)
         {
             _gameEngine.MainInventoryManager.UpdateHudTransitionVariables();
-            var image = _gameEngine.GraphicManager.GetAnimationImageByIndex(0); // alundra portrait
-            _gameEngine.GraphicManager.DrawPolyFt4(_gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait[0], image);
-            //pPVar1 = _gameEngine.StaticVariables.g_spriteInventoryAlundraPotrait + g_drawModes[0x14].tag;
+            //var image = _gameEngine.GraphicManager.GetAnimationImageByIndex(0); // alundra portrait
+            //_gameEngine.StaticVariables.g_spriteCharacterPortraitImage = image;
+            var image = _gameEngine.StaticVariables.g_spriteCharacterPortraitImage;
+            _gameEngine.GraphicManager.DrawPolyFt4(_gameEngine.StaticVariables.g_spriteCharacterPortrait[0], image);
+            //pPVar1 = _gameEngine.StaticVariables.g_spriteCharacterPortrait + g_drawModes[0x14].tag;
             /* Probable PsyQ macro: addPrim(). */
             //pPVar1->tag = pPVar1->tag & 0xff000000 | *param_1 & 0xffffff;
             //*param_1 = *param_1 & 0xff000000 | (uint)pPVar1 & 0xffffff;
@@ -486,10 +490,13 @@ public class MainInventoryManager
             _gameEngine.GraphicManager.InitializeFrame();
             _gameEngine.GraphicManager.SetTransitionType(6);
             var image = _gameEngine.GraphicManager.GetAnimationImageByIndex(0); //portrait alundra
+            var bitmap = _gameEngine.AlundraMap.GenerateSpriteBitmap(image,
+                _gameEngine.AlundraMap.SpriteInfo.Palettes[image.Palette & 0x1f]);
+
             InitializeHudTransitionVariablesAndSetStart(
                 _gameEngine.StaticVariables.PlayerEntity.PosX, _gameEngine.StaticVariables.PlayerEntity.PosY, _gameEngine.StaticVariables.PlayerEntity.PosZ,
                 _gameEngine.StaticVariables.g_cameraScrollingX, _gameEngine.StaticVariables.g_cameraScrollingY,
-                (sbyte)image.Sx, (sbyte)image.Sy, image);
+                (sbyte)image.Sx, (sbyte)image.Sy, bitmap);
             DisplayIconNames();
             _gameEngine.SoundManager.PlaySoundEffect(4);
         }

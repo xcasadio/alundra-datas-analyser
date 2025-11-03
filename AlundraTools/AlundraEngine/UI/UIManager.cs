@@ -618,7 +618,7 @@ public class UIManager
 
         DialogCharacterNameSprites.Clear();
         _gameEngine.UIManager.DisplayIconName(
-            _gameEngine.StaticVariables.g_messageCharacterPortrait,
+            _gameEngine.StaticVariables.g_spriteMessageCharacterPortrait,
             DialogCharacterNameSprites,
             text.ToCharArray(),
             6,
@@ -652,19 +652,17 @@ public class UIManager
 
             if (i == 1)
             {
+                if ((_gameEngine.StaticVariables.g_etcDisplayFlags & 1U) != 0)
                 {
-                    if ((_gameEngine.StaticVariables.g_etcDisplayFlags & 1U) != 0)
-                    {
-                        _gameEngine.StaticVariables.g_etcDisplayFlags = (short)(_gameEngine.StaticVariables.g_etcDisplayFlags & 0xfffe);
-                    }
+                    _gameEngine.StaticVariables.g_etcDisplayFlags = (short)(_gameEngine.StaticVariables.g_etcDisplayFlags & 0xfffe);
+                }
 
-                    if ((_gameEngine.StaticVariables.g_etcDisplayFlags & 2U) != 0)
-                    {
-                        callbackInfo.Data.X = _gameEngine.StaticVariables.g_textToDisplay2.originX;
-                        callbackInfo.Data.Y = _gameEngine.StaticVariables.g_textToDisplay2.originY;
-                        FUN_8005a244(callbackInfo);
-                        return; // 0;
-                    }
+                if ((_gameEngine.StaticVariables.g_etcDisplayFlags & 2U) != 0)
+                {
+                    callbackInfo.Data.X = _gameEngine.StaticVariables.g_textToDisplay2.originX;
+                    callbackInfo.Data.Y = _gameEngine.StaticVariables.g_textToDisplay2.originY;
+                    FUN_8005a244(callbackInfo);
+                    return; // 0;
                 }
             }
         }
@@ -682,23 +680,23 @@ public class UIManager
             //uVar2 = g_drawModes[0x14].tag;
             //iVar5 = iVar3 + g_drawModes[0x14].tag;
             //psVar6 = callbackInfo.Data.X;
-            _gameEngine.StaticVariables.g_messageCharacterPortrait[i].x0 = (short)(callbackInfo.Data.X + (callbackInfo.Data.Width * 8 - iVar4) / 2);
+            _gameEngine.StaticVariables.g_spriteMessageCharacterPortrait[i].x0 = (short)(callbackInfo.Data.X + (callbackInfo.Data.Width * 8 - iVar4) / 2);
             sVar1 = (short)i;
-            _gameEngine.StaticVariables.g_messageCharacterPortrait[i].y0 = (short)(callbackInfo.Data.Y + callbackInfo.Data.Height - sVar1);
+            _gameEngine.StaticVariables.g_spriteMessageCharacterPortrait[i].y0 = (short)(callbackInfo.Data.Y + callbackInfo.Data.Height - sVar1);
 
             i = i + 1;
         } while (i < 1);
 
         iVar4 = 0;
         //puVar9 = _gameEngine.StaticVariables.DAT_80146f70[uVar2 * 0x28];
-        //pSVar10 = _gameEngine.StaticVariables.g_messageCharacterPortrait;
+        //pSVar10 = _gameEngine.StaticVariables.g_spriteMessageCharacterPortrait;
         i = 0; //uVar2 * 0x14;
 
         do
         {
             //pSVar7 = pSVar10 + uVar2;
             //pSVar10 = pSVar10 + 1;
-            puVar8 = _gameEngine.StaticVariables.g_messageCharacterPortrait[i];
+            puVar8 = _gameEngine.StaticVariables.g_spriteMessageCharacterPortrait[i];
 
             i = i + 1;
             iVar4 = iVar4 + 1;

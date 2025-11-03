@@ -5551,7 +5551,8 @@ public class StaticVariables
     public SPRT[] g_spriteInventoryNumberOfKeys = Enumerable.Range(0, 4).Select(x => new SPRT()).ToArray(); // 8017ffcc
     public SPRT[] g_spriteInventoryNumberOfFalcon = Enumerable.Range(0, 4).Select(x => new SPRT()).ToArray(); // 8018001c
     public short g_hudTransitionState; // 80180070
-    public POLY_FT4[] g_spriteInventoryAlundraPotrait = Enumerable.Range(0, 2).Select(x => new POLY_FT4()).ToArray(); // 80180074
+    public POLY_FT4[] g_spriteCharacterPortrait = Enumerable.Range(0, 2).Select(x => new POLY_FT4()).ToArray(); // 80180074
+    public Bitmap g_spriteCharacterPortraitImage; // used to retrieve the image associated with g_spriteCharacterPortrait
     public int g_hudTransitionSrcX; // 801800C4
     public int g_hudTransitionSrcY; // 801800C8
     public int g_hudTransitionSrcZ; // 801800CC
@@ -5589,7 +5590,7 @@ public class StaticVariables
     public short g_etcTextY_2; // 80180252
     public short g_etcTextStartX_2; // 80180254
     public short g_etcTextStartY_2; // 80180256
-    public SPRT[] g_messageCharacterPortrait = Enumerable.Range(0, 2).Select(x => new SPRT()).ToArray();
+    public SPRT[] g_spriteMessageCharacterPortrait = Enumerable.Range(0, 2).Select(x => new SPRT()).ToArray();
     public int g_entitySpriteNameTableIndex; // 80180288
     public int g_cdDataStartPtr; // 801802A8
     public int g_cdDataEndPtr; // 801802AC

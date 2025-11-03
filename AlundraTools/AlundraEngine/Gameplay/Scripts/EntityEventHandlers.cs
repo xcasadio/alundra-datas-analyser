@@ -1553,9 +1553,8 @@ public class EntityEventHandlers
             using var binaryReader = _gameEngine.DatasBin.OpenBin();
             var imgset = logicEntity.SpriteRecord.GetPortraitImageset(binaryReader);
             var img = imgset.Images[0];
-            var bmp = _gameEngine.CurrentMap.GenerateSpriteBitmap(
-                imgset.Images[0],
-                _gameEngine.CurrentMap.SpriteInfo.Palettes[imgset.Images[0].Palette & 0x1f]);
+            var bitmap = _gameEngine.CurrentMap.GenerateSpriteBitmap(img,
+                    _gameEngine.CurrentMap.SpriteInfo.Palettes[img.Palette & 0x1f]);
 
             _gameEngine.MainInventoryManager.StartHudTransition(
                 logicEntity.PosX, logicEntity.PosY, logicEntity.PosZ,
@@ -1563,7 +1562,7 @@ public class EntityEventHandlers
                 img.Sx, img.Sy, img.Swidth, img.Sheight,
                 /*_gameEngine.StaticVariables.g_drawPageInfoBase[logicEntity.SpriteSheetOffset + ((img.Spritesheet) & 0x3f)],
                 _gameEngine.StaticVariables.g_tPageFadeLUT[logicEntity.PaletteOffset + ((img.Palette) & 7)]*/
-                img);
+                bitmap);
 
             //TODO get it from memory, not disk
             //SIImageSet portrait = entity.SpriteRecord.GetPortraitImageset(datasReader);
@@ -5221,6 +5220,8 @@ public class EntityEventHandlers
                 //var textureId2 = _gameEngine.StaticVariables.g_drawPageInfoBase[spriteSheetOffset];
 
                 var image = targetEntity.Frame.Images.Images[targetEntity.CurrentFrameIndex];
+                var bitmap = _gameEngine.AlundraMap.GenerateSpriteBitmap(image,
+                        _gameEngine.AlundraMap.SpriteInfo.Palettes[image.Palette & 0x1f]);
 
                 _gameEngine.MainInventoryManager.StartHudTransition(
                     targetEntity.PosX, 
@@ -5232,7 +5233,7 @@ public class EntityEventHandlers
                     (byte)eventProgramState.Exp[5],
                     (short)eventProgramState.Exp[6],
                     (short)eventProgramState.Exp[7],
-                    image);
+                    bitmap);
             }
 
             int spriteUpdateId = variables[2] | (variables[3] << 8);
