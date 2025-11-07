@@ -128,7 +128,7 @@ public class GameInitializer
         InitializeRenderingTiles();
         //InitializeDrMoveBuffers();
         LoadFontInTakiFolder();
-        //InitSoundSystem();
+        _gameEngine.SoundManager.InitSoundSystem();
         InitializeTileRenderer(0x340, 0x100, 0x100, 0x1f0,
             _gameEngine.StaticVariables.g_drawModeIndexInit, _gameEngine.StaticVariables.g_paletteIndexInit, _gameEngine.StaticVariables.g_tileScaleXInit,
             _gameEngine.StaticVariables.g_tileScaleYInit, _gameEngine.StaticVariables.g_uvLookupTableInit);

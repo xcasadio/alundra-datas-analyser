@@ -204,9 +204,9 @@ public class SoundBin
     private byte[] PlaySfxInner(int sfx, VabHeader header, byte[] bodybuff, int pitch, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
     {
         var pos = 0;
-        for (var dex = 0; dex < sfx; dex++)
+        for (var i = 0; i < sfx; i++)
         {
-            pos += header.VagOffsetTable[dex] << 3;
+            pos += header.VagOffsetTable[i] << 3;
         }
         var length = header.VagOffsetTable[sfx] << 3;
         var blocks = length / 16;

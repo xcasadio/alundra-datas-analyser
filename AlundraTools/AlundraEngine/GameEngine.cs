@@ -35,6 +35,7 @@ public class GameEngine
     public UIManager UIManager { get; }
     public MainInventoryManager MainInventoryManager { get; }
     public SubInventoryManager SubInventoryManager { get; }
+    public UIDebugManager UIDebugManager { get; }
 
     private readonly EntityEventHandlers _entityEventHandlers;
     private readonly GameInitializer _gameInitializer;
@@ -67,6 +68,7 @@ public class GameEngine
         UIManager = new UIManager(this);
         MainInventoryManager = new MainInventoryManager(this);
         SubInventoryManager = new SubInventoryManager(this);
+        UIDebugManager = new UIDebugManager(this);
     }
 
     public void InitializeEngine()
@@ -1556,6 +1558,37 @@ public class GameEngine
         GraphicManager.SetTransitionType(0xb);
     }
 
+    //80051f1c
+    public void ActivateDebugSoundMenu()
+    {
+        //StaticVariables.g_SE_BGM_array //800a82c0
+        string[] args = ["SE", "BGM"];
+        StartAsyncCallback(SetDisplaySoundMenuCallback, 1, ref args);
+    }
+
+    //80050670
+    void SetDisplaySoundMenuCallback(int param_1)
+    {
+        int transitionType;
+
+        if (param_1 == 2)
+        {
+            transitionType = 8;
+        }
+        else
+        {
+            transitionType = 5;
+
+            if (param_1 != 1)
+            {
+                return;
+            }
+        }
+
+        GraphicManager.SetTransitionType(transitionType);
+    }
+
+    //8002e058
     private void UpdateWorld()
     {
         if (StaticVariables.g_animationRawSize > 0x38800)
@@ -1604,7 +1637,7 @@ public class GameEngine
             }
 
             var mapEventEntity = currentMapEvent.Entity;
-            var programId = mapEventEntity.EventTrigger;
+            var programId = mapEventEntity.MapEventProgramId;
 
             var record = currentMapEvent.MapEventRecord;
             var px = playerEntity.TileX;
@@ -1616,7 +1649,8 @@ public class GameEngine
                 mapEventEntity.EventProgramState.Sp = 0;
                 mapEventEntity.RelativeWarpOffsetX = 0;
                 mapEventEntity.Index = playerEntity.Index;
-                mapEventEntity.EventTrigger = record.EventCodesBIndex;
+                //mapEventEntity.MapEventProgramId = record.EventCodesBIndex;
+                //mapEventEntity.EventTrigger = record.EventCodesBIndex;
                 continue;
             }
 
@@ -1631,7 +1665,8 @@ public class GameEngine
 
             currentMapEvent.EventData.CopyFrom(playerEntity.EventProgramState);
             currentMapEvent.Entity = playerEntity.LogicContextEntity;
-            mapEventEntity.EventTrigger = playerEntity.EventTrigger;
+            currentMapEvent.ProgramBMap = playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap];
+            //mapEventEntity.EventTrigger = playerEntity.EventTrigger;
         }
 
     }
@@ -2611,12 +2646,13 @@ public class GameEngine
     }
 
     //80050ba8
-    public int InitializeAsyncOperation(string arg1, string arg2, ref int operationCounter)
+    public int InitializeAsyncOperation(string arg1, string arg2, Action<int> callback)
     {
         StaticVariables.g_asyncCallbackArgs[0] = arg1;
         StaticVariables.g_asyncCallbackArgs[1] = arg2;
-        StartAsyncCallback(AsyncCallbackHandler, 1, ref StaticVariables.g_asyncCallbackArgs);
-        StaticVariables.g_asyncOperationCounterPtr = operationCounter;
+        StartAsyncCallback(callback, 1, ref StaticVariables.g_asyncCallbackArgs);
+        //StartAsyncCallback(AsyncCallbackHandler, 1, ref StaticVariables.g_asyncCallbackArgs);
+        //StaticVariables.g_asyncOperationResultPtr = result;
         StaticVariables.g_asyncOperationCountdown = 0;
         return 1;
     }
@@ -2633,8 +2669,9 @@ public class GameEngine
     }
 
     //80050b98
-    void AsyncCallbackHandler(int counter)
+    void AsyncCallbackHandler(int result)
     {
-        StaticVariables.g_asyncOperationCounterPtr = counter;
+        //StaticVariables.g_asyncOperationResultPtr
+        //StaticVariables.g_asyncOperationResultPtr = result;
     }
 }

@@ -1537,19 +1537,6 @@ public class EntityEventHandlers
     {
         if ((logicEntity.Flags & 0x800000U) != 0) // has portrait
         {
-            //var iVar2 = logicEntity.SpriteRecord.Header.FramesPointer;
-            //
-            ////WrapsDialogSetupPortrait
-            //_gameEngine.StartHudTransition(
-            //    logicEntity.PosX, logicEntity.PosY, logicEntity.PosZ,
-            //    _gameEngine.StaticVariables.g_cameraScrollingX, _gameEngine.StaticVariables.g_cameraScrollingY,
-            //
-            //    (iVar2 + 4), (iVar2 + 5), (ushort)(iVar2 + 6), (ushort)(iVar2 + 7),
-            //    _gameEngine.StaticVariables.g_drawPageInfoBase[logicEntity.SheetSize + ((iVar2 + 3) & 0x3f)],
-            //    _gameEngine.StaticVariables.g_tPageFadeLUT[logicEntity.PaletteIndex + ((iVar2 + 2) & 7)]);
-
-            Debugger.Break();
-
             using var binaryReader = _gameEngine.DatasBin.OpenBin();
             var imgset = logicEntity.SpriteRecord.GetPortraitImageset(binaryReader);
             var img = imgset.Images[0];
@@ -1563,15 +1550,6 @@ public class EntityEventHandlers
                 /*_gameEngine.StaticVariables.g_drawPageInfoBase[logicEntity.SpriteSheetOffset + ((img.Spritesheet) & 0x3f)],
                 _gameEngine.StaticVariables.g_tPageFadeLUT[logicEntity.PaletteOffset + ((img.Palette) & 7)]*/
                 bitmap);
-
-            //TODO get it from memory, not disk
-            //SIImageSet portrait = entity.SpriteRecord.GetPortraitImageset(datasReader);
-            //var img = portrait.Images[0];
-            //var bmps = gameState.GetSpriteImages(portrait);
-            //var bmp = bmps[0];
-            //WrapsDialogSetupPortrait(entity.PosX, entity.PosY, entity.PosZ,
-            //  gameState.g_hudCurrentX, gameState.g_hudCurrentY,
-            //  img.Sx, img.Sy, img.Swidth, img.Sheight, bmp);
         }
 
         //Debugger.Break();
@@ -2664,9 +2642,9 @@ public class EntityEventHandlers
     {
         if (eventProgramState.Exp[1] == variables[0])
         {
-            if (_gameEngine.StaticVariables.INT_8013d8d0 != 0)
+            if (_gameEngine.StaticVariables.g_scriptDialogChoiceResult != 0)
             {
-                if (_gameEngine.StaticVariables.INT_8013d8d0 == 1)
+                if (_gameEngine.StaticVariables.g_scriptDialogChoiceResult == 1)
                 {
                     eventProgramState.Result = 1;
                 }
@@ -2680,11 +2658,11 @@ public class EntityEventHandlers
         }
         else
         {
-            _gameEngine.StaticVariables.INT_8013d8d0 = 0;
+            _gameEngine.StaticVariables.g_scriptDialogChoiceResult = 0;
 
             var arg1 = _gameEngine.EtcRes.GetEtcString(0x43);
             var arg2 = _gameEngine.EtcRes.GetEtcString(0x44);
-            var res = _gameEngine.InitializeAsyncOperation(arg1, arg2, ref _gameEngine.StaticVariables.INT_8013d8d0);
+            var res = _gameEngine.InitializeAsyncOperation(arg1, arg2, result => _gameEngine.StaticVariables.g_scriptDialogChoiceResult = result);
 
             if (res == 0)
             {

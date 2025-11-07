@@ -26,7 +26,7 @@ namespace AlundraTools.GameControls
             for (var dex = 0; dex < _soundBin.SfxRecords.Length; dex++)
             {
                 var item = _soundBin.SfxRecords[dex];
-                lsvSfx.Items.Add(new ListViewItem(new[] {
+                lsvSfx.Items.Add(new ListViewItem([
                     dex.ToString(),
                     item.VabId.ToString(),
                     item.ProgramNumber.ToString(),
@@ -39,7 +39,7 @@ namespace AlundraTools.GameControls
                     item.MaxVoices.ToString(),
                     item.Unknown2.ToString("x"),
                     item.NumTones.ToString()
-                }));
+                ]));
             }
 
             _input = new InputPort();

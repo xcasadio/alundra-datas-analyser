@@ -13,6 +13,20 @@ public class SoundManager
 
     //see soundBin
 
+    //800484e8
+    public void InitSoundSystem()
+    {
+        _gameEngine.StaticVariables.g_cdIsReady = 1;
+
+        _gameEngine.StaticVariables.g_resetSoundFlag = 0;
+        //_gameEngine.StaticVariables.INT_80164fc0 = 0;
+        _gameEngine.StaticVariables.g_currentMapSoundIndex = 0;
+        _gameEngine.StaticVariables.g_currentSoundGroup = -1; //0xffffffff;
+        _gameEngine.StaticVariables.g_soundEffectState = 0;
+        _gameEngine.StaticVariables.g_resetSoundFlag = 0;
+        _gameEngine.StaticVariables.DAT_80165024 = 0;
+    }
+
     // 8004b114
     public void FUN_8004b114(int soundIndex, int stopAllSound)
     {

@@ -421,7 +421,7 @@ public class MainInventoryManager
     }
 
     //80058134
-    public void DisplayInventoryAlundraPortrait()
+    public void DisplayInventoryCharacterPortrait()
     {
         //POLY_FT4* pPVar1;
         //DISPENV DStack_28;
@@ -469,20 +469,17 @@ public class MainInventoryManager
                 }
                 if ((_gameEngine.StaticVariables.g_padState1.ButtonsHold & PadState.Left) != 0)
                 {
-                    Debugger.Break();
-                    //TriggerWarpTypeB();
+                    //_gameEngine.TriggerWarpDebugZone();
                     return 0;
                 }
                 if ((_gameEngine.StaticVariables.g_padState1.ButtonsHold & PadState.Up) != 0)
                 {
-                    Debugger.Break();
-                    //StartFadeOut();
+                    _gameEngine.GraphicManager.StartFadeOut();
                     return 1;
                 }
                 if ((_gameEngine.StaticVariables.g_padState1.ButtonsHold & PadState.Down) != 0)
                 {
-                    Debugger.Break();
-                    //TriggerWarpTypeC();
+                    _gameEngine.ActivateDebugSoundMenu();
                     return 1;
                 }
             }

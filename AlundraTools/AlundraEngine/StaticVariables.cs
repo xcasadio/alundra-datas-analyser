@@ -4916,7 +4916,7 @@ public class StaticVariables
     public int g_isMemoryCopyInProgress; // 800C497C
     public int g_globalTransitionState; // 800C4980
     public int g_fadeControlValue; // 800C4984
-    public int g_asyncOperationStatus; // 800C4988
+    public int g_asyncOperationResult; // 800C4988
     public int g_fadeSubstate; // 800C498C
     public int DAT_800c4990; // 800C4990
     public int[] INT_ARRAY_800c4994 = new int[96]; // 800C4994
@@ -5222,7 +5222,7 @@ public class StaticVariables
     public MapEvent[] g_mapEvents = new MapEvent[64]; // 8013C688
     public int[] g_monitorData = new int[3]; // 8013C68C
     public MapEvent g_emptyMapEvent = new(); // 8013D888
-    public int INT_8013d8d0; // 8013D8D0
+    public int g_scriptDialogChoiceResult; // 8013D8D0
     public int g_activeEntityRefId; // 8013D8D4
     public Entity[] g_matchingEntitiesBuffer = new Entity[65]; // 8013D8D8
     public int g_activeEventProgramType; // 8013D9DC
@@ -5438,7 +5438,7 @@ public class StaticVariables
     public char g_soundBinNamePart2; // 8017E3E4
     public char g_soundBinNamePart3; // 8017E3E8
     public char g_soundBinNamePart4; // 8017E3EC
-    public int g_asyncOperationCounterPtr; // 8017E3F0
+    public Action<int> g_asyncOperationResultPtr; // 8017E3F0
     public string[] g_asyncCallbackArgs = new string[2]; // 8017E3F8
     public int DAT_8017e400; // 8017E400
     public SPRT SPRT_8017e410; // 8017E410

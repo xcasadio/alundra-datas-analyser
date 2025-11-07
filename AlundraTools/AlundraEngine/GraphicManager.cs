@@ -436,7 +436,7 @@ public class GraphicManager
         // GetDispEnv(&displayEnv);
         // SetDrawArea(&drawArea,&displayEnv.disp);
         FUN_800481f8();
-        _gameEngine.MainInventoryManager.DisplayInventoryAlundraPortrait(/*_gameEngine.StaticVariables.DAT_80146f64[g_drawModes[0x14].tag * 0x28]*/); //SPRT ??
+        _gameEngine.MainInventoryManager.DisplayInventoryCharacterPortrait(/*_gameEngine.StaticVariables.DAT_80146f64[g_drawModes[0x14].tag * 0x28]*/); //SPRT ??
         // uVar1 = g_drawModes[0x14].tag;
         // primitiveStart = g_drawModes + g_drawModes[0x14].tag * 10 + 4;
         // iVar3 = g_drawModes[0x14].tag * 0x28;
@@ -537,6 +537,28 @@ public class GraphicManager
 
                             j += 1;
                         } while (j < primitiveCount);
+
+                        //Dialog choice : we need to display the text
+                        //In the game the sprite is created with the text once before displaying
+                        if (i == 3)
+                        {
+                            sprite = tilesConfiguration.SpritesA[0];
+                            var xOffset = 0;
+
+                            foreach (var dialogChoiceSprites in _gameEngine.UIManager.DialogChoiceSprites)
+                            {
+                                foreach (var spr in dialogChoiceSprites)
+                                {
+                                    _gameEngine.Renderer.AddSprite(
+                                        spr.X + sprite.x0 + 16 + xOffset,
+                                        spr.Y + sprite.y0 + 8,
+                                        spr.Width, spr.Height,
+                                        int.MaxValue, spr.Bitmap, spr.Alpha);
+                                }
+
+                                xOffset += 0x30; //48
+                            }
+                        }
                     }
                 }
             }
@@ -784,7 +806,7 @@ public class GraphicManager
     }
 
     //80052618
-    private int StartFadeOut()
+    public int StartFadeOut()
     {
         var player = _gameEngine.StaticVariables.PlayerEntity;
 
