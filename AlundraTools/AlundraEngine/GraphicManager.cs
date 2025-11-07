@@ -499,7 +499,7 @@ public class GraphicManager
         UIBoxConfiguration tilesConfiguration;
         SPRT sprite;
         int j;
-        CallBackInfo callbackTable;
+        CallBackInfo callBackInfo;
         int iVar4;
         int i;
         int primitiveCount;
@@ -508,14 +508,14 @@ public class GraphicManager
 
         do
         {
-            callbackTable = _gameEngine.StaticVariables.g_callbackTable[i];
+            callBackInfo = _gameEngine.StaticVariables.g_callbackTable[i];
             _gameEngine.StaticVariables.g_activeTransitionCallback = _gameEngine.StaticVariables.g_callbackTable[i];
 
-            if ((callbackTable.Flags & 1) != 0)
+            if ((callBackInfo.Flags & 1) != 0)
             {
-                tilesConfiguration = callbackTable.Data;
+                tilesConfiguration = callBackInfo.Data;
 
-                if (tilesConfiguration != null && callbackTable.Arg != 0xffffffff)
+                if (tilesConfiguration != null && callBackInfo.Arg != 0xffffffff)
                 {
                     primitiveCount = tilesConfiguration.Width * tilesConfiguration.Height;
                     j = 0;

@@ -373,6 +373,7 @@ public partial class FrmGame : Form
         RefreshDialogControls();
         RefreshHudControls();
         RefreshPadControls();
+        RefreshCallbackControls();
 
         ResumeLayout();
         PerformLayout();
@@ -456,6 +457,22 @@ public partial class FrmGame : Form
         labelPadButtonJustPressed.Text = _gameEngine.StaticVariables.g_padState1.ButtonsJustPressed.ToString();
         labelPadButtonReleased.Text = _gameEngine.StaticVariables.g_padState1.ButtonsReleased.ToString();
         labelPadButtonJustPressedByInterval.Text = _gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval.ToString();
+    }
+
+    private void RefreshCallbackControls()
+    {
+        Label[] labels = [labelCallback0, labelCallback1, labelCallback2, labelCallback3, labelCallback4, labelCallback5, labelCallback6, labelCallback7, labelCallback8, labelCallback9, labelCallback10, labelCallback11, labelCallback12];
+
+        for (int i = 0; i < labels.Length; i++)
+        {
+            var isActive = (_gameEngine.StaticVariables.g_callbackTable[i].Flags & 1) != 0;
+            var foreColor = isActive ? Color.Black : Color.LightGray;
+
+            if (labels[i].ForeColor != foreColor)
+            {
+                labels[i].ForeColor = foreColor;
+            }
+        }
     }
 
     #region Pad
@@ -1190,5 +1207,37 @@ public partial class FrmGame : Form
     private void buttonAllItems_Click(object sender, EventArgs e)
     {
         Array.Fill<short>(_gameEngine.StaticVariables.g_numberOfItems, 1);
+    }
+
+    private void buttonZoomX2_Click(object sender, EventArgs e)
+    {
+        SetZoomLevel(2);
+    }
+
+    private void buttonZoomX4_Click(object sender, EventArgs e)
+    {
+        SetZoomLevel(4);
+    }
+
+    private void buttonZoomX8_Click(object sender, EventArgs e)
+    {
+        SetZoomLevel(8);
+    }
+
+    private void SetZoomLevel(int zoomScale)
+    {
+        SuspendLayout();
+
+        var screenGameWidth = StaticVariables.ScreenWidth * zoomScale;
+        var screenGameHeight = StaticVariables.ScreenHeight * zoomScale;
+
+        Width = screenGameWidth + 23 + tabControl1.Width;
+        Height = screenGameHeight + 41; //41 = title height + border => how to know the exact value?
+
+        pctOut.Width = screenGameWidth;
+        pctOut.Height = screenGameHeight;
+
+        ResumeLayout();
+        PerformLayout();
     }
 }
