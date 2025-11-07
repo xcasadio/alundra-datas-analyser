@@ -33,11 +33,11 @@ public class FrameSnapshot
     public int IsCameraScrolling { get; set; }
     public int CameraScrollingX { get; set; }
     public int CameraScrollingY { get; set; }
-    public int BossCutsceneFlag { get; set; }
+    public uint BossCutsceneFlag { get; set; }
     public int CameraOffsetX { get; set; }
     public int CameraOffsetY { get; set; }
     public PadState PadState1 { get; set; }
-    public int GravityFlag { get; set; }
+    public uint GravityFlag { get; set; }
     public Entity ActiveCollisionEntity { get; set; }
     public int WarpLockTimer { get; set; }
     public Entity[] ActiveEntities { get; set; }
@@ -58,7 +58,7 @@ public class FrameSnapshot
     public int MapOffsetY { get; set; }
     public int MapScreenPosX { get; set; }
     public int MapScreenPosY { get; set; }
-    public int WarpFlags { get; set; }
+    public uint WarpFlags { get; set; }
     public int PlayerLastX { get; set; }
     public int PlayerLastY { get; set; }
     public int PlayerLastZ { get; set; }

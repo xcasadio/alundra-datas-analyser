@@ -561,12 +561,12 @@ public class UIManager
                         sprite.x0 = (short)x;
                         sprite.y0 = startY;
 
-                        w = w + 1;
-                        x = x + 8;
+                        w += 1;
+                        x += 8;
                     } while (w < uiBoxConfig.Width);
                 }
 
-                h = h + 1;
+                h += 1;
                 startY = (short)(startY + 8);
 
             } while (h < uiBoxConfig.Height);
@@ -643,7 +643,7 @@ public class UIManager
             {
                 if ((_gameEngine.StaticVariables.g_etcDisplayFlags & 1U) != 0)
                 {
-                    _gameEngine.StaticVariables.g_etcDisplayFlags = (short)(_gameEngine.StaticVariables.g_etcDisplayFlags & 0xfffe);
+                    _gameEngine.StaticVariables.g_etcDisplayFlags &= 0xfffe;
                 }
 
                 if ((_gameEngine.StaticVariables.g_etcDisplayFlags & 2U) != 0)
@@ -671,7 +671,7 @@ public class UIManager
             sVar1 = (short)i;
             _gameEngine.StaticVariables.g_spriteMessageCharacterPortrait[i].y0 = (short)(callbackInfo.Data.Y + callbackInfo.Data.Height - sVar1);
 
-            i = i + 1;
+            i += 1;
         } while (i < 1);
 
         iVar4 = 0;
@@ -685,8 +685,8 @@ public class UIManager
             //pSVar10 = pSVar10 + 1;
             puVar8 = _gameEngine.StaticVariables.g_spriteMessageCharacterPortrait[i];
 
-            i = i + 1;
-            iVar4 = iVar4 + 1;
+            i += 1;
+            iVar4 += 1;
             //*puVar8 = *puVar8 & 0xff000000 | *puVar9 & 0xffffff;
             //*puVar9 = *puVar9 & 0xff000000 | (uint)pSVar7 & 0xffffff;
         } while (iVar4 < 1);
@@ -865,8 +865,8 @@ public class UIManager
             //*puVar5 = *puVar5 & 0xff000000 | *puVar7 & 0xffffff;
             //*puVar7 = *puVar7 & 0xff000000 | (uint)pSVar9 & 0xffffff;
 
-            iVar4 = iVar4 + 0x3c;
-            i = i + 1;
+            iVar4 += 0x3c;
+            i += 1;
             //sVar10 = sVar10 + 0x30;
 
         } while (i < 2);
@@ -895,8 +895,8 @@ public class UIManager
             sprite.code = 0;
         }
 
-        sprites[0].u0 = _gameEngine.StaticVariables.g_dialogCursorTextureUV[(sprite.r0 / 10) * 0x28];
-        sprites[0].v0 = _gameEngine.StaticVariables.g_dialogCursorTextureUV[(sprite.r0 / 10) * 0x28 + 1];
+        sprites[0].u0 = _gameEngine.StaticVariables.g_dialogCursorTextureUV[sprite.r0 / 10 * 0x28];
+        sprites[0].v0 = _gameEngine.StaticVariables.g_dialogCursorTextureUV[sprite.r0 / 10 * 0x28 + 1];
 
         //Debugger.Break();
         //TODO remove this
@@ -1703,7 +1703,7 @@ public class UIManager
             if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressed & 0x80) != 0)
             {
                 _gameEngine.StaticVariables.g_textHoldState = 0;
-                _gameEngine.StaticVariables.g_textFlags = (int)(_gameEngine.StaticVariables.g_textFlags & 0xfffffff7);
+                _gameEngine.StaticVariables.g_textFlags &= 0xfffffff7;
                 _gameEngine.StaticVariables.g_debugFlags_2 |= 8;
 
                 LAB_80046e34:
@@ -2307,7 +2307,7 @@ public class UIManager
                     //var bitmap = Font3.GenerateFontBitmapFromSprite(sprite);
                     //Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
-                    x = x + 1;
+                    x += 1;
                 }
             }
 
@@ -2335,7 +2335,7 @@ public class UIManager
             //var bitmap = Font3.GenerateHudBitmapFromSprite(sprite);
             //Renderer.AddSprite(sprite, int.MaxValue, bitmap);
 
-            i = i + 1;
+            i += 1;
         } while (i < 2);
 
         // Efface une zone d’écran pour préparer l’affichage
@@ -2387,7 +2387,7 @@ public class UIManager
 
         if (3 < displayMode)
         {
-            displayMode = displayMode + 1;
+            displayMode += 1;
         }
 
         if (displayMode < 0xe)
@@ -2428,7 +2428,7 @@ public class UIManager
                     }
 
                     k++;
-                    j = j + 1;
+                    j += 1;
                 }
 
                 /*
@@ -2494,10 +2494,10 @@ public class UIManager
                     //SetShadeTex(spritePtr, 1);
 
                     //y = (short)(y - 1);
-                    i = i + 1;
+                    i += 1;
                 } while (i < 1);
 
-                j = j + 1;
+                j += 1;
             } while (j < 2);
         }
         else

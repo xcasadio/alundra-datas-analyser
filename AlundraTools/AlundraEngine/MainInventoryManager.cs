@@ -875,7 +875,7 @@ public class MainInventoryManager
             {
                 if ((_gameEngine.StaticVariables.g_forbiddenWarpFlag & 4U) != 0)
                 {
-                    _gameEngine.StaticVariables.g_forbiddenWarpFlag = (int)(_gameEngine.StaticVariables.g_forbiddenWarpFlag & 0xfffffffb);
+                    _gameEngine.StaticVariables.g_forbiddenWarpFlag &= 0xfffffffb;
                 }
 
                 if ((_gameEngine.StaticVariables.g_forbiddenWarpFlag & 2U) != 0)
@@ -1513,7 +1513,7 @@ public class MainInventoryManager
                                 }
                             }
 
-                            i = (i + offset); // * 4;
+                            i += offset; // * 4;
 
                             sprite.r0 = 0x90;
                             sprite.g0 = 0x90;
@@ -1668,8 +1668,8 @@ public class MainInventoryManager
             cursorAnim.FrameDelay = 0;
         }
 
-        cursorAnim.Sprites[0].u0 = _gameEngine.StaticVariables.g_inventoryCursorTextureUVs[(cursorAnim.FrameDelay / 10) * 0x28];
-        cursorAnim.Sprites[0].v0 = _gameEngine.StaticVariables.g_inventoryCursorTextureUVs[(cursorAnim.FrameDelay / 10) * 0x28 + 1];
+        cursorAnim.Sprites[0].u0 = _gameEngine.StaticVariables.g_inventoryCursorTextureUVs[cursorAnim.FrameDelay / 10 * 0x28];
+        cursorAnim.Sprites[0].v0 = _gameEngine.StaticVariables.g_inventoryCursorTextureUVs[cursorAnim.FrameDelay / 10 * 0x28 + 1];
 
         //cursorAnim.Sprites[1].u0 = (byte)(_gameEngine.StaticVariables.g_inventoryCursorTextureU + cursorAnim.FrameDelay / 10 * 0x28);
         //cursorAnim.Sprites[1].v0 = (byte)(_gameEngine.StaticVariables.g_inventoryCursorTextureV + cursorAnim.FrameDelay / 10 * 0x28);

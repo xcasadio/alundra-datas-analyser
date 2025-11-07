@@ -1298,7 +1298,8 @@ public class EntityManager
         moddedZPos = _gameEngine.StaticVariables.PlayerEntity.ModdedPosZ;
         lockTimer = _gameEngine.StaticVariables.g_warpLockTimer;
 
-        if (_gameEngine.StaticVariables.g_debugState > -1 || (_gameEngine.StaticVariables.g_debugFlags & 0x80000000) == 0)
+        if (_gameEngine.StaticVariables.g_debugState != 0xFFFFFFFF 
+            || (_gameEngine.StaticVariables.g_debugFlags & 0x80000000) == 0)
         {
             flag = 0x40;
 
@@ -1390,8 +1391,9 @@ public class EntityManager
         Entity currentEntity;
         Entity[] collideableEntities;
 
-        if ((entity != _gameEngine.StaticVariables.PlayerEntity || _gameEngine.StaticVariables.g_debugState > -1 ||
-             (_gameEngine.StaticVariables.g_debugFlags & 0x80000000) == 0)
+        if ((entity != _gameEngine.StaticVariables.PlayerEntity 
+             || _gameEngine.StaticVariables.g_debugState != 0xFFFFFFFF 
+             || (_gameEngine.StaticVariables.g_debugFlags & 0x80000000) == 0)
             && (entity.Flags & 0x80U) != 0
             && (entity.AnimFlags & 0x80U) == 0
             && entity.PlatformEntity == null)

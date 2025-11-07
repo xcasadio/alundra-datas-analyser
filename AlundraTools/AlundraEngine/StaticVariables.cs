@@ -5073,7 +5073,7 @@ public class StaticVariables
     public int[] g_orderingTableBuffer = new int[4]; // 800CC050
     //public int g_orderingTableBufferAlt; // 800CC054
     public byte[] g_bufferImage2 = new byte[65536]; // 800CC058
-    public int g_debugState; // 800DC058
+    public uint g_debugState; // 800DC058
     public uint g_debugFlags; // 800DC05C
     public int g_debugFrameDelay; // 800DC060
     public int g_debug_desiredMapId; // 800DC064
@@ -5146,7 +5146,7 @@ public class StaticVariables
     public int g_cameraScrollingY; // 800E432C
     public byte[] g_imageBufferCompressed; // 800E4330
     public byte[] g_imageBuffer = new byte[5000]; // 800E4334
-    public int g_bossCutsceneFlag; // 800E4338
+    public uint g_bossCutsceneFlag; // 800E4338
     public int g_triggerEvent1; // 800E433C
     public int g_triggerEvent2; // 800E4340
     public int g_flagCutsceneState1; // 800E4344
@@ -5188,12 +5188,12 @@ public class StaticVariables
     public int[] INT_ARRAY_80126fe8 = new int[4]; // 80126FE8
     public SpriteEffect g_playerWarpEffect; // 80126FF8
     public int g_playerWarpTimer; // 80126FFC
-    public int g_gravityFlag; // 80127000
+    public uint g_gravityFlag; // 80127000
     public BalanceRecord[] g_intArray_80127008 = new BalanceRecord[2]; // 80127008
     public Entity g_activeCollisionEntity; // 80127108
     public uint g_currentWeaponFlags; // 8012710C
     public byte[] g_playerEffectTransitionCooldown = new byte[4]; // 80127110
-    public int g_playerEffectStepFlags; // 80127114
+    public uint g_playerEffectStepFlags; // 80127114
     public int g_playerEffectTimer; // 80127118
     public Entity[] g_spawnedWarpEntity = new Entity[16]; // 8012711C
     public int g_playerEffectCurrentFrame; // 8012715C
@@ -5259,7 +5259,7 @@ public class StaticVariables
     public int g_fadeTPagePrim2; // 8013FB90
     //public TILE TILE_8013fb98; // 8013FB98
     //public TILE TILE_8013fba8; // 8013FBA8
-    public int g_warpFlags; // 8013FBB8
+    public uint g_warpFlags; // 8013FBB8
     public int g_playerLastX; // 8013FBBC
     public int g_playerLastY; // 8013FBC0
     public int g_playerLastZ; // 8013FBC4
@@ -5269,7 +5269,7 @@ public class StaticVariables
     public int g_playerStepX; // 8013FBD4
     public int g_playerStepY; // 8013FBD8
     public int g_playerStepZ; // 8013FBDC
-    public int g_warpStepFlags_2; // 8013FBE0
+    public uint g_warpStepFlags_2; // 8013FBE0
     public int g_fadeFrameCounter; // 8013FBE4
     public int g_currentFadeColorB; // 8013FBE8
     public int g_currentFadeColorG; // 8013FBEC
@@ -5314,8 +5314,8 @@ public class StaticVariables
     public short g_textState; // 801490D4
     public short g_textCurrentPage; // 801490D6
     public char[] g_scriptBuffer = new char[2416]; // 80149268
-    public int g_textFlags; // 80149BC8
-    public int g_textAutoAdvanceFlag; // 80149BCC
+    public uint g_textFlags; // 80149BC8
+    public uint g_textAutoAdvanceFlag; // 80149BCC
     public int g_textDelayReset; // 80149BD0
     public int g_textDelay; // 80149BD4
     public int g_textBufferX; // 80149BD8
@@ -5345,7 +5345,7 @@ public class StaticVariables
     public short DAT_80149c9c; // 80149C9C
     public short DAT_80149c9e; // 80149C9E
     public int g_textMessageConfirmed; // 80149CA0
-    public int g_textAutoAdvanceFlag_2; // 80149CA4
+    public uint g_textAutoAdvanceFlag_2; // 80149CA4
     public int g_textChoiceIndex; // 80149CA8
     public int g_textNextChoice; // 80149CAC
     public uint g_debugFlags_2; // 80149CB0
@@ -5544,7 +5544,7 @@ public class StaticVariables
     public SPRT[] g_spriteInventoryText = Enumerable.Range(0, 4).Select(x => new SPRT()).ToArray(); // 8017fe9c
     public int g_inventoryCursorText; // 8017FEEC
     public int INT_8017fef0; // 8017FEF0
-    public int g_forbiddenWarpFlag; // 8017FEF4
+    public uint g_forbiddenWarpFlag; // 8017FEF4
     public InventoryCursorAnimation g_inventoryCursorAnimation = new InventoryCursorAnimation(); // 8017fef8
     public int g_inventorySelectedSlotId; // 8017FF28
     public SPRT[] g_spriteInventoryMoney = Enumerable.Range(0, 8).Select(x => new SPRT()).ToArray(); // 8017FF2C
@@ -5582,7 +5582,7 @@ public class StaticVariables
     public short DAT_8018014a; // 8018014A
     public int INT_80180238; // 80180238
     public int INT_8018023c; // 8018023C
-    public short g_etcDisplayFlags; // 80180240
+    public uint g_etcDisplayFlags; // 80180240
     public TextToDisplay g_textToDisplay2 = new TextToDisplay(); // 80180244
     public int g_etcTextSpeed_2; // 80180248
     public int g_etcTextMode_2; // 8018024C
@@ -5705,7 +5705,7 @@ public class StaticVariables
     public int DAT_80191254; // 80191254
     public int DAT_80191258; // 80191258
     public int DAT_8019125c; // 8019125C
-    public int g_warpStatusFlag; // 80191260
+    public uint g_warpStatusFlag; // 80191260
     public string g_dropItemTextBuffer;
     public Entity PTR_801912e8; // 801912E8
     public int DAT_801912ec; // 801912EC
@@ -5757,8 +5757,8 @@ public class StaticVariables
     public int g_mapTransitionFlags; // 801EB39C
     public int g_playerState; // 801EB3F4
     public int g_progressStateFlags; // 801EB3F8
-    public int g_systemFlags; // 801EB410
-    public int g_renderFlags; // 801EB424
+    public uint g_systemFlags; // 801EB410
+    public uint g_renderFlags; // 801EB424
     public int DAT_801eb43c; // 801EB43C
     public int g_debugPrintDisableFrameCounter; // 801EB440
     public ushort[] g_mapIdToInternalMapIndexTable = new ushort[500]; // 801EB444

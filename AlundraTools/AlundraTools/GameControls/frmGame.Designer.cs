@@ -129,6 +129,9 @@ namespace AlundraTools.GameControls
             label20 = new Label();
             numericUpDownHpMax = new NumericUpDown();
             tabPageDebug = new TabPage();
+            groupBoxFlags = new GroupBox();
+            panelFlags = new Panel();
+            label54 = new Label();
             groupBox7 = new GroupBox();
             labelCallback12 = new Label();
             labelCallback11 = new Label();
@@ -224,6 +227,7 @@ namespace AlundraTools.GameControls
             ((System.ComponentModel.ISupportInitialize)numericUpDownMp).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownHpMax).BeginInit();
             tabPageDebug.SuspendLayout();
+            groupBoxFlags.SuspendLayout();
             groupBox7.SuspendLayout();
             groupBox6.SuspendLayout();
             tabPageHud.SuspendLayout();
@@ -657,7 +661,7 @@ namespace AlundraTools.GameControls
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(5, 9);
+            label8.Location = new Point(6, 26);
             label8.Name = "label8";
             label8.Size = new Size(69, 15);
             label8.TabIndex = 21;
@@ -666,7 +670,7 @@ namespace AlundraTools.GameControls
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(122, 9);
+            label12.Location = new Point(122, 26);
             label12.Name = "label12";
             label12.Size = new Size(59, 15);
             label12.TabIndex = 22;
@@ -678,11 +682,11 @@ namespace AlundraTools.GameControls
             dataGridViewGlobalFlags.AllowUserToDeleteRows = false;
             dataGridViewGlobalFlags.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewGlobalFlags.Columns.AddRange(new DataGridViewColumn[] { columnIndex, columnValue });
-            dataGridViewGlobalFlags.Location = new Point(8, 27);
+            dataGridViewGlobalFlags.Location = new Point(6, 44);
             dataGridViewGlobalFlags.Name = "dataGridViewGlobalFlags";
             dataGridViewGlobalFlags.RowHeadersVisible = false;
             dataGridViewGlobalFlags.RowHeadersWidth = 51;
-            dataGridViewGlobalFlags.Size = new Size(108, 264);
+            dataGridViewGlobalFlags.Size = new Size(110, 334);
             dataGridViewGlobalFlags.TabIndex = 23;
             // 
             // columnIndex
@@ -705,11 +709,11 @@ namespace AlundraTools.GameControls
             dataGridViewMapFlags.AllowUserToDeleteRows = false;
             dataGridViewMapFlags.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewMapFlags.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2 });
-            dataGridViewMapFlags.Location = new Point(122, 27);
+            dataGridViewMapFlags.Location = new Point(122, 44);
             dataGridViewMapFlags.Name = "dataGridViewMapFlags";
             dataGridViewMapFlags.RowHeadersVisible = false;
             dataGridViewMapFlags.RowHeadersWidth = 51;
-            dataGridViewMapFlags.Size = new Size(117, 264);
+            dataGridViewMapFlags.Size = new Size(117, 334);
             dataGridViewMapFlags.TabIndex = 24;
             // 
             // dataGridViewTextBoxColumn1
@@ -1296,6 +1300,8 @@ namespace AlundraTools.GameControls
             // 
             // tabPageDebug
             // 
+            tabPageDebug.Controls.Add(groupBoxFlags);
+            tabPageDebug.Controls.Add(label54);
             tabPageDebug.Controls.Add(groupBox7);
             tabPageDebug.Controls.Add(groupBox6);
             tabPageDebug.Controls.Add(buttonCompareWithDump);
@@ -1322,6 +1328,35 @@ namespace AlundraTools.GameControls
             tabPageDebug.TabIndex = 3;
             tabPageDebug.Text = "Debug";
             tabPageDebug.UseVisualStyleBackColor = true;
+            // 
+            // groupBoxFlags
+            // 
+            groupBoxFlags.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            groupBoxFlags.Controls.Add(panelFlags);
+            groupBoxFlags.Location = new Point(6, 384);
+            groupBoxFlags.Name = "groupBoxFlags";
+            groupBoxFlags.Size = new Size(490, 280);
+            groupBoxFlags.TabIndex = 66;
+            groupBoxFlags.TabStop = false;
+            groupBoxFlags.Text = "Flags";
+            // 
+            // panelFlags
+            // 
+            panelFlags.AutoScroll = true;
+            panelFlags.Dock = DockStyle.Fill;
+            panelFlags.Location = new Point(3, 19);
+            panelFlags.Name = "panelFlags";
+            panelFlags.Size = new Size(484, 258);
+            panelFlags.TabIndex = 0;
+            // 
+            // label54
+            // 
+            label54.AutoSize = true;
+            label54.Location = new Point(3, 9);
+            label54.Name = "label54";
+            label54.Size = new Size(122, 15);
+            label54.TabIndex = 65;
+            label54.Text = "Display only flags != 0";
             // 
             // groupBox7
             // 
@@ -1351,7 +1386,7 @@ namespace AlundraTools.GameControls
             labelCallback12.AutoSize = true;
             labelCallback12.Location = new Point(3, 199);
             labelCallback12.Name = "labelCallback12";
-            labelCallback12.Size = new Size(74, 15);
+            labelCallback12.Size = new Size(256, 15);
             labelCallback12.TabIndex = 28;
             labelCallback12.Text = "Callback #12 - display dialog portrait and name";
             // 
@@ -1405,7 +1440,7 @@ namespace AlundraTools.GameControls
             labelCallback6.AutoSize = true;
             labelCallback6.Location = new Point(3, 109);
             labelCallback6.Name = "labelCallback6";
-            labelCallback6.Size = new Size(68, 15);
+            labelCallback6.Size = new Size(180, 15);
             labelCallback6.TabIndex = 22;
             labelCallback6.Text = "Callback #6 - display main menu";
             // 
@@ -1423,7 +1458,7 @@ namespace AlundraTools.GameControls
             labelCallback4.AutoSize = true;
             labelCallback4.Location = new Point(3, 79);
             labelCallback4.Name = "labelCallback4";
-            labelCallback4.Size = new Size(68, 15);
+            labelCallback4.Size = new Size(207, 15);
             labelCallback4.TabIndex = 20;
             labelCallback4.Text = "Callback #4 - display secondary menu";
             // 
@@ -1432,7 +1467,7 @@ namespace AlundraTools.GameControls
             labelCallback3.AutoSize = true;
             labelCallback3.Location = new Point(3, 64);
             labelCallback3.Name = "labelCallback3";
-            labelCallback3.Size = new Size(68, 15);
+            labelCallback3.Size = new Size(190, 15);
             labelCallback3.TabIndex = 19;
             labelCallback3.Text = "Callback #3 - display dialog choice";
             // 
@@ -1459,7 +1494,7 @@ namespace AlundraTools.GameControls
             labelCallback0.AutoSize = true;
             labelCallback0.Location = new Point(3, 19);
             labelCallback0.Name = "labelCallback0";
-            labelCallback0.Size = new Size(68, 15);
+            labelCallback0.Size = new Size(152, 15);
             labelCallback0.TabIndex = 16;
             labelCallback0.Text = "Callback #0 - display dialog";
             // 
@@ -1639,7 +1674,7 @@ namespace AlundraTools.GameControls
             // 
             comboBoxSpawnItemId.FormattingEnabled = true;
             comboBoxSpawnItemId.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86" });
-            comboBoxSpawnItemId.Location = new Point(131, 342);
+            comboBoxSpawnItemId.Location = new Point(126, 695);
             comboBoxSpawnItemId.Margin = new Padding(3, 2, 3, 2);
             comboBoxSpawnItemId.Name = "comboBoxSpawnItemId";
             comboBoxSpawnItemId.Size = new Size(108, 23);
@@ -1647,7 +1682,7 @@ namespace AlundraTools.GameControls
             // 
             // buttonSpawnItem
             // 
-            buttonSpawnItem.Location = new Point(8, 341);
+            buttonSpawnItem.Location = new Point(3, 694);
             buttonSpawnItem.Margin = new Padding(3, 2, 3, 2);
             buttonSpawnItem.Name = "buttonSpawnItem";
             buttonSpawnItem.Size = new Size(108, 22);
@@ -1659,7 +1694,7 @@ namespace AlundraTools.GameControls
             // label30
             // 
             label30.AutoSize = true;
-            label30.Location = new Point(8, 318);
+            label30.Location = new Point(3, 671);
             label30.Name = "label30";
             label30.Size = new Size(108, 15);
             label30.TabIndex = 60;
@@ -1669,7 +1704,7 @@ namespace AlundraTools.GameControls
             // 
             comboBoxRandomItem.FormattingEnabled = true;
             comboBoxRandomItem.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86" });
-            comboBoxRandomItem.Location = new Point(131, 316);
+            comboBoxRandomItem.Location = new Point(126, 669);
             comboBoxRandomItem.Margin = new Padding(3, 2, 3, 2);
             comboBoxRandomItem.Name = "comboBoxRandomItem";
             comboBoxRandomItem.Size = new Size(108, 23);
@@ -2144,6 +2179,7 @@ namespace AlundraTools.GameControls
             ((System.ComponentModel.ISupportInitialize)numericUpDownHpMax).EndInit();
             tabPageDebug.ResumeLayout(false);
             tabPageDebug.PerformLayout();
+            groupBoxFlags.ResumeLayout(false);
             groupBox7.ResumeLayout(false);
             groupBox7.PerformLayout();
             groupBox6.ResumeLayout(false);
@@ -2336,5 +2372,8 @@ namespace AlundraTools.GameControls
         private Button buttonZoomX2;
         private Button buttonZoomX8;
         private Button buttonZoomX4;
+        private Label label54;
+        private GroupBox groupBoxFlags;
+        private Panel panelFlags;
     }
 }

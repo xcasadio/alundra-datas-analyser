@@ -643,7 +643,7 @@ public class GraphicManager
         if ((_gameEngine.StaticVariables.g_renderFlags & 0x800000U) != 0)
         {
             ActivateSpecialRenderMode(7);
-            _gameEngine.StaticVariables.g_renderFlags = (int)(_gameEngine.StaticVariables.g_renderFlags & 0xff7fffff);
+            _gameEngine.StaticVariables.g_renderFlags &= 0xff7fffff;
         }
 
         if ((_gameEngine.StaticVariables.g_systemFlags & 0x40000000U) == 0)
@@ -653,7 +653,7 @@ public class GraphicManager
 
         if ((_gameEngine.StaticVariables.g_renderFlags & 0x200000U) != 0)
         {
-            _gameEngine.StaticVariables.g_renderFlags = (int)(_gameEngine.StaticVariables.g_renderFlags & 0xffdfffff);
+            _gameEngine.StaticVariables.g_renderFlags &= 0xffdfffff;
             _gameEngine.StaticVariables.g_systemFlags |= 0x40000000;
             PrepareBufferFlip();
         }
@@ -661,8 +661,8 @@ public class GraphicManager
         if ((_gameEngine.StaticVariables.g_renderFlags & 0x400000U) != 0)
         {
             ResetDrawFrameFlags();
-            _gameEngine.StaticVariables.g_systemFlags = (int)(_gameEngine.StaticVariables.g_systemFlags & 0xbfffffff);
-            _gameEngine.StaticVariables.g_renderFlags = (int)(_gameEngine.StaticVariables.g_renderFlags & 0xffbfffff);
+            _gameEngine.StaticVariables.g_systemFlags &= 0xbfffffff;
+            _gameEngine.StaticVariables.g_renderFlags &= 0xffbfffff;
         }
 
         i = 0;

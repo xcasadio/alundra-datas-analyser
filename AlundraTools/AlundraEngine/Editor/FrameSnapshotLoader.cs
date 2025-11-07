@@ -193,11 +193,11 @@ public static class FrameSnapshotLoader
         public int g_isCameraScrolling { get; set; }
         public int g_cameraScrollingX { get; set; }
         public int g_cameraScrollingY { get; set; }
-        public int g_bossCutsceneFlag { get; set; }
+        public uint g_bossCutsceneFlag { get; set; }
         public int g_cameraOffsetX { get; set; }
         public int g_cameraOffsetY { get; set; }
         public PadState g_padState1 { get; set; }
-        public int g_gravityFlag { get; set; }
+        public uint g_gravityFlag { get; set; }
         public int g_activeCollisionEntity { get; set; }
         public int g_warpLockTimer { get; set; }
         public int[] g_activeEntities { get; set; }
@@ -218,7 +218,7 @@ public static class FrameSnapshotLoader
         public int g_mapOffsetY { get; set; }
         public int g_mapScreenPosX { get; set; }
         public int g_mapScreenPosY { get; set; }
-        public int g_warpFlags { get; set; }
+        public uint g_warpFlags { get; set; }
         public int g_playerLastX { get; set; }
         public int g_playerLastY { get; set; }
         public int g_playerLastZ { get; set; }

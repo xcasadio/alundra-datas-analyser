@@ -1,11 +1,13 @@
-﻿using System.Runtime.InteropServices;
-using System.Text;
-using AlundraEngine;
+﻿using AlundraEngine;
 using AlundraEngine.DatasBin;
 using AlundraEngine.Editor;
 using AlundraEngine.Gameplay;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
+using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text;
 using Timer = System.Windows.Forms.Timer;
 
 namespace AlundraTools.GameControls;
@@ -19,6 +21,7 @@ public partial class FrmGame : Form
     private readonly Graphics _graphics;
     private int _lastMapId = -1;
     private bool _exceptionMessageShown;
+    private readonly Stopwatch _stopwatch = new();
 
     private readonly Dictionary<string, string> _entityCategories = new()
     {
@@ -239,6 +242,8 @@ public partial class FrmGame : Form
         [nameof(SpriteEffect.ForceZ)] = nameof(ShiftedFieldDescriptor)
     };
 
+    private long _lastFrameTime;
+    private FlagModel[] _flagModels;
 
     public FrmGame(DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcRes etcRes, Font3 font3)
     {
@@ -252,6 +257,112 @@ public partial class FrmGame : Form
 
         _graphics = Graphics.FromImage(_backBuffer);
         _graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+
+        InitializeFlagControls();
+    }
+
+    private void InitializeFlagControls()
+    {
+        _flagModels = [
+            new(
+                nameof(_gameEngine.StaticVariables.g_bossCutsceneFlag),
+                () => _gameEngine.StaticVariables.g_bossCutsceneFlag
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_currentWeaponFlags),
+                () => _gameEngine.StaticVariables.g_currentWeaponFlags
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_debugFlags),
+                () => _gameEngine.StaticVariables.g_debugFlags
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_debugFlags_2),
+                () => _gameEngine.StaticVariables.g_debugFlags_2
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_debugState),
+                () => _gameEngine.StaticVariables.g_debugState
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_etcDisplayFlags),
+                () => _gameEngine.StaticVariables.g_etcDisplayFlags
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_forbiddenWarpFlag),
+                () => _gameEngine.StaticVariables.g_forbiddenWarpFlag
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_gravityFlag),
+                () => _gameEngine.StaticVariables.g_gravityFlag
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_playerControlFlags),
+                () => _gameEngine.StaticVariables.g_playerControlFlags
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_playerEffectStepFlags),
+                () => _gameEngine.StaticVariables.g_playerEffectStepFlags
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_renderFlags),
+                () => _gameEngine.StaticVariables.g_renderFlags
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_systemFlags),
+                () => _gameEngine.StaticVariables.g_systemFlags
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_textAutoAdvanceFlag),
+                () => _gameEngine.StaticVariables.g_textAutoAdvanceFlag
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_textAutoAdvanceFlag_2),
+                () => _gameEngine.StaticVariables.g_textAutoAdvanceFlag_2
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_textFlags),
+                () => _gameEngine.StaticVariables.g_textFlags
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_warpFlags),
+                () => _gameEngine.StaticVariables.g_warpFlags
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_warpStatusFlag),
+                () => _gameEngine.StaticVariables.g_warpStatusFlag
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_warpStepFlags_2),
+                () => _gameEngine.StaticVariables.g_warpStepFlags_2
+            )
+        ];
+
+        var yOffset = 16;
+
+        for (int i = 0; i < _flagModels.Length; i++)
+        {
+            var flag = _flagModels[i];
+
+            var startTextLocation = new Point(6, 16 + i * yOffset);
+            var startValueLocation = new Point(184, 16 + i * yOffset);
+
+            var labelText = new Label();
+            labelText.AutoSize = true;
+            labelText.Location = startTextLocation;
+            labelText.Name = $"label{flag.Name}Text";
+            labelText.Text = flag.Name;
+
+            var labelValue = new Label();
+            labelValue.AutoSize = true;
+            labelValue.Location = startValueLocation;
+            labelValue.Name = $"label{flag.Name}Value";
+            labelValue.Text = "0";
+            flag.LabelValue = labelValue;
+
+            panelFlags.Controls.Add(labelText);
+            panelFlags.Controls.Add(labelValue);
+        }
     }
 
     private void FrmGame_FormClosing(object? sender, FormClosingEventArgs e)
@@ -279,26 +390,43 @@ public partial class FrmGame : Form
 
     private void InitializeUI()
     {
-        for (int i = 0; i < _gameEngine.StaticVariables.g_mapFlags.Length; i++)
-        {
-            dataGridViewMapFlags.Rows.Add(i.ToString(), _gameEngine.StaticVariables.g_mapFlags[i]);
-        }
+        AddFlagsInDataGridView(dataGridViewMapFlags, _gameEngine.StaticVariables.g_mapFlags);
+        AddFlagsInDataGridView(dataGridViewGlobalFlags, _gameEngine.StaticVariables.g_globalFlags);
+    }
 
-        for (int i = 0; i < _gameEngine.StaticVariables.g_globalFlags.Length; i++)
+    private void AddFlagsInDataGridView(DataGridView dataGridView, uint[] flags)
+    {
+        for (int i = 0; i < flags.Length; i++)
         {
-            dataGridViewGlobalFlags.Rows.Add(i.ToString(), _gameEngine.StaticVariables.g_globalFlags[i]);
+            var index = dataGridView.Rows.Add(i.ToString(), flags[i]);
+
+            if (flags[i] == 0)
+            {
+                dataGridView.Rows[index].Visible = false;
+            }
         }
     }
 
     private void GameEngineTimerTick(object sender, EventArgs e)
     {
         pctOut.Invalidate();
+
+        if (_lastFrameTime == 0)
+        {
+            _gameEngineTimer.Interval = 33;
+        }
+        else
+        {
+            _gameEngineTimer.Interval = (int)Math.Max(1, 33 - _lastFrameTime);
+        }
     }
 
     private void pctOut_Paint(object sender, PaintEventArgs e)
     {
         try
         {
+            _stopwatch.Restart();
+
             UpdatePad();
 
             _graphics.Clear(Color.Black);
@@ -308,6 +436,9 @@ public partial class FrmGame : Form
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             e.Graphics.Clear(Color.Black);
             e.Graphics.DrawImage(_backBuffer, 0, 0, pctOut.Width, pctOut.Height);
+
+            _stopwatch.Stop();
+            _lastFrameTime = _stopwatch.ElapsedMilliseconds;
         }
         catch (Exception ex)
         {
@@ -368,8 +499,8 @@ public partial class FrmGame : Form
         propertyGridEntity.Refresh();
         propertyGridEffect.Refresh();
 
-        RefreshMapFlags();
-        RefreshGameFlags();
+        RefreshGameAndMapFlagsControls();
+        RefreshFlagsControls();
         RefreshDialogControls();
         RefreshHudControls();
         RefreshPadControls();
@@ -384,30 +515,23 @@ public partial class FrmGame : Form
         labelFrames.Text = $"Frame {_gameEngine.ReplayManager.CurrentFrame}/{_gameEngine.ReplayManager.FrameCount - 1}";
     }
 
-    private void RefreshMapFlags()
+    private void RefreshGameAndMapFlagsControls()
     {
-        for (int i = 0; i < _gameEngine.StaticVariables.g_mapFlags.Length; i++)
-        {
-            var cell = dataGridViewMapFlags.Rows[i].Cells[1];
-
-            if (!(dataGridViewMapFlags.CurrentCell == cell && dataGridViewMapFlags.IsCurrentCellInEditMode)
-                && cell.Value != null && (uint)cell.Value != _gameEngine.StaticVariables.g_mapFlags[i])
-            {
-                cell.Value = _gameEngine.StaticVariables.g_mapFlags[i];
-            }
-        }
+        RefreshDatagridViewFlagsControl(dataGridViewMapFlags, _gameEngine.StaticVariables.g_mapFlags);
+        RefreshDatagridViewFlagsControl(dataGridViewGlobalFlags, _gameEngine.StaticVariables.g_globalFlags);
     }
 
-    private void RefreshGameFlags()
+    private void RefreshDatagridViewFlagsControl(DataGridView dataGridView, uint[] flags)
     {
-        for (int i = 0; i < _gameEngine.StaticVariables.g_globalFlags.Length; i++)
+        for (int i = 0; i < flags.Length; i++)
         {
-            var cell = dataGridViewGlobalFlags.Rows[i].Cells[1];
+            var cell = dataGridView.Rows[i].Cells[1];
 
-            if (!(dataGridViewGlobalFlags.CurrentCell == cell && dataGridViewGlobalFlags.IsCurrentCellInEditMode)
-                && cell.Value != null && (uint)cell.Value != _gameEngine.StaticVariables.g_globalFlags[i])
+            if (!(dataGridView.CurrentCell == cell && dataGridView.IsCurrentCellInEditMode)
+                && cell.Value != null && (uint)cell.Value != flags[i])
             {
-                cell.Value = _gameEngine.StaticVariables.g_globalFlags[i];
+                dataGridView.Rows[i].Visible = flags[i] != 0;
+                cell.Value = flags[i];
             }
         }
     }
@@ -475,12 +599,18 @@ public partial class FrmGame : Form
         }
     }
 
+    private void RefreshFlagsControls()
+    {
+        for (int i = 0; i < _flagModels.Length; i++)
+        {
+            _flagModels[i].LabelValue.Text = _flagModels[i].Value().ToString();
+        }
+    }
+
     #region Pad
 
     [DllImport("user32.dll")]
     static extern int GetScrollPos(IntPtr hWnd, int nBar);
-
-    [DllImport("user32.dll")]
     static extern int SetScrollPos(IntPtr hWnd, int nBar, int nPos, bool bRedraw);
 
     [DllImport("user32.dll")]
@@ -1240,4 +1370,11 @@ public partial class FrmGame : Form
         ResumeLayout();
         PerformLayout();
     }
+}
+
+internal class FlagModel(string Name, Func<uint> Value)
+{
+    public string Name { get; init; } = Name;
+    public Func<uint> Value { get; init; } = Value;
+    public Label LabelValue { get; set; }
 }

@@ -1351,7 +1351,7 @@ public class PlayerManager
     // 8002f768
     private int UpdateWeaponStepProgression()
     {
-        int stepCounter = _gameEngine.StaticVariables.g_playerEffectStepFlags;
+        var stepCounter = _gameEngine.StaticVariables.g_playerEffectStepFlags;
 
         if (_gameEngine.StaticVariables.g_playerEffectTransitionCooldown[0] != 0)
         {
