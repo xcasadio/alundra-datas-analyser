@@ -875,7 +875,7 @@ public class SpriteEventHandlers
                             entity.Status = 3;
                         }
                         value++;
-                        System.Diagnostics.Debugger.Break();
+                        Debugger.Break();
                         //entity2 = entity2.Index2; // ??
                     } while (value < 4);
 

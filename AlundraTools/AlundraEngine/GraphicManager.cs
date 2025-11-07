@@ -827,7 +827,6 @@ public class GraphicManager
     //80057b40
     public SiImage GetAnimationImageByIndex(int index)
     {
-        //Debugger.Break();
         //return _gameEngine.AlundraMap.SpriteInfo.Sprites[index].AnimSets[0].PreloadedAnims[0].Frames[0].Images.Images[0];
         //TODO : don't use OpenBin()
         using var br = _gameEngine.DatasBin.OpenBin();

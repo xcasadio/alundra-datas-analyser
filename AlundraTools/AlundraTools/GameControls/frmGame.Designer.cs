@@ -207,6 +207,7 @@ namespace AlundraTools.GameControls
             buttonZoomX8 = new Button();
             buttonZoomX4 = new Button();
             buttonZoomX2 = new Button();
+            buttonAlundraCabine = new Button();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -1300,6 +1301,7 @@ namespace AlundraTools.GameControls
             // 
             // tabPageDebug
             // 
+            tabPageDebug.Controls.Add(buttonAlundraCabine);
             tabPageDebug.Controls.Add(groupBoxFlags);
             tabPageDebug.Controls.Add(label54);
             tabPageDebug.Controls.Add(groupBox7);
@@ -2142,6 +2144,16 @@ namespace AlundraTools.GameControls
             buttonZoomX2.UseVisualStyleBackColor = true;
             buttonZoomX2.Click += buttonZoomX2_Click;
             // 
+            // buttonAlundraCabine
+            // 
+            buttonAlundraCabine.Location = new Point(322, 684);
+            buttonAlundraCabine.Name = "buttonAlundraCabine";
+            buttonAlundraCabine.Size = new Size(75, 23);
+            buttonAlundraCabine.TabIndex = 67;
+            buttonAlundraCabine.Text = "Pass alundra cabine";
+            buttonAlundraCabine.UseVisualStyleBackColor = true;
+            buttonAlundraCabine.Click += buttonAlundraCabine_Click;
+            // 
             // FrmGame
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -2375,5 +2387,6 @@ namespace AlundraTools.GameControls
         private Label label54;
         private GroupBox groupBoxFlags;
         private Panel panelFlags;
+        private Button buttonAlundraCabine;
     }
 }

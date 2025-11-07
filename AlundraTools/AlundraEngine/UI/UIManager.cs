@@ -31,7 +31,6 @@ public class UIManager
         int surfaceIndex;
 
         surfaceIndex = 0;
-        _gameEngine.StaticVariables.g_etcDisplayFlags = 0;
         tilesConfiguration = callBackInfo.Data;
 
         if (callBackInfo.Data == null)
@@ -81,7 +80,6 @@ public class UIManager
     //80046ef0
     public void Fun_80046ef0(CallBackInfo callBackInfo)
     {
-        //Debugger.Break();
         int y;
         int height;
         //DISPENV local_28;
@@ -576,8 +574,6 @@ public class UIManager
     //8005a268
     public void FUN_8005a268(CallBackInfo callBackInfo)
     {
-        Debugger.Break();
-
         var textTileConfig = callBackInfo.Data;
 
         _gameEngine.StaticVariables.g_textToDisplay2.mode = 2;
@@ -621,8 +617,6 @@ public class UIManager
     //8005a3e0
     public void Fun_8005a3e0(CallBackInfo callbackInfo)
     {
-        Debugger.Break();
-
         short sVar1;
         ulong uVar2;
         int i;
@@ -684,6 +678,17 @@ public class UIManager
             //pSVar7 = pSVar10 + uVar2;
             //pSVar10 = pSVar10 + 1;
             puVar8 = _gameEngine.StaticVariables.g_spriteMessageCharacterPortrait[i];
+
+            var sprite = _gameEngine.StaticVariables.g_spriteMessageCharacterPortrait[i];
+
+            foreach (var spr in DialogCharacterNameSprites)
+            {
+                _gameEngine.Renderer.AddSprite(
+                    spr.X + sprite.x0,
+                    spr.Y /*+ sprite.y0*/ + 4,
+                    spr.Width, spr.Height,
+                    int.MaxValue, spr.Bitmap, spr.Alpha);
+            }
 
             i += 1;
             iVar4 += 1;
@@ -1764,8 +1769,6 @@ public class UIManager
         Rectangle drawRect = new Rectangle();
         short posX_;
 
-        //Debugger.Break();
-
         if (formattedText[i] != '\0' && i < formattedText.Length)
         {
             bufferWidth = (int)drawWidth;
@@ -2278,7 +2281,7 @@ public class UIManager
         // 3 lines to display the text in the dialog box
         DialogChoiceSprites[0].Clear();
         DialogChoiceSprites[1].Clear();
-        DialogCharacterNameSprites.Clear();
+        //DialogCharacterNameSprites.Clear();
         foreach (var dialogLinesSprite in DialogLinesSprites)
         {
             dialogLinesSprite.Clear();

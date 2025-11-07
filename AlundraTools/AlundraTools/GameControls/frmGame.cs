@@ -1370,6 +1370,14 @@ public partial class FrmGame : Form
         ResumeLayout();
         PerformLayout();
     }
+
+    private void buttonAlundraCabine_Click(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.g_mapFlags[108] |= 4;
+        _gameEngine.StaticVariables.g_mapFlags[108] |= 32;
+        _gameEngine.StaticVariables.g_mapFlags[108] |= 64;
+        _gameEngine.StaticVariables.g_mapFlags[108] |= 128;
+    }
 }
 
 internal class FlagModel(string Name, Func<uint> Value)

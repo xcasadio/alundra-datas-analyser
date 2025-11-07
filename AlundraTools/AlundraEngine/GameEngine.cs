@@ -1174,7 +1174,7 @@ public class GameEngine
         //    i = i + 1;
         //} while (i < 0xf0);
 
-        StaticVariables.g_warpEffectBuffer[1] = (StaticVariables.g_warpEffectBuffer[1] & 0x0000_FFFF) | (0xEF << 16);
+        StaticVariables.g_warpEffectBuffer[1] = (short)((StaticVariables.g_warpEffectBuffer[1] & 0x0000_FFFF) | (0xEF << 16));
         StaticVariables.g_targetFadeColorR = 0xff0000;
         StaticVariables.g_targetFadeColorG = 0xff0000;
         StaticVariables.g_targetFadeColorB = 0xff0000;
@@ -1213,7 +1213,7 @@ public class GameEngine
                     rowIndex = frameOffset * 2 + StaticVariables.g_mapWarpPattern[warpPatternPtr];
                 }
 
-                StaticVariables.g_warpEffectBuffer[columnOffset] = rowIndex;
+                StaticVariables.g_warpEffectBuffer[columnOffset] = (short)rowIndex;
                 StaticVariables.g_warpEffectBuffer[columnOffset + 4] = 0;
                 columnOffset = columnOffset + 8;
                 columnIndex = columnIndex + 1;
@@ -1254,6 +1254,8 @@ public class GameEngine
         iVar6 = 0;
         iVar7 = 0;
 
+        Debugger.Break();
+
         do
         {
             iVar4 = 0;
@@ -1279,13 +1281,13 @@ public class GameEngine
                     iVar2 = iVar2 + -7 + iVar6;
                 }
 
-                StaticVariables.g_warpEffectBuffer[iVar5] = iVar2 * -2;
+                StaticVariables.g_warpEffectBuffer[iVar5] = (short)(iVar2 * -2);
                 uVar3 = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
                 StaticVariables.g_gameRandomSeed = uVar3 * 0x7d2b89dd + 0xe06a02e7;
                 uVar1 = StaticVariables.g_gameRandomSeed;
                 iVar4 = iVar4 + 1;
-                StaticVariables.g_warpEffectBuffer[iVar5 + 4] = 0x40 - (short)((ulong)uVar3 * 0x81 >> 0x20);
-                StaticVariables.g_warpEffectBuffer[iVar5 + 6] = -0x10 - (short)(uVar1 * 0x41 >> 0x20);
+                StaticVariables.g_warpEffectBuffer[iVar5 + 4] = (short)(0x40 - (short)((ulong)uVar3 * 0x81 >> 0x20));
+                StaticVariables.g_warpEffectBuffer[iVar5 + 6] = (short)(-0x10 - (short)(uVar1 * 0x41 >> 0x20));
                 iVar5 = iVar5 + 8;
             } while (iVar4 < 0x14);
 
@@ -1381,7 +1383,7 @@ public class GameEngine
         int innerLoopCounter;
         int offsetY;
         int offsetX;
-        int iterationCounter;
+        int iterationCounter = 0;
         int outerLoopCounter;
         int tableOffset;
 
@@ -1393,7 +1395,7 @@ public class GameEngine
         {
             innerLoopCounter = 0;
             offsetX = -0x98;
-            iterationCounter = tableOffset;
+            //iterationCounter = tableOffset;
 
             do
             {
@@ -1401,15 +1403,12 @@ public class GameEngine
                 randomSeed2 = randomSeed1 * 0x7d2b89dd + 0xe06a02e7;
                 randomSeed3 = randomSeed2 * 0x7d2b89dd + 0xe06a02e7;
                 StaticVariables.g_gameRandomSeed = (uint)(randomSeed3 * 0x7d2b89dd + 0xe06a02e7);
-                Debugger.Break();
-                //innerLoopCounter = innerLoopCounter + 1;
-                StaticVariables.g_warpEffectBuffer[iterationCounter] = -(short)(randomSeed1 * 0x15 >> 0x20) - (short)(offsetX * offsetX + offsetY * offsetY >> 10);
-                StaticVariables.g_warpEffectBuffer[iterationCounter + 2] = (short)(randomSeed2 * 0x15 >> 0x20) + 0x14;
-                StaticVariables.g_warpEffectBuffer[iterationCounter + 4] = (short)(randomSeed3 * 0x130 >> 0x20);
-                StaticVariables.g_warpEffectBuffer[iterationCounter + 6] = (short)(StaticVariables.g_gameRandomSeed * 0xe0 >> 0x20);
-                
+                StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 0] = (short)(-(short)(randomSeed1 * 0x15 >> 0x20) - (short)(offsetX * offsetX + offsetY * offsetY >> 10));
+                StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 1] = (short)((short)(randomSeed2 * 0x15 >> 0x20) + 0x14);
+                StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 2] = (short)(randomSeed3 * 0x130 >> 0x20);
+                StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 3] = (short)(StaticVariables.g_gameRandomSeed * 0xe0 >> 0x20);
                 offsetX = offsetX + 0x10;
-                iterationCounter = iterationCounter + 8;
+                iterationCounter = iterationCounter + 1;
                 innerLoopCounter = innerLoopCounter + 1;
             } while (innerLoopCounter < 0x14);
 

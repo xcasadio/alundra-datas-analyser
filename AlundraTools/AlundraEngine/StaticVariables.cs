@@ -5281,7 +5281,7 @@ public class StaticVariables
     public int g_warpColorStepG; // 8013FC04
     public int g_fadeColorStepR; // 8013FC08
     //public DR_MOVE[] g_drMoveBuffer = new DR_MOVE[600]; // 8013FC10
-    public int[] g_warpEffectBuffer = new int[600]; // 80143488
+    public short[] g_warpEffectBuffer = new short[1200]; // 80143488
     public int g_effectRenderToggle; // 80143DE8
     public int g_itemIdThreshold; // 80143DF0
     public byte[] g_balanceBinBuffer = new byte[12288]; // 80143DF8
