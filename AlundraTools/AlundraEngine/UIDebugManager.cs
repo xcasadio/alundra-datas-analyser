@@ -187,7 +187,7 @@ public class UIDebugManager
 
                 Debugger.Break();
                 var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-                _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+                _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
                 var name = "";
 
@@ -222,7 +222,7 @@ public class UIDebugManager
 
                 Debugger.Break();
                 bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-                _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+                _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
                 puVar10 = 0; //localNumbers[0];
 

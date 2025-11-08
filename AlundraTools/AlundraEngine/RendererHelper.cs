@@ -271,7 +271,7 @@ public class RendererHelper
         gameEngine.Renderer.Clear();
 
 
-
+        //Debug text rendering
         foreach (var textDisplayParameter in textToRender)
         {
             //background

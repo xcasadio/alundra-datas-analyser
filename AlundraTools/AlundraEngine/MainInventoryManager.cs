@@ -1172,7 +1172,7 @@ public class MainInventoryManager
         //TODO save the text and display it
         //var sprite = _gameEngine.StaticVariables.g_spriteInventoryText[index];
         //var bitmap = _gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
-        //_gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+        //_gameEngine.Renderer.AddSprite(sprite, SpriteDepth., bitmap);
 
         //uVar2 = _gameEngine.StaticVariables.g_drawModes[0x14].tag;
         //puVar9 = _gameEngine.StaticVariables.DAT_80146f5c + _gameEngine.StaticVariables.g_drawModes[0x14].tag * 0x28);
@@ -1187,7 +1187,7 @@ public class MainInventoryManager
 
         //sprite = _gameEngine.StaticVariables.g_spriteInventoryText[index * 2];
         //bitmap = _gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
-        //_gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+        //_gameEngine.Renderer.AddSprite(sprite, SpriteDepth., bitmap);
 
         //_gameEngine.UIManager.DisplayTexts(0, 0); //sprite.x0, sprite.y0);
 
@@ -1195,7 +1195,7 @@ public class MainInventoryManager
         {
             _gameEngine.Renderer.AddSprite(spr.X + sprite.x0, spr.Y + sprite.y0,
                 spr.Width, spr.Height,
-                int.MaxValue, spr.Bitmap, spr.Alpha);
+                SpriteDepth.ForegroundUI, spr.Bitmap, spr.Alpha);
         }
     }
 
@@ -1263,7 +1263,7 @@ public class MainInventoryManager
         {
             _gameEngine.Renderer.AddSprite(spr.X + sprite.x0, spr.Y + sprite.y0,
                 spr.Width, spr.Height,
-                int.MaxValue, spr.Bitmap, spr.Alpha);
+                SpriteDepth.ForegroundUI, spr.Bitmap, spr.Alpha);
         }
 
         sprite = _gameEngine.StaticVariables.g_ItemNameSprites[0];
@@ -1274,7 +1274,7 @@ public class MainInventoryManager
         {
             _gameEngine.Renderer.AddSprite(spr.X + sprite.x0, spr.Y + sprite.y0,
                 spr.Width, spr.Height,
-                int.MaxValue, spr.Bitmap, spr.Alpha);
+                SpriteDepth.ForegroundUI, spr.Bitmap, spr.Alpha);
         }
 
         //iVar10 = -0x7fe805a4; _gameEngine.StaticVariables.g_ItemNameSprites[2]
@@ -1326,7 +1326,7 @@ public class MainInventoryManager
                         //pSVar2 = pSVar2 + 1;
                         sprite = textTileConfig.SpritesA[h * textTileConfig.Width + w];
                         var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-                        _gameEngine.Renderer.AddSprite(sprite, int.MaxValue - 1, bitmap);
+                        _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.BackgroundUI, bitmap);
 
                         w += 1;
                     } while (w < textTileConfig.Width);
@@ -1409,7 +1409,7 @@ public class MainInventoryManager
                                 //var image = _gameEngine.GraphicManager.GetAnimationImageByIndex(index);
                                 //var bitmap = _gameEngine.AlundraMap.GetSpriteBitmap(image);
                                 var bitmap3 = _gameEngine.Font3.GenerateHudBitmapFromSprite(rectangleSprite);
-                                _gameEngine.Renderer.AddSprite(rectangleSprite, int.MaxValue, bitmap3);
+                                _gameEngine.Renderer.AddSprite(rectangleSprite, SpriteDepth.ForegroundUI, bitmap3);
                             }
 
                             sprite.r0 = 0x90;
@@ -1419,7 +1419,7 @@ public class MainInventoryManager
                             index = _gameEngine.GraphicManager.GetItemTextureIdByItemId((int)itemId);
                             var image = _gameEngine.GraphicManager.GetAnimationImageByIndex(index);
                             var bitmap = _gameEngine.AlundraMap.GetSpriteBitmap(image);
-                            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+                            _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
                             var numberSprite = _gameEngine.StaticVariables.SPRT_ARRAY_8017fe74[0];
                             //SetSprt(sprite);
@@ -1434,7 +1434,7 @@ public class MainInventoryManager
                             numberSprite.v0 = _gameEngine.StaticVariables.BYTE_ARRAY_8009cfd8[i + 1];
 
                             var bitmap2 = _gameEngine.Font3.GenerateHudBitmapFromSprite(numberSprite);
-                            _gameEngine.Renderer.AddSprite(numberSprite, int.MaxValue, bitmap2);
+                            _gameEngine.Renderer.AddSprite(numberSprite, SpriteDepth.ForegroundUI, bitmap2);
 
                             //uVar1 = g_drawModes[0x14].tag;
                             //pSVar4 = _gameEngine.StaticVariables.SPRT_ARRAY_8017fe74 + g_drawModes[0x14].tag;
@@ -1487,7 +1487,7 @@ public class MainInventoryManager
                                 //*puVar3 = *puVar3 & 0xff000000 | (uint)puVar5 & 0xffffff;
 
                                 var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(rectangleSprite);
-                                _gameEngine.Renderer.AddSprite(rectangleSprite, int.MaxValue, bitmap);
+                                _gameEngine.Renderer.AddSprite(rectangleSprite, SpriteDepth.ForegroundUI, bitmap);
                             }
 
                             i = offset << 2;
@@ -1507,7 +1507,7 @@ public class MainInventoryManager
                                     //*puVar5 = *puVar5 & 0xff000000 | (uint)puVar3 & 0xffffff;
 
                                     var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(rectangleSprite);
-                                    _gameEngine.Renderer.AddSprite(rectangleSprite, int.MaxValue, bitmap);
+                                    _gameEngine.Renderer.AddSprite(rectangleSprite, SpriteDepth.ForegroundUI, bitmap);
 
                                     i = offset << 2;
                                 }
@@ -1523,7 +1523,7 @@ public class MainInventoryManager
                             index = _gameEngine.GraphicManager.GetItemTextureIdByItemId((int)textureId);
                             var image = _gameEngine.GraphicManager.GetAnimationImageByIndex(index);
                             var bitmap3 = _gameEngine.AlundraMap.GetSpriteBitmap(image);
-                            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap3);
+                            _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap3);
 
                             //i = _gameEngine.StaticVariables.g_drawModes[0x14].tag * 0x1e0;
                             //puVar3 = _gameEngine.StaticVariables.DAT_80146f68 + g_drawModes[0x14].tag * 0x28);
@@ -1577,7 +1577,7 @@ public class MainInventoryManager
             sprite.y0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y + 4);
 
             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+            _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
             //puVar5 = (_gameEngine.StaticVariables.sprite.tag + iVar8);;
             //puVar6 = _gameEngine.StaticVariables.DAT_80146f6c[i];
@@ -1610,7 +1610,7 @@ public class MainInventoryManager
             sprite.y0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y + 0x34);
 
             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+            _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
             //puVar5 = (_gameEngine.StaticVariables.sprite.tag + iVar8);
             //uVar3 = *puVar5;
@@ -1644,7 +1644,7 @@ public class MainInventoryManager
             sprite.y0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y + 0x1c);
 
             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+            _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
             //puVar5 = (_gameEngine.StaticVariables.sprite.tag + iVar8);
             //uVar3 = *puVar5;
@@ -1682,7 +1682,7 @@ public class MainInventoryManager
 
         var sprite = cursorAnim.Sprites[0];
         var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-        _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+        _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
     }
 
     //8005795c

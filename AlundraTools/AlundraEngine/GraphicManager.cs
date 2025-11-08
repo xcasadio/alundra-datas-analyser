@@ -43,7 +43,7 @@ public class GraphicManager
         }
 
         //UpdateEntityGeometry(_gameEngine.StaticVariables.g_orderingTableBuffer[2]);
-        //RenderEffects(_gameEngine.StaticVariables.g_orderingTableBuffer[3]);
+        RenderEffects(_gameEngine.StaticVariables.g_orderingTableBuffer[3]);
         UpdatePostProcessingEffects();
         SwapBuffersAndDraw();
         _gameEngine.StaticVariables.g_primitive_sync = GetDisplaySyncCounter();
@@ -533,7 +533,7 @@ public class GraphicManager
                             //*puVar2 = *puVar2 & 0xff000000 | (uint)pSVar3 & 0xffffff;
                             
                             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-                            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue - 1, bitmap);
+                            _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.BackgroundUI, bitmap);
 
                             j += 1;
                         } while (j < primitiveCount);
@@ -582,9 +582,85 @@ public class GraphicManager
     }
 
     //80042ccc
-    private void RenderEffects(int i)
+    private uint RenderEffects(int i)
     {
-        //todo
+        //uint uVar1;
+        //TILE* pTVar2;
+        //uint uVar3;
+        //int** ppiVar4;
+
+        if (_gameEngine.StaticVariables.g_warpFlags !=0)
+        {
+            _gameEngine.StaticVariables.g_playerLastX = MoveTowards(_gameEngine.StaticVariables.g_playerLastX, _gameEngine.StaticVariables.g_playerStartX, _gameEngine.StaticVariables.g_playerStepX);
+            _gameEngine.StaticVariables.g_playerLastY = MoveTowards(_gameEngine.StaticVariables.g_playerLastY, _gameEngine.StaticVariables.g_playerStartY, _gameEngine.StaticVariables.g_playerStepY);
+            _gameEngine.StaticVariables.g_playerLastZ = MoveTowards(_gameEngine.StaticVariables.g_playerLastZ, _gameEngine.StaticVariables.g_playerStartZ, _gameEngine.StaticVariables.g_playerStepZ);
+            
+            if (_gameEngine.StaticVariables.g_playerLastX == _gameEngine.StaticVariables.g_playerStartX 
+                && _gameEngine.StaticVariables.g_playerLastY == _gameEngine.StaticVariables.g_playerStartY 
+                && _gameEngine.StaticVariables.g_playerLastZ == _gameEngine.StaticVariables.g_playerStartZ)
+            {
+                _gameEngine.StaticVariables.g_warpFlags =0;
+            }
+        }
+
+        _gameEngine.StaticVariables.g_displayEnvColorR = _gameEngine.StaticVariables.g_playerLastX >>0x10;
+        _gameEngine.StaticVariables.g_displayEnvColorG = _gameEngine.StaticVariables.g_playerLastY >>0x10;
+        _gameEngine.StaticVariables.g_displayEnvColorB = _gameEngine.StaticVariables.g_playerLastZ >>0x10;
+
+        if (_gameEngine.StaticVariables.g_warpStepFlags_2 ==0)
+        {
+            if (_gameEngine.StaticVariables.g_fadeFrameCounter ==0)
+            {
+                goto LAB_80042ee4;
+            }
+        }
+        else
+        {
+            _gameEngine.StaticVariables.g_currentFadeColorB = MoveTowards(_gameEngine.StaticVariables.g_currentFadeColorB, _gameEngine.StaticVariables.g_targetFadeColorB, _gameEngine.StaticVariables.g_fadeColorStepB);
+            _gameEngine.StaticVariables.g_currentFadeColorG = MoveTowards(_gameEngine.StaticVariables.g_currentFadeColorG, _gameEngine.StaticVariables.g_targetFadeColorG, _gameEngine.StaticVariables.g_warpColorStepG);
+            _gameEngine.StaticVariables.g_currentFadeColorR = MoveTowards(_gameEngine.StaticVariables.g_currentFadeColorR, _gameEngine.StaticVariables.g_targetFadeColorR, _gameEngine.StaticVariables.g_fadeColorStepR);
+            
+            if (_gameEngine.StaticVariables.g_currentFadeColorB == _gameEngine.StaticVariables.g_targetFadeColorB 
+                && _gameEngine.StaticVariables.g_currentFadeColorG == _gameEngine.StaticVariables.g_targetFadeColorG
+               && _gameEngine.StaticVariables.g_currentFadeColorR == _gameEngine.StaticVariables.g_targetFadeColorR)
+            {
+                _gameEngine.StaticVariables.g_warpStepFlags_2 =0;
+            }
+        }
+
+        var tile = _gameEngine.StaticVariables.TILE_8013fb98;
+        tile.r0 = (byte)(_gameEngine.StaticVariables.g_currentFadeColorB >>0x10);
+        tile.g0 = (byte)(_gameEngine.StaticVariables.g_currentFadeColorG >>0x10);
+        tile.b0 = (byte)(_gameEngine.StaticVariables.g_currentFadeColorR >>0x10);
+
+        _gameEngine.Renderer.AddSprite(tile.x0, tile.y0, tile.w, tile.h,
+            SpriteDepth.ForegroundEffect, _gameEngine.Renderer.WhiteBitmap, tile.r0 / 255f, 0f, 0f, 0f);
+
+         LAB_80042ee4:
+         return _gameEngine.StaticVariables.g_warpFlags | _gameEngine.StaticVariables.g_warpStepFlags_2;
+    }
+
+    //80042954
+    private int MoveTowards(int value, int target, int step)
+
+    {
+        int result;
+        bool isFinished;
+
+        if (step < 0)
+        {
+            isFinished = value + step < target;
+        }
+        else
+        {
+            isFinished = target < value + step;
+        }
+        result = value + step;
+        if (isFinished)
+        {
+            result = target;
+        }
+        return result;
     }
 
     //8005ec98
@@ -908,7 +984,7 @@ public class GraphicManager
                             //sprite.clut = clut;
 
                             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-                            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+                            _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
                             col += 1;
                         } while (col < textTilesConfig.Width);
@@ -947,8 +1023,7 @@ public class GraphicManager
         var width = maxX - minX;
         var height = maxY - minY;
 
-        //var bitmap = _gameEngine.AlundraMap.GetSpriteBitmap(image);
-        _gameEngine.Renderer.AddSprite(minX, minY, width, height, int.MaxValue, image, 1.0f);
+        _gameEngine.Renderer.AddSprite(minX, minY, width, height, SpriteDepth.BackgroundUI, image, 1.0f);
     }
 
     //8004e168

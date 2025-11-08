@@ -478,14 +478,14 @@ public class GameInitializer
         //SetSemiTrans(_gameEngine.StaticVariables.TILE_8013fb98, 1);
         //SetSemiTrans(_gameEngine.StaticVariables.TILE_8013fba8, 1);
 
-        //_gameEngine.StaticVariables.TILE_8013fba8.w = 0x140;
-        //_gameEngine.StaticVariables.TILE_8013fb98.w = 0x140;
+        //_gameEngine.StaticVariables.TILE_8013fba8.w = StaticVariables.MapTileWidth;
+        _gameEngine.StaticVariables.TILE_8013fb98.w = StaticVariables.ScreenWidth;
         //_gameEngine.StaticVariables.TILE_8013fba8.x0 = 0;
-        //_gameEngine.StaticVariables.TILE_8013fb98.x0 = 0;
+        _gameEngine.StaticVariables.TILE_8013fb98.x0 = 0;
         //_gameEngine.StaticVariables.TILE_8013fba8.y0 = 0;
-        //_gameEngine.StaticVariables.TILE_8013fb98.y0 = 0;
-        //_gameEngine.StaticVariables.TILE_8013fba8.h = 0xf0;
-        //_gameEngine.StaticVariables.TILE_8013fb98.h = 0xf0;
+        _gameEngine.StaticVariables.TILE_8013fb98.y0 = 0;
+        //_gameEngine.StaticVariables.TILE_8013fba8.h = StaticVariables.MapTileHeight;
+        _gameEngine.StaticVariables.TILE_8013fb98.h = StaticVariables.ScreenHeight;
     }
 
     //80044be4
@@ -565,7 +565,7 @@ public class GameInitializer
 
                             //TODO cache images with u and v coordinates
                             //_gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
-                            //_gameEngine.Renderer.AddSprite(sprite, int.MaxValue, _gameEngine.Font3.GenerateFontBitmapTim(_gameEngine.StaticVariables.g_clutTable[0]));
+                            //_gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, _gameEngine.Font3.GenerateFontBitmapTim(_gameEngine.StaticVariables.g_clutTable[0]));
 
                             tileX += 1;
                         } while (tileX < tilesConfiguration.Width);

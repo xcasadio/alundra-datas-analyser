@@ -129,6 +129,7 @@ namespace AlundraTools.GameControls
             label20 = new Label();
             numericUpDownHpMax = new NumericUpDown();
             tabPageDebug = new TabPage();
+            buttonAlundraCabine = new Button();
             groupBoxFlags = new GroupBox();
             panelFlags = new Panel();
             label54 = new Label();
@@ -207,7 +208,6 @@ namespace AlundraTools.GameControls
             buttonZoomX8 = new Button();
             buttonZoomX4 = new Button();
             buttonZoomX2 = new Button();
-            buttonAlundraCabine = new Button();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -1331,6 +1331,16 @@ namespace AlundraTools.GameControls
             tabPageDebug.Text = "Debug";
             tabPageDebug.UseVisualStyleBackColor = true;
             // 
+            // buttonAlundraCabine
+            // 
+            buttonAlundraCabine.Location = new Point(322, 684);
+            buttonAlundraCabine.Name = "buttonAlundraCabine";
+            buttonAlundraCabine.Size = new Size(142, 23);
+            buttonAlundraCabine.TabIndex = 67;
+            buttonAlundraCabine.Text = "Pass alundra cabine";
+            buttonAlundraCabine.UseVisualStyleBackColor = true;
+            buttonAlundraCabine.Click += buttonAlundraCabine_Click;
+            // 
             // groupBoxFlags
             // 
             groupBoxFlags.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -1531,7 +1541,7 @@ namespace AlundraTools.GameControls
             // labelPadButtonJustPressedByInterval
             // 
             labelPadButtonJustPressedByInterval.AutoSize = true;
-            labelPadButtonJustPressedByInterval.Location = new Point(108, 122);
+            labelPadButtonJustPressedByInterval.Location = new Point(114, 122);
             labelPadButtonJustPressedByInterval.Name = "labelPadButtonJustPressedByInterval";
             labelPadButtonJustPressedByInterval.Size = new Size(13, 15);
             labelPadButtonJustPressedByInterval.TabIndex = 15;
@@ -1540,7 +1550,7 @@ namespace AlundraTools.GameControls
             // labelPadButtonReleased
             // 
             labelPadButtonReleased.AutoSize = true;
-            labelPadButtonReleased.Location = new Point(108, 107);
+            labelPadButtonReleased.Location = new Point(114, 107);
             labelPadButtonReleased.Name = "labelPadButtonReleased";
             labelPadButtonReleased.Size = new Size(13, 15);
             labelPadButtonReleased.TabIndex = 14;
@@ -1549,7 +1559,7 @@ namespace AlundraTools.GameControls
             // labelPadButtonJustPressed
             // 
             labelPadButtonJustPressed.AutoSize = true;
-            labelPadButtonJustPressed.Location = new Point(108, 92);
+            labelPadButtonJustPressed.Location = new Point(114, 92);
             labelPadButtonJustPressed.Name = "labelPadButtonJustPressed";
             labelPadButtonJustPressed.Size = new Size(13, 15);
             labelPadButtonJustPressed.TabIndex = 13;
@@ -1558,7 +1568,7 @@ namespace AlundraTools.GameControls
             // labelPadButtonHold
             // 
             labelPadButtonHold.AutoSize = true;
-            labelPadButtonHold.Location = new Point(108, 77);
+            labelPadButtonHold.Location = new Point(114, 77);
             labelPadButtonHold.Name = "labelPadButtonHold";
             labelPadButtonHold.Size = new Size(13, 15);
             labelPadButtonHold.TabIndex = 12;
@@ -1567,7 +1577,7 @@ namespace AlundraTools.GameControls
             // labelPadNumberFrameHold
             // 
             labelPadNumberFrameHold.AutoSize = true;
-            labelPadNumberFrameHold.Location = new Point(108, 62);
+            labelPadNumberFrameHold.Location = new Point(114, 62);
             labelPadNumberFrameHold.Name = "labelPadNumberFrameHold";
             labelPadNumberFrameHold.Size = new Size(13, 15);
             labelPadNumberFrameHold.TabIndex = 11;
@@ -1576,7 +1586,7 @@ namespace AlundraTools.GameControls
             // labelPadIsOver
             // 
             labelPadIsOver.AutoSize = true;
-            labelPadIsOver.Location = new Point(108, 47);
+            labelPadIsOver.Location = new Point(114, 47);
             labelPadIsOver.Name = "labelPadIsOver";
             labelPadIsOver.Size = new Size(13, 15);
             labelPadIsOver.TabIndex = 10;
@@ -1585,7 +1595,7 @@ namespace AlundraTools.GameControls
             // labelPadRepeatInterval
             // 
             labelPadRepeatInterval.AutoSize = true;
-            labelPadRepeatInterval.Location = new Point(108, 32);
+            labelPadRepeatInterval.Location = new Point(114, 32);
             labelPadRepeatInterval.Name = "labelPadRepeatInterval";
             labelPadRepeatInterval.Size = new Size(13, 15);
             labelPadRepeatInterval.TabIndex = 9;
@@ -1594,7 +1604,7 @@ namespace AlundraTools.GameControls
             // labelPadMaxNbHeld
             // 
             labelPadMaxNbHeld.AutoSize = true;
-            labelPadMaxNbHeld.Location = new Point(108, 17);
+            labelPadMaxNbHeld.Location = new Point(114, 17);
             labelPadMaxNbHeld.Name = "labelPadMaxNbHeld";
             labelPadMaxNbHeld.Size = new Size(13, 15);
             labelPadMaxNbHeld.TabIndex = 8;
@@ -2143,16 +2153,6 @@ namespace AlundraTools.GameControls
             buttonZoomX2.Text = "x2";
             buttonZoomX2.UseVisualStyleBackColor = true;
             buttonZoomX2.Click += buttonZoomX2_Click;
-            // 
-            // buttonAlundraCabine
-            // 
-            buttonAlundraCabine.Location = new Point(322, 684);
-            buttonAlundraCabine.Name = "buttonAlundraCabine";
-            buttonAlundraCabine.Size = new Size(75, 23);
-            buttonAlundraCabine.TabIndex = 67;
-            buttonAlundraCabine.Text = "Pass alundra cabine";
-            buttonAlundraCabine.UseVisualStyleBackColor = true;
-            buttonAlundraCabine.Click += buttonAlundraCabine_Click;
             // 
             // FrmGame
             // 

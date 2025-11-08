@@ -726,7 +726,7 @@ public class SubInventoryManager
 
             InventoryItemDescriptionLinesSprites[index].Add(new Sprite(
                 sprite.w, index * 0x10,
-                16, 16, int.MaxValue, bitmap));*/
+                16, 16, SpriteDepth.ForegroundUI, bitmap));*/
         }
         else
         {
@@ -761,13 +761,13 @@ public class SubInventoryManager
 
         //TODO text to display here
         //var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-        //_gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+        //_gameEngine.Renderer.AddSprite(sprite, SpriteDepth., bitmap);
 
         foreach (var spr in InventoryItemDescriptionLinesSprites[index])
         {
             _gameEngine.Renderer.AddSprite(spr.X + sprite.x0, spr.Y + sprite.y0,
                 spr.Width, spr.Height,
-                int.MaxValue, spr.Bitmap, spr.Alpha);
+                SpriteDepth.ForegroundUI, spr.Bitmap, spr.Alpha);
         }
 
         //uVar3 = (uint)pSVar4 & 0xffffff;
@@ -816,7 +816,7 @@ public class SubInventoryManager
             sprite.y0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y + 4);
 
             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+            _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
             //puVar5 = (_gameEngine.StaticVariables.sprite.tag + iVar8);;
             //puVar6 = _gameEngine.StaticVariables.DAT_80146f6c[i];
@@ -849,7 +849,7 @@ public class SubInventoryManager
             sprite.y0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y + 0x34);
 
             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+            _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
             //puVar5 = (_gameEngine.StaticVariables.sprite.tag + iVar8);
             //uVar3 = *puVar5;
@@ -883,7 +883,7 @@ public class SubInventoryManager
             sprite.y0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y + 0x1c);
 
             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+            _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
             //puVar5 = (_gameEngine.StaticVariables.sprite.tag + iVar8);
             //uVar3 = *puVar5;
@@ -1176,12 +1176,12 @@ public class SubInventoryManager
             {
                 _gameEngine.Renderer.AddSprite(spr.X + sprite.x0, spr.Y + sprite.y0,
                     spr.Width, spr.Height,
-                    int.MaxValue, spr.Bitmap, spr.Alpha);
+                    SpriteDepth.ForegroundUI, spr.Bitmap, spr.Alpha);
             }
 
             //TODO display text here
             //var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-            //_gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+            //_gameEngine.Renderer.AddSprite(sprite, SpriteDepth., bitmap);
 
             //uVar5 = (uint)pSVar7 & 0xffffff;
             //pSVar7 = pSVar7 + 1;
@@ -1218,7 +1218,7 @@ public class SubInventoryManager
             index = _gameEngine.GraphicManager.GetItemTextureIdByItemId((int)index);
             var image = _gameEngine.GraphicManager.GetAnimationImageByIndex(index);
             var bitmap3 = _gameEngine.AlundraMap.GetSpriteBitmap(image);
-            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap3);
+            _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap3);
 
             //iVar2 = g_drawModes[0x14].tag * 0x3c;
             //iVar4 = g_drawModes[0x14].tag * 0x28;
@@ -1234,7 +1234,7 @@ public class SubInventoryManager
             sprite.y0 = (short)(_gameEngine.StaticVariables.UIBoxConfiguration_800b287c.Y + sVar1);
 
             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+            _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
             /* Probable PsyQ macro: addPrim(). */
             //*(uint*)(&DAT_8017f790 + iVar3) = *(uint*)(&DAT_8017f790 + iVar3) & 0xff000000 | *puVar5 & 0xffffff;
@@ -1265,7 +1265,7 @@ public class SubInventoryManager
                 var index = _gameEngine.GraphicManager.GetItemTextureIdByItemId((int)itemId);
                 var image = _gameEngine.GraphicManager.GetAnimationImageByIndex(index);
                 var bitmap = _gameEngine.AlundraMap.GetSpriteBitmap(image);
-                _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+                _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
                 //puVar3 = _gameEngine.StaticVariables.SPRT_ARRAY_8017f4f8[iVar4];
                 //itemCount = g_drawModes[0x14].tag * 0x28;
@@ -1309,7 +1309,7 @@ public class SubInventoryManager
                 var index = _gameEngine.GraphicManager.GetItemTextureIdByItemId(itemId);
                 var image = _gameEngine.GraphicManager.GetAnimationImageByIndex(index);
                 var bitmap = _gameEngine.AlundraMap.GetSpriteBitmap(image);
-                _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+                _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
                 //uVar1 = g_drawModes[0x14].tag;
                 //_gameEngine.StaticVariables.g_subInventoryState = textureId;
@@ -1378,7 +1378,7 @@ public class SubInventoryManager
                         sprite = uiBoxConfig.SpritesA[h * uiBoxConfig.Width + w];
 
                         var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-                        _gameEngine.Renderer.AddSprite(sprite, int.MaxValue - 1, bitmap);
+                        _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.BackgroundUI, bitmap);
 
                         w += 1;
                         /* Probable PsyQ macro: addPrim(). */

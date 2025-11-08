@@ -61,7 +61,7 @@ public class UIManager
                             //SetShadeTex(sprite, 1);
                             sprite.clut = 0; //_gameEngine.StaticVariables.g_clutTable[0];
                             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-                            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue - 1, bitmap);
+                            _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.BackgroundUI, bitmap);
 
                             tileX += 1;
                         } while (tileX < tilesConfiguration.Width);
@@ -258,7 +258,7 @@ public class UIManager
                     spr.X + callbackInfo.Data.Width,
                     /*spr.Y +*/index * 0x10 + sprite.y0,
                     spr.Width, spr.Height,
-                    int.MaxValue, spr.Bitmap, spr.Alpha);
+                    SpriteDepth.ForegroundUI, spr.Bitmap, spr.Alpha);
             }
 
             //puVar7 = (uint*)((int)&_gameEngine.StaticVariables.g_textFullLinesSprites + iVar14);
@@ -687,7 +687,7 @@ public class UIManager
                     spr.X + sprite.x0,
                     spr.Y /*+ sprite.y0*/ + 4,
                     spr.Width, spr.Height,
-                    int.MaxValue, spr.Bitmap, spr.Alpha);
+                    SpriteDepth.ForegroundUI, spr.Bitmap, spr.Alpha);
             }
 
             i += 1;
@@ -938,7 +938,7 @@ public class UIManager
         //sprite.clut = (short)(uVar4 >> 0x10);
 
         var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-        _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+        _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
     }
 
     //80045e60
@@ -1879,7 +1879,7 @@ public class UIManager
 
                     sprites.Add(new Sprite(
                         posX_ + textWidth, posY + textLineOffset * 16,
-                        16, 16, int.MaxValue, bitmap));
+                        16, 16, SpriteDepth.ForegroundUI, bitmap));
                 }
 
                 i++;
@@ -2163,7 +2163,7 @@ public class UIManager
                     spr.X + callbackInfo.Data.Width,
                     /*spr.Y*/lineIndex * 0x10 + sprite.y0,
                     spr.Width, spr.Height,
-                    int.MaxValue, spr.Bitmap, spr.Alpha);
+                    SpriteDepth.ForegroundUI, spr.Bitmap, spr.Alpha);
             }
 
             lineIndex += 1;
@@ -2202,7 +2202,7 @@ public class UIManager
 
             var sprite = _gameEngine.StaticVariables.g_cursorTextSprites[0];
             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-            _gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+            _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
         }
     }
 
@@ -2308,7 +2308,7 @@ public class UIManager
 
                     //display a buffer created with text
                     //var bitmap = Font3.GenerateFontBitmapFromSprite(sprite);
-                    //Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+                    //Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
                     x += 1;
                 }
@@ -2336,7 +2336,7 @@ public class UIManager
             //SetShadeTex(sprite, 1);
 
             //var bitmap = Font3.GenerateHudBitmapFromSprite(sprite);
-            //Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+            //Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
             i += 1;
         } while (i < 2);
@@ -2490,7 +2490,7 @@ public class UIManager
                     sprite.clut = (ushort)(8 - i); //_gameEngine.StaticVariables.g_clutTable[8 - i]
 
                     //var bitmap = _gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
-                    //_gameEngine.Renderer.AddSprite(sprite, int.MaxValue, bitmap);
+                    //_gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
                     //SetSprt(spritePtr);
                     //SetSemiTrans(spritePtr, 0);

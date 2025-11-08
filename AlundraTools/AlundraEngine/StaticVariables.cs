@@ -5257,7 +5257,7 @@ public class StaticVariables
     public int INT_8013fb80; // 8013FB80
     public int g_fadeTPagePrim1; // 8013FB88
     public int g_fadeTPagePrim2; // 8013FB90
-    //public TILE TILE_8013fb98; // 8013FB98
+    public TILE TILE_8013fb98 = new TILE(); // 8013FB98
     //public TILE TILE_8013fba8; // 8013FBA8
     public uint g_warpFlags; // 8013FBB8
     public int g_playerLastX; // 8013FBBC
