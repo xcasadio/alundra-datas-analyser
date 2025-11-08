@@ -4397,7 +4397,7 @@ public class StaticVariables
     public int DAT_80010018; // 80010018
     public int DAT_8001001c; // 8001001C
     public int g_debugVar_WarpDestRestart; // 8001004C
-    public byte g_transitionCounter; // 80010756
+    public sbyte g_transitionCounter; // 80010756
     public int PTR_DAT_80020384; // 80020384
     public int g_unused_800203b4; // 800203B4
     public short[] g_tileOffsetYTable = new short[32]; // 800203F0

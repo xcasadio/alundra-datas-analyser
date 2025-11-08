@@ -30,17 +30,20 @@ namespace AlundraTools.GameControls
             _datasBin = datasBin;
             _font3 = font3;
 
+            var mapNames = File.ReadLines("map_names.csv").ToArray();
+
             for (var i = 0; i < datasBin.GameMaps.Length; i++)
             {
                 if (datasBin.GameMaps[i] != null)
                 {
                     var name = "";
-                    if (!string.IsNullOrEmpty(DebugSymbols.MapNames[i]))
+
+                    if (i < mapNames.Length)
                     {
-                        name = $" ({DebugSymbols.MapNames[i]})";
+                        name = $" - {mapNames[i]}";
                     }
 
-                    lstGameMaps.Items.Add("" + datasBin.GameMaps[i].Info.MapId + name);
+                    lstGameMaps.Items.Add($"{datasBin.GameMaps[i].Info.MapId}{name}");
                 }
             }
 
