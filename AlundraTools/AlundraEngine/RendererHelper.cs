@@ -267,8 +267,8 @@ public class RendererHelper
             }
         }
 
-        gameEngine.Renderer.Render(g);
-        gameEngine.Renderer.Clear();
+        //gameEngine.Renderer.Render(g);
+        //gameEngine.Renderer.Clear();
 
 
         //Debug text rendering

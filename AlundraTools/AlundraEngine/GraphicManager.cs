@@ -45,7 +45,7 @@ public class GraphicManager
         //UpdateEntityGeometry(_gameEngine.StaticVariables.g_orderingTableBuffer[2]);
         RenderEffects(_gameEngine.StaticVariables.g_orderingTableBuffer[3]);
         UpdatePostProcessingEffects();
-        SwapBuffersAndDraw();
+        SwapBuffersAndDraw(graphics);
         _gameEngine.StaticVariables.g_primitive_sync = GetDisplaySyncCounter();
     }
 
@@ -712,8 +712,11 @@ public class GraphicManager
     }
 
     //80048054
-    private void SwapBuffersAndDraw()
+    private void SwapBuffersAndDraw(System.Drawing.Graphics graphics)
     {
+        _gameEngine.Renderer.Render(graphics);
+        _gameEngine.Renderer.Clear();
+
         int i;
 
         if ((_gameEngine.StaticVariables.g_renderFlags & 0x800000U) != 0)

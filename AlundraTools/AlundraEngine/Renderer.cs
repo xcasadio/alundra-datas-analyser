@@ -77,6 +77,9 @@ public class Renderer(GameEngine gameEngine)
             imageAttributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
             var destRect = new Rectangle(sprite.X, sprite.Y, sprite.Width, sprite.Height);
+            //With this overload of DrawImage, the destRect is the area to draw to the control and not the backbuffer image
+            destRect.Inflate(320, 224); 
+            destRect.Offset(320, 224);
             graphics.DrawImage(sprite.Bitmap, destRect, 0, 0, sprite.Bitmap.Width, sprite.Bitmap.Height, GraphicsUnit.Pixel, imageAttributes);
         }
         else
