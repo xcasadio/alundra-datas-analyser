@@ -32,11 +32,11 @@ public class GotoIfFlagCommand : ContainerCommand
         var offset = ((Parameters[2] + Parameters[3] * 0x100) * 0x10000) >> 0x10;
         var index = GetCommandNameByOffset(offset, commands);
         name += $"{(index == -1 ? "?" : $"{index}")}";
-        name += $" ({commands[index].Name})";
+        name += $" ({(index == -1 ? "out of bounds" : commands[index].Name)})";
         name += " else goto ";
         index = GetCommandNameByOffset(Size, commands);
         name += $"{(index == -1 ? "?" : $"{index}")}";
-        name += $" ({commands[index].Name})";
+        name += $" ({(index == -1 ? "out of bounds" : commands[index].Name)})";
         Name = name;
 
         _lastCommandMemoryAddress = MemoryAddress + Math.Max(offset, Size);

@@ -6,7 +6,8 @@ public class EventProgramState
     public readonly int[] Exp = new int[10];
     public int Result;
     public int _30;
-    
+    public int _34;
+
     public byte[] Codes;
     public int CodeIndex = 0;
 
@@ -18,10 +19,11 @@ public class EventProgramState
         Array.Copy(other.Exp, Exp, Exp.Length);
         Result = other.Result;
         _30 = other._30;
+        _34 = other._34;
     }
 
     public override string ToString()
     {
-        return $"Sp:{string.Join(',', Sp)} Exp:{string.Join(',', Exp)}";
+        return $"Sp:{string.Join(',', Sp)} Exp:{string.Join(',', Exp)} {nameof(_34)}:{_34}";
     }
 }

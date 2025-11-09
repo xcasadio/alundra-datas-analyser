@@ -422,6 +422,7 @@ public class Entity
         Array.Clear(EventProgramState.Exp);
         EventProgramState.Result = 0;
         EventProgramState._30 = 0;
+        EventProgramState._34 = 0;
         EventProgramState.Codes = null;
         EventProgramState.CodeIndex = 0;
 

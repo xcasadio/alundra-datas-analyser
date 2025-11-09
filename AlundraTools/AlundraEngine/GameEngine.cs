@@ -838,7 +838,7 @@ public class GameEngine
             }
 
             StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-            uint rand = StaticVariables.g_gameRandomSeed >> 28;
+            uint rand = (uint)((ulong)StaticVariables.g_gameRandomSeed >> 28);
             var index = ((contentId & 0x7F) << 4) | rand;
             contentId = StaticVariables.g_itemRandomTable[index];
             isValid = contentId < 0x100;
@@ -1190,34 +1190,38 @@ public class GameEngine
     {
         int rowIndex;
         int columnOffset;
-        int warpPatternPtr = 0;
         uint columnIndex;
         int frameOffset;
         int tableOffset;
 
         frameOffset = 0;
         tableOffset = 0;
+        columnOffset = 0;
+
         do
         {
             columnIndex = 0;
-            columnOffset = tableOffset;
+            //columnOffset = tableOffset;
+            int warpPatternIndex = 0;
 
             do
             {
                 if ((columnIndex & 1) == 0)
                 {
-                    rowIndex = (0xe - frameOffset) * 2 + StaticVariables.g_mapWarpPattern[warpPatternPtr];
+                    rowIndex = StaticVariables.g_mapWarpPattern[warpPatternIndex] + (0xe - frameOffset) * 2;
                 }
                 else
                 {
-                    rowIndex = frameOffset * 2 + StaticVariables.g_mapWarpPattern[warpPatternPtr];
+                    rowIndex = StaticVariables.g_mapWarpPattern[warpPatternIndex] + frameOffset * 2;
                 }
 
                 StaticVariables.g_warpEffectBuffer[columnOffset] = (short)rowIndex;
-                StaticVariables.g_warpEffectBuffer[columnOffset + 4] = 0;
-                columnOffset = columnOffset + 8;
+                StaticVariables.g_warpEffectBuffer[columnOffset + 1] = 0;
+                StaticVariables.g_warpEffectBuffer[columnOffset + 2] = 0;
+                StaticVariables.g_warpEffectBuffer[columnOffset + 3] = 0;
+                columnOffset = columnOffset + 4;
                 columnIndex = columnIndex + 1;
-                warpPatternPtr = warpPatternPtr + 1;
+                warpPatternIndex++;
 
             } while ((int)columnIndex < 0x14);
 
@@ -1245,7 +1249,7 @@ public class GameEngine
     {
         ulong uVar1;
         int iVar2;
-        uint uVar3;
+        ulong uVar3;
         int iVar4;
         int iVar5;
         int iVar6;
@@ -1283,7 +1287,7 @@ public class GameEngine
 
                 StaticVariables.g_warpEffectBuffer[iVar5] = (short)(iVar2 * -2);
                 uVar3 = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                StaticVariables.g_gameRandomSeed = uVar3 * 0x7d2b89dd + 0xe06a02e7;
+                StaticVariables.g_gameRandomSeed = (uint)(uVar3 * 0x7d2b89dd + 0xe06a02e7);
                 uVar1 = StaticVariables.g_gameRandomSeed;
                 iVar4 = iVar4 + 1;
                 StaticVariables.g_warpEffectBuffer[iVar5 + 4] = (short)(0x40 - (short)((ulong)uVar3 * 0x81 >> 0x20));
@@ -1406,7 +1410,7 @@ public class GameEngine
                 StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 0] = (short)(-(short)(randomSeed1 * 0x15 >> 0x20) - (short)(offsetX * offsetX + offsetY * offsetY >> 10));
                 StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 1] = (short)((short)(randomSeed2 * 0x15 >> 0x20) + 0x14);
                 StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 2] = (short)(randomSeed3 * 0x130 >> 0x20);
-                StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 3] = (short)(StaticVariables.g_gameRandomSeed * 0xe0 >> 0x20);
+                StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 3] = (short)((uint)((ulong)StaticVariables.g_gameRandomSeed * 0xe0 >> 0x20));
                 offsetX = offsetX + 0x10;
                 iterationCounter = iterationCounter + 1;
                 innerLoopCounter = innerLoopCounter + 1;
@@ -1685,7 +1689,7 @@ public class GameEngine
             addedtosheet = 0xb;
             addedtopallette = 0x60;
         }
-        if (spritetableindex >= 0 && spritetableindex < si.SpriteTable.Length)
+        if (spritetableindex >= 0 && spritetableindex < si.SpriteEffects.Length)
         {
             return si.SpriteEffects[spritetableindex];
         }
@@ -2159,7 +2163,6 @@ public class GameEngine
     //8002d608
     public void ChangeAreaTileProperties(int startX, int startY, int sizeX, int sizeY, int distX, int distY)
     {
-        int distX2;
         int x;
         int y;
 
@@ -2188,13 +2191,12 @@ public class GameEngine
             do
             {
                 x = 0;
-                distX2 = distX;
 
                 if (0 < sizeX)
                 {
                     do
                     {
-                        var tileDestination = map.MapTiles[distX2 + (distY + y) * mapWidth];
+                        var tileDestination = map.MapTiles[distX + x + (distY + y) * mapWidth];
                         var tileSource = map.MapTiles[startX + x + (startY + y) * mapWidth];
                         tileDestination.Walkability = tileSource.Walkability;
                         tileDestination.GroundProperty = tileSource.GroundProperty;
@@ -2214,7 +2216,6 @@ public class GameEngine
                         }
 
                         x++;
-                        distX2 = distX + x;
                     } while (x < sizeX);
                 }
 
@@ -2406,112 +2407,6 @@ public class GameEngine
                         SoundManager.PlaySoundEffect(0x1F);
                     }
                 }
-            }
-        }
-    }
-
-    // 80033a2c
-    public void FUN_80033a2c(Entity entity)
-    {
-        entity.Hp = entity.HpMax;
-        PlayerManager.SetPlayerMp((short)PlayerManager.GetPlayerMpMax());
-
-        // Create first set of effects in a loop (8 effects total)
-        for (var i = 0; i < 8; i++)
-        {
-            // Create an effect at player position with effect ID 14 (0xE)
-            var useFlag = (i & 1) == 0;
-            var flag = useFlag ? 0 : 1;
-
-            // Get player position
-            var playerY = StaticVariables.PlayerEntity.PosY;
-
-            // Create an effect entity
-            var effect = EffectManager.CreateEffectEntity(
-                0,              // behaviorFlags
-                14,             // spriteTableIndex (0xE)
-                (byte)flag,     // animationIndex
-                StaticVariables.PlayerEntity.PosX,    // x position
-                playerY,        // y position
-                StaticVariables.PlayerEntity.PosZ + 0x80000  // z position (slightly above player)
-            );
-
-            // If effect was created successfully, set its parameters
-            if (effect != null)
-            {
-                // Add offset to X and Y position based on index
-                var xOffset = StaticVariables.g_offsetXList[i];
-                var yOffset = StaticVariables.g_offsetYList[i];
-
-                // Apply offsets to effect position
-                effect.X += xOffset << 11;
-                effect.Y += yOffset << 11;
-
-                // Calculate effect index based on loop counter
-                var effectIndex = ((i << 2) + 8) & 0x1F;
-                effectIndex <<= 1;
-
-                // Apply additional offsets and force values
-                var xForce = StaticVariables.g_offsetXList[effectIndex / 2 + 4];
-                var yForce = StaticVariables.g_offsetYList[effectIndex / 2 + 4];
-
-                // Set effect parameters
-                effect.ForceZ = 0x30000;
-                effect.ForceX = (xForce * 8 - xForce) << 6;
-                effect.ForceY = (yForce * 8 - yForce) << 6;
-            }
-        }
-
-        // Create second set of random-positioned effects (4 effects total)
-        for (var i = 0; i < 4; i++)
-        {
-            // Create another effect entity
-            var effect = EffectManager.CreateEffectEntity(
-                0,              // behaviorFlags
-                14,             // spriteTableIndex (0xE)
-                (byte)i,        // animationIndex (use loop counter as animation index)
-                StaticVariables.PlayerEntity.PosX,    // x position
-                StaticVariables.PlayerEntity.PosY,    // y position
-                StaticVariables.PlayerEntity.PosZ + 0x100000  // z position (higher above player)
-            );
-
-            if (effect != null)
-            {
-                // Set different Z force value
-                effect.ForceZ = 0x40000;
-
-                // Generate random offset values using the game's RNG
-                StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                effect.ForceX = GenerateRandomOffset(StaticVariables.g_gameRandomSeed, 0xFFFF0000);
-
-                StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                effect.ForceY = GenerateRandomOffset(StaticVariables.g_gameRandomSeed, 0xFFFF8000);
-            }
-        }
-
-        // Create third set of effects
-        for (var i = 0; i < 4; i++)
-        {
-            var effect = EffectManager.CreateEffectEntity(
-                0,              // behaviorFlags
-                14,             // spriteTableIndex (0xE)
-                2,              // animationIndex fixed at 2
-                StaticVariables.PlayerEntity.PosX,    // x position
-                StaticVariables.PlayerEntity.PosY,    // y position
-                StaticVariables.PlayerEntity.PosZ + 0x100000  // z position (higher above player)
-            );
-
-            if (effect != null)
-            {
-                // Set different Z force value
-                effect.ForceZ = 0x20000;
-
-                // Generate random offset values using the game's RNG
-                StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                effect.ForceX = GenerateRandomOffset(StaticVariables.g_gameRandomSeed, 0xFFFF0000);
-
-                StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                effect.ForceY = GenerateRandomOffset(StaticVariables.g_gameRandomSeed, 0xFFFF8000);
             }
         }
     }

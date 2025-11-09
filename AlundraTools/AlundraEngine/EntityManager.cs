@@ -423,7 +423,7 @@ public class EntityManager
                     }
                     else
                     {
-                        Debugger.Break();
+                        //Debugger.Break();
                         height += StaticVariables.MapTileHeight;
                     }
 
@@ -439,7 +439,7 @@ public class EntityManager
                     }
                     else
                     {
-                        Debugger.Break();
+                        //Debugger.Break();
                         height += StaticVariables.MapTileHeight;
                     }
 
@@ -455,7 +455,7 @@ public class EntityManager
                     }
                     else
                     {
-                        Debugger.Break();
+                        //Debugger.Break();
                         height += StaticVariables.MapTileHeight;
                     }
 
@@ -2134,27 +2134,27 @@ public class EntityManager
 
             var baseForce = 0xffff << 16;
 
-            var i = _gameEngine.StaticVariables.g_gameRandomSeed;
+            var i = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
             var val1 = i * 0x7d2b89dd;
             var val2 = 0xe06a02e7 + val1;
             var targetVal = (int)(((long)val2 * 0x20001) >> 32);
-            _gameEngine.StaticVariables.g_gameRandomSeed = val2;
+            _gameEngine.StaticVariables.g_gameRandomSeed = (uint)val2;
 
             effect.ForceX = targetVal + baseForce;
 
-            i = _gameEngine.StaticVariables.g_gameRandomSeed;
+            i = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
             val1 = i * 0x7d2b89dd;
             val2 = 0xe06a02e7 + val1;
             targetVal = (int)(((long)val2 * 0x20001) >> 32);
-            _gameEngine.StaticVariables.g_gameRandomSeed = val2;
+            _gameEngine.StaticVariables.g_gameRandomSeed = (uint)val2;
 
             effect.ForceY = targetVal + baseForce;
 
-            i = _gameEngine.StaticVariables.g_gameRandomSeed;
+            i = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
             val1 = i * 0x7d2b89dd;
             val2 = 0xe06a02e7 + val1;
             targetVal = (int)(((long)val2 * 0x20001) >> 32);
-            _gameEngine.StaticVariables.g_gameRandomSeed = val2;
+            _gameEngine.StaticVariables.g_gameRandomSeed = (uint)val2;
 
             effect.ForceZ = targetVal + baseForce;
         }
