@@ -2820,7 +2820,7 @@ public class EntityEventHandlers
     // 8003EB88
     private int Script_83_053(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.StaticVariables.g_warpType = variables[6];
+        _gameEngine.StaticVariables.g_mapTransitionEffectId = variables[6];
         _gameEngine.StaticVariables.g_desiredMap = variables[1];
         _gameEngine.StaticVariables.g_warpEntryBehavior = variables[7];
 
@@ -2829,7 +2829,7 @@ public class EntityEventHandlers
         var z = (y + 5) * 0x100000;
         y = ((y + 4) * 0x10 + 8) * 0x10000;
 
-        if (_gameEngine.StaticVariables.g_warpType == 3)
+        if (_gameEngine.StaticVariables.g_mapTransitionEffectId == 3)
         {
             if (_gameEngine.StaticVariables.g_desiredMap == _gameEngine.StaticVariables.g_currentMap)
             {
@@ -2841,7 +2841,7 @@ public class EntityEventHandlers
 
             //_gameEngine.DoNothing();
 
-            _gameEngine.StaticVariables.g_warpType = 0;
+            _gameEngine.StaticVariables.g_mapTransitionEffectId = 0;
         }
 
         _gameEngine.StaticVariables.g_cameraTargetZ = z;
@@ -5022,7 +5022,7 @@ public class EntityEventHandlers
                     {
                         result = 1;
                         _gameEngine.StaticVariables.g_isGameEnding = 1;
-                        _gameEngine.StaticVariables.g_warpType = 10;
+                        _gameEngine.StaticVariables.g_mapTransitionEffectId = 10;
                         _gameEngine.StaticVariables.g_warpEntryBehavior = 0;
                         _gameEngine.StaticVariables.g_desiredMap = 0xb;
                     }
@@ -5039,7 +5039,7 @@ public class EntityEventHandlers
             else
             {
                 _gameEngine.StaticVariables.g_isGameEnding = 1;
-                _gameEngine.StaticVariables.g_warpType = 0xb;
+                _gameEngine.StaticVariables.g_mapTransitionEffectId = 0xb;
                 _gameEngine.StaticVariables.g_warpEntryBehavior = 0;
             }
         }
@@ -5047,7 +5047,7 @@ public class EntityEventHandlers
         {
             result = 1;
             _gameEngine.StaticVariables.g_isGameEnding = 1;
-            _gameEngine.StaticVariables.g_warpType = 9;
+            _gameEngine.StaticVariables.g_mapTransitionEffectId = 9;
             _gameEngine.StaticVariables.g_warpEntryBehavior = 0;
         }
 

@@ -139,7 +139,7 @@ public class GameEngine
             ResetCameraAndLoadVRAMAssets();
             InitializeItems(StaticVariables.g_imageBuffer[0xb]);
             LoadMapAndInitializeEntities(null/*StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b40*/);
-            WarpPlayer(playerPosX, playerPosY, playerPosZ, StaticVariables.g_warpType);
+            WarpPlayer(playerPosX, playerPosY, playerPosZ, StaticVariables.g_mapTransitionEffectId);
             InitializeTileAnimationSystem();
             GraphicManager.PrepareBufferFlip();
             LoadMapSounds(StaticVariables.g_currentMap);
@@ -187,13 +187,13 @@ public class GameEngine
         {
             //HandleMapSoundEffects(StaticVariables.g_desiredMap, StaticVariables.g_warpEntryBehavior);
             StaticVariables.g_warpEntryBehavior = 0;
-            StartWarpTransition(StaticVariables.g_warpType);
+            StartWarpTransition(StaticVariables.g_mapTransitionEffectId);
             StaticVariables.INT_800dc4e4 = 1;
             do
             {
                 StaticVariables.g_debugMessage = "";
                 _padManager.UpdatePads();
-                //isEffectRunning = FUN_80044440(StaticVariables.g_orderingTableBuffer + 3, StaticVariables.g_warpType);
+                //isEffectRunning = FUN_80044440(StaticVariables.g_orderingTableBuffer + 3, StaticVariables.g_mapTransitionEffectId);
                 //HandleMapSoundStreaming();
                 //PauseGameDuringNbFrame(1);
                 //DoNothing();
@@ -201,7 +201,7 @@ public class GameEngine
 
             EndGame();
             //FUN_80049ff8(); //sound
-            if (StaticVariables.g_warpType != 9)
+            if (StaticVariables.g_mapTransitionEffectId != 9)
             {
                 return; //break;
             }
@@ -221,11 +221,11 @@ public class GameEngine
             StaticVariables.g_playerControlFlags = 0;
             //InitializeMapWarpPosition();
             //}
-            //if (9 < StaticVariables.g_warpType)
+            //if (9 < StaticVariables.g_mapTransitionEffectId)
             //{
-            //    if (StaticVariables.g_warpType != 10)
+            //    if (StaticVariables.g_mapTransitionEffectId != 10)
             //    {
-            //        if (StaticVariables.g_warpType == 0xb)
+            //        if (StaticVariables.g_mapTransitionEffectId == 0xb)
             //        {
             //            LoadBgm(0);
             //            LoadSomethingInDatasBin(g_indexInDatasBin);
@@ -237,7 +237,7 @@ public class GameEngine
             //    }
             //    goto LAB_8002c590;
             //}
-            //if (StaticVariables.g_warpType == 8)
+            //if (StaticVariables.g_mapTransitionEffectId == 8)
             //{
             //    StaticVariables.g_systemFlags = StaticVariables.g_systemFlags & 0xbfffffff;
             //}

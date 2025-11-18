@@ -5100,7 +5100,7 @@ public class StaticVariables
     public uint g_playerControlFlags; // 800DC4B8
     public int g_isWarpDisabled; // 800DC4C0
     public int g_isGameEnding; // 800DC4C4
-    public int g_warpType; // 800DC4C8
+    public int g_mapTransitionEffectId; // 800DC4C8
     public int g_desiredMap; // 800DC4CC
     public int g_warpTriggerType; // 800DC4D0
     public int g_warpExtraParam; // 800DC4D4

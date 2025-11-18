@@ -392,7 +392,7 @@ public class GameInitializer
         }
 
         _gameEngine.StaticVariables.g_warpTriggerType = 0x36;
-        _gameEngine.StaticVariables.g_warpType = 0;
+        _gameEngine.StaticVariables.g_mapTransitionEffectId = 0;
         _gameEngine.StaticVariables.g_warpExtraParam = 0;
         _gameEngine.StaticVariables.g_cameraLookAtX = (playerTileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraLookAtY = (playerTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
