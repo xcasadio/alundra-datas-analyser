@@ -237,7 +237,7 @@ public class EntityEventHandlers
                 case ScriptHelper.ProgramBMap:
                     eventProgramState = entity.EventProgramState;
 
-                    if (eventProgramState.Codes != null) //.Exp[0] != 0 && eventProgramState.Sp != 0)
+                    if (eventProgramState.Codes != null) //.Parameters[0] != 0 && eventProgramState.Sp != 0)
                     {
                         goto SET_LOGIC_MODE;
                     }
@@ -246,7 +246,7 @@ public class EntityEventHandlers
                 case ScriptHelper.ProgramCTick:
                     eventProgramState = entity.EventProgramState;
 
-                    if (eventProgramState.Codes != null) //Exp[0] != 0 && eventProgramState.Sp != 0)
+                    if (eventProgramState.Codes != null) //Parameters[0] != 0 && eventProgramState.Sp != 0)
                     {
                         if (entity.MapEventProgramId != 2)
                         {
@@ -309,7 +309,7 @@ public class EntityEventHandlers
             if (command == 0x00) // break, skip the loop but do the next command
             {
                 //Debug.WriteLine($"Entity[{entity.Index}] break");
-                eventProgramState.Exp[1] = 0;
+                eventProgramState.Parameters[1] = 0;
                 eventProgramState.CodeIndex++;
                 FillDataFromCommand(eventProgramState); // needed because there is a check at the beginning of the function
                 goto END_SCRIPT;
@@ -348,7 +348,7 @@ public class EntityEventHandlers
                 goto END_SCRIPT;
             }
 
-            eventProgramState.Exp[1] = 0;
+            eventProgramState.Parameters[1] = 0;
             eventProgramState.CodeIndex += result;
         }
 
@@ -375,6 +375,11 @@ public class EntityEventHandlers
             return [0xFF];
         }
 
+        if (eventProgramState.CodeIndex < 0)
+        {
+            Debugger.Break();
+        }
+        
         eventProgramState.Sp = eventProgramState.Codes[eventProgramState.CodeIndex];
         int[] variables = new int[10];
         var length = Math.Min(10, eventProgramState.Codes.Length - eventProgramState.CodeIndex);
@@ -406,11 +411,11 @@ public class EntityEventHandlers
         };
 
         eventProgramState.CodeIndex = 0;
-        Array.Clear(eventProgramState.Exp);
+        Array.Clear(eventProgramState.Parameters);
 
         eventProgramState.Codes = GetEventCodes(br, entity.ProgramIndexes[eventProgramType], eventCodesTable, spriteInfo);
         eventProgramState.Sp = eventProgramState.Codes?.Length > 0 ? eventProgramState.Codes[eventProgramState.CodeIndex] : 0;
-        eventProgramState.Exp[0] = eventProgramState.Sp;
+        eventProgramState.Parameters[0] = eventProgramState.Sp;
     }
 
     public static List<SiCommand> GetEventCodeCommands(BinaryReader br, int index, short[] eventCodesTable, SpriteInfo spriteInfo)
@@ -557,10 +562,10 @@ public class EntityEventHandlers
 
     public int _1c_WaitAnim_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        if (exp[0] != eventProgramState.Exp[1])
+        if (exp[0] != eventProgramState.Parameters[1])
         {
-            eventProgramState.Exp[1] = exp[0];
-            eventProgramState.Exp[2] = 0;
+            eventProgramState.Parameters[1] = exp[0];
+            eventProgramState.Parameters[2] = 0;
             entity.AnimCompleteCounter = 0;
             return 0;
         }
@@ -572,12 +577,12 @@ public class EntityEventHandlers
 
         if (entity.ForceResetAnimationFlag != 0 || entity.AnimCompleteCounter != 0)
         {
-            eventProgramState.Exp[2]++;
+            eventProgramState.Parameters[2]++;
             entity.AnimCompleteCounter = 0;
         }
 
         var towait = exp[1];
-        if (eventProgramState.Exp[2] >= towait)
+        if (eventProgramState.Parameters[2] >= towait)
         {
             return 2;
         }
@@ -606,16 +611,16 @@ public class EntityEventHandlers
     //wait until they have walked a certain distance, collision pauses the walk
     public int _1e_WaitWalk_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        if (exp[0] != eventProgramState.Exp[1])
+        if (exp[0] != eventProgramState.Parameters[1])
         {
-            eventProgramState.Exp[1] = exp[0];
-            eventProgramState.Exp[2] = entity.PosX;
-            eventProgramState.Exp[3] = entity.PosY;
+            eventProgramState.Parameters[1] = exp[0];
+            eventProgramState.Parameters[2] = entity.PosX;
+            eventProgramState.Parameters[3] = entity.PosY;
             return 0;
         }
 
-        var x = Math.Abs(eventProgramState.Exp[2] - entity.PosX) >> 16;
-        var y = Math.Abs(eventProgramState.Exp[3] - entity.PosY) >> 16;
+        var x = Math.Abs(eventProgramState.Parameters[2] - entity.PosX) >> 16;
+        var y = Math.Abs(eventProgramState.Parameters[3] - entity.PosY) >> 16;
 
         var distance = exp[1] | (exp[2] << 8);
 
@@ -1120,17 +1125,17 @@ public class EntityEventHandlers
     //block until specified number of ticks
     public int _37_Wait_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        if (exp[0] != eventProgramState.Exp[1])
+        if (exp[0] != eventProgramState.Parameters[1])
         {
-            eventProgramState.Exp[1] = exp[0];
-            eventProgramState.Exp[2] = 0;
+            eventProgramState.Parameters[1] = exp[0];
+            eventProgramState.Parameters[2] = 0;
             return 0;
         }
 
-        eventProgramState.Exp[2]++;
+        eventProgramState.Parameters[2]++;
 
         var towait = exp[1];
-        if (eventProgramState.Exp[2] >= towait)
+        if (eventProgramState.Parameters[2] >= towait)
         {
             return 2;
         }
@@ -1198,14 +1203,14 @@ public class EntityEventHandlers
 
     public int _49_Restart_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
-        return eventProgramState.Exp[0] - entity.EventProgramState.Sp;
+        return eventProgramState.Parameters[0] - entity.EventProgramState.Sp;
     }
 
     public int _4a_IfTrueRestart_Handler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState)
     {
         if (eventProgramState.Result != 0)
         {
-            return eventProgramState.Exp[0] - entity.EventProgramState.Sp;
+            return eventProgramState.Parameters[0] - entity.EventProgramState.Sp;
         }
 
         return 1;
@@ -1215,7 +1220,7 @@ public class EntityEventHandlers
     {
         if (eventProgramState.Result == 0)
         {
-            return eventProgramState.Exp[0] - entity.EventProgramState.Sp;
+            return eventProgramState.Parameters[0] - entity.EventProgramState.Sp;
         }
 
         return 1;
@@ -1490,10 +1495,10 @@ public class EntityEventHandlers
 
         logicEntity.TargetAnimationId = (uint)variables[1];
 
-        if (eventProgramState.Exp[1] == variables[0])
+        if (eventProgramState.Parameters[1] == variables[0])
         {
-            var x = eventProgramState.Exp[2] - logicEntity.PosX;
-            var y = eventProgramState.Exp[3] - logicEntity.PosY;
+            var x = eventProgramState.Parameters[2] - logicEntity.PosX;
+            var y = eventProgramState.Parameters[3] - logicEntity.PosY;
 
             if (x < 0)
             {
@@ -1505,7 +1510,7 @@ public class EntityEventHandlers
                 y = -y;
             }
 
-            var uVar2 = (uint)eventProgramState.Exp[3];
+            var uVar2 = (uint)eventProgramState.Parameters[3];
             result = 0;
             if ((int)uVar2 <= x >> 0x10 || (int)uVar2 <= y >> 0x10)
             {
@@ -1514,9 +1519,9 @@ public class EntityEventHandlers
         }
         else
         {
-            eventProgramState.Exp[1] = variables[0];
-            eventProgramState.Exp[2] = logicEntity.PosX;
-            eventProgramState.Exp[3] = logicEntity.PosY;
+            eventProgramState.Parameters[1] = variables[0];
+            eventProgramState.Parameters[2] = logicEntity.PosX;
+            eventProgramState.Parameters[3] = logicEntity.PosY;
             result = 0;
         }
 
@@ -1639,10 +1644,10 @@ public class EntityEventHandlers
     // 8003D7FC
     private int Script_28_01C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        if (eventProgramState.Exp[1] != variables[0])
+        if (eventProgramState.Parameters[1] != variables[0])
         {
-            eventProgramState.Exp[1] = variables[0];
-            eventProgramState.Exp[2] = 0;
+            eventProgramState.Parameters[1] = variables[0];
+            eventProgramState.Parameters[2] = 0;
             logicEntity.AnimCompleteCounter = 0;
             return 0;
         }
@@ -1659,11 +1664,11 @@ public class EntityEventHandlers
             logicEntity.CurrentAnimationId = ~logicEntity.TargetAnimationId;
         }
 
-        eventProgramState.Exp[2] += 1;
+        eventProgramState.Parameters[2] += 1;
         logicEntity.AnimCompleteCounter = 0;
 
         LAB_8003d868:
-        return (eventProgramState.Exp[2] < (variables[1] ^ 1) ? 1 : 0) << 1;
+        return (eventProgramState.Parameters[2] < (variables[1] ^ 1) ? 1 : 0) << 1;
     }
 
     // 8003D890
@@ -1686,16 +1691,16 @@ public class EntityEventHandlers
     {
         var signature =  variables[0] | (variables[1] <<  8) | (variables[2] << 16);
 
-        if (eventProgramState.Exp[1] != signature)
+        if (eventProgramState.Parameters[1] != signature)
         {
-            eventProgramState.Exp[1] = signature;
-            eventProgramState.Exp[2] = logicEntity.PosX;
-            eventProgramState.Exp[3] = logicEntity.PosY;
+            eventProgramState.Parameters[1] = signature;
+            eventProgramState.Parameters[2] = logicEntity.PosX;
+            eventProgramState.Parameters[3] = logicEntity.PosY;
             return 0;
         }
 
-        var dx = eventProgramState.Exp[2] - logicEntity.PosX;
-        var dy = eventProgramState.Exp[3] - logicEntity.PosY;
+        var dx = eventProgramState.Parameters[2] - logicEntity.PosX;
+        var dy = eventProgramState.Parameters[3] - logicEntity.PosY;
 
         if (dx < 0)
         {
@@ -1745,9 +1750,9 @@ public class EntityEventHandlers
 
         iVar1 = 0;
 
-        if (eventProgramState.Exp[1] == iVar3)
+        if (eventProgramState.Parameters[1] == iVar3)
         {
-            iVar2 = eventProgramState.Exp[2] - logicEntity.PosZ;
+            iVar2 = eventProgramState.Parameters[2] - logicEntity.PosZ;
 
             if (iVar2 < 0)
             {
@@ -1764,8 +1769,8 @@ public class EntityEventHandlers
         }
         else
         {
-            eventProgramState.Exp[1] = iVar3;
-            eventProgramState.Exp[2] = logicEntity.PosZ;
+            eventProgramState.Parameters[1] = iVar3;
+            eventProgramState.Parameters[2] = logicEntity.PosZ;
         }
 
         return iVar1;*/
@@ -1791,15 +1796,15 @@ public class EntityEventHandlers
         bool isSmaller;
         int result = 0;
 
-        if (eventProgramState.Exp[1] == variables[0])
+        if (eventProgramState.Parameters[1] == variables[0])
         {
-            if (eventProgramState.Exp[2] == logicEntity.PosZ)
+            if (eventProgramState.Parameters[2] == logicEntity.PosZ)
             {
                 result = 1;
             }
             else
             {
-                var zForce = eventProgramState.Exp[2] - logicEntity.PosZ;
+                var zForce = eventProgramState.Parameters[2] - logicEntity.PosZ;
 
                 if (zForce < 1)
                 {
@@ -1818,7 +1823,7 @@ public class EntityEventHandlers
         }
         else
         {
-            eventProgramState.Exp[1] = variables[0];
+            eventProgramState.Parameters[1] = variables[0];
             var entityRecord = logicEntity.EntityRecord;
             if (entityRecord == null)
             {
@@ -1826,7 +1831,7 @@ public class EntityEventHandlers
                 Debugger.Break();
             }
 
-            eventProgramState.Exp[2] = entityRecord.Height << 0x13;
+            eventProgramState.Parameters[2] = entityRecord.Height << 0x13;
         }
 
         return result;
@@ -2391,17 +2396,17 @@ public class EntityEventHandlers
         command = variables[0];
         result = 0;
 
-        if (command != eventProgramState.Exp[1])
+        if (command != eventProgramState.Parameters[1])
         {
-            eventProgramState.Exp[1] = command;
-            eventProgramState.Exp[2] = 0;
+            eventProgramState.Parameters[1] = command;
+            eventProgramState.Parameters[2] = 0;
             return 0;
         }
 
-        eventProgramState.Exp[2]++;
+        eventProgramState.Parameters[2]++;
         var toWait = variables[1];
 
-        if (eventProgramState.Exp[2] >= toWait)
+        if (eventProgramState.Parameters[2] >= toWait)
         {
             return 2;
         }
@@ -2628,7 +2633,7 @@ public class EntityEventHandlers
     //wait dialog choice
     private int Script_68_044(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        if (eventProgramState.Exp[1] == variables[0])
+        if (eventProgramState.Parameters[1] == variables[0])
         {
             if (_gameEngine.StaticVariables.g_scriptDialogChoiceResult != 0)
             {
@@ -2657,7 +2662,7 @@ public class EntityEventHandlers
                 return 0;
             }
 
-            eventProgramState.Exp[1] = variables[0];
+            eventProgramState.Parameters[1] = variables[0];
         }
 
         return 0;
@@ -2706,7 +2711,7 @@ public class EntityEventHandlers
     // 8003E9DC
     private int Script_73_049(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        return -eventProgramState.CodeIndex; //eventProgramState.Sp - eventProgramState.Exp[0];
+        return -eventProgramState.CodeIndex; //eventProgramState.Sp - eventProgramState.Parameters[0];
     }
 
     // 8003E9EC
@@ -2716,7 +2721,7 @@ public class EntityEventHandlers
 
         if (eventProgramState.Result != 0)
         {
-            return -eventProgramState.CodeIndex; //eventProgramState.Sp - eventProgramState.Exp[0];
+            return -eventProgramState.CodeIndex; //eventProgramState.Sp - eventProgramState.Parameters[0];
         }
 
         return result;
@@ -2729,7 +2734,7 @@ public class EntityEventHandlers
 
         if (eventProgramState.Result == 0)
         {
-            return -eventProgramState.CodeIndex; //eventProgramState.Sp - eventProgramState.Exp[0];
+            return -eventProgramState.CodeIndex; //eventProgramState.Sp - eventProgramState.Parameters[0];
         }
 
         return result;
@@ -3085,15 +3090,15 @@ public class EntityEventHandlers
         int frameTimer;
         byte conditionFlags;
 
-        if (eventProgramState.Exp[1] != variables[0])
+        if (eventProgramState.Parameters[1] != variables[0])
         {
-            eventProgramState.Exp[1] = variables[0];
-            eventProgramState.Exp[2] = logicEntity.PosX;
-            eventProgramState.Exp[3] = logicEntity.PosY;
+            eventProgramState.Parameters[1] = variables[0];
+            eventProgramState.Parameters[2] = logicEntity.PosX;
+            eventProgramState.Parameters[3] = logicEntity.PosY;
             command = logicEntity.PosZ;
-            eventProgramState.Exp[5] = 0;
-            eventProgramState.Exp[6] = 0;
-            eventProgramState.Exp[4] = command;
+            eventProgramState.Parameters[5] = 0;
+            eventProgramState.Parameters[6] = 0;
+            eventProgramState.Parameters[4] = command;
             logicEntity.AnimCompleteCounter = 0;
             return 0;
         }
@@ -3108,15 +3113,15 @@ public class EntityEventHandlers
             logicEntity.CurrentAnimationId = ~logicEntity.TargetAnimationId;
         }
 
-        eventProgramState.Exp[5] = eventProgramState.Exp[5] + 1;
+        eventProgramState.Parameters[5] = eventProgramState.Parameters[5] + 1;
         logicEntity.AnimCompleteCounter = 0;
 
         UPDATE_FRAME_COUNTER:
-        frameTimer = eventProgramState.Exp[6] + 1;
-        eventProgramState.Exp[6] = frameTimer;
+        frameTimer = eventProgramState.Parameters[6] + 1;
+        eventProgramState.Parameters[6] = frameTimer;
         command = variables[0];
 
-        if (eventProgramState.Exp[5] < (int)(uint)(command + 4))
+        if (eventProgramState.Parameters[5] < (int)(uint)(command + 4))
         {
             return 0;
         }
@@ -3138,7 +3143,7 @@ public class EntityEventHandlers
             }
 
             frameTimer = variables[0];
-            command = eventProgramState.Exp[2] - logicEntity.PosX;
+            command = eventProgramState.Parameters[2] - logicEntity.PosX;
             if (command < 0)
             {
                 command = -command;
@@ -3149,7 +3154,7 @@ public class EntityEventHandlers
                 return 0;
             }
 
-            command = eventProgramState.Exp[3] - logicEntity.PosY;
+            command = eventProgramState.Parameters[3] - logicEntity.PosY;
             if (command < 0)
             {
                 command = -command;
@@ -3157,7 +3162,7 @@ public class EntityEventHandlers
 
             if ((int)((uint)(frameTimer + 2) << 0x14) <= command)
             {
-                command = eventProgramState.Exp[4] - logicEntity.PosZ;
+                command = eventProgramState.Parameters[4] - logicEntity.PosZ;
                 if (command < 0)
                 {
                     command = -command;
@@ -3361,16 +3366,16 @@ public class EntityEventHandlers
     // 8003F8DC
     private int Script_106_06A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        eventProgramState.Exp[2] = logicEntity.PosX;
-        eventProgramState.Exp[3] = logicEntity.PosY;
-        eventProgramState.Exp[4] = logicEntity.PosZ;
+        eventProgramState.Parameters[2] = logicEntity.PosX;
+        eventProgramState.Parameters[3] = logicEntity.PosY;
+        eventProgramState.Parameters[4] = logicEntity.PosZ;
         return 1;
     }
 
     // 8003F908
     private int Script_107_06B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var iVar1 = eventProgramState.Exp[2] - logicEntity.PosX;
+        var iVar1 = eventProgramState.Parameters[2] - logicEntity.PosX;
 
         if (iVar1 < 0)
         {
@@ -3385,7 +3390,7 @@ public class EntityEventHandlers
     // 8003F94C
     private int Script_108_06C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var iVar1 = eventProgramState.Exp[3] - logicEntity.PosY;
+        var iVar1 = eventProgramState.Parameters[3] - logicEntity.PosY;
 
         if (iVar1 < 0)
         {
@@ -3399,7 +3404,7 @@ public class EntityEventHandlers
     // 8003F990
     private int Script_109_06D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var iVar1 = eventProgramState.Exp[4] - logicEntity.PosZ;
+        var iVar1 = eventProgramState.Parameters[4] - logicEntity.PosZ;
 
         if (iVar1 < 0)
         {
@@ -4991,7 +4996,7 @@ public class EntityEventHandlers
 
             if ((_gameEngine.StaticVariables.g_globalFlags[0] & 2U) == 0)
             {
-                if (eventProgramState.Exp[1] == variables[0])
+                if (eventProgramState.Parameters[1] == variables[0])
                 {
                     if (_gameEngine.StaticVariables.g_debugState < 0)
                     {
@@ -5005,9 +5010,9 @@ public class EntityEventHandlers
                         //Debug.WriteLine(_gameEngine.StaticVariables.g_debugMessage + iVar2, "Retry = %d", iVar1);
                     }
 
-                    result = eventProgramState.Exp[2];
+                    result = eventProgramState.Parameters[2];
 
-                    eventProgramState.Exp[2] = result + 1;
+                    eventProgramState.Parameters[2] = result + 1;
 
                     if (result < 0x3c)
                     {
@@ -5027,8 +5032,8 @@ public class EntityEventHandlers
                     _gameEngine.PlayerManager.RestoreHpAndMpAndCreateEffect(_gameEngine.StaticVariables.PlayerEntity);
                     _gameEngine.SoundManager.PlaySoundEffect(0x31);
                     result = 0;
-                    eventProgramState.Exp[1] = variables[0];
-                    eventProgramState.Exp[2] = 0;
+                    eventProgramState.Parameters[1] = variables[0];
+                    eventProgramState.Parameters[2] = 0;
                 }
             }
             else
@@ -5143,10 +5148,10 @@ public class EntityEventHandlers
             {
                 var targetEntity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0];
 
-                //var textureIndex = (eventProgramState.Exp[2] & 0x07) + targetEntity.PaletteOffset;
+                //var textureIndex = (eventProgramState.Parameters[2] & 0x07) + targetEntity.PaletteOffset;
                 //var textureId = _gameEngine.StaticVariables.g_tPageFadeLUT[textureIndex];
 
-                //var spriteSheetOffset = targetEntity.SpriteSheetOffset + (eventProgramState.Exp[3] & 0x3F);
+                //var spriteSheetOffset = targetEntity.SpriteSheetOffset + (eventProgramState.Parameters[3] & 0x3F);
                 //var textureId2 = _gameEngine.StaticVariables.g_drawPageInfoBase[spriteSheetOffset];
 
                 var image = targetEntity.Frame.Images.Images[targetEntity.CurrentFrameIndex];
@@ -5159,10 +5164,10 @@ public class EntityEventHandlers
                     targetEntity.PosZ, 
                     -_gameEngine.StaticVariables.g_cameraScrollingX, 
                     -_gameEngine.StaticVariables.g_cameraScrollingY,
-                    (byte)eventProgramState.Exp[4],
-                    (byte)eventProgramState.Exp[5],
-                    (short)eventProgramState.Exp[6],
-                    (short)eventProgramState.Exp[7],
+                    (byte)eventProgramState.Parameters[4],
+                    (byte)eventProgramState.Parameters[5],
+                    (short)eventProgramState.Parameters[6],
+                    (short)eventProgramState.Parameters[7],
                     bitmap);
             }
 

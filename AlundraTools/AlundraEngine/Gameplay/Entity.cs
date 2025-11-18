@@ -419,7 +419,7 @@ public class Entity
         LogicContextEntity = null;
 
         EventProgramState.Sp = 0;
-        Array.Clear(EventProgramState.Exp);
+        Array.Clear(EventProgramState.Parameters);
         EventProgramState.Result = 0;
         EventProgramState._30 = 0;
         EventProgramState._34 = 0;

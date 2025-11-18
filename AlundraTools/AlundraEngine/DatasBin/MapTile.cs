@@ -57,7 +57,7 @@ public class MapTile
     public short Palette;
     public short Tile;
     public short TilesOffset;
-    public WallTiles WallTiles;
+    public WallTiles? WallTiles;
 
     public uint Flags => (uint)(Walkability | (GroundProperty << 8) | (Slope << 16) | (Height << 24));
 

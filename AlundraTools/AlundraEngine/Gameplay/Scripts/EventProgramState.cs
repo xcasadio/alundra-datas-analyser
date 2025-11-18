@@ -3,7 +3,7 @@
 public class EventProgramState
 {
     public int Sp; // pointer on code
-    public readonly int[] Exp = new int[10];
+    public readonly int[] Parameters = new int[10];
     public int Result;
     public int _30;
     public int _34;
@@ -16,7 +16,7 @@ public class EventProgramState
         Sp = other.Sp;
         Codes = other.Codes;
         CodeIndex = other.CodeIndex;
-        Array.Copy(other.Exp, Exp, Exp.Length);
+        Array.Copy(other.Parameters, Parameters, Parameters.Length);
         Result = other.Result;
         _30 = other._30;
         _34 = other._34;
@@ -24,6 +24,6 @@ public class EventProgramState
 
     public override string ToString()
     {
-        return $"Sp:{string.Join(',', Sp)} Exp:{string.Join(',', Exp)} {nameof(_34)}:{_34}";
+        return $"Sp:{string.Join(',', Sp)} Parameters:{string.Join(',', Parameters)} {nameof(_34)}:{_34}";
     }
 }

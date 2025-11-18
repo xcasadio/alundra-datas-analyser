@@ -17,7 +17,7 @@ public class GameMapHeader
         MapSize = 0;
         TilesSize = 0;
         SpriteInfoSize = SpriteSheetsOffset - SpriteInfoOffset;
-        SpritesSize = (int)header.UnknownMapA - SpriteSheetsOffset;
+        SpritesSize = (int)header.DrawPageParam - SpriteSheetsOffset;
         ScrollSize = 0;
     }
 

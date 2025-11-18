@@ -378,7 +378,7 @@ public class GameEngine
             StaticVariables.g_mapEvents[i].Entity = null;
             StaticVariables.g_mapEvents[i].EventData.Sp = 0;
             StaticVariables.g_mapEvents[i].EventData.CodeIndex = 0;
-            Array.Clear(StaticVariables.g_mapEvents[i].EventData.Exp);
+            Array.Clear(StaticVariables.g_mapEvents[i].EventData.Parameters);
 
             //StaticVariables.g_mapEvents[i].EventData.Tick = 0;
             //for (int j = 0; j < StaticVariables.g_mapEvents[i].EventData.Variables.Length; j++)
@@ -414,9 +414,9 @@ public class GameEngine
             //
             //} while (pEmptyMapEvent != StaticVariables.g_emptyMapEvent.EventData.Codes[1]);
             //
-            //programBMapCode = pEmptyMapEvent.EventData.Exp;
+            //programBMapCode = pEmptyMapEvent.EventData.Parameters;
             //mapEventDest.EventData.Sp = StaticVariables.g_emptyMapEvent.EventData.Codes[1];
-            //mapEventDest.EventData.Exp = programBMapCode;
+            //mapEventDest.EventData.Parameters = programBMapCode;
             //
             //mapEvents[i].Id = i;
             //i++;

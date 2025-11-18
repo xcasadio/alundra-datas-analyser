@@ -99,8 +99,8 @@ public class GameInitializer
             _gameEngine.StaticVariables.g_uvLookupTableInit[i] = table[offset + i];
         }
 
-        //datasBinHeader = &g_datasBinHeaderOffset;
-        //ReadFileFromCDIntoBuffer(DATAS_BIN, (u_long*)&g_datasBinHeaderOffset, 0, 0x7b8);
+        //datasBinHeader = &g_dataBinHeader;
+        //ReadFileFromCDIntoBuffer(DATAS_BIN, (u_long*)&g_dataBinHeader, 0, 0x7b8);
         //clutLoopIndex = 0;
         //g_data_buffer = 0;
         //g_data_buffer_length = 0;
@@ -338,6 +338,7 @@ public class GameInitializer
         {
             ClearMapArrays();
             playerTileX = 0x16;
+
             if (_gameEngine.StaticVariables.g_someDataIntoRam == 0)
             {
                 playerTileX = 0x21;
@@ -396,7 +397,7 @@ public class GameInitializer
         _gameEngine.StaticVariables.g_cameraLookAtX = (playerTileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraLookAtY = (playerTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraLookAtZ = playerZ << 0x14;
-        _gameEngine.StaticVariables.g_desiredMap = _gameEngine.StaticVariables.g_initialMapId;
+        _gameEngine.StaticVariables.g_desiredMap = 476; //_gameEngine.StaticVariables.g_initialMapId;
         _gameEngine.StaticVariables.g_cameraTargetX = (_gameEngine.StaticVariables.g_initialCameraTileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraTargetY = (_gameEngine.StaticVariables.g_initialCameraTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraTargetZ = _gameEngine.StaticVariables.g_initialCameraTileZ << 0x14;

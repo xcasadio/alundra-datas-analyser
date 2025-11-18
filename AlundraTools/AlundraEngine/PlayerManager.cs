@@ -140,7 +140,7 @@ public class PlayerManager
                         if (weaponId == 0)
                         {
                             _gameEngine.StaticVariables.g_isGameEnding = 1;
-                            _gameEngine.StaticVariables.g_warpType = 8;
+                            _gameEngine.StaticVariables.g_mapTransitionEffectId = 8;
                             _gameEngine.StaticVariables.g_warpEntryBehavior = 0;
                             _gameEngine.StaticVariables.g_desiredMap = 0x1dd;
                             _gameEngine.StaticVariables.g_warpTriggerType = 0;
@@ -2498,7 +2498,7 @@ public class PlayerManager
             return;
         }
 
-        _gameEngine.StaticVariables.g_warpType = (warpData.Flags & 0x70) >> 4;
+        _gameEngine.StaticVariables.g_mapTransitionEffectId = (warpData.Flags & 0x70) >> 4;
 
         int internalMapIdx = _gameEngine.StaticVariables.g_mapIdToInternalMapIndexTable[warpData.DestMapId];
         _gameEngine.StaticVariables.g_desiredMap = warpData.DestMapId;
@@ -2518,12 +2518,12 @@ public class PlayerManager
 
         _gameEngine.StaticVariables.g_warpEntryBehavior = _gameEngine.StaticVariables.g_warpBehaviorTable[warpData.Flags & 0xF];
 
-        if (_gameEngine.StaticVariables.g_warpType == 3)
+        if (_gameEngine.StaticVariables.g_mapTransitionEffectId == 3)
         {
             if (internalMapIdx != _gameEngine.StaticVariables.g_currentMap)
             {
                 //_gameEngine.DoNothing();
-                _gameEngine.StaticVariables.g_warpType = 0;
+                _gameEngine.StaticVariables.g_mapTransitionEffectId = 0;
             }
             else if (playerEntity.CarriedEntity != null)
             {

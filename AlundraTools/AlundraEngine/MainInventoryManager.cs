@@ -469,7 +469,7 @@ public class MainInventoryManager
                 }
                 if ((_gameEngine.StaticVariables.g_padState1.ButtonsHold & PadState.Left) != 0)
                 {
-                    //_gameEngine.TriggerWarpDebugZone();
+                    //_gameEngine.TriggerWarpDebugZone(); //can't work
                     return 0;
                 }
                 if ((_gameEngine.StaticVariables.g_padState1.ButtonsHold & PadState.Up) != 0)

@@ -102,7 +102,7 @@ public class FrameSnapshot
         gameEngine.StaticVariables.g_warpDelayFrames = WarpDelayFrames;
         gameEngine.StaticVariables.g_playerControlFlags = PlayerControlFlags;
         gameEngine.StaticVariables.g_isWarpDisabled = IsWarpDisabled;
-        gameEngine.StaticVariables.g_warpType = WarpType;
+        gameEngine.StaticVariables.g_mapTransitionEffectId = WarpType;
         gameEngine.StaticVariables.g_desiredMap = DesiredMap;
         gameEngine.StaticVariables.g_warpTriggerType = WarpTriggerType;
         gameEngine.StaticVariables.g_warpExtraParam = WarpExtraParam;
@@ -187,7 +187,7 @@ public class FrameSnapshot
         WarpDelayFrames = gameEngine.StaticVariables.g_warpDelayFrames;
         PlayerControlFlags = gameEngine.StaticVariables.g_playerControlFlags;
         IsWarpDisabled = gameEngine.StaticVariables.g_isWarpDisabled;
-        WarpType = gameEngine.StaticVariables.g_warpType;
+        WarpType = gameEngine.StaticVariables.g_mapTransitionEffectId;
         DesiredMap = gameEngine.StaticVariables.g_desiredMap;
         WarpTriggerType = gameEngine.StaticVariables.g_warpTriggerType;
         WarpExtraParam = gameEngine.StaticVariables.g_warpExtraParam;

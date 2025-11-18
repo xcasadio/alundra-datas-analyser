@@ -5729,7 +5729,7 @@ public class StaticVariables
     public int g_animTableAlt_80191b48; // 80191B48
     public int DAT_8019acbc; // 8019ACBC
     public int DAT_8019acc4; // 8019ACC4
-    public int g_datasBinHeaderOffset; // 801EAB30
+    public DatasBin.DbHeader g_dataBinHeader; // 801EAB30
     public int g_spriteBufferCDEnd; // 801EAB34
     public int g_imageBufferCDStart; // 801EAB38
     public int g_imageBufferCDEnd; // 801EAB3C
