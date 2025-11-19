@@ -43,12 +43,15 @@ jobs:
     - name: Prepare release artifacts
       run: |
         mkdir release-artifacts
-        xcopy /E /I AlundraTools\bin\Release release-artifacts\Release
+        if exist "AlundraTools\AlundraTools\bin\Release" xcopy /E /I /Y AlundraTools\AlundraTools\bin\Release release-artifacts\AlundraTools
+        if exist "AlundraTools\AlundraGame\bin\Release" xcopy /E /I /Y AlundraTools\AlundraGame\bin\Release release-artifacts\AlundraGame
+        if exist "AlundraTools\AlundraEngine\bin\Release" xcopy /E /I /Y AlundraTools\AlundraEngine\bin\Release release-artifacts\AlundraEngine
+        dir /S release-artifacts
       shell: cmd
       
     - name: Create release archive
       run: |
-        Compress-Archive -Path release-artifacts\Release\* -DestinationPath alundra-tools-release.zip
+        Compress-Archive -Path release-artifacts\* -DestinationPath alundra-tools-release.zip
       shell: pwsh
       
     - name: Determine version
