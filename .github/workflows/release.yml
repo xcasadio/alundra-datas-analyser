@@ -1,0 +1,65 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+      
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+      
+    - name: Restore NuGet packages
+      run: nuget restore AlundraTools/Alundra.sln
+      
+    - name: Build solution in Release mode
+      run: msbuild AlundraTools/Alundra.sln /p:Configuration=Release /p:Platform="Any CPU" /m
+      
+    - name: Prepare release artifacts
+      run: |
+        mkdir release-artifacts
+        xcopy /E /I AlundraTools\bin\Release release-artifacts\Release
+      shell: cmd
+      
+    - name: Create release archive
+      run: |
+        Compress-Archive -Path release-artifacts\Release\* -DestinationPath alundra-tools-release.zip
+      shell: pwsh
+      
+    - name: Determine version
+      id: version
+      run: |
+        if ("${{ github.event_name }}" -eq "workflow_dispatch") {
+          echo "version=${{ github.event.inputs.version }}" >> $env:GITHUB_OUTPUT
+        } else {
+          echo "version=${{ github.ref_name }}" >> $env:GITHUB_OUTPUT
+        }
+      shell: pwsh
+      
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.version }}
+        name: Release ${{ steps.version.outputs.version }}
+        files: |
+          alundra-tools-release.zip
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
