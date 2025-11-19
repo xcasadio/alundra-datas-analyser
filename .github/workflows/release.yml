@@ -42,12 +42,19 @@ jobs:
     - name: Build solution in Release mode
       run: msbuild AlundraTools/Alundra.sln /p:Configuration=Release /p:Platform="Any CPU" /m
       
+    - name: Get TargetFramework from csproj
+      id: get-framework
+      run: |
+        [xml]$csproj = Get-Content "AlundraTools\AlundraTools\AlundraTools.csproj"
+        $targetFramework = $csproj.Project.PropertyGroup.TargetFramework
+        echo "framework=$targetFramework" >> $env:GITHUB_OUTPUT
+        echo "Detected TargetFramework: $targetFramework"
+      shell: pwsh
+      
     - name: Prepare release artifacts
       run: |
         mkdir release-artifacts
-        if exist "AlundraTools\AlundraTools\bin\Release" xcopy /E /I /Y AlundraTools\AlundraTools\bin\Release release-artifacts\AlundraTools
-        if exist "AlundraTools\AlundraGame\bin\Release" xcopy /E /I /Y AlundraTools\AlundraGame\bin\Release release-artifacts\AlundraGame
-        if exist "AlundraTools\AlundraEngine\bin\Release" xcopy /E /I /Y AlundraTools\AlundraEngine\bin\Release release-artifacts\AlundraEngine
+        xcopy /E /I /Y AlundraTools\AlundraTools\bin\Release\${{ steps.get-framework.outputs.framework }}\* release-artifacts\
         dir /S release-artifacts
       shell: cmd
       
