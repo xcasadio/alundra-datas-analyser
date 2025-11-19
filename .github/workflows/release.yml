@@ -28,6 +28,15 @@ jobs:
     - name: Restore NuGet packages
       run: nuget restore AlundraTools/Alundra.sln
       
+    - name: Verify app.manifest exists
+      run: |
+        if not exist "AlundraTools\AlundraGame\app.manifest" (
+          echo Error: app.manifest not found
+          exit /b 1
+        )
+        echo app.manifest found
+      shell: cmd
+      
     - name: Build solution in Release mode
       run: msbuild AlundraTools/Alundra.sln /p:Configuration=Release /p:Platform="Any CPU" /m
       
