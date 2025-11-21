@@ -4604,7 +4604,7 @@ public class StaticVariables
     public int g_obj_poly_ft4; // 80098700
     public int DAT_80098704; // 80098704
     public uint g_gameRandomSeed; // 80098708
-    //public int  g_spriteTableIndexes[512]; // 8009870C
+    public readonly string[] g_spriteNames = new string[512];; // 8009870C
     public Entity g_lastValidWarpEntity; // 80098F0C
     //public int  g_directionNames[5]; // 80098F10
     public int DAT_80098f24; // 80098F24
@@ -9522,6 +9522,4 @@ public class StaticVariables
             new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x0120, y0=0x0070, u0=0xD0, v0=0x20, clut=0x0000, w=0x0008, h=0x0008 },
             new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x0128, y0=0x0070, u0=0xD8, v0=0x20, clut=0x0000, w=0x0008, h=0x0008 }
         };
-
-    public readonly string[] g_spriteTableIndexes = new string[512];
 }

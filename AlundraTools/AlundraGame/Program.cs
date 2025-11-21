@@ -1,2 +1,2 @@
-﻿using var game = new AlundraGame.Game1();
+﻿using var game = new AlundraGame.AlundraGame();
 game.Run();

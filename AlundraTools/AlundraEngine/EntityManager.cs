@@ -2050,8 +2050,8 @@ public class EntityManager
                 {
                     _gameEngine.StaticVariables.g_messageDebug += // + otherEntity->index * 0x100
                         string.Format("{0} (Race) {1}\n\r{2} (Attr) {3}\n\r",
-                            _gameEngine.StaticVariables.g_spriteTableIndexes[entity.SpriteTableIndex],
-                            _gameEngine.StaticVariables.g_spriteTableIndexes[otherEntity.SpriteTableIndex],
+                            _gameEngine.StaticVariables.g_spriteNames[entity.SpriteTableIndex],
+                            _gameEngine.StaticVariables.g_spriteNames[otherEntity.SpriteTableIndex],
                             _gameEngine.StaticVariables.g_weaponNames[balanceValueIndex],
                             _gameEngine.StaticVariables.g_damageNames[otherEntity.BalanceRecord.Values[balanceValueIndex - 1] >> 6]);
                 }
