@@ -1,0 +1,501 @@
+﻿text_jp;text_fr;text_en
+無音;Silence;Silence
+カーソル移動;Déplacement du curseur;Cursor movement
+Ｏｋ;OK;OK
+ＮＧ;Échec;NG
+メニューオープン;Ouverture du menu;Menu open
+メニュークローズ;Fermeture du menu;Menu close
+メッセージオープン;Ouverture du message;Message window open
+メッセージクローズ;Fermeture du message;Message window close
+ＨＰ回復メーター;Jauge de récupération PV;HP recovery gauge
+ＭＰ回復メーター;Jauge de récupération PM;MP recovery gauge
+ジャンプ;Saut;Jump
+着地;Atterrissage;Landing
+ダッシュ;Dash / Course;Dash / Run
+走る;Courir;Run
+スライディング;Glissade;Sliding
+マント;Cape;Cape
+砂：歩く;Marcher sur le sable;Walk on sand
+砂：着地;Atterrissage sur le sable;Landing on sand
+沼：歩く;Marcher dans le marais;Walk in swamp
+沼：着地;Atterrissage dans le marais;Landing in swamp
+浅瀬：歩く;Marcher dans les eaux peu profondes;Walk in shallow water
+浅瀬：着地;Atterrissage dans les eaux peu profondes;Landing in shallow water
+泳ぐ;Nager;Swim
+ダメージ;Dégât;Damage
+置く;Poser;Place
+押す;Pousser;Push
+投げる;Lancer;Throw
+落ちて壊れる;Tomber et se briser;Fall and break
+ぶつかる;Collision;Collision
+剣：振る;Épée : frapper;Sword: swing
+剣：気をためて振る;Épée : coup chargé;Sword: charged swing
+剣：草を斬る;Épée : couper l’herbe;Sword: cut grass
+矢：撃つ;Flèche : tirer;Arrow: shoot
+矢：気をためて撃つ;Flèche : tir chargé;Arrow: charged shot
+矢：敵以外に当たる;Flèche : touche autre chose qu’un ennemi;Arrow: hit non-enemy
+鉄球：振る;Boule de fer : balancer;Iron ball: swing
+鉄球：気をためて振る;Boule de fer : balancer (chargé);Iron ball: charged swing
+ロッド：振る;Bâton : frapper;Rod: swing
+凍る;Geler;Freeze
+燃える;Brûler;Burn
+気をためて凍る;Geler (attaque chargée);Charged freeze
+気をためて燃える;Brûler (attaque chargée);Charged burn
+気をためる;Charge de pouvoir;Charge power
+気合まんたん;Énergie au maximum;Full power
+爆弾をだす;Sortir une bombe;Place bomb
+爆発大;Grosse explosion;Big explosion
+爆発中;Explosion moyenne;Medium explosion
+爆発小;Petite explosion;Small explosion
+エリクサー;Élixir;Elixir
+ＨＰ回復アイテム大;Objet de soin PV (grand);HP recovery item (large)
+ＨＰ回復アイテム小;Objet de soin PV (petit);HP recovery item (small)
+宝箱があく;Coffre au trésor s’ouvre;Treasure chest opens
+ライフアップアイテム;Objet d’augmentation de vie;Life-up item
+アイテム入手;Obtention d’objet;Item obtained
+ＭＰ回復アイテム;Objet de récupération PM;MP recovery item
+落下;Chute;Fall
+　　;;
+風;Vent;Wind
+トラップ解除;Désactivation du piège;Trap disarmed
+トラップ解除失敗;Échec de désactivation du piège;Trap disarm failed
+鍵を開ける;Ouvrir une serrure;Unlock
+扉が開く;Porte qui s’ouvre;Door opens
+テレポート;Téléportation;Teleport
+階段;Escaliers;Stairs
+敵：消滅;Ennemi : disparaît;Enemy: disappears
+敵：ダメージ１;Ennemi : dégâts 1;Enemy: damage 1
+敵：ダメージ２;Ennemi : dégâts 2;Enemy: damage 2
+敵：ダメージ３;Ennemi : dégâts 3;Enemy: damage 3
+敵：ダメージ４;Ennemi : dégâts 4;Enemy: damage 4
+マップ切替：家;Changement de carte : maison;Map change: house
+マップ切替：汎用;Changement de carte : générique;Map change: generic
+マップ切替：落下;Changement de carte : chute;Map change: fall
+マップ切替：潜水;Changement de carte : plongée;Map change: diving
+マップ切替：ワープ;Changement de carte : warp;Map change: warp
+マップ切替：洞窟;Changement de carte : grotte;Map change: cave
+マップ切替：階段;Changement de carte : escalier;Map change: stairs
+マップ切替：橋;Changement de carte : pont;Map change: bridge
+　　;;
+振動ー＞８５;Vibration → 85;Vibration → 85
+台詞：男;Réplique : homme;Voice: male line
+台詞：女;Réplique : femme;Voice: female line
+台詞：子供;Réplique : enfant;Voice: child line
+台詞：モンスター;Réplique : monstre;Voice: monster line
+タックル;Charge;Tackle
+アイテム発見;Objet découvert;Item found
+振動;Vibration;Vibration
+豆の木ジャンプ;Saut sur le haricot magique;Beanstalk jump
+８７　;87;87
+ニルード：叫ぶ;Nilude : crie;Nilude: shout
+ニルード：消滅;Nilude : disparaît;Nilude: disappears
+ニルード：歩く;Nilude : marche;Nilude: walk
+ニルード：歩く;Nilude : marche;Nilude: walk
+ニルード：橋が壊れる;Nilude : le pont se brise;Nilude: bridge breaks
+ニルード：崩れる;Nilude : s’effondre;Nilude: collapses
+ドラゴン：羽ばたく;Dragon : bat des ailes;Dragon: flaps wings
+ドラゴン：ダメージ;Dragon : subit des dégâts;Dragon: takes damage
+ドラゴン：着地;Dragon : atterrit;Dragon: lands
+ドラゴン：火の弾を吐く;Dragon : crache des boules de feu;Dragon: spits fireballs
+ドラゴン：炎を吐く;Dragon : crache des flammes;Dragon: breathes flames
+ドラゴン：吠える;Dragon : rugit;Dragon: roars
+アース：がダメージを受ける;Earth : subit des dégâts;Earth: takes damage
+アース：が着地;Earth : atterrit;Earth: lands
+アース：が浮かぶ;Earth : s’élève;Earth: rises
+アース：岩石が落ちた;Earth : rocher tombé;Earth: rock fell
+アース：岩石が落ちてくる;Earth : rochers qui tombent;Earth: rocks falling
+アース：岩石を落とす前の叫び;Earth : cri avant de lâcher les rochers;Earth: scream before dropping rocks
+アース：が倒される;Earth : est vaincu;Earth: defeated
+アビス：がダメージを受ける;Abyss : subit des dégâts;Abyss: takes damage
+アビス：腕が出てくる（小）;Abyss : bras apparaît (petit);Abyss: small arm appears
+アビス：腕が出てくる（大）;Abyss : bras apparaît (grand);Abyss: large arm appears
+アビス：腕がまわる;Abyss : bras qui tourne;Abyss: arm spins
+アビス：腕が引っ込む;Abyss : bras se rétracte;Abyss: arm retracts
+アビス：が倒される;Abyss : est vaincu;Abyss: defeated
+１２：瞳のプレートに乗った;12 : monté sur la plaque de l’œil;12: on the eye plate
+１０：刺刺出現;10 : pics apparaissent;10: spikes appear
+１０：マッディヘドロ吐く;10 : Muddy Hedoro crache;10: Muddy Hedoro spits
+　　;;
+　　;;
+１０：三色ＳＷ入れた;10 : interrupteur tricolore activé;10: three-color switch activated
+１０：岩転がる;10 : rocher roule;10: rock rolls
+１０：大鉄球移動;10 : grosse boule de fer se déplace;10: huge iron ball moves
+１０：大鉄球回転;10 : grosse boule de fer tourne;10: huge iron ball spins
+１１：スリップ;11 : glissade;11: slip
+１１：クライン叫び;11 : Klein crie;11: Klein shouts
+１１：クライン変身;11 : Klein se transforme;11: Klein transforms
+１１：ワープモンスタ出現;11 : monstre de warp apparaît;11: warp monster appears
+１１：小岩が転がる;11 : petits rochers roulent;11: small rocks roll
+１１：石柱せりあがる;11 : pilier de pierre se lève;11: stone pillar rises
+１１：氷が割れる;11 : glace se brise;11: ice cracks
+１１：氷柱壊れる;11 : stalactites de glace se brisent;11: ice stalactites break
+１１：氷柱滑る;11 : glisser sur la glace;11: slide on ice
+１６：リザードマン吠える;16 : homme-lézard rugit;16: lizardman roars
+１６：リザードマン泥吐く;16 : homme-lézard crache de la boue;16: lizardman spits mud
+１６：炎動く;16 : flamme se déplace;16: flame moves
+１６：トカゲの像光る;16 : statue de lézard brille;16: lizard statue shines
+１６：トカゲの像動きだす;16 : statue de lézard se met en mouvement;16: lizard statue starts moving
+１４：炎が灯る;14 : flammes s’allument;14: flames light up
+１４：機械仕掛けの扉;14 : porte mécanique;14: mechanical door
+１４：大砲発射;14 : canon tire;14: cannon fires
+１４：ゾルジア内臓攻撃;14 : attaque d’organes de Zoldia;14: Zoldia organ attack
+１４：落とし穴があく;14 : trappe s’ouvre;14: trapdoor opens
+１４：つり天井上がる;14 : plafond écrasant se lève;14: crushing ceiling rises
+１５：火が消える;15 : feu s’éteint;15: fire goes out
+１５：石の扉開く;15 : porte de pierre s’ouvre;15: stone door opens
+１５：死体モンスター出現;15 : monstre cadavre apparaît;15: corpse monster appears
+１５：水滴１;15 : gouttes d’eau 1;15: water drops 1
+１５：水滴２;15 : gouttes d’eau 2;15: water drops 2
+１５：川;15 : rivière;15: river
+オーク吠える;Orc : rugit;Orc: roars
+０２：水の流れ;02 : courant d’eau;02: water current
+フライングキラー跳ねる;Flying Killer : rebondit;Flying Killer: bounces
+１８：マッシュ吐く;18 : Mush crache;18: Mush spits
+１８：ウッズ出現;18 : Woods apparaît;18: Woods appears
+１８：ウッズ吐く;18 : Woods crache;18: Woods spits
+１９：波１;19 : vagues 1;19: waves 1
+１９：波２;19 : vagues 2;19: waves 2
+２０：間欠泉;20 : geyser intermittent;20: intermittent geyser
+２１：ミミング喋り;21 : Mimming parle;21: Mimming talks
+２１：マッディヘドロ吠える;21 : Muddy Hedoro rugit;21: Muddy Hedoro roars
+１７：水車;17 : roue à eau;17: waterwheel
+１２：神殿外の雨;12 : pluie à l’extérieur du temple;12: rain outside the temple
+０１：夜の村;01 : village de nuit;01: village at night
+蜂が飛ぶ;Abeilles qui volent;Bees flying
+１５：草燃える;15 : herbes brûlent;15: grass burns
+エリーン：水晶割れる;Elin : le cristal se brise;Elin: crystal shatters
+エリーン：ダメージ;Elin : subit des dégâts;Elin: takes damage
+エリーン：移動;Elin : se déplace;Elin: moves
+エリーン：出現;Elin : apparition;Elin: appears
+双子：ダメージ;Jumeaux : subissent des dégâts;Twins: take damage
+双子：移動;Jumeaux : se déplacent;Twins: move
+双子：消滅;Jumeaux : disparaissent;Twins: disappear
+双子：口レーザー;Jumeaux : laser de la bouche;Twins: mouth laser
+双子：双子降りる;Jumeaux : descendent;Twins: descend
+双子：腹レーザー;Jumeaux : laser du ventre;Twins: belly laser
+吸い込：もぐもぐ;Aspiration : mâchouille;Suction: munches
+吸い込：ダメージ;Aspiration : subit des dégâts;Suction: takes damage
+吸い込：吸い込み;Aspiration : aspire;Suction: sucks in
+吸い込：吠える;Aspiration : rugit;Suction: roars
+吸い込：吐く;Aspiration : recrache;Suction: spits out
+吸い込：消滅;Aspiration : disparaît;Suction: disappears
+ゾルジア：カッター回る;Zoldia : lames tournent;Zoldia: blades spin
+ゾルジア：カッター飛ぶ;Zoldia : lames volantes;Zoldia: blades fly
+ゾルジア：炎;Zoldia : flammes;Zoldia: flames
+ゾルジア：岩落ちる;Zoldia : rochers tombent;Zoldia: rocks fall
+ゾルジア：岩落ちた;Zoldia : rochers tombés;Zoldia: rocks fell
+ゾルジア：手が光る;Zoldia : main qui brille;Zoldia: hand shines
+ゾルジア：光る;Zoldia : brille;Zoldia: shines
+ゾルジア：魔法陣;Zoldia : cercle magique;Zoldia: magic circle
+;;
+ゾルジア：ダメージ;Zoldia : subit des dégâts;Zoldia: takes damage
+アビス：ミニ竜巻？;Abyss : mini-tornade;Abyss: mini-tornado
+アビス：渦巻;Abyss : tourbillon;Abyss: whirlpool
+アビス：出現;Abyss : apparition;Abyss: appears
+ウィルダ：ダメージ;Wilda : subit des dégâts;Wilda: takes damage
+ウィルダ：火の弾を吐く;Wilda : crache des boules de feu;Wilda: spits fireballs
+ウィルダ：炎を吐く;Wilda : crache des flammes;Wilda: breathes flames
+ウィルダ：首が壊れる;Wilda : cou se brise;Wilda: neck breaks
+ウィルダ：燃える;Wilda : brûle;Wilda: burns
+ウィルダ：崩れる;Wilda : s’effondre;Wilda: collapses
+ウィルダ：消滅;Wilda : disparaît;Wilda: disappears
+００：噴水;00 : fontaine;00: fountain
+００：岩が崩れる;00 : rochers s’effondrent;00: rocks collapse
+００：犬;00 : chien;00: dog
+００：風車;00 : moulin à vent;00: windmill
+００：本を開く;00 : ouvrir le livre;00: open book
+町：ムルータの声;Village : voix de Muruta;Village: Muruta's voice
+町：ムルータキングが胸を叩く;Village : le roi Muruta se frappe la poitrine;Village: King Muruta pounds his chest
+００：スライミージェル出現;00 : slime gélatineux apparaît;00: slime gel appears
+００：岩亀、岩顔出現;00 : tortue de roche et visage de roche apparaissent;00: rock turtle and rock face appear
+００：火を吹く;00 : souffle de feu;00: fire breath
+００：岩亀吠える;00 : tortue de roche rugit;00: rock turtle roars
+００：ビーンノイド出現;00 : Beannoid apparaît;00: Beannoid appears
+００：岩顔転がる;00 : visage de roche roule;00: rock face rolls
+００：岩顔吠える;00 : visage de roche rugit;00: rock face roars
+００：トレジャーイーター出現;00 : Treasure Eater apparaît;00: Treasure Eater appears
+２１５　;215;215
+００：滝;00 : cascade;00: waterfall
+０２：扉が閉まる;02 : porte se ferme;02: door closes
+０２：スイッチ;02 : interrupteur;02: switch
+０２：メルザス出現;02 : apparition de Melzas;02: Melzas appears
+０２：メルザス消滅;02 : disparition de Melzas;02: Melzas disappears
+０２：橋　出現;02 : pont apparaît;02: bridge appears
+０２：仕掛け扉が開く;02 : porte mécanique s’ouvre;02: mechanical door opens
+０２：蓋があがる;02 : couvercle se lève;02: lid rises
+０２：鉄格子開く;02 : grille en fer s’ouvre;02: iron gate opens
+０２：鉄球落ちる;02 : boule de fer tombe;02: iron ball falls
+炭１：エンジン起動;Mine 1 : moteur en marche;Mine 1: engine running
+炭２：エレベーター;Mine 2 : ascenseur;Mine 2: elevator
+炭２：エンジン踏む;Mine 2 : moteur actionné;Mine 2: engine activated
+炭２：トロッコ走行;Mine 2 : chariot en marche;Mine 2: cart running
+炭２：岩が落ちる;Mine 2 : rochers tombent;Mine 2: rocks fall
+１３：ムルータキング吠る;13 : roi Muruta hurle;13: King Muruta howls
+１３：オオカミ吠る;13 : loup hurle;13: wolf howls
+００：川;00 : rivière;00: river
+００：地響;00 : grondement de la terre;00: rumbling earth
+０８：ゾンビ吠える;08 : zombie rugit;08: zombie roars
+０８：ミイラ吠える;08 : momie rugit;08: mummy roars
+０９：錆びたＳＷ;09 : interrupteur rouillé;09: rusty switch
+０９：不幸の壁紙;09 : tapisserie du malheur;09: wallpaper of misfortune
+０９：ワープゲート出現;09 : portail de warp apparaît;09: warp gate appears
+０９：賢者出現;09 : sage apparaît;09: sage appears
+０９：賢者消滅;09 : sage disparaît;09: sage disappears
+０８：ガーゴイルの像を斬る;08 : frapper la statue de gargouille;08: hit gargoyle statue
+０８：サーティ登場;08 : Sarty apparaît;08: Sarty appears
+０８：サーティ消滅;08 : Sarty disparaît;08: Sarty disappears
+０８：ブロック出現;08 : bloc apparaît;08: block appears
+１２：ケーブクリケット跳ぶ;12 : criquet des cavernes saute;12: cave cricket jumps
+１２：ワーム砂に潜る;12 : ver plonge dans le sable;12: worm dives into sand
+１２：ワーム砂から出る;12 : ver sort du sable;12: worm emerges from sand
+１２：ユニオンセル出現;12 : Union Cell apparaît;12: Union Cell appears
+１２：玉座が開く;12 : trône s’ouvre;12: throne opens
+１２：取り巻き念仏唱る;12 : sbires récitent un mantra;12: minions chant a mantra
+１２：取り巻き変身;12 : sbires se transforment;12: minions transform
+１２：女神出現;12 : déesse apparaît;12: goddess appears
+１２：図形をプレートに乗せる;12 : poser la forme sur la plaque;12: put the shape on the plate
+１２：大鉄球伸び縮み;12 : grosse boule de fer se dilate;12: huge iron ball expands and contracts
+２５６;256;256
+２５７;257;257
+２５８;258;258
+２５９;259;259
+ドラゴン：消滅;Dragon : disparaît;Dragon: disappears
+ジル：着地;Jill : atterrit;Jill: lands
+ジル：ダメージ;Jill : subit des dégâts;Jill: takes damage
+ジル：吠える;Jill : rugit;Jill: roars
+ムカデ：ダメージ;Mille-pattes : subit des dégâts;Centipede: takes damage
+ムカデ：甲羅を叩く;Mille-pattes : carapace frappée;Centipede: shell is hit
+ムカデ：尾を振る;Mille-pattes : remue la queue;Centipede: wags tail
+ムカデ：節々が壊れる;Mille-pattes : segments se brisent;Centipede: segments break
+ムカデ：卵をうむ;Mille-pattes : pond des œufs;Centipede: lays eggs
+ムカデ：卵壊れる;Mille-pattes : œufs détruits;Centipede: eggs destroyed
+ムカデ：甲羅復活;Mille-pattes : carapace se régénère;Centipede: shell regenerates
+ロエイン：ガードボール出現;Roein : sphères de garde apparaissent;Roein: guard spheres appear
+ロエイン：吠える;Roein : rugit;Roein: roars
+ロエイン：ダメージ;Roein : subit des dégâts;Roein: takes damage
+ロエイン：変身;Roein : se transforme;Roein: transforms
+ロエイン：弾が落ちる;Roein : les projectiles tombent;Roein: projectiles fall
+ロエイン：背中レーザー;Roein : laser dorsal;Roein: back laser
+ロエイン：腕レーザー;Roein : laser du bras;Roein: arm laser
+ロエイン：消滅;Roein : disparaît;Roein: disappears
+２７９;279;279
+ザザン：ダメージ;Zazan : subit des dégâts;Zazan: takes damage
+ザザン：着地;Zazan : atterrit;Zazan: lands
+ザザン：崩れる;Zazan : s’effondre;Zazan: collapses
+ザザン：回転;Zazan : tourne;Zazan: spins
+ザザン：消滅;Zazan : disparaît;Zazan: disappears
+サーティ：変身;Sarty : se transforme;Sarty: transforms
+サーティ：ダメージ;Sarty : subit des dégâts;Sarty: takes damage
+サーティ：移動;Sarty : se déplace;Sarty: moves
+サーティ：ワープ;Sarty : se téléporte;Sarty: warps
+サーティ：弾;Sarty : projectile;Sarty: projectile
+サーティ：跳ぶ;Sarty : saute;Sarty: jumps
+サーティ：消滅;Sarty : disparaît;Sarty: disappears
+２９２;292;292
+２９３;293;293
+２９４;294;294
+２９５;295;295
+２９６;296;296
+２９７;297;297
+２９８;298;298
+２９９;299;299
+５６：鳥;56 : oiseau;56: bird
+５６：鳥の羽音;56 : battement d’ailes;56: flapping wings
+５６：波;56 : vagues;56: waves
+５６：雷;56 : tonnerre;56: thunder
+４９：家がつぶれる;49 : maison s’écroule;49: house collapses
+４９：家がきしむ２;49 : maison craque 2;49: house creaks 2
+５６：嵐;56 : tempête;56: storm
+５７：爆破;57 : explosion;57: explosion
+５７：扉を叩く;57 : frapper la porte;57: knock on door
+５２：柱を押す;52 : pousser la colonne;52: push pillar
+５７：鉄球壊れる;57 : boule de fer se brise;57: iron ball breaks
+５７：椅子を動かす;57 : déplacer la chaise;57: move chair
+５７：本がワープ;57 : livre se téléporte;57: book warps
+５７：本棚に入れる;57 : placer le livre dans l’étagère;57: put book in bookshelf
+５７：本棚動く;57 : étagère bouge;57: bookshelf moves
+５７：本落ちる;57 : livre tombe;57: book falls
+５２：スライド式扉開く;52 : porte coulissante s’ouvre;52: sliding door opens
+５６：;56 :;56:
+５６：;56 :;56:
+５８：メディアム消える;58 : médium disparaît;58: Medium disappears
+５８：メディアム出現;58 : médium apparaît;58: Medium appears
+５８：メディアム笑う;58 : médium rit;58: Medium laughs
+４９：炎;49 : flammes;49: flames
+５８：群集;58 : foule;58: crowd
+５８：メディアム泣く;58 : médium pleure;58: Medium cries
+５８：岩扉崩壊;58 : porte de pierre s’effondre;58: stone door collapses
+５８：岩メディアム殴る;58 : frapper le rocher du médium;58: hit Medium's rock
+５９：渦に巻き込まれる;59 : aspiré dans un tourbillon;59: sucked into whirlpool
+５９：流木落ちる;59 : bois flotté tombe;59: driftwood falls
+５９：水が引く;59 : l’eau se retire;59: water recedes
+５９：流木砕ける;59 : bois flotté se brise;59: driftwood breaks
+４１：大扉開く;41 : grande porte s’ouvre;41: great door opens
+５９：エンジン崩壊;59 : moteur s’effondre;59: engine collapses
+５２：錆びた鎖を叩く;52 : frapper la chaîne rouillée;52: hit rusty chain
+４０：モアイ火を吐く;40 : moai crachent du feu;40: moai spit fire
+４０：モアイ叩く;40 : frapper les moai;40: hit moai
+４０：モアイ破壊;40 : moai détruits;40: moai destroyed
+４０：石像を押す;40 : pousser la statue;40: push statue
+４０：針天井落下;40 : plafond à pointes tombe;40: spiked ceiling falls
+３３９;339;339
+５２：歯車回る;52 : engrenages tournent;52: gears turn
+４０：モアイの火が漂う;40 : feu des moai flotte;40: moai fire drifts
+４０：モアイレーザー;40 : laser des moai;40: moai laser
+４０：ゾルジア攻撃（不可;40 : attaque de Zoldia (inutilisable);40: Zoldia attack (unused)
+４０：ニルード出現;40 : Nilude apparaît;40: Nilude appears
+３４５;345;345
+３４６;346;346
+４１：エリーンの笑い;41 : rire d’Elin;41: Elin's laughter
+３４８;348;348
+４１：クリスタル光る;41 : cristal brille;41: crystal shines
+４１：クリスタル割れる（不可;41 : cristal se brise (inutilisé);41: crystal shatters (unused)
+４１：ローパー;41 : Roper;41: Roper
+４２：溶岩;42 : lave;42: lava
+４２：炎;42 : flammes;42: flames
+４２：火山弾;42 : bombes volcaniques;42: volcanic bombs
+３５５;355;355
+３５６;356;356
+３５７;357;357
+４６：木扉;46 : porte en bois;46: wooden door
+３５９;359;359
+４６：エレベータ始動;46 : ascenseur démarre;46: elevator starts
+４６：エレベータ停止;46 : ascenseur arrêté;46: elevator stops
+４６：柵の罠;46 : piège de barrière;46: fence trap
+４６：ムルータ喜ぶ;46 : Muruta se réjouit;46: Muruta rejoices
+４７：溶岩;47 : lave;47: lava
+４７：炎が凍る;47 : flammes gèlent;47: flames freeze
+４７：氷が溶ける;47 : glace fond;47: ice melts
+４７：火柱;47 : colonnes de feu;47: pillars of fire
+５５：アランドラ吹き飛ぶ;55 : Alundra est projeté;55: Alundra is blown away
+４７：ウイングバード;47 : Winged Bird;47: Winged Bird
+４８：女神消滅;48 : déesse disparaît;48: goddess disappears
+４８：鏡割れる;48 : miroir se brise;48: mirror shatters
+３７２;372;372
+４８：女神合成;48 : déesse fusionne;48: goddess fuses
+４８：像壊れる;48 : statue se brise;48: statue shatters
+４８：女神合成まえ;48 : avant fusion de la déesse;48: before goddess fusion
+４９：熱風;49 : vent brûlant;49: hot wind
+４９：家がきしむ１;49 : maison craque 1;49: house creaks 1
+３７８;378;378
+３７９;379;379
+３８０;380;380
+３８１;381;381
+５１：意識の集合体１;51 : agrégat de conscience 1;51: aggregate of consciousness 1
+５１：意識の集合体２;51 : agrégat de conscience 2;51: aggregate of consciousness 2
+５１：エルナート誕生;51 : naissance d’Elnard;51: birth of Elnard
+５２：鉄格子開く;52 : grille de fer s’ouvre;52: iron gate opens
+５２：結界解除;52 : barrière levée;52: barrier lifted
+３８７;387;387
+５２：城門開ききった;52 : porte du château totalement ouverte;52: castle gate fully open
+５２：鎖停止;52 : chaîne arrêtée;52: chain stopped
+５２：鉄扉開く;52 : porte de fer s’ouvre;52: iron door opens
+５２：結界;52 : barrière magique;52: magic barrier
+３９２;392;392
+５５：鉄扉上がる;55 : porte de fer se lève;55: iron door rises
+３９４;394;394
+５５：鎧殴る;55 : frapper l’armure;55: hit armor
+５６：回転扉;56 : porte tournante;56: revolving door
+５４：岩転がす;54 : faire rouler le rocher;54: roll rock
+３９８;398;398
+５４：渦に巻き込まれる;54 : aspiré dans un tourbillon;54: sucked into whirlpool
+アラーム;Alarme;Alarm
+紋章を置く;Poser un emblème;Place an emblem
+００：鳥;00 : oiseau;00: bird
+４０３;403;403
+４０４;404;404
+３６：水晶出現＆消滅;36 : cristal apparaît / disparaît;36: crystal appears / disappears
+３６：石版光る;36 : stèle brille;36: tablet shines
+３６：石版出現;36 : stèle apparaît;36: tablet appears
+３６：石版に乗った;36 : monté sur la stèle;36: stood on the tablet
+メルザス：ダメージ;Melzas : subit des dégâts;Melzas: takes damage
+メルザス：消滅;Melzas : disparaît;Melzas: disappears
+メルザス：握り;Melzas : écrasement;Melzas: crush
+メルザス：鼓動;Melzas : battement de cœur;Melzas: heartbeat
+メルザス：レーザー落ちた;Melzas : le laser s’abat;Melzas: laser comes down
+メルザス：目玉アタック;Melzas : attaque de l’œil;Melzas: eye attack
+メルザス：レーザー発射;Melzas : tire le laser;Melzas: fires laser
+５４：岩同士ぶつかる;54 : rochers se percutent;54: rocks collide
+５４：岩水底につく;54 : rocher touche le fond;54: rock reaches bottom
+５４：岩水に落ちる;54 : rocher tombe dans l’eau;54: rock falls into water
+５４：岩陸に落ちる;54 : rocher tombe sur la terre;54: rock falls on ground
+５４：機雷爆発;54 : mine explose;54: mine explodes
+５４：泡;54 : bulles;54: bubbles
+５４：泡壊れる;54 : bulles éclatent;54: bubbles burst
+６０：入り口閉まる;60 : entrée se ferme;60: entrance closes
+６０：宝うめる;60 : trésor enfoui;60: buried treasure
+６０：ランプ付く;60 : lampe s’allume;60: lamp lights up
+６０：ランプ台落ちる;60 : support de lampe tombe;60: lamp stand falls
+６０：床がせりあがる;60 : sol se soulève;60: floor rises
+４２８;428;428
+４２９;429;429
+４３０;430;430
+４３１;431;431
+４３２;432;432
+４３３;433;433
+４３４;434;434
+４３５;435;435
+４３６;436;436
+４３７;437;437
+４３８;438;438
+４３９;439;439
+４４０;440;440
+４４１;441;441
+４４２;442;442
+４４３;443;443
+４４４;444;444
+４４５;445;445
+４４６;446;446
+４４７;447;447
+４４８;448;448
+４４９;449;449
+４５０;450;450
+４５１;451;451
+４５２;452;452
+４５３;453;453
+４５４;454;454
+４５５;455;455
+４５６;456;456
+４５７;457;457
+４５８;458;458
+４５９;459;459
+４６０;460;460
+４６１;461;461
+４６２;462;462
+４６３;463;463
+４６４;464;464
+４６５;465;465
+４６６;466;466
+４６７;467;467
+４６８;468;468
+４６９;469;469
+４７０;470;470
+４７１;471;471
+４７２;472;472
+４７３;473;473
+４７４;474;474
+４７５;475;475
+４７６;476;476
+４７７;477;477
+４７８;478;478
+４７９;479;479
+４８０;480;480
+４８１;481;481
+４８２;482;482
+４８３;483;483
+４８４;484;484
+４８５;485;485
+４８６;486;486
+４８７;487;487
+４８８;488;488
+４８９;489;489
+４９０;490;490
+４９１;491;491
+４９２;492;492
+４９３;493;493
+４９４;494;494
+４９５;495;495
+４９６;496;496
+４９７;497;497
+４９８;498;498
+４９９;499;499

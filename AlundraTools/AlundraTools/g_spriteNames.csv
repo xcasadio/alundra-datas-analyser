@@ -1,513 +1,513 @@
-﻿text_jp;text_fr
-アランドラ;Alundra
-ジャックの豆;Haricots de Jack
-爆弾;Bombe
-矢Ｌｖ１;Flèches Niv.1
-矢Ｌｖ２;Flèches Niv.2
-(空き);(vide)
-(空き);(vide)
-ため矢;Flèches chargées
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-火炎弾;Boule de feu
-ため火炎弾;Boule de feu chargée
-(空き);(vide)
-氷弾;Boule de glace
-ため氷弾;Boule de glace chargée
-地系魔法Ｌｖ１;Magie de terre Niv.1
-地系魔法Ｌｖ２;Magie de terre Niv.2
-(空き);(vide)
-水系魔法Ｌｖ２;Magie d’eau Niv.2
-火系魔法Ｌｖ１;Magie de feu Niv.1
-火系魔法Ｌｖ２;Magie de feu Niv.2
-風系魔法Ｌｖ１;Magie de vent Niv.1
-火系魔法Ｌｖ１の弾;Projectile de magie de feu Niv.1
-風系魔法Ｌｖ２（下）;Magie de vent Niv.2 (bas)
-透明君（１×１×２）;Bloc transparent (1×1×2)
-トロッコ;Chariot de mine
-波動剣Ｌｖ１;Épée d’onde Niv.1
-波動剣Ｌｖ２;Épée d’onde Niv.2
-波動剣Ｌｖ３;Épée d’onde Niv.3
-宝箱;Coffre au trésor
-I01_ハンディソード;I01_Épée de base
-I02_スチルエッジ;I02_Lame d’acier
-I03_ディモンバスタ;I03_Destructeur de démons
-I04_聖剣エルナート;I04_Épée sacrée Elnard
-I05_ハンターボウ;I05_Arc du chasseur
-I06_ウィリアムボウ;I06_Arc de William
-I07_魔導の杖;I07_Bâton magique
-I08_アイテム００８;I08_Objet 008
-I09_チェインスロー;I09_Lancer de chaîne
-I10_クラッシャー;I10_Le Broyeur
-I11_アイテム０１１;I11_Objet 011
-I12_アイテム０１２;I12_Objet 012
-I13_アイテム０１３;I13_Objet 013
-I14_流氷の杖;I14_Bâton des glaces flottantes
-I15_アイテム０１５;I15_Objet 015
-I16_火球の杖;I16_Bâton de feu
-I17_布のジャケット;I17_Veste en tissu
-I18_皮のジャケット;I18_Veste en cuir
-I19_鋼のジャケット;I19_Veste en acier
-I20_銀のジャケット;I20_Veste en argent
-I21_アイテム０２１;I21_Objet 021
-I22_アイテム０２２;I22_Objet 022
-I23_アイテム０２３;I23_Objet 023
-I24_アイテム０２４;I24_Objet 024
-I25_ノーマルブーツ;I25_Bottes normales
-I26_ロングブーツ;I26_Bottes longues
-I27_マーマンブーツ;I27_Bottes de triton
-I28_マジックブーツ;I28_Bottes magiques
-I29_アイテム０２９;I29_Objet 029
-I30_アイテム０３０;I30_Objet 030
-I31_ジャックの豆;I31_Haricots de Jack
-I32_サンドケープ;I32_Cape de sable
-I33_壊れた鎧;I33_Armure brisée
-I34_アイテム０３４;I34_Objet 034
-I35_さく裂弾;I35_Bombe explosive
-I36_薬草;I36_Herbe médicinale
-I37_Ｌ・ポーション;I37_Potion L
-I38_マジカルエキス;I38_Extrait magique
-I39_キュアエール;I39_Breuvage de soin
-I40_アクアケープ;I40_Cape aquatique
-I41_Ｓ・ポーション;I41_Potion S
-I42_アイテム０４２;I42_Objet 042
-I43_大地の章（上）;I43_Tome de la Terre (haut)
-I44_大地の章（下）;I44_Tome de la Terre (bas)
-I45_水魔の章（上）;I45_Tome du démon d’eau (haut)
-I46_水魔の章（下）;I46_Tome du démon d’eau (bas)
-I47_火竜の章（上）;I47_Tome du dragon de feu (haut)
-I48_火竜の章（下）;I48_Tome du dragon de feu (bas)
-I49_風神の章（上）;I49_Tome du dieu du vent (haut)
-I50_風神の章（下）;I50_Tome du dieu du vent (bas)
-I51_オークの指輪;I51_Anneau d’orc
-I52_オーガの指輪;I52_Anneau d’ogre
-I53_鋼鎧の腕輪;I53_Bracelet d’armure d’acier
-I54_銀鎧の腕輪;I54_Bracelet d’armure d’argent
-I55_回復の輪;I55_Anneau de régénération
-I56_治癒の輪;I56_Anneau de guérison
-I57_入場券;I57_Billet d’entrée
-I58_アイテム０５８;I58_Objet 058
-I59_パワーグローブ;I59_Gant de puissance
-I60_エレベーターの鍵;I60_Clé de l’ascenseur
-I61_鍵;I61_Clé
-I62_鳩血の紋章;I62_Emblème du sang de pigeon
-I63_青碧の紋章;I63_Emblème azur
-I64_黄玉の紋章;I64_Emblème de topaze
-I65_褐色の紋章;I65_Emblème brun
-I66_真紅の紋章;I66_Emblème écarlate
-I67_深緑の紋章;I67_Emblème vert sombre
-I68_白銀の紋章;I68_Emblème d’argent
-I69_１ギルダ;I69_1 Gilda
-I70_５ギルダ;I70_5 Gildas
-I71_１０ギルダ;I71_10 Gildas
-I72_３０ギルダ;I72_30 Gildas
-I73_？古びた鍵;I73_? Vieille clé
-I74_花束;I74_Bouquet de fleurs
-I75_アンゼスの鍵;I75_Clé d’Anzes
-I76_アンゼスの遺書;I76_Testament d’Anzes
-I77_大樹の珠;I77_Orbe du grand arbre
-I78_ゾリストの石;I78_Pierre de Zolist
-I79_金のくちばし;I79_Bec en or
-I80_マジックシード;I80_Graine magique
-I81_小水晶;I81_Petit cristal
-I82_大水晶;I82_Grand cristal
-I83_命の器;I83_Récipient de vie
-I84_小ハート;I84_Petit cœur
-I85_中ハート;I85_Cœur moyen
-I86_大ハート;I86_Grand cœur
-I87_？お礼の品;I87_? Cadeau de remerciement
-I88_エルナの本;I88_Livre d’Elna
-I89_アイテム０８９;I89_Objet 089
-I90_アイテム０９０;I90_Objet 090
-I91_アイテム０９１;I91_Objet 091
-I92_アイテム０９２;I92_Objet 092
-I93_アイテム０９３;I93_Objet 093
-I94_アイテム０９４;I94_Objet 094
-I95_アイテム０９５;I95_Objet 095
-I96_アイテム０９６;I96_Objet 096
-I97_アイテム０９７;I97_Objet 097
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-弾（直線）;Projectile (ligne droite)
-弾（落下）;Projectile (chute)
-弾（放物線）;Projectile (parabolique)
-弾（ブーメラン）;Projectile (boomerang)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-(空き);(vide)
-アンゼスの箱;Coffre d’Anzes
-透明（弓用）;Bloc transparent (pour arc)
-押す、攻撃ブロック;Bloc à pousser/attaquer
-鉄球壁（2x2x1）常駐;Mur à boule de fer (2×2×1) permanent
-透明君（8x2x1）;Bloc transparent (8×2×1)
-鉄球壁（2x2x2）常駐;Mur à boule de fer (2×2×2) permanent
-透明君（3x3x3);Bloc transparent (3×3×3)
-とても重い石;Pierre très lourde
-でっかい透明君(6x10);Gros bloc transparent (6×10)
-砂煙;Nuage de sable
-SaveBook(Don'tTouch!);SaveBook (Ne pas toucher !)
-燃えるイバラ２２２;Ronces enflammées 222
-燃えるイバラ１１２;Ronces enflammées 112
-任意方向移動プレート;Plateforme mobile toutes directions
-爆弾ロッド用蓋（横）;Couvercle de tige-bombe (horizontal)
-爆弾ロッド用蓋（上）;Couvercle de tige-bombe (dessus)
-爆弾ロッド用蓋（縦）;Couvercle de tige-bombe (vertical)
-透明キー接触（極小）;Déclencheur clé invisible (très petit)
-荷積みトロッコ;Chariot de chargement
-透明キー接触（標準）;Déclencheur clé invisible (standard)
-墓;Tombe
-透明君（巨大）;Bloc transparent (gigantesque)
-透明君（極小）;Bloc transparent (minuscule)
-(空き);(vide)
-レーザー（？）;Laser (?)
-落石;Rocher tombant
-爆弾で壊れる根;Racine destructible à la bombe
-汎用看板;Panneau générique
-END;FIN
-ビイゼン（村長）;Beizen (chef du village)
-トステア（妻）;Tostea (épouse)
-ツーラス（息子）;Turas (fils)
-ユステル（占い婆）;Yustel (vieille voyante)
-アンゼス（武器屋）;Anzes (armurier)
-ロエイン（神父）;Roein (prêtre)
-シヴィル（赤目）;Shivil (aux yeux rouges)
-シーラ（母親）;Sheela (mère)
-オーレン（抗夫）;Oren (mineur)
-ルィック（抗夫）;Luik (mineur)
-ヌィンダ（抗夫）;Nuinda (mineur)
-ズーリム（抗夫）;Zulim (mineur)
-セクタス（研究家）;Sectus (chercheur)
-ナーシア（不眠女）;Narsia (femme insomniaque)
-モラアス（老婆）;Moraas (vieille femme)
-ボージス（永眠男）;Bojis (homme endormi à jamais)
-メイザン（父親）;Meizan (père)
-クライン（夢遊病）;Klein (somnambule)
-ゴウセル（宗教男）;Gouser (homme religieux)
-キーシャ（妹）;Kisha (petite sœur)
-エリーン（多重女）;Elin (femme à personnalités multiples)
-ウストウ（酔どれ）;Ustow (ivrogne)
-ベグラス（兄）;Beglas (frère aîné)
-ネクタス（弟）;Nectas (frère cadet)
-マーチス（双子父）;Martis (père des jumeaux)
-イルニィ（双子母）;Ilni (mère des jumeaux)
-ワインズ（祖父）;Wines (grand-père)
-ヤァード（道具屋）;Yaard (marchand d’objets)
-ノウラン（肝玉妻）;Nauran (épouse courageuse)
-ハヴァン（岬老人）;Havan (vieil homme du cap)
-ケイトス（墓守）;Keitos (gardien de cimetière)
-ルータス（デブ）;Lutas (gros bonhomme)
-フェイン（デブ妻）;Fein (femme du gros)
-ワンちゃん（犬）;Toutou (chien)
-汎用タル;Tonneau générique
-汎用壺;Cruche générique
-汎用木箱;Caisse en bois générique
-汎用石;Pierre générique
-壺その２;Cruche n°2
-石（鉄球で破壊可）１;Pierre (destructible à la boule de fer) 1
-石（鉄球で破壊可）２;Pierre (destructible à la boule de fer) 2
-持てる草;Herbe transportable
-押せる石像(イベント);Statue poussable (événement)
-石像;Statue de pierre
-ＳＷ（乗る）使用不可;Interrupteur (monter) inutilisable
-ＳＷ（踏む）←使う！;Interrupteur (piétiner) ← à utiliser !
-メディアム;Médium
-本;Livre
-持てる氷;Bloc de glace transportable
-ＳＷ（レバー）;Interrupteur (levier)
-ＳＷ（壁）;Interrupteur (mur)
-ＳＷ（点火）;Interrupteur (allumage)
-ＳＷ（切り替え）;Interrupteur (bascule)
-火炎放射台;Plateforme lance-flammes
-鉄球（小）;Boule de fer (petite)
-鉄球（大）;Boule de fer (grande)
-浮遊床（小）;Plateforme flottante (petite)
-浮遊床（大）;Plateforme flottante (grande)
-転石（小）;Rocher roulant (petit)
-転石（大）;Rocher roulant (grand)
-火柱（アイスロッド）;Pilier de feu (Ice Rod)
-発射台;Rampe de lancement
-ちくちく床;Sol piquant
-炎;Flamme
-いばら（火ロッド用）;Ronces (bâton de feu)
-壊れる浮遊床（小）;Plateforme flottante fragile (petite)
-壊れる浮遊床（大）;Plateforme flottante fragile (grande)
-ドア（小）;Porte (petite)
-ドア（大）;Porte (grande)
-鉄格子（小）;Grille de fer (petite)
-鉄格子（大）;Grille de fer (grande)
-階段用フタ（小）;Trappe d’escalier (petite)
-階段用フタ（大）;Trappe d’escalier (grande)
-◆スライミージェル;◆Slime gélatineux
-◆−弾;◆Projectile
-死にエリーン;Élin morte
-死にボージス;Bojis mort
-死にモラアス;Moraas morte
-死にナーシア;Narsia morte
-◆ビーンノイド;◆Beannoïde
-波動エンジン;Moteur à ondes
-炎（アイスロッド用）;Flammes (pour Ice Rod)
-◆オーク(斧)Lv１;◆Orc (hache) Niv.1
-サーティ（夢の女）;Sarty (femme du rêve)
-ジャンプ台;Rampe de saut
-◆オーク(メイス)Ｌｖ１;◆Orc (masse) Niv.1
-４方向砲台;Tourelle à 4 directions
-水平方向炎;Flammes horizontales
-◆オーク(鉄)Ｌｖ１;◆Orc (armure de fer) Niv.1
-押すスイッチ;Interrupteur poussoir
-大顔面（俺アイダ）;Grand visage (Aida)
-◆ムルータ(爪)Ｌｖ１;◆Muruta (griffes) Niv.1
-吊り天井;Plafond suspendu
-少女メディアム;Jeune médium
-◆ムルータ(弓)Ｌｖ１;◆Muruta (arc) Niv.1
-◆−弓Ｌｖ１;◆Flèche Niv.1
-チェイン;Chaîne
-アリシア;Alicia
-リィジオ;Rijio
-メディアムの母;Mère du médium
-◆ムルータ(ブ)Ｌｖ１;◆Muruta (boomerang) Niv.1
-◆−ブーメランＬｖ１;◆Boomerang Niv.1
-ザ・ローブマン;L’Homme en robe
-バタンＱ男;Homme effondré
-緊縛メディアム;Médium ligoté
-赤青２色ボックス;Boîte bicolore rouge/bleu
-◆リザード(剣)Ｌｖ１;◆Homme-lézard (épée) Niv.1
-星オブジェ（持）;Objet étoile (transportable)
-絵柄プレート;Plaque à motif
-◆リザード(槍)Ｌｖ１;◆Homme-lézard (lance) Niv.1
-◆−槍Ｌｖ１;◆Lance Niv.1
-月オブジェ（持）;Objet lune (transportable)
-水オブジェ（持）;Objet eau (transportable)
-太陽オブジェ（持）;Objet soleil (transportable)
-王、従者、女神像;Statue de roi, serviteur et déesse
-◆リザード(弾)Ｌｖ１;◆Homme-lézard (projectiles) Niv.1
-◆−弾Ｌｖ１;◆Projectile Niv.1
-丸太（持）、小鉄球;Tronc (transportable), petite boule de fer
-鉄球壁（２２２）鉄球;Mur à boule de fer (222) – boule de fer
-鉄球壁（２２１）;Mur à boule de fer (221)
-鉄球壁（１１２）軸;Mur à boule de fer (112) – axe
-◆ミミング(鎌)Ｌｖ１;◆Mimming (faux) Niv.1
-ミミング王;Roi Mimming
-ボージス＆石（YM03）;Bojis & pierre (YM03)
-にわとり;Poulet
-からす;Corbeau
-鉄球壁（１１１）;Mur à boule de fer (111)
-三色スイッチ;Interrupteur tricolore
-変身リザードマン像;Statue d’homme-lézard transformé
-水浮き・鉄球（大）;Flotteur d’eau / grande boule de fer
-◆ミミング(回)Ｌｖ１;◆Mimming (rotation) Niv.1
-壊せる柱(UD■/LR●);Pilier détruisible (UD■/LR●)
-棺;Cercueil
-◆ローパーＬｖ１;◆Roper Niv.1
-氷柱;Colonne de glace
-水しずく;Goutte d’eau
-◆魚Ｌｖ１;◆Poisson Niv.1
-たいまつ;Torche
-ジェネレータ;Générateur
-◆岩顔Ｌｖ１;◆Tête de roche Niv.1
-流木.01水上/23空中;Bois flottant .01 sur l’eau / .23 en l’air
-泡.012乗/34否乗;Bulle .0-1-2 support /3-4 non support
-ランプスイッチ;Interrupteur de lampe
-鍵師;Maître des clés
-メディアム　(YM08用);Médium (pour YM08)
-◆虫男Ｌｖ１;◆Homme-insecte Niv.1
-船員/乗客/カモメ;Marin / passager / mouette
-くさり.0通/1滅/2待;Chaîne .0 traversable /1 détruite /2 attente
-◆ミミックＬｖ１;◆Mimique Niv.1
-壊れる鎧;Armure cassable
-４５ｃ回転扉;Porte rotative 45°
-YM08結界u水d炎l砂r氷;YM08 barrière u=eau d=feu l=sable r=glace
-asiba;asiba (plateforme)
-魔法の鉢(びよよん);Pot magique (boïng)
-◆ワームＬｖ１;◆Ver Niv.1
-◆−弾Ｌｖ１;◆Projectile Niv.1
-◆ウィルダ（首）;◆Wilda (tête)
-◆−胴;◆Corps
-◆−ドラゴンブレス;◆Souffle de dragon
-◆−火炎弾;◆Boule de feu
-空;Vide
-空;Vide
-◆メルザス（本体）;◆Melzas (corps principal)
-◆−追尾レーザー;◆Laser à tête chercheuse
-◆−螺旋弾（遅い）;◆Projectiles en spirale (lents)
-空;Vide
-空;Vide
-◆−追尾弾（遅い）;◆Projectiles à tête chercheuse (lents)
-◆−分身メルザス;◆Double de Melzas
-◆ミイラ男Ｌｖ１;◆Homme momie Niv.1
-メルザス怨念;Rancune de Melzas
-メルザス神像;Statue divine de Melzas
-◆ゴーストＬｖ１;◆Fantôme Niv.1
-風船スイッチ;Interrupteur à ballon
-押せる柱(ＰＲＧ);Pilier poussable (PRG)
-◆泥男Ｌｖ１;◆Homme de boue Niv.1
-◆−弾Ｌｖ１;◆Projectile Niv.1
-ミニ・ニルード(D12);Mini-Nilude (D12)
-クライン（夢専用）;Klein (rêve uniquement)
-空・空にしてもOKっす;Vide – OK de laisser vide
-空;Vide
-◆岩ガメＬｖ１;◆Tortue de roche Niv.1
-敵じゃないカメ岩;Rocher tortue non ennemi
-空;Vide
-◆カゲマンＬｖ１;◆Homme-ombre Niv.1
-◆岩ガメＬｖ２;◆Tortue de roche Niv.2
-空;Vide
-◆キノコＬｖ１;◆Champignon Niv.1
-◆−胞子Ｌｖ１;◆Spores Niv.1
-敵じゃないキノコ;Champignon non ennemi
-◆邪神化ロエイン;◆Roein divin corrompu
-◆−ロエインコレダー;◆Collider de Roein
-◆−ロエインボンバー;◆Bombardement de Roein
-◆ゾンビＬｖ１;◆Zombie Niv.1
-◆−ロエインシールド;◆Bouclier de Roein
-空;Vide
-◆ＰゾルジアＬｖ１;◆P-Zoldia Niv.1
-◆ＰゾルジアＬｖ２;◆P-Zoldia Niv.2
-◆ミイラ男Ｌｖ２;◆Homme momie Niv.2
-◆はちＬｖ１;◆Guêpe Niv.1
-◆ローパーＬｖ２;◆Roper Niv.2
-空;Vide
-◆はえＬｖ１;◆Mouche Niv.1
-◆巨大スライム（大）;◆Slime géant (grand)
-◆巨大スライム（小）;◆Slime géant (petit)
-◆木人Ｌｖ１;◆Homme de bois Niv.1
-◆−弾Ｌｖ１;◆Projectile Niv.1
-◆メルザス後;◆Après Melzas
-◆−腕、弾;◆Bras, projectiles
-◆−触手;◆Tentacule
-空;Vide
-◆カマドＬｖ１;◆Fourneau Niv.1
-◆−弾Ｌｖ１;◆Projectile Niv.1
-◆−ゾルジア魔法;◆Magie de Zoldia
-◆−ビーム兄弟（毒ガス）;◆Frères Rayon (gaz toxique)
-◆巨大スライム（目玉）;◆Slime géant (œil)
-◆−巨大スライム（体）;◆Slime géant (corps)
-◆火の鳥Ｌｖ１;◆Oiseau de feu Niv.1
-◆−弾（羽）Ｌｖ１;◆Projectiles (plumes) Niv.1
-◆−弾（火の粉）Ｌｖ１;◆Projectiles (étincelles) Niv.1
-◆吸い込み君;◆Monsieur Aspiration
-◆−吸い込み効果;◆Effet d’aspiration
-◆−子供スライム;◆Petit slime
-◆ドラゴン;◆Dragon
-◆−ドラゴン炎;◆Flammes de dragon
-◆−ドラゴン３弾;◆Triple projectile de dragon
-◆狼男  Ｌｖ１;◆Loup-garou Niv.1
-◆−キング破片;◆Débris du roi
-◆−アビス（泡弾）;◆Abyss (projectiles-bulles)
-◆アビスＬｖ１;◆Abyss Niv.1
-◆−アビス（右）;◆Abyss (droite)
-◆−アビス（左）;◆Abyss (gauche)
-◆ムカデ（親）;◆Mille-pattes (corps principal)
-◆−ムカデ（胴）;◆Mille-pattes (tronc)
-◆−ムカデ（尻尾）;◆Mille-pattes (queue)
-◆−ムカデ（つなぎ）;◆Mille-pattes (joint)
-◆−ムカデ（胴２）;◆Mille-pattes (tronc 2)
-◆ニルード（残留思念）;◆Nilude (pensée résiduelle)
-◆リザードボスＬｖ１;◆Boss lézard Niv.1
-◆ニルード（体つき）;◆Nilude (avec corps)
-◆−ニルード落石(222);◆Chute de rochers de Nilude (222)
-◆エレメントＬｖ１;◆Élément Niv.1
-◆−エレメント岩;◆Roche élémentaire
-◆−エレメント監視;◆Surveillance élémentaire
-◆ビーム兄弟（兄）Ｌ１;◆Frère Rayon (aîné) Niv.1
-◆−ビーム兄弟（弟）;◆Frère Rayon (cadet)
-◆−ニルード落石(112);◆Chute de rochers de Nilude (112)
-◆−ニルード落石(111);◆Chute de rochers de Nilude (111)
-◆−ムカデ（反射弾）;◆Mille-pattes (projectiles réfléchis)
-◆−ムカデ（炸裂卵）;◆Mille-pattes (œufs explosifs)
-◆ムルータキング;◆Roi Muruta
-◆−キング大岩;◆Grand rocher du roi
-◆−キング手下;◆Sbires du roi
-◆ゾルジア;◆Zoldia
-◆−ゾルジア魔法陣;◆Cercle magique de Zoldia
-◆−ゾルジア弾;◆Projectiles de Zoldia
+﻿text_jp;text_fr;text_en
+アランドラ;Alundra;Alundra
+ジャックの豆;Haricots de Jack;Jack's beans
+爆弾;Bombe;Bomb
+矢Ｌｖ１;Flèches Niv.1;Arrows Lv.1
+矢Ｌｖ２;Flèches Niv.2;Arrows Lv.2
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+ため矢;Flèches chargées;Charged arrows
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+火炎弾;Boule de feu;Fireball
+ため火炎弾;Boule de feu chargée;Charged fireball
+(空き);(vide);(empty)
+氷弾;Boule de glace;Ice ball
+ため氷弾;Boule de glace chargée;Charged ice ball
+地系魔法Ｌｖ１;Magie de terre Niv.1;Earth magic Lv.1
+地系魔法Ｌｖ２;Magie de terre Niv.2;Earth magic Lv.2
+(空き);(vide);(empty)
+水系魔法Ｌｖ２;Magie d’eau Niv.2;Water magic Lv.2
+火系魔法Ｌｖ１;Magie de feu Niv.1;Fire magic Lv.1
+火系魔法Ｌｖ２;Magie de feu Niv.2;Fire magic Lv.2
+風系魔法Ｌｖ１;Magie de vent Niv.1;Wind magic Lv.1
+火系魔法Ｌｖ１の弾;Projectile de magie de feu Niv.1;Fire magic Lv.1 projectile
+風系魔法Ｌｖ２（下）;Magie de vent Niv.2 (bas);Wind magic Lv.2 (lower)
+透明君（１×１×２）;Bloc transparent (1×1×2);Transparent block (1×1×2)
+トロッコ;Chariot de mine;Mine cart
+波動剣Ｌｖ１;Épée d’onde Niv.1;Wave sword Lv.1
+波動剣Ｌｖ２;Épée d’onde Niv.2;Wave sword Lv.2
+波動剣Ｌｖ３;Épée d’onde Niv.3;Wave sword Lv.3
+宝箱;Coffre au trésor;Treasure chest
+I01_ハンディソード;I01_Épée de base;I01_Basic sword
+I02_スチルエッジ;I02_Lame d’acier;I02_Steel Edge
+I03_ディモンバスタ;I03_Destructeur de démons;I03_Demon Buster
+I04_聖剣エルナート;I04_Épée sacrée Elnard;I04_Holy Sword Elnard
+I05_ハンターボウ;I05_Arc du chasseur;I05_Hunter's Bow
+I06_ウィリアムボウ;I06_Arc de William;I06_William's Bow
+I07_魔導の杖;I07_Bâton magique;I07_Magic staff
+I08_アイテム００８;I08_Objet 008;I08_Item 008
+I09_チェインスロー;I09_Lancer de chaîne;I09_Chain Throw
+I10_クラッシャー;I10_Le Broyeur;I10_Crusher
+I11_アイテム０１１;I11_Objet 011;I11_Item 011
+I12_アイテム０１２;I12_Objet 012;I12_Item 012
+I13_アイテム０１３;I13_Objet 013;I13_Item 013
+I14_流氷の杖;I14_Bâton des glaces flottantes;I14_Drifting Ice Rod
+I15_アイテム０１５;I15_Objet 015;I15_Item 015
+I16_火球の杖;I16_Bâton de feu;I16_Fireball Rod
+I17_布のジャケット;I17_Veste en tissu;I17_Cloth jacket
+I18_皮のジャケット;I18_Veste en cuir;I18_Leather jacket
+I19_鋼のジャケット;I19_Veste en acier;I19_Steel jacket
+I20_銀のジャケット;I20_Veste en argent;I20_Silver jacket
+I21_アイテム０２１;I21_Objet 021;I21_Item 021
+I22_アイテム０２２;I22_Objet 022;I22_Item 022
+I23_アイテム０２３;I23_Objet 023;I23_Item 023
+I24_アイテム０２４;I24_Objet 024;I24_Item 024
+I25_ノーマルブーツ;I25_Bottes normales;I25_Normal Boots
+I26_ロングブーツ;I26_Bottes longues;I26_Long Boots
+I27_マーマンブーツ;I27_Bottes de triton;I27_Merman Boots
+I28_マジックブーツ;I28_Bottes magiques;I28_Magic Boots
+I29_アイテム０２９;I29_Objet 029;I29_Item 029
+I30_アイテム０３０;I30_Objet 030;I30_Item 030
+I31_ジャックの豆;I31_Haricots de Jack;I31_Jack's beans
+I32_サンドケープ;I32_Cape de sable;I32_Sand Cape
+I33_壊れた鎧;I33_Armure brisée;I33_Broken armor
+I34_アイテム０３４;I34_Objet 034;I34_Item 034
+I35_さく裂弾;I35_Bombe explosive;I35_Explosive bomb
+I36_薬草;I36_Herbe médicinale;I36_Herb
+I37_Ｌ・ポーション;I37_Potion L;I37_L Potion
+I38_マジカルエキス;I38_Extrait magique;I38_Magic Elixir
+I39_キュアエール;I39_Breuvage de soin;I39_Cure Ale
+I40_アクアケープ;I40_Cape aquatique;I40_Aqua Cape
+I41_Ｓ・ポーション;I41_Potion S;I41_S Potion
+I42_アイテム０４２;I42_Objet 042;I42_Item 042
+I43_大地の章（上）;I43_Tome de la Terre (haut);I43_Earth Tome (upper)
+I44_大地の章（下）;I44_Tome de la Terre (bas);I44_Earth Tome (lower)
+I45_水魔の章（上）;I45_Tome du démon d’eau (haut);I45_Water Demon Tome (upper)
+I46_水魔の章（下）;I46_Tome du démon d’eau (bas);I46_Water Demon Tome (lower)
+I47_火竜の章（上）;I47_Tome du dragon de feu (haut);I47_Fire Dragon Tome (upper)
+I48_火竜の章（下）;I48_Tome du dragon de feu (bas);I48_Fire Dragon Tome (lower)
+I49_風神の章（上）;I49_Tome du dieu du vent (haut);I49_Wind God Tome (upper)
+I50_風神の章（下）;I50_Tome du dieu du vent (bas);I50_Wind God Tome (lower)
+I51_オークの指輪;I51_Anneau d’orc;I51_Orc Ring
+I52_オーガの指輪;I52_Anneau d’ogre;I52_Ogre Ring
+I53_鋼鎧の腕輪;I53_Bracelet d’armure d’acier;I53_Steel Armor Bracelet
+I54_銀鎧の腕輪;I54_Bracelet d’armure d’argent;I54_Silver Armor Bracelet
+I55_回復の輪;I55_Anneau de régénération;I55_Regeneration Ring
+I56_治癒の輪;I56_Anneau de guérison;I56_Healing Ring
+I57_入場券;I57_Billet d’entrée;I57_Admission Ticket
+I58_アイテム０５８;I58_Objet 058;I58_Item 058
+I59_パワーグローブ;I59_Gant de puissance;I59_Power Glove
+I60_エレベーターの鍵;I60_Clé de l’ascenseur;I60_Elevator Key
+I61_鍵;I61_Clé;I61_Key
+I62_鳩血の紋章;I62_Emblème du sang de pigeon;I62_Pigeon's Blood Crest
+I63_青碧の紋章;I63_Emblème azur;I63_Azure Crest
+I64_黄玉の紋章;I64_Emblème de topaze;I64_Topaz Crest
+I65_褐色の紋章;I65_Emblème brun;I65_Brown Crest
+I66_真紅の紋章;I66_Emblème écarlate;I66_Scarlet Crest
+I67_深緑の紋章;I67_Emblème vert sombre;I67_Dark Green Crest
+I68_白銀の紋章;I68_Emblème d’argent;I68_Silver Crest
+I69_１ギルダ;I69_1 Gilda;I69_1 Gilda
+I70_５ギルダ;I70_5 Gildas;I70_5 Gilda
+I71_１０ギルダ;I71_10 Gildas;I71_10 Gilda
+I72_３０ギルダ;I72_30 Gildas;I72_30 Gilda
+I73_？古びた鍵;I73_? Vieille clé;I73_? Old key
+I74_花束;I74_Bouquet de fleurs;I74_Bouquet of flowers
+I75_アンゼスの鍵;I75_Clé d’Anzes;I75_Anzes's Key
+I76_アンゼスの遺書;I76_Testament d’Anzes;I76_Anzes's Testament
+I77_大樹の珠;I77_Orbe du grand arbre;I77_Tree Gem
+I78_ゾリストの石;I78_Pierre de Zolist;I78_Zolist's Stone
+I79_金のくちばし;I79_Bec en or;I79_Golden Beak
+I80_マジックシード;I80_Graine magique;I80_Magic Seed
+I81_小水晶;I81_Petit cristal;I81_Small Crystal
+I82_大水晶;I82_Grand cristal;I82_Large Crystal
+I83_命の器;I83_Récipient de vie;I83_Life Vessel
+I84_小ハート;I84_Petit cœur;I84_Small Heart
+I85_中ハート;I85_Cœur moyen;I85_Medium Heart
+I86_大ハート;I86_Grand cœur;I86_Large Heart
+I87_？お礼の品;I87_? Cadeau de remerciement;I87_? Thank-you gift
+I88_エルナの本;I88_Livre d’Elna;I88_Elna's Book
+I89_アイテム０８９;I89_Objet 089;I89_Item 089
+I90_アイテム０９０;I90_Objet 090;I90_Item 090
+I91_アイテム０９１;I91_Objet 091;I91_Item 091
+I92_アイテム０９２;I92_Objet 092;I92_Item 092
+I93_アイテム０９３;I93_Objet 093;I93_Item 093
+I94_アイテム０９４;I94_Objet 094;I94_Item 094
+I95_アイテム０９５;I95_Objet 095;I95_Item 095
+I96_アイテム０９６;I96_Objet 096;I96_Item 096
+I97_アイテム０９７;I97_Objet 097;I97_Item 097
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+弾（直線）;Projectile (ligne droite);Straight projectile
+弾（落下）;Projectile (chute);Falling projectile
+弾（放物線）;Projectile (parabolique);Parabolic projectile
+弾（ブーメラン）;Projectile (boomerang);Boomerang projectile
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+(空き);(vide);(empty)
+アンゼスの箱;Coffre d’Anzes;Anzes's chest
+透明（弓用）;Bloc transparent (pour arc);Transparent block (for bow)
+押す、攻撃ブロック;Bloc à pousser/attaquer;Push/attack block
+鉄球壁（2x2x1）常駐;Mur à boule de fer (2×2×1) permanent;Iron ball wall (2×2×1) permanent
+透明君（8x2x1）;Bloc transparent (8×2×1);Transparent block (8×2×1)
+鉄球壁（2x2x2）常駐;Mur à boule de fer (2×2×2) permanent;Iron ball wall (2×2×2) permanent
+透明君（3x3x3);Bloc transparent (3×3×3);Transparent block (3×3×3)
+とても重い石;Pierre très lourde;Very heavy stone
+でっかい透明君(6x10);Gros bloc transparent (6×10);Huge transparent block (6×10)
+砂煙;Nuage de sable;Sand cloud
+SaveBook(Don'tTouch!);SaveBook (Ne pas toucher !);SaveBook (Don't touch!)
+燃えるイバラ２２２;Ronces enflammées 222;Burning thorns 222
+燃えるイバラ１１２;Ronces enflammées 112;Burning thorns 112
+任意方向移動プレート;Plateforme mobile toutes directions;Free-moving platform (any direction)
+爆弾ロッド用蓋（横）;Couvercle de tige-bombe (horizontal);Bomb rod lid (side)
+爆弾ロッド用蓋（上）;Couvercle de tige-bombe (dessus);Bomb rod lid (top)
+爆弾ロッド用蓋（縦）;Couvercle de tige-bombe (vertical);Bomb rod lid (vertical)
+透明キー接触（極小）;Déclencheur clé invisible (très petit);Invisible key trigger (very small)
+荷積みトロッコ;Chariot de chargement;Loading mine cart
+透明キー接触（標準）;Déclencheur clé invisible (standard);Invisible key trigger (standard)
+墓;Tombe;Grave
+透明君（巨大）;Bloc transparent (gigantesque);Transparent block (huge)
+透明君（極小）;Bloc transparent (minuscule);Transparent block (tiny)
+(空き);(vide);(empty)
+レーザー（？）;Laser (?);Laser (?)
+落石;Rocher tombant;Falling rock
+爆弾で壊れる根;Racine destructible à la bombe;Bomb-breakable root
+汎用看板;Panneau générique;Generic signboard
+END;FIN;END
+ビイゼン（村長）;Beizen (chef du village);Beizen (village chief)
+トステア（妻）;Tostea (épouse);Tostea (wife)
+ツーラス（息子）;Turas (fils);Turas (son)
+ユステル（占い婆）;Yustel (vieille voyante);Yustel (old fortune-teller)
+アンゼス（武器屋）;Anzes (armurier);Anzes (weapons shop)
+ロエイン（神父）;Roein (prêtre);Roein (priest)
+シヴィル（赤目）;Shivil (aux yeux rouges);Shivil (red-eyed)
+シーラ（母親）;Sheela (mère);Sheela (mother)
+オーレン（抗夫）;Oren (mineur);Oren (miner)
+ルィック（抗夫）;Luik (mineur);Luik (miner)
+ヌィンダ（抗夫）;Nuinda (mineur);Nuinda (miner)
+ズーリム（抗夫）;Zulim (mineur);Zulim (miner)
+セクタス（研究家）;Sectus (chercheur);Sectus (researcher)
+ナーシア（不眠女）;Narsia (femme insomniaque);Narsia (insomniac woman)
+モラアス（老婆）;Moraas (vieille femme);Moraas (old woman)
+ボージス（永眠男）;Bojis (homme endormi à jamais);Bojis (man in eternal sleep)
+メイザン（父親）;Meizan (père);Meizan (father)
+クライン（夢遊病）;Klein (somnambule);Klein (sleepwalker)
+ゴウセル（宗教男）;Gouser (homme religieux);Gouser (religious man)
+キーシャ（妹）;Kisha (petite sœur);Kisha (little sister)
+エリーン（多重女）;Elin (femme à personnalités multiples);Elin (woman with multiple personalities)
+ウストウ（酔どれ）;Ustow (ivrogne);Ustow (drunkard)
+ベグラス（兄）;Beglas (frère aîné);Beglas (older brother)
+ネクタス（弟）;Nectas (frère cadet);Nectas (younger brother)
+マーチス（双子父）;Martis (père des jumeaux);Martis (father of twins)
+イルニィ（双子母）;Ilni (mère des jumeaux);Ilni (mother of twins)
+ワインズ（祖父）;Wines (grand-père);Wines (grandfather)
+ヤァード（道具屋）;Yaard (marchand d’objets);Yaard (item shop owner)
+ノウラン（肝玉妻）;Nauran (épouse courageuse);Nauran (brave wife)
+ハヴァン（岬老人）;Havan (vieil homme du cap);Havan (old man at the cape)
+ケイトス（墓守）;Keitos (gardien de cimetière);Keitos (gravekeeper)
+ルータス（デブ）;Lutas (gros bonhomme);Lutas (fat man)
+フェイン（デブ妻）;Fein (femme du gros);Fein (fat man's wife)
+ワンちゃん（犬）;Toutou (chien);Doggy (dog)
+汎用タル;Tonneau générique;Generic barrel
+汎用壺;Cruche générique;Generic jar
+汎用木箱;Caisse en bois générique;Generic wooden crate
+汎用石;Pierre générique;Generic rock
+壺その２;Cruche n°2;Jar No.2
+石（鉄球で破壊可）１;Pierre (destructible à la boule de fer) 1;Rock (breakable by iron ball) 1
+石（鉄球で破壊可）２;Pierre (destructible à la boule de fer) 2;Rock (breakable by iron ball) 2
+持てる草;Herbe transportable;Carryable grass
+押せる石像(イベント);Statue poussable (événement);Pushable statue (event)
+石像;Statue de pierre;Stone statue
+ＳＷ（乗る）使用不可;Interrupteur (monter) inutilisable;Switch (step on) unusable
+ＳＷ（踏む）←使う！;Interrupteur (piétiner) ← à utiliser !;Switch (step on) ← use this!
+メディアム;Médium;Medium
+本;Livre;Book
+持てる氷;Bloc de glace transportable;Carryable ice block
+ＳＷ（レバー）;Interrupteur (levier);Switch (lever)
+ＳＷ（壁）;Interrupteur (mur);Switch (wall)
+ＳＷ（点火）;Interrupteur (allumage);Switch (ignition)
+ＳＷ（切り替え）;Interrupteur (bascule);Switch (toggle)
+火炎放射台;Plateforme lance-flammes;Flamethrower platform
+鉄球（小）;Boule de fer (petite);Iron ball (small)
+鉄球（大）;Boule de fer (grande);Iron ball (large)
+浮遊床（小）;Plateforme flottante (petite);Floating platform (small)
+浮遊床（大）;Plateforme flottante (grande);Floating platform (large)
+転石（小）;Rocher roulant (petit);Rolling rock (small)
+転石（大）;Rocher roulant (grand);Rolling rock (large)
+火柱（アイスロッド）;Pilier de feu (Ice Rod);Flame pillar (Ice Rod)
+発射台;Rampe de lancement;Launcher
+ちくちく床;Sol piquant;Spiky floor
+炎;Flamme;Flame
+いばら（火ロッド用）;Ronces (bâton de feu);Thorns (for Fire Rod)
+壊れる浮遊床（小）;Plateforme flottante fragile (petite);Breakable floating platform (small)
+壊れる浮遊床（大）;Plateforme flottante fragile (grande);Breakable floating platform (large)
+ドア（小）;Porte (petite);Door (small)
+ドア（大）;Porte (grande);Door (large)
+鉄格子（小）;Grille de fer (petite);Iron grating (small)
+鉄格子（大）;Grille de fer (grande);Iron grating (large)
+階段用フタ（小）;Trappe d’escalier (petite);Stairway cover (small)
+階段用フタ（大）;Trappe d’escalier (grande);Stairway cover (large)
+◆スライミージェル;◆Slime gélatineux;◆Slime Gel
+◆−弾;◆Projectile;◆Projectile
+死にエリーン;Élin morte;Dead Elin
+死にボージス;Bojis mort;Dead Bojis
+死にモラアス;Moraas morte;Dead Moraas
+死にナーシア;Narsia morte;Dead Narsia
+◆ビーンノイド;◆Beannoïde;◆Beannoid
+波動エンジン;Moteur à ondes;Wave engine
+炎（アイスロッド用）;Flammes (pour Ice Rod);Flames (for Ice Rod)
+◆オーク(斧)Lv１;◆Orc (hache) Niv.1;◆Orc (axe) Lv.1
+サーティ（夢の女）;Sarty (femme du rêve);Sarty (dream woman)
+ジャンプ台;Rampe de saut;Jump platform
+◆オーク(メイス)Ｌｖ１;◆Orc (masse) Niv.1;◆Orc (mace) Lv.1
+４方向砲台;Tourelle à 4 directions;Four-way turret
+水平方向炎;Flammes horizontales;Horizontal flames
+◆オーク(鉄)Ｌｖ１;◆Orc (armure de fer) Niv.1;◆Orc (iron armor) Lv.1
+押すスイッチ;Interrupteur poussoir;Push switch
+大顔面（俺アイダ）;Grand visage (Aida);Big face (Aida)
+◆ムルータ(爪)Ｌｖ１;◆Muruta (griffes) Niv.1;◆Muruta (claws) Lv.1
+吊り天井;Plafond suspendu;Falling ceiling
+少女メディアム;Jeune médium;Young medium
+◆ムルータ(弓)Ｌｖ１;◆Muruta (arc) Niv.1;◆Muruta (bow) Lv.1
+◆−弓Ｌｖ１;◆Flèche Niv.1;◆Arrow Lv.1
+チェイン;Chaîne;Chain
+アリシア;Alicia;Alicia
+リィジオ;Rijio;Rijio
+メディアムの母;Mère du médium;Medium's mother
+◆ムルータ(ブ)Ｌｖ１;◆Muruta (boomerang) Niv.1;◆Muruta (boomerang) Lv.1
+◆−ブーメランＬｖ１;◆Boomerang Niv.1;◆Boomerang Lv.1
+ザ・ローブマン;L’Homme en robe;The Robed Man
+バタンＱ男;Homme effondré;Collapsed man
+緊縛メディアム;Médium ligoté;Bound medium
+赤青２色ボックス;Boîte bicolore rouge/bleu;Red/blue two-color box
+◆リザード(剣)Ｌｖ１;◆Homme-lézard (épée) Niv.1;◆Lizardman (sword) Lv.1
+星オブジェ（持）;Objet étoile (transportable);Star object (carryable)
+絵柄プレート;Plaque à motif;Pattern plate
+◆リザード(槍)Ｌｖ１;◆Homme-lézard (lance) Niv.1;◆Lizardman (spear) Lv.1
+◆−槍Ｌｖ１;◆Lance Niv.1;◆Spear Lv.1
+月オブジェ（持）;Objet lune (transportable);Moon object (carryable)
+水オブジェ（持）;Objet eau (transportable);Water object (carryable)
+太陽オブジェ（持）;Objet soleil (transportable);Sun object (carryable)
+王、従者、女神像;Statue de roi, serviteur et déesse;King, servant, goddess statue
+◆リザード(弾)Ｌｖ１;◆Homme-lézard (projectiles) Niv.1;◆Lizardman (projectiles) Lv.1
+◆−弾Ｌｖ１;◆Projectile Niv.1;◆Projectile Lv.1
+丸太（持）、小鉄球;Tronc (transportable), petite boule de fer;Log (carryable), small iron ball
+鉄球壁（２２２）鉄球;Mur à boule de fer (222) – boule de fer;Iron ball wall (222) – iron ball
+鉄球壁（２２１）;Mur à boule de fer (221);Iron ball wall (221)
+鉄球壁（１１２）軸;Mur à boule de fer (112) – axe;Iron ball wall (112) – axis
+◆ミミング(鎌)Ｌｖ１;◆Mimming (faux) Niv.1;◆Mimming (scythe) Lv.1
+ミミング王;Roi Mimming;King Mimming
+ボージス＆石（YM03）;Bojis & pierre (YM03);Bojes & rock (YM03)
+にわとり;Poulet;Chicken
+からす;Corbeau;Crow
+鉄球壁（１１１）;Mur à boule de fer (111);Iron ball wall (111)
+三色スイッチ;Interrupteur tricolore;Three-color switch
+変身リザードマン像;Statue d’homme-lézard transformé;Transformed lizardman statue
+水浮き・鉄球（大）;Flotteur d’eau / grande boule de fer;Water float / large iron ball
+◆ミミング(回)Ｌｖ１;◆Mimming (rotation) Niv.1;◆Mimming (spinning) Lv.1
+壊せる柱(UD■/LR●);Pilier détruisible (UD■/LR●);Breakable pillar (UD■/LR●)
+棺;Cercueil;Coffin
+◆ローパーＬｖ１;◆Roper Niv.1;◆Roper Lv.1
+氷柱;Colonne de glace;Ice pillar
+水しずく;Goutte d’eau;Water droplet
+◆魚Ｌｖ１;◆Poisson Niv.1;◆Fish Lv.1
+たいまつ;Torche;Torch
+ジェネレータ;Générateur;Generator
+◆岩顔Ｌｖ１;◆Tête de roche Niv.1;◆Rock Face Lv.1
+流木.01水上/23空中;Bois flottant .01 sur l’eau / .23 en l’air;Driftwood .01 on water / .23 in air
+泡.012乗/34否乗;Bulle .0-1-2 support /3-4 non support;Bubble .0-1-2 stand-on / .3-4 non-stand
+ランプスイッチ;Interrupteur de lampe;Lamp switch
+鍵師;Maître des clés;Key master
+メディアム　(YM08用);Médium (pour YM08);Medium (for YM08)
+◆虫男Ｌｖ１;◆Homme-insecte Niv.1;◆Insect man Lv.1
+船員/乗客/カモメ;Marin / passager / mouette;Sailor / passenger / seagull
+くさり.0通/1滅/2待;Chaîne .0 traversable /1 détruite /2 attente;Chain .0 pass /1 destroyed /2 wait
+◆ミミックＬｖ１;◆Mimique Niv.1;◆Mimic Lv.1
+壊れる鎧;Armure cassable;Breakable armor
+４５ｃ回転扉;Porte rotative 45°;45° rotating door
+YM08結界u水d炎l砂r氷;YM08 barrière u=eau d=feu l=sable r=glace;YM08 barrier u=water d=fire l=sand r=ice
+asiba;asiba (plateforme);asiba (platform)
+魔法の鉢(びよよん);Pot magique (boïng);Magic pot (boing)
+◆ワームＬｖ１;◆Ver Niv.1;◆Worm Lv.1
+◆−弾Ｌｖ１;◆Projectile Niv.1;◆Projectile Lv.1
+◆ウィルダ（首）;◆Wilda (tête);◆Wilda (head)
+◆−胴;◆Corps;◆Body
+◆−ドラゴンブレス;◆Souffle de dragon;◆Dragon breath
+◆−火炎弾;◆Boule de feu;◆Fireball
+空;Vide;Empty
+空;Vide;Empty
+◆メルザス（本体）;◆Melzas (corps principal);◆Melzas (main body)
+◆−追尾レーザー;◆Laser à tête chercheuse;◆Homing laser
+◆−螺旋弾（遅い）;◆Projectiles en spirale (lents);◆Spiral projectiles (slow)
+空;Vide;Empty
+空;Vide;Empty
+◆−追尾弾（遅い）;◆Projectiles à tête chercheuse (lents);◆Homing projectiles (slow)
+◆−分身メルザス;◆Double de Melzas;◆Melzas double
+◆ミイラ男Ｌｖ１;◆Homme momie Niv.1;◆Mummy man Lv.1
+メルザス怨念;Rancune de Melzas;Melzas's grudge
+メルザス神像;Statue divine de Melzas;Melzas idol
+◆ゴーストＬｖ１;◆Fantôme Niv.1;◆Ghost Lv.1
+風船スイッチ;Interrupteur à ballon;Balloon switch
+押せる柱(ＰＲＧ);Pilier poussable (PRG);Pushable pillar (PRG)
+◆泥男Ｌｖ１;◆Homme de boue Niv.1;◆Mud man Lv.1
+◆−弾Ｌｖ１;◆Projectile Niv.1;◆Projectile Lv.1
+ミニ・ニルード(D12);Mini-Nilude (D12);Mini-Nilude (D12)
+クライン（夢専用）;Klein (rêve uniquement);Klein (dream only)
+空・空にしてもOKっす;Vide – OK de laisser vide;Empty – OK to leave empty
+空;Vide;Empty
+◆岩ガメＬｖ１;◆Tortue de roche Niv.1;◆Rock Turtle Lv.1
+敵じゃないカメ岩;Rocher tortue non ennemi;Non-enemy rock turtle
+空;Vide;Empty
+◆カゲマンＬｖ１;◆Homme-ombre Niv.1;◆Shadow Man Lv.1
+◆岩ガメＬｖ２;◆Tortue de roche Niv.2;◆Rock Turtle Lv.2
+空;Vide;Empty
+◆キノコＬｖ１;◆Champignon Niv.1;◆Mushroom Lv.1
+◆−胞子Ｌｖ１;◆Spores Niv.1;◆Spores Lv.1
+敵じゃないキノコ;Champignon non ennemi;Non-enemy mushroom
+◆邪神化ロエイン;◆Roein divin corrompu;◆Corrupted God Roein
+◆−ロエインコレダー;◆Collider de Roein;◆Roein Collider
+◆−ロエインボンバー;◆Bombardement de Roein;◆Roein Bomber
+◆ゾンビＬｖ１;◆Zombie Niv.1;◆Zombie Lv.1
+◆−ロエインシールド;◆Bouclier de Roein;◆Roein Shield
+空;Vide;Empty
+◆ＰゾルジアＬｖ１;◆P-Zoldia Niv.1;◆P-Zorgia Lv.1
+◆ＰゾルジアＬｖ２;◆P-Zoldia Niv.2;◆P-Zorgia Lv.2
+◆ミイラ男Ｌｖ２;◆Homme momie Niv.2;◆Mummy man Lv.2
+◆はちＬｖ１;◆Guêpe Niv.1;◆Wasp Lv.1
+◆ローパーＬｖ２;◆Roper Niv.2;◆Roper Lv.2
+空;Vide;Empty
+◆はえＬｖ１;◆Mouche Niv.1;◆Fly Lv.1
+◆巨大スライム（大）;◆Slime géant (grand);◆Giant slime (large)
+◆巨大スライム（小）;◆Slime géant (petit);◆Giant slime (small)
+◆木人Ｌｖ１;◆Homme de bois Niv.1;◆Wood man Lv.1
+◆−弾Ｌｖ１;◆Projectile Niv.1;◆Projectile Lv.1
+◆メルザス後;◆Après Melzas;◆After Melzas
+◆−腕、弾;◆Bras, projectiles;◆Arm, projectiles
+◆−触手;◆Tentacule;◆Tentacle
+空;Vide;Empty
+◆カマドＬｖ１;◆Fourneau Niv.1;◆Stove Lv.1
+◆−弾Ｌｖ１;◆Projectile Niv.1;◆Projectile Lv.1
+◆−ゾルジア魔法;◆Magie de Zoldia;◆Zorgia magic
+◆−ビーム兄弟（毒ガス）;◆Frères Rayon (gaz toxique);◆Beam Brothers (poison gas)
+◆巨大スライム（目玉）;◆Slime géant (œil);◆Giant slime (eyeball)
+◆−巨大スライム（体）;◆Slime géant (corps);◆Giant slime (body)
+◆火の鳥Ｌｖ１;◆Oiseau de feu Niv.1;◆Firebird Lv.1
+◆−弾（羽）Ｌｖ１;◆Projectiles (plumes) Niv.1;◆Projectile (feathers) Lv.1
+◆−弾（火の粉）Ｌｖ１;◆Projectiles (étincelles) Niv.1;◆Projectile (embers) Lv.1
+◆吸い込み君;◆Monsieur Aspiration;◆Suction unit
+◆−吸い込み効果;◆Effet d’aspiration;◆Suction effect
+◆−子供スライム;◆Petit slime;◆Child slime
+◆ドラゴン;◆Dragon;◆Dragon
+◆−ドラゴン炎;◆Flammes de dragon;◆Dragon flames
+◆−ドラゴン３弾;◆Triple projectile de dragon;◆Dragon triple projectile
+◆狼男  Ｌｖ１;◆Loup-garou Niv.1;◆Werewolf Lv.1
+◆−キング破片;◆Débris du roi;◆King fragments
+◆−アビス（泡弾）;◆Abyss (projectiles-bulles);◆Abyss (bubble projectiles)
+◆アビスＬｖ１;◆Abyss Niv.1;◆Abyss Lv.1
+◆−アビス（右）;◆Abyss (droite);◆Abyss (right)
+◆−アビス（左）;◆Abyss (gauche);◆Abyss (left)
+◆ムカデ（親）;◆Mille-pattes (corps principal);◆Centipede (main body)
+◆−ムカデ（胴）;◆Mille-pattes (tronc);◆Centipede (body)
+◆−ムカデ（尻尾）;◆Mille-pattes (queue);◆Centipede (tail)
+◆−ムカデ（つなぎ）;◆Mille-pattes (joint);◆Centipede (joint)
+◆−ムカデ（胴２）;◆Mille-pattes (tronc 2);◆Centipede (body 2)
+◆ニルード（残留思念）;◆Nilude (pensée résiduelle);◆Nilude (residual thought)
+◆リザードボスＬｖ１;◆Boss lézard Niv.1;◆Lizard Boss Lv.1
+◆ニルード（体つき）;◆Nilude (avec corps);◆Nilude (with body)
+◆−ニルード落石(222);◆Chute de rochers de Nilude (222);◆Nilude rockfall (222)
+◆エレメントＬｖ１;◆Élément Niv.1;◆Element Lv.1
+◆−エレメント岩;◆Roche élémentaire;◆Element rock
+◆−エレメント監視;◆Surveillance élémentaire;◆Element watcher
+◆ビーム兄弟（兄）Ｌ１;◆Frère Rayon (aîné) Niv.1;◆Beam Brother (elder) Lv.1
+◆−ビーム兄弟（弟）;◆Frère Rayon (cadet);◆Beam Brother (younger)
+◆−ニルード落石(112);◆Chute de rochers de Nilude (112);◆Nilude rockfall (112)
+◆−ニルード落石(111);◆Chute de rochers de Nilude (111);◆Nilude rockfall (111)
+◆−ムカデ（反射弾）;◆Mille-pattes (projectiles réfléchis);◆Centipede (reflected projectiles)
+◆−ムカデ（炸裂卵）;◆Mille-pattes (œufs explosifs);◆Centipede (explosive eggs)
+◆ムルータキング;◆Roi Muruta;◆Muruta King
+◆−キング大岩;◆Grand rocher du roi;◆King's big rock
+◆−キング手下;◆Sbires du roi;◆King's underlings
+◆ゾルジア;◆Zoldia;◆Zorgia
+◆−ゾルジア魔法陣;◆Cercle magique de Zoldia;◆Zorgia magic circle
+◆−ゾルジア弾;◆Projectiles de Zoldia;◆Zorgia projectiles
