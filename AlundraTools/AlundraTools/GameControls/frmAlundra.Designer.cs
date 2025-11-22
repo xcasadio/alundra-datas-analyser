@@ -281,6 +281,7 @@
             radioButtonZoom1 = new RadioButton();
             radioButtonZoom2 = new RadioButton();
             radioButtonZoom4 = new RadioButton();
+            columnHeader22 = new ColumnHeader();
             ((System.ComponentModel.ISupportInitialize)pctMapPalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctTilesheet).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctSpritesheet).BeginInit();
@@ -917,7 +918,7 @@
             // lsvEntities
             // 
             lsvEntities.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            lsvEntities.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2, columnHeader3, columnHeader4, columnHeader5, columnHeader6, columnHeader7, columnHeader8, columnHeader9, columnHeader10, columnHeader11, columnHeader12 });
+            lsvEntities.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2, columnHeader3, columnHeader22, columnHeader4, columnHeader5, columnHeader6, columnHeader7, columnHeader8, columnHeader9, columnHeader10, columnHeader11, columnHeader12 });
             lsvEntities.Location = new Point(4, 21);
             lsvEntities.Margin = new Padding(4, 3, 4, 3);
             lsvEntities.MultiSelect = false;
@@ -940,7 +941,7 @@
             // 
             // columnHeader3
             // 
-            columnHeader3.Text = "sprite";
+            columnHeader3.Text = "sprite index";
             columnHeader3.Width = 48;
             // 
             // columnHeader4
@@ -2238,7 +2239,7 @@
             tabPage1.Controls.Add(lblsinfoaddr);
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(3, 3, 3, 3);
+            tabPage1.Padding = new Padding(3);
             tabPage1.Size = new Size(852, 790);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Spritesheet";
@@ -2559,7 +2560,7 @@
             tabPage2.Controls.Add(label34);
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3, 3, 3, 3);
+            tabPage2.Padding = new Padding(3);
             tabPage2.Size = new Size(852, 790);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Entities";
@@ -2623,7 +2624,7 @@
             tabPage5.Controls.Add(label33);
             tabPage5.Location = new Point(4, 24);
             tabPage5.Name = "tabPage5";
-            tabPage5.Padding = new Padding(3, 3, 3, 3);
+            tabPage5.Padding = new Padding(3);
             tabPage5.Size = new Size(852, 790);
             tabPage5.TabIndex = 4;
             tabPage5.Text = "Portals";
@@ -2634,7 +2635,7 @@
             tabPage6.Controls.Add(soundboardControl1);
             tabPage6.Location = new Point(4, 24);
             tabPage6.Name = "tabPage6";
-            tabPage6.Padding = new Padding(3, 3, 3, 3);
+            tabPage6.Padding = new Padding(3);
             tabPage6.Size = new Size(852, 790);
             tabPage6.TabIndex = 5;
             tabPage6.Text = "Sound";
@@ -2663,7 +2664,7 @@
             tabPage7.Controls.Add(listBoxEtcDescriptionItemTable);
             tabPage7.Location = new Point(4, 24);
             tabPage7.Name = "tabPage7";
-            tabPage7.Padding = new Padding(3, 3, 3, 3);
+            tabPage7.Padding = new Padding(3);
             tabPage7.Size = new Size(852, 790);
             tabPage7.TabIndex = 6;
             tabPage7.Text = "Etc ressources";
@@ -2766,7 +2767,7 @@
             tabPage8.Controls.Add(label63);
             tabPage8.Location = new Point(4, 24);
             tabPage8.Name = "tabPage8";
-            tabPage8.Padding = new Padding(3, 3, 3, 3);
+            tabPage8.Padding = new Padding(3);
             tabPage8.Size = new Size(852, 790);
             tabPage8.TabIndex = 7;
             tabPage8.Text = "Font3";
@@ -2925,6 +2926,10 @@
             radioButtonZoom4.Text = "x4";
             radioButtonZoom4.UseVisualStyleBackColor = true;
             radioButtonZoom4.CheckedChanged += radioButtonZoom4_CheckedChanged;
+            // 
+            // columnHeader22
+            // 
+            columnHeader22.Text = "sprite name";
             // 
             // FrmAlundra
             // 
@@ -3238,5 +3243,6 @@
         private ListBox listBoxCodesF;
         private Label label80;
         private ListBox listBoxCodesGlobal;
+        private ColumnHeader columnHeader22;
     }
 }

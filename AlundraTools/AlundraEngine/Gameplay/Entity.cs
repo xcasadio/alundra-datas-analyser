@@ -124,6 +124,9 @@ public class Entity
 
     public bool IsMapSprite => EntityRecord != null && (EntityRecord.SpriteDirection & 0x80) != 0;
 
+    //for debugging
+    public string? SpriteName { get; set; }
+
     public void CopyFrom(Entity other)
     {
         if (other == null)

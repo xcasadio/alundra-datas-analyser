@@ -5,7 +5,9 @@ using AlundraEngine.Graphics;
 using AlundraEngine.Sound;
 using AlundraEngine.UI;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AlundraEngine;
@@ -3761,7 +3763,19 @@ public class StaticVariables
     public UIBoxConfiguration g_uiBoxesConfigurationBackgroundMessageChoice; //800a4fec
 
     public void Initialize(GameEngine gameEngine)
-    {
+    {    
+        var lines = new List<string>();
+        using (var reader = new StreamReader("g_spriteNames.csv", Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
+        {
+            string? line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                lines.Add(line.Split(";")[1]); //0:jp, 1:fr, 2:en
+            }
+        }
+
+        g_spriteNames = lines.Skip(1).ToArray();
+
         //TODO : already loaded? where?
         g_imageBuffer = new byte[50000];
         g_imageBufferCompressed = new byte[50000];
@@ -4604,7 +4618,7 @@ public class StaticVariables
     public int g_obj_poly_ft4; // 80098700
     public int DAT_80098704; // 80098704
     public uint g_gameRandomSeed; // 80098708
-    public readonly string[] g_spriteNames = new string[512];; // 8009870C
+    public string[] g_spriteNames; // 8009870C
     public Entity g_lastValidWarpEntity; // 80098F0C
     //public int  g_directionNames[5]; // 80098F10
     public int DAT_80098f24; // 80098F24

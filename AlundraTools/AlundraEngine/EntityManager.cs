@@ -3,6 +3,7 @@ using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Sound;
 using System.Diagnostics;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AlundraEngine;
 
@@ -43,7 +44,7 @@ public class EntityManager
     }
 
     // 80039d04
-    public void InitializeEntity(Entity entity, Entity parentEntity, SpriteRecord sprite, SiEntityRecord entityRecord,
+    public void InitializeEntity(Entity entity, Entity parentEntity, SpriteRecord sprite, SiEntityRecord? entityRecord,
         uint spriteTableIndex, int entityId, int x, int y, int z, uint animationId, uint direction, int paletteIndex,
         int sheetSize)
     {
@@ -69,6 +70,8 @@ public class EntityManager
         entity.SpriteRecord = sprite;
         entity.EntityRecord = entityRecord;
         entity.SpriteTableIndex = spriteTableIndex;
+        
+        entity.SpriteName = GetSpriteName(entityRecord?.SpriteDirection ?? 0, spriteTableIndex);
 
         if (entityRecord != null)
         {
@@ -138,6 +141,16 @@ public class EntityManager
 
         UpdateTileAttributes(entity);
         _gameEngine.InitializeContents(entity);
+    }
+
+    private string? GetSpriteName(byte spriteDirection, uint spriteTableIndex)
+    {
+        if ((spriteDirection & 0x80) != 0)
+        {
+            spriteTableIndex += 0x100;
+        }
+
+        return spriteTableIndex < 512 ? _gameEngine.StaticVariables.g_spriteNames[spriteTableIndex] : null;
     }
 
     //8004201c

@@ -1,10 +1,11 @@
-﻿using System.Drawing.Imaging;
-using System.Text.Json;
-using AlundraEngine;
+﻿using AlundraEngine;
 using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
+using System.Drawing.Imaging;
+using System.Text;
+using System.Text.Json;
 using Color = System.Drawing.Color;
 using Timer = System.Windows.Forms.Timer;
 
@@ -325,27 +326,47 @@ namespace AlundraTools.GameControls
             }
 
             //spriteinfo
+            var lines = new List<string>();
+            using (var reader = new StreamReader("g_spriteNames.csv", Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
+            {
+                while (reader.ReadLine() is { } line)
+                {
+                    lines.Add(line.Split(";")[1]);
+                }
+            }
+
+            var g_spriteNames = lines.Skip(1).ToArray();
+
             lsvEntities.Items.Clear();
             for (var dex = 0; dex < _selectedGameMap.SpriteInfo.Entities.Entities.Length; dex++)
             {
-                var entity = _selectedGameMap.SpriteInfo.Entities.Entities[dex];
-                if (entity != null)
+                var entityRecord = _selectedGameMap.SpriteInfo.Entities.Entities[dex];
+
+                if (entityRecord != null)
                 {
+                    var spriteTableIndex = (uint)entityRecord.SpriteTableIndex;
+                    if ((entityRecord.SpriteDirection & 0x80) != 0)
+                    {
+                        spriteTableIndex += 0x100;
+                    }
+                    var spriteName = spriteTableIndex < 512 ? g_spriteNames[spriteTableIndex] : null;
+
                     var lvi = new ListViewItem([
                         "entity " + dex,
-                            entity.SpriteDirection.ToString("x2"),
-                            entity.SpriteTableIndex.ToString("x2"),
-                            (entity.XPos/2).ToString(),
-                            (entity.YPos/2).ToString(),
-                            entity.Height.ToString("x2"),
-                            entity.EventCodesA_LoadIndex.ToString("x2"),
-                            entity.EventCodesB_MapIndex.ToString("x2"),
-                            entity.EventCodesC_TickIndex.ToString("x2"),
-                            entity.EventCodesD_TouchIndex.ToString("x2"),
-                            entity.EventCodesE_DeactivateIndex.ToString("x2"),
-                            entity.EventCodesF_InteractIndex.ToString("x2")
+                            entityRecord.SpriteDirection.ToString("x2"),
+                            entityRecord.SpriteTableIndex.ToString("x2"),
+                            spriteName,
+                            (entityRecord.XPos/2).ToString(),
+                            (entityRecord.YPos/2).ToString(),
+                            entityRecord.Height.ToString("x2"),
+                            entityRecord.EventCodesA_LoadIndex.ToString("x2"),
+                            entityRecord.EventCodesB_MapIndex.ToString("x2"),
+                            entityRecord.EventCodesC_TickIndex.ToString("x2"),
+                            entityRecord.EventCodesD_TouchIndex.ToString("x2"),
+                            entityRecord.EventCodesE_DeactivateIndex.ToString("x2"),
+                            entityRecord.EventCodesF_InteractIndex.ToString("x2")
                     ]);
-                    lvi.ToolTipText = ShortToString(entity.Contents) + " " + ShortToString(entity._10) + " " + ByteToString(entity.XMin) + " " + ByteToString(entity.YMin);
+                    lvi.ToolTipText = ShortToString(entityRecord.Contents) + " " + ShortToString(entityRecord._10) + " " + ByteToString(entityRecord.XMin) + " " + ByteToString(entityRecord.YMin);
                     lsvEntities.Items.Add(lvi);
                 }
             }
