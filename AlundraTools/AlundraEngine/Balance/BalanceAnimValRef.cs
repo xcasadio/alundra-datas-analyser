@@ -1,4 +1,4 @@
-﻿namespace AlundraEngine.Sound;
+﻿namespace AlundraEngine.Balance;
 
 public class BalanceAnimValRef
 {

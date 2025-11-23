@@ -964,7 +964,7 @@ public class MainInventoryManager
 
         if (_gameEngine.StaticVariables.g_inventoryCursorText == 0)
         {
-            var text = _gameEngine.EtcRes.GetItemName((int)itemId);//_gameEngine.StaticVariables.g_iconNameEtcBase[itemId * 2];
+            var text = _gameEngine.EtcRes.GetItemName((int)itemId);//_gameEngine.StaticVariables.g_itemDropProperties[itemId * 2];
             //text = text.PadRight(0x20);
             text = text.Substring(0, _gameEngine.StaticVariables.g_inventoryCursorText);
             iVar2 = 0x20;
@@ -989,7 +989,7 @@ public class MainInventoryManager
         {
             if (_gameEngine.StaticVariables.g_inventoryCursorText - 1U < 0x10)
             {
-                var text = _gameEngine.EtcRes.GetItemName((int)itemId);//_gameEngine.StaticVariables.g_iconNameEtcBase[itemId * 2];
+                var text = _gameEngine.EtcRes.GetItemName((int)itemId);//_gameEngine.StaticVariables.g_itemDropProperties[itemId * 2];
                 //text = text.PadRight(0x11);
                 var initialLength = text.Length;
                 var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText);
@@ -1003,7 +1003,7 @@ public class MainInventoryManager
                 }
                 else
                 {
-                    //var text = _gameEngine.EtcRes.GetOtherString((int)itemId); //_gameEngine.StaticVariables.g_iconNameEtcBase[itemId * 2];
+                    //var text = _gameEngine.EtcRes.GetOtherString((int)itemId); //_gameEngine.StaticVariables.g_itemDropProperties[itemId * 2];
                     FUN_80055f48(0, 0, ' ');
                         //_gameEngine.StaticVariables.g_inventoryCursorText,
                         //text[_gameEngine.StaticVariables.g_inventoryCursorText - 1]);
@@ -1029,7 +1029,7 @@ public class MainInventoryManager
             {
                 if (_gameEngine.StaticVariables.g_inventoryCursorText == 0x4d)
                 {
-                    var text = _gameEngine.EtcRes.GetItemDescription((int)itemId);//_gameEngine.StaticVariables.g_iconNameEtcBase[itemId * 2];
+                    var text = _gameEngine.EtcRes.GetItemDescription((int)itemId);//_gameEngine.StaticVariables.g_itemDropProperties[itemId * 2];
                     //text = _gameEngine.StaticVariables.g_tileSetEtcBase[itemId * 2];
                     //text = text.PadRight(0x40);var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText);
                     var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText);
@@ -1823,7 +1823,7 @@ public class MainInventoryManager
         uint currentTileIndex;
         string sourceWarpName;
 
-        currentTileIndex = _gameEngine.PlayerManager.GetItemIdFromCurrentWeapon(); //_gameEngine.StaticVariables.g_iconNameEtcBase[currentTileIndex * 2]
+        currentTileIndex = _gameEngine.PlayerManager.GetItemIdFromCurrentWeapon(); //_gameEngine.StaticVariables.g_itemDropProperties[currentTileIndex * 2]
 
         if (currentTileIndex != 0xffffffff)
         {
@@ -1848,7 +1848,7 @@ public class MainInventoryManager
         }
         else
         {
-            sourceWarpName = _gameEngine.EtcRes.GetItemName((int)currentTileIndex);// _gameEngine.StaticVariables.g_iconNameEtcBase[currentTileIndex * 2];
+            sourceWarpName = _gameEngine.EtcRes.GetItemName((int)currentTileIndex);// _gameEngine.StaticVariables.g_itemDropProperties[currentTileIndex * 2];
         }
 
         SPRT[] sprites = [_gameEngine.StaticVariables.g_ItemNameSprites[2], _gameEngine.StaticVariables.g_ItemNameSprites[3], _gameEngine.StaticVariables.g_ItemNameSprites[4], _gameEngine.StaticVariables.g_ItemNameSprites[5]];

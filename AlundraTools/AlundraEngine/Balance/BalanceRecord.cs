@@ -1,10 +1,10 @@
-﻿namespace AlundraEngine.Sound;
+﻿namespace AlundraEngine.Balance;
 
 public class BalanceRecord
 {
     public readonly byte Level;//0
     public readonly byte OffsetToNextLevel;//1
-    public readonly byte Hp;//2 
+    public byte Hp;//2 
     public readonly byte[] Values = new byte[11];//supposed to be at 2
     //but i think ill put it at 3 and subtract q from the indexvals
     //3
@@ -21,7 +21,7 @@ public class BalanceRecord
     public readonly byte NumAnimVals;//e
     public readonly BalanceAnimValRef[] AnimVals;//targetanim+1 //f
 
-    public int Offset;
+    public readonly int Offset;
     public readonly BalanceRecord Next;
 
     public BalanceRecord(BinaryReader br, int offset)

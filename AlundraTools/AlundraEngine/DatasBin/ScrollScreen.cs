@@ -2,23 +2,29 @@
 
 public class ScrollScreen
 {
+    public readonly int FactorXNum; // How many pixels to scroll horizontal against camera movement (negative = scroll with camera)
+    public readonly int FactorXDenom;
+    public readonly int FactorYNum; // How many pixels to scroll vertical against camera movement (negative = scroll with camera)
+    public readonly int FactorYDenom;
+    public readonly int ScrollXSpeed; // How many pixels to scroll horizontal per tick
+    public readonly int ScrollXPeriod; // How many ticks to skip for horizontal scrolling
+    public readonly int ScrollYSpeed; // How many pixels to scroll vertical per tick
+    public readonly int ScrollYPeriod; // How many ticks to skip for vertical scrolling
+
     public ScrollScreen(BinaryReader br)
     {
-        Unknown1 = br.ReadInt32();
-        Unknown2 = br.ReadInt32();
-        Unknown3 = br.ReadInt32();
-        Unknown4 = br.ReadInt32();
-        Unknown5 = br.ReadInt32();
-        Unknown6 = br.ReadInt32();
-        Unknown7 = br.ReadInt32();
-        Unknown8 = br.ReadInt32();
+        FactorXNum = br.ReadInt32();
+        FactorXDenom = br.ReadInt32();
+        FactorYNum = br.ReadInt32();
+        FactorYDenom = br.ReadInt32();
+        ScrollXSpeed = br.ReadInt32();
+        ScrollXPeriod = br.ReadInt32();
+        ScrollYSpeed = br.ReadInt32();
+        ScrollYPeriod = br.ReadInt32();
     }
-    public readonly int Unknown1;
-    public readonly int Unknown2;
-    public readonly int Unknown3;
-    public readonly int Unknown4;
-    public readonly int Unknown5;
-    public readonly int Unknown6;
-    public readonly int Unknown7;
-    public readonly int Unknown8;
+
+    public override string ToString()
+    {
+        return $"{FactorXDenom} {FactorXNum} {FactorYDenom} {FactorYNum} {ScrollXSpeed} {ScrollXPeriod} {ScrollYSpeed} {ScrollYPeriod}";
+    }
 }

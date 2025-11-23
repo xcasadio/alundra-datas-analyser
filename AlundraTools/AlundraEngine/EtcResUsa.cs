@@ -60,7 +60,7 @@ public class EtcResUsa : EtcRes
             if (offset != -1)
             {
                 IconNames[i * 2] = ReadString(buffer, ref offset);
-                //_gameEngine.StaticVariables.g_iconNameEtcBase[i * 2] = (byte)i;
+                //_gameEngine.StaticVariables.g_itemDropProperties[i * 2] = (byte)i;
             }
 
             offset = descriptionOffset;

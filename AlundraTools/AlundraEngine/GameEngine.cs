@@ -6,6 +6,7 @@ using AlundraEngine.Sound;
 using AlundraEngine.Text;
 using System;
 using System.Diagnostics;
+using AlundraEngine.Balance;
 using AlundraEngine.UI;
 
 namespace AlundraEngine;
@@ -137,7 +138,7 @@ public class GameEngine
             //DoNothing();
             ClearGlobalFlags();
             ResetCameraAndLoadVRAMAssets();
-            InitializeItems(StaticVariables.g_imageBuffer[0xb]);
+            InitializeItems(CurrentMap.Info._11); //StaticVariables.g_imageBuffer[0xb]);
             LoadMapAndInitializeEntities(null/*StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b40*/);
             WarpPlayer(playerPosX, playerPosY, playerPosZ, StaticVariables.g_mapTransitionEffectId);
             InitializeTileAnimationSystem();
@@ -307,6 +308,7 @@ public class GameEngine
         StaticVariables.g_etcAnimTable = param_1;
     }
 
+    //8008159c
     private void ClearGlobalFlags()
     {
         var iVar2 = 0x3f;
@@ -320,6 +322,7 @@ public class GameEngine
         } while (iVar2 >= 0);
     }
 
+    //8002cd54
     private void ResetCameraAndLoadVRAMAssets()
     {
         StaticVariables.g_bossCutsceneFlag = 0;
@@ -330,19 +333,18 @@ public class GameEngine
         //LoadVRAMAssets();
     }
 
+    //80044520
     private void InitializeItems(int threshold)
     {
-        var iVar2 = 2;
-        var piVar1 = 2;
+        var i = 2;
 
         StaticVariables.g_itemIdThreshold = threshold;
 
         do
         {
-            StaticVariables.g_items[piVar1 + 2] = 0;
-            iVar2 = iVar2 - 1;
-            piVar1 = piVar1 - 2;
-        } while (iVar2 >= 0);
+            StaticVariables.g_itemBalanceRecords[i].ItemId = 0;
+            i = i - 1;
+        } while (i >= 0);
     }
 
     //8002dfe4
@@ -1794,7 +1796,8 @@ public class GameEngine
         spawnedEntity.Flags &= 0xffffff7f;
 
         var delay = 600;
-        if (StaticVariables.g_iconNameEtcBase[(entity.ContentsItemId * 8 + 4) / 4] == 0)
+        Debugger.Break();
+        if (StaticVariables.g_itemDropProperties[entity.ContentsItemId].Field1 == 0)
         {
             delay = -1;
         }
@@ -2206,10 +2209,17 @@ public class GameEngine
 
                         if (tileSource.WallTiles != null)
                         {
+                            tileDestination.WallTiles ??= new WallTiles();
+                            tileDestination.WallTiles.Tiles ??= new ushort[tileSource.WallTiles.Tiles.Length];
+
                             tileDestination.WallTiles.Offset = tileSource.WallTiles.Offset;
 
-                            var length = Math.Min(tileSource.WallTiles.Tiles.Length, tileDestination.WallTiles.Tiles.Length);
-                            for (int i = 0; i < length; i++)
+                            if (tileSource.WallTiles.Tiles.Length != tileDestination.WallTiles.Tiles.Length)
+                            {
+                                Debugger.Break();
+                            }
+
+                            for (int i = 0; i < tileSource.WallTiles.Tiles.Length; i++)
                             {
                                 tileDestination.WallTiles.Tiles[i] = tileSource.WallTiles.Tiles[i];
                             }
@@ -2419,34 +2429,34 @@ public class GameEngine
     }
 
     // 800445c0
-    public int GetItemDataPointer(int itemId)
-    {
-        Debugger.Break();
-        // Check if the item ID is valid (less than 0x62/98)
-        if (itemId >= 0x62)
-        {
-            throw new Exception("Illegal Item No!");
-        }
-
-        // Get the offset for this item ID from the balance bin buffer
-        using var br = DatasBin.OpenBin();
-        br.BaseStream.Position = itemId * 2 + 0x32c;
-        var currentRecord = 0;
-
-        // Traverse the balance record chain until we find one with Level less than the threshold
-        // or reach the end of the chain
-        //while (currentRecord != null && currentRecord.Level < StaticVariables.g_itemIdThreshold)
-        //{
-        //    // Add the current record to our list
-        //    balanceRecords.Add(currentRecord);
-        //
-        //    // Follow the chain to the next record
-        //    currentRecord = currentRecord.Next;
-        //}
-
-        // Return the array of balance records
-        return currentRecord;
-    }
+    //public int GetItemDataPointer(int itemId)
+    //{
+    //    Debugger.Break();
+    //    // Check if the item ID is valid (less than 0x62/98)
+    //    if (itemId >= 0x62)
+    //    {
+    //        throw new Exception("Illegal Item No!");
+    //    }
+    //
+    //    // Get the offset for this item ID from the balance bin buffer
+    //    using var br = DatasBin.OpenBin();
+    //    br.BaseStream.Position = itemId * 2 + 0x32c;
+    //    var currentRecord = 0;
+    //
+    //    // Traverse the balance record chain until we find one with Level less than the threshold
+    //    // or reach the end of the chain
+    //    //while (currentRecord != null && currentRecord.Level < StaticVariables.g_itemIdThreshold)
+    //    //{
+    //    //    // Add the current record to our list
+    //    //    balanceRecords.Add(currentRecord);
+    //    //
+    //    //    // Follow the chain to the next record
+    //    //    currentRecord = currentRecord.Next;
+    //    //}
+    //
+    //    // Return the array of balance records
+    //    return currentRecord;
+    //}
 
     //80059f6c
     public void TriggerVisualUpdate(int spriteTableIndex)
@@ -2565,7 +2575,84 @@ public class GameEngine
     //80050b98
     void AsyncCallbackHandler(int result)
     {
+        //not used replace par Action<int> callback in InitializeAsyncOperation
+
         //StaticVariables.g_asyncOperationResultPtr
         //StaticVariables.g_asyncOperationResultPtr = result;
+    }
+
+    //8003153c
+    public void UpdateSavedData()
+    {
+        StaticVariables.g_initialMapId = StaticVariables.g_currentMap;
+        StaticVariables.g_initialCameraTileX = StaticVariables.PlayerEntity.TileX;
+        StaticVariables.g_initialCameraTileY = StaticVariables.PlayerEntity.TileY;
+        StaticVariables.g_initialCameraTileZ = StaticVariables.PlayerEntity.TileZ;
+        UpdateMenuStatusText();
+        StaticVariables.g_savedGameplayTime = StaticVariables.g_gameplayTime;
+        Debugger.Break();
+        //CopyMemoryToRAM(&g_saveSlotData, 0x758, 1);
+    }
+
+    //80030fc8
+    private void UpdateMenuStatusText()
+    {
+        // (L’ASM appelle GetFirstEnabledFlagIndex(g_string_buffer_flag) sans utiliser le résultat :
+        // on omet, car cela ne change pas le rendu du texte.)
+
+        // Base identique à la dernière copie de l’ASM :
+        // "  HP 00       TIME 00:00:00   " (31/32 caractères selon padding).
+        // Indices notables (pour info) :
+        //   5..6   -> HP (2 chiffres)
+        //   après "TIME " -> HH:MM:SS
+        string template = "  HP 00       TIME 00:00:00   ";
+        var chars = template.ToCharArray();
+
+        // --- HP (de g_entitySlots[0]) ---
+        int hp = StaticVariables.g_entitySlots[0].Hp;
+        if (hp < 0)
+        {
+            hp = 0;
+        }
+
+        if (hp > 99)
+        {
+            hp = 99; // l’UI affiche 2 chiffres
+        }
+
+        chars[5] = (char)('0' + (hp / 10));
+        chars[6] = (char)('0' + (hp % 10));
+
+        // --- Temps de jeu ---
+        // NOTE : l’ASM fait des divisions via constantes magiques.
+        // Ici on considère que g_gameplayTime est en SECONDES.
+        // Si dans ton build c’est en frames/ticks, convertis-le AVANT :
+        //   int totalSeconds = StaticVariables.g_gameplayTime / TicksPerSecond;
+        int totalSeconds = (int)StaticVariables.g_gameplayTime;
+        if (totalSeconds < 0)
+        {
+            totalSeconds = 0;
+        }
+
+        int hours = totalSeconds / 3600;
+        int minutes = (totalSeconds % 3600) / 60;
+        int seconds = totalSeconds % 60;
+
+        // clamp visuel à 2 chiffres (comme l’ASM qui n’écrit que '0'..'9')
+        hours = hours % 100;
+        minutes = minutes % 100;
+        seconds = seconds % 100;
+
+        // Positions après "TIME " dans le template :
+        // index de 'T' = 14 -> "TIME " finit à 18, donc HH à 19..20, ':' à 21,
+        // MM à 22..23, ':' à 24, SS à 25..26
+        chars[19] = (char)('0' + (hours / 10));
+        chars[20] = (char)('0' + (hours % 10));
+        chars[22] = (char)('0' + (minutes / 10));
+        chars[23] = (char)('0' + (minutes % 10));
+        chars[25] = (char)('0' + (seconds / 10));
+        chars[26] = (char)('0' + (seconds % 10));
+
+        StaticVariables.g_menuStatusText = new string(chars);
     }
 }

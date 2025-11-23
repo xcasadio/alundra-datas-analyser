@@ -2,9 +2,18 @@
 
 public class WallTiles
 {
+    public sbyte Offset;
+    public byte Count;
+    public ushort[] Tiles;
+
     // TODO: remove, for debugging purpose
     public int TileX { get; set; }
     public int TileY { get; set; }
+
+    public WallTiles()
+    {
+
+    }
 
     public WallTiles(BinaryReader br)
     {
@@ -21,7 +30,4 @@ public class WallTiles
             Tiles[i] = br.ReadUInt16();
         }
     }
-    public sbyte Offset;
-    public byte Count;
-    public ushort[] Tiles;
 }

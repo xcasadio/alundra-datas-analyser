@@ -3,6 +3,7 @@ using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Sound;
 using System.Diagnostics;
+using AlundraEngine.Balance;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AlundraEngine;
@@ -2671,19 +2672,20 @@ public class EntityManager
     {
         int damage;
         int strLength;
-        BalanceRecord balanceRecord;
+        BalanceRecordData balanceRecord;
         string debugStr = string.Empty;
 
         if (entity == _gameEngine.StaticVariables.PlayerEntity)
         {
-            balanceRecord = _gameEngine.StaticVariables.g_intArray_80127008[0];
+            balanceRecord = _gameEngine.StaticVariables.g_balanceRecord[0];
         }
         else
         {
-            balanceRecord = entity.BalanceRecord;
+            balanceRecord = new BalanceRecordData();
+            balanceRecord.CopyFrom(entity.BalanceRecord);
         }
 
-        damage = ResolveBalanceTarget(balanceRecord.AnimVals[0], entity.TouchingEntity, entity.Hp);
+        damage = ResolveBalanceTarget(entity.TouchingEntity.BalanceAnimValRef, balanceRecord, entity.Hp);
 
         if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
         {
@@ -2735,11 +2737,11 @@ public class EntityManager
     }
 
     // 8004464c
-    private int ResolveBalanceTarget(BalanceAnimValRef balanceConfig, Entity targetEntity, int hp)
+    private int ResolveBalanceTarget(BalanceAnimValRef balanceConfig, BalanceRecordData balanceRecordData, int hp)
     {
         BalanceAnimValRef values;
-        BalanceRecord[] balanceSources;
-        BalanceRecord animPtr;
+        ItemBalanceRecord[] balanceSources;
+        BalanceRecord balanceRecord;
         int i;
         int adjustedHpValue;
         int newHp;
@@ -2752,16 +2754,13 @@ public class EntityManager
             _gameEngine.StaticVariables.g_balanceHpTotal = -1;
         }
 
-        if (targetEntity != null && balanceConfig != null)
+        if (balanceRecordData != null && balanceConfig != null)
         {
             balanceId = balanceConfig.Val;
 
             if (balanceId != 0)
             {
-                // TODO understand this
-                //int entityId = targetEntity + (balanceId & 0xf);
-                //byte balanceMultiplier = targetEntity.Bytes[2];
-                balanceMultiplier = 1;
+                balanceMultiplier = balanceRecordData.Values[(balanceId & 0xf) - 1];
 
                 if ((balanceMultiplier & 0xc0) == 0)
                 {
@@ -2770,25 +2769,25 @@ public class EntityManager
                     if ((balanceId & 0x80) != 0)
                     {
                         i = 0;
-                        balanceSources = _gameEngine.StaticVariables.g_balanceEffectSources;
+                        balanceSources = _gameEngine.StaticVariables.g_itemBalanceRecords;
 
                         do
                         {
-                            animPtr = balanceSources[i];
+                            balanceRecord = balanceSources[i].BalanceRecord;
 
-                            if (animPtr != null)
+                            if (balanceRecord != null)
                             {
-                                if (animPtr.NumAnimVals == 0)
+                                if (balanceRecord.NumAnimVals == 0)
                                 {
                                     values = null;
                                 }
-                                else if (_gameEngine.StaticVariables.g_balanceAnimIndex + 1 < animPtr.NumAnimVals)
+                                else if (_gameEngine.StaticVariables.g_balanceAnimIndex + 1 < balanceRecord.NumAnimVals)
                                 {
-                                    values = animPtr.AnimVals[(_gameEngine.StaticVariables.g_balanceAnimIndex << 1) + 0xf + 2];
+                                    values = balanceRecord.AnimVals[(_gameEngine.StaticVariables.g_balanceAnimIndex << 1) + 0xf + 2];
                                 }
                                 else
                                 {
-                                    values = animPtr.AnimVals[0];
+                                    values = balanceRecord.AnimVals[0];
                                 }
 
                                 if (values != null)

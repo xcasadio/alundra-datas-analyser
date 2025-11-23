@@ -2,18 +2,34 @@
 
 public class Map
 {
+    public readonly int MemoryAddress;
+
+    public readonly int Width;
+    public readonly int Height;
+    public readonly int Width2;
+    public readonly int Height2;
+    public readonly MapCopy[] MapCopies = new MapCopy[256];
+    public readonly int WallTilesOffset;
+    public readonly MapTile[] MapTiles;
+
     public Map(BinaryReader br, int memoryAddress)
     {
         MemoryAddress = memoryAddress;
         var binaryOffset = br.BaseStream.Position;
 
+        //read sizes
         Width = br.ReadByte();
         Height = br.ReadByte();
         Width2 = br.ReadByte();
         Height2 = br.ReadByte();
 
-        br.BaseStream.Position = binaryOffset + 1540;//why this number?
-
+        //map copies
+        for (int i = 0; i < MapCopies.Length; i++)
+        {
+            MapCopies[i] = new MapCopy(br);
+        }
+        
+        //read MapTiles
         MapTiles = new MapTile[Width * Height];
         for (var i = 0; i < MapTiles.Length; i++)
         {
@@ -41,15 +57,4 @@ public class Map
             }
         }
     }
-    public readonly int MemoryAddress;
-
-    public readonly int Width;
-    public readonly int Height;
-    public readonly int Width2;
-    public readonly int Height2;
-
-    public readonly int WallTilesOffset;
-
-    public readonly MapTile[] MapTiles;
-
 }

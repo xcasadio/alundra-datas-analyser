@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Windows.Forms;
+using static System.Windows.Forms.AxHost;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace AlundraEngine.Gameplay.Scripts;
 
@@ -56,6 +58,7 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramCTick, 23, AI_FUN_8006b848);
         Register(ScriptHelper.ProgramCTick, 60, AI_UpdateIceProjectile);
         Register(ScriptHelper.ProgramCTick, 70, AI_FUN_8007b7b0);
+        Register(ScriptHelper.ProgramCTick, 72, AI_ProcessWarpTransitionState);
         Register(ScriptHelper.ProgramCTick, 91, AI_UpdateEntityAI_IdleLookAround);
         Register(ScriptHelper.ProgramCTick, 92, AI_UpdateEntityTriggerWarpBehavior);
         Register(ScriptHelper.ProgramCTick, 93, AI_UpdateEntityAI_IdleCurious);
@@ -1148,6 +1151,137 @@ public class SpriteEventHandlers
         entity.Flags = (entity.Flags | 0x34) & 0xffffff7f;//turn off bit 8, turn on bits 5 and 6
     }
 
+    //8007b998
+    public void AI_ProcessWarpTransitionState(Entity entity)
+    {
+        int state = ReadWarpState(entity);     // lw 0x274(a0)
+        uint idx = (uint)(state - 1);          // v1 = state-1; if (idx>=6) return
+        if (idx >= 6)
+        {
+            return;
+        }
+
+        string arg1;
+        string arg2;
+
+        switch (entity.LastTargetDirection)
+        {
+            case 1:
+
+                if (_gameEngine.IsDialogInProgress())
+                {
+                    ResetWarpState(entity);
+                    return;
+                }
+
+                arg1 = _gameEngine.EtcRes.GetEtcString(0x40);
+                _gameEngine.UIManager.InitializeDialogMessage(arg1, 1);
+                _gameEngine.SetEtcAnimationMode(4);
+
+                LABEL_WaitBeforeNextWarpStep:
+                entity.ItemDelay = 0x3C;
+                WriteWarpState(entity, state + 1);
+                break;
+
+            case 2:
+                // countdown: if (--ItemDelay != -1) return
+                entity.ItemDelay -= 1;
+                if (entity.ItemDelay != -1)
+                {
+                    return;
+                }
+
+                // g_warpStatusFlag = 0; lancer une "opération asynchrone" (2 textes ETC)
+                _gameEngine.StaticVariables.g_warpStatusFlag = 0;
+
+                arg1 = _gameEngine.EtcRes.GetEtcString(0x41);
+                arg2 = _gameEngine.EtcRes.GetEtcString(0x42);
+
+                int r = _gameEngine.InitializeAsyncOperation(arg1, arg2, result => _gameEngine.StaticVariables.g_warpStatusFlag = (uint)result);
+
+                // Si terminé immédiatement, on saute un état (state+=1) puis on avancera encore (state+=1) => skip vers case 4
+                if (r != 0)
+                {
+                    WriteWarpState(entity, state + 1);
+                    state++;
+                }
+
+                // Avance d’un état (vers 3 si non terminé, vers 4 si terminé de suite)
+                WriteWarpState(entity, state + 1);
+                return;
+
+            case 4:
+                {
+                    // si pas encore de statut, on attend
+                    if (_gameEngine.StaticVariables.g_warpStatusFlag == 0)
+                    {
+                        return;
+                    }
+
+                    // On essaye d’activer le "TextHold" (mise en pause du texte)
+                    _gameEngine.UIManager.TryActivateTextHoldState();
+
+                    // si statut != 1 => Reset; sinon on attend 0x3C frames et on avance
+                    if (_gameEngine.StaticVariables.g_warpStatusFlag != 1)
+                    {
+                        ResetWarpState(entity);
+                        return;
+                    }
+
+                    // WaitBeforeNextWarpStep: timer=0x3C; state++
+                    entity.ItemDelay = 0x3C;
+                    WriteWarpState(entity, state + 1);
+                    return;
+                }
+
+            case 5:
+            {
+                entity.ItemDelay -= 1;
+
+                if (entity.ItemDelay != -1)
+                {
+                    return;
+                }
+
+                _gameEngine.UpdateSavedData();
+                WriteWarpState(entity, 6);
+                return;
+            }
+
+            // case 6
+            case 6:
+            {
+                if (_gameEngine.StaticVariables.g_globalTransitionState != 0)
+                {
+                    return;
+                }
+
+                ResetWarpState(entity);
+                return;
+            }
+        }
+    }
+
+    private void ResetWarpState(Entity entity)
+    {
+        WriteWarpState(entity, 0);
+        _gameEngine.StaticVariables.g_playerControlFlags &= 0xfffffffb;
+    }
+
+    private int ReadWarpState(Entity e)
+        => e.Bytes[0]
+           | (e.Bytes[1] << 8)
+           | (e.Bytes[2] << 16)
+           | (e.Bytes[3] << 24);
+
+    private void WriteWarpState(Entity e, int v)
+    {
+        e.Bytes[0] = (byte)(v & 0xFF);
+        e.Bytes[1] = (byte)((v >> 8) & 0xFF);
+        e.Bytes[2] = (byte)((v >> 16) & 0xFF);
+        e.Bytes[3] = (byte)((v >> 24) & 0xFF);
+    }
+
     //800637d8
     public void AI_UpdateEntityAI_IdleLookAround(Entity entity)
     {
@@ -1675,7 +1809,7 @@ public class SpriteEventHandlers
     {
         int itemState;
         Entity entity2;
-        int uVar6;
+        int soundSfxIndex;
 
         //Debugger.Break();
         var itemId = entity.SpriteTableIndex - 0x1e;
@@ -1737,14 +1871,15 @@ public class SpriteEventHandlers
                 if (entity.AIValues[4] == 0)
                 {
                     entity.ItemState += 2;
-                    uVar6 = _gameEngine.StaticVariables.g_iconNameEtcBase[(int)(itemId + 1)]; //itemId * 8 + 5
+                    Debugger.Break();
+                    soundSfxIndex = _gameEngine.StaticVariables.g_itemDropProperties[itemId].SoundSfxIndex; //itemId * 8 + 5
 
-                    if (uVar6 == 0)
+                    if (soundSfxIndex == 0)
                     {
                         _gameEngine.StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcRes.GetOtherString(0x46);
                     }
 
-                    _gameEngine.SoundManager.PlaySoundEffect((uint)uVar6);
+                    _gameEngine.SoundManager.PlaySoundEffect((uint)soundSfxIndex);
                     //goto LAB_8007c320;
                     _gameEngine.UIManager.InitializeDialogMessage(_gameEngine.StaticVariables.g_dropItemTextBuffer, 1);
                     return;
@@ -1879,11 +2014,11 @@ public class SpriteEventHandlers
                 }
 
                 _gameEngine.FUN_80032b28((uint)entity.ContentsGameFlag); //AIValues
-                uVar6 = _gameEngine.StaticVariables.g_iconNameEtcBase[(int)(itemId + 1)]; //itemId * 8 + 5
+                soundSfxIndex = _gameEngine.StaticVariables.g_itemDropProperties[itemId].SoundSfxIndex; //itemId * 8 + 5
 
-                if (uVar6 != 0)
+                if (soundSfxIndex != 0)
                 {
-                    _gameEngine.SoundManager.PlaySoundEffect((uint)uVar6);
+                    _gameEngine.SoundManager.PlaySoundEffect((uint)soundSfxIndex);
 
                     if (_gameEngine.StaticVariables.g_dropItemTextBuffer.Length > 0)
                     {

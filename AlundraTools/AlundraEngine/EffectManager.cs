@@ -464,8 +464,10 @@ public class EffectManager
         itemEntity.Bytes[2] = 0;
         itemEntity.Bytes[3] = 0;
         itemEntity.Flags &= 0xffffff7f; // ~0x80
-        
-        var initPosX = _gameEngine.StaticVariables.g_iconNameEtcBase[itemId * 2 + 1] == 0 ? -1 : 600;
+
+        ////[itemId * 2 + 1]
+        Debugger.Break();
+        var initPosX = _gameEngine.StaticVariables.g_itemDropProperties[itemId].Field1 == 0 ? -1 : 600;
 
         itemEntity.ItemDelay = initPosX;
         itemEntity.ItemState = 0;

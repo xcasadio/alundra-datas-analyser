@@ -525,7 +525,7 @@ public class SubInventoryManager
         if (_gameEngine.StaticVariables.INT_8017f788 == 0)
         {
             InventoryItemDescriptionLinesSprites[0].Clear();
-            text = _gameEngine.EtcRes.GetItemName(iVar1); //_gameEngine.StaticVariables.g_iconNameEtcBase[iVar1 * 2];
+            text = _gameEngine.EtcRes.GetItemName(iVar1); //_gameEngine.StaticVariables.g_itemDropProperties[iVar1 * 2];
             iVar1 = 0x20;
 
             LAB_8005420c:
@@ -544,7 +544,7 @@ public class SubInventoryManager
         }
         else
         {
-            var itemName = _gameEngine.EtcRes.GetItemName(iVar1); //_gameEngine.StaticVariables.g_iconNameEtcBase[iVar1 * 2];
+            var itemName = _gameEngine.EtcRes.GetItemName(iVar1); //_gameEngine.StaticVariables.g_itemDropProperties[iVar1 * 2];
 
             if (_gameEngine.StaticVariables.INT_8017f788 - 1U < 0x10)
             {

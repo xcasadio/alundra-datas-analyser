@@ -1,4 +1,5 @@
 ﻿using AlundraEngine.DatasBin;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -4196,47 +4197,21 @@ public class EntityEventHandlers
     // 800409A8
     private int Script_150_096(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-        return 0;
-        /*
-        byte bVar1;
+        var amountHp = variables[1];
+        var num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
 
-        int iVar2;
-
-        int piVar3;
-
-        int iVar4;
-
-        int iVar5;
-
-        bVar1 = variables[1];
-
-        iVar2 = _gameEngine.GetNumberOfEntityByRefId(logicEntity, (uint)bVar1);
-
-        if (0 < iVar2)
+        for (var i = 0; i < num; i++)
         {
-            piVar3 = _gameEngine.StaticVariables.g_activeEntityRefId + iVar2;
+            var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
+            entity.Hp += amountHp;
 
-            do
+            if (entity.HpMax < entity.Hp)
             {
-                iVar5 = piVar3;
-
-                iVar4 = iVar5 + 0x14 + (uint)bVar1;
-
-                if (iVar5 + 0x18 < iVar4)
-                {
-                    iVar4 = iVar5 + 0x18;
-                }
-
-                (iVar5 + 0x14) = iVar4;
-
-                iVar2 = iVar2 + -1;
-
-                piVar3 = piVar3 + -1;
-            } while (0 < iVar2);
+                entity.Hp = entity.HpMax;
+            }
         }
 
-        return 3;*/
+        return 3;
     }
 
     // 80040A2C

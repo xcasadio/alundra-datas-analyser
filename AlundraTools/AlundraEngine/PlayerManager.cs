@@ -1,7 +1,9 @@
-﻿using AlundraEngine.Gameplay;
+﻿using AlundraEngine.Balance;
+using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
 using System;
 using System.Diagnostics;
+using static OfficeOpenXml.ExcelErrorValue;
 using WarpData = AlundraEngine.DatasBin.WarpData;
 
 namespace AlundraEngine;
@@ -1159,72 +1161,138 @@ public class PlayerManager
             _gameEngine.StaticVariables.g_gravityFlag = 0;
         }
 
-        var iconIndex = 0x61; // Index 97
+        var i = 0x61; // Index 97
         var requiredFlag = 2;
         var iconBase = 0;
 
-        _gameEngine.StaticVariables.g_items[0] = 0;
-        _gameEngine.StaticVariables.g_items[1] = 0;
-        _gameEngine.StaticVariables.g_items[2] = 0;
-        _gameEngine.StaticVariables.g_items[3] = 0;
-        _gameEngine.StaticVariables.g_items[4] = 0;
-        _gameEngine.StaticVariables.g_balanceEffectSources = null;
+        _gameEngine.StaticVariables.g_itemBalanceRecords[2].BalanceRecord = null;
+        _gameEngine.StaticVariables.g_itemBalanceRecords[1].BalanceRecord = null;
+        _gameEngine.StaticVariables.g_itemBalanceRecords[0].BalanceRecord = null;
+        _gameEngine.StaticVariables.g_itemBalanceRecords[2].ItemId = 0;
+        _gameEngine.StaticVariables.g_itemBalanceRecords[1].ItemId = 0;
+        _gameEngine.StaticVariables.g_itemBalanceRecords[0].ItemId = 0;
 
-        var iconOffset = 97 * 8 + 6; // Offset dans le tableau g_iconNameEtcBase
-        while (iconIndex >= 0)
+        while (i >= 0)
         {
             // Vérifie le bit 0x7F du troisième byte (index+2) de l'icône
-            var iconFlags = (byte)(_gameEngine.StaticVariables.g_iconNameEtcBase[iconOffset / 4] & 0x7F);
+            var iconFlags = (byte)(_gameEngine.StaticVariables.g_itemDropProperties[i].Field3 & 0x7F);
 
-            if (iconFlags == requiredFlag && _gameEngine.PlayerManager.GetNumberOfItem(iconIndex) != 0)
+            if (iconFlags == requiredFlag && _gameEngine.PlayerManager.GetNumberOfItem(i) != 0)
             {
-                var itemData = _gameEngine.GetItemDataPointer(iconIndex);
-                //_gameEngine.StaticVariables.g_balanceEffectSources = itemData;
-                _gameEngine.StaticVariables.g_items[0] = iconIndex + 0x1E;
+                var itemData = _gameEngine.BalanceBin.GetItemDataPointer(i, _gameEngine.StaticVariables.g_itemIdThreshold);
+                //Debugger.Break();
+                _gameEngine.StaticVariables.g_itemBalanceRecords[0].BalanceRecord = itemData;
+                _gameEngine.StaticVariables.g_itemBalanceRecords[0].ItemId = i + 0x1E;
                 break;
             }
 
-            iconIndex--;
-            iconOffset -= 8;
+            i--;
         }
 
-        var currentTileIndex = (int)_gameEngine.PlayerManager.GetItemIdFromCurrentWeapon();
-        if (currentTileIndex > 0 && currentTileIndex < 0x61)
+        var itemId = (int)_gameEngine.PlayerManager.GetItemIdFromCurrentWeapon();
+        if (itemId > 0 && itemId < 0x61)
         {
-            var tileIconFlags = (byte)(_gameEngine.StaticVariables.g_iconNameEtcBase[(currentTileIndex * 8 + 6) / 4] & 0x7F);
+            var tileIconFlags = (byte)(_gameEngine.StaticVariables.g_itemDropProperties[itemId].Field3 & 0x7F);
 
             if (tileIconFlags == 1)
             {
-                var itemData = _gameEngine.GetItemDataPointer(currentTileIndex);
-                _gameEngine.StaticVariables.g_items[2] = itemData;
-                _gameEngine.StaticVariables.g_items[3] = currentTileIndex + 0x1E;
+                var itemData = _gameEngine.BalanceBin.GetItemDataPointer(itemId, _gameEngine.StaticVariables.g_itemIdThreshold);
+                _gameEngine.StaticVariables.g_itemBalanceRecords[1].BalanceRecord = itemData;
+                _gameEngine.StaticVariables.g_itemBalanceRecords[1].ItemId = i + 0x1E;
             }
         }
 
         var currentItemId = _gameEngine.PlayerManager.SetItemIdFromCurrentItemId();
         if (currentItemId > 0 && currentItemId < 0x61)
         {
-            var warpIconFlags = (byte)(_gameEngine.StaticVariables.g_iconNameEtcBase[(currentItemId * 8 + 6) / 4] & 0x7F);
+            var warpIconFlags = (byte)(_gameEngine.StaticVariables.g_itemDropProperties[currentItemId].Field3 & 0x7F);
 
             if (warpIconFlags == 3)
             {
-                var itemData = _gameEngine.GetItemDataPointer((int)currentItemId);
-                _gameEngine.StaticVariables.g_items[3] = itemData;
-                _gameEngine.StaticVariables.g_items[4] = (int)(currentItemId + 0x1E);
+                var itemData = _gameEngine.BalanceBin.GetItemDataPointer((int)currentItemId, _gameEngine.StaticVariables.g_itemIdThreshold);
+                _gameEngine.StaticVariables.g_itemBalanceRecords[2].BalanceRecord = itemData;
+                _gameEngine.StaticVariables.g_itemBalanceRecords[2].ItemId = i + 0x1E;
             }
         }
 
-        if (_gameEngine.StaticVariables.g_balanceEffectSources != null)
+        var balanceRecordSource = _gameEngine.StaticVariables.g_itemBalanceRecords[0].BalanceRecord ?? _gameEngine.StaticVariables.PlayerEntity.BalanceRecord;
+        _gameEngine.StaticVariables.g_balanceRecord[0].CopyFrom(balanceRecordSource);
+
+        var valueB = 0x10;
+        var valueA = 0x10;
+        i = 1;
+
+        do
         {
-            // Copie de g_balanceEffectSources vers g_intArray_80127008
-            Array.Copy(_gameEngine.StaticVariables.g_balanceEffectSources, 0, _gameEngine.StaticVariables.g_intArray_80127008, 0, 0xF0 / 4);
-        }
-        else if (_gameEngine.StaticVariables.PlayerEntity.BalanceRecord != null)
-        {
-            _gameEngine.StaticVariables.g_intArray_80127008[0] = _gameEngine.StaticVariables.PlayerEntity.BalanceRecord;
-            // Copie de la BalanceRecord du joueur vers g_intArray_80127008
-            //Array.Copy(_gameEngine.StaticVariables.PlayerEntity.BalanceRecord, 0, _gameEngine.StaticVariables.g_intArray_80127008, 0, 0xF0 / 4);
-        }
+            var balanceRecord = _gameEngine.StaticVariables.g_balanceRecord[i - 1];
+
+            var result = (uint)balanceRecord.Hp;
+
+            if (_gameEngine.StaticVariables. g_itemBalanceRecords[1].BalanceRecord != null)
+            {
+                valueA = _gameEngine.StaticVariables.g_itemBalanceRecords[1].BalanceRecord.Values[i + -1];
+            }
+
+            if (_gameEngine.StaticVariables.g_itemBalanceRecords[2].BalanceRecord != null)
+            {
+                valueB = _gameEngine.StaticVariables.g_itemBalanceRecords[2].BalanceRecord.Values[i + -1];
+            }
+
+            var flagsA = valueA & 0xc0;
+            var flagsB = valueB & 0xc0;
+
+            if ((result & 0xc0) == 0x80 || flagsA == 0x80 || flagsB == 0x80)
+            {
+                result = 0x80;
+            }
+            else
+            {
+                if ((balanceRecord.Hp & 0xc0) != 0)
+                {
+                    result = 0x10;
+
+                    if (flagsA != 0)
+                    {
+                        result = 0x40;
+
+                        if (flagsB != 0)
+                        {
+                            goto LAB_80030c0c;
+                        }
+
+                        result = 0x10;
+                    }
+                }
+
+                if (flagsA == 0)
+                {
+                    result = (uint)(result - 0x10 + valueA);
+                }
+
+                if (flagsB == 0)
+                {
+                    result = (uint)(result - 0x10 + valueB);
+                }
+
+                if ((int)result < 0x20)
+                {
+                    if ((int)result < 0)
+                    {
+                        result = 0;
+                    }
+                }
+                else
+                {
+                    result = 0x1f;
+                }
+            }
+
+            LAB_80030c0c:
+            balanceRecord.Hp = (byte)result;
+
+            i = i + 1;
+        } while (i < 0xc);
+
 
         if (_gameEngine.StaticVariables.g_playerControlFlags == 0
             && _gameEngine.StaticVariables.PlayerEntity.IsNotProcessable == 0
@@ -1233,25 +1301,18 @@ public class PlayerManager
             if (_gameEngine.StaticVariables.PlayerEntity.Hp != 0
                 && _gameEngine.StaticVariables.PlayerEntity.Hp < _gameEngine.StaticVariables.PlayerEntity.HpMax)
             {
-                for (var i = 0; i < 3; i++)
+                for (i = 0; i < 3; i++)
                 {
-                    if (_gameEngine.StaticVariables.g_items[i] != null && _gameEngine.StaticVariables.g_items[i] != 0)
+                    var balanceRecord2 = _gameEngine.StaticVariables.g_itemBalanceRecords[i].BalanceRecord;
+
+                    if (balanceRecord2 != null && balanceRecord2.Hp != 0)
                     {
-                        var animationFrames = _gameEngine.StaticVariables.g_intArray_80127008[i * 2].Hp;
+                        _gameEngine.StaticVariables.INT_ARRAY_80126fe8[i]++;
 
-                        if (animationFrames != 0)
-                        {
-                            _gameEngine.StaticVariables.INT_ARRAY_80126fe8[i]++;
-
-                            if (animationFrames <= _gameEngine.StaticVariables.INT_ARRAY_80126fe8[i])
-                            {
-                                _gameEngine.StaticVariables.INT_ARRAY_80126fe8[i] = 0;
-                                _gameEngine.StaticVariables.PlayerEntity.Hp++;
-                            }
-                        }
-                        else
+                        if (balanceRecord2.Hp <= _gameEngine.StaticVariables.INT_ARRAY_80126fe8[i])
                         {
                             _gameEngine.StaticVariables.INT_ARRAY_80126fe8[i] = 0;
+                            _gameEngine.StaticVariables.PlayerEntity.Hp++;
                         }
                     }
                     else
@@ -1289,8 +1350,8 @@ public class PlayerManager
             //            debugHeaderPrinted = true;
             //        }
             //
-            //        byte numAnimVals = (byte)((_gameEngine.StaticVariables.g_intArray_80127008[i * 2] >> 16) & 0xFF);
-            //        byte animVal = (byte)((_gameEngine.StaticVariables.g_intArray_80127008[i * 2 + 1] >> 8) & 0xFF);
+            //        byte numAnimVals = (byte)((_gameEngine.StaticVariables.g_balanceRecord[i * 2] >> 16) & 0xFF);
+            //        byte animVal = (byte)((_gameEngine.StaticVariables.g_balanceRecord[i * 2 + 1] >> 8) & 0xFF);
             //        var effectType = _gameEngine.StaticVariables.g_effectDebugFlagNames[i];
             //
             //        if (numAnimVals != 0)
@@ -1344,7 +1405,7 @@ public class PlayerManager
             //    _gameEngine.AppendHexVisualDebugLine(_gameEngine.StaticVariables.g_items[3], "ITM");
             //}
             //
-            //_gameEngine.AppendHexVisualDebugLine(_gameEngine.StaticVariables.g_intArray_80127008, "DEF");
+            //_gameEngine.AppendHexVisualDebugLine(_gameEngine.StaticVariables.g_balanceRecord, "DEF");
         }
     }
 
@@ -4044,7 +4105,7 @@ public class PlayerManager
                 break;
         }
 
-        return _gameEngine.StaticVariables.g_iconNameEtcBase[itemId * 2 + 1] == 0;
+        return _gameEngine.StaticVariables.g_itemDropProperties[itemId].Field1 == 0;
     }
 
     //8004e7a4

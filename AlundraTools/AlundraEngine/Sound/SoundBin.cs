@@ -39,10 +39,12 @@ public class SoundBin
     {
         _mapVabIndex = MapIdToVabIndex[mapid];
         using var br = new BinaryReader(File.OpenRead(_soundBinfile));
-        var dex = _mapVabIndex * 2;
+        var index = _mapVabIndex * 2;
+
         //read header
-        var pos = MapVabOffsets[dex];
-        var len = MapVabOffsets[dex + 1] - pos;
+        var pos = MapVabOffsets[index];
+        var len = MapVabOffsets[index + 1] - pos;
+
         _mapSfxVabHeaderBuff = new byte[len];
         br.BaseStream.Position = pos;
         br.Read(_mapSfxVabHeaderBuff, 0, len);
@@ -52,8 +54,8 @@ public class SoundBin
         MapVabHeader = new VabHeader(br);
 
         //read body
-        pos = MapVabOffsets[dex + 1];
-        len = MapVabOffsets[dex + 2] - pos;
+        pos = MapVabOffsets[index + 1];
+        len = MapVabOffsets[index + 2] - pos;
         _mapSfxVabBodyBuff = new byte[len];
         br.BaseStream.Position = pos;
         br.Read(_mapSfxVabBodyBuff, 0, len);

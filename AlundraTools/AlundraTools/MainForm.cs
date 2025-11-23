@@ -5,6 +5,7 @@ using AlundraEngine.Text;
 using AlundraTools.GameControls;
 using Microsoft.Win32;
 using System.Text.Json;
+using AlundraEngine.Balance;
 using AlundraTools.GameControls.CommandControls;
 
 namespace AlundraTools;

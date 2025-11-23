@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using AlundraEngine.Balance;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AlundraEngine;
@@ -767,34 +768,108 @@ public class StaticVariables
         0x0000,0x0000,0x0000,0x0000,unchecked((short)0xFFFF)
     ];
     // 800C5F7C
-    public int[] g_iconNameEtcBase =
-    [
-        0, 0, 0, 0x01810000, 0, 0x01010000, 0, 0x01010000,
-        0, 0x01010000, 0, 0x01010000, 0, 0x01010000, 0, 0x01010000,
-        0, 0x01010000, 0, 0x01010000, 0, 0x01010000, 0, 0,
-        0, 0, 0, 0, 0, 0x01010000, 0, 0,
-        0, 0x01010000, 0, 0x01820000, 0, 0x01020000, 0, 0x01020000,
-        0, 0x01020000, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0x01800000, 0, 0x01000000, 0, 0x01000000,
-        0, 0x01000000, 0, 0, 0, 0, 0, 0x01000000,
-        0, 0x01000000, 0, 0x01003400, 0, 0, 0, 0x01000000,
-        0, 0x09003401, 0, 0x01003401, 0, 0x01003401, 0, 0x01003401,
-        0, 0x01000000, 0, 0x01003401, 0, 0, 0, 0x01000000,
-        0, 0x01000000, 0, 0x01000000, 0, 0x01000000, 0, 0x01000000,
-        0, 0x01000000, 0, 0x01000000, 0, 0x01000000, 0, 0x01030000,
-        0, 0x01030000, 0, 0x01030000, 0, 0x01030000, 0, 0x01030000,
-        0, 0x01030000, 0, 0x01000000, 0, 0, 0, 0x01000000,
-        0, 0x01000000, 0, 0x09003400, 0, 0x01000000, 0, 0x01000000,
-        0, 0x01000000, 0, 0x01000000, 0, 0x01000000, 0, 0x01000000,
-        0, 0x01000000, 0, 0x00003501, 0, 0x00003501, 0, 0x00003501,
-        0, 0x00003501, 0, 0x01000000, 0, 0x01000000, 0, 0x01000000,
-        0, 0x01000000, 0, 0x01000000, 0, 0x01000000, 0, 0x00003400,
-        0, 0, 0, 0x00003601, 0, 0x00003601, 0, 0,
-        0, 0, 0, 0x00003401, 0, 0x00003401, 0, 0x00003401,
-        0, 0, 0, 0x01003400, 0, 0x01000000, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0
-    ];
+    public ItemDropProperties[] g_itemDropProperties = new ItemDropProperties[]
+    {
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [0]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x81, Field4 = (byte)0x01 }, // [1]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x01, Field4 = (byte)0x01 }, // [2]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x01, Field4 = (byte)0x01 }, // [3]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x01, Field4 = (byte)0x01 }, // [4]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x01, Field4 = (byte)0x01 }, // [5]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x01, Field4 = (byte)0x01 }, // [6]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x01, Field4 = (byte)0x01 }, // [7]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x01, Field4 = (byte)0x01 }, // [8]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x01, Field4 = (byte)0x01 }, // [9]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x01, Field4 = (byte)0x01 }, // [10]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [11]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [12]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [13]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x01, Field4 = (byte)0x01 }, // [14]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [15]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x01, Field4 = (byte)0x01 }, // [16]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x82, Field4 = (byte)0x01 }, // [17]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x02, Field4 = (byte)0x01 }, // [18]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x02, Field4 = (byte)0x01 }, // [19]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x02, Field4 = (byte)0x01 }, // [20]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [21]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [22]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [23]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [24]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x80, Field4 = (byte)0x01 }, // [25]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [26]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [27]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [28]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [29]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [30]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [31]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [32]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x34, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [33]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [34]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [35]
+        new() { Field0 = "", Field1 = (byte)0x01, SoundSfxIndex = (byte)0x34, Field3 = (byte)0x00, Field4 = (byte)0x09 }, // [36]
+        new() { Field0 = "", Field1 = (byte)0x01, SoundSfxIndex = (byte)0x34, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [37]
+        new() { Field0 = "", Field1 = (byte)0x01, SoundSfxIndex = (byte)0x34, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [38]
+        new() { Field0 = "", Field1 = (byte)0x01, SoundSfxIndex = (byte)0x34, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [39]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [40]
+        new() { Field0 = "", Field1 = (byte)0x01, SoundSfxIndex = (byte)0x34, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [41]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [42]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [43]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [44]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [45]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [46]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [47]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [48]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [49]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [50]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x03, Field4 = (byte)0x01 }, // [51]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x03, Field4 = (byte)0x01 }, // [52]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x03, Field4 = (byte)0x01 }, // [53]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x03, Field4 = (byte)0x01 }, // [54]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x03, Field4 = (byte)0x01 }, // [55]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x03, Field4 = (byte)0x01 }, // [56]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [57]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [58]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [59]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [60]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x34, Field3 = (byte)0x00, Field4 = (byte)0x09 }, // [61]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [62]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [63]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [64]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [65]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [66]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [67]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [68]
+        new() { Field0 = "", Field1 = (byte)0x01, SoundSfxIndex = (byte)0x35, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [69]
+        new() { Field0 = "", Field1 = (byte)0x01, SoundSfxIndex = (byte)0x35, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [70]
+        new() { Field0 = "", Field1 = (byte)0x01, SoundSfxIndex = (byte)0x35, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [71]
+        new() { Field0 = "", Field1 = (byte)0x01, SoundSfxIndex = (byte)0x35, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [72]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [73]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [74]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [75]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [76]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [77]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [78]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x34, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [79]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [80]
+        new() { Field0 = "", Field1 = (byte)0x01, SoundSfxIndex = (byte)0x36, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [81]
+        new() { Field0 = "", Field1 = (byte)0x01, SoundSfxIndex = (byte)0x36, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [82]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [83]
+        new() { Field0 = "", Field1 = (byte)0x01, SoundSfxIndex = (byte)0x34, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [84]
+        new() { Field0 = "", Field1 = (byte)0x01, SoundSfxIndex = (byte)0x34, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [85]
+        new() { Field0 = "", Field1 = (byte)0x01, SoundSfxIndex = (byte)0x34, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [86]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x34, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [87]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x01 }, // [88]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [89]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [90]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [91]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [92]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [93]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [94]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [95]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [96]
+        new() { Field0 = "", Field1 = (byte)0x00, SoundSfxIndex = (byte)0x00, Field3 = (byte)0x00, Field4 = (byte)0x00 }, // [97]
+    };
+
     // 80022814
     public short[] g_hitSoundEffects =
     [
@@ -4945,7 +5020,7 @@ public class StaticVariables
     public int DAT_800c5f48; // 800C5F48
     public int DAT_800c5f4c; // 800C5F4C
     public int DAT_800c5f50; // 800C5F50
-    //public int[] g_iconNameEtcBase; // 800C5F7C
+    //public int[] g_itemDropProperties; // 800C5F7C
     public int[] g_warpVelocityFlags = new int[195]; // 800C5F80
     public int g_tileSetEtcBase; // 800C628C
     public int g_paletteSetEtcBase; // 800C6290
@@ -5203,7 +5278,7 @@ public class StaticVariables
     public SpriteEffect g_playerWarpEffect; // 80126FF8
     public int g_playerWarpTimer; // 80126FFC
     public uint g_gravityFlag; // 80127000
-    public BalanceRecord[] g_intArray_80127008 = new BalanceRecord[2]; // 80127008
+    public BalanceRecordData[] g_balanceRecord = Enumerable.Range(0, 15).Select(x => new BalanceRecordData()).ToArray(); // 80127008
     public Entity g_activeCollisionEntity; // 80127108
     public uint g_currentWeaponFlags; // 8012710C
     public byte[] g_playerEffectTransitionCooldown = new byte[4]; // 80127110
@@ -5298,10 +5373,9 @@ public class StaticVariables
     public short[] g_warpEffectBuffer = new short[1200]; // 80143488
     public int g_effectRenderToggle; // 80143DE8
     public int g_itemIdThreshold; // 80143DF0
-    public byte[] g_balanceBinBuffer = new byte[12288]; // 80143DF8
+    public byte[] g_balanceBin = new byte[12288]; // 80143DF8
     public int g_balanceAnimIndex; // 80146DF8
-    public BalanceRecord[] g_balanceEffectSources; // 80146E00
-    public int[] g_items = new int[5]; // 80146E04
+    public ItemBalanceRecord[] g_itemBalanceRecords = Enumerable.Range(0, 3).Select(x => new ItemBalanceRecord()).ToArray(); // 80146E00
     public short g_balanceHpTotal; // 80146E18
     public short g_balanceParams; // 80146E1A
     public short g_balanceHp; // 80146E1C
@@ -5753,7 +5827,7 @@ public class StaticVariables
     public int INT_801eab58; // 801EAB58
     public int INT_801eab5c; // 801EAB5C
     public int INT_801eab60; // 801EAB60
-    public int g_ramDestination; // 801EB2E8
+    public int g_saveSlotData; // 801EB2E8
     public uint g_lastVisitedMapId; // 801EB2EC
     public int DAT_801eb2f0; // 801EB2F0
     public int DAT_801eb2f4; // 801EB2F4
@@ -5761,7 +5835,7 @@ public class StaticVariables
     public int DAT_801eb2fc; // 801EB2FC
     public int DAT_801eb300; // 801EB300
     public int DAT_801eb304; // 801EB304
-    public char[] g_menuStatusText = new char[32]; // 801EB310
+    public string g_menuStatusText; // = new char[32]; // 801EB310
     public uint g_savedGameplayTime; // 801EB330
     public int g_initialMapId; // 801EB334
     public int g_initialCameraTileX; // 801EB338
@@ -5782,7 +5856,7 @@ public class StaticVariables
     public short DAT_801eb834; // 801EB834
     public short DAT_801eb83a; // 801EB83A
     public short DAT_801eb83c; // 801EB83C
-    public short[] SHORT_ARRAY_801eb83e = new short[256]; // 801EB83E
+    public short[] g_initialNumberOfItems = new short[256]; // 801EB83E
     public short g_currentSaveSlotNameIndex; // 801EBA3E
     public uint[] g_globalFlags = new uint[1024]; // 801EBA40 //64
     public byte[] g_bufferEtc = new byte[12288]; // 801EBB40

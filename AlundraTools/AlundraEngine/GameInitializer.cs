@@ -372,14 +372,14 @@ public class GameInitializer
                 _gameEngine.PlayerManager.InitializeHpAndMp();
             }
             iconIndex = 0;
-            //iconEtcEntryPtr = &_gameEngine.StaticVariables.g_iconNameEtcBase;
+            //iconEtcEntryPtr = &_gameEngine.StaticVariables.g_itemDropProperties;
             _gameEngine.StaticVariables.g_lastVisitedMapId = 0xffffffff;
             _gameEngine.StaticVariables.g_currentSaveSlotNameIndex = 0;
             _gameEngine.StaticVariables.g_savedGameplayTime = 0;
             do
             {
-                var value = _gameEngine.StaticVariables.g_iconNameEtcBase[iconIndex * 2 + 1] >> 16;
-                value &= 0xFF;
+                //Debugger.Break();
+                var value = _gameEngine.StaticVariables.g_itemDropProperties[iconIndex].Field3;
                 if ((value & 0x80) != 0)
                 {
                     _gameEngine.PlayerManager.AddOneItemIfUnlocked(iconIndex);
@@ -388,7 +388,7 @@ public class GameInitializer
                 //iconEtcEntryPtr = iconEtcEntryPtr + 2;
             } while (iconIndex < 0x62);
             _gameEngine.PlayerManager.SetPlayerWeaponId(1);
-            //InitializeExtraSystemState();
+            //InitializeNumberOfItems();
         }
 
         _gameEngine.StaticVariables.g_warpTriggerType = 0x36;
@@ -397,7 +397,7 @@ public class GameInitializer
         _gameEngine.StaticVariables.g_cameraLookAtX = (playerTileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraLookAtY = (playerTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraLookAtZ = playerZ << 0x14;
-        _gameEngine.StaticVariables.g_desiredMap = 476; //_gameEngine.StaticVariables.g_initialMapId;
+        _gameEngine.StaticVariables.g_desiredMap = _gameEngine.StaticVariables.g_initialMapId; // 452; //_gameEngine.StaticVariables.g_initialMapId; //476
         _gameEngine.StaticVariables.g_cameraTargetX = (_gameEngine.StaticVariables.g_initialCameraTileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraTargetY = (_gameEngine.StaticVariables.g_initialCameraTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraTargetZ = _gameEngine.StaticVariables.g_initialCameraTileZ << 0x14;
@@ -422,7 +422,7 @@ public class GameInitializer
 
         //while (i < 0x80)
         //{
-        //    if (_gameEngine.StaticVariables.g_iconNameEtcBase[index] == 0)
+        //    if (_gameEngine.StaticVariables.g_itemDropProperties[index] == 0)
         //    {
         //        break;
         //    }

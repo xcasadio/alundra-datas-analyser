@@ -6,6 +6,7 @@ using AlundraEngine.Text;
 using System.Drawing.Imaging;
 using System.Text;
 using System.Text.Json;
+using AlundraEngine.Balance;
 using Color = System.Drawing.Color;
 using Timer = System.Windows.Forms.Timer;
 
@@ -171,10 +172,8 @@ namespace AlundraTools.GameControls
             if (_selectedGameMap?.Info != null)
             {
                 var info = _selectedGameMap.Info;
-                lblInfo.Text =
-                    $@"grav:{info.Gravity} term_vel:{info.TerminalVelocity} _a:{info.SlideEffectId} balance:{info.BalanceLevel} _c:{info.C} _d:{info.D} _e:{info.E} _f:{info.F} _10:{info._10}";
+                lblInfo.Text = _selectedGameMap.Info.ToString();
 
-                //portals
                 lstPortals.Items.Clear();
                 for (var dex = 0; dex < _selectedGameMap.Info.Portals.Length; dex++)
                 {
@@ -234,8 +233,7 @@ namespace AlundraTools.GameControls
             if (_selectedGameMap?.ScrollScreen != null)
             {
                 var scinfo = _selectedGameMap.ScrollScreen;
-                lblScrollInfo.Text =
-                    $"? {scinfo.Unknown1}\t? {scinfo.Unknown2}\t? {scinfo.Unknown3}\t? {scinfo.Unknown4}\t? {scinfo.Unknown5}\t? {scinfo.Unknown6}\t? {scinfo.Unknown7}\t? {scinfo.Unknown8}";
+                lblScrollInfo.Text = scinfo.ToString();
             }
             else
             {

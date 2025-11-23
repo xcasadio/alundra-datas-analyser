@@ -23,7 +23,9 @@ public class GameMapInfo
         D = br.ReadByte();//d
         E = br.ReadByte();//e
         F = br.ReadByte();//f
-        _10 = br.ReadInt16();//10
+        _10 = br.ReadByte();//10
+        _11 = br.ReadByte();//10
+
         //read palettes
         var maxPalettes = 32;
         Palettes = new Color[maxPalettes][];
@@ -100,16 +102,18 @@ public class GameMapInfo
     }
 
     public readonly int MemoryAddress;
+
     public readonly int MapId; //0
     public readonly short Gravity; //4
-    public readonly short TerminalVelocity;
-    public readonly byte SlideEffectId;
-    public readonly byte BalanceLevel;
-    public readonly byte C;
+    public readonly short TerminalVelocity; // ZViscosity
+    public readonly byte SlideEffectId; // XYResistance
+    public readonly byte BalanceLevel; // AnimDeleteWall
+    public readonly byte C; 
     public readonly byte D;
     public readonly byte E;
     public readonly byte F;
-    public readonly short _10; // TODO short or byte ??
+    public readonly byte _10; // AnimLandFloor
+    public readonly byte _11; // item something
     public readonly Color[][] Palettes;
     public readonly byte PortalFlag1;
     public readonly byte PortalFlag2;
@@ -117,4 +121,9 @@ public class GameMapInfo
     public readonly WarpData[] Portals;
     
     public readonly Bitmap PalettesBitmap;
+
+    public override string ToString()
+    {
+        return $"gravity:{Gravity} term_vel:{TerminalVelocity} _a:{SlideEffectId} balance:{BalanceLevel} _c:{C} _d:{D} _e:{E} _f:{F} _10:{_10} _11:{_11} portalFlags:{PortalFlag1} {PortalFlag2}";
+    }
 }
