@@ -18,7 +18,7 @@ public class CommandBase
         MemoryAddress = memoryAddress;
         Command = command;
         Parameters = parameters;
-        Size = SpriteInfoEventCodes.CommandSizeByCodes.GetValueOrDefault(command, 1);
+        Size = SpriteInfoEventCodes.CommandSizeByCode.GetValueOrDefault(command, 1);
         Name = name;
     }
 

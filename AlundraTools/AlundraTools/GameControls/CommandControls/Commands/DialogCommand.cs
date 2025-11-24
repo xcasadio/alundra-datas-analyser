@@ -2,8 +2,8 @@
 
 public class DialogCommand : CommandBaseDecimalParameters
 {
-    public readonly int TextId;
-    public readonly int PlayerControlFlag;
+    public int TextId;
+    public int PlayerControlFlag;
 
     public DialogCommand(byte command, byte[] parameters, string name, int memoryAddress)
         : base(command, parameters, name, memoryAddress)

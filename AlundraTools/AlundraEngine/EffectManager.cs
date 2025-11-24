@@ -63,6 +63,9 @@ public class EffectManager
         effectStatus = GetMapEffectRecord(effectId, checkSpawnArea == 1);
         effect = null;
 
+        var tileHalfWidth = StaticVariables.MapTileWidth / 2;
+        var tileHalfHeight = StaticVariables.MapTileHeight / 2;
+
         if (effectStatus != null)
         {
             flags = effectStatus.Flags;
@@ -81,8 +84,8 @@ public class EffectManager
                         flags & 0x80,
                         effectStatus.EffectId,
                         effectStatus.AnimId,
-                        (int)(((uint)effectStatus.X * 12 + 12) * 0x10000),
-                        (int)(((uint)effectStatus.Y * 8 + 8) * 0x10000),
+                        (int)(((uint)effectStatus.X * tileHalfWidth + tileHalfWidth) * 0x10000),
+                        (int)(((uint)effectStatus.Y * tileHalfHeight + tileHalfHeight) * 0x10000),
                         (int)((uint)effectStatus.Z << 0x13)
                     );
                 }

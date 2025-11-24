@@ -4703,7 +4703,7 @@ public class StaticVariables
     //public char[] g_effectDebugFlagNames = new char[20]; // 80098F34
     //public byte  g_weaponNames; // 80098F64
     //public byte  g_damageNames; // 80098F94
-    public byte[] BYTE_ARRAY_80098fa4 = new byte[8]; // 80098FA4
+    public byte[] BYTE_ARRAY_80098fa4 = new byte[] {1, 2, 3, 4, 5, 5, 6, 7}; // 80098FA4
     //public int  g_scriptFunctions[255]; // 80098FAC
     // 800993A8
     public byte[] g_mapWarpPattern = new byte[]

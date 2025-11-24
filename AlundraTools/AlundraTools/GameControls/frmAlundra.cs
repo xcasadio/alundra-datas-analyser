@@ -982,7 +982,7 @@ namespace AlundraTools.GameControls
 
         private string GetSector1ByteCodes(BinaryReader br, int index, short[] sector1Table)
         {
-            if (index > 0 && index < 0xff)
+            if (index >= 0 && index < 0xff)
             {
                 return sector1Table[index & 0x7f].ToString("x4") + ":" + 
                        (_selectedGameMap.SpriteInfo.Header.EventCodeAddress + sector1Table[index & 0x7f]).ToString("x6") + ":" + 
