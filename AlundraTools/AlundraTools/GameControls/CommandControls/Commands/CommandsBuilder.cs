@@ -41,6 +41,8 @@ public static class CommandsBuilder
             0x58 => new DirectionBranchCommand(code, parameters, name, memoryAddress),
             0x5C => new DialogCommandWithChoice(code, parameters, name, memoryAddress),
             0x64 => new SetPositionCommand(code, parameters, name, memoryAddress),
+            0x78 => new GotoCommand(code, parameters, name, memoryAddress),
+
             _ => new CommandBase(code, parameters, name, memoryAddress),
         };
     }

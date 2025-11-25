@@ -2552,7 +2552,7 @@ public class PlayerManager
     }
 
     // 80031340
-    private void HandleWarpTransition(WarpData warpData, int warpType, int extraData)
+    public void HandleWarpTransition(WarpData warpData, int warpType, int extraData)
     {
         if (_gameEngine.StaticVariables.g_isWarpDisabled != 0)
         {

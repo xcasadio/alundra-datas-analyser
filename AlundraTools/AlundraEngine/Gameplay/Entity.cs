@@ -112,10 +112,6 @@ public class Entity
     public int MapEventProgramId;//22c
     public Entity LogicContextEntity; //self
     public readonly EventProgramState EventProgramState = new();
-    public byte _268;//0x268
-    public byte _269;//0x269
-    public byte _26a;//0x26a
-    public byte _26b;//0x26b
     public uint LastTargetAnimationId;//26c
     public uint LastTargetDirection;//270
     public byte[] Bytes = new byte[4];

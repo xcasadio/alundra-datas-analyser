@@ -1681,7 +1681,6 @@ public class GameEngine
             currentMapEvent.ProgramBMap = playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap];
             //mapEventEntity.EventTrigger = playerEntity.EventTrigger;
         }
-
     }
 
     public SpriteEffectRecord GetEffectSpriteFromSpriteTable(bool isMapSprite, int spritetableindex, out int addedtosheet, out int addedtopallette)
@@ -1842,6 +1841,7 @@ public class GameEngine
         if ((entityId & 0x80) == 0)
         {
             CheckEntityRecord(entityId);//calls getinitrecord which is a 20 byte datarecord SIEntityRecord
+            
             foreach (var entity in StaticVariables.g_entitySlots.Skip(1))
             {
                 if ((ownerEntity.Status - 1 < 2 || ownerEntity.Status == 3) && entity.EntityRefId == entityId)
@@ -1849,6 +1849,7 @@ public class GameEngine
                     StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                 }
             }
+
             return matchCount;
         }
 
@@ -2584,5 +2585,35 @@ public class GameEngine
         chars[26] = (char)('0' + (seconds % 10));
 
         StaticVariables.g_menuStatusText = new string(chars);
+    }
+
+    //800450b0
+    public void SetTextFlags(uint flags)
+    {
+        StaticVariables.g_textFlags = flags;
+    }
+
+    //80045088
+    public void ActivateTextAutoAdvanceFlag()
+    {
+        if ((StaticVariables.g_textFlags & 4U) != 0)
+        {
+            StaticVariables.g_textAutoAdvanceFlag = 1;
+        }
+    }
+
+    //800450e4
+    public void SetDebugFlag(uint flags)
+    {
+        StaticVariables.g_debugFlags_2 = flags;
+    }
+
+    //800450bc
+    public void ActivateDebugTextAutoAdvance()
+    {
+        if ((StaticVariables.g_debugFlags_2 & 4) != 0)
+        {
+            StaticVariables.g_textAutoAdvanceFlag_2 = 1;
+        }
     }
 }

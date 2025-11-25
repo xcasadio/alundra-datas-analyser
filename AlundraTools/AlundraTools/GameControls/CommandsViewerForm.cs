@@ -26,15 +26,23 @@ namespace AlundraTools.GameControls
 
         private void CommandsViewerForm_Load(object sender, EventArgs e)
         {
-            var commandBases = CommandsBuilder.Convert(_commands);
-            int index = 0;
-
-            foreach (var commandBase in commandBases)
+            try
             {
-                CreateTreeViewNode(ref index, commandBase);
-                index++;
-            }
+                var commandBases = CommandsBuilder.Convert(_commands);
+                int index = 0;
 
+                foreach (var commandBase in commandBases)
+                {
+                    CreateTreeViewNode(ref index, commandBase);
+                    index++;
+                }
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.ToString(), "error", MessageBoxButtons.OK);
+                throw;
+            }
+            
             treeView1.ExpandAll();
         }
 
