@@ -2,22 +2,22 @@
 
 public class GameMapHeader
 {
-    public GameMapHeader(DbHeader header)
+    public GameMapHeader(DataBinHeader header)
     {
         //alundra gamemap, just has sprites
         InfoBlockOffset = -1;
         MapBlockOffset = -1;
         TileSheetsOffset = -1;
-        SpriteInfoOffset = (int)header.AlundraSpriteInfoOffset;
-        SpriteSheetsOffset = (int)header.AlundraSpritesOffset;
+        SpriteRecordsOffset = (int)header.AlundraSpriteRecordsOffset;
+        SpriteSheetOffset = (int)header.AlundraSpriteSheetOffset;
         ScrollScreenOffset = -1;
         StringTableOffset = (int)header.AlundraStringTableOffset;
 
         InfoSize = 0;
         MapSize = 0;
         TilesSize = 0;
-        SpriteInfoSize = SpriteSheetsOffset - SpriteInfoOffset;
-        SpritesSize = (int)header.DrawPageParam - SpriteSheetsOffset;
+        SpriteInfoSize = SpriteSheetOffset - SpriteRecordsOffset;
+        SpritesSize = (int)header.DrawPageParam - SpriteSheetOffset;
         ScrollSize = 0;
     }
 
@@ -26,16 +26,16 @@ public class GameMapHeader
         InfoBlockOffset = br.ReadInt32();//0
         MapBlockOffset = br.ReadInt32();//4
         TileSheetsOffset = br.ReadInt32();//8
-        SpriteInfoOffset = br.ReadInt32();//c
-        SpriteSheetsOffset = br.ReadInt32();//10
+        SpriteRecordsOffset = br.ReadInt32();//c
+        SpriteSheetOffset = br.ReadInt32();//10
         ScrollScreenOffset = br.ReadInt32();//14
         StringTableOffset = br.ReadInt32();//18
 
         InfoSize = MapBlockOffset - InfoBlockOffset;
         MapSize = TileSheetsOffset - MapBlockOffset;
-        TilesSize = SpriteInfoOffset - TileSheetsOffset;
-        SpriteInfoSize = SpriteSheetsOffset - SpriteInfoOffset;
-        SpritesSize = ScrollScreenOffset - SpriteSheetsOffset;
+        TilesSize = SpriteRecordsOffset - TileSheetsOffset;
+        SpriteInfoSize = SpriteSheetOffset - SpriteRecordsOffset;
+        SpritesSize = ScrollScreenOffset - SpriteSheetOffset;
         ScrollSize = StringTableOffset - ScrollScreenOffset;
         //string table is called later
     }
@@ -52,8 +52,8 @@ public class GameMapHeader
     public readonly int InfoBlockOffset;
     public readonly int MapBlockOffset;
     public readonly int TileSheetsOffset;
-    public readonly int SpriteInfoOffset;
-    public readonly int SpriteSheetsOffset;
+    public readonly int SpriteRecordsOffset;
+    public readonly int SpriteSheetOffset;
     public readonly int ScrollScreenOffset;//shadow, sky or distant background
     public readonly int StringTableOffset;
 }

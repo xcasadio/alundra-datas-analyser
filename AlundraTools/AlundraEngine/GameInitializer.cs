@@ -118,7 +118,7 @@ public class GameInitializer
         //InitDisplaySystem((int*)DrawOTags, (int*)ClearOrderTables);
         //InitializeOrderingTables();
         InitializeTileRenderingSystem(_gameEngine.StaticVariables.g_drawPageParam);
-        InitializeAlundraSpriteResourcesFromFile(StaticVariables.DATAS_BIN, _gameEngine.DatasBin.Header.AlundraSpriteInfoOffset, _gameEngine.DatasBin.Header.AlundraSpritesOffset, _gameEngine.DatasBin.Header.AlundraSpritesRepeatOffset, _gameEngine.DatasBin.Header.AlundraStringTableOffset);
+        InitializeAlundraSpriteResourcesFromFile(StaticVariables.DATAS_BIN, _gameEngine.DatasBin.Header.AlundraSpriteRecordsOffset, _gameEngine.DatasBin.Header.AlundraSpriteSheetOffset, _gameEngine.DatasBin.Header.AlundraSpritesRepeatOffset, _gameEngine.DatasBin.Header.AlundraStringTableOffset);
         //LoadBalance_bin();
         InitializeDebugVars();
         //LoadAlundraStringTable(DATAS_BIN, _datasBin.Header.AlundraStringTableRepeatOffset);
@@ -398,7 +398,7 @@ public class GameInitializer
         _gameEngine.StaticVariables.g_cameraLookAtX = (playerTileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraLookAtY = (playerTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraLookAtZ = playerZ << 0x14;
-        _gameEngine.StaticVariables.g_desiredMap = 452; //_gameEngine.StaticVariables.g_initialMapId; //476
+        _gameEngine.StaticVariables.g_desiredMap = _gameEngine.StaticVariables.g_initialMapId; //452; //_gameEngine.StaticVariables.g_initialMapId; //476
         _gameEngine.StaticVariables.g_cameraTargetX = (_gameEngine.StaticVariables.g_initialCameraTileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraTargetY = (_gameEngine.StaticVariables.g_initialCameraTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraTargetZ = _gameEngine.StaticVariables.g_initialCameraTileZ << 0x14;

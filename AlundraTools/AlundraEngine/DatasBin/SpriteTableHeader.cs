@@ -8,6 +8,7 @@ public class SpriteTableHeader
         MemoryAddress = memoryAddress;
         Sector5Id = id;
         BinOffset = binOffset;
+
         AnimationOffsetsPointer = br.ReadInt32();
         AnimationsPointer = br.ReadInt32();
         FrameCollisionPointer = br.ReadInt32();

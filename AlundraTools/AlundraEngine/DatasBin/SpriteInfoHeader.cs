@@ -31,7 +31,7 @@ public class SpriteInfoHeader
         EventCodesCSize = EventCodesDPointer - EventCodesCPointer;
         EventCodesDSize = EventCodesEPointer - EventCodesDPointer;
         EventCodesESize = EventCodesFPointer - EventCodesEPointer;
-        EventCodesFAndremainingSize = EntitiesPointer - EventCodesFPointer;
+        EventCodesFAndRemainingSize = EntitiesPointer - EventCodesFPointer;
     }
     public readonly int MemoryAddress;
     public readonly int EventCodeAddress;
@@ -60,5 +60,5 @@ public class SpriteInfoHeader
     public readonly int EventCodesESize;
     public readonly int EventCodesFPointer;
     public int EventCodesFSize;//calced when reading sector1
-    public readonly int EventCodesFAndremainingSize;
+    public readonly int EventCodesFAndRemainingSize;
 }

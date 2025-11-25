@@ -16,6 +16,7 @@ public class SpriteInfo
             SpriteTable[i] = br.ReadInt32();
         }
 
+        //read sprite effect table
         br.BaseStream.Position = _binOffset + Header.SpriteEffectsPointer;
         SpriteEffectTable = new int[0xff];
         for (var i = 0; i < SpriteEffectTable.Length; i++)

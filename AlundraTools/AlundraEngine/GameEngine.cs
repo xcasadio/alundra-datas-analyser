@@ -110,7 +110,7 @@ public class GameEngine
                 //StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b34,
                 //StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b38);
                 //LoadSpriteInfo(StaticVariables.g_compressedImageData[StaticVariables.g_mapIndexInDatasBin]);
-                //SetEtcAnimTableAlt(StaticVariables.g_compressedImageData[StaticVariables.g_animTableAlt_80191b48]);
+                //SetEtcStrings(StaticVariables.g_compressedImageData[StaticVariables.g_animTableAlt_80191b48]);
                 //InitializeTileSet(StaticVariables.g_currentMap, StaticVariables.g_compressedImageData[StaticVariables.g_tileSet_index_80191b44]);
 
                 //_datasBin.AlundraGameMap.SpriteInfo.Entities.Entities[0].PosX
@@ -298,14 +298,16 @@ public class GameEngine
         InitializeSpriteInfo(StaticVariables.g_currentMapSpriteInfo, spriteRecord);
     }
 
+    //8002d808
     private void InitializeSpriteInfo(SpriteInfoHeader spriteInfoHeader, SpriteRecord spriteRecord)
     {
         //Loaded in GameMap
     }
 
-    private void SetEtcAnimTableAlt(int param_1)
+    //800423ec
+    private void SetEtcStrings(string[] strings)
     {
-        StaticVariables.g_etcAnimTable = param_1;
+        StaticVariables.g_etcStrings = strings;
     }
 
     //8008159c
@@ -592,7 +594,7 @@ public class GameEngine
     // 8003a1b8
     public Entity SpawnEntity(Entity parent, int spriteInfoEntityIndex, int notCheckSpawnZone)
     {
-        var entityRecord = CurrentMap.SpriteInfo.Entities.Entities[spriteInfoEntityIndex];
+        var entityRecord = GetEntityRecord(spriteInfoEntityIndex);
 
         if (entityRecord == null)
         {
@@ -651,11 +653,14 @@ public class GameEngine
 
         var directionIndex = entityRecord.SpriteDirection & 0x3;
 
+        var tileHalfWidth = StaticVariables.MapTileWidth / 2;
+        var tileHalfHeight = StaticVariables.MapTileHeight / 2;
+
         EntityManager.InitializeEntity(
             entity, parent,
             spriteRecord, entityRecord, (uint)spriteTableIndex, spriteInfoEntityIndex,
-            (entityRecord.XPos * 0xc + 0xc) * 0x10000,
-            (entityRecord.YPos * 8 + 8) * 0x10000,
+            (entityRecord.XPos * tileHalfWidth + tileHalfWidth) * 0x10000,
+            (entityRecord.YPos * tileHalfHeight + tileHalfHeight) * 0x10000,
             entityRecord.Height << 0x13,
             0,
             (uint)StaticVariables.g_cardinalDirectionTable[directionIndex],
@@ -682,6 +687,7 @@ public class GameEngine
             paletteOffset = 0xb;
             sheetSize = 0x60;
         }
+
         if (spriteTableIndex < 0)
         {
             throw new Exception("Illegal Character Race!");
@@ -1833,7 +1839,7 @@ public class GameEngine
 
         if ((entityId & 0x80) == 0)
         {
-            CheckValidEntityId(entityId);//calls getinitrecord which is a 20 byte datarecord SIEntityRecord
+            CheckEntityRecord(entityId);//calls getinitrecord which is a 20 byte datarecord SIEntityRecord
             foreach (var entity in StaticVariables.g_entitySlots.Skip(1))
             {
                 if ((ownerEntity.Status - 1 < 2 || ownerEntity.Status == 3) && entity.EntityRefId == entityId)
@@ -1975,95 +1981,17 @@ public class GameEngine
         return matchCount;
     }
 
-    private SiEntityRecord CheckValidEntityId(int entityId)
+    private SiEntityRecord CheckEntityRecord(int entityId)
     {
-        var rec = GetInitData(entityId);
+        var rec = GetEntityRecord(entityId);
         return rec;
     }
 
-    public Entity ActivateEntity(Entity ownerEntity, int entityId, int forceActivate)
-    {
-        var data = GetInitData(entityId);
-
-        if (data == null)
-        {
-            return null;
-        }
-
-        if (forceActivate == 0)
-        {
-            //if player is outside of the activation zone dont activate
-            //  this is used when a map has multiple rooms, the activate zone is set to the room where
-            //  the entity is, if the player loads in a different room then the entity wont activate
-            if (StaticVariables.PlayerEntity.TileX < data.XMin)
-            {
-                return null;
-            }
-
-            if (data.XMax < StaticVariables.PlayerEntity.TileX)
-            {
-                return null;
-            }
-
-            if (StaticVariables.PlayerEntity.TileY < data.YMin)
-            {
-                return null;
-            }
-
-            if (data.YMax < StaticVariables.PlayerEntity.TileY)
-            {
-                return null;
-            }
-        }
-
-        if ((data.SpriteDirection & 0x40) == 0 && forceActivate == 0)
-        {
-            return null;
-        }
-
-        int addedtosheet, addedtopalette;
-        var isMapSprite = (data.SpriteDirection & 0x80) != 0;
-        var sprite = GetSpriteFromSpriteTable(isMapSprite, data.SpriteTableIndex, out addedtosheet, out addedtopalette);
-
-        if (sprite == null)
-        {
-            return null;
-        }
-
-        var entity = EntityManager.AllocateEntitySlot();
-
-        if (entity == null)
-        {
-            return null;
-        }
-
-        var x = (data.XPos * 12 + 12) << 16;
-        var y = (data.XPos * 8 + 8) << 16;
-        var z = data.Height << 19;
-
-        var directionTable = new uint[] { 0x00, 0x10, 0x08, 0x18 };
-        var dir = directionTable[data.SpriteDirection & 0x3];
-
-        var spriteTable = (uint)data.SpriteTableIndex;
-        if ((data.SpriteDirection & 0x80) != 0)
-        {
-            spriteTable += 0x100;
-        }
-
-        EntityManager.InitializeEntity(entity, ownerEntity,
-            sprite, data, spriteTable, entityId,
-            x, y, z,
-            0, dir,
-            addedtosheet, addedtopalette);
-
-        return entity;
-    }
-
-    public SiEntityRecord GetInitData(int entityId)
+    public SiEntityRecord GetEntityRecord(int id)
     {
         SiEntityRecord res;
 
-        if (entityId < 0 || CurrentMap.SpriteInfo.Entities.Entities.Length <= entityId) // StaticVariables.g_maxInitData
+        if (id < 0 || CurrentMap.SpriteInfo.Entities.Entities.Length <= id) // StaticVariables.g_maxEntityRecord
         {
             Debugger.Break();
             //"Illegal character initial data!!
@@ -2071,9 +1999,9 @@ public class GameEngine
         }
         else
         {
-            res = CurrentMap.SpriteInfo.Entities.Entities[entityId];// * 0x14;
+            res = CurrentMap.SpriteInfo.Entities.Entities[id];
 
-            if (CurrentMap.SpriteInfo.Entities.Entities[entityId + 1] == null)
+            if (res.IsEnabled == 0)
             {
                 res = null;
             }
@@ -2474,7 +2402,7 @@ public class GameEngine
     }
 
     //800423f8
-    public int TryPlayEtcAnimation(uint textId, int animationMode)
+    public int TryOpenDialog(uint textId, int playerControlMode)
     {
         string[] strings;
 
@@ -2484,18 +2412,18 @@ public class GameEngine
         }
 
         strings = AlundraMap.Strings;
-        //tableBase = StaticVariables.g_etcAnimTable; //alundra string table
+        //tableBase = StaticVariables.g_alundraMapString; //alundra string table
 
         if ((textId & 0x80) != 0)
         {
             strings = CurrentMap.Strings;
-            //tableBase = StaticVariables.g_etcAnimTableAlt; //currentmapstringtable
+            //tableBase = StaticVariables.g_etcStrings; //currentmapstringtable
         }
 
         var text = strings[textId & 0x7f];
 
-        SetupEtcAnimation();
-        UIManager.InitializeDialogMessage(text, animationMode);
+        DialogEmptyFunction();
+        UIManager.InitializeDialogMessage(text, playerControlMode);
 
         return 1;
     }
@@ -2507,7 +2435,7 @@ public class GameEngine
     }
 
     //8008167c
-    private void SetupEtcAnimation()
+    private void DialogEmptyFunction()
     {
         //empty function
     }

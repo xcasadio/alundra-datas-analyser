@@ -228,7 +228,7 @@ namespace AlundraTools.GameControls
             lblSpriteInfo.Text =
                 $@"{Fix(sinfo.EntitiesPointer)}    {Fix(sinfo.MapEffectSector3Pointer)} {Fix(sinfo.MapEventsPointer)} {Fix(sinfo.SpriteTablePointer)} {Fix(sinfo.SpriteEffectsPointer)} palettes:{Fix(sinfo.SpritePalettesPointer)}    {Fix(sinfo.EventCodesAPointer)} {Fix(sinfo.EventCodesBPointer)} {Fix(sinfo.EventCodesCPointer)} {Fix(sinfo.EventCodesDPointer)} {Fix(sinfo.EventCodesEPointer)}    {Fix(sinfo.EventCodesFPointer)}";
             lblSpriteInfoSizes.Text =
-                $@"{Fix(sinfo.EntitiesSize)}    {Fix(sinfo.MapEffectSector3Size)} {Fix(sinfo.MapEventsSize)} {Fix(sinfo.SpriteTableSize)} {Fix(sinfo.SpriteEffectsSize)} palettes:{Fix(sinfo.SpritePalettesSize)}    {Fix(sinfo.EventCodesASize)} {Fix(sinfo.EventCodesBSize)} {Fix(sinfo.EventCodesCSize)} {Fix(sinfo.EventCodesDSize)} {Fix(sinfo.EventCodesESize)}    {Fix(sinfo.EventCodesFAndremainingSize)}";
+                $@"{Fix(sinfo.EntitiesSize)}    {Fix(sinfo.MapEffectSector3Size)} {Fix(sinfo.MapEventsSize)} {Fix(sinfo.SpriteTableSize)} {Fix(sinfo.SpriteEffectsSize)} palettes:{Fix(sinfo.SpritePalettesSize)}    {Fix(sinfo.EventCodesASize)} {Fix(sinfo.EventCodesBSize)} {Fix(sinfo.EventCodesCSize)} {Fix(sinfo.EventCodesDSize)} {Fix(sinfo.EventCodesESize)}    {Fix(sinfo.EventCodesFAndRemainingSize)}";
             //scroll info
             if (_selectedGameMap?.ScrollScreen != null)
             {
@@ -290,7 +290,7 @@ namespace AlundraTools.GameControls
             lblWallTiles.Text = _selectedGameMap.Header.WallTilesSize.ToString();
             lblTilesSize.Text = _selectedGameMap.Header.TilesSize.ToString();
             lblSInfoSize.Text = _selectedGameMap.Header.SpriteInfoSize.ToString();
-            lblsinfoaddr.Text = (GameMap.MemoryAddress + _selectedGameMap.Header.SpriteInfoOffset).ToString("x6");
+            lblsinfoaddr.Text = (GameMap.MemoryAddress + _selectedGameMap.Header.SpriteRecordsOffset).ToString("x6");
             lblSpritesSize.Text = _selectedGameMap.Header.SpritesSize.ToString();
             lblScrollSize.Text = _selectedGameMap.Header.ScrollSize.ToString();
             lblStringsSize.Text = _selectedGameMap.Header.StringSize.ToString();
@@ -336,9 +336,9 @@ namespace AlundraTools.GameControls
             var g_spriteNames = lines.Skip(1).ToArray();
 
             lsvEntities.Items.Clear();
-            for (var dex = 0; dex < _selectedGameMap.SpriteInfo.Entities.Entities.Length; dex++)
+            for (var i = 0; i < _selectedGameMap.SpriteInfo.Entities.Entities.Length; i++)
             {
-                var entityRecord = _selectedGameMap.SpriteInfo.Entities.Entities[dex];
+                var entityRecord = _selectedGameMap.SpriteInfo.Entities.Entities[i];
 
                 if (entityRecord != null)
                 {
@@ -350,7 +350,7 @@ namespace AlundraTools.GameControls
                     var spriteName = spriteTableIndex < 512 ? g_spriteNames[spriteTableIndex] : null;
 
                     var lvi = new ListViewItem([
-                        "entity " + dex,
+                        "entity " + i,
                             entityRecord.SpriteDirection.ToString("x2"),
                             entityRecord.SpriteTableIndex.ToString("x2"),
                             spriteName,
@@ -710,7 +710,7 @@ namespace AlundraTools.GameControls
         {
             if (_selectedGameMap != null)
             {
-                AnalyzeAt(_selectedGameMap.Header.SpriteInfoOffset, _selectedGameMap.SpriteInfo.Header.MemoryAddress);
+                AnalyzeAt(_selectedGameMap.Header.SpriteRecordsOffset, _selectedGameMap.SpriteInfo.Header.MemoryAddress);
             }
         }
 
@@ -718,7 +718,7 @@ namespace AlundraTools.GameControls
         {
             if (_selectedGameMap != null)
             {
-                AnalyzeAt(_selectedGameMap.Header.SpriteSheetsOffset);
+                AnalyzeAt(_selectedGameMap.Header.SpriteSheetOffset);
             }
         }
 
@@ -1561,7 +1561,7 @@ namespace AlundraTools.GameControls
         {
             if (_selectedGameMap != null)
             {
-                AnalyzeAt(_selectedGameMap.Header.SpriteInfoOffset, _selectedGameMap.SpriteInfo.Header.MemoryAddress, _selectedGameMap.SpriteInfo.Header.MapEventsPointer);
+                AnalyzeAt(_selectedGameMap.Header.SpriteRecordsOffset, _selectedGameMap.SpriteInfo.Header.MemoryAddress, _selectedGameMap.SpriteInfo.Header.MapEventsPointer);
             }
         }
 

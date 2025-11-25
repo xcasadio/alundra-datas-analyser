@@ -1563,7 +1563,7 @@ public class EntityEventHandlers
 
         //Debugger.Break();
         _gameEngine.TriggerVisualUpdate((int)logicEntity.SpriteTableIndex);
-        var res = _gameEngine.TryPlayEtcAnimation((uint)variables[1], variables[2]);
+        var res = _gameEngine.TryOpenDialog((uint)variables[1], variables[2]);
         // SetText(exp[1], exp[2]);
 
         if (res == 0)
@@ -3058,7 +3058,7 @@ public class EntityEventHandlers
             _gameEngine.TriggerVisualUpdate((int)matchedEntity.SpriteTableIndex);
         }
 
-        matchCount = _gameEngine.TryPlayEtcAnimation((uint)variables[2], variables[3]);
+        matchCount = _gameEngine.TryOpenDialog((uint)variables[2], variables[3]);
 
         return (matchCount != 0 ? 1 : 0) << 2;
     }
@@ -5213,7 +5213,7 @@ public class EntityEventHandlers
             _gameEngine.TriggerVisualUpdate(spriteUpdateId);
         }
 
-        if (_gameEngine.TryPlayEtcAnimation((uint)variables[4], variables[5]) == 0)
+        if (_gameEngine.TryOpenDialog((uint)variables[4], variables[5]) == 0)
         {
             return 0;
         }

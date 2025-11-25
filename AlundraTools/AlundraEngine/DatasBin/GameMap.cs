@@ -5,7 +5,7 @@ namespace AlundraEngine.DatasBin;
 
 public class GameMap
 {
-    public GameMap(BinaryReader br, DbHeader dbheader)
+    public GameMap(BinaryReader br, DataBinHeader dbheader)
     {
         //the alundra gamemap (just has sprites)
         br.BaseStream.Position = Offset = 0;
@@ -62,23 +62,23 @@ public class GameMap
         if (Header.TileSheetsOffset != -1)
         {
             br.BaseStream.Position = Offset + Header.TileSheetsOffset + 6;
-            var buff = new byte[Header.SpriteInfoOffset - Header.TileSheetsOffset];
+            var buff = new byte[Header.SpriteRecordsOffset - Header.TileSheetsOffset];
             br.Read(buff, 0, buff.Length);
             _tileSheetImageData = new byte[256 * 256 * 6 / 2];//6 256x256 4bpp bitmaps
             ImageHelper.Deflate(buff, _tileSheetImageData);
         }
 
         //spriteinfo
-        if (Header.SpriteInfoOffset != -1)
+        if (Header.SpriteRecordsOffset != -1)
         {
-            br.BaseStream.Position = Offset + Header.SpriteInfoOffset;
-            SpriteInfo = new SpriteInfo(br, MemoryAddress + Header.SpriteInfoOffset, Header.SpriteSheetsOffset, isMap);
+            br.BaseStream.Position = Offset + Header.SpriteRecordsOffset;
+            SpriteInfo = new SpriteInfo(br, MemoryAddress + Header.SpriteRecordsOffset, Header.SpriteSheetOffset, isMap);
         }
 
         //spritesheet
-        if (Header.SpriteSheetsOffset != -1)
+        if (Header.SpriteSheetOffset != -1)
         {
-            br.BaseStream.Position = Offset + Header.SpriteSheetsOffset + 6;
+            br.BaseStream.Position = Offset + Header.SpriteSheetOffset + 6;
             var buff = new byte[Header.SpritesSize - 6];
             br.Read(buff, 0, buff.Length);
             _spriteSheetImageData = new byte[256 * 256 * _numSpriteSheets / 2];//numspritesheets 256x256 4bpp bitmaps

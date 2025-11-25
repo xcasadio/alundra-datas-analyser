@@ -5251,10 +5251,10 @@ public class StaticVariables
     public SpriteRef[] g_spriteImages = new SpriteRef[1024]; // 80126E6C
     public SpriteInfoHeader g_currentMapSpriteInfo; // 80126E70
     public int g_bufferImage; // 80126E74
-    public EntityRecord g_initTableEntry; // 80126E78
+    public EntityRecord g_entityRecords; // 80126E78
     public int INT_80126e7c; // 80126E7C
     public int INT_80126e80; // 80126E80
-    public int g_maxInitData; // 80126E84
+    public int g_maxEntityRecord; // 80126E84
     //public SiMapEventRecord[] g_initMapEventRecords = new SiMapEventRecord[14]; // 80126E88
     public SpriteInfoHeader g_alundraSpriteInfo; // 80126EC0
     public int g_animationStructs_paletteClut; // 80126EC4
@@ -5321,8 +5321,8 @@ public class StaticVariables
     public int g_activeEventProgramIndex; // 8013DA24
     public int g_activeCommand; // 8013DA28
     public byte[] g_datasBinBuffer4 = new byte[8192]; // 8013DA30
-    public int g_etcAnimTableAlt; // 8013FA30
-    public int g_etcAnimTable; // 8013FA34
+    public string[] g_etcStrings; // 8013FA30
+    public string[] g_alundraMapString; // 8013FA34
     //public DRAWENV  PTR_8013fa38; // 8013FA38
     public bool g_renderEffectDoneFlag; // 8013FA60
     //public DRAWENV  PTR_8013fabc; // 8013FABC
@@ -5817,7 +5817,7 @@ public class StaticVariables
     public int g_animTableAlt_80191b48; // 80191B48
     public int DAT_8019acbc; // 8019ACBC
     public int DAT_8019acc4; // 8019ACC4
-    public DatasBin.DbHeader g_dataBinHeader; // 801EAB30
+    public DatasBin.DataBinHeader g_dataBinHeader; // 801EAB30
     public int g_spriteBufferCDEnd; // 801EAB34
     public int g_imageBufferCDStart; // 801EAB38
     public int g_imageBufferCDEnd; // 801EAB3C

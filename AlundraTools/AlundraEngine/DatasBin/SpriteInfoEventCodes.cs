@@ -209,8 +209,13 @@ public class SpriteInfoEventCodes
         while (i < bytes.Length && (commandsSize == 0 || i < commandsSize))
         {
             var value = bytes[i++];
-
             var sicode = GetCode(value);
+
+            if (sicode.Size < 1)
+            {
+                continue;
+            }
+
             var size = sicode.Size;
             var name = sicode.Name;
             var parameters = new byte[size - 1];
@@ -494,75 +499,106 @@ public class SpriteInfoEventCodes
         { 0x07, "Check entity in area" },
         { 0x08, "Turn" },
         { 0x09, "Set direction" },
-        { 0x0A, "Reverse direction" }, //switch direction, used for placeing npcs
+        { 0x0A, "Reverse direction" },
         { 0x0B, "Anim wait distance" },
         { 0x0C, "Set random dir" },
-        { 0x0D, "Dialog" }, //show dialog
+        { 0x0D, "Dialog" },
         { 0x0E, "Do nothing" },
         { 0x0F, "Do nothing" },
         { 0x10, "Player lose control" },
         { 0x11, "Player gain control" },
-        { 0x12, "Play sound 1" }, //only 1 byte sound index
+        { 0x12, "Play sound 1" },
         { 0x13, "Do nothing" },
         { 0x14, "Do nothing" },
         { 0x15, "Reset z pos" },
-        { 0x16, "High gravity" }, //fall as normal  //bit 0x100
-        { 0x17, "Low gravity" }, //used for climbing ladders and flying
+        { 0x16, "High gravity" },
+        { 0x17, "Low gravity" },
         { 0x18, "Do nothing" },
         { 0x19, "Deactivate entity" },
         { 0x1A, "Set anim" },
-        { 0x1B, "Fly" }, //stop flying 0x0000   flying down 0xff7f     flying foward and up  0x0380
+        { 0x1B, "Fly" },
         { 0x1C, "Repeat anim" },
         { 0x1D, "Repeat anim with collision" },
-        { 0x1E, "Walk" }, //collision blocks/pauses the walk
-        { 0x1F, "Walk with collision" }, //collision ends the walk
-        { 0x24, "Wait force adjusted" }, //waits until force adjust is > 0
+        { 0x1E, "Walk" },
+        { 0x1F, "Walk with collision" },
+        { 0x20, "??? 0x20" },
+        { 0x21, "??? 0x21" },
+        { 0x22, "??? 0x22" },
+        { 0x23, "??? 0x23" },
+        { 0x24, "Wait force adjusted" },
         { 0x25, "Wait entity collision z or 144" },
         { 0x26, "Wait force adjusted or entity collision z" },
         { 0x27, "Face player" },
-        { 0x28, "Gravity flag 2 on" }, //bit 0x8
-        { 0x29, "Gravity flag 2 off" }, //bit 0x8
-        { 0x2A, "Gravity flag 3 on" }, //bit 0x1
-        { 0x2B, "Gravity flag 3 off" }, //bit 0x1
-        { 0x2D, "Activate entity" }, //look into this event to study entity type
+        { 0x28, "Gravity flag 2 on" },
+        { 0x29, "Gravity flag 2 off" },
+        { 0x2A, "Gravity flag 3 on" },
+        { 0x2B, "Gravity flag 3 off" },
+        { 0x2C, "??? 0x2C" },
+        { 0x2D, "Activate entity" },
         { 0x2E, "Hide" },
         { 0x2F, "Check moving in dir" },
         { 0x30, "If flag on" },
         { 0x31, "If flag off" },
-        { 0x32, "Toggle flag" }, //toggle bit on a flag
+        { 0x32, "Toggle flag" },
         { 0x33, "Check flags on" },
         { 0x34, "Check flags off" },
-        { 0x35, "Until flag off" }, //block until a flag is off
-        { 0x36, "Until flag on" }, //block until a flag is on
+        { 0x35, "Until flag off" },
+        { 0x36, "Until flag on" },
         { 0x37, "Wait" },
         { 0x38, "Register warp" },
-        { 0x39, "Wait for dialog" }, //blocks until the dialog is finished
+        { 0x39, "Wait for dialog" },
+        { 0x3A, "??? 0x3A" },
         { 0x3B, "Check player in area" },
+        { 0x3C, "??? 0x3C" },
+        { 0x3D, "??? 0x3D" },
+        { 0x3E, "??? 0x3E" },
+        { 0x3F, "??? 0x3F" },
         { 0x40, "Set program index" },
         { 0x41, "Set sprite program index" },
+        { 0x42, "??? 0x42" },
+        { 0x43, "??? 0x43" },
         { 0x44, "Wait dialog choice" },
-        { 0x45, "Gravity flag 4 off" }, //bit 0x2000
+        { 0x45, "Gravity flag 4 off" },
         { 0x46, "Gravity flag 4 on" },
-        { 0x49, "Restart" }, //seeks back to the beginning of event program
+        { 0x47, "??? 0x47" },
+        { 0x48, "??? 0x48" },
+        { 0x49, "Restart" },
         { 0x4A, "If true restart" },
         { 0x4B, "If false restart" },
-        { 0x4C, "Set dialog something" }, //*0x107200 = val
-        { 0x4D, "Check dialog something" }, //*0x107204 = *0x107200 & 0x4
+        { 0x4C, "Set dialog something" },
+        { 0x4D, "Check dialog something" },
+        { 0x4E, "??? 0x4E" },
+        { 0x4F, "??? 0x4F" },
         { 0x50, "Set dialog choice" },
         { 0x51, "Get dialog choice" },
+        { 0x52, "??? 0x52" },
+        { 0x53, "??? 0x53" },
         { 0x54, "Set walkable" },
         { 0x55, "Set unwalkable" },
+        { 0x56, "??? 0x56" },
+        { 0x57, "??? 0x57" },
         { 0x58, "Directional branch" },
         { 0x59, "Set entity anim" },
         { 0x5A, "Turn entity" },
-        { 0x5B, "Turn entity with anim" }, //also has anim flag for on ground or climbing, etc
+        { 0x5B, "Turn entity with anim" },
         { 0x5C, "Dialog with entity" },
+        { 0x5D, "??? 0x5D" },
+        { 0x5E, "??? 0x5E" },
+        { 0x5F, "??? 0x5F" },
+        { 0x60, "??? 0x60" },
+        { 0x61, "??? 0x61" },
         { 0x62, "Set entities flags" },
         { 0x63, "Set entities gravity" },
         { 0x64, "Set entities position" },
         { 0x65, "Move entity position" },
+        { 0x66, "??? 0x66" },
         { 0x67, "Follow entity" },
+        { 0x68, "??? 0x68" },
         { 0x69, "Camera look at" },
+        { 0x6A, "??? 0x6A" },
+        { 0x6B, "??? 0x6B" },
+        { 0x6C, "??? 0x6C" },
+        { 0x6D, "??? 0x6D" },
         { 0x6E, "Is force adjusted" },
         { 0x6F, "Is collided with entity Z" },
         { 0x70, "Is above ground" },
@@ -587,14 +623,22 @@ public class SpriteInfoEventCodes
         { 0x83, "If number of item > 0" },
         { 0x84, "Use item" },
         { 0x85, "Set map tiles" },
+        { 0x86, "??? 0x86" },
+        { 0x87, "??? 0x87" },
+        { 0x88, "??? 0x88" },
+        { 0x89, "??? 0x89" },
         { 0x8A, "Spawn entity" },
         { 0x8B, "Spawn entity according to entity position" },
         { 0x8C, "Random < variable" },
+        { 0x8D, "??? 0x8D" },
+        { 0x8E, "??? 0x8E" },
+        { 0x8F, "??? 0x8F" },
         { 0x90, "Create effect" },
         { 0x91, "Disable effect" },
         { 0x92, "Set effect anim" },
         { 0x93, "Set effect pos" },
         { 0x94, "Set effect forces" },
+        { 0x95, "??? 0x95" },
         { 0x96, "Restore HP" },
         { 0x97, "Spend money" },
         { 0x98, "Add money" },
@@ -603,21 +647,40 @@ public class SpriteInfoEventCodes
         { 0x9B, "Set g_isWarpDisabled = 1" },
         { 0x9C, "Set g_isWarpDisabled = 0" },
         { 0x9D, "Exit() - Fatal Error" },
+        { 0x9E, "??? 0x9E" },
+        { 0x9F, "??? 0x9F" },
         { 0xA0, "Adjusted effect pos" },
         { 0xA1, "Set effect pos with entity" },
         { 0xA2, "Create effect with pos" },
         { 0xA3, "Create effect with entity pos" },
+        { 0xA4, "??? 0xA4" },
         { 0xA5, "Stop all sound" },
         { 0xA6, "Load bgm" },
         { 0xA7, "Play music" },
+        { 0xA8, "??? 0xA8" },
+        { 0xA9, "??? 0xA9" },
+        { 0xAA, "??? 0xAA" },
+        { 0xAB, "??? 0xAB" },
         { 0xAC, "Set gravity flags on entity" },
+        { 0xAD, "??? 0xAD" },
         { 0xAE, "Exit() - Fatal Error" },
         { 0xAF, "Set fade transition with color" },
         { 0xB0, "Set player position and warp" },
+        { 0xB1, "??? 0xB1" },
+        { 0xB2, "??? 0xB2" },
+        { 0xB3, "??? 0xB3" },
+        { 0xB4, "??? 0xB4" },
+        { 0xB5, "??? 0xB5" },
+        { 0xB6, "??? 0xB6" },
+        { 0xB7, "??? 0xB7" },
+        { 0xB8, "??? 0xB8" },
         { 0xB9, "Start cd streaming" },
+        { 0xBA, "??? 0xBA" },
+        { 0xBB, "??? 0xBB" },
         { 0xBC, "Increase player HPMax" },
         { 0xBD, "Play sound 2" },
         { 0xBE, "Play sound 2 (bis)" },
+        { 0xBF, "??? 0xBF" },
         { 0xC0, "Set equipped weapon" },
         { 0xC1, "Set player flag &= 0xffffff7f" },
         { 0xC2, "Check something save" },

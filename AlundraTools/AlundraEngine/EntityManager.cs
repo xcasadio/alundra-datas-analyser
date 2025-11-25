@@ -1,10 +1,8 @@
 ﻿using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
-using AlundraEngine.Sound;
 using System.Diagnostics;
 using AlundraEngine.Balance;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AlundraEngine;
 
@@ -45,7 +43,7 @@ public class EntityManager
     }
 
     // 80039d04
-    public void InitializeEntity(Entity entity, Entity parentEntity, SpriteRecord sprite, SiEntityRecord? entityRecord,
+    public void InitializeEntity(Entity entity, Entity parentEntity, SpriteRecord spriteRecord, SiEntityRecord? entityRecord,
         uint spriteTableIndex, int entityId, int x, int y, int z, uint animationId, uint direction, int paletteIndex,
         int sheetSize)
     {
@@ -68,7 +66,7 @@ public class EntityManager
             entity.ChildEntity = linkedEntity;
         }
 
-        entity.SpriteRecord = sprite;
+        entity.SpriteRecord = spriteRecord;
         entity.EntityRecord = entityRecord;
         entity.SpriteTableIndex = spriteTableIndex;
         
@@ -91,15 +89,15 @@ public class EntityManager
         entity.TargetAnimationId = animationId;
         entity.TargetDirection = direction;
         //uint flags = animData.Flags;
-        entity.Flags = (uint)(sprite.Header.MoreFlags | sprite.Header.CanPickup << 8 |
-                              sprite.Header.FlagsPortraitShadowType << 16);
+        entity.Flags = (uint)(spriteRecord.Header.MoreFlags | spriteRecord.Header.CanPickup << 8 |
+                              spriteRecord.Header.FlagsPortraitShadowType << 16);
 
-        entity.SpriteProgramIndexes[ScriptHelper.ProgramALoad] = sprite.Header.ProgramLoad;
+        entity.SpriteProgramIndexes[ScriptHelper.ProgramALoad] = spriteRecord.Header.ProgramLoad;
         entity.SpriteProgramIndexes[ScriptHelper.ProgramBMap] = 0;
-        entity.SpriteProgramIndexes[ScriptHelper.ProgramCTick] = sprite.Header.ProgramTick;
-        entity.SpriteProgramIndexes[ScriptHelper.ProgramDTouch] = sprite.Header.ProgramTouch;
-        entity.SpriteProgramIndexes[ScriptHelper.ProgramEDeactivate] = sprite.Header.ProgramDeactivate;
-        entity.SpriteProgramIndexes[ScriptHelper.ProgramFInteract] = sprite.Header.ProgramInteract;
+        entity.SpriteProgramIndexes[ScriptHelper.ProgramCTick] = spriteRecord.Header.ProgramTick;
+        entity.SpriteProgramIndexes[ScriptHelper.ProgramDTouch] = spriteRecord.Header.ProgramTouch;
+        entity.SpriteProgramIndexes[ScriptHelper.ProgramEDeactivate] = spriteRecord.Header.ProgramDeactivate;
+        entity.SpriteProgramIndexes[ScriptHelper.ProgramFInteract] = spriteRecord.Header.ProgramInteract;
 
         entity.PaletteOffset = paletteIndex;
         entity.SpriteSheetOffset = sheetSize;
@@ -116,8 +114,8 @@ public class EntityManager
         InitializeCodePrograms(entity);
 
         SetEntityDimensions(entity,
-            sprite.Header.OffsetX, sprite.Header.OffsetY, sprite.Header.OffsetZ,
-            sprite.Header.SizeX, sprite.Header.SizeY, sprite.Header.SizeZ);
+            spriteRecord.Header.OffsetX, spriteRecord.Header.OffsetY, spriteRecord.Header.OffsetZ,
+            spriteRecord.Header.SizeX, spriteRecord.Header.SizeY, spriteRecord.Header.SizeZ);
 
         entity.PosX = x;
         entity.PosY = y;
