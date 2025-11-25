@@ -16,7 +16,7 @@ public class DataBinHeader
         LoadingScreen2 = br.ReadUInt32();//20
         LoadingScreen3 = br.ReadUInt32();//24
 
-        GameMapOffsets = new uint[502];//28
+        GameMapOffsets = new uint[502];//28 //484
 
         for (var i = 0; i < GameMapOffsets.Length; i++)
         {

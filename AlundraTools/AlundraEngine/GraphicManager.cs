@@ -906,10 +906,10 @@ public class GraphicManager
     //80057b40
     public SiImage GetAnimationImageByIndex(int index)
     {
-        //return _gameEngine.AlundraMap.SpriteInfo.Sprites[index].AnimSets[0].PreloadedAnims[0].Frames[0].Images.Images[0];
+        //return _gameEngine.AlundraMap.SpriteInfo.SpriteRecords[index].AnimSets[0].PreloadedAnims[0].Frames[0].Images.Images[0];
         //TODO : don't use OpenBin()
         using var br = _gameEngine.DatasBin.OpenBin();
-        var siImageSet = _gameEngine.AlundraMap.SpriteInfo.Sprites[index].GetPortraitImageset(br);
+        var siImageSet = _gameEngine.AlundraMap.SpriteInfo.SpriteRecords[index].GetPortraitImageset(br);
         return siImageSet.Images[0];
         //return (((g_initialAnimationTable.animationSet).animationOffsets + index * 2 + -0x10) + 0xc) + 2;
         //return null;

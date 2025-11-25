@@ -286,8 +286,8 @@ public partial class FrmGame : Form
                 () => _gameEngine.StaticVariables.g_debugState
             ),
             new(
-                nameof(_gameEngine.StaticVariables.g_etcDisplayFlags),
-                () => _gameEngine.StaticVariables.g_etcDisplayFlags
+                nameof(_gameEngine.StaticVariables.g_UIDisplayFlags),
+                () => _gameEngine.StaticVariables.g_UIDisplayFlags
             ),
             new(
                 nameof(_gameEngine.StaticVariables.g_forbiddenWarpFlag),

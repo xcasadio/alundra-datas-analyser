@@ -5670,14 +5670,8 @@ public class StaticVariables
     public short DAT_8018014a; // 8018014A
     public int INT_80180238; // 80180238
     public int INT_8018023c; // 8018023C
-    public uint g_etcDisplayFlags; // 80180240
+    public uint g_UIDisplayFlags; // 80180240
     public TextToDisplay g_textToDisplay2 = new TextToDisplay(); // 80180244
-    public int g_etcTextSpeed_2; // 80180248
-    public int g_etcTextMode_2; // 8018024C
-    public short g_etcTextX_2; // 80180250
-    public short g_etcTextY_2; // 80180252
-    public short g_etcTextStartX_2; // 80180254
-    public short g_etcTextStartY_2; // 80180256
     public SPRT[] g_spriteMessageCharacterPortrait = Enumerable.Range(0, 2).Select(x => new SPRT()).ToArray();
     public int g_entitySpriteNameTableIndex; // 80180288
     public int g_cdDataStartPtr; // 801802A8

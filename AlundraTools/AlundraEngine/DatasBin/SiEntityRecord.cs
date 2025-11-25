@@ -34,7 +34,8 @@ public class SiEntityRecord
 
     public SiAnimation GetSprite(BinaryReader br, SpriteInfo si)
     {
-        var sector5 = si.Sprites[SpriteTableIndex];
+        var sector5 = si.SpriteRecords[SpriteTableIndex];
+
         if (sector5 != null && SpriteDirection >> 4 != 0x4 && SpriteDirection >> 4 != 0x0)
         {
             var commands = new List<SiCommand>();
@@ -57,6 +58,7 @@ public class SiEntityRecord
                     return sector5.GetAnimation(br, animset.AnimationOffsets[SpriteDirection & 0x3]);
                 }
             }
+
             return sector5.GetAnimation(br, sector5.AnimSets[0].AnimationOffsets[SpriteDirection & 0x3]);//default anim
         }
 

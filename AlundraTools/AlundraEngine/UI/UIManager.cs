@@ -1,8 +1,5 @@
-﻿using AlundraEngine.DatasBin;
-using AlundraEngine.Gameplay;
-using AlundraEngine.Graphics;
+﻿using AlundraEngine.Graphics;
 using AlundraEngine.Text;
-using System;
 using System.Diagnostics;
 using static AlundraEngine.Renderer;
 
@@ -597,7 +594,7 @@ public class UIManager
 
         _gameEngine.StaticVariables.g_textToDisplay2.originX = textTileConfig.X;
         _gameEngine.StaticVariables.g_textToDisplay2.originY = textTileConfig.Y;
-        _gameEngine.StaticVariables.g_etcDisplayFlags = 5;
+        _gameEngine.StaticVariables.g_UIDisplayFlags = 5;
 
         var text = _gameEngine.StaticVariables.g_entitySpriteNamesTable[_gameEngine.StaticVariables.g_entitySpriteNameTableIndex];
 
@@ -629,18 +626,18 @@ public class UIManager
         SPRT pSVar10;
         //DISPENV local_30;
 
-        if ((_gameEngine.StaticVariables.g_etcDisplayFlags & 3U) != 0)
+        if ((_gameEngine.StaticVariables.g_UIDisplayFlags & 3U) != 0)
         {
             i = UpdateUiBoxesPosition(callbackInfo.Data, _gameEngine.StaticVariables.g_textToDisplay2);
 
             if (i == 1)
             {
-                if ((_gameEngine.StaticVariables.g_etcDisplayFlags & 1U) != 0)
+                if ((_gameEngine.StaticVariables.g_UIDisplayFlags & 1U) != 0)
                 {
-                    _gameEngine.StaticVariables.g_etcDisplayFlags &= 0xfffe;
+                    _gameEngine.StaticVariables.g_UIDisplayFlags &= 0xfffe;
                 }
 
-                if ((_gameEngine.StaticVariables.g_etcDisplayFlags & 2U) != 0)
+                if ((_gameEngine.StaticVariables.g_UIDisplayFlags & 2U) != 0)
                 {
                     callbackInfo.Data.X = _gameEngine.StaticVariables.g_textToDisplay2.originX;
                     callbackInfo.Data.Y = _gameEngine.StaticVariables.g_textToDisplay2.originY;
@@ -724,7 +721,7 @@ public class UIManager
     private void FUN_8005a244(CallBackInfo callBackInfo)
     {
         FUN_80047cb0(callBackInfo);
-        _gameEngine.StaticVariables.g_etcDisplayFlags = 0;
+        _gameEngine.StaticVariables.g_UIDisplayFlags = 0;
     }
 
     //80047cb0
@@ -1013,9 +1010,9 @@ public class UIManager
     //80059fe0
     private void ResetHudTransitionState()
     {
-        if ((_gameEngine.StaticVariables.g_etcDisplayFlags & 4U) != 0)
+        if ((_gameEngine.StaticVariables.g_UIDisplayFlags & 4U) != 0)
         {
-            _gameEngine.StaticVariables.g_etcDisplayFlags = 6;
+            _gameEngine.StaticVariables.g_UIDisplayFlags = 6;
         }
 
         _gameEngine.StaticVariables.g_textToDisplay2.mode = 2;

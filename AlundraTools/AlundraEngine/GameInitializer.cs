@@ -539,7 +539,7 @@ public class GameInitializer
         int surfaceIndex;
 
         surfaceIndex = 0;
-        _gameEngine.StaticVariables.g_etcDisplayFlags = 0;
+        _gameEngine.StaticVariables.g_UIDisplayFlags = 0;
         tilesConfiguration = _gameEngine.StaticVariables.g_textTilesConfiguration;
 
         do

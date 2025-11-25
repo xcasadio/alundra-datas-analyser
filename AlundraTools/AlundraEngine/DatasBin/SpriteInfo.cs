@@ -69,23 +69,23 @@ public class SpriteInfo
         MapEvents = new SpriteInfoMapEvents(br, _binOffset, sectorEnd);
 
         //read sprite table records;
-        Sprites = new SpriteRecord[SpriteTable.Length];
-        for (var i = 0; i < Sprites.Length; i++)
+        SpriteRecords = new SpriteRecord[SpriteTable.Length];
+        for (var i = 0; i < SpriteRecords.Length; i++)
         {
             if (SpriteTable[i] != -1)
             {
                 br.BaseStream.Position = _binOffset + SpriteTable[i];
-                Sprites[i] = new SpriteRecord(br, _binOffset, i, memoryAddress + SpriteTable[i], memoryAddress);
+                SpriteRecords[i] = new SpriteRecord(br, _binOffset, i, memoryAddress + SpriteTable[i], memoryAddress);
             }
         }
 
-        SpriteEffects = new SpriteEffectRecord[NumSpriteEffects];
-        for (var i = 0; i < SpriteEffects.Length; i++)
+        SpriteEffectRecords = new SpriteEffectRecord[NumSpriteEffects];
+        for (var i = 0; i < SpriteEffectRecords.Length; i++)
         {
             if (SpriteEffectTable[i] != -1)
             {
                 br.BaseStream.Position = _binOffset + SpriteEffectTable[i];
-                SpriteEffects[i] = new SpriteEffectRecord(br, _binOffset + SpriteEffectTable[i], i | 0x8000, memoryAddress + SpriteEffectTable[i], memoryAddress + SpriteEffectTable[i]);
+                SpriteEffectRecords[i] = new SpriteEffectRecord(br, _binOffset + SpriteEffectTable[i], i | 0x8000, memoryAddress + SpriteEffectTable[i], memoryAddress + SpriteEffectTable[i]);
             }
         }
     }
@@ -96,10 +96,10 @@ public class SpriteInfo
     public readonly SpriteInfoMapEvents MapEvents;
 
     public readonly int[] SpriteTable;
-    public readonly SpriteRecord[] Sprites;
+    public readonly SpriteRecord[] SpriteRecords;
 
     public readonly int[] SpriteEffectTable;
-    public readonly SpriteEffectRecord[] SpriteEffects;
+    public readonly SpriteEffectRecord[] SpriteEffectRecords;
     public readonly int NumSpriteEffects;
 
     public readonly MapEffectRecord[] MapEffectRecords;

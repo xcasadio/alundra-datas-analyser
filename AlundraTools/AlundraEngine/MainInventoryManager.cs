@@ -1671,11 +1671,11 @@ public class MainInventoryManager
         cursorAnim.Sprites[0].u0 = _gameEngine.StaticVariables.g_inventoryCursorTextureUVs[cursorAnim.FrameDelay / 10 * 0x28];
         cursorAnim.Sprites[0].v0 = _gameEngine.StaticVariables.g_inventoryCursorTextureUVs[cursorAnim.FrameDelay / 10 * 0x28 + 1];
 
-        //cursorAnim.Sprites[1].u0 = (byte)(_gameEngine.StaticVariables.g_inventoryCursorTextureU + cursorAnim.FrameDelay / 10 * 0x28);
-        //cursorAnim.Sprites[1].v0 = (byte)(_gameEngine.StaticVariables.g_inventoryCursorTextureV + cursorAnim.FrameDelay / 10 * 0x28);
+        //cursorAnim.SpriteRecords[1].u0 = (byte)(_gameEngine.StaticVariables.g_inventoryCursorTextureU + cursorAnim.FrameDelay / 10 * 0x28);
+        //cursorAnim.SpriteRecords[1].v0 = (byte)(_gameEngine.StaticVariables.g_inventoryCursorTextureV + cursorAnim.FrameDelay / 10 * 0x28);
 
         //puVar2 = _gameEngine.StaticVariables.DAT_80146f6c[g_drawModes[0x14].tag * 0x28];
-        //pSVar3 = cursorAnim.Sprites[_gameEngine.StaticVariables.g_drawModes[0x14].tag];
+        //pSVar3 = cursorAnim.SpriteRecords[_gameEngine.StaticVariables.g_drawModes[0x14].tag];
         /* Probable PsyQ macro: addPrim(). */
         //cursorAnim.sprites[g_drawModes[0x14].tag].tag = cursorAnim.sprites[g_drawModes[0x14].tag].tag & 0xff000000 | *puVar2 & 0xffffff;
         //*puVar2 = *puVar2 & 0xff000000 | (uint)pSVar3 & 0xffffff;

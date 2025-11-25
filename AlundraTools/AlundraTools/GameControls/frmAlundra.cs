@@ -390,9 +390,9 @@ namespace AlundraTools.GameControls
             }
 
             lstSector5.Items.Clear();
-            for (var i = 0; i < _selectedGameMap.SpriteInfo.Sprites.Length; i++)
+            for (var i = 0; i < _selectedGameMap.SpriteInfo.SpriteRecords.Length; i++)
             {
-                var sector5Record = _selectedGameMap.SpriteInfo.Sprites[i];
+                var sector5Record = _selectedGameMap.SpriteInfo.SpriteRecords[i];
                 if (sector5Record != null)
                 {
                     lstSector5.Items.Add("record " + i.ToString("x2"));
@@ -1047,7 +1047,7 @@ namespace AlundraTools.GameControls
             _selectedSector5 = null;
             if (_selectedGameMap != null && lstSector5.SelectedIndex >= 0 && lstSector5.SelectedItem.ToString() != "-1")
             {
-                _selectedSector5 = _selectedGameMap.SpriteInfo.Sprites[int.Parse(lstSector5.SelectedItem.ToString().Replace("record ", ""), System.Globalization.NumberStyles.AllowHexSpecifier)];
+                _selectedSector5 = _selectedGameMap.SpriteInfo.SpriteRecords[int.Parse(lstSector5.SelectedItem.ToString().Replace("record ", ""), System.Globalization.NumberStyles.AllowHexSpecifier)];
             }
 
             lstSector5Animations.Items.Clear();

@@ -2391,7 +2391,7 @@
             tabPage3.Name = "tabPage3";
             tabPage3.Size = new Size(852, 790);
             tabPage3.TabIndex = 2;
-            tabPage3.Text = "Sprites";
+            tabPage3.Text = "SpriteRecords";
             tabPage3.UseVisualStyleBackColor = true;
             // 
             // label80

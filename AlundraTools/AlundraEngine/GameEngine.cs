@@ -472,6 +472,8 @@ public class GameEngine
     public void LoadMap(int mapId)
     {
         CurrentMap = DatasBin.GameMaps[mapId];
+        using var br = DatasBin.OpenBin();
+        CurrentMap.Load(br, false);
 
         if (!CurrentMap.Loaded)
         {
@@ -698,7 +700,7 @@ public class GameEngine
             throw new Exception("Illegal Character Race!");
         }
 
-        var sprite = spriteInfo.Sprites[spriteTableIndex];
+        var sprite = spriteInfo.SpriteRecords[spriteTableIndex];
         return sprite;
     }
 
@@ -1697,9 +1699,9 @@ public class GameEngine
             addedtosheet = 0xb;
             addedtopallette = 0x60;
         }
-        if (spritetableindex >= 0 && spritetableindex < si.SpriteEffects.Length)
+        if (spritetableindex >= 0 && spritetableindex < si.SpriteEffectRecords.Length)
         {
-            return si.SpriteEffects[spritetableindex];
+            return si.SpriteEffectRecords[spritetableindex];
         }
 
         return null;
@@ -2389,7 +2391,7 @@ public class GameEngine
     //80059f6c
     public void TriggerVisualUpdate(int spriteTableIndex)
     {
-        if ((StaticVariables.g_etcDisplayFlags & 4) == 0
+        if ((StaticVariables.g_UIDisplayFlags & 4) == 0
             && spriteTableIndex - 0x100U < 0x100
             && StaticVariables.g_entitySpriteNamesTable[spriteTableIndex] != null
             //&& StaticVariables.g_entitySpriteNamesTable[spriteTableIndex * 4] != 0

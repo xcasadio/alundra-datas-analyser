@@ -15,6 +15,7 @@ public class SiFrame
         SpriteIndexHigh = br.ReadByte();
         br.BaseStream.Position = pos;
 
+        //TODO create CollisionOffset & ImageSetPointer with TransformIndexLow, ...
         CollisionOffset = br.ReadInt16();
         ImageSetPointer = br.ReadUInt16() * 2;
 

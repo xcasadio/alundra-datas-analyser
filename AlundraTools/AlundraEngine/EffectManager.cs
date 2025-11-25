@@ -22,7 +22,7 @@ public class EffectManager
         }
 
         //TODO check this
-        var mapEffectRecords = _gameEngine.CurrentMap.SpriteInfo.SpriteEffects;
+        var mapEffectRecords = _gameEngine.CurrentMap.SpriteInfo.SpriteEffectRecords;
         for (int i = 0; i < mapEffectRecords.Length; i++)
         {
             if (mapEffectRecords[i] == null)
@@ -94,7 +94,8 @@ public class EffectManager
 
         return effect;
     }
-    
+
+    //8003ba70
     public MapEffectRecord GetMapEffectRecord(int id, bool checkBoundingBox)
     {
         if (id < _gameEngine.CurrentMap.SpriteInfo.MapEffectRecords.Length)

@@ -33,15 +33,14 @@ public class DatasBin
         }
 #endif
 
-        GameMaps = new GameMap[Header.GameMapOffsets.Length];
+        GameMaps = new GameMap[Header.GameMapOffsets.Length]; 
         for (var i = 0; i < Header.GameMapOffsets.Length; i++)
         {
             var gameMapOffset = Header.GameMapOffsets[i];
-
+        
             if (gameMapOffset > 0 && gameMapOffset < br.BaseStream.Length)
             {
                 GameMaps[i] = new GameMap(br, gameMapOffset);
-                GameMaps[i].Load(br, false);
             }
         }
     }
