@@ -44,7 +44,7 @@ public class SpriteInfoHeader
     public readonly int MapEventsSize;
     public readonly int SpriteTablePointer;
     public readonly int SpriteTableSize;
-    public readonly int SpriteEffectsPointer;//0000333b000e240e0400000000000000
+    public readonly int SpriteEffectsPointer;
     public readonly int SpriteEffectsSize;
     public readonly int SpritePalettesPointer;
     public readonly int SpritePalettesSize;
@@ -59,6 +59,6 @@ public class SpriteInfoHeader
     public readonly int EventCodesEPointer;
     public readonly int EventCodesESize;
     public readonly int EventCodesFPointer;
-    public int EventCodesFSize;//calced when reading sector1
+    public int EventCodesFSize;//calculated when reading sector1
     public readonly int EventCodesFAndRemainingSize;
 }

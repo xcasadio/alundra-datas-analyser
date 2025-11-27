@@ -9,7 +9,7 @@ public class SpriteInfoEventCodes
     public SpriteInfoEventCodes(BinaryReader br, long binOffset, SpriteInfoHeader header, bool ismap)
     {
         var tableSize = 0;
-        short firstoffset = 0;
+        short firstOffset = 0;
 
         //read sector1a
         br.BaseStream.Position = binOffset + header.EventCodesAPointer;
@@ -18,9 +18,9 @@ public class SpriteInfoEventCodes
         for (var i = 0; i < tableSize; i++)
         {
             EventCodesATable[i] = br.ReadInt16();
-            if (firstoffset == 0 && EventCodesATable[i] != 0)
+            if (firstOffset == 0 && EventCodesATable[i] != 0)
             {
-                firstoffset = EventCodesATable[i];
+                firstOffset = EventCodesATable[i];
             }
         }
 
@@ -31,9 +31,9 @@ public class SpriteInfoEventCodes
         for (var i = 0; i < tableSize; i++)
         {
             EventCodesBTable[i] = br.ReadInt16();
-            if (firstoffset == 0 && EventCodesBTable[i] != 0)
+            if (firstOffset == 0 && EventCodesBTable[i] != 0)
             {
-                firstoffset = EventCodesBTable[i];
+                firstOffset = EventCodesBTable[i];
             }
         }
 
@@ -44,9 +44,9 @@ public class SpriteInfoEventCodes
         for (var i = 0; i < tableSize; i++)
         {
             EventCodesCTable[i] = br.ReadInt16();
-            if (firstoffset == 0 && EventCodesCTable[i] != 0)
+            if (firstOffset == 0 && EventCodesCTable[i] != 0)
             {
-                firstoffset = EventCodesCTable[i];
+                firstOffset = EventCodesCTable[i];
             }
         }
 
@@ -57,9 +57,9 @@ public class SpriteInfoEventCodes
         for (var i = 0; i < tableSize; i++)
         {
             EventCodesDTable[i] = br.ReadInt16();
-            if (firstoffset == 0 && EventCodesDTable[i] != 0)
+            if (firstOffset == 0 && EventCodesDTable[i] != 0)
             {
-                firstoffset = EventCodesDTable[i];
+                firstOffset = EventCodesDTable[i];
             }
         }
 
@@ -70,14 +70,14 @@ public class SpriteInfoEventCodes
         for (var i = 0; i < tableSize; i++)
         {
             EventCodesETable[i] = br.ReadInt16();
-            if (firstoffset == 0 && EventCodesETable[i] != 0)
+            if (firstOffset == 0 && EventCodesETable[i] != 0)
             {
-                firstoffset = EventCodesETable[i];
+                firstOffset = EventCodesETable[i];
             }
         }
 
         //read sector1f
-        header.EventCodesFSize = header.EventCodesAPointer + firstoffset - header.EventCodesFPointer;
+        header.EventCodesFSize = header.EventCodesAPointer + firstOffset - header.EventCodesFPointer;
         br.BaseStream.Position = binOffset + header.EventCodesFPointer;
         tableSize = header.EventCodesFSize / 2;
         if (tableSize < 0)
@@ -94,66 +94,11 @@ public class SpriteInfoEventCodes
         //set binOffset for eventcodes
         _binOffset = binOffset + header.EventCodesAPointer;
         _memoryAddress = header.MemoryAddress + header.EventCodesAPointer;
-        _dataSize = (header.EntitiesPointer == 0 ? header.EventCodesFPointer : header.EntitiesPointer) -
-                    header.EventCodesAPointer;
+        _dataSize = (header.EntitiesPointer == 0 ? header.EventCodesFPointer : header.EntitiesPointer) - header.EventCodesAPointer;
         //Debug.Assert(_dataSize > 0);
 
         //Preload all commands
-        //optim: only load index used by the current map
-        //CommandsByTypes.Add(ScriptHelper.ProgramALoad, new List<SiCommand>());
-        //CommandsByTypes.Add(ScriptHelper.ProgramBMap, new List<SiCommand>());
-        //CommandsByTypes.Add(ScriptHelper.ProgramCTick, new List<SiCommand>());
-        //CommandsByTypes.Add(ScriptHelper.ProgramDTouch, new List<SiCommand>());
-        //CommandsByTypes.Add(ScriptHelper.ProgramEDeactivate, new List<SiCommand>());
-        //CommandsByTypes.Add(ScriptHelper.ProgramFInteract, new List<SiCommand>());
-        //
-        //foreach (var index in EventCodesATable)
-        //{
-        //    var commands = GetCommands(br, index, true);
-        //    CommandsByTypes[ScriptHelper.ProgramALoad].AddRange(commands);
-        //}
-        //
-        //foreach (var index in EventCodesBTable)
-        //{
-        //    var commands = GetCommands(br, index, true);
-        //    CommandsByTypes[ScriptHelper.ProgramBMap].AddRange(commands);
-        //}
-        //
-        //foreach (var index in EventCodesCTable)
-        //{
-        //    var commands = GetCommands(br, index, true);
-        //    CommandsByTypes[ScriptHelper.ProgramCTick].AddRange(commands);
-        //}
-        //
-        //foreach (var index in EventCodesDTable)
-        //{
-        //    var commands = GetCommands(br, index, true);
-        //    CommandsByTypes[ScriptHelper.ProgramDTouch].AddRange(commands);
-        //}
-        //
-        //foreach (var index in EventCodesETable)
-        //{
-        //    var commands = GetCommands(br, index, true);
-        //    CommandsByTypes[ScriptHelper.ProgramEDeactivate].AddRange(commands);
-        //}
-        //
-        ////TODO bug with F codes
-        ////foreach (var index in EventCodesFTable)
-        ////{
-        ////    var commands = GetCommands(br, index, true);
-        ////    CommandsByTypes[ScriptHelper.ProgramFInteract].AddRange(commands);
-        ////}
-        ////
-        //foreach (var commandsByType in CommandsByTypes)
-        //{
-        //    Debug.WriteLine($"Code type {commandsByType.Key}");
-        //
-        //    foreach (var siCommand in commandsByType.Value)
-        //    {
-        //        Debug.WriteLine($"  {siCommand.Print(2, commandsByType.Value)}");
-        //    }
-        //}
-
+        
         ////remove this ??  =>
         //var top = 0;
         //if (ismap)
@@ -161,40 +106,49 @@ public class SpriteInfoEventCodes
         //    top += 1024 * 512;
         //}
         //
-        //br.BaseStream.Position = binOffset;
-        //if (_dataSize > 0)
-        //{
-        //    br.Read(Codes, top, _dataSize);
-        //}
+        br.BaseStream.Position = binOffset;
+        if (_dataSize > 0)
+        {
+            var size = EventCodesATable.Length + EventCodesBTable.Length + EventCodesCTable.Length +
+                       EventCodesDTable.Length + EventCodesETable.Length + EventCodesFTable.Length;
+            EventCodes = new short[size];
+            var index = 0;
+
+            while (index < size)
+            {
+                EventCodes[index] = br.ReadInt16();
+                index++;
+            }
+        }
         //half mb for global codes, half mb for map codes
     }
 
     public class SiCode
     {
-        public byte Code { get; set; }
-        public string Name { get; set; }
-        public int Size { get; set; }
+        public byte Code { get; init; }
+        public string Name { get; init; }
+        public int Size { get; init; }
     }
 
-    public static SiCode GetCode(byte b)
+    public static SiCode GetCode(byte code)
     {
-        if (CommandSizeByCode.TryGetValue(b, out var size))
+        if (CommandSizeByCode.TryGetValue(code, out var size))
         {
             return new SiCode
             {
-                Code = b,
+                Code = code,
                 Size = size,
-                Name = CommandNameByCode.GetValueOrDefault(b, "")
+                Name = CommandNameByCode.GetValueOrDefault(code, "")
             };
         }
 
-        return new SiCode
-        {
-            Code = b,
-            Size = 1,
-            Name = ""
-        };
-        //throw new ArgumentException($"DepthSortValue command code: {b:Width}");
+        //return new SiCode
+        //{
+        //    Code = code,
+        //    Size = 0,
+        //    Name = ""
+        //};
+        throw new ArgumentException($"SiCode command code unknown size: {code}({code:X2})");
     }
 
     public List<SiCommand> GetCommands(BinaryReader br, int eventCodesOffset, bool stopAtff = false, int commandsSize = 0)
@@ -282,7 +236,7 @@ public class SpriteInfoEventCodes
     public readonly short[] EventCodesDTable;
     public readonly short[] EventCodesETable;
     public readonly short[] EventCodesFTable;
-    //public readonly Dictionary<int, List<SiCommand>> CommandsByTypes = new();
+    public readonly short[] EventCodes;
 
     public static readonly Dictionary<byte, int> CommandSizeByCode = new()
     {

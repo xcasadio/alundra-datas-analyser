@@ -30,7 +30,6 @@
         {
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
-            analyzeFileToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem1 = new ToolStripMenuItem();
             openDATASBINToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
@@ -50,17 +49,10 @@
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { analyzeFileToolStripMenuItem, toolStripMenuItem1, openDATASBINToolStripMenuItem, exitToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem1, openDATASBINToolStripMenuItem, exitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "File";
-            // 
-            // analyzeFileToolStripMenuItem
-            // 
-            analyzeFileToolStripMenuItem.Name = "analyzeFileToolStripMenuItem";
-            analyzeFileToolStripMenuItem.Size = new Size(180, 22);
-            analyzeFileToolStripMenuItem.Text = "Analyze File";
-            analyzeFileToolStripMenuItem.Click += analyzeFileToolStripMenuItem_Click;
             // 
             // toolStripMenuItem1
             // 
@@ -102,7 +94,6 @@
         #endregion
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem analyzeFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openDATASBINToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;

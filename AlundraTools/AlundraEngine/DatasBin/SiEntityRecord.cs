@@ -51,11 +51,10 @@ public class SiEntityRecord
 
             foreach (var cmd in commands)
             {
-                if (cmd.Command == 0x1a)//set sprite
+                if (cmd.Command == 0x1a)//set animation
                 {
-                    var animset = sector5.AnimSets[cmd.Parameters[0]];
-
-                    return sector5.GetAnimation(br, animset.AnimationOffsets[SpriteDirection & 0x3]);
+                    var animSet = sector5.AnimSets[cmd.Parameters[0]];
+                    return sector5.GetAnimation(br, animSet.AnimationOffsets[SpriteDirection & 0x3]);
                 }
             }
 
@@ -64,6 +63,7 @@ public class SiEntityRecord
 
         return null;
     }
+
     public readonly int MemoryAddress;
 
     public readonly byte XMin;//if character isnt within this bounding box, dont activate the entity
