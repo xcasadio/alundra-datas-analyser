@@ -23,27 +23,6 @@ public partial class MainForm : Form
         //toolStripMenuItem1_Click(this, EventArgs.Empty);
     }
 
-    private void analyzeFileToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        var ofd = new OpenFileDialog();
-        ofd.ShowDialog();
-        if (!string.IsNullOrEmpty(ofd.FileName))
-        {
-            var config = JsonSerializer.Deserialize<EditorConfiguration>(File.ReadAllText("config.json"));
-
-            if (string.IsNullOrWhiteSpace(config.PsyqSdkFolder) || !Directory.Exists(config.PsyqSdkFolder))
-            {
-                MessageBox.Show("Please set the Psy-Q SDK folder in the config.json.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            var frm = new FrmFileAnalyzer();
-            frm.Datafile = ofd.FileName;
-            frm.Initialize(config.PsyqSdkFolder);
-            frm.Show();
-        }
-    }
-
     private void openDATASBINToolStripMenuItem_Click(object sender, EventArgs e)
     {
         var ofd = new OpenFileDialog();
@@ -55,7 +34,6 @@ public partial class MainForm : Form
         {
             if (!string.IsNullOrWhiteSpace(ofd.FileName))
             {
-                DebugSymbols.Init();
                 var frmAlundra = new FrmAlundra();
                 frmAlundra.Show();
                 var datasBin = new DatasBin(ofd.FileName);

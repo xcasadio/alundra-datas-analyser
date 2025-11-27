@@ -41,6 +41,8 @@ public class CommandBase
             output += $" ({PrintParameters()})";
         }
 
+        output += $" ({MemoryAddress} {Size})";
+
         return output;
     }
 

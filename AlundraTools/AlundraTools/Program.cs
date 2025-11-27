@@ -14,7 +14,5 @@
         }
 
         public static Color[] Palette;
-        public static FrmViewer Viewer;
-        public static FrmViewer Pal;
     }
 }

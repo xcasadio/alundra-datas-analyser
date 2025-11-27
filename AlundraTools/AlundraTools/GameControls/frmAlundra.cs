@@ -1,4 +1,5 @@
 ﻿using AlundraEngine;
+using AlundraEngine.Balance;
 using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Sound;
@@ -6,7 +7,7 @@ using AlundraEngine.Text;
 using System.Drawing.Imaging;
 using System.Text;
 using System.Text.Json;
-using AlundraEngine.Balance;
+using System.Windows.Forms;
 using Color = System.Drawing.Color;
 using Timer = System.Windows.Forms.Timer;
 
@@ -436,18 +437,24 @@ namespace AlundraTools.GameControls
 
         private void DrawMap()
         {
+            DrawMap(pctMap.Image, pctMap);
+            DrawMap(imageViewerControl1.Image, imageViewerControl1);
+        }
+
+        private void DrawMap(Image image, Control control)
+        {
             if (_selectedGameMap?.Map != null)
             {
                 var map = _selectedGameMap.Map;
 
-                using var g = Graphics.FromImage(pctMap.Image);
+                using var g = Graphics.FromImage(image);
                 var fnt = new Font(FontFamily.GenericSansSerif, 8);
 
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 g.Clear(Color.Black);
 
                 var mapHeightLimit = map.Height - vScrollMap.Value;
-                var mapWidthLimit = pctMap.Width / _mapScale / StaticVariables.MapTileWidth;
+                var mapWidthLimit = control.Width / _mapScale / StaticVariables.MapTileWidth;
 
                 //for (var y = 0; y < mapHeightLimit; y++)
                 //{
@@ -515,7 +522,7 @@ namespace AlundraTools.GameControls
                 {
                     for (var y = 0; y < map.Height - vScrollMap.Value; y++)
                     {
-                        for (var x = 0; x < pctMap.Width / _mapScale / StaticVariables.MapTileWidth; x++)
+                        for (var x = 0; x < control.Width / _mapScale / StaticVariables.MapTileWidth; x++)
                         {
                             var tile = map.MapTiles[(y + vScrollMap.Value) * map.Width + x + hScrollMap.Value];
                             if (tile.TileId != 0xFFFF)
@@ -543,7 +550,7 @@ namespace AlundraTools.GameControls
                     }
                 }
 
-                pctMap.Refresh();
+                control.Refresh();
             }
         }
 
@@ -653,94 +660,14 @@ namespace AlundraTools.GameControls
             }
         }
 
-        private void AnalyzeAt(int offset, int memaddress = 0, int startoffset = 0)
-        {
-            if (_selectedGameMap != null)
-            {
-                var config = JsonSerializer.Deserialize<EditorConfiguration>(File.ReadAllText("config.json"));
-
-                if (string.IsNullOrWhiteSpace(config.PsyqSdkFolder) || !Directory.Exists(config.PsyqSdkFolder))
-                {
-                    MessageBox.Show("Please set the Psy-Q SDK folder in the config.json.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                var frm = new FrmFileAnalyzer();
-                frm.Initialize(config.PsyqSdkFolder);
-                frm.Datafile = _datasBin.Binfile;
-                frm.Offset = (int)_selectedGameMap.Offset + offset;
-                frm.Memaddress = memaddress;
-                frm.Startoffset = startoffset;
-                frm.Show();
-            }
-        }
-        private void btnAnalyzeInfo_Click(object sender, EventArgs e)
-        {
-            if (_selectedGameMap != null)
-            {
-                AnalyzeAt(_selectedGameMap.Header.InfoBlockOffset, _selectedGameMap.Info.MemoryAddress);
-            }
-        }
-
-        private void btnAnalyzeMap_Click(object sender, EventArgs e)
-        {
-            if (_selectedGameMap != null)
-            {
-                AnalyzeAt(_selectedGameMap.Header.MapBlockOffset, _selectedGameMap.Map.MemoryAddress);
-            }
-        }
-
-        private void btnAnalyzeWallTiles_Click(object sender, EventArgs e)
-        {
-            if (_selectedGameMap != null)
-            {
-                AnalyzeAt(_selectedGameMap.Header.MapBlockOffset + _selectedGameMap.Map.WallTilesOffset);
-            }
-        }
-
-        private void btnAnalyzeTiles_Click(object sender, EventArgs e)
-        {
-            if (_selectedGameMap != null)
-            {
-                AnalyzeAt(_selectedGameMap.Header.TileSheetsOffset);
-            }
-        }
-
-        private void btnAnalyzeSInfo_Click(object sender, EventArgs e)
-        {
-            if (_selectedGameMap != null)
-            {
-                AnalyzeAt(_selectedGameMap.Header.SpriteRecordsOffset, _selectedGameMap.SpriteInfo.Header.MemoryAddress);
-            }
-        }
-
-        private void btnAnalyzeSprites_Click(object sender, EventArgs e)
-        {
-            if (_selectedGameMap != null)
-            {
-                AnalyzeAt(_selectedGameMap.Header.SpriteSheetOffset);
-            }
-        }
-
-        private void btnAnalyzeScroll_Click(object sender, EventArgs e)
-        {
-            if (_selectedGameMap != null)
-            {
-                AnalyzeAt(_selectedGameMap.Header.ScrollScreenOffset);
-            }
-        }
-
-        private void btnanalyzeStrings_Click(object sender, EventArgs e)
-        {
-            if (_selectedGameMap != null)
-            {
-                AnalyzeAt(_selectedGameMap.Header.StringTableOffset);
-            }
-        }
-
         private void frmAlundra_Load(object sender, EventArgs e)
         {
             pctMap.Image = new Bitmap(pctMap.Width, pctMap.Height, PixelFormat.Format24bppRgb);
+
+            var height = 60 * StaticVariables.MapTileHeight;
+            var width = 52 * StaticVariables.MapTileWidth;
+
+            imageViewerControl1.Image = new Bitmap(width, height, PixelFormat.Format24bppRgb);
 
             _animtimer = new Timer();
             _animtimer.Enabled = false;
@@ -1079,57 +1006,52 @@ namespace AlundraTools.GameControls
 
                 var ecode = _selectedSector5.Header.ProgramLoad;
                 var sicodename = "";
-                var dbs = DebugSymbols.EventHandlerNames["eload"];
-                if (dbs.ContainsKey(ecode))
+                if (SpriteInfoEventCodes.CommandNameByCode.TryGetValue(ecode, out var value2))
                 {
-                    sicodename = dbs[ecode];
+                    sicodename = value2;
                 }
 
-                var fname = $"{ecode.ToString("x2")}_{sicodename}_handler";
+                var fname = $"{ecode:x2}_{sicodename}_handler";
                 lbl_eload.Text = fname;
 
                 ecode = _selectedSector5.Header.ProgramTick;
                 sicodename = "";
-                dbs = DebugSymbols.EventHandlerNames["etick"];
-                if (dbs.ContainsKey(ecode))
+                if (SpriteInfoEventCodes.CommandNameByCode.TryGetValue(ecode, out var value1))
                 {
-                    sicodename = dbs[ecode];
+                    sicodename = value1;
                 }
 
-                fname = $"{ecode.ToString("x2")}_{sicodename}_handler";
+                fname = $"{ecode:x2}_{sicodename}_handler";
                 lbl_etick.Text = fname;
 
                 ecode = _selectedSector5.Header.ProgramTouch;
                 sicodename = "";
-                dbs = DebugSymbols.EventHandlerNames["etouch"];
-                if (dbs.ContainsKey(ecode))
+                if (SpriteInfoEventCodes.CommandNameByCode.TryGetValue(ecode, out var value))
                 {
-                    sicodename = dbs[ecode];
+                    sicodename = value;
                 }
 
-                fname = $"{ecode.ToString("x2")}_{sicodename}_handler";
+                fname = $"{ecode:x2}_{sicodename}_handler";
                 lbl_etouch.Text = fname;
 
                 ecode = _selectedSector5.Header.ProgramDeactivate;
                 sicodename = "";
-                dbs = DebugSymbols.EventHandlerNames["edeactivate"];
-                if (dbs.ContainsKey(ecode))
+                if (SpriteInfoEventCodes.CommandNameByCode.TryGetValue(ecode, out var value3))
                 {
-                    sicodename = dbs[ecode];
+                    sicodename = value3;
                 }
 
-                fname = $"{ecode.ToString("x2")}_{sicodename}_handler";
+                fname = $"{ecode:x2}_{sicodename}_handler";
                 lbl_edeactivate.Text = fname;
 
                 ecode = _selectedSector5.Header.ProgramInteract;
                 sicodename = "";
-                dbs = DebugSymbols.EventHandlerNames["einteract"];
-                if (dbs.ContainsKey(ecode))
+                if (SpriteInfoEventCodes.CommandNameByCode.TryGetValue(ecode, out var value4))
                 {
-                    sicodename = dbs[ecode];
+                    sicodename = value4;
                 }
 
-                fname = $"{ecode.ToString("x2")}_{sicodename}_handler";
+                fname = $"{ecode:x2}_{sicodename}_handler";
                 lbl_einteract.Text = fname;
 
                 lbl_moreflags.Text = _selectedSector5.Header.MoreFlags.ToString("x");
@@ -1557,45 +1479,9 @@ namespace AlundraTools.GameControls
             }
         }
 
-        private void btnSector4Analyze_Click(object sender, EventArgs e)
-        {
-            if (_selectedGameMap != null)
-            {
-                AnalyzeAt(_selectedGameMap.Header.SpriteRecordsOffset, _selectedGameMap.SpriteInfo.Header.MemoryAddress, _selectedGameMap.SpriteInfo.Header.MapEventsPointer);
-            }
-        }
-
         private string _dumpfile = "";
         private EtcRes _etcRes;
         private Font3 _font3;
-
-        private void btnAnalyzeEntity_Click(object sender, EventArgs e)
-        {
-            if (lsvEntities.SelectedIndices.Count != 1)
-            {
-                return;
-            }
-
-            if (string.IsNullOrEmpty(_dumpfile))
-            {
-                var ofd = new OpenFileDialog();
-                ofd.Title = "Select dump file";
-
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    _dumpfile = ofd.FileName;
-                }
-            }
-
-            if (string.IsNullOrEmpty(_dumpfile))
-            {
-                return;
-            }
-
-            var frm = new FrmEntityDumpAnalyzer();
-            frm.Init(_dumpfile, lsvEntities.SelectedIndices[0]);
-            frm.Show();
-        }
 
         private void pctPortrait_Paint(object sender, PaintEventArgs e)
         {

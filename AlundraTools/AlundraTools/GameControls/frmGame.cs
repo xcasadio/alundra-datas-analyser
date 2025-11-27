@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using AlundraEngine.Balance;
+using AlundraTools.CustomControls;
 using Timer = System.Windows.Forms.Timer;
 
 namespace AlundraTools.GameControls;

@@ -42,29 +42,21 @@
             lblScrollInfo = new Label();
             label1 = new Label();
             lblInfoSize = new Label();
-            btnAnalyzeInfo = new Button();
-            btnAnalyzeMap = new Button();
             lblMapSize = new Label();
             label3 = new Label();
-            btnAnalyzeTiles = new Button();
             lblTilesSize = new Label();
             label5 = new Label();
-            btnAnalyzeSInfo = new Button();
             lblSInfoSize = new Label();
             label7 = new Label();
-            btnAnalyzeSprites = new Button();
             lblSpritesSize = new Label();
             label9 = new Label();
-            btnAnalyzeScroll = new Button();
             lblScrollSize = new Label();
             label11 = new Label();
-            btnanalyzeStrings = new Button();
             lblStringsSize = new Label();
             label13 = new Label();
             pctMap = new PictureBox();
             vScrollMap = new VScrollBar();
             hScrollMap = new HScrollBar();
-            btnAnalyzeWallTiles = new Button();
             lblWallTiles = new Label();
             label4 = new Label();
             lstPortals = new ListBox();
@@ -92,6 +84,7 @@
             columnHeader1 = new ColumnHeader();
             columnHeader2 = new ColumnHeader();
             columnHeader3 = new ColumnHeader();
+            columnHeader22 = new ColumnHeader();
             columnHeader4 = new ColumnHeader();
             columnHeader5 = new ColumnHeader();
             columnHeader6 = new ColumnHeader();
@@ -185,9 +178,7 @@
             btnSector1dCmds = new Button();
             btnSector1eCmds = new Button();
             btnSector1fCmds = new Button();
-            btnSector4Analyze = new Button();
             lblSector5Info = new Label();
-            btnAnalyzeEntity = new Button();
             lblSelAnim = new Label();
             lblAnimSetAddr = new Label();
             lblFrameAddr = new Label();
@@ -281,7 +272,7 @@
             radioButtonZoom1 = new RadioButton();
             radioButtonZoom2 = new RadioButton();
             radioButtonZoom4 = new RadioButton();
-            columnHeader22 = new ColumnHeader();
+            imageViewerControl1 = new AlundraTools.CustomControls.ImageViewerControl();
             ((System.ComponentModel.ISupportInitialize)pctMapPalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctTilesheet).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctSpritesheet).BeginInit();
@@ -443,28 +434,6 @@
             lblInfoSize.TabIndex = 22;
             lblInfoSize.Text = "0";
             // 
-            // btnAnalyzeInfo
-            // 
-            btnAnalyzeInfo.Location = new Point(523, 486);
-            btnAnalyzeInfo.Margin = new Padding(4, 3, 4, 3);
-            btnAnalyzeInfo.Name = "btnAnalyzeInfo";
-            btnAnalyzeInfo.Size = new Size(59, 31);
-            btnAnalyzeInfo.TabIndex = 23;
-            btnAnalyzeInfo.Text = "analyze";
-            btnAnalyzeInfo.UseVisualStyleBackColor = true;
-            btnAnalyzeInfo.Click += btnAnalyzeInfo_Click;
-            // 
-            // btnAnalyzeMap
-            // 
-            btnAnalyzeMap.Location = new Point(523, 525);
-            btnAnalyzeMap.Margin = new Padding(4, 3, 4, 3);
-            btnAnalyzeMap.Name = "btnAnalyzeMap";
-            btnAnalyzeMap.Size = new Size(59, 31);
-            btnAnalyzeMap.TabIndex = 26;
-            btnAnalyzeMap.Text = "analyze";
-            btnAnalyzeMap.UseVisualStyleBackColor = true;
-            btnAnalyzeMap.Click += btnAnalyzeMap_Click;
-            // 
             // lblMapSize
             // 
             lblMapSize.AutoSize = true;
@@ -484,17 +453,6 @@
             label3.Size = new Size(31, 15);
             label3.TabIndex = 24;
             label3.Text = "map";
-            // 
-            // btnAnalyzeTiles
-            // 
-            btnAnalyzeTiles.Location = new Point(523, 601);
-            btnAnalyzeTiles.Margin = new Padding(4, 3, 4, 3);
-            btnAnalyzeTiles.Name = "btnAnalyzeTiles";
-            btnAnalyzeTiles.Size = new Size(59, 31);
-            btnAnalyzeTiles.TabIndex = 29;
-            btnAnalyzeTiles.Text = "analyze";
-            btnAnalyzeTiles.UseVisualStyleBackColor = true;
-            btnAnalyzeTiles.Click += btnAnalyzeTiles_Click;
             // 
             // lblTilesSize
             // 
@@ -516,17 +474,6 @@
             label5.TabIndex = 27;
             label5.Text = "tiles";
             // 
-            // btnAnalyzeSInfo
-            // 
-            btnAnalyzeSInfo.Location = new Point(523, 639);
-            btnAnalyzeSInfo.Margin = new Padding(4, 3, 4, 3);
-            btnAnalyzeSInfo.Name = "btnAnalyzeSInfo";
-            btnAnalyzeSInfo.Size = new Size(59, 31);
-            btnAnalyzeSInfo.TabIndex = 32;
-            btnAnalyzeSInfo.Text = "analyze";
-            btnAnalyzeSInfo.UseVisualStyleBackColor = true;
-            btnAnalyzeSInfo.Click += btnAnalyzeSInfo_Click;
-            // 
             // lblSInfoSize
             // 
             lblSInfoSize.AutoSize = true;
@@ -546,17 +493,6 @@
             label7.Size = new Size(57, 15);
             label7.TabIndex = 30;
             label7.Text = "spriteinfo";
-            // 
-            // btnAnalyzeSprites
-            // 
-            btnAnalyzeSprites.Location = new Point(523, 677);
-            btnAnalyzeSprites.Margin = new Padding(4, 3, 4, 3);
-            btnAnalyzeSprites.Name = "btnAnalyzeSprites";
-            btnAnalyzeSprites.Size = new Size(59, 31);
-            btnAnalyzeSprites.TabIndex = 35;
-            btnAnalyzeSprites.Text = "analyze";
-            btnAnalyzeSprites.UseVisualStyleBackColor = true;
-            btnAnalyzeSprites.Click += btnAnalyzeSprites_Click;
             // 
             // lblSpritesSize
             // 
@@ -578,17 +514,6 @@
             label9.TabIndex = 33;
             label9.Text = "sprites";
             // 
-            // btnAnalyzeScroll
-            // 
-            btnAnalyzeScroll.Location = new Point(523, 715);
-            btnAnalyzeScroll.Margin = new Padding(4, 3, 4, 3);
-            btnAnalyzeScroll.Name = "btnAnalyzeScroll";
-            btnAnalyzeScroll.Size = new Size(59, 31);
-            btnAnalyzeScroll.TabIndex = 38;
-            btnAnalyzeScroll.Text = "analyze";
-            btnAnalyzeScroll.UseVisualStyleBackColor = true;
-            btnAnalyzeScroll.Click += btnAnalyzeScroll_Click;
-            // 
             // lblScrollSize
             // 
             lblScrollSize.AutoSize = true;
@@ -608,17 +533,6 @@
             label11.Size = new Size(35, 15);
             label11.TabIndex = 36;
             label11.Text = "scroll";
-            // 
-            // btnanalyzeStrings
-            // 
-            btnanalyzeStrings.Location = new Point(523, 753);
-            btnanalyzeStrings.Margin = new Padding(4, 3, 4, 3);
-            btnanalyzeStrings.Name = "btnanalyzeStrings";
-            btnanalyzeStrings.Size = new Size(59, 31);
-            btnanalyzeStrings.TabIndex = 41;
-            btnanalyzeStrings.Text = "analyze";
-            btnanalyzeStrings.UseVisualStyleBackColor = true;
-            btnanalyzeStrings.Click += btnanalyzeStrings_Click;
             // 
             // lblStringsSize
             // 
@@ -646,7 +560,7 @@
             pctMap.Location = new Point(196, 37);
             pctMap.Margin = new Padding(4, 3, 4, 3);
             pctMap.Name = "pctMap";
-            pctMap.Size = new Size(691, 778);
+            pctMap.Size = new Size(300, 778);
             pctMap.TabIndex = 42;
             pctMap.TabStop = false;
             pctMap.Paint += pctMap_Paint;
@@ -671,17 +585,6 @@
             hScrollMap.Size = new Size(691, 17);
             hScrollMap.TabIndex = 44;
             hScrollMap.Scroll += hScrollMap_Scroll;
-            // 
-            // btnAnalyzeWallTiles
-            // 
-            btnAnalyzeWallTiles.Location = new Point(523, 563);
-            btnAnalyzeWallTiles.Margin = new Padding(4, 3, 4, 3);
-            btnAnalyzeWallTiles.Name = "btnAnalyzeWallTiles";
-            btnAnalyzeWallTiles.Size = new Size(59, 31);
-            btnAnalyzeWallTiles.TabIndex = 47;
-            btnAnalyzeWallTiles.Text = "analyze";
-            btnAnalyzeWallTiles.UseVisualStyleBackColor = true;
-            btnAnalyzeWallTiles.Click += btnAnalyzeWallTiles_Click;
             // 
             // lblWallTiles
             // 
@@ -943,6 +846,10 @@
             // 
             columnHeader3.Text = "sprite index";
             columnHeader3.Width = 48;
+            // 
+            // columnHeader22
+            // 
+            columnHeader22.Text = "sprite name";
             // 
             // columnHeader4
             // 
@@ -1815,17 +1722,6 @@
             btnSector1fCmds.UseVisualStyleBackColor = true;
             btnSector1fCmds.Click += btnSector1fCmds_Click;
             // 
-            // btnSector4Analyze
-            // 
-            btnSector4Analyze.Location = new Point(4, 361);
-            btnSector4Analyze.Margin = new Padding(4, 3, 4, 3);
-            btnSector4Analyze.Name = "btnSector4Analyze";
-            btnSector4Analyze.Size = new Size(59, 31);
-            btnSector4Analyze.TabIndex = 148;
-            btnSector4Analyze.Text = "analyze";
-            btnSector4Analyze.UseVisualStyleBackColor = true;
-            btnSector4Analyze.Click += btnSector4Analyze_Click;
-            // 
             // lblSector5Info
             // 
             lblSector5Info.AutoSize = true;
@@ -1835,17 +1731,6 @@
             lblSector5Info.Size = new Size(13, 15);
             lblSector5Info.TabIndex = 149;
             lblSector5Info.Text = "0";
-            // 
-            // btnAnalyzeEntity
-            // 
-            btnAnalyzeEntity.Location = new Point(4, 163);
-            btnAnalyzeEntity.Margin = new Padding(4, 3, 4, 3);
-            btnAnalyzeEntity.Name = "btnAnalyzeEntity";
-            btnAnalyzeEntity.Size = new Size(59, 31);
-            btnAnalyzeEntity.TabIndex = 150;
-            btnAnalyzeEntity.Text = "analyze";
-            btnAnalyzeEntity.UseVisualStyleBackColor = true;
-            btnAnalyzeEntity.Click += btnAnalyzeEntity_Click;
             // 
             // lblSelAnim
             // 
@@ -2212,28 +2097,20 @@
             tabPage1.Controls.Add(lblScrollInfo);
             tabPage1.Controls.Add(label1);
             tabPage1.Controls.Add(lblInfoSize);
-            tabPage1.Controls.Add(btnAnalyzeInfo);
             tabPage1.Controls.Add(label3);
             tabPage1.Controls.Add(lblMapSize);
-            tabPage1.Controls.Add(btnAnalyzeMap);
             tabPage1.Controls.Add(label5);
             tabPage1.Controls.Add(lblTilesSize);
-            tabPage1.Controls.Add(btnAnalyzeTiles);
             tabPage1.Controls.Add(label7);
             tabPage1.Controls.Add(lblSInfoSize);
-            tabPage1.Controls.Add(btnAnalyzeSInfo);
             tabPage1.Controls.Add(label9);
             tabPage1.Controls.Add(lblSpritesSize);
-            tabPage1.Controls.Add(btnAnalyzeSprites);
             tabPage1.Controls.Add(label11);
             tabPage1.Controls.Add(lblScrollSize);
-            tabPage1.Controls.Add(btnAnalyzeScroll);
             tabPage1.Controls.Add(label13);
             tabPage1.Controls.Add(lblStringsSize);
-            tabPage1.Controls.Add(btnanalyzeStrings);
             tabPage1.Controls.Add(label4);
             tabPage1.Controls.Add(lblWallTiles);
-            tabPage1.Controls.Add(btnAnalyzeWallTiles);
             tabPage1.Controls.Add(lblSpriteInfoSizes);
             tabPage1.Controls.Add(label31);
             tabPage1.Controls.Add(lblsinfoaddr);
@@ -2535,7 +2412,6 @@
             tabPage2.Controls.Add(label8);
             tabPage2.Controls.Add(lsvEntities);
             tabPage2.Controls.Add(lblEntityInfo);
-            tabPage2.Controls.Add(btnAnalyzeEntity);
             tabPage2.Controls.Add(label15);
             tabPage2.Controls.Add(label2);
             tabPage2.Controls.Add(lblSector1a);
@@ -2555,7 +2431,6 @@
             tabPage2.Controls.Add(btnSector1eCmds);
             tabPage2.Controls.Add(btnSector1dCmds);
             tabPage2.Controls.Add(btnSector1fCmds);
-            tabPage2.Controls.Add(btnSector4Analyze);
             tabPage2.Controls.Add(lsvSector4);
             tabPage2.Controls.Add(label34);
             tabPage2.Location = new Point(4, 24);
@@ -2927,15 +2802,20 @@
             radioButtonZoom4.UseVisualStyleBackColor = true;
             radioButtonZoom4.CheckedChanged += radioButtonZoom4_CheckedChanged;
             // 
-            // columnHeader22
+            // imageViewerControl1
             // 
-            columnHeader22.Text = "sprite name";
+            imageViewerControl1.Image = null;
+            imageViewerControl1.Location = new Point(503, 40);
+            imageViewerControl1.Name = "imageViewerControl1";
+            imageViewerControl1.Size = new Size(384, 775);
+            imageViewerControl1.TabIndex = 194;
             // 
             // FrmAlundra
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1782, 842);
+            Controls.Add(imageViewerControl1);
             Controls.Add(radioButtonZoom4);
             Controls.Add(radioButtonZoom2);
             Controls.Add(radioButtonZoom1);
@@ -3004,29 +2884,21 @@
         private System.Windows.Forms.Label lblScrollInfo;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblInfoSize;
-        private System.Windows.Forms.Button btnAnalyzeInfo;
-        private System.Windows.Forms.Button btnAnalyzeMap;
         private System.Windows.Forms.Label lblMapSize;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button btnAnalyzeTiles;
         private System.Windows.Forms.Label lblTilesSize;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button btnAnalyzeSInfo;
         private System.Windows.Forms.Label lblSInfoSize;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Button btnAnalyzeSprites;
         private System.Windows.Forms.Label lblSpritesSize;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Button btnAnalyzeScroll;
         private System.Windows.Forms.Label lblScrollSize;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Button btnanalyzeStrings;
         private System.Windows.Forms.Label lblStringsSize;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.PictureBox pctMap;
         private System.Windows.Forms.VScrollBar vScrollMap;
         private System.Windows.Forms.HScrollBar hScrollMap;
-        private System.Windows.Forms.Button btnAnalyzeWallTiles;
         private System.Windows.Forms.Label lblWallTiles;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ListBox lstPortals;
@@ -3147,9 +3019,7 @@
         private System.Windows.Forms.Button btnSector1dCmds;
         private System.Windows.Forms.Button btnSector1eCmds;
         private System.Windows.Forms.Button btnSector1fCmds;
-        private System.Windows.Forms.Button btnSector4Analyze;
         private System.Windows.Forms.Label lblSector5Info;
-        private System.Windows.Forms.Button btnAnalyzeEntity;
         private System.Windows.Forms.Label lblSelAnim;
         private System.Windows.Forms.Label lblAnimSetAddr;
         private System.Windows.Forms.Label lblFrameAddr;
@@ -3244,5 +3114,6 @@
         private Label label80;
         private ListBox listBoxCodesGlobal;
         private ColumnHeader columnHeader22;
+        private CustomControls.ImageViewerControl imageViewerControl1;
     }
 }
