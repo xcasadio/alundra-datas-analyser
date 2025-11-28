@@ -38,6 +38,20 @@ public class ImageViewerControl : UserControl
     [Browsable(false)]
     public float Zoom => _zoomLevels[_zoomIndex];
 
+    // Center on a given tile position (tileX, tileY). Defaults to 24x16 tile size.
+    public void CenterAt(int tileX, int tileY, int tileWidth = 24, int tileHeight = 16)
+    {
+        if (_image == null) return;
+        var z = Zoom;
+        var px = tileX * tileWidth;
+        var py = tileY * tileHeight;
+        var cx = Width / 2f;
+        var cy = Height / 2f;
+        _translation.X = cx - px * z;
+        _translation.Y = cy - py * z;
+        Invalidate();
+    }
+
     public void SetZoom(float zoom)
     {
         // choose nearest supported zoom level
@@ -124,7 +138,7 @@ public class ImageViewerControl : UserControl
         }
 
         // high quality rendering for zoomed images
-        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low; //HighQualityBicubic;
         g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
         g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
 

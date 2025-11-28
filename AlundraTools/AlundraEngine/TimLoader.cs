@@ -1,9 +1,9 @@
 ﻿using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
-namespace AlundraEngine.Text;
+namespace AlundraEngine;
 
-public static class TimReader
+public static class TimLoader
 {
     public static Bitmap LoadTim(string path, int paletteIndex = 0, Color? transparentKey = null, int tolerance = 0)
     {

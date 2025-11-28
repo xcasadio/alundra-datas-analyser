@@ -1,4 +1,5 @@
-﻿using AlundraEngine;
+﻿using System.Diagnostics;
+using AlundraEngine;
 using AlundraEngine.Balance;
 using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay.Scripts;
@@ -6,8 +7,6 @@ using AlundraEngine.Sound;
 using AlundraEngine.Text;
 using System.Drawing.Imaging;
 using System.Text;
-using System.Text.Json;
-using System.Windows.Forms;
 using Color = System.Drawing.Color;
 using Timer = System.Windows.Forms.Timer;
 
@@ -19,6 +18,7 @@ namespace AlundraTools.GameControls
         private Color[] _selectedPalette;
         private Color[] _selectedSpritePalette;
         private Dictionary<int, Bitmap> _cachedTiles;
+        private string[] _spriteNames;
 
         public FrmAlundra()
         {
@@ -33,7 +33,7 @@ namespace AlundraTools.GameControls
             _datasBin = datasBin;
             _font3 = font3;
 
-            var mapNames = File.ReadLines("map_names.csv").ToArray();
+            _mapNames = File.ReadLines("map_names.csv").ToArray();
 
             for (var i = 0; i < datasBin.GameMaps.Length; i++)
             {
@@ -41,14 +41,25 @@ namespace AlundraTools.GameControls
                 {
                     var name = "";
 
-                    if (i < mapNames.Length)
+                    if (i < _mapNames.Length)
                     {
-                        name = $" - {mapNames[i]}";
+                        name = $" - {_mapNames[i]}";
                     }
 
                     lstGameMaps.Items.Add($"{datasBin.GameMaps[i].Info.MapId}{name}");
                 }
             }
+
+            var lines = new List<string>();
+            using (var reader = new StreamReader("g_spriteNames.csv", Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
+            {
+                while (reader.ReadLine() is { } line)
+                {
+                    lines.Add(line.Split(";")[1]);
+                }
+            }
+
+            _spriteNames = lines.Skip(1).ToArray();
 
             soundboardControl1.Initialize(soundBin);
 
@@ -165,16 +176,12 @@ namespace AlundraTools.GameControls
 
             if (_selectedGameMap?.Map != null)
             {
-                hScrollMap.Maximum = _selectedGameMap.Map.Width - pctMap.Width / _mapScale / StaticVariables.MapTileWidth;
-                vScrollMap.Maximum = _selectedGameMap.Map.Height - pctMap.Height / _mapScale / StaticVariables.MapTileHeight;
+                imageViewerControl1.ResetView();
             }
 
             //info
             if (_selectedGameMap?.Info != null)
             {
-                var info = _selectedGameMap.Info;
-                lblInfo.Text = _selectedGameMap.Info.ToString();
-
                 lstPortals.Items.Clear();
                 for (var dex = 0; dex < _selectedGameMap.Info.Portals.Length; dex++)
                 {
@@ -200,7 +207,7 @@ namespace AlundraTools.GameControls
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 g.Clear(Color.Black);
                 g.DrawImage(_selectedGameMap.Info.PalettesBitmap, 0, 0, _selectedGameMap.Info.PalettesBitmap.Width * _palScale, _selectedGameMap.Info.PalettesBitmap.Height * _palScale);
-                
+
                 listViewSpriteMapEntries.Items.Clear();
                 foreach (var spriteMapEntry in _selectedGameMap.Info.SpriteMapEntries)
                 {
@@ -218,29 +225,10 @@ namespace AlundraTools.GameControls
             }
             else
             {
-                lblInfo.Text = "alundra dummy map";
                 lstPortals.Items.Clear();
                 lstMapPalettes.Items.Clear();
                 listViewSpriteMapEntries.Items.Clear();
             }
-
-            //spriteinfo
-            var sinfo = _selectedGameMap.SpriteInfo.Header;
-            lblSpriteInfo.Text =
-                $@"{Fix(sinfo.EntitiesPointer)}    {Fix(sinfo.MapEffectSector3Pointer)} {Fix(sinfo.MapEventsPointer)} {Fix(sinfo.SpriteTablePointer)} {Fix(sinfo.SpriteEffectsPointer)} palettes:{Fix(sinfo.SpritePalettesPointer)}    {Fix(sinfo.EventCodesAPointer)} {Fix(sinfo.EventCodesBPointer)} {Fix(sinfo.EventCodesCPointer)} {Fix(sinfo.EventCodesDPointer)} {Fix(sinfo.EventCodesEPointer)}    {Fix(sinfo.EventCodesFPointer)}";
-            lblSpriteInfoSizes.Text =
-                $@"{Fix(sinfo.EntitiesSize)}    {Fix(sinfo.MapEffectSector3Size)} {Fix(sinfo.MapEventsSize)} {Fix(sinfo.SpriteTableSize)} {Fix(sinfo.SpriteEffectsSize)} palettes:{Fix(sinfo.SpritePalettesSize)}    {Fix(sinfo.EventCodesASize)} {Fix(sinfo.EventCodesBSize)} {Fix(sinfo.EventCodesCSize)} {Fix(sinfo.EventCodesDSize)} {Fix(sinfo.EventCodesESize)}    {Fix(sinfo.EventCodesFAndRemainingSize)}";
-            //scroll info
-            if (_selectedGameMap?.ScrollScreen != null)
-            {
-                var scinfo = _selectedGameMap.ScrollScreen;
-                lblScrollInfo.Text = scinfo.ToString();
-            }
-            else
-            {
-                lblScrollInfo.Text = "alundra dummy map";
-            }
-
 
             listBoxCodesA.Items.Clear();
             foreach (var code in _selectedGameMap.SpriteInfo.EventCodes.EventCodesATable)
@@ -284,18 +272,6 @@ namespace AlundraTools.GameControls
             //    listBoxCodesGlobal.Items.Add(code);
             //}
 
-
-            //sizes
-            lblInfoSize.Text = _selectedGameMap.Header.InfoSize.ToString();
-            lblMapSize.Text = _selectedGameMap.Header.MapSize.ToString();
-            lblWallTiles.Text = _selectedGameMap.Header.WallTilesSize.ToString();
-            lblTilesSize.Text = _selectedGameMap.Header.TilesSize.ToString();
-            lblSInfoSize.Text = _selectedGameMap.Header.SpriteInfoSize.ToString();
-            lblsinfoaddr.Text = (GameMap.MemoryAddress + _selectedGameMap.Header.SpriteRecordsOffset).ToString("x6");
-            lblSpritesSize.Text = _selectedGameMap.Header.SpritesSize.ToString();
-            lblScrollSize.Text = _selectedGameMap.Header.ScrollSize.ToString();
-            lblStringsSize.Text = _selectedGameMap.Header.StringSize.ToString();
-
             //sprite palettes
             lstSpritePalettes.Items.Clear();
             for (var dex = 0; dex < _selectedGameMap.SpriteInfo.Palettes.Length; dex++)
@@ -325,17 +301,6 @@ namespace AlundraTools.GameControls
             }
 
             //spriteinfo
-            var lines = new List<string>();
-            using (var reader = new StreamReader("g_spriteNames.csv", Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
-            {
-                while (reader.ReadLine() is { } line)
-                {
-                    lines.Add(line.Split(";")[1]);
-                }
-            }
-
-            var g_spriteNames = lines.Skip(1).ToArray();
-
             lsvEntities.Items.Clear();
             for (var i = 0; i < _selectedGameMap.SpriteInfo.Entities.Entities.Length; i++)
             {
@@ -348,7 +313,7 @@ namespace AlundraTools.GameControls
                     {
                         spriteTableIndex += 0x100;
                     }
-                    var spriteName = spriteTableIndex < 512 ? g_spriteNames[spriteTableIndex] : null;
+                    var spriteName = spriteTableIndex < 512 ? _spriteNames[spriteTableIndex] : null;
 
                     var lvi = new ListViewItem([
                         "entity " + i,
@@ -430,14 +395,12 @@ namespace AlundraTools.GameControls
             LoadMap(_datasBin.AlundraGameMap);
         }
 
-        private int _mapScale = 2;
         private bool _showDebug = false;
         private bool _showStandardTile = true;
         private bool _showWallTile = true;
 
         private void DrawMap()
         {
-            DrawMap(pctMap.Image, pctMap);
             DrawMap(imageViewerControl1.Image, imageViewerControl1);
         }
 
@@ -450,36 +413,28 @@ namespace AlundraTools.GameControls
                 using var g = Graphics.FromImage(image);
                 var fnt = new Font(FontFamily.GenericSansSerif, 8);
 
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bicubic;
                 g.Clear(Color.Black);
 
-                var mapHeightLimit = map.Height - vScrollMap.Value;
-                var mapWidthLimit = control.Width / _mapScale / StaticVariables.MapTileWidth;
-
-                //for (var y = 0; y < mapHeightLimit; y++)
-                //{
-                //    for (var x = 0; x < mapWidthLimit; x++)
-                //    {
                 for (var y = 0; y < map.Height; y++)
                 {
                     for (var x = 0; x < map.Width; x++)
                     {
-                        //var tile = map.MapTiles[(y + vScrollMap.Value) * map.SizeX + x + hScrollMap.Value];
                         var tile = map.MapTiles[y * map.Width + x];
 
-                        var dx = x * _mapScale * StaticVariables.MapTileWidth;
-                        var dy = (y - tile.Height) * _mapScale * StaticVariables.MapTileHeight;
+                        var dx = x * StaticVariables.MapTileWidth;
+                        var dy = (y - tile.Height) * StaticVariables.MapTileHeight;
 
-                        dx -= hScrollMap.Value * _mapScale * StaticVariables.MapTileWidth;
-                        dy -= vScrollMap.Value * _mapScale * StaticVariables.MapTileHeight;
+                        //dx -= StaticVariables.MapTileWidth;
+                        //dy -= StaticVariables.MapTileHeight;
 
                         if (tile.TileId != 0xFFFF && _showStandardTile)
                         {
                             g.DrawImage(GetTile(tile.TileId),
                                 dx,
                                 dy,
-                                StaticVariables.MapTileWidth * _mapScale + 1,
-                                StaticVariables.MapTileHeight * _mapScale + 1);
+                                StaticVariables.MapTileWidth + 1,
+                                StaticVariables.MapTileHeight + 1);
                         }
 
                         if (tile.WallTiles != null && _showWallTile)
@@ -490,9 +445,9 @@ namespace AlundraTools.GameControls
                                 {
                                     g.DrawImage(GetTile(tile.WallTiles.Tiles[i]),
                                         dx,
-                                        dy + (i - tile.WallTiles.Offset + 1) * StaticVariables.MapTileHeight * _mapScale,
-                                        StaticVariables.MapTileWidth * _mapScale + 1,
-                                        StaticVariables.MapTileHeight * _mapScale + 1);
+                                        dy + (i - tile.WallTiles.Offset + 1) * StaticVariables.MapTileHeight,
+                                        StaticVariables.MapTileWidth + 1,
+                                        StaticVariables.MapTileHeight + 1);
                                 }
                             }
                         }
@@ -502,17 +457,17 @@ namespace AlundraTools.GameControls
                             var halfHeight = StaticVariables.MapTileHeight;
 
                             g.DrawString(tile.Walkability.ToString(), fnt, Brushes.Red, dx, dy);
-                            g.DrawString(tile.GroundProperty.ToString(), fnt, Brushes.Red, dx + halfHeight * _mapScale, dy);
-                            g.DrawString(tile.Slope.ToString(), fnt, Brushes.Red, dx + StaticVariables.MapTileHeight * _mapScale, dy);
-                            g.DrawString(tile.Height.ToString(), fnt, Brushes.Red, dx, dy + halfHeight * _mapScale / 1.5f);
-                            g.DrawString(tile.Palette.ToString(), fnt, Brushes.Red, dx + halfHeight * _mapScale, dy + halfHeight * _mapScale / 1.5f);
-                            g.DrawString(tile.Tile.ToString(), fnt, Brushes.Red, dx + StaticVariables.MapTileHeight * _mapScale, dy + halfHeight * _mapScale / 1.5f);
-                            g.DrawString(tile.TilesOffset.ToString(), fnt, Brushes.Green, dx, dy + StaticVariables.MapTileHeight * _mapScale / 1.5f);
+                            g.DrawString(tile.GroundProperty.ToString(), fnt, Brushes.Red, dx + halfHeight, dy);
+                            g.DrawString(tile.Slope.ToString(), fnt, Brushes.Red, dx + StaticVariables.MapTileHeight, dy);
+                            g.DrawString(tile.Height.ToString(), fnt, Brushes.Red, dx, dy + halfHeight / 1.5f);
+                            g.DrawString(tile.Palette.ToString(), fnt, Brushes.Red, dx + halfHeight, dy + halfHeight / 1.5f);
+                            g.DrawString(tile.Tile.ToString(), fnt, Brushes.Red, dx + StaticVariables.MapTileHeight, dy + halfHeight / 1.5f);
+                            g.DrawString(tile.TilesOffset.ToString(), fnt, Brushes.Green, dx, dy + StaticVariables.MapTileHeight / 1.5f);
 
                             if (tile.WallTiles != null)
                             {
-                                g.DrawString(tile.WallTiles.Offset.ToString(), fnt, Brushes.Green, dx + halfHeight * _mapScale, dy + StaticVariables.MapTileHeight * _mapScale / 1.5f);
-                                g.DrawString(tile.WallTiles.Count.ToString(), fnt, Brushes.Green, dx + StaticVariables.MapTileHeight * _mapScale, dy + StaticVariables.MapTileHeight * _mapScale / 1.5f);
+                                g.DrawString(tile.WallTiles.Offset.ToString(), fnt, Brushes.Green, dx + halfHeight, dy + StaticVariables.MapTileHeight / 1.5f);
+                                g.DrawString(tile.WallTiles.Count.ToString(), fnt, Brushes.Green, dx + StaticVariables.MapTileHeight, dy + StaticVariables.MapTileHeight / 1.5f);
                             }
                         }
                     }
@@ -520,33 +475,91 @@ namespace AlundraTools.GameControls
 
                 if (chkTileXy.Checked)
                 {
-                    for (var y = 0; y < map.Height - vScrollMap.Value; y++)
+                    for (var y = 0; y < map.Height; y++)
                     {
-                        for (var x = 0; x < control.Width / _mapScale / StaticVariables.MapTileWidth; x++)
+                        for (var x = 0; x < map.Width; x++)
                         {
-                            var tile = map.MapTiles[(y + vScrollMap.Value) * map.Width + x + hScrollMap.Value];
+                            var tile = map.MapTiles[y * map.Width + x];
+                            
                             if (tile.TileId != 0xFFFF)
                             {
-                                var dx = x * _mapScale * StaticVariables.MapTileWidth;
-                                var dy = (y - tile.Height) * _mapScale * StaticVariables.MapTileHeight;
-                                var text = (x + hScrollMap.Value).ToString("x2") + "x" + (y + vScrollMap.Value).ToString("x2");
+                                var dx = x * StaticVariables.MapTileWidth;
+                                var dy = (y - tile.Height) * StaticVariables.MapTileHeight;
+                                var text = x.ToString() + "x" + y.ToString();
                                 g.DrawString(text, fnt, Brushes.Red, dx, dy);
-
-                                //g.DrawString(Array.IndexOf(map.maptiles,tile).ToString(), fnt, Brushes.Red, dx, dy);
-                                //g.DrawString(tile.walkability.ToString(), fnt, Brushes.Red, dx, dy);
-                                //g.DrawString(tile.groundproperty.ToString(), fnt, Brushes.Red, dx + 8 * mapscale, dy);
-                                //g.DrawString(tile.slope.ToString(), fnt, Brushes.Red, dx + StaticVariables.MapTileHeight * mapscale, dy);
-                                //g.DrawString(tile.height.ToString(), fnt, Brushes.Red, dx, dy + 8 * mapscale / 1.5f);
-                                //g.DrawString(tile.palette.ToString(), fnt, Brushes.Red, dx + 8 * mapscale, dy + 8 * mapscale / 1.5f);
-                                //g.DrawString(tile.tile.ToString(), fnt, Brushes.Red, dx + StaticVariables.MapTileHeight * mapscale, dy + 8 * mapscale / 1.5f);
-                                //g.DrawString(tile.tilesoffset.ToString(), fnt, Brushes.Green, dx, dy + StaticVariables.MapTileHeight * mapscale / 1.5f);
-                                //if (tile.walltiles != null)
-                                //{
-                                //    g.DrawString(tile.walltiles.offset.ToString(), fnt, Brushes.Green, dx + 8 * mapscale, dy + StaticVariables.MapTileHeight * mapscale / 1.5f);
-                                //    g.DrawString(tile.walltiles.count.ToString(), fnt, Brushes.Green, dx + StaticVariables.MapTileHeight * mapscale, dy + StaticVariables.MapTileHeight * mapscale / 1.5f);
-                                //}
                             }
                         }
+                    }
+                }
+
+                //entities + other
+                var portals = _selectedGameMap.Info.Portals;
+                for (var i = 0; i < portals.Length; i++)
+                {
+                    if (portals[i].X2 != 0xff && portals[i].Y2 != 0xff)
+                    {
+                        var tile = _selectedGameMap.Map.MapTiles[portals[i].X1 + portals[i].Y1 * _selectedGameMap.Map.Width];
+                        var x1 = portals[i].X1 * StaticVariables.MapTileWidth;
+                        var y1 = (portals[i].Y1 - tile.Height) * StaticVariables.MapTileHeight;
+                        var x2 = (portals[i].X2 + 1) * StaticVariables.MapTileWidth;
+                        var y2 = (portals[i].Y2 - tile.Height + 1) * StaticVariables.MapTileHeight;
+
+                        g.DrawRectangle(Pens.Blue, x1, y1, x2 - x1, y2 - y1);
+                        if (portals[i] == _selectedPortal)
+                        {
+                            g.DrawRectangle(Pens.Red, x1 + 1, y1 + 1, x2 - x1 - 2, y2 - y1 - 2);
+                        }
+                    }
+                }
+
+                fnt = new Font(FontFamily.GenericSansSerif, 9);
+
+                var entities = _selectedGameMap.SpriteInfo.Entities.Entities;
+                using var br = _datasBin.OpenBin();
+                for (var i = 0; i < entities.Length; i++)
+                {
+                    if (entities[i] != null)
+                    {
+                        var x = entities[i].XPos / 2;
+                        var y = entities[i].YPos / 2;
+                        var height = entities[i].Height / 2;
+
+                        var x1 = x * StaticVariables.MapTileWidth;
+                        var y1 = (y - height) * StaticVariables.MapTileHeight;
+                        try
+                        {
+
+                            var anim = entities[i].GetSprite(br, _selectedGameMap.SpriteInfo);
+
+                            if (anim != null)
+                            {
+                                var frame = anim.Frames[0];
+                                var bmps = GetSpriteImages(frame.Images);
+                                for (var sdex = frame.Images.NumberOfImages - 1; sdex >= 0; sdex--)
+                                {
+                                    var img = frame.Images.Images[sdex];
+                                    if (img != null)
+                                    {
+
+                                        var w = img.X4 - img.X1;
+                                        var h = img.Y4 - img.Y1;
+                                        if (w != 0 && h != 0)
+                                        {
+                                            g.DrawImage(bmps[sdex], x1 + 12 + img.X1, y1 + 8 + img.Y1, w, h);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debugger.Break();
+                        }
+
+                        var pen = entities[i] == _selectedEntity ? Pens.Yellow : Pens.Green;
+                        var brush = entities[i] == _selectedEntity ? Brushes.Yellow : Brushes.Green;
+                        g.DrawRectangle(pen, x1, y1, 24, 16);
+                        g.DrawString("entity " + i, fnt, brush, x1, y1);
                     }
                 }
 
@@ -662,8 +675,6 @@ namespace AlundraTools.GameControls
 
         private void frmAlundra_Load(object sender, EventArgs e)
         {
-            pctMap.Image = new Bitmap(pctMap.Width, pctMap.Height, PixelFormat.Format24bppRgb);
-
             var height = 60 * StaticVariables.MapTileHeight;
             var width = 52 * StaticVariables.MapTileWidth;
 
@@ -708,7 +719,7 @@ namespace AlundraTools.GameControls
                 lblportaly1.Text = _selectedPortal.Y1.ToString();
                 lblportalx2.Text = _selectedPortal.X2.ToString();
                 lblportaly2.Text = _selectedPortal.Y2.ToString();
-                lblportalmapid.Text = _selectedPortal.DestMapId.ToString();
+                lblportalmapid.Text = $"{_selectedPortal.DestMapId}{_mapNames[_selectedPortal.DestMapId]}";
                 lblportaldestx.Text = _selectedPortal.DestTileX.ToString();
                 lblportaldesty.Text = _selectedPortal.DestTileY.ToString();
                 lblportalu1.Text = _selectedPortal.ZLevel.ToString();
@@ -720,7 +731,7 @@ namespace AlundraTools.GameControls
                 }
                 else
                 {
-                    pctMap.Refresh();
+                    DrawMap();
                 }
             }
             else
@@ -735,24 +746,14 @@ namespace AlundraTools.GameControls
                 lblportalu1.Text = "0";
                 lblportalu2.Text = "0";
 
-                pctMap.Refresh();
+                DrawMap();
             }
         }
 
         private void CenterOnTile(int tilex, int tiley)
         {
-            var targetx = tilex - pctMap.Width / 24 / _mapScale / 2;
-            var targety = tiley - pctMap.Height / 16 / _mapScale / 2;
-            //scroll map to make portal visible
-            if (targetx > hScrollMap.Maximum)
-            {
-                targetx = hScrollMap.Maximum;
-            }
-
-            if (targety > vScrollMap.Maximum)
-            {
-                targety = vScrollMap.Maximum;
-            }
+            var targetx = tilex - imageViewerControl1.Width / StaticVariables.MapTileWidth / 2;
+            var targety = tiley - imageViewerControl1.Height / StaticVariables.MapTileHeight / 2;
 
             if (targetx < 0)
             {
@@ -764,95 +765,11 @@ namespace AlundraTools.GameControls
                 targety = 0;
             }
 
-            hScrollMap.Value = targetx;
-            vScrollMap.Value = targety;
+            imageViewerControl1.CenterAt(targetx, targety);
 
             DrawMap();
         }
 
-        private void pctMap_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            if (_selectedGameMap != null && _selectedGameMap.Map != null)
-            {
-                var portals = _selectedGameMap.Info.Portals;
-                for (var i = 0; i < portals.Length; i++)
-                {
-                    if (portals[i].X2 != 0xff && portals[i].Y2 != 0xff)
-                    {
-                        var tile = _selectedGameMap.Map.MapTiles[portals[i].X1 + portals[i].Y1 * _selectedGameMap.Map.Width];
-                        var x1 = (portals[i].X1 - hScrollMap.Value) * 24 * _mapScale;
-                        var y1 = (portals[i].Y1 - tile.Height - vScrollMap.Value) * 16 * _mapScale;
-                        var x2 = (portals[i].X2 + 1 - hScrollMap.Value) * 24 * _mapScale;
-                        var y2 = (portals[i].Y2 - tile.Height + 1 - vScrollMap.Value) * 16 * _mapScale;
-
-                        e.Graphics.DrawRectangle(Pens.Blue, x1, y1, x2 - x1, y2 - y1);
-                        if (portals[i] == _selectedPortal)
-                        {
-                            e.Graphics.DrawRectangle(Pens.Red, x1 + 1, y1 + 1, x2 - x1 - 2, y2 - y1 - 2);
-                        }
-                    }
-                }
-
-                var fnt = new Font(FontFamily.GenericSansSerif, 9);
-
-                var entities = _selectedGameMap.SpriteInfo.Entities.Entities;
-                var br = _datasBin.OpenBin();
-                for (var i = 0; i < entities.Length; i++)
-                {
-                    if (entities[i] != null)
-                    {
-                        var x = entities[i].XPos / 2;
-                        var y = entities[i].YPos / 2;
-                        var height = entities[i].Height / 2;
-
-                        //var tile = selectedGame.map.maptiles[x + y * selectedGame.map.width];
-                        var x1 = (x - hScrollMap.Value) * 24 * _mapScale;
-                        var y1 = (y - height - vScrollMap.Value) * 16 * _mapScale;
-                        try
-                        {
-
-                            var anim = entities[i].GetSprite(br, _selectedGameMap.SpriteInfo);
-
-                            if (anim != null)
-                            {
-                                var frame = anim.Frames[0];
-                                var bmps = GetSpriteImages(frame.Images);
-                                for (var sdex = frame.Images.NumberOfImages - 1; sdex >= 0; sdex--)
-                                {
-                                    var img = frame.Images.Images[sdex];
-                                    if (img != null)
-                                    {
-
-                                        var w = img.X4 - img.X1;
-                                        var h = img.Y4 - img.Y1;
-                                        if (w != 0 && h != 0)
-                                        {
-                                            e.Graphics.DrawImage(bmps[sdex], x1 + 12 * _mapScale + img.X1 * _mapScale, y1 + 8 * _mapScale + img.Y1 * _mapScale, w * _mapScale, h * _mapScale);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            //ex = ex;
-                        }
-
-                        var pen = entities[i] == _selectedEntity ? Pens.Yellow : Pens.Green;
-                        var brush = entities[i] == _selectedEntity ? Brushes.Yellow : Brushes.Green;
-                        e.Graphics.DrawRectangle(pen, x1, y1, 24 * _mapScale, 16 * _mapScale);
-                        e.Graphics.DrawString("entity " + i, fnt, brush, x1, y1);
-                    }
-                }
-
-                br.Close();
-            }
-            else
-            {
-                e.Graphics.Clear(Color.Black);
-            }
-        }
 
         private void btnPortal_Click(object sender, EventArgs e)
         {
@@ -877,10 +794,10 @@ namespace AlundraTools.GameControls
                     if (portals[dex].X2 != 0xff && portals[dex].Y2 != 0xff)
                     {
                         var tile = _selectedGameMap.Map.MapTiles[portals[dex].X1 + portals[dex].Y1 * _selectedGameMap.Map.Width];
-                        var x1 = (portals[dex].X1 - hScrollMap.Value) * 24 * _mapScale;
-                        var y1 = (portals[dex].Y1 - tile.Height - vScrollMap.Value) * 16 * _mapScale;
-                        var x2 = (portals[dex].X2 + 1 - hScrollMap.Value) * 24 * _mapScale;
-                        var y2 = (portals[dex].Y2 - tile.Height + 1 - vScrollMap.Value) * 16 * _mapScale;
+                        var x1 = portals[dex].X1 * StaticVariables.MapTileWidth;
+                        var y1 = (portals[dex].Y1 - tile.Height) * StaticVariables.MapTileHeight;
+                        var x2 = (portals[dex].X2 + 1) * StaticVariables.MapTileWidth;
+                        var y2 = (portals[dex].Y2 - tile.Height + 1) * StaticVariables.MapTileHeight;
                         if (e.X > x1 && e.X < x2 && e.Y > y1 && e.Y < y2)
                         {
                             SelectPortal(dex);
@@ -911,8 +828,8 @@ namespace AlundraTools.GameControls
         {
             if (index >= 0 && index < 0xff)
             {
-                return sector1Table[index & 0x7f].ToString("x4") + ":" + 
-                       (_selectedGameMap.SpriteInfo.Header.EventCodeAddress + sector1Table[index & 0x7f]).ToString("x6") + ":" + 
+                return sector1Table[index & 0x7f].ToString("x4") + ":" +
+                       (_selectedGameMap.SpriteInfo.Header.EventCodeAddress + sector1Table[index & 0x7f]).ToString("x6") + ":" +
                        RenderByteCodes(_selectedGameMap.SpriteInfo.EventCodes.GetByteCode(br, sector1Table[index & 0x7f]));
             }
 
@@ -964,7 +881,8 @@ namespace AlundraTools.GameControls
                 lblSector1e.Text = "0";
                 lblSector1f.Text = "0";
             }
-            pctMap.Refresh();
+
+            DrawMap();
         }
 
         private SpriteRecord _selectedSector5;
@@ -1482,6 +1400,7 @@ namespace AlundraTools.GameControls
         private string _dumpfile = "";
         private EtcRes _etcRes;
         private Font3 _font3;
+        private string[] _mapNames;
 
         private void pctPortrait_Paint(object sender, PaintEventArgs e)
         {
@@ -1551,43 +1470,70 @@ namespace AlundraTools.GameControls
             DrawMap();
         }
 
-        private void radioButtonZoom1_CheckedChanged(object sender, EventArgs e)
+        private void buttonGameMapHeader_Click(object sender, EventArgs e)
         {
-            _mapScale = 1;
-            
-            if (_selectedGameMap?.Map != null)
+            if (_selectedGameMap == null)
             {
-                hScrollMap.Maximum = _selectedGameMap.Map.Width - pctMap.Width / _mapScale / StaticVariables.MapTileWidth;
-                vScrollMap.Maximum = _selectedGameMap.Map.Height - pctMap.Height / _mapScale / StaticVariables.MapTileWidth;
+                propertyGridGameMapHeader.SelectedObject = null;
+                return;
             }
 
-            DrawMap();
+            propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.Header);
         }
 
-        private void radioButtonZoom2_CheckedChanged(object sender, EventArgs e)
+        private void buttonSpriteInfoHeader_Click(object sender, EventArgs e)
         {
-            _mapScale = 2;
-            
-            if (_selectedGameMap?.Map != null)
+            if (_selectedGameMap?.SpriteInfo == null)
             {
-                hScrollMap.Maximum = _selectedGameMap.Map.Width - pctMap.Width / _mapScale / StaticVariables.MapTileWidth;
-                vScrollMap.Maximum = _selectedGameMap.Map.Height - pctMap.Height / _mapScale / StaticVariables.MapTileWidth;
+                propertyGridGameMapHeader.SelectedObject = null;
+                return;
             }
 
-            DrawMap();
+            propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.SpriteInfo.Header);
         }
 
-        private void radioButtonZoom4_CheckedChanged(object sender, EventArgs e)
+        private void buttonGameMapInfo_Click(object sender, EventArgs e)
         {
-            _mapScale = 4;
-            
-            if (_selectedGameMap?.Map != null)
+            if (_selectedGameMap?.Info == null)
             {
-                hScrollMap.Maximum = _selectedGameMap.Map.Width - pctMap.Width / _mapScale / StaticVariables.MapTileWidth;
-                vScrollMap.Maximum = _selectedGameMap.Map.Height - pctMap.Height / _mapScale / StaticVariables.MapTileWidth;
+                propertyGridGameMapHeader.SelectedObject = null;
+                return;
             }
 
-            DrawMap();
+            propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.Info);
+        }
+
+        private void buttonScrollScreen_Click(object sender, EventArgs e)
+        {
+            if (_selectedGameMap == null)
+            {
+                propertyGridGameMapHeader.SelectedObject = null;
+                return;
+            }
+
+            propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.ScrollScreen);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (_selectedGameMap?.SpriteInfo == null)
+            {
+                propertyGridGameMapHeader.SelectedObject = null;
+                return;
+            }
+
+            propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.SpriteInfo);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (_selectedGameMap == null)
+            {
+                propertyGridGameMapHeader.SelectedObject = null;
+                return;
+            }
+
+            propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.Map);
         }
 
         //private static void Save<T>(string fileName, List<T> spriteDatas, Action<T, JObject> saveFunction)

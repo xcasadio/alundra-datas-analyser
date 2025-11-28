@@ -37,28 +37,6 @@
             pctSpritesheet = new PictureBox();
             lstSpritePalettes = new ListBox();
             pctSpritePalettes = new PictureBox();
-            lblInfo = new Label();
-            lblSpriteInfo = new Label();
-            lblScrollInfo = new Label();
-            label1 = new Label();
-            lblInfoSize = new Label();
-            lblMapSize = new Label();
-            label3 = new Label();
-            lblTilesSize = new Label();
-            label5 = new Label();
-            lblSInfoSize = new Label();
-            label7 = new Label();
-            lblSpritesSize = new Label();
-            label9 = new Label();
-            lblScrollSize = new Label();
-            label11 = new Label();
-            lblStringsSize = new Label();
-            label13 = new Label();
-            pctMap = new PictureBox();
-            vScrollMap = new VScrollBar();
-            hScrollMap = new HScrollBar();
-            lblWallTiles = new Label();
-            label4 = new Label();
             lstPortals = new ListBox();
             lblportalx1 = new Label();
             label6 = new Label();
@@ -79,7 +57,6 @@
             lblportaldestx = new Label();
             label30 = new Label();
             btnPortal = new Button();
-            lblSpriteInfoSizes = new Label();
             lsvEntities = new ListView();
             columnHeader1 = new ColumnHeader();
             columnHeader2 = new ColumnHeader();
@@ -171,7 +148,6 @@
             lblFrameData = new Label();
             lblImageData = new Label();
             lblEntityInfo = new Label();
-            lblsinfoaddr = new Label();
             btnSector1cCmds = new Button();
             btnSector1bCmds = new Button();
             btnSector1aCmds = new Button();
@@ -213,6 +189,14 @@
             lbl_moreflags = new Label();
             label74 = new Label();
             tabControl1 = new TabControl();
+            tabPage9 = new TabPage();
+            button2 = new Button();
+            button1 = new Button();
+            buttonScrollScreen = new Button();
+            buttonGameMapInfo = new Button();
+            buttonSpriteInfoHeader = new Button();
+            buttonGameMapHeader = new Button();
+            propertyGridGameMapHeader = new PropertyGrid();
             tabPage1 = new TabPage();
             label69 = new Label();
             listViewSpriteMapEntries = new ListView();
@@ -269,21 +253,18 @@
             checkBoxStatndardTile = new CheckBox();
             checkBoxWallTile = new CheckBox();
             checkBoxDebug = new CheckBox();
-            radioButtonZoom1 = new RadioButton();
-            radioButtonZoom2 = new RadioButton();
-            radioButtonZoom4 = new RadioButton();
             imageViewerControl1 = new AlundraTools.CustomControls.ImageViewerControl();
             ((System.ComponentModel.ISupportInitialize)pctMapPalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctTilesheet).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctSpritesheet).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctSpritePalettes).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pctMap).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctAnim).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctImage).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctFrame).BeginInit();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pctPortrait).BeginInit();
             tabControl1.SuspendLayout();
+            tabPage9.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage3.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -383,228 +364,6 @@
             pctSpritePalettes.TabStop = false;
             pctSpritePalettes.Paint += pctSpritePalettes_Paint;
             pctSpritePalettes.MouseClick += pctSpritePalettes_MouseClick;
-            // 
-            // lblInfo
-            // 
-            lblInfo.AutoSize = true;
-            lblInfo.Location = new Point(7, 170);
-            lblInfo.Margin = new Padding(4, 0, 4, 0);
-            lblInfo.Name = "lblInfo";
-            lblInfo.Size = new Size(86, 15);
-            lblInfo.TabIndex = 18;
-            lblInfo.Text = "selected a map";
-            // 
-            // lblSpriteInfo
-            // 
-            lblSpriteInfo.AutoSize = true;
-            lblSpriteInfo.Location = new Point(412, 165);
-            lblSpriteInfo.Margin = new Padding(4, 0, 4, 0);
-            lblSpriteInfo.Name = "lblSpriteInfo";
-            lblSpriteInfo.Size = new Size(86, 15);
-            lblSpriteInfo.TabIndex = 19;
-            lblSpriteInfo.Text = "selected a map";
-            // 
-            // lblScrollInfo
-            // 
-            lblScrollInfo.AutoSize = true;
-            lblScrollInfo.Location = new Point(7, 467);
-            lblScrollInfo.Margin = new Padding(4, 0, 4, 0);
-            lblScrollInfo.Name = "lblScrollInfo";
-            lblScrollInfo.Size = new Size(86, 15);
-            lblScrollInfo.TabIndex = 20;
-            lblScrollInfo.Text = "selected a map";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(432, 495);
-            label1.Margin = new Padding(4, 0, 4, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(28, 15);
-            label1.TabIndex = 21;
-            label1.Text = "info";
-            // 
-            // lblInfoSize
-            // 
-            lblInfoSize.AutoSize = true;
-            lblInfoSize.Location = new Point(474, 495);
-            lblInfoSize.Margin = new Padding(4, 0, 4, 0);
-            lblInfoSize.Name = "lblInfoSize";
-            lblInfoSize.Size = new Size(13, 15);
-            lblInfoSize.TabIndex = 22;
-            lblInfoSize.Text = "0";
-            // 
-            // lblMapSize
-            // 
-            lblMapSize.AutoSize = true;
-            lblMapSize.Location = new Point(474, 533);
-            lblMapSize.Margin = new Padding(4, 0, 4, 0);
-            lblMapSize.Name = "lblMapSize";
-            lblMapSize.Size = new Size(13, 15);
-            lblMapSize.TabIndex = 25;
-            lblMapSize.Text = "0";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(432, 533);
-            label3.Margin = new Padding(4, 0, 4, 0);
-            label3.Name = "label3";
-            label3.Size = new Size(31, 15);
-            label3.TabIndex = 24;
-            label3.Text = "map";
-            // 
-            // lblTilesSize
-            // 
-            lblTilesSize.AutoSize = true;
-            lblTilesSize.Location = new Point(474, 609);
-            lblTilesSize.Margin = new Padding(4, 0, 4, 0);
-            lblTilesSize.Name = "lblTilesSize";
-            lblTilesSize.Size = new Size(13, 15);
-            lblTilesSize.TabIndex = 28;
-            lblTilesSize.Text = "0";
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new Point(432, 609);
-            label5.Margin = new Padding(4, 0, 4, 0);
-            label5.Name = "label5";
-            label5.Size = new Size(28, 15);
-            label5.TabIndex = 27;
-            label5.Text = "tiles";
-            // 
-            // lblSInfoSize
-            // 
-            lblSInfoSize.AutoSize = true;
-            lblSInfoSize.Location = new Point(474, 647);
-            lblSInfoSize.Margin = new Padding(4, 0, 4, 0);
-            lblSInfoSize.Name = "lblSInfoSize";
-            lblSInfoSize.Size = new Size(13, 15);
-            lblSInfoSize.TabIndex = 31;
-            lblSInfoSize.Text = "0";
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new Point(420, 647);
-            label7.Margin = new Padding(4, 0, 4, 0);
-            label7.Name = "label7";
-            label7.Size = new Size(57, 15);
-            label7.TabIndex = 30;
-            label7.Text = "spriteinfo";
-            // 
-            // lblSpritesSize
-            // 
-            lblSpritesSize.AutoSize = true;
-            lblSpritesSize.Location = new Point(474, 685);
-            lblSpritesSize.Margin = new Padding(4, 0, 4, 0);
-            lblSpritesSize.Name = "lblSpritesSize";
-            lblSpritesSize.Size = new Size(13, 15);
-            lblSpritesSize.TabIndex = 34;
-            lblSpritesSize.Text = "0";
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.Location = new Point(432, 685);
-            label9.Margin = new Padding(4, 0, 4, 0);
-            label9.Name = "label9";
-            label9.Size = new Size(41, 15);
-            label9.TabIndex = 33;
-            label9.Text = "sprites";
-            // 
-            // lblScrollSize
-            // 
-            lblScrollSize.AutoSize = true;
-            lblScrollSize.Location = new Point(474, 723);
-            lblScrollSize.Margin = new Padding(4, 0, 4, 0);
-            lblScrollSize.Name = "lblScrollSize";
-            lblScrollSize.Size = new Size(13, 15);
-            lblScrollSize.TabIndex = 37;
-            lblScrollSize.Text = "0";
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Location = new Point(432, 723);
-            label11.Margin = new Padding(4, 0, 4, 0);
-            label11.Name = "label11";
-            label11.Size = new Size(35, 15);
-            label11.TabIndex = 36;
-            label11.Text = "scroll";
-            // 
-            // lblStringsSize
-            // 
-            lblStringsSize.AutoSize = true;
-            lblStringsSize.Location = new Point(474, 761);
-            lblStringsSize.Margin = new Padding(4, 0, 4, 0);
-            lblStringsSize.Name = "lblStringsSize";
-            lblStringsSize.Size = new Size(13, 15);
-            lblStringsSize.TabIndex = 40;
-            lblStringsSize.Text = "0";
-            // 
-            // label13
-            // 
-            label13.AutoSize = true;
-            label13.Location = new Point(432, 761);
-            label13.Margin = new Padding(4, 0, 4, 0);
-            label13.Name = "label13";
-            label13.Size = new Size(42, 15);
-            label13.TabIndex = 39;
-            label13.Text = "strings";
-            // 
-            // pctMap
-            // 
-            pctMap.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            pctMap.Location = new Point(196, 37);
-            pctMap.Margin = new Padding(4, 3, 4, 3);
-            pctMap.Name = "pctMap";
-            pctMap.Size = new Size(300, 778);
-            pctMap.TabIndex = 42;
-            pctMap.TabStop = false;
-            pctMap.Paint += pctMap_Paint;
-            pctMap.MouseClick += pctMap_MouseClick;
-            // 
-            // vScrollMap
-            // 
-            vScrollMap.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            vScrollMap.LargeChange = 1;
-            vScrollMap.Location = new Point(890, 37);
-            vScrollMap.Name = "vScrollMap";
-            vScrollMap.Size = new Size(17, 777);
-            vScrollMap.TabIndex = 43;
-            vScrollMap.Scroll += vScrollMap_Scroll;
-            // 
-            // hScrollMap
-            // 
-            hScrollMap.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            hScrollMap.LargeChange = 1;
-            hScrollMap.Location = new Point(196, 818);
-            hScrollMap.Name = "hScrollMap";
-            hScrollMap.Size = new Size(691, 17);
-            hScrollMap.TabIndex = 44;
-            hScrollMap.Scroll += hScrollMap_Scroll;
-            // 
-            // lblWallTiles
-            // 
-            lblWallTiles.AutoSize = true;
-            lblWallTiles.Location = new Point(474, 571);
-            lblWallTiles.Margin = new Padding(4, 0, 4, 0);
-            lblWallTiles.Name = "lblWallTiles";
-            lblWallTiles.Size = new Size(13, 15);
-            lblWallTiles.TabIndex = 46;
-            lblWallTiles.Text = "0";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(420, 571);
-            label4.Margin = new Padding(4, 0, 4, 0);
-            label4.Name = "label4";
-            label4.Size = new Size(49, 15);
-            label4.TabIndex = 45;
-            label4.Text = "walltiles";
             // 
             // lstPortals
             // 
@@ -807,16 +566,6 @@
             btnPortal.Text = "follow portal";
             btnPortal.UseVisualStyleBackColor = true;
             btnPortal.Click += btnPortal_Click;
-            // 
-            // lblSpriteInfoSizes
-            // 
-            lblSpriteInfoSizes.AutoSize = true;
-            lblSpriteInfoSizes.Location = new Point(412, 179);
-            lblSpriteInfoSizes.Margin = new Padding(4, 0, 4, 0);
-            lblSpriteInfoSizes.Name = "lblSpriteInfoSizes";
-            lblSpriteInfoSizes.Size = new Size(86, 15);
-            lblSpriteInfoSizes.TabIndex = 72;
-            lblSpriteInfoSizes.Text = "selected a map";
             // 
             // lsvEntities
             // 
@@ -1648,16 +1397,6 @@
             lblEntityInfo.TabIndex = 140;
             lblEntityInfo.Text = "0";
             // 
-            // lblsinfoaddr
-            // 
-            lblsinfoaddr.AutoSize = true;
-            lblsinfoaddr.Location = new Point(474, 480);
-            lblsinfoaddr.Margin = new Padding(4, 0, 4, 0);
-            lblsinfoaddr.Name = "lblsinfoaddr";
-            lblsinfoaddr.Size = new Size(13, 15);
-            lblsinfoaddr.TabIndex = 136;
-            lblsinfoaddr.Text = "0";
-            // 
             // btnSector1cCmds
             // 
             btnSector1cCmds.Location = new Point(7, 490);
@@ -2065,6 +1804,7 @@
             // tabControl1
             // 
             tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tabControl1.Controls.Add(tabPage9);
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage3);
             tabControl1.Controls.Add(tabPage2);
@@ -2079,6 +1819,92 @@
             tabControl1.Size = new Size(860, 818);
             tabControl1.TabIndex = 186;
             // 
+            // tabPage9
+            // 
+            tabPage9.Controls.Add(button2);
+            tabPage9.Controls.Add(button1);
+            tabPage9.Controls.Add(buttonScrollScreen);
+            tabPage9.Controls.Add(buttonGameMapInfo);
+            tabPage9.Controls.Add(buttonSpriteInfoHeader);
+            tabPage9.Controls.Add(buttonGameMapHeader);
+            tabPage9.Controls.Add(propertyGridGameMapHeader);
+            tabPage9.Location = new Point(4, 24);
+            tabPage9.Name = "tabPage9";
+            tabPage9.Padding = new Padding(3);
+            tabPage9.Size = new Size(852, 790);
+            tabPage9.TabIndex = 8;
+            tabPage9.Text = "Data";
+            tabPage9.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            button2.Location = new Point(6, 167);
+            button2.Name = "button2";
+            button2.Size = new Size(137, 23);
+            button2.TabIndex = 143;
+            button2.Text = "Map";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(6, 138);
+            button1.Name = "button1";
+            button1.Size = new Size(137, 23);
+            button1.TabIndex = 142;
+            button1.Text = "Sprite info";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
+            // buttonScrollScreen
+            // 
+            buttonScrollScreen.Location = new Point(6, 93);
+            buttonScrollScreen.Name = "buttonScrollScreen";
+            buttonScrollScreen.Size = new Size(137, 23);
+            buttonScrollScreen.TabIndex = 141;
+            buttonScrollScreen.Text = "Scroll screen";
+            buttonScrollScreen.UseVisualStyleBackColor = true;
+            buttonScrollScreen.Click += buttonScrollScreen_Click;
+            // 
+            // buttonGameMapInfo
+            // 
+            buttonGameMapInfo.Location = new Point(6, 64);
+            buttonGameMapInfo.Name = "buttonGameMapInfo";
+            buttonGameMapInfo.Size = new Size(137, 23);
+            buttonGameMapInfo.TabIndex = 140;
+            buttonGameMapInfo.Text = "Game map info";
+            buttonGameMapInfo.UseVisualStyleBackColor = true;
+            buttonGameMapInfo.Click += buttonGameMapInfo_Click;
+            // 
+            // buttonSpriteInfoHeader
+            // 
+            buttonSpriteInfoHeader.Location = new Point(6, 35);
+            buttonSpriteInfoHeader.Name = "buttonSpriteInfoHeader";
+            buttonSpriteInfoHeader.Size = new Size(137, 23);
+            buttonSpriteInfoHeader.TabIndex = 139;
+            buttonSpriteInfoHeader.Text = "Sprite info header";
+            buttonSpriteInfoHeader.UseVisualStyleBackColor = true;
+            buttonSpriteInfoHeader.Click += buttonSpriteInfoHeader_Click;
+            // 
+            // buttonGameMapHeader
+            // 
+            buttonGameMapHeader.Location = new Point(6, 6);
+            buttonGameMapHeader.Name = "buttonGameMapHeader";
+            buttonGameMapHeader.Size = new Size(137, 23);
+            buttonGameMapHeader.TabIndex = 138;
+            buttonGameMapHeader.Text = "Game map header";
+            buttonGameMapHeader.UseVisualStyleBackColor = true;
+            buttonGameMapHeader.Click += buttonGameMapHeader_Click;
+            // 
+            // propertyGridGameMapHeader
+            // 
+            propertyGridGameMapHeader.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            propertyGridGameMapHeader.BackColor = SystemColors.Control;
+            propertyGridGameMapHeader.Location = new Point(149, 3);
+            propertyGridGameMapHeader.Name = "propertyGridGameMapHeader";
+            propertyGridGameMapHeader.Size = new Size(700, 784);
+            propertyGridGameMapHeader.TabIndex = 137;
+            // 
             // tabPage1
             // 
             tabPage1.Controls.Add(label69);
@@ -2092,28 +1918,7 @@
             tabPage1.Controls.Add(vScrollSprite);
             tabPage1.Controls.Add(lstSpritePalettes);
             tabPage1.Controls.Add(pctSpritePalettes);
-            tabPage1.Controls.Add(lblInfo);
-            tabPage1.Controls.Add(lblSpriteInfo);
-            tabPage1.Controls.Add(lblScrollInfo);
-            tabPage1.Controls.Add(label1);
-            tabPage1.Controls.Add(lblInfoSize);
-            tabPage1.Controls.Add(label3);
-            tabPage1.Controls.Add(lblMapSize);
-            tabPage1.Controls.Add(label5);
-            tabPage1.Controls.Add(lblTilesSize);
-            tabPage1.Controls.Add(label7);
-            tabPage1.Controls.Add(lblSInfoSize);
-            tabPage1.Controls.Add(label9);
-            tabPage1.Controls.Add(lblSpritesSize);
-            tabPage1.Controls.Add(label11);
-            tabPage1.Controls.Add(lblScrollSize);
-            tabPage1.Controls.Add(label13);
-            tabPage1.Controls.Add(lblStringsSize);
-            tabPage1.Controls.Add(label4);
-            tabPage1.Controls.Add(lblWallTiles);
-            tabPage1.Controls.Add(lblSpriteInfoSizes);
             tabPage1.Controls.Add(label31);
-            tabPage1.Controls.Add(lblsinfoaddr);
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
@@ -2767,47 +2572,12 @@
             checkBoxDebug.UseVisualStyleBackColor = true;
             checkBoxDebug.CheckedChanged += checkBoxDebug_CheckedChanged;
             // 
-            // radioButtonZoom1
-            // 
-            radioButtonZoom1.AutoSize = true;
-            radioButtonZoom1.Checked = true;
-            radioButtonZoom1.Location = new Point(633, 12);
-            radioButtonZoom1.Name = "radioButtonZoom1";
-            radioButtonZoom1.Size = new Size(36, 19);
-            radioButtonZoom1.TabIndex = 191;
-            radioButtonZoom1.TabStop = true;
-            radioButtonZoom1.Text = "x1";
-            radioButtonZoom1.UseVisualStyleBackColor = true;
-            radioButtonZoom1.CheckedChanged += radioButtonZoom1_CheckedChanged;
-            // 
-            // radioButtonZoom2
-            // 
-            radioButtonZoom2.AutoSize = true;
-            radioButtonZoom2.Location = new Point(676, 12);
-            radioButtonZoom2.Name = "radioButtonZoom2";
-            radioButtonZoom2.Size = new Size(36, 19);
-            radioButtonZoom2.TabIndex = 192;
-            radioButtonZoom2.Text = "x2";
-            radioButtonZoom2.UseVisualStyleBackColor = true;
-            radioButtonZoom2.CheckedChanged += radioButtonZoom2_CheckedChanged;
-            // 
-            // radioButtonZoom4
-            // 
-            radioButtonZoom4.AutoSize = true;
-            radioButtonZoom4.Location = new Point(719, 12);
-            radioButtonZoom4.Name = "radioButtonZoom4";
-            radioButtonZoom4.Size = new Size(36, 19);
-            radioButtonZoom4.TabIndex = 193;
-            radioButtonZoom4.Text = "x4";
-            radioButtonZoom4.UseVisualStyleBackColor = true;
-            radioButtonZoom4.CheckedChanged += radioButtonZoom4_CheckedChanged;
-            // 
             // imageViewerControl1
             // 
             imageViewerControl1.Image = null;
-            imageViewerControl1.Location = new Point(503, 40);
+            imageViewerControl1.Location = new Point(195, 40);
             imageViewerControl1.Name = "imageViewerControl1";
-            imageViewerControl1.Size = new Size(384, 775);
+            imageViewerControl1.Size = new Size(709, 790);
             imageViewerControl1.TabIndex = 194;
             // 
             // FrmAlundra
@@ -2816,9 +2586,6 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1782, 842);
             Controls.Add(imageViewerControl1);
-            Controls.Add(radioButtonZoom4);
-            Controls.Add(radioButtonZoom2);
-            Controls.Add(radioButtonZoom1);
             Controls.Add(checkBoxDebug);
             Controls.Add(checkBoxWallTile);
             Controls.Add(checkBoxStatndardTile);
@@ -2826,9 +2593,6 @@
             Controls.Add(tabControl1);
             Controls.Add(chkTileXy);
             Controls.Add(label23);
-            Controls.Add(hScrollMap);
-            Controls.Add(vScrollMap);
-            Controls.Add(pctMap);
             Controls.Add(lstGameMaps);
             Margin = new Padding(4, 3, 4, 3);
             Name = "FrmAlundra";
@@ -2838,7 +2602,6 @@
             ((System.ComponentModel.ISupportInitialize)pctTilesheet).EndInit();
             ((System.ComponentModel.ISupportInitialize)pctSpritesheet).EndInit();
             ((System.ComponentModel.ISupportInitialize)pctSpritePalettes).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pctMap).EndInit();
             ((System.ComponentModel.ISupportInitialize)pctAnim).EndInit();
             ((System.ComponentModel.ISupportInitialize)pctImage).EndInit();
             ((System.ComponentModel.ISupportInitialize)pctFrame).EndInit();
@@ -2846,6 +2609,7 @@
             groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pctPortrait).EndInit();
             tabControl1.ResumeLayout(false);
+            tabPage9.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
             tabPage3.ResumeLayout(false);
@@ -2879,28 +2643,6 @@
         private System.Windows.Forms.PictureBox pctSpritesheet;
         private System.Windows.Forms.ListBox lstSpritePalettes;
         private System.Windows.Forms.PictureBox pctSpritePalettes;
-        private System.Windows.Forms.Label lblInfo;
-        private System.Windows.Forms.Label lblSpriteInfo;
-        private System.Windows.Forms.Label lblScrollInfo;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label lblInfoSize;
-        private System.Windows.Forms.Label lblMapSize;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label lblTilesSize;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label lblSInfoSize;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label lblSpritesSize;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label lblScrollSize;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label lblStringsSize;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.PictureBox pctMap;
-        private System.Windows.Forms.VScrollBar vScrollMap;
-        private System.Windows.Forms.HScrollBar hScrollMap;
-        private System.Windows.Forms.Label lblWallTiles;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ListBox lstPortals;
         private System.Windows.Forms.Label lblportalx1;
         private System.Windows.Forms.Label label6;
@@ -2921,7 +2663,6 @@
         private System.Windows.Forms.Label lblportaldestx;
         private System.Windows.Forms.Label label30;
         private System.Windows.Forms.Button btnPortal;
-        private System.Windows.Forms.Label lblSpriteInfoSizes;
         private System.Windows.Forms.ListView lsvEntities;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
@@ -3012,7 +2753,6 @@
         private System.Windows.Forms.Label lblFrameData;
         private System.Windows.Forms.Label lblImageData;
         private System.Windows.Forms.Label lblEntityInfo;
-        private System.Windows.Forms.Label lblsinfoaddr;
         private System.Windows.Forms.Button btnSector1cCmds;
         private System.Windows.Forms.Button btnSector1bCmds;
         private System.Windows.Forms.Button btnSector1aCmds;
@@ -3086,9 +2826,6 @@
         private CheckBox checkBoxStatndardTile;
         private CheckBox checkBoxWallTile;
         private CheckBox checkBoxDebug;
-        private RadioButton radioButtonZoom1;
-        private RadioButton radioButtonZoom2;
-        private RadioButton radioButtonZoom4;
         private Label label69;
         private ListView listViewSpriteMapEntries;
         private ColumnHeader columnHeaderSpriteMapEntryEnabled;
@@ -3115,5 +2852,13 @@
         private ListBox listBoxCodesGlobal;
         private ColumnHeader columnHeader22;
         private CustomControls.ImageViewerControl imageViewerControl1;
+        private TabPage tabPage9;
+        private PropertyGrid propertyGridGameMapHeader;
+        private Button buttonScrollScreen;
+        private Button buttonGameMapInfo;
+        private Button buttonSpriteInfoHeader;
+        private Button buttonGameMapHeader;
+        private Button button2;
+        private Button button1;
     }
 }

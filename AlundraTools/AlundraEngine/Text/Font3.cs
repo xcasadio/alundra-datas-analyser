@@ -128,7 +128,7 @@ public class Font3
 
     private void LoadImageTim(string folderName)
     {
-        FontBitmapTim = TimReader.LoadTim(Path.Combine(folderName, "FONT3.TIM"), 
+        FontBitmapTim = TimLoader.LoadTim(Path.Combine(folderName, "FONT3.TIM"), 
             0, Color.FromArgb(255, 156, 165, 132));
         //_fontImageDataTim = File.ReadAllBytes(Path.Combine(folderName, "FONT3.TIM"));
     }

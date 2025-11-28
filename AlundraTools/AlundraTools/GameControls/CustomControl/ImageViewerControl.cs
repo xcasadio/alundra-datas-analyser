@@ -52,6 +52,25 @@ namespace AlundraTools.GameControls.CustomControl
         [Browsable(false)]
         public float Zoom => _zoomLevels[_zoomIndex];
 
+        // Center the view on a given tile coordinate. Defaults to 24x16 tile size.
+        public void CenterAt(int tileX, int tileY, int tileWidth = 24, int tileHeight = 16)
+        {
+            if (_image == null) return;
+
+            var z = Zoom;
+            // convert tile coordinates to pixel center in image space
+            var targetPx = (tileX * tileWidth);
+            var targetPy = (tileY * tileHeight);
+
+            // we want target point at the center of the control
+            var centerX = Width / 2f;
+            var centerY = Height / 2f;
+
+            _translation.X = centerX - targetPx * z;
+            _translation.Y = centerY - targetPy * z;
+            Invalidate();
+        }
+
         public void SetZoom(float zoom)
         {
             // choose nearest supported zoom level
@@ -115,11 +134,9 @@ namespace AlundraTools.GameControls.CustomControl
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            // optional: keep current translation but if image is null nothing to do
             if (_image != null && !_dragging)
             {
-                // keep view consistent: do nothing, or re-center on reset:
-                // ResetView();
+                // keep view
             }
 
             Invalidate();
@@ -133,11 +150,9 @@ namespace AlundraTools.GameControls.CustomControl
 
             if (_image == null)
             {
-                // nothing
                 return;
             }
 
-            // high quality rendering for zoomed images
             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
             g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
             g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
@@ -157,7 +172,6 @@ namespace AlundraTools.GameControls.CustomControl
                 _translationStart = _translation;
                 Capture = true;
                 Focus();
-                // change cursor to grabbing (use SizeAll as a close substitute)
                 Cursor = Cursors.SizeAll;
             }
         }
@@ -181,7 +195,6 @@ namespace AlundraTools.GameControls.CustomControl
             {
                 _dragging = false;
                 Capture = false;
-                // restore hand cursor when leaving mouse over control
                 Cursor = ClientRectangle.Contains(PointToClient(Cursor.Position)) ? Cursors.Hand : Cursors.Default;
             }
         }
@@ -191,7 +204,6 @@ namespace AlundraTools.GameControls.CustomControl
             base.OnMouseWheel(e);
             if (_image == null) return;
 
-            // choose zoom level step by wheel direction
             if (e.Delta > 0)
             {
                 SetZoomIndex(Math.Min(_zoomIndex + 1, _zoomLevels.Length - 1), e.Location);
@@ -202,7 +214,6 @@ namespace AlundraTools.GameControls.CustomControl
             }
         }
 
-        // optional keyboard support: + / - to zoom
         protected override bool IsInputKey(Keys keyData)
         {
             if (keyData == Keys.Add || keyData == Keys.Subtract || keyData == Keys.Oemplus || keyData == Keys.OemMinus)
