@@ -1,4 +1,5 @@
-﻿using AlundraEngine.Gameplay.Scripts;
+﻿using System.Diagnostics;
+using AlundraEngine.Gameplay.Scripts;
 using static AlundraEngine.Gameplay.Scripts.EntityEventHandlers;
 namespace AlundraEngine.DatasBin;
 
@@ -98,7 +99,7 @@ public class SpriteInfoEventCodes
         //Debug.Assert(_dataSize > 0);
 
         //Preload all commands
-        
+
         ////remove this ??  =>
         //var top = 0;
         //if (ismap)
@@ -106,20 +107,20 @@ public class SpriteInfoEventCodes
         //    top += 1024 * 512;
         //}
         //
-        br.BaseStream.Position = binOffset;
-        if (_dataSize > 0)
-        {
-            var size = EventCodesATable.Length + EventCodesBTable.Length + EventCodesCTable.Length +
-                       EventCodesDTable.Length + EventCodesETable.Length + EventCodesFTable.Length;
-            EventCodes = new short[size];
-            var index = 0;
-
-            while (index < size)
-            {
-                EventCodes[index] = br.ReadInt16();
-                index++;
-            }
-        }
+        //br.BaseStream.Position = binOffset;
+        //if (_dataSize > 0)
+        //{
+        //    var size = EventCodesATable.Length + EventCodesBTable.Length + EventCodesCTable.Length +
+        //               EventCodesDTable.Length + EventCodesETable.Length + EventCodesFTable.Length;
+        //    EventCodes = new short[size];
+        //    var index = 0;
+        //
+        //    while (index < size)
+        //    {
+        //        EventCodes[index] = br.ReadInt16();
+        //        index++;
+        //    }
+        //}
         //half mb for global codes, half mb for map codes
     }
 
@@ -142,13 +143,15 @@ public class SpriteInfoEventCodes
             };
         }
 
-        //return new SiCode
-        //{
-        //    Code = code,
-        //    Size = 0,
-        //    Name = ""
-        //};
-        throw new ArgumentException($"SiCode command code unknown size: {code}({code:X2})");
+        //Debugger.Break();
+
+        return new SiCode
+        {
+            Code = code,
+            Size = 0,
+            Name = ""
+        };
+        //throw new ArgumentException($"SiCode command code unknown size: {code}({code:X2})");
     }
 
     public List<SiCommand> GetCommands(BinaryReader br, int eventCodesOffset, bool stopAtff = false, int commandsSize = 0)
@@ -236,7 +239,7 @@ public class SpriteInfoEventCodes
     public readonly short[] EventCodesDTable;
     public readonly short[] EventCodesETable;
     public readonly short[] EventCodesFTable;
-    public readonly short[] EventCodes;
+    //public readonly short[] EventCodes;
 
     public static readonly Dictionary<byte, int> CommandSizeByCode = new()
     {

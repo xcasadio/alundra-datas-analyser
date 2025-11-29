@@ -59,10 +59,10 @@ public class GraphicManager
         {
             _gameEngine.StaticVariables.g_cameraScrollingX =
                 _gameEngine.StaticVariables.g_cameraScrollingX +
-                (offsetX - (_gameEngine.StaticVariables.g_cameraScrollingX + 0xa0) >> 4) + _gameEngine.StaticVariables.g_cameraOffsetX + _gameEngine.StaticVariables.g_cameraDebugOffsetX;
+                (offsetX - (_gameEngine.StaticVariables.g_cameraScrollingX + 0xa0) >> 4) + _gameEngine.StaticVariables.g_scrollingParameters.OffsetX + _gameEngine.StaticVariables.g_cameraDebugOffsetX;
             _gameEngine.StaticVariables.g_cameraScrollingY =
                 _gameEngine.StaticVariables.g_cameraScrollingY +
-                (offsetY - offsetZ - (_gameEngine.StaticVariables.g_cameraScrollingY + 0x88) >> 4) + _gameEngine.StaticVariables.g_cameraOffsetY +
+                (offsetY - offsetZ - (_gameEngine.StaticVariables.g_cameraScrollingY + 0x88) >> 4) + _gameEngine.StaticVariables.g_scrollingParameters.OffsetY +
                 _gameEngine.StaticVariables.g_cameraDebugOffsetY;
         }
         else
@@ -354,60 +354,60 @@ public class GraphicManager
     //8002c894
     private void ResetTileAnimationState()
     {
-        if (_gameEngine.StaticVariables.g_bossCutsceneFlag == 0)
+        if (_gameEngine.StaticVariables.g_scrollingParameters.Flag == 0)
         {
-            _gameEngine.StaticVariables.g_cutsceneScrollLimitY = 0;
-            _gameEngine.StaticVariables.g_cutsceneScrollLimitX = 0;
-            _gameEngine.StaticVariables.g_cutsceneScrollSpeedY = 0;
-            _gameEngine.StaticVariables.g_cutsceneScrollSpeedX = 0;
-            _gameEngine.StaticVariables.g_cameraOffsetY = 0;
-            _gameEngine.StaticVariables.g_cameraOffsetX = 0;
+            _gameEngine.StaticVariables.g_scrollingParameters.LimitY = 0;
+            _gameEngine.StaticVariables.g_scrollingParameters.LimitX = 0;
+            _gameEngine.StaticVariables.g_scrollingParameters.SpeedY = 0;
+            _gameEngine.StaticVariables.g_scrollingParameters.SpeedX = 0;
+            _gameEngine.StaticVariables.g_scrollingParameters.OffsetY = 0;
+            _gameEngine.StaticVariables.g_scrollingParameters.OffsetX = 0;
         }
         else
         {
-            if (_gameEngine.StaticVariables.g_cutsceneScrollLimitX == 0 || _gameEngine.StaticVariables.g_cutsceneScrollSpeedX == 0)
+            if (_gameEngine.StaticVariables.g_scrollingParameters.LimitX == 0 || _gameEngine.StaticVariables.g_scrollingParameters.SpeedX == 0)
             {
-                _gameEngine.StaticVariables.g_cameraOffsetX = 0;
+                _gameEngine.StaticVariables.g_scrollingParameters.OffsetX = 0;
             }
-            else if (_gameEngine.StaticVariables.g_cutsceneXReachedMin == 0)
+            else if (_gameEngine.StaticVariables.g_scrollingParameters.XReachMin == 0)
             {
-                _gameEngine.StaticVariables.g_cameraOffsetX -= _gameEngine.StaticVariables.g_cutsceneScrollSpeedX;
-                if (_gameEngine.StaticVariables.g_cameraOffsetX <= -_gameEngine.StaticVariables.g_cutsceneScrollLimitX)
+                _gameEngine.StaticVariables.g_scrollingParameters.OffsetX -= _gameEngine.StaticVariables.g_scrollingParameters.SpeedX;
+                if (_gameEngine.StaticVariables.g_scrollingParameters.OffsetX <= -_gameEngine.StaticVariables.g_scrollingParameters.LimitX)
                 {
-                    _gameEngine.StaticVariables.g_cutsceneXReachedMin = 1;
-                    _gameEngine.StaticVariables.g_cameraOffsetX = -_gameEngine.StaticVariables.g_cutsceneScrollLimitX;
+                    _gameEngine.StaticVariables.g_scrollingParameters.XReachMin = 1;
+                    _gameEngine.StaticVariables.g_scrollingParameters.OffsetX = -_gameEngine.StaticVariables.g_scrollingParameters.LimitX;
                 }
             }
             else
             {
-                _gameEngine.StaticVariables.g_cameraOffsetX += _gameEngine.StaticVariables.g_cutsceneScrollSpeedX;
-                if (_gameEngine.StaticVariables.g_cameraOffsetX >= _gameEngine.StaticVariables.g_cutsceneScrollLimitX)
+                _gameEngine.StaticVariables.g_scrollingParameters.OffsetX += _gameEngine.StaticVariables.g_scrollingParameters.SpeedX;
+                if (_gameEngine.StaticVariables.g_scrollingParameters.OffsetX >= _gameEngine.StaticVariables.g_scrollingParameters.LimitX)
                 {
-                    _gameEngine.StaticVariables.g_cameraOffsetX = _gameEngine.StaticVariables.g_cutsceneScrollLimitX;
-                    _gameEngine.StaticVariables.g_cutsceneXReachedMin = 0;
+                    _gameEngine.StaticVariables.g_scrollingParameters.OffsetX = _gameEngine.StaticVariables.g_scrollingParameters.LimitX;
+                    _gameEngine.StaticVariables.g_scrollingParameters.XReachMin = 0;
                 }
             }
 
-            if (_gameEngine.StaticVariables.g_cutsceneScrollLimitY == 0)
+            if (_gameEngine.StaticVariables.g_scrollingParameters.LimitY == 0)
             {
-                _gameEngine.StaticVariables.g_cameraOffsetY = 0;
+                _gameEngine.StaticVariables.g_scrollingParameters.OffsetY = 0;
             }
-            else if (_gameEngine.StaticVariables.g_cutsceneYReachedMin == 0)
+            else if (_gameEngine.StaticVariables.g_scrollingParameters.YReachMin == 0)
             {
-                _gameEngine.StaticVariables.g_cameraOffsetY -= _gameEngine.StaticVariables.g_cutsceneScrollSpeedY;
-                if (_gameEngine.StaticVariables.g_cameraOffsetY <= -_gameEngine.StaticVariables.g_cutsceneScrollLimitY)
+                _gameEngine.StaticVariables.g_scrollingParameters.OffsetY -= _gameEngine.StaticVariables.g_scrollingParameters.SpeedY;
+                if (_gameEngine.StaticVariables.g_scrollingParameters.OffsetY <= -_gameEngine.StaticVariables.g_scrollingParameters.LimitY)
                 {
-                    _gameEngine.StaticVariables.g_cutsceneYReachedMin = 1;
-                    _gameEngine.StaticVariables.g_cameraOffsetY = -_gameEngine.StaticVariables.g_cutsceneScrollLimitY;
+                    _gameEngine.StaticVariables.g_scrollingParameters.YReachMin = 1;
+                    _gameEngine.StaticVariables.g_scrollingParameters.OffsetY = -_gameEngine.StaticVariables.g_scrollingParameters.LimitY;
                 }
             }
             else
             {
-                _gameEngine.StaticVariables.g_cameraOffsetY += _gameEngine.StaticVariables.g_cutsceneScrollSpeedY;
-                if (_gameEngine.StaticVariables.g_cameraOffsetY >= _gameEngine.StaticVariables.g_cutsceneScrollLimitY)
+                _gameEngine.StaticVariables.g_scrollingParameters.OffsetY += _gameEngine.StaticVariables.g_scrollingParameters.SpeedY;
+                if (_gameEngine.StaticVariables.g_scrollingParameters.OffsetY >= _gameEngine.StaticVariables.g_scrollingParameters.LimitY)
                 {
-                    _gameEngine.StaticVariables.g_cameraOffsetY = _gameEngine.StaticVariables.g_cutsceneScrollLimitY;
-                    _gameEngine.StaticVariables.g_cutsceneYReachedMin = 0;
+                    _gameEngine.StaticVariables.g_scrollingParameters.OffsetY = _gameEngine.StaticVariables.g_scrollingParameters.LimitY;
+                    _gameEngine.StaticVariables.g_scrollingParameters.YReachMin = 0;
                 }
             }
         }

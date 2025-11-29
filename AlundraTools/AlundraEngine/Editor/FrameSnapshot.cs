@@ -33,9 +33,7 @@ public class FrameSnapshot
     public int IsCameraScrolling { get; set; }
     public int CameraScrollingX { get; set; }
     public int CameraScrollingY { get; set; }
-    public uint BossCutsceneFlag { get; set; }
-    public int CameraOffsetX { get; set; }
-    public int CameraOffsetY { get; set; }
+    public ScrollingParameters ScrollingParameters { get; set; }
     public PadState PadState1 { get; set; }
     public uint GravityFlag { get; set; }
     public Entity ActiveCollisionEntity { get; set; }
@@ -71,12 +69,6 @@ public class FrameSnapshot
     public int CameraCurrentY { get; set; }
     public int CameraX { get; set; }
     public int CameraY { get; set; }
-    public int CutsceneScrollLimitX { get; set; }
-    public int CutsceneScrollLimitY { get; set; }
-    public int CutsceneScrollSpeedX { get; set; }
-    public int CutsceneScrollSpeedY { get; set; }
-    public int CutsceneXReachedMin { get; set; }
-    public int CutsceneYReachedMin { get; set; }
 
     public void CopyToMemory(GameEngine gameEngine)
     {
@@ -113,9 +105,7 @@ public class FrameSnapshot
         gameEngine.StaticVariables.g_isCameraScrolling = IsCameraScrolling;
         gameEngine.StaticVariables.g_cameraScrollingX = CameraScrollingX;
         gameEngine.StaticVariables.g_cameraScrollingY = CameraScrollingY;
-        gameEngine.StaticVariables.g_bossCutsceneFlag = BossCutsceneFlag;
-        gameEngine.StaticVariables.g_cameraOffsetX = CameraOffsetX;
-        gameEngine.StaticVariables.g_cameraOffsetY = CameraOffsetY;
+        gameEngine.StaticVariables.g_scrollingParameters = ScrollingParameters;
         gameEngine.StaticVariables.g_padState1 = PadState1.Copy();
         gameEngine.StaticVariables.g_gravityFlag = GravityFlag;
         gameEngine.StaticVariables.g_activeCollisionEntity = ActiveCollisionEntity;
@@ -151,12 +141,6 @@ public class FrameSnapshot
         //gameEngine.StaticVariables.g_hudCurrentY = CameraCurrentY;
         gameEngine.StaticVariables.g_hudX = CameraX;
         gameEngine.StaticVariables.g_hudY = CameraY;
-        gameEngine.StaticVariables.g_cutsceneScrollLimitX = CutsceneScrollLimitX;
-        gameEngine.StaticVariables.g_cutsceneScrollLimitY = CutsceneScrollLimitY;
-        gameEngine.StaticVariables.g_cutsceneScrollSpeedX = CutsceneScrollSpeedX;
-        gameEngine.StaticVariables.g_cutsceneScrollSpeedY = CutsceneScrollSpeedY;
-        gameEngine.StaticVariables.g_cutsceneXReachedMin = CutsceneXReachedMin;
-        gameEngine.StaticVariables.g_cutsceneYReachedMin = CutsceneYReachedMin;
     }
 
     public void CopyFromMemory(GameEngine gameEngine)
@@ -198,9 +182,7 @@ public class FrameSnapshot
         IsCameraScrolling = gameEngine.StaticVariables.g_isCameraScrolling;
         CameraScrollingX = gameEngine.StaticVariables.g_cameraScrollingX;
         CameraScrollingY = gameEngine.StaticVariables.g_cameraScrollingY;
-        BossCutsceneFlag = gameEngine.StaticVariables.g_bossCutsceneFlag;
-        CameraOffsetX = gameEngine.StaticVariables.g_cameraOffsetX;
-        CameraOffsetY = gameEngine.StaticVariables.g_cameraOffsetY;
+        ScrollingParameters = gameEngine.StaticVariables.g_scrollingParameters;
         PadState1 = gameEngine.StaticVariables.g_padState1.Copy();
         GravityFlag = gameEngine.StaticVariables.g_gravityFlag;
         ActiveCollisionEntity = gameEngine.StaticVariables.g_activeCollisionEntity;
@@ -237,11 +219,5 @@ public class FrameSnapshot
         CameraCurrentY = gameEngine.StaticVariables.g_hudCurrentY;
         CameraX = gameEngine.StaticVariables.g_hudX;
         CameraY = gameEngine.StaticVariables.g_hudY;
-        CutsceneScrollLimitX = gameEngine.StaticVariables.g_cutsceneScrollLimitX;
-        CutsceneScrollLimitY = gameEngine.StaticVariables.g_cutsceneScrollLimitY;
-        CutsceneScrollSpeedX = gameEngine.StaticVariables.g_cutsceneScrollSpeedX;
-        CutsceneScrollSpeedY = gameEngine.StaticVariables.g_cutsceneScrollSpeedY;
-        CutsceneXReachedMin = gameEngine.StaticVariables.g_cutsceneXReachedMin;
-        CutsceneYReachedMin = gameEngine.StaticVariables.g_cutsceneYReachedMin;
     }
 }

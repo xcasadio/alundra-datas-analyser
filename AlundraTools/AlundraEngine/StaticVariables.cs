@@ -5235,15 +5235,7 @@ public class StaticVariables
     public int g_cameraScrollingY; // 800E432C
     public byte[] g_imageBufferCompressed; // 800E4330
     public byte[] g_imageBuffer = new byte[5000]; // 800E4334
-    public uint g_bossCutsceneFlag; // 800E4338
-    public int g_triggerEvent1; // 800E433C
-    public int g_triggerEvent2; // 800E4340
-    public int g_flagCutsceneState1; // 800E4344
-    public int g_flagCutsceneState2; // 800E4348
-    public int g_cameraOffsetX; // 800E434C
-    public int g_cameraOffsetY; // 800E4350
-    public int INT_800e4354; // 800E4354
-    public int INT_800e4358; // 800E4358
+    public ScrollingParameters g_scrollingParameters; // 800E4338
     public int[] g_animationRawData = new int[58050]; // 800E4360
     public int g_spriteNumberOfImage; // 8011ce60
     public POLY_FT4[] g_alundraSprites = Enumerable.Range(0, 1024).Select(x => new POLY_FT4()).ToArray(); // 8011CE68
@@ -6013,13 +6005,6 @@ public class StaticVariables
     public short g_voiceCommandPendingRight; // 801F7F10
     public byte[] g_heapBuffer = new byte[32732]; // 801F7F24
     public int g_executable_loaded; // 801FFF00
-
-    public int g_cutsceneScrollLimitX = 0; // 800e433c
-    public int g_cutsceneScrollLimitY = 0; // 800e4340
-    public int g_cutsceneScrollSpeedX = 0; // 800e4344
-    public int g_cutsceneScrollSpeedY = 0; // 800e4348
-    public int g_cutsceneXReachedMin = 0; // 800e4354
-    public int g_cutsceneYReachedMin = 0; // 800e4358
 
     //800ad594
     public readonly SPRT[] SPRT_ARRAY_800ad594 = new SPRT[]

@@ -18,4 +18,9 @@ public class MapCopy
         ToX = br.ReadByte();
         ToY = br.ReadByte();
     }
+
+    public override string ToString()
+    {
+        return $"x:{FromX} y:{FromY} w:{Width} h:{Height} ->x:{ToX} ->y:{ToY}";
+    }
 };

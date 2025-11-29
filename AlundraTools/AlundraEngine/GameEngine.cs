@@ -327,7 +327,7 @@ public class GameEngine
     //8002cd54
     private void ResetCameraAndLoadVRAMAssets()
     {
-        StaticVariables.g_bossCutsceneFlag = 0;
+        StaticVariables.g_scrollingParameters.Flag = 0;
         StaticVariables.g_renderTileRowCount = 0x3c;
         StaticVariables.g_isCameraScrolling = 1;
         StaticVariables.g_cameraDebugOffsetY = 0;
@@ -2262,7 +2262,7 @@ public class GameEngine
     }
 
     // 8003166c
-    public WarpData GetWarpData()
+    public Portal GetPortal()
     {
         foreach (var infoPortal in CurrentMap.Info.Portals)
         {

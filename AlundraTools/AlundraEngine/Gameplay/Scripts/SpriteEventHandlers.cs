@@ -1923,7 +1923,6 @@ public class SpriteEventHandlers
                 var value = (entity.AIValues[2] * 0xc) >> 4;
                 entity.AIValues[2] = (short)value;
 
-                //_gameEngine.StaticVariables.g_sharedBuffer2 + 4 => _gameEngine.CurrentMap.Info.Gravity
                 if (value <= _gameEngine.CurrentMap.Info.Gravity << 8)
                 {
                     entity.AIValues[2] = 0;

@@ -1,7 +1,4 @@
-using System;
 using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
 
 namespace AlundraTools.GameControls.CustomControl
 {
@@ -52,11 +49,10 @@ namespace AlundraTools.GameControls.CustomControl
         [Browsable(false)]
         public float Zoom => _zoomLevels[_zoomIndex];
 
-        // Center the view on a given tile coordinate. Defaults to 24x16 tile size.
+        // Center view on tile coordinate and clamp inside control.
         public void CenterAt(int tileX, int tileY, int tileWidth = 24, int tileHeight = 16)
         {
             if (_image == null) return;
-
             var z = Zoom;
             // convert tile coordinates to pixel center in image space
             var targetPx = (tileX * tileWidth);
@@ -68,6 +64,7 @@ namespace AlundraTools.GameControls.CustomControl
 
             _translation.X = centerX - targetPx * z;
             _translation.Y = centerY - targetPy * z;
+            ClampTranslation();
             Invalidate();
         }
 
@@ -79,13 +76,8 @@ namespace AlundraTools.GameControls.CustomControl
             for (var i = 0; i < _zoomLevels.Length; i++)
             {
                 var diff = Math.Abs(_zoomLevels[i] - zoom);
-                if (diff < bestDiff)
-                {
-                    bestDiff = diff;
-                    best = i;
-                }
+                if (diff < bestDiff) { bestDiff = diff; best = i; }
             }
-
             SetZoomIndex(best, new Point(Width / 2, Height / 2));
         }
 
@@ -109,7 +101,7 @@ namespace AlundraTools.GameControls.CustomControl
             // newTranslation = focus - imageCoord * newZoom
             _translation.X = focus.X - imageCoordX * newZoom;
             _translation.Y = focus.Y - imageCoordY * newZoom;
-
+            ClampTranslation();
             Invalidate();
         }
 
@@ -129,16 +121,13 @@ namespace AlundraTools.GameControls.CustomControl
             _translation.X = (Width - w) / 2f;
             _translation.Y = (Height - h) / 2f;
             _zoomIndex = 1;
+            ClampTranslation();
         }
 
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            if (_image != null && !_dragging)
-            {
-                // keep view
-            }
-
+            if (_image != null && !_dragging) ClampTranslation();
             Invalidate();
         }
 
@@ -148,14 +137,12 @@ namespace AlundraTools.GameControls.CustomControl
             var g = e.Graphics;
             g.Clear(BackColor);
 
-            if (_image == null)
-            {
-                return;
-            }
+            if (_image == null) return;
 
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+            // Pixel-perfect (no smoothing) zoom rendering
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighSpeed; // avoid sub-pixel adjustments
+            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
 
             var z = Zoom;
             var destRect = new RectangleF(_translation.X, _translation.Y, _image.Width * z, _image.Height * z);
@@ -184,6 +171,7 @@ namespace AlundraTools.GameControls.CustomControl
                 var dx = e.X - _dragStart.X;
                 var dy = e.Y - _dragStart.Y;
                 _translation = new PointF(_translationStart.X + dx, _translationStart.Y + dy);
+                ClampTranslation();
                 Invalidate();
             }
         }
@@ -203,21 +191,13 @@ namespace AlundraTools.GameControls.CustomControl
         {
             base.OnMouseWheel(e);
             if (_image == null) return;
-
-            if (e.Delta > 0)
-            {
-                SetZoomIndex(Math.Min(_zoomIndex + 1, _zoomLevels.Length - 1), e.Location);
-            }
-            else if (e.Delta < 0)
-            {
-                SetZoomIndex(Math.Max(_zoomIndex - 1, 0), e.Location);
-            }
+            if (e.Delta > 0) SetZoomIndex(Math.Min(_zoomIndex + 1, _zoomLevels.Length - 1), e.Location);
+            else if (e.Delta < 0) SetZoomIndex(Math.Max(_zoomIndex - 1, 0), e.Location);
         }
 
         protected override bool IsInputKey(Keys keyData)
         {
-            if (keyData == Keys.Add || keyData == Keys.Subtract || keyData == Keys.Oemplus || keyData == Keys.OemMinus)
-                return true;
+            if (keyData == Keys.Add || keyData == Keys.Subtract || keyData == Keys.Oemplus || keyData == Keys.OemMinus) return true;
             return base.IsInputKey(keyData);
         }
 
@@ -225,14 +205,30 @@ namespace AlundraTools.GameControls.CustomControl
         {
             base.OnKeyDown(e);
             if (_image == null) return;
+            if (e.KeyCode == Keys.Add || e.KeyCode == Keys.Oemplus) SetZoomIndex(Math.Min(_zoomIndex + 1, _zoomLevels.Length - 1), new Point(Width / 2, Height / 2));
+            else if (e.KeyCode == Keys.Subtract || e.KeyCode == Keys.OemMinus) SetZoomIndex(Math.Max(_zoomIndex - 1, 0), new Point(Width / 2, Height / 2));
+        }
 
-            if (e.KeyCode == Keys.Add || e.KeyCode == Keys.Oemplus)
+        private void ClampTranslation()
+        {
+            if (_image == null) return;
+            var w = _image.Width * Zoom;
+            var h = _image.Height * Zoom;
+            // X axis
+            if (w <= Width)
+                _translation.X = (Width - w) / 2f; // center if smaller
+            else
             {
-                SetZoomIndex(Math.Min(_zoomIndex + 1, _zoomLevels.Length - 1), new Point(Width / 2, Height / 2));
+                if (_translation.X > 0) _translation.X = 0;
+                if (_translation.X < Width - w) _translation.X = Width - w;
             }
-            else if (e.KeyCode == Keys.Subtract || e.KeyCode == Keys.OemMinus)
+            // Y axis
+            if (h <= Height)
+                _translation.Y = (Height - h) / 2f;
+            else
             {
-                SetZoomIndex(Math.Max(_zoomIndex - 1, 0), new Point(Width / 2, Height / 2));
+                if (_translation.Y > 0) _translation.Y = 0;
+                if (_translation.Y < Height - h) _translation.Y = Height - h;
             }
         }
     }

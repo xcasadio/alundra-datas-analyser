@@ -138,9 +138,9 @@ public class ImageViewerControl : UserControl
         }
 
         // high quality rendering for zoomed images
-        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low; //HighQualityBicubic;
-        g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-        g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+        g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighSpeed;
+        g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
 
         var z = Zoom;
         var destRect = new RectangleF(_translation.X, _translation.Y, _image.Width * z, _image.Height * z);

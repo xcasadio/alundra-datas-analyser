@@ -13,10 +13,10 @@ public class GameMapInfo
     public GameMapInfo(BinaryReader br, int memoryAddress)
     {
         MemoryAddress = memoryAddress; // start just after the header ??
-        var startPosition = br.BaseStream.Position;
+
         MapId = br.ReadInt32();//0
         Gravity = br.ReadInt16();//4
-        TerminalVelocity = br.ReadInt16();//6
+        ZViscosity = br.ReadInt16();//6
         SlideEffectId = br.ReadByte();//a
         BalanceLevel = br.ReadByte();//b
         C = br.ReadByte();//c
@@ -29,7 +29,7 @@ public class GameMapInfo
         //read palettes
         var maxPalettes = 32;
         Palettes = new Color[maxPalettes][];
-        var buff = new byte[maxPalettes * 16 * 2];
+        var buff = new byte[maxPalettes * 32];
         br.Read(buff, 0, buff.Length);
         var buffIndex = 0;
 
@@ -90,14 +90,11 @@ public class GameMapInfo
         } while (spriteIndex < 6);
 
         //read portals
-        br.BaseStream.Position = startPosition + 1066;
-        PortalFlag1 = br.ReadByte();
-        PortalFlag2 = br.ReadByte();
         var maxPortals = 64;
-        Portals = new WarpData[maxPortals];
+        Portals = new Portal[maxPortals];
         for (var i = 0; i < Portals.Length; i++)
         {
-            Portals[i] = new WarpData(br);
+            Portals[i] = new Portal(br);
         }
     }
 
@@ -105,7 +102,7 @@ public class GameMapInfo
 
     public readonly int MapId; //0
     public readonly short Gravity; //4
-    public readonly short TerminalVelocity; // ZViscosity
+    public readonly short ZViscosity; //6
     public readonly byte SlideEffectId; // XYResistance
     public readonly byte BalanceLevel; // AnimDeleteWall
     public readonly byte C; 
@@ -115,15 +112,13 @@ public class GameMapInfo
     public readonly byte _10; // AnimLandFloor
     public readonly byte _11; // item something
     public readonly Color[][] Palettes;
-    public readonly byte PortalFlag1;
-    public readonly byte PortalFlag2;
     public readonly SpriteMapEntry[] SpriteMapEntries;
-    public readonly WarpData[] Portals;
+    public readonly Portal[] Portals;
     
     public readonly Bitmap PalettesBitmap;
 
     public override string ToString()
     {
-        return $"gravity:{Gravity} term_vel:{TerminalVelocity} _a:{SlideEffectId} balance:{BalanceLevel} _c:{C} _d:{D} _e:{E} _f:{F} _10:{_10} _11:{_11} portalFlags:{PortalFlag1} {PortalFlag2}";
+        return $"gravity:{Gravity} term_vel:{ZViscosity} _a:{SlideEffectId} balance:{BalanceLevel} _c:{C} _d:{D} _e:{E} _f:{F} _10:{_10} _11:{_11}";
     }
 }

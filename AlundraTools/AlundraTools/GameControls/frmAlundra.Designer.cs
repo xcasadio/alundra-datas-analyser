@@ -190,6 +190,11 @@
             label74 = new Label();
             tabControl1 = new TabControl();
             tabPage9 = new TabPage();
+            button7 = new Button();
+            button6 = new Button();
+            button5 = new Button();
+            button4 = new Button();
+            button3 = new Button();
             button2 = new Button();
             button1 = new Button();
             buttonScrollScreen = new Button();
@@ -1821,6 +1826,11 @@
             // 
             // tabPage9
             // 
+            tabPage9.Controls.Add(button7);
+            tabPage9.Controls.Add(button6);
+            tabPage9.Controls.Add(button5);
+            tabPage9.Controls.Add(button4);
+            tabPage9.Controls.Add(button3);
             tabPage9.Controls.Add(button2);
             tabPage9.Controls.Add(button1);
             tabPage9.Controls.Add(buttonScrollScreen);
@@ -1836,9 +1846,59 @@
             tabPage9.Text = "Data";
             tabPage9.UseVisualStyleBackColor = true;
             // 
+            // button7
+            // 
+            button7.Location = new Point(6, 318);
+            button7.Name = "button7";
+            button7.Size = new Size(137, 23);
+            button7.TabIndex = 148;
+            button7.Text = "Sprite records";
+            button7.UseVisualStyleBackColor = true;
+            button7.Click += this.button7_Click;
+            // 
+            // button6
+            // 
+            button6.Location = new Point(6, 289);
+            button6.Name = "button6";
+            button6.Size = new Size(137, 23);
+            button6.TabIndex = 147;
+            button6.Text = "Sprite effect records";
+            button6.UseVisualStyleBackColor = true;
+            button6.Click += this.button6_Click;
+            // 
+            // button5
+            // 
+            button5.Location = new Point(6, 260);
+            button5.Name = "button5";
+            button5.Size = new Size(137, 23);
+            button5.TabIndex = 146;
+            button5.Text = "Map effect records";
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += this.button5_Click;
+            // 
+            // button4
+            // 
+            button4.Location = new Point(6, 231);
+            button4.Name = "button4";
+            button4.Size = new Size(137, 23);
+            button4.TabIndex = 145;
+            button4.Text = "Sprite info Event Codes";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += this.button4_Click;
+            // 
+            // button3
+            // 
+            button3.Location = new Point(6, 202);
+            button3.Name = "button3";
+            button3.Size = new Size(137, 23);
+            button3.TabIndex = 144;
+            button3.Text = "Sprite info Entities";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += this.button3_Click;
+            // 
             // button2
             // 
-            button2.Location = new Point(6, 167);
+            button2.Location = new Point(6, 132);
             button2.Name = "button2";
             button2.Size = new Size(137, 23);
             button2.TabIndex = 143;
@@ -1848,7 +1908,7 @@
             // 
             // button1
             // 
-            button1.Location = new Point(6, 138);
+            button1.Location = new Point(6, 161);
             button1.Name = "button1";
             button1.Size = new Size(137, 23);
             button1.TabIndex = 142;
@@ -2860,5 +2920,10 @@
         private Button buttonGameMapHeader;
         private Button button2;
         private Button button1;
+        private Button button3;
+        private Button button7;
+        private Button button6;
+        private Button button5;
+        private Button button4;
     }
 }

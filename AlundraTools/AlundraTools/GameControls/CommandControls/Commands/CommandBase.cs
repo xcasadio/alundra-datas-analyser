@@ -1,4 +1,5 @@
 ﻿using AlundraEngine.DatasBin;
+using System.Globalization;
 
 namespace AlundraTools.GameControls.CommandControls.Commands;
 
@@ -41,7 +42,7 @@ public class CommandBase
             output += $" ({PrintParameters()})";
         }
 
-        output += $" ({MemoryAddress} {Size})";
+        output += $" (addr:{FormatWithSpaces(MemoryAddress)} size:{Size})";
 
         return output;
     }
@@ -80,7 +81,13 @@ public class CommandBase
                 break;
             }
         }
-
+    
         return i < commands.Count ? i : -1;
+    }
+
+    private static string FormatWithSpaces(int value)
+    {
+        // group thousands and replace commas with spaces
+        return value.ToString("N0", CultureInfo.InvariantCulture).Replace(',', ' ');
     }
 }

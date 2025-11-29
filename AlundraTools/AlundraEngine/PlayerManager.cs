@@ -3,8 +3,8 @@ using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
 using System;
 using System.Diagnostics;
+using AlundraEngine.DatasBin;
 using static OfficeOpenXml.ExcelErrorValue;
-using WarpData = AlundraEngine.DatasBin.WarpData;
 
 namespace AlundraEngine;
 
@@ -2402,7 +2402,7 @@ public class PlayerManager
     // 8002f120
     private void CheckAndExecuteWarp()
     {
-        WarpData warpData;
+        Portal portal;
         int iVar1;
         int combinedVramFlagsAnd;
         string buffer;
@@ -2430,15 +2430,15 @@ public class PlayerManager
                     else
                     {
                         //string.Format(_gameEngine.StaticVariables.g_debugMessage + combinedVramFlagsAnd, "Warp)\n");
-                        warpData = _gameEngine.GetWarpData();
-                        if (warpData == null)
+                        portal = _gameEngine.GetPortal();
+                        if (portal == null)
                         {
                             //buffer = _gameEngine.StaticVariables.g_debugMessage + combinedVramFlagsAnd;
-                            //fmt = "No WarpData.\n";
+                            //fmt = "No Portal.\n";
                         }
                         else
                         {
-                            direction = (uint)(warpData.Flags >> 14);
+                            direction = (uint)(portal.Flags >> 14);
                             //_gameEngine.PrintDebugWarpInfo(pbVar2, (int)uVar3);
 
                             ushort requiredInput = _gameEngine.StaticVariables.BYTE_ARRAY_80022778[direction * 2];
@@ -2465,11 +2465,11 @@ public class PlayerManager
                 else
                 {
                     //string.Format(_gameEngine.StaticVariables.g_debugMessage + combinedVramFlagsAnd, "Hole)\n");
-                    warpData = _gameEngine.GetWarpData();
-                    if (warpData == null)
+                    portal = _gameEngine.GetPortal();
+                    if (portal == null)
                     {
                         //buffer = _gameEngine.StaticVariables.g_debugMessage + combinedVramFlagsAnd;
-                        //fmt = "No WarpData.\n";
+                        //fmt = "No Portal.\n";
                     }
                     else
                     {
@@ -2509,13 +2509,13 @@ public class PlayerManager
                 return;
             }
 
-            warpData = _gameEngine.GetWarpData();
-            if (warpData == null)
+            portal = _gameEngine.GetPortal();
+            if (portal == null)
             {
                 return;
             }
 
-            direction = (uint)(warpData.Flags >> 14);
+            direction = (uint)(portal.Flags >> 14);
             ushort requiredInput = _gameEngine.StaticVariables.BYTE_ARRAY_80022778[direction * 2];
 
             if (((_gameEngine.StaticVariables.g_padState1.ButtonsHold >> 8) & requiredInput) == 0)
@@ -2535,39 +2535,39 @@ public class PlayerManager
                 return;
             }
 
-            combinedVramFlagsAnd = _gameEngine.StaticVariables.g_cardinalDirectionTable[(warpData.Flags & 0x3000) >> 11];
+            combinedVramFlagsAnd = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 11];
         }
         else
         {
-            warpData = _gameEngine.GetWarpData();
-            if (warpData == null)
+            portal = _gameEngine.GetPortal();
+            if (portal == null)
             {
                 return;
             }
 
-            combinedVramFlagsAnd = _gameEngine.StaticVariables.g_cardinalDirectionTable[(warpData.Flags & 0x3000) >> 11];
+            combinedVramFlagsAnd = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 11];
         }
 
-        HandleWarpTransition(warpData, 0x36, combinedVramFlagsAnd);
+        HandleWarpTransition(portal, 0x36, combinedVramFlagsAnd);
     }
 
     // 80031340
-    public void HandleWarpTransition(WarpData warpData, int warpType, int extraData)
+    public void HandleWarpTransition(Portal portal, int warpType, int extraData)
     {
         if (_gameEngine.StaticVariables.g_isWarpDisabled != 0)
         {
             return;
         }
 
-        _gameEngine.StaticVariables.g_mapTransitionEffectId = (warpData.Flags & 0x70) >> 4;
+        _gameEngine.StaticVariables.g_mapTransitionEffectId = (portal.Flags & 0x70) >> 4;
 
-        int internalMapIdx = _gameEngine.StaticVariables.g_mapIdToInternalMapIndexTable[warpData.DestMapId];
-        _gameEngine.StaticVariables.g_desiredMap = warpData.DestMapId;
+        int internalMapIdx = _gameEngine.StaticVariables.g_mapIdToInternalMapIndexTable[portal.DestMapId];
+        _gameEngine.StaticVariables.g_desiredMap = portal.DestMapId;
 
         Entity playerEntity = _gameEngine.StaticVariables.PlayerEntity;
 
-        int deltaX = warpData.DestTileX * StaticVariables.MapTileWidth + (playerEntity.PosX >> 16) - warpData.X1 * StaticVariables.MapTileWidth;
-        int deltaY = warpData.DestTileY * StaticVariables.MapTileHeight + (playerEntity.PosY >> 16) - warpData.Y1 * StaticVariables.MapTileHeight;
+        int deltaX = portal.DestTileX * StaticVariables.MapTileWidth + (playerEntity.PosX >> 16) - portal.X1 * StaticVariables.MapTileWidth;
+        int deltaY = portal.DestTileY * StaticVariables.MapTileHeight + (playerEntity.PosY >> 16) - portal.Y1 * StaticVariables.MapTileHeight;
 
 
         int tileX = _gameEngine.StaticVariables.g_tileToWorldXTable[deltaX];
@@ -2575,9 +2575,9 @@ public class PlayerManager
 
         int targetCamX = (tileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) << 16;
         int targetCamY = (deltaY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) << 16;
-        int targetCamZ = warpData.ZLevel << 20;
+        int targetCamZ = portal.ZLevel << 20;
 
-        _gameEngine.StaticVariables.g_warpEntryBehavior = _gameEngine.StaticVariables.g_warpBehaviorTable[warpData.Flags & 0xF];
+        _gameEngine.StaticVariables.g_warpEntryBehavior = _gameEngine.StaticVariables.g_warpBehaviorTable[portal.Flags & 0xF];
 
         if (_gameEngine.StaticVariables.g_mapTransitionEffectId == 3)
         {

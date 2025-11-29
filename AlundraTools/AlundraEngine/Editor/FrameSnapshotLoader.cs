@@ -72,9 +72,7 @@ public static class FrameSnapshotLoader
         frameSnapshot.IsCameraScrolling = dump.g_isCameraScrolling;
         frameSnapshot.CameraScrollingX = dump.g_cameraScrollingX;
         frameSnapshot.CameraScrollingY = dump.g_cameraScrollingY;
-        frameSnapshot.BossCutsceneFlag = dump.g_bossCutsceneFlag;
-        frameSnapshot.CameraOffsetX = dump.g_cameraOffsetX;
-        frameSnapshot.CameraOffsetY = dump.g_cameraOffsetY;
+        frameSnapshot.ScrollingParameters = dump.g_scrollingParameters;
 
         if (dump.g_padState1 != null)
         {
@@ -143,12 +141,6 @@ public static class FrameSnapshotLoader
         frameSnapshot.CameraCurrentY = dump.g_cameraCurrentY;
         frameSnapshot.CameraX = dump.g_cameraX;
         frameSnapshot.CameraY = dump.g_cameraY;
-        frameSnapshot.CutsceneScrollLimitX = dump.g_cutsceneScrollLimitX;
-        frameSnapshot.CutsceneScrollLimitY = dump.g_cutsceneScrollLimitY;
-        frameSnapshot.CutsceneScrollSpeedX = dump.g_cutsceneScrollSpeedX;
-        frameSnapshot.CutsceneScrollSpeedY = dump.g_cutsceneScrollSpeedY;
-        frameSnapshot.CutsceneXReachedMin = dump.g_cutsceneXReachedMin;
-        frameSnapshot.CutsceneYReachedMin = dump.g_cutsceneYReachedMin;
 
         return frameSnapshot;
     }
@@ -193,7 +185,7 @@ public static class FrameSnapshotLoader
         public int g_isCameraScrolling { get; set; }
         public int g_cameraScrollingX { get; set; }
         public int g_cameraScrollingY { get; set; }
-        public uint g_bossCutsceneFlag { get; set; }
+        public ScrollingParameters g_scrollingParameters { get; set; }
         public int g_cameraOffsetX { get; set; }
         public int g_cameraOffsetY { get; set; }
         public PadState g_padState1 { get; set; }
@@ -231,12 +223,6 @@ public static class FrameSnapshotLoader
         public int g_cameraCurrentY { get; set; }
         public int g_cameraX { get; set; }
         public int g_cameraY { get; set; }
-        public int g_cutsceneScrollLimitX { get; set; }
-        public int g_cutsceneScrollLimitY { get; set; }
-        public int g_cutsceneScrollSpeedX { get; set; }
-        public int g_cutsceneScrollSpeedY { get; set; }
-        public int g_cutsceneXReachedMin { get; set; }
-        public int g_cutsceneYReachedMin { get; set; }
     }
 
     private class EntityJson

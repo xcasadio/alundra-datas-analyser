@@ -267,10 +267,6 @@ public partial class FrmGame : Form
     {
         _flagModels = [
             new(
-                nameof(_gameEngine.StaticVariables.g_bossCutsceneFlag),
-                () => _gameEngine.StaticVariables.g_bossCutsceneFlag
-            ),
-            new(
                 nameof(_gameEngine.StaticVariables.g_currentWeaponFlags),
                 () => _gameEngine.StaticVariables.g_currentWeaponFlags
             ),
@@ -463,7 +459,7 @@ public partial class FrmGame : Form
 
         labelCameraPosition.Text = $"{_gameEngine.StaticVariables.g_hudCurrentX} x {_gameEngine.StaticVariables.g_hudCurrentY}";
         labelCameraLookAt.Text = $"{_gameEngine.StaticVariables.g_cameraLookAtX} x {_gameEngine.StaticVariables.g_cameraLookAtY} x {_gameEngine.StaticVariables.g_cameraLookAtZ}";
-        labelCameraOffset.Text = $"{_gameEngine.StaticVariables.g_cameraOffsetX} x {_gameEngine.StaticVariables.g_cameraOffsetY}";
+        labelCameraOffset.Text = $"{_gameEngine.StaticVariables.g_scrollingParameters}";
         labelCameraScrolling.Text = $"{_gameEngine.StaticVariables.g_cameraScrollingX} x {_gameEngine.StaticVariables.g_cameraScrollingY}";
 
         labelMapId.Text = $"{_gameEngine.StaticVariables.g_currentMap}";

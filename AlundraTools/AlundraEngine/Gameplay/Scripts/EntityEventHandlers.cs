@@ -1922,17 +1922,17 @@ public class EntityEventHandlers
     {
         Debugger.Break();
         
-        WarpData warpData;
-        warpData = _gameEngine.GetWarpData();
+        Portal portal;
+        portal = _gameEngine.GetPortal();
 
-        if (warpData == null)
+        if (portal == null)
         {
             //_gameEngine.DoNothing();
             eventProgramState.Result = 0;
         }
         else
         {
-            _gameEngine.PlayerManager.HandleWarpTransition(warpData, 
+            _gameEngine.PlayerManager.HandleWarpTransition(portal, 
                 (int)_gameEngine.StaticVariables.PlayerEntity.TargetAnimationId, 
                 (int)_gameEngine.StaticVariables.PlayerEntity.TargetDirection);
             eventProgramState.Result = 1;
@@ -3111,11 +3111,11 @@ public class EntityEventHandlers
     // 80040534
     private int Script_142_08E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.StaticVariables.g_bossCutsceneFlag = 1;
-        _gameEngine.StaticVariables.g_cutsceneScrollSpeedX = variables[1];
-        _gameEngine.StaticVariables.g_cutsceneScrollSpeedY = variables[2];
-        _gameEngine.StaticVariables.g_cutsceneScrollLimitX = variables[3];
-        _gameEngine.StaticVariables.g_cutsceneScrollLimitY = variables[4];
+        _gameEngine.StaticVariables.g_scrollingParameters.Flag = 1;
+        _gameEngine.StaticVariables.g_scrollingParameters.SpeedX = variables[1];
+        _gameEngine.StaticVariables.g_scrollingParameters.SpeedY = variables[2];
+        _gameEngine.StaticVariables.g_scrollingParameters.LimitX = variables[3];
+        _gameEngine.StaticVariables.g_scrollingParameters.LimitY = variables[4];
 
         return 5;
     }
@@ -3123,7 +3123,7 @@ public class EntityEventHandlers
     // 80040598
     private int Script_143_08F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.StaticVariables.g_bossCutsceneFlag = 0;
+        _gameEngine.StaticVariables.g_scrollingParameters.Flag = 0;
         return 1;
     }
 

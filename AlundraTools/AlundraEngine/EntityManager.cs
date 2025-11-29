@@ -1611,11 +1611,11 @@ public class EntityManager
                             spriteZForceAbs = -spriteZForceTemp;
                         }
 
-                        zForceMax = _gameEngine.CurrentMap.Info.TerminalVelocity * 0x100;
+                        zForceMax = _gameEngine.CurrentMap.Info.ZViscosity * 0x100;
                         entity.ForceZ = spriteZForceTemp;
                         if (zForceMax < spriteZForceAbs && spriteZForceTemp < 1)
                         {
-                            entity.ForceZ = _gameEngine.CurrentMap.Info.TerminalVelocity * -0x100;
+                            entity.ForceZ = _gameEngine.CurrentMap.Info.ZViscosity * -0x100;
                         }
                     }
                 }
@@ -1685,7 +1685,7 @@ public class EntityManager
                                 forceAbs = -force;
                             }
 
-                            var terminal = _gameEngine.CurrentMap.Info.TerminalVelocity << 8;
+                            var terminal = _gameEngine.CurrentMap.Info.ZViscosity << 8;
                             if (terminal < forceAbs && force < 1)
                             {
                                 force = -terminal;
@@ -2248,7 +2248,7 @@ public class EntityManager
                     }
 
                     _gameEngine.EffectManager.CreateEffectEntity(
-                        (byte)0, _gameEngine.CurrentMap.Info.SlideEffectId, 0,
+                        (byte)0, _gameEngine.CurrentMap.Info.SlideEffectId, 0, //_gameEngine.CurrentMap.Info.C
                         entity.PosX, entity.PosY, entity.FloorHeight);
                     break;
 

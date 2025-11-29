@@ -413,7 +413,7 @@ namespace AlundraTools.GameControls
                 using var g = Graphics.FromImage(image);
                 var fnt = new Font(FontFamily.GenericSansSerif, 8);
 
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bicubic;
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 g.Clear(Color.Black);
 
                 for (var y = 0; y < map.Height; y++)
@@ -424,9 +424,6 @@ namespace AlundraTools.GameControls
 
                         var dx = x * StaticVariables.MapTileWidth;
                         var dy = (y - tile.Height) * StaticVariables.MapTileHeight;
-
-                        //dx -= StaticVariables.MapTileWidth;
-                        //dy -= StaticVariables.MapTileHeight;
 
                         if (tile.TileId != 0xFFFF && _showStandardTile)
                         {
@@ -480,7 +477,7 @@ namespace AlundraTools.GameControls
                         for (var x = 0; x < map.Width; x++)
                         {
                             var tile = map.MapTiles[y * map.Width + x];
-                            
+
                             if (tile.TileId != 0xFFFF)
                             {
                                 var dx = x * StaticVariables.MapTileWidth;
@@ -559,7 +556,7 @@ namespace AlundraTools.GameControls
                         var pen = entities[i] == _selectedEntity ? Pens.Yellow : Pens.Green;
                         var brush = entities[i] == _selectedEntity ? Brushes.Yellow : Brushes.Green;
                         g.DrawRectangle(pen, x1, y1, 24, 16);
-                        g.DrawString("entity " + i, fnt, brush, x1, y1);
+                        g.DrawString("#" + i, fnt, brush, x1, y1);
                     }
                 }
 
@@ -577,7 +574,6 @@ namespace AlundraTools.GameControls
                 vScrolTile.Maximum = _selectedGameMap.TileSheetBitmap.Height;
                 //vScrolTile.Value = 0;
 
-                //draw map
                 DrawMap();
 
                 vScrolTile_Scroll(null, null);
@@ -696,7 +692,7 @@ namespace AlundraTools.GameControls
             DrawMap();
         }
 
-        private WarpData? _selectedPortal;
+        private Portal? _selectedPortal;
         private bool _dontcenteronportal = false;
 
         private void SelectPortal(int portaldex)
@@ -1436,18 +1432,15 @@ namespace AlundraTools.GameControls
                 using var graphics = Graphics.FromImage(pictureBoxWindTx.Image);
                 graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 graphics.Clear(Color.Black);
-                graphics.DrawImage(_font3.GenerateHudBitmap(paletteIndex), 0, 0/*-vScrollSprite.Value*/);
+                graphics.DrawImage(_font3.GenerateHudBitmap(paletteIndex), 0, 0);
                 pictureBoxWindTx.Refresh();
 
                 pictureBoxFont3Tim.Image = new Bitmap(pictureBoxFont3Tim.Width, pictureBoxFont3Tim.Height, PixelFormat.Format24bppRgb);
                 using var graphics2 = Graphics.FromImage(pictureBoxFont3Tim.Image);
                 graphics2.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 graphics2.Clear(Color.Black);
-                graphics2.DrawImage(_font3.GenerateFontBitmapTim(paletteIndex), 0, 0/*-vScrollSprite.Value*/);
+                graphics2.DrawImage(_font3.GenerateFontBitmapTim(paletteIndex), 0, 0);
                 pictureBoxFont3Tim.Refresh();
-
-                //vScrollSprite.Maximum = Font3.FontBitmap.SizeZ;
-                //vScrollSprite_Scroll(null, null);
             }
             pctSpritePalettes.Refresh();
         }
@@ -1536,23 +1529,59 @@ namespace AlundraTools.GameControls
             propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.Map);
         }
 
-        //private static void Save<T>(string fileName, List<T> spriteDatas, Action<T, JObject> saveFunction)
-        //{
-        //    JObject rootObject = new();
-        //    JArray spritesObject = new JArray();
-        //    rootObject.Add("animations", spritesObject);
-        //
-        //    foreach (var spriteData in spriteDatas)
-        //    {
-        //        var jObject = new JObject();
-        //        saveFunction(spriteData, jObject);
-        //        //spriteData.Save(jObject);
-        //        spritesObject.Add(jObject);
-        //    }
-        //
-        //    using StreamWriter file = File.CreateText(fileName);
-        //    using JsonTextWriter writer = new JsonTextWriter(file) { Formatting = Formatting.Indented };
-        //    rootObject.WriteTo(writer);
-        //}
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (_selectedGameMap?.SpriteInfo == null)
+            {
+                propertyGridGameMapHeader.SelectedObject = null;
+                return;
+            }
+
+            propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.SpriteInfo.Entities);
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (_selectedGameMap?.SpriteInfo == null)
+            {
+                propertyGridGameMapHeader.SelectedObject = null;
+                return;
+            }
+
+            propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.SpriteInfo.EventCodes);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (_selectedGameMap?.SpriteInfo == null)
+            {
+                propertyGridGameMapHeader.SelectedObject = null;
+                return;
+            }
+
+            propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.SpriteInfo.MapEffectRecords);
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (_selectedGameMap?.SpriteInfo == null)
+            {
+                propertyGridGameMapHeader.SelectedObject = null;
+                return;
+            }
+
+            propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.SpriteInfo.SpriteEffectRecords);
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (_selectedGameMap?.SpriteInfo == null)
+            {
+                propertyGridGameMapHeader.SelectedObject = null;
+                return;
+            }
+
+            propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.SpriteInfo.SpriteRecords);
+        }
     }
 }

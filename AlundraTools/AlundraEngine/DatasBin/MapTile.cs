@@ -2,32 +2,28 @@
 
 public class MapTile
 {
+    public byte Walkability;
+    public byte GroundProperty;
+    public byte Slope;
+    public byte Height;
+    public ushort TileId;
+    public short Palette;
+    public short Tile;
+    public short TilesOffset;
+    public WallTiles? WallTiles;
+
     // TODO: remove, for debugging purpose
     public int TileX { get; set; }
     public int TileY { get; set; }
 
-    public MapTile()
-    {
-    }
+    public MapTile() { }
 
     public MapTile(BinaryReader br)
     {
-        //long i = br.ReadUInt32();
-
         Walkability = br.ReadByte();
         GroundProperty = br.ReadByte();
         Slope = br.ReadByte();
         Height = br.ReadByte();
-
-
-        //Walkability = (byte)(i & 0xff);
-        //i >>= 8;
-        //GroundProperty = (byte)(i & 0xff);
-        //i >>= 8;
-        //Slope = (byte)(i & 0xff);
-        //i >>= 8;
-        //Height = (byte)(i & 0xff);
-
         TileId = br.ReadUInt16();
 
         if (TileId == 0xffff)
@@ -42,22 +38,8 @@ public class MapTile
         }
 
         TilesOffset = br.ReadInt16();
-
-        if (TilesOffset != -1)
-        {
-            TilesOffset *= 2;
-        }
+        if (TilesOffset != -1) TilesOffset *= 2;
     }
-
-    public byte Walkability;
-    public byte GroundProperty;
-    public byte Slope;
-    public byte Height;
-    public ushort TileId;
-    public short Palette;
-    public short Tile;
-    public short TilesOffset;
-    public WallTiles? WallTiles;
 
     public uint Flags => (uint)(Walkability | (GroundProperty << 8) | (Slope << 16) | (Height << 24));
 
@@ -68,5 +50,11 @@ public class MapTile
             br.BaseStream.Position = offset + TilesOffset;
             WallTiles = new WallTiles(br);
         }
+    }
+
+    public override string ToString()
+    {
+        var wallInfo = WallTiles == null ? "-1" : WallTiles.Count.ToString();
+        return $"w:{Walkability} g:{GroundProperty} s:{Slope} h:{Height} id:{TileId} p:{Palette} t:{Tile} o:{TilesOffset} x:{TileX} y:{TileY} wall:{wallInfo}";
     }
 }

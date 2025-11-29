@@ -1,8 +1,8 @@
 ﻿namespace AlundraEngine.DatasBin;
 
-public class WarpData
+public class Portal
 {
-    public WarpData(BinaryReader br)
+    public Portal(BinaryReader br)
     {
         X1 = br.ReadByte();
         Y1 = br.ReadByte();
@@ -24,4 +24,9 @@ public class WarpData
     public readonly byte DestTileY;
     public readonly short ZLevel;
     public readonly ushort Flags;
+
+    public override string ToString()
+    {
+        return $"x1:{X1} y1:{Y1} x2:{X2} y2:{Y2} map:{DestMapId} ->x:{DestTileX} ->y:{DestTileY} z:{ZLevel} f:{Flags}";
+    }
 }
