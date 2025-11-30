@@ -5235,7 +5235,7 @@ public class StaticVariables
     public int g_cameraScrollingY; // 800E432C
     public byte[] g_imageBufferCompressed; // 800E4330
     public byte[] g_imageBuffer = new byte[5000]; // 800E4334
-    public ScrollingParameters g_scrollingParameters; // 800E4338
+    public ScrollingParameters g_scrollingParameters = new(); // 800E4338
     public int[] g_animationRawData = new int[58050]; // 800E4360
     public int g_spriteNumberOfImage; // 8011ce60
     public POLY_FT4[] g_alundraSprites = Enumerable.Range(0, 1024).Select(x => new POLY_FT4()).ToArray(); // 8011CE68

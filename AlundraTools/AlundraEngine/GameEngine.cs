@@ -2150,7 +2150,9 @@ public class GameEngine
                                 Debugger.Break();
                             }
 
-                            for (int i = 0; i < tileSource.WallTiles.Tiles.Length; i++)
+                            int length = Math.Min(tileSource.WallTiles.Tiles.Length, tileDestination.WallTiles.Tiles.Length);
+
+                            for (int i = 0; i < length; i++)
                             {
                                 tileDestination.WallTiles.Tiles[i] = tileSource.WallTiles.Tiles[i];
                             }
@@ -2340,8 +2342,10 @@ public class GameEngine
                         int effectX = worldXCoords[i] * 0x180000 + 0xC0000;
                         int effectY = worldYCoords[i] * 0x100000 + 0x80000;
 
+                        Debugger.Break();
+
                         EffectManager.CreateEffectEntity(0,
-                            CurrentMap.Info.SlideEffectId,
+                            CurrentMap.Info.SlideEffectId, //CurrentMap.Info.C
                             0,
                             effectX, effectY, tileEffectZ);
                         EffectManager.RandomlySpawnItem(0xFF, effectX, effectY, tileEffectZ);
@@ -2351,43 +2355,6 @@ public class GameEngine
             }
         }
     }
-
-    private int GenerateRandomOffset(uint seed, uint maskValue)
-    {
-        // Generate a value between -0x18000 and +0x18000 using high bits of the seed
-        var highBits = (int)(((ulong)seed * 0x30001) >> 32);
-        return (highBits - 0x18000) & (int)maskValue;
-    }
-
-    // 800445c0
-    //public int GetItemDataPointer(int itemId)
-    //{
-    //    Debugger.Break();
-    //    // Check if the item ID is valid (less than 0x62/98)
-    //    if (itemId >= 0x62)
-    //    {
-    //        throw new Exception("Illegal Item No!");
-    //    }
-    //
-    //    // Get the offset for this item ID from the balance bin buffer
-    //    using var br = DatasBin.OpenBin();
-    //    br.BaseStream.Position = itemId * 2 + 0x32c;
-    //    var currentRecord = 0;
-    //
-    //    // Traverse the balance record chain until we find one with Level less than the threshold
-    //    // or reach the end of the chain
-    //    //while (currentRecord != null && currentRecord.Level < StaticVariables.g_itemIdThreshold)
-    //    //{
-    //    //    // Add the current record to our list
-    //    //    balanceRecords.Add(currentRecord);
-    //    //
-    //    //    // Follow the chain to the next record
-    //    //    currentRecord = currentRecord.Next;
-    //    //}
-    //
-    //    // Return the array of balance records
-    //    return currentRecord;
-    //}
 
     //80059f6c
     public void TriggerVisualUpdate(int spriteTableIndex)
@@ -2442,8 +2409,6 @@ public class GameEngine
     {
         //empty function
     }
-
-    
 
     //8004507c
     public void SetEtcAnimationMode(int mode)

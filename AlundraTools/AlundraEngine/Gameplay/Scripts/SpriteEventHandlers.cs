@@ -1016,8 +1016,12 @@ public class SpriteEventHandlers
 
                 if ((uVar4 & 7) == 0)
                 {
+                    Debugger.Break();
+
                     _gameEngine.EffectManager.CreateEffectEntity(
-                        (byte)0, _gameEngine.CurrentMap.Info.SlideEffectId, 0,
+                        (byte)0, 
+                        _gameEngine.CurrentMap.Info.SlideEffectId, // _gameEngine.CurrentMap.Info.C
+                        0,
                         entity.PosX, entity.PosY, entity.FloorHeight);
                 }
 

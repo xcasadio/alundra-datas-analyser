@@ -122,6 +122,24 @@ public class SpriteInfoEventCodes
         //    }
         //}
         //half mb for global codes, half mb for map codes
+
+        var codes = new List<short>();
+
+        codes.AddRange(EventCodesATable);
+        codes.AddRange(EventCodesBTable);
+        codes.AddRange(EventCodesCTable);
+        codes.AddRange(EventCodesDTable);
+        codes.AddRange(EventCodesETable);
+        codes.AddRange(EventCodesFTable);
+        codes.RemoveAll(x => x == 0);
+
+        var min = codes.Min();
+        var max = codes.Max();
+
+
+        Codes = new byte[max - min];
+        br.BaseStream.Position = _binOffset + min;
+        br.Read(Codes, 0, Codes.Length);
     }
 
     public class SiCode
@@ -199,10 +217,9 @@ public class SpriteInfoEventCodes
 
     public byte[] GetByteCode(BinaryReader br, int sectorOffset)
     {
-
         var bytes = new byte[_dataSize - sectorOffset];
-        var i = 0;
         br.BaseStream.Position = _binOffset + sectorOffset;
+        var i = 0;
 
         //br.Read(bytes, 0, bytes.Length);
 
@@ -239,7 +256,8 @@ public class SpriteInfoEventCodes
     public readonly short[] EventCodesDTable;
     public readonly short[] EventCodesETable;
     public readonly short[] EventCodesFTable;
-    //public readonly short[] EventCodes;
+
+    public readonly byte[] Codes;
 
     public static readonly Dictionary<byte, int> CommandSizeByCode = new()
     {

@@ -19,7 +19,7 @@ public class ImageViewerControl : UserControl
         SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
         TabStop = true; // allow focus so wheel events can be received
         // ensure we get mouse wheel when focused
-        MouseEnter += (s, e) => Focus();
+        MouseClick += (s, e) => Focus();
     }
 
     [Browsable(true)]
