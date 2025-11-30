@@ -513,7 +513,7 @@ public static class FrameSnapshotLoader
             entity.EventTrigger = eventTrigger;
             entity.MapEventProgramId = mapEventProgramId;
             //entity.LogicContextEntity = logicContextEntity;
-            entity.EventProgramState.Sp = eventProgramState;
+            //entity.EventProgramState.Sp = eventProgramState;
             //if (eventProgramState != null && entity.EventProgramState != null)
             //    eventProgramState.CopyToEventProgramState(entity.EventProgramState);
             // Les champs _268, _269, _26A, _26B, bytes sont ignorés (données brutes)
