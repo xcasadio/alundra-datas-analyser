@@ -313,9 +313,7 @@ public class EntityEventHandlers
                 eventProgramState.Parameters[1] = 0;
                 eventProgramState.CodeIndex++;
                 FillDataFromCommand(eventProgramState); // needed because there is a check at the beginning of the function
-                Debug.Write($"Entity[{entity.Index}] break => ");
-                LogCommand(entity, logicMode, command, variables, eventProgramState.CodeIndex);
-                Debug.WriteLine("");
+                Debug.WriteLine($"Entity[{entity.Index}] break {eventProgramState.CodeIndex}");
                 goto END_SCRIPT;
             }
 
@@ -417,7 +415,7 @@ public class EntityEventHandlers
         eventProgramState.CodeIndex = 0;
         Array.Clear(eventProgramState.Parameters);
 
-        var commands = GetEventCodeCommands(br, entity.ProgramIndexes[eventProgramType], eventCodesTable, spriteInfo);
+        //var commands = GetEventCodeCommands(br, entity.ProgramIndexes[eventProgramType], eventCodesTable, spriteInfo);
         eventProgramState.Codes = GetEventCodes(br, entity.ProgramIndexes[eventProgramType], eventCodesTable, spriteInfo);
         eventProgramState.Sp = eventProgramState.Codes?.Length > 0 ? eventProgramState.Codes[eventProgramState.CodeIndex] : 0;
         eventProgramState.Parameters[0] = eventProgramState.Sp;
@@ -487,7 +485,7 @@ public class EntityEventHandlers
     // 8003D17C
     private int Script_2_002(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        return ((variables[1] + variables[2] * 0x100) * 0x10000) >> 0x10;
+        return (((variables[2] << 8) | variables[1]) * 0x10000) >> 0x10;
     }
 
     // 8003D1A0
@@ -497,7 +495,7 @@ public class EntityEventHandlers
 
         if (eventProgramState.Result != 0)
         {
-            result = (variables[1] + variables[2] * 0x100) * 0x10000 >> 0x10;
+            result = (((variables[2] << 8) | variables[1]) * 0x10000) >> 0x10;
         }
 
         return result;
@@ -544,7 +542,7 @@ public class EntityEventHandlers
     {
         uint[] flags;
 
-        var flag = (uint)(variables[1] + variables[2] * 0x100);
+        var flag = (uint)((variables[2] << 8) | variables[1]);
 
         if ((flag & 0x8000) == 0)
         {
@@ -772,7 +770,7 @@ public class EntityEventHandlers
     // 8003D7D0
     private int Script_27_01B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        logicEntity.ForceZ = ((variables[2] << 8) | variables[1]) << 8;
+        logicEntity.ForceZ = (((variables[2] << 8) | variables[1]) * 0x10000) >> 8;
         return 3;
     }
 
@@ -1099,7 +1097,7 @@ public class EntityEventHandlers
     // 8003DD8C
     private int Script_47_02F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var flag = (uint)(variables[1] + variables[2] * 0x100);
+        var flag = (uint)((variables[2] << 8) | variables[1]);
 
         uint value = variables[3] switch
         {
@@ -1144,7 +1142,7 @@ public class EntityEventHandlers
 
         if ((flags[index] & mask) != 0)
         {
-            result = ((variables[3] + variables[4] * 0x100) * 0x10000) >> 0x10;
+            result = (((variables[4] << 8) | variables[3]) * 0x10000) >> 0x10;
         }
 
         return result;
@@ -1173,7 +1171,7 @@ public class EntityEventHandlers
 
         if ((flags[index] & mask) == 0)
         {
-            result = ((variables[3] + variables[4] * 0x100) * 0x10000) >> 0x10;
+            result = (((variables[4] << 8) | variables[3]) * 0x10000) >> 0x10;
         }
 
         return result;
@@ -1307,78 +1305,6 @@ public class EntityEventHandlers
 
         eventProgramState.Result = 1;//made it through them all
         return 9;
-
-        /*uint[] piVar1;
-        uint uVar2;
-        int iVar3;
-
-        uVar2 = variables[1] + variables[2] * 0x100;
-
-        if ((uVar2 & 0x8000) == 0)
-        {
-            piVar1 = _gameEngine.StaticVariables.g_mapFlags;
-        }
-        else
-        {
-            piVar1 = _gameEngine.StaticVariables.g_globalFlags;
-        }
-
-        iVar3 = variables;
-
-        if (((uint)((uVar2 >> 3 & 0xffc) + piVar1) & 1 << ((iVar3 + 1) & 0x1f)) != 0)
-        {
-            uVar2 = iVar3 + 3 + (iVar3 + 4) * 0x100;
-
-            if ((uVar2 & 0x8000) == 0)
-            {
-                piVar1 = _gameEngine.StaticVariables.g_mapFlags;
-            }
-            else
-            {
-                piVar1 = _gameEngine.StaticVariables.g_globalFlags;
-            }
-
-            iVar3 = variables;
-
-            if (((uint)((uVar2 >> 3 & 0xffc) + piVar1) & 1 << ((iVar3 + 3) & 0x1f)) != 0)
-            {
-                uVar2 = iVar3 + 5 + (iVar3 + 6) * 0x100;
-
-                if ((uVar2 & 0x8000) == 0)
-                {
-                    piVar1 = _gameEngine.StaticVariables.g_mapFlags;
-                }
-                else
-                {
-                    piVar1 = _gameEngine.StaticVariables.g_globalFlags;
-                }
-
-                iVar3 = variables;
-
-                if (((uint)((uVar2 >> 3 & 0xffc) + piVar1) & 1 << ((iVar3 + 5) & 0x1f)) != 0)
-                {
-                    uVar2 = iVar3 + 7 + (iVar3 + 8) * 0x100;
-
-                    if ((uVar2 & 0x8000) == 0)
-                    {
-                        piVar1 = _gameEngine.StaticVariables.g_mapFlags;
-                    }
-                    else
-                    {
-                        piVar1 = _gameEngine.StaticVariables.g_globalFlags;
-                    }
-
-                    if (((uint)((uVar2 >> 3 & 0xffc) + piVar1) & 1 << (variables[7] & 0x1f)) != 0)
-                    {
-                        eventProgramState.Result = 1;
-                        return 9;
-                    }
-                }
-            }
-        }
-
-        eventProgramState.Result = 0;
-        return 9;*/
     }
 
     // 8003E128
@@ -1552,7 +1478,7 @@ public class EntityEventHandlers
     // 8003E424
     private int Script_56_038(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.StaticVariables.g_mapIdToInternalMapIndexTable[variables[1]] = (ushort)(variables[3] + variables[4] * 0x100);
+        _gameEngine.StaticVariables.g_mapIdToInternalMapIndexTable[variables[1]] = (ushort)((variables[4] << 8) | variables[3]);
         return 5;
     }
 
@@ -2207,14 +2133,12 @@ public class EntityEventHandlers
         byte bVar2;
         int num;
 
-        bVar1 = (byte)variables[3];
-        bVar2 = (byte)variables[2];
         num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
 
         for (int i = 0; i < num; i++)
         {
             var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
-            entity.ForceZ = (int)((bVar2 + (uint)bVar1 * 0x100) * 0x10000) >> 8;
+            entity.ForceZ = ((variables[2] + variables[3] * 0x100) * 0x10000) >> 8;
         }
 
         return 4;
@@ -2609,7 +2533,7 @@ public class EntityEventHandlers
         }
         else
         {
-            result = variables[1] + variables[2] * 0x100;
+            result = (((variables[2] << 8) | variables[1]) * 0x10000) >> 0x10;
         }
 
         return result;
@@ -2640,7 +2564,7 @@ public class EntityEventHandlers
     private int Script_StoreChoiceParamAndJump(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         eventProgramState._34 = variables[3];
-        return variables[1] + (variables[2] << 8);
+        return (((variables[2] << 8) | variables[1]) * 0x10000) >> 0x10;
     }
 
     // 8003FB44
@@ -2651,7 +2575,7 @@ public class EntityEventHandlers
         if (eventProgramState.Result != 0)
         {
             eventProgramState._34 = variables[3];
-            result = variables[1] + (variables[2] << 8);
+            result = (((variables[2] << 8) | variables[1]) * 0x10000) >> 0x10;
         }
 
         return result;
@@ -2665,7 +2589,7 @@ public class EntityEventHandlers
         if (eventProgramState.Result == 0)
         {
             eventProgramState._34 = variables[3];
-            result = variables[1] + (variables[2] << 8);
+            result = (((variables[2] << 8) | variables[1]) * 0x10000) >> 0x10;
         }
 
         return result;
@@ -2695,7 +2619,7 @@ public class EntityEventHandlers
         if ((flags[index] & mask) != 0)
         {
             eventProgramState._34 = variables[5];
-            result = (variables[3] + variables[4] * 0x100);
+            result = (((variables[4] << 8) | variables[3]) * 0x10000) >> 0x10;
         }
 
         return result;
@@ -2725,7 +2649,7 @@ public class EntityEventHandlers
         if ((flags[index] & mask) == 0)
         {
             eventProgramState._34 = variables[5];
-            result = variables[3] + variables[4] * 0x100;
+            result = (((variables[4] << 8) | variables[3]) * 0x10000) >> 0x10;
         }
 
         return result;
@@ -2798,7 +2722,7 @@ public class EntityEventHandlers
         uint[] flags;
         int result;
 
-        var flag = (uint)(variables[1] + variables[2] * 0x100);  // variables[2] << 8 | variables[1];
+        var flag = (uint)((variables[2] << 8) | variables[1]);
 
         if ((flag & 0x8000) == 0)
         {

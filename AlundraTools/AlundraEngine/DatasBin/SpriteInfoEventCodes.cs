@@ -220,27 +220,27 @@ public class SpriteInfoEventCodes
         br.BaseStream.Position = _binOffset + eventCodesOffset;
         var i = 0;
 
-        //br.Read(bytes, 0, bytes.Length);
+        br.Read(bytes, 0, bytes.Length);
 
-        while (i < bytes.Length)
-        {
-            //Debug.Assert(dex < bytes.Length, "ByteCodes larger than 255");
-        
-            var b = br.ReadByte();
-            if (b == 0)
-            {
-                bytes[i++] = b;
-            }
-            else if (b == 0xff)
-            {
-                bytes[i++] = b;
-                return bytes;
-            }
-            else
-            {
-                bytes[i++] = b;
-            }
-        }
+        //while (i < bytes.Length)
+        //{
+        //    //Debug.Assert(dex < bytes.Length, "ByteCodes larger than 255");
+        //
+        //    var b = br.ReadByte();
+        //    if (b == 0)
+        //    {
+        //        bytes[i++] = b;
+        //    }
+        //    else if (b == 0xff)
+        //    {
+        //        bytes[i++] = b;
+        //        return bytes;
+        //    }
+        //    else
+        //    {
+        //        bytes[i++] = b;
+        //    }
+        //}
 
         return bytes;
     }
