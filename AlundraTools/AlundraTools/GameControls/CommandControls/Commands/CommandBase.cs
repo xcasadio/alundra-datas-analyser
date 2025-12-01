@@ -42,7 +42,7 @@ public class CommandBase
             output += $" ({PrintParameters()})";
         }
 
-        output += $" (addr:{FormatWithSpaces(MemoryAddress)} size:{Size})";
+        output += $" (addr:{MemoryAddress} size:{Size})";
 
         return output;
     }

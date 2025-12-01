@@ -824,9 +824,11 @@ namespace AlundraTools.GameControls
         {
             if (index >= 0 && index < 0xff)
             {
-                return sector1Table[index & 0x7f].ToString("x4") + ":" +
-                       (_selectedGameMap.SpriteInfo.Header.EventCodeAddress + sector1Table[index & 0x7f]).ToString("x6") + ":" +
-                       RenderByteCodes(_selectedGameMap.SpriteInfo.EventCodes.GetByteCode(br, sector1Table[index & 0x7f]));
+                var i = index & 0x7f;
+
+                return sector1Table[i].ToString("x4") + ":" +
+                       (_selectedGameMap.SpriteInfo.Header.EventCodeAddress + sector1Table[i]).ToString("x6") + ":" +
+                       RenderByteCodes(_selectedGameMap.SpriteInfo.EventCodes.GetByteCode(br, sector1Table[i]));
             }
 
             return "0";

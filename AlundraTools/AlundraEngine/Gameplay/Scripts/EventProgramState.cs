@@ -1,4 +1,6 @@
-﻿namespace AlundraEngine.Gameplay.Scripts;
+﻿using AlundraEngine.DatasBin;
+
+namespace AlundraEngine.Gameplay.Scripts;
 
 public class EventProgramState
 {
@@ -24,6 +26,7 @@ public class EventProgramState
 
     public override string ToString()
     {
-        return $"Sp:{string.Join(',', Sp)} Parameters:{string.Join(',', Parameters)} {nameof(_34)}:{_34}";
+        var actionName = SpriteInfoEventCodes.CommandNameByCode.GetValueOrDefault((byte)Sp, "?");
+        return $"{nameof(Sp)}:{Sp} {actionName} ci:{CodeIndex} Parameters:{string.Join(',', Parameters)} {nameof(_30)}:{_30} {nameof(_34)}:{_34}";
     }
 }

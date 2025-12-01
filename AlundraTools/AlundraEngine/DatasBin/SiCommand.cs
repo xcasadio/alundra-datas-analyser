@@ -69,4 +69,16 @@ public class SiCommand
 
         return string.Empty;
     }
+
+    public override string ToString()
+    {
+        var parameters = "-";
+
+        if (HasParameters)
+        {
+            parameters = string.Join(", ", Parameters.Select(x => x.ToString()));
+        }
+
+        return $"{Name} (0x{Command}) s:{Size} p:{parameters} [{MemoryAddress}]";
+    }
 }

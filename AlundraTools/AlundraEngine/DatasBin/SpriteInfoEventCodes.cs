@@ -201,9 +201,8 @@ public class SpriteInfoEventCodes
                 parameters[j++] = bytes[i++];
             }
 
-            SiCommand cmd;
             var address = _memoryAddress + eventCodesOffset + i - size;
-            cmd = new SiCommand(value, parameters, name, address);
+            var cmd = new SiCommand(value, parameters, name, address);
             commands.Add(cmd);
 
             if (stopAtff && value == 0xff)
@@ -215,10 +214,10 @@ public class SpriteInfoEventCodes
         return commands;
     }
 
-    public byte[] GetByteCode(BinaryReader br, int sectorOffset)
+    public byte[] GetByteCode(BinaryReader br, int eventCodesOffset)
     {
-        var bytes = new byte[_dataSize - sectorOffset];
-        br.BaseStream.Position = _binOffset + sectorOffset;
+        var bytes = new byte[_dataSize - eventCodesOffset];
+        br.BaseStream.Position = _binOffset + eventCodesOffset;
         var i = 0;
 
         //br.Read(bytes, 0, bytes.Length);
@@ -228,19 +227,18 @@ public class SpriteInfoEventCodes
             //Debug.Assert(dex < bytes.Length, "ByteCodes larger than 255");
         
             var b = br.ReadByte();
-            if (b == 0) //what does 0 mean?
+            if (b == 0)
             {
                 bytes[i++] = b;
             }
-            else if (b == 0xff) //end
+            else if (b == 0xff)
             {
                 bytes[i++] = b;
-                return bytes; //for now
+                return bytes;
             }
             else
             {
                 bytes[i++] = b;
-                //skip ahead to parameter length
             }
         }
 

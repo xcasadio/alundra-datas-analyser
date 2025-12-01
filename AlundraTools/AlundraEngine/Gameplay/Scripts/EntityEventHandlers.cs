@@ -310,10 +310,12 @@ public class EntityEventHandlers
 
             if (command == 0x00) // break, skip the loop but do the next command
             {
-                Debug.WriteLine($"Entity[{entity.Index}] break");
                 eventProgramState.Parameters[1] = 0;
                 eventProgramState.CodeIndex++;
                 FillDataFromCommand(eventProgramState); // needed because there is a check at the beginning of the function
+                Debug.Write($"Entity[{entity.Index}] break => ");
+                LogCommand(entity, logicMode, command, variables, eventProgramState.CodeIndex);
+                Debug.WriteLine("");
                 goto END_SCRIPT;
             }
 
@@ -321,7 +323,7 @@ public class EntityEventHandlers
             var lastCommand = _gameEngine.StaticVariables.g_activeCommand;
             _gameEngine.StaticVariables.g_activeCommand = command;
 
-            LogCommand(entity, logicMode, command, variables);
+            LogCommand(entity, logicMode, command, variables, eventProgramState.CodeIndex);
 
             var func = _handlers[command];
             var result = func(entity.LogicContextEntity, entity, variables, eventProgramState);
@@ -363,11 +365,11 @@ public class EntityEventHandlers
         }
     }
 
-    private static void LogCommand(Entity entity, int logicMode, int command, int[] variables)
+    private static void LogCommand(Entity entity, int logicMode, int command, int[] variables, int codeIndex)
     {
         var name = SpriteInfoEventCodes.CommandNameByCode.GetValueOrDefault((byte)command, "?");
         var eventTypeName = logicMode == 0 ? "ALoad" : logicMode == 1 ? "BMap" : logicMode == 2 ? "CTick" : logicMode == 3 ? "DTouch" : logicMode == 4 ? "EDeactivate" : "FInteract";
-        Debug.Write($"Entity[{entity.Index}] run {eventTypeName} command 0x{command:x2} '{name}' {string.Join(',', variables.Select(x => x.ToString("x2")))} = ");
+        Debug.Write($"Entity[{entity.Index}] run ({codeIndex}){eventTypeName} command 0x{command:x2} '{name}' {string.Join(',', variables.Select(x => x.ToString("x2")))} = ");
     }
 
     private int[] FillDataFromCommand(EventProgramState eventProgramState)
@@ -415,6 +417,7 @@ public class EntityEventHandlers
         eventProgramState.CodeIndex = 0;
         Array.Clear(eventProgramState.Parameters);
 
+        var commands = GetEventCodeCommands(br, entity.ProgramIndexes[eventProgramType], eventCodesTable, spriteInfo);
         eventProgramState.Codes = GetEventCodes(br, entity.ProgramIndexes[eventProgramType], eventCodesTable, spriteInfo);
         eventProgramState.Sp = eventProgramState.Codes?.Length > 0 ? eventProgramState.Codes[eventProgramState.CodeIndex] : 0;
         eventProgramState.Parameters[0] = eventProgramState.Sp;
@@ -452,7 +455,6 @@ public class EntityEventHandlers
             var i = index & 0x7f;
             if (i < eventCodesTable.Length)
             {
-                //var size = eventCodesTable[i + 1] - eventCodesTable[i];
                 return spriteInfo?.EventCodes?.GetByteCode(br, eventCodesTable[i]);
             }
         }
@@ -508,7 +510,7 @@ public class EntityEventHandlers
 
         if (eventProgramState.Result == 0)
         {
-            result = ((variables[1] + variables[2] * 0x100) * 0x10000) >> 0x10;
+            result = (((variables[2] << 8) | variables[1]) * 0x10000) >> 0x10;
         }
 
         return result;
@@ -519,7 +521,7 @@ public class EntityEventHandlers
     {
         uint[] flags;
 
-        var flag = (uint)(variables[1] + variables[2] * 0x100);  // variables[2] << 8 | variables[1];
+        var flag = (uint)((variables[2] << 8) | variables[1]);
 
         if ((flag & 0x8000) == 0)
         {
@@ -770,7 +772,7 @@ public class EntityEventHandlers
     // 8003D7D0
     private int Script_27_01B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        logicEntity.ForceZ = ((variables[1] | (variables[2] << 8)) << 16) >> 8;
+        logicEntity.ForceZ = ((variables[2] << 8) | variables[1]) << 8;
         return 3;
     }
 
@@ -822,7 +824,7 @@ public class EntityEventHandlers
     // 8003D8D8
     private int Script_30_01E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var signature = variables[0] | (variables[1] << 8) | (variables[2] << 16);
+        var signature = (variables[2] << 16) | (variables[1] << 8) | variables[0];
 
         if (eventProgramState.Parameters[1] != signature)
         {
@@ -1181,7 +1183,7 @@ public class EntityEventHandlers
     private int Script_50_032(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
-        var flag = (uint)(variables[1] + variables[2] * 0x100);  // variables[2] << 8 | variables[1];
+        var flag = (variables[2] << 8) | variables[1];
 
         if ((flag & 0x8000) == 0)
         {
@@ -1471,7 +1473,7 @@ public class EntityEventHandlers
         uint[] flags;
         uint flag;
 
-        flag = (uint)(variables[1] + variables[2] * 0x100); // variables[2] << 8 | variables[1];
+        flag = (uint)((variables[2] << 8) | variables[1]);
 
         if ((flag & 0x8000) == 0)
         {
@@ -1499,7 +1501,7 @@ public class EntityEventHandlers
         uint[] flags;
         uint flag;
 
-        flag = (uint)(variables[1] + variables[2] * 0x100); // variables[2] << 8 | variables[1];
+        flag = (uint)((variables[2] << 8) | variables[1]);
 
         if ((flag & 0x8000) == 0)
         {
@@ -1844,7 +1846,7 @@ public class EntityEventHandlers
     // 8003E9DC
     private int Script_73_049(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        //Debugger.Break();
         return -eventProgramState.CodeIndex; //eventProgramState.Sp - eventProgramState.Parameters[0];
     }
 
@@ -1868,7 +1870,7 @@ public class EntityEventHandlers
 
         if (eventProgramState.Result == 0)
         {
-            Debugger.Break();
+            //Debugger.Break();
             return -eventProgramState.CodeIndex; //eventProgramState.Sp - eventProgramState.Parameters[0];
         }
 
@@ -2675,7 +2677,7 @@ public class EntityEventHandlers
         uint[] flags;
         int result;
 
-        var flag = (uint)(variables[1] + variables[2] * 0x100);  // variables[2] << 8 | variables[1];
+        var flag = (uint)((variables[2] << 8) | variables[1]);
 
         if ((flag & 0x8000) == 0)
         {
@@ -2705,7 +2707,7 @@ public class EntityEventHandlers
         uint[] flags;
         int result;
 
-        var flag = (uint)(variables[1] + variables[2] * 0x100);  // variables[2] << 8 | variables[1];
+        var flag = (uint)((variables[2] << 8) | variables[1]);
 
         if ((flag & 0x8000) == 0)
         {
@@ -2767,7 +2769,7 @@ public class EntityEventHandlers
         uint[] flags;
         int result;
 
-        var flag = (uint)(variables[1] + variables[2] * 0x100);  // variables[2] << 8 | variables[1];
+        var flag = (uint)((variables[2] << 8) | variables[1]);
 
         if ((flag & 0x8000) == 0)
         {
@@ -3171,9 +3173,9 @@ public class EntityEventHandlers
     private int Script_147_093(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var effectId = variables[1];
-        var x = (variables[2] | (variables[3] << 8)) << 16;
-        var y = (variables[4] | (variables[5] << 8)) << 16;
-        var z = (variables[6] | (variables[7] << 8)) << 16;
+        var x = ((variables[3] << 8) | variables[2]) << 16;
+        var y = ((variables[5] << 8) | variables[4]) << 16;
+        var z = ((variables[7] << 8) | variables[6]) << 16;
 
         foreach (var effect in _gameEngine.StaticVariables.g_effectSlots)
         {
@@ -3192,9 +3194,9 @@ public class EntityEventHandlers
     private int Script_148_094(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var effectid = variables[1];
-        var x = (variables[2] | (variables[3] << 8)) << 16;
-        var y = (variables[4] | (variables[5] << 8)) << 16;
-        var z = (variables[6] | (variables[7] << 8)) << 16;
+        var x = ((variables[3] << 8) | variables[2]) << 16;
+        var y = ((variables[5] << 8) | variables[4]) << 16;
+        var z = ((variables[7] << 8) | variables[6]) << 16;
 
         foreach (var effect in _gameEngine.StaticVariables.g_effectSlots)
         {
@@ -3576,9 +3578,9 @@ public class EntityEventHandlers
     private int Script_160_0A0(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var effectid = variables[1];
-        var x = (variables[2] | (variables[3] << 8)) << 16;
-        var y = (variables[4] | (variables[5] << 8)) << 16;
-        var z = (variables[6] | (variables[7] << 8)) << 16;
+        var x = ((variables[3] << 8) | variables[2]) << 16;
+        var y = ((variables[5] << 8) | variables[4]) << 16;
+        var z = ((variables[7] << 8) | variables[6]) << 16;
 
         foreach (var effect in _gameEngine.StaticVariables.g_effectSlots)
         {
@@ -3604,10 +3606,10 @@ public class EntityEventHandlers
         {
             return 9;
         }
-
-        var x = (variables[3] | (variables[4] << 8)) << 16;
-        var y = (variables[5] | (variables[6] << 8)) << 16;
-        var z = (variables[7] | (variables[8] << 8)) << 16;
+                                         
+        var x = ((variables[4] << 8) | variables[3]) << 16;
+        var y = ((variables[6] << 8) | variables[5]) << 16;
+        var z = ((variables[8] << 8) | variables[7]) << 16;
 
         var playerEntity = _gameEngine.StaticVariables.PlayerEntity;
 
@@ -3635,9 +3637,9 @@ public class EntityEventHandlers
 
         if (spriteEffect != null)
         {
-            spriteEffect.X = (variables[2] + (variables[3] << 8)) << 16;
-            spriteEffect.Y = (variables[4] + (variables[5] << 8)) << 16;
-            spriteEffect.Z = ((variables[6] + (variables[7] << 8)) << 16) + 1;
+            spriteEffect.X = ((variables[3] << 8) | variables[2]) << 16;
+            spriteEffect.Y = ((variables[5] << 8) | variables[4]) << 16;
+            spriteEffect.Z = (((variables[7] << 8) | variables[6]) << 16) + 1;
         }
 
         return 8;
@@ -3655,9 +3657,9 @@ public class EntityEventHandlers
 
             if (spriteEffect != null)
             {
-                spriteEffect.X = entity.PosX + ((variables[3] + (variables[4] << 8)) << 16);
-                spriteEffect.Y = entity.PosY + ((variables[5] + (variables[6] << 8)) << 16);
-                spriteEffect.Z = entity.PosZ + ((variables[7] + (variables[8] << 8)) << 16);
+                spriteEffect.X = entity.PosX + (((variables[4] << 8) | variables[3]) << 16);
+                spriteEffect.Y = entity.PosY + (((variables[6] << 8) | variables[5]) << 16);
+                spriteEffect.Z = entity.PosZ + (((variables[8] << 8) | variables[7]) << 16);
             }
         }
 
@@ -4228,7 +4230,7 @@ public class EntityEventHandlers
     // 80041C38
     private int Script_189_0BD(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var sfxId = variables[1] | (variables[2] << 8);
+        var sfxId = (variables[2] << 8) | variables[1];
         _gameEngine.SoundManager.PlaySoundEffect((uint)sfxId);
         return 3;
     }
@@ -4236,7 +4238,7 @@ public class EntityEventHandlers
     // 80041C6C
     private int Script_190_0BE(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var sfxId = variables[1] | (variables[2] << 8);
+        var sfxId = (variables[2] << 8) | variables[1];
         _gameEngine.SoundManager.PlaySoundEffect((uint)sfxId);
         return 3;
     }
@@ -4268,7 +4270,7 @@ public class EntityEventHandlers
     private int Script_194_0C2(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
-        var slotId = variables[1] | (variables[2] << 8);
+        var slotId = (variables[2] << 8) | variables[1];
 
         if ((byte)_gameEngine.StaticVariables.g_currentSaveSlotNameIndex < slotId)
         {
@@ -4328,7 +4330,7 @@ public class EntityEventHandlers
                     bitmap);
             }
 
-            int spriteUpdateId = variables[2] | (variables[3] << 8);
+            int spriteUpdateId = (variables[3] << 8) | variables[2];
             _gameEngine.TriggerVisualUpdate(spriteUpdateId);
         }
 
