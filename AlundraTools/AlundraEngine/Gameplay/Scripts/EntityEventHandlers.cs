@@ -302,12 +302,11 @@ public class EntityEventHandlers
             int[] variables = FillDataFromCommand(eventProgramState);
             int command = variables[0];
 
-            LogCommand(entity, logicMode, command, variables, eventProgramState.CodeIndex);
+            //LogCommand(entity, logicMode, command, variables, eventProgramState.CodeIndex);
 
             if (command == 0xFF)
             {
-                //Debug.WriteLine($"Entity[{entity.Index}] end script");
-                Debug.WriteLine("");
+                //Debug.WriteLine("");
                 goto END_SCRIPT;
             }
 
@@ -316,8 +315,7 @@ public class EntityEventHandlers
                 eventProgramState.Parameters[1] = 0;
                 eventProgramState.CodeIndex++;
                 FillDataFromCommand(eventProgramState); // needed because there is a check at the beginning of the function
-                //Debug.WriteLine($"Entity[{entity.Index}] p:{eventProgramState.CodeIndex} break");
-                Debug.WriteLine("");
+                //Debug.WriteLine("");
                 goto END_SCRIPT;
             }
 
@@ -328,7 +326,7 @@ public class EntityEventHandlers
             var func = _handlers[command];
             var result = func(entity.LogicContextEntity, entity, variables, eventProgramState);
 
-            Debug.WriteLine($" = {result}");
+            //Debug.WriteLine($" = {result}");
 
             if (_gameEngine.StaticVariables.g_clearProgramState != 0)
             {
@@ -339,7 +337,7 @@ public class EntityEventHandlers
                 else
                 {
                     _gameEngine.StaticVariables.g_clearProgramState = 0;
-                    Debug.WriteLine($"Entity[{logicContextEntity.Index}] clean EventProgramState");
+                    //Debug.WriteLine($"Entity[{logicContextEntity.Index}] clean EventProgramState");
                     logicContextEntity.EventProgramState.Sp = 0;
                     logicContextEntity.EventProgramState.Codes = null;
                 }
@@ -362,7 +360,7 @@ public class EntityEventHandlers
         END_SCRIPT:
         if (wasEntityCleared)
         {
-            Debug.WriteLine($"Entity[{entity.Index}] clean EventProgramState 2");
+            //Debug.WriteLine($"Entity[{entity.Index}] clean EventProgramState 2");
             eventProgramState.Sp = 0;
             eventProgramState.Codes = null;
         }

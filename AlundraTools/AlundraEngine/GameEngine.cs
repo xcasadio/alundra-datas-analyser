@@ -1640,7 +1640,7 @@ public class GameEngine
 
         var playerEntity = StaticVariables.PlayerEntity;
 
-        Debug.WriteLine($"===================================");
+        //Debug.WriteLine($"===================================");
 
         for (var i = 0; i < StaticVariables.g_mapEvents.Length; ++i)
         {
@@ -1664,8 +1664,6 @@ public class GameEngine
                 mapEventEntity.EventProgramState.Sp = 0;
                 mapEventEntity.RelativeWarpOffsetX = 0;
                 mapEventEntity.Index = playerEntity.Index;
-                //mapEventEntity.MapEventProgramId = record.EventCodesBIndex;
-                //mapEventEntity.EventTrigger = record.EventCodesBIndex;
                 continue;
             }
 
@@ -1676,14 +1674,13 @@ public class GameEngine
             playerEntity.LogicContextEntity = mapEventEntity;
             playerEntity.EventProgramState.CopyFrom(currentMapEvent.EventData);
 
-            Debug.WriteLine($"========== Map event {i} ==========");
+            //Debug.WriteLine($"========== Map event {i} ==========");
 
             RunScript(playerEntity, ScriptHelper.ProgramBMap);
 
             currentMapEvent.EventData.CopyFrom(playerEntity.EventProgramState);
             currentMapEvent.Entity = playerEntity.LogicContextEntity;
             currentMapEvent.ProgramBMap = playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap];
-            //mapEventEntity.EventTrigger = playerEntity.EventTrigger;
         }
     }
 
