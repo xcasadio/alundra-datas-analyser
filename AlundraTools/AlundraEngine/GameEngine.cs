@@ -258,7 +258,7 @@ public class GameEngine
         GraphicManager.RenderScene(graphics);
     }
 
-
+    //8005d668
     public void SetTileAnimationMode(int animationMode, int animationBankIndex)
     {
         StaticVariables.g_tileAnimationMode = animationMode;
@@ -1640,6 +1640,8 @@ public class GameEngine
 
         var playerEntity = StaticVariables.PlayerEntity;
 
+        Debug.WriteLine($"===================================");
+
         for (var i = 0; i < StaticVariables.g_mapEvents.Length; ++i)
         {
             var currentMapEvent = StaticVariables.g_mapEvents[i];
@@ -1673,6 +1675,8 @@ public class GameEngine
             playerEntity.EventTrigger = i;
             playerEntity.LogicContextEntity = mapEventEntity;
             playerEntity.EventProgramState.CopyFrom(currentMapEvent.EventData);
+
+            Debug.WriteLine($"========== Map event {i} ==========");
 
             RunScript(playerEntity, ScriptHelper.ProgramBMap);
 

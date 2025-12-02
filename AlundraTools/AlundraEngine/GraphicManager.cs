@@ -584,11 +584,6 @@ public class GraphicManager
     //80042ccc
     private uint RenderEffects(int i)
     {
-        //uint uVar1;
-        //TILE* pTVar2;
-        //uint uVar3;
-        //int** ppiVar4;
-
         if (_gameEngine.StaticVariables.g_warpFlags !=0)
         {
             _gameEngine.StaticVariables.g_playerLastX = MoveTowards(_gameEngine.StaticVariables.g_playerLastX, _gameEngine.StaticVariables.g_playerStartX, _gameEngine.StaticVariables.g_playerStepX);

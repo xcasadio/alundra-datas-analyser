@@ -302,9 +302,12 @@ public class EntityEventHandlers
             int[] variables = FillDataFromCommand(eventProgramState);
             int command = variables[0];
 
+            LogCommand(entity, logicMode, command, variables, eventProgramState.CodeIndex);
+
             if (command == 0xFF)
             {
-                Debug.WriteLine($"Entity[{entity.Index}] end script");
+                //Debug.WriteLine($"Entity[{entity.Index}] end script");
+                Debug.WriteLine("");
                 goto END_SCRIPT;
             }
 
@@ -313,22 +316,19 @@ public class EntityEventHandlers
                 eventProgramState.Parameters[1] = 0;
                 eventProgramState.CodeIndex++;
                 FillDataFromCommand(eventProgramState); // needed because there is a check at the beginning of the function
-                Debug.WriteLine($"Entity[{entity.Index}] break {eventProgramState.CodeIndex}");
+                //Debug.WriteLine($"Entity[{entity.Index}] p:{eventProgramState.CodeIndex} break");
+                Debug.WriteLine("");
                 goto END_SCRIPT;
             }
 
             var logicContextEntity = entity.LogicContextEntity;
-            var lastCommand = _gameEngine.StaticVariables.g_activeCommand;
+            _gameEngine.StaticVariables.g_lastCommand = _gameEngine.StaticVariables.g_activeCommand;
             _gameEngine.StaticVariables.g_activeCommand = command;
-
-            LogCommand(entity, logicMode, command, variables, eventProgramState.CodeIndex);
 
             var func = _handlers[command];
             var result = func(entity.LogicContextEntity, entity, variables, eventProgramState);
 
-            Debug.WriteLine($"{result}");
-
-            _gameEngine.StaticVariables.g_lastCommand = lastCommand;
+            Debug.WriteLine($" = {result}");
 
             if (_gameEngine.StaticVariables.g_clearProgramState != 0)
             {
@@ -352,6 +352,11 @@ public class EntityEventHandlers
 
             eventProgramState.Parameters[1] = 0;
             eventProgramState.CodeIndex += result;
+
+            if (eventProgramState.CodeIndex < 0)
+            {
+                Debugger.Break();
+            }
         }
 
         END_SCRIPT:
@@ -367,7 +372,7 @@ public class EntityEventHandlers
     {
         var name = SpriteInfoEventCodes.CommandNameByCode.GetValueOrDefault((byte)command, "?");
         var eventTypeName = logicMode == 0 ? "ALoad" : logicMode == 1 ? "BMap" : logicMode == 2 ? "CTick" : logicMode == 3 ? "DTouch" : logicMode == 4 ? "EDeactivate" : "FInteract";
-        Debug.Write($"Entity[{entity.Index}] run ({codeIndex}){eventTypeName} command 0x{command:x2} '{name}' {string.Join(',', variables.Select(x => x.ToString("x2")))} = ");
+        Debug.Write($"Entity[{entity.Index}] run[{eventTypeName}] 0x{command:x2} p:{codeIndex} '{name}' {string.Join(',', variables.Select(x => x.ToString("x2")))}");
     }
 
     private int[] FillDataFromCommand(EventProgramState eventProgramState)
@@ -418,7 +423,8 @@ public class EntityEventHandlers
         //var commands = GetEventCodeCommands(br, entity.ProgramIndexes[eventProgramType], eventCodesTable, spriteInfo);
         eventProgramState.Codes = GetEventCodes(br, entity.ProgramIndexes[eventProgramType], eventCodesTable, spriteInfo);
         eventProgramState.Sp = eventProgramState.Codes?.Length > 0 ? eventProgramState.Codes[eventProgramState.CodeIndex] : 0;
-        eventProgramState.Parameters[0] = eventProgramState.Sp;
+        //eventProgramState.Parameters[0] = eventProgramState.Sp;
+        eventProgramState.Parameters[0] = eventProgramState.CodeIndex;
     }
 
     public static List<SiCommand> GetEventCodeCommands(BinaryReader br, int index, short[] eventCodesTable, SpriteInfo spriteInfo)
@@ -1772,8 +1778,8 @@ public class EntityEventHandlers
     // 8003E9DC
     private int Script_73_049(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        //Debugger.Break();
-        return -eventProgramState.CodeIndex; //eventProgramState.Sp - eventProgramState.Parameters[0];
+        //return eventProgramState.Sp - eventProgramState.Parameters[0];
+        return -eventProgramState.CodeIndex; //eventProgramState.Sp - variables[0];
     }
 
     // 8003E9EC
@@ -1783,7 +1789,8 @@ public class EntityEventHandlers
 
         if (eventProgramState.Result != 0)
         {
-            return -eventProgramState.CodeIndex; //eventProgramState.Sp - eventProgramState.Parameters[0];
+            //return eventProgramState.Sp - eventProgramState.Parameters[0];
+            return -eventProgramState.CodeIndex; //eventProgramState.Sp - variables[0];
         }
 
         return result;
@@ -1796,8 +1803,8 @@ public class EntityEventHandlers
 
         if (eventProgramState.Result == 0)
         {
-            //Debugger.Break();
-            return -eventProgramState.CodeIndex; //eventProgramState.Sp - eventProgramState.Parameters[0];
+            //return eventProgramState.Sp - eventProgramState.Parameters[0];
+            return -eventProgramState.CodeIndex; //eventProgramState.Sp - variables[0];
         }
 
         return result;
@@ -2301,16 +2308,19 @@ public class EntityEventHandlers
     // 8003F590
     private int Script_99_063(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        ushort flag;
+        ushort clearMask;
         int num;
 
-        flag = (ushort)((variables[3] << 8) | variables[2]);
         num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
 
         for (int i = 0; i < num; i++)
         {
             var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
-            entity.Flags &= ~(uint)flag | 0xffff0000;
+            //entity.Flags &= ~(uint)clearMask | 0xffff0000;
+
+            clearMask = (ushort)((variables[3] << 8) | variables[2]);
+            uint andMask = 0xFFFF0000u | (uint)(~clearMask & 0xFFFF);
+            entity.Flags &= andMask;
         }
 
         return 4;
@@ -2563,7 +2573,7 @@ public class EntityEventHandlers
     // 8003FB10
     private int Script_StoreChoiceParamAndJump(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        eventProgramState._34 = variables[3];
+        eventProgramState._34 = eventProgramState.CodeIndex + 3; //variables[3];
         return (((variables[2] << 8) | variables[1]) * 0x10000) >> 0x10;
     }
 
@@ -2574,7 +2584,7 @@ public class EntityEventHandlers
 
         if (eventProgramState.Result != 0)
         {
-            eventProgramState._34 = variables[3];
+            eventProgramState._34 = eventProgramState.CodeIndex + 3; //variables[3];
             result = (((variables[2] << 8) | variables[1]) * 0x10000) >> 0x10;
         }
 
@@ -2588,7 +2598,7 @@ public class EntityEventHandlers
 
         if (eventProgramState.Result == 0)
         {
-            eventProgramState._34 = variables[3];
+            eventProgramState._34 = eventProgramState.CodeIndex + 3; //variables[3];
             result = (((variables[2] << 8) | variables[1]) * 0x10000) >> 0x10;
         }
 
@@ -2618,7 +2628,7 @@ public class EntityEventHandlers
 
         if ((flags[index] & mask) != 0)
         {
-            eventProgramState._34 = variables[5];
+            eventProgramState._34 = eventProgramState.CodeIndex + 5; //variables[5];
             result = (((variables[4] << 8) | variables[3]) * 0x10000) >> 0x10;
         }
 
@@ -2648,7 +2658,7 @@ public class EntityEventHandlers
 
         if ((flags[index] & mask) == 0)
         {
-            eventProgramState._34 = variables[5];
+            eventProgramState._34 = eventProgramState.CodeIndex + 5; //variables[5];
             result = (((variables[4] << 8) | variables[3]) * 0x10000) >> 0x10;
         }
 
@@ -2658,7 +2668,8 @@ public class EntityEventHandlers
     // 8003FD14
     private int Script_JumpRelativeFromStoredParam(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        return eventProgramState._34 - variables[0];
+        var value = (variables[1] << 24) | (variables[1] << 16) | (variables[1] << 8) | variables[0];
+        return eventProgramState._34 - eventProgramState.CodeIndex; //variables[0];
     }
 
     // 8003FD24
@@ -2668,7 +2679,7 @@ public class EntityEventHandlers
 
         if (eventProgramState.Result != 0)
         {
-            result = eventProgramState._34 - variables[0];
+            result = eventProgramState._34 - eventProgramState.CodeIndex; //eventProgramState._34 - variables[0];
         }
 
         return result;
@@ -2681,7 +2692,7 @@ public class EntityEventHandlers
 
         if (eventProgramState.Result == 0)
         {
-            result = eventProgramState._34 - variables[0];
+            result = eventProgramState._34 - eventProgramState.CodeIndex; //eventProgramState._34 - variables[0];
         }
 
         return result;
@@ -2710,7 +2721,7 @@ public class EntityEventHandlers
 
         if ((flags[index] & mask) != 0)
         {
-            result = eventProgramState._34 - variables[0];
+            result = eventProgramState._34 - eventProgramState.CodeIndex; //eventProgramState._34 - variables[0];
         }
 
         return result;
@@ -2739,7 +2750,7 @@ public class EntityEventHandlers
 
         if ((flags[index] & mask) == 0)
         {
-            result = eventProgramState._34 - variables[0];
+            result = eventProgramState._34 - eventProgramState.CodeIndex; //eventProgramState._34 - variables[0];
         }
 
         return result;
@@ -3006,32 +3017,22 @@ public class EntityEventHandlers
     // 800404A8
     private int Script_141_08D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-        return 0;
-        /*
         var num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
 
-        if (0 < num)
+        for (var i = 0; i < num; i++)
         {
-            var piVar2 = _gameEngine.StaticVariables.g_activeEntityRefId + num;
+            var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
 
-            do
+            if (entity.PosZ <= entity.TerrainHeight + 1)
             {
-                if (piVar2 + 0x11c <= piVar2 + 0x138 + 1)
-                {
-                    eventProgramState.Result = 1;
-                    return 2;
-                }
-
-                num += -1;
-                piVar2 += -1;
-            } while (0 < num);
+                eventProgramState.Result = 1;
+                return 2;
+            }
         }
 
         eventProgramState.Result = 0;
 
         return 2;
-        */
     }
 
     // 80040534

@@ -103,7 +103,7 @@ public class SpriteEventHandlers
         }
         else
         {
-            Debugger.Break();
+            //Debugger.Break();
         }
     }
 
