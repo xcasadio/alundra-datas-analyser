@@ -12,7 +12,7 @@ public class GameMapInfo
 
     public GameMapInfo(BinaryReader br, int memoryAddress)
     {
-        MemoryAddress = memoryAddress; // start just after the header ??
+        MemoryAddress = memoryAddress;
 
         MapId = br.ReadInt32();//0
         Gravity = br.ReadInt16();//4
@@ -46,22 +46,22 @@ public class GameMapInfo
 
         PalettesBitmap = ImageHelper.BitmapFromPsxBuff(buff, 16, maxPalettes, 16, null);
 
-        byte[] unused = new byte[16];
-        br.Read(unused, 0, 16);
+        //byte[] unused = new byte[16];
+        //br.Read(unused, 0, 16);
 
-        SpriteMapEntries = new SpriteMapEntry[6];
+        SpriteMapEntries = new SpriteMapEntry[14];
 
         //InitializeMapSpriteTable 8002cc58
         int spriteIndex = 0;
         do
         {
-            var val1 = br.ReadByte();
-            var val2 = br.ReadByte();
+            var numberOfFrame = br.ReadByte();
+            var frameDuration = br.ReadByte();
         
             SpriteMapEntries[spriteIndex] = new SpriteMapEntry();
         
-            if (val1 == 0 ||
-                val2 == 0)
+            if (numberOfFrame == 0 ||
+                frameDuration == 0)
             {
                 SpriteMapEntries[spriteIndex].Enabled = 0;
                 SpriteMapEntries[spriteIndex].Index = 0;
@@ -69,7 +69,7 @@ public class GameMapInfo
             else
             {
                 SpriteMapEntries[spriteIndex].Enabled = 1;
-                SpriteMapEntries[spriteIndex].NumberOfFrame = (byte)(1 << (val1 & 0x1f));
+                SpriteMapEntries[spriteIndex].NumberOfFrame = (byte)(1 << (numberOfFrame & 0x1f));
         
                 if (SpriteMapEntries[spriteIndex].NumberOfFrame == 0)
                 {
@@ -78,16 +78,14 @@ public class GameMapInfo
                 }
         
                 SpriteMapEntries[spriteIndex].TileWidth = (byte)(0xa0 / SpriteMapEntries[spriteIndex].NumberOfFrame);
-                byte rowCount = val2;
-        
                 SpriteMapEntries[spriteIndex].FrameIndex = 0;
                 SpriteMapEntries[spriteIndex].Tick = 0;
                 SpriteMapEntries[spriteIndex].Index = 0;
-                SpriteMapEntries[spriteIndex].FrameDuration = rowCount;
+                SpriteMapEntries[spriteIndex].FrameDuration = frameDuration;
             }
         
             spriteIndex++;
-        } while (spriteIndex < 6);
+        } while (spriteIndex < SpriteMapEntries.Length);
 
         //read portals
         var maxPortals = 64;

@@ -30,7 +30,7 @@ public class GameMap
     public readonly GameMapHeader Header;
     public GameMapInfo Info;
     public SpriteInfo SpriteInfo;
-    public ScrollScreen ScrollScreen;
+    public ScrollParameters ScrollParameters;
     public Map Map;
     public string[] Strings;
     public readonly bool Loaded = false;
@@ -39,6 +39,8 @@ public class GameMap
     private byte[] _spriteSheetImageData;
     public Bitmap SpriteSheetBitmap;
     private readonly int _numSpriteSheets = 8;
+
+    public ScrollScreen? ScrollScreen;
 
     public void Load(BinaryReader br, bool isMap)
     {
@@ -86,9 +88,10 @@ public class GameMap
         }
 
         //scrollscreen
-        if (Header.ScrollScreenOffset != -1)
+        if (Header.ScrollingScreenOffset != -1)
         {
-            ScrollScreen = new ScrollScreen(br);
+            ScrollParameters = new ScrollParameters(br, Header.StringTableOffset - Header.ScrollingScreenOffset);
+            ScrollScreen = new ScrollScreen(ScrollParameters);
         }
 
         //read string table

@@ -5,8 +5,9 @@ namespace AlundraEngine.DatasBin;
 public class DatasBin
 {
     public readonly DataBinHeader Header;
-    public readonly GameMap[] GameMaps;
     public readonly GameMap AlundraGameMap;
+    public readonly GameMap[] GameMaps;
+
     public readonly string Binfile;
 
     public DatasBin(string binfile)

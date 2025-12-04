@@ -1506,7 +1506,7 @@ namespace AlundraTools.GameControls
                 return;
             }
 
-            propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.ScrollScreen);
+            propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.ScrollParameters);
         }
 
         private void button1_Click(object sender, EventArgs e)

@@ -38,7 +38,8 @@ public class GraphicManager
         else
         {
             _gameEngine.StaticVariables.g_numberOfLayersDrawn = RenderAllTileLayers(
-                _gameEngine.StaticVariables.g_orderingTableBuffer[0], _gameEngine.StaticVariables.g_orderingTableBuffer[1],
+                //_gameEngine.StaticVariables.g_orderingTableBuffer, _gameEngine.StaticVariables.g_orderingTableBuffer,
+                null, null,
                     _gameEngine.StaticVariables.g_cameraScrollingX, _gameEngine.StaticVariables.g_cameraScrollingY);
         }
 
@@ -569,10 +570,66 @@ public class GraphicManager
     }
     
     //8005b670
-    private int RenderAllTileLayers(int i, int i1, int gCameraScrollingX, int gCameraScrollingY)
+    private int RenderAllTileLayers(int[] orderingTableBuffer1, int[] orderingTableBuffer2, int cameraX, int cameraY)
     {
-        //todo
-        return 0;
+        int numberOfLayerRendered;
+        int additionalTiles;
+        
+        numberOfLayerRendered = 0;
+
+        if (_gameEngine.CurrentMap.ScrollScreen?.ScrollYSpeed != 0)
+        {
+            _gameEngine.StaticVariables.g_renderingBufferIndex = _gameEngine.StaticVariables.g_renderingBufferIndex != 1 ? 1 : 0;
+            _gameEngine.StaticVariables.INT_800c48c4 += 1;
+
+            if (_gameEngine.StaticVariables.g_tileAnimationType != 0)
+            {
+                UpdateTileAnimationFrame();
+            }
+
+            numberOfLayerRendered = 0;
+
+            if ((_gameEngine.StaticVariables.g_tileAnimationMode & 1U) != 0)
+            {
+                //numberOfLayerRendered = RenderLayerToBuffer(0, orderingTableBuffer1, orderingTableBuffer2, cameraX, cameraY);
+            }
+
+            if ((_gameEngine.StaticVariables.g_tileAnimationMode & 2U) != 0)
+            {
+                //additionalTiles = RenderLayerToBuffer(1, orderingTableBuffer1, orderingTableBuffer2, cameraX, cameraY);
+                //numberOfLayerRendered += additionalTiles;
+            }
+
+            if (_gameEngine.CurrentMap.ScrollScreen.ScrollYPeriod != 0)
+            {
+                //RenderTileOverlayLayer(orderingTableBuffer2);
+            }
+        }
+
+        return numberOfLayerRendered;
+    }
+
+    //8005b7a0
+    private void UpdateTileAnimationFrame()
+    {
+        //_gameEngine.StaticVariables.g_tileOffset = _gameEngine.StaticVariables.g_animationData >> 5;
+        //_gameEngine.StaticVariables.g_animationCounter += 1;
+        //
+        //if ((_gameEngine.StaticVariables.g_animationData.field1 & 0x1f) < _gameEngine.StaticVariables.g_animationCounter)
+        //{
+        //    _gameEngine.StaticVariables.g_animationData += 1;
+        //    _gameEngine.StaticVariables.g_animationCounter = 2;
+        //    _gameEngine.StaticVariables.g_animationFrameCounter += 1;
+        //
+        //    if (_gameEngine.StaticVariables.g_animationFrameCounter > 16)
+        //    {
+        //        _gameEngine.StaticVariables.g_animationFrameCounter = 1;
+        //        //_gameEngine.StaticVariables.g_animationData = _gameEngine.StaticVariables.g_tile_set + (_gameEngine.StaticVariables.g_tileAnimationType + -1) * 0x10 + _gameEngine.StaticVariables.g_tileSetMetaData.TileAnimationOffset;
+        //
+        //        var tileSetMetaData = _gameEngine.StaticVariables.g_tileSetMetaData[_gameEngine.StaticVariables.g_tileAnimationType + -1];
+        //        //_gameEngine.StaticVariables.g_animationData = _gameEngine.StaticVariables.g_tile_set + tileSetMetaData.tileAnimationOffset;
+        //    }
+        //}
     }
 
     //8003b51c

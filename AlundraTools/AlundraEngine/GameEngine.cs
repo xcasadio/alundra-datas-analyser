@@ -111,7 +111,7 @@ public class GameEngine
                 //StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b38);
                 //LoadSpriteInfo(StaticVariables.g_compressedImageData[StaticVariables.g_mapIndexInDatasBin]);
                 //SetEtcStrings(StaticVariables.g_compressedImageData[StaticVariables.g_animTableAlt_80191b48]);
-                //InitializeTileSet(StaticVariables.g_currentMap, StaticVariables.g_compressedImageData[StaticVariables.g_tileSet_index_80191b44]);
+                //InitializeScrollingData(StaticVariables.g_currentMap, g_currentMapBuffer.infoBlockOffset + g_currentMapBuffer.scrollingScreenOffset);
 
                 //_datasBin.AlundraGameMap.SpriteInfo.Entities.Entities[0].PosX
                 //StaticVariables.g_imageBuffer[0xc];
@@ -269,7 +269,10 @@ public class GameEngine
         if (0 < animationBankIndex)
         {
             Debugger.Break();
-            //StaticVariables.g_animationData = StaticVariables.g_tile_set + (animationBankIndex + -1) * 0x10 + StaticVariables.g_tileSetMetaData.tileAnimationOffset;
+            //                               
+            // g_animationData =
+            //      (int)g_scrollingParameters2 +
+            //      (animationBankIndex + -1) * 0x10 + g_scrollingParameters->offsetX;
         }
     }
 
@@ -278,7 +281,7 @@ public class GameEngine
     {
         StaticVariables.g_mapLimits = 0x3c;
         StaticVariables.g_debugFrameDelay = 0;
-        StaticVariables.g_debugFlags = StaticVariables.g_debugFlags & 0xf7ffff3f;
+        StaticVariables.g_debugFlags &= 0xf7ffff3f;
     }
 
     // 8002cc58
@@ -313,15 +316,13 @@ public class GameEngine
     //8008159c
     private void ClearGlobalFlags()
     {
-        var iVar2 = 0x3f;
-        var piVar1 = 0x3f;
+        var i = 0x3f;
 
         do
         {
-            StaticVariables.g_globalFlags[piVar1] = 0;
-            iVar2 = iVar2 - 1;
-            piVar1 = piVar1 - 1;
-        } while (iVar2 >= 0);
+            StaticVariables.g_globalFlags[i] = 0;
+            i -= 1;
+        } while (i >= 0);
     }
 
     //8002cd54
@@ -345,7 +346,7 @@ public class GameEngine
         do
         {
             StaticVariables.g_itemBalanceRecords[i].ItemId = 0;
-            i = i - 1;
+            i -= 1;
         } while (i >= 0);
     }
 
@@ -919,8 +920,8 @@ public class GameEngine
                 StaticVariables.g_targetFadeColorB = 0;
                 StaticVariables.g_warpStepFlags_2 = 1;
                 ApplyScreenFade(1, 8);
-                StaticVariables.g_fadeColorStepB = StaticVariables.g_fadeColorStepB >> 1;
-                StaticVariables.g_warpColorStepG = StaticVariables.g_warpColorStepG >> 1;
+                StaticVariables.g_fadeColorStepB >>= 1;
+                StaticVariables.g_warpColorStepG >>= 1;
                 return;
 
             case 5:
@@ -1229,14 +1230,14 @@ public class GameEngine
                 StaticVariables.g_warpEffectBuffer[columnOffset + 1] = 0;
                 StaticVariables.g_warpEffectBuffer[columnOffset + 2] = 0;
                 StaticVariables.g_warpEffectBuffer[columnOffset + 3] = 0;
-                columnOffset = columnOffset + 4;
-                columnIndex = columnIndex + 1;
+                columnOffset += 4;
+                columnIndex += 1;
                 warpPatternIndex++;
 
             } while ((int)columnIndex < 0x14);
 
-            frameOffset = frameOffset + 1;
-            tableOffset = tableOffset + 0xa0;
+            frameOffset += 1;
+            tableOffset += 0xa0;
 
         } while (frameOffset < 0xf);
 
@@ -1299,14 +1300,14 @@ public class GameEngine
                 uVar3 = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
                 StaticVariables.g_gameRandomSeed = (uint)(uVar3 * 0x7d2b89dd + 0xe06a02e7);
                 uVar1 = StaticVariables.g_gameRandomSeed;
-                iVar4 = iVar4 + 1;
+                iVar4 += 1;
                 StaticVariables.g_warpEffectBuffer[iVar5 + 4] = (short)(0x40 - (short)((ulong)uVar3 * 0x81 >> 0x20));
                 StaticVariables.g_warpEffectBuffer[iVar5 + 6] = (short)(-0x10 - (short)(uVar1 * 0x41 >> 0x20));
-                iVar5 = iVar5 + 8;
+                iVar5 += 8;
             } while (iVar4 < 0x14);
 
-            iVar6 = iVar6 + 1;
-            iVar7 = iVar7 + 0xa0;
+            iVar6 += 1;
+            iVar7 += 0xa0;
 
         } while (iVar6 < 0xf);
 
@@ -1421,14 +1422,14 @@ public class GameEngine
                 StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 1] = (short)((short)(randomSeed2 * 0x15 >> 0x20) + 0x14);
                 StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 2] = (short)(randomSeed3 * 0x130 >> 0x20);
                 StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 3] = (short)((uint)((ulong)StaticVariables.g_gameRandomSeed * 0xe0 >> 0x20));
-                offsetX = offsetX + 0x10;
-                iterationCounter = iterationCounter + 1;
-                innerLoopCounter = innerLoopCounter + 1;
+                offsetX += 0x10;
+                iterationCounter += 1;
+                innerLoopCounter += 1;
             } while (innerLoopCounter < 0x14);
 
-            offsetY = offsetY + 0x10;
-            outerLoopCounter = outerLoopCounter + 1;
-            tableOffset = tableOffset + 0xa0;
+            offsetY += 0x10;
+            outerLoopCounter += 1;
+            tableOffset += 0xa0;
 
         } while (outerLoopCounter < 0xf);
 
@@ -2031,7 +2032,7 @@ public class GameEngine
             {
                 if (entityType != 0)
                 {
-                    subtype = subtype + 0x100;
+                    subtype += 0x100;
                 }
 
                 EntityManager.InitializeEntity(entityResult, parentEntity,
@@ -2195,7 +2196,7 @@ public class GameEngine
                 direction = (uint)ScriptHelper.GetDirectionToTarget(
                     StaticVariables.PlayerEntity.PosX - entity.PosX,
                     StaticVariables.PlayerEntity.PosY - entity.PosY);
-                direction = direction + encodedDir;
+                direction += encodedDir;
                 goto LAB_8003d110;
 
             case 4:
@@ -2536,9 +2537,9 @@ public class GameEngine
         int seconds = totalSeconds % 60;
 
         // clamp visuel à 2 chiffres (comme l’ASM qui n’écrit que '0'..'9')
-        hours = hours % 100;
-        minutes = minutes % 100;
-        seconds = seconds % 100;
+        hours %= 100;
+        minutes %= 100;
+        seconds %= 100;
 
         // Positions après "TIME " dans le template :
         // index de 'T' = 14 -> "TIME " finit à 18, donc HH à 19..20, ':' à 21,

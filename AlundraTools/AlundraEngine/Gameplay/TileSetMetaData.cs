@@ -1,18 +1,19 @@
 ﻿namespace AlundraEngine.Gameplay;
 
-public class TileSetMetaData {
-    byte tileUVCoordinates;
-    byte _1;
-    byte tileRenderDataLow;
-    byte tileRenderDataHigh;
-    byte numberOfLayers;
-    short tileDepth;
-    int _7;
-    byte tileAnimationMode;
-    byte frameOffsetTable;
-    byte _d;
-    byte _e;
-    byte _f;
-    int tileAnimationBankOffset;
-    int tileAnimationOffset;
+public class TileSetMetaData 
+{
+    public byte tileUVCoordinates;
+    public byte _1;
+    public byte tileRenderDataLow;
+    public byte tileRenderDataHigh;
+    public byte numberOfLayers;
+    public short tileDepth;
+    public int _7;
+    public byte tileAnimationMode;
+    public byte frameOffsetTable;
+    public byte _d;
+    public byte _e;
+    public byte _f;
+    public int tileAnimationBankOffset;
+    public int tileAnimationOffset;
 };

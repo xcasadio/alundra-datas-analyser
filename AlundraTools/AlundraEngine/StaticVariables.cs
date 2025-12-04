@@ -4950,7 +4950,7 @@ public class StaticVariables
     public int DAT_800c48b8; // 800C48B8
     public int g_tile_frame_counter_by_layer_2; // 800C48BC
     public int DAT_800c48c0; // 800C48C0
-    public int DAT_800c48c4; // 800C48C4
+    public int INT_800c48c4; // 800C48C4
     public int g_frameCounterScrollingX_layers; // 800C48C8
     public int DAT_800c48cc; // 800C48CC
     public int g_frameCounterScrollingY_layers; // 800C48D0
@@ -5695,7 +5695,7 @@ public class StaticVariables
     public int[] g_scrollPosY = new int[400]; // 801822C8
     public int[] g_renderingBuffer0 = new int[2000]; // 80182908
     public int[] g_renderingBuffer1 = new int[2000]; // 80184848
-    public TileSetMetaData g_tile_set; // 80186788
+    //public TileSetMetaData g_tile_set; // 80186788
     public int g_tileAnimationMode; // 8018678C
     public int g_animationData; // 80186790
     public int g_tileSetIsSpecialHeader; // 80186794
@@ -5705,7 +5705,7 @@ public class StaticVariables
     public int[] g_scrollTargetY = new int[400]; // 80187418
     public int[] g_tile_rendering_buffer_1 = new int[2720]; // 80187A58
     public int[] g_tile_rendering_buffer_2 = new int[2720]; // 8018A4D8
-    public TileSetMetaData g_tileSetMetaData; // 8018CF58
+    //public TileSetMetaData[] g_tileSetMetaData; // 8018CF58
     public int g_renderingBufferIndex; // 8018CF5C
     public int g_currentBuffer; // 8018CF60
     public short g_paletteLookup; // 8018CF66

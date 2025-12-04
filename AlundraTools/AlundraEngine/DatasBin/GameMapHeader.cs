@@ -10,7 +10,7 @@ public class GameMapHeader
         TileSheetsOffset = -1;
         SpriteRecordsOffset = (int)header.AlundraSpriteRecordsOffset;
         SpriteSheetOffset = (int)header.AlundraSpriteSheetOffset;
-        ScrollScreenOffset = -1;
+        ScrollingScreenOffset = -1;
         StringTableOffset = (int)header.AlundraStringTableOffset;
 
         InfoSize = 0;
@@ -18,7 +18,7 @@ public class GameMapHeader
         TilesSize = 0;
         SpriteInfoSize = SpriteSheetOffset - SpriteRecordsOffset;
         SpritesSize = (int)header.DrawPageParam - SpriteSheetOffset;
-        ScrollSize = 0;
+        ScrollingSize = 0;
     }
 
     public GameMapHeader(BinaryReader br)
@@ -28,15 +28,15 @@ public class GameMapHeader
         TileSheetsOffset = br.ReadInt32();//8
         SpriteRecordsOffset = br.ReadInt32();//c
         SpriteSheetOffset = br.ReadInt32();//10
-        ScrollScreenOffset = br.ReadInt32();//14
+        ScrollingScreenOffset = br.ReadInt32();//14
         StringTableOffset = br.ReadInt32();//18
 
         InfoSize = MapBlockOffset - InfoBlockOffset;
         MapSize = TileSheetsOffset - MapBlockOffset;
         TilesSize = SpriteRecordsOffset - TileSheetsOffset;
         SpriteInfoSize = SpriteSheetOffset - SpriteRecordsOffset;
-        SpritesSize = ScrollScreenOffset - SpriteSheetOffset;
-        ScrollSize = StringTableOffset - ScrollScreenOffset;
+        SpritesSize = ScrollingScreenOffset - SpriteSheetOffset;
+        ScrollingSize = StringTableOffset - ScrollingScreenOffset;
         //string table is called later
     }
 
@@ -46,7 +46,7 @@ public class GameMapHeader
     public readonly int TilesSize;
     public readonly int SpriteInfoSize;
     public readonly int SpritesSize;
-    public readonly int ScrollSize;
+    public readonly int ScrollingSize;
     public int StringSize;
 
     public readonly int InfoBlockOffset;
@@ -54,6 +54,6 @@ public class GameMapHeader
     public readonly int TileSheetsOffset;
     public readonly int SpriteRecordsOffset;
     public readonly int SpriteSheetOffset;
-    public readonly int ScrollScreenOffset;//shadow, sky or distant background
+    public readonly int ScrollingScreenOffset;
     public readonly int StringTableOffset;
 }

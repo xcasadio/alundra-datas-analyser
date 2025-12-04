@@ -1,4 +1,6 @@
-﻿namespace AlundraEngine.DatasBin;
+﻿using System;
+
+namespace AlundraEngine.DatasBin;
 
 public class DataBinHeader
 {
@@ -16,12 +18,19 @@ public class DataBinHeader
         LoadingScreen2 = br.ReadUInt32();//20
         LoadingScreen3 = br.ReadUInt32();//24
 
-        GameMapOffsets = new uint[502];//28 //484
+        GameMapOffsets = new uint[484];//28
 
         for (var i = 0; i < GameMapOffsets.Length; i++)
         {
             GameMapOffsets[i] = br.ReadUInt32();
         }
+
+        //NullPointers = new uint[18];
+        //
+        //for (var i = 0; i < NullPointers.Length; i++)
+        //{
+        //    NullPointers[i] = br.ReadUInt32();
+        //}
     }
 
     public readonly uint AlundraSpriteRecordsOffset;
@@ -35,4 +44,5 @@ public class DataBinHeader
     public uint LoadingScreen2;
     public uint LoadingScreen3;
     public readonly uint[] GameMapOffsets;
+    //public readonly uint[] NullPointers;
 }
