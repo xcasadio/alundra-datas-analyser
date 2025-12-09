@@ -15,16 +15,16 @@ public class DatasBin
         Binfile = binfile;
         using var br = new BinaryReader(File.OpenRead(binfile));
         Header = new DataBinHeader(br);
-
         AlundraGameMap = new GameMap(br, Header);
 
-#if DEBUG       
+#if DEBUG
         //verify maps
         for (var i = 0; i < Header.GameMapOffsets.Length; i++)
         {
             if (Header.GameMapOffsets[i] > 0)
             {
                 br.BaseStream.Position = Header.GameMapOffsets[i];
+
                 if (br.BaseStream.Position != br.BaseStream.Length)
                 {
                     var check = br.ReadInt32();

@@ -1,4 +1,5 @@
 ﻿using System;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace AlundraEngine.DatasBin;
 
@@ -39,6 +40,7 @@ public class ScrollParameters // LiningHeader
     public uint Overlay;
     public uint OverlayExt;
     public uint WaveLUT;
+    public Bitmap TileSheetBitmap;
 
     public ScrollParameters(BinaryReader br, int dataSize)
     {
@@ -64,7 +66,22 @@ public class ScrollParameters // LiningHeader
 
         if (hasGraphics)
         {
+            //palette
+            var palette = new Color[16];
 
+            for (var i = 0; i < 16; i++)
+            {
+                var b2 = br.ReadByte();
+                var b1 = br.ReadByte();
+                palette[i] = ImageHelper.FromPsxColor((b1 << 8) | b2);
+            }
+
+            //img
+            var buffer = br.ReadBytes(0x8000); //256 * 256 * 6 / 2);
+            var tileSheetImageData = new byte[0x80000];
+            ImageHelper.Deflate(buffer, tileSheetImageData);
+            TileSheetBitmap = ImageHelper.BitmapFromPsxBuff(tileSheetImageData, 256, 256 * 6, 4, palette);
+            //TileSheetBitmap.Save("c:\\image.bmp");
         }
     }
 

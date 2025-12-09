@@ -176,7 +176,7 @@ namespace AlundraTools.GameControls
 
             if (_selectedGameMap?.Map != null)
             {
-                imageViewerControl1.ResetView();
+                imageViewerMap.ResetView();
             }
 
             //info
@@ -377,6 +377,8 @@ namespace AlundraTools.GameControls
             //spritesheet
             //triggered by palette
 
+            imageViewerScrollingSpriteSheet.Image = _selectedGameMap?.ScrollParameters?.TileSheetBitmap;
+
             this.PerformLayout();
         }
 
@@ -401,7 +403,7 @@ namespace AlundraTools.GameControls
 
         private void DrawMap()
         {
-            DrawMap(imageViewerControl1.Image, imageViewerControl1);
+            DrawMap(imageViewerMap.Image, imageViewerMap);
         }
 
         private void DrawMap(Image image, Control control)
@@ -569,15 +571,7 @@ namespace AlundraTools.GameControls
             if (lstMapPalettes.SelectedIndex >= 0 && _selectedGameMap != null)
             {
                 _selectedPalette = _selectedGameMap.Info.Palettes[lstMapPalettes.SelectedIndex];
-                pctTilesheet.Image = new Bitmap(pctTilesheet.Width, pctTilesheet.Height, PixelFormat.Format24bppRgb);
-                _selectedGameMap.GenerateTileSheetBmp(_selectedPalette);
-                vScrolTile.Maximum = _selectedGameMap.TileSheetBitmap.Height;
-                //vScrolTile.Value = 0;
-
-                DrawMap();
-
-                vScrolTile_Scroll(null, null);
-
+                imageViewerTileSheet.Image = _selectedGameMap.GenerateTileSheetBmp(_selectedPalette);
             }
             pctMapPalettes.Refresh();
 
@@ -603,33 +597,13 @@ namespace AlundraTools.GameControls
 
             }
         }
-
-        private void vScrolTile_Scroll(object sender, ScrollEventArgs e)
-        {
-            if (_selectedGameMap != null && _selectedGameMap.TileSheetBitmap != null)
-            {
-                using (var g = Graphics.FromImage(pctTilesheet.Image))
-                {
-                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                    g.Clear(Color.Black);
-                    g.DrawImage(_selectedGameMap.TileSheetBitmap, 0, -vScrolTile.Value);
-                }
-                pctTilesheet.Refresh();
-            }
-        }
-
+        
         private void lstSpritePalettes_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lstSpritePalettes.SelectedIndex >= 0 && _selectedGameMap != null)
             {
                 _selectedSpritePalette = _selectedGameMap.SpriteInfo.Palettes[lstSpritePalettes.SelectedIndex];
-                pctSpritesheet.Image = new Bitmap(pctSpritesheet.Width, pctSpritesheet.Height, PixelFormat.Format24bppRgb);
-                _selectedGameMap.GenerateSpriteSheetBmp(_selectedSpritePalette);
-                vScrollSprite.Maximum = _selectedGameMap.SpriteSheetBitmap.Height;
-                //vScrollSprite.Value = 0;
-
-                vScrollSprite_Scroll(null, null);
-
+                imageViewerSpriteSheet.Image = _selectedGameMap.GenerateSpriteSheetBmp(_selectedSpritePalette);
             }
             pctSpritePalettes.Refresh();
         }
@@ -655,26 +629,12 @@ namespace AlundraTools.GameControls
             }
         }
 
-        private void vScrollSprite_Scroll(object sender, ScrollEventArgs e)
-        {
-            if (_selectedGameMap != null && _selectedGameMap.SpriteSheetBitmap != null)
-            {
-                using (var g = Graphics.FromImage(pctSpritesheet.Image))
-                {
-                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                    g.Clear(Color.Black);
-                    g.DrawImage(_selectedGameMap.SpriteSheetBitmap, 0, -vScrollSprite.Value);
-                }
-                pctSpritesheet.Refresh();
-            }
-        }
-
         private void frmAlundra_Load(object sender, EventArgs e)
         {
             var height = 60 * StaticVariables.MapTileHeight;
             var width = 52 * StaticVariables.MapTileWidth;
 
-            imageViewerControl1.Image = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+            imageViewerMap.Image = new Bitmap(width, height, PixelFormat.Format24bppRgb);
 
             _animtimer = new Timer();
             _animtimer.Enabled = false;
@@ -682,23 +642,13 @@ namespace AlundraTools.GameControls
 
         }
 
-        private void vScrollMap_Scroll(object sender, ScrollEventArgs e)
-        {
-            DrawMap();
-        }
-
-        private void hScrollMap_Scroll(object sender, ScrollEventArgs e)
-        {
-            DrawMap();
-        }
-
         private Portal? _selectedPortal;
         private bool _dontcenteronportal = false;
 
-        private void SelectPortal(int portaldex)
+        private void SelectPortal(int portalId)
         {
             _dontcenteronportal = true;
-            lstPortals.SelectedIndex = portaldex;
+            lstPortals.SelectedIndex = portalId;
             _dontcenteronportal = false;
         }
 
@@ -748,8 +698,8 @@ namespace AlundraTools.GameControls
 
         private void CenterOnTile(int tilex, int tiley)
         {
-            var targetx = tilex - imageViewerControl1.Width / StaticVariables.MapTileWidth / 2;
-            var targety = tiley - imageViewerControl1.Height / StaticVariables.MapTileHeight / 2;
+            var targetx = tilex - imageViewerMap.Width / StaticVariables.MapTileWidth / 2;
+            var targety = tiley - imageViewerMap.Height / StaticVariables.MapTileHeight / 2;
 
             if (targetx < 0)
             {
@@ -761,9 +711,9 @@ namespace AlundraTools.GameControls
                 targety = 0;
             }
 
-            imageViewerControl1.CenterAt(targetx, targety);
+            imageViewerMap.CenterAt(targetx, targety);
 
-            DrawMap();
+            //DrawMap();
         }
 
 

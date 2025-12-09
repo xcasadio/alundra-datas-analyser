@@ -174,10 +174,9 @@ public class GameMap
 
             if (shiftleft)
             {
-                int dex;
-                for (dex = 0; dex < readbuff.Length - 1; dex++)
+                for (var i = 0; i < readbuff.Length - 1; i++)
                 {
-                    buff[y * outputwidth / 2 + dex] = (byte)((readbuff[dex] & 0xf0) >> 4 | (readbuff[dex + 1] & 0x0f) << 4);
+                    buff[y * outputwidth / 2 + i] = (byte)((readbuff[i] & 0xf0) >> 4 | (readbuff[i + 1] & 0x0f) << 4);
                 }
 
             }

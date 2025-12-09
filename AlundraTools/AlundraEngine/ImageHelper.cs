@@ -23,32 +23,39 @@ public static class ImageHelper
     public static int Deflate(byte[] data, byte[] dest)
     {
         //compressed
-        var dex = 0;
-        var buffdex = 0;
-        while (dex < dest.Length && buffdex < data.Length)
+        var i = 0;
+        var bufferIndex = 0;
+
+        while (i < dest.Length && bufferIndex < data.Length)
         {
-            var b = data[buffdex++];
+            var b = data[bufferIndex++];
+
             if (b == 0xad)
             {
-                int seek = data[buffdex++];
+                int seek = data[bufferIndex++];
+
                 if (seek == 0)
                 {
-                    dest[dex++] = b;
+                    dest[i++] = b;
                 }
                 else
                 {
-                    int len = data[buffdex++];
-                    var seekdex = dex - seek;
+                    int len = data[bufferIndex++];
+                    var seekIndex = i - seek;
+
                     while (len-- > 0)
-                        dest[dex++] = dest[seekdex++];
+                    {
+                        dest[i++] = dest[seekIndex++];
+                    }
                 }
             }
             else
             {
-                dest[dex++] = b;
+                dest[i++] = b;
             }
         }
-        return dex;
+
+        return i;
     }
 
     public static Bitmap BitmapFromPsxBuff(byte[] imagedata, int width, int height, int bpp, Color[] pal)
@@ -85,7 +92,7 @@ public static class ImageHelper
         }
         else if (bpp == 4 && pal != null)
         {
-            var dex = u + v * width;
+            var i = u + v * width;
 
             for (var y = 0; y < height; y++)
             {
@@ -93,18 +100,18 @@ public static class ImageHelper
 
                 for (var x = 0; x < width / 2; x++)
                 {
-                    var c = pal[imagedata[dex] & 0xf];
+                    var c = pal[imagedata[i] & 0xf];
 
                     pixels[y * rowsize + bmpdex++] = c.R;
                     pixels[y * rowsize + bmpdex++] = c.G;
                     pixels[y * rowsize + bmpdex++] = c.B;
                     pixels[y * rowsize + bmpdex++] = c.A;
-                    c = pal[(imagedata[dex] & 0xf0) >> 4];
+                    c = pal[(imagedata[i] & 0xf0) >> 4];
                     pixels[y * rowsize + bmpdex++] = c.R;
                     pixels[y * rowsize + bmpdex++] = c.G;
                     pixels[y * rowsize + bmpdex++] = c.B;
                     pixels[y * rowsize + bmpdex++] = c.A;
-                    dex++;
+                    i++;
 
                 }
             }

@@ -577,7 +577,7 @@ public class GraphicManager
         
         numberOfLayerRendered = 0;
 
-        if (_gameEngine.CurrentMap.ScrollScreen?.ScrollYSpeed != 0)
+        if (_gameEngine.CurrentMap.ScrollScreen != null && _gameEngine.CurrentMap.ScrollScreen.ScrollYSpeed != 0)
         {
             _gameEngine.StaticVariables.g_renderingBufferIndex = _gameEngine.StaticVariables.g_renderingBufferIndex != 1 ? 1 : 0;
             _gameEngine.StaticVariables.INT_800c48c4 += 1;
