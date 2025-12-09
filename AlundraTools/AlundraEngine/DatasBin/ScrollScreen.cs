@@ -67,20 +67,35 @@ public class ScrollParameters // LiningHeader
         if (hasGraphics)
         {
             //palette
-            var palette = new Color[16];
+            //var palette = new Color[16];
+            //
+            //for (var i = 0; i < palette.Length; i++)
+            //{
+            //    palette[i] = ImageHelper.FromPsxColor(br.ReadInt32());
+            //}
+            var maxPalettes = 16;
+            var palettes = new Color[maxPalettes][];
+            var buff = new byte[maxPalettes * 32];
+            br.Read(buff, 0, buff.Length);
+            var buffIndex = 0;
 
-            for (var i = 0; i < 16; i++)
+            for (var i = 0; i < maxPalettes; i++)
             {
-                var b2 = br.ReadByte();
-                var b1 = br.ReadByte();
-                palette[i] = ImageHelper.FromPsxColor((b1 << 8) | b2);
+                palettes[i] = new Color[16];
+                for (var j = 0; j < 16; j++)
+                {
+                    var b2 = buff[buffIndex++];
+                    var b1 = buff[buffIndex++];
+                    palettes[i][j] = ImageHelper.FromPsxColor((b1 << 8) | b2);
+                }
             }
 
             //img
             var buffer = br.ReadBytes(0x8000); //256 * 256 * 6 / 2);
-            var tileSheetImageData = new byte[0x80000];
-            ImageHelper.Deflate(buffer, tileSheetImageData);
-            TileSheetBitmap = ImageHelper.BitmapFromPsxBuff(tileSheetImageData, 256, 256 * 6, 4, palette);
+            //var tileSheetImageData = new byte[0x80000];
+            //ImageHelper.Deflate(buffer, tileSheetImageData);
+            var tileSheetImageData = ImageHelper.Unzip(buffer);
+            TileSheetBitmap = ImageHelper.BitmapFromPsxBuff(tileSheetImageData, 256, 256, 4, palettes[0]);
             //TileSheetBitmap.Save("c:\\image.bmp");
         }
     }

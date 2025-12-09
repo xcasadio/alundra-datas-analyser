@@ -58,6 +58,69 @@ public static class ImageHelper
         return i;
     }
 
+    public static byte[] Unzip(byte[] src)
+    {
+        if (src.Length < 2 || (src[0] | (src[1] << 8)) != 0x5A45)
+        {
+            int sheet = 0x8000;
+            var dataBits = new byte[sheet];
+            Array.Copy(src, dataBits, Math.Min(sheet, src.Length));
+            for (int i = 0; i < dataBits.Length; i++)
+            {
+                dataBits[i] = Bswap(dataBits[i]);
+            }
+
+            return dataBits;
+        }
+
+        int rhead = 6;
+        int whead = 0;
+        bool keep = true;
+        var buffer = new byte[0x80000];
+        while (keep && whead < buffer.Length && rhead < src.Length)
+        {
+            byte cur = src[rhead++];
+            if (cur == 0xAD)
+            {
+                if (rhead >= src.Length) break;
+                byte dist = src[rhead++];
+                if (dist == 0)
+                {
+                    buffer[whead++] = Bswap(cur);
+                }
+                else
+                {
+                    if (rhead >= src.Length) break;
+                    byte len = src[rhead++];
+                    keep = !(cur == 0xAD && dist == 0xFF && len == 0x00);
+                    int seek = whead - dist;
+                    while (len-- > 0 && whead < buffer.Length && seek < buffer.Length)
+                    {
+                        buffer[whead] = buffer[seek];
+                        whead++;
+                        seek++;
+                    }
+                }
+            }
+            else
+            {
+                buffer[whead++] = Bswap(cur);
+            }
+        }
+
+        if (whead > 0)
+        {
+            var result = new byte[whead];
+            Array.Copy(buffer, result, whead);
+            return result;
+        }
+
+        return Array.Empty<byte>();
+    }
+
+    // bswap utility (swap nibbles)
+    private static byte Bswap(byte x) => (byte)(((x << 4) | (x >> 4)) & 0xFF);
+
     public static Bitmap BitmapFromPsxBuff(byte[] imagedata, int width, int height, int bpp, Color[] pal)
     {
         return BitmapFromPsxBuff(imagedata, 0, 0, width, height, bpp, pal);
