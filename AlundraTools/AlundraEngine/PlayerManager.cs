@@ -2166,7 +2166,6 @@ public class PlayerManager
 
     private int ProcessPlayerEffectSequence(int timer)
     {
-
         Debugger.Break();
         return 0;
     }

@@ -5156,7 +5156,7 @@ public class StaticVariables
     public int DAT_800ca0ec; // 800CA0EC
     public ushort[] g_drawPageInfoBase = new ushort[96]; // 800CA0F0
     public ushort[] g_clutTableBase = new ushort[48]; // 800CA1B0
-    public ushort[] g_uvLookupTableInit = new ushort[16]; // 800CA210
+    public ushort[] g_scrollingClutTableInit = new ushort[16]; // 800CA210
     public int[] g_orderTableFrame0 = new int[372]; // 800CA230
     public int[] g_orderTableFrame1 = new int[964]; // 800CB140
     public int[] g_orderingTableBuffer = new int[4]; // 800CC050
@@ -5313,7 +5313,7 @@ public class StaticVariables
     public int g_activeEventProgramIndex; // 8013DA24
     public int g_activeCommand; // 8013DA28
     public byte[] g_datasBinBuffer4 = new byte[8192]; // 8013DA30
-    public string[] g_etcStrings; // 8013FA30
+    //public string[] g_etcStrings; // 8013FA30
     public string[] g_alundraMapString; // 8013FA34
     //public DRAWENV  PTR_8013fa38; // 8013FA38
     public bool g_renderEffectDoneFlag; // 8013FA60
@@ -5686,11 +5686,11 @@ public class StaticVariables
     public int[] g_screenWrapY = new int[400]; // 801815A0
     public int g_tile_rendering_buffer; // 80181BE0
     public int g_tileAnimationType; // 80181BE4
-    public int g_paletteX; // 80181BE8
-    public int g_paletteY; // 80181BEC
+    public int g_scrollingTextureX; // 80181BE8
+    public int g_scrollingTextureY; // 80181BEC
     public int[] g_extendedOverlayDrawBuffers = new int[30]; // 80181BF0
     //public DR_MODE[] g_drawModes2 = new DR_MODE[2]; // 80181C68
-    public ushort[] g_tileUVLookup; // 80181C80
+    public ushort[] g_scrollingClutTable; // 80181C80
     public int[] g_scrollPosX = new int[400]; // 80181C88
     public int[] g_scrollPosY = new int[400]; // 801822C8
     public int[] g_renderingBuffer0 = new int[2000]; // 80182908

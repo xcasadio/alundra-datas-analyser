@@ -91,7 +91,7 @@ public class GameMap
         if (Header.ScrollingScreenOffset != -1)
         {
             ScrollParameters = new ScrollParameters(br, Header.StringTableOffset - Header.ScrollingScreenOffset);
-            ScrollScreen = new ScrollScreen(ScrollParameters);
+            //ScrollScreen = new ScrollScreen(ScrollParameters);
         }
 
         //read string table

@@ -3592,7 +3592,7 @@ public class EntityEventHandlers
     // 80041098
     private int Script_164_0A4(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.SetTileAnimationMode(variables[1], variables[2]);
+        _gameEngine.SetScrollingMode(variables[1], variables[2]);
         return 3;
     }
 

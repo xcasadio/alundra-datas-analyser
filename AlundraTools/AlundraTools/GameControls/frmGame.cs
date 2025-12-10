@@ -614,6 +614,9 @@ public partial class FrmGame : Form
     [DllImport("user32.dll")]
     static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
 
+    [DllImport("user32.dll")]
+    private static extern short GetAsyncKeyState(int vKey);
+
     const int SB_VERT = 0x1;
     const int WM_VSCROLL = 0x115;
     const int SB_THUMBPOSITION = 4;
@@ -662,7 +665,32 @@ public partial class FrmGame : Form
     const float MAX_THUMB_VALUE = 32767.0f;
     const float MAX_TRIGGER_VALUE = 255.0f;
 
-
+    private static readonly (Keys Key, uint Flag)[] KeyboardMappings =
+    [
+        (Keys.Up, PadState.Up),
+        //(Keys.W, PadState.Up),
+        (Keys.Down, PadState.Down),
+        //(Keys.S, PadState.Down),
+        (Keys.Left, PadState.Left),
+        //(Keys.A, PadState.Left),
+        (Keys.Right, PadState.Right),
+        //(Keys.D, PadState.Right),
+        (Keys.K, PadState.Cross),
+        (Keys.Space, PadState.Cross),
+        //(Keys.Z, PadState.Cross),
+        (Keys.L, PadState.Circle),
+        //(Keys.X, PadState.Circle),
+        (Keys.J, PadState.Square),
+        //(Keys.C, PadState.Square),
+        (Keys.K, PadState.Triangle),
+        //(Keys.V, PadState.Triangle),
+        (Keys.Enter, PadState.Start),
+        (Keys.Back, PadState.Select),
+        (Keys.Q, PadState.L1),
+        (Keys.E, PadState.R1),
+        (Keys.LShiftKey, PadState.L2),
+        (Keys.RShiftKey, PadState.R2)
+    ];
 
     private void UpdatePad()
     {
@@ -771,6 +799,29 @@ public partial class FrmGame : Form
                 _gameEngine.StaticVariables.g_cameraDebugOffsetX -= step;
             }
         }
+
+        ApplyKeyboardInput();
+    }
+
+    private void ApplyKeyboardInput()
+    {
+        if (!ContainsFocus)
+        {
+            return;
+        }
+
+        foreach (var (key, flag) in KeyboardMappings)
+        {
+            if (IsKeyPressed(key))
+            {
+                PadManager.ButtonStates |= flag;
+            }
+        }
+    }
+
+    private static bool IsKeyPressed(Keys key)
+    {
+        return (GetAsyncKeyState((int)key) & 0x8000) != 0;
     }
 
 

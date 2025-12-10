@@ -94,9 +94,9 @@ public class GameInitializer
 
         offset = _gameEngine.StaticVariables.g_drawPageInfoBase.Length + _gameEngine.StaticVariables.g_clutTableBase.Length;
 
-        for (int i = 0; i < _gameEngine.StaticVariables.g_uvLookupTableInit.Length; i++)
+        for (int i = 0; i < _gameEngine.StaticVariables.g_scrollingClutTableInit.Length; i++)
         {
-            _gameEngine.StaticVariables.g_uvLookupTableInit[i] = table[offset + i];
+            _gameEngine.StaticVariables.g_scrollingClutTableInit[i] = table[offset + i];
         }
 
         //datasBinHeader = &g_dataBinHeader;
@@ -129,9 +129,9 @@ public class GameInitializer
         //InitializeDrMoveBuffers();
         LoadFontInTakiFolder();
         _gameEngine.SoundManager.InitSoundSystem();
-        InitializeTileRenderer(0x340, 0x100, 0x100, 0x1f0,
+        InitializeScrollingRenderer(0x340, 0x100, 0x100, 0x1f0,
             _gameEngine.StaticVariables.g_drawModeIndexInit, _gameEngine.StaticVariables.g_paletteIndexInit, _gameEngine.StaticVariables.g_tileScaleXInit,
-            _gameEngine.StaticVariables.g_tileScaleYInit, _gameEngine.StaticVariables.g_uvLookupTableInit);
+            _gameEngine.StaticVariables.g_tileScaleYInit, _gameEngine.StaticVariables.g_scrollingClutTableInit);
         _gameEngine.StaticVariables.g_currentMap = ~_gameEngine.StaticVariables.g_desiredMap;
     }
 
@@ -653,19 +653,19 @@ public class GameInitializer
         _gameEngine.StaticVariables.g_hudTransitionStartY = 0x78;
     }
 
-    private void InitializeTileRenderer(int tPageX, int tPageY, int paletteX, int paletteY, short drawMode,
-        short paletteIndex, short tileScaleX, short tileScaleY, ushort[] uvLookupTablePtr)
+    private void InitializeScrollingRenderer(int tPageX, int tPageY, int u, int v, short drawMode,
+        short paletteIndex, short tileScaleX, short tileScaleY, ushort[] clutTable)
     {
         _gameEngine.StaticVariables.g_renderingBufferIndex = 0;
         _gameEngine.StaticVariables.g_drawModeIndex = drawMode;
         _gameEngine.StaticVariables.g_tilePaletteIndex = paletteIndex;
         _gameEngine.StaticVariables.g_tileScaleX = tileScaleX;
         _gameEngine.StaticVariables.g_tileScaleY = tileScaleY;
-        _gameEngine.StaticVariables.g_tileUVLookup = uvLookupTablePtr;
+        _gameEngine.StaticVariables.g_scrollingClutTable = clutTable;
         _gameEngine.StaticVariables.g_tileTPageX = tPageX;
         _gameEngine.StaticVariables.g_tileTPageY = tPageY;
-        _gameEngine.StaticVariables.g_paletteX = paletteX;
-        _gameEngine.StaticVariables.g_paletteY = paletteY;
-        _gameEngine.SetTileAnimationMode(3, 0);
+        _gameEngine.StaticVariables.g_scrollingTextureX = u;
+        _gameEngine.StaticVariables.g_scrollingTextureY = v;
+        _gameEngine.SetScrollingMode(3, 0);
     }
 }

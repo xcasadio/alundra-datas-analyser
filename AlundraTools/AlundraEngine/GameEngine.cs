@@ -106,9 +106,6 @@ public class GameEngine
                 LoadMap(StaticVariables.g_currentMap); // Added by hand
                 //ReadFileFromCDIntoBuffer(StaticVariables.DATAS_BIN, StaticVariables.g_compressedImageData, (StaticVariables.INT_801eab58)[StaticVariables.g_desiredMap], (StaticVariables.INT_801eab5c)[StaticVariables.g_desiredMap] - (StaticVariables.INT_801eab58)[StaticVariables.g_desiredMap]);
                 InitializeMapSpriteTable(null, null, null);
-                //StaticVariables.g_compressedImageData + ??,
-                //StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b34,
-                //StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b38);
                 //LoadSpriteInfo(StaticVariables.g_compressedImageData[StaticVariables.g_mapIndexInDatasBin]);
                 //SetEtcStrings(StaticVariables.g_compressedImageData[StaticVariables.g_animTableAlt_80191b48]);
                 //InitializeScrollingData(StaticVariables.g_currentMap, g_currentMapBuffer.infoBlockOffset + g_currentMapBuffer.scrollingScreenOffset);
@@ -118,9 +115,9 @@ public class GameEngine
                 //StaticVariables.g_imageBuffer[0xd];
                 //StaticVariables.g_imageBuffer[0xe];
 
-                byte x = 0;
-                byte y = 0;
-                byte z = 0;
+                byte x = 0; //CurrentMap.Info.E;
+                byte y = 0; //CurrentMap.Info.F;
+                byte z = 0; //CurrentMap.Info._10;
 
                 //when alundra dies, the map hasn't entities
                 if (CurrentMap.SpriteInfo.Entities.Entities[0] != null)
@@ -138,10 +135,10 @@ public class GameEngine
             //DoNothing();
             ClearGlobalFlags();
             ResetCameraAndLoadVRAMAssets();
-            InitializeItems(CurrentMap.Info._11); //StaticVariables.g_imageBuffer[0xb]);
-            LoadMapAndInitializeEntities(null/*StaticVariables.g_compressedImageData + StaticVariables.DAT_80191b40*/);
+            InitializeItems(CurrentMap.Info._11); //StaticVariables.g_gameMapInfo->d
+            LoadMapAndInitializeEntities(null);//((int)&g_currentMapBuffer.infoBlockOffset + g_currentMapBuffer.spriteSheetsOffset));
             WarpPlayer(playerPosX, playerPosY, playerPosZ, StaticVariables.g_mapTransitionEffectId);
-            InitializeTileAnimationSystem();
+            InitializeScrollingMode();
             GraphicManager.PrepareBufferFlip();
             LoadMapSounds(StaticVariables.g_currentMap);
             Update(1);
@@ -259,7 +256,7 @@ public class GameEngine
     }
 
     //8005d668
-    public void SetTileAnimationMode(int animationMode, int animationBankIndex)
+    public void SetScrollingMode(int animationMode, int animationBankIndex)
     {
         StaticVariables.g_tileAnimationMode = animationMode;
         StaticVariables.g_tileAnimationType = animationBankIndex;
@@ -269,10 +266,10 @@ public class GameEngine
         if (0 < animationBankIndex)
         {
             Debugger.Break();
-            //                               
+            //
             // g_animationData =
-            //      (int)g_scrollingParameters2 +
-            //      (animationBankIndex + -1) * 0x10 + g_scrollingParameters->offsetX;
+            //    (int)g_scrollingParameters2 +
+            //    (animationBankIndex + -1) * 0x10 + g_scrollingParameters->offsetX;
         }
     }
 
@@ -288,12 +285,6 @@ public class GameEngine
     private void InitializeMapSpriteTable(byte[] buffer, ushort[] vramTable, byte[] otherPtr)
     {
         //already loaded in GameMap
-
-        //StaticVariables.g_spriteVRAMPointer = vramTable;
-        //StaticVariables.g_imageBufferCompressed = otherPtr;
-        //StaticVariables.g_imageBuffer = buffer;
-
-        //StaticVariables.g_spriteMapTable[]
     }
 
     private void LoadSpriteInfo(SpriteRecord spriteRecord)
@@ -310,7 +301,7 @@ public class GameEngine
     //800423ec
     private void SetEtcStrings(string[] strings)
     {
-        StaticVariables.g_etcStrings = strings;
+        //StaticVariables.g_etcStrings = strings;
     }
 
     //8008159c
@@ -1060,9 +1051,10 @@ public class GameEngine
         }
     }
 
-    private void InitializeTileAnimationSystem()
+    // 8005b63c
+    private void InitializeScrollingMode()
     {
-        SetTileAnimationMode(3, 0);
+        SetScrollingMode(3, 0);
         StaticVariables.g_tileOffset = 0;
         StaticVariables.g_animationCounter = 2;
     }
