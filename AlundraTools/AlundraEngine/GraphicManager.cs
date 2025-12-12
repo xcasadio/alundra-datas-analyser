@@ -1,11 +1,8 @@
 ﻿using AlundraEngine.DatasBin;
-using AlundraEngine.Gameplay;
+using AlundraEngine.Graphics;
 using AlundraEngine.UI;
 using System;
 using System.Diagnostics;
-using System.Reflection;
-using AlundraEngine.Graphics;
-using static AlundraEngine.Renderer;
 
 namespace AlundraEngine;
 
@@ -45,7 +42,7 @@ public class GraphicManager
 
         //UpdateEntityGeometry(_gameEngine.StaticVariables.g_orderingTableBuffer[2]);
         RenderEffects(_gameEngine.StaticVariables.g_orderingTableBuffer[3]);
-        UpdatePostProcessingEffects();
+        _gameEngine.MemoryCardManager.UpdatePostProcessingEffects();
         SwapBuffersAndDraw(graphics);
         _gameEngine.StaticVariables.g_primitive_sync = GetDisplaySyncCounter();
     }
@@ -444,44 +441,44 @@ public class GraphicManager
         // primitiveChain = (uint *)(&DAT_80146f68 + iVar3);
         // primitiveEnd = (uint *)(&DAT_80146f64 + iVar3);
         //                   /* Probable PsyQ macro: addPrim(). */
-        // primitiveStart->tag = primitiveStart->tag & 0xff000000 | *primitiveChain & 0xffffff;
+        // primitiveStart.tag = primitiveStart.tag & 0xff000000 | *primitiveChain & 0xffffff;
         // pDVar2 = g_drawModes + g_drawModes[0x14].tag * 10 + 3;
         // *primitiveChain = *primitiveChain & 0xff000000 | (uint)primitiveStart & 0xffffff;
         // primitiveChain = (uint *)((int)g_drawModes + iVar3 + 0xf8);
         //                   /* Probable PsyQ macro: addPrim(). */
-        // pDVar2->tag = pDVar2->tag & 0xff000000 | *primitiveEnd & 0xffffff;
+        // pDVar2.tag = pDVar2.tag & 0xff000000 | *primitiveEnd & 0xffffff;
         // primitiveStart = g_drawModes + g_drawModes[0x14].tag * 10;
         // *primitiveEnd = *primitiveEnd & 0xff000000 | (uint)pDVar2 & 0xffffff;
         //                   /* Probable PsyQ macro: addPrim(). */
-        // primitiveStart->tag = primitiveStart->tag & 0xff000000 | *primitiveChain & 0xffffff;
+        // primitiveStart.tag = primitiveStart.tag & 0xff000000 | *primitiveChain & 0xffffff;
         // pDVar2 = g_drawModes + g_drawModes[0x14].tag * 10 + 1;
         // *primitiveChain = *primitiveChain & 0xff000000 | (uint)primitiveStart & 0xffffff;
         // primitiveChain = (uint *)(&DAT_80146f5c + iVar3);
         //                   /* Probable PsyQ macro: addPrim(). */
-        // pDVar2->tag = pDVar2->tag & 0xff000000 | *primitiveChain & 0xffffff;
+        // pDVar2.tag = pDVar2.tag & 0xff000000 | *primitiveChain & 0xffffff;
         // primitiveStart = g_drawModes + g_drawModes[0x14].tag * 10 + 2;
         // *primitiveChain = *primitiveChain & 0xff000000 | (uint)pDVar2 & 0xffffff;
         // primitiveChain = (uint *)(&DAT_80146f60 + iVar3);
         //                   /* Probable PsyQ macro: addPrim(). */
-        // primitiveStart->tag = primitiveStart->tag & 0xff000000 | *primitiveChain & 0xffffff;
+        // primitiveStart.tag = primitiveStart.tag & 0xff000000 | *primitiveChain & 0xffffff;
         // pDVar2 = g_drawModes + g_drawModes[0x14].tag * 10 + 5;
         // *primitiveChain = *primitiveChain & 0xff000000 | (uint)primitiveStart & 0xffffff;
         // primitiveChain = (uint *)(&DAT_80146f6c + iVar3);
         //                   /* Probable PsyQ macro: addPrim(). */
-        // pDVar2->tag = pDVar2->tag & 0xff000000 | *primitiveChain & 0xffffff;
+        // pDVar2.tag = pDVar2.tag & 0xff000000 | *primitiveChain & 0xffffff;
         // primitiveStart = g_drawModes + g_drawModes[0x14].tag * 10 + 6;
         // *primitiveChain = *primitiveChain & 0xff000000 | (uint)pDVar2 & 0xffffff;
         // primitiveChain = (uint *)(&DAT_80146f70 + iVar3);
         // pDVar2 = g_drawModes + g_drawModes[0x14].tag * 10 + 7;
         //                   /* Probable PsyQ macro: addPrim(). */
-        // primitiveStart->tag = primitiveStart->tag & 0xff000000 | *primitiveChain & 0xffffff;
+        // primitiveStart.tag = primitiveStart.tag & 0xff000000 | *primitiveChain & 0xffffff;
         // *primitiveChain = *primitiveChain & 0xff000000 | (uint)primitiveStart & 0xffffff;
         // primitiveChain = (uint *)(&DAT_80146f74 + iVar3);
         // newBufferIndex = g_drawModes[0x14].tag + 1 & 1;
         //                   /* WARNING: Read-only address (ram,0x80146f50) is written */
         //                   /* Probable PsyQ macro: addPrim(). */
         // g_drawModes[0x14].tag = newBufferIndex;
-        // pDVar2->tag = pDVar2->tag & 0xff000000 | *primitiveChain & 0xffffff;
+        // pDVar2.tag = pDVar2.tag & 0xff000000 | *primitiveChain & 0xffffff;
         // *primitiveChain = *primitiveChain & 0xff000000 | (uint)pDVar2 & 0xffffff;
         // primitiveChain = UINT_ARRAY_80180108 + uVar1 * 3;
         //                   /* Probable PsyQ macro: addPrim(). */
@@ -532,7 +529,7 @@ public class GraphicManager
                             //pSVar3.tag = pSVar3.tag & 0xff000000 | *(uint*)((int)_gameEngine.StaticVariables.g_drawModes + iVar4 + callbackTable.arg * 4 + 0xf8) & 0xffffff;
                             //puVar2 = (uint*)((int)_gameEngine.StaticVariables.g_drawModes + iVar4 + callbackTable.arg * 4 + 0xf8);
                             //*puVar2 = *puVar2 & 0xff000000 | (uint)pSVar3 & 0xffffff;
-                            
+
                             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
                             _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.BackgroundUI, bitmap);
 
@@ -568,13 +565,13 @@ public class GraphicManager
 
         } while (i < 0xd);
     }
-    
+
     //8005b670
     private int RenderAllTileLayers(int[] orderingTableBuffer1, int[] orderingTableBuffer2, int cameraX, int cameraY)
     {
         int numberOfLayerRendered;
         int additionalTiles;
-        
+
         numberOfLayerRendered = 0;
 
         if (_gameEngine.CurrentMap.ScrollScreen != null && _gameEngine.CurrentMap.ScrollScreen.ScrollYSpeed != 0)
@@ -641,27 +638,27 @@ public class GraphicManager
     //80042ccc
     private uint RenderEffects(int i)
     {
-        if (_gameEngine.StaticVariables.g_warpFlags !=0)
+        if (_gameEngine.StaticVariables.g_warpFlags != 0)
         {
             _gameEngine.StaticVariables.g_playerLastX = MoveTowards(_gameEngine.StaticVariables.g_playerLastX, _gameEngine.StaticVariables.g_playerStartX, _gameEngine.StaticVariables.g_playerStepX);
             _gameEngine.StaticVariables.g_playerLastY = MoveTowards(_gameEngine.StaticVariables.g_playerLastY, _gameEngine.StaticVariables.g_playerStartY, _gameEngine.StaticVariables.g_playerStepY);
             _gameEngine.StaticVariables.g_playerLastZ = MoveTowards(_gameEngine.StaticVariables.g_playerLastZ, _gameEngine.StaticVariables.g_playerStartZ, _gameEngine.StaticVariables.g_playerStepZ);
-            
-            if (_gameEngine.StaticVariables.g_playerLastX == _gameEngine.StaticVariables.g_playerStartX 
-                && _gameEngine.StaticVariables.g_playerLastY == _gameEngine.StaticVariables.g_playerStartY 
+
+            if (_gameEngine.StaticVariables.g_playerLastX == _gameEngine.StaticVariables.g_playerStartX
+                && _gameEngine.StaticVariables.g_playerLastY == _gameEngine.StaticVariables.g_playerStartY
                 && _gameEngine.StaticVariables.g_playerLastZ == _gameEngine.StaticVariables.g_playerStartZ)
             {
-                _gameEngine.StaticVariables.g_warpFlags =0;
+                _gameEngine.StaticVariables.g_warpFlags = 0;
             }
         }
 
-        _gameEngine.StaticVariables.g_displayEnvColorR = _gameEngine.StaticVariables.g_playerLastX >>0x10;
-        _gameEngine.StaticVariables.g_displayEnvColorG = _gameEngine.StaticVariables.g_playerLastY >>0x10;
-        _gameEngine.StaticVariables.g_displayEnvColorB = _gameEngine.StaticVariables.g_playerLastZ >>0x10;
+        _gameEngine.StaticVariables.g_displayEnvColorR = _gameEngine.StaticVariables.g_playerLastX >> 0x10;
+        _gameEngine.StaticVariables.g_displayEnvColorG = _gameEngine.StaticVariables.g_playerLastY >> 0x10;
+        _gameEngine.StaticVariables.g_displayEnvColorB = _gameEngine.StaticVariables.g_playerLastZ >> 0x10;
 
-        if (_gameEngine.StaticVariables.g_warpStepFlags_2 ==0)
+        if (_gameEngine.StaticVariables.g_warpStepFlags_2 == 0)
         {
-            if (_gameEngine.StaticVariables.g_fadeFrameCounter ==0)
+            if (_gameEngine.StaticVariables.g_fadeFrameCounter == 0)
             {
                 goto LAB_80042ee4;
             }
@@ -671,25 +668,25 @@ public class GraphicManager
             _gameEngine.StaticVariables.g_currentFadeColorB = MoveTowards(_gameEngine.StaticVariables.g_currentFadeColorB, _gameEngine.StaticVariables.g_targetFadeColorB, _gameEngine.StaticVariables.g_fadeColorStepB);
             _gameEngine.StaticVariables.g_currentFadeColorG = MoveTowards(_gameEngine.StaticVariables.g_currentFadeColorG, _gameEngine.StaticVariables.g_targetFadeColorG, _gameEngine.StaticVariables.g_warpColorStepG);
             _gameEngine.StaticVariables.g_currentFadeColorR = MoveTowards(_gameEngine.StaticVariables.g_currentFadeColorR, _gameEngine.StaticVariables.g_targetFadeColorR, _gameEngine.StaticVariables.g_fadeColorStepR);
-            
-            if (_gameEngine.StaticVariables.g_currentFadeColorB == _gameEngine.StaticVariables.g_targetFadeColorB 
+
+            if (_gameEngine.StaticVariables.g_currentFadeColorB == _gameEngine.StaticVariables.g_targetFadeColorB
                 && _gameEngine.StaticVariables.g_currentFadeColorG == _gameEngine.StaticVariables.g_targetFadeColorG
                && _gameEngine.StaticVariables.g_currentFadeColorR == _gameEngine.StaticVariables.g_targetFadeColorR)
             {
-                _gameEngine.StaticVariables.g_warpStepFlags_2 =0;
+                _gameEngine.StaticVariables.g_warpStepFlags_2 = 0;
             }
         }
 
         var tile = _gameEngine.StaticVariables.TILE_8013fb98;
-        tile.r0 = (byte)(_gameEngine.StaticVariables.g_currentFadeColorB >>0x10);
-        tile.g0 = (byte)(_gameEngine.StaticVariables.g_currentFadeColorG >>0x10);
-        tile.b0 = (byte)(_gameEngine.StaticVariables.g_currentFadeColorR >>0x10);
+        tile.r0 = (byte)(_gameEngine.StaticVariables.g_currentFadeColorB >> 0x10);
+        tile.g0 = (byte)(_gameEngine.StaticVariables.g_currentFadeColorG >> 0x10);
+        tile.b0 = (byte)(_gameEngine.StaticVariables.g_currentFadeColorR >> 0x10);
 
         _gameEngine.Renderer.AddSprite(tile.x0, tile.y0, tile.w, tile.h,
             SpriteDepth.ForegroundEffect, _gameEngine.Renderer.WhiteBitmap, tile.r0 / 255f, 0f, 0f, 0f);
 
-         LAB_80042ee4:
-         return _gameEngine.StaticVariables.g_warpFlags | _gameEngine.StaticVariables.g_warpStepFlags_2;
+    LAB_80042ee4:
+        return _gameEngine.StaticVariables.g_warpFlags | _gameEngine.StaticVariables.g_warpStepFlags_2;
     }
 
     //80042954
@@ -713,54 +710,6 @@ public class GraphicManager
             result = target;
         }
         return result;
-    }
-
-    //8005ec98
-    private int UpdatePostProcessingEffects()
-    {
-        var result = _gameEngine.StaticVariables.g_globalTransitionState == 1;
-
-        if (_gameEngine.StaticVariables.g_globalTransitionState != 0)
-        {
-            result = _gameEngine.StaticVariables.g_postProcessingState < 3;
-
-            if (_gameEngine.StaticVariables.g_postProcessingState == 2)
-            {
-                RunFadeEffect();
-            }
-            else if (_gameEngine.StaticVariables.g_postProcessingState == 0)
-            {
-                result = true;
-
-                if (_gameEngine.StaticVariables.g_postProcessingState == 3)
-                {
-                    result = RunWaveEffect() != 0;
-                }
-            }
-            else
-            {
-                result = true;
-
-                if (_gameEngine.StaticVariables.g_postProcessingState == 1)
-                {
-                    RunFadeEffect();
-                }
-            }
-        }
-
-        return result ? 1 : 0;
-    }
-
-    //8005f458
-    private void RunFadeEffect()
-    {
-
-    }
-
-    //8005ed2c
-    private int RunWaveEffect()
-    {
-        return 0;
     }
 
     //80048054
@@ -814,7 +763,7 @@ public class GraphicManager
 
         if (_gameEngine.StaticVariables.g_postProcessState != 0)
         {
-            if (_gameEngine.StaticVariables.g_postProcessState == 1 
+            if (_gameEngine.StaticVariables.g_postProcessState == 1
                 && (short)_gameEngine.StaticVariables.g_callbackTable[6].Flags == 0)
             {
                 _gameEngine.StaticVariables.g_postProcessState = 0;

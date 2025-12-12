@@ -208,6 +208,8 @@ namespace AlundraTools.GameControls
             buttonZoomX8 = new Button();
             buttonZoomX4 = new Button();
             buttonZoomX2 = new Button();
+            label56 = new Label();
+            labelActiveCollisionEntity = new Label();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -352,7 +354,7 @@ namespace AlundraTools.GameControls
             groupBox2.Controls.Add(labelCameraPosition);
             groupBox2.Location = new Point(298, 5);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(200, 128);
+            groupBox2.Size = new Size(200, 90);
             groupBox2.TabIndex = 9;
             groupBox2.TabStop = false;
             groupBox2.Text = "Camera";
@@ -870,6 +872,8 @@ namespace AlundraTools.GameControls
             // 
             // tabPageEntities
             // 
+            tabPageEntities.Controls.Add(label56);
+            tabPageEntities.Controls.Add(labelActiveCollisionEntity);
             tabPageEntities.Controls.Add(label14);
             tabPageEntities.Controls.Add(groupBox1);
             tabPageEntities.Controls.Add(groupBox2);
@@ -2154,6 +2158,23 @@ namespace AlundraTools.GameControls
             buttonZoomX2.UseVisualStyleBackColor = true;
             buttonZoomX2.Click += buttonZoomX2_Click;
             // 
+            // label56
+            // 
+            label56.AutoSize = true;
+            label56.Location = new Point(298, 99);
+            label56.Name = "label56";
+            label56.Size = new Size(118, 15);
+            label56.TabIndex = 13;
+            label56.Text = "active collision entity";
+            // 
+            // labelActiveCollisionEntity
+            // 
+            labelActiveCollisionEntity.AutoSize = true;
+            labelActiveCollisionEntity.Location = new Point(422, 99);
+            labelActiveCollisionEntity.Name = "labelActiveCollisionEntity";
+            labelActiveCollisionEntity.Size = new Size(0, 15);
+            labelActiveCollisionEntity.TabIndex = 12;
+            // 
             // FrmGame
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -2388,5 +2409,7 @@ namespace AlundraTools.GameControls
         private GroupBox groupBoxFlags;
         private Panel panelFlags;
         private Button buttonAlundraCabine;
+        private Label label56;
+        private Label labelActiveCollisionEntity;
     }
 }

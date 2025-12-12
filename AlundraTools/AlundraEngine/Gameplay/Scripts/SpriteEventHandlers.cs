@@ -59,6 +59,7 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramCTick, 60, AI_UpdateIceProjectile);
         Register(ScriptHelper.ProgramCTick, 70, AI_FUN_8007b7b0);
         Register(ScriptHelper.ProgramCTick, 72, AI_ProcessWarpTransitionState);
+        Register(ScriptHelper.ProgramCTick, 90, AI_FUN_80062bc0);
         Register(ScriptHelper.ProgramCTick, 91, AI_UpdateEntityAI_IdleLookAround);
         Register(ScriptHelper.ProgramCTick, 92, AI_UpdateEntityTriggerWarpBehavior);
         Register(ScriptHelper.ProgramCTick, 93, AI_UpdateEntityAI_IdleCurious);
@@ -103,7 +104,7 @@ public class SpriteEventHandlers
         }
         else
         {
-            //Debugger.Break();
+            Debugger.Break();
         }
     }
 
@@ -1168,7 +1169,7 @@ public class SpriteEventHandlers
         string arg1;
         string arg2;
 
-        switch (entity.LastTargetDirection)
+        switch (entity.Bytes[0])
         {
             case 1:
 
@@ -1284,6 +1285,12 @@ public class SpriteEventHandlers
         e.Bytes[1] = (byte)((v >> 8) & 0xFF);
         e.Bytes[2] = (byte)((v >> 16) & 0xFF);
         e.Bytes[3] = (byte)((v >> 24) & 0xFF);
+    }
+
+    //80062bc0
+    public void AI_FUN_80062bc0(Entity entity)
+    {
+        Debugger.Break();
     }
 
     //800637d8

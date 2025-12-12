@@ -12,6 +12,7 @@ public class UIManager
     public readonly List<Sprite>[] DialogLinesSprites = [new(), new(), new()];
     public readonly List<Sprite> DialogCharacterNameSprites = new();
     public readonly List<Sprite>[] DialogChoiceSprites = [new(), new()];
+    public readonly List<Sprite> DialogSaveGameSprites = new();
 
     public UIManager(GameEngine gameEngine)
     {
@@ -488,9 +489,122 @@ public class UIManager
     }
 
     //80050ec8
+    //open memory card menu
     public void Fun_80050ec8(CallBackInfo callBackInfo)
     {
-        Debugger.Break();
+        SPRT pSVar1;
+        ulong uVar2;
+        int iVar3;
+        uint uVar4;
+        uint uVar5;
+        uint uVar6;
+        SPRT pSVar7;
+        SPRT pSVar8;
+
+        if ((_gameEngine.StaticVariables.g_memoryCardMenuState & 3U) == 0)
+        {
+            if ((_gameEngine.StaticVariables.g_memoryCardMenuState & 8U) != 0)
+            {
+                _gameEngine.StaticVariables.g_memoryCardMenuState = (_gameEngine.StaticVariables.g_memoryCardMenuState & 0xfffffff7U) | 2;
+                _gameEngine.StaticVariables.TextToDisplay_8017e620.mode = 2;
+                _gameEngine.StaticVariables.TextToDisplay_8017e620.tick = 0;
+                _gameEngine.StaticVariables.TextToDisplay_8017e620.speed = 0xf;
+
+                if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X < 0)
+                {
+                    _gameEngine.StaticVariables.TextToDisplay_8017e620.x =
+                        (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X +
+                                _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width * -8);
+                }
+                else
+                {
+                    _gameEngine.StaticVariables.TextToDisplay_8017e620.x = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
+                }
+                if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y < 0)
+                {
+                    _gameEngine.StaticVariables.TextToDisplay_8017e620.y =
+                        (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y +
+                                _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Height * -8);
+                }
+                else
+                {
+                    _gameEngine.StaticVariables.TextToDisplay_8017e620.y = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y;
+                }
+                if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X < 0)
+                {
+                    _gameEngine.StaticVariables.TextToDisplay_8017e620.startX =
+                        (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X +
+                                _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width * -8);
+                }
+                else
+                {
+                    _gameEngine.StaticVariables.TextToDisplay_8017e620.startX = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
+                }
+
+                _gameEngine.StaticVariables.TextToDisplay_8017e620.startY = 0xf0;
+                _gameEngine.SoundManager.PlaySoundEffect(5);
+            }
+        }
+        else
+        {
+            iVar3 = UpdateUiBoxesPosition(callBackInfo.Data, _gameEngine.StaticVariables.TextToDisplay_8017e620);
+            
+            if (iVar3 == 1)
+            {
+                if ((_gameEngine.StaticVariables.g_memoryCardMenuState & 1U) != 0)
+                {
+                    _gameEngine.StaticVariables.g_memoryCardMenuState = _gameEngine.StaticVariables.g_memoryCardMenuState & 0xfffffffe;
+                }
+
+                if ((_gameEngine.StaticVariables.g_memoryCardMenuState & 2U) != 0)
+                {
+                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X = _gameEngine.StaticVariables.TextToDisplay_8017e620.originX;
+                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y = _gameEngine.StaticVariables.TextToDisplay_8017e620.originY;
+                    _gameEngine.StaticVariables.DAT_8017e400 = -1; //0xffffffff;
+                    FUN_80047cb0(callBackInfo);
+                    return;
+                }
+            }
+        }
+
+        //uVar2 = _gameEngine.StaticVariables.g_drawModes[0x14].tag;
+        pSVar7 = _gameEngine.StaticVariables.SPRT_ARRAY_8017e410[0];
+        _gameEngine.StaticVariables.SPRT_ARRAY_8017e410[0].w = 0xff;
+        _gameEngine.StaticVariables.SPRT_ARRAY_8017e410[0].h = 0x10;
+        _gameEngine.StaticVariables.SPRT_ARRAY_8017e410[0].x0 = (short)(callBackInfo.Data.X + callBackInfo.Data.Width);
+        _gameEngine.StaticVariables.SPRT_ARRAY_8017e410[0].y0 = (short)(callBackInfo.Data.Y + callBackInfo.Data.Height);
+
+        pSVar8 = _gameEngine.StaticVariables.SPRT_ARRAY_8017e438[0];
+        _gameEngine.StaticVariables.SPRT_ARRAY_8017e438[0].w = 0xff;
+        _gameEngine.StaticVariables.SPRT_ARRAY_8017e438[0].h = 0x10;
+        _gameEngine.StaticVariables.SPRT_ARRAY_8017e438[0].x0 = (short)(callBackInfo.Data.X + callBackInfo.Data.Width);
+        _gameEngine.StaticVariables.SPRT_ARRAY_8017e438[0].y0 = (short)(callBackInfo.Data.Y + callBackInfo.Data.Height + 0x10);
+
+        //pSVar1 = _gameEngine.StaticVariables.SPRT_80146f5c[0];
+        //uVar5._0_1_ = pSVar1->r0;
+        //uVar5._1_1_ = pSVar1->g0;
+        //uVar5._2_1_ = pSVar1->b0;
+        //uVar5._3_1_ = pSVar1->code;
+        //pSVar7->tag = pSVar7->tag & 0xff000000 | uVar5 & 0xffffff;
+        //uVar4._0_1_ = pSVar1->r0;
+        //uVar4._1_1_ = pSVar1->g0;
+        //uVar4._2_1_ = pSVar1->b0;
+        //uVar4._3_1_ = pSVar1->code;
+        //uVar5 = uVar4 & 0xff000000 | (uint)pSVar7 & 0xffffff;
+        //pSVar1->r0 = (char)uVar5;
+        //pSVar1->g0 = (char)(uVar5 >> 8);
+        //pSVar1->b0 = (char)(uVar5 >> 0x10);
+        //pSVar1->code = (char)(uVar5 >> 0x18);
+        //pSVar8->tag = pSVar8->tag & 0xff000000 | (uint)pSVar7 & 0xffffff;
+        //uVar6._0_1_ = pSVar1->r0;
+        //uVar6._1_1_ = pSVar1->g0;
+        //uVar6._2_1_ = pSVar1->b0;
+        //uVar6._3_1_ = pSVar1->code;
+        //uVar5 = uVar6 & 0xff000000 | (uint)pSVar8 & 0xffffff;
+        //pSVar1->r0 = (char)uVar5;
+        //pSVar1->g0 = (char)(uVar5 >> 8);
+        //pSVar1->b0 = (char)(uVar5 >> 0x10);
+        //pSVar1->code = (char)(uVar5 >> 0x18);
     }
 
     //800583ec
@@ -2521,4 +2635,112 @@ public class UIManager
             _gameEngine.StaticVariables.g_textHoldState_2 = 1;
         }
     }
+
+
+    //80050c88
+    public int FUN_80050c88(string arg1, string arg2, ref int val)
+    {
+        val = 0;
+
+        int i = 0;
+        int maxLen = 0x80;
+
+        if (arg1 == null)
+        {
+            arg1 = string.Empty;
+        }
+
+        if (arg2 == null)
+        {
+            arg2 = string.Empty;
+        }
+
+        Array.Clear(_gameEngine.StaticVariables.CHAR_ARRAY_8017e490);
+
+        while (i < maxLen && i < arg1.Length && arg1[i] != '\0')
+        {
+            _gameEngine.StaticVariables.CHAR_ARRAY_8017e490[i] = arg1[i];
+            i++;
+        }
+
+        i = 0;
+        int base2 = 0x81;
+
+        Array.Clear(_gameEngine.StaticVariables.CHAR_ARRAY_8017e511);
+
+        while (i < maxLen && i < arg2.Length && arg2[i] != '\0')
+        {
+            int index = base2 + i;
+            if (index < _gameEngine.StaticVariables.CHAR_ARRAY_8017e511.Length)
+            {
+                _gameEngine.StaticVariables.CHAR_ARRAY_8017e511[index] = arg2[i];
+            }
+
+            i++;
+        }
+
+        int setTransResult = _gameEngine.GraphicManager.SetTransitionType(9);
+
+        if (setTransResult == 0)
+        {
+            return 0;
+        }
+
+        _gameEngine.StaticVariables.TextToDisplay_8017e620.mode = 2;
+        _gameEngine.StaticVariables.TextToDisplay_8017e620.speed = 0xF;
+
+        if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X < 0)
+        {
+            _gameEngine.StaticVariables.TextToDisplay_8017e620.x =
+                (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X +
+                        _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width * -8);
+        }
+        else
+        {
+            _gameEngine.StaticVariables.TextToDisplay_8017e620.x = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
+        }
+
+        _gameEngine.StaticVariables.TextToDisplay_8017e620.y = 0xf0;
+
+        if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X < 0)
+        {
+            _gameEngine.StaticVariables.TextToDisplay_8017e620.startX =
+                (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X +
+                        _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width * -8);
+        }
+        else
+        {
+            _gameEngine.StaticVariables.TextToDisplay_8017e620.startX = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
+        }
+
+        if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y < 0)
+        {
+            _gameEngine.StaticVariables.TextToDisplay_8017e620.startY =
+                (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y +
+                        _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Height * -8);
+        }
+        else
+        {
+            _gameEngine.StaticVariables.TextToDisplay_8017e620.startY = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y;
+        }
+
+        _gameEngine.StaticVariables.TextToDisplay_8017e620.originX = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
+        _gameEngine.StaticVariables.TextToDisplay_8017e620.originY = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y;
+        _gameEngine.StaticVariables.g_memoryCardMenuState = 5;
+
+        _gameEngine.UIManager.DisplayIconName(
+            _gameEngine.StaticVariables.SPRT_ARRAY_8017e410, DialogSaveGameSprites,
+            _gameEngine.StaticVariables.CHAR_ARRAY_8017e490, 0x40,
+            (short)(_gameEngine.StaticVariables.g_activeTransitionCallback.Data.X + _gameEngine.StaticVariables.g_activeTransitionCallback.X),
+            (short)(_gameEngine.StaticVariables.g_activeTransitionCallback.Data.Y + _gameEngine.StaticVariables.g_activeTransitionCallback.Y), 1);
+
+        _gameEngine.UIManager.DisplayIconName(
+            _gameEngine.StaticVariables.SPRT_ARRAY_8017e438, DialogSaveGameSprites,
+            _gameEngine.StaticVariables.CHAR_ARRAY_8017e511, 0x40,
+            (short)(_gameEngine.StaticVariables.g_activeTransitionCallback.Data.X + _gameEngine.StaticVariables.g_activeTransitionCallback.X),
+            (short)(_gameEngine.StaticVariables.g_activeTransitionCallback.Data.Y + _gameEngine.StaticVariables.g_activeTransitionCallback.Y + 0x10), 2);
+
+        return 1;
+    }
+
 }

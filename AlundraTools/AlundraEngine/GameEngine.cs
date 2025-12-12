@@ -37,6 +37,7 @@ public class GameEngine
     public MainInventoryManager MainInventoryManager { get; }
     public SubInventoryManager SubInventoryManager { get; }
     public UIDebugManager UIDebugManager { get; }
+    public MemoryCardManager MemoryCardManager { get; }
 
     private readonly EntityEventHandlers _entityEventHandlers;
     private readonly GameInitializer _gameInitializer;
@@ -70,6 +71,7 @@ public class GameEngine
         MainInventoryManager = new MainInventoryManager(this);
         SubInventoryManager = new SubInventoryManager(this);
         UIDebugManager = new UIDebugManager(this);
+        MemoryCardManager = new MemoryCardManager(this);
     }
 
     public void InitializeEngine()
@@ -2451,8 +2453,20 @@ public class GameEngine
         return 1;
     }
 
+    //80050c00
+    public int StartAsyncOperation(string arg1, string arg2, Action<int> callback)
+    {
+        StaticVariables.g_asyncCallbackArgs[0] = arg1;
+        StaticVariables.g_asyncCallbackArgs[1] = arg2;
+        StartAsyncCallback(callback, 1, ref StaticVariables.g_asyncCallbackArgs);
+        //StartAsyncCallback(AsyncCallbackHandler, 1, ref StaticVariables.g_asyncCallbackArgs);
+        //StaticVariables.g_asyncOperationResultPtr = result;
+        StaticVariables.g_asyncOperationCountdown = 0;
+        return 1;
+    }
+
     //800505fc
-    private void StartAsyncCallback(Action<int> asyncCallbackHandler, short i, ref string[] args)
+    public void StartAsyncCallback(Action<int> asyncCallbackHandler, short i, ref string[] args)
     {
         StaticVariables.g_asyncCallbackCounter = i;
         StaticVariables.g_asyncCallback = asyncCallbackHandler;
@@ -2480,8 +2494,36 @@ public class GameEngine
         StaticVariables.g_initialCameraTileZ = StaticVariables.PlayerEntity.TileZ;
         UpdateMenuStatusText();
         StaticVariables.g_savedGameplayTime = StaticVariables.g_gameplayTime;
-        Debugger.Break();
-        //CopyMemoryToRAM(&g_saveSlotData, 0x758, 1);
+        InitialMemoryCopy(StaticVariables.g_saveSlotData, 0x758, 1);
+    }
+
+    //8005ec44
+    private uint InitialMemoryCopy(byte[] source, int byteCount, int mode)
+    {
+        uint result = 0xffffffff;
+
+        if (StaticVariables.g_isMemoryCopyInProgress == 0)
+        {
+            StaticVariables.g_globalTransitionState = 10000;
+            result = (uint)(byteCount < 0x76d ? 1 : 0);
+            StaticVariables.g_copyByteCount = byteCount;
+            StaticVariables.g_copySourceAddress = source;
+            StaticVariables.g_postProcessingState = mode;
+
+            if (result == 0)
+            {
+                StaticVariables.g_globalTransitionState = 0;
+                result = 0xffffffff;
+            }
+        }
+
+        return result;
+    }
+
+    //800814e8
+    public void CopyFromMemory()
+    {
+        //Array.Copy(StaticVariables.g_someDataIntoRam, StaticVariables.g_saveSlotData, 0x758);
     }
 
     //80030fc8

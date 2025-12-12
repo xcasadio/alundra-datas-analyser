@@ -22,36 +22,31 @@ public class EffectManager
         }
 
         //TODO check this
-        var mapEffectRecords = _gameEngine.CurrentMap.SpriteInfo.SpriteEffectRecords;
-        for (int i = 0; i < mapEffectRecords.Length; i++)
+        var mapEventsRecords = _gameEngine.CurrentMap.SpriteInfo.MapEvents.Records;
+
+        for (int i = 0; i < mapEventsRecords.Length; i++)
         {
-            if (mapEffectRecords[i] == null)
+            var mapEventsRecord = mapEventsRecords[i];
+
+            if (mapEventsRecord == null)
             {
                 break;
             }
-        }
 
-        //var effectIndex = 0;
-        //var mapEventRecord = _gameEngine.CurrentMap.SpriteInfo.MapEffectRecords[effectIndex];
-        ////var mapEventRecord = _gameEngine.StaticVariables.g_initMapEventRecords[effectIndex];
-        //var val = (uint)(mapEventRecord.X | (mapEventRecord.Y << 8) | (mapEventRecord.Width << 16) | (mapEventRecord.Height << 24));
-        //
-        //while (val != 0)
-        //{
-        //    var effectSlotPtr = SpawnSpriteEffect(effectIndex, 0);
-        //    if (effectSlotPtr == null 
-        //        && (_gameEngine.StaticVariables.g_debugState & 0x80000000U) != 0 
-        //        && (_gameEngine.StaticVariables.g_debugFlags & 0x20) != 0)
-        //    {
-        //        Debugger.Break();
-        //        //PrintInfo();
-        //    }
-        //
-        //    effectIndex += 1;
-        //    //mapEventRecord = _gameEngine.StaticVariables.g_initMapEventRecords[effectIndex];
-        //    mapEventRecord = _gameEngine.CurrentMap.SpriteInfo.MapEffectRecords[effectIndex];
-        //    val = (uint)(mapEventRecord.X | (mapEventRecord.Y << 8) | (mapEventRecord.Width << 16) | (mapEventRecord.Height << 24));
-        //}
+            if (mapEventsRecord.X1 == 0 && mapEventsRecord.X2 == 0 && mapEventsRecord.Y1 == 0 &&
+                mapEventsRecord.Y2 == 0)
+            {
+                break;
+            }
+
+            var spriteEffect = SpawnSpriteEffect(i, 0);
+            if (spriteEffect == null 
+                  && (_gameEngine.StaticVariables.g_debugState & 0x80000000U) != 0
+                 && (_gameEngine.StaticVariables.g_debugFlags & 0x20) != 0)
+            {
+                Debugger.Break();
+            }
+        }
     }
 
     public SpriteEffect SpawnSpriteEffect(int effectId, int checkSpawnArea)
@@ -219,14 +214,16 @@ public class EffectManager
                 if (effect.Frame.Images != null) // (imageOffset != 0xffff)
                 {
                     effect.SpriteRef.Images = effect.Frame.Images.Images;
-                    effect.SpriteRef.DepthSortValue = effect.Frame.Images.DepthSortValue;
                     effect.SpriteRef.NumberOfImages = effect.Frame.Images.NumberOfImages;
+                    //effect.SpriteRef.DepthSortValue = effect.Frame.Images.DepthSortValue;
+                    effect._24 = effect.Frame.Images.ImageSetId;
                 }
                 else
                 {
                     effect.SpriteRef.Images = null;
-                    effect.SpriteRef.DepthSortValue = 0;
                     effect.SpriteRef.NumberOfImages = 0;
+                    //effect.SpriteRef.DepthSortValue = 0;
+                    effect._24 = 0;
                 }
                 return;
             }

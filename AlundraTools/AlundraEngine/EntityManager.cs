@@ -2357,14 +2357,18 @@ public class EntityManager
 
                                     if (_gameEngine.StaticVariables.g_activeCollisionEntity == entity)
                                     {
-                                        if (entity.ProgramIndexes[5] != 0)
+                                        if (entity.ProgramIndexes[5] != 0 || entity.SpriteProgramIndexes[5] != 0)
                                         {
                                             eventProgramType = ScriptHelper.ProgramFInteract;
                                         }
-                                        else if (entity.SpriteProgramIndexes[5] != 0)
-                                        {
-                                            eventProgramType = ScriptHelper.ProgramCTick;
-                                        }
+                                        //if (entity.ProgramIndexes[5] != 0)
+                                        //{
+                                        //    eventProgramType = ScriptHelper.ProgramFInteract;
+                                        //}
+                                        //else if (entity.SpriteProgramIndexes[5] != 0)
+                                        //{
+                                        //    eventProgramType = ScriptHelper.ProgramCTick;
+                                        //}
                                     }
                                 }
                                 

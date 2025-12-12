@@ -10,7 +10,7 @@ public class SpriteEffect
     public MapEffectRecord? MapEffectRecord;//4
     public SpriteEffectRecord? SpriteEffectRecord;//8
     public SpriteRef SpriteRef = new();//c-20
-    public int _24;
+    public int _24;//24
     public int SheetSize;//28
     public int PaletteIndex;//2c
     public int MapEffectId;//30

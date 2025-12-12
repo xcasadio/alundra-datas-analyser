@@ -489,6 +489,8 @@ public partial class FrmGame : Form
             }
         }
 
+        labelActiveCollisionEntity.Text = _gameEngine.StaticVariables.g_activeCollisionEntity?.ToString() ?? "";
+
         if (_gameEngine.ReplayManager.IsSaving)
         {
             UpdateLabelFramesText();

@@ -330,7 +330,7 @@ public class GameInitializer
 
         if (_gameEngine.StaticVariables.g_someDataIntoRam == 1)
         {
-            //CopyInitialDataToRAM(); // maybe map datas already loaded ?
+            _gameEngine.CopyFromMemory();
             playerTileX = _gameEngine.StaticVariables.g_initialCameraTileX;
             playerTileY = _gameEngine.StaticVariables.g_initialCameraTileY;
             playerZ = _gameEngine.StaticVariables.g_initialCameraTileZ;
