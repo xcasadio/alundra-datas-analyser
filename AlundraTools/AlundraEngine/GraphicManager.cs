@@ -116,12 +116,19 @@ public class GraphicManager
         //}
 
         //Map animation
+        //8002cfd8
         for (int i = 0; i < 6; i++)
         {
             var spriteMapEntry = _gameEngine.CurrentMap.Info.SpriteMapEntries[i];
+
+            if (spriteMapEntry.Enabled == 0)
+            {
+                continue;
+            }
+
             spriteMapEntry.Tick++;
 
-            if (spriteMapEntry.Enabled == 1 && spriteMapEntry.FrameDuration <= spriteMapEntry.Tick)
+            if (spriteMapEntry.FrameDuration <= spriteMapEntry.Tick)
             {
                 spriteMapEntry.Index += spriteMapEntry.TileWidth;
                 spriteMapEntry.Tick = 0;

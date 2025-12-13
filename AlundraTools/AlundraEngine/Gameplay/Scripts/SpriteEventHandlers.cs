@@ -456,7 +456,7 @@ public class SpriteEventHandlers
                 entity.TargetForceY = 0;
                 entity.TargetForceX = 0;
                 entity.TargetDirection = direction;
-                delay = (short)((((uint)((ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x1f) >> 32)) + 0x1e);
+                delay = (short)(((uint)((ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x1f) >> 32) + 0x1e);
                 goto case 4;
 
             case 2:
@@ -1017,11 +1017,9 @@ public class SpriteEventHandlers
 
                 if ((uVar4 & 7) == 0)
                 {
-                    Debugger.Break();
-
                     _gameEngine.EffectManager.CreateEffectEntity(
                         (byte)0, 
-                        _gameEngine.CurrentMap.Info.SlideEffectId, // _gameEngine.CurrentMap.Info.C
+                        _gameEngine.CurrentMap.Info.C, // _gameEngine.CurrentMap.Info.C
                         0,
                         entity.PosX, entity.PosY, entity.FloorHeight);
                 }
@@ -1924,8 +1922,7 @@ public class SpriteEventHandlers
             }
 
             Debugger.Break();
-            entity2 = null;
-            //entity2 = entity.AIValues[0];
+            entity2 = _gameEngine.StaticVariables.g_entitySlots[entity.AIValues[0]];
         }
         else
         {
@@ -2023,7 +2020,8 @@ public class SpriteEventHandlers
                     _gameEngine.StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcRes.GetOtherString(0x45);
                 }
 
-                _gameEngine.FUN_80032b28((uint)entity.ContentsGameFlag); //AIValues
+                Debugger.Break();
+                _gameEngine.FUN_80032b28((uint)entity.ContentsGameFlag); //AIValues[0]
                 soundSfxIndex = _gameEngine.StaticVariables.g_itemDropProperties[itemId].SoundSfxIndex; //itemId * 8 + 5
 
                 if (soundSfxIndex != 0)
@@ -2357,9 +2355,61 @@ public class SpriteEventHandlers
     }
 
     //8007fc88
+    //open a treasure ?
     private void FUN_8007fc88(Entity entity)
     {
-        Debugger.Break();
+        Entity entitySpawn;
+        string scriptText;
+        int iVar4;
+        int itemId;
+
+        if (_gameEngine.StaticVariables.g_playerControlFlags == 0
+            && _gameEngine.StaticVariables.g_isGameEnding == 0
+            && _gameEngine.StaticVariables.g_entitySlots[0].CarriedEntity == null
+            && !_gameEngine.IsDialogInProgress())
+        {
+            itemId = (int)entity.ContentsItemId;
+            iVar4 = 0x48;
+
+            if (itemId != 0 && entity.TargetAnimationId == 0)
+            {
+                entity.TargetAnimationId = 2;
+                entitySpawn = _gameEngine.SpawnWarpEntity(entity, 0, (uint)(itemId + 0x1e), entity.PosX, entity.PosY, entity.PosZ + 0x100000, 0);
+                iVar4 = 0x49;
+
+                if (entitySpawn != null)
+                {
+                    _gameEngine.EntityManager.FUN_8003ad30(entity);
+                    entitySpawn.ForceZ = 0x8000;
+                    entitySpawn.ItemDelay = 0x40;
+                    entitySpawn.Flags &= 0xfffffe7f;
+                    entitySpawn.IsNotProcessable = 0;
+                    entitySpawn.Bytes[0] = 2;
+                    entitySpawn.Bytes[1] = 0;
+                    entitySpawn.Bytes[2] = 0;
+                    entitySpawn.Bytes[3] = 0;
+                    entitySpawn.ItemState = 0;
+                    entitySpawn.AIValues[0] = (short)entity.Index; // entity but we can't so we store only the Index
+                    iVar4 = _gameEngine.PlayerManager.FUN_80033d34(itemId) ? 1 : 0;
+                    entitySpawn.AIValues[2] = (short)iVar4;
+
+                    if (iVar4 != 0 && _gameEngine.StaticVariables.g_itemDropProperties[itemId].SoundSfxIndex == 0)
+                    {
+                        entitySpawn.AIValues[4] = 1;
+                        entitySpawn.AIValues[5] = 0;
+                        _gameEngine.SoundManager.LoadBgm(0);
+                        return;
+                    }
+
+                    entitySpawn.AIValues[4] = 0;
+                    entitySpawn.AIValues[5] = 0;
+                    return;
+                }
+            }
+
+            scriptText = _gameEngine.EtcRes.GetEtcString(iVar4); //0x48 or 0x49
+            _gameEngine.UIManager.InitializeDialogMessage(scriptText, 0);
+        }
     }
 
     #endregion

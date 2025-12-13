@@ -2136,22 +2136,26 @@ public class GameEngine
 
                         if (tileSource.WallTiles != null)
                         {
-                            tileDestination.WallTiles ??= new WallTiles();
-                            tileDestination.WallTiles.Tiles ??= new ushort[tileSource.WallTiles.Tiles.Length];
-
-                            tileDestination.WallTiles.Offset = tileSource.WallTiles.Offset;
-
-                            if (tileSource.WallTiles.Tiles.Length != tileDestination.WallTiles.Tiles.Length)
+                            if (tileSource.WallTiles.Tiles.Length != (tileDestination.WallTiles?.Tiles?.Length ?? 0))
                             {
-                                Debugger.Break();
+                                //Debugger.Break();
                             }
 
                             int length = Math.Min(tileSource.WallTiles.Tiles.Length, tileDestination.WallTiles.Tiles.Length);
 
-                            for (int i = 0; i < length; i++)
+                            tileDestination.WallTiles ??= new WallTiles();
+                            tileDestination.WallTiles.Tiles ??= new ushort[tileSource.WallTiles.Tiles.Length];
+
+                            tileDestination.WallTiles.Offset = tileSource.WallTiles.Offset;
+                            tileDestination.WallTiles.Count = tileSource.WallTiles.Count;
+
+                            if (tileDestination.WallTiles.Tiles.Length < tileSource.WallTiles.Tiles.Length)
                             {
-                                tileDestination.WallTiles.Tiles[i] = tileSource.WallTiles.Tiles[i];
+                                tileDestination.WallTiles.Tiles = new ushort[tileSource.WallTiles.Tiles.Length];
+                                length = tileSource.WallTiles.Tiles.Length;
                             }
+
+                            Array.Copy(tileSource.WallTiles.Tiles, tileDestination.WallTiles.Tiles, length);
                         }
 
                         x++;
@@ -2338,10 +2342,8 @@ public class GameEngine
                         int effectX = worldXCoords[i] * 0x180000 + 0xC0000;
                         int effectY = worldYCoords[i] * 0x100000 + 0x80000;
 
-                        Debugger.Break();
-
                         EffectManager.CreateEffectEntity(0,
-                            CurrentMap.Info.SlideEffectId, //CurrentMap.Info.C
+                            CurrentMap.Info.C, //CurrentMap.Info.C
                             0,
                             effectX, effectY, tileEffectZ);
                         EffectManager.RandomlySpawnItem(0xFF, effectX, effectY, tileEffectZ);

@@ -2534,6 +2534,8 @@ public class PlayerManager
                 return;
             }
 
+            if (((portal.Flags & 0x3000) >> 11) > 3) Debugger.Break();
+
             combinedVramFlagsAnd = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 11];
         }
         else
@@ -2543,6 +2545,8 @@ public class PlayerManager
             {
                 return;
             }
+
+            if (((portal.Flags & 0x3000) >> 11) > 3) Debugger.Break();
 
             combinedVramFlagsAnd = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 11];
         }
@@ -4132,5 +4136,31 @@ public class PlayerManager
         }
 
         _gameEngine.StaticVariables.g_progressStateFlags = (int)(_gameEngine.StaticVariables.g_progressStateFlags & 0xfffffbff);
+    }
+
+
+    //80033d34
+    public bool FUN_80033d34(int itemId)
+    {
+        int num;
+
+        if (itemId < 0x28)
+        {
+            if (itemId < 0x24)
+            {
+                if (itemId != 0)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+        else if (itemId != 0x29)
+        {
+            return true;
+        }
+
+        num = GetNumberOfItem(itemId);
+        return num < _gameEngine.StaticVariables.g_itemDropProperties[itemId].Field4;
     }
 }

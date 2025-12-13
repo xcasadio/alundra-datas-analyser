@@ -46,10 +46,10 @@ public class GameMapInfo
 
         PalettesBitmap = ImageHelper.BitmapFromPsxBuff(buff, 16, maxPalettes, 16, null);
 
-        //byte[] unused = new byte[16];
-        //br.Read(unused, 0, 16);
+        byte[] unused = new byte[16];
+        br.Read(unused, 0, 16);
 
-        SpriteMapEntries = new SpriteMapEntry[14];
+        SpriteMapEntries = new SpriteMapEntry[6]; //14
 
         //InitializeMapSpriteTable 8002cc58
         int spriteIndex = 0;

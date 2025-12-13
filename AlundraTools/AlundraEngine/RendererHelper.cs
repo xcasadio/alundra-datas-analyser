@@ -72,8 +72,8 @@ public class RendererHelper
                                 Text = text,
                                 Font = FontTileInfo,
                                 Color = Brushes.White,
-                                X = dx + (StaticVariables.MapTileWidth + textSize.Width) / 2f,
-                                Y = dy + (StaticVariables.MapTileHeight + textSize.Height) / 2f
+                                X = dx + (StaticVariables.MapTileWidth - textSize.Width) / 2f,
+                                Y = dy + (StaticVariables.MapTileHeight - textSize.Height) / 2f
                             });
                         }
                     }
@@ -106,9 +106,9 @@ public class RendererHelper
                                 {
                                     Text = text,
                                     Font = FontTileInfo,
-                                    Color = Brushes.White,
-                                    X = dx + (StaticVariables.MapTileWidth + textSize.Width) / 2f,
-                                    Y = dy + (StaticVariables.MapTileHeight + textSize.Height) / 2f
+                                    Color = Brushes.BurlyWood,
+                                    X = dx + (StaticVariables.MapTileWidth - textSize.Width) / 2f,
+                                    Y = dy + (StaticVariables.MapTileHeight/* + textSize.Height*/) / 2f
                                 });
                             }
                         }
@@ -304,7 +304,7 @@ public class RendererHelper
             if (entry.Enabled == 1)
             {
                 //tileY + 1
-                tileId = (ushort)((tileId & 0xF000) | ((tileId + 10 * entry.FrameIndex * 2) & 0x03FF));
+                tileId = (ushort)((tileId & 0xF000) | ((tileId + 10 * entry.FrameIndex * 2) & 0x3ff));
             }
         }
 

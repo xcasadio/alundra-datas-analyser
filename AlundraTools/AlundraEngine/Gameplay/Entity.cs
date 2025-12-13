@@ -31,7 +31,7 @@ public class Entity
     public uint SpriteTableIndex;
     public uint Flags;//0x800000 = portrait,0x0100 = gravity,0xf = ?, 0x1 = ? , 0x80 = collidable
     public readonly int[] SpriteProgramIndexes = new int[6]; //70
-    public uint TargetAnimationId;
+    public uint TargetAnimationId; //88
     public uint TargetDirection;
     public uint CurrentAnimationId;
     public uint CurrentDirection;
@@ -116,7 +116,7 @@ public class Entity
     public uint LastTargetDirection;//270
     public byte[] Bytes = new byte[4];
     public int ItemDelay;//278
-    public int ItemState;
+    public int ItemState;//27C
     public short[] AIValues = new short[10];//280
 
     public bool IsMapSprite => EntityRecord != null && (EntityRecord.SpriteDirection & 0x80) != 0;

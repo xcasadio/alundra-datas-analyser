@@ -4,12 +4,10 @@ using AlundraEngine.Editor;
 using AlundraEngine.Gameplay;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
-using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using AlundraEngine.Balance;
-using AlundraTools.CustomControls;
 using Timer = System.Windows.Forms.Timer;
 
 namespace AlundraTools.GameControls;
@@ -22,7 +20,7 @@ public partial class FrmGame : Form
     private readonly Bitmap _backBuffer = new(StaticVariables.ScreenWidth, StaticVariables.ScreenHeight);
     private readonly Graphics _graphics;
     private int _lastMapId = -1;
-    private bool _exceptionMessageShown;
+    private volatile bool _exceptionMessageShown;
     private readonly Stopwatch _stopwatch = new();
 
     private readonly Dictionary<string, string> _entityCategories = new()
@@ -442,8 +440,9 @@ public partial class FrmGame : Form
         {
             if (!_exceptionMessageShown)
             {
-                MessageBox.Show(ex.ToString());
+                Debugger.Break();
                 _exceptionMessageShown = true;
+                MessageBox.Show(ex.ToString());
             }
         }
     }

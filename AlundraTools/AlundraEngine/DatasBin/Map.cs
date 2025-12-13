@@ -1,4 +1,8 @@
-﻿namespace AlundraEngine.DatasBin;
+﻿using System;
+using System.Diagnostics;
+using System.Text;
+
+namespace AlundraEngine.DatasBin;
 
 public class Map
 {
@@ -56,5 +60,32 @@ public class Map
                 }
             }
         }
+
+        /*
+        var log = new StringBuilder();
+
+        for (int y = 0; y < 60; y++)
+        {
+            for (int x = 0; x < 52; x++)
+            {
+                var mapTile = MapTiles[y * Width + x];
+                log.AppendFormat("x:{0} y:{1} ", x, y);
+
+                if (mapTile.WallTiles != null)
+                {
+                    log.AppendFormat("wallTiles:{0} {1} tiles:", mapTile.WallTiles.Count, mapTile.WallTiles.Offset);
+
+                    for (int i = 0; i < mapTile.WallTiles.Count; i++)
+                    {
+                        log.AppendFormat("{0} ", mapTile.WallTiles.Tiles[i]);
+                    }
+                }
+
+                log.AppendLine();
+            }
+        }
+
+        Debug.WriteLine(log.ToString());
+        */
     }
 }
