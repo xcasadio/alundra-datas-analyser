@@ -195,6 +195,13 @@ public class EffectManager
             if (effect.NextFrameDelay == 0)
             {
                 effect.CurrentFrameIndex++;
+
+                //TODO : fix bug
+                if (effect.CurrentFrameIndex >=
+                    effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnimation].NumberOfFrames)
+                {
+                    effect.CurrentFrameIndex = 0;
+                }
             }
         }
 
@@ -205,7 +212,6 @@ public class EffectManager
 
             if ((frameData.Delay & 0x80) != 0)
             {
-                //effect.CurrentFrameIndex++;
                 var anim = effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnimation];
                 effect.Frame = anim.Frames[effect.CurrentFrameIndex];
                 effect.NextFrameDelay = (byte)(frameData.Delay & 0x7f);

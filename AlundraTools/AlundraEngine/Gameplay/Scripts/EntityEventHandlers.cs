@@ -1878,7 +1878,7 @@ public class EntityEventHandlers
     private int Script_83_053(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.g_mapTransitionEffectId = variables[6];
-        _gameEngine.StaticVariables.g_desiredMap = variables[1];
+        _gameEngine.StaticVariables.g_desiredMap = variables[2] << 8 | variables[1];
         _gameEngine.StaticVariables.g_warpEntryBehavior = variables[7];
 
         var y = variables[0];
@@ -1897,7 +1897,6 @@ public class EntityEventHandlers
             }
 
             //_gameEngine.DoNothing();
-
             _gameEngine.StaticVariables.g_mapTransitionEffectId = 0;
         }
 

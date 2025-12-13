@@ -2080,14 +2080,11 @@ public class GameEngine
     }
 
     //8002d7b0
-    public void ChangeAreaTileProperties(int mapTileIndex)
+    public void ChangeAreaTileProperties(int tileId)
     {
         Debugger.Break();
-        //spriteData = g_spriteVRAMPointer + mapTileIndex * 3 + 2;
-        //var mapTile = CurrentMap.Map.MapTiles[mapTileIndex];
-
-
-        //ChangeAreaTileProperties();
+        var mapCopy = CurrentMap.Map.MapCopies[tileId]; //tileId - 2
+        ChangeAreaTileProperties(mapCopy.FromX, mapCopy.FromY, mapCopy.Width, mapCopy.Height, mapCopy.ToX, mapCopy.ToY);
     }
 
     //8002d608
