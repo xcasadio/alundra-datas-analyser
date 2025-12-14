@@ -329,8 +329,8 @@ public partial class FrmGame : Form
                 () => _gameEngine.StaticVariables.g_warpStatusFlag
             ),
             new(
-                nameof(_gameEngine.StaticVariables.g_warpStepFlags_2),
-                () => _gameEngine.StaticVariables.g_warpStepFlags_2
+                nameof(_gameEngine.StaticVariables.g_fadeStepFlags),
+                () => _gameEngine.StaticVariables.g_fadeStepFlags
             )
         ];
 

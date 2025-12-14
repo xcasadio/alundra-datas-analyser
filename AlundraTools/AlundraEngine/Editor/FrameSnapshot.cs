@@ -22,13 +22,13 @@ public class FrameSnapshot
     public int WarpDelayFrames { get; set; }
     public uint PlayerControlFlags { get; set; }
     public int IsWarpDisabled { get; set; }
-    public int WarpType { get; set; }
+    public int MapTransitionEffectId { get; set; }
     public int DesiredMap { get; set; }
     public int WarpTriggerType { get; set; }
     public int WarpExtraParam { get; set; }
     public int CameraTargetX { get; set; }
     public int CameraTargetY { get; set; }
-    public int AnimationId { get; set; }
+    public int CameraTargetZ { get; set; }
     public int CurrentMap { get; set; }
     public int IsCameraScrolling { get; set; }
     public int CameraScrollingX { get; set; }
@@ -63,12 +63,12 @@ public class FrameSnapshot
     public int PlayerStartX { get; set; }
     public int PlayerStartY { get; set; }
     public int PlayerStartZ { get; set; }
-    public int CameraDeltaX { get; set; }
-    public int CameraDeltaY { get; set; }
-    public int CameraCurrentX { get; set; }
-    public int CameraCurrentY { get; set; }
-    public int CameraX { get; set; }
-    public int CameraY { get; set; }
+    public int HudDeltaX { get; set; }
+    public int HudDeltaY { get; set; }
+    public int HudCurrentX { get; set; }
+    public int HudCurrentY { get; set; }
+    public int HudX { get; set; }
+    public int HudY { get; set; }
 
     public void CopyToMemory(GameEngine gameEngine)
     {
@@ -94,13 +94,13 @@ public class FrameSnapshot
         gameEngine.StaticVariables.g_warpDelayFrames = WarpDelayFrames;
         gameEngine.StaticVariables.g_playerControlFlags = PlayerControlFlags;
         gameEngine.StaticVariables.g_isWarpDisabled = IsWarpDisabled;
-        gameEngine.StaticVariables.g_mapTransitionEffectId = WarpType;
+        gameEngine.StaticVariables.g_mapTransitionEffectId = MapTransitionEffectId;
         gameEngine.StaticVariables.g_desiredMap = DesiredMap;
         gameEngine.StaticVariables.g_warpTriggerType = WarpTriggerType;
         gameEngine.StaticVariables.g_warpExtraParam = WarpExtraParam;
         gameEngine.StaticVariables.g_cameraTargetX = CameraTargetX;
         gameEngine.StaticVariables.g_cameraTargetY = CameraTargetY;
-        gameEngine.StaticVariables.g_cameraTargetZ = AnimationId;
+        gameEngine.StaticVariables.g_cameraTargetZ = CameraTargetZ;
         gameEngine.StaticVariables.g_currentMap = CurrentMap;
         gameEngine.StaticVariables.g_isCameraScrolling = IsCameraScrolling;
         gameEngine.StaticVariables.g_cameraScrollingX = CameraScrollingX;
@@ -129,18 +129,18 @@ public class FrameSnapshot
         gameEngine.StaticVariables.g_mapScreenPosX = MapScreenPosX;
         gameEngine.StaticVariables.g_mapScreenPosY = MapScreenPosY;
         gameEngine.StaticVariables.g_warpFlags = WarpFlags;
-        gameEngine.StaticVariables.g_playerLastX = PlayerLastX;
-        gameEngine.StaticVariables.g_playerLastY = PlayerLastY;
-        gameEngine.StaticVariables.g_playerLastZ = PlayerLastZ;
-        gameEngine.StaticVariables.g_playerStartX = PlayerStartX;
-        gameEngine.StaticVariables.g_playerStartY = PlayerStartY;
-        gameEngine.StaticVariables.g_playerStartZ = PlayerStartZ;
-        gameEngine.StaticVariables.g_hudDeltaX = CameraDeltaX;
-        gameEngine.StaticVariables.g_hudDeltaY = CameraDeltaY;
-        //gameEngine.StaticVariables.g_hudCurrentX = CameraCurrentX;
-        //gameEngine.StaticVariables.g_hudCurrentY = CameraCurrentY;
-        gameEngine.StaticVariables.g_hudX = CameraX;
-        gameEngine.StaticVariables.g_hudY = CameraY;
+        gameEngine.StaticVariables.g_warpFadeColorR = PlayerLastX;
+        gameEngine.StaticVariables.g_warpFadeColorG = PlayerLastY;
+        gameEngine.StaticVariables.g_warpFadeColorB = PlayerLastZ;
+        gameEngine.StaticVariables.g_warpFadeColorR_Target = PlayerStartX;
+        gameEngine.StaticVariables.g_warpFadeColorG_Target = PlayerStartY;
+        gameEngine.StaticVariables.g_warpFadeColorB_Target = PlayerStartZ;
+        gameEngine.StaticVariables.g_hudDeltaX = HudDeltaX;
+        gameEngine.StaticVariables.g_hudDeltaY = HudDeltaY;
+        //gameEngine.StaticVariables.g_hudCurrentX = HudCurrentX;
+        //gameEngine.StaticVariables.g_hudCurrentY = HudCurrentY;
+        gameEngine.StaticVariables.g_hudX = HudX;
+        gameEngine.StaticVariables.g_hudY = HudY;
     }
 
     public void CopyFromMemory(GameEngine gameEngine)
@@ -171,13 +171,13 @@ public class FrameSnapshot
         WarpDelayFrames = gameEngine.StaticVariables.g_warpDelayFrames;
         PlayerControlFlags = gameEngine.StaticVariables.g_playerControlFlags;
         IsWarpDisabled = gameEngine.StaticVariables.g_isWarpDisabled;
-        WarpType = gameEngine.StaticVariables.g_mapTransitionEffectId;
+        MapTransitionEffectId = gameEngine.StaticVariables.g_mapTransitionEffectId;
         DesiredMap = gameEngine.StaticVariables.g_desiredMap;
         WarpTriggerType = gameEngine.StaticVariables.g_warpTriggerType;
         WarpExtraParam = gameEngine.StaticVariables.g_warpExtraParam;
         CameraTargetX = gameEngine.StaticVariables.g_cameraTargetX;
         CameraTargetY = gameEngine.StaticVariables.g_cameraTargetY;
-        AnimationId = gameEngine.StaticVariables.g_cameraTargetZ;
+        CameraTargetZ = gameEngine.StaticVariables.g_cameraTargetZ;
         CurrentMap = gameEngine.StaticVariables.g_currentMap;
         IsCameraScrolling = gameEngine.StaticVariables.g_isCameraScrolling;
         CameraScrollingX = gameEngine.StaticVariables.g_cameraScrollingX;
@@ -207,17 +207,17 @@ public class FrameSnapshot
         MapScreenPosX = gameEngine.StaticVariables.g_mapScreenPosX;
         MapScreenPosY = gameEngine.StaticVariables.g_mapScreenPosY;
         WarpFlags = gameEngine.StaticVariables.g_warpFlags;
-        PlayerLastX = gameEngine.StaticVariables.g_playerLastX;
-        PlayerLastY = gameEngine.StaticVariables.g_playerLastY;
-        PlayerLastZ = gameEngine.StaticVariables.g_playerLastZ;
-        PlayerStartX = gameEngine.StaticVariables.g_playerStartX;
-        PlayerStartY = gameEngine.StaticVariables.g_playerStartY;
-        PlayerStartZ = gameEngine.StaticVariables.g_playerStartZ;
-        CameraDeltaX = gameEngine.StaticVariables.g_hudDeltaX;
-        CameraDeltaY = gameEngine.StaticVariables.g_hudDeltaY;
-        CameraCurrentX = gameEngine.StaticVariables.g_hudCurrentX;
-        CameraCurrentY = gameEngine.StaticVariables.g_hudCurrentY;
-        CameraX = gameEngine.StaticVariables.g_hudX;
-        CameraY = gameEngine.StaticVariables.g_hudY;
+        PlayerLastX = gameEngine.StaticVariables.g_warpFadeColorR;
+        PlayerLastY = gameEngine.StaticVariables.g_warpFadeColorG;
+        PlayerLastZ = gameEngine.StaticVariables.g_warpFadeColorB;
+        PlayerStartX = gameEngine.StaticVariables.g_warpFadeColorR_Target;
+        PlayerStartY = gameEngine.StaticVariables.g_warpFadeColorG_Target;
+        PlayerStartZ = gameEngine.StaticVariables.g_warpFadeColorB_Target;
+        HudDeltaX = gameEngine.StaticVariables.g_hudDeltaX;
+        HudDeltaY = gameEngine.StaticVariables.g_hudDeltaY;
+        HudCurrentX = gameEngine.StaticVariables.g_hudCurrentX;
+        HudCurrentY = gameEngine.StaticVariables.g_hudCurrentY;
+        HudX = gameEngine.StaticVariables.g_hudX;
+        HudY = gameEngine.StaticVariables.g_hudY;
     }
 }

@@ -862,11 +862,11 @@ public class GameEngine
         int drawPage;
         int transitionDuration;
 
-        StaticVariables.g_playerStartX = posX << 16;
-        StaticVariables.g_playerStartY = posY << 16;
-        StaticVariables.g_playerStartZ = posZ << 16;
+        StaticVariables.g_warpFadeColorR_Target = posX << 16;
+        StaticVariables.g_warpFadeColorG_Target = posY << 16;
+        StaticVariables.g_warpFadeColorB_Target = posZ << 16;
         StaticVariables.g_fadeFrameCounter = 0;
-        StaticVariables.g_warpStepFlags_2 = 0;
+        StaticVariables.g_fadeStepFlags = 0;
         StaticVariables.g_warpFlags = 0;
         StaticVariables.g_mapOffsetY = 0;
         StaticVariables.g_mapOffsetX = 0;
@@ -883,7 +883,7 @@ public class GameEngine
                 StaticVariables.g_targetFadeColorR = 0;
                 StaticVariables.g_targetFadeColorG = 0;
                 StaticVariables.g_targetFadeColorB = 0;
-                StaticVariables.g_warpStepFlags_2 = 1;
+                StaticVariables.g_fadeStepFlags = 1;
                 break;
 
             default:
@@ -901,7 +901,7 @@ public class GameEngine
                 StaticVariables.g_targetFadeColorR = 0;
                 StaticVariables.g_targetFadeColorG = 0;
                 StaticVariables.g_targetFadeColorB = 0;
-                StaticVariables.g_warpStepFlags_2 = 1;
+                StaticVariables.g_fadeStepFlags = 1;
                 break;
 
             case 4:
@@ -911,10 +911,10 @@ public class GameEngine
                 StaticVariables.g_targetFadeColorR = 0;
                 StaticVariables.g_targetFadeColorG = 0;
                 StaticVariables.g_targetFadeColorB = 0;
-                StaticVariables.g_warpStepFlags_2 = 1;
+                StaticVariables.g_fadeStepFlags = 1;
                 ApplyScreenFade(1, 8);
                 StaticVariables.g_fadeColorStepB >>= 1;
-                StaticVariables.g_warpColorStepG >>= 1;
+                StaticVariables.g_fadeColorStepG >>= 1;
                 return;
 
             case 5:
@@ -935,7 +935,7 @@ public class GameEngine
                 StaticVariables.g_targetFadeColorR = 0;
                 StaticVariables.g_targetFadeColorG = 0;
                 StaticVariables.g_targetFadeColorB = 0;
-                StaticVariables.g_warpStepFlags_2 = 1;
+                StaticVariables.g_fadeStepFlags = 1;
                 break;
 
             case 8:
@@ -945,7 +945,7 @@ public class GameEngine
                 StaticVariables.g_targetFadeColorR = 0;
                 StaticVariables.g_targetFadeColorG = 0;
                 StaticVariables.g_targetFadeColorB = 0;
-                StaticVariables.g_warpStepFlags_2 = 1;
+                StaticVariables.g_fadeStepFlags = 1;
                 ApplyScreenFade(2, 0x3c);
                 StaticVariables.g_fadeColorStepB = StaticVariables.g_fadeColorStepR << 2;
                 return;
@@ -962,10 +962,10 @@ public class GameEngine
 
     public void BeginFadeEffect(int fadeTPageIndex, int fadeDuration)
     {
-        if (StaticVariables.g_warpStepFlags_2 == 0)
+        if (StaticVariables.g_fadeStepFlags == 0)
         {
             StaticVariables.g_fadeColorStepR = 0;
-            StaticVariables.g_warpColorStepG = 0;
+            StaticVariables.g_fadeColorStepG = 0;
             StaticVariables.g_fadeColorStepB = 0;
             StaticVariables.g_currentFadeColorB = StaticVariables.g_targetFadeColorB;
             StaticVariables.g_currentFadeColorG = StaticVariables.g_targetFadeColorG;
@@ -986,7 +986,7 @@ public class GameEngine
                 //Trap(0x1800);
             }
 
-            StaticVariables.g_warpColorStepG = (StaticVariables.g_targetFadeColorG - StaticVariables.g_currentFadeColorG) / fadeDuration;
+            StaticVariables.g_fadeColorStepG = (StaticVariables.g_targetFadeColorG - StaticVariables.g_currentFadeColorG) / fadeDuration;
             if (fadeDuration == 0)
             {
                 //Trap(0x1c00);
@@ -1012,41 +1012,41 @@ public class GameEngine
     {
         if (StaticVariables.g_warpFlags == 0)
         {
-            StaticVariables.g_playerStepZ = 0;
-            StaticVariables.g_playerStepY = 0;
-            StaticVariables.g_playerStepX = 0;
-            StaticVariables.g_playerLastX = StaticVariables.g_playerStartX;
-            StaticVariables.g_playerLastY = StaticVariables.g_playerStartY;
-            StaticVariables.g_playerLastZ = StaticVariables.g_playerStartZ;
+            StaticVariables.g_warpFadeColorB_Step = 0;
+            StaticVariables.g_warpFadeColorG_Step = 0;
+            StaticVariables.g_warpFadeColorR_Step = 0;
+            StaticVariables.g_warpFadeColorR = StaticVariables.g_warpFadeColorR_Target;
+            StaticVariables.g_warpFadeColorG = StaticVariables.g_warpFadeColorG_Target;
+            StaticVariables.g_warpFadeColorB = StaticVariables.g_warpFadeColorB_Target;
         }
         else
         {
-            StaticVariables.g_playerStepX = (StaticVariables.g_playerStartX - StaticVariables.g_playerLastX) / fadeDuration;
+            StaticVariables.g_warpFadeColorR_Step = (StaticVariables.g_warpFadeColorR_Target - StaticVariables.g_warpFadeColorR) / fadeDuration;
             if (fadeDuration == 0)
             {
                 //Trap(0x1c00);
             }
-            if (fadeDuration == -1 && StaticVariables.g_playerStartX - StaticVariables.g_playerLastX == -0x80000000)
+            if (fadeDuration == -1 && StaticVariables.g_warpFadeColorR_Target - StaticVariables.g_warpFadeColorR == -0x80000000)
             {
                 //Trap(0x1800);
             }
 
-            StaticVariables.g_playerStepY = (StaticVariables.g_playerStartY - StaticVariables.g_playerLastY) / fadeDuration;
+            StaticVariables.g_warpFadeColorG_Step = (StaticVariables.g_warpFadeColorG_Target - StaticVariables.g_warpFadeColorG) / fadeDuration;
             if (fadeDuration == 0)
             {
                 //Trap(0x1c00);
             }
-            if (fadeDuration == -1 && StaticVariables.g_playerStartY - StaticVariables.g_playerLastY == -0x80000000)
+            if (fadeDuration == -1 && StaticVariables.g_warpFadeColorG_Target - StaticVariables.g_warpFadeColorG == -0x80000000)
             {
                 //Trap(0x1800);
             }
 
-            StaticVariables.g_playerStepZ = (StaticVariables.g_playerStartZ - StaticVariables.g_playerLastZ) / fadeDuration;
+            StaticVariables.g_warpFadeColorB_Step = (StaticVariables.g_warpFadeColorB_Target - StaticVariables.g_warpFadeColorB) / fadeDuration;
             if (fadeDuration == 0)
             {
                 //Trap(0x1c00);
             }
-            if (fadeDuration == -1 && StaticVariables.g_playerStartZ - StaticVariables.g_playerLastZ == -0x80000000)
+            if (fadeDuration == -1 && StaticVariables.g_warpFadeColorB_Target - StaticVariables.g_warpFadeColorB == -0x80000000)
             {
                 //Trap(0x1800);
             }
@@ -1124,7 +1124,7 @@ public class GameEngine
         StaticVariables.g_mapOffsetX = 0;
         StaticVariables.g_mapOffsetY = 0;
         StaticVariables.g_fadeFrameCounter = 0;
-        StaticVariables.g_warpStepFlags_2 = 0;
+        StaticVariables.g_fadeStepFlags = 0;
         StaticVariables.g_warpFlags = 0;
 
         switch (warpType)
@@ -1186,7 +1186,7 @@ public class GameEngine
         StaticVariables.g_currentFadeColorR = 0;
         StaticVariables.g_currentFadeColorG = 0;
         StaticVariables.g_currentFadeColorB = 0;
-        StaticVariables.g_warpStepFlags_2 = 1;
+        StaticVariables.g_fadeStepFlags = 1;
         ApplyScreenFade(2, 300);
     }
 
@@ -1242,10 +1242,10 @@ public class GameEngine
         StaticVariables.g_currentFadeColorB = 0;
         StaticVariables.g_targetFadeColorB = 0;
         StaticVariables.g_fadeFrameCounter = 1;
-        StaticVariables.g_warpStepFlags_2 = 1;
-        StaticVariables.g_playerStartZ = 0;
-        StaticVariables.g_playerStartY = 0;
-        StaticVariables.g_playerStartX = 0;
+        StaticVariables.g_fadeStepFlags = 1;
+        StaticVariables.g_warpFadeColorB_Target = 0;
+        StaticVariables.g_warpFadeColorG_Target = 0;
+        StaticVariables.g_warpFadeColorR_Target = 0;
         ApplyScreenFade(2, 0xb4);
     }
 
@@ -1305,12 +1305,12 @@ public class GameEngine
 
         } while (iVar6 < 0xf);
 
-        StaticVariables.g_playerLastY = 0xff0000;
-        StaticVariables.g_playerLastX = 0xff0000;
-        StaticVariables.g_playerLastZ = 0;
-        StaticVariables.g_playerStartZ = 0;
-        StaticVariables.g_playerStartY = 0;
-        StaticVariables.g_playerStartX = 0;
+        StaticVariables.g_warpFadeColorG = 0xff0000;
+        StaticVariables.g_warpFadeColorR = 0xff0000;
+        StaticVariables.g_warpFadeColorB = 0;
+        StaticVariables.g_warpFadeColorB_Target = 0;
+        StaticVariables.g_warpFadeColorG_Target = 0;
+        StaticVariables.g_warpFadeColorR_Target = 0;
         StaticVariables.g_warpFlags = 1;
         StaticVariables.g_targetFadeColorG = 0xff0000;
         StaticVariables.g_targetFadeColorB = 0xff0000;
@@ -1319,7 +1319,7 @@ public class GameEngine
         StaticVariables.g_currentFadeColorB = 0;
         StaticVariables.g_targetFadeColorR = 0;
         StaticVariables.g_fadeFrameCounter = 1;
-        StaticVariables.g_warpStepFlags_2 = 1;
+        StaticVariables.g_fadeStepFlags = 1;
         ApplyScreenFade(2, 100);
     }
 
@@ -1350,10 +1350,10 @@ public class GameEngine
         StaticVariables.g_currentFadeColorG = 0;
         StaticVariables.g_currentFadeColorB = 0;
         StaticVariables.g_fadeFrameCounter = 1;
-        StaticVariables.g_warpStepFlags_2 = 1;
-        StaticVariables.g_playerStartZ = 0;
-        StaticVariables.g_playerStartY = 0;
-        StaticVariables.g_playerStartX = 0;
+        StaticVariables.g_fadeStepFlags = 1;
+        StaticVariables.g_warpFadeColorB_Target = 0;
+        StaticVariables.g_warpFadeColorG_Target = 0;
+        StaticVariables.g_warpFadeColorR_Target = 0;
         ApplyScreenFade(2, 0x1e);
     }
 
@@ -1366,7 +1366,7 @@ public class GameEngine
         StaticVariables.g_currentFadeColorR = 0;
         StaticVariables.g_currentFadeColorG = 0;
         StaticVariables.g_currentFadeColorB = 0;
-        StaticVariables.g_warpStepFlags_2 = 1;
+        StaticVariables.g_fadeStepFlags = 1;
         ApplyScreenFade(2,0x10);
     }
 
@@ -1379,7 +1379,7 @@ public class GameEngine
         StaticVariables.g_currentFadeColorR = 0;
         StaticVariables.g_currentFadeColorG = 0;
         StaticVariables.g_currentFadeColorB = 0;
-        StaticVariables.g_warpStepFlags_2 = 1;
+        StaticVariables.g_fadeStepFlags = 1;
         ApplyScreenFade(1, 0x10);
     }
 
@@ -1431,13 +1431,13 @@ public class GameEngine
         StaticVariables.g_targetFadeColorG = 0x400000;
         StaticVariables.g_targetFadeColorB = 0x200000;
         StaticVariables.g_fadeFrameCounter = 1;
-        StaticVariables.g_warpStepFlags_2 = 1;
+        StaticVariables.g_fadeStepFlags = 1;
         StaticVariables.g_currentFadeColorR = 0;
         StaticVariables.g_currentFadeColorG = 0;
         StaticVariables.g_currentFadeColorB = 0;
-        StaticVariables.g_playerStartZ = 0xff0000;
-        StaticVariables.g_playerStartY = 0xff0000;
-        StaticVariables.g_playerStartX = 0xff0000;
+        StaticVariables.g_warpFadeColorB_Target = 0xff0000;
+        StaticVariables.g_warpFadeColorG_Target = 0xff0000;
+        StaticVariables.g_warpFadeColorR_Target = 0xff0000;
         ApplyScreenFade(1, 0x50);
     }
 
@@ -2099,10 +2099,13 @@ public class GameEngine
             //Debug.WriteLine(startX,startY,sizeX,sizeY,distX,distY);
         }
 
-        if (0x34 < startX + sizeX
-            || 0x3c < startY + sizeY
-            || 0x34 < distX + sizeX
-            || 0x3c < distY + sizeY)
+        var mapWidth = CurrentMap.Map.Width;
+        var mapHeight = CurrentMap.Map.Height;
+
+        if (mapWidth < startX + sizeX
+            || mapHeight < startY + sizeY
+            || mapWidth < distX + sizeX
+            || mapHeight < distY + sizeY)
         {
             Debugger.Break();
             //Debug.WriteLine(startX,startY,sizeX,sizeY,distX,distY);
@@ -2113,7 +2116,6 @@ public class GameEngine
         if (0 < sizeY)
         {
             var map = CurrentMap.Map;
-            var mapWidth = CurrentMap.Map.Width;
 
             do
             {
@@ -2133,10 +2135,11 @@ public class GameEngine
 
                         if (tileSource.WallTiles != null)
                         {
-                            if (tileSource.WallTiles.Tiles.Length != (tileDestination.WallTiles?.Tiles?.Length ?? 0))
-                            {
-                                //Debugger.Break();
-                            }
+                            //override in original source code
+                            //if (tileSource.WallTiles.Tiles.Length != (tileDestination.WallTiles?.Tiles?.Length ?? 0))
+                            //{
+                            //    Debugger.Break();
+                            //}
 
                             int length = Math.Min(tileSource.WallTiles.Tiles.Length, tileDestination.WallTiles.Tiles.Length);
 

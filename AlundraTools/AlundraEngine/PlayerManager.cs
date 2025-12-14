@@ -3027,8 +3027,10 @@ public class PlayerManager
                             // Vérifier si la hauteur de la boîte de collision croise la hauteur de l'effet
                             var tileEffectZ = (tile.Height & 0xFF) << 20;
 
-                            if (_gameEngine.StaticVariables.PlayerEntity.HitBoxZ <= tileEffectZ + 0x80000 &&
-                                tileEffectZ + 0x80000 <= _gameEngine.StaticVariables.PlayerEntity.HitBoxZ + _gameEngine.StaticVariables.PlayerEntity.CollisionHeight)
+                            Debugger.Break();
+
+                            if (_gameEngine.StaticVariables.PlayerEntity.HitBoxZ <= tileEffectZ + 0x80000 
+                                && tileEffectZ + 0x80000 <= _gameEngine.StaticVariables.PlayerEntity.HitBoxZ + _gameEngine.StaticVariables.PlayerEntity.CollisionHeight)
                             {
                                 // Désactiver l'effet pour éviter de le déclencher plusieurs fois
                                 //TODO
@@ -3041,7 +3043,7 @@ public class PlayerManager
 
                                 _gameEngine.EffectManager.CreateEffectEntity(
                                     0,
-                                    _gameEngine.CurrentMap.Info.F,
+                                    _gameEngine.CurrentMap.Info.F, //_gameEngine.CurrentMap.Info.C
                                     0,
                                     effectX,
                                     effectY,

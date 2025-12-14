@@ -61,13 +61,13 @@ public static class FrameSnapshotLoader
         frameSnapshot.WarpDelayFrames = dump.g_warpDelayFrames;
         frameSnapshot.PlayerControlFlags = dump.g_playerControlFlags;
         frameSnapshot.IsWarpDisabled = dump.g_isWarpDisabled;
-        frameSnapshot.WarpType = dump.g_warpType;
+        frameSnapshot.MapTransitionEffectId = dump.g_mapTransitionEffectId;
         frameSnapshot.DesiredMap = dump.g_desiredMap;
         frameSnapshot.WarpTriggerType = dump.g_warpTriggerType;
         frameSnapshot.WarpExtraParam = dump.g_warpExtraParam;
         frameSnapshot.CameraTargetX = dump.g_cameraTargetX;
         frameSnapshot.CameraTargetY = dump.g_cameraTargetY;
-        frameSnapshot.AnimationId = dump.g_animationId;
+        frameSnapshot.CameraTargetZ = dump.g_cameraTargetZ;
         frameSnapshot.CurrentMap = dump.g_currentMap;
         frameSnapshot.IsCameraScrolling = dump.g_isCameraScrolling;
         frameSnapshot.CameraScrollingX = dump.g_cameraScrollingX;
@@ -135,12 +135,12 @@ public static class FrameSnapshotLoader
         frameSnapshot.PlayerStartX = dump.g_playerStartX;
         frameSnapshot.PlayerStartY = dump.g_playerStartY;
         frameSnapshot.PlayerStartZ = dump.g_playerStartZ;
-        frameSnapshot.CameraDeltaX = dump.g_cameraDeltaX;
-        frameSnapshot.CameraDeltaY = dump.g_cameraDeltaY;
-        frameSnapshot.CameraCurrentX = dump.g_cameraCurrentX;
-        frameSnapshot.CameraCurrentY = dump.g_cameraCurrentY;
-        frameSnapshot.CameraX = dump.g_cameraX;
-        frameSnapshot.CameraY = dump.g_cameraY;
+        frameSnapshot.HudDeltaX = dump.g_hudDeltaX;
+        frameSnapshot.HudDeltaY = dump.g_hudDeltaY;
+        frameSnapshot.HudCurrentX = dump.g_hudCurrentX;
+        frameSnapshot.HudCurrentY = dump.g_hudCurrentY;
+        frameSnapshot.HudX = dump.g_hudX;
+        frameSnapshot.HudY = dump.g_hudY;
 
         return frameSnapshot;
     }
@@ -174,13 +174,13 @@ public static class FrameSnapshotLoader
         public int g_warpDelayFrames { get; set; }
         public uint g_playerControlFlags { get; set; }
         public int g_isWarpDisabled { get; set; }
-        public int g_warpType { get; set; }
+        public int g_mapTransitionEffectId { get; set; }
         public int g_desiredMap { get; set; }
         public int g_warpTriggerType { get; set; }
         public int g_warpExtraParam { get; set; }
         public int g_cameraTargetX { get; set; }
         public int g_cameraTargetY { get; set; }
-        public int g_animationId { get; set; }
+        public int g_cameraTargetZ { get; set; }
         public int g_currentMap { get; set; }
         public int g_isCameraScrolling { get; set; }
         public int g_cameraScrollingX { get; set; }
@@ -217,12 +217,12 @@ public static class FrameSnapshotLoader
         public int g_playerStartX { get; set; }
         public int g_playerStartY { get; set; }
         public int g_playerStartZ { get; set; }
-        public int g_cameraDeltaX { get; set; }
-        public int g_cameraDeltaY { get; set; }
-        public int g_cameraCurrentX { get; set; }
-        public int g_cameraCurrentY { get; set; }
-        public int g_cameraX { get; set; }
-        public int g_cameraY { get; set; }
+        public int g_hudDeltaX { get; set; }
+        public int g_hudDeltaY { get; set; }
+        public int g_hudCurrentX { get; set; }
+        public int g_hudCurrentY { get; set; }
+        public int g_hudX { get; set; }
+        public int g_hudY { get; set; }
     }
 
     private class EntityJson

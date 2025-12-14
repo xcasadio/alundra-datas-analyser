@@ -1935,15 +1935,11 @@ public class EntityEventHandlers
             tiley = 0x3b;
         }
 
-        //_gameEngine.StaticVariables.g_spriteVRAMPointer[uVar2 * 0xd0 + uVar1 * 4 + 0x302] =
-        //_gameEngine.StaticVariables.g_spriteVRAMPointer[uVar2 * 0xd0 + uVar1 * 4 + 0x302] | (ushort)variables[3] + (ushort)variables[4] * 0x100;
-        var walkabilitybits = variables[3];
-        var groundpropertybits = variables[4];
         var mapWidth = _gameEngine.CurrentMap.Map.Width;
         var tile = _gameEngine.CurrentMap.Map.MapTiles[tilex + tiley * mapWidth];
 
-        tile.Walkability |= (byte)walkabilitybits;
-        tile.GroundProperty |= (byte)groundpropertybits;
+        tile.Walkability |= (byte)variables[3];
+        tile.GroundProperty |= (byte)variables[4];
 
         return 5;
     }
@@ -1973,15 +1969,11 @@ public class EntityEventHandlers
             tiley = 0x3b;
         }
 
-        //_gameEngine.StaticVariables.g_spriteVRAMPointer[uVar2 * 0xd0 + uVar1 * 4 + 0x302] =
-        //_gameEngine.StaticVariables.g_spriteVRAMPointer[uVar2 * 0xd0 + uVar1 * 4 + 0x302] & ~variables[3];
-        var walkabilitybits = variables[3];
-        var groundpropertybits = variables[4];
         var mapWidth = _gameEngine.CurrentMap.Map.Width;
         var tile = _gameEngine.CurrentMap.Map.MapTiles[tilex + tiley * mapWidth];
 
-        tile.Walkability &= (byte)~walkabilitybits;
-        tile.GroundProperty &= (byte)~groundpropertybits;
+        tile.Walkability &= (byte)~variables[3];
+        tile.GroundProperty &= (byte)~variables[4];
 
         return 5;
     }
@@ -3397,63 +3389,47 @@ public class EntityEventHandlers
     private int Script_158_09E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
-        return 0;
-        /*
-        int iVar1;
 
-        ushort* puVar2;
+        MapTile mapTile;
+        int x;
+        int y;
+        int count;
 
-        int iVar3;
+        y = 0;
+        count = 0;
+        var x1 = variables[1];
+        var y1 = variables[2];
+        var x2 = variables[3];
+        var y2 = variables[4];
+        var mapWidth = _gameEngine.CurrentMap.Map.Width;
 
-        int iVar4;
-
-        int iVar5;
-
-        iVar4 = 0;
-
-        iVar1 = variables;
-
-        iVar5 = 0;
-
-        if (iVar1 + 4 != 0)
+        if (y2 != 0)
         {
             do
             {
-                iVar3 = 0;
+                x = 0;
+                mapTile = _gameEngine.CurrentMap.Map.MapTiles[(y1 + y) * mapWidth + x1]; //x1 - 2
 
-                puVar2 = _gameEngine.StaticVariables.g_spriteVRAMPointer + (iVar1 + 2 + iVar4) * 0xd0 + (iVar1 + 1) * 4 + 0x302;
-
-                if (iVar1 + 3 != 0)
+                if (x2 != 0)
                 {
                     do
                     {
-                        if ((puVar2 & 2) != 0)
+                        if ((mapTile.Walkability & 2) != 0)
                         {
-                            iVar5 = iVar5 + 1;
+                            count = count + 1;
                         }
 
-                        iVar3 = iVar3 + 1;
-
-                        puVar2 = puVar2 + 4;
-                    } while (iVar3 < iVar1 + 3);
+                        x = x + 1;
+                    } while (x < x2);
                 }
 
-                iVar4 = iVar4 + 1;
-            } while (iVar4 < iVar1 + 4);
-
-            iVar1 = variables;
+                y = y + 1;
+            } while (y < y2);
         }
 
-        if (iVar5 < iVar1 + 5)
-        {
-            eventProgramState.Result = 0;
-        }
-        else
-        {
-            eventProgramState.Result = 1;
-        }
+        eventProgramState.Result = count < variables[5] ? 0 : 1;
 
-        return 6;*/
+        return 6;
     }
 
     // 80040C80
@@ -3499,14 +3475,14 @@ public class EntityEventHandlers
     // 80040D60
     private int Script_160_0A0(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var effectid = variables[1];
+        var effectId = variables[1];
         var x = ((variables[3] << 8) | variables[2]) << 16;
         var y = ((variables[5] << 8) | variables[4]) << 16;
         var z = ((variables[7] << 8) | variables[6]) << 16;
 
         foreach (var effect in _gameEngine.StaticVariables.g_effectSlots)
         {
-            if (effect.Status != 0 && effect.MapEffectId == effectid)
+            if (effect.Status != 0 && effect.MapEffectId == effectId)
             {
                 effect.X += x;
                 effect.Y += y;
@@ -3619,18 +3595,8 @@ public class EntityEventHandlers
     // 80041144
     private int Script_168_0A8(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        eventProgramState.Result = _gameEngine.CdManager.IsSoundDriverReady() ? 1 : 0;
         return 1;
-        /*
-        bool bVar1;
-
-        undefined3 extraout_var;
-
-        bVar1 = _gameEngine.IsSoundDriverReady();
-
-        eventProgramState.Result = _gameEngine.CONCAT31(extraout_var, bVar1);
-
-        return 1;*/
     }
 
     // 80041174
@@ -3809,7 +3775,7 @@ public class EntityEventHandlers
         _gameEngine.StaticVariables.g_targetFadeColorG = variables[2] << 16;
         _gameEngine.StaticVariables.g_targetFadeColorR = variables[3] << 16;
         _gameEngine.StaticVariables.g_fadeFrameCounter = variables[6];
-        _gameEngine.StaticVariables.g_warpStepFlags_2 = 1;
+        _gameEngine.StaticVariables.g_fadeStepFlags = 1;
         _gameEngine.BeginFadeEffect(variables[4], variables[5]);
 
         return 7;
@@ -3818,9 +3784,9 @@ public class EntityEventHandlers
     // 80041570
     private int Script_176_0B0(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.StaticVariables.g_playerStartX = variables[1] << 16;
-        _gameEngine.StaticVariables.g_playerStartY = variables[2] << 16;
-        _gameEngine.StaticVariables.g_playerStartZ = variables[3] << 16;
+        _gameEngine.StaticVariables.g_warpFadeColorR_Target = variables[1] << 16;
+        _gameEngine.StaticVariables.g_warpFadeColorG_Target = variables[2] << 16;
+        _gameEngine.StaticVariables.g_warpFadeColorB_Target = variables[3] << 16;
         _gameEngine.StaticVariables.g_warpFlags = 1;
         _gameEngine.SetFadeDuration(variables[4]);
 
@@ -3830,7 +3796,7 @@ public class EntityEventHandlers
     // 800415E8
     private int Script_177_0B1(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        if (_gameEngine.StaticVariables.g_warpStepFlags_2 == 0 && _gameEngine.StaticVariables.g_warpFlags == 0)
+        if (_gameEngine.StaticVariables.g_fadeStepFlags == 0 && _gameEngine.StaticVariables.g_warpFlags == 0)
         {
             eventProgramState.Result = 1;
         }

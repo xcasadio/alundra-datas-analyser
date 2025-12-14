@@ -199,6 +199,8 @@
             buttonGameMapHeader = new Button();
             propertyGridGameMapHeader = new PropertyGrid();
             tabPage1 = new TabPage();
+            imageViewerTileSheet = new AlundraTools.GameControls.CustomControl.ImageViewerControl();
+            imageViewerSpriteSheet = new AlundraTools.GameControls.CustomControl.ImageViewerControl();
             imageViewerScrollingSpriteSheet = new AlundraTools.GameControls.CustomControl.ImageViewerControl();
             label69 = new Label();
             listViewSpriteMapEntries = new ListView();
@@ -257,8 +259,6 @@
             checkBoxDebug = new CheckBox();
             imageViewerMap = new AlundraTools.CustomControls.ImageViewerControl();
             saveFileDialog1 = new SaveFileDialog();
-            imageViewerSpriteSheet = new AlundraTools.GameControls.CustomControl.ImageViewerControl();
-            imageViewerTileSheet = new AlundraTools.GameControls.CustomControl.ImageViewerControl();
             ((System.ComponentModel.ISupportInitialize)pctMapPalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctSpritePalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctAnim).BeginInit();
@@ -285,29 +285,29 @@
             // 
             lstGameMaps.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             lstGameMaps.FormattingEnabled = true;
-            lstGameMaps.Location = new Point(24, 122);
-            lstGameMaps.Margin = new Padding(7, 6, 7, 6);
+            lstGameMaps.Location = new Point(13, 57);
+            lstGameMaps.Margin = new Padding(4, 3, 4, 3);
             lstGameMaps.Name = "lstGameMaps";
-            lstGameMaps.Size = new Size(322, 1604);
+            lstGameMaps.Size = new Size(175, 769);
             lstGameMaps.TabIndex = 0;
             lstGameMaps.SelectedIndexChanged += lstGameMaps_SelectedIndexChanged;
             // 
             // lstMapPalettes
             // 
             lstMapPalettes.FormattingEnabled = true;
-            lstMapPalettes.Location = new Point(13, 47);
-            lstMapPalettes.Margin = new Padding(7, 6, 7, 6);
+            lstMapPalettes.Location = new Point(7, 22);
+            lstMapPalettes.Margin = new Padding(4, 3, 4, 3);
             lstMapPalettes.Name = "lstMapPalettes";
-            lstMapPalettes.Size = new Size(149, 292);
+            lstMapPalettes.Size = new Size(82, 139);
             lstMapPalettes.TabIndex = 1;
             lstMapPalettes.SelectedIndexChanged += lstMapPalettes_SelectedIndexChanged;
             // 
             // pctMapPalettes
             // 
-            pctMapPalettes.Location = new Point(180, 47);
-            pctMapPalettes.Margin = new Padding(7, 6, 7, 6);
+            pctMapPalettes.Location = new Point(97, 22);
+            pctMapPalettes.Margin = new Padding(4, 3, 4, 3);
             pctMapPalettes.Name = "pctMapPalettes";
-            pctMapPalettes.Size = new Size(199, 299);
+            pctMapPalettes.Size = new Size(107, 140);
             pctMapPalettes.TabIndex = 2;
             pctMapPalettes.TabStop = false;
             pctMapPalettes.Paint += pctMapPalettes_Paint;
@@ -316,19 +316,19 @@
             // lstSpritePalettes
             // 
             lstSpritePalettes.FormattingEnabled = true;
-            lstSpritePalettes.Location = new Point(392, 47);
-            lstSpritePalettes.Margin = new Padding(7, 6, 7, 6);
+            lstSpritePalettes.Location = new Point(211, 22);
+            lstSpritePalettes.Margin = new Padding(4, 3, 4, 3);
             lstSpritePalettes.Name = "lstSpritePalettes";
-            lstSpritePalettes.Size = new Size(149, 292);
+            lstSpritePalettes.Size = new Size(82, 139);
             lstSpritePalettes.TabIndex = 16;
             lstSpritePalettes.SelectedIndexChanged += lstSpritePalettes_SelectedIndexChanged;
             // 
             // pctSpritePalettes
             // 
-            pctSpritePalettes.Location = new Point(559, 47);
-            pctSpritePalettes.Margin = new Padding(7, 6, 7, 6);
+            pctSpritePalettes.Location = new Point(301, 22);
+            pctSpritePalettes.Margin = new Padding(4, 3, 4, 3);
             pctSpritePalettes.Name = "pctSpritePalettes";
-            pctSpritePalettes.Size = new Size(199, 299);
+            pctSpritePalettes.Size = new Size(107, 140);
             pctSpritePalettes.TabIndex = 17;
             pctSpritePalettes.TabStop = false;
             pctSpritePalettes.Paint += pctSpritePalettes_Paint;
@@ -338,199 +338,199 @@
             // 
             lstPortals.FormattingEnabled = true;
             lstPortals.HorizontalScrollbar = true;
-            lstPortals.Location = new Point(7, 45);
-            lstPortals.Margin = new Padding(7, 6, 7, 6);
+            lstPortals.Location = new Point(4, 21);
+            lstPortals.Margin = new Padding(4, 3, 4, 3);
             lstPortals.Name = "lstPortals";
-            lstPortals.Size = new Size(188, 804);
+            lstPortals.Size = new Size(103, 379);
             lstPortals.TabIndex = 48;
             lstPortals.SelectedIndexChanged += lstPortals_SelectedIndexChanged;
             // 
             // lblportalx1
             // 
             lblportalx1.AutoSize = true;
-            lblportalx1.Location = new Point(273, 62);
-            lblportalx1.Margin = new Padding(7, 0, 7, 0);
+            lblportalx1.Location = new Point(147, 29);
+            lblportalx1.Margin = new Padding(4, 0, 4, 0);
             lblportalx1.Name = "lblportalx1";
-            lblportalx1.Size = new Size(27, 32);
+            lblportalx1.Size = new Size(13, 15);
             lblportalx1.TabIndex = 50;
             lblportalx1.Text = "0";
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(249, 62);
-            label6.Margin = new Padding(7, 0, 7, 0);
+            label6.Location = new Point(134, 29);
+            label6.Margin = new Padding(4, 0, 4, 0);
             label6.Name = "label6";
-            label6.Size = new Size(25, 32);
+            label6.Size = new Size(12, 15);
             label6.TabIndex = 49;
             label6.Text = "x";
             // 
             // lblportaly1
             // 
             lblportaly1.AutoSize = true;
-            lblportaly1.Location = new Point(357, 62);
-            lblportaly1.Margin = new Padding(7, 0, 7, 0);
+            lblportaly1.Location = new Point(192, 29);
+            lblportaly1.Margin = new Padding(4, 0, 4, 0);
             lblportaly1.Name = "lblportaly1";
-            lblportaly1.Size = new Size(27, 32);
+            lblportaly1.Size = new Size(13, 15);
             lblportaly1.TabIndex = 52;
             lblportaly1.Text = "0";
             // 
             // label10
             // 
             label10.AutoSize = true;
-            label10.Location = new Point(329, 62);
-            label10.Margin = new Padding(7, 0, 7, 0);
+            label10.Location = new Point(177, 29);
+            label10.Margin = new Padding(4, 0, 4, 0);
             label10.Name = "label10";
-            label10.Size = new Size(26, 32);
+            label10.Size = new Size(13, 15);
             label10.TabIndex = 51;
             label10.Text = "y";
             // 
             // lblportalmapid
             // 
             lblportalmapid.AutoSize = true;
-            lblportalmapid.Location = new Point(299, 126);
-            lblportalmapid.Margin = new Padding(7, 0, 7, 0);
+            lblportalmapid.Location = new Point(161, 59);
+            lblportalmapid.Margin = new Padding(4, 0, 4, 0);
             lblportalmapid.Name = "lblportalmapid";
-            lblportalmapid.Size = new Size(27, 32);
+            lblportalmapid.Size = new Size(13, 15);
             lblportalmapid.TabIndex = 54;
             lblportalmapid.Text = "0";
             // 
             // label14
             // 
             label14.AutoSize = true;
-            label14.Location = new Point(247, 126);
-            label14.Margin = new Padding(7, 0, 7, 0);
+            label14.Location = new Point(133, 59);
+            label14.Margin = new Padding(4, 0, 4, 0);
             label14.Name = "label14";
-            label14.Size = new Size(61, 32);
+            label14.Size = new Size(31, 15);
             label14.TabIndex = 53;
             label14.Text = "map";
             // 
             // lblportalu1
             // 
             lblportalu1.AutoSize = true;
-            lblportalu1.Location = new Point(273, 207);
-            lblportalu1.Margin = new Padding(7, 0, 7, 0);
+            lblportalu1.Location = new Point(147, 97);
+            lblportalu1.Margin = new Padding(4, 0, 4, 0);
             lblportalu1.Name = "lblportalu1";
-            lblportalu1.Size = new Size(27, 32);
+            lblportalu1.Size = new Size(13, 15);
             lblportalu1.TabIndex = 56;
             lblportalu1.Text = "0";
             // 
             // label16
             // 
             label16.AutoSize = true;
-            label16.Location = new Point(247, 207);
-            label16.Margin = new Padding(7, 0, 7, 0);
+            label16.Location = new Point(133, 97);
+            label16.Margin = new Padding(4, 0, 4, 0);
             label16.Name = "label16";
-            label16.Size = new Size(25, 32);
+            label16.Size = new Size(12, 15);
             label16.TabIndex = 55;
             label16.Text = "?";
             // 
             // lblportalu2
             // 
             lblportalu2.AutoSize = true;
-            lblportalu2.Location = new Point(273, 239);
-            lblportalu2.Margin = new Padding(7, 0, 7, 0);
+            lblportalu2.Location = new Point(147, 112);
+            lblportalu2.Margin = new Padding(4, 0, 4, 0);
             lblportalu2.Name = "lblportalu2";
-            lblportalu2.Size = new Size(27, 32);
+            lblportalu2.Size = new Size(13, 15);
             lblportalu2.TabIndex = 58;
             lblportalu2.Text = "0";
             // 
             // label22
             // 
             label22.AutoSize = true;
-            label22.Location = new Point(247, 239);
-            label22.Margin = new Padding(7, 0, 7, 0);
+            label22.Location = new Point(133, 112);
+            label22.Margin = new Padding(4, 0, 4, 0);
             label22.Name = "label22";
-            label22.Size = new Size(25, 32);
+            label22.Size = new Size(12, 15);
             label22.TabIndex = 57;
             label22.Text = "?";
             // 
             // lblportaly2
             // 
             lblportaly2.AutoSize = true;
-            lblportaly2.Location = new Point(357, 94);
-            lblportaly2.Margin = new Padding(7, 0, 7, 0);
+            lblportaly2.Location = new Point(192, 44);
+            lblportaly2.Margin = new Padding(4, 0, 4, 0);
             lblportaly2.Name = "lblportaly2";
-            lblportaly2.Size = new Size(27, 32);
+            lblportaly2.Size = new Size(13, 15);
             lblportaly2.TabIndex = 66;
             lblportaly2.Text = "0";
             // 
             // label24
             // 
             label24.AutoSize = true;
-            label24.Location = new Point(329, 94);
-            label24.Margin = new Padding(7, 0, 7, 0);
+            label24.Location = new Point(177, 44);
+            label24.Margin = new Padding(4, 0, 4, 0);
             label24.Name = "label24";
-            label24.Size = new Size(26, 32);
+            label24.Size = new Size(13, 15);
             label24.TabIndex = 65;
             label24.Text = "y";
             // 
             // lblportalx2
             // 
             lblportalx2.AutoSize = true;
-            lblportalx2.Location = new Point(273, 94);
-            lblportalx2.Margin = new Padding(7, 0, 7, 0);
+            lblportalx2.Location = new Point(147, 44);
+            lblportalx2.Margin = new Padding(4, 0, 4, 0);
             lblportalx2.Name = "lblportalx2";
-            lblportalx2.Size = new Size(27, 32);
+            lblportalx2.Size = new Size(13, 15);
             lblportalx2.TabIndex = 64;
             lblportalx2.Text = "0";
             // 
             // label26
             // 
             label26.AutoSize = true;
-            label26.Location = new Point(249, 94);
-            label26.Margin = new Padding(7, 0, 7, 0);
+            label26.Location = new Point(134, 44);
+            label26.Margin = new Padding(4, 0, 4, 0);
             label26.Name = "label26";
-            label26.Size = new Size(25, 32);
+            label26.Size = new Size(12, 15);
             label26.TabIndex = 63;
             label26.Text = "x";
             // 
             // lblportaldesty
             // 
             lblportaldesty.AutoSize = true;
-            lblportaldesty.Location = new Point(357, 158);
-            lblportaldesty.Margin = new Padding(7, 0, 7, 0);
+            lblportaldesty.Location = new Point(192, 74);
+            lblportaldesty.Margin = new Padding(4, 0, 4, 0);
             lblportaldesty.Name = "lblportaldesty";
-            lblportaldesty.Size = new Size(27, 32);
+            lblportaldesty.Size = new Size(13, 15);
             lblportaldesty.TabIndex = 70;
             lblportaldesty.Text = "0";
             // 
             // label28
             // 
             label28.AutoSize = true;
-            label28.Location = new Point(329, 158);
-            label28.Margin = new Padding(7, 0, 7, 0);
+            label28.Location = new Point(177, 74);
+            label28.Margin = new Padding(4, 0, 4, 0);
             label28.Name = "label28";
-            label28.Size = new Size(26, 32);
+            label28.Size = new Size(13, 15);
             label28.TabIndex = 69;
             label28.Text = "y";
             // 
             // lblportaldestx
             // 
             lblportaldestx.AutoSize = true;
-            lblportaldestx.Location = new Point(273, 158);
-            lblportaldestx.Margin = new Padding(7, 0, 7, 0);
+            lblportaldestx.Location = new Point(147, 74);
+            lblportaldestx.Margin = new Padding(4, 0, 4, 0);
             lblportaldestx.Name = "lblportaldestx";
-            lblportaldestx.Size = new Size(27, 32);
+            lblportaldestx.Size = new Size(13, 15);
             lblportaldestx.TabIndex = 68;
             lblportaldestx.Text = "0";
             // 
             // label30
             // 
             label30.AutoSize = true;
-            label30.Location = new Point(249, 158);
-            label30.Margin = new Padding(7, 0, 7, 0);
+            label30.Location = new Point(134, 74);
+            label30.Margin = new Padding(4, 0, 4, 0);
             label30.Name = "label30";
-            label30.Size = new Size(25, 32);
+            label30.Size = new Size(12, 15);
             label30.TabIndex = 67;
             label30.Text = "x";
             // 
             // btnPortal
             // 
-            btnPortal.Location = new Point(253, 341);
-            btnPortal.Margin = new Padding(7, 6, 7, 6);
+            btnPortal.Location = new Point(136, 160);
+            btnPortal.Margin = new Padding(4, 3, 4, 3);
             btnPortal.Name = "btnPortal";
-            btnPortal.Size = new Size(156, 53);
+            btnPortal.Size = new Size(84, 25);
             btnPortal.TabIndex = 71;
             btnPortal.Text = "follow portal";
             btnPortal.UseVisualStyleBackColor = true;
@@ -540,11 +540,11 @@
             // 
             lsvEntities.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             lsvEntities.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2, columnHeader3, columnHeader22, columnHeader4, columnHeader5, columnHeader6, columnHeader7, columnHeader8, columnHeader9, columnHeader10, columnHeader11, columnHeader12 });
-            lsvEntities.Location = new Point(7, 45);
-            lsvEntities.Margin = new Padding(7, 6, 7, 6);
+            lsvEntities.Location = new Point(4, 21);
+            lsvEntities.Margin = new Padding(4, 3, 4, 3);
             lsvEntities.MultiSelect = false;
             lsvEntities.Name = "lsvEntities";
-            lsvEntities.Size = new Size(1557, 292);
+            lsvEntities.Size = new Size(840, 139);
             lsvEntities.TabIndex = 73;
             lsvEntities.UseCompatibleStateImageBehavior = false;
             lsvEntities.View = View.Details;
@@ -617,200 +617,200 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(115, 934);
-            label2.Margin = new Padding(7, 0, 7, 0);
+            label2.Location = new Point(62, 438);
+            label2.Margin = new Padding(4, 0, 4, 0);
             label2.Name = "label2";
-            label2.Size = new Size(100, 32);
+            label2.Size = new Size(49, 15);
             label2.TabIndex = 74;
             label2.Text = "load evt";
             // 
             // lblSector1a
             // 
             lblSector1a.AutoSize = true;
-            lblSector1a.Location = new Point(277, 934);
-            lblSector1a.Margin = new Padding(7, 0, 7, 0);
+            lblSector1a.Location = new Point(149, 438);
+            lblSector1a.Margin = new Padding(4, 0, 4, 0);
             lblSector1a.Name = "lblSector1a";
-            lblSector1a.Size = new Size(27, 32);
+            lblSector1a.Size = new Size(13, 15);
             lblSector1a.TabIndex = 76;
             lblSector1a.Text = "0";
             // 
             // lblSector1b
             // 
             lblSector1b.AutoSize = true;
-            lblSector1b.Location = new Point(277, 992);
-            lblSector1b.Margin = new Padding(7, 0, 7, 0);
+            lblSector1b.Location = new Point(149, 465);
+            lblSector1b.Margin = new Padding(4, 0, 4, 0);
             lblSector1b.Name = "lblSector1b";
-            lblSector1b.Size = new Size(27, 32);
+            lblSector1b.Size = new Size(13, 15);
             lblSector1b.TabIndex = 78;
             lblSector1b.Text = "0";
             // 
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(115, 992);
-            label12.Margin = new Padding(7, 0, 7, 0);
+            label12.Location = new Point(62, 465);
+            label12.Margin = new Padding(4, 0, 4, 0);
             label12.Name = "label12";
-            label12.Size = new Size(101, 32);
+            label12.Size = new Size(50, 15);
             label12.TabIndex = 77;
             label12.Text = "map evt";
             // 
             // lblSector1c
             // 
             lblSector1c.AutoSize = true;
-            lblSector1c.Location = new Point(277, 1052);
-            lblSector1c.Margin = new Padding(7, 0, 7, 0);
+            lblSector1c.Location = new Point(149, 493);
+            lblSector1c.Margin = new Padding(4, 0, 4, 0);
             lblSector1c.Name = "lblSector1c";
-            lblSector1c.Size = new Size(27, 32);
+            lblSector1c.Size = new Size(13, 15);
             lblSector1c.TabIndex = 80;
             lblSector1c.Text = "0";
             // 
             // label17
             // 
             label17.AutoSize = true;
-            label17.Location = new Point(115, 1052);
-            label17.Margin = new Padding(7, 0, 7, 0);
+            label17.Location = new Point(62, 493);
+            label17.Margin = new Padding(4, 0, 4, 0);
             label17.Name = "label17";
-            label17.Size = new Size(116, 32);
+            label17.Size = new Size(57, 15);
             label17.TabIndex = 79;
             label17.Text = "frame evt";
             // 
             // lblSector1d
             // 
             lblSector1d.AutoSize = true;
-            lblSector1d.Location = new Point(277, 1109);
-            lblSector1d.Margin = new Padding(7, 0, 7, 0);
+            lblSector1d.Location = new Point(149, 520);
+            lblSector1d.Margin = new Padding(4, 0, 4, 0);
             lblSector1d.Name = "lblSector1d";
-            lblSector1d.Size = new Size(27, 32);
+            lblSector1d.Size = new Size(13, 15);
             lblSector1d.TabIndex = 82;
             lblSector1d.Text = "0";
             // 
             // label21
             // 
             label21.AutoSize = true;
-            label21.Location = new Point(115, 1109);
-            label21.Margin = new Padding(7, 0, 7, 0);
+            label21.Location = new Point(62, 520);
+            label21.Margin = new Padding(4, 0, 4, 0);
             label21.Name = "label21";
-            label21.Size = new Size(115, 32);
+            label21.Size = new Size(57, 15);
             label21.TabIndex = 81;
             label21.Text = "touch evt";
             // 
             // lblSector1f
             // 
             lblSector1f.AutoSize = true;
-            lblSector1f.Location = new Point(279, 1233);
-            lblSector1f.Margin = new Padding(7, 0, 7, 0);
+            lblSector1f.Location = new Point(150, 578);
+            lblSector1f.Margin = new Padding(4, 0, 4, 0);
             lblSector1f.Name = "lblSector1f";
-            lblSector1f.Size = new Size(27, 32);
+            lblSector1f.Size = new Size(13, 15);
             lblSector1f.TabIndex = 86;
             lblSector1f.Text = "0";
             // 
             // label25
             // 
             label25.AutoSize = true;
-            label25.Location = new Point(115, 1233);
-            label25.Margin = new Padding(7, 0, 7, 0);
+            label25.Location = new Point(62, 578);
+            label25.Margin = new Padding(4, 0, 4, 0);
             label25.Name = "label25";
-            label25.Size = new Size(134, 32);
+            label25.Size = new Size(66, 15);
             label25.TabIndex = 85;
             label25.Text = "interact evt";
             // 
             // lblSector1e
             // 
             lblSector1e.AutoSize = true;
-            lblSector1e.Location = new Point(277, 1171);
-            lblSector1e.Margin = new Padding(7, 0, 7, 0);
+            lblSector1e.Location = new Point(149, 549);
+            lblSector1e.Margin = new Padding(4, 0, 4, 0);
             lblSector1e.Name = "lblSector1e";
-            lblSector1e.Size = new Size(27, 32);
+            lblSector1e.Size = new Size(13, 15);
             lblSector1e.TabIndex = 84;
             lblSector1e.Text = "0";
             // 
             // label29
             // 
             label29.AutoSize = true;
-            label29.Location = new Point(115, 1171);
-            label29.Margin = new Padding(7, 0, 7, 0);
+            label29.Location = new Point(62, 549);
+            label29.Margin = new Padding(4, 0, 4, 0);
             label29.Name = "label29";
-            label29.Size = new Size(163, 32);
+            label29.Size = new Size(80, 15);
             label29.TabIndex = 83;
             label29.Text = "deactivate evt";
             // 
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(7, 6);
-            label8.Margin = new Padding(7, 0, 7, 0);
+            label8.Location = new Point(4, 3);
+            label8.Margin = new Padding(4, 0, 4, 0);
             label8.Name = "label8";
-            label8.Size = new Size(92, 32);
+            label8.Size = new Size(45, 15);
             label8.TabIndex = 87;
             label8.Text = "entities";
             // 
             // label15
             // 
             label15.AutoSize = true;
-            label15.Location = new Point(7, 879);
-            label15.Margin = new Padding(7, 0, 7, 0);
+            label15.Location = new Point(4, 412);
+            label15.Margin = new Padding(4, 0, 4, 0);
             label15.Name = "label15";
-            label15.Size = new Size(277, 32);
+            label15.Size = new Size(136, 15);
             label15.TabIndex = 88;
             label15.Text = "selected event programs";
             // 
             // label23
             // 
             label23.AutoSize = true;
-            label23.Location = new Point(24, 19);
-            label23.Margin = new Padding(7, 0, 7, 0);
+            label23.Location = new Point(13, 9);
+            label23.Margin = new Padding(4, 0, 4, 0);
             label23.Name = "label23";
-            label23.Size = new Size(140, 32);
+            label23.Size = new Size(70, 15);
             label23.TabIndex = 90;
             label23.Text = "Game maps";
             // 
             // label27
             // 
             label27.AutoSize = true;
-            label27.Location = new Point(13, 9);
-            label27.Margin = new Padding(7, 0, 7, 0);
+            label27.Location = new Point(7, 4);
+            label27.Margin = new Padding(4, 0, 4, 0);
             label27.Name = "label27";
-            label27.Size = new Size(138, 32);
+            label27.Size = new Size(67, 15);
             label27.TabIndex = 91;
             label27.Text = "tile palettes";
             // 
             // label31
             // 
             label31.AutoSize = true;
-            label31.Location = new Point(386, 9);
-            label31.Margin = new Padding(7, 0, 7, 0);
+            label31.Location = new Point(208, 4);
+            label31.Margin = new Padding(4, 0, 4, 0);
             label31.Name = "label31";
-            label31.Size = new Size(164, 32);
+            label31.Size = new Size(80, 15);
             label31.TabIndex = 92;
             label31.Text = "sprite palettes";
             // 
             // label32
             // 
             label32.AutoSize = true;
-            label32.Location = new Point(7, 6);
-            label32.Margin = new Padding(7, 0, 7, 0);
+            label32.Location = new Point(4, 3);
+            label32.Margin = new Padding(4, 0, 4, 0);
             label32.Name = "label32";
-            label32.Size = new Size(140, 32);
+            label32.Size = new Size(70, 15);
             label32.TabIndex = 93;
             label32.Text = "map portals";
             // 
             // label33
             // 
             label33.AutoSize = true;
-            label33.Location = new Point(247, 15);
-            label33.Margin = new Padding(7, 0, 7, 0);
+            label33.Location = new Point(133, 7);
+            label33.Margin = new Padding(4, 0, 4, 0);
             label33.Name = "label33";
-            label33.Size = new Size(246, 32);
+            label33.Size = new Size(121, 15);
             label33.TabIndex = 94;
             label33.Text = "selected portal record";
             // 
             // label34
             // 
             label34.AutoSize = true;
-            label34.Location = new Point(13, 420);
-            label34.Margin = new Padding(7, 0, 7, 0);
+            label34.Location = new Point(7, 197);
+            label34.Margin = new Padding(4, 0, 4, 0);
             label34.Name = "label34";
-            label34.Size = new Size(138, 32);
+            label34.Size = new Size(68, 15);
             label34.TabIndex = 96;
             label34.Text = "map events";
             // 
@@ -818,11 +818,11 @@
             // 
             lsvSector4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             lsvSector4.Columns.AddRange(new ColumnHeader[] { columnHeader13, columnHeader14, columnHeader15, columnHeader16, columnHeader17, columnHeader18, columnHeader19, columnHeader20, columnHeader21 });
-            lsvSector4.Location = new Point(7, 461);
-            lsvSector4.Margin = new Padding(7, 6, 7, 6);
+            lsvSector4.Location = new Point(4, 216);
+            lsvSector4.Margin = new Padding(4, 3, 4, 3);
             lsvSector4.MultiSelect = false;
             lsvSector4.Name = "lsvSector4";
-            lsvSector4.Size = new Size(1557, 292);
+            lsvSector4.Size = new Size(840, 139);
             lsvSector4.TabIndex = 95;
             lsvSector4.UseCompatibleStateImageBehavior = false;
             lsvSector4.View = View.Details;
@@ -876,10 +876,10 @@
             // label35
             // 
             label35.AutoSize = true;
-            label35.Location = new Point(319, 36);
-            label35.Margin = new Padding(7, 0, 7, 0);
+            label35.Location = new Point(172, 17);
+            label35.Margin = new Padding(4, 0, 4, 0);
             label35.Name = "label35";
-            label35.Size = new Size(83, 32);
+            label35.Size = new Size(41, 15);
             label35.TabIndex = 98;
             label35.Text = "sprites";
             // 
@@ -887,20 +887,20 @@
             // 
             lstSector5.FormattingEnabled = true;
             lstSector5.HorizontalScrollbar = true;
-            lstSector5.Location = new Point(327, 68);
-            lstSector5.Margin = new Padding(7, 6, 7, 6);
+            lstSector5.Location = new Point(176, 32);
+            lstSector5.Margin = new Padding(4, 3, 4, 3);
             lstSector5.Name = "lstSector5";
-            lstSector5.Size = new Size(203, 132);
+            lstSector5.Size = new Size(111, 64);
             lstSector5.TabIndex = 97;
             lstSector5.SelectedIndexChanged += lstSector5_SelectedIndexChanged;
             // 
             // label36
             // 
             label36.AutoSize = true;
-            label36.Location = new Point(319, 284);
-            label36.Margin = new Padding(7, 0, 7, 0);
+            label36.Location = new Point(172, 133);
+            label36.Margin = new Padding(4, 0, 4, 0);
             label36.Name = "label36";
-            label36.Size = new Size(131, 32);
+            label36.Size = new Size(66, 15);
             label36.TabIndex = 100;
             label36.Text = "animations";
             // 
@@ -908,19 +908,19 @@
             // 
             lstSector5Animations.FormattingEnabled = true;
             lstSector5Animations.HorizontalScrollbar = true;
-            lstSector5Animations.Location = new Point(325, 324);
-            lstSector5Animations.Margin = new Padding(7, 6, 7, 6);
+            lstSector5Animations.Location = new Point(175, 152);
+            lstSector5Animations.Margin = new Padding(4, 3, 4, 3);
             lstSector5Animations.Name = "lstSector5Animations";
-            lstSector5Animations.Size = new Size(205, 260);
+            lstSector5Animations.Size = new Size(112, 124);
             lstSector5Animations.TabIndex = 99;
             lstSector5Animations.SelectedIndexChanged += lstSector5Animations_SelectedIndexChanged;
             // 
             // pctAnim
             // 
-            pctAnim.Location = new Point(548, 604);
-            pctAnim.Margin = new Padding(7, 6, 7, 6);
+            pctAnim.Location = new Point(295, 283);
+            pctAnim.Margin = new Padding(4, 3, 4, 3);
             pctAnim.Name = "pctAnim";
-            pctAnim.Size = new Size(279, 209);
+            pctAnim.Size = new Size(150, 98);
             pctAnim.TabIndex = 101;
             pctAnim.TabStop = false;
             pctAnim.Paint += pctAnim_Paint;
@@ -928,249 +928,249 @@
             // lbly2
             // 
             lbly2.AutoSize = true;
-            lbly2.Location = new Point(1330, 109);
-            lbly2.Margin = new Padding(7, 0, 7, 0);
+            lbly2.Location = new Point(716, 51);
+            lbly2.Margin = new Padding(4, 0, 4, 0);
             lbly2.Name = "lbly2";
-            lbly2.Size = new Size(27, 32);
+            lbly2.Size = new Size(13, 15);
             lbly2.TabIndex = 109;
             lbly2.Text = "0";
             // 
             // label38
             // 
             label38.AutoSize = true;
-            label38.Location = new Point(1294, 109);
-            label38.Margin = new Padding(7, 0, 7, 0);
+            label38.Location = new Point(697, 51);
+            label38.Margin = new Padding(4, 0, 4, 0);
             label38.Name = "label38";
-            label38.Size = new Size(39, 32);
+            label38.Size = new Size(19, 15);
             label38.TabIndex = 108;
             label38.Text = "y2";
             // 
             // lblx2
             // 
             lblx2.AutoSize = true;
-            lblx2.Location = new Point(1246, 109);
-            lblx2.Margin = new Padding(7, 0, 7, 0);
+            lblx2.Location = new Point(671, 51);
+            lblx2.Margin = new Padding(4, 0, 4, 0);
             lblx2.Name = "lblx2";
-            lblx2.Size = new Size(27, 32);
+            lblx2.Size = new Size(13, 15);
             lblx2.TabIndex = 107;
             lblx2.Text = "0";
             // 
             // label40
             // 
             label40.AutoSize = true;
-            label40.Location = new Point(1215, 109);
-            label40.Margin = new Padding(7, 0, 7, 0);
+            label40.Location = new Point(654, 51);
+            label40.Margin = new Padding(4, 0, 4, 0);
             label40.Name = "label40";
-            label40.Size = new Size(38, 32);
+            label40.Size = new Size(18, 15);
             label40.TabIndex = 106;
             label40.Text = "x2";
             // 
             // lbly1
             // 
             lbly1.AutoSize = true;
-            lbly1.Location = new Point(1176, 109);
-            lbly1.Margin = new Padding(7, 0, 7, 0);
+            lbly1.Location = new Point(633, 51);
+            lbly1.Margin = new Padding(4, 0, 4, 0);
             lbly1.Name = "lbly1";
-            lbly1.Size = new Size(27, 32);
+            lbly1.Size = new Size(13, 15);
             lbly1.TabIndex = 105;
             lbly1.Text = "0";
             // 
             // label42
             // 
             label42.AutoSize = true;
-            label42.Location = new Point(1140, 109);
-            label42.Margin = new Padding(7, 0, 7, 0);
+            label42.Location = new Point(614, 51);
+            label42.Margin = new Padding(4, 0, 4, 0);
             label42.Name = "label42";
-            label42.Size = new Size(39, 32);
+            label42.Size = new Size(19, 15);
             label42.TabIndex = 104;
             label42.Text = "y1";
             // 
             // lblx1
             // 
             lblx1.AutoSize = true;
-            lblx1.Location = new Point(1094, 109);
-            lblx1.Margin = new Padding(7, 0, 7, 0);
+            lblx1.Location = new Point(589, 51);
+            lblx1.Margin = new Padding(4, 0, 4, 0);
             lblx1.Name = "lblx1";
-            lblx1.Size = new Size(27, 32);
+            lblx1.Size = new Size(13, 15);
             lblx1.TabIndex = 103;
             lblx1.Text = "0";
             // 
             // label44
             // 
             label44.AutoSize = true;
-            label44.Location = new Point(1060, 109);
-            label44.Margin = new Padding(7, 0, 7, 0);
+            label44.Location = new Point(571, 51);
+            label44.Margin = new Padding(4, 0, 4, 0);
             label44.Name = "label44";
-            label44.Size = new Size(38, 32);
+            label44.Size = new Size(18, 15);
             label44.TabIndex = 102;
             label44.Text = "x1";
             // 
             // lbly4
             // 
             lbly4.AutoSize = true;
-            lbly4.Location = new Point(1330, 173);
-            lbly4.Margin = new Padding(7, 0, 7, 0);
+            lbly4.Location = new Point(716, 81);
+            lbly4.Margin = new Padding(4, 0, 4, 0);
             lbly4.Name = "lbly4";
-            lbly4.Size = new Size(27, 32);
+            lbly4.Size = new Size(13, 15);
             lbly4.TabIndex = 117;
             lbly4.Text = "0";
             // 
             // label46
             // 
             label46.AutoSize = true;
-            label46.Location = new Point(1294, 173);
-            label46.Margin = new Padding(7, 0, 7, 0);
+            label46.Location = new Point(697, 81);
+            label46.Margin = new Padding(4, 0, 4, 0);
             label46.Name = "label46";
-            label46.Size = new Size(39, 32);
+            label46.Size = new Size(19, 15);
             label46.TabIndex = 116;
             label46.Text = "y4";
             // 
             // lblx4
             // 
             lblx4.AutoSize = true;
-            lblx4.Location = new Point(1246, 173);
-            lblx4.Margin = new Padding(7, 0, 7, 0);
+            lblx4.Location = new Point(671, 81);
+            lblx4.Margin = new Padding(4, 0, 4, 0);
             lblx4.Name = "lblx4";
-            lblx4.Size = new Size(27, 32);
+            lblx4.Size = new Size(13, 15);
             lblx4.TabIndex = 115;
             lblx4.Text = "0";
             // 
             // label48
             // 
             label48.AutoSize = true;
-            label48.Location = new Point(1215, 173);
-            label48.Margin = new Padding(7, 0, 7, 0);
+            label48.Location = new Point(654, 81);
+            label48.Margin = new Padding(4, 0, 4, 0);
             label48.Name = "label48";
-            label48.Size = new Size(38, 32);
+            label48.Size = new Size(18, 15);
             label48.TabIndex = 114;
             label48.Text = "x4";
             // 
             // lbly3
             // 
             lbly3.AutoSize = true;
-            lbly3.Location = new Point(1176, 173);
-            lbly3.Margin = new Padding(7, 0, 7, 0);
+            lbly3.Location = new Point(633, 81);
+            lbly3.Margin = new Padding(4, 0, 4, 0);
             lbly3.Name = "lbly3";
-            lbly3.Size = new Size(27, 32);
+            lbly3.Size = new Size(13, 15);
             lbly3.TabIndex = 113;
             lbly3.Text = "0";
             // 
             // label50
             // 
             label50.AutoSize = true;
-            label50.Location = new Point(1140, 173);
-            label50.Margin = new Padding(7, 0, 7, 0);
+            label50.Location = new Point(614, 81);
+            label50.Margin = new Padding(4, 0, 4, 0);
             label50.Name = "label50";
-            label50.Size = new Size(39, 32);
+            label50.Size = new Size(19, 15);
             label50.TabIndex = 112;
             label50.Text = "y3";
             // 
             // lblx3
             // 
             lblx3.AutoSize = true;
-            lblx3.Location = new Point(1094, 173);
-            lblx3.Margin = new Padding(7, 0, 7, 0);
+            lblx3.Location = new Point(589, 81);
+            lblx3.Margin = new Padding(4, 0, 4, 0);
             lblx3.Name = "lblx3";
-            lblx3.Size = new Size(27, 32);
+            lblx3.Size = new Size(13, 15);
             lblx3.TabIndex = 111;
             lblx3.Text = "0";
             // 
             // label52
             // 
             label52.AutoSize = true;
-            label52.Location = new Point(1060, 173);
-            label52.Margin = new Padding(7, 0, 7, 0);
+            label52.Location = new Point(571, 81);
+            label52.Margin = new Padding(4, 0, 4, 0);
             label52.Name = "label52";
-            label52.Size = new Size(38, 32);
+            label52.Size = new Size(18, 15);
             label52.TabIndex = 110;
             label52.Text = "x3";
             // 
             // lblsheight
             // 
             lblsheight.AutoSize = true;
-            lblsheight.Location = new Point(1226, 77);
-            lblsheight.Margin = new Padding(7, 0, 7, 0);
+            lblsheight.Location = new Point(660, 36);
+            lblsheight.Margin = new Padding(4, 0, 4, 0);
             lblsheight.Name = "lblsheight";
-            lblsheight.Size = new Size(27, 32);
+            lblsheight.Size = new Size(13, 15);
             lblsheight.TabIndex = 125;
             lblsheight.Text = "0";
             // 
             // label54
             // 
             label54.AutoSize = true;
-            label54.Location = new Point(1140, 77);
-            label54.Margin = new Padding(7, 0, 7, 0);
+            label54.Location = new Point(614, 36);
+            label54.Margin = new Padding(4, 0, 4, 0);
             label54.Name = "label54";
-            label54.Size = new Size(93, 32);
+            label54.Size = new Size(46, 15);
             label54.TabIndex = 124;
             label54.Text = "sheight";
             // 
             // lblswidth
             // 
             lblswidth.AutoSize = true;
-            lblswidth.Location = new Point(1094, 77);
-            lblswidth.Margin = new Padding(7, 0, 7, 0);
+            lblswidth.Location = new Point(589, 36);
+            lblswidth.Margin = new Padding(4, 0, 4, 0);
             lblswidth.Name = "lblswidth";
-            lblswidth.Size = new Size(27, 32);
+            lblswidth.Size = new Size(13, 15);
             lblswidth.TabIndex = 123;
             lblswidth.Text = "0";
             // 
             // label56
             // 
             label56.AutoSize = true;
-            label56.Location = new Point(1018, 77);
-            label56.Margin = new Padding(7, 0, 7, 0);
+            label56.Location = new Point(548, 36);
+            label56.Margin = new Padding(4, 0, 4, 0);
             label56.Name = "label56";
-            label56.Size = new Size(83, 32);
+            label56.Size = new Size(42, 15);
             label56.TabIndex = 122;
             label56.Text = "swidth";
             // 
             // lblsy
             // 
             lblsy.AutoSize = true;
-            lblsy.Location = new Point(1226, 45);
-            lblsy.Margin = new Padding(7, 0, 7, 0);
+            lblsy.Location = new Point(660, 21);
+            lblsy.Margin = new Padding(4, 0, 4, 0);
             lblsy.Name = "lblsy";
-            lblsy.Size = new Size(27, 32);
+            lblsy.Size = new Size(13, 15);
             lblsy.TabIndex = 121;
             lblsy.Text = "0";
             // 
             // label58
             // 
             label58.AutoSize = true;
-            label58.Location = new Point(1190, 45);
-            label58.Margin = new Padding(7, 0, 7, 0);
+            label58.Location = new Point(641, 21);
+            label58.Margin = new Padding(4, 0, 4, 0);
             label58.Name = "label58";
-            label58.Size = new Size(36, 32);
+            label58.Size = new Size(18, 15);
             label58.TabIndex = 120;
             label58.Text = "sy";
             // 
             // lblsx
             // 
             lblsx.AutoSize = true;
-            lblsx.Location = new Point(1094, 45);
-            lblsx.Margin = new Padding(7, 0, 7, 0);
+            lblsx.Location = new Point(589, 21);
+            lblsx.Margin = new Padding(4, 0, 4, 0);
             lblsx.Name = "lblsx";
-            lblsx.Size = new Size(27, 32);
+            lblsx.Size = new Size(13, 15);
             lblsx.TabIndex = 119;
             lblsx.Text = "0";
             // 
             // label60
             // 
             label60.AutoSize = true;
-            label60.Location = new Point(1060, 45);
-            label60.Margin = new Padding(7, 0, 7, 0);
+            label60.Location = new Point(571, 21);
+            label60.Margin = new Padding(4, 0, 4, 0);
             label60.Name = "label60";
-            label60.Size = new Size(35, 32);
+            label60.Size = new Size(17, 15);
             label60.TabIndex = 118;
             label60.Text = "sx";
             // 
             // pctImage
             // 
-            pctImage.Location = new Point(1270, 604);
-            pctImage.Margin = new Padding(7, 6, 7, 6);
+            pctImage.Location = new Point(684, 283);
+            pctImage.Margin = new Padding(4, 3, 4, 3);
             pctImage.Name = "pctImage";
-            pctImage.Size = new Size(267, 209);
+            pctImage.Size = new Size(144, 98);
             pctImage.TabIndex = 126;
             pctImage.TabStop = false;
             pctImage.Paint += pctImage_Paint;
@@ -1179,10 +1179,10 @@
             // 
             lstSector5Frames.FormattingEnabled = true;
             lstSector5Frames.HorizontalScrollbar = true;
-            lstSector5Frames.Location = new Point(932, 324);
-            lstSector5Frames.Margin = new Padding(7, 6, 7, 6);
+            lstSector5Frames.Location = new Point(502, 152);
+            lstSector5Frames.Margin = new Padding(4, 3, 4, 3);
             lstSector5Frames.Name = "lstSector5Frames";
-            lstSector5Frames.Size = new Size(292, 228);
+            lstSector5Frames.Size = new Size(159, 109);
             lstSector5Frames.TabIndex = 127;
             lstSector5Frames.SelectedIndexChanged += lstSector5Frames_SelectedIndexChanged;
             // 
@@ -1190,19 +1190,19 @@
             // 
             lstSector5Images.FormattingEnabled = true;
             lstSector5Images.HorizontalScrollbar = true;
-            lstSector5Images.Location = new Point(1270, 324);
-            lstSector5Images.Margin = new Padding(7, 6, 7, 6);
+            lstSector5Images.Location = new Point(684, 152);
+            lstSector5Images.Margin = new Padding(4, 3, 4, 3);
             lstSector5Images.Name = "lstSector5Images";
-            lstSector5Images.Size = new Size(266, 228);
+            lstSector5Images.Size = new Size(145, 109);
             lstSector5Images.TabIndex = 129;
             lstSector5Images.SelectedIndexChanged += lstSector5Images_SelectedIndexChanged;
             // 
             // pctFrame
             // 
-            pctFrame.Location = new Point(932, 604);
-            pctFrame.Margin = new Padding(7, 6, 7, 6);
+            pctFrame.Location = new Point(502, 283);
+            pctFrame.Margin = new Padding(4, 3, 4, 3);
             pctFrame.Name = "pctFrame";
-            pctFrame.Size = new Size(293, 209);
+            pctFrame.Size = new Size(158, 98);
             pctFrame.TabIndex = 128;
             pctFrame.TabStop = false;
             pctFrame.Paint += pctFrame_Paint;
@@ -1210,20 +1210,20 @@
             // label37
             // 
             label37.AutoSize = true;
-            label37.Location = new Point(932, 284);
-            label37.Margin = new Padding(7, 0, 7, 0);
+            label37.Location = new Point(502, 133);
+            label37.Margin = new Padding(4, 0, 4, 0);
             label37.Name = "label37";
-            label37.Size = new Size(86, 32);
+            label37.Size = new Size(43, 15);
             label37.TabIndex = 130;
             label37.Text = "frames";
             // 
             // label39
             // 
             label39.AutoSize = true;
-            label39.Location = new Point(1270, 284);
-            label39.Margin = new Padding(7, 0, 7, 0);
+            label39.Location = new Point(684, 133);
+            label39.Margin = new Padding(4, 0, 4, 0);
             label39.Name = "label39";
-            label39.Size = new Size(90, 32);
+            label39.Size = new Size(45, 15);
             label39.TabIndex = 131;
             label39.Text = "images";
             // 
@@ -1233,11 +1233,11 @@
             groupBox1.Controls.Add(rdoLeft);
             groupBox1.Controls.Add(rdoUp);
             groupBox1.Controls.Add(rdoDown);
-            groupBox1.Location = new Point(548, 324);
-            groupBox1.Margin = new Padding(7, 6, 7, 6);
+            groupBox1.Location = new Point(295, 152);
+            groupBox1.Margin = new Padding(4, 3, 4, 3);
             groupBox1.Name = "groupBox1";
-            groupBox1.Padding = new Padding(7, 6, 7, 6);
-            groupBox1.Size = new Size(199, 228);
+            groupBox1.Padding = new Padding(4, 3, 4, 3);
+            groupBox1.Size = new Size(107, 107);
             groupBox1.TabIndex = 133;
             groupBox1.TabStop = false;
             groupBox1.Text = "anim direction";
@@ -1245,10 +1245,10 @@
             // rdoRight
             // 
             rdoRight.AutoSize = true;
-            rdoRight.Location = new Point(13, 179);
-            rdoRight.Margin = new Padding(7, 6, 7, 6);
+            rdoRight.Location = new Point(7, 84);
+            rdoRight.Margin = new Padding(4, 3, 4, 3);
             rdoRight.Name = "rdoRight";
-            rdoRight.Size = new Size(95, 36);
+            rdoRight.Size = new Size(50, 19);
             rdoRight.TabIndex = 3;
             rdoRight.TabStop = true;
             rdoRight.Text = "right";
@@ -1258,10 +1258,10 @@
             // rdoLeft
             // 
             rdoLeft.AutoSize = true;
-            rdoLeft.Location = new Point(13, 130);
-            rdoLeft.Margin = new Padding(7, 6, 7, 6);
+            rdoLeft.Location = new Point(7, 61);
+            rdoLeft.Margin = new Padding(4, 3, 4, 3);
             rdoLeft.Name = "rdoLeft";
-            rdoLeft.Size = new Size(80, 36);
+            rdoLeft.Size = new Size(42, 19);
             rdoLeft.TabIndex = 2;
             rdoLeft.TabStop = true;
             rdoLeft.Text = "left";
@@ -1271,10 +1271,10 @@
             // rdoUp
             // 
             rdoUp.AutoSize = true;
-            rdoUp.Location = new Point(13, 79);
-            rdoUp.Margin = new Padding(7, 6, 7, 6);
+            rdoUp.Location = new Point(7, 37);
+            rdoUp.Margin = new Padding(4, 3, 4, 3);
             rdoUp.Name = "rdoUp";
-            rdoUp.Size = new Size(73, 36);
+            rdoUp.Size = new Size(39, 19);
             rdoUp.TabIndex = 1;
             rdoUp.TabStop = true;
             rdoUp.Text = "up";
@@ -1284,10 +1284,10 @@
             // rdoDown
             // 
             rdoDown.AutoSize = true;
-            rdoDown.Location = new Point(13, 32);
-            rdoDown.Margin = new Padding(7, 6, 7, 6);
+            rdoDown.Location = new Point(7, 15);
+            rdoDown.Margin = new Padding(4, 3, 4, 3);
             rdoDown.Name = "rdoDown";
-            rdoDown.Size = new Size(104, 36);
+            rdoDown.Size = new Size(55, 19);
             rdoDown.TabIndex = 0;
             rdoDown.TabStop = true;
             rdoDown.Text = "down";
@@ -1297,20 +1297,20 @@
             // lblAnimProps
             // 
             lblAnimProps.AutoSize = true;
-            lblAnimProps.Location = new Point(548, 559);
-            lblAnimProps.Margin = new Padding(7, 0, 7, 0);
+            lblAnimProps.Location = new Point(295, 262);
+            lblAnimProps.Margin = new Padding(4, 0, 4, 0);
             lblAnimProps.Name = "lblAnimProps";
-            lblAnimProps.Size = new Size(170, 32);
+            lblAnimProps.Size = new Size(79, 15);
             lblAnimProps.TabIndex = 134;
             lblAnimProps.Text = "000000000000";
             // 
             // chkTileXy
             // 
             chkTileXy.AutoSize = true;
-            chkTileXy.Location = new Point(364, 26);
-            chkTileXy.Margin = new Padding(7, 6, 7, 6);
+            chkTileXy.Location = new Point(196, 12);
+            chkTileXy.Margin = new Padding(4, 3, 4, 3);
             chkTileXy.Name = "chkTileXy";
-            chkTileXy.Size = new Size(176, 36);
+            chkTileXy.Size = new Size(90, 19);
             chkTileXy.TabIndex = 135;
             chkTileXy.Text = "show tile x,y";
             chkTileXy.UseVisualStyleBackColor = true;
@@ -1319,59 +1319,59 @@
             // lblsector5mem
             // 
             lblsector5mem.AutoSize = true;
-            lblsector5mem.Location = new Point(550, 109);
-            lblsector5mem.Margin = new Padding(7, 0, 7, 0);
+            lblsector5mem.Location = new Point(296, 51);
+            lblsector5mem.Margin = new Padding(4, 0, 4, 0);
             lblsector5mem.Name = "lblsector5mem";
-            lblsector5mem.Size = new Size(118, 32);
+            lblsector5mem.Size = new Size(55, 15);
             lblsector5mem.TabIndex = 137;
             lblsector5mem.Text = "00000000";
             // 
             // label43
             // 
             label43.AutoSize = true;
-            label43.Location = new Point(548, 68);
-            label43.Margin = new Padding(7, 0, 7, 0);
+            label43.Location = new Point(295, 32);
+            label43.Margin = new Padding(4, 0, 4, 0);
             label43.Name = "label43";
-            label43.Size = new Size(195, 32);
+            label43.Size = new Size(98, 15);
             label43.TabIndex = 136;
             label43.Text = "memory location";
             // 
             // lblFrameData
             // 
             lblFrameData.AutoSize = true;
-            lblFrameData.Location = new Point(932, 565);
-            lblFrameData.Margin = new Padding(7, 0, 7, 0);
+            lblFrameData.Location = new Point(502, 265);
+            lblFrameData.Margin = new Padding(4, 0, 4, 0);
             lblFrameData.Name = "lblFrameData";
-            lblFrameData.Size = new Size(27, 32);
+            lblFrameData.Size = new Size(13, 15);
             lblFrameData.TabIndex = 138;
             lblFrameData.Text = "0";
             // 
             // lblImageData
             // 
             lblImageData.AutoSize = true;
-            lblImageData.Location = new Point(1268, 565);
-            lblImageData.Margin = new Padding(7, 0, 7, 0);
+            lblImageData.Location = new Point(683, 265);
+            lblImageData.Margin = new Padding(4, 0, 4, 0);
             lblImageData.Name = "lblImageData";
-            lblImageData.Size = new Size(27, 32);
+            lblImageData.Size = new Size(13, 15);
             lblImageData.TabIndex = 139;
             lblImageData.Text = "0";
             // 
             // lblEntityInfo
             // 
             lblEntityInfo.AutoSize = true;
-            lblEntityInfo.Location = new Point(132, 348);
-            lblEntityInfo.Margin = new Padding(7, 0, 7, 0);
+            lblEntityInfo.Location = new Point(71, 163);
+            lblEntityInfo.Margin = new Padding(4, 0, 4, 0);
             lblEntityInfo.Name = "lblEntityInfo";
-            lblEntityInfo.Size = new Size(27, 32);
+            lblEntityInfo.Size = new Size(13, 15);
             lblEntityInfo.TabIndex = 140;
             lblEntityInfo.Text = "0";
             // 
             // btnSector1cCmds
             // 
-            btnSector1cCmds.Location = new Point(13, 1045);
-            btnSector1cCmds.Margin = new Padding(7, 6, 7, 6);
+            btnSector1cCmds.Location = new Point(7, 490);
+            btnSector1cCmds.Margin = new Padding(4, 3, 4, 3);
             btnSector1cCmds.Name = "btnSector1cCmds";
-            btnSector1cCmds.Size = new Size(87, 47);
+            btnSector1cCmds.Size = new Size(47, 22);
             btnSector1cCmds.TabIndex = 141;
             btnSector1cCmds.Text = "view";
             btnSector1cCmds.UseVisualStyleBackColor = true;
@@ -1379,10 +1379,10 @@
             // 
             // btnSector1bCmds
             // 
-            btnSector1bCmds.Location = new Point(13, 986);
-            btnSector1bCmds.Margin = new Padding(7, 6, 7, 6);
+            btnSector1bCmds.Location = new Point(7, 462);
+            btnSector1bCmds.Margin = new Padding(4, 3, 4, 3);
             btnSector1bCmds.Name = "btnSector1bCmds";
-            btnSector1bCmds.Size = new Size(87, 47);
+            btnSector1bCmds.Size = new Size(47, 22);
             btnSector1bCmds.TabIndex = 142;
             btnSector1bCmds.Text = "view";
             btnSector1bCmds.UseVisualStyleBackColor = true;
@@ -1390,10 +1390,10 @@
             // 
             // btnSector1aCmds
             // 
-            btnSector1aCmds.Location = new Point(13, 926);
-            btnSector1aCmds.Margin = new Padding(7, 6, 7, 6);
+            btnSector1aCmds.Location = new Point(7, 434);
+            btnSector1aCmds.Margin = new Padding(4, 3, 4, 3);
             btnSector1aCmds.Name = "btnSector1aCmds";
-            btnSector1aCmds.Size = new Size(87, 47);
+            btnSector1aCmds.Size = new Size(47, 22);
             btnSector1aCmds.TabIndex = 143;
             btnSector1aCmds.Text = "view";
             btnSector1aCmds.UseVisualStyleBackColor = true;
@@ -1401,30 +1401,30 @@
             // 
             // btnSector1dCmds
             // 
-            btnSector1dCmds.Location = new Point(13, 1105);
-            btnSector1dCmds.Margin = new Padding(7, 6, 7, 6);
+            btnSector1dCmds.Location = new Point(7, 518);
+            btnSector1dCmds.Margin = new Padding(4, 3, 4, 3);
             btnSector1dCmds.Name = "btnSector1dCmds";
-            btnSector1dCmds.Size = new Size(87, 47);
+            btnSector1dCmds.Size = new Size(47, 22);
             btnSector1dCmds.TabIndex = 145;
             btnSector1dCmds.Text = "view";
             btnSector1dCmds.UseVisualStyleBackColor = true;
             // 
             // btnSector1eCmds
             // 
-            btnSector1eCmds.Location = new Point(13, 1165);
-            btnSector1eCmds.Margin = new Padding(7, 6, 7, 6);
+            btnSector1eCmds.Location = new Point(7, 546);
+            btnSector1eCmds.Margin = new Padding(4, 3, 4, 3);
             btnSector1eCmds.Name = "btnSector1eCmds";
-            btnSector1eCmds.Size = new Size(87, 47);
+            btnSector1eCmds.Size = new Size(47, 22);
             btnSector1eCmds.TabIndex = 144;
             btnSector1eCmds.Text = "view";
             btnSector1eCmds.UseVisualStyleBackColor = true;
             // 
             // btnSector1fCmds
             // 
-            btnSector1fCmds.Location = new Point(13, 1225);
-            btnSector1fCmds.Margin = new Padding(7, 6, 7, 6);
+            btnSector1fCmds.Location = new Point(7, 574);
+            btnSector1fCmds.Margin = new Padding(4, 3, 4, 3);
             btnSector1fCmds.Name = "btnSector1fCmds";
-            btnSector1fCmds.Size = new Size(87, 47);
+            btnSector1fCmds.Size = new Size(47, 22);
             btnSector1fCmds.TabIndex = 147;
             btnSector1fCmds.Text = "view";
             btnSector1fCmds.UseVisualStyleBackColor = true;
@@ -1433,59 +1433,59 @@
             // lblSector5Info
             // 
             lblSector5Info.AutoSize = true;
-            lblSector5Info.Location = new Point(331, 213);
-            lblSector5Info.Margin = new Padding(7, 0, 7, 0);
+            lblSector5Info.Location = new Point(178, 100);
+            lblSector5Info.Margin = new Padding(4, 0, 4, 0);
             lblSector5Info.Name = "lblSector5Info";
-            lblSector5Info.Size = new Size(27, 32);
+            lblSector5Info.Size = new Size(13, 15);
             lblSector5Info.TabIndex = 149;
             lblSector5Info.Text = "0";
             // 
             // lblSelAnim
             // 
             lblSelAnim.AutoSize = true;
-            lblSelAnim.Location = new Point(553, 297);
-            lblSelAnim.Margin = new Padding(7, 0, 7, 0);
+            lblSelAnim.Location = new Point(298, 139);
+            lblSelAnim.Margin = new Padding(4, 0, 4, 0);
             lblSelAnim.Name = "lblSelAnim";
-            lblSelAnim.Size = new Size(92, 32);
+            lblSelAnim.Size = new Size(43, 15);
             lblSelAnim.TabIndex = 151;
             lblSelAnim.Text = "000000";
             // 
             // lblAnimSetAddr
             // 
             lblAnimSetAddr.AutoSize = true;
-            lblAnimSetAddr.Location = new Point(321, 597);
-            lblAnimSetAddr.Margin = new Padding(7, 0, 7, 0);
+            lblAnimSetAddr.Location = new Point(173, 280);
+            lblAnimSetAddr.Margin = new Padding(4, 0, 4, 0);
             lblAnimSetAddr.Name = "lblAnimSetAddr";
-            lblAnimSetAddr.Size = new Size(92, 32);
+            lblAnimSetAddr.Size = new Size(43, 15);
             lblAnimSetAddr.TabIndex = 152;
             lblAnimSetAddr.Text = "000000";
             // 
             // lblFrameAddr
             // 
             lblFrameAddr.AutoSize = true;
-            lblFrameAddr.Location = new Point(1036, 284);
-            lblFrameAddr.Margin = new Padding(7, 0, 7, 0);
+            lblFrameAddr.Location = new Point(558, 133);
+            lblFrameAddr.Margin = new Padding(4, 0, 4, 0);
             lblFrameAddr.Name = "lblFrameAddr";
-            lblFrameAddr.Size = new Size(92, 32);
+            lblFrameAddr.Size = new Size(43, 15);
             lblFrameAddr.TabIndex = 153;
             lblFrameAddr.Text = "000000";
             // 
             // lblImgAddr
             // 
             lblImgAddr.AutoSize = true;
-            lblImgAddr.Location = new Point(1380, 284);
-            lblImgAddr.Margin = new Padding(7, 0, 7, 0);
+            lblImgAddr.Location = new Point(743, 133);
+            lblImgAddr.Margin = new Padding(4, 0, 4, 0);
             lblImgAddr.Name = "lblImgAddr";
-            lblImgAddr.Size = new Size(92, 32);
+            lblImgAddr.Size = new Size(43, 15);
             lblImgAddr.TabIndex = 154;
             lblImgAddr.Text = "000000";
             // 
             // pctPortrait
             // 
-            pctPortrait.Location = new Point(761, 68);
-            pctPortrait.Margin = new Padding(7, 6, 7, 6);
+            pctPortrait.Location = new Point(410, 32);
+            pctPortrait.Margin = new Padding(4, 3, 4, 3);
             pctPortrait.Name = "pctPortrait";
-            pctPortrait.Size = new Size(104, 128);
+            pctPortrait.Size = new Size(56, 60);
             pctPortrait.TabIndex = 155;
             pctPortrait.TabStop = false;
             pctPortrait.Paint += pctPortrait_Paint;
@@ -1493,280 +1493,280 @@
             // label41
             // 
             label41.AutoSize = true;
-            label41.Location = new Point(54, 510);
-            label41.Margin = new Padding(4, 0, 4, 0);
+            label41.Location = new Point(29, 239);
+            label41.Margin = new Padding(2, 0, 2, 0);
             label41.Name = "label41";
-            label41.Size = new Size(73, 32);
+            label41.Size = new Size(36, 15);
             label41.TabIndex = 156;
             label41.Text = "eload";
             // 
             // lbl_eload
             // 
             lbl_eload.AutoSize = true;
-            lbl_eload.Location = new Point(189, 510);
-            lbl_eload.Margin = new Padding(4, 0, 4, 0);
+            lbl_eload.Location = new Point(102, 239);
+            lbl_eload.Margin = new Padding(2, 0, 2, 0);
             lbl_eload.Name = "lbl_eload";
-            lbl_eload.Size = new Size(25, 32);
+            lbl_eload.Size = new Size(12, 15);
             lbl_eload.TabIndex = 157;
             lbl_eload.Text = "?";
             // 
             // lbl_etick
             // 
             lbl_etick.AutoSize = true;
-            lbl_etick.Location = new Point(189, 544);
-            lbl_etick.Margin = new Padding(4, 0, 4, 0);
+            lbl_etick.Location = new Point(102, 255);
+            lbl_etick.Margin = new Padding(2, 0, 2, 0);
             lbl_etick.Name = "lbl_etick";
-            lbl_etick.Size = new Size(25, 32);
+            lbl_etick.Size = new Size(12, 15);
             lbl_etick.TabIndex = 159;
             lbl_etick.Text = "?";
             // 
             // label49
             // 
             label49.AutoSize = true;
-            label49.Location = new Point(54, 544);
-            label49.Margin = new Padding(4, 0, 4, 0);
+            label49.Location = new Point(29, 255);
+            label49.Margin = new Padding(2, 0, 2, 0);
             label49.Name = "label49";
-            label49.Size = new Size(64, 32);
+            label49.Size = new Size(32, 15);
             label49.TabIndex = 158;
             label49.Text = "etick";
             // 
             // lbl_edeactivate
             // 
             lbl_edeactivate.AutoSize = true;
-            lbl_edeactivate.Location = new Point(189, 614);
-            lbl_edeactivate.Margin = new Padding(4, 0, 4, 0);
+            lbl_edeactivate.Location = new Point(102, 288);
+            lbl_edeactivate.Margin = new Padding(2, 0, 2, 0);
             lbl_edeactivate.Name = "lbl_edeactivate";
-            lbl_edeactivate.Size = new Size(25, 32);
+            lbl_edeactivate.Size = new Size(12, 15);
             lbl_edeactivate.TabIndex = 163;
             lbl_edeactivate.Text = "?";
             // 
             // label53
             // 
             label53.AutoSize = true;
-            label53.Location = new Point(54, 614);
-            label53.Margin = new Padding(4, 0, 4, 0);
+            label53.Location = new Point(29, 288);
+            label53.Margin = new Padding(2, 0, 2, 0);
             label53.Name = "label53";
-            label53.Size = new Size(125, 32);
+            label53.Size = new Size(61, 15);
             label53.TabIndex = 162;
             label53.Text = "edeativate";
             // 
             // lbl_etouch
             // 
             lbl_etouch.AutoSize = true;
-            lbl_etouch.Location = new Point(189, 580);
-            lbl_etouch.Margin = new Padding(4, 0, 4, 0);
+            lbl_etouch.Location = new Point(102, 272);
+            lbl_etouch.Margin = new Padding(2, 0, 2, 0);
             lbl_etouch.Name = "lbl_etouch";
-            lbl_etouch.Size = new Size(25, 32);
+            lbl_etouch.Size = new Size(12, 15);
             lbl_etouch.TabIndex = 161;
             lbl_etouch.Text = "?";
             // 
             // label57
             // 
             label57.AutoSize = true;
-            label57.Location = new Point(54, 580);
-            label57.Margin = new Padding(4, 0, 4, 0);
+            label57.Location = new Point(29, 272);
+            label57.Margin = new Padding(2, 0, 2, 0);
             label57.Name = "label57";
-            label57.Size = new Size(88, 32);
+            label57.Size = new Size(44, 15);
             label57.TabIndex = 160;
             label57.Text = "etouch";
             // 
             // lbl_einteract
             // 
             lbl_einteract.AutoSize = true;
-            lbl_einteract.Location = new Point(189, 646);
-            lbl_einteract.Margin = new Padding(4, 0, 4, 0);
+            lbl_einteract.Location = new Point(102, 303);
+            lbl_einteract.Margin = new Padding(2, 0, 2, 0);
             lbl_einteract.Name = "lbl_einteract";
-            lbl_einteract.Size = new Size(25, 32);
+            lbl_einteract.Size = new Size(12, 15);
             lbl_einteract.TabIndex = 165;
             lbl_einteract.Text = "?";
             // 
             // label61
             // 
             label61.AutoSize = true;
-            label61.Location = new Point(54, 646);
-            label61.Margin = new Padding(4, 0, 4, 0);
+            label61.Location = new Point(29, 303);
+            label61.Margin = new Padding(2, 0, 2, 0);
             label61.Name = "label61";
-            label61.Size = new Size(107, 32);
+            label61.Size = new Size(53, 15);
             label61.TabIndex = 164;
             label61.Text = "einteract";
             // 
             // lbl_offsetx
             // 
             lbl_offsetx.AutoSize = true;
-            lbl_offsetx.Location = new Point(189, 681);
-            lbl_offsetx.Margin = new Padding(4, 0, 4, 0);
+            lbl_offsetx.Location = new Point(102, 319);
+            lbl_offsetx.Margin = new Padding(2, 0, 2, 0);
             lbl_offsetx.Name = "lbl_offsetx";
-            lbl_offsetx.Size = new Size(25, 32);
+            lbl_offsetx.Size = new Size(12, 15);
             lbl_offsetx.TabIndex = 167;
             lbl_offsetx.Text = "?";
             // 
             // label47
             // 
             label47.AutoSize = true;
-            label47.Location = new Point(54, 681);
-            label47.Margin = new Padding(4, 0, 4, 0);
+            label47.Location = new Point(29, 319);
+            label47.Margin = new Padding(2, 0, 2, 0);
             label47.Name = "label47";
-            label47.Size = new Size(75, 32);
+            label47.Size = new Size(37, 15);
             label47.TabIndex = 166;
             label47.Text = "offset";
             // 
             // lbl_offsety
             // 
             lbl_offsety.AutoSize = true;
-            lbl_offsety.Location = new Point(240, 681);
-            lbl_offsety.Margin = new Padding(4, 0, 4, 0);
+            lbl_offsety.Location = new Point(129, 319);
+            lbl_offsety.Margin = new Padding(2, 0, 2, 0);
             lbl_offsety.Name = "lbl_offsety";
-            lbl_offsety.Size = new Size(25, 32);
+            lbl_offsety.Size = new Size(12, 15);
             lbl_offsety.TabIndex = 168;
             lbl_offsety.Text = "?";
             // 
             // lbl_offsetz
             // 
             lbl_offsetz.AutoSize = true;
-            lbl_offsetz.Location = new Point(290, 681);
-            lbl_offsetz.Margin = new Padding(4, 0, 4, 0);
+            lbl_offsetz.Location = new Point(156, 319);
+            lbl_offsetz.Margin = new Padding(2, 0, 2, 0);
             lbl_offsetz.Name = "lbl_offsetz";
-            lbl_offsetz.Size = new Size(25, 32);
+            lbl_offsetz.Size = new Size(12, 15);
             lbl_offsetz.TabIndex = 169;
             lbl_offsetz.Text = "?";
             // 
             // lbl_height
             // 
             lbl_height.AutoSize = true;
-            lbl_height.Location = new Point(290, 715);
-            lbl_height.Margin = new Padding(4, 0, 4, 0);
+            lbl_height.Location = new Point(156, 335);
+            lbl_height.Margin = new Padding(2, 0, 2, 0);
             lbl_height.Name = "lbl_height";
-            lbl_height.Size = new Size(25, 32);
+            lbl_height.Size = new Size(12, 15);
             lbl_height.TabIndex = 173;
             lbl_height.Text = "?";
             // 
             // lbl_depth
             // 
             lbl_depth.AutoSize = true;
-            lbl_depth.Location = new Point(240, 715);
-            lbl_depth.Margin = new Padding(4, 0, 4, 0);
+            lbl_depth.Location = new Point(129, 335);
+            lbl_depth.Margin = new Padding(2, 0, 2, 0);
             lbl_depth.Name = "lbl_depth";
-            lbl_depth.Size = new Size(25, 32);
+            lbl_depth.Size = new Size(12, 15);
             lbl_depth.TabIndex = 172;
             lbl_depth.Text = "?";
             // 
             // lbl_width
             // 
             lbl_width.AutoSize = true;
-            lbl_width.Location = new Point(189, 715);
-            lbl_width.Margin = new Padding(4, 0, 4, 0);
+            lbl_width.Location = new Point(102, 335);
+            lbl_width.Margin = new Padding(2, 0, 2, 0);
             lbl_width.Name = "lbl_width";
-            lbl_width.Size = new Size(25, 32);
+            lbl_width.Size = new Size(12, 15);
             lbl_width.TabIndex = 171;
             lbl_width.Text = "?";
             // 
             // label64
             // 
             label64.AutoSize = true;
-            label64.Location = new Point(54, 715);
-            label64.Margin = new Padding(4, 0, 4, 0);
+            label64.Location = new Point(29, 335);
+            label64.Margin = new Padding(2, 0, 2, 0);
             label64.Name = "label64";
-            label64.Size = new Size(136, 32);
+            label64.Size = new Size(68, 15);
             label64.TabIndex = 170;
             label64.Text = "dimensions";
             // 
             // lbl_contents
             // 
             lbl_contents.AutoSize = true;
-            lbl_contents.Location = new Point(189, 781);
-            lbl_contents.Margin = new Padding(4, 0, 4, 0);
+            lbl_contents.Location = new Point(102, 366);
+            lbl_contents.Margin = new Padding(2, 0, 2, 0);
             lbl_contents.Name = "lbl_contents";
-            lbl_contents.Size = new Size(25, 32);
+            lbl_contents.Size = new Size(12, 15);
             lbl_contents.TabIndex = 177;
             lbl_contents.Text = "?";
             // 
             // label66
             // 
             label66.AutoSize = true;
-            label66.Location = new Point(54, 781);
-            label66.Margin = new Padding(4, 0, 4, 0);
+            label66.Location = new Point(29, 366);
+            label66.Margin = new Padding(2, 0, 2, 0);
             label66.Name = "label66";
-            label66.Size = new Size(106, 32);
+            label66.Size = new Size(53, 15);
             label66.TabIndex = 176;
             label66.Text = "contents";
             // 
             // lbl_breakeffect
             // 
             lbl_breakeffect.AutoSize = true;
-            lbl_breakeffect.Location = new Point(189, 747);
-            lbl_breakeffect.Margin = new Padding(4, 0, 4, 0);
+            lbl_breakeffect.Location = new Point(102, 350);
+            lbl_breakeffect.Margin = new Padding(2, 0, 2, 0);
             lbl_breakeffect.Name = "lbl_breakeffect";
-            lbl_breakeffect.Size = new Size(25, 32);
+            lbl_breakeffect.Size = new Size(12, 15);
             lbl_breakeffect.TabIndex = 175;
             lbl_breakeffect.Text = "?";
             // 
             // label68
             // 
             label68.AutoSize = true;
-            label68.Location = new Point(54, 747);
-            label68.Margin = new Padding(4, 0, 4, 0);
+            label68.Location = new Point(29, 350);
+            label68.Margin = new Padding(2, 0, 2, 0);
             label68.Name = "label68";
-            label68.Size = new Size(134, 32);
+            label68.Size = new Size(66, 15);
             label68.TabIndex = 174;
             label68.Text = "breakeffect";
             // 
             // lbl_flags
             // 
             lbl_flags.AutoSize = true;
-            lbl_flags.Location = new Point(191, 476);
-            lbl_flags.Margin = new Padding(4, 0, 4, 0);
+            lbl_flags.Location = new Point(103, 223);
+            lbl_flags.Margin = new Padding(2, 0, 2, 0);
             lbl_flags.Name = "lbl_flags";
-            lbl_flags.Size = new Size(25, 32);
+            lbl_flags.Size = new Size(12, 15);
             lbl_flags.TabIndex = 183;
             lbl_flags.Text = "?";
             // 
             // label70
             // 
             label70.AutoSize = true;
-            label70.Location = new Point(56, 476);
-            label70.Margin = new Padding(4, 0, 4, 0);
+            label70.Location = new Point(30, 223);
+            label70.Margin = new Padding(2, 0, 2, 0);
             label70.Name = "label70";
-            label70.Size = new Size(64, 32);
+            label70.Size = new Size(32, 15);
             label70.TabIndex = 182;
             label70.Text = "flags";
             // 
             // lbl_canpickup
             // 
             lbl_canpickup.AutoSize = true;
-            lbl_canpickup.Location = new Point(191, 442);
-            lbl_canpickup.Margin = new Padding(4, 0, 4, 0);
+            lbl_canpickup.Location = new Point(103, 207);
+            lbl_canpickup.Margin = new Padding(2, 0, 2, 0);
             lbl_canpickup.Name = "lbl_canpickup";
-            lbl_canpickup.Size = new Size(25, 32);
+            lbl_canpickup.Size = new Size(12, 15);
             lbl_canpickup.TabIndex = 181;
             lbl_canpickup.Text = "?";
             // 
             // label72
             // 
             label72.AutoSize = true;
-            label72.Location = new Point(56, 442);
-            label72.Margin = new Padding(4, 0, 4, 0);
+            label72.Location = new Point(30, 207);
+            label72.Margin = new Padding(2, 0, 2, 0);
             label72.Name = "label72";
-            label72.Size = new Size(122, 32);
+            label72.Size = new Size(62, 15);
             label72.TabIndex = 180;
             label72.Text = "canpickup";
             // 
             // lbl_moreflags
             // 
             lbl_moreflags.AutoSize = true;
-            lbl_moreflags.Location = new Point(191, 410);
-            lbl_moreflags.Margin = new Padding(4, 0, 4, 0);
+            lbl_moreflags.Location = new Point(103, 192);
+            lbl_moreflags.Margin = new Padding(2, 0, 2, 0);
             lbl_moreflags.Name = "lbl_moreflags";
-            lbl_moreflags.Size = new Size(25, 32);
+            lbl_moreflags.Size = new Size(12, 15);
             lbl_moreflags.TabIndex = 179;
             lbl_moreflags.Text = "?";
             // 
             // label74
             // 
             label74.AutoSize = true;
-            label74.Location = new Point(56, 410);
-            label74.Margin = new Padding(4, 0, 4, 0);
+            label74.Location = new Point(30, 192);
+            label74.Margin = new Padding(2, 0, 2, 0);
             label74.Name = "label74";
-            label74.Size = new Size(120, 32);
+            label74.Size = new Size(60, 15);
             label74.TabIndex = 178;
             label74.Text = "moreflags";
             // 
@@ -1782,11 +1782,10 @@
             tabControl1.Controls.Add(tabPage6);
             tabControl1.Controls.Add(tabPage7);
             tabControl1.Controls.Add(tabPage8);
-            tabControl1.Location = new Point(1690, 26);
-            tabControl1.Margin = new Padding(6);
+            tabControl1.Location = new Point(910, 12);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1597, 1745);
+            tabControl1.Size = new Size(860, 814);
             tabControl1.TabIndex = 186;
             // 
             // tabPage9
@@ -1803,21 +1802,19 @@
             tabPage9.Controls.Add(buttonSpriteInfoHeader);
             tabPage9.Controls.Add(buttonGameMapHeader);
             tabPage9.Controls.Add(propertyGridGameMapHeader);
-            tabPage9.Location = new Point(8, 46);
-            tabPage9.Margin = new Padding(6);
+            tabPage9.Location = new Point(4, 24);
             tabPage9.Name = "tabPage9";
-            tabPage9.Padding = new Padding(6);
-            tabPage9.Size = new Size(1581, 1691);
+            tabPage9.Padding = new Padding(3, 3, 3, 3);
+            tabPage9.Size = new Size(852, 786);
             tabPage9.TabIndex = 8;
             tabPage9.Text = "Data";
             tabPage9.UseVisualStyleBackColor = true;
             // 
             // button7
             // 
-            button7.Location = new Point(11, 678);
-            button7.Margin = new Padding(6);
+            button7.Location = new Point(6, 318);
             button7.Name = "button7";
-            button7.Size = new Size(254, 49);
+            button7.Size = new Size(137, 23);
             button7.TabIndex = 148;
             button7.Text = "Sprite records";
             button7.UseVisualStyleBackColor = true;
@@ -1825,10 +1822,9 @@
             // 
             // button6
             // 
-            button6.Location = new Point(11, 617);
-            button6.Margin = new Padding(6);
+            button6.Location = new Point(6, 289);
             button6.Name = "button6";
-            button6.Size = new Size(254, 49);
+            button6.Size = new Size(137, 23);
             button6.TabIndex = 147;
             button6.Text = "Sprite effect records";
             button6.UseVisualStyleBackColor = true;
@@ -1836,10 +1832,9 @@
             // 
             // button5
             // 
-            button5.Location = new Point(11, 555);
-            button5.Margin = new Padding(6);
+            button5.Location = new Point(6, 260);
             button5.Name = "button5";
-            button5.Size = new Size(254, 49);
+            button5.Size = new Size(137, 23);
             button5.TabIndex = 146;
             button5.Text = "Map effect records";
             button5.UseVisualStyleBackColor = true;
@@ -1847,10 +1842,9 @@
             // 
             // button4
             // 
-            button4.Location = new Point(11, 493);
-            button4.Margin = new Padding(6);
+            button4.Location = new Point(6, 231);
             button4.Name = "button4";
-            button4.Size = new Size(254, 49);
+            button4.Size = new Size(137, 23);
             button4.TabIndex = 145;
             button4.Text = "Sprite info Event Codes";
             button4.UseVisualStyleBackColor = true;
@@ -1858,10 +1852,9 @@
             // 
             // button3
             // 
-            button3.Location = new Point(11, 431);
-            button3.Margin = new Padding(6);
+            button3.Location = new Point(6, 202);
             button3.Name = "button3";
-            button3.Size = new Size(254, 49);
+            button3.Size = new Size(137, 23);
             button3.TabIndex = 144;
             button3.Text = "Sprite info Entities";
             button3.UseVisualStyleBackColor = true;
@@ -1869,10 +1862,9 @@
             // 
             // button2
             // 
-            button2.Location = new Point(11, 282);
-            button2.Margin = new Padding(6);
+            button2.Location = new Point(6, 132);
             button2.Name = "button2";
-            button2.Size = new Size(254, 49);
+            button2.Size = new Size(137, 23);
             button2.TabIndex = 143;
             button2.Text = "Map";
             button2.UseVisualStyleBackColor = true;
@@ -1880,10 +1872,9 @@
             // 
             // button1
             // 
-            button1.Location = new Point(11, 343);
-            button1.Margin = new Padding(6);
+            button1.Location = new Point(6, 161);
             button1.Name = "button1";
-            button1.Size = new Size(254, 49);
+            button1.Size = new Size(137, 23);
             button1.TabIndex = 142;
             button1.Text = "Sprite info";
             button1.UseVisualStyleBackColor = true;
@@ -1891,10 +1882,9 @@
             // 
             // buttonScrollScreen
             // 
-            buttonScrollScreen.Location = new Point(11, 198);
-            buttonScrollScreen.Margin = new Padding(6);
+            buttonScrollScreen.Location = new Point(6, 93);
             buttonScrollScreen.Name = "buttonScrollScreen";
-            buttonScrollScreen.Size = new Size(254, 49);
+            buttonScrollScreen.Size = new Size(137, 23);
             buttonScrollScreen.TabIndex = 141;
             buttonScrollScreen.Text = "Scroll screen";
             buttonScrollScreen.UseVisualStyleBackColor = true;
@@ -1902,10 +1892,9 @@
             // 
             // buttonGameMapInfo
             // 
-            buttonGameMapInfo.Location = new Point(11, 137);
-            buttonGameMapInfo.Margin = new Padding(6);
+            buttonGameMapInfo.Location = new Point(6, 64);
             buttonGameMapInfo.Name = "buttonGameMapInfo";
-            buttonGameMapInfo.Size = new Size(254, 49);
+            buttonGameMapInfo.Size = new Size(137, 23);
             buttonGameMapInfo.TabIndex = 140;
             buttonGameMapInfo.Text = "Game map info";
             buttonGameMapInfo.UseVisualStyleBackColor = true;
@@ -1913,10 +1902,9 @@
             // 
             // buttonSpriteInfoHeader
             // 
-            buttonSpriteInfoHeader.Location = new Point(11, 75);
-            buttonSpriteInfoHeader.Margin = new Padding(6);
+            buttonSpriteInfoHeader.Location = new Point(6, 35);
             buttonSpriteInfoHeader.Name = "buttonSpriteInfoHeader";
-            buttonSpriteInfoHeader.Size = new Size(254, 49);
+            buttonSpriteInfoHeader.Size = new Size(137, 23);
             buttonSpriteInfoHeader.TabIndex = 139;
             buttonSpriteInfoHeader.Text = "Sprite info header";
             buttonSpriteInfoHeader.UseVisualStyleBackColor = true;
@@ -1924,10 +1912,9 @@
             // 
             // buttonGameMapHeader
             // 
-            buttonGameMapHeader.Location = new Point(11, 13);
-            buttonGameMapHeader.Margin = new Padding(6);
+            buttonGameMapHeader.Location = new Point(6, 6);
             buttonGameMapHeader.Name = "buttonGameMapHeader";
-            buttonGameMapHeader.Size = new Size(254, 49);
+            buttonGameMapHeader.Size = new Size(137, 23);
             buttonGameMapHeader.TabIndex = 138;
             buttonGameMapHeader.Text = "Game map header";
             buttonGameMapHeader.UseVisualStyleBackColor = true;
@@ -1937,10 +1924,9 @@
             // 
             propertyGridGameMapHeader.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             propertyGridGameMapHeader.BackColor = SystemColors.Control;
-            propertyGridGameMapHeader.Location = new Point(277, 6);
-            propertyGridGameMapHeader.Margin = new Padding(6);
+            propertyGridGameMapHeader.Location = new Point(149, 3);
             propertyGridGameMapHeader.Name = "propertyGridGameMapHeader";
-            propertyGridGameMapHeader.Size = new Size(1300, 1673);
+            propertyGridGameMapHeader.Size = new Size(700, 780);
             propertyGridGameMapHeader.TabIndex = 137;
             // 
             // tabPage1
@@ -1956,42 +1942,59 @@
             tabPage1.Controls.Add(lstSpritePalettes);
             tabPage1.Controls.Add(pctSpritePalettes);
             tabPage1.Controls.Add(label31);
-            tabPage1.Location = new Point(8, 46);
-            tabPage1.Margin = new Padding(6);
+            tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(6);
-            tabPage1.Size = new Size(1581, 1691);
+            tabPage1.Padding = new Padding(3, 3, 3, 3);
+            tabPage1.Size = new Size(852, 679);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Spritesheet";
             tabPage1.UseVisualStyleBackColor = true;
             // 
+            // imageViewerTileSheet
+            // 
+            imageViewerTileSheet.Image = null;
+            imageViewerTileSheet.Location = new Point(7, 180);
+            imageViewerTileSheet.Margin = new Padding(2, 1, 2, 1);
+            imageViewerTileSheet.Name = "imageViewerTileSheet";
+            imageViewerTileSheet.Size = new Size(276, 240);
+            imageViewerTileSheet.TabIndex = 141;
+            // 
+            // imageViewerSpriteSheet
+            // 
+            imageViewerSpriteSheet.Image = null;
+            imageViewerSpriteSheet.Location = new Point(286, 180);
+            imageViewerSpriteSheet.Margin = new Padding(2, 1, 2, 1);
+            imageViewerSpriteSheet.Name = "imageViewerSpriteSheet";
+            imageViewerSpriteSheet.Size = new Size(276, 240);
+            imageViewerSpriteSheet.TabIndex = 140;
+            // 
             // imageViewerScrollingSpriteSheet
             // 
             imageViewerScrollingSpriteSheet.Image = null;
-            imageViewerScrollingSpriteSheet.Location = new Point(532, 953);
+            imageViewerScrollingSpriteSheet.Location = new Point(286, 447);
+            imageViewerScrollingSpriteSheet.Margin = new Padding(2, 1, 2, 1);
             imageViewerScrollingSpriteSheet.Name = "imageViewerScrollingSpriteSheet";
-            imageViewerScrollingSpriteSheet.Size = new Size(512, 512);
+            imageViewerScrollingSpriteSheet.Size = new Size(276, 240);
             imageViewerScrollingSpriteSheet.TabIndex = 139;
             // 
             // label69
             // 
             label69.AutoSize = true;
-            label69.Location = new Point(13, 915);
-            label69.Margin = new Padding(7, 0, 7, 0);
+            label69.Location = new Point(7, 429);
+            label69.Margin = new Padding(4, 0, 4, 0);
             label69.Name = "label69";
-            label69.Size = new Size(164, 32);
+            label69.Size = new Size(81, 15);
             label69.TabIndex = 138;
             label69.Text = "animated tiles";
             // 
             // listViewSpriteMapEntries
             // 
             listViewSpriteMapEntries.Columns.AddRange(new ColumnHeader[] { columnHeaderSpriteMapEntryEnabled, columnHeaderSpriteMapEntryMaxOffsetY, columnHeaderSpriteMapEntryTileWidth, columnHeaderSpriteMapEntryRowCount, columnHeaderSpriteMapEntryOffsetX, columnHeaderSpriteMapEntryOffsetY, columnHeaderSpriteMapEntryOffsetZ });
-            listViewSpriteMapEntries.Location = new Point(11, 953);
-            listViewSpriteMapEntries.Margin = new Padding(6);
+            listViewSpriteMapEntries.Location = new Point(6, 447);
             listViewSpriteMapEntries.MultiSelect = false;
             listViewSpriteMapEntries.Name = "listViewSpriteMapEntries";
             listViewSpriteMapEntries.ShowGroups = false;
-            listViewSpriteMapEntries.Size = new Size(512, 512);
+            listViewSpriteMapEntries.Size = new Size(278, 242);
             listViewSpriteMapEntries.TabIndex = 137;
             listViewSpriteMapEntries.UseCompatibleStateImageBehavior = false;
             listViewSpriteMapEntries.View = View.Details;
@@ -2116,10 +2119,9 @@
             tabPage3.Controls.Add(lblFrameData);
             tabPage3.Controls.Add(label43);
             tabPage3.Controls.Add(lblsector5mem);
-            tabPage3.Location = new Point(8, 46);
-            tabPage3.Margin = new Padding(6);
+            tabPage3.Location = new Point(4, 24);
             tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(1581, 1691);
+            tabPage3.Size = new Size(852, 679);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "SpriteRecords";
             tabPage3.UseVisualStyleBackColor = true;
@@ -2127,144 +2129,144 @@
             // label80
             // 
             label80.AutoSize = true;
-            label80.Location = new Point(1300, 930);
-            label80.Margin = new Padding(7, 0, 7, 0);
+            label80.Location = new Point(700, 436);
+            label80.Margin = new Padding(4, 0, 4, 0);
             label80.Name = "label80";
-            label80.Size = new Size(82, 32);
+            label80.Size = new Size(41, 15);
             label80.TabIndex = 198;
             label80.Text = "Global";
             // 
             // listBoxCodesGlobal
             // 
+            listBoxCodesGlobal.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listBoxCodesGlobal.FormattingEnabled = true;
-            listBoxCodesGlobal.Location = new Point(1300, 969);
-            listBoxCodesGlobal.Margin = new Padding(6);
+            listBoxCodesGlobal.Location = new Point(700, 454);
             listBoxCodesGlobal.Name = "listBoxCodesGlobal";
-            listBoxCodesGlobal.Size = new Size(201, 1028);
+            listBoxCodesGlobal.Size = new Size(110, 214);
             listBoxCodesGlobal.TabIndex = 197;
             // 
             // label79
             // 
             label79.AutoSize = true;
-            label79.Location = new Point(1085, 930);
-            label79.Margin = new Padding(7, 0, 7, 0);
+            label79.Location = new Point(584, 436);
+            label79.Margin = new Padding(4, 0, 4, 0);
             label79.Name = "label79";
-            label79.Size = new Size(113, 32);
+            label79.Size = new Size(56, 15);
             label79.TabIndex = 196;
             label79.Text = "F Interact";
             // 
             // listBoxCodesF
             // 
+            listBoxCodesF.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listBoxCodesF.FormattingEnabled = true;
-            listBoxCodesF.Location = new Point(1085, 969);
-            listBoxCodesF.Margin = new Padding(6);
+            listBoxCodesF.Location = new Point(584, 454);
             listBoxCodesF.Name = "listBoxCodesF";
-            listBoxCodesF.Size = new Size(201, 1028);
+            listBoxCodesF.Size = new Size(110, 214);
             listBoxCodesF.TabIndex = 195;
             // 
             // label78
             // 
             label78.AutoSize = true;
-            label78.Location = new Point(869, 930);
-            label78.Margin = new Padding(7, 0, 7, 0);
+            label78.Location = new Point(468, 436);
+            label78.Margin = new Padding(4, 0, 4, 0);
             label78.Name = "label78";
-            label78.Size = new Size(145, 32);
+            label78.Size = new Size(71, 15);
             label78.TabIndex = 194;
             label78.Text = "E Deactivate";
             // 
             // listBoxCodesE
             // 
+            listBoxCodesE.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listBoxCodesE.FormattingEnabled = true;
-            listBoxCodesE.Location = new Point(869, 969);
-            listBoxCodesE.Margin = new Padding(6);
+            listBoxCodesE.Location = new Point(468, 454);
             listBoxCodesE.Name = "listBoxCodesE";
-            listBoxCodesE.Size = new Size(201, 1028);
+            listBoxCodesE.Size = new Size(110, 214);
             listBoxCodesE.TabIndex = 193;
             // 
             // label77
             // 
             label77.AutoSize = true;
-            label77.Location = new Point(654, 930);
-            label77.Margin = new Padding(7, 0, 7, 0);
+            label77.Location = new Point(352, 436);
+            label77.Margin = new Padding(4, 0, 4, 0);
             label77.Name = "label77";
-            label77.Size = new Size(102, 32);
+            label77.Size = new Size(51, 15);
             label77.TabIndex = 192;
             label77.Text = "D Touch";
             // 
             // listBoxCodesD
             // 
+            listBoxCodesD.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listBoxCodesD.FormattingEnabled = true;
-            listBoxCodesD.Location = new Point(654, 969);
-            listBoxCodesD.Margin = new Padding(6);
+            listBoxCodesD.Location = new Point(352, 454);
             listBoxCodesD.Name = "listBoxCodesD";
-            listBoxCodesD.Size = new Size(201, 1028);
+            listBoxCodesD.Size = new Size(110, 214);
             listBoxCodesD.TabIndex = 191;
             // 
             // label76
             // 
             label76.AutoSize = true;
-            label76.Location = new Point(438, 930);
-            label76.Margin = new Padding(7, 0, 7, 0);
+            label76.Location = new Point(236, 436);
+            label76.Margin = new Padding(4, 0, 4, 0);
             label76.Name = "label76";
-            label76.Size = new Size(78, 32);
+            label76.Size = new Size(40, 15);
             label76.TabIndex = 190;
             label76.Text = "C Tick";
             // 
             // listBoxCodesC
             // 
+            listBoxCodesC.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listBoxCodesC.FormattingEnabled = true;
-            listBoxCodesC.Location = new Point(438, 969);
-            listBoxCodesC.Margin = new Padding(6);
+            listBoxCodesC.Location = new Point(236, 454);
             listBoxCodesC.Name = "listBoxCodesC";
-            listBoxCodesC.Size = new Size(201, 1028);
+            listBoxCodesC.Size = new Size(110, 214);
             listBoxCodesC.TabIndex = 189;
             // 
             // label75
             // 
             label75.AutoSize = true;
-            label75.Location = new Point(223, 930);
-            label75.Margin = new Padding(7, 0, 7, 0);
+            label75.Location = new Point(120, 436);
+            label75.Margin = new Padding(4, 0, 4, 0);
             label75.Name = "label75";
-            label75.Size = new Size(83, 32);
+            label75.Size = new Size(41, 15);
             label75.TabIndex = 188;
             label75.Text = "B Map";
             // 
             // listBoxCodesB
             // 
+            listBoxCodesB.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listBoxCodesB.FormattingEnabled = true;
-            listBoxCodesB.Location = new Point(223, 969);
-            listBoxCodesB.Margin = new Padding(6);
+            listBoxCodesB.Location = new Point(120, 454);
             listBoxCodesB.Name = "listBoxCodesB";
-            listBoxCodesB.Size = new Size(201, 1028);
+            listBoxCodesB.Size = new Size(110, 214);
             listBoxCodesB.TabIndex = 187;
             // 
             // label73
             // 
             label73.AutoSize = true;
-            label73.Location = new Point(7, 877);
-            label73.Margin = new Padding(7, 0, 7, 0);
+            label73.Location = new Point(4, 411);
+            label73.Margin = new Padding(4, 0, 4, 0);
             label73.Name = "label73";
-            label73.Size = new Size(85, 32);
+            label73.Size = new Size(43, 15);
             label73.TabIndex = 186;
             label73.Text = "Codes:";
             // 
             // label71
             // 
             label71.AutoSize = true;
-            label71.Location = new Point(7, 930);
-            label71.Margin = new Padding(7, 0, 7, 0);
+            label71.Location = new Point(4, 436);
+            label71.Margin = new Padding(4, 0, 4, 0);
             label71.Name = "label71";
-            label71.Size = new Size(87, 32);
+            label71.Size = new Size(44, 15);
             label71.TabIndex = 185;
             label71.Text = "A Load";
             // 
             // listBoxCodesA
             // 
+            listBoxCodesA.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listBoxCodesA.FormattingEnabled = true;
-            listBoxCodesA.Location = new Point(7, 969);
-            listBoxCodesA.Margin = new Padding(6);
+            listBoxCodesA.Location = new Point(4, 454);
             listBoxCodesA.Name = "listBoxCodesA";
-            listBoxCodesA.Size = new Size(201, 1028);
+            listBoxCodesA.Size = new Size(110, 214);
             listBoxCodesA.TabIndex = 184;
             // 
             // tabPage2
@@ -2293,11 +2295,10 @@
             tabPage2.Controls.Add(btnSector1fCmds);
             tabPage2.Controls.Add(lsvSector4);
             tabPage2.Controls.Add(label34);
-            tabPage2.Location = new Point(8, 46);
-            tabPage2.Margin = new Padding(6);
+            tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(6);
-            tabPage2.Size = new Size(1581, 1691);
+            tabPage2.Padding = new Padding(3, 3, 3, 3);
+            tabPage2.Size = new Size(852, 679);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Entities";
             tabPage2.UseVisualStyleBackColor = true;
@@ -2306,10 +2307,9 @@
             // 
             tabPage4.Controls.Add(lstStringTable);
             tabPage4.Controls.Add(label19);
-            tabPage4.Location = new Point(8, 46);
-            tabPage4.Margin = new Padding(6);
+            tabPage4.Location = new Point(4, 24);
             tabPage4.Name = "tabPage4";
-            tabPage4.Size = new Size(1581, 1691);
+            tabPage4.Size = new Size(852, 679);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "Strings";
             tabPage4.UseVisualStyleBackColor = true;
@@ -2319,19 +2319,19 @@
             lstStringTable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             lstStringTable.FormattingEnabled = true;
             lstStringTable.HorizontalScrollbar = true;
-            lstStringTable.Location = new Point(7, 58);
-            lstStringTable.Margin = new Padding(7, 6, 7, 6);
+            lstStringTable.Location = new Point(4, 27);
+            lstStringTable.Margin = new Padding(4, 3, 4, 3);
             lstStringTable.Name = "lstStringTable";
-            lstStringTable.Size = new Size(1545, 1572);
+            lstStringTable.Size = new Size(834, 619);
             lstStringTable.TabIndex = 90;
             // 
             // label19
             // 
             label19.AutoSize = true;
-            label19.Location = new Point(7, 19);
-            label19.Margin = new Padding(7, 0, 7, 0);
+            label19.Location = new Point(4, 9);
+            label19.Margin = new Padding(4, 0, 4, 0);
             label19.Name = "label19";
-            label19.Size = new Size(134, 32);
+            label19.Size = new Size(66, 15);
             label19.TabIndex = 91;
             label19.Text = "string table";
             // 
@@ -2359,11 +2359,10 @@
             tabPage5.Controls.Add(lblportaldesty);
             tabPage5.Controls.Add(btnPortal);
             tabPage5.Controls.Add(label33);
-            tabPage5.Location = new Point(8, 46);
-            tabPage5.Margin = new Padding(6);
+            tabPage5.Location = new Point(4, 24);
             tabPage5.Name = "tabPage5";
-            tabPage5.Padding = new Padding(6);
-            tabPage5.Size = new Size(1581, 1691);
+            tabPage5.Padding = new Padding(3, 3, 3, 3);
+            tabPage5.Size = new Size(852, 679);
             tabPage5.TabIndex = 4;
             tabPage5.Text = "Portals";
             tabPage5.UseVisualStyleBackColor = true;
@@ -2371,11 +2370,10 @@
             // tabPage6
             // 
             tabPage6.Controls.Add(soundboardControl1);
-            tabPage6.Location = new Point(8, 46);
-            tabPage6.Margin = new Padding(6);
+            tabPage6.Location = new Point(4, 24);
             tabPage6.Name = "tabPage6";
-            tabPage6.Padding = new Padding(6);
-            tabPage6.Size = new Size(1581, 1691);
+            tabPage6.Padding = new Padding(3, 3, 3, 3);
+            tabPage6.Size = new Size(852, 786);
             tabPage6.TabIndex = 5;
             tabPage6.Text = "Sound";
             tabPage6.UseVisualStyleBackColor = true;
@@ -2384,9 +2382,9 @@
             // 
             soundboardControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             soundboardControl1.Location = new Point(0, 0);
-            soundboardControl1.Margin = new Padding(6, 9, 6, 9);
+            soundboardControl1.Margin = new Padding(3, 4, 3, 4);
             soundboardControl1.Name = "soundboardControl1";
-            soundboardControl1.Size = new Size(1582, 1679);
+            soundboardControl1.Size = new Size(852, 783);
             soundboardControl1.TabIndex = 0;
             // 
             // tabPage7
@@ -2401,11 +2399,10 @@
             tabPage7.Controls.Add(listBoxEtcIconNameTable);
             tabPage7.Controls.Add(label45);
             tabPage7.Controls.Add(listBoxEtcDescriptionItemTable);
-            tabPage7.Location = new Point(8, 46);
-            tabPage7.Margin = new Padding(6);
+            tabPage7.Location = new Point(4, 24);
             tabPage7.Name = "tabPage7";
-            tabPage7.Padding = new Padding(6);
-            tabPage7.Size = new Size(1581, 1691);
+            tabPage7.Padding = new Padding(3, 3, 3, 3);
+            tabPage7.Size = new Size(852, 786);
             tabPage7.TabIndex = 6;
             tabPage7.Text = "Etc ressources";
             tabPage7.UseVisualStyleBackColor = true;
@@ -2413,10 +2410,9 @@
             // label62
             // 
             label62.AutoSize = true;
-            label62.Location = new Point(11, 742);
-            label62.Margin = new Padding(6, 0, 6, 0);
+            label62.Location = new Point(6, 348);
             label62.Name = "label62";
-            label62.Size = new Size(86, 32);
+            label62.Size = new Size(43, 15);
             label62.TabIndex = 9;
             label62.Text = "Strings";
             // 
@@ -2424,86 +2420,77 @@
             // 
             listBoxEtcStrings.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             listBoxEtcStrings.FormattingEnabled = true;
-            listBoxEtcStrings.Location = new Point(11, 781);
-            listBoxEtcStrings.Margin = new Padding(6);
+            listBoxEtcStrings.Location = new Point(6, 366);
             listBoxEtcStrings.Name = "listBoxEtcStrings";
-            listBoxEtcStrings.Size = new Size(1557, 868);
+            listBoxEtcStrings.Size = new Size(840, 394);
             listBoxEtcStrings.TabIndex = 8;
             // 
             // label59
             // 
             label59.AutoSize = true;
-            label59.Location = new Point(1287, 4);
-            label59.Margin = new Padding(6, 0, 6, 0);
+            label59.Location = new Point(693, 2);
             label59.Name = "label59";
-            label59.Size = new Size(136, 32);
+            label59.Size = new Size(67, 15);
             label59.TabIndex = 7;
             label59.Text = "String table";
             // 
             // listBoxEtcStringTable
             // 
             listBoxEtcStringTable.FormattingEnabled = true;
-            listBoxEtcStringTable.Location = new Point(1287, 45);
-            listBoxEtcStringTable.Margin = new Padding(6);
+            listBoxEtcStringTable.Location = new Point(693, 21);
             listBoxEtcStringTable.Name = "listBoxEtcStringTable";
-            listBoxEtcStringTable.Size = new Size(281, 676);
+            listBoxEtcStringTable.Size = new Size(153, 319);
             listBoxEtcStringTable.TabIndex = 6;
             // 
             // label55
             // 
             label55.AutoSize = true;
-            label55.Location = new Point(427, 6);
-            label55.Margin = new Padding(6, 0, 6, 0);
+            label55.Location = new Point(230, 3);
             label55.Name = "label55";
-            label55.Size = new Size(152, 32);
+            label55.Size = new Size(75, 15);
             label55.TabIndex = 5;
             label55.Text = "Other strings";
             // 
             // listBoxEtcOtherStringTable
             // 
             listBoxEtcOtherStringTable.FormattingEnabled = true;
-            listBoxEtcOtherStringTable.Location = new Point(427, 45);
-            listBoxEtcOtherStringTable.Margin = new Padding(6);
+            listBoxEtcOtherStringTable.Location = new Point(230, 21);
             listBoxEtcOtherStringTable.Name = "listBoxEtcOtherStringTable";
-            listBoxEtcOtherStringTable.Size = new Size(424, 676);
+            listBoxEtcOtherStringTable.Size = new Size(230, 319);
             listBoxEtcOtherStringTable.TabIndex = 4;
             // 
             // label51
             // 
             label51.AutoSize = true;
-            label51.Location = new Point(864, 6);
-            label51.Margin = new Padding(6, 0, 6, 0);
+            label51.Location = new Point(465, 3);
             label51.Name = "label51";
-            label51.Size = new Size(136, 32);
+            label51.Size = new Size(68, 15);
             label51.TabIndex = 3;
             label51.Text = "Icon names";
             // 
             // listBoxEtcIconNameTable
             // 
             listBoxEtcIconNameTable.FormattingEnabled = true;
-            listBoxEtcIconNameTable.Location = new Point(864, 45);
-            listBoxEtcIconNameTable.Margin = new Padding(6);
+            listBoxEtcIconNameTable.Location = new Point(465, 21);
             listBoxEtcIconNameTable.Name = "listBoxEtcIconNameTable";
-            listBoxEtcIconNameTable.Size = new Size(413, 676);
+            listBoxEtcIconNameTable.Size = new Size(224, 319);
             listBoxEtcIconNameTable.TabIndex = 2;
             // 
             // label45
             // 
             label45.AutoSize = true;
-            label45.Location = new Point(11, 6);
-            label45.Margin = new Padding(6, 0, 6, 0);
+            label45.Location = new Point(6, 3);
             label45.Name = "label45";
-            label45.Size = new Size(200, 32);
+            label45.Size = new Size(99, 15);
             label45.TabIndex = 1;
             label45.Text = "Description Items";
             // 
             // listBoxEtcDescriptionItemTable
             // 
             listBoxEtcDescriptionItemTable.FormattingEnabled = true;
-            listBoxEtcDescriptionItemTable.Location = new Point(11, 45);
-            listBoxEtcDescriptionItemTable.Margin = new Padding(6);
+            listBoxEtcDescriptionItemTable.Location = new Point(6, 21);
             listBoxEtcDescriptionItemTable.Name = "listBoxEtcDescriptionItemTable";
-            listBoxEtcDescriptionItemTable.Size = new Size(403, 676);
+            listBoxEtcDescriptionItemTable.Size = new Size(219, 319);
             listBoxEtcDescriptionItemTable.TabIndex = 0;
             // 
             // tabPage8
@@ -2515,11 +2502,10 @@
             tabPage8.Controls.Add(listBoxFont3Palette);
             tabPage8.Controls.Add(pictureBoxWindTx);
             tabPage8.Controls.Add(label63);
-            tabPage8.Location = new Point(8, 46);
-            tabPage8.Margin = new Padding(6);
+            tabPage8.Location = new Point(4, 24);
             tabPage8.Name = "tabPage8";
-            tabPage8.Padding = new Padding(6);
-            tabPage8.Size = new Size(1581, 1691);
+            tabPage8.Padding = new Padding(3, 3, 3, 3);
+            tabPage8.Size = new Size(852, 679);
             tabPage8.TabIndex = 7;
             tabPage8.Text = "Font3";
             tabPage8.UseVisualStyleBackColor = true;
@@ -2527,78 +2513,77 @@
             // label67
             // 
             label67.AutoSize = true;
-            label67.Location = new Point(13, 939);
-            label67.Margin = new Padding(7, 0, 7, 0);
+            label67.Location = new Point(7, 440);
+            label67.Margin = new Padding(4, 0, 4, 0);
             label67.Name = "label67";
-            label67.Size = new Size(134, 32);
+            label67.Size = new Size(68, 15);
             label67.TabIndex = 99;
             label67.Text = "FONT3.TIM";
             // 
             // pictureBoxFont3Tim
             // 
             pictureBoxFont3Tim.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            pictureBoxFont3Tim.Location = new Point(19, 977);
-            pictureBoxFont3Tim.Margin = new Padding(7, 6, 7, 6);
+            pictureBoxFont3Tim.Location = new Point(10, 458);
+            pictureBoxFont3Tim.Margin = new Padding(4, 3, 4, 3);
             pictureBoxFont3Tim.Name = "pictureBoxFont3Tim";
-            pictureBoxFont3Tim.Size = new Size(438, 546);
+            pictureBoxFont3Tim.Size = new Size(236, 256);
             pictureBoxFont3Tim.TabIndex = 98;
             pictureBoxFont3Tim.TabStop = false;
             // 
             // label65
             // 
             label65.AutoSize = true;
-            label65.Location = new Point(7, 348);
-            label65.Margin = new Padding(7, 0, 7, 0);
+            label65.Location = new Point(4, 163);
+            label65.Margin = new Padding(4, 0, 4, 0);
             label65.Name = "label65";
-            label65.Size = new Size(109, 32);
+            label65.Size = new Size(55, 15);
             label65.TabIndex = 97;
             label65.Text = "WIND.TX";
             // 
             // pictureBoxFont3Palette
             // 
-            pictureBoxFont3Palette.Location = new Point(180, 45);
-            pictureBoxFont3Palette.Margin = new Padding(7, 6, 7, 6);
+            pictureBoxFont3Palette.Location = new Point(97, 21);
+            pictureBoxFont3Palette.Margin = new Padding(4, 3, 4, 3);
             pictureBoxFont3Palette.Name = "pictureBoxFont3Palette";
-            pictureBoxFont3Palette.Size = new Size(199, 299);
+            pictureBoxFont3Palette.Size = new Size(107, 140);
             pictureBoxFont3Palette.TabIndex = 96;
             pictureBoxFont3Palette.TabStop = false;
             // 
             // listBoxFont3Palette
             // 
             listBoxFont3Palette.FormattingEnabled = true;
-            listBoxFont3Palette.Location = new Point(13, 45);
-            listBoxFont3Palette.Margin = new Padding(7, 6, 7, 6);
+            listBoxFont3Palette.Location = new Point(7, 21);
+            listBoxFont3Palette.Margin = new Padding(4, 3, 4, 3);
             listBoxFont3Palette.Name = "listBoxFont3Palette";
-            listBoxFont3Palette.Size = new Size(149, 292);
+            listBoxFont3Palette.Size = new Size(82, 139);
             listBoxFont3Palette.TabIndex = 93;
             listBoxFont3Palette.SelectedIndexChanged += listBoxFont3Palette_SelectedIndexChanged;
             // 
             // pictureBoxWindTx
             // 
             pictureBoxWindTx.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            pictureBoxWindTx.Location = new Point(13, 386);
-            pictureBoxWindTx.Margin = new Padding(7, 6, 7, 6);
+            pictureBoxWindTx.Location = new Point(7, 181);
+            pictureBoxWindTx.Margin = new Padding(4, 3, 4, 3);
             pictureBoxWindTx.Name = "pictureBoxWindTx";
-            pictureBoxWindTx.Size = new Size(438, 546);
+            pictureBoxWindTx.Size = new Size(236, 256);
             pictureBoxWindTx.TabIndex = 94;
             pictureBoxWindTx.TabStop = false;
             // 
             // label63
             // 
             label63.AutoSize = true;
-            label63.Location = new Point(7, 6);
-            label63.Margin = new Padding(7, 0, 7, 0);
+            label63.Location = new Point(4, 3);
+            label63.Margin = new Padding(4, 0, 4, 0);
             label63.Name = "label63";
-            label63.Size = new Size(96, 32);
+            label63.Size = new Size(48, 15);
             label63.TabIndex = 95;
             label63.Text = "Palettes";
             // 
             // buttonSelectAlundra
             // 
-            buttonSelectAlundra.Location = new Point(24, 60);
-            buttonSelectAlundra.Margin = new Padding(6);
+            buttonSelectAlundra.Location = new Point(13, 28);
             buttonSelectAlundra.Name = "buttonSelectAlundra";
-            buttonSelectAlundra.Size = new Size(223, 49);
+            buttonSelectAlundra.Size = new Size(120, 23);
             buttonSelectAlundra.TabIndex = 187;
             buttonSelectAlundra.Text = "Select Alundra map";
             buttonSelectAlundra.UseVisualStyleBackColor = true;
@@ -2609,10 +2594,10 @@
             checkBoxStatndardTile.AutoSize = true;
             checkBoxStatndardTile.Checked = true;
             checkBoxStatndardTile.CheckState = CheckState.Checked;
-            checkBoxStatndardTile.Location = new Point(548, 26);
-            checkBoxStatndardTile.Margin = new Padding(7, 6, 7, 6);
+            checkBoxStatndardTile.Location = new Point(295, 12);
+            checkBoxStatndardTile.Margin = new Padding(4, 3, 4, 3);
             checkBoxStatndardTile.Name = "checkBoxStatndardTile";
-            checkBoxStatndardTile.Size = new Size(250, 36);
+            checkBoxStatndardTile.Size = new Size(127, 19);
             checkBoxStatndardTile.TabIndex = 188;
             checkBoxStatndardTile.Text = "show standard tiles";
             checkBoxStatndardTile.UseVisualStyleBackColor = true;
@@ -2623,10 +2608,10 @@
             checkBoxWallTile.AutoSize = true;
             checkBoxWallTile.Checked = true;
             checkBoxWallTile.CheckState = CheckState.Checked;
-            checkBoxWallTile.Location = new Point(799, 26);
-            checkBoxWallTile.Margin = new Padding(7, 6, 7, 6);
+            checkBoxWallTile.Location = new Point(430, 12);
+            checkBoxWallTile.Margin = new Padding(4, 3, 4, 3);
             checkBoxWallTile.Name = "checkBoxWallTile";
-            checkBoxWallTile.Size = new Size(189, 36);
+            checkBoxWallTile.Size = new Size(97, 19);
             checkBoxWallTile.TabIndex = 189;
             checkBoxWallTile.Text = "show wall tile";
             checkBoxWallTile.UseVisualStyleBackColor = true;
@@ -2635,10 +2620,10 @@
             // checkBoxDebug
             // 
             checkBoxDebug.AutoSize = true;
-            checkBoxDebug.Location = new Point(994, 26);
-            checkBoxDebug.Margin = new Padding(7, 6, 7, 6);
+            checkBoxDebug.Location = new Point(535, 12);
+            checkBoxDebug.Margin = new Padding(4, 3, 4, 3);
             checkBoxDebug.Name = "checkBoxDebug";
-            checkBoxDebug.Size = new Size(177, 36);
+            checkBoxDebug.Size = new Size(91, 19);
             checkBoxDebug.TabIndex = 190;
             checkBoxDebug.Text = "show debug";
             checkBoxDebug.UseVisualStyleBackColor = true;
@@ -2647,33 +2632,16 @@
             // imageViewerMap
             // 
             imageViewerMap.Image = null;
-            imageViewerMap.Location = new Point(362, 85);
-            imageViewerMap.Margin = new Padding(6);
+            imageViewerMap.Location = new Point(195, 40);
             imageViewerMap.Name = "imageViewerMap";
-            imageViewerMap.Size = new Size(1317, 1685);
+            imageViewerMap.Size = new Size(709, 786);
             imageViewerMap.TabIndex = 194;
-            // 
-            // imageViewerSpriteSheet
-            // 
-            imageViewerSpriteSheet.Image = null;
-            imageViewerSpriteSheet.Location = new Point(532, 385);
-            imageViewerSpriteSheet.Name = "imageViewerSpriteSheet";
-            imageViewerSpriteSheet.Size = new Size(512, 512);
-            imageViewerSpriteSheet.TabIndex = 140;
-            // 
-            // imageViewerTileSheet
-            // 
-            imageViewerTileSheet.Image = null;
-            imageViewerTileSheet.Location = new Point(13, 385);
-            imageViewerTileSheet.Name = "imageViewerTileSheet";
-            imageViewerTileSheet.Size = new Size(512, 512);
-            imageViewerTileSheet.TabIndex = 141;
             // 
             // FrmAlundra
             // 
-            AutoScaleDimensions = new SizeF(13F, 32F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(3309, 1796);
+            ClientSize = new Size(1782, 831);
             Controls.Add(imageViewerMap);
             Controls.Add(checkBoxDebug);
             Controls.Add(checkBoxWallTile);
@@ -2683,7 +2651,7 @@
             Controls.Add(chkTileXy);
             Controls.Add(label23);
             Controls.Add(lstGameMaps);
-            Margin = new Padding(7, 6, 7, 6);
+            Margin = new Padding(4, 3, 4, 3);
             Name = "FrmAlundra";
             Text = "frmAlundra";
             Load += frmAlundra_Load;

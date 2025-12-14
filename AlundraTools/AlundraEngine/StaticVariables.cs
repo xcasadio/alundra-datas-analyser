@@ -5462,16 +5462,16 @@ public class StaticVariables
     public TILE TILE_8013fb98 = new TILE(); // 8013FB98
     //public TILE TILE_8013fba8; // 8013FBA8
     public uint g_warpFlags; // 8013FBB8
-    public int g_playerLastX; // 8013FBBC
-    public int g_playerLastY; // 8013FBC0
-    public int g_playerLastZ; // 8013FBC4
-    public int g_playerStartX; // 8013FBC8
-    public int g_playerStartY; // 8013FBCC
-    public int g_playerStartZ; // 8013FBD0
-    public int g_playerStepX; // 8013FBD4
-    public int g_playerStepY; // 8013FBD8
-    public int g_playerStepZ; // 8013FBDC
-    public uint g_warpStepFlags_2; // 8013FBE0
+    public int g_warpFadeColorR; // 8013FBBC
+    public int g_warpFadeColorG; // 8013FBC0
+    public int g_warpFadeColorB; // 8013FBC4
+    public int g_warpFadeColorR_Target; // 8013FBC8
+    public int g_warpFadeColorG_Target; // 8013FBCC
+    public int g_warpFadeColorB_Target; // 8013FBD0
+    public int g_warpFadeColorR_Step; // 8013FBD4
+    public int g_warpFadeColorG_Step; // 8013FBD8
+    public int g_warpFadeColorB_Step; // 8013FBDC
+    public uint g_fadeStepFlags; // 8013FBE0
     public int g_fadeFrameCounter; // 8013FBE4
     public int g_currentFadeColorB; // 8013FBE8
     public int g_currentFadeColorG; // 8013FBEC
@@ -5480,7 +5480,7 @@ public class StaticVariables
     public int g_targetFadeColorG; // 8013FBF8
     public int g_targetFadeColorR; // 8013FBFC
     public int g_fadeColorStepB; // 8013FC00
-    public int g_warpColorStepG; // 8013FC04
+    public int g_fadeColorStepG; // 8013FC04
     public int g_fadeColorStepR; // 8013FC08
     //public DR_MOVE[] g_drMoveBuffer = new DR_MOVE[600]; // 8013FC10
     public short[] g_warpEffectBuffer = new short[1200]; // 80143488

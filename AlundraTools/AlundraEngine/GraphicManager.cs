@@ -50,7 +50,6 @@ public class GraphicManager
     // 8002cda0
     private int RenderTiles(int[] renderListBase, int offsetX, int offsetY, int offsetZ, System.Drawing.Graphics graphics)
     {
-        //TODO
         ResetTileAnimationState();
 
         if (_gameEngine.StaticVariables.g_isCameraScrolling == 0)
@@ -110,10 +109,14 @@ public class GraphicManager
         currentRow >>= 4;
         var camTileOffsetY = (short)_gameEngine.StaticVariables.g_cameraScrollingY + (short)currentRow * -StaticVariables.MapTileHeight;
 
-        //for (int i = 0; i < 0x3C0; i++) 
+        //i = 0x3bf;
+        //tileOffset = g_tileOTFlags + 0x3bf;
+        //do
         //{
-        //    _gameEngine.StaticVariables.g_tileVRAMClearTable[i] = 0;
-        //}
+        //    *tileOffset = 0;
+        //    i = i + -1;
+        //    tileOffset = tileOffset + -1;
+        //} while (-1 < i);
 
         //Map animation
         //8002cfd8
@@ -647,23 +650,23 @@ public class GraphicManager
     {
         if (_gameEngine.StaticVariables.g_warpFlags != 0)
         {
-            _gameEngine.StaticVariables.g_playerLastX = MoveTowards(_gameEngine.StaticVariables.g_playerLastX, _gameEngine.StaticVariables.g_playerStartX, _gameEngine.StaticVariables.g_playerStepX);
-            _gameEngine.StaticVariables.g_playerLastY = MoveTowards(_gameEngine.StaticVariables.g_playerLastY, _gameEngine.StaticVariables.g_playerStartY, _gameEngine.StaticVariables.g_playerStepY);
-            _gameEngine.StaticVariables.g_playerLastZ = MoveTowards(_gameEngine.StaticVariables.g_playerLastZ, _gameEngine.StaticVariables.g_playerStartZ, _gameEngine.StaticVariables.g_playerStepZ);
+            _gameEngine.StaticVariables.g_warpFadeColorR = MoveTowards(_gameEngine.StaticVariables.g_warpFadeColorR, _gameEngine.StaticVariables.g_warpFadeColorR_Target, _gameEngine.StaticVariables.g_warpFadeColorR_Step);
+            _gameEngine.StaticVariables.g_warpFadeColorG = MoveTowards(_gameEngine.StaticVariables.g_warpFadeColorG, _gameEngine.StaticVariables.g_warpFadeColorG_Target, _gameEngine.StaticVariables.g_warpFadeColorG_Step);
+            _gameEngine.StaticVariables.g_warpFadeColorB = MoveTowards(_gameEngine.StaticVariables.g_warpFadeColorB, _gameEngine.StaticVariables.g_warpFadeColorB_Target, _gameEngine.StaticVariables.g_warpFadeColorB_Step);
 
-            if (_gameEngine.StaticVariables.g_playerLastX == _gameEngine.StaticVariables.g_playerStartX
-                && _gameEngine.StaticVariables.g_playerLastY == _gameEngine.StaticVariables.g_playerStartY
-                && _gameEngine.StaticVariables.g_playerLastZ == _gameEngine.StaticVariables.g_playerStartZ)
+            if (_gameEngine.StaticVariables.g_warpFadeColorR == _gameEngine.StaticVariables.g_warpFadeColorR_Target
+                && _gameEngine.StaticVariables.g_warpFadeColorG == _gameEngine.StaticVariables.g_warpFadeColorG_Target
+                && _gameEngine.StaticVariables.g_warpFadeColorB == _gameEngine.StaticVariables.g_warpFadeColorB_Target)
             {
                 _gameEngine.StaticVariables.g_warpFlags = 0;
             }
         }
 
-        _gameEngine.StaticVariables.g_displayEnvColorR = _gameEngine.StaticVariables.g_playerLastX >> 0x10;
-        _gameEngine.StaticVariables.g_displayEnvColorG = _gameEngine.StaticVariables.g_playerLastY >> 0x10;
-        _gameEngine.StaticVariables.g_displayEnvColorB = _gameEngine.StaticVariables.g_playerLastZ >> 0x10;
+        _gameEngine.StaticVariables.g_displayEnvColorR = _gameEngine.StaticVariables.g_warpFadeColorR >> 0x10;
+        _gameEngine.StaticVariables.g_displayEnvColorG = _gameEngine.StaticVariables.g_warpFadeColorG >> 0x10;
+        _gameEngine.StaticVariables.g_displayEnvColorB = _gameEngine.StaticVariables.g_warpFadeColorB >> 0x10;
 
-        if (_gameEngine.StaticVariables.g_warpStepFlags_2 == 0)
+        if (_gameEngine.StaticVariables.g_fadeStepFlags == 0)
         {
             if (_gameEngine.StaticVariables.g_fadeFrameCounter == 0)
             {
@@ -673,14 +676,14 @@ public class GraphicManager
         else
         {
             _gameEngine.StaticVariables.g_currentFadeColorB = MoveTowards(_gameEngine.StaticVariables.g_currentFadeColorB, _gameEngine.StaticVariables.g_targetFadeColorB, _gameEngine.StaticVariables.g_fadeColorStepB);
-            _gameEngine.StaticVariables.g_currentFadeColorG = MoveTowards(_gameEngine.StaticVariables.g_currentFadeColorG, _gameEngine.StaticVariables.g_targetFadeColorG, _gameEngine.StaticVariables.g_warpColorStepG);
+            _gameEngine.StaticVariables.g_currentFadeColorG = MoveTowards(_gameEngine.StaticVariables.g_currentFadeColorG, _gameEngine.StaticVariables.g_targetFadeColorG, _gameEngine.StaticVariables.g_fadeColorStepG);
             _gameEngine.StaticVariables.g_currentFadeColorR = MoveTowards(_gameEngine.StaticVariables.g_currentFadeColorR, _gameEngine.StaticVariables.g_targetFadeColorR, _gameEngine.StaticVariables.g_fadeColorStepR);
 
             if (_gameEngine.StaticVariables.g_currentFadeColorB == _gameEngine.StaticVariables.g_targetFadeColorB
                 && _gameEngine.StaticVariables.g_currentFadeColorG == _gameEngine.StaticVariables.g_targetFadeColorG
                && _gameEngine.StaticVariables.g_currentFadeColorR == _gameEngine.StaticVariables.g_targetFadeColorR)
             {
-                _gameEngine.StaticVariables.g_warpStepFlags_2 = 0;
+                _gameEngine.StaticVariables.g_fadeStepFlags = 0;
             }
         }
 
@@ -689,11 +692,12 @@ public class GraphicManager
         tile.g0 = (byte)(_gameEngine.StaticVariables.g_currentFadeColorG >> 0x10);
         tile.b0 = (byte)(_gameEngine.StaticVariables.g_currentFadeColorR >> 0x10);
 
+        //fullscreen image used to create fade effect
         _gameEngine.Renderer.AddSprite(tile.x0, tile.y0, tile.w, tile.h,
             SpriteDepth.ForegroundEffect, _gameEngine.Renderer.WhiteBitmap, tile.r0 / 255f, 0f, 0f, 0f);
 
     LAB_80042ee4:
-        return _gameEngine.StaticVariables.g_warpFlags | _gameEngine.StaticVariables.g_warpStepFlags_2;
+        return _gameEngine.StaticVariables.g_warpFlags | _gameEngine.StaticVariables.g_fadeStepFlags;
     }
 
     //80042954

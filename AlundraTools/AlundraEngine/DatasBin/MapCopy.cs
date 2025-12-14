@@ -2,8 +2,8 @@
 
 public class MapCopy
 {
-    public byte FromX;
-    public byte FromY;
+    public sbyte FromX;
+    public sbyte FromY;
     public byte Width;
     public byte Height;
     public byte ToX;
@@ -11,8 +11,8 @@ public class MapCopy
 
     public MapCopy(BinaryReader br)
     {
-        FromX = br.ReadByte();
-        FromY = br.ReadByte();
+        FromX = br.ReadSByte();
+        FromY = br.ReadSByte();
         Width = br.ReadByte();
         Height = br.ReadByte();
         ToX = br.ReadByte();
