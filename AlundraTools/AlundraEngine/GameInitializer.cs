@@ -26,6 +26,8 @@ public class GameInitializer
         int largestEntryIndex = 0;
         byte[] datasBinHeader;
 
+        _gameEngine.StaticVariables.FrameNumber++;
+
         //VSync(0);
         //ResetCallback();
         //ResetGraph(3);
@@ -328,7 +330,7 @@ public class GameInitializer
         _gameEngine.StaticVariables.g_gravityFlag = 0;
         InitializePlayerStatsAndItems();
 
-        if (_gameEngine.StaticVariables.g_someDataIntoRam == 1)
+        if (_gameEngine.StaticVariables.g_saveDataInRam.SlotData == 1)
         {
             _gameEngine.CopyFromMemory();
             playerTileX = _gameEngine.StaticVariables.g_initialCameraTileX;
@@ -340,7 +342,7 @@ public class GameInitializer
             ClearMapArrays();
             playerTileX = 0x16;
 
-            if (_gameEngine.StaticVariables.g_someDataIntoRam == 0)
+            if (_gameEngine.StaticVariables.g_saveDataInRam.SlotData == 0)
             {
                 playerTileX = 0x21;
                 playerTileY = 0x23;
@@ -406,7 +408,7 @@ public class GameInitializer
     }
 
     // 8004dac0
-    private void InitializePlayerStatsAndItems()
+    public void InitializePlayerStatsAndItems()
     {
         int i = 0;
         int index = 0;

@@ -2,20 +2,18 @@
 
 public class SiEffectFrame
 {
-    public SiEffectFrame(BinaryReader br, int effectId, int binoffset, int memoryAddress)
+    public SiEffectFrame(BinaryReader br, int effectId, int binOffset, int memoryAddress)
     {
         MemoryAddress = memoryAddress;
-        Delay = br.ReadByte();
 
+        Delay = br.ReadByte();
         var pos = br.BaseStream.Position;
         TransformIndexLow = br.ReadByte();
         br.BaseStream.Position = pos;
-
         ImageSetPointer = br.ReadUInt16() * 2;
 
         pos = br.BaseStream.Position;
-
-        br.BaseStream.Position = binoffset + ImageSetPointer;
+        br.BaseStream.Position = binOffset + ImageSetPointer;
         Images = new SiImageSet(br, effectId << 16 | ImageSetPointer, memoryAddress + ImageSetPointer);
 
         br.BaseStream.Position = pos;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.FileSystemGlobbing.Internal;
 using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace AlundraEngine;
 
@@ -14,7 +15,7 @@ public class MemoryCardManager
 
 
     //8005ec98
-    public int UpdatePostProcessingEffects()
+    public int UpdateMemoryCardProcess()
     {
         var result = _gameEngine.StaticVariables.g_globalTransitionState == 1;
 
@@ -261,7 +262,7 @@ public class MemoryCardManager
                         {
                             if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
                             {
-                                SaveInMemoryCard(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle, _gameEngine.StaticVariables.g_titleScreenData);
+                                SaveInMemoryCard(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle, _gameEngine.StaticVariables.g_memoryCardDataBlob);
                                 ResetMemoryCardMenuState();
                                 _gameEngine.StaticVariables.g_fadeSubstate = 1;
                             }
@@ -393,7 +394,7 @@ public class MemoryCardManager
                                 fadeCounter = _gameEngine.StaticVariables.g_fadeFrame + 1;
                                 _gameEngine.StaticVariables.g_fadeFrame = fadeCounter;
 
-                                if (0x12 < _gameEngine.StaticVariables.g_fadeFrame && _gameEngine.StaticVariables.DAT_800c4990 != -1)
+                                if (0x12 < _gameEngine.StaticVariables.g_fadeFrame && _gameEngine.StaticVariables.INT_800c4990 != -1)
                                 {
                                     _gameEngine.StaticVariables.g_fadeFrame = 0;
                                     arg1 = _gameEngine.EtcRes.GetEtcString(0xb3);
@@ -414,7 +415,7 @@ public class MemoryCardManager
                                 return;
                             }
 
-                            if (_gameEngine.StaticVariables.DAT_800c4990 != -1)
+                            if (_gameEngine.StaticVariables.INT_800c4990 != -1)
                             {
                                 _gameEngine.StaticVariables.g_fadeFrame = 0;
                                 _gameEngine.StaticVariables.g_globalTransitionState = 0x17;
@@ -486,7 +487,7 @@ public class MemoryCardManager
 
                             if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
                             {
-                                if (_gameEngine.StaticVariables.DAT_800c4990 != -1)
+                                if (_gameEngine.StaticVariables.INT_800c4990 != -1)
                                 {
                                     _gameEngine.StaticVariables.g_fadeFrame = 0;
                                     _gameEngine.StaticVariables.g_globalTransitionState = 0x15;
@@ -514,7 +515,7 @@ public class MemoryCardManager
 
                         if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
                         {
-                            if (_gameEngine.StaticVariables.DAT_800c4990 != -1)
+                            if (_gameEngine.StaticVariables.INT_800c4990 != -1)
                             {
                                 _gameEngine.StaticVariables.g_fadeFrame = 0;
                                 _gameEngine.StaticVariables.g_globalTransitionState = 0x16;
@@ -541,7 +542,7 @@ public class MemoryCardManager
 
                                 if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
                                 {
-                                    if (_gameEngine.StaticVariables.DAT_800c4990 != -1)
+                                    if (_gameEngine.StaticVariables.INT_800c4990 != -1)
                                     {
                                         _gameEngine.StaticVariables.g_fadeFrame = 0;
                                         _gameEngine.StaticVariables.g_globalTransitionState = 0x12;
@@ -568,7 +569,7 @@ public class MemoryCardManager
 
                             if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
                             {
-                                if (_gameEngine.StaticVariables.DAT_800c4990 != -1)
+                                if (_gameEngine.StaticVariables.INT_800c4990 != -1)
                                 {
                                     _gameEngine.StaticVariables.g_fadeFrame = 0;
                                     _gameEngine.StaticVariables.g_globalTransitionState = 0x13;
@@ -584,9 +585,9 @@ public class MemoryCardManager
 
                         if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3f7)
                         {
-                            if (_gameEngine.StaticVariables.DAT_800c4990 != -1)
+                            if (_gameEngine.StaticVariables.INT_800c4990 != -1)
                             {
-                                if (_gameEngine.StaticVariables.DAT_800c4990 == -2)
+                                if (_gameEngine.StaticVariables.INT_800c4990 == -2)
                                 {
                                     _gameEngine.StaticVariables.g_globalTransitionState = 0xf;
                                 }
@@ -608,12 +609,12 @@ public class MemoryCardManager
                             return;
                         }
 
-                        if (_gameEngine.StaticVariables.DAT_800c4990 == -1)
+                        if (_gameEngine.StaticVariables.INT_800c4990 == -1)
                         {
                             return;
                         }
 
-                        if (_gameEngine.StaticVariables.DAT_800c4990 == -2)
+                        if (_gameEngine.StaticVariables.INT_800c4990 == -2)
                         {
                             if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
                             {
@@ -657,7 +658,7 @@ public class MemoryCardManager
                     etcSectionA = 0x11;
                 }
 
-                if (_gameEngine.StaticVariables.DAT_800c4990 == -1)
+                if (_gameEngine.StaticVariables.INT_800c4990 == -1)
                 {
                     _gameEngine.StaticVariables.g_fadeFrame = fadeCounter;
                     return;
@@ -762,7 +763,7 @@ public class MemoryCardManager
                                 return;
                             }
 
-                            fadeCounter = FUN_80060e20(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle);
+                            fadeCounter = BuildDataAndSaveInMemoryCard(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle);
 
                             if (fadeCounter == -1)
                             {
@@ -800,7 +801,7 @@ public class MemoryCardManager
                             _gameEngine.StaticVariables.DAT_8018ed8c = 0;
                             _gameEngine.StaticVariables.PTR_8018ede8 = _gameEngine.EtcRes.GetEtcString(0x83);
                             _gameEngine.StaticVariables.PTR_8018edec = _gameEngine.EtcRes.GetEtcString(0x84);
-                            FUN_80058ab4(_gameEngine.StaticVariables.PTR_8018ed68, _gameEngine.StaticVariables.PTR_8018ed6c, ref _gameEngine.StaticVariables.DAT_800c4990);
+                            FUN_80058ab4(_gameEngine.StaticVariables.PTR_8018ed68, _gameEngine.StaticVariables.PTR_8018ed6c, ref _gameEngine.StaticVariables.INT_800c4990);
                             _gameEngine.StaticVariables.g_fadeFrame = 0;
                             _gameEngine.StaticVariables.g_globalTransitionState = 0x3f8;
                             return;
@@ -824,7 +825,7 @@ public class MemoryCardManager
                         FUN_8005e3e4(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle, _gameEngine.StaticVariables.g_memoryCardFileIndex, _gameEngine.StaticVariables.PTR_8018ed68);
                         _gameEngine.StaticVariables.PTR_8018ede8 = _gameEngine.EtcRes.GetEtcString(0x85);
                         _gameEngine.StaticVariables.PTR_8018edec = _gameEngine.EtcRes.GetEtcString(0x86);
-                        FUN_80058ab4(_gameEngine.StaticVariables.PTR_8018ed68, _gameEngine.StaticVariables.PTR_8018ed6c, ref _gameEngine.StaticVariables.DAT_800c4990);
+                        FUN_80058ab4(_gameEngine.StaticVariables.PTR_8018ed68, _gameEngine.StaticVariables.PTR_8018ed6c, ref _gameEngine.StaticVariables.INT_800c4990);
                         _gameEngine.StaticVariables.g_globalTransitionState = 0x3f7;
                         return;
                     }
@@ -1081,7 +1082,7 @@ public class MemoryCardManager
                         return;
                     }
 
-                    if (_gameEngine.StaticVariables.DAT_800c4990 == -2)
+                    if (_gameEngine.StaticVariables.INT_800c4990 == -2)
                     {
                         _gameEngine.StaticVariables.g_fadeFrame = 0;
                         _gameEngine.StaticVariables.g_globalTransitionState = 0x3f6;
@@ -1094,7 +1095,7 @@ public class MemoryCardManager
 
                     if (_gameEngine.StaticVariables.INT_ARRAY_80191088[_gameEngine.StaticVariables.g_memorySlotId] == 0)
                     {
-                        DeleteMemoryCardFile(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle /*+ _gameEngine.StaticVariables.DAT_800c4990 * 0x28*/);
+                        DeleteMemoryCardFile(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle /*+ _gameEngine.StaticVariables.INT_800c4990 * 0x28*/);
                         _gameEngine.StaticVariables.g_fadeFrame = 0;
                         _gameEngine.StaticVariables.g_globalTransitionState = 0x3ff;
                         _gameEngine.StaticVariables.g_fadeSubstate = 0;
@@ -1146,7 +1147,7 @@ public class MemoryCardManager
                 return;
             }
 
-            if (_gameEngine.StaticVariables.DAT_800c4990 == -2)
+            if (_gameEngine.StaticVariables.INT_800c4990 == -2)
             {
                 _gameEngine.StaticVariables.g_fadeFrame = 0;
                 _gameEngine.StaticVariables.g_globalTransitionState = 0x3f6;
@@ -1159,7 +1160,7 @@ public class MemoryCardManager
 
             if (_gameEngine.StaticVariables.INT_ARRAY_80191088[_gameEngine.StaticVariables.g_memorySlotId] == 0)
             {
-                fadeCounter = FUN_8006122c(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle, _gameEngine.StaticVariables.DAT_800c4990);
+                fadeCounter = BuildDataAndSaveInMemoryCardAndUpdateData(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle, _gameEngine.StaticVariables.INT_800c4990);
 
                 if (fadeCounter == -1)
                 {
@@ -1194,18 +1195,105 @@ public class MemoryCardManager
         return "";
     }
 
-    //8006122c
-    private int FUN_8006122c(int slotId, string gameTitle, int param_3)
-    {
-        Debugger.Break();
-        return 1;
-    }
 
     //80060e20
-    private int FUN_80060e20(int slotId, string gameTitle)
+    private int BuildDataAndSaveInMemoryCard(int slotId, string gameTitle)
     {
-        Debugger.Break();
-        return 1;
+        _gameEngine.StaticVariables.g_memoryCardDataBlob.Header[0] = 'S';
+        _gameEngine.StaticVariables.g_memoryCardDataBlob.Header[1] = 'C';
+        _gameEngine.StaticVariables.g_memoryCardDataBlob.IconFlags = 0x11;
+        _gameEngine.StaticVariables.g_memoryCardDataBlob.BlockCount = 1;
+        _gameEngine.StaticVariables.g_memoryCardDataBlob.Title = "ＡＬＵＮＤＲＡ・アランドラ";
+
+        Array.Copy(_gameEngine.StaticVariables.g_memoryCardIconClut, _gameEngine.StaticVariables.g_memoryCardDataBlob.IconClut16, _gameEngine.StaticVariables.g_memoryCardIconClut.Length);
+        Array.Copy(_gameEngine.StaticVariables.g_memoryCardIconFrame0, _gameEngine.StaticVariables.g_memoryCardDataBlob.IconFrame4bpp_0, _gameEngine.StaticVariables.g_memoryCardIconFrame0.Length);
+        Array.Copy(_gameEngine.StaticVariables.g_memoryCardIconFrame1, _gameEngine.StaticVariables.g_memoryCardDataBlob.IconFrame4bpp_1, _gameEngine.StaticVariables.g_memoryCardIconFrame1.Length);
+        Array.Copy(_gameEngine.StaticVariables.g_memoryCardIconFrame2, _gameEngine.StaticVariables.g_memoryCardDataBlob.IconFrame4bpp_2, _gameEngine.StaticVariables.g_memoryCardIconFrame2.Length);
+
+        Array.Clear(_gameEngine.StaticVariables.g_memoryCardDataBlob.SavePayload,
+            _gameEngine.StaticVariables.g_memoryCardDataBlob.SavePayload.Length - 0x1daf, 
+            0x1daf);
+
+        //N’analyse pas!!:::Kobayashi Toshiaki:j1494039:Matrix
+        _gameEngine.StaticVariables.g_memoryCardDataBlob.DeveloperWatermark = "解析するな!!:::小林敬明:j1494039:Matrix"; //length = 64
+        _gameEngine.StaticVariables.g_memoryCardDataBlob.Checksum = ComputeChecksum(0x1ffc);
+
+        return SaveInMemoryCard(slotId, gameTitle, _gameEngine.StaticVariables.g_memoryCardDataBlob);
+    }
+
+    //8006122c
+    private int BuildDataAndSaveInMemoryCardAndUpdateData(int slotId, string gameTitle, int param_3)
+    {
+        _gameEngine.StaticVariables.g_memoryCardDataBlob.Header[0] = 'S';
+        _gameEngine.StaticVariables.g_memoryCardDataBlob.Header[1] = 'C';
+        _gameEngine.StaticVariables.g_memoryCardDataBlob.IconFlags = 0x11;
+        _gameEngine.StaticVariables.g_memoryCardDataBlob.BlockCount = 1;
+        _gameEngine.StaticVariables.g_memoryCardDataBlob.Title = "ＡＬＵＮＤＲＡ・アランドラ";
+
+        Array.Copy(_gameEngine.StaticVariables.g_memoryCardIconClut, _gameEngine.StaticVariables.g_memoryCardDataBlob.IconClut16, _gameEngine.StaticVariables.g_memoryCardIconClut.Length);
+        Array.Copy(_gameEngine.StaticVariables.g_memoryCardIconFrame0, _gameEngine.StaticVariables.g_memoryCardDataBlob.IconFrame4bpp_0, _gameEngine.StaticVariables.g_memoryCardIconFrame0.Length);
+        Array.Copy(_gameEngine.StaticVariables.g_memoryCardIconFrame1, _gameEngine.StaticVariables.g_memoryCardDataBlob.IconFrame4bpp_1, _gameEngine.StaticVariables.g_memoryCardIconFrame1.Length);
+        Array.Copy(_gameEngine.StaticVariables.g_memoryCardIconFrame2, _gameEngine.StaticVariables.g_memoryCardDataBlob.IconFrame4bpp_2, _gameEngine.StaticVariables.g_memoryCardIconFrame2.Length);
+
+        Array.Copy(_gameEngine.StaticVariables.g_copySourceAddress, 
+            _gameEngine.StaticVariables.g_memoryCardDataBlob.SavePayload + offset * 0x76c, 
+            _gameEngine.StaticVariables.g_copyByteCount);
+        _gameEngine.StaticVariables.g_memoryCardDataBlob.SavePayload[offset * 0x76c + 4] = offset;
+
+        //N’analyse pas!!:::Kobayashi Toshiaki:j1494039:Matrix
+        _gameEngine.StaticVariables.g_memoryCardDataBlob.DeveloperWatermark = "解析するな!!:::小林敬明:j1494039:Matrix"; //length = 64
+        _gameEngine.StaticVariables.g_memoryCardDataBlob.Checksum = ComputeChecksum(0x1ffc);
+
+        var result = 1;
+        if (SaveInMemoryCard(slotId, gameTitle, _gameEngine.StaticVariables.g_memoryCardDataBlob) == -1)
+        {
+            result = -1;
+        }
+
+        Array.Copy(
+            _gameEngine.StaticVariables.g_memoryCardDataBlob.SavePayload + offset * 0x76c,
+            _gameEngine.StaticVariables.g_saveDataInRam, 
+            0x760);
+
+        return result;
+    }
+
+    //800616d8
+    private uint ComputeChecksum(uint value)
+    {
+        uint val;
+        uint j;
+        uint i;
+
+        val = 0xffffffff;
+        i = 0;
+
+        if (value != 0)
+        {
+            do
+            {
+                j = 0;
+                val = (uint)(val ^ (_gameEngine.StaticVariables.g_memoryCardDataBlob.Header[i] << 0x18));
+
+                do
+                {
+                    if ((val & 0x80000000) == 0)
+                    {
+                        val = val << 1;
+                    }
+                    else
+                    {
+                        val = (val << 1) ^ 0x4c11db7;
+                    }
+                    j = j + 1;
+
+                } while (j < 8);
+
+                i = i + 1;
+            } while (i < value);
+        }
+
+        return ~val;
     }
 
     //80058ab4
@@ -1391,7 +1479,7 @@ public class MemoryCardManager
     }
 
     //8005dd74
-    private int SaveInMemoryCard(int slotId, string gameName, byte[] buffer)
+    private int SaveInMemoryCard(int slotId, string gameName, MemoryCardDataBlob memoryCardDataBlob)
     {
         int fd;
         int result = -1;

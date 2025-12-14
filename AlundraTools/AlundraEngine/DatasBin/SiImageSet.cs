@@ -2,21 +2,23 @@
 
 public class SiImageSet
 {
-    public SiImageSet(BinaryReader br, int imageSetId, int memoryAddress, bool isportrait = false)
+    public SiImageSet(BinaryReader br, int imageSetId, int memoryAddress, bool isPortrait = false)
     {
         MemoryAddress = memoryAddress;
         ImageSetId = imageSetId;
         DepthSortValue = br.ReadByte();
         NumberOfImages = br.ReadByte();
-        if (isportrait)
+
+        if (isPortrait)
         {
             NumberOfImages = 1;
         }
 
         Images = new SiImage[NumberOfImages];
-        for (var dex = 0; dex < NumberOfImages; dex++)
+
+        for (var i = 0; i < NumberOfImages; i++)
         {
-            Images[dex] = new SiImage(br);
+            Images[i] = new SiImage(br);
         }
     }
 

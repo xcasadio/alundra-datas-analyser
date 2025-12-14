@@ -42,7 +42,7 @@ public class GraphicManager
 
         //UpdateEntityGeometry(_gameEngine.StaticVariables.g_orderingTableBuffer[2]);
         RenderEffects(_gameEngine.StaticVariables.g_orderingTableBuffer[3]);
-        _gameEngine.MemoryCardManager.UpdatePostProcessingEffects();
+        _gameEngine.MemoryCardManager.UpdateMemoryCardProcess();
         SwapBuffersAndDraw(graphics);
         _gameEngine.StaticVariables.g_primitive_sync = GetDisplaySyncCounter();
     }
@@ -731,29 +731,29 @@ public class GraphicManager
 
         int i;
 
-        if ((_gameEngine.StaticVariables.g_renderFlags & 0x800000U) != 0)
+        if ((_gameEngine.StaticVariables.g_mapFlags[0x38] & 0x800000U) != 0)
         {
             ActivateSpecialRenderMode(7);
-            _gameEngine.StaticVariables.g_renderFlags &= 0xff7fffff;
+            _gameEngine.StaticVariables.g_mapFlags[0x38] &= 0xff7fffff;
         }
 
-        if ((_gameEngine.StaticVariables.g_systemFlags & 0x40000000U) == 0)
+        if ((_gameEngine.StaticVariables.g_mapFlags[0x33] & 0x40000000U) == 0)
         {
             InitializeFrame();
         }
 
-        if ((_gameEngine.StaticVariables.g_renderFlags & 0x200000U) != 0)
+        if ((_gameEngine.StaticVariables.g_mapFlags[0x38] & 0x200000U) != 0)
         {
-            _gameEngine.StaticVariables.g_renderFlags &= 0xffdfffff;
-            _gameEngine.StaticVariables.g_systemFlags |= 0x40000000;
+            _gameEngine.StaticVariables.g_mapFlags[0x38] &= 0xffdfffff;
+            _gameEngine.StaticVariables.g_mapFlags[0x33] |= 0x40000000;
             PrepareBufferFlip();
         }
 
-        if ((_gameEngine.StaticVariables.g_renderFlags & 0x400000U) != 0)
+        if ((_gameEngine.StaticVariables.g_mapFlags[0x38] & 0x400000U) != 0)
         {
             ResetDrawFrameFlags();
-            _gameEngine.StaticVariables.g_systemFlags &= 0xbfffffff;
-            _gameEngine.StaticVariables.g_renderFlags &= 0xffbfffff;
+            _gameEngine.StaticVariables.g_mapFlags[0x33] &= 0xbfffffff;
+            _gameEngine.StaticVariables.g_mapFlags[0x38] &= 0xffbfffff;
         }
 
         i = 0;
@@ -825,7 +825,7 @@ public class GraphicManager
     //8004be0c
     public void PrepareBufferFlip()
     {
-        if ((_gameEngine.StaticVariables.g_systemFlags & 0x40000000U) != 0 && _gameEngine.StaticVariables.g_drawFrameFlags == 0)
+        if ((_gameEngine.StaticVariables.g_mapFlags[0x33] & 0x40000000U) != 0 && _gameEngine.StaticVariables.g_drawFrameFlags == 0)
         {
             SetTransitionType(1);
             _gameEngine.StaticVariables.g_drawState = 2;

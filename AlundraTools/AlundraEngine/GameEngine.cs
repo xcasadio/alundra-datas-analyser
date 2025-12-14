@@ -38,6 +38,7 @@ public class GameEngine
     public SubInventoryManager SubInventoryManager { get; }
     public UIDebugManager UIDebugManager { get; }
     public MemoryCardManager MemoryCardManager { get; }
+    public LogManager LogManager { get; }
 
     private readonly EntityEventHandlers _entityEventHandlers;
     private readonly GameInitializer _gameInitializer;
@@ -72,6 +73,7 @@ public class GameEngine
         SubInventoryManager = new SubInventoryManager(this);
         UIDebugManager = new UIDebugManager(this);
         MemoryCardManager = new MemoryCardManager(this);
+        LogManager = new LogManager(this);
     }
 
     public void InitializeEngine()
@@ -162,6 +164,7 @@ public class GameEngine
             else
             {
                 Update(0);
+                StaticVariables.FrameNumber++;
             }
 
             if (ReplayManager.IsSaving)
@@ -219,7 +222,7 @@ public class GameEngine
             LAB_8002c590:
             //LoadBgm(0);
             StaticVariables.g_playerControlFlags = 0;
-            //InitializeMapWarpPosition();
+            InitializeMapWarpPosition();
             //}
             //if (9 < StaticVariables.g_mapTransitionEffectId)
             //{
@@ -1461,6 +1464,27 @@ public class GameEngine
         //MoveImage(g_currentDrawEnv + 1,(int)g_currentDrawEnv.x,(int)g_currentDrawEnv.y);
     }
 
+    //800315b0
+    private void InitializeMapWarpPosition()
+    {
+        if (StaticVariables.g_saveDataInRam.SaveSlotIndex != 0xff)
+        {
+            StaticVariables.g_saveDataInRam.SaveSlotIndex += 1;
+        }
+
+        _gameInitializer.InitializePlayerStatsAndItems();
+        CopyFromMemory();
+        StaticVariables.g_warpTriggerType = 0x36;
+        StaticVariables.g_warpExtraParam = 0;
+        StaticVariables.g_desiredMap = StaticVariables.g_initialMapId;
+        StaticVariables.g_cameraLookAtX = (StaticVariables.g_initialCameraTileX * 0x18 + 0xc) * 0x10000;
+        StaticVariables.g_cameraTargetX = StaticVariables.g_cameraLookAtX;
+        StaticVariables.g_cameraLookAtY = (StaticVariables.g_initialCameraTileY * 0x10 + 8) * 0x10000;
+        StaticVariables.g_cameraTargetY = StaticVariables.g_cameraLookAtY;
+        StaticVariables.g_cameraLookAtZ = StaticVariables.g_initialCameraTileZ << 0x14;
+        StaticVariables.g_cameraTargetZ = StaticVariables.g_initialCameraTileZ << 0x14;
+    }
+
     private void Update(int endGame)
     {
         StaticVariables.g_mapOffsetX -= 8;
@@ -1635,8 +1659,6 @@ public class GameEngine
 
         var playerEntity = StaticVariables.PlayerEntity;
 
-        //Debug.WriteLine($"===================================");
-
         for (var i = 0; i < StaticVariables.g_mapEvents.Length; ++i)
         {
             var currentMapEvent = StaticVariables.g_mapEvents[i];
@@ -1669,7 +1691,7 @@ public class GameEngine
             playerEntity.LogicContextEntity = mapEventEntity;
             playerEntity.EventProgramState.CopyFrom(currentMapEvent.EventData);
 
-            //Debug.WriteLine($"========== Map event {i} ==========");
+            LogManager.Log($"========== Map event {i} ==========");
 
             RunScript(playerEntity, ScriptHelper.ProgramBMap);
 
@@ -2096,7 +2118,6 @@ public class GameEngine
         if (startX < 0 || startY < 0 || sizeX < 0 || sizeY < 0 || distX < 0 || distY < 0)
         {
             Debugger.Break();
-            //Debug.WriteLine(startX,startY,sizeX,sizeY,distX,distY);
         }
 
         var mapWidth = CurrentMap.Map.Width;
@@ -2108,7 +2129,6 @@ public class GameEngine
             || mapHeight < distY + sizeY)
         {
             Debugger.Break();
-            //Debug.WriteLine(startX,startY,sizeX,sizeY,distX,distY);
         }
 
         y = 0;
@@ -2525,7 +2545,7 @@ public class GameEngine
     //800814e8
     public void CopyFromMemory()
     {
-        //Array.Copy(StaticVariables.g_someDataIntoRam, StaticVariables.g_saveSlotData, 0x758);
+        //Array.Copy(StaticVariables.g_saveDataInRam, StaticVariables.g_saveSlotData, 0x758);
     }
 
     //80030fc8

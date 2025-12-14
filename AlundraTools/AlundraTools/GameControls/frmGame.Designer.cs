@@ -242,11 +242,10 @@ namespace AlundraTools.GameControls
             // 
             // pctOut
             // 
-            pctOut.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             pctOut.BackColor = Color.Black;
-            pctOut.Location = new Point(0, 0);
+            pctOut.Location = new Point(1, 1);
             pctOut.Name = "pctOut";
-            pctOut.Size = new Size(1281, 1080);
+            pctOut.Size = new Size(1280, 896);
             pctOut.SizeMode = PictureBoxSizeMode.StretchImage;
             pctOut.TabIndex = 0;
             pctOut.TabStop = false;
@@ -602,16 +601,16 @@ namespace AlundraTools.GameControls
             listBoxEntities.FormattingEnabled = true;
             listBoxEntities.Location = new Point(4, 143);
             listBoxEntities.Name = "listBoxEntities";
-            listBoxEntities.Size = new Size(103, 769);
+            listBoxEntities.Size = new Size(103, 574);
             listBoxEntities.TabIndex = 11;
             listBoxEntities.SelectedIndexChanged += listBoxEntities_SelectedIndexChanged;
             // 
             // buttonPauseGame
             // 
-            buttonPauseGame.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            buttonPauseGame.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             buttonPauseGame.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             buttonPauseGame.ForeColor = Color.FromArgb(0, 192, 0);
-            buttonPauseGame.Location = new Point(1294, 954);
+            buttonPauseGame.Location = new Point(1288, 772);
             buttonPauseGame.Name = "buttonPauseGame";
             buttonPauseGame.Size = new Size(75, 23);
             buttonPauseGame.TabIndex = 14;
@@ -621,8 +620,8 @@ namespace AlundraTools.GameControls
             // 
             // buttonRunOneFrame
             // 
-            buttonRunOneFrame.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            buttonRunOneFrame.Location = new Point(1375, 954);
+            buttonRunOneFrame.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            buttonRunOneFrame.Location = new Point(1369, 772);
             buttonRunOneFrame.Name = "buttonRunOneFrame";
             buttonRunOneFrame.Size = new Size(35, 23);
             buttonRunOneFrame.TabIndex = 15;
@@ -636,15 +635,15 @@ namespace AlundraTools.GameControls
             propertyGridEntity.BackColor = SystemColors.Control;
             propertyGridEntity.Location = new Point(113, 143);
             propertyGridEntity.Name = "propertyGridEntity";
-            propertyGridEntity.Size = new Size(386, 771);
+            propertyGridEntity.Size = new Size(386, 589);
             propertyGridEntity.TabIndex = 16;
             // 
             // hScrollBarFrames
             // 
-            hScrollBarFrames.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            hScrollBarFrames.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             hScrollBarFrames.Enabled = false;
             hScrollBarFrames.LargeChange = 1;
-            hScrollBarFrames.Location = new Point(1294, 980);
+            hScrollBarFrames.Location = new Point(1288, 798);
             hScrollBarFrames.Maximum = 0;
             hScrollBarFrames.Name = "hScrollBarFrames";
             hScrollBarFrames.Size = new Size(495, 23);
@@ -653,9 +652,9 @@ namespace AlundraTools.GameControls
             // 
             // labelFrames
             // 
-            labelFrames.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            labelFrames.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             labelFrames.AutoSize = true;
-            labelFrames.Location = new Point(1426, 958);
+            labelFrames.Location = new Point(1420, 776);
             labelFrames.Name = "labelFrames";
             labelFrames.Size = new Size(65, 15);
             labelFrames.TabIndex = 18;
@@ -735,10 +734,10 @@ namespace AlundraTools.GameControls
             // 
             // buttonSaveFrames
             // 
-            buttonSaveFrames.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            buttonSaveFrames.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             buttonSaveFrames.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             buttonSaveFrames.ForeColor = Color.FromArgb(0, 192, 0);
-            buttonSaveFrames.Location = new Point(1294, 1020);
+            buttonSaveFrames.Location = new Point(1288, 838);
             buttonSaveFrames.Name = "buttonSaveFrames";
             buttonSaveFrames.Size = new Size(120, 23);
             buttonSaveFrames.TabIndex = 25;
@@ -757,8 +756,8 @@ namespace AlundraTools.GameControls
             // 
             // buttonLoadDump
             // 
-            buttonLoadDump.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            buttonLoadDump.Location = new Point(1420, 1020);
+            buttonLoadDump.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            buttonLoadDump.Location = new Point(1414, 838);
             buttonLoadDump.Margin = new Padding(3, 2, 3, 2);
             buttonLoadDump.Name = "buttonLoadDump";
             buttonLoadDump.Size = new Size(82, 22);
@@ -770,7 +769,7 @@ namespace AlundraTools.GameControls
             // buttonExtractToCsv
             // 
             buttonExtractToCsv.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            buttonExtractToCsv.Location = new Point(1637, 1047);
+            buttonExtractToCsv.Location = new Point(1631, 865);
             buttonExtractToCsv.Margin = new Padding(3, 2, 3, 2);
             buttonExtractToCsv.Name = "buttonExtractToCsv";
             buttonExtractToCsv.Size = new Size(150, 22);
@@ -845,7 +844,7 @@ namespace AlundraTools.GameControls
             // buttonCompareWithDump
             // 
             buttonCompareWithDump.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            buttonCompareWithDump.Location = new Point(1637, 1021);
+            buttonCompareWithDump.Location = new Point(1631, 839);
             buttonCompareWithDump.Margin = new Padding(3, 2, 3, 2);
             buttonCompareWithDump.Name = "buttonCompareWithDump";
             buttonCompareWithDump.Size = new Size(150, 22);
@@ -863,11 +862,11 @@ namespace AlundraTools.GameControls
             tabControl1.Controls.Add(tabPageDebug);
             tabControl1.Controls.Add(tabPageHud);
             tabControl1.Controls.Add(tabPage1);
-            tabControl1.Location = new Point(1287, 0);
+            tabControl1.Location = new Point(1281, 0);
             tabControl1.Margin = new Padding(3, 2, 3, 2);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(511, 949);
+            tabControl1.Size = new Size(511, 767);
             tabControl1.TabIndex = 34;
             // 
             // tabPageEntities
@@ -884,7 +883,7 @@ namespace AlundraTools.GameControls
             tabPageEntities.Margin = new Padding(3, 2, 3, 2);
             tabPageEntities.Name = "tabPageEntities";
             tabPageEntities.Padding = new Padding(3, 2, 3, 2);
-            tabPageEntities.Size = new Size(503, 921);
+            tabPageEntities.Size = new Size(503, 739);
             tabPageEntities.TabIndex = 0;
             tabPageEntities.Text = "Entities";
             tabPageEntities.UseVisualStyleBackColor = true;
@@ -915,7 +914,7 @@ namespace AlundraTools.GameControls
             tabPageEffects.Margin = new Padding(3, 2, 3, 2);
             tabPageEffects.Name = "tabPageEffects";
             tabPageEffects.Padding = new Padding(3, 2, 3, 2);
-            tabPageEffects.Size = new Size(503, 921);
+            tabPageEffects.Size = new Size(503, 739);
             tabPageEffects.TabIndex = 2;
             tabPageEffects.Text = "Effects";
             tabPageEffects.UseVisualStyleBackColor = true;
@@ -986,7 +985,7 @@ namespace AlundraTools.GameControls
             tabPagePlayerStatus.Margin = new Padding(3, 2, 3, 2);
             tabPagePlayerStatus.Name = "tabPagePlayerStatus";
             tabPagePlayerStatus.Padding = new Padding(3, 2, 3, 2);
-            tabPagePlayerStatus.Size = new Size(503, 921);
+            tabPagePlayerStatus.Size = new Size(503, 739);
             tabPagePlayerStatus.TabIndex = 1;
             tabPagePlayerStatus.Text = "Player status";
             tabPagePlayerStatus.UseVisualStyleBackColor = true;
@@ -1339,7 +1338,7 @@ namespace AlundraTools.GameControls
             tabPageDebug.Margin = new Padding(3, 2, 3, 2);
             tabPageDebug.Name = "tabPageDebug";
             tabPageDebug.Padding = new Padding(3, 2, 3, 2);
-            tabPageDebug.Size = new Size(503, 921);
+            tabPageDebug.Size = new Size(503, 739);
             tabPageDebug.TabIndex = 3;
             tabPageDebug.Text = "Debug";
             tabPageDebug.UseVisualStyleBackColor = true;
@@ -1744,7 +1743,7 @@ namespace AlundraTools.GameControls
             tabPageHud.Margin = new Padding(3, 2, 3, 2);
             tabPageHud.Name = "tabPageHud";
             tabPageHud.Padding = new Padding(3, 2, 3, 2);
-            tabPageHud.Size = new Size(503, 921);
+            tabPageHud.Size = new Size(503, 739);
             tabPageHud.TabIndex = 4;
             tabPageHud.Text = "HUD";
             tabPageHud.UseVisualStyleBackColor = true;
@@ -2116,7 +2115,7 @@ namespace AlundraTools.GameControls
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(503, 921);
+            tabPage1.Size = new Size(503, 739);
             tabPage1.TabIndex = 5;
             tabPage1.Text = "Display";
             tabPage1.UseVisualStyleBackColor = true;
@@ -2171,7 +2170,7 @@ namespace AlundraTools.GameControls
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1799, 1080);
+            ClientSize = new Size(1793, 898);
             Controls.Add(buttonCompareWithDump);
             Controls.Add(buttonExtractToCsv);
             Controls.Add(buttonLoadDump);

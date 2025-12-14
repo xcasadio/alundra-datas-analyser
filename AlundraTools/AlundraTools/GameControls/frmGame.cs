@@ -301,14 +301,6 @@ public partial class FrmGame : Form
                 () => _gameEngine.StaticVariables.g_playerEffectStepFlags
             ),
             new(
-                nameof(_gameEngine.StaticVariables.g_renderFlags),
-                () => _gameEngine.StaticVariables.g_renderFlags
-            ),
-            new(
-                nameof(_gameEngine.StaticVariables.g_systemFlags),
-                () => _gameEngine.StaticVariables.g_systemFlags
-            ),
-            new(
                 nameof(_gameEngine.StaticVariables.g_textAutoAdvanceFlag),
                 () => _gameEngine.StaticVariables.g_textAutoAdvanceFlag
             ),
@@ -382,6 +374,8 @@ public partial class FrmGame : Form
         _refreshUiTimer.Interval = 33 * 3;
         _refreshUiTimer.Tick += RefreshUI;
         _refreshUiTimer.Start();
+
+        buttonZoomX4_Click(null, EventArgs.Empty);
     }
 
     private void InitializeUI()

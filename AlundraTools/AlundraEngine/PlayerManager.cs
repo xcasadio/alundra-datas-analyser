@@ -3489,7 +3489,7 @@ public class PlayerManager
             playerStats.FalconTemp = 0x32;
         }
 
-        _gameEngine.StaticVariables.g_progressStateFlags |= 0x400;
+        _gameEngine.StaticVariables.g_mapFlags[0x2d] |= 0x400;
     }
 
     //80032e2c
@@ -4137,7 +4137,7 @@ public class PlayerManager
             playerStats.Falcon = 0x32;
         }
 
-        _gameEngine.StaticVariables.g_progressStateFlags = (int)(_gameEngine.StaticVariables.g_progressStateFlags & 0xfffffbff);
+        _gameEngine.StaticVariables.g_mapFlags[0x2d] &= 0xfffffbff;
     }
 
 

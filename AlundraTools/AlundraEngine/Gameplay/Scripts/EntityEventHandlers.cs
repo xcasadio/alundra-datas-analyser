@@ -302,11 +302,11 @@ public class EntityEventHandlers
             int[] variables = FillDataFromCommand(eventProgramState);
             int command = variables[0];
 
-            //LogCommand(entity, logicMode, command, variables, eventProgramState.CodeIndex);
+            var log = LogCommand(entity, logicMode, command, variables, eventProgramState.CodeIndex);
 
             if (command == 0xFF)
             {
-                //Debug.WriteLine("");
+                _gameEngine.LogManager.Log(entity, "end script");
                 goto END_SCRIPT;
             }
 
@@ -315,7 +315,6 @@ public class EntityEventHandlers
                 eventProgramState.Parameters[1] = 0;
                 eventProgramState.CodeIndex++;
                 FillDataFromCommand(eventProgramState); // needed because there is a check at the beginning of the function
-                //Debug.WriteLine("");
                 goto END_SCRIPT;
             }
 
@@ -326,7 +325,7 @@ public class EntityEventHandlers
             var func = _handlers[command];
             var result = func(entity.LogicContextEntity, entity, variables, eventProgramState);
 
-            //Debug.WriteLine($" = {result}");
+            _gameEngine.LogManager.Log(entity, $"{log} = {result}");
 
             if (_gameEngine.StaticVariables.g_clearProgramState != 0)
             {
@@ -337,7 +336,7 @@ public class EntityEventHandlers
                 else
                 {
                     _gameEngine.StaticVariables.g_clearProgramState = 0;
-                    //Debug.WriteLine($"Entity[{logicContextEntity.Index}] clean EventProgramState");
+                    _gameEngine.LogManager.Log($"clean EventProgramState");
                     logicContextEntity.EventProgramState.Sp = 0;
                     logicContextEntity.EventProgramState.Codes = null;
                 }
@@ -360,17 +359,17 @@ public class EntityEventHandlers
         END_SCRIPT:
         if (wasEntityCleared)
         {
-            //Debug.WriteLine($"Entity[{entity.Index}] clean EventProgramState 2");
+            _gameEngine.LogManager.Log("clean EventProgramState 2");
             eventProgramState.Sp = 0;
             eventProgramState.Codes = null;
         }
     }
 
-    private static void LogCommand(Entity entity, int logicMode, int command, int[] variables, int codeIndex)
+    private static string LogCommand(Entity entity, int logicMode, int command, int[] variables, int codeIndex)
     {
         var name = SpriteInfoEventCodes.CommandNameByCode.GetValueOrDefault((byte)command, "?");
         var eventTypeName = logicMode == 0 ? "ALoad" : logicMode == 1 ? "BMap" : logicMode == 2 ? "CTick" : logicMode == 3 ? "DTouch" : logicMode == 4 ? "EDeactivate" : "FInteract";
-        Debug.Write($"Entity[{entity.Index}] run[{eventTypeName}] 0x{command:x2} p:{codeIndex} '{name}' {string.Join(',', variables.Select(x => x.ToString("x2")))}");
+        return $"Entity[{entity.Index}] run[{eventTypeName}] 0x{command:x2} p:{codeIndex} '{name}' {string.Join(',', variables.Select(x => x.ToString("x2")))}";
     }
 
     private int[] FillDataFromCommand(EventProgramState eventProgramState)
@@ -4034,7 +4033,7 @@ public class EntityEventHandlers
 
     // 80041A74
     // Menu after died
-    private int Script_187_0BB(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    private int Script_187_0BB(Entity logicEntity, Entity ownerEngtity, int[] variables, EventProgramState eventProgramState)
     {
         int result;
 
@@ -4050,12 +4049,12 @@ public class EntityEventHandlers
                     {
                         result = 0xff;
 
-                        if (_gameEngine.StaticVariables.g_transitionCounter != 0xff)
+                        if (_gameEngine.StaticVariables.g_saveDataInRam.SaveSlotIndex != 0xff)
                         {
-                            result = _gameEngine.StaticVariables.g_transitionCounter + 1;
+                            result = _gameEngine.StaticVariables.g_saveDataInRam.SaveSlotIndex + 1;
                         }
 
-                        //Debug.WriteLine(_gameEngine.StaticVariables.g_debugMessage + iVar2, "Retry = %d", iVar1);
+                        _gameEngine.LogManager.Log($"Retry = {result}");
                     }
 
                     result = eventProgramState.Parameters[2];

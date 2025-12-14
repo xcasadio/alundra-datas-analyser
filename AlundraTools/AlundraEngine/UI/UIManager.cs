@@ -553,7 +553,7 @@ public class UIManager
             {
                 if ((_gameEngine.StaticVariables.g_memoryCardMenuState & 1U) != 0)
                 {
-                    _gameEngine.StaticVariables.g_memoryCardMenuState = _gameEngine.StaticVariables.g_memoryCardMenuState & 0xfffffffe;
+                    _gameEngine.StaticVariables.g_memoryCardMenuState &= 0xfffffffe;
                 }
 
                 if ((_gameEngine.StaticVariables.g_memoryCardMenuState & 2U) != 0)
@@ -1596,107 +1596,107 @@ public class UIManager
                             cursor = _gameEngine.StaticVariables.g_textCursor + 2;
                             Debugger.Break();
                             break;
-                        /*
-                        switch (_gameEngine.StaticVariables.g_scriptBuffer[_gameEngine.StaticVariables.g_textCursor + 2])
-                        {
-                            case '0':
-                                _gameEngine.StaticVariables.g_textCursor += 3;
-                                strncpy(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer, _gameEngine.StaticVariables.g_textCursor);
+                            /*
+                            switch (_gameEngine.StaticVariables.g_scriptBuffer[_gameEngine.StaticVariables.g_textCursor + 2])
+                            {
+                                case '0':
+                                    _gameEngine.StaticVariables.g_textCursor += 3;
+                                    strncpy(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer, _gameEngine.StaticVariables.g_textCursor);
 
-                                acStack_1c48[_gameEngine.StaticVariables.g_textCursor] = '\0';
-                                currentLineIndex = _gameEngine.PlayerManager.GetNumberOfFalconTemp();
-
-                                if (currentLineIndex / 10 + (currentLineIndex >> 0x1f) != currentLineIndex >> 0x1f)
-                                {
+                                    acStack_1c48[_gameEngine.StaticVariables.g_textCursor] = '\0';
                                     currentLineIndex = _gameEngine.PlayerManager.GetNumberOfFalconTemp();
-                                    strcat(acStack_1c48, PTR_DAT_8009a7ec[currentLineIndex / 10]);
-                                }
 
-                                currentLineIndex = _gameEngine.PlayerManager.GetNumberOfFalconTemp();
-                                strcat(acStack_1c48, PTR_DAT_8009a7ec[currentLineIndex % 10]);
-                                strcat(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer[_gameEngine.StaticVariables.g_textCursor]);
-                                break;
+                                    if (currentLineIndex / 10 + (currentLineIndex >> 0x1f) != currentLineIndex >> 0x1f)
+                                    {
+                                        currentLineIndex = _gameEngine.PlayerManager.GetNumberOfFalconTemp();
+                                        strcat(acStack_1c48, PTR_DAT_8009a7ec[currentLineIndex / 10]);
+                                    }
 
-                            case '1':
-                                _gameEngine.StaticVariables.g_textCursor += 3;
-                                strncpy(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer, _gameEngine.StaticVariables.g_textCursor);
-                                acStack_1c48[_gameEngine.StaticVariables.g_textCursor] = '\0';
-                                _gameEngine.PlayerManager.UpdateNumberOfFalcon();
-                                UpdatePlayerProgressState();
-                                currentLineIndex = _gameEngine.PlayerManager.GetNumberOfFalcon();
+                                    currentLineIndex = _gameEngine.PlayerManager.GetNumberOfFalconTemp();
+                                    strcat(acStack_1c48, PTR_DAT_8009a7ec[currentLineIndex % 10]);
+                                    strcat(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer[_gameEngine.StaticVariables.g_textCursor]);
+                                    break;
 
-                                if (currentLineIndex / 10 + (currentLineIndex >> 0x1f) != currentLineIndex >> 0x1f)
-                                {
+                                case '1':
+                                    _gameEngine.StaticVariables.g_textCursor += 3;
+                                    strncpy(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer, _gameEngine.StaticVariables.g_textCursor);
+                                    acStack_1c48[_gameEngine.StaticVariables.g_textCursor] = '\0';
+                                    _gameEngine.PlayerManager.UpdateNumberOfFalcon();
+                                    UpdatePlayerProgressState();
                                     currentLineIndex = _gameEngine.PlayerManager.GetNumberOfFalcon();
-                                    strcat(acStack_1c48, PTR_DAT_8009a7ec[currentLineIndex / 10]);
-                                }
 
-                                currentLineIndex = _gameEngine.PlayerManager.GetNumberOfFalcon();
-                                goto LAB_80046984;
+                                    if (currentLineIndex / 10 + (currentLineIndex >> 0x1f) != currentLineIndex >> 0x1f)
+                                    {
+                                        currentLineIndex = _gameEngine.PlayerManager.GetNumberOfFalcon();
+                                        strcat(acStack_1c48, PTR_DAT_8009a7ec[currentLineIndex / 10]);
+                                    }
 
-                            case '2':
-                            case '4':
-                                _gameEngine.StaticVariables.g_textCursor += 3;
-                                strncpy(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer, _gameEngine.StaticVariables.g_textCursor);
-                                acStack_1c48[_gameEngine.StaticVariables.g_textCursor] = '\0';
-                                strcat(acStack_1c48,
-                                    PTR_g_iconNameEtcBase_8009a814[_gameEngine.StaticVariables.g_textCategoryIndex]);
-                                strcat(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer[_gameEngine.StaticVariables.g_textCursor]);
-                                break;
+                                    currentLineIndex = _gameEngine.PlayerManager.GetNumberOfFalcon();
+                                    goto LAB_80046984;
 
-                            case '3':
-                                _gameEngine.StaticVariables.g_textCursor += 3;
-                                strncpy(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer, _gameEngine.StaticVariables.g_textCursor);
-                                acStack_1c48[_gameEngine.StaticVariables.g_textCursor] = '\0';
-                                _gameEngine.PlayerManager.UpdateNumberOfFalcon();
-                                UpdatePlayerProgressState();
-                                strcat(acStack_1c48,
-                                    PTR_DAT_8009a7ec[
-                                        _gameEngine.StaticVariables.g_categoryThresholdTable[
-                                            _gameEngine.StaticVariables.g_textCategoryIndex] / 10]);
-                                strcat(acStack_1c48,
-                                    PTR_DAT_8009a7ec[
-                                        _gameEngine.StaticVariables.g_categoryThresholdTable[
-                                            _gameEngine.StaticVariables.g_textCategoryIndex] % 10]);
-                                strcat(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer[_gameEngine.StaticVariables.g_textCursor]);
-                                strcpy(_gameEngine.StaticVariables.g_scriptBuffer, acStack_1c48);
-                                cursor = _gameEngine.StaticVariables.g_textCursor;
-                                goto switchD_80046540_RENDER_NEXT_CHARACTER;
+                                case '2':
+                                case '4':
+                                    _gameEngine.StaticVariables.g_textCursor += 3;
+                                    strncpy(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer, _gameEngine.StaticVariables.g_textCursor);
+                                    acStack_1c48[_gameEngine.StaticVariables.g_textCursor] = '\0';
+                                    strcat(acStack_1c48,
+                                        PTR_g_iconNameEtcBase_8009a814[_gameEngine.StaticVariables.g_textCategoryIndex]);
+                                    strcat(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer[_gameEngine.StaticVariables.g_textCursor]);
+                                    break;
 
-                            case '5':
-                                _gameEngine.StaticVariables.g_textCursor += 3;
-                                strncpy(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer, _gameEngine.StaticVariables.g_textCursor);
-                                acStack_1c48[_gameEngine.StaticVariables.g_textCursor] = '\0';
-                                _gameEngine.PlayerManager.UpdateNumberOfFalcon();
-                                UpdatePlayerProgressState();
-                                currentLineIndex = _gameEngine.PlayerManager.GetNumberOfFalcon();
-                                currentLineIndex =
-                                    _gameEngine.StaticVariables.g_categoryThresholdTable[_gameEngine.StaticVariables.g_textCategoryIndex] -
-                                    currentLineIndex;
+                                case '3':
+                                    _gameEngine.StaticVariables.g_textCursor += 3;
+                                    strncpy(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer, _gameEngine.StaticVariables.g_textCursor);
+                                    acStack_1c48[_gameEngine.StaticVariables.g_textCursor] = '\0';
+                                    _gameEngine.PlayerManager.UpdateNumberOfFalcon();
+                                    UpdatePlayerProgressState();
+                                    strcat(acStack_1c48,
+                                        PTR_DAT_8009a7ec[
+                                            _gameEngine.StaticVariables.g_categoryThresholdTable[
+                                                _gameEngine.StaticVariables.g_textCategoryIndex] / 10]);
+                                    strcat(acStack_1c48,
+                                        PTR_DAT_8009a7ec[
+                                            _gameEngine.StaticVariables.g_categoryThresholdTable[
+                                                _gameEngine.StaticVariables.g_textCategoryIndex] % 10]);
+                                    strcat(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer[_gameEngine.StaticVariables.g_textCursor]);
+                                    strcpy(_gameEngine.StaticVariables.g_scriptBuffer, acStack_1c48);
+                                    cursor = _gameEngine.StaticVariables.g_textCursor;
+                                    goto switchD_80046540_RENDER_NEXT_CHARACTER;
 
-                                if (9 < currentLineIndex)
-                                {
-                                    strcat(acStack_1c48, PTR_DAT_8009a7ec[currentLineIndex / 10]);
-                                }
+                                case '5':
+                                    _gameEngine.StaticVariables.g_textCursor += 3;
+                                    strncpy(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer, _gameEngine.StaticVariables.g_textCursor);
+                                    acStack_1c48[_gameEngine.StaticVariables.g_textCursor] = '\0';
+                                    _gameEngine.PlayerManager.UpdateNumberOfFalcon();
+                                    UpdatePlayerProgressState();
+                                    currentLineIndex = _gameEngine.PlayerManager.GetNumberOfFalcon();
+                                    currentLineIndex =
+                                        _gameEngine.StaticVariables.g_categoryThresholdTable[_gameEngine.StaticVariables.g_textCategoryIndex] -
+                                        currentLineIndex;
 
-                                LAB_80046984:
-                                strcat(acStack_1c48, PTR_DAT_8009a7ec[currentLineIndex % 10]);
-                                strcat(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer[_gameEngine.StaticVariables.g_textCursor]);
+                                    if (9 < currentLineIndex)
+                                    {
+                                        strcat(acStack_1c48, PTR_DAT_8009a7ec[currentLineIndex / 10]);
+                                    }
 
-                                LAB_800469b4:
-                                strcpy(_gameEngine.StaticVariables.g_scriptBuffer, acStack_1c48);
-                                cursor = _gameEngine.StaticVariables.g_textCursor;
-                                goto switchD_80046540_RENDER_NEXT_CHARACTER;
+                                    LAB_80046984:
+                                    strcat(acStack_1c48, PTR_DAT_8009a7ec[currentLineIndex % 10]);
+                                    strcat(acStack_1c48, _gameEngine.StaticVariables.g_scriptBuffer[_gameEngine.StaticVariables.g_textCursor]);
 
-                            default:
-                                goto switchD_80046540_RENDER_NEXT_CHARACTER;
-                        }
-                        strcpy(_gameEngine.StaticVariables.g_scriptBuffer, acStack_1c48);
-                        _gameEngine.PlayerManager.UpdateNumberOfFalcon();
-                        UpdatePlayerProgressState();
-                        cursor = _gameEngine.StaticVariables.g_textCursor;
-                        goto switchD_80046540_RENDER_NEXT_CHARACTER;
-                        */
+                                    LAB_800469b4:
+                                    strcpy(_gameEngine.StaticVariables.g_scriptBuffer, acStack_1c48);
+                                    cursor = _gameEngine.StaticVariables.g_textCursor;
+                                    goto switchD_80046540_RENDER_NEXT_CHARACTER;
+
+                                default:
+                                    goto switchD_80046540_RENDER_NEXT_CHARACTER;
+                            }
+                            strcpy(_gameEngine.StaticVariables.g_scriptBuffer, acStack_1c48);
+                            _gameEngine.PlayerManager.UpdateNumberOfFalcon();
+                            UpdatePlayerProgressState();
+                            cursor = _gameEngine.StaticVariables.g_textCursor;
+                            goto switchD_80046540_RENDER_NEXT_CHARACTER;
+                            */
 
                         case 'Y':
                             _gameEngine.StaticVariables.g_textCursor += 2;
@@ -2141,40 +2141,40 @@ public class UIManager
         uint progressFlags;
         int piVar1;
 
-        progressFlags = (uint)(_gameEngine.StaticVariables.g_progressStateFlags & 0xfffffe01);
+        progressFlags = _gameEngine.StaticVariables.g_mapFlags[0x2d] & 0xfffffe01;
 
-        if (_gameEngine.StaticVariables.g_playerState < 0)
+        if (_gameEngine.StaticVariables.g_mapFlags[0x2c] < 0)
         {
-            _gameEngine.StaticVariables.g_progressStateFlags = (int)(progressFlags | 0x100);
+            _gameEngine.StaticVariables.g_mapFlags[0x2d] = progressFlags | 0x100;
             _gameEngine.StaticVariables.g_textCategoryIndex = 7;
         }
         else
         {
-            _gameEngine.StaticVariables.g_progressStateFlags = (int)(progressFlags | 0x80);
+            _gameEngine.StaticVariables.g_mapFlags[0x2d] = progressFlags | 0x80;
 
-            if ((_gameEngine.StaticVariables.g_playerState & 0x40000000U) == 0)
+            if ((_gameEngine.StaticVariables.g_mapFlags[0x2c] & 0x40000000U) == 0)
             {
-                _gameEngine.StaticVariables.g_progressStateFlags = (int)(progressFlags | 0x40);
+                _gameEngine.StaticVariables.g_mapFlags[0x2d] = progressFlags | 0x40;
 
-                if ((_gameEngine.StaticVariables.g_playerState & 0x20000000U) == 0)
+                if ((_gameEngine.StaticVariables.g_mapFlags[0x2c] & 0x20000000U) == 0)
                 {
-                    _gameEngine.StaticVariables.g_progressStateFlags = (int)(progressFlags | 0x20);
+                    _gameEngine.StaticVariables.g_mapFlags[0x2d] = progressFlags | 0x20;
 
-                    if ((_gameEngine.StaticVariables.g_playerState & 0x10000000U) == 0)
+                    if ((_gameEngine.StaticVariables.g_mapFlags[0x2c] & 0x10000000U) == 0)
                     {
-                        _gameEngine.StaticVariables.g_progressStateFlags = (int)(progressFlags | 0x10);
+                        _gameEngine.StaticVariables.g_mapFlags[0x2d] = progressFlags | 0x10;
 
-                        if ((_gameEngine.StaticVariables.g_playerState & 0x8000000U) == 0)
+                        if ((_gameEngine.StaticVariables.g_mapFlags[0x2c] & 0x8000000U) == 0)
                         {
-                            _gameEngine.StaticVariables.g_progressStateFlags = (int)(progressFlags | 8);
+                            _gameEngine.StaticVariables.g_mapFlags[0x2d] = progressFlags | 8;
 
-                            if ((_gameEngine.StaticVariables.g_playerState & 0x4000000U) == 0)
+                            if ((_gameEngine.StaticVariables.g_mapFlags[0x2c] & 0x4000000U) == 0)
                             {
-                                _gameEngine.StaticVariables.g_progressStateFlags = (int)(progressFlags | 4);
+                                _gameEngine.StaticVariables.g_mapFlags[0x2d] = progressFlags | 4;
 
-                                if ((_gameEngine.StaticVariables.g_playerState & 0x2000000U) == 0)
+                                if ((_gameEngine.StaticVariables.g_mapFlags[0x2c] & 0x2000000U) == 0)
                                 {
-                                    _gameEngine.StaticVariables.g_progressStateFlags = (int)(progressFlags | 2);
+                                    _gameEngine.StaticVariables.g_mapFlags[0x2d] = progressFlags | 2;
 
                                     _gameEngine.StaticVariables.g_textCategoryIndex = 0;
                                 }
@@ -2214,11 +2214,11 @@ public class UIManager
 
         if (currentValue < piVar1)
         {
-            _gameEngine.StaticVariables.g_progressStateFlags = (int)(_gameEngine.StaticVariables.g_progressStateFlags & 0xfffff7ff);
+            _gameEngine.StaticVariables.g_mapFlags[0x2d] &= 0xfffff7ff;
         }
         else
         {
-            _gameEngine.StaticVariables.g_progressStateFlags |= 0x800;
+            _gameEngine.StaticVariables.g_mapFlags[0x2d] |= 0x800;
         }
     }
 
