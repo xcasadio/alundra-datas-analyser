@@ -37,7 +37,7 @@ public static class FrameSnapshotLoader
         for (int i = 0; i < frameSnapshot.Entities.Length; i++)
         {
             // TODO : create a new entity
-            // we use frameSnapshot.CopyFromMemory() to copy all assets
+            // we use frameSnapshot.UpdateSaveData() to copy all assets
             //frameSnapshot.Entities[i] = new Entity();
 
             if (i < dump.entities.Count)
@@ -175,13 +175,13 @@ public static class FrameSnapshotLoader
         public uint g_playerControlFlags { get; set; }
         public int g_isWarpDisabled { get; set; }
         public int g_mapTransitionEffectId { get; set; }
-        public int g_desiredMap { get; set; }
+        public uint g_desiredMap { get; set; }
         public int g_warpTriggerType { get; set; }
         public int g_warpExtraParam { get; set; }
         public int g_cameraTargetX { get; set; }
         public int g_cameraTargetY { get; set; }
         public int g_cameraTargetZ { get; set; }
-        public int g_currentMap { get; set; }
+        public uint g_currentMap { get; set; }
         public int g_isCameraScrolling { get; set; }
         public int g_cameraScrollingX { get; set; }
         public int g_cameraScrollingY { get; set; }

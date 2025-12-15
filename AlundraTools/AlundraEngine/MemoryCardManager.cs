@@ -394,7 +394,7 @@ public class MemoryCardManager
                                 fadeCounter = _gameEngine.StaticVariables.g_fadeFrame + 1;
                                 _gameEngine.StaticVariables.g_fadeFrame = fadeCounter;
 
-                                if (0x12 < _gameEngine.StaticVariables.g_fadeFrame && _gameEngine.StaticVariables.INT_800c4990 != -1)
+                                if (0x12 < _gameEngine.StaticVariables.g_fadeFrame && _gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
                                 {
                                     _gameEngine.StaticVariables.g_fadeFrame = 0;
                                     arg1 = _gameEngine.EtcRes.GetEtcString(0xb3);
@@ -415,7 +415,7 @@ public class MemoryCardManager
                                 return;
                             }
 
-                            if (_gameEngine.StaticVariables.INT_800c4990 != -1)
+                            if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
                             {
                                 _gameEngine.StaticVariables.g_fadeFrame = 0;
                                 _gameEngine.StaticVariables.g_globalTransitionState = 0x17;
@@ -487,7 +487,7 @@ public class MemoryCardManager
 
                             if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
                             {
-                                if (_gameEngine.StaticVariables.INT_800c4990 != -1)
+                                if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
                                 {
                                     _gameEngine.StaticVariables.g_fadeFrame = 0;
                                     _gameEngine.StaticVariables.g_globalTransitionState = 0x15;
@@ -515,7 +515,7 @@ public class MemoryCardManager
 
                         if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
                         {
-                            if (_gameEngine.StaticVariables.INT_800c4990 != -1)
+                            if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
                             {
                                 _gameEngine.StaticVariables.g_fadeFrame = 0;
                                 _gameEngine.StaticVariables.g_globalTransitionState = 0x16;
@@ -542,7 +542,7 @@ public class MemoryCardManager
 
                                 if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
                                 {
-                                    if (_gameEngine.StaticVariables.INT_800c4990 != -1)
+                                    if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
                                     {
                                         _gameEngine.StaticVariables.g_fadeFrame = 0;
                                         _gameEngine.StaticVariables.g_globalTransitionState = 0x12;
@@ -569,7 +569,7 @@ public class MemoryCardManager
 
                             if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
                             {
-                                if (_gameEngine.StaticVariables.INT_800c4990 != -1)
+                                if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
                                 {
                                     _gameEngine.StaticVariables.g_fadeFrame = 0;
                                     _gameEngine.StaticVariables.g_globalTransitionState = 0x13;
@@ -585,9 +585,9 @@ public class MemoryCardManager
 
                         if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3f7)
                         {
-                            if (_gameEngine.StaticVariables.INT_800c4990 != -1)
+                            if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
                             {
-                                if (_gameEngine.StaticVariables.INT_800c4990 == -2)
+                                if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xfffffffe)
                                 {
                                     _gameEngine.StaticVariables.g_globalTransitionState = 0xf;
                                 }
@@ -609,12 +609,12 @@ public class MemoryCardManager
                             return;
                         }
 
-                        if (_gameEngine.StaticVariables.INT_800c4990 == -1)
+                        if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
                         {
                             return;
                         }
 
-                        if (_gameEngine.StaticVariables.INT_800c4990 == -2)
+                        if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xfffffffe)
                         {
                             if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
                             {
@@ -658,7 +658,7 @@ public class MemoryCardManager
                     etcSectionA = 0x11;
                 }
 
-                if (_gameEngine.StaticVariables.INT_800c4990 == -1)
+                if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
                 {
                     _gameEngine.StaticVariables.g_fadeFrame = fadeCounter;
                     return;
@@ -801,7 +801,7 @@ public class MemoryCardManager
                             _gameEngine.StaticVariables.DAT_8018ed8c = 0;
                             _gameEngine.StaticVariables.PTR_8018ede8 = _gameEngine.EtcRes.GetEtcString(0x83);
                             _gameEngine.StaticVariables.PTR_8018edec = _gameEngine.EtcRes.GetEtcString(0x84);
-                            FUN_80058ab4(_gameEngine.StaticVariables.PTR_8018ed68, _gameEngine.StaticVariables.PTR_8018ed6c, ref _gameEngine.StaticVariables.INT_800c4990);
+                            FUN_80058ab4(_gameEngine.StaticVariables.PTR_8018ed68, _gameEngine.StaticVariables.PTR_8018ed6c, ref _gameEngine.StaticVariables.g_memoryCardPayloadOffset);
                             _gameEngine.StaticVariables.g_fadeFrame = 0;
                             _gameEngine.StaticVariables.g_globalTransitionState = 0x3f8;
                             return;
@@ -825,7 +825,7 @@ public class MemoryCardManager
                         FUN_8005e3e4(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle, _gameEngine.StaticVariables.g_memoryCardFileIndex, _gameEngine.StaticVariables.PTR_8018ed68);
                         _gameEngine.StaticVariables.PTR_8018ede8 = _gameEngine.EtcRes.GetEtcString(0x85);
                         _gameEngine.StaticVariables.PTR_8018edec = _gameEngine.EtcRes.GetEtcString(0x86);
-                        FUN_80058ab4(_gameEngine.StaticVariables.PTR_8018ed68, _gameEngine.StaticVariables.PTR_8018ed6c, ref _gameEngine.StaticVariables.INT_800c4990);
+                        FUN_80058ab4(_gameEngine.StaticVariables.PTR_8018ed68, _gameEngine.StaticVariables.PTR_8018ed6c, ref _gameEngine.StaticVariables.g_memoryCardPayloadOffset);
                         _gameEngine.StaticVariables.g_globalTransitionState = 0x3f7;
                         return;
                     }
@@ -1082,7 +1082,7 @@ public class MemoryCardManager
                         return;
                     }
 
-                    if (_gameEngine.StaticVariables.INT_800c4990 == -2)
+                    if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xfffffffe)
                     {
                         _gameEngine.StaticVariables.g_fadeFrame = 0;
                         _gameEngine.StaticVariables.g_globalTransitionState = 0x3f6;
@@ -1095,7 +1095,7 @@ public class MemoryCardManager
 
                     if (_gameEngine.StaticVariables.INT_ARRAY_80191088[_gameEngine.StaticVariables.g_memorySlotId] == 0)
                     {
-                        DeleteMemoryCardFile(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle /*+ _gameEngine.StaticVariables.INT_800c4990 * 0x28*/);
+                        DeleteMemoryCardFile(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle /*+ _gameEngine.StaticVariables.g_memoryCardPayloadOffset * 0x28*/);
                         _gameEngine.StaticVariables.g_fadeFrame = 0;
                         _gameEngine.StaticVariables.g_globalTransitionState = 0x3ff;
                         _gameEngine.StaticVariables.g_fadeSubstate = 0;
@@ -1147,7 +1147,7 @@ public class MemoryCardManager
                 return;
             }
 
-            if (_gameEngine.StaticVariables.INT_800c4990 == -2)
+            if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xfffffffe)
             {
                 _gameEngine.StaticVariables.g_fadeFrame = 0;
                 _gameEngine.StaticVariables.g_globalTransitionState = 0x3f6;
@@ -1160,7 +1160,7 @@ public class MemoryCardManager
 
             if (_gameEngine.StaticVariables.INT_ARRAY_80191088[_gameEngine.StaticVariables.g_memorySlotId] == 0)
             {
-                fadeCounter = BuildDataAndSaveInMemoryCardAndUpdateData(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle, _gameEngine.StaticVariables.INT_800c4990);
+                fadeCounter = BuildDataAndSaveInMemoryCardAndUpdateData(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle, _gameEngine.StaticVariables.g_memoryCardPayloadOffset);
 
                 if (fadeCounter == -1)
                 {
@@ -1222,7 +1222,7 @@ public class MemoryCardManager
     }
 
     //8006122c
-    private int BuildDataAndSaveInMemoryCardAndUpdateData(int slotId, string gameTitle, int param_3)
+    private int BuildDataAndSaveInMemoryCardAndUpdateData(int slotId, string gameTitle, uint offset)
     {
         _gameEngine.StaticVariables.g_memoryCardDataBlob.Header[0] = 'S';
         _gameEngine.StaticVariables.g_memoryCardDataBlob.Header[1] = 'C';
@@ -1235,10 +1235,12 @@ public class MemoryCardManager
         Array.Copy(_gameEngine.StaticVariables.g_memoryCardIconFrame1, _gameEngine.StaticVariables.g_memoryCardDataBlob.IconFrame4bpp_1, _gameEngine.StaticVariables.g_memoryCardIconFrame1.Length);
         Array.Copy(_gameEngine.StaticVariables.g_memoryCardIconFrame2, _gameEngine.StaticVariables.g_memoryCardDataBlob.IconFrame4bpp_2, _gameEngine.StaticVariables.g_memoryCardIconFrame2.Length);
 
-        Array.Copy(_gameEngine.StaticVariables.g_copySourceAddress, 
-            _gameEngine.StaticVariables.g_memoryCardDataBlob.SavePayload + offset * 0x76c, 
-            _gameEngine.StaticVariables.g_copyByteCount);
-        _gameEngine.StaticVariables.g_memoryCardDataBlob.SavePayload[offset * 0x76c + 4] = offset;
+        Debugger.Break();
+
+        //Array.Copy(_gameEngine.StaticVariables.g_saveDataCopyPtr, 
+        //    _gameEngine.StaticVariables.g_memoryCardDataBlob.SavePayload[offset * 0x76c], 
+        //    _gameEngine.StaticVariables.g_saveDataSize);
+        //_gameEngine.StaticVariables.g_memoryCardDataBlob.SavePayload[offset * 0x76c + 4] = offset;
 
         //N’analyse pas!!:::Kobayashi Toshiaki:j1494039:Matrix
         _gameEngine.StaticVariables.g_memoryCardDataBlob.DeveloperWatermark = "解析するな!!:::小林敬明:j1494039:Matrix"; //length = 64
@@ -1250,10 +1252,10 @@ public class MemoryCardManager
             result = -1;
         }
 
-        Array.Copy(
-            _gameEngine.StaticVariables.g_memoryCardDataBlob.SavePayload + offset * 0x76c,
-            _gameEngine.StaticVariables.g_saveDataInRam, 
-            0x760);
+        //Array.Copy(
+        //    _gameEngine.StaticVariables.g_memoryCardDataBlob.SavePayload[offset * 0x76c],
+        //    _gameEngine.StaticVariables.g_saveDataInRam, 
+        //    0x760);
 
         return result;
     }
@@ -1297,13 +1299,13 @@ public class MemoryCardManager
     }
 
     //80058ab4
-    private int FUN_80058ab4(string param_1, string param_2, ref int param_3)
+    private int FUN_80058ab4(string param_1, string param_2, ref uint param_3)
     {
         _gameEngine.GraphicManager.InitializeFrame();
         _gameEngine.StaticVariables.PTR_80180128 = param_3;
         _gameEngine.StaticVariables.PTR_80180238 = param_1;
         _gameEngine.StaticVariables.PTR_8018023c = param_2;
-        param_3 = -1;
+        param_3 = 0xffffffff;
         _gameEngine.GraphicManager.SetTransitionType(10);
         return 1;
     }

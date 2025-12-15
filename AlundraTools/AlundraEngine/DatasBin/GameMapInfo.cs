@@ -4,7 +4,7 @@ namespace AlundraEngine.DatasBin;
 
 public class GameMapInfo
 {
-    public GameMapInfo(int mapId, int memoryAddress)
+    public GameMapInfo(uint mapId, int memoryAddress)
     {
         MemoryAddress = memoryAddress;
         MapId = mapId;
@@ -14,7 +14,7 @@ public class GameMapInfo
     {
         MemoryAddress = memoryAddress;
 
-        MapId = br.ReadInt32();//0
+        MapId = br.ReadUInt32();//0
         Gravity = br.ReadInt16();//4
         ZViscosity = br.ReadInt16();//6
         SlideEffectId = br.ReadByte();//a
@@ -98,7 +98,7 @@ public class GameMapInfo
 
     public readonly int MemoryAddress;
 
-    public readonly int MapId; //0
+    public readonly uint MapId; //0
     public readonly short Gravity; //4
     public readonly short ZViscosity; //6
     public readonly byte SlideEffectId; // XYResistance

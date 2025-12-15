@@ -731,29 +731,29 @@ public class GraphicManager
 
         int i;
 
-        if ((_gameEngine.StaticVariables.g_mapFlags[0x38] & 0x800000U) != 0)
+        if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x38] & 0x800000U) != 0)
         {
             ActivateSpecialRenderMode(7);
-            _gameEngine.StaticVariables.g_mapFlags[0x38] &= 0xff7fffff;
+            _gameEngine.StaticVariables.g_saveData.MapFlags[0x38] &= 0xff7fffff;
         }
 
-        if ((_gameEngine.StaticVariables.g_mapFlags[0x33] & 0x40000000U) == 0)
+        if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x33] & 0x40000000U) == 0)
         {
             InitializeFrame();
         }
 
-        if ((_gameEngine.StaticVariables.g_mapFlags[0x38] & 0x200000U) != 0)
+        if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x38] & 0x200000U) != 0)
         {
-            _gameEngine.StaticVariables.g_mapFlags[0x38] &= 0xffdfffff;
-            _gameEngine.StaticVariables.g_mapFlags[0x33] |= 0x40000000;
+            _gameEngine.StaticVariables.g_saveData.MapFlags[0x38] &= 0xffdfffff;
+            _gameEngine.StaticVariables.g_saveData.MapFlags[0x33] |= 0x40000000;
             PrepareBufferFlip();
         }
 
-        if ((_gameEngine.StaticVariables.g_mapFlags[0x38] & 0x400000U) != 0)
+        if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x38] & 0x400000U) != 0)
         {
             ResetDrawFrameFlags();
-            _gameEngine.StaticVariables.g_mapFlags[0x33] &= 0xbfffffff;
-            _gameEngine.StaticVariables.g_mapFlags[0x38] &= 0xffbfffff;
+            _gameEngine.StaticVariables.g_saveData.MapFlags[0x33] &= 0xbfffffff;
+            _gameEngine.StaticVariables.g_saveData.MapFlags[0x38] &= 0xffbfffff;
         }
 
         i = 0;
@@ -825,7 +825,7 @@ public class GraphicManager
     //8004be0c
     public void PrepareBufferFlip()
     {
-        if ((_gameEngine.StaticVariables.g_mapFlags[0x33] & 0x40000000U) != 0 && _gameEngine.StaticVariables.g_drawFrameFlags == 0)
+        if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x33] & 0x40000000U) != 0 && _gameEngine.StaticVariables.g_drawFrameFlags == 0)
         {
             SetTransitionType(1);
             _gameEngine.StaticVariables.g_drawState = 2;

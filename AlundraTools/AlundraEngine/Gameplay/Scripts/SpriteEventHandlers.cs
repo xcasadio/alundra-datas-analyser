@@ -356,7 +356,7 @@ public class SpriteEventHandlers
 
             if ((contentFlags & 0x8000) == 0)
             {
-                flags = _gameEngine.StaticVariables.g_mapFlags;
+                flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
             }
             else
             {
@@ -364,7 +364,7 @@ public class SpriteEventHandlers
             }
 
 
-            var index = (contentFlags >> 3) & 0xffc;
+            var index = ((contentFlags >> 3) & 0xffc) >> 2;
             var mask = 1 << (entity.ContentsGameFlag & 0x1f);
 
             if ((flags[index] & mask) == 0)

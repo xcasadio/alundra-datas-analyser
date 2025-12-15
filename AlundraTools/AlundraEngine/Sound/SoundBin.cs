@@ -35,7 +35,7 @@ public class SoundBin
 
     private int _mapVabIndex = -1;
 
-    public void OpenMap(int mapid)
+    public void OpenMap(uint mapid)
     {
         _mapVabIndex = MapIdToVabIndex[mapid];
         using var br = new BinaryReader(File.OpenRead(_soundBinfile));

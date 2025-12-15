@@ -466,7 +466,7 @@ public class GameEngine
         }
     }
 
-    public void LoadMap(int mapId)
+    public void LoadMap(uint mapId)
     {
         CurrentMap = DatasBin.GameMaps[mapId];
         using var br = DatasBin.OpenBin();
@@ -800,14 +800,14 @@ public class GameEngine
 
                 if ((contents & 0x8000) == 0)
                 {
-                    flags = StaticVariables.g_mapFlags;
+                    flags = StaticVariables.g_saveData.MapFlags;
                 }
                 else
                 {
                     flags = StaticVariables.g_globalFlags;
                 }
 
-                var index = (contents >> 3) & 0xffc;
+                var index = ((contents >> 3) & 0xffc) >> 2;
                 var mask = 1 << (val & 0x1f);
 
                 if ((flags[index] & mask) == 0)
@@ -1065,14 +1065,14 @@ public class GameEngine
     }
 
     // 8004a09c
-    private int LoadMapSounds(int mapId)
+    private int LoadMapSounds(uint mapId)
     {
         SoundManager.LoadMapSounds(mapId);
         GraphicManager.PrepareBufferFlip();
         return 1;
     }
 
-    public uint GetMapWarpDestination(int mapId)
+    public uint GetMapWarpDestination(uint mapId)
     {
         uint currentMapId;
         var warpDataIndex = 0;
@@ -1086,17 +1086,16 @@ public class GameEngine
             {
                 if (mapId == currentMapId)
                 {
-                    var bitfieldPtr = StaticVariables.g_mapFlags;
+                    var flags = StaticVariables.g_saveData.MapFlags;
 
                     if ((warpDataPtr[warpDataIndex + 1] & 0x8000) != 0)
                     {
-                        bitfieldPtr = StaticVariables.g_globalFlags;
+                        flags = StaticVariables.g_globalFlags;
                     }
 
-                    var bitfieldOffset = (warpDataPtr[warpDataIndex + 1] >> 3) & 0xffc;
-                    var bitfieldValue = bitfieldPtr[bitfieldOffset / 4];
+                    var index = ((warpDataPtr[warpDataIndex + 1] >> 3) & 0xffc) >> 2;
 
-                    if ((bitfieldValue & (1 << (int)(warpDataPtr[warpDataIndex + 1] & 0x1f))) != 0)
+                    if ((flags[index] & (1 << (int)(warpDataPtr[warpDataIndex + 1] & 0x1f))) != 0)
                     {
                         return warpDataPtr[warpDataIndex + 2];
                     }
@@ -1473,16 +1472,16 @@ public class GameEngine
         }
 
         _gameInitializer.InitializePlayerStatsAndItems();
-        CopyFromMemory();
+        UpdateSaveData();
         StaticVariables.g_warpTriggerType = 0x36;
         StaticVariables.g_warpExtraParam = 0;
-        StaticVariables.g_desiredMap = StaticVariables.g_initialMapId;
-        StaticVariables.g_cameraLookAtX = (StaticVariables.g_initialCameraTileX * 0x18 + 0xc) * 0x10000;
+        StaticVariables.g_desiredMap = StaticVariables.g_saveData.InitialMapId;
+        StaticVariables.g_cameraLookAtX = (StaticVariables.g_saveData.CameraTileX * 0x18 + 0xc) * 0x10000;
         StaticVariables.g_cameraTargetX = StaticVariables.g_cameraLookAtX;
-        StaticVariables.g_cameraLookAtY = (StaticVariables.g_initialCameraTileY * 0x10 + 8) * 0x10000;
+        StaticVariables.g_cameraLookAtY = (StaticVariables.g_saveData.CameraTileY * 0x10 + 8) * 0x10000;
         StaticVariables.g_cameraTargetY = StaticVariables.g_cameraLookAtY;
-        StaticVariables.g_cameraLookAtZ = StaticVariables.g_initialCameraTileZ << 0x14;
-        StaticVariables.g_cameraTargetZ = StaticVariables.g_initialCameraTileZ << 0x14;
+        StaticVariables.g_cameraLookAtZ = StaticVariables.g_saveData.CameraTileZ << 0x14;
+        StaticVariables.g_cameraTargetZ = StaticVariables.g_saveData.CameraTileZ << 0x14;
     }
 
     private void Update(int endGame)
@@ -2438,7 +2437,6 @@ public class GameEngine
     public void FUN_80032b28(uint flag)
     {
         uint[] flags;
-        uint value;
 
         if (flag == 0)
         {
@@ -2447,14 +2445,15 @@ public class GameEngine
 
         if ((flag & 0x8000) == 0)
         {
-            flags = StaticVariables.g_mapFlags;
+            flags = StaticVariables.g_saveData.MapFlags;
         }
         else
         {
             flags = StaticVariables.g_globalFlags;
         }
 
-        flags[(flag >> 3) & 0xffc] |= (uint)(1 << (int)(flag & 0x1f));
+        var index = ((flag >> 3) & 0xffc) >> 2;
+        flags[index] |= (uint)(1 << (int)(flag & 0x1f));
     }
 
     //8004248c
@@ -2510,17 +2509,17 @@ public class GameEngine
     //8003153c
     public void UpdateSavedData()
     {
-        StaticVariables.g_initialMapId = StaticVariables.g_currentMap;
-        StaticVariables.g_initialCameraTileX = StaticVariables.PlayerEntity.TileX;
-        StaticVariables.g_initialCameraTileY = StaticVariables.PlayerEntity.TileY;
-        StaticVariables.g_initialCameraTileZ = StaticVariables.PlayerEntity.TileZ;
+        StaticVariables.g_saveData.InitialMapId = StaticVariables.g_currentMap;
+        StaticVariables.g_saveData.CameraTileX = StaticVariables.PlayerEntity.TileX;
+        StaticVariables.g_saveData.CameraTileY = StaticVariables.PlayerEntity.TileY;
+        StaticVariables.g_saveData.CameraTileZ = StaticVariables.PlayerEntity.TileZ;
         UpdateMenuStatusText();
-        StaticVariables.g_savedGameplayTime = StaticVariables.g_gameplayTime;
-        InitialMemoryCopy(StaticVariables.g_saveSlotData, 0x758, 1);
+        StaticVariables.g_saveData.GameTime = StaticVariables.g_gameplayTime;
+        InitializeSaveDataCopy(StaticVariables.g_saveData, 0x758, 1);
     }
 
     //8005ec44
-    private uint InitialMemoryCopy(byte[] source, int byteCount, int mode)
+    private uint InitializeSaveDataCopy(SaveData source, int byteCount, int state)
     {
         uint result = 0xffffffff;
 
@@ -2528,9 +2527,9 @@ public class GameEngine
         {
             StaticVariables.g_globalTransitionState = 10000;
             result = (uint)(byteCount < 0x76d ? 1 : 0);
-            StaticVariables.g_copyByteCount = byteCount;
-            StaticVariables.g_copySourceAddress = source;
-            StaticVariables.g_postProcessingState = mode;
+            StaticVariables.g_saveDataSize = byteCount;
+            StaticVariables.g_saveDataCopyPtr = source;
+            StaticVariables.g_postProcessingState = state;
 
             if (result == 0)
             {
@@ -2543,9 +2542,10 @@ public class GameEngine
     }
 
     //800814e8
-    public void CopyFromMemory()
+    public void UpdateSaveData()
     {
-        //Array.Copy(StaticVariables.g_saveDataInRam, StaticVariables.g_saveSlotData, 0x758);
+        StaticVariables.g_saveData.CopyFrom(StaticVariables.g_saveDataInRam);
+        //Array.Copy(StaticVariables.g_saveDataInRam, StaticVariables.g_saveData, 0x758);
     }
 
     //80030fc8
@@ -2607,7 +2607,7 @@ public class GameEngine
         chars[25] = (char)('0' + (seconds / 10));
         chars[26] = (char)('0' + (seconds % 10));
 
-        StaticVariables.g_menuStatusText = new string(chars);
+        StaticVariables.g_saveData.GameStateDescription = new string(chars);
     }
 
     //800450b0

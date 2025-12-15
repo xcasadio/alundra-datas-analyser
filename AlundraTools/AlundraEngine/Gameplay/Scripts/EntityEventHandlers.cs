@@ -526,14 +526,14 @@ public class EntityEventHandlers
 
         if ((flag & 0x8000) == 0)
         {
-            flags = _gameEngine.StaticVariables.g_mapFlags;
+            flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
         }
         else
         {
             flags = _gameEngine.StaticVariables.g_globalFlags;
         }
 
-        var index = (flag >> 3) & 0xffc;
+        var index = ((flag >> 3) & 0xffc) >> 2;
         var mask = (uint)(1 << (variables[1] & 0x1f));
         flags[index] |= mask;
 
@@ -549,14 +549,14 @@ public class EntityEventHandlers
 
         if ((flag & 0x8000) == 0)
         {
-            flags = _gameEngine.StaticVariables.g_mapFlags;
+            flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
         }
         else
         {
             flags = _gameEngine.StaticVariables.g_globalFlags;
         }
 
-        var index = flag >> 3 & 0xffc;
+        var index = ((flag >> 3) & 0xffc) >> 2;
         flags[index] = (uint)(flags[index] & ~(1 << (variables[1] & 0x1f)));
 
         return 3;
@@ -1132,7 +1132,7 @@ public class EntityEventHandlers
 
         if ((flag & 0x8000) == 0)
         {
-            flags = _gameEngine.StaticVariables.g_mapFlags;
+            flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
         }
         else
         {
@@ -1141,7 +1141,7 @@ public class EntityEventHandlers
 
         result = 5;
         var mask = 1 << (variables[1] & 0x1f);
-        var index = (flag >> 3) & 0xffc;
+        var index = ((flag >> 3) & 0xffc) >> 2;
 
         if ((flags[index] & mask) != 0)
         {
@@ -1161,7 +1161,7 @@ public class EntityEventHandlers
 
         if ((flag & 0x8000) == 0)
         {
-            flags = _gameEngine.StaticVariables.g_mapFlags;
+            flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
         }
         else
         {
@@ -1170,7 +1170,7 @@ public class EntityEventHandlers
 
         result = 5;
         var mask = 1 << (variables[1] & 0x1f);
-        var index = (flag >> 3) & 0xffc;
+        var index = ((flag >> 3) & 0xffc) >> 2;
 
         if ((flags[index] & mask) == 0)
         {
@@ -1188,14 +1188,14 @@ public class EntityEventHandlers
 
         if ((flag & 0x8000) == 0)
         {
-            flags = _gameEngine.StaticVariables.g_mapFlags;
+            flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
         }
         else
         {
             flags = _gameEngine.StaticVariables.g_globalFlags;
         }
 
-        var index = (flag >> 3) & 0xffc;
+        var index = ((flag >> 3) & 0xffc) >> 2;
         var mask = (uint)(1 << (variables[1] & 0x1f));
         flags[index] ^= mask;
 
@@ -1208,13 +1208,13 @@ public class EntityEventHandlers
         //do this 4 times
         {
             var flagData = variables[1] + (variables[2] << 8);
-            //int flag = (flagData >> 3) & 0xffc;
-            var flag = (flagData >> 5) & 0x3ff;
+            
+            var flag = ((flagData >> 3) & 0x3ff) >> 2;
             uint[] flags;
             //if the mapflag bit is set
             if ((flagData & 0x8000) != 0)
             {
-                flags = _gameEngine.StaticVariables.g_mapFlags;
+                flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
             }
             else//otherwise its a global flag
             {
@@ -1233,13 +1233,13 @@ public class EntityEventHandlers
 
         {
             var flagData = variables[3] + (variables[4] << 8);
-            //int flag = (flagData >> 3) & 0xffc;
-            var flag = (flagData >> 5) & 0x3ff;
+            
+            var flag = ((flagData >> 3) & 0x3ff) >> 2;
             uint[] flags;
             //if the mapflag bit is set
             if ((flagData & 0x8000) != 0)
             {
-                flags = _gameEngine.StaticVariables.g_mapFlags;
+                flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
             }
             else//otherwise its a global flag
             {
@@ -1258,13 +1258,13 @@ public class EntityEventHandlers
 
         {
             var flagData = variables[5] + (variables[6] << 8);
-            //int flag = (flagData >> 3) & 0xffc;
-            var flag = (flagData >> 5) & 0x3ff;
+            
+            var flag = ((flagData >> 3) & 0x3ff) >> 2;
             uint[] flags;
             //if the mapflag bit is set
             if ((flagData & 0x8000) != 0)
             {
-                flags = _gameEngine.StaticVariables.g_mapFlags;
+                flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
             }
             else//otherwise its a global flag
             {
@@ -1283,13 +1283,13 @@ public class EntityEventHandlers
 
         {
             var flagData = variables[7] + (variables[8] << 8);
-            //int flag = (flagData >> 3) & 0xffc;
-            var flag = (flagData >> 5) & 0x3ff;
+            
+            var flag = ((flagData >> 3) & 0x3ff) >> 2;
             uint[] flags;
             //if the mapflag bit is set
             if ((flagData & 0x8000) != 0)
             {
-                flags = _gameEngine.StaticVariables.g_mapFlags;
+                flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
             }
             else//otherwise its a global flag
             {
@@ -1326,7 +1326,7 @@ public class EntityEventHandlers
 
         if ((uVar2 & 0x8000) == 0)
         {
-            piVar1 = _gameEngine.StaticVariables.g_mapFlags;
+            piVar1 = _gameEngine.StaticVariables.g_saveData.MapFlags;
         }
         else
         {
@@ -1341,7 +1341,7 @@ public class EntityEventHandlers
 
             if ((uVar2 & 0x8000) == 0)
             {
-                piVar1 = _gameEngine.StaticVariables.g_mapFlags;
+                piVar1 = _gameEngine.StaticVariables.g_saveData.MapFlags;
             }
             else
             {
@@ -1356,7 +1356,7 @@ public class EntityEventHandlers
 
                 if ((uVar2 & 0x8000) == 0)
                 {
-                    piVar1 = _gameEngine.StaticVariables.g_mapFlags;
+                    piVar1 = _gameEngine.StaticVariables.g_saveData.MapFlags;
                 }
                 else
                 {
@@ -1372,7 +1372,7 @@ public class EntityEventHandlers
 
                     if ((uVar2 & 0x8000) == 0)
                     {
-                        piVar1 = _gameEngine.StaticVariables.g_mapFlags;
+                        piVar1 = _gameEngine.StaticVariables.g_saveData.MapFlags;
                     }
                     else
                     {
@@ -1406,14 +1406,14 @@ public class EntityEventHandlers
 
         if ((flag & 0x8000) == 0)
         {
-            flags = _gameEngine.StaticVariables.g_mapFlags;
+            flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
         }
         else
         {
             flags = _gameEngine.StaticVariables.g_globalFlags;
         }
 
-        var index = (flag >> 3) & 0xffc;
+        var index = ((flag >> 3) & 0xffc) >> 2;
         var mask = 1 << (variables[1] & 0x1f);
 
         if ((flags[index] & mask) == 0)
@@ -1434,14 +1434,14 @@ public class EntityEventHandlers
 
         if ((flag & 0x8000) == 0)
         {
-            flags = _gameEngine.StaticVariables.g_mapFlags;
+            flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
         }
         else
         {
             flags = _gameEngine.StaticVariables.g_globalFlags;
         }
 
-        var index = (flag >> 3) & 0xffc;
+        var index = ((flag >> 3) & 0xffc) >> 2;
         var mask = 1 << (variables[1] & 0x1f);
 
         if ((flags[index] & mask) != 0)
@@ -1481,7 +1481,7 @@ public class EntityEventHandlers
     // 8003E424
     private int Script_56_038(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.StaticVariables.g_mapIdToInternalMapIndexTable[variables[1]] = (ushort)((variables[4] << 8) | variables[3]);
+        _gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable[variables[1]] = (ushort)((variables[4] << 8) | variables[3]);
         return 5;
     }
 
@@ -1877,7 +1877,7 @@ public class EntityEventHandlers
     private int Script_83_053(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.g_mapTransitionEffectId = variables[6];
-        _gameEngine.StaticVariables.g_desiredMap = variables[2] << 8 | variables[1];
+        _gameEngine.StaticVariables.g_desiredMap = (uint)(variables[2] << 8 | variables[1]);
         _gameEngine.StaticVariables.g_warpEntryBehavior = variables[7];
 
         var y = variables[0];
@@ -2603,7 +2603,7 @@ public class EntityEventHandlers
 
         if ((flag & 0x8000) == 0)
         {
-            flags = _gameEngine.StaticVariables.g_mapFlags;
+            flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
         }
         else
         {
@@ -2611,7 +2611,7 @@ public class EntityEventHandlers
         }
 
         result = 5;
-        var index = (flag >> 3) & 0xffc;
+        var index = ((flag >> 3) & 0xffc) >> 2;
         var mask = (uint)(1 << (variables[1] & 0x1f));
 
         if ((flags[index] & mask) != 0)
@@ -2633,7 +2633,7 @@ public class EntityEventHandlers
 
         if ((flag & 0x8000) == 0)
         {
-            flags = _gameEngine.StaticVariables.g_mapFlags;
+            flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
         }
         else
         {
@@ -2641,7 +2641,7 @@ public class EntityEventHandlers
         }
 
         result = 5;
-        var index = (flag >> 3) & 0xffc;
+        var index = ((flag >> 3) & 0xffc) >> 2;
         var mask = (uint)(1 << (variables[1] & 0x1f));
 
         if ((flags[index] & mask) == 0)
@@ -2696,7 +2696,7 @@ public class EntityEventHandlers
 
         if ((flag & 0x8000) == 0)
         {
-            flags = _gameEngine.StaticVariables.g_mapFlags;
+            flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
         }
         else
         {
@@ -2704,7 +2704,7 @@ public class EntityEventHandlers
         }
 
         result = 5;
-        var index = (flag >> 3) & 0xffc;
+        var index = ((flag >> 3) & 0xffc) >> 2;
         var mask = (uint)(1 << (variables[1] & 0x1f));
 
         if ((flags[index] & mask) != 0)
@@ -2725,7 +2725,7 @@ public class EntityEventHandlers
 
         if ((flag & 0x8000) == 0)
         {
-            flags = _gameEngine.StaticVariables.g_mapFlags;
+            flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
         }
         else
         {
@@ -2733,7 +2733,7 @@ public class EntityEventHandlers
         }
 
         result = 5;
-        var index = (flag >> 3) & 0xffc;
+        var index = ((flag >> 3) & 0xffc) >> 2;
         var mask = (uint)(1 << (variables[1] & 0x1f));
 
         if ((flags[index] & mask) == 0)
@@ -3451,7 +3451,7 @@ public class EntityEventHandlers
 
             if ((uVar1 & 0x8000) == 0)
             {
-                piVar3 = _gameEngine.StaticVariables.g_mapFlags;
+                piVar3 = _gameEngine.StaticVariables.g_saveData.MapFlags;
             }
             else
             {
@@ -4159,7 +4159,7 @@ public class EntityEventHandlers
         Debugger.Break();
         var slotId = (variables[2] << 8) | variables[1];
 
-        if ((byte)_gameEngine.StaticVariables.g_currentSaveSlotNameIndex < slotId)
+        if ((byte)_gameEngine.StaticVariables.g_saveData.SaveSlotIndex < slotId)
         {
             eventProgramState.Result = 0;
         }

@@ -83,7 +83,7 @@ public class UIDebugManager
                 {
                     _gameEngine.StaticVariables.SHORT_8017e8dc = (short)(_gameEngine.StaticVariables.SHORT_8017e8dc - 1);
 
-                    if ((_gameEngine.StaticVariables.SHORT_8017e8dc << 0x10) < 0)
+                    if (_gameEngine.StaticVariables.SHORT_8017e8dc << 0x10 < 0)
                     {
                         _gameEngine.StaticVariables.SHORT_8017e8dc = 0;
                     }
@@ -228,14 +228,17 @@ public class UIDebugManager
 
                 if (((_gameEngine.StaticVariables.UINT_8017e8d8 & 0xffff | (uint)_gameEngine.StaticVariables.DAT_8017e9ac << 0xf) & 0x8000) == 0)
                 {
-                    flags = _gameEngine.StaticVariables.g_mapFlags;
+                    flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
                 }
                 else
                 {
                     flags = _gameEngine.StaticVariables.g_globalFlags;
                 }
 
-                var flagValue = flags[(_gameEngine.StaticVariables.UINT_8017e8d8 & 0x7fe0) >> 3];
+                var index = (_gameEngine.StaticVariables.UINT_8017e8d8 & 0x7fe0) >> 3;
+                Debugger.Break();
+                //index >>= 2; ??
+                var flagValue = flags[index];
                 var bitMask = 1 << (int)(_gameEngine.StaticVariables.UINT_8017e8d8 & 0x1f);
                 if ((flagValue & bitMask) != 0)
                 {
@@ -282,18 +285,20 @@ public class UIDebugManager
                     i += 1;
                 } while (i < 5);
 
-                var value = ((_gameEngine.StaticVariables.UINT_8017e8d8 & 0xffff) | (uint)(_gameEngine.StaticVariables.DAT_8017e9ac << 0xf));
+                var value = (_gameEngine.StaticVariables.UINT_8017e8d8 & 0xffff) | (uint)(_gameEngine.StaticVariables.DAT_8017e9ac << 0xf);
 
                 if ((value & 0x8000) == 0)
                 {
-                    flags = _gameEngine.StaticVariables.g_mapFlags;
+                    flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
                 }
                 else
                 {
                     flags = _gameEngine.StaticVariables.g_globalFlags;
                 }
 
-                var index = ((_gameEngine.StaticVariables.UINT_8017e8d8 & 0x7fe0) >> 3);
+                var index = (_gameEngine.StaticVariables.UINT_8017e8d8 & 0x7fe0) >> 3;
+                Debugger.Break();
+                //index >>= 2;
                 flags[index] = (uint)(flags[index] ^ (1 << (int)(_gameEngine.StaticVariables.UINT_8017e8d8 & 0x1f)));
 
                 if ((_gameEngine.StaticVariables.DAT_8017e990 & 1) != 0)

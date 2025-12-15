@@ -15,7 +15,7 @@ public class WaitFlagCommand : CommandBase
         var name = "Wait ";
         var flag = (uint)(Parameters[0] + Parameters[1] * 0x100);
         name += (flag & 0x8000) == 0 ? "MapFlags" : "GlobalFlags";
-        name += $"[{(flag >> 3) & 0xffc}]";
+        name += $"[{((flag >> 3) & 0xffc) >> 2}]";
         name += $" & {1 << (Parameters[0] & 0x1f)} is ";
         name += $"{(Command == 0x36 ? "off" : "on")}";
         Name = name;

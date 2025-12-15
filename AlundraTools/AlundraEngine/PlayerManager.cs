@@ -2564,8 +2564,8 @@ public class PlayerManager
 
         _gameEngine.StaticVariables.g_mapTransitionEffectId = (portal.Flags & 0x70) >> 4;
 
-        int internalMapIdx = _gameEngine.StaticVariables.g_mapIdToInternalMapIndexTable[portal.DestMapId];
-        _gameEngine.StaticVariables.g_desiredMap = portal.DestMapId;
+        int internalMapIdx = _gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable[portal.DestMapId];
+        _gameEngine.StaticVariables.g_desiredMap = (uint)portal.DestMapId;
 
         Entity playerEntity = _gameEngine.StaticVariables.PlayerEntity;
 
@@ -3489,7 +3489,7 @@ public class PlayerManager
             playerStats.FalconTemp = 0x32;
         }
 
-        _gameEngine.StaticVariables.g_mapFlags[0x2d] |= 0x400;
+        _gameEngine.StaticVariables.g_saveData.MapFlags[0x2d] |= 0x400;
     }
 
     //80032e2c
@@ -4137,7 +4137,7 @@ public class PlayerManager
             playerStats.Falcon = 0x32;
         }
 
-        _gameEngine.StaticVariables.g_mapFlags[0x2d] &= 0xfffffbff;
+        _gameEngine.StaticVariables.g_saveData.MapFlags[0x2d] &= 0xfffffbff;
     }
 
 

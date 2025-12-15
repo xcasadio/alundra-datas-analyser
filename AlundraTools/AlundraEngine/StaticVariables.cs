@@ -4799,8 +4799,8 @@ public class StaticVariables
     public int g_debugPrimColor; // 800986E8
     public int g_debugActorColor; // 800986EC
     public int g_lastWarpEntityIndex; // 800986F0
-    public int g_map_sprite; // 800986F4
-    public int g_dr_tpage; // 800986F8
+    public uint g_map_sprite; // 800986F4
+    public uint g_dr_tpage; // 800986F8
     public int g_tileAnimFrameCounter; // 800986FC
     public int g_obj_poly_ft4; // 80098700
     public int DAT_80098704; // 80098704
@@ -5119,7 +5119,7 @@ public class StaticVariables
     public int g_fadeControlValue; // 800C4984
     public int g_asyncOperationResult; // 800C4988
     public int g_fadeSubstate; // 800C498C
-    public int INT_800c4990 = 0x3E7; // 800C4990
+    public uint g_memoryCardPayloadOffset = 0x3E7; // 800C4990
     //800c4994
     public readonly byte[] g_memoryCardIconFrame0 = new byte[]
     {
@@ -5391,7 +5391,7 @@ public class StaticVariables
     public uint g_debugState; // 800DC058
     public uint g_debugFlags; // 800DC05C
     public int g_debugFrameDelay; // 800DC060
-    public int g_debug_desiredMapId; // 800DC064
+    public uint g_debug_desiredMapId; // 800DC064
     public int g_warpIndex; // 800DC068
     public int g_debugVar_NbFrameBreak; // 800DC06C
     public int g_mapLimits; // 800DC070
@@ -5416,7 +5416,7 @@ public class StaticVariables
     public int g_isWarpDisabled; // 800DC4C0
     public int g_isGameEnding; // 800DC4C4
     public int g_mapTransitionEffectId; // 800DC4C8
-    public int g_desiredMap; // 800DC4CC
+    public uint g_desiredMap; // 800DC4CC
     public int g_warpTriggerType; // 800DC4D0
     public int g_warpExtraParam; // 800DC4D4
     public int g_cameraTargetX; // 800DC4D8
@@ -5431,7 +5431,7 @@ public class StaticVariables
     public short g_paletteIndexInit; // 800DC542
     public short g_tileScaleXInit; // 800DC56E
     public short g_tileScaleYInit; // 800DC59A
-    public int g_currentMap; // 800DC5A0
+    public uint g_currentMap; // 800DC5A0
     public short[] g_tileOTFlags = new short[960]; // 800DC5A8
     public short DAT_800dc5aa; // 800DC5AA
     public short DAT_800dc5b6; // 800DC5B6
@@ -5866,7 +5866,7 @@ public class StaticVariables
     public int g_hudTransitionStartX; // 801800FC
     public int g_hudTransitionStartY; // 80180100
     public uint[] UINT_ARRAY_80180108 = new uint[8]; // 80180108
-    public int PTR_80180128; // 80180128
+    public uint PTR_80180128; // 80180128
     public int DAT_80180130; // 80180130
     public int DAT_80180134; // 80180134
     public int DAT_80180138; // 80180138
@@ -5950,11 +5950,11 @@ public class StaticVariables
     public int DAT_8018ee10; // 8018EE10
     public int DAT_8018ee38; // 8018EE38
     public MemoryCardDataBlob g_memoryCardDataBlob = new(); // 8018F078
-    public int g_copyByteCount; //80191078
+    public int g_saveDataSize; //80191078
     public int[] INT_ARRAY_80191080 = new int[2]; //80191080
     public int[] INT_ARRAY_80191088 = new int[2]; //80191088
     public int g_memoryCardFileIndex; //80191090 
-    public byte[] g_copySourceAddress; //80191094
+    public SaveData g_saveDataCopyPtr; //80191094
     public int g_postProcessingState; //80191098
     public Entity g_bossSpawnedEffectEntity; // 801911B8
     public Entity g_bossEffectEntity; // 801911BC
@@ -6025,30 +6025,7 @@ public class StaticVariables
     public int INT_801eab58; // 801EAB58
     public int INT_801eab5c; // 801EAB5C
     public int INT_801eab60; // 801EAB60
-    public byte[] g_saveSlotData; // 801EB2E8
-    public uint g_lastVisitedMapId; // 801EB2EC
-    public int DAT_801eb2f0; // 801EB2F0
-    public int DAT_801eb2f4; // 801EB2F4
-    public int DAT_801eb2f8; // 801EB2F8
-    public int DAT_801eb2fc; // 801EB2FC
-    public int DAT_801eb300; // 801EB300
-    public int DAT_801eb304; // 801EB304
-    public string g_menuStatusText; // = new char[32]; // 801EB310
-    public uint g_savedGameplayTime; // 801EB330
-    public int g_initialMapId; // 801EB334
-    public int g_initialCameraTileX; // 801EB338
-    public int g_initialCameraTileY; // 801EB33C
-    public int g_initialCameraTileZ; // 801EB340
-    public uint[] g_mapFlags = new uint[1024]; // 801EB344 // 44
-    public ushort[] g_mapIdToInternalMapIndexTable = new ushort[500]; // 801EB444
-    public short DAT_801eb828; // 801EB828
-    public short DAT_801eb82a; // 801EB82A
-    public PlayerStats g_initialPlayerStats; // 801EB82C
-    public short DAT_801eb834; // 801EB834
-    public short DAT_801eb83a; // 801EB83A
-    public short DAT_801eb83c; // 801EB83C
-    public short[] g_initialNumberOfItems = new short[256]; // 801EB83E
-    public short g_currentSaveSlotNameIndex; // 801EBA3E
+    public SaveData g_saveData = new(); // 801EB2E8
     public uint[] g_globalFlags = new uint[1024]; // 801EBA40 //64
     public byte[] g_bufferEtc = new byte[12288]; // 801EBB40
     public int g_bufferEtcPtr; // 801EEB40

@@ -23,13 +23,13 @@ public class FrameSnapshot
     public uint PlayerControlFlags { get; set; }
     public int IsWarpDisabled { get; set; }
     public int MapTransitionEffectId { get; set; }
-    public int DesiredMap { get; set; }
+    public uint DesiredMap { get; set; }
     public int WarpTriggerType { get; set; }
     public int WarpExtraParam { get; set; }
     public int CameraTargetX { get; set; }
     public int CameraTargetY { get; set; }
     public int CameraTargetZ { get; set; }
-    public int CurrentMap { get; set; }
+    public uint CurrentMap { get; set; }
     public int IsCameraScrolling { get; set; }
     public int CameraScrollingX { get; set; }
     public int CameraScrollingY { get; set; }
@@ -77,7 +77,7 @@ public class FrameSnapshot
             gameEngine.StaticVariables.g_entitySlots[i].CopyFrom(Entities[i]);
         }
 
-        Array.Copy(MapFlags, gameEngine.StaticVariables.g_mapFlags, gameEngine.StaticVariables.g_mapFlags.Length);
+        Array.Copy(MapFlags, gameEngine.StaticVariables.g_saveData.MapFlags, gameEngine.StaticVariables.g_saveData.MapFlags.Length);
         Array.Copy(GlobalFlags, gameEngine.StaticVariables.g_globalFlags, gameEngine.StaticVariables.g_globalFlags.Length);
 
         gameEngine.StaticVariables.g_gameRandomSeed = GameRandomSeed;
@@ -154,7 +154,7 @@ public class FrameSnapshot
         }
         ;
 
-        MapFlags = (uint[])gameEngine.StaticVariables.g_mapFlags.Clone();
+        MapFlags = (uint[])gameEngine.StaticVariables.g_saveData.MapFlags.Clone();
         GlobalFlags = (uint[])gameEngine.StaticVariables.g_globalFlags.Clone();
 
         GameRandomSeed = gameEngine.StaticVariables.g_gameRandomSeed;

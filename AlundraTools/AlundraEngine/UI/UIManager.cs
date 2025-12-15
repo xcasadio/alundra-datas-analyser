@@ -2141,40 +2141,40 @@ public class UIManager
         uint progressFlags;
         int piVar1;
 
-        progressFlags = _gameEngine.StaticVariables.g_mapFlags[0x2d] & 0xfffffe01;
+        progressFlags = _gameEngine.StaticVariables.g_saveData.MapFlags[0x2d] & 0xfffffe01;
 
-        if (_gameEngine.StaticVariables.g_mapFlags[0x2c] < 0)
+        if (_gameEngine.StaticVariables.g_saveData.MapFlags[0x2c] < 0)
         {
-            _gameEngine.StaticVariables.g_mapFlags[0x2d] = progressFlags | 0x100;
+            _gameEngine.StaticVariables.g_saveData.MapFlags[0x2d] = progressFlags | 0x100;
             _gameEngine.StaticVariables.g_textCategoryIndex = 7;
         }
         else
         {
-            _gameEngine.StaticVariables.g_mapFlags[0x2d] = progressFlags | 0x80;
+            _gameEngine.StaticVariables.g_saveData.MapFlags[0x2d] = progressFlags | 0x80;
 
-            if ((_gameEngine.StaticVariables.g_mapFlags[0x2c] & 0x40000000U) == 0)
+            if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x2c] & 0x40000000U) == 0)
             {
-                _gameEngine.StaticVariables.g_mapFlags[0x2d] = progressFlags | 0x40;
+                _gameEngine.StaticVariables.g_saveData.MapFlags[0x2d] = progressFlags | 0x40;
 
-                if ((_gameEngine.StaticVariables.g_mapFlags[0x2c] & 0x20000000U) == 0)
+                if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x2c] & 0x20000000U) == 0)
                 {
-                    _gameEngine.StaticVariables.g_mapFlags[0x2d] = progressFlags | 0x20;
+                    _gameEngine.StaticVariables.g_saveData.MapFlags[0x2d] = progressFlags | 0x20;
 
-                    if ((_gameEngine.StaticVariables.g_mapFlags[0x2c] & 0x10000000U) == 0)
+                    if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x2c] & 0x10000000U) == 0)
                     {
-                        _gameEngine.StaticVariables.g_mapFlags[0x2d] = progressFlags | 0x10;
+                        _gameEngine.StaticVariables.g_saveData.MapFlags[0x2d] = progressFlags | 0x10;
 
-                        if ((_gameEngine.StaticVariables.g_mapFlags[0x2c] & 0x8000000U) == 0)
+                        if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x2c] & 0x8000000U) == 0)
                         {
-                            _gameEngine.StaticVariables.g_mapFlags[0x2d] = progressFlags | 8;
+                            _gameEngine.StaticVariables.g_saveData.MapFlags[0x2d] = progressFlags | 8;
 
-                            if ((_gameEngine.StaticVariables.g_mapFlags[0x2c] & 0x4000000U) == 0)
+                            if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x2c] & 0x4000000U) == 0)
                             {
-                                _gameEngine.StaticVariables.g_mapFlags[0x2d] = progressFlags | 4;
+                                _gameEngine.StaticVariables.g_saveData.MapFlags[0x2d] = progressFlags | 4;
 
-                                if ((_gameEngine.StaticVariables.g_mapFlags[0x2c] & 0x2000000U) == 0)
+                                if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x2c] & 0x2000000U) == 0)
                                 {
-                                    _gameEngine.StaticVariables.g_mapFlags[0x2d] = progressFlags | 2;
+                                    _gameEngine.StaticVariables.g_saveData.MapFlags[0x2d] = progressFlags | 2;
 
                                     _gameEngine.StaticVariables.g_textCategoryIndex = 0;
                                 }
@@ -2214,11 +2214,11 @@ public class UIManager
 
         if (currentValue < piVar1)
         {
-            _gameEngine.StaticVariables.g_mapFlags[0x2d] &= 0xfffff7ff;
+            _gameEngine.StaticVariables.g_saveData.MapFlags[0x2d] &= 0xfffff7ff;
         }
         else
         {
-            _gameEngine.StaticVariables.g_mapFlags[0x2d] |= 0x800;
+            _gameEngine.StaticVariables.g_saveData.MapFlags[0x2d] |= 0x800;
         }
     }
 

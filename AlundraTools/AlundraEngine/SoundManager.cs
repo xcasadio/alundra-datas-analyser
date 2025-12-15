@@ -162,7 +162,7 @@ public class SoundManager
     }
 
     //8004a09c
-    public void LoadMapSounds(int mapId)
+    public void LoadMapSounds(uint mapId)
     {
         var iVar1 = _gameEngine.GetMapWarpDestination(mapId);
 

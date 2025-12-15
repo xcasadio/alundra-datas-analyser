@@ -20,7 +20,7 @@ public class GameMap
 
         //just read mapid
         br.BaseStream.Position = Offset + Header.InfoBlockOffset;
-        Info = new GameMapInfo(br.ReadInt32(), MemoryAddress + Header.InfoBlockOffset);
+        Info = new GameMapInfo(br.ReadUInt32(), MemoryAddress + Header.InfoBlockOffset);
     }
 
     public readonly long Offset;

@@ -49,7 +49,7 @@ namespace AlundraTools.GameControls
             _input.Start();
         }
 
-        public void ChangeMap(int mapId)
+        public void ChangeMap(uint mapId)
         {
             _soundBin.OpenMap(mapId);
             lstMapSfx.Items.Clear();

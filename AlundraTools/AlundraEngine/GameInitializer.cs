@@ -332,14 +332,14 @@ public class GameInitializer
 
         if (_gameEngine.StaticVariables.g_saveDataInRam.SlotData == 1)
         {
-            _gameEngine.CopyFromMemory();
-            playerTileX = _gameEngine.StaticVariables.g_initialCameraTileX;
-            playerTileY = _gameEngine.StaticVariables.g_initialCameraTileY;
-            playerZ = _gameEngine.StaticVariables.g_initialCameraTileZ;
+            _gameEngine.UpdateSaveData();
+            playerTileX = _gameEngine.StaticVariables.g_saveData.CameraTileX;
+            playerTileY = _gameEngine.StaticVariables.g_saveData.CameraTileY;
+            playerZ = _gameEngine.StaticVariables.g_saveData.CameraTileZ;
         }
         else
         {
-            ClearMapArrays();
+            ResetMapFlags();
             playerTileX = 0x16;
 
             if (_gameEngine.StaticVariables.g_saveDataInRam.SlotData == 0)
@@ -347,10 +347,10 @@ public class GameInitializer
                 playerTileX = 0x21;
                 playerTileY = 0x23;
                 playerZ = 0;
-                _gameEngine.StaticVariables.g_initialMapId = 0x185;
-                _gameEngine.StaticVariables.g_initialCameraTileX = 0x21;
-                _gameEngine.StaticVariables.g_initialCameraTileY = 0x3b;
-                _gameEngine.StaticVariables.g_initialCameraTileZ = 0;
+                _gameEngine.StaticVariables.g_saveData.InitialMapId = 0x185;
+                _gameEngine.StaticVariables.g_saveData.CameraTileX = 0x21;
+                _gameEngine.StaticVariables.g_saveData.CameraTileY = 0x3b;
+                _gameEngine.StaticVariables.g_saveData.CameraTileZ = 0;
                 _gameEngine.StaticVariables.g_warpExtraParam = 0;
                 _gameEngine.PlayerManager.SetPlayerHpMax(10);
                 _gameEngine.PlayerManager.SetPlayerHp(10);
@@ -362,10 +362,10 @@ public class GameInitializer
             {
                 playerTileY = 0x1d;
                 playerZ = 10;
-                _gameEngine.StaticVariables.g_initialMapId = 0xb;
-                _gameEngine.StaticVariables.g_initialCameraTileX = 0x16;
-                _gameEngine.StaticVariables.g_initialCameraTileY = 0x1d;
-                _gameEngine.StaticVariables.g_initialCameraTileZ = 10;
+                _gameEngine.StaticVariables.g_saveData.InitialMapId = 0xb;
+                _gameEngine.StaticVariables.g_saveData.CameraTileX = 0x16;
+                _gameEngine.StaticVariables.g_saveData.CameraTileY = 0x1d;
+                _gameEngine.StaticVariables.g_saveData.CameraTileZ = 10;
                 _gameEngine.StaticVariables.g_warpExtraParam = 0;
                 _gameEngine.PlayerManager.SetPlayerHpMax(0x2d);
                 _gameEngine.PlayerManager.SetPlayerHp(0x26);
@@ -376,9 +376,9 @@ public class GameInitializer
             }
 
             iconIndex = 0;
-            _gameEngine.StaticVariables.g_lastVisitedMapId = 0xffffffff;
-            _gameEngine.StaticVariables.g_currentSaveSlotNameIndex = 0;
-            _gameEngine.StaticVariables.g_savedGameplayTime = 0;
+            _gameEngine.StaticVariables.g_saveData.LastMapId = 0xffffffff;
+            _gameEngine.StaticVariables.g_saveData.SaveSlotIndex = 0;
+            _gameEngine.StaticVariables.g_saveData.GameTime = 0;
 
             do
             {
@@ -400,11 +400,11 @@ public class GameInitializer
         _gameEngine.StaticVariables.g_cameraLookAtX = (playerTileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraLookAtY = (playerTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraLookAtZ = playerZ << 0x14;
-        _gameEngine.StaticVariables.g_desiredMap = _gameEngine.StaticVariables.g_initialMapId; //452; //_gameEngine.StaticVariables.g_initialMapId; //476
-        _gameEngine.StaticVariables.g_cameraTargetX = (_gameEngine.StaticVariables.g_initialCameraTileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) * 0x10000;
-        _gameEngine.StaticVariables.g_cameraTargetY = (_gameEngine.StaticVariables.g_initialCameraTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
-        _gameEngine.StaticVariables.g_cameraTargetZ = _gameEngine.StaticVariables.g_initialCameraTileZ << 0x14;
-        _gameEngine.StaticVariables.g_gameplayTime = _gameEngine.StaticVariables.g_savedGameplayTime;
+        _gameEngine.StaticVariables.g_desiredMap = _gameEngine.StaticVariables.g_saveData.InitialMapId; //471; //452; //476; //11;
+        _gameEngine.StaticVariables.g_cameraTargetX = (_gameEngine.StaticVariables.g_saveData.CameraTileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) * 0x10000;
+        _gameEngine.StaticVariables.g_cameraTargetY = (_gameEngine.StaticVariables.g_saveData.CameraTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
+        _gameEngine.StaticVariables.g_cameraTargetZ = _gameEngine.StaticVariables.g_saveData.CameraTileZ << 0x14;
+        _gameEngine.StaticVariables.g_gameplayTime = _gameEngine.StaticVariables.g_saveData.GameTime;
     }
 
     // 8004dac0
@@ -413,15 +413,15 @@ public class GameInitializer
         int i = 0;
         int index = 0;
 
-        _gameEngine.StaticVariables.g_initialPlayerStats = new PlayerStats();
-        _gameEngine.StaticVariables.g_playerStats = _gameEngine.StaticVariables.g_initialPlayerStats;
-        _gameEngine.StaticVariables.g_initialPlayerStats.HpMax = 1;
-        _gameEngine.StaticVariables.g_initialPlayerStats.Hp = 1;
-        _gameEngine.StaticVariables.g_initialPlayerStats.MpMax = 0;
-        _gameEngine.StaticVariables.g_initialPlayerStats.Mp = 0;
-        _gameEngine.StaticVariables.g_initialPlayerStats.MoneyAmount = 0;
-        _gameEngine.StaticVariables.g_initialPlayerStats.FalconTemp = 0;
-        _gameEngine.StaticVariables.g_initialPlayerStats.Falcon = 0;
+        _gameEngine.StaticVariables.g_saveData.PlayerStats = new PlayerStats();
+        _gameEngine.StaticVariables.g_playerStats = _gameEngine.StaticVariables.g_saveData.PlayerStats;
+        _gameEngine.StaticVariables.g_saveData.PlayerStats.HpMax = 1;
+        _gameEngine.StaticVariables.g_saveData.PlayerStats.Hp = 1;
+        _gameEngine.StaticVariables.g_saveData.PlayerStats.MpMax = 0;
+        _gameEngine.StaticVariables.g_saveData.PlayerStats.Mp = 0;
+        _gameEngine.StaticVariables.g_saveData.PlayerStats.MoneyAmount = 0;
+        _gameEngine.StaticVariables.g_saveData.PlayerStats.FalconTemp = 0;
+        _gameEngine.StaticVariables.g_saveData.PlayerStats.Falcon = 0;
 
         //while (i < 0x80)
         //{
@@ -452,16 +452,16 @@ public class GameInitializer
     }
 
     //800814a0
-    private void ClearMapArrays()
+    private void ResetMapFlags()
     {
-        for (int i = 0; i < _gameEngine.StaticVariables.g_mapFlags.Length; i++)
+        for (int i = 0; i < _gameEngine.StaticVariables.g_saveData.MapFlags.Length; i++)
         {
-            _gameEngine.StaticVariables.g_mapFlags[i] = 0;
+            _gameEngine.StaticVariables.g_saveData.MapFlags[i] = 0;
         }
 
-        for (int i = 0; i < _gameEngine.StaticVariables.g_mapIdToInternalMapIndexTable.Length; i++)
+        for (int i = 0; i < _gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable.Length; i++)
         {
-            _gameEngine.StaticVariables.g_mapIdToInternalMapIndexTable[i] = (ushort)(_gameEngine.StaticVariables.g_mapIdToInternalMapIndexTable.Length - i - 1);
+            _gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable[i] = (ushort)(_gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable.Length - i - 1);
         }
     }
 

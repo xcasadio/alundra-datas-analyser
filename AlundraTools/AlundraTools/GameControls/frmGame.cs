@@ -19,7 +19,7 @@ public partial class FrmGame : Form
     private Timer _refreshUiTimer;
     private readonly Bitmap _backBuffer = new(StaticVariables.ScreenWidth, StaticVariables.ScreenHeight);
     private readonly Graphics _graphics;
-    private int _lastMapId = -1;
+    private uint _lastMapId = 0xFFFFFFFF;
     private volatile bool _exceptionMessageShown;
     private readonly Stopwatch _stopwatch = new();
 
@@ -380,7 +380,7 @@ public partial class FrmGame : Form
 
     private void InitializeUI()
     {
-        AddFlagsInDataGridView(dataGridViewMapFlags, _gameEngine.StaticVariables.g_mapFlags);
+        AddFlagsInDataGridView(dataGridViewMapFlags, _gameEngine.StaticVariables.g_saveData.MapFlags);
         AddFlagsInDataGridView(dataGridViewGlobalFlags, _gameEngine.StaticVariables.g_globalFlags);
     }
 
@@ -510,7 +510,7 @@ public partial class FrmGame : Form
 
     private void RefreshGameAndMapFlagsControls()
     {
-        RefreshDatagridViewFlagsControl(dataGridViewMapFlags, _gameEngine.StaticVariables.g_mapFlags);
+        RefreshDatagridViewFlagsControl(dataGridViewMapFlags, _gameEngine.StaticVariables.g_saveData.MapFlags);
         RefreshDatagridViewFlagsControl(dataGridViewGlobalFlags, _gameEngine.StaticVariables.g_globalFlags);
     }
 
@@ -1190,38 +1190,38 @@ public partial class FrmGame : Form
 
     private void numericUpDownHpMax_ValueChanged(object sender, EventArgs e)
     {
-        _gameEngine.StaticVariables.g_initialPlayerStats.HpMax = (short)numericUpDownHpMax.Value;
+        _gameEngine.StaticVariables.g_saveData.PlayerStats.HpMax = (short)numericUpDownHpMax.Value;
         //g_playerStats ??
     }
 
     private void numericUpDownHp_ValueChanged(object sender, EventArgs e)
     {
-        _gameEngine.StaticVariables.g_initialPlayerStats.HpMax = (short)numericUpDownHp.Value;
+        _gameEngine.StaticVariables.g_saveData.PlayerStats.HpMax = (short)numericUpDownHp.Value;
     }
 
     private void numericUpDownMpMax_ValueChanged(object sender, EventArgs e)
     {
-        _gameEngine.StaticVariables.g_initialPlayerStats.MpMax = (short)numericUpDownMpMax.Value;
+        _gameEngine.StaticVariables.g_saveData.PlayerStats.MpMax = (short)numericUpDownMpMax.Value;
     }
 
     private void numericUpDownMp_ValueChanged(object sender, EventArgs e)
     {
-        _gameEngine.StaticVariables.g_initialPlayerStats.Mp = (short)numericUpDownMp.Value;
+        _gameEngine.StaticVariables.g_saveData.PlayerStats.Mp = (short)numericUpDownMp.Value;
     }
 
     private void numericUpDownMoney_ValueChanged(object sender, EventArgs e)
     {
-        _gameEngine.StaticVariables.g_initialPlayerStats.MoneyAmount = (short)numericUpDownMoney.Value;
+        _gameEngine.StaticVariables.g_saveData.PlayerStats.MoneyAmount = (short)numericUpDownMoney.Value;
     }
 
     private void numericUpDownFalcon1_ValueChanged(object sender, EventArgs e)
     {
-        _gameEngine.StaticVariables.g_initialPlayerStats.Falcon = (short)numericUpDownFalcon1.Value;
+        _gameEngine.StaticVariables.g_saveData.PlayerStats.Falcon = (short)numericUpDownFalcon1.Value;
     }
 
     private void numericUpDownFalcon2_ValueChanged(object sender, EventArgs e)
     {
-        _gameEngine.StaticVariables.g_initialPlayerStats.FalconTemp = (short)numericUpDownFalcon2.Value;
+        _gameEngine.StaticVariables.g_saveData.PlayerStats.FalconTemp = (short)numericUpDownFalcon2.Value;
     }
 
     private void numericUpDownKeys_ValueChanged(object sender, EventArgs e)
@@ -1235,7 +1235,7 @@ public partial class FrmGame : Form
         {
             var weaponName = comboBoxWeapon.SelectedItem as string;
             var weaponIndex = int.Parse(weaponName.Split("-")[0]);
-            _gameEngine.StaticVariables.g_initialPlayerStats.WeaponId = (byte)weaponIndex;
+            _gameEngine.StaticVariables.g_saveData.PlayerStats.WeaponId = (byte)weaponIndex;
 
             //Ensure we have one weapon of specified type
             if (weaponIndex == 1) //sword
@@ -1275,7 +1275,7 @@ public partial class FrmGame : Form
         var itemName = comboBoxItem.SelectedItem as string;
         var itemIndex = int.Parse(itemName.Split("-")[0]);
 
-        _gameEngine.StaticVariables.g_initialPlayerStats.ItemId = (byte)(itemIndex + 1);
+        _gameEngine.StaticVariables.g_saveData.PlayerStats.ItemId = (byte)(itemIndex + 1);
         _gameEngine.StaticVariables.g_numberOfItems[itemIndex * 2 + 1] = 1; // number of item
     }
 
@@ -1417,10 +1417,10 @@ public partial class FrmGame : Form
 
     private void buttonAlundraCabine_Click(object sender, EventArgs e)
     {
-        _gameEngine.StaticVariables.g_mapFlags[108] |= 4;
-        _gameEngine.StaticVariables.g_mapFlags[108] |= 32;
-        _gameEngine.StaticVariables.g_mapFlags[108] |= 64;
-        _gameEngine.StaticVariables.g_mapFlags[108] |= 128;
+        _gameEngine.StaticVariables.g_saveData.MapFlags[108] |= 4;
+        _gameEngine.StaticVariables.g_saveData.MapFlags[108] |= 32;
+        _gameEngine.StaticVariables.g_saveData.MapFlags[108] |= 64;
+        _gameEngine.StaticVariables.g_saveData.MapFlags[108] |= 128;
     }
 }
 
