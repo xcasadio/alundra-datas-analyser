@@ -1411,7 +1411,8 @@ public class UIManager
                             }
 
                             uVar1 = uint.Parse(numericString);
-                            _gameEngine.StaticVariables.g_globalFlags[(uVar1 >> 3) & 0xffc] |= (uint)(1 << (int)(uVar1 & 0x1f));
+                            var index = ((uVar1 >> 3) & 0xffc) >> 2;
+                            _gameEngine.StaticVariables.g_globalFlags[index] |= (uint)(1 << (int)(uVar1 & 0x1f));
                             cursor = _gameEngine.StaticVariables.g_textCursor;
                             goto switchD_80046540_RENDER_NEXT_CHARACTER;
 

@@ -1417,10 +1417,10 @@ public partial class FrmGame : Form
 
     private void buttonAlundraCabine_Click(object sender, EventArgs e)
     {
-        _gameEngine.StaticVariables.g_saveData.MapFlags[108] |= 4;
-        _gameEngine.StaticVariables.g_saveData.MapFlags[108] |= 32;
-        _gameEngine.StaticVariables.g_saveData.MapFlags[108] |= 64;
-        _gameEngine.StaticVariables.g_saveData.MapFlags[108] |= 128;
+        _gameEngine.StaticVariables.g_saveData.MapFlags[27] |= 4;
+        _gameEngine.StaticVariables.g_saveData.MapFlags[27] |= 32;
+        _gameEngine.StaticVariables.g_saveData.MapFlags[27] |= 64;
+        _gameEngine.StaticVariables.g_saveData.MapFlags[27] |= 128;
     }
 }
 

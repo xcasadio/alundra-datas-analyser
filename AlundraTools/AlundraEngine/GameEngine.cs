@@ -2379,8 +2379,6 @@ public class GameEngine
         if ((StaticVariables.g_UIDisplayFlags & 4) == 0
             && spriteTableIndex - 0x100U < 0x100
             && StaticVariables.g_entitySpriteNamesTable[spriteTableIndex] != null
-            //&& StaticVariables.g_entitySpriteNamesTable[spriteTableIndex * 4] != 0
-            //&& StaticVariables.g_entitySpriteNamesTable[spriteTableIndex * 4] != '\0'
             )
         {
             StaticVariables.g_entitySpriteNameTableIndex = spriteTableIndex;
