@@ -484,7 +484,7 @@ public class MainInventoryManager
                 }
             }
 
-            _gameEngine.GraphicManager.InitializeFrame();
+            _gameEngine.HudManager.InitializeHudPosition();
             _gameEngine.GraphicManager.SetTransitionType(6);
             var image = _gameEngine.GraphicManager.GetAnimationImageByIndex(0); //portrait alundra
             var bitmap = _gameEngine.AlundraMap.GenerateSpriteBitmap(image,
@@ -850,7 +850,7 @@ public class MainInventoryManager
             {
                 FUN_800556dc();
                 _gameEngine.MainInventoryManager.UpdateHudTransitionState();
-                _gameEngine.GraphicManager.PrepareBufferFlip();
+                _gameEngine.HudManager.InitializeHudPositionBeforeHide();
             }
 
             if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.OpenSubInventory) != 0)

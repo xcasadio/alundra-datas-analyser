@@ -1066,7 +1066,7 @@ public class MemoryCardManager
                     {
                         _gameEngine.StaticVariables.g_fadeSubstate = 0;
                         _gameEngine.StaticVariables.g_fadeFrame = 0;
-                        _gameEngine.GraphicManager.PrepareBufferFlip();
+                        _gameEngine.HudManager.InitializeHudPositionBeforeHide();
                         _gameEngine.StaticVariables.g_globalTransitionState = 1099;
                         return;
                     }
@@ -1301,7 +1301,7 @@ public class MemoryCardManager
     //80058ab4
     private int FUN_80058ab4(string param_1, string param_2, ref uint param_3)
     {
-        _gameEngine.GraphicManager.InitializeFrame();
+        _gameEngine.HudManager.InitializeHudPosition();
         _gameEngine.StaticVariables.PTR_80180128 = param_3;
         _gameEngine.StaticVariables.PTR_80180238 = param_1;
         _gameEngine.StaticVariables.PTR_8018023c = param_2;

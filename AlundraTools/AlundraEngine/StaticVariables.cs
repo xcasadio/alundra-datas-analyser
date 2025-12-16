@@ -470,7 +470,7 @@ public class StaticVariables
         0x00000004,
     ];
     //80023644
-    public readonly int[] g_cardinalDirectionTable = [0, 0x10, 0x08, 0x18];
+    public readonly uint[] g_cardinalDirectionTable = [0, 0x10, 0x08, 0x18];
     //80022778
     public readonly byte[] BYTE_ARRAY_80022778 = [0x40, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00];
     //800236d4
@@ -4281,15 +4281,15 @@ public class StaticVariables
                 Id = 0, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x05, Width = 0x20, Height = 0x06,
                 InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Fun_80046ef0, Arg = 0
             },
-            new CallBackInfo
+            new CallBackInfo //hud
             {
                 Id = 1, Flags = 0, Data = null, X = 0x00, Y = 0x00, Width = 0x28, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.FUN_8004b770, RenderFunc = gameEngine.UIManager.Func_8004bea4, Arg = 0xFFFFFFFF
+                InitializeFunc = gameEngine.HudManager.FUN_8004b770, RenderFunc = gameEngine.HudManager.Fun_8004bea4, Arg = 0xFFFFFFFF
             },
             new CallBackInfo
             {
                 Id = 2, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Func_8004f628, Arg = 0
+                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Fun_8004f628, Arg = 0
             },
             new CallBackInfo
             {
@@ -4876,12 +4876,20 @@ public class StaticVariables
     public int g_soundLoadState; // 800A824C
     public int g_partialVabBodyLoadState; // 800A8250
     public int g_forceStopAllSound; // 800A8254
-    public short SHORT_800a8258; // 800A8258
-    public short SHORT_800a825a; // 800A825A
-    public short g_soundFadeTimer; // 800A825E
-    public byte[] BYTE_ARRAY_800a8268 = new byte[20]; // 800A8268
+    public UIBoxConfiguration UIBoxHud = new UIBoxConfiguration { X = 0, Y = 0x10, Width = 0, Height = 5}; // 800A8258
+    // 800A8268
+    public short[] g_inventoryWeaponIconX = new short[]
+    {
+        0x100, 0x302, 0x201, 0x3, 0x302, 0x100, 0x3, 0x201, 0x10, 0x30
+    };
     public int INT_800a827c; // 800A827C
-    public int[] INT_ARRAY_800a8284 = new int[10]; // 800A8284
+    // 800A8284
+    public int[] INT_ARRAY_800a8284 = new int[]
+    {
+        0x0000000A, 0x0000000A, 0x00000000, 0x00000000,
+        0x00000000, 0x00000000, 0x00000000, 0x00000000,
+        0x00000000, 0x00000000
+    };
     public int g_cdIsReady; // 800A82B0
     public int g_cdReadMode; // 800A82B4
     public int DAT_800a82b8; // 800A82B8
@@ -5417,8 +5425,8 @@ public class StaticVariables
     public int g_isGameEnding; // 800DC4C4
     public int g_mapTransitionEffectId; // 800DC4C8
     public uint g_desiredMap; // 800DC4CC
-    public int g_warpTriggerType; // 800DC4D0
-    public int g_warpExtraParam; // 800DC4D4
+    public uint g_resetAnimationId; // 800DC4D0
+    public uint g_resetDirectionId; // 800DC4D4
     public int g_cameraTargetX; // 800DC4D8
     public int g_cameraTargetY; // 800DC4DC
     public int g_cameraTargetZ; // 800DC4E0
@@ -5711,15 +5719,16 @@ public class StaticVariables
     public short[] g_loadedSequenceHandles = new short[8]; // 80175D00
     public short SHORT_80175d10; // 80175D10
     public short SHORT_80175d12; // 80175D12
-    public int g_fadeTimer; // 80175D18
-    public int g_fadeStep; // 80175D1C
-    public int g_drawState; // 80175D20
-    public short g_blendRed; // 80175D24
-    public short g_blendGreen; // 80175D26
-    public short g_blendBlue; // 80175D28
-    public short g_blendAlpha; // 80175D2A
-    public byte[] BYTE_ARRAY_80175d38 = new byte[1496]; // 80175D38
-    public int g_drawFrameFlags; // 80176310
+    public TextToDisplay g_textToDisplay_hud = new(); // 80175D18
+    public SPRT[] g_MpIconsSprites = Enumerable.Range(0, 5).Select(x => new SPRT()).ToArray(); // 80175d38
+    public SPRT[] g_lifeBigIconSprites = Enumerable.Range(0, 5).Select(x => new SPRT()).ToArray(); // 80175e08
+    public SPRT[] g_lifeSmallIconSprites = Enumerable.Range(0, 12).Select(x => new SPRT()).ToArray(); // 80175ed8
+    public SPRT[] g_MpIconSprites = Enumerable.Range(0, 4).Select(x => new SPRT()).ToArray(); // 801760b8
+    public SPRT[] g_HudMoneySprites = Enumerable.Range(0, 5).Select(x => new SPRT()).ToArray(); // 80176158
+    public POLY_G4[] g_hudBackgroundWeaponAndItemPolyG4s = Enumerable.Range(0, 2).Select(x => new POLY_G4()).ToArray(); // 80176228
+    public SPRT[] SPRT_ARRAY_801762b8 = Enumerable.Range(0, 2).Select(x => new SPRT()).ToArray(); // 801762b8
+    public SPRT[] SPRT_ARRAY_801762e8 = Enumerable.Range(0, 2).Select(x => new SPRT()).ToArray(); // 801762e8
+    public uint g_drawFrameFlags; // 80176310
     public PlayerStats g_playerStats; // 80176318
     public short[] g_numberOfItems = new short[256]; // 8017631C point to 801eb83e
     public int g_itemsCount; // 8017638C

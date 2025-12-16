@@ -739,14 +739,14 @@ public class GraphicManager
 
         if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x33] & 0x40000000U) == 0)
         {
-            InitializeFrame();
+            _gameEngine.HudManager.InitializeHudPosition();
         }
 
         if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x38] & 0x200000U) != 0)
         {
             _gameEngine.StaticVariables.g_saveData.MapFlags[0x38] &= 0xffdfffff;
             _gameEngine.StaticVariables.g_saveData.MapFlags[0x33] |= 0x40000000;
-            PrepareBufferFlip();
+            _gameEngine.HudManager.InitializeHudPositionBeforeHide();
         }
 
         if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x38] & 0x400000U) != 0)
@@ -804,39 +804,6 @@ public class GraphicManager
              CdControl('\x15',(u_char *)0x0,auStack_10);
            }
          */
-    }
-
-    //8004bd9c
-    public void InitializeFrame()
-    {
-        if ((_gameEngine.StaticVariables.g_drawFrameFlags & 3U) == 1)
-        {
-            _gameEngine.StaticVariables.g_drawState = 2;
-            _gameEngine.StaticVariables.g_fadeTimer = 0;
-            _gameEngine.StaticVariables.g_fadeStep = 0xf;
-            _gameEngine.StaticVariables.g_blendRed = 0;
-            _gameEngine.StaticVariables.g_blendGreen = 0x10;
-            _gameEngine.StaticVariables.g_blendBlue = 0;
-            _gameEngine.StaticVariables.g_blendAlpha = (short)~(_gameEngine.StaticVariables.g_soundFadeTimer << 3);
-            _gameEngine.StaticVariables.g_drawFrameFlags |= 2;
-        }
-    }
-
-    //8004be0c
-    public void PrepareBufferFlip()
-    {
-        if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x33] & 0x40000000U) != 0 && _gameEngine.StaticVariables.g_drawFrameFlags == 0)
-        {
-            SetTransitionType(1);
-            _gameEngine.StaticVariables.g_drawState = 2;
-            _gameEngine.StaticVariables.g_fadeTimer = 0;
-            _gameEngine.StaticVariables.g_fadeStep = 0xf;
-            _gameEngine.StaticVariables.g_blendAlpha = 0x10;
-            _gameEngine.StaticVariables.g_blendRed = 0;
-            _gameEngine.StaticVariables.g_blendBlue = 0;
-            _gameEngine.StaticVariables.g_drawFrameFlags = 5;
-            _gameEngine.StaticVariables.g_blendGreen = (short)~(_gameEngine.StaticVariables.g_soundFadeTimer << 3);
-        }
     }
 
     //80047f94
@@ -901,7 +868,7 @@ public class GraphicManager
     {
         var player = _gameEngine.StaticVariables.PlayerEntity;
 
-        InitializeFrame();
+        _gameEngine.HudManager.InitializeHudPosition();
         SetTransitionType(4);
         var image = GetAnimationImageByIndex(0);
         var bitmap = _gameEngine.AlundraMap.GenerateSpriteBitmap(image,

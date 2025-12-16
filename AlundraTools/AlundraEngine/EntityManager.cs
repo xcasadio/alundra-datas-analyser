@@ -2608,8 +2608,8 @@ public class EntityManager
                 i += 1;
             } while (i < 4);
 
-            entity.CombinedVramFlagsOR = (int)(tempFlags[0] | tempFlags[1] | tempFlags[2] | tempFlags[3]);
-            entity.CombinedVramFlagsAND = (int)(tempFlags[0] & tempFlags[1] & tempFlags[2] & tempFlags[3]);
+            entity.CombinedVramFlagsOR = tempFlags[0] | tempFlags[1] | tempFlags[2] | tempFlags[3];
+            entity.CombinedVramFlagsAND = tempFlags[0] & tempFlags[1] & tempFlags[2] & tempFlags[3];
             tileX = entity.TileX;
 
             if (tileX < 1)

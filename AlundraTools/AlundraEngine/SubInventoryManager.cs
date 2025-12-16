@@ -368,7 +368,7 @@ public class SubInventoryManager
             {
                 FUN_800526cc();
                 _gameEngine.MainInventoryManager.UpdateHudTransitionState();
-                _gameEngine.GraphicManager.PrepareBufferFlip();
+                _gameEngine.HudManager.InitializeHudPositionBeforeHide();
             }
 
             if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.OpenSubInventory) != 0)

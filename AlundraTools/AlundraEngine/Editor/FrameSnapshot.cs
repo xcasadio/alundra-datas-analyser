@@ -14,7 +14,6 @@ public class FrameSnapshot
     public int TileAnimFrameCounter { get; set; }
     public int DAT_80098f24 { get; set; }
     public int[] INT_ARRAY_800a8284 { get; set; }
-    public short SoundFadeTimer { get; set; }
     public int GlobalTransitionState { get; set; }
     public uint[] DefaultWarpDestinations { get; set; }
     public uint[] SoundGroupByMapId { get; set; }
@@ -24,8 +23,8 @@ public class FrameSnapshot
     public int IsWarpDisabled { get; set; }
     public int MapTransitionEffectId { get; set; }
     public uint DesiredMap { get; set; }
-    public int WarpTriggerType { get; set; }
-    public int WarpExtraParam { get; set; }
+    public uint ResetAnimationId { get; set; }
+    public uint ResetDirectionId { get; set; }
     public int CameraTargetX { get; set; }
     public int CameraTargetY { get; set; }
     public int CameraTargetZ { get; set; }
@@ -86,7 +85,6 @@ public class FrameSnapshot
         gameEngine.StaticVariables.g_tileAnimFrameCounter = TileAnimFrameCounter;
         gameEngine.StaticVariables.DAT_80098f24 = DAT_80098f24;
         Array.Copy(INT_ARRAY_800a8284, gameEngine.StaticVariables.INT_ARRAY_800a8284, INT_ARRAY_800a8284.Length);
-        gameEngine.StaticVariables.g_soundFadeTimer = SoundFadeTimer;
         gameEngine.StaticVariables.g_globalTransitionState = GlobalTransitionState;
         Array.Copy(DefaultWarpDestinations, gameEngine.StaticVariables.g_defaultWarpDestinations, DefaultWarpDestinations.Length);
         Array.Copy(SoundGroupByMapId, gameEngine.StaticVariables.g_soundGroupByMapId, SoundGroupByMapId.Length);
@@ -96,8 +94,8 @@ public class FrameSnapshot
         gameEngine.StaticVariables.g_isWarpDisabled = IsWarpDisabled;
         gameEngine.StaticVariables.g_mapTransitionEffectId = MapTransitionEffectId;
         gameEngine.StaticVariables.g_desiredMap = DesiredMap;
-        gameEngine.StaticVariables.g_warpTriggerType = WarpTriggerType;
-        gameEngine.StaticVariables.g_warpExtraParam = WarpExtraParam;
+        gameEngine.StaticVariables.g_resetAnimationId = ResetAnimationId;
+        gameEngine.StaticVariables.g_resetDirectionId = ResetDirectionId;
         gameEngine.StaticVariables.g_cameraTargetX = CameraTargetX;
         gameEngine.StaticVariables.g_cameraTargetY = CameraTargetY;
         gameEngine.StaticVariables.g_cameraTargetZ = CameraTargetZ;
@@ -163,7 +161,6 @@ public class FrameSnapshot
         TileAnimFrameCounter = gameEngine.StaticVariables.g_tileAnimFrameCounter;
         DAT_80098f24 = gameEngine.StaticVariables.DAT_80098f24;
         INT_ARRAY_800a8284 = (int[])gameEngine.StaticVariables.INT_ARRAY_800a8284.Clone();
-        SoundFadeTimer = gameEngine.StaticVariables.g_soundFadeTimer;
         GlobalTransitionState = gameEngine.StaticVariables.g_globalTransitionState;
         DefaultWarpDestinations = (uint[])gameEngine.StaticVariables.g_defaultWarpDestinations.Clone();
         SoundGroupByMapId = (uint[])gameEngine.StaticVariables.g_soundGroupByMapId.Clone();
@@ -173,8 +170,8 @@ public class FrameSnapshot
         IsWarpDisabled = gameEngine.StaticVariables.g_isWarpDisabled;
         MapTransitionEffectId = gameEngine.StaticVariables.g_mapTransitionEffectId;
         DesiredMap = gameEngine.StaticVariables.g_desiredMap;
-        WarpTriggerType = gameEngine.StaticVariables.g_warpTriggerType;
-        WarpExtraParam = gameEngine.StaticVariables.g_warpExtraParam;
+        ResetAnimationId = gameEngine.StaticVariables.g_resetAnimationId;
+        ResetDirectionId = gameEngine.StaticVariables.g_resetDirectionId;
         CameraTargetX = gameEngine.StaticVariables.g_cameraTargetX;
         CameraTargetY = gameEngine.StaticVariables.g_cameraTargetY;
         CameraTargetZ = gameEngine.StaticVariables.g_cameraTargetZ;

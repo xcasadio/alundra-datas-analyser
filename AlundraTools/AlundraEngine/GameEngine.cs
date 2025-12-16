@@ -36,6 +36,7 @@ public class GameEngine
     public UIManager UIManager { get; }
     public MainInventoryManager MainInventoryManager { get; }
     public SubInventoryManager SubInventoryManager { get; }
+    public HudManager HudManager { get; }
     public UIDebugManager UIDebugManager { get; }
     public MemoryCardManager MemoryCardManager { get; }
     public LogManager LogManager { get; }
@@ -71,6 +72,7 @@ public class GameEngine
         UIManager = new UIManager(this);
         MainInventoryManager = new MainInventoryManager(this);
         SubInventoryManager = new SubInventoryManager(this);
+        HudManager = new HudManager(this);
         UIDebugManager = new UIDebugManager(this);
         MemoryCardManager = new MemoryCardManager(this);
         LogManager = new LogManager(this);
@@ -143,7 +145,7 @@ public class GameEngine
             LoadMapAndInitializeEntities(null);//((int)&g_currentMapBuffer.infoBlockOffset + g_currentMapBuffer.spriteSheetsOffset));
             WarpPlayer(playerPosX, playerPosY, playerPosZ, StaticVariables.g_mapTransitionEffectId);
             InitializeScrollingMode();
-            GraphicManager.PrepareBufferFlip();
+            HudManager.InitializeHudPositionBeforeHide();
             LoadMapSounds(StaticVariables.g_currentMap);
             Update(1);
             GraphicManager.ResetDebugRenderingState();
@@ -538,8 +540,8 @@ public class GameEngine
             StaticVariables.g_cameraTargetX,
             StaticVariables.g_cameraTargetY,
             StaticVariables.g_cameraTargetZ,
-            (uint)StaticVariables.g_warpTriggerType,
-            (uint)StaticVariables.g_warpExtraParam,
+            (uint)StaticVariables.g_resetAnimationId,
+            (uint)StaticVariables.g_resetDirectionId,
             0xb, 0x60);
 
         StaticVariables.PlayerEntity.Status = 2;
@@ -1068,7 +1070,7 @@ public class GameEngine
     private int LoadMapSounds(uint mapId)
     {
         SoundManager.LoadMapSounds(mapId);
-        GraphicManager.PrepareBufferFlip();
+        HudManager.InitializeHudPositionBeforeHide();
         return 1;
     }
 
@@ -1473,8 +1475,8 @@ public class GameEngine
 
         _gameInitializer.InitializePlayerStatsAndItems();
         UpdateSaveData();
-        StaticVariables.g_warpTriggerType = 0x36;
-        StaticVariables.g_warpExtraParam = 0;
+        StaticVariables.g_resetAnimationId = 0x36;
+        StaticVariables.g_resetDirectionId = 0;
         StaticVariables.g_desiredMap = StaticVariables.g_saveData.InitialMapId;
         StaticVariables.g_cameraLookAtX = (StaticVariables.g_saveData.CameraTileX * 0x18 + 0xc) * 0x10000;
         StaticVariables.g_cameraTargetX = StaticVariables.g_cameraLookAtX;

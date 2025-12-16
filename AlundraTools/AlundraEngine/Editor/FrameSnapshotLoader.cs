@@ -53,7 +53,6 @@ public static class FrameSnapshotLoader
         frameSnapshot.TileAnimFrameCounter = dump.g_TileAnimFrameCounter;
         frameSnapshot.DAT_80098f24 = dump.DAT_80098f24;
         frameSnapshot.INT_ARRAY_800a8284 = dump.INT_ARRAY_800a8284;
-        frameSnapshot.SoundFadeTimer = dump.g_soundFadeTimer;
         frameSnapshot.GlobalTransitionState = dump.g_globalTransitionState;
         frameSnapshot.DefaultWarpDestinations = dump.g_defaultWarpDestinations;
         frameSnapshot.SoundGroupByMapId = dump.g_soundGroupByMapId;
@@ -63,8 +62,8 @@ public static class FrameSnapshotLoader
         frameSnapshot.IsWarpDisabled = dump.g_isWarpDisabled;
         frameSnapshot.MapTransitionEffectId = dump.g_mapTransitionEffectId;
         frameSnapshot.DesiredMap = dump.g_desiredMap;
-        frameSnapshot.WarpTriggerType = dump.g_warpTriggerType;
-        frameSnapshot.WarpExtraParam = dump.g_warpExtraParam;
+        frameSnapshot.ResetAnimationId = dump.g_resetAnimationId;
+        frameSnapshot.ResetDirectionId = dump.g_resetDirectionId;
         frameSnapshot.CameraTargetX = dump.g_cameraTargetX;
         frameSnapshot.CameraTargetY = dump.g_cameraTargetY;
         frameSnapshot.CameraTargetZ = dump.g_cameraTargetZ;
@@ -166,7 +165,6 @@ public static class FrameSnapshotLoader
         public int g_TileAnimFrameCounter { get; set; }
         public int DAT_80098f24 { get; set; }
         public int[] INT_ARRAY_800a8284 { get; set; }
-        public short g_soundFadeTimer { get; set; }
         public int g_globalTransitionState { get; set; }
         public uint[] g_defaultWarpDestinations { get; set; }
         public uint[] g_soundGroupByMapId { get; set; }
@@ -176,8 +174,8 @@ public static class FrameSnapshotLoader
         public int g_isWarpDisabled { get; set; }
         public int g_mapTransitionEffectId { get; set; }
         public uint g_desiredMap { get; set; }
-        public int g_warpTriggerType { get; set; }
-        public int g_warpExtraParam { get; set; }
+        public uint g_resetAnimationId { get; set; }
+        public uint g_resetDirectionId { get; set; }
         public int g_cameraTargetX { get; set; }
         public int g_cameraTargetY { get; set; }
         public int g_cameraTargetZ { get; set; }
@@ -300,8 +298,8 @@ public static class FrameSnapshotLoader
         public int hitboxOriginY { get; set; }
         public int hitboxOriginZ { get; set; }
         public int _17c { get; set; }
-        public int combinedVramFlagsOR { get; set; }
-        public int combinedVramFlagsAND { get; set; }
+        public uint combinedVramFlagsOR { get; set; }
+        public uint combinedVramFlagsAND { get; set; }
         public int tileAttributes { get; set; }
         public int slope_18c { get; set; }
         public int slope_190 { get; set; }

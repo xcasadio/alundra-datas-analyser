@@ -2,8 +2,11 @@
 
 namespace AlundraEngine.DatasBin.Commands;
 
-public class GotoCommand : CommandBase
+public class GotoCommand : ContainerCommand
 {
+    private int _lastCommandMemoryAddress;
+    public override int LastCommandMemoryAddress => _lastCommandMemoryAddress;
+
     public GotoCommand(byte command, byte[] parameters, string name, int memoryAddress)
         : base(command, parameters, name, memoryAddress)
     {
@@ -14,6 +17,8 @@ public class GotoCommand : CommandBase
     {
         var index = GetCommandNameByOffset(RefOffset, commands);
         Name += index == -1 ? " ?" : $" #{index:D2}";
+        
+        _lastCommandMemoryAddress = MemoryAddress + RefOffset;
 
         return base.Build(i, commands);
     }

@@ -86,7 +86,14 @@ namespace AlundraTools.GameControls
                         map = "alundra";
                     }
 
-                    textBox1.Text = $@"Text load from {map} map =>{Environment.NewLine}";
+                    textBox1.Text = $@"Text load from {map} map ";
+
+                    if (dialogCommand is DialogCommandWithChoice dialogCommandWithChoice)
+                    {
+                        textBox1.Text += $@"with entity[{dialogCommandWithChoice.EntityIndex}] ";
+                    }
+
+                    textBox1.Text += $@"=>{Environment.NewLine}";
                     var text = strings?[dialogCommand.TextId & 0x7f];
                     textBox1.Text += text;
                 }

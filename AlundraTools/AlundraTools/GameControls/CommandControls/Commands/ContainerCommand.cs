@@ -1,4 +1,5 @@
-﻿using AlundraEngine.DatasBin;
+﻿using System.Diagnostics;
+using AlundraEngine.DatasBin;
 
 namespace AlundraTools.GameControls.CommandControls.Commands;
 
@@ -19,13 +20,18 @@ public abstract class ContainerCommand : CommandBase
 
         for (; j < commands.Count; j++)
         {
-            if (commands[j].MemoryAddress == LastCommandMemoryAddress)
+            if (commands[j].MemoryAddress > LastCommandMemoryAddress)
+            {
+                //Debugger.Break();
+            }
+
+            if (commands[j].MemoryAddress >= LastCommandMemoryAddress)
             {
                 break;
             }
 
             var commandBase = CommandsBuilder.Convert(commands[j]);
-            commandBase.Build(j, commands);
+            j = commandBase.Build(j, commands);
             children.Add(commandBase);
         }
 

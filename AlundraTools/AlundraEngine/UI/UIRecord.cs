@@ -1,5 +1,6 @@
 ﻿namespace AlundraEngine.UI;
 
+public delegate bool UiFunction(UiRecord ui);
 public class UiRecord
 {
     public int Status;//1 = active

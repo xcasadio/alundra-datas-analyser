@@ -117,7 +117,7 @@ public class EntityEventHandlers
         _handlers[0x59] = Script_89_059;
         _handlers[0x5A] = Script_90_05A;
         _handlers[0x5B] = Script_91_05B;
-        _handlers[0x5C] = Script_OpenDialogWithChoice;
+        _handlers[0x5C] = Script_OpenDialogWithChoice_05C;
         _handlers[0x5D] = Script_93_05D;
         _handlers[0x5E] = Script_94_05E;
         _handlers[0x5F] = Script_WaitForAnimOrDistance;
@@ -369,7 +369,7 @@ public class EntityEventHandlers
     {
         var name = SpriteInfoEventCodes.CommandNameByCode.GetValueOrDefault((byte)command, "?");
         var eventTypeName = logicMode == 0 ? "ALoad" : logicMode == 1 ? "BMap" : logicMode == 2 ? "CTick" : logicMode == 3 ? "DTouch" : logicMode == 4 ? "EDeactivate" : "FInteract";
-        return $"Entity[{entity.Index}] run[{eventTypeName}] 0x{command:x2} p:{codeIndex} '{name}' {string.Join(',', variables.Select(x => x.ToString("x2")))}";
+        return $"run[{eventTypeName}] 0x{command:x2} p:{codeIndex} '{name}' {string.Join(',', variables.Select(x => x.ToString("x2")))}";
     }
 
     private int[] FillDataFromCommand(EventProgramState eventProgramState)
@@ -391,6 +391,7 @@ public class EntityEventHandlers
         return variables;
     }
 
+    //80041ee4
     private void InitializeEventData(Entity entity, int eventProgramType, EventProgramState eventProgramState)
     {
         var codeIndex = entity.ProgramIndexes[eventProgramType];
@@ -1865,8 +1866,8 @@ public class EntityEventHandlers
         else
         {
             _gameEngine.PlayerManager.HandleWarpTransition(portal, 
-                (int)_gameEngine.StaticVariables.PlayerEntity.TargetAnimationId, 
-                (int)_gameEngine.StaticVariables.PlayerEntity.TargetDirection);
+                _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId, 
+                _gameEngine.StaticVariables.PlayerEntity.TargetDirection);
             eventProgramState.Result = 1;
         }
 
@@ -1880,10 +1881,9 @@ public class EntityEventHandlers
         _gameEngine.StaticVariables.g_desiredMap = (uint)(variables[2] << 8 | variables[1]);
         _gameEngine.StaticVariables.g_warpEntryBehavior = variables[7];
 
-        var y = variables[0];
-        var x = ((y + 3) * 0x18 + 0xc) * 0x10000;
-        var z = (y + 5) * 0x100000;
-        y = ((y + 4) * 0x10 + 8) * 0x10000;
+        var x = (variables[3] * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) * 0x10000;
+        var y = (variables[4] * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
+        var z = variables[5] * 0x100000;
 
         if (_gameEngine.StaticVariables.g_mapTransitionEffectId == 3)
         {
@@ -1902,8 +1902,8 @@ public class EntityEventHandlers
         _gameEngine.StaticVariables.g_cameraTargetZ = z;
         _gameEngine.StaticVariables.g_cameraTargetY = y;
         _gameEngine.StaticVariables.g_cameraTargetX = x;
-        _gameEngine.StaticVariables.g_warpExtraParam = (int)_gameEngine.StaticVariables.PlayerEntity.TargetDirection;
-        _gameEngine.StaticVariables.g_warpTriggerType = (int)_gameEngine.StaticVariables.PlayerEntity.TargetAnimationId;
+        _gameEngine.StaticVariables.g_resetDirectionId = _gameEngine.StaticVariables.PlayerEntity.TargetDirection;
+        _gameEngine.StaticVariables.g_resetAnimationId = _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId;
         _gameEngine.StaticVariables.g_isGameEnding = 1;
 
         return 8;
@@ -2065,7 +2065,7 @@ public class EntityEventHandlers
     }
 
     // 8003F01C
-    private int Script_OpenDialogWithChoice(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    private int Script_OpenDialogWithChoice_05C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int matchCount;
         Entity matchedEntity;
@@ -4331,7 +4331,7 @@ public class EntityEventHandlers
         handlerNameByCodes[0x59] = nameof(Script_89_059);
         handlerNameByCodes[0x5A] = nameof(Script_90_05A);
         handlerNameByCodes[0x5B] = nameof(Script_91_05B);
-        handlerNameByCodes[0x5C] = nameof(Script_OpenDialogWithChoice);
+        handlerNameByCodes[0x5C] = nameof(Script_OpenDialogWithChoice_05C);
         handlerNameByCodes[0x5D] = nameof(Script_93_05D);
         handlerNameByCodes[0x5E] = nameof(Script_94_05E);
         handlerNameByCodes[0x5F] = nameof(Script_WaitForAnimOrDistance);

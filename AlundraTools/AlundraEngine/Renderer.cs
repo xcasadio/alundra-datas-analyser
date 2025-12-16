@@ -16,6 +16,10 @@ public class Renderer(GameEngine gameEngine)
     private readonly SortedDictionary<int, List<Sprite>> _sprites = new();
     public readonly Bitmap WhiteBitmap = CreateWhiteBitmap();
 
+    // Cache pour les quads colorés
+    private readonly Dictionary<QuadColorKey, Bitmap> _quadColorCache = new();
+    private const int MaxCacheSize = 256;
+
     private static Bitmap CreateWhiteBitmap()
     {
         var bmp = new Bitmap(1, 1);
@@ -92,6 +96,15 @@ public class Renderer(GameEngine gameEngine)
         _sprites.Clear();
     }
 
+    public void ClearQuadCache()
+    {
+        foreach (var bitmap in _quadColorCache.Values)
+        {
+            bitmap.Dispose();
+        }
+        _quadColorCache.Clear();
+    }
+
     public class Sprite
     {
         public int X;
@@ -119,6 +132,94 @@ public class Renderer(GameEngine gameEngine)
             G = Math.Clamp(g, 0.0f, 1.0f);
             B = Math.Clamp(b, 0.0f, 1.0f);
         }
+    }
+
+    private readonly record struct QuadColorKey(
+        int Width, int Height,
+        byte R0, byte G0, byte B0,
+        byte R1, byte G1, byte B1,
+        byte R2, byte G2, byte B2,
+        byte R3, byte G3, byte B3);
+
+    public void AddQuadColor(POLY_G4 polyG4, int depthSortValue)
+    {
+        int minX = Math.Min(Math.Min(polyG4.x0, polyG4.x1), Math.Min(polyG4.x2, polyG4.x3));
+        int maxX = Math.Max(Math.Max(polyG4.x0, polyG4.x1), Math.Max(polyG4.x2, polyG4.x3));
+        int minY = Math.Min(Math.Min(polyG4.y0, polyG4.y1), Math.Min(polyG4.y2, polyG4.y3));
+        int maxY = Math.Max(Math.Max(polyG4.y0, polyG4.y1), Math.Max(polyG4.y2, polyG4.y3));
+
+        int width = maxX - minX;
+        int height = maxY - minY;
+
+        if (width <= 0 || height <= 0) return;
+
+        // Créer la clé de cache
+        var cacheKey = new QuadColorKey(
+            width, height,
+            polyG4.r0, polyG4.g0, polyG4.b0,
+            polyG4.r1, polyG4.g1, polyG4.b1,
+            polyG4.r2, polyG4.g2, polyG4.b2,
+            polyG4.r3, polyG4.g3, polyG4.b3);
+
+        // Vérifier le cache
+        if (!_quadColorCache.TryGetValue(cacheKey, out var bitmap))
+        {
+            // Limiter la taille du cache
+            if (_quadColorCache.Count >= MaxCacheSize)
+            {
+                ClearQuadCache();
+            }
+
+            bitmap = CreateGradientBitmap(width, height, polyG4);
+            _quadColorCache[cacheKey] = bitmap;
+        }
+
+        AddSprite(minX, minY, width, height, depthSortValue, bitmap);
+    }
+
+    private static unsafe Bitmap CreateGradientBitmap(int width, int height, POLY_G4 polyG4)
+    {
+        var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+        var bitmapData = bitmap.LockBits(
+            new Rectangle(0, 0, width, height),
+            ImageLockMode.WriteOnly,
+            PixelFormat.Format32bppArgb);
+
+        byte* ptr = (byte*)bitmapData.Scan0;
+        int stride = bitmapData.Stride;
+
+        for (int py = 0; py < height; py++)
+        {
+            // Facteur d'interpolation verticale (fixed-point 8.8)
+            int ty = height > 1 ? (py << 8) / (height - 1) : 0;
+            int invTy = 256 - ty;
+
+            byte* row = ptr + py * stride;
+
+            for (int px = 0; px < width; px++)
+            {
+                // Facteur d'interpolation horizontale (fixed-point 8.8)
+                int tx = width > 1 ? (px << 8) / (width - 1) : 0;
+                int invTx = 256 - tx;
+
+                // Interpolation bilinéaire en fixed-point
+                int r = ((polyG4.r0 * invTx + polyG4.r1 * tx) * invTy +
+                         (polyG4.r2 * invTx + polyG4.r3 * tx) * ty) >> 16;
+                int g = ((polyG4.g0 * invTx + polyG4.g1 * tx) * invTy +
+                         (polyG4.g2 * invTx + polyG4.g3 * tx) * ty) >> 16;
+                int b = ((polyG4.b0 * invTx + polyG4.b1 * tx) * invTy +
+                         (polyG4.b2 * invTx + polyG4.b3 * tx) * ty) >> 16;
+
+                int offset = px * 4;
+                row[offset] = (byte)b;     // Blue
+                row[offset + 1] = (byte)g; // Green
+                row[offset + 2] = (byte)r; // Red
+                row[offset + 3] = 255;     // Alpha
+            }
+        }
+
+        bitmap.UnlockBits(bitmapData);
+        return bitmap;
     }
 }
 

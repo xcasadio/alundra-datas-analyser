@@ -78,8 +78,8 @@ public class Entity
     public int HitBoxOriginY;
     public int HitBoxOriginZ;
     public int _17c;
-    public int CombinedVramFlagsOR;
-    public int CombinedVramFlagsAND;
+    public uint CombinedVramFlagsOR;
+    public uint CombinedVramFlagsAND;
     public int TileAttributes; //188
     public int Slope_18c; // slopesomething?, 
     public int Slope_190; // slopesomethingprev?

@@ -1,4 +1,5 @@
-﻿using AlundraEngine.Gameplay;
+﻿using System.Diagnostics;
+using AlundraEngine.Gameplay;
 
 namespace AlundraEngine;
 
@@ -30,6 +31,8 @@ public class LogManager
 
     private void LogImpl(string message)
     {
-        Logs.Add($"{_gameEngine.StaticVariables.FrameNumber} {message}" + Environment.NewLine);
+        var log = $"Map#{_gameEngine.StaticVariables.g_currentMap} frame#{_gameEngine.StaticVariables.FrameNumber} {message}";
+        Logs.Add(log);
+        Debug.WriteLine(log);
     }
 }

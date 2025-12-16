@@ -1,5 +1,6 @@
 ﻿using AlundraEngine.Graphics;
 using AlundraEngine.Text;
+using System;
 using System.Diagnostics;
 using static AlundraEngine.Renderer;
 
@@ -299,21 +300,10 @@ public class UIManager
             //ClearImage(&rect, '\0', '\0', '\0');
         }
     }
-
-    //8004b770
-    public void FUN_8004b770(CallBackInfo callBackInfo)
-    {
-        Debugger.Break();
-    }
-
-    //8004bea4
-    public void Func_8004bea4(CallBackInfo callBackInfo)
-    {
-        Debugger.Break();
-    }
-
+    
     //8004f628
-    public void Func_8004f628(CallBackInfo callBackInfo)
+    //display DisplayDialogBackgroundText
+    public void Fun_8004f628(CallBackInfo callBackInfo)
     {
         Debugger.Break();
     }

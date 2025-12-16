@@ -326,7 +326,7 @@ public class GameInitializer
         int playerTileY;
         int playerZ;
 
-        _gameEngine.StaticVariables.g_warpTriggerType = 0;
+        _gameEngine.StaticVariables.g_resetAnimationId = 0;
         _gameEngine.StaticVariables.g_gravityFlag = 0;
         InitializePlayerStatsAndItems();
 
@@ -351,7 +351,7 @@ public class GameInitializer
                 _gameEngine.StaticVariables.g_saveData.CameraTileX = 0x21;
                 _gameEngine.StaticVariables.g_saveData.CameraTileY = 0x3b;
                 _gameEngine.StaticVariables.g_saveData.CameraTileZ = 0;
-                _gameEngine.StaticVariables.g_warpExtraParam = 0;
+                _gameEngine.StaticVariables.g_resetDirectionId = 0;
                 _gameEngine.PlayerManager.SetPlayerHpMax(10);
                 _gameEngine.PlayerManager.SetPlayerHp(10);
                 _gameEngine.PlayerManager.SetPlayerMpMax(0);
@@ -366,7 +366,7 @@ public class GameInitializer
                 _gameEngine.StaticVariables.g_saveData.CameraTileX = 0x16;
                 _gameEngine.StaticVariables.g_saveData.CameraTileY = 0x1d;
                 _gameEngine.StaticVariables.g_saveData.CameraTileZ = 10;
-                _gameEngine.StaticVariables.g_warpExtraParam = 0;
+                _gameEngine.StaticVariables.g_resetDirectionId = 0;
                 _gameEngine.PlayerManager.SetPlayerHpMax(0x2d);
                 _gameEngine.PlayerManager.SetPlayerHp(0x26);
                 _gameEngine.PlayerManager.SetPlayerMpMax(3);
@@ -394,9 +394,9 @@ public class GameInitializer
             //InitializeNumberOfItems();
         }
 
-        _gameEngine.StaticVariables.g_warpTriggerType = 0x36;
+        _gameEngine.StaticVariables.g_resetAnimationId = 0x36;
         _gameEngine.StaticVariables.g_mapTransitionEffectId = 0;
-        _gameEngine.StaticVariables.g_warpExtraParam = 0;
+        _gameEngine.StaticVariables.g_resetDirectionId = 0;
         _gameEngine.StaticVariables.g_cameraLookAtX = (playerTileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraLookAtY = (playerTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraLookAtZ = playerZ << 0x14;

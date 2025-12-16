@@ -145,7 +145,7 @@ public class PlayerManager
                             _gameEngine.StaticVariables.g_mapTransitionEffectId = 8;
                             _gameEngine.StaticVariables.g_warpEntryBehavior = 0;
                             _gameEngine.StaticVariables.g_desiredMap = 0x1dd;
-                            _gameEngine.StaticVariables.g_warpTriggerType = 0;
+                            _gameEngine.StaticVariables.g_resetAnimationId = 0;
                             _gameEngine.StaticVariables.g_playerControlFlags |= 4;
                             break;
                         }
@@ -1779,7 +1779,7 @@ public class PlayerManager
     }
 
     //8004dea4
-    private int GetPlayerMp()
+    public int GetPlayerMp()
     {
         return _gameEngine.StaticVariables.g_playerStats.Mp;
     }
@@ -2403,12 +2403,12 @@ public class PlayerManager
     {
         Portal portal;
         int iVar1;
-        int combinedVramFlagsAnd;
+        uint directionId;
         string buffer;
         string fmt;
         uint direction;
 
-        combinedVramFlagsAnd = _gameEngine.StaticVariables.PlayerEntity.CombinedVramFlagsAND;
+        directionId = _gameEngine.StaticVariables.PlayerEntity.CombinedVramFlagsAND;
 
         if (_gameEngine.StaticVariables.g_debugState < 0
             && (_gameEngine.StaticVariables.g_debugFlags & 4) != 0
@@ -2419,9 +2419,9 @@ public class PlayerManager
                 _gameEngine.StaticVariables.DAT_80098f24 += 1;
                 //_gameEngine.StaticVariables.g_debugMessage += "Attr     : %08X("  + combinedVramFlagsAnd;
 
-                if ((combinedVramFlagsAnd & 4U) == 0)
+                if ((directionId & 4U) == 0)
                 {
-                    if ((combinedVramFlagsAnd & 0x8000U) == 0 || _gameEngine.StaticVariables.g_playerControlFlags != 0)
+                    if ((directionId & 0x8000U) == 0 || _gameEngine.StaticVariables.g_playerControlFlags != 0)
                     {
                         //buffer = _gameEngine.StaticVariables.g_debugMessage + combinedVramFlagsAnd;
                         //fmt = "None)\n";
@@ -2536,7 +2536,7 @@ public class PlayerManager
 
             if (((portal.Flags & 0x3000) >> 11) > 3) Debugger.Break();
 
-            combinedVramFlagsAnd = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 11];
+            directionId = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 11];
         }
         else
         {
@@ -2548,14 +2548,14 @@ public class PlayerManager
 
             if (((portal.Flags & 0x3000) >> 11) > 3) Debugger.Break();
 
-            combinedVramFlagsAnd = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 11];
+            directionId = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 11];
         }
 
-        HandleWarpTransition(portal, 0x36, combinedVramFlagsAnd);
+        HandleWarpTransition(portal, 0x36, directionId);
     }
 
     // 80031340
-    public void HandleWarpTransition(Portal portal, int warpType, int extraData)
+    public void HandleWarpTransition(Portal portal, uint animationId, uint directionId)
     {
         if (_gameEngine.StaticVariables.g_isWarpDisabled != 0)
         {
@@ -2604,8 +2604,8 @@ public class PlayerManager
         else
         {
             _gameEngine.StaticVariables.g_isGameEnding = 1;
-            _gameEngine.StaticVariables.g_warpTriggerType = warpType;
-            _gameEngine.StaticVariables.g_warpExtraParam = extraData;
+            _gameEngine.StaticVariables.g_resetAnimationId = animationId;
+            _gameEngine.StaticVariables.g_resetDirectionId = directionId;
             _gameEngine.StaticVariables.g_cameraTargetX = targetCamX;
             _gameEngine.StaticVariables.g_cameraTargetY = targetCamY;
             _gameEngine.StaticVariables.g_cameraTargetZ = targetCamZ;

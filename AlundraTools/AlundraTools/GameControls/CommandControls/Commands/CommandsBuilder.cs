@@ -42,6 +42,7 @@ public static class CommandsBuilder
             0x5C => new DialogCommandWithChoice(code, parameters, name, memoryAddress),
             0x64 => new SetPositionCommand(code, parameters, name, memoryAddress),
             0x78 => new GotoCommand(code, parameters, name, memoryAddress),
+            0xC4 => new DialogWithEntityAndNameCommand(code, parameters, name, memoryAddress),
 
             _ => new CommandBase(code, parameters, name, memoryAddress),
         };
