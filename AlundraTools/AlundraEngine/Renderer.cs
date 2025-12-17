@@ -5,8 +5,10 @@ namespace AlundraEngine;
 
 public class SpriteDepth
 {
-    public const int BackgroundUI = int.MaxValue - 2;
-    public const int ForegroundUI = int.MaxValue - 1;
+    public const int BackgroundUI = int.MaxValue - 4;
+    public const int ForegroundUI = int.MaxValue - 3;
+    public const int ForegroundUICursor = int.MaxValue - 2;
+    public const int ForegroundUICursor2 = int.MaxValue - 1;
     public const int ForegroundEffect = int.MaxValue;
 }
 

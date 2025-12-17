@@ -432,9 +432,9 @@ public partial class FrmGame : Form
         }
         catch (Exception ex)
         {
+            Debugger.Break();
             if (!_exceptionMessageShown)
             {
-                Debugger.Break();
                 _exceptionMessageShown = true;
                 MessageBox.Show(ex.ToString());
             }
@@ -1226,7 +1226,7 @@ public partial class FrmGame : Form
 
     private void numericUpDownKeys_ValueChanged(object sender, EventArgs e)
     {
-        _gameEngine.StaticVariables.g_numberOfItems[0x3d * 2 + 1] = (short)numericUpDownKeys.Value;
+        _gameEngine.StaticVariables.g_saveData.NumberOfItems[0x3d * 2 + 1] = (short)numericUpDownKeys.Value;
     }
 
     private void comboBoxWeapon_SelectedIndexChanged(object sender, EventArgs e)
@@ -1244,28 +1244,28 @@ public partial class FrmGame : Form
             }
             else if (weaponIndex == 3) //chain
             {
-                _gameEngine.StaticVariables.g_numberOfItems[9 * 2 + 1] = 1;
-                _gameEngine.StaticVariables.g_numberOfItems[10 * 2 + 1] = 1;
-                //_gameEngine.StaticVariables.g_numberOfItems[11 * 2 + 1] = 1;
-                //_gameEngine.StaticVariables.g_numberOfItems[12 * 2 + 1] = 1;
+                _gameEngine.StaticVariables.g_saveData.NumberOfItems[9 * 2 + 1] = 1;
+                _gameEngine.StaticVariables.g_saveData.NumberOfItems[10 * 2 + 1] = 1;
+                //_gameEngine.StaticVariables.g_saveData.NumberOfItems[11 * 2 + 1] = 1;
+                //_gameEngine.StaticVariables.g_saveData.NumberOfItems[12 * 2 + 1] = 1;
             }
             else if (weaponIndex == 2) //bow
             {
-                _gameEngine.StaticVariables.g_numberOfItems[5 * 2 + 1] = 1;
-                _gameEngine.StaticVariables.g_numberOfItems[6 * 2 + 1] = 1;
+                _gameEngine.StaticVariables.g_saveData.NumberOfItems[5 * 2 + 1] = 1;
+                _gameEngine.StaticVariables.g_saveData.NumberOfItems[6 * 2 + 1] = 1;
             }
             else if (weaponIndex == 4) //ice
             {
-                _gameEngine.StaticVariables.g_numberOfItems[14 * 2 + 1] = 1;
+                _gameEngine.StaticVariables.g_saveData.NumberOfItems[14 * 2 + 1] = 1;
             }
             else if (weaponIndex == 5) //fire
             {
-                _gameEngine.StaticVariables.g_numberOfItems[15 * 2 + 1] = 1;
-                //_gameEngine.StaticVariables.g_numberOfItems[16 * 2 + 1] = 1;
+                _gameEngine.StaticVariables.g_saveData.NumberOfItems[15 * 2 + 1] = 1;
+                //_gameEngine.StaticVariables.g_saveData.NumberOfItems[16 * 2 + 1] = 1;
             }
             else if (weaponIndex == 6) //spirit wand
             {
-                _gameEngine.StaticVariables.g_numberOfItems[7 * 2 + 1] = 1;
+                _gameEngine.StaticVariables.g_saveData.NumberOfItems[7 * 2 + 1] = 1;
             }
         }
     }
@@ -1276,7 +1276,7 @@ public partial class FrmGame : Form
         var itemIndex = int.Parse(itemName.Split("-")[0]);
 
         _gameEngine.StaticVariables.g_saveData.PlayerStats.ItemId = (byte)(itemIndex + 1);
-        _gameEngine.StaticVariables.g_numberOfItems[itemIndex * 2 + 1] = 1; // number of item
+        _gameEngine.StaticVariables.g_saveData.NumberOfItems[itemIndex * 2 + 1] = 1; // number of item
     }
 
     private void checkBoxUseDebugCamera_CheckedChanged(object sender, EventArgs e)
@@ -1380,7 +1380,7 @@ public partial class FrmGame : Form
 
     private void buttonAllItems_Click(object sender, EventArgs e)
     {
-        Array.Fill<short>(_gameEngine.StaticVariables.g_numberOfItems, 1);
+        Array.Fill<short>(_gameEngine.StaticVariables.g_saveData.NumberOfItems, 1);
     }
 
     private void buttonZoomX2_Click(object sender, EventArgs e)

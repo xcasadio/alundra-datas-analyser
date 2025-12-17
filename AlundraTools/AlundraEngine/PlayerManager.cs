@@ -1882,8 +1882,8 @@ public class PlayerManager
         }
         else
         {
-            remainingItem = (int)(itemId * 2 * 2 + _gameEngine.StaticVariables.g_numberOfItems[0]);
-            itemCount = _gameEngine.StaticVariables.g_numberOfItems[itemId * 2 + 1];
+            remainingItem = (int)(itemId * 2 * 2 + _gameEngine.StaticVariables.g_saveData.NumberOfItems[0]);
+            itemCount = _gameEngine.StaticVariables.g_saveData.NumberOfItems[itemId * 2 + 1];
             itemCount--;
 
             if (itemCount == -1)
@@ -1892,7 +1892,7 @@ public class PlayerManager
             }
             else
             {
-                _gameEngine.StaticVariables.g_numberOfItems[itemId * 2 + 1] = itemCount;
+                _gameEngine.StaticVariables.g_saveData.NumberOfItems[itemId * 2 + 1] = itemCount;
                 remainingItem = itemCount;
             }
         }
@@ -3273,7 +3273,7 @@ public class PlayerManager
         }
         else
         {
-            nbItem = _gameEngine.StaticVariables.g_numberOfItems[itemId * 2 + 1];
+            nbItem = _gameEngine.StaticVariables.g_saveData.NumberOfItems[itemId * 2 + 1];
         }
 
         return nbItem;
@@ -3313,13 +3313,13 @@ public class PlayerManager
         uint bestMatchIndex = 0xFFFFFFFF;
         uint currentIndex = 0;
 
-        while (currentIndex < 99)//0x80)
+        while (currentIndex < 100)//0x80)
         {
             var entrySectionId = _gameEngine.StaticVariables.g_itemsProperties[currentIndex * 5];
 
             if (entrySectionId == slotId)
             {
-                var usageCount = _gameEngine.StaticVariables.g_numberOfItems[currentIndex * 2 + 1];
+                var usageCount = _gameEngine.StaticVariables.g_saveData.NumberOfItems[currentIndex * 2 + 1];
 
                 if (usageCount > 0)
                 {
@@ -3607,14 +3607,14 @@ public class PlayerManager
             return 0;
         }
 
-        int itemIdIndex = itemId * 2; // In the assembly: itemIdIndex = (itemId * 4) + g_numberOfItems
-        short currentUsage = _gameEngine.StaticVariables.g_numberOfItems[itemIdIndex + 1];
-        int itemPropertyId = itemId * 5;
-        short unlockRequirement = _gameEngine.StaticVariables.g_itemsProperties[itemPropertyId + 3];
+        var itemIdIndex = itemId * 2; // In the assembly: itemIdIndex = (itemId * 4) + g_saveData.NumberOfItems
+        var currentUsage = _gameEngine.StaticVariables.g_saveData.NumberOfItems[itemIdIndex + 1];
+        var itemPropertyId = itemId * 5;
+        var unlockRequirement = _gameEngine.StaticVariables.g_itemsProperties[itemPropertyId + 3];
 
         if (currentUsage != unlockRequirement)
         {
-            _gameEngine.StaticVariables.g_numberOfItems[itemIdIndex + 1] = (short)(currentUsage + 1);
+            _gameEngine.StaticVariables.g_saveData.NumberOfItems[itemIdIndex + 1] = (short)(currentUsage + 1);
             return currentUsage + 1;
         }
 

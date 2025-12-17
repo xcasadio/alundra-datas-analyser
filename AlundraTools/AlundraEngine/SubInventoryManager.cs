@@ -1334,9 +1334,9 @@ public class SubInventoryManager
                 do
                 {
                     var property = _gameEngine.StaticVariables.g_itemsProperties[startIndex * 5];
-                    var quantity = _gameEngine.StaticVariables.g_numberOfItems[startIndex * 2 + 1];
+                    var quantity = _gameEngine.StaticVariables.g_saveData.NumberOfItems[startIndex * 2 + 1];
 
-                    if ((property == wantedPropertyId) && (0 < quantity))
+                    if (property == wantedPropertyId && 0 < quantity)
                     {
                         return startIndex;
                     }
