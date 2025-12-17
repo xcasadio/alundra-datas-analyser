@@ -405,6 +405,7 @@ public class GameInitializer
         _gameEngine.StaticVariables.g_cameraTargetY = (_gameEngine.StaticVariables.g_saveData.CameraTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraTargetZ = _gameEngine.StaticVariables.g_saveData.CameraTileZ << 0x14;
         _gameEngine.StaticVariables.g_gameplayTime = _gameEngine.StaticVariables.g_saveData.GameTime;
+
     }
 
     // 8004dac0
@@ -509,12 +510,27 @@ public class GameInitializer
     //80044b48
     private void LoadtakiScreenWind_cl()
     {
-        //_gameEngine.StaticVariables.g_clutTable = _gameEngine.Font3.Palettes
-        //LoadImage => _gameEngine.Font3.FontBitmap
+        //u_short clutId;
+        //int clutIndex;
+        //ushort* clutTablePtr;
+        //RECT clutRect;
+        //
+        //ReadFileFromCDIntoBuffer("taki\\screen\\wind.cl", (u_long*)g_wind_tx_buffer, 0, 0x200);
+
+        var clutIndex = 0;
+
+        do
+        {
+            var clutId = GetClut(0x120, clutIndex + 0x1e0);
+            _gameEngine.StaticVariables.g_clutTable[clutIndex] = clutId;
+            clutIndex = clutIndex + 1;
+        } while (clutIndex < 0x10);
+
         //clutRect.x = 0x120;
         //clutRect.y = 0x1e0;
         //clutRect.w = 0x10;
         //clutRect.h = 0x10;
+        //LoadImage(&clutRect, (u_long*)g_wind_tx_buffer);
     }
 
     //80044f88

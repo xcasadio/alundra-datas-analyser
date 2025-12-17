@@ -11,8 +11,8 @@ public class Font3
     public Bitmap FontBitmapTim;
 
     private readonly Dictionary<int, Bitmap> _hudBitmapByPalette = new();
-    private readonly Dictionary<int, Bitmap> _hudBitmapBySprite = new();
-    private readonly Dictionary<int, Bitmap> _fontBitmapBySprite = new();
+    private readonly Dictionary<(int, int), Bitmap> _hudBitmapBySprite = new();
+    private readonly Dictionary<(int, int), Bitmap> _fontBitmapBySprite = new();
     private byte[] _hudImageData;
 
     public Font3(string folderName)
@@ -45,12 +45,12 @@ public class Font3
 
     public Bitmap GenerateHudBitmap(int x, int y, int w, int h, Color[] pal)
     {
-        var key = (x << 24) | (y << 16) | (w << 8) | h;
+        var spriteKey = (x << 24) | (y << 16) | (w << 8) | h;
+        var paletteKey = GetPaletteHashCode(pal);
+        var key = (spriteKey, paletteKey);
 
         if (!_hudBitmapBySprite.TryGetValue(key, out var bitmap))
         {
-            var paletteKey = pal.GetHashCode();
-
             if (!_hudBitmapByPalette.TryGetValue(paletteKey, out var fullBitmap))
             {
                 fullBitmap = ImageHelper.BitmapFromPsxBuff(_hudImageData, 0, 0, 256, 256, 4, pal);
@@ -87,7 +87,9 @@ public class Font3
 
     public Bitmap GenerateFontBitmapTim(int x, int y, int w, int h, Color[] pal)
     { 
-        var key = (x << 24) | (y << 16) | (w << 8) | h;
+        var spriteKey = (x << 24) | (y << 16) | (w << 8) | h;
+        var paletteKey = GetPaletteHashCode(pal);
+        var key = (spriteKey, paletteKey);
 
         if (!_fontBitmapBySprite.TryGetValue(key, out var bitmap))
         {
@@ -97,6 +99,16 @@ public class Font3
         }
 
         return bitmap;
+    }
+
+    private static int GetPaletteHashCode(Color[] pal)
+    {
+        var hash = new HashCode();
+        foreach (var color in pal)
+        {
+            hash.Add(color.ToArgb());
+        }
+        return hash.ToHashCode();
     }
 
     private void LoadPalette(string folderName)
