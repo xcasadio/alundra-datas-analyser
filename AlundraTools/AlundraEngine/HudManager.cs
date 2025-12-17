@@ -580,11 +580,11 @@ public class HudManager
         {
             //weapon background
             var polyG4 = _gameEngine.StaticVariables.g_hudBackgroundWeaponAndItemPolyG4s[0];
-            _gameEngine.Renderer.AddQuadColor(polyG4, SpriteDepth.BackgroundUI);
+            _gameEngine.Renderer.AddQuadColor(polyG4, SpriteDepth.BackgroundUI, 0.5f);
 
             //item background
             polyG4 = _gameEngine.StaticVariables.g_hudBackgroundWeaponAndItemPolyG4s[1];
-            _gameEngine.Renderer.AddQuadColor(polyG4, SpriteDepth.BackgroundUI);
+            _gameEngine.Renderer.AddQuadColor(polyG4, SpriteDepth.BackgroundUI, 0.5f);
         }
 
         //puVar11 = (uint*)((int)g_hudBackgroundWeaponAndItemPolyG4s +  0x48);

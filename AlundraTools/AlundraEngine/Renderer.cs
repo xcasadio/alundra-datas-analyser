@@ -80,9 +80,6 @@ public class Renderer(GameEngine gameEngine)
             imageAttributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
             var destRect = new Rectangle(sprite.X, sprite.Y, sprite.Width, sprite.Height);
-            //bug: With this overload of DrawImage, the destRect is the area to draw to the control and not the backbuffer image
-            destRect.Inflate(320, 224); 
-            destRect.Offset(320, 224);
             graphics.DrawImage(sprite.Bitmap, destRect, 0, 0, sprite.Bitmap.Width, sprite.Bitmap.Height, GraphicsUnit.Pixel, imageAttributes);
         }
         else
@@ -141,7 +138,7 @@ public class Renderer(GameEngine gameEngine)
         byte R2, byte G2, byte B2,
         byte R3, byte G3, byte B3);
 
-    public void AddQuadColor(POLY_G4 polyG4, int depthSortValue)
+    public void AddQuadColor(POLY_G4 polyG4, int depthSortValue, float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f)
     {
         int minX = Math.Min(Math.Min(polyG4.x0, polyG4.x1), Math.Min(polyG4.x2, polyG4.x3));
         int maxX = Math.Max(Math.Max(polyG4.x0, polyG4.x1), Math.Max(polyG4.x2, polyG4.x3));
@@ -174,7 +171,7 @@ public class Renderer(GameEngine gameEngine)
             _quadColorCache[cacheKey] = bitmap;
         }
 
-        AddSprite(minX, minY, width, height, depthSortValue, bitmap);
+        AddSprite(minX, minY, width, height, depthSortValue, bitmap, alpha, r, g, b);
     }
 
     private static unsafe Bitmap CreateGradientBitmap(int width, int height, POLY_G4 polyG4)
