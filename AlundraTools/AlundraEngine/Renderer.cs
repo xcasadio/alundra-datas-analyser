@@ -22,8 +22,12 @@ public class Renderer(GameEngine gameEngine)
 
     private static Bitmap CreateWhiteBitmap()
     {
-        var bmp = new Bitmap(1, 1);
-        bmp.SetPixel(0, 0, System.Drawing.Color.White);
+        var bmp = new Bitmap(StaticVariables.ScreenWidth, StaticVariables.ScreenHeight);
+
+        for (int i = 0; i < StaticVariables.ScreenWidth * StaticVariables.ScreenHeight; i++)
+        {
+            bmp.SetPixel(i % StaticVariables.ScreenWidth, i / StaticVariables.ScreenWidth, System.Drawing.Color.White);
+        }
         return bmp;
     }
 
