@@ -750,7 +750,7 @@ public class HudManager
                 sprite.v0 = _gameEngine.StaticVariables.BYTE_ARRAY_800a0d60[1]; //0x28
 
                 var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-                _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
+                _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI - i, bitmap);
 
                 i += 1;
                 //_gameEngine.StaticVariables.g_lifeBigIconSprites[iVar1 + 5].tag = _gameEngine.StaticVariables.g_lifeBigIconSprites[iVar1 + 5].tag & 0xff000000 | *puVar4 & 0xffffff;
@@ -770,7 +770,7 @@ public class HudManager
             sprite.v0 = _gameEngine.StaticVariables.BYTE_ARRAY_800a0dd8[1]; //0x28
 
             var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-            _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.BackgroundUI, bitmap);
+            _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.BackgroundUI - 5 - i, bitmap);
             //_gameEngine.StaticVariables.g_lifeBigIconSprites[iVar1 + 5].tag = _gameEngine.StaticVariables.g_lifeBigIconSprites[iVar1 + 5].tag & 0xff000000 | *puVar4 & 0xffffff;
             /* Probable PsyQ macro: addPrim(). */
             //puVar4 = (uint*)((int)g_drawModes + 0x28 + 0xf8);
