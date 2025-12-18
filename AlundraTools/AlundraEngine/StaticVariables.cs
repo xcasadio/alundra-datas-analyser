@@ -4295,7 +4295,7 @@ public class StaticVariables
             new CallBackInfo
             {
                 Id = 10, Flags = 0, Data = null, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04, InitializeFunc = null,
-                RenderFunc = gameEngine.UIManager.FUN_800583ec, Arg = 0
+                RenderFunc = gameEngine.MemoryCardManager.FUN_800583ec, Arg = 0
             },
             new CallBackInfo
             {
@@ -5926,8 +5926,8 @@ public class StaticVariables
     public int INT_8018ecc8; // 8018ECC8
     public string PTR_8018ed68; // 8018ED68
     public string PTR_8018ed6c; // 8018ED6C
-    public int DAT_8018ed88; // 8018ED88
-    public int DAT_8018ed8c; // 8018ED8C
+    public int INT_8018ed88; // 8018ED88
+    public int INT_8018ed8c; // 8018ED8C
     public string PTR_8018ede8; // 8018EDE8
     public string PTR_8018edec; // 8018EDEC
     public int DAT_8018ee10; // 8018EE10
@@ -5996,8 +5996,8 @@ public class StaticVariables
     public int DAT_80191b40; // 80191B40
     public int g_tileSet_index_80191b44; // 80191B44
     public int g_animTableAlt_80191b48; // 80191B48
-    public int DAT_8019acbc; // 8019ACBC
-    public int DAT_8019acc4; // 8019ACC4
+    public int[] DAT_8019acbc = new int[2]; // 8019ACBC
+    public int[] DAT_8019acc4 = new int[2]; // 8019ACC4
     public DatasBin.DataBinHeader g_dataBinHeader; // 801EAB30
     public int g_spriteBufferCDEnd; // 801EAB34
     public int g_imageBufferCDStart; // 801EAB38

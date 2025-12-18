@@ -597,12 +597,6 @@ public class UIManager
         //pSVar1->code = (char)(uVar5 >> 0x18);
     }
 
-    //800583ec
-    public void FUN_800583ec(CallBackInfo callBackInfo)
-    {
-        Debugger.Break();
-    }
-
     //80051550
     public void Func_80051550(CallBackInfo callBackInfo)
     {

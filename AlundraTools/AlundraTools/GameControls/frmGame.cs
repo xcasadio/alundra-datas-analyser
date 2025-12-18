@@ -323,6 +323,14 @@ public partial class FrmGame : Form
             new(
                 nameof(_gameEngine.StaticVariables.g_fadeStepFlags),
                 () => _gameEngine.StaticVariables.g_fadeStepFlags
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_postProcessingState),
+                () => (uint)_gameEngine.StaticVariables.g_postProcessingState
+            ),
+            new(
+                nameof(_gameEngine.StaticVariables.g_globalTransitionState),
+                () => (uint)_gameEngine.StaticVariables.g_globalTransitionState
             )
         ];
 
@@ -364,6 +372,7 @@ public partial class FrmGame : Form
     {
         _gameEngine.InitializeEngine();
         InitializeUI();
+        buttonAllItems_Click(null, EventArgs.Empty);
 
         _gameEngineTimer = new Timer();
         _gameEngineTimer.Interval = 30; // 33

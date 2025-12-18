@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using AlundraEngine.UI;
+using System;
+using System.Diagnostics;
 
 namespace AlundraEngine;
 
@@ -48,1151 +50,12 @@ public class MemoryCardManager
         return result ? 1 : 0;
     }
 
-    //8005f458
-    private void StartMemoryCardProcess()
-    {
-        string arg1;
-        string arg2;
-        byte[] pbVar1;
-        int etcSectionA;
-        byte[] pbVar4;
-        int fadeCounter;
-        int iVar5;
-        int[] piVar6;
-        int[] local_28 = new int[2];
-        bool isFadeComplete;
-
-        fadeCounter = 0;
-        if (_gameEngine.StaticVariables.g_globalTransitionState == 0x6b)
-        {
-            if (_gameEngine.StaticVariables.g_asyncOperationResult == 1)
-            {
-                _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
-            }
-            else
-            {
-                if (_gameEngine.StaticVariables.g_asyncOperationResult < 2)
-                {
-                    return;
-                }
-
-                if (_gameEngine.StaticVariables.g_asyncOperationResult != 2)
-                {
-                    return;
-                }
-                _gameEngine.StaticVariables.g_globalTransitionState = 0x3ed;
-            }
-
-            //FADE_RESTART:
-            _gameEngine.StaticVariables.g_asyncOperationResult = 0;
-            ResetMemoryCardMenuState();
-            _gameEngine.StaticVariables.g_fadeSubstate = 1;
-            return;
-        }
-
-        if (0x6b < _gameEngine.StaticVariables.g_globalTransitionState)
-        {
-            if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3f6)
-            {
-                if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
-                {
-                    ResetMemoryCardMenuState();
-                    _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                }
-
-                if (_gameEngine.StaticVariables.g_fadeFrame < 0x13)
-                {
-                    _gameEngine.StaticVariables.g_fadeFrame += 1;
-                    return;
-                }
-
-                etcSectionA = 0xe;
-            }
-            else if (_gameEngine.StaticVariables.g_globalTransitionState < 0x3f7)
-            {
-                if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3ef)
-                {
-                    if (_gameEngine.StaticVariables.g_openMemoryCardState == 1000)
-                    {
-                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                    }
-
-                    if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressed & 0x80) != 0)
-                    {
-                        ResetMemoryCardMenuState();
-                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                    }
-
-                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
-                    {
-                        return;
-                    }
-
-                    if (_gameEngine.StaticVariables.g_fadeFrame < 0x13)
-                    {
-                        _gameEngine.StaticVariables.g_fadeFrame += 1;
-                        return;
-                    }
-
-                    etcSectionA = 7;
-                }
-                else
-                {
-                    if (_gameEngine.StaticVariables.g_globalTransitionState < 0x3f0)
-                    {
-                        if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3ec)
-                        {
-                            _gameEngine.StaticVariables.g_globalTransitionState = 4;
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_globalTransitionState < 0x3ed)
-                        {
-                            if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3ea)
-                            {
-                                _gameEngine.StaticVariables.g_globalTransitionState = 2;
-                                return;
-                            }
-
-                            if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3eb)
-                            {
-                                _gameEngine.StaticVariables.g_globalTransitionState = 3;
-                                return;
-                            }
-
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3ed)
-                        {
-                            if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
-                            {
-                                ResetMemoryCardMenuState();
-                                _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                            }
-
-                            if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
-                            {
-                                _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                _gameEngine.StaticVariables.g_globalTransitionState = 5;
-                                return;
-                            }
-
-                            _gameEngine.StaticVariables.g_fadeFrame += 1;
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_globalTransitionState != 0x3ee)
-                        {
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_fadeSubstate == 1)
-                        {
-                            isFadeComplete = 0x1b < _gameEngine.StaticVariables.g_fadeFrame;
-                            _gameEngine.StaticVariables.g_fadeFrame += 1;
-
-                            if (isFadeComplete)
-                            {
-                                _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                _gameEngine.StaticVariables.g_fadeSubstate = 2;
-                            }
-                        }
-
-                        if (_gameEngine.StaticVariables.g_fadeSubstate == 2)
-                        {
-                            arg1 = _gameEngine.EtcRes.GetEtcString(0x91);
-                            arg2 = _gameEngine.EtcRes.GetEtcString(0x92);
-                            TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
-                            _gameEngine.StaticVariables.g_fadeSubstate = 3;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_fadeSubstate == 3)
-                        {
-                            if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
-                            {
-                                _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                _gameEngine.StaticVariables.g_globalTransitionState = 6;
-                                return;
-                            }
-
-                            _gameEngine.StaticVariables.g_fadeFrame += 1;
-                            return;
-                        }
-                        return;
-                    }
-
-                    if (_gameEngine.StaticVariables.g_globalTransitionState != 0x3f2)
-                    {
-                        if (_gameEngine.StaticVariables.g_globalTransitionState < 0x3f3)
-                        {
-                            if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3f0)
-                            {
-                                _gameEngine.StaticVariables.g_globalTransitionState = 8;
-                                return;
-                            }
-
-                            if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3f1)
-                            {
-                                if (_gameEngine.StaticVariables.g_openMemoryCardState == 1000)
-                                {
-                                    _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                                }
-
-                                ResetMemoryCardMenuState();
-
-                                if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
-                                {
-                                    _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                    _gameEngine.StaticVariables.g_globalTransitionState = 9;
-                                    _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                                    return;
-                                }
-
-                                _gameEngine.StaticVariables.g_fadeFrame += 1;
-                                _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                                return;
-                            }
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3f4)
-                        {
-                            if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
-                            {
-                                SaveInMemoryCard(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle, _gameEngine.StaticVariables.g_memoryCardDataBlob);
-                                ResetMemoryCardMenuState();
-                                _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                            }
-
-                            if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
-                            {
-                                _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                _gameEngine.StaticVariables.g_globalTransitionState = 0xc;
-                                return;
-                            }
-
-                            _gameEngine.StaticVariables.g_fadeFrame += 1;
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_globalTransitionState < 0x3f5)
-                        {
-                            if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
-                            {
-                                FUN_8005dc04(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.INT_ARRAY_80191088, _gameEngine.StaticVariables.INT_ARRAY_80191080);
-                                _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                            }
-
-                            if (_gameEngine.StaticVariables.g_fadeSubstate == 1)
-                            {
-                                ResetMemoryCardMenuState();
-                                _gameEngine.StaticVariables.g_fadeSubstate = 2;
-                            }
-
-                            if (_gameEngine.StaticVariables.g_fadeSubstate == 2)
-                            {
-                                if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
-                                {
-                                    _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                    _gameEngine.StaticVariables.g_globalTransitionState = 0xb;
-                                    return;
-                                }
-
-                                _gameEngine.StaticVariables.g_fadeFrame += 1;
-                                return;
-                            }
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_openMemoryCardState == 1000)
-                        {
-                            _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                        }
-
-                        if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressed & 0x80) != 0)
-                        {
-                            ResetMemoryCardMenuState();
-                            _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_fadeSubstate != 0)
-                        {
-                            if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
-                            {
-                                _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                _gameEngine.StaticVariables.g_globalTransitionState = 0xd;
-                                return;
-                            }
-
-                            _gameEngine.StaticVariables.g_fadeFrame += 1;
-                            return;
-                        }
-                        return;
-                    }
-
-                    if (_gameEngine.StaticVariables.g_openMemoryCardState == 1000)
-                    {
-                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                    }
-
-                    if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressed & 0x20) != 0)
-                    {
-                        ResetMemoryCardMenuState();
-                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                    }
-
-                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
-                    {
-                        return;
-                    }
-
-                    if (_gameEngine.StaticVariables.g_fadeFrame < 0x13)
-                    {
-                        _gameEngine.StaticVariables.g_fadeFrame += 1;
-                        return;
-                    }
-                    etcSectionA = 10;
-                }
-            }
-            else
-            {
-                if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3fc)
-                {
-                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
-                    {
-                        ResetMemoryCardMenuState();
-                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                    }
-
-                    fadeCounter = _gameEngine.StaticVariables.g_fadeFrame + 1;
-
-                    if (_gameEngine.StaticVariables.g_fadeFrame < 0x13)
-                    {
-                        _gameEngine.StaticVariables.g_fadeFrame = fadeCounter;
-                        return;
-                    }
-
-                    etcSectionA = 0x14;
-                }
-                else
-                {
-                    if (0x3fc < _gameEngine.StaticVariables.g_globalTransitionState)
-                    {
-                        if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3ff)
-                        {
-                            if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
-                            {
-                                ResetMemoryCardMenuState();
-                                _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                            }
-
-                            if (_gameEngine.StaticVariables.g_fadeSubstate == 1)
-                            {
-                                fadeCounter = _gameEngine.StaticVariables.g_fadeFrame + 1;
-                                _gameEngine.StaticVariables.g_fadeFrame = fadeCounter;
-
-                                if (0x12 < _gameEngine.StaticVariables.g_fadeFrame && _gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
-                                {
-                                    _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                    arg1 = _gameEngine.EtcRes.GetEtcString(0xb3);
-                                    arg2 = _gameEngine.EtcRes.GetEtcString(0xb4);
-                                    TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
-                                    _gameEngine.StaticVariables.g_fadeSubstate = 2;
-                                }
-                            }
-
-                            if (_gameEngine.StaticVariables.g_fadeSubstate != 2)
-                            {
-                                return;
-                            }
-
-                            if (_gameEngine.StaticVariables.g_fadeFrame < 0x13)
-                            {
-                                _gameEngine.StaticVariables.g_fadeFrame += 1;
-                                return;
-                            }
-
-                            if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
-                            {
-                                _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                _gameEngine.StaticVariables.g_globalTransitionState = 0x17;
-                                return;
-                            }
-
-                            _gameEngine.StaticVariables.g_fadeFrame += 1;
-                            return;
-                        }
-
-                        if (0x3ff < _gameEngine.StaticVariables.g_globalTransitionState)
-                        {
-                            if (_gameEngine.StaticVariables.g_globalTransitionState == 10000)
-                            {
-                                _gameEngine.StaticVariables.g_isMemoryCopyInProgress = 1;
-                                _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                _gameEngine.StaticVariables.g_playerControlFlags |= 8;
-                                arg1 = _gameEngine.EtcRes.GetEtcString(0x87);
-                                arg2 = _gameEngine.EtcRes.GetEtcString(0x88);
-                                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
-                                _gameEngine.StaticVariables.g_globalTransitionState = 0x2711;
-                                return;
-                            }
-
-                            if (10000 < _gameEngine.StaticVariables.g_globalTransitionState)
-                            {
-                                if (_gameEngine.StaticVariables.g_globalTransitionState != 0x2711)
-                                {
-                                    return;
-                                }
-                                if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
-                                {
-                                    _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                    _gameEngine.StaticVariables.g_globalTransitionState = 1;
-                                    return;
-                                }
-                                _gameEngine.StaticVariables.g_fadeFrame += 1;
-                                return;
-                            }
-
-                            if (_gameEngine.StaticVariables.g_globalTransitionState != 1099)
-                            {
-                                return;
-                            }
-
-                            if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
-                            {
-                                ResetMemoryCardMenuState();
-                                _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                            }
-
-                            if (10 < _gameEngine.StaticVariables.g_fadeFrame)
-                            {
-                                _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                _gameEngine.StaticVariables.g_globalTransitionState = 99;
-                                return;
-                            }
-                            _gameEngine.StaticVariables.g_fadeFrame += 1;
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3fd)
-                        {
-                            if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
-                            {
-                                ResetMemoryCardMenuState();
-                                _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                            }
-
-                            if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
-                            {
-                                if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
-                                {
-                                    _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                    _gameEngine.StaticVariables.g_globalTransitionState = 0x15;
-                                    return;
-                                }
-
-                                _gameEngine.StaticVariables.g_fadeFrame += 1;
-                                return;
-                            }
-
-                            _gameEngine.StaticVariables.g_fadeFrame += 1;
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_globalTransitionState != 0x3fe)
-                        {
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
-                        {
-                            ResetMemoryCardMenuState();
-                            _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                        }
-
-                        if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
-                        {
-                            if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
-                            {
-                                _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                _gameEngine.StaticVariables.g_globalTransitionState = 0x16;
-                                return;
-                            }
-                            _gameEngine.StaticVariables.g_fadeFrame += 1;
-                            return;
-                        }
-                        _gameEngine.StaticVariables.g_fadeFrame += 1;
-                        return;
-                    }
-
-                    if (_gameEngine.StaticVariables.g_globalTransitionState != 0x3f9)
-                    {
-                        if (0x3f9 < _gameEngine.StaticVariables.g_globalTransitionState)
-                        {
-                            if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3fa)
-                            {
-                                if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
-                                {
-                                    ResetMemoryCardMenuState();
-                                    _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                                }
-
-                                if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
-                                {
-                                    if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
-                                    {
-                                        _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                        _gameEngine.StaticVariables.g_globalTransitionState = 0x12;
-                                        return;
-                                    }
-                                    _gameEngine.StaticVariables.g_fadeFrame += 1;
-                                    return;
-                                }
-
-                                _gameEngine.StaticVariables.g_fadeFrame += 1;
-                                return;
-                            }
-
-                            if (_gameEngine.StaticVariables.g_globalTransitionState != 0x3fb)
-                            {
-                                return;
-                            }
-
-                            if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
-                            {
-                                ResetMemoryCardMenuState();
-                                _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                            }
-
-                            if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
-                            {
-                                if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
-                                {
-                                    _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                    _gameEngine.StaticVariables.g_globalTransitionState = 0x13;
-                                    return;
-                                }
-                                _gameEngine.StaticVariables.g_fadeFrame += 1;
-                                return;
-                            }
-
-                            _gameEngine.StaticVariables.g_fadeFrame += 1;
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3f7)
-                        {
-                            if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
-                            {
-                                if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xfffffffe)
-                                {
-                                    _gameEngine.StaticVariables.g_globalTransitionState = 0xf;
-                                }
-                                else
-                                {
-                                    _gameEngine.StaticVariables.g_globalTransitionState = 0xf;
-                                    arg1 = _gameEngine.EtcRes.GetEtcString(0xa3);
-                                    arg2 = _gameEngine.EtcRes.GetEtcString(0xa4);
-                                    TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
-                                }
-                                _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                return;
-                            }
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_globalTransitionState != 0x3f8)
-                        {
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
-                        {
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xfffffffe)
-                        {
-                            if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
-                            {
-                                _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                _gameEngine.StaticVariables.g_globalTransitionState = 0x10;
-                                return;
-                            }
-                            _gameEngine.StaticVariables.g_fadeFrame += 1;
-                            return;
-                        }
-
-                        if (0x12 < _gameEngine.StaticVariables.g_fadeFrame)
-                        {
-                            _gameEngine.StaticVariables.g_fadeFrame += 1;
-                            arg1 = _gameEngine.EtcRes.GetEtcString(0xa5);
-                            arg2 = _gameEngine.EtcRes.GetEtcString(0xa6);
-                            TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
-                            _gameEngine.StaticVariables.g_fadeFrame = 0;
-                            _gameEngine.StaticVariables.g_globalTransitionState = 0x10;
-                            return;
-                        }
-
-                        _gameEngine.StaticVariables.g_fadeFrame += 1;
-                        return;
-                    }
-
-                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
-                    {
-                        ResetMemoryCardMenuState();
-                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                    }
-
-                    fadeCounter = _gameEngine.StaticVariables.g_fadeFrame + 1;
-
-                    if (_gameEngine.StaticVariables.g_fadeFrame < 0x13)
-                    {
-                        _gameEngine.StaticVariables.g_fadeFrame = fadeCounter;
-                        return;
-                    }
-
-                    etcSectionA = 0x11;
-                }
-
-                if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
-                {
-                    _gameEngine.StaticVariables.g_fadeFrame = fadeCounter;
-                    return;
-                }
-            }
-
-            _gameEngine.StaticVariables.g_fadeFrame = 0;
-            _gameEngine.StaticVariables.g_globalTransitionState = etcSectionA;
-            return;
-        }
-
-        if (_gameEngine.StaticVariables.g_globalTransitionState == 0xd)
-        {
-            _gameEngine.StaticVariables.g_fadeSubstate = 0;
-            _gameEngine.StaticVariables.g_fadeFrame = 0;
-            arg1 = _gameEngine.EtcRes.GetEtcString(0x9f);
-            arg2 = _gameEngine.EtcRes.GetEtcString(0xa0);
-            TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
-            _gameEngine.StaticVariables.g_globalTransitionState = 0x3f6;
-            return;
-        }
-
-        if (_gameEngine.StaticVariables.g_globalTransitionState < 0xe)
-        {
-            if (_gameEngine.StaticVariables.g_globalTransitionState == 6)
-            {
-                _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                FUN_8005dc04(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.INT_ARRAY_80191088, _gameEngine.StaticVariables.INT_ARRAY_80191080);
-
-                iVar5 = _gameEngine.StaticVariables.INT_ARRAY_80191088[_gameEngine.StaticVariables.g_memorySlotId];
-                fadeCounter = 3;
-
-                if (iVar5 == 0)
-                {
-                    FUN_8005df84(_gameEngine.StaticVariables.g_memorySlotId);
-
-                    if (fadeCounter != 1)
-                    {
-                        _gameEngine.StaticVariables.g_fadeFrame = 0;
-                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3fc;
-                        return;
-                    }
-
-                    _gameEngine.StaticVariables.g_fadeFrame = 0;
-                    _gameEngine.StaticVariables.g_globalTransitionState = 0x3f3;
-                    return;
-                }
-
-                //LAB_8005fe34:
-                if (iVar5 == 3)
-                {
-                    //goto LAB_80060640
-                    _gameEngine.StaticVariables.g_globalTransitionState = 0x3fb;
-                    return;
-                }
-            }
-            else
-            {
-                if (6 < _gameEngine.StaticVariables.g_globalTransitionState)
-                {
-                    if (_gameEngine.StaticVariables.g_globalTransitionState != 9)
-                    {
-                        if (_gameEngine.StaticVariables.g_globalTransitionState < 10)
-                        {
-                            if (_gameEngine.StaticVariables.g_globalTransitionState == 7)
-                            {
-                                _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                                arg1 = _gameEngine.EtcRes.GetEtcString(0x93);
-                                arg2 = _gameEngine.EtcRes.GetEtcString(0x94);
-                                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
-                                arg1 = _gameEngine.EtcRes.GetEtcString(0x81);
-                                arg2 = _gameEngine.EtcRes.GetEtcString(0x82);
-                                _gameEngine.InitializeAsyncOperation(arg1, arg2, result => _gameEngine.StaticVariables.g_asyncOperationResult = result);
-                                _gameEngine.StaticVariables.g_globalTransitionState = 0x6b;
-                                return;
-                            }
-
-                            if (_gameEngine.StaticVariables.g_globalTransitionState == 8)
-                            {
-                                _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                                FUN_80060bd0();
-                            }
-
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_globalTransitionState == 0xb)
-                        {
-                            _gameEngine.StaticVariables.g_fadeSubstate = 0;
-
-                            if (_gameEngine.StaticVariables.INT_ARRAY_80191088[_gameEngine.StaticVariables.g_memorySlotId] != 0)
-                            {
-                                if (_gameEngine.StaticVariables.INT_ARRAY_80191088[_gameEngine.StaticVariables.g_memorySlotId] != 3)
-                                {
-                                    _gameEngine.StaticVariables.g_globalTransitionState = 0x3f9;
-                                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                                    return;
-                                }
-
-                                _gameEngine.StaticVariables.g_globalTransitionState = 0x3fb;
-                                _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                                return;
-                            }
-
-                            fadeCounter = BuildDataAndSaveInMemoryCard(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle);
-
-                            if (fadeCounter == -1)
-                            {
-                                _gameEngine.StaticVariables.g_globalTransitionState = 0x3fd;
-                                return;
-                            }
-
-                            _gameEngine.StaticVariables.g_globalTransitionState = 0x3f4;
-                            return;
-                        }
-
-                        if (0xb < _gameEngine.StaticVariables.g_globalTransitionState)
-                        {
-                            _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                            Debugger.Break();
-                            //fadeCounter = 0;
-                            //puVar2 = _gameEngine.StaticVariables.PTR_8018ed68;
-                            //piVar6 = _gameEngine.StaticVariables.PTR_8018ed6c;
-                            //pbVar4 = _gameEngine.StaticVariables.BYTE_ARRAY_8018f278[8];
-                            //iVar5 = _gameEngine.StaticVariables.BYTE_ARRAY_8018f278[40];
-                            //
-                            //do
-                            //{
-                            //    pbVar1 = FUN_800818e4(pbVar4);
-                            //    *puVar2 = pbVar1;
-                            //    *piVar6 = iVar5;
-                            //    piVar6 += 2;
-                            //    iVar5 += 0x76c;
-                            //    puVar2 += 2;
-                            //    fadeCounter += 1;
-                            //    pbVar4 += 0x76c;
-                            //} while (fadeCounter < 4);
-
-                            _gameEngine.StaticVariables.DAT_8018ed88 = 0;
-                            _gameEngine.StaticVariables.DAT_8018ed8c = 0;
-                            _gameEngine.StaticVariables.PTR_8018ede8 = _gameEngine.EtcRes.GetEtcString(0x83);
-                            _gameEngine.StaticVariables.PTR_8018edec = _gameEngine.EtcRes.GetEtcString(0x84);
-                            FUN_80058ab4(_gameEngine.StaticVariables.PTR_8018ed68, _gameEngine.StaticVariables.PTR_8018ed6c, ref _gameEngine.StaticVariables.g_memoryCardPayloadOffset);
-                            _gameEngine.StaticVariables.g_fadeFrame = 0;
-                            _gameEngine.StaticVariables.g_globalTransitionState = 0x3f8;
-                            return;
-                        }
-
-                        _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                        FUN_8005dc04(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.INT_ARRAY_80191088, _gameEngine.StaticVariables.INT_ARRAY_80191080);
-
-                        if (_gameEngine.StaticVariables.INT_ARRAY_80191088[_gameEngine.StaticVariables.g_memorySlotId] != 0)
-                        {
-                            if (_gameEngine.StaticVariables.INT_ARRAY_80191088[_gameEngine.StaticVariables.g_memorySlotId] != 3)
-                            {
-                                _gameEngine.StaticVariables.g_globalTransitionState = 0x3f9;
-                                return;
-                            }
-
-                            _gameEngine.StaticVariables.g_globalTransitionState = 0x3fb;
-                            return;
-                        }
-
-                        FUN_8005e3e4(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle, _gameEngine.StaticVariables.g_memoryCardFileIndex, _gameEngine.StaticVariables.PTR_8018ed68);
-                        _gameEngine.StaticVariables.PTR_8018ede8 = _gameEngine.EtcRes.GetEtcString(0x85);
-                        _gameEngine.StaticVariables.PTR_8018edec = _gameEngine.EtcRes.GetEtcString(0x86);
-                        FUN_80058ab4(_gameEngine.StaticVariables.PTR_8018ed68, _gameEngine.StaticVariables.PTR_8018ed6c, ref _gameEngine.StaticVariables.g_memoryCardPayloadOffset);
-                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3f7;
-                        return;
-                    }
-
-                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                    FUN_8005dc04(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.INT_ARRAY_80191088, _gameEngine.StaticVariables.INT_ARRAY_80191080);
-                    iVar5 = _gameEngine.StaticVariables.INT_ARRAY_80191088[_gameEngine.StaticVariables.g_memorySlotId];
-
-                    if (iVar5 == 0)
-                    {
-                        //puVar3 = &_gameEngine.StaticVariables.g_gameTitle;
-                        //FindSaveFileInMemoryCard(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle, ref _gameEngine.StaticVariables.g_memoryCardFileIndex);
-                        //iVar5 = 0;
-                        //
-                        //if (0 < _gameEngine.StaticVariables.g_memoryCardFileIndex)
-                        //{
-                        //    do
-                        //    {
-                        //        iVar5 += 1;
-                        //        fadeCounter += (puVar3 + 0x18);
-                        //        puVar3 += 0x28;
-                        //    } while (iVar5 < _gameEngine.StaticVariables.g_memoryCardFileIndex);
-                        //}
-
-                        Debugger.Break();
-                        fadeCounter = 0x1c000;
-
-                        if (0x1c000 < fadeCounter)
-                        {
-                            arg1 = _gameEngine.EtcRes.GetEtcString(0x97);
-                            arg2 = _gameEngine.EtcRes.GetEtcString(0x98);
-                            TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
-                            _gameEngine.StaticVariables.g_globalTransitionState = 0x3f2;
-                            return;
-                        }
-
-                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3ff;
-                    }
-
-                    //goto LAB_8005fe34;
-                    if (iVar5 == 3)
-                    {
-                        //goto LAB_80060640
-                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3fb;
-                        return;
-                    }
-                }
-
-                if (_gameEngine.StaticVariables.g_globalTransitionState != 3)
-                {
-                    if (3 < _gameEngine.StaticVariables.g_globalTransitionState)
-                    {
-                        if (_gameEngine.StaticVariables.g_globalTransitionState == 4)
-                        {
-                            _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                            FUN_80060b1c();
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_globalTransitionState == 5)
-                        {
-                            _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                            var uStack_24 = new int[2];
-                            FUN_8005dc04(_gameEngine.StaticVariables.g_memorySlotId, local_28, uStack_24);
-
-                            if (1 < local_28[_gameEngine.StaticVariables.g_memorySlotId] - 1U)
-                            {
-                                arg1 = _gameEngine.EtcRes.GetEtcString(0x8f);
-                                arg2 = _gameEngine.EtcRes.GetEtcString(0x90);
-                                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
-                                _gameEngine.StaticVariables.g_asyncOperationResult = 2;
-                                arg1 = _gameEngine.EtcRes.GetEtcString(0x81);
-                                arg2 = _gameEngine.EtcRes.GetEtcString(0x82);
-                                _gameEngine.StartAsyncOperation(arg1, arg2, result => _gameEngine.StaticVariables.g_asyncOperationResult = result);
-                                _gameEngine.StaticVariables.g_globalTransitionState = 0x69;
-                                return;
-                            }
-
-                            _gameEngine.StaticVariables.g_globalTransitionState = 0x3eb;
-                        }
-                        return;
-                    }
-
-                    if (_gameEngine.StaticVariables.g_globalTransitionState == 1)
-                    {
-                        _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                        FUN_8005dc04(0, _gameEngine.StaticVariables.INT_ARRAY_80191088, _gameEngine.StaticVariables.INT_ARRAY_80191080);
-
-                        if (_gameEngine.StaticVariables.INT_ARRAY_80191088[0] != 0 && _gameEngine.StaticVariables.INT_ARRAY_80191088[0] != 3)
-                        {
-                            _gameEngine.StaticVariables.g_globalTransitionState = 0x3ea;
-                            return;
-                        }
-
-                        _gameEngine.StaticVariables.g_memorySlotId = 0;
-                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3ec;
-                        return;
-                    }
-
-                    if (_gameEngine.StaticVariables.g_globalTransitionState != 2)
-                    {
-                        return;
-                    }
-
-                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                    FUN_8005dc04(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.INT_ARRAY_80191088, _gameEngine.StaticVariables.INT_ARRAY_80191080);
-
-                    if (_gameEngine.StaticVariables.INT_ARRAY_80191088[1] != 0 && _gameEngine.StaticVariables.INT_ARRAY_80191088[1] != 3)
-                    {
-                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3eb;
-                        return;
-                    }
-
-                    _gameEngine.StaticVariables.g_memorySlotId = 1;
-                    _gameEngine.StaticVariables.g_globalTransitionState = 0x3fa;
-                    return;
-                }
-
-                _gameEngine.StaticVariables.g_fadeSubstate = 0;
-            }
-
-            _gameEngine.StaticVariables.g_globalTransitionState = 0x3f9;
-        }
-        else
-        {
-            if (_gameEngine.StaticVariables.g_globalTransitionState == 0x13)
-            {
-                _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                _gameEngine.StaticVariables.g_fadeFrame = 0;
-                arg1 = _gameEngine.EtcRes.GetEtcString(0xab);
-                fadeCounter = 0xac;
-                //LAB_800609c0:
-                arg2 = _gameEngine.EtcRes.GetEtcString(fadeCounter);
-                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
-                _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
-                return;
-            }
-
-            if (0x13 < _gameEngine.StaticVariables.g_globalTransitionState)
-            {
-                if (_gameEngine.StaticVariables.g_globalTransitionState == 0x16)
-                {
-                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                    _gameEngine.StaticVariables.g_fadeFrame = 0;
-                    arg1 = _gameEngine.EtcRes.GetEtcString(0xb1);
-                    fadeCounter = 0xb2;
-                }
-                else
-                {
-                    if (0x16 < _gameEngine.StaticVariables.g_globalTransitionState)
-                    {
-                        if (_gameEngine.StaticVariables.g_globalTransitionState == 99)
-                        {
-                            _gameEngine.StaticVariables.g_fadeFrame = 0;
-                            _gameEngine.StaticVariables.g_isMemoryCopyInProgress = 0;
-                            _gameEngine.StaticVariables.g_globalTransitionState = 0;
-                            _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                            _gameEngine.StaticVariables.g_playerControlFlags &= 0xfffffff7;
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_globalTransitionState < 100)
-                        {
-                            if (_gameEngine.StaticVariables.g_globalTransitionState == 0x17)
-                            {
-                                _gameEngine.StaticVariables.g_fadeFrame = 0;
-                                _gameEngine.StaticVariables.g_globalTransitionState = 0x3f3;
-                                _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                            }
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_globalTransitionState != 0x69)
-                        {
-                            return;
-                        }
-
-                        if (_gameEngine.StaticVariables.g_asyncOperationResult == 1)
-                        {
-                            _gameEngine.StaticVariables.g_globalTransitionState = 0x3ee;
-                            _gameEngine.StaticVariables.g_fadeFrame = 0;
-                        }
-                        else
-                        {
-                            if (_gameEngine.StaticVariables.g_asyncOperationResult < 2)
-                            {
-                                return;
-                            }
-
-                            if (_gameEngine.StaticVariables.g_asyncOperationResult != 2)
-                            {
-                                return;
-                            }
-
-                            _gameEngine.StaticVariables.g_globalTransitionState = 0x3ef;
-                            _gameEngine.StaticVariables.g_fadeFrame = 0;
-                        }
-
-                        //goto FADE_RESTART;
-                        _gameEngine.StaticVariables.g_asyncOperationResult = 0;
-                        ResetMemoryCardMenuState();
-                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                        return;
-                    }
-
-                    if (_gameEngine.StaticVariables.g_globalTransitionState != 0x14)
-                    {
-                        if (_gameEngine.StaticVariables.g_globalTransitionState == 0x15)
-                        {
-                            _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                            _gameEngine.StaticVariables.g_fadeFrame = 0;
-                            arg1 = _gameEngine.EtcRes.GetEtcString(0xaf);
-                            arg2 = _gameEngine.EtcRes.GetEtcString(0xb0);
-                            TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
-                            _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
-                        }
-                        return;
-                    }
-
-                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                    _gameEngine.StaticVariables.g_fadeFrame = 0;
-                    arg1 = _gameEngine.EtcRes.GetEtcString(0xad);
-                    fadeCounter = 0xae;
-                }
-
-                //goto LAB_800609c0;
-                arg2 = _gameEngine.EtcRes.GetEtcString(fadeCounter);
-                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
-                _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
-                return;
-            }
-
-            if (_gameEngine.StaticVariables.g_globalTransitionState != 0x10)
-            {
-                if (_gameEngine.StaticVariables.g_globalTransitionState < 0x11)
-                {
-                    if (_gameEngine.StaticVariables.g_globalTransitionState == 0xe)
-                    {
-                        _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                        _gameEngine.StaticVariables.g_fadeFrame = 0;
-                        _gameEngine.HudManager.InitializeHudPositionBeforeHide();
-                        _gameEngine.StaticVariables.g_globalTransitionState = 1099;
-                        return;
-                    }
-
-                    if (_gameEngine.StaticVariables.g_globalTransitionState != 0xf)
-                    {
-                        return;
-                    }
-
-                    if (_gameEngine.StaticVariables.g_fadeFrame < 0x13)
-                    {
-                        _gameEngine.StaticVariables.g_fadeFrame += 1;
-                        return;
-                    }
-
-                    if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xfffffffe)
-                    {
-                        _gameEngine.StaticVariables.g_fadeFrame = 0;
-                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3f6;
-                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                        return;
-                    }
-
-                    _gameEngine.StaticVariables.g_fadeFrame += 1;
-                    FUN_8005dc04(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.INT_ARRAY_80191088, _gameEngine.StaticVariables.INT_ARRAY_80191080);
-
-                    if (_gameEngine.StaticVariables.INT_ARRAY_80191088[_gameEngine.StaticVariables.g_memorySlotId] == 0)
-                    {
-                        DeleteMemoryCardFile(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle /*+ _gameEngine.StaticVariables.g_memoryCardPayloadOffset * 0x28*/);
-                        _gameEngine.StaticVariables.g_fadeFrame = 0;
-                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3ff;
-                        _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                        return;
-                    }
-
-                    if (_gameEngine.StaticVariables.INT_ARRAY_80191088[_gameEngine.StaticVariables.g_memorySlotId] != 3)
-                    {
-                        _gameEngine.StaticVariables.g_fadeFrame = 0;
-                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3f9;
-                        return;
-                    }
-
-                    _gameEngine.StaticVariables.g_fadeFrame = 0;
-                    _gameEngine.StaticVariables.g_globalTransitionState = 0x3fb;
-
-                    return;
-                }
-
-                if (_gameEngine.StaticVariables.g_globalTransitionState != 0x11)
-                {
-                    if (_gameEngine.StaticVariables.g_globalTransitionState == 0x12)
-                    {
-                        _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                        _gameEngine.StaticVariables.g_fadeFrame = 0;
-                        arg1 = _gameEngine.EtcRes.GetEtcString(0xa9);
-                        arg2 = _gameEngine.EtcRes.GetEtcString(0xaa);
-                        TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
-                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
-                    }
-
-                    return;
-                }
-
-                _gameEngine.StaticVariables.g_fadeSubstate = 0;
-                _gameEngine.StaticVariables.g_fadeFrame = 0;
-                arg1 = _gameEngine.EtcRes.GetEtcString(0xa7);
-                fadeCounter = 0xa8;
-                //goto LAB_800609c0;
-                arg2 = _gameEngine.EtcRes.GetEtcString(fadeCounter);
-                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
-                _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
-                return;
-            }
-
-            if (_gameEngine.StaticVariables.g_fadeFrame < 0x13)
-            {
-                _gameEngine.StaticVariables.g_fadeFrame += 1;
-                return;
-            }
-
-            if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xfffffffe)
-            {
-                _gameEngine.StaticVariables.g_fadeFrame = 0;
-                _gameEngine.StaticVariables.g_globalTransitionState = 0x3f6;
-                _gameEngine.StaticVariables.g_fadeSubstate = 1;
-                return;
-            }
-            _gameEngine.StaticVariables.g_fadeFrame += 1;
-
-            FUN_8005dc04(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.INT_ARRAY_80191088, _gameEngine.StaticVariables.INT_ARRAY_80191080);
-
-            if (_gameEngine.StaticVariables.INT_ARRAY_80191088[_gameEngine.StaticVariables.g_memorySlotId] == 0)
-            {
-                fadeCounter = BuildDataAndSaveInMemoryCardAndUpdateData(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle, _gameEngine.StaticVariables.g_memoryCardPayloadOffset);
-
-                if (fadeCounter == -1)
-                {
-                    _gameEngine.StaticVariables.g_globalTransitionState = 0x3fd;
-                    return;
-                }
-
-                _gameEngine.StaticVariables.g_fadeFrame = 0;
-                _gameEngine.StaticVariables.g_globalTransitionState = 0x3fe;
-                _gameEngine.StaticVariables.g_fadeSubstate = 0;
-
-                return;
-            }
-            _gameEngine.StaticVariables.g_fadeFrame = 0;
-
-            if (_gameEngine.StaticVariables.INT_ARRAY_80191088[_gameEngine.StaticVariables.g_memorySlotId] != 3)
-            {
-                _gameEngine.StaticVariables.g_fadeFrame = 0;
-                _gameEngine.StaticVariables.g_globalTransitionState = 0x3f9;
-                return;
-            }
-
-            //LAB_80060640:
-            _gameEngine.StaticVariables.g_globalTransitionState = 0x3fb;
-        }
-    }
-
     //8005e3e4
     private string FUN_8005e3e4(int slotId, string gameTitle, int memoryCardFileIndex, string data)
     {
         Debugger.Break();
         return "";
     }
-
 
     //80060e20
     private int BuildDataAndSaveInMemoryCard(int slotId, string gameTitle)
@@ -1357,7 +220,7 @@ public class MemoryCardManager
         if (_gameEngine.StaticVariables.INT_ARRAY_80191088[_gameEngine.StaticVariables.g_memorySlotId] == 0)
         {
             FindSaveFileInMemoryCard(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle, ref _gameEngine.StaticVariables.g_memoryCardFileIndex);
-            bVar1 = false;
+            bVar1 = true;
             i = 0;
 
             if (0 < _gameEngine.StaticVariables.g_memoryCardFileIndex)
@@ -1398,6 +261,8 @@ public class MemoryCardManager
     //8005dc94
     private void FindSaveFileInMemoryCard(int slotId, string gameTitle, ref int fileIndex)
     {
+        return;
+        //Debugger.Break();
         //string prefix = slotId == 0 ? "bu00:" : "bu10:";
         //string pattern = prefix + "*";
         //
@@ -1435,7 +300,7 @@ public class MemoryCardManager
         //FUN_8005ebec(); //TestEvent();
         //_new_card();
         //_card_read(memorySlotId, 0, buffer);
-        val = 3; //FUN_8005eaf8();
+        val = 0; //FUN_8005eaf8();
         result = 0xffffffff;
 
         if (val == 0)
@@ -1463,7 +328,7 @@ public class MemoryCardManager
         int uVar2;
 
         //_card_info();
-        iVar1 = 3; //FUN_8005ea5c();
+        iVar1 = 0; //FUN_8005ea5c();
         param_2[slotId] = iVar1;
         //FUN_8005eb94(); //TestEvent
 
@@ -1473,7 +338,7 @@ public class MemoryCardManager
         }
 
         //_card_load();
-        uVar2 = 3;//FUN_8005ea5c();
+        uVar2 = 0;//FUN_8005ea5c();
         param_3[slotId] = uVar2;
         //FUN_8005eb94(); //TestEvent
     }
@@ -1534,5 +399,1031 @@ public class MemoryCardManager
     {
         Debugger.Break();
         return 0;
+    }
+
+    private int StartMemoryCardProcess()
+    {
+        int result = 0;
+
+        /* locals nécessaires à quelques appels (écriture via pointeurs) */
+        int localStatus = 0;
+        int fadeCounter = 0;
+
+        switch (_gameEngine.StaticVariables.g_globalTransitionState)
+        {
+            /* ------------------------------------------------------------ */
+            /* 0x2710 / 0x2711 : entrée menu memory card + fade -> state 1   */
+            /* ------------------------------------------------------------ */
+
+            case 0x2710:
+                {
+                    _gameEngine.StaticVariables.g_isMemoryCopyInProgress = 1;
+                    _gameEngine.StaticVariables.g_fadeFrame = 0;
+                    _gameEngine.StaticVariables.g_playerControlFlags |= 0x8;
+
+                    string s0 = _gameEngine.EtcRes.GetEtcString(0x87);
+                    string s1 = _gameEngine.EtcRes.GetEtcString(0x88);
+                    TryOpenMemoryCardMenu(s0, s1, ref _gameEngine.StaticVariables.g_openMemoryCardState);
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x2711;
+                    return result;
+                }
+
+            case 0x2711:
+                {
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+                    _gameEngine.StaticVariables.g_globalTransitionState = 1;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 1 / 2 : sélection slot / lecture de résultat INT_ARRAY_*      */
+            /* ------------------------------------------------------------ */
+
+            case 1:
+                {
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                    FUN_8005dc04(0, _gameEngine.StaticVariables.INT_ARRAY_80191088, _gameEngine.StaticVariables.INT_ARRAY_80191080);
+
+                    localStatus = _gameEngine.StaticVariables.INT_ARRAY_80191088[0];
+                    if (localStatus == 0 || localStatus == 3)
+                    {
+                        _gameEngine.StaticVariables.g_memorySlotId = 0;
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3ec;
+                    }
+                    else
+                    {
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3ea;
+                    }
+                    return result;
+                }
+
+            case 0x3ea: /* trampoline -> 2 */
+                _gameEngine.StaticVariables.g_globalTransitionState = 2;
+                return result;
+
+            case 2:
+                {
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                    FUN_8005dc04(1, _gameEngine.StaticVariables.INT_ARRAY_80191088, _gameEngine.StaticVariables.INT_ARRAY_80191080);
+
+                    localStatus = _gameEngine.StaticVariables.INT_ARRAY_80191088[1];
+                    if (localStatus == 0 || localStatus == 3)
+                    {
+                        _gameEngine.StaticVariables.g_memorySlotId = 1;
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3fa;
+                    }
+                    else
+                    {
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3eb;
+                    }
+                    return result;
+                }
+
+            case 0x3eb: /* trampoline -> 3 */
+                _gameEngine.StaticVariables.g_globalTransitionState = 3;
+                return result;
+
+            case 3:
+                _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                _gameEngine.StaticVariables.g_globalTransitionState = 0x3f9;
+                return result;
+
+            case 0x3ec: /* trampoline -> 4 */
+                _gameEngine.StaticVariables.g_globalTransitionState = 4;
+                return result;
+
+            case 4:
+                _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                FUN_80060b1c();
+                return result;
+
+            /* ------------------------------------------------------------ */
+            /* 0x3ed -> fade -> state 5                                      */
+            /* ------------------------------------------------------------ */
+
+            case 0x3ed:
+                {
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
+                    {
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 5;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 5 : FUN_8005dc04(slot) puis StartAsyncOperation -> state 0x69 */
+            /* ------------------------------------------------------------ */
+
+            case 5:
+                {
+                    /* Ghidra: a1=sp+0x10 (local_28), a2=sp+0x14 ; on modélise 2 sorties */
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                    var tmpA = new int[2];
+                    var tmpB = new int[2];
+                    FUN_8005dc04(_gameEngine.StaticVariables.g_memorySlotId, tmpA, tmpB);
+
+                    /* check: (tmpA - 1) < 2  <=> tmpA == 1 || tmpA == 2 */
+                    if ((tmpA[0] - 1) >= 2u)
+                    {
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3eb;
+                        return result;
+                    }
+
+                    {
+                        string line1 = _gameEngine.EtcRes.GetEtcString(0x8F);
+                        string line2 = _gameEngine.EtcRes.GetEtcString(0x90);
+                        TryOpenMemoryCardMenu(line1, line2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
+                    }
+
+                    _gameEngine.StaticVariables.g_asyncOperationResult = 2;
+
+                    {
+                        string arg1 = _gameEngine.EtcRes.GetEtcString(0x81);
+                        string arg2 = _gameEngine.EtcRes.GetEtcString(0x82);
+                        _gameEngine.StartAsyncOperation(arg1, arg2, result => _gameEngine.StaticVariables.g_asyncOperationResult = result);
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x69;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x69 : poll async result -> state 0x3ee / 0x3ef + FADE_RESTART */
+            /* ------------------------------------------------------------ */
+
+            case 0x69:
+                {
+                    int r = _gameEngine.StaticVariables.g_asyncOperationResult;
+
+                    if (r == 1)
+                    {
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3ee;
+                        _gameEngine.StaticVariables.g_asyncOperationResult = 0;
+                        _gameEngine.StaticVariables.g_fadeFrame = 0;
+
+                        /* FADE_RESTART */
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                        return result;
+                    }
+
+                    if (r == 2)
+                    {
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3ef;
+                        _gameEngine.StaticVariables.g_asyncOperationResult = 0;
+                        _gameEngine.StaticVariables.g_fadeFrame = 0;
+
+                        /* FADE_RESTART */
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                        return result;
+                    }
+
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x3ee : sous-états + fade -> state 6                          */
+            /* ------------------------------------------------------------ */
+
+            case 0x3ee:
+                {
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 1)
+                    {
+                        if (AdvanceFadeOldCheck(0x1c))
+                        {
+                            _gameEngine.StaticVariables.g_fadeSubstate = 2;
+                        }
+                    }
+
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 2)
+                    {
+                        string line1 = _gameEngine.EtcRes.GetEtcString(0x91);
+                        string line2 = _gameEngine.EtcRes.GetEtcString(0x92);
+                        TryOpenMemoryCardMenu(line1, line2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
+                        _gameEngine.StaticVariables.g_fadeSubstate = 3;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 3)
+                    {
+                        if (!AdvanceFadeOldCheck(0x13))
+                        {
+                            return result;
+                        }
+                        _gameEngine.StaticVariables.g_globalTransitionState = 6;
+                        return result;
+                    }
+
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 6 : check DAT_8019acc4[slot], FUN_8005df84 -> 0x3f3 ou 0x3fc   */
+            /* ------------------------------------------------------------ */
+
+            case 6:
+                {
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                    FUN_8005dc04(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.DAT_8019acc4, _gameEngine.StaticVariables.DAT_8019acbc);
+
+                    if (_gameEngine.StaticVariables.DAT_8019acc4[_gameEngine.StaticVariables.g_memorySlotId] != 0)
+                    {
+                        /* branche vers LAB_8005fe34 dans le dump (non-zéro) */
+                        _gameEngine.StaticVariables.g_globalTransitionState = 
+                            (_gameEngine.StaticVariables.DAT_8019acc4[_gameEngine.StaticVariables.g_memorySlotId] == 3) ? 0x3fb : 0x3f9;
+                        return result;
+                    }
+
+                    /* DAT_8019acc4[slot] == 0 */
+                    {
+                        FUN_8005df84(_gameEngine.StaticVariables.g_memorySlotId);
+                        int r = 0; //FUN_8005df84 if success then 0
+                        _gameEngine.StaticVariables.g_fadeFrame = 0;
+                        _gameEngine.StaticVariables.g_globalTransitionState = (r == 1) ? 0x3f3 : 0x3fc;
+                        return result;
+                    }
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x3ef : input(0x80) + fade -> state 7                         */
+            /* ------------------------------------------------------------ */
+
+            case 0x3ef:
+                {
+                    if (_gameEngine.StaticVariables.g_openMemoryCardState == 0x3e8)
+                    {
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressed & 0x80) != 0)
+                    {
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
+                    {
+                        return result;
+                    }
+
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 7;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 7 : menu + InitializeAsyncOperation -> state 0x6b             */
+            /* ------------------------------------------------------------ */
+
+            case 7:
+                {
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+
+                    {
+                        string line1 = _gameEngine.EtcRes.GetEtcString(0x93);
+                        string line2 = _gameEngine.EtcRes.GetEtcString(0x94);
+                        TryOpenMemoryCardMenu(line1, line2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
+                    }
+
+                    {
+                        string a0 = _gameEngine.EtcRes.GetEtcString(0x81);
+                        string a1 = _gameEngine.EtcRes.GetEtcString(0x82);
+                        _gameEngine.InitializeAsyncOperation(a0, a1, result => _gameEngine.StaticVariables.g_asyncOperationResult = result);
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x6b;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x6b : poll async -> state 0x3f5 ou 0x3ed + FADE_RESTART       */
+            /* ------------------------------------------------------------ */
+
+            case 0x6b:
+                {
+                    int r = _gameEngine.StaticVariables.g_asyncOperationResult;
+
+                    if (r == 1)
+                    {
+                        _gameEngine.StaticVariables.g_asyncOperationResult = 0;
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
+                        /* FADE_RESTART */
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                        return result;
+                    }
+
+                    if (r == 2)
+                    {
+                        _gameEngine.StaticVariables.g_asyncOperationResult = 0;
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3ed;
+                        /* FADE_RESTART */
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                        return result;
+                    }
+
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 8 / 0x3f0                                                    */
+            /* ------------------------------------------------------------ */
+
+            case 0x3f0: /* trampoline -> 8 */
+                _gameEngine.StaticVariables.g_globalTransitionState = 8;
+                return result;
+
+            case 8:
+                _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                FUN_80060bd0();
+                return result;
+
+            /* ------------------------------------------------------------ */
+            /* 0x3f1 : reset menu + fade -> state 9                          */
+            /* ------------------------------------------------------------ */
+
+            case 0x3f1:
+                {
+                    if (_gameEngine.StaticVariables.g_openMemoryCardState == 0x3e8)
+                    {
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    ResetMemoryCardMenuState();
+                    _gameEngine.StaticVariables.g_fadeSubstate = 1;
+
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 9;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 9 : FUN_8005dc04 + FindSaveFileInMemoryCard + somme -> 0x3ff / 0x3f2
+             *     sinon si DAT_8019acc4 != 0 -> 0x3fb/0x3f9
+             * ------------------------------------------------------------ */
+            case 9:
+                {
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+
+                    FUN_8005dc04(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.DAT_8019acc4, _gameEngine.StaticVariables.DAT_8019acbc);
+
+                    if (_gameEngine.StaticVariables.DAT_8019acc4[_gameEngine.StaticVariables.g_memorySlotId] != 0)
+                    {
+                        _gameEngine.StaticVariables.g_globalTransitionState = (_gameEngine.StaticVariables.DAT_8019acc4[_gameEngine.StaticVariables.g_memorySlotId] == 3) ? 0x3fb : 0x3f9;
+                        return result;
+                    }
+
+                    /* DAT_8019acc4 == 0 -> recherche et somme */
+                    FindSaveFileInMemoryCard(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle, ref _gameEngine.StaticVariables.g_memoryCardFileIndex);
+
+                    fadeCounter = 0;
+
+                    if (_gameEngine.StaticVariables.g_memoryCardFileIndex > 0)
+                    {
+                        /* dans le dump: boucle somme sur un tableau d'entrées (stride 0x28, add 0x18) */
+                        /* Ici on laisse en placeholder : tu peux recâbler sur ta structure de directory. */
+                        /* TODO: remplacer par itération réelle sur tes entrées MC. */
+                    }
+
+                    /* compare avec 0x1C0000 (lui 1; ori C000) */
+                    if (fadeCounter <= (int)0x001C0000)
+                    {
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3ff;
+                        return result;
+                    }
+
+                    {
+                        string line1 = _gameEngine.EtcRes.GetEtcString(0x97);
+                        string line2 = _gameEngine.EtcRes.GetEtcString(0x98);
+                        TryOpenMemoryCardMenu(line1, line2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x3f2;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x3f2 : input(0x20) + fade -> state 0x0A                      */
+            /* ------------------------------------------------------------ */
+
+            case 0x3f2:
+                {
+                    if (_gameEngine.StaticVariables.g_openMemoryCardState == 0x3e8)
+                    {
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressed & 0x20) != 0)
+                    {
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
+                    {
+                        return result;
+                    }
+
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x0A;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x0A : bloc LAB_8005fecc (création/prepare payload) -> 0x3f7   */
+            /* ------------------------------------------------------------ */
+
+            case 0x0A:
+                {
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+
+                    FUN_8005dc04(_gameEngine.StaticVariables.g_memorySlotId,
+                                 _gameEngine.StaticVariables.DAT_8019acc4,
+                                 _gameEngine.StaticVariables.DAT_8019acbc);
+
+                    if (_gameEngine.StaticVariables.DAT_8019acc4[_gameEngine.StaticVariables.g_memorySlotId] != 0)
+                    {
+                        _gameEngine.StaticVariables.g_globalTransitionState = 
+                            (_gameEngine.StaticVariables.DAT_8019acc4[_gameEngine.StaticVariables.g_memorySlotId] == 3) ? 0x3fb : 0x3f9;
+                        return result;
+                    }
+
+                    /* DAT_8019acc4 == 0 : appels FUN_8005e3e4 + FUN_80058ab4 dans le dump */
+                    /* TODO: recâbler précisément si tu as les types exacts */
+                    {
+                        /* dans le dump: FUN_8005e3e4(..., _gameEngine.StaticVariables.g_memoryCardFileIndex, PTR_8018ed68) renvoie un ptr (v0) */
+                        /* on omet ici faute de prototype exact, mais on reproduit l’idée: prépare des pointeurs + payloadOffset */
+                        var arg1 = _gameEngine.EtcRes.GetEtcString(0x85);
+                        var arg2 = _gameEngine.EtcRes.GetEtcString(0x86);
+
+                        /* FUN_80058ab4(PTR_8018ed68, PTR_8018ede8, &_gameEngine.StaticVariables.g_memoryCardPayloadOffset) */
+                        /* NB: le dump stocke aussi un champ à +4, etc. */
+                        FUN_80058ab4(arg1, arg2, ref _gameEngine.StaticVariables.g_memoryCardPayloadOffset);
+
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3f7;
+                        return result;
+                    }
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x3f7 : check payloadOffset (-1/-2) + menu -> state 0x0F      */
+            /* ------------------------------------------------------------ */
+
+            case 0x3f7:
+                {
+                    if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset == 0xFFFFFFFF)
+                    {
+                        return result;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset == 0xFFFFFFFE)
+                    {
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x0F;
+                        _gameEngine.StaticVariables.g_fadeFrame = 0;
+                        return result;
+                    }
+
+                    {
+                        string line1 = _gameEngine.EtcRes.GetEtcString(0xA3);
+                        string line2 = _gameEngine.EtcRes.GetEtcString(0xA4);
+                        TryOpenMemoryCardMenu(line1, line2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x0F;
+                    _gameEngine.StaticVariables.g_fadeFrame = 0;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x0F : fade -> (delete file?) -> 0x3ff / 0x3fb / 0x3f9 / 0x3f6 */
+            /* ------------------------------------------------------------ */
+
+            case 0x0F:
+                {
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset == 0xFFFFFFFE)
+                    {
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                        _gameEngine.StaticVariables.g_fadeFrame = 0;
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3f6;
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                    FUN_8005dc04(_gameEngine.StaticVariables.g_memorySlotId,
+                        _gameEngine.StaticVariables.DAT_8019acc4,
+                                 _gameEngine.StaticVariables.DAT_8019acbc);
+
+                    if (_gameEngine.StaticVariables.DAT_8019acc4[_gameEngine.StaticVariables.g_memorySlotId] == 0)
+                    {
+                        /* delete file correspondant à payloadOffset */
+                        /* dans le dump: index = payloadOffset; calc: (idx*4 + idx) * 8 = idx*40 ; + base */
+                        /* TODO: remplacer la base/structure réelle (ici placeholder) */
+                        DeleteMemoryCardFile(_gameEngine.StaticVariables.g_memorySlotId, null);
+
+                        _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                        _gameEngine.StaticVariables.g_fadeFrame = 0;
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3ff;
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = (_gameEngine.StaticVariables.DAT_8019acc4[_gameEngine.StaticVariables.g_memorySlotId] == 3) ? 0x3fb : 0x3f9;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x3f3 : séquence en 3 sous-états puis fade -> state 0x0B      */
+            /* ------------------------------------------------------------ */
+
+            case 0x3f3:
+                {
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
+                    {
+                        FUN_8005dc04(_gameEngine.StaticVariables.g_memorySlotId,
+                                     _gameEngine.StaticVariables.DAT_8019acc4,
+                                     _gameEngine.StaticVariables.DAT_8019acbc);
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 1)
+                    {
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 2;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 2)
+                    {
+                        if (!AdvanceFadeOldCheck(0x13))
+                        {
+                            return result;
+                        }
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x0B;
+                        return result;
+                    }
+
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x0B : check DAT_8019acc4[slot]; si 0 -> FUN_80060e20 ; -> 0x3f4
+             *      sinon -> 0x3fb/0x3f9
+             * ------------------------------------------------------------ */
+            case 0x0B:
+                {
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+
+                    if (_gameEngine.StaticVariables.DAT_8019acc4[_gameEngine.StaticVariables.g_memorySlotId] == 0)
+                    {
+                        int r = BuildDataAndSaveInMemoryCard(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle);
+                        if (r == -1)
+                        {
+                            _gameEngine.StaticVariables.g_globalTransitionState = 0x3fd;
+                            return result;
+                        }
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3f4;
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = (_gameEngine.StaticVariables.DAT_8019acc4[_gameEngine.StaticVariables.g_memorySlotId] == 3) ? 0x3fb : 0x3f9;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x3f4 : SaveInMemoryCard + reset + fade -> state 0x0C         */
+            /* ------------------------------------------------------------ */
+
+            case 0x3f4:
+                {
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
+                    {
+                        SaveInMemoryCard(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle, _gameEngine.StaticVariables.g_memoryCardDataBlob);
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x0C;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x0C : gros bloc build payload + loop(4) + FUN_80058ab4 -> 0x3f8 */
+            /* ------------------------------------------------------------ */
+
+            case 0x0C:
+                {
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+
+                    /* loop 4 fois (strides 0x76C) – on reproduit le schéma */
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Debugger.Break();
+                        //var src = _gameEngine.StaticVariables.g_memoryCardDataBlob.SavePayload[8 + (i * 0x76c)];
+                        //var resOut = FUN_800818e4(src);
+                        //
+                        ///* dump: écrit 2 pointeurs par entrée dans une table (PTR_8018ed68) */
+                        ///* TODO: remapper PTR_8018ed68 à ta vraie table [4][2] */
+                        //resOut;
+                    }
+
+                    _gameEngine.StaticVariables.INT_8018ed88 = 0;
+                    _gameEngine.StaticVariables.INT_8018ed8c = 0;
+
+                    var arg1 = _gameEngine.EtcRes.GetEtcString(0x83);
+                    var arg2 = _gameEngine.EtcRes.GetEtcString(0x84);
+
+                    FUN_80058ab4(arg1, arg2, ref _gameEngine.StaticVariables.g_memoryCardPayloadOffset);
+
+                    _gameEngine.StaticVariables.g_fadeFrame = 0;
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x3f8;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x3f8 : check payloadOffset (-1/-2) + fade + menu -> state 0x10 */
+            /* ------------------------------------------------------------ */
+
+            case 0x3f8:
+                {
+                    if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset == 0xFFFFFFFF)
+                    {
+                        return result;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset == 0xFFFFFFFE)
+                    {
+                        if (!AdvanceFadeOldCheck(0x13))
+                        {
+                            return result;
+                        }
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x10;
+                        return result;
+                    }
+
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+
+                    {
+                        string line1 = _gameEngine.EtcRes.GetEtcString(0xA5);
+                        string line2 = _gameEngine.EtcRes.GetEtcString(0xA6);
+                        TryOpenMemoryCardMenu(line1, line2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x10;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x10 : fade -> FUN_8005dc04 + save/update -> 0x3fe / 0x3fd / 0x3f6 ... */
+            /* ------------------------------------------------------------ */
+
+            case 0x10:
+                {
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset == 0xFFFFFFFE)
+                    {
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                        _gameEngine.StaticVariables.g_fadeFrame = 0;
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3f6;
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                    FUN_8005dc04(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.DAT_8019acc4, _gameEngine.StaticVariables.DAT_8019acbc);
+
+                    if (_gameEngine.StaticVariables.DAT_8019acc4[_gameEngine.StaticVariables.g_memorySlotId] == 0)
+                    {
+                        var r = BuildDataAndSaveInMemoryCardAndUpdateData(_gameEngine.StaticVariables.g_memorySlotId,
+                            _gameEngine.StaticVariables.g_gameTitle, _gameEngine.StaticVariables.g_memoryCardPayloadOffset);
+
+                        if ((int)r == -1)
+                        {
+                            _gameEngine.StaticVariables.g_globalTransitionState = 0x3fd;
+                            return result;
+                        }
+
+                        _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                        _gameEngine.StaticVariables.g_fadeFrame = 0;
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3fe;
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = (_gameEngine.StaticVariables.DAT_8019acc4[_gameEngine.StaticVariables.g_memorySlotId] == 3) ? 0x3fb : 0x3f9;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x3f6 : fade -> state 0x0E                                    */
+            /* ------------------------------------------------------------ */
+
+            case 0x3f6:
+                {
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
+                    {
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x0E;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x0E : init HUD hide + state 0x44B                            */
+            /* ------------------------------------------------------------ */
+
+            case 0x0E:
+                _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                _gameEngine.StaticVariables.g_fadeFrame = 0;
+                _gameEngine.HudManager.InitializeHudPositionBeforeHide();
+                _gameEngine.StaticVariables.g_globalTransitionState = 0x44B;
+                return result;
+
+            /* ------------------------------------------------------------ */
+            /* 0x44B : reset menu once + fade (limit 0x0B) -> state 0x63     */
+            /* ------------------------------------------------------------ */
+
+            case 0x44B:
+                {
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
+                    {
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    if (!AdvanceFadeOldCheck(0x0B))
+                    {
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x63;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x63 : fin : clear flags + state=0                            */
+            /* ------------------------------------------------------------ */
+
+            case 0x63:
+                _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                _gameEngine.StaticVariables.g_fadeFrame = 0;
+                _gameEngine.StaticVariables.g_isMemoryCopyInProgress = 0;
+                _gameEngine.StaticVariables.g_globalTransitionState = 0;
+                _gameEngine.StaticVariables.g_playerControlFlags = (uint)(_gameEngine.StaticVariables.g_playerControlFlags & ~0x8);
+                return result;
+
+            /* ------------------------------------------------------------ */
+            /* 0x3f5 : input(0x80) + fade -> state 0x0D                      */
+            /* ------------------------------------------------------------ */
+
+            case 0x3f5:
+                {
+                    if (_gameEngine.StaticVariables.g_openMemoryCardState == 0x3e8)
+                    {
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressed & 0x80) != 0)
+                    {
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
+                    {
+                        return result;
+                    }
+
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x0D;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x0D : menu strings 0x9F/0xA0 -> state 0x3f6                  */
+            /* ------------------------------------------------------------ */
+
+            case 0x0D:
+                {
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                    _gameEngine.StaticVariables.g_fadeFrame = 0;
+
+                    {
+                        string line1 = _gameEngine.EtcRes.GetEtcString(0x9F);
+                        string line2 = _gameEngine.EtcRes.GetEtcString(0xA0);
+                        TryOpenMemoryCardMenu(line1, line2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x3f6;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x3f9 : reset menu once + fade -> si payloadOffset != -1 -> state 0x11 */
+            /* ------------------------------------------------------------ */
+
+            case 0x3f9:
+                {
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
+                    {
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset == 0xFFFFFFFF)
+                    {
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x11;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x3fa : reset menu once + fade -> si payloadOffset != -1 -> state 0x12 */
+            /* ------------------------------------------------------------ */
+
+            case 0x3fa:
+                {
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
+                    {
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset == 0xFFFFFFFF)
+                    {
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x12;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x12 : menu 0xAA + 0x?? -> state 0x3f5 (selon dump)           */
+            /* ------------------------------------------------------------ */
+
+            case 0x12:
+                {
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                    _gameEngine.StaticVariables.g_fadeFrame = 0;
+
+                    {
+                        string line1 = _gameEngine.EtcRes.GetEtcString(0xAA);
+                        string line2 = _gameEngine.EtcRes.GetEtcString(0xAA); /* placeholder: dans dump c’est AA puis (après) */
+                        TryOpenMemoryCardMenu(line1, line2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x3fb : reset menu once + fade -> si payloadOffset != -1 -> state 0x13 */
+            /* ------------------------------------------------------------ */
+
+            case 0x3fb:
+                {
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
+                    {
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset == 0xFFFFFFFF)
+                    {
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x13;
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x13 : menu 0xAB/0xAC puis jump vers LAB_800609c0 (non fourni) */
+            /* ------------------------------------------------------------ */
+
+            case 0x13:
+                {
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                    _gameEngine.StaticVariables.g_fadeFrame = 0;
+
+                    {
+                        string line1 = _gameEngine.EtcRes.GetEtcString(0xAB);
+                        string line2 = _gameEngine.EtcRes.GetEtcString(0xAC);
+                        TryOpenMemoryCardMenu(line1, line2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
+                    }
+
+                    /* TODO: ton dump continue via LAB_800609c0 (non présent dans l’extrait). */
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            /* 0x3fc : début du bloc LAB_80060818 (dump tronqué chez toi)    */
+            /* ------------------------------------------------------------ */
+
+            case 0x3fc:
+                {
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
+                    {
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    /* Ici ton extrait s’arrête au chargement de g_fadeFrame (LAB_80060840). */
+                    /* TODO: compléter avec la suite du dump (après 80060840). */
+                    return result;
+                }
+
+            /* ------------------------------------------------------------ */
+            default:
+                return result;
+        }
+    }
+
+    private bool AdvanceFadeOldCheck(int limitInclusiveOld)
+    {
+        int old = _gameEngine.StaticVariables.g_fadeFrame;
+        _gameEngine.StaticVariables.g_fadeFrame = old + 1;
+
+        if (old < limitInclusiveOld)
+        {
+            return false; // pas fini
+        }
+
+        _gameEngine.StaticVariables.g_fadeFrame = 0;
+
+        return true; // fini
+    }
+
+    //800583ec
+    //Display all memory card files
+    public void FUN_800583ec(CallBackInfo callBackInfo)
+    {
+        Debugger.Break();
     }
 }

@@ -1345,6 +1345,7 @@ namespace AlundraTools.GameControls
             // 
             // buttonAlundraCabine
             // 
+            buttonAlundraCabine.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             buttonAlundraCabine.Location = new Point(322, 684);
             buttonAlundraCabine.Name = "buttonAlundraCabine";
             buttonAlundraCabine.Size = new Size(142, 23);
@@ -1366,8 +1367,8 @@ namespace AlundraTools.GameControls
             // 
             // panelFlags
             // 
+            panelFlags.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             panelFlags.AutoScroll = true;
-            panelFlags.Dock = DockStyle.Fill;
             panelFlags.Location = new Point(3, 19);
             panelFlags.Name = "panelFlags";
             panelFlags.Size = new Size(484, 258);
@@ -1696,6 +1697,7 @@ namespace AlundraTools.GameControls
             // 
             // comboBoxSpawnItemId
             // 
+            comboBoxSpawnItemId.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             comboBoxSpawnItemId.FormattingEnabled = true;
             comboBoxSpawnItemId.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86" });
             comboBoxSpawnItemId.Location = new Point(126, 695);
@@ -1706,6 +1708,7 @@ namespace AlundraTools.GameControls
             // 
             // buttonSpawnItem
             // 
+            buttonSpawnItem.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             buttonSpawnItem.Location = new Point(3, 694);
             buttonSpawnItem.Margin = new Padding(3, 2, 3, 2);
             buttonSpawnItem.Name = "buttonSpawnItem";
@@ -1717,6 +1720,7 @@ namespace AlundraTools.GameControls
             // 
             // label30
             // 
+            label30.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             label30.AutoSize = true;
             label30.Location = new Point(3, 671);
             label30.Name = "label30";
@@ -1726,6 +1730,7 @@ namespace AlundraTools.GameControls
             // 
             // comboBoxRandomItem
             // 
+            comboBoxRandomItem.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             comboBoxRandomItem.FormattingEnabled = true;
             comboBoxRandomItem.Items.AddRange(new object[] { "36", "37", "41", "69", "70", "71", "72", "79", "80", "81", "82", "83", "84", "85", "86" });
             comboBoxRandomItem.Location = new Point(126, 669);
