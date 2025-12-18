@@ -4944,7 +4944,7 @@ public class StaticVariables
     public UIBoxConfiguration g_UiBoxesInventoryMoneyFalconKeyIcons;
     public byte PTR_GetCurrentTile_Zone1_800b9e68; // 800B9E68
     //800b9ec8
-    public readonly int[] UINT_ARRAY_800b9ec8 =
+    public readonly int[] g_ItemIdBySlotIndex =
     [
         -1, -1, -1, -1, -1, 7, 
         0x24, 0x29, 0x25, 0x26, 0x27, -1,
@@ -5099,7 +5099,7 @@ public class StaticVariables
     public int g_fadeFrame; // 800C4978
     public int g_isMemoryCopyInProgress; // 800C497C
     public int g_globalTransitionState; // 800C4980
-    public int g_fadeControlValue; // 800C4984
+    public int g_openMemoryCardState; // 800C4984
     public int g_asyncOperationResult; // 800C4988
     public int g_fadeSubstate; // 800C498C
     public uint g_memoryCardPayloadOffset = 0x3E7; // 800C4990

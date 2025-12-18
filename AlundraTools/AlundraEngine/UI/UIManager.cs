@@ -550,7 +550,7 @@ public class UIManager
                 {
                     _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X = _gameEngine.StaticVariables.TextToDisplay_8017e620.originX;
                     _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y = _gameEngine.StaticVariables.TextToDisplay_8017e620.originY;
-                    _gameEngine.StaticVariables.DAT_8017e400 = -1; //0xffffffff;
+                    _gameEngine.StaticVariables.g_openMemoryCardState = -1;
                     FUN_80047cb0(callBackInfo);
                     return;
                 }
@@ -2591,9 +2591,6 @@ public class UIManager
                     sprite.y0 = y;
                     sprite.clut = (ushort)(8 - i); //_gameEngine.StaticVariables.g_clutTable[8 - i]
 
-                    //var bitmap = _gameEngine.Font3.GenerateFontBitmapFromSprite(sprite);
-                    //_gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
-
                     //SetSprt(spritePtr);
                     //SetSemiTrans(spritePtr, 0);
                     //SetShadeTex(spritePtr, 1);
@@ -2720,14 +2717,18 @@ public class UIManager
         _gameEngine.StaticVariables.g_memoryCardMenuState = 5;
 
         _gameEngine.UIManager.DisplayIconName(
-            _gameEngine.StaticVariables.SPRT_ARRAY_8017e410, DialogSaveGameSprites,
-            _gameEngine.StaticVariables.CHAR_ARRAY_8017e490, 0x40,
+            _gameEngine.StaticVariables.SPRT_ARRAY_8017e410, 
+            DialogSaveGameSprites,
+            _gameEngine.StaticVariables.CHAR_ARRAY_8017e490, 
+            0x40,
             (short)(_gameEngine.StaticVariables.g_activeTransitionCallback.Data.X + _gameEngine.StaticVariables.g_activeTransitionCallback.X),
             (short)(_gameEngine.StaticVariables.g_activeTransitionCallback.Data.Y + _gameEngine.StaticVariables.g_activeTransitionCallback.Y), 1);
 
         _gameEngine.UIManager.DisplayIconName(
-            _gameEngine.StaticVariables.SPRT_ARRAY_8017e438, DialogSaveGameSprites,
-            _gameEngine.StaticVariables.CHAR_ARRAY_8017e511, 0x40,
+            _gameEngine.StaticVariables.SPRT_ARRAY_8017e438, 
+            DialogSaveGameSprites,
+            _gameEngine.StaticVariables.CHAR_ARRAY_8017e511, 
+            0x40,
             (short)(_gameEngine.StaticVariables.g_activeTransitionCallback.Data.X + _gameEngine.StaticVariables.g_activeTransitionCallback.X),
             (short)(_gameEngine.StaticVariables.g_activeTransitionCallback.Data.Y + _gameEngine.StaticVariables.g_activeTransitionCallback.Y + 0x10), 2);
 

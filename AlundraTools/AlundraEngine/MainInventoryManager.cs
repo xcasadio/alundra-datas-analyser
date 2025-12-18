@@ -931,7 +931,7 @@ public class MainInventoryManager
         int uVar1;
         int iVar2;
 
-        var itemId = _gameEngine.StaticVariables.UINT_ARRAY_800b9ec8[_gameEngine.StaticVariables.g_inventorySelectedSlotId];
+        var itemId = _gameEngine.StaticVariables.g_ItemIdBySlotIndex[_gameEngine.StaticVariables.g_inventorySelectedSlotId];
 
         if (itemId == 0)
         {
@@ -1381,7 +1381,7 @@ public class MainInventoryManager
 
             do
             {
-                var itemId = _gameEngine.StaticVariables.UINT_ARRAY_800b9ec8[offset];
+                var itemId = _gameEngine.StaticVariables.g_ItemIdBySlotIndex[offset];
 
                 if (itemId != 0)
                 {
@@ -1803,10 +1803,10 @@ public class MainInventoryManager
                 break;
 
             case 5:
-                iVar1 = (uint)_gameEngine.PlayerManager.GetNumberOfItem((int)_gameEngine.StaticVariables.UINT_ARRAY_800b9ec8[_gameEngine.StaticVariables.g_inventorySelectedSlotId]);
+                iVar1 = (uint)_gameEngine.PlayerManager.GetNumberOfItem((int)_gameEngine.StaticVariables.g_ItemIdBySlotIndex[_gameEngine.StaticVariables.g_inventorySelectedSlotId]);
                 iVar2 = _gameEngine.PlayerManager.GetItemIdFromCurrentWeapon();
 
-                if (iVar2 == _gameEngine.StaticVariables.UINT_ARRAY_800b9ec8[_gameEngine.StaticVariables.g_inventorySelectedSlotId])
+                if (iVar2 == _gameEngine.StaticVariables.g_ItemIdBySlotIndex[_gameEngine.StaticVariables.g_inventorySelectedSlotId])
                 {
                     DisplayIconNames();
                     return;
@@ -1889,7 +1889,7 @@ public class MainInventoryManager
         uint currentItemId;
         int iVar2;
 
-        var slotId = _gameEngine.StaticVariables.UINT_ARRAY_800b9ec8[_gameEngine.StaticVariables.g_inventorySelectedSlotId];
+        var slotId = _gameEngine.StaticVariables.g_ItemIdBySlotIndex[_gameEngine.StaticVariables.g_inventorySelectedSlotId];
 
         if (slotId != 0)
         {
@@ -1935,7 +1935,7 @@ public class MainInventoryManager
                 }
 
                 currentItemId = _gameEngine.PlayerManager.SetItemIdFromCurrentItemId();
-                slotId = _gameEngine.StaticVariables.UINT_ARRAY_800b9ec8[_gameEngine.StaticVariables.g_inventorySelectedSlotId];
+                slotId = _gameEngine.StaticVariables.g_ItemIdBySlotIndex[_gameEngine.StaticVariables.g_inventorySelectedSlotId];
 
                 if (currentItemId == slotId)
                 {

@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.FileSystemGlobbing.Internal;
-using System.Diagnostics;
-using System.Security.Cryptography;
+﻿using System.Diagnostics;
 
 namespace AlundraEngine;
 
@@ -114,7 +112,7 @@ public class MemoryCardManager
             {
                 if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3ef)
                 {
-                    if (_gameEngine.StaticVariables.g_fadeControlValue == 1000)
+                    if (_gameEngine.StaticVariables.g_openMemoryCardState == 1000)
                     {
                         _gameEngine.StaticVariables.g_fadeSubstate = 1;
                     }
@@ -205,7 +203,7 @@ public class MemoryCardManager
                         {
                             arg1 = _gameEngine.EtcRes.GetEtcString(0x91);
                             arg2 = _gameEngine.EtcRes.GetEtcString(0x92);
-                            TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_fadeControlValue);
+                            TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
                             _gameEngine.StaticVariables.g_fadeSubstate = 3;
                         }
 
@@ -236,7 +234,7 @@ public class MemoryCardManager
 
                             if (_gameEngine.StaticVariables.g_globalTransitionState == 0x3f1)
                             {
-                                if (_gameEngine.StaticVariables.g_fadeControlValue == 1000)
+                                if (_gameEngine.StaticVariables.g_openMemoryCardState == 1000)
                                 {
                                     _gameEngine.StaticVariables.g_fadeSubstate = 1;
                                 }
@@ -307,7 +305,7 @@ public class MemoryCardManager
                             return;
                         }
 
-                        if (_gameEngine.StaticVariables.g_fadeControlValue == 1000)
+                        if (_gameEngine.StaticVariables.g_openMemoryCardState == 1000)
                         {
                             _gameEngine.StaticVariables.g_fadeSubstate = 1;
                         }
@@ -333,7 +331,7 @@ public class MemoryCardManager
                         return;
                     }
 
-                    if (_gameEngine.StaticVariables.g_fadeControlValue == 1000)
+                    if (_gameEngine.StaticVariables.g_openMemoryCardState == 1000)
                     {
                         _gameEngine.StaticVariables.g_fadeSubstate = 1;
                     }
@@ -399,7 +397,7 @@ public class MemoryCardManager
                                     _gameEngine.StaticVariables.g_fadeFrame = 0;
                                     arg1 = _gameEngine.EtcRes.GetEtcString(0xb3);
                                     arg2 = _gameEngine.EtcRes.GetEtcString(0xb4);
-                                    TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_fadeControlValue);
+                                    TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
                                     _gameEngine.StaticVariables.g_fadeSubstate = 2;
                                 }
                             }
@@ -435,7 +433,7 @@ public class MemoryCardManager
                                 _gameEngine.StaticVariables.g_playerControlFlags |= 8;
                                 arg1 = _gameEngine.EtcRes.GetEtcString(0x87);
                                 arg2 = _gameEngine.EtcRes.GetEtcString(0x88);
-                                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_fadeControlValue);
+                                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
                                 _gameEngine.StaticVariables.g_globalTransitionState = 0x2711;
                                 return;
                             }
@@ -596,7 +594,7 @@ public class MemoryCardManager
                                     _gameEngine.StaticVariables.g_globalTransitionState = 0xf;
                                     arg1 = _gameEngine.EtcRes.GetEtcString(0xa3);
                                     arg2 = _gameEngine.EtcRes.GetEtcString(0xa4);
-                                    TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_fadeControlValue);
+                                    TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
                                 }
                                 _gameEngine.StaticVariables.g_fadeFrame = 0;
                                 return;
@@ -631,7 +629,7 @@ public class MemoryCardManager
                             _gameEngine.StaticVariables.g_fadeFrame += 1;
                             arg1 = _gameEngine.EtcRes.GetEtcString(0xa5);
                             arg2 = _gameEngine.EtcRes.GetEtcString(0xa6);
-                            TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_fadeControlValue);
+                            TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
                             _gameEngine.StaticVariables.g_fadeFrame = 0;
                             _gameEngine.StaticVariables.g_globalTransitionState = 0x10;
                             return;
@@ -676,7 +674,7 @@ public class MemoryCardManager
             _gameEngine.StaticVariables.g_fadeFrame = 0;
             arg1 = _gameEngine.EtcRes.GetEtcString(0x9f);
             arg2 = _gameEngine.EtcRes.GetEtcString(0xa0);
-            TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_fadeControlValue);
+            TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
             _gameEngine.StaticVariables.g_globalTransitionState = 0x3f6;
             return;
         }
@@ -728,7 +726,7 @@ public class MemoryCardManager
                                 _gameEngine.StaticVariables.g_fadeSubstate = 0;
                                 arg1 = _gameEngine.EtcRes.GetEtcString(0x93);
                                 arg2 = _gameEngine.EtcRes.GetEtcString(0x94);
-                                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_fadeControlValue);
+                                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
                                 arg1 = _gameEngine.EtcRes.GetEtcString(0x81);
                                 arg2 = _gameEngine.EtcRes.GetEtcString(0x82);
                                 _gameEngine.InitializeAsyncOperation(arg1, arg2, result => _gameEngine.StaticVariables.g_asyncOperationResult = result);
@@ -857,7 +855,7 @@ public class MemoryCardManager
                         {
                             arg1 = _gameEngine.EtcRes.GetEtcString(0x97);
                             arg2 = _gameEngine.EtcRes.GetEtcString(0x98);
-                            TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_fadeControlValue);
+                            TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
                             _gameEngine.StaticVariables.g_globalTransitionState = 0x3f2;
                             return;
                         }
@@ -895,7 +893,7 @@ public class MemoryCardManager
                             {
                                 arg1 = _gameEngine.EtcRes.GetEtcString(0x8f);
                                 arg2 = _gameEngine.EtcRes.GetEtcString(0x90);
-                                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_fadeControlValue);
+                                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
                                 _gameEngine.StaticVariables.g_asyncOperationResult = 2;
                                 arg1 = _gameEngine.EtcRes.GetEtcString(0x81);
                                 arg2 = _gameEngine.EtcRes.GetEtcString(0x82);
@@ -959,7 +957,7 @@ public class MemoryCardManager
                 fadeCounter = 0xac;
                 //LAB_800609c0:
                 arg2 = _gameEngine.EtcRes.GetEtcString(fadeCounter);
-                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_fadeControlValue);
+                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
                 _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
                 return;
             }
@@ -1039,7 +1037,7 @@ public class MemoryCardManager
                             _gameEngine.StaticVariables.g_fadeFrame = 0;
                             arg1 = _gameEngine.EtcRes.GetEtcString(0xaf);
                             arg2 = _gameEngine.EtcRes.GetEtcString(0xb0);
-                            TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_fadeControlValue);
+                            TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
                             _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
                         }
                         return;
@@ -1053,7 +1051,7 @@ public class MemoryCardManager
 
                 //goto LAB_800609c0;
                 arg2 = _gameEngine.EtcRes.GetEtcString(fadeCounter);
-                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_fadeControlValue);
+                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
                 _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
                 return;
             }
@@ -1123,7 +1121,7 @@ public class MemoryCardManager
                         _gameEngine.StaticVariables.g_fadeFrame = 0;
                         arg1 = _gameEngine.EtcRes.GetEtcString(0xa9);
                         arg2 = _gameEngine.EtcRes.GetEtcString(0xaa);
-                        TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_fadeControlValue);
+                        TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
                         _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
                     }
 
@@ -1136,7 +1134,7 @@ public class MemoryCardManager
                 fadeCounter = 0xa8;
                 //goto LAB_800609c0;
                 arg2 = _gameEngine.EtcRes.GetEtcString(fadeCounter);
-                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_fadeControlValue);
+                TryOpenMemoryCardMenu(arg1, arg2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
                 _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
                 return;
             }
