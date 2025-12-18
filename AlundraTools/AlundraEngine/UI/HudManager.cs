@@ -1,13 +1,8 @@
-﻿using AlundraEngine.Gameplay;
+﻿using System.Diagnostics;
 using AlundraEngine.Graphics;
-using AlundraEngine.UI;
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Security.Cryptography;
 using static AlundraEngine.Renderer;
 
-namespace AlundraEngine;
+namespace AlundraEngine.UI;
 
 public class HudManager
 {

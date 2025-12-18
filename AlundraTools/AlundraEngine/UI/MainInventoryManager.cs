@@ -1,12 +1,9 @@
-﻿using AlundraEngine.DatasBin;
+﻿using System.Diagnostics;
 using AlundraEngine.Gameplay;
 using AlundraEngine.Graphics;
-using AlundraEngine.UI;
-using System;
-using System.Diagnostics;
 using static AlundraEngine.Renderer;
 
-namespace AlundraEngine;
+namespace AlundraEngine.UI;
 
 public class MainInventoryManager
 {

@@ -1,8 +1,6 @@
-﻿using AlundraEngine.UI;
-using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
-namespace AlundraEngine;
+namespace AlundraEngine.UI;
 
 public class MemoryCardManager
 {

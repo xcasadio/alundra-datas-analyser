@@ -1,11 +1,8 @@
-﻿using AlundraEngine.Gameplay;
+﻿using System.Diagnostics;
+using AlundraEngine.Gameplay;
 using AlundraEngine.Graphics;
-using AlundraEngine.Text;
-using AlundraEngine.UI;
-using System;
-using System.Diagnostics;
 
-namespace AlundraEngine;
+namespace AlundraEngine.UI;
 
 public class SubInventoryManager
 {
