@@ -406,6 +406,25 @@ public class GameInitializer
         _gameEngine.StaticVariables.g_cameraTargetZ = _gameEngine.StaticVariables.g_saveData.CameraTileZ << 0x14;
         _gameEngine.StaticVariables.g_gameplayTime = _gameEngine.StaticVariables.g_saveData.GameTime;
 
+
+        //==== DEBUG
+        //enable HUD
+        _gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 40000000;
+
+        _gameEngine.StaticVariables.g_desiredMap = 452; //476; //11
+        //_gameEngine.StaticVariables.g_mapTransitionEffectId = 4;
+        //_gameEngine.StaticVariables.g_desiredMap = 476;
+        //_gameEngine.StaticVariables.g_warpEntryBehavior = 73;
+        //_gameEngine.StaticVariables.g_cameraTargetZ = 786432;
+        //_gameEngine.StaticVariables.g_cameraTargetY = 524288;
+        //_gameEngine.StaticVariables.g_cameraTargetX = 3145728;
+        //_gameEngine.StaticVariables.g_resetDirectionId = 0;
+        //_gameEngine.StaticVariables.g_resetAnimationId = 13;
+        ////_gameEngine.StaticVariables.g_isGameEnding = 1;
+        
+        //active la map 390
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 256;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 512;
     }
 
     // 8004dac0
@@ -445,8 +464,8 @@ public class GameInitializer
 
         while (i < 0x80)
         {
-            _gameEngine.StaticVariables.g_numberOfItems[index] = 0;
-            _gameEngine.StaticVariables.g_numberOfItems[index + 1] = 0;
+            _gameEngine.StaticVariables.g_saveData.NumberOfItems[index] = 0;
+            _gameEngine.StaticVariables.g_saveData.NumberOfItems[index + 1] = 0;
             i++;
             index += 2;
         }
