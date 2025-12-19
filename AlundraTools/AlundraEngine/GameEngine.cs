@@ -1702,7 +1702,7 @@ public class GameEngine
         }
     }
 
-    public SpriteEffectRecord GetEffectSpriteFromSpriteTable(bool isMapSprite, int spritetableindex, out int addedtosheet, out int addedtopallette)
+    public SpriteEffectRecord GetEffectSpriteFromSpriteTable(bool isMapSprite, int spriteTableIndex, out int addedtosheet, out int addedtopallette)
     {
         SpriteInfo si;
         if (isMapSprite)
@@ -1717,9 +1717,9 @@ public class GameEngine
             addedtosheet = 0xb;
             addedtopallette = 0x60;
         }
-        if (spritetableindex >= 0 && spritetableindex < si.SpriteEffectRecords.Length)
+        if (spriteTableIndex >= 0 && spriteTableIndex < si.SpriteEffectRecords.Length)
         {
-            return si.SpriteEffectRecords[spritetableindex];
+            return si.SpriteEffectRecords[spriteTableIndex];
         }
 
         return null;
@@ -1753,7 +1753,7 @@ public class GameEngine
 
         if (entity.ActiveEffect != null)
         {
-            entity.ActiveEffect.CurrentSpriteTableIndex = 0; //.spriteTableIndex = 0;
+            entity.ActiveEffect.CurrentSpriteTableIndex = 0;
             entity.ActiveEffect = null;
         }
 
@@ -1859,7 +1859,7 @@ public class GameEngine
 
         if ((entityId & 0x80) == 0)
         {
-            CheckEntityRecord(entityId);//calls getinitrecord which is a 20 byte datarecord SIEntityRecord
+            CheckEntityRecord(entityId);
             
             foreach (var entity in StaticVariables.g_entitySlots.Skip(1))
             {

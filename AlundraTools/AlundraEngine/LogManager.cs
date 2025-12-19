@@ -33,6 +33,6 @@ public class LogManager
     {
         var log = $"Map#{_gameEngine.StaticVariables.g_currentMap} frame#{_gameEngine.StaticVariables.FrameNumber} {message}";
         Logs.Add(log);
-        Debug.WriteLine(log);
+        //Debug.WriteLine(log);
     }
 }

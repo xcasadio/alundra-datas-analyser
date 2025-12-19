@@ -1,8 +1,5 @@
 ﻿using AlundraEngine.DatasBin;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
 
 namespace AlundraEngine.Gameplay.Scripts;
 
@@ -509,27 +506,23 @@ public class EntityEventHandlers
     // 8003D1A0
     private int Script_3_003(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var result = 3;
-
         if (eventProgramState.Result != 0)
         {
-            result = (((variables[2] << 8) | variables[1]) * 0x10000) >> 0x10;
+            return (((variables[2] << 8) | variables[1]) * 0x10000) >> 0x10;
         }
 
-        return result;
+        return 3;
     }
 
     // 8003D1D8
     private int Script_4_004(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var result = 3;
-
         if (eventProgramState.Result == 0)
         {
-            result = (((variables[2] << 8) | variables[1]) * 0x10000) >> 0x10;
+            return (((variables[2] << 8) | variables[1]) * 0x10000) >> 0x10;
         }
 
-        return result;
+        return 3;
     }
 
     // 8003D210
@@ -642,8 +635,6 @@ public class EntityEventHandlers
     // 8003D468
     private int Script_11_00B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        int result;
-
         logicEntity.TargetAnimationId = (uint)variables[1];
 
         if (eventProgramState.Parameters[1] == variables[0])
@@ -662,10 +653,10 @@ public class EntityEventHandlers
             }
 
             var uVar2 = (uint)eventProgramState.Parameters[3];
-            result = 0;
+
             if ((int)uVar2 <= x >> 0x10 || (int)uVar2 <= y >> 0x10)
             {
-                result = 4;
+                return 4;
             }
         }
         else
@@ -673,10 +664,9 @@ public class EntityEventHandlers
             eventProgramState.Parameters[1] = variables[0];
             eventProgramState.Parameters[2] = logicEntity.PosX;
             eventProgramState.Parameters[3] = logicEntity.PosY;
-            result = 0;
         }
 
-        return result;
+        return 0;
     }
 
     // 8003D518
@@ -926,45 +916,41 @@ public class EntityEventHandlers
     private int Script_33_021(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var iVar1 = Script_32_020(logicEntity, ownerEntity, variables, eventProgramState);
-        var result = 3;
 
         if (iVar1 == 0 && logicEntity.CollidedWithEntityZ == 0)
         {
-            result = iVar1;
+            return 0;
         }
 
-        return result;
+        return 3;
     }
 
     // 8003DA70
     private int Script_34_022(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         bool isSmaller;
-        int result = 0;
 
         if (eventProgramState.Parameters[1] == variables[0])
         {
             if (eventProgramState.Parameters[2] == logicEntity.PosZ)
             {
-                result = 1;
+                return 1;
+            }
+
+            var zForce = eventProgramState.Parameters[2] - logicEntity.PosZ;
+
+            if (zForce < 1)
+            {
+                isSmaller = logicEntity.ForceZ < zForce;
             }
             else
             {
-                var zForce = eventProgramState.Parameters[2] - logicEntity.PosZ;
+                isSmaller = zForce < logicEntity.ForceZ;
+            }
 
-                if (zForce < 1)
-                {
-                    isSmaller = logicEntity.ForceZ < zForce;
-                }
-                else
-                {
-                    isSmaller = zForce < logicEntity.ForceZ;
-                }
-
-                if (isSmaller)
-                {
-                    logicEntity.ForceZ = zForce;
-                }
+            if (isSmaller)
+            {
+                logicEntity.ForceZ = zForce;
             }
         }
         else
@@ -980,22 +966,20 @@ public class EntityEventHandlers
             eventProgramState.Parameters[2] = entityRecord.Height << 0x13;
         }
 
-        return result;
+        return 0;
     }
 
     // 8003DB28
     private int Script_35_023(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var iVar1 = Script_34_022(logicEntity, ownerEntity, variables, eventProgramState);
-        var result = iVar1;
-        result = 1;
 
         if (iVar1 == 0 && logicEntity.CollidedWithEntityZ == 0)
         {
-            result = iVar1;
+            return 0;
         }
 
-        return result;
+        return 1;
     }
 
     // 8003DB70
@@ -1007,27 +991,23 @@ public class EntityEventHandlers
     // 8003DB7C
     private int Script_37_025(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var result = 1;
-
         if (logicEntity.CollidedWithEntityZ == 0 && logicEntity.IsAboveGround == 0)
         {
-            result = 0;
+            return 0;
         }
 
-        return result;
+        return 1;
     }
 
     // 8003DBA8
     private int Script_38_026(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var result = 1;
-
         if (logicEntity.ForceAdjusted == 0 && logicEntity.CollidedWithEntityZ == 0)
         {
-            result = 0;
+            return 0;
         }
 
-        return result;
+        return 1;
     }
 
     // 8003DBD4
@@ -1136,7 +1116,6 @@ public class EntityEventHandlers
     private int Script_48_030(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
-        int result;
         uint flag;
         flag = (uint)(variables[1] + variables[2] * 0x100);
 
@@ -1149,23 +1128,21 @@ public class EntityEventHandlers
             flags = _gameEngine.StaticVariables.g_globalFlags;
         }
 
-        result = 5;
         var mask = 1 << (variables[1] & 0x1f);
         var index = ((flag >> 3) & 0xffc) >> 2;
 
         if ((flags[index] & mask) != 0)
         {
-            result = (((variables[4] << 8) | variables[3]) * 0x10000) >> 0x10;
+            return(((variables[4] << 8) | variables[3]) * 0x10000) >> 0x10;
         }
 
-        return result;
+        return 5;
     }
 
     // 8003DE6C
     private int Script_49_031(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
-        int result;
         uint flag;
         flag = (uint)(variables[1] + variables[2] * 0x100);
 
@@ -1178,16 +1155,15 @@ public class EntityEventHandlers
             flags = _gameEngine.StaticVariables.g_globalFlags;
         }
 
-        result = 5;
         var mask = 1 << (variables[1] & 0x1f);
         var index = ((flag >> 3) & 0xffc) >> 2;
 
         if ((flags[index] & mask) == 0)
         {
-            result = (((variables[4] << 8) | variables[3]) * 0x10000) >> 0x10;
+            return (((variables[4] << 8) | variables[3]) * 0x10000) >> 0x10;
         }
 
-        return result;
+        return 5;
     }
 
     // 8003DEFC
@@ -1215,25 +1191,26 @@ public class EntityEventHandlers
     // 8003DF74
     private int Script_51_033(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        //do this 4 times
+        Debugger.Break();
+
+        for (int i = 0; i < 4; i++)
         {
-            var flagData = variables[1] + (variables[2] << 8);
+            var flagData = variables[i * 2 + 1] + (variables[i * 2 + 2] << 8);
             
             var flag = ((flagData >> 3) & 0x3ff) >> 2;
             uint[] flags;
-            //if the mapflag bit is set
+
             if ((flagData & 0x8000) != 0)
             {
                 flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
             }
-            else//otherwise its a global flag
+            else
             {
                 flags = _gameEngine.StaticVariables.g_globalFlags;
             }
 
             var bitToCheck = flagData & 0x1f;
 
-            //check the bit for this flag
             if ((flags[flag] & (1 << bitToCheck)) == 0)
             {
                 eventProgramState.Result = 0;
@@ -1241,82 +1218,7 @@ public class EntityEventHandlers
             }
         }
 
-        {
-            var flagData = variables[3] + (variables[4] << 8);
-            
-            var flag = ((flagData >> 3) & 0x3ff) >> 2;
-            uint[] flags;
-            //if the mapflag bit is set
-            if ((flagData & 0x8000) != 0)
-            {
-                flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
-            }
-            else//otherwise its a global flag
-            {
-                flags = _gameEngine.StaticVariables.g_globalFlags;
-            }
-
-            var bitToCheck = flagData & 0x1f;
-
-            //check the bit for this flag
-            if ((flags[flag] & (1 << bitToCheck)) == 0)
-            {
-                eventProgramState.Result = 0;
-                return 9;
-            }
-        }
-
-        {
-            var flagData = variables[5] + (variables[6] << 8);
-            
-            var flag = ((flagData >> 3) & 0x3ff) >> 2;
-            uint[] flags;
-            //if the mapflag bit is set
-            if ((flagData & 0x8000) != 0)
-            {
-                flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
-            }
-            else//otherwise its a global flag
-            {
-                flags = _gameEngine.StaticVariables.g_globalFlags;
-            }
-
-            var bitToCheck = flagData & 0x1f;
-
-            //check the bit for this flag
-            if ((flags[flag] & (1 << bitToCheck)) == 0)
-            {
-                eventProgramState.Result = 0;
-                return 9;
-            }
-        }
-
-        {
-            var flagData = variables[7] + (variables[8] << 8);
-            
-            var flag = ((flagData >> 3) & 0x3ff) >> 2;
-            uint[] flags;
-            //if the mapflag bit is set
-            if ((flagData & 0x8000) != 0)
-            {
-                flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
-            }
-            else//otherwise its a global flag
-            {
-                flags = _gameEngine.StaticVariables.g_globalFlags;
-            }
-
-            var bitToCheck = flagData & 0x1f;
-
-            //check the bit for this flag
-            if ((flags[flag] & (1 << bitToCheck)) == 0)
-            {
-                eventProgramState.Result = 0;
-                return 9;
-            }
-        }
-
-        eventProgramState.Result = 1;//made it through them all
+        eventProgramState.Result = 1;
         return 9;
     }
 
@@ -1324,86 +1226,34 @@ public class EntityEventHandlers
     private int Script_52_034(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
-        return 0;
-        /*
-        uint[] piVar1;
 
-        uint uVar2;
-
-        int iVar3;
-
-        uVar2 = variables[1] + variables[2] * 0x100;
-
-        if ((uVar2 & 0x8000) == 0)
+        for (int i = 0; i < 4; i++)
         {
-            piVar1 = _gameEngine.StaticVariables.g_saveData.MapFlags;
-        }
-        else
-        {
-            piVar1 = _gameEngine.StaticVariables.g_globalFlags;
-        }
+            var flagData = variables[i * 2 + 1] + (variables[i * 2 + 2] << 8);
 
-        iVar3 = variables;
+            var flag = ((flagData >> 3) & 0x3ff) >> 2;
+            uint[] flags;
 
-        if (((uint)((uVar2 >> 3 & 0xffc) + piVar1) & 1 << ((iVar3 + 1) & 0x1f)) == 0)
-        {
-            uVar2 = iVar3 + 3 + (iVar3 + 4) * 0x100;
-
-            if ((uVar2 & 0x8000) == 0)
+            if ((flagData & 0x8000) != 0)
             {
-                piVar1 = _gameEngine.StaticVariables.g_saveData.MapFlags;
+                flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
             }
             else
             {
-                piVar1 = _gameEngine.StaticVariables.g_globalFlags;
+                flags = _gameEngine.StaticVariables.g_globalFlags;
             }
 
-            iVar3 = variables;
+            var bitToCheck = flagData & 0x1f;
 
-            if (((uint)((uVar2 >> 3 & 0xffc) + piVar1) & 1 << ((iVar3 + 3) & 0x1f)) == 0)
+            if ((flags[flag] & (1 << bitToCheck)) != 0)
             {
-                uVar2 = iVar3 + 5 + (iVar3 + 6) * 0x100;
-
-                if ((uVar2 & 0x8000) == 0)
-                {
-                    piVar1 = _gameEngine.StaticVariables.g_saveData.MapFlags;
-                }
-                else
-                {
-                    piVar1 = _gameEngine.StaticVariables.g_globalFlags;
-                }
-
-                iVar3 = variables;
-
-                if (((uint)((uVar2 >> 3 & 0xffc) + piVar1) & 1 << ((iVar3 + 5) & 0x1f)) == 0)
-
-                {
-                    uVar2 = iVar3 + 7 + (iVar3 + 8) * 0x100;
-
-                    if ((uVar2 & 0x8000) == 0)
-                    {
-                        piVar1 = _gameEngine.StaticVariables.g_saveData.MapFlags;
-                    }
-                    else
-                    {
-                        piVar1 = _gameEngine.StaticVariables.g_globalFlags;
-                    }
-
-                    if (((uint)((uVar2 >> 3 & 0xffc) + piVar1) &
-
-                        1 << (variables[7] & 0x1f)) == 0)
-                    {
-                        eventProgramState.Result = 1;
-
-                        return 9;
-                    }
-                }
+                eventProgramState.Result = 0;
+                return 9;
             }
         }
 
         eventProgramState.Result = 0;
-
-        return 9;*/
+        return 9;
     }
 
     // 8003E2DC
@@ -1465,10 +1315,8 @@ public class EntityEventHandlers
     // 8003E3DC
     private int Script_55_037(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        int result;
         int command;
         command = variables[0];
-        result = 0;
 
         if (command != eventProgramState.Parameters[1])
         {
@@ -1532,85 +1380,55 @@ public class EntityEventHandlers
     private int Script_60_03C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
-        return 0;
-        /*
-        int iVar1;
-        int piVar2;
-        int iVar3;
-        iVar1 = variables;
-        iVar3 = 0;
 
-        if (-1 < _gameEngine.StaticVariables.g_numberOfEntity)
+        for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntity; i++)
         {
-            piVar2 = _gameEngine.StaticVariables.PlayerEntity.TileZ;
+            var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
-            do
+            if (entity.Status - 1U < 3 
+                && (entity.AnimFlags & 0x80U) != 0 
+                && (entity.Flags & 0x80U) == 0 
+                && entity.PlatformEntity == null)
             {
-                if (piVar2[-0x46] - 1U < 3 && (piVar2[-0x2f] & 0x80U) != 0 &&
-                    (piVar2[-0x1d] & 0x80U) == 0 && piVar2[-0x40] == 0x0)
+                if (variables[1] <= entity.TileX && entity.TileX <= variables[2]
+                    && variables[3] <= entity.TileY && entity.TileY <= variables[4]
+                    && variables[5] <= entity.TileZ && entity.TileZ <= variables[6])
                 {
-                    if (iVar1 + 1 <= piVar2[-2] &&
-                        piVar2[-2] <= iVar1 + 2 &&
-                        iVar1 + 3 <= piVar2[-1] &&
-                        piVar2[-1] <= iVar1 + 4 &&
-                        iVar1 + 5 <= piVar2 &&
-                        piVar2 <= iVar1 + 6)
-                    {
-                        eventProgramState.Result = 1;
-                        return 7;
-                    }
+                    eventProgramState.Result = 1;
+                    return 7;
                 }
-
-                iVar3 = iVar3 + 1;
-                piVar2 = piVar2 + 0xa5;
-            } while (iVar3 <= _gameEngine.StaticVariables.g_numberOfEntity);
+            }
         }
 
         eventProgramState.Result = 0;
 
-        return 7;*/
+        return 7;
     }
 
     // 8003E64C
     private int Script_61_03D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
-        return 0;
-        /*
-        int iVar1;
-        int piVar2;
-        int iVar3;
-        iVar1 = variables;
-        iVar3 = 0;
+        
+       for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntity; i++)
+       {
+           var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
-        if (-1 < _gameEngine.StaticVariables.g_numberOfEntity)
-        {
-            piVar2 = _gameEngine.StaticVariables.PlayerEntity.TileZ;
+           if (entity.Status - 1U < 3)
+           {
+               if (variables[1] <= entity.TileX && entity.TileX <= variables[2]
+                   && variables[3] <= entity.TileY && entity.TileY <= variables[4]
+                   && variables[5] <= entity.TileZ && entity.TileZ <= variables[6])
+               {
+                   eventProgramState.Result = 1;
+                   return 7;
+               }
+           }
+       }
 
-            do
-            {
-                if (piVar2[-0x46] - 1U < 3)
-                {
-                    if (iVar1 + 1 <= piVar2[-2] &&
-                        piVar2[-2] <= iVar1 + 2 &&
-                        iVar1 + 3 <= piVar2[-1] &&
-                        piVar2[-1] <= iVar1 + 4 &&
-                        iVar1 + 5 <= piVar2 &&
-                        piVar2 <= iVar1 + 6)
-                    {
-                        eventProgramState.Result = 1;
-                        return 7;
-                    }
-                }
+       eventProgramState.Result = 0;
 
-                iVar3 = iVar3 + 1;
-                piVar2 = piVar2 + 0xa5;
-            } while (iVar3 <= _gameEngine.StaticVariables.g_numberOfEntity);
-        }
-
-        eventProgramState.Result = 0;
-
-        return 7;*/
+       return 7;
     }
 
     // 8003E708
@@ -1632,32 +1450,22 @@ public class EntityEventHandlers
     private int Script_63_03F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
-        return 0;
-        /*
-        Entity ppEVar1;
-        int iVar2;
-        iVar2 = 0;
 
-        if (-1 < _gameEngine.StaticVariables.g_numberOfEntity)
+        for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntity; i++)
         {
-            ppEVar1 = _gameEngine.StaticVariables.PlayerEntity.RidingEntity;
+            var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
-            do
+            if (entity.Status - 1U < 3
+                && entity.IsNotProcessable == 0
+                && entity.RidingEntity == logicEntity)
             {
-                if ((int)ppEVar1[-0x47] - 2U < 2 && ppEVar1[-0x43] == 0x0 && ppEVar1 == logicEntity)
-                {
-                    eventProgramState.Result = 1;
-                    return 1;
-                }
-
-                iVar2 = iVar2 + 1;
-                ppEVar1 = ppEVar1 + 0xa5;
-            } while (iVar2 <= _gameEngine.StaticVariables.g_numberOfEntity);
+                eventProgramState.Result = 1;
+                return 7;
+            }
         }
 
         eventProgramState.Result = 0;
-
-        return 1;*/
+        return 1;
     }
 
     // 8003E7B8
@@ -1786,7 +1594,7 @@ public class EntityEventHandlers
     private int Script_73_049(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         //return eventProgramState.Sp - eventProgramState.Parameters[0];
-        return -(eventProgramState.CodeIndex - eventProgramState.Parameters[0]); //eventProgramState.Sp - variables[0];
+        return -(eventProgramState.CodeIndex - eventProgramState.Parameters[0]);
     }
 
     // 8003E9EC
@@ -1797,7 +1605,7 @@ public class EntityEventHandlers
         if (eventProgramState.Result != 0)
         {
             //return eventProgramState.Sp - eventProgramState.Parameters[0];
-            return -(eventProgramState.CodeIndex - eventProgramState.Parameters[0]); //eventProgramState.Sp - variables[0];
+            return -(eventProgramState.CodeIndex - eventProgramState.Parameters[0]);
         }
 
         return result;
@@ -1811,7 +1619,7 @@ public class EntityEventHandlers
         if (eventProgramState.Result == 0)
         {
             //return eventProgramState.Sp - eventProgramState.Parameters[0];
-            return -(eventProgramState.CodeIndex - eventProgramState.Parameters[0]); //eventProgramState.Sp - variables[0];
+            return -(eventProgramState.CodeIndex - eventProgramState.Parameters[0]);
         }
 
         return result;
@@ -1998,24 +1806,19 @@ public class EntityEventHandlers
     {
         Debugger.Break();
         //check CommandSizeByCode !!!!
-        return 0;
-        /*
-        int pbVar1;
-        pbVar1 = variables + _gameEngine.StaticVariables.PlayerEntity.CurrentFrameIndex * 2 + 1;
-        return (int)((pbVar1 + (uint)pbVar1[1] * 0x100) * 0x10000) >> 0x10;*/
+        int v1 = variables[_gameEngine.StaticVariables.PlayerEntity.CurrentFrameIndex * 2 + 1];
+        int v2 = variables[_gameEngine.StaticVariables.PlayerEntity.CurrentFrameIndex * 2 + 2];
+        return ((v1 + v2 * 0x100) * 0x10000) >> 0x10;
     }
 
     // 8003EE5C
     private int Script_88_058(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
-        return 0;
-        /*
-        int pbVar1;
-
-        pbVar1 = variables + logicEntity.CurrentFrameIndex * 2 + 1;
-
-        return (int)((pbVar1 + (uint)pbVar1[1] * 0x100) * 0x10000) >> 0x10;*/
+        //check CommandSizeByCode !!!!
+        int v1 = variables[logicEntity.CurrentFrameIndex * 2 + 1];
+        int v2 = variables[logicEntity.CurrentFrameIndex * 2 + 2];
+        return ((v1 + v2 * 0x100) * 0x10000) >> 0x10;
     }
 
     // 8003EE8C
@@ -2103,8 +1906,6 @@ public class EntityEventHandlers
                     _gameEngine.StaticVariables.g_cameraScrollingX, 
                     _gameEngine.StaticVariables.g_cameraScrollingY,
                     img.Sx, img.Sy, img.Swidth, img.Sheight,
-                    /*_gameEngine.StaticVariables.g_drawPageInfoBase[logicEntity.SpriteSheetOffset + ((img.Spritesheet) & 0x3f)],
-                    _gameEngine.StaticVariables.g_tPageFadeLUT[logicEntity.PaletteOffset + ((img.Palette) & 7)]*/
                     bitmap);
             }
 
@@ -2153,94 +1954,128 @@ public class EntityEventHandlers
     private int Script_WaitForAnimOrDistance(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
-        return 0;
-        /*
-        int command;
-        int frameTimer;
-        byte conditionFlags;
 
         if (eventProgramState.Parameters[1] != variables[0])
         {
             eventProgramState.Parameters[1] = variables[0];
-            eventProgramState.Parameters[2] = logicEntity.PosX;
-            eventProgramState.Parameters[3] = logicEntity.PosY;
-            eventProgramState.Parameters[5] = 0;
-            eventProgramState.Parameters[6] = 0;
-            eventProgramState.Parameters[4] = logicEntity.PosZ;
-            logicEntity.AnimCompleteCounter = 0;
+            eventProgramState.Parameters[2] = ownerEntity.PosX;
+            eventProgramState.Parameters[3] = ownerEntity.PosY;
+            eventProgramState.Parameters[4] = ownerEntity.PosZ;
+            eventProgramState.Parameters[5] = 0; // animDoneCount
+            eventProgramState.Parameters[6] = 0; // frameTimer
+
+            ownerEntity.AnimCompleteCounter = 0;
             return 0;
         }
 
-        if (logicEntity.ForceResetAnimationFlag == 0)
+        // --- suivi animation ---
+        if (ownerEntity.ForceResetAnimationFlag != 0)
         {
-            if (logicEntity.AnimCompleteCounter == 0)
-                goto UPDATE_FRAME_COUNTER;
+            ownerEntity.CurrentAnimationId = ~ownerEntity.TargetAnimationId;
+
+            eventProgramState.Parameters[5] += 1;
+            ownerEntity.AnimCompleteCounter = 0;
         }
         else
         {
-            logicEntity.CurrentAnimationId = ~logicEntity.TargetAnimationId;
+            if (ownerEntity.AnimCompleteCounter != 0)
+            {
+                eventProgramState.Parameters[5] += 1;
+                ownerEntity.AnimCompleteCounter = 0;
+            }
         }
 
-        eventProgramState.Parameters[5] = eventProgramState.Parameters[5] + 1;
-        logicEntity.AnimCompleteCounter = 0;
-
-        UPDATE_FRAME_COUNTER:
-        frameTimer = eventProgramState.Parameters[6] + 1;
-        eventProgramState.Parameters[6] = frameTimer;
-        command = variables[0];
-
-        if (eventProgramState.Parameters[5] < (int)(uint)(command + 4))
+        // frameTimer++
+        eventProgramState.Parameters[6] += 1;
         {
-            return 0;
-        }
+            int animDoneCount = eventProgramState.Parameters[5];
+            int frameTimer = eventProgramState.Parameters[6];
 
-        if (frameTimer < (int)(uint)(command + 5))
-        {
-            return 0;
-        }
-
-        conditionFlags = command + 6;
-
-        if (((conditionFlags & 1) == 0 || logicEntity.ForceAdjusted != 0) &&
-            ((conditionFlags & 2) == 0 || logicEntity.CollidedWithEntityZ != 0) &&
-             ((conditionFlags & 3) == 0 || logicEntity.IsAboveGround != 0))
-        {
-            if ((conditionFlags & 4) != 0 && logicEntity.HitCounter == 0)
+            if (animDoneCount < variables[4])
             {
                 return 0;
             }
 
-            frameTimer = variables[0];
-            command = eventProgramState.Parameters[2] - logicEntity.PosX;
-            if (command < 0)
-            {
-                command = -command;
-            }
-
-            if (command < (int)((uint)(frameTimer + 1) * 0x180000))
+            if (frameTimer < variables[5])
             {
                 return 0;
             }
 
-            command = eventProgramState.Parameters[3] - logicEntity.PosY;
-            if (command < 0)
+            // command[6] = flags de conditions
             {
-                command = -command;
-            }
+                var conditionFlags = variables[6];
 
-            if ((int)((uint)(frameTimer + 2) << 0x14) <= command)
-            {
-                command = eventProgramState.Parameters[4] - logicEntity.PosZ;
-                if (command < 0)
+                if ((conditionFlags & 0x01) != 0)
                 {
-                    command = -command;
+                    if (ownerEntity.ForceAdjusted == 0)
+                    {
+                        return 0;
+                    }
                 }
 
-                return (command < (int)((uint)(frameTimer + 3) << 0x14) ^ 1) << 3;
+                if ((conditionFlags & 0x02) != 0)
+                {
+                    if (ownerEntity.CollidedWithEntityZ == 0)
+                    {
+                        return 0;
+                    }
+                }
+
+                if ((conditionFlags & 0x04) != 0)
+                {
+                    if (ownerEntity.IsAboveGround == 0)
+                    {
+                        return 0;
+                    }
+
+                    if (ownerEntity.HitCounter == 0)
+                    {
+                        return 0;
+                    }
+                }
+            }
+
+            {
+                int startX = eventProgramState.Parameters[2];
+                int startY = eventProgramState.Parameters[3];
+                int startZ = eventProgramState.Parameters[4];
+
+                int dx = startX - ownerEntity.PosX;
+                int dy = startY - ownerEntity.PosY;
+                int dz = startZ - ownerEntity.PosZ;
+
+                int absDx = (dx >= 0) ? dx : -dx;
+                int absDy = (dy >= 0) ? dy : -dy;
+                int absDz = (dz >= 0) ? dz : -dz;
+
+                // X threshold = (command[1] * 3) << 19
+                {
+                    int xScale = variables[1];
+                    int xThreshold = (xScale * 3) << 19;
+                    if (absDx < xThreshold)
+                    {
+                        return 0;
+                    }
+                }
+
+                // Y threshold = command[2] << 20
+                {
+                    int yThreshold = variables[2] << 20;
+                    if (absDy < yThreshold)
+                    {
+                        return 0;
+                    }
+                }
+
+                // Z threshold = command[3] << 20
+                {
+                    int zThreshold = variables[3] << 20;
+
+                    // asm: v0 = (absDz < zThreshold); v0 ^= 1; return (v0 << 3)
+                    return (absDz >= zThreshold) ? 8 : 0;
+                }
             }
         }
-
-        return 0;*/
     }
 
     // 8003F3F8
@@ -2314,8 +2149,6 @@ public class EntityEventHandlers
         for (int i = 0; i < num; i++)
         {
             var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
-            //entity.Flags &= ~(uint)clearMask | 0xffff0000;
-
             clearMask = (ushort)((variables[3] << 8) | variables[2]);
             uint andMask = 0xFFFF0000u | (uint)(~clearMask & 0xFFFF);
             entity.Flags &= andMask;
@@ -2368,45 +2201,18 @@ public class EntityEventHandlers
     private int Script_CopyLogicContextAndAssignScript(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
-        return 0;
-        /*
-        EventProgramState pEVar1;
-        EventProgramState pEVar2;
-        int script2;
-        int command;
-        int xpos;
-        EventProgramState nextSource;
-        EventProgramState nextTarget;
-        pEVar1 = _gameEngine.StaticVariables.g_eventProgramState;
-        pEVar2 = ownerEntity.EventProgramState;
+        
+        _gameEngine.StaticVariables.g_eventProgramState.CopyFrom(ownerEntity.EventProgramState);
 
-        do
-        {
-            nextTarget = pEVar2;
-            nextSource = pEVar1;
-            script2 = nextSource.var0;
-            command = nextSource.var1;
-            xpos = nextSource.var2;
-            nextTarget.Sp = nextSource.Sp;
-            nextTarget.var0 = script2;
-            nextTarget.var1 = command;
-            nextTarget.var2 = xpos;
-            pEVar1 = EventProgramState & nextSource.var3;
-            pEVar2 = EventProgramState & nextTarget.var3;
-        } while (&nextSource.var3 != _gameEngine.StaticVariables.g_eventProgramState._30);
-
-        command = nextSource.var4;
-        nextTarget.var3 = _gameEngine.StaticVariables.g_eventProgramState._30;
-        nextTarget.var4 = command;
         logicEntity.LastTargetAnimationId = logicEntity.TargetAnimationId;
         logicEntity.LastTargetDirection = logicEntity.TargetDirection;
 
-        command = variables;
-        script2 = command + ((command + 1 + (command + 2) * 0x100) * 0x10000 >> 0x10);
-        ownerEntity.EventProgramState.var0 = script2;
-        ownerEntity.EventProgramState.Sp = script2;
+        var index = ((variables[1] + variables[2] * 0x100) * 0x10000) >> 0x10;
+        var value = variables[index];
+        ownerEntity.EventProgramState.Parameters[0] = value;
+        ownerEntity.EventProgramState.CodeIndex = value;
 
-        return 3;*/
+        return 3;
     }
 
     // 8003F82C
