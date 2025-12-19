@@ -11,14 +11,16 @@ namespace AlundraTools.GameControls
         private List<SiCommand> _commands;
         private GameMap? _alundraGameMap;
         private GameMap? _currentGameMap;
+        private byte[]? _codes;
 
         public CommandsViewerForm()
         {
             InitializeComponent();
         }
 
-        public void Init(List<SiCommand> commands, GameMap? alundraGameMap, GameMap? currentGameMap)
+        public void Init(List<SiCommand> commands, GameMap? alundraGameMap, GameMap? currentGameMap, byte[] codes = null)
         {
+            _codes = codes;
             _commands = commands;
             _alundraGameMap = alundraGameMap;
             _currentGameMap = currentGameMap;
@@ -44,6 +46,11 @@ namespace AlundraTools.GameControls
             }
             
             treeView1.ExpandAll();
+
+            if (_codes != null)
+            {
+                textBoxRawCodes.Text = string.Join(' ', _codes.Select(b => b.ToString("X2")));
+            }
         }
 
         private void CreateTreeViewNode(ref int index, CommandBase commandBase, TreeNode? parentNode = null)

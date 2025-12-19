@@ -1804,7 +1804,7 @@
             tabPage9.Controls.Add(propertyGridGameMapHeader);
             tabPage9.Location = new Point(4, 24);
             tabPage9.Name = "tabPage9";
-            tabPage9.Padding = new Padding(3, 3, 3, 3);
+            tabPage9.Padding = new Padding(3);
             tabPage9.Size = new Size(852, 786);
             tabPage9.TabIndex = 8;
             tabPage9.Text = "Data";
@@ -1944,8 +1944,8 @@
             tabPage1.Controls.Add(label31);
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(3, 3, 3, 3);
-            tabPage1.Size = new Size(852, 679);
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(852, 786);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Spritesheet";
             tabPage1.UseVisualStyleBackColor = true;
@@ -2121,7 +2121,7 @@
             tabPage3.Controls.Add(lblsector5mem);
             tabPage3.Location = new Point(4, 24);
             tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(852, 679);
+            tabPage3.Size = new Size(852, 786);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "SpriteRecords";
             tabPage3.UseVisualStyleBackColor = true;
@@ -2239,6 +2239,7 @@
             listBoxCodesB.Name = "listBoxCodesB";
             listBoxCodesB.Size = new Size(110, 214);
             listBoxCodesB.TabIndex = 187;
+            listBoxCodesB.DoubleClick += listBoxCodesB_DoubleClick;
             // 
             // label73
             // 
@@ -2297,8 +2298,8 @@
             tabPage2.Controls.Add(label34);
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3, 3, 3, 3);
-            tabPage2.Size = new Size(852, 679);
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(852, 786);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Entities";
             tabPage2.UseVisualStyleBackColor = true;
@@ -2309,7 +2310,7 @@
             tabPage4.Controls.Add(label19);
             tabPage4.Location = new Point(4, 24);
             tabPage4.Name = "tabPage4";
-            tabPage4.Size = new Size(852, 679);
+            tabPage4.Size = new Size(852, 786);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "Strings";
             tabPage4.UseVisualStyleBackColor = true;
@@ -2361,8 +2362,8 @@
             tabPage5.Controls.Add(label33);
             tabPage5.Location = new Point(4, 24);
             tabPage5.Name = "tabPage5";
-            tabPage5.Padding = new Padding(3, 3, 3, 3);
-            tabPage5.Size = new Size(852, 679);
+            tabPage5.Padding = new Padding(3);
+            tabPage5.Size = new Size(852, 786);
             tabPage5.TabIndex = 4;
             tabPage5.Text = "Portals";
             tabPage5.UseVisualStyleBackColor = true;
@@ -2372,7 +2373,7 @@
             tabPage6.Controls.Add(soundboardControl1);
             tabPage6.Location = new Point(4, 24);
             tabPage6.Name = "tabPage6";
-            tabPage6.Padding = new Padding(3, 3, 3, 3);
+            tabPage6.Padding = new Padding(3);
             tabPage6.Size = new Size(852, 786);
             tabPage6.TabIndex = 5;
             tabPage6.Text = "Sound";
@@ -2401,7 +2402,7 @@
             tabPage7.Controls.Add(listBoxEtcDescriptionItemTable);
             tabPage7.Location = new Point(4, 24);
             tabPage7.Name = "tabPage7";
-            tabPage7.Padding = new Padding(3, 3, 3, 3);
+            tabPage7.Padding = new Padding(3);
             tabPage7.Size = new Size(852, 786);
             tabPage7.TabIndex = 6;
             tabPage7.Text = "Etc ressources";
@@ -2504,8 +2505,8 @@
             tabPage8.Controls.Add(label63);
             tabPage8.Location = new Point(4, 24);
             tabPage8.Name = "tabPage8";
-            tabPage8.Padding = new Padding(3, 3, 3, 3);
-            tabPage8.Size = new Size(852, 679);
+            tabPage8.Padding = new Padding(3);
+            tabPage8.Size = new Size(852, 786);
             tabPage8.TabIndex = 7;
             tabPage8.Text = "Font3";
             tabPage8.UseVisualStyleBackColor = true;

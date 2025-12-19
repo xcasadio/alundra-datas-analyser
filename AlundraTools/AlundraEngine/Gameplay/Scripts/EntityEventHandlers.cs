@@ -145,16 +145,16 @@ public class EntityEventHandlers
         _handlers[0x75] = Script_117_075;
         _handlers[0x76] = Script_118_076;
         _handlers[0x77] = Script_119_077;
-        _handlers[0x78] = Script_StoreChoiceParamAndJump;
-        _handlers[0x79] = Script_JumpIfChoiceAccepted;
-        _handlers[0x7A] = Script_JumpIfChoiceRejected;
-        _handlers[0x7B] = Script_JumpIfFlagSetStoreParam;
-        _handlers[0x7C] = Script_JumpIfFlagClearStoreParam;
-        _handlers[0x7D] = Script_JumpRelativeFromStoredParam;
-        _handlers[0x7E] = Script_ConditionalJumpFromStoredParamIfTrue;
-        _handlers[0x7F] = Script_ConditionalJumpFromStoredParamIfFalse;
-        _handlers[0x80] = Script_JumpFromStoredParamIfFlagSet;
-        _handlers[0x81] = Script_JumpFromStoredParamIfFlagClear;
+        _handlers[0x78] = Script_StoreChoiceParamAndJump_078;
+        _handlers[0x79] = Script_JumpIfChoiceAccepted_079;
+        _handlers[0x7A] = Script_JumpIfChoiceRejected_07A;
+        _handlers[0x7B] = Script_JumpIfFlagSetStoreParam_07B;
+        _handlers[0x7C] = Script_JumpIfFlagClearStoreParam_07C;
+        _handlers[0x7D] = Script_JumpRelativeFromStoredParam_07D;
+        _handlers[0x7E] = Script_ConditionalJumpFromStoredParamIfTrue_07E;
+        _handlers[0x7F] = Script_ConditionalJumpFromStoredParamIfFalse_07F;
+        _handlers[0x80] = Script_JumpFromStoredParamIfFlagSet_080;
+        _handlers[0x81] = Script_JumpFromStoredParamIfFlagClear_081;
         _handlers[0x82] = Script_130_082;
         _handlers[0x83] = Script_131_083;
         _handlers[0x84] = Script_132_084;
@@ -812,15 +812,13 @@ public class EntityEventHandlers
     private int Script_29_01D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var iVar1 = Script_28_01C(logicEntity, ownerEntity, variables, eventProgramState);
-        var iVar2 = iVar1;
-        iVar2 = 2;
 
         if (iVar1 == 0 && logicEntity.ForceAdjusted == 0)
         {
-            iVar2 = iVar1;
+            return 0;
         }
 
-        return iVar2;
+        return 2;
     }
 
     // 8003D8D8
@@ -1988,6 +1986,7 @@ public class EntityEventHandlers
     private int Script_87_057(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
+        //check CommandSizeByCode !!!!
         return 0;
         /*
         int pbVar1;
@@ -2559,14 +2558,14 @@ public class EntityEventHandlers
     }
 
     // 8003FB10
-    private int Script_StoreChoiceParamAndJump(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    private int Script_StoreChoiceParamAndJump_078(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         eventProgramState._34 = eventProgramState.CodeIndex + 3; //variables[3];
         return (((variables[2] << 8) | variables[1]) * 0x10000) >> 0x10;
     }
 
     // 8003FB44
-    private int Script_JumpIfChoiceAccepted(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    private int Script_JumpIfChoiceAccepted_079(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int result = 3;
 
@@ -2580,7 +2579,7 @@ public class EntityEventHandlers
     }
 
     // 8003FB8C
-    private int Script_JumpIfChoiceRejected(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    private int Script_JumpIfChoiceRejected_07A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int result = 3;
 
@@ -2594,7 +2593,7 @@ public class EntityEventHandlers
     }
 
     // 8003FBD4
-    private int Script_JumpIfFlagSetStoreParam(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    private int Script_JumpIfFlagSetStoreParam_07B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
         int result;
@@ -2624,7 +2623,7 @@ public class EntityEventHandlers
     }
 
     // 8003FC74
-    private int Script_JumpIfFlagClearStoreParam(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    private int Script_JumpIfFlagClearStoreParam_07C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
         int result;
@@ -2654,14 +2653,14 @@ public class EntityEventHandlers
     }
 
     // 8003FD14
-    private int Script_JumpRelativeFromStoredParam(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    private int Script_JumpRelativeFromStoredParam_07D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var value = (variables[1] << 24) | (variables[1] << 16) | (variables[1] << 8) | variables[0];
         return eventProgramState._34 - eventProgramState.CodeIndex; //variables[0];
     }
 
     // 8003FD24
-    private int Script_ConditionalJumpFromStoredParamIfTrue(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    private int Script_ConditionalJumpFromStoredParamIfTrue_07E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int result = 1;
 
@@ -2674,7 +2673,7 @@ public class EntityEventHandlers
     }
 
     // 8003FD4C
-    private int Script_ConditionalJumpFromStoredParamIfFalse(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    private int Script_ConditionalJumpFromStoredParamIfFalse_07F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int result = 1;
 
@@ -2687,7 +2686,7 @@ public class EntityEventHandlers
     }
 
     // 8003FD74
-    private int Script_JumpFromStoredParamIfFlagSet(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    private int Script_JumpFromStoredParamIfFlagSet_080(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
         int result;
@@ -2716,7 +2715,7 @@ public class EntityEventHandlers
     }
 
     // 8003FDF8
-    private int Script_JumpFromStoredParamIfFlagClear(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    private int Script_JumpFromStoredParamIfFlagClear_081(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
         int result;
@@ -4359,16 +4358,16 @@ public class EntityEventHandlers
         handlerNameByCodes[0x75] = nameof(Script_117_075);
         handlerNameByCodes[0x76] = nameof(Script_118_076);
         handlerNameByCodes[0x77] = nameof(Script_119_077);
-        handlerNameByCodes[0x78] = nameof(Script_StoreChoiceParamAndJump);
-        handlerNameByCodes[0x79] = nameof(Script_JumpIfChoiceAccepted);
-        handlerNameByCodes[0x7A] = nameof(Script_JumpIfChoiceRejected);
-        handlerNameByCodes[0x7B] = nameof(Script_JumpIfFlagSetStoreParam);
-        handlerNameByCodes[0x7C] = nameof(Script_JumpIfFlagClearStoreParam);
-        handlerNameByCodes[0x7D] = nameof(Script_JumpRelativeFromStoredParam);
-        handlerNameByCodes[0x7E] = nameof(Script_ConditionalJumpFromStoredParamIfTrue);
-        handlerNameByCodes[0x7F] = nameof(Script_ConditionalJumpFromStoredParamIfFalse);
-        handlerNameByCodes[0x80] = nameof(Script_JumpFromStoredParamIfFlagSet);
-        handlerNameByCodes[0x81] = nameof(Script_JumpFromStoredParamIfFlagClear);
+        handlerNameByCodes[0x78] = nameof(Script_StoreChoiceParamAndJump_078);
+        handlerNameByCodes[0x79] = nameof(Script_JumpIfChoiceAccepted_079);
+        handlerNameByCodes[0x7A] = nameof(Script_JumpIfChoiceRejected_07A);
+        handlerNameByCodes[0x7B] = nameof(Script_JumpIfFlagSetStoreParam_07B);
+        handlerNameByCodes[0x7C] = nameof(Script_JumpIfFlagClearStoreParam_07C);
+        handlerNameByCodes[0x7D] = nameof(Script_JumpRelativeFromStoredParam_07D);
+        handlerNameByCodes[0x7E] = nameof(Script_ConditionalJumpFromStoredParamIfTrue_07E);
+        handlerNameByCodes[0x7F] = nameof(Script_ConditionalJumpFromStoredParamIfFalse_07F);
+        handlerNameByCodes[0x80] = nameof(Script_JumpFromStoredParamIfFlagSet_080);
+        handlerNameByCodes[0x81] = nameof(Script_JumpFromStoredParamIfFlagClear_081);
         handlerNameByCodes[0x82] = nameof(Script_130_082);
         handlerNameByCodes[0x83] = nameof(Script_131_083);
         handlerNameByCodes[0x84] = nameof(Script_132_084);

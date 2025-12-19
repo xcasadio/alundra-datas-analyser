@@ -1,11 +1,13 @@
-﻿using System.Diagnostics;
-using AlundraEngine;
+﻿using AlundraEngine;
 using AlundraEngine.Balance;
 using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
+using System.Diagnostics;
+using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 using System.Text;
 using Color = System.Drawing.Color;
 using Timer = System.Windows.Forms.Timer;
@@ -51,7 +53,8 @@ namespace AlundraTools.GameControls
             }
 
             var lines = new List<string>();
-            using (var reader = new StreamReader("g_spriteNames.csv", Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
+            using (var reader =
+                   new StreamReader("g_spriteNames.csv", Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
             {
                 while (reader.ReadLine() is { } line)
                 {
@@ -104,20 +107,24 @@ namespace AlundraTools.GameControls
 
         private void InitFont3Controls()
         {
-            pictureBoxWindTx.Image = new Bitmap(pictureBoxWindTx.Width, pictureBoxWindTx.Height, PixelFormat.Format24bppRgb);
+            pictureBoxWindTx.Image =
+                new Bitmap(pictureBoxWindTx.Width, pictureBoxWindTx.Height, PixelFormat.Format24bppRgb);
 
             listBoxFont3Palette.Items.Clear();
             for (var i = 0; i < _font3.Palettes.Length; i++)
             {
                 listBoxFont3Palette.Items.Add("palette " + i);
             }
+
             listBoxFont3Palette.SelectedIndex = 0;
 
-            pictureBoxFont3Palette.Image = new Bitmap(pictureBoxFont3Palette.Width * _palScale, pictureBoxFont3Palette.Height * _palScale, PixelFormat.Format24bppRgb);
+            pictureBoxFont3Palette.Image = new Bitmap(pictureBoxFont3Palette.Width * _palScale,
+                pictureBoxFont3Palette.Height * _palScale, PixelFormat.Format24bppRgb);
             using var graphics = Graphics.FromImage(pictureBoxFont3Palette.Image);
             graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             graphics.Clear(Color.Black);
-            graphics.DrawImage(_font3.PalettesBitmap, 0, 0, _font3.PalettesBitmap.Width * _palScale, _font3.PalettesBitmap.Height * _palScale);
+            graphics.DrawImage(_font3.PalettesBitmap, 0, 0, _font3.PalettesBitmap.Width * _palScale,
+                _font3.PalettesBitmap.Height * _palScale);
             pictureBoxFont3Palette.Refresh();
         }
 
@@ -125,7 +132,9 @@ namespace AlundraTools.GameControls
         {
             if (!_cachedTiles.ContainsKey(tileId))
             {
-                _cachedTiles.Add(tileId, _selectedGameMap.GenerateTileBitmap(tileId & 0x3ff, _selectedGameMap.Info.Palettes[(tileId & 0xf000) >> 12]));
+                _cachedTiles.Add(tileId,
+                    _selectedGameMap.GenerateTileBitmap(tileId & 0x3ff,
+                        _selectedGameMap.Info.Palettes[(tileId & 0xf000) >> 12]));
             }
 
             return _cachedTiles[tileId];
@@ -141,7 +150,8 @@ namespace AlundraTools.GameControls
                 for (var i = 0; i < imgset.NumberOfImages; i++)
                 {
                     var palette = imgset.Images[i].Palette;
-                    list.Add(_selectedGameMap.GenerateSpriteBitmap(imgset.Images[i], _selectedGameMap.SpriteInfo.Palettes[palette & 0x1f]));
+                    list.Add(_selectedGameMap.GenerateSpriteBitmap(imgset.Images[i],
+                        _selectedGameMap.SpriteInfo.Palettes[palette & 0x1f]));
                 }
 
                 _cachedSprites.Add(imgset.ImageSetId, list);
@@ -171,8 +181,8 @@ namespace AlundraTools.GameControls
                 soundboardControl1.ChangeMap(_selectedGameMap.Info.MapId);
             }
 
-            _cachedTiles = new Dictionary<int, Bitmap>();//blow cache
-            _cachedSprites = new Dictionary<int, List<Bitmap>>();//blow cache
+            _cachedTiles = new Dictionary<int, Bitmap>(); //blow cache
+            _cachedSprites = new Dictionary<int, List<Bitmap>>(); //blow cache
 
             if (_selectedGameMap?.Map != null)
             {
@@ -190,6 +200,7 @@ namespace AlundraTools.GameControls
                         lstPortals.Items.Add("portal " + dex);
                     }
                 }
+
                 lstPortals_SelectedIndexChanged(null, null);
 
                 //palettes
@@ -198,6 +209,7 @@ namespace AlundraTools.GameControls
                 {
                     lstMapPalettes.Items.Add("palette " + dex);
                 }
+
                 lstMapPalettes.SelectedIndex = 0;
 
                 pctMapPalettes.Image = new Bitmap(_selectedGameMap.Info.PalettesBitmap, 16 * _palScale, 32 * _palScale);
@@ -206,7 +218,9 @@ namespace AlundraTools.GameControls
                 using var g = Graphics.FromImage(pctMapPalettes.Image);
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 g.Clear(Color.Black);
-                g.DrawImage(_selectedGameMap.Info.PalettesBitmap, 0, 0, _selectedGameMap.Info.PalettesBitmap.Width * _palScale, _selectedGameMap.Info.PalettesBitmap.Height * _palScale);
+                g.DrawImage(_selectedGameMap.Info.PalettesBitmap, 0, 0,
+                    _selectedGameMap.Info.PalettesBitmap.Width * _palScale,
+                    _selectedGameMap.Info.PalettesBitmap.Height * _palScale);
 
                 listViewSpriteMapEntries.Items.Clear();
                 foreach (var spriteMapEntry in _selectedGameMap.Info.SpriteMapEntries)
@@ -278,16 +292,20 @@ namespace AlundraTools.GameControls
             {
                 lstSpritePalettes.Items.Add("palette " + dex);
             }
+
             lstSpritePalettes.SelectedIndex = 0;
 
-            pctSpritePalettes.Image = new Bitmap(_selectedGameMap.SpriteInfo.PalettesBitmap, 16 * _palScale, 32 * _palScale);
+            pctSpritePalettes.Image =
+                new Bitmap(_selectedGameMap.SpriteInfo.PalettesBitmap, 16 * _palScale, 32 * _palScale);
             pctSpritePalettes.Width = pctSpritePalettes.Image.Width;
             pctSpritePalettes.Height = pctSpritePalettes.Image.Height;
             using (var g = Graphics.FromImage(pctSpritePalettes.Image))
             {
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 g.Clear(Color.Black);
-                g.DrawImage(_selectedGameMap.SpriteInfo.PalettesBitmap, 0, 0, _selectedGameMap.SpriteInfo.PalettesBitmap.Width * _palScale, _selectedGameMap.SpriteInfo.PalettesBitmap.Height * _palScale);
+                g.DrawImage(_selectedGameMap.SpriteInfo.PalettesBitmap, 0, 0,
+                    _selectedGameMap.SpriteInfo.PalettesBitmap.Width * _palScale,
+                    _selectedGameMap.SpriteInfo.PalettesBitmap.Height * _palScale);
             }
 
             //strings
@@ -313,24 +331,26 @@ namespace AlundraTools.GameControls
                     {
                         spriteTableIndex += 0x100;
                     }
+
                     var spriteName = spriteTableIndex < 512 ? _spriteNames[spriteTableIndex] : null;
 
                     var lvi = new ListViewItem([
                         "entity " + i,
-                            entityRecord.SpriteDirection.ToString("x2"),
-                            entityRecord.SpriteTableIndex.ToString("x2"),
-                            spriteName,
-                            (entityRecord.XPos/2).ToString(),
-                            (entityRecord.YPos/2).ToString(),
-                            entityRecord.Height.ToString("x2"),
-                            entityRecord.EventCodesA_LoadIndex.ToString("x2"),
-                            entityRecord.EventCodesB_MapIndex.ToString("x2"),
-                            entityRecord.EventCodesC_TickIndex.ToString("x2"),
-                            entityRecord.EventCodesD_TouchIndex.ToString("x2"),
-                            entityRecord.EventCodesE_DeactivateIndex.ToString("x2"),
-                            entityRecord.EventCodesF_InteractIndex.ToString("x2")
+                        entityRecord.SpriteDirection.ToString("x2"),
+                        entityRecord.SpriteTableIndex.ToString("x2"),
+                        spriteName,
+                        (entityRecord.XPos / 2).ToString(),
+                        (entityRecord.YPos / 2).ToString(),
+                        entityRecord.Height.ToString("x2"),
+                        entityRecord.EventCodesA_LoadIndex.ToString("x2"),
+                        entityRecord.EventCodesB_MapIndex.ToString("x2"),
+                        entityRecord.EventCodesC_TickIndex.ToString("x2"),
+                        entityRecord.EventCodesD_TouchIndex.ToString("x2"),
+                        entityRecord.EventCodesE_DeactivateIndex.ToString("x2"),
+                        entityRecord.EventCodesF_InteractIndex.ToString("x2")
                     ]);
-                    lvi.ToolTipText = ShortToString(entityRecord.Contents) + " " + ShortToString(entityRecord._10) + " " + ByteToString(entityRecord.XMin) + " " + ByteToString(entityRecord.YMin);
+                    lvi.ToolTipText = ShortToString(entityRecord.Contents) + " " + ShortToString(entityRecord._10) +
+                                      " " + ByteToString(entityRecord.XMin) + " " + ByteToString(entityRecord.YMin);
                     lsvEntities.Items.Add(lvi);
                 }
             }
@@ -342,15 +362,15 @@ namespace AlundraTools.GameControls
                 if (record != null)
                 {
                     lsvSector4.Items.Add(new ListViewItem([
-                        "record "+dex,
-                            record.X1.ToString("x2"),
-                            record.Y1.ToString("x2"),
-                            record.X2.ToString("x2"),
-                            record.Y2.ToString("x2"),
-                            record.EventCodesBIndex.ToString("x2"),
-                            record.Ub1.ToString("x2"),
-                            record.Ub2.ToString("x2"),
-                            record.Ub3.ToString("x2")
+                        "record " + dex,
+                        record.X1.ToString("x2"),
+                        record.Y1.ToString("x2"),
+                        record.X2.ToString("x2"),
+                        record.Y2.ToString("x2"),
+                        record.EventCodesBIndex.ToString("x2"),
+                        record.Ub1.ToString("x2"),
+                        record.Ub2.ToString("x2"),
+                        record.Ub3.ToString("x2")
                     ]));
                 }
             }
@@ -383,6 +403,7 @@ namespace AlundraTools.GameControls
         }
 
         private int _palScale = 4;
+
         private void lstGameMaps_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lstGameMaps.SelectedIndex >= 0)
@@ -457,16 +478,22 @@ namespace AlundraTools.GameControls
 
                             g.DrawString(tile.Walkability.ToString(), fnt, Brushes.Red, dx, dy);
                             g.DrawString(tile.GroundProperty.ToString(), fnt, Brushes.Red, dx + halfHeight, dy);
-                            g.DrawString(tile.Slope.ToString(), fnt, Brushes.Red, dx + StaticVariables.MapTileHeight, dy);
+                            g.DrawString(tile.Slope.ToString(), fnt, Brushes.Red, dx + StaticVariables.MapTileHeight,
+                                dy);
                             g.DrawString(tile.Height.ToString(), fnt, Brushes.Red, dx, dy + halfHeight / 1.5f);
-                            g.DrawString(tile.Palette.ToString(), fnt, Brushes.Red, dx + halfHeight, dy + halfHeight / 1.5f);
-                            g.DrawString(tile.Tile.ToString(), fnt, Brushes.Red, dx + StaticVariables.MapTileHeight, dy + halfHeight / 1.5f);
-                            g.DrawString(tile.TilesOffset.ToString(), fnt, Brushes.Green, dx, dy + StaticVariables.MapTileHeight / 1.5f);
+                            g.DrawString(tile.Palette.ToString(), fnt, Brushes.Red, dx + halfHeight,
+                                dy + halfHeight / 1.5f);
+                            g.DrawString(tile.Tile.ToString(), fnt, Brushes.Red, dx + StaticVariables.MapTileHeight,
+                                dy + halfHeight / 1.5f);
+                            g.DrawString(tile.TilesOffset.ToString(), fnt, Brushes.Green, dx,
+                                dy + StaticVariables.MapTileHeight / 1.5f);
 
                             if (tile.WallTiles != null)
                             {
-                                g.DrawString(tile.WallTiles.Offset.ToString(), fnt, Brushes.Green, dx + halfHeight, dy + StaticVariables.MapTileHeight / 1.5f);
-                                g.DrawString(tile.WallTiles.Count.ToString(), fnt, Brushes.Green, dx + StaticVariables.MapTileHeight, dy + StaticVariables.MapTileHeight / 1.5f);
+                                g.DrawString(tile.WallTiles.Offset.ToString(), fnt, Brushes.Green, dx + halfHeight,
+                                    dy + StaticVariables.MapTileHeight / 1.5f);
+                                g.DrawString(tile.WallTiles.Count.ToString(), fnt, Brushes.Green,
+                                    dx + StaticVariables.MapTileHeight, dy + StaticVariables.MapTileHeight / 1.5f);
                             }
                         }
                     }
@@ -497,7 +524,8 @@ namespace AlundraTools.GameControls
                 {
                     if (portals[i].X2 != 0xff && portals[i].Y2 != 0xff)
                     {
-                        var tile = _selectedGameMap.Map.MapTiles[portals[i].X1 + portals[i].Y1 * _selectedGameMap.Map.Width];
+                        var tile = _selectedGameMap.Map.MapTiles[
+                            portals[i].X1 + portals[i].Y1 * _selectedGameMap.Map.Width];
                         var x1 = portals[i].X1 * StaticVariables.MapTileWidth;
                         var y1 = (portals[i].Y1 - tile.Height) * StaticVariables.MapTileHeight;
                         var x2 = (portals[i].X2 + 1) * StaticVariables.MapTileWidth;
@@ -573,6 +601,7 @@ namespace AlundraTools.GameControls
                 _selectedPalette = _selectedGameMap.Info.Palettes[lstMapPalettes.SelectedIndex];
                 imageViewerTileSheet.Image = _selectedGameMap.GenerateTileSheetBmp(_selectedPalette);
             }
+
             pctMapPalettes.Refresh();
 
         }
@@ -597,7 +626,7 @@ namespace AlundraTools.GameControls
 
             }
         }
-        
+
         private void lstSpritePalettes_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lstSpritePalettes.SelectedIndex >= 0 && _selectedGameMap != null)
@@ -605,6 +634,7 @@ namespace AlundraTools.GameControls
                 _selectedSpritePalette = _selectedGameMap.SpriteInfo.Palettes[lstSpritePalettes.SelectedIndex];
                 imageViewerSpriteSheet.Image = _selectedGameMap.GenerateSpriteSheetBmp(_selectedSpritePalette);
             }
+
             pctSpritePalettes.Refresh();
         }
 
@@ -659,7 +689,8 @@ namespace AlundraTools.GameControls
             {
                 _selectedPortal = _selectedGameMap.Info.Portals[lstPortals.SelectedIndex];
 
-                var tile = _selectedGameMap.Map.MapTiles[_selectedPortal.X1 + _selectedPortal.Y1 * _selectedGameMap.Map.Width];
+                var tile = _selectedGameMap.Map.MapTiles[
+                    _selectedPortal.X1 + _selectedPortal.Y1 * _selectedGameMap.Map.Width];
 
                 lblportalx1.Text = _selectedPortal.X1.ToString();
                 lblportaly1.Text = _selectedPortal.Y1.ToString();
@@ -739,7 +770,8 @@ namespace AlundraTools.GameControls
                 {
                     if (portals[dex].X2 != 0xff && portals[dex].Y2 != 0xff)
                     {
-                        var tile = _selectedGameMap.Map.MapTiles[portals[dex].X1 + portals[dex].Y1 * _selectedGameMap.Map.Width];
+                        var tile = _selectedGameMap.Map.MapTiles[
+                            portals[dex].X1 + portals[dex].Y1 * _selectedGameMap.Map.Width];
                         var x1 = portals[dex].X1 * StaticVariables.MapTileWidth;
                         var y1 = (portals[dex].Y1 - tile.Height) * StaticVariables.MapTileHeight;
                         var x2 = (portals[dex].X2 + 1) * StaticVariables.MapTileWidth;
@@ -767,6 +799,7 @@ namespace AlundraTools.GameControls
                     break;
                 }
             }
+
             return output.Substring(0, output.Length - 1);
         }
 
@@ -808,14 +841,25 @@ namespace AlundraTools.GameControls
                 using var br = _datasBin.OpenBin();
                 _selectedMapEvent = null;
                 _selectedEntity = _selectedGameMap.SpriteInfo.Entities.Entities[lsvEntities.SelectedIndices[0]];
-                lblEntityInfo.Text = "si addr:" + GameMap.EventObjectAddr(lsvEntities.SelectedIndices[0]).ToString("x6") + " entity addr:" + _selectedEntity.MemoryAddress.ToString("x6") + " u123: " + ByteToString(_selectedEntity.XMax) + ByteToString(_selectedEntity.YMax) + ByteToString(_selectedEntity.IsEnabled) + " u789ab:" + lsvEntities.Items[lsvEntities.SelectedIndices[0]].ToolTipText;
+                lblEntityInfo.Text = "si addr:" +
+                                     GameMap.EventObjectAddr(lsvEntities.SelectedIndices[0]).ToString("x6") +
+                                     " entity addr:" + _selectedEntity.MemoryAddress.ToString("x6") + " u123: " +
+                                     ByteToString(_selectedEntity.XMax) + ByteToString(_selectedEntity.YMax) +
+                                     ByteToString(_selectedEntity.IsEnabled) + " u789ab:" +
+                                     lsvEntities.Items[lsvEntities.SelectedIndices[0]].ToolTipText;
                 var sector1 = _selectedGameMap.SpriteInfo.EventCodes;
-                lblSector1a.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesA_LoadIndex, sector1.EventCodesATable);
-                lblSector1b.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesB_MapIndex, sector1.EventCodesBTable);
-                lblSector1c.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesC_TickIndex, sector1.EventCodesCTable);
-                lblSector1d.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesD_TouchIndex, sector1.EventCodesDTable);
-                lblSector1e.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesE_DeactivateIndex, sector1.EventCodesETable);
-                lblSector1f.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesF_InteractIndex, sector1.EventCodesFTable);
+                lblSector1a.Text =
+                    GetSector1ByteCodes(br, _selectedEntity.EventCodesA_LoadIndex, sector1.EventCodesATable);
+                lblSector1b.Text =
+                    GetSector1ByteCodes(br, _selectedEntity.EventCodesB_MapIndex, sector1.EventCodesBTable);
+                lblSector1c.Text =
+                    GetSector1ByteCodes(br, _selectedEntity.EventCodesC_TickIndex, sector1.EventCodesCTable);
+                lblSector1d.Text =
+                    GetSector1ByteCodes(br, _selectedEntity.EventCodesD_TouchIndex, sector1.EventCodesDTable);
+                lblSector1e.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesE_DeactivateIndex,
+                    sector1.EventCodesETable);
+                lblSector1f.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesF_InteractIndex,
+                    sector1.EventCodesFTable);
 
                 br.Close();
             }
@@ -834,13 +878,16 @@ namespace AlundraTools.GameControls
         }
 
         private SpriteRecord _selectedSector5;
+
         private void lstSector5_SelectedIndexChanged(object sender, EventArgs e)
         {
             lblsector5mem.Text = 0.ToString("x8");
             _selectedSector5 = null;
             if (_selectedGameMap != null && lstSector5.SelectedIndex >= 0 && lstSector5.SelectedItem.ToString() != "-1")
             {
-                _selectedSector5 = _selectedGameMap.SpriteInfo.SpriteRecords[int.Parse(lstSector5.SelectedItem.ToString().Replace("record ", ""), System.Globalization.NumberStyles.AllowHexSpecifier)];
+                _selectedSector5 = _selectedGameMap.SpriteInfo.SpriteRecords[
+                    int.Parse(lstSector5.SelectedItem.ToString().Replace("record ", ""),
+                        System.Globalization.NumberStyles.AllowHexSpecifier)];
             }
 
             lstSector5Animations.Items.Clear();
@@ -868,6 +915,7 @@ namespace AlundraTools.GameControls
                 {
                     lstSector5Animations.Items.Add("anim " + dex);
                 }
+
                 lblSector5Info.Text = string.Join(",", _selectedSector5.Header.Ubuff.Select(x => x.ToString("x2")));
 
                 var ecode = _selectedSector5.Header.ProgramLoad;
@@ -933,6 +981,7 @@ namespace AlundraTools.GameControls
                 lbl_contents.Text = _selectedSector5.Header.Contents.ToString("x");
 
             }
+
             lstSector5Animations.SelectedIndex = 0;
             pctPortrait.Refresh();
         }
@@ -940,6 +989,7 @@ namespace AlundraTools.GameControls
         private int _curframe;
         private Timer _animtimer;
         private SiAnimation _selectedAnim;
+
         private void UpdateAnim(int animoffset)
         {
             _animtimer.Enabled = false;
@@ -952,7 +1002,7 @@ namespace AlundraTools.GameControls
                 var br = _datasBin.OpenBin();
                 _selectedAnim = _selectedSector5.GetAnimation(br, animoffset);
                 lblSelAnim.Text = _selectedAnim.MemoryAddress.ToString("x6");
-                _cachedSprites = new Dictionary<int, List<Bitmap>>();//blow cache
+                _cachedSprites = new Dictionary<int, List<Bitmap>>(); //blow cache
                 _curframe = _selectedAnim.NumberOfFrames;
                 _animtimer.Interval = 1;
                 _animtimer.Enabled = true;
@@ -969,7 +1019,8 @@ namespace AlundraTools.GameControls
                         }
                         else
                         {
-                            lstSector5Frames.Items.Add("frame " + dex + " (imageset " + (_selectedAnim.Frames[dex].Images.ImageSetId & 0xff) + ")");
+                            lstSector5Frames.Items.Add("frame " + dex + " (imageset " +
+                                                       (_selectedAnim.Frames[dex].Images.ImageSetId & 0xff) + ")");
                         }
                     }
 
@@ -1015,6 +1066,7 @@ namespace AlundraTools.GameControls
         }
 
         private AnimationSet _selectedAnimSet;
+
         private void lstSector5Animations_SelectedIndexChanged(object sender, EventArgs e)
         {
             _selectedAnim = null;
@@ -1032,15 +1084,16 @@ namespace AlundraTools.GameControls
                 rdoDown.Text = "down (" + _selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Down].ToString("x4") + ")";
                 rdoUp.Text = "up (" + _selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Up].ToString("x4") + ")";
                 rdoLeft.Text = "left (" + _selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Left].ToString("x4") + ")";
-                rdoRight.Text = "right (" + _selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Right].ToString("x4") + ")";
+                rdoRight.Text = "right (" + _selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Right].ToString("x4") +
+                                ")";
 
                 rdoDown.Checked = true;
 
                 lblAnimProps.Text = "speed:" + _selectedAnimSet.Speed.ToString("x4") +
-                    " sfx:" + _selectedAnimSet.Sfx.ToString("x2") +
-                    " flags:" + _selectedAnimSet.Flags.ToString("x2") +
-                    _selectedAnimSet.Acceleration.ToString("x2") +
-                    _selectedAnimSet.U6.ToString("x2");
+                                    " sfx:" + _selectedAnimSet.Sfx.ToString("x2") +
+                                    " flags:" + _selectedAnimSet.Flags.ToString("x2") +
+                                    _selectedAnimSet.Acceleration.ToString("x2") +
+                                    _selectedAnimSet.U6.ToString("x2");
             }
         }
 
@@ -1064,6 +1117,7 @@ namespace AlundraTools.GameControls
         }
 
         private SiFrame _selectedFrame;
+
         private void lstSector5Frames_SelectedIndexChanged(object sender, EventArgs e)
         {
             _selectedFrame = null;
@@ -1087,6 +1141,7 @@ namespace AlundraTools.GameControls
                     {
                         lstSector5Images.Items.Add("image " + dex);
                     }
+
                     if (_selectedFrame.Images.NumberOfImages > 0)
                     {
                         lstSector5Images.SelectedIndex = 0;
@@ -1106,6 +1161,7 @@ namespace AlundraTools.GameControls
         }
 
         private SiImage _selectedImage;
+
         private void lstSector5Images_SelectedIndexChanged(object sender, EventArgs e)
         {
             _selectedImage = null;
@@ -1113,7 +1169,8 @@ namespace AlundraTools.GameControls
             if (_selectedFrame != null && lstSector5Images.SelectedIndex >= 0)
             {
                 _selectedImage = _selectedFrame.Images.Images[lstSector5Images.SelectedIndex];
-                lblImageData.Text = "ss: " + ByteToString(_selectedImage.Spritesheet) + " p: " + ByteToString(_selectedImage.Palette);
+                lblImageData.Text = "ss: " + ByteToString(_selectedImage.Spritesheet) + " p: " +
+                                    ByteToString(_selectedImage.Palette);
                 var i = _selectedImage;
                 lblsx.Text = i.Sx.ToString();
                 lblsy.Text = i.Sy.ToString();
@@ -1212,7 +1269,7 @@ namespace AlundraTools.GameControls
                             var h = img.Y4 - img.Y1;
                             if (w != 0 && h != 0)
                             {
-                                e.Graphics.DrawImage(bmps[dex], posx + img.X1, posy + img.Y1);//, w, h);
+                                e.Graphics.DrawImage(bmps[dex], posx + img.X1, posy + img.Y1); //, w, h);
                             }
                         }
                     }
@@ -1242,7 +1299,8 @@ namespace AlundraTools.GameControls
                     var h = _selectedImage.Y4 - _selectedImage.Y1;
                     if (w != 0 && h != 0)
                     {
-                        e.Graphics.DrawImage(bmps[Array.IndexOf(_selectedFrame.Images.Images, _selectedImage)], posx + _selectedImage.X1, posy + _selectedImage.Y1);//, w, h);
+                        e.Graphics.DrawImage(bmps[Array.IndexOf(_selectedFrame.Images.Images, _selectedImage)],
+                            posx + _selectedImage.X1, posy + _selectedImage.Y1); //, w, h);
                     }
                 }
             }
@@ -1253,6 +1311,7 @@ namespace AlundraTools.GameControls
         }
 
         private SiMapEventRecord _selectedMapEvent;
+
         private void lsvSector4_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_selectedGameMap != null && lsvSector4.SelectedIndices.Count == 1)
@@ -1262,7 +1321,8 @@ namespace AlundraTools.GameControls
                 _selectedMapEvent = _selectedGameMap.SpriteInfo.MapEvents.Records[lsvSector4.SelectedIndices[0]];
                 var sector1 = _selectedGameMap.SpriteInfo.EventCodes;
                 lblSector1a.Text = "";
-                lblSector1b.Text = GetSector1ByteCodes(br, _selectedMapEvent.EventCodesBIndex, sector1.EventCodesBTable);
+                lblSector1b.Text =
+                    GetSector1ByteCodes(br, _selectedMapEvent.EventCodesBIndex, sector1.EventCodesBTable);
                 lblSector1c.Text = "";
                 lblSector1d.Text = "";
                 lblSector1e.Text = "";
@@ -1293,7 +1353,9 @@ namespace AlundraTools.GameControls
             {
                 var frm = new CommandsViewerForm();
                 var br = _datasBin.OpenBin();
-                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesA_LoadIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesATable, _selectedGameMap?.SpriteInfo);
+                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br,
+                    _selectedEntity.EventCodesA_LoadIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesATable,
+                    _selectedGameMap?.SpriteInfo);
                 frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap);
                 frm.Show();
                 br.Close();
@@ -1306,16 +1368,20 @@ namespace AlundraTools.GameControls
             var br = _datasBin.OpenBin();
             if (_selectedEntity != null)
             {
-                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesB_MapIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable, _selectedGameMap?.SpriteInfo);
+                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br,
+                    _selectedEntity.EventCodesB_MapIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable,
+                    _selectedGameMap?.SpriteInfo);
                 frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap);
                 frm.Show();
             }
             else if (_selectedMapEvent != null)
             {
-                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br, _selectedMapEvent.EventCodesBIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable, _selectedGameMap?.SpriteInfo);
+                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br, _selectedMapEvent.EventCodesBIndex,
+                    _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable, _selectedGameMap?.SpriteInfo);
                 frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap);
                 frm.Show();
             }
+
             br.Close();
         }
 
@@ -1325,7 +1391,9 @@ namespace AlundraTools.GameControls
             {
                 var frm = new CommandsViewerForm();
                 var br = _datasBin.OpenBin();
-                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesC_TickIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesCTable, _selectedGameMap?.SpriteInfo);
+                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br,
+                    _selectedEntity.EventCodesC_TickIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesCTable,
+                    _selectedGameMap?.SpriteInfo);
                 frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap);
                 frm.Show();
                 br.Close();
@@ -1338,7 +1406,9 @@ namespace AlundraTools.GameControls
             {
                 var frm = new CommandsViewerForm();
                 var br = _datasBin.OpenBin();
-                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br, _selectedEntity.EventCodesF_InteractIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesFTable, _selectedGameMap?.SpriteInfo);
+                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br,
+                    _selectedEntity.EventCodesF_InteractIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesFTable,
+                    _selectedGameMap?.SpriteInfo);
                 frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap);
                 frm.Show();
                 br.Close();
@@ -1363,7 +1433,8 @@ namespace AlundraTools.GameControls
                         var br = _datasBin.OpenBin();
                         var portraitset = _selectedSector5.GetPortraitImageset(br);
                         br.Close();
-                        var portraitbmp = _selectedGameMap.GenerateSpriteBitmap(portraitset.Images[0], _selectedGameMap.SpriteInfo.Palettes[portraitset.Images[0].Palette & 0x1f]);
+                        var portraitbmp = _selectedGameMap.GenerateSpriteBitmap(portraitset.Images[0],
+                            _selectedGameMap.SpriteInfo.Palettes[portraitset.Images[0].Palette & 0x1f]);
                         e.Graphics.DrawImage(portraitbmp, 0, 0);
                     }
                 }
@@ -1380,20 +1451,23 @@ namespace AlundraTools.GameControls
             {
                 var paletteIndex = _font3.Palettes[listBoxFont3Palette.SelectedIndex];
 
-                pictureBoxWindTx.Image = new Bitmap(pictureBoxWindTx.Width, pictureBoxWindTx.Height, PixelFormat.Format24bppRgb);
+                pictureBoxWindTx.Image = new Bitmap(pictureBoxWindTx.Width, pictureBoxWindTx.Height,
+                    PixelFormat.Format24bppRgb);
                 using var graphics = Graphics.FromImage(pictureBoxWindTx.Image);
                 graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 graphics.Clear(Color.Black);
                 graphics.DrawImage(_font3.GenerateHudBitmap(paletteIndex), 0, 0);
                 pictureBoxWindTx.Refresh();
 
-                pictureBoxFont3Tim.Image = new Bitmap(pictureBoxFont3Tim.Width, pictureBoxFont3Tim.Height, PixelFormat.Format24bppRgb);
+                pictureBoxFont3Tim.Image = new Bitmap(pictureBoxFont3Tim.Width, pictureBoxFont3Tim.Height,
+                    PixelFormat.Format24bppRgb);
                 using var graphics2 = Graphics.FromImage(pictureBoxFont3Tim.Image);
                 graphics2.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 graphics2.Clear(Color.Black);
                 graphics2.DrawImage(_font3.GenerateFontBitmapTim(paletteIndex), 0, 0);
                 pictureBoxFont3Tim.Refresh();
             }
+
             pctSpritePalettes.Refresh();
         }
 
@@ -1511,7 +1585,8 @@ namespace AlundraTools.GameControls
                 return;
             }
 
-            propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.SpriteInfo.MapEffectRecords);
+            propertyGridGameMapHeader.SelectedObject =
+                new UniversalWrapper(_selectedGameMap.SpriteInfo.MapEffectRecords);
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -1522,7 +1597,8 @@ namespace AlundraTools.GameControls
                 return;
             }
 
-            propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.SpriteInfo.SpriteEffectRecords);
+            propertyGridGameMapHeader.SelectedObject =
+                new UniversalWrapper(_selectedGameMap.SpriteInfo.SpriteEffectRecords);
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -1534,6 +1610,61 @@ namespace AlundraTools.GameControls
             }
 
             propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.SpriteInfo.SpriteRecords);
+        }
+
+        private void listBoxCodesB_DoubleClick(object sender, EventArgs e)
+        {
+            if (listBoxCodesB.SelectedIndex != -1)
+            {
+                var frm = new CommandsViewerForm();
+
+                var mapBIndex = (int)_selectedGameMap?.SpriteInfo?.EventCodes?.EventCodesBTable[listBoxCodesB.SelectedIndex] - 1;
+                var indexEnd = (int)_selectedGameMap?.SpriteInfo?.EventCodes?.EventCodesBTable[listBoxCodesB.SelectedIndex + 1];
+
+                var codes = _selectedGameMap?.SpriteInfo?.EventCodes?.Codes.Skip(mapBIndex).Take(indexEnd - mapBIndex).ToArray();
+
+                //var br = _datasBin.OpenBin();
+                //var commands = _selectedGameMap?.SpriteInfo?.EventCodes?.GetCommands(br,
+                //        (int)mapBIndex, true);
+                //br.Close();
+
+                var commands = new List<SiCommand>();
+                var i = 0;
+
+                while (i < codes.Length)
+                {
+                    var value = codes[i++];
+                    var sicode = SpriteInfoEventCodes.GetCode(value);
+
+                    if (sicode.Size < 1)
+                    {
+                        continue;
+                    }
+
+                    var size = sicode.Size;
+                    var name = sicode.Name;
+                    var parameters = new byte[size - 1];
+                    var j = 0;
+
+                    while (j < size - 1 && i < codes.Length)
+                    {
+                        parameters[j++] = codes[i++];
+                    }
+
+                    var address = -1; //_memoryAddress + eventCodesOffset + i - size;
+                    var cmd = new SiCommand(value, parameters, name, address);
+                    commands.Add(cmd);
+
+                    //if (stopAtff && value == 0xff)
+                    //{
+                    //    break;
+                    //}
+                }
+
+
+                frm.Init(commands, _datasBin.AlundraGameMap, _selectedGameMap, codes);
+                frm.Show();
+            }
         }
     }
 }
