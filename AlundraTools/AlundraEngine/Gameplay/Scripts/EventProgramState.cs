@@ -4,7 +4,7 @@ namespace AlundraEngine.Gameplay.Scripts;
 
 public class EventProgramState
 {
-    public int Sp; // pointer on code
+    public int Sp; // pointer on code => use Codes instead
     public readonly int[] Parameters = new int[10];
     public int Result;
     public int _30;

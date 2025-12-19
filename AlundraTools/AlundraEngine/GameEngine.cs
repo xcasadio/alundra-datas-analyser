@@ -2111,12 +2111,12 @@ public class GameEngine
     }
 
     //8002d608
-    public void ChangeAreaTileProperties(int startX, int startY, int sizeX, int sizeY, int distX, int distY)
+    public void ChangeAreaTileProperties(int startX, int startY, int sizeX, int sizeY, int destX, int destY)
     {
         int x;
         int y;
 
-        if (startX < 0 || startY < 0 || sizeX < 0 || sizeY < 0 || distX < 0 || distY < 0)
+        if (startX < 0 || startY < 0 || sizeX < 0 || sizeY < 0 || destX < 0 || destY < 0)
         {
             Debugger.Break();
         }
@@ -2126,8 +2126,8 @@ public class GameEngine
 
         if (mapWidth < startX + sizeX
             || mapHeight < startY + sizeY
-            || mapWidth < distX + sizeX
-            || mapHeight < distY + sizeY)
+            || mapWidth < destX + sizeX
+            || mapHeight < destY + sizeY)
         {
             Debugger.Break();
         }
@@ -2146,7 +2146,7 @@ public class GameEngine
                 {
                     do
                     {
-                        var tileDestination = map.MapTiles[distX + x + (distY + y) * mapWidth];
+                        var tileDestination = map.MapTiles[destX + x + (destY + y) * mapWidth];
                         var tileSource = map.MapTiles[startX + x + (startY + y) * mapWidth];
                         tileDestination.Walkability = tileSource.Walkability;
                         tileDestination.GroundProperty = tileSource.GroundProperty;
@@ -2161,11 +2161,10 @@ public class GameEngine
                             //{
                             //    Debugger.Break();
                             //}
-
-                            int length = Math.Min(tileSource.WallTiles.Tiles.Length, tileDestination.WallTiles.Tiles.Length);
-
                             tileDestination.WallTiles ??= new WallTiles();
                             tileDestination.WallTiles.Tiles ??= new ushort[tileSource.WallTiles.Tiles.Length];
+
+                            int length = Math.Min(tileSource.WallTiles.Tiles.Length, tileDestination.WallTiles.Tiles.Length);
 
                             tileDestination.WallTiles.Offset = tileSource.WallTiles.Offset;
                             tileDestination.WallTiles.Count = tileSource.WallTiles.Count;

@@ -1618,10 +1618,15 @@ namespace AlundraTools.GameControls
             {
                 var frm = new CommandsViewerForm();
 
-                var mapBIndex = (int)_selectedGameMap?.SpriteInfo?.EventCodes?.EventCodesBTable[listBoxCodesB.SelectedIndex] - 1;
-                var indexEnd = (int)_selectedGameMap?.SpriteInfo?.EventCodes?.EventCodesBTable[listBoxCodesB.SelectedIndex + 1];
+                var mapBIndex = (int)_selectedGameMap?.SpriteInfo?.EventCodes?.EventCodesBTable[listBoxCodesB.SelectedIndex];
+                var indexEnd = _selectedGameMap?.SpriteInfo?.EventCodes?.Codes.Length ?? 0;
 
-                var codes = _selectedGameMap?.SpriteInfo?.EventCodes?.Codes.Skip(mapBIndex).Take(indexEnd - mapBIndex).ToArray();
+                if (listBoxCodesB.SelectedIndex < _selectedGameMap?.SpriteInfo?.EventCodes?.EventCodesBTable.Length - 1)
+                {
+                    indexEnd = (int)_selectedGameMap?.SpriteInfo?.EventCodes?.EventCodesBTable[listBoxCodesB.SelectedIndex + 1];
+                }
+
+                var codes = _selectedGameMap?.SpriteInfo?.EventCodes?.Codes.Skip(mapBIndex).Take(indexEnd - mapBIndex - 1).ToArray();
 
                 //var br = _datasBin.OpenBin();
                 //var commands = _selectedGameMap?.SpriteInfo?.EventCodes?.GetCommands(br,

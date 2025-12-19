@@ -1,12 +1,8 @@
-﻿using System.Diagnostics;
-using AlundraEngine.Gameplay.Scripts;
-using static AlundraEngine.Gameplay.Scripts.EntityEventHandlers;
+﻿using static AlundraEngine.Gameplay.Scripts.EntityEventHandlers;
 namespace AlundraEngine.DatasBin;
 
 public class SpriteInfoEventCodes
 {
-    //public readonly byte[] Codes = new byte[1024 * 1024]; //1mb of event codes, too much prob but oh well;
-
     public SpriteInfoEventCodes(BinaryReader br, long binOffset, SpriteInfoHeader header, bool ismap)
     {
         var tableSize = 0;
@@ -96,32 +92,6 @@ public class SpriteInfoEventCodes
         _binOffset = binOffset + header.EventCodesAPointer;
         _memoryAddress = header.MemoryAddress + header.EventCodesAPointer;
         _dataSize = (header.EntitiesPointer == 0 ? header.EventCodesFPointer : header.EntitiesPointer) - header.EventCodesAPointer;
-        //Debug.Assert(_dataSize > 0);
-
-        //Preload all commands
-
-        ////remove this ??  =>
-        //var top = 0;
-        //if (ismap)
-        //{
-        //    top += 1024 * 512;
-        //}
-        //
-        //br.BaseStream.Position = binOffset;
-        //if (_dataSize > 0)
-        //{
-        //    var size = EventCodesATable.Length + EventCodesBTable.Length + EventCodesCTable.Length +
-        //               EventCodesDTable.Length + EventCodesETable.Length + EventCodesFTable.Length;
-        //    EventCodes = new short[size];
-        //    var index = 0;
-        //
-        //    while (index < size)
-        //    {
-        //        EventCodes[index] = br.ReadInt16();
-        //        index++;
-        //    }
-        //}
-        //half mb for global codes, half mb for map codes
 
         var codes = new List<short>();
 
@@ -133,12 +103,10 @@ public class SpriteInfoEventCodes
         codes.AddRange(EventCodesFTable);
         codes.RemoveAll(x => x == 0);
 
-        var min = codes.Min();
         var max = codes.Max();
 
-
-        Codes = new byte[max - min];
-        br.BaseStream.Position = _binOffset + min;
+        Codes = new byte[max];
+        br.BaseStream.Position = _binOffset;
         br.Read(Codes, 0, Codes.Length);
     }
 
@@ -169,13 +137,11 @@ public class SpriteInfoEventCodes
             Size = 0,
             Name = ""
         };
-        //throw new ArgumentException($"SiCode command code unknown size: {code}({code:X2})");
     }
 
     public List<SiCommand> GetCommands(BinaryReader br, int eventCodesOffset, bool stopAtff = false, int commandsSize = 0)
     {
         var commands = new List<SiCommand>();
-        //var bytes = GetByteCode(br, sector1offset);
         br.BaseStream.Position = _binOffset + eventCodesOffset;
         var bytes = new byte[_dataSize - eventCodesOffset];
         br.Read(bytes, 0, bytes.Length);
@@ -221,26 +187,6 @@ public class SpriteInfoEventCodes
         var i = 0;
 
         br.Read(bytes, 0, bytes.Length);
-
-        //while (i < bytes.Length)
-        //{
-        //    //Debug.Assert(dex < bytes.Length, "ByteCodes larger than 255");
-        //
-        //    var b = br.ReadByte();
-        //    if (b == 0)
-        //    {
-        //        bytes[i++] = b;
-        //    }
-        //    else if (b == 0xff)
-        //    {
-        //        bytes[i++] = b;
-        //        return bytes;
-        //    }
-        //    else
-        //    {
-        //        bytes[i++] = b;
-        //    }
-        //}
 
         return bytes;
     }

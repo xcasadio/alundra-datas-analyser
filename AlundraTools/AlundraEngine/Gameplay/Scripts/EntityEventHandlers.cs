@@ -310,11 +310,11 @@ public class EntityEventHandlers
                 goto END_SCRIPT;
             }
 
-            if (command == 0x00) // break, skip the loop but do the next command
+            if (command == 0x00) // break
             {
+                _gameEngine.LogManager.Log(entity, $"{log}");
                 eventProgramState.Parameters[1] = 0;
                 eventProgramState.CodeIndex++;
-                FillDataFromCommand(eventProgramState); // needed because there is a check at the beginning of the function
                 goto END_SCRIPT;
             }
 
@@ -402,8 +402,6 @@ public class EntityEventHandlers
             spriteInfo = _gameEngine.CurrentMap.SpriteInfo;
         }
 
-        using var br = _gameEngine.DatasBin.OpenBin();
-
         short[] eventCodesTable = eventProgramType switch
         {
             ScriptHelper.ProgramALoad => spriteInfo.EventCodes.EventCodesATable,
@@ -415,13 +413,29 @@ public class EntityEventHandlers
             _ => throw new InvalidOperationException()
         };
 
-        eventProgramState.CodeIndex = 0;
-        Array.Clear(eventProgramState.Parameters);
+        var index = entity.ProgramIndexes[eventProgramType];
 
-        //var commands = GetEventCodeCommands(br, entity.ProgramIndexes[eventProgramType], eventCodesTable, spriteInfo);
-        eventProgramState.Codes = GetEventCodes(br, entity.ProgramIndexes[eventProgramType], eventCodesTable, spriteInfo);
-        eventProgramState.Sp = eventProgramState.Codes?.Length > 0 ? eventProgramState.Codes[eventProgramState.CodeIndex] : 0;
-        //eventProgramState.Parameters[0] = eventProgramState.Sp;
+        if (index >= 0)
+        {
+            var i = index & 0x7f;
+            if (i < eventCodesTable.Length)
+            {
+                eventProgramState.CodeIndex = eventCodesTable[i];
+            }
+        }
+
+        Array.Clear(eventProgramState.Parameters);
+        eventProgramState.Codes = spriteInfo.EventCodes.Codes;
+
+        if (eventProgramState.Codes?.Length == 0 || eventProgramState.CodeIndex >= eventProgramState.Codes.Length)
+        {
+            eventProgramState.Sp = 0xFF;
+        }
+        else
+        {
+            eventProgramState.Sp = eventProgramState.Codes[eventProgramState.CodeIndex];
+        }
+            
         eventProgramState.Parameters[0] = eventProgramState.CodeIndex;
     }
 
@@ -689,15 +703,12 @@ public class EntityEventHandlers
                 logicEntity.PosX, logicEntity.PosY, logicEntity.PosZ,
                 _gameEngine.StaticVariables.g_cameraScrollingX, _gameEngine.StaticVariables.g_cameraScrollingY,
                 img.Sx, img.Sy, img.Swidth, img.Sheight,
-                /*_gameEngine.StaticVariables.g_drawPageInfoBase[logicEntity.SpriteSheetOffset + ((img.Spritesheet) & 0x3f)],
-                _gameEngine.StaticVariables.g_tPageFadeLUT[logicEntity.PaletteOffset + ((img.Palette) & 7)]*/
                 bitmap);
         }
 
         //Debugger.Break();
         _gameEngine.TriggerVisualUpdate((int)logicEntity.SpriteTableIndex);
         var res = _gameEngine.TryOpenDialog((uint)variables[1], variables[2]);
-        // SetText(exp[1], exp[2]);
 
         if (res == 0)
         {
@@ -1775,7 +1786,7 @@ public class EntityEventHandlers
     private int Script_73_049(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         //return eventProgramState.Sp - eventProgramState.Parameters[0];
-        return -eventProgramState.CodeIndex; //eventProgramState.Sp - variables[0];
+        return -(eventProgramState.CodeIndex - eventProgramState.Parameters[0]); //eventProgramState.Sp - variables[0];
     }
 
     // 8003E9EC
@@ -1786,7 +1797,7 @@ public class EntityEventHandlers
         if (eventProgramState.Result != 0)
         {
             //return eventProgramState.Sp - eventProgramState.Parameters[0];
-            return -eventProgramState.CodeIndex; //eventProgramState.Sp - variables[0];
+            return -(eventProgramState.CodeIndex - eventProgramState.Parameters[0]); //eventProgramState.Sp - variables[0];
         }
 
         return result;
@@ -1800,7 +1811,7 @@ public class EntityEventHandlers
         if (eventProgramState.Result == 0)
         {
             //return eventProgramState.Sp - eventProgramState.Parameters[0];
-            return -eventProgramState.CodeIndex; //eventProgramState.Sp - variables[0];
+            return -(eventProgramState.CodeIndex - eventProgramState.Parameters[0]); //eventProgramState.Sp - variables[0];
         }
 
         return result;
