@@ -130,7 +130,7 @@ public class GameInitializer
         InitializeRenderingTiles();
         //InitializeDrMoveBuffers();
         LoadFontInTakiFolder();
-        _gameEngine.SoundManager.InitSoundSystem();
+        _gameEngine.SoundManager.InitializeSoundSystem();
         InitializeScrollingRenderer(0x340, 0x100, 0x100, 0x1f0,
             _gameEngine.StaticVariables.g_drawModeIndexInit, _gameEngine.StaticVariables.g_paletteIndexInit, _gameEngine.StaticVariables.g_tileScaleXInit,
             _gameEngine.StaticVariables.g_tileScaleYInit, _gameEngine.StaticVariables.g_scrollingClutTableInit);
@@ -139,7 +139,7 @@ public class GameInitializer
 
     private ushort GetClut(int x, int y)
     {
-        return (ushort)((y << 6) | (x >> 4) & 0x3f);
+        return (ushort)((y << 6) | ((x >> 4) & 0x3f));
     }
 
     private void InitializePadController()
@@ -400,7 +400,7 @@ public class GameInitializer
         _gameEngine.StaticVariables.g_cameraLookAtX = (playerTileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraLookAtY = (playerTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraLookAtZ = playerZ << 0x14;
-        _gameEngine.StaticVariables.g_desiredMap = _gameEngine.StaticVariables.g_saveData.InitialMapId; //471; //452; //476; //11;
+        _gameEngine.StaticVariables.g_desiredMap = _gameEngine.StaticVariables.g_saveData.InitialMapId;
         _gameEngine.StaticVariables.g_cameraTargetX = (_gameEngine.StaticVariables.g_saveData.CameraTileX * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraTargetY = (_gameEngine.StaticVariables.g_saveData.CameraTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraTargetZ = _gameEngine.StaticVariables.g_saveData.CameraTileZ << 0x14;

@@ -66,13 +66,13 @@ public class Entity
     public Entity? RidingEntity; //12c
     public Entity? XCollisionEntity;
     public int FloorHeight;
-    public int TerrainHeight;//map collision
+    public int TerrainHeight;//
     public int ForceAdjusted;//0x13c
-    public int CollidedWithEntityZ;//some boolean that has to do with if moddedzpos is greater than hity from collideentitiesz
+    public int CollidedWithEntityZ;//0x140
     public int IsAboveGround;//collided with something
     public readonly MapTile[] MapTiles = new MapTile[4];
     public readonly int[] MapHeights = new int[4]; // 158
-    public int PlatformUpdateFlag; //public bool DoneMoving;
+    public int PlatformUpdateFlag; //
     public int _16c;
     public int HitBoxOriginX;
     public int HitBoxOriginY;
@@ -81,8 +81,8 @@ public class Entity
     public uint CombinedVramFlagsOR;
     public uint CombinedVramFlagsAND;
     public int TileAttributes; //188
-    public int Slope_18c; // slopesomething?, 
-    public int Slope_190; // slopesomethingprev?
+    public int Slope_18c; //
+    public int Slope_190; //
     public SpriteRef SpriteRef = new SpriteRef();//194 
     //public int field91_0x1ac; // 1ac => SpriteRef
     public int SpriteSheetOffset, PaletteOffset;//represents offset where the pallets and sheets are in memory for map vs global sprites, prob not used with my engine

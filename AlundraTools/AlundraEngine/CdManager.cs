@@ -104,12 +104,6 @@ public class CdManager
         return bVar1;
     }
 
-    //8004b104
-    public bool IsSoundDriverReady()
-    {
-        return _gameEngine.StaticVariables.g_soundLoadState != 0;
-    }
-
     //8005ad38
     public void OnCdDataStreamComplete()
     {

@@ -104,7 +104,7 @@ public class GameEngine
             InitializeStaticVariable();
             StaticVariables.INT_800dc4e4 = 0;
             StaticVariables.g_isGameEnding = 0;
-            StaticVariables.g_warpEntryBehavior = 0;
+            StaticVariables.g_warpSoundEffectId = 0;
 
             if (StaticVariables.g_desiredMap != StaticVariables.g_currentMap)
             {
@@ -190,8 +190,8 @@ public class GameEngine
         //end game
         if (StaticVariables.g_isGameEnding != 0)
         {
-            //HandleMapSoundEffects(StaticVariables.g_desiredMap, StaticVariables.g_warpEntryBehavior);
-            StaticVariables.g_warpEntryBehavior = 0;
+            SoundManager.HandleMapSoundEffects(StaticVariables.g_desiredMap, StaticVariables.g_warpSoundEffectId);
+            StaticVariables.g_warpSoundEffectId = 0;
             StartWarpTransition(StaticVariables.g_mapTransitionEffectId);
             StaticVariables.INT_800dc4e4 = 1;
             do
@@ -199,7 +199,7 @@ public class GameEngine
                 StaticVariables.g_debugMessage = "";
                 _padManager.UpdatePads();
                 //isEffectRunning = FUN_80044440(StaticVariables.g_orderingTableBuffer + 3, StaticVariables.g_mapTransitionEffectId);
-                //HandleMapSoundStreaming();
+                SoundManager.HandleMapSoundStreaming();
                 //PauseGameDuringNbFrame(1);
                 //DoNothing();
             } while (isEffectRunning != 0);
@@ -2082,7 +2082,7 @@ public class GameEngine
 
         if ((StaticVariables.g_isCdResetRequested != 0
              || (StaticVariables.g_cdIsReady != 0 && StaticVariables.g_cdDataLoaded == 0))
-            && CdManager.IsSoundDriverReady() == false) 
+            && SoundManager.IsSoundLoading() == false) 
         {
             StaticVariables.g_cdDataStartPtr = StaticVariables.DAT_CDAranXa_pos + StaticVariables.g_mapCdDataOffsets[mapIndex * 3];
             StaticVariables.g_cdDataEndPtr = StaticVariables.g_cdDataStartPtr + StaticVariables.g_mapCdDataOffsets[mapIndex * 3 + 2] * 8 + -1;

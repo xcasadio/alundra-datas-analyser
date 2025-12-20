@@ -143,7 +143,7 @@ public class PlayerManager
                         {
                             _gameEngine.StaticVariables.g_isGameEnding = 1;
                             _gameEngine.StaticVariables.g_mapTransitionEffectId = 8;
-                            _gameEngine.StaticVariables.g_warpEntryBehavior = 0;
+                            _gameEngine.StaticVariables.g_warpSoundEffectId = 0;
                             _gameEngine.StaticVariables.g_desiredMap = 0x1dd;
                             _gameEngine.StaticVariables.g_resetAnimationId = 0;
                             _gameEngine.StaticVariables.g_playerControlFlags |= 4;
@@ -2580,7 +2580,7 @@ public class PlayerManager
         int targetCamY = (deltaY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) << 16;
         int targetCamZ = portal.ZLevel << 20;
 
-        _gameEngine.StaticVariables.g_warpEntryBehavior = _gameEngine.StaticVariables.g_warpBehaviorTable[portal.Flags & 0xF];
+        _gameEngine.StaticVariables.g_warpSoundEffectId = (uint)_gameEngine.StaticVariables.g_warpBehaviorTable[portal.Flags & 0xF];
 
         if (_gameEngine.StaticVariables.g_mapTransitionEffectId == 3)
         {

@@ -4878,10 +4878,8 @@ public class StaticVariables
     public short g_soundPitch; // 800A82EC
     public short g_soundNote; // 800A82EE
     public short g_soundBankTable; // 800A82F0
-    public short g_soundEffectBankIdList; // 800A82F2
-    public int g_soundEffectMaxVoices; // 800A82F8
-    public int g_soundEffectToneCount; // 800A82FC
-    public short DAT_800a8308; // 800A8308
+    // 800A82F2
+    public short[] g_soundEffectParameters = new short[10577]; //TODO fill with value
     public UIBoxConfiguration UIBoxConfiguration_800af664; // 800AF664
     public UIBoxConfiguration UIBoxConfiguration_800b06dc; // 800B06DC
     public UIBoxConfiguration UIBoxConfiguration_800b122c; // 800B122C
@@ -5406,7 +5404,7 @@ public class StaticVariables
     public int g_cameraTargetY; // 800DC4DC
     public int g_cameraTargetZ; // 800DC4E0
     public int INT_800dc4e4; // 800DC4E4
-    public int g_warpEntryBehavior; // 800DC4E8
+    public uint g_warpSoundEffectId; // 800DC4E8
     public short[] g_tPageFadeLUT = new short[5]; // 800DC4F0
     public short[] g_tPageIds = new short[14]; // 800DC4FA
     public short g_drawModeIndexInit; // 800DC516
@@ -5682,9 +5680,8 @@ public class StaticVariables
     public int g_currentSoundGroup; // 80173848
     public int DAT_8017384c; // 8017384C
     public int g_soundEffectState; // 80175850
-    public byte g_voiceState; // 80175858
-    public byte DAT_80175859; // 80175859
-    public int DAT_80175874; // 80175874
+    public byte[] g_voiceState = new byte[24]; // 80175858
+    public int[] INT_ARRAY_80175874 = new int[23]; // 80175874
     public int g_voiceType; // 801758D0
     public int g_voicePitch; // 80175930
     public int g_voiceVolumeLeft; // 80175990
@@ -6098,8 +6095,7 @@ public class StaticVariables
     public short DAT_maybeCurrentVoiceIndex_801f76b2; // 801F76B2
     public short DAT_801f76b4; // 801F76B4
     public short DAT_801f76b6; // 801F76B6
-    public byte DAT_sound_801f76b8; // 801F76B8
-    public byte DAT_801f76b9; // 801F76B9
+    public byte[] DAT_sound_801f76b8 = new byte[16]; // 801F76B8
     public byte g_voiceLockFlag; // 801F76C8
     public short DAT_sound_801f7710; // 801F7710
     public int DAT_sound_801f7718; // 801F7718

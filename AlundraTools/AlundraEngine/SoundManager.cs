@@ -14,8 +14,17 @@ public class SoundManager
     //see soundBin
 
     //800484e8
-    public void InitSoundSystem()
+    public int InitializeSoundSystem()
     {
+        int result;
+
+        if (_gameEngine.StaticVariables.g_isCdResetRequested != 0)
+        {
+            //_gameEngine.CdManager.CdInit();
+            //_gameEngine.CdManager.InitCDRom2();
+            _gameEngine.StaticVariables.g_cdIsReady = 0;
+        }
+
         _gameEngine.StaticVariables.g_cdIsReady = 1;
 
         _gameEngine.StaticVariables.g_resetSoundFlag = 0;
@@ -25,6 +34,65 @@ public class SoundManager
         _gameEngine.StaticVariables.g_soundEffectState = 0;
         _gameEngine.StaticVariables.g_resetSoundFlag = 0;
         _gameEngine.StaticVariables.DAT_80165024 = 0;
+
+        Array.Clear(_gameEngine.StaticVariables.g_voiceState);
+
+        //FUN_8008eeac(-0x7fe8a5b0, 4, 1);
+        //FUN_8008e398();
+        //SpuSetMute(1);
+        //FUN_8008ec8c(4);
+        _gameEngine.StaticVariables.g_mainSoundDriver = -1;
+        _gameEngine.StaticVariables.g_currentVabId = -1;
+        //FUN_8008f994();
+
+        if (_gameEngine.StaticVariables.g_cdIsReady != 0)
+        {
+            //g_vabBaseSector = CdPosToInt((CdlLOC*)&PTR_CDFile_Sound_bin);
+        }
+
+        _gameEngine.StaticVariables.DAT_8017384c = 4;
+        //_gameEngine.StaticVariables.g_spuReverbAttr.mask = 7;
+        //_gameEngine.StaticVariables.g_spuReverbAttr.mode = 0x104;
+        //_gameEngine.StaticVariables.g_spuReverbAttr.depth.left = 0x2a00;
+        //_gameEngine.StaticVariables.g_spuReverbAttr.depth.right = 0x2a00;
+        //SpuSetReverbModeParam(&g_spuReverbAttr);
+        //SpuSetReverbDepth(&g_spuReverbAttr);
+        //SpuSetReverbVoice(1, 0xffffff);
+        //SpuSetReverb(1);
+        //SpuCommonAttr_80166140.mask = 0x2ec0;
+        //SpuCommonAttr_80166140.cd.volume.left = 0x7fff;
+        //SpuCommonAttr_80166140.cd.volume.right = 0x7fff;
+        //SpuCommonAttr_80166140.cd.mix = 1;
+        //SpuCommonAttr_80166140.ext.volume.left = 0x7fff;
+        //SpuCommonAttr_80166140.ext.volume.right = 0x7fff;
+        //SpuCommonAttr_80166140.ext.mix = 1;
+        //SpuSetCommonAttr(&SpuCommonAttr_80166140);
+        //FUN_80048704();
+
+        if (_gameEngine.StaticVariables.DAT_800a7d2c < 0x801)
+        {
+            //ReadFileFromCDIntoBuffer("data\\sound.bin", (u_long*)&DAT_80173850, 0, DAT_800a7d2c);
+            //voiceIndex = 9;
+            //psVar1 = _gameEngine.StaticVariables.SHORT_80175d12;
+
+            //do
+            //{
+            //    *psVar1 = -1;
+            //    voiceIndex = voiceIndex + -1;
+            //    psVar1 = psVar1 + -1;
+            //} while (-1 < voiceIndex);
+
+            //FUN_8008e398();
+            //SpuSetMute(0);
+            result = 1;
+        }
+        else
+        {
+            //DoNothing();
+            result = 0;
+        }
+
+        return result;
     }
 
     // 8004b114
@@ -61,25 +129,79 @@ public class SoundManager
     //80049be0
     public void MaybeLoadSound(int soundIndex, int stopAllSound)
     {
-        Debugger.Break();
+        int segId;
+
+        _gameEngine.StaticVariables.g_currentMapSoundIndex = (short)soundIndex;
+        InitializeBgm(_gameEngine.StaticVariables.g_requestedSeqId);
+        ResetSomethingSound(_gameEngine.StaticVariables.g_requestedSeqId);
+        MaybeFreeSound(_gameEngine.StaticVariables.g_currentVabId);
+
+        if (_gameEngine.StaticVariables.g_currentMapSoundIndex == -1)
+        {
+            _gameEngine.StaticVariables.g_currentMapSoundIndex = 1;
+        }
+
+        //FUN_8004a184(_gameEngine.StaticVariables.g_currentVabId, _gameEngine.StaticVariables.DAT_8015b1a0, _gameEngine.StaticVariables.g_wind_tx_buffer, 0x39040);
+
+        if (_gameEngine.StaticVariables.g_currentVabId < 0)
+        {
+            //DoNothing();
+        }
+
+        //ReadFileFromCDIntoBuffer("data\\sound.bin", (u_long*)&g_errorMarker2,
+        //    (uint)(&g_seqExtraAddrTable)[g_currentMapSoundIndex * 3],
+        //    (int)(&g_seqStartAddrTable)[g_currentMapSoundIndex * 3] -
+        //    (int)(&g_seqExtraAddrTable)[g_currentMapSoundIndex * 3]);
+
+        segId = -1; //LoadSeq(_gameEngine.StaticVariables.g_errorMarker2, _gameEngine.StaticVariables.g_currentVabId);
+        _gameEngine.StaticVariables.g_requestedSeqId = (short)segId;
+
+        if ((int)(segId << 0x10) < 0)
+        {
+            //DoNothing();
+        }
+
+        _gameEngine.StaticVariables.g_currentMapSoundIndex = (short)soundIndex;
+
+        if ((0 < soundIndex) && (stopAllSound != 0))
+        {
+            StopAllSound();
+        }
+
+        _gameEngine.StaticVariables.g_resetSoundFlag = 1;
     }
 
     //8008f9a4
     private void MaybeFreeSound(short vabId)
     {
-        Debugger.Break();
+        if (vabId < 0x10 && vabId > 0)
+        {
+            if (_gameEngine.StaticVariables.DAT_sound_801f76b8[vabId] == 1)
+            {
+                //SpuFree(_gameEngine.StaticVariables.DAT_sound_801f7718[vabId]);
+                _gameEngine.StaticVariables.DAT_sound_801f76b8[vabId] = 0;
+                _gameEngine.StaticVariables.DAT_sound_801f7710 = (short)(_gameEngine.StaticVariables.DAT_sound_801f7710 - 1);
+            }
+        }
     }
 
     //8008df04
     public void ResetSomethingSound(short vabId)
     {
-        Debugger.Break();
+        ResetSomethingSound2(vabId);
+    }
+
+    //8008dd8c
+    public void ResetSomethingSound2(short vabId)
+    {
+        //TODO
     }
 
     // 80049b7c
     public void LoadBgm(int bgmIndex)
     {
         _gameEngine.StaticVariables.g_resetSoundFlag = 0;
+
         if (bgmIndex == 0)
         {
             InitializeBgm(_gameEngine.StaticVariables.g_requestedSeqId);
@@ -263,5 +385,105 @@ public class SoundManager
             }
             while (s1 < toneCount);
         }*/
+    }
+
+    //80049f1c
+    public int HandleMapSoundEffects(uint mapId, uint soundEffectId)
+    {
+        uint destinationMapId;
+
+        InitializeSoundSomething();
+
+        if (_gameEngine.StaticVariables.g_soundEffectParameters[soundEffectId * 0xb] == -1 &&
+            _gameEngine.StaticVariables.g_soundEffectParameters[soundEffectId * 0x16] == 0)
+        {
+            soundEffectId = 0;
+        }
+
+        destinationMapId = _gameEngine.GetMapWarpDestination(mapId);
+
+        if (destinationMapId == 0)
+        {
+            destinationMapId = (uint)_gameEngine.StaticVariables.g_currentMapSoundIndex;
+        }
+
+        if (_gameEngine.StaticVariables.g_currentMapSoundIndex == destinationMapId)
+        {
+            if (soundEffectId == 0)
+            {
+                return 1;
+            }
+        }
+        else
+        {
+            if (soundEffectId == 0)
+            {
+                _gameEngine.StaticVariables.g_soundEffectState = 0x78;
+                return 1;
+            }
+
+            LoadBgm(0);
+        }
+
+        PlaySoundEffect(soundEffectId);
+        return 1;
+    }
+
+    //80048e44
+    private void InitializeSoundSomething()
+    {
+        //undefined1 uVar1;
+        //undefined3 extraout_var;
+        //undefined** ppuVar2;
+        //int iVar3;
+        //byte* pbVar4;
+        //char acStack_80[104];
+        //
+        //iVar3 = 0;
+        //pbVar4 = g_voiceState;
+        //do
+        //{
+        //    if ((g_voiceState[iVar3] != 0) && (*(int*)(pbVar4 + 0x78) != -2))
+        //    {
+        //        FUN_80094f20((ushort)iVar3);
+        //    }
+        //    iVar3 = iVar3 + 1;
+        //    pbVar4 = pbVar4 + 4;
+        //} while (iVar3 < 0x18);
+        //iVar3 = 0;
+        //ppuVar2 = &g_soundEffectData;
+        //do
+        //{
+        //    if (((*(short*)((int)ppuVar2 + 10) != -1) && (((uint)ppuVar2[2] & 2) != 0)) &&
+        //        (uVar1 = FUN_8008dd1c((int)g_loadedSequenceHandles[*(short*)((int)ppuVar2 + 10)], 0),
+        //            (short)CONCAT31(extraout_var, uVar1) == 1))
+        //    {
+        //        InitializeBgm(g_loadedSequenceHandles[*(short*)((int)ppuVar2 + 10)]);
+        //        ResetSomethingSound(g_loadedSequenceHandles[*(short*)((int)ppuVar2 + 10)]);
+        //        *(ushort*)(ppuVar2 + 2) = *(ushort*)(ppuVar2 + 2) & 0xfffd;
+        //        sprintf(acStack_80, "%d %d\r\n", iVar3,
+        //            (int)g_loadedSequenceHandles[*(short*)((int)ppuVar2 + 10)]);
+        //        DoNothing();
+        //    }
+        //    iVar3 = iVar3 + 1;
+        //    ppuVar2 = (undefined**)((int)ppuVar2 + 0x16);
+        //} while (iVar3 < 0x3c2);
+        //FUN_80090168();
+    }
+
+    //8004b1d4
+    public void HandleMapSoundStreaming()
+    {
+        _gameEngine.StaticVariables.g_soundLoadState = 0;
+
+        //TODO
+    }
+
+    //8004b104
+    public bool IsSoundLoading()
+    {
+        //TODO we don't load sound yet
+        //return _gameEngine.StaticVariables.g_soundLoadState != 0;
+        return false;
     }
 }

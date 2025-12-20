@@ -934,7 +934,7 @@ namespace AlundraTools.GameControls
             listBoxEffects.FormattingEnabled = true;
             listBoxEffects.Location = new Point(3, 20);
             listBoxEffects.Name = "listBoxEffects";
-            listBoxEffects.Size = new Size(103, 889);
+            listBoxEffects.Size = new Size(103, 709);
             listBoxEffects.TabIndex = 28;
             listBoxEffects.SelectedIndexChanged += listBoxEffects_SelectedIndexChanged;
             // 
@@ -944,7 +944,7 @@ namespace AlundraTools.GameControls
             propertyGridEffect.BackColor = SystemColors.Control;
             propertyGridEffect.Location = new Point(112, 20);
             propertyGridEffect.Name = "propertyGridEffect";
-            propertyGridEffect.Size = new Size(386, 896);
+            propertyGridEffect.Size = new Size(386, 714);
             propertyGridEffect.TabIndex = 29;
             // 
             // tabPagePlayerStatus

@@ -93,19 +93,7 @@ public class SpriteInfoEventCodes
         _memoryAddress = header.MemoryAddress + header.EventCodesAPointer;
         _dataSize = (header.EntitiesPointer == 0 ? header.EventCodesFPointer : header.EntitiesPointer) - header.EventCodesAPointer;
 
-        var codes = new List<short>();
-
-        codes.AddRange(EventCodesATable);
-        codes.AddRange(EventCodesBTable);
-        codes.AddRange(EventCodesCTable);
-        codes.AddRange(EventCodesDTable);
-        codes.AddRange(EventCodesETable);
-        codes.AddRange(EventCodesFTable);
-        codes.RemoveAll(x => x == 0);
-
-        var max = codes.Max();
-
-        Codes = new byte[max];
+        Codes = new byte[_dataSize];
         br.BaseStream.Position = _binOffset;
         br.Read(Codes, 0, Codes.Length);
     }
@@ -440,9 +428,9 @@ public class SpriteInfoEventCodes
         { 0x1D, "Repeat anim with collision" },
         { 0x1E, "Walk" },
         { 0x1F, "Walk with collision" },
-        { 0x20, "??? 0x20" },
-        { 0x21, "??? 0x21" },
-        { 0x22, "??? 0x22" },
+        { 0x20, "Check ZDistance and collidedWithEntityZ" },
+        { 0x21, "Is within Z distance" },
+        { 0x22, "Clamp forceZ to height target" },
         { 0x23, "??? 0x23" },
         { 0x24, "Wait force adjusted" },
         { 0x25, "Wait entity collision z or 144" },
@@ -491,7 +479,7 @@ public class SpriteInfoEventCodes
         { 0x50, "Set dialog choice" },
         { 0x51, "Get dialog choice" },
         { 0x52, "??? 0x52" },
-        { 0x53, "??? 0x53" },
+        { 0x53, "Change map" },
         { 0x54, "Set walkable" },
         { 0x55, "Set unwalkable" },
         { 0x56, "??? 0x56" },
@@ -605,7 +593,7 @@ public class SpriteInfoEventCodes
         { 0xC2, "Check something save" },
         { 0xC3, "Restore and initialize HP and MP" },
         { 0xC4, "Dialog with entity and name" },
-        { 0xFF, "End" },
+        { 0xFF, "End script" },
     };
 
     public record CommandProperties(byte Code, int Size, string Name, string Description);

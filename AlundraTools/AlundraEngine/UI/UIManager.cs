@@ -470,6 +470,16 @@ public class UIManager
     public void Func_8004a8a8(CallBackInfo callBackInfo)
     {
         Debugger.Break();
+
+        //debug menu sound
+        //char acStack_68[80];
+        //g_debugSoundMenuSoundIndex = 0;
+        //g_playerControlFlags = g_playerControlFlags | 0x18;
+        //strcpy(acStack_68, g_numberCharacterJpArray[0]);
+        //strcat(acStack_68, g_numberCharacterJpArray[((int)g_debugSoundMenuSoundIndex / 10) % 10]);
+        //strcat(acStack_68, g_numberCharacterJpArray[(int)g_debugSoundMenuSoundIndex % 10]);
+        //callBackInfo.RenderFunc = FUN_8004a31c;
+        //return 1;
     }
 
     //8004afe8
