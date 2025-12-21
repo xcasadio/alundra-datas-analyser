@@ -210,6 +210,15 @@ namespace AlundraTools.GameControls
             buttonZoomX8 = new Button();
             buttonZoomX4 = new Button();
             buttonZoomX2 = new Button();
+            tabPage2 = new TabPage();
+            listBoxLogs = new ListBox();
+            buttonRefreshLogs = new Button();
+            buttonCopyAllLogs = new Button();
+            buttonShowAllLogs = new Button();
+            label58 = new Label();
+            comboBoxLogCategories = new ComboBox();
+            checkBoxAddLogInVS = new CheckBox();
+            buttonClearLog = new Button();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -238,6 +247,7 @@ namespace AlundraTools.GameControls
             groupBox5.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox8.SuspendLayout();
+            tabPage2.SuspendLayout();
             SuspendLayout();
             // 
             // pctOut
@@ -855,13 +865,14 @@ namespace AlundraTools.GameControls
             // 
             // tabControl1
             // 
-            tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tabControl1.Controls.Add(tabPageEntities);
             tabControl1.Controls.Add(tabPageEffects);
             tabControl1.Controls.Add(tabPagePlayerStatus);
             tabControl1.Controls.Add(tabPageDebug);
             tabControl1.Controls.Add(tabPageHud);
             tabControl1.Controls.Add(tabPage1);
+            tabControl1.Controls.Add(tabPage2);
             tabControl1.Location = new Point(1281, 0);
             tabControl1.Margin = new Padding(3, 2, 3, 2);
             tabControl1.Name = "tabControl1";
@@ -2171,6 +2182,102 @@ namespace AlundraTools.GameControls
             buttonZoomX2.UseVisualStyleBackColor = true;
             buttonZoomX2.Click += buttonZoomX2_Click;
             // 
+            // tabPage2
+            // 
+            tabPage2.Controls.Add(buttonClearLog);
+            tabPage2.Controls.Add(listBoxLogs);
+            tabPage2.Controls.Add(buttonRefreshLogs);
+            tabPage2.Controls.Add(buttonCopyAllLogs);
+            tabPage2.Controls.Add(buttonShowAllLogs);
+            tabPage2.Controls.Add(label58);
+            tabPage2.Controls.Add(comboBoxLogCategories);
+            tabPage2.Controls.Add(checkBoxAddLogInVS);
+            tabPage2.Location = new Point(4, 24);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(503, 739);
+            tabPage2.TabIndex = 6;
+            tabPage2.Text = "Logs";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // listBoxLogs
+            // 
+            listBoxLogs.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            listBoxLogs.FormattingEnabled = true;
+            listBoxLogs.Location = new Point(14, 128);
+            listBoxLogs.Name = "listBoxLogs";
+            listBoxLogs.Size = new Size(482, 604);
+            listBoxLogs.TabIndex = 6;
+            // 
+            // buttonRefreshLogs
+            // 
+            buttonRefreshLogs.Location = new Point(14, 99);
+            buttonRefreshLogs.Name = "buttonRefreshLogs";
+            buttonRefreshLogs.Size = new Size(117, 23);
+            buttonRefreshLogs.TabIndex = 5;
+            buttonRefreshLogs.Text = "Refresh";
+            buttonRefreshLogs.UseVisualStyleBackColor = true;
+            buttonRefreshLogs.Click += buttonRefreshLogs_Click;
+            // 
+            // buttonCopyAllLogs
+            // 
+            buttonCopyAllLogs.Location = new Point(260, 61);
+            buttonCopyAllLogs.Name = "buttonCopyAllLogs";
+            buttonCopyAllLogs.Size = new Size(117, 23);
+            buttonCopyAllLogs.TabIndex = 4;
+            buttonCopyAllLogs.Text = "Copy all logs";
+            buttonCopyAllLogs.UseVisualStyleBackColor = true;
+            buttonCopyAllLogs.Click += buttonCopyAllLogs_Click;
+            // 
+            // buttonShowAllLogs
+            // 
+            buttonShowAllLogs.Location = new Point(14, 61);
+            buttonShowAllLogs.Name = "buttonShowAllLogs";
+            buttonShowAllLogs.Size = new Size(117, 23);
+            buttonShowAllLogs.TabIndex = 3;
+            buttonShowAllLogs.Text = "Show all logs";
+            buttonShowAllLogs.UseVisualStyleBackColor = true;
+            buttonShowAllLogs.Click += buttonShowAllLogs_Click;
+            // 
+            // label58
+            // 
+            label58.AutoSize = true;
+            label58.Location = new Point(14, 33);
+            label58.Name = "label58";
+            label58.Size = new Size(98, 15);
+            label58.TabIndex = 2;
+            label58.Text = "Filter by category";
+            // 
+            // comboBoxLogCategories
+            // 
+            comboBoxLogCategories.FormattingEnabled = true;
+            comboBoxLogCategories.Location = new Point(118, 30);
+            comboBoxLogCategories.Name = "comboBoxLogCategories";
+            comboBoxLogCategories.Size = new Size(186, 23);
+            comboBoxLogCategories.TabIndex = 1;
+            comboBoxLogCategories.SelectedIndexChanged += comboBoxLogCategories_SelectedIndexChanged;
+            // 
+            // checkBoxAddLogInVS
+            // 
+            checkBoxAddLogInVS.AutoSize = true;
+            checkBoxAddLogInVS.Location = new Point(14, 11);
+            checkBoxAddLogInVS.Name = "checkBoxAddLogInVS";
+            checkBoxAddLogInVS.Size = new Size(142, 19);
+            checkBoxAddLogInVS.TabIndex = 0;
+            checkBoxAddLogInVS.Text = "Add Logs in VS Studio";
+            checkBoxAddLogInVS.UseVisualStyleBackColor = true;
+            checkBoxAddLogInVS.CheckedChanged += checkBoxAddLogInVS_CheckedChanged;
+            // 
+            // buttonClearLog
+            // 
+            buttonClearLog.Location = new Point(137, 61);
+            buttonClearLog.Name = "buttonClearLog";
+            buttonClearLog.Size = new Size(117, 23);
+            buttonClearLog.TabIndex = 7;
+            buttonClearLog.Text = "Clear logs";
+            buttonClearLog.UseVisualStyleBackColor = true;
+            buttonClearLog.Click += buttonClearLog_Click;
+            // 
             // FrmGame
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -2228,6 +2335,8 @@ namespace AlundraTools.GameControls
             groupBox5.PerformLayout();
             tabPage1.ResumeLayout(false);
             groupBox8.ResumeLayout(false);
+            tabPage2.ResumeLayout(false);
+            tabPage2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -2416,5 +2525,14 @@ namespace AlundraTools.GameControls
         private Button buttonAlundraCabine;
         private Label label56;
         private Label labelActiveCollisionEntity;
+        private TabPage tabPage2;
+        private Button buttonShowAllLogs;
+        private Label label58;
+        private ComboBox comboBoxLogCategories;
+        private CheckBox checkBoxAddLogInVS;
+        private ListBox listBoxLogs;
+        private Button buttonRefreshLogs;
+        private Button buttonCopyAllLogs;
+        private Button buttonClearLog;
     }
 }

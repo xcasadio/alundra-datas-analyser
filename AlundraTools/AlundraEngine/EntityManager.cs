@@ -2252,12 +2252,6 @@ public class EntityManager
                         entity.PosX, entity.PosY, entity.FloorHeight);
                     break;
 
-                //case 0:
-                //case 5:
-                //case 6:
-                //case 7:
-                //    break;
-
                 case 4:
                     effect.Status = 1;
                     if ((entity.FrameCounter & 7) != 0)
@@ -2361,14 +2355,6 @@ public class EntityManager
                                         {
                                             eventProgramType = ScriptHelper.ProgramFInteract;
                                         }
-                                        //if (entity.ProgramIndexes[5] != 0)
-                                        //{
-                                        //    eventProgramType = ScriptHelper.ProgramFInteract;
-                                        //}
-                                        //else if (entity.SpriteProgramIndexes[5] != 0)
-                                        //{
-                                        //    eventProgramType = ScriptHelper.ProgramCTick;
-                                        //}
                                     }
                                 }
                                 
@@ -2402,6 +2388,7 @@ public class EntityManager
         do
         {
             keepGoing = false;
+
             for (var i = 1; i < _gameEngine.StaticVariables.g_numberOfEntity; i++)
             {
                 var entity = _gameEngine.StaticVariables.g_entitySlots[i];
@@ -2413,6 +2400,8 @@ public class EntityManager
 
                 var programIndex = entity.ProgramIndexes[entity.EventTrigger] & 0x7f;
 
+                _gameEngine.LogManager.SetCategory($"entity[{entity}]");
+
                 if (programIndex == 0)
                 {
                     // g_entityEventFunctionsByType => AI
@@ -2422,6 +2411,8 @@ public class EntityManager
                 {
                     _gameEngine.RunScript(entity, entity.EventTrigger);
                 }
+
+                _gameEngine.LogManager.ResetCategory();
 
                 entity.EventTrigger = -1;
                 keepGoing = true;

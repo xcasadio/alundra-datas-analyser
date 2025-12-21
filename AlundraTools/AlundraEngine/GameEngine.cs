@@ -1692,7 +1692,7 @@ public class GameEngine
             playerEntity.LogicContextEntity = mapEventEntity;
             playerEntity.EventProgramState.CopyFrom(currentMapEvent.EventData);
 
-            LogManager.Log($"========== Map event {i} ==========");
+            LogManager.SetCategory($"MapEvent {i}");
 
             RunScript(playerEntity, ScriptHelper.ProgramBMap);
 
@@ -1700,6 +1700,8 @@ public class GameEngine
             currentMapEvent.Entity = playerEntity.LogicContextEntity;
             currentMapEvent.ProgramBMap = playerEntity.ProgramIndexes[ScriptHelper.ProgramBMap];
         }
+
+        LogManager.ResetCategory();
     }
 
     public SpriteEffectRecord GetEffectSpriteFromSpriteTable(bool isMapSprite, int spriteTableIndex, out int addedtosheet, out int addedtopallette)

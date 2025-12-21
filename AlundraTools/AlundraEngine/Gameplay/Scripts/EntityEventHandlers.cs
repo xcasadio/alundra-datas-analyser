@@ -699,7 +699,8 @@ public class EntityEventHandlers
 
         //Debugger.Break();
         _gameEngine.TriggerVisualUpdate((int)logicEntity.SpriteTableIndex);
-        var res = _gameEngine.TryOpenDialog((uint)((variables[2] << 8) | variables[1]), 0);
+        //var res = _gameEngine.TryOpenDialog((uint)((variables[2] << 8) | variables[1]), 0);
+        var res = _gameEngine.TryOpenDialog((uint)variables[1], variables[2]);
 
         if (res == 0)
         {
@@ -3956,16 +3957,8 @@ public class EntityEventHandlers
             if ((_gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].Flags & 0x800000U) != 0)
             {
                 var targetEntity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0];
-
-                //var textureIndex = (eventProgramState.Parameters[2] & 0x07) + targetEntity.PaletteOffset;
-                //var textureId = _gameEngine.StaticVariables.g_tPageFadeLUT[textureIndex];
-
-                //var spriteSheetOffset = targetEntity.SpriteSheetOffset + (eventProgramState.Parameters[3] & 0x3F);
-                //var textureId2 = _gameEngine.StaticVariables.g_drawPageInfoBase[spriteSheetOffset];
-
                 var image = targetEntity.Frame.Images.Images[targetEntity.CurrentFrameIndex];
-                var bitmap = _gameEngine.AlundraMap.GenerateSpriteBitmap(image,
-                        _gameEngine.AlundraMap.SpriteInfo.Palettes[image.Palette & 0x1f]);
+                var bitmap = _gameEngine.AlundraMap.GenerateSpriteBitmap(image, _gameEngine.AlundraMap.SpriteInfo.Palettes[image.Palette & 0x1f]);
 
                 _gameEngine.MainInventoryManager.StartHudTransition(
                     targetEntity.PosX,

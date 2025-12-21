@@ -1,4 +1,5 @@
 ﻿using AlundraEngine;
+using AlundraEngine.Balance;
 using AlundraEngine.DatasBin;
 using AlundraEngine.Editor;
 using AlundraEngine.Gameplay;
@@ -7,7 +8,7 @@ using AlundraEngine.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
-using AlundraEngine.Balance;
+using static System.Windows.Forms.LinkLabel;
 using Timer = System.Windows.Forms.Timer;
 
 namespace AlundraTools.GameControls;
@@ -1430,6 +1431,77 @@ public partial class FrmGame : Form
         _gameEngine.StaticVariables.g_saveData.MapFlags[27] |= 32;
         _gameEngine.StaticVariables.g_saveData.MapFlags[27] |= 64;
         _gameEngine.StaticVariables.g_saveData.MapFlags[27] |= 128;
+    }
+
+    private void checkBoxAddLogInVS_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.LogManager.TraceEnabled = checkBoxAddLogInVS.Checked;
+    }
+
+    private void comboBoxLogCategories_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        buttonRefreshLogs_Click(sender, e);
+    }
+
+    private void buttonShowAllLogs_Click(object sender, EventArgs e)
+    {
+        comboBoxLogCategories.SelectedIndex = -1;
+        buttonRefreshLogs_Click(sender, e);
+    }
+
+    private void buttonCopyAllLogs_Click(object sender, EventArgs e)
+    {
+        List<string> lines;
+
+        if (comboBoxLogCategories.SelectedIndex == -1)
+        {
+            lines = _gameEngine.LogManager.Logs;
+        }
+        else
+        {
+            lines = _gameEngine.LogManager.LogByCategories[comboBoxLogCategories.SelectedItem as string];
+        }
+
+        var text = string.Join(Environment.NewLine, lines);
+        Clipboard.SetText(text);
+    }
+
+    private void buttonRefreshLogs_Click(object sender, EventArgs e)
+    {
+        listBoxLogs.SuspendLayout();
+        comboBoxLogCategories.SuspendLayout();
+
+        listBoxLogs.Items.Clear();
+
+        if (comboBoxLogCategories.SelectedIndex == -1)
+        {
+            foreach (var log in _gameEngine.LogManager.Logs)
+            {
+                listBoxLogs.Items.Add(log);
+            }
+        }
+        else
+        {
+            foreach (var log in _gameEngine.LogManager.LogByCategories[comboBoxLogCategories.SelectedItem as string])
+            {
+                listBoxLogs.Items.Add(log);
+            }
+        }
+
+        comboBoxLogCategories.Items.Clear();
+
+        foreach (var log in _gameEngine.LogManager.LogByCategories.Keys)
+        {
+            comboBoxLogCategories.Items.Add(log);
+        }
+
+        listBoxLogs.ResumeLayout();
+        comboBoxLogCategories.ResumeLayout();
+    }
+
+    private void buttonClearLog_Click(object sender, EventArgs e)
+    {
+        _gameEngine.LogManager.Clear();
     }
 }
 
