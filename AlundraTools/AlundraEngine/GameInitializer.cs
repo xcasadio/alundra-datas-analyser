@@ -409,22 +409,19 @@ public class GameInitializer
 
         //==== DEBUG
         //enable HUD
-        _gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 40000000;
-
-        _gameEngine.StaticVariables.g_desiredMap = 452; //476; //11
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 40000000;
+        //_gameEngine.StaticVariables.g_desiredMap = 476; //452; //476; //11; //471; 
+        //
+        ////active la map 476
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 256;
         //_gameEngine.StaticVariables.g_mapTransitionEffectId = 4;
-        //_gameEngine.StaticVariables.g_desiredMap = 476;
-        //_gameEngine.StaticVariables.g_warpEntryBehavior = 73;
+        //_gameEngine.StaticVariables.g_warpSoundEffectId = 73;
         //_gameEngine.StaticVariables.g_cameraTargetZ = 786432;
         //_gameEngine.StaticVariables.g_cameraTargetY = 524288;
         //_gameEngine.StaticVariables.g_cameraTargetX = 3145728;
         //_gameEngine.StaticVariables.g_resetDirectionId = 0;
         //_gameEngine.StaticVariables.g_resetAnimationId = 13;
-        ////_gameEngine.StaticVariables.g_isGameEnding = 1;
-        
-        //active la map 390
-        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 256;
-        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 512;
+        //_gameEngine.StaticVariables.g_isGameEnding = 1;
     }
 
     // 8004dac0

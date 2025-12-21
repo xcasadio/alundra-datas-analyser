@@ -21,7 +21,7 @@ public abstract class EtcRes
 
     protected string ReadString(byte[] buffer, ref int l)
     {
-        var str = "";
+        string str = null;
         var c = (char)buffer[l];
 
         while (c != '\0')
@@ -31,6 +31,6 @@ public abstract class EtcRes
             c = (char)buffer[l];
         }
 
-        return TextDecoder.DecodeString(str);
+        return str != null ? TextDecoder.DecodeString(str) : null;
     }
 }

@@ -24,7 +24,8 @@ public class EtcResR : EtcRes
         for (int i = 0; i < 0x100; i++)
         {
             int offset = IndexTable[i + 0x100];
-            StringTable[i] = ReadString(buffer, ref offset);
+            var j = offset;
+            StringTable[i] = ReadString(buffer, ref j);
             _stringByIndex.Add(offset, StringTable[i]);
         }
 
@@ -32,7 +33,8 @@ public class EtcResR : EtcRes
         for (int i = 0; i < 0x100; i++)
         {
             int offset = IndexTable[i];
-            DescriptionStrings[i] = ReadString(buffer, ref offset);
+            var j = offset;
+            DescriptionStrings[i] = ReadString(buffer, ref j);
             _stringByIndex.Add(offset, DescriptionStrings[i]);
         }
 
@@ -54,19 +56,18 @@ public class EtcResR : EtcRes
         for (int i = 0; i < 0x62; i++)
         {
             int iconNameOffset = IndexTable[i + 0x200];
-            int descriptionOffset = IndexTable[i + 0x280];
-            int otherStringOffset = IndexTable[i + 0x300];
-
             var offset = iconNameOffset;
             IconNames[i * 2] = ReadString(buffer, ref offset);
-            //_gameEngine.StaticVariables.g_itemDropProperties[i * 2] = (byte)i;
+            _stringByIndex.TryAdd(iconNameOffset, IconNames[i * 2]);
+
+            int descriptionOffset = IndexTable[i + 0x280];
             offset = descriptionOffset;
             DescriptionItems[i * 2] = ReadString(buffer, ref offset);
+            _stringByIndex.TryAdd(descriptionOffset, DescriptionItems[i * 2]);
+
+            int otherStringOffset = IndexTable[i + 0x300];
             offset = otherStringOffset;
             OtherStrings[i * 2] = ReadString(buffer, ref offset);
-
-            _stringByIndex.TryAdd(iconNameOffset, IconNames[i * 2]);
-            _stringByIndex.TryAdd(descriptionOffset, DescriptionItems[i * 2]);
             _stringByIndex.TryAdd(otherStringOffset, OtherStrings[i * 2]);
         }
 

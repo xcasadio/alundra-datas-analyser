@@ -2379,7 +2379,7 @@ public class GameEngine
     {
         if ((StaticVariables.g_UIDisplayFlags & 4) == 0
             && spriteTableIndex - 0x100U < 0x100
-            && StaticVariables.g_entitySpriteNamesTable[spriteTableIndex] != null
+            && EtcRes.GetEtcString(spriteTableIndex) != null
             )
         {
             StaticVariables.g_entitySpriteNameTableIndex = spriteTableIndex;
@@ -2398,12 +2398,10 @@ public class GameEngine
         }
 
         strings = AlundraMap.Strings;
-        //tableBase = StaticVariables.g_alundraMapString; //alundra string table
 
         if ((textId & 0x80) != 0)
         {
             strings = CurrentMap.Strings;
-            //tableBase = StaticVariables.g_etcStrings; //currentmapstringtable
         }
 
         var text = strings[textId & 0x7f];
@@ -2550,14 +2548,6 @@ public class GameEngine
     //80030fc8
     private void UpdateMenuStatusText()
     {
-        // (L’ASM appelle GetFirstEnabledFlagIndex(g_string_buffer_flag) sans utiliser le résultat :
-        // on omet, car cela ne change pas le rendu du texte.)
-
-        // Base identique à la dernière copie de l’ASM :
-        // "  HP 00       TIME 00:00:00   " (31/32 caractères selon padding).
-        // Indices notables (pour info) :
-        //   5..6   -> HP (2 chiffres)
-        //   après "TIME " -> HH:MM:SS
         string template = "  HP 00       TIME 00:00:00   ";
         var chars = template.ToCharArray();
 
@@ -2570,18 +2560,13 @@ public class GameEngine
 
         if (hp > 99)
         {
-            hp = 99; // l’UI affiche 2 chiffres
+            hp = 99;
         }
 
         chars[5] = (char)('0' + (hp / 10));
         chars[6] = (char)('0' + (hp % 10));
-
-        // --- Temps de jeu ---
-        // NOTE : l’ASM fait des divisions via constantes magiques.
-        // Ici on considère que g_gameplayTime est en SECONDES.
-        // Si dans ton build c’est en frames/ticks, convertis-le AVANT :
-        //   int totalSeconds = StaticVariables.g_gameplayTime / TicksPerSecond;
         int totalSeconds = (int)StaticVariables.g_gameplayTime;
+
         if (totalSeconds < 0)
         {
             totalSeconds = 0;
@@ -2591,14 +2576,10 @@ public class GameEngine
         int minutes = (totalSeconds % 3600) / 60;
         int seconds = totalSeconds % 60;
 
-        // clamp visuel à 2 chiffres (comme l’ASM qui n’écrit que '0'..'9')
         hours %= 100;
         minutes %= 100;
         seconds %= 100;
 
-        // Positions après "TIME " dans le template :
-        // index de 'T' = 14 -> "TIME " finit à 18, donc HH à 19..20, ':' à 21,
-        // MM à 22..23, ':' à 24, SS à 25..26
         chars[19] = (char)('0' + (hours / 10));
         chars[20] = (char)('0' + (hours % 10));
         chars[22] = (char)('0' + (minutes / 10));

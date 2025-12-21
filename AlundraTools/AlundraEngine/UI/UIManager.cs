@@ -704,13 +704,13 @@ public class UIManager
         _gameEngine.StaticVariables.g_textToDisplay2.originY = textTileConfig.Y;
         _gameEngine.StaticVariables.g_UIDisplayFlags = 5;
 
-        var text = _gameEngine.StaticVariables.g_entitySpriteNamesTable[_gameEngine.StaticVariables.g_entitySpriteNameTableIndex];
+        var text = _gameEngine.EtcRes.GetEtcString(_gameEngine.StaticVariables.g_entitySpriteNameTableIndex);
 
         DialogCharacterNameSprites.Clear();
         _gameEngine.UIManager.DisplayIconName(
             _gameEngine.StaticVariables.g_spriteMessageCharacterPortrait,
             DialogCharacterNameSprites,
-            text.ToCharArray(),
+            text != null ? text.ToCharArray() : null,
             6,
             0,
             (short)(textTileConfig.Height + textTileConfig.Y),
@@ -759,16 +759,14 @@ public class UIManager
 
         do
         {
-            var text = _gameEngine.StaticVariables.g_entitySpriteNamesTable[_gameEngine.StaticVariables.g_entitySpriteNameTableIndex];
-            //_gameEngine.StaticVariables.SPRT_ARRAY_800c2dd0[0xe9].x0 + _gameEngine.StaticVariables.g_entitySpriteNameTableIndex * 2
+            var text = _gameEngine.EtcRes.GetEtcString(_gameEngine.StaticVariables.g_entitySpriteNameTableIndex);
 
-            iVar4 = CalculateTextWidthFromScript(text.ToCharArray());
+            var textWidth = CalculateTextWidthFromScript(text != null ? text.ToCharArray() : null);
             //uVar2 = g_drawModes[0x14].tag;
             //iVar5 = iVar3 + g_drawModes[0x14].tag;
             //psVar6 = callbackInfo.Data.X;
-            _gameEngine.StaticVariables.g_spriteMessageCharacterPortrait[i].x0 = (short)(callbackInfo.Data.X + (callbackInfo.Data.Width * 8 - iVar4) / 2);
-            sVar1 = (short)i;
-            _gameEngine.StaticVariables.g_spriteMessageCharacterPortrait[i].y0 = (short)(callbackInfo.Data.Y + callbackInfo.Data.Height - sVar1);
+            _gameEngine.StaticVariables.g_spriteMessageCharacterPortrait[i].x0 = (short)(callbackInfo.Data.X + (callbackInfo.Data.Width * 8 - textWidth) / 2);
+            _gameEngine.StaticVariables.g_spriteMessageCharacterPortrait[i].y0 = (short)(callbackInfo.Data.Y + callbackInfo.Data.Height - i);
 
             i += 1;
         } while (i < 1);
@@ -1399,6 +1397,7 @@ public class UIManager
                                         break;
                                     }
 
+                                    Debugger.Break();
                                     pcVar2 = ' ';
 
                                 } while (currentLineIndex < cursor + -1);
@@ -2014,6 +2013,11 @@ public class UIManager
     //8004771c
     private int CalculateTextWidthFromScript(char[] text)
     {
+        if (text == null || text?.Length == 0)
+        {
+            return 0;
+        }
+
         char pbVar1;
         int fontWidth;
         int totalWidth;
@@ -2313,7 +2317,7 @@ public class UIManager
     }
 
     //800450f0
-    public int InitializeDialogMessage(string scriptText, int animationMode)
+    public int InitializeDialogMessage(string scriptText, int controlPlayer)
     {
         if (_gameEngine.GraphicManager.SetTransitionType(0) == 0)
         {
@@ -2369,7 +2373,7 @@ public class UIManager
         _gameEngine.StaticVariables.g_backgroundMessageAnimation.originY = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y;
         
         _gameEngine.StaticVariables.g_dialog_flags = 5;
-        _gameEngine.StaticVariables.g_playerControlFlags |= (uint)(animationMode == 1 ? 0x10 : 0x8);
+        _gameEngine.StaticVariables.g_playerControlFlags |= (uint)(controlPlayer == 1 ? 0x10 : 0x8);
 
         _gameEngine.StaticVariables.g_textPrimitives = 0;
         _gameEngine.StaticVariables.g_textHoldState_2 = 0;
@@ -2471,11 +2475,11 @@ public class UIManager
     //800472d0
     public void DisplayIconName(SPRT[] sprites,
         List<Sprite> spritesToDisplay,
-        char[] text, int textLength,
+        char[]? text, int textLength,
         short textCoordDstX, short textCoordDstY,
         int displayMode)
     {
-        if (text.Length == 0)
+        if (text == null || text?.Length == 0)
         {
             return;
         }

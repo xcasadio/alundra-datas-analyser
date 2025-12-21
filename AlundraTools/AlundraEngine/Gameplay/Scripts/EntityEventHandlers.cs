@@ -699,7 +699,7 @@ public class EntityEventHandlers
 
         //Debugger.Break();
         _gameEngine.TriggerVisualUpdate((int)logicEntity.SpriteTableIndex);
-        var res = _gameEngine.TryOpenDialog((uint)variables[1], variables[2]);
+        var res = _gameEngine.TryOpenDialog((uint)((variables[2] << 8) | variables[1]), 0);
 
         if (res == 0)
         {
@@ -1879,8 +1879,6 @@ public class EntityEventHandlers
             
             if ((matchedEntity.Flags & 0x800000U) != 0)
             {
-                Debugger.Break();
-
                 using var binaryReader = _gameEngine.DatasBin.OpenBin();
                 var imgset = matchedEntity.SpriteRecord.GetPortraitImageset(binaryReader);
                 var img = imgset.Images[0];

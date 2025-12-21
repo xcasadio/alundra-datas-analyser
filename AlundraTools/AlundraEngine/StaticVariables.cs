@@ -2969,7 +2969,7 @@ public class StaticVariables
         0x00, 0x06, 0x10, 0xD0, 0xF0, 0x00, 0x07, 0x10, 0xE0, 0xF0, 0x00, 0x06, 0x10, 0xF0, 0xF0, 0x00,
     ];
     // 800C400C
-    public string?[] g_entitySpriteNamesTable = new string?[512];
+    //public string?[] g_entitySpriteNamesTable = new string?[512]; // not used see EtcRes.StringTable
     //800b8370
     public readonly SPRT[] SPRT_ARRAY_800b8370 =
     [
@@ -3983,6 +3983,7 @@ public class StaticVariables
             g_effectSlots[i] = new SpriteEffect { Status = 0 };
         }
 
+        /*
         g_entitySpriteNamesTable[256] = "BIZEN";
         g_entitySpriteNamesTable[257] = "TOSTIA";
         g_entitySpriteNamesTable[258] = "TULAS";
@@ -4044,6 +4045,7 @@ public class StaticVariables
         g_entitySpriteNamesTable[495] = "NILUDE";
         g_entitySpriteNamesTable[506] = "ZAZAN";
         g_entitySpriteNamesTable[509] = "ZOLDIA";
+        */
 
         g_UiBoxesInventoryWeaponNameBackground = new UIBoxConfiguration
         {
