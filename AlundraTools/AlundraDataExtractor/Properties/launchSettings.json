@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AlundraDataExtractor": {
+      "commandName": "Project",
+      "commandLineArgs": "\"D:\\development\\repo\\Alundra Remake\\Alundra (France)\\Alundra (France)_extracted\" \"D:\\development\\repo\\Alundra Remake\\remaster-data-extracted\""
+    }
+  }
+}
