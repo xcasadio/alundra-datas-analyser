@@ -4,14 +4,14 @@ namespace AlundraEngine.Balance;
 
 public class BalanceBin
 {
-    public readonly string BalanceFile;
+    public readonly string FileName;
     public readonly List<BalanceRecord> BalanceRecords = new();
     public readonly List<int> Offsets = new();
 
-    public BalanceBin(string balanceFile)
+    public BalanceBin(string fileName)
     {
-        BalanceFile = balanceFile;
-        using var br = new BinaryReader(File.OpenRead(balanceFile));
+        FileName = fileName;
+        using var br = new BinaryReader(File.OpenRead(fileName));
         var firstOffset = 0;
 
         while (firstOffset == 0 || br.BaseStream.Position < firstOffset)

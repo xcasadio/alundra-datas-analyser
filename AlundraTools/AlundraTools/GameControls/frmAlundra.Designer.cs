@@ -248,12 +248,13 @@ namespace AlundraTools.GameControls
             label45 = new Label();
             listBoxEtcDescriptionItemTable = new ListBox();
             tabPage8 = new TabPage();
+            imageViewerControlLoadScreen = new ImageViewerControl();
             label67 = new Label();
-            pictureBoxFont3Tim = new AlundraTools.CustomControls.ImageViewerControl();
+            pictureBoxFont3Tim = new ImageViewerControl();
             label65 = new Label();
             pictureBoxFont3Palette = new PictureBox();
             listBoxFont3Palette = new ListBox();
-            pictureBoxWindTx = new AlundraTools.CustomControls.ImageViewerControl();
+            pictureBoxWindTx = new ImageViewerControl();
             label63 = new Label();
             tabPage10 = new TabPage();
             label5 = new Label();
@@ -268,8 +269,9 @@ namespace AlundraTools.GameControls
             checkBoxStatndardTile = new CheckBox();
             checkBoxWallTile = new CheckBox();
             checkBoxDebug = new CheckBox();
-            imageViewerMap = new AlundraTools.CustomControls.ImageViewerControl();
+            imageViewerMap = new ImageViewerControl();
             saveFileDialog1 = new SaveFileDialog();
+            label7 = new Label();
             ((System.ComponentModel.ISupportInitialize)pctMapPalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctSpritePalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctAnim).BeginInit();
@@ -2508,6 +2510,8 @@ namespace AlundraTools.GameControls
             // 
             // tabPage8
             // 
+            tabPage8.Controls.Add(label7);
+            tabPage8.Controls.Add(imageViewerControlLoadScreen);
             tabPage8.Controls.Add(label67);
             tabPage8.Controls.Add(pictureBoxFont3Tim);
             tabPage8.Controls.Add(label65);
@@ -2523,6 +2527,16 @@ namespace AlundraTools.GameControls
             tabPage8.Text = "Font3";
             tabPage8.UseVisualStyleBackColor = true;
             // 
+            // imageViewerControlLoadScreen
+            // 
+            imageViewerControlLoadScreen.Image = null;
+            imageViewerControlLoadScreen.Location = new Point(330, 21);
+            imageViewerControlLoadScreen.Margin = new Padding(4, 3, 4, 3);
+            imageViewerControlLoadScreen.Name = "imageViewerControlLoadScreen";
+            imageViewerControlLoadScreen.Size = new Size(320, 240);
+            imageViewerControlLoadScreen.TabIndex = 100;
+            imageViewerControlLoadScreen.TabStop = false;
+            // 
             // label67
             // 
             label67.AutoSize = true;
@@ -2535,6 +2549,7 @@ namespace AlundraTools.GameControls
             // 
             // pictureBoxFont3Tim
             // 
+            pictureBoxFont3Tim.Image = null;
             pictureBoxFont3Tim.Location = new Point(10, 458);
             pictureBoxFont3Tim.Margin = new Padding(4, 3, 4, 3);
             pictureBoxFont3Tim.Name = "pictureBoxFont3Tim";
@@ -2573,6 +2588,7 @@ namespace AlundraTools.GameControls
             // 
             // pictureBoxWindTx
             // 
+            pictureBoxWindTx.Image = null;
             pictureBoxWindTx.Location = new Point(7, 181);
             pictureBoxWindTx.Margin = new Padding(4, 3, 4, 3);
             pictureBoxWindTx.Name = "pictureBoxWindTx";
@@ -2733,6 +2749,16 @@ namespace AlundraTools.GameControls
             imageViewerMap.Name = "imageViewerMap";
             imageViewerMap.Size = new Size(709, 786);
             imageViewerMap.TabIndex = 194;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(330, 3);
+            label7.Margin = new Padding(4, 0, 4, 0);
+            label7.Name = "label7";
+            label7.Size = new Size(87, 15);
+            label7.TabIndex = 101;
+            label7.Text = "Loading screen";
             // 
             // FrmAlundra
             // 
@@ -3027,5 +3053,7 @@ namespace AlundraTools.GameControls
         private Label label3;
         private CustomControl.ImageViewerControl imageViewerMemoryCardFrame2;
         private Label label1;
+        private ImageViewerControl imageViewerControlLoadScreen;
+        private Label label7;
     }
 }

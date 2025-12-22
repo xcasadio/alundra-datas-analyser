@@ -55,7 +55,7 @@ public class MainInventoryManager
             //SetSemiTrans(sprite2, 0);
             //SetShadeTex(sprite2, 1);
 
-            var sprite = _gameEngine.StaticVariables.g_spriteInventoryMoney[i];
+            var sprite = _gameEngine.StaticVariables.g_spriteInventoryMoneyAmount[i];
             sprite.w = 8;
             sprite.h = 0x10;
             sprite.clut = 5; //_gameEngine.StaticVariables.g_clutTableIndex; //_gameEngine.StaticVariables.g_clutTable[_gameEngine.StaticVariables.g_clutTableIndex];
@@ -958,7 +958,7 @@ public class MainInventoryManager
         }
         else
         {
-            iVar2 = _gameEngine.PlayerManager.GetNumberOfItem((int)itemId);
+            iVar2 = _gameEngine.PlayerManager.GetNumberOfItem(itemId);
 
             if (iVar2 == 0)
             {
@@ -971,7 +971,7 @@ public class MainInventoryManager
 
         if (_gameEngine.StaticVariables.g_inventoryCursorText == 0)
         {
-            var text = _gameEngine.EtcRes.GetItemName((int)itemId);//_gameEngine.StaticVariables.g_itemDropProperties[itemId * 2];
+            var text = _gameEngine.EtcRes.GetItemName(itemId);//_gameEngine.StaticVariables.g_itemDropProperties[itemId * 2];
             //text = text.PadRight(0x20);
             text = text.Substring(0, _gameEngine.StaticVariables.g_inventoryCursorText);
             iVar2 = 0x20;
@@ -996,7 +996,7 @@ public class MainInventoryManager
         {
             if (_gameEngine.StaticVariables.g_inventoryCursorText - 1U < 0x10)
             {
-                var text = _gameEngine.EtcRes.GetItemName((int)itemId);//_gameEngine.StaticVariables.g_itemDropProperties[itemId * 2];
+                var text = _gameEngine.EtcRes.GetItemName(itemId);//_gameEngine.StaticVariables.g_itemDropProperties[itemId * 2];
                 //text = text.PadRight(0x11);
                 var initialLength = text.Length;
                 var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText);
@@ -1036,7 +1036,7 @@ public class MainInventoryManager
             {
                 if (_gameEngine.StaticVariables.g_inventoryCursorText == 0x4d)
                 {
-                    var text = _gameEngine.EtcRes.GetItemDescription((int)itemId);//_gameEngine.StaticVariables.g_itemDropProperties[itemId * 2];
+                    var text = _gameEngine.EtcRes.GetItemDescription(itemId);//_gameEngine.StaticVariables.g_itemDropProperties[itemId * 2];
                     //text = _gameEngine.StaticVariables.g_tileSetEtcBase[itemId * 2];
                     //text = text.PadRight(0x40);var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText);
                     var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText);
@@ -1063,7 +1063,7 @@ public class MainInventoryManager
                 if (_gameEngine.StaticVariables.g_inventoryCursorText - 0x4eU < 0x40)
                 {
                     uVar1 = 0;
-                    var text = _gameEngine.EtcRes.GetItemDescription((int)itemId);//_gameEngine.StaticVariables.g_tileSetEtcBase[itemId * 2];
+                    var text = _gameEngine.EtcRes.GetItemDescription(itemId);//_gameEngine.StaticVariables.g_tileSetEtcBase[itemId * 2];
                     var initialLength = text.Length;
                     var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText - 0x04d);
                     text = text.Substring(0, length);
@@ -1128,7 +1128,7 @@ public class MainInventoryManager
 
                     if (_gameEngine.StaticVariables.g_inventoryCursorText - 0x8fU < 0x40)
                     {
-                        var text = _gameEngine.EtcRes.GetItemDescription((int)itemId);
+                        var text = _gameEngine.EtcRes.GetItemDescription(itemId);
                         var initialLength = text.Length;
                         var length = Math.Min(text.Length, _gameEngine.StaticVariables.g_inventoryCursorText);
                         text = text.Substring(0, length);
@@ -1365,7 +1365,7 @@ public class MainInventoryManager
         rectangleSprite.v0 = 0x98;
         rectangleSprite.w = 0x18;
         rectangleSprite.h = 0x20;
-        rectangleSprite.clut = 0; //_gameEngine.StaticVariables.g_clutTable[(ushort)BYTE_ARRAY_8009cfd8._2_2_];
+        rectangleSprite.clut = 0; //_gameEngine.StaticVariables.g_clutTable[(ushort)g_numbersSpriteSheetUVs._2_2_];
         //SetSemiTrans(rectangleSprite + iVar2, 0);
         //SetShadeTex(rectangleSprite + g_draSetShadeTex(rectangleSprite + g_dra    SetShadeTex(rectangleSprite + g_dra
 
@@ -1417,7 +1417,7 @@ public class MainInventoryManager
                             sprite.g0 = 0x90;
                             sprite.b0 = 0x90;
 
-                            index = _gameEngine.GraphicManager.GetItemTextureIdByItemId((int)itemId);
+                            index = _gameEngine.GraphicManager.GetItemTextureIdByItemId(itemId);
                             var image = _gameEngine.GraphicManager.GetAnimationImageByIndex(index);
                             var bitmap = _gameEngine.AlundraMap.GetSpriteBitmap(image);
                             _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
@@ -1431,8 +1431,8 @@ public class MainInventoryManager
                             numberSprite.g0 = 0x90;
                             numberSprite.b0 = 0x90;
                             i = (numOfItem % 10) * 0x14;
-                            numberSprite.u0 = _gameEngine.StaticVariables.BYTE_ARRAY_8009cfd8[i];
-                            numberSprite.v0 = _gameEngine.StaticVariables.BYTE_ARRAY_8009cfd8[i + 1];
+                            numberSprite.u0 = _gameEngine.StaticVariables.g_numbersSpriteSheetUVs[i];
+                            numberSprite.v0 = _gameEngine.StaticVariables.g_numbersSpriteSheetUVs[i + 1];
 
                             var bitmap2 = _gameEngine.Font3.GenerateHudBitmapFromSprite(numberSprite);
                             _gameEngine.Renderer.AddSprite(numberSprite, SpriteDepth.ForegroundUI, bitmap2);
@@ -1478,7 +1478,7 @@ public class MainInventoryManager
                             var sprite = _gameEngine.StaticVariables.g_spriteInventoryItems[offset];
                             
                             _gameEngine.GraphicManager.InitializeSpriteWithImage(sprite,
-                                       (int)textureId,
+                                       textureId,
                                        (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryWeaponBackground.X + _gameEngine.StaticVariables.g_uiBoxesInventoryAnimationOffsetX[offset]),
                                        (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryWeaponBackground.Y + _gameEngine.StaticVariables.g_uiBoxesInventoryAnimationOffsetY[offset]));
                             
@@ -1512,7 +1512,7 @@ public class MainInventoryManager
                             sprite.g0 = 0x90;
                             sprite.b0 = 0x90;
 
-                            index = _gameEngine.GraphicManager.GetItemTextureIdByItemId((int)textureId);
+                            index = _gameEngine.GraphicManager.GetItemTextureIdByItemId(textureId);
                             var image = _gameEngine.GraphicManager.GetAnimationImageByIndex(index);
                             var bitmap3 = _gameEngine.AlundraMap.GetSpriteBitmap(image);
                             _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap3);
@@ -1578,11 +1578,11 @@ public class MainInventoryManager
                 Debugger.Break();
             }
 
-            sprite = _gameEngine.StaticVariables.g_spriteInventoryMoney[i];
+            sprite = _gameEngine.StaticVariables.g_spriteInventoryMoneyAmount[i];
 
             iVar2 = value / divisor % 10 * 0x14;
-            sprite.u0 = _gameEngine.StaticVariables.BYTE_ARRAY_8009cfd8[iVar2];
-            sprite.v0 = _gameEngine.StaticVariables.BYTE_ARRAY_8009cfd8[iVar2 + 1];
+            sprite.u0 = _gameEngine.StaticVariables.g_numbersSpriteSheetUVs[iVar2];
+            sprite.v0 = _gameEngine.StaticVariables.g_numbersSpriteSheetUVs[iVar2 + 1];
             sprite.x0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.X + offsetX);
             sprite.y0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y + 4);
 
@@ -1614,8 +1614,8 @@ public class MainInventoryManager
             sprite = _gameEngine.StaticVariables.g_spriteInventoryNumberOfKeys[i];
 
             iVar2 = value / divisor % 10 * 0x14;
-            sprite.u0 = _gameEngine.StaticVariables.BYTE_ARRAY_8009cfd8[iVar2];
-            sprite.v0 = _gameEngine.StaticVariables.BYTE_ARRAY_8009cfd8[iVar2 + 1];
+            sprite.u0 = _gameEngine.StaticVariables.g_numbersSpriteSheetUVs[iVar2];
+            sprite.v0 = _gameEngine.StaticVariables.g_numbersSpriteSheetUVs[iVar2 + 1];
             sprite.x0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.X + offsetX + 0x10);
             sprite.y0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y + 0x34);
 
@@ -1648,8 +1648,8 @@ public class MainInventoryManager
             sprite = _gameEngine.StaticVariables.g_spriteInventoryNumberOfFalcon[i];
 
             iVar2 = value / divisor % 10 * 0x14;
-            sprite.u0 = _gameEngine.StaticVariables.BYTE_ARRAY_8009cfd8[iVar2];
-            sprite.v0 = _gameEngine.StaticVariables.BYTE_ARRAY_8009cfd8[iVar2 + 1];
+            sprite.u0 = _gameEngine.StaticVariables.g_numbersSpriteSheetUVs[iVar2];
+            sprite.v0 = _gameEngine.StaticVariables.g_numbersSpriteSheetUVs[iVar2 + 1];
             sprite.x0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.X + offsetX + 0x10);
             sprite.y0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y + 0x1c);
 
@@ -1800,7 +1800,7 @@ public class MainInventoryManager
                 break;
 
             case 5:
-                iVar1 = (uint)_gameEngine.PlayerManager.GetNumberOfItem((int)_gameEngine.StaticVariables.g_ItemIdBySlotIndex[_gameEngine.StaticVariables.g_inventorySelectedSlotId]);
+                iVar1 = (uint)_gameEngine.PlayerManager.GetNumberOfItem(_gameEngine.StaticVariables.g_ItemIdBySlotIndex[_gameEngine.StaticVariables.g_inventorySelectedSlotId]);
                 iVar2 = _gameEngine.PlayerManager.GetItemIdFromCurrentWeapon();
 
                 if (iVar2 == _gameEngine.StaticVariables.g_ItemIdBySlotIndex[_gameEngine.StaticVariables.g_inventorySelectedSlotId])
@@ -1922,7 +1922,7 @@ public class MainInventoryManager
             }
             else
             {
-                iVar2 = _gameEngine.PlayerManager.GetNumberOfItem((int)slotId);
+                iVar2 = _gameEngine.PlayerManager.GetNumberOfItem(slotId);
 
                 if (iVar2 == 0)
                 {

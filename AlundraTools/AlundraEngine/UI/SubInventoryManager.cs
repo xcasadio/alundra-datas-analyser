@@ -804,11 +804,11 @@ public class SubInventoryManager
                 Debugger.Break();
             }
 
-            sprite = _gameEngine.StaticVariables.g_spriteInventoryMoney[i];
+            sprite = _gameEngine.StaticVariables.g_spriteInventoryMoneyAmount[i];
 
             iVar2 = value / divisor % 10 * 0x14;
-            sprite.u0 = _gameEngine.StaticVariables.BYTE_ARRAY_8009cfd8[iVar2];
-            sprite.v0 = _gameEngine.StaticVariables.BYTE_ARRAY_8009cfd8[iVar2 + 1];
+            sprite.u0 = _gameEngine.StaticVariables.g_numbersSpriteSheetUVs[iVar2];
+            sprite.v0 = _gameEngine.StaticVariables.g_numbersSpriteSheetUVs[iVar2 + 1];
             sprite.x0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.X + offsetX);
             sprite.y0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y + 4);
 
@@ -840,8 +840,8 @@ public class SubInventoryManager
             sprite = _gameEngine.StaticVariables.g_spriteInventoryNumberOfKeys[i];
 
             iVar2 = value / divisor % 10 * 0x14;
-            sprite.u0 = _gameEngine.StaticVariables.BYTE_ARRAY_8009cfd8[iVar2];
-            sprite.v0 = _gameEngine.StaticVariables.BYTE_ARRAY_8009cfd8[iVar2 + 1];
+            sprite.u0 = _gameEngine.StaticVariables.g_numbersSpriteSheetUVs[iVar2];
+            sprite.v0 = _gameEngine.StaticVariables.g_numbersSpriteSheetUVs[iVar2 + 1];
             sprite.x0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.X + offsetX + 0x10);
             sprite.y0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y + 0x34);
 
@@ -874,8 +874,8 @@ public class SubInventoryManager
             sprite = _gameEngine.StaticVariables.g_spriteInventoryNumberOfFalcon[i];
 
             iVar2 = value / divisor % 10 * 0x14;
-            sprite.u0 = _gameEngine.StaticVariables.BYTE_ARRAY_8009cfd8[iVar2];
-            sprite.v0 = _gameEngine.StaticVariables.BYTE_ARRAY_8009cfd8[iVar2 + 1];
+            sprite.u0 = _gameEngine.StaticVariables.g_numbersSpriteSheetUVs[iVar2];
+            sprite.v0 = _gameEngine.StaticVariables.g_numbersSpriteSheetUVs[iVar2 + 1];
             sprite.x0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.X + offsetX + 0x10);
             sprite.y0 = (short)(_gameEngine.StaticVariables.g_UiBoxesInventoryMoneyFalconKeyIcons.Y + 0x1c);
 
@@ -1411,7 +1411,7 @@ public class SubInventoryManager
             sprite = _gameEngine.StaticVariables.SPRT_ARRAY_8017f7e0[i];
             sprite.w = 8;
             sprite.h = 0x10;
-            sprite.clut = 0; //g_clutTable[(ushort)BYTE_ARRAY_8009cfd8._2_2_];
+            sprite.clut = 0; //g_clutTable[(ushort)g_numbersSpriteSheetUVs._2_2_];
             sprite.r0 = 0x80;
             sprite.g0 = 0x80;
             sprite.b0 = 0x80;
@@ -1428,7 +1428,7 @@ public class SubInventoryManager
             sprite = _gameEngine.StaticVariables.SPRT_ARRAY_8017f880[i];
             sprite.w = 8;
             sprite.h = 0x10;
-            sprite.clut = 0; //g_clutTable[(ushort)BYTE_ARRAY_8009cfd8._2_2_];
+            sprite.clut = 0; //g_clutTable[(ushort)g_numbersSpriteSheetUVs._2_2_];
             sprite.r0 = 0x80;
             sprite.g0 = 0x80;
             sprite.b0 = 0x80;
@@ -1445,7 +1445,7 @@ public class SubInventoryManager
             sprite = _gameEngine.StaticVariables.SPRT_ARRAY_8017f8d0[i];
             sprite.w = 8;
             sprite.h = 0x10;
-            sprite.clut = 0; //g_clutTable[(ushort)BYTE_ARRAY_8009cfd8._2_2_];
+            sprite.clut = 0; //g_clutTable[(ushort)g_numbersSpriteSheetUVs._2_2_];
             sprite.r0 = 0x80;
             sprite.g0 = 0x80;
             sprite.b0 = 0x80;
@@ -1464,7 +1464,7 @@ public class SubInventoryManager
             sprite.h = 0x20;
             sprite.u0 = (byte)'0';
             sprite.v0 = 0x98;
-            sprite.clut = 0; //g_clutTable[(ushort)BYTE_ARRAY_8009cfd8._2_2_];
+            sprite.clut = 0; //g_clutTable[(ushort)g_numbersSpriteSheetUVs._2_2_];
             sprite.r0 = 0x80;
             sprite.g0 = 0x80;
             sprite.b0 = 0x80;

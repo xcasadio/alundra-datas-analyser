@@ -1855,7 +1855,7 @@ public class StaticVariables
     public UIBoxConfiguration g_uiBoxesInventoryDescriptionBackground;
 
     //800b44f8
-    public readonly SPRT[] SPRT_ARRAY_800b44f8 =
+    public readonly SPRT[] g_MainInventoryWeaponBackgroundSpritesA =
     [
         new SPRT { tag=0, r0=0, g0=0, b0=0, code=0, x0=0x0008, y0=0x0010, u0=0xB0, v0=0x48, clut=0x0003, w=0x0008, h=0x0008 },
         new SPRT { tag=0, r0=0, g0=0, b0=0, code=0, x0=0x0010, y0=0x0010, u0=0xB8, v0=0x48, clut=0x0003, w=0x0008, h=0x0008 },
@@ -1985,7 +1985,7 @@ public class StaticVariables
         new SPRT { tag=0, r0=0, g0=0, b0=0, code=0, x0=0x00A8, y0=0x0038, u0=0xF8, v0=0x80, clut=0x0003, w=0x0008, h=0x0008 } // 125
     ];
     //800b4ed0
-    public readonly SPRT[] SPRT_ARRAY_800b4ed0 =
+    public readonly SPRT[] g_MainInventoryWeaponBackgroundSpritesB =
     [
         new SPRT { tag = 0u, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x08, y0 = 0x10, u0 = 0xB0, v0 = 0x48, clut = 0x0003, w = 0x08, h = 0x08 }, // 0
     new SPRT { tag = 0u, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x10, y0 = 0x10, u0 = 0xB8, v0 = 0x48, clut = 0x0003, w = 0x08, h = 0x08 }, // 1
@@ -2116,7 +2116,7 @@ public class StaticVariables
 
     ];
     //800b58b8
-    public readonly SPRT[] SPRT_ARRAY_800b58b8 =
+    public readonly SPRT[] g_MainInventoryItemBackgroundSpritesA =
     [
         new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x0008, y0=0x0040, u0=0xB0, v0=0x48, clut=0x0003, w=0x0008, h=0x0008 },
         new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x0010, y0=0x0040, u0=0xB8, v0=0x48, clut=0x0003, w=0x0008, h=0x0008 },
@@ -2393,7 +2393,7 @@ public class StaticVariables
         new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x00A8, y0=0x00A0, u0=0xF8, v0=0x80, clut=0x0003, w=0x0008, h=0x0008 }
     ];
     //800b6e0c
-    public readonly SPRT[] SPRT_ARRAY_800b6e0c =
+    public readonly SPRT[] g_MainInventoryItemBackgroundSpritesB =
     [
         new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x0008, y0 = 0x0040, u0 = (byte)0xB0, v0 = (byte)0x48, clut = (ushort)0x0003, w = unchecked((short)0x0008), h = unchecked((short)0x0008) },
         new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x0010, y0 = 0x0040, u0 = (byte)0xB8, v0 = (byte)0x48, clut = (ushort)0x0003, w = unchecked((short)0x0008), h = unchecked((short)0x0008) },
@@ -2823,7 +2823,7 @@ public class StaticVariables
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x0138, y0 = 0x0058, u0 = 0xD8, v0 = 0x20, clut = 0x0000, w = 0x0008, h = 0x0008 }
     ];
     //800b9a20
-    public readonly SPRT[] SPRT_ARRAY_800b9a20 =
+    public readonly SPRT[] g_moneyFalconKeyIconSpritesA =
     [
         new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B0, y0 = 0x0060, u0 = 0x38, v0 = 0x70, clut = 0x0006, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B8, y0 = 0x0060, u0 = 0x40, v0 = 0x70, clut = 0x0006, w = 0x0008, h = 0x0008 },
@@ -2854,7 +2854,7 @@ public class StaticVariables
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00C0, y0 = 0x00A0, u0 = 0x68, v0 = 0x80, clut = 0x0005, w = 0x0008, h = 0x0008 }
     ];
     //800b9c3c
-    public readonly SPRT[] SPRT_ARRAY_800b9c3c =
+    public readonly SPRT[] g_moneyFalconKeyIconSpritesB =
     [
         new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B0, y0 = 0x0060, u0 = 0x38, v0 = 0x70, clut = 0x0006, w = 0x0008, h = 0x0008 },
     new SPRT { tag = 0x00000000, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B8, y0 = 0x0060, u0 = 0x40, v0 = 0x70, clut = 0x0006, w = 0x0008, h = 0x0008 },
@@ -3409,7 +3409,7 @@ public class StaticVariables
     //800b8910
     public SPRT[] SPRT_ARRAY_800b8910;
     //8009cfd8
-    public readonly byte[] BYTE_ARRAY_8009cfd8 = new byte[]
+    public readonly byte[] g_numbersSpriteSheetUVs = new byte[]
     {
         0x00, 0x28, 0x05, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 
         0x08, 0x28, 0x05, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 
@@ -4088,8 +4088,8 @@ public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
             Y = 0x10,
             Width = 0x15,
             Height = 0x6,
-            SpritesA = SPRT_ARRAY_800b44f8,
-            SpritesB = SPRT_ARRAY_800b4ed0
+            SpritesA = g_MainInventoryWeaponBackgroundSpritesA,
+            SpritesB = g_MainInventoryWeaponBackgroundSpritesB
         };
 
         g_UiBoxesInventoryItemBackground = new UIBoxConfiguration
@@ -4098,8 +4098,8 @@ public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
             Y = 0x40,
             Width = 0x15,
             Height = 0xD,
-            SpritesA = SPRT_ARRAY_800b58b8,
-            SpritesB = SPRT_ARRAY_800b6e0c
+            SpritesA = g_MainInventoryItemBackgroundSpritesA,
+            SpritesB = g_MainInventoryItemBackgroundSpritesB
 
         };
 
@@ -4139,8 +4139,8 @@ public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
             Y = 0x60,
             Width = 0x3,
             Height = 0x9,
-            SpritesA = SPRT_ARRAY_800b9a20,
-            SpritesB = SPRT_ARRAY_800b9c3c
+            SpritesA = g_moneyFalconKeyIconSpritesA,
+            SpritesB = g_moneyFalconKeyIconSpritesB
         };
 
         g_uiBoxesConfigurationBackgroundMessageChoice = new UIBoxConfiguration
@@ -4246,7 +4246,7 @@ public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
             new CallBackInfo
             {
                 Id = 0, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x05, Width = 0x20, Height = 0x06,
-                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Fun_80046ef0, Arg = 0
+                InitializeFunc = gameEngine.UIManager.InitializeDialogBackgroundSprites, RenderFunc = gameEngine.UIManager.Fun_80046ef0, Arg = 0
             },
             new CallBackInfo //hud
             {
@@ -4256,12 +4256,12 @@ public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
             new CallBackInfo
             {
                 Id = 2, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Fun_8004f628, Arg = 0
+                InitializeFunc = gameEngine.UIManager.InitializeDialogBackgroundSprites, RenderFunc = gameEngine.UIManager.Fun_8004f628, Arg = 0
             },
             new CallBackInfo
             {
-                Id = 3, Flags = 0, Data = g_uiBoxesConfigurationBackgroundMessageChoice, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04, InitializeFunc = null,
-                RenderFunc = gameEngine.UIManager.DisplayMessageChoice, Arg = 0x05
+                Id = 3, Flags = 0, Data = g_uiBoxesConfigurationBackgroundMessageChoice, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04, 
+                InitializeFunc = null, RenderFunc = gameEngine.UIManager.DisplayMessageChoice, Arg = 0x05
             },
             new CallBackInfo
             {
@@ -4271,37 +4271,37 @@ public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
             new CallBackInfo
             {
                 Id = 5, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.InitializeDebugMenuSound, Arg = 0
+                InitializeFunc = gameEngine.UIManager.InitializeDialogBackgroundSprites, RenderFunc = gameEngine.UIDebugManager.InitializeDebugMenuSound, Arg = 0
             },
             new CallBackInfo
             {
-                Id = 6, Flags = 0, Data = null, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04, InitializeFunc = null,
-                RenderFunc = gameEngine.MainInventoryManager.FUN_80054f1c, Arg = 0
+                Id = 6, Flags = 0, Data = null, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04, 
+                InitializeFunc = null, RenderFunc = gameEngine.MainInventoryManager.FUN_80054f1c, Arg = 0
             },
             new CallBackInfo
             {
                 Id = 7, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = null, Arg = 0
+                InitializeFunc = gameEngine.UIManager.InitializeDialogBackgroundSprites, RenderFunc = null, Arg = 0
             },
             new CallBackInfo
             {
                 Id = 8, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Fun_8004afe8, Arg = 0
+                InitializeFunc = gameEngine.UIManager.InitializeDialogBackgroundSprites, RenderFunc = gameEngine.UIManager.Fun_8004afe8, Arg = 0
             },
             new CallBackInfo
             {
                 Id = 9, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Fun_80050ec8, Arg = 0
+                InitializeFunc = gameEngine.UIManager.InitializeDialogBackgroundSprites, RenderFunc = gameEngine.MemoryCardManager.Fun_80050ec8, Arg = 0
             },
             new CallBackInfo
             {
-                Id = 10, Flags = 0, Data = null, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04, InitializeFunc = null,
-                RenderFunc = gameEngine.MemoryCardManager.DisplayMemoryCardMenu, Arg = 0
+                Id = 10, Flags = 0, Data = null, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04, 
+                InitializeFunc = null, RenderFunc = gameEngine.MemoryCardManager.DisplayMemoryCardMenu, Arg = 0
             },
             new CallBackInfo
             {
                 Id = 11, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x08, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Func_80051550, Arg = 0
+                InitializeFunc = gameEngine.UIManager.InitializeDialogBackgroundSprites, RenderFunc = gameEngine.UIDebugManager.InitializeFlagsDebugMenu, Arg = 0
             },
             new CallBackInfo
             {
@@ -4806,7 +4806,7 @@ public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
     public int g_isCdResetRequested; // 8009A858
     public ushort g_clutTableIndex; // 8009CFDA
     //8009fb80
-    public readonly byte[] BYTE_ARRAY_8009fb80 = new byte[]
+    public readonly byte[] g_hudMoneyIconUVs = new byte[]
     {
         0x90, 0x38, 0x05, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 
         0x98, 0x38, 0x05, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 
@@ -4815,7 +4815,7 @@ public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
         0x00, 0x00, 0x05, 0x00, 0x08
     };
     //800a0d60
-    public readonly byte[] BYTE_ARRAY_800a0d60 = new byte[] { 0x60, 0x28 };
+    public readonly byte[] g_fullLifeBigIconUVs = new byte[] { 0x60, 0x28 };
     //800a0d62
     public readonly byte[] BYTE_ARRAY_800a0d62 = new byte[]
     {
@@ -4827,16 +4827,16 @@ public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
         0x07, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0x00, 0x00, 0x00
     };
     // 800A0DD8
-    public byte[] BYTE_ARRAY_800a0dd8 = new byte[] { 0x90, 0x28 };
+    public byte[] g_emptyLifeBigIconUVs = new byte[] { 0x90, 0x28 };
     //800a2030
-    public readonly byte[] BYTE_ARRAY_800a2030 = new byte[]
+    public readonly byte[] g_fullLifeSmallIconUVs = new byte[]
     {
         0x70, 0x38, 
         0x07, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x78, 0x38, 
         0x05, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x80, 0x38, 
         0x05, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x00, 0x00, 0x00 };
     // 800A206C
-    public readonly byte[] BYTE_ARRAY_800a206c = new byte[] { 0x88, 0x38 };
+    public readonly byte[] g_emptyLifeSmallIconUVs = new byte[] { 0x88, 0x38 };
     //800a3238
     //public readonly byte[] BYTE_ARRAY_800a3238 = new byte[]; //useless
     public CallBackInfo[] g_initialCallbackTable; // 800A731C
@@ -4867,7 +4867,7 @@ public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
     };
     public int INT_800a827c; // 800A827C
     // 800A8284
-    public int[] INT_ARRAY_800a8284 = new int[]
+    public int[] g_playerDataHud = new int[]
     {
         0x0000000A, 0x0000000A, 0x00000000, 0x00000000, 0x00000000, 
         0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
@@ -5824,7 +5824,7 @@ public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
     public uint g_forbiddenWarpFlag; // 8017FEF4
     public InventoryCursorAnimation g_inventoryCursorAnimation = new InventoryCursorAnimation(); // 8017fef8
     public int g_inventorySelectedSlotId; // 8017FF28
-    public SPRT[] g_spriteInventoryMoney = Enumerable.Range(0, 8).Select(x => new SPRT()).ToArray(); // 8017FF2C
+    public SPRT[] g_spriteInventoryMoneyAmount = Enumerable.Range(0, 8).Select(x => new SPRT()).ToArray(); // 8017FF2C
     public SPRT[] g_spriteInventoryNumberOfKeys = Enumerable.Range(0, 4).Select(x => new SPRT()).ToArray(); // 8017ffcc
     public SPRT[] g_spriteInventoryNumberOfFalcon = Enumerable.Range(0, 4).Select(x => new SPRT()).ToArray(); // 8018001c
     public short g_hudTransitionState; // 80180070

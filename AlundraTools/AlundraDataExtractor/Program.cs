@@ -7,6 +7,7 @@ using AlundraEngine.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text.Json;
+using System.Xml.Linq;
 
 namespace AlundraDataExtractor;
 
@@ -47,7 +48,9 @@ internal class Program
         var alunCdExe = new AlunCdExe(gamePath);
         ExtractDataFromAlunCdExe(alunCdExe, extractionPath);
         ExtractDataFromBalanceBin(balanceBin, extractionPath);
-        ExtractDataFromScreenFolder(font3, gameEngine, extractionPath);
+        ExtractDataFromScreenFolder(font3, gameEngine.StaticVariables, extractionPath);
+        ExtractDataFromEtcRes(etcRes, gameEngine.StaticVariables, extractionPath);
+        ExtractDataFromDatasBin(datasBin, gameEngine.StaticVariables, extractionPath);
     }
 
     private static void ExtractDataFromAlunCdExe(AlunCdExe alunCdExe, string extractionPath)
@@ -61,16 +64,15 @@ internal class Program
 
     private static void ExtractDataFromBalanceBin(BalanceBin balanceBin, string extractionPath)
     {
-        var balanceBinPath = Path.Combine(extractionPath, "balance");
         var elements = balanceBin.BalanceRecords.Select(x => new BalanceRecordJson(x));
-
+        var balanceBinPath = Path.Combine(extractionPath, "data");
         Directory.CreateDirectory(balanceBinPath);
-        File.WriteAllText(Path.Combine(balanceBinPath, "balance.json"), JsonSerializer.Serialize(elements, _jsonSerializerOptions));
+        File.WriteAllText(Path.Combine(balanceBinPath, $"{balanceBin.FileName}.json"), JsonSerializer.Serialize(elements, _jsonSerializerOptions));
     }
 
-    private static void ExtractDataFromScreenFolder(Font3 font3, GameEngine gameEngine, string extractionPath)
+    private static void ExtractDataFromScreenFolder(Font3 font3, StaticVariables staticVariables, string extractionPath)
     {
-        var screenPath = Path.Combine(extractionPath, "TAKI", "SCREEN");
+        var screenPath = Path.Combine(extractionPath, "ui");
         Directory.CreateDirectory(screenPath);
         font3.FontBitmapTim.Save(Path.Combine(screenPath, "font3.png"), ImageFormat.Png);
         var fontCharTiles = new List<FontCharTile>();
@@ -81,18 +83,227 @@ internal class Program
             //charValue = TextDecoder.ConvertCp850ToLatin1(charIndex);
             fontCharTiles.Add(new FontCharTile { Code = i, X = charValue % 16 * 16, Y = charValue / 16 * 16, Width = 16, Height = 16, Palette = 8 });
         }
-        //all tiles
+
+        //all tiles data
         File.WriteAllText(Path.Combine(screenPath, "font3.json"), JsonSerializer.Serialize(fontCharTiles, _jsonSerializerOptions));
 
         //all hud sprites
-        //font3.GenerateHudBitmapFromSprite()
         var windBitmap = new Bitmap(256, 256);
-
-
-
-
+        var windTiles = DrawAllUITiles(font3, staticVariables, windBitmap);
         windBitmap.Save(Path.Combine(screenPath, "wind.png"), ImageFormat.Png);
 
-        //all tiles
+        //all tiles data
+        var windData = windTiles.OrderBy(x => x.U0).ThenBy(x => x.V0);
+        File.WriteAllText(Path.Combine(screenPath, "wind.json"), JsonSerializer.Serialize(windData, _jsonSerializerOptions));
+    }
+
+    private static HashSet<SpriteSheetTile> DrawAllUITiles(Font3 font3, StaticVariables staticVariables, Bitmap windBitmap)
+    {
+        var spriteSheetTiles = new HashSet<SpriteSheetTile>();
+
+        //cursor dialog
+        for (int i = 0; i < 4; i++)
+        {
+            spriteSheetTiles.Add(new SpriteSheetTile(
+                staticVariables.g_dialogCursorTextureUV[i * 0x28],
+                staticVariables.g_dialogCursorTextureUV[i * 0x28 + 1],
+                0x10,
+                0x10,
+                8));
+        }
+
+        //message background
+        foreach (var sprite in staticVariables.g_uiBoxesInventoryDescriptionBackground.SpritesA)
+        {
+            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
+        }
+
+        //numbers
+        for (int i = 0; i < 10; i++)
+        {
+            spriteSheetTiles.Add(new SpriteSheetTile(
+                staticVariables.g_numbersSpriteSheetUVs[i * 0x14], 
+                staticVariables.g_numbersSpriteSheetUVs[i * 0x14 + 1], 
+                8, 
+                0x10, 
+                5));
+        }
+
+        AddHudTiles(staticVariables, spriteSheetTiles);
+        AddInventoryTiles(staticVariables, spriteSheetTiles);
+
+        //draw
+        using var g = Graphics.FromImage(windBitmap);
+        foreach (var tile in spriteSheetTiles)
+        {
+            var tileBitmap = font3.GenerateHudBitmap(tile.U0, tile.V0, tile.Width, tile.Height, tile.PaletteIndex);
+            g.DrawImage(tileBitmap, tile.U0, tile.V0, tile.Width, tile.Height);
+        }
+
+        return spriteSheetTiles;
+    }
+
+    private static void AddHudTiles(StaticVariables staticVariables, HashSet<SpriteSheetTile> spriteSheetTiles)
+    {
+        //'/'
+        spriteSheetTiles.Add(new SpriteSheetTile(
+            staticVariables.g_numbersSpriteSheetUVs[200],  //0x50
+            staticVariables.g_numbersSpriteSheetUVs[201],  //0x28
+            8,
+            0x10,
+            5));
+
+        //full life big icons
+        spriteSheetTiles.Add(new SpriteSheetTile(
+            staticVariables.g_fullLifeBigIconUVs[0],
+            staticVariables.g_fullLifeBigIconUVs[1],
+            0x10,
+            0x10,
+            7));
+
+
+        //empty life big icons
+        spriteSheetTiles.Add(new SpriteSheetTile(
+            staticVariables.g_emptyLifeBigIconUVs[0],
+            staticVariables.g_emptyLifeBigIconUVs[1],
+            0x10,
+            0x10,
+            7));
+
+
+        //full life small icons
+        spriteSheetTiles.Add(new SpriteSheetTile(
+            staticVariables.g_fullLifeSmallIconUVs[0],
+            staticVariables.g_fullLifeSmallIconUVs[1],
+            8,
+            8,
+            7));
+
+
+        //empty life small icons
+        spriteSheetTiles.Add(new SpriteSheetTile(
+            staticVariables.g_emptyLifeSmallIconUVs[0],
+            staticVariables.g_emptyLifeSmallIconUVs[1],
+            8,
+            8,
+            7));
+
+        // mp cristal
+        for (int i = 0; i < 14; i++)
+        {
+            spriteSheetTiles.Add(new SpriteSheetTile(
+                i * 8,
+                56,
+                8,
+                0x10,
+                5));
+        }
+
+        //money icons
+        for (int i = 0; i < 4; i++)
+        {
+            spriteSheetTiles.Add(new SpriteSheetTile(
+                staticVariables.g_hudMoneyIconUVs[i * 20],
+                staticVariables.g_hudMoneyIconUVs[i * 20 + 1],
+                8,
+                0x10,
+                5));
+        }
+    }
+
+    private static void AddInventoryTiles(StaticVariables staticVariables, HashSet<SpriteSheetTile> spriteSheetTiles)
+    {
+        //cursor
+        for (int i = 0; i < 4; i++)
+        {
+            var sprite = new SpriteSheetTile(
+                staticVariables.g_inventoryCursorTextureUVs[i * 0x28],
+                staticVariables.g_inventoryCursorTextureUVs[i * 0x28 + 1],
+                0x10,
+                0x10,
+                0);
+            spriteSheetTiles.Add(sprite);
+        }
+
+        //icons
+        foreach (var sprite in staticVariables.g_moneyFalconKeyIconSpritesA)
+        {
+            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
+        }
+
+        //rectangle selection
+        spriteSheetTiles.Add(new SpriteSheetTile(48, 0x98, 0x18, 0x20, 0));
+
+        //background
+        foreach (var sprite in staticVariables.g_MainInventoryWeaponBackgroundSpritesA)
+        {
+            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
+        }
+
+        foreach (var sprite in staticVariables.g_MainInventoryItemBackgroundSpritesA)
+        {
+            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
+        }
+
+        foreach (var sprite in staticVariables.SPRT_ARRAY_800ad594)
+        {
+            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
+        }
+
+        foreach (var sprite in staticVariables.SPRT_ARRAY_800af674)
+        {
+            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
+        }
+
+        foreach (var sprite in staticVariables.SPRT_ARRAY_800b06ec)
+        {
+            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
+        }
+
+        foreach (var sprite in staticVariables.SPRT_ARRAY_800b123c)
+        {
+            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
+        }
+
+        foreach (var sprite in staticVariables.SPRT_ARRAY_800b1d8c)
+        {
+            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
+        }
+
+        foreach (var sprite in staticVariables.SPRT_ARRAY_800ba3d0)
+        {
+            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
+        }
+
+        foreach (var sprite in staticVariables.SPRT_ARRAY_800bcb40)
+        {
+            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
+        }
+
+        foreach (var sprite in staticVariables.SPRT_ARRAY_800bf2b0)
+        {
+            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
+        }
+
+        foreach (var sprite in staticVariables.SPRT_ARRAY_800c1a20)
+        {
+            spriteSheetTiles.Add(new(sprite.u0, sprite.v0, sprite.w, sprite.h, sprite.clut));
+        }
+    }
+
+    private static void ExtractDataFromEtcRes(EtcRes etcRes, StaticVariables staticVariables, string extractionPath)
+    {
+        var dataPath = Path.Combine(extractionPath, "data");
+        Directory.CreateDirectory(dataPath);
+        var path = Path.Combine(dataPath, $"{Path.GetFileName(etcRes.FileName)}.json");
+        var sortedData = etcRes.StringByIndex.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
+        File.WriteAllText(path, JsonSerializer.Serialize(sortedData, _jsonSerializerOptions));
+    }
+
+    private static void ExtractDataFromDatasBin(DatasBin datasBin, StaticVariables staticVariables, string extractionPath)
+    {
+        //datasBin.Header
     }
 }
+
+record SpriteSheetTile(int U0, int V0, int Width, int Height, int PaletteIndex);

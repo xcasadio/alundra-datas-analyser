@@ -372,7 +372,7 @@ public class GameInitializer
                 _gameEngine.PlayerManager.SetPlayerMpMax(3);
                 _gameEngine.PlayerManager.SetPlayerMp(2);
                 _gameEngine.PlayerManager.SetMoney(0x873);
-                _gameEngine.PlayerManager.InitializeHpAndMp();
+                _gameEngine.HudManager.InitializeHpAndMp();
             }
 
             iconIndex = 0;

@@ -3942,7 +3942,7 @@ public class EntityEventHandlers
 
         _gameEngine.StaticVariables.PlayerEntity.Hp = _gameEngine.StaticVariables.PlayerEntity.HpMax;
         _gameEngine.PlayerManager.SetPlayerMp((short)_gameEngine.PlayerManager.GetPlayerMpMax());
-        _gameEngine.PlayerManager.InitializeHpAndMp();
+        _gameEngine.HudManager.InitializeHpAndMp();
 
         return 1;
     }

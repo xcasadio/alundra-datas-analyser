@@ -4,12 +4,8 @@ namespace AlundraEngine;
 
 public class EtcResUsa : EtcRes
 {
-    private readonly string _fileName;
-
-    public EtcResUsa(string fileName)
+    public EtcResUsa(string fileName) : base(fileName)
     {
-        _fileName = fileName;
-
         using var br = new BinaryReader(File.OpenRead(fileName));
         var indexTable = new short[1024];
 

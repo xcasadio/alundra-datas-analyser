@@ -1,9 +1,8 @@
-﻿using AlundraEngine.Gameplay;
+﻿using System.Diagnostics;
+using AlundraEngine.Gameplay;
 using AlundraEngine.Graphics;
-using AlundraEngine.UI;
-using System.Diagnostics;
 
-namespace AlundraEngine;
+namespace AlundraEngine.UI;
 
 public class UIDebugManager
 {
@@ -14,6 +13,75 @@ public class UIDebugManager
         _gameEngine = gameEngine;
     }
 
+
+    //80051550
+    public void InitializeFlagsDebugMenu(CallBackInfo callBackInfo)
+    {
+        short psVar1;
+        int index;
+        //index = 4;
+
+        _gameEngine.StaticVariables.UINT_8017e8d8 = 0xffffffff;
+        _gameEngine.StaticVariables.SHORT_8017e8dc = 0;
+        _gameEngine.StaticVariables.g_playerControlFlags |= 8;
+        Array.Clear(_gameEngine.StaticVariables.SHORT_ARRAY_8017e8de);
+
+        index = _gameEngine.StaticVariables.DAT_8017e998;
+
+        if (0x10 < (index - (index >> 0x1f)) * 0x8000 >> 0x10)
+        {
+            _gameEngine.StaticVariables.DAT_8017e9a8 = 0;
+        }
+
+        FUN_80047cc4(callBackInfo.Data, callBackInfo.Data.X, callBackInfo.Data.Y);
+        SPRT[] sprites = [_gameEngine.StaticVariables.SPRT_ARRAY_8017e938[2], _gameEngine.StaticVariables.SPRT_ARRAY_8017e938[3]];
+        _gameEngine.GraphicManager.InitializeFadeOverlaySprites(sprites);
+        callBackInfo.RenderFunc = _gameEngine.UIDebugManager.DisplayFlagsDebugMenu;
+    }
+
+    //80047cc4
+    private void FUN_80047cc4(UIBoxConfiguration uiBoxConfig, short startX, short startY)
+    {
+        int index;
+        int w;
+        int h;
+        int x;
+        int width;
+
+        h = 0;
+
+        if (0 < uiBoxConfig.Height)
+        {
+            do
+            {
+                width = uiBoxConfig.Width;
+                w = 0;
+                x = startX;
+
+                if (0 < uiBoxConfig.Width)
+                {
+                    do
+                    {
+                        index = h * uiBoxConfig.Width + w;
+                        var sprite = uiBoxConfig.SpritesA[index];
+                        sprite.x0 = (short)x;
+                        sprite.y0 = startY;
+
+                        sprite = uiBoxConfig.SpritesB[index];
+                        sprite.x0 = (short)x;
+                        sprite.y0 = startY;
+
+                        w += 1;
+                        x += 8;
+                    } while (w < uiBoxConfig.Width);
+                }
+
+                h += 1;
+                startY = (short)(startY + 8);
+
+            } while (h < uiBoxConfig.Height);
+        }
+    }
 
     //80051624
     public void DisplayFlagsDebugMenu(CallBackInfo callBackInfo)
@@ -326,4 +394,21 @@ public class UIDebugManager
             _gameEngine.UIManager.FUN_80047cb0(callBackInfo);
         }
     }
+
+    //8004a8a8
+    public void InitializeDebugMenuSound(CallBackInfo callBackInfo)
+    {
+        Debugger.Break();
+
+        //debug menu sound
+        //char acStack_68[80];
+        //g_debugSoundMenuSoundIndex = 0;
+        //g_playerControlFlags = g_playerControlFlags | 0x18;
+        //strcpy(acStack_68, g_numberCharacterJpArray[0]);
+        //strcat(acStack_68, g_numberCharacterJpArray[((int)g_debugSoundMenuSoundIndex / 10) % 10]);
+        //strcat(acStack_68, g_numberCharacterJpArray[(int)g_debugSoundMenuSoundIndex % 10]);
+        //callBackInfo.RenderFunc = DisplayDebugMenuSound;
+        //return 1;
+    }
+
 }

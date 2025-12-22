@@ -1512,9 +1512,9 @@ namespace AlundraTools.GameControls
             labelCallback1.AutoSize = true;
             labelCallback1.Location = new Point(3, 34);
             labelCallback1.Name = "labelCallback1";
-            labelCallback1.Size = new Size(46, 15);
+            labelCallback1.Size = new Size(56, 15);
             labelCallback1.TabIndex = 17;
-            labelCallback1.Text = "#1 - ???";
+            labelCallback1.Text = "#1 - HUD";
             // 
             // labelCallback0
             // 

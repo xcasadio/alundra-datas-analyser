@@ -9,7 +9,11 @@ public static class TimLoader
     {
         using var fs = File.OpenRead(path);
         using var br = new BinaryReader(fs);
+        return LoadTim(br, paletteIndex, transparentKey, tolerance);
+    }
 
+    public static Bitmap LoadTim(BinaryReader br, int paletteIndex = 0, Color? transparentKey = null, int tolerance = 0)
+    {
         uint magic = br.ReadUInt32(); // 0x10 00 00 00
         if (magic != 0x10)
         {
@@ -90,6 +94,12 @@ public static class TimLoader
         byte[] imgData = br.ReadBytes(dataBytes);
 
         // --- Decode to 32-bit ARGB ---
+        return DecodeBuffer(paletteIndex, width, height, bpp, palettes, imgWWords, imgData);
+    }
+
+    public static Bitmap DecodeBuffer(int paletteIndex, int width, int height, int bpp, Color[][]? palettes,
+        ushort imgWWords, byte[] imgData)
+    {
         var bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
         var rect = new Rectangle(0, 0, width, height);
         var data = bmp.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);

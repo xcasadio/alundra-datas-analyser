@@ -1702,15 +1702,6 @@ public class PlayerManager
         return _gameEngine.StaticVariables.g_playerStats.MoneyAmount;
     }
 
-    // 8004b730
-    public void InitializeHpAndMp()
-    {
-        _gameEngine.StaticVariables.INT_ARRAY_800a8284[0] = GetPlayerHpMax();
-        _gameEngine.StaticVariables.INT_ARRAY_800a8284[1] = _gameEngine.StaticVariables.INT_ARRAY_800a8284[0];
-        _gameEngine.StaticVariables.INT_ARRAY_800a8284[3] = GetPlayerMpMax();
-        _gameEngine.StaticVariables.INT_ARRAY_800a8284[2] = _gameEngine.StaticVariables.INT_ARRAY_800a8284[3];
-    }
-
     // 8004e78c
     public int GetPlayerHpMax()
     {

@@ -1,16 +1,9 @@
-﻿using System.Diagnostics;
-
-namespace AlundraEngine;
+﻿namespace AlundraEngine;
 
 public class EtcResR : EtcRes
 {
-    private readonly string _fileName;
-    private readonly Dictionary<int, string> _stringByIndex = new();
-
-    public EtcResR(string fileName)
+    public EtcResR(string fileName) : base(fileName)
     {
-        _fileName = fileName;
-
         using var br = new BinaryReader(File.OpenRead(fileName));
         IndexTable = new short[1024];
 
@@ -26,7 +19,7 @@ public class EtcResR : EtcRes
             int offset = IndexTable[i + 0x100];
             var j = offset;
             StringTable[i] = ReadString(buffer, ref j);
-            _stringByIndex.Add(offset, StringTable[i]);
+            StringByIndex.Add(offset, StringTable[i]);
         }
 
 
@@ -35,7 +28,7 @@ public class EtcResR : EtcRes
             int offset = IndexTable[i];
             var j = offset;
             DescriptionStrings[i] = ReadString(buffer, ref j);
-            _stringByIndex.Add(offset, DescriptionStrings[i]);
+            StringByIndex.Add(offset, DescriptionStrings[i]);
         }
 
         int x = 0;
@@ -50,7 +43,7 @@ public class EtcResR : EtcRes
             }
             l++;
 
-            _stringByIndex.TryAdd(offset, str);
+            StringByIndex.TryAdd(offset, str);
         }
 
         for (int i = 0; i < 0x62; i++)
@@ -58,17 +51,17 @@ public class EtcResR : EtcRes
             int iconNameOffset = IndexTable[i + 0x200];
             var offset = iconNameOffset;
             IconNames[i * 2] = ReadString(buffer, ref offset);
-            _stringByIndex.TryAdd(iconNameOffset, IconNames[i * 2]);
+            StringByIndex.TryAdd(iconNameOffset, IconNames[i * 2]);
 
             int descriptionOffset = IndexTable[i + 0x280];
             offset = descriptionOffset;
             DescriptionItems[i * 2] = ReadString(buffer, ref offset);
-            _stringByIndex.TryAdd(descriptionOffset, DescriptionItems[i * 2]);
+            StringByIndex.TryAdd(descriptionOffset, DescriptionItems[i * 2]);
 
             int otherStringOffset = IndexTable[i + 0x300];
             offset = otherStringOffset;
             OtherStrings[i * 2] = ReadString(buffer, ref offset);
-            _stringByIndex.TryAdd(otherStringOffset, OtherStrings[i * 2]);
+            StringByIndex.TryAdd(otherStringOffset, OtherStrings[i * 2]);
         }
 
         //l = _indexTable[0x3ff];
@@ -82,7 +75,7 @@ public class EtcResR : EtcRes
 
     public override string GetEtcString(int id)
     {
-        return _stringByIndex[IndexTable[id]];
+        return StringByIndex[IndexTable[id]];
 
         //Debugger.Break();
 
@@ -92,7 +85,7 @@ public class EtcResR : EtcRes
         0x400 (1024) < id < => Strings
          */
 
-        //var buffer = File.ReadAllBytes(_fileName);
+        //var buffer = File.ReadAllBytes(FileName);
         //int offset = _indexTable[id];
         //var value = ReadString(buffer, ref offset);
 

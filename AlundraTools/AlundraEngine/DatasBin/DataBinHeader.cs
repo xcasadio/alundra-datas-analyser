@@ -13,7 +13,7 @@ public class DataBinHeader
         AlundraStringTableRepeatOffset = br.ReadUInt32();//10
 
         DrawPageParam = br.ReadUInt32();//14 g_currentDrawPageParam
-        LoadingScreen0 = br.ReadUInt32();//18 offset to fill g_orderingTableBuffer in 8002be98, used to exit game
+        LoadingScreen0 = br.ReadUInt32();//18
         LoadingScreen1 = br.ReadUInt32();//1c
         LoadingScreen2 = br.ReadUInt32();//20
         LoadingScreen3 = br.ReadUInt32();//24

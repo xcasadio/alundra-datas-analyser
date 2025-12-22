@@ -1530,7 +1530,7 @@ public class GameEngine
                     StaticVariables.g_lastWarpEntityIndex = 0;
                     StaticVariables.PlayerEntity.Hp = 0;
                     //StaticVariables.PlayerEntity.DamagedTickCounter = entityBeforeWarp;
-                    StaticVariables.INT_ARRAY_800a8284[0] = 0;
+                    StaticVariables.g_playerDataHud[0] = 0;
                     PlayerManager.SetPlayerHp(0);
                     finalEntity = StaticVariables.g_lastWarpEntityIndex;
                 }

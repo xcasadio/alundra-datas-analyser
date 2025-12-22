@@ -12,7 +12,15 @@ public abstract class EtcRes
     public readonly string[] Strings = new string[512];
     public readonly string[] DescriptionStrings = new string[256];
 
-    protected short[] IndexTable;
+    public readonly Dictionary<int, string> StringByIndex = new();
+    public short[] IndexTable;
+
+    public readonly string FileName;
+
+    protected EtcRes(string fileName)
+    {
+        FileName = fileName;
+    }
 
     public abstract string GetItemName(int id);
     public abstract string GetEtcString(int id);

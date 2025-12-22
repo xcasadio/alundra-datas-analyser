@@ -21,7 +21,7 @@ public class UIManager
     }
 
     //80048304
-    public void DisplayDialogBackgroundText(CallBackInfo callBackInfo)
+    public void InitializeDialogBackgroundSprites(CallBackInfo callBackInfo)
     {
         //TODO : same as InitializeTextSpriteTiles ? => 8005a0c8
         int tileX;
@@ -59,8 +59,6 @@ public class UIManager
                             //SetSemiTrans(sprite, 0);
                             //SetShadeTex(sprite, 1);
                             sprite.clut = 0; //_gameEngine.StaticVariables.g_clutTable[0];
-                            var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
-                            _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.BackgroundUI, bitmap);
 
                             tileX += 1;
                         } while (tileX < tilesConfiguration.Width);
@@ -302,7 +300,7 @@ public class UIManager
     }
     
     //8004f628
-    //display DisplayDialogBackgroundText
+    //display InitializeDialogBackgroundSprites
     public void Fun_8004f628(CallBackInfo callBackInfo)
     {
         Debugger.Break();
@@ -462,218 +460,12 @@ public class UIManager
         UpdateUiBoxesPosition(callBackInfo.Data, _gameEngine.StaticVariables.g_textToDisplay3);
 
         callBackInfo.RenderFunc = FUN_800501a4;
-        DisplayDialogBackgroundText(callBackInfo);
+        InitializeDialogBackgroundSprites(callBackInfo);
     }
-
-
-    //8004a8a8
-    public void InitializeDebugMenuSound(CallBackInfo callBackInfo)
-    {
-        Debugger.Break();
-
-        //debug menu sound
-        //char acStack_68[80];
-        //g_debugSoundMenuSoundIndex = 0;
-        //g_playerControlFlags = g_playerControlFlags | 0x18;
-        //strcpy(acStack_68, g_numberCharacterJpArray[0]);
-        //strcat(acStack_68, g_numberCharacterJpArray[((int)g_debugSoundMenuSoundIndex / 10) % 10]);
-        //strcat(acStack_68, g_numberCharacterJpArray[(int)g_debugSoundMenuSoundIndex % 10]);
-        //callBackInfo.RenderFunc = DisplayDebugMenuSound;
-        //return 1;
-    }
-
     //8004afe8
     public void Fun_8004afe8(CallBackInfo callBackInfo)
     {
         Debugger.Break();
-    }
-
-    //80050ec8
-    //open memory card menu
-    public void Fun_80050ec8(CallBackInfo callBackInfo)
-    {
-        SPRT pSVar1;
-        ulong uVar2;
-        int iVar3;
-        uint uVar4;
-        uint uVar5;
-        uint uVar6;
-        SPRT pSVar7;
-        SPRT pSVar8;
-
-        if ((_gameEngine.StaticVariables.g_memoryCardMenuState & 3U) == 0)
-        {
-            if ((_gameEngine.StaticVariables.g_memoryCardMenuState & 8U) != 0)
-            {
-                _gameEngine.StaticVariables.g_memoryCardMenuState = (_gameEngine.StaticVariables.g_memoryCardMenuState & 0xfffffff7U) | 2;
-                _gameEngine.StaticVariables.TextToDisplay_8017e620.mode = 2;
-                _gameEngine.StaticVariables.TextToDisplay_8017e620.tick = 0;
-                _gameEngine.StaticVariables.TextToDisplay_8017e620.speed = 0xf;
-
-                if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X < 0)
-                {
-                    _gameEngine.StaticVariables.TextToDisplay_8017e620.x =
-                        (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X +
-                                _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width * -8);
-                }
-                else
-                {
-                    _gameEngine.StaticVariables.TextToDisplay_8017e620.x = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
-                }
-                if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y < 0)
-                {
-                    _gameEngine.StaticVariables.TextToDisplay_8017e620.y =
-                        (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y +
-                                _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Height * -8);
-                }
-                else
-                {
-                    _gameEngine.StaticVariables.TextToDisplay_8017e620.y = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y;
-                }
-                if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X < 0)
-                {
-                    _gameEngine.StaticVariables.TextToDisplay_8017e620.startX =
-                        (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X +
-                                _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width * -8);
-                }
-                else
-                {
-                    _gameEngine.StaticVariables.TextToDisplay_8017e620.startX = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
-                }
-
-                _gameEngine.StaticVariables.TextToDisplay_8017e620.startY = 0xf0;
-                _gameEngine.SoundManager.PlaySoundEffect(5);
-            }
-        }
-        else
-        {
-            iVar3 = UpdateUiBoxesPosition(callBackInfo.Data, _gameEngine.StaticVariables.TextToDisplay_8017e620);
-            
-            if (iVar3 == 1)
-            {
-                if ((_gameEngine.StaticVariables.g_memoryCardMenuState & 1U) != 0)
-                {
-                    _gameEngine.StaticVariables.g_memoryCardMenuState &= 0xfffffffe;
-                }
-
-                if ((_gameEngine.StaticVariables.g_memoryCardMenuState & 2U) != 0)
-                {
-                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X = _gameEngine.StaticVariables.TextToDisplay_8017e620.originX;
-                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y = _gameEngine.StaticVariables.TextToDisplay_8017e620.originY;
-                    _gameEngine.StaticVariables.g_openMemoryCardState = -1;
-                    FUN_80047cb0(callBackInfo);
-                    return;
-                }
-            }
-        }
-
-        //uVar2 = _gameEngine.StaticVariables.g_drawModes[0x14].tag;
-        pSVar7 = _gameEngine.StaticVariables.SPRT_ARRAY_8017e410[0];
-        _gameEngine.StaticVariables.SPRT_ARRAY_8017e410[0].w = 0xff;
-        _gameEngine.StaticVariables.SPRT_ARRAY_8017e410[0].h = 0x10;
-        _gameEngine.StaticVariables.SPRT_ARRAY_8017e410[0].x0 = (short)(callBackInfo.Data.X + callBackInfo.Data.Width);
-        _gameEngine.StaticVariables.SPRT_ARRAY_8017e410[0].y0 = (short)(callBackInfo.Data.Y + callBackInfo.Data.Height);
-
-        pSVar8 = _gameEngine.StaticVariables.SPRT_ARRAY_8017e438[0];
-        _gameEngine.StaticVariables.SPRT_ARRAY_8017e438[0].w = 0xff;
-        _gameEngine.StaticVariables.SPRT_ARRAY_8017e438[0].h = 0x10;
-        _gameEngine.StaticVariables.SPRT_ARRAY_8017e438[0].x0 = (short)(callBackInfo.Data.X + callBackInfo.Data.Width);
-        _gameEngine.StaticVariables.SPRT_ARRAY_8017e438[0].y0 = (short)(callBackInfo.Data.Y + callBackInfo.Data.Height + 0x10);
-
-        //pSVar1 = _gameEngine.StaticVariables.SPRT_80146f5c[0];
-        //uVar5._0_1_ = pSVar1->r0;
-        //uVar5._1_1_ = pSVar1->g0;
-        //uVar5._2_1_ = pSVar1->b0;
-        //uVar5._3_1_ = pSVar1->code;
-        //pSVar7->tag = pSVar7->tag & 0xff000000 | uVar5 & 0xffffff;
-        //uVar4._0_1_ = pSVar1->r0;
-        //uVar4._1_1_ = pSVar1->g0;
-        //uVar4._2_1_ = pSVar1->b0;
-        //uVar4._3_1_ = pSVar1->code;
-        //uVar5 = uVar4 & 0xff000000 | (uint)pSVar7 & 0xffffff;
-        //pSVar1->r0 = (char)uVar5;
-        //pSVar1->g0 = (char)(uVar5 >> 8);
-        //pSVar1->b0 = (char)(uVar5 >> 0x10);
-        //pSVar1->code = (char)(uVar5 >> 0x18);
-        //pSVar8->tag = pSVar8->tag & 0xff000000 | (uint)pSVar7 & 0xffffff;
-        //uVar6._0_1_ = pSVar1->r0;
-        //uVar6._1_1_ = pSVar1->g0;
-        //uVar6._2_1_ = pSVar1->b0;
-        //uVar6._3_1_ = pSVar1->code;
-        //uVar5 = uVar6 & 0xff000000 | (uint)pSVar8 & 0xffffff;
-        //pSVar1->r0 = (char)uVar5;
-        //pSVar1->g0 = (char)(uVar5 >> 8);
-        //pSVar1->b0 = (char)(uVar5 >> 0x10);
-        //pSVar1->code = (char)(uVar5 >> 0x18);
-    }
-
-    //80051550
-    public void Func_80051550(CallBackInfo callBackInfo)
-    {
-        short psVar1;
-        int index;
-        //index = 4;
-
-        _gameEngine.StaticVariables.UINT_8017e8d8 = 0xffffffff;
-        _gameEngine.StaticVariables.SHORT_8017e8dc = 0;
-        _gameEngine.StaticVariables.g_playerControlFlags |= 8;
-        Array.Clear(_gameEngine.StaticVariables.SHORT_ARRAY_8017e8de);
-
-        index = _gameEngine.StaticVariables.DAT_8017e998;
-
-        if (0x10 < (index - (index >> 0x1f)) * 0x8000 >> 0x10)
-        {
-            _gameEngine.StaticVariables.DAT_8017e9a8 = 0;
-        }
-
-        FUN_80047cc4(callBackInfo.Data, callBackInfo.Data.X, callBackInfo.Data.Y);
-        SPRT[] sprites = [_gameEngine.StaticVariables.SPRT_ARRAY_8017e938[2], _gameEngine.StaticVariables.SPRT_ARRAY_8017e938[3]];
-        _gameEngine.GraphicManager.InitializeFadeOverlaySprites(sprites);
-        callBackInfo.RenderFunc = _gameEngine.UIDebugManager.DisplayFlagsDebugMenu;
-    }
-
-    //80047cc4
-    private void FUN_80047cc4(UIBoxConfiguration uiBoxConfig, short startX, short startY)
-    {
-        int index;
-        int w;
-        int h;
-        int x;
-        int width;
-
-        h = 0;
-
-        if (0 < uiBoxConfig.Height)
-        {
-            do
-            {
-                width = uiBoxConfig.Width;
-                w = 0;
-                x = startX;
-
-                if (0 < uiBoxConfig.Width)
-                {
-                    do
-                    {
-                        index = h * uiBoxConfig.Width + w;
-                        var sprite = uiBoxConfig.SpritesA[index];
-                        sprite.x0 = (short)x;
-                        sprite.y0 = startY; 
-                        
-                        sprite = uiBoxConfig.SpritesB[index];
-                        sprite.x0 = (short)x;
-                        sprite.y0 = startY;
-
-                        w += 1;
-                        x += 8;
-                    } while (w < uiBoxConfig.Width);
-                }
-
-                h += 1;
-                startY = (short)(startY + 8);
-
-            } while (h < uiBoxConfig.Height);
-        }
     }
 
     //8005a268

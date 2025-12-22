@@ -84,7 +84,7 @@ public class FrameSnapshot
         gameEngine.StaticVariables.g_lastWarpEntityIndex = LastWarpEntityIndex;
         gameEngine.StaticVariables.g_tileAnimFrameCounter = TileAnimFrameCounter;
         gameEngine.StaticVariables.DAT_80098f24 = DAT_80098f24;
-        Array.Copy(INT_ARRAY_800a8284, gameEngine.StaticVariables.INT_ARRAY_800a8284, INT_ARRAY_800a8284.Length);
+        Array.Copy(INT_ARRAY_800a8284, gameEngine.StaticVariables.g_playerDataHud, INT_ARRAY_800a8284.Length);
         gameEngine.StaticVariables.g_globalTransitionState = GlobalTransitionState;
         Array.Copy(DefaultWarpDestinations, gameEngine.StaticVariables.g_defaultWarpDestinations, DefaultWarpDestinations.Length);
         Array.Copy(SoundGroupByMapId, gameEngine.StaticVariables.g_soundGroupByMapId, SoundGroupByMapId.Length);
@@ -160,7 +160,7 @@ public class FrameSnapshot
         LastWarpEntityIndex = gameEngine.StaticVariables.g_lastWarpEntityIndex;
         TileAnimFrameCounter = gameEngine.StaticVariables.g_tileAnimFrameCounter;
         DAT_80098f24 = gameEngine.StaticVariables.DAT_80098f24;
-        INT_ARRAY_800a8284 = (int[])gameEngine.StaticVariables.INT_ARRAY_800a8284.Clone();
+        INT_ARRAY_800a8284 = (int[])gameEngine.StaticVariables.g_playerDataHud.Clone();
         GlobalTransitionState = gameEngine.StaticVariables.g_globalTransitionState;
         DefaultWarpDestinations = (uint[])gameEngine.StaticVariables.g_defaultWarpDestinations.Clone();
         SoundGroupByMapId = (uint[])gameEngine.StaticVariables.g_soundGroupByMapId.Clone();
