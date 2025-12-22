@@ -2379,10 +2379,23 @@ public class GameEngine
     //80059f6c
     public void TriggerVisualUpdate(int spriteTableIndex)
     {
+        var tableIndex = spriteTableIndex - 256;
+
+        if (tableIndex < 0
+            || tableIndex >= EtcRes.StringTable.Length)
+        {
+            return;
+        }
+
+        if (tableIndex >= 0
+            && tableIndex < EtcRes.StringTable.Length
+            && EtcRes.StringTable[tableIndex] == null)
+        {
+            return;
+        }
+
         if ((StaticVariables.g_UIDisplayFlags & 4) == 0
-            && spriteTableIndex - 0x100U < 0x100
-            && EtcRes.GetEtcString(spriteTableIndex) != null
-            )
+            && spriteTableIndex - 0x100U < 0x100)
         {
             StaticVariables.g_entitySpriteNameTableIndex = spriteTableIndex;
             GraphicManager.SetTransitionType(0xc);

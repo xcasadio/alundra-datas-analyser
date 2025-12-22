@@ -4,13 +4,13 @@ namespace AlundraEngine.Balance;
 
 public class BalanceBin
 {
-    private readonly string _balanceFile;
-    private readonly List<BalanceRecord> _balanceRecords = new();
-    private readonly List<int> _offsets = new();
+    public readonly string BalanceFile;
+    public readonly List<BalanceRecord> BalanceRecords = new();
+    public readonly List<int> Offsets = new();
 
     public BalanceBin(string balanceFile)
     {
-        _balanceFile = balanceFile;
+        BalanceFile = balanceFile;
         using var br = new BinaryReader(File.OpenRead(balanceFile));
         var firstOffset = 0;
 
@@ -22,33 +22,15 @@ public class BalanceBin
                 firstOffset = offset;
             }
 
-            _offsets.Add(offset);
+            Offsets.Add(offset);
         }
 
-        foreach (var offset in _offsets)
+        foreach (var offset in Offsets)
         {
             var record = new BalanceRecord(br, offset);
-            _balanceRecords.Add(record);
+            BalanceRecords.Add(record);
         }
     }
-
-    //80044550
-    //public BalanceRecord GetBalanceRecordFromSpriteIndex(int index, int balanceLevel)
-    //{
-    //    var record = _balanceRecords[index];
-    //    
-    //    if (record.Level >= balanceLevel)
-    //    {
-    //        return record;
-    //    }
-    //
-    //    do
-    //    {
-    //        record = record.Next;
-    //    } while (record.Level < balanceLevel);
-    //
-    //    return record;
-    //}
 
     //80044550
     public BalanceRecord GetBalanceRecordFromSpriteIndex(int spriteIndex, int itemIdThreshold)
@@ -58,8 +40,8 @@ public class BalanceBin
             spriteIndex = 0x1e;
         }
 
-        var offset = _offsets[spriteIndex];
-        var animDataPtr = _balanceRecords[spriteIndex];
+        var offset = Offsets[spriteIndex];
+        var animDataPtr = BalanceRecords[spriteIndex];
 
         if (animDataPtr.Offset != offset)
         {
@@ -68,7 +50,7 @@ public class BalanceBin
 
         var currentId = animDataPtr.Level;
 
-        while ((int)(uint)currentId < itemIdThreshold)
+        while (currentId < itemIdThreshold)
         {
             animDataPtr = animDataPtr.Next;//(BalanceRecord*)(itemDataPtr->values + (itemDataPtr->offsetToNextLevel - 3));
             currentId = animDataPtr.Level;
@@ -79,8 +61,6 @@ public class BalanceBin
     //800445c0
     public BalanceRecord GetItemDataPointer(int itemId, int itemIdThreshold)
     {
-        //Debugger.Break();
-        
         if (0x61 < itemId)
         {
             //DoNothing();
@@ -89,8 +69,8 @@ public class BalanceBin
             Debugger.Break();
         }
 
-        var offset = _offsets[itemId + 0x1e];
-        var itemDataPtr = _balanceRecords[itemId + 0x1e];
+        var offset = Offsets[itemId + 0x1e];
+        var itemDataPtr = BalanceRecords[itemId + 0x1e];
 
         if (itemDataPtr.Offset != offset)
         {

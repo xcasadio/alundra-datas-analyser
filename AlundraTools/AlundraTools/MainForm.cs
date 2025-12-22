@@ -1,12 +1,13 @@
 ﻿using AlundraEngine;
+using AlundraEngine.Balance;
 using AlundraEngine.DatasBin;
+using AlundraEngine.Editor;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
 using AlundraTools.GameControls;
+using AlundraTools.GameControls.CommandControls;
 using Microsoft.Win32;
 using System.Text.Json;
-using AlundraEngine.Balance;
-using AlundraTools.GameControls.CommandControls;
 
 namespace AlundraTools;
 
@@ -43,7 +44,7 @@ public partial class MainForm : Form
                 var soundBinFileName = Path.Combine(dataFolder, "SOUND.BIN");
                 var soundBin = new SoundBin(soundBinFileName);
                 var font3 = new Font3(Path.Combine(dataFolder, "..", "TAKI\\SCREEN"));
-                var etcResFileName = GetEtcFileName(dataFolder);
+                var etcResFileName = PathHelper.GetEtcFileName(dataFolder);
                 EtcRes etcRes;
 
                 if (Path.GetFileName(etcResFileName).Contains("usa", StringComparison.InvariantCultureIgnoreCase))
@@ -58,19 +59,6 @@ public partial class MainForm : Form
                 frmAlundra.Init(datasBin, balanceBin, soundBin, etcRes, font3);
             }
         }
-    }
-
-    private static string GetEtcFileName(string dataFolder)
-    {
-        //"ETC_RES.R"
-        var files = Directory.GetFiles(dataFolder, "*.R");
-
-        if (files.Length == 0)
-        {
-            throw new FileNotFoundException($"ETC_XXX.R file not found in the specified data folder {dataFolder}.");
-        }
-
-        return Path.Combine(dataFolder, files[0]);
     }
 
     private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -93,7 +81,7 @@ public partial class MainForm : Form
                 var soundFile = Path.Combine(dataFolder, "SOUND.BIN");
                 var balanceFile = Path.Combine(dataFolder, "BALANCE.BIN");
                 var font3Folder = Path.Combine(dataFolder, "..", "TAKI\\SCREEN");
-                var etcResFileName = GetEtcFileName(dataFolder);
+                var etcResFileName = PathHelper.GetEtcFileName(dataFolder);
                 EtcRes etcRes;
 
                 if (Path.GetFileName(etcResFileName).Contains("usa", StringComparison.InvariantCultureIgnoreCase))

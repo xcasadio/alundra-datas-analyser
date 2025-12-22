@@ -3424,8 +3424,8 @@ public class StaticVariables
         0x50, 0x28, 0x05, 0x00, 0x08, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x58, 0x00, 0x00, 0x00
     };
 
-    // 800a58d8
-    public readonly byte[] g_dialogCursorTextureUV = new byte[]
+// 800a58d8
+public readonly byte[] g_dialogCursorTextureUV = new byte[]
 {
     0xB0, 0x38, 0x05, 0x00,
     0x08, 0x00, 0x08, 0x00,
@@ -3537,8 +3537,9 @@ public class StaticVariables
     0x90, 0x00, 0x00, 0x00,
     0x00
 };
-    // 800B2898
-    public readonly byte[] g_inventoryCursorTextureUVs = new byte[361]
+
+// 800B2898
+public readonly byte[] g_inventoryCursorTextureUVs = new byte[361]
 {
     0xB0, 0xA0, 0x00, 0x00,
     0x08, 0x00, 0x08, 0x00,
@@ -3650,8 +3651,9 @@ public class StaticVariables
     0x90, 0x00, 0x00, 0x00,
     0x00
 };
-    //800a45ec
-    public static readonly SPRT[] SPRT_ARRAY_800a45ec = new SPRT[]
+
+//800a45ec
+public static readonly SPRT[] SPRT_ARRAY_800a45ec = new SPRT[]
 {
     // [0..15]
     new SPRT { tag = 0u, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B0, y0 = 0x0090, u0 = 0xE0, v0 = 0x00, clut = 0x0000, w = 0x08, h = 0x08 },
@@ -3725,8 +3727,9 @@ public class StaticVariables
     new SPRT { tag = 0u, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x0120, y0 = 0x00A8, u0 = 0xD0, v0 = 0x20, clut = 0x0000, w = 0x08, h = 0x08 },
     new SPRT { tag = 0u, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x0128, y0 = 0x00A8, u0 = 0xD8, v0 = 0x20, clut = 0x0000, w = 0x08, h = 0x08 },
 };
-    //800a4aec
-    public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
+
+//800a4aec
+public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
 {
     // [0..15]
     new SPRT { tag = 0u, r0 = 0x00, g0 = 0x00, b0 = 0x00, code = 0x00, x0 = 0x00B0, y0 = 0x0090, u0 = 0xE0, v0 = 0x00, clut = 0x0000, w = 0x08, h = 0x08 },
@@ -4201,7 +4204,6 @@ public class StaticVariables
         };
 
 
-
         UIBoxConfiguration_800bcb30 = new UIBoxConfiguration
         {
             X = 0x10,
@@ -4239,12 +4241,9 @@ public class StaticVariables
             SpritesB = SPRT_ARRAY_800c2dd0
         };
 
-
-
-
         g_initialCallbackTable =
-            [
-                new CallBackInfo
+        [
+            new CallBackInfo
             {
                 Id = 0, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x05, Width = 0x20, Height = 0x06,
                 InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Fun_80046ef0, Arg = 0
@@ -4272,7 +4271,7 @@ public class StaticVariables
             new CallBackInfo
             {
                 Id = 5, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.Func_8004a8a8, Arg = 0
+                InitializeFunc = gameEngine.UIManager.DisplayDialogBackgroundText, RenderFunc = gameEngine.UIManager.InitializeDebugMenuSound, Arg = 0
             },
             new CallBackInfo
             {
@@ -4297,7 +4296,7 @@ public class StaticVariables
             new CallBackInfo
             {
                 Id = 10, Flags = 0, Data = null, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04, InitializeFunc = null,
-                RenderFunc = gameEngine.MemoryCardManager.FUN_800583ec, Arg = 0
+                RenderFunc = gameEngine.MemoryCardManager.DisplayMemoryCardMenu, Arg = 0
             },
             new CallBackInfo
             {
@@ -4309,7 +4308,7 @@ public class StaticVariables
                 Id = 12, Flags = 0, Data = g_textTilesConfiguration, X = 0x10, Y = 0x08, Width = 0x20, Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.FUN_8005a268, RenderFunc = gameEngine.UIManager.Fun_8005a3e0, Arg = 0x05
             }
-            ];
+        ];
     }
 
     //

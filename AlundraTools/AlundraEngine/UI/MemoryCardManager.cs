@@ -1420,7 +1420,7 @@ public class MemoryCardManager
 
     //800583ec
     //Display all memory card files
-    public void FUN_800583ec(CallBackInfo callBackInfo)
+    public void DisplayMemoryCardMenu(CallBackInfo callBackInfo)
     {
         Debugger.Break();
     }

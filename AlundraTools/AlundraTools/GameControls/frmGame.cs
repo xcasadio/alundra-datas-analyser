@@ -8,6 +8,7 @@ using AlundraEngine.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
 using static System.Windows.Forms.LinkLabel;
 using Timer = System.Windows.Forms.Timer;
 
@@ -411,13 +412,15 @@ public partial class FrmGame : Form
     {
         pctOut.Invalidate();
 
+        var frameTimeInMs = 20; //PAL=20ms NTSC-J=16.68ms
+
         if (_lastFrameTime == 0)
         {
-            _gameEngineTimer.Interval = 33;
+            _gameEngineTimer.Interval = frameTimeInMs;
         }
         else
         {
-            _gameEngineTimer.Interval = (int)Math.Max(1, 33 - _lastFrameTime);
+            _gameEngineTimer.Interval = (int)Math.Max(1, frameTimeInMs - _lastFrameTime);
         }
     }
 
@@ -1393,6 +1396,11 @@ public partial class FrmGame : Form
         Array.Fill<short>(_gameEngine.StaticVariables.g_saveData.NumberOfItems, 1);
     }
 
+    private void buttonZoomX1_Click(object sender, EventArgs e)
+    {
+        SetZoomLevel(1);
+    }
+
     private void buttonZoomX2_Click(object sender, EventArgs e)
     {
         SetZoomLevel(2);
@@ -1405,21 +1413,24 @@ public partial class FrmGame : Form
 
     private void buttonZoomX8_Click(object sender, EventArgs e)
     {
-        SetZoomLevel(8);
+        SetZoomLevel(6);
     }
 
     private void SetZoomLevel(int zoomScale)
     {
         SuspendLayout();
-
+        
         var screenGameWidth = StaticVariables.ScreenWidth * zoomScale;
         var screenGameHeight = StaticVariables.ScreenHeight * zoomScale;
 
-        Width = screenGameWidth + 23 + tabControl1.Width;
+        Width = screenGameWidth + 23 + tabControl1.MinimumSize.Width;
         Height = screenGameHeight + 41; //41 = title height + border => how to know the exact value?
 
         pctOut.Width = screenGameWidth;
         pctOut.Height = screenGameHeight;
+
+        tabControl1.Width = tabControl1.MinimumSize.Width;
+        tabControl1.Location = new Point(screenGameWidth + 23, 0);
 
         ResumeLayout();
         PerformLayout();

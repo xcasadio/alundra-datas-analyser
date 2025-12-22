@@ -1,4 +1,6 @@
-﻿namespace AlundraTools.GameControls
+﻿using AlundraTools.CustomControls;
+
+namespace AlundraTools.GameControls
 {
     partial class FrmAlundra
     {
@@ -247,12 +249,21 @@
             listBoxEtcDescriptionItemTable = new ListBox();
             tabPage8 = new TabPage();
             label67 = new Label();
-            pictureBoxFont3Tim = new PictureBox();
+            pictureBoxFont3Tim = new AlundraTools.CustomControls.ImageViewerControl();
             label65 = new Label();
             pictureBoxFont3Palette = new PictureBox();
             listBoxFont3Palette = new ListBox();
-            pictureBoxWindTx = new PictureBox();
+            pictureBoxWindTx = new AlundraTools.CustomControls.ImageViewerControl();
             label63 = new Label();
+            tabPage10 = new TabPage();
+            label5 = new Label();
+            pictureBoxMemoryCardPalette = new PictureBox();
+            label4 = new Label();
+            imageViewerMemoryCardFrame3 = new AlundraTools.GameControls.CustomControl.ImageViewerControl();
+            label3 = new Label();
+            imageViewerMemoryCardFrame2 = new AlundraTools.GameControls.CustomControl.ImageViewerControl();
+            label1 = new Label();
+            imageViewerMemoryCardFrame1 = new AlundraTools.GameControls.CustomControl.ImageViewerControl();
             buttonSelectAlundra = new Button();
             checkBoxStatndardTile = new CheckBox();
             checkBoxWallTile = new CheckBox();
@@ -276,9 +287,9 @@
             tabPage6.SuspendLayout();
             tabPage7.SuspendLayout();
             tabPage8.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Tim).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Palette).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBoxWindTx).BeginInit();
+            tabPage10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxMemoryCardPalette).BeginInit();
             SuspendLayout();
             // 
             // lstGameMaps
@@ -1782,6 +1793,7 @@
             tabControl1.Controls.Add(tabPage6);
             tabControl1.Controls.Add(tabPage7);
             tabControl1.Controls.Add(tabPage8);
+            tabControl1.Controls.Add(tabPage10);
             tabControl1.Location = new Point(910, 12);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
@@ -2523,11 +2535,10 @@
             // 
             // pictureBoxFont3Tim
             // 
-            pictureBoxFont3Tim.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             pictureBoxFont3Tim.Location = new Point(10, 458);
             pictureBoxFont3Tim.Margin = new Padding(4, 3, 4, 3);
             pictureBoxFont3Tim.Name = "pictureBoxFont3Tim";
-            pictureBoxFont3Tim.Size = new Size(236, 256);
+            pictureBoxFont3Tim.Size = new Size(256, 256);
             pictureBoxFont3Tim.TabIndex = 98;
             pictureBoxFont3Tim.TabStop = false;
             // 
@@ -2562,11 +2573,10 @@
             // 
             // pictureBoxWindTx
             // 
-            pictureBoxWindTx.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             pictureBoxWindTx.Location = new Point(7, 181);
             pictureBoxWindTx.Margin = new Padding(4, 3, 4, 3);
             pictureBoxWindTx.Name = "pictureBoxWindTx";
-            pictureBoxWindTx.Size = new Size(236, 256);
+            pictureBoxWindTx.Size = new Size(256, 256);
             pictureBoxWindTx.TabIndex = 94;
             pictureBoxWindTx.TabStop = false;
             // 
@@ -2579,6 +2589,92 @@
             label63.Size = new Size(48, 15);
             label63.TabIndex = 95;
             label63.Text = "Palettes";
+            // 
+            // tabPage10
+            // 
+            tabPage10.Controls.Add(label5);
+            tabPage10.Controls.Add(pictureBoxMemoryCardPalette);
+            tabPage10.Controls.Add(label4);
+            tabPage10.Controls.Add(imageViewerMemoryCardFrame3);
+            tabPage10.Controls.Add(label3);
+            tabPage10.Controls.Add(imageViewerMemoryCardFrame2);
+            tabPage10.Controls.Add(label1);
+            tabPage10.Controls.Add(imageViewerMemoryCardFrame1);
+            tabPage10.Location = new Point(4, 24);
+            tabPage10.Name = "tabPage10";
+            tabPage10.Padding = new Padding(3);
+            tabPage10.Size = new Size(852, 786);
+            tabPage10.TabIndex = 9;
+            tabPage10.Text = "Memory Card";
+            tabPage10.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(421, 4);
+            label5.Name = "label5";
+            label5.Size = new Size(43, 15);
+            label5.TabIndex = 7;
+            label5.Text = "palette";
+            // 
+            // pictureBoxMemoryCardPalette
+            // 
+            pictureBoxMemoryCardPalette.Location = new Point(408, 22);
+            pictureBoxMemoryCardPalette.Name = "pictureBoxMemoryCardPalette";
+            pictureBoxMemoryCardPalette.Size = new Size(76, 128);
+            pictureBoxMemoryCardPalette.TabIndex = 6;
+            pictureBoxMemoryCardPalette.TabStop = false;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(313, 4);
+            label4.Name = "label4";
+            label4.Size = new Size(47, 15);
+            label4.TabIndex = 5;
+            label4.Text = "frame 3";
+            // 
+            // imageViewerMemoryCardFrame3
+            // 
+            imageViewerMemoryCardFrame3.Image = null;
+            imageViewerMemoryCardFrame3.Location = new Point(274, 22);
+            imageViewerMemoryCardFrame3.Name = "imageViewerMemoryCardFrame3";
+            imageViewerMemoryCardFrame3.Size = new Size(128, 128);
+            imageViewerMemoryCardFrame3.TabIndex = 4;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(179, 4);
+            label3.Name = "label3";
+            label3.Size = new Size(47, 15);
+            label3.TabIndex = 3;
+            label3.Text = "frame 2";
+            // 
+            // imageViewerMemoryCardFrame2
+            // 
+            imageViewerMemoryCardFrame2.Image = null;
+            imageViewerMemoryCardFrame2.Location = new Point(140, 22);
+            imageViewerMemoryCardFrame2.Name = "imageViewerMemoryCardFrame2";
+            imageViewerMemoryCardFrame2.Size = new Size(128, 128);
+            imageViewerMemoryCardFrame2.TabIndex = 2;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(45, 4);
+            label1.Name = "label1";
+            label1.Size = new Size(47, 15);
+            label1.TabIndex = 1;
+            label1.Text = "frame 1";
+            // 
+            // imageViewerMemoryCardFrame1
+            // 
+            imageViewerMemoryCardFrame1.Image = null;
+            imageViewerMemoryCardFrame1.Location = new Point(6, 22);
+            imageViewerMemoryCardFrame1.Name = "imageViewerMemoryCardFrame1";
+            imageViewerMemoryCardFrame1.Size = new Size(128, 128);
+            imageViewerMemoryCardFrame1.TabIndex = 0;
             // 
             // buttonSelectAlundra
             // 
@@ -2681,9 +2777,10 @@
             tabPage7.PerformLayout();
             tabPage8.ResumeLayout(false);
             tabPage8.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Tim).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxFont3Palette).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBoxWindTx).EndInit();
+            tabPage10.ResumeLayout(false);
+            tabPage10.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxMemoryCardPalette).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -2869,12 +2966,12 @@
         private ListBox listBoxEtcDescriptionItemTable;
         private TabPage tabPage8;
         private ListBox listBoxFont3Palette;
-        private PictureBox pictureBoxWindTx;
+        private AlundraTools.CustomControls.ImageViewerControl pictureBoxWindTx;
         private Label label63;
         private PictureBox pictureBoxFont3Palette;
         private Label label65;
         private Label label67;
-        private PictureBox pictureBoxFont3Tim;
+        private AlundraTools.CustomControls.ImageViewerControl pictureBoxFont3Tim;
         private CheckBox checkBoxStatndardTile;
         private CheckBox checkBoxWallTile;
         private CheckBox checkBoxDebug;
@@ -2921,5 +3018,14 @@
         private SaveFileDialog saveFileDialog1;
         private CustomControl.ImageViewerControl imageViewerTileSheet;
         private CustomControl.ImageViewerControl imageViewerSpriteSheet;
+        private TabPage tabPage10;
+        private CustomControl.ImageViewerControl imageViewerMemoryCardFrame1;
+        private Label label5;
+        private PictureBox pictureBoxMemoryCardPalette;
+        private Label label4;
+        private CustomControl.ImageViewerControl imageViewerMemoryCardFrame3;
+        private Label label3;
+        private CustomControl.ImageViewerControl imageViewerMemoryCardFrame2;
+        private Label label1;
     }
 }

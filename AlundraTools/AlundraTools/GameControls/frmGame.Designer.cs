@@ -207,10 +207,12 @@ namespace AlundraTools.GameControls
             labelTextFlag = new Label();
             tabPage1 = new TabPage();
             groupBox8 = new GroupBox();
+            buttonZoomx1 = new Button();
             buttonZoomX8 = new Button();
             buttonZoomX4 = new Button();
             buttonZoomX2 = new Button();
             tabPage2 = new TabPage();
+            buttonClearLog = new Button();
             listBoxLogs = new ListBox();
             buttonRefreshLogs = new Button();
             buttonCopyAllLogs = new Button();
@@ -218,7 +220,6 @@ namespace AlundraTools.GameControls
             label58 = new Label();
             comboBoxLogCategories = new ComboBox();
             checkBoxAddLogInVS = new CheckBox();
-            buttonClearLog = new Button();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -352,7 +353,6 @@ namespace AlundraTools.GameControls
             // 
             // groupBox2
             // 
-            groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             groupBox2.Controls.Add(label29);
             groupBox2.Controls.Add(labelCameraScrolling);
             groupBox2.Controls.Add(label9);
@@ -778,8 +778,8 @@ namespace AlundraTools.GameControls
             // 
             // buttonExtractToCsv
             // 
-            buttonExtractToCsv.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            buttonExtractToCsv.Location = new Point(1631, 865);
+            buttonExtractToCsv.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            buttonExtractToCsv.Location = new Point(1546, 865);
             buttonExtractToCsv.Margin = new Padding(3, 2, 3, 2);
             buttonExtractToCsv.Name = "buttonExtractToCsv";
             buttonExtractToCsv.Size = new Size(150, 22);
@@ -853,8 +853,8 @@ namespace AlundraTools.GameControls
             // 
             // buttonCompareWithDump
             // 
-            buttonCompareWithDump.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            buttonCompareWithDump.Location = new Point(1631, 839);
+            buttonCompareWithDump.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            buttonCompareWithDump.Location = new Point(1546, 839);
             buttonCompareWithDump.Margin = new Padding(3, 2, 3, 2);
             buttonCompareWithDump.Name = "buttonCompareWithDump";
             buttonCompareWithDump.Size = new Size(150, 22);
@@ -875,6 +875,7 @@ namespace AlundraTools.GameControls
             tabControl1.Controls.Add(tabPage2);
             tabControl1.Location = new Point(1281, 0);
             tabControl1.Margin = new Padding(3, 2, 3, 2);
+            tabControl1.MinimumSize = new Size(511, 0);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
             tabControl1.Size = new Size(511, 767);
@@ -1043,8 +1044,7 @@ namespace AlundraTools.GameControls
             // 
             // buttonAddHugeHp
             // 
-            buttonAddHugeHp.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonAddHugeHp.Location = new Point(347, 259);
+            buttonAddHugeHp.Location = new Point(214, 262);
             buttonAddHugeHp.Margin = new Padding(3, 2, 3, 2);
             buttonAddHugeHp.Name = "buttonAddHugeHp";
             buttonAddHugeHp.Size = new Size(150, 22);
@@ -1055,8 +1055,7 @@ namespace AlundraTools.GameControls
             // 
             // buttonRestoreHpAndMp
             // 
-            buttonRestoreHpAndMp.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonRestoreHpAndMp.Location = new Point(347, 4);
+            buttonRestoreHpAndMp.Location = new Point(214, 7);
             buttonRestoreHpAndMp.Margin = new Padding(3, 2, 3, 2);
             buttonRestoreHpAndMp.Name = "buttonRestoreHpAndMp";
             buttonRestoreHpAndMp.Size = new Size(150, 22);
@@ -1067,8 +1066,7 @@ namespace AlundraTools.GameControls
             // 
             // buttonRestoreHp
             // 
-            buttonRestoreHp.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonRestoreHp.Location = new Point(347, 154);
+            buttonRestoreHp.Location = new Point(214, 157);
             buttonRestoreHp.Margin = new Padding(3, 2, 3, 2);
             buttonRestoreHp.Name = "buttonRestoreHp";
             buttonRestoreHp.Size = new Size(150, 22);
@@ -1079,8 +1077,7 @@ namespace AlundraTools.GameControls
             // 
             // buttonIncreaseHp
             // 
-            buttonIncreaseHp.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonIncreaseHp.Location = new Point(347, 181);
+            buttonIncreaseHp.Location = new Point(214, 184);
             buttonIncreaseHp.Margin = new Padding(3, 2, 3, 2);
             buttonIncreaseHp.Name = "buttonIncreaseHp";
             buttonIncreaseHp.Size = new Size(150, 22);
@@ -1091,8 +1088,7 @@ namespace AlundraTools.GameControls
             // 
             // buttonRestoreMp
             // 
-            buttonRestoreMp.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonRestoreMp.Location = new Point(347, 67);
+            buttonRestoreMp.Location = new Point(214, 70);
             buttonRestoreMp.Margin = new Padding(3, 2, 3, 2);
             buttonRestoreMp.Name = "buttonRestoreMp";
             buttonRestoreMp.Size = new Size(150, 22);
@@ -1103,8 +1099,7 @@ namespace AlundraTools.GameControls
             // 
             // buttonAddLowHp
             // 
-            buttonAddLowHp.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonAddLowHp.Location = new Point(347, 207);
+            buttonAddLowHp.Location = new Point(214, 210);
             buttonAddLowHp.Margin = new Padding(3, 2, 3, 2);
             buttonAddLowHp.Name = "buttonAddLowHp";
             buttonAddLowHp.Size = new Size(150, 22);
@@ -1115,8 +1110,7 @@ namespace AlundraTools.GameControls
             // 
             // buttonAddMediumHp
             // 
-            buttonAddMediumHp.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonAddMediumHp.Location = new Point(347, 233);
+            buttonAddMediumHp.Location = new Point(214, 236);
             buttonAddMediumHp.Margin = new Padding(3, 2, 3, 2);
             buttonAddMediumHp.Name = "buttonAddMediumHp";
             buttonAddMediumHp.Size = new Size(150, 22);
@@ -1127,8 +1121,7 @@ namespace AlundraTools.GameControls
             // 
             // buttonIncreaseHpMax
             // 
-            buttonIncreaseHpMax.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonIncreaseHpMax.Location = new Point(347, 128);
+            buttonIncreaseHpMax.Location = new Point(214, 131);
             buttonIncreaseHpMax.Margin = new Padding(3, 2, 3, 2);
             buttonIncreaseHpMax.Name = "buttonIncreaseHpMax";
             buttonIncreaseHpMax.Size = new Size(150, 22);
@@ -1139,8 +1132,7 @@ namespace AlundraTools.GameControls
             // 
             // buttonIncreaseMp
             // 
-            buttonIncreaseMp.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonIncreaseMp.Location = new Point(347, 93);
+            buttonIncreaseMp.Location = new Point(214, 96);
             buttonIncreaseMp.Margin = new Padding(3, 2, 3, 2);
             buttonIncreaseMp.Name = "buttonIncreaseMp";
             buttonIncreaseMp.Size = new Size(150, 22);
@@ -1151,8 +1143,7 @@ namespace AlundraTools.GameControls
             // 
             // buttonIncreaseMpMax
             // 
-            buttonIncreaseMpMax.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonIncreaseMpMax.Location = new Point(347, 40);
+            buttonIncreaseMpMax.Location = new Point(214, 43);
             buttonIncreaseMpMax.Margin = new Padding(3, 2, 3, 2);
             buttonIncreaseMpMax.Name = "buttonIncreaseMpMax";
             buttonIncreaseMpMax.Size = new Size(150, 22);
@@ -1357,7 +1348,7 @@ namespace AlundraTools.GameControls
             // buttonAlundraCabine
             // 
             buttonAlundraCabine.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            buttonAlundraCabine.Location = new Point(322, 684);
+            buttonAlundraCabine.Location = new Point(247, 671);
             buttonAlundraCabine.Name = "buttonAlundraCabine";
             buttonAlundraCabine.Size = new Size(142, 23);
             buttonAlundraCabine.TabIndex = 67;
@@ -1415,124 +1406,124 @@ namespace AlundraTools.GameControls
             groupBox7.Size = new Size(254, 219);
             groupBox7.TabIndex = 64;
             groupBox7.TabStop = false;
-            groupBox7.Text = "Callbacks";
+            groupBox7.Text = "Display callbacks";
             // 
             // labelCallback12
             // 
             labelCallback12.AutoSize = true;
             labelCallback12.Location = new Point(3, 199);
             labelCallback12.Name = "labelCallback12";
-            labelCallback12.Size = new Size(256, 15);
+            labelCallback12.Size = new Size(194, 15);
             labelCallback12.TabIndex = 28;
-            labelCallback12.Text = "Callback #12 - display dialog portrait and name";
+            labelCallback12.Text = "#12 - dialog with portrait and name";
             // 
             // labelCallback11
             // 
             labelCallback11.AutoSize = true;
             labelCallback11.Location = new Point(3, 184);
             labelCallback11.Name = "labelCallback11";
-            labelCallback11.Size = new Size(74, 15);
+            labelCallback11.Size = new Size(52, 15);
             labelCallback11.TabIndex = 27;
-            labelCallback11.Text = "Callback #11";
+            labelCallback11.Text = "#11 - ???";
             // 
             // labelCallback10
             // 
             labelCallback10.AutoSize = true;
             labelCallback10.Location = new Point(3, 169);
             labelCallback10.Name = "labelCallback10";
-            labelCallback10.Size = new Size(74, 15);
+            labelCallback10.Size = new Size(142, 15);
             labelCallback10.TabIndex = 26;
-            labelCallback10.Text = "Callback #10";
+            labelCallback10.Text = "#10 - memory card menu";
             // 
             // labelCallback9
             // 
             labelCallback9.AutoSize = true;
             labelCallback9.Location = new Point(3, 154);
             labelCallback9.Name = "labelCallback9";
-            labelCallback9.Size = new Size(68, 15);
+            labelCallback9.Size = new Size(46, 15);
             labelCallback9.TabIndex = 25;
-            labelCallback9.Text = "Callback #9";
+            labelCallback9.Text = "#9 - ???";
             // 
             // labelCallback8
             // 
             labelCallback8.AutoSize = true;
             labelCallback8.Location = new Point(3, 139);
             labelCallback8.Name = "labelCallback8";
-            labelCallback8.Size = new Size(68, 15);
+            labelCallback8.Size = new Size(46, 15);
             labelCallback8.TabIndex = 24;
-            labelCallback8.Text = "Callback #8";
+            labelCallback8.Text = "#8 - ???";
             // 
             // labelCallback7
             // 
             labelCallback7.AutoSize = true;
             labelCallback7.Location = new Point(3, 124);
             labelCallback7.Name = "labelCallback7";
-            labelCallback7.Size = new Size(68, 15);
+            labelCallback7.Size = new Size(46, 15);
             labelCallback7.TabIndex = 23;
-            labelCallback7.Text = "Callback #7";
+            labelCallback7.Text = "#7 - ???";
             // 
             // labelCallback6
             // 
             labelCallback6.AutoSize = true;
             labelCallback6.Location = new Point(3, 109);
             labelCallback6.Name = "labelCallback6";
-            labelCallback6.Size = new Size(180, 15);
+            labelCallback6.Size = new Size(92, 15);
             labelCallback6.TabIndex = 22;
-            labelCallback6.Text = "Callback #6 - display main menu";
+            labelCallback6.Text = "#6 - main menu";
             // 
             // labelCallback5
             // 
             labelCallback5.AutoSize = true;
             labelCallback5.Location = new Point(3, 94);
             labelCallback5.Name = "labelCallback5";
-            labelCallback5.Size = new Size(68, 15);
+            labelCallback5.Size = new Size(135, 15);
             labelCallback5.TabIndex = 21;
-            labelCallback5.Text = "Callback #5";
+            labelCallback5.Text = "#5 - debug menu sound";
             // 
             // labelCallback4
             // 
             labelCallback4.AutoSize = true;
             labelCallback4.Location = new Point(3, 79);
             labelCallback4.Name = "labelCallback4";
-            labelCallback4.Size = new Size(207, 15);
+            labelCallback4.Size = new Size(119, 15);
             labelCallback4.TabIndex = 20;
-            labelCallback4.Text = "Callback #4 - display secondary menu";
+            labelCallback4.Text = "#4 - secondary menu";
             // 
             // labelCallback3
             // 
             labelCallback3.AutoSize = true;
             labelCallback3.Location = new Point(3, 64);
             labelCallback3.Name = "labelCallback3";
-            labelCallback3.Size = new Size(190, 15);
+            labelCallback3.Size = new Size(128, 15);
             labelCallback3.TabIndex = 19;
-            labelCallback3.Text = "Callback #3 - display dialog choice";
+            labelCallback3.Text = "#3 - dialog with choice";
             // 
             // labelCallback2
             // 
             labelCallback2.AutoSize = true;
             labelCallback2.Location = new Point(3, 49);
             labelCallback2.Name = "labelCallback2";
-            labelCallback2.Size = new Size(68, 15);
+            labelCallback2.Size = new Size(46, 15);
             labelCallback2.TabIndex = 18;
-            labelCallback2.Text = "Callback #2";
+            labelCallback2.Text = "#2 - ???";
             // 
             // labelCallback1
             // 
             labelCallback1.AutoSize = true;
             labelCallback1.Location = new Point(3, 34);
             labelCallback1.Name = "labelCallback1";
-            labelCallback1.Size = new Size(68, 15);
+            labelCallback1.Size = new Size(46, 15);
             labelCallback1.TabIndex = 17;
-            labelCallback1.Text = "Callback #1";
+            labelCallback1.Text = "#1 - ???";
             // 
             // labelCallback0
             // 
             labelCallback0.AutoSize = true;
             labelCallback0.Location = new Point(3, 19);
             labelCallback0.Name = "labelCallback0";
-            labelCallback0.Size = new Size(152, 15);
+            labelCallback0.Size = new Size(64, 15);
             labelCallback0.TabIndex = 16;
-            labelCallback0.Text = "Callback #0 - display dialog";
+            labelCallback0.Text = "#0 - dialog";
             // 
             // groupBox6
             // 
@@ -2139,33 +2130,42 @@ namespace AlundraTools.GameControls
             // groupBox8
             // 
             groupBox8.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox8.Controls.Add(buttonZoomx1);
             groupBox8.Controls.Add(buttonZoomX8);
             groupBox8.Controls.Add(buttonZoomX4);
             groupBox8.Controls.Add(buttonZoomX2);
-            groupBox8.Location = new Point(175, 5);
+            groupBox8.Location = new Point(175, 6);
             groupBox8.Name = "groupBox8";
-            groupBox8.Size = new Size(321, 115);
+            groupBox8.Size = new Size(321, 60);
             groupBox8.TabIndex = 33;
             groupBox8.TabStop = false;
             groupBox8.Text = "Zoom";
             // 
+            // buttonZoomx1
+            // 
+            buttonZoomx1.Location = new Point(6, 22);
+            buttonZoomx1.Name = "buttonZoomx1";
+            buttonZoomx1.Size = new Size(39, 23);
+            buttonZoomx1.TabIndex = 35;
+            buttonZoomx1.Text = "x1";
+            buttonZoomx1.UseVisualStyleBackColor = true;
+            buttonZoomx1.Click += buttonZoomX1_Click;
+            // 
             // buttonZoomX8
             // 
-            buttonZoomX8.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            buttonZoomX8.Location = new Point(6, 80);
+            buttonZoomX8.Location = new Point(141, 22);
             buttonZoomX8.Name = "buttonZoomX8";
-            buttonZoomX8.Size = new Size(309, 23);
+            buttonZoomX8.Size = new Size(39, 23);
             buttonZoomX8.TabIndex = 34;
-            buttonZoomX8.Text = "x8";
+            buttonZoomX8.Text = "x6";
             buttonZoomX8.UseVisualStyleBackColor = true;
             buttonZoomX8.Click += buttonZoomX8_Click;
             // 
             // buttonZoomX4
             // 
-            buttonZoomX4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            buttonZoomX4.Location = new Point(6, 51);
+            buttonZoomX4.Location = new Point(96, 22);
             buttonZoomX4.Name = "buttonZoomX4";
-            buttonZoomX4.Size = new Size(309, 23);
+            buttonZoomX4.Size = new Size(39, 23);
             buttonZoomX4.TabIndex = 33;
             buttonZoomX4.Text = "x4";
             buttonZoomX4.UseVisualStyleBackColor = true;
@@ -2173,10 +2173,9 @@ namespace AlundraTools.GameControls
             // 
             // buttonZoomX2
             // 
-            buttonZoomX2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            buttonZoomX2.Location = new Point(6, 22);
+            buttonZoomX2.Location = new Point(51, 22);
             buttonZoomX2.Name = "buttonZoomX2";
-            buttonZoomX2.Size = new Size(309, 23);
+            buttonZoomX2.Size = new Size(39, 23);
             buttonZoomX2.TabIndex = 32;
             buttonZoomX2.Text = "x2";
             buttonZoomX2.UseVisualStyleBackColor = true;
@@ -2199,6 +2198,16 @@ namespace AlundraTools.GameControls
             tabPage2.TabIndex = 6;
             tabPage2.Text = "Logs";
             tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // buttonClearLog
+            // 
+            buttonClearLog.Location = new Point(137, 61);
+            buttonClearLog.Name = "buttonClearLog";
+            buttonClearLog.Size = new Size(117, 23);
+            buttonClearLog.TabIndex = 7;
+            buttonClearLog.Text = "Clear logs";
+            buttonClearLog.UseVisualStyleBackColor = true;
+            buttonClearLog.Click += buttonClearLog_Click;
             // 
             // listBoxLogs
             // 
@@ -2267,16 +2276,6 @@ namespace AlundraTools.GameControls
             checkBoxAddLogInVS.Text = "Add Logs in VS Studio";
             checkBoxAddLogInVS.UseVisualStyleBackColor = true;
             checkBoxAddLogInVS.CheckedChanged += checkBoxAddLogInVS_CheckedChanged;
-            // 
-            // buttonClearLog
-            // 
-            buttonClearLog.Location = new Point(137, 61);
-            buttonClearLog.Name = "buttonClearLog";
-            buttonClearLog.Size = new Size(117, 23);
-            buttonClearLog.TabIndex = 7;
-            buttonClearLog.Text = "Clear logs";
-            buttonClearLog.UseVisualStyleBackColor = true;
-            buttonClearLog.Click += buttonClearLog_Click;
             // 
             // FrmGame
             // 
@@ -2534,5 +2533,6 @@ namespace AlundraTools.GameControls
         private Button buttonRefreshLogs;
         private Button buttonCopyAllLogs;
         private Button buttonClearLog;
+        private Button buttonZoomx1;
     }
 }

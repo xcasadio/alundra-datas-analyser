@@ -1,13 +1,12 @@
 ﻿using AlundraEngine;
 using AlundraEngine.Balance;
 using AlundraEngine.DatasBin;
+using AlundraEngine.Editor;
 using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
 using System.Diagnostics;
-using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
 using System.Text;
 using Color = System.Drawing.Color;
 using Timer = System.Windows.Forms.Timer;
@@ -68,6 +67,7 @@ namespace AlundraTools.GameControls
 
             InitEtcControls();
             InitFont3Controls();
+            InitMemoryCardControls();
 
             LoadMap(datasBin.AlundraGameMap);
         }
@@ -126,6 +126,22 @@ namespace AlundraTools.GameControls
             graphics.DrawImage(_font3.PalettesBitmap, 0, 0, _font3.PalettesBitmap.Width * _palScale,
                 _font3.PalettesBitmap.Height * _palScale);
             pictureBoxFont3Palette.Refresh();
+        }
+
+        private void InitMemoryCardControls()
+        {
+            try
+            {
+                var alunCdExe = new AlunCdExe(Path.Combine(_datasBin.Binfile, "..", ".."));
+                pictureBoxMemoryCardPalette.Image = alunCdExe.MemoryCardPaletteImage;
+                imageViewerMemoryCardFrame1.Image = alunCdExe.MemoryCardFrame1Image;
+                imageViewerMemoryCardFrame2.Image = alunCdExe.MemoryCardFrame2Image;
+                imageViewerMemoryCardFrame3.Image = alunCdExe.MemoryCardFrame3Image;
+            }
+            catch
+            {
+                //do nothing
+            }
         }
 
         private Bitmap GetTile(int tileId)
@@ -1086,6 +1102,7 @@ namespace AlundraTools.GameControls
                 rdoLeft.Text = "left (" + _selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Left].ToString("x4") + ")";
                 rdoRight.Text = "right (" + _selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Right].ToString("x4") +
                                 ")";
+
 
                 rdoDown.Checked = true;
 

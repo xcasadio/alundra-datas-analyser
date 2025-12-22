@@ -467,7 +467,7 @@ public class UIManager
 
 
     //8004a8a8
-    public void Func_8004a8a8(CallBackInfo callBackInfo)
+    public void InitializeDebugMenuSound(CallBackInfo callBackInfo)
     {
         Debugger.Break();
 
@@ -478,7 +478,7 @@ public class UIManager
         //strcpy(acStack_68, g_numberCharacterJpArray[0]);
         //strcat(acStack_68, g_numberCharacterJpArray[((int)g_debugSoundMenuSoundIndex / 10) % 10]);
         //strcat(acStack_68, g_numberCharacterJpArray[(int)g_debugSoundMenuSoundIndex % 10]);
-        //callBackInfo.RenderFunc = FUN_8004a31c;
+        //callBackInfo.RenderFunc = DisplayDebugMenuSound;
         //return 1;
     }
 
