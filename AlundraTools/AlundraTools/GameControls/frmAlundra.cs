@@ -268,7 +268,7 @@ namespace AlundraTools.GameControls
                     var lvi = new ListViewItem([
                         spriteMapEntry.Enabled.ToString(),
                         spriteMapEntry.NumberOfFrame.ToString(),
-                        spriteMapEntry.TileWidth.ToString(),
+                        spriteMapEntry.TileHeight.ToString(),
                         spriteMapEntry.FrameDuration.ToString(),
                         spriteMapEntry.Index.ToString(),
                         spriteMapEntry.Tick.ToString(),

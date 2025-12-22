@@ -7,13 +7,12 @@ using AlundraEngine.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text.Json;
-using System.Xml.Linq;
 
 namespace AlundraDataExtractor;
 
 internal class Program
 {
-    static JsonSerializerOptions _jsonSerializerOptions = new() { WriteIndented = true };
+    private static readonly JsonSerializerOptions _jsonSerializerOptions = new() { WriteIndented = true };
 
     static void Main(string[] args)
     {
@@ -46,6 +45,7 @@ internal class Program
         gameEngine.InitializeEngine();
 
         var alunCdExe = new AlunCdExe(gamePath);
+
         ExtractDataFromAlunCdExe(alunCdExe, extractionPath);
         ExtractDataFromBalanceBin(balanceBin, extractionPath);
         ExtractDataFromScreenFolder(font3, gameEngine.StaticVariables, extractionPath);

@@ -77,7 +77,7 @@ public class GameMapInfo
                     //Trap(0x1c00);
                 }
         
-                SpriteMapEntries[spriteIndex].TileWidth = (byte)(0xa0 / SpriteMapEntries[spriteIndex].NumberOfFrame);
+                SpriteMapEntries[spriteIndex].TileHeight = (byte)(0xa0 / SpriteMapEntries[spriteIndex].NumberOfFrame);
                 SpriteMapEntries[spriteIndex].FrameIndex = 0;
                 SpriteMapEntries[spriteIndex].Tick = 0;
                 SpriteMapEntries[spriteIndex].Index = 0;

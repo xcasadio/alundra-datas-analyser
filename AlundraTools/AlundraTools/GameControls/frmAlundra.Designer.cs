@@ -2023,7 +2023,7 @@ namespace AlundraTools.GameControls
             // 
             // columnHeaderSpriteMapEntryTileWidth
             // 
-            columnHeaderSpriteMapEntryTileWidth.Text = "TileWidth";
+            columnHeaderSpriteMapEntryTileWidth.Text = "TileHeight";
             // 
             // columnHeaderSpriteMapEntryRowCount
             // 

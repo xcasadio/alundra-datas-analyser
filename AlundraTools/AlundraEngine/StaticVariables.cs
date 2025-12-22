@@ -5614,13 +5614,9 @@ public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
     public int DAT_80149bec; // 80149BEC
     public SPRT[] g_textFullLinesSprites = Enumerable.Range(0, 6).Select(x => new SPRT()).ToArray(); // 80149BF8
     public SPRT[] g_cursorTextSprites = Enumerable.Range(0, 2).Select(x => new SPRT()).ToArray(); // 80149C78
-
-
     public SPRT[] SPRT_ARRAY_8017f7e0 = Enumerable.Range(0, 4).Select(x => new SPRT()).ToArray(); // 8017f7e0
     public SPRT[] SPRT_ARRAY_8017f880 = Enumerable.Range(0, 2).Select(x => new SPRT()).ToArray(); // 8017f880
     public SPRT[] SPRT_ARRAY_8017f8d0 = Enumerable.Range(0, 2).Select(x => new SPRT()).ToArray(); // 8017f8d0
-
-
     public short DAT_80149c80; // 80149C80
     public short DAT_80149c82; // 80149C82
     public byte DAT_80149c84; // 80149C84

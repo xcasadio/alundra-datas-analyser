@@ -1,5 +1,6 @@
 ﻿using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay;
+using System;
 using System.Diagnostics;
 using System.Drawing.Imaging;
 
@@ -303,8 +304,9 @@ public class RendererHelper
             var entry = gameMap.Info.SpriteMapEntries[spriteIndex];
             if (entry.Enabled == 1)
             {
-                //tileY + 1
-                tileId = (ushort)((tileId & 0xF000) | ((tileId + 10 * entry.FrameIndex * 2) & 0x3ff));
+                //var paletteId = tileId & 0xF000;
+                //tileId = (ushort)(paletteId | (tile + entry.FrameIndex * entry.TileHeight));
+                tileId += (ushort)(entry.FrameIndex * entry.TileHeight);
             }
         }
 

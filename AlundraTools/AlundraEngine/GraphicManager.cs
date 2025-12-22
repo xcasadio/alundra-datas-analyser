@@ -133,7 +133,7 @@ public class GraphicManager
 
             if (spriteMapEntry.FrameDuration <= spriteMapEntry.Tick)
             {
-                spriteMapEntry.Index += spriteMapEntry.TileWidth;
+                spriteMapEntry.Index += spriteMapEntry.TileHeight;
                 spriteMapEntry.Tick = 0;
                 spriteMapEntry.FrameIndex++;
 
