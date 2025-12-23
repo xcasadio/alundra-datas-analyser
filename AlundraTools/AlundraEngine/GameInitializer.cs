@@ -406,13 +406,12 @@ public class GameInitializer
         _gameEngine.StaticVariables.g_cameraTargetZ = _gameEngine.StaticVariables.g_saveData.CameraTileZ << 0x14;
         _gameEngine.StaticVariables.g_gameplayTime = _gameEngine.StaticVariables.g_saveData.GameTime;
 
-
         //==== DEBUG
         //enable HUD
         //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 40000000;
-        //_gameEngine.StaticVariables.g_desiredMap = 476; //452; //476; //11; //471; 
+        //_gameEngine.StaticVariables.g_desiredMap = 471; //452; //476; //11; //471; //416;
         //
-        ////active la map 476
+        ////active la map 476 Alundra cabine
         //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 256;
         //_gameEngine.StaticVariables.g_mapTransitionEffectId = 4;
         //_gameEngine.StaticVariables.g_warpSoundEffectId = 73;
@@ -422,6 +421,13 @@ public class GameInitializer
         //_gameEngine.StaticVariables.g_resetDirectionId = 0;
         //_gameEngine.StaticVariables.g_resetAnimationId = 13;
         //_gameEngine.StaticVariables.g_isGameEnding = 1;
+
+        ////active la map 416 Inoa beach
+        _gameEngine.StaticVariables.g_globalFlags[0] = 1;
+        _gameEngine.StaticVariables.g_saveData.MapFlags[6] = 256;
+        _gameEngine.StaticVariables.g_saveData.MapFlags[26] = 268435456;
+        _gameEngine.StaticVariables.g_saveData.MapFlags[27] = 228;
+        _gameEngine.StaticVariables.g_saveData.MapFlags[51] = 512;
     }
 
     // 8004dac0
