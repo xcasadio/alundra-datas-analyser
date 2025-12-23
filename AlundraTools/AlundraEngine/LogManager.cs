@@ -68,7 +68,7 @@ public class LogManager
 
     public void Clear()
     {
-        LogByCategories[CurrentCategory].Clear();
+        LogByCategories.Clear();
         Logs.Clear();
     }
 }
