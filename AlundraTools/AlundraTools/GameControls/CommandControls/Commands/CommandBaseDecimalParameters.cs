@@ -2,8 +2,8 @@
 
 public class CommandBaseDecimalParameters : CommandBase
 {
-    public CommandBaseDecimalParameters(byte code, byte[] parameters, string name, int memoryAddress) : 
-        base(code, parameters, name, memoryAddress)
+    public CommandBaseDecimalParameters(byte code, byte[] parameters, string name, int offset) : 
+        base(code, parameters, name, offset)
     {
     }
 

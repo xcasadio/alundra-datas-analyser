@@ -2,8 +2,8 @@
 
 public class RepeatAnimationCommand : CommandBase
 {
-    public RepeatAnimationCommand(byte code, byte[] parameters, string name, int memoryAddress) :
-        base(code, parameters, name, memoryAddress)
+    public RepeatAnimationCommand(byte code, byte[] parameters, string name, int offset) :
+        base(code, parameters, name, offset)
     {
         Name += $" for {(parameters[0])} times";
     }

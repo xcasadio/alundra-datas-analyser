@@ -24,7 +24,7 @@ public static class CommandsBuilder
         var code = command.Command;
         var parameters = command.Parameters;
         var name = command.Name;
-        var memoryAddress = command.MemoryAddress;
+        var memoryAddress = command.Offset;
 
         return code switch
         {

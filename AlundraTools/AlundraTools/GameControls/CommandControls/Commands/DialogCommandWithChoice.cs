@@ -4,8 +4,8 @@ public class DialogCommandWithChoice : DialogCommand
 {
     public int EntityIndex;
 
-    public DialogCommandWithChoice(byte command, byte[] parameters, string name, int memoryAddress)
-        : base(command, parameters, name, memoryAddress)
+    public DialogCommandWithChoice(byte command, byte[] parameters, string name, int offset)
+        : base(command, parameters, name, offset)
     {
         EntityIndex = parameters[0];
         TextId = parameters[1];

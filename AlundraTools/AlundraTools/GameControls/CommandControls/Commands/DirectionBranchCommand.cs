@@ -4,8 +4,8 @@ namespace AlundraTools.GameControls.CommandControls.Commands;
 
 public class DirectionBranchCommand : CommandBase
 {
-    public DirectionBranchCommand(byte command, byte[] parameters, string name, int memoryAddress)
-        : base(command, parameters, name, memoryAddress)
+    public DirectionBranchCommand(byte command, byte[] parameters, string name, int offset)
+        : base(command, parameters, name, offset)
     {
         _offsets[0] = (short)(parameters[Size - 9] | (parameters[Size - 8] << 8));
         _offsets[1] = (short)(parameters[Size - 7] | (parameters[Size - 6] << 8));
@@ -22,11 +22,11 @@ public class DirectionBranchCommand : CommandBase
         var parms = new List<string>();
         foreach (var offset in _offsets)
         {
-            var jumpaddr = MemoryAddress + offset;
+            var jumpaddr = Offset + offset;
             int j;
             for (j = 0; i < commands.Count; j++)
             {
-                if (commands[j].MemoryAddress == jumpaddr)
+                if (commands[j].Offset == jumpaddr)
                 {
                     break;
                 }

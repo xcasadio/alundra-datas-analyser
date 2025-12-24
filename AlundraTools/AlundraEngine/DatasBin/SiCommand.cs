@@ -4,9 +4,9 @@ public class SiCommand
 {
     public bool HasParameters => Parameters is { Length: > 0 } && Command != 0 && Command != 0xff;
 
-    public SiCommand(byte command, byte[] parameters, string name, int memoryAddress)
+    public SiCommand(byte command, byte[] parameters, string name, int offset)
     {
-        MemoryAddress = memoryAddress;
+        Offset = offset;
         Command = command;
         Parameters = parameters;
         Size = SpriteInfoEventCodes.CommandSizeByCode.GetValueOrDefault(command, 1);
@@ -14,7 +14,7 @@ public class SiCommand
     }
 
     public readonly string Name;
-    public readonly int MemoryAddress;
+    public readonly int Offset;
     public readonly byte Command;
     public readonly byte[] Parameters;
     public readonly int Size;
@@ -79,6 +79,6 @@ public class SiCommand
             parameters = string.Join(", ", Parameters.Select(x => x.ToString()));
         }
 
-        return $"{Name} (0x{Command}) s:{Size} p:{parameters} [{MemoryAddress}]";
+        return $"{Name} (0x{Command}) s:{Size} p:{parameters} [{Offset}]";
     }
 }

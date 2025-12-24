@@ -5,17 +5,17 @@ public class SpriteInfoHeader
     public SpriteInfoHeader(BinaryReader br, int memoryAddress)
     {
         EntitiesPointer = br.ReadInt32();
-        MapEffectSector3Pointer = br.ReadInt32();
-        MapEventsPointer = br.ReadInt32();
-        SpriteTablePointer = br.ReadInt32();
-        SpriteEffectsPointer = br.ReadInt32();
-        SpritePalettesPointer = br.ReadInt32();
-        EventCodesAPointer = br.ReadInt32();
-        EventCodesBPointer = br.ReadInt32();
-        EventCodesCPointer = br.ReadInt32();
-        EventCodesDPointer = br.ReadInt32();
-        EventCodesEPointer = br.ReadInt32();
-        EventCodesFPointer = br.ReadInt32();
+        MapEffectSector3Pointer = br.ReadInt32(); //0x4
+        MapEventsPointer = br.ReadInt32(); //0x8
+        SpriteTablePointer = br.ReadInt32(); //0xc
+        SpriteEffectsPointer = br.ReadInt32(); //0x10
+        SpritePalettesPointer = br.ReadInt32(); //0x14
+        EventCodesAPointer = br.ReadInt32(); //0x18
+        EventCodesBPointer = br.ReadInt32(); //0x1c
+        EventCodesCPointer = br.ReadInt32(); //0x20
+        EventCodesDPointer = br.ReadInt32(); //0x24
+        EventCodesEPointer = br.ReadInt32(); //0x28
+        EventCodesFPointer = br.ReadInt32(); //0x2c
 
         MemoryAddress = memoryAddress;
         EventCodeAddress = memoryAddress + EventCodesAPointer;

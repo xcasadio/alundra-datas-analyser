@@ -4,8 +4,8 @@ namespace AlundraTools.GameControls.CommandControls.Commands;
 
 public class SetFlagCommand : CommandBase
 {
-    public SetFlagCommand(byte command, byte[] parameters, string name, int memoryAddress)
-        : base(command, parameters, name, memoryAddress)
+    public SetFlagCommand(byte command, byte[] parameters, string name, int offset)
+        : base(command, parameters, name, offset)
     {
     }
 

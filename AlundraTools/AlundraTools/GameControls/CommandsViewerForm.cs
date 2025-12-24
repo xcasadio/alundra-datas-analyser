@@ -9,14 +9,17 @@ namespace AlundraTools.GameControls
         private GameMap? _alundraGameMap;
         private GameMap? _currentGameMap;
         private byte[]? _codes;
+        private int _selectedCommandIndex;
 
         public CommandsViewerForm()
         {
             InitializeComponent();
         }
 
-        public void Init(List<SiCommand> commands, GameMap? alundraGameMap, GameMap? currentGameMap, byte[] codes = null)
+        public void Init(List<SiCommand> commands, GameMap? alundraGameMap, GameMap? currentGameMap, 
+            int selectedCommandIndex, byte[] codes = null)
         {
+            _selectedCommandIndex = selectedCommandIndex;
             _codes = codes;
             _commands = commands;
             _alundraGameMap = alundraGameMap;
@@ -25,6 +28,8 @@ namespace AlundraTools.GameControls
 
         private void CommandsViewerForm_Load(object sender, EventArgs e)
         {
+            treeView1.SuspendLayout();
+
             try
             {
                 var commandBases = CommandsBuilder.Convert(_commands);
@@ -43,6 +48,12 @@ namespace AlundraTools.GameControls
             }
             
             treeView1.ExpandAll();
+            treeView1.ResumeLayout();
+
+            if (treeView1.SelectedNode != null)
+            {
+                treeView1.SelectedNode.EnsureVisible();
+            }
 
             if (_codes != null)
             {
@@ -53,9 +64,28 @@ namespace AlundraTools.GameControls
         private void CreateTreeViewNode(ref int index, CommandBase commandBase, TreeNode? parentNode = null)
         {
             TreeNodeCollection nodes = parentNode == null ? treeView1.Nodes : parentNode.Nodes;
-            parentNode = nodes.Add(index.ToString(), $"{index:D2} - {commandBase.PrintName()}");
+            parentNode = nodes.Add(index.ToString(), $"{commandBase.Offset:D4} - {commandBase.PrintName()}");//index:D2
             parentNode.ToolTipText = commandBase.Description();
             parentNode.Tag = commandBase;
+
+            if (commandBase.Command == 0)
+            {
+                parentNode.ForeColor = Color.DarkGray;
+            }
+            else if (commandBase.Command == 255)
+            {
+                parentNode.ForeColor = Color.Red;
+            }
+            else if (commandBase is DialogCommand)
+            {
+                parentNode.ForeColor = Color.Blue;
+            }
+
+            if (index == _selectedCommandIndex)
+            {
+                treeView1.SelectedNode = parentNode;
+                parentNode.BackColor = Color.Green;
+            }
 
             if (commandBase is not ContainerCommand container)
             {

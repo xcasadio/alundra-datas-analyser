@@ -4,13 +4,13 @@ namespace AlundraEngine.DatasBin.Commands;
 
 public class BranchCommand : ContainerCommand
 {
-    private int _lastCommandMemoryAddress;
-    public override int LastCommandMemoryAddress => _lastCommandMemoryAddress;
+    private int _lastCommandOffset;
+    public override int LastCommandOffset => _lastCommandOffset;
 
-    public BranchCommand(byte command, byte[] parameters, string name, int memoryAddress)
-        : base(command, parameters, name, memoryAddress)
+    public BranchCommand(byte command, byte[] parameters, string name, int offset)
+        : base(command, parameters, name, offset)
     {
-        RefOffset = (short)(parameters[Size - 3] | (parameters[Size - 2] << 8));
+        OffsetShift = (short)(parameters[Size - 3] | (parameters[Size - 2] << 8));
     }
 
     protected override string PrintParameters()
@@ -27,14 +27,14 @@ public class BranchCommand : ContainerCommand
                 parms.Add(Parameters[i].ToString("x2"));
             }
         }
-        parms.Add(RefOffset.ToString());
+        parms.Add(OffsetShift.ToString());
 
         return string.Join(", ", parms);
     }
 
     public override int Build(int i, List<SiCommand> commands)
     {
-        _lastCommandMemoryAddress = MemoryAddress + Math.Max(((Parameters[0] + Parameters[1] * 0x100) * 0x10000) >> 0x10, Size);
+        _lastCommandOffset = Offset + Math.Max(((Parameters[0] + Parameters[1] * 0x100) * 0x10000) >> 0x10, Size);
         return base.Build(i, commands);
     }
 }

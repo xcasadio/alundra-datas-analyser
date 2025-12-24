@@ -2,8 +2,8 @@
 
 public class SetPositionCommand : CommandBase
 {
-    public SetPositionCommand(byte command, byte[] parameters, string name, int memoryAddress)
-        : base(command, parameters, name, memoryAddress)
+    public SetPositionCommand(byte command, byte[] parameters, string name, int offset)
+        : base(command, parameters, name, offset)
     {
     }
 

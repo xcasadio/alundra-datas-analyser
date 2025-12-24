@@ -2469,7 +2469,7 @@ public class GameEngine
     }
 
     //8004248c
-    public int Script_IsDialogInProgress()
+    public int IsDialogInProgress2()
     {
         return IsDialogInProgress() ? 1 : 0;
     }

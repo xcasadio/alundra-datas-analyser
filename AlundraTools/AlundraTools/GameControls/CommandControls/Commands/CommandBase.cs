@@ -5,18 +5,18 @@ namespace AlundraTools.GameControls.CommandControls.Commands;
 
 public class CommandBase
 {
-    public readonly int MemoryAddress;
+    public readonly int Offset;
     public readonly byte Command;
     public readonly byte[] Parameters;
     public readonly int Size;
-    public int RefOffset;
+    public int OffsetShift;
 
     public string Name { get; protected set; }
     public bool HasParameters => Parameters is { Length: > 0 } && Command != 0 && Command != 0xff;
 
-    public CommandBase(byte command, byte[] parameters, string name, int memoryAddress)
+    public CommandBase(byte command, byte[] parameters, string name, int offset)
     {
-        MemoryAddress = memoryAddress;
+        Offset = offset;
         Command = command;
         Parameters = parameters;
         Size = SpriteInfoEventCodes.CommandSizeByCode.GetValueOrDefault(command, 1);
@@ -42,7 +42,7 @@ public class CommandBase
             output += $" ({PrintParameters()})";
         }
 
-        output += $" (addr:{MemoryAddress} size:{Size})";
+        output += $" (addr:{Offset} size:{Size})";
 
         return output;
     }
@@ -72,17 +72,18 @@ public class CommandBase
     protected int GetCommandNameByOffset(int offset, List<SiCommand> commands)
     {
         var jumpAmount = offset;
-        var jumpAddress = MemoryAddress + jumpAmount;
+        var jumpAddress = Offset + jumpAmount;
         int i;
         for (i = 0; i < commands.Count; i++)
         {
-            if (commands[i].MemoryAddress == jumpAddress)
+            if (commands[i].Offset == jumpAddress)
             {
                 break;
             }
         }
-    
-        return i < commands.Count ? i : -1;
+
+        return jumpAddress;
+        //return i < commands.Count ? i : -1;
     }
 
     private static string FormatWithSpaces(int value)

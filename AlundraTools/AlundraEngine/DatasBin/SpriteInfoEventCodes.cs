@@ -3,6 +3,18 @@ namespace AlundraEngine.DatasBin;
 
 public class SpriteInfoEventCodes
 {
+    private readonly long _binOffset;
+    private readonly int _dataSize;
+    private readonly int _memoryAddress;
+    public readonly short[] EventCodesATable;
+    public readonly short[] EventCodesBTable;
+    public readonly short[] EventCodesCTable;
+    public readonly short[] EventCodesDTable;
+    public readonly short[] EventCodesETable;
+    public readonly short[] EventCodesFTable;
+
+    public readonly byte[] Codes;
+
     public SpriteInfoEventCodes(BinaryReader br, long binOffset, SpriteInfoHeader header, bool ismap)
     {
         var tableSize = 0;
@@ -92,7 +104,6 @@ public class SpriteInfoEventCodes
         _binOffset = binOffset + header.EventCodesAPointer;
         _memoryAddress = header.MemoryAddress + header.EventCodesAPointer;
         _dataSize = (header.EntitiesPointer == 0 ? header.EventCodesFPointer : header.EntitiesPointer) - header.EventCodesAPointer;
-
         Codes = new byte[_dataSize];
         br.BaseStream.Position = _binOffset;
         br.Read(Codes, 0, Codes.Length);
@@ -149,6 +160,7 @@ public class SpriteInfoEventCodes
             var name = sicode.Name;
             var parameters = new byte[size - 1];
             var j = 0;
+            var offset = i;
 
             while (j < size - 1)
             {
@@ -156,13 +168,46 @@ public class SpriteInfoEventCodes
             }
 
             var address = _memoryAddress + eventCodesOffset + i - size;
-            var cmd = new SiCommand(value, parameters, name, address);
+            var cmd = new SiCommand(value, parameters, name, offset);
             commands.Add(cmd);
 
             if (stopAtff && value == 0xff)
             {
                 break;
             }
+        }
+
+        return commands;
+    }
+
+    public List<SiCommand> GetCommands(int startOffset)
+    {
+        var commands = new List<SiCommand>();
+        var i = startOffset;
+
+        while (i < Codes.Length)
+        {
+            var value = Codes[i++];
+            var siCode = GetCode(value);
+
+            if (siCode.Size < 1)
+            {
+                continue;
+            }
+
+            var size = siCode.Size;
+            var name = siCode.Name;
+            var parameters = new byte[size - 1];
+            var j = 0;
+            var offset = i;
+
+            while (j < size - 1)
+            {
+                parameters[j++] = Codes[i++];
+            }
+
+            var cmd = new SiCommand(value, parameters, name, offset);
+            commands.Add(cmd);
         }
 
         return commands;
@@ -178,18 +223,6 @@ public class SpriteInfoEventCodes
 
         return bytes;
     }
-
-    private readonly long _binOffset;
-    private readonly int _dataSize;
-    private readonly int _memoryAddress;
-    public readonly short[] EventCodesATable;
-    public readonly short[] EventCodesBTable;
-    public readonly short[] EventCodesCTable;
-    public readonly short[] EventCodesDTable;
-    public readonly short[] EventCodesETable;
-    public readonly short[] EventCodesFTable;
-
-    public readonly byte[] Codes;
 
     public static readonly Dictionary<byte, int> CommandSizeByCode = new()
     {
@@ -280,7 +313,7 @@ public class SpriteInfoEventCodes
         { 0x54, 5 },
         { 0x55, 5 },
         { 0x56, 2 },
-        { 0x57, 2 }, // I don't know !
+        { 0x57, 9 },
         { 0x58, 9 },
         { 0x59, 3 },
         { 0x5A, 3 },
@@ -407,7 +440,7 @@ public class SpriteInfoEventCodes
         { 0x08, "Turn" },
         { 0x09, "Set direction" },
         { 0x0A, "Reverse direction" },
-        { 0x0B, "Anim wait distance" },
+        { 0x0B, "Wait until entity moves beyond radius" },
         { 0x0C, "Set random dir" },
         { 0x0D, "Dialog" },
         { 0x0E, "Do nothing" },
@@ -431,7 +464,7 @@ public class SpriteInfoEventCodes
         { 0x20, "Check ZDistance and collidedWithEntityZ" },
         { 0x21, "Is within Z distance" },
         { 0x22, "Clamp forceZ to height target" },
-        { 0x23, "??? 0x23" },
+        { 0x23, "Clamp forceZ to height target and no collidedWithEntityZ" },
         { 0x24, "Wait force adjusted" },
         { 0x25, "Wait entity collision z or 144" },
         { 0x26, "Wait force adjusted or entity collision z" },
@@ -440,7 +473,7 @@ public class SpriteInfoEventCodes
         { 0x29, "Gravity flag 2 off" },
         { 0x2A, "Gravity flag 3 on" },
         { 0x2B, "Gravity flag 3 off" },
-        { 0x2C, "??? 0x2C" },
+        { 0x2C, "Check no entity found by function id" },
         { 0x2D, "Activate entity" },
         { 0x2E, "Hide" },
         { 0x2F, "Check moving in dir" },
@@ -454,7 +487,7 @@ public class SpriteInfoEventCodes
         { 0x37, "Wait" },
         { 0x38, "Register warp" },
         { 0x39, "Wait for dialog" },
-        { 0x3A, "??? 0x3A" },
+        { 0x3A, "Set TargetDirection" },
         { 0x3B, "Check player in area" },
         { 0x3C, "??? 0x3C" },
         { 0x3D, "??? 0x3D" },
@@ -569,7 +602,7 @@ public class SpriteInfoEventCodes
         { 0xAA, "??? 0xAA" },
         { 0xAB, "??? 0xAB" },
         { 0xAC, "Set gravity flags on entity" },
-        { 0xAD, "??? 0xAD" },
+        { 0xAD, "Check any entity in relativeAABB_RefIdPair" },
         { 0xAE, "Exit() - Fatal Error" },
         { 0xAF, "Set fade transition with color" },
         { 0xB0, "Set player position and warp" },
@@ -587,7 +620,7 @@ public class SpriteInfoEventCodes
         { 0xBC, "Increase player HPMax" },
         { 0xBD, "Play sound 2" },
         { 0xBE, "Play sound 2 (bis)" },
-        { 0xBF, "??? 0xBF" },
+        { 0xBF, "Play sound effect with tone volume mix" },
         { 0xC0, "Set equipped weapon" },
         { 0xC1, "Set player flag &= 0xffffff7f" },
         { 0xC2, "Check something save" },

@@ -5,9 +5,12 @@ using AlundraEngine.Editor;
 using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
+using System;
 using System.Diagnostics;
 using System.Drawing.Imaging;
+using System.Reflection.Emit;
 using System.Text;
+using System.Windows.Forms;
 using Color = System.Drawing.Color;
 using Timer = System.Windows.Forms.Timer;
 
@@ -128,11 +131,11 @@ namespace AlundraTools.GameControls
             pictureBoxFont3Palette.Refresh();
 
             using var br = _datasBin.OpenBin();
-            var offsets = new[] 
+            var offsets = new[]
             {
-                _datasBin.Header.LoadingScreen0, 
+                _datasBin.Header.LoadingScreen0,
                 _datasBin.Header.LoadingScreen1,
-                _datasBin.Header.LoadingScreen2, 
+                _datasBin.Header.LoadingScreen2,
                 _datasBin.Header.LoadingScreen3
             };
 
@@ -148,7 +151,7 @@ namespace AlundraTools.GameControls
                 graphics2.DrawImage(bitmapChunk, 0, 60 * index);
                 index++;
             }
-            
+
             imageViewerControlLoadScreen.Image = bitmap;
         }
 
@@ -382,12 +385,12 @@ namespace AlundraTools.GameControls
                         (entityRecord.XPos / 2).ToString(),
                         (entityRecord.YPos / 2).ToString(),
                         entityRecord.Height.ToString("x2"),
-                        entityRecord.EventCodesA_LoadIndex.ToString("x2"),
-                        entityRecord.EventCodesB_MapIndex.ToString("x2"),
-                        entityRecord.EventCodesC_TickIndex.ToString("x2"),
-                        entityRecord.EventCodesD_TouchIndex.ToString("x2"),
-                        entityRecord.EventCodesE_DeactivateIndex.ToString("x2"),
-                        entityRecord.EventCodesF_InteractIndex.ToString("x2")
+                        $"0x{entityRecord.EventCodesA_LoadIndex:x2} {entityRecord.EventCodesA_LoadIndex & 0x7f}",
+                        $"0x{entityRecord.EventCodesB_MapIndex:x2} {entityRecord.EventCodesB_MapIndex & 0x7f}",
+                        $"0x{entityRecord.EventCodesC_TickIndex:x2} {entityRecord.EventCodesC_TickIndex & 0x7f}",
+                        $"0x{entityRecord.EventCodesD_TouchIndex:x2} {entityRecord.EventCodesD_TouchIndex & 0x7f}",
+                        $"0x{entityRecord.EventCodesE_DeactivateIndex:x2} {entityRecord.EventCodesE_DeactivateIndex & 0x7f}",
+                        $"0x{entityRecord.EventCodesF_InteractIndex:x2} {entityRecord.EventCodesF_InteractIndex & 0x7f}"
                     ]);
                     lvi.ToolTipText = ShortToString(entityRecord.Contents) + " " + ShortToString(entityRecord._10) +
                                       " " + ByteToString(entityRecord.XMin) + " " + ByteToString(entityRecord.YMin);
@@ -1393,14 +1396,12 @@ namespace AlundraTools.GameControls
             if (_selectedEntity != null)
             {
                 var frm = new CommandsViewerForm();
-                var br = _datasBin.OpenBin();
-                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br,
-                    _selectedEntity.EventCodesA_LoadIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesATable,
-                    _selectedGameMap?.SpriteInfo);
-                frm.Text = "Commands load events " + (_selectedEntity.EventCodesA_LoadIndex & 0x7f);
-                frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap);
+                var selectedIndex = _selectedEntity.EventCodesA_LoadIndex & 0x7f;
+                var offset = _selectedGameMap.SpriteInfo.EventCodes.EventCodesATable[selectedIndex];
+                var eventCodeCommands = _selectedGameMap.SpriteInfo.EventCodes.GetCommands(offset);
+                frm.Text = "Commands load events " + selectedIndex;
+                frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap, offset);
                 frm.Show();
-                br.Close();
             }
         }
 
@@ -1412,19 +1413,20 @@ namespace AlundraTools.GameControls
 
             if (_selectedEntity != null)
             {
-                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br,
-                    _selectedEntity.EventCodesB_MapIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable,
-                    _selectedGameMap?.SpriteInfo);
-                frm.Text += _selectedEntity.EventCodesB_MapIndex & 0x7f;
-                frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap);
+                var selectedIndex = _selectedEntity.EventCodesB_MapIndex & 0x7f;
+                var offset = _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable[selectedIndex];
+                var eventCodeCommands = _selectedGameMap.SpriteInfo.EventCodes.GetCommands(offset);
+                frm.Text = "Commands load events " + selectedIndex;
+                frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap, offset);
                 frm.Show();
             }
             else if (_selectedMapEvent != null)
             {
-                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br, _selectedMapEvent.EventCodesBIndex,
-                    _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable, _selectedGameMap?.SpriteInfo);
-                frm.Text += _selectedMapEvent.EventCodesBIndex & 0x7f;
-                frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap);
+                var selectedIndex = _selectedMapEvent.EventCodesBIndex & 0x7f;
+                var offset = _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable[selectedIndex];
+                var eventCodeCommands = _selectedGameMap.SpriteInfo.EventCodes.GetCommands(offset);
+                frm.Text = "Commands load events " + selectedIndex;
+                frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap, offset);
                 frm.Show();
             }
 
@@ -1436,14 +1438,12 @@ namespace AlundraTools.GameControls
             if (_selectedEntity != null)
             {
                 var frm = new CommandsViewerForm();
-                var br = _datasBin.OpenBin();
-                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br,
-                    _selectedEntity.EventCodesC_TickIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesCTable,
-                    _selectedGameMap?.SpriteInfo);
-                frm.Text = "Commands tick events " + (_selectedEntity.EventCodesC_TickIndex & 0x7f);
-                frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap);
+                var selectedIndex = _selectedEntity.EventCodesC_TickIndex & 0x7f;
+                var offset = _selectedGameMap.SpriteInfo.EventCodes.EventCodesCTable[selectedIndex];
+                var eventCodeCommands = _selectedGameMap.SpriteInfo.EventCodes.GetCommands(offset);
+                frm.Text = "Commands load events " + selectedIndex;
+                frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap, offset);
                 frm.Show();
-                br.Close();
             }
         }
 
@@ -1452,14 +1452,12 @@ namespace AlundraTools.GameControls
             if (_selectedEntity != null)
             {
                 var frm = new CommandsViewerForm();
-                var br = _datasBin.OpenBin();
-                var eventCodeCommands = EntityEventHandlers.GetEventCodeCommands(br,
-                    _selectedEntity.EventCodesF_InteractIndex, _selectedGameMap.SpriteInfo.EventCodes.EventCodesFTable,
-                    _selectedGameMap?.SpriteInfo);
-                frm.Text = "Commands interact events " + (_selectedEntity.EventCodesF_InteractIndex & 0x7f);
-                frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap);
+                var selectedIndex = _selectedEntity.EventCodesF_InteractIndex & 0x7f;
+                var offset = _selectedGameMap.SpriteInfo.EventCodes.EventCodesFTable[selectedIndex];
+                var eventCodeCommands = _selectedGameMap.SpriteInfo.EventCodes.GetCommands(offset);
+                frm.Text = "Commands load events " + selectedIndex;
+                frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap, offset);
                 frm.Show();
-                br.Close();
             }
         }
 
@@ -1660,65 +1658,139 @@ namespace AlundraTools.GameControls
             propertyGridGameMapHeader.SelectedObject = new UniversalWrapper(_selectedGameMap.SpriteInfo.SpriteRecords);
         }
 
+        private void listBoxCodesA_DoubleClick(object sender, EventArgs e)
+        {
+            var selectedIndex = listBoxCodesA.SelectedIndex;
+
+            if (_selectedGameMap?.SpriteInfo?.EventCodes?.EventCodesATable == null
+                || _selectedGameMap?.SpriteInfo?.EventCodes?.Codes == null
+                || selectedIndex == -1)
+            {
+                return;
+            }
+
+            SpriteInfoEventCodes spriteInfoEventCodes = _selectedGameMap!.SpriteInfo!.EventCodes!;
+            OpenCommandViewerForm(selectedIndex, spriteInfoEventCodes, spriteInfoEventCodes.EventCodesATable, "Commands load events ");
+        }
+
         private void listBoxCodesB_DoubleClick(object sender, EventArgs e)
         {
-            if (listBoxCodesB.SelectedIndex != -1)
+            var selectedIndex = listBoxCodesB.SelectedIndex;
+
+            if (_selectedGameMap?.SpriteInfo?.EventCodes?.EventCodesBTable == null
+                || _selectedGameMap?.SpriteInfo?.EventCodes?.Codes == null
+                || selectedIndex == -1)
             {
-                var frm = new CommandsViewerForm();
-                frm.Text = "Commands map events " + listBoxCodesB.SelectedIndex;
-
-                var mapBIndex = (int)_selectedGameMap?.SpriteInfo?.EventCodes?.EventCodesBTable[listBoxCodesB.SelectedIndex];
-                var indexEnd = _selectedGameMap?.SpriteInfo?.EventCodes?.Codes.Length ?? 0;
-
-                if (listBoxCodesB.SelectedIndex < _selectedGameMap?.SpriteInfo?.EventCodes?.EventCodesBTable.Length - 1)
-                {
-                    indexEnd = (int)_selectedGameMap?.SpriteInfo?.EventCodes?.EventCodesBTable[listBoxCodesB.SelectedIndex + 1];
-                }
-
-                var codes = _selectedGameMap?.SpriteInfo?.EventCodes?.Codes.Skip(mapBIndex).Take(indexEnd - mapBIndex - 1).ToArray();
-
-                //var br = _datasBin.OpenBin();
-                //var commands = _selectedGameMap?.SpriteInfo?.EventCodes?.GetCommands(br,
-                //        (int)mapBIndex, true);
-                //br.Close();
-
-                var commands = new List<SiCommand>();
-                var i = 0;
-
-                while (i < codes.Length)
-                {
-                    var value = codes[i++];
-                    var sicode = SpriteInfoEventCodes.GetCode(value);
-
-                    if (sicode.Size < 1)
-                    {
-                        continue;
-                    }
-
-                    var size = sicode.Size;
-                    var name = sicode.Name;
-                    var parameters = new byte[size - 1];
-                    var j = 0;
-
-                    while (j < size - 1 && i < codes.Length)
-                    {
-                        parameters[j++] = codes[i++];
-                    }
-
-                    var address = -1; //_memoryAddress + eventCodesOffset + i - size;
-                    var cmd = new SiCommand(value, parameters, name, address);
-                    commands.Add(cmd);
-
-                    //if (stopAtff && value == 0xff)
-                    //{
-                    //    break;
-                    //}
-                }
-
-
-                frm.Init(commands, _datasBin.AlundraGameMap, _selectedGameMap, codes);
-                frm.Show();
+                return;
             }
+
+            SpriteInfoEventCodes spriteInfoEventCodes = _selectedGameMap!.SpriteInfo!.EventCodes!;
+            OpenCommandViewerForm(selectedIndex, spriteInfoEventCodes, spriteInfoEventCodes.EventCodesBTable, "Commands map events ");
+        }
+
+        private void listBoxCodesC_DoubleClick(object sender, EventArgs e)
+        {
+            var selectedIndex = listBoxCodesC.SelectedIndex;
+
+            if (_selectedGameMap?.SpriteInfo?.EventCodes?.EventCodesCTable == null
+                || _selectedGameMap?.SpriteInfo?.EventCodes?.Codes == null
+                || selectedIndex == -1)
+            {
+                return;
+            }
+
+            SpriteInfoEventCodes spriteInfoEventCodes = _selectedGameMap!.SpriteInfo!.EventCodes!;
+            OpenCommandViewerForm(selectedIndex, spriteInfoEventCodes, spriteInfoEventCodes.EventCodesCTable, "Commands tick events ");
+        }
+
+        private void listBoxCodesD_DoubleClick(object sender, EventArgs e)
+        {
+            var selectedIndex = listBoxCodesD.SelectedIndex;
+
+            if (_selectedGameMap?.SpriteInfo?.EventCodes?.EventCodesDTable == null
+                || _selectedGameMap?.SpriteInfo?.EventCodes?.Codes == null
+                || selectedIndex == -1)
+            {
+                return;
+            }
+
+            SpriteInfoEventCodes spriteInfoEventCodes = _selectedGameMap!.SpriteInfo!.EventCodes!;
+            OpenCommandViewerForm(selectedIndex, spriteInfoEventCodes, spriteInfoEventCodes.EventCodesDTable, "Commands touch events ");
+        }
+
+        private void listBoxCodesE_DoubleClick(object sender, EventArgs e)
+        {
+            var selectedIndex = listBoxCodesE.SelectedIndex;
+
+            if (_selectedGameMap?.SpriteInfo?.EventCodes?.EventCodesETable == null
+                || _selectedGameMap?.SpriteInfo?.EventCodes?.Codes == null
+                || selectedIndex == -1)
+            {
+                return;
+            }
+
+            SpriteInfoEventCodes spriteInfoEventCodes = _selectedGameMap!.SpriteInfo!.EventCodes!;
+            OpenCommandViewerForm(selectedIndex, spriteInfoEventCodes, spriteInfoEventCodes.EventCodesETable, "Commands deactivate events ");
+        }
+
+        private void listBoxCodesF_DoubleClick(object sender, EventArgs e)
+        {
+            var selectedIndex = listBoxCodesF.SelectedIndex;
+
+            if (_selectedGameMap?.SpriteInfo?.EventCodes?.EventCodesFTable == null
+                || _selectedGameMap?.SpriteInfo?.EventCodes?.Codes == null
+                || selectedIndex == -1)
+            {
+                return;
+            }
+
+            SpriteInfoEventCodes spriteInfoEventCodes = _selectedGameMap!.SpriteInfo!.EventCodes!;
+            OpenCommandViewerForm(selectedIndex, spriteInfoEventCodes, spriteInfoEventCodes.EventCodesFTable, "Commands interact events ");
+        }
+
+        private void OpenCommandViewerForm(int selectedIndex, SpriteInfoEventCodes spriteInfoEventCodes, short[] eventCodesTable, string title)
+        {
+            var frm = new CommandsViewerForm();
+            frm.Text = title + selectedIndex;
+
+            var codeIndex = (int)eventCodesTable[selectedIndex];
+            var codes = spriteInfoEventCodes.Codes;
+            var commands = new List<SiCommand>();
+            var i = 0;
+            var selectedCommandIndex = 0;
+
+            while (i < codes.Length)
+            {
+                if (i == codeIndex)
+                {
+                    selectedCommandIndex = commands.Count;
+                }
+
+                var value = codes[i++];
+                var sicode = SpriteInfoEventCodes.GetCode(value);
+
+                if (sicode.Size < 1)
+                {
+                    continue;
+                }
+
+                var size = sicode.Size;
+                var name = sicode.Name;
+                var parameters = new byte[size - 1];
+                var offset = i;
+                var j = 0;
+
+                while (j < size - 1 && i < codes.Length)
+                {
+                    parameters[j++] = codes[i++];
+                }
+
+                var cmd = new SiCommand(value, parameters, name, offset);
+                commands.Add(cmd);
+            }
+
+            frm.Init(commands, _datasBin.AlundraGameMap, _selectedGameMap, selectedCommandIndex, codes);
+            frm.Show();
         }
     }
 }

@@ -2525,9 +2525,9 @@ public class PlayerManager
                 return;
             }
 
-            if (((portal.Flags & 0x3000) >> 11) > 3) Debugger.Break();
+            if (((portal.Flags & 0x3000) >> 12) > 3) Debugger.Break();
 
-            directionId = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 11];
+            directionId = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 12];
         }
         else
         {
@@ -2537,9 +2537,9 @@ public class PlayerManager
                 return;
             }
 
-            if (((portal.Flags & 0x3000) >> 11) > 3) Debugger.Break();
+            if (((portal.Flags & 0x3000) >> 12) > 3) Debugger.Break();
 
-            directionId = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 11];
+            directionId = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 12];
         }
 
         HandleWarpTransition(portal, 0x36, directionId);

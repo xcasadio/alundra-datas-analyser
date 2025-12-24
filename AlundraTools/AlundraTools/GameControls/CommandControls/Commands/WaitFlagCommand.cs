@@ -4,8 +4,8 @@ namespace AlundraTools.GameControls.CommandControls.Commands;
 
 public class WaitFlagCommand : CommandBase
 {
-    public WaitFlagCommand(byte code, byte[] parameters, string name, int memoryAddress) :
-        base(code, parameters, name, memoryAddress)
+    public WaitFlagCommand(byte code, byte[] parameters, string name, int offset) :
+        base(code, parameters, name, offset)
 
     {
     }

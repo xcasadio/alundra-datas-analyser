@@ -248,6 +248,7 @@ namespace AlundraTools.GameControls
             label45 = new Label();
             listBoxEtcDescriptionItemTable = new ListBox();
             tabPage8 = new TabPage();
+            label7 = new Label();
             imageViewerControlLoadScreen = new ImageViewerControl();
             label67 = new Label();
             pictureBoxFont3Tim = new ImageViewerControl();
@@ -271,7 +272,6 @@ namespace AlundraTools.GameControls
             checkBoxDebug = new CheckBox();
             imageViewerMap = new ImageViewerControl();
             saveFileDialog1 = new SaveFileDialog();
-            label7 = new Label();
             ((System.ComponentModel.ISupportInitialize)pctMapPalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctSpritePalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctAnim).BeginInit();
@@ -2177,6 +2177,7 @@ namespace AlundraTools.GameControls
             listBoxCodesF.Name = "listBoxCodesF";
             listBoxCodesF.Size = new Size(110, 214);
             listBoxCodesF.TabIndex = 195;
+            listBoxCodesF.DoubleClick += listBoxCodesF_DoubleClick;
             // 
             // label78
             // 
@@ -2196,6 +2197,7 @@ namespace AlundraTools.GameControls
             listBoxCodesE.Name = "listBoxCodesE";
             listBoxCodesE.Size = new Size(110, 214);
             listBoxCodesE.TabIndex = 193;
+            listBoxCodesE.DoubleClick += listBoxCodesE_DoubleClick;
             // 
             // label77
             // 
@@ -2215,6 +2217,7 @@ namespace AlundraTools.GameControls
             listBoxCodesD.Name = "listBoxCodesD";
             listBoxCodesD.Size = new Size(110, 214);
             listBoxCodesD.TabIndex = 191;
+            listBoxCodesD.DoubleClick += listBoxCodesD_DoubleClick;
             // 
             // label76
             // 
@@ -2234,6 +2237,7 @@ namespace AlundraTools.GameControls
             listBoxCodesC.Name = "listBoxCodesC";
             listBoxCodesC.Size = new Size(110, 214);
             listBoxCodesC.TabIndex = 189;
+            listBoxCodesC.DoubleClick += listBoxCodesC_DoubleClick;
             // 
             // label75
             // 
@@ -2283,6 +2287,7 @@ namespace AlundraTools.GameControls
             listBoxCodesA.Name = "listBoxCodesA";
             listBoxCodesA.Size = new Size(110, 214);
             listBoxCodesA.TabIndex = 184;
+            listBoxCodesA.DoubleClick += listBoxCodesA_DoubleClick;
             // 
             // tabPage2
             // 
@@ -2527,6 +2532,16 @@ namespace AlundraTools.GameControls
             tabPage8.Text = "Font3";
             tabPage8.UseVisualStyleBackColor = true;
             // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(330, 3);
+            label7.Margin = new Padding(4, 0, 4, 0);
+            label7.Name = "label7";
+            label7.Size = new Size(87, 15);
+            label7.TabIndex = 101;
+            label7.Text = "Loading screen";
+            // 
             // imageViewerControlLoadScreen
             // 
             imageViewerControlLoadScreen.Image = null;
@@ -2749,16 +2764,6 @@ namespace AlundraTools.GameControls
             imageViewerMap.Name = "imageViewerMap";
             imageViewerMap.Size = new Size(709, 786);
             imageViewerMap.TabIndex = 194;
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new Point(330, 3);
-            label7.Margin = new Padding(4, 0, 4, 0);
-            label7.Name = "label7";
-            label7.Size = new Size(87, 15);
-            label7.TabIndex = 101;
-            label7.Text = "Loading screen";
             // 
             // FrmAlundra
             // 

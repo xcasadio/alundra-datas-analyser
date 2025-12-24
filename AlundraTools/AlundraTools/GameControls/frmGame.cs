@@ -374,7 +374,6 @@ public partial class FrmGame : Form
     {
         _gameEngine.InitializeEngine();
         InitializeUI();
-        buttonAllItems_Click(null, EventArgs.Empty);
 
         _gameEngineTimer = new Timer();
         _gameEngineTimer.Interval = 30; // 33

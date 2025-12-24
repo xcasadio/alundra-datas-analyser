@@ -320,11 +320,13 @@ public class SoundManager
         //}
         //
         //FUN_8005ac90();
+        Debug.WriteLine("!!!!!!!!!!!!!!!! Implement PlaySoundEffectWithToneVolumeMix");
     }
 
     //80049794
-    public void FUN_80049794(int param_1, int param_2, int param_3)
+    public void PlaySoundEffectWithToneVolumeMix(int param_1, int param_2, int param_3)
     {
+        Debug.WriteLine("!!!!!!!!!!!!!!!! Implement LoadMapSounds 0x8004a09c");
         //TODO
         /*
         int s4 = param_1;

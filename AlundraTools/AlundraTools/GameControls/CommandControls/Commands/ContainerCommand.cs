@@ -6,10 +6,10 @@ namespace AlundraTools.GameControls.CommandControls.Commands;
 public abstract class ContainerCommand : CommandBase
 {
     public CommandBase[] Children { get; set; } = [];
-    public abstract int LastCommandMemoryAddress { get; }
+    public abstract int LastCommandOffset { get; }
 
-    public ContainerCommand(byte command, byte[] parameters, string name, int memoryAddress)
-        : base(command, parameters, name, memoryAddress)
+    public ContainerCommand(byte command, byte[] parameters, string name, int offset)
+        : base(command, parameters, name, offset)
     {
     }
 
@@ -20,12 +20,12 @@ public abstract class ContainerCommand : CommandBase
 
         for (; j < commands.Count; j++)
         {
-            if (commands[j].MemoryAddress > LastCommandMemoryAddress)
+            if (commands[j].Offset > LastCommandOffset)
             {
                 //Debugger.Break();
             }
 
-            if (commands[j].MemoryAddress >= LastCommandMemoryAddress)
+            if (commands[j].Offset >= LastCommandOffset)
             {
                 break;
             }

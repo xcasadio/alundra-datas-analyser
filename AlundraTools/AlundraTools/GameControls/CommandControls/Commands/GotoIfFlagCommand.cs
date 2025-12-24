@@ -4,14 +4,14 @@ namespace AlundraTools.GameControls.CommandControls.Commands;
 
 public class GotoIfFlagCommand : ContainerCommand
 {
-    private int _lastCommandMemoryAddress;
+    private int _lastCommandOffset;
 
-    public override int LastCommandMemoryAddress => _lastCommandMemoryAddress;
+    public override int LastCommandOffset => _lastCommandOffset;
 
-    public GotoIfFlagCommand(byte command, byte[] parameters, string name, int memoryAddress)
-        : base(command, parameters, name, memoryAddress)
+    public GotoIfFlagCommand(byte command, byte[] parameters, string name, int offset)
+        : base(command, parameters, name, offset)
     {
-        RefOffset = (short)(parameters[0] | (parameters[1] << 8));
+        OffsetShift = (short)(parameters[0] | (parameters[1] << 8));
     }
 
     protected override string PrintParameters()
@@ -32,14 +32,14 @@ public class GotoIfFlagCommand : ContainerCommand
         var offset = ((Parameters[2] + Parameters[3] * 0x100) * 0x10000) >> 0x10;
         var index = GetCommandNameByOffset(offset, commands);
         name += $"{(index == -1 ? "?" : $"{index}")}";
-        name += $" ({(index == -1 ? "out of bounds" : commands[index].Name)})";
+        //name += $" ({(index == -1 ? "out of bounds" : commands[index].Name)})";
         name += " else goto ";
         index = GetCommandNameByOffset(Size, commands);
         name += $"{(index == -1 ? "?" : $"{index}")}";
-        name += $" ({(index == -1 ? "out of bounds" : commands[index].Name)})";
+        //name += $" ({(index == -1 ? "out of bounds" : commands[index].Name)})";
         Name = name;
 
-        _lastCommandMemoryAddress = MemoryAddress + Math.Max(offset, Size);
+        _lastCommandOffset = Offset + Math.Max(offset, Size);
 
         return base.Build(i, commands);
     }
