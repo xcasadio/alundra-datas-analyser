@@ -183,7 +183,7 @@ public class SpriteInfoEventCodes
     public List<SiCommand> GetCommands(int startOffset)
     {
         var commands = new List<SiCommand>();
-        var i = startOffset;
+        var i = 0; //startOffset;
 
         while (i < Codes.Length)
         {
@@ -211,17 +211,6 @@ public class SpriteInfoEventCodes
         }
 
         return commands;
-    }
-
-    public byte[] GetByteCode(BinaryReader br, int eventCodesOffset)
-    {
-        var bytes = new byte[_dataSize - eventCodesOffset];
-        br.BaseStream.Position = _binOffset + eventCodesOffset;
-        var i = 0;
-
-        br.Read(bytes, 0, bytes.Length);
-
-        return bytes;
     }
 
     public static readonly Dictionary<byte, int> CommandSizeByCode = new()

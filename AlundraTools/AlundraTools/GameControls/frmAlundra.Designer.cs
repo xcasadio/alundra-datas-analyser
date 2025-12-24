@@ -70,16 +70,10 @@ namespace AlundraTools.GameControls
             columnHeader11 = new ColumnHeader();
             columnHeader12 = new ColumnHeader();
             label2 = new Label();
-            lblSector1a = new Label();
-            lblSector1b = new Label();
             label12 = new Label();
-            lblSector1c = new Label();
             label17 = new Label();
-            lblSector1d = new Label();
             label21 = new Label();
-            lblSector1f = new Label();
             label25 = new Label();
-            lblSector1e = new Label();
             label29 = new Label();
             label8 = new Label();
             label15 = new Label();
@@ -637,26 +631,6 @@ namespace AlundraTools.GameControls
             label2.TabIndex = 74;
             label2.Text = "load evt";
             // 
-            // lblSector1a
-            // 
-            lblSector1a.AutoSize = true;
-            lblSector1a.Location = new Point(149, 438);
-            lblSector1a.Margin = new Padding(4, 0, 4, 0);
-            lblSector1a.Name = "lblSector1a";
-            lblSector1a.Size = new Size(13, 15);
-            lblSector1a.TabIndex = 76;
-            lblSector1a.Text = "0";
-            // 
-            // lblSector1b
-            // 
-            lblSector1b.AutoSize = true;
-            lblSector1b.Location = new Point(149, 465);
-            lblSector1b.Margin = new Padding(4, 0, 4, 0);
-            lblSector1b.Name = "lblSector1b";
-            lblSector1b.Size = new Size(13, 15);
-            lblSector1b.TabIndex = 78;
-            lblSector1b.Text = "0";
-            // 
             // label12
             // 
             label12.AutoSize = true;
@@ -666,16 +640,6 @@ namespace AlundraTools.GameControls
             label12.Size = new Size(50, 15);
             label12.TabIndex = 77;
             label12.Text = "map evt";
-            // 
-            // lblSector1c
-            // 
-            lblSector1c.AutoSize = true;
-            lblSector1c.Location = new Point(149, 493);
-            lblSector1c.Margin = new Padding(4, 0, 4, 0);
-            lblSector1c.Name = "lblSector1c";
-            lblSector1c.Size = new Size(13, 15);
-            lblSector1c.TabIndex = 80;
-            lblSector1c.Text = "0";
             // 
             // label17
             // 
@@ -687,16 +651,6 @@ namespace AlundraTools.GameControls
             label17.TabIndex = 79;
             label17.Text = "frame evt";
             // 
-            // lblSector1d
-            // 
-            lblSector1d.AutoSize = true;
-            lblSector1d.Location = new Point(149, 520);
-            lblSector1d.Margin = new Padding(4, 0, 4, 0);
-            lblSector1d.Name = "lblSector1d";
-            lblSector1d.Size = new Size(13, 15);
-            lblSector1d.TabIndex = 82;
-            lblSector1d.Text = "0";
-            // 
             // label21
             // 
             label21.AutoSize = true;
@@ -707,16 +661,6 @@ namespace AlundraTools.GameControls
             label21.TabIndex = 81;
             label21.Text = "touch evt";
             // 
-            // lblSector1f
-            // 
-            lblSector1f.AutoSize = true;
-            lblSector1f.Location = new Point(150, 578);
-            lblSector1f.Margin = new Padding(4, 0, 4, 0);
-            lblSector1f.Name = "lblSector1f";
-            lblSector1f.Size = new Size(13, 15);
-            lblSector1f.TabIndex = 86;
-            lblSector1f.Text = "0";
-            // 
             // label25
             // 
             label25.AutoSize = true;
@@ -726,16 +670,6 @@ namespace AlundraTools.GameControls
             label25.Size = new Size(66, 15);
             label25.TabIndex = 85;
             label25.Text = "interact evt";
-            // 
-            // lblSector1e
-            // 
-            lblSector1e.AutoSize = true;
-            lblSector1e.Location = new Point(149, 549);
-            lblSector1e.Margin = new Padding(4, 0, 4, 0);
-            lblSector1e.Name = "lblSector1e";
-            lblSector1e.Size = new Size(13, 15);
-            lblSector1e.TabIndex = 84;
-            lblSector1e.Text = "0";
             // 
             // label29
             // 
@@ -2296,17 +2230,11 @@ namespace AlundraTools.GameControls
             tabPage2.Controls.Add(lblEntityInfo);
             tabPage2.Controls.Add(label15);
             tabPage2.Controls.Add(label2);
-            tabPage2.Controls.Add(lblSector1a);
             tabPage2.Controls.Add(label12);
-            tabPage2.Controls.Add(lblSector1b);
             tabPage2.Controls.Add(label17);
-            tabPage2.Controls.Add(lblSector1c);
             tabPage2.Controls.Add(label21);
-            tabPage2.Controls.Add(lblSector1d);
             tabPage2.Controls.Add(label29);
-            tabPage2.Controls.Add(lblSector1e);
             tabPage2.Controls.Add(label25);
-            tabPage2.Controls.Add(lblSector1f);
             tabPage2.Controls.Add(btnSector1cCmds);
             tabPage2.Controls.Add(btnSector1bCmds);
             tabPage2.Controls.Add(btnSector1aCmds);
@@ -2857,16 +2785,10 @@ namespace AlundraTools.GameControls
         private System.Windows.Forms.ColumnHeader columnHeader11;
         private System.Windows.Forms.ColumnHeader columnHeader12;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label lblSector1a;
-        private System.Windows.Forms.Label lblSector1b;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label lblSector1c;
         private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.Label lblSector1d;
         private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.Label lblSector1f;
         private System.Windows.Forms.Label label25;
-        private System.Windows.Forms.Label lblSector1e;
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label15;

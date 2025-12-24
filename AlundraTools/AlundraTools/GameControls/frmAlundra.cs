@@ -846,20 +846,6 @@ namespace AlundraTools.GameControls
             return output.Substring(0, output.Length - 1);
         }
 
-        private string GetSector1ByteCodes(BinaryReader br, int index, short[] sector1Table)
-        {
-            if (index >= 0 && index < 0xff)
-            {
-                var i = index & 0x7f;
-
-                return sector1Table[i].ToString("x4") + ":" +
-                       (_selectedGameMap.SpriteInfo.Header.EventCodeAddress + sector1Table[i]).ToString("x6") + ":" +
-                       RenderByteCodes(_selectedGameMap.SpriteInfo.EventCodes.GetByteCode(br, sector1Table[i]));
-            }
-
-            return "0";
-        }
-
         private string ByteToString(byte b)
         {
             return b.ToString("x2");
@@ -881,7 +867,6 @@ namespace AlundraTools.GameControls
             lblEntityInfo.Text = "0";
             if (_selectedGameMap != null && lsvEntities.SelectedIndices.Count == 1)
             {
-                using var br = _datasBin.OpenBin();
                 _selectedMapEvent = null;
                 _selectedEntity = _selectedGameMap.SpriteInfo.Entities.Entities[lsvEntities.SelectedIndices[0]];
                 lblEntityInfo.Text = "si addr:" +
@@ -890,31 +875,10 @@ namespace AlundraTools.GameControls
                                      ByteToString(_selectedEntity.XMax) + ByteToString(_selectedEntity.YMax) +
                                      ByteToString(_selectedEntity.IsEnabled) + " u789ab:" +
                                      lsvEntities.Items[lsvEntities.SelectedIndices[0]].ToolTipText;
-                var sector1 = _selectedGameMap.SpriteInfo.EventCodes;
-                lblSector1a.Text =
-                    GetSector1ByteCodes(br, _selectedEntity.EventCodesA_LoadIndex, sector1.EventCodesATable);
-                lblSector1b.Text =
-                    GetSector1ByteCodes(br, _selectedEntity.EventCodesB_MapIndex, sector1.EventCodesBTable);
-                lblSector1c.Text =
-                    GetSector1ByteCodes(br, _selectedEntity.EventCodesC_TickIndex, sector1.EventCodesCTable);
-                lblSector1d.Text =
-                    GetSector1ByteCodes(br, _selectedEntity.EventCodesD_TouchIndex, sector1.EventCodesDTable);
-                lblSector1e.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesE_DeactivateIndex,
-                    sector1.EventCodesETable);
-                lblSector1f.Text = GetSector1ByteCodes(br, _selectedEntity.EventCodesF_InteractIndex,
-                    sector1.EventCodesFTable);
-
-                br.Close();
             }
             else
             {
                 _selectedEntity = null;
-                lblSector1a.Text = "0";
-                lblSector1b.Text = "0";
-                lblSector1c.Text = "0";
-                lblSector1d.Text = "0";
-                lblSector1e.Text = "0";
-                lblSector1f.Text = "0";
             }
 
             DrawMap();
@@ -1360,29 +1324,12 @@ namespace AlundraTools.GameControls
         {
             if (_selectedGameMap != null && lsvSector4.SelectedIndices.Count == 1)
             {
-                using var br = _datasBin.OpenBin();
                 _selectedEntity = null;
                 _selectedMapEvent = _selectedGameMap.SpriteInfo.MapEvents.Records[lsvSector4.SelectedIndices[0]];
-                var sector1 = _selectedGameMap.SpriteInfo.EventCodes;
-                lblSector1a.Text = "";
-                lblSector1b.Text =
-                    GetSector1ByteCodes(br, _selectedMapEvent.EventCodesBIndex, sector1.EventCodesBTable);
-                lblSector1c.Text = "";
-                lblSector1d.Text = "";
-                lblSector1e.Text = "";
-                lblSector1f.Text = "";
-
-                br.Close();
             }
             else
             {
                 _selectedMapEvent = null;
-                lblSector1a.Text = "0";
-                lblSector1b.Text = "0";
-                lblSector1c.Text = "0";
-                lblSector1d.Text = "0";
-                lblSector1e.Text = "0";
-                lblSector1f.Text = "0";
             }
         }
 

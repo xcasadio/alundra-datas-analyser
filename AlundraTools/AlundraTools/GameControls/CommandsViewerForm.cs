@@ -84,7 +84,7 @@ namespace AlundraTools.GameControls
             if (index == _selectedCommandIndex)
             {
                 treeView1.SelectedNode = parentNode;
-                parentNode.BackColor = Color.Green;
+                parentNode.BackColor = Color.LightGreen;
             }
 
             if (commandBase is not ContainerCommand container)

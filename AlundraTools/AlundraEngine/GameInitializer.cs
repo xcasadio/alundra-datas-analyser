@@ -409,9 +409,11 @@ public class GameInitializer
         //==== DEBUG
         //enable HUD
         //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 40000000;
-        //_gameEngine.StaticVariables.g_desiredMap = 471; //452; //476; //11; //471; //416;
-        //
-        ////active la map 476 Alundra cabine
+
+        //_gameEngine.StaticVariables.g_desiredMap = 452; //11; //471;
+
+        //active la map 476 Alundra cabine
+        //_gameEngine.StaticVariables.g_desiredMap = 476;
         //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 256;
         //_gameEngine.StaticVariables.g_mapTransitionEffectId = 4;
         //_gameEngine.StaticVariables.g_warpSoundEffectId = 73;
@@ -422,12 +424,37 @@ public class GameInitializer
         //_gameEngine.StaticVariables.g_resetAnimationId = 13;
         //_gameEngine.StaticVariables.g_isGameEnding = 1;
 
-        ////active la map 416 Inoa beach
-        _gameEngine.StaticVariables.g_globalFlags[0] = 1;
-        _gameEngine.StaticVariables.g_saveData.MapFlags[6] = 256;
-        _gameEngine.StaticVariables.g_saveData.MapFlags[26] = 268435456;
-        _gameEngine.StaticVariables.g_saveData.MapFlags[27] = 228;
-        _gameEngine.StaticVariables.g_saveData.MapFlags[51] = 512;
+        //active la map 416 Inoa beach
+        //_gameEngine.StaticVariables.g_desiredMap = 416;
+        //_gameEngine.StaticVariables.g_globalFlags[0] = 1;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[6] = 256;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[26] = 268435456;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[27] = 228;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] = 512;
+        //_gameEngine.StaticVariables.g_mapTransitionEffectId = 2;
+        //_gameEngine.StaticVariables.g_warpSoundEffectId = 0;
+        //_gameEngine.StaticVariables.g_cameraTargetZ = 1048576;
+        //_gameEngine.StaticVariables.g_cameraTargetY = 51904512;
+        //_gameEngine.StaticVariables.g_cameraTargetX = 65273856;
+        //_gameEngine.StaticVariables.g_resetDirectionId = 16;
+        //_gameEngine.StaticVariables.g_resetAnimationId = 0;
+        //_gameEngine.StaticVariables.g_isGameEnding = 1;
+
+        //active la map 163 Jess's house
+        //_gameEngine.StaticVariables.g_desiredMap = 163;
+        //_gameEngine.StaticVariables.g_globalFlags[0] = 1;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[6] = 256;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[26] = 268435456;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[27] = 228;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] = 512;
+        //_gameEngine.StaticVariables.g_mapTransitionEffectId = 2;
+        //_gameEngine.StaticVariables.g_warpSoundEffectId = 0;
+        //_gameEngine.StaticVariables.g_cameraTargetZ = 2097152;
+        //_gameEngine.StaticVariables.g_cameraTargetY = 9961472;
+        //_gameEngine.StaticVariables.g_cameraTargetX = 63700992;
+        //_gameEngine.StaticVariables.g_resetDirectionId = 16;
+        //_gameEngine.StaticVariables.g_resetAnimationId = 78;
+        //_gameEngine.StaticVariables.g_isGameEnding = 1;
     }
 
     // 8004dac0
