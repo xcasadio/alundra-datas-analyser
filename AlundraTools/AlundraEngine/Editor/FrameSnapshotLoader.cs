@@ -389,7 +389,7 @@ public static class FrameSnapshotLoader
             entity.TargetDirection = targetDirection;
             entity.CurrentAnimationId = currentAnimationId;
             entity.CurrentDirection = currentDirection;
-            entity.CurrentFrameIndex = currentFrameIndex;
+            entity.AnimationDirection = currentFrameIndex;
             //entity.AnimSet = animSet;
             if (entity.AnimSet != null 
                 && entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3].NumberOfFrames > 0

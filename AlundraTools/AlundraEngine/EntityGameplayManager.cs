@@ -131,7 +131,7 @@ public class EntityGameplayManager
 
     public bool TryAttackPlayer(Entity entity, int[] relativePositions, int maxHorizontalRange, int maxVerticalRange)
     {
-        int currentFrame;
+        int animationDirection;
         bool isWithinRange;
 
         if (maxVerticalRange < relativePositions[2])
@@ -139,9 +139,9 @@ public class EntityGameplayManager
             return false;
         }
 
-        currentFrame = entity.CurrentFrameIndex;
+        animationDirection = entity.AnimationDirection;
 
-        if (currentFrame == 1)
+        if (animationDirection == 1)
         {
             if (relativePositions[0] < 2 && -1 < relativePositions[4] &&
                 relativePositions[1] <= maxHorizontalRange)
@@ -156,9 +156,9 @@ public class EntityGameplayManager
 
             isWithinRange = maxHorizontalRange < relativePositions[0];
         }
-        else if (currentFrame < 2)
+        else if (animationDirection < 2)
         {
-            if (currentFrame != 0)
+            if (animationDirection != 0)
             {
                 return false;
             }
@@ -178,7 +178,7 @@ public class EntityGameplayManager
         }
         else
         {
-            if (currentFrame == 2)
+            if (animationDirection == 2)
             {
                 if (relativePositions[1] < 2 && -1 < relativePositions[3] &&
                     relativePositions[0] <= maxHorizontalRange)
@@ -199,7 +199,7 @@ public class EntityGameplayManager
                 return false;
             }
 
-            if (currentFrame != 3)
+            if (animationDirection != 3)
             {
                 return false;
             }
@@ -449,7 +449,7 @@ public class EntityGameplayManager
     //800805c8
     public bool TryAttackPlayerFront(Entity entity, int[] relativePositions, int xThreshold, int yThreshold, int zThreshold)
     {
-        int animFrame;
+        int animationDirection;
         bool isOutOfRange;
 
         if (zThreshold < relativePositions[2])
@@ -457,9 +457,9 @@ public class EntityGameplayManager
             return false;
         }
 
-        animFrame = entity.CurrentFrameIndex;
+        animationDirection = entity.AnimationDirection;
 
-        if (animFrame == 1)
+        if (animationDirection == 1)
         {
             if (xThreshold < relativePositions[0])
             {
@@ -473,9 +473,9 @@ public class EntityGameplayManager
 
             isOutOfRange = yThreshold < relativePositions[1];
         }
-        else if (animFrame < 2)
+        else if (animationDirection < 2)
         {
-            if (animFrame != 0)
+            if (animationDirection != 0)
             {
                 return false;
             }
@@ -494,7 +494,7 @@ public class EntityGameplayManager
         }
         else
         {
-            if (animFrame == 2)
+            if (animationDirection == 2)
             {
                 if (xThreshold < relativePositions[1])
                 {
@@ -513,7 +513,7 @@ public class EntityGameplayManager
                 return false;
             }
 
-            if (animFrame != 3)
+            if (animationDirection != 3)
             {
                 return false;
             }

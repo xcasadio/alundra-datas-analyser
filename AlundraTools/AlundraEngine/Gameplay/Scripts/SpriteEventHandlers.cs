@@ -1918,7 +1918,6 @@ public class SpriteEventHandlers
                 _gameEngine.FUN_80032b28((uint)entity.ContentsGameFlag);
             }
 
-            Debugger.Break();
             entity2 = _gameEngine.StaticVariables.g_entitySlots[entity.AIValues[0]];
         }
         else

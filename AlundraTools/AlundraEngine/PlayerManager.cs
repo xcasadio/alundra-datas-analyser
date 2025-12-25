@@ -458,7 +458,7 @@ public class PlayerManager
                 {
                     if (_gameEngine.StaticVariables.PlayerEntity.ForceAdjusted == 0)
                     {
-                        var dirIndex = _gameEngine.StaticVariables.PlayerEntity.CurrentDirection >> 3;
+                        var dirIndex = _gameEngine.StaticVariables.PlayerEntity.AnimationDirection >> 3;
                         dirIndex = dirIndex switch
                         {
                             1 => 2,
@@ -601,7 +601,7 @@ public class PlayerManager
                     }
                     else if ((_gameEngine.StaticVariables.PlayerEntity.CombinedVramFlagsOR & 0x2000U) == 0)
                     {
-                        var direction = _gameEngine.StaticVariables.PlayerEntity.CurrentDirection; //(uint)_gameEngine.StaticVariables.g_cardinalDirectionTable[_gameEngine.StaticVariables.PlayerEntity.CurrentDirection >> 3];
+                        var direction = _gameEngine.StaticVariables.g_cardinalDirectionTable[_gameEngine.StaticVariables.PlayerEntity.AnimationDirection >> 3];
                         _gameEngine.StaticVariables.PlayerEntity.CarriedEntity.TargetDirection = direction;
                         carriedEntity.PosX = _gameEngine.StaticVariables.PlayerEntity.PosX;
                         carriedEntity.PosY = _gameEngine.StaticVariables.PlayerEntity.PosY;
@@ -1433,14 +1433,14 @@ public class PlayerManager
                 if (_gameEngine.StaticVariables.g_playerEffectTransitionCooldown[2] <= _gameEngine.StaticVariables.g_playerEffectStepFlags)
                 {
                     var zOffset = _gameEngine.StaticVariables.g_playerEffectTransitionCooldown[3] << 16;
-                    var directionIndex = _gameEngine.StaticVariables.PlayerEntity.CurrentDirection >> 3;
+                    var directionIndex = _gameEngine.StaticVariables.PlayerEntity.AnimationDirection >> 3;
                     //TODO check direction
-                    directionIndex = directionIndex switch
-                    {
-                        1 => 2,
-                        2 => 1,
-                        _ => directionIndex
-                    };
+                    //directionIndex = directionIndex switch
+                    //{
+                    //    1 => 2,
+                    //    2 => 1,
+                    //    _ => directionIndex
+                    //};
                     var direction = _gameEngine.StaticVariables.g_cardinalDirectionTable[directionIndex];
 
                     var entity = _gameEngine.SpawnWarpEntity(
@@ -1450,7 +1450,7 @@ public class PlayerManager
                         _gameEngine.StaticVariables.PlayerEntity.PosX,
                         _gameEngine.StaticVariables.PlayerEntity.PosY,
                         _gameEngine.StaticVariables.PlayerEntity.PosZ + zOffset,
-                        (uint)direction);
+                        direction);
 
                     _gameEngine.StaticVariables.g_playerEffectTransitionCooldown[0] = 0;
                     _gameEngine.StaticVariables.g_playerEffectTransitionCooldown[1] = 0;
@@ -2434,7 +2434,7 @@ public class PlayerManager
                             ushort requiredInput = _gameEngine.StaticVariables.BYTE_ARRAY_80022778[direction * 2];
 
                             if ((_gameEngine.StaticVariables.g_padState1.ButtonsHold & requiredInput) == 0
-                                || _gameEngine.StaticVariables.PlayerEntity.CurrentFrameIndex != direction)
+                                || _gameEngine.StaticVariables.PlayerEntity.AnimationDirection != direction)
                             {
                                 //buffer = _gameEngine.StaticVariables.g_debugMessage + combinedVramFlagsAnd;
                                 //fmt = "Warp Not Ready!\n";
@@ -2682,12 +2682,12 @@ public class PlayerManager
 
                 if (spriteEffect != null)
                 {
-                    frameOffset = _gameEngine.StaticVariables.PlayerEntity.CurrentFrameIndex;
+                    frameOffset = _gameEngine.StaticVariables.PlayerEntity.AnimationDirection;
                     animIndex = _gameEngine.StaticVariables.g_hitSoundEffects[effectEntityId + animIndex + 4];
 
                     var rand = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                    var index = effectEntityId + _gameEngine.StaticVariables.PlayerEntity.CurrentFrameIndex * 2 + 9;
-                    var index2 = effectEntityId + _gameEngine.StaticVariables.PlayerEntity.CurrentFrameIndex * 2 + 8;
+                    var index = effectEntityId + _gameEngine.StaticVariables.PlayerEntity.AnimationDirection * 2 + 9;
+                    var index2 = effectEntityId + _gameEngine.StaticVariables.PlayerEntity.AnimationDirection * 2 + 8;
                     spriteEffect.ForceX =
                         _gameEngine.StaticVariables.g_hitSoundEffects[index] * animIndex +
                         (int)((rand * (ulong)(_gameEngine.StaticVariables.g_hitSoundEffects[index2] * animIndex + 1)) >> 0x20);

@@ -109,14 +109,13 @@ public class StaticVariables
         0x0, 0x0
     ];
     //800237f4
-    public int[] g_frameIndexTable = //800237f4
+    public int[] g_animationDirectionTable = //800237f4
     [
-        0x00000000, 0x00000000, 0x00000002, 0x00000001, 0x00000001, 0x00000001,
-        0x00000003, 0x00000000, 0x00000000, 0x00000000, 0x00000002, 0x00000001,
-        0x00000001, 0x00000001, 0x00000003, 0x00000000, 0x00000000, 0x00000002,
-        0x00000002, 0x00000002, 0x00000001, 0x00000003, 0x00000003, 0x00000003,
-        0x00000000, 0x00000002, 0x00000002, 0x00000002, 0x00000001, 0x00000003,
-        0x00000003, 0x00000003];
+        0,0,2,1,1,1,3,0,
+        0,0,2,1,1,1,3,0,
+        0,2,2,2,1,3,3,3,
+        0,2,2,2,1,3,3,3
+    ];
     public byte[][] g_contentstable = [[0, 1, 2, 3, 4, 5], [0, 1, 2, 3]];
     //// 800A81E4
     public uint[] g_warpMapList = [0x14B, 0xD8, 0xA, 0xA, 0x1C6, 0x0, 0xA, 0x1C7, 0xA, 0xA, 0x1C8, 0xA, 0xA, 0x1C9, 0xA, 0xA3, 0x0, 0x10, 0x1DC, 0x669, 0x2E, 0x0, 0x0, 0x0];
@@ -4630,7 +4629,7 @@ public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
     public short DAT_800236a0; // 800236A0
     public short DAT_800236a4; // 800236A4
     public short DAT_800236c4; // 800236C4
-    //public int[] g_frameIndexTable = new int[32]; // 800237F4
+    //public int[] g_animationDirectionTable = new int[32]; // 800237F4
     public char g_unusedTextBuffer; // 80023C94
     public char PTR_DAT_80023d0c; // 80023D0C
     public int PTR_DAT_80023d2c; // 80023D2C

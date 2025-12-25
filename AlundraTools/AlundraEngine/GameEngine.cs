@@ -1706,22 +1706,22 @@ public class GameEngine
 
     public SpriteEffectRecord GetEffectSpriteFromSpriteTable(bool isMapSprite, int spriteTableIndex, out int addedtosheet, out int addedtopallette)
     {
-        SpriteInfo si;
+        SpriteInfo spriteInfo;
         if (isMapSprite)
         {
-            si = CurrentMap.SpriteInfo;
+            spriteInfo = CurrentMap.SpriteInfo;
             addedtosheet = 0;
             addedtopallette = 0x20;
         }
         else
         {
-            si = DatasBin.AlundraGameMap.SpriteInfo;
+            spriteInfo = DatasBin.AlundraGameMap.SpriteInfo;
             addedtosheet = 0xb;
             addedtopallette = 0x60;
         }
-        if (spriteTableIndex >= 0 && spriteTableIndex < si.SpriteEffectRecords.Length)
+        if (spriteTableIndex >= 0 && spriteTableIndex < spriteInfo.SpriteEffectRecords.Length)
         {
-            return si.SpriteEffectRecords[spriteTableIndex];
+            return spriteInfo.SpriteEffectRecords[spriteTableIndex];
         }
 
         return null;
@@ -1737,12 +1737,6 @@ public class GameEngine
             StaticVariables.g_cameraLookAtY = StaticVariables.g_entityFollowedByCamera.PosY >> 16;
             StaticVariables.g_cameraLookAtZ = StaticVariables.g_entityFollowedByCamera.PosZ >> 16;
         }
-    }
-
-    //80031b50
-    public void MovePlayer()
-    {
-        PlayerManager.MovePlayer();
     }
 
     // 8003a774

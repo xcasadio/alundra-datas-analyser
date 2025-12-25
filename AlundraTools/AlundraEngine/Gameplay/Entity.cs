@@ -36,7 +36,7 @@ public class Entity
     public uint TargetDirection;
     public uint CurrentAnimationId;
     public uint CurrentDirection;
-    public int CurrentFrameIndex;
+    public int AnimationDirection;
     public AnimationSet? AnimSet;
     public SiFrame? FirstFrame;
     public SiFrame? Frame;
@@ -120,6 +120,10 @@ public class Entity
     public int ItemState;//27C
     public short[] AIValues = new short[10];//280
 
+    //used for animation
+
+    public int AnimationFrameIndex;
+
     public bool IsMapSprite => EntityRecord != null && (EntityRecord.SpriteDirection & 0x80) != 0;
 
     //for debugging
@@ -168,7 +172,7 @@ public class Entity
         TargetDirection = other.TargetDirection;
         CurrentAnimationId = other.CurrentAnimationId;
         CurrentDirection = other.CurrentDirection;
-        CurrentFrameIndex = other.CurrentFrameIndex;
+        AnimationDirection = other.AnimationDirection;
         AnimSet = other.AnimSet;
         FirstFrame = other.FirstFrame;
         Frame = other.Frame;
@@ -318,7 +322,7 @@ public class Entity
         TargetDirection = 0;
         CurrentAnimationId = 0;
         CurrentDirection = 0;
-        CurrentFrameIndex = 0;
+        AnimationDirection = 0;
         AnimSet = null;
         FirstFrame = null;
         Frame = null;

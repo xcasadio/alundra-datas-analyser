@@ -6,7 +6,6 @@ using AlundraEngine.Gameplay;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
 using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices;
 using System.Text;
 using Timer = System.Windows.Forms.Timer;
@@ -81,7 +80,8 @@ public partial class FrmGame : Form
         [nameof(Entity.CurrentDirection)] = "Display",
         [nameof(Entity.TargetDirection)] = "Display",
         [nameof(Entity.LastTargetDirection)] = "Display",
-        [nameof(Entity.CurrentFrameIndex)] = "Display",
+        [nameof(Entity.AnimationDirection)] = "Display",
+        [nameof(Entity.AnimationFrameIndex)] = "Display",
         [nameof(Entity.AnimSet)] = "Display",
         [nameof(Entity.Frame)] = "Display",
         [nameof(Entity.FirstFrame)] = "Display",

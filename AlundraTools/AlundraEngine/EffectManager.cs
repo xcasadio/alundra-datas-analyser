@@ -222,7 +222,7 @@ public class EffectManager
                     effect.SpriteRef.Images = effect.Frame.Images.Images;
                     effect.SpriteRef.NumberOfImages = effect.Frame.Images.NumberOfImages;
                     //effect.SpriteRef.DepthSortValue = effect.Frame.Images.DepthSortValue;
-                    effect._24 = effect.Frame.Images.ImageSetId;
+                    effect._24 = effect.Frame.Images.NumberOfImages;
                 }
                 else
                 {

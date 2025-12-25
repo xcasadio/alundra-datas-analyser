@@ -1758,16 +1758,16 @@ public class EntityEventHandlers
     {
         Debugger.Break();
         //check CommandSizeByCode !!!!
-        int v1 = variables[_gameEngine.StaticVariables.PlayerEntity.CurrentFrameIndex * 2 + 1];
-        int v2 = variables[_gameEngine.StaticVariables.PlayerEntity.CurrentFrameIndex * 2 + 2];
+        int v1 = variables[_gameEngine.StaticVariables.PlayerEntity.AnimationDirection * 2 + 1];
+        int v2 = variables[_gameEngine.StaticVariables.PlayerEntity.AnimationDirection * 2 + 2];
         return ((v1 + v2 * 0x100) * 0x10000) >> 0x10;
     }
 
     // 8003EE5C
     private int Script_88_058(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        int v1 = variables[logicEntity.CurrentFrameIndex * 2 + 1];
-        int v2 = variables[logicEntity.CurrentFrameIndex * 2 + 2];
+        int v1 = variables[logicEntity.AnimationDirection * 2 + 1];
+        int v2 = variables[logicEntity.AnimationDirection * 2 + 2];
         return ((v1 + v2 * 0x100) * 0x10000) >> 0x10;
     }
 
@@ -3917,7 +3917,7 @@ public class EntityEventHandlers
             if ((_gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].Flags & 0x800000U) != 0)
             {
                 var targetEntity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0];
-                var image = targetEntity.Frame.Images.Images[targetEntity.CurrentFrameIndex];
+                var image = targetEntity.Frame.Images.Images[targetEntity.AnimationDirection];
                 var bitmap = _gameEngine.AlundraMap.GenerateSpriteBitmap(image, _gameEngine.AlundraMap.SpriteInfo.Palettes[image.Palette & 0x1f]);
 
                 _gameEngine.MainInventoryManager.StartHudTransition(
