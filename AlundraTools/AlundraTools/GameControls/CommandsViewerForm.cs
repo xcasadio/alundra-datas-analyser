@@ -81,7 +81,7 @@ namespace AlundraTools.GameControls
                 parentNode.ForeColor = Color.Blue;
             }
 
-            if (index == _selectedCommandIndex)
+            if (commandBase.Offset == _selectedCommandIndex)
             {
                 treeView1.SelectedNode = parentNode;
                 parentNode.BackColor = Color.LightGreen;

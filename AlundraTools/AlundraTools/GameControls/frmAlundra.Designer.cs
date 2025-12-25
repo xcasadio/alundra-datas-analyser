@@ -547,6 +547,7 @@ namespace AlundraTools.GameControls
             // 
             lsvEntities.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             lsvEntities.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2, columnHeader3, columnHeader22, columnHeader4, columnHeader5, columnHeader6, columnHeader7, columnHeader8, columnHeader9, columnHeader10, columnHeader11, columnHeader12 });
+            lsvEntities.FullRowSelect = true;
             lsvEntities.Location = new Point(4, 21);
             lsvEntities.Margin = new Padding(4, 3, 4, 3);
             lsvEntities.MultiSelect = false;
@@ -556,6 +557,7 @@ namespace AlundraTools.GameControls
             lsvEntities.UseCompatibleStateImageBehavior = false;
             lsvEntities.View = View.Details;
             lsvEntities.SelectedIndexChanged += lsvEntities_SelectedIndexChanged;
+            lsvEntities.MouseDoubleClick += lsvEntities_MouseDoubleClick;
             // 
             // columnHeader1
             // 
@@ -765,6 +767,7 @@ namespace AlundraTools.GameControls
             // 
             lsvSector4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             lsvSector4.Columns.AddRange(new ColumnHeader[] { columnHeader13, columnHeader14, columnHeader15, columnHeader16, columnHeader17, columnHeader18, columnHeader19, columnHeader20, columnHeader21 });
+            lsvSector4.FullRowSelect = true;
             lsvSector4.Location = new Point(4, 216);
             lsvSector4.Margin = new Padding(4, 3, 4, 3);
             lsvSector4.MultiSelect = false;
@@ -774,6 +777,7 @@ namespace AlundraTools.GameControls
             lsvSector4.UseCompatibleStateImageBehavior = false;
             lsvSector4.View = View.Details;
             lsvSector4.SelectedIndexChanged += lsvSector4_SelectedIndexChanged;
+            lsvSector4.MouseDoubleClick += lsvSector4_MouseDoubleClick;
             // 
             // columnHeader13
             // 
@@ -803,7 +807,7 @@ namespace AlundraTools.GameControls
             // columnHeader18
             // 
             columnHeader18.Text = "map evt index";
-            columnHeader18.Width = 36;
+            columnHeader18.Width = 100;
             // 
             // columnHeader19
             // 

@@ -1,4 +1,5 @@
-﻿using static AlundraEngine.Gameplay.Scripts.EntityEventHandlers;
+﻿using static AlundraEngine.DatasBin.SpriteInfoEventCodes;
+using static AlundraEngine.Gameplay.Scripts.EntityEventHandlers;
 namespace AlundraEngine.DatasBin;
 
 public class SpriteInfoEventCodes
@@ -148,26 +149,33 @@ public class SpriteInfoEventCodes
 
         while (i < bytes.Length && (commandsSize == 0 || i < commandsSize))
         {
+            var offset = i;
             var value = bytes[i++];
-            var sicode = GetCode(value);
+            var siCode = GetCode(value);
 
-            if (sicode.Size < 1)
+            if (siCode.Size < 1)
             {
                 continue;
             }
 
-            var size = sicode.Size;
-            var name = sicode.Name;
-            var parameters = new byte[size - 1];
-            var j = 0;
-            var offset = i;
+            var size = siCode.Size;
+            var name = siCode.Name; 
+            byte[] parameters = null;
 
-            while (j < size - 1)
+            if (siCode.Code == 0) //break
             {
-                parameters[j++] = bytes[i++];
+                parameters = Array.Empty<byte>();
             }
+            else
+            {
+                parameters = new byte[size - 1];
+                var j = 0;
 
-            var address = _memoryAddress + eventCodesOffset + i - size;
+                while (j < size - 1)
+                {
+                    parameters[j++] = Codes[i++];
+                }
+            }
             var cmd = new SiCommand(value, parameters, name, offset);
             commands.Add(cmd);
 
@@ -187,9 +195,10 @@ public class SpriteInfoEventCodes
 
         while (i < Codes.Length)
         {
+            var offset = i;
             var value = Codes[i++];
             var siCode = GetCode(value);
-
+            
             if (siCode.Size < 1)
             {
                 continue;
@@ -197,13 +206,21 @@ public class SpriteInfoEventCodes
 
             var size = siCode.Size;
             var name = siCode.Name;
-            var parameters = new byte[size - 1];
-            var j = 0;
-            var offset = i;
+            byte[] parameters = null;
 
-            while (j < size - 1)
+            if (siCode.Code == 0) //break
             {
-                parameters[j++] = Codes[i++];
+                parameters = Array.Empty<byte>();
+            }
+            else
+            {
+                parameters = new byte[size - 1];
+                var j = 0;
+
+                while (j < size - 1)
+                {
+                    parameters[j++] = Codes[i++];
+                }
             }
 
             var cmd = new SiCommand(value, parameters, name, offset);
@@ -215,7 +232,7 @@ public class SpriteInfoEventCodes
 
     public static readonly Dictionary<byte, int> CommandSizeByCode = new()
     {
-        { 0x00, 0 }, //nothing
+        { 0x00, 1 }, //break
         { 0x01, 0 }, //debug
         { 0x02, 3 },
         { 0x03, 3 },

@@ -8,8 +8,6 @@ using AlundraEngine.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Forms;
-using static System.Windows.Forms.LinkLabel;
 using Timer = System.Windows.Forms.Timer;
 
 namespace AlundraTools.GameControls;

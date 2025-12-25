@@ -540,8 +540,8 @@ public class GameEngine
             StaticVariables.g_cameraTargetX,
             StaticVariables.g_cameraTargetY,
             StaticVariables.g_cameraTargetZ,
-            (uint)StaticVariables.g_resetAnimationId,
-            (uint)StaticVariables.g_resetDirectionId,
+            StaticVariables.g_resetAnimationId,
+            StaticVariables.g_resetDirectionId,
             0xb, 0x60);
 
         StaticVariables.PlayerEntity.Status = 2;
@@ -664,7 +664,7 @@ public class GameEngine
             (entityRecord.YPos * tileHalfHeight + tileHalfHeight) * 0x10000,
             entityRecord.Height << 0x13,
             0,
-            (uint)StaticVariables.g_cardinalDirectionTable[directionIndex],
+            StaticVariables.g_cardinalDirectionTable[directionIndex],
             paletteIndex,
             sheetSize);
 
@@ -826,7 +826,7 @@ public class GameEngine
             }
         }
 
-        entity.ContentsItemId = (uint)ChooseRandomlyAnItem((ushort)entity.SpriteRecord.Header.Contents);
+        entity.ContentsItemId = (uint)ChooseRandomlyAnItem(entity.SpriteRecord.Header.Contents);
     }
 
     //80032968
@@ -1299,7 +1299,7 @@ public class GameEngine
                 StaticVariables.g_gameRandomSeed = (uint)(uVar3 * 0x7d2b89dd + 0xe06a02e7);
                 uVar1 = StaticVariables.g_gameRandomSeed;
                 iVar4 += 1;
-                StaticVariables.g_warpEffectBuffer[iVar5 + 4] = (short)(0x40 - (short)((ulong)uVar3 * 0x81 >> 0x20));
+                StaticVariables.g_warpEffectBuffer[iVar5 + 4] = (short)(0x40 - (short)(uVar3 * 0x81 >> 0x20));
                 StaticVariables.g_warpEffectBuffer[iVar5 + 6] = (short)(-0x10 - (short)(uVar1 * 0x41 >> 0x20));
                 iVar5 += 8;
             } while (iVar4 < 0x14);
@@ -2209,7 +2209,7 @@ public class GameEngine
                 goto LAB_8003d110;
 
             case 2:
-                result = (uint)StaticVariables.g_cardinalDirectionTable[encodedDir & 3];
+                result = StaticVariables.g_cardinalDirectionTable[encodedDir & 3];
                 break;
 
             case 3:
@@ -2222,7 +2222,7 @@ public class GameEngine
             case 4:
                 StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
                 var rand = (int)((ulong)(StaticVariables.g_gameRandomSeed * 4) >> 0x20);
-                result = (uint)StaticVariables.g_cardinalDirectionTable[rand];
+                result = StaticVariables.g_cardinalDirectionTable[rand];
                 break;
 
             case 5:
