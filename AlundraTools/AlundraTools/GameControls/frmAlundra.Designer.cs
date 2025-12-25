@@ -69,14 +69,7 @@ namespace AlundraTools.GameControls
             columnHeader10 = new ColumnHeader();
             columnHeader11 = new ColumnHeader();
             columnHeader12 = new ColumnHeader();
-            label2 = new Label();
-            label12 = new Label();
-            label17 = new Label();
-            label21 = new Label();
-            label25 = new Label();
-            label29 = new Label();
             label8 = new Label();
-            label15 = new Label();
             label23 = new Label();
             label27 = new Label();
             label31 = new Label();
@@ -139,13 +132,6 @@ namespace AlundraTools.GameControls
             label43 = new Label();
             lblFrameData = new Label();
             lblImageData = new Label();
-            lblEntityInfo = new Label();
-            btnSector1cCmds = new Button();
-            btnSector1bCmds = new Button();
-            btnSector1aCmds = new Button();
-            btnSector1dCmds = new Button();
-            btnSector1eCmds = new Button();
-            btnSector1fCmds = new Button();
             lblSector5Info = new Label();
             lblSelAnim = new Label();
             lblAnimSetAddr = new Label();
@@ -208,22 +194,22 @@ namespace AlundraTools.GameControls
             columnHeaderSpriteMapEntryOffsetY = new ColumnHeader();
             columnHeaderSpriteMapEntryOffsetZ = new ColumnHeader();
             tabPage3 = new TabPage();
+            tabPage2 = new TabPage();
             label80 = new Label();
             listBoxCodesGlobal = new ListBox();
             label79 = new Label();
             listBoxCodesF = new ListBox();
             label78 = new Label();
             listBoxCodesE = new ListBox();
+            label73 = new Label();
             label77 = new Label();
+            label71 = new Label();
             listBoxCodesD = new ListBox();
+            listBoxCodesB = new ListBox();
             label76 = new Label();
+            listBoxCodesA = new ListBox();
             listBoxCodesC = new ListBox();
             label75 = new Label();
-            listBoxCodesB = new ListBox();
-            label73 = new Label();
-            label71 = new Label();
-            listBoxCodesA = new ListBox();
-            tabPage2 = new TabPage();
             tabPage4 = new TabPage();
             lstStringTable = new ListBox();
             label19 = new Label();
@@ -623,66 +609,6 @@ namespace AlundraTools.GameControls
             columnHeader12.Text = "interact evt index";
             columnHeader12.Width = 94;
             // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(62, 438);
-            label2.Margin = new Padding(4, 0, 4, 0);
-            label2.Name = "label2";
-            label2.Size = new Size(49, 15);
-            label2.TabIndex = 74;
-            label2.Text = "load evt";
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Location = new Point(62, 465);
-            label12.Margin = new Padding(4, 0, 4, 0);
-            label12.Name = "label12";
-            label12.Size = new Size(50, 15);
-            label12.TabIndex = 77;
-            label12.Text = "map evt";
-            // 
-            // label17
-            // 
-            label17.AutoSize = true;
-            label17.Location = new Point(62, 493);
-            label17.Margin = new Padding(4, 0, 4, 0);
-            label17.Name = "label17";
-            label17.Size = new Size(57, 15);
-            label17.TabIndex = 79;
-            label17.Text = "frame evt";
-            // 
-            // label21
-            // 
-            label21.AutoSize = true;
-            label21.Location = new Point(62, 520);
-            label21.Margin = new Padding(4, 0, 4, 0);
-            label21.Name = "label21";
-            label21.Size = new Size(57, 15);
-            label21.TabIndex = 81;
-            label21.Text = "touch evt";
-            // 
-            // label25
-            // 
-            label25.AutoSize = true;
-            label25.Location = new Point(62, 578);
-            label25.Margin = new Padding(4, 0, 4, 0);
-            label25.Name = "label25";
-            label25.Size = new Size(66, 15);
-            label25.TabIndex = 85;
-            label25.Text = "interact evt";
-            // 
-            // label29
-            // 
-            label29.AutoSize = true;
-            label29.Location = new Point(62, 549);
-            label29.Margin = new Padding(4, 0, 4, 0);
-            label29.Name = "label29";
-            label29.Size = new Size(80, 15);
-            label29.TabIndex = 83;
-            label29.Text = "deactivate evt";
-            // 
             // label8
             // 
             label8.AutoSize = true;
@@ -692,16 +618,6 @@ namespace AlundraTools.GameControls
             label8.Size = new Size(45, 15);
             label8.TabIndex = 87;
             label8.Text = "entities";
-            // 
-            // label15
-            // 
-            label15.AutoSize = true;
-            label15.Location = new Point(4, 412);
-            label15.Margin = new Padding(4, 0, 4, 0);
-            label15.Name = "label15";
-            label15.Size = new Size(136, 15);
-            label15.TabIndex = 88;
-            label15.Text = "selected event programs";
             // 
             // label23
             // 
@@ -756,7 +672,7 @@ namespace AlundraTools.GameControls
             // label34
             // 
             label34.AutoSize = true;
-            label34.Location = new Point(7, 197);
+            label34.Location = new Point(7, 163);
             label34.Margin = new Padding(4, 0, 4, 0);
             label34.Name = "label34";
             label34.Size = new Size(68, 15);
@@ -768,7 +684,7 @@ namespace AlundraTools.GameControls
             lsvSector4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             lsvSector4.Columns.AddRange(new ColumnHeader[] { columnHeader13, columnHeader14, columnHeader15, columnHeader16, columnHeader17, columnHeader18, columnHeader19, columnHeader20, columnHeader21 });
             lsvSector4.FullRowSelect = true;
-            lsvSector4.Location = new Point(4, 216);
+            lsvSector4.Location = new Point(4, 182);
             lsvSector4.Margin = new Padding(4, 3, 4, 3);
             lsvSector4.MultiSelect = false;
             lsvSector4.Name = "lsvSector4";
@@ -1306,80 +1222,6 @@ namespace AlundraTools.GameControls
             lblImageData.Size = new Size(13, 15);
             lblImageData.TabIndex = 139;
             lblImageData.Text = "0";
-            // 
-            // lblEntityInfo
-            // 
-            lblEntityInfo.AutoSize = true;
-            lblEntityInfo.Location = new Point(71, 163);
-            lblEntityInfo.Margin = new Padding(4, 0, 4, 0);
-            lblEntityInfo.Name = "lblEntityInfo";
-            lblEntityInfo.Size = new Size(13, 15);
-            lblEntityInfo.TabIndex = 140;
-            lblEntityInfo.Text = "0";
-            // 
-            // btnSector1cCmds
-            // 
-            btnSector1cCmds.Location = new Point(7, 490);
-            btnSector1cCmds.Margin = new Padding(4, 3, 4, 3);
-            btnSector1cCmds.Name = "btnSector1cCmds";
-            btnSector1cCmds.Size = new Size(47, 22);
-            btnSector1cCmds.TabIndex = 141;
-            btnSector1cCmds.Text = "view";
-            btnSector1cCmds.UseVisualStyleBackColor = true;
-            btnSector1cCmds.Click += btnSector1cCmds_Click;
-            // 
-            // btnSector1bCmds
-            // 
-            btnSector1bCmds.Location = new Point(7, 462);
-            btnSector1bCmds.Margin = new Padding(4, 3, 4, 3);
-            btnSector1bCmds.Name = "btnSector1bCmds";
-            btnSector1bCmds.Size = new Size(47, 22);
-            btnSector1bCmds.TabIndex = 142;
-            btnSector1bCmds.Text = "view";
-            btnSector1bCmds.UseVisualStyleBackColor = true;
-            btnSector1bCmds.Click += btnSector1bCmds_Click;
-            // 
-            // btnSector1aCmds
-            // 
-            btnSector1aCmds.Location = new Point(7, 434);
-            btnSector1aCmds.Margin = new Padding(4, 3, 4, 3);
-            btnSector1aCmds.Name = "btnSector1aCmds";
-            btnSector1aCmds.Size = new Size(47, 22);
-            btnSector1aCmds.TabIndex = 143;
-            btnSector1aCmds.Text = "view";
-            btnSector1aCmds.UseVisualStyleBackColor = true;
-            btnSector1aCmds.Click += btnSector1aCmds_Click;
-            // 
-            // btnSector1dCmds
-            // 
-            btnSector1dCmds.Location = new Point(7, 518);
-            btnSector1dCmds.Margin = new Padding(4, 3, 4, 3);
-            btnSector1dCmds.Name = "btnSector1dCmds";
-            btnSector1dCmds.Size = new Size(47, 22);
-            btnSector1dCmds.TabIndex = 145;
-            btnSector1dCmds.Text = "view";
-            btnSector1dCmds.UseVisualStyleBackColor = true;
-            // 
-            // btnSector1eCmds
-            // 
-            btnSector1eCmds.Location = new Point(7, 546);
-            btnSector1eCmds.Margin = new Padding(4, 3, 4, 3);
-            btnSector1eCmds.Name = "btnSector1eCmds";
-            btnSector1eCmds.Size = new Size(47, 22);
-            btnSector1eCmds.TabIndex = 144;
-            btnSector1eCmds.Text = "view";
-            btnSector1eCmds.UseVisualStyleBackColor = true;
-            // 
-            // btnSector1fCmds
-            // 
-            btnSector1fCmds.Location = new Point(7, 574);
-            btnSector1fCmds.Margin = new Padding(4, 3, 4, 3);
-            btnSector1fCmds.Name = "btnSector1fCmds";
-            btnSector1fCmds.Size = new Size(47, 22);
-            btnSector1fCmds.TabIndex = 147;
-            btnSector1fCmds.Text = "view";
-            btnSector1fCmds.UseVisualStyleBackColor = true;
-            btnSector1fCmds.Click += btnSector1fCmds_Click;
             // 
             // lblSector5Info
             // 
@@ -1981,21 +1823,6 @@ namespace AlundraTools.GameControls
             // 
             // tabPage3
             // 
-            tabPage3.Controls.Add(label80);
-            tabPage3.Controls.Add(listBoxCodesGlobal);
-            tabPage3.Controls.Add(label79);
-            tabPage3.Controls.Add(listBoxCodesF);
-            tabPage3.Controls.Add(label78);
-            tabPage3.Controls.Add(listBoxCodesE);
-            tabPage3.Controls.Add(label77);
-            tabPage3.Controls.Add(listBoxCodesD);
-            tabPage3.Controls.Add(label76);
-            tabPage3.Controls.Add(listBoxCodesC);
-            tabPage3.Controls.Add(label75);
-            tabPage3.Controls.Add(listBoxCodesB);
-            tabPage3.Controls.Add(label73);
-            tabPage3.Controls.Add(label71);
-            tabPage3.Controls.Add(listBoxCodesA);
             tabPage3.Controls.Add(label35);
             tabPage3.Controls.Add(lstSector5);
             tabPage3.Controls.Add(lbl_flags);
@@ -2078,10 +1905,39 @@ namespace AlundraTools.GameControls
             tabPage3.Text = "SpriteRecords";
             tabPage3.UseVisualStyleBackColor = true;
             // 
+            // tabPage2
+            // 
+            tabPage2.Controls.Add(label80);
+            tabPage2.Controls.Add(label8);
+            tabPage2.Controls.Add(listBoxCodesGlobal);
+            tabPage2.Controls.Add(lsvEntities);
+            tabPage2.Controls.Add(label79);
+            tabPage2.Controls.Add(listBoxCodesF);
+            tabPage2.Controls.Add(lsvSector4);
+            tabPage2.Controls.Add(label78);
+            tabPage2.Controls.Add(label34);
+            tabPage2.Controls.Add(listBoxCodesE);
+            tabPage2.Controls.Add(label73);
+            tabPage2.Controls.Add(label77);
+            tabPage2.Controls.Add(label71);
+            tabPage2.Controls.Add(listBoxCodesD);
+            tabPage2.Controls.Add(listBoxCodesB);
+            tabPage2.Controls.Add(label76);
+            tabPage2.Controls.Add(listBoxCodesA);
+            tabPage2.Controls.Add(listBoxCodesC);
+            tabPage2.Controls.Add(label75);
+            tabPage2.Location = new Point(4, 24);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(852, 786);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Entities";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
             // label80
             // 
             label80.AutoSize = true;
-            label80.Location = new Point(700, 436);
+            label80.Location = new Point(703, 349);
             label80.Margin = new Padding(4, 0, 4, 0);
             label80.Name = "label80";
             label80.Size = new Size(41, 15);
@@ -2092,7 +1948,7 @@ namespace AlundraTools.GameControls
             // 
             listBoxCodesGlobal.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listBoxCodesGlobal.FormattingEnabled = true;
-            listBoxCodesGlobal.Location = new Point(700, 454);
+            listBoxCodesGlobal.Location = new Point(703, 367);
             listBoxCodesGlobal.Name = "listBoxCodesGlobal";
             listBoxCodesGlobal.Size = new Size(110, 214);
             listBoxCodesGlobal.TabIndex = 197;
@@ -2100,7 +1956,7 @@ namespace AlundraTools.GameControls
             // label79
             // 
             label79.AutoSize = true;
-            label79.Location = new Point(584, 436);
+            label79.Location = new Point(587, 349);
             label79.Margin = new Padding(4, 0, 4, 0);
             label79.Name = "label79";
             label79.Size = new Size(56, 15);
@@ -2111,7 +1967,7 @@ namespace AlundraTools.GameControls
             // 
             listBoxCodesF.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listBoxCodesF.FormattingEnabled = true;
-            listBoxCodesF.Location = new Point(584, 454);
+            listBoxCodesF.Location = new Point(587, 367);
             listBoxCodesF.Name = "listBoxCodesF";
             listBoxCodesF.Size = new Size(110, 214);
             listBoxCodesF.TabIndex = 195;
@@ -2120,7 +1976,7 @@ namespace AlundraTools.GameControls
             // label78
             // 
             label78.AutoSize = true;
-            label78.Location = new Point(468, 436);
+            label78.Location = new Point(471, 349);
             label78.Margin = new Padding(4, 0, 4, 0);
             label78.Name = "label78";
             label78.Size = new Size(71, 15);
@@ -2131,47 +1987,87 @@ namespace AlundraTools.GameControls
             // 
             listBoxCodesE.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listBoxCodesE.FormattingEnabled = true;
-            listBoxCodesE.Location = new Point(468, 454);
+            listBoxCodesE.Location = new Point(471, 367);
             listBoxCodesE.Name = "listBoxCodesE";
             listBoxCodesE.Size = new Size(110, 214);
             listBoxCodesE.TabIndex = 193;
             listBoxCodesE.DoubleClick += listBoxCodesE_DoubleClick;
             // 
+            // label73
+            // 
+            label73.AutoSize = true;
+            label73.Location = new Point(7, 324);
+            label73.Margin = new Padding(4, 0, 4, 0);
+            label73.Name = "label73";
+            label73.Size = new Size(43, 15);
+            label73.TabIndex = 186;
+            label73.Text = "Codes:";
+            // 
             // label77
             // 
             label77.AutoSize = true;
-            label77.Location = new Point(352, 436);
+            label77.Location = new Point(355, 349);
             label77.Margin = new Padding(4, 0, 4, 0);
             label77.Name = "label77";
             label77.Size = new Size(51, 15);
             label77.TabIndex = 192;
             label77.Text = "D Touch";
             // 
+            // label71
+            // 
+            label71.AutoSize = true;
+            label71.Location = new Point(7, 349);
+            label71.Margin = new Padding(4, 0, 4, 0);
+            label71.Name = "label71";
+            label71.Size = new Size(44, 15);
+            label71.TabIndex = 185;
+            label71.Text = "A Load";
+            // 
             // listBoxCodesD
             // 
             listBoxCodesD.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listBoxCodesD.FormattingEnabled = true;
-            listBoxCodesD.Location = new Point(352, 454);
+            listBoxCodesD.Location = new Point(355, 367);
             listBoxCodesD.Name = "listBoxCodesD";
             listBoxCodesD.Size = new Size(110, 214);
             listBoxCodesD.TabIndex = 191;
             listBoxCodesD.DoubleClick += listBoxCodesD_DoubleClick;
             // 
+            // listBoxCodesB
+            // 
+            listBoxCodesB.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            listBoxCodesB.FormattingEnabled = true;
+            listBoxCodesB.Location = new Point(123, 367);
+            listBoxCodesB.Name = "listBoxCodesB";
+            listBoxCodesB.Size = new Size(110, 214);
+            listBoxCodesB.TabIndex = 187;
+            listBoxCodesB.DoubleClick += listBoxCodesB_DoubleClick;
+            // 
             // label76
             // 
             label76.AutoSize = true;
-            label76.Location = new Point(236, 436);
+            label76.Location = new Point(239, 349);
             label76.Margin = new Padding(4, 0, 4, 0);
             label76.Name = "label76";
             label76.Size = new Size(40, 15);
             label76.TabIndex = 190;
             label76.Text = "C Tick";
             // 
+            // listBoxCodesA
+            // 
+            listBoxCodesA.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            listBoxCodesA.FormattingEnabled = true;
+            listBoxCodesA.Location = new Point(7, 367);
+            listBoxCodesA.Name = "listBoxCodesA";
+            listBoxCodesA.Size = new Size(110, 214);
+            listBoxCodesA.TabIndex = 184;
+            listBoxCodesA.DoubleClick += listBoxCodesA_DoubleClick;
+            // 
             // listBoxCodesC
             // 
             listBoxCodesC.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listBoxCodesC.FormattingEnabled = true;
-            listBoxCodesC.Location = new Point(236, 454);
+            listBoxCodesC.Location = new Point(239, 367);
             listBoxCodesC.Name = "listBoxCodesC";
             listBoxCodesC.Size = new Size(110, 214);
             listBoxCodesC.TabIndex = 189;
@@ -2180,80 +2076,12 @@ namespace AlundraTools.GameControls
             // label75
             // 
             label75.AutoSize = true;
-            label75.Location = new Point(120, 436);
+            label75.Location = new Point(123, 349);
             label75.Margin = new Padding(4, 0, 4, 0);
             label75.Name = "label75";
             label75.Size = new Size(41, 15);
             label75.TabIndex = 188;
             label75.Text = "B Map";
-            // 
-            // listBoxCodesB
-            // 
-            listBoxCodesB.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            listBoxCodesB.FormattingEnabled = true;
-            listBoxCodesB.Location = new Point(120, 454);
-            listBoxCodesB.Name = "listBoxCodesB";
-            listBoxCodesB.Size = new Size(110, 214);
-            listBoxCodesB.TabIndex = 187;
-            listBoxCodesB.DoubleClick += listBoxCodesB_DoubleClick;
-            // 
-            // label73
-            // 
-            label73.AutoSize = true;
-            label73.Location = new Point(4, 411);
-            label73.Margin = new Padding(4, 0, 4, 0);
-            label73.Name = "label73";
-            label73.Size = new Size(43, 15);
-            label73.TabIndex = 186;
-            label73.Text = "Codes:";
-            // 
-            // label71
-            // 
-            label71.AutoSize = true;
-            label71.Location = new Point(4, 436);
-            label71.Margin = new Padding(4, 0, 4, 0);
-            label71.Name = "label71";
-            label71.Size = new Size(44, 15);
-            label71.TabIndex = 185;
-            label71.Text = "A Load";
-            // 
-            // listBoxCodesA
-            // 
-            listBoxCodesA.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            listBoxCodesA.FormattingEnabled = true;
-            listBoxCodesA.Location = new Point(4, 454);
-            listBoxCodesA.Name = "listBoxCodesA";
-            listBoxCodesA.Size = new Size(110, 214);
-            listBoxCodesA.TabIndex = 184;
-            listBoxCodesA.DoubleClick += listBoxCodesA_DoubleClick;
-            // 
-            // tabPage2
-            // 
-            tabPage2.Controls.Add(label8);
-            tabPage2.Controls.Add(lsvEntities);
-            tabPage2.Controls.Add(lblEntityInfo);
-            tabPage2.Controls.Add(label15);
-            tabPage2.Controls.Add(label2);
-            tabPage2.Controls.Add(label12);
-            tabPage2.Controls.Add(label17);
-            tabPage2.Controls.Add(label21);
-            tabPage2.Controls.Add(label29);
-            tabPage2.Controls.Add(label25);
-            tabPage2.Controls.Add(btnSector1cCmds);
-            tabPage2.Controls.Add(btnSector1bCmds);
-            tabPage2.Controls.Add(btnSector1aCmds);
-            tabPage2.Controls.Add(btnSector1eCmds);
-            tabPage2.Controls.Add(btnSector1dCmds);
-            tabPage2.Controls.Add(btnSector1fCmds);
-            tabPage2.Controls.Add(lsvSector4);
-            tabPage2.Controls.Add(label34);
-            tabPage2.Location = new Point(4, 24);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(852, 786);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "Entities";
-            tabPage2.UseVisualStyleBackColor = true;
             // 
             // tabPage4
             // 
@@ -2274,7 +2102,7 @@ namespace AlundraTools.GameControls
             lstStringTable.Location = new Point(4, 27);
             lstStringTable.Margin = new Padding(4, 3, 4, 3);
             lstStringTable.Name = "lstStringTable";
-            lstStringTable.Size = new Size(834, 619);
+            lstStringTable.Size = new Size(844, 754);
             lstStringTable.TabIndex = 90;
             // 
             // label19
@@ -2788,14 +2616,7 @@ namespace AlundraTools.GameControls
         private System.Windows.Forms.ColumnHeader columnHeader10;
         private System.Windows.Forms.ColumnHeader columnHeader11;
         private System.Windows.Forms.ColumnHeader columnHeader12;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.Label label25;
-        private System.Windows.Forms.Label label29;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.Label label27;
         private System.Windows.Forms.Label label31;
@@ -2858,13 +2679,6 @@ namespace AlundraTools.GameControls
         private System.Windows.Forms.Label label43;
         private System.Windows.Forms.Label lblFrameData;
         private System.Windows.Forms.Label lblImageData;
-        private System.Windows.Forms.Label lblEntityInfo;
-        private System.Windows.Forms.Button btnSector1cCmds;
-        private System.Windows.Forms.Button btnSector1bCmds;
-        private System.Windows.Forms.Button btnSector1aCmds;
-        private System.Windows.Forms.Button btnSector1dCmds;
-        private System.Windows.Forms.Button btnSector1eCmds;
-        private System.Windows.Forms.Button btnSector1fCmds;
         private System.Windows.Forms.Label lblSector5Info;
         private System.Windows.Forms.Label lblSelAnim;
         private System.Windows.Forms.Label lblAnimSetAddr;

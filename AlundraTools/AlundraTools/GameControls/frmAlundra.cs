@@ -865,17 +865,10 @@ namespace AlundraTools.GameControls
 
         private void lsvEntities_SelectedIndexChanged(object sender, EventArgs e)
         {
-            lblEntityInfo.Text = "0";
             if (_selectedGameMap != null && lsvEntities.SelectedIndices.Count == 1)
             {
                 _selectedMapEvent = null;
                 _selectedEntity = _selectedGameMap.SpriteInfo.Entities.Entities[lsvEntities.SelectedIndices[0]];
-                lblEntityInfo.Text = "si addr:" +
-                                     GameMap.EventObjectAddr(lsvEntities.SelectedIndices[0]).ToString("x6") +
-                                     " entity addr:" + _selectedEntity.MemoryAddress.ToString("x6") + " u123: " +
-                                     ByteToString(_selectedEntity.XMax) + ByteToString(_selectedEntity.YMax) +
-                                     ByteToString(_selectedEntity.IsEnabled) + " u789ab:" +
-                                     lsvEntities.Items[lsvEntities.SelectedIndices[0]].ToolTipText;
             }
             else
             {
