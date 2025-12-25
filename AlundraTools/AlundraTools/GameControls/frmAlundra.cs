@@ -852,7 +852,6 @@ namespace AlundraTools.GameControls
             return b.ToString("x2");
         }
 
-
         private string ShortToString(ushort s)
         {
             return s.ToString("x4");

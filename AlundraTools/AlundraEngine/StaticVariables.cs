@@ -26,6 +26,7 @@ public class StaticVariables
     public bool DisplayEntityId { get; set; }
     public bool DisplayEffectId { get; set; }
     public bool DisplayTileXY { get; set; }
+    public float Speed { get; set; } = 1.0f;
 
     //debug
     public uint FrameNumber;

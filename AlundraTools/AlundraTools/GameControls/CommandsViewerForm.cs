@@ -9,7 +9,7 @@ namespace AlundraTools.GameControls
         private GameMap? _alundraGameMap;
         private GameMap? _currentGameMap;
         private byte[]? _codes;
-        private int _selectedCommandIndex;
+        private int _selectedOffset;
 
         public CommandsViewerForm()
         {
@@ -17,9 +17,9 @@ namespace AlundraTools.GameControls
         }
 
         public void Init(List<SiCommand> commands, GameMap? alundraGameMap, GameMap? currentGameMap, 
-            int selectedCommandIndex, byte[] codes = null)
+            int selectedOffset, byte[] codes = null)
         {
-            _selectedCommandIndex = selectedCommandIndex;
+            _selectedOffset = selectedOffset;
             _codes = codes;
             _commands = commands;
             _alundraGameMap = alundraGameMap;
@@ -28,16 +28,26 @@ namespace AlundraTools.GameControls
 
         private void CommandsViewerForm_Load(object sender, EventArgs e)
         {
-            treeView1.SuspendLayout();
+            FillTreeView(treeView1, _commands, _selectedOffset);
+
+            if (_codes != null)
+            {
+                textBoxRawCodes.Text = string.Join(' ', _codes.Select(b => b.ToString("X2")));
+            }
+        }
+
+        public static void FillTreeView(TreeView treeView, List<SiCommand> commands, int selectedOffset)
+        {
+            treeView.SuspendLayout();
 
             try
             {
-                var commandBases = CommandsBuilder.Convert(_commands);
+                var commandBases = CommandsBuilder.Convert(commands);
                 int index = 0;
 
                 foreach (var commandBase in commandBases)
                 {
-                    CreateTreeViewNode(ref index, commandBase);
+                    CreateTreeViewNode(ref index, commandBase, selectedOffset, treeView);
                     index++;
                 }
             }
@@ -47,23 +57,18 @@ namespace AlundraTools.GameControls
                 throw;
             }
             
-            treeView1.ExpandAll();
-            treeView1.ResumeLayout();
+            treeView.ExpandAll();
+            treeView.ResumeLayout();
 
-            if (treeView1.SelectedNode != null)
+            if (treeView.SelectedNode != null)
             {
-                treeView1.SelectedNode.EnsureVisible();
-            }
-
-            if (_codes != null)
-            {
-                textBoxRawCodes.Text = string.Join(' ', _codes.Select(b => b.ToString("X2")));
+                treeView.SelectedNode.EnsureVisible();
             }
         }
 
-        private void CreateTreeViewNode(ref int index, CommandBase commandBase, TreeNode? parentNode = null)
+        public static void CreateTreeViewNode(ref int index, CommandBase commandBase, int selectedOffset, TreeView treeView, TreeNode? parentNode = null)
         {
-            TreeNodeCollection nodes = parentNode == null ? treeView1.Nodes : parentNode.Nodes;
+            TreeNodeCollection nodes = parentNode == null ? treeView.Nodes : parentNode.Nodes;
             parentNode = nodes.Add(index.ToString(), $"{commandBase.Offset:D4} - {commandBase.PrintName()}");//index:D2
             parentNode.ToolTipText = commandBase.Description();
             parentNode.Tag = commandBase;
@@ -81,9 +86,9 @@ namespace AlundraTools.GameControls
                 parentNode.ForeColor = Color.Blue;
             }
 
-            if (commandBase.Offset == _selectedCommandIndex)
+            if (commandBase.Offset == selectedOffset)
             {
-                treeView1.SelectedNode = parentNode;
+                treeView.SelectedNode = parentNode;
                 parentNode.BackColor = Color.LightGreen;
             }
 
@@ -95,7 +100,7 @@ namespace AlundraTools.GameControls
             foreach (var child in container.Children)
             {
                 index++;
-                CreateTreeViewNode(ref index, child, parentNode);
+                CreateTreeViewNode(ref index, child, selectedOffset, treeView, parentNode);
             }
         }
 

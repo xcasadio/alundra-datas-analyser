@@ -6,6 +6,7 @@ using AlundraEngine.Gameplay;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices;
 using System.Text;
 using Timer = System.Windows.Forms.Timer;
@@ -374,12 +375,12 @@ public partial class FrmGame : Form
         InitializeUI();
 
         _gameEngineTimer = new Timer();
-        _gameEngineTimer.Interval = 30; // 33
+        _gameEngineTimer.Interval = 20;
         _gameEngineTimer.Tick += GameEngineTimerTick;
         _gameEngineTimer.Start();
 
         _refreshUiTimer = new Timer();
-        _refreshUiTimer.Interval = 33 * 3;
+        _refreshUiTimer.Interval = 20 * 3;
         _refreshUiTimer.Tick += RefreshUI;
         _refreshUiTimer.Start();
 
@@ -409,7 +410,7 @@ public partial class FrmGame : Form
     {
         pctOut.Invalidate();
 
-        var frameTimeInMs = 20; //PAL=20ms NTSC-J=16.68ms
+        var frameTimeInMs = (int)(20f * (1f / _gameEngine.StaticVariables.Speed)); //PAL=20ms NTSC-J=16.68ms
 
         if (_lastFrameTime == 0)
         {
@@ -559,11 +560,6 @@ public partial class FrmGame : Form
     private void RefreshHudControls()
     {
         labelHudActivate.Text = _gameEngine.StaticVariables.g_dialog_flags.ToString();
-        //textBoxHudPoly.Text = _gameEngine.StaticVariables.g_backgroundMessageAnimation + Environment.NewLine +
-        //                      _gameEngine.StaticVariables.g_textToDisplay2 + Environment.NewLine +
-        //                      _gameEngine.StaticVariables.g_textToDisplay3 + Environment.NewLine +
-        //                      string.Join(Environment.NewLine, _gameEngine.StaticVariables.TextToDisplay_ARRAY_8017f920.Select(x => x.ToString()));
-
         //var sprt = _gameEngine.StaticVariables.g_cursorTextSprites[0];
         //labelHudDebug.Text += $"{sprt}";
 
@@ -1416,7 +1412,7 @@ public partial class FrmGame : Form
     private void SetZoomLevel(int zoomScale)
     {
         SuspendLayout();
-        
+
         var screenGameWidth = StaticVariables.ScreenWidth * zoomScale;
         var screenGameHeight = StaticVariables.ScreenHeight * zoomScale;
 
@@ -1510,6 +1506,86 @@ public partial class FrmGame : Form
     private void buttonClearLog_Click(object sender, EventArgs e)
     {
         _gameEngine.LogManager.Clear();
+    }
+
+    private void radioButtonSpeed0_25_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.Speed = 0.25f;
+    }
+
+    private void radioButtonSpeed0_5_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.Speed = 0.5f;
+    }
+
+    private void radioButtonSpeed0_75_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.Speed = 0.75f;
+    }
+
+    private void radioButtonSpeed1_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.Speed = 1.0f;
+    }
+
+    private void radioButtonSpeed1_5_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.Speed = 1.5f;
+    }
+
+    private void radioButtonSpeed2_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.Speed = 2.0f;
+    }
+
+    private void buttonRefreshScript_Click(object sender, EventArgs e)
+    {
+        treeViewScript.Nodes.Clear();
+        var codes = _gameEngine.CurrentMap?.SpriteInfo.EventCodes.Codes;
+
+        if (codes == null || codes.Length == 0)
+        {
+            return;
+        }
+        var commands = new List<SiCommand>();
+        var i = 0;
+        var selectedCommandIndex = 0;
+
+        while (i < codes.Length)
+        {
+            var offset = i;
+            var value = codes[i++];
+            var siCode = SpriteInfoEventCodes.GetCode(value);
+
+            if (siCode.Size < 1)
+            {
+                continue;
+            }
+
+            var size = siCode.Size;
+            var name = siCode.Name;
+            byte[] parameters = null;
+
+            if (siCode.Code == 0) //break
+            {
+                parameters = Array.Empty<byte>();
+            }
+            else
+            {
+                parameters = new byte[size - 1];
+                var j = 0;
+
+                while (j < size - 1)
+                {
+                    parameters[j++] = codes[i++];
+                }
+            }
+
+            var cmd = new SiCommand(value, parameters, name, offset);
+            commands.Add(cmd);
+        }
+
+        CommandsViewerForm.FillTreeView(treeViewScript, commands, -1);
     }
 }
 

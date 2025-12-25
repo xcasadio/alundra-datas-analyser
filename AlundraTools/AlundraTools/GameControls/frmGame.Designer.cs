@@ -101,7 +101,6 @@ namespace AlundraTools.GameControls
             buttonAllItems = new Button();
             label53 = new Label();
             numericUpDownKeys = new NumericUpDown();
-            buttonControlAlundra = new Button();
             buttonAddHugeHp = new Button();
             buttonRestoreHpAndMp = new Button();
             buttonRestoreHp = new Button();
@@ -135,6 +134,7 @@ namespace AlundraTools.GameControls
             groupBoxFlags = new GroupBox();
             panelFlags = new Panel();
             label54 = new Label();
+            buttonControlAlundra = new Button();
             groupBox7 = new GroupBox();
             labelCallback12 = new Label();
             labelCallback11 = new Label();
@@ -172,8 +172,6 @@ namespace AlundraTools.GameControls
             comboBoxRandomItem = new ComboBox();
             tabPageHud = new TabPage();
             groupBoxHud = new GroupBox();
-            textBoxHudPoly = new TextBox();
-            label39 = new Label();
             label36 = new Label();
             labelHudDebug = new Label();
             label34 = new Label();
@@ -206,6 +204,13 @@ namespace AlundraTools.GameControls
             label38 = new Label();
             labelTextFlag = new Label();
             tabPage1 = new TabPage();
+            groupBox9 = new GroupBox();
+            radioButtonSpeed2 = new RadioButton();
+            radioButtonSpeed1_5 = new RadioButton();
+            radioButtonSpeed1 = new RadioButton();
+            radioButtonSpeed0_75 = new RadioButton();
+            radioButtonSpeed0_5 = new RadioButton();
+            radioButtonSpeed0_25 = new RadioButton();
             groupBox8 = new GroupBox();
             buttonZoomx1 = new Button();
             buttonZoomX8 = new Button();
@@ -220,6 +225,9 @@ namespace AlundraTools.GameControls
             label58 = new Label();
             comboBoxLogCategories = new ComboBox();
             checkBoxAddLogInVS = new CheckBox();
+            tabPage3 = new TabPage();
+            treeViewScript = new TreeView();
+            buttonRefreshScript = new Button();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -247,8 +255,10 @@ namespace AlundraTools.GameControls
             groupBoxHud.SuspendLayout();
             groupBox5.SuspendLayout();
             tabPage1.SuspendLayout();
+            groupBox9.SuspendLayout();
             groupBox8.SuspendLayout();
             tabPage2.SuspendLayout();
+            tabPage3.SuspendLayout();
             SuspendLayout();
             // 
             // pctOut
@@ -873,6 +883,7 @@ namespace AlundraTools.GameControls
             tabControl1.Controls.Add(tabPageHud);
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
+            tabControl1.Controls.Add(tabPage3);
             tabControl1.Location = new Point(1281, 0);
             tabControl1.Margin = new Padding(3, 2, 3, 2);
             tabControl1.MinimumSize = new Size(511, 0);
@@ -964,7 +975,6 @@ namespace AlundraTools.GameControls
             tabPagePlayerStatus.Controls.Add(buttonAllItems);
             tabPagePlayerStatus.Controls.Add(label53);
             tabPagePlayerStatus.Controls.Add(numericUpDownKeys);
-            tabPagePlayerStatus.Controls.Add(buttonControlAlundra);
             tabPagePlayerStatus.Controls.Add(buttonAddHugeHp);
             tabPagePlayerStatus.Controls.Add(buttonRestoreHpAndMp);
             tabPagePlayerStatus.Controls.Add(buttonRestoreHp);
@@ -1009,7 +1019,7 @@ namespace AlundraTools.GameControls
             buttonAllItems.Name = "buttonAllItems";
             buttonAllItems.Size = new Size(193, 22);
             buttonAllItems.TabIndex = 66;
-            buttonAllItems.Text = "All items";
+            buttonAllItems.Text = "All items BUG !!";
             buttonAllItems.UseVisualStyleBackColor = true;
             buttonAllItems.Click += buttonAllItems_Click;
             // 
@@ -1030,17 +1040,6 @@ namespace AlundraTools.GameControls
             numericUpDownKeys.Size = new Size(131, 23);
             numericUpDownKeys.TabIndex = 65;
             numericUpDownKeys.ValueChanged += numericUpDownKeys_ValueChanged;
-            // 
-            // buttonControlAlundra
-            // 
-            buttonControlAlundra.Location = new Point(6, 312);
-            buttonControlAlundra.Margin = new Padding(3, 2, 3, 2);
-            buttonControlAlundra.Name = "buttonControlAlundra";
-            buttonControlAlundra.Size = new Size(194, 22);
-            buttonControlAlundra.TabIndex = 63;
-            buttonControlAlundra.Text = "Control alundra";
-            buttonControlAlundra.UseVisualStyleBackColor = true;
-            buttonControlAlundra.Click += buttonControlAlundra_Click;
             // 
             // buttonAddHugeHp
             // 
@@ -1326,6 +1325,7 @@ namespace AlundraTools.GameControls
             tabPageDebug.Controls.Add(buttonAlundraCabine);
             tabPageDebug.Controls.Add(groupBoxFlags);
             tabPageDebug.Controls.Add(label54);
+            tabPageDebug.Controls.Add(buttonControlAlundra);
             tabPageDebug.Controls.Add(groupBox7);
             tabPageDebug.Controls.Add(groupBox6);
             tabPageDebug.Controls.Add(label8);
@@ -1384,6 +1384,17 @@ namespace AlundraTools.GameControls
             label54.Size = new Size(122, 15);
             label54.TabIndex = 65;
             label54.Text = "Display only flags != 0";
+            // 
+            // buttonControlAlundra
+            // 
+            buttonControlAlundra.Location = new Point(247, 699);
+            buttonControlAlundra.Margin = new Padding(3, 2, 3, 2);
+            buttonControlAlundra.Name = "buttonControlAlundra";
+            buttonControlAlundra.Size = new Size(142, 22);
+            buttonControlAlundra.TabIndex = 63;
+            buttonControlAlundra.Text = "Control alundra";
+            buttonControlAlundra.UseVisualStyleBackColor = true;
+            buttonControlAlundra.Click += buttonControlAlundra_Click;
             // 
             // groupBox7
             // 
@@ -1758,8 +1769,6 @@ namespace AlundraTools.GameControls
             // groupBoxHud
             // 
             groupBoxHud.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            groupBoxHud.Controls.Add(textBoxHudPoly);
-            groupBoxHud.Controls.Add(label39);
             groupBoxHud.Controls.Add(label11);
             groupBoxHud.Controls.Add(label36);
             groupBoxHud.Controls.Add(labelHudDebug);
@@ -1772,32 +1781,10 @@ namespace AlundraTools.GameControls
             groupBoxHud.Margin = new Padding(3, 2, 3, 2);
             groupBoxHud.Name = "groupBoxHud";
             groupBoxHud.Padding = new Padding(3, 2, 3, 2);
-            groupBoxHud.Size = new Size(494, 267);
+            groupBoxHud.Size = new Size(494, 95);
             groupBoxHud.TabIndex = 52;
             groupBoxHud.TabStop = false;
             groupBoxHud.Text = "HUD";
-            // 
-            // textBoxHudPoly
-            // 
-            textBoxHudPoly.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            textBoxHudPoly.BorderStyle = BorderStyle.FixedSingle;
-            textBoxHudPoly.Location = new Point(97, 77);
-            textBoxHudPoly.Margin = new Padding(3, 2, 3, 2);
-            textBoxHudPoly.Multiline = true;
-            textBoxHudPoly.Name = "textBoxHudPoly";
-            textBoxHudPoly.ReadOnly = true;
-            textBoxHudPoly.Size = new Size(385, 138);
-            textBoxHudPoly.TabIndex = 63;
-            textBoxHudPoly.Text = "\r\n";
-            // 
-            // label39
-            // 
-            label39.AutoSize = true;
-            label39.Location = new Point(6, 77);
-            label39.Name = "label39";
-            label39.Size = new Size(33, 15);
-            label39.TabIndex = 66;
-            label39.Text = "poly:";
             // 
             // label36
             // 
@@ -1874,7 +1861,7 @@ namespace AlundraTools.GameControls
             // labelHudDebug2
             // 
             labelHudDebug2.AutoSize = true;
-            labelHudDebug2.Location = new Point(101, 242);
+            labelHudDebug2.Location = new Point(97, 233);
             labelHudDebug2.Name = "labelHudDebug2";
             labelHudDebug2.Size = new Size(13, 15);
             labelHudDebug2.TabIndex = 66;
@@ -1883,7 +1870,7 @@ namespace AlundraTools.GameControls
             // label57
             // 
             label57.AutoSize = true;
-            label57.Location = new Point(10, 242);
+            label57.Location = new Point(6, 233);
             label57.Name = "label57";
             label57.Size = new Size(64, 15);
             label57.TabIndex = 65;
@@ -1892,7 +1879,7 @@ namespace AlundraTools.GameControls
             // labelHudDebug1
             // 
             labelHudDebug1.AutoSize = true;
-            labelHudDebug1.Location = new Point(101, 227);
+            labelHudDebug1.Location = new Point(97, 218);
             labelHudDebug1.Name = "labelHudDebug1";
             labelHudDebug1.Size = new Size(13, 15);
             labelHudDebug1.TabIndex = 64;
@@ -1901,7 +1888,7 @@ namespace AlundraTools.GameControls
             // label55
             // 
             label55.AutoSize = true;
-            label55.Location = new Point(10, 227);
+            label55.Location = new Point(6, 218);
             label55.Name = "label55";
             label55.Size = new Size(64, 15);
             label55.TabIndex = 63;
@@ -2048,7 +2035,7 @@ namespace AlundraTools.GameControls
             textBoxFullText.Name = "textBoxFullText";
             textBoxFullText.ReadOnly = true;
             textBoxFullText.ScrollBars = ScrollBars.Vertical;
-            textBoxFullText.Size = new Size(309, 79);
+            textBoxFullText.Size = new Size(309, 148);
             textBoxFullText.TabIndex = 49;
             textBoxFullText.Text = "\r\n";
             // 
@@ -2117,6 +2104,7 @@ namespace AlundraTools.GameControls
             // 
             // tabPage1
             // 
+            tabPage1.Controls.Add(groupBox9);
             tabPage1.Controls.Add(groupBox8);
             tabPage1.Controls.Add(groupBox4);
             tabPage1.Location = new Point(4, 24);
@@ -2126,6 +2114,89 @@ namespace AlundraTools.GameControls
             tabPage1.TabIndex = 5;
             tabPage1.Text = "Display";
             tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // groupBox9
+            // 
+            groupBox9.Controls.Add(radioButtonSpeed2);
+            groupBox9.Controls.Add(radioButtonSpeed1_5);
+            groupBox9.Controls.Add(radioButtonSpeed1);
+            groupBox9.Controls.Add(radioButtonSpeed0_75);
+            groupBox9.Controls.Add(radioButtonSpeed0_5);
+            groupBox9.Controls.Add(radioButtonSpeed0_25);
+            groupBox9.Location = new Point(181, 72);
+            groupBox9.Name = "groupBox9";
+            groupBox9.Size = new Size(315, 48);
+            groupBox9.TabIndex = 34;
+            groupBox9.TabStop = false;
+            groupBox9.Text = "Speed";
+            // 
+            // radioButtonSpeed2
+            // 
+            radioButtonSpeed2.AutoSize = true;
+            radioButtonSpeed2.Location = new Point(245, 20);
+            radioButtonSpeed2.Name = "radioButtonSpeed2";
+            radioButtonSpeed2.Size = new Size(31, 19);
+            radioButtonSpeed2.TabIndex = 5;
+            radioButtonSpeed2.Text = "2";
+            radioButtonSpeed2.UseVisualStyleBackColor = true;
+            radioButtonSpeed2.CheckedChanged += radioButtonSpeed2_CheckedChanged;
+            // 
+            // radioButtonSpeed1_5
+            // 
+            radioButtonSpeed1_5.AutoSize = true;
+            radioButtonSpeed1_5.Location = new Point(199, 20);
+            radioButtonSpeed1_5.Name = "radioButtonSpeed1_5";
+            radioButtonSpeed1_5.Size = new Size(40, 19);
+            radioButtonSpeed1_5.TabIndex = 4;
+            radioButtonSpeed1_5.Text = "1.5";
+            radioButtonSpeed1_5.UseVisualStyleBackColor = true;
+            radioButtonSpeed1_5.CheckedChanged += radioButtonSpeed1_5_CheckedChanged;
+            // 
+            // radioButtonSpeed1
+            // 
+            radioButtonSpeed1.AutoSize = true;
+            radioButtonSpeed1.Checked = true;
+            radioButtonSpeed1.Location = new Point(162, 20);
+            radioButtonSpeed1.Name = "radioButtonSpeed1";
+            radioButtonSpeed1.Size = new Size(31, 19);
+            radioButtonSpeed1.TabIndex = 3;
+            radioButtonSpeed1.TabStop = true;
+            radioButtonSpeed1.Text = "1";
+            radioButtonSpeed1.UseVisualStyleBackColor = true;
+            radioButtonSpeed1.CheckedChanged += radioButtonSpeed1_CheckedChanged;
+            // 
+            // radioButtonSpeed0_75
+            // 
+            radioButtonSpeed0_75.AutoSize = true;
+            radioButtonSpeed0_75.Location = new Point(110, 20);
+            radioButtonSpeed0_75.Name = "radioButtonSpeed0_75";
+            radioButtonSpeed0_75.Size = new Size(46, 19);
+            radioButtonSpeed0_75.TabIndex = 2;
+            radioButtonSpeed0_75.Text = "0.75";
+            radioButtonSpeed0_75.UseVisualStyleBackColor = true;
+            radioButtonSpeed0_75.CheckedChanged += radioButtonSpeed0_75_CheckedChanged;
+            // 
+            // radioButtonSpeed0_5
+            // 
+            radioButtonSpeed0_5.AutoSize = true;
+            radioButtonSpeed0_5.Location = new Point(58, 20);
+            radioButtonSpeed0_5.Name = "radioButtonSpeed0_5";
+            radioButtonSpeed0_5.Size = new Size(40, 19);
+            radioButtonSpeed0_5.TabIndex = 1;
+            radioButtonSpeed0_5.Text = "0.5";
+            radioButtonSpeed0_5.UseVisualStyleBackColor = true;
+            radioButtonSpeed0_5.CheckedChanged += radioButtonSpeed0_5_CheckedChanged;
+            // 
+            // radioButtonSpeed0_25
+            // 
+            radioButtonSpeed0_25.AutoSize = true;
+            radioButtonSpeed0_25.Location = new Point(6, 20);
+            radioButtonSpeed0_25.Name = "radioButtonSpeed0_25";
+            radioButtonSpeed0_25.Size = new Size(46, 19);
+            radioButtonSpeed0_25.TabIndex = 0;
+            radioButtonSpeed0_25.Text = "0.25";
+            radioButtonSpeed0_25.UseVisualStyleBackColor = true;
+            radioButtonSpeed0_25.CheckedChanged += radioButtonSpeed0_25_CheckedChanged;
             // 
             // groupBox8
             // 
@@ -2277,6 +2348,36 @@ namespace AlundraTools.GameControls
             checkBoxAddLogInVS.UseVisualStyleBackColor = true;
             checkBoxAddLogInVS.CheckedChanged += checkBoxAddLogInVS_CheckedChanged;
             // 
+            // tabPage3
+            // 
+            tabPage3.Controls.Add(buttonRefreshScript);
+            tabPage3.Controls.Add(treeViewScript);
+            tabPage3.Location = new Point(4, 24);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Padding = new Padding(3);
+            tabPage3.Size = new Size(503, 739);
+            tabPage3.TabIndex = 7;
+            tabPage3.Text = "Script";
+            tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // treeViewScript
+            // 
+            treeViewScript.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            treeViewScript.Location = new Point(6, 35);
+            treeViewScript.Name = "treeViewScript";
+            treeViewScript.Size = new Size(490, 698);
+            treeViewScript.TabIndex = 0;
+            // 
+            // buttonRefreshScript
+            // 
+            buttonRefreshScript.Location = new Point(6, 6);
+            buttonRefreshScript.Name = "buttonRefreshScript";
+            buttonRefreshScript.Size = new Size(75, 23);
+            buttonRefreshScript.TabIndex = 1;
+            buttonRefreshScript.Text = "Refresh";
+            buttonRefreshScript.UseVisualStyleBackColor = true;
+            buttonRefreshScript.Click += buttonRefreshScript_Click;
+            // 
             // FrmGame
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -2333,9 +2434,12 @@ namespace AlundraTools.GameControls
             groupBox5.ResumeLayout(false);
             groupBox5.PerformLayout();
             tabPage1.ResumeLayout(false);
+            groupBox9.ResumeLayout(false);
+            groupBox9.PerformLayout();
             groupBox8.ResumeLayout(false);
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
+            tabPage3.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -2473,8 +2577,6 @@ namespace AlundraTools.GameControls
         private Label labelHudActivate;
         private Label label36;
         private Label labelHudDebug;
-        private TextBox textBoxHudPoly;
-        private Label label39;
         private GroupBox groupBox6;
         private Label label42;
         private Label label40;
@@ -2534,5 +2636,15 @@ namespace AlundraTools.GameControls
         private Button buttonCopyAllLogs;
         private Button buttonClearLog;
         private Button buttonZoomx1;
+        private GroupBox groupBox9;
+        private RadioButton radioButtonSpeed2;
+        private RadioButton radioButtonSpeed1_5;
+        private RadioButton radioButtonSpeed1;
+        private RadioButton radioButtonSpeed0_75;
+        private RadioButton radioButtonSpeed0_5;
+        private RadioButton radioButtonSpeed0_25;
+        private TabPage tabPage3;
+        private TreeView treeViewScript;
+        private Button buttonRefreshScript;
     }
 }
