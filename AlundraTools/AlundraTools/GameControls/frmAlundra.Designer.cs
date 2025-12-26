@@ -87,7 +87,6 @@ namespace AlundraTools.GameControls
             columnHeader20 = new ColumnHeader();
             columnHeader21 = new ColumnHeader();
             label35 = new Label();
-            lstSector5 = new ListBox();
             label36 = new Label();
             lstSector5Animations = new ListBox();
             pctAnim = new PictureBox();
@@ -128,44 +127,12 @@ namespace AlundraTools.GameControls
             rdoDown = new RadioButton();
             lblAnimProps = new Label();
             chkTileXy = new CheckBox();
-            lblsector5mem = new Label();
-            label43 = new Label();
             lblFrameData = new Label();
             lblImageData = new Label();
-            lblSector5Info = new Label();
             lblSelAnim = new Label();
-            lblAnimSetAddr = new Label();
             lblFrameAddr = new Label();
             lblImgAddr = new Label();
             pctPortrait = new PictureBox();
-            label41 = new Label();
-            lbl_eload = new Label();
-            lbl_etick = new Label();
-            label49 = new Label();
-            lbl_edeactivate = new Label();
-            label53 = new Label();
-            lbl_etouch = new Label();
-            label57 = new Label();
-            lbl_einteract = new Label();
-            label61 = new Label();
-            lbl_offsetx = new Label();
-            label47 = new Label();
-            lbl_offsety = new Label();
-            lbl_offsetz = new Label();
-            lbl_height = new Label();
-            lbl_depth = new Label();
-            lbl_width = new Label();
-            label64 = new Label();
-            lbl_contents = new Label();
-            label66 = new Label();
-            lbl_breakeffect = new Label();
-            label68 = new Label();
-            lbl_flags = new Label();
-            label70 = new Label();
-            lbl_canpickup = new Label();
-            label72 = new Label();
-            lbl_moreflags = new Label();
-            label74 = new Label();
             tabControl1 = new TabControl();
             tabPage9 = new TabPage();
             button7 = new Button();
@@ -194,6 +161,30 @@ namespace AlundraTools.GameControls
             columnHeaderSpriteMapEntryOffsetY = new ColumnHeader();
             columnHeaderSpriteMapEntryOffsetZ = new ColumnHeader();
             tabPage3 = new TabPage();
+            label2 = new Label();
+            listViewSpriteRecord = new ListView();
+            columnHeader27 = new ColumnHeader();
+            columnHeader28 = new ColumnHeader();
+            columnHeader29 = new ColumnHeader();
+            columnHeader30 = new ColumnHeader();
+            columnHeader31 = new ColumnHeader();
+            columnHeader32 = new ColumnHeader();
+            columnHeader33 = new ColumnHeader();
+            columnHeader34 = new ColumnHeader();
+            columnHeader35 = new ColumnHeader();
+            columnHeader36 = new ColumnHeader();
+            columnHeader37 = new ColumnHeader();
+            columnHeader38 = new ColumnHeader();
+            columnHeader39 = new ColumnHeader();
+            columnHeader40 = new ColumnHeader();
+            columnHeader41 = new ColumnHeader();
+            columnHeader42 = new ColumnHeader();
+            columnHeader43 = new ColumnHeader();
+            columnHeader44 = new ColumnHeader();
+            listViewSpriteEffectRecord = new ListView();
+            columnHeader23 = new ColumnHeader();
+            columnHeader24 = new ColumnHeader();
+            columnHeader25 = new ColumnHeader();
             tabPage2 = new TabPage();
             label80 = new Label();
             listBoxCodesGlobal = new ListBox();
@@ -291,7 +282,7 @@ namespace AlundraTools.GameControls
             lstMapPalettes.Location = new Point(7, 22);
             lstMapPalettes.Margin = new Padding(4, 3, 4, 3);
             lstMapPalettes.Name = "lstMapPalettes";
-            lstMapPalettes.Size = new Size(82, 139);
+            lstMapPalettes.Size = new Size(82, 154);
             lstMapPalettes.TabIndex = 1;
             lstMapPalettes.SelectedIndexChanged += lstMapPalettes_SelectedIndexChanged;
             // 
@@ -300,7 +291,7 @@ namespace AlundraTools.GameControls
             pctMapPalettes.Location = new Point(97, 22);
             pctMapPalettes.Margin = new Padding(4, 3, 4, 3);
             pctMapPalettes.Name = "pctMapPalettes";
-            pctMapPalettes.Size = new Size(107, 140);
+            pctMapPalettes.Size = new Size(107, 154);
             pctMapPalettes.TabIndex = 2;
             pctMapPalettes.TabStop = false;
             pctMapPalettes.Paint += pctMapPalettes_Paint;
@@ -312,7 +303,7 @@ namespace AlundraTools.GameControls
             lstSpritePalettes.Location = new Point(211, 22);
             lstSpritePalettes.Margin = new Padding(4, 3, 4, 3);
             lstSpritePalettes.Name = "lstSpritePalettes";
-            lstSpritePalettes.Size = new Size(82, 139);
+            lstSpritePalettes.Size = new Size(82, 154);
             lstSpritePalettes.TabIndex = 16;
             lstSpritePalettes.SelectedIndexChanged += lstSpritePalettes_SelectedIndexChanged;
             // 
@@ -321,7 +312,7 @@ namespace AlundraTools.GameControls
             pctSpritePalettes.Location = new Point(301, 22);
             pctSpritePalettes.Margin = new Padding(4, 3, 4, 3);
             pctSpritePalettes.Name = "pctSpritePalettes";
-            pctSpritePalettes.Size = new Size(107, 140);
+            pctSpritePalettes.Size = new Size(107, 154);
             pctSpritePalettes.TabIndex = 17;
             pctSpritePalettes.TabStop = false;
             pctSpritePalettes.Paint += pctSpritePalettes_Paint;
@@ -538,7 +529,7 @@ namespace AlundraTools.GameControls
             lsvEntities.Margin = new Padding(4, 3, 4, 3);
             lsvEntities.MultiSelect = false;
             lsvEntities.Name = "lsvEntities";
-            lsvEntities.Size = new Size(840, 139);
+            lsvEntities.Size = new Size(849, 139);
             lsvEntities.TabIndex = 73;
             lsvEntities.UseCompatibleStateImageBehavior = false;
             lsvEntities.View = View.Details;
@@ -688,7 +679,7 @@ namespace AlundraTools.GameControls
             lsvSector4.Margin = new Padding(4, 3, 4, 3);
             lsvSector4.MultiSelect = false;
             lsvSector4.Name = "lsvSector4";
-            lsvSector4.Size = new Size(840, 139);
+            lsvSector4.Size = new Size(849, 139);
             lsvSector4.TabIndex = 95;
             lsvSector4.UseCompatibleStateImageBehavior = false;
             lsvSector4.View = View.Details;
@@ -743,28 +734,17 @@ namespace AlundraTools.GameControls
             // label35
             // 
             label35.AutoSize = true;
-            label35.Location = new Point(172, 17);
+            label35.Location = new Point(4, 3);
             label35.Margin = new Padding(4, 0, 4, 0);
             label35.Name = "label35";
-            label35.Size = new Size(41, 15);
+            label35.Size = new Size(78, 15);
             label35.TabIndex = 98;
-            label35.Text = "sprites";
-            // 
-            // lstSector5
-            // 
-            lstSector5.FormattingEnabled = true;
-            lstSector5.HorizontalScrollbar = true;
-            lstSector5.Location = new Point(176, 32);
-            lstSector5.Margin = new Padding(4, 3, 4, 3);
-            lstSector5.Name = "lstSector5";
-            lstSector5.Size = new Size(111, 64);
-            lstSector5.TabIndex = 97;
-            lstSector5.SelectedIndexChanged += lstSector5_SelectedIndexChanged;
+            label35.Text = "sprite records";
             // 
             // label36
             // 
             label36.AutoSize = true;
-            label36.Location = new Point(172, 133);
+            label36.Location = new Point(4, 307);
             label36.Margin = new Padding(4, 0, 4, 0);
             label36.Name = "label36";
             label36.Size = new Size(66, 15);
@@ -775,7 +755,7 @@ namespace AlundraTools.GameControls
             // 
             lstSector5Animations.FormattingEnabled = true;
             lstSector5Animations.HorizontalScrollbar = true;
-            lstSector5Animations.Location = new Point(175, 152);
+            lstSector5Animations.Location = new Point(7, 326);
             lstSector5Animations.Margin = new Padding(4, 3, 4, 3);
             lstSector5Animations.Name = "lstSector5Animations";
             lstSector5Animations.Size = new Size(112, 124);
@@ -784,10 +764,10 @@ namespace AlundraTools.GameControls
             // 
             // pctAnim
             // 
-            pctAnim.Location = new Point(295, 283);
+            pctAnim.Location = new Point(84, 457);
             pctAnim.Margin = new Padding(4, 3, 4, 3);
             pctAnim.Name = "pctAnim";
-            pctAnim.Size = new Size(150, 98);
+            pctAnim.Size = new Size(150, 116);
             pctAnim.TabIndex = 101;
             pctAnim.TabStop = false;
             pctAnim.Paint += pctAnim_Paint;
@@ -795,7 +775,7 @@ namespace AlundraTools.GameControls
             // lbly2
             // 
             lbly2.AutoSize = true;
-            lbly2.Location = new Point(716, 51);
+            lbly2.Location = new Point(743, 367);
             lbly2.Margin = new Padding(4, 0, 4, 0);
             lbly2.Name = "lbly2";
             lbly2.Size = new Size(13, 15);
@@ -805,7 +785,7 @@ namespace AlundraTools.GameControls
             // label38
             // 
             label38.AutoSize = true;
-            label38.Location = new Point(697, 51);
+            label38.Location = new Point(724, 367);
             label38.Margin = new Padding(4, 0, 4, 0);
             label38.Name = "label38";
             label38.Size = new Size(19, 15);
@@ -815,7 +795,7 @@ namespace AlundraTools.GameControls
             // lblx2
             // 
             lblx2.AutoSize = true;
-            lblx2.Location = new Point(671, 51);
+            lblx2.Location = new Point(698, 367);
             lblx2.Margin = new Padding(4, 0, 4, 0);
             lblx2.Name = "lblx2";
             lblx2.Size = new Size(13, 15);
@@ -825,7 +805,7 @@ namespace AlundraTools.GameControls
             // label40
             // 
             label40.AutoSize = true;
-            label40.Location = new Point(654, 51);
+            label40.Location = new Point(681, 367);
             label40.Margin = new Padding(4, 0, 4, 0);
             label40.Name = "label40";
             label40.Size = new Size(18, 15);
@@ -835,7 +815,7 @@ namespace AlundraTools.GameControls
             // lbly1
             // 
             lbly1.AutoSize = true;
-            lbly1.Location = new Point(633, 51);
+            lbly1.Location = new Point(643, 367);
             lbly1.Margin = new Padding(4, 0, 4, 0);
             lbly1.Name = "lbly1";
             lbly1.Size = new Size(13, 15);
@@ -845,7 +825,7 @@ namespace AlundraTools.GameControls
             // label42
             // 
             label42.AutoSize = true;
-            label42.Location = new Point(614, 51);
+            label42.Location = new Point(624, 367);
             label42.Margin = new Padding(4, 0, 4, 0);
             label42.Name = "label42";
             label42.Size = new Size(19, 15);
@@ -855,7 +835,7 @@ namespace AlundraTools.GameControls
             // lblx1
             // 
             lblx1.AutoSize = true;
-            lblx1.Location = new Point(589, 51);
+            lblx1.Location = new Point(599, 367);
             lblx1.Margin = new Padding(4, 0, 4, 0);
             lblx1.Name = "lblx1";
             lblx1.Size = new Size(13, 15);
@@ -865,7 +845,7 @@ namespace AlundraTools.GameControls
             // label44
             // 
             label44.AutoSize = true;
-            label44.Location = new Point(571, 51);
+            label44.Location = new Point(581, 367);
             label44.Margin = new Padding(4, 0, 4, 0);
             label44.Name = "label44";
             label44.Size = new Size(18, 15);
@@ -875,7 +855,7 @@ namespace AlundraTools.GameControls
             // lbly4
             // 
             lbly4.AutoSize = true;
-            lbly4.Location = new Point(716, 81);
+            lbly4.Location = new Point(743, 410);
             lbly4.Margin = new Padding(4, 0, 4, 0);
             lbly4.Name = "lbly4";
             lbly4.Size = new Size(13, 15);
@@ -885,7 +865,7 @@ namespace AlundraTools.GameControls
             // label46
             // 
             label46.AutoSize = true;
-            label46.Location = new Point(697, 81);
+            label46.Location = new Point(724, 410);
             label46.Margin = new Padding(4, 0, 4, 0);
             label46.Name = "label46";
             label46.Size = new Size(19, 15);
@@ -895,7 +875,7 @@ namespace AlundraTools.GameControls
             // lblx4
             // 
             lblx4.AutoSize = true;
-            lblx4.Location = new Point(671, 81);
+            lblx4.Location = new Point(698, 410);
             lblx4.Margin = new Padding(4, 0, 4, 0);
             lblx4.Name = "lblx4";
             lblx4.Size = new Size(13, 15);
@@ -905,7 +885,7 @@ namespace AlundraTools.GameControls
             // label48
             // 
             label48.AutoSize = true;
-            label48.Location = new Point(654, 81);
+            label48.Location = new Point(681, 410);
             label48.Margin = new Padding(4, 0, 4, 0);
             label48.Name = "label48";
             label48.Size = new Size(18, 15);
@@ -915,7 +895,7 @@ namespace AlundraTools.GameControls
             // lbly3
             // 
             lbly3.AutoSize = true;
-            lbly3.Location = new Point(633, 81);
+            lbly3.Location = new Point(643, 410);
             lbly3.Margin = new Padding(4, 0, 4, 0);
             lbly3.Name = "lbly3";
             lbly3.Size = new Size(13, 15);
@@ -925,7 +905,7 @@ namespace AlundraTools.GameControls
             // label50
             // 
             label50.AutoSize = true;
-            label50.Location = new Point(614, 81);
+            label50.Location = new Point(624, 410);
             label50.Margin = new Padding(4, 0, 4, 0);
             label50.Name = "label50";
             label50.Size = new Size(19, 15);
@@ -935,7 +915,7 @@ namespace AlundraTools.GameControls
             // lblx3
             // 
             lblx3.AutoSize = true;
-            lblx3.Location = new Point(589, 81);
+            lblx3.Location = new Point(599, 410);
             lblx3.Margin = new Padding(4, 0, 4, 0);
             lblx3.Name = "lblx3";
             lblx3.Size = new Size(13, 15);
@@ -945,7 +925,7 @@ namespace AlundraTools.GameControls
             // label52
             // 
             label52.AutoSize = true;
-            label52.Location = new Point(571, 81);
+            label52.Location = new Point(581, 410);
             label52.Margin = new Padding(4, 0, 4, 0);
             label52.Name = "label52";
             label52.Size = new Size(18, 15);
@@ -955,7 +935,7 @@ namespace AlundraTools.GameControls
             // lblsheight
             // 
             lblsheight.AutoSize = true;
-            lblsheight.Location = new Point(660, 36);
+            lblsheight.Location = new Point(681, 341);
             lblsheight.Margin = new Padding(4, 0, 4, 0);
             lblsheight.Name = "lblsheight";
             lblsheight.Size = new Size(13, 15);
@@ -965,7 +945,7 @@ namespace AlundraTools.GameControls
             // label54
             // 
             label54.AutoSize = true;
-            label54.Location = new Point(614, 36);
+            label54.Location = new Point(635, 341);
             label54.Margin = new Padding(4, 0, 4, 0);
             label54.Name = "label54";
             label54.Size = new Size(46, 15);
@@ -975,7 +955,7 @@ namespace AlundraTools.GameControls
             // lblswidth
             // 
             lblswidth.AutoSize = true;
-            lblswidth.Location = new Point(589, 36);
+            lblswidth.Location = new Point(610, 341);
             lblswidth.Margin = new Padding(4, 0, 4, 0);
             lblswidth.Name = "lblswidth";
             lblswidth.Size = new Size(13, 15);
@@ -985,7 +965,7 @@ namespace AlundraTools.GameControls
             // label56
             // 
             label56.AutoSize = true;
-            label56.Location = new Point(548, 36);
+            label56.Location = new Point(569, 341);
             label56.Margin = new Padding(4, 0, 4, 0);
             label56.Name = "label56";
             label56.Size = new Size(42, 15);
@@ -995,7 +975,7 @@ namespace AlundraTools.GameControls
             // lblsy
             // 
             lblsy.AutoSize = true;
-            lblsy.Location = new Point(660, 21);
+            lblsy.Location = new Point(681, 326);
             lblsy.Margin = new Padding(4, 0, 4, 0);
             lblsy.Name = "lblsy";
             lblsy.Size = new Size(13, 15);
@@ -1005,7 +985,7 @@ namespace AlundraTools.GameControls
             // label58
             // 
             label58.AutoSize = true;
-            label58.Location = new Point(641, 21);
+            label58.Location = new Point(662, 326);
             label58.Margin = new Padding(4, 0, 4, 0);
             label58.Name = "label58";
             label58.Size = new Size(18, 15);
@@ -1015,7 +995,7 @@ namespace AlundraTools.GameControls
             // lblsx
             // 
             lblsx.AutoSize = true;
-            lblsx.Location = new Point(589, 21);
+            lblsx.Location = new Point(610, 326);
             lblsx.Margin = new Padding(4, 0, 4, 0);
             lblsx.Name = "lblsx";
             lblsx.Size = new Size(13, 15);
@@ -1025,7 +1005,7 @@ namespace AlundraTools.GameControls
             // label60
             // 
             label60.AutoSize = true;
-            label60.Location = new Point(571, 21);
+            label60.Location = new Point(592, 326);
             label60.Margin = new Padding(4, 0, 4, 0);
             label60.Name = "label60";
             label60.Size = new Size(17, 15);
@@ -1034,10 +1014,10 @@ namespace AlundraTools.GameControls
             // 
             // pctImage
             // 
-            pctImage.Location = new Point(684, 283);
+            pctImage.Location = new Point(424, 457);
             pctImage.Margin = new Padding(4, 3, 4, 3);
             pctImage.Name = "pctImage";
-            pctImage.Size = new Size(144, 98);
+            pctImage.Size = new Size(144, 116);
             pctImage.TabIndex = 126;
             pctImage.TabStop = false;
             pctImage.Paint += pctImage_Paint;
@@ -1046,7 +1026,7 @@ namespace AlundraTools.GameControls
             // 
             lstSector5Frames.FormattingEnabled = true;
             lstSector5Frames.HorizontalScrollbar = true;
-            lstSector5Frames.Location = new Point(502, 152);
+            lstSector5Frames.Location = new Point(242, 326);
             lstSector5Frames.Margin = new Padding(4, 3, 4, 3);
             lstSector5Frames.Name = "lstSector5Frames";
             lstSector5Frames.Size = new Size(159, 109);
@@ -1057,7 +1037,7 @@ namespace AlundraTools.GameControls
             // 
             lstSector5Images.FormattingEnabled = true;
             lstSector5Images.HorizontalScrollbar = true;
-            lstSector5Images.Location = new Point(684, 152);
+            lstSector5Images.Location = new Point(424, 326);
             lstSector5Images.Margin = new Padding(4, 3, 4, 3);
             lstSector5Images.Name = "lstSector5Images";
             lstSector5Images.Size = new Size(145, 109);
@@ -1066,10 +1046,10 @@ namespace AlundraTools.GameControls
             // 
             // pctFrame
             // 
-            pctFrame.Location = new Point(502, 283);
+            pctFrame.Location = new Point(242, 457);
             pctFrame.Margin = new Padding(4, 3, 4, 3);
             pctFrame.Name = "pctFrame";
-            pctFrame.Size = new Size(158, 98);
+            pctFrame.Size = new Size(158, 116);
             pctFrame.TabIndex = 128;
             pctFrame.TabStop = false;
             pctFrame.Paint += pctFrame_Paint;
@@ -1077,7 +1057,7 @@ namespace AlundraTools.GameControls
             // label37
             // 
             label37.AutoSize = true;
-            label37.Location = new Point(502, 133);
+            label37.Location = new Point(242, 307);
             label37.Margin = new Padding(4, 0, 4, 0);
             label37.Name = "label37";
             label37.Size = new Size(43, 15);
@@ -1087,7 +1067,7 @@ namespace AlundraTools.GameControls
             // label39
             // 
             label39.AutoSize = true;
-            label39.Location = new Point(684, 133);
+            label39.Location = new Point(424, 307);
             label39.Margin = new Padding(4, 0, 4, 0);
             label39.Name = "label39";
             label39.Size = new Size(45, 15);
@@ -1100,7 +1080,7 @@ namespace AlundraTools.GameControls
             groupBox1.Controls.Add(rdoLeft);
             groupBox1.Controls.Add(rdoUp);
             groupBox1.Controls.Add(rdoDown);
-            groupBox1.Location = new Point(295, 152);
+            groupBox1.Location = new Point(127, 326);
             groupBox1.Margin = new Padding(4, 3, 4, 3);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(4, 3, 4, 3);
@@ -1164,7 +1144,7 @@ namespace AlundraTools.GameControls
             // lblAnimProps
             // 
             lblAnimProps.AutoSize = true;
-            lblAnimProps.Location = new Point(295, 262);
+            lblAnimProps.Location = new Point(127, 436);
             lblAnimProps.Margin = new Padding(4, 0, 4, 0);
             lblAnimProps.Name = "lblAnimProps";
             lblAnimProps.Size = new Size(79, 15);
@@ -1183,30 +1163,10 @@ namespace AlundraTools.GameControls
             chkTileXy.UseVisualStyleBackColor = true;
             chkTileXy.CheckedChanged += chkTileXy_CheckedChanged;
             // 
-            // lblsector5mem
-            // 
-            lblsector5mem.AutoSize = true;
-            lblsector5mem.Location = new Point(296, 51);
-            lblsector5mem.Margin = new Padding(4, 0, 4, 0);
-            lblsector5mem.Name = "lblsector5mem";
-            lblsector5mem.Size = new Size(55, 15);
-            lblsector5mem.TabIndex = 137;
-            lblsector5mem.Text = "00000000";
-            // 
-            // label43
-            // 
-            label43.AutoSize = true;
-            label43.Location = new Point(295, 32);
-            label43.Margin = new Padding(4, 0, 4, 0);
-            label43.Name = "label43";
-            label43.Size = new Size(98, 15);
-            label43.TabIndex = 136;
-            label43.Text = "memory location";
-            // 
             // lblFrameData
             // 
             lblFrameData.AutoSize = true;
-            lblFrameData.Location = new Point(502, 265);
+            lblFrameData.Location = new Point(242, 439);
             lblFrameData.Margin = new Padding(4, 0, 4, 0);
             lblFrameData.Name = "lblFrameData";
             lblFrameData.Size = new Size(13, 15);
@@ -1216,47 +1176,27 @@ namespace AlundraTools.GameControls
             // lblImageData
             // 
             lblImageData.AutoSize = true;
-            lblImageData.Location = new Point(683, 265);
+            lblImageData.Location = new Point(423, 439);
             lblImageData.Margin = new Padding(4, 0, 4, 0);
             lblImageData.Name = "lblImageData";
             lblImageData.Size = new Size(13, 15);
             lblImageData.TabIndex = 139;
             lblImageData.Text = "0";
             // 
-            // lblSector5Info
-            // 
-            lblSector5Info.AutoSize = true;
-            lblSector5Info.Location = new Point(178, 100);
-            lblSector5Info.Margin = new Padding(4, 0, 4, 0);
-            lblSector5Info.Name = "lblSector5Info";
-            lblSector5Info.Size = new Size(13, 15);
-            lblSector5Info.TabIndex = 149;
-            lblSector5Info.Text = "0";
-            // 
             // lblSelAnim
             // 
             lblSelAnim.AutoSize = true;
-            lblSelAnim.Location = new Point(298, 139);
+            lblSelAnim.Location = new Point(130, 313);
             lblSelAnim.Margin = new Padding(4, 0, 4, 0);
             lblSelAnim.Name = "lblSelAnim";
             lblSelAnim.Size = new Size(43, 15);
             lblSelAnim.TabIndex = 151;
             lblSelAnim.Text = "000000";
             // 
-            // lblAnimSetAddr
-            // 
-            lblAnimSetAddr.AutoSize = true;
-            lblAnimSetAddr.Location = new Point(173, 280);
-            lblAnimSetAddr.Margin = new Padding(4, 0, 4, 0);
-            lblAnimSetAddr.Name = "lblAnimSetAddr";
-            lblAnimSetAddr.Size = new Size(43, 15);
-            lblAnimSetAddr.TabIndex = 152;
-            lblAnimSetAddr.Text = "000000";
-            // 
             // lblFrameAddr
             // 
             lblFrameAddr.AutoSize = true;
-            lblFrameAddr.Location = new Point(558, 133);
+            lblFrameAddr.Location = new Point(298, 307);
             lblFrameAddr.Margin = new Padding(4, 0, 4, 0);
             lblFrameAddr.Name = "lblFrameAddr";
             lblFrameAddr.Size = new Size(43, 15);
@@ -1266,7 +1206,7 @@ namespace AlundraTools.GameControls
             // lblImgAddr
             // 
             lblImgAddr.AutoSize = true;
-            lblImgAddr.Location = new Point(743, 133);
+            lblImgAddr.Location = new Point(483, 307);
             lblImgAddr.Margin = new Padding(4, 0, 4, 0);
             lblImgAddr.Name = "lblImgAddr";
             lblImgAddr.Size = new Size(43, 15);
@@ -1275,293 +1215,13 @@ namespace AlundraTools.GameControls
             // 
             // pctPortrait
             // 
-            pctPortrait.Location = new Point(410, 32);
+            pctPortrait.Location = new Point(8, 456);
             pctPortrait.Margin = new Padding(4, 3, 4, 3);
             pctPortrait.Name = "pctPortrait";
-            pctPortrait.Size = new Size(56, 60);
+            pctPortrait.Size = new Size(64, 64);
             pctPortrait.TabIndex = 155;
             pctPortrait.TabStop = false;
             pctPortrait.Paint += pctPortrait_Paint;
-            // 
-            // label41
-            // 
-            label41.AutoSize = true;
-            label41.Location = new Point(29, 239);
-            label41.Margin = new Padding(2, 0, 2, 0);
-            label41.Name = "label41";
-            label41.Size = new Size(36, 15);
-            label41.TabIndex = 156;
-            label41.Text = "eload";
-            // 
-            // lbl_eload
-            // 
-            lbl_eload.AutoSize = true;
-            lbl_eload.Location = new Point(102, 239);
-            lbl_eload.Margin = new Padding(2, 0, 2, 0);
-            lbl_eload.Name = "lbl_eload";
-            lbl_eload.Size = new Size(12, 15);
-            lbl_eload.TabIndex = 157;
-            lbl_eload.Text = "?";
-            // 
-            // lbl_etick
-            // 
-            lbl_etick.AutoSize = true;
-            lbl_etick.Location = new Point(102, 255);
-            lbl_etick.Margin = new Padding(2, 0, 2, 0);
-            lbl_etick.Name = "lbl_etick";
-            lbl_etick.Size = new Size(12, 15);
-            lbl_etick.TabIndex = 159;
-            lbl_etick.Text = "?";
-            // 
-            // label49
-            // 
-            label49.AutoSize = true;
-            label49.Location = new Point(29, 255);
-            label49.Margin = new Padding(2, 0, 2, 0);
-            label49.Name = "label49";
-            label49.Size = new Size(32, 15);
-            label49.TabIndex = 158;
-            label49.Text = "etick";
-            // 
-            // lbl_edeactivate
-            // 
-            lbl_edeactivate.AutoSize = true;
-            lbl_edeactivate.Location = new Point(102, 288);
-            lbl_edeactivate.Margin = new Padding(2, 0, 2, 0);
-            lbl_edeactivate.Name = "lbl_edeactivate";
-            lbl_edeactivate.Size = new Size(12, 15);
-            lbl_edeactivate.TabIndex = 163;
-            lbl_edeactivate.Text = "?";
-            // 
-            // label53
-            // 
-            label53.AutoSize = true;
-            label53.Location = new Point(29, 288);
-            label53.Margin = new Padding(2, 0, 2, 0);
-            label53.Name = "label53";
-            label53.Size = new Size(61, 15);
-            label53.TabIndex = 162;
-            label53.Text = "edeativate";
-            // 
-            // lbl_etouch
-            // 
-            lbl_etouch.AutoSize = true;
-            lbl_etouch.Location = new Point(102, 272);
-            lbl_etouch.Margin = new Padding(2, 0, 2, 0);
-            lbl_etouch.Name = "lbl_etouch";
-            lbl_etouch.Size = new Size(12, 15);
-            lbl_etouch.TabIndex = 161;
-            lbl_etouch.Text = "?";
-            // 
-            // label57
-            // 
-            label57.AutoSize = true;
-            label57.Location = new Point(29, 272);
-            label57.Margin = new Padding(2, 0, 2, 0);
-            label57.Name = "label57";
-            label57.Size = new Size(44, 15);
-            label57.TabIndex = 160;
-            label57.Text = "etouch";
-            // 
-            // lbl_einteract
-            // 
-            lbl_einteract.AutoSize = true;
-            lbl_einteract.Location = new Point(102, 303);
-            lbl_einteract.Margin = new Padding(2, 0, 2, 0);
-            lbl_einteract.Name = "lbl_einteract";
-            lbl_einteract.Size = new Size(12, 15);
-            lbl_einteract.TabIndex = 165;
-            lbl_einteract.Text = "?";
-            // 
-            // label61
-            // 
-            label61.AutoSize = true;
-            label61.Location = new Point(29, 303);
-            label61.Margin = new Padding(2, 0, 2, 0);
-            label61.Name = "label61";
-            label61.Size = new Size(53, 15);
-            label61.TabIndex = 164;
-            label61.Text = "einteract";
-            // 
-            // lbl_offsetx
-            // 
-            lbl_offsetx.AutoSize = true;
-            lbl_offsetx.Location = new Point(102, 319);
-            lbl_offsetx.Margin = new Padding(2, 0, 2, 0);
-            lbl_offsetx.Name = "lbl_offsetx";
-            lbl_offsetx.Size = new Size(12, 15);
-            lbl_offsetx.TabIndex = 167;
-            lbl_offsetx.Text = "?";
-            // 
-            // label47
-            // 
-            label47.AutoSize = true;
-            label47.Location = new Point(29, 319);
-            label47.Margin = new Padding(2, 0, 2, 0);
-            label47.Name = "label47";
-            label47.Size = new Size(37, 15);
-            label47.TabIndex = 166;
-            label47.Text = "offset";
-            // 
-            // lbl_offsety
-            // 
-            lbl_offsety.AutoSize = true;
-            lbl_offsety.Location = new Point(129, 319);
-            lbl_offsety.Margin = new Padding(2, 0, 2, 0);
-            lbl_offsety.Name = "lbl_offsety";
-            lbl_offsety.Size = new Size(12, 15);
-            lbl_offsety.TabIndex = 168;
-            lbl_offsety.Text = "?";
-            // 
-            // lbl_offsetz
-            // 
-            lbl_offsetz.AutoSize = true;
-            lbl_offsetz.Location = new Point(156, 319);
-            lbl_offsetz.Margin = new Padding(2, 0, 2, 0);
-            lbl_offsetz.Name = "lbl_offsetz";
-            lbl_offsetz.Size = new Size(12, 15);
-            lbl_offsetz.TabIndex = 169;
-            lbl_offsetz.Text = "?";
-            // 
-            // lbl_height
-            // 
-            lbl_height.AutoSize = true;
-            lbl_height.Location = new Point(156, 335);
-            lbl_height.Margin = new Padding(2, 0, 2, 0);
-            lbl_height.Name = "lbl_height";
-            lbl_height.Size = new Size(12, 15);
-            lbl_height.TabIndex = 173;
-            lbl_height.Text = "?";
-            // 
-            // lbl_depth
-            // 
-            lbl_depth.AutoSize = true;
-            lbl_depth.Location = new Point(129, 335);
-            lbl_depth.Margin = new Padding(2, 0, 2, 0);
-            lbl_depth.Name = "lbl_depth";
-            lbl_depth.Size = new Size(12, 15);
-            lbl_depth.TabIndex = 172;
-            lbl_depth.Text = "?";
-            // 
-            // lbl_width
-            // 
-            lbl_width.AutoSize = true;
-            lbl_width.Location = new Point(102, 335);
-            lbl_width.Margin = new Padding(2, 0, 2, 0);
-            lbl_width.Name = "lbl_width";
-            lbl_width.Size = new Size(12, 15);
-            lbl_width.TabIndex = 171;
-            lbl_width.Text = "?";
-            // 
-            // label64
-            // 
-            label64.AutoSize = true;
-            label64.Location = new Point(29, 335);
-            label64.Margin = new Padding(2, 0, 2, 0);
-            label64.Name = "label64";
-            label64.Size = new Size(68, 15);
-            label64.TabIndex = 170;
-            label64.Text = "dimensions";
-            // 
-            // lbl_contents
-            // 
-            lbl_contents.AutoSize = true;
-            lbl_contents.Location = new Point(102, 366);
-            lbl_contents.Margin = new Padding(2, 0, 2, 0);
-            lbl_contents.Name = "lbl_contents";
-            lbl_contents.Size = new Size(12, 15);
-            lbl_contents.TabIndex = 177;
-            lbl_contents.Text = "?";
-            // 
-            // label66
-            // 
-            label66.AutoSize = true;
-            label66.Location = new Point(29, 366);
-            label66.Margin = new Padding(2, 0, 2, 0);
-            label66.Name = "label66";
-            label66.Size = new Size(53, 15);
-            label66.TabIndex = 176;
-            label66.Text = "contents";
-            // 
-            // lbl_breakeffect
-            // 
-            lbl_breakeffect.AutoSize = true;
-            lbl_breakeffect.Location = new Point(102, 350);
-            lbl_breakeffect.Margin = new Padding(2, 0, 2, 0);
-            lbl_breakeffect.Name = "lbl_breakeffect";
-            lbl_breakeffect.Size = new Size(12, 15);
-            lbl_breakeffect.TabIndex = 175;
-            lbl_breakeffect.Text = "?";
-            // 
-            // label68
-            // 
-            label68.AutoSize = true;
-            label68.Location = new Point(29, 350);
-            label68.Margin = new Padding(2, 0, 2, 0);
-            label68.Name = "label68";
-            label68.Size = new Size(66, 15);
-            label68.TabIndex = 174;
-            label68.Text = "breakeffect";
-            // 
-            // lbl_flags
-            // 
-            lbl_flags.AutoSize = true;
-            lbl_flags.Location = new Point(103, 223);
-            lbl_flags.Margin = new Padding(2, 0, 2, 0);
-            lbl_flags.Name = "lbl_flags";
-            lbl_flags.Size = new Size(12, 15);
-            lbl_flags.TabIndex = 183;
-            lbl_flags.Text = "?";
-            // 
-            // label70
-            // 
-            label70.AutoSize = true;
-            label70.Location = new Point(30, 223);
-            label70.Margin = new Padding(2, 0, 2, 0);
-            label70.Name = "label70";
-            label70.Size = new Size(32, 15);
-            label70.TabIndex = 182;
-            label70.Text = "flags";
-            // 
-            // lbl_canpickup
-            // 
-            lbl_canpickup.AutoSize = true;
-            lbl_canpickup.Location = new Point(103, 207);
-            lbl_canpickup.Margin = new Padding(2, 0, 2, 0);
-            lbl_canpickup.Name = "lbl_canpickup";
-            lbl_canpickup.Size = new Size(12, 15);
-            lbl_canpickup.TabIndex = 181;
-            lbl_canpickup.Text = "?";
-            // 
-            // label72
-            // 
-            label72.AutoSize = true;
-            label72.Location = new Point(30, 207);
-            label72.Margin = new Padding(2, 0, 2, 0);
-            label72.Name = "label72";
-            label72.Size = new Size(62, 15);
-            label72.TabIndex = 180;
-            label72.Text = "canpickup";
-            // 
-            // lbl_moreflags
-            // 
-            lbl_moreflags.AutoSize = true;
-            lbl_moreflags.Location = new Point(103, 192);
-            lbl_moreflags.Margin = new Padding(2, 0, 2, 0);
-            lbl_moreflags.Name = "lbl_moreflags";
-            lbl_moreflags.Size = new Size(12, 15);
-            lbl_moreflags.TabIndex = 179;
-            lbl_moreflags.Text = "?";
-            // 
-            // label74
-            // 
-            label74.AutoSize = true;
-            label74.Location = new Point(30, 192);
-            label74.Margin = new Padding(2, 0, 2, 0);
-            label74.Name = "label74";
-            label74.Size = new Size(60, 15);
-            label74.TabIndex = 178;
-            label74.Text = "moreflags";
             // 
             // tabControl1
             // 
@@ -1579,7 +1239,7 @@ namespace AlundraTools.GameControls
             tabControl1.Location = new Point(910, 12);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(860, 814);
+            tabControl1.Size = new Size(869, 814);
             tabControl1.TabIndex = 186;
             // 
             // tabPage9
@@ -1599,7 +1259,7 @@ namespace AlundraTools.GameControls
             tabPage9.Location = new Point(4, 24);
             tabPage9.Name = "tabPage9";
             tabPage9.Padding = new Padding(3);
-            tabPage9.Size = new Size(852, 786);
+            tabPage9.Size = new Size(861, 786);
             tabPage9.TabIndex = 8;
             tabPage9.Text = "Data";
             tabPage9.UseVisualStyleBackColor = true;
@@ -1739,7 +1399,7 @@ namespace AlundraTools.GameControls
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(852, 786);
+            tabPage1.Size = new Size(861, 786);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Spritesheet";
             tabPage1.UseVisualStyleBackColor = true;
@@ -1823,63 +1483,37 @@ namespace AlundraTools.GameControls
             // 
             // tabPage3
             // 
+            tabPage3.Controls.Add(label2);
+            tabPage3.Controls.Add(listViewSpriteRecord);
+            tabPage3.Controls.Add(listViewSpriteEffectRecord);
             tabPage3.Controls.Add(label35);
-            tabPage3.Controls.Add(lstSector5);
-            tabPage3.Controls.Add(lbl_flags);
             tabPage3.Controls.Add(lstSector5Animations);
-            tabPage3.Controls.Add(label70);
             tabPage3.Controls.Add(pctAnim);
-            tabPage3.Controls.Add(lbl_canpickup);
             tabPage3.Controls.Add(label44);
-            tabPage3.Controls.Add(label72);
             tabPage3.Controls.Add(lblx1);
-            tabPage3.Controls.Add(lbl_moreflags);
             tabPage3.Controls.Add(label42);
-            tabPage3.Controls.Add(label74);
             tabPage3.Controls.Add(lbly1);
-            tabPage3.Controls.Add(lbl_contents);
             tabPage3.Controls.Add(label40);
-            tabPage3.Controls.Add(label66);
             tabPage3.Controls.Add(lblx2);
-            tabPage3.Controls.Add(lbl_breakeffect);
             tabPage3.Controls.Add(label38);
-            tabPage3.Controls.Add(label68);
             tabPage3.Controls.Add(lbly2);
-            tabPage3.Controls.Add(lbl_height);
             tabPage3.Controls.Add(label52);
-            tabPage3.Controls.Add(lbl_depth);
             tabPage3.Controls.Add(lblx3);
-            tabPage3.Controls.Add(lbl_width);
             tabPage3.Controls.Add(label50);
-            tabPage3.Controls.Add(label64);
             tabPage3.Controls.Add(lbly3);
-            tabPage3.Controls.Add(lbl_offsetz);
             tabPage3.Controls.Add(label48);
-            tabPage3.Controls.Add(lbl_offsety);
             tabPage3.Controls.Add(lblx4);
-            tabPage3.Controls.Add(lbl_offsetx);
             tabPage3.Controls.Add(label46);
-            tabPage3.Controls.Add(label47);
             tabPage3.Controls.Add(lbly4);
-            tabPage3.Controls.Add(lbl_einteract);
             tabPage3.Controls.Add(label60);
-            tabPage3.Controls.Add(label61);
             tabPage3.Controls.Add(lblsx);
-            tabPage3.Controls.Add(lbl_edeactivate);
             tabPage3.Controls.Add(label58);
-            tabPage3.Controls.Add(label53);
             tabPage3.Controls.Add(lblsy);
-            tabPage3.Controls.Add(lbl_etouch);
             tabPage3.Controls.Add(label56);
-            tabPage3.Controls.Add(label57);
             tabPage3.Controls.Add(lblswidth);
-            tabPage3.Controls.Add(lbl_etick);
             tabPage3.Controls.Add(label54);
-            tabPage3.Controls.Add(label49);
             tabPage3.Controls.Add(lblsheight);
-            tabPage3.Controls.Add(lbl_eload);
             tabPage3.Controls.Add(pctImage);
-            tabPage3.Controls.Add(label41);
             tabPage3.Controls.Add(lstSector5Frames);
             tabPage3.Controls.Add(pctPortrait);
             tabPage3.Controls.Add(pctFrame);
@@ -1887,23 +1521,140 @@ namespace AlundraTools.GameControls
             tabPage3.Controls.Add(lstSector5Images);
             tabPage3.Controls.Add(lblFrameAddr);
             tabPage3.Controls.Add(label37);
-            tabPage3.Controls.Add(lblAnimSetAddr);
             tabPage3.Controls.Add(label39);
             tabPage3.Controls.Add(lblSelAnim);
             tabPage3.Controls.Add(groupBox1);
-            tabPage3.Controls.Add(lblSector5Info);
             tabPage3.Controls.Add(label36);
             tabPage3.Controls.Add(lblImageData);
             tabPage3.Controls.Add(lblAnimProps);
             tabPage3.Controls.Add(lblFrameData);
-            tabPage3.Controls.Add(label43);
-            tabPage3.Controls.Add(lblsector5mem);
             tabPage3.Location = new Point(4, 24);
             tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(852, 786);
+            tabPage3.Size = new Size(861, 786);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "SpriteRecords";
             tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(4, 148);
+            label2.Margin = new Padding(4, 0, 4, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(78, 15);
+            label2.TabIndex = 186;
+            label2.Text = "sprite records";
+            // 
+            // listViewSpriteRecord
+            // 
+            listViewSpriteRecord.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            listViewSpriteRecord.Columns.AddRange(new ColumnHeader[] { columnHeader27, columnHeader28, columnHeader29, columnHeader30, columnHeader31, columnHeader32, columnHeader33, columnHeader34, columnHeader35, columnHeader36, columnHeader37, columnHeader38, columnHeader39, columnHeader40, columnHeader41, columnHeader42, columnHeader43, columnHeader44 });
+            listViewSpriteRecord.FullRowSelect = true;
+            listViewSpriteRecord.Location = new Point(3, 21);
+            listViewSpriteRecord.MultiSelect = false;
+            listViewSpriteRecord.Name = "listViewSpriteRecord";
+            listViewSpriteRecord.Size = new Size(855, 115);
+            listViewSpriteRecord.TabIndex = 185;
+            listViewSpriteRecord.UseCompatibleStateImageBehavior = false;
+            listViewSpriteRecord.View = View.Details;
+            listViewSpriteRecord.SelectedIndexChanged += listViewSpriteRecord_SelectedIndexChanged;
+            // 
+            // columnHeader27
+            // 
+            columnHeader27.Text = "Id";
+            // 
+            // columnHeader28
+            // 
+            columnHeader28.Text = "flag";
+            // 
+            // columnHeader29
+            // 
+            columnHeader29.Text = "can pickup";
+            // 
+            // columnHeader30
+            // 
+            columnHeader30.Text = "portrait flag";
+            // 
+            // columnHeader31
+            // 
+            columnHeader31.Text = "load event";
+            // 
+            // columnHeader32
+            // 
+            columnHeader32.Text = "tick event";
+            // 
+            // columnHeader33
+            // 
+            columnHeader33.Text = "touche event";
+            // 
+            // columnHeader34
+            // 
+            columnHeader34.Text = "deactivate event";
+            // 
+            // columnHeader35
+            // 
+            columnHeader35.Text = "interact event";
+            // 
+            // columnHeader36
+            // 
+            columnHeader36.Text = "offset X";
+            // 
+            // columnHeader37
+            // 
+            columnHeader37.Text = "offset Y";
+            // 
+            // columnHeader38
+            // 
+            columnHeader38.Text = "offset Z";
+            // 
+            // columnHeader39
+            // 
+            columnHeader39.Text = "Size X";
+            // 
+            // columnHeader40
+            // 
+            columnHeader40.Text = "Size Y";
+            // 
+            // columnHeader41
+            // 
+            columnHeader41.Text = "Size Z";
+            // 
+            // columnHeader42
+            // 
+            columnHeader42.Text = "break effect";
+            // 
+            // columnHeader43
+            // 
+            columnHeader43.Text = "content";
+            // 
+            // columnHeader44
+            // 
+            columnHeader44.Text = "nb anim";
+            // 
+            // listViewSpriteEffectRecord
+            // 
+            listViewSpriteEffectRecord.Columns.AddRange(new ColumnHeader[] { columnHeader23, columnHeader24, columnHeader25 });
+            listViewSpriteEffectRecord.FullRowSelect = true;
+            listViewSpriteEffectRecord.Location = new Point(3, 166);
+            listViewSpriteEffectRecord.MultiSelect = false;
+            listViewSpriteEffectRecord.Name = "listViewSpriteEffectRecord";
+            listViewSpriteEffectRecord.Size = new Size(231, 127);
+            listViewSpriteEffectRecord.TabIndex = 184;
+            listViewSpriteEffectRecord.UseCompatibleStateImageBehavior = false;
+            listViewSpriteEffectRecord.View = View.Details;
+            listViewSpriteEffectRecord.SelectedIndexChanged += listViewSpriteEffectRecord_SelectedIndexChanged;
+            // 
+            // columnHeader23
+            // 
+            columnHeader23.Text = "Name";
+            // 
+            // columnHeader24
+            // 
+            columnHeader24.Text = "id";
+            // 
+            // columnHeader25
+            // 
+            columnHeader25.Text = "anim count";
             // 
             // tabPage2
             // 
@@ -1929,7 +1680,7 @@ namespace AlundraTools.GameControls
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(852, 786);
+            tabPage2.Size = new Size(861, 786);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Entities";
             tabPage2.UseVisualStyleBackColor = true;
@@ -2089,7 +1840,7 @@ namespace AlundraTools.GameControls
             tabPage4.Controls.Add(label19);
             tabPage4.Location = new Point(4, 24);
             tabPage4.Name = "tabPage4";
-            tabPage4.Size = new Size(852, 786);
+            tabPage4.Size = new Size(861, 786);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "Strings";
             tabPage4.UseVisualStyleBackColor = true;
@@ -2142,7 +1893,7 @@ namespace AlundraTools.GameControls
             tabPage5.Location = new Point(4, 24);
             tabPage5.Name = "tabPage5";
             tabPage5.Padding = new Padding(3);
-            tabPage5.Size = new Size(852, 786);
+            tabPage5.Size = new Size(861, 786);
             tabPage5.TabIndex = 4;
             tabPage5.Text = "Portals";
             tabPage5.UseVisualStyleBackColor = true;
@@ -2153,7 +1904,7 @@ namespace AlundraTools.GameControls
             tabPage6.Location = new Point(4, 24);
             tabPage6.Name = "tabPage6";
             tabPage6.Padding = new Padding(3);
-            tabPage6.Size = new Size(852, 786);
+            tabPage6.Size = new Size(861, 786);
             tabPage6.TabIndex = 5;
             tabPage6.Text = "Sound";
             tabPage6.UseVisualStyleBackColor = true;
@@ -2182,7 +1933,7 @@ namespace AlundraTools.GameControls
             tabPage7.Location = new Point(4, 24);
             tabPage7.Name = "tabPage7";
             tabPage7.Padding = new Padding(3);
-            tabPage7.Size = new Size(852, 786);
+            tabPage7.Size = new Size(861, 786);
             tabPage7.TabIndex = 6;
             tabPage7.Text = "Etc ressources";
             tabPage7.UseVisualStyleBackColor = true;
@@ -2287,7 +2038,7 @@ namespace AlundraTools.GameControls
             tabPage8.Location = new Point(4, 24);
             tabPage8.Name = "tabPage8";
             tabPage8.Padding = new Padding(3);
-            tabPage8.Size = new Size(852, 786);
+            tabPage8.Size = new Size(861, 786);
             tabPage8.TabIndex = 7;
             tabPage8.Text = "Font3";
             tabPage8.UseVisualStyleBackColor = true;
@@ -2394,7 +2145,7 @@ namespace AlundraTools.GameControls
             tabPage10.Location = new Point(4, 24);
             tabPage10.Name = "tabPage10";
             tabPage10.Padding = new Padding(3);
-            tabPage10.Size = new Size(852, 786);
+            tabPage10.Size = new Size(861, 786);
             tabPage10.TabIndex = 9;
             tabPage10.Text = "Memory Card";
             tabPage10.UseVisualStyleBackColor = true;
@@ -2634,7 +2385,6 @@ namespace AlundraTools.GameControls
         private System.Windows.Forms.ColumnHeader columnHeader20;
         private System.Windows.Forms.ColumnHeader columnHeader21;
         private System.Windows.Forms.Label label35;
-        private System.Windows.Forms.ListBox lstSector5;
         private System.Windows.Forms.Label label36;
         private System.Windows.Forms.ListBox lstSector5Animations;
         private System.Windows.Forms.PictureBox pctAnim;
@@ -2675,44 +2425,12 @@ namespace AlundraTools.GameControls
         private System.Windows.Forms.RadioButton rdoDown;
         private System.Windows.Forms.Label lblAnimProps;
         private System.Windows.Forms.CheckBox chkTileXy;
-        private System.Windows.Forms.Label lblsector5mem;
-        private System.Windows.Forms.Label label43;
         private System.Windows.Forms.Label lblFrameData;
         private System.Windows.Forms.Label lblImageData;
-        private System.Windows.Forms.Label lblSector5Info;
         private System.Windows.Forms.Label lblSelAnim;
-        private System.Windows.Forms.Label lblAnimSetAddr;
         private System.Windows.Forms.Label lblFrameAddr;
         private System.Windows.Forms.Label lblImgAddr;
         private System.Windows.Forms.PictureBox pctPortrait;
-        private System.Windows.Forms.Label label41;
-        private System.Windows.Forms.Label lbl_eload;
-        private System.Windows.Forms.Label lbl_etick;
-        private System.Windows.Forms.Label label49;
-        private System.Windows.Forms.Label lbl_edeactivate;
-        private System.Windows.Forms.Label label53;
-        private System.Windows.Forms.Label lbl_etouch;
-        private System.Windows.Forms.Label label57;
-        private System.Windows.Forms.Label lbl_einteract;
-        private System.Windows.Forms.Label label61;
-        private System.Windows.Forms.Label lbl_offsetx;
-        private System.Windows.Forms.Label label47;
-        private System.Windows.Forms.Label lbl_offsety;
-        private System.Windows.Forms.Label lbl_offsetz;
-        private System.Windows.Forms.Label lbl_height;
-        private System.Windows.Forms.Label lbl_depth;
-        private System.Windows.Forms.Label lbl_width;
-        private System.Windows.Forms.Label label64;
-        private System.Windows.Forms.Label lbl_contents;
-        private System.Windows.Forms.Label label66;
-        private System.Windows.Forms.Label lbl_breakeffect;
-        private System.Windows.Forms.Label label68;
-        private System.Windows.Forms.Label lbl_flags;
-        private System.Windows.Forms.Label label70;
-        private System.Windows.Forms.Label lbl_canpickup;
-        private System.Windows.Forms.Label label72;
-        private System.Windows.Forms.Label lbl_moreflags;
-        private System.Windows.Forms.Label label74;
         private TabControl tabControl1;
         private TabPage tabPage1;
         private TabPage tabPage3;
@@ -2800,5 +2518,29 @@ namespace AlundraTools.GameControls
         private Label label1;
         private ImageViewerControl imageViewerControlLoadScreen;
         private Label label7;
+        private ListView listViewSpriteEffectRecord;
+        private ColumnHeader columnHeader24;
+        private ColumnHeader columnHeader25;
+        private ListView listViewSpriteRecord;
+        private ColumnHeader columnHeader27;
+        private ColumnHeader columnHeader28;
+        private ColumnHeader columnHeader29;
+        private ColumnHeader columnHeader30;
+        private ColumnHeader columnHeader31;
+        private ColumnHeader columnHeader32;
+        private ColumnHeader columnHeader33;
+        private ColumnHeader columnHeader34;
+        private ColumnHeader columnHeader35;
+        private ColumnHeader columnHeader36;
+        private ColumnHeader columnHeader37;
+        private ColumnHeader columnHeader38;
+        private ColumnHeader columnHeader39;
+        private ColumnHeader columnHeader40;
+        private ColumnHeader columnHeader41;
+        private ColumnHeader columnHeader42;
+        private ColumnHeader columnHeader43;
+        private ColumnHeader columnHeader44;
+        private Label label2;
+        private ColumnHeader columnHeader23;
     }
 }

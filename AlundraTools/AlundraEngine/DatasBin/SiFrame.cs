@@ -2,6 +2,19 @@
 
 public class SiFrame
 {
+    public readonly int MemoryAddress;
+    public readonly byte Delay;
+    public readonly short CollisionOffset;//-1
+    public readonly int ImageSetPointer;
+
+    public readonly byte TransformIndexLow;
+    public readonly byte TransformIndexHigh;
+    public readonly byte SpriteIndexLow;
+    public readonly byte SpriteIndexHigh;
+
+    public readonly FrameCollisionData CollisionData;
+    public SiImageSet Images;
+
     public SiFrame(BinaryReader br, SpriteTableHeader header, int memoryAddress)
     {
         MemoryAddress = memoryAddress;
@@ -43,17 +56,4 @@ public class SiFrame
         CollisionOffset = -1;
         ImageSetPointer = -1;
     }
-
-    public readonly byte Delay;//top bit masked
-    public readonly short CollisionOffset;//-1
-    public readonly int ImageSetPointer;
-
-    public readonly byte TransformIndexLow;
-    public readonly byte TransformIndexHigh;
-    public readonly byte SpriteIndexLow;
-    public readonly byte SpriteIndexHigh;
-
-    public readonly FrameCollisionData CollisionData;
-    public readonly int MemoryAddress;
-    public SiImageSet Images;
 }

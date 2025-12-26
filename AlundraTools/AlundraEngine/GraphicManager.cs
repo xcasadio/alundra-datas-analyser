@@ -1,8 +1,10 @@
 ﻿using AlundraEngine.DatasBin;
+using AlundraEngine.Gameplay;
 using AlundraEngine.Graphics;
 using AlundraEngine.UI;
 using System;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace AlundraEngine;
 
@@ -40,11 +42,15 @@ public class GraphicManager
                     _gameEngine.StaticVariables.g_cameraScrollingX, _gameEngine.StaticVariables.g_cameraScrollingY);
         }
 
-        //UpdateEntityGeometry(_gameEngine.StaticVariables.g_orderingTableBuffer[2]);
+        DisplayDebugCollisionRectangle(_gameEngine.StaticVariables.g_orderingTableBuffer[2]);
         RenderEffects(_gameEngine.StaticVariables.g_orderingTableBuffer[3]);
         _gameEngine.MemoryCardManager.UpdateMemoryCardProcess();
-        SwapBuffersAndDraw(graphics);
+        UpdateUserInterface(graphics);
         _gameEngine.StaticVariables.g_primitive_sync = GetDisplaySyncCounter();
+
+
+        _gameEngine.Renderer.Render(graphics);
+        _gameEngine.Renderer.Clear();
     }
 
     // 8002cda0
@@ -639,10 +645,230 @@ public class GraphicManager
         //}
     }
 
+    static int Fixed16ToInt(int v) { return v >> 16; }
+
     //8003b51c
-    private void UpdateEntityGeometry(int i)
+    private void DisplayDebugCollisionRectangle(int orderingTable)
     {
-        //todo
+        //if (_gameEngine.StaticVariables.g_debugState >= 0)
+        //{
+        //    return;
+        //}
+        //
+        //// doit avoir au moins un des flags 0x100 / 0x200 (car test &0x300)
+        //if ((_gameEngine.StaticVariables.g_debugFlags & 0x300) == 0)
+        //{
+        //    return;
+        //}
+
+        // --- choose primitive buffer (double buffering) ---
+        int bufferIndex = (_gameEngine.StaticVariables.g_debugFrameCounter & 1);
+        _gameEngine.StaticVariables.g_debugFrameCounter++;
+
+        // Dans l'ASM, t8 = base + (bufferIndex<<12) ; ensuite on écrit des TILE à la suite.
+        // Ici on simule en prenant un pointeur dans un gros tableau.
+        // IMPORTANT: adapte ces offsets/tailles à ton layout réel.
+        TILE tilePtr = new TILE(); //_gameEngine.StaticVariables.g_spriteTiles[bufferIndex << 12];
+
+        // ============================================================
+        // Mode 0x100 : rectangles basés sur (pos/mod/width/height/depth)
+        // ============================================================
+        //if (_gameEngine.StaticVariables.g_debugFlags & 0x100)
+        {
+            for (int i = 0; i <= _gameEngine.StaticVariables.g_numberOfEntity; i++)
+            {
+                Entity e = _gameEngine.StaticVariables.g_entitySlots[i];
+
+                if ((e.Status - 2) >= 2)
+                {
+                    continue;
+                }
+
+                if (e.IsNotProcessable != 0)
+                {
+                    continue;
+                }
+
+                // --- rectangle #0 (bleu sombre) ---
+                {
+                    tilePtr.r0 = 0;
+                    tilePtr.g0 = 0;
+                    tilePtr.b0 = 0x30;
+
+                    int x = Fixed16ToInt(e.PosX + e.ModX) - _gameEngine.StaticVariables.g_cameraScrollingX;
+
+                    // y calc (suivant ASM):
+                    // t2 = posY - posZ
+                    // base = t2 - modZ - depth - 1
+                    // y = ((base + modY + height + 1) >> 16) - cameraY
+                    int basePosition = (e.PosY - e.PosZ) - e.ModZ - e.Depth;
+                    basePosition -= 1;
+                    int y = Fixed16ToInt(basePosition + e.ModY + e.Height + 1) - _gameEngine.StaticVariables.g_cameraScrollingY;
+
+                    // w = ((width + 1) >> 16)
+                    // h = ((depth + 1) >> 16)
+                    int w = Fixed16ToInt(e.Width + 1);
+                    int h = Fixed16ToInt(e.Depth + 1);
+
+                    tilePtr.x0 = (short)x;
+                    tilePtr.y0 = (short)y;
+                    tilePtr.w = (short)w;
+                    tilePtr.h = (short)h;
+
+                    //AddPrim(orderingTable, tilePtr);
+                    tilePtr = new TILE(); //tilePtr++;
+                }
+
+                // --- rectangle #1 (bleu fort) ---
+                {
+                    tilePtr.r0 = 0;
+                    tilePtr.g0 = 0;
+                    tilePtr.b0 = 0xFF;
+
+                    int x = Fixed16ToInt(e.PosX + e.ModX) - _gameEngine.StaticVariables.g_cameraScrollingX;
+
+                    // ASM recalcule une variante du Y (sans ajouter height dans la première partie),
+                    // puis h = ((height+1)>>16)
+                    int basePosition = (e.PosY - e.PosZ) - e.ModZ - e.Depth;
+                    basePosition -= 1;
+                    int y = Fixed16ToInt(basePosition + e.ModY) - _gameEngine.StaticVariables.g_cameraScrollingY;
+
+                    int w = Fixed16ToInt(e.Width + 1);
+                    int h = Fixed16ToInt(e.Height + 1);
+
+                    tilePtr.x0 = (short)x;
+                    tilePtr.y0 = (short)y;
+                    tilePtr.w = (short)w;
+                    tilePtr.h = (short)h;
+
+                    //AddPrim(orderingTable, tilePtr);
+                    tilePtr = new TILE(); //tilePtr++;
+                }
+            }
+        }
+
+        // ============================================================
+        // Mode 0x200 : rectangles basés sur FrameCollisionData + offsets
+        // (collision box / hitbox en pratique)
+        // ============================================================
+        //if (_gameEngine.StaticVariables.g_debugFlags & 0x200)
+        {
+            for (int i = 0; i <= _gameEngine.StaticVariables.g_numberOfEntity; i++)
+            {
+                Entity e = _gameEngine.StaticVariables.g_entitySlots[i];
+
+                if ((e.Status - 2) >= 2)
+                {
+                    continue;
+                }
+
+                if (e.IsNotProcessable != 0)
+                {
+                    continue;
+                }
+
+                // L'ASM skip si frameCollisionData == 0
+                if (e.FrameCollision == null)
+                {
+                    continue;
+                }
+
+                // Couleur dépend de balanceAnimValRef et du 1er octet pointé
+                int highlight = 0;
+                if (e.BalanceAnimValRef != null)
+                {
+                    // lbu [balanceAnimValRef]
+                    if (e.BalanceAnimValRef != null)
+                    {
+                        highlight = 1;
+                    }
+                }
+
+                // --- rectangle #2 ---
+                {
+                    if (highlight != 0)
+                    {
+                        // r=0x30, g=0, b=0
+                        tilePtr.r0 = 0x30;
+                        tilePtr.g0 = 0x00;
+                        tilePtr.b0 = 0x00;
+                    }
+                    else
+                    {
+                        // r=g=0x20, b=0
+                        tilePtr.r0 = 0x20;
+                        tilePtr.g0 = 0x20;
+                        tilePtr.b0 = 0x00;
+                    }
+
+                    // Les formules suivent l'ASM en utilisant collisionOffsetX/Y/Z + collisionWidth/Depth/Height
+                    // baseZ = (posY - posZ) - collisionOffsetZ - collisionHeight - 1
+                    int basePosition = (e.PosY - e.PosZ) - e.CollisionOffsetZ - (int)e.CollisionHeight;
+                    basePosition -= 1;
+
+                    // x = ((posX + collisionOffsetX) >> 16) - camX
+                    int x = Fixed16ToInt(e.PosX + e.CollisionOffsetX) - _gameEngine.StaticVariables.g_cameraScrollingX;
+
+                    // y = ((base + collisionOffsetY + collisionDepth + 1) >> 16) - camY
+                    int y = Fixed16ToInt(basePosition + e.CollisionOffsetY + (int)e.CollisionDepth + 1) - _gameEngine.StaticVariables.g_cameraScrollingY;
+
+                    // w = ((collisionWidth + 1) >> 16)
+                    // h = ((collisionHeight + 1) >> 16)
+                    int w = Fixed16ToInt((int)e.CollisionWidth + 1);
+                    int h = Fixed16ToInt((int)e.CollisionHeight + 1);
+
+                    tilePtr.x0 = (short)x;
+                    tilePtr.y0 = (short)y;
+                    tilePtr.w = (short)w;
+                    tilePtr.h = (short)h;
+
+                    //AddPrim(orderingTable, tilePtr);
+                    tilePtr = new TILE(); //tilePtr++;
+                }
+
+                // --- rectangle #3 ---
+                {
+                    if (highlight != 0)
+                    {
+                        // r=0xFF, g=0, b=0
+                        tilePtr.r0 = 0xFF;
+                        tilePtr.g0 = 0x00;
+                        tilePtr.b0 = 0x00;
+                    }
+                    else
+                    {
+                        // r=g=0x80, b=0
+                        tilePtr.r0 = 0x80;
+                        tilePtr.g0 = 0x80;
+                        tilePtr.b0 = 0x00;
+                    }
+
+                    int basePosition = (e.PosY - e.PosZ) - e.CollisionOffsetZ - (int)e.CollisionHeight;
+                    basePosition -= 1;
+
+                    int x = Fixed16ToInt(e.PosX + e.CollisionOffsetX) - _gameEngine.StaticVariables.g_cameraScrollingX;
+
+                    // y = ((base + collisionOffsetY) >> 16) - camY
+                    int y = Fixed16ToInt(basePosition + e.CollisionOffsetY) - _gameEngine.StaticVariables.g_cameraScrollingY;
+
+                    int w = Fixed16ToInt((int)e.CollisionWidth + 1);
+                    int h = Fixed16ToInt((int)e.CollisionHeight + 1);
+
+                    tilePtr.x0 = (short)x;
+                    tilePtr.y0 = (short)y;
+                    tilePtr.w = (short)w;
+                    tilePtr.h = (short)h;
+
+                    //AddPrim(orderingTable, tilePtr);
+                    tilePtr = new TILE(); //tilePtr++;
+                }
+            }
+        }
+
+        // --- push DR_MODE for this bufferIndex ---
+        // ASM: index = bufferIndex*3, *4 bytes => stride 12 bytes
+        //DR_MODE* dr = (DR_MODE*)((u8*)DR_MODE_ARRAY_80134234 + (bufferIndex * 12));
+        //AddPrim(orderingTable, dr);
     }
 
     //80042ccc
@@ -724,16 +950,13 @@ public class GraphicManager
     }
 
     //80048054
-    private void SwapBuffersAndDraw(System.Drawing.Graphics graphics)
+    private void UpdateUserInterface(System.Drawing.Graphics graphics)
     {
-        _gameEngine.Renderer.Render(graphics);
-        _gameEngine.Renderer.Clear();
-
         int i;
 
         if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x38] & 0x800000U) != 0)
         {
-            ActivateSpecialRenderMode(7);
+            SetCdToAranXaMusicIndex(7);
             _gameEngine.StaticVariables.g_saveData.MapFlags[0x38] &= 0xff7fffff;
         }
 
@@ -791,17 +1014,17 @@ public class GraphicManager
     }
 
     //8005abe0
-    private void ActivateSpecialRenderMode(int mode)
+    private void SetCdToAranXaMusicIndex(int mode)
     {
         /*
-          CdlLOC aCStack_18 [2];
-           u_char auStack_10 [8];
+           CdlLOC cdlLoc [2];
+           u_char buffer [8];
            
            if ((g_isCdResetRequested != 0) || ((g_cdIsReady != 0 && (g_cdDataLoaded == 0)))) {
              g_cdDataStartPtr = DAT_CDAranXa_pos + g_mapCdDataOffsets[mode * 3];
-             CdIntToPos(g_cdDataStartPtr,aCStack_18);
-             CdControl('\x02',&aCStack_18[0].minute,auStack_10);
-             CdControl('\x15',(u_char *)0x0,auStack_10);
+             CdIntToPos(g_cdDataStartPtr,cdlLoc);
+             CdControl('\x02',&cdlLoc[0].minute,buffer);
+             CdControl('\x15',(u_char *)0x0,buffer);
            }
          */
     }

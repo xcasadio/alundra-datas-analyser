@@ -211,7 +211,7 @@ namespace AlundraTools.GameControls
 
         private void LoadMap(GameMap map)
         {
-            this.SuspendLayout();
+            SuspendLayout();
 
             _selectedGameMap = map;
             if (!_selectedGameMap.Loaded)
@@ -419,21 +419,70 @@ namespace AlundraTools.GameControls
                 }
             }
 
-            lstSector5.Items.Clear();
+            //sprite records
+            listViewSpriteRecord.Items.Clear();
             for (var i = 0; i < _selectedGameMap.SpriteInfo.SpriteRecords.Length; i++)
             {
                 var sector5Record = _selectedGameMap.SpriteInfo.SpriteRecords[i];
                 if (sector5Record != null)
                 {
-                    lstSector5.Items.Add("record " + i.ToString("x2"));
+                    var listViewItem = new ListViewItem([
+                        "record " + sector5Record.Header.Sector5Id,
+                        sector5Record.Header.MoreFlags.ToString(),
+                        sector5Record.Header.CanPickup.ToString(),
+                        sector5Record.Header.FlagsPortraitShadowType.ToString(),
+                        sector5Record.Header.ProgramLoad.ToString(),
+                        sector5Record.Header.ProgramTick.ToString(),
+                        sector5Record.Header.ProgramTouch.ToString(),
+                        sector5Record.Header.ProgramDeactivate.ToString(),
+                        sector5Record.Header.ProgramInteract.ToString(),
+                        sector5Record.Header.OffsetX.ToString(),
+                        sector5Record.Header.OffsetY.ToString(),
+                        sector5Record.Header.OffsetZ.ToString(),
+                        sector5Record.Header.SizeX.ToString(),
+                        sector5Record.Header.SizeY.ToString(),
+                        sector5Record.Header.SizeZ.ToString(),
+                        sector5Record.Header.BreakEffect.ToString(),
+                        sector5Record.Header.Contents.ToString(),
+                        sector5Record.AnimSets?.Length.ToString() ?? "0"
+                    ]);
+                    listViewItem.Tag = sector5Record;
+
+                    listViewSpriteRecord.Items.Add(listViewItem);
                 }
             }
 
-            lstSector5.SelectedIndex = -1;
-            if (lstSector5.Items.Count > 0)
+            listViewSpriteRecord.SelectedIndices.Clear();
+            listViewSpriteRecord.SelectedItems.Clear();
+            if (listViewSpriteRecord.Items.Count > 0)
             {
-                lstSector5.SelectedIndex = 0;
+                listViewSpriteRecord.SelectedIndices.Add(0);
             }
+
+            //sprite effect records
+            listViewSpriteEffectRecord.Items.Clear();
+            for (var i = 0; i < _selectedGameMap.SpriteInfo.SpriteEffectRecords.Length; i++)
+            {
+                var effectRecord = _selectedGameMap.SpriteInfo.SpriteEffectRecords[i];
+                if (effectRecord != null)
+                {
+                    var listViewItem = new ListViewItem([
+                        "effect record " + i,
+                        effectRecord.EffectId.ToString(),
+                        effectRecord.AnimationCount.ToString()
+                    ]);
+                    listViewItem.Tag = effectRecord;
+
+                    listViewSpriteEffectRecord.Items.Add(listViewItem);
+                }
+            }
+
+            listViewSpriteEffectRecord.SelectedIndices.Clear();
+            listViewSpriteEffectRecord.SelectedItems.Clear();
+            //if (listViewSpriteEffectRecord.Items.Count > 0)
+            //{
+            //    listViewSpriteEffectRecord.SelectedIndices.Add(0);
+            //}
 
             //tilesheet
             //triggered by palette
@@ -443,7 +492,7 @@ namespace AlundraTools.GameControls
 
             imageViewerScrollingSpriteSheet.Image = _selectedGameMap?.ScrollParameters?.TileSheetBitmap;
 
-            this.PerformLayout();
+            PerformLayout();
         }
 
         private int _palScale = 4;
@@ -710,9 +759,9 @@ namespace AlundraTools.GameControls
 
             imageViewerMap.Image = new Bitmap(width, height, PixelFormat.Format24bppRgb);
 
-            _animtimer = new Timer();
-            _animtimer.Enabled = false;
-            _animtimer.Tick += new EventHandler(animtimer_Tick);
+            _animTimer = new Timer();
+            _animTimer.Enabled = false;
+            _animTimer.Tick += new EventHandler(animationTimer_Tick);
 
         }
 
@@ -877,153 +926,127 @@ namespace AlundraTools.GameControls
             DrawMap();
         }
 
-        private SpriteRecord _selectedSector5;
+        private SpriteRecord? _selectedSpriteRecord;
 
-        private void lstSector5_SelectedIndexChanged(object sender, EventArgs e)
+        private void listViewSpriteRecord_SelectedIndexChanged(object sender, EventArgs e)
         {
-            lblsector5mem.Text = 0.ToString("x8");
-            _selectedSector5 = null;
-            if (_selectedGameMap != null && lstSector5.SelectedIndex >= 0 && lstSector5.SelectedItem.ToString() != "-1")
+            _selectedSpriteRecord = null;
+            _selectedSpriteEffectRecord = null;
+
+            if (_selectedGameMap != null && listViewSpriteRecord.SelectedItems.Count > 0 && listViewSpriteRecord.SelectedItems[0].Tag is SpriteRecord spriteRecord)
             {
-                _selectedSector5 = _selectedGameMap.SpriteInfo.SpriteRecords[
-                    int.Parse(lstSector5.SelectedItem.ToString().Replace("record ", ""),
-                        System.Globalization.NumberStyles.AllowHexSpecifier)];
+                _selectedSpriteRecord = spriteRecord;
+                //_selectedSpriteRecord = _selectedGameMap.SpriteInfo.SpriteRecords[index];
             }
 
             lstSector5Animations.Items.Clear();
             lstSector5Animations.SelectedIndex = -1;
-            lbl_moreflags.Text = "?";
-            lbl_canpickup.Text = "?";
-            lbl_flags.Text = "?";
-            lbl_eload.Text = "?";
-            lbl_etick.Text = "?";
-            lbl_etouch.Text = "?";
-            lbl_edeactivate.Text = "?";
-            lbl_einteract.Text = "?";
-            lbl_offsetx.Text = "?";
-            lbl_offsety.Text = "?";
-            lbl_offsetz.Text = "?";
-            lbl_width.Text = "?";
-            lbl_depth.Text = "?";
-            lbl_height.Text = "?";
-            lbl_breakeffect.Text = "?";
-            lbl_contents.Text = "?";
-            if (_selectedSector5 != null)
+            if (_selectedSpriteRecord != null)
             {
-                lblsector5mem.Text = _selectedSector5.Header.MemoryAddress.ToString("x8");
-                for (var dex = 0; dex < _selectedSector5.AnimSets.Length; dex++)
+                for (var i = 0; i < _selectedSpriteRecord.AnimSets.Length; i++)
                 {
-                    lstSector5Animations.Items.Add("anim " + dex);
+                    lstSector5Animations.Items.Add("anim " + i);
                 }
 
-                lblSector5Info.Text = string.Join(",", _selectedSector5.Header.Ubuff.Select(x => x.ToString("x2")));
-
-                var ecode = _selectedSector5.Header.ProgramLoad;
-                var sicodename = "";
-                if (SpriteInfoEventCodes.CommandNameByCode.TryGetValue(ecode, out var value2))
-                {
-                    sicodename = value2;
-                }
-
-                var fname = $"{ecode:x2}_{sicodename}_handler";
-                lbl_eload.Text = fname;
-
-                ecode = _selectedSector5.Header.ProgramTick;
-                sicodename = "";
-                if (SpriteInfoEventCodes.CommandNameByCode.TryGetValue(ecode, out var value1))
-                {
-                    sicodename = value1;
-                }
-
-                fname = $"{ecode:x2}_{sicodename}_handler";
-                lbl_etick.Text = fname;
-
-                ecode = _selectedSector5.Header.ProgramTouch;
-                sicodename = "";
-                if (SpriteInfoEventCodes.CommandNameByCode.TryGetValue(ecode, out var value))
-                {
-                    sicodename = value;
-                }
-
-                fname = $"{ecode:x2}_{sicodename}_handler";
-                lbl_etouch.Text = fname;
-
-                ecode = _selectedSector5.Header.ProgramDeactivate;
-                sicodename = "";
-                if (SpriteInfoEventCodes.CommandNameByCode.TryGetValue(ecode, out var value3))
-                {
-                    sicodename = value3;
-                }
-
-                fname = $"{ecode:x2}_{sicodename}_handler";
-                lbl_edeactivate.Text = fname;
-
-                ecode = _selectedSector5.Header.ProgramInteract;
-                sicodename = "";
-                if (SpriteInfoEventCodes.CommandNameByCode.TryGetValue(ecode, out var value4))
-                {
-                    sicodename = value4;
-                }
-
-                fname = $"{ecode:x2}_{sicodename}_handler";
-                lbl_einteract.Text = fname;
-
-                lbl_moreflags.Text = _selectedSector5.Header.MoreFlags.ToString("x");
-                lbl_canpickup.Text = _selectedSector5.Header.CanPickup.ToString("x");
-                lbl_flags.Text = _selectedSector5.Header.FlagsPortraitShadowType.ToString("x");
-                lbl_offsetx.Text = _selectedSector5.Header.OffsetX.ToString();
-                lbl_offsety.Text = _selectedSector5.Header.OffsetY.ToString();
-                lbl_offsetz.Text = _selectedSector5.Header.OffsetZ.ToString();
-                lbl_width.Text = _selectedSector5.Header.SizeX.ToString();
-                lbl_depth.Text = _selectedSector5.Header.SizeY.ToString();
-                lbl_height.Text = _selectedSector5.Header.SizeZ.ToString();
-                lbl_breakeffect.Text = _selectedSector5.Header.BreakEffect.ToString();
-                lbl_contents.Text = _selectedSector5.Header.Contents.ToString("x");
-
+                lstSector5Animations.SelectedIndex = 0;
             }
 
-            lstSector5Animations.SelectedIndex = 0;
+            pctPortrait.Refresh();
+        }
+
+        private SpriteEffectRecord? _selectedSpriteEffectRecord;
+
+        private void listViewSpriteEffectRecord_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _selectedSpriteRecord = null;
+            _selectedSpriteEffectRecord = null;
+
+            if (_selectedGameMap != null && listViewSpriteEffectRecord.SelectedItems.Count > 0 && listViewSpriteEffectRecord.SelectedItems[0].Tag is SpriteEffectRecord spriteEffectRecord)
+            {
+                _selectedSpriteEffectRecord = spriteEffectRecord;
+            }
+
+            lstSector5Animations.Items.Clear();
+            lstSector5Animations.SelectedIndex = -1;
+
+            if (_selectedSpriteEffectRecord != null)
+            {
+                for (var i = 0; i < _selectedSpriteEffectRecord.PreloadedAnims.Length; i++)
+                {
+                    lstSector5Animations.Items.Add("anim " + i);
+                }
+
+                lstSector5Animations.SelectedIndex = 0;
+            }
+
             pctPortrait.Refresh();
         }
 
         private int _curframe;
-        private Timer _animtimer;
-        private SiAnimation _selectedAnim;
+        private Timer _animTimer;
+        private SiAnimation? _selectedAnimation;
 
         private void UpdateAnim(int animoffset)
         {
-            _animtimer.Enabled = false;
+            _animTimer.Enabled = false;
             lstSector5Frames.Items.Clear();
             lstSector5Frames.SelectedIndex = -1;
 
-            if (_selectedSector5 != null)
+            if (_selectedSpriteRecord != null)
             {
-
-                var br = _datasBin.OpenBin();
-                _selectedAnim = _selectedSector5.GetAnimation(br, animoffset);
-                lblSelAnim.Text = _selectedAnim.MemoryAddress.ToString("x6");
+                using var br = _datasBin.OpenBin();
+                _selectedAnimation = _selectedSpriteRecord.GetAnimation(br, animoffset);
+                lblSelAnim.Text = _selectedAnimation.MemoryAddress.ToString("x6");
                 _cachedSprites = new Dictionary<int, List<Bitmap>>(); //blow cache
-                _curframe = _selectedAnim.NumberOfFrames;
-                _animtimer.Interval = 1;
-                _animtimer.Enabled = true;
-                animtimer_Tick(null, null);
-                br.Close();
+                _curframe = _selectedAnimation.NumberOfFrames;
+                _animTimer.Interval = 1;
+                _animTimer.Enabled = true;
+                animationTimer_Tick(null, null);
 
-                if (_selectedAnim.Frames != null)
+                if (_selectedAnimation.Frames != null)
                 {
-                    for (var dex = 0; dex < _selectedAnim.NumberOfFrames; dex++)
+                    for (var dex = 0; dex < _selectedAnimation.NumberOfFrames; dex++)
                     {
-                        if (_selectedAnim.Frames[dex].Images == null)
+                        if (_selectedAnimation.Frames[dex].Images == null)
                         {
                             lstSector5Frames.Items.Add("frame " + dex + " transition");
                         }
                         else
                         {
-                            lstSector5Frames.Items.Add("frame " + dex + " (imageset " +
-                                                       (_selectedAnim.Frames[dex].Images.ImageSetId & 0xff) + ")");
+                            lstSector5Frames.Items.Add("frame " + dex + " (imageset " + (_selectedAnimation.Frames[dex].Images.ImageSetId & 0xff) + ")");
                         }
                     }
+                }
 
+                if (lstSector5Frames.Items.Count > 0)
+                {
+                    lstSector5Frames.SelectedIndex = 0;
+                }
+            }
+            else if (_selectedSpriteEffectRecord != null)
+            {
+                //using var br = _datasBin.OpenBin();
+                //_selectedAnimation = _selectedSpriteEffectRecord.GetAnimation(br, animoffset);
+                lblSelAnim.Text = _selectedEffectAnimation.MemoryAddress.ToString("x6");
+                _cachedSprites = new Dictionary<int, List<Bitmap>>(); //blow cache
+                _curframe = _selectedEffectAnimation.NumberOfFrames;
+                _animTimer.Interval = 1;
+                _animTimer.Enabled = true;
+                animationTimer_Tick(null, null);
+
+                if (_selectedEffectAnimation.Frames != null)
+                {
+                    for (var i = 0; i < _selectedEffectAnimation.NumberOfFrames; i++)
+                    {
+                        if (_selectedEffectAnimation.Frames[i].Images == null)
+                        {
+                            lstSector5Frames.Items.Add("frame " + i + " transition");
+                        }
+                        else
+                        {
+                            lstSector5Frames.Items.Add("frame " + i + " (imageset " + (_selectedEffectAnimation.Frames[i].Images.ImageSetId & 0xff) + ")");
+                        }
+                    }
                 }
 
                 if (lstSector5Frames.Items.Count > 0)
@@ -1035,7 +1058,7 @@ namespace AlundraTools.GameControls
 
         private void rdoDown_CheckedChanged(object sender, EventArgs e)
         {
-            if (rdoDown.Checked)
+            if (rdoDown.Checked && _selectedAnimSet != null)
             {
                 UpdateAnim(_selectedAnimSet.DownOffset);
             }
@@ -1043,7 +1066,7 @@ namespace AlundraTools.GameControls
 
         private void rdoUp_CheckedChanged(object sender, EventArgs e)
         {
-            if (rdoUp.Checked)
+            if (rdoUp.Checked && _selectedAnimSet != null)
             {
                 UpdateAnim(_selectedAnimSet.UpOffset);
             }
@@ -1051,7 +1074,7 @@ namespace AlundraTools.GameControls
 
         private void rdoLeft_CheckedChanged(object sender, EventArgs e)
         {
-            if (rdoLeft.Checked)
+            if (rdoLeft.Checked && _selectedAnimSet != null)
             {
                 UpdateAnim(_selectedAnimSet.LeftOffset);
             }
@@ -1059,103 +1082,171 @@ namespace AlundraTools.GameControls
 
         private void rdoRight_CheckedChanged(object sender, EventArgs e)
         {
-            if (rdoRight.Checked)
+            if (rdoRight.Checked && _selectedAnimSet != null)
             {
                 UpdateAnim(_selectedAnimSet.RightOffset);
             }
         }
 
         private AnimationSet _selectedAnimSet;
+        private SiEffectAnimation _selectedEffectAnimation;
 
         private void lstSector5Animations_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _selectedAnim = null;
-            _animtimer.Enabled = false;
+            _selectedAnimation = null;
+            _animTimer.Enabled = false;
             lstSector5Frames.Items.Clear();
             lstSector5Frames.SelectedIndex = -1;
-
             rdoDown.Checked = false;
-
             _selectedAnimSet = null;
-            if (_selectedGameMap != null && _selectedSector5 != null && lstSector5Animations.SelectedIndex >= 0)
+            _selectedEffectAnimation = null;
+
+            if (lstSector5Animations.SelectedIndex == -1)
             {
-                _selectedAnimSet = _selectedSector5.AnimSets[lstSector5Animations.SelectedIndex];
-                lblAnimSetAddr.Text = _selectedAnimSet.MemoryAddress.ToString("x6");
-                rdoDown.Text = "down (" + _selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Down].ToString("x4") + ")";
-                rdoUp.Text = "up (" + _selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Up].ToString("x4") + ")";
-                rdoLeft.Text = "left (" + _selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Left].ToString("x4") + ")";
-                rdoRight.Text = "right (" + _selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Right].ToString("x4") +
-                                ")";
+                return;
+            }
 
+            if (_selectedSpriteRecord != null)
+            {
+                _selectedAnimSet = _selectedSpriteRecord.AnimSets[lstSector5Animations.SelectedIndex];
 
-                rdoDown.Checked = true;
+                if (_selectedGameMap != null && _selectedAnimSet != null)
+                {
+                    rdoDown.Text = $"down ({_selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Down]})";
+                    rdoUp.Text = $"up ({_selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Up]})";
+                    rdoLeft.Text = $"left ({_selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Left]})";
+                    rdoRight.Text = $"right ({_selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Right]})";
+                    rdoDown.Checked = true;
+                    lblAnimProps.Text = $"speed: {_selectedAnimSet.Speed} sfx: {_selectedAnimSet.Sfx} flags: {_selectedAnimSet.Flags} {_selectedAnimSet.Acceleration} {_selectedAnimSet.U6}";
+                }
+            }
+            else if (_selectedSpriteEffectRecord != null)
+            {
+                _selectedEffectAnimation = _selectedSpriteEffectRecord.PreloadedAnims[lstSector5Animations.SelectedIndex];
 
-                lblAnimProps.Text = "speed:" + _selectedAnimSet.Speed.ToString("x4") +
-                                    " sfx:" + _selectedAnimSet.Sfx.ToString("x2") +
-                                    " flags:" + _selectedAnimSet.Flags.ToString("x2") +
-                                    _selectedAnimSet.Acceleration.ToString("x2") +
-                                    _selectedAnimSet.U6.ToString("x2");
+                rdoDown.Text = "down";
+                rdoUp.Text = "up";
+                rdoLeft.Text = "left";
+                rdoRight.Text = "right";
+                lblAnimProps.Text = "--";
+
+                UpdateAnim(-1);
             }
         }
 
-        private void animtimer_Tick(object sender, EventArgs e)
+        private void animationTimer_Tick(object sender, EventArgs e)
         {
-            _animtimer.Enabled = false;
-            if (_selectedAnim != null && _selectedAnim.NumberOfFrames > 0 && _selectedAnim.Frames != null)
+            _animTimer.Enabled = false;
+
+            if (_selectedEffectAnimation == null && _selectedAnimation == null)
             {
-                _curframe++;
-                if (_curframe >= _selectedAnim.NumberOfFrames)
+                return;
+            }
+
+            var numberOfFrames = 0;
+            var frameDelay = -1;
+
+            if (_selectedAnimation != null && _selectedAnimation.NumberOfFrames > 0 && _selectedAnimation.Frames != null)
+            {
+                numberOfFrames = _selectedAnimation.NumberOfFrames;
+
+                if (_curframe >= numberOfFrames)
                 {
                     _curframe = 0;
                 }
 
-                var delay = Math.Max(_selectedAnim.Frames[_curframe].Delay & 0x7f, 1);
-                _animtimer.Interval = delay * 23;
-
-                pctAnim.Refresh();
-                _animtimer.Enabled = true;
+                frameDelay = _selectedAnimation.Frames[_curframe].Delay & 0x7f;
             }
+            else if (_selectedEffectAnimation != null && _selectedEffectAnimation.NumberOfFrames > 0 && _selectedEffectAnimation.Frames != null)
+            {
+                numberOfFrames = _selectedEffectAnimation.NumberOfFrames;
+
+                if (_curframe >= numberOfFrames)
+                {
+                    _curframe = 0;
+                }
+
+                frameDelay = _selectedEffectAnimation.Frames[_curframe].Delay & 0x7f;
+            }
+            else
+            {
+                return;
+            }
+
+            _curframe++;
+
+            if (_curframe >= numberOfFrames)
+            {
+                _curframe = 0;
+            }
+
+            var delay = Math.Max(frameDelay, 1);
+            _animTimer.Interval = delay * 23;
+
+            pctAnim.Refresh();
+            _animTimer.Enabled = true;
         }
 
         private SiFrame _selectedFrame;
+        private SiEffectFrame _selectedEffectFrame;
 
         private void lstSector5Frames_SelectedIndexChanged(object sender, EventArgs e)
         {
             _selectedFrame = null;
+            _selectedEffectFrame = null;
             lstSector5Images.Items.Clear();
             lstSector5Images.SelectedIndex = -1;
             lblFrameData.Text = "";
             lblFrameAddr.Text = "000000";
             lblImgAddr.Text = "000000";
-            if (_selectedAnim != null && lstSector5Frames.SelectedIndex >= 0)
+
+            if (lstSector5Frames.SelectedIndex == -1)
             {
-                _selectedFrame = _selectedAnim.Frames[lstSector5Frames.SelectedIndex];
-                lblFrameAddr.Text = _selectedFrame.MemoryAddress.ToString("x6");
-                lblFrameData.Text = "delay: " + ByteToString(_selectedFrame.Delay) + " frm?: " +
-                                    _selectedFrame.CollisionOffset.ToString("x4");
-                //CachedSprites.Remove(selectedFrame.images.imagesetid);
+                return;
+            }
 
-                if (_selectedFrame.Images != null)
+            SiImageSet imageSet = null;
+            var delay = -1;
+            var memoryAddress = -1;
+
+            if (_selectedAnimation != null)
+            {
+                _selectedFrame = _selectedAnimation.Frames[lstSector5Frames.SelectedIndex];
+                imageSet = _selectedFrame.Images;
+                delay = _selectedFrame.Delay;
+                memoryAddress = _selectedFrame.MemoryAddress;
+            }
+            else if (_selectedEffectAnimation != null)
+            {
+                _selectedEffectFrame = _selectedEffectAnimation.Frames[lstSector5Frames.SelectedIndex];
+                imageSet = _selectedEffectFrame.Images;
+                delay = _selectedEffectFrame.Delay;
+                memoryAddress = _selectedEffectFrame.MemoryAddress;
+            }
+           
+            lblFrameAddr.Text = memoryAddress.ToString("x6");
+            lblFrameData.Text = "delay: " + delay;
+
+            if (imageSet != null)
+            {
+                lblImgAddr.Text = imageSet.MemoryAddress.ToString("x6");
+                for (var dex = 0; dex < imageSet.NumberOfImages; dex++)
                 {
-                    lblImgAddr.Text = _selectedFrame.Images.MemoryAddress.ToString("x6");
-                    for (var dex = 0; dex < _selectedFrame.Images.NumberOfImages; dex++)
-                    {
-                        lstSector5Images.Items.Add("image " + dex);
-                    }
-
-                    if (_selectedFrame.Images.NumberOfImages > 0)
-                    {
-                        lstSector5Images.SelectedIndex = 0;
-                    }
-
-                    lblFrameData.Text += " imgs?: " + ByteToString(_selectedFrame.Images.DepthSortValue);
+                    lstSector5Images.Items.Add("image " + dex);
                 }
-                else
+
+                if (imageSet.NumberOfImages > 0)
                 {
-                    lblImgAddr.Text = string.Empty;
-                    lstSector5Images.Items.Clear();
-                    lstSector5Images.SelectedIndex = -1;
+                    lstSector5Images.SelectedIndex = 0;
                 }
+
+                lblFrameData.Text += " imgs?: " + ByteToString(imageSet.DepthSortValue);
+            }
+            else
+            {
+                lblImgAddr.Text = string.Empty;
+                lstSector5Images.Items.Clear();
+                lstSector5Images.SelectedIndex = -1;
             }
 
             pctFrame.Refresh();
@@ -1167,40 +1258,52 @@ namespace AlundraTools.GameControls
         {
             _selectedImage = null;
             lblImageData.Text = "";
-            if (_selectedFrame != null && lstSector5Images.SelectedIndex >= 0)
+            lblsx.Text = "0";
+            lblsy.Text = "0";
+            lblswidth.Text = "0";
+            lblsheight.Text = "0";
+            lblx1.Text = "0";
+            lbly1.Text = "0";
+            lblx2.Text = "0";
+            lbly2.Text = "0";
+            lblx3.Text = "0";
+            lbly3.Text = "0";
+            lblx4.Text = "0";
+            lbly4.Text = "0";
+
+            if (lstSector5Images.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            if (_selectedFrame != null)
             {
                 _selectedImage = _selectedFrame.Images.Images[lstSector5Images.SelectedIndex];
-                lblImageData.Text = "ss: " + ByteToString(_selectedImage.Spritesheet) + " p: " +
-                                    ByteToString(_selectedImage.Palette);
-                var i = _selectedImage;
-                lblsx.Text = i.Sx.ToString();
-                lblsy.Text = i.Sy.ToString();
-                lblswidth.Text = i.Swidth.ToString();
-                lblsheight.Text = i.Sheight.ToString();
-                lblx1.Text = i.X1.ToString();
-                lbly1.Text = i.Y1.ToString();
-                lblx2.Text = i.X2.ToString();
-                lbly2.Text = i.Y2.ToString();
-                lblx3.Text = i.X3.ToString();
-                lbly3.Text = i.Y3.ToString();
-                lblx4.Text = i.X4.ToString();
-                lbly4.Text = i.Y4.ToString();
+
+            }
+            else if (_selectedEffectFrame != null)
+            {
+                _selectedImage = _selectedEffectFrame.Images.Images[lstSector5Images.SelectedIndex];
             }
             else
             {
-                lblsx.Text = "0";
-                lblsy.Text = "0";
-                lblswidth.Text = "0";
-                lblsheight.Text = "0";
-                lblx1.Text = "0";
-                lbly1.Text = "0";
-                lblx2.Text = "0";
-                lbly2.Text = "0";
-                lblx3.Text = "0";
-                lbly3.Text = "0";
-                lblx4.Text = "0";
-                lbly4.Text = "0";
+                return;
             }
+
+            lblImageData.Text = "ss: " + ByteToString(_selectedImage.Spritesheet) + " p: " + ByteToString(_selectedImage.Palette);
+            var i = _selectedImage;
+            lblsx.Text = i.Sx.ToString();
+            lblsy.Text = i.Sy.ToString();
+            lblswidth.Text = i.Swidth.ToString();
+            lblsheight.Text = i.Sheight.ToString();
+            lblx1.Text = i.X1.ToString();
+            lbly1.Text = i.Y1.ToString();
+            lblx2.Text = i.X2.ToString();
+            lbly2.Text = i.Y2.ToString();
+            lblx3.Text = i.X3.ToString();
+            lbly3.Text = i.Y3.ToString();
+            lblx4.Text = i.X4.ToString();
+            lbly4.Text = i.Y4.ToString();
 
             pctImage.Refresh();
         }
@@ -1210,24 +1313,34 @@ namespace AlundraTools.GameControls
             try
             {
                 e.Graphics.Clear(Color.Black);
-                if (_selectedAnim?.Frames != null && _selectedAnim.NumberOfFrames > 0)
-                {
-                    var frame = _selectedAnim.Frames[_curframe];
 
-                    if (frame.Images == null)
+                SiImageSet images = null;
+
+                if (_selectedAnimation != null)
+                {
+                    images = _selectedAnimation.Frames[_curframe]?.Images;
+                }
+                else if (_selectedEffectAnimation != null)
+                {
+                    images = _selectedEffectAnimation.Frames[_curframe]?.Images;
+                }
+
+                if (images != null && images.NumberOfImages > 0)
+                {
+                    if (images.Images == null)
                     {
                         return;
                     }
 
-                    var bmps = GetSpriteImages(frame.Images);
+                    var bmps = GetSpriteImages(images);
                     var posx = pctAnim.Width / 2;
                     var posy = pctAnim.Height / 2;
 
                     e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 
-                    for (var dex = frame.Images.NumberOfImages - 1; dex >= 0; dex--)
+                    for (var dex = images.NumberOfImages - 1; dex >= 0; dex--)
                     {
-                        var img = frame.Images.Images[dex];
+                        var img = images.Images[dex];
                         if (img != null)
                         {
 
@@ -1252,17 +1365,29 @@ namespace AlundraTools.GameControls
             try
             {
                 e.Graphics.Clear(Color.Black);
-                if (_selectedFrame?.Images != null)
+
+                SiImageSet images = null;
+
+                if (_selectedFrame != null)
                 {
-                    var bmps = GetSpriteImages(_selectedFrame.Images);
+                    images = _selectedFrame.Images;
+                }
+                else if (_selectedEffectFrame != null)
+                {
+                    images = _selectedEffectFrame.Images;
+                }
+
+                if (images != null)
+                {
+                    var bmps = GetSpriteImages(images);
                     var posx = pctFrame.Width / 2;
                     var posy = pctFrame.Height / 2;
 
                     e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 
-                    for (var dex = _selectedFrame.Images.NumberOfImages - 1; dex >= 0; dex--)
+                    for (var dex = images.NumberOfImages - 1; dex >= 0; dex--)
                     {
-                        var img = _selectedFrame.Images.Images[dex];
+                        var img = images.Images[dex];
                         if (img != null)
                         {
 
@@ -1278,7 +1403,7 @@ namespace AlundraTools.GameControls
             }
             catch (Exception ex)
             {
-
+                Debugger.Break();
             }
         }
 
@@ -1288,9 +1413,26 @@ namespace AlundraTools.GameControls
             {
                 e.Graphics.Clear(Color.Black);
 
-                if (_selectedFrame != null && _selectedImage != null)
+                SiImageSet imageSet = null;
+
+                if (_selectedFrame != null)
                 {
-                    var bmps = GetSpriteImages(_selectedFrame.Images);
+                    imageSet = _selectedFrame.Images;
+                }
+                else if (_selectedEffectFrame != null)
+                {
+                    imageSet = _selectedEffectFrame.Images;
+                }
+
+                if (_selectedImage != null)
+                {
+                    var bmps = GetSpriteImages(imageSet);
+
+                    if (bmps.Count == 0)
+                    {
+                        return;
+                    }
+
                     var posx = pctFrame.Width / 2;
                     var posy = pctFrame.Height / 2;
 
@@ -1298,16 +1440,17 @@ namespace AlundraTools.GameControls
 
                     var w = _selectedImage.X4 - _selectedImage.X1;
                     var h = _selectedImage.Y4 - _selectedImage.Y1;
+
                     if (w != 0 && h != 0)
                     {
-                        e.Graphics.DrawImage(bmps[Array.IndexOf(_selectedFrame.Images.Images, _selectedImage)],
-                            posx + _selectedImage.X1, posy + _selectedImage.Y1); //, w, h);
+                        var index = Math.Min(bmps.Count - 1, lstSector5Frames.SelectedIndex);
+                        e.Graphics.DrawImage(bmps[index], posx + _selectedImage.X1, posy + _selectedImage.Y1); //, w, h);
                     }
                 }
             }
             catch (Exception ex)
             {
-
+                Debugger.Break();
             }
         }
 
@@ -1489,12 +1632,12 @@ namespace AlundraTools.GameControls
             {
                 e.Graphics.Clear(Color.Black);
 
-                if (_selectedSector5 != null)
+                if (_selectedSpriteRecord != null)
                 {
-                    if ((_selectedSector5.Header.FlagsPortraitShadowType & 0x80) == 0x80)
+                    if ((_selectedSpriteRecord.Header.FlagsPortraitShadowType & 0x80) == 0x80)
                     {
                         var br = _datasBin.OpenBin();
-                        var portraitset = _selectedSector5.GetPortraitImageset(br);
+                        var portraitset = _selectedSpriteRecord.GetPortraitImageset(br);
                         br.Close();
                         var portraitbmp = _selectedGameMap.GenerateSpriteBitmap(portraitset.Images[0],
                             _selectedGameMap.SpriteInfo.Palettes[portraitset.Images[0].Palette & 0x1f]);
@@ -1609,7 +1752,7 @@ namespace AlundraTools.GameControls
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (_selectedGameMap == null)
+            if (_selectedGameMap?.Map == null)
             {
                 propertyGridGameMapHeader.SelectedObject = null;
                 return;

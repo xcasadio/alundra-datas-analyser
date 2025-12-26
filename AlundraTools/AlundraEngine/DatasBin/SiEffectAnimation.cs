@@ -2,6 +2,10 @@
 
 public class SiEffectAnimation
 {
+    public int MemoryAddress;
+    public int NumberOfFrames;
+    public readonly SiEffectFrame[] Frames;
+
     public SiEffectAnimation(BinaryReader br, int effectid, int binoffset, int memoryAddress)
     {
         MemoryAddress = memoryAddress;
@@ -37,7 +41,4 @@ public class SiEffectAnimation
             }
         }
     }
-    public int MemoryAddress;
-    public int NumberOfFrames;
-    public readonly SiEffectFrame[] Frames;
 }

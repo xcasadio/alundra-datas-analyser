@@ -1,4 +1,6 @@
-﻿namespace AlundraEngine.DatasBin;
+﻿using System.Diagnostics;
+
+namespace AlundraEngine.DatasBin;
 
 public class SiEntityRecord
 {
@@ -22,11 +24,6 @@ public class SiEntityRecord
         EventCodesD_TouchIndex = br.ReadByte();
         EventCodesE_DeactivateIndex = br.ReadByte();
         EventCodesF_InteractIndex = br.ReadByte();
-        //U7 = br.ReadByte();//10
-        //U7 = (short)(U7 | (br.ReadByte() << 8));
-        ////u8 = br.ReadByte();//11
-        //Contents = br.ReadByte();//12
-        //U10 = br.ReadByte();//13
         _10 = br.ReadUInt16();
         Contents = br.ReadUInt16();
 
@@ -41,18 +38,24 @@ public class SiEntityRecord
             var commands = new List<SiCommand>();
             if (EventCodesA_LoadIndex != 0xff && EventCodesA_LoadIndex != 0)
             {
-                commands.AddRange(si.EventCodes.GetCommands(br, si.EventCodes.EventCodesATable[EventCodesA_LoadIndex & 0x7f], true));
+                commands.AddRange(si.EventCodes.GetCommandsOnlyAtOffset(si.EventCodes.EventCodesATable[EventCodesA_LoadIndex & 0x7f]));
             }
 
             if (commands.Count == 0 && EventCodesC_TickIndex != 0xff && EventCodesC_TickIndex != 0)
             {
-                commands.AddRange(si.EventCodes.GetCommands(br, si.EventCodes.EventCodesCTable[EventCodesC_TickIndex & 0x7f], true));
+                commands.AddRange(si.EventCodes.GetCommandsOnlyAtOffset(si.EventCodes.EventCodesCTable[EventCodesC_TickIndex & 0x7f]));
             }
 
             foreach (var cmd in commands)
             {
                 if (cmd.Command == 0x1a)//set animation
                 {
+                    if (cmd.Parameters[0] >= (sector5.AnimSets?.Length ?? -1))
+                    {
+                        Debugger.Break();
+                        cmd.Parameters[0] = (byte)((sector5.AnimSets?.Length ?? 1) - 1);
+                    }
+
                     var animSet = sector5.AnimSets[cmd.Parameters[0]];
                     return sector5.GetAnimation(br, animSet.AnimationOffsets[SpriteDirection & 0x3]);
                 }

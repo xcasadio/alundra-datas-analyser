@@ -2,6 +2,10 @@
 
 public class SiAnimation
 {
+    public readonly int MemoryAddress;
+    public readonly int NumberOfFrames;
+    public readonly SiFrame[] Frames;
+
     public SiAnimation(BinaryReader br, SpriteTableHeader header, int memoryAddress)
     {
         MemoryAddress = memoryAddress;
@@ -41,7 +45,4 @@ public class SiAnimation
             }
         }
     }
-    public readonly int MemoryAddress;
-    public readonly int NumberOfFrames;
-    public readonly SiFrame[] Frames;
 }

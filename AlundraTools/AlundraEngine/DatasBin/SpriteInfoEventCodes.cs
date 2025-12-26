@@ -139,15 +139,13 @@ public class SpriteInfoEventCodes
         };
     }
 
-    public List<SiCommand> GetCommands(BinaryReader br, int eventCodesOffset, bool stopAtff = false, int commandsSize = 0)
+    public List<SiCommand> GetCommandsOnlyAtOffset(int eventCodesOffset)
     {
         var commands = new List<SiCommand>();
-        br.BaseStream.Position = _binOffset + eventCodesOffset;
-        var bytes = new byte[_dataSize - eventCodesOffset];
-        br.Read(bytes, 0, bytes.Length);
-        var i = 0;
+        var i = eventCodesOffset;
+        var bytes = Codes;
 
-        while (i < bytes.Length && (commandsSize == 0 || i < commandsSize))
+        while (i < bytes.Length)
         {
             var offset = i;
             var value = bytes[i++];
@@ -160,9 +158,9 @@ public class SpriteInfoEventCodes
 
             var size = siCode.Size;
             var name = siCode.Name; 
-            byte[] parameters = null;
+            byte[] parameters;
 
-            if (siCode.Code == 0) //break
+            if (siCode.Code == 0)
             {
                 parameters = Array.Empty<byte>();
             }
@@ -179,7 +177,7 @@ public class SpriteInfoEventCodes
             var cmd = new SiCommand(value, parameters, name, offset);
             commands.Add(cmd);
 
-            if (stopAtff && value == 0xff)
+            if (value == 0xff)
             {
                 break;
             }

@@ -168,7 +168,6 @@ public class EffectManager
             effect.PaletteIndex = paletteIndex;
             effect.CurrentIsMapSprite = effect.TargetIsMapSprite;
             effect.CurrentSpriteTableIndex = effect.TargetSpriteTableIndex;
-
             effect.CurrentAnimation = (byte)~effect.TargetAnimation;
         }
 

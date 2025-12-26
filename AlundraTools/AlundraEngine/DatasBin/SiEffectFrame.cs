@@ -2,6 +2,14 @@
 
 public class SiEffectFrame
 {
+    public readonly int MemoryAddress;
+    public readonly byte Delay;
+    //public short DepthSortValue;//-1
+    public readonly int ImageSetPointer;
+    public readonly byte TransformIndexLow;
+
+    public SiImageSet Images;
+
     public SiEffectFrame(BinaryReader br, int effectId, int binOffset, int memoryAddress)
     {
         MemoryAddress = memoryAddress;
@@ -28,12 +36,4 @@ public class SiEffectFrame
 
         ImageSetPointer = -1;
     }
-
-    public int MemoryAddress;
-    public readonly byte Delay;//top bit masked
-    //public short DepthSortValue;//-1
-    public readonly int ImageSetPointer;
-    public readonly byte TransformIndexLow;
-
-    public SiImageSet Images;
 }

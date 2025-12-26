@@ -2016,7 +2016,7 @@ public class SpriteEventHandlers
                     _gameEngine.StaticVariables.g_dropItemTextBuffer += _gameEngine.EtcRes.GetOtherString(0x45);
                 }
 
-                Debugger.Break();
+                //Debugger.Break();
                 _gameEngine.FUN_80032b28((uint)entity.ContentsGameFlag); //AIValues[0]
                 soundSfxIndex = _gameEngine.StaticVariables.g_itemDropProperties[itemId].SoundSfxIndex; //itemId * 8 + 5
 

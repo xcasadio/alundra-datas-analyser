@@ -4,48 +4,48 @@ public class SpriteEffectRecord
 {
     public SpriteEffectRecord(BinaryReader br, long binOffset, int id, int memaddr, int spriteInfoMemoryAddress)
     {
-        _effectId = id;
-        _binOffset = binOffset;
-        _spriteInfoMemoryAddress = spriteInfoMemoryAddress;
+        EffectId = id;
+        BinOffset = binOffset;
+        SpriteInfoMemoryAddress = spriteInfoMemoryAddress;
 
-        _animationOffsets = new int[255];
+        AnimationOffsets = new int[255];
         var final = -1;
 
-        for (var i = 0; i < _animationOffsets.Length; i++)
+        for (var i = 0; i < AnimationOffsets.Length; i++)
         {
             if (final != -1 && i >= final)
             {
-                _animationCount = i;
+                AnimationCount = i;
                 break;
             }
 
-            _animationOffsets[i] = br.ReadInt16();
+            AnimationOffsets[i] = br.ReadInt16();
 
             if (final == -1)
             {
-                final = _animationOffsets[i] / 2;
+                final = AnimationOffsets[i] / 2;
             }
         }
 
         //preload all of the animations here
-        PreloadedAnims = new SiEffectAnimation[_animationCount];
-        for (int i = 0; i < _animationCount; i++)
+        PreloadedAnims = new SiEffectAnimation[AnimationCount];
+        for (int i = 0; i < AnimationCount; i++)
         {
-            PreloadedAnims[i] = GetAnimation(br, _animationOffsets[i]);
+            PreloadedAnims[i] = GetAnimation(br, AnimationOffsets[i]);
         }
     }
 
-    private readonly long _binOffset;
-    private readonly int _spriteInfoMemoryAddress;
-    private readonly int[] _animationOffsets;
-    private readonly int _animationCount;
-    private readonly int _effectId;
+    public readonly long BinOffset;
+    public readonly int SpriteInfoMemoryAddress;
+    public readonly int[] AnimationOffsets;
+    public readonly int AnimationCount;
+    public readonly int EffectId;
     public readonly SiEffectAnimation[] PreloadedAnims;
 
     public SiEffectAnimation GetAnimation(BinaryReader br, int animationOffset)
     {
-        br.BaseStream.Position = _binOffset + animationOffset;
-        var anim = new SiEffectAnimation(br, _effectId, (int)_binOffset, _spriteInfoMemoryAddress + animationOffset);
+        br.BaseStream.Position = BinOffset + animationOffset;
+        var anim = new SiEffectAnimation(br, EffectId, (int)BinOffset, SpriteInfoMemoryAddress + animationOffset);
         return anim;
     }
 }
