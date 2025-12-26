@@ -1,4 +1,6 @@
-﻿namespace AlundraEngine.DatasBin;
+﻿using System.Diagnostics;
+
+namespace AlundraEngine.DatasBin;
 
 public class SiFrame
 {
@@ -21,16 +23,13 @@ public class SiFrame
 
         Delay = br.ReadByte();
 
-        var pos = br.BaseStream.Position;
         TransformIndexLow = br.ReadByte();
         TransformIndexHigh = br.ReadByte();
         SpriteIndexLow = br.ReadByte();
         SpriteIndexHigh = br.ReadByte();
-        br.BaseStream.Position = pos;
 
-        //TODO create CollisionOffset & ImageSetPointer with TransformIndexLow, ...
-        CollisionOffset = br.ReadInt16();
-        ImageSetPointer = br.ReadUInt16() * 2;
+        CollisionOffset = (short)((TransformIndexHigh << 8) | TransformIndexLow);
+        ImageSetPointer = ((SpriteIndexHigh << 8) | SpriteIndexLow) * 2;
 
         var streamPosition = br.BaseStream.Position;
 

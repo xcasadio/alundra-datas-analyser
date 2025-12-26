@@ -5,21 +5,9 @@ public class BalanceRecord
     public readonly byte Level;//0
     public readonly byte OffsetToNextLevel;//1
     public byte Hp;//2 
-    public readonly byte[] Values = new byte[11];//supposed to be at 2
-    //but i think ill put it at 3 and subtract q from the indexvals
-    //3
-    //4
-    //5
-    //6
-    //7
-    //8
-    //9
-    //a
-    //b
-    //c
-    //d
-    public readonly byte NumAnimVals;//e
-    public readonly BalanceAnimValRef[] AnimVals;//targetanim+1 //f
+    public readonly byte[] Values = new byte[11];
+    public readonly byte NumAnimVals;
+    public readonly BalanceAnimValRef[] AnimVals;
 
     public readonly int Offset;
     public readonly BalanceRecord Next;

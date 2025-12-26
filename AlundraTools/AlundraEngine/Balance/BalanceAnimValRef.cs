@@ -10,4 +10,9 @@ public class BalanceAnimValRef
         Val = br.ReadByte();
         U2 = br.ReadByte();
     }
+
+    public override string ToString()
+    {
+        return $"{Val} {U2}";
+    }
 }

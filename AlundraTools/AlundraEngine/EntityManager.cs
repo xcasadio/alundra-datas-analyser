@@ -103,10 +103,7 @@ public class EntityManager
         entity.PaletteOffset = paletteIndex;
         entity.SpriteSheetOffset = sheetSize;
 
-        //BalanceRecord balanceRecord = GetSpriteAnimationPtr(entity.SpriteTableIndex);
-        BalanceRecord balanceRecord =
-            _gameEngine.BalanceBin.GetBalanceRecordFromSpriteIndex((int)spriteTableIndex,
-                _gameEngine.CurrentMap.Info.BalanceLevel);
+        BalanceRecord balanceRecord = _gameEngine.BalanceBin.GetBalanceRecordFromSpriteIndex((int)spriteTableIndex, _gameEngine.StaticVariables.g_itemIdThreshold);
         entity.BalanceRecord = balanceRecord;
         byte balanceHp = balanceRecord.Hp;
         entity.HpMax = balanceHp;
@@ -436,7 +433,7 @@ public class EntityManager
             }
             else
             {
-                var index = entity.TargetAnimationId >= entity.BalanceRecord.NumAnimVals ? 0 : entity.TargetAnimationId;
+                var index = entity.TargetAnimationId + 1 >= entity.BalanceRecord.NumAnimVals ? 0 : entity.TargetAnimationId + 1;
                 entity.BalanceAnimValRef = entity.BalanceRecord.AnimVals[index];
             }
 
@@ -494,6 +491,8 @@ public class EntityManager
 
         animRecordPtr = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
         currentFrame = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
+
+        currentFrame = entity.Frame;
 
         if (currentFrame.CollisionData != null)
         {

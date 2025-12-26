@@ -696,17 +696,9 @@ public class GraphicManager
                     tilePtr.b0 = 0x30;
 
                     int x = Fixed16ToInt(e.PosX + e.ModX) - _gameEngine.StaticVariables.g_cameraScrollingX;
-
-                    // y calc (suivant ASM):
-                    // t2 = posY - posZ
-                    // base = t2 - modZ - depth - 1
-                    // y = ((base + modY + height + 1) >> 16) - cameraY
                     int basePosition = (e.PosY - e.PosZ) - e.ModZ - e.Depth;
                     basePosition -= 1;
                     int y = Fixed16ToInt(basePosition + e.ModY + e.Height + 1) - _gameEngine.StaticVariables.g_cameraScrollingY;
-
-                    // w = ((width + 1) >> 16)
-                    // h = ((depth + 1) >> 16)
                     int w = Fixed16ToInt(e.Width + 1);
                     int h = Fixed16ToInt(e.Depth + 1);
 
@@ -716,7 +708,7 @@ public class GraphicManager
                     tilePtr.h = (short)h;
 
                     //AddPrim(orderingTable, tilePtr);
-                    _gameEngine.Renderer.AddRectangle(tilePtr);
+                    _gameEngine.Renderer.AddRectangle(tilePtr, SpriteDepth.DebugCollision, 0.5f);
                     //tilePtr = new TILE(); //tilePtr++;
                 }
 
@@ -727,13 +719,9 @@ public class GraphicManager
                     tilePtr.b0 = 0xFF;
 
                     int x = Fixed16ToInt(e.PosX + e.ModX) - _gameEngine.StaticVariables.g_cameraScrollingX;
-
-                    // ASM recalcule une variante du Y (sans ajouter height dans la première partie),
-                    // puis h = ((height+1)>>16)
                     int basePosition = (e.PosY - e.PosZ) - e.ModZ - e.Depth;
                     basePosition -= 1;
                     int y = Fixed16ToInt(basePosition + e.ModY) - _gameEngine.StaticVariables.g_cameraScrollingY;
-
                     int w = Fixed16ToInt(e.Width + 1);
                     int h = Fixed16ToInt(e.Height + 1);
 
@@ -742,7 +730,7 @@ public class GraphicManager
                     tilePtr.w = (short)w;
                     tilePtr.h = (short)h;
 
-                    _gameEngine.Renderer.AddRectangle(tilePtr);
+                    _gameEngine.Renderer.AddRectangle(tilePtr, SpriteDepth.DebugCollision, 0.5f);
                     //AddPrim(orderingTable, tilePtr);
                     //tilePtr = new TILE(); //tilePtr++;
                 }
@@ -769,18 +757,15 @@ public class GraphicManager
                     continue;
                 }
 
-                // L'ASM skip si frameCollisionData == 0
                 if (e.FrameCollision == null)
                 {
                     continue;
                 }
 
-                // Couleur dépend de balanceAnimValRef et du 1er octet pointé
                 int highlight = 0;
                 if (e.BalanceAnimValRef != null)
                 {
-                    // lbu [balanceAnimValRef]
-                    if (e.BalanceAnimValRef != null)
+                    if (e.BalanceAnimValRef.Val != 0)
                     {
                         highlight = 1;
                     }
@@ -790,14 +775,12 @@ public class GraphicManager
                 {
                     if (highlight != 0)
                     {
-                        // r=0x30, g=0, b=0
                         tilePtr.r0 = 0x30;
                         tilePtr.g0 = 0x00;
                         tilePtr.b0 = 0x00;
                     }
                     else
                     {
-                        // r=g=0x20, b=0
                         tilePtr.r0 = 0x20;
                         tilePtr.g0 = 0x20;
                         tilePtr.b0 = 0x00;
@@ -805,19 +788,13 @@ public class GraphicManager
 
                     // Les formules suivent l'ASM en utilisant collisionOffsetX/Y/Z + collisionWidth/Depth/Height
                     // baseZ = (posY - posZ) - collisionOffsetZ - collisionHeight - 1
-                    int basePosition = (e.PosY - e.PosZ) - e.CollisionOffsetZ - (int)e.CollisionHeight;
+                    int basePosition = (e.PosY - e.PosZ) - e.CollisionOffsetZ - e.CollisionHeight;
                     basePosition -= 1;
 
-                    // x = ((posX + collisionOffsetX) >> 16) - camX
                     int x = Fixed16ToInt(e.PosX + e.CollisionOffsetX) - _gameEngine.StaticVariables.g_cameraScrollingX;
-
-                    // y = ((base + collisionOffsetY + collisionDepth + 1) >> 16) - camY
-                    int y = Fixed16ToInt(basePosition + e.CollisionOffsetY + (int)e.CollisionDepth + 1) - _gameEngine.StaticVariables.g_cameraScrollingY;
-
-                    // w = ((collisionWidth + 1) >> 16)
-                    // h = ((collisionHeight + 1) >> 16)
-                    int w = Fixed16ToInt((int)e.CollisionWidth + 1);
-                    int h = Fixed16ToInt((int)e.CollisionHeight + 1);
+                    int y = Fixed16ToInt(basePosition + e.CollisionOffsetY + e.CollisionDepth + 1) - _gameEngine.StaticVariables.g_cameraScrollingY;
+                    int w = Fixed16ToInt(e.CollisionWidth + 1);
+                    int h = Fixed16ToInt(e.CollisionHeight + 1);
 
                     tilePtr.x0 = (short)x;
                     tilePtr.y0 = (short)y;
@@ -825,7 +802,7 @@ public class GraphicManager
                     tilePtr.h = (short)h;
 
                     //AddPrim(orderingTable, tilePtr);
-                    _gameEngine.Renderer.AddRectangle(tilePtr);
+                    _gameEngine.Renderer.AddRectangle(tilePtr, SpriteDepth.DebugCollision, 0.5f);
                     //tilePtr = new TILE(); //tilePtr++;
                 }
 
@@ -833,29 +810,24 @@ public class GraphicManager
                 {
                     if (highlight != 0)
                     {
-                        // r=0xFF, g=0, b=0
                         tilePtr.r0 = 0xFF;
                         tilePtr.g0 = 0x00;
                         tilePtr.b0 = 0x00;
                     }
                     else
                     {
-                        // r=g=0x80, b=0
                         tilePtr.r0 = 0x80;
                         tilePtr.g0 = 0x80;
                         tilePtr.b0 = 0x00;
                     }
 
-                    int basePosition = (e.PosY - e.PosZ) - e.CollisionOffsetZ - (int)e.CollisionHeight;
+                    int basePosition = (e.PosY - e.PosZ) - e.CollisionOffsetZ - e.CollisionHeight;
                     basePosition -= 1;
 
                     int x = Fixed16ToInt(e.PosX + e.CollisionOffsetX) - _gameEngine.StaticVariables.g_cameraScrollingX;
-
-                    // y = ((base + collisionOffsetY) >> 16) - camY
                     int y = Fixed16ToInt(basePosition + e.CollisionOffsetY) - _gameEngine.StaticVariables.g_cameraScrollingY;
-
-                    int w = Fixed16ToInt((int)e.CollisionWidth + 1);
-                    int h = Fixed16ToInt((int)e.CollisionHeight + 1);
+                    int w = Fixed16ToInt(e.CollisionWidth + 1);
+                    int h = Fixed16ToInt(e.CollisionHeight + 1);
 
                     tilePtr.x0 = (short)x;
                     tilePtr.y0 = (short)y;
@@ -863,7 +835,7 @@ public class GraphicManager
                     tilePtr.h = (short)h;
 
                     //AddPrim(orderingTable, tilePtr);
-                    _gameEngine.Renderer.AddRectangle(tilePtr);
+                    _gameEngine.Renderer.AddRectangle(tilePtr, SpriteDepth.DebugCollision, 0.5f);
                     //tilePtr = new TILE(); //tilePtr++;
                 }
             }

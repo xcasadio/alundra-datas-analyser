@@ -2299,73 +2299,87 @@ public class GameEngine
     //8003a7b0
     public void CheckAndTriggerTileEffect(Entity entity)
     {
-        if (entity.FrameCollision != null)
+        if (entity.FrameCollision == null)
         {
-            int[] worldXCoords = new int[4];
-            int[] worldYCoords = new int[4];
-            int tileZ, height;
+            return;
+        }
 
-            worldXCoords[2] = StaticVariables.g_tileToWorldXTable[(short)(entity.HitBoxX >> 16)];
-            worldXCoords[0] = worldXCoords[2];
-            worldXCoords[3] = StaticVariables.g_tileToWorldXTable[(int)((entity.HitBoxX + entity.CollisionWidth) >> 16)];
-            worldXCoords[1] = worldXCoords[3];
+        int[] worldXCoords = new int[4];
+        int[] worldYCoords = new int[4];
+        int tileZ, height;
 
-            worldYCoords[1] = entity.HitBoxY >> 20;
-            worldYCoords[0] = worldYCoords[1];
-            worldYCoords[3] = (int)((entity.HitBoxY + entity.CollisionDepth) >> 20);
-            worldYCoords[2] = worldYCoords[3];
+        if (entity.HitBoxX >> 16 >= StaticVariables.g_tileToWorldXTable.Length
+            || (entity.HitBoxX + entity.CollisionWidth) >> 16 >= StaticVariables.g_tileToWorldXTable.Length)
+        {
+            Debugger.Break();
+        }
 
-            tileZ = entity.HitBoxZ;
-            height = entity.CollisionHeight;
+        var val = (short)entity.HitBoxX;
+        worldXCoords[2] = (entity.HitBoxX >> 16) / StaticVariables.MapTileWidth; //StaticVariables.g_tileToWorldXTable[entity.HitBoxX >> 16];
+        worldXCoords[0] = worldXCoords[2];
+        worldXCoords[3] = ((entity.HitBoxX + entity.CollisionWidth) >> 16) / StaticVariables.MapTileWidth; //StaticVariables.g_tileToWorldXTable[(entity.HitBoxX + entity.CollisionWidth) >> 16];
+        worldXCoords[1] = worldXCoords[3];
 
-            for (int i = 0; i < 4; i++)
+        worldYCoords[1] = (entity.HitBoxY >> 16) / StaticVariables.MapTileHeight;
+        worldYCoords[0] = worldYCoords[1];
+        worldYCoords[3] = ((entity.HitBoxY + entity.CollisionDepth) >> 20) / StaticVariables.MapTileHeight;
+        worldYCoords[2] = worldYCoords[3];
+
+        tileZ = entity.HitBoxZ;
+        height = entity.CollisionHeight;
+
+        for (int i = 0; i < 4; i++)
+        {
+            int tileX = worldXCoords[i];
+
+            if (tileX < 1)
             {
-                int tileX = worldXCoords[i];
-                if (tileX < 1)
-                {
-                    tileX = 0;
-                }
-                else if (tileX > 0x33)
-                {
-                    tileX = 0x33;
-                }
+                tileX = 0;
+            }
+            else if (tileX > 0x33)
+            {
+                tileX = 0x33;
+            }
 
-                int tileY = worldYCoords[i];
-                if (tileY < 1)
-                {
-                    tileY = 0;
-                }
-                else if (tileY > 0x3B)
-                {
-                    tileY = 0x3B;
-                }
+            int tileY = worldYCoords[i];
 
-                var mapWidth = CurrentMap.Map.Width;
-                var tile = CurrentMap.Map.MapTiles[tileY * mapWidth + tileX];
-                var tileFlags = tile.Walkability | tile.GroundProperty << 8;
+            if (tileY < 1)
+            {
+                tileY = 0;
+            }
+            else if (tileY > 0x3B)
+            {
+                tileY = 0x3B;
+            }
 
-                if ((tileFlags & 2) != 0)
-                {
-                    int tileEffectZ = (tile.Height & 0xFF) << 20;
-                    //tileEffectZ = tile.Height * 0x100000;
+            var mapWidth = CurrentMap.Map.Width;
+            var tile = CurrentMap.Map.MapTiles[tileY * mapWidth + tileX];
+            var tileFlags = tile.Walkability | tile.GroundProperty << 8;
 
-                    if (tileZ <= tileEffectZ + 0x80000 && tileEffectZ + 0x80000 <= tileZ + height)
-                    {
-                        tile.Walkability = (byte)(tileFlags & 0xFFFD);
-                        tile.Height = (byte)((tileFlags & 0xFFFF) >> 8);
-                        tile.TilesOffset = -1;
+            if ((tileFlags & 2) == 0)
+            {
+                continue;
+            }
 
-                        int effectX = worldXCoords[i] * 0x180000 + 0xC0000;
-                        int effectY = worldYCoords[i] * 0x100000 + 0x80000;
+            int tileHeightWorld = (tile.Height << 20) + 0x80000; //0x80_000; //(tile.Height & 0xFF) << 20;
+            //tileEffectZ = tile.Height * 0x100000;
 
-                        EffectManager.CreateEffectEntity(0,
-                            CurrentMap.Info.C, //CurrentMap.Info.C
-                            0,
-                            effectX, effectY, tileEffectZ);
-                        EffectManager.RandomlySpawnItem(0xFF, effectX, effectY, tileEffectZ);
-                        SoundManager.PlaySoundEffect(0x1F);
-                    }
-                }
+            if (tileZ <= tileHeightWorld && tileHeightWorld <= tileZ + height)
+            {
+                tile.Walkability = (byte)(tileFlags & 0xFFFD);
+                //tile.Height = (byte)((tileFlags & 0xFFFF) >> 8);
+                tile.TilesOffset = -1; // tile.TileId = 0xFFFF;
+                tile.WallTiles = null;
+
+                int effectX = worldXCoords[i] * 0x180000 + 0xC0000; // center on tile
+                int effectY = worldYCoords[i] * 0x100000 + 0x80000;
+
+                EffectManager.CreateEffectEntity(0,
+                    CurrentMap.Info.BalanceLevel, //C?
+                    0,
+                    effectX, effectY, tileHeightWorld);
+                EffectManager.RandomlySpawnItem(0xFF, effectX, effectY, tileHeightWorld);
+                SoundManager.PlaySoundEffect(0x1F);
             }
         }
     }

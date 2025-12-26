@@ -5,6 +5,8 @@ namespace AlundraEngine;
 
 public class SpriteDepth
 {
+    public const int DebugCollision = int.MaxValue - 5;
+
     public const int BackgroundUI = int.MaxValue - 4;
     public const int ForegroundUI = int.MaxValue - 3;
     public const int ForegroundUICursor = int.MaxValue - 2;
@@ -20,6 +22,8 @@ public class Renderer(GameEngine gameEngine)
 
     // Cache pour les quads colorés
     private readonly Dictionary<QuadColorKey, Bitmap> _quadColorCache = new();
+    // Cache pour les rectangles
+    private readonly Dictionary<RectangleColorKey, Bitmap> _rectangleCache = new();
     private const int MaxCacheSize = 256;
 
     private static Bitmap CreateWhiteBitmap()
@@ -46,17 +50,39 @@ public class Renderer(GameEngine gameEngine)
 
     public void AddSprite(Sprite sprite)
     {
-        if (!_sprites.ContainsKey(sprite.DepthSortValue))
+        if (!_sprites.ContainsKey(sprite.Depth))
         {
-            _sprites[sprite.DepthSortValue] = [];
+            _sprites[sprite.Depth] = [];
         }
 
-        _sprites[sprite.DepthSortValue].Add(sprite);
+        _sprites[sprite.Depth].Add(sprite);
     }
 
-    public void AddRectangle(TILE tile)
+    public void AddRectangle(TILE tile, int depthSortValue, float alpha = 1.0f)
     {
+        if (tile.w <= 0 || tile.h <= 0) return;
 
+        var cacheKey = new RectangleColorKey(tile.w, tile.h, tile.r0, tile.g0, tile.b0);
+
+        if (!_rectangleCache.TryGetValue(cacheKey, out var bitmap))
+        {
+            if (_rectangleCache.Count >= MaxCacheSize)
+            {
+                ClearRectangleCache();
+            }
+
+            var color = Color.FromArgb(255, tile.r0, tile.g0, tile.b0);
+            bitmap = new Bitmap(tile.w, tile.h);
+            using (var g = System.Drawing.Graphics.FromImage(bitmap))
+            {
+                using var brush = new SolidBrush(color);
+                g.FillRectangle(brush, 0, 0, tile.w, tile.h);
+            }
+
+            _rectangleCache[cacheKey] = bitmap;
+        }
+
+        AddSprite(tile.x0, tile.y0, tile.w, tile.h, depthSortValue, bitmap, alpha);
     }
 
     public void AddQuadColor(POLY_G4 polyG4, int depthSortValue, float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f)
@@ -146,27 +172,36 @@ public class Renderer(GameEngine gameEngine)
         _quadColorCache.Clear();
     }
 
+    public void ClearRectangleCache()
+    {
+        foreach (var bitmap in _rectangleCache.Values)
+        {
+            bitmap.Dispose();
+        }
+        _rectangleCache.Clear();
+    }
+
     public class Sprite
     {
         public int X;
         public int Y;
         public int Width;
         public int Height;
-        public int DepthSortValue;
+        public int Depth;
         public float Alpha;
         public Bitmap Bitmap;
         public float R;
         public float G;
         public float B;
 
-        public Sprite(int x, int y, int width, int height, int depthSortValue, Bitmap bitmap,
+        public Sprite(int x, int y, int width, int height, int depth, Bitmap bitmap,
             float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f)
         {
             X = x;
             Y = y;
             Width = width;
             Height = height;
-            DepthSortValue = depthSortValue;
+            Depth = depth;
             Bitmap = bitmap;
             Alpha = Math.Clamp(alpha, 0.0f, 1.0f);
             R = Math.Clamp(r, 0.0f, 1.0f);
@@ -181,6 +216,10 @@ public class Renderer(GameEngine gameEngine)
         byte R1, byte G1, byte B1,
         byte R2, byte G2, byte B2,
         byte R3, byte G3, byte B3);
+
+    private readonly record struct RectangleColorKey(
+        int Width, int Height,
+        byte R, byte G, byte B);
 
     private static unsafe Bitmap CreateGradientBitmap(int width, int height, POLY_G4 polyG4)
     {

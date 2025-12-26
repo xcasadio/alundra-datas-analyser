@@ -35,27 +35,27 @@ public class BalanceBin
     //80044550
     public BalanceRecord GetBalanceRecordFromSpriteIndex(int spriteIndex, int itemIdThreshold)
     {
-        if (spriteIndex - 0x1fU < 0x61)
+        if ((uint)(spriteIndex - 0x1fU) < 0x61)
         {
             spriteIndex = 0x1e;
         }
 
         var offset = Offsets[spriteIndex];
-        var animDataPtr = BalanceRecords[spriteIndex];
+        var balanceRecord = BalanceRecords[spriteIndex];
 
-        if (animDataPtr.Offset != offset)
+        if (balanceRecord.Offset != offset)
         {
             Debugger.Break();
         }
 
-        var currentId = animDataPtr.Level;
+        var currentId = balanceRecord.Level;
 
         while (currentId < itemIdThreshold)
         {
-            animDataPtr = animDataPtr.Next;//(BalanceRecord*)(itemDataPtr->values + (itemDataPtr->offsetToNextLevel - 3));
-            currentId = animDataPtr.Level;
+            balanceRecord = balanceRecord.Next;
+            currentId = balanceRecord.Level;
         }
-        return animDataPtr;
+        return balanceRecord;
     }
 
     //800445c0
@@ -77,12 +77,11 @@ public class BalanceBin
             Debugger.Break();
         }
 
-        //itemDataPtr = (BalanceRecord*)((int)g_balanceBin.offsets + (uint)(ushort)g_balanceBin.offsets[itemId + 0x1e]);
         var currentId = itemDataPtr.Level;
         
-        while (currentId < itemIdThreshold) //g_itemIdThreshold
+        while (currentId < itemIdThreshold)
         {
-            itemDataPtr = itemDataPtr.Next;//(BalanceRecord*)(itemDataPtr->values + (itemDataPtr->offsetToNextLevel - 3));
+            itemDataPtr = itemDataPtr.Next;
             currentId = itemDataPtr.Level;
         }
         
