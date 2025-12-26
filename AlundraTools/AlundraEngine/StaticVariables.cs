@@ -5451,7 +5451,6 @@ public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
     public SpriteRef[] g_spriteImages = new SpriteRef[1024]; // 80126E6C
     public SpriteInfoHeader g_currentMapSpriteInfo; // 80126E70
     public int g_bufferImage; // 80126E74
-    public EntityRecord g_entityRecords; // 80126E78
     public int INT_80126e7c; // 80126E7C
     public int INT_80126e80; // 80126E80
     public int g_maxEntityRecord; // 80126E84
