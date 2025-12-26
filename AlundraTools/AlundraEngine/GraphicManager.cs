@@ -716,7 +716,8 @@ public class GraphicManager
                     tilePtr.h = (short)h;
 
                     //AddPrim(orderingTable, tilePtr);
-                    tilePtr = new TILE(); //tilePtr++;
+                    _gameEngine.Renderer.AddRectangle(tilePtr);
+                    //tilePtr = new TILE(); //tilePtr++;
                 }
 
                 // --- rectangle #1 (bleu fort) ---
@@ -741,8 +742,9 @@ public class GraphicManager
                     tilePtr.w = (short)w;
                     tilePtr.h = (short)h;
 
+                    _gameEngine.Renderer.AddRectangle(tilePtr);
                     //AddPrim(orderingTable, tilePtr);
-                    tilePtr = new TILE(); //tilePtr++;
+                    //tilePtr = new TILE(); //tilePtr++;
                 }
             }
         }
@@ -823,7 +825,8 @@ public class GraphicManager
                     tilePtr.h = (short)h;
 
                     //AddPrim(orderingTable, tilePtr);
-                    tilePtr = new TILE(); //tilePtr++;
+                    _gameEngine.Renderer.AddRectangle(tilePtr);
+                    //tilePtr = new TILE(); //tilePtr++;
                 }
 
                 // --- rectangle #3 ---
@@ -860,7 +863,8 @@ public class GraphicManager
                     tilePtr.h = (short)h;
 
                     //AddPrim(orderingTable, tilePtr);
-                    tilePtr = new TILE(); //tilePtr++;
+                    _gameEngine.Renderer.AddRectangle(tilePtr);
+                    //tilePtr = new TILE(); //tilePtr++;
                 }
             }
         }

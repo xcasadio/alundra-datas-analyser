@@ -54,6 +54,44 @@ public class Renderer(GameEngine gameEngine)
         _sprites[sprite.DepthSortValue].Add(sprite);
     }
 
+    public void AddRectangle(TILE tile)
+    {
+
+    }
+
+    public void AddQuadColor(POLY_G4 polyG4, int depthSortValue, float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f)
+    {
+        int minX = Math.Min(Math.Min(polyG4.x0, polyG4.x1), Math.Min(polyG4.x2, polyG4.x3));
+        int maxX = Math.Max(Math.Max(polyG4.x0, polyG4.x1), Math.Max(polyG4.x2, polyG4.x3));
+        int minY = Math.Min(Math.Min(polyG4.y0, polyG4.y1), Math.Min(polyG4.y2, polyG4.y3));
+        int maxY = Math.Max(Math.Max(polyG4.y0, polyG4.y1), Math.Max(polyG4.y2, polyG4.y3));
+
+        int width = maxX - minX;
+        int height = maxY - minY;
+
+        if (width <= 0 || height <= 0) return;
+
+        var cacheKey = new QuadColorKey(
+            width, height,
+            polyG4.r0, polyG4.g0, polyG4.b0,
+            polyG4.r1, polyG4.g1, polyG4.b1,
+            polyG4.r2, polyG4.g2, polyG4.b2,
+            polyG4.r3, polyG4.g3, polyG4.b3);
+
+        if (!_quadColorCache.TryGetValue(cacheKey, out var bitmap))
+        {
+            if (_quadColorCache.Count >= MaxCacheSize)
+            {
+                ClearQuadCache();
+            }
+
+            bitmap = CreateGradientBitmap(width, height, polyG4);
+            _quadColorCache[cacheKey] = bitmap;
+        }
+
+        AddSprite(minX, minY, width, height, depthSortValue, bitmap, alpha, r, g, b);
+    }
+
     public void Render(System.Drawing.Graphics graphics)
     {
         foreach (var kvp in _sprites)
@@ -143,42 +181,6 @@ public class Renderer(GameEngine gameEngine)
         byte R1, byte G1, byte B1,
         byte R2, byte G2, byte B2,
         byte R3, byte G3, byte B3);
-
-    public void AddQuadColor(POLY_G4 polyG4, int depthSortValue, float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f)
-    {
-        int minX = Math.Min(Math.Min(polyG4.x0, polyG4.x1), Math.Min(polyG4.x2, polyG4.x3));
-        int maxX = Math.Max(Math.Max(polyG4.x0, polyG4.x1), Math.Max(polyG4.x2, polyG4.x3));
-        int minY = Math.Min(Math.Min(polyG4.y0, polyG4.y1), Math.Min(polyG4.y2, polyG4.y3));
-        int maxY = Math.Max(Math.Max(polyG4.y0, polyG4.y1), Math.Max(polyG4.y2, polyG4.y3));
-
-        int width = maxX - minX;
-        int height = maxY - minY;
-
-        if (width <= 0 || height <= 0) return;
-
-        // Créer la clé de cache
-        var cacheKey = new QuadColorKey(
-            width, height,
-            polyG4.r0, polyG4.g0, polyG4.b0,
-            polyG4.r1, polyG4.g1, polyG4.b1,
-            polyG4.r2, polyG4.g2, polyG4.b2,
-            polyG4.r3, polyG4.g3, polyG4.b3);
-
-        // Vérifier le cache
-        if (!_quadColorCache.TryGetValue(cacheKey, out var bitmap))
-        {
-            // Limiter la taille du cache
-            if (_quadColorCache.Count >= MaxCacheSize)
-            {
-                ClearQuadCache();
-            }
-
-            bitmap = CreateGradientBitmap(width, height, polyG4);
-            _quadColorCache[cacheKey] = bitmap;
-        }
-
-        AddSprite(minX, minY, width, height, depthSortValue, bitmap, alpha, r, g, b);
-    }
 
     private static unsafe Bitmap CreateGradientBitmap(int width, int height, POLY_G4 polyG4)
     {
