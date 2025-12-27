@@ -117,7 +117,7 @@ public class FrameSnapshot
         gameEngine.StaticVariables.g_cameraLookAtY = CameraLookAtY;
         gameEngine.StaticVariables.g_cameraLookAtZ = CameraLookAtZ;
         gameEngine.StaticVariables.g_visibleEntityCount = VisibleEntityCount;
-        gameEngine.StaticVariables.g_numberOfEntity = NumberOfEntity;
+        gameEngine.StaticVariables.g_numberOfEntities = NumberOfEntity;
         gameEngine.StaticVariables.g_entityFollowedByCamera = EntityFollowedByCamera;
         gameEngine.StaticVariables.g_nextEntityIndex = NextEntityIndex;
         //Array.Copy(MapEvents, gameEngine.StaticVariables.g_mapEvents, MapEvents.Length);
@@ -193,7 +193,7 @@ public class FrameSnapshot
         CameraLookAtY = gameEngine.StaticVariables.g_cameraLookAtY;
         CameraLookAtZ = gameEngine.StaticVariables.g_cameraLookAtZ;
         VisibleEntityCount = gameEngine.StaticVariables.g_visibleEntityCount;
-        NumberOfEntity = gameEngine.StaticVariables.g_numberOfEntity;
+        NumberOfEntity = gameEngine.StaticVariables.g_numberOfEntities;
         EntityFollowedByCamera = gameEngine.StaticVariables.g_entityFollowedByCamera;
         NextEntityIndex = gameEngine.StaticVariables.g_nextEntityIndex;
         MapEvents = (MapEvent[])gameEngine.StaticVariables.g_mapEvents.Clone();

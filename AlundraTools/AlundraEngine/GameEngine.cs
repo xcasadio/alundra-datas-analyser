@@ -508,7 +508,7 @@ public class GameEngine
     {
         EntityManager.InitializeEntitySlots();
 
-        StaticVariables.g_numberOfEntity = 0;
+        StaticVariables.g_numberOfEntities = 0;
 
         ResetEntityState();
 

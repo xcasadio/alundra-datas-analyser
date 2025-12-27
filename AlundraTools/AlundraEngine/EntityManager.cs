@@ -48,9 +48,9 @@ public class EntityManager
         uint spriteTableIndex, int entityId, int x, int y, int z, uint animationId, uint direction, int paletteIndex,
         int sheetSize)
     {
-        if (_gameEngine.StaticVariables.g_numberOfEntity < entity.Index)
+        if (_gameEngine.StaticVariables.g_numberOfEntities < entity.Index)
         {
-            _gameEngine.StaticVariables.g_numberOfEntity = entity.Index + 1;
+            _gameEngine.StaticVariables.g_numberOfEntities = entity.Index + 1;
         }
 
         entity.ParentEntity = parentEntity;
@@ -2350,7 +2350,7 @@ public class EntityManager
     // 80038e84
     private void UpdateActiveEffects()
     {
-        for (var i = 0; i < _gameEngine.StaticVariables.g_numberOfEntity; i++)
+        for (var i = 0; i < _gameEngine.StaticVariables.g_numberOfEntities; i++)
         {
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
             if (entity.Status - 2 >= 2 || (entity.DamagedTickCounter & 3) == 3)
@@ -2484,7 +2484,7 @@ public class EntityManager
     {
         _gameEngine.PlayerManager.MovePlayer();
 
-        for (var i = 1; i < _gameEngine.StaticVariables.g_numberOfEntity; i++)
+        for (var i = 1; i < _gameEngine.StaticVariables.g_numberOfEntities; i++)
         {
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
             var eventProgramType = -1;
@@ -2566,7 +2566,7 @@ public class EntityManager
         {
             keepGoing = false;
 
-            for (var i = 1; i < _gameEngine.StaticVariables.g_numberOfEntity; i++)
+            for (var i = 1; i < _gameEngine.StaticVariables.g_numberOfEntities; i++)
             {
                 var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
@@ -2600,7 +2600,7 @@ public class EntityManager
     // 80038998
     private void UpdateEntitiesCounters()
     {
-        for (var i = 0; i <= _gameEngine.StaticVariables.g_numberOfEntity; i++)
+        for (var i = 0; i <= _gameEngine.StaticVariables.g_numberOfEntities; i++)
         {
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
@@ -2644,7 +2644,7 @@ public class EntityManager
             }
         }
 
-        _gameEngine.StaticVariables.g_numberOfEntity = max + 1;
+        _gameEngine.StaticVariables.g_numberOfEntities = max + 1;
     }
 
     // 800384f4
@@ -2658,7 +2658,7 @@ public class EntityManager
         Array.Clear(_gameEngine.StaticVariables.g_collideableEntities);
         Array.Clear(_gameEngine.StaticVariables.g_visibleEntities);
 
-        for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntity; i++)
+        for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntities; i++)
         {
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
@@ -3025,12 +3025,12 @@ public class EntityManager
         int result;
         int maxEntity;
 
-        maxEntity = _gameEngine.StaticVariables.g_numberOfEntity;
+        maxEntity = _gameEngine.StaticVariables.g_numberOfEntities;
         result = 0;
         i = 0;
         var j = 0;
 
-        if (-1 < _gameEngine.StaticVariables.g_numberOfEntity)
+        if (-1 < _gameEngine.StaticVariables.g_numberOfEntities)
         {
             currentEntity = _gameEngine.StaticVariables.PlayerEntity;
             entity2 = _gameEngine.StaticVariables.PlayerEntity;
@@ -3063,11 +3063,11 @@ public class EntityManager
         int result;
         int maxEntity;
 
-        maxEntity = _gameEngine.StaticVariables.g_numberOfEntity;
+        maxEntity = _gameEngine.StaticVariables.g_numberOfEntities;
         result = 0;
         i = 0;
 
-        if (-1 < _gameEngine.StaticVariables.g_numberOfEntity)
+        if (-1 < _gameEngine.StaticVariables.g_numberOfEntities)
         {
             entity2 = _gameEngine.StaticVariables.g_entitySlots[0];
 

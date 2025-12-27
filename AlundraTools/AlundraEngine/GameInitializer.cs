@@ -304,7 +304,7 @@ public class GameInitializer
             do
             {
                 _gameEngine.StaticVariables.g_tileToWorldXTable[innerTileIndex] = (short)index2; //useless => why an array ? (x / 24) is used
-                //currentEntity = _gameEngine.StaticVariables.g_numberOfEntity;
+                //currentEntity = _gameEngine.StaticVariables.g_numberOfEntities;
                 tileOffset += 1;
                 innerTileIndex = layoutIndex + tileOffset;
             } while (tileOffset < 0x18);

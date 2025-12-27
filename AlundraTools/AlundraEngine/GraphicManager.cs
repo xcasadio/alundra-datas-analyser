@@ -672,7 +672,7 @@ public class GraphicManager
         // ============================================================
         //if (_gameEngine.StaticVariables.g_debugFlags & 0x100)
         {
-            for (int i = 0; i <= _gameEngine.StaticVariables.g_numberOfEntity; i++)
+            for (int i = 0; i <= _gameEngine.StaticVariables.g_numberOfEntities; i++)
             {
                 Entity e = _gameEngine.StaticVariables.g_entitySlots[i];
 
@@ -738,7 +738,7 @@ public class GraphicManager
         // ============================================================
         //if (_gameEngine.StaticVariables.g_debugFlags & 0x200)
         {
-            for (int i = 0; i <= _gameEngine.StaticVariables.g_numberOfEntity; i++)
+            for (int i = 0; i <= _gameEngine.StaticVariables.g_numberOfEntities; i++)
             {
                 Entity e = _gameEngine.StaticVariables.g_entitySlots[i];
 

@@ -5501,7 +5501,7 @@ public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
     public int g_cameraLookAtY; // 80134354
     public int g_cameraLookAtZ; // 80134358
     public int g_visibleEntityCount; // 8013435C
-    public int g_numberOfEntity; // 80134360
+    public int g_numberOfEntities; // 80134360
     public Entity g_emptyEntityForClearing; // 80134368
     public Entity g_entityFollowedByCamera; // 801345FC
     public int g_nextEntityIndex; // 80134600
@@ -5932,6 +5932,39 @@ public static readonly SPRT[] SPRT_ARRAY_800a4aec = new SPRT[]
     public int g_memoryCardFileIndex; //80191090 
     public SaveData g_saveDataCopyPtr; //80191094
     public int g_postProcessingState; //80191098
+    public WarpSlotState[] WarpSlotState_ARRAY_801910a0 = Enumerable.Range(0, 2).Select(x => new WarpSlotState()).ToArray(); // 801910a0
+    public CutsceneChannel[] CutsceneChannel_ARRAY_801910f0 = Enumerable.Range(0, 2).Select(x => new CutsceneChannel()).ToArray(); // 801910f0
+    public CutsceneChannel[] CutsceneChannel_ARRAY_80026d30 = new CutsceneChannel[2] // 0x80026D30
+    {
+        new CutsceneChannel
+        {
+            Amplitude      = 0x02400000,   // 2400000h
+            BiasY          = 0x02D00000,   // 2D00000h
+            BaseY          = unchecked((int)0xFFE80000), // FFE80000h (-0x180000)
+            AngleMain      = 0x0000,
+            AngleSwing     = 0x0018,
+            AngleZ         = 0x0000,
+            Pad12          = 0x0003,
+            BaseXorTarget  = 0x00000002,
+            ExtraFlagsOrScale   = 0x00010002,   // 10002h
+            Phase          = 0x0002,
+            Pad            = 0x0000,
+        },
+        new CutsceneChannel
+        {
+            Amplitude      = 0x00000003,
+            BiasY          = 0x00020000,   // 20000h
+            BaseY          = 0x00020001,   // 20001h
+            AngleMain      = 0x0002,
+            AngleSwing     = 0x0000,
+            AngleZ         = 0x0002,
+            Pad12          = 0x0001,
+            BaseXorTarget  = 0x00000003,
+            ExtraFlagsOrScale   = 0x00010000,   // 10000h
+            Phase          = 0x0002,
+            Pad            = 0x0000,
+        }
+    };
     public Entity g_bossSpawnedEffectEntity; // 801911B8
     public Entity g_bossEffectEntity; // 801911BC
     public int DAT_801911c0; // 801911C0

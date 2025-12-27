@@ -456,7 +456,7 @@ public partial class FrmGame : Form
     {
         SuspendLayout();
 
-        labelNumberOfEntity.Text = _gameEngine.StaticVariables.g_numberOfEntity.ToString();
+        labelNumberOfEntity.Text = _gameEngine.StaticVariables.g_numberOfEntities.ToString();
         labelNumberOfActivatedEntity.Text = _gameEngine.StaticVariables.g_activeEntityCount.ToString();
         labelNumberOfCollideableEntity.Text = _gameEngine.StaticVariables.g_collideableEntitiesCount.ToString();
         labelNumberOfVisibleEntity.Text = _gameEngine.StaticVariables.g_visibleEntityCount.ToString();

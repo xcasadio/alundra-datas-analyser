@@ -1333,7 +1333,7 @@ public class EntityEventHandlers
     {
         Debugger.Break();
 
-        for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntity; i++)
+        for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntities; i++)
         {
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
@@ -1362,7 +1362,7 @@ public class EntityEventHandlers
     {
         Debugger.Break();
 
-        for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntity; i++)
+        for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntities; i++)
         {
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
@@ -1403,7 +1403,7 @@ public class EntityEventHandlers
     {
         Debugger.Break();
 
-        for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntity; i++)
+        for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntities; i++)
         {
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
@@ -2873,7 +2873,7 @@ public class EntityEventHandlers
         byte idxType = (byte)variables[9];
 
         // Si aucun masque fourni → early out (beq t4,zero)
-        if (flagMask == 0 || _gameEngine.StaticVariables.g_numberOfEntity < 0)
+        if (flagMask == 0 || _gameEngine.StaticVariables.g_numberOfEntities < 0)
         {
             eventProgramState.Result = 0;
             return 10;
@@ -2890,7 +2890,7 @@ public class EntityEventHandlers
         // Type attendu (v1 & 0x0F) == t6
         int expectedNibble = _gameEngine.StaticVariables.BYTE_ARRAY_80098fa4[idxType];
 
-        int n = _gameEngine.StaticVariables.g_numberOfEntity;
+        int n = _gameEngine.StaticVariables.g_numberOfEntities;
         var slots = _gameEngine.StaticVariables.g_entitySlots;
 
         for (int i = 0; i < n; i++)

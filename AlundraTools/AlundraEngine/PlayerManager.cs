@@ -1059,7 +1059,7 @@ public class PlayerManager
             }
         }
 
-        var count = _gameEngine.StaticVariables.g_numberOfEntity;
+        var count = _gameEngine.StaticVariables.g_numberOfEntities;
         if (count < 0)
         {
             return 0;

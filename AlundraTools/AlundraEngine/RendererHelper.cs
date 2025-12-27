@@ -120,7 +120,7 @@ public class RendererHelper
 
             //draw sprites who are on this row
 
-            //for (var i = 0; i < gameEngine.StaticVariables.g_numberOfEntity; i++) // g_visibleEntityCount
+            //for (var i = 0; i < gameEngine.StaticVariables.g_numberOfEntities; i++) // g_visibleEntityCount
             //{
             //   entity = gameEngine.StaticVariables.g_entitySlots[i]; // g_visibleEntities
             //  if (entity.Status == 5)
