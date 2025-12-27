@@ -2642,4 +2642,21 @@ public class GameEngine
             StaticVariables.g_textAutoAdvanceFlag_2 = 1;
         }
     }
+
+    //80080a88
+    public void TriggerScreenEffect(int fadeColor, int duration, int frameCount, int resetBackgroundColor)
+    {
+        if (resetBackgroundColor != 0)
+        {
+            StaticVariables.g_currentFadeColorR = 0;
+            StaticVariables.g_currentFadeColorG = 0;
+            StaticVariables.g_currentFadeColorB = 0;
+        }
+        StaticVariables.g_fadeStepFlags = 1;
+        StaticVariables.g_fadeFrameCounter = frameCount;
+        StaticVariables.g_targetFadeColorB = fadeColor;
+        StaticVariables.g_targetFadeColorG = fadeColor;
+        StaticVariables.g_targetFadeColorR = fadeColor;
+        BeginFadeEffect(1, duration);
+    }
 }

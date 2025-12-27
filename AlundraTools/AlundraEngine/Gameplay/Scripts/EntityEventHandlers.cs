@@ -1883,8 +1883,6 @@ public class EntityEventHandlers
     // 8003F1A0
     private int Script_94_05E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        byte bVar1;
-        byte bVar2;
         int num;
 
         num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
@@ -2744,7 +2742,6 @@ public class EntityEventHandlers
         }
 
         eventProgramState.Result = 0;
-
         return 2;
     }
 

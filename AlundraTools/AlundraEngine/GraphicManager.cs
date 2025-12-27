@@ -665,9 +665,6 @@ public class GraphicManager
         int bufferIndex = (_gameEngine.StaticVariables.g_debugFrameCounter & 1);
         _gameEngine.StaticVariables.g_debugFrameCounter++;
 
-        // Dans l'ASM, t8 = base + (bufferIndex<<12) ; ensuite on écrit des TILE à la suite.
-        // Ici on simule en prenant un pointeur dans un gros tableau.
-        // IMPORTANT: adapte ces offsets/tailles à ton layout réel.
         TILE tilePtr = new TILE(); //_gameEngine.StaticVariables.g_spriteTiles[bufferIndex << 12];
 
         // ============================================================
@@ -709,7 +706,6 @@ public class GraphicManager
 
                     //AddPrim(orderingTable, tilePtr);
                     _gameEngine.Renderer.AddRectangle(tilePtr, SpriteDepth.DebugCollision, 0.5f);
-                    //tilePtr = new TILE(); //tilePtr++;
                 }
 
                 // --- rectangle #1 (bleu fort) ---
@@ -732,7 +728,6 @@ public class GraphicManager
 
                     _gameEngine.Renderer.AddRectangle(tilePtr, SpriteDepth.DebugCollision, 0.5f);
                     //AddPrim(orderingTable, tilePtr);
-                    //tilePtr = new TILE(); //tilePtr++;
                 }
             }
         }
@@ -786,8 +781,6 @@ public class GraphicManager
                         tilePtr.b0 = 0x00;
                     }
 
-                    // Les formules suivent l'ASM en utilisant collisionOffsetX/Y/Z + collisionWidth/Depth/Height
-                    // baseZ = (posY - posZ) - collisionOffsetZ - collisionHeight - 1
                     int basePosition = (e.PosY - e.PosZ) - e.CollisionOffsetZ - e.CollisionHeight;
                     basePosition -= 1;
 
@@ -803,7 +796,6 @@ public class GraphicManager
 
                     //AddPrim(orderingTable, tilePtr);
                     _gameEngine.Renderer.AddRectangle(tilePtr, SpriteDepth.DebugCollision, 0.5f);
-                    //tilePtr = new TILE(); //tilePtr++;
                 }
 
                 // --- rectangle #3 ---
@@ -836,7 +828,6 @@ public class GraphicManager
 
                     //AddPrim(orderingTable, tilePtr);
                     _gameEngine.Renderer.AddRectangle(tilePtr, SpriteDepth.DebugCollision, 0.5f);
-                    //tilePtr = new TILE(); //tilePtr++;
                 }
             }
         }
@@ -932,7 +923,7 @@ public class GraphicManager
 
         if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x38] & 0x800000U) != 0)
         {
-            SetCdToAranXaMusicIndex(7);
+            _gameEngine.CdManager.SetCdToAranXaMusicIndex(7);
             _gameEngine.StaticVariables.g_saveData.MapFlags[0x38] &= 0xff7fffff;
         }
 
@@ -987,22 +978,6 @@ public class GraphicManager
                 _gameEngine.MainInventoryManager.DisplayInventory();
             }
         }
-    }
-
-    //8005abe0
-    private void SetCdToAranXaMusicIndex(int mode)
-    {
-        /*
-           CdlLOC cdlLoc [2];
-           u_char buffer [8];
-           
-           if ((g_isCdResetRequested != 0) || ((g_cdIsReady != 0 && (g_cdDataLoaded == 0)))) {
-             g_cdDataStartPtr = DAT_CDAranXa_pos + g_mapCdDataOffsets[mode * 3];
-             CdIntToPos(g_cdDataStartPtr,cdlLoc);
-             CdControl('\x02',&cdlLoc[0].minute,buffer);
-             CdControl('\x15',(u_char *)0x0,buffer);
-           }
-         */
     }
 
     //80047f94

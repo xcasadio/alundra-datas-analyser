@@ -355,4 +355,20 @@ public class CdManager
             _gameEngine.StaticVariables.g_previousVSyncCallback();
         }
     }
+
+    //8005abe0
+    public void SetCdToAranXaMusicIndex(int mode)
+    {
+        /*
+           CdlLOC cdlLoc [2];
+           u_char buffer [8];
+
+           if ((g_isCdResetRequested != 0) || ((g_cdIsReady != 0 && (g_cdDataLoaded == 0)))) {
+             g_cdDataStartPtr = DAT_CDAranXa_pos + g_mapCdDataOffsets[mode * 3];
+             CdIntToPos(g_cdDataStartPtr,cdlLoc);
+             CdControl('\x02',&cdlLoc[0].minute,buffer);
+             CdControl('\x15',(u_char *)0x0,buffer);
+           }
+         */
+    }
 }
