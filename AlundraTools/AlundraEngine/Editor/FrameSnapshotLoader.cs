@@ -517,7 +517,7 @@ public static class FrameSnapshotLoader
             // Les champs _268, _269, _26A, _26B, bytes sont ignorés (données brutes)
             entity.LastTargetAnimationId = lastTargetAnimationId;
             entity.LastTargetDirection = lastTargetDirection;
-            entity.ItemDelay = initialXPos;
+            entity.DelayOrAngle = initialXPos;
             entity.ItemState = initialYPos;
             if (aiValues != null && entity.AIValues != null)
             {

@@ -475,7 +475,7 @@ public class EffectManager
         //Debugger.Break();
         var initPosX = _gameEngine.StaticVariables.g_itemDropProperties[itemId].Field1 == 0 ? -1 : 600;
 
-        itemEntity.ItemDelay = initPosX;
+        itemEntity.DelayOrAngle = initPosX;
         itemEntity.ItemState = 0;
         itemEntity.AIValues[0] = 0;
         itemEntity.AIValues[1] = 0;

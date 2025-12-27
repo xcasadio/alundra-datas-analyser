@@ -37,7 +37,7 @@ public partial class FrmGame : Form
         [nameof(Entity.PosX)] = "Transform",
         [nameof(Entity.PosY)] = "Transform",
         [nameof(Entity.PosZ)] = "Transform",
-        [nameof(Entity.ItemDelay)] = "Transform",
+        [nameof(Entity.DelayOrAngle)] = "Transform",
         [nameof(Entity.ItemState)] = "Transform",
         [nameof(Entity.ScreenClipX)] = "Transform",
         [nameof(Entity.ScreenClipY)] = "Transform",
@@ -1294,6 +1294,11 @@ public partial class FrmGame : Form
             _gameEngine.StaticVariables.g_cameraDebugOffsetX = 0;
             _gameEngine.StaticVariables.g_cameraDebugOffsetY = 0;
         }
+    }
+
+    private void checkBoxDisplayCollision_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.DisplayCollisions = checkBoxDisplayCollision.Checked;
     }
 
     private void buttonRestoreHpAndMp_Click(object sender, EventArgs e)

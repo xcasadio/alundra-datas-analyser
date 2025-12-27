@@ -1520,7 +1520,7 @@ public class SubInventoryManager
                             //SetSemiTrans(uiBoxConfig.SpritesA + h * uiBoxConfig.Width + w, 0);
                             //SetShadeTex(uiBoxConfig.SpritesA + h * uiBoxConfig.Width + w, 1);
                             index = h * uiBoxConfig.Width + w;
-                            uiBoxConfig.SpritesA[index].clut = 0; //g_clutTable[uiBoxConfig.SpritesA[index].clut];
+                            //uiBoxConfig.SpritesA[index].clut = 0; //g_clutTable[uiBoxConfig.SpritesA[index].clut];
                             w += 1;
                         } while (w < uiBoxConfig.Width);
                     }

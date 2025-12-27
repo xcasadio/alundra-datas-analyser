@@ -137,57 +137,11 @@ public class RendererHelper
                     continue;//if its not in this row, continue
                 }
 
-                //var tile = selectedGame.map.maptiles[sx + sy * selectedGame.map.width];
-                //var scx = (entity.ModdedPosX >> 16) - (currentRow * StaticVariables.MapTileWidth);
-                //var scy = (entity.ModdedPosY >> 16) - (entity.ModdedPosZ >> 16) - (camTileOffsetY * StaticVariables.MapTileHeight);
-                var scx = (entity.ModdedPosX >> 16) - currentXPosition + StaticVariables.MapTileWidth / 2;
-                var scy = (entity.ModdedPosY >> 16) - (entity.ModdedPosZ >> 16) - currentYPosition + StaticVariables.MapTileHeight / 2;
-
+                var scx = (entity.ModdedPosX >> 16) - currentXPosition + 10; //StaticVariables.MapTileWidth / 2;
+                var scy = (entity.ModdedPosY >> 16) - (entity.ModdedPosZ >> 16) - currentYPosition + 8; //StaticVariables.MapTileHeight / 2
+                
                 if (entity.SpriteRecord != null)
                 {
-                    /*
-                    //display attached effect
-                    if (entity.ActiveEffect?.Status == 2)
-                    {
-                        var effect = entity.ActiveEffect;
-
-                        var eX = (effect.X >> 16) - currentXPosition;
-                        var eY = (effect.Y >> 16) - (effect.Z >> 16) - currentYPosition;
-
-                        //if (effect.SpriteRecord != null)
-                        {
-                            var mapSprite = effect.CurrentIsMapSprite == 1 ? gameMap : datasBin.AlundraGameMap;
-
-                            if (effect.Frame?.Images != null) // why?? TODO, not initialized when we load a dump?
-                            {
-                                var iset = effect.Frame.Images;
-                                for (var idex = iset.NumberOfImages - 1; idex >= 0; idex--)
-                                {
-                                    var img = iset.Images[idex];
-                                    DrawSprite(mapSprite, img, eX, eY, g, 0.5f);
-                                }
-                            }
-                        }
-
-                        if (gameEngine.StaticVariables.DisplayEffectId)
-                        {
-                            var brush = gameEngine.StaticVariables.EditorSelectEffectIndex == effect.Id
-                                ? Brushes.LightSeaGreen
-                                : Brushes.DarkViolet;
-                            var text = $"#{effect.Id}";
-                            var textSize = g.MeasureString(text, FontEntityId);
-
-                            textToRender.Add(new TextDisplayParameter
-                            {
-                                Text = text,
-                                Font = FontEntityId,
-                                Color = brush,
-                                X = scx - textSize.Width / 2,
-                                Y = scy
-                            });
-                        }
-                    }*/
-
                     //display entity
                     var map = entity.IsMapSprite ? gameMap : datasBin.AlundraGameMap;
 

@@ -28,7 +28,7 @@ public class GraphicManager
             _gameEngine.StaticVariables.g_cameraLookAtX, _gameEngine.StaticVariables.g_cameraLookAtY, _gameEngine.StaticVariables.g_cameraLookAtZ,
             graphics);
 
-        //_gameEngine.StaticVariables.g_numberOfEntitiesDrawn = RenderEntitiesMaybe(_gameEngine.StaticVariables.g_orderingTableBuffer[4],  _gameEngine.StaticVariables.g_cameraScrollingX, _gameEngine.StaticVariables.g_cameraScrollingY);
+        _gameEngine.StaticVariables.g_numberOfEntitiesDrawn = RenderEntitiesMaybe(_gameEngine.StaticVariables.g_orderingTableBuffer[4],  _gameEngine.StaticVariables.g_cameraScrollingX, _gameEngine.StaticVariables.g_cameraScrollingY);
 
         if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x40) != 0)
         {
@@ -46,8 +46,7 @@ public class GraphicManager
         RenderEffects(_gameEngine.StaticVariables.g_orderingTableBuffer[3]);
         _gameEngine.MemoryCardManager.UpdateMemoryCardProcess();
         UpdateUserInterface(graphics);
-        _gameEngine.StaticVariables.g_primitive_sync = GetDisplaySyncCounter();
-
+        _gameEngine.StaticVariables.g_primitive_sync = DisplayUserInterface();
 
         _gameEngine.Renderer.Render(graphics);
         _gameEngine.Renderer.Clear();
@@ -60,13 +59,15 @@ public class GraphicManager
 
         if (_gameEngine.StaticVariables.g_isCameraScrolling == 0)
         {
-            _gameEngine.StaticVariables.g_cameraScrollingX =
-                _gameEngine.StaticVariables.g_cameraScrollingX +
-                (offsetX - (_gameEngine.StaticVariables.g_cameraScrollingX + 0xa0) >> 4) + _gameEngine.StaticVariables.g_scrollingParameters.OffsetX + _gameEngine.StaticVariables.g_cameraDebugOffsetX;
-            _gameEngine.StaticVariables.g_cameraScrollingY =
-                _gameEngine.StaticVariables.g_cameraScrollingY +
-                (offsetY - offsetZ - (_gameEngine.StaticVariables.g_cameraScrollingY + 0x88) >> 4) + _gameEngine.StaticVariables.g_scrollingParameters.OffsetY +
-                _gameEngine.StaticVariables.g_cameraDebugOffsetY;
+            _gameEngine.StaticVariables.g_cameraScrollingX = _gameEngine.StaticVariables.g_cameraScrollingX 
+                                                             + (offsetX - (_gameEngine.StaticVariables.g_cameraScrollingX + 0xa0) >> 4) 
+                                                             + _gameEngine.StaticVariables.g_scrollingParameters.OffsetX 
+                                                             + _gameEngine.StaticVariables.g_cameraDebugOffsetX;
+
+            _gameEngine.StaticVariables.g_cameraScrollingY = _gameEngine.StaticVariables.g_cameraScrollingY 
+                                                             + (offsetY - offsetZ - (_gameEngine.StaticVariables.g_cameraScrollingY + 0x88) >> 4) 
+                                                             + _gameEngine.StaticVariables.g_scrollingParameters.OffsetY 
+                                                             + _gameEngine.StaticVariables.g_cameraDebugOffsetY;
         }
         else
         {
@@ -428,14 +429,14 @@ public class GraphicManager
     }
 
     //8002e130
-    private int RenderEntitiesMaybe(int i, int gCameraScrollingX, int gCameraScrollingY)
+    private int RenderEntitiesMaybe(int orderingTable, int cameraX, int cameraY)
     {
         //todo
         return 0;
     }
 
     //80044c5c
-    private int GetDisplaySyncCounter()
+    private int DisplayUserInterface()
     {
         //u_long uVar1;
         // DR_MODE *primitiveStart;
@@ -554,7 +555,7 @@ public class GraphicManager
 
                         //Dialog choice : we need to display the text
                         //In the game the sprite is created with the text once before displaying
-                        if (i == 3)
+                        if (i == 3) // callback.Id == 2
                         {
                             sprite = tilesConfiguration.SpritesA[0];
                             var xOffset = 0;
@@ -650,6 +651,11 @@ public class GraphicManager
     //8003b51c
     private void DisplayDebugCollisionRectangle(int orderingTable)
     {
+        if (!_gameEngine.StaticVariables.DisplayCollisions)
+        {
+            return;
+        }
+
         //if (_gameEngine.StaticVariables.g_debugState >= 0)
         //{
         //    return;

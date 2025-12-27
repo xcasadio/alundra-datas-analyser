@@ -226,8 +226,9 @@ namespace AlundraTools.GameControls
             comboBoxLogCategories = new ComboBox();
             checkBoxAddLogInVS = new CheckBox();
             tabPage3 = new TabPage();
-            treeViewScript = new TreeView();
             buttonRefreshScript = new Button();
+            treeViewScript = new TreeView();
+            checkBoxDisplayCollision = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -812,6 +813,7 @@ namespace AlundraTools.GameControls
             // 
             // groupBox4
             // 
+            groupBox4.Controls.Add(checkBoxDisplayCollision);
             groupBox4.Controls.Add(checkBoxUseDebugCamera);
             groupBox4.Controls.Add(checkBoxDisplayEffectId);
             groupBox4.Controls.Add(checkBoxTileXY);
@@ -820,7 +822,7 @@ namespace AlundraTools.GameControls
             groupBox4.Margin = new Padding(3, 2, 3, 2);
             groupBox4.Name = "groupBox4";
             groupBox4.Padding = new Padding(3, 2, 3, 2);
-            groupBox4.Size = new Size(163, 115);
+            groupBox4.Size = new Size(163, 176);
             groupBox4.TabIndex = 31;
             groupBox4.TabStop = false;
             groupBox4.Text = "Debugging";
@@ -2360,14 +2362,6 @@ namespace AlundraTools.GameControls
             tabPage3.Text = "Script";
             tabPage3.UseVisualStyleBackColor = true;
             // 
-            // treeViewScript
-            // 
-            treeViewScript.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            treeViewScript.Location = new Point(6, 35);
-            treeViewScript.Name = "treeViewScript";
-            treeViewScript.Size = new Size(490, 698);
-            treeViewScript.TabIndex = 0;
-            // 
             // buttonRefreshScript
             // 
             buttonRefreshScript.Location = new Point(6, 6);
@@ -2377,6 +2371,26 @@ namespace AlundraTools.GameControls
             buttonRefreshScript.Text = "Refresh";
             buttonRefreshScript.UseVisualStyleBackColor = true;
             buttonRefreshScript.Click += buttonRefreshScript_Click;
+            // 
+            // treeViewScript
+            // 
+            treeViewScript.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            treeViewScript.Location = new Point(6, 35);
+            treeViewScript.Name = "treeViewScript";
+            treeViewScript.Size = new Size(490, 698);
+            treeViewScript.TabIndex = 0;
+            // 
+            // checkBoxDisplayCollision
+            // 
+            checkBoxDisplayCollision.AutoSize = true;
+            checkBoxDisplayCollision.Location = new Point(5, 110);
+            checkBoxDisplayCollision.Margin = new Padding(3, 2, 3, 2);
+            checkBoxDisplayCollision.Name = "checkBoxDisplayCollision";
+            checkBoxDisplayCollision.Size = new Size(115, 19);
+            checkBoxDisplayCollision.TabIndex = 34;
+            checkBoxDisplayCollision.Text = "display collisions";
+            checkBoxDisplayCollision.UseVisualStyleBackColor = true;
+            checkBoxDisplayCollision.CheckedChanged += checkBoxDisplayCollision_CheckedChanged;
             // 
             // FrmGame
             // 
@@ -2646,5 +2660,6 @@ namespace AlundraTools.GameControls
         private TabPage tabPage3;
         private TreeView treeViewScript;
         private Button buttonRefreshScript;
+        private CheckBox checkBoxDisplayCollision;
     }
 }

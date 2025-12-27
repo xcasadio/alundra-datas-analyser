@@ -116,7 +116,7 @@ public class Entity
     public uint LastTargetAnimationId;//26c
     public uint LastTargetDirection;//270
     public byte[] Bytes = new byte[4];
-    public int ItemDelay;//278
+    public int DelayOrAngle;//278
     public int ItemState;//27C
     public short[] AIValues = new short[10];//280
 
@@ -280,7 +280,7 @@ public class Entity
             Bytes[i] = other.Bytes[i];
         }
 
-        ItemDelay = other.ItemDelay;
+        DelayOrAngle = other.DelayOrAngle;
         ItemState = other.ItemState;
         for (int i = 0; i < AIValues.Length; i++)
         {
@@ -436,7 +436,7 @@ public class Entity
 
         Array.Clear(Bytes);
 
-        ItemDelay = 0;
+        DelayOrAngle = 0;
         ItemState = 0;
 
         Array.Clear(AIValues);

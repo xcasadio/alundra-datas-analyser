@@ -2236,7 +2236,7 @@ public class PlayerManager
         }
         else
         {
-            _gameEngine.EntityManager.UpdateEntityFacingDirection(player);
+            _gameEngine.EntityManager.ComputeNewHp(player);
             direction = (uint)ScriptHelper.GetDirectionToTarget(player.PosX - entity2.PosX, player.PosY - entity2.PosY);
         }
         return direction;

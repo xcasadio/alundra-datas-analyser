@@ -1818,13 +1818,13 @@ public class GameEngine
         spawnedEntity.Flags &= 0xffffff7f;
 
         var delay = 600;
-        Debugger.Break();
+        //Debugger.Break();
         if (StaticVariables.g_itemDropProperties[entity.ContentsItemId].Field1 == 0)
         {
             delay = -1;
         }
 
-        spawnedEntity.ItemDelay = delay;
+        spawnedEntity.DelayOrAngle = delay;
         spawnedEntity.ItemState = 0;
         spawnedEntity.AIValues[0] = (short)(entity.ContentsGameFlag & 0xFFFF);
         spawnedEntity.AIValues[1] = (short)((entity.ContentsGameFlag >> 16) & 0xFFFF);
@@ -2053,6 +2053,8 @@ public class GameEngine
                     posX, posY, posZ,
                     0, direction,
                     paletteIndex, sheetSize);
+
+                LogManager.Log(entityResult, $"Spawned=> parent:{(parentEntity == null ? "null" : parentEntity)} x:{entityResult.PosX >> 16} y:{entityResult.PosY >> 16} z:{entityResult.PosZ >> 16}");
             }
         }
 

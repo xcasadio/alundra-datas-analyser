@@ -417,7 +417,15 @@ public class EntityManager
             entity.AnimCompleteCounter = 0;
             entity.AnimationFrameIndex = 0;
             animRecordPtr = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
-            currentFrame = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
+            currentFrame = null;
+            try
+            {
+                currentFrame = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
+            }
+            catch (Exception e)
+            {
+                Debugger.Break();
+            }
             entity.AnimSet = animRecordPtr;
             entity.Frame = currentFrame;
             entity.FirstFrame = currentFrame;
@@ -452,7 +460,16 @@ public class EntityManager
                 return;
             }
 
-            var preloadedAnim = entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3];
+            SiAnimation preloadedAnim = null;
+
+            try
+            {
+                preloadedAnim = entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3];
+            }
+            catch (Exception e)
+            {
+                Debugger.Break();
+            }
 
             if (entity.AnimationFrameIndex == preloadedAnim.Frames.Length - 2)
             {
@@ -2227,20 +2244,23 @@ public class EntityManager
                     continue;
                 }
 
-                Debugger.Break();
+                //Debugger.Break();
 
                 var balanceValueIndex = entity.BalanceAnimValRef.Val & 0xf;
                 var val = otherEntity.BalanceRecord.Values[balanceValueIndex];
 
-                if (_gameEngine.StaticVariables.g_debugState < 0
-                    && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
+                //if (_gameEngine.StaticVariables.g_debugState < 0
+                //    && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
                 {
-                    _gameEngine.StaticVariables.g_messageDebug += // + otherEntity->index * 0x100
-                        string.Format("{0} (Race) {1}\n\r{2} (Attr) {3}\n\r",
+                    //_gameEngine.StaticVariables.g_messageDebug += // + otherEntity->index * 0x100
+                    var log = string.Format("{0} (Race) {1} -> {2} (Attr) {3} = {4}",
                             _gameEngine.StaticVariables.g_spriteNames[entity.SpriteTableIndex],
                             _gameEngine.StaticVariables.g_spriteNames[otherEntity.SpriteTableIndex],
                             _gameEngine.StaticVariables.g_weaponNames[balanceValueIndex],
-                            _gameEngine.StaticVariables.g_damageNames[otherEntity.BalanceRecord.Values[balanceValueIndex - 1] >> 6]);
+                            _gameEngine.StaticVariables.g_damageNames[otherEntity.BalanceRecord.Values[balanceValueIndex] >> 6],
+                            val);
+
+                    _gameEngine.LogManager.Log(log);
                 }
 
                 if ((val & 0xc0) != 0x80)
@@ -2838,7 +2858,7 @@ public class EntityManager
     }
 
     // 8003a374
-    public bool UpdateEntityFacingDirection(Entity entity)
+    public bool ComputeNewHp(Entity entity)
     {
         int damage;
         int strLength;
@@ -2857,7 +2877,7 @@ public class EntityManager
 
         damage = ResolveBalanceTarget(entity.TouchingEntity.BalanceAnimValRef, balanceRecord, entity.Hp);
 
-        if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
+        //if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
         {
             if (_gameEngine.StaticVariables.g_balanceHpTotal != -1)
             {
@@ -2865,36 +2885,38 @@ public class EntityManager
                 {
                     if ((_gameEngine.StaticVariables.g_balanceHpTotal & 0x80U) == 0)
                     {
-                        debugStr += $"                     {_gameEngine.StaticVariables.g_balanceHp}";
+                        debugStr += $"{_gameEngine.StaticVariables.g_balanceHp}";
                     }
                     else
                     {
-                        debugStr +=
-                            $"      O{_gameEngine.StaticVariables.g_balanceParams} + A{_gameEngine.StaticVariables.g_balanceHp - _gameEngine.StaticVariables.g_balanceParams} = T{_gameEngine.StaticVariables.g_balanceParams}";
+                        debugStr += $" O{_gameEngine.StaticVariables.g_balanceParams} + A{_gameEngine.StaticVariables.g_balanceHp - _gameEngine.StaticVariables.g_balanceParams} = T{_gameEngine.StaticVariables.g_balanceParams}";
                     }
 
-                    debugStr += $" (Parm) {_gameEngine.StaticVariables.g_balanceMultiplier}\n\r";
+                    debugStr += $" (Parm) {_gameEngine.StaticVariables.g_balanceMultiplier}";
+
+                    _gameEngine.LogManager.Log(entity, debugStr);
+                    debugStr = string.Empty;
                 }
 
                 if (damage == null)
                 {
-                    debugStr +=
-                        $"              {_gameEngine.StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} DEAD\n\r";
+                    debugStr += $"{_gameEngine.StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} DEAD";
                     entity.Hp = 0;
                 }
                 else
                 {
-                    debugStr +=
-                        $"               {_gameEngine.StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} N{damage}\n\r";
+                    debugStr += $"{_gameEngine.StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} N{damage}";
                     entity.Hp = damage;
                 }
+
+                _gameEngine.LogManager.Log(entity, debugStr);
 
                 goto END;
             }
 
-            debugStr += "   Balance patamator error(Result)No Damage\n\r";
-
+            debugStr += "Balance patamator error(Result)No Damage";
             _gameEngine.StaticVariables.g_messageDebug += debugStr;
+            _gameEngine.LogManager.Log(entity, debugStr);
         }
 
         entity.Hp = damage;
