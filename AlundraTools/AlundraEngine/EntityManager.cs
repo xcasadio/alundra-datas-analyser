@@ -70,7 +70,7 @@ public class EntityManager
         entity.SpriteRecord = spriteRecord;
         entity.EntityRecord = entityRecord;
         entity.SpriteTableIndex = spriteTableIndex;
-        
+        //for debugging
         entity.SpriteName = GetSpriteName(entityRecord?.SpriteDirection ?? 0, spriteTableIndex);
 
         if (entityRecord != null)

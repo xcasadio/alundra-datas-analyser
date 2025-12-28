@@ -70,6 +70,7 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramDTouch, 0, AI_EmptyFunction); // null
         Register(ScriptHelper.ProgramDTouch, 4, AI_EmptyFunction); // null
         Register(ScriptHelper.ProgramDTouch, 12, AI_FUN_8007df4c); // null
+        Register(ScriptHelper.ProgramDTouch, 42, AI_FUN_8007eb58);
         Register(ScriptHelper.ProgramDTouch, 43, AI_FUN_8007eba8);
 
         Register(ScriptHelper.ProgramEDeactivate, 0, Script_Deactivate_FUN_8007ed10);
@@ -1649,11 +1650,17 @@ public class SpriteEventHandlers
                     // clamp comme case 2
                     {
                         int dx = entity.PosX - warpSlot.BaseX;
-                        if (Math.Abs(dx) > 0xB000FFFFu) warpSlot.A0 = 0;
+                        if (Math.Abs(dx) > 0xB000FFFFu)
+                        {
+                            warpSlot.A0 = 0;
+                        }
                     }
                     {
                         int dy = entity.PosY - warpSlot.BaseY;
-                        if (Math.Abs(dy) > (int)0x7000FFFFu) warpSlot.A1 = 0;
+                        if (Math.Abs(dy) > (int)0x7000FFFFu)
+                        {
+                            warpSlot.A1 = 0;
+                        }
                     }
 
                     // si ForceZ==0 et A0==0 et A1==0:
@@ -1686,7 +1693,10 @@ public class SpriteEventHandlers
             // --------------------------------------------------------------------
             case 5:
                 {
-                    if (entity.ForceResetAnimationFlag == 0) goto default;
+                    if (entity.ForceResetAnimationFlag == 0)
+                    {
+                        goto default;
+                    }
 
                     entity.TargetAnimationId = 2;
                     entity.ForceZ = unchecked((int)0xFFFC0000u);
@@ -1695,12 +1705,20 @@ public class SpriteEventHandlers
                     // stepX = (SavedX - targetX + 0xF) >> 4  (ASM: rand2=SavedX - targetX)
                     {
                         int dx = warpSlot.SavedX - entity.PosX;
-                        if (dx < 0) dx += 0xF;
+                        if (dx < 0)
+                        {
+                            dx += 0xF;
+                        }
+
                         warpSlot.A0 = dx >> 4;
                     }
                     {
                         int dy = warpSlot.SavedY - entity.PosY;
-                        if (dy < 0) dy += 0xF;
+                        if (dy < 0)
+                        {
+                            dy += 0xF;
+                        }
+
                         warpSlot.A1 = dy >> 4;
                     }
 
@@ -1715,7 +1733,10 @@ public class SpriteEventHandlers
                     warpSlot.A1 = 0;
                     warpSlot.A0 = 0;
 
-                    if (entity.ForceResetAnimationFlag == 0) goto default;
+                    if (entity.ForceResetAnimationFlag == 0)
+                    {
+                        goto default;
+                    }
 
                     if (entity.Bytes[3] != 0)
                     {
@@ -1736,12 +1757,20 @@ public class SpriteEventHandlers
 
                     {
                         int dx = warpSlot.SavedX - entity.PosX;
-                        if (dx < 0) dx += 0xF;
+                        if (dx < 0)
+                        {
+                            dx += 0xF;
+                        }
+
                         warpSlot.A0 = dx >> 4;
                     }
                     {
                         int dy = warpSlot.SavedY - entity.PosY;
-                        if (dy < 0) dy += 0xF;
+                        if (dy < 0)
+                        {
+                            dy += 0xF;
+                        }
+
                         warpSlot.A1 = dy >> 4;
                     }
 
@@ -2698,7 +2727,9 @@ public class SpriteEventHandlers
                     direction = 6;
                     
                     if (entity.TargetAnimationId < 2)
+                    {
                         goto LAB_8007e058;
+                    }
 
                     if (entity.SpriteTableIndex == 0x155)
                     {
@@ -2709,7 +2740,9 @@ public class SpriteEventHandlers
                             direction = 6;
 
                             if (entity.TargetAnimationId == 7)
+                            {
                                 goto LAB_8007e058;
+                            }
                         }
                     }
                 }
@@ -2727,6 +2760,22 @@ public class SpriteEventHandlers
 
         LAB_8007e058:
         entity.TargetAnimationId = (uint)direction;
+    }
+
+    //8007eb58
+    private void AI_FUN_8007eb58(Entity entity)
+    {
+        if (entity.Hp == 0)
+        {
+            return;
+        }
+
+        if (_gameEngine.EntityManager.ComputeNewHp(entity))
+        {
+            entity.Bytes[3] = 1;
+        }
+
+        entity.TargetAnimationId = 1;
     }
 
     //8007eba8

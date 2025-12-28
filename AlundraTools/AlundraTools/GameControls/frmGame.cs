@@ -1592,6 +1592,11 @@ public partial class FrmGame : Form
 
         CommandsViewerForm.FillTreeView(treeViewScript, commands, -1);
     }
+
+    private void checkBoxLogScript_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.IsLogScriptEnabled = checkBoxLogScript.Checked;
+    }
 }
 
 internal class FlagModel(string Name, Func<uint> Value)

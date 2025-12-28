@@ -85,6 +85,7 @@ namespace AlundraTools.GameControls
             buttonExtractToCsv = new Button();
             checkBoxDisplayEntityId = new CheckBox();
             groupBox4 = new GroupBox();
+            checkBoxDisplayCollision = new CheckBox();
             checkBoxUseDebugCamera = new CheckBox();
             checkBoxDisplayEffectId = new CheckBox();
             checkBoxTileXY = new CheckBox();
@@ -228,7 +229,7 @@ namespace AlundraTools.GameControls
             tabPage3 = new TabPage();
             buttonRefreshScript = new Button();
             treeViewScript = new TreeView();
-            checkBoxDisplayCollision = new CheckBox();
+            checkBoxLogScript = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -826,6 +827,18 @@ namespace AlundraTools.GameControls
             groupBox4.TabIndex = 31;
             groupBox4.TabStop = false;
             groupBox4.Text = "Debugging";
+            // 
+            // checkBoxDisplayCollision
+            // 
+            checkBoxDisplayCollision.AutoSize = true;
+            checkBoxDisplayCollision.Location = new Point(5, 110);
+            checkBoxDisplayCollision.Margin = new Padding(3, 2, 3, 2);
+            checkBoxDisplayCollision.Name = "checkBoxDisplayCollision";
+            checkBoxDisplayCollision.Size = new Size(115, 19);
+            checkBoxDisplayCollision.TabIndex = 34;
+            checkBoxDisplayCollision.Text = "display collisions";
+            checkBoxDisplayCollision.UseVisualStyleBackColor = true;
+            checkBoxDisplayCollision.CheckedChanged += checkBoxDisplayCollision_CheckedChanged;
             // 
             // checkBoxUseDebugCamera
             // 
@@ -2256,6 +2269,7 @@ namespace AlundraTools.GameControls
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(checkBoxLogScript);
             tabPage2.Controls.Add(buttonClearLog);
             tabPage2.Controls.Add(listBoxLogs);
             tabPage2.Controls.Add(buttonRefreshLogs);
@@ -2380,17 +2394,16 @@ namespace AlundraTools.GameControls
             treeViewScript.Size = new Size(490, 698);
             treeViewScript.TabIndex = 0;
             // 
-            // checkBoxDisplayCollision
+            // checkBoxLogScript
             // 
-            checkBoxDisplayCollision.AutoSize = true;
-            checkBoxDisplayCollision.Location = new Point(5, 110);
-            checkBoxDisplayCollision.Margin = new Padding(3, 2, 3, 2);
-            checkBoxDisplayCollision.Name = "checkBoxDisplayCollision";
-            checkBoxDisplayCollision.Size = new Size(115, 19);
-            checkBoxDisplayCollision.TabIndex = 34;
-            checkBoxDisplayCollision.Text = "display collisions";
-            checkBoxDisplayCollision.UseVisualStyleBackColor = true;
-            checkBoxDisplayCollision.CheckedChanged += checkBoxDisplayCollision_CheckedChanged;
+            checkBoxLogScript.AutoSize = true;
+            checkBoxLogScript.Location = new Point(380, 4);
+            checkBoxLogScript.Name = "checkBoxLogScript";
+            checkBoxLogScript.Size = new Size(78, 19);
+            checkBoxLogScript.TabIndex = 8;
+            checkBoxLogScript.Text = "Log script";
+            checkBoxLogScript.UseVisualStyleBackColor = true;
+            checkBoxLogScript.CheckedChanged += checkBoxLogScript_CheckedChanged;
             // 
             // FrmGame
             // 
@@ -2661,5 +2674,6 @@ namespace AlundraTools.GameControls
         private TreeView treeViewScript;
         private Button buttonRefreshScript;
         private CheckBox checkBoxDisplayCollision;
+        private CheckBox checkBoxLogScript;
     }
 }

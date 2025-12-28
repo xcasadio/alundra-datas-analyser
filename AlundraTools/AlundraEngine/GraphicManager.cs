@@ -4,7 +4,6 @@ using AlundraEngine.Graphics;
 using AlundraEngine.UI;
 using System;
 using System.Diagnostics;
-using System.Windows.Forms;
 
 namespace AlundraEngine;
 
@@ -28,7 +27,7 @@ public class GraphicManager
             _gameEngine.StaticVariables.g_cameraLookAtX, _gameEngine.StaticVariables.g_cameraLookAtY, _gameEngine.StaticVariables.g_cameraLookAtZ,
             graphics);
 
-        _gameEngine.StaticVariables.g_numberOfEntitiesDrawn = RenderEntitiesMaybe(_gameEngine.StaticVariables.g_orderingTableBuffer[4],  _gameEngine.StaticVariables.g_cameraScrollingX, _gameEngine.StaticVariables.g_cameraScrollingY);
+        _gameEngine.StaticVariables.g_numberOfEntitiesDrawn = RenderEntitiesMaybe(_gameEngine.StaticVariables.g_orderingTableBuffer[3],  _gameEngine.StaticVariables.g_cameraScrollingX, _gameEngine.StaticVariables.g_cameraScrollingY);
 
         if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x40) != 0)
         {

@@ -2028,14 +2028,14 @@ public class GameEngine
     }
 
     //80039f58
-    public Entity SpawnWarpEntity(Entity parentEntity, int entityType, uint subtype, int posX, int posY, int posZ, uint direction)
+    public Entity SpawnWarpEntity(Entity parentEntity, int isCurrentMapSprite, uint spriteTableIndex, int posX, int posY, int posZ, uint direction)
     {
         SpriteRecord spriteRecord;
         Entity entityResult = null;
         int paletteIndex;
         int sheetSize;
 
-        spriteRecord = GetSpriteFromSpriteTable(entityType == 1, subtype, out paletteIndex, out sheetSize);
+        spriteRecord = GetSpriteFromSpriteTable(isCurrentMapSprite != 0, spriteTableIndex, out paletteIndex, out sheetSize);
 
         if (spriteRecord != null)
         {
@@ -2043,18 +2043,18 @@ public class GameEngine
 
             if (entityResult != null)
             {
-                if (entityType != 0)
+                if (isCurrentMapSprite != 0)
                 {
-                    subtype += 0x100;
+                    spriteTableIndex += 0x100;
                 }
 
                 EntityManager.InitializeEntity(entityResult, parentEntity,
-                    spriteRecord, null, subtype, -1,
+                    spriteRecord, null, spriteTableIndex, -1,
                     posX, posY, posZ,
                     0, direction,
                     paletteIndex, sheetSize);
 
-                LogManager.Log(entityResult, $"Spawned=> parent:{(parentEntity == null ? "null" : parentEntity)} x:{entityResult.PosX >> 16} y:{entityResult.PosY >> 16} z:{entityResult.PosZ >> 16}");
+                LogManager.Log(entityResult, $"Spawned=> parent:[{(parentEntity == null ? "null" : parentEntity)}] x:{entityResult.PosX >> 16} y:{entityResult.PosY >> 16} z:{entityResult.PosZ >> 16} from:{(isCurrentMapSprite != 0 ? "currentMap" : "alundraMap")} spriteIndex:{spriteTableIndex}");
             }
         }
 

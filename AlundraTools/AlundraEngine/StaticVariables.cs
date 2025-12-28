@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using AlundraEngine.Balance;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AlundraEngine;
 
@@ -22,6 +21,7 @@ public class StaticVariables
     public bool DoNextFrame { get; set; }
     public bool UseDebugCamera { get; set; }
     public bool DisplayCollisions { get; set; }
+    public bool IsLogScriptEnabled { get; set; }
 
     //editor debuggin display
     public bool DisplayEntityId { get; set; }

@@ -1,5 +1,4 @@
 ﻿using AlundraEngine.DatasBin;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace AlundraEngine.Gameplay.Scripts;
@@ -201,7 +200,7 @@ public class EntityEventHandlers
         _handlers[0xAF] = Script_175_0AF;
         _handlers[0xB0] = Script_176_0B0;
         _handlers[0xB1] = Script_177_0B1;
-        _handlers[0xB2] = Script_CompareEntityGroupsForMatch;
+        _handlers[0xB2] = Script_CompareEntityGroupsForMatch_0B2;
         _handlers[0xB3] = Script_UpdatePadState;
         _handlers[0xB4] = Script_180_0B4;
         _handlers[0xB5] = Script_181_0B5;
@@ -304,13 +303,21 @@ public class EntityEventHandlers
 
             if (command == 0xFF)
             {
-                _gameEngine.LogManager.Log(entity, $"{log}");
+                if (_gameEngine.StaticVariables.IsLogScriptEnabled)
+                {
+                    _gameEngine.LogManager.Log(entity, $"{log}");
+                }
+
                 goto END_SCRIPT;
             }
 
             if (command == 0x00) // break
             {
-                _gameEngine.LogManager.Log(entity, $"{log}");
+                if (_gameEngine.StaticVariables.IsLogScriptEnabled)
+                {
+                    _gameEngine.LogManager.Log(entity, $"{log}");
+                }
+
                 eventProgramState.Parameters[1] = 0;
                 eventProgramState.CodeIndex++;
                 goto END_SCRIPT;
@@ -322,8 +329,11 @@ public class EntityEventHandlers
 
             var func = _handlers[command];
             var result = func(entity.LogicContextEntity, entity, variables, eventProgramState);
-
-            _gameEngine.LogManager.Log(entity, $"{log} = {result}");
+            
+            if (_gameEngine.StaticVariables.IsLogScriptEnabled)
+            {
+                _gameEngine.LogManager.Log(entity, $"{log} = {result}");
+            }
 
             if (_gameEngine.StaticVariables.g_clearProgramState != 0)
             {
@@ -334,7 +344,12 @@ public class EntityEventHandlers
                 else
                 {
                     _gameEngine.StaticVariables.g_clearProgramState = 0;
-                    _gameEngine.LogManager.Log($"clean EventProgramState");
+
+                    if (_gameEngine.StaticVariables.IsLogScriptEnabled)
+                    {
+                        _gameEngine.LogManager.Log("clean EventProgramState");
+                    }
+                    
                     logicContextEntity.EventProgramState.Sp = 0;
                     logicContextEntity.EventProgramState.Codes = null;
                 }
@@ -354,10 +369,14 @@ public class EntityEventHandlers
             }
         }
 
-    END_SCRIPT:
+        END_SCRIPT:
         if (wasEntityCleared)
         {
-            _gameEngine.LogManager.Log("clean EventProgramState 2");
+            if (_gameEngine.StaticVariables.IsLogScriptEnabled)
+            {
+                _gameEngine.LogManager.Log("clean EventProgramState 2");
+            }
+            
             eventProgramState.Sp = 0;
             eventProgramState.Codes = null;
         }
@@ -3529,84 +3548,59 @@ public class EntityEventHandlers
     }
 
     // 80041628
-    private int Script_CompareEntityGroupsForMatch(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    private int Script_CompareEntityGroupsForMatch_0B2(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-        return 0;
-        /*
         int group1Count;
         int group2Count;
-        Entity group2Entity1;
-        Entity group2Entity2;
-        int group1Ptr2;
-        Entity group2Entity3;
+        Entity entity1;
+        Entity entity2;
         int matchIndex;
-        Entity group1EntityList;
-        int group1Ptr;
 
-        int[] group1EntitiesBuffer = new int[66];
         group1Count = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
-        group1Ptr = group1EntitiesBuffer;
 
         if (group1Count == 0)
         {
             eventProgramState.Result = 0;
+            return 3;
         }
-        else
-        {
-            group1EntityList = _gameEngine.StaticVariables.g_matchingEntitiesBuffer;
 
+        Entity[] group1Entities = new Entity[group1Count];
+        Array.Copy(_gameEngine.StaticVariables.g_matchingEntitiesBuffer, group1Entities, group1Count);
+
+        group2Count = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[2]);
+
+        Debugger.Break();
+
+        if (0 < group2Count)
+        {
             do
             {
-                group2Entity1 = group1EntityList[1];
-                group2Entity2 = group1EntityList[2];
-                group2Entity3 = group1EntityList[3];
-                *group1Ptr = (int)*group1EntityList;
-                group1Ptr[1] = (int)group2Entity1;
-                group1Ptr[2] = (int)group2Entity2;
-                group1Ptr[3] = (int)group2Entity3;
-                group1EntityList = group1EntityList + 4;
-                group1Ptr = group1Ptr + 4;
-            } while (group1EntityList != _gameEngine.StaticVariables.g_matchingEntitiesBuffer + 0x40);
+                matchIndex = 0;
+                entity2 = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[group2Count - 1];
 
-            *group1Ptr = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0x40];
-
-            group2Count = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[2]);
-
-            if (0 < group2Count)
-            {
-                group1Ptr = _gameEngine.StaticVariables.g_activeEntityRefId + group2Count;
-
-                do
+                if (0 < group1Count)
                 {
-                    matchIndex = 0;
-                    group1Ptr2 = group1EntitiesBuffer;
-
-                    if (0 < group1Count)
+                    do
                     {
-                        do
+                        entity1 = group1Entities[matchIndex];
+
+                        if (entity2 == entity1)
                         {
-                            matchIndex = matchIndex + 1;
+                            eventProgramState.Result = 1;
+                            return 3;
+                        }
 
-                            if (*group1Ptr2 == *group1Ptr)
-                            {
-                                eventProgramState.Result = 1;
-                                return 3;
-                            }
+                        matchIndex++;
+                    } while (matchIndex < group1Count);
+                }
 
-                            group1Ptr2 = group1Ptr2 + 1;
-                        } while (matchIndex < group1Count);
-                    }
-
-                    group2Count = group2Count + -1;
-                    group1Ptr = group1Ptr + -1;
-                } while (0 < group2Count);
-            }
-
-            eventProgramState.Result = 0;
+                group2Count--;
+            } while (0 < group2Count);
         }
 
-        return 3;*/
+        eventProgramState.Result = 0;
+
+        return 3;
     }
 
     // 80041750
@@ -3677,62 +3671,53 @@ public class EntityEventHandlers
     private int Script_183_0B7(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
-        return 0;
-        /*var bVar1 = (byte)variables[2];
-        var iVar2 = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
 
-        if (0 < iVar2)
+        var animationId = (byte)variables[2];
+
+        int i = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[2]) - 1;
+
+        while (i > 0)
         {
-            var piVar3 = _gameEngine.StaticVariables.g_activeEntityRefId + iVar2;
+            var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
 
-            do
+            if (entity.TargetAnimationId == animationId)
             {
-                if ((uint)(piVar3 + 0x88) == bVar1)
-                {
-                    eventProgramState.Result = 1;
+                eventProgramState.Result = 1;
+                return 3;
+            }
 
-                    return 3;
-                }
-
-                iVar2 += -1;
-
-                piVar3 += -1;
-            } while (0 < iVar2);
+            i--;
         }
 
         eventProgramState.Result = 0;
 
-        return 3;*/
+        return 3;
     }
 
     // 80041988
     private int Script_184_0B8(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
-        return 0;
-        /*var bVar1 = (byte)variables[2];
-        var iVar2 = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var targetDirection = (byte)variables[2];
 
-        if (0 < iVar2)
+        int i = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[2]) - 1;
+
+        while (i > 0)
         {
-            var piVar3 = _gameEngine.StaticVariables.g_activeEntityRefId + iVar2;
+            var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
 
-            do
+            if (entity.TargetDirection == targetDirection)
             {
-                if ((uint)(piVar3 + 0x90) == bVar1)
-                {
-                    eventProgramState.Result = 1;
-                    return 3;
-                }
+                eventProgramState.Result = 1;
+                return 3;
+            }
 
-                iVar2 += -1;
-                piVar3 += -1;
-            } while (0 < iVar2);
+            i--;
         }
 
         eventProgramState.Result = 0;
 
-        return 3;*/
+        return 3;
     }
 
     // 80041A18
@@ -4130,7 +4115,7 @@ public class EntityEventHandlers
         handlerNameByCodes[0xAF] = nameof(Script_175_0AF);
         handlerNameByCodes[0xB0] = nameof(Script_176_0B0);
         handlerNameByCodes[0xB1] = nameof(Script_177_0B1);
-        handlerNameByCodes[0xB2] = nameof(Script_CompareEntityGroupsForMatch);
+        handlerNameByCodes[0xB2] = nameof(Script_CompareEntityGroupsForMatch_0B2);
         handlerNameByCodes[0xB3] = nameof(Script_UpdatePadState);
         handlerNameByCodes[0xB4] = nameof(Script_180_0B4);
         handlerNameByCodes[0xB5] = nameof(Script_181_0B5);
