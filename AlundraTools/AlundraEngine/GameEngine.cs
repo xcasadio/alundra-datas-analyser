@@ -563,35 +563,6 @@ public class GameEngine
         StaticVariables.g_warpLockTimer = 0;
     }
 
-    //8003a1b8
-    public Entity SpawnEntity(Entity ownerEntity, bool isMapSprite, uint tableIndex, int xpos, int ypos, int zpos, uint dir)
-    {
-        int paletteIndex, sheetSize;
-
-        var spriteRecord = GetSpriteFromSpriteTable(isMapSprite, tableIndex, out paletteIndex, out sheetSize);
-
-        if (spriteRecord == null)
-        {
-            return null;
-        }
-
-        var entity = EntityManager.AllocateEntitySlot();
-        if (entity == null)
-        {
-            return null;
-        }
-
-        var spriteTableIndex = tableIndex;
-        if (isMapSprite)
-        {
-            spriteTableIndex += 0x100;
-        }
-
-        EntityManager.InitializeEntity(entity, ownerEntity, spriteRecord, null, spriteTableIndex, -1, xpos, ypos, zpos, 0, dir, paletteIndex, sheetSize);
-
-        return entity;
-    }
-
     // 8003a1b8
     public Entity SpawnEntity(Entity parent, int spriteInfoEntityIndex, int notCheckSpawnZone)
     {
@@ -646,6 +617,7 @@ public class GameEngine
             return null;
         }
 
+        entity.IsMapSprite = isMapSprite;
         int spriteTableIndex = entityRecord.SpriteTableIndex;
         if (isMapSprite)
         {
@@ -689,14 +661,9 @@ public class GameEngine
             sheetSize = 0x60;
         }
 
-        if (spriteTableIndex < 0)
+        if (spriteTableIndex < 0 || spriteTableIndex >= spriteInfo.SpriteTable.Length)
         {
-            throw new Exception("Illegal Character Race!");
-        }
-
-        if (spriteTableIndex >= spriteInfo.SpriteTable.Length)
-        {
-            throw new Exception("Illegal Character Race!");
+            Debugger.Break();
         }
 
         var sprite = spriteInfo.SpriteRecords[spriteTableIndex];
@@ -1874,36 +1841,44 @@ public class GameEngine
         {
             case 0://get owner
                 StaticVariables.g_matchingEntitiesBuffer[matchCount++] = ownerEntity;
-                return matchCount;
+                break;
 
             case 1://get player
                 StaticVariables.g_matchingEntitiesBuffer[matchCount++] = StaticVariables.PlayerEntity;
-                return matchCount;
+                break;
 
             case 2://get all entities
-                foreach (var entity in StaticVariables.g_entitySlots)
+                for (int i = 0; i < StaticVariables.g_numberOfEntities; i++)
                 {
-                    if (entity.Status - 1 < 2 || entity.Status == 3)
+                    var entity = StaticVariables.g_entitySlots[i];
+
+                    if (entity.Status - 1 < 3)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
                 }
-                return matchCount;
+
+                break;
 
             case 3://get all entities except player
-                foreach (var entity in StaticVariables.g_entitySlots.Skip(1))
+                for (int i = 0; i < StaticVariables.g_numberOfEntities; i++)
                 {
-                    if (entity.Status - 1 < 2 || entity.Status == 3)
+                    var entity = StaticVariables.g_entitySlots[i];
+
+                    if (entity.Status - 1 < 3)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
                 }
-                return matchCount;
+
+                break;
 
             case 4://all entities on the ground
-                foreach (var entity in StaticVariables.g_entitySlots)
+                for (int i = 0; i < StaticVariables.g_numberOfEntities; i++)
                 {
-                    if ((ownerEntity.Status - 1 < 2 || ownerEntity.Status == 3)
+                    var entity = StaticVariables.g_entitySlots[i];
+
+                    if (ownerEntity.Status - 1 < 3
                         && (entity.Flags & 0x80) != 0
                         && (entity.AnimFlags & 0x80) == 0
                         && entity.PlatformEntity == null)
@@ -1911,89 +1886,106 @@ public class GameEngine
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
                 }
-                return matchCount;
+
+                break;
 
             case 5://all entities besides player that the ownerentity is riding on
-                foreach (var entity in StaticVariables.g_entitySlots.Skip(1))
+                for (int i = 1; i < StaticVariables.g_numberOfEntities; i++)
                 {
-                    if ((entity.Status - 1 < 2 || entity.Status == 3)
-                        && ownerEntity.RidingEntity == entity)
+                    var entity = StaticVariables.g_entitySlots[i];
+
+                    if (entity.Status - 1 < 3 && ownerEntity.RidingEntity == entity)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
                 }
-                return matchCount;
+
+                break;
 
             case 6://all entities besides player that are riding on the ownerentity
-                foreach (var entity in StaticVariables.g_entitySlots.Skip(1))
+                for (int i = 1; i < StaticVariables.g_numberOfEntities; i++)
                 {
-                    if ((entity.Status - 1 < 2 || entity.Status == 3)
-                        && entity.RidingEntity == ownerEntity)
+                    var entity = StaticVariables.g_entitySlots[i];
+
+                    if (entity.Status - 1 < 3 && entity.RidingEntity == ownerEntity)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
                 }
-                return matchCount;
+
+                break;
 
             case 7://all entities besides player where ownerentity.xcollision? == entity
                 foreach (var entity in StaticVariables.g_entitySlots.Skip(1))
                 {
-                    if ((entity.Status - 1 < 2 || entity.Status == 3)
-                        && ownerEntity.XCollisionEntity == entity)
+                    if (entity.Status - 1 < 3 && ownerEntity.XCollisionEntity == entity)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
 
                 }
-                return matchCount;
+
+                break;
 
             case 8://all entities besides player where entity.xcollision? == ownerentity
-                foreach (var entity in StaticVariables.g_entitySlots.Skip(1))
+                for (int i = 1; i < StaticVariables.g_numberOfEntities; i++)
                 {
-                    if ((entity.Status - 1 < 2 || entity.Status == 3)
-                        && entity.XCollisionEntity == ownerEntity)
+                    var entity = StaticVariables.g_entitySlots[i];
+
+                    if (entity.Status - 1 < 3 && entity.XCollisionEntity == ownerEntity)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
 
                 }
-                return matchCount;
+
+                break;
 
             case 9://all entities besides player where entity.ownerentity [c] == ownerentity
-                foreach (var entity in StaticVariables.g_entitySlots.Skip(1))
+                for (int i = 1; i < StaticVariables.g_numberOfEntities; i++)
                 {
-                    if ((entity.Status - 1 < 2 || entity.Status == 3)
-                        && entity.ParentEntity == ownerEntity)
+                    var entity = StaticVariables.g_entitySlots[i];
+
+                    if (entity.Status - 1 < 3 && entity.ParentEntity == ownerEntity)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
 
                 }
-                return matchCount;
+
+                break;
 
             case 10://all entities besides player where ownerentity.ownerentity [c] == entity
-                foreach (var entity in StaticVariables.g_entitySlots.Skip(1))
+                for (int i = 1; i < StaticVariables.g_numberOfEntities; i++)
                 {
-                    if ((entity.Status - 1 < 2 || entity.Status == 3)
-                        && ownerEntity.ParentEntity == entity)
+                    var entity = StaticVariables.g_entitySlots[i];
+
+                    if (entity.Status - 1 < 3 && ownerEntity.ParentEntity == entity)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
 
                 }
-                return matchCount;
+
+                break;
 
             case 11://all entities besides player that are on a platform
-                foreach (var entity in StaticVariables.g_entitySlots.Skip(1))
+                for (int i = 1; i < StaticVariables.g_numberOfEntities; i++)
                 {
-                    if ((entity.Status - 1 < 2 || entity.Status == 3)
-                        && entity.PlatformEntity != null)
+                    var entity = StaticVariables.g_entitySlots[i];
+
+                    if (entity.Status - 1 < 3 && entity.PlatformEntity != null)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
 
                 }
-                return matchCount;
+
+                break;
+
+            default: //"Illegal Destination!"
+                Debugger.Break();
+                break;
         }
 
         return matchCount;
@@ -2047,6 +2039,8 @@ public class GameEngine
                 {
                     spriteTableIndex += 0x100;
                 }
+
+                entityResult.IsMapSprite = isCurrentMapSprite != 0;
 
                 EntityManager.InitializeEntity(entityResult, parentEntity,
                     spriteRecord, null, spriteTableIndex, -1,

@@ -58,6 +58,7 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramCTick, 60, AI_UpdateIceProjectile);
         Register(ScriptHelper.ProgramCTick, 70, AI_FUN_8007b7b0);
         Register(ScriptHelper.ProgramCTick, 72, AI_ProcessWarpTransitionState);
+        Register(ScriptHelper.ProgramCTick, 74, AI_FUN_8007bb9c);
         Register(ScriptHelper.ProgramCTick, 88, AI_Melzas2_FinalBoss);
         Register(ScriptHelper.ProgramCTick, 89, AI_SpawnWarpIfValid);
         Register(ScriptHelper.ProgramCTick, 90, AI_UpdateMelzas2CutsceneChannels);
@@ -279,37 +280,7 @@ public class SpriteEventHandlers
     // 80061A6C
     public void SpawnVerticalWarpColumns(Entity entity)
     {
-        int z = 0xF40000;
-        entity.ItemState = 1;
-        entity.DelayOrAngle = 1;
-
-        Entity parentEntity = _gameEngine.SpawnWarpEntity(entity, 1, 0xD1, 0x2400000, 0x2600000, z, 0);
-        parentEntity.Bytes[0] = 0;
-        
-        for (int i = 0; i < 7; i++)
-        {
-            z -= 0xC0000;
-            Entity entitySpawned = _gameEngine.SpawnWarpEntity(entity, 1, 0xD1, 0x2400000, 0x2600000, z, 0);
-            entitySpawned.TargetAnimationId = 7;
-            parentEntity.AIValues[2] = (short)entitySpawned.Index;
-            parentEntity = entitySpawned;
-        }
-
-        z = 0xF40000;
-        parentEntity = _gameEngine.SpawnWarpEntity(entity, 1, 0xD1, 0x2D00000, 0x2600000, z, 0);
-        parentEntity.Bytes[0] = 1;
-
-        for (int i = 0; i < 7; i++)
-        {
-            z -= 0xC0000;
-            Entity entitySpawned = _gameEngine.SpawnWarpEntity(entity, 1, 0xD1, 0x2D00000, 0x2600000, z, 0);
-            entitySpawned.TargetAnimationId = 7;
-            parentEntity.AIValues[2] = (short)entitySpawned.Index;
-            parentEntity = entitySpawned;
-        }
-
-        _gameEngine.SoundManager.PlaySoundEffect(0x19C);
-        _gameEngine.StaticVariables.g_loaderInitialized = 0;
+        AI_Melzas2.SpawnVerticalWarpColumns(_gameEngine, entity);
     }
 
     //80061bcc
@@ -855,12 +826,13 @@ public class SpriteEventHandlers
                     do
                     {
                         var tile = entity2.MapTiles[value];
+
                         if (((tile.Walkability | (tile.GroundProperty << 8)) & 0x1001) == 0x1001)
                         {
                             break;
                         }
+
                         value++;
-                        //entity2 = entity2.Index2; // ??
                     } while (value < 4);
 
                     if (value == 4)
@@ -873,6 +845,7 @@ public class SpriteEventHandlers
             {
                 value = 0;
                 entity2 = entity;
+
                 if (entity.IsAboveGround == 0)
                 {
                     if (entity.ForceZ > 0 && entity.DelayOrAngle == 0)
@@ -887,13 +860,13 @@ public class SpriteEventHandlers
                     do
                     {
                         var tile = entity2.MapTiles[value];
+
                         if (((tile.Walkability | (tile.GroundProperty << 8)) & 0x1001) == 0x1001)
                         {
                             entity.Status = 3;
                         }
+
                         value++;
-                        Debugger.Break();
-                        //entity2 = entity2.Index2; // ??
                     } while (value < 4);
 
                     entity.TargetAnimationId = 0;
@@ -924,7 +897,7 @@ public class SpriteEventHandlers
             return;
         }
 
-    LAB_80066be0:
+        LAB_80066be0:
         entity.TargetAnimationId = 0;
     }
 
@@ -1162,6 +1135,84 @@ public class SpriteEventHandlers
         entity.Flags = (entity.Flags | 0x34) & 0xffffff7f;//turn off bit 8, turn on bits 5 and 6
     }
 
+    //8007bb9c
+    public void AI_FUN_8007bb9c(Entity entity)
+    {
+        switch (entity.TargetAnimationId - 1)
+        {
+            case 1:
+                {
+                    if ((entity.FrameCounter & 3) != 0)
+                    {
+                        break;
+                    }
+
+                    var spriteEffect = _gameEngine.EffectManager.CreateEffectEntity(0, 0x0E, 0, entity.PosX, entity.PosY, entity.PosZ);
+
+                    if (spriteEffect == null)
+                    {
+                        break;
+                    }
+
+                    {
+                        var seed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+                        _gameEngine.StaticVariables.g_gameRandomSeed = seed * 0x7d2b89dd + 0xe06a02e7;
+                        var randForceY = _gameEngine.StaticVariables.g_gameRandomSeed;
+                        var randForceX = (seed * 0x30001) >> 0x20;
+                        
+                        spriteEffect.ForceX = (int)(randForceX - 0x18000);
+                        spriteEffect.ForceY = (int)(randForceY - 1);
+                        spriteEffect.ForceZ = 0x20000;
+                    }
+                    break;
+                }
+
+            case 2:
+                {
+                    entity.ForceZ = (int)entity.LastTargetDirection - entity.PosZ >> 1;
+
+                    if (_gameEngine.StaticVariables.g_entitySlots[0].RidingEntity == entity)
+                    {
+                        entity.ForceZ = -0x8000;
+                        entity.TargetAnimationId = 3;
+                    }
+                    break;
+                }
+
+            case 3:
+                {
+                    if (_gameEngine.StaticVariables.g_entitySlots[0].RidingEntity != entity)
+                    {
+                        entity.TargetAnimationId = 2;
+                    }
+                    break;
+                }
+
+            case 4:
+                {
+                    if (_gameEngine.StaticVariables.g_entitySlots[0].RidingEntity == entity)
+                        break;
+
+                    if (_gameEngine.StaticVariables.g_entitySlots[0].ForceZ > 0)
+                    {
+                        _gameEngine.StaticVariables.g_entitySlots[0].ForceZ = 0x00098000;
+                        entity.TargetAnimationId = 5;
+                    }
+                    else
+                    {
+                        entity.TargetAnimationId = 2;
+                    }
+                    break;
+                }
+
+            default:
+                {
+                    entity.ForceZ = (int)entity.LastTargetDirection - entity.PosZ >> 1;
+                    break;
+                }
+        }
+    }
+    
     //8007b998
     public void AI_ProcessWarpTransitionState(Entity entity)
     {

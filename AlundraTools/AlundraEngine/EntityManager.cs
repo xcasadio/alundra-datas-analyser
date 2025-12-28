@@ -394,7 +394,7 @@ public class EntityManager
     // 80038ab4
     private void UpdateAnimation(Entity entity)
     {
-        AnimationSet? animRecordPtr;
+        AnimationSet? animSet;
         SiFrame? currentFrame;
 
         entity.IsZForceApplied = 0;
@@ -416,20 +416,20 @@ public class EntityManager
             entity.AnimationDirection = animationDirectionFromTable;
             entity.AnimCompleteCounter = 0;
             entity.AnimationFrameIndex = 0;
-            animRecordPtr = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
+            animSet = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
             currentFrame = null;
             try
             {
-                currentFrame = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
+                currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
             }
             catch (Exception e)
             {
                 Debugger.Break();
             }
-            entity.AnimSet = animRecordPtr;
+            entity.AnimSet = animSet;
             entity.Frame = currentFrame;
             entity.FirstFrame = currentFrame;
-            entity.IsZForceApplied = animRecordPtr.IsZForceApplied;
+            entity.IsZForceApplied = animSet.IsZForceApplied;
 
             entity.NextFrameDelay = entity.Frame.Delay & 0x7f;
             entity.ForceResetAnimationFlag = 0;
@@ -501,13 +501,13 @@ public class EntityManager
         if ((frameFlags & 0x80) != 0)
         {
             entity.NextFrameDelay = (int)(frameFlags & 0x7F);
-            animRecordPtr = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
-            currentFrame = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
+            animSet = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
+            currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
             entity.Frame = currentFrame;
         }
 
-        animRecordPtr = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
-        currentFrame = animRecordPtr.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
+        animSet = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
+        currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
 
         currentFrame = entity.Frame;
 

@@ -2871,10 +2871,6 @@ public class EntityEventHandlers
     {
         Debugger.Break();
 
-        // variables est le bloc lu via lw a2,0(a2) puis lbu … dans l’ASM.
-        // Conversions "fixed" identiques au MIPS :
-        // centreX = (var1 * 3) << 19 ; centreY = var2 << 20 ; centreZ = var3 << 20
-        // portées/rayons : rx = (var4 * 3) << 19 ; ry = ((var5 << 20) - 1) + 1 == var5 << 20
         if (variables == null || variables.Length < 10)
         {
             eventProgramState.Result = 0;
@@ -2891,30 +2887,25 @@ public class EntityEventHandlers
         int flagMask = maskLo | (maskHi << 8); // t4
         byte idxType = (byte)variables[9];
 
-        // Si aucun masque fourni → early out (beq t4,zero)
         if (flagMask == 0 || _gameEngine.StaticVariables.g_numberOfEntities < 0)
         {
             eventProgramState.Result = 0;
             return 10;
         }
 
-        // Centres/portées dans le même “fixed” que le code MIPS
-        int centerX = (var1 * 3) << 19; // t3
-        int centerY = var2 << 20; // t2
-        int centerZ = var3 << 20; // t1
+        int centerX = (var1 * 3) << 19;
+        int centerY = var2 << 20;
+        int centerZ = var3 << 20;
+        int rangeX = (var4 * 3) << 19;
+        int rangeY = (var5 << 20);
 
-        int rangeX = (var4 * 3) << 19; // ownerEntity (registre) recopié dans "variables" dans la boucle
-        int rangeY = (var5 << 20); // (t7+1) dans l’ASM devient <<20
-
-        // Type attendu (v1 & 0x0F) == t6
         int expectedNibble = _gameEngine.StaticVariables.BYTE_ARRAY_80098fa4[idxType];
 
         int n = _gameEngine.StaticVariables.g_numberOfEntities;
-        var slots = _gameEngine.StaticVariables.g_entitySlots;
 
         for (int i = 0; i < n; i++)
         {
-            Entity e = slots[i];
+            Entity e = _gameEngine.StaticVariables.g_entitySlots[i];
 
             if (e == null)
             {
@@ -2927,26 +2918,21 @@ public class EntityEventHandlers
                 continue;
             }
 
-            // -0x1FC == 0 → IsNotProcessable == 0
             if (e.IsNotProcessable != 0)
             {
                 continue;
             }
 
-            // -0x48 != 0 → FrameCollision != null
             if (e.FrameCollision == null)
             {
                 continue;
             }
 
-            // (Flags & flagMask) != 0  — le MIPS AND à 0x6C ; en C# on utilise un champ flag.
-            // Si tes bits de filtre sont sur Flags2, bascule sur e.Flags2.
             if (((int)e.Flags & flagMask) == 0)
             {
                 continue;
             }
 
-            // *(u8*)ptr1C8 != 0  et  ( *(u8*)ptr1C8 & 0x0F ) == table[index]
             int nibble = e.BalanceAnimValRef == null ? -1 : e.BalanceAnimValRef.Val & 0x0F;
 
             if (nibble < 0)
@@ -3026,8 +3012,7 @@ public class EntityEventHandlers
             }
 
             eventProgramState.Result = 1;
-
-            return 10;
+            break;
         }
 
         return 10;
