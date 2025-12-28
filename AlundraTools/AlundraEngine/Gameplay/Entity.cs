@@ -1,8 +1,6 @@
-﻿using System.Diagnostics.Eventing.Reader;
-using AlundraEngine.Balance;
+﻿using AlundraEngine.Balance;
 using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay.Scripts;
-using AlundraEngine.Sound;
 
 namespace AlundraEngine.Gameplay;
 
@@ -10,8 +8,8 @@ public class Entity
 {
     public int Index;
     public int Index2;
-    public Entity? ChildEntity; ////UnknownBeforeOwnerEntity;
-    public Entity? ParentEntity; //OwnerEntity;
+    public Entity? ChildEntity;
+    public Entity? ParentEntity;
     public int Status;//0=destroyed,1=loaded,2=normal,3=deactivated,4=flagtodestroy,5=?
     public int Hp;
     public int HpMax;
@@ -81,10 +79,9 @@ public class Entity
     public uint CombinedVramFlagsOR;
     public uint CombinedVramFlagsAND;
     public int TileAttributes; //188
-    public int Slope_18c; //
-    public int Slope_190; //
-    public SpriteRef SpriteRef = new SpriteRef();//194 
-    //public int field91_0x1ac; // 1ac => SpriteRef
+    public int Slope_18c; //18c
+    public int Slope_190; //190
+    public SpriteRef SpriteRef = new SpriteRef();//194
     public int SpriteSheetOffset, PaletteOffset;//represents offset where the pallets and sheets are in memory for map vs global sprites, prob not used with my engine
     public SpriteEffect? ActiveEffect;
     public int ZSortValue;//1bc
@@ -97,7 +94,6 @@ public class Entity
     public int ModdedPosX, ModdedPosY, ModdedPosZ;
     public int ModX, ModY, ModZ;
     public int Width, Depth, Height;
-    //this set of vars is set when an animation has a frame with attached data
     public int HitBoxX;//1fc
     public int HitBoxY;//200
     public int HitBoxZ;//204
@@ -124,7 +120,7 @@ public class Entity
 
     public int AnimationFrameIndex;
 
-    public bool IsMapSprite => EntityRecord != null && (EntityRecord.SpriteDirection & 0x80) != 0;
+    public bool IsMapSprite { get; set; }
 
     //for debugging
     public string? SpriteName { get; set; }
@@ -444,6 +440,6 @@ public class Entity
 
     public override string ToString()
     {
-        return $"#{Index} #{Index2}";
+        return $"#{Index} #{Index2} {SpriteName}";
     }
 }
