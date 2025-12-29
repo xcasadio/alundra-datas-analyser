@@ -416,7 +416,17 @@ public class EntityManager
             entity.AnimationDirection = animationDirectionFromTable;
             entity.AnimCompleteCounter = 0;
             entity.AnimationFrameIndex = 0;
-            animSet = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
+            animSet = null;
+
+            try
+            {
+                animSet = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
+            }
+            catch (Exception e)
+            {
+                Debugger.Break();
+            }
+
             currentFrame = null;
             try
             {
@@ -2341,28 +2351,13 @@ public class EntityManager
 
             var baseForce = 0xffff << 16;
 
-            var i = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
-            var val1 = i * 0x7d2b89dd;
-            var val2 = 0xe06a02e7 + val1;
-            var targetVal = (int)(((long)val2 * 0x20001) >> 32);
-            _gameEngine.StaticVariables.g_gameRandomSeed = (uint)val2;
-
+            var targetVal = (int)((Random.Next() * 0x20001) >> 32);
             effect.ForceX = targetVal + baseForce;
 
-            i = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
-            val1 = i * 0x7d2b89dd;
-            val2 = 0xe06a02e7 + val1;
-            targetVal = (int)(((long)val2 * 0x20001) >> 32);
-            _gameEngine.StaticVariables.g_gameRandomSeed = (uint)val2;
-
+            targetVal = (int)((Random.Next() * 0x20001) >> 32);
             effect.ForceY = targetVal + baseForce;
 
-            i = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
-            val1 = i * 0x7d2b89dd;
-            val2 = 0xe06a02e7 + val1;
-            targetVal = (int)(((long)val2 * 0x20001) >> 32);
-            _gameEngine.StaticVariables.g_gameRandomSeed = (uint)val2;
-
+            targetVal = (int)((Random.Next() * 0x20001) >> 32);
             effect.ForceZ = targetVal + baseForce;
         }
     }

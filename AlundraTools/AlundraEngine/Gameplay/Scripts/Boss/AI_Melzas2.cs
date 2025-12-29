@@ -164,57 +164,22 @@ public static class AI_Melzas2
             {
                 gameEngine.SoundManager.PlaySoundEffect(0x2E);
 
-                const uint MUL = 0x7D2B89DDu;
-                const uint ADD = 0xE06A02E7u;
+                var uVar2 = Random.Next();
+                var uVar1 = Random.Next();
+                var uVar3 = Random.Next();
+                var effectOffsetZ = (Random.Next() * 0x11) >> 0x20;
 
-                uint seed = gameEngine.StaticVariables.g_gameRandomSeed;
-                seed = seed * MUL;
-                uint t1 = seed + ADD;     // first derived state
-                gameEngine.StaticVariables.g_gameRandomSeed = t1;
+                int xOffset = (int)(((uVar2 * (ulong)(entity.Width >> 0x14) + 1) >> 0x20) * 0x10);
+                xOffset += (int)(((uVar1 * 0x11) >> 0x20) * 0x10000);
 
-                uint t0 = (t1 * MUL) + ADD;
-                gameEngine.StaticVariables.g_gameRandomSeed = t0;
-
-                uint w = ((uint)entity.Width >> 20) + 1u;
-
-                ulong prod = t1 * (ulong)w;
-                uint s3 = (uint)(prod >> 32);
-                uint s2 = (uint)(prod & 0xFFFFFFFFu);
-
-                uint t0b = (t0 * MUL);
-                uint t4 = t0b + ADD;
-
-                const uint K = 0x11u;
-
-                ulong prod2 = t0 * (ulong)K;
-                uint t7 = (uint)(prod2 >> 32);
-
-                uint s6 = (uint)(t4 * (ulong)MUL);
-
-                uint d = ((uint)entity.Depth >> 20) + 1u;
-
-                ulong prod3 = t4 * (ulong)d;
-                uint s1 = (uint)(prod3 >> 32);
-                uint s0 = (uint)(prod3 & 0xFFFFFFFFu);
-
-                uint t2 = s6 + ADD;
-
-                ulong prod4 = t2 * (ulong)K;
-                uint t9 = (uint)(prod4 >> 32);
-                uint t8 = (uint)(prod4 & 0xFFFFFFFFu);
-
-                int xOffset = (((int)s3 << 4) + (int)t7) << 16;
-                int zOffset = (((int)s1 << 4) + (int)t9) << 16;
+                int zOffset = (int)(((uVar3 * (ulong)(entity.Depth >> 0x14) + 1) >> 0x20) * 0x10);
+                zOffset += (int)(effectOffsetZ * 0x10000);
 
                 int effectX = entity.ModdedPosX + xOffset;
                 int effectY = entity.ModdedPosY + entity.Height;
                 int effectZ = entity.ModdedPosZ + zOffset;
 
                 gameEngine.EffectManager.CreateEffectEntity(0, 0x1B, 0, effectX, effectY, effectZ);
-
-                // Note: the asm writes g_gameRandomSeed multiple times (t1, t0, t4, t2).
-                // We mirrored the same "seed gets updated to last computed" behavior above,
-                // though the exact intermediate stores are not observable in C here.
             }
         }
 
@@ -277,16 +242,8 @@ public static class AI_Melzas2
             }
 
             gameEngine.TriggerScreenEffect(0xff0000, 4, 0, 1);
-
-            const uint MUL = 0x7D2B89DDu;
-            const uint ADD = 0xE06A02E7u;
-
-            uint seed = gameEngine.StaticVariables.g_gameRandomSeed;
-            seed = (seed * MUL) + ADD;
-            gameEngine.StaticVariables.g_gameRandomSeed = seed;
-
-            ulong prod = seed * 5ul;
-            uint hi = (uint)(prod >> 32);
+            
+            uint hi = (uint)((Random.Next() * 5ul) >> 32);
             remainingDelay = (ushort)(((int)hi << 3) + 0x1E);
 
             entity.AIValues[5] = (short)remainingDelay;
@@ -296,7 +253,6 @@ public static class AI_Melzas2
     //80062bc0
     public static void AI_UpdateMelzas2CutsceneChannels(GameEngine gameEngine, Entity entity)
     {
-
         bool bVar1;
         bool bVar2;
         int amplitude;

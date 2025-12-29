@@ -97,9 +97,8 @@ public static class FunctionTypeE
 
                 if (effectEntity != null)
                 {
-                    isSmallSprite = (int)((ulong)gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7);
-                    gameEngine.StaticVariables.g_gameRandomSeed = (uint)(isSmallSprite * 0x7d2b89dd + 0xe06a02e7);
-                    rand = gameEngine.StaticVariables.g_gameRandomSeed;
+                    isSmallSprite = (int)Random.Next();
+                    rand = Random.Next();
                     randomOffset = (isSmallSprite * 0x30001) >> 0x20;
 
                     effectEntity.ForceZ = 0x20000;
@@ -132,9 +131,8 @@ public static class FunctionTypeE
 
                     if (effectEntity != null)
                     {
-                        isSmallSprite = (int)((ulong)gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7);
-                        gameEngine.StaticVariables.g_gameRandomSeed = (uint)(isSmallSprite * 0x7d2b89dd + 0xe06a02e7);
-                        rand = gameEngine.StaticVariables.g_gameRandomSeed;
+                        isSmallSprite = (int)Random.Next();
+                        rand = Random.Next();
                         randomOffset = (isSmallSprite * 0x60001) >> 0x20;
 
                         effectEntity.ForceX = randomOffset + -0x30000;

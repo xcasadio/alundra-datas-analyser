@@ -262,7 +262,7 @@ public class PlayerManager
                     case 0x1c:
                     case 0x31:
                     case 0x3e:
-                        _gameEngine.StaticVariables.PlayerEntity.TargetDirection = _gameEngine.StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
+                        _gameEngine.StaticVariables.PlayerEntity.TargetDirection = (_gameEngine.StaticVariables.PlayerEntity.TargetDirection + 0x10) & 0x1f;
                         goto case 0;
                     case 0:
                     case 1:
@@ -333,11 +333,11 @@ public class PlayerManager
                             if (_gameEngine.StaticVariables.PlayerEntity.ForceResetAnimationFlag == 1)
                             {
                                 _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.SwimmingStill;
-                                _gameEngine.StaticVariables.PlayerEntity.TargetDirection = _gameEngine.StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
+                                _gameEngine.StaticVariables.PlayerEntity.TargetDirection = (_gameEngine.StaticVariables.PlayerEntity.TargetDirection + 0x10) & 0x1f;
                             }
                             goto END;
                         }
-                        _gameEngine.StaticVariables.PlayerEntity.TargetDirection = _gameEngine.StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
+                        _gameEngine.StaticVariables.PlayerEntity.TargetDirection = (_gameEngine.StaticVariables.PlayerEntity.TargetDirection + 0x10) & 0x1f;
                         goto END;
                 }
                 TryUseItem();
@@ -492,7 +492,7 @@ public class PlayerManager
                             _gameEngine.StaticVariables.PlayerEntity.PosY,
                             _gameEngine.StaticVariables.PlayerEntity.PosZ + 0x100000);
                         _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.SprintAgainstWall;
-                        _gameEngine.StaticVariables.PlayerEntity.TargetDirection = _gameEngine.StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
+                        _gameEngine.StaticVariables.PlayerEntity.TargetDirection = (_gameEngine.StaticVariables.PlayerEntity.TargetDirection + 0x10) & 0x1f;
                     }
 
                     break;
@@ -760,7 +760,7 @@ public class PlayerManager
             case (int)PlayerAnimation.SprintAgainstWall:
                 if (TryUseItem() == 0)
                 {
-                    _gameEngine.StaticVariables.PlayerEntity.TargetDirection = _gameEngine.StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
+                    _gameEngine.StaticVariables.PlayerEntity.TargetDirection = (_gameEngine.StaticVariables.PlayerEntity.TargetDirection + 0x10) & 0x1f;
                     break;
                 }
 
@@ -769,7 +769,7 @@ public class PlayerManager
                     break;
                 }
 
-                _gameEngine.StaticVariables.PlayerEntity.TargetDirection = _gameEngine.StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
+                _gameEngine.StaticVariables.PlayerEntity.TargetDirection = (_gameEngine.StaticVariables.PlayerEntity.TargetDirection + 0x10) & 0x1f;
 
                 if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
                 {
@@ -930,7 +930,7 @@ public class PlayerManager
 
             case (int)PlayerAnimation.DamageTakenSwimming:
             case (int)PlayerAnimation.DamageKnockBackSwimming:
-                _gameEngine.StaticVariables.PlayerEntity.TargetDirection = _gameEngine.StaticVariables.PlayerEntity.TargetDirection + 0x10 & 0x1f;
+                _gameEngine.StaticVariables.PlayerEntity.TargetDirection = (_gameEngine.StaticVariables.PlayerEntity.TargetDirection + 0x10) & 0x1f;
                 //goto switchD_80031dac_caseD_f;
                 if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
                 {
@@ -1556,16 +1556,11 @@ public class PlayerManager
 
                     if (spriteEffect != null)
                     {
-                        // Generate random sound effect (0x1AC or 0x1AD)
                         var soundId = (_gameEngine.StaticVariables.PlayerEntity.FrameCounter & 0x7) == 0 ? 0x1ADU : 0x1ACU;
                         _gameEngine.SoundManager.PlaySoundEffect(soundId);
 
-                        // Generate random forces using game's random seed
-                        _gameEngine.StaticVariables.g_gameRandomSeed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                        var randomSeed1 = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
-
-                        _gameEngine.StaticVariables.g_gameRandomSeed = (uint)(randomSeed1 * 0x7d2b89dd + 0xe06a02e7);
-                        var randomSeed2 = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
+                        var randomSeed1 = Random.Next();
+                        var randomSeed2 = Random.Next();
 
                         // Calculate random force components
                         // Complex math for random X force
@@ -1575,8 +1570,7 @@ public class PlayerManager
                         var adjustedXForce = randomXComponent * 5;
 
                         // Complex math for random Y force  
-                        _gameEngine.StaticVariables.g_gameRandomSeed = (uint)(randomSeed2 * 0x7d2b89dd + 0xe06a02e7);
-                        var temp2 = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x40001;
+                        var temp2 = Random.Next() * 0x40001;
                         var randomYComponent = (int)(temp2 >> 32);
                         randomYComponent -= 0x20000; // Bias
                         var adjustedYForce = randomYComponent * 5;
@@ -2228,7 +2222,7 @@ public class PlayerManager
                             hp = player.Hp - iVar1;
                         }
 
-                        direction = player.TargetDirection + 0x10 & 0x1f;
+                        direction = (player.TargetDirection + 0x10) & 0x1f;
                         player.Hp = hp;
                     }
                 }
@@ -2685,7 +2679,7 @@ public class PlayerManager
                     frameOffset = _gameEngine.StaticVariables.PlayerEntity.AnimationDirection;
                     animIndex = _gameEngine.StaticVariables.g_hitSoundEffects[effectEntityId + animIndex + 4];
 
-                    var rand = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+                    var rand = Random.Next();
                     var index = effectEntityId + _gameEngine.StaticVariables.PlayerEntity.AnimationDirection * 2 + 9;
                     var index2 = effectEntityId + _gameEngine.StaticVariables.PlayerEntity.AnimationDirection * 2 + 8;
                     spriteEffect.ForceX =
@@ -2698,12 +2692,11 @@ public class PlayerManager
                     spriteEffect.ForceY = _gameEngine.StaticVariables.g_hitSoundEffects[index] * animIndex +
                                           (int)((rand * (ulong)(_gameEngine.StaticVariables.g_hitSoundEffects[index2] * animIndex + 1)) >> 0x20);
 
-                    _gameEngine.StaticVariables.g_gameRandomSeed = (uint)(rand * 0x7d2b89dd + 0xe06a02e7);
-                    rand = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
+                    rand = Random.Next();
                     index = effectEntityId + 0x19;
                     index2 = effectEntityId + 0x18;
-                    spriteEffect.ForceZ = (int)(_gameEngine.StaticVariables.g_hitSoundEffects[index] * animIndex +
-                        (uint)(rand * (ulong)(_gameEngine.StaticVariables.g_hitSoundEffects[index2] * animIndex + 1)) >> 0x20);
+                    spriteEffect.ForceZ = (int)((_gameEngine.StaticVariables.g_hitSoundEffects[index] * animIndex +
+                                                 (uint)(rand * (ulong)(_gameEngine.StaticVariables.g_hitSoundEffects[index2] * animIndex + 1))) >> 0x20);
                 }
                 break;
         }
@@ -2771,8 +2764,7 @@ public class PlayerManager
                     spriteEffect.ForceY = (_gameEngine.StaticVariables.PlayerEntity.ForceY * forceMult) >> 8;
 
                     // Ajouter une composante aléatoire à la force verticale
-                    _gameEngine.StaticVariables.g_gameRandomSeed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                    int zOffset = (int)(((ulong)_gameEngine.StaticVariables.g_gameRandomSeed * (ulong)(_gameEngine.StaticVariables.g_hitSoundEffects[animIndex + 0x3a] + 1)) >> 32);
+                    int zOffset = (int)((Random.Next() * (ulong)(_gameEngine.StaticVariables.g_hitSoundEffects[animIndex + 0x3a] + 1)) >> 32);
                     spriteEffect.ForceZ = _gameEngine.StaticVariables.g_hitSoundEffects[animIndex + 0x3c] + zOffset;
                 }
                 break;
@@ -2802,18 +2794,13 @@ public class PlayerManager
 
                 if (spriteEffect != null)
                 {
-                    _gameEngine.StaticVariables.g_gameRandomSeed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                    var randomSeed1 = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
+                    var randomSeed1 = (int)((Random.Next() * 0x180001) >> 32);
+                    var randomSeed2 = (int)((Random.Next() * 0x100001) >> 32);
+                    var randomSeed3 = (int)((Random.Next() * 0x10001) >> 32);
 
-                    _gameEngine.StaticVariables.g_gameRandomSeed = (uint)(randomSeed1 * 0x7d2b89dd + 0xe06a02e7);
-                    var randomSeed2 = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
-
-                    _gameEngine.StaticVariables.g_gameRandomSeed = (uint)(randomSeed2 * 0x7d2b89dd + 0xe06a02e7);
-
-                    // Appliquer les offsets aléatoires à la position de l'effet
-                    spriteEffect.X += -0xc0000 + (int)((randomSeed1 * 0x180001) >> 32);
-                    spriteEffect.Y += -0x80000 + (int)((randomSeed2 * 0x100001) >> 32);
-                    spriteEffect.ForceZ += 0x10000 + (int)(((ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x10001) >> 32);
+                    spriteEffect.X += -0xc0000 + randomSeed1;
+                    spriteEffect.Y += -0x80000 + randomSeed2;
+                    spriteEffect.ForceZ += 0x10000 + randomSeed3;
                 }
                 break;
 
@@ -2903,11 +2890,8 @@ public class PlayerManager
 
                                 if (entityCreated != null)
                                 {
-                                    _gameEngine.StaticVariables.g_gameRandomSeed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                                    entityCreated.ForceX = (int)(((ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x30001) >> 32) - 0x18000;
-
-                                    _gameEngine.StaticVariables.g_gameRandomSeed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                                    entityCreated.ForceY = (int)(((ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x20001) >> 32) - 0x10000;
+                                    entityCreated.ForceX = (int)((Random.Next() * 0x30001) >> 32) - 0x18000;
+                                    entityCreated.ForceY = (int)((Random.Next() * 0x20001) >> 32) - 0x10000;
                                 }
                             }
                         }
@@ -3573,13 +3557,13 @@ public class PlayerManager
 
             if (effect != null)
             {
-                rand1 = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                _gameEngine.StaticVariables.g_gameRandomSeed = (uint)(rand1 * 0x7d2b89dd + 0xe06a02e7);
-                rand2 = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
-                vx = (int)((ulong)rand1 * 0x20001 >> 0x20);
+                rand1 = Random.Next();
+                rand2 = Random.Next();
+                vx = (int)((rand1 * 0x20001) >> 0x20);
+                var vy = (int)((rand2 * 0x30001) >> 0x20);
 
                 effect.ForceX = vx + -0x10000;
-                effect.ForceY = (int)(rand2 * 0x30001 >> 0x20) + -0x18000;
+                effect.ForceY = vy + -0x18000;
                 effect.ForceZ = 0x20000;
             }
 
@@ -3659,9 +3643,8 @@ public class PlayerManager
             
             if (pEffect2 != null)
             {
-                rand = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                _gameEngine.StaticVariables.g_gameRandomSeed = (uint)(rand * 0x7d2b89dd + 0xe06a02e7);
-                uVar1 = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
+                rand = Random.Next();
+                uVar1 = Random.Next();
                 pEffect2.ForceX = ((int)(rand * 0x20001) >> 0x20) + -0x10000;
                 pEffect2.ForceY = (int)((uVar1 * 0x30001) >> 0x20) + -0x18000;
                 pEffect2.ForceZ = 0x40000;
@@ -3692,10 +3675,9 @@ public class PlayerManager
 
             if (effect != null)
             {
-                nextSeed = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                _gameEngine.StaticVariables.g_gameRandomSeed = (uint)(nextSeed * 0x7d2b89dd + 0xe06a02e7);
-                randProductZ = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
-                randOffsetX = (int)((ulong)(nextSeed * 0x20001) >> 0x20);
+                nextSeed = Random.Next();
+                randProductZ = Random.Next();
+                randOffsetX = (int)((nextSeed * 0x20001) >> 0x20);
 
                 effect.ForceX = randOffsetX + -0x10000;
                 effect.ForceY = (int)((randProductZ * 0x30001) >> 0x20) + -0x18000;
@@ -3789,10 +3771,8 @@ public class PlayerManager
 
             if (sparkEffect != null)
             {
-                randomSeed = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                _gameEngine.StaticVariables.g_gameRandomSeed = (uint)(randomSeed * 0x7d2b89dd + 0xe06a02e7);
-                randomXPart = (int)((ulong)randomSeed * 0x20001 >> 0x20);
-                randomZPart = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
+                randomXPart = (int)((Random.Next() * 0x20001) >> 0x20);
+                randomZPart = Random.Next();
 
                 sparkEffect.ForceX = randomXPart + -0x10000;
                 sparkEffect.ForceY = (int)((randomZPart * 0x30001) >> 0x20) + -0x18000;
@@ -3902,8 +3882,8 @@ public class PlayerManager
             {
                 effect.X += _gameEngine.StaticVariables.g_offsetXList[i * 4] * 0x800;
                 effect.Y += _gameEngine.StaticVariables.g_offsetYList[i * 4] * 0x800;
-                effect.ForceX = _gameEngine.StaticVariables.g_offsetXList[i * 4 + 8 & 0x1f] * 0x1c0;
-                effect.ForceY = _gameEngine.StaticVariables.g_offsetYList[i * 4 + 8 & 0x1f] * 0x1c0;
+                effect.ForceX = _gameEngine.StaticVariables.g_offsetXList[(i * 4 + 8) & 0x1f] * 0x1c0;
+                effect.ForceY = _gameEngine.StaticVariables.g_offsetYList[(i * 4 + 8) & 0x1f] * 0x1c0;
                 effect.ForceZ = 0x30000;
             }
 
@@ -3920,13 +3900,12 @@ public class PlayerManager
 
             if (effect2 != null)
             {
-                var seed = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                _gameEngine.StaticVariables.g_gameRandomSeed = (uint)(seed * 0x7d2b89dd + 0xe06a02e7);
-                rand = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
+                var seed = Random.Next();
+                rand = Random.Next();
 
                 effect2.ForceZ = 0x40000;
-                effect2.ForceX = (int)(seed * 0x20001 >> 0x20) + -0x10000;
-                effect2.ForceY = (int)(rand * 0x30001 >> 0x20) + -0x18000;
+                effect2.ForceX = (int)((seed * 0x20001) >> 0x20) + -0x10000;
+                effect2.ForceY = (int)((rand * 0x30001) >> 0x20) + -0x18000;
             }
 
             effect3 = _gameEngine.EffectManager.CreateEffectEntity(0, 0xe, 2,
@@ -3934,13 +3913,12 @@ public class PlayerManager
 
             if (effect3 != null)
             {
-                var seed = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                _gameEngine.StaticVariables.g_gameRandomSeed = (uint)(seed * 0x7d2b89dd + 0xe06a02e7);
-                rand = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
+                var seed = Random.Next();
+                rand = Random.Next();
 
                 effect3.ForceZ = 0x20000;
-                effect3.ForceX = (int)(seed * 0x20001 >> 0x20) + -0x10000;
-                effect3.ForceY = (int)(rand * 0x30001 >> 0x20) + -0x18000;
+                effect3.ForceX = (int)((seed * 0x20001) >> 0x20) + -0x10000;
+                effect3.ForceY = (int)((rand * 0x30001) >> 0x20) + -0x18000;
             }
 
             i += 1;
@@ -3983,13 +3961,12 @@ public class PlayerManager
 
             if (effect != null)
             {
-                rand = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                _gameEngine.StaticVariables.g_gameRandomSeed = (uint)(rand * 0x7d2b89dd + 0xe06a02e7);
-                seed = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
-                calculatedVelocity = (int)((ulong)rand * 0x20001 >> 0x20);
+                rand = Random.Next();
+                seed = Random.Next();
+                calculatedVelocity = (int)((rand * 0x20001) >> 0x20);
 
                 effect.ForceX = calculatedVelocity + -0x10000;
-                effect.ForceY = (int)(seed * 0x30001 >> 0x20) + -0x18000;
+                effect.ForceY = (int)((seed * 0x30001) >> 0x20) + -0x18000;
                 effect.ForceZ = 0x20000;
             }
 

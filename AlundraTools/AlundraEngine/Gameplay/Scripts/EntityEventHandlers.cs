@@ -1,4 +1,5 @@
-﻿using AlundraEngine.DatasBin;
+﻿using AlundraEngine.Balance;
+using AlundraEngine.DatasBin;
 using System.Diagnostics;
 
 namespace AlundraEngine.Gameplay.Scripts;
@@ -654,8 +655,8 @@ public class EntityEventHandlers
     // 8003D518
     private int Script_12_00C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.StaticVariables.g_gameRandomSeed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-        logicEntity.TargetDirection = _gameEngine.StaticVariables.g_cardinalDirectionTable[(uint)(((ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 4) >> 0x20)];
+        var rand = (uint)((Random.Next() * 4) >> 0x20);
+        logicEntity.TargetDirection = _gameEngine.StaticVariables.g_cardinalDirectionTable[rand];
         return 1;
     }
 
@@ -2601,51 +2602,41 @@ public class EntityEventHandlers
     // 80040048
     private int Script_135_087(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-        return 0;
-        /*
-        byte bVar1;
-        byte bVar2;
-        int iVar3;
-        int piVar4;
-        int iVar5;
+        byte expectedNibble;
+        int count;
 
-        bVar1 = _gameEngine.StaticVariables.BYTE_ARRAY_80098fa4[variables[0][2]];
-        iVar3 = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        expectedNibble = _gameEngine.StaticVariables.BYTE_ARRAY_80098fa4[variables[2]];
+        count = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
 
-        if (0 < iVar3)
+        if (0 < count)
         {
-            piVar4 = _gameEngine.StaticVariables.g_activeEntityRefId + iVar3;
-
             do
             {
-                iVar5 = piVar4 + 0x224;
-                bVar2 = (iVar5 + 0x1c8);
+                var entity2 = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[--count];
+                var touchingEntity = entity2.TouchingEntity;
 
-                if (iVar5 != 0 && iVar5 + 0x1d4 != 0
-                               && (iVar5 + 0x1c8) != 0x0
-                                && bVar2 != 0 && (bVar2 & 0xf) == bVar1)
+                if (touchingEntity != null 
+                    && touchingEntity.FrameCollision != null
+                    && touchingEntity.BalanceAnimValRef != null
+                    && touchingEntity.BalanceAnimValRef.Val != 0 
+                    && (touchingEntity.BalanceAnimValRef.Val & 0xf) == expectedNibble)
                 {
                     eventProgramState.Result = 1;
-
                     return 3;
                 }
-
-                iVar3 = iVar3 + -1;
-                piVar4 = piVar4 + -1;
-            } while (0 < iVar3);
+            } while (0 < count);
         }
 
         eventProgramState.Result = 0;
 
-        return 3;*/
+        return 3;
     }
 
     // 8004011C
     private int Script_136_088(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
-        return 0;
+        return 3;
         /*
         int matchingEntityCount;
         int iVar1;
@@ -2730,9 +2721,9 @@ public class EntityEventHandlers
     // 80040438
     private int Script_140_08C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.StaticVariables.g_gameRandomSeed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+        var rand = (uint)((Random.Next() * 0x100) >> 0x20);
 
-        if ((uint)((ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x100 >> 0x20) < variables[1])
+        if (rand < variables[1])
         {
             eventProgramState.Result = 0;
         }
@@ -2869,7 +2860,7 @@ public class EntityEventHandlers
     private int Script_149_095(Entity logicEntity, Entity ownerEntity, int[] variables,
         EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        //Debugger.Break();
 
         if (variables == null || variables.Length < 10)
         {
@@ -3395,16 +3386,8 @@ public class EntityEventHandlers
     // 80041290
     private int Script_171_0AB(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-        return 0;
-        /*
-        int iVar1;
-
-        iVar1 = variables;
-
-        _gameEngine.SoundManager.PlaySoundEffectWithToneVolumeMix(iVar1 + 1, iVar1 + 2, iVar1 + 3);
-
-        return 4;*/
+        _gameEngine.SoundManager.PlaySoundEffectWithToneVolumeMix(variables[1], variables[2], variables[3]);
+        return 4;
     }
 
     // 800412C4
@@ -3554,8 +3537,6 @@ public class EntityEventHandlers
 
         group2Count = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[2]);
 
-        Debugger.Break();
-
         if (0 < group2Count)
         {
             do
@@ -3591,14 +3572,11 @@ public class EntityEventHandlers
     // 80041750
     private int Script_UpdatePadState(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-        return 0;
-        /*
-        _gameEngine.StaticVariables.g_padState1.ButtonsHold = (ushort)variables[0][1] + (ushort)variables[0][2] * 0x100;
-        _gameEngine.StaticVariables.g_padState1.ButtonsJustPressed = (ushort)variables[3] + (ushort)variables[4] * 0x100;
-        _gameEngine.StaticVariables.g_padState1.ButtonsReleased = (ushort)variables[5] + (ushort)variables[6] * 0x100;
-        _gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval = (ushort)variables[7] + (ushort)variables[8] * 0x100;
-        return 9;*/
+        _gameEngine.StaticVariables.g_padState1.ButtonsHold = (ushort)(variables[1] + variables[2] * 0x100);
+        _gameEngine.StaticVariables.g_padState1.ButtonsJustPressed = (ushort)(variables[3] + variables[4] * 0x100);
+        _gameEngine.StaticVariables.g_padState1.ButtonsReleased = (ushort)(variables[5] + variables[6] * 0x100);
+        _gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval = (ushort)(variables[7] + variables[8] * 0x100);
+        return 9;
     }
 
     // 800417CC
@@ -3682,7 +3660,6 @@ public class EntityEventHandlers
     // 80041988
     private int Script_184_0B8(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
         var targetDirection = (byte)variables[2];
 
         int i = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[2]) - 1;

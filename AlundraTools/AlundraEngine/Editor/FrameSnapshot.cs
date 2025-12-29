@@ -7,7 +7,7 @@ public class FrameSnapshot
 {
     public Entity[] Entities { get; set; }
 
-    public uint GameRandomSeed { get; set; }
+    public ulong GameRandomSeed { get; set; }
     public uint[] MapFlags { get; set; }
     public uint[] GlobalFlags { get; set; }
     public int LastWarpEntityIndex { get; set; }
@@ -79,7 +79,7 @@ public class FrameSnapshot
         Array.Copy(MapFlags, gameEngine.StaticVariables.g_saveData.MapFlags, gameEngine.StaticVariables.g_saveData.MapFlags.Length);
         Array.Copy(GlobalFlags, gameEngine.StaticVariables.g_globalFlags, gameEngine.StaticVariables.g_globalFlags.Length);
 
-        gameEngine.StaticVariables.g_gameRandomSeed = GameRandomSeed;
+        Random.RandomSeed = GameRandomSeed;
 
         gameEngine.StaticVariables.g_lastWarpEntityIndex = LastWarpEntityIndex;
         gameEngine.StaticVariables.g_tileAnimFrameCounter = TileAnimFrameCounter;
@@ -155,7 +155,7 @@ public class FrameSnapshot
         MapFlags = (uint[])gameEngine.StaticVariables.g_saveData.MapFlags.Clone();
         GlobalFlags = (uint[])gameEngine.StaticVariables.g_globalFlags.Clone();
 
-        GameRandomSeed = gameEngine.StaticVariables.g_gameRandomSeed;
+        GameRandomSeed = Random.RandomSeed;
 
         LastWarpEntityIndex = gameEngine.StaticVariables.g_lastWarpEntityIndex;
         TileAnimFrameCounter = gameEngine.StaticVariables.g_tileAnimFrameCounter;

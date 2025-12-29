@@ -27,7 +27,7 @@ public class EntityGameplayManager
                 return (uint)((entity.TargetDirection + turndir) & 0x1f);
 
             case 2:
-                return (uint)_gameEngine.StaticVariables.g_cardinalDirectionTable[turndir & 0x3];
+                return _gameEngine.StaticVariables.g_cardinalDirectionTable[turndir & 0x3];
 
             case 3:
                 var dfv = ScriptHelper.GetDirectionToTarget(_gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX, _gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
@@ -35,23 +35,15 @@ public class EntityGameplayManager
 
             case 4:
             {
-                var i = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
-                var val1 = (int)(i * 0x7d2b89dd);
-                var val2 = (int)(0xe06a02e7 + val1);
-                var val3 = (int)(((long)val2 * 4) >> 32);
-                _gameEngine.StaticVariables.g_gameRandomSeed = (uint)val2;
+                var val3 = (int)((Random.Next() * 4) >> 32);
                 var dir = _gameEngine.StaticVariables.g_cardinalDirectionTable[val3];//val3 here is a number between 0 and 3
-                return (uint)dir;
+                return dir;
             }
 
             case 5:
             {
-                var i = (ulong)_gameEngine.StaticVariables.g_gameRandomSeed;
-                var val1 = (int)(i * 0x7d2b89dd);
-                var val2 = (int)(0xe06a02e7 + val1);
-                var val3 = (int)(((long)val2 * 0x20) >> 32);
-                _gameEngine.StaticVariables.g_gameRandomSeed = (uint)val2;
-                return (uint)val2;
+                var val3 = (uint)((Random.Next() * 0x20) >> 32);
+                return val3;
             }
 
             case 6:
@@ -101,11 +93,12 @@ public class EntityGameplayManager
         return 0x00;
     }
 
+    //8007fef8
     public void StartFlying(Entity entity, uint animationId, short baseDelay, uint probabilityTargeted)
     {
-        _gameEngine.StaticVariables.g_gameRandomSeed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+        var rand = (Random.Next() * 0x65) >> 32;
 
-        if ((uint)(((ulong)(ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x65) >> 32) < (probabilityTargeted & 0xff))
+        if ((uint)rand < (probabilityTargeted & 0xff))
         {
             var direction = (uint)ScriptHelper.GetDirectionToTarget(
                 _gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
@@ -115,20 +108,19 @@ public class EntityGameplayManager
         }
         else
         {
-            _gameEngine.StaticVariables.g_gameRandomSeed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-            entity.TargetDirection = (uint)(((ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x20) >> 32);
+            entity.TargetDirection = (uint)(Random.Next() % 32);
         }
 
         entity.TargetAnimationId = animationId & 0xff;
 
         if (baseDelay != 0)
         {
-            _gameEngine.StaticVariables.g_gameRandomSeed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-            var delay = (short)(((ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x10) >> 32) + baseDelay;
+            var delay = (short)((Random.Next() * 0x10) >> 32) + baseDelay;
             entity.AIValues.Set(delay, 1);
         }
     }
 
+    //80080704
     public bool TryAttackPlayer(Entity entity, int[] relativePositions, int maxHorizontalRange, int maxVerticalRange)
     {
         int animationDirection;
@@ -302,7 +294,7 @@ public class EntityGameplayManager
         if (needUpdate)
         {
             returnValue = 1;
-            newDirection = (byte)_gameEngine.StaticVariables.g_directionFlipTable[direction];
+            newDirection = _gameEngine.StaticVariables.g_directionFlipTable[direction];
             entity.TargetAnimationId = newAnimId & 0xff;
             entity.ForceStepY = 0;
             entity.ForceStepX = 0;
@@ -343,7 +335,7 @@ public class EntityGameplayManager
 
         if (zThreshold < heightDiff || heightDiff < 1)
         {
-            newDirection = (byte)_gameEngine.StaticVariables.g_directionFlipTable[entity.TargetDirection];
+            newDirection = _gameEngine.StaticVariables.g_directionFlipTable[entity.TargetDirection];
             entity.TargetAnimationId = newAnimId & 0xff;
             entity.ForceStepY = 0;
             entity.ForceStepX = 0;

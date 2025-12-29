@@ -131,29 +131,7 @@ namespace AlundraTools.GameControls
                 _font3.PalettesBitmap.Height * _palScale);
             pictureBoxFont3Palette.Refresh();
 
-            using var br = _datasBin.OpenBin();
-            var offsets = new[]
-            {
-                _datasBin.Header.LoadingScreen0,
-                _datasBin.Header.LoadingScreen1,
-                _datasBin.Header.LoadingScreen2,
-                _datasBin.Header.LoadingScreen3
-            };
-
-            Bitmap bitmap = new Bitmap(320, 240);
-            using var graphics2 = Graphics.FromImage(bitmap);
-            var index = 0;
-
-            foreach (var offset in offsets)
-            {
-                br.BaseStream.Position = offset;
-                var buffer = br.ReadBytes(320 * 60 * 2);
-                var bitmapChunk = TimLoader.DecodeBuffer(0, 320, 60, 16, null, 320, buffer);
-                graphics2.DrawImage(bitmapChunk, 0, 60 * index);
-                index++;
-            }
-
-            imageViewerControlLoadScreen.Image = bitmap;
+            imageViewerControlLoadScreen.Image = _datasBin.LoadingScreen;
         }
 
         private void InitMemoryCardControls()
@@ -217,7 +195,7 @@ namespace AlundraTools.GameControls
             if (!_selectedGameMap.Loaded)
             {
                 using var reader = _datasBin.OpenBin();
-                _selectedGameMap.Load(reader, true);
+                _selectedGameMap.Load(reader);
             }
 
             if (_selectedGameMap.Info != null)

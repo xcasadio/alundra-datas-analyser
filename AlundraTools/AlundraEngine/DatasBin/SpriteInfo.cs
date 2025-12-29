@@ -2,7 +2,7 @@
 
 public class SpriteInfo
 {
-    public SpriteInfo(BinaryReader br, int memoryAddress, int sectorEnd, bool ismap)
+    public SpriteInfo(BinaryReader br, int memoryAddress, int sectorEnd)
     {
         _binOffset = br.BaseStream.Position;
 
@@ -58,7 +58,7 @@ public class SpriteInfo
         PalettesBitmap = ImageHelper.BitmapFromPsxBuff(buff, 16, maxPalettes, 16, null);
 
         //read eventcodes
-        EventCodes = new SpriteInfoEventCodes(br, _binOffset, Header, ismap);
+        EventCodes = new SpriteInfoEventCodes(br, _binOffset, Header);
 
         //read entities
         br.BaseStream.Position = _binOffset + Header.EntitiesPointer;

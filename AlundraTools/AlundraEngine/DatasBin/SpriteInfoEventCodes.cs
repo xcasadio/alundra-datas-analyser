@@ -16,7 +16,7 @@ public class SpriteInfoEventCodes
 
     public readonly byte[] Codes;
 
-    public SpriteInfoEventCodes(BinaryReader br, long binOffset, SpriteInfoHeader header, bool ismap)
+    public SpriteInfoEventCodes(BinaryReader br, long binOffset, SpriteInfoHeader header)
     {
         var tableSize = 0;
         short firstOffset = 0;

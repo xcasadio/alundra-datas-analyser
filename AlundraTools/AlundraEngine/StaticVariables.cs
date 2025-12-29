@@ -11083,7 +11083,6 @@ public class StaticVariables
         }
 
         g_isGameEnding = 1; //force initialization
-        g_gameRandomSeed = 0xB017C93D;
         g_tileToWorldXTable = new short[1248];
         g_playerStats = new PlayerStats();
         g_emptyEntityForClearing = new Entity();
@@ -11937,7 +11936,7 @@ public class StaticVariables
     public int g_tileAnimFrameCounter; // 800986FC
     public int g_obj_poly_ft4; // 80098700
     public int DAT_80098704; // 80098704
-    public uint g_gameRandomSeed; // 80098708
+    //public uint g_gameRandomSeed = 0xB017C93D; // 80098708 see Random class
     public string[] g_spriteNames; // 8009870C
     public Entity g_lastValidWarpEntity; // 80098F0C
     //public int  g_directionNames[5]; // 80098F10

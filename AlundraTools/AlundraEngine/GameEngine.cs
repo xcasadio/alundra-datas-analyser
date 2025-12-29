@@ -80,6 +80,7 @@ public class GameEngine
 
     public void InitializeEngine()
     {
+        Random.Reset();
         StaticVariables.Initialize(this);
         _gameInitializer.Initialize();
     }
@@ -472,12 +473,12 @@ public class GameEngine
     {
         CurrentMap = DatasBin.GameMaps[mapId];
         using var br = DatasBin.OpenBin();
-        CurrentMap.Load(br, false);
+        CurrentMap.Load(br);
 
         if (!CurrentMap.Loaded)
         {
             using var reader = DatasBin.OpenBin();
-            CurrentMap.Load(reader, true);
+            CurrentMap.Load(reader);
             SoundBin.OpenMap(mapId);
         }
 
@@ -813,9 +814,10 @@ public class GameEngine
                 break;
             }
 
-            StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-            uint rand = (uint)((ulong)StaticVariables.g_gameRandomSeed >> 28);
+            var rand = (uint)(Random.Next() % 17);
             var index = ((contentId & 0x7F) << 4) | rand;
+
+            index = (int)((ulong)Random.Next() * 0x10 >> 0x20) + (contentId & 0x7f) * 0x10;
             contentId = StaticVariables.g_itemRandomTable[index];
             isValid = contentId < 0x100;
         }
@@ -1262,12 +1264,11 @@ public class GameEngine
                 }
 
                 StaticVariables.g_warpEffectBuffer[iVar5] = (short)(iVar2 * -2);
-                uVar3 = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                StaticVariables.g_gameRandomSeed = (uint)(uVar3 * 0x7d2b89dd + 0xe06a02e7);
-                uVar1 = StaticVariables.g_gameRandomSeed;
+                uVar3 = Random.Next();
+                uVar1 = Random.Next();
                 iVar4 += 1;
-                StaticVariables.g_warpEffectBuffer[iVar5 + 4] = (short)(0x40 - (short)(uVar3 * 0x81 >> 0x20));
-                StaticVariables.g_warpEffectBuffer[iVar5 + 6] = (short)(-0x10 - (short)(uVar1 * 0x41 >> 0x20));
+                StaticVariables.g_warpEffectBuffer[iVar5 + 4] = (short)(0x40 - (short)((uVar3 * 0x81) >> 0x20));
+                StaticVariables.g_warpEffectBuffer[iVar5 + 6] = (short)(-0x10 - (short)((uVar1 * 0x41) >> 0x20));
                 iVar5 += 8;
             } while (iVar4 < 0x14);
 
@@ -1379,14 +1380,13 @@ public class GameEngine
 
             do
             {
-                randomSeed1 = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                randomSeed2 = randomSeed1 * 0x7d2b89dd + 0xe06a02e7;
-                randomSeed3 = randomSeed2 * 0x7d2b89dd + 0xe06a02e7;
-                StaticVariables.g_gameRandomSeed = (uint)(randomSeed3 * 0x7d2b89dd + 0xe06a02e7);
-                StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 0] = (short)(-(short)(randomSeed1 * 0x15 >> 0x20) - (short)(offsetX * offsetX + offsetY * offsetY >> 10));
-                StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 1] = (short)((short)(randomSeed2 * 0x15 >> 0x20) + 0x14);
-                StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 2] = (short)(randomSeed3 * 0x130 >> 0x20);
-                StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 3] = (short)((uint)((ulong)StaticVariables.g_gameRandomSeed * 0xe0 >> 0x20));
+                randomSeed1 = Random.Next();
+                randomSeed2 = Random.Next();
+                randomSeed3 = Random.Next();
+                StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 0] = (short)(-(short)((randomSeed1 * 0x15) >> 0x20) - (short)((offsetX * offsetX + offsetY * offsetY) >> 10));
+                StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 1] = (short)((short)((randomSeed2 * 0x15) >> 0x20) + 0x14);
+                StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 2] = (short)((randomSeed3 * 0x130) >> 0x20);
+                StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 3] = (short)((uint)((randomSeed3 * 0xe0) >> 0x20));
                 offsetX += 0x10;
                 iterationCounter += 1;
                 innerLoopCounter += 1;
@@ -1532,7 +1532,7 @@ public class GameEngine
 
         //HandleMapSoundStreaming();
 
-        StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+        Random.Next();
 
         if (endGame != 0)
         {
@@ -2210,14 +2210,12 @@ public class GameEngine
                 goto LAB_8003d110;
 
             case 4:
-                StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                var rand = (int)((ulong)(StaticVariables.g_gameRandomSeed * 4) >> 0x20);
+                var rand = (int)((Random.Next() * 4) >> 0x20);
                 result = StaticVariables.g_cardinalDirectionTable[rand];
                 break;
 
             case 5:
-                StaticVariables.g_gameRandomSeed = StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-                result = (uint)((ulong)(StaticVariables.g_gameRandomSeed * 0x20) >> 0x20);
+                result = (uint)((Random.Next() * 0x20) >> 0x20);
                 break;
 
             case 6:
@@ -2350,7 +2348,7 @@ public class GameEngine
 
             var mapWidth = CurrentMap.Map.Width;
             var tile = CurrentMap.Map.MapTiles[tileY * mapWidth + tileX];
-            var tileFlags = tile.Walkability | tile.GroundProperty << 8;
+            var tileFlags = tile.Walkability | (tile.GroundProperty << 8);
 
             if ((tileFlags & 2) == 0)
             {

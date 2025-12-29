@@ -125,7 +125,7 @@ public class GameInitializer
         InitializeDebugVars();
         //LoadAlundraStringTable(DATAS_BIN, _datasBin.Header.AlundraStringTableRepeatOffset);
         using var reader = _gameEngine.DatasBin.OpenBin(); //added by hand
-        _gameEngine.AlundraMap.Load(reader, false);
+        _gameEngine.AlundraMap.Load(reader);
 
         InitializeRenderingTiles();
         //InitializeDrMoveBuffers();

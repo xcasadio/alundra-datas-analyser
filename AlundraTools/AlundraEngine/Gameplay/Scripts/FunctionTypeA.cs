@@ -20,9 +20,9 @@ public static class FunctionTypeA
     // 80061764
     public static void SetRandomizedAnimIdAndFlag(GameEngine gameEngine, Entity entity)
     {
-        gameEngine.StaticVariables.g_gameRandomSeed = gameEngine.StaticVariables.g_gameRandomSeed * 0x7D2B89DD + 0xE06A02E7;
         entity.TargetAnimationId = 4;
-        entity.AIValues[0] = (short)((((ulong)gameEngine.StaticVariables.g_gameRandomSeed * 0x1F) >> 32) + 0xB4);
+        var rand = ((Random.Next() * 0x1F) >> 32);
+        entity.AIValues[0] = (short)(rand + 0xB4);
     }
 
     // 800617B8

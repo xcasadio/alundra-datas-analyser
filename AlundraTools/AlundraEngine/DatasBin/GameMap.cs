@@ -42,7 +42,7 @@ public class GameMap
 
     public ScrollScreen? ScrollScreen;
 
-    public void Load(BinaryReader br, bool isMap)
+    public void Load(BinaryReader br)
     {
         //read info
         if (Header.InfoBlockOffset != -1)
@@ -74,7 +74,7 @@ public class GameMap
         if (Header.SpriteRecordsOffset != -1)
         {
             br.BaseStream.Position = Offset + Header.SpriteRecordsOffset;
-            SpriteInfo = new SpriteInfo(br, MemoryAddress + Header.SpriteRecordsOffset, Header.SpriteSheetOffset, isMap);
+            SpriteInfo = new SpriteInfo(br, MemoryAddress + Header.SpriteRecordsOffset, Header.SpriteSheetOffset);
         }
 
         //spritesheet
