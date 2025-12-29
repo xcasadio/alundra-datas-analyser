@@ -13,7 +13,6 @@ public class SpriteInfoEventCodes
     public readonly short[] EventCodesDTable;
     public readonly short[] EventCodesETable;
     public readonly short[] EventCodesFTable;
-
     public readonly byte[] Codes;
 
     public SpriteInfoEventCodes(BinaryReader br, long binOffset, SpriteInfoHeader header)

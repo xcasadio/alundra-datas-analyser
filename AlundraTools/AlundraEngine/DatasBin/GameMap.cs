@@ -5,6 +5,24 @@ namespace AlundraEngine.DatasBin;
 
 public class GameMap
 {
+    public readonly long Offset;
+    public static readonly int MemoryAddress = 0x153460;// + 0x260; Header size ??
+
+
+    public readonly GameMapHeader Header;
+    public GameMapInfo Info;
+    public SpriteInfo SpriteInfo;
+    public ScrollParameters ScrollParameters;
+    public Map Map;
+    public string[] Strings;
+    public readonly bool Loaded = false;
+    private byte[] _tileSheetImageData;
+    public Bitmap TileSheetBitmap;
+    private byte[] _spriteSheetImageData;
+    public Bitmap SpriteSheetBitmap;
+    private readonly int _numSpriteSheets = 8;
+    public ScrollScreen? ScrollScreen;
+
     public GameMap(BinaryReader br, DataBinHeader dbheader)
     {
         //the alundra gamemap (just has sprites)
@@ -22,25 +40,6 @@ public class GameMap
         br.BaseStream.Position = Offset + Header.InfoBlockOffset;
         Info = new GameMapInfo(br.ReadUInt32(), MemoryAddress + Header.InfoBlockOffset);
     }
-
-    public readonly long Offset;
-    public static readonly int MemoryAddress = 0x153460;// + 0x260; Header size ??
-
-
-    public readonly GameMapHeader Header;
-    public GameMapInfo Info;
-    public SpriteInfo SpriteInfo;
-    public ScrollParameters ScrollParameters;
-    public Map Map;
-    public string[] Strings;
-    public readonly bool Loaded = false;
-    private byte[] _tileSheetImageData;
-    public Bitmap TileSheetBitmap;
-    private byte[] _spriteSheetImageData;
-    public Bitmap SpriteSheetBitmap;
-    private readonly int _numSpriteSheets = 8;
-
-    public ScrollScreen? ScrollScreen;
 
     public void Load(BinaryReader br)
     {
@@ -125,7 +124,6 @@ public class GameMap
 
             Header.StringSize = (int)(br.BaseStream.Position - Offset) - Header.StringTableOffset;
         }
-        //loaded = true;
     }
 
     private readonly Dictionary<long, Bitmap> _spriteCache = new();

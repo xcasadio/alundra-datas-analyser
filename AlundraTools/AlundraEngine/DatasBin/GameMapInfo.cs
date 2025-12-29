@@ -4,6 +4,25 @@ namespace AlundraEngine.DatasBin;
 
 public class GameMapInfo
 {
+    public readonly int MemoryAddress;
+
+    public readonly uint MapId; //0
+    public readonly short Gravity; //4
+    public readonly short ZViscosity; //6
+    public readonly byte SlideEffectId; // XYResistance
+    public readonly byte BalanceLevel; // AnimDeleteWall
+    public readonly byte C;
+    public readonly byte D;
+    public readonly byte E;
+    public readonly byte F;
+    public readonly byte _10; // AnimLandFloor
+    public readonly byte _11; // item something
+    public readonly Color[][] Palettes;
+    public readonly SpriteMapEntry[] SpriteMapEntries;
+    public readonly Portal[] Portals;
+
+    public readonly Bitmap PalettesBitmap;
+
     public GameMapInfo(uint mapId, int memoryAddress)
     {
         MemoryAddress = memoryAddress;
@@ -95,25 +114,6 @@ public class GameMapInfo
             Portals[i] = new Portal(br);
         }
     }
-
-    public readonly int MemoryAddress;
-
-    public readonly uint MapId; //0
-    public readonly short Gravity; //4
-    public readonly short ZViscosity; //6
-    public readonly byte SlideEffectId; // XYResistance
-    public readonly byte BalanceLevel; // AnimDeleteWall
-    public readonly byte C; 
-    public readonly byte D;
-    public readonly byte E;
-    public readonly byte F;
-    public readonly byte _10; // AnimLandFloor
-    public readonly byte _11; // item something
-    public readonly Color[][] Palettes;
-    public readonly SpriteMapEntry[] SpriteMapEntries;
-    public readonly Portal[] Portals;
-    
-    public readonly Bitmap PalettesBitmap;
 
     public override string ToString()
     {

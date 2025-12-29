@@ -4,6 +4,28 @@ namespace AlundraEngine.DatasBin;
 
 public class SiEntityRecord
 {
+    public readonly int MemoryAddress;
+
+    public readonly byte XMin;//if character isnt within this bounding box, dont activate the entity
+    public readonly byte YMin;
+    public readonly byte XMax;//0x2
+    public readonly byte YMax;
+    public readonly byte IsEnabled;
+    public readonly byte SpriteDirection;//0,c0,c1,c2,c3,80
+    public readonly byte SpriteTableIndex;
+    public readonly byte XPos;//divide by 2
+    public readonly byte YPos;//divide by 2
+    public readonly byte Height;//divide by 2
+    public readonly byte EventCodesA_LoadIndex;
+    public readonly byte EventCodesB_MapIndex;
+    public readonly byte EventCodesC_TickIndex;
+    public readonly byte EventCodesD_TouchIndex;
+    public readonly byte EventCodesE_DeactivateIndex;
+    public readonly byte EventCodesF_InteractIndex; //0xf
+    //public readonly ushort U7;
+    public readonly ushort _10;
+    public readonly ushort Contents;
+
     public SiEntityRecord(BinaryReader br, int memoryAddress)
     {
         MemoryAddress = memoryAddress;
@@ -26,7 +48,6 @@ public class SiEntityRecord
         EventCodesF_InteractIndex = br.ReadByte();
         _10 = br.ReadUInt16();
         Contents = br.ReadUInt16();
-
     }
 
     public SiAnimation GetSprite(BinaryReader br, SpriteInfo si)
@@ -66,27 +87,4 @@ public class SiEntityRecord
 
         return null;
     }
-
-    public readonly int MemoryAddress;
-
-    public readonly byte XMin;//if character isnt within this bounding box, dont activate the entity
-    public readonly byte YMin;
-    public readonly byte XMax;//0x2
-    public readonly byte YMax;
-    public readonly byte IsEnabled;
-    public readonly byte SpriteDirection;//0,c0,c1,c2,c3,80
-    public readonly byte SpriteTableIndex;
-    public readonly byte XPos;//divide by 2
-    public readonly byte YPos;//divide by 2
-    public readonly byte Height;//divide by 2
-    public readonly byte EventCodesA_LoadIndex;
-    public readonly byte EventCodesB_MapIndex;
-    public readonly byte EventCodesC_TickIndex;
-    public readonly byte EventCodesD_TouchIndex;
-    public readonly byte EventCodesE_DeactivateIndex;
-    public readonly byte EventCodesF_InteractIndex; //0xf
-    //public readonly ushort U7;
-    public readonly ushort _10;
-    public readonly ushort Contents;
-
 }

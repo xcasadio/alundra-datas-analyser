@@ -2,6 +2,25 @@
 
 public class SpriteInfo
 {
+    public readonly SpriteInfoHeader Header;
+    public readonly SpriteInfoEventCodes EventCodes;
+    public readonly SpriteInfoEntities Entities;
+    public readonly SpriteInfoMapEvents MapEvents;
+
+    public readonly int[] SpriteTable;
+    public readonly SpriteRecord[] SpriteRecords;
+
+    public readonly int[] SpriteEffectTable;
+    public readonly SpriteEffectRecord[] SpriteEffectRecords;
+    public readonly int NumSpriteEffects;
+
+    public readonly MapEffectRecord[] MapEffectRecords;
+
+    private long _binOffset;
+
+    public readonly Color[][] Palettes;
+    public readonly Bitmap PalettesBitmap;
+
     public SpriteInfo(BinaryReader br, int memoryAddress, int sectorEnd)
     {
         _binOffset = br.BaseStream.Position;
@@ -89,23 +108,4 @@ public class SpriteInfo
             }
         }
     }
-
-    public readonly SpriteInfoHeader Header;
-    public readonly SpriteInfoEventCodes EventCodes;
-    public readonly SpriteInfoEntities Entities;
-    public readonly SpriteInfoMapEvents MapEvents;
-
-    public readonly int[] SpriteTable;
-    public readonly SpriteRecord[] SpriteRecords;
-
-    public readonly int[] SpriteEffectTable;
-    public readonly SpriteEffectRecord[] SpriteEffectRecords;
-    public readonly int NumSpriteEffects;
-
-    public readonly MapEffectRecord[] MapEffectRecords;
-
-    private long _binOffset;
-
-    public readonly Color[][] Palettes;
-    public readonly Bitmap PalettesBitmap;
 }
