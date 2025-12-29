@@ -655,7 +655,7 @@ public class EntityEventHandlers
     private int Script_12_00C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.g_gameRandomSeed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-        logicEntity.TargetDirection = _gameEngine.StaticVariables.g_cardinalDirectionTable[(uint)((ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 4 >> 0x20)];
+        logicEntity.TargetDirection = _gameEngine.StaticVariables.g_cardinalDirectionTable[(uint)(((ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 4) >> 0x20)];
         return 1;
     }
 

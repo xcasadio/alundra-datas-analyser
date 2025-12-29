@@ -105,7 +105,7 @@ public class EntityGameplayManager
     {
         _gameEngine.StaticVariables.g_gameRandomSeed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
 
-        if ((uint)((ulong)(ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x65 >> 32) < (probabilityTargeted & 0xff))
+        if ((uint)(((ulong)(ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x65) >> 32) < (probabilityTargeted & 0xff))
         {
             var direction = (uint)ScriptHelper.GetDirectionToTarget(
                 _gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
@@ -116,7 +116,7 @@ public class EntityGameplayManager
         else
         {
             _gameEngine.StaticVariables.g_gameRandomSeed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-            entity.TargetDirection = (uint)((ulong)(ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x20 >> 32);
+            entity.TargetDirection = (uint)(((ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x20) >> 32);
         }
 
         entity.TargetAnimationId = animationId & 0xff;
@@ -124,7 +124,7 @@ public class EntityGameplayManager
         if (baseDelay != 0)
         {
             _gameEngine.StaticVariables.g_gameRandomSeed = _gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
-            var delay = (short)((ulong)(ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x10 >> 32) + baseDelay;
+            var delay = (short)(((ulong)_gameEngine.StaticVariables.g_gameRandomSeed * 0x10) >> 32) + baseDelay;
             entity.AIValues.Set(delay, 1);
         }
     }
