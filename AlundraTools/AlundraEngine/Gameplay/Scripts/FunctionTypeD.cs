@@ -65,7 +65,57 @@ public static class FunctionTypeD
     //8007df4c
     public static void AI_FUN_8007df4c(GameEngine gameEngine, Entity entity)
     {
-        System.Diagnostics.Debugger.Break();
+        bool bVar1;
+        byte val;
+
+        val = entity.TouchingEntity.BalanceAnimValRef.Val;
+        var direction = ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - _gameEngine.StaticVariables.g_entitySlots[0].PosY);
+        entity.TargetDirection = (uint)direction;
+
+        if (((val & 0xf) - 1 < 3))
+        {
+            gameEngine.StaticVariables.g_gameRandomSeed = gameEngine.StaticVariables.g_gameRandomSeed * 0x7d2b89dd + 0xe06a02e7;
+
+            if (0x45 < gameEngine.StaticVariables.g_gameRandomSeed * 100 >> 0x20)
+            {
+                if (entity.SpriteTableIndex == 0x152)
+                {
+                    direction = 6;
+
+                    if (entity.TargetAnimationId < 2)
+                    {
+                        goto LAB_8007e058;
+                    }
+
+                    if (entity.SpriteTableIndex == 0x155)
+                    {
+                        direction = 6;
+
+                        if (entity.TargetAnimationId < 2)
+                        {
+                            direction = 6;
+
+                            if (entity.TargetAnimationId == 7)
+                            {
+                                goto LAB_8007e058;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        bVar1 = gameEngine.EntityManager.ComputeNewHp(entity);
+
+        if (bVar1)
+        {
+            entity.Bytes[3] = 1;
+        }
+
+        direction = 4;
+
+        LAB_8007e058:
+        entity.TargetAnimationId = (uint)direction;
     }
 
     //8007e074
@@ -245,13 +295,33 @@ public static class FunctionTypeD
     //8007eb58
     public static void AI_FUN_8007eb58(GameEngine gameEngine, Entity entity)
     {
-        System.Diagnostics.Debugger.Break();
+        if (entity.Hp == 0)
+        {
+            return;
+        }
+
+        if (gameEngine.EntityManager.ComputeNewHp(entity))
+        {
+            entity.Bytes[3] = 1;
+        }
+
+        entity.TargetAnimationId = 1;
     }
 
     //8007eba8
     public static void AI_FUN_8007eba8(GameEngine gameEngine, Entity entity)
     {
-        System.Diagnostics.Debugger.Break();
+        entity.ForceZ = 0;
+        entity.PreviousAdjustedForceY = 0;
+        entity.PreviousAdjustedForceX = 0;
+        var bVar1 = gameEngine.EntityManager.ComputeNewHp(entity);
+
+        if (bVar1)
+        {
+            entity.Bytes[3] = 1;
+        }
+
+        entity.TargetAnimationId = 6;
     } 
 
     //8007ebf0
@@ -466,12 +536,6 @@ public static class FunctionTypeD
 
     //8007fac8
     public static void AI_FUN_8007fac8(GameEngine gameEngine, Entity entity)
-    {
-        System.Diagnostics.Debugger.Break();
-    }
-
-    //8007fb38
-    public static void AI_FUN_8007fb38(GameEngine gameEngine, Entity entity)
     {
         System.Diagnostics.Debugger.Break();
     }

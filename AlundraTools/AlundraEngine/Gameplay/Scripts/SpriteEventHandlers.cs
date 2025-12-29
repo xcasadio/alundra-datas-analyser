@@ -250,9 +250,9 @@ public class SpriteEventHandlers
 
         if (handlers.TryGetValue(eventId, out var handler)) //g_entityEventFunctionsByType  // 80098f4c
         {
-            if (handler != AI_EmptyFunction)
+            if (handler != AI_EmptyFunction && _gameEngine.StaticVariables.IsLogScriptEnabled)
             {
-                //Debug.WriteLine($"Entity {entity.Index} exec func[{eventType}][{eventId}] => {handler.Method.Name}");
+                _gameEngine.LogManager.Log(entity, $"exec func[{eventType}][{eventId}] => {handler.Method.Name}");
             }
 
             handler(_gameEngine, entity);
