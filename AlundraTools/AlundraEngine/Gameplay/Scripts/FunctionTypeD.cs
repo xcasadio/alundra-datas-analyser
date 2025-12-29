@@ -69,7 +69,7 @@ public static class FunctionTypeD
         byte val;
 
         val = entity.TouchingEntity.BalanceAnimValRef.Val;
-        var direction = ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - _gameEngine.StaticVariables.g_entitySlots[0].PosY);
+        var direction = ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
         entity.TargetDirection = (uint)direction;
 
         if (((val & 0xf) - 1 < 3))
