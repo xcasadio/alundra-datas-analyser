@@ -67,7 +67,7 @@ internal class Program
         var elements = balanceBin.BalanceRecords.Select(x => new BalanceRecordJson(x));
         var balanceBinPath = Path.Combine(extractionPath, "data");
         Directory.CreateDirectory(balanceBinPath);
-        File.WriteAllText(Path.Combine(balanceBinPath, $"{balanceBin.FileName}.json"), JsonSerializer.Serialize(elements, _jsonSerializerOptions));
+        File.WriteAllText(Path.Combine(balanceBinPath, $"{Path.GetFileName(balanceBin.FileName)}.json"), JsonSerializer.Serialize(elements, _jsonSerializerOptions));
     }
 
     private static void ExtractDataFromScreenFolder(Font3 font3, StaticVariables staticVariables, string extractionPath)
@@ -302,8 +302,41 @@ internal class Program
 
     private static void ExtractDataFromDatasBin(DatasBin datasBin, StaticVariables staticVariables, string extractionPath)
     {
-        //datasBin.Header
+        datasBin.LoadingScreen.Save(Path.Combine(extractionPath, "data", "loading_screen.bmp"));
+
+        using var br = datasBin.OpenBin();
+        datasBin.AlundraGameMap.Load(br);
+
+        var tileAnimDescriptors  = GameInitializer.CreateTileAnimDescriptors(0);
+
+        //SaveMap(datasBin.AlundraGameMap, "map_alundra.json", extractionPath);
+
+        //for (int i = 0; i < 483; i++)
+        //{
+        //    var gameMap = datasBin.GameMaps[i];
+        //    gameMap.Load(br);
+        //    SaveMap(gameMap, i, extractionPath);
+        //}
+
+        var gameMap = datasBin.GameMaps[389];
+        gameMap.Load(br);
+        SaveMap(gameMap, 389, extractionPath, tileAnimDescriptors);
+    }
+
+    private static void SaveMap(GameMap gameMap, int id, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors)
+    {
+        var dataPath = Path.Combine(extractionPath, "data");
+        Directory.CreateDirectory(dataPath);
+        var path = Path.Combine(dataPath, $"map_{id}.json");
+        var gameMapJson = ConvertGameMap(gameMap);
+        File.WriteAllText(path, JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
+
+        gameMapJson.SaveTileSheetBitmap(gameMap, Path.Combine(dataPath, $"map_{id}_tilesheet.bmp"), tileAnimDescriptors);
+        gameMapJson.SaveSpriteSheetBitmap(gameMap, Path.Combine(dataPath, $"map_{id}_spritesheet.bmp"), tileAnimDescriptors);
+    }
+
+    private static GameMapJson ConvertGameMap(GameMap gameMap)
+    {
+        return new GameMapJson(gameMap);
     }
 }
-
-record SpriteSheetTile(int U0, int V0, int Width, int Height, int PaletteIndex);
