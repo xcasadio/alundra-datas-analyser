@@ -2,7 +2,14 @@
 
 public class SpriteEffectRecord
 {
-    public SpriteEffectRecord(BinaryReader br, long binOffset, int id, int memaddr, int spriteInfoMemoryAddress)
+    public readonly long BinOffset;
+    public readonly int SpriteInfoMemoryAddress;
+    public readonly int[] AnimationOffsets;
+    public readonly int AnimationCount;
+    public readonly int EffectId;
+    public readonly SiEffectAnimation[] PreloadedAnims;
+
+    public SpriteEffectRecord(BinaryReader br, long binOffset, int id, int memoryAddress, int spriteInfoMemoryAddress)
     {
         EffectId = id;
         BinOffset = binOffset;
@@ -34,13 +41,6 @@ public class SpriteEffectRecord
             PreloadedAnims[i] = GetAnimation(br, AnimationOffsets[i]);
         }
     }
-
-    public readonly long BinOffset;
-    public readonly int SpriteInfoMemoryAddress;
-    public readonly int[] AnimationOffsets;
-    public readonly int AnimationCount;
-    public readonly int EffectId;
-    public readonly SiEffectAnimation[] PreloadedAnims;
 
     public SiEffectAnimation GetAnimation(BinaryReader br, int animationOffset)
     {

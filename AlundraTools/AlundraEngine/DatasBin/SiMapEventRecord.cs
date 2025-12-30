@@ -2,6 +2,15 @@
 
 public class SiMapEventRecord
 {
+    public readonly byte X1;
+    public readonly byte Y1;
+    public readonly byte X2;
+    public readonly byte Y2;
+    public readonly byte EventCodesBIndex;
+    public readonly byte Ub1;
+    public readonly byte Ub2;
+    public readonly byte Ub3;
+
     public SiMapEventRecord(BinaryReader br)
     {
         X1 = br.ReadByte();
@@ -13,13 +22,4 @@ public class SiMapEventRecord
         Ub2 = br.ReadByte();
         Ub3 = br.ReadByte();
     }
-
-    public readonly byte X1;
-    public readonly byte Y1;
-    public readonly byte X2;
-    public readonly byte Y2;
-    public readonly byte EventCodesBIndex;
-    public readonly byte Ub1;
-    public readonly byte Ub2;
-    public readonly byte Ub3;
 }

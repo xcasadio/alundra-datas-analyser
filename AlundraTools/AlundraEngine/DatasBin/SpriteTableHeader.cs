@@ -2,6 +2,35 @@
 
 public class SpriteTableHeader
 {
+    public readonly int Sector5Id;
+    public readonly long BinOffset;
+    public readonly int MemoryAddress;
+    public readonly int SpriteInfoMemoryAddress;
+
+    public readonly int AnimationOffsetsPointer;
+    public readonly int AnimationsPointer;
+    public readonly int FrameCollisionPointer;
+    public readonly int FramesPointer;
+
+    public readonly byte MoreFlags;
+    public readonly byte CanPickup;
+    public readonly byte FlagsPortraitShadowType;
+    public readonly byte ProgramLoad;
+    public readonly byte ProgramTick;
+    public readonly byte ProgramTouch;
+    public readonly byte ProgramDeactivate;
+    public readonly byte ProgramInteract;
+    public readonly sbyte OffsetX;
+    public readonly sbyte OffsetY;
+    public readonly sbyte OffsetZ;
+    public readonly byte SizeX;
+    public readonly byte SizeY;
+    public readonly byte SizeZ;
+    public readonly byte BreakEffect;
+    public readonly byte Contents;
+
+    public readonly byte[] Ubuff;
+
     public SpriteTableHeader(BinaryReader br, long binOffset, int id, int memoryAddress, int spriteInfoMemoryAddress)
     {
         SpriteInfoMemoryAddress = spriteInfoMemoryAddress;
@@ -35,32 +64,4 @@ public class SpriteTableHeader
         BreakEffect = br.ReadByte();//18+6
         Contents = br.ReadByte();//18+7
     }
-    public readonly int Sector5Id;
-    public readonly long BinOffset;
-    public readonly int MemoryAddress;
-    public readonly int SpriteInfoMemoryAddress;
-
-    public readonly int AnimationOffsetsPointer;
-    public readonly int AnimationsPointer;
-    public readonly int FrameCollisionPointer;
-    public readonly int FramesPointer;
-
-    public readonly byte MoreFlags;
-    public readonly byte CanPickup;
-    public readonly byte FlagsPortraitShadowType;
-    public readonly byte ProgramLoad;
-    public readonly byte ProgramTick;
-    public readonly byte ProgramTouch;
-    public readonly byte ProgramDeactivate;
-    public readonly byte ProgramInteract;
-    public readonly sbyte OffsetX;
-    public readonly sbyte OffsetY;
-    public readonly sbyte OffsetZ;
-    public readonly byte SizeX;
-    public readonly byte SizeY;
-    public readonly byte SizeZ;
-    public readonly byte BreakEffect;
-    public readonly byte Contents;
-
-    public readonly byte[] Ubuff;
 }

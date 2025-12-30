@@ -2,6 +2,8 @@
 
 public class SpriteInfoMapEvents
 {
+    public readonly SiMapEventRecord[] Records;
+
     public SpriteInfoMapEvents(BinaryReader br, long sioffset, int sectorend)
     {
         Records = new SiMapEventRecord[64];
@@ -21,7 +23,4 @@ public class SpriteInfoMapEvents
             Records[i] = new SiMapEventRecord(br);
         }
     }
-
-    public readonly SiMapEventRecord[] Records;
-
 }

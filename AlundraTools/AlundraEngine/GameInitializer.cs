@@ -182,31 +182,7 @@ public class GameInitializer
         _gameEngine.StaticVariables.g_currentDrawPageParam = drawPageParam;
 
         //TODO: initialize g_tileSpriteBuffer ?
-
-        _gameEngine.StaticVariables.g_tileAnimDescriptorTable = new TileAnimDescriptor[960];
-
-        int tileAnimIndex = 0;
-
-        for (byte spriteIndex = 0; spriteIndex < 6; spriteIndex++)
-        {
-            byte padding = 0;
-
-            for (int i = 0; i < 16; i++, padding += 0x10)
-            {
-                drawPageParam = 0;
-
-                while ((drawPageParam + 0x18) < 0x101)
-                {
-                    _gameEngine.StaticVariables.g_tileAnimDescriptorTable[tileAnimIndex] = new TileAnimDescriptor();
-                    _gameEngine.StaticVariables.g_tileAnimDescriptorTable[tileAnimIndex].SpriteIndex = spriteIndex;
-                    _gameEngine.StaticVariables.g_tileAnimDescriptorTable[tileAnimIndex].DrawPageOffset = (byte)drawPageParam;
-                    _gameEngine.StaticVariables.g_tileAnimDescriptorTable[tileAnimIndex].Padding = padding;
-
-                    tileAnimIndex++;
-                    drawPageParam += 0x18;
-                }
-            }
-        }
+        _gameEngine.StaticVariables.g_tileAnimDescriptorTable = CreateTileAnimDescriptors(drawPageParam);
 
         //var frameIndex = 0;
         //var spriteBufferOffset = 0;
@@ -235,6 +211,36 @@ public class GameInitializer
         //    spriteBufferOffset = 0;
         //
         //} while (frameIndex < 6);
+    }
+
+    public static TileAnimDescriptor[] CreateTileAnimDescriptors(int drawPageParam)
+    {
+        var tileAnimDescriptors = new TileAnimDescriptor[960];
+
+        int tileAnimIndex = 0;
+
+        for (byte spriteIndex = 0; spriteIndex < 6; spriteIndex++)
+        {
+            byte padding = 0;
+
+            for (int i = 0; i < 16; i++, padding += 0x10)
+            {
+                drawPageParam = 0;
+
+                while ((drawPageParam + 0x18) < 0x101)
+                {
+                    tileAnimDescriptors[tileAnimIndex] = new TileAnimDescriptor();
+                    tileAnimDescriptors[tileAnimIndex].SpriteIndex = spriteIndex;
+                    tileAnimDescriptors[tileAnimIndex].DrawPageOffset = (byte)drawPageParam;
+                    tileAnimDescriptors[tileAnimIndex].Padding = padding;
+
+                    tileAnimIndex++;
+                    drawPageParam += 0x18;
+                }
+            }
+        }
+
+        return tileAnimDescriptors;
     }
 
     private void InitializeAlundraSpriteResourcesFromFile(string fileName, uint frameDataStart, uint frameDataEnd, uint imageDataStart, uint imageDataEnd)

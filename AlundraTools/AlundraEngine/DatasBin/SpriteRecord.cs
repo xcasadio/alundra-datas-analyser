@@ -2,6 +2,9 @@
 
 public class SpriteRecord
 {
+    public readonly SpriteTableHeader Header;
+    public readonly AnimationSet[] AnimSets;
+
     public SpriteRecord(BinaryReader br, long binOffset, int id, int memoryAddress, int spriteInfoMemoryAddress)
     {
         const int sizeofAnimationSet = 14;
@@ -73,7 +76,4 @@ public class SpriteRecord
         br.BaseStream.Position = position;
         return imageset;
     }
-
-    public readonly SpriteTableHeader Header;
-    public readonly AnimationSet[] AnimSets;
 }
