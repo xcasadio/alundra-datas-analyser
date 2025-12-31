@@ -887,20 +887,18 @@ public class EntityManager
     // 80037730
     private Entity? ComputeXYPosition(Entity entity)
     {
-        // "Registers"/stack locals (ASM-like)
-        Entity? candidate = null;      // s4
-        Entity? result = null;         // stack result(sp)
-        int i = 0;                     // s5
-        const int s6 = -1;             // s6 constant -1
+        Entity? candidate = null;
+        Entity? result = null;
+        int i = 0;
+        const int s6 = -1;
 
-        int dx, dy;                    // s2, s1 (forces)
-        int posX, posY, posZ;          // s7, s8, stack posZ
+        int dx, dy;
+        int posX, posY, posZ;
         uint[] collisionFlags = new uint[4];
 
-        int modX = 0;                  // stack modX
-        int didAdjustForObstacle = 0;  // stack didAdjustForObstacle
+        int modX = 0;
+        int didAdjustForObstacle = 0;
 
-        // ASM: isStraightDir = (((*(int*)(entity+0x8C)) & 7) == 0) ? 1 : 0
         int isStraightDir = ((entity.TargetDirection & 7) == 0) ? 1 : 0;
 
         Func<Entity, uint[], uint> collisionFunc =
@@ -909,8 +907,8 @@ public class EntityManager
                 : GetCollisionFlags;
 
         START_COLLISION_CHECK:
-        dx = entity.FinalForceX; // s2 = *(entity+0xE4)
-        dy = entity.FinalForceY; // s1 = *(entity+0xE8)
+        dx = entity.FinalForceX;
+        dy = entity.FinalForceY;
 
         if (dx == 0 && dy == 0)
         {
@@ -922,67 +920,52 @@ public class EntityManager
         i = 0;
 
         TRY_ADVANCE:
-        // Save original position
         posX = entity.PosX;
         posY = entity.PosY;
         posZ = entity.PosZ;
 
-        // result(sp) = candidate (ASM does sw candidate,result(sp) at start of TRY_ADVANCE)
         result = candidate;
 
-        // collisionFlags[0..3] = 0
         collisionFlags[0] = 0;
         collisionFlags[1] = 0;
         collisionFlags[2] = 0;
         collisionFlags[3] = 0;
 
-        // Apply forces to position (ASM writes PosX/PosY)
         entity.PosX = entity.PosX + dx;
         entity.PosY = entity.PosY + dy;
 
-        // Recompute modded positions exactly like ASM (1D8/1DC/1E0)
         entity.ModdedPosZ = entity.PosZ + entity.ModZ;
         entity.ModdedPosX = entity.PosX + entity.ModX;
         entity.ModdedPosY = entity.PosY + entity.ModY;
 
-        // groundHeight = ComputeEntityGroundHeight(entity); entity.TerrainHeight = groundHeight;
         int groundHeight = ComputeEntityGroundHeight(entity);
         entity.TerrainHeight = groundHeight;
 
-        // --- Ground snapping logic (ASM checks Flags & 0x100 and ForceZ==0) ---
         if ((entity.Flags & 0x100) != 0)
         {
             if (entity.ForceZ == 0)
             {
-                // dz = groundHeight - entity.ModdedPosZ; dz -= 1;
                 int dz = groundHeight - entity.ModdedPosZ;
                 dz -= 1;
 
-                // zTolerance is effectively 0x30003 (ASM builds 0x30003)
                 int zTolerance = 0x30003;
 
-                // abs(dz) (ASM does if dz<0 then dz=-dz)
                 if (dz < 0)
                 {
                     dz = -dz;
                 }
 
-                // if (dz < zTolerance) then try snap
                 if (dz < zTolerance)
                 {
                     int savedZ = entity.PosZ;
-
-                    // entity.PosZ = groundHeight + 1; and recompute modded coords
                     entity.PosZ = groundHeight + 1;
                     entity.ModdedPosX = entity.PosX + entity.ModX;
                     entity.ModdedPosY = entity.PosY + entity.ModY;
                     entity.ModdedPosZ = entity.PosZ + entity.ModZ;
 
-                    // otherEntity = FindEntityCollisionCandidate(entity)
                     Entity? otherEntity = FindEntityCollisionCandidate(entity);
                     if (otherEntity != null)
                     {
-                        // Restore Z and recompute modded Z (ASM restores 11C + recomputes 1E0 etc)
                         entity.PosZ = savedZ;
                         entity.ModdedPosX = entity.PosX + entity.ModX;
                         entity.ModdedPosY = entity.PosY + entity.ModY;
@@ -999,40 +982,34 @@ public class EntityManager
         }
 
         RESTORE_POS:
-        // candidate = FindEntityCollisionCandidate(entity)
         candidate = FindEntityCollisionCandidate(entity);
 
-        // if candidate == null => CHECK_ENTITY_COLLISION else fall into obstacle path
         if (candidate == null)
         {
             goto CHECK_ENTITY_COLLISION;
         }
 
-        goto OBSTACLE_PATH; // corresponds to going to LAB_80037938 path
+        goto OBSTACLE_PATH;
 
         CHECK_ENTITY_COLLISION:
-        // flags = collisionFunc(entity, collisionFlags)
         uint flags = collisionFunc(entity, collisionFlags);
 
-        // if (flags == 0) => LAB_80037d68, else obstacle
         if (flags == 0)
         {
             goto NO_OBSTACLE_PATH;
         }
 
         OBSTACLE_PATH:
-        // LAB_80037938: restore position
+        // LAB_80037938
         entity.PosX = posX;
         entity.PosY = posY;
         entity.PosZ = posZ;
 
-        // halfDx / halfDy with special -1 -> 0, else arithmetic >> 1
         int halfDx = (dx == s6) ? 0 : (dx >> 1);
         int halfDy = (dy == s6) ? 0 : (dy >> 1);
 
         if (isStraightDir != 0)
         {
-            // if halfDx != 0 => TRY_ADVANCE
             if (halfDx != 0)
             {
                 i = i + 1;
@@ -1041,13 +1018,11 @@ public class EntityManager
                 goto TRY_ADVANCE;
             }
 
-            // if halfDy == 0 => go to decision block
             if (halfDy == 0)
             {
                 goto DECIDE_FINAL_OBSTACLE;
             }
 
-            // else TRY_ADVANCE
             i = i + 1;
             dx = halfDx;
             dy = halfDy;
@@ -1055,13 +1030,11 @@ public class EntityManager
         }
         else
         {
-            // not straight: if halfDx==0 => decision block
             if (halfDx == 0)
             {
                 goto DECIDE_FINAL_OBSTACLE;
             }
 
-            // if halfDy != 0 => TRY_ADVANCE
             if (halfDy != 0)
             {
                 i = i + 1;
@@ -1070,12 +1043,11 @@ public class EntityManager
                 goto TRY_ADVANCE;
             }
 
-            // else decision block
             goto DECIDE_FINAL_OBSTACLE;
         }
 
         NO_OBSTACLE_PATH:
-        // LAB_80037d68: modX = 1; if i==0 return
+        // LAB_80037d68
         modX = 1;
 
         if (i == 0)
@@ -1083,13 +1055,11 @@ public class EntityManager
             goto RETURN_RESULT;
         }
 
-        // halfDx / halfDy with special -1 -> 0, else >> 1
         int halfDx2 = (dx == s6) ? 0 : (dx >> 1);
         int halfDy2 = (dy == s6) ? 0 : (dy >> 1);
 
         if (isStraightDir != 0)
         {
-            // straight: if halfDx==0 then require halfDy!=0 to continue
             if (halfDx2 == 0)
             {
                 if (halfDy2 == 0)
@@ -1129,7 +1099,7 @@ public class EntityManager
         }
 
         DECIDE_FINAL_OBSTACLE:
-        // LAB_8003799C: if modX!=0 => finalize (LAB_80037D58)
+        // LAB_8003799C:
         if (modX != 0)
         {
             goto FINALIZE_COMMON;
@@ -1148,8 +1118,6 @@ public class EntityManager
             goto FINAL_OBSTACLE;
         }
 
-        // --- Switch behavior block (direct transcription of your existing logic,
-        // but kept as close as possible to the jump-table intent) ---
         switch ((int)dir)
         {
             case 0:
@@ -1336,12 +1304,10 @@ public class EntityManager
         }
 
         FINAL_OBSTACLE:
-        // FINAL_OBSTACLE: entity->13C = 1
         entity.ForceAdjusted = 1;
         goto FINALIZE_COMMON;
 
         FINALIZE_COMMON:
-        // FINALIZE: recompute ModdedPos* and ground
         entity.ModdedPosX = entity.PosX + entity.ModX;
         entity.ModdedPosY = entity.PosY + entity.ModY;
         entity.ModdedPosZ = entity.PosZ + entity.ModZ;
@@ -1350,7 +1316,6 @@ public class EntityManager
         return result;
 
         FINALIZE_NO_MOVE:
-        // When no movement, ASM sets result(sp)=0 and still finalizes modded + ground.
         result = null;
 
         entity.ModdedPosX = entity.PosX + entity.ModX;
@@ -1361,7 +1326,6 @@ public class EntityManager
         return result;
 
         RETURN_RESULT:
-        // Return with current result (stack "result(sp)")
         return result;
     }
 
@@ -1370,8 +1334,7 @@ public class EntityManager
     public uint GetCollisionFlagsWithPlayer(Entity entity, uint[] collisionFlags)
     {
         //Disable collision
-        if (_gameEngine.StaticVariables.g_debugState < 0
-            && (_gameEngine.StaticVariables.g_debugState & 0x80000000) != 0)
+        if ((_gameEngine.StaticVariables.g_debugState & 0x80000000) != 0)
         {
             return 0;
         }
@@ -1599,7 +1562,7 @@ public class EntityManager
             int entityDepth = entity.Depth + 1;
 
             int entityMaxY = entity.ModdedPosY;
-            int entityMaxYExtra = entity.Depth; // 0x1f8 is depth, attention: voir le code binaire, ici c'est additionné pour obtenir maxY
+            int entityMaxYExtra = entity.Depth;
             int entityMaxYWithExtra = entityMaxY + entityMaxYExtra;
 
             entity.RidingEntity = null;
@@ -2720,7 +2683,7 @@ public class EntityManager
     // 8003a374
     public bool ComputeNewHp(Entity entity)
     {
-        int damage;
+        int newHp;
         int strLength;
         BalanceRecordData balanceRecord;
         string debugStr = string.Empty;
@@ -2735,9 +2698,10 @@ public class EntityManager
             balanceRecord.CopyFrom(entity.BalanceRecord);
         }
 
-        damage = ResolveBalanceTarget(entity.TouchingEntity.BalanceAnimValRef, balanceRecord, entity.Hp);
+        newHp = ResolveBalanceTarget(entity.TouchingEntity.BalanceAnimValRef, balanceRecord, entity.Hp);
 
         //if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
+        if (_gameEngine.StaticVariables.IsLogDamageEnabled)
         {
             if (_gameEngine.StaticVariables.g_balanceHpTotal != -1)
             {
@@ -2745,11 +2709,11 @@ public class EntityManager
                 {
                     if ((_gameEngine.StaticVariables.g_balanceHpTotal & 0x80U) == 0)
                     {
-                        debugStr += $"{_gameEngine.StaticVariables.g_balanceHp}";
+                        debugStr = $"{_gameEngine.StaticVariables.g_balanceHp}";
                     }
                     else
                     {
-                        debugStr += $" O{_gameEngine.StaticVariables.g_balanceParams} + A{_gameEngine.StaticVariables.g_balanceHp - _gameEngine.StaticVariables.g_balanceParams} = T{_gameEngine.StaticVariables.g_balanceParams}";
+                        debugStr = $"O{_gameEngine.StaticVariables.g_balanceParams} + A{_gameEngine.StaticVariables.g_balanceHp - _gameEngine.StaticVariables.g_balanceParams} = T{_gameEngine.StaticVariables.g_balanceParams}";
                     }
 
                     debugStr += $" (Parm) {_gameEngine.StaticVariables.g_balanceMultiplier}";
@@ -2758,15 +2722,15 @@ public class EntityManager
                     debugStr = string.Empty;
                 }
 
-                if (damage == null)
+                if (newHp == 0)
                 {
-                    debugStr += $"{_gameEngine.StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} DEAD";
+                    debugStr += $" {_gameEngine.StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} DEAD";
                     entity.Hp = 0;
                 }
                 else
                 {
-                    debugStr += $"{_gameEngine.StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} N{damage}";
-                    entity.Hp = damage;
+                    debugStr += $" {_gameEngine.StaticVariables.g_balanceResult} Damage(Result)HP M{entity.HpMax} C{entity.Hp} N{newHp}";
+                    entity.Hp = newHp;
                 }
 
                 _gameEngine.LogManager.Log(entity, debugStr);
@@ -2775,17 +2739,17 @@ public class EntityManager
             }
 
             debugStr += "Balance patamator error(Result)No Damage";
-            _gameEngine.StaticVariables.g_messageDebug += debugStr;
             _gameEngine.LogManager.Log(entity, debugStr);
+            //_gameEngine.StaticVariables.g_messageDebug += debugStr;
         }
 
-        entity.Hp = damage;
+        entity.Hp = newHp;
 
         END:
         //DisplayHpDebugString();
         //DisplayHpDebugString();
         //DoNothing();
-        return damage == null;
+        return newHp == 0;
     }
 
     // 8004464c

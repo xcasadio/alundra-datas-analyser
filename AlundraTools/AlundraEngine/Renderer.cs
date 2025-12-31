@@ -5,12 +5,12 @@ namespace AlundraEngine;
 
 public class SpriteDepth
 {
-    public const int DebugCollision = int.MaxValue - 5;
-
-    public const int BackgroundUI = int.MaxValue - 4;
-    public const int ForegroundUI = int.MaxValue - 3;
-    public const int ForegroundUICursor = int.MaxValue - 2;
-    public const int ForegroundUICursor2 = int.MaxValue - 1;
+    public const int DebugCollision = FadeTransitionEffect - 1;
+    public const int FadeTransitionEffect = BackgroundUI - 1;
+    public const int BackgroundUI = ForegroundUI - 1;
+    public const int ForegroundUI = ForegroundUICursor - 1;
+    public const int ForegroundUICursor = ForegroundUICursor2 - 1;
+    public const int ForegroundUICursor2 = ForegroundEffect - 1;
     public const int ForegroundEffect = int.MaxValue;
 }
 

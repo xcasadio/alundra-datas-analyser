@@ -37,7 +37,8 @@ public class SoundBin
 
     public void OpenMap(uint mapid)
     {
-        _mapVabIndex = MapIdToVabIndex[mapid];
+        //FUN_80048850
+        _mapVabIndex = VabIndexByMapId[mapid];
         using var br = new BinaryReader(File.OpenRead(_soundBinfile));
         var index = _mapVabIndex * 2;
 
@@ -610,14 +611,8 @@ public class SoundBin
     }
     public static readonly int SfxVabHeaderOffset = 0x800;
     public static readonly int SfxVabBodyOffset = 0x3000;
-    public static int[] SeqOffsets = new int[]{
-        0x00000000,//0x00
-        0x00000084,//0x01
-        0x000000d4,//0x02
-        0x00000254,//0x03
-        0x000002b8,//0x04
-        0x000002e4,//0x05
-    };
+    public static int[] SeqOffsets = new int[]{ 0x000, 0x084, 0x0d4, 0x254, 0x2b8, 0x2e4, 0x324, }; //800a81c8
+    //800a7d34
     public static readonly int[] MapVabOffsets = new int[]{//header,body,header,body,header,body, etc
         0x0003b800,//0x00
         0x0003c800,//0x01
@@ -770,8 +765,13 @@ public class SoundBin
         0x0056b000,//0x94
         0x0056c800,//0x95
         0x00580000,//0x96
+        0x00581800,
+        0x00594800,
+        0x00595800,
+        0x005a4800
     };
-    public int[] MusicSeqVabOffsets = new int[]{//seq,header,body,seq,header,body,etc
+    //800a7f90
+    public readonly int[] MusicSeqVabOffsets = new int[]{//seq,header,body,seq,header,body,etc
         0x00581800,//0x00
         0x00594800,//0x01
         0x00595800,//0x02
@@ -915,7 +915,9 @@ public class SoundBin
         0x00b8f800,//0x8c
         0x00b9f000,//0x8d
     };
-    public static readonly int[] MapIdToVabIndex = new int[]{
+    //800c6d28
+    public static readonly int[] VabIndexByMapId =
+    [
         0x00000000,//0x00
         0x0000002e,//0x01
         0x00000012,//0x02
@@ -1399,8 +1401,8 @@ public class SoundBin
         0x00000047,//0x1e0
         0x00000001,//0x1e1
         0x00000000//0x1e2
-    };
-
+    ];
+    //800a82f2
     public static readonly byte[][] SfxRecordsData = new byte[][]{
         new byte[]{0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0x00,0x00,0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,},
         new byte[]{0xff,0xff,0x00,0x00,0x00,0x00,0x3c,0x00,0x00,0x00,0xff,0xff,0x00,0x00,0xff,0xff,0x02,0x00,0x00,0x00,0x01,0x00,},

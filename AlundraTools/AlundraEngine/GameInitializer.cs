@@ -414,7 +414,7 @@ public class GameInitializer
 
         //==== DEBUG
         //enable HUD
-        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 40000000;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 0x40000000;
 
         //_gameEngine.StaticVariables.g_desiredMap = 452; //11; //471;
 

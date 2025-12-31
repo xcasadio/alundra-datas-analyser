@@ -15,8 +15,6 @@ public class FrameSnapshot
     public int DAT_80098f24 { get; set; }
     public int[] INT_ARRAY_800a8284 { get; set; }
     public int GlobalTransitionState { get; set; }
-    public uint[] DefaultWarpDestinations { get; set; }
-    public uint[] SoundGroupByMapId { get; set; }
     public int[] OrderingTableBuffer { get; set; }
     public int WarpDelayFrames { get; set; }
     public uint PlayerControlFlags { get; set; }
@@ -86,8 +84,6 @@ public class FrameSnapshot
         gameEngine.StaticVariables.DAT_80098f24 = DAT_80098f24;
         Array.Copy(INT_ARRAY_800a8284, gameEngine.StaticVariables.g_playerDataHud, INT_ARRAY_800a8284.Length);
         gameEngine.StaticVariables.g_globalTransitionState = GlobalTransitionState;
-        Array.Copy(DefaultWarpDestinations, gameEngine.StaticVariables.g_defaultWarpDestinations, DefaultWarpDestinations.Length);
-        Array.Copy(SoundGroupByMapId, gameEngine.StaticVariables.g_soundGroupByMapId, SoundGroupByMapId.Length);
         Array.Copy(OrderingTableBuffer, gameEngine.StaticVariables.g_orderingTableBuffer, OrderingTableBuffer.Length);
         gameEngine.StaticVariables.g_warpDelayFrames = WarpDelayFrames;
         gameEngine.StaticVariables.g_playerControlFlags = PlayerControlFlags;
@@ -162,8 +158,6 @@ public class FrameSnapshot
         DAT_80098f24 = gameEngine.StaticVariables.DAT_80098f24;
         INT_ARRAY_800a8284 = (int[])gameEngine.StaticVariables.g_playerDataHud.Clone();
         GlobalTransitionState = gameEngine.StaticVariables.g_globalTransitionState;
-        DefaultWarpDestinations = (uint[])gameEngine.StaticVariables.g_defaultWarpDestinations.Clone();
-        SoundGroupByMapId = (uint[])gameEngine.StaticVariables.g_soundGroupByMapId.Clone();
         OrderingTableBuffer = (int[])gameEngine.StaticVariables.g_orderingTableBuffer.Clone();
         WarpDelayFrames = gameEngine.StaticVariables.g_warpDelayFrames;
         PlayerControlFlags = gameEngine.StaticVariables.g_playerControlFlags;

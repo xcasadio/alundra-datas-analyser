@@ -1609,6 +1609,11 @@ public partial class FrmGame : Form
             _gameEngine.StaticVariables.g_debugState &= 0x7FFFFFFF;
         }
     }
+
+    private void checkBoxLogDamage_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.IsLogDamageEnabled = checkBoxLogScript.Checked;
+    }
 }
 
 internal class FlagModel(string Name, Func<uint> Value)

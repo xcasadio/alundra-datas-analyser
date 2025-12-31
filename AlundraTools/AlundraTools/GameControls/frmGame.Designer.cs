@@ -131,6 +131,7 @@ namespace AlundraTools.GameControls
             label20 = new Label();
             numericUpDownHpMax = new NumericUpDown();
             tabPageDebug = new TabPage();
+            checkBoxDisableCollision = new CheckBox();
             buttonAlundraCabine = new Button();
             groupBoxFlags = new GroupBox();
             panelFlags = new Panel();
@@ -230,7 +231,7 @@ namespace AlundraTools.GameControls
             tabPage3 = new TabPage();
             buttonRefreshScript = new Button();
             treeViewScript = new TreeView();
-            checkBoxDisableCollision = new CheckBox();
+            checkBoxLogDamage = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -1362,6 +1363,17 @@ namespace AlundraTools.GameControls
             tabPageDebug.Text = "Debug";
             tabPageDebug.UseVisualStyleBackColor = true;
             // 
+            // checkBoxDisableCollision
+            // 
+            checkBoxDisableCollision.AutoSize = true;
+            checkBoxDisableCollision.Location = new Point(395, 675);
+            checkBoxDisableCollision.Name = "checkBoxDisableCollision";
+            checkBoxDisableCollision.Size = new Size(111, 19);
+            checkBoxDisableCollision.TabIndex = 68;
+            checkBoxDisableCollision.Text = "Disable collision";
+            checkBoxDisableCollision.UseVisualStyleBackColor = true;
+            checkBoxDisableCollision.CheckedChanged += checkBoxDisableCollision_CheckedChanged;
+            // 
             // buttonAlundraCabine
             // 
             buttonAlundraCabine.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
@@ -2271,6 +2283,7 @@ namespace AlundraTools.GameControls
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(checkBoxLogDamage);
             tabPage2.Controls.Add(checkBoxLogScript);
             tabPage2.Controls.Add(buttonClearLog);
             tabPage2.Controls.Add(listBoxLogs);
@@ -2407,16 +2420,16 @@ namespace AlundraTools.GameControls
             treeViewScript.Size = new Size(490, 698);
             treeViewScript.TabIndex = 0;
             // 
-            // checkBoxDisableCollision
+            // checkBoxLogDamage
             // 
-            checkBoxDisableCollision.AutoSize = true;
-            checkBoxDisableCollision.Location = new Point(395, 675);
-            checkBoxDisableCollision.Name = "checkBoxDisableCollision";
-            checkBoxDisableCollision.Size = new Size(111, 19);
-            checkBoxDisableCollision.TabIndex = 68;
-            checkBoxDisableCollision.Text = "Disable collision";
-            checkBoxDisableCollision.UseVisualStyleBackColor = true;
-            checkBoxDisableCollision.CheckedChanged += checkBoxDisableCollision_CheckedChanged;
+            checkBoxLogDamage.AutoSize = true;
+            checkBoxLogDamage.Location = new Point(380, 29);
+            checkBoxLogDamage.Name = "checkBoxLogDamage";
+            checkBoxLogDamage.Size = new Size(92, 19);
+            checkBoxLogDamage.TabIndex = 9;
+            checkBoxLogDamage.Text = "Log damage";
+            checkBoxLogDamage.UseVisualStyleBackColor = true;
+            checkBoxLogDamage.CheckedChanged += checkBoxLogDamage_CheckedChanged;
             // 
             // FrmGame
             // 
@@ -2689,5 +2702,6 @@ namespace AlundraTools.GameControls
         private CheckBox checkBoxDisplayCollision;
         private CheckBox checkBoxLogScript;
         private CheckBox checkBoxDisableCollision;
+        private CheckBox checkBoxLogDamage;
     }
 }

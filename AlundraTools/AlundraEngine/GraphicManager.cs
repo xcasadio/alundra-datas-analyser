@@ -892,7 +892,7 @@ public class GraphicManager
 
         //fullscreen image used to create fade effect
         _gameEngine.Renderer.AddSprite(tile.x0, tile.y0, tile.w, tile.h,
-            SpriteDepth.ForegroundEffect, _gameEngine.Renderer.WhiteBitmap, tile.r0 / 255f, 0f, 0f, 0f);
+            SpriteDepth.FadeTransitionEffect, _gameEngine.Renderer.WhiteBitmap, tile.r0 / 255f, 0f, 0f, 0f);
 
     LAB_80042ee4:
         return _gameEngine.StaticVariables.g_warpFlags | _gameEngine.StaticVariables.g_fadeStepFlags;

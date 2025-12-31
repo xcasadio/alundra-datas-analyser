@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using AlundraEngine.Sound;
 
 namespace AlundraEngine;
 
@@ -41,7 +42,7 @@ public class SoundManager
         //FUN_8008e398();
         //SpuSetMute(1);
         //FUN_8008ec8c(4);
-        _gameEngine.StaticVariables.g_mainSoundDriver = -1;
+        //_gameEngine.StaticVariables.g_vabHeader = -1;
         _gameEngine.StaticVariables.g_currentVabId = -1;
         //FUN_8008f994();
 
@@ -69,28 +70,30 @@ public class SoundManager
         //SpuSetCommonAttr(&SpuCommonAttr_80166140);
         //FUN_80048704();
 
-        if (_gameEngine.StaticVariables.DAT_800a7d2c < 0x801)
-        {
-            //ReadFileFromCDIntoBuffer("data\\sound.bin", (u_long*)&DAT_80173850, 0, DAT_800a7d2c);
-            //voiceIndex = 9;
-            //psVar1 = _gameEngine.StaticVariables.SHORT_80175d12;
+        result = 1;
 
-            //do
-            //{
-            //    *psVar1 = -1;
-            //    voiceIndex = voiceIndex + -1;
-            //    psVar1 = psVar1 + -1;
-            //} while (-1 < voiceIndex);
-
-            //FUN_8008e398();
-            //SpuSetMute(0);
-            result = 1;
-        }
-        else
-        {
-            //DoNothing();
-            result = 0;
-        }
+        //if (_gameEngine.StaticVariables.SfxVabHeaderOffset < 0x801)
+        //{
+        //    //ReadFileFromCDIntoBuffer("data\\sound.bin", (u_long*)&DAT_80173850, 0, DAT_800a7d2c);
+        //    //voiceIndex = 9;
+        //    //psVar1 = _gameEngine.StaticVariables.SHORT_80175d12;
+        //
+        //    //do
+        //    //{
+        //    //    *psVar1 = -1;
+        //    //    voiceIndex = voiceIndex + -1;
+        //    //    psVar1 = psVar1 + -1;
+        //    //} while (-1 < voiceIndex);
+        //
+        //    //FUN_8008e398();
+        //    //SpuSetMute(0);
+        //    result = 1;
+        //}
+        //else
+        //{
+        //    //DoNothing();
+        //    result = 0;
+        //}
 
         return result;
     }
@@ -286,12 +289,12 @@ public class SoundManager
     //8004a09c
     public void LoadMapSounds(uint mapId)
     {
-        var iVar1 = _gameEngine.GetMapWarpDestination(mapId);
+        var iVar1 = _gameEngine.GetSoundOffsetByMapId(mapId);
 
         if (iVar1 != 0)
         {
             int iVar2 = _gameEngine.StaticVariables.g_currentMapSoundIndex;
-            iVar1 = _gameEngine.GetMapWarpDestination(mapId);
+            iVar1 = _gameEngine.GetSoundOffsetByMapId(mapId);
 
             if (iVar2 != iVar1)
             {
@@ -301,10 +304,10 @@ public class SoundManager
                     ResetSomethingSound(_gameEngine.StaticVariables.g_requestedSeqId);
                 }
 
-                iVar1 = _gameEngine.GetMapWarpDestination(mapId);
+                iVar1 = _gameEngine.GetSoundOffsetByMapId(mapId);
                 if (iVar1 != 0x2d)
                 {
-                    iVar1 = _gameEngine.GetMapWarpDestination(mapId);
+                    iVar1 = _gameEngine.GetSoundOffsetByMapId(mapId);
                     MaybeLoadSound((int)iVar1, 0);
                 }
 
@@ -343,7 +346,7 @@ public class SoundManager
         if (soundEffectData[s4].Id == -1)
         {
             s0 = s4;
-            param_1 = _gameEngine.StaticVariables.g_mainSoundDriver;
+            param_1 = _gameEngine.StaticVariables.g_vabHeader;
             param_2 = soundEffectData[s4].Pitch;
         }
         else
@@ -392,24 +395,22 @@ public class SoundManager
     //80049f1c
     public int HandleMapSoundEffects(uint mapId, uint soundEffectId)
     {
-        uint destinationMapId;
-
         InitializeSoundSomething();
 
-        if (_gameEngine.StaticVariables.g_soundEffectParameters[soundEffectId * 0xb] == -1 &&
-            _gameEngine.StaticVariables.g_soundEffectParameters[soundEffectId * 0x16] == 0)
+        if (SoundBin.SfxRecordsData[soundEffectId][0] == 0xFF &&
+            SoundBin.SfxRecordsData[soundEffectId][6] == 0)
         {
             soundEffectId = 0;
         }
 
-        destinationMapId = _gameEngine.GetMapWarpDestination(mapId);
+        var offset = _gameEngine.GetSoundOffsetByMapId(mapId);
 
-        if (destinationMapId == 0)
+        if (offset == 0)
         {
-            destinationMapId = (uint)_gameEngine.StaticVariables.g_currentMapSoundIndex;
+            offset = _gameEngine.StaticVariables.g_currentMapSoundIndex;
         }
 
-        if (_gameEngine.StaticVariables.g_currentMapSoundIndex == destinationMapId)
+        if (_gameEngine.StaticVariables.g_currentMapSoundIndex == offset)
         {
             if (soundEffectId == 0)
             {

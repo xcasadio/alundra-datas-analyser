@@ -860,7 +860,7 @@ public class EntityEventHandlers
     // 8003D9BC
     private int Script_32_020(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        //Debugger.Break();
 
         if (eventProgramState.Parameters[1] == variables[0])
         {
@@ -1196,7 +1196,7 @@ public class EntityEventHandlers
     // 8003E128
     private int Script_52_034(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        //Debugger.Break();
 
         for (int i = 0; i < 4; i++)
         {
@@ -1421,7 +1421,7 @@ public class EntityEventHandlers
     // 8003E734
     private int Script_63_03F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        //Debugger.Break();
 
         for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntities; i++)
         {

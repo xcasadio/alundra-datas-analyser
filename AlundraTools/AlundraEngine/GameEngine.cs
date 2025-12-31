@@ -1044,15 +1044,16 @@ public class GameEngine
         return 1;
     }
 
-    public uint GetMapWarpDestination(uint mapId)
+    //80049d3c
+    public int GetSoundOffsetByMapId(uint mapId)
     {
-        uint currentMapId;
-        var warpDataIndex = 0;
+        int currentMapId;
+        var i = 0;
 
-        if (StaticVariables.g_warpMapList[0] != 0)
+        if (StaticVariables.g_SoundOffsetList[0] != 0)
         {
-            var warpDataPtr = StaticVariables.g_warpMapList;
-            currentMapId = warpDataPtr[warpDataIndex];
+            var soundOffsetList = StaticVariables.g_SoundOffsetList;
+            currentMapId = soundOffsetList[i];
 
             do
             {
@@ -1060,31 +1061,26 @@ public class GameEngine
                 {
                     var flags = StaticVariables.g_saveData.MapFlags;
 
-                    if ((warpDataPtr[warpDataIndex + 1] & 0x8000) != 0)
+                    if ((soundOffsetList[i + 1] & 0x8000) != 0)
                     {
                         flags = StaticVariables.g_globalFlags;
                     }
 
-                    var index = ((warpDataPtr[warpDataIndex + 1] >> 3) & 0xffc) >> 2;
+                    var index = ((soundOffsetList[i + 1] >> 3) & 0xffc) >> 2;
 
-                    if ((flags[index] & (1 << (int)(warpDataPtr[warpDataIndex + 1] & 0x1f))) != 0)
+                    if ((flags[index] & (1 << (int)(soundOffsetList[i + 1] & 0x1f))) != 0)
                     {
-                        return warpDataPtr[warpDataIndex + 2];
+                        return soundOffsetList[i + 2];
                     }
                 }
 
-                warpDataIndex += 3;
-                currentMapId = warpDataPtr[warpDataIndex];
+                i += 3;
+                currentMapId = soundOffsetList[i];
             }
             while (currentMapId != 0);
         }
 
-        return StaticVariables.g_defaultWarpDestinations[mapId];
-    }
-
-    private uint GetSoundGroupBbyMapId(int warpId)
-    {
-        return StaticVariables.g_soundGroupByMapId[warpId];
+        return StaticVariables.g_defaultSoundOffsetList[mapId];
     }
 
     private void StartWarpTransition(int warpType)

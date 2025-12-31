@@ -1,6 +1,7 @@
 ﻿using AlundraEngine.Gameplay.Scripts.Boss;
 using System;
 using System.Diagnostics;
+using System.Runtime.Intrinsics.X86;
 
 namespace AlundraEngine.Gameplay.Scripts;
 
@@ -1357,7 +1358,74 @@ public static class FunctionTypeC
     //8007c024
     public static void AI_FUN_8007c024(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //Debugger.Break();
+
+        if (gameEngine.StaticVariables.g_entitySlots[0].XCollisionEntity == entity)
+        {
+            if (entity.Bytes[0] < 0x1f)
+            {
+                entity.Bytes[0] = entity.Bytes[1];
+                return;
+            }
+
+            gameEngine.SoundManager.PlaySoundEffect(0x19);
+            entity.TargetAnimationId = 1;
+            var result = FUN_8003ac9c(entity, gameEngine.StaticVariables.g_entitySlots[0]);
+
+            if (result != -1)
+            {
+                entity.TargetDirection = (uint)((result + 0x10U) & 0x1f);
+                return;
+            }
+        }
+
+        if (entity.TargetAnimationId == 1)
+        {
+            gameEngine.SoundManager.PlaySoundEffect(0x19);
+        }
+
+        entity.Bytes[0] = 0;
+        entity.Bytes[1] = 0;
+        entity.Bytes[2] = 0;
+        entity.Bytes[3] = 0;
+        entity.TargetAnimationId = 0;
+    }
+
+    //8003ac9c
+    private static int FUN_8003ac9c(Entity entity1, Entity entity2)
+    {
+        int diffX;
+
+        if (entity2.XCollisionEntity != entity1)
+        {
+            return -1;
+        }
+
+        diffX = entity2.ModdedPosX - entity1.ModdedPosX;
+
+        if (diffX < 0)
+        {
+            if (-diffX <= entity2.Width)
+            {
+                //goto LAB_8003acf4;
+
+                return ((entity2.PosY < entity1.PosY) ? 1 : 0) << 4;
+            }
+        }
+        else if (diffX <= entity1.Width)
+        {
+            LAB_8003acf4:
+            return ((entity2.PosY < entity1.PosY) ? 1 : 0) << 4;
+        }
+
+        diffX = 0x18;
+
+        if (entity2.PosX < entity1.PosX)
+        {
+            diffX = 8;
+        }
+
+        return diffX;
     }
 
     //8007c0d8
@@ -2101,7 +2169,7 @@ public static class FunctionTypeC
                             spawned.Flags |= 0x2;
                             spawned.Flags = (uint)(spawned.Flags & ~0x80);
 
-                            player.AnimFlags = player.AnimFlags & ~0x40;
+                            player.AnimFlags &= ~0x40;
                             entity.Bytes[2] = 1;
                         }
                         else
@@ -2246,31 +2314,144 @@ public static class FunctionTypeC
 
             case 3:
                 {
+                    var index = entity.Bytes[0];
                     var timer = entity.AIValues[1];
+                    if (timer == 0)
+                    {
+                        var gotoLAB_800625d0 = false;
+                        var gotoLAB_80062624 = false;
+                        var gotoLAB_80062678 = false;
 
-                    if (timer != 0)
+                        var diffX = gameEngine.StaticVariables.g_entitySlots[0].ModdedPosX - entity.ModdedPosX;
+
+                        if (diffX < 0)
+                        {
+                            if (entity.ModdedPosX - gameEngine.StaticVariables.g_entitySlots[0].ModdedPosX < gameEngine.StaticVariables.g_entitySlots[0].Width + 1)
+                            {
+                                //goto LAB_800625d0;
+                                gotoLAB_800625d0 = true;
+                            }
+                        }
+                        
+                        if ((diffX < 0 && diffX < entity.Width + 1) || gotoLAB_800625d0)
+                        {
+                            LAB_800625d0:
+                            diffX = gameEngine.StaticVariables.g_entitySlots[0].ModdedPosY - entity.ModdedPosY;
+
+                            if (diffX < 0)
+                            {
+                                if (entity.ModdedPosY - gameEngine.StaticVariables.g_entitySlots[0].ModdedPosY < gameEngine.StaticVariables.g_entitySlots[0].Height + 1)
+                                {
+                                    //goto LAB_80062624;
+                                    gotoLAB_80062624 = true;
+                                }
+                            }
+                            
+                            if ((diffX < 0 && diffX < entity.Height + 1) || gotoLAB_80062624)
+                            {
+                                LAB_80062624:
+                                diffX = gameEngine.StaticVariables.g_entitySlots[0].ModdedPosZ - entity.ModdedPosZ;
+
+                                if (diffX < 0)
+                                {
+                                    if (entity.ModdedPosZ - gameEngine.StaticVariables.g_entitySlots[0].ModdedPosZ < gameEngine.StaticVariables.g_entitySlots[0].Depth + 1)
+                                    {
+                                        //goto LAB_80062678;
+                                        gotoLAB_80062678 = true;
+                                    }
+                                }
+                                
+                                if ((diffX < 0 && diffX < entity.Depth + 1) || gotoLAB_80062678)
+                                {
+                                    LAB_80062678:
+                                    if ((((gameEngine.StaticVariables.g_entitySlots[0].AnimFlags & 0x40U) == 0)
+                                        && (gameEngine.StaticVariables.g_entitySlots[0].DamagedTickCounter == 0))
+                                        && (gameEngine.StaticVariables.WarpSlotState_ARRAY_801910a0[index ^ 1].Phase == 0))
+                                    {
+                                        entity.TargetAnimationId = 4;
+                                        entity.ForceZ = 0x20000;
+                                        entity.Flags &= 0xfffffffe;
+                                        diffX = gameEngine.StaticVariables.WarpSlotState_ARRAY_801910a0[index].BaseX - entity.PosX;
+
+                                        if (diffX < 0)
+                                        {
+                                            diffX += 0x1f;
+                                        }
+
+                                        var iVar2 = gameEngine.StaticVariables.WarpSlotState_ARRAY_801910a0[index].BaseY;
+                                        warpSlot.A0 = diffX >> 5;
+                                        iVar2 -= entity.PosY;
+
+                                        if (iVar2 < 0)
+                                        {
+                                            iVar2 += 0x1f;
+                                        }
+
+                                        gameEngine.StaticVariables.WarpSlotState_ARRAY_801910a0[index].A1 = iVar2 >> 5;
+                                        gameEngine.StaticVariables.g_entitySlots[0].TargetAnimationId = 0x56;
+                                        gameEngine.StaticVariables.g_playerControlFlags |= 0x20;
+                                        gameEngine.StaticVariables.g_entitySlots[0].Flags &= 0xfffffef7;
+                                        gameEngine.StaticVariables.WarpSlotState_ARRAY_801910a0[index].Phase = 1;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if ((entity.CollidedWithEntityZ != 0) || (entity.PosZ < 0xa00001))
+                        {
+                            entity.AIValues[1] = 0x14;
+                            entity.ForceZ = 0;
+                            gameEngine.StaticVariables.WarpSlotState_ARRAY_801910a0[index].A1 = 0;
+                            warpSlot.A0 = 0;
+                        }
+                    }
+                    else if (timer != 0)
                     {
                         timer--;
                         entity.AIValues[1] = timer;
-                        if (timer != 0)
+                        
+                        if (timer == 1)
                         {
                             break;
                         }
                     }
 
                     entity.TargetAnimationId = 0x2;
-                    Debugger.Break();
+                    //Debugger.Break();
 
                     // ... le dump continue avec LAB_800629c8 etc.
                     // (le reste suit la même logique; si tu veux, je te génère aussi la suite
                     //  en gardant exactement tous les cases 0x2..0xF.)
 
+                    //goto LAB_800629c8;
+                    {
+                        int dx = warpSlot.SavedX - entity.PosX;
+                        if (dx < 0)
+                        {
+                            dx += 0xF;
+                        }
 
-                    entity.AIValues[1] = 0x14;
-                    entity.ForceZ = 0;
-                    warpSlot.A1 = 0;
-                    warpSlot.A0 = 0;
+                        warpSlot.A0 = dx >> 4;
+                    }
+                    {
+                        int dy = warpSlot.SavedY - entity.PosY;
+                        if (dy < 0)
+                        {
+                            dy += 0xF;
+                        }
+
+                        warpSlot.A1 = dy >> 4;
+                    }
+
                     goto default;
+
+
+                    //entity.AIValues[1] = 0x14;
+                    //entity.ForceZ = 0;
+                    //warpSlot.A1 = 0;
+                    //warpSlot.A0 = 0;
+                    //goto default;
                 }
 
             // --------------------------------------------------------------------
@@ -2339,7 +2520,6 @@ public static class FunctionTypeC
                     entity.ForceZ = unchecked((int)0xFFFC0000u);
 
                 LAB_800629c8:
-                    // stepX = (SavedX - targetX + 0xF) >> 4  (ASM: rand2=SavedX - targetX)
                     {
                         int dx = warpSlot.SavedX - entity.PosX;
                         if (dx < 0)

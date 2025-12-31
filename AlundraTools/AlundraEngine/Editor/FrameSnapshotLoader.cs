@@ -54,8 +54,6 @@ public static class FrameSnapshotLoader
         frameSnapshot.DAT_80098f24 = dump.DAT_80098f24;
         frameSnapshot.INT_ARRAY_800a8284 = dump.INT_ARRAY_800a8284;
         frameSnapshot.GlobalTransitionState = dump.g_globalTransitionState;
-        frameSnapshot.DefaultWarpDestinations = dump.g_defaultWarpDestinations;
-        frameSnapshot.SoundGroupByMapId = dump.g_soundGroupByMapId;
         frameSnapshot.OrderingTableBuffer = dump.g_orderingTableBuffer;
         frameSnapshot.WarpDelayFrames = dump.g_warpDelayFrames;
         frameSnapshot.PlayerControlFlags = dump.g_playerControlFlags;
@@ -166,8 +164,6 @@ public static class FrameSnapshotLoader
         public int DAT_80098f24 { get; set; }
         public int[] INT_ARRAY_800a8284 { get; set; }
         public int g_globalTransitionState { get; set; }
-        public uint[] g_defaultWarpDestinations { get; set; }
-        public uint[] g_soundGroupByMapId { get; set; }
         public int[] g_orderingTableBuffer { get; set; }
         public int g_warpDelayFrames { get; set; }
         public uint g_playerControlFlags { get; set; }
