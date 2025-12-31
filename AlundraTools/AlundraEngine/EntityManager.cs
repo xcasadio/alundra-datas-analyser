@@ -208,21 +208,16 @@ public class EntityManager
 
         entity.IsZForceApplied = 0;
 
-        var animationDirectionTableIndex = ((entity.TargetDirection + 2) & 0x1C) + entity.AnimationDirection;
-
-        if (animationDirectionTableIndex >= _gameEngine.StaticVariables.g_animationDirectionTable.Length)
-        {
-            Debugger.Break();
-        }
-
-        var animationDirectionFromTable = _gameEngine.StaticVariables.g_animationDirectionTable[animationDirectionTableIndex];
+        var row = entity.AnimationDirection;
+        var col = ((entity.TargetDirection + 2) & 0x1c) >> 2; // 0..7
+        var animationDirectionTableIndex = row * 8 + col; // 0..31
+        var animationDirectionFromTargetDirection = _gameEngine.StaticVariables.g_animationDirectionTable[animationDirectionTableIndex];
 
         if (entity.CurrentAnimationId != entity.TargetAnimationId ||
-            entity.AnimationDirection != animationDirectionFromTable)
-            //entity.CurrentDirection != entity.TargetDirection)
+            entity.AnimationDirection != animationDirectionFromTargetDirection)
         {
             entity.CurrentAnimationId = entity.TargetAnimationId;
-            entity.AnimationDirection = animationDirectionFromTable;
+            entity.AnimationDirection = animationDirectionFromTargetDirection;
             entity.AnimCompleteCounter = 0;
             entity.AnimationFrameIndex = 0;
             animSet = null;
@@ -1803,7 +1798,7 @@ public class EntityManager
     {
         if (entity.Speed == entity.AnimationSet.Speed
             && entity.TargetDirection == entity.CurrentDirection
-            && entity.Acceleration == (entity.AnimationSet.Acceleration & 0xf))//acceleration ?
+            && entity.Acceleration == (entity.AnimationSet.Acceleration & 0xf))
         {
             return;
         }
@@ -1811,7 +1806,7 @@ public class EntityManager
         entity.CurrentDirection = entity.TargetDirection;
 
         entity.Speed = entity.AnimationSet.Speed;
-        entity.Acceleration = entity.AnimationSet.Acceleration & 0xf; // acceleration ?
+        entity.Acceleration = entity.AnimationSet.Acceleration & 0xf;
 
         entity.TargetForceX = _gameEngine.StaticVariables.g_offsetXList[entity.TargetDirection] * entity.AnimationSet.Speed;
         entity.TargetForceY = _gameEngine.StaticVariables.g_offsetYList[entity.TargetDirection] * entity.AnimationSet.Speed;

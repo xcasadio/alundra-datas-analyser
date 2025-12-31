@@ -601,7 +601,7 @@ public class PlayerManager
                     }
                     else if ((_gameEngine.StaticVariables.PlayerEntity.CombinedVramFlagsOR & 0x2000U) == 0)
                     {
-                        var direction = _gameEngine.StaticVariables.g_cardinalDirectionTable[_gameEngine.StaticVariables.PlayerEntity.AnimationDirection >> 3];
+                        var direction = _gameEngine.StaticVariables.g_cardinalDirectionTable[_gameEngine.StaticVariables.PlayerEntity.AnimationDirection];
                         _gameEngine.StaticVariables.PlayerEntity.CarriedEntity.TargetDirection = direction;
                         carriedEntity.PosX = _gameEngine.StaticVariables.PlayerEntity.PosX;
                         carriedEntity.PosY = _gameEngine.StaticVariables.PlayerEntity.PosY;

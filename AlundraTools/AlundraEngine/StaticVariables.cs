@@ -446,23 +446,12 @@ public class StaticVariables
 
     //80098f10
     public readonly string[] g_directionNames = ["X", "R", "L", "U", "D"];
-
     //80098f64
-    public readonly string[] g_weaponNames =
-    [
-        "No Effect", "Sword", "Hammer", "Arrow", "B", "Tackle", "F", "I", "Earth Magic", "Water Magic", "Fire Magic",
-        "Air Magic"
-    ];
-
+    public readonly string[] g_weaponNames = ["No Effect", "Sword", "Hammer", "Arrow", "B", "Tackle", "F", "I", "Earth Magic", "Water Magic", "Fire Magic", "Air Magic"];
     //80098f94
     public readonly string[] g_damageNames = ["Normal Damage", "Critical", "No Effect", "Error!"];
-
     //80098f34
-    public readonly string[] g_effectDebugFlagNames =
-    [
-        "A", "W", "I", "0", "-2", "-2", "+2", "-2", "-1", "-1", "+1", "-1", "0", "0", "-1", "+1", "+1", "+1", "-2", "+2"
-    ];
-
+    public readonly string[] g_effectDebugFlagNames = ["A", "W", "I", "0", "-2", "-2", "+2", "-2", "-1", "-1", "+1", "-1", "0", "0", "-1", "+1", "+1", "+1", "-2", "+2"];
     //80023654
     public readonly short[] g_offsetXList =
     [
@@ -485,33 +474,11 @@ public class StaticVariables
     ];
 
     //800270c0
-    public readonly int[] g_scriptAnimationTable =
-    [
-        0x00000000,
-        0x00000003,
-        0x00000001,
-        0x00000004,
-        0x00000000
-    ];
-
+    public readonly int[] g_scriptAnimationTable = [0, 3, 1, 4, 0];
     //80027400
-    public readonly int[] g_scriptAnimationTable2 =
-    [
-        0x00000000,
-        0x00000003,
-        0x00000001,
-        0x00000004,
-        0x00000000
-    ];
-
+    public readonly int[] g_scriptAnimationTable2 = [0, 3, 1, 4, 0];
     //800281dc
-    public readonly int[] g_scriptAnimationTable3 =
-    [
-        0x00000000,
-        0x00000003,
-        0x00000001,
-        0x00000004,
-    ];
+    public readonly int[] g_scriptAnimationTable3 = [0, 3, 1, 4,];
 
     //80023644
     public readonly uint[] g_cardinalDirectionTable = [0, 0x10, 0x08, 0x18];
