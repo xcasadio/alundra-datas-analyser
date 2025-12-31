@@ -1,4 +1,5 @@
-﻿using AlundraEngine.DatasBin;
+﻿using AlundraEngine;
+using AlundraEngine.DatasBin;
 
 namespace AlundraDataExtractor;
 
@@ -22,6 +23,7 @@ record SpriteInfoEntityJson
     public byte EventCodesF_InteractIndex { get; set; }
     public ushort _10 { get; set; }
     public ushort Contents { get; set; }
+    public string? Name { get; set; }
 
     public SpriteInfoEntityJson(SiEntityRecord EntityRecord)
     {
@@ -43,5 +45,7 @@ record SpriteInfoEntityJson
         EventCodesF_InteractIndex = EntityRecord.EventCodesF_InteractIndex;
         _10 = EntityRecord._10;
         Contents = EntityRecord.Contents;
+
+        Name = EntityNames.GetName(SpriteDirection, SpriteTableIndex);
     }
 }

@@ -18,16 +18,29 @@ record GameMapJson
 
     public GameMapJson(GameMap gameMap)
     {
-        GameMapInfo = new GameMapInfoJson(gameMap.Info);
-        Map = new MapJson(gameMap.Map);
+        if (gameMap.Info != null)
+        {
+            GameMapInfo = new GameMapInfoJson(gameMap.Info);
+        }
+
+        if (gameMap.Map != null)
+        {
+            Map = new MapJson(gameMap.Map);
+        }
+        
         SpriteInfo = new SpriteInfoJson(gameMap.SpriteInfo);
-        ScrollParameters = new ScrollParametersJson(gameMap.ScrollParameters);
+
+        if (gameMap.ScrollParameters != null)
+        {
+            ScrollParameters = new ScrollParametersJson(gameMap.ScrollParameters);
+        }
+
         Strings = gameMap.Strings;
     }
 
-    public void SaveTileSheetBitmap(GameMap gameMap, string fileName, TileAnimDescriptor[] tileAnimDescriptors)
+    public void SaveTileSheetBitmap(GameMap gameMap, string fileName, TileAnimDescriptor[] tileAnimDescriptors = null)
     {
-        using var bitmap = new Bitmap(256, 256 * 8);
+        using var bitmap = new Bitmap(256, 256 * 6);
         using var graphics = Graphics.FromImage(bitmap);
         var tileCache = new HashSet<ushort>();
 
@@ -39,7 +52,14 @@ record GameMapJson
             {
                 if (tileCache.Add(tile))
                 {
-                    DrawAllAnimatedTiles(gameMap, tile, graphics, tileAnimDescriptors);
+                    if (tileAnimDescriptors != null)
+                    {
+                        DrawAllAnimatedTiles(gameMap, tile, graphics, tileAnimDescriptors);
+                    }
+                    else
+                    {
+                        DrawTile(gameMap, tile, graphics);
+                    }
                 }
             }
 
@@ -49,7 +69,14 @@ record GameMapJson
                 {
                     if (wallTile != 0xffff && tileCache.Add(wallTile))
                     {
-                        DrawAllAnimatedTiles(gameMap, wallTile, graphics, tileAnimDescriptors);
+                        if (tileAnimDescriptors != null)
+                        {
+                            DrawAllAnimatedTiles(gameMap, wallTile, graphics, tileAnimDescriptors);
+                        }
+                        else
+                        {
+                            DrawTile(gameMap, wallTile, graphics);
+                        }
                     }
                 }
             }
@@ -58,18 +85,11 @@ record GameMapJson
         bitmap.Save(fileName);
     }
 
-    public void SaveSpriteSheetBitmap(GameMap gameMap, string path, TileAnimDescriptor[] tileAnimDescriptors)
-    {
-        using var bitmap = new Bitmap(256, 256 * 8);
-        using var graphics = Graphics.FromImage(bitmap);
-
-    }
-
     private static void DrawAllAnimatedTiles(GameMap gameMap, ushort tileId, Graphics graphics, TileAnimDescriptor[] tileAnimDescriptors)
     {
         var tile = tileId & 0x3ff;
 
-        var spriteIndex = tileAnimDescriptors[tile].SpriteIndex;
+        var spriteIndex = tile >= tileAnimDescriptors.Length ? 0 : tileAnimDescriptors[tile].SpriteIndex;
 
         if (spriteIndex != 0 && gameMap.Info.SpriteMapEntries[spriteIndex].Enabled == 1)
         {
@@ -91,10 +111,58 @@ record GameMapJson
     {
         var tileBitmap = gameMap.GetTileBitmap(tileId);
         var position = tileId & 0x3ff;
-        var x = position % 10 * StaticVariables.MapTileWidth; //(tileIndex % (gameMap.TileSheetBitmap.Width / 16)) * 16;
-        var y = position / 10 * StaticVariables.MapTileHeight; //(tileIndex / (gameMap.TileSheetBitmap.Width / 16)) * 16;
+        var x = position % 10 * StaticVariables.MapTileWidth;
+        var y = position / 10 * StaticVariables.MapTileHeight;
         graphics.DrawImage(tileBitmap, x, y);
+    }
 
-        Console.WriteLine($"Drawn tileId {tileId} at ({x}, {y})");
+    public void SaveSpriteSheetBitmap(GameMap gameMap, string fileName)
+    {
+        using var bitmap = new Bitmap(256, 256 * 8);
+        using var graphics = Graphics.FromImage(bitmap);
+
+        foreach (var spriteRecord in gameMap.SpriteInfo.SpriteRecords.Where(x => x != null))
+        {
+            if (spriteRecord.AnimSets == null)
+            {
+                continue;
+            }
+
+            foreach (var animationSet in spriteRecord.AnimSets)
+            {
+                if (animationSet == null)
+                {
+                    continue;
+                }
+
+                foreach (var animation in animationSet.PreloadedAnims)
+                {
+                    if (animation?.Frames == null)
+                    {
+                        continue;
+                    }
+
+                    for (int i = 0; i < animation.NumberOfFrames; i++)
+                    {
+                        var frame = animation.Frames[i];
+
+                        if (frame?.Images?.Images == null)
+                        {
+                            continue;
+                        }
+
+                        foreach (var image in frame.Images.Images)
+                        {
+                            var spriteBitmap = gameMap.GetSpriteBitmap(image);
+                            var x = image.Sx;
+                            var y = (image.Spritesheet & 0x7) * 256 + image.Sy;
+                            graphics.DrawImage(spriteBitmap, x, y);
+                        }
+                    }
+                }
+            }
+        }
+
+        bitmap.Save(fileName);
     }
 }

@@ -7,12 +7,14 @@ using AlundraEngine.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text.Json;
+using System.Xml.Linq;
 
 namespace AlundraDataExtractor;
 
 internal class Program
 {
     private static readonly JsonSerializerOptions _jsonSerializerOptions = new() { WriteIndented = true };
+    private static Dictionary<string, HashSet<string>> entitySpriteSheets = new();
 
     static void Main(string[] args)
     {
@@ -122,10 +124,10 @@ internal class Program
         for (int i = 0; i < 10; i++)
         {
             spriteSheetTiles.Add(new SpriteSheetTile(
-                staticVariables.g_numbersSpriteSheetUVs[i * 0x14], 
-                staticVariables.g_numbersSpriteSheetUVs[i * 0x14 + 1], 
-                8, 
-                0x10, 
+                staticVariables.g_numbersSpriteSheetUVs[i * 0x14],
+                staticVariables.g_numbersSpriteSheetUVs[i * 0x14 + 1],
+                8,
+                0x10,
                 5));
         }
 
@@ -307,32 +309,112 @@ internal class Program
         using var br = datasBin.OpenBin();
         datasBin.AlundraGameMap.Load(br);
 
-        var tileAnimDescriptors  = GameInitializer.CreateTileAnimDescriptors(0);
+        var tileAnimDescriptors = GameInitializer.CreateTileAnimDescriptors(0);
+        EntityNames.Load(EntityNames.Language.French);
 
-        //SaveMap(datasBin.AlundraGameMap, "map_alundra.json", extractionPath);
+        var dataPath = Path.Combine(extractionPath, "data");
+        Directory.CreateDirectory(dataPath);
 
-        //for (int i = 0; i < 483; i++)
-        //{
-        //    var gameMap = datasBin.GameMaps[i];
-        //    gameMap.Load(br);
-        //    SaveMap(gameMap, i, extractionPath);
-        //}
+        Console.WriteLine($"Extract map alundra");
+        datasBin.AlundraGameMap.Load(br);
+        SaveAlundraMap(datasBin.AlundraGameMap, dataPath);
 
-        var gameMap = datasBin.GameMaps[389];
-        gameMap.Load(br);
-        SaveMap(gameMap, 389, extractionPath, tileAnimDescriptors);
+        for (int i = 0; i < 483; i++)
+        {
+            Console.WriteLine($"Extract map {i}");
+            var gameMap = datasBin.GameMaps[i];
+            gameMap.Load(br);
+            SaveMap(gameMap, i, dataPath, tileAnimDescriptors);
+        }
+        
+        foreach (var entitySpriteSheet in entitySpriteSheets)
+        {
+            Console.WriteLine($"Entity {entitySpriteSheet.Key}");
+
+            foreach (var idName in entitySpriteSheet.Value)
+            {
+                Console.WriteLine($"\t{idName}");
+            }
+        }
+    }
+
+    private static void SaveAlundraMap(GameMap gameMap, string extractionPath)
+    {
+        var gameMapJson = ConvertGameMap(gameMap);
+        File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
+
+        gameMapJson.SaveSpriteSheetBitmap(gameMap, Path.Combine(extractionPath, "map_alundra_spritesheet.bmp"));
     }
 
     private static void SaveMap(GameMap gameMap, int id, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors)
     {
-        var dataPath = Path.Combine(extractionPath, "data");
-        Directory.CreateDirectory(dataPath);
-        var path = Path.Combine(dataPath, $"map_{id}.json");
         var gameMapJson = ConvertGameMap(gameMap);
-        File.WriteAllText(path, JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
+        File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
 
-        gameMapJson.SaveTileSheetBitmap(gameMap, Path.Combine(dataPath, $"map_{id}_tilesheet.bmp"), tileAnimDescriptors);
-        gameMapJson.SaveSpriteSheetBitmap(gameMap, Path.Combine(dataPath, $"map_{id}_spritesheet.bmp"), tileAnimDescriptors);
+        GetEntitySpriteSheets(gameMap, id);
+
+        //gameMapJson.SaveTileSheetBitmap(gameMap, Path.Combine(extractionPath, $"map_{id}_tilesheet.bmp"), tileAnimDescriptors);
+        //gameMapJson.SaveSpriteSheetBitmap(gameMap, Path.Combine(extractionPath, $"map_{id}_spritesheet.bmp"));
+    }
+
+    private static void GetEntitySpriteSheets(GameMap gameMap, int id)
+    {
+        foreach (var entityRecord in gameMap.SpriteInfo.Entities.Entities.Where(x => x != null))
+        {
+            if (entityRecord.SpriteTableIndex >= 255)
+            {
+                continue;
+            }
+
+            var spriteRecord = gameMap.SpriteInfo.SpriteRecords[entityRecord.SpriteTableIndex];
+
+            if (spriteRecord?.AnimSets == null)
+            {
+                continue;
+            }
+
+            HashSet<string> spriteSheetIds = new();
+
+            foreach (var animationSet in spriteRecord.AnimSets.Where(x => x != null))
+            {
+                foreach (var animation in animationSet.PreloadedAnims)
+                {
+                    if (animation.Frames == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (var frame in animation.Frames)
+                    {
+                        if (frame.Images?.Images == null)
+                        {
+                            continue;
+                        }
+
+                        foreach (var image in frame.Images?.Images)
+                        {
+                            spriteSheetIds.Add($"map:{id} spritesheet:{image.Spritesheet & 0x7}");
+                        }
+                    }
+                }
+            }
+
+            if (spriteSheetIds.Count == 0)
+            {
+                continue;
+            }
+
+            var name = EntityNames.GetName(entityRecord.SpriteDirection, entityRecord.SpriteTableIndex);
+            //Console.WriteLine($"Entity {name} uses sprite sheets: {string.Join(", ", spriteSheetIds)}");
+
+            if (!entitySpriteSheets.TryAdd(name, spriteSheetIds))
+            {
+                foreach (var spriteSheetId in spriteSheetIds)
+                {
+                    entitySpriteSheets[name].Add(spriteSheetId);
+                }
+            }
+        }
     }
 
     private static GameMapJson ConvertGameMap(GameMap gameMap)
