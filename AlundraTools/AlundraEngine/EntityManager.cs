@@ -885,28 +885,32 @@ public class EntityManager
     }
 
     // 80037730
-    private Entity ComputeXYPosition(Entity entity)
+    private Entity? ComputeXYPosition(Entity entity)
     {
-        Entity candidate = null;
-        int i = 0;
-        int s6 = -1;
-        int dy, dx;
-        int groundHeight;
-        int dz;
-        int zTolerance;
-        int posX, posY, posZ;
+        // "Registers"/stack locals (ASM-like)
+        Entity? candidate = null;      // s4
+        Entity? result = null;         // stack result(sp)
+        int i = 0;                     // s5
+        const int s6 = -1;             // s6 constant -1
+
+        int dx, dy;                    // s2, s1 (forces)
+        int posX, posY, posZ;          // s7, s8, stack posZ
         uint[] collisionFlags = new uint[4];
 
-        int modX = 0;
-        int didAdjustForObstacle = 0;
-        int isStraightDir = (entity.TargetDirection & 7) == 0 ? 1 : 0;
+        int modX = 0;                  // stack modX
+        int didAdjustForObstacle = 0;  // stack didAdjustForObstacle
+
+        // ASM: isStraightDir = (((*(int*)(entity+0x8C)) & 7) == 0) ? 1 : 0
+        int isStraightDir = ((entity.TargetDirection & 7) == 0) ? 1 : 0;
 
         Func<Entity, uint[], uint> collisionFunc =
-            entity == _gameEngine.StaticVariables.PlayerEntity ? GetCollisionFlagsWithPlayer : GetCollisionFlags;
+            (entity == _gameEngine.StaticVariables.PlayerEntity)
+                ? GetCollisionFlagsWithPlayer
+                : GetCollisionFlags;
 
         START_COLLISION_CHECK:
-        dx = entity.FinalForceX;
-        dy = entity.FinalForceY;
+        dx = entity.FinalForceX; // s2 = *(entity+0xE4)
+        dy = entity.FinalForceY; // s1 = *(entity+0xE8)
 
         if (dx == 0 && dy == 0)
         {
@@ -918,165 +922,217 @@ public class EntityManager
         i = 0;
 
         TRY_ADVANCE:
+        // Save original position
         posX = entity.PosX;
         posY = entity.PosY;
         posZ = entity.PosZ;
 
+        // result(sp) = candidate (ASM does sw candidate,result(sp) at start of TRY_ADVANCE)
+        result = candidate;
+
+        // collisionFlags[0..3] = 0
         collisionFlags[0] = 0;
         collisionFlags[1] = 0;
         collisionFlags[2] = 0;
         collisionFlags[3] = 0;
 
-        entity.PosX += dx;
-        entity.PosY += dy;
+        // Apply forces to position (ASM writes PosX/PosY)
+        entity.PosX = entity.PosX + dx;
+        entity.PosY = entity.PosY + dy;
+
+        // Recompute modded positions exactly like ASM (1D8/1DC/1E0)
+        entity.ModdedPosZ = entity.PosZ + entity.ModZ;
         entity.ModdedPosX = entity.PosX + entity.ModX;
         entity.ModdedPosY = entity.PosY + entity.ModY;
-        entity.ModdedPosZ = entity.PosZ + entity.ModZ;
 
-        groundHeight = ComputeEntityGroundHeight(entity);
+        // groundHeight = ComputeEntityGroundHeight(entity); entity.TerrainHeight = groundHeight;
+        int groundHeight = ComputeEntityGroundHeight(entity);
         entity.TerrainHeight = groundHeight;
 
-        int halfDxVal = dx >> 1;
-        int halfDyVal = dy >> 1;
-
-        // Ground snapping logic
-        if ((entity.Flags & 0x100) != 0 && entity.ForceZ == 0)
+        // --- Ground snapping logic (ASM checks Flags & 0x100 and ForceZ==0) ---
+        if ((entity.Flags & 0x100) != 0)
         {
-            dz = groundHeight - entity.ModdedPosZ - 1;
-            zTolerance = 0x30000;
-            if (dz < 0)
+            if (entity.ForceZ == 0)
             {
-                zTolerance = 0x30003;
-                dz = -dz;
-            }
+                // dz = groundHeight - entity.ModdedPosZ; dz -= 1;
+                int dz = groundHeight - entity.ModdedPosZ;
+                dz -= 1;
 
-            if (dz < zTolerance)
-            {
-                int savedZ = entity.PosZ;
-                entity.PosZ = groundHeight + 1;
-                entity.ModdedPosX = entity.PosX + entity.ModX;
-                entity.ModdedPosY = entity.PosY + entity.ModY;
-                entity.ModdedPosZ = entity.PosZ + entity.ModZ;
+                // zTolerance is effectively 0x30003 (ASM builds 0x30003)
+                int zTolerance = 0x30003;
 
-                candidate = FindEntityCollisionCandidate(entity);
-                if (candidate != null)
+                // abs(dz) (ASM does if dz<0 then dz=-dz)
+                if (dz < 0)
                 {
-                    entity.PosZ = savedZ;
-                    entity.ModdedPosZ = savedZ + entity.ModZ;
+                    dz = -dz;
+                }
+
+                // if (dz < zTolerance) then try snap
+                if (dz < zTolerance)
+                {
+                    int savedZ = entity.PosZ;
+
+                    // entity.PosZ = groundHeight + 1; and recompute modded coords
+                    entity.PosZ = groundHeight + 1;
                     entity.ModdedPosX = entity.PosX + entity.ModX;
                     entity.ModdedPosY = entity.PosY + entity.ModY;
+                    entity.ModdedPosZ = entity.PosZ + entity.ModZ;
+
+                    // otherEntity = FindEntityCollisionCandidate(entity)
+                    Entity? otherEntity = FindEntityCollisionCandidate(entity);
+                    if (otherEntity != null)
+                    {
+                        // Restore Z and recompute modded Z (ASM restores 11C + recomputes 1E0 etc)
+                        entity.PosZ = savedZ;
+                        entity.ModdedPosX = entity.PosX + entity.ModX;
+                        entity.ModdedPosY = entity.PosY + entity.ModY;
+                        entity.ModdedPosZ = entity.PosZ + entity.ModZ;
+
+                        goto RESTORE_POS;
+                    }
+                }
+                else
+                {
                     goto RESTORE_POS;
                 }
             }
-            else
-            {
-                goto RESTORE_POS;
-            }
         }
-
-        CHECK_ENTITY_COLLISION:
-        uint flags = collisionFunc(entity, collisionFlags);
-
-        if (flags == 0) // aucun obstacle détecté
-        {
-            modX = 1;
-
-            if (i == 0)
-            {
-                goto FINALIZE_OK;
-            }
-
-            if (dx == -1)
-            {
-                halfDxVal = 0;
-            }
-
-            if (dy == -1)
-            {
-                halfDyVal = 0;
-            }
-
-            if (isStraightDir == 0)
-            {
-                if (halfDxVal == 0)
-                {
-                    goto FINALIZE_OK;
-                }
-            }
-            else if (halfDxVal != 0)
-            {
-                i++;
-                dx = halfDxVal;
-                dy = halfDyVal;
-                goto TRY_ADVANCE;
-            }
-
-            if (halfDyVal == 0)
-            {
-                goto FINALIZE_OK;
-            }
-
-            i++;
-            dx = halfDxVal;
-            dy = halfDyVal;
-            goto TRY_ADVANCE;
-        }
-            
-        goto LAB_80037938;
 
         RESTORE_POS:
+        // candidate = FindEntityCollisionCandidate(entity)
         candidate = FindEntityCollisionCandidate(entity);
-        if (candidate == null) goto CHECK_ENTITY_COLLISION;
 
-        LAB_80037938:
+        // if candidate == null => CHECK_ENTITY_COLLISION else fall into obstacle path
+        if (candidate == null)
+        {
+            goto CHECK_ENTITY_COLLISION;
+        }
+
+        goto OBSTACLE_PATH; // corresponds to going to LAB_80037938 path
+
+        CHECK_ENTITY_COLLISION:
+        // flags = collisionFunc(entity, collisionFlags)
+        uint flags = collisionFunc(entity, collisionFlags);
+
+        // if (flags == 0) => LAB_80037d68, else obstacle
+        if (flags == 0)
+        {
+            goto NO_OBSTACLE_PATH;
+        }
+
+        OBSTACLE_PATH:
+        // LAB_80037938: restore position
         entity.PosX = posX;
         entity.PosY = posY;
         entity.PosZ = posZ;
 
-        if (dx == -1)
-        {
-            halfDxVal = 0;
-        }
-
-        if (dy == -1)
-        {
-            halfDyVal = 0;
-        }
+        // halfDx / halfDy with special -1 -> 0, else arithmetic >> 1
+        int halfDx = (dx == s6) ? 0 : (dx >> 1);
+        int halfDy = (dy == s6) ? 0 : (dy >> 1);
 
         if (isStraightDir != 0)
         {
-            if (halfDxVal != 0)
+            // if halfDx != 0 => TRY_ADVANCE
+            if (halfDx != 0)
             {
-                dx = halfDxVal;
-                dy = halfDyVal;
+                i = i + 1;
+                dx = halfDx;
+                dy = halfDy;
                 goto TRY_ADVANCE;
             }
 
-            if (halfDyVal == 0)
+            // if halfDy == 0 => go to decision block
+            if (halfDy == 0)
             {
-                goto LAB_8003799C;
+                goto DECIDE_FINAL_OBSTACLE;
             }
 
-            i++;
-            dx = halfDxVal;
-            dy = halfDyVal;
+            // else TRY_ADVANCE
+            i = i + 1;
+            dx = halfDx;
+            dy = halfDy;
             goto TRY_ADVANCE;
         }
         else
         {
-            if (halfDxVal != 0 && halfDyVal != 0)
+            // not straight: if halfDx==0 => decision block
+            if (halfDx == 0)
             {
-                i++;
-                dx = halfDxVal;
-                dy = halfDyVal;
+                goto DECIDE_FINAL_OBSTACLE;
+            }
+
+            // if halfDy != 0 => TRY_ADVANCE
+            if (halfDy != 0)
+            {
+                i = i + 1;
+                dx = halfDx;
+                dy = halfDy;
                 goto TRY_ADVANCE;
             }
+
+            // else decision block
+            goto DECIDE_FINAL_OBSTACLE;
         }
 
-        LAB_8003799C:
+        NO_OBSTACLE_PATH:
+        // LAB_80037d68: modX = 1; if i==0 return
+        modX = 1;
+
+        if (i == 0)
+        {
+            goto RETURN_RESULT;
+        }
+
+        // halfDx / halfDy with special -1 -> 0, else >> 1
+        int halfDx2 = (dx == s6) ? 0 : (dx >> 1);
+        int halfDy2 = (dy == s6) ? 0 : (dy >> 1);
+
+        if (isStraightDir != 0)
+        {
+            // straight: if halfDx==0 then require halfDy!=0 to continue
+            if (halfDx2 == 0)
+            {
+                if (halfDy2 == 0)
+                {
+                    goto RETURN_RESULT;
+                }
+
+                i = i + 1;
+                dx = halfDx2;
+                dy = halfDy2;
+                goto TRY_ADVANCE;
+            }
+
+            i = i + 1;
+            dx = halfDx2;
+            dy = halfDy2;
+            goto TRY_ADVANCE;
+        }
+        else
+        {
+            // not straight: if halfDx==0 => return
+            if (halfDx2 == 0)
+            {
+                goto RETURN_RESULT;
+            }
+
+            // then must also have halfDy!=0
+            if (halfDy2 == 0)
+            {
+                goto RETURN_RESULT;
+            }
+
+            i = i + 1;
+            dx = halfDx2;
+            dy = halfDy2;
+            goto TRY_ADVANCE;
+        }
+
+        DECIDE_FINAL_OBSTACLE:
+        // LAB_8003799C: if modX!=0 => finalize (LAB_80037D58)
         if (modX != 0)
         {
-            goto LAB_80037D58;
+            goto FINALIZE_COMMON;
         }
 
         if (didAdjustForObstacle == 1 || (entity.Flags & 0x2000) != 0 || candidate != null)
@@ -1086,7 +1142,15 @@ public class EntityManager
 
         didAdjustForObstacle = 1;
 
-        switch (entity.TargetDirection)
+        uint dir = entity.TargetDirection;
+        if (dir >= 0x20)
+        {
+            goto FINAL_OBSTACLE;
+        }
+
+        // --- Switch behavior block (direct transcription of your existing logic,
+        // but kept as close as possible to the jump-table intent) ---
+        switch ((int)dir)
         {
             case 0:
                 if ((collisionFlags[2] != 0 && collisionFlags[3] != 0) ||
@@ -1096,6 +1160,7 @@ public class EntityManager
                 }
 
                 entity.FinalForceY = 0;
+
                 if (collisionFlags[2] != 0 && collisionFlags[3] == 0)
                 {
                     entity.FinalForceX = 0xC000;
@@ -1114,18 +1179,15 @@ public class EntityManager
                 {
                     if (collisionFlags[3] == 0)
                     {
-                        LAB_80037C70:
-                        entity.FinalForceX = 0;
+                        entity.FinalForceX = 0; // LAB_80037C70
                         goto START_COLLISION_CHECK;
                     }
-
                     goto FINAL_OBSTACLE;
                 }
 
                 if (collisionFlags[3] != 0)
                 {
-                    LAB_80037C88:
-                    entity.FinalForceY = 0;
+                    entity.FinalForceY = 0; // LAB_80037C88
                 }
 
                 goto START_COLLISION_CHECK;
@@ -1138,17 +1200,17 @@ public class EntityManager
                 }
 
                 entity.FinalForceX = 0;
+
                 if (collisionFlags[0] != 0 && collisionFlags[2] == 0)
                 {
                     entity.FinalForceY = 0x8000;
+                    goto START_COLLISION_CHECK;
                 }
-                else if (collisionFlags[0] == 0 && collisionFlags[2] != 0)
+
+                if (collisionFlags[0] == 0 && collisionFlags[2] != 0)
                 {
-                    code_r0x80037C3C:
-                    if (collisionFlags[0] == 0)
-                    {
-                        entity.FinalForceY = -0x8000;
-                    }
+                    entity.FinalForceY = -0x8000;
+                    goto START_COLLISION_CHECK;
                 }
 
                 goto START_COLLISION_CHECK;
@@ -1187,6 +1249,7 @@ public class EntityManager
                 }
 
                 entity.FinalForceY = 0;
+
                 if (collisionFlags[0] != 0 && collisionFlags[1] == 0)
                 {
                     entity.FinalForceX = 0xC000;
@@ -1215,7 +1278,6 @@ public class EntityManager
                 }
                 else
                 {
-                    //goto LAB_80037C70;
                     entity.FinalForceX = 0;
                     goto START_COLLISION_CHECK;
                 }
@@ -1223,24 +1285,24 @@ public class EntityManager
                 goto START_COLLISION_CHECK;
 
             case 24:
-                if ((collisionFlags[1] != 0 && collisionFlags[3] != 0)
-                    || collisionFlags[0] != 0 || collisionFlags[2] != 0)
+                if ((collisionFlags[1] != 0 && collisionFlags[3] != 0) ||
+                    collisionFlags[0] != 0 || collisionFlags[2] != 0)
                 {
                     goto FINAL_OBSTACLE;
                 }
 
                 entity.FinalForceX = 0;
+
                 if (collisionFlags[1] != 0 && collisionFlags[3] == 0)
                 {
                     entity.FinalForceY = 0x8000;
+                    goto START_COLLISION_CHECK;
                 }
-                else if (collisionFlags[1] == 0 && collisionFlags[3] != 0)
+
+                if (collisionFlags[1] == 0 && collisionFlags[3] != 0)
                 {
-                    //goto code_r0x80037C3C;
-                    if (collisionFlags[0] == 0)
-                    {
-                        entity.FinalForceY = -0x8000;
-                    }
+                    entity.FinalForceY = -0x8000;
+                    goto START_COLLISION_CHECK;
                 }
 
                 goto START_COLLISION_CHECK;
@@ -1259,7 +1321,6 @@ public class EntityManager
 
                 if (collisionFlags[2] != 0)
                 {
-                    //goto LAB_80037C88;
                     entity.FinalForceY = 0;
                 }
 
@@ -1274,95 +1335,100 @@ public class EntityManager
                 goto FINAL_OBSTACLE;
         }
 
-        LAB_80037D58:
-        dy = entity.PosX;
-        dx = entity.ModX;
-        goto FINALIZE_COMMON;
-
         FINAL_OBSTACLE:
+        // FINAL_OBSTACLE: entity->13C = 1
         entity.ForceAdjusted = 1;
-
-        FINALIZE_OK:
-        dy = entity.PosX;
-        dx = entity.ModX;
         goto FINALIZE_COMMON;
 
         FINALIZE_COMMON:
-        entity.ModdedPosX = dy + dx;
-        entity.ModdedPosY = entity.PosY + entity.ModY;
-        entity.ModdedPosZ = entity.PosZ + entity.ModZ;
-        entity.TerrainHeight = ComputeEntityGroundHeight(entity);
-        return candidate;
-
-        FINALIZE_NO_MOVE:
+        // FINALIZE: recompute ModdedPos* and ground
         entity.ModdedPosX = entity.PosX + entity.ModX;
         entity.ModdedPosY = entity.PosY + entity.ModY;
         entity.ModdedPosZ = entity.PosZ + entity.ModZ;
+
         entity.TerrainHeight = ComputeEntityGroundHeight(entity);
-        return candidate;
+        return result;
+
+        FINALIZE_NO_MOVE:
+        // When no movement, ASM sets result(sp)=0 and still finalizes modded + ground.
+        result = null;
+
+        entity.ModdedPosX = entity.PosX + entity.ModX;
+        entity.ModdedPosY = entity.PosY + entity.ModY;
+        entity.ModdedPosZ = entity.PosZ + entity.ModZ;
+
+        entity.TerrainHeight = ComputeEntityGroundHeight(entity);
+        return result;
+
+        RETURN_RESULT:
+        // Return with current result (stack "result(sp)")
+        return result;
     }
 
+
+    //80037488
     public uint GetCollisionFlagsWithPlayer(Entity entity, uint[] collisionFlags)
     {
-        uint flags;
-        Entity player;
-        uint[] colFlags;
-        int index;
-        int flag;
-        bool gravityFlag;
-        int lockTimer;
-        int moddedZPos;
-
-        moddedZPos = _gameEngine.StaticVariables.PlayerEntity.ModdedPosZ;
-        lockTimer = _gameEngine.StaticVariables.g_warpLockTimer;
-
-        if (_gameEngine.StaticVariables.g_debugState != 0xFFFFFFFF 
-            || (_gameEngine.StaticVariables.g_debugFlags & 0x80000000) == 0)
+        //Disable collision
+        if (_gameEngine.StaticVariables.g_debugState < 0
+            && (_gameEngine.StaticVariables.g_debugState & 0x80000000) != 0)
         {
-            flag = 0x40;
+            return 0;
+        }
+        
+        Entity player = _gameEngine.StaticVariables.PlayerEntity;
+        uint flag;
 
-            if ((_gameEngine.StaticVariables.PlayerEntity.Flags & 8U) != 0)
-            {
-                flag = 0x41;
-            }
-
-            if ((_gameEngine.StaticVariables.PlayerEntity.Flags & 1U) != 0)
-            {
-                flag |= 0x1000;
-            }
-
-            index = 0;
-            gravityFlag = _gameEngine.StaticVariables.g_gravityFlag < 2;
-            colFlags = collisionFlags;
-            player = _gameEngine.StaticVariables.PlayerEntity;
-
-            for (int i = 0; i < 4; i++)
-            {
-                //TODO : Flags or walkability ?
-                if ((player.MapTiles[i].Flags & flag) != 0 || moddedZPos <= player.MapHeights[i])
-                {
-                    colFlags[index] = 1;
-                }
-
-                if (gravityFlag && (player.MapTiles[i].Flags & 0xe00) == 0x800)
-                {
-                    colFlags[index] = 1;
-                }
-
-                if (lockTimer == 0x20
-                    && moddedZPos == player.MapHeights[i] + 1
-                    && (player.MapTiles[i].Flags & 0xe00) == 0x600)
-                {
-                    colFlags[index] = 1;
-                }
-            }
-
-            flags = collisionFlags[0] | collisionFlags[1] | collisionFlags[2] | collisionFlags[3];
+        if ((player.Flags & 0x8) != 0)
+        {
+            flag = 0x41;
         }
         else
         {
-            flags = 0;
+            flag = 0x40;
         }
+
+        if ((player.Flags & 0x1) != 0)
+        {
+            flag |= 0x1000;
+        }
+
+        int index = 0;
+        uint colFlags = 0;
+        int moddedZPos = player.ModdedPosZ;
+        int lockTimer = _gameEngine.StaticVariables.g_warpLockTimer;
+        
+        for (int i = 0; i < 4; i++)
+        {
+            var tileFlags = player.MapTiles[i].Walkability | (player.MapTiles[i].GroundProperty << 8);
+
+            if ((tileFlags & flag) != 0 || player.MapHeights[i] >= moddedZPos)
+            {
+                collisionFlags[i] = 1;
+            }
+
+            if (_gameEngine.StaticVariables.g_gravityFlag < 2
+                && (tileFlags & 0xE00) == 0x0800)
+            {
+                collisionFlags[i] = 1;
+            }
+
+            if (lockTimer == 0x20
+                && moddedZPos == player.MapHeights[i] + 1
+                && (player.MapTiles[i].Flags & 0xe00) == 0x600)
+            {
+                collisionFlags[i] = 1;
+            }
+
+            index += 4;
+            colFlags += 4;
+        }
+
+        uint flags =
+            collisionFlags[0] |
+            collisionFlags[1] |
+            collisionFlags[2] |
+            collisionFlags[3];
 
         return flags;
     }
@@ -1370,10 +1436,7 @@ public class EntityManager
     // 800373e4
     private uint GetCollisionFlags(Entity entity, uint[] flags)
     {
-        ushort flag;
-        int moddedZPos;
-
-        flag = 0x40;
+        var flag = 0x40;
 
         if ((entity.Flags & 0x8) != 0) // 0x8 = « traverse cliff ? »
         {
@@ -1385,13 +1448,13 @@ public class EntityManager
             flag |= 0x1000;
         }
 
-        moddedZPos = entity.ModdedPosZ;
+        var moddedZPos = entity.ModdedPosZ;
 
         for (int i = 0; i < 4; i++)
         {
             flags[i] = 0;
             var tile = entity.MapTiles[i];
-            var tileFlag = (uint)tile.Walkability;
+            var tileFlag = tile.Walkability | (tile.GroundProperty << 8);
 
             if ((tileFlag & flag) != 0 || entity.MapHeights[i] >= moddedZPos) // la case est plus basse
             {

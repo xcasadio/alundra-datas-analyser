@@ -458,13 +458,8 @@ public class PlayerManager
                 {
                     if (_gameEngine.StaticVariables.PlayerEntity.ForceAdjusted == 0)
                     {
-                        var dirIndex = _gameEngine.StaticVariables.PlayerEntity.AnimationDirection >> 3;
-                        dirIndex = dirIndex switch
-                        {
-                            1 => 2,
-                            2 => 1,
-                            _ => dirIndex
-                        } * 3;
+                        var dirIndex = _gameEngine.StaticVariables.PlayerEntity.AnimationDirection * 3;
+                        //Debugger.Break();
 
                         if (buttonsHold == 0)
                         {
@@ -491,6 +486,7 @@ public class PlayerManager
                             _gameEngine.StaticVariables.PlayerEntity.PosX,
                             _gameEngine.StaticVariables.PlayerEntity.PosY,
                             _gameEngine.StaticVariables.PlayerEntity.PosZ + 0x100000);
+
                         _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.SprintAgainstWall;
                         _gameEngine.StaticVariables.PlayerEntity.TargetDirection = (_gameEngine.StaticVariables.PlayerEntity.TargetDirection + 0x10) & 0x1f;
                     }
@@ -1433,14 +1429,7 @@ public class PlayerManager
                 if (_gameEngine.StaticVariables.g_playerEffectTransitionCooldown[2] <= _gameEngine.StaticVariables.g_playerEffectStepFlags)
                 {
                     var zOffset = _gameEngine.StaticVariables.g_playerEffectTransitionCooldown[3] << 16;
-                    var directionIndex = _gameEngine.StaticVariables.PlayerEntity.AnimationDirection >> 3;
-                    //TODO check direction
-                    //directionIndex = directionIndex switch
-                    //{
-                    //    1 => 2,
-                    //    2 => 1,
-                    //    _ => directionIndex
-                    //};
+                    var directionIndex = _gameEngine.StaticVariables.PlayerEntity.AnimationDirection;
                     var direction = _gameEngine.StaticVariables.g_cardinalDirectionTable[directionIndex];
 
                     var entity = _gameEngine.SpawnWarpEntity(
@@ -2686,7 +2675,7 @@ public class PlayerManager
                         _gameEngine.StaticVariables.g_hitSoundEffects[index] * animIndex +
                         (int)((rand * (ulong)(_gameEngine.StaticVariables.g_hitSoundEffects[index2] * animIndex + 1)) >> 0x20);
 
-                    rand = rand * 0x7d2b89dd + 0xe06a02e7;
+                    rand = Random.Next();
                     index = effectEntityId + frameOffset * 2 + 0x13;
                     index2 = effectEntityId + frameOffset * 2 + 0x12;
                     spriteEffect.ForceY = _gameEngine.StaticVariables.g_hitSoundEffects[index] * animIndex +
