@@ -1597,6 +1597,18 @@ public partial class FrmGame : Form
     {
         _gameEngine.StaticVariables.IsLogScriptEnabled = checkBoxLogScript.Checked;
     }
+
+    private void checkBoxDisableCollision_CheckedChanged(object sender, EventArgs e)
+    {
+        if (checkBoxDisableCollision.Checked)
+        {
+            _gameEngine.StaticVariables.g_debugState |= 0x80000000;
+        }
+        else
+        {
+            _gameEngine.StaticVariables.g_debugState &= 0x7FFFFFFF;
+        }
+    }
 }
 
 internal class FlagModel(string Name, Func<uint> Value)
