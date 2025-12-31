@@ -252,6 +252,11 @@ public class RendererHelper
     {
         var tile = tileId & 0x3ff;
 
+        if (tile >= gameEngine.StaticVariables.g_tileAnimDescriptorTable.Length)
+        {
+            return tileId;
+        }
+
         var spriteIndex = gameEngine.StaticVariables.g_tileAnimDescriptorTable[tile].SpriteIndex;
         if (spriteIndex != 0)
         {

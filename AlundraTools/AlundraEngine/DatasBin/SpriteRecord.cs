@@ -34,26 +34,6 @@ public class SpriteRecord
                 if (AnimSets[i].AnimationOffsets[direction] != 0xffff)
                 {
                     AnimSets[i].PreloadedAnims[dirIndex] = GetAnimation(br, AnimSets[i].AnimationOffsets[direction]);
-
-                    /*DBFrame* frames = (DBFrame*)&(*spr->framesdata)[spr->animsets[animdex].diroffsets[dirdex]];
-                    int framedex;
-                    for (framedex = 0; framedex < 32; framedex++)
-                    {
-                        DBFrame* frame = &frames[framedex];
-                        if ((frame->delay & 0x80) != 0x80)
-                            break;
-
-                        DBImageSet* imageset = (DBImageSet*)&(*spr->imagesetdata)[flipu16(frame->imagesetoffset) << 1];
-
-                        int imagedex;
-                        for (imagedex = 0; imagedex < imageset->numimages; imagedex++)
-                        {
-                            numimages++;
-                            if (dex > 0)
-                                cache_image(&imageset->images[imagedex], 1);
-                        }
-
-                    }*/
                 }
             }
         }

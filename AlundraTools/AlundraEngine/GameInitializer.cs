@@ -213,7 +213,7 @@ public class GameInitializer
         //} while (frameIndex < 6);
     }
 
-    public static TileAnimDescriptor[] CreateTileAnimDescriptors(int drawPageParam)
+    public static TileAnimDescriptor[] CreateTileAnimDescriptors(int tileX)
     {
         var tileAnimDescriptors = new TileAnimDescriptor[960];
 
@@ -225,17 +225,17 @@ public class GameInitializer
 
             for (int i = 0; i < 16; i++, padding += 0x10)
             {
-                drawPageParam = 0;
+                tileX = 0;
 
-                while ((drawPageParam + 0x18) < 0x101)
+                while ((tileX + 0x18) < 0x101)
                 {
                     tileAnimDescriptors[tileAnimIndex] = new TileAnimDescriptor();
                     tileAnimDescriptors[tileAnimIndex].SpriteIndex = spriteIndex;
-                    tileAnimDescriptors[tileAnimIndex].DrawPageOffset = (byte)drawPageParam;
+                    tileAnimDescriptors[tileAnimIndex].TileX = (byte)tileX;
                     tileAnimDescriptors[tileAnimIndex].Padding = padding;
 
                     tileAnimIndex++;
-                    drawPageParam += 0x18;
+                    tileX += 0x18;
                 }
             }
         }

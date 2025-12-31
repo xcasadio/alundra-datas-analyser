@@ -81,6 +81,7 @@ public class GameEngine
     public void InitializeEngine()
     {
         Random.Reset();
+        EntityNames.Load(EntityNames.Language.French);
         StaticVariables.Initialize(this);
         _gameInitializer.Initialize();
     }

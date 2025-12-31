@@ -134,7 +134,7 @@ public class GameMap
             return bitmap;
         }
 
-        var pal = SpriteInfo.Palettes[img.Palette]; // img.Palette & 0x1f;
+        var pal = SpriteInfo.Palettes[img.Palette];
         var bmp = GenerateSpriteBitmap(img, pal);
         _spriteCache.Add(img.Signature, bmp);
 
@@ -228,7 +228,8 @@ public class GameMap
 
     public Bitmap GenerateTileBitmap(int tile, Color[] pal)
     {
-        Debug.Assert(tile < 10 * StaticVariables.MapTileHeight * 6, "Bad tile index!", "unexpectedly large tile index of {0}", tile);
+        //only map 143 uses over limits
+        //Debug.Assert(tile < 10 * StaticVariables.MapTileHeight * 6, "Bad tile index!", "unexpectedly large tile index of {0}", tile);
 
         var tileBuff = new byte[StaticVariables.MapTileWidth * StaticVariables.MapTileHeight * 4 / 8];
         var tileX = tile % 10 * StaticVariables.MapTileWidth;

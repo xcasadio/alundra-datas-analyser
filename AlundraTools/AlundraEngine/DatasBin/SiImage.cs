@@ -4,31 +4,6 @@ namespace AlundraEngine.DatasBin;
 
 public class SiImage
 {
-    //private static int paletteMax = 0;
-
-    public readonly long Signature;
-
-    public SiImage(BinaryReader br)
-    {
-        Spritesheet = br.ReadByte();
-        Palette = br.ReadByte();
-        //paletteMax = Math.Max(paletteMax, Palette);
-        Sx = br.ReadByte();
-        Sy = br.ReadByte();
-        Swidth = br.ReadByte();
-        Sheight = br.ReadByte();
-        X1 = br.ReadSByte();
-        Y1 = br.ReadSByte();
-        X2 = br.ReadSByte();
-        Y2 = br.ReadSByte();
-        X3 = br.ReadSByte();
-        Y3 = br.ReadSByte();
-        X4 = br.ReadSByte();
-        Y4 = br.ReadSByte();
-
-        Signature = Spritesheet | Palette << 8 | Sx << 16 | Sy << 24 | Swidth << 32 | Sheight << 38;
-    }
-
     public readonly byte Spritesheet;
     public readonly byte Palette;
     public readonly byte Sx;
@@ -43,4 +18,31 @@ public class SiImage
     public readonly sbyte Y3;
     public sbyte X4;
     public sbyte Y4;
+
+    public readonly long Signature;
+
+    public SiImage(BinaryReader br)
+    {
+        Spritesheet = br.ReadByte();
+        Palette = br.ReadByte();
+        Sx = br.ReadByte();
+        Sy = br.ReadByte();
+        Swidth = br.ReadByte();
+        Sheight = br.ReadByte();
+        X1 = br.ReadSByte();
+        Y1 = br.ReadSByte();
+        X2 = br.ReadSByte();
+        Y2 = br.ReadSByte();
+        X3 = br.ReadSByte();
+        Y3 = br.ReadSByte();
+        X4 = br.ReadSByte();
+        Y4 = br.ReadSByte();
+
+        Signature = (long)Spritesheet | 
+                    (long)Palette << 8 | 
+                    (long)Sx << 16 | 
+                    (long)Sy << 24 | 
+                    (long)Swidth << 32 | 
+                    (long)Sheight << 40;
+    }
 }

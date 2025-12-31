@@ -50,39 +50,39 @@ public class SiEntityRecord
         Contents = br.ReadUInt16();
     }
 
-    public SiAnimation GetSprite(BinaryReader br, SpriteInfo si)
+    public SiAnimation GetSprite(BinaryReader br, SpriteInfo spriteInfo)
     {
-        var sector5 = si.SpriteRecords[SpriteTableIndex];
+        var spriteRecord = spriteInfo.SpriteRecords[SpriteTableIndex];
 
-        if (sector5 != null && SpriteDirection >> 4 != 0x4 && SpriteDirection >> 4 != 0x0)
+        if (spriteRecord != null && SpriteDirection >> 4 != 0x4 && SpriteDirection >> 4 != 0x0)
         {
             var commands = new List<SiCommand>();
             if (EventCodesA_LoadIndex != 0xff && EventCodesA_LoadIndex != 0)
             {
-                commands.AddRange(si.EventCodes.GetCommandsOnlyAtOffset(si.EventCodes.EventCodesATable[EventCodesA_LoadIndex & 0x7f]));
+                commands.AddRange(spriteInfo.EventCodes.GetCommandsOnlyAtOffset(spriteInfo.EventCodes.EventCodesATable[EventCodesA_LoadIndex & 0x7f]));
             }
 
             if (commands.Count == 0 && EventCodesC_TickIndex != 0xff && EventCodesC_TickIndex != 0)
             {
-                commands.AddRange(si.EventCodes.GetCommandsOnlyAtOffset(si.EventCodes.EventCodesCTable[EventCodesC_TickIndex & 0x7f]));
+                commands.AddRange(spriteInfo.EventCodes.GetCommandsOnlyAtOffset(spriteInfo.EventCodes.EventCodesCTable[EventCodesC_TickIndex & 0x7f]));
             }
 
             foreach (var cmd in commands)
             {
                 if (cmd.Command == 0x1a)//set animation
                 {
-                    if (cmd.Parameters[0] >= (sector5.AnimSets?.Length ?? -1))
+                    if (cmd.Parameters[0] >= (spriteRecord.AnimSets?.Length ?? -1))
                     {
-                        Debugger.Break();
-                        cmd.Parameters[0] = (byte)((sector5.AnimSets?.Length ?? 1) - 1);
+                        //Debugger.Break();
+                        cmd.Parameters[0] = (byte)((spriteRecord.AnimSets?.Length ?? 1) - 1);
                     }
 
-                    var animSet = sector5.AnimSets[cmd.Parameters[0]];
-                    return sector5.GetAnimation(br, animSet.AnimationOffsets[SpriteDirection & 0x3]);
+                    var animSet = spriteRecord.AnimSets[cmd.Parameters[0]];
+                    return spriteRecord.GetAnimation(br, animSet.AnimationOffsets[SpriteDirection & 0x3]);
                 }
             }
 
-            return sector5.GetAnimation(br, sector5.AnimSets[0].AnimationOffsets[SpriteDirection & 0x3]);//default anim
+            return spriteRecord.GetAnimation(br, spriteRecord.AnimSets[0].AnimationOffsets[SpriteDirection & 0x3]);//default anim
         }
 
         return null;

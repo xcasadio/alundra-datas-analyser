@@ -216,7 +216,7 @@ public class GraphicManager
                                 primitivePtr.u0 = (byte)_gameEngine.StaticVariables.g_drawPageInfoTable[(spriteAttr >> 0xc) * 2];
                                 var index = _gameEngine.StaticVariables.g_spriteMapTable[_gameEngine.StaticVariables.g_tileAnimDescriptorTable[spriteAttr & 0x3ff].SpriteIndex].Index;
                                 var tileAnimDescriptor = _gameEngine.StaticVariables.g_tileAnimDescriptorTable[(spriteAttr & 0x3ff) + index];
-                                primitivePtr.v0 = tileAnimDescriptor.DrawPageOffset;
+                                primitivePtr.v0 = tileAnimDescriptor.TileX;
 
                                 primitivePtr.tag = tileAnimDescriptor.Padding;
                                 var otIndex = i * StaticVariables.MapTileHeight + (uint)tileAnimDescriptor.SpriteIndex;

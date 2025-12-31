@@ -71,7 +71,7 @@ public class EntityManager
         entity.EntityRecord = entityRecord;
         entity.SpriteTableIndex = spriteTableIndex;
         //for debugging
-        entity.SpriteName = GetSpriteName(entityRecord?.SpriteDirection ?? 0, spriteTableIndex);
+        entity.SpriteName = EntityNames.GetName(entityRecord?.SpriteDirection ?? 0, spriteTableIndex);
 
         if (entityRecord != null)
         {
@@ -140,15 +140,7 @@ public class EntityManager
         _gameEngine.InitializeContents(entity);
     }
 
-    private string? GetSpriteName(byte spriteDirection, uint spriteTableIndex)
-    {
-        if ((spriteDirection & 0x80) != 0)
-        {
-            spriteTableIndex += 0x100;
-        }
-
-        return spriteTableIndex < 512 ? _gameEngine.StaticVariables.g_spriteNames[spriteTableIndex] : null;
-    }
+    
 
     //8004201c
     private void InitializeCodePrograms(Entity entity)
@@ -2264,8 +2256,8 @@ public class EntityManager
                 {
                     //_gameEngine.StaticVariables.g_messageDebug += // + otherEntity->index * 0x100
                     var log = string.Format("{0} (Race) {1} -> {2} (Attr) {3} = {4}",
-                            _gameEngine.StaticVariables.g_spriteNames[entity.SpriteTableIndex],
-                            _gameEngine.StaticVariables.g_spriteNames[otherEntity.SpriteTableIndex],
+                            EntityNames.GetName(entity.SpriteTableIndex),
+                            EntityNames.GetName(otherEntity.SpriteTableIndex),
                             _gameEngine.StaticVariables.g_weaponNames[balanceValueIndex],
                             _gameEngine.StaticVariables.g_damageNames[otherEntity.BalanceRecord.Values[balanceValueIndex] >> 6],
                             val);

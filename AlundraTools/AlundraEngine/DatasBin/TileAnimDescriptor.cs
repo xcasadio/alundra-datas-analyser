@@ -3,6 +3,6 @@
 public class TileAnimDescriptor
 {
     public byte SpriteIndex;
-    public byte DrawPageOffset;
+    public byte TileX;
     public byte Padding;
 }

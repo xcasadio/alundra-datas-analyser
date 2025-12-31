@@ -84,22 +84,21 @@ public class ImageViewerControl : UserControl
         // imageCoord = (focus - translation) / oldZoom
         var imageCoordX = (focus.X - _translation.X) / oldZoom;
         var imageCoordY = (focus.Y - _translation.Y) / oldZoom;
-
         _zoomIndex = index;
-
-        // newTranslation = focus - imageCoord * newZoom
         _translation.X = focus.X - imageCoordX * newZoom;
         _translation.Y = focus.Y - imageCoordY * newZoom;
 
+        ClampTranslation();
         Invalidate();
     }
 
     public void ResetView()
     {
+        _zoomIndex = 1;
+        
         if (_image == null)
         {
             _translation = new PointF(0, 0);
-            _zoomIndex = 1;
             return;
         }
 
@@ -109,13 +108,45 @@ public class ImageViewerControl : UserControl
         var h = _image.Height * z;
         _translation.X = (Width - w) / 2f;
         _translation.Y = (Height - h) / 2f;
-        _zoomIndex = 1;
+        
+        ClampTranslation();
+    }
+
+    private void ClampTranslation()
+    {
+        if (_image == null) return;
+
+        var z = Zoom;
+        var imageWidth = _image.Width * z;
+        var imageHeight = _image.Height * z;
+
+        if (imageWidth <= Width)
+        {
+            _translation.X = (Width - imageWidth) / 2f;
+        }
+        else
+        {
+            var minX = Width - imageWidth;
+            var maxX = 0f; 
+            _translation.X = Math.Clamp(_translation.X, minX, maxX);
+        }
+
+        if (imageHeight <= Height)
+        {
+            _translation.Y = (Height - imageHeight) / 2f;
+        }
+        else
+        {
+            var minY = Height - imageHeight;
+            var maxY = 0f;
+            _translation.Y = Math.Clamp(_translation.Y, minY, maxY);
+        }
     }
 
     protected override void OnResize(EventArgs e)
     {
         base.OnResize(e);
-        // optional: keep current translation but if image is null nothing to do
+
         if (_image != null && !_dragging)
         {
             // keep view consistent: do nothing, or re-center on reset:
@@ -137,7 +168,6 @@ public class ImageViewerControl : UserControl
             return;
         }
 
-        // high quality rendering for zoomed images
         g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
         g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighSpeed;
         g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
@@ -168,6 +198,7 @@ public class ImageViewerControl : UserControl
             var dx = e.X - _dragStart.X;
             var dy = e.Y - _dragStart.Y;
             _translation = new PointF(_translationStart.X + dx, _translationStart.Y + dy);
+            ClampTranslation();
             Invalidate();
         }
     }
@@ -187,7 +218,6 @@ public class ImageViewerControl : UserControl
         base.OnMouseWheel(e);
         if (_image == null) return;
 
-        // choose zoom level step by wheel direction
         if (e.Delta > 0)
         {
             SetZoomIndex(Math.Min(_zoomIndex + 1, _zoomLevels.Length - 1), e.Location);
@@ -198,7 +228,6 @@ public class ImageViewerControl : UserControl
         }
     }
 
-    // optional keyboard support: + / - to zoom
     protected override bool IsInputKey(Keys keyData)
     {
         if (keyData == Keys.Add || keyData == Keys.Subtract || keyData == Keys.Oemplus || keyData == Keys.OemMinus)
