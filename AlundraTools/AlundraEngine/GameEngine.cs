@@ -2380,7 +2380,7 @@ public class GameEngine
     }
 
     //80059f6c
-    public void TriggerVisualUpdate(int spriteTableIndex)
+    public void TryOpenDialogWithName(int spriteTableIndex)
     {
         var tableIndex = spriteTableIndex - 256;
 

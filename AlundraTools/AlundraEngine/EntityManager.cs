@@ -201,189 +201,6 @@ public class EntityManager
     }
 
     // 80038ab4
-    private void UpdateAnimation2(Entity entity)
-    {
-        var targetAnimationId = entity.TargetAnimationId;
-        var targetDirection = entity.TargetDirection;
-        int animationDirection = entity.AnimationDirection;
-
-        entity.IsZForceApplied = 0;
-
-        {
-            var animationDirectionFromTable = _gameEngine.StaticVariables.g_animationDirectionTable[((targetDirection + 2) & 0x1C) + (animationDirection << 5)];
-
-            if (targetAnimationId == (int)entity.CurrentAnimationId && animationDirectionFromTable == animationDirection)
-            {
-                // LAB_80038bd8
-                int countdown = entity.NextFrameDelay;
-                countdown -= 1;
-                entity.NextFrameDelay = countdown;
-
-                if (countdown != 0)
-                {
-                    goto END;
-                }
-
-                // when countdown reached 0, reload currentFrame pointer from a4 and continue processing
-                // (this matches: lw s1,0xa4(s0))
-            }
-            else
-            {
-                // LOAD_ANIMATION
-                var animRecordPtr = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
-
-                entity.AnimSet = animRecordPtr;   
-                entity.AnimationDirection = animationDirectionFromTable; 
-                entity.Frame = null;
-                entity.AnimationFrameIndex = 0;
-                entity.NextFrameDelay = 0;                       
-                entity.CurrentAnimationId = targetAnimationId;
-                entity.ForceResetAnimationFlag = 0;
-
-                var currentFrame = animRecordPtr.PreloadedAnims[animationDirectionFromTable >> 3].Frames[entity.AnimationFrameIndex];
-                entity.Frame = currentFrame;
-                entity.FirstFrame = currentFrame;
-                entity.IsZForceApplied = animRecordPtr.IsZForceApplied;
-                entity.AnimFlags = entity.AnimSet.U6; // TODO U6 ??
-
-                {
-                    var balanceRecord = entity.BalanceRecord;
-                    BalanceAnimValRef balanceAnimValRef = null;
-
-                    if (balanceRecord.NumAnimVals != 0)
-                    {
-                        if (targetAnimationId + 1 < balanceRecord.NumAnimVals)
-                        {
-                            balanceAnimValRef = balanceRecord.AnimVals[targetAnimationId << 1];
-                        }
-                        else
-                        {
-                            balanceAnimValRef = balanceRecord.AnimVals[0];
-                        }
-                    }
-
-                    entity.BalanceAnimValRef = balanceAnimValRef;
-
-                    {
-                        uint sfxId = entity.AnimSet.Sfx;
-                        if ((entity.AnimSet.Flags & 0x20) != 0)
-                        {
-                            sfxId += 0x100;
-                        }
-
-                        _gameEngine.SoundManager.PlaySoundEffect(sfxId);
-                    }
-                }
-            }
-
-            // LAB_80038bf0
-            {
-                var currentFrame = entity.Frame;
-                var delay = currentFrame.Delay;
-
-                if ((delay & 0x80) != 0)
-                {
-                    entity.NextFrameDelay = (delay & 0x7F);
-                    var animRecordPtr = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
-                    entity.AnimationFrameIndex++;
-                    entity.Frame = animRecordPtr.PreloadedAnims[animationDirectionFromTable >> 3].Frames[entity.AnimationFrameIndex];
-
-                    // read transform index (hi/lo) and update frame collision
-                    {
-                        if (currentFrame.CollisionData != null)  //(currentFrame.CollisionOffset != -1)
-                        {
-                            entity.FrameCollision = entity.Frame.CollisionData;
-                            entity.CollisionOffsetX = entity.FrameCollision.OffsetX << 16;
-                            entity.CollisionOffsetY = entity.FrameCollision.OffsetY << 16;
-                            entity.CollisionOffsetZ = entity.FrameCollision.OffsetZ << 16;
-                            entity.CollisionWidth = (entity.FrameCollision.Width << 16) - 1;
-                            entity.CollisionDepth = (entity.FrameCollision.Depth << 16) - 1;
-                            entity.CollisionHeight = (entity.FrameCollision.Height << 16) - 1;
-                        }
-                        else
-                        {
-                            entity.FrameCollision = null;
-                        }
-                    }
-
-                    if (entity.Frame.ImageSetPointer != -1)
-                    {
-                        entity.SpriteRef.Images = entity.Frame.Images.Images;
-                        entity.SpriteRef.DepthSortValue = entity.Frame.Images.DepthSortValue;
-                        entity.SpriteRef.NumberOfImages = entity.Frame.Images.NumberOfImages;
-                    }
-                    else
-                    {
-                        entity.SpriteRef.Images = null;
-                        entity.SpriteRef.DepthSortValue = 0;
-                        entity.SpriteRef.NumberOfImages = 0;
-                    }
-
-                    goto END;
-                }
-
-                // LAB_80038d14 (delay high-bit not set): interpret cmd in "spriteIndexLow" field (asm calls it pbVar1)
-                {
-                    if (currentFrame.SpriteIndexLow == 0)
-                    {
-                        if ((currentFrame.TransformIndexLow & 0x80) != 0)
-                        {
-                            entity.NextFrameDelay = 0x7FFFFFFF;
-                            entity.ForceResetAnimationFlag = 1;
-                            goto END;
-                        }
-
-                        // LAB_80038d54: restart animation (increment animCompleteCounter and reload)
-                        {
-                            entity.TargetAnimationId = currentFrame.TransformIndexLow;
-                            entity.AnimCompleteCounter += 1;
-                            // jump to LOAD_ANIMATION with frameDelay = newAnim
-                            targetAnimationId = currentFrame.TransformIndexLow;
-                            goto LOAD_ANIMATION_LABEL;
-                        }
-                    }
-                    
-                    if (currentFrame.SpriteIndexLow == 1)
-                    {
-                        // LAB_80038d70: advance firstFrame and continue
-                        entity.AnimCompleteCounter += 1;
-                        entity.AnimationFrameIndex = 0;
-                        entity.Frame = entity.FirstFrame;
-                        goto FRAME_PROCESS_LABEL;
-                    }
-                    else
-                    {
-                        Debugger.Break();
-                        // LAB_80038d88: error path
-                        //DoNothing();
-                        //PrintInfo("No      = %d", entity.Index);
-                        //PrintInfo("Init    = %d", entity.EntityRefId);
-                        //PrintInfo("Race    = %d", entity.SpriteTableIndex);
-                        //PrintInfo("Act     = %d", entity.TargetAnimationId);
-                        //PrintInfo("Dir     = %d", entity.TargetDirection);
-                        //PrintInfo("AnimDir = %d", entity.AnimationDirection);
-                        //exit(1);
-                    }
-                }
-            }
-        }
-
-        LOAD_ANIMATION_LABEL:
-        {
-            // Re-enter "LOAD_ANIMATION" logic.
-            // (We duplicate minimal structure by re-calling ourselves style-wise is not allowed;
-            //  keep as goto to preserve control flow.)
-        }
-        FRAME_PROCESS_LABEL:
-        {
-            // Re-enter frame processing at LAB_80038bf0.
-        }
-
-        END:
-        return;
-    }
-
-    // 80038ab4
     private void UpdateAnimation(Entity entity)
     {
         AnimationSet? animSet;
@@ -428,14 +245,14 @@ public class EntityManager
             {
                 Debugger.Break();
             }
-            entity.AnimSet = animSet;
+            entity.AnimationSet = animSet;
             entity.Frame = currentFrame;
             entity.FirstFrame = currentFrame;
             entity.IsZForceApplied = animSet.IsZForceApplied;
 
             entity.NextFrameDelay = entity.Frame.Delay & 0x7f;
             entity.ForceResetAnimationFlag = 0;
-            entity.AnimFlags = entity.AnimSet.U6; // TODO U6 ??
+            entity.AnimFlags = entity.AnimationSet.Acceleration; // TODO Acceleration ??
 
             if (entity.BalanceRecord.NumAnimVals == 0)
             {
@@ -447,8 +264,8 @@ public class EntityManager
                 entity.BalanceAnimValRef = entity.BalanceRecord.AnimVals[index];
             }
 
-            uint sfxId = entity.AnimSet.Sfx;
-            if ((entity.AnimSet.Flags & 0x20) != 0)
+            uint sfxId = entity.AnimationSet.Sfx;
+            if ((entity.AnimationSet.Flags & 0x20) != 0)
             {
                 sfxId += 0x100;
             }
@@ -466,7 +283,7 @@ public class EntityManager
 
             try
             {
-                preloadedAnim = entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3];
+                preloadedAnim = entity.AnimationSet.PreloadedAnims[entity.TargetDirection >> 3];
             }
             catch (Exception e)
             {
@@ -541,7 +358,7 @@ public class EntityManager
             entity.SpriteRef.NumberOfImages = 0;
         }
 
-        var anim = entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3];
+        var anim = entity.AnimationSet.PreloadedAnims[entity.TargetDirection >> 3];
         var nextFrameIndex = entity.AnimationFrameIndex + 1;
 
         if (nextFrameIndex >= anim.NumberOfFrames)
@@ -552,7 +369,7 @@ public class EntityManager
         }
         else
         {
-            if (entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[nextFrameIndex] == null)
+            if (entity.AnimationSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[nextFrameIndex] == null)
             {
                 entity.Frame = entity.FirstFrame;
             }
@@ -1984,23 +1801,21 @@ public class EntityManager
     // 80036614
     private void UpdateEntityPhysics(Entity entity)
     {
-        if (entity.Speed == entity.AnimSet.Speed
-            && entity.TargetDirection == entity.CurrentDirection)
+        if (entity.Speed == entity.AnimationSet.Speed
+            && entity.TargetDirection == entity.CurrentDirection
+            && entity.Acceleration == (entity.AnimationSet.Acceleration & 0xf))//acceleration ?
         {
-            if (entity.Acceleration == (entity.AnimSet.U6 & 0xf)) //acceleration ?
-            {
-                return;
-            }
-        }
-        else
-        {
-            entity.CurrentDirection = entity.TargetDirection;
-            entity.Speed = entity.AnimSet.Speed;
-            entity.TargetForceX = _gameEngine.StaticVariables.g_offsetXList[entity.TargetDirection] * entity.AnimSet.Speed;
-            entity.TargetForceY = _gameEngine.StaticVariables.g_offsetYList[entity.TargetDirection] * entity.AnimSet.Speed;
+            return;
         }
 
-        entity.Acceleration = entity.AnimSet.U6 & 0xf; // acceleration ?
+        entity.CurrentDirection = entity.TargetDirection;
+
+        entity.Speed = entity.AnimationSet.Speed;
+        entity.Acceleration = entity.AnimationSet.Acceleration & 0xf; // acceleration ?
+
+        entity.TargetForceX = _gameEngine.StaticVariables.g_offsetXList[entity.TargetDirection] * entity.AnimationSet.Speed;
+        entity.TargetForceY = _gameEngine.StaticVariables.g_offsetYList[entity.TargetDirection] * entity.AnimationSet.Speed;
+
         entity.ForceStepX = Math.Abs(entity.TargetForceX - entity.ForceX) >> entity.Acceleration;
         entity.ForceStepY = Math.Abs(entity.TargetForceY - entity.ForceY) >> entity.Acceleration;
     }

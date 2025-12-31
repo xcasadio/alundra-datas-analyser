@@ -17,7 +17,7 @@ record AnimationSetJson
         Speed = animationSet.Speed;
         Sfx = animationSet.Sfx;
         Flags = animationSet.Flags;
-        Acceleration = animationSet.Acceleration;
-        U6 = animationSet.U6;
+        Acceleration = animationSet._C;
+        U6 = animationSet.Acceleration;
     }
 }

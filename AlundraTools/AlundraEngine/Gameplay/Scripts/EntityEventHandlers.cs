@@ -680,7 +680,7 @@ public class EntityEventHandlers
         }
 
         //Debugger.Break();
-        _gameEngine.TriggerVisualUpdate((int)logicEntity.SpriteTableIndex);
+        _gameEngine.TryOpenDialogWithName((int)logicEntity.SpriteTableIndex);
         //var res = _gameEngine.TryOpenDialog((uint)((variables[2] << 8) | variables[1]), 0);
         var res = _gameEngine.TryOpenDialog((uint)variables[1], variables[2]);
 
@@ -1877,7 +1877,7 @@ public class EntityEventHandlers
                     bitmap);
             }
 
-            _gameEngine.TriggerVisualUpdate((int)matchedEntity.SpriteTableIndex);
+            _gameEngine.TryOpenDialogWithName((int)matchedEntity.SpriteTableIndex);
         }
 
         matchCount = _gameEngine.TryOpenDialog((uint)variables[2], variables[3]);
@@ -3878,7 +3878,7 @@ public class EntityEventHandlers
             }
 
             int spriteUpdateId = (variables[3] << 8) | variables[2];
-            _gameEngine.TriggerVisualUpdate(spriteUpdateId);
+            _gameEngine.TryOpenDialogWithName(spriteUpdateId);
         }
 
         if (_gameEngine.TryOpenDialog((uint)variables[4], variables[5]) == 0)

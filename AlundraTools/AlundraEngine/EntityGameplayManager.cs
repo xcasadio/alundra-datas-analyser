@@ -359,7 +359,7 @@ public class EntityGameplayManager
         uint stepDistance;
 
         //stepDistance = entity.SpriteRecord.AnimationOffsetsPointer[animIndex * 0xe + 8];
-        stepDistance = entity.SpriteRecord.AnimSets[animIndex].U6; // TODO check which property => flag or acceleration...
+        stepDistance = entity.SpriteRecord.AnimSets[animIndex].Acceleration; // TODO check which property => flag or acceleration...
         height = GetTileHeightAtOffset(entity,
             _gameEngine.StaticVariables.g_offsetXList[direction] * (int)stepDistance,
             _gameEngine.StaticVariables.g_offsetYList[direction] * (int)stepDistance);

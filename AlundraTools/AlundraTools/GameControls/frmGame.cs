@@ -82,7 +82,7 @@ public partial class FrmGame : Form
         [nameof(Entity.LastTargetDirection)] = "Display",
         [nameof(Entity.AnimationDirection)] = "Display",
         [nameof(Entity.AnimationFrameIndex)] = "Display",
-        [nameof(Entity.AnimSet)] = "Display",
+        [nameof(Entity.AnimationSet)] = "Display",
         [nameof(Entity.Frame)] = "Display",
         [nameof(Entity.FirstFrame)] = "Display",
         [nameof(Entity.NextFrameDelay)] = "Display",
@@ -1018,7 +1018,7 @@ public partial class FrmGame : Form
             content.Append("FinalForceX;FinalForceY;FinalForceZ;ForceStepX;ForceStepY;");
             content.Append("TargetForceX;TargetForceY;");
             content.Append("AdjustedForceX;AdjustedForceY;ForceAdjusted;");
-            content.Append("Speed;Acceleration;IsZForceApplied;");
+            content.Append("Speed;_C;IsZForceApplied;");
 
             content.AppendLine();
 

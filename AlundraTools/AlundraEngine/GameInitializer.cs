@@ -461,6 +461,10 @@ public class GameInitializer
         //_gameEngine.StaticVariables.g_resetDirectionId = 16;
         //_gameEngine.StaticVariables.g_resetAnimationId = 78;
         //_gameEngine.StaticVariables.g_isGameEnding = 1;
+
+        //active la map 471 Final boss
+        //_gameEngine.StaticVariables.g_desiredMap = 471;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 40000000;
     }
 
     // 8004dac0

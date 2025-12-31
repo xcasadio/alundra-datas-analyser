@@ -22,7 +22,6 @@ public class EtcResR : EtcRes
             StringByIndex.Add(offset, StringTable[i]);
         }
 
-
         for (int i = 0; i < 0x100; i++)
         {
             int offset = IndexTable[i];
@@ -76,20 +75,6 @@ public class EtcResR : EtcRes
     public override string GetEtcString(int id)
     {
         return StringByIndex[IndexTable[id]];
-
-        //Debugger.Break();
-
-        /*
-        0 < id < 0x100 (256) => DescriptionStrings
-        0x100 (256) < id < 0x200 (512) => StringTable
-        0x400 (1024) < id < => Strings
-         */
-
-        //var buffer = File.ReadAllBytes(FileName);
-        //int offset = _indexTable[id];
-        //var value = ReadString(buffer, ref offset);
-
-        //return Strings[id];
     }
 
     public override string GetOtherString(int id)

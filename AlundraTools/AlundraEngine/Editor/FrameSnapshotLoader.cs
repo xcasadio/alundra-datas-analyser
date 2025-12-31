@@ -390,14 +390,14 @@ public static class FrameSnapshotLoader
             entity.CurrentAnimationId = currentAnimationId;
             entity.CurrentDirection = currentDirection;
             entity.AnimationDirection = currentFrameIndex;
-            //entity.AnimSet = animSet;
-            if (entity.AnimSet != null 
-                && entity.AnimSet.PreloadedAnims[entity.TargetDirection >> 3].NumberOfFrames > 0
+            //entity.AnimationSet = animSet;
+            if (entity.AnimationSet != null 
+                && entity.AnimationSet.PreloadedAnims[entity.TargetDirection >> 3].NumberOfFrames > 0
                 && frameIndex != -1)
             {
                 var animRecordPtr = entity.SpriteRecord.AnimSets[currentAnimationId];
                 var currentFrame = animRecordPtr.PreloadedAnims[targetDirection >> 3].Frames[frameIndex];
-                entity.AnimSet = animRecordPtr;
+                entity.AnimationSet = animRecordPtr;
                 entity.Frame = currentFrame;
                 entity.FirstFrame = currentFrame;
             }

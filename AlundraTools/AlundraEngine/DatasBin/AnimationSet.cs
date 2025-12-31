@@ -6,8 +6,8 @@ public class AnimationSet
     public readonly ushort Speed; //0x8
     public readonly byte Sfx; // 0xa
     public readonly byte Flags; //0xb
-    public readonly byte Acceleration; // 0xc
-    public readonly byte U6; // 0xd
+    public readonly byte _C; // 0xc
+    public readonly byte Acceleration; // 0xd
 
     public readonly int MemoryAddress;
     public readonly SiAnimation[] PreloadedAnims;
@@ -31,8 +31,8 @@ public class AnimationSet
         Speed = br.ReadUInt16();
         Sfx = br.ReadByte();
         Flags = br.ReadByte();
+        _C = br.ReadByte();
         Acceleration = br.ReadByte();
-        U6 = br.ReadByte();
         PreloadedAnims = new SiAnimation[4];
     }
 }

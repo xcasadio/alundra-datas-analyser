@@ -597,7 +597,7 @@ public class GraphicManager
 
             if (_gameEngine.StaticVariables.g_tileAnimationType != 0)
             {
-                UpdateTileAnimationFrame();
+                UpdateScrollingTileAnimation();
             }
 
             numberOfLayerRendered = 0;
@@ -623,7 +623,7 @@ public class GraphicManager
     }
 
     //8005b7a0
-    private void UpdateTileAnimationFrame()
+    private void UpdateScrollingTileAnimation()
     {
         //_gameEngine.StaticVariables.g_tileOffset = _gameEngine.StaticVariables.g_animationData >> 5;
         //_gameEngine.StaticVariables.g_animationCounter += 1;
@@ -1056,7 +1056,7 @@ public class GraphicManager
         _gameEngine.MainInventoryManager.InitializeHudTransitionVariablesAndSetStart(
             player.PosX, player.PosY, player.PosZ,
             _gameEngine.StaticVariables.g_cameraScrollingX, _gameEngine.StaticVariables.g_cameraScrollingY,
-            (sbyte)image.Sx, (sbyte)image.Sy, /*image.Swidth, image.Sheight,*/ bitmap);
+            (sbyte)image.Sx, (sbyte)image.Sy, bitmap);
         _gameEngine.SoundManager.PlaySoundEffect(4);
         return 1;
     }
@@ -1069,8 +1069,6 @@ public class GraphicManager
         using var br = _gameEngine.DatasBin.OpenBin();
         var siImageSet = _gameEngine.AlundraMap.SpriteInfo.SpriteRecords[index].GetPortraitImageset(br);
         return siImageSet.Images[0];
-        //return (((g_initialAnimationTable.animationSet).animationOffsets + index * 2 + -0x10) + 0xc) + 2;
-        //return null;
     }
 
     //800506fc

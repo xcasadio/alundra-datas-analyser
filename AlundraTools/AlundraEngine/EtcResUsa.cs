@@ -2,75 +2,82 @@
 
 namespace AlundraEngine;
 
+//same as EUR version ? => EtcResR
 public class EtcResUsa : EtcRes
 {
     public EtcResUsa(string fileName) : base(fileName)
     {
         using var br = new BinaryReader(File.OpenRead(fileName));
-        var indexTable = new short[1024];
+        IndexTable = new short[1024];
 
         for (int i = 0; i < 1024; i++)
         {
-            indexTable[i] = br.ReadInt16();
+            IndexTable[i] = br.ReadInt16();
         }
 
         var buffer = File.ReadAllBytes(fileName);
 
         for (int i = 0; i < 0x100; i++)
         {
-            int offset = indexTable[i + 0x100];
-            StringTable[i] = ReadString(buffer, ref offset);
+            int offset = IndexTable[i + 0x100];
+            var j = offset;
+            StringTable[i] = ReadString(buffer, ref j);
+            StringByIndex.Add(offset, StringTable[i]);
         }
-
 
         for (int i = 0; i < 0x100; i++)
         {
-            int offset = indexTable[i];
+            int offset = IndexTable[i];
 
-            if (offset != -1)
+            if (offset == -1)
             {
-                DescriptionStrings[i] = ReadString(buffer, ref offset);
+                continue;
             }
+
+            var j = offset;
+            DescriptionStrings[i] = ReadString(buffer, ref j);
+            StringByIndex.Add(offset, DescriptionStrings[i]);
         }
 
         int x = 0;
         int l = 0x400 * 2;
         while (l < buffer.Length)
         {
+            var offset = l;
             var str = ReadString(buffer, ref l);
             if (!string.IsNullOrEmpty(str))
             {
                 Strings[x++] = str;
             }
             l++;
+
+            StringByIndex.TryAdd(offset, str);
         }
 
         for (int i = 0; i < 0x62; i++)
         {
-            int iconNameOffset = indexTable[i + 0x200];
-            int descriptionOffset = indexTable[i + 0x280];
-            int OtherStringOffset = indexTable[i + 0x300];
-
+            int iconNameOffset = IndexTable[i + 0x200];
             var offset = iconNameOffset;
-
             if (offset != -1)
             {
                 IconNames[i * 2] = ReadString(buffer, ref offset);
-                //_gameEngine.StaticVariables.g_itemDropProperties[i * 2] = (byte)i;
+                StringByIndex.TryAdd(iconNameOffset, IconNames[i * 2]);
             }
 
+            int descriptionOffset = IndexTable[i + 0x280];
             offset = descriptionOffset;
-
             if (offset != -1)
             {
                 DescriptionItems[i * 2] = ReadString(buffer, ref offset);
+                StringByIndex.TryAdd(descriptionOffset, DescriptionItems[i * 2]);
             }
 
-            offset = OtherStringOffset;
-
+            int otherStringOffset = IndexTable[i + 0x300];
+            offset = otherStringOffset;
             if (offset != -1)
             {
                 OtherStrings[i * 2] = ReadString(buffer, ref offset);
+                StringByIndex.TryAdd(otherStringOffset, OtherStrings[i * 2]);
             }
         }
     }
@@ -82,19 +89,7 @@ public class EtcResUsa : EtcRes
 
     public override string GetEtcString(int id)
     {
-        Debugger.Break();
-
-        /*
-        0 < id < 0x100 (256) => DescriptionStrings
-        0x100 (256) < id < 0x200 (512) => StringTable
-        0x400 (1024) < id < => Strings
-         */
-
-        //var buffer = File.ReadAllBytes(_fileName);
-        //int offset = _indexTable[id];
-        //var value = ReadString(buffer, ref offset);
-
-        return Strings[id];
+        return StringByIndex[IndexTable[id]];
     }
 
     public override string GetOtherString(int id)

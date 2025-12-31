@@ -1095,7 +1095,7 @@ namespace AlundraTools.GameControls
                     rdoLeft.Text = $"left ({_selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Left]})";
                     rdoRight.Text = $"right ({_selectedAnimSet.AnimationOffsets[(int)SiAnimDir.Right]})";
                     rdoDown.Checked = true;
-                    lblAnimProps.Text = $"speed: {_selectedAnimSet.Speed} sfx: {_selectedAnimSet.Sfx} flags: {_selectedAnimSet.Flags} {_selectedAnimSet.Acceleration} {_selectedAnimSet.U6}";
+                    lblAnimProps.Text = $"speed: {_selectedAnimSet.Speed} sfx: {_selectedAnimSet.Sfx} flags: {_selectedAnimSet.Flags} {_selectedAnimSet._C} {_selectedAnimSet.Acceleration}";
                 }
             }
             else if (_selectedSpriteEffectRecord != null)

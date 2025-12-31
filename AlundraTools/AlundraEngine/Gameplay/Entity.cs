@@ -35,7 +35,7 @@ public class Entity
     public uint CurrentAnimationId;
     public uint CurrentDirection;
     public int AnimationDirection;
-    public AnimationSet? AnimSet;
+    public AnimationSet? AnimationSet;
     public SiFrame? FirstFrame;
     public SiFrame? Frame;
     public int NextFrameDelay;
@@ -169,7 +169,7 @@ public class Entity
         CurrentAnimationId = other.CurrentAnimationId;
         CurrentDirection = other.CurrentDirection;
         AnimationDirection = other.AnimationDirection;
-        AnimSet = other.AnimSet;
+        AnimationSet = other.AnimationSet;
         FirstFrame = other.FirstFrame;
         Frame = other.Frame;
         NextFrameDelay = other.NextFrameDelay;
@@ -319,7 +319,7 @@ public class Entity
         CurrentAnimationId = 0;
         CurrentDirection = 0;
         AnimationDirection = 0;
-        AnimSet = null;
+        AnimationSet = null;
         FirstFrame = null;
         Frame = null;
         NextFrameDelay = 0;
