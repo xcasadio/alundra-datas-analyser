@@ -1189,7 +1189,7 @@ public class UIManager
                                         break;
                                     }
 
-                                    Debugger.Break();
+                                    //Debugger.Break();
                                     pcVar2 = ' ';
 
                                 } while (currentLineIndex < cursor + -1);

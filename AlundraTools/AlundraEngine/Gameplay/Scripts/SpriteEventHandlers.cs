@@ -38,7 +38,7 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramALoad, 15, FunctionTypeA.SpawnSpecificWarpAndResetLoader);
         Register(ScriptHelper.ProgramALoad, 16, FunctionTypeA.SetAnim0AndResetLoader);
         Register(ScriptHelper.ProgramALoad, 17, FunctionTypeA.SetAnimEAndResetLoader);
-        Register(ScriptHelper.ProgramALoad, 18, FunctionTypeA.SetAnimEAndClearZForce);
+        Register(ScriptHelper.ProgramALoad, 18, FunctionTypeA.SetTargetAnimationTo14);
         Register(ScriptHelper.ProgramALoad, 19, FunctionTypeA.SetCustomByteFromProgramIndex);
         Register(ScriptHelper.ProgramALoad, 20, FunctionTypeA.SetCustomByteFromZPos);
         Register(ScriptHelper.ProgramALoad, 21, FunctionTypeA.SpawnWarpDropAndAdjustPosition);

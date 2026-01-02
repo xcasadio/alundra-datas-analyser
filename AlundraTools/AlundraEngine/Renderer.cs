@@ -20,11 +20,9 @@ public class Renderer(GameEngine gameEngine)
     private readonly SortedDictionary<int, List<Sprite>> _sprites = new();
     public readonly Bitmap WhiteBitmap = CreateWhiteBitmap();
 
-    // Cache pour les quads colorés
     private readonly Dictionary<QuadColorKey, Bitmap> _quadColorCache = new();
-    // Cache pour les rectangles
     private readonly Dictionary<RectangleColorKey, Bitmap> _rectangleCache = new();
-    private const int MaxCacheSize = 256;
+    private const int MaxCacheSize = 10000;
 
     private static Bitmap CreateWhiteBitmap()
     {

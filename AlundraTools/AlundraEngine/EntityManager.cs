@@ -2882,7 +2882,6 @@ public class EntityManager
         maxEntity = _gameEngine.StaticVariables.g_numberOfEntities;
         result = 0;
         i = 0;
-        var j = 0;
 
         if (-1 < _gameEngine.StaticVariables.g_numberOfEntities)
         {
@@ -2895,13 +2894,11 @@ public class EntityManager
                     && currentEntity.Status - 2 < 2 
                     && currentEntity.IsNotProcessable == 0)
                 {
-                    currentEntity = entity;
-                    result = result + 1;
-                    j = entity.Index;
+                    result++;
+                    currentEntity = _gameEngine.StaticVariables.g_entitySlots[entity.Index];
                 }
 
-                i = i + 1;
-                currentEntity = _gameEngine.StaticVariables.g_entitySlots[j];
+                i++;
                 entity2 = _gameEngine.StaticVariables.g_entitySlots[i];
             } while (i <= maxEntity);
         }

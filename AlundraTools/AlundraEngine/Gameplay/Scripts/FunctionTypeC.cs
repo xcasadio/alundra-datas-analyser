@@ -4224,7 +4224,7 @@ public static class FunctionTypeC
     }
 
     //80065750
-    //Item
+    //Item spawn
     public static void FUN_8007c174(GameEngine gameEngine, Entity entity)
     {
         int itemState;
@@ -4238,7 +4238,7 @@ public static class FunctionTypeC
         {
             if (entity.DelayOrAngle != 0)
             {
-                entity.DelayOrAngle += -1;
+                entity.DelayOrAngle -= 1;
                 return;
             }
 
@@ -4246,7 +4246,7 @@ public static class FunctionTypeC
 
             if (itemState == 1)
             {
-            LAB_8007c6f4:
+                LAB_8007c6f4:
                 if (gameEngine.CdManager.FUN_8005a7d4())
                 {
                     return;
@@ -4291,7 +4291,7 @@ public static class FunctionTypeC
                 if (entity.AIValues[4] == 0)
                 {
                     entity.ItemState += 2;
-                    Debugger.Break();
+                    //Debugger.Break();
                     soundSfxIndex = gameEngine.StaticVariables.g_itemDropProperties[itemId].SoundSfxIndex; //itemId * 8 + 5
 
                     if (soundSfxIndex == 0)

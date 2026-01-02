@@ -89,7 +89,8 @@ public static class FunctionTypeA
     public static void TriggerMultipleWarpsAndClearHistory(GameEngine gameEngine, Entity entity)
     {
         var index = Array.IndexOf(gameEngine.StaticVariables.g_entitySlots, entity);
-        for (int i = index + 1; i < index + 15; i++)
+
+        for (int i = index + 1; i < index + 16; i++)
         {
             gameEngine.DestroyEntity(gameEngine.StaticVariables.g_entitySlots[i]);
         }
@@ -114,9 +115,16 @@ public static class FunctionTypeA
     // 80061930
     public static void SpawnSpecificWarpAndResetLoader(GameEngine gameEngine, Entity entity)
     {
-        Entity spawned = gameEngine.SpawnWarpEntity(entity, 1, 0x9D,
-            entity.PosX + 0x380000, entity.PosY, entity.PosZ - 0x200000, entity.TargetDirection);
-        entity.AIValues.Set(0xa000, 1); //spawned;
+        Entity spawned = gameEngine.SpawnWarpEntity(
+            entity, 
+            1, 
+            0x9D,
+            entity.PosX + 0x380000, 
+            entity.PosY, 
+            entity.PosZ - 0x200000, 
+            entity.TargetDirection);
+
+        entity.AIValues[2] = (short)spawned.Index;
         gameEngine.StaticVariables.g_loaderInitialized = 0;
     }
 
@@ -132,20 +140,23 @@ public static class FunctionTypeA
     {
         entity.TargetAnimationId = 0xE;
         gameEngine.StaticVariables.g_loaderInitialized = 0;
-        entity.AIValues[1] = 0;
+        entity.AIValues[2] = 0;
+        entity.AIValues[3] = 0;
     }
 
     // 800619C0
-    public static void SetAnimEAndClearZForce(GameEngine gameEngine, Entity entity)
+    public static void SetTargetAnimationTo14(GameEngine gameEngine, Entity entity)
     {
         entity.TargetAnimationId = 0xE;
-        entity.AIValues[1] = 0;
+        entity.AIValues[2] = 0;
+        entity.AIValues[3] = 0;
     }
 
     // 800619D0
     public static void SetCustomByteFromProgramIndex(GameEngine gameEngine, Entity entity)
     {
-        entity.DelayOrAngle = entity.ProgramIndexes[2]; //Bytes[0] + 1
+        entity.Bytes[1] = (byte)entity.ProgramIndexes[2];
+        //entity.DelayOrAngle = entity.ProgramIndexes[2];
     }
 
     // 800619DC
@@ -177,6 +188,7 @@ public static class FunctionTypeA
     }
 
     //80061bd4
+    //Chest
     public static void FUN_80061bd4(GameEngine gameEngine, Entity entity)
     {
         ushort contentFlags;
@@ -184,13 +196,15 @@ public static class FunctionTypeA
 
         if (entity.SpriteTableIndex == 0x1e)
         {
-            if (entity.ContentsItemId == 0)
+            if (entity.ContentsItemId != 0)
             {
-                entity.TargetAnimationId = 1;
+                return;
             }
 
+            entity.TargetAnimationId = 1;
+
             return;
-        }
+        } 
 
         if (entity.Bytes[0] == 1)
         {
@@ -199,7 +213,7 @@ public static class FunctionTypeA
 
         if (entity.Bytes[0] == 2)
         {
-            if (entity.AIValues[4] == 1)
+            if (entity.ParentEntity.TargetAnimationId == 1)
             {
                 if (entity.AIValues[4] != 0)
                 {
