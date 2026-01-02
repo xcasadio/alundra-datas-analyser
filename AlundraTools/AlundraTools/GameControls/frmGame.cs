@@ -669,22 +669,14 @@ public partial class FrmGame : Form
     private static readonly (Keys Key, uint Flag)[] KeyboardMappings =
     [
         (Keys.Up, PadState.Up),
-        //(Keys.W, PadState.Up),
         (Keys.Down, PadState.Down),
-        //(Keys.S, PadState.Down),
         (Keys.Left, PadState.Left),
-        //(Keys.A, PadState.Left),
         (Keys.Right, PadState.Right),
-        //(Keys.D, PadState.Right),
         (Keys.K, PadState.Cross),
         (Keys.Space, PadState.Cross),
-        //(Keys.Z, PadState.Cross),
         (Keys.L, PadState.Circle),
-        //(Keys.X, PadState.Circle),
         (Keys.J, PadState.Square),
-        //(Keys.C, PadState.Square),
         (Keys.K, PadState.Triangle),
-        //(Keys.V, PadState.Triangle),
         (Keys.Enter, PadState.Start),
         (Keys.Back, PadState.Select),
         (Keys.Q, PadState.L1),
@@ -1613,6 +1605,22 @@ public partial class FrmGame : Form
     private void checkBoxLogDamage_CheckedChanged(object sender, EventArgs e)
     {
         _gameEngine.StaticVariables.IsLogDamageEnabled = checkBoxLogScript.Checked;
+    }
+
+    private void buttonSnapshot_Click(object sender, EventArgs e)
+    {
+        var i = 0;
+
+        while (true)
+        {
+            var filename = $"Snapshot_{i++}.bmp";
+
+            if (!File.Exists(filename))
+            {
+                _backBuffer.Save(filename);
+                break;
+            }
+        }
     }
 }
 

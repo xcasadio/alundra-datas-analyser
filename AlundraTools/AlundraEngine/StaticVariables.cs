@@ -479,6 +479,20 @@ public class StaticVariables
     public readonly int[] g_scriptAnimationTable = [0, 3, 1, 4, 0];
     //80027400
     public readonly int[] g_scriptAnimationTable2 = [0, 3, 1, 4, 0];
+    //80027440
+    public readonly int[] INT_ARRAY_80027440 = [ 
+        0,        // 0x00000000
+        262144,   // 0x00040000
+        0,        // 0x00000000
+        -262144,  // 0xFFFC0000
+        -458752,  // 0xFFF90000
+        0,        // 0x00000000
+        458752,   // 0x00070000
+        0,        // 0x00000000
+        0       // 0x00000000
+    ];
+    //80027604
+    public readonly short[] SHORT_ARRAY_80027604 = [0, 0, 0, 8, 0, 0, 0, -8, 0, -10, 0, 0, 0, 10, 0, 0];
     //800281dc
     public readonly int[] g_scriptAnimationTable3 = [0, 3, 1, 4,];
 
@@ -505,6 +519,9 @@ public class StaticVariables
         0x18, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x08, 0x08, 0x08, 0x08, 0x10, 0x10, 0x10, 0x10,
         0x10, 0x18, 0x18, 0x18, 0x18, 0x18, 0x10, 0x10, 0x10, 0x10, 0x18, 0x18, 0x18, 0x18
     ];
+
+    // 80028b54
+    public readonly byte[] BYTE_ARRAY_80028b54 = [0, 10,  8, 18];
 
     // 80028DCC
     public readonly int[] g_warpBehaviorTable =
@@ -11395,7 +11412,7 @@ public class StaticVariables
             new CallBackInfo
             {
                 Id = 10, Flags = 0, Data = null, X = 0x10, Y = 0x0C, Width = 0x20, Height = 0x04,
-                InitializeFunc = null, RenderFunc = gameEngine.MemoryCardManager.DisplayMemoryCardMenu, Arg = 0
+                InitializeFunc = null, RenderFunc = gameEngine.MemoryCardManager.InitializeMemoryCardMenu, Arg = 0
             },
             new CallBackInfo
             {
@@ -12086,54 +12103,13 @@ public class StaticVariables
     public int INT_800c4180; // 800C4180
     public short DAT_800c4184; // 800C4184
     public short DAT_800c4186; // 800C4186
-    public int DAT_800c4190; // 800C4190
-    public int DAT_800c4194; // 800C4194
-    public int DAT_800c4198; // 800C4198
-    public int DAT_800c419c; // 800C419C
-    public int PTR_DAT_800c41a0; // 800C41A0
-    public int DAT_800c41a4; // 800C41A4
-    public int DAT_800c41a8; // 800C41A8
-    public int DAT_800c41ac; // 800C41AC
-    public short DAT_800c41b0; // 800C41B0
-    public short DAT_800c41b2; // 800C41B2
-    public short DAT_800c41b4; // 800C41B4
-    public short DAT_800c41b6; // 800C41B6
-    public short DAT_800c41bc; // 800C41BC
-    public short DAT_800c41be; // 800C41BE
-    public int DAT_800c4210; // 800C4210
-    public int PTR_DAT_800c4214; // 800C4214
-    public int DAT_800c4218; // 800C4218
-    public int DAT_800c421c; // 800C421C
-    public int DAT_800c4220; // 800C4220
-    public short DAT_800c4224; // 800C4224
-    public short DAT_800c4226; // 800C4226
-    public short DAT_800c4228; // 800C4228
-    public short DAT_800c422a; // 800C422A
-    public short DAT_800c4230; // 800C4230
-    public short DAT_800c4232; // 800C4232
-    public int DAT_800c4284; // 800C4284
-    public int PTR_DAT_800c4288; // 800C4288
-    public int DAT_800c428c; // 800C428C
-    public int DAT_800c4290; // 800C4290
-    public int DAT_800c4294; // 800C4294
-    public short DAT_800c4298; // 800C4298
-    public short DAT_800c429a; // 800C429A
-    public short DAT_800c429c; // 800C429C
-    public short DAT_800c429e; // 800C429E
-    public short DAT_800c42a4; // 800C42A4
-    public short DAT_800c42a6; // 800C42A6
-    public int DAT_800c42f8; // 800C42F8
-    public int PTR_INT_800c42fc; // 800C42FC
-    public int DAT_800c4300; // 800C4300
-    public int DAT_800c4304; // 800C4304
-    public int DAT_800c4308; // 800C4308
-    public short DAT_800c430c; // 800C430C
-    public short DAT_800c430e; // 800C430E
-    public short DAT_800c4310; // 800C4310
-    public short DAT_800c4312; // 800C4312
-    public short DAT_800c4318; // 800C4318
-    public short DAT_800c431a; // 800C431A
-    public int DAT_800c436c; // 800C436C
+    public uint[] UINT_ARRAY_800c4190 = new uint[3]; // 800C4190
+    public TextToDisplay TextToDisplay_800c41a4 = new(); //800c41a4
+    public SPRT[] SPRT_ARRAY_800c41c0 = Enumerable.Range(0, 4).Select(x => new SPRT()).ToArray(); // 800c41c0
+    public TextToDisplay TextToDisplay_800c4218 = new(); //800c4218
+    public TextToDisplay TextToDisplay_800c428c = new(); //800c428c
+    public TextToDisplay TextToDisplay_800c4300 = new(); // 800C431A
+    public readonly int[] SHORT_ARRAY_800C436C = [-1, -1, 0, 0]; // 800C436C
     public int DAT_800c4370; // 800C4370
     public short DAT_800c4374; // 800C4374
     public byte g_characterNameTable; // 800C440C
@@ -12989,20 +12965,15 @@ public class StaticVariables
     public int g_hudTransitionStartX; // 801800FC
     public int g_hudTransitionStartY; // 80180100
     public uint[] UINT_ARRAY_80180108 = new uint[8]; // 80180108
+    public int INT_80180120; // 80180120
     public uint PTR_80180128; // 80180128
-    public int DAT_80180130; // 80180130
-    public int DAT_80180134; // 80180134
-    public int DAT_80180138; // 80180138
-    public short DAT_8018013c; // 8018013C
-    public short DAT_8018013e; // 8018013E
-    public short DAT_80180140; // 80180140
-    public short DAT_80180142; // 80180142
-    public short DAT_80180148; // 80180148
-    public short DAT_8018014a; // 8018014A
-    public string PTR_80180238; // 80180238
-    public string PTR_8018023c; // 8018023C
+    public TextToDisplay TextToDisplay_80180130 = new(); //80180130
+    public UIMemoryFileBox[] UIMemoryFileBox_ARRAY_80180150 = Enumerable.Range(0, 4).Select(x => new UIMemoryFileBox()).ToArray(); // 80180150
+    public string g_memoryCardOffsetArg1; // 80180238
+    public string g_memoryCardOffsetArg2; // 8018023C
     public uint g_UIDisplayFlags; // 80180240
     public TextToDisplay g_textToDisplay2 = new TextToDisplay(); // 80180244
+    public SPRT[] SPRT_ARRAY_80180210 = Enumerable.Range(0, 2).Select(x => new SPRT()).ToArray(); // 80180210
     public SPRT[] g_spriteMessageCharacterPortrait = Enumerable.Range(0, 2).Select(x => new SPRT()).ToArray();
     public int g_entitySpriteNameTableIndex; // 80180288
     public int g_cdDataStartPtr; // 801802A8

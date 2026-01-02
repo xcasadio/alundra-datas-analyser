@@ -50,3 +50,25 @@ public class TextToDisplay
         return $"t:{tick} s:{speed} m:{mode} x:{x} y:{y} sx:{startX} sy:{startY} ox:{originX} oy:{originY}";
     }
 }
+
+public class UIMemoryFileBox
+{
+    public int StartR;
+    public int StartG;
+    public int StartB;
+    public int TargetR;
+    public int TargetG;
+    public int TargetB;
+    public int R;
+    public int G;
+    public int B;
+    public int Tick;
+    public int Duration;
+    public int Enabled;
+
+    public override string ToString()
+    {
+        return $"Start:({StartR},{StartG},{StartB}) Target:({TargetR},{TargetG},{TargetB}) Current:({R},{G},{B}) Tick:{Tick} Duration:{Duration} Enabled:{Enabled}";
+    }
+}
+    

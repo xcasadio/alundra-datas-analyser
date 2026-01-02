@@ -219,6 +219,7 @@ namespace AlundraTools.GameControls
             buttonZoomX4 = new Button();
             buttonZoomX2 = new Button();
             tabPage2 = new TabPage();
+            checkBoxLogDamage = new CheckBox();
             checkBoxLogScript = new CheckBox();
             buttonClearLog = new Button();
             listBoxLogs = new ListBox();
@@ -231,7 +232,7 @@ namespace AlundraTools.GameControls
             tabPage3 = new TabPage();
             buttonRefreshScript = new Button();
             treeViewScript = new TreeView();
-            checkBoxLogDamage = new CheckBox();
+            buttonSnapshot = new Button();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -2301,6 +2302,17 @@ namespace AlundraTools.GameControls
             tabPage2.Text = "Logs";
             tabPage2.UseVisualStyleBackColor = true;
             // 
+            // checkBoxLogDamage
+            // 
+            checkBoxLogDamage.AutoSize = true;
+            checkBoxLogDamage.Location = new Point(380, 29);
+            checkBoxLogDamage.Name = "checkBoxLogDamage";
+            checkBoxLogDamage.Size = new Size(92, 19);
+            checkBoxLogDamage.TabIndex = 9;
+            checkBoxLogDamage.Text = "Log damage";
+            checkBoxLogDamage.UseVisualStyleBackColor = true;
+            checkBoxLogDamage.CheckedChanged += checkBoxLogDamage_CheckedChanged;
+            // 
             // checkBoxLogScript
             // 
             checkBoxLogScript.AutoSize = true;
@@ -2420,22 +2432,22 @@ namespace AlundraTools.GameControls
             treeViewScript.Size = new Size(490, 698);
             treeViewScript.TabIndex = 0;
             // 
-            // checkBoxLogDamage
+            // buttonSnapshot
             // 
-            checkBoxLogDamage.AutoSize = true;
-            checkBoxLogDamage.Location = new Point(380, 29);
-            checkBoxLogDamage.Name = "checkBoxLogDamage";
-            checkBoxLogDamage.Size = new Size(92, 19);
-            checkBoxLogDamage.TabIndex = 9;
-            checkBoxLogDamage.Text = "Log damage";
-            checkBoxLogDamage.UseVisualStyleBackColor = true;
-            checkBoxLogDamage.CheckedChanged += checkBoxLogDamage_CheckedChanged;
+            buttonSnapshot.Location = new Point(1706, 772);
+            buttonSnapshot.Name = "buttonSnapshot";
+            buttonSnapshot.Size = new Size(75, 23);
+            buttonSnapshot.TabIndex = 35;
+            buttonSnapshot.Text = "Snapshot";
+            buttonSnapshot.UseVisualStyleBackColor = true;
+            buttonSnapshot.Click += buttonSnapshot_Click;
             // 
             // FrmGame
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1793, 898);
+            Controls.Add(buttonSnapshot);
             Controls.Add(buttonCompareWithDump);
             Controls.Add(buttonExtractToCsv);
             Controls.Add(buttonLoadDump);
@@ -2703,5 +2715,6 @@ namespace AlundraTools.GameControls
         private CheckBox checkBoxLogScript;
         private CheckBox checkBoxDisableCollision;
         private CheckBox checkBoxLogDamage;
+        private Button buttonSnapshot;
     }
 }

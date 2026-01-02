@@ -123,7 +123,7 @@ public class Entity
     public bool IsMapSprite { get; set; }
 
     //for debugging
-    public string? SpriteName { get; set; }
+    public string? Name { get; set; }
 
     public void CopyFrom(Entity other)
     {
@@ -440,6 +440,6 @@ public class Entity
 
     public override string ToString()
     {
-        return $"#{Index} #{Index2} {SpriteName}";
+        return $"#{Index} #{Index2} {Name}";
     }
 }

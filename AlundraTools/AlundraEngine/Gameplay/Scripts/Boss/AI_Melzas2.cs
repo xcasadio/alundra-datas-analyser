@@ -150,7 +150,6 @@ public static class AI_Melzas2
     //80080ae0
     public static void UpdateEntityAI_ExecuteBossSpecialMove(GameEngine gameEngine, Entity entity)
     {
-
         ushort frameCounter = (ushort)entity.AIValues[1];
         frameCounter = (ushort)(frameCounter - 1);
         entity.AIValues[1] = (short)frameCounter;
@@ -164,15 +163,14 @@ public static class AI_Melzas2
             {
                 gameEngine.SoundManager.PlaySoundEffect(0x2E);
 
-                var uVar2 = Random.Next();
-                var uVar1 = Random.Next();
-                var uVar3 = Random.Next();
+                var rand1 = Random.Next();
+                var rand2 = Random.Next();
+                int xOffset = (int)(((rand1 * (ulong)(entity.Width >> 0x14) + 1) >> 0x20) * 0x10);
+                xOffset += (int)(((rand2 * 0x11) >> 0x20) * 0x10000);
+
+                var rand3 = Random.Next();
+                int zOffset = (int)(((rand3 * (ulong)(entity.Depth >> 0x14) + 1) >> 0x20) * 0x10);
                 var effectOffsetZ = (Random.Next() * 0x11) >> 0x20;
-
-                int xOffset = (int)(((uVar2 * (ulong)(entity.Width >> 0x14) + 1) >> 0x20) * 0x10);
-                xOffset += (int)(((uVar1 * 0x11) >> 0x20) * 0x10000);
-
-                int zOffset = (int)(((uVar3 * (ulong)(entity.Depth >> 0x14) + 1) >> 0x20) * 0x10);
                 zOffset += (int)(effectOffsetZ * 0x10000);
 
                 int effectX = entity.ModdedPosX + xOffset;

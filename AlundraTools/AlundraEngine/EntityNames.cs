@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 
 namespace AlundraEngine;
 
@@ -30,11 +31,12 @@ public static class EntityNames
 
     public static string? GetName(byte spriteDirection, uint spriteTableIndex)
     {
+        Debugger.Break();
         if ((spriteDirection & 0x80) != 0)
         {
             spriteTableIndex += 0x100;
         }
-
+    
         return spriteTableIndex < 512 ? SpriteNames[spriteTableIndex] : null;
     }
 

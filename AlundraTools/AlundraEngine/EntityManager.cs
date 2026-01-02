@@ -71,7 +71,7 @@ public class EntityManager
         entity.EntityRecord = entityRecord;
         entity.SpriteTableIndex = spriteTableIndex;
         //for debugging
-        entity.SpriteName = EntityNames.GetName(entityRecord?.SpriteDirection ?? 0, spriteTableIndex);
+        entity.Name = EntityNames.GetName(spriteTableIndex);
 
         if (entityRecord != null)
         {
@@ -2765,98 +2765,106 @@ public class EntityManager
         byte balanceMultiplier;
         bool isReduced;
 
-        if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
+        if (_gameEngine.StaticVariables.IsLogDamageEnabled)
+        //if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
         {
             _gameEngine.StaticVariables.g_balanceHpTotal = -1;
         }
 
-        if (balanceRecordData != null && balanceConfig != null)
+        if (balanceRecordData == null || balanceConfig == null)
         {
-            balanceId = balanceConfig.Val;
+            return hp;
+        }
 
-            if (balanceId != 0)
+        balanceId = balanceConfig.Val;
+
+        if (balanceId == 0)
+        {
+            return hp;
+        }
+
+        balanceMultiplier = balanceRecordData.Values[(balanceId & 0xf) - 1];
+
+        if ((balanceMultiplier & 0xc0) == 0)
+        {
+            adjustedHpValue = balanceConfig.U2;
+
+            if ((balanceId & 0x80) != 0)
             {
-                balanceMultiplier = balanceRecordData.Values[(balanceId & 0xf) - 1];
+                i = 0;
+                balanceSources = _gameEngine.StaticVariables.g_itemBalanceRecords;
 
-                if ((balanceMultiplier & 0xc0) == 0)
+                do
                 {
-                    adjustedHpValue = balanceConfig.U2;
+                    balanceRecord = balanceSources[i].BalanceRecord;
 
-                    if ((balanceId & 0x80) != 0)
+                    if (balanceRecord != null)
                     {
-                        i = 0;
-                        balanceSources = _gameEngine.StaticVariables.g_itemBalanceRecords;
-
-                        do
+                        if (balanceRecord.NumAnimVals == 0)
                         {
-                            balanceRecord = balanceSources[i].BalanceRecord;
+                            values = null;
+                        }
+                        else if (_gameEngine.StaticVariables.g_balanceAnimIndex + 1 < balanceRecord.NumAnimVals)
+                        {
+                            values = balanceRecord.AnimVals[(_gameEngine.StaticVariables.g_balanceAnimIndex << 1) + 0xf + 2];
+                        }
+                        else
+                        {
+                            values = balanceRecord.AnimVals[0];
+                        }
 
-                            if (balanceRecord != null)
-                            {
-                                if (balanceRecord.NumAnimVals == 0)
-                                {
-                                    values = null;
-                                }
-                                else if (_gameEngine.StaticVariables.g_balanceAnimIndex + 1 < balanceRecord.NumAnimVals)
-                                {
-                                    values = balanceRecord.AnimVals[(_gameEngine.StaticVariables.g_balanceAnimIndex << 1) + 0xf + 2];
-                                }
-                                else
-                                {
-                                    values = balanceRecord.AnimVals[0];
-                                }
-
-                                if (values != null)
-                                {
-                                    adjustedHpValue = adjustedHpValue + values.Val;
-                                }
-                            }
-
-                            i = i + 1;
-                        } while (i < 3);
+                        if (values != null)
+                        {
+                            adjustedHpValue = adjustedHpValue + values.Val;
+                        }
                     }
 
-                    i = (adjustedHpValue * balanceMultiplier) >> 4;
-                    isReduced = i < hp;
-
-                    if (i == 0)
-                    {
-                        i = 1;
-                        isReduced = 1 < hp;
-                    }
-
-                    newHp = 0;
-
-                    if (isReduced)
-                    {
-                        newHp = hp - i;
-                    }
-
-                    hp = newHp;
-
-                    if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
-                    {
-                        _gameEngine.StaticVariables.g_balanceHp = (short)adjustedHpValue;
-                        _gameEngine.StaticVariables.g_balanceParams = balanceConfig.U2;
-                        _gameEngine.StaticVariables.g_balanceResult = (short)i;
-                        _gameEngine.StaticVariables.g_balanceHpTotal = balanceConfig.Val;
-                        _gameEngine.StaticVariables.g_balanceMultiplier = balanceMultiplier;
-                    }
-                }
-                else if ((balanceMultiplier & 0xc0) == 0x40)
-                {
-                    if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
-                    {
-                        _gameEngine.StaticVariables.g_balanceHp = 0;
-                        _gameEngine.StaticVariables.g_balanceParams = 0;
-                        _gameEngine.StaticVariables.g_balanceResult = (short)hp;
-                        _gameEngine.StaticVariables.g_balanceHpTotal = balanceConfig.Val;
-                        _gameEngine.StaticVariables.g_balanceMultiplier = balanceMultiplier;
-                    }
-
-                    hp = 0;
-                }
+                    i = i + 1;
+                } while (i < 3);
             }
+
+            i = (adjustedHpValue * balanceMultiplier) >> 4;
+            isReduced = i < hp;
+
+            if (i == 0)
+            {
+                i = 1;
+                isReduced = 1 < hp;
+            }
+
+            newHp = 0;
+
+            if (isReduced)
+            {
+                newHp = hp - i;
+            }
+
+            hp = newHp;
+
+            if (_gameEngine.StaticVariables.IsLogDamageEnabled)
+                //if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
+            {
+                _gameEngine.StaticVariables.g_balanceHp = (short)adjustedHpValue;
+                _gameEngine.StaticVariables.g_balanceParams = balanceConfig.U2;
+                _gameEngine.StaticVariables.g_balanceResult = (short)i;
+                _gameEngine.StaticVariables.g_balanceHpTotal = balanceConfig.Val;
+                _gameEngine.StaticVariables.g_balanceMultiplier = balanceMultiplier;
+            }
+        }
+        else if ((balanceMultiplier & 0xc0) == 0x40)
+        {
+
+            if (_gameEngine.StaticVariables.IsLogDamageEnabled) 
+                //if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
+            {
+                _gameEngine.StaticVariables.g_balanceHp = 0;
+                _gameEngine.StaticVariables.g_balanceParams = 0;
+                _gameEngine.StaticVariables.g_balanceResult = (short)hp;
+                _gameEngine.StaticVariables.g_balanceHpTotal = balanceConfig.Val;
+                _gameEngine.StaticVariables.g_balanceMultiplier = balanceMultiplier;
+            }
+
+            hp = 0;
         }
 
         return hp;

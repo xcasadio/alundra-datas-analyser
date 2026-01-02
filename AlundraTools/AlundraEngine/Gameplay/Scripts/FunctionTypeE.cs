@@ -26,9 +26,18 @@ public static class FunctionTypeE
     }
 
     //8007eda0
+    //spores nv1
     public static void AI_FUN_8007eda0(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        if (entity.TargetAnimationId == 1 && entity.ForceResetAnimationFlag == 1)
+        {
+            gameEngine.DestroyEntity(entity, -1);
+        }
+        else
+        {
+            entity.TargetAnimationId = 1;
+            entity.Flags = (entity.Flags & 0xffffffcfU) | 0x40;
+        }
     }
 
     //8007ee04
@@ -176,7 +185,8 @@ public static class FunctionTypeE
     //8007f378
     public static void AI_FUN_8007f378(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        gameEngine.SoundManager.PlaySoundEffect(0x2d);
+        gameEngine.DestroyEntity(entity, -1);
     }
 
     //8007f3b0

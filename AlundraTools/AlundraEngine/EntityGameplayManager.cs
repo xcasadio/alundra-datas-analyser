@@ -120,99 +120,6 @@ public class EntityGameplayManager
         }
     }
 
-    //80080704
-    public bool TryAttackPlayer(Entity entity, int[] relativePositions, int maxHorizontalRange, int maxVerticalRange)
-    {
-        int animationDirection;
-        bool isWithinRange;
-
-        if (maxVerticalRange < relativePositions[2])
-        {
-            return false;
-        }
-
-        animationDirection = entity.AnimationDirection;
-
-        if (animationDirection == 1)
-        {
-            if (relativePositions[0] < 2 && -1 < relativePositions[4] &&
-                relativePositions[1] <= maxHorizontalRange)
-            {
-                return true;
-            }
-
-            if (1 < relativePositions[1])
-            {
-                return false;
-            }
-
-            isWithinRange = maxHorizontalRange < relativePositions[0];
-        }
-        else if (animationDirection < 2)
-        {
-            if (animationDirection != 0)
-            {
-                return false;
-            }
-
-            if (relativePositions[0] < 2 && relativePositions[4] < 1 &&
-                relativePositions[1] <= maxHorizontalRange)
-            {
-                return true;
-            }
-
-            if (1 < relativePositions[1])
-            {
-                return false;
-            }
-
-            isWithinRange = maxHorizontalRange < relativePositions[0];
-        }
-        else
-        {
-            if (animationDirection == 2)
-            {
-                if (relativePositions[1] < 2 && -1 < relativePositions[3] &&
-                    relativePositions[0] <= maxHorizontalRange)
-                {
-                    return true;
-                }
-
-                if (1 < relativePositions[0])
-                {
-                    return false;
-                }
-
-                if (relativePositions[1] <= maxHorizontalRange)
-                {
-                    return true;
-                }
-
-                return false;
-            }
-
-            if (animationDirection != 3)
-            {
-                return false;
-            }
-
-            if (relativePositions[1] < 2 && relativePositions[3] < 1 &&
-                relativePositions[0] <= maxHorizontalRange)
-            {
-                return true;
-            }
-
-            if (1 < relativePositions[0])
-            {
-                return false;
-            }
-
-            isWithinRange = maxHorizontalRange < relativePositions[1];
-        }
-
-        return !isWithinRange;
-    }
-
     public int HandleAnimationDirection(Entity entity, uint newAnimId, int currentZ)
     {
         int deltaBottomRight;
@@ -438,18 +345,109 @@ public class EntityGameplayManager
         return (int)(maxHeight << 0x14);
     }
 
-    //800805c8
-    public bool TryAttackPlayerFront(Entity entity, int[] relativePositions, int xThreshold, int yThreshold, int zThreshold)
+    //80080704
+    public bool TryAttackPlayer(Entity entity, int[] relativePositions, int maxHorizontalRange, int maxVerticalRange)
     {
         int animationDirection;
+        bool isWithinRange;
+
+        if (maxVerticalRange < relativePositions[2])
+        {
+            return false;
+        }
+
+        animationDirection = entity.AnimationDirection;
+
+        if (animationDirection == 1)
+        {
+            if (relativePositions[0] < 2 && -1 < relativePositions[4] &&
+                relativePositions[1] <= maxHorizontalRange)
+            {
+                return true;
+            }
+
+            if (1 < relativePositions[1])
+            {
+                return false;
+            }
+
+            isWithinRange = maxHorizontalRange < relativePositions[0];
+        }
+        else if (animationDirection < 2)
+        {
+            if (animationDirection != 0)
+            {
+                return false;
+            }
+
+            if (relativePositions[0] < 2 && relativePositions[4] < 1 &&
+                relativePositions[1] <= maxHorizontalRange)
+            {
+                return true;
+            }
+
+            if (1 < relativePositions[1])
+            {
+                return false;
+            }
+
+            isWithinRange = maxHorizontalRange < relativePositions[0];
+        }
+        else
+        {
+            if (animationDirection == 2)
+            {
+                if (relativePositions[1] < 2 && -1 < relativePositions[3] &&
+                    relativePositions[0] <= maxHorizontalRange)
+                {
+                    return true;
+                }
+
+                if (1 < relativePositions[0])
+                {
+                    return false;
+                }
+
+                if (relativePositions[1] <= maxHorizontalRange)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            if (animationDirection != 3)
+            {
+                return false;
+            }
+
+            if (relativePositions[1] < 2 && relativePositions[3] < 1 &&
+                relativePositions[0] <= maxHorizontalRange)
+            {
+                return true;
+            }
+
+            if (1 < relativePositions[0])
+            {
+                return false;
+            }
+
+            isWithinRange = maxHorizontalRange < relativePositions[1];
+        }
+
+        return !isWithinRange;
+    }
+
+    //8008048c
+    //see TryAttackPlayer: only difference animationDirection 
+    public bool TryAttackPlayer2(Entity entity, int[] relativePositions, int animationDirection, int xThreshold, int yThreshold, int zThreshold)
+    {
         bool isOutOfRange;
 
         if (zThreshold < relativePositions[2])
         {
             return false;
         }
-
-        animationDirection = entity.AnimationDirection;
 
         if (animationDirection == 1)
         {
@@ -524,5 +522,35 @@ public class EntityGameplayManager
         }
 
         return !isOutOfRange;
+    }
+
+    //800805c8
+    public bool TryAttackPlayerFront(Entity entity, int[] relativePositions, int xThreshold, int yThreshold, int zThreshold)
+    {
+        return TryAttackPlayer2(entity, relativePositions, entity.AnimationDirection, xThreshold, yThreshold, zThreshold);
+    }
+
+    //80080030
+    public void SetEntityRandomDirection(Entity entity, uint newAnimId, short delayDuration)
+    {
+        uint direction;
+        var rand = Random.Next();
+
+        if (((rand * 0x2000) & 0x100000000) == 0)
+        {
+            entity.TargetDirection = (uint)((rand * 0x2000) >> 0x28);
+        }
+        else
+        {
+            direction = (uint)ScriptHelper.GetDirectionToTarget(_gameEngine.StaticVariables.g_entitySlots[0].PosX - entity.PosX, _gameEngine.StaticVariables.g_entitySlots[0].PosY - entity.PosY);
+            entity.TargetDirection = direction;
+        }
+
+        entity.TargetAnimationId = newAnimId & 0xff;
+
+        if (delayDuration != 0)
+        {
+            entity.AIValues[1] = (short)(((Random.Next() * 0x10) >> 0x20) + (ulong)delayDuration);
+        }
     }
 }

@@ -48,8 +48,8 @@ public class LogManager
 
     private void LogImpl(string message)
     {
-        var logPrefix = $"Map#{_gameEngine.StaticVariables.g_currentMap} frame#{_gameEngine.StaticVariables.FrameNumber}";
-        var logWithCategory = $"{logPrefix} {CurrentCategory}: {message}";
+        var logPrefix = $"map#{_gameEngine.StaticVariables.g_currentMap:d3} frame#{_gameEngine.StaticVariables.FrameNumber:d6}";
+        var logWithCategory = $"{logPrefix} [{CurrentCategory}] {message}";
 
         if (TraceEnabled)
         {

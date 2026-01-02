@@ -1776,8 +1776,6 @@ public class EntityEventHandlers
     // 8003EE28
     private int Script_87_057(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-        //check CommandSizeByCode !!!!
         int v1 = variables[_gameEngine.StaticVariables.PlayerEntity.AnimationDirection * 2 + 1];
         int v2 = variables[_gameEngine.StaticVariables.PlayerEntity.AnimationDirection * 2 + 2];
         return ((v1 + v2 * 0x100) * 0x10000) >> 0x10;

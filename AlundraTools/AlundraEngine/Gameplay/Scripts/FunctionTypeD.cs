@@ -46,15 +46,52 @@ public static class FunctionTypeD
     }
 
     //8007dbe0
+    //mimique niveau 1 touch
     public static void AI_FUN_8007dbe0(GameEngine gameEngine, Entity entity)
     {
-        System.Diagnostics.Debugger.Break();
+        bool bVar1;
+        uint direction;
+        byte val;
+
+        val = entity.TouchingEntity.BalanceAnimValRef.Val;
+        direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
+        entity.TargetDirection = direction;
+
+        if ((val & 0xf) - 1 < 3 && entity.SpriteTableIndex == 0x1a9 && entity.TargetAnimationId < 2)
+        {
+            direction = 0xb;
+
+            if (0x3b < (uint)((Random.Next() * 100) >> 0x20))
+            {
+                goto LAB_8007dcbc;
+            }
+        }
+
+        if (gameEngine.EntityManager.ComputeNewHp(entity))
+        {
+            entity.Bytes[3] = 1;
+        }
+
+        direction = 5;
+
+        LAB_8007dcbc:
+        entity.TargetAnimationId = direction;
     }
 
     //8007dcd8
+    //fish
     public static void AI_FUN_8007dcd8(GameEngine gameEngine, Entity entity)
     {
-        System.Diagnostics.Debugger.Break();
+        //System.Diagnostics.Debugger.Break();
+
+        if (gameEngine.EntityManager.ComputeNewHp(entity))
+        {
+            entity.Bytes[3] = 1;
+        }
+
+        entity.TargetAnimationId = 6;
+        var direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
+        entity.TargetDirection = direction;
     }
 
     //8007dd3c
@@ -70,9 +107,17 @@ public static class FunctionTypeD
     }
 
     //8007de04
+    //muruta griffes nv1
     public static void AI_FUN_8007de04(GameEngine gameEngine, Entity entity)
     {
-        System.Diagnostics.Debugger.Break();
+        if (gameEngine.EntityManager.ComputeNewHp(entity))
+        {
+            entity.Bytes[3] = 1;
+        }
+
+        entity.TargetAnimationId = 2;
+        var direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
+        entity.TargetDirection = direction;
     }
 
     //8007de68
