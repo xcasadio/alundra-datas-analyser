@@ -563,7 +563,7 @@ public class EntityEventHandlers
         var zmin = variables[6];
         var zmax = variables[7];
 
-        var val = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var val = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         if (0 < val)
         {
@@ -1025,7 +1025,7 @@ public class EntityEventHandlers
     // 8003DC84
     private int Script_44_02C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
         eventProgramState.Result = num == 0 ? 1 : 0;
         return 2;
     }
@@ -1048,7 +1048,7 @@ public class EntityEventHandlers
     private int Script_46_02E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         eventProgramState.Result = 0;
-        var num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         for (var i = 0; i < num; i++)
         {
@@ -1468,7 +1468,7 @@ public class EntityEventHandlers
     // 8003E81C
     private int Script_67_043(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        int count = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        int count = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         if (count <= 0)
         {
@@ -1792,7 +1792,7 @@ public class EntityEventHandlers
     // 8003EE8C
     private int Script_89_059(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         for (var i = 0; i < num; i++)
         {
@@ -1810,7 +1810,7 @@ public class EntityEventHandlers
         int num;
 
         bVar1 = (byte)variables[2];
-        num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         for (int i = 0; i < num; i++)
         {
@@ -1831,7 +1831,7 @@ public class EntityEventHandlers
 
         animationId = (uint)variables[2];
         direction = (uint)variables[3];
-        num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         for (int i = 0; i < num; i++)
         {
@@ -1851,7 +1851,7 @@ public class EntityEventHandlers
         int matchCount;
         Entity matchedEntity;
 
-        matchCount = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        matchCount = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         if (matchCount != 0)
         {
@@ -1887,7 +1887,7 @@ public class EntityEventHandlers
     private int Script_93_05D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int num;
-        num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         for (int i = 0; i < num; i++)
         {
@@ -1903,7 +1903,7 @@ public class EntityEventHandlers
     {
         int num;
 
-        num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         for (int i = 0; i < num; i++)
         {
@@ -2046,7 +2046,7 @@ public class EntityEventHandlers
     private int Script_96_060(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int num;
-        num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         for (int i = 0; i < num; i++)
         {
@@ -2067,7 +2067,7 @@ public class EntityEventHandlers
     private int Script_97_061(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int num;
-        num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         for (int i = 0; i < num; i++)
         {
@@ -2091,7 +2091,7 @@ public class EntityEventHandlers
         int num;
 
         flag = (ushort)((variables[3] << 8) | variables[2]);
-        num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         for (int i = 0; i < num; i++)
         {
@@ -2108,7 +2108,7 @@ public class EntityEventHandlers
         ushort clearMask;
         int num;
 
-        num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         for (int i = 0; i < num; i++)
         {
@@ -2128,7 +2128,7 @@ public class EntityEventHandlers
         int y = ((variables[5] << 8) | variables[4]) << 16;
         int z = (((variables[7] << 8) | variables[6]) << 16) + 1;
 
-        var count = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var count = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         for (int i = 0; i < count; i++)
         {
@@ -2148,7 +2148,7 @@ public class EntityEventHandlers
         int y = (variables[4] | (variables[5] << 8)) << 16;
         int z = (variables[6] | (variables[7] << 8)) << 16;
 
-        var num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         for (int i = 0; i < num; i++)
         {
@@ -2182,7 +2182,7 @@ public class EntityEventHandlers
     // 8003F82C
     private int Script_103_067(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
         _gameEngine.StaticVariables.g_entityFollowedByCamera = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0];
         return 2;
     }
@@ -2586,7 +2586,7 @@ public class EntityEventHandlers
     private int Script_134_086(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var value = variables[2];
-        var num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         for (var i = 0; i < num; i++)
         {
@@ -2604,7 +2604,7 @@ public class EntityEventHandlers
         int count;
 
         expectedNibble = _gameEngine.StaticVariables.BYTE_ARRAY_80098fa4[variables[2]];
-        count = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        count = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         if (0 < count)
         {
@@ -2641,7 +2641,7 @@ public class EntityEventHandlers
         int piVar2;
         int piVar3;
         piVar3 = (&PTR_DAT_80023d2c)[variables[0][2]];
-        matchingEntityCount = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        matchingEntityCount = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         if (0 < matchingEntityCount)
         {
@@ -2662,7 +2662,7 @@ public class EntityEventHandlers
     // 80040194
     private int Script_137_089(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         for (var i = 0; i < num; i++)
         {
@@ -2702,7 +2702,7 @@ public class EntityEventHandlers
             //_gameEngine.PrintCommandMap();
         }
 
-        var num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         if (num != 0)
         {
@@ -2736,7 +2736,7 @@ public class EntityEventHandlers
     // 800404A8
     private int Script_141_08D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         for (var i = 0; i < num; i++)
         {
@@ -3011,7 +3011,7 @@ public class EntityEventHandlers
     private int Script_150_096(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var value = variables[1];
-        var num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         for (var i = 0; i < num; i++)
         {
@@ -3158,7 +3158,7 @@ public class EntityEventHandlers
 
         int piVar3;
 
-        iVar2 = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        iVar2 = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         if (iVar2 != 0 && _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].ContentsGameFlag != 0)
         {
@@ -3213,7 +3213,7 @@ public class EntityEventHandlers
         var effectid = variables[1];
         var entityId = variables[2];
 
-        var numEntities = _gameEngine.GetNumberOfEntityByRefId(logicEntity, entityId);
+        var numEntities = _gameEngine.GetMatchingEntityBySearchType(logicEntity, entityId);
         if (numEntities == 0)
         {
             return 9;
@@ -3260,7 +3260,7 @@ public class EntityEventHandlers
     // 80040FAC
     private int Script_163_0A3(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[2]);
+        var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[2]);
         var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0];
 
         if (num != 0)
@@ -3321,7 +3321,7 @@ public class EntityEventHandlers
         /*
         int iVar1;
         int piVar2;
-        iVar1 = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        iVar1 = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         if (0 < iVar1)
         {
@@ -3355,7 +3355,7 @@ public class EntityEventHandlers
 
         int piVar2;
 
-        iVar1 = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        iVar1 = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         if (0 < iVar1)
         {
@@ -3391,7 +3391,7 @@ public class EntityEventHandlers
     // 800412C4
     private int Script_172_0AC(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var count = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var count = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         if (count != 0)
         {
@@ -3408,7 +3408,7 @@ public class EntityEventHandlers
     // 80041344
     private int Script_173_0AD(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var count = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var count = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         if (count == 0)
         {
@@ -3437,7 +3437,7 @@ public class EntityEventHandlers
         int maxY = minY + (dy1 << 20);
         int maxZ = minZ + (dz1 << 20);
 
-        int i = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[2]) - 1;
+        int i = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[2]) - 1;
 
         while (i > 0)
         {
@@ -3522,7 +3522,7 @@ public class EntityEventHandlers
         Entity entity2;
         int matchIndex;
 
-        group1Count = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        group1Count = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         if (group1Count == 0)
         {
@@ -3533,7 +3533,7 @@ public class EntityEventHandlers
         Entity[] group1Entities = new Entity[group1Count];
         Array.Copy(_gameEngine.StaticVariables.g_matchingEntitiesBuffer, group1Entities, group1Count);
 
-        group2Count = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[2]);
+        group2Count = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[2]);
 
         if (0 < group2Count)
         {
@@ -3580,7 +3580,7 @@ public class EntityEventHandlers
     // 800417CC
     private int Script_180_0B4(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var iVar1 = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var iVar1 = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         if (iVar1 == 0 || _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].ForceZ < 1)
         {
@@ -3597,7 +3597,7 @@ public class EntityEventHandlers
     // 80041830
     private int Script_181_0B5(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         if (num == 0 || -1 < _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].ForceZ)
         {
@@ -3614,7 +3614,7 @@ public class EntityEventHandlers
     // 80041894
     private int Script_182_0B6(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var num = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         if (num == 0 || _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].ForceZ != 0)
         {
@@ -3635,7 +3635,7 @@ public class EntityEventHandlers
 
         var animationId = (byte)variables[2];
 
-        int i = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[2]) - 1;
+        int i = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[2]) - 1;
 
         while (i > 0)
         {
@@ -3660,7 +3660,7 @@ public class EntityEventHandlers
     {
         var targetDirection = (byte)variables[2];
 
-        int i = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[2]) - 1;
+        int i = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[2]) - 1;
 
         while (i > 0)
         {
@@ -3852,7 +3852,7 @@ public class EntityEventHandlers
     // 80041DA8
     private int Script_196_0C4(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var entityCount = _gameEngine.GetNumberOfEntityByRefId(logicEntity, variables[1]);
+        var entityCount = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         if (entityCount != 0)
         {

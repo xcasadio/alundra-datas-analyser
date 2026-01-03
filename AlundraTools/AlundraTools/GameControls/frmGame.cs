@@ -410,32 +410,22 @@ public partial class FrmGame : Form
 
     private void GameEngineTimerTick(object sender)
     {
-        if (_isRendering || Disposing || IsDisposed 
-                                  || pctOut.Disposing || pctOut.IsDisposed)
-        {
-            return;
-        }
-
         var targetFrameTime = (int)(20f / _gameEngine.StaticVariables.Speed); //PAL=20ms NTSC-J=16.68ms
         var dueTime = (int)Math.Max(1, targetFrameTime - _lastFrameTime);
         _gameEngineTimer.Change(dueTime, targetFrameTime);
 
-        if (InvokeRequired)
+        if (_isRendering || Disposing)
         {
-            Invoke(() =>
-            {
-                if (Disposing || IsDisposed 
-                              || pctOut.Disposing || pctOut.IsDisposed)
-                {
-                    return;
-                }
-
-                pctOut.Invalidate();
-            });
+            return;
         }
-        else
+
+        try
         {
-            pctOut.Invalidate();
+            Invoke(() => pctOut.Invalidate());
+        }
+        catch
+        {
+            //do nothing
         }
     }
 
@@ -459,7 +449,7 @@ public partial class FrmGame : Form
         {
             _stopwatch.Restart();
             UpdatePad();
-            
+
             _graphics.Clear(Color.Black);
             _gameEngine.MainLoop(_graphics);
 

@@ -1743,17 +1743,17 @@ public class GameEngine
     }
 
     // 8003c954
-    public int GetNumberOfEntityByRefId(Entity ownerEntity, int entityId)
+    public int GetMatchingEntityBySearchType(Entity ownerEntity, int searchType)
     {
         var matchCount = 0;
 
-        if ((entityId & 0x80) == 0)
+        if ((searchType & 0x80) == 0)
         {
-            CheckEntityRecord(entityId);
+            GetEntityRecord(searchType);
             
             foreach (var entity in StaticVariables.g_entitySlots.Skip(1))
             {
-                if ((ownerEntity.Status - 1 < 2 || ownerEntity.Status == 3) && entity.EntityRefId == entityId)
+                if ((ownerEntity.Status - 1 < 2 || ownerEntity.Status == 3) && entity.EntityRefId == searchType)
                 {
                     StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                 }
@@ -1762,7 +1762,7 @@ public class GameEngine
             return matchCount;
         }
 
-        var functionId = entityId & 0x7f;
+        var functionId = searchType & 0x7f;
 
         switch (functionId)
         {
@@ -1916,12 +1916,6 @@ public class GameEngine
         }
 
         return matchCount;
-    }
-
-    private SiEntityRecord CheckEntityRecord(int entityId)
-    {
-        var rec = GetEntityRecord(entityId);
-        return rec;
     }
 
     public SiEntityRecord GetEntityRecord(int id)
