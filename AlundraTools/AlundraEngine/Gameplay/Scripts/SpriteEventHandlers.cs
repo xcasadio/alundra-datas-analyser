@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using AlundraEngine.Gameplay.Scripts.Boss;
+using System.Diagnostics;
 
 namespace AlundraEngine.Gameplay.Scripts;
 
@@ -42,7 +43,7 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramALoad, 19, FunctionTypeA.SetCustomByteFromProgramIndex);
         Register(ScriptHelper.ProgramALoad, 20, FunctionTypeA.SetCustomByteFromZPos);
         Register(ScriptHelper.ProgramALoad, 21, FunctionTypeA.SpawnWarpDropAndAdjustPosition);
-        Register(ScriptHelper.ProgramALoad, 22, FunctionTypeA.SpawnVerticalWarpColumns);
+        Register(ScriptHelper.ProgramALoad, 22, AI_Melzas2.SpawnVerticalWarpColumns);
         Register(ScriptHelper.ProgramALoad, 254, FunctionTypeA.FUN_80061bcc);
         Register(ScriptHelper.ProgramALoad, 255, FunctionTypeA.FUN_80061bd4);
 
@@ -134,7 +135,7 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramCTick, 85, FunctionTypeC.AI_FUN_80073728);
         Register(ScriptHelper.ProgramCTick, 86, FunctionTypeC.AI_FUN_80079950);
         Register(ScriptHelper.ProgramCTick, 87, FunctionTypeC.AI_UpdateEntityDelayed);
-        Register(ScriptHelper.ProgramCTick, 88, FunctionTypeC.AI_Melzas2_FinalBoss);
+        Register(ScriptHelper.ProgramCTick, 88, AI_Melzas2.AI_Melzas2_FinalBoss);
         Register(ScriptHelper.ProgramCTick, 89, FunctionTypeC.AI_SpawnWarpIfValid);
         Register(ScriptHelper.ProgramCTick, 90, FunctionTypeC.AI_UpdateMelzas2CutsceneChannels);
         Register(ScriptHelper.ProgramCTick, 91, FunctionTypeC.AI_UpdateEntityAI_IdleLookAround);
@@ -239,7 +240,7 @@ public class SpriteEventHandlers
         _typeHandlers[type].Add(code, handler);
     }
 
-    public void RunSpriteHandler(int eventType, int eventId, Entity entity)
+    public void RunSpriteEvent(int eventType, int eventId, Entity entity)
     {
         if (eventType == ScriptHelper.ProgramBMap)
         {

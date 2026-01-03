@@ -223,7 +223,7 @@ public class EntityEventHandlers
     }
 
     //8004205c
-    public void RunEntityEventScripts(Entity entity, int logicMode)
+    public void RunScript(Entity entity, int logicMode)
     {
         EventProgramState eventProgramState = _gameEngine.StaticVariables.g_eventProgramState;
 
@@ -3683,7 +3683,7 @@ public class EntityEventHandlers
     // 80041A18
     private int Script_185_0B9(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.StartCdStreaming(variables[1]);
+        _gameEngine.CdManager.StartCdStreaming(variables[1]);
         return 2;
     }
 

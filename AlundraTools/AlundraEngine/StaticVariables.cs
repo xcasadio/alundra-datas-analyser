@@ -35,7 +35,7 @@ public class StaticVariables
     public uint FrameNumber;
 
     public const int ScreenWidth = 320;
-    public const int ScreenHeight = 224;
+    public const int ScreenHeight = 236; //224
     public const int MapTileWidth = 24;
     public const int MapTileHeight = 16;
 
@@ -1208,26 +1208,20 @@ public class StaticVariables
     };
 
     // 80022814
-    public short[] g_hitSoundEffects =
+    public readonly short[] g_prepareSprintParameters =
     [
-        0x0C, 0x15, 0x13, 0x10, // [0-3]
-        0x15, 0x00, 0x0C, 0x00, // [4-7]
-        0x07, 0x07, 0x03, 0x03, // [8-11]
-        0x100, 0x180, 0x200, 0x280, // [12-15]
-        0x180, unchecked((short)0xFF40), 0x180, unchecked((short)0xFF40), // [16-19]
-        0x180, unchecked((short)0xFFA0), 0x180, unchecked((short)0xFEE0), // [20-23]
-        0x100, unchecked((short)0xFF40), 0x100, unchecked((short)0xFFC0), // [24-27]
-        0x100, unchecked((short)0xFF80), 0x100, unchecked((short)0xFF80), // [28-31]
-        0x20, 0x20, 0x03, unchecked((short)0xFF80), // [32-35]
-        0x20, 0x7FFF, 0x4000, 0x00, // [36-39]
-        0x0F, 0x0F, 0x07, 0x07, // [40-43]
-        0x100, 0x140, 0x180, 0x1C0, // [44-47]
-        0xC0, unchecked((short)0xFFA0), 0xC0, unchecked((short)0xFFA0), // [48-51]
-        0xC0, 0x00, 0xC0, unchecked((short)0xFF40), // [52-55]
-        0x80, unchecked((short)0xFF80), 0x80, 0x00, // [56-59]
-        0x80, unchecked((short)0xFFC0), 0x80, unchecked((short)0xFFC0), // [60-63]
-        0x00, 0x00, 0x07, unchecked((short)0xFFC0), // [64-67]
-        0x00, 0x00, 0x00, 0x00 // [68-71]
+        12, 21, 19, 16, 21, 0,
+        12, 0, 7, 7, 3, 3, 
+        256, 384, 512, 640, 384, -192, 
+        384, -192, 384, -96, 384, -288, 
+        256, -192, 256, -64, 256, -128, 
+        256, -128, 32, 32, 3, -128, 
+        32, 32767, 16384, 0, 15, 15,
+        7, 7, 256, 320, 384, 448,    
+        192, -96, 192, -96, 192, 0, 
+        192, -192, 128, -128, 128, 0,     
+        128, -64, 128, -64, 0, 0, 
+        7, -64, 0, 0, 0, 0
     ];
 
     // 80022804
@@ -11702,7 +11696,7 @@ public class StaticVariables
     public char[] s_D_8002270c = new char[4]; // 8002270C
 
     //public short[] SHORT_ARRAY_800227f4 = new short[8]; // 800227F4
-    //public short[] g_hitSoundEffects = new short[72]; // 80022814
+    //public short[] g_prepareSprintParameters = new short[72]; // 80022814
     //public byte[] g_flailHitAnimations = new byte[8]; // 800228A4
     public char[] s_ARM_80022be4 = new char[84]; // 80022BE4
 

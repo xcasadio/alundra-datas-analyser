@@ -43,6 +43,35 @@ public class CdManager
         }
     }
 
+
+    // 8005a9e0
+    public void StartCdStreaming(int mapIndex)
+    {
+        bool bVar1;
+        Action previousVSyncCallback;
+
+        if ((_gameEngine.StaticVariables.g_isCdResetRequested != 0
+             || (_gameEngine.StaticVariables.g_cdIsReady != 0 && _gameEngine.StaticVariables.g_cdDataLoaded == 0))
+            && _gameEngine.SoundManager.IsSoundLoading() == false)
+        {
+            _gameEngine.StaticVariables.g_cdDataStartPtr = _gameEngine.StaticVariables.DAT_CDAranXa_pos + _gameEngine.StaticVariables.g_mapCdDataOffsets[mapIndex * 3];
+            _gameEngine.StaticVariables.g_cdDataEndPtr = _gameEngine.StaticVariables.g_cdDataStartPtr + _gameEngine.StaticVariables.g_mapCdDataOffsets[mapIndex * 3 + 2] * 8 + -1;
+            _gameEngine.StaticVariables.g_cdReadPtr = _gameEngine.StaticVariables.g_cdDataStartPtr;
+            previousVSyncCallback = OnCdDataStreamComplete;
+
+            if (previousVSyncCallback != OnCdDataStreamComplete
+                && previousVSyncCallback != null)
+            {
+                _gameEngine.StaticVariables.g_previousVSyncCallback = previousVSyncCallback;
+            }
+            _gameEngine.StaticVariables.g_cdControlCommand = 1;
+            _gameEngine.StaticVariables.g_cdTrackIndex = (byte)_gameEngine.StaticVariables.g_mapCdDataOffsets[mapIndex * 3 + 1];
+            //CdControlF('\r',&StaticVariables.g_cdControlCommand);
+            _gameEngine.StaticVariables.g_cdReadComplete = 0;
+            _gameEngine.StaticVariables.g_cdInitRequired = 2;
+        }
+    }
+
     private int CdControlB(char com, byte[]? param, byte result)
 
     {

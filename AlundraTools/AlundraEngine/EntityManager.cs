@@ -2554,7 +2554,7 @@ public class EntityManager
         entity.TileZ = entity.PosZ >> 20;
 
 
-        var hitz = _gameEngine.GetCollisionOnZ(entity);
+        var hitz = PhysicEngine.GetCollisionOnZ(_gameEngine, entity);
         entity.FloorHeight = hitz;
         entity.IsAboveGround = hitz < entity.PosZ ? 0 : 1;
 

@@ -1,9 +1,6 @@
-﻿using AlundraEngine.Balance;
-using AlundraEngine.DatasBin;
-using AlundraEngine.Gameplay.Scripts.Boss;
+﻿using AlundraEngine.Gameplay.Scripts.Boss;
 using System;
 using System.Diagnostics;
-using System.Runtime.Intrinsics.X86;
 
 namespace AlundraEngine.Gameplay.Scripts;
 
@@ -3841,12 +3838,6 @@ public static class FunctionTypeC
 
     }
 
-    //80061d14
-    public static void AI_Melzas2_FinalBoss(GameEngine gameEngine, Entity entity)
-    {
-        AI_Melzas2.AI_Melzas2_FinalBoss(gameEngine, entity);
-    }
-
     //80062bc0
     public static void AI_UpdateMelzas2CutsceneChannels(GameEngine gameEngine, Entity entity)
     {
@@ -4449,7 +4440,7 @@ public static class FunctionTypeC
                 entity.ItemState += 1;
                 gameEngine.EntityManager.FUN_8003ad30(entity);
                 gameEngine.SoundManager.LoadBgm(0);
-                gameEngine.StartCdStreaming(0xb);
+                gameEngine.CdManager.StartCdStreaming(0xb);
 
                 if (gameEngine.StaticVariables.g_dropItemTextBuffer.Length == 0)
                 {

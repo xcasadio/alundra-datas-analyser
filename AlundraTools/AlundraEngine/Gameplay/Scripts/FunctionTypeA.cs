@@ -77,8 +77,15 @@ public static class FunctionTypeA
     // 80061820
     public static void SpawnWarpAndSetAnim(GameEngine gameEngine, Entity entity)
     {
-        Entity spawned = gameEngine.SpawnWarpEntity(entity, 1, 0xF5, entity.PosX + 0xF00000,
-            entity.PosY, entity.PosZ, entity.TargetDirection);
+        Entity spawned = gameEngine.SpawnWarpEntity(
+            entity,
+            1, 
+            0xF5, 
+            entity.PosX + 0xF00000,
+            entity.PosY, 
+            entity.PosZ, 
+            entity.TargetDirection);
+
         entity.AIValues[0] = (short)spawned.Index;
         spawned.AIValues[1] = 0;
         entity.TargetAnimationId = 3;
@@ -175,12 +182,6 @@ public static class FunctionTypeA
         entity.PosZ += 0x300000;
     }
 
-    // 80061A6C
-    public static void SpawnVerticalWarpColumns(GameEngine gameEngine, Entity entity)
-    {
-        AI_Melzas2.SpawnVerticalWarpColumns(gameEngine, entity);
-    }
-
     //80061bcc
     public static void FUN_80061bcc(GameEngine gameEngine, Entity entity)
     {
@@ -217,7 +218,7 @@ public static class FunctionTypeA
             {
                 if (entity.AIValues[4] != 0)
                 {
-                    gameEngine.StartCdStreaming(0xb);
+                    gameEngine.CdManager.StartCdStreaming(0xb);
                 }
             }
             else

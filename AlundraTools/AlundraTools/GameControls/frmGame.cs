@@ -15,7 +15,7 @@ namespace AlundraTools.GameControls;
 public partial class FrmGame : Form
 {
     private readonly GameEngine _gameEngine;
-    private Timer _gameEngineTimer;
+    private System.Threading.Timer _gameEngineTimer;
     private Timer _refreshUiTimer;
     private readonly Bitmap _backBuffer = new(StaticVariables.ScreenWidth, StaticVariables.ScreenHeight);
     private readonly Graphics _graphics;
@@ -374,13 +374,13 @@ public partial class FrmGame : Form
         _gameEngine.InitializeEngine();
         InitializeUI();
 
-        _gameEngineTimer = new Timer();
-        _gameEngineTimer.Interval = 20;
-        _gameEngineTimer.Tick += GameEngineTimerTick;
-        _gameEngineTimer.Start();
+        _gameEngineTimer = new System.Threading.Timer(GameEngineTimerTick, null, 0, 20);
+
+        _stopwatch.Start();
+        _fpsWatch.Start();
 
         _refreshUiTimer = new Timer();
-        _refreshUiTimer.Interval = 20 * 3;
+        _refreshUiTimer.Interval = 20 * 2;
         _refreshUiTimer.Tick += RefreshUI;
         _refreshUiTimer.Start();
 
@@ -406,32 +406,61 @@ public partial class FrmGame : Form
         }
     }
 
-    private void GameEngineTimerTick(object sender, EventArgs e)
+    private volatile bool _isRendering = false;
+
+    private void GameEngineTimerTick(object sender)
     {
-        pctOut.Invalidate();
-
-        var frameTimeInMs = (int)(20f * (1f / _gameEngine.StaticVariables.Speed)); //PAL=20ms NTSC-J=16.68ms
-
-        if (_lastFrameTime == 0)
+        if (_isRendering || Disposing || IsDisposed 
+                                  || pctOut.Disposing || pctOut.IsDisposed)
         {
-            _gameEngineTimer.Interval = frameTimeInMs;
+            return;
+        }
+
+        var targetFrameTime = (int)(20f / _gameEngine.StaticVariables.Speed); //PAL=20ms NTSC-J=16.68ms
+        var dueTime = (int)Math.Max(1, targetFrameTime - _lastFrameTime);
+        _gameEngineTimer.Change(dueTime, targetFrameTime);
+
+        if (InvokeRequired)
+        {
+            Invoke(() =>
+            {
+                if (Disposing || IsDisposed 
+                              || pctOut.Disposing || pctOut.IsDisposed)
+                {
+                    return;
+                }
+
+                pctOut.Invalidate();
+            });
         }
         else
         {
-            _gameEngineTimer.Interval = (int)Math.Max(1, frameTimeInMs - _lastFrameTime);
+            pctOut.Invalidate();
         }
     }
 
+    private readonly Stopwatch _fpsWatch = new();
+    private int _frameCount;
+
     private void pctOut_Paint(object sender, PaintEventArgs e)
     {
+        _frameCount++;
+
+        if (_fpsWatch.ElapsedMilliseconds >= 1000)
+        {
+            var fps = _frameCount / (_fpsWatch.ElapsedMilliseconds / 1000.0);
+            Text = $"Alundra - {fps:F1} FPS (Speed: {_gameEngine.StaticVariables.Speed}×)";
+
+            _frameCount = 0;
+            _fpsWatch.Restart();
+        }
+
         try
         {
             _stopwatch.Restart();
-
             UpdatePad();
-
+            
             _graphics.Clear(Color.Black);
-
             _gameEngine.MainLoop(_graphics);
 
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
@@ -440,6 +469,7 @@ public partial class FrmGame : Form
 
             _stopwatch.Stop();
             _lastFrameTime = _stopwatch.ElapsedMilliseconds;
+            _isRendering = false;
         }
         catch (Exception ex)
         {

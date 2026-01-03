@@ -159,7 +159,7 @@ public class GameEngine
         //PrintDebug();
         RenderScene(graphics);
 
-        if (!StaticVariables.IsGamePaused || StaticVariables.DoNextFrame || ReplayManager.ApplyCurrentFrame)
+        if (IsRunning())
         {
             if (ReplayManager.ApplyCurrentFrame)
             {
@@ -256,6 +256,11 @@ public class GameEngine
         }
 
         //} while (true);
+    }
+
+    private bool IsRunning()
+    {
+        return !StaticVariables.IsGamePaused || StaticVariables.DoNextFrame || ReplayManager.ApplyCurrentFrame;
     }
 
     // 8002bd60
@@ -506,7 +511,7 @@ public class GameEngine
         //LoadEntities();
     }
 
-    private void InitializeEntitySlots()
+    public void InitializeEntitySlots()
     {
         EntityManager.InitializeEntitySlots();
 
@@ -670,81 +675,6 @@ public class GameEngine
 
         var sprite = spriteInfo.SpriteRecords[spriteTableIndex];
         return sprite;
-    }
-
-    //80037f28
-    public int GetCollisionOnZ(Entity entity)
-    {
-        var collision = entity.TerrainHeight + 1;
-
-        if ((entity.Flags & 0x80) == 0)
-        {
-            return collision;
-        }
-
-        if ((entity.AnimFlags & 0x80) != 0)
-        {
-            return collision;
-        }
-
-        if (entity.PlatformEntity != null)
-        {
-            return collision;
-        }
-
-        if (StaticVariables.g_collideableEntitiesCount <= 0)
-        {
-            return collision;
-        }
-
-        for (var dex = 0; dex < StaticVariables.g_collideableEntitiesCount; dex++)
-        {
-            var otherEntity = StaticVariables.g_collideableEntities[dex];
-
-            if (otherEntity == entity)
-            {
-                continue;
-            }
-
-            if (otherEntity.ModdedPosZ + otherEntity.Height >= entity.ModdedPosZ
-                || otherEntity.ModdedPosZ + otherEntity.Height < collision)
-            {
-                continue;
-            }
-
-            if (otherEntity.ModdedPosX - entity.ModdedPosX >= 0)
-            {
-                if (otherEntity.ModdedPosX - entity.ModdedPosX >= entity.Width + 1)
-                {
-                    continue;
-                }
-            }
-            else
-            {
-                if (entity.ModdedPosX - otherEntity.ModdedPosX >= otherEntity.Width + 1)
-                {
-                    continue;
-                }
-            }
-
-            if (otherEntity.ModdedPosY - entity.ModdedPosY >= 0)
-            {
-                if (otherEntity.ModdedPosY - entity.ModdedPosY < entity.Depth + 1)
-                {
-                    collision = otherEntity.ModdedPosZ + otherEntity.Depth;
-                }
-            }
-            else
-            {
-                if (entity.ModdedPosY - otherEntity.ModdedPosY < otherEntity.Depth + 1)
-                {
-                    collision = otherEntity.ModdedPosZ + otherEntity.Depth;
-                }
-            }
-
-        }
-
-        return collision;
     }
 
     // 80032a40
@@ -2054,41 +1984,13 @@ public class GameEngine
 
     public void RunScript(Entity entity, int eventType)
     {
-        _entityEventHandlers.RunEntityEventScripts(entity, eventType);
+        _entityEventHandlers.RunScript(entity, eventType);
     }
 
     public void RunSpriteEvent(Entity entity)
     {
         var eventId = entity.SpriteProgramIndexes[entity.EventTrigger];
-        _entityEventHandlers.SpriteHandlers.RunSpriteHandler(entity.EventTrigger, eventId, entity);
-    }
-
-    // 8005a9e0
-    public void StartCdStreaming(int mapIndex)
-    {
-        bool bVar1;
-        Action previousVSyncCallback;
-
-        if ((StaticVariables.g_isCdResetRequested != 0
-             || (StaticVariables.g_cdIsReady != 0 && StaticVariables.g_cdDataLoaded == 0))
-            && SoundManager.IsSoundLoading() == false) 
-        {
-            StaticVariables.g_cdDataStartPtr = StaticVariables.DAT_CDAranXa_pos + StaticVariables.g_mapCdDataOffsets[mapIndex * 3];
-            StaticVariables.g_cdDataEndPtr = StaticVariables.g_cdDataStartPtr + StaticVariables.g_mapCdDataOffsets[mapIndex * 3 + 2] * 8 + -1;
-            StaticVariables.g_cdReadPtr = StaticVariables.g_cdDataStartPtr;
-            previousVSyncCallback = CdManager.OnCdDataStreamComplete;
-
-            if (previousVSyncCallback != CdManager.OnCdDataStreamComplete
-                && previousVSyncCallback != null)
-            {
-                StaticVariables.g_previousVSyncCallback = previousVSyncCallback;
-            }
-            StaticVariables.g_cdControlCommand = 1;
-            StaticVariables.g_cdTrackIndex = (byte)StaticVariables.g_mapCdDataOffsets[mapIndex * 3 + 1];
-            //CdControlF('\r',&StaticVariables.g_cdControlCommand);
-            StaticVariables.g_cdReadComplete = 0;
-            StaticVariables.g_cdInitRequired = 2;
-        }
+        _entityEventHandlers.SpriteHandlers.RunSpriteEvent(entity.EventTrigger, eventId, entity);
     }
 
     //8002d7b0

@@ -5,6 +5,7 @@ namespace AlundraEngine.Gameplay.Scripts.Boss;
 public static class AI_Melzas2
 {
     // 80061A6C
+    //Load function
     public static void SpawnVerticalWarpColumns(GameEngine gameEngine, Entity entity)
     {
         int z = 0xF40000;
@@ -42,6 +43,7 @@ public static class AI_Melzas2
 
 
     //80061d14
+    //tick function
     public static void AI_Melzas2_FinalBoss(GameEngine gameEngine, Entity entity)
     {
         uint flagByte = entity.Bytes[3];
