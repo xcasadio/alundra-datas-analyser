@@ -282,6 +282,10 @@ public partial class FrmGame : Form
                 () => _gameEngine.StaticVariables.g_debugState
             ),
             new(
+                nameof(_gameEngine.StaticVariables.g_dialog_flags),
+                () => _gameEngine.StaticVariables.g_dialog_flags
+            ),
+            new(
                 nameof(_gameEngine.StaticVariables.g_UIDisplayFlags),
                 () => _gameEngine.StaticVariables.g_UIDisplayFlags
             ),
@@ -341,8 +345,8 @@ public partial class FrmGame : Form
         {
             var flag = _flagModels[i];
 
-            var startTextLocation = new Point(6, 16 + i * yOffset);
-            var startValueLocation = new Point(184, 16 + i * yOffset);
+            var startTextLocation = new Point(6, 8 + i * yOffset);
+            var startValueLocation = new Point(184, 8 + i * yOffset);
 
             var labelText = new Label();
             labelText.AutoSize = true;

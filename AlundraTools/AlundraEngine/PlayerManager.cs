@@ -2546,7 +2546,6 @@ public class PlayerManager
         int deltaX = portal.DestTileX * StaticVariables.MapTileWidth + (playerEntity.PosX >> 16) - portal.X1 * StaticVariables.MapTileWidth;
         int deltaY = portal.DestTileY * StaticVariables.MapTileHeight + (playerEntity.PosY >> 16) - portal.Y1 * StaticVariables.MapTileHeight;
 
-
         int tileX = _gameEngine.StaticVariables.g_tileToWorldXTable[deltaX];
         deltaY /= StaticVariables.MapTileHeight;
 

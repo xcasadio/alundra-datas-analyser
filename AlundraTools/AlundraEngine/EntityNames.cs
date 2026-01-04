@@ -17,7 +17,7 @@ public static class EntityNames
     public static void Load(Language language)
     {
         var lines = new List<string>();
-        using (var reader = new StreamReader("g_spriteNames.csv", Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
+        using (var reader = new StreamReader("EntityNames.csv", Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
         {
             string? line;
             while ((line = reader.ReadLine()) != null)
@@ -29,14 +29,24 @@ public static class EntityNames
         SpriteNames = lines.Skip(1).ToArray();
     }
 
-    public static string? GetName(byte spriteDirection, uint spriteTableIndex)
+    public static string? GetNameWithIndex(byte spriteDirection, uint spriteTableIndex)
     {
-        Debugger.Break();
-        if ((spriteDirection & 0x80) != 0)
+        //if ((spriteDirection & 0x80) != 0)
         {
             spriteTableIndex += 0x100;
         }
     
+        return spriteTableIndex < 512 ? $"{spriteTableIndex}_{SpriteNames[spriteTableIndex]}" : null;
+    }
+
+
+    public static string? GetName(byte spriteDirection, uint spriteTableIndex)
+    {
+        if ((spriteDirection & 0x80) != 0)
+        {
+            spriteTableIndex += 0x100;
+        }
+
         return spriteTableIndex < 512 ? SpriteNames[spriteTableIndex] : null;
     }
 

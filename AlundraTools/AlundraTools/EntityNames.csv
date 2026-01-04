@@ -255,37 +255,37 @@ SaveBook(Don'tTouch!);SaveBook (Ne pas toucher !);SaveBook (Don't touch!)
 爆弾で壊れる根;Racine destructible à la bombe;Bomb-breakable root
 汎用看板;Panneau générique;Generic signboard
 END;FIN;END
-ビイゼン（村長）;Beizen (chef du village);Beizen (village chief)
-トステア（妻）;Tostea (épouse);Tostea (wife)
-ツーラス（息子）;Turas (fils);Turas (son)
+ビイゼン（村長）;Beaumont (chef du village);Beizen (village chief)
+トステア（妻）;Thyea (épouse);Tostea (wife)
+ツーラス（息子）;Talis (fils);Turas (son)
 ユステル（占い婆）;Yustel (vieille voyante);Yustel (old fortune-teller)
-アンゼス（武器屋）;Anzes (armurier);Anzes (weapons shop)
-ロエイン（神父）;Roein (prêtre);Roein (priest)
-シヴィル（赤目）;Shivil (aux yeux rouges);Shivil (red-eyed)
-シーラ（母親）;Sheela (mère);Sheela (mother)
-オーレン（抗夫）;Oren (mineur);Oren (miner)
-ルィック（抗夫）;Luik (mineur);Luik (miner)
-ヌィンダ（抗夫）;Nuinda (mineur);Nuinda (miner)
-ズーリム（抗夫）;Zulim (mineur);Zulim (miner)
-セクタス（研究家）;Sectus (chercheur);Sectus (researcher)
-ナーシア（不眠女）;Narsia (femme insomniaque);Narsia (insomniac woman)
-モラアス（老婆）;Moraas (vieille femme);Moraas (old woman)
-ボージス（永眠男）;Bojis (homme endormi à jamais);Bojis (man in eternal sleep)
-メイザン（父親）;Meizan (père);Meizan (father)
-クライン（夢遊病）;Klein (somnambule);Klein (sleepwalker)
-ゴウセル（宗教男）;Gouser (homme religieux);Gouser (religious man)
+アンゼス（武器屋）;Jess (armurier);Anzes (weapons shop)
+ロエイン（神父）;Ronan (prêtre);Roein (priest)
+シヴィル（赤目）;Sybill (aux yeux rouges);Shivil (red-eyed)
+シーラ（母親）;Sierra (mère);Sheela (mother)
+オーレン（抗夫）;Olen (mineur);Oren (miner)
+ルィック（抗夫）;Lyman (mineur);Luik (miner)
+ヌィンダ（抗夫）;Jaylen (mineur);Nuinda (miner)
+ズーリム（抗夫）;Zane (mineur);Zulim (miner)
+セクタス（研究家）;Septimus (chercheur);Sectus (researcher)
+ナーシア（不眠女）;Nadia (femme insomniaque);Nadia (insomniac woman)
+モラアス（老婆）;Myra (vieille femme);Myra (old woman)
+ボージス（永眠男）;Bonaire (homme endormi à jamais);Bojis (man in eternal sleep)
+メイザン（父親）;Phineas (père);Meizan (father)
+クライン（夢遊病）;Kline (somnambule);Klein (sleepwalker)
+ゴウセル（宗教男）;Giles (homme religieux);Gouser (religious man)
 キーシャ（妹）;Kisha (petite sœur);Kisha (little sister)
-エリーン（多重女）;Elin (femme à personnalités multiples);Elin (woman with multiple personalities)
-ウストウ（酔どれ）;Ustow (ivrogne);Ustow (drunkard)
-ベグラス（兄）;Beglas (frère aîné);Beglas (older brother)
-ネクタス（弟）;Nectas (frère cadet);Nectas (younger brother)
-マーチス（双子父）;Martis (père des jumeaux);Martis (father of twins)
-イルニィ（双子母）;Ilni (mère des jumeaux);Ilni (mother of twins)
-ワインズ（祖父）;Wines (grand-père);Wines (grandfather)
-ヤァード（道具屋）;Yaard (marchand d’objets);Yaard (item shop owner)
-ノウラン（肝玉妻）;Nauran (épouse courageuse);Nauran (brave wife)
-ハヴァン（岬老人）;Havan (vieil homme du cap);Havan (old man at the cape)
-ケイトス（墓守）;Keitos (gardien de cimetière);Keitos (gravekeeper)
+エリーン（多重女）;Elene (femme à personnalités multiples);Elin (woman with multiple personalities)
+ウストウ（酔どれ）;Gustav (ivrogne);Ustow (drunkard)
+ベグラス（兄）;Bergus (frère aîné);Beglas (older brother)
+ネクタス（弟）;Nestus (frère cadet);Nectas (younger brother)
+マーチス（双子父）;Meade (père des jumeaux);Martis (father of twins)
+イルニィ（双子母）;Rumi (mère des jumeaux);Ilni (mother of twins)
+ワインズ（祖父）;Wendell (grand-père);Wines (grandfather)
+ヤァード（道具屋）;Yuri (marchand d’objets);Yaard (item shop owner)
+ノウラン（肝玉妻）;Naomi (épouse courageuse);Nauran (brave wife)
+ハヴァン（岬老人）;Nava (vieil homme du cap);Havan (old man at the cape)
+ケイトス（墓守）;Cephas (gardien de cimetière);Keitos (gravekeeper)
 ルータス（デブ）;Lutas (gros bonhomme);Lutas (fat man)
 フェイン（デブ妻）;Fein (femme du gros);Fein (fat man's wife)
 ワンちゃん（犬）;Toutou (chien);Doggy (dog)
@@ -301,7 +301,7 @@ END;FIN;END
 石像;Statue de pierre;Stone statue
 ＳＷ（乗る）使用不可;Interrupteur (monter) inutilisable;Switch (step on) unusable
 ＳＷ（踏む）←使う！;Interrupteur (piétiner) ← à utiliser !;Switch (step on) ← use this!
-メディアム;Médium;Medium
+メディアム;Meia;Medium
 本;Livre;Book
 持てる氷;Bloc de glace transportable;Carryable ice block
 ＳＷ（レバー）;Interrupteur (levier);Switch (lever)
@@ -330,15 +330,15 @@ END;FIN;END
 階段用フタ（大）;Trappe d’escalier (grande);Stairway cover (large)
 ◆スライミージェル;◆Slime gélatineux;◆Slime Gel
 ◆−弾;◆Projectile;◆Projectile
-死にエリーン;Élin morte;Dead Elin
-死にボージス;Bojis mort;Dead Bojis
-死にモラアス;Moraas morte;Dead Moraas
-死にナーシア;Narsia morte;Dead Narsia
+死にエリーン;Elene morte;Dead Elin
+死にボージス;Bonaire mort;Dead Bojis
+死にモラアス;Myra morte;Dead Myra
+死にナーシア;Nadia morte;Dead Nadia
 ◆ビーンノイド;◆Beannoïde;◆Beannoid
 波動エンジン;Moteur à ondes;Wave engine
 炎（アイスロッド用）;Flammes (pour Ice Rod);Flames (for Ice Rod)
 ◆オーク(斧)Lv１;◆Orc (hache) Niv.1;◆Orc (axe) Lv.1
-サーティ（夢の女）;Sarty (femme du rêve);Sarty (dream woman)
+サーティ（夢の女）;Sara (femme du rêve);Sara (dream woman)
 ジャンプ台;Rampe de saut;Jump platform
 ◆オーク(メイス)Ｌｖ１;◆Orc (masse) Niv.1;◆Orc (mace) Lv.1
 ４方向砲台;Tourelle à 4 directions;Four-way turret
@@ -348,12 +348,12 @@ END;FIN;END
 大顔面（俺アイダ）;Grand visage (Aida);Big face (Aida)
 ◆ムルータ(爪)Ｌｖ１;◆Muruta (griffes) Niv.1;◆Muruta (claws) Lv.1
 吊り天井;Plafond suspendu;Falling ceiling
-少女メディアム;Jeune médium;Young medium
+少女メディアム;Jeune Meia;Young medium
 ◆ムルータ(弓)Ｌｖ１;◆Muruta (arc) Niv.1;◆Muruta (bow) Lv.1
 ◆−弓Ｌｖ１;◆Flèche Niv.1;◆Arrow Lv.1
 チェイン;Chaîne;Chain
 アリシア;Alicia;Alicia
-リィジオ;Rijio;Rijio
+リィジオ;Lurvy;Rijio
 メディアムの母;Mère du médium;Medium's mother
 ◆ムルータ(ブ)Ｌｖ１;◆Muruta (boomerang) Niv.1;◆Muruta (boomerang) Lv.1
 ◆−ブーメランＬｖ１;◆Boomerang Niv.1;◆Boomerang Lv.1
@@ -378,7 +378,7 @@ END;FIN;END
 鉄球壁（１１２）軸;Mur à boule de fer (112) – axe;Iron ball wall (112) – axis
 ◆ミミング(鎌)Ｌｖ１;◆Mimming (faux) Niv.1;◆Mimming (scythe) Lv.1
 ミミング王;Roi Mimming;King Mimming
-ボージス＆石（YM03）;Bojis & pierre (YM03);Bojes & rock (YM03)
+ボージス＆石（YM03）;Bonaire & pierre (YM03);Bojes & rock (YM03)
 にわとり;Poulet;Chicken
 からす;Corbeau;Crow
 鉄球壁（１１１）;Mur à boule de fer (111);Iron ball wall (111)
@@ -399,9 +399,9 @@ END;FIN;END
 泡.012乗/34否乗;Bulle .0-1-2 support /3-4 non support;Bubble .0-1-2 stand-on / .3-4 non-stand
 ランプスイッチ;Interrupteur de lampe;Lamp switch
 鍵師;Maître des clés;Key master
-メディアム　(YM08用);Médium (pour YM08);Medium (for YM08)
+メディアム　(YM08用);Meia (pour YM08);Medium (for YM08)
 ◆虫男Ｌｖ１;◆Homme-insecte Niv.1;◆Insect man Lv.1
-船員/乗客/カモメ;Marin / passager / mouette;Sailor / passenger / seagull
+船員/乗客/カモメ;Marin-passager-mouette;Sailor / passenger / seagull
 くさり.0通/1滅/2待;Chaîne .0 traversable /1 détruite /2 attente;Chain .0 pass /1 destroyed /2 wait
 ◆ミミックＬｖ１;◆Mimique Niv.1;◆Mimic Lv.1
 壊れる鎧;Armure cassable;Breakable armor
@@ -415,13 +415,13 @@ asiba;asiba (plateforme);asiba (platform)
 ◆−胴;◆Corps;◆Body
 ◆−ドラゴンブレス;◆Souffle de dragon;◆Dragon breath
 ◆−火炎弾;◆Boule de feu;◆Fireball
-空;Vide;Empty
-空;Vide;Empty
+空;Kohei;Empty
+空;Marin-passager-mouette;Empty
 ◆メルザス（本体）;◆Melzas (corps principal);◆Melzas (main body)
 ◆−追尾レーザー;◆Laser à tête chercheuse;◆Homing laser
 ◆−螺旋弾（遅い）;◆Projectiles en spirale (lents);◆Spiral projectiles (slow)
-空;Vide;Empty
-空;Vide;Empty
+空;Porte Muruta;Empty
+空;pont en bois;Empty
 ◆−追尾弾（遅い）;◆Projectiles à tête chercheuse (lents);◆Homing projectiles (slow)
 ◆−分身メルザス;◆Double de Melzas;◆Melzas double
 ◆ミイラ男Ｌｖ１;◆Homme momie Niv.1;◆Mummy man Lv.1
@@ -445,7 +445,7 @@ asiba;asiba (plateforme);asiba (platform)
 ◆キノコＬｖ１;◆Champignon Niv.1;◆Mushroom Lv.1
 ◆−胞子Ｌｖ１;◆Spores Niv.1;◆Spores Lv.1
 敵じゃないキノコ;Champignon non ennemi;Non-enemy mushroom
-◆邪神化ロエイン;◆Roein divin corrompu;◆Corrupted God Roein
+◆邪神化ロエイン;◆Ronan divin corrompu;◆Corrupted God Roein
 ◆−ロエインコレダー;◆Collider de Roein;◆Roein Collider
 ◆−ロエインボンバー;◆Bombardement de Roein;◆Roein Bomber
 ◆ゾンビＬｖ１;◆Zombie Niv.1;◆Zombie Lv.1
@@ -492,9 +492,9 @@ asiba;asiba (plateforme);asiba (platform)
 ◆−ムカデ（尻尾）;◆Mille-pattes (queue);◆Centipede (tail)
 ◆−ムカデ（つなぎ）;◆Mille-pattes (joint);◆Centipede (joint)
 ◆−ムカデ（胴２）;◆Mille-pattes (tronc 2);◆Centipede (body 2)
-◆ニルード（残留思念）;◆Nilude (pensée résiduelle);◆Nilude (residual thought)
+◆ニルード（残留思念）;◆Nirude (pensée résiduelle);◆Nilude (residual thought)
 ◆リザードボスＬｖ１;◆Boss lézard Niv.1;◆Lizard Boss Lv.1
-◆ニルード（体つき）;◆Nilude (avec corps);◆Nilude (with body)
+◆ニルード（体つき）;◆Nirude (avec corps);◆Nilude (with body)
 ◆−ニルード落石(222);◆Chute de rochers de Nilude (222);◆Nilude rockfall (222)
 ◆エレメントＬｖ１;◆Élément Niv.1;◆Element Lv.1
 ◆−エレメント岩;◆Roche élémentaire;◆Element rock
@@ -505,9 +505,9 @@ asiba;asiba (plateforme);asiba (platform)
 ◆−ニルード落石(111);◆Chute de rochers de Nilude (111);◆Nilude rockfall (111)
 ◆−ムカデ（反射弾）;◆Mille-pattes (projectiles réfléchis);◆Centipede (reflected projectiles)
 ◆−ムカデ（炸裂卵）;◆Mille-pattes (œufs explosifs);◆Centipede (explosive eggs)
-◆ムルータキング;◆Roi Muruta;◆Muruta King
+◆ムルータキング;◆Zazan-Roi Muruta;◆Muruta King
 ◆−キング大岩;◆Grand rocher du roi;◆King's big rock
 ◆−キング手下;◆Sbires du roi;◆King's underlings
-◆ゾルジア;◆Zoldia;◆Zorgia
+◆ゾルジア;◆Zorgia;◆Zorgia
 ◆−ゾルジア魔法陣;◆Cercle magique de Zoldia;◆Zorgia magic circle
 ◆−ゾルジア弾;◆Projectiles de Zoldia;◆Zorgia projectiles

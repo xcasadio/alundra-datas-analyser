@@ -12765,7 +12765,7 @@ public class StaticVariables
     public char[] CHAR_ARRAY_8014a4e8 = new char[2048]; // 8014a4e8
     public byte[] g_bufferFONT3_tim = new byte[11000]; // 8014ACE8
     public byte BYTE_80150000; // 80150000
-    public int g_dialog_flags; // 80152F08
+    public uint g_dialog_flags; // 80152F08
     public CallBackInfo[] g_callbackTable = Enumerable.Range(0, 13).Select(x => new CallBackInfo()).ToArray(); // 80153028
     public int g_postProcessState; // 80153194
     public int g_currentTransitionType; // 80153198

@@ -1318,7 +1318,7 @@ public class EntityEventHandlers
     // 8003E464
     private int Script_IsDialogInProgress_039(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        return _gameEngine.IsDialogInProgress2() == 0 ? 0 : 1;
+        return _gameEngine.IsDialogInProgress2() == 0 ? 1 : 0;
     }
 
     // 8003E484

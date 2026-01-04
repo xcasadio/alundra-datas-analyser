@@ -1,4 +1,6 @@
-﻿namespace AlundraEngine;
+﻿using System.Diagnostics;
+
+namespace AlundraEngine;
 
 public class EtcResR : EtcRes
 {

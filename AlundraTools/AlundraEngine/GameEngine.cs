@@ -2199,6 +2199,7 @@ public class GameEngine
             || (entity.HitBoxX + entity.CollisionWidth) >> 16 >= StaticVariables.g_tileToWorldXTable.Length)
         {
             Debugger.Break();
+            return;
         }
 
         var val = (short)entity.HitBoxX;

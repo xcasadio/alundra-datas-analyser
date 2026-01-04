@@ -956,6 +956,7 @@ public static class FunctionTypeC
     }
 
     //800756ec
+    //Gouser (homme religieux
     public static void AI_FUN_800756ec(GameEngine gameEngine, Entity entity)
     {
         Debugger.Break();
@@ -1169,14 +1170,13 @@ public static class FunctionTypeC
                 break;
 
             case 2:
-                // countdown: if (--DelayOrAngle != -1) return
                 entity.DelayOrAngle -= 1;
+
                 if (entity.DelayOrAngle != -1)
                 {
                     return;
                 }
 
-                // g_warpStatusFlag = 0; lancer une "opération asynchrone" (2 textes ETC)
                 gameEngine.StaticVariables.g_warpStatusFlag = 0;
 
                 arg1 = gameEngine.EtcRes.GetEtcString(0x41);
@@ -1184,36 +1184,30 @@ public static class FunctionTypeC
 
                 int r = gameEngine.InitializeAsyncOperation(arg1, arg2, result => gameEngine.StaticVariables.g_warpStatusFlag = (uint)result);
 
-                // Si terminé immédiatement, on saute un état (state+=1) puis on avancera encore (state+=1) => skip vers case 4
                 if (r != 0)
                 {
                     WriteWarpState(entity, state + 1);
                     state++;
                 }
 
-                // Avance d’un état (vers 3 si non terminé, vers 4 si terminé de suite)
                 WriteWarpState(entity, state + 1);
                 return;
 
             case 4:
                 {
-                    // si pas encore de statut, on attend
                     if (gameEngine.StaticVariables.g_warpStatusFlag == 0)
                     {
                         return;
                     }
 
-                    // On essaye d’activer le "TextHold" (mise en pause du texte)
                     gameEngine.UIManager.TryActivateTextHoldState();
 
-                    // si statut != 1 => Reset; sinon on attend 0x3C frames et on avance
                     if (gameEngine.StaticVariables.g_warpStatusFlag != 1)
                     {
                         ResetWarpState(gameEngine, entity);
                         return;
                     }
 
-                    // WaitBeforeNextWarpStep: timer=0x3C; state++
                     entity.DelayOrAngle = 0x3C;
                     WriteWarpState(entity, state + 1);
                     return;
@@ -1233,7 +1227,6 @@ public static class FunctionTypeC
                     return;
                 }
 
-            // case 6
             case 6:
                 {
                     if (gameEngine.StaticVariables.g_globalTransitionState != 0)
@@ -3132,6 +3125,8 @@ public static class FunctionTypeC
         Debugger.Break();
     }
 
+    //
+    //Monsieur Aspiration
     public static void AI_UpdateEntityAI_Warp(GameEngine gameEngine, Entity entity)
     {
         Debugger.Break();

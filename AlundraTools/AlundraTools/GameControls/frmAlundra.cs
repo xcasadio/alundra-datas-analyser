@@ -23,7 +23,6 @@ namespace AlundraTools.GameControls
         private Color[] _selectedPalette;
         private Color[] _selectedSpritePalette;
         private Dictionary<int, Bitmap> _cachedTiles;
-        private string[] _spriteNames;
 
         public FrmAlundra()
         {
@@ -55,17 +54,7 @@ namespace AlundraTools.GameControls
                 }
             }
 
-            var lines = new List<string>();
-            using (var reader =
-                   new StreamReader("g_spriteNames.csv", Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
-            {
-                while (reader.ReadLine() is { } line)
-                {
-                    lines.Add(line.Split(";")[1]);
-                }
-            }
-
-            _spriteNames = lines.Skip(1).ToArray();
+            EntityNames.Load(EntityNames.Language.French);
 
             soundboardControl1.Initialize(soundBin);
 
@@ -348,19 +337,13 @@ namespace AlundraTools.GameControls
 
                 if (entityRecord != null)
                 {
-                    var spriteTableIndex = (uint)entityRecord.SpriteTableIndex;
-                    if ((entityRecord.SpriteDirection & 0x80) != 0)
-                    {
-                        spriteTableIndex += 0x100;
-                    }
-
-                    var spriteName = spriteTableIndex < 512 ? _spriteNames[spriteTableIndex] : null;
+                    var entityName = EntityNames.GetName(entityRecord.SpriteDirection, entityRecord.SpriteTableIndex);
 
                     var lvi = new ListViewItem([
                         "entity " + i,
                         entityRecord.SpriteDirection.ToString("x2"),
                         entityRecord.SpriteTableIndex.ToString("x2"),
-                        spriteName,
+                        entityName,
                         (entityRecord.XPos / 2).ToString(),
                         (entityRecord.YPos / 2).ToString(),
                         entityRecord.Height.ToString("x2"),
