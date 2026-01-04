@@ -14,7 +14,8 @@ namespace AlundraDataExtractor;
 internal class Program
 {
     private static readonly JsonSerializerOptions _jsonSerializerOptions = new() { WriteIndented = true };
-    private static Dictionary<string, HashSet<string>> entitySpriteSheets = new();
+    private static Dictionary<string, HashSet<string>> entitySpriteSheetIds = new();
+    private static HashSet<string> entitySpriteSheetAlreadySaved = new();
 
     static void Main(string[] args)
     {
@@ -304,7 +305,7 @@ internal class Program
 
     private static void ExtractDataFromDatasBin(DatasBin datasBin, StaticVariables staticVariables, string extractionPath)
     {
-        datasBin.LoadingScreen.Save(Path.Combine(extractionPath, "data", "loading_screen.bmp"));
+        datasBin.LoadingScreen.Save(Path.Combine(extractionPath, "data", "loading_screen.png"), ImageFormat.Png);
 
         using var br = datasBin.OpenBin();
         datasBin.AlundraGameMap.Load(br);
@@ -326,8 +327,8 @@ internal class Program
             gameMap.Load(br);
             SaveMap(gameMap, i, dataPath, tileAnimDescriptors);
         }
-        
-        foreach (var entitySpriteSheet in entitySpriteSheets)
+
+        foreach (var entitySpriteSheet in entitySpriteSheetIds)
         {
             Console.WriteLine($"Entity {entitySpriteSheet.Key}");
 
@@ -343,7 +344,7 @@ internal class Program
         var gameMapJson = ConvertGameMap(gameMap);
         File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
 
-        gameMapJson.SaveSpriteSheetBitmap(gameMap, Path.Combine(extractionPath, "map_alundra_spritesheet.bmp"));
+        //gameMapJson.SaveEntitySpriteSheet(gameMap, Path.Combine(extractionPath, "map_alundra_spritesheet.png"));
     }
 
     private static void SaveMap(GameMap gameMap, int id, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors)
@@ -351,13 +352,14 @@ internal class Program
         var gameMapJson = ConvertGameMap(gameMap);
         File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
 
-        GetEntitySpriteSheets(gameMap, id);
+        //try to extract all entity infos from all map
+        //GetEntitySpriteSheets(gameMap, id, extractionPath);
 
-        //gameMapJson.SaveTileSheetBitmap(gameMap, Path.Combine(extractionPath, $"map_{id}_tilesheet.bmp"), tileAnimDescriptors);
-        //gameMapJson.SaveSpriteSheetBitmap(gameMap, Path.Combine(extractionPath, $"map_{id}_spritesheet.bmp"));
+        gameMapJson.SaveTileSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_tilesheet.png"), tileAnimDescriptors);
+        gameMapJson.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_spritesheet.png"));
     }
 
-    private static void GetEntitySpriteSheets(GameMap gameMap, int id)
+    private static void GetEntitySpriteSheets(GameMap gameMap, int id, string extractionPath)
     {
         foreach (var entityRecord in gameMap.SpriteInfo.Entities.Entities.Where(x => x != null))
         {
@@ -374,6 +376,7 @@ internal class Program
             }
 
             HashSet<string> spriteSheetIds = new();
+            int minSpriteSheetId = int.MaxValue;
 
             foreach (var animationSet in spriteRecord.AnimSets.Where(x => x != null))
             {
@@ -394,6 +397,7 @@ internal class Program
                         foreach (var image in frame.Images?.Images)
                         {
                             spriteSheetIds.Add($"map:{id} spritesheet:{image.Spritesheet & 0x7}");
+                            minSpriteSheetId = Math.Min(minSpriteSheetId, image.Spritesheet & 0x7);
                         }
                     }
                 }
@@ -404,17 +408,66 @@ internal class Program
                 continue;
             }
 
-            var name = EntityNames.GetName(entityRecord.SpriteDirection, entityRecord.SpriteTableIndex);
-            //Console.WriteLine($"Entity {name} uses sprite sheets: {string.Join(", ", spriteSheetIds)}");
+            var name = EntityNames.GetNameWithIndex(entityRecord.SpriteDirection, entityRecord.SpriteTableIndex);
+            //name = name.Replace("_", $"_{id}_");
+            //var name = EntityNames.GetName(entityRecord.SpriteTableIndex);
 
-            if (!entitySpriteSheets.TryAdd(name, spriteSheetIds))
+            //if (!entitySpriteSheetIds.TryAdd(name, spriteSheetIds))
+            //{
+            //    foreach (var spriteSheetId in spriteSheetIds)
+            //    {
+            //        entitySpriteSheetIds[name].Add(spriteSheetId);
+            //    }
+            //}
+
+            if (entitySpriteSheetAlreadySaved.Add(name))
             {
-                foreach (var spriteSheetId in spriteSheetIds)
+                var fileName = Path.Combine(extractionPath, name.Replace('\\', '-').Replace('/', '-') + ".png");
+                //SaveEntitySpriteSheet(gameMap, fileName, spriteSheetIds, spriteRecord, minSpriteSheetId);
+            }
+        }
+    }
+
+    public static void SaveEntitySpriteSheet(GameMap gameMap, string fileName, HashSet<string> spriteSheetIds, SpriteRecord spriteRecord, int minSpriteSheetId)
+    {
+        using var bitmap = new Bitmap(256, 256 * spriteSheetIds.Count);
+        using var graphics = Graphics.FromImage(bitmap);
+
+        foreach (var animationSet in spriteRecord.AnimSets)
+        {
+            if (animationSet == null)
+            {
+                continue;
+            }
+
+            foreach (var animation in animationSet.PreloadedAnims)
+            {
+                if (animation?.Frames == null)
                 {
-                    entitySpriteSheets[name].Add(spriteSheetId);
+                    continue;
+                }
+
+                for (int i = 0; i < animation.NumberOfFrames; i++)
+                {
+                    var frame = animation.Frames[i];
+
+                    if (frame?.Images?.Images == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (var image in frame.Images.Images)
+                    {
+                        var spriteBitmap = gameMap.GetSpriteBitmap(image);
+                        var x = image.Sx;
+                        var y = ((image.Spritesheet & 0x7) - minSpriteSheetId) * 256 + image.Sy;
+                        graphics.DrawImage(spriteBitmap, x, y);
+                    }
                 }
             }
         }
+
+        bitmap.Save(fileName, ImageFormat.Png);
     }
 
     private static GameMapJson ConvertGameMap(GameMap gameMap)

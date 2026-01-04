@@ -1,6 +1,7 @@
 ﻿using AlundraEngine;
 using AlundraEngine.DatasBin;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace AlundraDataExtractor;
 
@@ -38,7 +39,7 @@ record GameMapJson
         Strings = gameMap.Strings;
     }
 
-    public void SaveTileSheetBitmap(GameMap gameMap, string fileName, TileAnimDescriptor[] tileAnimDescriptors = null)
+    public void SaveTileSheet(GameMap gameMap, string fileName, TileAnimDescriptor[] tileAnimDescriptors = null)
     {
         using var bitmap = new Bitmap(256, 256 * 6);
         using var graphics = Graphics.FromImage(bitmap);
@@ -82,7 +83,7 @@ record GameMapJson
             }
         }
 
-        bitmap.Save(fileName);
+        bitmap.Save(fileName, ImageFormat.Png);
     }
 
     private static void DrawAllAnimatedTiles(GameMap gameMap, ushort tileId, Graphics graphics, TileAnimDescriptor[] tileAnimDescriptors)
@@ -116,7 +117,7 @@ record GameMapJson
         graphics.DrawImage(tileBitmap, x, y);
     }
 
-    public void SaveSpriteSheetBitmap(GameMap gameMap, string fileName)
+    public void SaveSpriteSheet(GameMap gameMap, string fileName)
     {
         using var bitmap = new Bitmap(256, 256 * 8);
         using var graphics = Graphics.FromImage(bitmap);
@@ -163,6 +164,6 @@ record GameMapJson
             }
         }
 
-        bitmap.Save(fileName);
+        bitmap.Save(fileName, ImageFormat.Png);
     }
 }
