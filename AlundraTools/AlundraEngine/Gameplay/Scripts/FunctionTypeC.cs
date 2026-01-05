@@ -1154,7 +1154,7 @@ public static class FunctionTypeC
         {
             case 1:
 
-                if (gameEngine.IsDialogInProgress())
+                if (gameEngine.IsDialogFinished())
                 {
                     ResetWarpState(gameEngine, entity);
                     return;
@@ -4253,7 +4253,7 @@ public static class FunctionTypeC
 
                 entity.ForceZ = 0;
 
-                if (gameEngine.IsDialogInProgress())
+                if (gameEngine.IsDialogFinished())
                 {
                     return;
                 }
@@ -4303,7 +4303,7 @@ public static class FunctionTypeC
                 return;
             }
 
-            if (gameEngine.IsDialogInProgress())
+            if (gameEngine.IsDialogFinished())
             {
                 return;
             }
@@ -4357,7 +4357,7 @@ public static class FunctionTypeC
 
             if (itemState == 1)
             {
-                if (gameEngine.IsDialogInProgress())
+                if (gameEngine.IsDialogFinished())
                 {
                     return;
                 }
@@ -4433,7 +4433,7 @@ public static class FunctionTypeC
                 }
 
                 entity.ItemState += 1;
-                gameEngine.EntityManager.FUN_8003ad30(entity);
+                gameEngine.EntityManager.BlockEntitiesBy(entity);
                 gameEngine.SoundManager.LoadBgm(0);
                 gameEngine.CdManager.StartCdStreaming(0xb);
 
@@ -4487,13 +4487,13 @@ public static class FunctionTypeC
 
             entity2 = entity;
 
-            if (gameEngine.IsDialogInProgress())
+            if (gameEngine.IsDialogFinished())
             {
                 return;
             }
         }
 
-        gameEngine.EntityManager.FUN_8003adac(entity2);
+        gameEngine.EntityManager.UnblockEntitiesBy(entity2);
 
     LAB_8007c740:
         gameEngine.DestroyEntity(entity);

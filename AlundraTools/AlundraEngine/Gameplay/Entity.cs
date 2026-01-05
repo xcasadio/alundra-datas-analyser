@@ -14,8 +14,8 @@ public class Entity
     public int Hp;
     public int HpMax;
     public int FrameCounter;//1c
-    public int IsNotProcessable;
-    public int Flags2;
+    public int IsBlockedByEntity;//20
+    public int Flags2;//24
     public Entity? PlatformEntity; //28
     public Entity? CarriedEntity;
     public int RelativeWarpOffsetX;
@@ -140,7 +140,7 @@ public class Entity
         Hp = other.Hp;
         HpMax = other.HpMax;
         FrameCounter = other.FrameCounter;
-        IsNotProcessable = other.IsNotProcessable;
+        IsBlockedByEntity = other.IsBlockedByEntity;
         Flags2 = other.Flags2;
         PlatformEntity = other.PlatformEntity;
         CarriedEntity = other.CarriedEntity;
@@ -294,7 +294,7 @@ public class Entity
         Hp = 0;
         HpMax = 0;
         FrameCounter = 0;
-        IsNotProcessable = 0;
+        IsBlockedByEntity = 0;
         Flags2 = 0;
         PlatformEntity = null;
         CarriedEntity = null;

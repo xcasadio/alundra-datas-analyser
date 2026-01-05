@@ -1402,7 +1402,7 @@ public class GameEngine
         int finalEntity;
 
         if (StaticVariables.g_playerControlFlags == 0 &&
-            StaticVariables.PlayerEntity.IsNotProcessable == 0 &&
+            StaticVariables.PlayerEntity.IsBlockedByEntity == 0 &&
             StaticVariables.g_warpLockTimer == 0 &&
             StaticVariables.g_padState1.ButtonsHold == (PadState.Start | PadState.Select) &&
             StaticVariables.g_warpDelayFrames == 0 &&
@@ -1446,7 +1446,7 @@ public class GameEngine
         }
 
         if (StaticVariables.g_playerControlFlags == 0 &&
-            StaticVariables.PlayerEntity.IsNotProcessable == 0 &&
+            StaticVariables.PlayerEntity.IsBlockedByEntity == 0 &&
             StaticVariables.g_warpLockTimer == 0 &&
             (StaticVariables.g_padState1.ButtonsJustPressed & PadState.OpenInventory) != 0 &&
             StaticVariables.g_warpDelayFrames == 0 &&
@@ -2303,7 +2303,7 @@ public class GameEngine
     {
         string[] strings;
 
-        if (IsDialogInProgress())
+        if (IsDialogFinished())
         {
             return 0;
         }
@@ -2324,7 +2324,7 @@ public class GameEngine
     }
 
     //80045004
-    public bool IsDialogInProgress()
+    public bool IsDialogFinished()
     {
         return (StaticVariables.g_dialog_flags & 4) != 0;
     }
@@ -2365,9 +2365,9 @@ public class GameEngine
     }
 
     //8004248c
-    public int IsDialogInProgress2()
+    public int IsDialogFinished2()
     {
-        return IsDialogInProgress() ? 1 : 0;
+        return IsDialogFinished() ? 1 : 0;
     }
 
     //80050ba8

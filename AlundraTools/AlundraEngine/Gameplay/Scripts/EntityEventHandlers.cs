@@ -1318,7 +1318,7 @@ public class EntityEventHandlers
     // 8003E464
     private int Script_IsDialogInProgress_039(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        return _gameEngine.IsDialogInProgress2() == 0 ? 1 : 0;
+        return _gameEngine.IsDialogFinished2() == 0 ? 1 : 0;
     }
 
     // 8003E484
@@ -1428,7 +1428,7 @@ public class EntityEventHandlers
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
             if (entity.Status - 1U < 3
-                && entity.IsNotProcessable == 0
+                && entity.IsBlockedByEntity == 0
                 && entity.RidingEntity == logicEntity)
             {
                 eventProgramState.Result = 1;
@@ -2907,7 +2907,7 @@ public class EntityEventHandlers
                 continue;
             }
 
-            if (e.IsNotProcessable != 0)
+            if (e.IsBlockedByEntity != 0)
             {
                 continue;
             }

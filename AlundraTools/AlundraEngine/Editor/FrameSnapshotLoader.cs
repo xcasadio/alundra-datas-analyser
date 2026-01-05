@@ -358,7 +358,7 @@ public static class FrameSnapshotLoader
         public void CopyToEntity(Entity entity, GameEngine gameEngine)
         {
             entity.FrameCounter = frameCounter;
-            entity.IsNotProcessable = isNotProcessable;
+            entity.IsBlockedByEntity = isNotProcessable;
             entity.Flags2 = flags2;
             entity.PlatformEntity = gameEngine.StaticVariables.g_entitySlots[platformEntity];
             entity.CarriedEntity = warpEntity;

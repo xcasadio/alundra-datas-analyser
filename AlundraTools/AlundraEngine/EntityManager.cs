@@ -778,7 +778,7 @@ public class EntityManager
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
             var eventProgramType = -1;
 
-            if (entity.IsNotProcessable == 0)
+            if (entity.IsBlockedByEntity == 0)
             {
                 switch (entity.Status)
                 {
@@ -951,13 +951,13 @@ public class EntityManager
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
             //processable
-            if (entity.Status >= 2 && entity.Status <= 3 && entity.IsNotProcessable == 0)
+            if (entity.Status >= 2 && entity.Status <= 3 && entity.IsBlockedByEntity == 0)
             {
                 _gameEngine.StaticVariables.g_activeEntities[_gameEngine.StaticVariables.g_activeEntityCount++] = entity;
             }
 
             //collidable
-            if ((entity.Flags & 0x80) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.IsNotProcessable == 0)
+            if ((entity.Flags & 0x80) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.IsBlockedByEntity == 0)
             {
                 _gameEngine.StaticVariables.g_collideableEntities[_gameEngine.StaticVariables.g_collideableEntitiesCount++] = entity;
             }
@@ -1290,10 +1290,9 @@ public class EntityManager
     }
 
     //8003ad30
-    public int FUN_8003ad30(Entity entity)
+    public int BlockEntitiesBy(Entity entity)
     {
         Entity entity2;
-        Entity currentEntity;
         int i;
         int result;
         int maxEntity;
@@ -1304,21 +1303,20 @@ public class EntityManager
 
         if (-1 < _gameEngine.StaticVariables.g_numberOfEntities)
         {
-            currentEntity = _gameEngine.StaticVariables.PlayerEntity;
-            entity2 = _gameEngine.StaticVariables.PlayerEntity;
-
             do
             {
+                entity2 = _gameEngine.StaticVariables.g_entitySlots[i];
+
                 if (entity2 != entity 
-                    && currentEntity.Status - 2 < 2 
-                    && currentEntity.IsNotProcessable == 0)
+                    && entity2.Status - 2 < 2 
+                    && entity2.IsBlockedByEntity == 0)
                 {
+                    entity2.IsBlockedByEntity = entity.Index; // pointer of the entity
                     result++;
-                    currentEntity = _gameEngine.StaticVariables.g_entitySlots[entity.Index];
+                    entity2 = _gameEngine.StaticVariables.g_entitySlots[entity.Index];
                 }
 
                 i++;
-                entity2 = _gameEngine.StaticVariables.g_entitySlots[i];
             } while (i <= maxEntity);
         }
 
@@ -1326,7 +1324,7 @@ public class EntityManager
     }
 
     //8003adac
-    public int FUN_8003adac(Entity entity)
+    public int UnblockEntitiesBy(Entity entity)
     {
         Entity entity2;
         int i;
@@ -1343,9 +1341,9 @@ public class EntityManager
 
             do
             {
-                if (entity2 == entity)
+                if (entity2.IsBlockedByEntity == entity.Index)
                 {
-                    entity2.IsNotProcessable = 0;
+                    entity2.IsBlockedByEntity = 0;
                     result = result + 1;
                 }
 

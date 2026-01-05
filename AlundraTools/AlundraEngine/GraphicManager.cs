@@ -686,7 +686,7 @@ public class GraphicManager
                     continue;
                 }
 
-                if (e.IsNotProcessable != 0)
+                if (e.IsBlockedByEntity != 0)
                 {
                     continue;
                 }
@@ -752,7 +752,7 @@ public class GraphicManager
                     continue;
                 }
 
-                if (e.IsNotProcessable != 0)
+                if (e.IsBlockedByEntity != 0)
                 {
                     continue;
                 }

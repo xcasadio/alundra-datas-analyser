@@ -289,7 +289,7 @@ public class SpriteEventHandlers
         if (_gameEngine.StaticVariables.g_playerControlFlags == 0
             && _gameEngine.StaticVariables.g_isGameEnding == 0
             && _gameEngine.StaticVariables.g_entitySlots[0].CarriedEntity == null
-            && !_gameEngine.IsDialogInProgress())
+            && !_gameEngine.IsDialogFinished())
         {
             itemId = (int)entity.ContentsItemId;
             iVar4 = 0x48;
@@ -302,11 +302,11 @@ public class SpriteEventHandlers
 
                 if (entitySpawn != null)
                 {
-                    _gameEngine.EntityManager.FUN_8003ad30(entity);
+                    _gameEngine.EntityManager.BlockEntitiesBy(entity);
                     entitySpawn.ForceZ = 0x8000;
                     entitySpawn.DelayOrAngle = 0x40;
                     entitySpawn.Flags &= 0xfffffe7f;
-                    entitySpawn.IsNotProcessable = 0;
+                    entitySpawn.IsBlockedByEntity = 0;
                     entitySpawn.Bytes[0] = 2;
                     entitySpawn.Bytes[1] = 0;
                     entitySpawn.Bytes[2] = 0;
