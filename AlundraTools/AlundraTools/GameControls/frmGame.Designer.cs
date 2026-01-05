@@ -233,6 +233,7 @@ namespace AlundraTools.GameControls
             buttonRefreshScript = new Button();
             treeViewScript = new TreeView();
             buttonSnapshot = new Button();
+            checkBoxDebugPortal = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -2284,6 +2285,7 @@ namespace AlundraTools.GameControls
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(checkBoxDebugPortal);
             tabPage2.Controls.Add(checkBoxLogDamage);
             tabPage2.Controls.Add(checkBoxLogScript);
             tabPage2.Controls.Add(buttonClearLog);
@@ -2441,6 +2443,17 @@ namespace AlundraTools.GameControls
             buttonSnapshot.Text = "Snapshot";
             buttonSnapshot.UseVisualStyleBackColor = true;
             buttonSnapshot.Click += buttonSnapshot_Click;
+            // 
+            // checkBoxDebugPortal
+            // 
+            checkBoxDebugPortal.AutoSize = true;
+            checkBoxDebugPortal.Location = new Point(380, 54);
+            checkBoxDebugPortal.Name = "checkBoxDebugPortal";
+            checkBoxDebugPortal.Size = new Size(80, 19);
+            checkBoxDebugPortal.TabIndex = 10;
+            checkBoxDebugPortal.Text = "Log portal";
+            checkBoxDebugPortal.UseVisualStyleBackColor = true;
+            checkBoxDebugPortal.CheckedChanged += checkBoxDebugPortal_CheckedChanged;
             // 
             // FrmGame
             // 
@@ -2716,5 +2729,6 @@ namespace AlundraTools.GameControls
         private CheckBox checkBoxDisableCollision;
         private CheckBox checkBoxLogDamage;
         private Button buttonSnapshot;
+        private CheckBox checkBoxDebugPortal;
     }
 }

@@ -325,7 +325,8 @@ public static class FunctionTypeE
     //8007f5c0
     public static void AI_FUN_8007f658(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        gameEngine.SoundManager.PlaySoundEffect(0xe1);
+        gameEngine.DestroyEntity(entity, -1);
     }
 
     //8007f690

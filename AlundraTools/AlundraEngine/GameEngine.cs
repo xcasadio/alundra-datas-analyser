@@ -1753,7 +1753,7 @@ public class GameEngine
             
             foreach (var entity in StaticVariables.g_entitySlots.Skip(1))
             {
-                if ((ownerEntity.Status - 1 < 2 || ownerEntity.Status == 3) && entity.EntityRefId == searchType)
+                if ((ownerEntity.Status - 1 < 3) && entity.EntityRefId == searchType)
                 {
                     StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                 }
@@ -2167,7 +2167,7 @@ public class GameEngine
     }
 
     // 8003166c
-    public Portal GetPortal()
+    public Portal? GetActivatedPortal()
     {
         foreach (var infoPortal in CurrentMap.Info.Portals)
         {

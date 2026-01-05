@@ -21,6 +21,7 @@ public class StaticVariables
     public bool DoNextFrame { get; set; }
     public bool UseDebugCamera { get; set; }
     public bool DisplayCollisions { get; set; }
+    public bool DebugPortalsEnabled { get; set; }
     public bool IsLogScriptEnabled { get; set; }
     public bool IsLogDamageEnabled { get; set; }
     
@@ -500,7 +501,7 @@ public class StaticVariables
     public readonly uint[] g_cardinalDirectionTable = [0, 0x10, 0x08, 0x18];
 
     //80022778
-    public readonly byte[] BYTE_ARRAY_80022778 = [0x40, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00];
+    public readonly ushort[] SHORT_ARRAY_80022776 = [0x4000, 0x1000, 0x8000, 0x2000];
 
     //800236d4
     public readonly byte[] g_heights_800236d4 =

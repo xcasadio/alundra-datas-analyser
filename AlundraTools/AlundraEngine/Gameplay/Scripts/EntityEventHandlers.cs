@@ -1645,11 +1645,12 @@ public class EntityEventHandlers
         Debugger.Break();
 
         Portal portal;
-        portal = _gameEngine.GetPortal();
+        portal = _gameEngine.GetActivatedPortal();
 
         if (portal == null)
         {
-            //_gameEngine.DoNothing();
+            //Debugger.Break();
+            //_gameEngine.DoNothing("Cant Find WarpData\n\r");
             eventProgramState.Result = 0;
         }
         else
@@ -3149,41 +3150,35 @@ public class EntityEventHandlers
     // 80040C80
     private int Script_159_09F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-        return 0;
-        /*
-        ushort uVar1;
+        int count = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
-        int iVar2;
-
-        int piVar3;
-
-        iVar2 = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
-
-        if (iVar2 != 0 && _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].ContentsGameFlag != 0)
+        if (count > 0 && _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].ContentsGameFlag != 0)
         {
-            uVar1 = (ushort)_gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].ContentsGameFlag;
+            var entityMatching = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0];
+            uint[] flags;
+            var flag = entityMatching.ContentsGameFlag;
 
-            if ((uVar1 & 0x8000) == 0)
+            if ((flag & 0x8000) == 0)
             {
-                piVar3 = _gameEngine.StaticVariables.g_saveData.MapFlags;
+                flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
             }
             else
             {
-                piVar3 = _gameEngine.StaticVariables.g_globalFlags;
+                flags = _gameEngine.StaticVariables.g_globalFlags;
             }
 
-            if (((uint)((uVar1 >> 3 & 0xffc) + piVar3) & 1 << (_gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].ContentsGameFlag & 0x1fU)) != 0)
+            var index = ((flag >> 3) & 0xffc) >> 2;
+            var mask = (uint)(1 << (entityMatching.ContentsGameFlag & 0x1f));
+
+            if ((flags[index] | mask) != 0)
             {
                 eventProgramState.Result = 1;
-
                 return 2;
             }
         }
 
         eventProgramState.Result = 0;
-
-        return 2;*/
+        return 2;
     }
 
     // 80040D60

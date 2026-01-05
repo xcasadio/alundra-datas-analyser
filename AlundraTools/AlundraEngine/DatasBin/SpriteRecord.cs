@@ -1,4 +1,6 @@
-﻿namespace AlundraEngine.DatasBin;
+﻿using AlundraEngine.Gameplay.Scripts;
+
+namespace AlundraEngine.DatasBin;
 
 public class SpriteRecord
 {
@@ -21,15 +23,9 @@ public class SpriteRecord
         //preload all of the animations here
         for (int i = 0; i < AnimSets.Length; i++)
         {
-            for (int dirIndex = 0; dirIndex < 4; dirIndex++)
+            for (uint dirIndex = 0; dirIndex < 4; dirIndex++)
             {
-                //TODO check direction
-                var direction = dirIndex switch
-                {
-                    1 => 2,
-                    2 => 1,
-                    _ => dirIndex
-                };
+                var direction = ScriptHelper.FixDirection(dirIndex);
 
                 if (AnimSets[i].AnimationOffsets[direction] != 0xffff)
                 {

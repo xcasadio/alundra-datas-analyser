@@ -1,9 +1,10 @@
 ﻿using AlundraEngine.Balance;
+using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
+using Microsoft.VisualBasic.Logging;
 using System;
 using System.Diagnostics;
-using AlundraEngine.DatasBin;
 using static OfficeOpenXml.ExcelErrorValue;
 
 namespace AlundraEngine;
@@ -2375,98 +2376,80 @@ public class PlayerManager
     // 8002f120
     private void CheckAndExecuteWarp()
     {
-        Portal portal;
-        int iVar1;
+        Portal? portal;
         uint directionId;
-        string buffer;
-        string fmt;
         uint direction;
 
         directionId = _gameEngine.StaticVariables.PlayerEntity.CombinedVramFlagsAND;
 
-        if (_gameEngine.StaticVariables.g_debugState < 0
-            && (_gameEngine.StaticVariables.g_debugFlags & 4) != 0
-            && (_gameEngine.StaticVariables.g_debugFlags & 0x8000004) != 0x8000004)
+        if (_gameEngine.StaticVariables.DebugPortalsEnabled)
+        //if (_gameEngine.StaticVariables.g_debugState < 0
+        //    && (_gameEngine.StaticVariables.g_debugFlags & 4) != 0
+        //    && (_gameEngine.StaticVariables.g_debugFlags & 0x8000004) != 0x8000004)
         {
+            var log = string.Empty;
+
             if (_gameEngine.StaticVariables.g_isWarpDisabled == 0)
             {
                 _gameEngine.StaticVariables.DAT_80098f24 += 1;
-                //_gameEngine.StaticVariables.g_debugMessage += "Attr     : %08X("  + combinedVramFlagsAnd;
+                log = "Attr: "  + _gameEngine.StaticVariables.PlayerEntity.CombinedVramFlagsAND.ToString("x8") + " ";
 
                 if ((directionId & 4U) == 0)
                 {
                     if ((directionId & 0x8000U) == 0 || _gameEngine.StaticVariables.g_playerControlFlags != 0)
                     {
-                        //buffer = _gameEngine.StaticVariables.g_debugMessage + combinedVramFlagsAnd;
-                        //fmt = "None)\n";
+                        log += "None";
                     }
                     else
                     {
-                        //string.Format(_gameEngine.StaticVariables.g_debugMessage + combinedVramFlagsAnd, "Warp)\n");
-                        portal = _gameEngine.GetPortal();
+                        log += "Warp ";
+                        portal = _gameEngine.GetActivatedPortal();
+                        
                         if (portal == null)
                         {
-                            //buffer = _gameEngine.StaticVariables.g_debugMessage + combinedVramFlagsAnd;
-                            //fmt = "No Portal.\n";
+                            log += "No Portal";
                         }
                         else
                         {
                             direction = (uint)(portal.Flags >> 14);
-                            //_gameEngine.PrintDebugWarpInfo(pbVar2, (int)uVar3);
-
-                            ushort requiredInput = _gameEngine.StaticVariables.BYTE_ARRAY_80022778[direction * 2];
+                            ushort requiredInput = _gameEngine.StaticVariables.SHORT_ARRAY_80022776[direction];
 
                             if ((_gameEngine.StaticVariables.g_padState1.ButtonsHold & requiredInput) == 0
                                 || _gameEngine.StaticVariables.PlayerEntity.AnimationDirection != direction)
                             {
-                                //buffer = _gameEngine.StaticVariables.g_debugMessage + combinedVramFlagsAnd;
-                                //fmt = "Warp Not Ready!\n";
+                                log += "Warp Not Ready!";
                             }
                             else if ((_gameEngine.StaticVariables.DAT_80098f24 & 4) == 0)
                             {
-                                //buffer = _gameEngine.StaticVariables.g_debugMessage + combinedVramFlagsAnd;
-                                //fmt = "Warp Ready!\n";
-                            }
-                            else
-                            {
-                                //buffer = _gameEngine.StaticVariables.g_debugMessage + combinedVramFlagsAnd;
-                                //fmt = "\n";
+                                log += "Warp Ready!";
                             }
                         }
                     }
                 }
                 else
                 {
-                    //string.Format(_gameEngine.StaticVariables.g_debugMessage + combinedVramFlagsAnd, "Hole)\n");
-                    portal = _gameEngine.GetPortal();
+                    log += "Hole ";
+                    portal = _gameEngine.GetActivatedPortal();
+
                     if (portal == null)
                     {
-                        //buffer = _gameEngine.StaticVariables.g_debugMessage + combinedVramFlagsAnd;
-                        //fmt = "No Portal.\n";
+                        log += "No Portal";
                     }
                     else
                     {
-                        //_gameEngine.PrintDebugWarpInfo(pbVar2, 4);
                         if ((_gameEngine.StaticVariables.DAT_80098f24 & 4) == 0)
                         {
-                            //buffer = _gameEngine.StaticVariables.g_debugMessage + combinedVramFlagsAnd;
-                            //fmt = "Warp Ready!\n";
-                        }
-                        else
-                        {
-                            //buffer = _gameEngine.StaticVariables.g_debugMessage + combinedVramFlagsAnd;
-                            //fmt = "\n";
+                            log += "Warp Ready!";
                         }
                     }
                 }
             }
             else
             {
-                //buffer = _gameEngine.StaticVariables.g_debugMessage + combinedVramFlagsAnd;
-                //fmt = "WARP DISABLE!\n";
+                log += "WARP DISABLE!";
             }
 
-            //string.Format(buffer, fmt);
+            _gameEngine.LogManager.Log(log);
             return;
         }
 
@@ -2482,45 +2465,46 @@ public class PlayerManager
                 return;
             }
 
-            portal = _gameEngine.GetPortal();
+            portal = _gameEngine.GetActivatedPortal();
             if (portal == null)
             {
                 return;
             }
 
             direction = (uint)(portal.Flags >> 14);
-            ushort requiredInput = _gameEngine.StaticVariables.BYTE_ARRAY_80022778[direction * 2];
+            ushort requiredInput = _gameEngine.StaticVariables.SHORT_ARRAY_80022776[direction];
 
-            if (((_gameEngine.StaticVariables.g_padState1.ButtonsHold >> 8) & requiredInput) == 0)
+            if ((_gameEngine.StaticVariables.g_padState1.ButtonsHold & requiredInput) == 0)
             {
                 return;
             }
 
-            direction = direction switch
-            {
-                1 => 2,
-                2 => 1,
-                _ => direction
-            };
+            direction = ScriptHelper.FixDirection(direction);
 
             if (_gameEngine.StaticVariables.PlayerEntity.CurrentDirection >> 3 != direction)
             {
                 return;
             }
 
-            if (((portal.Flags & 0x3000) >> 12) > 3) Debugger.Break();
+            if ((portal.Flags & 0x3000) >> 12 > 3)
+            {
+                Debugger.Break();
+            }
 
             directionId = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 12];
         }
         else
         {
-            portal = _gameEngine.GetPortal();
+            portal = _gameEngine.GetActivatedPortal();
             if (portal == null)
             {
                 return;
             }
 
-            if (((portal.Flags & 0x3000) >> 12) > 3) Debugger.Break();
+            if ((portal.Flags & 0x3000) >> 12 > 3)
+            {
+                Debugger.Break();
+            }
 
             directionId = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 12];
         }
@@ -2748,8 +2732,8 @@ public class PlayerManager
                     int forceMult = _gameEngine.StaticVariables.g_prepareSprintParameters[baseIndex * 2 + animIndex/*+ 0x36*/];
                     spriteEffect.ForceX = (_gameEngine.StaticVariables.PlayerEntity.ForceX * forceMult) >> 8;
                     spriteEffect.ForceY = (_gameEngine.StaticVariables.PlayerEntity.ForceY * forceMult) >> 8;
-                    int zOffset = (int)((Random.Next() * (ulong)(_gameEngine.StaticVariables.g_prepareSprintParameters[animIndex + 0x3a] + 1)) >> 32);
-                    spriteEffect.ForceZ = _gameEngine.StaticVariables.g_prepareSprintParameters[animIndex + 0x3c] + zOffset;
+                    int zOffset = (int)((Random.Next() * (ulong)(_gameEngine.StaticVariables.g_prepareSprintParameters[0x18] * animIndex + 1)) >> 32);
+                    spriteEffect.ForceZ = _gameEngine.StaticVariables.g_prepareSprintParameters[0x19] * animIndex + (short)zOffset;
                 }
                 break;
 

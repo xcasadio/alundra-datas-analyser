@@ -1646,6 +1646,11 @@ public partial class FrmGame : Form
             }
         }
     }
+
+    private void checkBoxDebugPortal_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.DebugPortalsEnabled = checkBoxDebugPortal.Checked;
+    }
 }
 
 internal class FlagModel(string Name, Func<uint> Value)
