@@ -30,9 +30,12 @@ namespace AlundraTools.GameControls
         }
 
         private DatasBin _datasBin;
+        private SoundBin _soundBin;
 
         public void Init(DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcRes etcRes, Font3 font3)
         {
+            _soundBin = soundBin;
+            _balanceBin = balanceBin;
             _etcRes = etcRes;
             _datasBin = datasBin;
             _font3 = font3;
@@ -1184,7 +1187,7 @@ namespace AlundraTools.GameControls
                 delay = _selectedEffectFrame.Delay;
                 memoryAddress = _selectedEffectFrame.MemoryAddress;
             }
-           
+
             lblFrameAddr.Text = memoryAddress.ToString("x6");
             lblFrameData.Text = "delay: " + delay;
 
@@ -1586,6 +1589,7 @@ namespace AlundraTools.GameControls
         private EtcRes _etcRes;
         private Font3 _font3;
         private string[] _mapNames;
+        private BalanceBin _balanceBin;
 
         private void pctPortrait_Paint(object sender, PaintEventArgs e)
         {
@@ -1921,6 +1925,19 @@ namespace AlundraTools.GameControls
 
             frm.Init(commands, _datasBin.AlundraGameMap, _selectedGameMap, selectedCommandIndex, codes);
             frm.Show();
+        }
+
+        private void buttonPlaySelectedMap_Click(object sender, EventArgs e)
+        {
+            StaticVariables.ForceDesiredMap = lstGameMaps.SelectedIndex;
+
+            var frmGame = new FrmGame(
+                _datasBin,
+                _balanceBin,
+                _soundBin,
+                _etcRes,
+                _font3);
+            frmGame.Show();
         }
     }
 }

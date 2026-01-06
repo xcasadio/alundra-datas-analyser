@@ -5,9 +5,6 @@ using AlundraEngine.Editor;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
 using AlundraTools.GameControls;
-using AlundraTools.GameControls.CommandControls;
-using Microsoft.Win32;
-using System.Text.Json;
 
 namespace AlundraTools;
 
@@ -68,6 +65,8 @@ public partial class MainForm : Form
 
     private void toolStripMenuItem1_Click(object sender, EventArgs e)
     {
+        StaticVariables.ForceDesiredMap = -1;
+
         var ofd = new OpenFileDialog();
         ofd.Filter = "DATAS.BIN|DATAS.BIN|All Files (*.*)|*.*";
         ofd.InitialDirectory = @"D:\development\repo\Alundra Remake\Alundra (France)\Alundra (France)_extracted\DATA";

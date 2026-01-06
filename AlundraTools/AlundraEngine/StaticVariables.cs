@@ -15,6 +15,8 @@ namespace AlundraEngine;
 public class StaticVariables
 {
     //editor
+    public static int ForceDesiredMap { get; set; } = -1;
+
     public int EditorSelectEntityIndex { get; set; } = -1;
     public int EditorSelectEffectIndex { get; set; } = -1;
     public bool IsGamePaused { get; set; }
@@ -11833,11 +11835,30 @@ public class StaticVariables
     public int DAT_80026d3c; // 80026D3C
     public short DAT_80026d4c; // 80026D4C
     public short DAT_80026d4e; // 80026D4E
-    public int[] INT_ARRAY_80026d70 = new int[5]; // 80026D70
-    public int[] INT_ARRAY_80026d84 = new int[3]; // 80026D84
-    public int[] INT_ARRAY_80026d90 = new int[16]; // 80026D90
-    public int INT_80026dd0; // 80026DD0
-    public int[] INT_ARRAY_80026dd4 = new int[31]; // 80026DD4
+    // 80026D70
+    public int[] INT_ARRAY_80026d70 = new int[] { 0, 0x1000, 0x1200, 0x2400, 0x2800 }; 
+    // 80026D84
+    public int[] INT_ARRAY_80026d84 = new int[] { 0xD000C, 0xF000E, 0xF }; 
+    // 80026D90
+    public int[] INT_ARRAY_80026d90 = new int[]
+    {
+        0x00, 0x14, 0x14, 0xA,
+        0x1E, 0x1E, 0x14, 0x1E,
+        0x1E, 0xA, 0xA, 0x14,
+        0x14, 0x1E, 0xA, 0xA
+    };
+    // 80026DD4
+    public int[] INT_ARRAY_80026dd0 = new int[]
+    {
+        0x4140000, 0x1880000, 0x42C0000, 0x1880000,
+        0x4440000, 0x1980000, 0x45C0000, 0x1A80000,
+        0x45C0000, 0x1B80000, 0x45C0000, 0x1C80000,
+        0x4440000, 0x1D80000, 0x42C0000, 0x1E80000,
+        0x4140000, 0x1E80000, 0x3FC0000, 0x1E80000,
+        0x3E40000, 0x1D80000, 0x3CC0000, 0x1C80000,
+        0x3CC0000, 0x1B80000, 0x3CC0000, 0x1A80000,
+        0x3E40000, 0x1980000, 0x3FC0000, 0x1880000
+    };
     public int INT_80026e50; // 80026E50
     public short SHORT_80026e5c; // 80026E5C
     public short SHORT_80026f34; // 80026F34
@@ -13079,6 +13100,12 @@ public class StaticVariables
         }
     };
     public Entity g_entitySpawned; // 801910e8
+    public int DAT_80191130; // 80191130
+    public int DAT_80191134; // 80191134
+    public int DAT_80191138; // 80191138
+    public int DAT_8019113c; // 8019113C
+    public int DAT_80191140; // 80191140
+
     public Entity g_bossSpawnedEffectEntity; // 801911B8
     public Entity g_bossEffectEntity; // 801911BC
     public int DAT_801911c0; // 801911C0

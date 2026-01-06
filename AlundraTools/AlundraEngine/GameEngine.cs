@@ -2547,4 +2547,22 @@ public class GameEngine
         StaticVariables.g_targetFadeColorR = fadeColor;
         BeginFadeEffect(1, duration);
     }
+
+    //8003abcc
+    public bool ResetEntity(Entity entity)
+    {
+        var entityRecord = entity.EntityRecord;
+
+        if (entityRecord != null)
+        {
+            EntityManager.InitializeEntity(entity, entity.ParentEntity, entity.SpriteRecord, entity.EntityRecord,
+                entity.SpriteTableIndex, entity.EntityRefId,
+                (entityRecord.XPos * 0xc + 0xc) * 0x10000,
+                (entityRecord.YPos * 8 + 8) * 0x10000, 
+                (entityRecord.Height << 0x13)
+                , 0, StaticVariables.g_cardinalDirectionTable[entityRecord.SpriteDirection & 3],
+                entity.PaletteOffset, entity.SpriteSheetOffset);
+        }
+        return entityRecord != null;
+    }
 }

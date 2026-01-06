@@ -243,6 +243,7 @@ namespace AlundraTools.GameControls
             checkBoxDebug = new CheckBox();
             imageViewerMap = new ImageViewerControl();
             saveFileDialog1 = new SaveFileDialog();
+            buttonPlaySelectedMap = new Button();
             ((System.ComponentModel.ISupportInitialize)pctMapPalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctSpritePalettes).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pctAnim).BeginInit();
@@ -2276,11 +2277,22 @@ namespace AlundraTools.GameControls
             imageViewerMap.Size = new Size(709, 786);
             imageViewerMap.TabIndex = 194;
             // 
+            // buttonPlaySelectedMap
+            // 
+            buttonPlaySelectedMap.Location = new Point(633, 12);
+            buttonPlaySelectedMap.Name = "buttonPlaySelectedMap";
+            buttonPlaySelectedMap.Size = new Size(125, 23);
+            buttonPlaySelectedMap.TabIndex = 195;
+            buttonPlaySelectedMap.Text = "Play selected map";
+            buttonPlaySelectedMap.UseVisualStyleBackColor = true;
+            buttonPlaySelectedMap.Click += buttonPlaySelectedMap_Click;
+            // 
             // FrmAlundra
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1782, 831);
+            Controls.Add(buttonPlaySelectedMap);
             Controls.Add(imageViewerMap);
             Controls.Add(checkBoxDebug);
             Controls.Add(checkBoxWallTile);
@@ -2542,5 +2554,6 @@ namespace AlundraTools.GameControls
         private ColumnHeader columnHeader44;
         private Label label2;
         private ColumnHeader columnHeader23;
+        private Button buttonPlaySelectedMap;
     }
 }

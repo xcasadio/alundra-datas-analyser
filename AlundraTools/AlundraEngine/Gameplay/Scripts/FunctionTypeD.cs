@@ -221,9 +221,19 @@ public static class FunctionTypeD
     }
 
     //8007e1c4
+    //Élément Niv.1
     public static void AI_FUN_8007e1c4(GameEngine gameEngine, Entity entity)
     {
-        System.Diagnostics.Debugger.Break();
+        uint direction;
+
+        if (gameEngine.EntityManager.ComputeNewHp(entity))
+        {
+            entity.Bytes[3] = 1;
+        }
+
+        entity.TargetAnimationId = 8;
+        direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
+        entity.TargetDirection = direction;
     }
 
     //8007e228
@@ -329,9 +339,30 @@ public static class FunctionTypeD
     }
 
     //8007e8f0
+    //P-Zoldia Niv.1
     public static void AI_FUN_8007e8f0(GameEngine gameEngine, Entity entity)
     {
-        System.Diagnostics.Debugger.Break();
+        if (entity.Bytes[0] == 0)
+        {
+            if (!gameEngine.EntityManager.ComputeNewHp(entity))
+            {
+                gameEngine.SoundManager.PlaySoundEffect(0x11e);
+            }
+            else
+            {
+                gameEngine.SoundManager.PlaySoundEffect(0x123);
+                entity.Bytes[3] = 1;
+            }
+
+            entity.TargetAnimationId = 6;
+            var direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
+            entity.TargetDirection = direction;
+        }
+        else
+        {
+            gameEngine.SoundManager.PlaySoundEffect(0x120);
+            entity.TargetAnimationId = 4;
+        }
     }
 
     //8007e994

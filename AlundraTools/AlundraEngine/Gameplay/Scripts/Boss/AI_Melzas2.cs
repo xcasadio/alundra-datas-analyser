@@ -152,8 +152,8 @@ public static class AI_Melzas2
     //80080ae0
     public static void UpdateEntityAI_ExecuteBossSpecialMove(GameEngine gameEngine, Entity entity)
     {
-        ushort frameCounter = (ushort)entity.AIValues[1];
-        frameCounter = (ushort)(frameCounter - 1);
+        var frameCounter = (int)entity.AIValues[1];
+        frameCounter = frameCounter - 1;
         entity.AIValues[1] = (short)frameCounter;
 
         // if phase (byte[3]) not in [0..2] => skip "periodic effect" block
@@ -168,12 +168,16 @@ public static class AI_Melzas2
                 var rand1 = Random.Next();
                 var rand2 = Random.Next();
                 int xOffset = (int)(((rand1 * (ulong)(entity.Width >> 0x14) + 1) >> 0x20) * 0x10);
-                xOffset += (int)(((rand2 * 0x11) >> 0x20) * 0x10000);
-
+                xOffset = (xOffset + (int)((rand2 * 0x11) >> 0x20)) * 0x10000;
+                
                 var rand3 = Random.Next();
                 int zOffset = (int)(((rand3 * (ulong)(entity.Depth >> 0x14) + 1) >> 0x20) * 0x10);
                 var effectOffsetZ = (Random.Next() * 0x11) >> 0x20;
                 zOffset += (int)(effectOffsetZ * 0x10000);
+
+                //var effectOffsetZ = ((Random.Next() * 0x11) >> 0x20);
+                //var xOffset = entity.ModdedPosX + ((int)((Random.Next() * (ulong)((entity.Width >> 0x14) + 1)) >> 0x20) * 0x10 + (int)((Random.Next() * 0x11) >> 0x20)) * 0x10000;
+                //var zOffset = entity.ModdedPosZ + ((int)((Random.Next() * (ulong)((entity.Depth >> 0x14) + 1)) >> 0x20) * 0x10 + (int)effectOffsetZ) * 0x10000;
 
                 int effectX = entity.ModdedPosX + xOffset;
                 int effectY = entity.ModdedPosY + entity.Height;

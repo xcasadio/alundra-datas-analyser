@@ -302,7 +302,7 @@ public class EntityEventHandlers
 
             var log = LogCommand(entity, logicMode, command, variables, eventProgramState.CodeIndex);
 
-            if (command == 0xFF)
+            if (command == 0xFF) // end
             {
                 if (_gameEngine.StaticVariables.IsLogScriptEnabled)
                 {
@@ -679,9 +679,7 @@ public class EntityEventHandlers
                 bitmap);
         }
 
-        //Debugger.Break();
         _gameEngine.TryOpenDialogWithName((int)logicEntity.SpriteTableIndex);
-        //var res = _gameEngine.TryOpenDialog((uint)((variables[2] << 8) | variables[1]), 0);
         var res = _gameEngine.TryOpenDialog((uint)variables[1], variables[2]);
 
         if (res == 0)
@@ -1196,8 +1194,6 @@ public class EntityEventHandlers
     // 8003E128
     private int Script_52_034(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        //Debugger.Break();
-
         for (int i = 0; i < 4; i++)
         {
             var flagData = variables[i * 2 + 1] + (variables[i * 2 + 2] << 8);
@@ -2052,8 +2048,8 @@ public class EntityEventHandlers
         for (int i = 0; i < num; i++)
         {
             var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
-            Debugger.Break();
-            if (entity.ChildEntity == logicEntity) // TODO: check if this is correct
+            //Debugger.Break();
+            if (entity.RidingEntity == logicEntity) // TODO: check if this is correct
             {
                 eventProgramState.Result = 1;
                 return 2;
@@ -2328,14 +2324,14 @@ public class EntityEventHandlers
     // 8003FAC8
     private int Script_118_076(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        //_gameEngine.PrintCommandMap();
+        //_gameEngine.PrintCommandMap("Not implemented");
         return 0;
     }
 
     // 8003FAEC
     private int Script_119_077(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        //_gameEngine.PrintCommandMap();
+        //_gameEngine.PrintCommandMap("Not implemented");
         return 0;
     }
 
@@ -3463,7 +3459,7 @@ public class EntityEventHandlers
     private int Script_174_0AE(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
-        //_gameEngine.DoNothing();
+        //_gameEngine.DoNothing("Not implemented");
         Environment.Exit(-1);
         return 0;
     }
