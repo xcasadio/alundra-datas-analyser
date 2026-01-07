@@ -484,15 +484,15 @@ public class StaticVariables
     public readonly int[] g_scriptAnimationTable2 = [0, 3, 1, 4, 0];
     //80027440
     public readonly int[] INT_ARRAY_80027440 = [ 
-        0,        // 0x00000000
-        262144,   // 0x00040000
-        0,        // 0x00000000
-        -262144,  // 0xFFFC0000
-        -458752,  // 0xFFF90000
-        0,        // 0x00000000
-        458752,   // 0x00070000
-        0,        // 0x00000000
-        0       // 0x00000000
+        0,        
+        262144,   
+        0,        
+        -262144,  
+        -458752,  
+        0,        
+        458752,   
+        0,       
+        0 
     ];
     //80027604
     public readonly short[] SHORT_ARRAY_80027604 = [0, 0, 0, 8, 0, 0, 0, -8, 0, -10, 0, 0, 0, 10, 0, 0];

@@ -16,9 +16,63 @@ public static class FunctionTypeD
     }
 
     //8007da08
+    //◆Homme-lézard (épée) Niv.1
     public static void AI_FUN_8007da08(GameEngine gameEngine, Entity entity)
     {
-        System.Diagnostics.Debugger.Break();
+        if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            System.Diagnostics.Debugger.Break();
+        }
+
+        byte bVar1;
+        uint uVar3;
+        uint iVar4;
+
+        bVar1 = entity.TouchingEntity.BalanceAnimValRef.Val;
+        entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.PlayerEntity.PosX, entity.PosY - gameEngine.StaticVariables.PlayerEntity.PosY);
+
+        if ((bVar1 & 0xf) - 1 < 3)
+        {
+            iVar4 = entity.SpriteTableIndex;
+
+            if (iVar4 == 0x16a)
+            {
+                uVar3 = 0xc;
+
+                if (entity.TargetAnimationId < 2)
+                {
+                    goto LAB_8007db1c;
+                }
+
+                if (entity.TargetAnimationId == 0xd)
+                {
+                    uVar3 = 0xc;
+                    goto LAB_8007db1c;
+                }
+
+                iVar4 = entity.SpriteTableIndex;
+            }
+
+            if (iVar4 == 0x16d && entity.TargetAnimationId < 2)
+            {
+                uVar3 = 10;
+
+                if (0x31 < (uint)((Random.Next() * 100) >> 0x20))
+                {
+                    goto LAB_8007db1c;
+                }
+            }
+        }
+
+        if (gameEngine.EntityManager.ComputeNewHp(entity))
+        {
+            entity.Bytes[3] = 1;
+        }
+
+        uVar3 = 7;
+
+        LAB_8007db1c:
+        entity.TargetAnimationId = uVar3;
     }
 
     //8007db38
@@ -142,9 +196,9 @@ public static class FunctionTypeD
         var direction = ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
         entity.TargetDirection = (uint)direction;
 
-        if (((val & 0xf) - 1 < 3))
+        if ((val & 0xf) - 1 < 3)
         {
-            var rand = Random.Next() * 100 >> 0x20;
+            var rand = (Random.Next() * 100) >> 0x20;
 
             if (0x45 < rand)
             {
