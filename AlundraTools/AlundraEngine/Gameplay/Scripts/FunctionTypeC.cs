@@ -7,8 +7,14 @@ namespace AlundraEngine.Gameplay.Scripts;
 public static class FunctionTypeC
 {
     // 80065ED4
+    //◆Beannoïde
     public static void AI_UpdateEntityAI_IdleSkittish(GameEngine gameEngine, Entity entity)
     {
+        if (entity.Name != "◆Beannoïde")
+        {
+            Debugger.Break();
+        }
+
         short delay = 0;
         uint direction;
         int[] relPos = new int[6];
@@ -79,6 +85,7 @@ public static class FunctionTypeC
                 entity.TargetForceX = 0;
                 entity.TargetDirection = direction;
                 delay = (short)(((Random.Next() * 0x1f) >> 32) + 0x1e);
+                entity.TargetAnimationId = 0;
                 entity.AIValues[1] = delay;
                 break;
 
@@ -147,11 +154,12 @@ public static class FunctionTypeC
                     return;
                 }
 
+                LAB_80066234:
+                entity.TargetAnimationId = 0;
+                LAB_80066238:
+                entity.AIValues[1] = delay;
                 break;
         }
-
-        entity.TargetAnimationId = 0;
-        entity.AIValues[1] = delay;
     }
 
     // 80066250
@@ -1884,9 +1892,13 @@ public static class FunctionTypeC
     }
 
     //8006b848
+    //Caisse en bois générique
     public static void AI_FUN_8006b848(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        if (entity.Name != "Caisse en bois générique")
+        {
+            Debugger.Break();
+        }
 
         if (entity.PlatformEntity == null)
         {
@@ -6292,9 +6304,9 @@ public static class FunctionTypeC
         Debugger.Break();
     }
 
-    //
+    //80074d00
     //Monsieur Aspiration
-    public static void AI_UpdateEntityAI_Warp(GameEngine gameEngine, Entity entity)
+    public static void AI_UpdateEntityAI_WarpBoss(GameEngine gameEngine, Entity entity)
     {
         Debugger.Break();
     }

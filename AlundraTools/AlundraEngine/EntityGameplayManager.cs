@@ -115,8 +115,8 @@ public class EntityGameplayManager
 
         if (baseDelay != 0)
         {
-            var delay = (short)((Random.Next() * 0x10) >> 32) + baseDelay;
-            entity.AIValues.Set(delay, 1);
+            var delay = (short)(((Random.Next() * 0x10) >> 32) + (ulong)baseDelay);
+            entity.AIValues[1] = delay;
         }
     }
 

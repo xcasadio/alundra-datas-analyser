@@ -95,7 +95,7 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramCTick, 45, FunctionTypeC.AI_UpdateEntityIA_Watc);
         Register(ScriptHelper.ProgramCTick, 46, FunctionTypeC.AI_UpdateEntityAI_Twin);
         Register(ScriptHelper.ProgramCTick, 47, FunctionTypeC.AI_UpdateEntityAI_0);
-        Register(ScriptHelper.ProgramCTick, 48, FunctionTypeC.AI_UpdateEntityAI_Warp);
+        Register(ScriptHelper.ProgramCTick, 48, FunctionTypeC.AI_UpdateEntityAI_WarpBoss);
         Register(ScriptHelper.ProgramCTick, 49, FunctionTypeC.AI_FUN_80075a3c);
         Register(ScriptHelper.ProgramCTick, 50, FunctionTypeC.AI_UpdateLoaderBossAI);
         Register(ScriptHelper.ProgramCTick, 51, FunctionTypeC.AI_FUN_80077734);
