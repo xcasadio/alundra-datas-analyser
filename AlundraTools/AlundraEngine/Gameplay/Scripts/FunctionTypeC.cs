@@ -1,6 +1,5 @@
 ﻿using AlundraEngine.Gameplay.Scripts.Boss;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 
 namespace AlundraEngine.Gameplay.Scripts;
@@ -3619,12 +3618,67 @@ public static class FunctionTypeC
     public static void AI_FUN_8007b04c(GameEngine gameEngine, Entity entity)
     {
         Debugger.Break();
+
+        AI_FUN_8007b04c_common(gameEngine, entity, 0x800, 0x180000);
+    }
+
+    private static void AI_FUN_8007b04c_common(GameEngine gameEngine, Entity entity, int factor, int offsetX)
+    {
+        var byte0 = entity.Bytes[0];
+
+        if (byte0 != 1)
+        {
+            if (1 < byte0)
+            {
+                if (byte0 != 2)
+                {
+                    return;
+                }
+
+                entity.AIValues[1] = (short)((entity.AIValues[1] + 4U) & 0x1ff);
+                entity.PosX = entity.DelayOrAngle + gameEngine.StaticVariables.g_sinus[(ushort)entity.AIValues[1]] * factor;
+                entity.PosY = entity.ItemState + gameEngine.StaticVariables.g_cosinus[(ushort)entity.AIValues[1]] * factor;
+                entity.Bytes[1] = (byte)(entity.Bytes[1] - 1);
+
+                if (entity.Bytes[1] != 0)
+                {
+                    return;
+                }
+
+                entity.Status = 3;
+                gameEngine.SoundManager.PlaySoundEffect(0xe1);
+                return;
+            }
+
+            if (byte0 != 0)
+            {
+                return;
+            }
+
+            entity.AIValues[1] = 0x180;
+            entity.Bytes[0] = 1;
+            entity.DelayOrAngle = entity.PosX + offsetX;
+            entity.ItemState = entity.PosY;
+        }
+
+        entity.AIValues[1] = (short)((entity.AIValues[1] + 4U) & 0x1ff);
+        entity.PosX = entity.DelayOrAngle + gameEngine.StaticVariables.g_sinus[(ushort)entity.AIValues[1]] * factor;
+        entity.PosY = entity.ItemState + gameEngine.StaticVariables.g_cosinus[(ushort)entity.AIValues[1]] * factor;
+        var iVar3 = gameEngine.GetMatchingEntityBySearchType(entity, entity.EntityRefId - 1);
+
+        if (iVar3 == 0)
+        {
+            entity.Bytes[0] = (byte)(entity.Bytes[0] + 1);
+            entity.Bytes[1] = 4;
+        }
     }
 
     //8007b1f0
     public static void AI_FUN_8007b1f0(GameEngine gameEngine, Entity entity)
     {
         Debugger.Break();
+
+        AI_FUN_8007b04c_common(gameEngine, entity, 0xc00, 0x240000);
     }
 
     //8007b3c4
