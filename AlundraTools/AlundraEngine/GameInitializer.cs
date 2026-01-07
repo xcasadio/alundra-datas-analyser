@@ -412,6 +412,11 @@ public class GameInitializer
         _gameEngine.StaticVariables.g_cameraTargetZ = _gameEngine.StaticVariables.g_saveData.CameraTileZ << 0x14;
         _gameEngine.StaticVariables.g_gameplayTime = _gameEngine.StaticVariables.g_saveData.GameTime;
 
+        if (StaticVariables.ForceDesiredMap != -1)
+        {
+            _gameEngine.StaticVariables.g_desiredMap = (uint)StaticVariables.ForceDesiredMap;
+        }
+
         //==== DEBUG
         //enable HUD
         //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 0x40000000;

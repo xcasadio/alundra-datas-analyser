@@ -11890,11 +11890,34 @@ public class StaticVariables
     public int DAT_80027eb8; // 80027EB8
     public int DAT_80027ebc; // 80027EBC
     public int DAT_80027ec0; // 80027EC0
-    public int g_directionCycleTable; // 80027FDC
-    public int DAT_800280f4; // 800280F4
-    public int DAT_800280f8; // 800280F8
-    public int DAT_80028104; // 80028104
-    public int DAT_80028108; // 80028108
+    //80027f90
+    public uint[] UINT_ARRAY_80027f90 = new uint[] { 0x8, 0x18, 0x5, 0x1B, 0x2, 0x1E, 0x1, 0x1F, 0x3, 0x1D, 0x5, 0x1B, 0x0 };
+    // 80027FDC
+    public uint[] g_directionCycleTable = new uint[]
+    {
+        0x0, 0x0, 0x0, 0xFFFFFFFF,
+        0xFFFFFFFF, 0xFFFFFFFF, 0x10, 0x10,
+        0x10, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
+        0x8, 0x8, 0x8, 0xFFFFFFFF,
+        0xFFFFFFFF, 0xFFFFFFFF, 0x8, 0x0,
+        0x10, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
+        0x8, 0x0, 0x10, 0xFFFFFFFF,
+        0xFFFFFFFF, 0xFFFFFFFF, 0x8, 0x0,
+        0x10, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
+        0x10, 0x0, 0x8, 0xFFFFFFFF,
+        0xFFFFFFFF, 0xFFFFFFFF, 0x10, 0x0,
+        0x8, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
+        0x10, 0x0, 0x8, 0xFFFFFFFF,
+        0xFFFFFFFF, 0xFFFFFFFF, 0x10, 0x0,
+        0x8, 0x0, 0x10, 0xFFFFFFFF
+    };
+    // 800280F4
+    public int[] g_ai_EntityPositionXY = new int[] {
+        0xD80000,     0x2900000,     0x1C80000,     0x2900000,
+        0x1500000,     0x2B00000,     0xD80000,     0x2D00000,
+        0xD80000,     0x3500000,     0x1C80000,     0x3500000,
+        0x1C80000,     0x2D00000
+    };
     //public byte[] g_directionFlipTable = new byte[32]; // 80028B34
     public byte DAT_80028b54; // 80028B54
     public byte DAT_80028b55; // 80028B55
@@ -13140,10 +13163,10 @@ public class StaticVariables
     public int DAT_80191250; // 80191250
     public int DAT_80191254; // 80191254
     public int DAT_80191258; // 80191258
-    public int DAT_8019125c; // 8019125C
+    public SpriteEffect? g_ai_spriteEffect_ptr; // 8019125C
     public uint g_warpStatusFlag; // 80191260
     public string g_dropItemTextBuffer;
-    public Entity PTR_801912e8; // 801912E8
+    public Entity? PTR_801912e8; // 801912E8
     public int DAT_801912ec; // 801912EC
     public int DAT_801912f0; // 801912F0
     public int DAT_801912f4; // 801912F4

@@ -2565,4 +2565,18 @@ public class GameEngine
         }
         return entityRecord != null;
     }
+
+    //80080a34
+    public void InitializeAndBeginFadeEffect()
+    {
+        StaticVariables.g_targetFadeColorR = 0xff0000;
+        StaticVariables.g_targetFadeColorG = 0xff0000;
+        StaticVariables.g_targetFadeColorB = 0xff0000;
+        StaticVariables.g_currentFadeColorR = 0;
+        StaticVariables.g_currentFadeColorG = 0;
+        StaticVariables.g_currentFadeColorB = 0;
+        StaticVariables.g_fadeStepFlags = 1;
+        StaticVariables.g_fadeFrameCounter = 0;
+        BeginFadeEffect(1, 8);
+    }
 }
