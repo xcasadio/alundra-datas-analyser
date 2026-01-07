@@ -420,8 +420,11 @@ public class GameInitializer
         //==== DEBUG
         //enable HUD
         //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 0x40000000;
+        //_gameEngine.StaticVariables.g_desiredMap = 449; //11; //452; //11; //0
 
-        //_gameEngine.StaticVariables.g_desiredMap = 452; //11; //471;
+        //active la map 452 Mine save room
+        //_gameEngine.StaticVariables.g_desiredMap = 452;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 0x40000000;
 
         //active la map 476 Alundra cabine
         //_gameEngine.StaticVariables.g_desiredMap = 476;
@@ -451,7 +454,7 @@ public class GameInitializer
         //_gameEngine.StaticVariables.g_resetAnimationId = 0;
         //_gameEngine.StaticVariables.g_isGameEnding = 1;
 
-        //active la map 163 Jess's house
+        //active la map 163 Jess's house beginning
         //_gameEngine.StaticVariables.g_desiredMap = 163;
         //_gameEngine.StaticVariables.g_globalFlags[0] = 1;
         //_gameEngine.StaticVariables.g_saveData.MapFlags[6] = 256;
@@ -469,7 +472,47 @@ public class GameInitializer
 
         //active la map 471 Final boss
         //_gameEngine.StaticVariables.g_desiredMap = 471;
-        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 40000000;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 0x40000000;
+
+        //active la map 141
+        //_gameEngine.StaticVariables.g_desiredMap = 141;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] |= 0x40000000;
+        //_gameEngine.StaticVariables.g_isGameEnding = 1;
+        //_gameEngine.StaticVariables.g_resetAnimationId = 54;
+        //_gameEngine.StaticVariables.g_resetDirectionId = 16;
+        //_gameEngine.StaticVariables.g_cameraTargetX = 71565312;
+        //_gameEngine.StaticVariables.g_cameraTargetY = 40370176;
+        //_gameEngine.StaticVariables.g_cameraTargetZ = 0;
+
+        //active la map 165
+        //_gameEngine.StaticVariables.g_desiredMap = 165;
+        //_gameEngine.StaticVariables.g_globalFlags[0] = 129;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[6] = 512;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[26] = 268435456;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[27] = 231;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] = 1744830976;
+        //_gameEngine.StaticVariables.g_isGameEnding = 1;
+        //_gameEngine.StaticVariables.g_resetAnimationId = 54;
+        //_gameEngine.StaticVariables.g_resetDirectionId = 16;
+        //_gameEngine.StaticVariables.g_cameraTargetX = 19660800;
+        //_gameEngine.StaticVariables.g_cameraTargetY = 23592960;
+        //_gameEngine.StaticVariables.g_cameraTargetZ = 0;
+
+        //manoir de tarn
+        //_gameEngine.StaticVariables.g_desiredMap = 115;
+        //_gameEngine.StaticVariables.g_isGameEnding = 1;
+        //_gameEngine.StaticVariables.g_resetAnimationId = 54;
+        //_gameEngine.StaticVariables.g_resetDirectionId = 16;
+        //_gameEngine.StaticVariables.g_cameraTargetX = 16515072;
+        //_gameEngine.StaticVariables.g_cameraTargetY = 59244544;
+        //_gameEngine.StaticVariables.g_cameraTargetZ = 0;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[0] = 409;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[6] = 1024;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[8] = 64;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[26] = 268435456;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[27] = 228;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[44] = 4;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] = 1745093120;
     }
 
     // 8004dac0

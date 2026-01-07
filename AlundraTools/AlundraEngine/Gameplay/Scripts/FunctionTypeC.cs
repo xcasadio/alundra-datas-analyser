@@ -1215,7 +1215,7 @@ public static class FunctionTypeC
         //            } while (iVar5 <= gameEngine.StaticVariables.g_numberOfEntities);
         //        }
         //
-        //        iVar5 = entity.DelayOrAngle + -1;
+        //        iVar5 = entity.DelayOrAngle - 1;
         //
         //        if (entity.DelayOrAngle == 0)
         //        {
@@ -1250,7 +1250,7 @@ public static class FunctionTypeC
         //                    break;
         //
         //                default:
-        //                    entity.ItemState = entity.ItemState + -1;
+        //                    entity.ItemState = entity.ItemState - 1;
         //                    return;
         //            }
         //
@@ -1273,7 +1273,7 @@ public static class FunctionTypeC
         //                    spawnedEntity = gameEngine.SpawnEntity(entity, entityRecordId, 1);
         //                    sVar2 = *psVar8;
         //                    psVar8 = psVar8 + 3;
-        //                    iVar5 = iVar5 + -1;
+        //                    iVar5 = iVar5 - 1;
         //                    spawnedEntity.AIValues[1] = sVar2;
         //                    sVar2 = *psVar7;
         //                    psVar7 = psVar7 + 3;
@@ -2505,7 +2505,7 @@ public static class FunctionTypeC
 
                 if (bVar1 == 1)
                 {
-                    entity.ForceZ = (int)((Random.Next() * 9) >> 0x20) * 0x800 + -0x18000;
+                    entity.ForceZ = (int)((Random.Next() * 9) >> 0x20) * 0x800 - 0x18000;
                 }
             }
         }
@@ -3388,18 +3388,182 @@ public static class FunctionTypeC
     public static void AI_FUN_8007a4a8(GameEngine gameEngine, Entity entity)
     {
         Debugger.Break();
+        //do nothing
     }
 
     //8007a4b0
     public static void AI_FUN_8007a4b0(GameEngine gameEngine, Entity entity)
     {
         Debugger.Break();
+
+        ushort uVar1;
+        Entity parentEntity;
+
+        parentEntity = entity.ParentEntity;
+
+        if (parentEntity.Bytes[3] == 0)
+        {
+            if (entity.TargetAnimationId - 1 < 2)
+            {
+                uVar1 = (ushort)(entity.AIValues[1] + 1);
+                entity.AIValues[1] = (short)uVar1;
+                
+                if ((uVar1 & 3) == 0)
+                {
+                    gameEngine.EffectManager.CreateEffectEntity(1, 1, 0, entity.PosX, entity.PosY, entity.PosZ);
+                }
+            }
+
+            if (entity.TargetAnimationId == 1)
+            {
+                if (entity.DelayOrAngle < 0x1800)
+                {
+                    entity.DelayOrAngle += 0x40;
+                }
+                else
+                {
+                    entity.ItemState -= 8;
+                }
+
+                entity.AIValues[4] = (short)((entity.AIValues[4] + 10U) & 0x1ff);
+                entity.PosX = gameEngine.StaticVariables.g_sinus[(ushort)entity.AIValues[4]] * entity.DelayOrAngle + 0x01500000;
+                entity.PosY = gameEngine.StaticVariables.g_cosinus[(ushort)entity.AIValues[4]] * entity.DelayOrAngle + 0x3100000;
+
+                if (entity.ItemState == 0)
+                {
+                    gameEngine.SoundManager.PlaySoundEffect(0x127);
+                    uVar1 = (ushort)entity.AIValues[4];
+                    entity.TargetAnimationId = 2;
+                    entity.TargetDirection = (uint)(0x20 - ((uVar1 >> 4) & 0x1f));
+                }
+            }
+            else if (entity.TargetAnimationId == 2 && entity.ForceAdjusted != 0)
+            {
+                entity.TargetAnimationId = 3;
+                entity.Flags |= 0x40;
+                parentEntity.AIValues[4] = (short)(parentEntity.AIValues[4] - 1);
+            }
+        }
+        else
+        {
+            entity.TargetAnimationId = 3;
+            entity.Flags |= 0x40;
+        }
     }
 
     //8007a680
     public static void AI_FUN_8007a680(GameEngine gameEngine, Entity entity)
     {
         Debugger.Break();
+
+        byte bVar1;
+        short sVar2;
+        uint uVar3;
+        int iVar4;
+        Entity parentEntity;
+
+        parentEntity = entity.ParentEntity;
+        if (parentEntity.Bytes[3] != 0)
+        {
+            entity.TargetAnimationId = 2;
+            entity.Flags |= 0x40;
+            return;
+        }
+
+        switch (entity.TargetAnimationId)
+        {
+            case 0:
+                sVar2 = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = sVar2;
+
+                if (sVar2 != 0)
+                {
+                    return;
+                }
+
+                bVar1 = entity.Bytes[0];
+                entity.AIValues[1] = 0x28;
+                goto LAB_8007a738;
+
+            case 1:
+                sVar2 = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = sVar2;
+
+                if (sVar2 != 0)
+                {
+                    return;
+                }
+
+                bVar1 = entity.Bytes[0];
+                entity.AIValues[1] = 0x14;
+                LAB_8007a738:
+                entity.TargetAnimationId = bVar1;
+                break;
+
+            case 3:
+                if (entity.ForceResetAnimationFlag != 0)
+                {
+                    if (entity.Bytes[3] == 0)
+                    {
+                        bVar1 = entity.Bytes[0];
+                        entity.AIValues[1] = 0x1e;
+                        entity.TargetAnimationId = 0;
+                        if (bVar1 != 7)
+                        {
+                            entity.Bytes[0] = (byte)(bVar1 + 1);
+                        }
+                    }
+                    else
+                    {
+                        entity.TargetAnimationId = 2;
+                        entity.Flags |= 0x40;
+                        parentEntity.Bytes[2] -= 1;
+                    }
+                }
+                break;
+
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+                sVar2 = entity.AIValues[1];
+
+                if (entity.AIValues[1] > 0)
+                {
+                    entity.AIValues[1] = (short)(sVar2 - 1);
+                }
+
+                if (entity.AIValues[1] == 0)
+                {
+                    uVar3 = (uint)ScriptHelper.GetDirectionToTarget(gameEngine.StaticVariables.g_entitySlots[0].PosX - entity.PosX, gameEngine.StaticVariables.g_entitySlots[0].PosY - entity.PosY);
+                    iVar4 = (int)(entity.TargetDirection - uVar3);
+                    
+                    if ((0xf < iVar4) || (iVar4 + 0x10U < 0x10))
+                    {
+                        entity.Bytes[1] = 1;
+                    }
+
+                    if ((iVar4 - 1U < 0xf) || (iVar4 < -0x10))
+                    {
+                        entity.Bytes[1] = 0xff;
+                    }
+
+                    if (iVar4 < 0)
+                    {
+                        iVar4 = -iVar4;
+                    }
+
+                    if (7 < iVar4)
+                    {
+                        entity.Bytes[1] <<= 1;
+                    }
+
+                    entity.TargetDirection = entity.TargetDirection + entity.Bytes[1] & 0x1f;
+                    entity.AIValues[1] = (short)((entity.TargetAnimationId - 4) * -4 + 0x12);
+                }
+
+                break;
+        }
     }
 
     //8007a8a0
@@ -3435,6 +3599,8 @@ public static class FunctionTypeC
     public static void AI_FUN_8007a958(GameEngine gameEngine, Entity entity)
     {
         Debugger.Break();
+
+        gameEngine.CheckAndTriggerTileEffect(entity);
     }
 
     //8007a978
@@ -3486,13 +3652,13 @@ public static class FunctionTypeC
 
         if (entity.Flags2 == 0)
         {
-            entity.TargetAnimationId = (int)PlayerAnimation.Idle;
+            entity.TargetAnimationId = 0;
             return;
         }
 
         if (entity.Flags2 == -1)
         {
-            entity.TargetAnimationId = (int)PlayerAnimation.Sprint;
+            entity.TargetAnimationId = 3;
         }
         else
         {
@@ -3781,7 +3947,7 @@ public static class FunctionTypeC
         }
         else if (diffX <= entity1.Width)
         {
-        LAB_8003acf4:
+            LAB_8003acf4:
             return (entity2.PosY < entity1.PosY ? 1 : 0) << 4;
         }
 
@@ -3799,6 +3965,21 @@ public static class FunctionTypeC
     public static void AI_FUN_8007c0d8(GameEngine gameEngine, Entity entity)
     {
         Debugger.Break();
+
+        SpriteEffect effect;
+
+        gameEngine.CheckAndTriggerTileEffect(entity);
+
+        if ((entity.FrameCounter & 3U) == 0)
+        {
+            effect = gameEngine.EffectManager.CreateEffectEntity(0, 0x19, (byte)entity.AnimationDirection, entity.PosX, entity.PosY, entity.PosZ + 0x80000);
+            
+            if (effect != null)
+            {
+                effect.ForceX = -entity.ForceX >> 1;
+                effect.ForceY = -entity.ForceY >> 1;
+            }
+        }
     }
 
     //8007c768
@@ -5600,7 +5781,7 @@ public static class FunctionTypeC
                 entity.Bytes[1] = 0;
                 entity.AIValues[1] = (short)(aiVal - 1);
                 val = entity.Bytes[0];
-                entity.ItemState = delay + -1;
+                entity.ItemState = delay - 1;
 
                 if (val == 1)
                 {
@@ -5878,7 +6059,7 @@ public static class FunctionTypeC
                     entity.AIValues[1] = 0xf;
                 }
 
-                animationTimer = (short)(entity.AIValues[1] + -1);
+                animationTimer = (short)(entity.AIValues[1] - 1);
                 entity.AIValues[1] = animationTimer;
 
                 if (animationTimer != 0)
@@ -5905,7 +6086,7 @@ public static class FunctionTypeC
                 break;
 
             case 2:
-                animationTimer = (short)(entity.AIValues[1] + -1);
+                animationTimer = (short)(entity.AIValues[1] - 1);
                 entity.AIValues[1] = animationTimer;
 
                 if (animationTimer == 0x78 || animationTimer == 0x3c)
@@ -5933,7 +6114,7 @@ public static class FunctionTypeC
                 break;
 
             case 3:
-                animationTimer = (short)(entity.AIValues[1] + -1);
+                animationTimer = (short)(entity.AIValues[1] - 1);
                 entity.AIValues[1] = animationTimer;
                 if (animationTimer == 0)
                 {
@@ -6007,7 +6188,7 @@ public static class FunctionTypeC
                     entity.AIValues[1] = 0x14;
                 }
 
-                animationTimer = (short)(entity.AIValues[1] + -1);
+                animationTimer = (short)(entity.AIValues[1] - 1);
                 entity.AIValues[1] = animationTimer;
 
                 if (animationTimer != 0)
