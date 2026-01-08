@@ -205,6 +205,7 @@ public class EntityManager
     {
         AnimationSet? animSet;
         SiFrame? currentFrame;
+        var updateFrameIndex = true;
 
         entity.IsZForceApplied = 0;
 
@@ -216,6 +217,8 @@ public class EntityManager
         if (entity.CurrentAnimationId != entity.TargetAnimationId ||
             entity.AnimationDirection != animationDirectionFromTargetDirection)
         {
+            updateFrameIndex = false;
+
             entity.CurrentAnimationId = entity.TargetAnimationId;
             entity.AnimationDirection = animationDirectionFromTargetDirection;
             entity.AnimCompleteCounter = 0;
@@ -269,7 +272,7 @@ public class EntityManager
         }
         else if (entity.NextFrameDelay != 0)
         {
-            if (--entity.NextFrameDelay != 0)
+            if (--entity.NextFrameDelay > 0)
             {
                 return;
             }
@@ -305,7 +308,7 @@ public class EntityManager
                     }
 
                     entity.TargetAnimationId = lastFrame.TransformIndexLow;
-                    UpdateAnimation(entity); // recursive call to update the animation
+                    //UpdateAnimation(entity); // recursive call to update the animation
                     return;
                 }
             }
@@ -321,8 +324,7 @@ public class EntityManager
         }
 
         animSet = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
-        currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
-
+        //currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
         currentFrame = entity.Frame;
 
         if (currentFrame.CollisionData != null)
@@ -353,24 +355,27 @@ public class EntityManager
             entity.SpriteRef.NumberOfImages = 0;
         }
 
-        var anim = entity.AnimationSet.PreloadedAnims[entity.TargetDirection >> 3];
-        var nextFrameIndex = entity.AnimationFrameIndex + 1;
+        if (updateFrameIndex)
+        {
+            var anim = entity.AnimationSet.PreloadedAnims[entity.TargetDirection >> 3];
+            var nextFrameIndex = entity.AnimationFrameIndex + 1;
 
-        if (nextFrameIndex >= anim.NumberOfFrames)
-        {
-            nextFrameIndex = 0;
-            entity.Frame = entity.FirstFrame;
-            entity.AnimCompleteCounter++;
-        }
-        else
-        {
-            if (entity.AnimationSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[nextFrameIndex] == null)
+            if (nextFrameIndex >= anim.NumberOfFrames)
             {
+                nextFrameIndex = 0;
                 entity.Frame = entity.FirstFrame;
+                entity.AnimCompleteCounter++;
             }
-        }
+            else
+            {
+                if (entity.AnimationSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[nextFrameIndex] == null)
+                {
+                    entity.Frame = entity.FirstFrame;
+                }
+            }
 
-        entity.AnimationFrameIndex = nextFrameIndex;
+            entity.AnimationFrameIndex = nextFrameIndex;
+        }
     }
 
     // 8003b388
