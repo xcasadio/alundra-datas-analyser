@@ -6,6 +6,21 @@ namespace AlundraEngine.Gameplay;
 
 public class Entity
 {
+
+    public SiFrame? Frame
+    {
+        get
+        {
+            if (_Frame.Images == null || _Frame.Images.Images == null || _Frame.Images?.Images?.Length == 0)
+            {
+                var index = Math.Max(0, AnimationFrameIndex - 1);
+                return AnimationSet.PreloadedAnims[TargetDirection >> 3].Frames[index];
+            }
+
+            return _Frame;
+        }
+    }
+
     public int Index;
     public int Index2;
     public Entity? ChildEntity;
@@ -14,7 +29,7 @@ public class Entity
     public int Hp;
     public int HpMax;
     public int FrameCounter;//1c
-    public int IsBlockedByEntity;//20
+    public Entity? BlockedByEntity;//20
     public int Flags2;//24
     public Entity? PlatformEntity; //28
     public Entity? CarriedEntity;
@@ -37,7 +52,7 @@ public class Entity
     public int AnimationDirection;
     public AnimationSet? AnimationSet;
     public SiFrame? FirstFrame;
-    public SiFrame? Frame;
+    public SiFrame? _Frame;
     public int NextFrameDelay;
     public int ForceResetAnimationFlag;
     public int AnimCompleteCounter;
@@ -140,7 +155,7 @@ public class Entity
         Hp = other.Hp;
         HpMax = other.HpMax;
         FrameCounter = other.FrameCounter;
-        IsBlockedByEntity = other.IsBlockedByEntity;
+        BlockedByEntity = other.BlockedByEntity;
         Flags2 = other.Flags2;
         PlatformEntity = other.PlatformEntity;
         CarriedEntity = other.CarriedEntity;
@@ -171,7 +186,7 @@ public class Entity
         AnimationDirection = other.AnimationDirection;
         AnimationSet = other.AnimationSet;
         FirstFrame = other.FirstFrame;
-        Frame = other.Frame;
+        _Frame = other._Frame;
         NextFrameDelay = other.NextFrameDelay;
         ForceResetAnimationFlag = other.ForceResetAnimationFlag;
         AnimCompleteCounter = other.AnimCompleteCounter;
@@ -294,7 +309,7 @@ public class Entity
         Hp = 0;
         HpMax = 0;
         FrameCounter = 0;
-        IsBlockedByEntity = 0;
+        BlockedByEntity = null;
         Flags2 = 0;
         PlatformEntity = null;
         CarriedEntity = null;
@@ -304,7 +319,7 @@ public class Entity
         ContentsItemId = 0;
         ContentsGameFlag = 0;
         EntityRecord = null;
-        EntityRefId = 0;
+        EntityRefId = -1;
 
         Array.Clear(ProgramIndexes);
 
@@ -321,7 +336,7 @@ public class Entity
         AnimationDirection = 0;
         AnimationSet = null;
         FirstFrame = null;
-        Frame = null;
+        _Frame = null;
         NextFrameDelay = 0;
         ForceResetAnimationFlag = 0;
         AnimCompleteCounter = 0;

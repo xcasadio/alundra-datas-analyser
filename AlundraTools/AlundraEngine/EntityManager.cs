@@ -225,26 +225,26 @@ public class EntityManager
             entity.AnimationFrameIndex = 0;
             animSet = null;
 
-            try
-            {
+            //try
+            //{
                 animSet = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
-            }
-            catch (Exception e)
-            {
-                Debugger.Break();
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    Debugger.Break();
+            //}
 
             currentFrame = null;
-            try
-            {
+            //try
+            //{
                 currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
-            }
-            catch (Exception e)
-            {
-                Debugger.Break();
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    Debugger.Break();
+            //}
             entity.AnimationSet = animSet;
-            entity.Frame = currentFrame;
+            entity._Frame = currentFrame;
             entity.FirstFrame = currentFrame;
             entity.IsZForceApplied = animSet.IsZForceApplied;
 
@@ -279,14 +279,14 @@ public class EntityManager
 
             SiAnimation preloadedAnim = null;
 
-            try
-            {
+            //try
+            //{
                 preloadedAnim = entity.AnimationSet.PreloadedAnims[entity.TargetDirection >> 3];
-            }
-            catch (Exception e)
-            {
-                Debugger.Break();
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    Debugger.Break();
+            //}
 
             if (entity.AnimationFrameIndex == preloadedAnim.Frames.Length - 2)
             {
@@ -295,7 +295,7 @@ public class EntityManager
                 if (lastFrame.Delay == 1)
                 {
                     entity.AnimationFrameIndex = 0;
-                    entity.Frame = entity.FirstFrame;
+                    entity._Frame = entity.FirstFrame;
                     entity.AnimCompleteCounter++;
                 }
                 else if ((lastFrame.Delay & 0x80) == 0)
@@ -308,28 +308,27 @@ public class EntityManager
                     }
 
                     entity.TargetAnimationId = lastFrame.TransformIndexLow;
-                    //UpdateAnimation(entity); // recursive call to update the animation
+                    UpdateAnimation(entity); // recursive call to update the animation
                     return;
                 }
             }
         }
 
-        uint frameFlags = entity.Frame.Delay;
-        if ((frameFlags & 0x80) != 0)
+        if ((entity._Frame.Delay & 0x80) != 0)
         {
-            entity.NextFrameDelay = (int)(frameFlags & 0x7F);
+            entity.NextFrameDelay = entity._Frame.Delay & 0x7F;
             animSet = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
-            currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
-            entity.Frame = currentFrame;
+            currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex + 1];
+            entity._Frame = currentFrame;
         }
 
         animSet = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
-        //currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
-        currentFrame = entity.Frame;
+        currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
+        //currentFrame = entity._Frame;
 
         if (currentFrame.CollisionData != null)
         {
-            entity.FrameCollision = entity.Frame.CollisionData;
+            entity.FrameCollision = currentFrame.CollisionData;
             entity.CollisionOffsetX = entity.FrameCollision.OffsetX << 16;
             entity.CollisionOffsetY = entity.FrameCollision.OffsetY << 16;
             entity.CollisionOffsetZ = entity.FrameCollision.OffsetZ << 16;
@@ -363,14 +362,14 @@ public class EntityManager
             if (nextFrameIndex >= anim.NumberOfFrames)
             {
                 nextFrameIndex = 0;
-                entity.Frame = entity.FirstFrame;
+                entity._Frame = entity.FirstFrame;
                 entity.AnimCompleteCounter++;
             }
             else
             {
                 if (entity.AnimationSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[nextFrameIndex] == null)
                 {
-                    entity.Frame = entity.FirstFrame;
+                    entity._Frame = entity.FirstFrame;
                 }
             }
 
@@ -414,8 +413,6 @@ public class EntityManager
             }
         }
     }
-
-
 
     //80039300
     private void UpdateBalanceRecords()
@@ -770,6 +767,7 @@ public class EntityManager
             var entity = _gameEngine.StaticVariables.g_activeEntities[i];
             UpdateAnimation(entity);
             Debug.Assert(entity.Frame != null);
+            Debug.Assert(entity.Frame.Images != null);
         }
     }
 
@@ -783,7 +781,7 @@ public class EntityManager
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
             var eventProgramType = -1;
 
-            if (entity.IsBlockedByEntity == 0)
+            if (entity.BlockedByEntity == null)
             {
                 switch (entity.Status)
                 {
@@ -956,13 +954,13 @@ public class EntityManager
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
             //processable
-            if (entity.Status >= 2 && entity.Status <= 3 && entity.IsBlockedByEntity == 0)
+            if (entity.Status >= 2 && entity.Status <= 3 && entity.BlockedByEntity == null)
             {
                 _gameEngine.StaticVariables.g_activeEntities[_gameEngine.StaticVariables.g_activeEntityCount++] = entity;
             }
 
             //collidable
-            if ((entity.Flags & 0x80) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.IsBlockedByEntity == 0)
+            if ((entity.Flags & 0x80) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.BlockedByEntity == null)
             {
                 _gameEngine.StaticVariables.g_collideableEntities[_gameEngine.StaticVariables.g_collideableEntitiesCount++] = entity;
             }
@@ -1314,9 +1312,9 @@ public class EntityManager
 
                 if (entity2 != entity 
                     && entity2.Status - 2 < 2 
-                    && entity2.IsBlockedByEntity == 0)
+                    && entity2.BlockedByEntity == null)
                 {
-                    entity2.IsBlockedByEntity = entity.Index; // pointer of the entity
+                    entity2.BlockedByEntity = entity; // pointer of the entity
                     result++;
                     entity2 = _gameEngine.StaticVariables.g_entitySlots[entity.Index];
                 }
@@ -1346,9 +1344,9 @@ public class EntityManager
 
             do
             {
-                if (entity2.IsBlockedByEntity == entity.Index)
+                if (entity2.BlockedByEntity == entity)
                 {
-                    entity2.IsBlockedByEntity = 0;
+                    entity2.BlockedByEntity = null;
                     result = result + 1;
                 }
 

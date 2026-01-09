@@ -1402,7 +1402,7 @@ public class GameEngine
         int finalEntity;
 
         if (StaticVariables.g_playerControlFlags == 0 &&
-            StaticVariables.PlayerEntity.IsBlockedByEntity == 0 &&
+            StaticVariables.PlayerEntity.BlockedByEntity == null &&
             StaticVariables.g_warpLockTimer == 0 &&
             StaticVariables.g_padState1.ButtonsHold == (PadState.Start | PadState.Select) &&
             StaticVariables.g_warpDelayFrames == 0 &&
@@ -1446,7 +1446,7 @@ public class GameEngine
         }
 
         if (StaticVariables.g_playerControlFlags == 0 &&
-            StaticVariables.PlayerEntity.IsBlockedByEntity == 0 &&
+            StaticVariables.PlayerEntity.BlockedByEntity == null &&
             StaticVariables.g_warpLockTimer == 0 &&
             (StaticVariables.g_padState1.ButtonsJustPressed & PadState.OpenInventory) != 0 &&
             StaticVariables.g_warpDelayFrames == 0 &&

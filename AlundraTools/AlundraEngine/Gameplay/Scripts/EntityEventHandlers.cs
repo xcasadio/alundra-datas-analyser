@@ -1023,6 +1023,8 @@ public class EntityEventHandlers
     // 8003DC84
     private int Script_44_02C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
+        //Debugger.Break();
+
         var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
         eventProgramState.Result = num == 0 ? 1 : 0;
         return 2;
@@ -1417,18 +1419,16 @@ public class EntityEventHandlers
     // 8003E734
     private int Script_63_03F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        //Debugger.Break();
-
         for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntities; i++)
         {
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
             if (entity.Status - 1U < 3
-                && entity.IsBlockedByEntity == 0
+                && entity.BlockedByEntity == null
                 && entity.RidingEntity == logicEntity)
             {
                 eventProgramState.Result = 1;
-                return 7;
+                return 1;
             }
         }
 
@@ -2904,7 +2904,7 @@ public class EntityEventHandlers
                 continue;
             }
 
-            if (e.IsBlockedByEntity != 0)
+            if (e.BlockedByEntity != null)
             {
                 continue;
             }

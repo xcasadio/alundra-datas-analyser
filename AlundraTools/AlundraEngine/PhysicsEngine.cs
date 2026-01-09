@@ -1151,15 +1151,8 @@ public static class PhysicsEngine
 
             int entityModdedXPos = entity.ModdedPosX;
             int entityModdedYPos = entity.ModdedPosY;
-            int entityModdedZPos = entity.ModdedPosZ;
-
             int entityWidth = entity.Width + 1;
-            int entityHeight = entity.Height + 1;
             int entityDepth = entity.Depth + 1;
-
-            int entityMaxY = entity.ModdedPosY;
-            int entityMaxYExtra = entity.Depth;
-            int entityMaxYWithExtra = entityMaxY + entityMaxYExtra;
 
             entity.RidingEntity = null;
 
@@ -1172,36 +1165,49 @@ public static class PhysicsEngine
 
                 var other = gameEngine.StaticVariables.g_collideableEntities[j];
 
-                int otherMaxY = other.ModdedPosY + other.Depth + 1;
-                if (otherMaxY != entityMaxY)
+                // Z overlap
+                int otherTopZ = other.ModdedPosZ + other.Height + 1;
+                if (otherTopZ != entity.ModdedPosZ)
+                {
                     continue;
+                }
 
-                // Y overlap
-                int yDiff = other.ModdedPosX - entityModdedXPos;
-                if (yDiff < 0)
+                // X overlap
+                int xDiff = other.ModdedPosX - entityModdedXPos;
+
+                if (xDiff < 0)
                 {
                     int val = other.Width + 1;
                     if (!(entityModdedXPos - other.ModdedPosX < val))
+                    {
                         continue;
+                    }
                 }
                 else
                 {
-                    if (!(yDiff < entityWidth))
+                    if (!(xDiff < entityWidth))
+                    {
                         continue;
+                    }
                 }
 
-                // Z overlap
-                int zDiff = other.ModdedPosZ - entityModdedZPos;
-                if (zDiff < 0)
+                // Y overlap
+                int yDiff = other.ModdedPosY - entityModdedYPos;
+
+                if (yDiff < 0)
                 {
-                    int val = other.Height + 1;
-                    if (!(entityModdedZPos - other.ModdedPosZ < val))
+                    int val = other.Depth + 1;
+                    if (!(entityModdedYPos - other.ModdedPosY < val))
+                    {
                         continue;
+                    }
                 }
                 else
                 {
-                    if (!(zDiff < entityHeight))
+                    if (!(yDiff < entityDepth))
+                    {
                         continue;
+                    }
                 }
 
                 entity.RidingEntity = other;

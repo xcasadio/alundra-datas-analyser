@@ -22,7 +22,6 @@ public class SiFrame
         MemoryAddress = memoryAddress;
 
         Delay = br.ReadByte();
-
         TransformIndexLow = br.ReadByte();
         TransformIndexHigh = br.ReadByte();
         SpriteIndexLow = br.ReadByte();
@@ -54,5 +53,10 @@ public class SiFrame
 
         CollisionOffset = -1;
         ImageSetPointer = -1;
+    }
+
+    public override string ToString()
+    {
+        return $"MemoryAddress: {MemoryAddress}, Delay: {Delay}, CollisionOffset: {CollisionOffset}, ImageSetPointer: {ImageSetPointer}";
     }
 }

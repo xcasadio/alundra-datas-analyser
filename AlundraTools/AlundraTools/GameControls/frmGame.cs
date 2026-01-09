@@ -58,7 +58,7 @@ public partial class FrmGame : Form
         [nameof(Entity.Flags2)] = "Gameplay",
         [nameof(Entity.CarriedEntity)] = "Gameplay",
         [nameof(Entity.Status)] = "Gameplay",
-        [nameof(Entity.IsBlockedByEntity)] = "Gameplay",
+        [nameof(Entity.BlockedByEntity)] = "Gameplay",
         [nameof(Entity.ContentsItemId)] = "Gameplay",
         [nameof(Entity.ContentsGameFlag)] = "Gameplay",
 

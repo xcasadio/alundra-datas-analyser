@@ -222,7 +222,7 @@ public static class FrameSnapshotLoader
     private class EntityJson
     {
         public int frameCounter { get; set; }
-        public int isNotProcessable { get; set; }
+        public int BlockedByEntity { get; set; }
         public int flags2 { get; set; }
         public int platformEntity { get; set; }
         public Entity warpEntity { get; set; }
@@ -358,7 +358,7 @@ public static class FrameSnapshotLoader
         public void CopyToEntity(Entity entity, GameEngine gameEngine)
         {
             entity.FrameCounter = frameCounter;
-            entity.IsBlockedByEntity = isNotProcessable;
+            //entity.BlockedByEntity = BlockedByEntity;
             entity.Flags2 = flags2;
             entity.PlatformEntity = gameEngine.StaticVariables.g_entitySlots[platformEntity];
             entity.CarriedEntity = warpEntity;
@@ -394,7 +394,7 @@ public static class FrameSnapshotLoader
                 var animRecordPtr = entity.SpriteRecord.AnimSets[currentAnimationId];
                 var currentFrame = animRecordPtr.PreloadedAnims[targetDirection >> 3].Frames[frameIndex];
                 entity.AnimationSet = animRecordPtr;
-                entity.Frame = currentFrame;
+                entity._Frame = currentFrame;
                 entity.FirstFrame = currentFrame;
             }
             //entity.FirstFrame = initialFrame;

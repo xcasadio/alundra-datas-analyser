@@ -686,7 +686,7 @@ public class GraphicManager
                     continue;
                 }
 
-                if (e.IsBlockedByEntity != 0)
+                if (e.BlockedByEntity != null)
                 {
                     continue;
                 }
@@ -752,7 +752,7 @@ public class GraphicManager
                     continue;
                 }
 
-                if (e.IsBlockedByEntity != 0)
+                if (e.BlockedByEntity != null)
                 {
                     continue;
                 }

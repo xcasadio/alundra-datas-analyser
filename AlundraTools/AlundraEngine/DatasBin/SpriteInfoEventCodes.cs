@@ -495,7 +495,7 @@ public class SpriteInfoEventCodes
         { 0x3C, "??? 0x3C" },
         { 0x3D, "??? 0x3D" },
         { 0x3E, "??? 0x3E" },
-        { 0x3F, "??? 0x3F" },
+        { 0x3F, "If an entity riding me" },
         { 0x40, "Set program index" },
         { 0x41, "Set sprite program index" },
         { 0x42, "LogicContextEntity = PlayerEntity" },

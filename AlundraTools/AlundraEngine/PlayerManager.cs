@@ -33,7 +33,7 @@ public class PlayerManager
         CheckAndExecuteWarp();
         slope = _gameEngine.StaticVariables.PlayerEntity.Slope_18c;
 
-        if (_gameEngine.StaticVariables.PlayerEntity.IsBlockedByEntity != 0)
+        if (_gameEngine.StaticVariables.PlayerEntity.BlockedByEntity != null)
         {
             _gameEngine.StaticVariables.g_playerWarpTimer = 0;
             Array.Clear(_gameEngine.StaticVariables.g_playerEffectTransitionCooldown);
@@ -1070,7 +1070,7 @@ public class PlayerManager
             var status = entity.Status - 2;
             if (status >= 0 && status < 2)
             {
-                if (entity.IsBlockedByEntity == 0)
+                if (entity.BlockedByEntity == null)
                 {
                     if (entity.RidingEntity == _gameEngine.StaticVariables.PlayerEntity)
                     {
@@ -1292,7 +1292,7 @@ public class PlayerManager
 
 
         if (_gameEngine.StaticVariables.g_playerControlFlags == 0
-            && _gameEngine.StaticVariables.PlayerEntity.IsBlockedByEntity == 0
+            && _gameEngine.StaticVariables.PlayerEntity.BlockedByEntity == null
             && _gameEngine.StaticVariables.g_padState1.ButtonsHold == 0)
         {
             if (_gameEngine.StaticVariables.PlayerEntity.Hp != 0

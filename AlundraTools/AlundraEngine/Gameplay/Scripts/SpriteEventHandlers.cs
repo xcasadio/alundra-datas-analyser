@@ -306,7 +306,7 @@ public class SpriteEventHandlers
                     entitySpawn.ForceZ = 0x8000;
                     entitySpawn.DelayOrAngle = 0x40;
                     entitySpawn.Flags &= 0xfffffe7f;
-                    entitySpawn.IsBlockedByEntity = 0;
+                    entitySpawn.BlockedByEntity = null;
                     entitySpawn.Bytes[0] = 2;
                     entitySpawn.Bytes[1] = 0;
                     entitySpawn.Bytes[2] = 0;
