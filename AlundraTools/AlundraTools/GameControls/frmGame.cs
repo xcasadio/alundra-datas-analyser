@@ -30,9 +30,9 @@ public partial class FrmGame : Form
         [nameof(Entity.EntityRefId)] = "Entity",
         [nameof(Entity.EntityRecord)] = "Entity",
 
-        [nameof(Entity.ChildEntity)] = "Link",
-        [nameof(Entity.ParentEntity)] = "Link",
-        [nameof(Entity.ActiveEffect)] = "Link",
+        [nameof(Entity.ChildEntity)] = "Hierarchy",
+        [nameof(Entity.ParentEntity)] = "Hierarchy",
+        [nameof(Entity.ActiveEffect)] = "Hierarchy",
 
         [nameof(Entity.PosX)] = "Transform",
         [nameof(Entity.PosY)] = "Transform",
@@ -1643,7 +1643,22 @@ public partial class FrmGame : Form
 
     private void checkBoxDisplayPositions_CheckedChanged(object sender, EventArgs e)
     {
-        _gameEngine.StaticVariables.DisplayPositions = checkBoxDisplayPositions.Checked;
+        _gameEngine.StaticVariables.DisplayEntitiesPosition = checkBoxDisplayEntityPositions.Checked;
+    }
+
+    private void checkBoxEffectPositions_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.DisplayEffectsPosition = checkBoxEffectPositions.Checked;
+    }
+
+    private void checkBoxDisplayFloorTiles_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.DisplayTiles = checkBoxDisplayFloorTiles.Checked;
+    }
+
+    private void checkBoxDisplayWallTiles_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.DisplayWallTiles = checkBoxDisplayWallTiles.Checked;
     }
 }
 

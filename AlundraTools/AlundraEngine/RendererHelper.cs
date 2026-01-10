@@ -1,8 +1,4 @@
 ﻿using AlundraEngine.DatasBin;
-using AlundraEngine.Gameplay;
-using System;
-using System.Diagnostics;
-using System.Drawing.Imaging;
 
 namespace AlundraEngine;
 
@@ -12,6 +8,11 @@ public class RendererHelper
     private static readonly Font FontTileInfo = new Font(FontFamily.GenericSansSerif, 5.5f);
     
     private static readonly Dictionary<FlippedBitmapKey, Bitmap> _flippedBitmapCache = new();
+    private static readonly Color EffectColor = Color.DarkViolet;
+    private static Color EntityColor = Color.Blue;
+    private static Color EntitySelectColor = Color.ForestGreen;
+    private static Color EffectSelectedColor = Color.LightSeaGreen;
+    private static Color ZColor = Color.Green;
     private const int MaxFlippedBitmapCacheSize = 10000;
 
     //Custom renderer
@@ -19,9 +20,7 @@ public class RendererHelper
     {
         DatasBin.DatasBin datasBin = gameEngine.DatasBin;
         GameMap gameMap = gameEngine.CurrentMap;
-
-        var textToRender = new List<TextDisplayParameter>();
-
+        
         var cameraX = gameEngine.StaticVariables.g_cameraScrollingX;
         var cameraY = gameEngine.StaticVariables.g_cameraScrollingY;
         var curXTile = cameraX / StaticVariables.MapTileWidth;
@@ -42,31 +41,28 @@ public class RendererHelper
                 var dx = x * StaticVariables.MapTileWidth - cameraX;
                 var dy = (y - tile.Height) * StaticVariables.MapTileHeight - cameraY;
                 
-                if (tile.TileId != 0xffff)
+                if (tile.TileId != 0xffff && gameEngine.StaticVariables.DisplayTiles)
                 {
                     if (dy > -StaticVariables.MapTileHeight 
                         && dy < StaticVariables.ScreenHeight)
                     {
                         tileId = GetAnimatedTileId(gameEngine, gameMap, tileId);
-                        DrawTile(tileId, dx, dy, dy, g, gameMap, gameEngine.Renderer);
+                        var z = ((y - tile.Height) * StaticVariables.MapTileHeight) << 16;
+                        DrawTile(tileId, dx, dy, z, g, gameMap, gameEngine.Renderer);
 
                         if (gameEngine.StaticVariables.DisplayTileXY)
                         {
                             var text = $"{x}x{y}";
                             var textSize = g.MeasureString(text, FontTileInfo);
-                            textToRender.Add(new TextDisplayParameter
-                            {
-                                Text = text,
-                                Font = FontTileInfo,
-                                Color = Brushes.White,
-                                X = dx + (StaticVariables.MapTileWidth - textSize.Width) / 2f,
-                                Y = dy + (StaticVariables.MapTileHeight - textSize.Height) / 2f
-                            });
+                            gameEngine.Renderer.DrawString(text, FontTileInfo, Color.White, 
+                                (int)(dx + (StaticVariables.MapTileWidth - textSize.Width) / 2f), 
+                                (int)(dy + (StaticVariables.MapTileHeight - textSize.Height) / 2f), 
+                                SpriteDepth.DebugCollision);
                         }
                     }
                 }
                 
-                if (tile.WallTiles != null)
+                if (tile.WallTiles != null && gameEngine.StaticVariables.DisplayWallTiles)
                 {
                     var wallTiles = tile.WallTiles;
                     int i;
@@ -82,39 +78,34 @@ public class RendererHelper
                             && dy < StaticVariables.ScreenHeight)
                         {
                             wallTileId = GetAnimatedTileId(gameEngine, gameMap, wallTileId);
-                            DrawTile(wallTileId, dx, dy, dy, g, gameMap, gameEngine.Renderer);
+                            var z = (dy + cameraY) << 16;
+                            DrawTile(wallTileId, dx, dy, z, g, gameMap, gameEngine.Renderer);
 
                             if (gameEngine.StaticVariables.DisplayTileXY)
                             {
                                 var text = $"{x}x{y}";
                                 var textSize = g.MeasureString(text, FontTileInfo);
-
-                                textToRender.Add(new TextDisplayParameter
-                                {
-                                    Text = text,
-                                    Font = FontTileInfo,
-                                    Color = Brushes.BurlyWood,
-                                    X = dx + (StaticVariables.MapTileWidth - textSize.Width) / 2f,
-                                    Y = dy + (StaticVariables.MapTileHeight/* + textSize.Height*/) / 2f
-                                });
+                                gameEngine.Renderer.DrawString(text, FontTileInfo, Color.BurlyWood,
+                                    (int)(dx + (StaticVariables.MapTileWidth - textSize.Width) / 2f),
+                                    (int)(dy + (StaticVariables.MapTileHeight - textSize.Height) / 2f), SpriteDepth.DebugCollision);
                             }
                         }
                     }
                 }
             }
 
-            //draw sprites who are on this row
-            for (var i = 0; i < gameEngine.StaticVariables.g_visibleEntityCount; i++) // g_visibleEntityCount
+            //DRAW ENTITIES
+            for (var i = 0; i < gameEngine.StaticVariables.g_visibleEntityCount; i++)
             {
-                var entity = gameEngine.StaticVariables.g_visibleEntities[i]; // g_visibleEntities
+                var entity = gameEngine.StaticVariables.g_visibleEntities[i];
 
                 if (entity.TileY != y)
                 {
                     continue;//if its not in this row, continue
                 }
 
-                var scx = (entity.ModdedPosX >> 16) - cameraX + 10; //StaticVariables.MapTileWidth / 2;
-                var scy = (entity.ModdedPosY >> 16) - (entity.ModdedPosZ >> 16) - cameraY + 8; //StaticVariables.MapTileHeight / 2
+                var scx = (entity.PosX >> 16) - cameraX;
+                var scy = (entity.PosY >> 16) - (entity.PosZ >> 16) - cameraY;
                 
                 if (entity.SpriteRecord != null)
                 {
@@ -127,46 +118,37 @@ public class RendererHelper
                         for (var idex = iset.NumberOfImages - 1; idex >= 0; idex--)
                         {
                             var img = iset.Images[idex];
-                            //DrawSprite(map, img, scx, scy, g);
 
                             var bmp = map.GetSpriteBitmap(img);
                             DrawSprite(bmp, img, scx, scy, entity.ZSortValue, gameEngine.Renderer); 
 
-                            if (gameEngine.StaticVariables.DisplayPositions)
+                            if (gameEngine.StaticVariables.DisplayEntitiesPosition)
                             {
                                 //display z
-                                //var tile = gameEngine.CurrentMap.Map.MapTiles[entity.TileY * gameEngine.CurrentMap.Map.Width + entity.TileX];
-                                //tile.Height
-                                var pz = (entity.FloorHeight - entity.ModdedPosZ) >> 16; //entity.TerrainHeight
-
+                                var pz = (entity.FloorHeight - entity.ModdedPosZ) >> 16;
                                 if (pz != 0)
                                 {
-                                    gameEngine.Renderer.DrawLine(scx, scy, scx, scy - pz, 0, 1f, 0);
-                                    gameEngine.Renderer.DrawCross(scx, scy - pz, 0, 1, 0);
+                                    gameEngine.Renderer.DrawLine(scx, scy, scx, scy - pz, ZColor);
+                                    gameEngine.Renderer.DrawCross(scx, scy - pz, SpriteDepth.DebugCollision, ZColor);
                                 }
 
                                 //display entity position
-                                gameEngine.Renderer.DrawCross(scx, scy, 1, 0, 0);
+                                gameEngine.Renderer.DrawCross(scx, scy, SpriteDepth.DebugCollision, EntityColor);
                             }
                         }
                     }
 
                     if (gameEngine.StaticVariables.DisplayEntityId)
                     {
-                        var brush = gameEngine.StaticVariables.EditorSelectEntityIndex == entity.Index
-                            ? Brushes.ForestGreen
-                            : Brushes.Blue;
+                        var color = gameEngine.StaticVariables.EditorSelectEntityIndex == entity.Index
+                            ? EntitySelectColor
+                            : EntityColor;
                         var text = $"#{entity.Index}";
                         var textSize = g.MeasureString(text, FontEntityId);
-
-                        textToRender.Add(new TextDisplayParameter
-                        {
-                            Text = text,
-                            Font = FontEntityId,
-                            Color = brush,
-                            X = scx - textSize.Width / 2,
-                            Y = scy
-                        });
+                        gameEngine.Renderer.DrawString(text, FontEntityId, color,
+                            (int)(scx - textSize.Width / 2f),
+                            scy,
+                            SpriteDepth.DebugCollision);
                     }
                 }
             }
@@ -177,76 +159,56 @@ public class RendererHelper
         {
             var effect = gameEngine.StaticVariables.g_effectSlots[i];
             
-            if (effect.Status != 2 /*|| effect.AttachedEntity != null*/)
+            if (effect.Status != 2)
             {
                 continue;
             }
 
             var scx = (effect.X >> 16) - cameraX;
-            var scy = (effect.Y >> 16) - (effect.Z >> 16) - cameraY;
+            var scy = ((effect.Y - effect.Z) >> 16) - cameraY;
 
-            //if (effect.SpriteRecord != null)
+            if (effect.SpriteRef.Images != null)
             {
                 var map = effect.CurrentIsMapSprite == 1 ? gameMap : datasBin.AlundraGameMap;
+                var spriteRef = effect.SpriteRef;
 
-                if (effect.SpriteRef.Images != null)
+                for (var idex = spriteRef.NumberOfImages - 1; idex >= 0; idex--)
                 {
-                    var iset = effect.SpriteRef;
+                    var img = spriteRef.Images[idex];
+                    //effect._24 set alpha
+                    var bmp = map.GetSpriteBitmap(img);
+                    DrawSprite(bmp, img, scx, scy, effect.DepthSortValue + (effect.DepthSortOffset << 16), gameEngine.Renderer, 1f);
 
-                    for (var idex = iset.NumberOfImages - 1; idex >= 0; idex--)
-                    {
-                        var img = iset.Images[idex];
-                        //effect._24 set alpha
-                        //DrawSprite(map, img, scx, scy, g, 0.8f);
+                    if (gameEngine.StaticVariables.DisplayEffectsPosition)
+                    {                                
+                        //display z
+                        //var pz = (effect.Z) >> 16;
+                        //if (pz != 0)
+                        //{
+                        //    gameEngine.Renderer.DrawLine(scx, scy, scx, scy - pz, ZColor);
+                        //    gameEngine.Renderer.DrawCross(scx, scy - pz, SpriteDepth.DebugCollision, ZColor);
+                        //}
 
-                        var bmp = map.GetSpriteBitmap(img);
-                        DrawSprite(bmp, img, scx, scy, effect.DepthSortValue + (effect.DepthSortOffset << 16), gameEngine.Renderer, 0.8f);
-
-                        if (gameEngine.StaticVariables.DisplayPositions)
-                        {
-                            gameEngine.Renderer.DrawCross(scx, scy, 0, 0, 1);
-                        }
+                        gameEngine.Renderer.DrawCross(scx, scy, SpriteDepth.DebugCollision, EffectColor);
                     }
                 }
             }
 
             if (gameEngine.StaticVariables.DisplayEffectId)
             {
-                var brush = gameEngine.StaticVariables.EditorSelectEffectIndex == effect.Id
-                    ? Brushes.LightSeaGreen
-                    : Brushes.DarkViolet;
+                var color = gameEngine.StaticVariables.EditorSelectEffectIndex == effect.Id
+                    ? EffectSelectedColor
+                    : EffectColor;
                 var text = $"#{effect.Id}";
                 var textSize = g.MeasureString(text, FontEntityId);
-
-                textToRender.Add(new TextDisplayParameter
-                {
-                    Text = text,
-                    Font = FontEntityId,
-                    Color = brush,
-                    X = scx - textSize.Width / 2,
-                    Y = scy
-                });
+                gameEngine.Renderer.DrawString(text,
+                    FontEntityId,
+                    color,
+                    (int)(scx - textSize.Width / 2f),
+                    scy,
+                    SpriteDepth.DebugCollision
+                );
             }
-        }
-
-        //Debug text rendering
-        foreach (var textDisplayParameter in textToRender)
-        {
-            //background
-            for (int dx = -1; dx <= 1; dx++)
-            {
-                for (int dy = -1; dy <= 1; dy++)
-                {
-                    if (dx == 0 && dy == 0)
-                    {
-                        continue;
-                    }
-
-                    gameEngine.Renderer.DrawString(textDisplayParameter.Text, textDisplayParameter.Font, Brushes.Black, textDisplayParameter.X + dx, textDisplayParameter.Y + dy);
-                }
-            }
-
-            gameEngine.Renderer.DrawString(textDisplayParameter.Text, textDisplayParameter.Font, textDisplayParameter.Color, textDisplayParameter.X, textDisplayParameter.Y);
         }
     }
 
@@ -274,104 +236,6 @@ public class RendererHelper
         return tileId;
     }
 
-    private static void DrawSprite(GameMap gm, SiImage img, int x, int y, System.Drawing.Graphics g, float alpha = 1f)
-    {
-        var bmp = gm.GetSpriteBitmap(img);
-        var w = img.X4 - img.X1;
-        var h = img.Y4 - img.Y1;
-
-        if (w == 0 || h == 0)
-        {
-            return;
-        }
-
-        // Déterminer les dimensions et la position en tenant compte des valeurs négatives (miroir)
-        var absW = Math.Abs(w);
-        var absH = Math.Abs(h);
-        var drawX = x + (w < 0 ? img.X4 : img.X1);
-        var drawY = y + (h < 0 ? img.Y4 : img.Y1);
-
-        // Déterminer les transformations de miroir
-        var flipX = w < 0;
-        var flipY = h < 0;
-
-        // Si alpha est différent de 1.0, utiliser ImageAttributes pour la transparence
-        if (Math.Abs(alpha - 1.0f) > 0.001f)
-        {
-            ColorMatrix cm = new ColorMatrix
-            {
-                Matrix33 = alpha
-            };
-
-            using ImageAttributes imageAttributes = new ImageAttributes();
-            imageAttributes.SetColorMatrix(cm, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-
-            Rectangle destRect = new Rectangle(drawX, drawY, absW, absH);
-
-            // Gérer les effets de miroir avec les transformations graphiques
-            if (flipX || flipY)
-            {
-                var state = g.Save();
-
-                // Appliquer les transformations de miroir
-                if (flipX && flipY)
-                {
-                    g.ScaleTransform(-1, -1);
-                    g.TranslateTransform(-(drawX * 2 + absW), -(drawY * 2 + absH));
-                }
-                else if (flipX)
-                {
-                    g.ScaleTransform(-1, 1);
-                    g.TranslateTransform(-(drawX * 2 + absW), 0);
-                }
-                else if (flipY)
-                {
-                    g.ScaleTransform(1, -1);
-                    g.TranslateTransform(0, -(drawY * 2 + absH));
-                }
-
-                g.DrawImage(bmp, destRect, 0, 0, bmp.Width, bmp.Height, GraphicsUnit.Pixel, imageAttributes);
-                g.Restore(state);
-            }
-            else
-            {
-                g.DrawImage(bmp, destRect, 0, 0, bmp.Width, bmp.Height, GraphicsUnit.Pixel, imageAttributes);
-            }
-        }
-        else
-        {
-            // Alpha = 1.0, pas besoin d'ImageAttributes
-            if (flipX || flipY)
-            {
-                var state = g.Save();
-
-                // Appliquer les transformations de miroir
-                if (flipX && flipY)
-                {
-                    g.ScaleTransform(-1, -1);
-                    g.TranslateTransform(-(drawX * 2 + absW), -(drawY * 2 + absH));
-                }
-                else if (flipX)
-                {
-                    g.ScaleTransform(-1, 1);
-                    g.TranslateTransform(-(drawX * 2 + absW), 0);
-                }
-                else if (flipY)
-                {
-                    g.ScaleTransform(1, -1);
-                    g.TranslateTransform(0, -(drawY * 2 + absH));
-                }
-
-                g.DrawImage(bmp, drawX, drawY, absW, absH);
-                g.Restore(state);
-            }
-            else
-            {
-                g.DrawImage(bmp, drawX, drawY, absW, absH);
-            }
-        }
-    }
-
     private static void DrawSprite(Bitmap bitmap, SiImage img, int x, int y, int z, Renderer renderer, float alpha = 1f)
     {
         var w = img.X4 - img.X1;
@@ -382,17 +246,14 @@ public class RendererHelper
             return;
         }
 
-        // Déterminer les dimensions et la position en tenant compte des valeurs négatives (miroir)
         var absW = Math.Abs(w);
         var absH = Math.Abs(h);
         var drawX = x + (w < 0 ? img.X4 : img.X1);
         var drawY = y + (h < 0 ? img.Y4 : img.Y1);
 
-        // Déterminer les transformations de miroir
         var flipX = w < 0;
         var flipY = h < 0;
 
-        // Si le sprite nécessite un flip, créer une copie transformée
         if (flipX || flipY)
         {
             var cacheKey = new FlippedBitmapKey(bitmap.GetHashCode(), flipX, flipY, bitmap.Width, bitmap.Height);
@@ -409,7 +270,6 @@ public class RendererHelper
                 {
                     g.Clear(Color.Transparent);
 
-                    // Appliquer les transformations de miroir
                     if (flipX && flipY)
                     {
                         g.ScaleTransform(-1, -1);
@@ -443,8 +303,6 @@ public class RendererHelper
     private static void DrawTile(int tileMapIndex, int x, int y, int z, System.Drawing.Graphics g, GameMap gameMap, Renderer renderer)
     {
         var bmp = gameMap.GetTileBitmap(tileMapIndex);
-        //g.DrawImage(bmp, x, y);
-
         renderer.AddSprite(x, y, bmp.Width, bmp.Height, z, bmp);
     }
 
@@ -463,13 +321,4 @@ public class RendererHelper
         bool FlipY,
         int Width,
         int Height);
-}
-
-public class TextDisplayParameter
-{
-    public string Text { get; set; }
-    public Font Font { get; set; }
-    public Brush Color { get; set; }
-    public float X { get; set; }
-    public float Y { get; set; }
 }

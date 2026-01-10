@@ -19,20 +19,26 @@ public class StaticVariables
 
     public int EditorSelectEntityIndex { get; set; } = -1;
     public int EditorSelectEffectIndex { get; set; } = -1;
+
+    public float Speed { get; set; } = 1.0f;
     public bool IsGamePaused { get; set; }
     public bool DoNextFrame { get; set; }
-    public bool DisplayCollisions { get; set; }
-    public bool DisplayPositions { get; set; }
+
     public bool DebugPortalsEnabled { get; set; }
     public bool IsLogScriptEnabled { get; set; }
     public bool IsLogDamageEnabled { get; set; }
     
+    public bool DisplayCollisions { get; set; }
 
-    //editor debuggin display
     public bool DisplayEntityId { get; set; }
+    public bool DisplayEntitiesPosition { get; set; }
+
     public bool DisplayEffectId { get; set; }
+    public bool DisplayEffectsPosition { get; set; }
+
     public bool DisplayTileXY { get; set; }
-    public float Speed { get; set; } = 1.0f;
+    public bool DisplayTiles { get; set; } = true;
+    public bool DisplayWallTiles { get; set; } = true;
 
     //debug
     public uint FrameNumber;

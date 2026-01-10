@@ -85,9 +85,13 @@ namespace AlundraTools.GameControls
             buttonExtractToCsv = new Button();
             checkBoxDisplayEntityId = new CheckBox();
             groupBox4 = new GroupBox();
+            checkBoxDisplayWallTiles = new CheckBox();
+            checkBoxDisplayFloorTiles = new CheckBox();
+            checkBoxEffectPositions = new CheckBox();
+            checkBoxDisplayEntityPositions = new CheckBox();
             checkBoxDisplayCollision = new CheckBox();
-            checkBoxDisplayEffectId = new CheckBox();
             checkBoxTileXY = new CheckBox();
+            checkBoxDisplayEffectId = new CheckBox();
             buttonCompareWithDump = new Button();
             tabControl1 = new TabControl();
             tabPageEntities = new TabPage();
@@ -233,7 +237,6 @@ namespace AlundraTools.GameControls
             buttonRefreshScript = new Button();
             treeViewScript = new TreeView();
             buttonSnapshot = new Button();
-            checkBoxDisplayPositions = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -810,15 +813,18 @@ namespace AlundraTools.GameControls
             checkBoxDisplayEntityId.Location = new Point(5, 20);
             checkBoxDisplayEntityId.Margin = new Padding(3, 2, 3, 2);
             checkBoxDisplayEntityId.Name = "checkBoxDisplayEntityId";
-            checkBoxDisplayEntityId.Size = new Size(109, 19);
+            checkBoxDisplayEntityId.Size = new Size(69, 19);
             checkBoxDisplayEntityId.TabIndex = 30;
-            checkBoxDisplayEntityId.Text = "display entity id";
+            checkBoxDisplayEntityId.Text = "Entity id";
             checkBoxDisplayEntityId.UseVisualStyleBackColor = true;
             checkBoxDisplayEntityId.CheckedChanged += checkBoxDisplayEntityId_CheckedChanged;
             // 
             // groupBox4
             // 
-            groupBox4.Controls.Add(checkBoxDisplayPositions);
+            groupBox4.Controls.Add(checkBoxDisplayWallTiles);
+            groupBox4.Controls.Add(checkBoxDisplayFloorTiles);
+            groupBox4.Controls.Add(checkBoxEffectPositions);
+            groupBox4.Controls.Add(checkBoxDisplayEntityPositions);
             groupBox4.Controls.Add(checkBoxDisplayCollision);
             groupBox4.Controls.Add(checkBoxDisplayEffectId);
             groupBox4.Controls.Add(checkBoxTileXY);
@@ -827,46 +833,98 @@ namespace AlundraTools.GameControls
             groupBox4.Margin = new Padding(3, 2, 3, 2);
             groupBox4.Name = "groupBox4";
             groupBox4.Padding = new Padding(3, 2, 3, 2);
-            groupBox4.Size = new Size(163, 144);
+            groupBox4.Size = new Size(163, 212);
             groupBox4.TabIndex = 31;
             groupBox4.TabStop = false;
-            groupBox4.Text = "Debugging";
+            groupBox4.Text = "Display";
+            // 
+            // checkBoxDisplayWallTiles
+            // 
+            checkBoxDisplayWallTiles.AutoSize = true;
+            checkBoxDisplayWallTiles.Checked = true;
+            checkBoxDisplayWallTiles.CheckState = CheckState.Checked;
+            checkBoxDisplayWallTiles.Location = new Point(6, 179);
+            checkBoxDisplayWallTiles.Margin = new Padding(3, 2, 3, 2);
+            checkBoxDisplayWallTiles.Name = "checkBoxDisplayWallTiles";
+            checkBoxDisplayWallTiles.Size = new Size(73, 19);
+            checkBoxDisplayWallTiles.TabIndex = 38;
+            checkBoxDisplayWallTiles.Text = "Wall tiles";
+            checkBoxDisplayWallTiles.UseVisualStyleBackColor = true;
+            checkBoxDisplayWallTiles.CheckedChanged += checkBoxDisplayWallTiles_CheckedChanged;
+            // 
+            // checkBoxDisplayFloorTiles
+            // 
+            checkBoxDisplayFloorTiles.AutoSize = true;
+            checkBoxDisplayFloorTiles.Checked = true;
+            checkBoxDisplayFloorTiles.CheckState = CheckState.Checked;
+            checkBoxDisplayFloorTiles.Location = new Point(6, 156);
+            checkBoxDisplayFloorTiles.Margin = new Padding(3, 2, 3, 2);
+            checkBoxDisplayFloorTiles.Name = "checkBoxDisplayFloorTiles";
+            checkBoxDisplayFloorTiles.Size = new Size(77, 19);
+            checkBoxDisplayFloorTiles.TabIndex = 37;
+            checkBoxDisplayFloorTiles.Text = "Floor tiles";
+            checkBoxDisplayFloorTiles.UseVisualStyleBackColor = true;
+            checkBoxDisplayFloorTiles.CheckedChanged += checkBoxDisplayFloorTiles_CheckedChanged;
+            // 
+            // checkBoxEffectPositions
+            // 
+            checkBoxEffectPositions.AutoSize = true;
+            checkBoxEffectPositions.Location = new Point(6, 88);
+            checkBoxEffectPositions.Margin = new Padding(3, 2, 3, 2);
+            checkBoxEffectPositions.Name = "checkBoxEffectPositions";
+            checkBoxEffectPositions.Size = new Size(107, 19);
+            checkBoxEffectPositions.TabIndex = 36;
+            checkBoxEffectPositions.Text = "Effect positions";
+            checkBoxEffectPositions.UseVisualStyleBackColor = true;
+            checkBoxEffectPositions.CheckedChanged += checkBoxEffectPositions_CheckedChanged;
+            // 
+            // checkBoxDisplayEntityPositions
+            // 
+            checkBoxDisplayEntityPositions.AutoSize = true;
+            checkBoxDisplayEntityPositions.Location = new Point(6, 42);
+            checkBoxDisplayEntityPositions.Margin = new Padding(3, 2, 3, 2);
+            checkBoxDisplayEntityPositions.Name = "checkBoxDisplayEntityPositions";
+            checkBoxDisplayEntityPositions.Size = new Size(107, 19);
+            checkBoxDisplayEntityPositions.TabIndex = 35;
+            checkBoxDisplayEntityPositions.Text = "Entity positions";
+            checkBoxDisplayEntityPositions.UseVisualStyleBackColor = true;
+            checkBoxDisplayEntityPositions.CheckedChanged += checkBoxDisplayPositions_CheckedChanged;
             // 
             // checkBoxDisplayCollision
             // 
             checkBoxDisplayCollision.AutoSize = true;
-            checkBoxDisplayCollision.Location = new Point(5, 87);
+            checkBoxDisplayCollision.Location = new Point(5, 110);
             checkBoxDisplayCollision.Margin = new Padding(3, 2, 3, 2);
             checkBoxDisplayCollision.Name = "checkBoxDisplayCollision";
-            checkBoxDisplayCollision.Size = new Size(115, 19);
+            checkBoxDisplayCollision.Size = new Size(72, 19);
             checkBoxDisplayCollision.TabIndex = 34;
-            checkBoxDisplayCollision.Text = "display collisions";
+            checkBoxDisplayCollision.Text = "Hitboxes";
             checkBoxDisplayCollision.UseVisualStyleBackColor = true;
             checkBoxDisplayCollision.CheckedChanged += checkBoxDisplayCollision_CheckedChanged;
-            // 
-            // checkBoxDisplayEffectId
-            // 
-            checkBoxDisplayEffectId.AutoSize = true;
-            checkBoxDisplayEffectId.Location = new Point(5, 42);
-            checkBoxDisplayEffectId.Margin = new Padding(3, 2, 3, 2);
-            checkBoxDisplayEffectId.Name = "checkBoxDisplayEffectId";
-            checkBoxDisplayEffectId.Size = new Size(109, 19);
-            checkBoxDisplayEffectId.TabIndex = 32;
-            checkBoxDisplayEffectId.Text = "display effect id";
-            checkBoxDisplayEffectId.UseVisualStyleBackColor = true;
-            checkBoxDisplayEffectId.CheckedChanged += checkBoxDisplayEffectId_CheckedChanged;
             // 
             // checkBoxTileXY
             // 
             checkBoxTileXY.AutoSize = true;
-            checkBoxTileXY.Location = new Point(5, 64);
+            checkBoxTileXY.Location = new Point(5, 133);
             checkBoxTileXY.Margin = new Padding(3, 2, 3, 2);
             checkBoxTileXY.Name = "checkBoxTileXY";
-            checkBoxTileXY.Size = new Size(96, 19);
+            checkBoxTileXY.Size = new Size(59, 19);
             checkBoxTileXY.TabIndex = 31;
-            checkBoxTileXY.Text = "display tile xy";
+            checkBoxTileXY.Text = "Tile xy";
             checkBoxTileXY.UseVisualStyleBackColor = true;
             checkBoxTileXY.CheckedChanged += checkBoxTileXY_CheckedChanged;
+            // 
+            // checkBoxDisplayEffectId
+            // 
+            checkBoxDisplayEffectId.AutoSize = true;
+            checkBoxDisplayEffectId.Location = new Point(6, 65);
+            checkBoxDisplayEffectId.Margin = new Padding(3, 2, 3, 2);
+            checkBoxDisplayEffectId.Name = "checkBoxDisplayEffectId";
+            checkBoxDisplayEffectId.Size = new Size(69, 19);
+            checkBoxDisplayEffectId.TabIndex = 32;
+            checkBoxDisplayEffectId.Text = "Effect id";
+            checkBoxDisplayEffectId.UseVisualStyleBackColor = true;
+            checkBoxDisplayEffectId.CheckedChanged += checkBoxDisplayEffectId_CheckedChanged;
             // 
             // buttonCompareWithDump
             // 
@@ -2443,18 +2501,6 @@ namespace AlundraTools.GameControls
             buttonSnapshot.UseVisualStyleBackColor = true;
             buttonSnapshot.Click += buttonSnapshot_Click;
             // 
-            // checkBoxDisplayPositions
-            // 
-            checkBoxDisplayPositions.AutoSize = true;
-            checkBoxDisplayPositions.Location = new Point(5, 110);
-            checkBoxDisplayPositions.Margin = new Padding(3, 2, 3, 2);
-            checkBoxDisplayPositions.Name = "checkBoxDisplayPositions";
-            checkBoxDisplayPositions.Size = new Size(114, 19);
-            checkBoxDisplayPositions.TabIndex = 35;
-            checkBoxDisplayPositions.Text = "display positions";
-            checkBoxDisplayPositions.UseVisualStyleBackColor = true;
-            checkBoxDisplayPositions.CheckedChanged += checkBoxDisplayPositions_CheckedChanged;
-            // 
             // FrmGame
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -2729,6 +2775,9 @@ namespace AlundraTools.GameControls
         private CheckBox checkBoxLogDamage;
         private Button buttonSnapshot;
         private CheckBox checkBoxDebugPortal;
-        private CheckBox checkBoxDisplayPositions;
+        private CheckBox checkBoxDisplayEntityPositions;
+        private CheckBox checkBoxDisplayWallTiles;
+        private CheckBox checkBoxDisplayFloorTiles;
+        private CheckBox checkBoxEffectPositions;
     }
 }
