@@ -42,7 +42,7 @@ public class PlayerManager
 
         if ((_gameEngine.StaticVariables.g_playerControlFlags & 0x34U) != 0)
         {
-            UpdatePlayerAnimationEffects(1);
+            CreatePlayerAnimationEffects(1);
             _gameEngine.StaticVariables.g_playerWarpTimer = 0;
             Array.Clear(_gameEngine.StaticVariables.g_playerEffectTransitionCooldown);
             UpdatePlayerCarriedEntity(1);
@@ -62,7 +62,7 @@ public class PlayerManager
         }
 
         _gameEngine.StaticVariables.PlayerEntity.Flags |= 0x100;
-        UpdatePlayerAnimationEffects(0);
+        CreatePlayerAnimationEffects(0);
         dir = FindWarpFacingDirection();
 
         if (dir != 0xffffffff)
@@ -2570,7 +2570,7 @@ public class PlayerManager
     }
 
     // 8002fb14
-    public void UpdatePlayerAnimationEffects(int mode)
+    public void CreatePlayerAnimationEffects(int mode)
     {
         var baseIndex = 0;
         byte effectId = 0;
@@ -2842,19 +2842,20 @@ public class PlayerManager
                     _gameEngine.SoundManager.PlaySoundEffect((uint)_gameEngine.StaticVariables.g_hitSfxIdByTileSlope[_gameEngine.StaticVariables.PlayerEntity.Slope_18c]);
 
                     // Créer des effets visuels d'atterrissage en fonction du type de terrain
-                    if (_gameEngine.StaticVariables.PlayerEntity.Slope_18c < 1 || (2 < _gameEngine.StaticVariables.PlayerEntity.Slope_18c && _gameEngine.StaticVariables.PlayerEntity.Slope_18c != 4))
+                    if (_gameEngine.StaticVariables.PlayerEntity.Slope_18c < 1
+                        || (2 < _gameEngine.StaticVariables.PlayerEntity.Slope_18c && _gameEngine.StaticVariables.PlayerEntity.Slope_18c != 4))
                     {
-                        for (var i = 0; i < 3; i++)
+                        if (_gameEngine.CurrentMap.Info.C != 0)
                         {
-                            if (_gameEngine.CurrentMap.Info._10 != 0)
+                            for (var i = 0; i < 3; i++)
                             {
                                 entityCreated = _gameEngine.EffectManager.CreateEffectEntity(
                                     0,
-                                    (byte)_gameEngine.CurrentMap.Info._10,
+                                    (byte)_gameEngine.CurrentMap.Info.C,
                                     0,
                                     _gameEngine.StaticVariables.PlayerEntity.PosX,
                                     _gameEngine.StaticVariables.PlayerEntity.PosY,
-                                    _gameEngine.StaticVariables.PlayerEntity.TerrainHeight);
+                                    _gameEngine.StaticVariables.PlayerEntity.FloorHeight);
 
                                 if (entityCreated != null)
                                 {
@@ -2873,7 +2874,7 @@ public class PlayerManager
                             0,
                             _gameEngine.StaticVariables.PlayerEntity.PosX,
                             _gameEngine.StaticVariables.PlayerEntity.PosY,
-                            _gameEngine.StaticVariables.PlayerEntity.TerrainHeight);
+                            _gameEngine.StaticVariables.PlayerEntity.FloorHeight); 
                     }
 
                     _gameEngine.StaticVariables.DAT_80098f30 = 1;

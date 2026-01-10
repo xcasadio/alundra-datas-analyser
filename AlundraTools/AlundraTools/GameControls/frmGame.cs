@@ -37,8 +37,6 @@ public partial class FrmGame : Form
         [nameof(Entity.PosX)] = "Transform",
         [nameof(Entity.PosY)] = "Transform",
         [nameof(Entity.PosZ)] = "Transform",
-        [nameof(Entity.DelayOrAngle)] = "Transform",
-        [nameof(Entity.ItemState)] = "Transform",
         [nameof(Entity.ScreenClipX)] = "Transform",
         [nameof(Entity.ScreenClipY)] = "Transform",
         [nameof(Entity.ScreenClipZ)] = "Transform",
@@ -58,9 +56,10 @@ public partial class FrmGame : Form
         [nameof(Entity.Flags2)] = "Gameplay",
         [nameof(Entity.CarriedEntity)] = "Gameplay",
         [nameof(Entity.Status)] = "Gameplay",
-        [nameof(Entity.BlockedByEntity)] = "Gameplay",
         [nameof(Entity.ContentsItemId)] = "Gameplay",
         [nameof(Entity.ContentsGameFlag)] = "Gameplay",
+        [nameof(Entity.DelayOrAngle)] = "GamePlay",
+        [nameof(Entity.ItemState)] = "GamePlay",
 
         [nameof(Entity.ProgramIndexes)] = "Script",
         [nameof(Entity.SpriteProgramIndexes)] = "Script",
@@ -148,7 +147,6 @@ public partial class FrmGame : Form
         [nameof(Entity.DamagedTickCounter)] = "Collision",
         [nameof(Entity.FrameCollisionTickCounter)] = "Collision",
         [nameof(Entity.FrameCollision)] = "Collision",
-        [nameof(Entity.FrameCounter)] = "Collision",
         [nameof(Entity.HitCounter)] = "Collision",
         [nameof(Entity.TouchingEntity)] = "Collision",
         [nameof(Entity.HitBoxX)] = "Collision",
@@ -156,7 +154,8 @@ public partial class FrmGame : Form
         [nameof(Entity.HitBoxZ)] = "Collision",
         [nameof(Entity.HitBoxOriginX)] = "Collision",
         [nameof(Entity.HitBoxOriginY)] = "Collision",
-        [nameof(Entity.HitBoxOriginZ)] = "Collision"
+        [nameof(Entity.HitBoxOriginZ)] = "Collision",
+        [nameof(Entity.BlockedByEntity)] = "Collision",
     };
 
     private readonly Dictionary<string, string> _entityDescriptors = new()
@@ -1027,7 +1026,7 @@ public partial class FrmGame : Form
             // MapTiles
             for (int i = 0; i < 4; i++)
             {
-                //content.Append($"{i}.Walk;{i}.Ground;{i}.Slope;{i}.Height;{i}.TileId;{i}.Palette;{i}.Tile;{i}.TilesOffset;");
+                //content.Append($"{i}.Walk;{i}.Ground;{i}.Slope;{i}.Height;{i}.TileId;{i}.Palette;{i}.Tile;{i}.WallTilesOffset;");
             }
             content.Append("NegModX;NegModY;NegModZ;");
             content.Append("ModX;ModY;ModZ;Width;Height;Depth;");
@@ -1074,7 +1073,7 @@ public partial class FrmGame : Form
                 //    content.Append($"{mapTile?.TileId};");
                 //    content.Append($"{mapTile?.Palette};");
                 //    content.Append($"{mapTile?.Tile};");
-                //    content.Append($"{mapTile?.TilesOffset};");
+                //    content.Append($"{mapTile?.WallTilesOffset};");
                 //}
 
                 content.Append($"{entity.NegModX};");

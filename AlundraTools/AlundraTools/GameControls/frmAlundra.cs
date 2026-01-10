@@ -542,7 +542,7 @@ namespace AlundraTools.GameControls
                                 dy + halfHeight / 1.5f);
                             g.DrawString(tile.Tile.ToString(), fnt, Brushes.Red, dx + StaticVariables.MapTileHeight,
                                 dy + halfHeight / 1.5f);
-                            g.DrawString(tile.TilesOffset.ToString(), fnt, Brushes.Green, dx,
+                            g.DrawString(tile.WallTilesOffset.ToString(), fnt, Brushes.Green, dx,
                                 dy + StaticVariables.MapTileHeight / 1.5f);
 
                             if (tile.WallTiles != null)
@@ -1305,11 +1305,12 @@ namespace AlundraTools.GameControls
                     for (var dex = images.NumberOfImages - 1; dex >= 0; dex--)
                     {
                         var img = images.Images[dex];
+
                         if (img != null)
                         {
-
                             var w = img.X4 - img.X1;
                             var h = img.Y4 - img.Y1;
+
                             if (w != 0 && h != 0)
                             {
                                 e.Graphics.DrawImage(bmps[dex], posx + img.X1, posy + img.Y1, w, h);

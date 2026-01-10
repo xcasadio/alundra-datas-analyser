@@ -453,7 +453,7 @@ public static class FrameSnapshotLoader
                         entity.MapTiles[i].TileId = mapTiles[i].TileId;
                         entity.MapTiles[i].Palette = mapTiles[i].Palette;
                         entity.MapTiles[i].Tile = mapTiles[i].Tile;
-                        entity.MapTiles[i].TilesOffset = mapTiles[i].TilesOffset;
+                        entity.MapTiles[i].WallTilesOffset = mapTiles[i].TilesOffset;
                     }
                 }
             }

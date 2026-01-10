@@ -2038,7 +2038,7 @@ public class GameEngine
                         tileDestination.GroundProperty = tileSource.GroundProperty;
                         tileDestination.Height = tileSource.Height;
                         tileDestination.TileId = tileSource.TileId;
-                        tileDestination.TilesOffset = tileSource.TilesOffset;
+                        tileDestination.WallTilesOffset = tileSource.WallTilesOffset;
 
                         if (tileSource.WallTiles != null)
                         {
@@ -2257,7 +2257,7 @@ public class GameEngine
             {
                 tile.Walkability = (byte)(tileFlags & 0xFFFD);
                 //tile.Height = (byte)((tileFlags & 0xFFFF) >> 8);
-                tile.TilesOffset = -1; // tile.TileId = 0xFFFF;
+                tile.WallTilesOffset = -1; // tile.TileId = 0xFFFF;
                 tile.WallTiles = null;
 
                 int effectX = worldXCoords[i] * 0x180000 + 0xC0000; // center on tile

@@ -23,7 +23,7 @@ record MapTileJson
         TileId = mapTile.TileId;
         Palette = mapTile.Palette;
         Tile = mapTile.Tile;
-        TilesOffset = mapTile.TilesOffset;
+        TilesOffset = mapTile.WallTilesOffset;
         WallTiles = mapTile.WallTiles != null ? new WallTilesJson(mapTile.WallTiles) : null;
     }
 }

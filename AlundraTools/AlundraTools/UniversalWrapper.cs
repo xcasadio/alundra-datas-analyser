@@ -221,7 +221,7 @@ public class MapTilesFieldDescriptor : ReflectionFieldDescriptor
             return null;
         }
 
-        return $"{mapTile.TileX}x{mapTile.TileY} {mapTile.Walkability} {mapTile.GroundProperty} {mapTile.Slope} {mapTile.Height} {mapTile.TileId} {mapTile.TilesOffset}";
+        return $"{mapTile.TileX}x{mapTile.TileY} {mapTile.Walkability} {mapTile.GroundProperty} {mapTile.Slope} {mapTile.Height} {mapTile.TileId} {mapTile.WallTilesOffset}";
     }
 
     public override void SetValue(object component, object value)
