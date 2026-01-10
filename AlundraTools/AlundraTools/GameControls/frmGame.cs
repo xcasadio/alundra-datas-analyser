@@ -1301,17 +1301,6 @@ public partial class FrmGame : Form
         _gameEngine.StaticVariables.g_saveData.NumberOfItems[itemIndex * 2 + 1] = 1; // number of item
     }
 
-    private void checkBoxUseDebugCamera_CheckedChanged(object sender, EventArgs e)
-    {
-        _gameEngine.StaticVariables.UseDebugCamera = checkBoxUseDebugCamera.Checked;
-
-        if (_gameEngine.StaticVariables.UseDebugCamera == false)
-        {
-            _gameEngine.StaticVariables.g_cameraDebugOffsetX = 0;
-            _gameEngine.StaticVariables.g_cameraDebugOffsetY = 0;
-        }
-    }
-
     private void checkBoxDisplayCollision_CheckedChanged(object sender, EventArgs e)
     {
         _gameEngine.StaticVariables.DisplayCollisions = checkBoxDisplayCollision.Checked;
@@ -1650,6 +1639,11 @@ public partial class FrmGame : Form
     private void checkBoxDebugPortal_CheckedChanged(object sender, EventArgs e)
     {
         _gameEngine.StaticVariables.DebugPortalsEnabled = checkBoxDebugPortal.Checked;
+    }
+
+    private void checkBoxDisplayPositions_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.DisplayPositions = checkBoxDisplayPositions.Checked;
     }
 }
 

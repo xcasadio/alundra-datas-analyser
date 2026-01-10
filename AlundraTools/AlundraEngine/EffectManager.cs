@@ -171,16 +171,17 @@ public class EffectManager
             effect.CurrentAnimation = (byte)~effect.TargetAnimation;
         }
 
+        var anim = effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnimation];
+
         if (effect.CurrentAnimation != effect.TargetAnimation)
         {
-            var anim = effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnimation];
-            effect.Frame = anim.Frames[0];
-            effect.FirstFrame = effect.Frame;
-
             effect.CurrentAnimation = effect.TargetAnimation;
             effect.NextFrameDelay = 0;
             effect.DestroyFlag = 0;
+
             effect.CurrentFrameIndex = 0;
+            effect.Frame = anim.Frames[0];
+            effect.FirstFrame = effect.Frame;
         }
         else
         {
@@ -188,54 +189,39 @@ public class EffectManager
 
             if ((effect.NextFrameDelay & 0xff) != 0)
             {
-                return; // Pas encore temps de changer de frame
-            }
-
-            if (effect.NextFrameDelay == 0)
-            {
-                effect.CurrentFrameIndex++;
-
-                //TODO : fix bug
-                if (effect.CurrentFrameIndex >=
-                    effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnimation].NumberOfFrames)
-                {
-                    effect.CurrentFrameIndex = 0;
-                }
+                return;
             }
         }
 
-        // Boucle de traitement des frames
         while (true)
         {
-            var frameData = effect.Frame;
+            var frameData = anim.Frames[effect.CurrentFrameIndex];
 
             if ((frameData.Delay & 0x80) != 0)
             {
-                var anim = effect.SpriteEffectRecord.PreloadedAnims[effect.TargetAnimation];
-                effect.Frame = anim.Frames[effect.CurrentFrameIndex];
                 effect.NextFrameDelay = (byte)(frameData.Delay & 0x7f);
-                var imageOffset = (frameData.ImageSetPointer >> 8) | ((frameData.ImageSetPointer & 0xff) << 8);
 
-                if (effect.Frame.Images != null) // (imageOffset != 0xffff)
+                effect.CurrentFrameIndex++;
+                effect.Frame = anim.Frames[effect.CurrentFrameIndex];
+
+                if (frameData.Images != null /*&& effect.Frame.ImageSetPointer != -1*/)
                 {
-                    effect.SpriteRef.Images = effect.Frame.Images.Images;
-                    effect.SpriteRef.NumberOfImages = effect.Frame.Images.NumberOfImages;
-                    //effect.SpriteRef.DepthSortValue = effect.Frame.Images.DepthSortValue;
-                    effect._24 = effect.Frame.Images.NumberOfImages;
+                    effect.SpriteRef.Images = frameData.Images.Images;
+                    effect.SpriteRef.NumberOfImages = frameData.Images.NumberOfImages;
+                    effect._24 = frameData.Images.NumberOfImages;
                 }
                 else
                 {
                     effect.SpriteRef.Images = null;
                     effect.SpriteRef.NumberOfImages = 0;
-                    //effect.SpriteRef.DepthSortValue = 0;
                     effect._24 = 0;
                 }
                 return;
             }
 
-            if (frameData.Delay == 0)
+            if (frameData.Delay == 0) //end anim => destroy the effect
             {
-                effect.NextFrameDelay = 0xff; // Animation non-répétitive, marquer pour destruction
+                effect.NextFrameDelay = 0xff;
                 effect.DestroyFlag = 1;
                 return;
             }
@@ -244,12 +230,11 @@ public class EffectManager
             {
                 effect.CurrentFrameIndex = 0;
                 effect.Frame = effect.FirstFrame;
+                continue;
             }
-            else
-            {
-                Debugger.Break();
-                throw new Exception("Effect Animation Error!!");
-            }
+
+            Debugger.Break();
+            //throw new Exception("Effect Animation Error!!");
         }
     }
 
@@ -261,7 +246,6 @@ public class EffectManager
             effect.X += effect.ForceX;
             effect.Y += effect.ForceY;
             effect.Z += effect.ForceZ;
-            //some kind of unique id? maybe its used for zsorting
             effect.DepthSortValue = (int)(effect.Y & 0xffff0000) + (effect.Z >> 16) + (effect.SpriteRef.DepthSortValue << 16);
             return;
         }

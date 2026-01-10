@@ -86,7 +86,6 @@ namespace AlundraTools.GameControls
             checkBoxDisplayEntityId = new CheckBox();
             groupBox4 = new GroupBox();
             checkBoxDisplayCollision = new CheckBox();
-            checkBoxUseDebugCamera = new CheckBox();
             checkBoxDisplayEffectId = new CheckBox();
             checkBoxTileXY = new CheckBox();
             buttonCompareWithDump = new Button();
@@ -219,6 +218,7 @@ namespace AlundraTools.GameControls
             buttonZoomX4 = new Button();
             buttonZoomX2 = new Button();
             tabPage2 = new TabPage();
+            checkBoxDebugPortal = new CheckBox();
             checkBoxLogDamage = new CheckBox();
             checkBoxLogScript = new CheckBox();
             buttonClearLog = new Button();
@@ -233,7 +233,7 @@ namespace AlundraTools.GameControls
             buttonRefreshScript = new Button();
             treeViewScript = new TreeView();
             buttonSnapshot = new Button();
-            checkBoxDebugPortal = new CheckBox();
+            checkBoxDisplayPositions = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -818,8 +818,8 @@ namespace AlundraTools.GameControls
             // 
             // groupBox4
             // 
+            groupBox4.Controls.Add(checkBoxDisplayPositions);
             groupBox4.Controls.Add(checkBoxDisplayCollision);
-            groupBox4.Controls.Add(checkBoxUseDebugCamera);
             groupBox4.Controls.Add(checkBoxDisplayEffectId);
             groupBox4.Controls.Add(checkBoxTileXY);
             groupBox4.Controls.Add(checkBoxDisplayEntityId);
@@ -827,7 +827,7 @@ namespace AlundraTools.GameControls
             groupBox4.Margin = new Padding(3, 2, 3, 2);
             groupBox4.Name = "groupBox4";
             groupBox4.Padding = new Padding(3, 2, 3, 2);
-            groupBox4.Size = new Size(163, 176);
+            groupBox4.Size = new Size(163, 144);
             groupBox4.TabIndex = 31;
             groupBox4.TabStop = false;
             groupBox4.Text = "Debugging";
@@ -835,7 +835,7 @@ namespace AlundraTools.GameControls
             // checkBoxDisplayCollision
             // 
             checkBoxDisplayCollision.AutoSize = true;
-            checkBoxDisplayCollision.Location = new Point(5, 110);
+            checkBoxDisplayCollision.Location = new Point(5, 87);
             checkBoxDisplayCollision.Margin = new Padding(3, 2, 3, 2);
             checkBoxDisplayCollision.Name = "checkBoxDisplayCollision";
             checkBoxDisplayCollision.Size = new Size(115, 19);
@@ -843,18 +843,6 @@ namespace AlundraTools.GameControls
             checkBoxDisplayCollision.Text = "display collisions";
             checkBoxDisplayCollision.UseVisualStyleBackColor = true;
             checkBoxDisplayCollision.CheckedChanged += checkBoxDisplayCollision_CheckedChanged;
-            // 
-            // checkBoxUseDebugCamera
-            // 
-            checkBoxUseDebugCamera.AutoSize = true;
-            checkBoxUseDebugCamera.Location = new Point(5, 87);
-            checkBoxUseDebugCamera.Margin = new Padding(3, 2, 3, 2);
-            checkBoxUseDebugCamera.Name = "checkBoxUseDebugCamera";
-            checkBoxUseDebugCamera.Size = new Size(123, 19);
-            checkBoxUseDebugCamera.TabIndex = 33;
-            checkBoxUseDebugCamera.Text = "use debug camera";
-            checkBoxUseDebugCamera.UseVisualStyleBackColor = true;
-            checkBoxUseDebugCamera.CheckedChanged += checkBoxUseDebugCamera_CheckedChanged;
             // 
             // checkBoxDisplayEffectId
             // 
@@ -2304,6 +2292,17 @@ namespace AlundraTools.GameControls
             tabPage2.Text = "Logs";
             tabPage2.UseVisualStyleBackColor = true;
             // 
+            // checkBoxDebugPortal
+            // 
+            checkBoxDebugPortal.AutoSize = true;
+            checkBoxDebugPortal.Location = new Point(380, 54);
+            checkBoxDebugPortal.Name = "checkBoxDebugPortal";
+            checkBoxDebugPortal.Size = new Size(80, 19);
+            checkBoxDebugPortal.TabIndex = 10;
+            checkBoxDebugPortal.Text = "Log portal";
+            checkBoxDebugPortal.UseVisualStyleBackColor = true;
+            checkBoxDebugPortal.CheckedChanged += checkBoxDebugPortal_CheckedChanged;
+            // 
             // checkBoxLogDamage
             // 
             checkBoxLogDamage.AutoSize = true;
@@ -2444,16 +2443,17 @@ namespace AlundraTools.GameControls
             buttonSnapshot.UseVisualStyleBackColor = true;
             buttonSnapshot.Click += buttonSnapshot_Click;
             // 
-            // checkBoxDebugPortal
+            // checkBoxDisplayPositions
             // 
-            checkBoxDebugPortal.AutoSize = true;
-            checkBoxDebugPortal.Location = new Point(380, 54);
-            checkBoxDebugPortal.Name = "checkBoxDebugPortal";
-            checkBoxDebugPortal.Size = new Size(80, 19);
-            checkBoxDebugPortal.TabIndex = 10;
-            checkBoxDebugPortal.Text = "Log portal";
-            checkBoxDebugPortal.UseVisualStyleBackColor = true;
-            checkBoxDebugPortal.CheckedChanged += checkBoxDebugPortal_CheckedChanged;
+            checkBoxDisplayPositions.AutoSize = true;
+            checkBoxDisplayPositions.Location = new Point(5, 110);
+            checkBoxDisplayPositions.Margin = new Padding(3, 2, 3, 2);
+            checkBoxDisplayPositions.Name = "checkBoxDisplayPositions";
+            checkBoxDisplayPositions.Size = new Size(114, 19);
+            checkBoxDisplayPositions.TabIndex = 35;
+            checkBoxDisplayPositions.Text = "display positions";
+            checkBoxDisplayPositions.UseVisualStyleBackColor = true;
+            checkBoxDisplayPositions.CheckedChanged += checkBoxDisplayPositions_CheckedChanged;
             // 
             // FrmGame
             // 
@@ -2608,7 +2608,6 @@ namespace AlundraTools.GameControls
         private CheckBox checkBoxDisplayEffectId;
         private Label label29;
         private Label labelCameraScrolling;
-        private CheckBox checkBoxUseDebugCamera;
         private TabPage tabPageDebug;
         private Button buttonForceRandomItem;
         private Label label31;
@@ -2730,5 +2729,6 @@ namespace AlundraTools.GameControls
         private CheckBox checkBoxLogDamage;
         private Button buttonSnapshot;
         private CheckBox checkBoxDebugPortal;
+        private CheckBox checkBoxDisplayPositions;
     }
 }

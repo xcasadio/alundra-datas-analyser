@@ -21,8 +21,8 @@ public class StaticVariables
     public int EditorSelectEffectIndex { get; set; } = -1;
     public bool IsGamePaused { get; set; }
     public bool DoNextFrame { get; set; }
-    public bool UseDebugCamera { get; set; }
     public bool DisplayCollisions { get; set; }
+    public bool DisplayPositions { get; set; }
     public bool DebugPortalsEnabled { get; set; }
     public bool IsLogScriptEnabled { get; set; }
     public bool IsLogDamageEnabled { get; set; }

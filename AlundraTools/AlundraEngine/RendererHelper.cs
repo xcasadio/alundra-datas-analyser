@@ -1,4 +1,5 @@
 ﻿using AlundraEngine.DatasBin;
+using AlundraEngine.Gameplay;
 using System;
 using System.Diagnostics;
 using System.Drawing.Imaging;
@@ -9,6 +10,9 @@ public class RendererHelper
 {
     private static readonly Font FontEntityId = new Font(FontFamily.GenericSansSerif, 9f);
     private static readonly Font FontTileInfo = new Font(FontFamily.GenericSansSerif, 5.5f);
+    
+    private static readonly Dictionary<FlippedBitmapKey, Bitmap> _flippedBitmapCache = new();
+    private const int MaxFlippedBitmapCacheSize = 10000;
 
     //Custom renderer
     public static void Render(System.Drawing.Graphics g, GameEngine gameEngine, int currentRow, int camTileOffsetY)
@@ -18,30 +22,13 @@ public class RendererHelper
 
         var textToRender = new List<TextDisplayParameter>();
 
-        var currentXPosition = gameEngine.StaticVariables.g_cameraScrollingX;
-        var currentYPosition = gameEngine.StaticVariables.g_cameraScrollingY;
-
-        //if (gameEngine.StaticVariables.UseDebugCamera)
-        //{
-        //    currentXPosition = gameEngine.StaticVariables.g_hudCurrentX;
-        //    currentYPosition = gameEngine.StaticVariables.g_hudCurrentY;
-        //}
-        //else
-        //{
-        //    gameEngine.StaticVariables.g_hudCurrentX = gameEngine.StaticVariables.g_cameraScrollingX;
-        //    gameEngine.StaticVariables.g_hudCurrentY = gameEngine.StaticVariables.g_cameraScrollingY;
-        //}
-
-        var curXTile = currentXPosition / StaticVariables.MapTileWidth;
+        var cameraX = gameEngine.StaticVariables.g_cameraScrollingX;
+        var cameraY = gameEngine.StaticVariables.g_cameraScrollingY;
+        var curXTile = cameraX / StaticVariables.MapTileWidth;
         var curYTile = 0;
-        //var curXTile = currentRow;
-        //var curYTile = camTileOffsetY;
 
         curXTile = Math.Max(0, curXTile);
         curXTile = Math.Min(gameMap.Map.Width, curXTile);
-
-        var sinfo = gameMap.SpriteInfo;
-        var gensi = datasBin.AlundraGameMap.SpriteInfo;
 
         for (var y = curYTile; y < gameMap.Map.Height; y++)
         {
@@ -52,8 +39,8 @@ public class RendererHelper
                 var tileId = tile.TileId;
 
                 //render tile
-                var dx = x * StaticVariables.MapTileWidth - currentXPosition;
-                var dy = (y - tile.Height) * StaticVariables.MapTileHeight - currentYPosition;
+                var dx = x * StaticVariables.MapTileWidth - cameraX;
+                var dy = (y - tile.Height) * StaticVariables.MapTileHeight - cameraY;
                 
                 if (tile.TileId != 0xffff)
                 {
@@ -61,7 +48,7 @@ public class RendererHelper
                         && dy < StaticVariables.ScreenHeight)
                     {
                         tileId = GetAnimatedTileId(gameEngine, gameMap, tileId);
-                        DrawTile(tileId, dx, dy, g, gameMap);
+                        DrawTile(tileId, dx, dy, dy, g, gameMap, gameEngine.Renderer);
 
                         if (gameEngine.StaticVariables.DisplayTileXY)
                         {
@@ -95,7 +82,7 @@ public class RendererHelper
                             && dy < StaticVariables.ScreenHeight)
                         {
                             wallTileId = GetAnimatedTileId(gameEngine, gameMap, wallTileId);
-                            DrawTile(wallTileId, dx, dy, g, gameMap);
+                            DrawTile(wallTileId, dx, dy, dy, g, gameMap, gameEngine.Renderer);
 
                             if (gameEngine.StaticVariables.DisplayTileXY)
                             {
@@ -112,21 +99,11 @@ public class RendererHelper
                                 });
                             }
                         }
-
                     }
                 }
             }
 
             //draw sprites who are on this row
-
-            //for (var i = 0; i < gameEngine.StaticVariables.g_numberOfEntities; i++) // g_visibleEntityCount
-            //{
-            //   entity = gameEngine.StaticVariables.g_entitySlots[i]; // g_visibleEntities
-            //  if (entity.Status == 5)
-            //  {
-            //      continue;
-            //  }
-
             for (var i = 0; i < gameEngine.StaticVariables.g_visibleEntityCount; i++) // g_visibleEntityCount
             {
                 var entity = gameEngine.StaticVariables.g_visibleEntities[i]; // g_visibleEntities
@@ -136,21 +113,41 @@ public class RendererHelper
                     continue;//if its not in this row, continue
                 }
 
-                var scx = (entity.ModdedPosX >> 16) - currentXPosition + 10; //StaticVariables.MapTileWidth / 2;
-                var scy = (entity.ModdedPosY >> 16) - (entity.ModdedPosZ >> 16) - currentYPosition + 8; //StaticVariables.MapTileHeight / 2
+                var scx = (entity.ModdedPosX >> 16) - cameraX + 10; //StaticVariables.MapTileWidth / 2;
+                var scy = (entity.ModdedPosY >> 16) - (entity.ModdedPosZ >> 16) - cameraY + 8; //StaticVariables.MapTileHeight / 2
                 
                 if (entity.SpriteRecord != null)
                 {
                     //display entity
                     var map = entity.IsMapSprite ? gameMap : datasBin.AlundraGameMap;
 
-                    if (entity.Frame?.Images != null) // why?? TODO, not initialized when we load a dump?
+                    if (entity.Frame?.Images != null)
                     {
                         var iset = entity.Frame.Images;
                         for (var idex = iset.NumberOfImages - 1; idex >= 0; idex--)
                         {
                             var img = iset.Images[idex];
-                            DrawSprite(map, img, scx, scy, g);
+                            //DrawSprite(map, img, scx, scy, g);
+
+                            var bmp = map.GetSpriteBitmap(img);
+                            DrawSprite(bmp, img, scx, scy, entity.ZSortValue, gameEngine.Renderer); 
+
+                            if (gameEngine.StaticVariables.DisplayPositions)
+                            {
+                                //display z
+                                //var tile = gameEngine.CurrentMap.Map.MapTiles[entity.TileY * gameEngine.CurrentMap.Map.Width + entity.TileX];
+                                //tile.Height
+                                var pz = (entity.FloorHeight - entity.ModdedPosZ) >> 16; //entity.TerrainHeight
+
+                                if (pz != 0)
+                                {
+                                    gameEngine.Renderer.DrawLine(scx, scy, scx, scy - pz, 0, 1f, 0);
+                                    gameEngine.Renderer.DrawCross(scx, scy - pz, 0, 1, 0);
+                                }
+
+                                //display entity position
+                                gameEngine.Renderer.DrawCross(scx, scy, 1, 0, 0);
+                            }
                         }
                     }
 
@@ -175,6 +172,7 @@ public class RendererHelper
             }
         }
 
+        //DRAW EFFECTS
         for (var i = 0; i < gameEngine.StaticVariables.g_effectSlots.Length; i++)
         {
             var effect = gameEngine.StaticVariables.g_effectSlots[i];
@@ -184,21 +182,30 @@ public class RendererHelper
                 continue;
             }
 
-            var scx = (effect.X >> 16) - currentXPosition;
-            var scy = (effect.Y >> 16) - (effect.Z >> 16) - currentYPosition;
+            var scx = (effect.X >> 16) - cameraX;
+            var scy = (effect.Y >> 16) - (effect.Z >> 16) - cameraY;
 
             //if (effect.SpriteRecord != null)
             {
                 var map = effect.CurrentIsMapSprite == 1 ? gameMap : datasBin.AlundraGameMap;
 
-                if (effect.Frame?.Images != null) // why?? TODO, not initialized when we load a dump?
+                if (effect.SpriteRef.Images != null)
                 {
-                    var iset = effect.Frame.Images;
+                    var iset = effect.SpriteRef;
+
                     for (var idex = iset.NumberOfImages - 1; idex >= 0; idex--)
                     {
                         var img = iset.Images[idex];
                         //effect._24 set alpha
-                        DrawSprite(map, img, scx, scy, g, 0.8f);
+                        //DrawSprite(map, img, scx, scy, g, 0.8f);
+
+                        var bmp = map.GetSpriteBitmap(img);
+                        DrawSprite(bmp, img, scx, scy, effect.DepthSortValue + (effect.DepthSortOffset << 16), gameEngine.Renderer, 0.8f);
+
+                        if (gameEngine.StaticVariables.DisplayPositions)
+                        {
+                            gameEngine.Renderer.DrawCross(scx, scy, 0, 0, 1);
+                        }
                     }
                 }
             }
@@ -222,10 +229,6 @@ public class RendererHelper
             }
         }
 
-        //gameEngine.Renderer.Render(g);
-        //gameEngine.Renderer.Clear();
-
-
         //Debug text rendering
         foreach (var textDisplayParameter in textToRender)
         {
@@ -239,11 +242,11 @@ public class RendererHelper
                         continue;
                     }
 
-                    g.DrawString(textDisplayParameter.Text, textDisplayParameter.Font, Brushes.Black, textDisplayParameter.X + dx, textDisplayParameter.Y + dy);
+                    gameEngine.Renderer.DrawString(textDisplayParameter.Text, textDisplayParameter.Font, Brushes.Black, textDisplayParameter.X + dx, textDisplayParameter.Y + dy);
                 }
             }
 
-            g.DrawString(textDisplayParameter.Text, textDisplayParameter.Font, textDisplayParameter.Color, textDisplayParameter.X, textDisplayParameter.Y);
+            gameEngine.Renderer.DrawString(textDisplayParameter.Text, textDisplayParameter.Font, textDisplayParameter.Color, textDisplayParameter.X, textDisplayParameter.Y);
         }
     }
 
@@ -369,11 +372,97 @@ public class RendererHelper
         }
     }
 
-    private static void DrawTile(int tileMapIndex, int x, int y, System.Drawing.Graphics g, GameMap gameMap)
+    private static void DrawSprite(Bitmap bitmap, SiImage img, int x, int y, int z, Renderer renderer, float alpha = 1f)
+    {
+        var w = img.X4 - img.X1;
+        var h = img.Y4 - img.Y1;
+
+        if (w == 0 || h == 0)
+        {
+            return;
+        }
+
+        // Déterminer les dimensions et la position en tenant compte des valeurs négatives (miroir)
+        var absW = Math.Abs(w);
+        var absH = Math.Abs(h);
+        var drawX = x + (w < 0 ? img.X4 : img.X1);
+        var drawY = y + (h < 0 ? img.Y4 : img.Y1);
+
+        // Déterminer les transformations de miroir
+        var flipX = w < 0;
+        var flipY = h < 0;
+
+        // Si le sprite nécessite un flip, créer une copie transformée
+        if (flipX || flipY)
+        {
+            var cacheKey = new FlippedBitmapKey(bitmap.GetHashCode(), flipX, flipY, bitmap.Width, bitmap.Height);
+
+            if (!_flippedBitmapCache.TryGetValue(cacheKey, out var flippedBitmap))
+            {
+                if (_flippedBitmapCache.Count >= MaxFlippedBitmapCacheSize)
+                {
+                    ClearFlippedBitmapCache();
+                }
+
+                flippedBitmap = new Bitmap(bitmap.Width, bitmap.Height);
+                using (var g = System.Drawing.Graphics.FromImage(flippedBitmap))
+                {
+                    g.Clear(Color.Transparent);
+
+                    // Appliquer les transformations de miroir
+                    if (flipX && flipY)
+                    {
+                        g.ScaleTransform(-1, -1);
+                        g.TranslateTransform(-bitmap.Width, -bitmap.Height);
+                    }
+                    else if (flipX)
+                    {
+                        g.ScaleTransform(-1, 1);
+                        g.TranslateTransform(-bitmap.Width, 0);
+                    }
+                    else if (flipY)
+                    {
+                        g.ScaleTransform(1, -1);
+                        g.TranslateTransform(0, -bitmap.Height);
+                    }
+
+                    g.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
+                }
+
+                _flippedBitmapCache[cacheKey] = flippedBitmap;
+            }
+
+            renderer.AddSprite(drawX, drawY, absW, absH, z, flippedBitmap, alpha);
+        }
+        else
+        {
+            renderer.AddSprite(drawX, drawY, absW, absH, z, bitmap, alpha);
+        }
+    }
+
+    private static void DrawTile(int tileMapIndex, int x, int y, int z, System.Drawing.Graphics g, GameMap gameMap, Renderer renderer)
     {
         var bmp = gameMap.GetTileBitmap(tileMapIndex);
-        g.DrawImage(bmp, x, y);
+        //g.DrawImage(bmp, x, y);
+
+        renderer.AddSprite(x, y, bmp.Width, bmp.Height, z, bmp);
     }
+
+    public static void ClearFlippedBitmapCache()
+    {
+        foreach (var bitmap in _flippedBitmapCache.Values)
+        {
+            bitmap.Dispose();
+        }
+        _flippedBitmapCache.Clear();
+    }
+
+    private readonly record struct FlippedBitmapKey(
+        int BitmapHashCode,
+        bool FlipX,
+        bool FlipY,
+        int Width,
+        int Height);
 }
 
 public class TextDisplayParameter

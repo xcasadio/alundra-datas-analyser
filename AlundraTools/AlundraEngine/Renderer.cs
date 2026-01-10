@@ -22,6 +22,9 @@ public class Renderer(GameEngine gameEngine)
 
     private readonly Dictionary<QuadColorKey, Bitmap> _quadColorCache = new();
     private readonly Dictionary<RectangleColorKey, Bitmap> _rectangleCache = new();
+    private readonly Dictionary<CrossColorKey, Bitmap> _crossCache = new();
+    private readonly Dictionary<LineColorKey, Bitmap> _lineCache = new();
+    private int _crossSize = 5;
     private const int MaxCacheSize = 10000;
 
     private static Bitmap CreateWhiteBitmap()
@@ -179,6 +182,24 @@ public class Renderer(GameEngine gameEngine)
         _rectangleCache.Clear();
     }
 
+    public void ClearCrossCache()
+    {
+        foreach (var bitmap in _crossCache.Values)
+        {
+            bitmap.Dispose();
+        }
+        _crossCache.Clear();
+    }
+
+    public void ClearLineCache()
+    {
+        foreach (var bitmap in _lineCache.Values)
+        {
+            bitmap.Dispose();
+        }
+        _lineCache.Clear();
+    }
+
     public class Sprite
     {
         public int X;
@@ -217,6 +238,15 @@ public class Renderer(GameEngine gameEngine)
 
     private readonly record struct RectangleColorKey(
         int Width, int Height,
+        byte R, byte G, byte B);
+
+    private readonly record struct CrossColorKey(
+        int Size,
+        byte R, byte G, byte B);
+
+    private readonly record struct LineColorKey(
+        int Width, int Height,
+        int X1, int Y1, int X2, int Y2,
         byte R, byte G, byte B);
 
     private static unsafe Bitmap CreateGradientBitmap(int width, int height, POLY_G4 polyG4)
@@ -262,6 +292,86 @@ public class Renderer(GameEngine gameEngine)
 
         bitmap.UnlockBits(bitmapData);
         return bitmap;
+    }
+
+    public void DrawCross(int x, int y, float r, float g, float b)
+    {
+        byte rByte = (byte)(r * 255);
+        byte gByte = (byte)(g * 255);
+        byte bByte = (byte)(b * 255);
+
+        var cacheKey = new CrossColorKey(_crossSize, rByte, gByte, bByte);
+
+        if (!_crossCache.TryGetValue(cacheKey, out var bmp))
+        {
+            if (_crossCache.Count >= MaxCacheSize)
+            {
+                ClearCrossCache();
+            }
+
+            var color = Color.FromArgb(rByte, gByte, bByte);
+            bmp = new Bitmap(_crossSize * 2 + 1, _crossSize * 2 + 1);
+            using (var gBmp = System.Drawing.Graphics.FromImage(bmp))
+            {
+                using var pen = new Pen(color);
+                gBmp.DrawLine(pen, _crossSize, 0, _crossSize, _crossSize * 2);
+                gBmp.DrawLine(pen, 0, _crossSize, _crossSize * 2, _crossSize);
+            }
+
+            _crossCache[cacheKey] = bmp;
+        }
+
+        AddSprite(x - _crossSize, y - _crossSize, bmp.Width, bmp.Height, SpriteDepth.DebugCollision, bmp);
+    }
+
+    public void DrawLine(int x1, int y1, int x2, int y2, float r, float g, float b)
+    {
+        int minX = Math.Min(x1, x2);
+        int minY = Math.Min(y1, y2);
+        int maxX = Math.Max(x1, x2);
+        int maxY = Math.Max(y1, y2);
+
+        int width = maxX - minX + 1;
+        int height = maxY - minY + 1;
+
+        if (width <= 0 || height <= 0) return;
+
+        byte rByte = (byte)(r * 255);
+        byte gByte = (byte)(g * 255);
+        byte bByte = (byte)(b * 255);
+
+        int localX1 = x1 - minX;
+        int localY1 = y1 - minY;
+        int localX2 = x2 - minX;
+        int localY2 = y2 - minY;
+
+        var cacheKey = new LineColorKey(width, height, localX1, localY1, localX2, localY2, rByte, gByte, bByte);
+
+        if (!_lineCache.TryGetValue(cacheKey, out var bmp))
+        {
+            if (_lineCache.Count >= MaxCacheSize)
+            {
+                ClearLineCache();
+            }
+
+            var color = Color.FromArgb(rByte, gByte, bByte);
+            bmp = new Bitmap(width, height);
+            using (var gBmp = System.Drawing.Graphics.FromImage(bmp))
+            {
+                gBmp.Clear(Color.Transparent);
+                using var pen = new Pen(color);
+                gBmp.DrawLine(pen, localX1, localY1, localX2, localY2);
+            }
+
+            _lineCache[cacheKey] = bmp;
+        }
+
+        AddSprite(minX, minY, width, height, SpriteDepth.DebugCollision, bmp);
+    }
+
+    public void DrawString(string text, Font font, Brush brush, float x, float y)
+    {
+        
     }
 }
 
