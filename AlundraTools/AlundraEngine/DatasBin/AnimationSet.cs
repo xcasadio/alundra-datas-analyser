@@ -12,7 +12,7 @@ public class AnimationSet
     public readonly int MemoryAddress;
     public readonly SiAnimation[] PreloadedAnims;
 
-    public int IsZForceApplied => (Flags << 8) | Sfx;
+    public int IsZForceApplied => (short)((Flags << 8) | Sfx);
 
     public int DownOffset => AnimationOffsets[(int)SiAnimDir.Down];
     public int UpOffset => AnimationOffsets[(int)SiAnimDir.Up];
