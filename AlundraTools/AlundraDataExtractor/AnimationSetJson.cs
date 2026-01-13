@@ -10,6 +10,7 @@ record AnimationSetJson
     public byte Flags { get; set; }
     public byte Acceleration { get; set; }
     public byte U6 { get; set; }
+    public SiAnimationJson[] SiAnimationJsons { get; set; }
 
     public AnimationSetJson(AnimationSet animationSet)
     {
@@ -19,5 +20,15 @@ record AnimationSetJson
         Flags = animationSet.Flags;
         Acceleration = animationSet._C;
         U6 = animationSet.Acceleration;
+
+        if (animationSet.PreloadedAnims.Count(x => x != null) > 0)
+        {
+            SiAnimationJsons = new SiAnimationJson[4];
+
+            for (int i = 0; i < animationSet.PreloadedAnims.Length; i++)
+            {
+                SiAnimationJsons[i] = new SiAnimationJson(animationSet.PreloadedAnims[i]);
+            }
+        }
     }
 }

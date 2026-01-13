@@ -7,7 +7,6 @@ using AlundraEngine.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text.Json;
-using System.Xml.Linq;
 
 namespace AlundraDataExtractor;
 
@@ -316,7 +315,7 @@ internal class Program
         var dataPath = Path.Combine(extractionPath, "data");
         Directory.CreateDirectory(dataPath);
 
-        Console.WriteLine($"Extract map alundra");
+        Console.WriteLine("Extract map alundra");
         datasBin.AlundraGameMap.Load(br);
         SaveAlundraMap(datasBin.AlundraGameMap, dataPath);
 
@@ -344,7 +343,7 @@ internal class Program
         var gameMapJson = ConvertGameMap(gameMap);
         File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
 
-        //gameMapJson.SaveEntitySpriteSheet(gameMap, Path.Combine(extractionPath, "map_alundra_spritesheet.png"));
+        gameMapJson.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, "map_alundra_spritesheet.png"));
     }
 
     private static void SaveMap(GameMap gameMap, int id, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors)
