@@ -1167,7 +1167,7 @@ namespace AlundraTools.GameControls
             // lblFrameData
             // 
             lblFrameData.AutoSize = true;
-            lblFrameData.Location = new Point(242, 439);
+            lblFrameData.Location = new Point(287, 439);
             lblFrameData.Margin = new Padding(4, 0, 4, 0);
             lblFrameData.Name = "lblFrameData";
             lblFrameData.Size = new Size(13, 15);

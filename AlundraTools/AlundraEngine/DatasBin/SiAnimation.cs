@@ -17,9 +17,16 @@ public class SiAnimation
             var test = br.ReadByte();
             if ((test & 0x80) == 0)
             {
-                var value = br.ReadByte();
+                var value = (byte)0;
+
+                if (test == 0)
+                {
+                    value = br.ReadByte();
+                }
+
                 //check if the frame is a transition frame
                 //if ((value & 0x80) == 0 /*&& value != 0*/) // TODO check value != 0
+
                 {
                     NumberOfFrames++;
                     frames[i] = new SiFrame(test, value, memoryAddress + i * 5);
@@ -44,5 +51,7 @@ public class SiAnimation
                 }
             }
         }
+
+        NumberOfFrames = Frames?.Length ?? 0;
     }
 }

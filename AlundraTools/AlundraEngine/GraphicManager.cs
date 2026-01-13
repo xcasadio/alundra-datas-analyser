@@ -883,7 +883,7 @@ public class GraphicManager
         SetTransitionType(4);
         var image = GetAnimationImageByIndex(0);
         var bitmap = _gameEngine.AlundraMap.GenerateSpriteBitmap(image,
-            _gameEngine.AlundraMap.SpriteInfo.Palettes[image.Palette & 0x1f]);
+            _gameEngine.AlundraMap.SpriteInfo.Palettes[image.Palette]);
 
         _gameEngine.MainInventoryManager.InitializeHudTransitionVariablesAndSetStart(
             player.PosX, player.PosY, player.PosZ,

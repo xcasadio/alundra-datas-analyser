@@ -160,6 +160,11 @@ public static class ScriptHelper
         array[3 + index] = (byte)((value >> 24) & 0xFF);
     }
 
+    public static int GetInt32(this short[] array, int index = 0)
+    {
+        return (int)(array[0 + index] | (array[1 + index] << 16));
+    }
+
     public static void Set(this short[] array, int value, int index = 0)
     {
         array[0 + index] = (byte)(value & 0xFFFF);

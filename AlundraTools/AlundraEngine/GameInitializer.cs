@@ -513,6 +513,16 @@ public class GameInitializer
         //_gameEngine.StaticVariables.g_saveData.MapFlags[27] = 228;
         //_gameEngine.StaticVariables.g_saveData.MapFlags[44] = 4;
         //_gameEngine.StaticVariables.g_saveData.MapFlags[51] = 1745093120;
+
+        //manoir de tarn
+        //_gameEngine.StaticVariables.g_desiredMap = 116;
+        //_gameEngine.StaticVariables.g_isGameEnding = 1;
+        //_gameEngine.StaticVariables.g_resetAnimationId = 54;
+        //_gameEngine.StaticVariables.g_resetDirectionId = 0;
+        //_gameEngine.StaticVariables.g_cameraTargetX = 7077888;
+        //_gameEngine.StaticVariables.g_cameraTargetY = 21495808;
+        //_gameEngine.StaticVariables.g_cameraTargetZ = 0;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] = 1745093120;
     }
 
     // 8004dac0

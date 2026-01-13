@@ -90,8 +90,8 @@ namespace AlundraTools.GameControls
             checkBoxEffectPositions = new CheckBox();
             checkBoxDisplayEntityPositions = new CheckBox();
             checkBoxDisplayCollision = new CheckBox();
-            checkBoxTileXY = new CheckBox();
             checkBoxDisplayEffectId = new CheckBox();
+            checkBoxTileXY = new CheckBox();
             buttonCompareWithDump = new Button();
             tabControl1 = new TabControl();
             tabPageEntities = new TabPage();
@@ -237,6 +237,9 @@ namespace AlundraTools.GameControls
             buttonRefreshScript = new Button();
             treeViewScript = new TreeView();
             buttonSnapshot = new Button();
+            checkBoxWallTileXY = new CheckBox();
+            checkBoxTileZ = new CheckBox();
+            checkBoxWallTileZ = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -821,6 +824,9 @@ namespace AlundraTools.GameControls
             // 
             // groupBox4
             // 
+            groupBox4.Controls.Add(checkBoxWallTileZ);
+            groupBox4.Controls.Add(checkBoxTileZ);
+            groupBox4.Controls.Add(checkBoxWallTileXY);
             groupBox4.Controls.Add(checkBoxDisplayWallTiles);
             groupBox4.Controls.Add(checkBoxDisplayFloorTiles);
             groupBox4.Controls.Add(checkBoxEffectPositions);
@@ -833,7 +839,7 @@ namespace AlundraTools.GameControls
             groupBox4.Margin = new Padding(3, 2, 3, 2);
             groupBox4.Name = "groupBox4";
             groupBox4.Padding = new Padding(3, 2, 3, 2);
-            groupBox4.Size = new Size(163, 212);
+            groupBox4.Size = new Size(163, 307);
             groupBox4.TabIndex = 31;
             groupBox4.TabStop = false;
             groupBox4.Text = "Display";
@@ -843,7 +849,7 @@ namespace AlundraTools.GameControls
             checkBoxDisplayWallTiles.AutoSize = true;
             checkBoxDisplayWallTiles.Checked = true;
             checkBoxDisplayWallTiles.CheckState = CheckState.Checked;
-            checkBoxDisplayWallTiles.Location = new Point(6, 179);
+            checkBoxDisplayWallTiles.Location = new Point(6, 248);
             checkBoxDisplayWallTiles.Margin = new Padding(3, 2, 3, 2);
             checkBoxDisplayWallTiles.Name = "checkBoxDisplayWallTiles";
             checkBoxDisplayWallTiles.Size = new Size(73, 19);
@@ -857,7 +863,7 @@ namespace AlundraTools.GameControls
             checkBoxDisplayFloorTiles.AutoSize = true;
             checkBoxDisplayFloorTiles.Checked = true;
             checkBoxDisplayFloorTiles.CheckState = CheckState.Checked;
-            checkBoxDisplayFloorTiles.Location = new Point(6, 156);
+            checkBoxDisplayFloorTiles.Location = new Point(6, 225);
             checkBoxDisplayFloorTiles.Margin = new Padding(3, 2, 3, 2);
             checkBoxDisplayFloorTiles.Name = "checkBoxDisplayFloorTiles";
             checkBoxDisplayFloorTiles.Size = new Size(77, 19);
@@ -902,18 +908,6 @@ namespace AlundraTools.GameControls
             checkBoxDisplayCollision.UseVisualStyleBackColor = true;
             checkBoxDisplayCollision.CheckedChanged += checkBoxDisplayCollision_CheckedChanged;
             // 
-            // checkBoxTileXY
-            // 
-            checkBoxTileXY.AutoSize = true;
-            checkBoxTileXY.Location = new Point(5, 133);
-            checkBoxTileXY.Margin = new Padding(3, 2, 3, 2);
-            checkBoxTileXY.Name = "checkBoxTileXY";
-            checkBoxTileXY.Size = new Size(59, 19);
-            checkBoxTileXY.TabIndex = 31;
-            checkBoxTileXY.Text = "Tile xy";
-            checkBoxTileXY.UseVisualStyleBackColor = true;
-            checkBoxTileXY.CheckedChanged += checkBoxTileXY_CheckedChanged;
-            // 
             // checkBoxDisplayEffectId
             // 
             checkBoxDisplayEffectId.AutoSize = true;
@@ -925,6 +919,18 @@ namespace AlundraTools.GameControls
             checkBoxDisplayEffectId.Text = "Effect id";
             checkBoxDisplayEffectId.UseVisualStyleBackColor = true;
             checkBoxDisplayEffectId.CheckedChanged += checkBoxDisplayEffectId_CheckedChanged;
+            // 
+            // checkBoxTileXY
+            // 
+            checkBoxTileXY.AutoSize = true;
+            checkBoxTileXY.Location = new Point(5, 133);
+            checkBoxTileXY.Margin = new Padding(3, 2, 3, 2);
+            checkBoxTileXY.Name = "checkBoxTileXY";
+            checkBoxTileXY.Size = new Size(59, 19);
+            checkBoxTileXY.TabIndex = 31;
+            checkBoxTileXY.Text = "Tile xy";
+            checkBoxTileXY.UseVisualStyleBackColor = true;
+            checkBoxTileXY.CheckedChanged += checkBoxTileXY_CheckedChanged;
             // 
             // buttonCompareWithDump
             // 
@@ -2501,6 +2507,42 @@ namespace AlundraTools.GameControls
             buttonSnapshot.UseVisualStyleBackColor = true;
             buttonSnapshot.Click += buttonSnapshot_Click;
             // 
+            // checkBoxWallTileXY
+            // 
+            checkBoxWallTileXY.AutoSize = true;
+            checkBoxWallTileXY.Location = new Point(6, 156);
+            checkBoxWallTileXY.Margin = new Padding(3, 2, 3, 2);
+            checkBoxWallTileXY.Name = "checkBoxWallTileXY";
+            checkBoxWallTileXY.Size = new Size(82, 19);
+            checkBoxWallTileXY.TabIndex = 39;
+            checkBoxWallTileXY.Text = "WallTile xy";
+            checkBoxWallTileXY.UseVisualStyleBackColor = true;
+            checkBoxWallTileXY.CheckedChanged += checkBoxWallTileXY_CheckedChanged;
+            // 
+            // checkBoxTileZ
+            // 
+            checkBoxTileZ.AutoSize = true;
+            checkBoxTileZ.Location = new Point(6, 179);
+            checkBoxTileZ.Margin = new Padding(3, 2, 3, 2);
+            checkBoxTileZ.Name = "checkBoxTileZ";
+            checkBoxTileZ.Size = new Size(53, 19);
+            checkBoxTileZ.TabIndex = 40;
+            checkBoxTileZ.Text = "Tile z";
+            checkBoxTileZ.UseVisualStyleBackColor = true;
+            checkBoxTileZ.CheckedChanged += checkBoxTileZ_CheckedChanged;
+            // 
+            // checkBoxWallTileZ
+            // 
+            checkBoxWallTileZ.AutoSize = true;
+            checkBoxWallTileZ.Location = new Point(6, 202);
+            checkBoxWallTileZ.Margin = new Padding(3, 2, 3, 2);
+            checkBoxWallTileZ.Name = "checkBoxWallTileZ";
+            checkBoxWallTileZ.Size = new Size(76, 19);
+            checkBoxWallTileZ.TabIndex = 41;
+            checkBoxWallTileZ.Text = "WallTile z";
+            checkBoxWallTileZ.UseVisualStyleBackColor = true;
+            checkBoxWallTileZ.CheckedChanged += checkBoxWallTileZ_CheckedChanged;
+            // 
             // FrmGame
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -2779,5 +2821,8 @@ namespace AlundraTools.GameControls
         private CheckBox checkBoxDisplayWallTiles;
         private CheckBox checkBoxDisplayFloorTiles;
         private CheckBox checkBoxEffectPositions;
+        private CheckBox checkBoxWallTileZ;
+        private CheckBox checkBoxTileZ;
+        private CheckBox checkBoxWallTileXY;
     }
 }

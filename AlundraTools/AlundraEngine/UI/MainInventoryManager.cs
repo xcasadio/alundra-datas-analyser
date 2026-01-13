@@ -485,7 +485,7 @@ public class MainInventoryManager
             _gameEngine.GraphicManager.SetTransitionType(6);
             var image = _gameEngine.GraphicManager.GetAnimationImageByIndex(0); //portrait alundra
             var bitmap = _gameEngine.AlundraMap.GenerateSpriteBitmap(image,
-                _gameEngine.AlundraMap.SpriteInfo.Palettes[image.Palette & 0x1f]);
+                _gameEngine.AlundraMap.SpriteInfo.Palettes[image.Palette]);
 
             InitializeHudTransitionVariablesAndSetStart(
                 _gameEngine.StaticVariables.PlayerEntity.PosX, _gameEngine.StaticVariables.PlayerEntity.PosY, _gameEngine.StaticVariables.PlayerEntity.PosZ,

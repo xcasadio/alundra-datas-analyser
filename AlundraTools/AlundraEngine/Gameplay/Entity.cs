@@ -1,4 +1,5 @@
-﻿using AlundraEngine.Balance;
+﻿using System.Diagnostics;
+using AlundraEngine.Balance;
 using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay.Scripts;
 
@@ -6,13 +7,63 @@ namespace AlundraEngine.Gameplay;
 
 public class Entity
 {
+    public uint TargetDirection
+    {
+        get => _TargetDirection;
+        set
+        {
+            //if (Index == 12)
+            if (value > 32)
+            {
+                Debugger.Break();
+            }
+            _TargetDirection = value;   
+        }
+    }
+
+    public uint TargetAnimationId
+    {
+        get => _TargetAnimationId;
+        set
+        {
+            if (value > 95)
+            {
+                Debugger.Break();
+            }
+
+            if (Index == 15)
+            {
+               //Debugger.Break();
+            }
+
+            _TargetAnimationId = value;
+        }
+    }
+
+    public int Status
+    {
+        get => _Status;
+        set
+        {
+            if (Index == 17)
+            {
+                //Debugger.Break();
+            }
+            _Status = value;
+        }
+    }
 
     public SiFrame? Frame
     {
         get
         {
-            if (_Frame.Images == null || _Frame.Images.Images == null || _Frame.Images?.Images?.Length == 0)
+            if (_Frame == null || _Frame.Images == null || _Frame.Images.Images == null || _Frame.Images!.Images!.Length == 0)
             {
+                if (AnimationSet == null)
+                {
+                    return null;
+                }
+
                 var index = Math.Max(0, AnimationFrameIndex - 1);
                 return AnimationSet.PreloadedAnims[TargetDirection >> 3].Frames[index];
             }
@@ -25,7 +76,7 @@ public class Entity
     public int Index2;
     public Entity? ChildEntity;
     public Entity? ParentEntity;
-    public int Status;//0=destroyed,1=loaded,2=normal,3=deactivated,4=flagtodestroy,5=?
+    public int _Status;//0=destroyed,1=loaded,2=normal,3=deactivated,4=flagtodestroy,5=?
     public int Hp;
     public int HpMax;
     public int FrameCounter;//1c
@@ -45,8 +96,8 @@ public class Entity
     public uint SpriteTableIndex;
     public uint Flags;//0x800000 = portrait,0x0100 = gravity,0xf = ?, 0x1 = ? , 0x80 = collidable
     public readonly int[] SpriteProgramIndexes = new int[6]; //70
-    public uint TargetAnimationId; //88
-    public uint TargetDirection;
+    public uint _TargetAnimationId; //88
+    public uint _TargetDirection;
     public uint CurrentAnimationId;
     public uint CurrentDirection;
     public int AnimationDirection;

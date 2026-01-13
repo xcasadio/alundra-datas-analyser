@@ -33,7 +33,7 @@ public class SiFrame
         var streamPosition = br.BaseStream.Position;
 
         br.BaseStream.Position = header.BinOffset + header.FramesPointer + ImageSetPointer;
-        Images = new SiImageSet(br, header.Sector5Id << 16 | ImageSetPointer, header.SpriteInfoMemoryAddress + header.FramesPointer + ImageSetPointer);
+        Images = new SiImageSet(br, ((ulong)header.Sector5Id << 32) | (uint)ImageSetPointer, header.SpriteInfoMemoryAddress + header.FramesPointer + ImageSetPointer);
 
         if (CollisionOffset != -1)
         {

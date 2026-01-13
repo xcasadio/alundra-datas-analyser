@@ -22,7 +22,7 @@ public class SiEffectFrame
 
         pos = br.BaseStream.Position;
         br.BaseStream.Position = binOffset + ImageSetPointer;
-        Images = new SiImageSet(br, effectId << 16 | ImageSetPointer, memoryAddress + ImageSetPointer);
+        Images = new SiImageSet(br, ((ulong)effectId << 32) | (uint)ImageSetPointer, memoryAddress + ImageSetPointer);
 
         br.BaseStream.Position = pos;
     }

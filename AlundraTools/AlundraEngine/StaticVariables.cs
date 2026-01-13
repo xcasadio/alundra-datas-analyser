@@ -37,6 +37,9 @@ public class StaticVariables
     public bool DisplayEffectsPosition { get; set; }
 
     public bool DisplayTileXY { get; set; }
+    public bool DisplayWallTileXY { get; set; }
+    public bool DisplayTileZ { get; set; }
+    public bool DisplayWallTileZ { get; set; }
     public bool DisplayTiles { get; set; } = true;
     public bool DisplayWallTiles { get; set; } = true;
 

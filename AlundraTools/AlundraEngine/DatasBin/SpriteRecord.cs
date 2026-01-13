@@ -47,7 +47,7 @@ public class SpriteRecord
         var position = br.BaseStream.Position;
         var imageSetPointer = 0;//(its the first one)
         br.BaseStream.Position = Header.BinOffset + Header.FramesPointer + 0;
-        var imageset = new SiImageSet(br, Header.Sector5Id << 16 | imageSetPointer, Header.SpriteInfoMemoryAddress + Header.FramesPointer + imageSetPointer, true);
+        var imageset = new SiImageSet(br, ((ulong)Header.Sector5Id << 32) | (uint)imageSetPointer, Header.SpriteInfoMemoryAddress + Header.FramesPointer + imageSetPointer, true);
 
         br.BaseStream.Position = position;
         return imageset;

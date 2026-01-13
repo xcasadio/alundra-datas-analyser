@@ -1293,6 +1293,11 @@ public partial class FrmGame : Form
 
     private void comboBoxItem_SelectedIndexChanged(object sender, EventArgs e)
     {
+        if (comboBoxItem.SelectedIndex == -1)
+        {
+            return;
+        }
+
         var itemName = comboBoxItem.SelectedItem as string;
         var itemIndex = int.Parse(itemName.Split("-")[0]);
 
@@ -1658,6 +1663,21 @@ public partial class FrmGame : Form
     private void checkBoxDisplayWallTiles_CheckedChanged(object sender, EventArgs e)
     {
         _gameEngine.StaticVariables.DisplayWallTiles = checkBoxDisplayWallTiles.Checked;
+    }
+
+    private void checkBoxWallTileXY_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.DisplayWallTileXY = checkBoxWallTileXY.Checked;
+    }
+
+    private void checkBoxTileZ_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.DisplayTileZ = checkBoxTileZ.Checked;
+    }
+
+    private void checkBoxWallTileZ_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.DisplayWallTileZ = checkBoxWallTileZ.Checked;
     }
 }
 

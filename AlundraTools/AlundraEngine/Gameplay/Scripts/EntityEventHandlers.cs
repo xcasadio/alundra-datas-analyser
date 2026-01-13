@@ -670,7 +670,7 @@ public class EntityEventHandlers
             var imgset = logicEntity.SpriteRecord.GetPortraitImageset(binaryReader);
             var img = imgset.Images[0];
             var bitmap = _gameEngine.CurrentMap.GenerateSpriteBitmap(img,
-                    _gameEngine.CurrentMap.SpriteInfo.Palettes[img.Palette & 0x1f]);
+                    _gameEngine.CurrentMap.SpriteInfo.Palettes[img.Palette /*& 0x1f*/]);
 
             _gameEngine.MainInventoryManager.StartHudTransition(
                 logicEntity.PosX, logicEntity.PosY, logicEntity.PosZ,
@@ -1860,7 +1860,7 @@ public class EntityEventHandlers
                 var imgset = matchedEntity.SpriteRecord.GetPortraitImageset(binaryReader);
                 var img = imgset.Images[0];
                 var bitmap = _gameEngine.CurrentMap.GenerateSpriteBitmap(img,
-                    _gameEngine.CurrentMap.SpriteInfo.Palettes[img.Palette & 0x1f]);
+                    _gameEngine.CurrentMap.SpriteInfo.Palettes[img.Palette]);
 
                 _gameEngine.MainInventoryManager.StartHudTransition(
                     matchedEntity.PosX,
@@ -3851,7 +3851,7 @@ public class EntityEventHandlers
             {
                 var targetEntity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0];
                 var image = targetEntity.Frame.Images.Images[targetEntity.AnimationDirection];
-                var bitmap = _gameEngine.AlundraMap.GenerateSpriteBitmap(image, _gameEngine.AlundraMap.SpriteInfo.Palettes[image.Palette & 0x1f]);
+                var bitmap = _gameEngine.AlundraMap.GenerateSpriteBitmap(image, _gameEngine.AlundraMap.SpriteInfo.Palettes[image.Palette]);
 
                 _gameEngine.MainInventoryManager.StartHudTransition(
                     targetEntity.PosX,

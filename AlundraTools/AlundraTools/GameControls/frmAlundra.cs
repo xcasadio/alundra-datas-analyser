@@ -154,7 +154,7 @@ namespace AlundraTools.GameControls
             return _cachedTiles[tileId];
         }
 
-        private Dictionary<int, List<Bitmap>> _cachedSprites;
+        private Dictionary<ulong, List<Bitmap>> _cachedSprites;
 
         private List<Bitmap> GetSpriteImages(SiImageSet imgset)
         {
@@ -164,8 +164,7 @@ namespace AlundraTools.GameControls
                 for (var i = 0; i < imgset.NumberOfImages; i++)
                 {
                     var palette = imgset.Images[i].Palette;
-                    list.Add(_selectedGameMap.GenerateSpriteBitmap(imgset.Images[i],
-                        _selectedGameMap.SpriteInfo.Palettes[palette & 0x1f]));
+                    list.Add(_selectedGameMap.GenerateSpriteBitmap(imgset.Images[i], _selectedGameMap.SpriteInfo.Palettes[palette]));
                 }
 
                 _cachedSprites.Add(imgset.ImageSetId, list);
@@ -196,7 +195,7 @@ namespace AlundraTools.GameControls
             }
 
             _cachedTiles = new Dictionary<int, Bitmap>(); //blow cache
-            _cachedSprites = new Dictionary<int, List<Bitmap>>(); //blow cache
+            _cachedSprites = new Dictionary<ulong, List<Bitmap>>(); //blow cache
 
             if (_selectedGameMap?.Map != null)
             {
@@ -961,7 +960,7 @@ namespace AlundraTools.GameControls
                 using var br = _datasBin.OpenBin();
                 _selectedAnimation = _selectedSpriteRecord.GetAnimation(br, animoffset);
                 lblSelAnim.Text = _selectedAnimation.MemoryAddress.ToString("x6");
-                _cachedSprites = new Dictionary<int, List<Bitmap>>(); //blow cache
+                _cachedSprites = new Dictionary<ulong, List<Bitmap>>(); //blow cache
                 _curframe = _selectedAnimation.NumberOfFrames;
                 _animTimer.Interval = 1;
                 _animTimer.Enabled = true;
@@ -992,7 +991,7 @@ namespace AlundraTools.GameControls
                 //using var br = _datasBin.OpenBin();
                 //_selectedAnimation = _selectedSpriteEffectRecord.GetAnimation(br, animoffset);
                 lblSelAnim.Text = _selectedEffectAnimation.MemoryAddress.ToString("x6");
-                _cachedSprites = new Dictionary<int, List<Bitmap>>(); //blow cache
+                _cachedSprites = new Dictionary<ulong, List<Bitmap>>(); //blow cache
                 _curframe = _selectedEffectAnimation.NumberOfFrames;
                 _animTimer.Interval = 1;
                 _animTimer.Enabled = true;
@@ -1606,7 +1605,7 @@ namespace AlundraTools.GameControls
                         var portraitset = _selectedSpriteRecord.GetPortraitImageset(br);
                         br.Close();
                         var portraitbmp = _selectedGameMap.GenerateSpriteBitmap(portraitset.Images[0],
-                            _selectedGameMap.SpriteInfo.Palettes[portraitset.Images[0].Palette & 0x1f]);
+                            _selectedGameMap.SpriteInfo.Palettes[portraitset.Images[0].Palette]);
                         e.Graphics.DrawImage(portraitbmp, 0, 0);
                     }
                 }

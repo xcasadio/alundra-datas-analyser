@@ -346,12 +346,14 @@ public class EntityManager
             entity.SpriteRef.Images = currentFrame.Images.Images;
             entity.SpriteRef.DepthSortValue = currentFrame.Images.DepthSortValue;
             entity.SpriteRef.NumberOfImages = currentFrame.Images.NumberOfImages;
+            entity.SpriteSheetOffset = currentFrame.Images.Images[0].Spritesheet & 0x7;
         }
         else
         {
             entity.SpriteRef.Images = null;
             entity.SpriteRef.DepthSortValue = 0;
             entity.SpriteRef.NumberOfImages = 0;
+            entity.SpriteSheetOffset = 0;
         }
 
         if (updateFrameIndex)
@@ -1016,6 +1018,7 @@ public class EntityManager
             return entity.ZSortValue;
         }
 
+        //entity.PosY + entity.Height + (entity.Frame.Images.DepthSortValue << 16); //
         var sortValue = entity.PosY + (entity.Frame.Images.DepthSortValue << 16);
 
         if ((entity.Flags & 0x80) != 0

@@ -2,7 +2,13 @@
 
 public class SiImageSet
 {
-    public SiImageSet(BinaryReader br, int imageSetId, int memoryAddress, bool isPortrait = false)
+    public readonly int MemoryAddress;
+    public readonly ulong ImageSetId;
+    public readonly byte DepthSortValue;
+    public readonly byte NumberOfImages;
+    public readonly SiImage[] Images;
+
+    public SiImageSet(BinaryReader br, ulong imageSetId, int memoryAddress, bool isPortrait = false)
     {
         MemoryAddress = memoryAddress;
         ImageSetId = imageSetId;
@@ -21,10 +27,4 @@ public class SiImageSet
             Images[i] = new SiImage(br);
         }
     }
-
-    public readonly int MemoryAddress;
-    public readonly int ImageSetId;
-    public readonly byte DepthSortValue;
-    public readonly byte NumberOfImages;
-    public readonly SiImage[] Images;
 }

@@ -7729,7 +7729,7 @@ public static class FunctionTypeC
         }
     }
 
-    //80065750
+    //8007c174
     //Item spawn
     public static void FUN_8007c174(GameEngine gameEngine, Entity entity)
     {
@@ -7797,7 +7797,6 @@ public static class FunctionTypeC
                 if (entity.AIValues[4] == 0)
                 {
                     entity.ItemState += 2;
-                    //Debugger.Break();
                     soundSfxIndex = gameEngine.StaticVariables.g_itemDropProperties[itemId].SoundSfxIndex; //itemId * 8 + 5
 
                     if (soundSfxIndex == 0)
@@ -7842,23 +7841,25 @@ public static class FunctionTypeC
         }
         else
         {
-            if (entity.IsAboveGround != 0 && entity.AIValues[2] != 0)
+            if (entity.IsAboveGround != 0 && entity.AIValues.GetInt32(2) != 0)
             {
-                var value = (entity.AIValues[2] * 0xc) >> 4;
-                entity.AIValues[2] = (short)value;
+                int force = entity.AIValues.GetInt32(2);
+
+                var value = (force * 0xc) >> 4;
+                entity.AIValues.Set(value, 2);
 
                 if (value <= gameEngine.CurrentMap.Info.Gravity << 8)
                 {
-                    entity.AIValues[2] = 0;
-                    entity.AIValues[3] = 0;
+                    entity.AIValues.Set(0, 2);
+                    value = 0;
                 }
 
-                entity.ForceZ = entity.AIValues[2];
+                entity.ForceZ = value;
             }
 
             var delay = entity.DelayOrAngle - 1;
 
-            if (1 < entity.DelayOrAngle + 1)
+            if (0 < entity.DelayOrAngle)
             {
                 entity.DelayOrAngle = delay;
 
@@ -7936,8 +7937,8 @@ public static class FunctionTypeC
                     gameEngine.StaticVariables.g_dropItemTextBuffer += gameEngine.EtcRes.GetOtherString(0x45);
                 }
 
-                //Debugger.Break();
-                gameEngine.FUN_80032b28((uint)entity.ContentsGameFlag); //AIValues[0]
+                uint flag = (uint)(entity.AIValues[0] | (entity.AIValues[1] >> 16));
+                gameEngine.FUN_80032b28(flag); //AIValues[0]
                 soundSfxIndex = gameEngine.StaticVariables.g_itemDropProperties[itemId].SoundSfxIndex; //itemId * 8 + 5
 
                 if (soundSfxIndex != 0)
@@ -7962,10 +7963,10 @@ public static class FunctionTypeC
                     goto LAB_8007c68c;
                 }
 
-            LAB_8007c684:
+                LAB_8007c684:
                 gameEngine.UIManager.InitializeDialogMessage(gameEngine.StaticVariables.g_dropItemTextBuffer, 1);
 
-            LAB_8007c68c:
+                LAB_8007c68c:
                 gameEngine.SetEtcAnimationMode(4);
                 return;
             }
