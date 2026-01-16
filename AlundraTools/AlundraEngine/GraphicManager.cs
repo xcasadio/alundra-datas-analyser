@@ -43,7 +43,7 @@ public class GraphicManager
         }
 
         DisplayDebugCollisionRectangle(_gameEngine.StaticVariables.g_orderingTableBuffer[2]);
-        RenderEffects(_gameEngine.StaticVariables.g_orderingTableBuffer[3]);
+        RenderTransitionEffects(_gameEngine.StaticVariables.g_orderingTableBuffer[3]);
         _gameEngine.MemoryCardManager.UpdateMemoryCardProcess();
         UpdateUserInterface(graphics);
         _gameEngine.StaticVariables.g_primitive_sync = DisplayUserInterface();
@@ -327,6 +327,15 @@ public class GraphicManager
         return baseTileY * STRIDE + WALL_BIAS + wallSlot;
     }
 
+    // PSX: otIndex = depthSortValue >> 0x14, clamp to 0x3B, then otTable[otIndex * 0x10 + 6]
+    const int ENTITY_SLOT = 6;  // Entities are between floors (0-6) and walls (7+)
+    static int DepthEntity(int depthSortValue)
+    {
+        int otIndex = depthSortValue >> 20;  // >> 0x14
+        if (otIndex > 0x3B) otIndex = 0x3B;  // Clamp to 59
+        return otIndex * STRIDE + ENTITY_SLOT;
+    }
+
     private static ushort GetAnimatedTileId(GameEngine gameEngine, GameMap gameMap, ushort tileId, out int height)
     {
         height = 0;
@@ -445,12 +454,14 @@ public class GraphicManager
                 if (entity.Frame?.Images != null)
                 {
                     var iset = entity.Frame.Images;
+                    // Use ZSortValue directly for sorting - higher values = rendered later (in front)
+                    var entityZ = entity.ZSortValue;
                     for (var idex = iset.NumberOfImages - 1; idex >= 0; idex--)
                     {
                         var img = iset.Images[idex];
         
                         var bmp = map.GetSpriteBitmap(img);
-                        DrawSprite(bmp, img, scx, scy, entity.ZSortValue, _gameEngine.Renderer); 
+                        DrawSprite(bmp, img, scx, scy, entityZ, _gameEngine.Renderer); 
         
                         if (_gameEngine.StaticVariables.DisplayEntitiesPosition)
                         {
@@ -500,13 +511,15 @@ public class GraphicManager
             {
                 var map = effect.CurrentIsMapSprite == 1 ? _gameEngine.CurrentMap : _gameEngine.DatasBin.AlundraGameMap;
                 var spriteRef = effect.SpriteRef;
+                // Use DepthSortValue directly for sorting - higher values = rendered later (in front)
+                var effectZ = effect.DepthSortValue;
 
                 for (var idex = spriteRef.NumberOfImages - 1; idex >= 0; idex--)
                 {
                     var img = spriteRef.Images[idex];
                     //effect._24 set alpha
                     var bmp = map.GetSpriteBitmap(img);
-                    DrawSprite(bmp, img, scx, scy, effect.DepthSortValue + (effect.DepthSortOffset << 16), _gameEngine.Renderer, 1f);
+                    DrawSprite(bmp, img, scx, scy, effectZ, _gameEngine.Renderer, 1f);
 
                     if (_gameEngine.StaticVariables.DisplayEffectsPosition)
                     {
@@ -557,7 +570,16 @@ public class GraphicManager
         var drawX = x + img.X1;
         var drawY = y + img.Y1;
 
-        renderer.AddSprite(drawX, drawY, w, h, z, bitmap, alpha);
+        // Extract blending info from Spritesheet byte
+        // Bit 3 (& 0x8): Semi-transparency enabled
+        // Bits 4-5 (& 0x30): Blending mode ABR (0-3)
+        var blendMode = BlendMode.None;
+        if ((img.Spritesheet & 0x8) != 0)
+        {
+            blendMode = (BlendMode)((img.Spritesheet & 0x30) >> 4);
+        }
+
+        renderer.AddSprite(drawX, drawY, w, h, z, bitmap, alpha, 1f, 1f, 1f, blendMode);
     }
 
     //80044c5c
@@ -970,7 +992,7 @@ public class GraphicManager
     }
 
     //80042ccc
-    private uint RenderEffects(int i)
+    private uint RenderTransitionEffects(int i)
     {
         if (_gameEngine.StaticVariables.g_warpFlags != 0)
         {

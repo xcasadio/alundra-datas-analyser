@@ -14,6 +14,23 @@ public class SpriteDepth
     public const int ForegroundEffect = int.MaxValue;
 }
 
+/// <summary>
+/// PSX GPU blending modes (ABR values)
+/// </summary>
+public enum BlendMode
+{
+    /// <summary>No blending (opaque)</summary>
+    None = -1,
+    /// <summary>50% Background + 50% Foreground (average)</summary>
+    Average = 0,
+    /// <summary>Background + Foreground (additive)</summary>
+    Additive = 1,
+    /// <summary>Background - Foreground (subtractive)</summary>
+    Subtractive = 2,
+    /// <summary>Background + 25% Foreground (additive dimmed)</summary>
+    AdditiveDim = 3
+}
+
 public class Renderer(GameEngine gameEngine)
 {
     private readonly GameEngine _gameEngine = gameEngine;
@@ -44,9 +61,9 @@ public class Renderer(GameEngine gameEngine)
         AddSprite(sprt.x0, sprt.y0, sprt.w, sprt.h, depthSortValue, bitmap, alpha, r, g, b);
     }
 
-    public void AddSprite(int x, int y, int width, int height, int depthSortValue, Bitmap bitmap, float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f)
+    public void AddSprite(int x, int y, int width, int height, int depthSortValue, Bitmap bitmap, float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f, BlendMode blendMode = BlendMode.None)
     {
-        var sprite = new Sprite(x, y, width, height, depthSortValue, bitmap, alpha, r, g, b);
+        var sprite = new Sprite(x, y, width, height, depthSortValue, bitmap, alpha, r, g, b, blendMode);
         AddSprite(sprite);
     }
 
@@ -133,7 +150,22 @@ public class Renderer(GameEngine gameEngine)
 
     private void RenderSprite(System.Drawing.Graphics graphics, Sprite sprite)
     {
-        var useMatrix = Math.Abs(sprite.Alpha - 1.0f) > 0.001f ||
+        // Determine alpha based on blend mode
+        float effectiveAlpha = sprite.Alpha;
+        if (sprite.BlendMode != BlendMode.None)
+        {
+            // Apply PSX-style blending approximation
+            effectiveAlpha = sprite.BlendMode switch
+            {
+                BlendMode.Average => 0.5f,      // 50% blend
+                BlendMode.Additive => 1.0f,     // Full additive (handled by CompositingMode if needed)
+                BlendMode.Subtractive => 0.5f,  // Approximation (GDI+ doesn't support subtractive)
+                BlendMode.AdditiveDim => 0.25f, // 25% blend
+                _ => sprite.Alpha
+            };
+        }
+
+        var useMatrix = Math.Abs(effectiveAlpha - 1.0f) > 0.001f ||
                         Math.Abs(sprite.R - 1.0f) > 0.001f ||
                         Math.Abs(sprite.G - 1.0f) > 0.001f ||
                         Math.Abs(sprite.B - 1.0f) > 0.001f;
@@ -144,7 +176,7 @@ public class Renderer(GameEngine gameEngine)
                 [sprite.R, 0f, 0f, 0f, 0f],
                 [0f, sprite.G, 0f, 0f, 0f],
                 [0f, 0f, sprite.B, 0f, 0f],
-                [0f, 0f, 0f, sprite.Alpha, 0f],
+                [0f, 0f, 0f, effectiveAlpha, 0f],
                 [0f, 0f, 0f, 0f, 1f]
             ]);
 
@@ -222,9 +254,10 @@ public class Renderer(GameEngine gameEngine)
         public float R;
         public float G;
         public float B;
+        public BlendMode BlendMode;
 
         public Sprite(int x, int y, int width, int height, int depth, Bitmap bitmap,
-            float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f)
+            float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f, BlendMode blendMode = BlendMode.None)
         {
             X = x;
             Y = y;
@@ -236,6 +269,7 @@ public class Renderer(GameEngine gameEngine)
             R = Math.Clamp(r, 0.0f, 1.0f);
             G = Math.Clamp(g, 0.0f, 1.0f);
             B = Math.Clamp(b, 0.0f, 1.0f);
+            BlendMode = blendMode;
         }
     }
 
