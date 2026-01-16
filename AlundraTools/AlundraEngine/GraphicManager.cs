@@ -88,8 +88,8 @@ public class GraphicManager
         }
 
         var nbColumns = 0xf;
-        var newCamRow = _gameEngine.StaticVariables.g_cameraScrollingX / 0x18;
-        var col = _gameEngine.StaticVariables.g_cameraScrollingX % 0x18; // divide by 15, approximation
+        var newCamRow = _gameEngine.StaticVariables.g_cameraScrollingX / StaticVariables.MapTileWidth;
+        var col = _gameEngine.StaticVariables.g_cameraScrollingX % StaticVariables.MapTileWidth; // divide by 15, approximation
 
         if (col < StaticVariables.MapTileHeight)
         {
@@ -112,8 +112,8 @@ public class GraphicManager
             currentRow = _gameEngine.StaticVariables.g_cameraScrollingY + 0xf;
         }
 
-        currentRow >>= 4;
-        var camTileOffsetY = (short)_gameEngine.StaticVariables.g_cameraScrollingY + (short)currentRow * -StaticVariables.MapTileHeight;
+        currentRow /= StaticVariables.MapTileHeight;
+        var camTileOffsetY = (short)_gameEngine.StaticVariables.g_cameraScrollingY - (short)currentRow * StaticVariables.MapTileWidth;
 
         //i = 0x3bf;
         //tileOffset = g_tileOTFlags + 0x3bf;
@@ -178,7 +178,7 @@ public class GraphicManager
         //var tileAnimFramIndex = (_gameEngine.StaticVariables.g_tileAnimFrameCounter & 1U) * 0x2a8;
         //var puVar4 = _gameEngine.StaticVariables.INT_ARRAY_800e0758[(_gameEngine.StaticVariables.g_tileAnimFrameCounter & 1U) * 0xd48];
 
-        RendererHelper.Render(graphics, _gameEngine, currentRow, camTileOffsetY);
+        RendererHelper.Render(graphics, _gameEngine, newCamRow, col);
 
         if (visibleTileCount >= 599)
         {
