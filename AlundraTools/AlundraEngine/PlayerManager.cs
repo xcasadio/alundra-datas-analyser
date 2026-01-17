@@ -29,9 +29,9 @@ public class PlayerManager
         weaponId = (int)_gameEngine.PlayerManager.GetItemIdFromCurrentWeapon();
         //weapon slot : 0 6 8 5 0 10
         //si sword niveau 1 alors 1
+        slope = _gameEngine.StaticVariables.PlayerEntity.Slope_18c;
         _gameEngine.StaticVariables.g_currentWeaponFlags = _gameEngine.StaticVariables.g_weaponFlagsByItemId[weaponId];
         CheckAndExecuteWarp();
-        slope = _gameEngine.StaticVariables.PlayerEntity.Slope_18c;
 
         if (_gameEngine.StaticVariables.PlayerEntity.BlockedByEntity != null)
         {
@@ -2004,7 +2004,16 @@ public class PlayerManager
     //80034680
     private void FUN_80034680(uint itemId)
     {
-        Debugger.Break();
+        if (_gameEngine.StaticVariables.PlayerEntity.Hp < _gameEngine.StaticVariables.PlayerEntity.HpMax)
+        {
+            IncreaseHpAndCreateEffect(_gameEngine.StaticVariables.PlayerEntity);
+            _gameEngine.SoundManager.PlaySoundEffect(0x31);
+            UseItem(itemId);
+        }
+        else
+        {
+            _gameEngine.SoundManager.PlaySoundEffect(3);
+        }
     }
 
     //800346f0

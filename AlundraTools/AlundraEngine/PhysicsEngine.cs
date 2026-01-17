@@ -1482,8 +1482,9 @@ public static class PhysicsEngine
                 continue;
             }
 
-            if (otherEntity.ModdedPosZ + otherEntity.Height >= entity.ModdedPosZ
-                || otherEntity.ModdedPosZ + otherEntity.Height < collision)
+            var otherEntityZTop = otherEntity.ModdedPosZ + otherEntity.Depth;
+
+            if (otherEntityZTop >= entity.ModdedPosZ || otherEntityZTop < collision)
             {
                 continue;
             }
@@ -1505,16 +1506,16 @@ public static class PhysicsEngine
 
             if (otherEntity.ModdedPosY - entity.ModdedPosY >= 0)
             {
-                if (otherEntity.ModdedPosY - entity.ModdedPosY < entity.Depth + 1)
+                if (otherEntity.ModdedPosY - entity.ModdedPosY < entity.Height + 1)
                 {
-                    collision = otherEntity.ModdedPosZ + otherEntity.Depth;
+                    collision = otherEntityZTop + 1;
                 }
             }
             else
             {
-                if (entity.ModdedPosY - otherEntity.ModdedPosY < otherEntity.Depth + 1)
+                if (entity.ModdedPosY - otherEntity.ModdedPosY < otherEntity.Height + 1)
                 {
-                    collision = otherEntity.ModdedPosZ + otherEntity.Depth;
+                    collision = otherEntityZTop + 1;
                 }
             }
 

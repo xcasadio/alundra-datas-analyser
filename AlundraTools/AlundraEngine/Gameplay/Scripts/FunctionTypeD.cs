@@ -1,4 +1,6 @@
-﻿namespace AlundraEngine.Gameplay.Scripts;
+﻿using System.Diagnostics;
+
+namespace AlundraEngine.Gameplay.Scripts;
 
 public static class FunctionTypeD
 {
@@ -183,7 +185,19 @@ public static class FunctionTypeD
     //8007dee8
     public static void AI_FUN_8007dee8(GameEngine gameEngine, Entity entity)
     {
-        System.Diagnostics.Debugger.Break();
+        if (entity.Name != "◆Guêpe Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        if (gameEngine.EntityManager.ComputeNewHp(entity))
+        {
+            entity.Bytes[3] = 1;
+        }
+
+        entity.TargetAnimationId = 4;
+        var direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.PlayerEntity.PosX, entity.PosY - gameEngine.StaticVariables.PlayerEntity.PosY);
+        entity.TargetDirection = direction;
     }
 
     //8007df4c

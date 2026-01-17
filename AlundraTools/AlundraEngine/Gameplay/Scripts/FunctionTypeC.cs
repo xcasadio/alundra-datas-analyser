@@ -1378,7 +1378,10 @@ public static class FunctionTypeC
     //80065750
     public static void AI_FUN_80065750(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        if (entity.Name != "Toutou (chien)")
+        {
+            Debugger.Break();
+        }
 
         byte bVar1;
         ulong uVar2;
@@ -3961,7 +3964,7 @@ public static class FunctionTypeC
     //8007bb9c
     public static void AI_FUN_8007bb9c(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "mimique nv1")
+        if (entity.Name != "Pot magique (boïng)")
         {
             Debugger.Break();
         }
@@ -4155,7 +4158,7 @@ public static class FunctionTypeC
     //8006a564
     public static void AI_FUN_8006a564(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "mimique nv1")
+        if (entity.Name != "◆Guêpe Niv.1")
         {
             Debugger.Break();
         }
@@ -4689,7 +4692,7 @@ public static class FunctionTypeC
     //muruta griffes nv1
     public static void AI_UpdateEntityAI_6_2(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "muruta griffes nv1")
+        if (entity.Name != "◆Muruta (griffes) Niv.1")
         {
             Debugger.Break();
         }
@@ -5313,7 +5316,10 @@ public static class FunctionTypeC
     //8006a974
     public static void AI_UpdateEntityAI_12(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        if (entity.Name != "◆Poisson Niv.1")
+        {
+            Debugger.Break();
+        }
 
         int iVar1;
         uint targetAnimationId;
