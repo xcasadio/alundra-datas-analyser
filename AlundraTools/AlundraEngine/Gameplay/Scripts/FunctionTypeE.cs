@@ -7,12 +7,22 @@ public static class FunctionTypeE
     //8007ed10
     public static void FUN_8007ed10(GameEngine gameEngine, Entity entity)
     {
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
         gameEngine.DestroyEntity(entity, -1);
     }
 
     //8007ed30
     public static void AI_FUN_8007ed30(GameEngine gameEngine, Entity entity)
     {
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
         if ((entity.TargetAnimationId == 2 && entity.ForceResetAnimationFlag == 1)
             || (entity.CombinedVramFlagsAND & 4U) != 0)
         {
@@ -29,6 +39,11 @@ public static class FunctionTypeE
     //spores nv1
     public static void AI_FUN_8007eda0(GameEngine gameEngine, Entity entity)
     {
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
         if (entity.TargetAnimationId == 1 && entity.ForceResetAnimationFlag == 1)
         {
             gameEngine.DestroyEntity(entity, -1);
@@ -43,36 +58,87 @@ public static class FunctionTypeE
     //8007ee04
     public static void AI_FUN_8007ee04(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        if (entity.TargetAnimationId == 4 && entity.ForceResetAnimationFlag == 1)
+        {
+            gameEngine.DestroyEntity(entity, -1);
+        }
+        else
+        {
+            entity.TargetAnimationId = 4;
+            entity.Flags = (entity.Flags & 0xffffffcfU) | 0x40;
+        }
     }
 
     //8007ee68
     public static void AI_FUN_8007ee68(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        if (entity.TargetAnimationId == 1)
+        {
+            if (entity.ForceResetAnimationFlag == 1)
+            {
+                gameEngine.DestroyEntity(entity, -1);
+                //FUN_8007eee0(); //empty function
+            }
+        }
+        else
+        {
+            entity.TargetAnimationId = 1;
+            entity.Flags = entity.Flags & 0xffffffcfU | 0x40;
+            gameEngine.EffectManager.CreateEffectEntity(0, 8, 0, entity.PosX, entity.PosY, entity.PosZ);
+        }
     }
 
     //8007eef0
     public static void AI_FUN_8007eef0(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        gameEngine.DestroyEntity(entity, -1);
     }
 
     //8007ef10  
     public static void AI_FUN_8007ef10(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        gameEngine.DestroyEntity(entity, -1);
     }
 
     //8007ef30
     public static void AI_FUN_8007ef30(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        gameEngine.DestroyEntity(entity, -1);
     }
 
     //8007ef50
     public static void AI_HandleIceLightHitEffect(GameEngine gameEngine, Entity entity)
     {
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
         ulong rand;
         SpriteEffect effectEntity;
         int isSmallSprite;
@@ -161,30 +227,118 @@ public static class FunctionTypeE
     //8007f23c
     public static void AI_FUN_8007f23c(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        gameEngine.DestroyEntity(entity, -1);
     }
 
     //8007f25c
     public static void AI_FUN_8007f25c(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        FUN_8003a648(gameEngine, entity, -1);
+    }
+
+    //8003a648
+    public static void FUN_8003a648(GameEngine gameEngine, Entity entity, int effectType)
+    {
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        int i = 0;
+
+        if (-1 < gameEngine.StaticVariables.g_numberOfEntities)
+        {
+            do
+            {
+                var entity2 = gameEngine.StaticVariables.g_entitySlots[i];
+
+                if ((entity.Status - 1U < 3) && (entity2.ParentEntity == entity))
+                {
+                    FUN_8003a648(gameEngine, entity2, effectType);
+                }
+
+                i = i + 1;
+            } while (i <= gameEngine.StaticVariables.g_numberOfEntities);
+        }
+
+        gameEngine.SpawnEntityContents(entity);
+        entity.Status = 4;
+        entity.EventTrigger = -1;
+
+        if (entity.ActiveEffect != null)
+        {
+            entity.ActiveEffect.Status = 0;
+            entity.ActiveEffect = null;
+        }
+
+        if (effectType == -1)
+        {
+            effectType = entity.SpriteRecord.Header.BreakEffect;
+        }
+
+        if (effectType != 0)
+        {
+            gameEngine.EffectManager.CreateAttachedEffect(0, (byte)effectType, 0, entity, 1, 0, 0, 0);
+        }
+
+        if (entity.PlatformEntity != null)
+        {
+            entity.PlatformEntity.CarriedEntity = null;
+        }
     }
 
     //8007f27c
     public static void AI_FUN_8007f27c(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        if ((entity.TargetAnimationId == 1 && entity.ForceResetAnimationFlag == 1) ||
+            (entity.CombinedVramFlagsAND & 4U) != 0)
+        {
+            gameEngine.DestroyEntity(entity, -1);
+        }
+        else
+        {
+            gameEngine.DestroyEntity(entity, -1);
+            gameEngine.CheckAndTriggerTileEffect(entity);
+            entity.TargetAnimationId = 1;
+            entity.Flags = (entity.Flags & 0xffffffcfU) | 0x40;
+        }
     }
 
     //8007f30c
     public static void AI_FUN_8007f30c(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        gameEngine.SoundManager.PlaySoundEffect(0x2d);
+        gameEngine.DestroyEntity(entity, -1);
     }
 
     //8007f378
     public static void AI_FUN_8007f378(GameEngine gameEngine, Entity entity)
     {
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
         gameEngine.SoundManager.PlaySoundEffect(0x2d);
         gameEngine.DestroyEntity(entity, -1);
     }
@@ -192,18 +346,35 @@ public static class FunctionTypeE
     //8007f3b0
     public static void AI_FUN_8007f3b0(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        gameEngine.SoundManager.PlaySoundEffect(0x2e);
+        gameEngine.DestroyEntity(entity, -1);
     }
 
     //8007f3e8
     public static void AI_FUN_8007f3e8(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        gameEngine.SoundManager.PlaySoundEffect(0x2f);
+        gameEngine.DestroyEntity(entity, -1);
     }
 
     //8007f420
     public static void AI_UpdateArrows(GameEngine gameEngine, Entity entity)
     {
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
         int entityTargetIndex = 0;
 
         if (entity.TargetAnimationId == 1) //after hit a wall (turn around)
@@ -319,12 +490,22 @@ public static class FunctionTypeE
     //8007fb38
     public static void AI_FUN_8007fb38(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        gameEngine.DestroyEntity(entity, -1);
     }
 
     //8007f5c0
     public static void AI_FUN_8007f658(GameEngine gameEngine, Entity entity)
     {
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
         gameEngine.SoundManager.PlaySoundEffect(0xe1);
         gameEngine.DestroyEntity(entity, -1);
     }
@@ -332,7 +513,13 @@ public static class FunctionTypeE
     //8007f690
     public static void AI_FUN_8007f690(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        gameEngine.SoundManager.PlaySoundEffect(0xe6);
+        gameEngine.DestroyEntity(entity, -1);
     }
 
     //8007f6c8
@@ -344,48 +531,199 @@ public static class FunctionTypeE
     //8007f7a0
     public static void AI_FUN_8007f7cc(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        Entity ridingEntity = entity.RidingEntity;
+
+        if (ridingEntity != null && ridingEntity.SpriteTableIndex == 0x199 &&
+            ridingEntity.TargetAnimationId == 0)
+        {
+            ridingEntity.TargetAnimationId = 1;
+            gameEngine.DestroyEntity(entity);
+        }
+
+        if (entity.TargetAnimationId == 1 && entity.ForceResetAnimationFlag == 1)
+        {
+            gameEngine.DestroyEntity(entity, -1);
+            //FUN_8007f864(); //empty function
+            return;
+        }
+
+        entity.TargetAnimationId = 1;
+        entity.Flags = entity.Flags & 0xffffffcfU | 0x40;
     }
 
     //8007f878
     public static void AI_FUN_8007f878(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        int attachedEffectType = 0xd;
+
+        if (entity.Bytes[3] != 0)
+        {
+            attachedEffectType = 8;
+        }
+
+        gameEngine.DestroyEntity(entity, attachedEffectType);
     }
 
     //8007f8ac
     public static void AI_FUN_8007f8ac(GameEngine gameEngine, Entity entity)
-    {
-        Debugger.Break();
+    {        
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        var x = entity.PosX;
+        var y = entity.PosY;
+        var z = entity.PosZ;
+
+        if (entity.SpriteTableIndex == 0x1f0)
+        {
+            gameEngine.EffectManager.CreateEffectEntity(0, 0xb, 0, x, y, z);
+            z = z + 0x100000;
+        }
+        else if (1 < entity.SpriteTableIndex - 0x1f6U)
+        {
+            gameEngine.DestroyEntity(entity);
+            return;
+        }
+
+        gameEngine.EffectManager.CreateEffectEntity(0, 0xb, 0, x, y, z);
     }
 
     //8007f974
     public static void AI_FUN_8007f974(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        Entity entitySpawned;
+        uint direction;
+        int iVar1;
+
+        iVar1 = 0;
+
+        if (entity.TargetAnimationId == 1)
+        {
+            if (entity.ForceResetAnimationFlag == 1)
+            {
+                gameEngine.DestroyEntity(entity, -1);
+                //FUN_8007fa7c(); // empty function
+                return;
+            }
+        }
+        else
+        {
+            direction = 4;
+
+            do
+            {
+                entitySpawned = gameEngine.SpawnWarpEntity(entity, 1, 0xe3, entity.PosX, entity.PosY, entity.PosZ + 0x20000, direction);
+                
+                if (entitySpawned != null)
+                {
+                    entitySpawned.TargetAnimationId = entity.TargetAnimationId;
+                }
+
+                iVar1 = iVar1 + 1;
+                direction = direction + 8;
+            } while (iVar1 != 4);
+
+            if (entity.ParentEntity.Bytes[3] == 0)
+            {
+                gameEngine.StaticVariables.g_scrollingParameters.Flag = 1;
+                gameEngine.StaticVariables.g_scrollingParameters.SpeedX = 1;
+                gameEngine.StaticVariables.g_scrollingParameters.SpeedY = 1;
+                gameEngine.StaticVariables.g_scrollingParameters.LimitX = 2;
+                gameEngine.StaticVariables.g_scrollingParameters.LimitY = 2;
+                entity.ParentEntity.ItemState = 0x1e;
+            }
+
+            entity.TargetAnimationId = 1;
+            entity.Flags = (entity.Flags & 0xffffffcfU) | 0x40;
+        }
     }
 
-    //8007f9a0
+    //8007faa0
     public static void AI_FUN_8007faa0(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        gameEngine.DestroyEntity(entity);
     }
 
     //8007fac0
     public static void AI_FUN_8007fac0(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        if ((entity.TargetAnimationId == 1) && (entity.ForceResetAnimationFlag == 1))
+        {
+            entity.ParentEntity.Bytes[2] = (byte)(entity.ParentEntity.Bytes[2] - 1);
+            gameEngine.DestroyEntity(entity, -1);
+            //FUN_8007fb28(); //empty function
+            return;
+        }
+        entity.TargetAnimationId = 1;
+        entity.Flags = (entity.Flags & 0xffffffcfU) | 0x40;
     }
 
     //8007fb38
     public static void AI_DestroyEntity(GameEngine gameEngine, Entity entity)
     {
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
         gameEngine.DestroyEntity(entity, -1);
     }
 
     //8007fb58
     public static void AI_FUN_8007fb58(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        int rand;
+        int i;
+        short x;
+        short y;
+        i = 0;
+
+        do
+        {
+            rand = (int)(((Random.Next() * 0x1801) >> 0x20) + 800);
+            x = gameEngine.StaticVariables.g_offsetXList[i * 4];
+            y = gameEngine.StaticVariables.g_offsetYList[i * 4];
+
+            gameEngine.EffectManager.CreateEffectEntity(0, 0x13, 2, 
+                entity.PosX + x * rand, 
+                entity.PosY + y * rand, 
+                entity.PosZ);
+
+            i = i + 1;
+        } while (i < 8);
+
+        gameEngine.DestroyEntity(entity, -1);
     }
 }
