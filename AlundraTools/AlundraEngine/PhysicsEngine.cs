@@ -424,10 +424,11 @@ public static class PhysicsEngine
                 int dz = groundHeight - entity.ModdedPosZ;
                 dz -= 1;
 
-                int zTolerance = 0x30003;
+                int zTolerance = 0x30000;
 
                 if (dz < 0)
                 {
+                    zTolerance = 0x30003;
                     dz = -dz;
                 }
 
@@ -609,6 +610,10 @@ public static class PhysicsEngine
                 {
                     entity.FinalForceX = 0xC000;
                 }
+                else if (collisionFlags[2] == 0 && collisionFlags[3] != 0)
+                {
+                    entity.FinalForceX = -0xC000;
+                }
 
                 goto START_COLLISION_CHECK;
 
@@ -697,6 +702,10 @@ public static class PhysicsEngine
                 if (collisionFlags[0] != 0 && collisionFlags[1] == 0)
                 {
                     entity.FinalForceX = 0xC000;
+                }
+                else if (collisionFlags[0] == 0 && collisionFlags[1] != 0)
+                {
+                    entity.FinalForceX = -0xC000;
                 }
 
                 goto START_COLLISION_CHECK;
@@ -952,8 +961,6 @@ public static class PhysicsEngine
             flag |= 0x1000;
         }
 
-        int index = 0;
-        uint colFlags = 0;
         int moddedZPos = player.ModdedPosZ;
         int lockTimer = gameEngine.StaticVariables.g_warpLockTimer;
 
@@ -978,9 +985,6 @@ public static class PhysicsEngine
             {
                 collisionFlags[i] = 1;
             }
-
-            index += 4;
-            colFlags += 4;
         }
 
         uint flags =
@@ -997,7 +1001,7 @@ public static class PhysicsEngine
     {
         var flag = 0x40;
 
-        if ((entity.Flags & 0x8) != 0) // 0x8 = « traverse cliff ? »
+        if ((entity.Flags & 0x8) != 0) // 0x8 = ï¿½ traverse cliff ? ï¿½
         {
             flag = 0x41;
         }
