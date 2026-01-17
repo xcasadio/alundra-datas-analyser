@@ -442,7 +442,12 @@ public static class FunctionTypeC
     //80066984
     public static void AI_FUN_80066984(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Tonneau générique")
+        if (entity.Name != "Tonneau générique"
+            && entity.Name != "I36_Herbe médicinale"
+            && entity.Name != "I41_Potion S"
+            && entity.Name != "I38_Extrait magique"
+            && entity.Name != "I83_Récipient de vie"
+            && entity.Name != "I20_Veste en argent")
         {
             Debugger.Break();
         }
@@ -3829,7 +3834,7 @@ public static class FunctionTypeC
     //8007b998
     public static void AI_ProcessWarpTransitionState(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "mimique nv1")
+        if (entity.Name != "SaveBook (Ne pas toucher !)")
         {
             Debugger.Break();
         }

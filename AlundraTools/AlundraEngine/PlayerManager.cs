@@ -2531,8 +2531,7 @@ public class PlayerManager
 
         _gameEngine.StaticVariables.g_mapTransitionEffectId = (portal.Flags & 0x70) >> 4;
 
-        int internalMapIdx = _gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable[portal.DestMapId];
-        _gameEngine.StaticVariables.g_desiredMap = (uint)portal.DestMapId;
+        _gameEngine.StaticVariables.g_desiredMap = _gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable[portal.DestMapId];
 
         Entity playerEntity = _gameEngine.StaticVariables.PlayerEntity;
 
@@ -2550,7 +2549,7 @@ public class PlayerManager
 
         if (_gameEngine.StaticVariables.g_mapTransitionEffectId == 3)
         {
-            if (internalMapIdx != _gameEngine.StaticVariables.g_currentMap)
+            if (_gameEngine.StaticVariables.g_desiredMap != _gameEngine.StaticVariables.g_currentMap)
             {
                 //_gameEngine.DoNothing();
                 _gameEngine.StaticVariables.g_mapTransitionEffectId = 0;

@@ -579,7 +579,7 @@ public class GameInitializer
 
         for (int i = 0; i < _gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable.Length; i++)
         {
-            _gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable[i] = (ushort)(_gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable.Length - i - 1);
+            _gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable[i] = (ushort)i;
         }
     }
 
