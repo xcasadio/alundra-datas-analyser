@@ -7,7 +7,8 @@ public static class FunctionTypeE
     //8007ed10
     public static void FUN_8007ed10(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (entity.Name != "◆Muruta (griffes) Niv.1"
+            && entity.Name != "◆Beannoïde")
         {
             Debugger.Break();
         }
@@ -18,7 +19,7 @@ public static class FunctionTypeE
     //8007ed30
     public static void AI_FUN_8007ed30(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (entity.Name != "Caisse en bois générique")
         {
             Debugger.Break();
         }
@@ -334,7 +335,7 @@ public static class FunctionTypeE
     //8007f378
     public static void AI_FUN_8007f378(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (entity.Name != "Rocher tombant")
         {
             Debugger.Break();
         }
@@ -501,7 +502,7 @@ public static class FunctionTypeE
     //8007f5c0
     public static void AI_FUN_8007f658(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (entity.Name != "Boule de fer (grande)")
         {
             Debugger.Break();
         }

@@ -7846,17 +7846,17 @@ public static class FunctionTypeC
                 return;
             }
 
+            entity2 = gameEngine.StaticVariables.g_entitySlots[entity.AIValues[0]];
+
             if (entity.AIValues[2] == 0)
             {
-                entity.AIValues[4] = 0;
+                entity2.TargetAnimationId = 0;
             }
             else
             {
                 gameEngine.PlayerManager.FUN_80033dbc(gameEngine.StaticVariables.PlayerEntity, itemId);
-                gameEngine.FUN_80032b28((uint)entity.ContentsGameFlag);
+                gameEngine.FUN_80032b28((uint)entity2.ContentsGameFlag);
             }
-
-            entity2 = gameEngine.StaticVariables.g_entitySlots[entity.AIValues[0]];
         }
         else
         {
@@ -7946,7 +7946,7 @@ public static class FunctionTypeC
 
                 var res = gameEngine.PlayerManager.FUN_80033f00(gameEngine.StaticVariables.PlayerEntity, (int)itemId);
 
-                if (res == false && entity.Bytes[0] != 0)
+                if (res == false && (entity.Bytes[0] | entity.Bytes[1] | entity.Bytes[2] | entity.Bytes[3]) != 0)
                 {
                     gameEngine.StaticVariables.g_dropItemTextBuffer = string.Empty;
                 }
@@ -7956,7 +7956,7 @@ public static class FunctionTypeC
                     gameEngine.StaticVariables.g_dropItemTextBuffer += gameEngine.EtcRes.GetOtherString(0x45);
                 }
 
-                uint flag = (uint)(entity.AIValues[0] | (entity.AIValues[1] >> 16));
+                uint flag = (ushort)entity.AIValues[0] | ((uint)(ushort)entity.AIValues[1] << 16);
                 gameEngine.FUN_80032b28(flag); //AIValues[0]
                 soundSfxIndex = gameEngine.StaticVariables.g_itemDropProperties[itemId].SoundSfxIndex; //itemId * 8 + 5
 
