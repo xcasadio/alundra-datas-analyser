@@ -80,8 +80,8 @@ public static class AI_Melzas2
                     entity,
                     1,
                     0xD0,
-                    unchecked((int)0xF0000000),
-                    unchecked((int)0xA0000000),
+                    -268435456,
+                    -1610612736,
                     0,
                     0
                 );
@@ -102,8 +102,8 @@ public static class AI_Melzas2
                     entity,
                     1,
                     0xD0,
-                    unchecked((int)0xF0000000),
-                    unchecked((int)0xA0000000),
+                    -268435456,
+                    -1610612736,
                     0,
                     8
                 );
@@ -279,7 +279,11 @@ public static class AI_Melzas2
         {
             i = 0;
             cutSceneChannel = gameEngine.StaticVariables.CutsceneChannel_ARRAY_80026d30[0];
-            var baseXorTarget = new int[2] { cutSceneChannel.BaseY , (cutSceneChannel.AngleZ << 24 | cutSceneChannel.AngleSwing << 16 | cutSceneChannel.AngleMain << 8) };
+            var baseXorTarget = new int[2]
+            {
+                cutSceneChannel.BaseY,
+                ((cutSceneChannel.AngleSwing & 0xFFFF) << 16) | (cutSceneChannel.AngleMain & 0xFFFF)
+            };
             
             do
             {
@@ -496,9 +500,10 @@ public static class AI_Melzas2
 
                     i = cutSceneChannel.BaseXorTarget;
 
-                    if (i != gameEngine.StaticVariables.CutsceneChannel_ARRAY_80026d30[channelIndex].BaseY)
+                    var targetBaseX = GetMelzas2CutsceneTargetBaseX(gameEngine, channelIndex);
+                    if (i != targetBaseX)
                     {
-                        if (i < gameEngine.StaticVariables.CutsceneChannel_ARRAY_80026d30[channelIndex].BaseY)
+                        if (i < targetBaseX)
                         {
                             i += 0x40000;
                         }
@@ -721,11 +726,12 @@ public static class AI_Melzas2
                                 i = cutSceneChannel.BaseXorTarget;
                                 bVar1 = true;
 
-                                if (i != gameEngine.StaticVariables.CutsceneChannel_ARRAY_80026d30[channelIndex].BaseY)
+                                var targetBaseX = GetMelzas2CutsceneTargetBaseX(gameEngine, channelIndex);
+                                if (i != targetBaseX)
                                 {
                                     amplitude = 0x40000;
 
-                                    if (gameEngine.StaticVariables.CutsceneChannel_ARRAY_80026d30[channelIndex].BaseY <= i)
+                                    if (targetBaseX <= i)
                                     {
                                         //goto LAB_80063474;
                                         amplitude = -0x40000;
@@ -925,7 +931,7 @@ public static class AI_Melzas2
         LAB_8006375c:
         if (bVar2)
         {
-            i = gameEngine.StaticVariables.CutsceneChannel_ARRAY_80026d30[channelIndex].BaseY;
+            i = GetMelzas2CutsceneTargetBaseX(gameEngine, channelIndex);
 
             cutSceneChannel.ExtraFlagsOrScale = 0x200000;
             cutSceneChannel.Amplitude = 0x600;
@@ -937,6 +943,14 @@ public static class AI_Melzas2
             entity.Bytes[1] = 0;
             cutSceneChannel.Phase = 0;
         }
+    }
+
+    private static int GetMelzas2CutsceneTargetBaseX(GameEngine gameEngine, uint channelIndex)
+    {
+        var config = gameEngine.StaticVariables.CutsceneChannel_ARRAY_80026d30[0];
+        var left = config.BaseY;
+        var right = ((config.AngleSwing & 0xFFFF) << 16) | (config.AngleMain & 0xFFFF);
+        return channelIndex == 0 ? left : right;
     }
 
 

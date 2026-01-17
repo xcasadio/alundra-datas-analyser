@@ -4051,7 +4051,10 @@ public static class FunctionTypeC
     //8007c024
     public static void AI_FUN_8007c024(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        if (entity.Name != "Pilier poussable (PRG)")
+        {
+            Debugger.Break();
+        }
 
         if (gameEngine.StaticVariables.PlayerEntity.XCollisionEntity == entity)
         {
@@ -4385,7 +4388,8 @@ public static class FunctionTypeC
     // 80066bf8
     public static void AI_UpdateEntityAI_0(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Homme momie Niv.1")
+        if (entity.Name != "◆Homme momie Niv.1"
+            && entity.Name != "◆Homme momie Niv.2")
         {
             Debugger.Break();
         }
@@ -6691,7 +6695,7 @@ public static class FunctionTypeC
     //80061eb8
     public static void AI_SpawnWarpIfValid(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name == "Roche élémentaire")
+        if (entity.Name != "◆Bras, projectiles")
         {
             Debugger.Break();
         }
