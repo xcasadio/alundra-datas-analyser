@@ -19,7 +19,8 @@ public static class FunctionTypeE
     //8007ed30
     public static void AI_FUN_8007ed30(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Caisse en bois générique")
+        if (entity.Name != "Caisse en bois générique"
+            && entity.Name != "Cruche générique")
         {
             Debugger.Break();
         }
@@ -301,7 +302,7 @@ public static class FunctionTypeE
     //8007f27c
     public static void AI_FUN_8007f27c(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (entity.Name != "Bombe}")
         {
             Debugger.Break();
         }
