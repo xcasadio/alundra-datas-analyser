@@ -516,7 +516,26 @@ public static class FunctionTypeD
     //8007ec9c
     public static void AI_FUN_8007ec9c(GameEngine gameEngine, Entity entity)
     {
-        System.Diagnostics.Debugger.Break();
+        if (entity.Name != "◆Slime géant (grand)"
+            && entity.Name != "◆Slime géant (petit)")
+        {
+            Debugger.Break();
+        }
+
+        if (gameEngine.EntityManager.ComputeNewHp(entity))
+        {
+            entity.Bytes[3] = 1;
+        }
+
+        entity.TargetAnimationId = 2;
+
+        if (entity.SpriteTableIndex == 459)
+        {
+            entity.TargetAnimationId = 3;
+        }
+
+        var direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
+        entity.TargetDirection = direction;
     }
 
     //8007eda4

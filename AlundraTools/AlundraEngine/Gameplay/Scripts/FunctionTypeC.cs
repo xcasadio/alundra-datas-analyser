@@ -1528,14 +1528,18 @@ public static class FunctionTypeC
     //80065b0c
     public static void AI_FUN_80065b0c(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        if (entity.Name != "◆Slime géant (grand)"
+            && entity.Name != "◆Slime géant (petit)")
+        {
+            Debugger.Break();
+        }
 
         short sVar1;
         short uVar2;
         Entity entitySpawned;
         int iVar4;
         int iVar6;
-        uint iVar7;
+        uint targetAnimationId;
 
         if (entity.Bytes[0] == 0)
         {
@@ -1545,9 +1549,9 @@ public static class FunctionTypeC
 
         if (entity.SpriteTableIndex == 0x1cb)
         {
-            iVar7 = entity.TargetAnimationId;
+            targetAnimationId = entity.TargetAnimationId;
 
-            if (iVar7 == 1)
+            if (targetAnimationId == 1)
             {
                 sVar1 = (short)(entity.AIValues[1] - 1);
                 entity.AIValues[1] = sVar1;
@@ -1570,9 +1574,9 @@ public static class FunctionTypeC
                 goto LAB_80065e00;
             }
 
-            if ((int)iVar7 < 2)
+            if ((int)targetAnimationId < 2)
             {
-                if (iVar7 != 0)
+                if (targetAnimationId != 0)
                 {
                     return;
                 }
@@ -1590,9 +1594,9 @@ public static class FunctionTypeC
                 return;
             }
 
-            if (iVar7 != 3)
+            if (targetAnimationId != 3)
             {
-                if (iVar7 != 6)
+                if (targetAnimationId != 6)
                 {
                     return;
                 }
@@ -1611,7 +1615,7 @@ public static class FunctionTypeC
                     return;
                 }
 
-                iVar7 = 4;
+                targetAnimationId = 4;
 
                 do
                 {
@@ -1623,13 +1627,13 @@ public static class FunctionTypeC
                         entitySpawned.PosX = entity.PosX;
                         entitySpawned.PosY = entity.PosY;
                         iVar4 = entity.PosZ;
-                        entitySpawned.TargetDirection = iVar7;
+                        entitySpawned.TargetDirection = targetAnimationId;
                         entitySpawned.AIValues[1] = 0x3c;
                         entitySpawned.PosZ = iVar4;
                     }
 
                     iVar6 += 1;
-                    iVar7 += 8;
+                    targetAnimationId += 8;
                 } while (iVar6 != 4);
 
             LAB_80065ea8:
@@ -1650,9 +1654,9 @@ public static class FunctionTypeC
         }
         else
         {
-            iVar7 = entity.TargetAnimationId;
+            targetAnimationId = entity.TargetAnimationId;
 
-            if (iVar7 == 1)
+            if (targetAnimationId == 1)
             {
                 sVar1 = (short)(entity.AIValues[1] - 1);
                 entity.AIValues[1] = sVar1;
@@ -1675,9 +1679,9 @@ public static class FunctionTypeC
                 goto LAB_80065e00;
             }
 
-            if ((int)iVar7 < 2)
+            if ((int)targetAnimationId < 2)
             {
-                if (iVar7 != 0)
+                if (targetAnimationId != 0)
                 {
                     return;
                 }
@@ -1695,9 +1699,9 @@ public static class FunctionTypeC
                 return;
             }
 
-            if (iVar7 != 2)
+            if (targetAnimationId != 2)
             {
-                if (iVar7 != 3)
+                if (targetAnimationId != 3)
                 {
                     return;
                 }
@@ -1716,7 +1720,7 @@ public static class FunctionTypeC
                     return;
                 }
 
-                iVar7 = 4;
+                targetAnimationId = 4;
 
                 do
                 {
@@ -1727,13 +1731,13 @@ public static class FunctionTypeC
                         entitySpawned.PosX = entity.PosX;
                         entitySpawned.PosY = entity.PosY;
                         iVar4 = entity.PosZ;
-                        entitySpawned.TargetDirection = iVar7;
+                        entitySpawned.TargetDirection = targetAnimationId;
                         entitySpawned.SpriteProgramIndexes[0] = 0;
                         entitySpawned.AIValues[1] = 0x1e;
                         entitySpawned.PosZ = iVar4;
                     }
                     iVar6 += 1;
-                    iVar7 += 8;
+                    targetAnimationId += 8;
                 } while (iVar6 != 4);
 
                 //goto LAB_80065ea8;

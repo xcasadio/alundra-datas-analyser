@@ -510,9 +510,10 @@ public class GameInitializer
         //_gameEngine.StaticVariables.g_saveData.MapFlags[6] = 1024;
         //_gameEngine.StaticVariables.g_saveData.MapFlags[8] = 64;
         //_gameEngine.StaticVariables.g_saveData.MapFlags[26] = 268435456;
-        //_gameEngine.StaticVariables.g_saveData.MapFlags[27] = 228;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[27] = 231;
         //_gameEngine.StaticVariables.g_saveData.MapFlags[44] = 4;
         //_gameEngine.StaticVariables.g_saveData.MapFlags[51] = 1745093120;
+        //_gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable[162] = 169;
 
         //manoir de tarn
         //_gameEngine.StaticVariables.g_desiredMap = 116;
@@ -522,7 +523,33 @@ public class GameInitializer
         //_gameEngine.StaticVariables.g_cameraTargetX = 7077888;
         //_gameEngine.StaticVariables.g_cameraTargetY = 21495808;
         //_gameEngine.StaticVariables.g_cameraTargetZ = 0;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[0] = 409;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[6] = 1024;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[8] = 64;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[26] = 268435456;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[27] = 231;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[44] = 4;
         //_gameEngine.StaticVariables.g_saveData.MapFlags[51] = 1745093120;
+        //_gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable[162] = 169;
+        
+        //reve 
+        //_gameEngine.StaticVariables.g_desiredMap = 44;
+        //_gameEngine.StaticVariables.g_isGameEnding = 1;
+        //_gameEngine.StaticVariables.g_resetAnimationId = 16;
+        //_gameEngine.StaticVariables.g_resetDirectionId = 0;
+        //_gameEngine.StaticVariables.g_cameraTargetX = 4194304;
+        //_gameEngine.StaticVariables.g_cameraTargetY = 61341696;
+        //_gameEngine.StaticVariables.g_cameraTargetZ = 4194304;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[0] = 409;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[3] = 4096;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[6] = 2048;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[8] = 4160;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[17] = 33554432;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[26] = 268435456;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[27] = 231;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[44] = 16;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] = 1745093120;
+        //_gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable[162] = 176;
     }
 
     // 8004dac0
