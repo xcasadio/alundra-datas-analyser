@@ -1,39 +1,11 @@
-﻿using System.Drawing.Imaging;
-using AlundraEngine.Graphics;
+﻿using AlundraEngine.Graphics;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace AlundraEngine;
 
-public class SpriteDepth
+public class Renderer(System.Drawing.Graphics graphics) : IRenderer
 {
-    public const int DebugCollision = FadeTransitionEffect - 1;
-    public const int FadeTransitionEffect = BackgroundUI - 1;
-    public const int BackgroundUI = ForegroundUI - 1;
-    public const int ForegroundUI = ForegroundUICursor - 1;
-    public const int ForegroundUICursor = ForegroundUICursor2 - 1;
-    public const int ForegroundUICursor2 = ForegroundEffect - 1;
-    public const int ForegroundEffect = int.MaxValue;
-}
-
-/// <summary>
-/// PSX GPU blending modes (ABR values)
-/// </summary>
-public enum BlendMode
-{
-    /// <summary>No blending (opaque)</summary>
-    None = -1,
-    /// <summary>50% Background + 50% Foreground (average)</summary>
-    Average = 0,
-    /// <summary>Background + Foreground (additive)</summary>
-    Additive = 1,
-    /// <summary>Background - Foreground (subtractive)</summary>
-    Subtractive = 2,
-    /// <summary>Background + 25% Foreground (additive dimmed)</summary>
-    AdditiveDim = 3
-}
-
-public class Renderer(GameEngine gameEngine)
-{
-    private readonly GameEngine _gameEngine = gameEngine;
     private readonly SortedDictionary<int, List<Sprite>> _sprites = new();
     public readonly Bitmap WhiteBitmap = CreateWhiteBitmap();
 
@@ -43,7 +15,10 @@ public class Renderer(GameEngine gameEngine)
     private readonly Dictionary<LineColorKey, Bitmap> _lineCache = new();
     private readonly Dictionary<TextColorKey, Bitmap> _textCache = new();
     private int _crossSize = 5;
+
     private const int MaxCacheSize = 10000;
+
+
 
     private static Bitmap CreateWhiteBitmap()
     {
@@ -137,7 +112,7 @@ public class Renderer(GameEngine gameEngine)
         AddSprite(minX, minY, width, height, depthSortValue, bitmap, alpha, r, g, b);
     }
 
-    public void Render(System.Drawing.Graphics graphics)
+    public void Render()
     {
         foreach (var kvp in _sprites)
         {
@@ -416,6 +391,12 @@ public class Renderer(GameEngine gameEngine)
         AddSprite(minX, minY, width, height, SpriteDepth.DebugCollision, bmp);
     }
 
+    public void DrawCenterString(string text, Font font, Color color, int x, int y, int z)
+    {
+        var textSize = graphics.MeasureString(text, font);
+        DrawString(text, font, color, (int)(x - textSize.Width / 2), (int)(y - textSize.Height / 2), z);
+    }
+
     public void DrawString(string text, Font font, Color color, int x, int y, int z)
     {
         if (string.IsNullOrEmpty(text)) return;
@@ -458,6 +439,12 @@ public class Renderer(GameEngine gameEngine)
         }
 
         AddSprite(x, y, bmp.Width, bmp.Height, z, bmp);
+    }
+
+    public void DrawColoredRectangle(short tileX0, short tileY0, short tileW, short tileH, int fadeTransitionEffect, float tileR0,
+        float f, float f1, float f2)
+    {
+        AddSprite(tileX0, tileY0, tileW, tileH, fadeTransitionEffect, WhiteBitmap, tileR0, f, f1, f2);
     }
 }
 

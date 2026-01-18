@@ -43,7 +43,7 @@ internal class Program
             etcRes = new EtcResR(etcResFileName);
         }
 
-        var gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3);
+        var gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3, null);
         gameEngine.InitializeEngine();
 
         var alunCdExe = new AlunCdExe(gamePath);

@@ -10,6 +10,16 @@ namespace AlundraEngine;
 
 public class GraphicManager
 {
+    private static readonly Font FontEntityId = new Font(FontFamily.GenericSansSerif, 9f);
+    private static readonly Font FontTileInfo = new Font(FontFamily.GenericSansSerif, 7f);
+
+    private static readonly Color EffectColor = Color.DarkViolet;
+    private static Color EntityColor = Color.Blue;
+    private static Color EntitySelectColor = Color.ForestGreen;
+    private static Color EffectSelectedColor = Color.LightSeaGreen;
+    private static Color ZColor = Color.Green;
+
+
     private readonly GameEngine _gameEngine;
 
     public GraphicManager(GameEngine gameEngine)
@@ -18,17 +28,16 @@ public class GraphicManager
     }
 
     // 8002bd60
-    public void RenderScene(System.Drawing.Graphics graphics)
+    public void RenderScene()
     {
         byte localScratchpad = 0;
         _gameEngine.StaticVariables.g_unusedByteArray = localScratchpad;
 
         _gameEngine.StaticVariables.g_numberOfTilesDrawn = RenderTiles(
             /*_gameEngine.StaticVariables.g_orderingTableBuffer[4]*/ null,
-            _gameEngine.StaticVariables.g_cameraLookAtX, _gameEngine.StaticVariables.g_cameraLookAtY, _gameEngine.StaticVariables.g_cameraLookAtZ,
-            graphics);
+            _gameEngine.StaticVariables.g_cameraLookAtX, _gameEngine.StaticVariables.g_cameraLookAtY, _gameEngine.StaticVariables.g_cameraLookAtZ);
 
-        _gameEngine.StaticVariables.g_numberOfEntitiesDrawn = RenderEntities(_gameEngine.StaticVariables.g_orderingTableBuffer[3], _gameEngine.StaticVariables.g_cameraScrollingX, _gameEngine.StaticVariables.g_cameraScrollingY, graphics);
+        _gameEngine.StaticVariables.g_numberOfEntitiesDrawn = RenderEntities(_gameEngine.StaticVariables.g_orderingTableBuffer[3], _gameEngine.StaticVariables.g_cameraScrollingX, _gameEngine.StaticVariables.g_cameraScrollingY);
 
         if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x40) != 0)
         {
@@ -45,15 +54,15 @@ public class GraphicManager
         DisplayDebugCollisionRectangle(_gameEngine.StaticVariables.g_orderingTableBuffer[2]);
         RenderTransitionEffects(_gameEngine.StaticVariables.g_orderingTableBuffer[3]);
         _gameEngine.MemoryCardManager.UpdateMemoryCardProcess();
-        UpdateUserInterface(graphics);
+        UpdateUserInterface();
         _gameEngine.StaticVariables.g_primitive_sync = DisplayUserInterface();
 
-        _gameEngine.Renderer.Render(graphics);
+        _gameEngine.Renderer.Render();
         _gameEngine.Renderer.Clear();
     }
 
     // 8002cda0
-    private int RenderTiles(int[] renderListBase, int offsetX, int offsetY, int offsetZ, System.Drawing.Graphics graphics)
+    private int RenderTiles(int[] renderListBase, int offsetX, int offsetY, int offsetZ)
     {
         ResetTileAnimationState();
 
@@ -179,7 +188,7 @@ public class GraphicManager
         //var tileAnimFramIndex = (_gameEngine.StaticVariables.g_tileAnimFrameCounter & 1U) * 0x2a8;
         //var puVar4 = _gameEngine.StaticVariables.INT_ARRAY_800e0758[(_gameEngine.StaticVariables.g_tileAnimFrameCounter & 1U) * 0xd48];
 
-        RenderTiles(graphics, newCamRow, col);
+        RenderTiles(newCamRow, col);
 
         if (visibleTileCount >= 599)
         {
@@ -198,17 +207,7 @@ public class GraphicManager
         return (maxTileSprite << 16) | visibleTileCount;
     }
 
-
-    private static readonly Font FontEntityId = new Font(FontFamily.GenericSansSerif, 9f);
-    private static readonly Font FontTileInfo = new Font(FontFamily.GenericSansSerif, 7f);
-
-    private static readonly Color EffectColor = Color.DarkViolet;
-    private static Color EntityColor = Color.Blue;
-    private static Color EntitySelectColor = Color.ForestGreen;
-    private static Color EffectSelectedColor = Color.LightSeaGreen;
-    private static Color ZColor = Color.Green;
-
-    private void RenderTiles(System.Drawing.Graphics graphics, int row, int column)
+    private void RenderTiles(int row, int column)
     {
         DatasBin.DatasBin datasBin = _gameEngine.DatasBin;
         GameMap gameMap = _gameEngine.CurrentMap;
@@ -238,27 +237,25 @@ public class GraphicManager
                         && dy < StaticVariables.ScreenHeight)
                     {
                         tileId = GetAnimatedTileId(_gameEngine, gameMap, tileId, out var height);
-                        var z = (y * StaticVariables.MapTileHeight);
+                        var z = y * StaticVariables.MapTileHeight;
                         z = DepthFloor(y, 0);
 
-                        DrawTile(tileId, dx, dy, z << 16, graphics, gameMap, _gameEngine.Renderer);
+                        DrawTile(tileId, dx, dy, z << 16, gameMap, _gameEngine.Renderer);
 
                         if (_gameEngine.StaticVariables.DisplayTileZ)
                         {
-                            var textSize2 = graphics.MeasureString(z.ToString(), FontTileInfo);
-                            _gameEngine.Renderer.DrawString(z.ToString(), FontTileInfo, Color.Green,
-                                (int)(dx + (StaticVariables.MapTileWidth - textSize2.Width) / 2f),
-                                (int)(dy + (StaticVariables.MapTileHeight - textSize2.Height) / 2f),
+                            _gameEngine.Renderer.DrawCenterString(z.ToString(), FontTileInfo, Color.Green,
+                                (int)(dx + StaticVariables.MapTileWidth / 2f),
+                                (int)(dy + StaticVariables.MapTileHeight / 2f),
                                 SpriteDepth.DebugCollision);
                         }
 
                         if (_gameEngine.StaticVariables.DisplayTileXY)
                         {
                             var text = $"{x},{y}";
-                            var textSize = graphics.MeasureString(text, FontTileInfo);
-                            _gameEngine.Renderer.DrawString(text, FontTileInfo, Color.White,
-                                (int)(dx + (StaticVariables.MapTileWidth - textSize.Width) / 2f),
-                                (int)(dy + (StaticVariables.MapTileHeight / 2f) - textSize.Height),
+                            _gameEngine.Renderer.DrawCenterString(text, FontTileInfo, Color.White,
+                                (int)(dx + StaticVariables.MapTileWidth / 2f),
+                                (int)(dy + StaticVariables.MapTileHeight / 2f),
                                 SpriteDepth.DebugCollision);
                         }
                     }
@@ -284,24 +281,22 @@ public class GraphicManager
                             && dy < StaticVariables.ScreenHeight)
                         {
                             wallTileId = GetAnimatedTileId(_gameEngine, gameMap, wallTileId, out var height);
-                            DrawTile(wallTileId, dx, dy, z << 16, graphics, gameMap, _gameEngine.Renderer);
+                            DrawTile(wallTileId, dx, dy, z << 16, gameMap, _gameEngine.Renderer);
 
                             if (_gameEngine.StaticVariables.DisplayWallTileZ)
                             {
-                                var textSize = graphics.MeasureString(z.ToString(), FontTileInfo);
-                                _gameEngine.Renderer.DrawString(z.ToString(), FontTileInfo, Color.LawnGreen,
-                                    (int)(dx + (StaticVariables.MapTileWidth - textSize.Width) / 2f),
-                                    (int)(dy + (StaticVariables.MapTileHeight / 2f) - textSize.Height),
+                                _gameEngine.Renderer.DrawCenterString(z.ToString(), FontTileInfo, Color.LawnGreen,
+                                    (int)(dx + StaticVariables.MapTileWidth / 2f),
+                                    (int)(dy + StaticVariables.MapTileHeight / 2f),
                                     SpriteDepth.DebugCollision);
                             }
 
                             if (_gameEngine.StaticVariables.DisplayWallTileXY)
                             {
                                 var text = $"{x},{y}";
-                                var textSize = graphics.MeasureString(text, FontTileInfo);
                                 _gameEngine.Renderer.DrawString(text, FontTileInfo, Color.BurlyWood,
-                                    (int)(dx + (StaticVariables.MapTileWidth - textSize.Width) / 2f),
-                                    (int)(dy + (StaticVariables.MapTileHeight / 2f) - textSize.Height), SpriteDepth.DebugCollision);
+                                    (int)(dx + (StaticVariables.MapTileWidth) / 2f),
+                                    (int)(dy + StaticVariables.MapTileHeight / 2f), SpriteDepth.DebugCollision);
                             }
                         }
                     }
@@ -362,7 +357,7 @@ public class GraphicManager
         return tileId;
     }
 
-    private static void DrawTile(int tileMapIndex, int x, int y, int z, System.Drawing.Graphics g, GameMap gameMap, Renderer renderer)
+    private static void DrawTile(int tileMapIndex, int x, int y, int z, GameMap gameMap, IRenderer renderer)
     {
         var bmp = gameMap.GetTileBitmap(tileMapIndex);
         renderer.AddSprite(x, y, bmp.Width, bmp.Height, z, bmp);
@@ -431,7 +426,7 @@ public class GraphicManager
     }
 
     //8002e130
-    private int RenderEntities(int orderingTable, int cameraX, int cameraY, System.Drawing.Graphics graphics)
+    private int RenderEntities(int orderingTable, int cameraX, int cameraY)
     {
         //DRAW ENTITIES
         for (var i = 0; i < _gameEngine.StaticVariables.g_visibleEntityCount; i++)
@@ -485,11 +480,7 @@ public class GraphicManager
                         ? EntitySelectColor
                         : EntityColor;
                     var text = $"#{entity.Index}";
-                    var textSize = graphics.MeasureString(text, FontEntityId);
-                    _gameEngine.Renderer.DrawString(text, FontEntityId, color,
-                        (int)(scx - textSize.Width / 2f),
-                        scy,
-                        SpriteDepth.DebugCollision);
+                    _gameEngine.Renderer.DrawString(text, FontEntityId, color, scx, scy, SpriteDepth.DebugCollision);
                 }
             }
         }
@@ -542,13 +533,7 @@ public class GraphicManager
                     ? EffectSelectedColor
                     : EffectColor;
                 var text = $"#{effect.Id}";
-                var textSize = graphics.MeasureString(text, FontEntityId);
-                _gameEngine.Renderer.DrawString(text,
-                    FontEntityId,
-                    color,
-                    (int)(scx - textSize.Width / 2f),
-                    scy,
-                    SpriteDepth.DebugCollision
+                _gameEngine.Renderer.DrawString(text, FontEntityId, color, scx, scy, SpriteDepth.DebugCollision
                 );
             }
         }
@@ -556,7 +541,7 @@ public class GraphicManager
         return 0;
     }
 
-    private static void DrawSprite(Bitmap bitmap, SiImage img, int x, int y, int z, Renderer renderer, float alpha = 1f)
+    private static void DrawSprite(Bitmap bitmap, SiImage img, int x, int y, int z, IRenderer renderer, float alpha = 1f)
     {
         var w = img.X4 - img.X1;
         var h = img.Y4 - img.Y1;
@@ -815,7 +800,7 @@ public class GraphicManager
         //}
 
         // --- choose primitive buffer (double buffering) ---
-        int bufferIndex = (_gameEngine.StaticVariables.g_debugFrameCounter & 1);
+        int bufferIndex = _gameEngine.StaticVariables.g_debugFrameCounter & 1;
         _gameEngine.StaticVariables.g_debugFrameCounter++;
 
         TILE tilePtr = new TILE(); //_gameEngine.StaticVariables.g_spriteTiles[bufferIndex << 12];
@@ -829,7 +814,7 @@ public class GraphicManager
             {
                 Entity e = _gameEngine.StaticVariables.g_entitySlots[i];
 
-                if ((e.Status - 2) >= 2)
+                if (e.Status - 2 >= 2)
                 {
                     continue;
                 }
@@ -846,7 +831,7 @@ public class GraphicManager
                     tilePtr.b0 = 0x30;
 
                     int x = Fixed16ToInt(e.PosX + e.ModX) - _gameEngine.StaticVariables.g_cameraScrollingX;
-                    int basePosition = (e.PosY - e.PosZ) - e.ModZ - e.Depth;
+                    int basePosition = e.PosY - e.PosZ - e.ModZ - e.Depth;
                     basePosition -= 1;
                     int y = Fixed16ToInt(basePosition + e.ModY + e.Height + 1) - _gameEngine.StaticVariables.g_cameraScrollingY;
                     int w = Fixed16ToInt(e.Width + 1);
@@ -868,7 +853,7 @@ public class GraphicManager
                     tilePtr.b0 = 0xFF;
 
                     int x = Fixed16ToInt(e.PosX + e.ModX) - _gameEngine.StaticVariables.g_cameraScrollingX;
-                    int basePosition = (e.PosY - e.PosZ) - e.ModZ - e.Depth;
+                    int basePosition = e.PosY - e.PosZ - e.ModZ - e.Depth;
                     basePosition -= 1;
                     int y = Fixed16ToInt(basePosition + e.ModY) - _gameEngine.StaticVariables.g_cameraScrollingY;
                     int w = Fixed16ToInt(e.Width + 1);
@@ -895,7 +880,7 @@ public class GraphicManager
             {
                 Entity e = _gameEngine.StaticVariables.g_entitySlots[i];
 
-                if ((e.Status - 2) >= 2)
+                if (e.Status - 2 >= 2)
                 {
                     continue;
                 }
@@ -934,7 +919,7 @@ public class GraphicManager
                         tilePtr.b0 = 0x00;
                     }
 
-                    int basePosition = (e.PosY - e.PosZ) - e.CollisionOffsetZ - e.CollisionHeight;
+                    int basePosition = e.PosY - e.PosZ - e.CollisionOffsetZ - e.CollisionHeight;
                     basePosition -= 1;
 
                     int x = Fixed16ToInt(e.PosX + e.CollisionOffsetX) - _gameEngine.StaticVariables.g_cameraScrollingX;
@@ -966,7 +951,7 @@ public class GraphicManager
                         tilePtr.b0 = 0x00;
                     }
 
-                    int basePosition = (e.PosY - e.PosZ) - e.CollisionOffsetZ - e.CollisionHeight;
+                    int basePosition = e.PosY - e.PosZ - e.CollisionOffsetZ - e.CollisionHeight;
                     basePosition -= 1;
 
                     int x = Fixed16ToInt(e.PosX + e.CollisionOffsetX) - _gameEngine.StaticVariables.g_cameraScrollingX;
@@ -1039,8 +1024,7 @@ public class GraphicManager
         tile.b0 = (byte)(_gameEngine.StaticVariables.g_currentFadeColorR >> 0x10);
 
         //fullscreen image used to create fade effect
-        _gameEngine.Renderer.AddSprite(tile.x0, tile.y0, tile.w, tile.h,
-            SpriteDepth.FadeTransitionEffect, _gameEngine.Renderer.WhiteBitmap, tile.r0 / 255f, 0f, 0f, 0f);
+        _gameEngine.Renderer.DrawColoredRectangle(tile.x0, tile.y0, tile.w, tile.h, SpriteDepth.FadeTransitionEffect, tile.r0 / 255f, 0f, 0f, 0f);
 
     LAB_80042ee4:
         return _gameEngine.StaticVariables.g_warpFlags | _gameEngine.StaticVariables.g_fadeStepFlags;
@@ -1070,7 +1054,7 @@ public class GraphicManager
     }
 
     //80048054
-    private void UpdateUserInterface(System.Drawing.Graphics graphics)
+    private void UpdateUserInterface()
     {
         int i;
 

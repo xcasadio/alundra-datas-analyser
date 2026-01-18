@@ -29,7 +29,7 @@ public class GameEngine
     public EntityManager EntityManager { get; }
     public PlayerManager PlayerManager { get; }
     public GraphicManager GraphicManager { get; }
-    public Renderer Renderer { get; }
+    public IRenderer Renderer { get; }
     public SoundManager SoundManager { get; }
     public SoundBin SoundBin { get; }
     public StaticVariables StaticVariables { get; }
@@ -48,7 +48,7 @@ public class GameEngine
     //TODO : find the variable in StaticVariables
     public int DialogState, DialogNameState, DialogName;
 
-    public GameEngine(DatasBin.DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcRes etcRes, Font3 font3)
+    public GameEngine(DatasBin.DatasBin datasBin, BalanceBin balanceBin, SoundBin soundBin, EtcRes etcRes, Font3 font3, IRenderer renderer)
     {
         DatasBin = datasBin;
         BalanceBin = balanceBin;
@@ -66,7 +66,7 @@ public class GameEngine
         EffectManager = new EffectManager(this);
         GraphicManager = new GraphicManager(this);
         PlayerManager = new PlayerManager(this);
-        Renderer = new Renderer(this);
+        Renderer = renderer;
         SoundManager = new SoundManager(this);
         StaticVariables = new StaticVariables();
         UIManager = new UIManager(this);
@@ -266,7 +266,7 @@ public class GameEngine
     // 8002bd60
     private void RenderScene(System.Drawing.Graphics graphics)
     {
-        GraphicManager.RenderScene(graphics);
+        GraphicManager.RenderScene();
     }
 
     //8005d668
