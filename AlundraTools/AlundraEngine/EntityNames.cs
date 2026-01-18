@@ -53,6 +53,11 @@ public static class EntityNames
 
     public static string? GetName(uint spriteTableIndex)
     {
+        if (SpriteNames == null)
+        {
+            return null;
+        }
+
         return spriteTableIndex < 512 ? SpriteNames[spriteTableIndex] : null;
     }
 }

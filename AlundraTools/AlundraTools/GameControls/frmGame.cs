@@ -454,7 +454,7 @@ public partial class FrmGame : Form
             UpdatePad();
 
             _graphics.Clear(Color.Black);
-            _gameEngine.MainLoop(_graphics);
+            _gameEngine.MainLoop();
 
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             e.Graphics.Clear(Color.Black);

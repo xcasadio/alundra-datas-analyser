@@ -78,16 +78,20 @@ public class GameEngine
         LogManager = new LogManager(this);
     }
 
-    public void InitializeEngine()
+    public void InitializeEngine(bool loadExtraDebugResources = true)
     {
+        if (loadExtraDebugResources)
+        {
+            EntityNames.Load(EntityNames.Language.French);
+        }
+
         Random.Reset();
-        EntityNames.Load(EntityNames.Language.French);
         StaticVariables.Initialize(this);
         _gameInitializer.Initialize();
     }
 
     // 8002bfe0
-    public void MainLoop(System.Drawing.Graphics graphics)
+    public void MainLoop()
     {
         StaticVariables.g_spriteNumberOfImage = 0;
 
@@ -157,7 +161,7 @@ public class GameEngine
         //{
         StaticVariables.g_debugMessage = "";
         //PrintDebug();
-        RenderScene(graphics);
+        RenderScene();
 
         if (IsRunning())
         {
@@ -264,7 +268,7 @@ public class GameEngine
     }
 
     // 8002bd60
-    private void RenderScene(System.Drawing.Graphics graphics)
+    private void RenderScene()
     {
         GraphicManager.RenderScene();
     }
