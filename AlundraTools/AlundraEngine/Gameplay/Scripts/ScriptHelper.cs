@@ -132,6 +132,17 @@ public static class ScriptHelper
         relativePositions[2] = deltaZ;
     }
 
+
+    public static int GetInt32(this byte[] array, int index = 0)
+    {
+        return (int)(array[0 + index] | (array[1 + index] << 8) | (array[2 + index] << 16) | (array[3 + index] << 24));
+    }
+
+    public static uint GetUInt32(this byte[] array, int index = 0)
+    {
+        return (uint)(array[0 + index] | (array[1 + index] << 8) | (array[2 + index] << 16) | (array[3 + index] << 24));
+    }
+
     public static void Set(this byte[] array, short value, int index = 0)
     {
         array[0 + index] = (byte)(value & 0xFF);
@@ -159,6 +170,8 @@ public static class ScriptHelper
         array[2 + index] = (byte)((value >> 16) & 0xFF);
         array[3 + index] = (byte)((value >> 24) & 0xFF);
     }
+
+
 
     public static int GetInt32(this short[] array, int index = 0)
     {

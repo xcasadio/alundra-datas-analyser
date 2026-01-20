@@ -8,7 +8,8 @@ public static class FunctionTypeE
     public static void FUN_8007ed10(GameEngine gameEngine, Entity entity)
     {
         if (entity.Name != "◆Muruta (griffes) Niv.1"
-            && entity.Name != "◆Beannoïde")
+            && entity.Name != "◆Beannoïde"
+            && entity.Name != "Septimus (chercheur)")
         {
             Debugger.Break();
         }
@@ -136,7 +137,8 @@ public static class FunctionTypeE
     //8007ef50
     public static void AI_HandleIceLightHitEffect(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (entity.Name != "Boule de feu"
+            && entity.Name != "Boule de glace")
         {
             Debugger.Break();
         }
@@ -302,7 +304,7 @@ public static class FunctionTypeE
     //8007f27c
     public static void AI_FUN_8007f27c(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Bombe}")
+        if (entity.Name != "Bombe")
         {
             Debugger.Break();
         }
@@ -372,7 +374,7 @@ public static class FunctionTypeE
     //8007f420
     public static void AI_UpdateArrows(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (entity.Name != "Flèches Niv.2")
         {
             Debugger.Break();
         }
@@ -533,7 +535,7 @@ public static class FunctionTypeE
     //8007f7a0
     public static void AI_FUN_8007f7cc(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (entity.Name != "Haricots de Jack")
         {
             Debugger.Break();
         }

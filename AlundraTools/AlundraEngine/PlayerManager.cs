@@ -1741,6 +1741,13 @@ public class PlayerManager
         return _gameEngine.StaticVariables.g_playerStats.Hp;
     }
 
+    //8004df3c
+    public void DecreaseMp(int amount)
+    {
+        SetPlayerMp((short)(_gameEngine.StaticVariables.g_playerStats.Mp - amount));
+        return;
+    }
+
     //8004df10
     public void IncreaseMp(int amount)
     {
@@ -1959,7 +1966,7 @@ public class PlayerManager
             case 18: // mapId == 0x31
             case 19: // mapId == 0x32
             case 12: // mapId == 0x2b
-                result = TryStartMapWarp(itemId);
+                result = TryLaunchMagic(itemId);
                 break;
 
             default:
@@ -1981,10 +1988,47 @@ public class PlayerManager
     }
 
     //80034224
+    //create haricot
     private int TrySpawnWarpEntity(uint itemId)
     {
-        Debugger.Break();
-        return 0;
+        Entity entity;
+        int result;
+
+        if (_gameEngine.StaticVariables.PlayerEntity.CarriedEntity == null 
+            && _gameEngine.StaticVariables.PlayerEntity.Slope_18c != 4 
+            && _gameEngine.StaticVariables.g_warpLockTimer == 0)
+        {
+            entity = _gameEngine.SpawnWarpEntity(_gameEngine.StaticVariables.PlayerEntity, 0, 1, 
+                _gameEngine.StaticVariables.PlayerEntity.PosX, 
+                _gameEngine.StaticVariables.PlayerEntity.PosY,
+                _gameEngine.StaticVariables.PlayerEntity.PosZ, 0);
+
+            result = 1;
+
+            if (entity != null)
+            {
+                _gameEngine.StaticVariables.PlayerEntity.CarriedEntity = entity;
+                entity.PlatformEntity = _gameEngine.StaticVariables.PlayerEntity;
+                _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = 5;
+
+                if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+                {
+                    _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = 0xb;
+                }
+
+                _gameEngine.StaticVariables.PlayerEntity.RelativeWarpOffsetX = entity.PosX - _gameEngine.StaticVariables.PlayerEntity.PosX;
+                _gameEngine.StaticVariables.PlayerEntity.RelativeWarpOffsetY = entity.PosY - _gameEngine.StaticVariables.PlayerEntity.PosY;
+                _gameEngine.StaticVariables.PlayerEntity.RelativeWarpOffsetZ = entity.PosZ - _gameEngine.StaticVariables.PlayerEntity.PosZ;
+
+                result = 0;
+            }
+        }
+        else
+        {
+           _gameEngine.SoundManager.PlaySoundEffect(3);
+            result = 1;
+        }
+        return result;
     }
 
     //80034320
@@ -1995,10 +2039,65 @@ public class PlayerManager
     }
 
     //8003453c
+    //create bomb
     private int FUN_8003453c(uint itemId)
     {
-        Debugger.Break();
-        return 0;
+        Entity entitySpawned;
+        int entityIndex = 0;
+        int entityCount;
+
+        if (_gameEngine.StaticVariables.PlayerEntity.CarriedEntity == null 
+            && _gameEngine.StaticVariables.PlayerEntity.Slope_18c != 4 
+            && _gameEngine.StaticVariables.g_warpLockTimer == 0)
+        {
+            entityCount = 0;
+
+            do
+            {
+                entitySpawned = _gameEngine.StaticVariables.g_entitySlots[entityIndex];
+
+                if (entitySpawned.SpriteTableIndex == 2)
+                {
+                    entityCount += 1;
+                }
+
+                entityIndex += 1;
+            } while (entityIndex != 0x40);
+
+            if (entityCount < 3)
+            {
+                entitySpawned = _gameEngine.SpawnWarpEntity(_gameEngine.StaticVariables.PlayerEntity, 0, 2,
+                    _gameEngine.StaticVariables.PlayerEntity.PosX, 
+                    _gameEngine.StaticVariables.PlayerEntity.PosY, 
+                    _gameEngine.StaticVariables.PlayerEntity.PosZ, 0);
+
+                if (entitySpawned == null)
+                {
+                    return 1;
+                }
+
+                entitySpawned.Bytes[0] = 0xf0;
+                entitySpawned.Bytes[1] = 0;
+                entitySpawned.Bytes[2] = 0;
+                entitySpawned.Bytes[3] = 0;
+                _gameEngine.StaticVariables.PlayerEntity.CarriedEntity = entitySpawned;
+                entitySpawned.PlatformEntity = _gameEngine.StaticVariables.PlayerEntity;
+                _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = 5;
+
+                if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+                {
+                    _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = 0xb;
+                }
+
+                _gameEngine.StaticVariables.PlayerEntity.RelativeWarpOffsetX = entitySpawned.PosX - _gameEngine.StaticVariables.PlayerEntity.PosX;
+                _gameEngine.StaticVariables.PlayerEntity.RelativeWarpOffsetY = entitySpawned.PosY - _gameEngine.StaticVariables.PlayerEntity.PosY;
+                _gameEngine.StaticVariables.PlayerEntity.RelativeWarpOffsetZ = entitySpawned.PosZ - _gameEngine.StaticVariables.PlayerEntity.PosZ;
+                return 0;
+            }
+        }
+
+        _gameEngine.SoundManager.PlaySoundEffect(3);
+        return 1;
     }
 
     //80034680
@@ -2050,11 +2149,41 @@ public class PlayerManager
         Debugger.Break();
     }
 
-    //80034870
-    private int TryStartMapWarp(uint itemId)
+    //800348e0
+    private int TryLaunchMagic(uint itemId)
     {
-        Debugger.Break();
-        return 0;
+        int result;
+
+        if (_gameEngine.StaticVariables.PlayerEntity.CarriedEntity == null 
+            && _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId < 2 
+            && _gameEngine.StaticVariables.g_warpLockTimer == 0)
+        {
+            var currentWeapon = GetItemIdFromCurrentWeapon();
+
+            if (currentWeapon != 7)
+            {
+                if (GetPlayerMp() == 0)
+                {
+                    //goto PlayFailSound;
+                    _gameEngine.SoundManager.PlaySoundEffect(3);
+                }
+
+                DecreaseMp(1);
+            }
+
+            Debugger.Break();
+            //StartCdStreaming((uint)*(byte*)((int)&PTR_caseD_1_80023364 + itemId + 1));
+            result = 0;
+            _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = 0x32;
+        }
+        else
+        {
+            PlayFailSound:
+            _gameEngine.SoundManager.PlaySoundEffect(3);
+            result = 1;
+        }
+
+        return result;
     }
 
     //8003634c
@@ -2170,9 +2299,22 @@ public class PlayerManager
 
     private int FUN_800352c4()
     {
+        if (_gameEngine.StaticVariables.PlayerEntity.CarriedEntity != null)
+        {
+            if (_gameEngine.StaticVariables.PlayerEntity.CarriedEntity.SpriteTableIndex != 2)
+            {
+                return 1;
+            }
 
-        Debugger.Break();
-        return 0;
+            if (_gameEngine.StaticVariables.PlayerEntity.Slope_18c != 4)
+            {
+                return 0;
+            }
+
+            AnimateWarpEffect();
+        }
+
+        return 1;
     }
 
     private int FUN_80035260()
@@ -2182,10 +2324,25 @@ public class PlayerManager
         return 0;
     }
 
+    //handle haricot
     private int FUN_80035204()
     {
-        Debugger.Break();
-        return 0;
+        if (_gameEngine.StaticVariables.PlayerEntity.CarriedEntity != null)
+        {
+            if (_gameEngine.StaticVariables.PlayerEntity.CarriedEntity.SpriteTableIndex != 1)
+            {
+                return 1;
+            }
+
+            if (_gameEngine.StaticVariables.PlayerEntity.Slope_18c != 4)
+            {
+                return 0;
+            }
+
+            AnimateWarpEffect();
+        }
+
+        return 1;
     }
 
     // 80031a68

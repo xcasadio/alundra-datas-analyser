@@ -1912,7 +1912,9 @@ public static class FunctionTypeC
     //Caisse en bois générique
     public static void AI_FUN_8006b848(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Caisse en bois générique" && entity.Name != "Cruche générique")
+        if (entity.Name != "Caisse en bois générique" 
+            && entity.Name != "Cruche générique"
+            && entity.Name != "Pierre très lourde")
         {
             Debugger.Break();
         }
@@ -3598,7 +3600,8 @@ public static class FunctionTypeC
     //8007a8a0
     public static void AI_UpdateIceProjectile(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "mimique nv1")
+        if (entity.Name != "Boule de feu"
+            && entity.Name != "Boule de glace")
         {
             Debugger.Break();
         }
@@ -3638,9 +3641,140 @@ public static class FunctionTypeC
     }
 
     //8007a978
+    //handle bombs
     public static void AI_FUN_8007a978(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        if (entity.Name != "Bombe")
+        {
+            Debugger.Break();
+        }
+
+        SpriteEffect effect;
+        int i;
+        uint rand2;
+
+        if ((entity.CombinedVramFlagsAND & 4U) != 0)
+        {
+            gameEngine.DestroyEntity(entity);
+            return;
+        }
+
+        rand2 = entity.Bytes.GetUInt32();
+        entity.Bytes.Set(rand2 - 1);
+
+        if (rand2 == 0)
+        {
+            entity.Status = 3;
+
+            if (entity.PlatformEntity != null)
+            {
+                entity.PlatformEntity.CarriedEntity = null;
+                entity.PlatformEntity = null;
+                //goto LAB_8007aac0; useless entity.PlatformEntity is null
+            }
+        }
+        else
+        {
+            if ((int)rand2 < 0x3c && (rand2 & 7) == 0)
+            {
+                effect = gameEngine.EffectManager.CreateEffectEntity(0, 9, 0, 
+                    entity.PosX, entity.PosY, entity.PosZ + 0x80000);
+
+                if (effect != null)
+                {
+                    effect.ForceX = (int)((Random.Next() * 0x30001) >> 0x20) + -0x18000;
+                    effect.ForceY = (int)((Random.Next() * 0x20001) >> 0x20) + -0x10000;
+                }
+            }
+
+            LAB_8007aac0:
+
+            if (entity.PlatformEntity != null)
+            {
+                if (entity.Flags2 != 0)
+                {
+                    entity.TargetAnimationId = 2;
+                    entity.Flags2 = 0;
+
+                    if (entity.PlatformEntity != null)
+                    {
+                        entity.PlatformEntity.CarriedEntity = null;
+                    }
+
+                    entity.PlatformEntity = null;
+                    return;
+                }
+
+                goto LAB_8007ac48;
+            }
+        }
+
+        if (entity.TargetAnimationId == 0)
+        {
+            return;
+        }
+
+        if (entity.ForceAdjusted != 0)
+        {
+            i = 0;
+
+            if (entity.IsAboveGround != 0)
+            {
+                do
+                {
+                    if ((entity.MapTiles[i].Flags & 0x1001) == 0x1001)
+                    {
+                        entity.Status = 3;
+                    }
+
+                    i = i + 1;
+                } while (i < 4);
+
+                entity.TargetAnimationId = 0;
+                return;
+            }
+
+            if (entity.ForceZ < 1)
+            {
+                return;
+            }
+
+            if (entity.DelayOrAngle != 0)
+            {
+                return;
+            }
+
+            entity.DelayOrAngle = 1;
+            entity.TargetDirection = (entity.TargetDirection + 0x10) & 0x1f;
+            gameEngine.EffectManager.CreateEffectEntity(0, 9, 0, entity.PosX, entity.PosY, entity.PosZ + 0x80000);
+            return;
+        }
+        if ((entity.IsAboveGround == 0) && (entity.HitCounter == 0))
+        {
+            return;
+        }
+
+        gameEngine.SoundManager.PlaySoundEffect(0x18);
+        entity.DelayOrAngle = 0;
+        i = 0;
+
+        do
+        {
+            if ((entity.MapTiles[i].Flags & 0x1001) == 0x1001)
+            {
+                break;
+            }
+
+            i = i + 1;
+        } while (i < 4);
+
+        if (i != 4)
+        {
+            return;
+        }
+
+        LAB_8007ac48:
+        entity.TargetAnimationId = 0;
     }
 
     //8007ac60
@@ -3967,7 +4101,33 @@ public static class FunctionTypeC
     //8007bb30
     public static void AI_FUN_8007bb30(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        if (entity.Name != "Haricots de Jack")
+        {
+            Debugger.Break();
+        }
+
+        if (entity.PlatformEntity == null)
+        {
+            if (entity.IsAboveGround != 0)
+            {
+                entity.Status = 3;
+            }
+        }
+        else if (entity.Flags2 == 0)
+        {
+            entity.TargetAnimationId = 0;
+        }
+        else
+        {
+            entity.TargetAnimationId = 2;
+            entity.Flags2 = 0;
+            if (entity.PlatformEntity != null)
+            {
+                entity.PlatformEntity.CarriedEntity = null;
+            }
+            entity.PlatformEntity = null;
+            entity.Flags |= 0x10;
+        }
     }
 
     //8007bb9c
