@@ -2661,12 +2661,24 @@ public class EntityEventHandlers
     {
         var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
-        for (var i = 0; i < num; i++)
+        if (num != 0)
         {
-            var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
-            entity.PosX = (variables[2] + variables[3] * 0x100) * 0x10000;
-            entity.PosY = (variables[4] + variables[5] * 0x100) * 0x10000;
-            entity.PosZ = (variables[6] + variables[7] * 0x100) * 0x10000 + 1;
+            num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[2]);
+
+            if (num != 0)
+            {
+                var x = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].PosX;
+                var y = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].PosY;
+                var z = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].PosZ;
+
+                for (var i = 0; i < num; i++)
+                {
+                    var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
+                    entity.PosX = x + (variables[3] + variables[4] * 0x100) * 0x10000;
+                    entity.PosY = y + (variables[5] + variables[6] * 0x100) * 0x10000;
+                    entity.PosZ = z + (variables[7] + variables[8] * 0x100) * 0x10000;
+                }
+            }
         }
 
         return 9;
@@ -2679,7 +2691,7 @@ public class EntityEventHandlers
 
         if (entity == null)
         {
-            //_gameEngine.PrintCommandMap();
+            //_gameEngine.PrintCommandMap("Illegal InitData Number!!");
         }
 
         entity.PosX = (variables[2] + variables[3] * 0x100) * 0x10000;
@@ -2852,8 +2864,7 @@ public class EntityEventHandlers
     }
 
     // 800407C0
-    private int Script_149_095(Entity logicEntity, Entity ownerEntity, int[] variables,
-        EventProgramState eventProgramState)
+    private int Script_149_095(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         //Debugger.Break();
 

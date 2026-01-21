@@ -539,6 +539,7 @@ public class EntityManager
 
                 //if (_gameEngine.StaticVariables.g_debugState < 0
                 //    && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
+                if (_gameEngine.StaticVariables.IsLogDamageEnabled)
                 {
                     //_gameEngine.StaticVariables.g_messageDebug += // + otherEntity->index * 0x100
                     var log = string.Format("{0} (Race) {1} -> {2} (Attr) {3} = {4}",

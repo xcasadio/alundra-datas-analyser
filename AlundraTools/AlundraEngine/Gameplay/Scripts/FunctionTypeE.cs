@@ -9,7 +9,9 @@ public static class FunctionTypeE
     {
         if (entity.Name != "◆Muruta (griffes) Niv.1"
             && entity.Name != "◆Beannoïde"
-            && entity.Name != "Septimus (chercheur)")
+            && entity.Name != "Septimus (chercheur)"
+            && entity.Name != "Jess (armurier)"
+            && entity.Name != "I35_Bombe explosive")
         {
             Debugger.Break();
         }
@@ -316,7 +318,6 @@ public static class FunctionTypeE
         }
         else
         {
-            gameEngine.DestroyEntity(entity, -1);
             gameEngine.CheckAndTriggerTileEffect(entity);
             entity.TargetAnimationId = 1;
             entity.Flags = (entity.Flags & 0xffffffcfU) | 0x40;
