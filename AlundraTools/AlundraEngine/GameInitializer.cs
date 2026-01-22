@@ -336,6 +336,13 @@ public class GameInitializer
         _gameEngine.StaticVariables.g_gravityFlag = 0;
         InitializePlayerStatsAndItems();
 
+        //load state
+        if (StaticVariables.GameStateFileNameToLoad != null)
+        {
+            _gameEngine.StaticVariables.g_saveDataInRam = SaveData.LoadFromJson(StaticVariables.GameStateFileNameToLoad);
+            _gameEngine.StaticVariables.g_saveDataInRam.SlotData = 1;
+        }
+
         if (_gameEngine.StaticVariables.g_saveDataInRam.SlotData == 1)
         {
             _gameEngine.UpdateSaveData();
@@ -364,7 +371,7 @@ public class GameInitializer
                 _gameEngine.PlayerManager.SetPlayerMp(0);
                 _gameEngine.PlayerManager.SetMoney(0);
             }
-            else
+            else // unused, only for debugging
             {
                 playerTileY = 0x1d;
                 playerZ = 10;
@@ -411,11 +418,6 @@ public class GameInitializer
         _gameEngine.StaticVariables.g_cameraTargetY = (_gameEngine.StaticVariables.g_saveData.CameraTileY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) * 0x10000;
         _gameEngine.StaticVariables.g_cameraTargetZ = _gameEngine.StaticVariables.g_saveData.CameraTileZ << 0x14;
         _gameEngine.StaticVariables.g_gameplayTime = _gameEngine.StaticVariables.g_saveData.GameTime;
-
-        if (StaticVariables.ForceDesiredMap != -1)
-        {
-            _gameEngine.StaticVariables.g_desiredMap = (uint)StaticVariables.ForceDesiredMap;
-        }
 
         //==== DEBUG
         //enable HUD
@@ -531,7 +533,7 @@ public class GameInitializer
         //_gameEngine.StaticVariables.g_saveData.MapFlags[44] = 4;
         //_gameEngine.StaticVariables.g_saveData.MapFlags[51] = 1745093120;
         //_gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable[162] = 169;
-        
+
         //reve 
         //_gameEngine.StaticVariables.g_desiredMap = 44;
         //_gameEngine.StaticVariables.g_isGameEnding = 1;
@@ -550,6 +552,56 @@ public class GameInitializer
         //_gameEngine.StaticVariables.g_saveData.MapFlags[44] = 16;
         //_gameEngine.StaticVariables.g_saveData.MapFlags[51] = 1745093120;
         //_gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable[162] = 176;
+
+        //debut mine de charbon //bug personne derriere lit
+        //_gameEngine.StaticVariables.g_desiredMap = 183;
+        //_gameEngine.StaticVariables.g_isGameEnding = 1;
+        //_gameEngine.StaticVariables.g_resetAnimationId = 54;
+        //_gameEngine.StaticVariables.g_resetDirectionId = 0;
+        //_gameEngine.StaticVariables.g_cameraTargetX = 3932160;
+        //_gameEngine.StaticVariables.g_cameraTargetY = 23592960;
+        //_gameEngine.StaticVariables.g_cameraTargetZ = 0;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[0] = 16793;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[3] = 4096;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[6] = 4096;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[8] = 4160;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[17] = 33554432;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[26] = 268435456;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[27] = 231;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[44] = 16;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[45] = 1024;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] = 1761346062;
+        //_gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable[162] = 176;
+
+        //avant bug mine de charbon avec la bombe
+        //_gameEngine.StaticVariables.g_desiredMap = 362;
+        //_gameEngine.StaticVariables.g_isGameEnding = 1;
+        //_gameEngine.StaticVariables.g_resetAnimationId = 54;
+        //_gameEngine.StaticVariables.g_resetDirectionId = 0;
+        //_gameEngine.StaticVariables.g_cameraTargetX = 24379392;
+        //_gameEngine.StaticVariables.g_cameraTargetY = 8912896;
+        //_gameEngine.StaticVariables.g_cameraTargetZ = 0;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[0] = 16793;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[3] = 251662336;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[6] = 4096;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[7] = 50332672;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[8] = 4160;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[9] = 256;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[17] = 33554432;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[21] = 268435456;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[26] = 268435456;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[27] = 231;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[44] = 4;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[45] = 1024;
+        //_gameEngine.StaticVariables.g_saveData.MapFlags[51] = 1761346062;
+        //_gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable[162] = 176;
+
+
+        if (StaticVariables.ForceDesiredMap != -1)
+        {
+            _gameEngine.StaticVariables.g_desiredMap = (uint)StaticVariables.ForceDesiredMap;
+        }
+
     }
 
     // 8004dac0

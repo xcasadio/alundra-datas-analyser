@@ -16,6 +16,7 @@ public class StaticVariables
 {
     //editor
     public static int ForceDesiredMap { get; set; } = -1;
+    public static string? GameStateFileNameToLoad { get; set; }
 
     public int EditorSelectEntityIndex { get; set; } = -1;
     public int EditorSelectEffectIndex { get; set; } = -1;

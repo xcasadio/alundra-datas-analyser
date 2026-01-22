@@ -1679,6 +1679,29 @@ public partial class FrmGame : Form
     {
         _gameEngine.StaticVariables.DisplayWallTileZ = checkBoxWallTileZ.Checked;
     }
+
+    private void buttonSaveState_Click(object sender, EventArgs e)
+    {
+        var saveStateDirectory = Path.Combine(Environment.CurrentDirectory, "SaveStates");
+
+        if (!Directory.Exists(saveStateDirectory))
+        {
+            Directory.CreateDirectory(saveStateDirectory);
+        }
+
+        var openFileDialog = new SaveFileDialog()
+        {
+            Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*",
+            Title = "Select a JSON file to save the game state",
+            InitialDirectory = saveStateDirectory
+        };
+
+        if (openFileDialog.ShowDialog(this) == DialogResult.OK)
+        {
+            _gameEngine.UpdateSavedData(false);
+            _gameEngine.StaticVariables.g_saveData.SaveToJson(openFileDialog.FileName);
+        }
+    }
 }
 
 internal class FlagModel(string Name, Func<uint> Value)

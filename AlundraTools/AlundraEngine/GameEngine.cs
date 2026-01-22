@@ -2420,7 +2420,7 @@ public class GameEngine
     }
 
     //8003153c
-    public void UpdateSavedData()
+    public void UpdateSavedData(bool displayMenu = true)
     {
         StaticVariables.g_saveData.InitialMapId = StaticVariables.g_currentMap;
         StaticVariables.g_saveData.CameraTileX = StaticVariables.PlayerEntity.TileX;
@@ -2428,7 +2428,11 @@ public class GameEngine
         StaticVariables.g_saveData.CameraTileZ = StaticVariables.PlayerEntity.TileZ;
         UpdateMenuStatusText();
         StaticVariables.g_saveData.GameTime = StaticVariables.g_gameplayTime;
-        InitializeSaveDataCopy(StaticVariables.g_saveData, 0x758, 1);
+
+        if (displayMenu)
+        {
+            InitializeSaveDataCopy(StaticVariables.g_saveData, 0x758, 1);
+        }
     }
 
     //8005ec44

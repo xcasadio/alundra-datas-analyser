@@ -33,6 +33,8 @@
             toolStripMenuItem1 = new ToolStripMenuItem();
             openDATASBINToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
+            listBoxSaveStates = new ListBox();
+            label1 = new Label();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -57,29 +59,49 @@
             // toolStripMenuItem1
             // 
             toolStripMenuItem1.Name = "toolStripMenuItem1";
-            toolStripMenuItem1.Size = new Size(180, 22);
+            toolStripMenuItem1.Size = new Size(163, 22);
             toolStripMenuItem1.Text = "Play DATAS.BIN";
             toolStripMenuItem1.Click += toolStripMenuItem1_Click;
             // 
             // openDATASBINToolStripMenuItem
             // 
             openDATASBINToolStripMenuItem.Name = "openDATASBINToolStripMenuItem";
-            openDATASBINToolStripMenuItem.Size = new Size(180, 22);
+            openDATASBINToolStripMenuItem.Size = new Size(163, 22);
             openDATASBINToolStripMenuItem.Text = "Open DATAS.BIN";
             openDATASBINToolStripMenuItem.Click += openDATASBINToolStripMenuItem_Click;
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(180, 22);
+            exitToolStripMenuItem.Size = new Size(163, 22);
             exitToolStripMenuItem.Text = "Exit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
+            // 
+            // listBoxSaveStates
+            // 
+            listBoxSaveStates.FormattingEnabled = true;
+            listBoxSaveStates.Location = new Point(12, 42);
+            listBoxSaveStates.Name = "listBoxSaveStates";
+            listBoxSaveStates.Size = new Size(170, 244);
+            listBoxSaveStates.TabIndex = 2;
+            listBoxSaveStates.MouseDoubleClick += listBoxSaveStates_MouseDoubleClick;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(12, 24);
+            label1.Name = "label1";
+            label1.Size = new Size(58, 15);
+            label1.TabIndex = 3;
+            label1.Text = "load state";
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(457, 279);
+            ClientSize = new Size(457, 303);
+            Controls.Add(label1);
+            Controls.Add(listBoxSaveStates);
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
             Margin = new Padding(4);
@@ -97,6 +119,8 @@
         private System.Windows.Forms.ToolStripMenuItem openDATASBINToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private ListBox listBoxSaveStates;
+        private Label label1;
     }
 }
 

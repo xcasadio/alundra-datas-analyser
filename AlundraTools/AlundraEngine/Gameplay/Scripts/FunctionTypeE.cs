@@ -7,14 +7,14 @@ public static class FunctionTypeE
     //8007ed10
     public static void FUN_8007ed10(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Muruta (griffes) Niv.1"
-            && entity.Name != "◆Beannoïde"
-            && entity.Name != "Septimus (chercheur)"
-            && entity.Name != "Jess (armurier)"
-            && entity.Name != "I35_Bombe explosive")
-        {
-            Debugger.Break();
-        }
+        //if (entity.Name != "◆Muruta (griffes) Niv.1"
+        //    && entity.Name != "◆Beannoïde"
+        //    && entity.Name != "Septimus (chercheur)"
+        //    && entity.Name != "Jess (armurier)"
+        //    && entity.Name != "I35_Bombe explosive")
+        //{
+        //    Debugger.Break();
+        //}
 
         gameEngine.DestroyEntity(entity, -1);
     }
@@ -44,7 +44,7 @@ public static class FunctionTypeE
     //spores nv1
     public static void AI_FUN_8007eda0(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (entity.Name != "◆Projectile")
         {
             Debugger.Break();
         }
@@ -518,7 +518,8 @@ public static class FunctionTypeE
     //8007f690
     public static void AI_FUN_8007f690(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (entity.Name != "Couvercle de tige-bombe (vertical)"
+            && entity.Name != "Couvercle de tige-bombe (dessus)")
         {
             Debugger.Break();
         }

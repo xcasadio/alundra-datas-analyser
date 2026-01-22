@@ -419,6 +419,8 @@ public class EntityManager
     //80039300
     private void UpdateBalanceRecords()
     {
+        _gameEngine.StaticVariables.g_balanceAnimIndex = (int)_gameEngine.StaticVariables.g_entitySlots[0].TargetAnimationId;
+
         for (var i = 0; i < _gameEngine.StaticVariables.g_activeEntityCount; i++)
         {
             var entity = _gameEngine.StaticVariables.g_activeEntities[i];
@@ -457,6 +459,12 @@ public class EntityManager
                 {
                     continue;
                 }
+
+                //if ((otherEntity.Index == 2 || otherEntity.Index == 12)
+                //    && (entity.Index == 2 || entity.Index == 12))
+                //{
+                //    Debugger.Break();
+                //}
 
                 if (otherEntity.FrameCollisionTickCounter != 0)
                 {
@@ -501,12 +509,12 @@ public class EntityManager
                 int depth;
                 if (dify > 0)
                 {
-                    depth = otherEntity.Depth + 1;
+                    depth = otherEntity.Height + 1;
                 }
                 else
                 {
                     dify = otherEntity.ModdedPosY - entity.HitBoxY;
-                    depth = entity.CollisionDepth + 1;
+                    depth = entity.CollisionHeight + 1;
                 }
 
                 if (dify >= depth)
@@ -519,12 +527,12 @@ public class EntityManager
                 int height;
                 if (difz > 0)
                 {
-                    height = otherEntity.Height + 1;
+                    height = otherEntity.Depth + 1;
                 }
                 else
                 {
                     difz = otherEntity.ModdedPosZ - entity.HitBoxZ;
-                    height = entity.CollisionHeight + 1;
+                    height = entity.CollisionDepth + 1;
                 }
 
                 if (difz >= height)
@@ -535,7 +543,7 @@ public class EntityManager
                 //Debugger.Break();
 
                 var balanceValueIndex = entity.BalanceAnimValRef.Val & 0xf;
-                var val = otherEntity.BalanceRecord.Values[balanceValueIndex];
+                var val = otherEntity.BalanceRecord.Values[balanceValueIndex - 1];
 
                 //if (_gameEngine.StaticVariables.g_debugState < 0
                 //    && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
@@ -546,7 +554,7 @@ public class EntityManager
                             EntityNames.GetName(entity.SpriteTableIndex),
                             EntityNames.GetName(otherEntity.SpriteTableIndex),
                             _gameEngine.StaticVariables.g_weaponNames[balanceValueIndex],
-                            _gameEngine.StaticVariables.g_damageNames[otherEntity.BalanceRecord.Values[balanceValueIndex] >> 6],
+                            _gameEngine.StaticVariables.g_damageNames[val >> 6],
                             val);
 
                     _gameEngine.LogManager.Log(log);

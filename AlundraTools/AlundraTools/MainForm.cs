@@ -18,7 +18,15 @@ public partial class MainForm : Form
 
     private void MainForm_Load(object? sender, EventArgs e)
     {
-        //toolStripMenuItem1_Click(this, EventArgs.Empty);
+        var saveStateDirectory = Path.Combine(Environment.CurrentDirectory, "SaveStates");
+
+        if (Directory.Exists(saveStateDirectory))
+        {
+            foreach (var file in Directory.GetFiles(saveStateDirectory, "*.json"))
+            {
+                listBoxSaveStates.Items.Add(Path.GetFileName(file));
+            }
+        }
     }
 
     private void openDATASBINToolStripMenuItem_Click(object sender, EventArgs e)
@@ -65,7 +73,23 @@ public partial class MainForm : Form
 
     private void toolStripMenuItem1_Click(object sender, EventArgs e)
     {
+        LaunchGame(-1, null);
+    }
+
+    private void listBoxSaveStates_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+        if (listBoxSaveStates.SelectedIndex != -1)
+        {
+            var selectedFile = listBoxSaveStates.SelectedItem.ToString();
+            var saveStateDirectory = Path.Combine(Environment.CurrentDirectory, "SaveStates");
+            var filePath = Path.Combine(saveStateDirectory, selectedFile);
+            LaunchGame(-1, filePath);
+        }
+    }
+    private static void LaunchGame(int mapId, string gameStateFile)
+    {
         StaticVariables.ForceDesiredMap = -1;
+        StaticVariables.GameStateFileNameToLoad = gameStateFile;
 
         var ofd = new OpenFileDialog();
         ofd.Filter = "DATAS.BIN|DATAS.BIN|All Files (*.*)|*.*";

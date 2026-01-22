@@ -1,4 +1,5 @@
 ﻿using AlundraEngine.Gameplay;
+using System.Text.Json;
 
 namespace AlundraEngine;
 
@@ -39,5 +40,26 @@ public class SaveData
         SaveSlotIndex = source.SaveSlotIndex;
         Field_757 = source.Field_757;
         Offset = source.Offset;
+    }
+
+    public void SaveToJson(string filePath)
+    {
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            IncludeFields = true
+        };
+        string jsonString = JsonSerializer.Serialize(this, options);
+        File.WriteAllText(filePath, jsonString);
+    }
+
+    public static SaveData LoadFromJson(string filePath)
+    {
+        var options = new JsonSerializerOptions
+        {
+            IncludeFields = true
+        };
+        string jsonString = File.ReadAllText(filePath);
+        return JsonSerializer.Deserialize<SaveData>(jsonString, options) ?? new SaveData();
     }
 }

@@ -379,7 +379,16 @@ public static class FunctionTypeD
     //8007e79c
     public static void AI_FUN_8007e79c(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        if (entity.Name != "Bombe")
+        {
+            Debugger.Break();
+        }
+
+        var value = entity.TouchingEntity.BalanceAnimValRef.Val & 0xf;
+        if (value == 4 || value == 6 || value == 10)
+        {
+            entity.Status = 3;
+        }
     }
 
     //8007e7e4

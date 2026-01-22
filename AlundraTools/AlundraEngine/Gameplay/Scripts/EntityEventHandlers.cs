@@ -2195,9 +2195,9 @@ public class EntityEventHandlers
     private int Script_105_069(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.g_entityFollowedByCamera = null;
-        _gameEngine.StaticVariables.g_cameraLookAtX = variables[1];
-        _gameEngine.StaticVariables.g_cameraLookAtY = variables[3];
-        _gameEngine.StaticVariables.g_cameraLookAtZ = variables[5];
+        _gameEngine.StaticVariables.g_cameraLookAtX = variables[1] | (variables[2] << 8);
+        _gameEngine.StaticVariables.g_cameraLookAtY = variables[3] | (variables[4] << 8);
+        _gameEngine.StaticVariables.g_cameraLookAtZ = variables[5] | (variables[6] << 8);
         return 7;
     }
 
