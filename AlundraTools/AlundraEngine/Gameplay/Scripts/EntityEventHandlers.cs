@@ -265,7 +265,7 @@ public class EntityEventHandlers
                     _gameEngine.StaticVariables.PlayerEntity.ForceStepX = 0;
                     _gameEngine.StaticVariables.PlayerEntity.ForceY = 0;
                     _gameEngine.StaticVariables.PlayerEntity.ForceX = 0;
-                    break;
+                    goto default;
 
                 default:
                     if (entity.MapEventProgramId == ScriptHelper.ProgramCTick)
@@ -1638,8 +1638,6 @@ public class EntityEventHandlers
     // 8003EB20
     private int Script_82_052(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
-
         Portal portal;
         portal = _gameEngine.GetActivatedPortal();
 
