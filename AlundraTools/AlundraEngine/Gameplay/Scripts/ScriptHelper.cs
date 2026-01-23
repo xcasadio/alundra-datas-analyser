@@ -190,44 +190,44 @@ public static class ScriptHelper
         array[1 + index] = (byte)((value >> 16) & 0xFFFF);
     }
 
-    public static readonly uint[] XForceTable =
+    public static readonly int[] XForceTable =
     [
-        0x00000000,//0x00
-        0x00000000,//0x01
-        0x00000000,//0x02
-        0x00000000,//0x03
-        0xffff1000,//0x04
-        0xffff1000,//0x05
-        0xffff1000,//0x06
-        0xfff10000,//0x07
-        0x0000f000,//0x08
-        0x0000f000,//0x09
-        0x0000f000,//0x0a
-        0x000f0000,//0x0b
-        0x00000000,//0x0c
-        0x00000000,//0x0d
-        0x00000000,//0x0e
-        0x00000000 //0x0f
+        0,
+        0,
+        0,
+        0,
+        -61440,
+        -61440,
+        -61440,
+        -983040,
+        61440,
+        61440,
+        61440,
+        983040,
+        0,
+        0,
+        0,
+        0 
     ];
 
-    public static readonly uint[] YForceTable =
+    public static readonly int[] YForceTable =
     [
-        0x00000000,//0x00
-        0xffff6000,//0x01
-        0x0000a000,//0x02
-        0x00000000,//0x03
-        0x00000000,//0x04
-        0xffff6000,//0x05
-        0x0000a000,//0x06
-        0x00000000,//0x07
-        0x00000000,//0x08
-        0xffff6000,//0x09
-        0x0000a000,//0x0a
-        0x00000000,//0x0b
-        0x00000000,//0x0c
-        0xffff6000,//0x0d
-        0x0000a000,//0x0e
-        0x00000000 //0x0f
+        0,
+        -40960,
+        40960,
+        0,
+        0,
+        -40960,
+        40960,
+        0,
+        0,
+        -40960,
+        40960,
+        0,
+        0,
+        -40960,
+        40960,
+        0 
     ];
 
     public static readonly short[] DirectionTable = // 80028b34

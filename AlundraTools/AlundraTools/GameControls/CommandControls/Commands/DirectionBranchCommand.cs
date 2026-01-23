@@ -24,7 +24,7 @@ public class DirectionBranchCommand : CommandBase
         {
             var jumpaddr = Offset + offset;
             int j;
-            for (j = 0; i < commands.Count; j++)
+            for (j = 0; j < commands.Count; j++)
             {
                 if (commands[j].Offset == jumpaddr)
                 {

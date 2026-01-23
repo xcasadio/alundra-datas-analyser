@@ -1370,24 +1370,31 @@ public static class PhysicsEngine
     // 800366fc
     public static void ApplyEntityForces(Entity entity, GameEngine gameEngine)
     {
-        var adjustedXForce = entity.PreviousAdjustedForceX;
-        var adjustedYForce = entity.PreviousAdjustedForceY;
-        var shiftAmount = gameEngine.CurrentMap.Info.Gravity & 0x1f;
-        var xForceComponent = entity.ForceX + ScriptHelper.XForceTable[entity.TileAttributes & 0xf] >> shiftAmount;
-        var yForceComponent = entity.ForceY + ScriptHelper.YForceTable[entity.TileAttributes & 0xf] >> shiftAmount;
-        xForceComponent += adjustedXForce;
-        yForceComponent += adjustedYForce;
+        var shiftAmount = gameEngine.CurrentMap.Info.SlideEffectId & 0x1f; //Gravity
+        var index = entity.TileAttributes & 0xf;
+        var xForceComponent = entity.ForceX + (ScriptHelper.XForceTable[index] >> shiftAmount) + entity.PreviousAdjustedForceX;
+        var yForceComponent = entity.ForceY + (ScriptHelper.YForceTable[index] >> shiftAmount) + entity.PreviousAdjustedForceY;
 
         entity.PreviousAdjustedForceY = 0;
         entity.PreviousAdjustedForceX = 0;
 
-        if (entity.PosX + xForceComponent < entity.NegModX || entity.ScreenClipX < entity.PosX + xForceComponent)
+        if (entity.PosX + xForceComponent < entity.NegModX)
+        {
+            xForceComponent = entity.NegModX - entity.PosX;
+            entity.ForceAdjusted = 1;
+        }
+        else if (entity.ScreenClipX < entity.PosX + xForceComponent)
         {
             xForceComponent = entity.ScreenClipX - entity.PosX;
             entity.ForceAdjusted = 1;
         }
 
-        if (entity.PosY + yForceComponent < entity.NegModY || entity.ScreenClipY < entity.PosY + yForceComponent)
+        if (entity.PosY + yForceComponent < entity.NegModY)
+        {
+            yForceComponent = entity.NegModY - entity.PosY;
+            entity.ForceAdjusted = 1;
+        }
+        else if (entity.ScreenClipY < entity.PosY + yForceComponent)
         {
             yForceComponent = entity.ScreenClipY - entity.PosY;
             entity.ForceAdjusted = 1;
@@ -1548,7 +1555,6 @@ public static class PhysicsEngine
         entity.TileX = (entity.PosX >> 16) / StaticVariables.MapTileWidth;
         entity.TileY = (entity.PosY >> 16) / StaticVariables.MapTileHeight;
         entity.TileZ = entity.PosZ >> 20;
-
 
         var hitz = PhysicsEngine.GetCollisionOnZ(gameEngine, entity);
         entity.FloorHeight = hitz;
