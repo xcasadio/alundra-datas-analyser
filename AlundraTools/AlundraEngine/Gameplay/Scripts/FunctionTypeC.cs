@@ -5340,7 +5340,7 @@ public static class FunctionTypeC
     //orc armure de fer
     public static void AI_UpdateEntityAI_11(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "orc armure de fer")
+        if (entity.Name != "◆Orc (armure de fer) Niv.1")
         {
             Debugger.Break();
         }
@@ -5674,10 +5674,9 @@ public static class FunctionTypeC
     }
 
     //8006b8d4
-    //Champignon
     public static void AI_UpdateEntityAI_15(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Champignon")
+        if (entity.Name != "◆Champignon Niv.1")
         {
             Debugger.Break();
         }
@@ -5841,7 +5840,6 @@ public static class FunctionTypeC
     }
 
     //8006bd30
-    //◆Slime gélatineux
     public static void AI_UpdateEntityAI_17(GameEngine gameEngine, Entity entity)
     {
         if (entity.Name != "◆Slime gélatineux")

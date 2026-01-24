@@ -858,7 +858,7 @@ public class EntityEventHandlers
     // 8003D9BC
     private int Script_32_020(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        //Debugger.Break();
+        int result = 0;
 
         if (eventProgramState.Parameters[1] == variables[0])
         {
@@ -870,11 +870,11 @@ public class EntityEventHandlers
             }
 
             var limit = variables[1] | (variables[2] << 8);
+            result = 3;
 
             if ((diff >> 0x10) < limit)
-
             {
-                return 3;
+                result = 0;
             }
         }
         else
@@ -883,7 +883,7 @@ public class EntityEventHandlers
             eventProgramState.Parameters[2] = logicEntity.PosZ;
         }
 
-        return 0;
+        return result;
     }
 
     // 8003DA28

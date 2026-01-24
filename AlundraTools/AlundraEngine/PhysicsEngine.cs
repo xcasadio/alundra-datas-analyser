@@ -1148,6 +1148,7 @@ public static class PhysicsEngine
         for (var i = 0; i < gameEngine.StaticVariables.g_collideableEntitiesCount; i++)
         {
             var entity = gameEngine.StaticVariables.g_collideableEntities[i];
+            
             if ((entity.Flags & 0x4100) != 0x0100)
             {
                 continue;
@@ -1170,7 +1171,7 @@ public static class PhysicsEngine
                 var other = gameEngine.StaticVariables.g_collideableEntities[j];
 
                 // Z overlap
-                int otherTopZ = other.ModdedPosZ + other.Height + 1;
+                int otherTopZ = other.ModdedPosZ + other.Depth + 1;
                 if (otherTopZ != entity.ModdedPosZ)
                 {
                     continue;
@@ -1182,6 +1183,7 @@ public static class PhysicsEngine
                 if (xDiff < 0)
                 {
                     int val = other.Width + 1;
+
                     if (!(entityModdedXPos - other.ModdedPosX < val))
                     {
                         continue;
@@ -1200,7 +1202,8 @@ public static class PhysicsEngine
 
                 if (yDiff < 0)
                 {
-                    int val = other.Depth + 1;
+                    int val = other.Height + 1;
+
                     if (!(entityModdedYPos - other.ModdedPosY < val))
                     {
                         continue;
