@@ -159,7 +159,19 @@ public static class FunctionTypeD
     //8007dda0
     public static void AI_FUN_8007dda0(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        if (entity.Name != "◆Fantôme Niv.1")
+        {
+            Debugger.Break();
+        }
+
+        if (gameEngine.EntityManager.ComputeNewHp(entity))
+        {
+            entity.Bytes[3] = 1;
+        }
+
+        entity.TargetAnimationId = 4;
+        var direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
+        entity.TargetDirection = direction;
     }
 
     //8007de04
@@ -185,7 +197,8 @@ public static class FunctionTypeD
     //8007dee8
     public static void AI_FUN_8007dee8(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Guêpe Niv.1")
+        if (entity.Name != "◆Guêpe Niv.1"
+            && entity.Name != "◆Zombie Niv.1")
         {
             Debugger.Break();
         }

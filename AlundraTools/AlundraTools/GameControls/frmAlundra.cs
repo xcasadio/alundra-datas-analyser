@@ -1188,7 +1188,7 @@ namespace AlundraTools.GameControls
             }
 
             lblFrameAddr.Text = memoryAddress.ToString("x6");
-            lblFrameData.Text = "delay: " + delay;
+            lblFrameData.Text = $"delay: {delay} ({delay & 0x7f})";
 
             if (imageSet != null)
             {

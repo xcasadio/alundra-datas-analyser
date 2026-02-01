@@ -17,6 +17,8 @@ public class SiFrame
     public readonly FrameCollisionData CollisionData;
     public SiImageSet Images;
 
+    public bool IsTransitionFrame { get; private set; }
+
     public SiFrame(BinaryReader br, SpriteTableHeader header, int memoryAddress)
     {
         MemoryAddress = memoryAddress;
@@ -53,6 +55,8 @@ public class SiFrame
 
         CollisionOffset = -1;
         ImageSetPointer = -1;
+
+        IsTransitionFrame = true;
     }
 
     public override string ToString()

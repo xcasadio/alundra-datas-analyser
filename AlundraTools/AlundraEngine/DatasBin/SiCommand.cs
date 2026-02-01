@@ -18,32 +18,6 @@ public class SiCommand
     public readonly byte Command;
     public readonly byte[] Parameters;
     public readonly int Size;
-    public int RefOffset;
-
-    public string Print(int depth, List<SiCommand> commands)
-    {
-        var index = commands.IndexOf(this);
-        var output = index.ToString("d3") + " ";
-        output += new string(' ', depth * 4);
-        output += PrintName(commands);
-        output += $"({PrintCode()})";
-        if (HasParameters)
-        {
-            output += $" ({PrintParameters(commands)})";
-        }
-        return output;
-    }
-
-    public string PrintEvent(int depth, List<SiCommand> commands)
-    {
-        var output = new string(' ', depth * 4);
-        output += PrintName(commands);
-        if (HasParameters)
-        {
-            output += $" ({PrintParameters(commands)})";
-        }
-        return output;
-    }
 
     public virtual string PrintName(List<SiCommand> commands)
     {

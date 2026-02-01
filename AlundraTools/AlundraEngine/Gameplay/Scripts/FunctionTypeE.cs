@@ -23,7 +23,9 @@ public static class FunctionTypeE
     public static void AI_FUN_8007ed30(GameEngine gameEngine, Entity entity)
     {
         if (entity.Name != "Caisse en bois générique"
-            && entity.Name != "Cruche générique")
+            && entity.Name != "Cruche générique"
+            && entity.Name != "Tonneau générique"
+            && entity.Name != "Pierre générique")
         {
             Debugger.Break();
         }
@@ -44,7 +46,9 @@ public static class FunctionTypeE
     //spores nv1
     public static void AI_FUN_8007eda0(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Projectile")
+        if (entity.Name != "◆Projectile"
+            && entity.Name != "◆Roche élémentaire"
+            && entity.Name != "Magie de terre Niv.1")
         {
             Debugger.Break();
         }

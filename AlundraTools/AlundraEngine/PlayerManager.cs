@@ -2290,10 +2290,93 @@ public class PlayerManager
         return 0;
     }
 
+    //magic earth nv1
     private int FUN_80035320()
     {
+        int iVar1;
+        int uVar2;
 
-        Debugger.Break();
+        if (_gameEngine.StaticVariables.g_playerEffectPhase == 1)
+        {
+            iVar1 = IsFadeActive();
+
+            if (iVar1 != 0)
+            {
+                return 1;
+            }
+
+            if (_gameEngine.StaticVariables.g_playerEffectCurrentFrame < 100)
+            {
+                return 0;
+            }
+
+            _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = 0x34;
+            _gameEngine.StaticVariables.g_playerEffectPhase = _gameEngine.StaticVariables.g_playerEffectPhase + 1;
+        }
+        else if (_gameEngine.StaticVariables.g_playerEffectPhase < 2)
+        {
+            if (_gameEngine.StaticVariables.g_playerEffectPhase != 0)
+            {
+                return 0;
+            }
+
+            iVar1 = IsFadeActive();
+
+            if (iVar1 != 0)
+            {
+                return 1;
+            }
+
+            var i = 0;
+            var param = _gameEngine.StaticVariables.MagicEarthParameters_ARRAY_8002343c[0];
+
+            if (0x13 < _gameEngine.StaticVariables.g_playerEffectCurrentFrame)
+            {
+                uVar2 = 0x14;
+
+                do
+                {
+                    param = _gameEngine.StaticVariables.MagicEarthParameters_ARRAY_8002343c[i];
+
+                    if (uVar2 == _gameEngine.StaticVariables.g_playerEffectCurrentFrame)
+                    {
+                        var entitySpawned = _gameEngine.SpawnWarpEntity(_gameEngine.StaticVariables.PlayerEntity, 
+                            0, 0x10,
+                            _gameEngine.StaticVariables.PlayerEntity.PosX,
+                            _gameEngine.StaticVariables.PlayerEntity.PosY,
+                            _gameEngine.StaticVariables.PlayerEntity.PosZ,
+                            (uint)((_gameEngine.StaticVariables.PlayerEntity.TargetDirection + param.ForceZ) & 0x1f));
+
+                        if (entitySpawned != null)
+                        {
+                            entitySpawned.ForceZ = param.Index << 8;
+                        }
+                    }
+
+                    i++;
+                } while (param.Index <= _gameEngine.StaticVariables.g_playerEffectCurrentFrame);
+            }
+
+            if (param.Index != -1)
+            {
+                return 0;
+            }
+
+            _gameEngine.StaticVariables.g_playerEffectPhase = _gameEngine.StaticVariables.g_playerEffectPhase + 1;
+        }
+        else
+        {
+            if (_gameEngine.StaticVariables.g_playerEffectPhase != 2)
+            {
+                return 0;
+            }
+
+            if (_gameEngine.StaticVariables.PlayerEntity.TargetAnimationId != 0x34)
+            {
+                return 1;
+            }
+        }
+
         return 0;
     }
 
@@ -2343,6 +2426,22 @@ public class PlayerManager
         }
 
         return 1;
+    }
+
+    //800351b8
+    public int IsFadeActive()
+
+    {
+        int result = 0;
+
+        if (_gameEngine.StaticVariables.PlayerEntity.Slope_18c == 4
+            || 1 < _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId - 0x32)
+        {
+            AnimateWarpEffect();
+            result = 1;
+        }
+
+        return result;
     }
 
     // 80031a68

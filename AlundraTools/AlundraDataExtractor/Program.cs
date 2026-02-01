@@ -306,9 +306,6 @@ internal class Program
     {
         datasBin.LoadingScreen.Save(Path.Combine(extractionPath, "data", "loading_screen.png"), ImageFormat.Png);
 
-        using var br = datasBin.OpenBin();
-        datasBin.AlundraGameMap.Load(br);
-
         var tileAnimDescriptors = GameInitializer.CreateTileAnimDescriptors(0);
         EntityNames.Load(EntityNames.Language.French);
 
@@ -316,6 +313,7 @@ internal class Program
         Directory.CreateDirectory(dataPath);
 
         Console.WriteLine("Extract map alundra");
+        using var br = datasBin.OpenBin();
         datasBin.AlundraGameMap.Load(br);
         SaveAlundraMap(datasBin.AlundraGameMap, dataPath);
 

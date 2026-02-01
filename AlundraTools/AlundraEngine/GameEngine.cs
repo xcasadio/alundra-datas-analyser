@@ -270,6 +270,11 @@ public class GameEngine
     // 8002bd60
     private void RenderScene()
     {
+        if (Renderer == null)
+        {
+            return;
+        }
+
         GraphicManager.RenderScene();
     }
 
@@ -752,7 +757,7 @@ public class GameEngine
             var rand = (uint)(Random.Next() % 17);
             var index = ((contentId & 0x7F) << 4) | rand;
 
-            index = (int)((ulong)Random.Next() * 0x10 >> 0x20) + (contentId & 0x7f) * 0x10;
+            index = (int)((Random.Next() * 0x10) >> 0x20) + (contentId & 0x7f) * 0x10;
             contentId = StaticVariables.g_itemRandomTable[index];
             isValid = contentId < 0x100;
         }
@@ -1995,7 +2000,7 @@ public class GameEngine
     //8002d7b0
     public void ChangeAreaTileProperties(int tileId)
     {
-        Debugger.Break();
+        //Debugger.Break();
         var mapCopy = CurrentMap.Map.MapCopies[tileId]; //tileId - 2
         ChangeAreaTileProperties(mapCopy.FromX, mapCopy.FromY, mapCopy.Width, mapCopy.Height, mapCopy.ToX, mapCopy.ToY);
     }
@@ -2181,6 +2186,12 @@ public class GameEngine
                 && StaticVariables.PlayerEntity.TileY >= infoPortal.Y1
                 && StaticVariables.PlayerEntity.TileY <= infoPortal.Y2)
             {
+                if (infoPortal.DestMapId == 0)
+                {
+                    return null;
+                    //Debugger.Break();
+                }
+
                 return infoPortal;
             }
         }
@@ -2471,8 +2482,8 @@ public class GameEngine
         string template = "  HP 00       TIME 00:00:00   ";
         var chars = template.ToCharArray();
 
-        // --- HP (de g_entitySlots[0]) ---
-        int hp = StaticVariables.g_entitySlots[0].Hp;
+        // --- HP (de PlayerEntity) ---
+        int hp = StaticVariables.PlayerEntity.Hp;
         if (hp < 0)
         {
             hp = 0;

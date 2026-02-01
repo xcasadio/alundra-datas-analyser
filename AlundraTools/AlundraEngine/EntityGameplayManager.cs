@@ -542,7 +542,7 @@ public class EntityGameplayManager
         }
         else
         {
-            direction = (uint)ScriptHelper.GetDirectionToTarget(_gameEngine.StaticVariables.g_entitySlots[0].PosX - entity.PosX, _gameEngine.StaticVariables.g_entitySlots[0].PosY - entity.PosY);
+            direction = (uint)ScriptHelper.GetDirectionToTarget(_gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX, _gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
             entity.TargetDirection = direction;
         }
 

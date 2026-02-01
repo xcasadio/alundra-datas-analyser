@@ -201,7 +201,7 @@ public class EntityManager
     }
 
     // 80038ab4
-    private void UpdateAnimation(Entity entity)
+    public void UpdateAnimation(Entity entity)
     {
         AnimationSet? animSet;
         SiFrame? currentFrame;
@@ -223,32 +223,17 @@ public class EntityManager
             entity.AnimationDirection = animationDirectionFromTargetDirection;
             entity.AnimCompleteCounter = 0;
             entity.AnimationFrameIndex = 0;
-            animSet = null;
+            //_gameEngine.LogManager.Log(entity, $"{entity.TargetAnimationId}:{entity.TargetDirection >> 3} Reset frame {entity.AnimationFrameIndex}");
 
-            //try
-            //{
-                animSet = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
-            //}
-            //catch (Exception e)
-            //{
-            //    Debugger.Break();
-            //}
+            animSet = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
+            currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
 
-            currentFrame = null;
-            //try
-            //{
-                currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
-            //}
-            //catch (Exception e)
-            //{
-            //    Debugger.Break();
-            //}
             entity.AnimationSet = animSet;
             entity._Frame = currentFrame;
             entity.FirstFrame = currentFrame;
             entity.IsZForceApplied = animSet.IsZForceApplied;
 
-            entity.NextFrameDelay = entity.Frame.Delay & 0x7f;
+            entity.NextFrameDelay = currentFrame.Delay & 0x7f;
             entity.ForceResetAnimationFlag = 0;
             entity.AnimFlags = entity.AnimationSet.Acceleration; // TODO Acceleration ??
 
@@ -272,29 +257,22 @@ public class EntityManager
         }
         else if (entity.NextFrameDelay != 0)
         {
-            if (--entity.NextFrameDelay > 0)
+            entity.NextFrameDelay--;
+            if (entity.NextFrameDelay > 0)
             {
                 return;
             }
 
-            SiAnimation preloadedAnim = null;
+            SiAnimation preloadedAnim = entity.AnimationSet.PreloadedAnims[entity.TargetDirection >> 3];
 
-            //try
-            //{
-                preloadedAnim = entity.AnimationSet.PreloadedAnims[entity.TargetDirection >> 3];
-            //}
-            //catch (Exception e)
-            //{
-            //    Debugger.Break();
-            //}
-
-            if (entity.AnimationFrameIndex == preloadedAnim.Frames.Length - 2)
+            if (entity.AnimationFrameIndex == preloadedAnim.Frames.Length - 1)
             {
-                var lastFrame = preloadedAnim.Frames[entity.AnimationFrameIndex + 1];
+                var lastFrame = entity._Frame;//preloadedAnim.Frames[entity.AnimationFrameIndex + 1];
 
                 if (lastFrame.Delay == 1)
                 {
                     entity.AnimationFrameIndex = 0;
+                    //_gameEngine.LogManager.Log(entity, $"{entity.TargetAnimationId}-{entity.TargetDirection >> 3} Reset loop frame {entity.AnimationFrameIndex}");
                     entity._Frame = entity.FirstFrame;
                     entity.AnimCompleteCounter++;
                 }
@@ -307,24 +285,46 @@ public class EntityManager
                         return;
                     }
 
+                    //_gameEngine.LogManager.Log(entity, $"{entity.TargetAnimationId}-{entity.TargetDirection >> 3} Change animation {lastFrame.TransformIndexLow}");
                     entity.TargetAnimationId = lastFrame.TransformIndexLow;
+                    entity.AnimationFrameIndex = 0;
                     UpdateAnimation(entity); // recursive call to update the animation
                     return;
                 }
             }
         }
 
-        if ((entity._Frame.Delay & 0x80) != 0)
-        {
-            entity.NextFrameDelay = entity._Frame.Delay & 0x7F;
-            animSet = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
-            currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex + 1];
-            entity._Frame = currentFrame;
-        }
+        //_gameEngine.LogManager.Log(entity, $"{entity.TargetAnimationId}-{entity.TargetDirection >> 3} Change frame {entity.AnimationFrameIndex}");
 
         animSet = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
-        currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
-        //currentFrame = entity._Frame;
+        var frameIndex = Math.Min(entity.AnimationFrameIndex, animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames.Length - 1);
+        currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[frameIndex];
+
+        if (currentFrame.IsTransitionFrame && frameIndex > 0)
+        {
+            currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[frameIndex - 1];
+        }
+
+        if ((currentFrame.Delay & 0x80) != 0)
+        {
+            animSet = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
+            entity.NextFrameDelay = currentFrame.Delay & 0x7F;
+
+            var nextFrameIndex = entity.AnimationFrameIndex + 1;
+
+            if (nextFrameIndex >= animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames.Length)
+            {
+                nextFrameIndex = entity.AnimationFrameIndex;
+                updateFrameIndex = false;
+            }
+
+            entity._Frame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[nextFrameIndex]; //currentFrame;
+
+            if (!updateFrameIndex && entity.AnimationFrameIndex == 0)
+            {
+                entity.AnimationFrameIndex = 1;
+            }
+        }
 
         if (currentFrame.CollisionData != null)
         {
@@ -361,18 +361,11 @@ public class EntityManager
             var anim = entity.AnimationSet.PreloadedAnims[entity.TargetDirection >> 3];
             var nextFrameIndex = entity.AnimationFrameIndex + 1;
 
-            if (nextFrameIndex >= anim.NumberOfFrames)
+            if (nextFrameIndex > anim.NumberOfFrames)
             {
                 nextFrameIndex = 0;
                 entity._Frame = entity.FirstFrame;
                 entity.AnimCompleteCounter++;
-            }
-            else
-            {
-                if (entity.AnimationSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[nextFrameIndex] == null)
-                {
-                    entity._Frame = entity.FirstFrame;
-                }
             }
 
             entity.AnimationFrameIndex = nextFrameIndex;
@@ -419,7 +412,7 @@ public class EntityManager
     //80039300
     private void UpdateBalanceRecords()
     {
-        _gameEngine.StaticVariables.g_balanceAnimIndex = (int)_gameEngine.StaticVariables.g_entitySlots[0].TargetAnimationId;
+        _gameEngine.StaticVariables.g_balanceAnimIndex = (int)_gameEngine.StaticVariables.PlayerEntity.TargetAnimationId;
 
         for (var i = 0; i < _gameEngine.StaticVariables.g_activeEntityCount; i++)
         {
@@ -485,6 +478,10 @@ public class EntityManager
                 {
                     continue;
                 }
+
+                //other.ModdedPosX = 36175872
+                //other.ModdedPosY = 52428800
+                //other.ModdedPosZ = 2097153
 
                 //X
                 var difx = entity.HitBoxX - otherEntity.ModdedPosX;
@@ -776,10 +773,12 @@ public class EntityManager
         for (var i = 0; i < _gameEngine.StaticVariables.g_activeEntityCount; i++)
         {
             var entity = _gameEngine.StaticVariables.g_activeEntities[i];
+            //_gameEngine.LogManager.SetCategory($"Animation entity {entity.Index}");
             UpdateAnimation(entity);
-            Debug.Assert(entity.Frame != null);
-            Debug.Assert(entity.Frame.Images != null);
+            //_gameEngine.LogManager.Log(entity, $"{entity.TargetAnimationId}-{entity.TargetDirection >> 3} {entity.AnimationFrameIndex} {entity.NextFrameDelay}");
         }
+
+        _gameEngine.LogManager.ResetCategory();
     }
 
     //800386d0
@@ -1028,7 +1027,7 @@ public class EntityManager
         }
 
         //entity.PosY + entity.Height + (entity.Frame.Images.DepthSortValue << 16); //
-        var sortValue = entity.PosY + (entity.Frame.Images.DepthSortValue << 16);
+        var sortValue = entity.PosY + (entity.SpriteRef.DepthSortValue << 16);
 
         if ((entity.Flags & 0x80) != 0
             || (entity.AnimFlags & 0x80) != 0)
@@ -1352,7 +1351,7 @@ public class EntityManager
 
         if (-1 < _gameEngine.StaticVariables.g_numberOfEntities)
         {
-            entity2 = _gameEngine.StaticVariables.g_entitySlots[0];
+            entity2 = _gameEngine.StaticVariables.g_entitySlots[i];
 
             do
             {

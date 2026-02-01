@@ -2629,29 +2629,21 @@ public class EntityEventHandlers
     private int Script_136_088(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
+        
+        //int matchingEntityCount;
+        //var val = _gameEngine.StaticVariables.BYTE_ARRAY_80023d2c[variables[2]];
+        //matchingEntityCount = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
+        //
+        //if (0 < matchingEntityCount)
+        //{
+        //    do
+        //    {
+        //        var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[--matchingEntityCount];
+        //        entity.Status = val;
+        //    } while (0 < matchingEntityCount);
+        //}
+
         return 3;
-        /*
-        int matchingEntityCount;
-        int iVar1;
-        int piVar2;
-        int piVar3;
-        piVar3 = (&PTR_DAT_80023d2c)[variables[0][2]];
-        matchingEntityCount = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
-
-        if (0 < matchingEntityCount)
-        {
-            piVar2 = _gameEngine.StaticVariables.g_activeEntityRefId + matchingEntityCount;
-
-            do
-            {
-                iVar1 = piVar2;
-                piVar2 = piVar2 + -1;
-                matchingEntityCount = matchingEntityCount + -1;
-                (iVar1 + 0x10) = piVar3;
-            } while (0 < matchingEntityCount);
-        }
-
-        return 3;*/
     }
 
     // 80040194
@@ -2706,7 +2698,7 @@ public class EntityEventHandlers
 
         if (entity == null)
         {
-            //_gameEngine.PrintCommandMap();
+            //_gameEngine.PrintCommandMap("Illegal InitData Number!!");
         }
 
         var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
@@ -3859,7 +3851,7 @@ public class EntityEventHandlers
             if ((_gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].Flags & 0x800000U) != 0)
             {
                 var targetEntity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0];
-                var image = targetEntity.Frame.Images.Images[targetEntity.AnimationDirection];
+                var image = targetEntity.SpriteRef.Images[targetEntity.AnimationDirection];
                 var bitmap = _gameEngine.AlundraMap.GenerateSpriteBitmap(image, _gameEngine.AlundraMap.SpriteInfo.Palettes[image.Palette]);
 
                 _gameEngine.MainInventoryManager.StartHudTransition(
@@ -3888,7 +3880,7 @@ public class EntityEventHandlers
     }
 
 
-    public static Dictionary<int, string> GetHandlerNameByCodes()
+    public static Dictionary<int, string> GetFunctionNameByCodes()
     {
         Dictionary<int, string> handlerNameByCodes = new();
 

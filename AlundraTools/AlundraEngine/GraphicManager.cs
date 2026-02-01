@@ -446,14 +446,13 @@ public class GraphicManager
                 //display entity
                 var map = entity.IsMapSprite ? _gameEngine.CurrentMap : _gameEngine.DatasBin.AlundraGameMap;
         
-                if (entity.Frame?.Images != null)
+                if (entity.SpriteRef?.Images != null)
                 {
-                    var iset = entity.Frame.Images;
                     // Use ZSortValue directly for sorting - higher values = rendered later (in front)
                     var entityZ = entity.ZSortValue;
-                    for (var idex = iset.NumberOfImages - 1; idex >= 0; idex--)
+                    for (var idex = entity.SpriteRef.NumberOfImages - 1; idex >= 0; idex--)
                     {
-                        var img = iset.Images[idex];
+                        var img = entity.SpriteRef.Images[idex];
         
                         var bmp = map.GetSpriteBitmap(img);
                         DrawSprite(bmp, img, scx, scy, entityZ, _gameEngine.Renderer); 

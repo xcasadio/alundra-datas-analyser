@@ -8,6 +8,12 @@ public static class AI_Melzas2
     //Load function
     public static void SpawnVerticalWarpColumns(GameEngine gameEngine, Entity entity)
     {
+        if (entity.Name != "Melzas2_FinalBoss")
+        {
+            Debugger.Break();
+            return;
+        }
+
         int z = 0xF40000;
         entity.ItemState = 1;
         entity.DelayOrAngle = 1;
@@ -46,6 +52,12 @@ public static class AI_Melzas2
     //tick function
     public static void AI_Melzas2_FinalBoss(GameEngine gameEngine, Entity entity)
     {
+        if (entity.Name != "Melzas2_FinalBoss")
+        {
+            Debugger.Break();
+            return;
+        }
+
         uint flagByte = entity.Bytes[3];
 
         if (flagByte != 0)
@@ -152,6 +164,12 @@ public static class AI_Melzas2
     //80080ae0
     public static void UpdateEntityAI_ExecuteBossSpecialMove(GameEngine gameEngine, Entity entity)
     {
+        if (entity.Name != "Melzas2_FinalBoss")
+        {
+            Debugger.Break();
+            return;
+        }
+
         var frameCounter = (int)entity.AIValues[1];
         frameCounter = frameCounter - 1;
         entity.AIValues[1] = (short)frameCounter;
@@ -257,6 +275,12 @@ public static class AI_Melzas2
     //80062bc0
     public static void AI_UpdateMelzas2CutsceneChannels(GameEngine gameEngine, Entity entity)
     {
+        if (entity.Name != "Melzas2_FinalBoss")
+        {
+            Debugger.Break();
+            return;
+        }
+
         bool bVar1;
         bool bVar2;
         int amplitude;

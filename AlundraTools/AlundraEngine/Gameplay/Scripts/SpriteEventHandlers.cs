@@ -87,8 +87,8 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramCTick, 37, FunctionTypeC.AI_UpdateEntityAI_23_2);
         Register(ScriptHelper.ProgramCTick, 38, FunctionTypeC.AI_FUN_8006eb9c);
         Register(ScriptHelper.ProgramCTick, 39, FunctionTypeC.AI_UpdateEntityAI_Boss);
-        Register(ScriptHelper.ProgramCTick, 40, FunctionTypeC.AI_UpdateBossEntityState);
-        Register(ScriptHelper.ProgramCTick, 41, FunctionTypeC.AI_UpdateBossEntityState2);
+        Register(ScriptHelper.ProgramCTick, 40, AncientGuardian.AI_UpdateBossEntityState);
+        Register(ScriptHelper.ProgramCTick, 41, AncientGuardian.AI_UpdateBossEntityState2);
         Register(ScriptHelper.ProgramCTick, 42, FunctionTypeC.AI_FUN_8006f8e4);
         Register(ScriptHelper.ProgramCTick, 43, FunctionTypeC.AI_UpdateEntityAI_BoosPhase3);
         Register(ScriptHelper.ProgramCTick, 44, FunctionTypeC.AI_UpdateEntityAI_SpecialBoss);
@@ -124,7 +124,7 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramCTick, 74, FunctionTypeC.AI_FUN_8007bb9c);
         Register(ScriptHelper.ProgramCTick, 75, FunctionTypeC.AI_FUN_8007bd8c);
         Register(ScriptHelper.ProgramCTick, 76, FunctionTypeC.AI_FUN_8007c024);
-        Register(ScriptHelper.ProgramCTick, 77, FunctionTypeC.AI_ApplyZGravityIfIdle);
+        Register(ScriptHelper.ProgramCTick, 77, AncientGuardian.AI_ApplyZGravityIfIdle);
         Register(ScriptHelper.ProgramCTick, 78, FunctionTypeC.AI_FUN_8007c768);
         Register(ScriptHelper.ProgramCTick, 79, FunctionTypeC.AI_FUN_8006f860);
         Register(ScriptHelper.ProgramCTick, 80, FunctionTypeC.AI_FUN_800756ec);

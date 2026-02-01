@@ -200,9 +200,19 @@ public class EffectManager
             if ((frameData.Delay & 0x80) != 0)
             {
                 effect.NextFrameDelay = (byte)(frameData.Delay & 0x7f);
-
                 effect.CurrentFrameIndex++;
-                effect.Frame = anim.Frames[effect.CurrentFrameIndex];
+
+                //Todo fix bug : during the first scene with Lars the effect bugs
+                effect.CurrentFrameIndex = Math.Min(effect.CurrentFrameIndex, anim.Frames.Length - 1);
+
+                try
+                {
+                    effect.Frame = anim.Frames[effect.CurrentFrameIndex];
+                }
+                catch (Exception e)
+                {
+                    Debugger.Break();
+                }
 
                 if (frameData.Images != null /*&& effect.Frame.ImageSetPointer != -1*/)
                 {

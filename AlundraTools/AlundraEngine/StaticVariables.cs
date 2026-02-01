@@ -11733,13 +11733,60 @@ public class StaticVariables
 
     public int PTR_LAB_80022d1c; // 80022D1C
     public int PTR_HandleWarpExitDecision_80022fbc; // 80022FBC
-    public short DAT_8002343c; // 8002343C
-    public short DAT_8002343e; // 8002343E
-    public short DAT_80023440; // 80023440
-    public short DAT_80023442; // 80023442
-    public short DAT_80023504; // 80023504
-    public short DAT_80023506; // 80023506
-    public short DAT_80023508; // 80023508
+
+    // 8002343C
+    public readonly MagicEarthParameters[] MagicEarthParameters_ARRAY_8002343c =
+    {
+    new MagicEarthParameters { Index = 0x0014, ForceZ = 0x0400, Direction = 0x0003 }, // [0]
+    new MagicEarthParameters { Index = 0x0014, ForceZ = 0x0400, Direction = -6 },     // [1]  0xFFFA
+    new MagicEarthParameters { Index = 0x0019, ForceZ = 0x0400, Direction = 0x0000 }, // [2]
+    new MagicEarthParameters { Index = 0x0019, ForceZ = 0x0400, Direction = 0x0006 }, // [3]
+    new MagicEarthParameters { Index = 0x001E, ForceZ = 0x0400, Direction = 0x0003 }, // [4]
+    new MagicEarthParameters { Index = 0x001E, ForceZ = 0x0400, Direction = 0x0002 }, // [5]
+    new MagicEarthParameters { Index = 0x0023, ForceZ = 0x0400, Direction = 0x0008 }, // [6]
+    new MagicEarthParameters { Index = 0x0023, ForceZ = 0x0400, Direction = 0x000E }, // [7]
+    new MagicEarthParameters { Index = 0x0028, ForceZ = 0x0400, Direction = 0x0003 }, // [8]
+    new MagicEarthParameters { Index = 0x0028, ForceZ = 0x0400, Direction = 0x000A }, // [9]
+    new MagicEarthParameters { Index = 0x002D, ForceZ = 0x0400, Direction = 0x0010 }, // [10]
+    new MagicEarthParameters { Index = 0x002D, ForceZ = 0x0400, Direction = 0x0016 }, // [11]
+    new MagicEarthParameters { Index = 0x0032, ForceZ = 0x0400, Direction = 0x0003 }, // [12]
+    new MagicEarthParameters { Index = 0x0032, ForceZ = 0x0400, Direction = 0x0012 }, // [13]
+    new MagicEarthParameters { Index = 0x0037, ForceZ = 0x0400, Direction = 0x0018 }, // [14]
+    new MagicEarthParameters { Index = 0x0037, ForceZ = 0x0400, Direction = 0x001E }, // [15]
+
+    new MagicEarthParameters { Index = 0x003C, ForceZ = 0x0500, Direction = 0x0003 }, // [16]
+    new MagicEarthParameters { Index = 0x003C, ForceZ = 0x0500, Direction = -6 },     // [17] 0xFFFA
+    new MagicEarthParameters { Index = 0x0041, ForceZ = 0x0500, Direction = 0x0000 }, // [18]
+    new MagicEarthParameters { Index = 0x0041, ForceZ = 0x0500, Direction = 0x0006 }, // [19]
+    new MagicEarthParameters { Index = 0x0046, ForceZ = 0x0500, Direction = 0x0003 }, // [20]
+    new MagicEarthParameters { Index = 0x0046, ForceZ = 0x0500, Direction = 0x0002 }, // [21]
+    new MagicEarthParameters { Index = 0x004B, ForceZ = 0x0500, Direction = 0x0008 }, // [22]
+    new MagicEarthParameters { Index = 0x004B, ForceZ = 0x0500, Direction = 0x000E }, // [23]
+    new MagicEarthParameters { Index = 0x0050, ForceZ = 0x0500, Direction = 0x0003 }, // [24]
+    new MagicEarthParameters { Index = 0x0050, ForceZ = 0x0500, Direction = 0x000A }, // [25]
+    new MagicEarthParameters { Index = 0x0055, ForceZ = 0x0500, Direction = 0x0010 }, // [26]
+    new MagicEarthParameters { Index = 0x0055, ForceZ = 0x0500, Direction = 0x0016 }, // [27]
+    new MagicEarthParameters { Index = 0x005A, ForceZ = 0x0500, Direction = 0x0003 }, // [28]
+    new MagicEarthParameters { Index = 0x005A, ForceZ = 0x0500, Direction = 0x0012 }, // [29]
+    new MagicEarthParameters { Index = 0x005F, ForceZ = 0x0500, Direction = 0x0018 }, // [30]
+    new MagicEarthParameters { Index = 0x005F, ForceZ = 0x0500, Direction = 0x001E }, // [31]
+
+    new MagicEarthParameters { Index = -1,     ForceZ = 0x0000, Direction = 0x0000 }, // [32] 0xFFFF sentinel
+    new MagicEarthParameters { Index = 0x0000, ForceZ = 0x0010, Direction = 0x0200 }, // [33]
+    new MagicEarthParameters { Index = 0x0020, ForceZ = 0x0400, Direction = 0x0030 }, // [34]
+
+    new MagicEarthParameters { Index = 0x0600, ForceZ = 0x0040, Direction = 0x0800 }, // [35]
+    new MagicEarthParameters { Index = 0x0050, ForceZ = 0x0A00, Direction = 0x0060 }, // [36]
+    new MagicEarthParameters { Index = 0x0C00, ForceZ = 0x0070, Direction = 0x0E00 }, // [37]
+    new MagicEarthParameters { Index = 0x0080, ForceZ = 0x1000, Direction = 0x0090 }, // [38]
+    new MagicEarthParameters { Index = 0x1200, ForceZ = 0x00A0, Direction = 0x1400 }, // [39]
+    new MagicEarthParameters { Index = 0x00B0, ForceZ = 0x1600, Direction = 0x00C0 }, // [40]
+    new MagicEarthParameters { Index = 0x1800, ForceZ = 0x00E0, Direction = 0x1A00 }, // [41]
+    new MagicEarthParameters { Index = 0x00E0, ForceZ = 0x1C00, Direction = 0x00F0 }, // [42]
+    new MagicEarthParameters { Index = 0x1E00, ForceZ = -1,     Direction = 0x0000 }, // [43] ForceZ=0xFFFF
+};
+
+
     public short DAT_80023544; // 80023544
     public short DAT_80023546; // 80023546
     public short DAT_80023548; // 80023548
