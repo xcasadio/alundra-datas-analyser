@@ -15,7 +15,6 @@
 3. [Toolchain](#toolchain)
 4. [Building & Running](#building--running)
 5. [Ghidra](#ghidra)
-6. [Roadmap](#roadmap)
 7. [Contributing](#contributing)
 8. [License](#license)
 9. [Acknowledgements](#acknowledgements)
@@ -34,10 +33,10 @@ This repository contains tools and documentation used to dissect the *Alundra* g
 
 | Software           | Minimum version | Notes                                  |
 | ------------------ | --------------- | -------------------------------------- |
-| .NET SDK           | **8.0**         | Build the C# tooling & CasaEngine fork |
-| Ghidra             | **11.3.1**      | Static analysis of the original ELF    |
+| .NET SDK           | **9.0**         | Build the C# tooling & CasaEngine fork |
+| Ghidra             | **12.0.1**      | Static analysis of the original ELF    |
 | PCSX‑Redux         | Latest          | Debugging the PS‑One ROM in real time  |
-| Visual Studio      | 2022            | Recommended IDE (optional)             |
+| Visual Studio      | 2026            | Recommended IDE (optional)             |
 | MonoGame           | **3.8**         | Game engine used for the remake        |
 
 > **Legal note** – You must own a legitimate copy of the original *Alundra* disc to extract and analyse game data.  No copyrighted assets are distributed in this repository.
@@ -55,10 +54,9 @@ $ dotnet restore
 ### 3. Quick Start
 
 1. Dump all data from your own disc image.
-2. Update paths in `GraphicsTool/appsettings.json`.
-3. Launch the alundramultitool
-4. You can open the Datas.bin to see maps and assets
-5. You can play the game (work in progress). Only used to test the game engine.
+2. Launch the AlundraTools.exe
+3. You can open the Datas.bin to see maps and assets
+4. You can play the game (work in progress). Only used to test the game engine.
 
 ---
 
@@ -66,7 +64,7 @@ $ dotnet restore
 
 | Component              | Purpose                                             |
 | ---------------------- | --------------------------------------------------- |
-| **GraphicsTool**       | Visual exploration of tilesets, sprites & maps      |
+| **AlundraTools**       | Visual exploration of tilesets, sprites & maps      |
 | **CasaEngineMonoGame** | Cross‑platform runtime for the in‑progress remake   |
 | **Scripts/**           | Python helpers (data extraction, format conversion) |
 | **PCSX‑Redux**         | Emulator with symbol loading & memory watch windows |
@@ -81,7 +79,7 @@ $ dotnet restore
 $ dotnet build -c Release
 
 # Run the remake prototype (loads external assets)
-$ dotnet run --project alundramultitool
+$ dotnet run --project AlundraTools
 ```
 
 The prototype currently boots into the intro map and allows basic movement.
@@ -91,14 +89,6 @@ The prototype currently boots into the intro map and allows basic movement.
 ## Ghidra
 
 The analyze has been done with the french version of Alundra.
-
----
-
-## Roadmap
-
-* [ ] **Event scripting VM** – interpret map triggers and cut‑scene events.
-* [ ] **Collision system parity** – replicate original tile & entity collisions.
-* [ ] **Save‑state importer** – convert original memory card saves to JSON.
 
 ---
 
@@ -126,3 +116,4 @@ Source code is released under the **MIT License**.  Original *Alundra* assets re
 * Matrix Software & Sony for creating the original game.
 * The **PCSX‑Redux** team for their excellent debugging emulator.
 * Contributors to **CasaEngine** for sharing their engine with the community.
+* Other project: Alundra PC portage [Alundra Toolkit](https://github.com/Sunnnix/AlundraToolkit)

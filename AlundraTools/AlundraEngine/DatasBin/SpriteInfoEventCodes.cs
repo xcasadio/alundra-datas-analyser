@@ -504,7 +504,7 @@ public class SpriteInfoEventCodes
         { 0x45, "Gravity flag 4 off" },
         { 0x46, "Gravity flag 4 on" },
         { 0x47, "If entity is collided with Z or ForceAdjusted" },
-        { 0x48, "If entity is collided with Z or hitted" },
+        { 0x48, "If entity is collided with Z or hit" },
         { 0x49, "Restart" },
         { 0x4A, "If true restart" },
         { 0x4B, "If false restart" },
