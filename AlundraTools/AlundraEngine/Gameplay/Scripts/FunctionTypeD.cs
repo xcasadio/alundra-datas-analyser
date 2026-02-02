@@ -7,6 +7,11 @@ public static class FunctionTypeD
     //8007d9a4
     public static void AI_FUN_8007d9a4(GameEngine gameEngine, Entity entity)
     {
+        if (entity.Name != "")
+        {
+            Debugger.Break();
+        }
+
         if (gameEngine.EntityManager.ComputeNewHp(entity))
         {
             entity.Bytes[3] = 1;
@@ -18,7 +23,6 @@ public static class FunctionTypeD
     }
 
     //8007da08
-    //◆Homme-lézard (épée) Niv.1
     public static void AI_FUN_8007da08(GameEngine gameEngine, Entity entity)
     {
         if (entity.Name != "◆Homme-lézard (épée) Niv.1")
@@ -80,6 +84,11 @@ public static class FunctionTypeD
     //8007db38
     public static void AI_FUN_8007db38(GameEngine gameEngine, Entity entity)
     {
+        if (entity.Name != "")
+        {
+            Debugger.Break();
+        }
+
         uint direction;
 
         if ((entity.SpriteTableIndex == 0x1b5 || entity.SpriteTableIndex == 0x1b9) && entity.TargetAnimationId - 4 < 3)
@@ -105,6 +114,11 @@ public static class FunctionTypeD
     //mimique niveau 1 touch
     public static void AI_FUN_8007dbe0(GameEngine gameEngine, Entity entity)
     {
+        if (entity.Name != "")
+        {
+            Debugger.Break();
+        }
+
         bool bVar1;
         uint direction;
         byte val;
@@ -138,7 +152,10 @@ public static class FunctionTypeD
     //fish
     public static void AI_FUN_8007dcd8(GameEngine gameEngine, Entity entity)
     {
-        //System.Diagnostics.Debugger.Break();
+        if (entity.Name != "")
+        {
+            Debugger.Break();
+        }
 
         if (gameEngine.EntityManager.ComputeNewHp(entity))
         {
@@ -153,6 +170,11 @@ public static class FunctionTypeD
     //8007dd3c
     public static void AI_FUN_8007dd3c(GameEngine gameEngine, Entity entity)
     {
+        if (entity.Name != "")
+        {
+            Debugger.Break();
+        }
+
         Debugger.Break();
     }
 
@@ -178,6 +200,11 @@ public static class FunctionTypeD
     //muruta griffes nv1
     public static void AI_FUN_8007de04(GameEngine gameEngine, Entity entity)
     {
+        if (entity.Name != "")
+        {
+            Debugger.Break();
+        }
+
         if (gameEngine.EntityManager.ComputeNewHp(entity))
         {
             entity.Bytes[3] = 1;
@@ -191,6 +218,11 @@ public static class FunctionTypeD
     //8007de68
     public static void AI_FUN_8007de68(GameEngine gameEngine, Entity entity)
     {
+        if (entity.Name != "")
+        {
+            Debugger.Break();
+        }
+
         Debugger.Break();
     }
 
@@ -216,6 +248,11 @@ public static class FunctionTypeD
     //8007df4c
     public static void AI_FUN_8007df4c(GameEngine gameEngine, Entity entity)
     {
+        if (entity.Name != "")
+        {
+            Debugger.Break();
+        }
+
         bool bVar1;
         byte val;
 
@@ -273,6 +310,11 @@ public static class FunctionTypeD
     //muruta arc nv1
     public static void AI_FUN_8007e074(GameEngine gameEngine, Entity entity)
     {
+        if (entity.Name != "")
+        {
+            Debugger.Break();
+        }
+
         if (gameEngine.EntityManager.ComputeNewHp(entity))
         {
             entity.Bytes[3] = 1;
@@ -286,25 +328,38 @@ public static class FunctionTypeD
     //8007e0d8
     public static void AI_FUN_8007e0d8(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        if (entity.Name != "")
+        {
+            Debugger.Break();
+        }
     }
 
     //8007e114
     public static void AI_FUN_8007e114(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        if (entity.Name != "")
+        {
+            Debugger.Break();
+        }
     }
 
     //8007e140
     public static void AI_FUN_8007e140(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        if (entity.Name != "")
+        {
+            Debugger.Break();
+        }
     }
 
     //8007e1c4
-    //Élément Niv.1
     public static void AI_FUN_8007e1c4(GameEngine gameEngine, Entity entity)
     {
+        if (entity.Name != "◆Élément Niv.1")
+        {
+            Debugger.Break();
+        }
+
         uint direction;
 
         if (gameEngine.EntityManager.ComputeNewHp(entity))
@@ -429,9 +484,13 @@ public static class FunctionTypeD
     }
 
     //8007e8f0
-    //P-Zoldia Niv.1
     public static void AI_FUN_8007e8f0(GameEngine gameEngine, Entity entity)
     {
+        if (entity.Name != "P-Zoldia Niv.1")
+        {
+            Debugger.Break();
+        }
+
         if (entity.Bytes[0] == 0)
         {
             if (!gameEngine.EntityManager.ComputeNewHp(entity))
@@ -494,6 +553,11 @@ public static class FunctionTypeD
     //8007eb58
     public static void AI_FUN_8007eb58(GameEngine gameEngine, Entity entity)
     {
+        if (entity.Name != "")
+        {
+            Debugger.Break();
+        }
+
         if (entity.Hp == 0)
         {
             return;
@@ -510,6 +574,11 @@ public static class FunctionTypeD
     //8007eba8
     public static void AI_FUN_8007eba8(GameEngine gameEngine, Entity entity)
     {
+        if (entity.Name != "")
+        {
+            Debugger.Break();
+        }
+
         entity.ForceZ = 0;
         entity.PreviousAdjustedForceY = 0;
         entity.PreviousAdjustedForceX = 0;

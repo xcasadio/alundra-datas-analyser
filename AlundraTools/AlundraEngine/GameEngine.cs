@@ -1,13 +1,15 @@
-﻿using AlundraEngine.DatasBin;
+﻿using AlundraEngine.Balance;
+using AlundraEngine.DatasBin;
 using AlundraEngine.Editor;
 using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
+using AlundraEngine.UI;
 using System;
 using System.Diagnostics;
-using AlundraEngine.Balance;
-using AlundraEngine.UI;
+using System.Drawing.Imaging.Effects;
+using Microsoft.VisualBasic.Logging;
 
 namespace AlundraEngine;
 
@@ -1645,26 +1647,30 @@ public class GameEngine
     // 8003a774
     public void DestroyEntity(Entity entity)
     {
-        SpawnEntityContents(entity);
+        //SpawnEntityContents(entity);
+        //
+        //entity.Status = 4;
+        //entity.EventTrigger = -1;
+        //
+        //if (entity.ActiveEffect != null)
+        //{
+        //    entity.ActiveEffect.CurrentSpriteTableIndex = 0;
+        //    entity.ActiveEffect = null;
+        //}
+        //
+        //if (entity.PlatformEntity != null)
+        //{
+        //    entity.PlatformEntity.CarriedEntity = null;
+        //}
 
-        entity.Status = 4;
-        entity.EventTrigger = -1;
-
-        if (entity.ActiveEffect != null)
-        {
-            entity.ActiveEffect.CurrentSpriteTableIndex = 0;
-            entity.ActiveEffect = null;
-        }
-
-        if (entity.PlatformEntity != null)
-        {
-            entity.PlatformEntity.CarriedEntity = null;
-        }
+        DestroyEntity(entity, -2);
     }
 
     // 8003a59c
     public void DestroyEntity(Entity entity, int effectId)
     {
+        LogManager.Log(entity, $"to destroy => status:{entity.Status} flags:{entity.Flags} Bytes:{string.Join('-', entity.Bytes)} AIValues:{string.Join('-', entity.AIValues)}");
+
         SpawnEntityContents(entity);
 
         entity.Status = 4;

@@ -50,7 +50,7 @@ public static class AncientGuardian
         {
             if (entity.Bytes[3] < 4)
             {
-                AI_Melzas2.UpdateEntityAI_ExecuteBossSpecialMove(gameEngine, entity);
+                AI_Melzas2.UpdateEntityAI_BossExplode(gameEngine, entity);
                 return;
             }
             entity.TargetAnimationId = 10;
@@ -106,7 +106,7 @@ public static class AncientGuardian
                     return;
                 }
 
-            LAB_80070914:
+                LAB_80070914:
                 entity.TargetAnimationId = 2;
                 entity.TargetDirection = 0;
                 entity.AIValues[1] = 0x3c;
@@ -243,6 +243,7 @@ public static class AncientGuardian
                         return;
                     }
 
+                    //create ◆Élément Niv.1
                     do
                     {
                         i = direction + 4;
@@ -545,7 +546,7 @@ public static class AncientGuardian
                     return;
                 }
 
-            LAB_800710f0:
+                LAB_800710f0:
                 if (entity.ForceAdjusted == 0 && FunctionTypeC.CanMoveForward(entity, 0) == 0)
                 {
                     return;

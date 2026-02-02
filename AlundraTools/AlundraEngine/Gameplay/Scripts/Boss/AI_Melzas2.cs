@@ -66,7 +66,7 @@ public static class AI_Melzas2
             {
                 if (flagByte < 2)
                 {
-                    UpdateEntityAI_ExecuteBossSpecialMove(gameEngine, entity);
+                    UpdateEntityAI_BossExplode(gameEngine, entity);
                     return;
                 }
 
@@ -162,12 +162,11 @@ public static class AI_Melzas2
     }
 
     //80080ae0
-    public static void UpdateEntityAI_ExecuteBossSpecialMove(GameEngine gameEngine, Entity entity)
+    public static void UpdateEntityAI_BossExplode(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (entity.Name != "◆Élément Niv.1")
         {
             Debugger.Break();
-            return;
         }
 
         var frameCounter = (int)entity.AIValues[1];

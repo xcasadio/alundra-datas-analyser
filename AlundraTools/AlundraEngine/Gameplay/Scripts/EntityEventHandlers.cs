@@ -3167,7 +3167,7 @@ public class EntityEventHandlers
             var index = ((flag >> 3) & 0xffc) >> 2;
             var mask = (uint)(1 << (entityMatching.ContentsGameFlag & 0x1f));
 
-            if ((flags[index] | mask) != 0)
+            if ((flags[index] & mask) != 0)
             {
                 eventProgramState.Result = 1;
                 return 2;

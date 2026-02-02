@@ -5905,6 +5905,7 @@ public static class FunctionTypeC
         entity.Bytes[0] = 0;
     }
 
+    //80080260
     public static int CanMoveForward(Entity entity, int zOffset)
     {
         int result;
@@ -5971,9 +5972,14 @@ public static class FunctionTypeC
         result = 0;
 
         if (floorToMapHeight2 <= adjustedZOffset
-            || (adjustedZOffset < floorToMapHeight0 && 0xf < entity.TargetDirection))
+            || adjustedZOffset < floorToMapHeight0)
         {
             result = 1;
+
+            if (0xf < entity.TargetDirection)
+            {
+                result = 0;
+            }
         }
 
         return result;
@@ -7855,7 +7861,11 @@ public static class FunctionTypeC
     //Item spawn
     public static void FUN_8007c174(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (entity.Name != "I83_Récipient de vie"
+            && entity.Name != "I43_Tome de la Terre (haut)"
+            && entity.Name != "I80_Graine magique"
+            && entity.Name != "I62_Emblème du sang de pigeon"
+            && entity.Name != "I84_Petit cœur")
         {
             Debugger.Break();
         }
@@ -7879,7 +7889,7 @@ public static class FunctionTypeC
 
             if (itemState == 1)
             {
-            LAB_8007c6f4:
+                //LAB_8007c6f4:
                 if (gameEngine.CdManager.FUN_8005a7d4())
                 {
                     return;
@@ -7912,7 +7922,7 @@ public static class FunctionTypeC
                     gameEngine.StaticVariables.g_dropItemTextBuffer += gameEngine.EtcRes.GetItemName((int)itemId);
                     gameEngine.StaticVariables.g_dropItemTextBuffer += gameEngine.EtcRes.GetOtherString(0x4f);
 
-                LAB_8007c320:
+                    //LAB_8007c320:
                     gameEngine.UIManager.InitializeDialogMessage(gameEngine.StaticVariables.g_dropItemTextBuffer, 1);
                     return;
                 }
@@ -8064,8 +8074,8 @@ public static class FunctionTypeC
                     gameEngine.StaticVariables.g_dropItemTextBuffer += gameEngine.EtcRes.GetOtherString(0x45);
                 }
 
-                uint flag = (ushort)entity.AIValues[0] | ((uint)(ushort)entity.AIValues[1] << 16);
-                gameEngine.FUN_80032b28(flag); //AIValues[0]
+                uint flag = (ushort)entity.AIValues[0] | ((uint)(ushort)entity.AIValues[1] << 16); //AIValues[0]
+                gameEngine.FUN_80032b28(flag);
                 soundSfxIndex = gameEngine.StaticVariables.g_itemDropProperties[itemId].SoundSfxIndex; //itemId * 8 + 5
 
                 if (soundSfxIndex != 0)

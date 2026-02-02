@@ -591,7 +591,7 @@ public class SpriteInfoEventCodes
         { 0x9C, "Set g_isWarpDisabled = 0" },
         { 0x9D, "Exit() - Fatal Error" },
         { 0x9E, "Count walkable tile" },
-        { 0x9F, "??? 0x9F" },
+        { 0x9F, "Wait open chest" },
         { 0xA0, "Adjusted effect pos" },
         { 0xA1, "Set effect pos with entity" },
         { 0xA2, "Create effect with pos" },
