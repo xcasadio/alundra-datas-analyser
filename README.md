@@ -1,7 +1,7 @@
 # Alundra Data‑Analyser
 
 <p align="center">
-  <img src="./gitHub/Analyser.jpg" width="33%">
+  <img src="./gitHub/Analyser.jpg" width="50%">
   <img src="./gitHub/Snapshot_1.bmp">
   <img src="./gitHub/Snapshot_6.bmp">
 </p>
@@ -127,7 +127,7 @@ Source code is released under the **MIT License**.  Original *Alundra* assets re
 ## Screenshots
 
 <p align="center">
-  <img src="./gitHub/analyser.jpg">
+  <img src="./gitHub/Analyser.jpg">
   <img src="./gitHub/script.jpg">
   <img src="./gitHub/Snapshot_1.bmp">
   <img src="./gitHub/Snapshot_6.bmp">
