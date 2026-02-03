@@ -1,7 +1,7 @@
 # Alundra Data‑Analyser
 
 <p align="center">
-  <img src="./gitHub/analyser.jpg" width="33%">
+  <img src="./gitHub/Analyser.jpg" width="33%">
   <img src="./gitHub/Snapshot_1.bmp">
   <img src="./gitHub/Snapshot_6.bmp">
 </p>
