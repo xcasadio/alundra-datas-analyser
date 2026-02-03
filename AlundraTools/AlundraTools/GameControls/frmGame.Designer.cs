@@ -241,6 +241,7 @@ namespace AlundraTools.GameControls
             treeViewScript = new TreeView();
             buttonSnapshot = new Button();
             buttonSaveState = new Button();
+            checkBoxLogAI = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pctOut).BeginInit();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -2374,6 +2375,7 @@ namespace AlundraTools.GameControls
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(checkBoxLogAI);
             tabPage2.Controls.Add(checkBoxDebugPortal);
             tabPage2.Controls.Add(checkBoxLogDamage);
             tabPage2.Controls.Add(checkBoxLogScript);
@@ -2554,6 +2556,17 @@ namespace AlundraTools.GameControls
             buttonSaveState.Text = "Save state";
             buttonSaveState.UseVisualStyleBackColor = true;
             buttonSaveState.Click += buttonSaveState_Click;
+            // 
+            // checkBoxLogAI
+            // 
+            checkBoxLogAI.AutoSize = true;
+            checkBoxLogAI.Location = new Point(380, 79);
+            checkBoxLogAI.Name = "checkBoxLogAI";
+            checkBoxLogAI.Size = new Size(96, 19);
+            checkBoxLogAI.TabIndex = 11;
+            checkBoxLogAI.Text = "Log AI values";
+            checkBoxLogAI.UseVisualStyleBackColor = true;
+            checkBoxLogAI.CheckedChanged += checkBoxLogAI_CheckedChanged;
             // 
             // FrmGame
             // 
@@ -2838,5 +2851,6 @@ namespace AlundraTools.GameControls
         private CheckBox checkBoxTileZ;
         private CheckBox checkBoxWallTileXY;
         private Button buttonSaveState;
+        private CheckBox checkBoxLogAI;
     }
 }

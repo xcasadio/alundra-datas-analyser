@@ -26,7 +26,7 @@ public class EventProgramState
 
     public override string ToString()
     {
-        var actionName = SpriteInfoEventCodes.CommandNameByCode.GetValueOrDefault((byte)Sp, "?");
+        var actionName = EventCodeDebugger.CommandPropertiesByCode.GetValueOrDefault((byte)Sp)?.Description ?? "?";
         return $"{nameof(Sp)}:{Sp} {actionName} ci:{CodeIndex} Parameters:{string.Join(',', Parameters)} {nameof(_30)}:{_30} {nameof(_34)}:{_34}";
     }
 }

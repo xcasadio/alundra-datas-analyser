@@ -375,6 +375,8 @@ public class EntityManager
     // 8003b388
     public void UpdateEntities()
     {
+        LogAIState();
+        
         if ((_gameEngine.StaticVariables.g_playerControlFlags & 0x48) == 0)
         {
             UpdateDestroyedEntities();
@@ -406,6 +408,21 @@ public class EntityManager
                 entity.SpriteRef.Z = entity.PosZ;
                 _gameEngine.StaticVariables.g_spriteImages[_gameEngine.StaticVariables.g_spriteNumberOfImage++] = entity.SpriteRef;
             }
+        }
+    }
+
+    private void LogAIState()
+    {
+        if (_gameEngine.StaticVariables.IsLogAIEnabled)
+        {
+            for (int i = 0; i < _gameEngine.StaticVariables.g_activeEntityCount; i++)
+            {
+                var entity = _gameEngine.StaticVariables.g_activeEntities[i];
+                _gameEngine.LogManager.SetCategory($"entity {entity.Index} - AI log");
+                _gameEngine.LogManager.Log(entity, $"status:{entity.Status} flags:{entity.Flags} Bytes:{string.Join('-', entity.Bytes)} AIValues:{string.Join('-', entity.AIValues)}");
+            }
+
+            _gameEngine.LogManager.ResetCategory();
         }
     }
 

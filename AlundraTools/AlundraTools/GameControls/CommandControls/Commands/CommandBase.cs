@@ -1,5 +1,6 @@
 ﻿using AlundraEngine.DatasBin;
 using System.Globalization;
+using AlundraEngine.Gameplay.Scripts;
 
 namespace AlundraTools.GameControls.CommandControls.Commands;
 
@@ -19,7 +20,7 @@ public class CommandBase
         Offset = offset;
         Command = command;
         Parameters = parameters;
-        Size = SpriteInfoEventCodes.CommandSizeByCode.GetValueOrDefault(command, 1);
+        Size = EventCodeDebugger.CommandPropertiesByCode.GetValueOrDefault(command).Size;
         Name = name;
     }
 
@@ -56,9 +57,9 @@ public class CommandBase
     {
         var description = string.Empty;
 
-        if (SpriteInfoEventCodes.CommandPropertiesByCode.TryGetValue(Command, out var commandProperties))
+        if (EventCodeDebugger.CommandPropertiesByCode.TryGetValue(Command, out var commandProperties))
         {
-            description = commandProperties.Description;
+            description = commandProperties.HandlerName;
         }
 
         if (HasParameters)

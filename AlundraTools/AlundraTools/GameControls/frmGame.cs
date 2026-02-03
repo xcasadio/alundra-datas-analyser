@@ -8,6 +8,7 @@ using AlundraEngine.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using AlundraEngine.Gameplay.Scripts;
 using Timer = System.Windows.Forms.Timer;
 
 namespace AlundraTools.GameControls;
@@ -1569,7 +1570,7 @@ public partial class FrmGame : Form
         {
             var offset = i;
             var value = codes[i++];
-            var siCode = SpriteInfoEventCodes.GetCode(value);
+            var siCode = EventCodeDebugger.GetCode(value);
 
             if (siCode.Size < 1)
             {
@@ -1701,6 +1702,11 @@ public partial class FrmGame : Form
             _gameEngine.UpdateSavedData(false);
             _gameEngine.StaticVariables.g_saveData.SaveToJson(openFileDialog.FileName);
         }
+    }
+
+    private void checkBoxLogAI_CheckedChanged(object sender, EventArgs e)
+    {
+        _gameEngine.StaticVariables.IsLogAIEnabled = checkBoxLogAI.Checked;
     }
 }
 

@@ -1494,7 +1494,7 @@ namespace AlundraTools.GameControls
                 var frm = new CommandsViewerForm();
                 var selectedIndex = _selectedEntity.EventCodesA_LoadIndex & 0x7f;
                 var offset = _selectedGameMap.SpriteInfo.EventCodes.EventCodesATable[selectedIndex];
-                var eventCodeCommands = _selectedGameMap.SpriteInfo.EventCodes.GetCommands(offset);
+                var eventCodeCommands = EventCodeDebugger.GetCommands(_selectedGameMap.SpriteInfo.EventCodes.Codes, offset);
                 frm.Text = "Commands load events " + selectedIndex;
                 frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap, offset);
                 frm.Show();
@@ -1511,7 +1511,7 @@ namespace AlundraTools.GameControls
             {
                 var selectedIndex = _selectedEntity.EventCodesB_MapIndex & 0x7f;
                 var offset = _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable[selectedIndex];
-                var eventCodeCommands = _selectedGameMap.SpriteInfo.EventCodes.GetCommands(offset);
+                var eventCodeCommands = EventCodeDebugger.GetCommands(_selectedGameMap.SpriteInfo.EventCodes.Codes, offset);
                 frm.Text += selectedIndex;
                 frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap, offset);
                 frm.Show();
@@ -1520,7 +1520,7 @@ namespace AlundraTools.GameControls
             {
                 var selectedIndex = _selectedMapEvent.EventCodesBIndex & 0x7f;
                 var offset = _selectedGameMap.SpriteInfo.EventCodes.EventCodesBTable[selectedIndex];
-                var eventCodeCommands = _selectedGameMap.SpriteInfo.EventCodes.GetCommands(offset);
+                var eventCodeCommands = EventCodeDebugger.GetCommands(_selectedGameMap.SpriteInfo.EventCodes.Codes, offset);
                 frm.Text += selectedIndex;
                 frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap, offset);
                 frm.Show();
@@ -1536,7 +1536,7 @@ namespace AlundraTools.GameControls
                 var frm = new CommandsViewerForm();
                 var selectedIndex = _selectedEntity.EventCodesC_TickIndex & 0x7f;
                 var offset = _selectedGameMap.SpriteInfo.EventCodes.EventCodesCTable[selectedIndex];
-                var eventCodeCommands = _selectedGameMap.SpriteInfo.EventCodes.GetCommands(offset);
+                var eventCodeCommands = EventCodeDebugger.GetCommands(_selectedGameMap.SpriteInfo.EventCodes.Codes, offset);
                 frm.Text = "Commands tick events " + selectedIndex;
                 frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap, offset);
                 frm.Show();
@@ -1550,7 +1550,7 @@ namespace AlundraTools.GameControls
                 var frm = new CommandsViewerForm();
                 var selectedIndex = _selectedEntity.EventCodesD_TouchIndex & 0x7f;
                 var offset = _selectedGameMap.SpriteInfo.EventCodes.EventCodesDTable[selectedIndex];
-                var eventCodeCommands = _selectedGameMap.SpriteInfo.EventCodes.GetCommands(offset);
+                var eventCodeCommands = EventCodeDebugger.GetCommands(_selectedGameMap.SpriteInfo.EventCodes.Codes, offset);
                 frm.Text = "Commands touch events " + selectedIndex;
                 frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap, offset);
                 frm.Show();
@@ -1564,7 +1564,7 @@ namespace AlundraTools.GameControls
                 var frm = new CommandsViewerForm();
                 var selectedIndex = _selectedEntity.EventCodesE_DeactivateIndex & 0x7f;
                 var offset = _selectedGameMap.SpriteInfo.EventCodes.EventCodesETable[selectedIndex];
-                var eventCodeCommands = _selectedGameMap.SpriteInfo.EventCodes.GetCommands(offset);
+                var eventCodeCommands = EventCodeDebugger.GetCommands(_selectedGameMap.SpriteInfo.EventCodes.Codes, offset);
                 frm.Text = "Commands deactivate events " + selectedIndex;
                 frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap, offset);
                 frm.Show();
@@ -1578,7 +1578,7 @@ namespace AlundraTools.GameControls
                 var frm = new CommandsViewerForm();
                 var selectedIndex = _selectedEntity.EventCodesF_InteractIndex & 0x7f;
                 var offset = _selectedGameMap.SpriteInfo.EventCodes.EventCodesFTable[selectedIndex];
-                var eventCodeCommands = _selectedGameMap.SpriteInfo.EventCodes.GetCommands(offset);
+                var eventCodeCommands = EventCodeDebugger.GetCommands(_selectedGameMap.SpriteInfo.EventCodes.Codes, offset);
                 frm.Text = "Commands interact events " + selectedIndex;
                 frm.Init(eventCodeCommands, _datasBin.AlundraGameMap, _selectedGameMap, offset);
                 frm.Show();
@@ -1893,7 +1893,7 @@ namespace AlundraTools.GameControls
 
                 var offset = i;
                 var value = codes[i++];
-                var siCode = GetCode(value);
+                var siCode = EventCodeDebugger.GetCode(value);
 
                 if (siCode.Size < 1)
                 {

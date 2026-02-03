@@ -28,7 +28,8 @@ public class StaticVariables
     public bool DebugPortalsEnabled { get; set; }
     public bool IsLogScriptEnabled { get; set; }
     public bool IsLogDamageEnabled { get; set; }
-    
+    public bool IsLogAIEnabled { get; set; }
+
     public bool DisplayCollisions { get; set; }
 
     public bool DisplayEntityId { get; set; }
@@ -17000,4 +17001,5 @@ public class StaticVariables
             new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x0120, y0=0x0070, u0=0xD0, v0=0x20, clut=0x0000, w=0x0008, h=0x0008 },
             new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x0128, y0=0x0070, u0=0xD8, v0=0x20, clut=0x0000, w=0x0008, h=0x0008 }
         };
+
 }

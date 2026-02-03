@@ -22,9 +22,11 @@ public static class CommandsBuilder
     public static CommandBase Convert(SiCommand command)
     {
         var code = command.Command;
-        var parameters = command.Parameters;
         var name = command.Name;
         var memoryAddress = command.Offset;
+        var parameters = new byte[command.Parameters.Length + 1];
+        parameters[0] = code;
+        Buffer.BlockCopy(command.Parameters, 0, parameters, 1, command.Parameters.Length);
 
         return code switch
         {

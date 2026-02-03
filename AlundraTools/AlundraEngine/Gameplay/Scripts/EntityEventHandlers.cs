@@ -1,5 +1,4 @@
-﻿using AlundraEngine.Balance;
-using AlundraEngine.DatasBin;
+﻿using AlundraEngine.DatasBin;
 using System.Diagnostics;
 
 namespace AlundraEngine.Gameplay.Scripts;
@@ -300,7 +299,7 @@ public class EntityEventHandlers
             int[] variables = FillDataFromCommand(eventProgramState);
             int command = variables[0];
 
-            var log = LogCommand(entity, logicMode, command, variables, eventProgramState.CodeIndex);
+            var log = LogCommand(logicMode, command, variables, eventProgramState.CodeIndex);
 
             if (command == 0xFF) // end
             {
@@ -383,11 +382,11 @@ public class EntityEventHandlers
         }
     }
 
-    private static string LogCommand(Entity entity, int logicMode, int command, int[] variables, int codeIndex)
+    private static string LogCommand(int logicMode, int command, int[] variables, int codeIndex)
     {
-        var name = SpriteInfoEventCodes.CommandNameByCode.GetValueOrDefault((byte)command, "?");
+        var eventActionProperty = EventCodeDebugger.CommandPropertiesByCode.GetValueOrDefault((byte)command);
         var eventTypeName = logicMode == 0 ? "ALoad" : logicMode == 1 ? "BMap" : logicMode == 2 ? "CTick" : logicMode == 3 ? "DTouch" : logicMode == 4 ? "EDeactivate" : "FInteract";
-        return $"run[{eventTypeName}] 0x{command:x2} p:{codeIndex} '{name}' {string.Join(',', variables.Select(x => x.ToString("x2")))}";
+        return $"run[{eventTypeName}] p:{codeIndex} '{eventActionProperty?.Description ?? $"0x{command:x2} ?"}' {string.Join(',', variables.Select(x => x.ToString("x2")))}";
     }
 
     private int[] FillDataFromCommand(EventProgramState eventProgramState)
@@ -467,27 +466,27 @@ public class EntityEventHandlers
     }
 
     // 8003D158
-    private int Script_DoNothing(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_DoNothing(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         //_gameEngine.PrintCommandMap();
         return 0;
     }
 
     // 8003D6EC
-    private int Script_DoNothing2(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_DoNothing2(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         //_gameEngine.PrintCommandMap();
         return 0;
     }
 
     // 8003D17C
-    private int Script_2_002(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_2_002(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         return (((variables[2] << 8) | variables[1]) * 0x10000) >> 0x10;
     }
 
     // 8003D1A0
-    private int Script_3_003(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_3_003(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         if (eventProgramState.Result != 0)
         {
@@ -498,7 +497,7 @@ public class EntityEventHandlers
     }
 
     // 8003D1D8
-    private int Script_4_004(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_4_004(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         if (eventProgramState.Result == 0)
         {
@@ -509,7 +508,7 @@ public class EntityEventHandlers
     }
 
     // 8003D210
-    private int Script_5_005(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_5_005(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
 
@@ -532,7 +531,7 @@ public class EntityEventHandlers
     }
 
     // 8003D288
-    private int Script_6_006(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_6_006(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
 
@@ -554,7 +553,7 @@ public class EntityEventHandlers
     }
 
     // 8003D308
-    private int Script_7_007(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_7_007(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var xmin = variables[2];
         var xmax = variables[3];
@@ -596,28 +595,28 @@ public class EntityEventHandlers
     }
 
     // 8003D404
-    private int Script_8_008(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_8_008(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.TargetDirection = (uint)(logicEntity.TargetDirection + variables[1] & 0x1f);
         return 2;
     }
 
     // 8003D42C
-    private int Script_9_009(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_9_009(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.TargetDirection = (uint)(variables[1] & 0x1f);
         return 2;
     }
 
     // 8003D44C
-    private int Script_10_00A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_10_00A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.TargetDirection = (logicEntity.TargetDirection + 0x10) & 0x1f;
         return 1;
     }
 
     // 8003D468
-    private int Script_WaitUntilEntityMovesBeyondRadius_00B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_WaitUntilEntityMovesBeyondRadius_00B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.TargetAnimationId = (uint)variables[1];
 
@@ -653,7 +652,7 @@ public class EntityEventHandlers
     }
 
     // 8003D518
-    private int Script_12_00C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_12_00C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var rand = (uint)((Random.Next() * 4) >> 0x20);
         logicEntity.TargetDirection = _gameEngine.StaticVariables.g_cardinalDirectionTable[rand];
@@ -662,7 +661,7 @@ public class EntityEventHandlers
 
     // 8003D578
     //open dialog
-    private int Script_OpenDialog_13_00D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_OpenDialog_13_00D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         if ((logicEntity.Flags & 0x800000U) != 0) // has portrait
         {
@@ -691,7 +690,7 @@ public class EntityEventHandlers
     }
 
     // 8003D688
-    private int Script_16_010(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_16_010(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         //dialog ??
         _gameEngine.StaticVariables.g_playerControlFlags |= 4;
@@ -699,21 +698,21 @@ public class EntityEventHandlers
     }
 
     // 8003D6A4
-    private int Script_17_011(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_17_011(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.g_playerControlFlags &= 0xfffffffb;
         return 1;
     }
 
     // 8003D6C0
-    private int Script_18_012(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_18_012(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.SoundManager.PlaySoundEffect((uint)variables[1]);
         return 2;
     }
 
     // 8003D710
-    private int Script_21_015(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_21_015(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var entityRecord = logicEntity.EntityRecord;
 
@@ -727,42 +726,42 @@ public class EntityEventHandlers
     }
 
     // 8003D774
-    private int Script_22_016(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_22_016(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.Flags |= 0x100;
         return 1;
     }
 
     // 8003D78C
-    private int Script_23_017(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_23_017(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.Flags &= 0xfffffeff;
         return 1;
     }
 
     // 8003D7A4
-    private int Script_25_019(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_25_019(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.Status = 3;
         return 1;
     }
 
     // 8003D7B4
-    private int Script_26_01A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_26_01A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.TargetAnimationId = (uint)variables[1];
         return 2;
     }
 
     // 8003D7D0
-    private int Script_27_01B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_27_01B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.ForceZ = (((variables[2] << 8) | variables[1]) * 0x10000) >> 8;
         return 3;
     }
 
     // 8003D7FC
-    private int Script_28_01C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_28_01C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         if (eventProgramState.Parameters[1] != variables[0])
         {
@@ -792,7 +791,7 @@ public class EntityEventHandlers
     }
 
     // 8003D890
-    private int Script_29_01D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_29_01D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var iVar1 = Script_28_01C(logicEntity, ownerEntity, variables, eventProgramState);
 
@@ -805,7 +804,7 @@ public class EntityEventHandlers
     }
 
     // 8003D8D8
-    private int Script_30_01E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_30_01E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var signature = (variables[2] << 16) | (variables[1] << 8) | variables[0];
 
@@ -844,7 +843,7 @@ public class EntityEventHandlers
     }
 
     // 8003D974
-    private int Script_31_01F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_31_01F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var walkingState = Script_30_01E(logicEntity, ownerEntity, variables, eventProgramState);
         if (walkingState == 0 && logicEntity.ForceAdjusted == 0)
@@ -856,7 +855,7 @@ public class EntityEventHandlers
     }
 
     // 8003D9BC
-    private int Script_32_020(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_32_020(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int result = 0;
 
@@ -887,7 +886,7 @@ public class EntityEventHandlers
     }
 
     // 8003DA28
-    private int Script_33_021(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_33_021(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var result = Script_32_020(logicEntity, ownerEntity, variables, eventProgramState);
 
@@ -900,7 +899,7 @@ public class EntityEventHandlers
     }
 
     // 8003DA70
-    private int Script_34_022(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_34_022(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         bool isSmaller;
 
@@ -944,7 +943,7 @@ public class EntityEventHandlers
     }
 
     // 8003DB28
-    private int Script_35_023(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_35_023(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var iVar1 = Script_34_022(logicEntity, ownerEntity, variables, eventProgramState);
 
@@ -957,13 +956,13 @@ public class EntityEventHandlers
     }
 
     // 8003DB70
-    private int Script_36_024(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_36_024(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         return logicEntity.ForceAdjusted != 0 ? 1 : 0;
     }
 
     // 8003DB7C
-    private int Script_37_025(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_37_025(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         if (logicEntity.CollidedWithEntityZ == 0 && logicEntity.IsAboveGround == 0)
         {
@@ -974,7 +973,7 @@ public class EntityEventHandlers
     }
 
     // 8003DBA8
-    private int Script_38_026(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_38_026(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         if (logicEntity.ForceAdjusted == 0 && logicEntity.CollidedWithEntityZ == 0)
         {
@@ -985,7 +984,7 @@ public class EntityEventHandlers
     }
 
     // 8003DBD4
-    private int Script_39_027(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_39_027(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var dir = (uint)ScriptHelper.GetDirectionToTarget(_gameEngine.StaticVariables.PlayerEntity.PosX - logicEntity.PosX, _gameEngine.StaticVariables.PlayerEntity.PosY - logicEntity.PosY);
         logicEntity.TargetDirection = dir;
@@ -993,35 +992,35 @@ public class EntityEventHandlers
     }
 
     // 8003DC24
-    private int Script_40_028(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_40_028(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.Flags |= 8;
         return 1;
     }
 
     // 8003DC3C
-    private int Script_41_029(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_41_029(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.Flags &= 0xfffffff7;
         return 1;
     }
 
     // 8003DC54
-    private int Script_42_02A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_42_02A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.Flags |= 1;
         return 1;
     }
 
     // 8003DC6C
-    private int Script_43_02B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_43_02B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.Flags &= 0xfffffffe;
         return 1;
     }
 
     // 8003DC84
-    private int Script_44_02C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_44_02C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         //Debugger.Break();
 
@@ -1031,7 +1030,7 @@ public class EntityEventHandlers
     }
 
     // 8003DCC4
-    private int Script_45_02D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_45_02D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var entity = _gameEngine.SpawnEntity(logicEntity, variables[1], 1);
 
@@ -1045,7 +1044,7 @@ public class EntityEventHandlers
     }
 
     // 8003DD00
-    private int Script_46_02E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_46_02E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         eventProgramState.Result = 0;
         var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
@@ -1061,7 +1060,7 @@ public class EntityEventHandlers
     }
 
     // 8003DD8C
-    private int Script_47_02F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_47_02F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var flag = (uint)((variables[2] << 8) | variables[1]);
 
@@ -1086,7 +1085,7 @@ public class EntityEventHandlers
     }
 
     // 8003DDDC
-    private int Script_48_030(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_48_030(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
         uint flag;
@@ -1113,7 +1112,7 @@ public class EntityEventHandlers
     }
 
     // 8003DE6C
-    private int Script_49_031(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_49_031(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
         uint flag;
@@ -1140,7 +1139,7 @@ public class EntityEventHandlers
     }
 
     // 8003DEFC
-    private int Script_50_032(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_50_032(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
         var flag = (variables[2] << 8) | variables[1];
@@ -1162,7 +1161,7 @@ public class EntityEventHandlers
     }
 
     // 8003DF74
-    private int Script_51_033(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_51_033(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         for (int i = 0; i < 4; i++)
         {
@@ -1194,7 +1193,7 @@ public class EntityEventHandlers
     }
 
     // 8003E128
-    private int Script_52_034(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_52_034(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         for (int i = 0; i < 4; i++)
         {
@@ -1226,7 +1225,7 @@ public class EntityEventHandlers
     }
 
     // 8003E2DC
-    private int Script_53_035(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_53_035(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
         uint flag;
@@ -1254,7 +1253,7 @@ public class EntityEventHandlers
     }
 
     // 8003E35C
-    private int Script_54_036(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_54_036(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
         uint flag;
@@ -1282,7 +1281,7 @@ public class EntityEventHandlers
     }
 
     // 8003E3DC
-    private int Script_55_037(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_55_037(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int command;
         command = variables[0];
@@ -1306,7 +1305,7 @@ public class EntityEventHandlers
     }
 
     // 8003E424
-    private int Script_SetSaveMapIdToInternalMapIndex_038(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_SetSaveMapIdToInternalMapIndex_038(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var index = (variables[2] << 8) | variables[1];
         _gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable[index] = (ushort)((variables[4] << 8) | variables[3]);
@@ -1314,20 +1313,20 @@ public class EntityEventHandlers
     }
 
     // 8003E464
-    private int Script_IsDialogInProgress_039(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_IsDialogInProgress_039(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         return _gameEngine.IsDialogFinished2() == 0 ? 1 : 0;
     }
 
     // 8003E484
-    private int Script_SetTargetDirection_03A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_SetTargetDirection_03A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.TargetDirection = _gameEngine.StaticVariables.g_cardinalDirectionTable[variables[1] & 0x3];
         return 2;
     }
 
     // 8003E4B4
-    private int Script_59_03B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_59_03B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         if (_gameEngine.StaticVariables.PlayerEntity.TileX >= variables[1]
             && _gameEngine.StaticVariables.PlayerEntity.TileX <= variables[2]
@@ -1347,7 +1346,7 @@ public class EntityEventHandlers
     }
 
     // 8003E558
-    private int Script_60_03C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_60_03C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
 
@@ -1376,7 +1375,7 @@ public class EntityEventHandlers
     }
 
     // 8003E64C
-    private int Script_61_03D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_61_03D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
 
@@ -1402,7 +1401,7 @@ public class EntityEventHandlers
     }
 
     // 8003E708
-    private int Script_62_03E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_62_03E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         if (_gameEngine.StaticVariables.PlayerEntity.RidingEntity == logicEntity)
         {
@@ -1417,7 +1416,7 @@ public class EntityEventHandlers
     }
 
     // 8003E734
-    private int Script_63_03F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_63_03F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntities; i++)
         {
@@ -1437,7 +1436,7 @@ public class EntityEventHandlers
     }
 
     // 8003E7B8
-    private int Script_64_040(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_64_040(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.g_clearProgramState = 1;
         logicEntity.ProgramIndexes[variables[1]] = variables[2];
@@ -1446,7 +1445,7 @@ public class EntityEventHandlers
     }
 
     // 8003E7E4
-    private int Script_65_041(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_65_041(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.SpriteProgramIndexes[variables[1]] = variables[2];
 
@@ -1454,7 +1453,7 @@ public class EntityEventHandlers
     }
 
     // 8003E808
-    private int Script_66_042(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_66_042(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         ownerEntity.LogicContextEntity = _gameEngine.StaticVariables.PlayerEntity;
 
@@ -1462,7 +1461,7 @@ public class EntityEventHandlers
     }
 
     // 8003E81C
-    private int Script_67_043(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_67_043(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int count = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
@@ -1481,7 +1480,7 @@ public class EntityEventHandlers
 
     // 8003E88C
     //wait dialog choice
-    private int Script_68_044(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_68_044(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         if (eventProgramState.Parameters[1] == variables[0])
         {
@@ -1519,21 +1518,21 @@ public class EntityEventHandlers
     }
 
     // 8003E954
-    private int Script_69_045(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_69_045(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.Flags &= 0xffffdfff;
         return 1;
     }
 
     // 8003E96C
-    private int Script_70_046(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_70_046(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.Flags |= 0x2000;
         return 1;
     }
 
     // 8003E984
-    private int Script_71_047(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_71_047(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var result = 1;
 
@@ -1546,7 +1545,7 @@ public class EntityEventHandlers
     }
 
     // 8003E9B0
-    private int Script_72_048(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_72_048(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var result = 1;
 
@@ -1559,14 +1558,14 @@ public class EntityEventHandlers
     }
 
     // 8003E9DC
-    private int Script_73_049(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_73_049(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         //return eventProgramState.Sp - eventProgramState.Parameters[0];
         return -(eventProgramState.CodeIndex - eventProgramState.Parameters[0]);
     }
 
     // 8003E9EC
-    private int Script_74_04A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_74_04A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var result = 1;
 
@@ -1580,7 +1579,7 @@ public class EntityEventHandlers
     }
 
     // 8003EA14
-    private int Script_75_04B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_75_04B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var result = 1;
 
@@ -1594,49 +1593,49 @@ public class EntityEventHandlers
     }
 
     // 8003EA3C
-    private int Script_76_04C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_76_04C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.SetTextFlags((uint)variables[1]);
         return 2;
     }
 
     // 8003EA68
-    private int Script_77_04D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_77_04D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.ActivateTextAutoAdvanceFlag();
         return 1;
     }
 
     // 8003EA88
-    private int Script_78_04E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_78_04E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.SetDebugFlag((uint)variables[1]);
         return 2;
     }
 
     // 8003EAB4
-    private int Script_ActivateDebugTextAutoAdvance(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_ActivateDebugTextAutoAdvance(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.ActivateDebugTextAutoAdvance();
         return 1;
     }
 
     // 8003EAD4
-    private int Script_SetEtcAnimationMode(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_SetEtcAnimationMode(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.SetEtcAnimationMode(variables[1]);
         return 2;
     }
 
     // 8003EB00
-    private int Script_TryActivateTextHoldState(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_TryActivateTextHoldState(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.UIManager.TryActivateTextHoldState();
         return 1;
     }
 
     // 8003EB20
-    private int Script_82_052(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_82_052(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Portal portal;
         portal = _gameEngine.GetActivatedPortal();
@@ -1659,7 +1658,7 @@ public class EntityEventHandlers
     }
 
     // 8003EB88
-    private int Script_ChangeMap_053(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_ChangeMap_053(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.g_mapTransitionEffectId = variables[6];
         _gameEngine.StaticVariables.g_desiredMap = (uint)(variables[2] << 8 | variables[1]);
@@ -1694,7 +1693,7 @@ public class EntityEventHandlers
     }
 
     // 8003ECBC
-    private int Script_84_054(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_84_054(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int tilex = variables[1];
         int tiley = variables[2];
@@ -1728,7 +1727,7 @@ public class EntityEventHandlers
     }
 
     // 8003ED5C
-    private int Script_85_055(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_85_055(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int tilex = variables[1];
         int tiley = variables[2];
@@ -1762,14 +1761,14 @@ public class EntityEventHandlers
     }
 
     // 8003EDFC
-    private int Script_86_056(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_86_056(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.ChangeAreaTileProperties(variables[1]);
         return 2;
     }
 
     // 8003EE28
-    private int Script_87_057(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_87_057(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int v1 = variables[_gameEngine.StaticVariables.PlayerEntity.AnimationDirection * 2 + 1];
         int v2 = variables[_gameEngine.StaticVariables.PlayerEntity.AnimationDirection * 2 + 2];
@@ -1777,7 +1776,7 @@ public class EntityEventHandlers
     }
 
     // 8003EE5C
-    private int Script_88_058(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_88_058(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int v1 = variables[logicEntity.AnimationDirection * 2 + 1];
         int v2 = variables[logicEntity.AnimationDirection * 2 + 2];
@@ -1785,7 +1784,7 @@ public class EntityEventHandlers
     }
 
     // 8003EE8C
-    private int Script_89_059(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_89_059(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
@@ -1799,7 +1798,7 @@ public class EntityEventHandlers
     }
 
     // 8003EEF4
-    private int Script_90_05A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_90_05A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         byte bVar1;
         int num;
@@ -1818,7 +1817,7 @@ public class EntityEventHandlers
     }
 
     // 8003EF80
-    private int Script_91_05B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_91_05B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint animationId;
         uint direction;
@@ -1841,7 +1840,7 @@ public class EntityEventHandlers
     }
 
     // 8003F01C
-    private int Script_OpenDialogWithChoice_05C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_OpenDialogWithChoice_05C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int matchCount;
         Entity matchedEntity;
@@ -1879,7 +1878,7 @@ public class EntityEventHandlers
     }
 
     // 8003F144
-    private int Script_93_05D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_93_05D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int num;
         num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
@@ -1894,7 +1893,7 @@ public class EntityEventHandlers
     }
 
     // 8003F1A0
-    private int Script_94_05E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_94_05E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int num;
 
@@ -1910,7 +1909,7 @@ public class EntityEventHandlers
     }
 
     // 8003F218
-    private int Script_WaitForAnimOrDistance(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_WaitForAnimOrDistance(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
 
@@ -2038,7 +2037,7 @@ public class EntityEventHandlers
     }
 
     // 8003F3F8
-    private int Script_96_060(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_96_060(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int num;
         num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
@@ -2059,7 +2058,7 @@ public class EntityEventHandlers
     }
 
     // 8003F488
-    private int Script_97_061(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_97_061(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int num;
         num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
@@ -2080,7 +2079,7 @@ public class EntityEventHandlers
     }
 
     // 8003F514
-    private int Script_98_062(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_98_062(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         ushort flag;
         int num;
@@ -2098,7 +2097,7 @@ public class EntityEventHandlers
     }
 
     // 8003F590
-    private int Script_99_063(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_99_063(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         ushort clearMask;
         int num;
@@ -2117,7 +2116,7 @@ public class EntityEventHandlers
     }
 
     // 8003F610
-    private int Script_100_064(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_100_064(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int x = ((variables[3] << 8) | variables[2]) << 16;
         int y = ((variables[5] << 8) | variables[4]) << 16;
@@ -2137,7 +2136,7 @@ public class EntityEventHandlers
     }
 
     // 8003F6C8
-    private int Script_101_065(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_101_065(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int x = (variables[2] | (variables[3] << 8)) << 16;
         int y = (variables[4] | (variables[5] << 8)) << 16;
@@ -2157,7 +2156,7 @@ public class EntityEventHandlers
     }
 
     // 8003F794
-    private int Script_CopyLogicContextAndAssignScript(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_CopyLogicContextAndAssignScript(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
 
@@ -2175,7 +2174,7 @@ public class EntityEventHandlers
     }
 
     // 8003F82C
-    private int Script_103_067(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_103_067(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
         _gameEngine.StaticVariables.g_entityFollowedByCamera = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0];
@@ -2183,14 +2182,14 @@ public class EntityEventHandlers
     }
 
     // 8003F868
-    private int Script_104_068(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_104_068(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.g_entityFollowedByCamera = null;
         return 1;
     }
 
     // 8003F878
-    private int Script_105_069(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_105_069(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.g_entityFollowedByCamera = null;
         _gameEngine.StaticVariables.g_cameraLookAtX = variables[1] | (variables[2] << 8);
@@ -2200,7 +2199,7 @@ public class EntityEventHandlers
     }
 
     // 8003F8DC
-    private int Script_106_06A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_106_06A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         eventProgramState.Parameters[2] = logicEntity.PosX;
         eventProgramState.Parameters[3] = logicEntity.PosY;
@@ -2209,7 +2208,7 @@ public class EntityEventHandlers
     }
 
     // 8003F908
-    private int Script_107_06B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_107_06B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var iVar1 = eventProgramState.Parameters[2] - logicEntity.PosX;
 
@@ -2224,7 +2223,7 @@ public class EntityEventHandlers
     }
 
     // 8003F94C
-    private int Script_108_06C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_108_06C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var iVar1 = eventProgramState.Parameters[3] - logicEntity.PosY;
 
@@ -2238,7 +2237,7 @@ public class EntityEventHandlers
     }
 
     // 8003F990
-    private int Script_109_06D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_109_06D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var iVar1 = eventProgramState.Parameters[4] - logicEntity.PosZ;
 
@@ -2252,35 +2251,35 @@ public class EntityEventHandlers
     }
 
     // 8003F9D4
-    private int Script_110_06E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_110_06E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         eventProgramState.Result = logicEntity.ForceAdjusted;
         return 1;
     }
 
     // 8003F9E8
-    private int Script_111_06F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_111_06F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         eventProgramState.Result = logicEntity.CollidedWithEntityZ;
         return 1;
     }
 
     // 8003F9FC
-    private int Script_112_070(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_112_070(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         eventProgramState.Result = logicEntity.IsAboveGround;
         return 1;
     }
 
     // 8003FA10
-    private int Script_113_071(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_113_071(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         eventProgramState.Result = logicEntity.HitCounter;
         return 1;
     }
 
     // 8003FA24
-    private int Script_114_072(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_114_072(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         logicEntity.LastTargetAnimationId = logicEntity.TargetAnimationId;
         logicEntity.LastTargetDirection = logicEntity.TargetDirection;
@@ -2288,14 +2287,14 @@ public class EntityEventHandlers
     }
 
     // 8003FA3C
-    private int Script_115_073(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_115_073(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         eventProgramState._30 = variables[1];
         return 2;
     }
 
     // 8003FA58
-    private int Script_116_074(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_116_074(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var result = eventProgramState._30 + -1;
         eventProgramState._30 = result;
@@ -2313,35 +2312,35 @@ public class EntityEventHandlers
     }
 
     // 8003FA9C
-    private int Script_117_075(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_117_075(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.SoundManager.PlaySoundEffect((uint)variables[1]);
         return 2;
     }
 
     // 8003FAC8
-    private int Script_118_076(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_118_076(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         //_gameEngine.PrintCommandMap("Not implemented");
         return 0;
     }
 
     // 8003FAEC
-    private int Script_119_077(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_119_077(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         //_gameEngine.PrintCommandMap("Not implemented");
         return 0;
     }
 
     // 8003FB10
-    private int Script_StoreChoiceParamAndJump_078(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_StoreChoiceParamAndJump_078(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         eventProgramState._34 = eventProgramState.CodeIndex + 3; //variables[3];
         return (((variables[2] << 8) | variables[1]) * 0x10000) >> 0x10;
     }
 
     // 8003FB44
-    private int Script_JumpIfChoiceAccepted_079(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_JumpIfChoiceAccepted_079(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int result = 3;
 
@@ -2355,7 +2354,7 @@ public class EntityEventHandlers
     }
 
     // 8003FB8C
-    private int Script_JumpIfChoiceRejected_07A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_JumpIfChoiceRejected_07A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int result = 3;
 
@@ -2369,7 +2368,7 @@ public class EntityEventHandlers
     }
 
     // 8003FBD4
-    private int Script_JumpIfFlagSetStoreParam_07B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_JumpIfFlagSetStoreParam_07B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
         int result;
@@ -2399,7 +2398,7 @@ public class EntityEventHandlers
     }
 
     // 8003FC74
-    private int Script_JumpIfFlagClearStoreParam_07C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_JumpIfFlagClearStoreParam_07C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
         int result;
@@ -2429,14 +2428,14 @@ public class EntityEventHandlers
     }
 
     // 8003FD14
-    private int Script_JumpRelativeFromStoredParam_07D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_JumpRelativeFromStoredParam_07D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var value = (variables[1] << 24) | (variables[1] << 16) | (variables[1] << 8) | variables[0];
         return eventProgramState._34 - eventProgramState.CodeIndex; //variables[0];
     }
 
     // 8003FD24
-    private int Script_ConditionalJumpFromStoredParamIfTrue_07E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_ConditionalJumpFromStoredParamIfTrue_07E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int result = 1;
 
@@ -2449,7 +2448,7 @@ public class EntityEventHandlers
     }
 
     // 8003FD4C
-    private int Script_ConditionalJumpFromStoredParamIfFalse_07F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_ConditionalJumpFromStoredParamIfFalse_07F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int result = 1;
 
@@ -2462,7 +2461,7 @@ public class EntityEventHandlers
     }
 
     // 8003FD74
-    private int Script_JumpFromStoredParamIfFlagSet_080(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_JumpFromStoredParamIfFlagSet_080(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
         int result;
@@ -2491,7 +2490,7 @@ public class EntityEventHandlers
     }
 
     // 8003FDF8
-    private int Script_JumpFromStoredParamIfFlagClear_081(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_JumpFromStoredParamIfFlagClear_081(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint[] flags;
         int result;
@@ -2520,7 +2519,7 @@ public class EntityEventHandlers
     }
 
     // 8003FE7C
-    private int Script_130_082(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_130_082(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var succes = _gameEngine.PlayerManager.HandleMapTriggerCommand(variables[1]);
 
@@ -2537,7 +2536,7 @@ public class EntityEventHandlers
     }
 
     // 8003FEC8
-    private int Script_131_083(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_131_083(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var iVar1 = _gameEngine.PlayerManager.GetNumberOfItem(variables[1]);
 
@@ -2554,7 +2553,7 @@ public class EntityEventHandlers
     }
 
     // 8003FF34
-    private int Script_132_084(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_132_084(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var iVar1 = _gameEngine.PlayerManager.UseItem((uint)variables[1]);
 
@@ -2571,14 +2570,14 @@ public class EntityEventHandlers
     }
 
     // 8003FF84
-    private int Script_133_085(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_133_085(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.ChangeAreaTileProperties(variables[1], variables[2], variables[3], variables[4], variables[5], variables[6]);
         return 7;
     }
 
     // 8003FFD4
-    private int Script_134_086(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_134_086(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var value = variables[2];
         var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
@@ -2593,7 +2592,7 @@ public class EntityEventHandlers
     }
 
     // 80040048
-    private int Script_135_087(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_135_087(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         byte expectedNibble;
         int count;
@@ -2626,7 +2625,7 @@ public class EntityEventHandlers
     }
 
     // 8004011C
-    private int Script_136_088(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_136_088(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
         
@@ -2647,7 +2646,7 @@ public class EntityEventHandlers
     }
 
     // 80040194
-    private int Script_137_089(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_137_089(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
@@ -2675,7 +2674,7 @@ public class EntityEventHandlers
     }
 
     // 80040284
-    private int Script_138_08A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_138_08A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var entity = _gameEngine.SpawnEntity(logicEntity, variables[1], 1);
 
@@ -2692,7 +2691,7 @@ public class EntityEventHandlers
     }
 
     // 8004033C
-    private int Script_139_08B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_139_08B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var entity = _gameEngine.SpawnEntity(logicEntity, variables[2], 1);
 
@@ -2716,7 +2715,7 @@ public class EntityEventHandlers
     }
 
     // 80040438
-    private int Script_140_08C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_140_08C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var rand = (uint)((Random.Next() * 0x100) >> 0x20);
 
@@ -2733,7 +2732,7 @@ public class EntityEventHandlers
     }
 
     // 800404A8
-    private int Script_141_08D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_141_08D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
@@ -2753,7 +2752,7 @@ public class EntityEventHandlers
     }
 
     // 80040534
-    private int Script_142_08E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_142_08E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.g_scrollingParameters.Flag = 1;
         _gameEngine.StaticVariables.g_scrollingParameters.SpeedX = variables[1];
@@ -2765,21 +2764,21 @@ public class EntityEventHandlers
     }
 
     // 80040598
-    private int Script_143_08F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_143_08F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.g_scrollingParameters.Flag = 0;
         return 1;
     }
 
     // 800405A8
-    private int Script_144_090(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_144_090(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.EffectManager.SpawnSpriteEffect(variables[1], 1);
         return 2;
     }
 
     // 800405D4
-    private int Script_145_091(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_145_091(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var effectId = variables[1];
 
@@ -2795,7 +2794,7 @@ public class EntityEventHandlers
     }
 
     // 80040628
-    private int Script_146_092(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_146_092(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var effectId = variables[1];
         var animId = (byte)variables[2];
@@ -2812,7 +2811,7 @@ public class EntityEventHandlers
     }
 
     // 80040680
-    private int Script_147_093(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_147_093(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var effectId = variables[1];
         var x = ((variables[3] << 8) | variables[2]) << 16;
@@ -2833,7 +2832,7 @@ public class EntityEventHandlers
     }
 
     // 8004071C
-    private int Script_148_094(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_148_094(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var effectid = variables[1];
         var x = ((variables[3] << 8) | variables[2]) << 16;
@@ -2854,7 +2853,7 @@ public class EntityEventHandlers
     }
 
     // 800407C0
-    private int Script_149_095(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_149_095(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         //Debugger.Break();
 
@@ -3006,7 +3005,7 @@ public class EntityEventHandlers
     }
 
     // 800409A8
-    private int Script_150_096(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_150_096(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var value = variables[1];
         var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
@@ -3026,21 +3025,21 @@ public class EntityEventHandlers
     }
 
     // 80040A2C
-    private int Script_151_097(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_151_097(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.PlayerManager.SpendMoney(variables[1]);
         return 2;
     }
 
     // 80040A58
-    private int Script_152_098(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_152_098(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.PlayerManager.AddMoney(variables[1]);
         return 3;
     }
 
     // 80040A8C
-    private int Script_153_099(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_153_099(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var money = _gameEngine.PlayerManager.GetMoney();
 
@@ -3058,7 +3057,7 @@ public class EntityEventHandlers
     }
 
     // 80040B00
-    private int Script_154_09A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_154_09A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var iVar1 = _gameEngine.PlayerManager.GetMoney();
 
@@ -3075,21 +3074,21 @@ public class EntityEventHandlers
     }
 
     // 80040B68
-    private int Script_155_09B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_155_09B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.g_isWarpDisabled = 1;
         return 1;
     }
 
     // 80040B78
-    private int Script_156_09C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_156_09C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.g_isWarpDisabled = 0;
         return 1;
     }
 
     // 80040B88
-    private int Script_157_09D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_157_09D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         //_gameEngine.DoNothing();
         Debugger.Break();
@@ -3098,7 +3097,7 @@ public class EntityEventHandlers
     }
 
     // 80040BB4
-    private int Script_158_09E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_158_09E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
 
@@ -3145,7 +3144,7 @@ public class EntityEventHandlers
     }
 
     // 80040C80
-    private int Script_159_09F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_159_09F(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int count = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
@@ -3179,7 +3178,7 @@ public class EntityEventHandlers
     }
 
     // 80040D60
-    private int Script_160_0A0(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_160_0A0(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var effectId = variables[1];
         var x = ((variables[3] << 8) | variables[2]) << 16;
@@ -3200,7 +3199,7 @@ public class EntityEventHandlers
     }
 
     // 80040E10
-    private int Script_161_0A1(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_161_0A1(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var effectid = variables[1];
         var entityId = variables[2];
@@ -3235,7 +3234,7 @@ public class EntityEventHandlers
     }
 
     // 80040F00
-    private int Script_162_0A2(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_162_0A2(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var spriteEffect = _gameEngine.EffectManager.SpawnSpriteEffect(variables[1], 1);
 
@@ -3250,7 +3249,7 @@ public class EntityEventHandlers
     }
 
     // 80040FAC
-    private int Script_163_0A3(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_163_0A3(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[2]);
         var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0];
@@ -3271,42 +3270,42 @@ public class EntityEventHandlers
     }
 
     // 80041098
-    private int Script_164_0A4(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_164_0A4(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.SetScrollingMode(variables[1], variables[2]);
         return 3;
     }
 
     // 800410C8
-    private int Script_165_0A5(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_165_0A5(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.SoundManager.StopAllSound();
         return 1;
     }
 
     // 800410E8
-    private int Script_166_0A6(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_166_0A6(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.SoundManager.LoadBgm(variables[1]);
         return 2;
     }
 
     // 80041114
-    private int Script_167_0A7(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_167_0A7(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.SoundManager.FUN_8004b114(variables[1], variables[2]);
         return 3;
     }
 
     // 80041144
-    private int Script_168_0A8(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_168_0A8(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         eventProgramState.Result = _gameEngine.SoundManager.IsSoundLoading() ? 1 : 0;
         return 1;
     }
 
     // 80041174
-    private int Script_169_0A9(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_169_0A9(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
         return 0;
@@ -3338,7 +3337,7 @@ public class EntityEventHandlers
     }
 
     // 80041200
-    private int Script_170_0AA(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_170_0AA(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
         return 0;
@@ -3374,14 +3373,14 @@ public class EntityEventHandlers
     }
 
     // 80041290
-    private int Script_171_0AB(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_171_0AB(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.SoundManager.PlaySoundEffectWithToneVolumeMix(variables[1], variables[2], variables[3]);
         return 4;
     }
 
     // 800412C4
-    private int Script_172_0AC(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_172_0AC(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var count = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
@@ -3398,7 +3397,7 @@ public class EntityEventHandlers
     }
 
     // 80041344
-    private int Script_173_0AD(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_173_0AD(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var count = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
@@ -3457,7 +3456,7 @@ public class EntityEventHandlers
     }
 
     // 800414B4
-    private int Script_174_0AE(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_174_0AE(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
         //_gameEngine.DoNothing("Not implemented");
@@ -3466,7 +3465,7 @@ public class EntityEventHandlers
     }
 
     // 800414E0
-    private int Script_175_0AF(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_175_0AF(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.g_targetFadeColorB = variables[1] << 16;
         _gameEngine.StaticVariables.g_targetFadeColorG = variables[2] << 16;
@@ -3479,7 +3478,7 @@ public class EntityEventHandlers
     }
 
     // 80041570
-    private int Script_176_0B0(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_176_0B0(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.g_warpFadeColorR_Target = variables[1] << 16;
         _gameEngine.StaticVariables.g_warpFadeColorG_Target = variables[2] << 16;
@@ -3491,7 +3490,7 @@ public class EntityEventHandlers
     }
 
     // 800415E8
-    private int Script_177_0B1(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_177_0B1(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         if (_gameEngine.StaticVariables.g_fadeStepFlags == 0 && _gameEngine.StaticVariables.g_warpFlags == 0)
         {
@@ -3506,7 +3505,7 @@ public class EntityEventHandlers
     }
 
     // 80041628
-    private int Script_CompareEntityGroupsForMatch_0B2(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_CompareEntityGroupsForMatch_0B2(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int group1Count;
         int group2Count;
@@ -3560,7 +3559,7 @@ public class EntityEventHandlers
     }
 
     // 80041750
-    private int Script_UpdatePadState(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_UpdatePadState(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.g_padState1.ButtonsHold = (ushort)(variables[1] + variables[2] * 0x100);
         _gameEngine.StaticVariables.g_padState1.ButtonsJustPressed = (ushort)(variables[3] + variables[4] * 0x100);
@@ -3570,7 +3569,7 @@ public class EntityEventHandlers
     }
 
     // 800417CC
-    private int Script_180_0B4(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_180_0B4(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var iVar1 = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
@@ -3587,7 +3586,7 @@ public class EntityEventHandlers
     }
 
     // 80041830
-    private int Script_181_0B5(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_181_0B5(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
@@ -3604,7 +3603,7 @@ public class EntityEventHandlers
     }
 
     // 80041894
-    private int Script_182_0B6(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_182_0B6(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
@@ -3621,7 +3620,7 @@ public class EntityEventHandlers
     }
 
     // 800418F8
-    private int Script_183_0B7(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_183_0B7(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
 
@@ -3648,7 +3647,7 @@ public class EntityEventHandlers
     }
 
     // 80041988
-    private int Script_184_0B8(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_184_0B8(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var targetDirection = (byte)variables[2];
 
@@ -3673,14 +3672,14 @@ public class EntityEventHandlers
     }
 
     // 80041A18
-    private int Script_185_0B9(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_185_0B9(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.CdManager.StartCdStreaming(variables[1]);
         return 2;
     }
 
     // 80041A44
-    private int Script_186_0BA(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_186_0BA(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         bool bVar1;
         bVar1 = _gameEngine.CdManager.FUN_8005a7d4();
@@ -3691,7 +3690,7 @@ public class EntityEventHandlers
 
     // 80041A74
     // Menu after died
-    private int Script_187_0BB(Entity logicEntity, Entity ownerEngtity, int[] variables, EventProgramState eventProgramState)
+    public int Script_187_0BB(Entity logicEntity, Entity ownerEngtity, int[] variables, EventProgramState eventProgramState)
     {
         int result;
 
@@ -3760,7 +3759,7 @@ public class EntityEventHandlers
     }
 
     // 80041C00
-    private int Script_188_0BC(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_188_0BC(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.PlayerEntity.HpMax += variables[1];
 
@@ -3773,7 +3772,7 @@ public class EntityEventHandlers
     }
 
     // 80041C38
-    private int Script_189_0BD(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_189_0BD(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var sfxId = (variables[2] << 8) | variables[1];
         _gameEngine.SoundManager.PlaySoundEffect((uint)sfxId);
@@ -3781,7 +3780,7 @@ public class EntityEventHandlers
     }
 
     // 80041C6C
-    private int Script_190_0BE(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_190_0BE(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var sfxId = (variables[2] << 8) | variables[1];
         _gameEngine.SoundManager.PlaySoundEffect((uint)sfxId);
@@ -3789,14 +3788,14 @@ public class EntityEventHandlers
     }
 
     // 80041CA0
-    private int Script_191_0BF(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_191_0BF(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.SoundManager.PlaySoundEffectWithToneVolumeMix(variables[1], variables[3], variables[4]);
         return 5;
     }
 
     // 80041CDC
-    private int Script_192_0C0(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_192_0C0(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
         _gameEngine.PlayerManager.SetPlayerWeaponId((ushort)(variables[1] + 1));
@@ -3805,14 +3804,14 @@ public class EntityEventHandlers
     }
 
     // 80041D18
-    private int Script_193_0C1(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_193_0C1(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         _gameEngine.StaticVariables.g_playerControlFlags &= 0xffffff7f;
         return 1;
     }
 
     // 80041D34
-    private int Script_194_0C2(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_194_0C2(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
         var slotId = (variables[2] << 8) | variables[1];
@@ -3830,7 +3829,7 @@ public class EntityEventHandlers
     }
 
     // 80041D6C
-    private int Script_195_0C3(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_195_0C3(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         Debugger.Break();
 
@@ -3842,7 +3841,7 @@ public class EntityEventHandlers
     }
 
     // 80041DA8
-    private int Script_196_0C4(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int Script_196_0C4(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var entityCount = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 

@@ -1,4 +1,6 @@
-﻿namespace AlundraEngine.DatasBin;
+﻿using AlundraEngine.Gameplay.Scripts;
+
+namespace AlundraEngine.DatasBin;
 
 public class SiCommand
 {
@@ -9,7 +11,7 @@ public class SiCommand
         Offset = offset;
         Command = command;
         Parameters = parameters;
-        Size = SpriteInfoEventCodes.CommandSizeByCode.GetValueOrDefault(command, 1);
+        Size = EventCodeDebugger.CommandPropertiesByCode.GetValueOrDefault(command).Size;
         Name = name;
     }
 
@@ -36,9 +38,9 @@ public class SiCommand
 
     public virtual string Description(List<SiCommand> commands)
     {
-        if (SpriteInfoEventCodes.CommandPropertiesByCode.TryGetValue(Command, out var commandProperties))
+        if (EventCodeDebugger.CommandPropertiesByCode.TryGetValue(Command, out var commandProperties))
         {
-            return commandProperties.Description;
+            return commandProperties.HandlerName;
         }
 
         return string.Empty;

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using AlundraEngine.Gameplay.Scripts;
 
 namespace AlundraEngine.DatasBin;
 
@@ -59,12 +60,12 @@ public class SiEntityRecord
             var commands = new List<SiCommand>();
             if (EventCodesA_LoadIndex != 0xff && EventCodesA_LoadIndex != 0)
             {
-                commands.AddRange(spriteInfo.EventCodes.GetCommandsOnlyAtOffset(spriteInfo.EventCodes.EventCodesATable[EventCodesA_LoadIndex & 0x7f]));
+                commands.AddRange(EventCodeDebugger.GetCommandsOnlyAtOffset(spriteInfo.EventCodes.Codes, spriteInfo.EventCodes.EventCodesATable[EventCodesA_LoadIndex & 0x7f]));
             }
 
             if (commands.Count == 0 && EventCodesC_TickIndex != 0xff && EventCodesC_TickIndex != 0)
             {
-                commands.AddRange(spriteInfo.EventCodes.GetCommandsOnlyAtOffset(spriteInfo.EventCodes.EventCodesCTable[EventCodesC_TickIndex & 0x7f]));
+                commands.AddRange(EventCodeDebugger.GetCommandsOnlyAtOffset(spriteInfo.EventCodes.Codes, spriteInfo.EventCodes.EventCodesCTable[EventCodesC_TickIndex & 0x7f]));
             }
 
             foreach (var cmd in commands)
