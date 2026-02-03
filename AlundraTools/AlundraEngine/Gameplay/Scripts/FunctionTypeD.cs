@@ -7,7 +7,7 @@ public static class FunctionTypeD
     //8007d9a4
     public static void AI_FUN_8007d9a4(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (entity.Name != "◆Beannoïde")
         {
             Debugger.Break();
         }

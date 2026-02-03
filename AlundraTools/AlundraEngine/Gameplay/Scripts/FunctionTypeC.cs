@@ -306,7 +306,7 @@ public static class FunctionTypeC
     // 800665a0
     public static void AI_UpdateEntityAI_1(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (entity.Name != "◆Tortue de roche Niv.1")
         {
             Debugger.Break();
             return;
@@ -7865,7 +7865,9 @@ public static class FunctionTypeC
             && entity.Name != "I43_Tome de la Terre (haut)"
             && entity.Name != "I80_Graine magique"
             && entity.Name != "I62_Emblème du sang de pigeon"
-            && entity.Name != "I84_Petit cœur")
+            && entity.Name != "I84_Petit cœur"
+            && entity.Name != "I86_Grand cœur"
+            && entity.Name != "I69_1 Gilda")
         {
             Debugger.Break();
         }
