@@ -4,8 +4,6 @@ namespace AlundraEngine.DatasBin;
 
 public class SiCommand
 {
-    public bool HasParameters => Parameters is { Length: > 0 } && Command != 0 && Command != 0xff;
-
     public SiCommand(byte command, byte[] parameters, string name, int offset)
     {
         Offset = offset;
@@ -20,41 +18,4 @@ public class SiCommand
     public readonly byte Command;
     public readonly byte[] Parameters;
     public readonly int Size;
-
-    public virtual string PrintName(List<SiCommand> commands)
-    {
-        return !string.IsNullOrEmpty(Name) ? Name : "<no name>";
-    }
-
-    public string PrintCode()
-    {
-        return $"{Command} (0x{Command:x2})";
-    }
-
-    public virtual string PrintParameters(List<SiCommand> commands)
-    {
-        return string.Join(", ", Parameters.Select(x => x.ToString("x2")));
-    }
-
-    public virtual string Description(List<SiCommand> commands)
-    {
-        if (EventCodeDebugger.CommandPropertiesByCode.TryGetValue(Command, out var commandProperties))
-        {
-            return commandProperties.HandlerName;
-        }
-
-        return string.Empty;
-    }
-
-    public override string ToString()
-    {
-        var parameters = "-";
-
-        if (HasParameters)
-        {
-            parameters = string.Join(", ", Parameters.Select(x => x.ToString()));
-        }
-
-        return $"{Name} (0x{Command}) s:{Size} p:{parameters} [{Offset}]";
-    }
 }

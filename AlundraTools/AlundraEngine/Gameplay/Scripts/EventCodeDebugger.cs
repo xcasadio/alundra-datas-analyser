@@ -1,5 +1,4 @@
 ﻿using AlundraEngine.DatasBin;
-using System.Xml.Linq;
 
 namespace AlundraEngine.Gameplay.Scripts;
 
@@ -127,7 +126,7 @@ public class EventCodeDebugger
     public static readonly Dictionary<byte, CommandInfo> CommandPropertiesByCode = new()
     {
         {0x00, new(0x00, 1, "Break", nameof(EntityEventHandlers.Script_DoNothing)) },
-        {0x01, new(0x01, 1, "Do nothing", nameof(EntityEventHandlers.Script_DoNothing)) },
+        {0x01, new(0x01, 1, "Do nothing (debug command)", nameof(EntityEventHandlers.Script_DoNothing)) },
         {0x02, new(0x02, 3, "Goto", nameof(EntityEventHandlers.Script_2_002)) },
         {0x03, new(0x03, 3, "If true goto", nameof(EntityEventHandlers.Script_3_003)) },
         {0x04, new(0x04, 3, "If false goto", nameof(EntityEventHandlers.Script_4_004)) },
@@ -140,9 +139,13 @@ public class EventCodeDebugger
         {0x0B, new(0x0B, 4, "Wait until entity moves beyond radius", nameof(EntityEventHandlers.Script_WaitUntilEntityMovesBeyondRadius_00B)) },
         {0x0C, new(0x0C, 1, "Set random dir", nameof(EntityEventHandlers.Script_12_00C)) },
         {0x0D, new(0x0D, 3, "Dialog", nameof(EntityEventHandlers.Script_OpenDialog_13_00D)) },
+        {0x0E, new(0x0E, 0, "Do nothing (debug command)", nameof(EntityEventHandlers.Script_DoNothing)) },
+        {0x0F, new(0x0F, 0, "Do nothing (debug command)", nameof(EntityEventHandlers.Script_DoNothing)) },
         {0x10, new(0x10, 1, "Player lose control", nameof(EntityEventHandlers.Script_16_010)) },
         {0x11, new(0x11, 1, "Player gain control", nameof(EntityEventHandlers.Script_17_011)) },
         {0x12, new(0x12, 2, "Play sound 1", nameof(EntityEventHandlers.Script_18_012)) },
+        {0x13, new(0x13, 0, "Do nothing (debug command)", nameof(EntityEventHandlers.Script_DoNothing)) },
+        {0x14, new(0x14, 0, "Do nothing (debug command)", nameof(EntityEventHandlers.Script_DoNothing2)) },
         {0x15, new(0x15, 1, "Reset z pos", nameof(EntityEventHandlers.Script_21_015)) },
         {0x16, new(0x16, 1, "High gravity", nameof(EntityEventHandlers.Script_22_016)) },
         {0x17, new(0x17, 1, "Low gravity", nameof(EntityEventHandlers.Script_23_017)) },
@@ -154,6 +157,10 @@ public class EventCodeDebugger
         {0x1D, new(0x1D, 2, "Repeat anim with collision", nameof(EntityEventHandlers.Script_29_01D)) },
         {0x1E, new(0x1E, 3, "Walk", nameof(EntityEventHandlers.Script_30_01E)) },
         {0x1F, new(0x1F, 3, "Walk with collision", nameof(EntityEventHandlers.Script_31_01F)) },
+        {0x20, new(0x20, 3, "", nameof(EntityEventHandlers.Script_32_020)) },
+        {0x21, new(0x21, 3, "", nameof(EntityEventHandlers.Script_33_021)) },
+        {0x22, new(0x22, 1, "", nameof(EntityEventHandlers.Script_34_022)) },
+        {0x23, new(0x23, 1, "", nameof(EntityEventHandlers.Script_35_023)) },
         {0x24, new(0x24, 1, "Wait force adjusted", nameof(EntityEventHandlers.Script_36_024)) },
         {0x25, new(0x25, 1, "Wait entity collision z or 144", nameof(EntityEventHandlers.Script_37_025)) },
         {0x26, new(0x26, 1, "Wait force adjusted or entity collision z", nameof(EntityEventHandlers.Script_38_026)) },
@@ -162,6 +169,7 @@ public class EventCodeDebugger
         {0x29, new(0x29, 1, "Gravity flag 2 off", nameof(EntityEventHandlers.Script_41_029)) },
         {0x2A, new(0x2A, 1, "Gravity flag 3 on", nameof(EntityEventHandlers.Script_42_02A)) },
         {0x2B, new(0x2B, 1, "Gravity flag 3 off", nameof(EntityEventHandlers.Script_43_02B)) },
+        {0x2C, new(0x2C, 2, "", nameof(EntityEventHandlers.Script_44_02C)) },
         {0x2D, new(0x2D, 2, "Activate entity", nameof(EntityEventHandlers.Script_45_02D)) },
         {0x2E, new(0x2E, 2, "Hide", nameof(EntityEventHandlers.Script_46_02E)) },
         {0x2F, new(0x2F, 4, "Check moving in dir", nameof(EntityEventHandlers.Script_47_02F)) },
@@ -173,52 +181,146 @@ public class EventCodeDebugger
         {0x35, new(0x35, 3, "Until flag off", nameof(EntityEventHandlers.Script_53_035)) },
         {0x36, new(0x36, 3, "Until flag on", nameof(EntityEventHandlers.Script_54_036)) },
         {0x37, new(0x37, 2, "Wait", nameof(EntityEventHandlers.Script_55_037)) },
-        {0x38, new(0x38, 5, "Register warp", nameof(EntityEventHandlers.Script_SetSaveMapIdToInternalMapIndex_038)) },
+        {0x38, new(0x38, 5, "Set MapIdToInternalMapIndex", nameof(EntityEventHandlers.Script_SetSaveMapIdToInternalMapIndex_038)) },
         {0x39, new(0x39, 1, "Wait for dialog", nameof(EntityEventHandlers.Script_IsDialogInProgress_039)) },
+        {0x3A, new(0x3A, 2, "Set TargetDirection", nameof(EntityEventHandlers.Script_SetTargetDirection_03A)) },
         {0x3B, new(0x3B, 7, "Check player in area", nameof(EntityEventHandlers.Script_59_03B)) },
+        {0x3C, new(0x3C, 7, "", nameof(EntityEventHandlers.Script_60_03C)) },
+        {0x3D, new(0x3D, 7, "", nameof(EntityEventHandlers.Script_61_03D)) },
+        {0x3E, new(0x3E, 1, "", nameof(EntityEventHandlers.Script_62_03E)) },
+        {0x3F, new(0x3F, 1, "", nameof(EntityEventHandlers.Script_63_03F)) },
         {0x40, new(0x40, 3, "Set program index", nameof(EntityEventHandlers.Script_64_040)) },
         {0x41, new(0x41, 3, "Set sprite program index", nameof(EntityEventHandlers.Script_65_041)) },
+        {0x42, new(0x42, 1, "", nameof(EntityEventHandlers.Script_66_042)) },
+        {0x43, new(0x43, 2, "", nameof(EntityEventHandlers.Script_67_043)) },
         {0x44, new(0x44, 1, "Wait dialog choice", nameof(EntityEventHandlers.Script_68_044)) },
         {0x45, new(0x45, 1, "Gravity flag 4 off", nameof(EntityEventHandlers.Script_69_045)) },
         {0x46, new(0x46, 1, "Gravity flag 4 on", nameof(EntityEventHandlers.Script_70_046)) },
+        {0x47, new(0x47, 1, "", nameof(EntityEventHandlers.Script_71_047)) },
+        {0x48, new(0x48, 1, "", nameof(EntityEventHandlers.Script_72_048)) },
         {0x49, new(0x49, 1, "Restart", nameof(EntityEventHandlers.Script_73_049)) },
         {0x4A, new(0x4A, 1, "If true restart", nameof(EntityEventHandlers.Script_74_04A)) },
         {0x4B, new(0x4B, 1, "If false restart", nameof(EntityEventHandlers.Script_75_04B)) },
         {0x4C, new(0x4C, 2, "Set dialog something", nameof(EntityEventHandlers.Script_76_04C)) },
         {0x4D, new(0x4D, 1, "Check dialog something", nameof(EntityEventHandlers.Script_77_04D)) },
+        {0x4E, new(0x4E, 2, "", nameof(EntityEventHandlers.Script_78_04E)) },
+        {0x4F, new(0x4F, 1, "", nameof(EntityEventHandlers.Script_ActivateDebugTextAutoAdvance)) },
         {0x50, new(0x50, 2, "Set dialog choice", nameof(EntityEventHandlers.Script_SetEtcAnimationMode)) },
         {0x51, new(0x51, 1, "Get dialog choice", nameof(EntityEventHandlers.Script_TryActivateTextHoldState)) },
+        {0x52, new(0x52, 1, "", nameof(EntityEventHandlers.Script_82_052)) },
+        {0x53, new(0x53, 8, "", nameof(EntityEventHandlers.Script_ChangeMap_053)) },
         {0x54, new(0x54, 5, "Set walkable", nameof(EntityEventHandlers.Script_84_054)) },
         {0x55, new(0x55, 5, "Set unwalkable", nameof(EntityEventHandlers.Script_85_055)) },
+        {0x56, new(0x56, 2, "", nameof(EntityEventHandlers.Script_86_056)) },
+        {0x57, new(0x57, 9, "", nameof(EntityEventHandlers.Script_87_057)) },
         {0x58, new(0x58, 9, "Directional branch", nameof(EntityEventHandlers.Script_88_058)) },
         {0x59, new(0x59, 3, "Set entity anim", nameof(EntityEventHandlers.Script_89_059)) },
         {0x5A, new(0x5A, 3, "Turn entity", nameof(EntityEventHandlers.Script_90_05A)) },
         {0x5B, new(0x5B, 4, "Turn entity with anim", nameof(EntityEventHandlers.Script_91_05B)) },
         {0x5C, new(0x5C, 4, "Dialog with entity", nameof(EntityEventHandlers.Script_OpenDialogWithChoice_05C)) },
+        {0x5D, new(0x5D, 2, "", nameof(EntityEventHandlers.Script_93_05D)) },
+        {0x5E, new(0x5E, 4, "", nameof(EntityEventHandlers.Script_94_05E)) },
+        {0x5F, new(0x5F, 1, "", nameof(EntityEventHandlers.Script_WaitForAnimOrDistance)) },
+        {0x60, new(0x60, 2, "", nameof(EntityEventHandlers.Script_96_060)) },
+        {0x61, new(0x61, 2, "", nameof(EntityEventHandlers.Script_97_061)) },
         {0x62, new(0x62, 4, "Set entities flags", nameof(EntityEventHandlers.Script_98_062)) },
         {0x63, new(0x63, 4, "Set entities gravity", nameof(EntityEventHandlers.Script_99_063)) },
         {0x64, new(0x64, 8, "Set entities position", nameof(EntityEventHandlers.Script_100_064)) },
         {0x65, new(0x65, 8, "Move entity position", nameof(EntityEventHandlers.Script_101_065)) },
+        {0x66, new(0x66, 3, "", nameof(EntityEventHandlers.Script_CopyLogicContextAndAssignScript)) },
         {0x67, new(0x67, 2, "Camera follow entity", nameof(EntityEventHandlers.Script_103_067)) },
+        {0x68, new(0x68, 1, "", nameof(EntityEventHandlers.Script_104_068)) },
         {0x69, new(0x69, 7, "Camera look at", nameof(EntityEventHandlers.Script_105_069)) },
+        {0x6A, new(0x6A, 1, "", nameof(EntityEventHandlers.Script_106_06A)) },
+        {0x6B, new(0x6B, 3, "", nameof(EntityEventHandlers.Script_107_06B)) },
+        {0x6C, new(0x6C, 3, "", nameof(EntityEventHandlers.Script_108_06C)) },
+        {0x6D, new(0x6D, 3, "", nameof(EntityEventHandlers.Script_109_06D)) },
+        {0x6E, new(0x6E, 1, "", nameof(EntityEventHandlers.Script_110_06E)) },
+        {0x6F, new(0x6F, 1, "", nameof(EntityEventHandlers.Script_111_06F)) },
         {0x70, new(0x70, 1, "Is above ground", nameof(EntityEventHandlers.Script_112_070)) },
+        {0x71, new(0x71, 1, "not implemented", nameof(EntityEventHandlers.Script_113_071)) },
+        {0x72, new(0x72, 1, "not implemented", nameof(EntityEventHandlers.Script_114_072)) },
         {0x73, new(0x73, 2, "Initialize timer _30", nameof(EntityEventHandlers.Script_115_073)) },
         {0x74, new(0x74, 3, "Update timer _30", nameof(EntityEventHandlers.Script_116_074)) },
+        {0x75, new(0x75, 2, "PlaySoundEffect", nameof(EntityEventHandlers.Script_117_075)) },
+        {0x76, new(0x76, 0, "not implemented", nameof(EntityEventHandlers.Script_118_076)) },
+        {0x77, new(0x77, 0, "not implemented", nameof(EntityEventHandlers.Script_119_077)) },
         {0x78, new(0x78, 4, "Store choice param and jump", nameof(EntityEventHandlers.Script_StoreChoiceParamAndJump_078)) },
+        {0x79, new(0x79, 3, "", nameof(EntityEventHandlers.Script_JumpIfChoiceAccepted_079)) },
+        {0x7A, new(0x7A, 3, "", nameof(EntityEventHandlers.Script_JumpIfChoiceRejected_07A)) },
+        {0x7B, new(0x7B, 5, "", nameof(EntityEventHandlers.Script_JumpIfFlagSetStoreParam_07B)) },
+        {0x7C, new(0x7C, 5, "", nameof(EntityEventHandlers.Script_JumpIfFlagClearStoreParam_07C)) },
+        {0x7D, new(0x7D, 1, "", nameof(EntityEventHandlers.Script_JumpRelativeFromStoredParam_07D)) },
+        {0x7E, new(0x7E, 1, "", nameof(EntityEventHandlers.Script_ConditionalJumpFromStoredParamIfTrue_07E)) },
+        {0x7F, new(0x7F, 1, "", nameof(EntityEventHandlers.Script_ConditionalJumpFromStoredParamIfFalse_07F)) },
+        {0x80, new(0x80, 5, "", nameof(EntityEventHandlers.Script_JumpFromStoredParamIfFlagSet_080)) },
+        {0x81, new(0x81, 5, "", nameof(EntityEventHandlers.Script_JumpFromStoredParamIfFlagClear_081)) },
+        {0x82, new(0x82, 2, "", nameof(EntityEventHandlers.Script_130_082)) },
+        {0x83, new(0x83, 3, "", nameof(EntityEventHandlers.Script_131_083)) },
+        {0x84, new(0x84, 2, "", nameof(EntityEventHandlers.Script_132_084)) },
         {0x85, new(0x85, 7, "Set map tiles", nameof(EntityEventHandlers.Script_133_085)) },
+        {0x86, new(0x86, 4, "", nameof(EntityEventHandlers.Script_134_086)) },
+        {0x87, new(0x87, 3, "", nameof(EntityEventHandlers.Script_135_087)) },
+        {0x88, new(0x88, 3, "", nameof(EntityEventHandlers.Script_136_088)) },
+        {0x89, new(0x89, 9, "", nameof(EntityEventHandlers.Script_137_089)) },
+        {0x8A, new(0x8A, 8, "", nameof(EntityEventHandlers.Script_138_08A)) },
         {0x8B, new(0x8B, 9, "Spawn entity according to entity position", nameof(EntityEventHandlers.Script_139_08B)) },
+        {0x8C, new(0x8C, 2, "", nameof(EntityEventHandlers.Script_140_08C)) },
+        {0x8D, new(0x8D, 2, "", nameof(EntityEventHandlers.Script_141_08D)) },
+        {0x8E, new(0x8E, 5, "", nameof(EntityEventHandlers.Script_142_08E)) },
+        {0x8F, new(0x8F, 1, "", nameof(EntityEventHandlers.Script_143_08F)) },
         {0x90, new(0x90, 2, "Create effect", nameof(EntityEventHandlers.Script_144_090)) },
         {0x91, new(0x91, 2, "Disable effect", nameof(EntityEventHandlers.Script_145_091)) },
         {0x92, new(0x92, 3, "Set effect anim", nameof(EntityEventHandlers.Script_146_092)) },
         {0x93, new(0x93, 8, "Set effect pos", nameof(EntityEventHandlers.Script_147_093)) },
         {0x94, new(0x94, 8, "Set effect forces", nameof(EntityEventHandlers.Script_148_094)) },
+        {0x95, new(0x95, 10, "", nameof(EntityEventHandlers.Script_149_095)) },
+        {0x96, new(0x96, 3, "", nameof(EntityEventHandlers.Script_150_096)) },
+        {0x97, new(0x97, 2, "", nameof(EntityEventHandlers.Script_151_097)) },
+        {0x98, new(0x98, 3, "", nameof(EntityEventHandlers.Script_152_098)) },
+        {0x99, new(0x99, 3, "", nameof(EntityEventHandlers.Script_153_099)) },
+        {0x9A, new(0x9A, 3, "", nameof(EntityEventHandlers.Script_154_09A)) },
+        {0x9B, new(0x9B, 1, "", nameof(EntityEventHandlers.Script_155_09B)) },
+        {0x9C, new(0x9C, 1, "", nameof(EntityEventHandlers.Script_156_09C)) },
+        {0x9D, new(0x9D, 0, "not implemented", nameof(EntityEventHandlers.Script_157_09D)) },
+        {0x9E, new(0x9E, 6, "", nameof(EntityEventHandlers.Script_158_09E)) },
+        {0x9F, new(0x9F, 2, "", nameof(EntityEventHandlers.Script_159_09F)) },
         {0xA0, new(0xA0, 8, "Adjusted effect pos", nameof(EntityEventHandlers.Script_160_0A0)) },
         {0xA1, new(0xA1, 9, "Set effect pos with entity", nameof(EntityEventHandlers.Script_161_0A1)) },
         {0xA2, new(0xA2, 8, "Create effect with pos", nameof(EntityEventHandlers.Script_162_0A2)) },
         {0xA3, new(0xA3, 9, "Create effect with entity pos", nameof(EntityEventHandlers.Script_163_0A3)) },
+        {0xA4, new(0xA4, 3, "", nameof(EntityEventHandlers.Script_164_0A4)) },
+        {0xA5, new(0xA5, 1, "", nameof(EntityEventHandlers.Script_165_0A5)) },
+        {0xA6, new(0xA6, 2, "", nameof(EntityEventHandlers.Script_166_0A6)) },
         {0xA7, new(0xA7, 3, "Play music", nameof(EntityEventHandlers.Script_167_0A7)) },
+        {0xA8, new(0xA8, 1, "", nameof(EntityEventHandlers.Script_168_0A8)) },
+        {0xA9, new(0xA9, 2, "", nameof(EntityEventHandlers.Script_169_0A9)) },
+        {0xAA, new(0xAA, 2, "", nameof(EntityEventHandlers.Script_170_0AA)) },
+        {0xAB, new(0xAB, 4, "", nameof(EntityEventHandlers.Script_171_0AB)) },
         {0xAC, new(0xAC, 4, "Set gravity flags on entity", nameof(EntityEventHandlers.Script_172_0AC)) },
+        {0xAD, new(0xAD, 9, "", nameof(EntityEventHandlers.Script_173_0AD)) },
+        {0xAE, new(0xAE, 0, "not implemented", nameof(EntityEventHandlers.Script_174_0AE)) },
+        {0xAF, new(0xAF, 7, "", nameof(EntityEventHandlers.Script_175_0AF)) },
+        {0xB0, new(0xB0, 5, "", nameof(EntityEventHandlers.Script_176_0B0)) },
+        {0xB1, new(0xB1, 1, "", nameof(EntityEventHandlers.Script_177_0B1)) },
+        {0xB2, new(0xB2, 3, "", nameof(EntityEventHandlers.Script_CompareEntityGroupsForMatch_0B2)) },
+        {0xB3, new(0xB3, 9, "", nameof(EntityEventHandlers.Script_UpdatePadState)) },
+        {0xB4, new(0xB4, 2, "", nameof(EntityEventHandlers.Script_180_0B4)) },
+        {0xB5, new(0xB5, 2, "", nameof(EntityEventHandlers.Script_181_0B5)) },
+        {0xB6, new(0xB6, 2, "", nameof(EntityEventHandlers.Script_182_0B6)) },
+        {0xB7, new(0xB7, 3, "", nameof(EntityEventHandlers.Script_183_0B7)) },
+        {0xB8, new(0xB8, 3, "", nameof(EntityEventHandlers.Script_184_0B8)) },
+        {0xB9, new(0xB9, 2, "", nameof(EntityEventHandlers.Script_185_0B9)) },
+        {0xBA, new(0xBA, 1, "", nameof(EntityEventHandlers.Script_186_0BA)) },
+        {0xBB, new(0xBB, 1, "", nameof(EntityEventHandlers.Script_187_0BB)) },
+        {0xBC, new(0xBC, 2, "", nameof(EntityEventHandlers.Script_188_0BC)) },
         {0xBD, new(0xBD, 3, "Play sound 2", nameof(EntityEventHandlers.Script_189_0BD)) },
+        {0xBE, new(0xBE, 3, "", nameof(EntityEventHandlers.Script_190_0BE)) },
+        {0xBF, new(0xBF, 5, "", nameof(EntityEventHandlers.Script_191_0BF)) },
+        {0xC0, new(0xC0, 2, "", nameof(EntityEventHandlers.Script_192_0C0)) },
+        {0xC1, new(0xC1, 1, "", nameof(EntityEventHandlers.Script_193_0C1)) },
+        {0xC2, new(0xC2, 2, "", nameof(EntityEventHandlers.Script_194_0C2)) },
+        {0xC3, new(0xC3, 1, "", nameof(EntityEventHandlers.Script_195_0C3)) },
         {0xC4, new(0xC4, 6, "Dialog with entity and name", nameof(EntityEventHandlers.Script_196_0C4)) },
         {0xFF, new(0xFF, 1, "End script", "end script") }
     };
@@ -227,8 +329,8 @@ public class EventCodeDebugger
     {
         var commandProperty = CommandPropertiesByCode.GetValueOrDefault(code);
         
-        string log = $"{code:x2} {commandProperty?.Description ?? "?"}";
-        log += GetEventDescriptionValue(position, code, parameters);
+        string log = $"0x{code:x2} {commandProperty?.Description ?? "?"}";
+        log += $" {GetEventDescriptionValue(position, code, parameters)}";
 
         if (withHandlerName)
         {
@@ -238,51 +340,53 @@ public class EventCodeDebugger
         return log;
     }
 
+    public static string GetHandlerName(byte code)
+    {
+        var commandProperty = CommandPropertiesByCode.GetValueOrDefault(code);
+        return commandProperty?.HandlerName ?? "?";
+    }
+
     private static string GetEventDescriptionValue(int position, byte code, byte[] parameters)
     {
-        //var parametersWithCode = new byte[parameters.Length + 1];
-        //parametersWithCode[0] = code;
-        //Buffer.BlockCopy(parameters, 0, parametersWithCode, 1, parameters.Length);
-        
         return code switch
         {
+            0x00 or 0xFF => string.Empty,
             0x02 or 0x03 or 0x04 => GetGotoDescription(position, parameters),
-            0x05 or 0x06 => GetFlagDescription(code, parameters),
-            0x0D => GetDialogDescription(code, parameters),
-            0x30 or 0x31 => GetFlagDescription(code, parameters),
-            0x35 or 0x36 => GetFlagDescription(code, parameters),
-            0x37 => GetWaitDescription(code, parameters),
+            0x05 or 0x06 => GetFlagDescription(position, parameters),
+            0x0D => GetDialogDescription(position, parameters),
+            0x30 or 0x31 => GetFlagDescription(position, parameters),
+            0x35 or 0x36 => GetFlagDescription(position, parameters),
+            0x37 => GetWaitDescription(position, parameters),
             0x1A => GetParametersAsDecimal(parameters, 1),
-            0x1C or 0x1D => GetRepeatAnimationDescription(code, parameters),
-            0x1E or 0x1F => GetWalkDescription(code, parameters),
-            0x58 => new DirectionBranchCommand(code, parameters),
-            0x5C => new DialogCommandWithChoice(code, parameters),
-            0x64 => new SetPositionCommand(code, parameters),
-            0x78 => new GotoCommand(code, parameters),
-            0xC4 => new DialogWithEntityAndNameCommand(code, parameters),
-            
-            _ => string.Join(',', parameters)
+            0x1C or 0x1D => GetRepeatAnimationDescription(position, parameters),
+            0x1E or 0x1F => GetWalkDescription(position, parameters),
+            0x58 => GetDirectionBranchDescription(position, parameters),
+            0x5C => GetDialogWithChoiceDescription(position, parameters),
+            0x64 => GetSetPositionDescription(position, parameters),
+            0x78 => GetGotoDescription(position, parameters),
+            0xC4 => GetDialogWithChoiceDescription(position, parameters),
+            _ => parameters.Length > 0 ? $"p:[{string.Join(',', parameters)}]" : string.Empty
         };
     }
 
     private static string GetGotoDescription(int position, byte[] parameters)
     {
-        var jump = (parameters[0] | (parameters[1] << 8));
+        var jump = parameters[0] | (parameters[1] << 8);
         return $"{position + jump} (jump={jump})";
     }
     
     private static string GetFlagDescription(int position, byte[] parameters)
     {
-        var flag = (parameters[0] | (parameters[1] << 8));
+        var flag = parameters[0] | (parameters[1] << 8);
         var name = (flag & 0x8000) == 0 ? "MapFlags" : "GlobalFlags";
         name += $"[{((flag >> 3) & 0xffc) >> 2}]";
-        name += $" with mask {1 << (parameters[0] & 0x1f)}";
+        name += $" with mask 0x{(1 << (parameters[0] & 0x1f)):X}";
         return name;
     }
     
     private static string GetDialogDescription(int position, byte[] parameters)
     {
-        return $"text id={parameters[0]} player control={parameters[1]}";
+        return $"text id:{parameters[0]} player control:{parameters[1]}";
     }
     
     private static string GetWaitDescription(int position, byte[] parameters)
@@ -311,5 +415,34 @@ public class EventCodeDebugger
         }
         
         return string.Join(", ", parameters.Select(x => x.ToString("D3")));
+    }
+
+    private static string GetDirectionBranchDescription(int position, byte[] parameters)
+    {
+        var log = "";
+
+        for (int i = 0; i < 4; i++)
+        {
+            int v1 = parameters[i * 2 + 0];
+            int v2 = parameters[i * 2 + 1];
+            var jump = ((v1 + v2 * 0x100) * 0x10000) >> 0x10;
+            log += $"{i}:{position - jump}(jump:{jump}) ";
+        }
+
+        return log;
+    }
+
+    private static string GetDialogWithChoiceDescription(int position, byte[] parameters)
+    {
+        return $"entity index:{parameters[0]} text id:{parameters[1]} player control:{parameters[2]}";
+    }
+
+    private static string GetSetPositionDescription(int position, byte[] parameters)
+    {
+        var searchType = parameters[0];
+        var x = parameters[1] | (parameters[2] << 8);
+        var y = parameters[3] | (parameters[4] << 8);
+        var z = parameters[5] | (parameters[6] << 8);
+        return $"search type:{searchType} x:{x} y:{y} z:{z}";
     }
 }

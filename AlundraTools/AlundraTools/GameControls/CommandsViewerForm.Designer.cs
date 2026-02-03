@@ -1,6 +1,4 @@
-﻿using AlundraTools.GameControls.CommandControls;
-
-namespace AlundraTools.GameControls
+﻿namespace AlundraTools.GameControls
 {
     partial class CommandsViewerForm
     {

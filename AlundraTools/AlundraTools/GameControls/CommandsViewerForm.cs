@@ -1,5 +1,5 @@
 ﻿using AlundraEngine.DatasBin;
-using AlundraTools.GameControls.CommandControls.Commands;
+using AlundraEngine.Gameplay.Scripts;
 
 namespace AlundraTools.GameControls
 {
@@ -42,12 +42,11 @@ namespace AlundraTools.GameControls
 
             try
             {
-                var commandBases = CommandsBuilder.Convert(commands);
                 int index = 0;
 
-                foreach (var commandBase in commandBases)
+                foreach (var command in commands)
                 {
-                    CreateTreeViewNode(ref index, commandBase, selectedOffset, treeView);
+                    CreateTreeViewNode(ref index, command, selectedOffset, treeView);
                     index++;
                 }
             }
@@ -66,11 +65,11 @@ namespace AlundraTools.GameControls
             }
         }
 
-        public static void CreateTreeViewNode(ref int index, CommandBase commandBase, int selectedOffset, TreeView treeView, TreeNode? parentNode = null)
+        public static void CreateTreeViewNode(ref int index, SiCommand commandBase, int selectedOffset, TreeView treeView, TreeNode? parentNode = null)
         {
             TreeNodeCollection nodes = parentNode == null ? treeView.Nodes : parentNode.Nodes;
-            parentNode = nodes.Add(index.ToString(), $"{commandBase.Offset:D4} - {commandBase.PrintName()}");//index:D2
-            parentNode.ToolTipText = commandBase.Description();
+            parentNode = nodes.Add(index.ToString(), $"{commandBase.Offset:D4} - {EventCodeDebugger.CreateLog(commandBase.Offset, commandBase.Command, commandBase.Parameters, false)}");
+            parentNode.ToolTipText = EventCodeDebugger.GetHandlerName(commandBase.Command);
             parentNode.Tag = commandBase;
 
             if (commandBase.Command == 0)
@@ -81,7 +80,7 @@ namespace AlundraTools.GameControls
             {
                 parentNode.ForeColor = Color.Red;
             }
-            else if (commandBase is DialogCommand)
+            else if (commandBase.Command is 0x0D or 0x5C or 0xC4)
             {
                 parentNode.ForeColor = Color.Blue;
             }
@@ -91,17 +90,6 @@ namespace AlundraTools.GameControls
                 treeView.SelectedNode = parentNode;
                 parentNode.BackColor = Color.LightGreen;
             }
-
-            if (commandBase is not ContainerCommand container)
-            {
-                return;
-            }
-
-            foreach (var child in container.Children)
-            {
-                index++;
-                CreateTreeViewNode(ref index, child, selectedOffset, treeView, parentNode);
-            }
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
@@ -110,12 +98,13 @@ namespace AlundraTools.GameControls
 
             if (e.Node != null)
             {
-                if (e.Node.Tag is DialogCommand dialogCommand)
+                if (e.Node.Tag is SiCommand command && command.Command is 0x0D or 0x5C or 0xC4)
                 {
                     var strings = _alundraGameMap?.Strings;
                     var map = "";
+                    var textId = command.Parameters[command.Command == 0x0D ? 0 : 1];
 
-                    if ((dialogCommand.TextId & 0x80) != 0)
+                    if ((textId & 0x80) != 0)
                     {
                         strings = _currentGameMap?.Strings;
                         map = "current";
@@ -127,13 +116,13 @@ namespace AlundraTools.GameControls
 
                     textBox1.Text = $@"Text load from {map} map ";
 
-                    if (dialogCommand is DialogCommandWithChoice dialogCommandWithChoice)
+                    if (command.Command is 0x5C or 0xC4)
                     {
-                        textBox1.Text += $@"with entity[{dialogCommandWithChoice.EntityIndex}] ";
+                        textBox1.Text += $@"with entity[{command.Parameters[0]}]";
                     }
 
                     textBox1.Text += $@"=>{Environment.NewLine}";
-                    var text = strings?[dialogCommand.TextId & 0x7f];
+                    var text = strings?[textId & 0x7f];
                     textBox1.Text += text;
                 }
             }
