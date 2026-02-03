@@ -1,7 +1,9 @@
 # Alundra Data‑Analyser
 
 <p align="center">
-  <img src="./gitHub/alundra-logo.jpg">
+  <img src="./gitHub/analyser.jpg" width="33%">
+  <img src="./gitHub/Snapshot_1.bmp">
+  <img src="./gitHub/Snapshot_6.bmp">
 </p>
 
 > **Reverse‑engineering the original *Alundra* PlayStation game in C# and rebuild it with CasaEngineMonoGame. Based on [surixurient](https://github.com/surixurient/alundra)**
@@ -18,6 +20,8 @@
 7. [Contributing](#contributing)
 8. [License](#license)
 9. [Acknowledgements](#acknowledgements)
+10. [Screenshots](#screenshots)
+
 
 ---
 
@@ -117,3 +121,17 @@ Source code is released under the **MIT License**.  Original *Alundra* assets re
 * The **PCSX‑Redux** team for their excellent debugging emulator.
 * Contributors to **CasaEngine** for sharing their engine with the community.
 * Other project: Alundra PC portage [Alundra Toolkit](https://github.com/Sunnnix/AlundraToolkit)
+
+---
+
+## Screenshots
+
+<p align="center">
+  <img src="./gitHub/analyser.jpg">
+  <img src="./gitHub/script.jpg">
+  <img src="./gitHub/Snapshot_1.bmp">
+  <img src="./gitHub/Snapshot_6.bmp">
+  <img src="./gitHub/Snapshot_7.bmp">
+  <img src="./gitHub/Snapshot_11.bmp">
+  <img src="./gitHub/Snapshot_14.bmp">
+</p>
