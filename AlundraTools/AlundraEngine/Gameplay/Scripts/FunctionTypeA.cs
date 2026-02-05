@@ -237,11 +237,11 @@ public static class FunctionTypeA
 
             if ((contentFlags & 0x8000) == 0)
             {
-                flags = gameEngine.StaticVariables.g_saveData.MapFlags;
+                flags = gameEngine.StaticVariables.g_saveData.GameFlags;
             }
             else
             {
-                flags = gameEngine.StaticVariables.g_globalFlags;
+                flags = gameEngine.StaticVariables.g_temporaryFlags;
             }
 
 

@@ -761,7 +761,7 @@ public static class FunctionTypeC
         int iVar5;
         int entityRecordId;
 
-        if ((gameEngine.StaticVariables.g_globalFlags[0] & 1) == 0)
+        if ((gameEngine.StaticVariables.g_temporaryFlags[0] & 1) == 0)
         {
             return;
         }
@@ -792,7 +792,7 @@ public static class FunctionTypeC
                 }
             }
 
-            gameEngine.StaticVariables.g_globalFlags[0] &= 0xfffffeff;
+            gameEngine.StaticVariables.g_temporaryFlags[0] &= 0xfffffeff;
         }
         entityRecordId = 0;
         entity.AIValues[1] = (short)(entity.AIValues[1] + 1);
@@ -828,13 +828,13 @@ public static class FunctionTypeC
 
                         if (gameEngine.StaticVariables.INT_ARRAY_80026d84[(uint)entity.Bytes[1] * 2] <= gameEngine.StaticVariables.INT_ARRAY_80191908[2])
                         {
-                            gameEngine.StaticVariables.g_globalFlags[0] |= 0x100;
+                            gameEngine.StaticVariables.g_temporaryFlags[0] |= 0x100;
                         }
 
                         bVar1 = entity.Bytes[1];
                         entity.AIValues[4] = 0;
                         entity.Bytes[1] = (byte)(bVar1 + 1);
-                        gameEngine.StaticVariables.g_globalFlags[0] &= 0xfffffffe;
+                        gameEngine.StaticVariables.g_temporaryFlags[0] &= 0xfffffffe;
                         return;
                     }
                 }
@@ -1021,17 +1021,17 @@ public static class FunctionTypeC
             entity.AIValues[2] = (short)effect.Id;
         }
 
-        if ((gameEngine.StaticVariables.g_globalFlags[0] & 1) == 0)
+        if ((gameEngine.StaticVariables.g_temporaryFlags[0] & 1) == 0)
         {
             return;
         }
 
         if (entity.Bytes[2] == 0)
         {
-            if ((gameEngine.StaticVariables.g_globalFlags[0] & 0x80) != 0)
+            if ((gameEngine.StaticVariables.g_temporaryFlags[0] & 0x80) != 0)
             {
                 entity.Bytes[1] = 0;
-                gameEngine.StaticVariables.g_globalFlags[0] &= 0xffffff7f;
+                gameEngine.StaticVariables.g_temporaryFlags[0] &= 0xffffff7f;
             }
 
             bVar2 = false;
@@ -1074,11 +1074,11 @@ public static class FunctionTypeC
                     {
                         if (((gameEngine.StaticVariables.INT_ARRAY_80026d90[uVar7] - 0x8000) & 0x8000) == 0)
                         {
-                            flags = gameEngine.StaticVariables.g_saveData.MapFlags;
+                            flags = gameEngine.StaticVariables.g_saveData.GameFlags;
                         }
                         else
                         {
-                            flags = gameEngine.StaticVariables.g_globalFlags;
+                            flags = gameEngine.StaticVariables.g_temporaryFlags;
                         }
 
                         var index = ((gameEngine.StaticVariables.INT_ARRAY_80026d90[uVar7] - 0x8000) >> 3) & 0xffc;
@@ -1097,11 +1097,11 @@ public static class FunctionTypeC
             {
                 if (((gameEngine.StaticVariables.INT_ARRAY_80026d90[entity.DelayOrAngle] - 0x8000) & 0x8000) == 0)
                 {
-                    flags = gameEngine.StaticVariables.g_saveData.MapFlags;
+                    flags = gameEngine.StaticVariables.g_saveData.GameFlags;
                 }
                 else
                 {
-                    flags = gameEngine.StaticVariables.g_globalFlags;
+                    flags = gameEngine.StaticVariables.g_temporaryFlags;
                 }
 
                 var index = ((gameEngine.StaticVariables.INT_ARRAY_80026d90[entity.DelayOrAngle] - 0x8000) >> 3) & 0xffc;
@@ -1118,11 +1118,11 @@ public static class FunctionTypeC
                         {
                             if (((gameEngine.StaticVariables.INT_ARRAY_80026d90[uVar7] - 0x8000) & 0x8000) == 0)
                             {
-                                flags = gameEngine.StaticVariables.g_saveData.MapFlags;
+                                flags = gameEngine.StaticVariables.g_saveData.GameFlags;
                             }
                             else
                             {
-                                flags = gameEngine.StaticVariables.g_globalFlags;
+                                flags = gameEngine.StaticVariables.g_temporaryFlags;
                             }
 
                             index = ((gameEngine.StaticVariables.INT_ARRAY_80026d90[uVar7] - 0x8000) >> 3) & 0xffc;
@@ -1145,11 +1145,11 @@ public static class FunctionTypeC
 
             if (bVar2)
             {
-                gameEngine.StaticVariables.g_globalFlags[0] |= 0x100;
+                gameEngine.StaticVariables.g_temporaryFlags[0] |= 0x100;
             }
             else
             {
-                gameEngine.StaticVariables.g_globalFlags[0] &= 0xfffffeff;
+                gameEngine.StaticVariables.g_temporaryFlags[0] &= 0xfffffeff;
             }
             entity.Bytes[2] = 1;
         }
@@ -1167,14 +1167,14 @@ public static class FunctionTypeC
             entity.Bytes[2] = 0;
             entity.Bytes[1] = (byte)(entity.Bytes[1] + 1);
 
-            if ((gameEngine.StaticVariables.g_globalFlags[0] & 0x100) != 0)
+            if ((gameEngine.StaticVariables.g_temporaryFlags[0] & 0x100) != 0)
             {
-                gameEngine.StaticVariables.g_globalFlags[0] &= 0xfffffffe;
+                gameEngine.StaticVariables.g_temporaryFlags[0] &= 0xfffffffe;
                 gameEngine.SoundManager.PlaySoundEffect(0x1c6);
                 return;
             }
 
-            gameEngine.StaticVariables.g_globalFlags[0] &= 0xfffffffe;
+            gameEngine.StaticVariables.g_temporaryFlags[0] &= 0xfffffffe;
             gameEngine.SoundManager.PlaySoundEffect(0x1c7);
             return;
         }
@@ -1227,21 +1227,21 @@ public static class FunctionTypeC
         //short psVar7;
         //short psVar8;
         //
-        //if ((gameEngine.StaticVariables.g_globalFlags[0] & 1) != 0)
+        //if ((gameEngine.StaticVariables.g_temporaryFlags[0] & 1) != 0)
         //{
         //    if (entity.AIValues[4] == 0)
         //    {
-        //        if ((gameEngine.StaticVariables.g_globalFlags[0] & 0x80) != 0)
+        //        if ((gameEngine.StaticVariables.g_temporaryFlags[0] & 0x80) != 0)
         //        {
         //            entity.Bytes[1] = 0;
-        //            gameEngine.StaticVariables.g_globalFlags[0] = gameEngine.StaticVariables.g_globalFlags[0] & 0xffffff7f;
+        //            gameEngine.StaticVariables.g_temporaryFlags[0] = gameEngine.StaticVariables.g_temporaryFlags[0] & 0xffffff7f;
         //        }
         //        bVar1 = entity.Bytes[1];
         //        entity.Bytes[2] = 0;
         //        entity.ItemState = 0;
         //        entity.AIValues[1] = 0;
         //        gameEngine.StaticVariables.DAT_80191144 = UNK_80026e6c + (uint)bVar1 * 0x28;
-        //        gameEngine.StaticVariables.g_globalFlags[0] = gameEngine.StaticVariables.g_globalFlags[0] & 0xfffffeff;
+        //        gameEngine.StaticVariables.g_temporaryFlags[0] = gameEngine.StaticVariables.g_temporaryFlags[0] & 0xfffffeff;
         //        entity.AIValues[4] = 1;
         //    }
         //
@@ -1342,14 +1342,14 @@ public static class FunctionTypeC
         //
         //        if (gameEngine.StaticVariables.INT_80026e50[entity.Bytes[1] * 2] <= entity.Bytes[2])
         //        {
-        //            gameEngine.StaticVariables.g_globalFlags[0] = gameEngine.StaticVariables.g_globalFlags[0] | 0x100;
+        //            gameEngine.StaticVariables.g_temporaryFlags[0] = gameEngine.StaticVariables.g_temporaryFlags[0] | 0x100;
         //        }
         //
         //        bVar1 = entity.Bytes[1];
         //        entity.AIValues[4] = 0;
         //        entity.Bytes[1] = (byte)(bVar1 + 1);
         //
-        //        gameEngine.StaticVariables.g_globalFlags[0] = gameEngine.StaticVariables.g_globalFlags[0] & 0xfffffffe;
+        //        gameEngine.StaticVariables.g_temporaryFlags[0] = gameEngine.StaticVariables.g_temporaryFlags[0] & 0xfffffffe;
         //    }
         //}
     }
@@ -1365,7 +1365,7 @@ public static class FunctionTypeC
         short sVar1;
         uint targetAnimationId;
 
-        if ((gameEngine.StaticVariables.g_globalFlags[0] & 1) == 0 && entity.TargetAnimationId != 0x10)
+        if ((gameEngine.StaticVariables.g_temporaryFlags[0] & 1) == 0 && entity.TargetAnimationId != 0x10)
         {
             entity.TargetAnimationId = 0x10;
         }
@@ -3361,7 +3361,7 @@ public static class FunctionTypeC
 
                 if (sVar4 == 0)
                 {
-                    gameEngine.StaticVariables.g_globalFlags[0] |= 1;
+                    gameEngine.StaticVariables.g_temporaryFlags[0] |= 1;
                     gameEngine.StaticVariables.PlayerEntity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.PlayerEntity.PosX, entity.PosY - gameEngine.StaticVariables.PlayerEntity.PosY);
                 }
 
@@ -7017,7 +7017,7 @@ public static class FunctionTypeC
                     warpSlot.SavedX = entity.PosX;
                     warpSlot.SavedY = entity.PosY;
 
-                    if ((gameEngine.StaticVariables.g_globalFlags[0] & 0x2) != 0)
+                    if ((gameEngine.StaticVariables.g_temporaryFlags[0] & 0x2) != 0)
                     {
                         if (relativePositions[1] < 3 && relativePositions[0] < 3 && entity.AIValues[1] == 0)
                         {

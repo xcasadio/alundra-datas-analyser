@@ -73,10 +73,10 @@ namespace AlundraTools.GameControls
             labelFrames = new Label();
             label8 = new Label();
             label12 = new Label();
-            dataGridViewGlobalFlags = new DataGridView();
+            dataGridViewTemporaryFlags = new DataGridView();
             columnIndex = new DataGridViewTextBoxColumn();
             columnValue = new DataGridViewTextBoxColumn();
-            dataGridViewMapFlags = new DataGridView();
+            dataGridViewGameFlags = new DataGridView();
             dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
             buttonSaveFrames = new Button();
@@ -246,8 +246,8 @@ namespace AlundraTools.GameControls
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridViewGlobalFlags).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridViewMapFlags).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewTemporaryFlags).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewGameFlags).BeginInit();
             groupBox4.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPageEntities.SuspendLayout();
@@ -701,7 +701,7 @@ namespace AlundraTools.GameControls
             label8.Name = "label8";
             label8.Size = new Size(69, 15);
             label8.TabIndex = 21;
-            label8.Text = "Global flags";
+            label8.Text = "Temporary flags";
             // 
             // label12
             // 
@@ -710,20 +710,20 @@ namespace AlundraTools.GameControls
             label12.Name = "label12";
             label12.Size = new Size(59, 15);
             label12.TabIndex = 22;
-            label12.Text = "Map flags";
+            label12.Text = "Global flags";
             // 
-            // dataGridViewGlobalFlags
+            // dataGridViewTemporaryFlags
             // 
-            dataGridViewGlobalFlags.AllowUserToAddRows = false;
-            dataGridViewGlobalFlags.AllowUserToDeleteRows = false;
-            dataGridViewGlobalFlags.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewGlobalFlags.Columns.AddRange(new DataGridViewColumn[] { columnIndex, columnValue });
-            dataGridViewGlobalFlags.Location = new Point(6, 44);
-            dataGridViewGlobalFlags.Name = "dataGridViewGlobalFlags";
-            dataGridViewGlobalFlags.RowHeadersVisible = false;
-            dataGridViewGlobalFlags.RowHeadersWidth = 51;
-            dataGridViewGlobalFlags.Size = new Size(110, 334);
-            dataGridViewGlobalFlags.TabIndex = 23;
+            dataGridViewTemporaryFlags.AllowUserToAddRows = false;
+            dataGridViewTemporaryFlags.AllowUserToDeleteRows = false;
+            dataGridViewTemporaryFlags.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewTemporaryFlags.Columns.AddRange(new DataGridViewColumn[] { columnIndex, columnValue });
+            dataGridViewTemporaryFlags.Location = new Point(6, 44);
+            dataGridViewTemporaryFlags.Name = "dataGridViewTemporaryFlags";
+            dataGridViewTemporaryFlags.RowHeadersVisible = false;
+            dataGridViewTemporaryFlags.RowHeadersWidth = 51;
+            dataGridViewTemporaryFlags.Size = new Size(110, 334);
+            dataGridViewTemporaryFlags.TabIndex = 23;
             // 
             // columnIndex
             // 
@@ -739,18 +739,18 @@ namespace AlundraTools.GameControls
             columnValue.Name = "columnValue";
             columnValue.Width = 60;
             // 
-            // dataGridViewMapFlags
+            // dataGridViewGameFlags
             // 
-            dataGridViewMapFlags.AllowUserToAddRows = false;
-            dataGridViewMapFlags.AllowUserToDeleteRows = false;
-            dataGridViewMapFlags.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewMapFlags.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2 });
-            dataGridViewMapFlags.Location = new Point(122, 44);
-            dataGridViewMapFlags.Name = "dataGridViewMapFlags";
-            dataGridViewMapFlags.RowHeadersVisible = false;
-            dataGridViewMapFlags.RowHeadersWidth = 51;
-            dataGridViewMapFlags.Size = new Size(117, 334);
-            dataGridViewMapFlags.TabIndex = 24;
+            dataGridViewGameFlags.AllowUserToAddRows = false;
+            dataGridViewGameFlags.AllowUserToDeleteRows = false;
+            dataGridViewGameFlags.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewGameFlags.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2 });
+            dataGridViewGameFlags.Location = new Point(122, 44);
+            dataGridViewGameFlags.Name = "dataGridViewGameFlags";
+            dataGridViewGameFlags.RowHeadersVisible = false;
+            dataGridViewGameFlags.RowHeadersWidth = 51;
+            dataGridViewGameFlags.Size = new Size(117, 334);
+            dataGridViewGameFlags.TabIndex = 24;
             // 
             // dataGridViewTextBoxColumn1
             // 
@@ -1441,9 +1441,9 @@ namespace AlundraTools.GameControls
             tabPageDebug.Controls.Add(label8);
             tabPageDebug.Controls.Add(comboBoxSpawnItemId);
             tabPageDebug.Controls.Add(label12);
-            tabPageDebug.Controls.Add(dataGridViewGlobalFlags);
+            tabPageDebug.Controls.Add(dataGridViewTemporaryFlags);
             tabPageDebug.Controls.Add(buttonSpawnItem);
-            tabPageDebug.Controls.Add(dataGridViewMapFlags);
+            tabPageDebug.Controls.Add(dataGridViewGameFlags);
             tabPageDebug.Controls.Add(label30);
             tabPageDebug.Controls.Add(comboBoxRandomItem);
             tabPageDebug.Location = new Point(4, 24);
@@ -2594,8 +2594,8 @@ namespace AlundraTools.GameControls
             groupBox2.PerformLayout();
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridViewGlobalFlags).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridViewMapFlags).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewTemporaryFlags).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewGameFlags).EndInit();
             groupBox4.ResumeLayout(false);
             groupBox4.PerformLayout();
             tabControl1.ResumeLayout(false);
@@ -2680,10 +2680,10 @@ namespace AlundraTools.GameControls
         private Label labelFrames;
         private Label label8;
         private Label label12;
-        private DataGridView dataGridViewGlobalFlags;
+        private DataGridView dataGridViewTemporaryFlags;
         private DataGridViewTextBoxColumn columnIndex;
         private DataGridViewTextBoxColumn columnValue;
-        private DataGridView dataGridViewMapFlags;
+        private DataGridView dataGridViewGameFlags;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private Button buttonSaveFrames;

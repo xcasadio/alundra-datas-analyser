@@ -401,7 +401,7 @@ public class EventCodeDebugger
         {
             var type = parameters[i * 2] + (parameters[i * 2 + 1] << 8);
             var flag = ((type >> 3) & 0x3ff) >> 2;
-            description += (flag & 0x8000) == 0 ? "MapFlags" : "GlobalFlags";
+            description += (flag & 0x8000) == 0 ? "GameFlags" : "TemporaryFlags";
             var bitToCheck = type & 0x1f;
             var mask = 1 << bitToCheck;
             description += $"[{flag}] & 0x{mask:X} != 0 and ";
@@ -426,7 +426,7 @@ public class EventCodeDebugger
     private static string GetFlagDescription(int position, byte[] parameters)
     {
         var flag = parameters[0] | (parameters[1] << 8);
-        var name = (flag & 0x8000) == 0 ? "MapFlags" : "GlobalFlags";
+        var name = (flag & 0x8000) == 0 ? "GameFlags" : "TemporaryFlags";
         name += $"[{((flag >> 3) & 0xffc) >> 2}]";
         name += $" with mask 0x{1 << (parameters[0] & 0x1f):X}";
         return name;

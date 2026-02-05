@@ -296,11 +296,11 @@ public class UIDebugManager
 
                 if (((_gameEngine.StaticVariables.UINT_8017e8d8 & 0xffff | (uint)_gameEngine.StaticVariables.DAT_8017e9ac << 0xf) & 0x8000) == 0)
                 {
-                    flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
+                    flags = _gameEngine.StaticVariables.g_saveData.GameFlags;
                 }
                 else
                 {
-                    flags = _gameEngine.StaticVariables.g_globalFlags;
+                    flags = _gameEngine.StaticVariables.g_temporaryFlags;
                 }
 
                 var index = (_gameEngine.StaticVariables.UINT_8017e8d8 & 0x7fe0) >> 3;
@@ -357,11 +357,11 @@ public class UIDebugManager
 
                 if ((value & 0x8000) == 0)
                 {
-                    flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
+                    flags = _gameEngine.StaticVariables.g_saveData.GameFlags;
                 }
                 else
                 {
-                    flags = _gameEngine.StaticVariables.g_globalFlags;
+                    flags = _gameEngine.StaticVariables.g_temporaryFlags;
                 }
 
                 var index = (_gameEngine.StaticVariables.UINT_8017e8d8 & 0x7fe0) >> 3;

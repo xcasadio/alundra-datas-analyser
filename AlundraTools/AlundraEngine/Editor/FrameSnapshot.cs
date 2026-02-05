@@ -8,8 +8,8 @@ public class FrameSnapshot
     public Entity[] Entities { get; set; }
 
     public ulong GameRandomSeed { get; set; }
-    public uint[] MapFlags { get; set; }
-    public uint[] GlobalFlags { get; set; }
+    public uint[] GameFlags { get; set; }
+    public uint[] TemporaryFlags { get; set; }
     public int LastWarpEntityIndex { get; set; }
     public int TileAnimFrameCounter { get; set; }
     public int DAT_80098f24 { get; set; }
@@ -74,8 +74,8 @@ public class FrameSnapshot
             gameEngine.StaticVariables.g_entitySlots[i].CopyFrom(Entities[i]);
         }
 
-        Array.Copy(MapFlags, gameEngine.StaticVariables.g_saveData.MapFlags, gameEngine.StaticVariables.g_saveData.MapFlags.Length);
-        Array.Copy(GlobalFlags, gameEngine.StaticVariables.g_globalFlags, gameEngine.StaticVariables.g_globalFlags.Length);
+        Array.Copy(GameFlags, gameEngine.StaticVariables.g_saveData.GameFlags, gameEngine.StaticVariables.g_saveData.GameFlags.Length);
+        Array.Copy(TemporaryFlags, gameEngine.StaticVariables.g_temporaryFlags, gameEngine.StaticVariables.g_temporaryFlags.Length);
 
         Random.RandomSeed = GameRandomSeed;
 
@@ -148,8 +148,8 @@ public class FrameSnapshot
         }
         ;
 
-        MapFlags = (uint[])gameEngine.StaticVariables.g_saveData.MapFlags.Clone();
-        GlobalFlags = (uint[])gameEngine.StaticVariables.g_globalFlags.Clone();
+        GameFlags = (uint[])gameEngine.StaticVariables.g_saveData.GameFlags.Clone();
+        TemporaryFlags = (uint[])gameEngine.StaticVariables.g_temporaryFlags.Clone();
 
         GameRandomSeed = Random.RandomSeed;
 

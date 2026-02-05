@@ -149,7 +149,7 @@ public class GameEngine
             }
 
             //DoNothing();
-            ClearGlobalFlags();
+            ClearTemporaryFlags();
             ResetCameraAndLoadVRAMAssets();
             InitializeItems(CurrentMap.Info._11); //StaticVariables.g_gameMapInfo->d
             LoadMapAndInitializeEntities(null);//((int)&g_currentMapBuffer.infoBlockOffset + g_currentMapBuffer.spriteSheetsOffset));
@@ -332,13 +332,13 @@ public class GameEngine
     }
 
     //8008159c
-    private void ClearGlobalFlags()
+    private void ClearTemporaryFlags()
     {
         var i = 0x3f;
 
         do
         {
-            StaticVariables.g_globalFlags[i] = 0;
+            StaticVariables.g_temporaryFlags[i] = 0;
             i -= 1;
         } while (i >= 0);
     }
@@ -717,11 +717,11 @@ public class GameEngine
                 
                 if ((contents & 0x8000) == 0)
                 {
-                    flags = StaticVariables.g_saveData.MapFlags;
+                    flags = StaticVariables.g_saveData.GameFlags;
                 }
                 else
                 {
-                    flags = StaticVariables.g_globalFlags;
+                    flags = StaticVariables.g_temporaryFlags;
                 }
 
                 var index = ((contents >> 3) & 0xffc) >> 2;
@@ -1008,11 +1008,11 @@ public class GameEngine
             {
                 if (mapId == currentMapId)
                 {
-                    var flags = StaticVariables.g_saveData.MapFlags;
+                    var flags = StaticVariables.g_saveData.GameFlags;
 
                     if ((soundOffsetList[i + 1] & 0x8000) != 0)
                     {
-                        flags = StaticVariables.g_globalFlags;
+                        flags = StaticVariables.g_temporaryFlags;
                     }
 
                     var index = ((soundOffsetList[i + 1] >> 3) & 0xffc) >> 2;
@@ -2383,11 +2383,11 @@ public class GameEngine
 
         if ((flag & 0x8000) == 0)
         {
-            flags = StaticVariables.g_saveData.MapFlags;
+            flags = StaticVariables.g_saveData.GameFlags;
         }
         else
         {
-            flags = StaticVariables.g_globalFlags;
+            flags = StaticVariables.g_temporaryFlags;
         }
 
         var index = ((flag >> 3) & 0xffc) >> 2;

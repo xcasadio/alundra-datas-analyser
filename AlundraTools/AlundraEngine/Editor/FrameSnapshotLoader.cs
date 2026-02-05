@@ -46,8 +46,8 @@ public static class FrameSnapshotLoader
             }
         }
 
-        frameSnapshot.MapFlags = dump.g_mapFlags;
-        frameSnapshot.GlobalFlags = dump.g_globalFlags;
+        frameSnapshot.GameFlags = dump.g_gameFlags;
+        frameSnapshot.TemporaryFlags = dump.g_temporaryFlags;
         frameSnapshot.GameRandomSeed = dump.g_gameRandomSeed;
         frameSnapshot.LastWarpEntityIndex = dump.g_lastWarpEntityIndex;
         frameSnapshot.TileAnimFrameCounter = dump.g_TileAnimFrameCounter;
@@ -156,8 +156,8 @@ public static class FrameSnapshotLoader
     {
         public List<EntityJson> entities { get; set; }
 
-        public uint[] g_mapFlags { get; set; }
-        public uint[] g_globalFlags { get; set; }
+        public uint[] g_gameFlags { get; set; }
+        public uint[] g_temporaryFlags { get; set; }
         public uint g_gameRandomSeed { get; set; }
         public int g_lastWarpEntityIndex { get; set; }
         public int g_TileAnimFrameCounter { get; set; }

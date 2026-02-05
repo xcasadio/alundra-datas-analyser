@@ -3371,7 +3371,7 @@ public class PlayerManager
     //8004dfd8
     public void AddMoney(int amount)
     {
-        SetMoney((short)(amount + _gameEngine.StaticVariables.g_playerStats.MoneyAmount));
+        SetMoney((short)(_gameEngine.StaticVariables.g_playerStats.MoneyAmount + amount));
     }
 
     //80034108
@@ -3692,7 +3692,7 @@ public class PlayerManager
             playerStats.FalconTemp = 0x32;
         }
 
-        _gameEngine.StaticVariables.g_saveData.MapFlags[0x2d] |= 0x400;
+        _gameEngine.StaticVariables.g_saveData.GameFlags[0x2d] |= 0x400;
     }
 
     //80032e2c
@@ -4333,7 +4333,7 @@ public class PlayerManager
             playerStats.Falcon = 0x32;
         }
 
-        _gameEngine.StaticVariables.g_saveData.MapFlags[0x2d] &= 0xfffffbff;
+        _gameEngine.StaticVariables.g_saveData.GameFlags[0x2d] &= 0xfffffbff;
     }
 
 

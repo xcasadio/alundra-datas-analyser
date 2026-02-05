@@ -14,7 +14,7 @@ public class SaveData
     public int CameraTileX;
     public int CameraTileY;
     public int CameraTileZ;
-    public uint[] MapFlags = new uint[64];
+    public uint[] GameFlags = new uint[64];
     public ushort[] MapIdToInternalMapIndexTable = new ushort[500];
     public PlayerStats PlayerStats = new();         
     public short[] NumberOfItems = new short[256];
@@ -33,7 +33,7 @@ public class SaveData
         CameraTileX = source.CameraTileX;
         CameraTileY = source.CameraTileY;
         CameraTileZ = source.CameraTileZ;
-        Array.Copy(source.MapFlags, MapFlags, MapFlags.Length);
+        Array.Copy(source.GameFlags, GameFlags, GameFlags.Length);
         Array.Copy(source.MapIdToInternalMapIndexTable, MapIdToInternalMapIndexTable, MapIdToInternalMapIndexTable.Length);
         PlayerStats.CopyFrom(source.PlayerStats);
         Array.Copy(source.NumberOfItems, NumberOfItems, NumberOfItems.Length);

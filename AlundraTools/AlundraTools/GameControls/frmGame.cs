@@ -395,8 +395,8 @@ public partial class FrmGame : Form
 
     private void InitializeUI()
     {
-        AddFlagsInDataGridView(dataGridViewMapFlags, _gameEngine.StaticVariables.g_saveData.MapFlags);
-        AddFlagsInDataGridView(dataGridViewGlobalFlags, _gameEngine.StaticVariables.g_globalFlags);
+        AddFlagsInDataGridView(dataGridViewGameFlags, _gameEngine.StaticVariables.g_saveData.GameFlags);
+        AddFlagsInDataGridView(dataGridViewTemporaryFlags, _gameEngine.StaticVariables.g_temporaryFlags);
     }
 
     private void AddFlagsInDataGridView(DataGridView dataGridView, uint[] flags)
@@ -529,7 +529,7 @@ public partial class FrmGame : Form
         propertyGridEntity.Refresh();
         propertyGridEffect.Refresh();
 
-        RefreshGameAndMapFlagsControls();
+        RefreshGameAndGameFlagsControls();
         RefreshFlagsControls();
         RefreshDialogControls();
         RefreshHudControls();
@@ -545,10 +545,10 @@ public partial class FrmGame : Form
         labelFrames.Text = $"Frame {_gameEngine.ReplayManager.CurrentFrame}/{_gameEngine.ReplayManager.FrameCount - 1}";
     }
 
-    private void RefreshGameAndMapFlagsControls()
+    private void RefreshGameAndGameFlagsControls()
     {
-        RefreshDatagridViewFlagsControl(dataGridViewMapFlags, _gameEngine.StaticVariables.g_saveData.MapFlags);
-        RefreshDatagridViewFlagsControl(dataGridViewGlobalFlags, _gameEngine.StaticVariables.g_globalFlags);
+        RefreshDatagridViewFlagsControl(dataGridViewGameFlags, _gameEngine.StaticVariables.g_saveData.GameFlags);
+        RefreshDatagridViewFlagsControl(dataGridViewTemporaryFlags, _gameEngine.StaticVariables.g_temporaryFlags);
     }
 
     private void RefreshDatagridViewFlagsControl(DataGridView dataGridView, uint[] flags)
@@ -1448,10 +1448,10 @@ public partial class FrmGame : Form
 
     private void buttonAlundraCabine_Click(object sender, EventArgs e)
     {
-        _gameEngine.StaticVariables.g_saveData.MapFlags[27] |= 4;
-        _gameEngine.StaticVariables.g_saveData.MapFlags[27] |= 32;
-        _gameEngine.StaticVariables.g_saveData.MapFlags[27] |= 64;
-        _gameEngine.StaticVariables.g_saveData.MapFlags[27] |= 128;
+        _gameEngine.StaticVariables.g_saveData.GameFlags[27] |= 4;
+        _gameEngine.StaticVariables.g_saveData.GameFlags[27] |= 32;
+        _gameEngine.StaticVariables.g_saveData.GameFlags[27] |= 64;
+        _gameEngine.StaticVariables.g_saveData.GameFlags[27] |= 128;
     }
 
     private void checkBoxAddLogInVS_CheckedChanged(object sender, EventArgs e)

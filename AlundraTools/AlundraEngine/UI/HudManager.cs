@@ -41,7 +41,7 @@ public class HudManager
     //8004be0c
     public void InitializeHudPositionBeforeHide()
     {
-        if ((_gameEngine.StaticVariables.g_saveData.MapFlags[0x33] & 0x40000000U) != 0
+        if ((_gameEngine.StaticVariables.g_saveData.GameFlags[0x33] & 0x40000000U) != 0
             && _gameEngine.StaticVariables.g_drawFrameFlags == 0)
         {
             _gameEngine.GraphicManager.SetTransitionType(1);
