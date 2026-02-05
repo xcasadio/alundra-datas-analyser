@@ -693,25 +693,28 @@ public class GameEngine
     // 80032a40
     public void InitializeContents(Entity entity)
     {
+        ushort contentId;
+        
         if (entity.EntityRecord == null)
         {
             entity.ContentsGameFlag = 0;
+            contentId = entity.SpriteRecord.Header.Contents;
         }
         else
         {
             int contents = entity.EntityRecord._10;
 
-            if ((contents & 0x7ff) >= 800)
+            if ((contents & 0x7fff) > 0x7ff)
             {
                 contents = 0;
             }
 
             entity.ContentsGameFlag = contents;
+            
             if (contents != 0)
             {
                 uint[] flags;
-                var val = contents;
-
+                
                 if ((contents & 0x8000) == 0)
                 {
                     flags = StaticVariables.g_saveData.MapFlags;
@@ -722,23 +725,26 @@ public class GameEngine
                 }
 
                 var index = ((contents >> 3) & 0xffc) >> 2;
-                var mask = 1 << (val & 0x1f);
+                var mask = 1 << (contents & 0x1f);
 
-                if ((flags[index] & mask) == 0)
+                contentId = 0;
+                if ((flags[index] & mask) != 0)
                 {
-                    entity.ContentsItemId = (uint)ChooseRandomlyAnItem(entity.EntityRecord.Contents);
-                    return;
+                    goto SET_CONTENTS;
                 }
             }
-
-            if (entity.EntityRecord.Contents != 0)
+            
+            contentId = entity.EntityRecord.Contents;
+            if (contentId != 0)
             {
-                entity.ContentsItemId = (uint)ChooseRandomlyAnItem(entity.EntityRecord.Contents);
-                return;
+                goto SET_CONTENTS;
             }
+            
+            contentId = entity.SpriteRecord.Header.Contents;
         }
 
-        entity.ContentsItemId = (uint)ChooseRandomlyAnItem(entity.SpriteRecord.Header.Contents);
+        SET_CONTENTS:
+        entity.ContentsItemId = (uint)ChooseRandomlyAnItem(contentId);
     }
 
     //80032968
@@ -2366,7 +2372,7 @@ public class GameEngine
     }
 
     //80032b28
-    public void FUN_80032b28(uint flag)
+    public void SetGameOrMapFlag(uint flag)
     {
         uint[] flags;
 
@@ -2385,7 +2391,8 @@ public class GameEngine
         }
 
         var index = ((flag >> 3) & 0xffc) >> 2;
-        flags[index] |= (uint)(1 << (int)(flag & 0x1f));
+        var mask = (uint)(1 << (int)(flag & 0x1f));
+        flags[index] |= mask;
     }
 
     //8004248c

@@ -7980,7 +7980,7 @@ public static class FunctionTypeC
             else
             {
                 gameEngine.PlayerManager.FUN_80033dbc(gameEngine.StaticVariables.PlayerEntity, itemId);
-                gameEngine.FUN_80032b28((uint)entity2.ContentsGameFlag);
+                gameEngine.SetGameOrMapFlag((uint)entity2.ContentsGameFlag);
             }
         }
         else
@@ -8082,7 +8082,7 @@ public static class FunctionTypeC
                 }
 
                 uint flag = (ushort)entity.AIValues[0] | ((uint)(ushort)entity.AIValues[1] << 16); //AIValues[0]
-                gameEngine.FUN_80032b28(flag);
+                gameEngine.SetGameOrMapFlag(flag);
                 soundSfxIndex = gameEngine.StaticVariables.g_itemDropProperties[itemId].SoundSfxIndex; //itemId * 8 + 5
 
                 if (soundSfxIndex != 0)
