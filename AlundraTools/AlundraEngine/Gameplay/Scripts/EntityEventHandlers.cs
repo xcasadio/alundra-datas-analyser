@@ -386,7 +386,7 @@ public class EntityEventHandlers
     {
         var eventActionProperty = EventCodeDebugger.CommandPropertiesByCode.GetValueOrDefault((byte)command);
         var eventTypeName = logicMode == 0 ? "ALoad" : logicMode == 1 ? "BMap" : logicMode == 2 ? "CTick" : logicMode == 3 ? "DTouch" : logicMode == 4 ? "EDeactivate" : "FInteract";
-        var parameters = variables.Select(x => (byte)x).ToArray();
+        var parameters = variables.Skip(1).Select(x => (byte)x).ToArray();
         return $"run[{eventTypeName}] p:{codeIndex} {EventCodeDebugger.CreateLog(codeIndex, (byte)command, parameters, false)}";
     }
 
@@ -1171,7 +1171,7 @@ public class EntityEventHandlers
             var flag = ((flagData >> 3) & 0x3ff) >> 2;
             uint[] flags;
 
-            if ((flagData & 0x8000) != 0)
+            if ((flagData & 0x8000) == 0)
             {
                 flags = _gameEngine.StaticVariables.g_saveData.MapFlags;
             }

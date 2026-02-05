@@ -1991,7 +1991,7 @@ public static class FunctionTypeC
     //8006b8cc
     public static void AI_FUN_8006b8cc(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (entity.Name != "◆Projectile")
         {
             Breakpoint.TriggerBreak();
         }
@@ -7875,6 +7875,8 @@ public static class FunctionTypeC
             && entity.Name != "I85_Cœur moyen"
             && entity.Name != "I86_Grand cœur"
             && entity.Name != "I69_1 Gilda"
+            && entity.Name != "I70_5 Gildas"
+            && entity.Name != "I61_Clé"
             && entity.Name != null)
         {
             Breakpoint.TriggerBreak();

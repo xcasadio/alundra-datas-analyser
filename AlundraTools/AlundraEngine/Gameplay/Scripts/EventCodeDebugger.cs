@@ -399,12 +399,12 @@ public class EventCodeDebugger
         
         for (int i = 0; i < 4; i++)
         {
-            var flag = parameters[i * 2] + (parameters[i * 2 + 1] << 8);
-            flag = ((flag >> 3) & 0x3ff) >> 2;
-            description += (flag & 0x8000) != 0 ? "MapFlags" : "GlobalFlags";
-            var bitToCheck = flag & 0x1f;
+            var type = parameters[i * 2] + (parameters[i * 2 + 1] << 8);
+            var flag = ((type >> 3) & 0x3ff) >> 2;
+            description += (flag & 0x8000) == 0 ? "MapFlags" : "GlobalFlags";
+            var bitToCheck = type & 0x1f;
             var mask = 1 << bitToCheck;
-            description += $"[{flag}] & 0x{mask:X} == 0 or ";
+            description += $"[{flag}] & 0x{mask:X} != 0 and ";
         }
 
         return description;
