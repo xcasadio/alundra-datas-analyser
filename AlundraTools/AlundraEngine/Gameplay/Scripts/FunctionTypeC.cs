@@ -12,7 +12,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "◆Beannoïde")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         short delay = 0;
@@ -167,7 +167,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             return;
         }
 
@@ -308,7 +308,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "◆Tortue de roche Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             return;
         }
 
@@ -460,9 +460,10 @@ public static class FunctionTypeC
             && entity.Name != "I38_Extrait magique"
             && entity.Name != "I83_Récipient de vie"
             && entity.Name != "I20_Veste en argent"
-            && entity.Name != "Pierre générique")
+            && entity.Name != "Pierre générique"
+            && entity.Name != null)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         int value = 0;
@@ -601,7 +602,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             return;
         }
 
@@ -748,7 +749,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             return;
         }
 
@@ -963,7 +964,7 @@ public static class FunctionTypeC
     //800647b0
     public static void AI_FUN_800647b0(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         if (entity.ParentEntity.AIValues[4] == 0)
         {
@@ -1001,7 +1002,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             return;
         }
 
@@ -1211,7 +1212,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             return;
         }
 
@@ -1358,7 +1359,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         short sVar1;
@@ -1413,16 +1414,17 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
     //80065750
     public static void AI_FUN_80065750(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Toutou (chien)")
+        if (entity.Name != "Toutou (chien)"
+            && entity.Name != null)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         byte bVar1;
@@ -1568,7 +1570,7 @@ public static class FunctionTypeC
         if (entity.Name != "◆Slime géant (grand)"
             && entity.Name != "◆Slime géant (petit)")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         short sVar1;
@@ -1807,7 +1809,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         short sVar1;
@@ -1954,9 +1956,10 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Caisse en bois générique" 
             && entity.Name != "Cruche générique"
-            && entity.Name != "Pierre très lourde")
+            && entity.Name != "Pierre très lourde"
+            && entity.Name != null)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         if (entity.PlatformEntity == null)
@@ -1990,7 +1993,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         //do nothing
@@ -2001,7 +2004,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         bool bVar2;
@@ -2234,7 +2237,7 @@ public static class FunctionTypeC
     //8006e83c
     public static void AI_FUN_8006e83c(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         uint uVar1;
 
@@ -2258,13 +2261,13 @@ public static class FunctionTypeC
     //Abyss Niv.1
     public static void AI_FUN_8006eb9c(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
     }
 
     //8006f860
     public static void AI_FUN_8006f860(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         if (entity.TargetAnimationId == 0)
         {
@@ -2292,19 +2295,19 @@ public static class FunctionTypeC
     //8006f8e4
     public static void AI_FUN_8006f8e4(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
     }
 
     //80073728
     public static void AI_FUN_80073728(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
     }
 
     //80074ae8
     public static void AI_FUN_80074ae8(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         short sVar1;
         uint uVar2;
@@ -2375,7 +2378,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         byte bVar1;
@@ -2496,7 +2499,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -2505,7 +2508,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         uint direction;
@@ -2571,7 +2574,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "◆Wilda (tête)")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -2580,7 +2583,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         byte bVar1;
@@ -2622,7 +2625,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         bool bVar1;
@@ -2919,7 +2922,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         int iVar1 = 0;
@@ -3048,7 +3051,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         bool bVar1;
@@ -3384,7 +3387,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         SpriteEffect effect;
@@ -3492,7 +3495,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         //do nothing
@@ -3503,7 +3506,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         ushort uVar1;
@@ -3566,7 +3569,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         byte bVar1;
@@ -3685,7 +3688,7 @@ public static class FunctionTypeC
         if (entity.Name != "Boule de feu"
             && entity.Name != "Boule de glace")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         if ((entity.FrameCounter & 0x3) == 0)
@@ -3719,7 +3722,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         gameEngine.CheckAndTriggerTileEffect(entity);
@@ -3731,7 +3734,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Bombe")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         SpriteEffect effect;
@@ -3867,7 +3870,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -3876,7 +3879,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         AI_FUN_8007b04c_common(gameEngine, entity, 0x800, 0x180000);
@@ -3886,7 +3889,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         var byte0 = entity.Bytes[0];
@@ -3943,7 +3946,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         AI_FUN_8007b04c_common(gameEngine, entity, 0xc00, 0x240000);
@@ -3954,7 +3957,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -3963,7 +3966,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -3973,7 +3976,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         if (entity.PlatformEntity == null)
@@ -4007,7 +4010,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Goutte d’eau")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         byte bVar1;
@@ -4080,9 +4083,10 @@ public static class FunctionTypeC
     //8007b998
     public static void AI_ProcessWarpTransitionState(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "SaveBook (Ne pas toucher !)")
+        if (entity.Name != "SaveBook (Ne pas toucher !)"
+            && entity.Name != null)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         int state = ReadWarpState(entity);
@@ -4211,7 +4215,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Haricots de Jack")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         if (entity.PlatformEntity == null)
@@ -4243,7 +4247,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Pot magique (boïng)")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         switch ((int)entity.TargetAnimationId - 1)
@@ -4324,7 +4328,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -4333,7 +4337,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "Pilier poussable (PRG)")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         if (gameEngine.StaticVariables.PlayerEntity.XCollisionEntity == entity)
@@ -4409,7 +4413,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         SpriteEffect effect;
@@ -4434,7 +4438,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -4443,7 +4447,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -4452,7 +4456,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "◆Guêpe Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         byte bVar1;
@@ -4680,7 +4684,7 @@ public static class FunctionTypeC
         if (entity.Name != "◆Homme momie Niv.1"
             && entity.Name != "◆Homme momie Niv.2")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         short sVar1;
@@ -4871,7 +4875,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "◆Mimique Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         bool bVar1;
@@ -4967,7 +4971,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -4976,7 +4980,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -4985,7 +4989,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "◆Fantôme Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         byte bVar1;
@@ -5173,7 +5177,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "◆Muruta (griffes) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         byte state;
@@ -5495,7 +5499,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -5504,7 +5508,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -5513,7 +5517,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -5522,7 +5526,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -5532,7 +5536,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "◆Orc (hache) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         byte bVar1;
@@ -5660,7 +5664,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "◆Orc (armure de fer) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         short sVar2;
@@ -5809,7 +5813,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "◆Poisson Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         int iVar1;
@@ -5990,7 +5994,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -5999,7 +6003,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "◆Zombie Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         short val;
@@ -6130,7 +6134,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "◆Champignon Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         short delay;
@@ -6296,7 +6300,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "◆Slime gélatineux")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         uint direction;
@@ -6452,7 +6456,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6461,7 +6465,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6470,7 +6474,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6479,7 +6483,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6488,7 +6492,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6498,7 +6502,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         short sVar2;
@@ -6677,7 +6681,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6686,7 +6690,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6695,7 +6699,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6705,7 +6709,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6714,7 +6718,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6723,7 +6727,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6732,7 +6736,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6742,7 +6746,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6751,7 +6755,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6759,7 +6763,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6767,7 +6771,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6775,7 +6779,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6783,7 +6787,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6791,7 +6795,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 
@@ -6800,7 +6804,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "◆Bras, projectiles")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         int[] relativePositions = new int[6];
@@ -7188,7 +7192,7 @@ public static class FunctionTypeC
                     }
 
                     entity.TargetAnimationId = 0x2;
-                    //Debugger.Break();
+                    //AlundraEngine.Debug.Debugger.Breakpoint();
 
                     // ... le dump continue avec LAB_800629c8 etc.
                     // (le reste suit la même logique; si tu veux, je te génère aussi la suite
@@ -7471,7 +7475,7 @@ public static class FunctionTypeC
     {
         if (entity.Name != "")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         AI_Melzas2.AI_UpdateMelzas2CutsceneChannels(gameEngine, entity);
@@ -7480,9 +7484,9 @@ public static class FunctionTypeC
     //800637d8
     public static void AI_UpdateEntityAI_IdleLookAround(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (entity.Name != null)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         ulong rand;
@@ -7683,9 +7687,9 @@ public static class FunctionTypeC
     //80063db4
     public static void AI_UpdateEntityAI_IdleCurious(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (entity.Name != null)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         byte remainingCycles;
@@ -7867,16 +7871,17 @@ public static class FunctionTypeC
             && entity.Name != "I62_Emblème du sang de pigeon"
             && entity.Name != "I84_Petit cœur"
             && entity.Name != "I86_Grand cœur"
-            && entity.Name != "I69_1 Gilda")
+            && entity.Name != "I69_1 Gilda"
+            && entity.Name != null)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         int itemState;
         Entity entity2;
         int soundSfxIndex;
 
-        //Debugger.Break();
+        //AlundraEngine.Debug.Debugger.Breakpoint();
         var itemId = entity.SpriteTableIndex - 0x1e;
 
         if (entity.Bytes[0] == 2)

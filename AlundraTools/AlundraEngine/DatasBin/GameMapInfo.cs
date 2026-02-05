@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using AlundraEngine.Graphics;
 
 namespace AlundraEngine.DatasBin;
 
@@ -92,7 +93,7 @@ public class GameMapInfo
         
                 if (SpriteMapEntries[spriteIndex].NumberOfFrame == 0)
                 {
-                    Debugger.Break();
+                    Breakpoint.TriggerBreak();
                     //Trap(0x1c00);
                 }
         

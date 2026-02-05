@@ -1,4 +1,4 @@
-﻿namespace AlundraEngine;
+﻿namespace AlundraEngine.Graphics;
 
 /// <summary>
 /// PSX GPU blending modes (ABR values)

@@ -74,7 +74,7 @@ public class SiEntityRecord
                 {
                     if (cmd.Parameters[0] >= (spriteRecord.AnimSets?.Length ?? -1))
                     {
-                        //Debugger.Break();
+                        //AlundraEngine.Debug.Debugger.Breakpoint();
                         cmd.Parameters[0] = (byte)((spriteRecord.AnimSets?.Length ?? 1) - 1);
                     }
 

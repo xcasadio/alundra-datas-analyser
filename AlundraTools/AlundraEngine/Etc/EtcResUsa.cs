@@ -1,10 +1,9 @@
-﻿using System.Diagnostics;
+﻿namespace AlundraEngine.Etc;
 
-namespace AlundraEngine;
-
-public class EtcResR : EtcRes
+//same as EUR version ? => EtcResR
+public class EtcResUsa : EtcRes
 {
-    public EtcResR(string fileName) : base(fileName)
+    public EtcResUsa(string fileName) : base(fileName)
     {
         using var br = new BinaryReader(File.OpenRead(fileName));
         IndexTable = new short[1024];
@@ -27,6 +26,12 @@ public class EtcResR : EtcRes
         for (int i = 0; i < 0x100; i++)
         {
             int offset = IndexTable[i];
+
+            if (offset == -1)
+            {
+                continue;
+            }
+
             var j = offset;
             DescriptionStrings[i] = ReadString(buffer, ref j);
             StringByIndex.Add(offset, DescriptionStrings[i]);
@@ -51,24 +56,30 @@ public class EtcResR : EtcRes
         {
             int iconNameOffset = IndexTable[i + 0x200];
             var offset = iconNameOffset;
-            IconNames[i * 2] = ReadString(buffer, ref offset);
-            StringByIndex.TryAdd(iconNameOffset, IconNames[i * 2]);
+            if (offset != -1)
+            {
+                IconNames[i * 2] = ReadString(buffer, ref offset);
+                StringByIndex.TryAdd(iconNameOffset, IconNames[i * 2]);
+            }
 
             int descriptionOffset = IndexTable[i + 0x280];
             offset = descriptionOffset;
-            DescriptionItems[i * 2] = ReadString(buffer, ref offset);
-            StringByIndex.TryAdd(descriptionOffset, DescriptionItems[i * 2]);
+            if (offset != -1)
+            {
+                DescriptionItems[i * 2] = ReadString(buffer, ref offset);
+                StringByIndex.TryAdd(descriptionOffset, DescriptionItems[i * 2]);
+            }
 
             int otherStringOffset = IndexTable[i + 0x300];
             offset = otherStringOffset;
-            OtherStrings[i * 2] = ReadString(buffer, ref offset);
-            StringByIndex.TryAdd(otherStringOffset, OtherStrings[i * 2]);
+            if (offset != -1)
+            {
+                OtherStrings[i * 2] = ReadString(buffer, ref offset);
+                StringByIndex.TryAdd(otherStringOffset, OtherStrings[i * 2]);
+            }
         }
-
-        //l = _indexTable[0x3ff];
-        //var gameTitle = ReadString(buffer, ref l); // "BESLES-01135ALUNDRA " => BESLES-01198ALUNDRA
     }
-    
+
     public override string GetItemName(int id)
     {
         return IconNames[id * 2];

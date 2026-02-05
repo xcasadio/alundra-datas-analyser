@@ -1,4 +1,6 @@
-﻿namespace AlundraEngine.DatasBin;
+﻿using AlundraEngine.Graphics;
+
+namespace AlundraEngine.DatasBin;
 
 public class SpriteInfo
 {

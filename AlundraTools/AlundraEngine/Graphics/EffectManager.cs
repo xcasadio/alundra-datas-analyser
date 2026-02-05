@@ -2,7 +2,7 @@
 using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay;
 
-namespace AlundraEngine;
+namespace AlundraEngine.Graphics;
 
 public class EffectManager
 {
@@ -44,7 +44,7 @@ public class EffectManager
                   && (_gameEngine.StaticVariables.g_debugState & 0x80000000U) != 0
                  && (_gameEngine.StaticVariables.g_debugFlags & 0x20) != 0)
             {
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
             }
         }
     }
@@ -211,7 +211,7 @@ public class EffectManager
                 }
                 catch (Exception e)
                 {
-                    Debugger.Break();
+                    Breakpoint.TriggerBreak();
                 }
 
                 if (frameData.Images != null /*&& effect.Frame.ImageSetPointer != -1*/)
@@ -243,7 +243,7 @@ public class EffectManager
                 continue;
             }
 
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             //throw new Exception("Effect Animation Error!!");
         }
     }
@@ -397,7 +397,7 @@ public class EffectManager
         }
         while (i < 0x80);
 
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         return null;
     }
@@ -466,7 +466,7 @@ public class EffectManager
         itemEntity.Flags &= 0xffffff7f; // ~0x80
 
         ////[itemId * 2 + 1]
-        //Debugger.Break();
+        //AlundraEngine.Debug.Debugger.Breakpoint();
         var initPosX = _gameEngine.StaticVariables.g_itemDropProperties[itemId].Field1 == 0 ? -1 : 600;
 
         itemEntity.DelayOrAngle = initPosX;

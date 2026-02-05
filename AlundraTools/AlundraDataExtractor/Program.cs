@@ -7,6 +7,7 @@ using AlundraEngine.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text.Json;
+using AlundraEngine.Etc;
 
 namespace AlundraDataExtractor;
 

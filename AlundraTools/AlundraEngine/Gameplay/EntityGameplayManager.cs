@@ -1,7 +1,6 @@
-﻿using AlundraEngine.Gameplay;
-using AlundraEngine.Gameplay.Scripts;
+﻿using AlundraEngine.Gameplay.Scripts;
 
-namespace AlundraEngine;
+namespace AlundraEngine.Gameplay;
 
 public class EntityGameplayManager
 {

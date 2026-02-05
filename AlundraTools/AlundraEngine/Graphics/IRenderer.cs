@@ -1,6 +1,4 @@
-﻿using AlundraEngine.Graphics;
-
-namespace AlundraEngine;
+﻿namespace AlundraEngine.Graphics;
 
 public interface IRenderer
 {

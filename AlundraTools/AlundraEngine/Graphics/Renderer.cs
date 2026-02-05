@@ -1,8 +1,6 @@
-﻿using AlundraEngine.Graphics;
-using System.Drawing;
-using System.Drawing.Imaging;
+﻿using System.Drawing.Imaging;
 
-namespace AlundraEngine;
+namespace AlundraEngine.Graphics;
 
 public class Renderer(System.Drawing.Graphics graphics) : IRenderer
 {

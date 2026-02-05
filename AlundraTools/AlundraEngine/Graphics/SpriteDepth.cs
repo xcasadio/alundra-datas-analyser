@@ -1,4 +1,4 @@
-﻿namespace AlundraEngine;
+﻿namespace AlundraEngine.Graphics;
 
 public class SpriteDepth
 {

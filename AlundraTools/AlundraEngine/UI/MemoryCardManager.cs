@@ -1,6 +1,6 @@
 ﻿using AlundraEngine.Graphics;
 using System.Diagnostics;
-using static AlundraEngine.Renderer;
+using static AlundraEngine.Graphics.Renderer;
 
 namespace AlundraEngine.UI;
 
@@ -54,7 +54,7 @@ public class MemoryCardManager
     //8005e3e4
     private string FUN_8005e3e4(int slotId, string gameTitle, int memoryCardFileIndex, string data)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
         return "";
     }
 
@@ -86,6 +86,9 @@ public class MemoryCardManager
     //8006122c
     private int BuildDataAndSaveInMemoryCardAndUpdateData(int slotId, string gameTitle, uint offset)
     {
+        //Save only SaveData
+
+
         _gameEngine.StaticVariables.g_memoryCardDataBlob.Header[0] = 'S';
         _gameEngine.StaticVariables.g_memoryCardDataBlob.Header[1] = 'C';
         _gameEngine.StaticVariables.g_memoryCardDataBlob.IconFlags = 0x11;
@@ -97,7 +100,7 @@ public class MemoryCardManager
         Array.Copy(_gameEngine.StaticVariables.g_memoryCardIconFrame1, _gameEngine.StaticVariables.g_memoryCardDataBlob.IconFrame4bpp_1, _gameEngine.StaticVariables.g_memoryCardIconFrame1.Length);
         Array.Copy(_gameEngine.StaticVariables.g_memoryCardIconFrame2, _gameEngine.StaticVariables.g_memoryCardDataBlob.IconFrame4bpp_2, _gameEngine.StaticVariables.g_memoryCardIconFrame2.Length);
 
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         //Array.Copy(_gameEngine.StaticVariables.g_saveDataCopyPtr, 
         //    _gameEngine.StaticVariables.g_memoryCardDataBlob.SavePayload[offset * 0x76c], 
@@ -226,6 +229,7 @@ public class MemoryCardManager
 
             if (0 < _gameEngine.StaticVariables.g_memoryCardFileIndex)
             {
+                Breakpoint.TriggerBreak();
                 //do
                 //{
                 //    iVar2 = strcmp(piVar4, _gameEngine.StaticVariables.g_gameTitle);
@@ -262,8 +266,20 @@ public class MemoryCardManager
     //8005dc94
     private void FindSaveFileInMemoryCard(int slotId, string gameTitle, ref int fileIndex)
     {
-        return;
-        //Debugger.Break();
+        fileIndex = 0;
+        //string[] files = Directory.GetFiles("saves", "*.json", SearchOption.TopDirectoryOnly);
+        //
+        //foreach (string file in files)
+        //{
+        //    if (file.Contains(gameTitle))
+        //    {
+        //        fileIndex++;
+        //    }
+        //}
+
+
+
+        //AlundraEngine.Debug.Debugger.Breakpoint();
         //string prefix = slotId == 0 ? "bu00:" : "bu10:";
         //string pattern = prefix + "*";
         //
@@ -408,7 +424,7 @@ public class MemoryCardManager
     //8005ed2c
     private int UpdateSaveGameTransition()
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
         return 0;
     }
 
@@ -815,6 +831,7 @@ public class MemoryCardManager
                         /* dans le dump: boucle somme sur un tableau d'entrées (stride 0x28, add 0x18) */
                         /* Ici on laisse en placeholder : tu peux recâbler sur ta structure de directory. */
                         /* TODO: remplacer par itération réelle sur tes entrées MC. */
+                        Breakpoint.TriggerBreak();
                     }
 
                     /* compare avec 0x1C0000 (lui 1; ori C000) */
@@ -1058,7 +1075,7 @@ public class MemoryCardManager
                 {
                     _gameEngine.StaticVariables.g_fadeSubstate = 0;
 
-                    //Debugger.Break();
+                    //AlundraEngine.Debug.Debugger.Breakpoint();
 
                     /* loop 4 fois (strides 0x76C) – on reproduit le schéma */
                     for (int i = 0; i < 4; i++)
@@ -1436,7 +1453,7 @@ public class MemoryCardManager
     //Display all memory card files
     public void InitializeMemoryCardMenu(CallBackInfo callbackInfo)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         callbackInfo.RenderFunc = DisplayMemoryCardMenu;
 
@@ -1636,7 +1653,7 @@ public class MemoryCardManager
             0);
         _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] |= 1;
 
-        //Debugger.Break();
+        //AlundraEngine.Debug.Debugger.Breakpoint();
         //if (_gameEngine.StaticVariables.g_memoryCardOffsetArg1 != 0)
         //{
         //    i = 0;
@@ -1691,7 +1708,7 @@ public class MemoryCardManager
     //80058b28
     private int FUN_80058b28(uint param_1, uint param_2)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         //var piVar2 = _gameEngine.StaticVariables.g_memoryCardOffsetArg1[param_2];
         //var bVar1 = piVar2 == 0;
@@ -1734,7 +1751,7 @@ public class MemoryCardManager
     //80058f24
     private void DisplayMemoryCardMenu(CallBackInfo callbackInfo)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         //ulong uVar1;
         //int iVar2;

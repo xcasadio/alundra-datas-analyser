@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using AlundraEngine.Graphics;
-using static AlundraEngine.Renderer;
+using static AlundraEngine.Graphics.Renderer;
 
 namespace AlundraEngine.UI;
 

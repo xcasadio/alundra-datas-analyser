@@ -13,7 +13,7 @@ public static class FunctionTypeE
         //    && entity.Name != "Jess (armurier)"
         //    && entity.Name != "I35_Bombe explosive")
         //{
-        //    Debugger.Break();
+        //    AlundraEngine.Debug.Debugger.Breakpoint();
         //}
 
         gameEngine.DestroyEntity(entity, -1);
@@ -25,9 +25,10 @@ public static class FunctionTypeE
         if (entity.Name != "Caisse en bois générique"
             && entity.Name != "Cruche générique"
             && entity.Name != "Tonneau générique"
-            && entity.Name != "Pierre générique")
+            && entity.Name != "Pierre générique"
+            && entity.Name != null)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         if ((entity.TargetAnimationId == 2 && entity.ForceResetAnimationFlag == 1)
@@ -50,7 +51,7 @@ public static class FunctionTypeE
             && entity.Name != "◆Roche élémentaire"
             && entity.Name != "Magie de terre Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         if (entity.TargetAnimationId == 1 && entity.ForceResetAnimationFlag == 1)
@@ -69,7 +70,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         if (entity.TargetAnimationId == 4 && entity.ForceResetAnimationFlag == 1)
@@ -88,7 +89,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         if (entity.TargetAnimationId == 1)
@@ -112,7 +113,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         gameEngine.DestroyEntity(entity, -1);
@@ -123,7 +124,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         gameEngine.DestroyEntity(entity, -1);
@@ -134,7 +135,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         gameEngine.DestroyEntity(entity, -1);
@@ -146,7 +147,7 @@ public static class FunctionTypeE
         if (entity.Name != "Boule de feu"
             && entity.Name != "Boule de glace")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         ulong rand;
@@ -239,7 +240,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         gameEngine.DestroyEntity(entity, -1);
@@ -250,7 +251,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         FUN_8003a648(gameEngine, entity, -1);
@@ -261,7 +262,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         int i = 0;
@@ -312,7 +313,7 @@ public static class FunctionTypeE
     {
         if (entity.Name != "Bombe")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         if ((entity.TargetAnimationId == 1 && entity.ForceResetAnimationFlag == 1) ||
@@ -333,7 +334,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         gameEngine.SoundManager.PlaySoundEffect(0x2d);
@@ -345,7 +346,7 @@ public static class FunctionTypeE
     {
         if (entity.Name != "Rocher tombant")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         gameEngine.SoundManager.PlaySoundEffect(0x2d);
@@ -357,7 +358,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         gameEngine.SoundManager.PlaySoundEffect(0x2e);
@@ -369,7 +370,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         gameEngine.SoundManager.PlaySoundEffect(0x2f);
@@ -381,7 +382,7 @@ public static class FunctionTypeE
     {
         if (entity.Name != "Flèches Niv.2")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         int entityTargetIndex = 0;
@@ -501,7 +502,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         gameEngine.DestroyEntity(entity, -1);
@@ -512,7 +513,7 @@ public static class FunctionTypeE
     {
         if (entity.Name != "Boule de fer (grande)")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         gameEngine.SoundManager.PlaySoundEffect(0xe1);
@@ -525,7 +526,7 @@ public static class FunctionTypeE
         if (entity.Name != "Couvercle de tige-bombe (vertical)"
             && entity.Name != "Couvercle de tige-bombe (dessus)")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         gameEngine.SoundManager.PlaySoundEffect(0xe6);
@@ -535,7 +536,7 @@ public static class FunctionTypeE
     //8007f6c8
     public static void AI_FUN_8007f6c8(GameEngine gameEngine, Entity entity)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
     }
 
     //8007f7a0
@@ -543,7 +544,7 @@ public static class FunctionTypeE
     {
         if (entity.Name != "Haricots de Jack")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         Entity ridingEntity = entity.RidingEntity;
@@ -571,7 +572,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         int attachedEffectType = 0xd;
@@ -589,7 +590,7 @@ public static class FunctionTypeE
     {        
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         var x = entity.PosX;
@@ -615,7 +616,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         Entity entitySpawned;
@@ -670,7 +671,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         gameEngine.DestroyEntity(entity);
@@ -681,7 +682,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         if ((entity.TargetAnimationId == 1) && (entity.ForceResetAnimationFlag == 1))
@@ -700,7 +701,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         gameEngine.DestroyEntity(entity, -1);
@@ -711,7 +712,7 @@ public static class FunctionTypeE
     {
         //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         int rand;

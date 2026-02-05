@@ -801,7 +801,7 @@ public class SubInventoryManager
         {
             if (divisor == 0 || (divisor == -1 && value == -0x80000000))
             {
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
             }
 
             sprite = _gameEngine.StaticVariables.g_spriteInventoryMoneyAmount[i];
@@ -834,7 +834,7 @@ public class SubInventoryManager
         {
             if (divisor == 0 || (divisor == -1 && value == -0x80000000))
             {
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
             }
 
             sprite = _gameEngine.StaticVariables.g_spriteInventoryNumberOfKeys[i];
@@ -868,7 +868,7 @@ public class SubInventoryManager
         {
             if (divisor == 0 || (divisor == -1 && value == -0x80000000))
             {
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
             }
 
             sprite = _gameEngine.StaticVariables.g_spriteInventoryNumberOfFalcon[i];
@@ -1344,7 +1344,7 @@ public class SubInventoryManager
         }
         else
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         return -1;

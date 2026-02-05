@@ -26,7 +26,7 @@ public static class FrameSnapshotLoader
         }
         catch (Exception e)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             Console.WriteLine(e);
         }
 

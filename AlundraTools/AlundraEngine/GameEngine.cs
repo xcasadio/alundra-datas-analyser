@@ -9,6 +9,8 @@ using AlundraEngine.UI;
 using System;
 using System.Diagnostics;
 using System.Drawing.Imaging.Effects;
+using AlundraEngine.Etc;
+using AlundraEngine.Graphics;
 using Microsoft.VisualBasic.Logging;
 
 namespace AlundraEngine;
@@ -226,7 +228,7 @@ public class GameEngine
             //syscall();
             //LoadExec();
             //DoNothing();
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             Environment.Exit(0);
 
             LAB_8002c590:
@@ -290,7 +292,7 @@ public class GameEngine
 
         if (0 < animationBankIndex)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             //
             // g_animationData =
             //    (int)g_scrollingParameters2 +
@@ -681,7 +683,7 @@ public class GameEngine
 
         if (spriteTableIndex < 0 || spriteTableIndex >= spriteInfo.SpriteTable.Length)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         var sprite = spriteInfo.SpriteRecords[spriteTableIndex];
@@ -1174,7 +1176,7 @@ public class GameEngine
         iVar6 = 0;
         iVar7 = 0;
 
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         do
         {
@@ -1727,7 +1729,7 @@ public class GameEngine
         spawnedEntity.Flags &= 0xffffff7f;
 
         var delay = 600;
-        //Debugger.Break();
+        //AlundraEngine.Debug.Debugger.Breakpoint();
         if (StaticVariables.g_itemDropProperties[entity.ContentsItemId].Field1 == 0)
         {
             delay = -1;
@@ -1926,7 +1928,7 @@ public class GameEngine
                 break;
 
             default: //"Illegal Destination!"
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
                 break;
         }
 
@@ -1939,7 +1941,7 @@ public class GameEngine
 
         if (id < 0 || CurrentMap.SpriteInfo.Entities.Entities.Length <= id) // StaticVariables.g_maxEntityRecord
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             //"Illegal character initial data!!
             res = null;
         }
@@ -2006,7 +2008,7 @@ public class GameEngine
     //8002d7b0
     public void ChangeAreaTileProperties(int tileId)
     {
-        //Debugger.Break();
+        //AlundraEngine.Debug.Debugger.Breakpoint();
         var mapCopy = CurrentMap.Map.MapCopies[tileId]; //tileId - 2
         ChangeAreaTileProperties(mapCopy.FromX, mapCopy.FromY, mapCopy.Width, mapCopy.Height, mapCopy.ToX, mapCopy.ToY);
     }
@@ -2019,7 +2021,7 @@ public class GameEngine
 
         if (startX < 0 || startY < 0 || sizeX < 0 || sizeY < 0 || destX < 0 || destY < 0)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         var mapWidth = CurrentMap.Map.Width;
@@ -2030,7 +2032,7 @@ public class GameEngine
             || mapWidth < destX + sizeX
             || mapHeight < destY + sizeY)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         y = 0;
@@ -2060,7 +2062,7 @@ public class GameEngine
                             //override in original source code
                             //if (tileSource.WallTiles.Tiles.Length != (tileDestination.WallTiles?.Tiles?.Length ?? 0))
                             //{
-                            //    Debugger.Break();
+                            //    AlundraEngine.Debug.Debugger.Breakpoint();
                             //}
                             tileDestination.WallTiles ??= new WallTiles();
                             tileDestination.WallTiles.Tiles ??= new ushort[tileSource.WallTiles.Tiles.Length];
@@ -2195,7 +2197,7 @@ public class GameEngine
                 if (infoPortal.DestMapId == 0)
                 {
                     return null;
-                    //Debugger.Break();
+                    //AlundraEngine.Debug.Debugger.Breakpoint();
                 }
 
                 return infoPortal;
@@ -2220,7 +2222,7 @@ public class GameEngine
         if (entity.HitBoxX >> 16 >= StaticVariables.g_tileToWorldXTable.Length
             || (entity.HitBoxX + entity.CollisionWidth) >> 16 >= StaticVariables.g_tileToWorldXTable.Length)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             return;
         }
 

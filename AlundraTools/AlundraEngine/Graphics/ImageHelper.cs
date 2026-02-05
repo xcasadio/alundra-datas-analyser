@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace AlundraEngine;
+namespace AlundraEngine.Graphics;
 
 public static class ImageHelper
 {

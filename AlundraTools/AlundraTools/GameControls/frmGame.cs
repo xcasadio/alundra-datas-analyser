@@ -8,7 +8,9 @@ using AlundraEngine.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using AlundraEngine.Etc;
 using AlundraEngine.Gameplay.Scripts;
+using AlundraEngine.Graphics;
 using Timer = System.Windows.Forms.Timer;
 
 namespace AlundraTools.GameControls;
@@ -467,7 +469,7 @@ public partial class FrmGame : Form
         }
         catch (Exception ex)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             if (!_exceptionMessageShown)
             {
                 _exceptionMessageShown = true;

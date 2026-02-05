@@ -2,7 +2,7 @@
 using AlundraEngine.Text;
 using System;
 using System.Diagnostics;
-using static AlundraEngine.Renderer;
+using static AlundraEngine.Graphics.Renderer;
 
 namespace AlundraEngine.UI;
 
@@ -216,7 +216,7 @@ public class UIManager
 
             if (_gameEngine.StaticVariables.g_textNextChoice == 0)
             {
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
                 //trap(0x1c00);
             }
 
@@ -224,7 +224,7 @@ public class UIManager
 
             if (_gameEngine.StaticVariables.g_textNextChoice == -1 && index == -0x80000000)
             {
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
                 //trap(0x1800);
             }
 
@@ -303,7 +303,7 @@ public class UIManager
     //display InitializeDialogBackgroundSprites
     public void Fun_8004f628(CallBackInfo callBackInfo)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
     }
 
     //800501fc
@@ -364,7 +364,7 @@ public class UIManager
             //}
         }
 
-        //Debugger.Break();
+        //AlundraEngine.Debug.Debugger.Breakpoint();
 
         //DialogChoice = _gameEngine.StaticVariables.g_asyncCallbackArgs2[0] + _gameEngine.StaticVariables.g_asyncCallbackArgs2[1];
         DialogChoiceSprites[0].Clear();
@@ -465,7 +465,7 @@ public class UIManager
     //8004afe8
     public void Fun_8004afe8(CallBackInfo callBackInfo)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
     }
 
     //8005a268
@@ -798,7 +798,7 @@ public class UIManager
         sprites[0].u0 = _gameEngine.StaticVariables.g_dialogCursorTextureUV[sprite.r0 / 10 * 0x28];
         sprites[0].v0 = _gameEngine.StaticVariables.g_dialogCursorTextureUV[sprite.r0 / 10 * 0x28 + 1];
 
-        //Debugger.Break();
+        //AlundraEngine.Debug.Debugger.Breakpoint();
         //TODO remove this
         sprite.x0 = sprite.w;
         sprite.y0 = sprite.h;
@@ -1139,7 +1139,7 @@ public class UIManager
                         currentTextCursorValue = '@';
 
                         //goto LAB_80046ccc;
-                        //Debugger.Break();
+                        //AlundraEngine.Debug.Debugger.Breakpoint();
                     }
                     else
                     {
@@ -1186,7 +1186,7 @@ public class UIManager
                                         break;
                                     }
 
-                                    //Debugger.Break();
+                                    //AlundraEngine.Debug.Debugger.Breakpoint();
                                     pcVar2 = ' ';
 
                                 } while (currentLineIndex < cursor + -1);
@@ -1296,7 +1296,7 @@ public class UIManager
                             return;
 
                         case 'V':
-                            Debugger.Break();
+                            Breakpoint.TriggerBreak();
                             break;
                         /*
                         charCode = (byte)_gameEngine.StaticVariables.g_scriptBuffer[_gameEngine.StaticVariables.g_textCursor + 2];
@@ -1395,7 +1395,7 @@ public class UIManager
 
                         case 'X':
                             cursor = _gameEngine.StaticVariables.g_textCursor + 2;
-                            Debugger.Break();
+                            Breakpoint.TriggerBreak();
                             break;
                             /*
                             switch (_gameEngine.StaticVariables.g_scriptBuffer[_gameEngine.StaticVariables.g_textCursor + 2])
@@ -1805,7 +1805,7 @@ public class UIManager
     private void LoadImage(Rectangle rectangle, char[] buffer)
     {
         //Debug.WriteLine("LoadImage: " + rectangle);
-        //Debugger.Break();
+        //AlundraEngine.Debug.Debugger.Breakpoint();
     }
 
     //8004f304
@@ -2134,7 +2134,7 @@ public class UIManager
 
         if (scriptText.Length >= 0x960)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             var message = "the sub text is too long"; //サブテキストが長すぎます!
             Array.Copy(message.ToCharArray(), _gameEngine.StaticVariables.g_scriptBuffer, message.Length);
         }
@@ -2420,7 +2420,7 @@ public class UIManager
         }
         else
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             //DoNothing();
         }
     }
@@ -2428,7 +2428,7 @@ public class UIManager
     //8004f374
     private void RenderStyledText(char[] text, short posX, short posY)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
     }
 
     //80045054

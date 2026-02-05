@@ -224,7 +224,7 @@ public class UIDebugManager
                 i = 0;
                 puVar8 = _gameEngine.StaticVariables.UINT_8017e8d8;
 
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
 
                 do
                 {
@@ -253,7 +253,7 @@ public class UIDebugManager
                 //sprite.tag = sprite.tag & 0xff000000 | (uint)pSVar9 & 0xffffff;
                 //*puVar8 = *puVar8 & 0xff000000 | (uint)sprite & 0xffffff;
 
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
                 var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
                 _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
@@ -288,7 +288,7 @@ public class UIDebugManager
                 //sprite.tag = sprite.tag & 0xff000000 | (uint)sprite2 & 0xffffff;
                 //*puVar8 = *puVar8 & 0xff000000 | (uint)sprite & 0xffffff;
 
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
                 bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
                 _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.ForegroundUI, bitmap);
 
@@ -304,7 +304,7 @@ public class UIDebugManager
                 }
 
                 var index = (_gameEngine.StaticVariables.UINT_8017e8d8 & 0x7fe0) >> 3;
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
                 //index >>= 2; ??
                 var flagValue = flags[index];
                 var bitMask = 1 << (int)(_gameEngine.StaticVariables.UINT_8017e8d8 & 0x1f);
@@ -365,7 +365,7 @@ public class UIDebugManager
                 }
 
                 var index = (_gameEngine.StaticVariables.UINT_8017e8d8 & 0x7fe0) >> 3;
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
                 //index >>= 2;
                 flags[index] = (uint)(flags[index] ^ (1 << (int)(_gameEngine.StaticVariables.UINT_8017e8d8 & 0x1f)));
 
@@ -398,7 +398,7 @@ public class UIDebugManager
     //8004a8a8
     public void InitializeDebugMenuSound(CallBackInfo callBackInfo)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         //debug menu sound
         //char acStack_68[80];

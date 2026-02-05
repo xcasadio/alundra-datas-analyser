@@ -1,6 +1,6 @@
 ﻿using AlundraEngine.Text;
 
-namespace AlundraEngine;
+namespace AlundraEngine.Etc;
 
 public abstract class EtcRes
 {

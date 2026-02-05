@@ -10,7 +10,7 @@ public static class AI_Melzas2
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             return;
         }
 
@@ -54,7 +54,7 @@ public static class AI_Melzas2
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             return;
         }
 
@@ -166,7 +166,7 @@ public static class AI_Melzas2
     {
         if (entity.Name != "◆Élément Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         var frameCounter = (int)entity.AIValues[1];
@@ -276,7 +276,7 @@ public static class AI_Melzas2
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             return;
         }
 

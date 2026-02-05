@@ -260,7 +260,7 @@ public class SpriteEventHandlers
         }
         else
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
     }
 

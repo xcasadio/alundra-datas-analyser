@@ -1,11 +1,9 @@
-﻿using AlundraEngine.Balance;
+﻿using System.Diagnostics;
+using AlundraEngine.Balance;
 using AlundraEngine.DatasBin;
-using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
-using System;
-using System.Diagnostics;
 
-namespace AlundraEngine;
+namespace AlundraEngine.Gameplay;
 
 public class EntityManager
 {
@@ -38,7 +36,7 @@ public class EntityManager
             }
         }
 
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         return null;
     }
@@ -473,7 +471,7 @@ public class EntityManager
                 //if ((otherEntity.Index == 2 || otherEntity.Index == 12)
                 //    && (entity.Index == 2 || entity.Index == 12))
                 //{
-                //    Debugger.Break();
+                //    AlundraEngine.Debug.Debugger.Breakpoint();
                 //}
 
                 if (otherEntity.FrameCollisionTickCounter != 0)
@@ -554,7 +552,7 @@ public class EntityManager
                     continue;
                 }
 
-                //Debugger.Break();
+                //AlundraEngine.Debug.Debugger.Breakpoint();
 
                 var balanceValueIndex = entity.BalanceAnimValRef.Val & 0xf;
                 var val = otherEntity.BalanceRecord.Values[balanceValueIndex - 1];

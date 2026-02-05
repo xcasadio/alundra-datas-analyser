@@ -1,7 +1,7 @@
 ﻿using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
-namespace AlundraEngine;
+namespace AlundraEngine.Graphics;
 
 public static class TimLoader
 {

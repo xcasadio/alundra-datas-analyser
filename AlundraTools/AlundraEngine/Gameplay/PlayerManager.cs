@@ -1,12 +1,8 @@
-﻿using AlundraEngine.Balance;
+﻿using System.Diagnostics;
 using AlundraEngine.DatasBin;
-using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
-using Microsoft.VisualBasic.Logging;
-using System;
-using System.Diagnostics;
 
-namespace AlundraEngine;
+namespace AlundraEngine.Gameplay;
 
 public class PlayerManager
 {
@@ -459,7 +455,7 @@ public class PlayerManager
                     if (_gameEngine.StaticVariables.PlayerEntity.ForceAdjusted == 0)
                     {
                         var dirIndex = _gameEngine.StaticVariables.PlayerEntity.AnimationDirection * 3;
-                        //Debugger.Break();
+                        //AlundraEngine.Debug.Debugger.Breakpoint();
 
                         if (buttonsHold == 0)
                         {
@@ -1176,7 +1172,7 @@ public class PlayerManager
             if (iconFlags == requiredFlag && _gameEngine.PlayerManager.GetNumberOfItem(i) != 0)
             {
                 var itemData = _gameEngine.BalanceBin.GetItemDataPointer(i, _gameEngine.StaticVariables.g_itemIdThreshold);
-                //Debugger.Break();
+                //AlundraEngine.Debug.Debugger.Breakpoint();
                 _gameEngine.StaticVariables.g_itemBalanceRecords[0].BalanceRecord = itemData;
                 _gameEngine.StaticVariables.g_itemBalanceRecords[0].ItemId = i + 0x1E;
                 break;
@@ -2033,7 +2029,7 @@ public class PlayerManager
     //80034320
     private int FUN_80034320(uint itemId)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
         return 0;
     }
 
@@ -2117,7 +2113,7 @@ public class PlayerManager
     //800346f0
     private void TryWarpToMap(uint itemId)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
     }
 
     //80034760
@@ -2145,7 +2141,7 @@ public class PlayerManager
 
     private void TryWarpWithExplosionEffect(uint itemId)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
     }
 
     //800348e0
@@ -2170,7 +2166,7 @@ public class PlayerManager
                 DecreaseMp(1);
             }
 
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             //StartCdStreaming((uint)*(byte*)((int)&PTR_caseD_1_80023364 + itemId + 1));
             result = 0;
             _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = 0x32;
@@ -2251,41 +2247,41 @@ public class PlayerManager
     private int FUN_80036218()
     {
 
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
         return 0;
     }
 
     private int FUN_80035eb0()
     {
 
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
         return 0;
     }
 
     private int FUN_80035c64()
     {
 
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
         return 0;
     }
 
     private int FUN_80035a84()
     {
 
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
         return 0;
     }
 
     private int ProcessPlayerEffectSequence(int timer)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
         return 0;
     }
 
     private int FUN_800354d0()
     {
 
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
         return 0;
     }
 
@@ -2402,7 +2398,7 @@ public class PlayerManager
     private int FUN_80035260()
     {
 
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
         return 0;
     }
 
@@ -2752,7 +2748,7 @@ public class PlayerManager
 
             if ((portal.Flags & 0x3000) >> 12 > 3)
             {
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
             }
 
             directionId = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 12];
@@ -2767,7 +2763,7 @@ public class PlayerManager
 
             if ((portal.Flags & 0x3000) >> 12 > 3)
             {
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
             }
 
             directionId = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 12];
@@ -3234,7 +3230,7 @@ public class PlayerManager
                             // Vérifier si la hauteur de la boîte de collision croise la hauteur de l'effet
                             var tileEffectZ = (tile.Height & 0xFF) << 20;
 
-                            Debugger.Break();
+                            Breakpoint.TriggerBreak();
 
                             if (_gameEngine.StaticVariables.PlayerEntity.HitBoxZ <= tileEffectZ + 0x80000 
                                 && tileEffectZ + 0x80000 <= _gameEngine.StaticVariables.PlayerEntity.HitBoxZ + _gameEngine.StaticVariables.PlayerEntity.CollisionHeight)
@@ -3243,7 +3239,7 @@ public class PlayerManager
                                 //TODO
                                 //tile.GroundProperty &= 0xFFFD;
                                 //tile.Height = 0xFFFF;
-                                Debugger.Break();
+                                Breakpoint.TriggerBreak();
 
                                 var effectX = worldXCoords[i] * 0x180000 + 0xC0000;
                                 var effectY = worldYCoords[i] * 0x100000 + 0x80000;
@@ -3321,43 +3317,43 @@ public class PlayerManager
     //80034ec4
     private void FUN_80034ec4()
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
     }
 
     //80034e08
     private void FUN_80034e08()
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
     }
 
     //80034d2c
     private void FUN_80034d2c()
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
     }
 
     //80034c54
     private void FUN_80034c54()
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
     }
 
     //80034bdc
     private void FUN_80034bdc()
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
     }
 
     //80034b54
     private void FUN_80034b54()
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
     }
 
     //80034acc
     private void FUN_80034acc()
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
     }
 
     //8004df68
@@ -3512,7 +3508,7 @@ public class PlayerManager
     {
         if (slotId >= 0x20)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             Debug.WriteLine($"Invalid slotId: {slotId}");
             return 0xFFFFFFFF;
         }
@@ -3564,7 +3560,7 @@ public class PlayerManager
     {
         if ((int)itemId < 0 || itemId >= _gameEngine.StaticVariables.g_itemsCount)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             return;
         }
 
@@ -3809,7 +3805,7 @@ public class PlayerManager
     {
         if (itemId < 0 || itemId >= _gameEngine.StaticVariables.g_itemsCount)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             Debug.WriteLine("Invalid itemId in AddOneItemIfUnlocked");
             return 0;
         }

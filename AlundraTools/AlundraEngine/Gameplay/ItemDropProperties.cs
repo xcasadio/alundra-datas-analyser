@@ -1,4 +1,4 @@
-﻿namespace AlundraEngine;
+﻿namespace AlundraEngine.Gameplay;
 
 public class ItemDropProperties
 {

@@ -277,7 +277,7 @@ public class EntityEventHandlers
         }
         else
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             //throw new Exception("Illegal logic entry!");
         }
 
@@ -365,7 +365,7 @@ public class EntityEventHandlers
 
             if (eventProgramState.CodeIndex < 0)
             {
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
             }
         }
 
@@ -386,7 +386,8 @@ public class EntityEventHandlers
     {
         var eventActionProperty = EventCodeDebugger.CommandPropertiesByCode.GetValueOrDefault((byte)command);
         var eventTypeName = logicMode == 0 ? "ALoad" : logicMode == 1 ? "BMap" : logicMode == 2 ? "CTick" : logicMode == 3 ? "DTouch" : logicMode == 4 ? "EDeactivate" : "FInteract";
-        return $"run[{eventTypeName}] p:{codeIndex} '{eventActionProperty?.Description ?? $"0x{command:x2} ?"}' {string.Join(',', variables.Select(x => x.ToString("x2")))}";
+        var parameters = variables.Select(x => (byte)x).ToArray();
+        return $"run[{eventTypeName}] p:{codeIndex} {EventCodeDebugger.CreateLog(codeIndex, (byte)command, parameters, false)}";
     }
 
     private int[] FillDataFromCommand(EventProgramState eventProgramState)
@@ -398,7 +399,7 @@ public class EntityEventHandlers
 
         if (eventProgramState.CodeIndex < 0)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         eventProgramState.Sp = eventProgramState.Codes[eventProgramState.CodeIndex];
@@ -933,7 +934,7 @@ public class EntityEventHandlers
             if (entityRecord == null)
             {
                 //_gameEngine.PrintCommandMap();
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
             }
 
             eventProgramState.Parameters[2] = entityRecord.Height << 0x13;
@@ -1022,7 +1023,7 @@ public class EntityEventHandlers
     // 8003DC84
     public int Script_44_02C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        //Debugger.Break();
+        //AlundraEngine.Debug.Debugger.Breakpoint();
 
         var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
         eventProgramState.Result = num == 0 ? 1 : 0;
@@ -1037,7 +1038,7 @@ public class EntityEventHandlers
         if (entity == null)
         {
             //_gameEngine.PrintCommandMap();
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         return 2;
@@ -1348,7 +1349,7 @@ public class EntityEventHandlers
     // 8003E558
     public int Script_60_03C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntities; i++)
         {
@@ -1377,7 +1378,7 @@ public class EntityEventHandlers
     // 8003E64C
     public int Script_61_03D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntities; i++)
         {
@@ -1558,7 +1559,7 @@ public class EntityEventHandlers
     }
 
     // 8003E9DC
-    public int Script_73_049(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
+    public int  Script_73_049(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         //return eventProgramState.Sp - eventProgramState.Parameters[0];
         return -(eventProgramState.CodeIndex - eventProgramState.Parameters[0]);
@@ -1637,12 +1638,11 @@ public class EntityEventHandlers
     // 8003EB20
     public int Script_82_052(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Portal portal;
-        portal = _gameEngine.GetActivatedPortal();
+        var portal = _gameEngine.GetActivatedPortal();
 
         if (portal == null)
         {
-            //Debugger.Break();
+            //AlundraEngine.Debug.Debugger.Breakpoint();
             //_gameEngine.DoNothing("Cant Find WarpData\n\r");
             eventProgramState.Result = 0;
         }
@@ -1911,7 +1911,7 @@ public class EntityEventHandlers
     // 8003F218
     public int Script_WaitForAnimOrDistance(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         if (eventProgramState.Parameters[1] != variables[0])
         {
@@ -2045,7 +2045,7 @@ public class EntityEventHandlers
         for (int i = 0; i < num; i++)
         {
             var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
-            //Debugger.Break();
+            //AlundraEngine.Debug.Debugger.Breakpoint();
             if (entity.RidingEntity == logicEntity) // TODO: check if this is correct
             {
                 eventProgramState.Result = 1;
@@ -2066,7 +2066,7 @@ public class EntityEventHandlers
         for (int i = 0; i < num; i++)
         {
             var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
             if (entity.RidingEntity == logicEntity) // TODO: check if this is correct
             {
                 eventProgramState.Result = 1;
@@ -2158,7 +2158,7 @@ public class EntityEventHandlers
     // 8003F794
     public int Script_CopyLogicContextAndAssignScript(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         _gameEngine.StaticVariables.g_eventProgramState.CopyFrom(ownerEntity.EventProgramState);
 
@@ -2627,7 +2627,7 @@ public class EntityEventHandlers
     // 8004011C
     public int Script_136_088(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
         
         //int matchingEntityCount;
         //var val = _gameEngine.StaticVariables.BYTE_ARRAY_80023d2c[variables[2]];
@@ -2855,7 +2855,7 @@ public class EntityEventHandlers
     // 800407C0
     public int Script_149_095(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        //Debugger.Break();
+        //AlundraEngine.Debug.Debugger.Breakpoint();
 
         if (variables == null || variables.Length < 10)
         {
@@ -3091,7 +3091,7 @@ public class EntityEventHandlers
     public int Script_157_09D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         //_gameEngine.DoNothing();
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
         Environment.Exit(-1);
         return 0;
     }
@@ -3099,7 +3099,7 @@ public class EntityEventHandlers
     // 80040BB4
     public int Script_158_09E(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         MapTile mapTile;
         int x;
@@ -3307,7 +3307,7 @@ public class EntityEventHandlers
     // 80041174
     public int Script_169_0A9(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
         return 0;
         /*
         int iVar1;
@@ -3339,7 +3339,7 @@ public class EntityEventHandlers
     // 80041200
     public int Script_170_0AA(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
         return 0;
         /*
         int iVar1;
@@ -3458,7 +3458,7 @@ public class EntityEventHandlers
     // 800414B4
     public int Script_174_0AE(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
         //_gameEngine.DoNothing("Not implemented");
         Environment.Exit(-1);
         return 0;
@@ -3622,7 +3622,7 @@ public class EntityEventHandlers
     // 800418F8
     public int Script_183_0B7(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         var animationId = (byte)variables[2];
 
@@ -3797,7 +3797,7 @@ public class EntityEventHandlers
     // 80041CDC
     public int Script_192_0C0(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
         _gameEngine.PlayerManager.SetPlayerWeaponId((ushort)(variables[1] + 1));
         _gameEngine.StaticVariables.g_playerControlFlags |= 0x80;
         return 2;
@@ -3813,7 +3813,7 @@ public class EntityEventHandlers
     // 80041D34
     public int Script_194_0C2(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
         var slotId = (variables[2] << 8) | variables[1];
 
         if (_gameEngine.StaticVariables.g_saveData.SaveSlotIndex < slotId)
@@ -3831,7 +3831,7 @@ public class EntityEventHandlers
     // 80041D6C
     public int Script_195_0C3(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Debugger.Break();
+        Breakpoint.TriggerBreak();
 
         _gameEngine.StaticVariables.PlayerEntity.Hp = _gameEngine.StaticVariables.PlayerEntity.HpMax;
         _gameEngine.PlayerManager.SetPlayerMp((short)_gameEngine.PlayerManager.GetPlayerMpMax());

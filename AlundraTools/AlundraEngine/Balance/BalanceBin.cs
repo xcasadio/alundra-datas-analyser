@@ -45,7 +45,7 @@ public class BalanceBin
 
         if (balanceRecord.Offset != offset)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         var currentId = balanceRecord.Level;
@@ -66,7 +66,7 @@ public class BalanceBin
             //DoNothing();
             itemId = 1;
             //exit();
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         var offset = Offsets[itemId + 0x1e];
@@ -74,7 +74,7 @@ public class BalanceBin
 
         if (itemDataPtr.Offset != offset)
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         var currentId = itemDataPtr.Level;

@@ -9,7 +9,7 @@ public static class AncientGuardian
     {
         if (entity.Name == "Roche élémentaire")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         if (entity.TargetAnimationId == 0 && -0x80001 < entity.ForceZ)
@@ -23,7 +23,7 @@ public static class AncientGuardian
     {
         if (entity.Name != "◆Élément Niv.1")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         int delay;
@@ -359,7 +359,7 @@ public static class AncientGuardian
     {
         if (entity.Name != "◆Surveillance élémentaire")
         {
-            Debugger.Break();
+            Breakpoint.TriggerBreak();
         }
 
         byte aiState;

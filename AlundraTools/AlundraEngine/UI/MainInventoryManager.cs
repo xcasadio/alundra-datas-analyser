@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using AlundraEngine.Gameplay;
 using AlundraEngine.Graphics;
-using static AlundraEngine.Renderer;
+using static AlundraEngine.Graphics.Renderer;
 
 namespace AlundraEngine.UI;
 
@@ -1575,7 +1575,7 @@ public class MainInventoryManager
         {
             if (divisor == 0 || (divisor == -1 && value == -0x80000000))
             {
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
             }
 
             sprite = _gameEngine.StaticVariables.g_spriteInventoryMoneyAmount[i];
@@ -1608,7 +1608,7 @@ public class MainInventoryManager
         {
             if (divisor == 0 || (divisor == -1 && value == -0x80000000))
             {
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
             }
 
             sprite = _gameEngine.StaticVariables.g_spriteInventoryNumberOfKeys[i];
@@ -1642,7 +1642,7 @@ public class MainInventoryManager
         {
             if (divisor == 0 || (divisor == -1 && value == -0x80000000))
             {
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
             }
 
             sprite = _gameEngine.StaticVariables.g_spriteInventoryNumberOfFalcon[i];

@@ -1,12 +1,8 @@
 ﻿using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay;
-using AlundraEngine.Graphics;
 using AlundraEngine.UI;
-using System;
-using System.Diagnostics;
-using System.Drawing;
 
-namespace AlundraEngine;
+namespace AlundraEngine.Graphics;
 
 public class GraphicManager
 {

@@ -858,12 +858,12 @@ public static class PhysicsEngine
             {
                 if (gameEngine.CurrentMap.Map.MapTiles[j].Flags == 84180992)
                 {
-                    Debugger.Break();
+                    AlundraEngine.Debug.Debugger.Breakpoint();
                 }
 
                 if (gameEngine.CurrentMap.Map.MapTiles[j].GroundProperty == 128)
                 {
-                    Debugger.Break();
+                    AlundraEngine.Debug.Debugger.Breakpoint();
                 }
             }*/
 
@@ -883,7 +883,7 @@ public static class PhysicsEngine
                     }
                     else
                     {
-                        //Debugger.Break();
+                        //AlundraEngine.Debug.Debugger.Breakpoint();
                         height += StaticVariables.MapTileHeight;
                     }
 
@@ -899,7 +899,7 @@ public static class PhysicsEngine
                     }
                     else
                     {
-                        //Debugger.Break();
+                        //AlundraEngine.Debug.Debugger.Breakpoint();
                         height += StaticVariables.MapTileHeight;
                     }
 
@@ -915,7 +915,7 @@ public static class PhysicsEngine
                     }
                     else
                     {
-                        //Debugger.Break();
+                        //AlundraEngine.Debug.Debugger.Breakpoint();
                         height += StaticVariables.MapTileHeight;
                     }
 

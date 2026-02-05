@@ -11,6 +11,7 @@ using System.Drawing.Imaging;
 using System.Reflection.Emit;
 using System.Text;
 using System.Windows.Forms;
+using AlundraEngine.Etc;
 using static AlundraEngine.DatasBin.SpriteInfoEventCodes;
 using Color = System.Drawing.Color;
 using Timer = System.Windows.Forms.Timer;
@@ -636,7 +637,7 @@ namespace AlundraTools.GameControls
                         }
                         catch (Exception ex)
                         {
-                            Debugger.Break();
+                            Breakpoint.TriggerBreak();
                         }
 
                         var pen = entities[i] == _selectedEntity ? Pens.Yellow : Pens.Green;
@@ -1367,7 +1368,7 @@ namespace AlundraTools.GameControls
             }
             catch (Exception ex)
             {
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
             }
         }
 
@@ -1414,7 +1415,7 @@ namespace AlundraTools.GameControls
             }
             catch (Exception ex)
             {
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
             }
         }
 
