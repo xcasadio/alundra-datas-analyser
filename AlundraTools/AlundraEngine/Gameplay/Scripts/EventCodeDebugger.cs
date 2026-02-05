@@ -353,19 +353,21 @@ public class EventCodeDebugger
             0x00 or 0xFF => string.Empty,
             0x02 or 0x03 or 0x04 => GetGotoDescription(position, parameters),
             0x05 or 0x06 => GetFlagDescription(position, parameters),
+            0x0B => $"{(parameters[2] << 8) | parameters[1]}",
             0x0D => GetDialogDescription(position, parameters),
             0x20 => GetParametersAsDecimal(parameters, 2),
             0x30 or 0x31 => GetFlagDescription(position, parameters),
+            0x33 => GetCheckFlagOnDescription(position, parameters),
             0x35 or 0x36 => GetFlagDescription(position, parameters),
             0x37 => GetWaitDescription(position, parameters),
             0x38 => $"[{GetParametersAsDecimal(parameters, 2)}] = {parameters[2] | (parameters[3] << 8)}",
             0x3B => $"TileX >= {parameters[0]} and TileX <= {parameters[1]} and TileY >= {parameters[2]} and TileY <= {parameters[3]} and TileZ >= {parameters[4]} and TileZ <= {parameters[5]}",
             0x40 => $"[{parameters[0]}]={parameters[1]}",
-            0x1A or 0x2D or 0xA6 or 0x67 or 0x50 or 0x2C => GetParametersAsDecimal(parameters, 1),
+            0x09 or 0x1A or 0x2D or 0xA6 or 0x67 or 0x50 or 0x2C or 0x9F => GetParametersAsDecimal(parameters, 1),
             0x1C or 0x1D => GetRepeatAnimationDescription(position, parameters),
             0x1E or 0x1F => GetWalkDescription(position, parameters),
             0x55 => $"x:{parameters[0]} y:{parameters[1]} -> walkability:{parameters[2]} groundProperty:{parameters[3]}",
-            0x58 => GetDirectionBranchDescription(position, parameters),
+            0x57 or 0x58 => GetDirectionBranchDescription(position, parameters),
             0x59 => $"search type:{parameters[0]} -> TargetAnimationId:{parameters[1]}",
             0x5B => $"search type:{parameters[0]} -> TargetAnimationId:{parameters[1]} TargetDirection:{parameters[2]}",
             0x5C => GetDialogWithChoiceDescription(position, parameters),
@@ -374,6 +376,7 @@ public class EventCodeDebugger
             0x64 => GetSetPositionDescription(position, parameters),
             0x78 => $"entity[{GetParametersAsDecimal(parameters, 1)}]",
             0x85 => $"x:{parameters[0]} y:{parameters[1]} w:{parameters[2]} h:{parameters[3]} -> x:{parameters[4]} y:{parameters[5]}",
+            0x89 => GetMoveEntitiesDescription(parameters),
             0x8D => $"search type:{parameters[0]}",
             0x8E => $"speedX:{parameters[0]} speedY:{parameters[1]} limitX:{parameters[2]} limitY:{parameters[3]}",
             0x92 => $"MapEffectId:{parameters[0]} TargetAnimationId:{parameters[1]}",
@@ -383,6 +386,28 @@ public class EventCodeDebugger
             0xC4 => GetDialogWithChoiceDescription(position, parameters),
             _ => parameters.Length > 0 ? $"p:[{string.Join(',', parameters)}]" : string.Empty
         };
+    }
+
+    private static string GetMoveEntitiesDescription(byte[] parameters)
+    {
+        return $"search type:{parameters[0]} and {parameters[1]} move offset x:{(parameters[3] << 8) | parameters[2]} y:{(parameters[5] << 8) | parameters[4]} z:{(parameters[7] << 8) | parameters[6]}";
+    }
+
+    private static string GetCheckFlagOnDescription(int position, byte[] parameters)
+    {
+        var description = "";
+        
+        for (int i = 0; i < 4; i++)
+        {
+            var flag = parameters[i * 2] + (parameters[i * 2 + 1] << 8);
+            flag = ((flag >> 3) & 0x3ff) >> 2;
+            description += (flag & 0x8000) != 0 ? "MapFlags" : "GlobalFlags";
+            var bitToCheck = flag & 0x1f;
+            var mask = 1 << bitToCheck;
+            description += $"[{flag}] & 0x{mask:X} == 0 or ";
+        }
+
+        return description;
     }
 
     private static string GetSetGravityFlagDescription(byte[] parameters)
@@ -432,7 +457,7 @@ public class EventCodeDebugger
         switch (numberOfIndices)
         {
             case 1:
-                return parameters[0].ToString("D3");
+                return parameters[0].ToString();
             case 2:
                 return (parameters[0] | (parameters[1] << 8)).ToString("D3");
         }
@@ -449,7 +474,7 @@ public class EventCodeDebugger
             int v1 = parameters[i * 2 + 0];
             int v2 = parameters[i * 2 + 1];
             var jump = ((v1 + v2 * 0x100) * 0x10000) >> 0x10;
-            log += $"{i}:{position - jump}(jump:{jump}) ";
+            log += $"{i}:{position + jump}(jump:{jump}) ";
         }
 
         return log;

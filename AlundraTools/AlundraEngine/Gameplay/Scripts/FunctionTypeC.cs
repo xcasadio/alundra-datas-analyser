@@ -7484,7 +7484,8 @@ public static class FunctionTypeC
     //800637d8
     public static void AI_UpdateEntityAI_IdleLookAround(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != null)
+        if (entity.Name != null
+            && entity.Name != "Poulet")
         {
             Breakpoint.TriggerBreak();
         }
@@ -7687,7 +7688,8 @@ public static class FunctionTypeC
     //80063db4
     public static void AI_UpdateEntityAI_IdleCurious(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != null)
+        if (entity.Name != null
+            && entity.Name != "Toutou (chien)")
         {
             Breakpoint.TriggerBreak();
         }
@@ -7870,6 +7872,7 @@ public static class FunctionTypeC
             && entity.Name != "I80_Graine magique"
             && entity.Name != "I62_Emblème du sang de pigeon"
             && entity.Name != "I84_Petit cœur"
+            && entity.Name != "I85_Cœur moyen"
             && entity.Name != "I86_Grand cœur"
             && entity.Name != "I69_1 Gilda"
             && entity.Name != null)

@@ -84,6 +84,10 @@ namespace AlundraTools.GameControls
             {
                 parentNode.ForeColor = Color.Blue;
             }
+            else if (commandBase.Command is 0x02 or 0x03 or 0x04 or 0x58)
+            {
+                parentNode.ForeColor = Color.Coral;
+            }
 
             if (commandBase.Offset == selectedOffset)
             {

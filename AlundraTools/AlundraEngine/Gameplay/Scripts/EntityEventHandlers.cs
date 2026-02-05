@@ -1181,8 +1181,9 @@ public class EntityEventHandlers
             }
 
             var bitToCheck = flagData & 0x1f;
-
-            if ((flags[flag] & (1 << bitToCheck)) == 0)
+            var mask = 1 << bitToCheck;
+            
+            if ((flags[flag] & mask) == 0)
             {
                 eventProgramState.Result = 0;
                 return 9;
@@ -3148,7 +3149,7 @@ public class EntityEventHandlers
     {
         int count = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
-        if (count > 0 && _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].ContentsGameFlag != 0)
+        if (count > 0 && _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].ContentsGameFlag != 0) //ContentsItemId
         {
             var entityMatching = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0];
             uint[] flags;
