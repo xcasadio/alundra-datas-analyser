@@ -171,7 +171,7 @@ public class EventCodeDebugger
         {0x2B, new(0x2B, 1, "Gravity flag 3 off", nameof(EntityEventHandlers.Script_43_02B)) },
         {0x2C, new(0x2C, 2, "Check no entity by function id", nameof(EntityEventHandlers.Script_44_02C)) },
         {0x2D, new(0x2D, 2, "Activate entity", nameof(EntityEventHandlers.Script_45_02D)) },
-        {0x2E, new(0x2E, 2, "Hide", nameof(EntityEventHandlers.Script_46_02E)) },
+        {0x2E, new(0x2E, 2, "Destroy entity", nameof(EntityEventHandlers.Script_46_02E)) },
         {0x2F, new(0x2F, 4, "Check moving in dir", nameof(EntityEventHandlers.Script_47_02F)) },
         {0x30, new(0x30, 5, "If flag on", nameof(EntityEventHandlers.Script_48_030)) },
         {0x31, new(0x31, 5, "If flag off", nameof(EntityEventHandlers.Script_49_031)) },
@@ -191,8 +191,8 @@ public class EventCodeDebugger
         {0x3F, new(0x3F, 1, "If entity riding me", nameof(EntityEventHandlers.Script_63_03F)) },
         {0x40, new(0x40, 3, "Set program index", nameof(EntityEventHandlers.Script_64_040)) },
         {0x41, new(0x41, 3, "Set sprite program index", nameof(EntityEventHandlers.Script_65_041)) },
-        {0x42, new(0x42, 1, "LogicContextEntity = PlayerEntity", nameof(EntityEventHandlers.Script_66_042)) },
-        {0x43, new(0x43, 2, "LogicContextEntity by function id", nameof(EntityEventHandlers.Script_67_043)) },
+        {0x42, new(0x42, 1, "SetLogicContextEntity = PlayerEntity", nameof(EntityEventHandlers.Script_66_042)) },
+        {0x43, new(0x43, 2, "Set LogicContextEntity", nameof(EntityEventHandlers.Script_67_043)) },
         {0x44, new(0x44, 1, "Wait dialog choice", nameof(EntityEventHandlers.Script_68_044)) },
         {0x45, new(0x45, 1, "Gravity flag 4 off", nameof(EntityEventHandlers.Script_69_045)) },
         {0x46, new(0x46, 1, "Gravity flag 4 on", nameof(EntityEventHandlers.Script_70_046)) },
@@ -201,8 +201,8 @@ public class EventCodeDebugger
         {0x49, new(0x49, 1, "Restart", nameof(EntityEventHandlers.Script_73_049)) },
         {0x4A, new(0x4A, 1, "If true restart", nameof(EntityEventHandlers.Script_74_04A)) },
         {0x4B, new(0x4B, 1, "If false restart", nameof(EntityEventHandlers.Script_75_04B)) },
-        {0x4C, new(0x4C, 2, "Set dialog something", nameof(EntityEventHandlers.Script_76_04C)) },
-        {0x4D, new(0x4D, 1, "Check dialog something", nameof(EntityEventHandlers.Script_77_04D)) },
+        {0x4C, new(0x4C, 2, "Set text flags", nameof(EntityEventHandlers.Script_76_04C)) },
+        {0x4D, new(0x4D, 1, "Try to activate textAutoAdvanceFlag", nameof(EntityEventHandlers.Script_77_04D)) },
         {0x4E, new(0x4E, 2, "Set debug flag", nameof(EntityEventHandlers.Script_78_04E)) },
         {0x4F, new(0x4F, 1, "Activate debug text auto advance", nameof(EntityEventHandlers.Script_ActivateDebugTextAutoAdvance)) },
         {0x50, new(0x50, 2, "Set dialog choice", nameof(EntityEventHandlers.Script_SetEtcAnimationMode)) },
@@ -263,8 +263,8 @@ public class EventCodeDebugger
         {0x87, new(0x87, 3, "If TouchingEntity anim value", nameof(EntityEventHandlers.Script_135_087)) },
         {0x88, new(0x88, 3, "", nameof(EntityEventHandlers.Script_136_088)) },
         {0x89, new(0x89, 9, "Move entities", nameof(EntityEventHandlers.Script_137_089)) },
-        {0x8A, new(0x8A, 8, "Spawn entity", nameof(EntityEventHandlers.Script_138_08A)) },
-        {0x8B, new(0x8B, 9, "Spawn entity at position", nameof(EntityEventHandlers.Script_139_08B)) },
+        {0x8A, new(0x8A, 8, "Spawn entity at position", nameof(EntityEventHandlers.Script_138_08A)) },
+        {0x8B, new(0x8B, 9, "Spawn entity next to entity ", nameof(EntityEventHandlers.Script_139_08B)) },
         {0x8C, new(0x8C, 2, "Random < variable", nameof(EntityEventHandlers.Script_140_08C)) },
         {0x8D, new(0x8D, 2, "Check PosZ <= TerrainHeight + 1", nameof(EntityEventHandlers.Script_141_08D)) },
         {0x8E, new(0x8E, 5, "Set scrolling parameters", nameof(EntityEventHandlers.Script_142_08E)) },
@@ -274,7 +274,7 @@ public class EventCodeDebugger
         {0x92, new(0x92, 3, "Set effect anim", nameof(EntityEventHandlers.Script_146_092)) },
         {0x93, new(0x93, 8, "Set effect pos", nameof(EntityEventHandlers.Script_147_093)) },
         {0x94, new(0x94, 8, "Set effect forces", nameof(EntityEventHandlers.Script_148_094)) },
-        {0x95, new(0x95, 10, "Check entities within hitbox", nameof(EntityEventHandlers.Script_149_095)) },
+        {0x95, new(0x95, 10, "Check entities attacking hitbox", nameof(EntityEventHandlers.Script_149_095)) },
         {0x96, new(0x96, 3, "Restore HP", nameof(EntityEventHandlers.Script_150_096)) },
         {0x97, new(0x97, 2, "Spend money", nameof(EntityEventHandlers.Script_151_097)) },
         {0x98, new(0x98, 3, "Add money", nameof(EntityEventHandlers.Script_152_098)) },
@@ -353,6 +353,7 @@ public class EventCodeDebugger
             0x00 or 0xFF => string.Empty,
             0x02 or 0x03 or 0x04 => GetGotoDescription(position, parameters),
             0x05 or 0x06 => GetFlagDescription(position, parameters),
+            0x07 => $"search type:{parameters[0]} ({parameters[1]},{parameters[2]})x({parameters[3]},{parameters[4]})x({parameters[5]},{parameters[6]})",
             0x0B => $"{(parameters[2] << 8) | parameters[1]}",
             0x0D => GetDialogDescription(position, parameters),
             0x20 => GetParametersAsDecimal(parameters, 2),
@@ -363,29 +364,60 @@ public class EventCodeDebugger
             0x38 => $"[{GetParametersAsDecimal(parameters, 2)}] = {parameters[2] | (parameters[3] << 8)}",
             0x3B => $"TileX >= {parameters[0]} and TileX <= {parameters[1]} and TileY >= {parameters[2]} and TileY <= {parameters[3]} and TileZ >= {parameters[4]} and TileZ <= {parameters[5]}",
             0x40 => $"[{parameters[0]}]={parameters[1]}",
-            0x09 or 0x1A or 0x2D or 0xA6 or 0x67 or 0x50 or 0x2C or 0x9F => GetParametersAsDecimal(parameters, 1),
+            0x09 or 0x1A or 0x2D or 0x2E or 0xA6 or 0x67 or 0x50 or 0x73 or 0x2C or 0x9F or 0x08 or 0x4c => GetParametersAsDecimal(parameters, 1),
             0x1C or 0x1D => GetRepeatAnimationDescription(position, parameters),
             0x1E or 0x1F => GetWalkDescription(position, parameters),
+            0x53 => GetChangeMapDescription(parameters),
             0x55 => $"x:{parameters[0]} y:{parameters[1]} -> walkability:{parameters[2]} groundProperty:{parameters[3]}",
             0x57 or 0x58 => GetDirectionBranchDescription(position, parameters),
             0x59 => $"search type:{parameters[0]} -> TargetAnimationId:{parameters[1]}",
             0x5B => $"search type:{parameters[0]} -> TargetAnimationId:{parameters[1]} TargetDirection:{parameters[2]}",
             0x5C => GetDialogWithChoiceDescription(position, parameters),
+            0x5E => $"search type:{parameters[0]} {((parameters[1] + parameters[2] * 0x100) * 0x10000) >> 8}",
             0x62 => $"search type:{parameters[0]} {(parameters[2] << 8) | parameters[1]}",
             0x63 => GetSetGravityFlagDescription(parameters),
             0x64 => GetSetPositionDescription(position, parameters),
+            0x65 => $"search type:{parameters[0]} offset x:{(parameters[2] << 8) | parameters[1]} y:{(parameters[4] << 8) | parameters[3]} z:{(parameters[6] << 8) | parameters[5]}",
+            0x74 => $"goto {position - ((((parameters[1] << 8) | parameters[0]) * 0x10000) >> 0x10)} jump:{(((parameters[1] << 8) | parameters[0]) * 0x10000) >> 0x10}",
             0x78 => $"entity[{GetParametersAsDecimal(parameters, 1)}]",
             0x85 => $"x:{parameters[0]} y:{parameters[1]} w:{parameters[2]} h:{parameters[3]} -> x:{parameters[4]} y:{parameters[5]}",
+            0x86 => $"search type:{parameters[0]} value:{(parameters[2] << 8) | parameters[1]}",
             0x89 => GetMoveEntitiesDescription(parameters),
-            0x8D => $"search type:{parameters[0]}",
+            0x8A => $"refId:{parameters[0]} x:{(parameters[2] << 8) | parameters[1]} y:{(parameters[4] << 8) | parameters[3]} z:{(parameters[6] << 8) | parameters[5]}",
+            0x8D or 0x43 or 0xB4 => $"search type:{parameters[0]}",
             0x8E => $"speedX:{parameters[0]} speedY:{parameters[1]} limitX:{parameters[2]} limitY:{parameters[3]}",
             0x92 => $"MapEffectId:{parameters[0]} TargetAnimationId:{parameters[1]}",
+            0x95 => GetCheckEntitiesWithinHitboxDescription(parameters),
             0xA0 => $"MapEffectId:{parameters[0]} x+={(parameters[2] << 8) | parameters[1]} y+={(parameters[4] << 8) | parameters[3]} z+={(parameters[6] << 8) | parameters[5]}", 
             0xA7 => $"sound:{parameters[0]} stop all sound:{parameters[1]}",
+            0xB0 => $"color:{parameters[0]},{parameters[1]},{parameters[2]} nbFrame:{parameters[3]}",
             0xBD or 0xBE => GetParametersAsDecimal(parameters, 2),
             0xC4 => GetDialogWithChoiceDescription(position, parameters),
             _ => parameters.Length > 0 ? $"p:[{string.Join(',', parameters)}]" : string.Empty
         };
+    }
+
+    private static string GetCheckEntitiesWithinHitboxDescription(byte[] parameters)
+    {
+        int var1 = parameters[0];
+        int var2 = parameters[1];
+        int var3 = parameters[2];
+        int var4 = parameters[3];
+        int var5 = parameters[4];
+        int maskLo = parameters[6];
+        int maskHi = parameters[7];
+        int flagMask = maskLo | (maskHi << 8);
+        byte idxType = parameters[8];
+        return $"center:({var1},{var2},{var3}) range:({var4},{var5}) flagMask:0x{flagMask:X} idxType:{idxType}";
+    }
+
+    private static string GetChangeMapDescription(byte[] parameters)
+    {
+        var x = parameters[3] * StaticVariables.MapTileWidth + StaticVariables.MapTileWidth / 2;
+        var y = parameters[4] * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2;
+        var z = parameters[5];
+
+        return $"mapid:{(parameters[1] << 8) | parameters[0]} position:{x},{y},{z}(+1) transition id:{parameters[5]} sound effect:{parameters[6]}";
     }
 
     private static string GetMoveEntitiesDescription(byte[] parameters)
@@ -459,10 +491,10 @@ public class EventCodeDebugger
             case 1:
                 return parameters[0].ToString();
             case 2:
-                return (parameters[0] | (parameters[1] << 8)).ToString("D3");
+                return (parameters[0] | (parameters[1] << 8)).ToString();
         }
         
-        return string.Join(", ", parameters.Select(x => x.ToString("D3")));
+        return string.Join(", ", parameters.Select(x => x.ToString()));
     }
 
     private static string GetDirectionBranchDescription(int position, byte[] parameters)

@@ -12771,9 +12771,9 @@ public class StaticVariables
     public int g_warpFadeColorR; // 8013FBBC
     public int g_warpFadeColorG; // 8013FBC0
     public int g_warpFadeColorB; // 8013FBC4
-    public int g_warpFadeColorR_Target; // 8013FBC8
-    public int g_warpFadeColorG_Target; // 8013FBCC
-    public int g_warpFadeColorB_Target; // 8013FBD0
+    public int g_fadeColorR_Target; // 8013FBC8
+    public int g_fadeColorG_Target; // 8013FBCC
+    public int g_fadeColorB_Target; // 8013FBD0
     public int g_warpFadeColorR_Step; // 8013FBD4
     public int g_warpFadeColorG_Step; // 8013FBD8
     public int g_warpFadeColorB_Step; // 8013FBDC

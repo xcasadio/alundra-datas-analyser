@@ -976,13 +976,13 @@ public class GraphicManager
     {
         if (_gameEngine.StaticVariables.g_warpFlags != 0)
         {
-            _gameEngine.StaticVariables.g_warpFadeColorR = MoveTowards(_gameEngine.StaticVariables.g_warpFadeColorR, _gameEngine.StaticVariables.g_warpFadeColorR_Target, _gameEngine.StaticVariables.g_warpFadeColorR_Step);
-            _gameEngine.StaticVariables.g_warpFadeColorG = MoveTowards(_gameEngine.StaticVariables.g_warpFadeColorG, _gameEngine.StaticVariables.g_warpFadeColorG_Target, _gameEngine.StaticVariables.g_warpFadeColorG_Step);
-            _gameEngine.StaticVariables.g_warpFadeColorB = MoveTowards(_gameEngine.StaticVariables.g_warpFadeColorB, _gameEngine.StaticVariables.g_warpFadeColorB_Target, _gameEngine.StaticVariables.g_warpFadeColorB_Step);
+            _gameEngine.StaticVariables.g_warpFadeColorR = MoveTowards(_gameEngine.StaticVariables.g_warpFadeColorR, _gameEngine.StaticVariables.g_fadeColorR_Target, _gameEngine.StaticVariables.g_warpFadeColorR_Step);
+            _gameEngine.StaticVariables.g_warpFadeColorG = MoveTowards(_gameEngine.StaticVariables.g_warpFadeColorG, _gameEngine.StaticVariables.g_fadeColorG_Target, _gameEngine.StaticVariables.g_warpFadeColorG_Step);
+            _gameEngine.StaticVariables.g_warpFadeColorB = MoveTowards(_gameEngine.StaticVariables.g_warpFadeColorB, _gameEngine.StaticVariables.g_fadeColorB_Target, _gameEngine.StaticVariables.g_warpFadeColorB_Step);
 
-            if (_gameEngine.StaticVariables.g_warpFadeColorR == _gameEngine.StaticVariables.g_warpFadeColorR_Target
-                && _gameEngine.StaticVariables.g_warpFadeColorG == _gameEngine.StaticVariables.g_warpFadeColorG_Target
-                && _gameEngine.StaticVariables.g_warpFadeColorB == _gameEngine.StaticVariables.g_warpFadeColorB_Target)
+            if (_gameEngine.StaticVariables.g_warpFadeColorR == _gameEngine.StaticVariables.g_fadeColorR_Target
+                && _gameEngine.StaticVariables.g_warpFadeColorG == _gameEngine.StaticVariables.g_fadeColorG_Target
+                && _gameEngine.StaticVariables.g_warpFadeColorB == _gameEngine.StaticVariables.g_fadeColorB_Target)
             {
                 _gameEngine.StaticVariables.g_warpFlags = 0;
             }

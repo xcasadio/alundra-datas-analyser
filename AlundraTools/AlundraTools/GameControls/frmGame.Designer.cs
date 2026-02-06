@@ -710,7 +710,7 @@ namespace AlundraTools.GameControls
             label12.Name = "label12";
             label12.Size = new Size(59, 15);
             label12.TabIndex = 22;
-            label12.Text = "Global flags";
+            label12.Text = "Game flags";
             // 
             // dataGridViewTemporaryFlags
             // 

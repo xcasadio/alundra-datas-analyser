@@ -2580,13 +2580,13 @@ public class EntityEventHandlers
     // 8003FFD4
     public int Script_134_086(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var value = variables[2];
+        var value = (variables[3] << 8) | variables[2];
         var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
         for (var i = 0; i < num; i++)
         {
             var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
-            entity.DamagedTickCounter += value;
+            entity.DamagedTickCounter = value;
         }
 
         return 4;
@@ -2874,23 +2874,16 @@ public class EntityEventHandlers
         int flagMask = maskLo | (maskHi << 8); // t4
         byte idxType = (byte)variables[9];
 
-        if (flagMask == 0 || _gameEngine.StaticVariables.g_numberOfEntities < 0)
-        {
-            eventProgramState.Result = 0;
-            return 10;
-        }
+        // ASM analysis: variables[4] * 0x180000 is used for both rangeX and rangeZ
+        int rangeXZ = var4 * 0x180000;
+        int centerX = var1 * 0x180000;
+        int centerY = var2 * 0x100000;
+        int centerZ = var3 * 0x100000;
+        int rangeY = var5 * 0x100000;
+        byte expectedNibble = _gameEngine.StaticVariables.BYTE_ARRAY_80098fa4[idxType];
 
-        int centerX = (var1 * 3) << 19;
-        int centerY = var2 << 20;
-        int centerZ = var3 << 20;
-        int rangeX = (var4 * 3) << 19;
-        int rangeY = (var5 << 20);
-
-        int expectedNibble = _gameEngine.StaticVariables.BYTE_ARRAY_80098fa4[idxType];
-
-        int n = _gameEngine.StaticVariables.g_numberOfEntities;
-
-        for (int i = 0; i < n; i++)
+        // ASM loop: i <= g_numberOfEntities (not i < n)
+        for (int i = 0; i <= _gameEngine.StaticVariables.g_numberOfEntities; i++)
         {
             Entity e = _gameEngine.StaticVariables.g_entitySlots[i];
 
@@ -2899,8 +2892,8 @@ public class EntityEventHandlers
                 continue;
             }
 
-            // (state-2) < 2  → Status 2 ou 3 uniquement
-            if (e.Status < 2 || e.Status > 3)
+            // ASM: (Status - 2) < 2 → Status must be 2 or 3
+            if (e.Status - 2 > 1)
             {
                 continue;
             }
@@ -2920,58 +2913,48 @@ public class EntityEventHandlers
                 continue;
             }
 
-            int nibble = e.BalanceAnimValRef == null ? -1 : e.BalanceAnimValRef.Val & 0x0F;
-
-            if (nibble < 0)
+            if (e.BalanceAnimValRef == null)
             {
                 continue;
             }
 
-            if (nibble != expectedNibble)
+            byte val = e.BalanceAnimValRef.Val;
+            if (val == 0)
+            {
+                continue;
+            }
+
+            if ((val & 0xf) != expectedNibble)
             {
                 continue;
             }
 
             // Tests de volume en 3 passes, fidèles à l’ASM (gestion des “diff < 0” avec largeur+1 / depth+1 / height+1)
 
-            // X : HitBoxX vs centerX, portée = rangeX ; si diff négative → (centerX - HitBoxX) < (CollisionWidth + 1)
-            bool okX;
+            // X test: HitBoxX vs centerX, range = rangeXZ
+            int dx = e.HitBoxX - centerX;
+            if (dx < 0)
             {
-                int dx = e.HitBoxX - centerX;
-
-                if (dx >= 0)
+                if ((centerX - e.HitBoxX) >= e.CollisionWidth + 1)
                 {
-                    okX = dx < rangeX;
-                }
-                else
-                {
-                    int w = e.CollisionWidth + 1;
-                    okX = (centerX - e.HitBoxX) < w;
+                    continue;
                 }
             }
-
-            if (!okX)
+            else if (dx >= rangeXZ)
             {
                 continue;
             }
 
-            // Y : HitBoxY vs centerY, portée = rangeY ; si diff négative → (centerY - HitBoxY) < (CollisionDepth + 1)
-            bool okY;
+            // Y test: HitBoxY vs centerY, range = rangeY
+            int dy = e.HitBoxY - centerY;
+            if (dy < 0)
             {
-                int dy = e.HitBoxY - centerY;
-
-                if (dy >= 0)
+                if ((centerY - e.HitBoxY) >= e.CollisionDepth + 1)
                 {
-                    okY = dy < rangeY;
-                }
-                else
-                {
-                    int d = e.CollisionDepth + 1;
-                    okY = (centerY - e.HitBoxY) < d;
+                    continue;
                 }
             }
-
-            if (!okY)
+            else if (dy >= rangeY)
             {
                 continue;
             }
@@ -2984,7 +2967,7 @@ public class EntityEventHandlers
 
                 if (dz >= 0)
                 {
-                    okZ = dz < rangeX;
+                    okZ = dz < rangeXZ;
                 }
                 else
                 {
@@ -2999,7 +2982,7 @@ public class EntityEventHandlers
             }
 
             eventProgramState.Result = 1;
-            break;
+            return 10;
         }
 
         return 10;
@@ -3481,9 +3464,9 @@ public class EntityEventHandlers
     // 80041570
     public int Script_176_0B0(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.StaticVariables.g_warpFadeColorR_Target = variables[1] << 16;
-        _gameEngine.StaticVariables.g_warpFadeColorG_Target = variables[2] << 16;
-        _gameEngine.StaticVariables.g_warpFadeColorB_Target = variables[3] << 16;
+        _gameEngine.StaticVariables.g_fadeColorR_Target = variables[1] << 16;
+        _gameEngine.StaticVariables.g_fadeColorG_Target = variables[2] << 16;
+        _gameEngine.StaticVariables.g_fadeColorB_Target = variables[3] << 16;
         _gameEngine.StaticVariables.g_warpFlags = 1;
         _gameEngine.SetFadeDuration(variables[4]);
 

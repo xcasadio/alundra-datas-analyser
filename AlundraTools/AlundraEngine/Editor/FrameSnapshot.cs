@@ -126,9 +126,9 @@ public class FrameSnapshot
         gameEngine.StaticVariables.g_warpFadeColorR = PlayerLastX;
         gameEngine.StaticVariables.g_warpFadeColorG = PlayerLastY;
         gameEngine.StaticVariables.g_warpFadeColorB = PlayerLastZ;
-        gameEngine.StaticVariables.g_warpFadeColorR_Target = PlayerStartX;
-        gameEngine.StaticVariables.g_warpFadeColorG_Target = PlayerStartY;
-        gameEngine.StaticVariables.g_warpFadeColorB_Target = PlayerStartZ;
+        gameEngine.StaticVariables.g_fadeColorR_Target = PlayerStartX;
+        gameEngine.StaticVariables.g_fadeColorG_Target = PlayerStartY;
+        gameEngine.StaticVariables.g_fadeColorB_Target = PlayerStartZ;
         gameEngine.StaticVariables.g_hudDeltaX = HudDeltaX;
         gameEngine.StaticVariables.g_hudDeltaY = HudDeltaY;
         //gameEngine.StaticVariables.g_hudCurrentX = HudCurrentX;
@@ -201,9 +201,9 @@ public class FrameSnapshot
         PlayerLastX = gameEngine.StaticVariables.g_warpFadeColorR;
         PlayerLastY = gameEngine.StaticVariables.g_warpFadeColorG;
         PlayerLastZ = gameEngine.StaticVariables.g_warpFadeColorB;
-        PlayerStartX = gameEngine.StaticVariables.g_warpFadeColorR_Target;
-        PlayerStartY = gameEngine.StaticVariables.g_warpFadeColorG_Target;
-        PlayerStartZ = gameEngine.StaticVariables.g_warpFadeColorB_Target;
+        PlayerStartX = gameEngine.StaticVariables.g_fadeColorR_Target;
+        PlayerStartY = gameEngine.StaticVariables.g_fadeColorG_Target;
+        PlayerStartZ = gameEngine.StaticVariables.g_fadeColorB_Target;
         HudDeltaX = gameEngine.StaticVariables.g_hudDeltaX;
         HudDeltaY = gameEngine.StaticVariables.g_hudDeltaY;
         HudCurrentX = gameEngine.StaticVariables.g_hudCurrentX;
