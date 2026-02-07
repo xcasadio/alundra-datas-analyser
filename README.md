@@ -49,7 +49,7 @@ This repository contains tools and documentation used to dissect the *Alundra* g
 
 ```bash
 # Clone the repo with sub‑modules (CasaEngine fork)
-$ git clone --recursive https://github.com/your-org/alundra-datas-analyser.git
+$ git clone --recursive https://github.com/xcasadio/alundra-datas-analyser.git
 
 # Restore .NET dependencies
 $ dotnet restore
@@ -83,7 +83,7 @@ $ dotnet restore
 $ dotnet build -c Release
 
 # Run the remake prototype (loads external assets)
-$ dotnet run --project AlundraTools
+$ dotnet run --project AlundraTools/AlundraTools.csproj
 ```
 
 The prototype currently boots into the intro map and allows basic movement.
@@ -92,7 +92,7 @@ The prototype currently boots into the intro map and allows basic movement.
 
 ## Ghidra
 
-The analyze has been done with the french version of Alundra.
+The analysis has been done with the French version of Alundra.
 
 ---
 
