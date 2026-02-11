@@ -2614,4 +2614,80 @@ public class GameEngine
         StaticVariables.g_fadeFrameCounter = 0;
         BeginFadeEffect(1, 8);
     }
+
+    public uint GetFlag(uint flag)
+    {
+        uint[] flags;
+
+        if ((flag & 0x8000) == 0)
+        {
+            flags = StaticVariables.g_saveData.GameFlags;
+        }
+        else
+        {
+            flags = StaticVariables.g_temporaryFlags;
+        }
+
+        var index = ((flag >> 3) & 0xffc) >> 2;
+        //var index = (flag >> 5) & 0x3ff;
+
+        return flags[index];
+    }
+
+    public void AddFlag(uint flag, uint mask)
+    {
+        uint[] flags;
+
+        if ((flag & 0x8000) == 0)
+        {
+            flags = StaticVariables.g_saveData.GameFlags;
+        }
+        else
+        {
+            flags = StaticVariables.g_temporaryFlags;
+        }
+
+        var index = ((flag >> 3) & 0xffc) >> 2;
+        //var index = (flag >> 5) & 0x3ff;
+
+        flags[index] |= mask;
+    }
+
+    public void SetFlag(uint flag, uint mask)
+    {
+        uint[] flags;
+
+        if ((flag & 0x8000) == 0)
+        {
+            flags = StaticVariables.g_saveData.GameFlags;
+        }
+        else
+        {
+            flags = StaticVariables.g_temporaryFlags;
+        }
+
+        var index = ((flag >> 3) & 0xffc) >> 2;
+        //var index = (flag >> 5) & 0x3ff;
+
+        flags[index] &= mask;
+    }
+
+    public void XorFlag(uint flag, uint mask)
+    {
+        uint[] flags;
+
+        if ((flag & 0x8000) == 0)
+        {
+            flags = StaticVariables.g_saveData.GameFlags;
+        }
+        else
+        {
+            flags = StaticVariables.g_temporaryFlags;
+        }
+
+        var index = ((flag >> 3) & 0xffc) >> 2;
+        //var index = (flag >> 5) & 0x3ff;
+
+        flags[index] ^= mask;
+    }
 }
