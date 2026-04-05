@@ -268,7 +268,7 @@ public class EffectManager
                 effect.X = entity.PosX + effect.OffsetX;
                 effect.Y = entity.PosY + effect.OffsetY;
                 effect.Z = entity.PosZ + effect.OffsetZ;
-                effect.DepthSortValue = entity.ZSortValue + effect.DepthSortOffset;
+                effect.DepthSortValue = entity.ZUpperBound + effect.DepthSortOffset;
                 if (entity.Status == 4)
                 {
                     effect.UpdateMode = 2;
@@ -291,7 +291,7 @@ public class EffectManager
 
         if (effect.AttachedEntity.Status != 0)
         {
-            effect.DepthSortValue = effect.AttachedEntity.ZSortValue + effect.DepthSortOffset;
+            effect.DepthSortValue = effect.AttachedEntity.ZUpperBound + effect.DepthSortOffset;
 
             if (effect.AttachedEntity.Status == 4)
             {

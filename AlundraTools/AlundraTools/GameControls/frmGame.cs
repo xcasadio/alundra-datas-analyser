@@ -61,8 +61,8 @@ public partial class FrmGame : Form
         [nameof(Entity.Status)] = "Gameplay",
         [nameof(Entity.ContentsItemId)] = "Gameplay",
         [nameof(Entity.ContentsGameFlag)] = "Gameplay",
-        [nameof(Entity.DelayOrAngle)] = "GamePlay",
-        [nameof(Entity.ItemState)] = "GamePlay",
+        [nameof(Entity.DelayOrAngle)] = "Gameplay",
+        [nameof(Entity.ItemState)] = "Gameplay",
 
         [nameof(Entity.ProgramIndexes)] = "Script",
         [nameof(Entity.SpriteProgramIndexes)] = "Script",
@@ -100,8 +100,8 @@ public partial class FrmGame : Form
         [nameof(Entity.Width)] = "Display",
         [nameof(Entity.Height)] = "Display",
         [nameof(Entity.Depth)] = "Display",
-        [nameof(Entity.ZSortValue)] = "Display",
-        [nameof(Entity.ZSortDepth)] = "Display",
+        [nameof(Entity.ZUpperBound)] = "Display",
+        [nameof(Entity.RenderSortKey)] = "Display",
         [nameof(Entity.SpriteSheetOffset)] = "Display",
 
         [nameof(Entity.TargetForceX)] = "Physics forces",
@@ -129,7 +129,7 @@ public partial class FrmGame : Form
         [nameof(Entity.FloorHeight)] = "Physics",
         [nameof(Entity.TerrainHeight)] = "Physics",
         [nameof(Entity.CollidedWithEntityZ)] = "Physics",
-        [nameof(Entity.IsAboveGround)] = "Physics",
+        [nameof(Entity.IsOnGround)] = "Physics",
         [nameof(Entity.MapTiles)] = "Physics",
         [nameof(Entity.MapHeights)] = "Physics",
         [nameof(Entity.PlatformUpdateFlag)] = "Physics",
@@ -183,8 +183,8 @@ public partial class FrmGame : Form
         [nameof(Entity.Width)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.Height)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.Depth)] = nameof(ShiftedFieldDescriptor),
-        [nameof(Entity.ZSortValue)] = nameof(ShiftedFieldDescriptor),
-        [nameof(Entity.ZSortDepth)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.ZUpperBound)] = nameof(ShiftedFieldDescriptor),
+        [nameof(Entity.RenderSortKey)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.TargetForceX)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.TargetForceY)] = nameof(ShiftedFieldDescriptor),
         [nameof(Entity.ForceX)] = nameof(ShiftedFieldDescriptor),
@@ -1057,8 +1057,8 @@ public partial class FrmGame : Form
                 content.Append($"{entity.ModdedPosZ};");
                 content.Append($"{entity.TerrainHeight};");
                 content.Append($"{entity.FloorHeight};");
-                content.Append($"{entity.ZSortValue};");
-                content.Append($"{entity.ZSortDepth};");
+                content.Append($"{entity.ZUpperBound};");
+                content.Append($"{entity.RenderSortKey};");
 
                 for (int i = 0; i < 4; i++)
                 {

@@ -183,7 +183,7 @@ public class PlayerManager
                 goto END;
             }
 
-            if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+            if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
             {
                 LAB_8003279c:
                 _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
@@ -399,7 +399,7 @@ public class PlayerManager
                     break;
                 }
 
-                if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+                if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
                 {
                     if (buttonsHold != 0)
                     {
@@ -450,7 +450,7 @@ public class PlayerManager
                     break;
                 }
 
-                if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround != 0)
+                if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround != 0)
                 {
                     if (_gameEngine.StaticVariables.PlayerEntity.ForceAdjusted == 0)
                     {
@@ -505,7 +505,7 @@ public class PlayerManager
             case (int)PlayerAnimation.AttackFlailSteel:
             case (int)PlayerAnimation.AttackSwordFiendBlade:
             case (int)PlayerAnimation.AttackSwordHoly:
-                if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+                if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
                 {
                     _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                 }
@@ -522,7 +522,7 @@ public class PlayerManager
 
                 if (_gameEngine.StaticVariables.PlayerEntity.CarriedEntity != null)
                 {
-                    if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+                    if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
                     {
                         _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.JumpWithObject;
                     }
@@ -552,12 +552,12 @@ public class PlayerManager
                         {
                             _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.JumpWithObject;
 
-                            if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround != 0)
+                            if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround != 0)
                             {
                                 _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.HoldObject;
                             }
                         }
-                        else if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+                        else if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
                         {
                             if (buttonsHold == 0)
                             {
@@ -599,7 +599,7 @@ public class PlayerManager
                         carriedEntity.PosY = _gameEngine.StaticVariables.PlayerEntity.PosY;
                         carriedEntity.PosZ = _gameEngine.StaticVariables.PlayerEntity.PosZ + 0x200000;
 
-                        if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+                        if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
                         {
                             _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.ThrowObjectWhileJumping;
 
@@ -625,7 +625,7 @@ public class PlayerManager
                     break;
                 }
 
-                if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround != 0)
+                if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround != 0)
                 {
                     //goto LAB_80031e7c;
                     _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Idle;
@@ -647,7 +647,7 @@ public class PlayerManager
             case (int)PlayerAnimation.JumpAttackFlailSteel:
             case (int)PlayerAnimation.JumpAttackSwordFiendBlade:
             case (int)PlayerAnimation.JumpAttackSwordHoly:
-                if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround != 0)
+                if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround != 0)
                 {
                     _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Idle;
                 }
@@ -663,7 +663,7 @@ public class PlayerManager
 
                 if (_gameEngine.StaticVariables.PlayerEntity.CarriedEntity != null)
                 {
-                    if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround != 0)
+                    if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround != 0)
                     {
                         _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.HoldObject;
                     }
@@ -737,7 +737,7 @@ public class PlayerManager
             case (int)PlayerAnimation.Dead:
             case (int)PlayerAnimation.Reserved4F:
                 //goto switchD_80031dac_caseD_f;
-                if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+                if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
                 {
                     _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                 }
@@ -763,7 +763,7 @@ public class PlayerManager
 
                 _gameEngine.StaticVariables.PlayerEntity.TargetDirection = (_gameEngine.StaticVariables.PlayerEntity.TargetDirection + 0x10) & 0x1f;
 
-                if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+                if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
                 {
                     _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                     //(uint)_gameEngine.StaticVariables.PlayerEntity.ForceResetAnimationFlag;
@@ -817,7 +817,7 @@ public class PlayerManager
                 }
 
                 LAB_8003253c:
-                if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+                if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
                 {
                     _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                     break;
@@ -833,7 +833,7 @@ public class PlayerManager
                     break;
                 }
 
-                if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+                if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
                 {
                     _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                     _gameEngine.StaticVariables.PlayerEntity.TargetDirection = dir;
@@ -862,7 +862,7 @@ public class PlayerManager
             case (int)PlayerAnimation.StopSprint:
                 if (TryUseItem() != 0 && PlayerTryAction() == 0)
                 {
-                    if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+                    if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
                     {
                         _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                     }
@@ -901,7 +901,7 @@ public class PlayerManager
                     break;
                 }
 
-                if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+                if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
                 {
                     goto LAB_80032604;
                 }
@@ -911,7 +911,7 @@ public class PlayerManager
                 break;
 
             case (int)PlayerAnimation.LoadingMap:
-                if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround != 0)
+                if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround != 0)
                 {
                     break;
                 }
@@ -924,7 +924,7 @@ public class PlayerManager
             case (int)PlayerAnimation.DamageKnockBackSwimming:
                 _gameEngine.StaticVariables.PlayerEntity.TargetDirection = (_gameEngine.StaticVariables.PlayerEntity.TargetDirection + 0x10) & 0x1f;
                 //goto switchD_80031dac_caseD_f;
-                if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+                if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
                 {
                     _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Jump;
                 }
@@ -967,7 +967,7 @@ public class PlayerManager
                 return 0;
             }
 
-            if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+            if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
             {
                 weaponFlagsIndex += 5;
                 animId = _gameEngine.StaticVariables.g_weaponInitFlags[weaponFlagsIndex];
@@ -991,7 +991,7 @@ public class PlayerManager
                 return 0;
             }
 
-            if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+            if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
             {
                 return 0;
             }
@@ -1039,7 +1039,7 @@ public class PlayerManager
 
         if (player.CarriedEntity != null)
         {
-            player.TargetAnimationId = (byte)(player.IsAboveGround == 1 ? (int)PlayerAnimation.HoldObject : (int)PlayerAnimation.JumpWithObject);
+            player.TargetAnimationId = (byte)(player.IsOnGround == 1 ? (int)PlayerAnimation.HoldObject : (int)PlayerAnimation.JumpWithObject);
             return 1;
         }
 
@@ -1115,7 +1115,7 @@ public class PlayerManager
         _gameEngine.StaticVariables.PlayerEntity.CarriedEntity = entity;
         entity.PlatformEntity = _gameEngine.StaticVariables.PlayerEntity;
 
-        var above = _gameEngine.StaticVariables.PlayerEntity.IsAboveGround;
+        var above = _gameEngine.StaticVariables.PlayerEntity.IsOnGround;
 
         if (entity.RidingEntity == _gameEngine.StaticVariables.PlayerEntity)
         {
@@ -2006,7 +2006,7 @@ public class PlayerManager
                 entity.PlatformEntity = _gameEngine.StaticVariables.PlayerEntity;
                 _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = 5;
 
-                if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+                if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
                 {
                     _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = 0xb;
                 }
@@ -2079,7 +2079,7 @@ public class PlayerManager
                 entitySpawned.PlatformEntity = _gameEngine.StaticVariables.PlayerEntity;
                 _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = 5;
 
-                if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+                if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
                 {
                     _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = 0xb;
                 }
@@ -3094,7 +3094,7 @@ public class PlayerManager
             case (int)PlayerAnimation.JumpAttackSwordHoly:
                 // Si on est en mode normal (mode == 0) et que le joueur est au sol
                 if ((mode == 0 || _gameEngine.StaticVariables.DAT_80098f30 == 0)
-                    && _gameEngine.StaticVariables.PlayerEntity.IsAboveGround != 0
+                    && _gameEngine.StaticVariables.PlayerEntity.IsOnGround != 0
                     && _gameEngine.StaticVariables.PlayerEntity.ForceZ < 1)
                 {
                     // Jouer un son d'atterrissage
@@ -3260,7 +3260,7 @@ public class PlayerManager
             }
             else
             {
-                if (_gameEngine.StaticVariables.PlayerEntity.IsAboveGround == 0)
+                if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
                 {
                     _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = _gameEngine.StaticVariables.g_flailHitAnimations[attackType * 2 + 1];
                 }

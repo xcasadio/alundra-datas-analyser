@@ -133,7 +133,7 @@ public class Entity
     public int TerrainHeight;//
     public int ForceAdjusted;//0x13c
     public int CollidedWithEntityZ;//0x140
-    public int IsAboveGround;//collided with something
+    public int IsOnGround;
     public readonly MapTile[] MapTiles = new MapTile[4];
     public readonly int[] MapHeights = new int[4]; // 158
     public int PlatformUpdateFlag; //
@@ -152,6 +152,7 @@ public class Entity
     public SpriteEffect? ActiveEffect;
     public int ZSortValue;//1bc
     public int ZSortDepth;//1c0
+    public int RenderSortKey;//1c0
     public BalanceRecord? BalanceRecord;//1c4
     public BalanceAnimValRef? BalanceAnimValRef;//1c8
     public int DamagedTickCounter;//1cc
@@ -159,7 +160,7 @@ public class Entity
     public FrameCollisionData? FrameCollision;//1d4
     public int ModdedPosX, ModdedPosY, ModdedPosZ;
     public int ModX, ModY, ModZ;
-    public int Width, Depth, Height;
+    public int Width, Height, Depth;
     public int HitBoxX;//1fc
     public int HitBoxY;//200
     public int HitBoxZ;//204
@@ -276,7 +277,7 @@ public class Entity
         TerrainHeight = other.TerrainHeight;
         ForceAdjusted = other.ForceAdjusted;
         CollidedWithEntityZ = other.CollidedWithEntityZ;
-        IsAboveGround = other.IsAboveGround;
+        IsOnGround = other.IsOnGround;
         for (int i = 0; i < MapTiles.Length; i++)
         {
             MapTiles[i] = other.MapTiles[i];
@@ -304,8 +305,8 @@ public class Entity
         SpriteSheetOffset = other.SpriteSheetOffset;
         PaletteOffset = other.PaletteOffset;
         ActiveEffect = other.ActiveEffect;
-        ZSortValue = other.ZSortValue;
-        ZSortDepth = other.ZSortDepth;
+        ZUpperBound = other.ZUpperBound;
+        RenderSortKey = other.RenderSortKey;
         BalanceRecord = other.BalanceRecord;
         BalanceAnimValRef = other.BalanceAnimValRef;
         DamagedTickCounter = other.DamagedTickCounter;
@@ -427,7 +428,7 @@ public class Entity
         TerrainHeight = 0;
         ForceAdjusted = 0;
         CollidedWithEntityZ = 0;
-        IsAboveGround = 0;
+        IsOnGround = 0;
 
         Array.Clear(MapTiles);
         Array.Clear(MapHeights);
@@ -454,8 +455,8 @@ public class Entity
         SpriteSheetOffset = 0;
         PaletteOffset = 0;
         ActiveEffect = null;
-        ZSortValue = 0;
-        ZSortDepth = 0;
+        ZUpperBound = 0;
+        RenderSortKey = 0;
         BalanceRecord = null;
         BalanceAnimValRef = null;
         DamagedTickCounter = 0;

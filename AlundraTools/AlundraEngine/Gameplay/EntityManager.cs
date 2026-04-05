@@ -400,7 +400,7 @@ public class EntityManager
             {
                 var entity = _gameEngine.StaticVariables.g_visibleEntities[i];
 
-                entity.SpriteRef.DepthSortValue = entity.ZSortValue;
+                entity.SpriteRef.DepthSortValue = entity.ZUpperBound;
                 entity.SpriteRef.X = entity.PosX;
                 entity.SpriteRef.Y = entity.PosY;
                 entity.SpriteRef.Z = entity.PosZ;
@@ -828,7 +828,7 @@ public class EntityManager
                             if ((flags & 0x200000) == 0 || (entity.CombinedVramFlagsOR & 0x8004U) == 0)
                             {
                                 if (
-                                    ((flags & 0x10) != 0 && (entity.ForceAdjusted != 0 || entity.IsAboveGround != 0))
+                                    ((flags & 0x10) != 0 && (entity.ForceAdjusted != 0 || entity.IsOnGround != 0))
                                     || ((flags & 0x20) != 0 && entity.HitCounter != 0)
                                     || ((flags & 0x40) != 0 && entity.ForceResetAnimationFlag != 0))
                                 {
@@ -1012,14 +1012,14 @@ public class EntityManager
         for (var i = 0; i < gameEngine.StaticVariables.g_visibleEntityCount; i++)
         {
             var entity = gameEngine.StaticVariables.g_visibleEntities[i];
-            entity.ZSortValue = 0;
-            entity.ZSortDepth = entity.ModdedPosZ + entity.Depth;
+            entity.ZUpperBound = 0;
+            entity.RenderSortKey = entity.ModdedPosZ + entity.Depth;
         }
 
         for (var i = 0; i < gameEngine.StaticVariables.g_visibleEntityCount; i++)
         {
             var entity = gameEngine.StaticVariables.g_visibleEntities[i];
-            if (entity.ZSortValue == 0)
+            if (entity.ZUpperBound == 0)
             {
                 ComputeZSortValue(entity, gameEngine);
             }
@@ -1028,7 +1028,7 @@ public class EntityManager
         for (var i = 0; i < gameEngine.StaticVariables.g_visibleEntityCount; i++)
         {
             var entity = gameEngine.StaticVariables.g_visibleEntities[i];
-            entity.ZSortValue = (int)(entity.ZSortValue & 0xffff0000) + ((entity.PosZ >> 16) & 0xFFFF);
+            entity.ZUpperBound = (int)(entity.ZUpperBound & 0xffff0000) + ((entity.PosZ >> 16) & 0xFFFF);
         }
     }
 
@@ -1036,94 +1036,90 @@ public class EntityManager
     // 800397ac
     public static int ComputeZSortValue(Entity entity, GameEngine gameEngine)
     {
-        if (entity.ZSortValue != 0)
+        if (entity.ZUpperBound != 0)
         {
-            return entity.ZSortValue;
+            return entity.ZUpperBound;
         }
 
-        //entity.PosY + entity.Height + (entity.Frame.Images.DepthSortValue << 16); //
         var sortValue = entity.PosY + (entity.SpriteRef.DepthSortValue << 16);
 
-        if ((entity.Flags & 0x80) != 0
-            || (entity.AnimFlags & 0x80) != 0)
+        if ((entity.Flags & 0x80) != 0 && (entity.AnimFlags & 0x80) == 0)
         {
-            entity.ZSortValue = sortValue;
-            return sortValue;
-        }
-
-        if (entity.PlatformEntity != null)
-        {
-            if (entity.PlatformEntity.ZSortValue == 0)
+            if (entity.PlatformEntity != null)
             {
-                sortValue = ComputeZSortValue(entity.PlatformEntity, gameEngine);
-            }
-
-            if (sortValue < entity.PlatformEntity.ZSortValue)
-            {
-                entity.ZSortValue = entity.PlatformEntity.ZSortValue;
-                return entity.PlatformEntity.ZSortValue;
-            }
-        }
-
-        for (var dex = 0; dex < gameEngine.StaticVariables.g_collideableEntitiesCount; dex++)
-        {
-            var otherEntity = gameEngine.StaticVariables.g_collideableEntities[dex];
-            if (otherEntity == entity)
-            {
-                continue;
-            }
-
-            if (otherEntity.ZSortDepth >= entity.ZSortDepth)
-            {
-                continue;
-            }
-
-            //X
-            var x = otherEntity.PosX + otherEntity.ModX - entity.ModdedPosX;
-            if (x >= 0)
-            {
-                if (x >= entity.Width + 1)
+                var referenceZOrder = entity.PlatformEntity.ZUpperBound;
+                if (referenceZOrder == 0)
                 {
-                    continue;
+                    referenceZOrder = ComputeZSortValue(entity.PlatformEntity, gameEngine);
                 }
-            }
-            else
-            {
-                if (entity.ModdedPosX - (otherEntity.PosX + otherEntity.ModX) >= otherEntity.Width + 1)
+
+                if (sortValue < referenceZOrder)
                 {
-                    continue;
+                    entity.ZUpperBound = referenceZOrder;
+                    return referenceZOrder;
                 }
             }
 
-            //Y
-            var y = otherEntity.PosY + otherEntity.ModY - entity.ModdedPosY;
-            if (y >= 0)
+            for (var dex = 0; dex < gameEngine.StaticVariables.g_collideableEntitiesCount; dex++)
             {
-                if (y >= entity.Depth + 1)
+                var otherEntity = gameEngine.StaticVariables.g_collideableEntities[dex];
+                if (otherEntity == entity)
                 {
                     continue;
                 }
-            }
-            else
-            {
-                if (entity.ModdedPosY - (otherEntity.PosY + otherEntity.ModY) >= otherEntity.Depth + 1)
+
+                if (otherEntity.RenderSortKey >= entity.RenderSortKey)
                 {
                     continue;
                 }
-            }
 
-            if (otherEntity.ZSortValue == 0)
-            {
-                sortValue = ComputeZSortValue(otherEntity, gameEngine);
-            }
+                //X
+                var x = otherEntity.PosX + otherEntity.ModX - entity.ModdedPosX;
+                if (x >= 0)
+                {
+                    if (x >= entity.Width + 1)
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    if (entity.ModdedPosX - (otherEntity.PosX + otherEntity.ModX) >= otherEntity.Width + 1)
+                    {
+                        continue;
+                    }
+                }
 
-            if (sortValue < otherEntity.ZSortValue)
-            {
-                sortValue = otherEntity.ZSortValue;
+                //Y
+                var y = otherEntity.PosY + otherEntity.ModY - entity.ModdedPosY;
+                if (y >= 0)
+                {
+                    if (y >= entity.Height + 1)
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    if (entity.ModdedPosY - (otherEntity.PosY + otherEntity.ModY) >= otherEntity.Height + 1)
+                    {
+                        continue;
+                    }
+                }
+
+                if (otherEntity.ZUpperBound == 0)
+                {
+                    sortValue = ComputeZSortValue(otherEntity, gameEngine);
+                }
+
+                if (sortValue < otherEntity.ZUpperBound)
+                {
+                    sortValue = otherEntity.ZUpperBound;
+                }
             }
         }
 
-        entity.ZSortValue = sortValue;
+        entity.ZUpperBound = sortValue;
 
         return sortValue;
     }

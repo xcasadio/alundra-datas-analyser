@@ -438,7 +438,7 @@ public static class FrameSnapshotLoader
             entity.TerrainHeight = terrainHeight;
             entity.ForceAdjusted = forceAdjusted;
             entity.CollidedWithEntityZ = collidedWithEntityZ;
-            entity.IsAboveGround = isAboveGround;
+            entity.IsOnGround = isAboveGround;
             if (mapTiles != null)
             {
                 for (int i = 0; i < 4; i++)
@@ -480,8 +480,8 @@ public static class FrameSnapshotLoader
             //entity.PaletteIndex = paletteIndex;
             //entity.SheetSize = sheetSize;
             //entity.ActiveEffect = activeEffect;
-            entity.ZSortValue = zSortValue;
-            entity.ZSortDepth = zSortDepth;
+            entity.ZUpperBound = zSortValue;
+            entity.RenderSortKey = zSortDepth;
             //entity.BalanceRecord = balanceRecord;
             //entity.BalanceAnimValRef = balanceAnimValRef;
             entity.DamagedTickCounter = damagedTickCounter;

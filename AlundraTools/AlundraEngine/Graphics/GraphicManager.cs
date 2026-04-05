@@ -445,7 +445,7 @@ public class GraphicManager
                 if (entity.SpriteRef?.Images != null)
                 {
                     // Use ZSortValue directly for sorting - higher values = rendered later (in front)
-                    var entityZ = entity.ZSortValue;
+                    var entityZ = entity.ZUpperBound;
                     for (var idex = entity.SpriteRef.NumberOfImages - 1; idex >= 0; idex--)
                     {
                         var img = entity.SpriteRef.Images[idex];

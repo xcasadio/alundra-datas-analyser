@@ -138,7 +138,7 @@ public static class FunctionTypeC
             case 12:
             case 13:
             case 14:
-                if (entity.IsAboveGround != 0)
+                if (entity.IsOnGround != 0)
                 {
                     entity.TargetAnimationId = 2;
                 }
@@ -254,7 +254,7 @@ public static class FunctionTypeC
                 break;
 
             case 6:
-                if (entity.IsAboveGround != 0)
+                if (entity.IsOnGround != 0)
                 {
                     entity.TargetAnimationId = 0;
                     var rand = ((Random.Next() * 0x29) >> 32) + 10;
@@ -292,7 +292,7 @@ public static class FunctionTypeC
 
                 direction = 10;
 
-                if (entity.IsAboveGround == 0)
+                if (entity.IsOnGround == 0)
                 {
                     return;
                 }
@@ -512,7 +512,7 @@ public static class FunctionTypeC
 
             if (entity.ForceAdjusted == 0)
             {
-                if (entity.IsAboveGround != 0 || entity.HitCounter != 0)
+                if (entity.IsOnGround != 0 || entity.HitCounter != 0)
                 {
                     gameEngine.SoundManager.PlaySoundEffect(0x18);
                     entity.DelayOrAngle = 0;
@@ -542,7 +542,7 @@ public static class FunctionTypeC
                 value = 0;
                 entity2 = entity;
 
-                if (entity.IsAboveGround == 0)
+                if (entity.IsOnGround == 0)
                 {
                     if (entity.ForceZ > 0 && entity.DelayOrAngle == 0)
                     {
@@ -1558,7 +1558,7 @@ public static class FunctionTypeC
                 }
             }
         }
-        else if (uVar4 == 5 && entity.IsAboveGround != 0)
+        else if (uVar4 == 5 && entity.IsOnGround != 0)
         {
             entity.TargetAnimationId = 1;
         }
@@ -1840,7 +1840,7 @@ public static class FunctionTypeC
                     if (entity.Bytes[1] == 1)
                     {
                         uVar3 = 2;
-                        if (entity.IsAboveGround == 0)
+                        if (entity.IsOnGround == 0)
                         {
                             uVar3 = (uint)(((Random.Next() * 3) >> 0x20) + 1);
                         }
@@ -1875,7 +1875,7 @@ public static class FunctionTypeC
             case 2:
             case 3:
                 if (entity.ForceResetAnimationFlag != 0
-                    || (entity.IsAboveGround != 0 && entity.TargetAnimationId == 3)
+                    || (entity.IsOnGround != 0 && entity.TargetAnimationId == 3)
                     || entity.ForceAdjusted != 0)
                 {
                     bVar2 = entity.Bytes[0];
@@ -2058,7 +2058,7 @@ public static class FunctionTypeC
                 {
                     if (entity.Bytes[2] == 0)
                     {
-                        if (entity.IsAboveGround != 0)
+                        if (entity.IsOnGround != 0)
                         {
                             sVar3 = (short)((Random.Next() * 0x20) >> 0x20);
                             entity.TargetAnimationId = 7;
@@ -2169,7 +2169,7 @@ public static class FunctionTypeC
 
                         if (-0x600000 < iVar4)
                         {
-                            if (entity.IsAboveGround == 0)
+                            if (entity.IsOnGround == 0)
                             {
                                 return;
                             }
@@ -2482,7 +2482,7 @@ public static class FunctionTypeC
             sVar2 = (short)(entity.AIValues[1] - 1);
             entity.AIValues[1] = sVar2;
 
-            if (sVar2 == 0 && entity.IsAboveGround != 0)
+            if (sVar2 == 0 && entity.IsOnGround != 0)
             {
                 entity.TargetAnimationId = 0x11;
             }
@@ -2749,7 +2749,7 @@ public static class FunctionTypeC
             {
                 return;
             }
-            if (entity.IsAboveGround == 0)
+            if (entity.IsOnGround == 0)
             {
                 return;
             }
@@ -3806,7 +3806,7 @@ public static class FunctionTypeC
         {
             i = 0;
 
-            if (entity.IsAboveGround != 0)
+            if (entity.IsOnGround != 0)
             {
                 do
                 {
@@ -3837,7 +3837,7 @@ public static class FunctionTypeC
             gameEngine.EffectManager.CreateEffectEntity(0, 9, 0, entity.PosX, entity.PosY, entity.PosZ + 0x80000);
             return;
         }
-        if ((entity.IsAboveGround == 0) && (entity.HitCounter == 0))
+        if ((entity.IsOnGround == 0) && (entity.HitCounter == 0))
         {
             return;
         }
@@ -4038,7 +4038,7 @@ public static class FunctionTypeC
                 break;
 
             case 2:
-                if (entity.CollidedWithEntityZ != 0 || entity.IsAboveGround != 0)
+                if (entity.CollidedWithEntityZ != 0 || entity.IsOnGround != 0)
                 {
                     entity.TargetAnimationId = 2;
                     entity.Bytes[0] = 3;
@@ -4220,7 +4220,7 @@ public static class FunctionTypeC
 
         if (entity.PlatformEntity == null)
         {
-            if (entity.IsAboveGround != 0)
+            if (entity.IsOnGround != 0)
             {
                 entity.Status = 3;
             }
@@ -4517,7 +4517,7 @@ public static class FunctionTypeC
 
                         if (0xfffff < positions[5])
                         {
-                            if (positions[5] < 0x180001 || entity.IsAboveGround != 0)
+                            if (positions[5] < 0x180001 || entity.IsOnGround != 0)
                             {
                                 //goto LAB_8006a7e4;
                                 entity.TargetAnimationId = 1;
@@ -4604,7 +4604,7 @@ public static class FunctionTypeC
                 sVar3 = (short)(entity.AIValues[1] - 1);
                 entity.AIValues[1] = sVar3;
 
-                if (sVar3 == 0 || entity.IsAboveGround != 0)
+                if (sVar3 == 0 || entity.IsOnGround != 0)
                 {
                     entity.TargetAnimationId = 0;
                 }
@@ -4699,7 +4699,7 @@ public static class FunctionTypeC
         switch (entity.TargetAnimationId)
         {
             case 0:
-                if (entity.IsAboveGround == 0)
+                if (entity.IsOnGround == 0)
                 {
                     return;
                 }
@@ -4920,7 +4920,7 @@ public static class FunctionTypeC
                 break;
 
             case 2:
-                if (entity.IsAboveGround != 0)
+                if (entity.IsOnGround != 0)
                 {
                     entity.TargetAnimationId = 1;
                 }
@@ -5441,7 +5441,7 @@ public static class FunctionTypeC
             case 9:
             case 10:
                 sVar3 = 0x14;
-                if (entity.IsAboveGround == 0)
+                if (entity.IsOnGround == 0)
                 {
                     goto switchD_800685cc_caseD_8;
                 }
@@ -5874,7 +5874,7 @@ public static class FunctionTypeC
         {
             if (targetAnimationId == 5)
             {
-                if (entity.IsAboveGround == 0)
+                if (entity.IsOnGround == 0)
                 {
                     return;
                 }
@@ -6828,7 +6828,7 @@ public static class FunctionTypeC
                 return;
             }
 
-            if (entity.IsAboveGround != 0)
+            if (entity.IsOnGround != 0)
             {
                 gameEngine.SoundManager.PlaySoundEffect(0x19D);
                 entity.Flags |= 0x40;
@@ -6914,7 +6914,7 @@ public static class FunctionTypeC
         {
             Entity player = gameEngine.StaticVariables.PlayerEntity;
 
-            if (player.IsAboveGround != 0)
+            if (player.IsOnGround != 0)
             {
                 if (player.TargetAnimationId == 0x1C)
                 {
@@ -7652,7 +7652,7 @@ public static class FunctionTypeC
                 }
             }
         }
-        else if (direction == 3 && entity.IsAboveGround != 0)
+        else if (direction == 3 && entity.IsOnGround != 0)
         {
             entity.TargetAnimationId = entity.Bytes[0];
         }
@@ -7990,7 +7990,7 @@ public static class FunctionTypeC
         }
         else
         {
-            if (entity.IsAboveGround != 0 && entity.AIValues.GetInt32(2) != 0)
+            if (entity.IsOnGround != 0 && entity.AIValues.GetInt32(2) != 0)
             {
                 int force = entity.AIValues.GetInt32(2);
 

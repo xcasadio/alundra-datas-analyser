@@ -1561,7 +1561,7 @@ public static class PhysicsEngine
 
         var hitz = PhysicsEngine.GetCollisionOnZ(gameEngine, entity);
         entity.FloorHeight = hitz;
-        entity.IsAboveGround = hitz < entity.PosZ ? 0 : 1;
+        entity.IsOnGround = hitz < entity.PosZ ? 0 : 1;
 
         if ((entity.Flags & 0x100U) == 0)
         {

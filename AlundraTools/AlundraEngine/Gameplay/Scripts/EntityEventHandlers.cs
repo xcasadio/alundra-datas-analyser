@@ -972,7 +972,7 @@ public class EntityEventHandlers
     // 8003DB7C
     public int Script_37_025(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        if (logicEntity.CollidedWithEntityZ == 0 && logicEntity.IsAboveGround == 0)
+        if (logicEntity.CollidedWithEntityZ == 0 && logicEntity.IsOnGround == 0)
         {
             return 0;
         }
@@ -1987,7 +1987,7 @@ public class EntityEventHandlers
 
                 if ((conditionFlags & 0x04) != 0)
                 {
-                    if (ownerEntity.IsAboveGround == 0)
+                    if (ownerEntity.IsOnGround == 0)
                     {
                         return 0;
                     }
@@ -2273,7 +2273,7 @@ public class EntityEventHandlers
     // 8003F9FC
     public int Script_112_070(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        eventProgramState.Result = logicEntity.IsAboveGround;
+        eventProgramState.Result = logicEntity.IsOnGround;
         return 1;
     }
 

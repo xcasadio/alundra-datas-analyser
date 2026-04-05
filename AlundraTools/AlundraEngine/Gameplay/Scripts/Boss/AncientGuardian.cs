@@ -269,7 +269,7 @@ public static class AncientGuardian
                 goto LAB_80070bd4;
 
             case 7:
-                if (entity.IsAboveGround != 0)
+                if (entity.IsOnGround != 0)
                 {
                     entity.TargetAnimationId = 0;
                     gameEngine.SoundManager.PlaySoundEffect(0x65);
