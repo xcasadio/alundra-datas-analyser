@@ -2166,7 +2166,7 @@ public class PlayerManager
                 DecreaseMp(1);
             }
 
-            Breakpoint.TriggerBreak();
+            //Breakpoint.TriggerBreak();
             //StartCdStreaming((uint)*(byte*)((int)&PTR_caseD_1_80023364 + itemId + 1));
             result = 0;
             _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = 0x32;
@@ -2207,7 +2207,7 @@ public class PlayerManager
                     iVar1 = FUN_800352c4();
                     break;
                 case 0x2b:
-                    iVar1 = FUN_80035320();
+                    iVar1 = ProcessEarthMagicLevel1Sequence();
                     break;
                 case 0x2c:
                     iVar1 = FUN_800354d0();
@@ -2286,12 +2286,13 @@ public class PlayerManager
     }
 
     //magic earth nv1
-    private int FUN_80035320()
+    private int ProcessEarthMagicLevel1Sequence()
     {
         int iVar1;
-        int uVar2;
+        var staticVariables = _gameEngine.StaticVariables;
+        var player = staticVariables.PlayerEntity;
 
-        if (_gameEngine.StaticVariables.g_playerEffectPhase == 1)
+        if (staticVariables.g_playerEffectPhase == 1)
         {
             iVar1 = IsFadeActive();
 
@@ -2300,17 +2301,17 @@ public class PlayerManager
                 return 1;
             }
 
-            if (_gameEngine.StaticVariables.g_playerEffectCurrentFrame < 100)
+            if (staticVariables.g_playerEffectCurrentFrame < 100)
             {
                 return 0;
             }
 
-            _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = 0x34;
-            _gameEngine.StaticVariables.g_playerEffectPhase = _gameEngine.StaticVariables.g_playerEffectPhase + 1;
+            player.TargetAnimationId = 0x34;
+            staticVariables.g_playerEffectPhase = staticVariables.g_playerEffectPhase + 1;
         }
-        else if (_gameEngine.StaticVariables.g_playerEffectPhase < 2)
+        else if (staticVariables.g_playerEffectPhase < 2)
         {
-            if (_gameEngine.StaticVariables.g_playerEffectPhase != 0)
+            if (staticVariables.g_playerEffectPhase != 0)
             {
                 return 0;
             }
@@ -2322,51 +2323,51 @@ public class PlayerManager
                 return 1;
             }
 
-            var i = 0;
-            var param = _gameEngine.StaticVariables.MagicEarthParameters_ARRAY_8002343c[0];
+            var parameters = staticVariables.MagicEarthParameters_ARRAY_8002343c;
+            var parameterIndex = 0;
+            var parameter = parameters[parameterIndex];
 
-            if (0x13 < _gameEngine.StaticVariables.g_playerEffectCurrentFrame)
+            if (unchecked((ushort)parameter.Index) <= staticVariables.g_playerEffectCurrentFrame)
             {
-                uVar2 = 0x14;
-
                 do
                 {
-                    param = _gameEngine.StaticVariables.MagicEarthParameters_ARRAY_8002343c[i];
+                    var scheduledFrame = unchecked((ushort)parameter.Index);
 
-                    if (uVar2 == _gameEngine.StaticVariables.g_playerEffectCurrentFrame)
+                    if (scheduledFrame == staticVariables.g_playerEffectCurrentFrame)
                     {
-                        var entitySpawned = _gameEngine.SpawnWarpEntity(_gameEngine.StaticVariables.PlayerEntity, 
+                        var entitySpawned = _gameEngine.SpawnWarpEntity(player,
                             0, 0x10,
-                            _gameEngine.StaticVariables.PlayerEntity.PosX,
-                            _gameEngine.StaticVariables.PlayerEntity.PosY,
-                            _gameEngine.StaticVariables.PlayerEntity.PosZ,
-                            (uint)((_gameEngine.StaticVariables.PlayerEntity.TargetDirection + param.ForceZ) & 0x1f));
+                            player.PosX,
+                            player.PosY,
+                            player.PosZ,
+                            (uint)((player.TargetDirection + parameter.Direction) & 0x1f));
 
                         if (entitySpawned != null)
                         {
-                            entitySpawned.ForceZ = param.Index << 8;
+                            entitySpawned.ForceZ = parameter.ForceZ << 8;
                         }
                     }
 
-                    i++;
-                } while (param.Index <= _gameEngine.StaticVariables.g_playerEffectCurrentFrame);
+                    parameterIndex++;
+                    parameter = parameters[parameterIndex];
+                } while (unchecked((ushort)parameter.Index) <= staticVariables.g_playerEffectCurrentFrame);
             }
 
-            if (param.Index != -1)
+            if (parameter.Index != -1)
             {
                 return 0;
             }
 
-            _gameEngine.StaticVariables.g_playerEffectPhase = _gameEngine.StaticVariables.g_playerEffectPhase + 1;
+            staticVariables.g_playerEffectPhase = staticVariables.g_playerEffectPhase + 1;
         }
         else
         {
-            if (_gameEngine.StaticVariables.g_playerEffectPhase != 2)
+            if (staticVariables.g_playerEffectPhase != 2)
             {
                 return 0;
             }
 
-            if (_gameEngine.StaticVariables.PlayerEntity.TargetAnimationId != 0x34)
+            if (player.TargetAnimationId != 0x34)
             {
                 return 1;
             }
