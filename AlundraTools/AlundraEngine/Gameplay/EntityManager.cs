@@ -157,7 +157,7 @@ public class EntityManager
     }
 
     // 80039c40
-    private void SetEntityDimensions(Entity entity, 
+    public void SetEntityDimensions(Entity entity, 
         int offsetX, int offsetY, int offsetZ, 
         int sizeX, int sizeY, int sizeZ)
     {

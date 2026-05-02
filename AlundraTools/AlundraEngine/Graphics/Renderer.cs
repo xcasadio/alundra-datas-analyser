@@ -12,11 +12,9 @@ public class Renderer(System.Drawing.Graphics graphics) : IRenderer
     private readonly Dictionary<CrossColorKey, Bitmap> _crossCache = new();
     private readonly Dictionary<LineColorKey, Bitmap> _lineCache = new();
     private readonly Dictionary<TextColorKey, Bitmap> _textCache = new();
-    private int _crossSize = 5;
+    private readonly int _crossSize = 5;
 
     private const int MaxCacheSize = 10000;
-
-
 
     private static Bitmap CreateWhiteBitmap()
     {
@@ -42,12 +40,13 @@ public class Renderer(System.Drawing.Graphics graphics) : IRenderer
 
     public void AddSprite(Sprite sprite)
     {
-        if (!_sprites.ContainsKey(sprite.Depth))
+        if (!_sprites.TryGetValue(sprite.Depth, out var value))
         {
-            _sprites[sprite.Depth] = [];
+            value = [];
+            _sprites[sprite.Depth] = value;
         }
 
-        _sprites[sprite.Depth].Add(sprite);
+        value.Add(sprite);
     }
 
     public void AddRectangle(TILE tile, int depthSortValue, float alpha = 1.0f)
@@ -116,27 +115,23 @@ public class Renderer(System.Drawing.Graphics graphics) : IRenderer
         {
             foreach (var sprite in kvp.Value)
             {
-                RenderSprite(graphics, sprite);
+                if (sprite.IsDeformed)
+                {
+                    RenderDeformedSprite(graphics, sprite);
+                }
+                else
+                {
+                    RenderSprite(graphics, sprite);
+                }
             }
         }
     }
 
     private void RenderSprite(System.Drawing.Graphics graphics, Sprite sprite)
     {
-        // Determine alpha based on blend mode
+        // Note: GDI+ ne supporte pas nativement les blend modes PSX (additif/soustractif)
+        // On applique uniquement l'alpha et les couleurs via ColorMatrix
         float effectiveAlpha = sprite.Alpha;
-        if (sprite.BlendMode != BlendMode.None)
-        {
-            // Apply PSX-style blending approximation
-            effectiveAlpha = sprite.BlendMode switch
-            {
-                BlendMode.Average => 0.5f,      // 50% blend
-                BlendMode.Additive => 1.0f,     // Full additive (handled by CompositingMode if needed)
-                BlendMode.Subtractive => 0.5f,  // Approximation (GDI+ doesn't support subtractive)
-                BlendMode.AdditiveDim => 0.25f, // 25% blend
-                _ => sprite.Alpha
-            };
-        }
 
         var useMatrix = Math.Abs(effectiveAlpha - 1.0f) > 0.001f ||
                         Math.Abs(sprite.R - 1.0f) > 0.001f ||
@@ -162,6 +157,54 @@ public class Renderer(System.Drawing.Graphics graphics) : IRenderer
         else
         {
             graphics.DrawImage(sprite.Bitmap, sprite.X, sprite.Y, sprite.Width, sprite.Height);
+        }
+    }
+
+    private void RenderDeformedSprite(System.Drawing.Graphics graphics, Sprite sprite)
+    {
+        // Utiliser DrawImage avec 3 points pour créer un parallélogramme
+        // Note: GDI+ ne supporte que les parallélogrammes, pas les quads arbitraires
+        // Pour un quad complet, il faudrait utiliser TextureBrush.Transform ou diviser en 2 triangles
+        
+        var destPoints = new PointF[]
+        {
+            new PointF(sprite.X0, sprite.Y0),  // Top-left
+            new PointF(sprite.X1, sprite.Y1),  // Top-right
+            new PointF(sprite.X2, sprite.Y2)   // Bottom-left
+        };
+        
+        // Calculer le rectangle source en fonction des UVs
+        int srcX = (int)(sprite.U0 * sprite.Bitmap.Width);
+        int srcY = (int)(sprite.V0 * sprite.Bitmap.Height);
+        int srcWidth = (int)((sprite.U1 - sprite.U0) * sprite.Bitmap.Width);
+        int srcHeight = (int)((sprite.V2 - sprite.V0) * sprite.Bitmap.Height);
+        
+        var srcRect = new RectangleF(srcX, srcY, Math.Max(1, srcWidth), Math.Max(1, srcHeight));
+        
+        // Appliquer la couleur et l'alpha
+        var useMatrix = Math.Abs(sprite.Alpha - 1.0f) > 0.001f ||
+                        Math.Abs(sprite.R - 1.0f) > 0.001f ||
+                        Math.Abs(sprite.G - 1.0f) > 0.001f ||
+                        Math.Abs(sprite.B - 1.0f) > 0.001f;
+        
+        if (useMatrix)
+        {
+            var colorMatrix = new ColorMatrix([
+                [sprite.R, 0f, 0f, 0f, 0f],
+                [0f, sprite.G, 0f, 0f, 0f],
+                [0f, 0f, sprite.B, 0f, 0f],
+                [0f, 0f, 0f, sprite.Alpha, 0f],
+                [0f, 0f, 0f, 0f, 1f]
+            ]);
+            
+            using var imageAttributes = new ImageAttributes();
+            imageAttributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+            
+            graphics.DrawImage(sprite.Bitmap, destPoints, srcRect, GraphicsUnit.Pixel, imageAttributes);
+        }
+        else
+        {
+            graphics.DrawImage(sprite.Bitmap, destPoints, srcRect, GraphicsUnit.Pixel);
         }
     }
 
@@ -215,6 +258,27 @@ public class Renderer(System.Drawing.Graphics graphics) : IRenderer
         _textCache.Clear();
     }
 
+    public void DrawDeformedQuad(
+        Bitmap bitmap,
+        int x0, int y0, float u0, float v0,
+        int x1, int y1, float u1, float v1,
+        int x2, int y2, float u2, float v2,
+        int x3, int y3, float u3, float v3,
+        int depthSortValue,
+        byte r, byte g, byte b, float alpha = 1.0f)
+    {
+        var sprite = new Sprite(
+            bitmap,
+            x0, y0, u0, v0,
+            x1, y1, u1, v1,
+            x2, y2, u2, v2,
+            x3, y3, u3, v3,
+            depthSortValue,
+            r / 255f, g / 255f, b / 255f, alpha);
+        
+        AddSprite(sprite);
+    }
+
     public class Sprite
     {
         public int X;
@@ -228,6 +292,11 @@ public class Renderer(System.Drawing.Graphics graphics) : IRenderer
         public float G;
         public float B;
         public BlendMode BlendMode;
+        
+        // Pour les quads déformés (rotation)
+        public bool IsDeformed;
+        public int X0, Y0, X1, Y1, X2, Y2, X3, Y3;
+        public float U0, V0, U1, V1, U2, V2, U3, V3;
 
         public Sprite(int x, int y, int width, int height, int depth, Bitmap bitmap,
             float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f, BlendMode blendMode = BlendMode.None)
@@ -243,6 +312,31 @@ public class Renderer(System.Drawing.Graphics graphics) : IRenderer
             G = Math.Clamp(g, 0.0f, 1.0f);
             B = Math.Clamp(b, 0.0f, 1.0f);
             BlendMode = blendMode;
+            IsDeformed = false;
+        }
+        
+        // Constructor pour quad déformé (rotation)
+        public Sprite(
+            Bitmap bitmap,
+            int x0, int y0, float u0, float v0,
+            int x1, int y1, float u1, float v1,
+            int x2, int y2, float u2, float v2,
+            int x3, int y3, float u3, float v3,
+            int depth,
+            float r = 1.0f, float g = 1.0f, float b = 1.0f, float alpha = 1.0f)
+        {
+            Bitmap = bitmap;
+            Depth = depth;
+            R = Math.Clamp(r, 0.0f, 1.0f);
+            G = Math.Clamp(g, 0.0f, 1.0f);
+            B = Math.Clamp(b, 0.0f, 1.0f);
+            Alpha = Math.Clamp(alpha, 0.0f, 1.0f);
+            IsDeformed = true;
+            X0 = x0; Y0 = y0; U0 = u0; V0 = v0;
+            X1 = x1; Y1 = y1; U1 = u1; V1 = v1;
+            X2 = x2; Y2 = y2; U2 = u2; V2 = v2;
+            X3 = x3; Y3 = y3; U3 = u3; V3 = v3;
+            BlendMode = BlendMode.None;
         }
     }
 

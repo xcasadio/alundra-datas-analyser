@@ -12,10 +12,14 @@ public class Entity
         get => _TargetDirection;
         set
         {
-            //if (Index == 12)
+            //if (Index == 1)
+            //{
+            //    Breakpoint.TriggerBreak();
+            //}
+
             if (value > 32)
             {
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
             }
             _TargetDirection = value;   
         }
@@ -28,12 +32,12 @@ public class Entity
         {
             if (value > 95)
             {
-                Debugger.Break();
+                Breakpoint.TriggerBreak();
             }
 
-            if (Index == 15)
+            if (Index == 19)
             {
-               //Debugger.Break();
+               //Breakpoint.TriggerBreak();
             }
 
             _TargetAnimationId = value;
@@ -45,11 +49,54 @@ public class Entity
         get => _Status;
         set
         {
-            if (Index == 17)
+            if (Index > 2 && value > 2)
             {
-                //Debugger.Break();
+                //Breakpoint.TriggerBreak();
             }
             _Status = value;
+        }
+    }
+
+    public bool IsLoadedNormalOrDeactivated => (uint)(Status - (int)EntityStatus.Loaded) < 3U;
+
+    public int EventTrigger
+    {
+        get => _EventTrigger;
+        set
+        {
+            //if (Index == 1 && value != -1 && value != 2)
+            //{
+            //    Breakpoint.TriggerBreak();
+            //}
+            _EventTrigger = value;
+        }
+    }
+
+    public int PosX
+    {
+        get => _PosX;
+        set
+        {
+            if (Index == 0 && value <= 800360)
+            {
+                //Breakpoint.TriggerBreak();
+            }
+
+            _PosX = value;
+        }
+    }
+
+    public int AdjustedForceX
+    {
+        get => _AdjustedForceX;
+        set
+        {
+            if (Index == 0 && value > 80280000)
+            {
+                Breakpoint.TriggerBreak();
+            }
+
+            _AdjustedForceX = value;
         }
     }
 
@@ -65,10 +112,25 @@ public class Entity
                 }
 
                 var index = Math.Max(0, AnimationFrameIndex - 1);
-                return AnimationSet.PreloadedAnims[TargetDirection >> 3].Frames[index];
+                //return AnimationSet.PreloadedAnims[TargetDirection >> 3].Frames[index];
+                return _Frame;
             }
 
             return _Frame;
+        }
+    }
+
+    public int ZUpperBound
+    {
+        get => _ZUpperBound;
+        set
+        {
+            if (Index == 0 && value >= 65536080)
+            {
+                //Breakpoint.TriggerBreak();
+            }
+
+            _ZUpperBound = value;
         }
     }
 
@@ -114,14 +176,14 @@ public class Entity
     public int PreviousAdjustedForceX;//?cc
     public int PreviousAdjustedForceY;//?d0
     public int ForceStepX, ForceStepY;//d4,d8
-    public int AdjustedForceX, AdjustedForceY;//dc,e0
+    public int _AdjustedForceX, AdjustedForceY;//dc,e0
     public int FinalForceX, FinalForceY, FinalForceZ;//e4,e8,ec
     public int Acceleration;//f0
     public int Speed;//f4
     public int IsZForceApplied;//this is probably named wrong, has to do with animation  f8
     public int ScreenClipX, ScreenClipY, ScreenClipZ;
     public int NegModX, NegModY, NegModZ;
-    public int PosX; //114
+    public int _PosX; //114
     public int PosY;
     public int PosZ;
     public int TileX;
@@ -150,8 +212,7 @@ public class Entity
     public SpriteRef SpriteRef = new SpriteRef();//194
     public int SpriteSheetOffset, PaletteOffset;//represents offset where the pallets and sheets are in memory for map vs global sprites, prob not used with my engine
     public SpriteEffect? ActiveEffect;
-    public int ZSortValue;//1bc
-    public int ZSortDepth;//1c0
+    public int _ZUpperBound;//1bc
     public int RenderSortKey;//1c0
     public BalanceRecord? BalanceRecord;//1c4
     public BalanceAnimValRef? BalanceAnimValRef;//1c8
@@ -172,7 +233,7 @@ public class Entity
     public int CollisionHeight;//21c
     public int HitCounter;//220
     public Entity? TouchingEntity;//224
-    public int EventTrigger;//228  for the player character this holds the id of the map event that is triggering, for other entities this holds the type of event slot to trigger
+    public int _EventTrigger;//228
     public int MapEventProgramId;//22c
     public Entity LogicContextEntity; //self
     public readonly EventProgramState EventProgramState = new();
@@ -185,7 +246,21 @@ public class Entity
 
     //used for animation
 
-    public int AnimationFrameIndex;
+    public int _AnimationFrameIndex;
+
+    public int AnimationFrameIndex
+    {
+        get => _AnimationFrameIndex;
+        set
+        {
+            if (Index == 0 && value == 0)
+            {
+                //Breakpoint.TriggerBreak();
+            }
+
+            _AnimationFrameIndex = value;
+        }
+    }
 
     public bool IsMapSprite { get; set; }
 

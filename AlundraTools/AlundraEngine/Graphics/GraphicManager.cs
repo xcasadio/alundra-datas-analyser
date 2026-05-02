@@ -1286,12 +1286,26 @@ public class GraphicManager
 
     public void DrawPolyFt4(POLY_FT4 polyFt4, Bitmap image)
     {
-        DrawPolyFt4(polyFt4.r0, polyFt4.b0, polyFt4.b0,
-            polyFt4.x0, polyFt4.y0,
-            polyFt4.x1, polyFt4.y1,
-            polyFt4.x2, polyFt4.y2,
-            polyFt4.x3, polyFt4.y3,
-            image);
+        // Extraire les coordonnées UV normalisées (0.0-1.0)
+        float u0 = polyFt4.u0 / 255f;
+        float v0 = polyFt4._2 / 255f;
+        float u1 = polyFt4.u1 / 255f;
+        float v1 = polyFt4._3 / 255f;
+        float u2 = polyFt4.u2 / 255f;
+        float v2 = polyFt4.v2 / 255f;
+        float u3 = polyFt4.u3 / 255f;
+        float v3 = polyFt4.v3 / 255f;
+        
+        // Utiliser la nouvelle méthode pour dessiner le quad déformé (rotation)
+        _gameEngine.Renderer.DrawDeformedQuad(
+            image,
+            polyFt4.x0, polyFt4.y0, u0, v0,
+            polyFt4.x1, polyFt4.y1, u1, v1,
+            polyFt4.x2, polyFt4.y2, u2, v2,
+            polyFt4.x3, polyFt4.y3, u3, v3,
+            SpriteDepth.BackgroundUI,
+            polyFt4.r0, polyFt4.g0, polyFt4.b0,
+            1.0f);
     }
 
     public void DrawPolyFt4(
@@ -1301,15 +1315,16 @@ public class GraphicManager
             int x2, int y2,
             int x3, int y3, Bitmap image)
     {
-        var minX = Math.Min(Math.Min(x0, x1), Math.Min(x2, x3));
-        var maxX = Math.Max(Math.Max(x0, x1), Math.Max(x2, x3));
-        var minY = Math.Min(Math.Min(y0, y1), Math.Min(y2, y3));
-        var maxY = Math.Max(Math.Max(y0, y1), Math.Max(y2, y3));
-
-        var width = maxX - minX;
-        var height = maxY - minY;
-
-        _gameEngine.Renderer.AddSprite(minX, minY, width, height, SpriteDepth.BackgroundUI, image, 1.0f);
+        // Version simplifiée : utiliser les UVs par défaut (rectangle complet)
+        _gameEngine.Renderer.DrawDeformedQuad(
+            image,
+            x0, y0, 0f, 0f,
+            x1, y1, 1f, 0f,
+            x2, y2, 0f, 1f,
+            x3, y3, 1f, 1f,
+            SpriteDepth.BackgroundUI,
+            r, g, b,
+            1.0f);
     }
 
     //8004e168
