@@ -76,6 +76,11 @@ namespace AlundraGame
 
             var alundraRenderer = new AlundraRenderer(_spriteBatch, GraphicsDevice);
 
+
+            StaticVariables.ForceDesiredMap = -1;
+            StaticVariables.GameStateFileNameToLoad =
+                @"D:\development\repo\alundra-datas-analyser\AlundraTools\AlundraTools\bin\Debug\net9.0-windows7.0\SaveStates\72 - bonaire's dream bug.json";
+
             _gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3, alundraRenderer);
             _gameEngine.InitializeEngine(false);
             

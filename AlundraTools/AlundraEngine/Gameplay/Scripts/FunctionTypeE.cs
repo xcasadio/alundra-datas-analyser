@@ -47,7 +47,8 @@ public static class FunctionTypeE
     //spores nv1
     public static void AI_FUN_8007eda0(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Projectile"
+        if (entity.Name != null
+            && entity.Name != "◆Projectile"
             && entity.Name != "◆Roche élémentaire"
             && entity.Name != "Magie de terre Niv.1")
         {

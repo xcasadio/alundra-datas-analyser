@@ -7,7 +7,8 @@ public static class FunctionTypeD
     //8007d9a4
     public static void AI_FUN_8007d9a4(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Beannoïde"
+        if (entity.Name != null
+            && entity.Name != "◆Beannoïde"
             && entity.Name != "◆Slime gélatineux")
         {
             Breakpoint.TriggerBreak();

@@ -600,7 +600,8 @@ public static class FunctionTypeC
     //80069f44
     public static void AI_FUN_80069f44(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (entity.Name != null
+            && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
             return;
@@ -1991,7 +1992,8 @@ public static class FunctionTypeC
     //8006b8cc
     public static void AI_FUN_8006b8cc(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Projectile")
+        if (entity.Name != null
+            && entity.Name != "◆Projectile")
         {
             Breakpoint.TriggerBreak();
         }
@@ -6298,7 +6300,8 @@ public static class FunctionTypeC
     //8006bd30
     public static void AI_UpdateEntityAI_17(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Slime gélatineux")
+        if (entity.Name != null 
+            && entity.Name != "◆Slime gélatineux")
         {
             Breakpoint.TriggerBreak();
         }
@@ -7876,7 +7879,9 @@ public static class FunctionTypeC
             && entity.Name != "I86_Grand cœur"
             && entity.Name != "I69_1 Gilda"
             && entity.Name != "I70_5 Gildas"
+            && entity.Name != "I71_10 Gildas"
             && entity.Name != "I61_Clé"
+            && entity.Name != "I79_Bec en or"
             && entity.Name != null)
         {
             Breakpoint.TriggerBreak();

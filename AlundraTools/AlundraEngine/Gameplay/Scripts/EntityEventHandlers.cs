@@ -2862,6 +2862,7 @@ public class EntityEventHandlers
     public int Script_149_095(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         //AlundraEngine.Debug.Debugger.Breakpoint();
+        eventProgramState.Result = 0;
 
         if (variables == null || variables.Length < 10)
         {
