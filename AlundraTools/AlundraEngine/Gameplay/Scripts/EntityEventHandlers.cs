@@ -1361,7 +1361,7 @@ public class EntityEventHandlers
         {
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
-            if (entity.Status - 1U < 3
+            if (entity.IsLoadedNormalOrDeactivated
                 && (entity.AnimFlags & 0x80U) != 0
                 && (entity.Flags & 0x80U) == 0
                 && entity.PlatformEntity == null)
@@ -1390,7 +1390,7 @@ public class EntityEventHandlers
         {
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
-            if (entity.Status - 1U < 3)
+            if (entity.IsLoadedNormalOrDeactivated)
             {
                 if (variables[1] <= entity.TileX && entity.TileX <= variables[2]
                     && variables[3] <= entity.TileY && entity.TileY <= variables[4]
@@ -1429,7 +1429,7 @@ public class EntityEventHandlers
         {
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
-            if (entity.Status - 1U < 3
+            if (entity.IsLoadedNormalOrDeactivated
                 && entity.BlockedByEntity == null
                 && entity.RidingEntity == logicEntity)
             {

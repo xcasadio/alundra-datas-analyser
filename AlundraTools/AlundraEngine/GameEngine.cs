@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Drawing.Imaging.Effects;
 using AlundraEngine.Etc;
 using AlundraEngine.Graphics;
+using AlundraEngine.RuntimeInspection;
 using Microsoft.VisualBasic.Logging;
 
 namespace AlundraEngine;
@@ -44,6 +45,7 @@ public class GameEngine
     public UIDebugManager UIDebugManager { get; }
     public MemoryCardManager MemoryCardManager { get; }
     public LogManager LogManager { get; }
+    public RuntimeInspectorHost? RuntimeInspector { get; private set; }
 
     private readonly EntityEventHandlers _entityEventHandlers;
     private readonly GameInitializer _gameInitializer;
@@ -94,9 +96,15 @@ public class GameEngine
         _gameInitializer.Initialize();
     }
 
+    public void AttachRuntimeInspector(RuntimeInspectorHost runtimeInspector)
+    {
+        RuntimeInspector = runtimeInspector;
+    }
+
     // 8002bfe0
     public void MainLoop()
     {
+        RuntimeInspector?.Checkpoint("GameEngine.MainLoop");
         StaticVariables.g_spriteNumberOfImage = 0;
 
         byte isEffectRunning = 0;
@@ -1401,6 +1409,8 @@ public class GameEngine
 
     private void Update(int endGame)
     {
+        RuntimeInspector?.Checkpoint("GameEngine.Update");
+
         StaticVariables.g_mapOffsetX -= 8;
         if (StaticVariables.g_mapOffsetX < 0)
         {
@@ -1644,7 +1654,7 @@ public class GameEngine
     {
         EntityManager.UpdateEntities();
 
-        if (StaticVariables.g_entityFollowedByCamera != null && StaticVariables.g_entityFollowedByCamera.Status <= 3)
+        if (StaticVariables.g_entityFollowedByCamera != null && StaticVariables.g_entityFollowedByCamera.IsLoadedNormalOrDeactivated)
         {
             StaticVariables.g_cameraLookAtX = StaticVariables.g_entityFollowedByCamera.PosX >> 16;
             StaticVariables.g_cameraLookAtY = StaticVariables.g_entityFollowedByCamera.PosY >> 16;
@@ -1776,7 +1786,7 @@ public class GameEngine
             
             foreach (var entity in StaticVariables.g_entitySlots.Skip(1))
             {
-                if (ownerEntity.Status - 1 < 3 && entity.EntityRefId == searchType)
+                if (ownerEntity.IsLoadedNormalOrDeactivated && entity.EntityRefId == searchType)
                 {
                     StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                 }
@@ -1802,7 +1812,7 @@ public class GameEngine
                 {
                     var entity = StaticVariables.g_entitySlots[i];
 
-                    if (entity.Status - 1 < 3)
+                    if (entity.IsLoadedNormalOrDeactivated)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
@@ -1811,11 +1821,11 @@ public class GameEngine
                 break;
 
             case 3://get all entities except player
-                for (int i = 0; i < StaticVariables.g_numberOfEntities; i++)
+                for (int i = 1; i < StaticVariables.g_numberOfEntities; i++)
                 {
                     var entity = StaticVariables.g_entitySlots[i];
 
-                    if (entity.Status - 1 < 3)
+                    if (entity.IsLoadedNormalOrDeactivated)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
@@ -1828,7 +1838,7 @@ public class GameEngine
                 {
                     var entity = StaticVariables.g_entitySlots[i];
 
-                    if (ownerEntity.Status - 1 < 3
+                    if (ownerEntity.IsLoadedNormalOrDeactivated
                         && (entity.Flags & 0x80) != 0
                         && (entity.AnimFlags & 0x80) == 0
                         && entity.PlatformEntity == null)
@@ -1844,7 +1854,7 @@ public class GameEngine
                 {
                     var entity = StaticVariables.g_entitySlots[i];
 
-                    if (entity.Status - 1 < 3 && ownerEntity.RidingEntity == entity)
+                    if (entity.IsLoadedNormalOrDeactivated && ownerEntity.RidingEntity == entity)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
@@ -1857,7 +1867,7 @@ public class GameEngine
                 {
                     var entity = StaticVariables.g_entitySlots[i];
 
-                    if (entity.Status - 1 < 3 && entity.RidingEntity == ownerEntity)
+                    if (entity.IsLoadedNormalOrDeactivated && entity.RidingEntity == ownerEntity)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
@@ -1868,7 +1878,7 @@ public class GameEngine
             case 7://all entities besides player where ownerentity.xcollision? == entity
                 foreach (var entity in StaticVariables.g_entitySlots.Skip(1))
                 {
-                    if (entity.Status - 1 < 3 && ownerEntity.XCollisionEntity == entity)
+                    if (entity.IsLoadedNormalOrDeactivated && ownerEntity.XCollisionEntity == entity)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
@@ -1882,7 +1892,7 @@ public class GameEngine
                 {
                     var entity = StaticVariables.g_entitySlots[i];
 
-                    if (entity.Status - 1 < 3 && entity.XCollisionEntity == ownerEntity)
+                    if (entity.IsLoadedNormalOrDeactivated && entity.XCollisionEntity == ownerEntity)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
@@ -1896,7 +1906,7 @@ public class GameEngine
                 {
                     var entity = StaticVariables.g_entitySlots[i];
 
-                    if (entity.Status - 1 < 3 && entity.ParentEntity == ownerEntity)
+                    if (entity.IsLoadedNormalOrDeactivated && entity.ParentEntity == ownerEntity)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
@@ -1910,7 +1920,7 @@ public class GameEngine
                 {
                     var entity = StaticVariables.g_entitySlots[i];
 
-                    if (entity.Status - 1 < 3 && ownerEntity.ParentEntity == entity)
+                    if (entity.IsLoadedNormalOrDeactivated && ownerEntity.ParentEntity == entity)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }
@@ -1924,7 +1934,7 @@ public class GameEngine
                 {
                     var entity = StaticVariables.g_entitySlots[i];
 
-                    if (entity.Status - 1 < 3 && entity.PlatformEntity != null)
+                    if (entity.IsLoadedNormalOrDeactivated && entity.PlatformEntity != null)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
                     }

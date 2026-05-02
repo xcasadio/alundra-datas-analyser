@@ -274,7 +274,7 @@ public static class FunctionTypeE
             {
                 var entity2 = gameEngine.StaticVariables.g_entitySlots[i];
 
-                if ((entity.Status - 1U < 3) && (entity2.ParentEntity == entity))
+                if (entity.IsLoadedNormalOrDeactivated && entity2.ParentEntity == entity)
                 {
                     FUN_8003a648(gameEngine, entity2, effectType);
                 }
