@@ -8,8 +8,9 @@ public class SpriteRef
     public int X;//4				//10
     public int Y;//8				//14
     public int Z;//c				//18
-    public int DepthSortValue;//0x10		//1c
-    public int NumberOfImages;//0x14		//20
+    public int DepthSortValue;
+    public int ImageDepthSortValue;
+    public int NumberOfImages;
 
     public void Reset()
     {
@@ -18,6 +19,7 @@ public class SpriteRef
         Y = 0;
         Z = 0;
         DepthSortValue = 0;
+        ImageDepthSortValue = 0;
         NumberOfImages = 0;
     }
 }

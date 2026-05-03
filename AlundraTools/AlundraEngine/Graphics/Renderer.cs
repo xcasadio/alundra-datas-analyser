@@ -265,7 +265,8 @@ public class Renderer(System.Drawing.Graphics graphics) : IRenderer
         int x2, int y2, float u2, float v2,
         int x3, int y3, float u3, float v3,
         int depthSortValue,
-        byte r, byte g, byte b, float alpha = 1.0f)
+        byte r, byte g, byte b, float alpha = 1.0f,
+        BlendMode blendMode = BlendMode.None)
     {
         var sprite = new Sprite(
             bitmap,
@@ -274,7 +275,8 @@ public class Renderer(System.Drawing.Graphics graphics) : IRenderer
             x2, y2, u2, v2,
             x3, y3, u3, v3,
             depthSortValue,
-            PsxColorMultiplier(r), PsxColorMultiplier(g), PsxColorMultiplier(b), alpha);
+            PsxColorMultiplier(r), PsxColorMultiplier(g), PsxColorMultiplier(b), alpha,
+            blendMode);
         
         AddSprite(sprite);
     }
@@ -325,7 +327,8 @@ public class Renderer(System.Drawing.Graphics graphics) : IRenderer
             int x2, int y2, float u2, float v2,
             int x3, int y3, float u3, float v3,
             int depth,
-            float r = 1.0f, float g = 1.0f, float b = 1.0f, float alpha = 1.0f)
+            float r = 1.0f, float g = 1.0f, float b = 1.0f, float alpha = 1.0f,
+            BlendMode blendMode = BlendMode.None)
         {
             Bitmap = bitmap;
             Depth = depth;
@@ -338,7 +341,7 @@ public class Renderer(System.Drawing.Graphics graphics) : IRenderer
             X1 = x1; Y1 = y1; U1 = u1; V1 = v1;
             X2 = x2; Y2 = y2; U2 = u2; V2 = v2;
             X3 = x3; Y3 = y3; U3 = u3; V3 = v3;
-            BlendMode = BlendMode.None;
+            BlendMode = blendMode;
         }
     }
 

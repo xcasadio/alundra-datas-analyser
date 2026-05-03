@@ -312,7 +312,8 @@ public static class FunctionTypeE
     //8007f27c
     public static void AI_FUN_8007f27c(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Bombe")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Bombe")
         {
             Breakpoint.TriggerBreak();
         }
@@ -345,7 +346,8 @@ public static class FunctionTypeE
     //8007f378
     public static void AI_FUN_8007f378(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Rocher tombant")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Rocher tombant")
         {
             Breakpoint.TriggerBreak();
         }

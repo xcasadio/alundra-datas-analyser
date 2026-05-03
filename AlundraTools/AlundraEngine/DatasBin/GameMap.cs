@@ -191,23 +191,6 @@ public class GameMap
 
         }
 
-        if (outputwidth > swidth)
-        {
-            img.Swidth = (byte)outputwidth;
-
-            var vec1X = (img.X2 - img.X1) / (float)swidth;//get the normalized (normalized to ratio of swidth/outputwidth) vector of point 1
-            var vec1Y = (img.Y2 - img.Y1) / (float)swidth;
-
-            var vec3X = (img.X4 - img.X3) / (float)swidth;//get normalized vector of point 3
-            var vec3Y = (img.Y4 - img.Y3) / (float)swidth;
-
-            img.X2 = (sbyte)(img.X1 + vec1X * outputwidth);//extend point 2 to new width
-            img.Y2 = (sbyte)(img.Y1 + vec1Y * outputwidth);
-
-            img.X4 = (sbyte)(img.X3 + vec3X * outputwidth);//extend point 4 to new width
-            img.Y4 = (sbyte)(img.Y3 + vec3Y * outputwidth);
-        }
-
         return ImageHelper.BitmapFromPsxBuff(buff, outputwidth, img.Sheight, 4, pal);
     }
 

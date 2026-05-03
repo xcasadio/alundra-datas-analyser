@@ -233,8 +233,7 @@ public class GraphicManager
                         && dy < StaticVariables.ScreenHeight)
                     {
                         tileId = GetAnimatedTileId(_gameEngine, gameMap, tileId, out var height);
-                        var z = y * StaticVariables.MapTileHeight;
-                        z = DepthFloor(y, 0);
+                        var z = DepthFloor(y, GetTileDepthSlot(tileId));
 
                         DrawTile(tileId, dx, dy, z << 16, gameMap, _gameEngine.Renderer);
 
@@ -270,13 +269,12 @@ public class GraphicManager
                         dy += StaticVariables.MapTileHeight;
                         var wallTileId = wallTiles.Tiles[i];
 
-                        z = DepthWallBlock(y, 0);
-
                         if (wallTileId != 0xffff
                             && dy > -StaticVariables.MapTileHeight
                             && dy < StaticVariables.ScreenHeight)
                         {
                             wallTileId = GetAnimatedTileId(_gameEngine, gameMap, wallTileId, out var height);
+                            z = DepthWallBlock(y, GetTileDepthSlot(wallTileId));
                             DrawTile(wallTileId, dx, dy, z << 16, gameMap, _gameEngine.Renderer);
 
                             if (_gameEngine.StaticVariables.DisplayWallTileZ)
@@ -302,6 +300,17 @@ public class GraphicManager
 
     }
 
+    private int GetTileDepthSlot(int tileMapIndex)
+    {
+        var tileIndex = tileMapIndex & 0x3ff;
+        if (tileIndex >= _gameEngine.StaticVariables.g_tileAnimDescriptorTable.Length)
+        {
+            return 0;
+        }
+
+        return _gameEngine.StaticVariables.g_tileAnimDescriptorTable[tileIndex].SpriteIndex;
+    }
+
     const int STRIDE = 16;
     const int WALL_BIAS = 7;
     const int FLOOR_MAX = 6;
@@ -324,7 +333,7 @@ public class GraphicManager
     {
         int otIndex = depthSortValue >> 20;  // >> 0x14
         if (otIndex > 0x3B) otIndex = 0x3B;  // Clamp to 59
-        return otIndex * STRIDE + ENTITY_SLOT;
+        return ((otIndex * STRIDE + ENTITY_SLOT) << 16) + (depthSortValue & 0xffff);
     }
 
     private static ushort GetAnimatedTileId(GameEngine gameEngine, GameMap gameMap, ushort tileId, out int height)
@@ -444,8 +453,7 @@ public class GraphicManager
         
                 if (entity.SpriteRef?.Images != null)
                 {
-                    // Use ZSortValue directly for sorting - higher values = rendered later (in front)
-                    var entityZ = entity.ZUpperBound;
+                    var entityZ = DepthEntity(entity.ZUpperBound);
                     for (var idex = entity.SpriteRef.NumberOfImages - 1; idex >= 0; idex--)
                     {
                         var img = entity.SpriteRef.Images[idex];
@@ -497,8 +505,7 @@ public class GraphicManager
             {
                 var map = effect.CurrentIsMapSprite == 1 ? _gameEngine.CurrentMap : _gameEngine.DatasBin.AlundraGameMap;
                 var spriteRef = effect.SpriteRef;
-                // Use DepthSortValue directly for sorting - higher values = rendered later (in front)
-                var effectZ = effect.DepthSortValue;
+                var effectZ = DepthEntity(effect.DepthSortValue);
 
                 for (var idex = spriteRef.NumberOfImages - 1; idex >= 0; idex--)
                 {
@@ -538,17 +545,10 @@ public class GraphicManager
 
     private static void DrawSprite(Bitmap bitmap, SiImage img, int x, int y, int z, IRenderer renderer, float alpha = 1f)
     {
-        var w = img.X4 - img.X1;
-        var h = img.Y4 - img.Y1;
-
-        if (w == 0 || h == 0)
+        if (img.Swidth == 0 || img.Sheight == 0)
         {
             return;
         }
-
-        // Utiliser X1/Y1 comme position de base, w et h peuvent être négatifs pour le flip
-        var drawX = x + img.X1;
-        var drawY = y + img.Y1;
 
         // Extract blending info from Spritesheet byte
         // Bit 3 (& 0x8): Semi-transparency enabled
@@ -559,7 +559,19 @@ public class GraphicManager
             blendMode = (BlendMode)((img.Spritesheet & 0x30) >> 4);
         }
 
-        renderer.AddSprite(drawX, drawY, w, h, z, bitmap, alpha, 1f, 1f, 1f, blendMode);
+        var u1 = img.Swidth / (float)bitmap.Width;
+        var v1 = img.Sheight / (float)bitmap.Height;
+
+        renderer.DrawDeformedQuad(
+            bitmap,
+            x + img.X1, y + img.Y1, 0f, 0f,
+            x + img.X2, y + img.Y2, u1, 0f,
+            x + img.X3, y + img.Y3, 0f, v1,
+            x + img.X4, y + img.Y4, u1, v1,
+            z,
+            0x80, 0x80, 0x80,
+            alpha,
+            blendMode);
     }
 
     //80044c5c

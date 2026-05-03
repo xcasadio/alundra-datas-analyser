@@ -86,7 +86,7 @@ public static class FunctionTypeD
     //8007db38
     public static void AI_FUN_8007db38(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -116,7 +116,7 @@ public static class FunctionTypeD
     //mimique niveau 1 touch
     public static void AI_FUN_8007dbe0(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -154,7 +154,7 @@ public static class FunctionTypeD
     //fish
     public static void AI_FUN_8007dcd8(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -172,7 +172,7 @@ public static class FunctionTypeD
     //8007dd3c
     public static void AI_FUN_8007dd3c(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -202,7 +202,7 @@ public static class FunctionTypeD
     //muruta griffes nv1
     public static void AI_FUN_8007de04(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -220,7 +220,7 @@ public static class FunctionTypeD
     //8007de68
     public static void AI_FUN_8007de68(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -231,7 +231,8 @@ public static class FunctionTypeD
     //8007dee8
     public static void AI_FUN_8007dee8(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Guêpe Niv.1"
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Guêpe Niv.1"
             && entity.Name != "◆Zombie Niv.1")
         {
             Breakpoint.TriggerBreak();
@@ -250,7 +251,7 @@ public static class FunctionTypeD
     //8007df4c
     public static void AI_FUN_8007df4c(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -312,7 +313,7 @@ public static class FunctionTypeD
     //muruta arc nv1
     public static void AI_FUN_8007e074(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -330,7 +331,7 @@ public static class FunctionTypeD
     //8007e0d8
     public static void AI_FUN_8007e0d8(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -339,7 +340,7 @@ public static class FunctionTypeD
     //8007e114
     public static void AI_FUN_8007e114(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -348,7 +349,7 @@ public static class FunctionTypeD
     //8007e140
     public static void AI_FUN_8007e140(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -556,7 +557,7 @@ public static class FunctionTypeD
     //8007eb58
     public static void AI_FUN_8007eb58(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -577,7 +578,7 @@ public static class FunctionTypeD
     //8007eba8
     public static void AI_FUN_8007eba8(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }

@@ -342,14 +342,14 @@ public class EntityManager
         if (currentFrame.ImageSetPointer != -1)
         {
             entity.SpriteRef.Images = currentFrame.Images.Images;
-            entity.SpriteRef.DepthSortValue = currentFrame.Images.DepthSortValue;
+            entity.SpriteRef.ImageDepthSortValue = currentFrame.Images.DepthSortValue;
             entity.SpriteRef.NumberOfImages = currentFrame.Images.NumberOfImages;
             entity.SpriteSheetOffset = currentFrame.Images.Images[0].Spritesheet & 0x7;
         }
         else
         {
             entity.SpriteRef.Images = null;
-            entity.SpriteRef.DepthSortValue = 0;
+            entity.SpriteRef.ImageDepthSortValue = 0;
             entity.SpriteRef.NumberOfImages = 0;
             entity.SpriteSheetOffset = 0;
         }
@@ -1028,7 +1028,7 @@ public class EntityManager
         for (var i = 0; i < gameEngine.StaticVariables.g_visibleEntityCount; i++)
         {
             var entity = gameEngine.StaticVariables.g_visibleEntities[i];
-            entity.ZUpperBound = (int)(entity.ZUpperBound & 0xffff0000) + ((entity.PosZ >> 16) & 0xFFFF);
+            entity.ZUpperBound = (entity.ZUpperBound & unchecked((int)0xffff0000)) + (short)(entity.PosZ >> 16);
         }
     }
 
@@ -1041,7 +1041,7 @@ public class EntityManager
             return entity.ZUpperBound;
         }
 
-        var sortValue = entity.PosY + (entity.SpriteRef.DepthSortValue << 16);
+        var sortValue = entity.PosY + (entity.SpriteRef.ImageDepthSortValue << 16);
 
         if ((entity.Flags & 0x80) != 0 && (entity.AnimFlags & 0x80) == 0)
         {

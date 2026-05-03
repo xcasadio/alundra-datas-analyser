@@ -23,5 +23,6 @@ public interface IRenderer
         int x2, int y2, float u2, float v2,
         int x3, int y3, float u3, float v3,
         int depthSortValue,
-        byte r, byte g, byte b, float alpha = 1.0f);
+        byte r, byte g, byte b, float alpha = 1.0f,
+        BlendMode blendMode = BlendMode.None);
 }

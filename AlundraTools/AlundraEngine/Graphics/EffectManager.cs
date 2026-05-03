@@ -159,7 +159,7 @@ public class EffectManager
                 effect.DestroyFlag = 1;
                 effect.SpriteRef.Images = null;
                 effect.SpriteRef.NumberOfImages = 0;
-                effect.SpriteRef.DepthSortValue = 0;
+                effect.SpriteRef.ImageDepthSortValue = 0;
                 return;
             }
 
@@ -217,12 +217,14 @@ public class EffectManager
                 if (frameData.Images != null /*&& effect.Frame.ImageSetPointer != -1*/)
                 {
                     effect.SpriteRef.Images = frameData.Images.Images;
+                    effect.SpriteRef.ImageDepthSortValue = frameData.Images.DepthSortValue;
                     effect.SpriteRef.NumberOfImages = frameData.Images.NumberOfImages;
                     effect._24 = frameData.Images.NumberOfImages;
                 }
                 else
                 {
                     effect.SpriteRef.Images = null;
+                    effect.SpriteRef.ImageDepthSortValue = 0;
                     effect.SpriteRef.NumberOfImages = 0;
                     effect._24 = 0;
                 }
@@ -256,7 +258,7 @@ public class EffectManager
             effect.X += effect.ForceX;
             effect.Y += effect.ForceY;
             effect.Z += effect.ForceZ;
-            effect.DepthSortValue = (int)(effect.Y & 0xffff0000) + (effect.Z >> 16) + (effect.SpriteRef.DepthSortValue << 16);
+            effect.DepthSortValue = (int)(effect.Y & 0xffff0000) + (effect.Z >> 16) + (effect.SpriteRef.ImageDepthSortValue << 16);
             return;
         }
 

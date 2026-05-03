@@ -461,7 +461,7 @@ public static class FunctionTypeC
             && entity.Name != "I83_Récipient de vie"
             && entity.Name != "I20_Veste en argent"
             && entity.Name != "Pierre générique"
-            && entity.Name != null)
+            && !string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -600,7 +600,7 @@ public static class FunctionTypeC
     //80069f44
     public static void AI_FUN_80069f44(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != null
+        if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
@@ -1423,7 +1423,7 @@ public static class FunctionTypeC
     public static void AI_FUN_80065750(GameEngine gameEngine, Entity entity)
     {
         if (entity.Name != "Toutou (chien)"
-            && entity.Name != null)
+            && !string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -1958,7 +1958,7 @@ public static class FunctionTypeC
         if (entity.Name != "Caisse en bois générique" 
             && entity.Name != "Cruche générique"
             && entity.Name != "Pierre très lourde"
-            && entity.Name != null)
+            && !string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -1992,7 +1992,7 @@ public static class FunctionTypeC
     //8006b8cc
     public static void AI_FUN_8006b8cc(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != null
+        if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "◆Projectile")
         {
             Breakpoint.TriggerBreak();
@@ -2625,7 +2625,7 @@ public static class FunctionTypeC
     //80078b54
     public static void AI_FUN_80078b54(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -2922,7 +2922,7 @@ public static class FunctionTypeC
     //80079950
     public static void AI_FUN_80079950(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -3051,7 +3051,7 @@ public static class FunctionTypeC
     //80079b14
     public static void AI_FUN_80079b14(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -3387,7 +3387,7 @@ public static class FunctionTypeC
     //8007a2f8
     public static void AI_FUN_8007a2f8(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -3495,7 +3495,7 @@ public static class FunctionTypeC
     //8007a4a8
     public static void AI_FUN_8007a4a8(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -3506,7 +3506,7 @@ public static class FunctionTypeC
     //8007a4b0
     public static void AI_FUN_8007a4b0(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -3569,7 +3569,7 @@ public static class FunctionTypeC
     //8007a680
     public static void AI_FUN_8007a680(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -3687,7 +3687,8 @@ public static class FunctionTypeC
     //8007a8a0
     public static void AI_UpdateIceProjectile(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Boule de feu"
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Boule de feu"
             && entity.Name != "Boule de glace")
         {
             Breakpoint.TriggerBreak();
@@ -3722,7 +3723,7 @@ public static class FunctionTypeC
     //8007a958
     public static void AI_FUN_8007a958(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -3734,7 +3735,8 @@ public static class FunctionTypeC
     //handle bombs
     public static void AI_FUN_8007a978(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Bombe")
+        if (entity.Name !=  null
+            && entity.Name != "Bombe")
         {
             Breakpoint.TriggerBreak();
         }
@@ -3870,7 +3872,7 @@ public static class FunctionTypeC
     //8007ac60
     public static void AI_FUN_8007ac60(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -3879,7 +3881,8 @@ public static class FunctionTypeC
     //8007b04c
     public static void AI_FUN_8007b04c(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && !string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -3889,7 +3892,7 @@ public static class FunctionTypeC
 
     private static void AI_FUN_8007b04c_common(GameEngine gameEngine, Entity entity, int factor, int offsetX)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -3946,7 +3949,7 @@ public static class FunctionTypeC
     //8007b1f0
     public static void AI_FUN_8007b1f0(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -3957,7 +3960,7 @@ public static class FunctionTypeC
     //8007b3c4
     public static void AI_FUN_8007b3c4(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -3966,7 +3969,7 @@ public static class FunctionTypeC
     //8007b6ec
     public static void AI_FUN_8007b6ec(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -3976,7 +3979,7 @@ public static class FunctionTypeC
     //jar sandboxes
     public static void AI_FUN_8007b7b0(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -4086,7 +4089,7 @@ public static class FunctionTypeC
     public static void AI_ProcessWarpTransitionState(GameEngine gameEngine, Entity entity)
     {
         if (entity.Name != "SaveBook (Ne pas toucher !)"
-            && entity.Name != null)
+            && !string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -4328,7 +4331,7 @@ public static class FunctionTypeC
     //8007bd8c
     public static void AI_FUN_8007bd8c(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -4396,7 +4399,7 @@ public static class FunctionTypeC
         }
         else if (diffX <= entity1.Width)
         {
-        LAB_8003acf4:
+            LAB_8003acf4:
             return (entity2.PosY < entity1.PosY ? 1 : 0) << 4;
         }
 
@@ -4413,7 +4416,7 @@ public static class FunctionTypeC
     //8007c0d8
     public static void AI_FUN_8007c0d8(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -4438,7 +4441,8 @@ public static class FunctionTypeC
     //P-Zoldia Niv.1
     public static void AI_FUN_8007c768(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "P-Zoldia Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "P-Zoldia Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -4912,7 +4916,7 @@ public static class FunctionTypeC
     //8007d554
     public static void AI_FUN_8007d554(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -5436,7 +5440,7 @@ public static class FunctionTypeC
     //80067138
     public static void AI_UpdateEntityAI_4(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -5445,7 +5449,7 @@ public static class FunctionTypeC
     //8006790c
     public static void AI_UpdateEntityAI_5(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -5964,7 +5968,7 @@ public static class FunctionTypeC
     //80068930
     public static void AI_UpdateEntityAI_7(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -5973,7 +5977,7 @@ public static class FunctionTypeC
     //80068cc8
     public static void AI_UpdateEntityAI_8(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -5982,7 +5986,7 @@ public static class FunctionTypeC
     //80069684
     public static void AI_UpdateEntityAI_8_2(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -5991,7 +5995,7 @@ public static class FunctionTypeC
     //800699c4
     public static void AI_UpdateEntityAI_9(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -6459,7 +6463,7 @@ public static class FunctionTypeC
     //8006abb0
     public static void AI_UpdateEntityAI_13(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -6468,7 +6472,8 @@ public static class FunctionTypeC
     //8006b234
     public static void AI_UpdateEntityAI_14(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Zombie Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Zombie Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -6765,7 +6770,7 @@ public static class FunctionTypeC
     //8006bd30
     public static void AI_UpdateEntityAI_17(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != null 
+        if (!string.IsNullOrEmpty(entity.Name) 
             && entity.Name != "◆Slime gélatineux")
         {
             Breakpoint.TriggerBreak();
@@ -6922,7 +6927,7 @@ public static class FunctionTypeC
     //8006c100
     public static void AI_UpdateEntityAI_18(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -6931,7 +6936,7 @@ public static class FunctionTypeC
     //8006c5cc
     public static void AI_UpdateEntityAI_19(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -6940,7 +6945,7 @@ public static class FunctionTypeC
     //8006ca40
     public static void AI_UpdateEntityAI_20(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -6949,7 +6954,7 @@ public static class FunctionTypeC
     //8006d550
     public static void AI_UpdateEntityAI_20_2(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -6958,7 +6963,7 @@ public static class FunctionTypeC
     //8006d998
     public static void AI_UpdateEntityAI_21(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -6968,7 +6973,7 @@ public static class FunctionTypeC
     //muruta arc nv1
     public static void AI_UpdateEntityAI_22(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -7147,7 +7152,7 @@ public static class FunctionTypeC
     //8006e2d8
     public static void AI_UpdateEntityAI_23(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -7156,7 +7161,7 @@ public static class FunctionTypeC
     //8006e89c
     public static void AI_UpdateEntityAI_23_2(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -7165,7 +7170,7 @@ public static class FunctionTypeC
     //8006fc7c
     public static void AI_UpdateEntityAI_Boss(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -7175,7 +7180,7 @@ public static class FunctionTypeC
     //80071164
     public static void AI_UpdateEntityAI_BoosPhase3(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -7184,7 +7189,7 @@ public static class FunctionTypeC
     //80071bf4
     public static void AI_UpdateEntityAI_SpecialBoss(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -7193,7 +7198,7 @@ public static class FunctionTypeC
     //8007252c
     public static void AI_UpdateEntityIA_WatcherBehavior(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -7202,7 +7207,7 @@ public static class FunctionTypeC
     //80072680
     public static void AI_UpdateEntityDelayedSoundTrigger(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -7212,7 +7217,7 @@ public static class FunctionTypeC
     //Monsieur Aspiration
     public static void AI_UpdateEntityAI_WarpBoss(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -7221,7 +7226,7 @@ public static class FunctionTypeC
     //80076da0
     public static void AI_UpdateLoaderBossAI(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -7229,7 +7234,7 @@ public static class FunctionTypeC
 
     public static void AI_UpdateEntityIA_Fire(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -7237,7 +7242,7 @@ public static class FunctionTypeC
 
     public static void AI_ApplyMatchingEntity(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -7245,7 +7250,7 @@ public static class FunctionTypeC
 
     public static void AI_UpdateHomingProject(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -7253,7 +7258,7 @@ public static class FunctionTypeC
 
     public static void AI_UpdateFollowerBehaviour(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -7261,7 +7266,7 @@ public static class FunctionTypeC
 
     public static void AI_UpdateEntityDelayed(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -7941,7 +7946,7 @@ public static class FunctionTypeC
     //80062bc0
     public static void AI_UpdateMelzas2CutsceneChannels(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "")
+        if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
@@ -7952,7 +7957,7 @@ public static class FunctionTypeC
     //800637d8
     public static void AI_UpdateEntityAI_IdleLookAround(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != null
+        if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "Poulet")
         {
             Breakpoint.TriggerBreak();
@@ -8156,7 +8161,7 @@ public static class FunctionTypeC
     //80063db4
     public static void AI_UpdateEntityAI_IdleCurious(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != null
+        if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "Toutou (chien)")
         {
             Breakpoint.TriggerBreak();
@@ -8347,7 +8352,7 @@ public static class FunctionTypeC
             && entity.Name != "I71_10 Gildas"
             && entity.Name != "I61_Clé"
             && entity.Name != "I79_Bec en or"
-            && entity.Name != null)
+            && !string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
