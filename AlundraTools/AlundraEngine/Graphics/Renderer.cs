@@ -274,10 +274,12 @@ public class Renderer(System.Drawing.Graphics graphics) : IRenderer
             x2, y2, u2, v2,
             x3, y3, u3, v3,
             depthSortValue,
-            r / 255f, g / 255f, b / 255f, alpha);
+            PsxColorMultiplier(r), PsxColorMultiplier(g), PsxColorMultiplier(b), alpha);
         
         AddSprite(sprite);
     }
+
+    private static float PsxColorMultiplier(byte color) => color / 128f;
 
     public class Sprite
     {
@@ -327,9 +329,9 @@ public class Renderer(System.Drawing.Graphics graphics) : IRenderer
         {
             Bitmap = bitmap;
             Depth = depth;
-            R = Math.Clamp(r, 0.0f, 1.0f);
-            G = Math.Clamp(g, 0.0f, 1.0f);
-            B = Math.Clamp(b, 0.0f, 1.0f);
+            R = Math.Clamp(r, 0.0f, 255f / 128f);
+            G = Math.Clamp(g, 0.0f, 255f / 128f);
+            B = Math.Clamp(b, 0.0f, 255f / 128f);
             Alpha = Math.Clamp(alpha, 0.0f, 1.0f);
             IsDeformed = true;
             X0 = x0; Y0 = y0; U0 = u0; V0 = v0;
