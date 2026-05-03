@@ -510,6 +510,15 @@ public class StaticVariables
     //800281dc
     public readonly int[] g_scriptAnimationTable3 = [0, 3, 1, 4,];
 
+    //80028230
+    public readonly uint[] BYTE_ARRAY_80028230 =
+    [
+        0x000, 0x100, 0x040, 0x140, 0x080, 0x180, 0x0C0, 0x1C0,
+        0x000, 0x040, 0x080, 0x0C0, 0x100, 0x140, 0x180, 0x1C0,
+        0x000, 0x1C0, 0x180, 0x140, 0x100, 0x0C0, 0x080, 0x040,
+        0x010, 0x004, 0x01C, 0x000, 0x00C, 0x014
+    ];
+
     //80023644
     public readonly uint[] g_cardinalDirectionTable = [0, 0x10, 0x08, 0x18];
 
@@ -535,7 +544,7 @@ public class StaticVariables
     ];
 
     // 80028b54
-    public readonly byte[] BYTE_ARRAY_80028b54 = [0, 10,  8, 18];
+    public readonly byte[] BYTE_ARRAY_80028b54 = [0, 0x10, 0x08, 0x18];
 
     // 80028DCC
     public readonly int[] g_warpBehaviorTable =

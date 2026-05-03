@@ -1,0 +1,23 @@
+{
+    "chat.mcp.access": "all",
+    "chat.mcp.serverSampling": {
+        "parasite-eve-1/.vscode/mcp.json: ReVa": {
+            "allowedModels": [
+                "copilot/claude-sonnet-4.6",
+                "copilot/claude-opus-4.6",
+                "copilot/gpt-4.1",
+                "copilot/gpt-4o",
+                "copilot/gpt-5-mini",
+                "copilot/gpt-5.2",
+                "copilot/gpt-5.2-codex",
+                "copilot/gpt-5.4",
+                "copilot/gpt-5.5",
+            ]
+        }
+    },
+    "github.copilot.chat.tools.enabled": {
+        "file_operations": true,
+        "terminal_operations": true
+    },
+    "github.copilot.chat.defaultAgent": "ghidra"
+}

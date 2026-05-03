@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.IO;
 using AlundraEngine.Etc;
+using AlundraEngine.RuntimeInspection;
 
 namespace AlundraGame
 {
@@ -20,6 +21,7 @@ namespace AlundraGame
         private GameEngine _gameEngine;
         private RenderTarget2D _renderTarget;
         private InputManager _inputManager;
+        private RuntimeInspectorHost? _runtimeInspector;
         private const int ScaleFactor = 4;
 
         public AlundraGame()
@@ -79,12 +81,17 @@ namespace AlundraGame
 
             StaticVariables.ForceDesiredMap = -1;
             StaticVariables.GameStateFileNameToLoad =
-                @"D:\development\repo\alundra-datas-analyser\AlundraTools\AlundraTools\bin\Debug\net9.0-windows7.0\SaveStates\72 - bonaire's dream bug.json";
+                @"D:\development\repo\alundra-datas-analyser\AlundraTools\AlundraTools\bin\Debug\net9.0-windows7.0\SaveStates\73 - bonaire's dream before boss.json";
 
             _gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3, alundraRenderer);
             _gameEngine.InitializeEngine(false);
             
             _inputManager = new InputManager(_gameEngine);
+            _runtimeInspector = RuntimeInspectorHost.TryStart(this, _gameEngine);
+            if (_runtimeInspector != null)
+            {
+                _gameEngine.AttachRuntimeInspector(_runtimeInspector);
+            }
         }
 
         protected override void Update(GameTime gameTime)
@@ -95,6 +102,7 @@ namespace AlundraGame
                 Exit();
             }
 
+            _runtimeInspector?.Checkpoint("AlundraGame.Update");
             _inputManager.Update();
 
             base.Update(gameTime);
@@ -102,6 +110,8 @@ namespace AlundraGame
 
         protected override void Draw(GameTime gameTime)
         {
+            _runtimeInspector?.Checkpoint("AlundraGame.Draw");
+
             //draw game
             GraphicsDevice.SetRenderTarget(_renderTarget);
             GraphicsDevice.Clear(Color.Black);
@@ -133,6 +143,7 @@ namespace AlundraGame
         {
             if (disposing)
             {
+                _runtimeInspector?.Dispose();
                 _renderTarget?.Dispose();
             }
             base.Dispose(disposing);

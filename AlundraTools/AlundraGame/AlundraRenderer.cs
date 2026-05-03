@@ -16,6 +16,14 @@ public class AlundraRenderer : IRenderer
     private readonly GraphicsDevice _graphicsDevice;
     private readonly SortedDictionary<int, List<Sprite>> _sprites = new();
     private readonly Texture2D _whiteTexture;
+    private readonly BasicEffect _basicEffect;
+    private readonly VertexPositionColorTexture[] _quadVertices = new VertexPositionColorTexture[6];
+    
+    // BlendStates PSX
+    private readonly BlendState _blendStateAverage;
+    private readonly BlendState _blendStateAdditive;
+    private readonly BlendState _blendStateSubtractive;
+    private readonly BlendState _blendStateAdditiveDim;
     
     private readonly Dictionary<Bitmap, Texture2D> _textureCache = new();
     private readonly Dictionary<QuadColorKey, Texture2D> _quadColorCache = new();
@@ -32,6 +40,58 @@ public class AlundraRenderer : IRenderer
         _spriteBatch = spriteBatch;
         _graphicsDevice = graphicsDevice;
         _whiteTexture = CreateWhiteTexture();
+        
+        // Initialiser BasicEffect pour le rendu de quads déformés (rotations)
+        _basicEffect = new BasicEffect(graphicsDevice)
+        {
+            TextureEnabled = true,
+            VertexColorEnabled = true,
+            World = Matrix.Identity,
+            View = Matrix.Identity,
+            Projection = Matrix.CreateOrthographicOffCenter(
+                0, graphicsDevice.Viewport.Width,
+                graphicsDevice.Viewport.Height, 0,
+                0, 1)
+        };
+        
+        // Créer les BlendStates PSX personnalisés
+        // Average: 0.5 * Back + 0.5 * Front
+        _blendStateAverage = new BlendState
+        {
+            ColorSourceBlend = Blend.DestinationColor,
+            ColorDestinationBlend = Blend.SourceColor,
+            AlphaSourceBlend = Blend.SourceAlpha,
+            AlphaDestinationBlend = Blend.DestinationAlpha
+        };
+        
+        // Additive: Back + Front
+        _blendStateAdditive = new BlendState
+        {
+            ColorSourceBlend = Blend.One,
+            ColorDestinationBlend = Blend.One,
+            AlphaSourceBlend = Blend.One,
+            AlphaDestinationBlend = Blend.One
+        };
+        
+        // Subtractive: Back - Front
+        _blendStateSubtractive = new BlendState
+        {
+            ColorSourceBlend = Blend.One,
+            ColorDestinationBlend = Blend.One,
+            ColorBlendFunction = BlendFunction.ReverseSubtract,
+            AlphaSourceBlend = Blend.One,
+            AlphaDestinationBlend = Blend.One,
+            AlphaBlendFunction = BlendFunction.Add
+        };
+        
+        // AdditiveDim: Back + 0.25 * Front
+        _blendStateAdditiveDim = new BlendState
+        {
+            ColorSourceBlend = Blend.BlendFactor,
+            ColorDestinationBlend = Blend.One,
+            AlphaSourceBlend = Blend.SourceAlpha,
+            AlphaDestinationBlend = Blend.One
+        };
     }
 
     private Texture2D CreateWhiteTexture()
@@ -43,13 +103,41 @@ public class AlundraRenderer : IRenderer
 
     public void Render()
     {
-        _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
+        BlendState currentBlendState = BlendState.AlphaBlend;
+        _spriteBatch.Begin(SpriteSortMode.Deferred, currentBlendState, SamplerState.PointClamp);
         
         foreach (var kvp in _sprites)
         {
             foreach (var sprite in kvp.Value)
             {
-                RenderSprite(sprite);
+                // Changer de BlendState si nécessaire
+                var requiredBlendState = GetBlendState(sprite.BlendMode);
+                if (requiredBlendState != currentBlendState || sprite.IsDeformed)
+                {
+                    _spriteBatch.End();
+                    
+                    if (sprite.IsDeformed)
+                    {
+                        RenderDeformedSprite(sprite);
+                    }
+                    
+                    currentBlendState = requiredBlendState;
+                    if (sprite.BlendMode == BlendMode.AdditiveDim)
+                    {
+                        // Configurer BlendFactor pour 0.25 (25%)
+                        _graphicsDevice.BlendFactor = new Microsoft.Xna.Framework.Color(64, 64, 64, 64);
+                    }
+                    _spriteBatch.Begin(SpriteSortMode.Deferred, currentBlendState, SamplerState.PointClamp);
+                    
+                    if (!sprite.IsDeformed)
+                    {
+                        RenderSprite(sprite);
+                    }
+                }
+                else
+                {
+                    RenderSprite(sprite);
+                }
             }
         }
         
@@ -67,24 +155,12 @@ public class AlundraRenderer : IRenderer
         
         if (texture == null) return;
 
-        float effectiveAlpha = sprite.Alpha;
-        if (sprite.BlendMode != BlendMode.None)
-        {
-            effectiveAlpha = sprite.BlendMode switch
-            {
-                BlendMode.Average => 0.5f,
-                BlendMode.Additive => 1.0f,
-                BlendMode.Subtractive => 0.5f,
-                BlendMode.AdditiveDim => 0.25f,
-                _ => sprite.Alpha
-            };
-        }
-
+        // Le BlendState est déjà configuré dans Render(), on applique juste la couleur
         var color = new Microsoft.Xna.Framework.Color(
             sprite.R,
             sprite.G,
             sprite.B,
-            effectiveAlpha);
+            sprite.Alpha);
 
         var destRect = new Microsoft.Xna.Framework.Rectangle(
             sprite.X,
@@ -93,6 +169,18 @@ public class AlundraRenderer : IRenderer
             sprite.Height);
 
         _spriteBatch.Draw(texture, destRect, color);
+    }
+    
+    private BlendState GetBlendState(BlendMode blendMode)
+    {
+        return blendMode switch
+        {
+            BlendMode.Average => _blendStateAverage,
+            BlendMode.Additive => _blendStateAdditive,
+            BlendMode.Subtractive => _blendStateSubtractive,
+            BlendMode.AdditiveDim => _blendStateAdditiveDim,
+            _ => BlendState.AlphaBlend
+        };
     }
 
     private Texture2D? GetOrCreateTexture(Bitmap bitmap)
@@ -507,6 +595,65 @@ public class AlundraRenderer : IRenderer
         AddSpriteFromTexture(tileX0, tileY0, tileW, tileH, fadeTransitionEffect, _whiteTexture, tileR0, f, f1, f2);
     }
 
+    public void DrawDeformedQuad(
+        Bitmap bitmap,
+        int x0, int y0, float u0, float v0,
+        int x1, int y1, float u1, float v1,
+        int x2, int y2, float u2, float v2,
+        int x3, int y3, float u3, float v3,
+        int depthSortValue,
+        byte r, byte g, byte b, float alpha = 1.0f)
+    {
+        var texture = GetOrCreateTexture(bitmap);
+        if (texture == null) return;
+        
+        var sprite = new Sprite(
+            texture,
+            x0, y0, u0, v0,
+            x1, y1, u1, v1,
+            x2, y2, u2, v2,
+            x3, y3, u3, v3,
+            depthSortValue,
+            r / 255f, g / 255f, b / 255f, alpha);
+        
+        AddSpriteInternal(sprite);
+    }
+
+    private void RenderDeformedSprite(Sprite sprite)
+    {
+        if (sprite.Texture == null) return;
+        
+        var color = new Microsoft.Xna.Framework.Color(sprite.R, sprite.G, sprite.B, sprite.Alpha);
+        
+        // Triangle 1: 0-1-2
+        _quadVertices[0] = new VertexPositionColorTexture(
+            new Vector3(sprite.X0, sprite.Y0, 0), color, new Vector2(sprite.U0, sprite.V0));
+        _quadVertices[1] = new VertexPositionColorTexture(
+            new Vector3(sprite.X1, sprite.Y1, 0), color, new Vector2(sprite.U1, sprite.V1));
+        _quadVertices[2] = new VertexPositionColorTexture(
+            new Vector3(sprite.X2, sprite.Y2, 0), color, new Vector2(sprite.U2, sprite.V2));
+        
+        // Triangle 2: 2-1-3
+        _quadVertices[3] = new VertexPositionColorTexture(
+            new Vector3(sprite.X2, sprite.Y2, 0), color, new Vector2(sprite.U2, sprite.V2));
+        _quadVertices[4] = new VertexPositionColorTexture(
+            new Vector3(sprite.X1, sprite.Y1, 0), color, new Vector2(sprite.U1, sprite.V1));
+        _quadVertices[5] = new VertexPositionColorTexture(
+            new Vector3(sprite.X3, sprite.Y3, 0), color, new Vector2(sprite.U3, sprite.V3));
+        
+        _basicEffect.Texture = sprite.Texture;
+        
+        foreach (var pass in _basicEffect.CurrentTechnique.Passes)
+        {
+            pass.Apply();
+            _graphicsDevice.DrawUserPrimitives(
+                PrimitiveType.TriangleList,
+                _quadVertices,
+                0,
+                2);  // 2 triangles
+        }
+    }
+
     private class Sprite
     {
         public int X;
@@ -521,6 +668,11 @@ public class AlundraRenderer : IRenderer
         public float G;
         public float B;
         public BlendMode BlendMode;
+        
+        // Pour les quads déformés (rotation)
+        public bool IsDeformed;
+        public int X0, Y0, X1, Y1, X2, Y2, X3, Y3;
+        public float U0, V0, U1, V1, U2, V2, U3, V3;
 
         public Sprite(int x, int y, int width, int height, int depth, Bitmap bitmap,
             float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f, BlendMode blendMode = BlendMode.None)
@@ -552,6 +704,31 @@ public class AlundraRenderer : IRenderer
             G = Math.Clamp(g, 0.0f, 1.0f);
             B = Math.Clamp(b, 0.0f, 1.0f);
             BlendMode = blendMode;
+            IsDeformed = false;
+        }
+        
+        // Constructor pour quad déformé (rotation)
+        public Sprite(
+            Texture2D texture,
+            int x0, int y0, float u0, float v0,
+            int x1, int y1, float u1, float v1,
+            int x2, int y2, float u2, float v2,
+            int x3, int y3, float u3, float v3,
+            int depth,
+            float r = 1.0f, float g = 1.0f, float b = 1.0f, float alpha = 1.0f)
+        {
+            Texture = texture;
+            Depth = depth;
+            R = Math.Clamp(r, 0.0f, 1.0f);
+            G = Math.Clamp(g, 0.0f, 1.0f);
+            B = Math.Clamp(b, 0.0f, 1.0f);
+            Alpha = Math.Clamp(alpha, 0.0f, 1.0f);
+            IsDeformed = true;
+            X0 = x0; Y0 = y0; U0 = u0; V0 = v0;
+            X1 = x1; Y1 = y1; U1 = u1; V1 = v1;
+            X2 = x2; Y2 = y2; U2 = u2; V2 = v2;
+            X3 = x3; Y3 = y3; U3 = u3; V3 = v3;
+            BlendMode = BlendMode.None;
         }
     }
 
