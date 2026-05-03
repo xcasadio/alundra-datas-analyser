@@ -898,7 +898,7 @@ public class MainInventoryManager
                         _gameEngine.StaticVariables.g_playerControlFlags &= 0xfffffff7;
                     }
 
-                    FUN_80047cb0(callbackInfo);
+                    _gameEngine.UIManager.FUN_80047cb0(callbackInfo);
                     return;
                 }
             }
@@ -1871,13 +1871,6 @@ public class MainInventoryManager
             0, //_gameEngine.StaticVariables.g_UiBoxesInventoryItemNameBackground.X,
             0, //_gameEngine.StaticVariables.g_UiBoxesInventoryItemNameBackground.Y,
             1);
-    }
-
-    //80047cb0
-    public int FUN_80047cb0(CallBackInfo callBackInfo)
-    {
-        callBackInfo.Flags = 0;
-        return 1;
     }
 
     //80057854

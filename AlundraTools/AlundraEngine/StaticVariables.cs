@@ -11445,6 +11445,23 @@ public class StaticVariables
                 Arg = 0x05
             }
         ];
+        
+        TextToDisplay_800c41a4 = new TextToDisplay
+        {
+            tick = 0,
+            speed = 0,
+            mode = 0,
+            x = 0,
+            y = 0,
+            startX = 0,
+            startY = 0,
+            _14 = 0,
+            _15 = 0,
+            _16 = 0,
+            _17 = 0,
+            originX = 0,
+            originY = 0,
+        };
     }
 
     //
@@ -12209,13 +12226,17 @@ public class StaticVariables
     public int INT_800c4180; // 800C4180
     public short DAT_800c4184; // 800C4184
     public short DAT_800c4186; // 800C4186
-    public uint[] UINT_ARRAY_800c4190 = new uint[3]; // 800C4190
+    public uint[] UINT_ARRAY_800c4190 = new uint[3]; // 800c4190
+    public UIBoxConfiguration? PTR_UIBoxConfiguration_800c419c; //800C419C
+    public UIBoxConfiguration? PTR_UIBoxConfiguration_800c4210; //800c4210
+    public UIBoxConfiguration? PTR_UIBoxConfiguration_800c4284; //800c4284
+    public UIBoxConfiguration? PTR_UIBoxConfiguration_800c42f8; //800c42f8
     public TextToDisplay TextToDisplay_800c41a4 = new(); //800c41a4
-    public SPRT[] SPRT_ARRAY_800c41c0 = Enumerable.Range(0, 4).Select(x => new SPRT()).ToArray(); // 800c41c0
+    public SPRT[] SPRT_ARRAY_800c41c0 = Enumerable.Range(0, 8).Select(x => new SPRT()).ToArray(); // 800c41c0
     public TextToDisplay TextToDisplay_800c4218 = new(); //800c4218
     public TextToDisplay TextToDisplay_800c428c = new(); //800c428c
     public TextToDisplay TextToDisplay_800c4300 = new(); // 800C431A
-    public readonly int[] SHORT_ARRAY_800C436C = [-1, -1, 0, 0]; // 800C436C
+    public readonly short[] SHORT_ARRAY_800C436C = [-1, -1, 0, 0]; // 800C436C
     public int DAT_800c4370; // 800C4370
     public short DAT_800c4374; // 800C4374
     public byte g_characterNameTable; // 800C440C
@@ -13072,11 +13093,13 @@ public class StaticVariables
     public int g_hudTransitionStartY; // 80180100
     public uint[] UINT_ARRAY_80180108 = new uint[8]; // 80180108
     public int INT_80180120; // 80180120
-    public uint PTR_80180128; // 80180128
+    public int PTR_80180128; // 80180128
     public TextToDisplay TextToDisplay_80180130 = new(); //80180130
     public UIMemoryFileBox[] UIMemoryFileBox_ARRAY_80180150 = Enumerable.Range(0, 4).Select(x => new UIMemoryFileBox()).ToArray(); // 80180150
-    public string g_memoryCardOffsetArg1; // 80180238
-    public string g_memoryCardOffsetArg2; // 8018023C
+    // GHIDRA: g_memoryCardOffsetArg1 @ 0x80180238
+    public MemoryCardPointerRecord[] g_memoryCardOffsetArg1 = Array.Empty<MemoryCardPointerRecord>();
+    // GHIDRA: g_memoryCardOffsetArg2 @ 0x8018023C
+    public MemoryCardPointerRecord g_memoryCardOffsetArg2 = new();
     public uint g_UIDisplayFlags; // 80180240
     public TextToDisplay g_textToDisplay2 = new TextToDisplay(); // 80180244
     public SPRT[] SPRT_ARRAY_80180210 = Enumerable.Range(0, 2).Select(x => new SPRT()).ToArray(); // 80180210
@@ -13141,11 +13164,13 @@ public class StaticVariables
     public int g_rendering_tile_buffer; // 8018E8A0
     public byte[] BYTE_ARRAY_8018e8a8 = new byte[1056]; // 8018E8A8
     public int INT_8018ecc8; // 8018ECC8
-    public string PTR_8018ed68; // 8018ED68
+    // GHIDRA: PTR_8018ed68 @ 0x8018ED68
+    public MemoryCardPointerRecord[] PTR_8018ed68 = Enumerable.Range(0, 4).Select(_ => new MemoryCardPointerRecord()).ToArray();
     public string PTR_8018ed6c; // 8018ED6C
     public int INT_8018ed88; // 8018ED88
     public int INT_8018ed8c; // 8018ED8C
-    public string PTR_8018ede8; // 8018EDE8
+    // GHIDRA: PTR_8018ede8 @ 0x8018EDE8
+    public MemoryCardPointerRecord PTR_8018ede8 = new();
     public string PTR_8018edec; // 8018EDEC
     public int DAT_8018ee10; // 8018EE10
     public int DAT_8018ee38; // 8018EE38
@@ -17010,5 +17035,4 @@ public class StaticVariables
             new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x0120, y0=0x0070, u0=0xD0, v0=0x20, clut=0x0000, w=0x0008, h=0x0008 },
             new SPRT { tag=0x00000000u, r0=0x00, g0=0x00, b0=0x00, code=0x00, x0=0x0128, y0=0x0070, u0=0xD8, v0=0x20, clut=0x0000, w=0x0008, h=0x0008 }
         };
-
 }

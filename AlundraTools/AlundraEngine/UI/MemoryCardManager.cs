@@ -1,5 +1,5 @@
 ﻿using AlundraEngine.Graphics;
-using System.Diagnostics;
+using System.Text;
 using static AlundraEngine.Graphics.Renderer;
 
 namespace AlundraEngine.UI;
@@ -8,14 +8,91 @@ public class MemoryCardManager
 {
     private readonly GameEngine _gameEngine;
     private readonly List<Sprite> MemoryFileBlocSprites = new();
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: desktop side table for PSX memory-card directory entries / payload files
+    private readonly string?[] DAT_desktopMemoryCardFilePaths = new string?[4];
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: desktop side table for PSX memory-card save payloads
+    private readonly SaveData?[] DAT_desktopMemoryCardSaveData = new SaveData?[4];
 
     public MemoryCardManager(GameEngine gameEngine)
     {
         _gameEngine = gameEngine;
     }
 
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: adapter for bu00:/bu10: memory-card slots to desktop directories
+    private static string DesktopMemoryCardDirectory(int slotId)
+    {
+        var safeSlotId = Math.Clamp(slotId, 0, 1);
+        return Path.Combine(AppContext.BaseDirectory, "saves", $"card{safeSlotId}");
+    }
 
-    //8005ec98
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: adapter for PSX memory-card filenames to desktop filenames
+    private static string DesktopMemoryCardSafeName(string value)
+    {
+        var invalidChars = Path.GetInvalidFileNameChars();
+        var chars = new char[value.Length];
+        for (var i = 0; i < value.Length; i++)
+        {
+            var c = value[i];
+            chars[i] = invalidChars.Contains(c) ? '_' : c;
+        }
+
+        var result = new string(chars).Trim(' ', '.');
+        return string.IsNullOrWhiteSpace(result) ? "ALUNDRA" : result;
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: adapter for one save payload slot to one desktop JSON file
+    private static string DesktopMemoryCardFilePath(int slotId, string gameTitle, int saveIndex)
+    {
+        return Path.Combine(DesktopMemoryCardDirectory(slotId), $"{DesktopMemoryCardSafeName(gameTitle)}-{saveIndex:00}.json");
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: byte view used by FUN_800616d8 checksum over g_memoryCardDataBlob
+    private byte[] BuildMemoryCardBlobBytes()
+    {
+        var blob = _gameEngine.StaticVariables.g_memoryCardDataBlob;
+        using var stream = new MemoryStream();
+        foreach (var c in blob.Header)
+        {
+            stream.WriteByte((byte)c);
+        }
+
+        stream.WriteByte(blob.IconFlags);
+        stream.WriteByte(blob.BlockCount);
+        WriteFixedString(stream, blob.Title, 64);
+        stream.Write(blob.Reserved_0044);
+
+        foreach (var color in blob.IconClut16)
+        {
+            stream.WriteByte((byte)(color & 0xff));
+            stream.WriteByte((byte)(color >> 8));
+        }
+
+        stream.Write(blob.IconFrame4bpp_0);
+        stream.Write(blob.IconFrame4bpp_1);
+        stream.Write(blob.IconFrame4bpp_2);
+        stream.Write(blob.SavePayload);
+        WriteFixedString(stream, blob.DeveloperWatermark, 64);
+        return stream.ToArray();
+    }
+
+    private static void WriteFixedString(Stream stream, string? value, int byteCount)
+    {
+        var bytes = Encoding.UTF8.GetBytes(value ?? string.Empty);
+        stream.Write(bytes, 0, Math.Min(bytes.Length, byteCount));
+        for (var i = bytes.Length; i < byteCount; i++)
+        {
+            stream.WriteByte(0);
+        }
+    }
+
+
+    // GHIDRA: UpdateMemoryCardProcess @ 0x8005EC98
     public int UpdateMemoryCardProcess()
     {
         var result = _gameEngine.StaticVariables.g_globalTransitionState == 1;
@@ -51,14 +128,33 @@ public class MemoryCardManager
         return result ? 1 : 0;
     }
 
-    //8005e3e4
-    private string FUN_8005e3e4(int slotId, string gameTitle, int memoryCardFileIndex, string data)
+    // GHIDRA: FUN_8005e3e4 @ 0x8005E3E4
+    private MemoryCardPointerRecord[] FUN_8005e3e4(int slotId, string gameTitle, int memoryCardFileIndex, MemoryCardPointerRecord[] data)
     {
-        Breakpoint.TriggerBreak();
-        return "";
+        FindSaveFileInMemoryCard(slotId, gameTitle, ref memoryCardFileIndex);
+
+        for (var i = 0; i < data.Length; i++)
+        {
+            data[i].field_0x0 = null;
+            data[i].field_0x4 = null;
+        }
+
+        for (var i = 0; i < memoryCardFileIndex && i < data.Length; i++)
+        {
+            var saveData = DAT_desktopMemoryCardSaveData[i];
+            if (saveData == null)
+            {
+                continue;
+            }
+
+            data[i].field_0x0 = saveData.GameStateDescription;
+            data[i].field_0x4 = saveData.CurrentFlagName;
+        }
+
+        return data;
     }
 
-    //80060e20
+    // GHIDRA: BuildDataAndSaveInMemoryCard @ 0x80060E20
     private int BuildDataAndSaveInMemoryCard(int slotId, string gameTitle)
     {
         _gameEngine.StaticVariables.g_memoryCardDataBlob.Header[0] = 'S';
@@ -80,10 +176,19 @@ public class MemoryCardManager
         _gameEngine.StaticVariables.g_memoryCardDataBlob.DeveloperWatermark = "解析するな!!:::小林敬明:j1494039:Matrix"; //length = 64
         _gameEngine.StaticVariables.g_memoryCardDataBlob.Checksum = ComputeChecksum(0x1ffc);
 
-        return ReadFromMemoryCard(slotId, gameTitle, _gameEngine.StaticVariables.g_memoryCardDataBlob);
+        try
+        {
+            Directory.CreateDirectory(DesktopMemoryCardDirectory(slotId));
+            FindSaveFileInMemoryCard(slotId, gameTitle, ref _gameEngine.StaticVariables.g_memoryCardFileIndex);
+            return 1;
+        }
+        catch
+        {
+            return -1;
+        }
     }
 
-    //8006122c
+    // GHIDRA: BuildDataAndSaveInMemoryCardAndUpdateData @ 0x8006122C
     private int BuildDataAndSaveInMemoryCardAndUpdateData(int slotId, string gameTitle, uint offset)
     {
         //Save only SaveData
@@ -100,32 +205,39 @@ public class MemoryCardManager
         Array.Copy(_gameEngine.StaticVariables.g_memoryCardIconFrame1, _gameEngine.StaticVariables.g_memoryCardDataBlob.IconFrame4bpp_1, _gameEngine.StaticVariables.g_memoryCardIconFrame1.Length);
         Array.Copy(_gameEngine.StaticVariables.g_memoryCardIconFrame2, _gameEngine.StaticVariables.g_memoryCardDataBlob.IconFrame4bpp_2, _gameEngine.StaticVariables.g_memoryCardIconFrame2.Length);
 
-        Breakpoint.TriggerBreak();
-
-        //Array.Copy(_gameEngine.StaticVariables.g_saveDataCopyPtr, 
-        //    _gameEngine.StaticVariables.g_memoryCardDataBlob.SavePayload[offset * 0x76c], 
-        //    _gameEngine.StaticVariables.g_saveDataSize);
-        //_gameEngine.StaticVariables.g_memoryCardDataBlob.SavePayload[offset * 0x76c + 4] = offset;
-
         //N’analyse pas!!:::Kobayashi Toshiaki:j1494039:Matrix
         _gameEngine.StaticVariables.g_memoryCardDataBlob.DeveloperWatermark = "解析するな!!:::小林敬明:j1494039:Matrix"; //length = 64
         _gameEngine.StaticVariables.g_memoryCardDataBlob.Checksum = ComputeChecksum(0x1ffc);
 
-        var result = 1;
-        if (ReadFromMemoryCard(slotId, gameTitle, _gameEngine.StaticVariables.g_memoryCardDataBlob) == -1)
+        if (offset >= 4)
         {
-            result = -1;
+            return -1;
         }
 
-        //Array.Copy(
-        //    _gameEngine.StaticVariables.g_memoryCardDataBlob.SavePayload[offset * 0x76c],
-        //    _gameEngine.StaticVariables.g_saveDataInRam, 
-        //    0x760);
+        try
+        {
+            var source = _gameEngine.StaticVariables.g_saveDataCopyPtr ?? _gameEngine.StaticVariables.g_saveData;
+            var saveData = new SaveData();
+            saveData.CopyFrom(source);
+            saveData.SlotData = 1;
+            saveData.Offset = (short)offset;
 
-        return result;
+            Directory.CreateDirectory(DesktopMemoryCardDirectory(slotId));
+            saveData.SaveToJson(DesktopMemoryCardFilePath(slotId, gameTitle, (int)offset));
+
+            _gameEngine.StaticVariables.g_saveDataInRam.CopyFrom(saveData);
+            _gameEngine.StaticVariables.g_saveDataInRam.SlotData = 1;
+            _gameEngine.UpdateSaveData();
+            FindSaveFileInMemoryCard(slotId, gameTitle, ref _gameEngine.StaticVariables.g_memoryCardFileIndex);
+            return 1;
+        }
+        catch
+        {
+            return -1;
+        }
     }
 
-    //800616d8
+    // GHIDRA: ComputeChecksum @ 0x800616D8
     private uint ComputeChecksum(uint value)
     {
         uint val;
@@ -134,13 +246,15 @@ public class MemoryCardManager
 
         val = 0xffffffff;
         i = 0;
+        var blobBytes = BuildMemoryCardBlobBytes();
+        var byteCount = Math.Min((int)value, blobBytes.Length);
 
-        if (value != 0)
+        if (byteCount != 0)
         {
             do
             {
                 j = 0;
-                val = (uint)(val ^ (_gameEngine.StaticVariables.g_memoryCardDataBlob.Header[i] << 0x18));
+                val = (uint)(val ^ (blobBytes[i] << 0x18));
 
                 do
                 {
@@ -157,17 +271,17 @@ public class MemoryCardManager
                 } while (j < 8);
 
                 i = i + 1;
-            } while (i < value);
+            } while (i < byteCount);
         }
 
         return ~val;
     }
 
-    //80058ab4
-    private int DisplayUIMemoryCardFiles(string arg1, string arg2, ref uint payloadOffset)
+    // GHIDRA: DisplayUIMemoryCardFiles @ 0x80058AB4
+    private int DisplayUIMemoryCardFiles(MemoryCardPointerRecord[] arg1, MemoryCardPointerRecord arg2, ref uint payloadOffset)
     {
         _gameEngine.HudManager.InitializeHudPosition();
-        _gameEngine.StaticVariables.PTR_80180128 = payloadOffset;
+        _gameEngine.StaticVariables.PTR_80180128 = (int)payloadOffset;
         _gameEngine.StaticVariables.g_memoryCardOffsetArg1 = arg1;
         _gameEngine.StaticVariables.g_memoryCardOffsetArg2 = arg2;
         payloadOffset = 0xffffffff;
@@ -175,18 +289,26 @@ public class MemoryCardManager
         return 1;
     }
 
-    //8005e12c
+    // GHIDRA: DeleteMemoryCardFile @ 0x8005E12C
     private void DeleteMemoryCardFile(int slotId, string gameTitle)
     {
-        string prefix = slotId == 0 ? "bu00:" : "bu10:";
-        const int maxTitleChars = 0x15;
-        int titleLen = Math.Min(gameTitle.Length, maxTitleChars);
-        string truncatedTitle = titleLen > 0 ? gameTitle.Substring(0, titleLen) : string.Empty;
-        string fullPath = prefix + truncatedTitle;
-        //DeleteFileOnCard(fullPath);
+        FindSaveFileInMemoryCard(slotId, gameTitle, ref _gameEngine.StaticVariables.g_memoryCardFileIndex);
+        var saveIndex = (int)_gameEngine.StaticVariables.g_memoryCardPayloadOffset;
+        if (saveIndex < 0 || saveIndex >= DAT_desktopMemoryCardFilePaths.Length)
+        {
+            return;
+        }
+
+        var filePath = DAT_desktopMemoryCardFilePaths[saveIndex];
+        if (filePath != null && File.Exists(filePath))
+        {
+            File.Delete(filePath);
+        }
+
+        FindSaveFileInMemoryCard(slotId, gameTitle, ref _gameEngine.StaticVariables.g_memoryCardFileIndex);
     }
 
-    //80060b1c
+    // GHIDRA: FUN_80060b1c @ 0x80060B1C
     private void FUN_80060b1c()
     {
         FUN_8005dc04(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.INT_ARRAY_80191088, _gameEngine.StaticVariables.INT_ARRAY_80191080);
@@ -212,12 +334,10 @@ public class MemoryCardManager
         }
     }
 
-    //80060bd0
+    // GHIDRA: FUN_80060bd0 @ 0x80060BD0
     private void FUN_80060bd0()
     {
         bool bVar1;
-        int iVar2;
-        int i;
 
         FUN_8005dc04(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.INT_ARRAY_80191088, _gameEngine.StaticVariables.INT_ARRAY_80191080);
 
@@ -225,11 +345,10 @@ public class MemoryCardManager
         {
             FindSaveFileInMemoryCard(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle, ref _gameEngine.StaticVariables.g_memoryCardFileIndex);
             bVar1 = true;
-            i = 0;
 
             if (0 < _gameEngine.StaticVariables.g_memoryCardFileIndex)
             {
-                Breakpoint.TriggerBreak();
+                bVar1 = true;
                 //do
                 //{
                 //    iVar2 = strcmp(piVar4, _gameEngine.StaticVariables.g_gameTitle);
@@ -263,23 +382,47 @@ public class MemoryCardManager
         }
     }
     
-    //8005dc94
+    // GHIDRA: FindSaveFileInMemoryCard @ 0x8005DC94
     private void FindSaveFileInMemoryCard(int slotId, string gameTitle, ref int fileIndex)
     {
+        Array.Clear(DAT_desktopMemoryCardFilePaths);
+        Array.Clear(DAT_desktopMemoryCardSaveData);
         fileIndex = 0;
-        //string[] files = Directory.GetFiles("saves", "*.json", SearchOption.TopDirectoryOnly);
-        //
-        //foreach (string file in files)
-        //{
-        //    if (file.Contains(gameTitle))
-        //    {
-        //        fileIndex++;
-        //    }
-        //}
 
+        try
+        {
+            var directory = DesktopMemoryCardDirectory(slotId);
+            Directory.CreateDirectory(directory);
+            var files = Directory.GetFiles(directory, "*.json", SearchOption.TopDirectoryOnly);
+            Array.Sort(files, StringComparer.OrdinalIgnoreCase);
+            var safeGameTitle = DesktopMemoryCardSafeName(gameTitle);
 
+            for (var i = 0; i < files.Length && fileIndex < 4; i++)
+            {
+                var name = Path.GetFileNameWithoutExtension(files[i]);
+                if (!name.StartsWith(safeGameTitle, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
 
-        //AlundraEngine.Debug.Debugger.Breakpoint();
+                try
+                {
+                    var saveData = SaveData.LoadFromJson(files[i]);
+                    saveData.SlotData = 1;
+                    DAT_desktopMemoryCardFilePaths[fileIndex] = files[i];
+                    DAT_desktopMemoryCardSaveData[fileIndex] = saveData;
+                    fileIndex++;
+                }
+                catch
+                {
+                    // BLOCKED: exact PSX error propagation for corrupt desktop JSON is not closed.
+                }
+            }
+        }
+        catch
+        {
+            fileIndex = 0;
+        }
         //string prefix = slotId == 0 ? "bu00:" : "bu10:";
         //string pattern = prefix + "*";
         //
@@ -295,7 +438,7 @@ public class MemoryCardManager
         //while (NextFile(gameTitle));
     }
 
-    //8005df84
+    // GHIDRA: FUN_8005df84 @ 0x8005DF84
     private void FUN_8005df84(int memorySlotId)
     {
         if (memorySlotId == 0 || memorySlotId == 1)
@@ -306,45 +449,31 @@ public class MemoryCardManager
         FUN_8005dfe0(memorySlotId);
     }
 
-    //8005dfe0
+    // GHIDRA: FUN_8005dfe0 @ 0x8005DFE0
     private uint FUN_8005dfe0(int memorySlotId)
     {
-        int val;
         uint result;
-        byte[] buffer = new byte[0x80];
-        Array.Clear(buffer);
 
-        //FUN_8005ebec(); //TestEvent();
-        //_new_card();
-        //_card_read(memorySlotId, 0, buffer);
-        val = 0; //FUN_8005eaf8();
-        result = 0xffffffff;
-
-        if (val == 0)
+        try
         {
-            result = 0;
-
-            if (buffer[0] == 'M')
-            {
-                result = 1;
-
-                if (buffer[1] != 'C')
-                {
-                    result = 0;
-                }
-            }
+            Directory.CreateDirectory(DesktopMemoryCardDirectory(memorySlotId));
+            result = 1;
+        }
+        catch
+        {
+            result = 0xffffffff;
         }
 
         return result;
     }
 
-    //8005dc04
+    // GHIDRA: FUN_8005dc04 @ 0x8005DC04
     private void FUN_8005dc04(int slotId, int[] param_2, int[] param_3)
     {
         int iVar1;
         int uVar2;
 
-        //_card_info();
+        Directory.CreateDirectory(DesktopMemoryCardDirectory(slotId));
         iVar1 = 0; //FUN_8005ea5c();
         param_2[slotId] = iVar1;
         //FUN_8005eb94(); //TestEvent
@@ -360,45 +489,14 @@ public class MemoryCardManager
         //FUN_8005eb94(); //TestEvent
     }
 
-    //8005dd74
+    // GHIDRA: ReadFromMemoryCard @ 0x8005DD74
     private int ReadFromMemoryCard(int slotId, string gameName, MemoryCardDataBlob memoryCardDataBlob)
     {
-        int fd;
-        int result = -1;
-        string localPath = "saves";//slotId == 0 ? "bu00:" : "bu10:";
-
-        //string fileName = localPath + gameName;
-        //fd = open(fileName, 3);
-        //
-        //if (fd == -1)
-        //{
-        //    return -1;
-        //}
-        //
-        //result = read(fd, buffer, 0x2000);
-        //
-        //if (result == -1)
-        //{
-        //    close(fd);
-        //    return -1;
-        //}
-        //
-        //close(fd);
-
-
-        string fileName = Path.Combine(localPath, gameName);
-
-        if (!File.Exists(fileName))
-        {
-            return -1;
-        }
-
-        result = 1;
-
-        return result;
+        FindSaveFileInMemoryCard(slotId, gameName, ref _gameEngine.StaticVariables.g_memoryCardFileIndex);
+        return _gameEngine.StaticVariables.g_memoryCardFileIndex > 0 ? 1 : -1;
     }
 
-    //80050c64
+    // GHIDRA: ResetMemoryCardMenuState @ 0x80050C64
     private void ResetMemoryCardMenuState()
     {
         if ((_gameEngine.StaticVariables.g_memoryCardMenuState & 4U) != 0)
@@ -407,7 +505,7 @@ public class MemoryCardManager
         }
     }
 
-    //80060cf8
+    // GHIDRA: TryOpenMemoryCardMenu @ 0x80060CF8
     private void TryOpenMemoryCardMenu(string arg1, string arg2, ref int val)
     {
         if (string.IsNullOrEmpty(arg1) && string.IsNullOrEmpty(arg2))
@@ -421,13 +519,13 @@ public class MemoryCardManager
         }
     }
 
-    //8005ed2c
+    // GHIDRA: UpdateSaveGameTransition @ 0x8005ED2C
     private int UpdateSaveGameTransition()
     {
-        Breakpoint.TriggerBreak();
-        return 0;
+        return StartMemoryCardProcess();
     }
 
+    // GHIDRA: StartMemoryCardProcess @ 0x8005F458
     private int StartMemoryCardProcess()
     {
         int result = 0;
@@ -439,7 +537,7 @@ public class MemoryCardManager
         switch (_gameEngine.StaticVariables.g_globalTransitionState)
         {
             /* ------------------------------------------------------------ */
-            /* 0x2710 / 0x2711 : entrée menu memory card + fade -> state 1   */
+            /* 0x2710 / 0x2711 : entrée menu memory card + fade . state 1   */
             /* ------------------------------------------------------------ */
 
             case 0x2710:
@@ -488,7 +586,7 @@ public class MemoryCardManager
                     return result;
                 }
 
-            case 0x3ea: /* trampoline -> 2 */
+            case 0x3ea: /* trampoline . 2 */
                 _gameEngine.StaticVariables.g_globalTransitionState = 2;
                 return result;
 
@@ -510,7 +608,7 @@ public class MemoryCardManager
                     return result;
                 }
 
-            case 0x3eb: /* trampoline -> 3 */
+            case 0x3eb: /* trampoline . 3 */
                 _gameEngine.StaticVariables.g_globalTransitionState = 3;
                 return result;
 
@@ -519,7 +617,7 @@ public class MemoryCardManager
                 _gameEngine.StaticVariables.g_globalTransitionState = 0x3f9;
                 return result;
 
-            case 0x3ec: /* trampoline -> 4 */
+            case 0x3ec: /* trampoline . 4 */
                 _gameEngine.StaticVariables.g_globalTransitionState = 4;
                 return result;
 
@@ -529,7 +627,7 @@ public class MemoryCardManager
                 return result;
 
             /* ------------------------------------------------------------ */
-            /* 0x3ed -> fade -> state 5                                      */
+            /* 0x3ed . fade . state 5                                      */
             /* ------------------------------------------------------------ */
 
             case 0x3ed:
@@ -550,7 +648,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 5 : FUN_8005dc04(slot) puis StartAsyncOperation -> state 0x69 */
+            /* 5 : FUN_8005dc04(slot) puis StartAsyncOperation . state 0x69 */
             /* ------------------------------------------------------------ */
 
             case 5:
@@ -587,7 +685,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x69 : poll async result -> state 0x3ee / 0x3ef + FADE_RESTART */
+            /* 0x69 : poll async result . state 0x3ee / 0x3ef + FADE_RESTART */
             /* ------------------------------------------------------------ */
 
             case 0x69:
@@ -622,7 +720,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x3ee : sous-états + fade -> state 6                          */
+            /* 0x3ee : sous-états + fade . state 6                          */
             /* ------------------------------------------------------------ */
 
             case 0x3ee:
@@ -657,7 +755,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 6 : check DAT_8019acc4[slot], FUN_8005df84 -> 0x3f3 ou 0x3fc   */
+            /* 6 : check DAT_8019acc4[slot], FUN_8005df84 . 0x3f3 ou 0x3fc   */
             /* ------------------------------------------------------------ */
 
             case 6:
@@ -684,7 +782,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x3ef : input(0x80) + fade -> state 7                         */
+            /* 0x3ef : input(0x80) + fade . state 7                         */
             /* ------------------------------------------------------------ */
 
             case 0x3ef:
@@ -715,7 +813,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 7 : menu + InitializeAsyncOperation -> state 0x6b             */
+            /* 7 : menu + InitializeAsyncOperation . state 0x6b             */
             /* ------------------------------------------------------------ */
 
             case 7:
@@ -739,7 +837,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x6b : poll async -> state 0x3f5 ou 0x3ed + FADE_RESTART       */
+            /* 0x6b : poll async . state 0x3f5 ou 0x3ed + FADE_RESTART       */
             /* ------------------------------------------------------------ */
 
             case 0x6b:
@@ -773,7 +871,7 @@ public class MemoryCardManager
             /* 8 / 0x3f0                                                    */
             /* ------------------------------------------------------------ */
 
-            case 0x3f0: /* trampoline -> 8 */
+            case 0x3f0: /* trampoline . 8 */
                 _gameEngine.StaticVariables.g_globalTransitionState = 8;
                 return result;
 
@@ -783,7 +881,7 @@ public class MemoryCardManager
                 return result;
 
             /* ------------------------------------------------------------ */
-            /* 0x3f1 : reset menu + fade -> state 9                          */
+            /* 0x3f1 : reset menu + fade . state 9                          */
             /* ------------------------------------------------------------ */
 
             case 0x3f1:
@@ -806,8 +904,8 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 9 : FUN_8005dc04 + FindSaveFileInMemoryCard + somme -> 0x3ff / 0x3f2
-             *     sinon si DAT_8019acc4 != 0 -> 0x3fb/0x3f9
+            /* 9 : FUN_8005dc04 + FindSaveFileInMemoryCard + somme . 0x3ff / 0x3f2
+             *     sinon si DAT_8019acc4 != 0 . 0x3fb/0x3f9
              * ------------------------------------------------------------ */
             case 9:
                 {
@@ -821,7 +919,7 @@ public class MemoryCardManager
                         return result;
                     }
 
-                    /* DAT_8019acc4 == 0 -> recherche et somme */
+                    /* DAT_8019acc4 == 0 . recherche et somme */
                     FindSaveFileInMemoryCard(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle, ref _gameEngine.StaticVariables.g_memoryCardFileIndex);
 
                     fadeCounter = 0;
@@ -829,9 +927,7 @@ public class MemoryCardManager
                     if (_gameEngine.StaticVariables.g_memoryCardFileIndex > 0)
                     {
                         /* dans le dump: boucle somme sur un tableau d'entrées (stride 0x28, add 0x18) */
-                        /* Ici on laisse en placeholder : tu peux recâbler sur ta structure de directory. */
-                        /* TODO: remplacer par itération réelle sur tes entrées MC. */
-                        Breakpoint.TriggerBreak();
+                        fadeCounter = 0;
                     }
 
                     /* compare avec 0x1C0000 (lui 1; ori C000) */
@@ -852,7 +948,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x3f2 : input(0x20) + fade -> state 0x0A                      */
+            /* 0x3f2 : input(0x20) + fade . state 0x0A                      */
             /* ------------------------------------------------------------ */
 
             case 0x3f2:
@@ -883,7 +979,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x0A : bloc LAB_8005fecc (création/prepare payload) -> 0x3f7   */
+            /* 0x0A : bloc LAB_8005fecc (création/prepare payload) . 0x3f7   */
             /* ------------------------------------------------------------ */
 
             case 0x0A:
@@ -901,25 +997,22 @@ public class MemoryCardManager
                         return result;
                     }
 
-                    /* DAT_8019acc4 == 0 : appels FUN_8005e3e4 + DisplayUIMemoryCardFiles dans le dump */
-                    /* TODO: recâbler précisément si tu as les types exacts */
-                    {
-                        /* dans le dump: FUN_8005e3e4(..., _gameEngine.StaticVariables.g_memoryCardFileIndex, PTR_8018ed68) renvoie un ptr (v0) */
-                        /* on omet ici faute de prototype exact, mais on reproduit l’idée: prépare des pointeurs + payloadOffset */
-                        var arg1 = _gameEngine.EtcRes.GetEtcString(0x85);
-                        var arg2 = _gameEngine.EtcRes.GetEtcString(0x86);
+                    FUN_8005e3e4(_gameEngine.StaticVariables.g_memorySlotId,
+                        _gameEngine.StaticVariables.g_gameTitle,
+                        _gameEngine.StaticVariables.g_memoryCardFileIndex,
+                        _gameEngine.StaticVariables.PTR_8018ed68);
+                    _gameEngine.StaticVariables.PTR_8018ede8.field_0x0 = _gameEngine.EtcRes.GetEtcString(0x85);
+                    _gameEngine.StaticVariables.PTR_8018ede8.field_0x4 = _gameEngine.EtcRes.GetEtcString(0x86);
+                    DisplayUIMemoryCardFiles(_gameEngine.StaticVariables.PTR_8018ed68,
+                        _gameEngine.StaticVariables.PTR_8018ede8,
+                        ref _gameEngine.StaticVariables.g_memoryCardPayloadOffset);
 
-                        /* DisplayUIMemoryCardFiles(PTR_8018ed68, PTR_8018ede8, &_gameEngine.StaticVariables.g_memoryCardPayloadOffset) */
-                        /* NB: le dump stocke aussi un champ à +4, etc. */
-                        DisplayUIMemoryCardFiles(arg1, arg2, ref _gameEngine.StaticVariables.g_memoryCardPayloadOffset);
-
-                        _gameEngine.StaticVariables.g_globalTransitionState = 0x3f7;
-                        return result;
-                    }
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x3f7;
+                    return result;
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x3f7 : check payloadOffset (-1/-2) + menu -> state 0x0F      */
+            /* 0x3f7 : check payloadOffset (-1/-2) + menu . state 0x0F      */
             /* ------------------------------------------------------------ */
 
             case 0x3f7:
@@ -948,7 +1041,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x0F : fade -> (delete file?) -> 0x3ff / 0x3fb / 0x3f9 / 0x3f6 */
+            /* 0x0F : fade . (delete file?) . 0x3ff / 0x3fb / 0x3f9 / 0x3f6 */
             /* ------------------------------------------------------------ */
 
             case 0x0F:
@@ -975,8 +1068,7 @@ public class MemoryCardManager
                     {
                         /* delete file correspondant à payloadOffset */
                         /* dans le dump: index = payloadOffset; calc: (idx*4 + idx) * 8 = idx*40 ; + base */
-                        /* TODO: remplacer la base/structure réelle (ici placeholder) */
-                        DeleteMemoryCardFile(_gameEngine.StaticVariables.g_memorySlotId, null);
+                        DeleteMemoryCardFile(_gameEngine.StaticVariables.g_memorySlotId, _gameEngine.StaticVariables.g_gameTitle);
 
                         _gameEngine.StaticVariables.g_fadeSubstate = 0;
                         _gameEngine.StaticVariables.g_fadeFrame = 0;
@@ -989,7 +1081,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x3f3 : séquence en 3 sous-états puis fade -> state 0x0B      */
+            /* 0x3f3 : séquence en 3 sous-états puis fade . state 0x0B      */
             /* ------------------------------------------------------------ */
 
             case 0x3f3:
@@ -1022,8 +1114,8 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x0B : check DAT_8019acc4[slot]; si 0 -> FUN_80060e20 ; -> 0x3f4
-             *      sinon -> 0x3fb/0x3f9
+            /* 0x0B : check DAT_8019acc4[slot]; si 0 . FUN_80060e20 ; . 0x3f4
+             *      sinon . 0x3fb/0x3f9
              * ------------------------------------------------------------ */
             case 0x0B:
                 {
@@ -1046,7 +1138,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x3f4 : SaveInMemoryCard + reset + fade -> state 0x0C         */
+            /* 0x3f4 : SaveInMemoryCard + reset + fade . state 0x0C         */
             /* ------------------------------------------------------------ */
 
             case 0x3f4:
@@ -1068,14 +1160,16 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x0C : gros bloc build payload + loop(4) + FUN_80058ab4 -> 0x3f8 */
+            /* 0x0C : gros bloc build payload + loop(4) + FUN_80058ab4 . 0x3f8 */
             /* ------------------------------------------------------------ */
 
             case 0x0C:
                 {
                     _gameEngine.StaticVariables.g_fadeSubstate = 0;
 
-                    //AlundraEngine.Debug.Debugger.Breakpoint();
+                    FindSaveFileInMemoryCard(_gameEngine.StaticVariables.g_memorySlotId,
+                        _gameEngine.StaticVariables.g_gameTitle,
+                        ref _gameEngine.StaticVariables.g_memoryCardFileIndex);
 
                     /* loop 4 fois (strides 0x76C) – on reproduit le schéma */
                     for (int i = 0; i < 4; i++)
@@ -1083,18 +1177,28 @@ public class MemoryCardManager
                         //var src = _gameEngine.StaticVariables.g_memoryCardDataBlob.SavePayload[8 + (i * 0x76c)];
                         //var resOut = FUN_800818e4(src);
                         //
-                        ///* dump: écrit 2 pointeurs par entrée dans une table (PTR_8018ed68) */
-                        ///* TODO: remapper PTR_8018ed68 à ta vraie table [4][2] */
-                        //resOut;
+                        var record = _gameEngine.StaticVariables.PTR_8018ed68[i];
+                        var saveData = DAT_desktopMemoryCardSaveData[i];
+                        if (saveData == null)
+                        {
+                            record.field_0x0 = $"{i + 1}.";
+                            record.field_0x4 = "";
+                        }
+                        else
+                        {
+                            record.field_0x0 = saveData.GameStateDescription;
+                            record.field_0x4 = saveData.CurrentFlagName;
+                        }
                     }
 
                     _gameEngine.StaticVariables.INT_8018ed88 = 0;
                     _gameEngine.StaticVariables.INT_8018ed8c = 0;
+                    _gameEngine.StaticVariables.PTR_8018ede8.field_0x0 = _gameEngine.EtcRes.GetEtcString(0x83);
+                    _gameEngine.StaticVariables.PTR_8018ede8.field_0x4 = _gameEngine.EtcRes.GetEtcString(0x84);
 
-                    var arg1 = _gameEngine.EtcRes.GetEtcString(0x83);
-                    var arg2 = _gameEngine.EtcRes.GetEtcString(0x84);
-
-                    DisplayUIMemoryCardFiles(arg1, arg2, ref _gameEngine.StaticVariables.g_memoryCardPayloadOffset);
+                    DisplayUIMemoryCardFiles(_gameEngine.StaticVariables.PTR_8018ed68,
+                        _gameEngine.StaticVariables.PTR_8018ede8,
+                        ref _gameEngine.StaticVariables.g_memoryCardPayloadOffset);
 
                     _gameEngine.StaticVariables.g_fadeFrame = 0;
                     _gameEngine.StaticVariables.g_globalTransitionState = 0x3f8;
@@ -1102,7 +1206,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x3f8 : check payloadOffset (-1/-2) + fade + menu -> state 0x10 */
+            /* 0x3f8 : check payloadOffset (-1/-2) + fade + menu . state 0x10 */
             /* ------------------------------------------------------------ */
 
             case 0x3f8:
@@ -1138,7 +1242,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x10 : fade -> FUN_8005dc04 + save/update -> 0x3fe / 0x3fd / 0x3f6 ... */
+            /* 0x10 : fade . FUN_8005dc04 + save/update . 0x3fe / 0x3fd / 0x3f6 ... */
             /* ------------------------------------------------------------ */
 
             case 0x10:
@@ -1181,7 +1285,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x3f6 : fade -> state 0x0E                                    */
+            /* 0x3f6 : fade . state 0x0E                                    */
             /* ------------------------------------------------------------ */
 
             case 0x3f6:
@@ -1201,6 +1305,92 @@ public class MemoryCardManager
                     return result;
                 }
 
+            case 0x3fd:
+                {
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
+                    {
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset == 0xffffffff)
+                    {
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x15;
+                    return result;
+                }
+
+            case 0x3fe:
+                {
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
+                    {
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset == 0xffffffff)
+                    {
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x16;
+                    return result;
+                }
+
+            case 0x3ff:
+                {
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 0)
+                    {
+                        ResetMemoryCardMenuState();
+                        _gameEngine.StaticVariables.g_fadeSubstate = 1;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_fadeSubstate == 1)
+                    {
+                        if (!AdvanceFadeOldCheck(0x13))
+                        {
+                            return result;
+                        }
+
+                        if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
+                        {
+                            string line1 = _gameEngine.EtcRes.GetEtcString(0xb3);
+                            string line2 = _gameEngine.EtcRes.GetEtcString(0xb4);
+                            TryOpenMemoryCardMenu(line1, line2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
+                            _gameEngine.StaticVariables.g_fadeSubstate = 2;
+                        }
+                    }
+
+                    if (_gameEngine.StaticVariables.g_fadeSubstate != 2)
+                    {
+                        return result;
+                    }
+
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset != 0xffffffff)
+                    {
+                        _gameEngine.StaticVariables.g_globalTransitionState = 0x17;
+                    }
+
+                    return result;
+                }
+
             /* ------------------------------------------------------------ */
             /* 0x0E : init HUD hide + state 0x44B                            */
             /* ------------------------------------------------------------ */
@@ -1213,7 +1403,7 @@ public class MemoryCardManager
                 return result;
 
             /* ------------------------------------------------------------ */
-            /* 0x44B : reset menu once + fade (limit 0x0B) -> state 0x63     */
+            /* 0x44B : reset menu once + fade (limit 0x0B) . state 0x63     */
             /* ------------------------------------------------------------ */
 
             case 0x44B:
@@ -1246,7 +1436,7 @@ public class MemoryCardManager
                 return result;
 
             /* ------------------------------------------------------------ */
-            /* 0x3f5 : input(0x80) + fade -> state 0x0D                      */
+            /* 0x3f5 : input(0x80) + fade . state 0x0D                      */
             /* ------------------------------------------------------------ */
 
             case 0x3f5:
@@ -1277,7 +1467,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x0D : menu strings 0x9F/0xA0 -> state 0x3f6                  */
+            /* 0x0D : menu strings 0x9F/0xA0 . state 0x3f6                  */
             /* ------------------------------------------------------------ */
 
             case 0x0D:
@@ -1296,7 +1486,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x3f9 : reset menu once + fade -> si payloadOffset != -1 -> state 0x11 */
+            /* 0x3f9 : reset menu once + fade . si payloadOffset != -1 . state 0x11 */
             /* ------------------------------------------------------------ */
 
             case 0x3f9:
@@ -1322,7 +1512,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x3fa : reset menu once + fade -> si payloadOffset != -1 -> state 0x12 */
+            /* 0x3fa : reset menu once + fade . si payloadOffset != -1 . state 0x12 */
             /* ------------------------------------------------------------ */
 
             case 0x3fa:
@@ -1347,18 +1537,14 @@ public class MemoryCardManager
                     return result;
                 }
 
-            /* ------------------------------------------------------------ */
-            /* 0x12 : menu 0xAA + 0x?? -> state 0x3f5 (selon dump)           */
-            /* ------------------------------------------------------------ */
-
             case 0x12:
                 {
                     _gameEngine.StaticVariables.g_fadeSubstate = 0;
                     _gameEngine.StaticVariables.g_fadeFrame = 0;
 
                     {
-                        string line1 = _gameEngine.EtcRes.GetEtcString(0xAA);
-                        string line2 = _gameEngine.EtcRes.GetEtcString(0xAA); /* placeholder: dans dump c’est AA puis (après) */
+                        string line1 = _gameEngine.EtcRes.GetEtcString(0xA9);
+                        string line2 = _gameEngine.EtcRes.GetEtcString(0xAA);
                         TryOpenMemoryCardMenu(line1, line2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
                     }
 
@@ -1367,7 +1553,7 @@ public class MemoryCardManager
                 }
 
             /* ------------------------------------------------------------ */
-            /* 0x3fb : reset menu once + fade -> si payloadOffset != -1 -> state 0x13 */
+            /* 0x3fb : reset menu once + fade . si payloadOffset != -1 . state 0x13 */
             /* ------------------------------------------------------------ */
 
             case 0x3fb:
@@ -1392,10 +1578,6 @@ public class MemoryCardManager
                     return result;
                 }
 
-            /* ------------------------------------------------------------ */
-            /* 0x13 : menu 0xAB/0xAC puis jump vers LAB_800609c0 (non fourni) */
-            /* ------------------------------------------------------------ */
-
             case 0x13:
                 {
                     _gameEngine.StaticVariables.g_fadeSubstate = 0;
@@ -1407,13 +1589,9 @@ public class MemoryCardManager
                         TryOpenMemoryCardMenu(line1, line2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
                     }
 
-                    /* TODO: ton dump continue via LAB_800609c0 (non présent dans l’extrait). */
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
                     return result;
                 }
-
-            /* ------------------------------------------------------------ */
-            /* 0x3fc : début du bloc LAB_80060818 (dump tronqué chez toi)    */
-            /* ------------------------------------------------------------ */
 
             case 0x3fc:
                 {
@@ -1423,8 +1601,69 @@ public class MemoryCardManager
                         _gameEngine.StaticVariables.g_fadeSubstate = 1;
                     }
 
-                    /* Ici ton extrait s’arrête au chargement de g_fadeFrame (LAB_80060840). */
-                    /* TODO: compléter avec la suite du dump (après 80060840). */
+                    if (!AdvanceFadeOldCheck(0x13))
+                    {
+                        return result;
+                    }
+
+                    if (_gameEngine.StaticVariables.g_memoryCardPayloadOffset == 0xffffffff)
+                    {
+                        return result;
+                    }
+
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x14;
+                    return result;
+                }
+
+            case 0x11:
+                {
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                    _gameEngine.StaticVariables.g_fadeFrame = 0;
+                    string line1 = _gameEngine.EtcRes.GetEtcString(0xa7);
+                    string line2 = _gameEngine.EtcRes.GetEtcString(0xa8);
+                    TryOpenMemoryCardMenu(line1, line2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
+                    return result;
+                }
+
+            case 0x14:
+                {
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                    _gameEngine.StaticVariables.g_fadeFrame = 0;
+                    string line1 = _gameEngine.EtcRes.GetEtcString(0xad);
+                    string line2 = _gameEngine.EtcRes.GetEtcString(0xae);
+                    TryOpenMemoryCardMenu(line1, line2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
+                    return result;
+                }
+
+            case 0x15:
+                {
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                    _gameEngine.StaticVariables.g_fadeFrame = 0;
+                    string line1 = _gameEngine.EtcRes.GetEtcString(0xaf);
+                    string line2 = _gameEngine.EtcRes.GetEtcString(0xb0);
+                    TryOpenMemoryCardMenu(line1, line2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
+                    return result;
+                }
+
+            case 0x16:
+                {
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                    _gameEngine.StaticVariables.g_fadeFrame = 0;
+                    string line1 = _gameEngine.EtcRes.GetEtcString(0xb1);
+                    string line2 = _gameEngine.EtcRes.GetEtcString(0xb2);
+                    TryOpenMemoryCardMenu(line1, line2, ref _gameEngine.StaticVariables.g_openMemoryCardState);
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x3f5;
+                    return result;
+                }
+
+            case 0x17:
+                {
+                    _gameEngine.StaticVariables.g_fadeSubstate = 0;
+                    _gameEngine.StaticVariables.g_fadeFrame = 0;
+                    _gameEngine.StaticVariables.g_globalTransitionState = 0x3f3;
                     return result;
                 }
 
@@ -1434,6 +1673,8 @@ public class MemoryCardManager
         }
     }
 
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: repeated Ghidra old-value g_fadeFrame checks in StartMemoryCardProcess
     private bool AdvanceFadeOldCheck(int limitInclusiveOld)
     {
         int old = _gameEngine.StaticVariables.g_fadeFrame;
@@ -1449,17 +1690,15 @@ public class MemoryCardManager
         return true; // fini
     }
 
-    //800583ec
-    //Display all memory card files
+    // GHIDRA: InitializeMemoryCardMenu @ 0x800583EC
     public void InitializeMemoryCardMenu(CallBackInfo callbackInfo)
     {
-        Breakpoint.TriggerBreak();
-
         callbackInfo.RenderFunc = DisplayMemoryCardMenu;
+        MemoryFileBlocSprites.Clear();
 
         //var i = 0;
         //ppUVar2 = &PTR_800c419c;
-        //psVar3 = SHORT_ARRAY_800c436c;
+        //psVar3 = SHORT_ARRAY_800C436C;
         //do
         //{
         //    psVar3 = psVar3 + 2;
@@ -1646,7 +1885,7 @@ public class MemoryCardManager
         _gameEngine.UIManager.DisplayIconName(
             _gameEngine.StaticVariables.SPRT_ARRAY_80180210,
             MemoryFileBlocSprites,
-            _gameEngine.StaticVariables.g_memoryCardOffsetArg2.ToCharArray(),
+            _gameEngine.StaticVariables.g_memoryCardOffsetArg2.field_0x4?.ToCharArray(),
             0x40,
             _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
             _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y, 
@@ -1688,7 +1927,7 @@ public class MemoryCardManager
         //return 1;
     }
 
-    //80059dc8
+    // GHIDRA: InitializeUIMemoryFileBox @ 0x80059DC8
     private void InitializeUIMemoryFileBox(UIMemoryFileBox uiBox, int r, int g, int b, int targetR, int targetG, int targetB, int duration)
     {
         uiBox.StartR = r;
@@ -1705,29 +1944,32 @@ public class MemoryCardManager
         uiBox.Duration = duration;
     }
 
-    //80058b28
+    // GHIDRA: FUN_80058b28 @ 0x80058B28
     private int FUN_80058b28(uint param_1, uint param_2)
     {
-        Breakpoint.TriggerBreak();
-
-        //var piVar2 = _gameEngine.StaticVariables.g_memoryCardOffsetArg1[param_2];
-        //var bVar1 = piVar2 == 0;
-        var bVar1 = false;
+        var entryIndex = (int)param_2;
+        var bVar1 = entryIndex >= _gameEngine.StaticVariables.g_memoryCardOffsetArg1.Length ||
+                    string.IsNullOrEmpty(_gameEngine.StaticVariables.g_memoryCardOffsetArg1[entryIndex].field_0x0);
 
         if (bVar1)
         {
-            //(&PTR_800c419c)[param_1 * 0x1d] = (UIBoxConfiguration*)0x0;
+            _gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c419c[param_1 & 3] = 0;
         }
         else
         {
-            //(&PTR_800c419c)[param_1 * 0x1d] = (UIBoxConfiguration*)0x1;
+            var entry = _gameEngine.StaticVariables.g_memoryCardOffsetArg1[entryIndex];
+            _gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c419c[param_1 & 3] = 1;
         
-            SPRT[] sprites = [_gameEngine.StaticVariables.SPRT_ARRAY_800c41c0[param_1], _gameEngine.StaticVariables.SPRT_ARRAY_800c41c0[param_1 + 1]];
+            SPRT[] sprites =
+            [
+                _gameEngine.StaticVariables.SPRT_ARRAY_800c41c0[param_1 * 2],
+                _gameEngine.StaticVariables.SPRT_ARRAY_800c41c0[param_1 * 2 + 1]
+            ];
         
             _gameEngine.UIManager.DisplayIconName(
                 sprites,
                 MemoryFileBlocSprites,
-                _gameEngine.StaticVariables.g_memoryCardOffsetArg1.ToCharArray(),
+                entry.field_0x0?.ToCharArray(),
                 0x10,
                 _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.X,
                 _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y, 
@@ -1736,445 +1978,656 @@ public class MemoryCardManager
             _gameEngine.UIManager.DisplayIconName(
                 sprites,
                 MemoryFileBlocSprites,
-                _gameEngine.StaticVariables.g_memoryCardOffsetArg2.ToCharArray(), 
+                entry.field_0x4?.ToCharArray(), 
                 0x10,
                 _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.X,
                 _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y, 
                 (int)(param_1 * 2 + 2));
         }
         
-        //return !bVar1;
+        return bVar1 ? 0 : 1;
+    }
+
+    // GHIDRA: DisplayMemoryCardMenu @ 0x80058F24
+    private void DisplayMemoryCardMenu(CallBackInfo callbackInfo)
+    {
+        int iVar2;
+        uint uVar4;
+
+        MemoryFileBlocSprites.Clear();
+
+        if ((_gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] & 5) == 0)
+        {
+            if ((_gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] & 2) == 0)
+            {
+                if ((_gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] & 8) == 0)
+                {
+                    if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & 0x40) == 0)
+                    {
+                        if (((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & 0x4000) != 0) &&
+                            _gameEngine.StaticVariables.INT_80180120 + 1 < _gameEngine.StaticVariables.g_memoryCardOffsetArg1.Length &&
+                            !string.IsNullOrEmpty(_gameEngine.StaticVariables.g_memoryCardOffsetArg1[_gameEngine.StaticVariables.INT_80180120 + 1].field_0x0))
+                        {
+                            _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] |= 4;
+                            _gameEngine.StaticVariables.INT_80180120 += 1;
+                            _gameEngine.StaticVariables.UINT_ARRAY_800c4190[1] = (uint)_gameEngine.StaticVariables.INT_80180120;
+                        }
+
+                        if (((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & 0x1000) != 0) &&
+                            _gameEngine.StaticVariables.INT_80180120 != 0)
+                        {
+                            _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] |= 4;
+                            _gameEngine.StaticVariables.INT_80180120 += -1;
+                            _gameEngine.StaticVariables.UINT_ARRAY_800c4190[1] = (uint)_gameEngine.StaticVariables.INT_80180120;
+                        }
+                    }
+                    else
+                    {
+                        _gameEngine.StaticVariables.g_asyncOperationResult = 0;
+                        var arg1 = _gameEngine.EtcRes.GetEtcString(0x4a);
+                        var arg2 = _gameEngine.EtcRes.GetEtcString(0x4b);
+                        _gameEngine.InitializeAsyncOperation(arg1, arg2, result => _gameEngine.StaticVariables.g_asyncOperationResult = result);
+                        _gameEngine.UIManager.DisplayIconName(
+                            _gameEngine.StaticVariables.SPRT_ARRAY_80180210,
+                            MemoryFileBlocSprites,
+                            _gameEngine.StaticVariables.g_memoryCardOffsetArg2.field_0x4?.ToCharArray(),
+                            0x40,
+                            _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
+                            _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y,
+                            0);
+                        _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] = 8;
+                    }
+                }
+                else if ((uint)(_gameEngine.StaticVariables.g_asyncOperationResult - 1) < 2)
+                {
+                    _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] = 2;
+                }
+            }
+            else
+            {
+                iVar2 = _gameEngine.UIManager.UpdateUiBoxesPosition(
+                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground,
+                    _gameEngine.StaticVariables.TextToDisplay_80180130);
+
+                if (iVar2 != 0)
+                {
+                    _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] &= 0xfffffffd;
+                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X = _gameEngine.StaticVariables.TextToDisplay_80180130.originX;
+                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y = _gameEngine.StaticVariables.TextToDisplay_80180130.originY;
+                    _gameEngine.UIManager.FUN_80047cb0(callbackInfo);
+
+                    if (_gameEngine.StaticVariables.g_asyncOperationResult == 2)
+                    {
+                        _gameEngine.StaticVariables.g_memoryCardPayloadOffset = 0xfffffffe;
+                        return;
+                    }
+
+                    _gameEngine.StaticVariables.g_memoryCardPayloadOffset = (uint)_gameEngine.StaticVariables.INT_80180120;
+                    return;
+                }
+            }
+        }
+        else
+        {
+            _gameEngine.UIManager.UpdateUiBoxesPosition(
+                _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground,
+                _gameEngine.StaticVariables.TextToDisplay_80180130);
+
+            if ((_gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] & 1) != 0)
+            {
+                _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] &= 0xfffffffe;
+            }
+
+            if ((_gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] & 4) != 0)
+            {
+                _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] &= 0xfffffffb;
+            }
+        }
+
+        for (uVar4 = 0; uVar4 < 4; uVar4++)
+        {
+            FUN_80058b28(uVar4, uVar4);
+        }
+
+        foreach (var sprite in MemoryFileBlocSprites)
+        {
+            _gameEngine.Renderer.AddSprite(sprite);
+        }
+    }
+
+    private int DisplayMemoryCardMenu2(CallBackInfo callbackInfo)
+    {
+        ulong uVar1;
+        int iVar2;
+        //int iVar3;
+        string arg1;
+        string arg2;
+        uint uVar4;
+        short piVar5;
+        SPRT pSVar6;
+        UIBoxConfiguration pUVar7;
+        uint puVar8;
+        
+        if ((_gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] & 5) == 0)
+        {
+            if ((_gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] & 2) == 0)
+            {
+                if ((_gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] & 8) == 0)
+                {
+                    if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & 0x40) == 0)
+                    {
+                        if (((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & 0x4000) != 0) 
+                            && ((_gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c419c[((((_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 2) & 3) + 1) & 3) * 0x1d] & 1) != 0))
+                        {
+                            iVar2 = 0;
+                            uVar4 = _gameEngine.StaticVariables.UINT_ARRAY_800c4190[0];
+
+                            do
+                            {
+                                uVar4 = (uVar4 + 1) & 3;
+                                _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y = (short)_gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2 * 2];
+                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.mode = 2;
+                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.tick = 0;
+                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.speed = 0xf;
+                                pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
+        
+                                if (pUVar7.X < 0)
+                                {
+                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.x = (short)(pUVar7.X + pUVar7.Width * -8);
+                                }
+                                else
+                                {
+                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.x = pUVar7.X;
+                                }
+        
+                                piVar5 = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2 * 2 + 2];
+        
+                                if (piVar5 < 0)
+                                {
+                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.y = (short)(piVar5 + _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Height * -8);
+                                }
+                                else
+                                {
+                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.y = (short)piVar5;
+                                }
+        
+                                pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
+        
+                                if (pUVar7.X < 0)
+                                {
+                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.startX = (short)(pUVar7.X + pUVar7.Width * -8);
+                                }
+                                else
+                                {
+                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.startX = pUVar7.X;
+                                }
+        
+                                pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
+        
+                                if (pUVar7.Y < 0)
+                                {
+                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.startY = (short)(pUVar7.Y + pUVar7.Height * -8);
+                                }
+                                else
+                                {
+                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.startY = pUVar7.Y;
+                                }
+        
+                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.originX = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.X;
+                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.originY = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y;
+        
+                                iVar2 += 1;
+        
+                                _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.UIBoxConfiguration_800bcb30, _gameEngine.StaticVariables.TextToDisplay_800c41a4);
+                            } while (iVar2 < 4);
+        
+                            InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0]], 0, 0, 0, 0x40, 0x40, 0x40, 0xf);
+                            InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 1 & 3)], 0x40, 0x40, 0x40, 0, 0, 0, 0xf);
+                            InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 2 & 3)], 0x80, 0x80, 0x80, 0x40, 0x40, 0x40, 0xf);
+                            InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 3 & 3)], 0x40, 0x40, 0x40, 0x80, 0x80, 0x80, 0xf);
+                            _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] |= 4;
+                            iVar2 = FUN_80058b28(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0], _gameEngine.StaticVariables.UINT_ARRAY_800c4190[1]);
+                            
+                            if (iVar2 != 0)
+                            {
+                                _gameEngine.StaticVariables.UINT_ARRAY_800c4190[1] += 1;
+                            }
+        
+                            _gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] = _gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 1 & 3;
+                            _gameEngine.StaticVariables.INT_80180120 += 1;
+                        }
+        
+                        iVar2 = 0;
+        
+                        if (((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & 0x1000) != 0) 
+                            && _gameEngine.StaticVariables.INT_80180120 != 0)
+                        {
+                            _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] |= 4;
+                            uVar4 = _gameEngine.StaticVariables.UINT_ARRAY_800c4190[0];
+        
+                            do
+                            {
+                                _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y = (short)_gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2 * 2 + 2];
+                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.mode = 2;
+                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.tick = 0;
+                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.speed = 0xf;
+                                pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
+        
+                                if (pUVar7.X < 0)
+                                {
+                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.x = (short)(pUVar7.X + pUVar7.Width * -8);
+                                }
+                                else
+                                {
+                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.x = pUVar7.X;
+                                }
+        
+                                piVar5 = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2 * 2];
+        
+                                if (piVar5 < 0)
+                                {
+                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.y = (short)(piVar5 + _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Height * -8);
+                                }
+                                else
+                                {
+                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.y = (short)piVar5;
+                                }
+        
+                                pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
+        
+                                if (pUVar7.X < 0)
+                                {
+                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.startX = (short)(pUVar7.X + pUVar7.Width * -8);
+                                }
+                                else
+                                {
+                                    (_gameEngine.StaticVariables.TextToDisplay_800c41a4.startX) = pUVar7.X;
+                                }
+        
+                                pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
+        
+                                if (pUVar7.Y < 0)
+                                {
+                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.startY = (short)(pUVar7.Y + pUVar7.Height * -8);
+                                }
+                                else
+                                {
+                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.startY = pUVar7.Y;
+                                }
+        
+                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.originX = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.X;
+                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.originY = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y;
+                                
+                                _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.UIBoxConfiguration_800bcb30, _gameEngine.StaticVariables.TextToDisplay_800c41a4);
+        
+                                iVar2 += 1; 
+                                uVar4 = uVar4 + 1 & 3;
+                            } while (iVar2 < 4);
+        
+                            if (1 < _gameEngine.StaticVariables.INT_80180120)
+                            {
+                                FUN_80058b28(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0], (uint)(_gameEngine.StaticVariables.INT_80180120 - 2));
+                            }
+        
+                            InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0]], 0, 0, 0, 0x40, 0x40, 0x40, 0xf);
+                            InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 1) & 3], 0x40, 0x40, 0x40, 0x80, 0x80, 0x80, 0xf);
+                            InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 2) & 3], 0x80, 0x80, 0x80, 0x40, 0x40, 0x40, 0xf);
+                            InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 3) & 3], 0x40, 0x40, 0x40, 0, 0, 0, 0xf);
+                            
+                            if (_gameEngine.StaticVariables.g_memoryCardOffsetArg1[(_gameEngine.StaticVariables.INT_80180120 - 1) * 8 + 8] == 0)
+                            {
+                                _gameEngine.StaticVariables.UINT_ARRAY_800c4190[1] = (uint)_gameEngine.StaticVariables.INT_80180120;
+                            }
+                            else
+                            {
+                                _gameEngine.StaticVariables.UINT_ARRAY_800c4190[1] = (uint)(_gameEngine.StaticVariables.INT_80180120 + 1);
+                            }
+        
+                            _gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] = _gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] - 1 & 3;
+                            _gameEngine.StaticVariables.INT_80180120 += -1;
+                        }
+                    }
+                    else
+                    {
+                        _gameEngine.StaticVariables.g_asyncOperationResult2 = 0;
+                        arg1 = _gameEngine.EtcRes.GetEtcString(0x4a);
+                        arg2 = _gameEngine.EtcRes.GetEtcString(0x4b);
+                        _gameEngine.InitializeAsyncOperation(arg1, arg2, &g_asyncOperationResult2);
+                        _gameEngine.UIManager.DisplayIconName(
+                            _gameEngine.StaticVariables.SPRT_ARRAY_80180210, 
+                            (_gameEngine.StaticVariables.g_memoryCardOffsetArg2 + 4), 
+                            0x40,
+                            _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
+                            _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y, 
+                            0);
+        
+                        _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] = 8;
+                    }
+                }
+                else if (_gameEngine.StaticVariables.g_asyncOperationResult2 - 1U < 2)
+                {
+                    _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] = 2;
+                    iVar2 = 0;
+                    uVar4 = _gameEngine.StaticVariables.UINT_ARRAY_800c4190[0];
+        
+                    do
+                    {
+                        uVar4 = uVar4 + 1 & 3;
+                        _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y = -1;
+                        _gameEngine.StaticVariables.TextToDisplay_800c41a4.mode = 2;
+                        _gameEngine.StaticVariables.TextToDisplay_800c41a4.tick = 0;
+                        _gameEngine.StaticVariables.TextToDisplay_800c41a4.speed = 0xf;
+                        pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
+        
+                        if (pUVar7.X < 0)
+                        {
+                            _gameEngine.StaticVariables.TextToDisplay_800c41a4.x = (short)(pUVar7.X + pUVar7.Width * -8);
+                        }
+                        else
+                        {
+                            _gameEngine.StaticVariables.TextToDisplay_800c41a4.x = pUVar7.X;
+                        }
+        
+                        piVar5 = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2 * 2 + 2];
+        
+                        if (piVar5 < 0)
+                        {
+                            _gameEngine.StaticVariables.TextToDisplay_800c41a4.y = (short)(piVar5 + _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Height * -8);
+                        }
+                        else
+                        {
+                            _gameEngine.StaticVariables.TextToDisplay_800c41a4.y = piVar5;
+                        }
+        
+                        pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
+        
+                        if (pUVar7.X < 0)
+                        {
+                            _gameEngine.StaticVariables.TextToDisplay_800c41a4.startX = (short)(pUVar7.X + pUVar7.Width * -8);
+                        }
+                        else
+                        {
+                            _gameEngine.StaticVariables.TextToDisplay_800c41a4.startX = pUVar7.X;
+                        }
+        
+                        pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
+        
+                        if (pUVar7.Y < 0)
+                        {
+                            _gameEngine.StaticVariables.TextToDisplay_800c41a4.startY = (short)(pUVar7.Y + pUVar7.Height * -8);
+                        }
+                        else
+                        {
+                            _gameEngine.StaticVariables.TextToDisplay_800c41a4.startY = pUVar7.Y;
+                        }
+        
+                        _gameEngine.StaticVariables.TextToDisplay_800c41a4.originX = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.X;
+                        _gameEngine.StaticVariables.TextToDisplay_800c41a4.originY = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y;
+                        iVar2 += 1;
+                        _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.UIBoxConfiguration_800bcb30, _gameEngine.StaticVariables.TextToDisplay_800c41a4);
+                    } while (iVar2 < 3);
+        
+                    InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 1 & 3], 0x40, 0x40, 0x40, 0, 0, 0, 0xf);
+                    InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 2 & 3], 0x80, 0x80, 0x80, 0, 0, 0, 0xf);
+                    InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 3 & 3], 0x40, 0x40, 0x40, 0, 0, 0, 0xf);
+                    _gameEngine.StaticVariables.TextToDisplay_80180130.mode = 2;
+                    _gameEngine.StaticVariables.TextToDisplay_80180130.tick = 0;
+                    _gameEngine.StaticVariables.TextToDisplay_80180130.speed = 0xf;
+        
+                    if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X < 0)
+                    {
+                        _gameEngine.StaticVariables.TextToDisplay_80180130.x = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X + _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width * -8);
+                    }
+                    else
+                    {
+                        _gameEngine.StaticVariables.TextToDisplay_80180130.x = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
+                    }
+        
+                    if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y < 0)
+                    {
+                        _gameEngine.StaticVariables.TextToDisplay_80180130.y = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y + _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Height * -8);
+                    }
+                    else
+                    {
+                        _gameEngine.StaticVariables.TextToDisplay_80180130.y = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y;
+                    }
+                    if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X < 0)
+                    {
+                        _gameEngine.StaticVariables.TextToDisplay_80180130.startX = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X + _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width * -8);
+                    }
+                    else
+                    {
+                        _gameEngine.StaticVariables.TextToDisplay_80180130.startX = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
+                    }
+        
+                    _gameEngine.StaticVariables.TextToDisplay_80180130.startY = 0xf0;
+                }
+            }
+            else
+            {
+                FUN_80059e0c(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[0]);
+                FUN_80059e0c(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[1]);
+                FUN_80059e0c(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[2]);
+                FUN_80059e0c(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[3]);
+                _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.UIBoxConfiguration_800bcb30, _gameEngine.StaticVariables.TextToDisplay_800c41a4);
+                _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c4214, _gameEngine.StaticVariables.TextToDisplay_800c4218);
+                _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c4288, _gameEngine.StaticVariables.TextToDisplay_800c428c);
+                _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c42fc, _gameEngine.StaticVariables.TextToDisplay_800c4300);
+                iVar2 = _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground, _gameEngine.StaticVariables.TextToDisplay_80180130);
+                
+                if (iVar2 != 0)
+                {
+                    _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] &= 0xfffffffd;
+                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X = _gameEngine.StaticVariables.TextToDisplay_80180130.originX;
+                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y = _gameEngine.StaticVariables.TextToDisplay_80180130.originY;
+                    _gameEngine.UIManager.FUN_80047cb0(callbackInfo);
+                    
+                    if (_gameEngine.StaticVariables.g_asyncOperationResult2 == 2)
+                    {
+                        _gameEngine.StaticVariables.PTR_80180128 = -2;
+                        return 1;
+                    }
+        
+                    _gameEngine.StaticVariables.PTR_80180128 = _gameEngine.StaticVariables.INT_80180120;
+                    return 1;
+                }
+            }
+        }
+        else
+        {
+            _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground, _gameEngine.StaticVariables.TextToDisplay_80180130);
+            FUN_80059e0c(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[0]);
+            FUN_80059e0c(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[1]);
+            FUN_80059e0c(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[2]);
+            FUN_80059e0c(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[3]);
+            _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.UIBoxConfiguration_800bcb30, _gameEngine.StaticVariables.TextToDisplay_800c41a4);
+            _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c4214, _gameEngine.StaticVariables.TextToDisplay_800c4218);
+            _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c42fc, _gameEngine.StaticVariables.TextToDisplay_800c4300);
+            iVar2 = _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c4288, _gameEngine.StaticVariables.TextToDisplay_800c428c);
+        
+            if (iVar2 != 0)
+            {
+                if ((_gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] & 1) != 0)
+                {
+                    _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] &= 0xfffffffe;
+                }
+        
+                if ((_gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] & 4) != 0)
+                {
+                    _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] &= 0xfffffffb;
+                    (_gameEngine.StaticVariables.PTR_800c419c)[_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] * 0x1d] = null;
+                }
+            }
+        }
+        
+        FUN_80058e6c(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground);
+        
+        if (_gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c419c != null)
+        {
+            FUN_80058c44(_gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c419c, _gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[0]);
+        }
+        
+        if (_gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c4210 != null)
+        {
+            FUN_80058c44(_gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c4210, _gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[1]);
+        }
+        
+        if (_gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c4284 != null)
+        {
+            FUN_80058c44(_gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c4284, _gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[2]);
+        }
+        
+        if (_gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c42f8 != null)
+        {
+            FUN_80058c44(_gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c42f8, _gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[3]);
+        }
+        
+        //uVar1 = g_drawModes[0x14].tag;
+        _gameEngine.StaticVariables.SPRT_ARRAY_80180210[0].x0 = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X + 0x10);
+        _gameEngine.StaticVariables.SPRT_ARRAY_80180210[0].y0 = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y + 0x10);
+        
+        foreach (var sprite in MemoryFileBlocSprites)
+        {
+            _gameEngine.Renderer.AddSprite(sprite);
+        }
+
+        //pSVar6 = _gameEngine.StaticVariables.SPRT_ARRAY_80180210[0];
+        //uVar4 = pSVar6.tag;
+        //puVar8 = _gameEngine.StaticVariables.UINT_80146f70 + uVar1 * 10;
+        //pSVar6.tag = uVar4 & 0xff000000 | *puVar8 & 0xffffff;
+        //*puVar8 = *puVar8 & 0xff000000 | (uint)pSVar6 & 0xffffff;
 
         return 1;
     }
 
-    //80058f24
-    private void DisplayMemoryCardMenu(CallBackInfo callbackInfo)
+    private void FUN_80058e6c(UIBoxConfiguration uiBoxConfiguration)
     {
-        Breakpoint.TriggerBreak();
+        SPRT pSVar2;
+        uint puVar3;
+        int w;
+        int h;
 
-        //ulong uVar1;
-        //int iVar2;
-        //int iVar3;
-        //string arg1;
-        //string arg2;
-        //uint uVar4;
-        //int piVar5;
-        //SPRT pSVar6;
-        //UIBoxConfiguration pUVar7;
-        //uint puVar8;
-        //
-        //if ((_gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] & 5) == 0)
-        //{
-        //    if ((_gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] & 2) == 0)
-        //    {
-        //        if ((_gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] & 8) == 0)
-        //        {
-        //            if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & 0x40) == 0)
-        //            {
-        //                if (((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & 0x4000) != 0) 
-        //                    && (((uint)(&PTR_800c419c)[((_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 2 & 3) + 1 & 3) * 0x1d] & 1) != 0))
-        //                {
-        //                    iVar2 = 0;
-        //                    uVar4 = _gameEngine.StaticVariables.UINT_ARRAY_800c4190[0];
-        //                    do
-        //                    {
-        //                        uVar4 = uVar4 + 1 & 3;
-        //                        iVar3 = uVar4 * 0x74;
-        //                        (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d].Y = _gameEngine.StaticVariables.SHORT_ARRAY_800c436c[iVar2 * 2];
-        //                        _gameEngine.StaticVariables.TextToDisplay_800c41a4[iVar3 + 8] = 2;
-        //                        _gameEngine.StaticVariables.TextToDisplay_800c41a4[iVar3] = 0;
-        //                        _gameEngine.StaticVariables.TextToDisplay_800c41a4[iVar3 + 4] = 0xf;
-        //                        pUVar7 = (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d];
-        //
-        //                        if (pUVar7.X < 0)
-        //                        {
-        //                            _gameEngine.StaticVariables.TextToDisplay_800c41a4 + iVar3 + 0xc =pUVar7.X + pUVar7.Width * -8;
-        //                        }
-        //                        else
-        //                        {
-        //                            _gameEngine.StaticVariables.TextToDisplay_800c41a4 + iVar3 + 0xc = pUVar7.X;
-        //                        }
-        //
-        //                        piVar5 = _gameEngine.StaticVariables.SHORT_ARRAY_800c436c + iVar2 * 2 + 2);
-        //
-        //                        if (*piVar5 < 0)
-        //                        {
-        //                            _gameEngine.StaticVariables.TextToDisplay_800c41a4 + uVar4 * 0x74 + 0xe) = (short)*piVar5 + (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d].Height * -8;
-        //                        }
-        //                        else
-        //                        {
-        //                            _gameEngine.StaticVariables.TextToDisplay_800c41a4 + uVar4 * 0x74 + 0xe) = (short)*piVar5;
-        //                        }
-        //
-        //                        pUVar7 = (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d];
-        //
-        //                        if (pUVar7.X < 0)
-        //                        {
-        //                            _gameEngine.StaticVariables.TextToDisplay_800c41a4 + uVar4 * 0x74 + 0x10) = pUVar7.X + pUVar7.Width * -8;
-        //                        }
-        //                        else
-        //                        {
-        //                            _gameEngine.StaticVariables.TextToDisplay_800c41a4 + uVar4 * 0x74 + 0x10) = pUVar7.X;
-        //                        }
-        //
-        //                        pUVar7 = (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d];
-        //
-        //                        if (pUVar7.Y < 0)
-        //                        {
-        //                            _gameEngine.StaticVariables.TextToDisplay_800c41a4 + uVar4 * 0x74 + 0x12) = pUVar7.Y + pUVar7.Height * -8;
-        //                        }
-        //                        else
-        //                        {
-        //                            _gameEngine.StaticVariables.TextToDisplay_800c41a4 + uVar4 * 0x74 + 0x12) = pUVar7.Y;
-        //                        }
-        //
-        //                        iVar3 = uVar4 * 0x74;
-        //
-        //                        _gameEngine.StaticVariables.TextToDisplay_800c41a4 + iVar3 + 0x18) = (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d].X;
-        //                        _gameEngine.StaticVariables.TextToDisplay_800c41a4 + iVar3 + 0x1a) = (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d].Y;
-        //
-        //                        iVar2 += 1;
-        //
-        //                        _gameEngine.StaticVariables.UpdateUiBoxesPosition((&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d], (TextToDisplay*)((int)&TextToDisplay_800c41a4 + iVar3));
-        //                    } while (iVar2 < 4);
-        //
-        //                    InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0]], 0, 0, 0, 0x40, 0x40, 0x40, 0xf);
-        //                    InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 1 & 3)], 0x40, 0x40, 0x40, 0, 0, 0, 0xf);
-        //                    InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 2 & 3)], 0x80, 0x80, 0x80, 0x40, 0x40, 0x40, 0xf);
-        //                    InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 3 & 3)], 0x40, 0x40, 0x40, 0x80, 0x80, 0x80, 0xf);
-        //                    _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] |= 4;
-        //                    iVar2 = FUN_80058b28(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0], _gameEngine.StaticVariables.UINT_ARRAY_800c4190[1]);
-        //                    
-        //                    if (iVar2 != 0)
-        //                    {
-        //                        _gameEngine.StaticVariables.UINT_ARRAY_800c4190[1] += 1;
-        //                    }
-        //
-        //                    _gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] = _gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 1 & 3;
-        //                    _gameEngine.StaticVariables.INT_80180120 += 1;
-        //                }
-        //
-        //                iVar2 = 0;
-        //
-        //                if (((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & 0x1000) != 0) 
-        //                    && _gameEngine.StaticVariables.INT_80180120 != 0)
-        //                {
-        //                    _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] |= 4;
-        //                    uVar4 = _gameEngine.StaticVariables.UINT_ARRAY_800c4190[0];
-        //
-        //                    do
-        //                    {
-        //                        iVar3 = uVar4 * 0x74;
-        //                        (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d].Y = _gameEngine.StaticVariables.SHORT_ARRAY_800c436c[iVar2 * 2 + 2];
-        //                        _gameEngine.StaticVariables.TextToDisplay_800c41a4[iVar3 + 8] = 2;
-        //                        _gameEngine.StaticVariables.TextToDisplay_800c41a4[iVar3] = 0;
-        //                        _gameEngine.StaticVariables.TextToDisplay_800c41a4[iVar3 + 4] = 0xf;
-        //                        pUVar7 = (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d];
-        //
-        //                        if (pUVar7.X < 0)
-        //                        {
-        //                            _gameEngine.StaticVariables.TextToDisplay_800c41a4 + iVar3 + 0xc = pUVar7.X + pUVar7.Width * -8;
-        //                        }
-        //                        else
-        //                        {
-        //                            _gameEngine.StaticVariables.TextToDisplay_800c41a4 + iVar3 + 0xc = pUVar7.X;
-        //                        }
-        //
-        //                        piVar5 = _gameEngine.StaticVariables.SHORT_ARRAY_800c436c[iVar2 * 2];
-        //
-        //                        if (*piVar5 < 0)
-        //                        {
-        //                            _gameEngine.StaticVariables.TextToDisplay_800c41a4 + uVar4 * 0x74 + 0xe) = piVar5 + (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d].Height * -8;
-        //                        }
-        //                        else
-        //                        {
-        //                            _gameEngine.StaticVariables.TextToDisplay_800c41a4 + uVar4 * 0x74 + 0xe = piVar5;
-        //                        }
-        //
-        //                        pUVar7 = (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d];
-        //
-        //                        if (pUVar7.X < 0)
-        //                        {
-        //                            _gameEngine.StaticVariables.TextToDisplay_800c41a4 + uVar4 * 0x74 + 0x10 =pUVar7.X + pUVar7.Width * -8;
-        //                        }
-        //                        else
-        //                        {
-        //                            *(short*)((int)&TextToDisplay_800c41a4 + uVar4 * 0x74 + 0x10) = pUVar7.X;
-        //                        }
-        //
-        //                        pUVar7 = (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d];
-        //
-        //                        if (pUVar7.Y < 0)
-        //                        {
-        //                            _gameEngine.StaticVariables.TextToDisplay_800c41a4 + uVar4 * 0x74 + 0x12 = pUVar7.Y + pUVar7.Height * -8;
-        //                        }
-        //                        else
-        //                        {
-        //                            _gameEngine.StaticVariables.TextToDisplay_800c41a4 + uVar4 * 0x74 + 0x12 = pUVar7.Y;
-        //                        }
-        //
-        //                        iVar3 = uVar4 * 0x74;
-        //
-        //                        _gameEngine.StaticVariables.TextToDisplay_800c41a4 + iVar3 + 0x18) = (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d].X;
-        //                        _gameEngine.StaticVariables.TextToDisplay_800c41a4 + iVar3 + 0x1a) = (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d].Y;
-        //                        
-        //                        _gameEngine.StaticVariables.UpdateUiBoxesPosition((&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d], (TextToDisplay*)((int)&TextToDisplay_800c41a4 + iVar3));
-        //
-        //                        iVar2 += 1; 
-        //                        uVar4 = uVar4 + 1 & 3;
-        //                    } while (iVar2 < 4);
-        //
-        //                    if (1 < _gameEngine.StaticVariables.INT_80180120)
-        //                    {
-        //                        FUN_80058b28(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0], _gameEngine.StaticVariables.INT_80180120 + -2);
-        //                    }
-        //
-        //                    InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0]], 0, 0, 0, 0x40, 0x40, 0x40, 0xf);
-        //                    InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 1) & 3], 0x40, 0x40, 0x40, 0x80, 0x80, 0x80, 0xf);
-        //                    InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 2) & 3], 0x80, 0x80, 0x80, 0x40, 0x40, 0x40, 0xf);
-        //                    InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 3) & 3], 0x40, 0x40, 0x40, 0, 0, 0, 0xf);
-        //                    
-        //                    if ((_gameEngine.StaticVariables.g_memoryCardOffsetArg1 + (_gameEngine.StaticVariables.INT_80180120 + -1) * 8 + 8) == 0)
-        //                    {
-        //                        _gameEngine.StaticVariables.UINT_ARRAY_800c4190[1] = (uint)_gameEngine.StaticVariables.INT_80180120;
-        //                    }
-        //                    else
-        //                    {
-        //                        _gameEngine.StaticVariables.UINT_ARRAY_800c4190[1] = (uint)(_gameEngine.StaticVariables.INT_80180120 + 1);
-        //                    }
-        //
-        //                    _gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] = _gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] - 1 & 3;
-        //                    _gameEngine.StaticVariables.INT_80180120 += -1;
-        //                }
-        //            }
-        //            else
-        //            {
-        //                _gameEngine.StaticVariables.g_asyncOperationResult2 = 0;
-        //                arg1 = GetEtcString(0x4a);
-        //                arg2 = GetEtcString(0x4b);
-        //                InitializeAsyncOperation(arg1, arg2, &g_asyncOperationResult2);
-        //                DisplayIconName(
-        //                    _gameEngine.StaticVariables.SPRT_ARRAY_80180210, 
-        //                    (_gameEngine.StaticVariables.g_memoryCardOffsetArg2 + 4), 
-        //                    0x40,
-        //                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
-        //                    _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y, 
-        //                    0);
-        //
-        //                _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] = 8;
-        //            }
-        //        }
-        //        else if (_gameEngine.StaticVariables.g_asyncOperationResult2 - 1U < 2)
-        //        {
-        //            _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] = 2;
-        //            iVar2 = 0;
-        //            uVar4 = _gameEngine.StaticVariables.UINT_ARRAY_800c4190[0];
-        //
-        //            do
-        //            {
-        //                uVar4 = uVar4 + 1 & 3;
-        //                iVar3 = uVar4 * 0x74;
-        //
-        //                (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d].Y = -1;
-        //                _gameEngine.StaticVariables.TextToDisplay_800c41a4 + iVar3 + 8 = 2;
-        //                _gameEngine.StaticVariables.TextToDisplay_800c41a4 + iVar3 = 0;
-        //                _gameEngine.StaticVariables.TextToDisplay_800c41a4 + iVar3 + 4 = 0xf;
-        //                pUVar7 = (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d];
-        //
-        //                if (pUVar7.X < 0)
-        //                {
-        //                    _gameEngine.StaticVariables.TextToDisplay_800c41a4 + iVar3 + 0xc = pUVar7.X + pUVar7.Width * -8;
-        //                }
-        //                else
-        //                {
-        //                    _gameEngine.StaticVariables.TextToDisplay_800c41a4 + iVar3 + 0xc = pUVar7.X;
-        //                }
-        //
-        //                piVar5 = _gameEngine.StaticVariables.SHORT_ARRAY_800c436c + iVar2 * 2 + 2;
-        //
-        //                if (*piVar5 < 0)
-        //                {
-        //                    _gameEngine.StaticVariables.TextToDisplay_800c41a4 + uVar4 * 0x74 + 0xe) = (short)*piVar5 + (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d].Height * -8;
-        //                }
-        //                else
-        //                {
-        //                    _gameEngine.StaticVariables.TextToDisplay_800c41a4 + uVar4 * 0x74 + 0xe) = (short)*piVar5;
-        //                }
-        //
-        //                pUVar7 = (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d];
-        //
-        //                if (pUVar7.X < 0)
-        //                {
-        //                    _gameEngine.StaticVariables.TextToDisplay_800c41a4 + uVar4 * 0x74 + 0x10) = pUVar7.X + pUVar7.Width * -8;
-        //                }
-        //                else
-        //                {
-        //                    _gameEngine.StaticVariables.TextToDisplay_800c41a4 + uVar4 * 0x74 + 0x10) = pUVar7.X;
-        //                }
-        //
-        //                pUVar7 = (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d];
-        //
-        //                if (pUVar7.Y < 0)
-        //                {
-        //                    _gameEngine.StaticVariables.TextToDisplay_800c41a4 + uVar4 * 0x74 + 0x12) = pUVar7.Y + pUVar7.Height * -8;
-        //                }
-        //                else
-        //                {
-        //                    _gameEngine.StaticVariables.TextToDisplay_800c41a4 + uVar4 * 0x74 + 0x12) = pUVar7.Y;
-        //                }
-        //
-        //                iVar3 = uVar4 * 0x74;
-        //
-        //                _gameEngine.StaticVariables.TextToDisplay_800c41a4 + iVar3 + 0x18) = (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d].X;
-        //                _gameEngine.StaticVariables.TextToDisplay_800c41a4 + iVar3 + 0x1a) = (&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d].Y;
-        //                iVar2 += 1;
-        //                UpdateUiBoxesPosition((&PTR_UIBoxConfiguration_800c41a0)[uVar4 * 0x1d], _gameEngine.StaticVariables.TextToDisplay_800c41a4 + iVar3));
-        //            } while (iVar2 < 3);
-        //
-        //            InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 1 & 3], 0x40, 0x40, 0x40, 0, 0, 0, 0xf);
-        //            InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 2 & 3], 0x80, 0x80, 0x80, 0, 0, 0, 0xf);
-        //            InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 3 & 3], 0x40, 0x40, 0x40, 0, 0, 0, 0xf);
-        //            _gameEngine.StaticVariables.TextToDisplay_80180130.mode = 2;
-        //            _gameEngine.StaticVariables.TextToDisplay_80180130.tick = 0;
-        //            _gameEngine.StaticVariables.TextToDisplay_80180130.speed = 0xf;
-        //
-        //            if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X < 0)
-        //            {
-        //                _gameEngine.StaticVariables.TextToDisplay_80180130.x = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X + _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width * -8);
-        //            }
-        //            else
-        //            {
-        //                _gameEngine.StaticVariables.TextToDisplay_80180130.x = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
-        //            }
-        //
-        //            if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y < 0)
-        //            {
-        //                _gameEngine.StaticVariables.TextToDisplay_80180130.y = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y + _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Height * -8);
-        //            }
-        //            else
-        //            {
-        //                _gameEngine.StaticVariables.TextToDisplay_80180130.y = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y;
-        //            }
-        //            if (_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X < 0)
-        //            {
-        //                _gameEngine.StaticVariables.TextToDisplay_80180130.startX = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X + _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Width * -8);
-        //            }
-        //            else
-        //            {
-        //                _gameEngine.StaticVariables.TextToDisplay_80180130.startX = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X;
-        //            }
-        //
-        //            _gameEngine.StaticVariables.TextToDisplay_80180130.startY = 0xf0;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        FUN_80059e0c(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[0]);
-        //        FUN_80059e0c(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[1]);
-        //        FUN_80059e0c(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[2]);
-        //        FUN_80059e0c(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[3]);
-        //        UpdateUiBoxesPosition(PTR_UIBoxConfiguration_800c41a0, _gameEngine.StaticVariables.TextToDisplay_800c41a4);
-        //        UpdateUiBoxesPosition(PTR_UIBoxConfiguration_800c4214, _gameEngine.StaticVariables.TextToDisplay_800c4218);
-        //        UpdateUiBoxesPosition(PTR_UIBoxConfiguration_800c4288, _gameEngine.StaticVariables.TextToDisplay_800c428c);
-        //        UpdateUiBoxesPosition(PTR_UIBoxConfiguration_800c42fc, _gameEngine.StaticVariables.TextToDisplay_800c4300);
-        //        iVar2 = UpdateUiBoxesPosition(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground, _gameEngine.StaticVariables.TextToDisplay_80180130);
-        //        
-        //        if (iVar2 != 0)
-        //        {
-        //            _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] &= 0xfffffffd;
-        //            _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X = _gameEngine.StaticVariables.TextToDisplay_80180130.originX;
-        //            _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y = _gameEngine.StaticVariables.TextToDisplay_80180130.originY;
-        //            FUN_80047cb0(callbackInfo);
-        //            
-        //            if (_gameEngine.StaticVariables.g_asyncOperationResult2 == 2)
-        //            {
-        //                *PTR_80180128 = -2;
-        //                return 1;
-        //            }
-        //
-        //            *PTR_80180128 = INT_80180120;
-        //            return 1;
-        //        }
-        //    }
-        //}
-        //else
-        //{
-        //    UpdateUiBoxesPosition(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground, _gameEngine.StaticVariables.TextToDisplay_80180130);
-        //    FUN_80059e0c(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[0]);
-        //    FUN_80059e0c(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[1]);
-        //    FUN_80059e0c(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[2]);
-        //    FUN_80059e0c(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[3]);
-        //    UpdateUiBoxesPosition(PTR_UIBoxConfiguration_800c41a0, _gameEngine.StaticVariables.TextToDisplay_800c41a4);
-        //    UpdateUiBoxesPosition(PTR_UIBoxConfiguration_800c4214, _gameEngine.StaticVariables.TextToDisplay_800c4218);
-        //    UpdateUiBoxesPosition(PTR_UIBoxConfiguration_800c42fc, _gameEngine.StaticVariables.TextToDisplay_800c4300);
-        //    iVar2 = UpdateUiBoxesPosition(PTR_UIBoxConfiguration_800c4288, _gameEngine.StaticVariables.TextToDisplay_800c428c);
-        //
-        //    if (iVar2 != 0)
-        //    {
-        //        if ((_gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] & 1) != 0)
-        //        {
-        //            _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] &= 0xfffffffe;
-        //        }
-        //
-        //        if ((_gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] & 4) != 0)
-        //        {
-        //            _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] &= 0xfffffffb;
-        //            (&PTR_800c419c)[UINT_ARRAY_800c4190[0] * 0x1d] = null;
-        //        }
-        //    }
-        //}
-        //
-        //FUN_80058e6c(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground);
-        //
-        //if (((uint)PTR_800c419c & 1) != 0)
-        //{
-        //    FUN_80058c44(_gameEngine.StaticVariables.PTR_800c419c, _gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150);
-        //}
-        //
-        //if ((_gameEngine.StaticVariables.DAT_800c4210 & 1) != 0)
-        //{
-        //    FUN_80058c44(_gameEngine.StaticVariables.DAT_800c4210, _gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150 + 1);
-        //}
-        //
-        //if ((_gameEngine.StaticVariables.DAT_800c4284 & 1) != 0)
-        //{
-        //    FUN_80058c44(_gameEngine.StaticVariables.DAT_800c4284, _gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150 + 2);
-        //}
-        //
-        //if ((_gameEngine.StaticVariables.DAT_800c42f8 & 1) != 0)
-        //{
-        //    FUN_80058c44(_gameEngine.StaticVariables.DAT_800c42f8, _gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150 + 3);
-        //}
-        //
-        ////uVar1 = g_drawModes[0x14].tag;
-        //_gameEngine.StaticVariables.SPRT_ARRAY_80180210[0].x0 = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X + 0x10);
-        //_gameEngine.StaticVariables.SPRT_ARRAY_80180210[0].y0 = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y + 0x10);
-        //
-        //foreach (var sprite in MemoryFileBlocSprites)
-        //{
-        //    _gameEngine.Renderer.AddSprite(sprite);
-        //}
+        h = 0;
 
-        //pSVar6 = _gameEngine.StaticVariables.SPRT_ARRAY_80180210[0];
-        //uVar4 = pSVar6.tag;
-        //puVar8 = &UINT_80146f70 + uVar1 * 10;
-        //pSVar6.tag = uVar4 & 0xff000000 | *puVar8 & 0xffffff;
-        //*puVar8 = *puVar8 & 0xff000000 | (uint)pSVar6 & 0xffffff;
+        if (0 < uiBoxConfiguration.Height)
+        {
+            do
+            {
+                w = 0;
+                if (0 < uiBoxConfiguration.Width)
+                {
+                    puVar3 = _gameEngine.StaticVariables.UINT_ARRAY_80146f68[10 + 1];
+                    pSVar2 = uiBoxConfiguration.SpritesA[0];
+
+                    do
+                    {
+                        w = w + 1;
+
+                        Breakpoint.TriggerBreak();
+
+                        /* Probable PsyQ macro: addPrim(). */
+                        //pSVar2.tag = pSVar2.tag & 0xff000000 | *puVar3 & 0xffffff;
+                        //*puVar3 = *puVar3 & 0xff000000 | (uint)pSVar2 & 0xffffff;
+                        //pSVar2 = pSVar2 + 1;
+
+                    } while (w < uiBoxConfiguration.Width);
+                }
+
+                h = h + 1;
+            } while (h < uiBoxConfiguration.Height);
+        }
     }
 
-    //80050ec8
-    //open memory card menu
+    //80059e0c
+    uint FUN_80059e0c(UIMemoryFileBox uiMemoryFileBox)
+    {
+        int iVar1;
+        int iVar2;
+        uint result;
+        int duration1;
+        int duration2;
+        int duration3;
+        int rColorOffset;
+        int baseColor;
+
+        duration1 = uiMemoryFileBox.Duration;
+        rColorOffset = uiMemoryFileBox.Tick + 1;
+        uiMemoryFileBox.Tick = rColorOffset;
+
+        if (rColorOffset == duration1)
+        {
+            uiMemoryFileBox.R = uiMemoryFileBox.TargetR;
+            uiMemoryFileBox.G = uiMemoryFileBox.TargetB;
+            uiMemoryFileBox.B = uiMemoryFileBox.TargetB;
+            if (uiMemoryFileBox.Enabled == 0)
+            {
+                uiMemoryFileBox.Enabled = 1;
+                result = 0;
+            }
+            else
+            {
+                result = 0xffffffff;
+            }
+        }
+        else
+        {
+            baseColor = uiMemoryFileBox.StartR;
+            rColorOffset = (uiMemoryFileBox.TargetR - baseColor) * rColorOffset;
+
+            if (duration1 == 0)
+            {
+                Breakpoint.TriggerBreak();
+            }
+
+            if ((duration1 == -1) && (rColorOffset == -0x80000000))
+            {
+                Breakpoint.TriggerBreak();
+            }
+
+            iVar1 = (uiMemoryFileBox.TargetG - uiMemoryFileBox.StartG) * uiMemoryFileBox.Tick;
+            duration3 = uiMemoryFileBox.Duration;
+
+            if (duration3 == 0)
+            {
+                Breakpoint.TriggerBreak();
+            }
+
+            if ((duration3 == -1) && (iVar1 == -0x80000000))
+            {
+                Breakpoint.TriggerBreak();
+            }
+
+            iVar2 = (uiMemoryFileBox.TargetB - uiMemoryFileBox.StartB) * uiMemoryFileBox.Tick;
+            duration2 = uiMemoryFileBox.Duration;
+
+            if (duration2 == 0)
+            {
+                Breakpoint.TriggerBreak();
+            }
+
+            if ((duration2 == -1) && (iVar2 == -0x80000000))
+            {
+                Breakpoint.TriggerBreak();
+            }
+
+            result = 0;
+            uiMemoryFileBox.R = rColorOffset / duration1 + baseColor;
+            uiMemoryFileBox.G = iVar1 / duration3 + baseColor;
+            uiMemoryFileBox.B = iVar2 / duration2 + baseColor;
+        }
+
+        return result;
+    }
+
+    // GHIDRA: Fun_80050ec8 @ 0x80050EC8
     public void Fun_80050ec8(CallBackInfo callBackInfo)
     {
-        SPRT pSVar1;
-        ulong uVar2;
         int iVar3;
-        uint uVar4;
-        uint uVar5;
-        uint uVar6;
-        SPRT pSVar7;
-        SPRT pSVar8;
+
+        if (callBackInfo.Data == null)
+        {
+            return;
+        }
 
         if ((_gameEngine.StaticVariables.g_memoryCardMenuState & 3U) == 0)
         {
@@ -2243,13 +2696,11 @@ public class MemoryCardManager
         }
 
         //uVar2 = _gameEngine.StaticVariables.g_drawModes[0x14].tag;
-        pSVar7 = _gameEngine.StaticVariables.SPRT_ARRAY_8017e410[0];
         _gameEngine.StaticVariables.SPRT_ARRAY_8017e410[0].w = 0xff;
         _gameEngine.StaticVariables.SPRT_ARRAY_8017e410[0].h = 0x10;
         _gameEngine.StaticVariables.SPRT_ARRAY_8017e410[0].x0 = (short)(callBackInfo.Data.X + callBackInfo.Data.Width);
         _gameEngine.StaticVariables.SPRT_ARRAY_8017e410[0].y0 = (short)(callBackInfo.Data.Y + callBackInfo.Data.Height);
 
-        pSVar8 = _gameEngine.StaticVariables.SPRT_ARRAY_8017e438[0];
         _gameEngine.StaticVariables.SPRT_ARRAY_8017e438[0].w = 0xff;
         _gameEngine.StaticVariables.SPRT_ARRAY_8017e438[0].h = 0x10;
         _gameEngine.StaticVariables.SPRT_ARRAY_8017e438[0].x0 = (short)(callBackInfo.Data.X + callBackInfo.Data.Width);

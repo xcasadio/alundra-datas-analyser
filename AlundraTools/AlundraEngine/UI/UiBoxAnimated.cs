@@ -31,19 +31,19 @@ public class UIBoxConfiguration
 
 public class TextToDisplay
 {
-    public int tick;
-    public int speed;
-    public int mode;
-    public short x;
-    public short y;
-    public short startX;
-    public short startY;
-    public byte _14;		
-    public byte	_15;		
-    public byte	_16;
-    public byte _17;
-    public short originX;
-    public short originY;
+    public int tick; //0x0
+    public int speed; //0x4
+    public int mode; //0x8
+    public short x; //0xc
+    public short y; //0xe
+    public short startX; //0x10
+    public short startY; //0x12
+    public byte _14; //0x14		
+    public byte _15; //0x15
+    public byte	_16; //0x16
+    public byte _17; //0x17
+    public short originX; //0x18
+    public short originY; //0x1a
 
     public override string ToString()
     {
@@ -70,5 +70,11 @@ public class UIMemoryFileBox
     {
         return $"Start:({StartR},{StartG},{StartB}) Target:({TargetR},{TargetG},{TargetB}) Current:({R},{G},{B}) Tick:{Tick} Duration:{Duration} Enabled:{Enabled}";
     }
+}
+
+public class MemoryCardPointerRecord
+{
+    public string? field_0x0;
+    public string? field_0x4;
 }
     
