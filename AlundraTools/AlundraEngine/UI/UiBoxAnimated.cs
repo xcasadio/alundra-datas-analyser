@@ -72,6 +72,23 @@ public class UIMemoryFileBox
     }
 }
 
+public class MemoryCardUiBoxRecord
+{
+    public uint field_0x00;
+    public UIBoxConfiguration field_0x04;
+    public TextToDisplay field_0x08;
+    public SPRT field_0x24;
+    public SPRT field_0x4c;
+
+    public MemoryCardUiBoxRecord(UIBoxConfiguration field_0x04, TextToDisplay field_0x08, SPRT field_0x24, SPRT field_0x4c)
+    {
+        this.field_0x04 = field_0x04;
+        this.field_0x08 = field_0x08;
+        this.field_0x24 = field_0x24;
+        this.field_0x4c = field_0x4c;
+    }
+}
+
 public class MemoryCardPointerRecord
 {
     public string? field_0x0;

@@ -11360,6 +11360,27 @@ public class StaticVariables
             SpritesB = SPRT_ARRAY_800c2dd0
         };
 
+        PTR_UIBoxConfiguration_800c419c[0] = new MemoryCardUiBoxRecord(
+            UIBoxConfiguration_800bcb30,
+            TextToDisplay_800c41a4,
+            SPRT_ARRAY_800c41c0[0],
+            SPRT_ARRAY_800c41c0[1]);
+        PTR_UIBoxConfiguration_800c419c[1] = new MemoryCardUiBoxRecord(
+            UIBoxConfiguration_800bf2a0,
+            TextToDisplay_800c4218,
+            SPRT_ARRAY_800c41c0[2],
+            SPRT_ARRAY_800c41c0[3]);
+        PTR_UIBoxConfiguration_800c419c[2] = new MemoryCardUiBoxRecord(
+            UIBoxConfiguration_800c1a10,
+            TextToDisplay_800c428c,
+            SPRT_ARRAY_800c41c0[4],
+            SPRT_ARRAY_800c41c0[5]);
+        PTR_UIBoxConfiguration_800c419c[3] = new MemoryCardUiBoxRecord(
+            UIBoxConfiguration_800c4180,
+            TextToDisplay_800c4300,
+            SPRT_ARRAY_800c41c0[6],
+            SPRT_ARRAY_800c41c0[7]);
+
         g_initialCallbackTable =
         [
             new CallBackInfo
@@ -12227,10 +12248,16 @@ public class StaticVariables
     public short DAT_800c4184; // 800C4184
     public short DAT_800c4186; // 800C4186
     public uint[] UINT_ARRAY_800c4190 = new uint[3]; // 800c4190
-    public UIBoxConfiguration? PTR_UIBoxConfiguration_800c419c; //800C419C
-    public UIBoxConfiguration? PTR_UIBoxConfiguration_800c4210; //800c4210
-    public UIBoxConfiguration? PTR_UIBoxConfiguration_800c4284; //800c4284
-    public UIBoxConfiguration? PTR_UIBoxConfiguration_800c42f8; //800c42f8
+    // GHIDRA: PTR_UIBoxConfiguration_800c419c @ 0x800C419C, 4 entries, stride 0x74.
+    public MemoryCardUiBoxRecord[] PTR_UIBoxConfiguration_800c419c = new MemoryCardUiBoxRecord[4];
+    // GHIDRA: entry bases at 0x800C4210 / 0x800C4284 / 0x800C42F8.
+    public MemoryCardUiBoxRecord PTR_UIBoxConfiguration_800c4210 => PTR_UIBoxConfiguration_800c419c[1];
+    public MemoryCardUiBoxRecord PTR_UIBoxConfiguration_800c4284 => PTR_UIBoxConfiguration_800c419c[2];
+    public MemoryCardUiBoxRecord PTR_UIBoxConfiguration_800c42f8 => PTR_UIBoxConfiguration_800c419c[3];
+    // GHIDRA: +0x04 slots point to UIBoxConfiguration objects.
+    public UIBoxConfiguration PTR_UIBoxConfiguration_800c4214 => PTR_UIBoxConfiguration_800c419c[1].field_0x04;
+    public UIBoxConfiguration PTR_UIBoxConfiguration_800c4288 => PTR_UIBoxConfiguration_800c419c[2].field_0x04;
+    public UIBoxConfiguration PTR_UIBoxConfiguration_800c42fc => PTR_UIBoxConfiguration_800c419c[3].field_0x04;
     public TextToDisplay TextToDisplay_800c41a4 = new(); //800c41a4
     public SPRT[] SPRT_ARRAY_800c41c0 = Enumerable.Range(0, 8).Select(x => new SPRT()).ToArray(); // 800c41c0
     public TextToDisplay TextToDisplay_800c4218 = new(); //800c4218
@@ -12842,6 +12869,8 @@ public class StaticVariables
     //public DR_MODE[] g_drawModes = new DR_MODE[20]; // 80146E60
     public int g_bufferIndex; // 80146F50
     public ulong[] g_orderTableTaki = new ulong[10]; // 80146F58
+    // GHIDRA: UINT_ARRAY_80146f68 @ 0x80146F68, observed OT tag accesses at tag * 10 + 0/+1.
+    public uint[] UINT_ARRAY_80146f68 = new uint[20];
     public ulong[] g_orderTableTaki2 = new ulong[10]; // 80146F80
     public TextToDisplay g_backgroundMessageAnimation = new TextToDisplay(); // 80146FA8
     public int g_textPosX; // 801490C8
