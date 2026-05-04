@@ -416,7 +416,7 @@ public class SubInventoryManager
                         _gameEngine.StaticVariables.g_playerControlFlags &= 0xfffffff7;
                     }
 
-                    _gameEngine.MainInventoryManager.FUN_80047cb0(callBackInfo);
+                    _gameEngine.UIManager.FUN_80047cb0(callBackInfo);
                     return; // 1;
                 }
             }

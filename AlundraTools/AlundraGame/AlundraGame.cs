@@ -78,12 +78,16 @@ namespace AlundraGame
 
             var alundraRenderer = new AlundraRenderer(_spriteBatch, GraphicsDevice);
 
-
             StaticVariables.ForceDesiredMap = -1;
-            StaticVariables.GameStateFileNameToLoad =
-                @"D:\development\repo\alundra-datas-analyser\AlundraTools\AlundraTools\bin\Debug\net9.0-windows7.0\SaveStates\73 - bonaire's dream before boss.json";
 
-            _gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3, alundraRenderer);
+            var savePath = @"D:\development\repo\alundra-datas-analyser\AlundraTools\AlundraTools\bin\Debug\net9.0-windows7.0\SaveStates\";
+            StaticVariables.GameStateFileNameToLoad =
+                savePath + "67 - boss - crypte de lars.json";
+                //savePath + "71 - bonaire's dream save room.json";
+                //savePath + "73 - bonaire's dream before boss.json";
+                
+
+        _gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3, alundraRenderer);
             _gameEngine.InitializeEngine(false);
             
             _inputManager = new InputManager(_gameEngine);

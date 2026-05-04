@@ -719,7 +719,7 @@ public class UIManager
         {
             callBackInfo.Data.X = _gameEngine.StaticVariables.g_textToDisplay3.originX;
             callBackInfo.Data.Y = _gameEngine.StaticVariables.g_textToDisplay3.originY;
-            _gameEngine.MainInventoryManager.FUN_80047cb0(callBackInfo);
+            _gameEngine.UIManager.FUN_80047cb0(callBackInfo);
             _gameEngine.StaticVariables.g_asyncCallback((int)_gameEngine.StaticVariables.g_sprites[0].tag);
         }
         else
@@ -1015,7 +1015,7 @@ public class UIManager
     //8004501c
     private void FUN_8004501c(CallBackInfo callBackInfo)
     {
-        _gameEngine.MainInventoryManager.FUN_80047cb0(callBackInfo);
+        _gameEngine.UIManager.FUN_80047cb0(callBackInfo);
         _gameEngine.StaticVariables.g_dialog_flags = 0;
         _gameEngine.StaticVariables.g_playerControlFlags &= 0xffffffe7;
     }

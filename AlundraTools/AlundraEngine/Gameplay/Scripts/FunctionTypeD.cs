@@ -358,7 +358,8 @@ public static class FunctionTypeD
     //8007e1c4
     public static void AI_FUN_8007e1c4(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Élément Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Élément Niv.1")
         {
             Breakpoint.TriggerBreak();
         }

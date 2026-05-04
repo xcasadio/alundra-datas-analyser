@@ -8,7 +8,8 @@ public static class AI_Melzas2
     //Load function
     public static void SpawnVerticalWarpColumns(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
             return;
@@ -52,7 +53,8 @@ public static class AI_Melzas2
     //tick function
     public static void AI_Melzas2_FinalBoss(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
             return;
@@ -164,7 +166,8 @@ public static class AI_Melzas2
     //80080ae0
     public static void UpdateEntityAI_BossExplode(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Élément Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Élément Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -274,7 +277,8 @@ public static class AI_Melzas2
     //80062bc0
     public static void AI_UpdateMelzas2CutsceneChannels(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
             return;

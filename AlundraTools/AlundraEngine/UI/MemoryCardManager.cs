@@ -105,7 +105,7 @@ public class MemoryCardManager
             {
                 StartMemoryCardProcess();
             }
-            else if (_gameEngine.StaticVariables.g_postProcessingState == 0)
+            else if (!result)
             {
                 result = true;
 
@@ -522,7 +522,68 @@ public class MemoryCardManager
     // GHIDRA: UpdateSaveGameTransition @ 0x8005ED2C
     private int UpdateSaveGameTransition()
     {
-        return StartMemoryCardProcess();
+        int state = _gameEngine.StaticVariables.g_globalTransitionState;
+
+        if (state == 3)
+        {
+            if (_gameEngine.StaticVariables.g_openMemoryCardState != 0 && AdvanceFadeOldCheck(0x13))
+            {
+                _gameEngine.StaticVariables.g_globalTransitionState = 0x2710;
+
+                if (_gameEngine.StaticVariables.INT_8018ecc8 == 0x3ee)
+                {
+                    _gameEngine.StaticVariables.g_postProcessingState = 1;
+                    _gameEngine.StaticVariables.g_isMemoryCopyInProgress = 0;
+                }
+
+                if (_gameEngine.StaticVariables.INT_8018ecc8 == 0x3ef)
+                {
+                    _gameEngine.StaticVariables.g_postProcessingState = 0;
+                    _gameEngine.StaticVariables.g_isMemoryCopyInProgress = 0;
+                }
+            }
+        }
+        else if (state < 4)
+        {
+            if (state == 2)
+            {
+                int nextState;
+
+                if (_gameEngine.StaticVariables.g_asyncOperationResult == 1)
+                {
+                    nextState = 0x3ee;
+                }
+                else
+                {
+                    if (_gameEngine.StaticVariables.g_asyncOperationResult < 2)
+                    {
+                        return 1;
+                    }
+
+                    nextState = 0x3ef;
+
+                    if (_gameEngine.StaticVariables.g_asyncOperationResult != 2)
+                    {
+                        return 1;
+                    }
+                }
+
+                _gameEngine.StaticVariables.g_asyncOperationResult = 0;
+                _gameEngine.StaticVariables.g_globalTransitionState = 3;
+                _gameEngine.StaticVariables.g_fadeFrame = 0;
+                _gameEngine.StaticVariables.INT_8018ecc8 = nextState;
+                ResetMemoryCardMenuState();
+            }
+        }
+        else if (state == 0x2710)
+        {
+            _gameEngine.StaticVariables.g_isMemoryCopyInProgress = 1;
+            TryOpenMemoryCardMenu("セーブのてすと", "", ref _gameEngine.StaticVariables.g_openMemoryCardState);
+            _gameEngine.InitializeAsyncOperation("セーブ", "　　　", result => _gameEngine.StaticVariables.g_asyncOperationResult = result);
+            _gameEngine.StaticVariables.g_globalTransitionState = 2;
+        }
+
+        return 1;
     }
 
     // GHIDRA: StartMemoryCardProcess @ 0x8005F458
@@ -931,7 +992,7 @@ public class MemoryCardManager
                     }
 
                     /* compare avec 0x1C0000 (lui 1; ori C000) */
-                    if (fadeCounter <= (int)0x001C0000)
+                    if (fadeCounter <= 0x001C0000)
                     {
                         _gameEngine.StaticVariables.g_globalTransitionState = 0x3ff;
                         return result;
@@ -1268,7 +1329,7 @@ public class MemoryCardManager
                         var r = BuildDataAndSaveInMemoryCardAndUpdateData(_gameEngine.StaticVariables.g_memorySlotId,
                             _gameEngine.StaticVariables.g_gameTitle, _gameEngine.StaticVariables.g_memoryCardPayloadOffset);
 
-                        if ((int)r == -1)
+                        if (r == -1)
                         {
                             _gameEngine.StaticVariables.g_globalTransitionState = 0x3fd;
                             return result;
@@ -2025,7 +2086,7 @@ public class MemoryCardManager
                             do
                             {
                                 uVar4 = (uVar4 + 1) & 3;
-                                _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y = (short)_gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2 * 2];
+                                _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2];
                                 _gameEngine.StaticVariables.TextToDisplay_800c41a4.mode = 2;
                                 _gameEngine.StaticVariables.TextToDisplay_800c41a4.tick = 0;
                                 _gameEngine.StaticVariables.TextToDisplay_800c41a4.speed = 0xf;
@@ -2040,7 +2101,7 @@ public class MemoryCardManager
                                     _gameEngine.StaticVariables.TextToDisplay_800c41a4.x = pUVar7.X;
                                 }
         
-                                piVar5 = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2 * 2 + 2];
+                                piVar5 = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2];
         
                                 if (piVar5 < 0)
                                 {
@@ -2048,7 +2109,7 @@ public class MemoryCardManager
                                 }
                                 else
                                 {
-                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.y = (short)piVar5;
+                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.y = piVar5;
                                 }
         
                                 pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
@@ -2107,7 +2168,7 @@ public class MemoryCardManager
         
                             do
                             {
-                                _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y = (short)_gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2 * 2 + 2];
+                                _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2];
                                 _gameEngine.StaticVariables.TextToDisplay_800c41a4.mode = 2;
                                 _gameEngine.StaticVariables.TextToDisplay_800c41a4.tick = 0;
                                 _gameEngine.StaticVariables.TextToDisplay_800c41a4.speed = 0xf;
@@ -2122,7 +2183,7 @@ public class MemoryCardManager
                                     _gameEngine.StaticVariables.TextToDisplay_800c41a4.x = pUVar7.X;
                                 }
         
-                                piVar5 = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2 * 2];
+                                piVar5 = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2];
         
                                 if (piVar5 < 0)
                                 {
@@ -2130,7 +2191,7 @@ public class MemoryCardManager
                                 }
                                 else
                                 {
-                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.y = (short)piVar5;
+                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.y = piVar5;
                                 }
         
                                 pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
@@ -2174,7 +2235,11 @@ public class MemoryCardManager
                             InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 2) & 3], 0x80, 0x80, 0x80, 0x40, 0x40, 0x40, 0xf);
                             InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[(_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 3) & 3], 0x40, 0x40, 0x40, 0, 0, 0, 0xf);
                             
-                            if (_gameEngine.StaticVariables.g_memoryCardOffsetArg1[(_gameEngine.StaticVariables.INT_80180120 - 1) * 8 + 8] == 0)
+                            var nextEntryIndex = _gameEngine.StaticVariables.INT_80180120;
+                            var nextEntryIsEmpty = nextEntryIndex >= _gameEngine.StaticVariables.g_memoryCardOffsetArg1.Length ||
+                                                   string.IsNullOrEmpty(_gameEngine.StaticVariables.g_memoryCardOffsetArg1[nextEntryIndex].field_0x0);
+
+                            if (nextEntryIsEmpty)
                             {
                                 _gameEngine.StaticVariables.UINT_ARRAY_800c4190[1] = (uint)_gameEngine.StaticVariables.INT_80180120;
                             }
@@ -2189,13 +2254,14 @@ public class MemoryCardManager
                     }
                     else
                     {
-                        _gameEngine.StaticVariables.g_asyncOperationResult2 = 0;
+                        _gameEngine.StaticVariables.g_asyncOperationResult = 0;
                         arg1 = _gameEngine.EtcRes.GetEtcString(0x4a);
                         arg2 = _gameEngine.EtcRes.GetEtcString(0x4b);
-                        _gameEngine.InitializeAsyncOperation(arg1, arg2, &g_asyncOperationResult2);
+                        _gameEngine.InitializeAsyncOperation(arg1, arg2, result => _gameEngine.StaticVariables.g_asyncOperationResult = result);
                         _gameEngine.UIManager.DisplayIconName(
-                            _gameEngine.StaticVariables.SPRT_ARRAY_80180210, 
-                            (_gameEngine.StaticVariables.g_memoryCardOffsetArg2 + 4), 
+                            _gameEngine.StaticVariables.SPRT_ARRAY_80180210,
+                            MemoryFileBlocSprites,
+                            _gameEngine.StaticVariables.g_memoryCardOffsetArg2.field_0x4?.ToCharArray(),
                             0x40,
                             _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X,
                             _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y, 
@@ -2204,7 +2270,7 @@ public class MemoryCardManager
                         _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] = 8;
                     }
                 }
-                else if (_gameEngine.StaticVariables.g_asyncOperationResult2 - 1U < 2)
+                else if ((uint)(_gameEngine.StaticVariables.g_asyncOperationResult - 1) < 2)
                 {
                     _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] = 2;
                     iVar2 = 0;
@@ -2228,7 +2294,7 @@ public class MemoryCardManager
                             _gameEngine.StaticVariables.TextToDisplay_800c41a4.x = pUVar7.X;
                         }
         
-                        piVar5 = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2 * 2 + 2];
+                        piVar5 = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2];
         
                         if (piVar5 < 0)
                         {
@@ -2322,7 +2388,7 @@ public class MemoryCardManager
                     _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y = _gameEngine.StaticVariables.TextToDisplay_80180130.originY;
                     _gameEngine.UIManager.FUN_80047cb0(callbackInfo);
                     
-                    if (_gameEngine.StaticVariables.g_asyncOperationResult2 == 2)
+                    if (_gameEngine.StaticVariables.g_asyncOperationResult == 2)
                     {
                         _gameEngine.StaticVariables.PTR_80180128 = -2;
                         return;
@@ -2388,7 +2454,14 @@ public class MemoryCardManager
         _gameEngine.StaticVariables.SPRT_ARRAY_80180210[0].x0 = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X + 0x10);
         _gameEngine.StaticVariables.SPRT_ARRAY_80180210[0].y0 = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y + 0x10);
 
-        _gameEngine.Renderer.AddSprite(_gameEngine.StaticVariables.SPRT_ARRAY_80180210[0]);
+        var memoryFileDescriptionSprite = _gameEngine.StaticVariables.SPRT_ARRAY_80180210[0];
+        var memoryFileDescriptionBitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(memoryFileDescriptionSprite);
+        _gameEngine.Renderer.AddSprite(memoryFileDescriptionSprite, SpriteDepth.ForegroundUI, memoryFileDescriptionBitmap);
+
+        foreach (var sprite in MemoryFileBlocSprites)
+        {
+            _gameEngine.Renderer.AddSprite(sprite);
+        }
 
         //pSVar6 = _gameEngine.StaticVariables.SPRT_ARRAY_80180210[0];
         //uVar4 = pSVar6.tag;
@@ -2421,7 +2494,9 @@ public class MemoryCardManager
                     do
                     {
                         w = w + 1;
-                        _gameEngine.Renderer.AddSprite(uiBoxConfiguration.SpritesA[i]);
+                        var sprite = uiBoxConfiguration.SpritesA[i];
+                        var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(sprite);
+                        _gameEngine.Renderer.AddSprite(sprite, SpriteDepth.BackgroundUI, bitmap);
                         i = i + 1;
 
                         /* Probable PsyQ macro: addPrim(). */
@@ -2436,53 +2511,55 @@ public class MemoryCardManager
         }
     }
 
-    //80058c44
+    // GHIDRA: FUN_80058c44 @ 0x80058C44
     private void FUN_80058c44(UIBoxConfiguration uiBoxConfig, UIMemoryFileBox uiMemoryFileBox)
     {
-        //uint uVar2;
-        //uint puVar3;
         int iVar4;
         SPRT p;
-        SPRT puVar5;
         int i;
-        //ulong uVar1;
 
-        i = uiBoxConfig->Width;
+        i = uiBoxConfig.Width;
         iVar4 = (i + 6) * (i + 4);
-        p = *(SPRT**)(g_drawModes[0x14].tag * 4 + i + 8);
         i = 0;
 
-        if (0 < iVar4)
+        if (0 < iVar4 && uiBoxConfig.SpritesA.Length != 0)
         {
-            puVar5 = (SPRT*)&p->b0;
-
             do
             {
-                SetSprt(p);
-                *(char*)&puVar5[-1].h = (char)uiMemoryFileBox->R;
-                *(char*)((int)&puVar5[-1].h + 1) = (char)uiMemoryFileBox->G;
-                *(u_char*)&puVar5->tag = (u_char)uiMemoryFileBox->B;
-                puVar5 = puVar5 + 1;
-                puVar3 = (uint*)((int)g_drawModes + g_drawModes[0x14].tag * 0x28 + 0xf8);
+                p = uiBoxConfig.SpritesA[i];
+                p.r0 = (byte)Math.Clamp(uiMemoryFileBox.R, 0, 0xff);
+                p.g0 = (byte)Math.Clamp(uiMemoryFileBox.G, 0, 0xff);
+                p.b0 = (byte)Math.Clamp(uiMemoryFileBox.B, 0, 0xff);
 
-                _gameEngine.Renderer.AddSprite(uiBoxConfiguration.SpritesA[i]);
+                var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(p);
+                _gameEngine.Renderer.AddSprite(
+                    p,
+                    SpriteDepth.BackgroundUI,
+                    bitmap,
+                    1.0f,
+                    p.r0 / 255.0f,
+                    p.g0 / 255.0f,
+                    p.b0 / 255.0f);
+
                 /* Probable PsyQ macro: addPrim(). */
                 //p->tag = p->tag & 0xff000000 | *puVar3 & 0xffffff;
                 //*puVar3 = *puVar3 & 0xff000000 | (uint)p & 0xffffff;
 
                 i = i + 1;
-                p = p + 1;
-            } while (i < iVar4);
+
+            } while (i < iVar4 && i < uiBoxConfig.SpritesA.Length);
         }
 
-        uiBoxConfig + 0x2c = uiBoxConfig->Width + 0x10;
-        uiBoxConfig + 0x2e = (uiBoxConfig->Width + 2) + 8;
-        uiBoxConfig + 0x54 = uiBoxConfig->Width + 0x10;
-        uiBoxConfig + 0x56 = (uiBoxConfig->Width + 2) + 0x20;
+        // PARTIAL: writes to raw SPRT fields at offsets +0x2c/+0x2e/+0x54/+0x56 are not closed in the current C# structure.
 
         //puVar3 = &UINT_80146f60 + uVar1 * 10;
 
-        _gameEngine.Renderer.AddSprite(uiBoxConfig.SpritesA[0]);
+        if (uiBoxConfig.SpritesA.Length != 0)
+        {
+            p = uiBoxConfig.SpritesA[0];
+            var bitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(p);
+            _gameEngine.Renderer.AddSprite(p, SpriteDepth.BackgroundUI, bitmap);
+        }
 
         /* Probable PsyQ macro: addPrim(). */
         //uVar2 = (int)uiBoxConfig + iVar4 + 0x24 & 0xffffff;

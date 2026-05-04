@@ -7,7 +7,8 @@ public static class AncientGuardian
     //80071134
     public static void AI_ApplyZGravityIfIdle(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name == "Roche élémentaire")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name == "◆Roche élémentaire")
         {
             Breakpoint.TriggerBreak();
         }
@@ -21,7 +22,8 @@ public static class AncientGuardian
     //80070598
     public static void AI_UpdateBossEntityState(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Élément Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Élément Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -352,12 +354,11 @@ public static class AncientGuardian
         }
     }
 
-
-
     //80070c40
     public static void AI_UpdateBossEntityState2(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Surveillance élémentaire")
+        if (entity.Name != null
+            && entity.Name != "◆Surveillance élémentaire")
         {
             Breakpoint.TriggerBreak();
         }
