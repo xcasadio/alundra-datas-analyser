@@ -558,7 +558,8 @@ public static class FunctionTypeD
     //8007eb58
     public static void AI_FUN_8007eb58(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Après Melzas")
         {
             Breakpoint.TriggerBreak();
         }

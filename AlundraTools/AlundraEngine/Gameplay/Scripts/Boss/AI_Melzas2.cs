@@ -4,12 +4,12 @@ namespace AlundraEngine.Gameplay.Scripts.Boss;
 
 public static class AI_Melzas2
 {
-    // 80061A6C
+    // GHIDRA: SpawnVerticalWarpColumns @ 0x80061A6C
     //Load function
     public static void SpawnVerticalWarpColumns(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
-            && entity.Name != "Melzas2_FinalBoss")
+            && entity.Name != "◆Après Melzas")
         {
             Breakpoint.TriggerBreak();
             return;
@@ -49,12 +49,12 @@ public static class AI_Melzas2
     }
 
 
-    //80061d14
+    // GHIDRA: AI_Melzas2_FinalBoss @ 0x80061D14
     //tick function
     public static void AI_Melzas2_FinalBoss(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
-            && entity.Name != "Melzas2_FinalBoss")
+            && entity.Name != "◆Après Melzas")
         {
             Breakpoint.TriggerBreak();
             return;
@@ -94,8 +94,8 @@ public static class AI_Melzas2
                     entity,
                     1,
                     0xD0,
-                    -268435456,
-                    -1610612736,
+                    0xF00000,
+                    0xA00000,
                     0,
                     0
                 );
@@ -116,8 +116,8 @@ public static class AI_Melzas2
                     entity,
                     1,
                     0xD0,
-                    -268435456,
-                    -1610612736,
+                    0xF00000,
+                    0xA00000,
                     0,
                     8
                 );
@@ -163,7 +163,7 @@ public static class AI_Melzas2
         entity.DamagedTickCounter = 0x5A;
     }
 
-    //80080ae0
+    // GHIDRA: UpdateEntityAI_BossExplode @ 0x80080AE0
     public static void UpdateEntityAI_BossExplode(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
@@ -187,11 +187,11 @@ public static class AI_Melzas2
 
                 var rand1 = Random.Next();
                 var rand2 = Random.Next();
-                int xOffset = (int)(((rand1 * (ulong)(entity.Width >> 0x14) + 1) >> 0x20) * 0x10);
+                int xOffset = (int)(((rand1 * (ulong)((entity.Width >> 0x14) + 1)) >> 0x20) * 0x10);
                 xOffset = (xOffset + (int)((rand2 * 0x11) >> 0x20)) * 0x10000;
                 
                 var rand3 = Random.Next();
-                int zOffset = (int)(((rand3 * (ulong)(entity.Depth >> 0x14) + 1) >> 0x20) * 0x10);
+                int zOffset = (int)(((rand3 * (ulong)((entity.Depth >> 0x14) + 1)) >> 0x20) * 0x10);
                 var effectOffsetZ = (Random.Next() * 0x11) >> 0x20;
                 zOffset += (int)(effectOffsetZ * 0x10000);
 
@@ -235,6 +235,22 @@ public static class AI_Melzas2
                     entity.AIValues[1] = 0x1E;
                     entity.Bytes[3] = (byte)(currentPhase + 1);
                 }
+                else
+                {
+                    ushort remainingDelay = (ushort)entity.AIValues[5];
+                    remainingDelay = (ushort)(remainingDelay - 1);
+                    entity.AIValues[5] = (short)remainingDelay;
+
+                    if (remainingDelay == 0)
+                    {
+                        gameEngine.TriggerScreenEffect(0xff0000, 4, 0, 1);
+
+                        uint hi = (uint)((Random.Next() * 5ul) >> 32);
+                        remainingDelay = (ushort)(((int)hi << 3) + 0x1E);
+
+                        entity.AIValues[5] = (short)remainingDelay;
+                    }
+                }
             }
 
             // Phase 0: nothing else to do
@@ -251,30 +267,10 @@ public static class AI_Melzas2
             return;
         }
 
-        // Phase 4:
-        // aiValues[5]-- ; when reaches 0:
-        //   TriggerScreenEffect(4,0,1)
-        //   aiValues[5] = 0x1E + (((rand%5)<<3))  (exactly as asm computes via HI)
-        {
-            ushort remainingDelay = (ushort)entity.AIValues[5];
-            remainingDelay = (ushort)(remainingDelay - 1);
-            entity.AIValues[5] = (short)remainingDelay;
-
-            if (remainingDelay != 0)
-            {
-                return;
-            }
-
-            gameEngine.TriggerScreenEffect(0xff0000, 4, 0, 1);
-            
-            uint hi = (uint)((Random.Next() * 5ul) >> 32);
-            remainingDelay = (ushort)(((int)hi << 3) + 0x1E);
-
-            entity.AIValues[5] = (short)remainingDelay;
-        }
+        return;
     }
 
-    //80062bc0
+    // GHIDRA: AI_UpdateMelzas2CutsceneChannels @ 0x80062BC0
     public static void AI_UpdateMelzas2CutsceneChannels(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
@@ -782,6 +778,8 @@ public static class AI_Melzas2
                                 {
                                     cutSceneChannel.Amplitude += 0x80;
                                 }
+
+                                goto END;
                             }
 
                             LAB_800636e8:
@@ -972,6 +970,8 @@ public static class AI_Melzas2
         }
     }
 
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: extracted expression from AI_UpdateMelzas2CutsceneChannels @ 0x80062BC0
     private static int GetMelzas2CutsceneTargetBaseX(GameEngine gameEngine, uint channelIndex)
     {
         var config = gameEngine.StaticVariables.CutsceneChannel_ARRAY_80026d30[0];
@@ -981,6 +981,8 @@ public static class AI_Melzas2
     }
 
 
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: extracted label LAB_80063254 from AI_UpdateMelzas2CutsceneChannels @ 0x80062BC0
     private static void LAB_80063254(Entity entity, short angleSwing, uint channelIndex, CutsceneChannel cutSceneChannel)
     {
         int i;
@@ -1009,6 +1011,8 @@ public static class AI_Melzas2
         }
     }
 
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: resolves original Melzas2 entity pointer chain stored through AIValues[2]
     private static Entity? GetEntityById(GameEngine gameEngine, Entity entity, int id)
     {
         var entityId = id;
