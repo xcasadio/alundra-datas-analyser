@@ -51,6 +51,7 @@ public static class FunctionTypeE
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "◆Projectile"
             && entity.Name != "◆Roche élémentaire"
+            && entity.Name != "◆Projectile Niv.1"
             && entity.Name != "Magie de terre Niv.1")
         {
             Breakpoint.TriggerBreak();
