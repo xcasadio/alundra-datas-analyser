@@ -1,0 +1,19 @@
+<Project>
+  <PropertyGroup>
+    <MonoGameVersion>3.8.4.1</MonoGameVersion>
+    <MonoGameExtendedVersion>3.8.*</MonoGameExtendedVersion>
+    <PortableXamlVersion>0.26.*</PortableXamlVersion>
+    <PrismCoreVersion>8.*</PrismCoreVersion>
+    <FontStashSharpMonoGameVersion>1.*</FontStashSharpMonoGameVersion>
+    <MicrosoftVisualStudioVsixColorCompilerVersion>17.*</MicrosoftVisualStudioVsixColorCompilerVersion>
+    <SpriteFontPlusVersion>0.*</SpriteFontPlusVersion>
+    <MicrosoftNetTestSdkVersion>17.11.1</MicrosoftNetTestSdkVersion>
+    <XunitVersion>2.9.2</XunitVersion>
+    <XunitRunnerVisualStudioVersion>2.8.2</XunitRunnerVisualStudioVersion>
+    <CoverletCollectorVersion>6.0.2</CoverletCollectorVersion>
+    <EPPlusVersion>8.0.6</EPPlusVersion>
+    <MicrosoftExtensionsHostingVersion>9.0.4</MicrosoftExtensionsHostingVersion>
+    <MicrosoftExtensionsLoggingConsoleVersion>9.0.4</MicrosoftExtensionsLoggingConsoleVersion>
+    <ModelContextProtocolVersion>1.2.0</ModelContextProtocolVersion>
+  </PropertyGroup>
+</Project>
