@@ -10,7 +10,8 @@ public static class FunctionTypeC
     // 80065ED4
     public static void AI_UpdateEntityAI_IdleSkittish(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Beannoïde")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Beannoïde")
         {
             Breakpoint.TriggerBreak();
         }
@@ -165,7 +166,8 @@ public static class FunctionTypeC
     // 80066250
     public static void AI_UpdateEntityAI_CuriousFlying(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (!string.IsNullOrEmpty(entity.Name) 
+            && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
             return;
@@ -306,7 +308,8 @@ public static class FunctionTypeC
     // 800665a0
     public static void AI_UpdateEntityAI_1(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Tortue de roche Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name) 
+            && entity.Name != "◆Tortue de roche Niv.1")
         {
             Breakpoint.TriggerBreak();
             return;
@@ -454,7 +457,8 @@ public static class FunctionTypeC
     //80066984
     public static void AI_FUN_80066984(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Tonneau générique"
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Tonneau générique"
             && entity.Name != "I36_Herbe médicinale"
             && entity.Name != "I41_Potion S"
             && entity.Name != "I38_Extrait magique"
@@ -748,7 +752,8 @@ public static class FunctionTypeC
     //80064294
     public static void AI_FUN_80064294(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (!string.IsNullOrEmpty(entity.Name) 
+            && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
             return;
@@ -1001,7 +1006,8 @@ public static class FunctionTypeC
     //80064884
     public static void AI_FUN_80064884(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (!string.IsNullOrEmpty(entity.Name) 
+            && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
             return;
@@ -1211,7 +1217,10 @@ public static class FunctionTypeC
     //80064d90
     public static void AI_FUN_80064d90(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        Breakpoint.TriggerBreak();
+
+        if (!string.IsNullOrEmpty(entity.Name) 
+            && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
             return;
@@ -1413,6 +1422,8 @@ public static class FunctionTypeC
     //80065204
     public static void AI_FUN_80065204(GameEngine gameEngine, Entity entity)
     {
+        Breakpoint.TriggerBreak();
+
         if (entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
@@ -1422,8 +1433,8 @@ public static class FunctionTypeC
     //80065750
     public static void AI_FUN_80065750(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Toutou (chien)"
-            && !string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name) 
+            && entity.Name != "Toutou (chien)")
         {
             Breakpoint.TriggerBreak();
         }
@@ -4218,7 +4229,8 @@ public static class FunctionTypeC
     //8007bb30
     public static void AI_FUN_8007bb30(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Haricots de Jack")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Haricots de Jack")
         {
             Breakpoint.TriggerBreak();
         }
@@ -4250,7 +4262,8 @@ public static class FunctionTypeC
     //8007bb9c
     public static void AI_FUN_8007bb9c(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Pot magique (boïng)")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Pot magique (boïng)")
         {
             Breakpoint.TriggerBreak();
         }
@@ -4340,7 +4353,8 @@ public static class FunctionTypeC
     //8007c024
     public static void AI_FUN_8007c024(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Pilier poussable (PRG)")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Pilier poussable (PRG)")
         {
             Breakpoint.TriggerBreak();
         }
@@ -4925,7 +4939,8 @@ public static class FunctionTypeC
     //8006a564
     public static void AI_FUN_8006a564(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Guêpe Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Guêpe Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -5968,6 +5983,8 @@ public static class FunctionTypeC
     //80068930
     public static void AI_UpdateEntityAI_7(GameEngine gameEngine, Entity entity)
     {
+        Breakpoint.TriggerBreak();
+
         if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
@@ -5986,6 +6003,8 @@ public static class FunctionTypeC
     //80069684
     public static void AI_UpdateEntityAI_8_2(GameEngine gameEngine, Entity entity)
     {
+        Breakpoint.TriggerBreak();
+
         if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
@@ -5995,6 +6014,8 @@ public static class FunctionTypeC
     //800699c4
     public static void AI_UpdateEntityAI_9(GameEngine gameEngine, Entity entity)
     {
+        Breakpoint.TriggerBreak();
+
         if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
@@ -6005,7 +6026,8 @@ public static class FunctionTypeC
     //◆Orc (hache) Niv.1
     public static void AI_UpdateEntityAI_10(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Orc (hache) Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Orc (hache) Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -6133,7 +6155,8 @@ public static class FunctionTypeC
     //orc armure de fer
     public static void AI_UpdateEntityAI_11(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Orc (armure de fer) Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Orc (armure de fer) Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -6282,7 +6305,8 @@ public static class FunctionTypeC
     //8006a974
     public static void AI_UpdateEntityAI_12(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Poisson Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Poisson Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -6924,12 +6948,183 @@ public static class FunctionTypeC
         entity.Bytes[1] = 0;
     }
 
-    //8006c100
+    // GHIDRA: AI_UpdateEntityAI_18 @ 0x8006C100
     public static void AI_UpdateEntityAI_18(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "")
         {
             Breakpoint.TriggerBreak();
+        }
+
+        short newDelay;
+        uint direction;
+        ulong seed;
+        ulong rand;
+        Entity entitySpawned;
+        int[] relativePositions = new int[6];
+
+        ScriptHelper.CalculateEntityRelativePosition(entity, gameEngine.StaticVariables.PlayerEntity, relativePositions);
+
+        switch (entity.TargetAnimationId)
+        {
+            case 0:
+                newDelay = entity.AIValues[1];
+                if (newDelay != 0)
+                {
+                    entity.AIValues[1] = (short)(newDelay - 1);
+                    if (newDelay != 1)
+                    {
+                        return;
+                    }
+                }
+
+                gameEngine.EntityGameplayManager.SetEntityRandomDirection(entity, 1, 0x78);
+                return;
+
+            case 1:
+                newDelay = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = newDelay;
+
+                if (newDelay == 0)
+                {
+                    direction = (uint)ScriptHelper.GetDirectionToTarget(
+                        gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                        gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                    entity.TargetDirection = direction;
+                    entity.Bytes[0] = 0;
+                    entity.AIValues[1] = (short)(((Random.Next() * 0x20) >> 0x20) + 0x78);
+                    return;
+                }
+
+                if (entity.Bytes[0] == 1)
+                {
+                    if (entity.ForceAdjusted == 0 && CanMoveForward(entity, 0) == 0)
+                    {
+                        return;
+                    }
+
+                    direction = (uint)ScriptHelper.GetDirectionToTarget(
+                        gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                        gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                    entity.TargetDirection = direction;
+                    entity.Bytes[0] = 0;
+                    entity.AIValues[1] = (short)(((Random.Next() * 0x20) >> 0x20) + 0x78);
+                    return;
+                }
+
+                if (!gameEngine.EntityGameplayManager.TryAttackPlayerFront(entity, relativePositions, 2, 4, 0x100000))
+                {
+                    if (entity.ForceAdjusted == 0 && CanMoveForward(entity, 0) == 0)
+                    {
+                        return;
+                    }
+
+                    entity.TargetDirection = (uint)((Random.Next() * 0x20) >> 0x20);
+                    return;
+                }
+
+                entity.TargetAnimationId = 3;
+                entity.AIValues[1] = 0x15;
+                return;
+
+            case 2:
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                entity.TargetAnimationId = 3;
+                direction = (uint)ScriptHelper.GetDirectionToTarget(
+                    gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                    gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                entity.TargetDirection = direction;
+                entity.AIValues[1] = 0x15;
+                return;
+
+            case 3:
+                newDelay = entity.AIValues[1];
+                if (newDelay != 0)
+                {
+                    entity.AIValues[1] = (short)(newDelay - 1);
+
+                    if (newDelay == 1)
+                    {
+                        int z = entity.PosZ;
+                        direction = (entity.TargetDirection - 6) & 0x1f;
+
+                        for (int i = 0; i < 4; i++)
+                        {
+                            entitySpawned = gameEngine.SpawnWarpEntity(
+                                entity,
+                                1,
+                                0xce,
+                                entity.PosX,
+                                entity.PosY,
+                                z + 0x200000,
+                                direction);
+
+                            entitySpawned.ForceZ = 0x40000;
+                            direction = (direction + 4) & 0x1f;
+                        }
+                    }
+                }
+
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                direction = (uint)ScriptHelper.GetDirectionToTarget(
+                    entity.PosX - gameEngine.StaticVariables.PlayerEntity.PosX,
+                    entity.PosY - gameEngine.StaticVariables.PlayerEntity.PosY);
+                seed = Random.Next();
+                rand = Random.Next();
+
+                entity.TargetAnimationId = 1;
+                entity.TargetDirection = (uint)((direction + (int)((seed * 5) >> 0x20) - 2) & 0x1f);
+                entity.Bytes[0] = 1;
+                entity.AIValues[1] = (short)(((rand * 0x20) >> 0x20) + 0x78);
+                return;
+
+            case 4:
+                if (2 < relativePositions[0])
+                {
+                    return;
+                }
+
+                if (2 < relativePositions[1])
+                {
+                    return;
+                }
+
+                if (0x100000 < relativePositions[2])
+                {
+                    return;
+                }
+
+                entity.TargetAnimationId = 2;
+                return;
+
+            case 6:
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                if (entity.Bytes[3] != 0)
+                {
+                    entity.TargetAnimationId = 7;
+                    entity.Flags |= 0x40;
+                    return;
+                }
+
+                entity.TargetAnimationId = 0;
+                entity.AIValues[1] = (short)(((Random.Next() * 0x10) >> 0x20) + 0x20);
+                return;
+
+            default:
+                return;
         }
     }
 
@@ -6945,7 +7140,10 @@ public static class FunctionTypeC
     //8006ca40
     public static void AI_UpdateEntityAI_20(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        Breakpoint.TriggerBreak();
+
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Ver Niv.1")
         {
             Breakpoint.TriggerBreak();
         }

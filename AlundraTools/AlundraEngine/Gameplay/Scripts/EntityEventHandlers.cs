@@ -2658,21 +2658,22 @@ public class EntityEventHandlers
 
         if (num != 0)
         {
+            var x = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].PosX;
+            var y = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].PosY;
+            var z = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].PosZ;
+
+            var targetX = x + (variables[3] + variables[4] * 0x100) * 0x10000;
+            var targetY = y + (variables[5] + variables[6] * 0x100) * 0x10000;
+            var targetZ = z + (variables[7] + variables[8] * 0x100) * 0x10000;
+
             num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[2]);
 
-            if (num != 0)
+            while (num > 0)
             {
-                var x = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].PosX;
-                var y = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].PosY;
-                var z = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].PosZ;
-
-                for (var i = 0; i < num; i++)
-                {
-                    var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
-                    entity.PosX = x + (variables[3] + variables[4] * 0x100) * 0x10000;
-                    entity.PosY = y + (variables[5] + variables[6] * 0x100) * 0x10000;
-                    entity.PosZ = z + (variables[7] + variables[8] * 0x100) * 0x10000;
-                }
+                var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[--num];
+                entity.PosX = targetX;
+                entity.PosY = targetY;
+                entity.PosZ = targetZ;
             }
         }
 

@@ -467,6 +467,12 @@ public static class FunctionTypeD
     public static void AI_FUN_8007e7e4(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        if ((entity.TouchingEntity.BalanceAnimValRef.Val & 0xf) == 2)
+        {
+            entity.TargetAnimationId = entity.TargetAnimationId + 1;
+            entity.Flags = entity.Flags | 0x40;
+        }
     }
 
     //8007e828
