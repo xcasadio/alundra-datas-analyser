@@ -13249,6 +13249,8 @@ public class StaticVariables
     public int DAT_80191138; // 80191138
     public int DAT_8019113c; // 8019113C
     public int DAT_80191140; // 80191140
+    // GHIDRA: DAT_8019119c @ 0x8019119C
+    public int DAT_8019119c; // 8019119C
 
     public Entity g_bossSpawnedEffectEntity; // 801911B8
     public Entity g_bossEffectEntity; // 801911BC
@@ -13264,7 +13266,7 @@ public class StaticVariables
     public int DAT_801911e4; // 801911E4
     public int DAT_801911e8; // 801911E8
     public Entity PTR_801911ec; // 801911EC
-    public Entity g_loaderEffectEntityId; // 801911F0
+    public SpriteEffect g_loaderEffectEntityId; // 801911F0
     public short g_loaderEventDelay2; // 801911F4
     public short g_loaderEventDelay1; // 801911F6
     public short DAT_801911f8; // 801911F8
@@ -13272,9 +13274,7 @@ public class StaticVariables
     public short DAT_801911fc; // 801911FC
     public short DAT_801911fe; // 801911FE
     public short DAT_80191200; // 80191200
-    public Entity PTR_80191204; // 80191204
-    public int g_specialEffectEntityArray; // 80191208
-    public int DAT_8019120c; // 8019120C
+    public Entity?[] PTR_ARRAY_80191204 = new Entity?[13]; // 80191204..80191234
     public int DAT_80191238; // 80191238
     public int g_fireSummonCount; // 8019123C
     public int g_fireCycleState; // 80191240

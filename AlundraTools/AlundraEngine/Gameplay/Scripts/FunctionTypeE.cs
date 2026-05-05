@@ -360,7 +360,8 @@ public static class FunctionTypeE
     //8007f3b0
     public static void AI_FUN_8007f3b0(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (entity.Name != "◆Homme-lézard (épée) Niv.1"
+            && entity.Name != "Mur à boule de fer (2×2×2) permanent")
         {
             Breakpoint.TriggerBreak();
         }

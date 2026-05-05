@@ -451,7 +451,8 @@ public static class FunctionTypeD
     //8007e79c
     public static void AI_FUN_8007e79c(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Bombe")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Bombe")
         {
             Breakpoint.TriggerBreak();
         }
@@ -466,7 +467,12 @@ public static class FunctionTypeD
     //8007e7e4
     public static void AI_FUN_8007e7e4(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Bombe"
+            && entity.Name != "Mur à boule de fer (2×2×2) permanent")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         if ((entity.TouchingEntity.BalanceAnimValRef.Val & 0xf) == 2)
         {
