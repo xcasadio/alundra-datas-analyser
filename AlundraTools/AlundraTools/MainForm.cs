@@ -11,6 +11,8 @@ namespace AlundraTools;
 
 public partial class MainForm : Form
 {
+    private static int _isGameRunning;
+
     public MainForm()
     {
         InitializeComponent();
@@ -87,11 +89,8 @@ public partial class MainForm : Form
             LaunchGame(-1, filePath);
         }
     }
-    private static void LaunchGame(int mapId, string gameStateFile)
+    private static void LaunchGame(int mapId, string? gameStateFile)
     {
-        StaticVariables.ForceDesiredMap = -1;
-        StaticVariables.GameStateFileNameToLoad = gameStateFile;
-
         var ofd = new OpenFileDialog();
         ofd.Filter = "DATAS.BIN|DATAS.BIN|All Files (*.*)|*.*";
         ofd.InitialDirectory = @"D:\development\repo\Alundra Remake\Alundra (France)\Alundra (France)_extracted\DATA";
@@ -100,31 +99,46 @@ public partial class MainForm : Form
         {
             if (!string.IsNullOrWhiteSpace(ofd.FileName))
             {
-                var datasBin = new DatasBin(ofd.FileName);
-                var dataFolder = Path.GetDirectoryName(ofd.FileName);
-                var soundFile = Path.Combine(dataFolder, "SOUND.BIN");
-                var balanceFile = Path.Combine(dataFolder, "BALANCE.BIN");
-                var font3Folder = Path.Combine(dataFolder, "..", "TAKI\\SCREEN");
-                var etcResFileName = PathHelper.GetEtcFileName(dataFolder);
-                EtcRes etcRes;
-
-                if (Path.GetFileName(etcResFileName).Contains("usa", StringComparison.InvariantCultureIgnoreCase))
+                try
                 {
-                    etcRes = new EtcResUsa(etcResFileName);
-                }
-                else
-                {
-                    etcRes = new EtcResR(etcResFileName);
-                }
+                    if (Interlocked.CompareExchange(ref _isGameRunning, 1, 0) != 0)
+                    {
+                        MessageBox.Show("AlundraGame is already running in this process.", "Unable to launch AlundraGame", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
 
-                var frmGame = new FrmGame(
-                    datasBin,
-                    new BalanceBin(balanceFile),
-                    new SoundBin(soundFile),
-                    etcRes,
-                    new Font3(font3Folder));
-                frmGame.Show();
+                    var datasBinFilePath = ofd.FileName;
+                    var gameThread = new Thread(() => RunGameInProcess(datasBinFilePath, mapId, gameStateFile))
+                    {
+                        IsBackground = true,
+                        Name = "AlundraGameThread"
+                    };
+
+                    gameThread.SetApartmentState(ApartmentState.STA);
+                    gameThread.Start();
+                }
+                catch (Exception ex)
+                {
+                    Interlocked.Exchange(ref _isGameRunning, 0);
+                    MessageBox.Show(ex.Message, "Unable to launch AlundraGame", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
+        }
+    }
+
+    private static void RunGameInProcess(string datasBinFilePath, int mapId, string? gameStateFile)
+    {
+        try
+        {
+            AlundraGame.AlundraGameRunner.Run(datasBinFilePath, mapId, gameStateFile);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.ToString(), "Unable to launch AlundraGame", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        finally
+        {
+            Interlocked.Exchange(ref _isGameRunning, 0);
         }
     }
 }

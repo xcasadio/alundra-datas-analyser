@@ -1,0 +1,403 @@
+<Window xmlns="clr-namespace:MGUI.Core.UI.XAML;assembly=MGUI.Core"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+        Name="frmGameDebugPanelWindow"
+        Left="1280" Top="0" Width="512" Height="944"
+        WindowStyle="None" Padding="0" IsUserResizable="False">
+    <Window.Styles>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="JetBrainsMono" />
+            <Setter Property="FontSize" Value="9" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="3,2" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="FontFamily" Value="JetBrainsMono" />
+            <Setter Property="FontSize" Value="9" />
+        </Style>
+        <Style TargetType="GroupBox">
+            <Setter Property="IsExpandable" Value="False" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="8,2,8,8" />
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="CheckBoxComponentSize" Value="13" />
+            <Setter Property="SpacingWidth" Value="4" />
+        </Style>
+        <Style TargetType="RadioButton">
+            <Setter Property="BubbleComponentSize" Value="13" />
+            <Setter Property="SpacingWidth" Value="4" />
+        </Style>
+    </Window.Styles>
+
+    <Canvas Name="frmGameDebugPanel" Width="512" Height="944">
+        <TabControl Name="tabControl1" CanvasLeft="0" CanvasTop="0" Width="511" Height="767"
+                    MinWidth="511" BorderThickness="1" Padding="0">
+            <TabControl.HeadersPanel>
+                <StackPanel Orientation="Horizontal" Spacing="0" />
+            </TabControl.HeadersPanel>
+
+            <TabItem Name="tabPageEntities" IsTabSelected="True" Padding="0">
+                <TabItem.Header>
+                    <TextBlock Name="tabPageEntitiesHeader" Text="Entities" />
+                </TabItem.Header>
+                <Canvas Width="503" Height="739">
+                    <GroupBox Name="groupBox1" Header="Entities" CanvasLeft="5" CanvasTop="5" Width="143" Height="90">
+                        <Grid RowLengths="15,15,15,15" ColumnLengths="71,*">
+                            <TextBlock Name="label1" Row="0" Column="0" Text="# entity:" />
+                            <TextBlock Name="labelNumberOfEntity" Row="0" Column="1" Text="0" />
+                            <TextBlock Name="label2" Row="1" Column="0" Text="# activated" />
+                            <TextBlock Name="labelNumberOfActivatedEntity" Row="1" Column="1" Text="0" />
+                            <TextBlock Name="label5" Row="2" Column="0" Text="# collideable" />
+                            <TextBlock Name="labelNumberOfCollideableEntity" Row="2" Column="1" Text="0" />
+                            <TextBlock Name="label7" Row="3" Column="0" Text="# visible" />
+                            <TextBlock Name="labelNumberOfVisibleEntity" Row="3" Column="1" Text="0" />
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Name="groupBox3" Header="Map" CanvasLeft="155" CanvasTop="5" Width="137" Height="128">
+                        <Grid RowLengths="15,15,15,15,15,15" ColumnLengths="71,*">
+                            <TextBlock Name="label21" Row="0" Column="0" Text="id:" />
+                            <TextBlock Name="labelMapId" Row="0" Column="1" Text="0" />
+                            <TextBlock Name="label19" Row="1" Column="0" Text="size:" />
+                            <TextBlock Name="labelMapSize" Row="1" Column="1" Text="0" />
+                            <TextBlock Name="label17" Row="2" Column="0" Text="gravity" />
+                            <TextBlock Name="labelMapGravity" Row="2" Column="1" Text="0" />
+                            <TextBlock Name="label15" Row="3" Column="0" Text="# entity" />
+                            <TextBlock Name="labelMapNumberOfEntity" Row="3" Column="1" Text="0" />
+                            <TextBlock Name="label10" Row="4" Column="0" Text="pos offset" />
+                            <TextBlock Name="labelMapOffset" Row="4" Column="1" Text="0" />
+                            <TextBlock Name="label4" Row="5" Column="0" Text="screen pos" />
+                            <TextBlock Name="labelMapScreenPos" Row="5" Column="1" Text="0" />
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Name="groupBox2" Header="Camera" CanvasLeft="298" CanvasTop="5" Width="200" Height="90">
+                        <Grid RowLengths="15,15,15,15" ColumnLengths="71,*">
+                            <TextBlock Name="label13" Row="0" Column="0" Text="current pos" />
+                            <TextBlock Name="labelCameraPosition" Row="0" Column="1" Text="0" />
+                            <TextBlock Name="label6" Row="1" Column="0" Text="look at" />
+                            <TextBlock Name="labelCameraLookAt" Row="1" Column="1" Text="0" />
+                            <TextBlock Name="label9" Row="2" Column="0" Text="offset" />
+                            <TextBlock Name="labelCameraOffset" Row="2" Column="1" Text="0" />
+                            <TextBlock Name="label29" Row="3" Column="0" Text="scrolling" />
+                            <TextBlock Name="labelCameraScrolling" Row="3" Column="1" Text="0" />
+                        </Grid>
+                    </GroupBox>
+
+                    <TextBlock Name="label56" CanvasLeft="298" CanvasTop="99" Text="active collision entity" />
+                    <TextBlock Name="labelActiveCollisionEntity" CanvasLeft="422" CanvasTop="99" Text="" />
+                    <TextBlock Name="label14" CanvasLeft="3" CanvasTop="125" Text="Entities" />
+                    <ListBox Name="listBoxEntities" CanvasLeft="4" CanvasTop="143" Width="103" Height="574" ItemType="{x:Type System:String}" />
+                    <DataGrid Name="propertyGridEntity" CanvasLeft="113" CanvasTop="143" Width="386" Height="589" ItemType="{x:Type System:Object}" RowHeight="16" SelectionMode="Row">
+                        <ListViewColumn Width="120">
+                            <ListViewColumn.Header><TextBlock Text="Property" /></ListViewColumn.Header>
+                        </ListViewColumn>
+                        <ListViewColumn Width="*">
+                            <ListViewColumn.Header><TextBlock Text="Value" /></ListViewColumn.Header>
+                        </ListViewColumn>
+                    </DataGrid>
+                </Canvas>
+            </TabItem>
+
+            <TabItem Name="tabPageEffects" Padding="0">
+                <TabItem.Header>
+                    <TextBlock Name="tabPageEffectsHeader" Text="Effects" />
+                </TabItem.Header>
+                <Canvas Width="503" Height="739">
+                    <TextBlock Name="label28" CanvasLeft="2" CanvasTop="2" Text="Effects" />
+                    <ListBox Name="listBoxEffects" CanvasLeft="3" CanvasTop="20" Width="103" Height="709" ItemType="{x:Type System:String}" />
+                    <DataGrid Name="propertyGridEffect" CanvasLeft="112" CanvasTop="20" Width="386" Height="714" ItemType="{x:Type System:Object}" RowHeight="16" SelectionMode="Row">
+                        <ListViewColumn Width="120">
+                            <ListViewColumn.Header><TextBlock Text="Property" /></ListViewColumn.Header>
+                        </ListViewColumn>
+                        <ListViewColumn Width="*">
+                            <ListViewColumn.Header><TextBlock Text="Value" /></ListViewColumn.Header>
+                        </ListViewColumn>
+                    </DataGrid>
+                </Canvas>
+            </TabItem>
+
+            <TabItem Name="tabPagePlayerStatus" Padding="0">
+                <TabItem.Header>
+                    <TextBlock Name="tabPagePlayerStatusHeader" Text="Player status" />
+                </TabItem.Header>
+                <Canvas Width="503" Height="739">
+                    <TextBlock Name="label20" CanvasLeft="5" CanvasTop="10" Text="HP max" />
+                    <NumericUpDown Name="numericUpDownHpMax" CanvasLeft="66" CanvasTop="7" Width="131" Height="23" Minimum="0" Maximum="100" Value="10" />
+                    <TextBlock Name="label24" CanvasLeft="5" CanvasTop="33" Text="HP" />
+                    <NumericUpDown Name="numericUpDownHp" CanvasLeft="66" CanvasTop="32" Width="131" Height="23" Minimum="0" Maximum="100" Value="10" />
+                    <TextBlock Name="label23" CanvasLeft="5" CanvasTop="58" Text="MP max" />
+                    <NumericUpDown Name="numericUpDownMpMax" CanvasLeft="66" CanvasTop="56" Width="131" Height="23" Minimum="0" Maximum="100" Value="0" />
+                    <TextBlock Name="label22" CanvasLeft="5" CanvasTop="83" Text="MP" />
+                    <NumericUpDown Name="numericUpDownMp" CanvasLeft="66" CanvasTop="80" Width="131" Height="23" Minimum="0" Maximum="100" Value="0" />
+                    <TextBlock Name="label25" CanvasLeft="5" CanvasTop="108" Text="Money" />
+                    <NumericUpDown Name="numericUpDownMoney" CanvasLeft="66" CanvasTop="105" Width="131" Height="23" Minimum="0" Maximum="30000" Value="0" />
+                    <TextBlock Name="label26" CanvasLeft="5" CanvasTop="133" Text="Falcon 1" />
+                    <NumericUpDown Name="numericUpDownFalcon1" CanvasLeft="66" CanvasTop="130" Width="131" Height="23" Minimum="0" Maximum="100" Value="0" />
+                    <TextBlock Name="label27" CanvasLeft="5" CanvasTop="158" Text="Falcon 2" />
+                    <NumericUpDown Name="numericUpDownFalcon2" CanvasLeft="66" CanvasTop="154" Width="131" Height="23" Minimum="0" Maximum="100" Value="0" />
+                    <TextBlock Name="label53" CanvasLeft="5" CanvasTop="182" Text="Keys" />
+                    <NumericUpDown Name="numericUpDownKeys" CanvasLeft="66" CanvasTop="179" Width="131" Height="23" Minimum="0" Maximum="100" Value="0" />
+                    <TextBlock Name="label16" CanvasLeft="5" CanvasTop="211" Text="Weapon" />
+                    <ComboBox Name="comboBoxWeapon" CanvasLeft="66" CanvasTop="208" Width="133" Height="23" ItemType="{x:Type System:String}">
+                        <System:String>1-sword</System:String>
+                        <System:String>3-Flail</System:String>
+                        <System:String>2-Bow</System:String>
+                        <System:String>4-Ice wand</System:String>
+                        <System:String>5-Fire wand</System:String>
+                        <System:String>6-Spirit wand</System:String>
+                    </ComboBox>
+                    <TextBlock Name="label18" CanvasLeft="5" CanvasTop="235" Text="Item" />
+                    <ComboBox Name="comboBoxItem" CanvasLeft="66" CanvasTop="232" Width="133" Height="23" ItemType="{x:Type System:String}">
+                        <System:String>30-Spring Bean</System:String>
+                        <System:String>31-Sand Cape</System:String>
+                        <System:String>33-Curious Key variant (unused)</System:String>
+                        <System:String>34-Bomb</System:String>
+                        <System:String>35-Herbs</System:String>
+                        <System:String>36-Strength Elixyr</System:String>
+                        <System:String>37-Magic Elixyr</System:String>
+                        <System:String>38-Wonder Essence</System:String>
+                        <System:String>39-Aqua Cape</System:String>
+                        <System:String>40-Stenght Tonic</System:String>
+                        <System:String>41-System error (unused)</System:String>
+                        <System:String>42-Earth Scroll</System:String>
+                        <System:String>43-Earth Book</System:String>
+                        <System:String>44-Water Scroll</System:String>
+                        <System:String>45-Water Book</System:String>
+                        <System:String>46-Fire Scroll</System:String>
+                        <System:String>47-Fire Book</System:String>
+                        <System:String>48-Wind Scroll</System:String>
+                        <System:String>49-Wind Book</System:String>
+                        <System:String>50-Olga's Ring</System:String>
+                        <System:String>51-Oak's Ring (unused)</System:String>
+                        <System:String>52-Silver Armlet</System:String>
+                        <System:String>53-Nava's Charm</System:String>
+                        <System:String>54-Recovery Ring</System:String>
+                        <System:String>55-Refresher (unused)</System:String>
+                        <System:String>57-Save book (unused)</System:String>
+                        <System:String>58-Power Glove</System:String>
+                    </ComboBox>
+                    <Button Name="buttonAllItems" CanvasLeft="5" CanvasTop="269" Width="193" Height="22" Content="All items BUG !!" CommandName="buttonAllItems_Click" />
+                    <Button Name="buttonRestoreHpAndMp" CanvasLeft="214" CanvasTop="7" Width="150" Height="22" Content="Restore Hp and Mp" CommandName="buttonRestoreHpAndMp_Click" />
+                    <Button Name="buttonIncreaseMpMax" CanvasLeft="214" CanvasTop="43" Width="150" Height="22" Content="Increase Mp Max" CommandName="buttonIncreaseMpMax_Click" />
+                    <Button Name="buttonRestoreMp" CanvasLeft="214" CanvasTop="70" Width="150" Height="22" Content="Restore Mp" CommandName="buttonRestoreMp_Click" />
+                    <Button Name="buttonIncreaseMp" CanvasLeft="214" CanvasTop="96" Width="150" Height="22" Content="Increase Mp" CommandName="buttonIncreaseMp_Click" />
+                    <Button Name="buttonIncreaseHpMax" CanvasLeft="214" CanvasTop="131" Width="150" Height="22" Content="Increase Hp Max" CommandName="buttonIncreaseHpMax_Click" />
+                    <Button Name="buttonRestoreHp" CanvasLeft="214" CanvasTop="157" Width="150" Height="22" Content="Restore Hp" CommandName="buttonRestoreHp_Click" />
+                    <Button Name="buttonIncreaseHp" CanvasLeft="214" CanvasTop="184" Width="150" Height="22" Content="Increase Hp" CommandName="buttonIncreaseHp_Click" />
+                    <Button Name="buttonAddLowHp" CanvasLeft="214" CanvasTop="210" Width="150" Height="22" Content="Add low Hp" CommandName="buttonAddLowHp_Click" />
+                    <Button Name="buttonAddMediumHp" CanvasLeft="214" CanvasTop="236" Width="150" Height="22" Content="Add medium Hp" CommandName="buttonAddMediumHp_Click" />
+                    <Button Name="buttonAddHugeHp" CanvasLeft="214" CanvasTop="262" Width="150" Height="22" Content="Add huge Hp" CommandName="buttonAddHugeHp_Click" />
+                </Canvas>
+            </TabItem>
+
+            <TabItem Name="tabPageDebug" Padding="0">
+                <TabItem.Header>
+                    <TextBlock Name="tabPageDebugHeader" Text="Debug" />
+                </TabItem.Header>
+                <Canvas Width="503" Height="739">
+                    <TextBlock Name="label54" CanvasLeft="3" CanvasTop="9" Text="Display only flags != 0" />
+                    <TextBlock Name="label8" CanvasLeft="6" CanvasTop="26" Text="Temporary flags" />
+                    <DataGrid Name="dataGridViewTemporaryFlags" CanvasLeft="6" CanvasTop="44" Width="110" Height="334" ItemType="{x:Type System:Object}" RowHeight="16" SelectionMode="Cell">
+                        <ListViewColumn Width="40"><ListViewColumn.Header><TextBlock Text="Index" /></ListViewColumn.Header></ListViewColumn>
+                        <ListViewColumn Width="60"><ListViewColumn.Header><TextBlock Text="Value" /></ListViewColumn.Header></ListViewColumn>
+                    </DataGrid>
+                    <TextBlock Name="label12" CanvasLeft="122" CanvasTop="26" Text="Game flags" />
+                    <DataGrid Name="dataGridViewGameFlags" CanvasLeft="122" CanvasTop="44" Width="117" Height="334" ItemType="{x:Type System:Object}" RowHeight="16" SelectionMode="Cell">
+                        <ListViewColumn Width="40"><ListViewColumn.Header><TextBlock Text="Index" /></ListViewColumn.Header></ListViewColumn>
+                        <ListViewColumn Width="60"><ListViewColumn.Header><TextBlock Text="Value" /></ListViewColumn.Header></ListViewColumn>
+                    </DataGrid>
+
+                    <GroupBox Name="groupBox6" Header="Pad" CanvasLeft="242" CanvasTop="9" Width="254" Height="145">
+                        <Grid RowLengths="15,15,15,15,15,15,15,15" ColumnLengths="109,*">
+                            <TextBlock Name="label40" Row="0" Column="0" Text="Max nb held" />
+                            <TextBlock Name="labelPadMaxNbHeld" Row="0" Column="1" Text="0" />
+                            <TextBlock Name="label42" Row="1" Column="0" Text="Repeat Interval" />
+                            <TextBlock Name="labelPadRepeatInterval" Row="1" Column="1" Text="0" />
+                            <TextBlock Name="label44" Row="2" Column="0" Text="Is over" />
+                            <TextBlock Name="labelPadIsOver" Row="2" Column="1" Text="0" />
+                            <TextBlock Name="label46" Row="3" Column="0" Text="# frame hold" />
+                            <TextBlock Name="labelPadNumberFrameHold" Row="3" Column="1" Text="0" />
+                            <TextBlock Name="label48" Row="4" Column="0" Text="Hold" />
+                            <TextBlock Name="labelPadButtonHold" Row="4" Column="1" Text="0" />
+                            <TextBlock Name="label50" Row="5" Column="0" Text="Just pressed" />
+                            <TextBlock Name="labelPadButtonJustPressed" Row="5" Column="1" Text="0" />
+                            <TextBlock Name="label51" Row="6" Column="0" Text="Released" />
+                            <TextBlock Name="labelPadButtonReleased" Row="6" Column="1" Text="0" />
+                            <TextBlock Name="label52" Row="7" Column="0" Text="Just pressed inter" />
+                            <TextBlock Name="labelPadButtonJustPressedByInterval" Row="7" Column="1" Text="0" />
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Name="groupBox7" Header="Display callbacks" CanvasLeft="242" CanvasTop="159" Width="254" Height="219">
+                        <StackPanel Orientation="Vertical" Spacing="0">
+                            <TextBlock Name="labelCallback0" Text="#0 - dialog" />
+                            <TextBlock Name="labelCallback1" Text="#1 - HUD" />
+                            <TextBlock Name="labelCallback2" Text="#2 - ???" />
+                            <TextBlock Name="labelCallback3" Text="#3 - dialog with choice" />
+                            <TextBlock Name="labelCallback4" Text="#4 - secondary menu" />
+                            <TextBlock Name="labelCallback5" Text="#5 - debug menu sound" />
+                            <TextBlock Name="labelCallback6" Text="#6 - main menu" />
+                            <TextBlock Name="labelCallback7" Text="#7 - ???" />
+                            <TextBlock Name="labelCallback8" Text="#8 - ???" />
+                            <TextBlock Name="labelCallback9" Text="#9 - ???" />
+                            <TextBlock Name="labelCallback10" Text="#10 - memory card menu" />
+                            <TextBlock Name="labelCallback11" Text="#11 - ???" />
+                            <TextBlock Name="labelCallback12" Text="#12 - dialog with portrait and name" />
+                        </StackPanel>
+                    </GroupBox>
+
+                    <GroupBox Name="groupBoxFlags" Header="Flags" CanvasLeft="6" CanvasTop="384" Width="490" Height="280">
+                        <ScrollViewer Name="panelFlags" Width="468" Height="250" VerticalScrollBarVisibility="Auto">
+                            <Grid Name="panelFlagsContent" Width="468" />
+                        </ScrollViewer>
+                    </GroupBox>
+
+                    <TextBlock Name="label30" CanvasLeft="3" CanvasTop="671" Text="Force random item" />
+                    <ComboBox Name="comboBoxRandomItem" CanvasLeft="126" CanvasTop="669" Width="108" Height="23" ItemType="{x:Type System:String}">
+                        <System:String>36</System:String><System:String>37</System:String><System:String>41</System:String><System:String>69</System:String><System:String>70</System:String><System:String>71</System:String><System:String>72</System:String><System:String>79</System:String><System:String>80</System:String><System:String>81</System:String><System:String>82</System:String><System:String>83</System:String><System:String>84</System:String><System:String>85</System:String><System:String>86</System:String>
+                    </ComboBox>
+                    <Button Name="buttonSpawnItem" CanvasLeft="3" CanvasTop="694" Width="108" Height="22" Content="Spawn item" CommandName="buttonSpawnItem_Click" />
+                    <ComboBox Name="comboBoxSpawnItemId" CanvasLeft="126" CanvasTop="695" Width="108" Height="23" ItemType="{x:Type System:String}">
+                        <System:String>36</System:String><System:String>37</System:String><System:String>41</System:String><System:String>69</System:String><System:String>70</System:String><System:String>71</System:String><System:String>72</System:String><System:String>79</System:String><System:String>80</System:String><System:String>81</System:String><System:String>82</System:String><System:String>83</System:String><System:String>84</System:String><System:String>85</System:String><System:String>86</System:String>
+                    </ComboBox>
+                    <Button Name="buttonAlundraCabine" CanvasLeft="247" CanvasTop="671" Width="142" Height="23" Content="Pass alundra cabine" CommandName="buttonAlundraCabine_Click" />
+                    <CheckBox Name="checkBoxDisableCollision" CanvasLeft="395" CanvasTop="675" Content="Disable collision" />
+                    <Button Name="buttonControlAlundra" CanvasLeft="247" CanvasTop="699" Width="142" Height="22" Content="Control alundra" CommandName="buttonControlAlundra_Click" />
+                </Canvas>
+            </TabItem>
+
+            <TabItem Name="tabPageHud" Padding="0">
+                <TabItem.Header>
+                    <TextBlock Name="tabPageHudHeader" Text="HUD" />
+                </TabItem.Header>
+                <Canvas Width="503" Height="739">
+                    <GroupBox Name="groupBox5" Header="Dialog" CanvasLeft="5" CanvasTop="5" Width="494" Height="291">
+                        <Grid RowLengths="*" ColumnLengths="165,*" ColumnSpacing="8">
+                            <Grid Row="0" Column="0" RowLengths="15,15,15,15,15,15,15,15,15,78,15,15" ColumnLengths="91,*">
+                                <TextBlock Name="label38" Row="0" Column="0" Text="flag:" />
+                                <TextBlock Name="labelTextFlag" Row="0" Column="1" Text="0" />
+                                <TextBlock Name="label37" Row="1" Column="0" Text="auto advance" />
+                                <TextBlock Name="labelTextAutoAdvance" Row="1" Column="1" Text="0" />
+                                <TextBlock Name="label35" Row="2" Column="0" Text="delay reset" />
+                                <TextBlock Name="labelTextDelayReset" Row="2" Column="1" Text="0" />
+                                <TextBlock Name="label33" Row="3" Column="0" Text="delay" />
+                                <TextBlock Name="labelTextDelay" Row="3" Column="1" Text="0" />
+                                <TextBlock Name="label41" Row="4" Column="0" Text="buffer X" />
+                                <TextBlock Name="labelTextBufferX" Row="4" Column="1" Text="0" />
+                                <TextBlock Name="label43" Row="5" Column="0" Text="line index" />
+                                <TextBlock Name="labelLineIndex" Row="5" Column="1" Text="0" />
+                                <TextBlock Name="label49" Row="6" Column="0" Text="cursor" />
+                                <TextBlock Name="labelTextCursor" Row="6" Column="1" Text="0" />
+                                <TextBlock Name="label47" Row="7" Column="0" Text="render step" />
+                                <TextBlock Name="labelTextRenderStep" Row="7" Column="1" Text="0" />
+                                <TextBlock Name="label45" Row="8" Column="0" Text="lines width" />
+                                <TextBlock Name="labelTextLinesWidth" Row="8" Column="1" Text="0" />
+                                <TextBlock Name="label55" Row="10" Column="0" Text="lines width" />
+                                <TextBlock Name="labelHudDebug1" Row="10" Column="1" Text="0" />
+                                <TextBlock Name="label57" Row="11" Column="0" Text="lines width" />
+                                <TextBlock Name="labelHudDebug2" Row="11" Column="1" Text="0" />
+                            </Grid>
+                            <StackPanel Row="0" Column="1" Orientation="Vertical" Spacing="4">
+                                <TextBlock Name="label31" Text="Text displayed" />
+                                <TextBox Name="textBoxTextInDialog" Width="292" Height="75" Text="&#x0D;&#x0A;" IsReadonly="True" AcceptsReturn="True" WrapText="True" />
+                                <TextBlock Name="label32" Text="Full text" />
+                                <TextBox Name="textBoxFullText" Width="292" Height="148" Text="&#x0D;&#x0A;" IsReadonly="True" AcceptsReturn="True" WrapText="True" />
+                            </StackPanel>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Name="groupBoxHud" Header="HUD" CanvasLeft="5" CanvasTop="301" Width="494" Height="95">
+                        <Grid RowLengths="15,15,15,15" ColumnLengths="91,*">
+                            <TextBlock Name="label34" Row="0" Column="0" Text="state:" />
+                            <TextBlock Name="labelHudActivate" Row="0" Column="1" Text="0" />
+                            <TextBlock Name="label36" Row="1" Column="0" Text="debug:" />
+                            <TextBlock Name="labelHudDebug" Row="1" Column="1" Text="0" />
+                            <TextBlock Name="label3" Row="2" Column="0" Text="position" />
+                            <TextBlock Name="labelHudXY" Row="2" Column="1" Text="0" />
+                            <TextBlock Name="label11" Row="3" Column="0" Text="delta" />
+                            <TextBlock Name="labelHudDelta" Row="3" Column="1" Text="0" />
+                        </Grid>
+                    </GroupBox>
+                </Canvas>
+            </TabItem>
+
+            <TabItem Name="tabPage1" Padding="0">
+                <TabItem.Header>
+                    <TextBlock Name="tabPage1Header" Text="Display" />
+                </TabItem.Header>
+                <Canvas Width="503" Height="739">
+                    <GroupBox Name="groupBox4" Header="Display" CanvasLeft="6" CanvasTop="5" Width="163" Height="307">
+                        <StackPanel Orientation="Vertical" Spacing="5">
+                            <CheckBox Name="checkBoxDisplayEntityId" Content="Entity id" />
+                            <CheckBox Name="checkBoxDisplayEntityPositions" Content="Entity positions" />
+                            <CheckBox Name="checkBoxDisplayEffectId" Content="Effect id" />
+                            <CheckBox Name="checkBoxEffectPositions" Content="Effect positions" />
+                            <CheckBox Name="checkBoxDisplayCollision" Content="Hitboxes" />
+                            <CheckBox Name="checkBoxTileXY" Content="Tile xy" />
+                            <CheckBox Name="checkBoxWallTileXY" Content="WallTile xy" />
+                            <CheckBox Name="checkBoxTileZ" Content="Tile z" />
+                            <CheckBox Name="checkBoxWallTileZ" Content="WallTile z" />
+                            <CheckBox Name="checkBoxDisplayFloorTiles" Content="Floor tiles" IsChecked="True" />
+                            <CheckBox Name="checkBoxDisplayWallTiles" Content="Wall tiles" IsChecked="True" />
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Name="groupBox8" Header="Zoom" CanvasLeft="175" CanvasTop="6" Width="321" Height="60">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Button Name="buttonZoomx1" Width="39" Height="23" Content="x1" CommandName="buttonZoomX1_Click" />
+                            <Button Name="buttonZoomX2" Width="39" Height="23" Content="x2" CommandName="buttonZoomX2_Click" />
+                            <Button Name="buttonZoomX4" Width="39" Height="23" Content="x4" CommandName="buttonZoomX4_Click" />
+                            <Button Name="buttonZoomX8" Width="39" Height="23" Content="x6" CommandName="buttonZoomX8_Click" />
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Name="groupBox9" Header="Speed" CanvasLeft="181" CanvasTop="72" Width="315" Height="48">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <RadioButton Name="radioButtonSpeed0_25" GroupName="runtimeSpeed" Content="0.25" />
+                            <RadioButton Name="radioButtonSpeed0_5" GroupName="runtimeSpeed" Content="0.5" />
+                            <RadioButton Name="radioButtonSpeed0_75" GroupName="runtimeSpeed" Content="0.75" />
+                            <RadioButton Name="radioButtonSpeed1" GroupName="runtimeSpeed" Content="1" IsChecked="True" />
+                            <RadioButton Name="radioButtonSpeed1_5" GroupName="runtimeSpeed" Content="1.5" />
+                            <RadioButton Name="radioButtonSpeed2" GroupName="runtimeSpeed" Content="2" />
+                        </StackPanel>
+                    </GroupBox>
+                </Canvas>
+            </TabItem>
+
+            <TabItem Name="tabPage2" Padding="0">
+                <TabItem.Header>
+                    <TextBlock Name="tabPage2Header" Text="Logs" />
+                </TabItem.Header>
+                <Canvas Width="503" Height="739">
+                    <CheckBox Name="checkBoxAddLogInVS" CanvasLeft="14" CanvasTop="11" Content="Add Logs in VS Studio" />
+                    <TextBlock Name="label58" CanvasLeft="14" CanvasTop="33" Text="Filter by category" />
+                    <ComboBox Name="comboBoxLogCategories" CanvasLeft="118" CanvasTop="30" Width="186" Height="23" ItemType="{x:Type System:String}" />
+                    <Button Name="buttonShowAllLogs" CanvasLeft="14" CanvasTop="61" Width="117" Height="23" Content="Show all logs" CommandName="buttonShowAllLogs_Click" />
+                    <Button Name="buttonClearLog" CanvasLeft="137" CanvasTop="61" Width="117" Height="23" Content="Clear logs" CommandName="buttonClearLog_Click" />
+                    <Button Name="buttonCopyAllLogs" CanvasLeft="260" CanvasTop="61" Width="117" Height="23" Content="Copy all logs" CommandName="buttonCopyAllLogs_Click" />
+                    <Button Name="buttonRefreshLogs" CanvasLeft="14" CanvasTop="99" Width="117" Height="23" Content="Refresh" CommandName="buttonRefreshLogs_Click" />
+                    <CheckBox Name="checkBoxLogScript" CanvasLeft="380" CanvasTop="4" Content="Log script" />
+                    <CheckBox Name="checkBoxLogDamage" CanvasLeft="380" CanvasTop="29" Content="Log damage" />
+                    <CheckBox Name="checkBoxDebugPortal" CanvasLeft="380" CanvasTop="54" Content="Log portal" />
+                    <CheckBox Name="checkBoxLogAI" CanvasLeft="380" CanvasTop="79" Content="Log AI values" />
+                    <ListBox Name="listBoxLogs" CanvasLeft="14" CanvasTop="128" Width="482" Height="604" ItemType="{x:Type System:String}" />
+                </Canvas>
+            </TabItem>
+
+            <TabItem Name="tabPage3" Padding="0">
+                <TabItem.Header>
+                    <TextBlock Name="tabPage3Header" Text="Script" />
+                </TabItem.Header>
+                <Canvas Width="503" Height="739">
+                    <Button Name="buttonRefreshScript" CanvasLeft="6" CanvasTop="6" Width="75" Height="23" Content="Refresh" CommandName="buttonRefreshScript_Click" />
+                    <ListBox Name="listBoxScript" CanvasLeft="6" CanvasTop="35" Width="490" Height="698" ItemType="{x:Type System:Object}" />
+                </Canvas>
+            </TabItem>
+        </TabControl>
+
+        <Button Name="buttonPauseGame" CanvasLeft="7" CanvasTop="772" Width="75" Height="23" Content="Running" TextForeground="RGB(0,192,0)" CommandName="buttonPauseGame_Click" />
+        <Button Name="buttonRunOneFrame" CanvasLeft="88" CanvasTop="772" Width="35" Height="23" Content="&gt;|" CommandName="buttonNextFrame_Click" />
+        <Button Name="buttonSnapshot" CanvasLeft="425" CanvasTop="772" Width="75" Height="23" Content="Snapshot" CommandName="buttonSnapshot_Click" />
+        <Button Name="buttonSaveState" CanvasLeft="7" CanvasTop="867" Width="75" Height="23" Content="Save state" CommandName="buttonSaveState_Click" />
+    </Canvas>
+</Window>

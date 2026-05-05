@@ -4,6 +4,12 @@ using AlundraEngine.DatasBin;
 using AlundraEngine.Editor;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
+using FontStashSharp;
+using MGUI.Backend.MonoGame;
+using MGUI.Core.UI;
+using MGUI.FontStashSharp;
+using MGUI.Shared.Rendering;
+using MGUI.Shared.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -17,22 +23,32 @@ namespace AlundraGame
     public class AlundraGame : Game
     {
         private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
-        private GameEngine _gameEngine;
-        private RenderTarget2D _renderTarget;
-        private InputManager _inputManager;
+        private SpriteBatch _spriteBatch = null!;
+        private GameEngine _gameEngine = null!;
+        private RenderTarget2D _renderTarget = null!;
+        private InputManager _inputManager = null!;
         private RuntimeInspectorHost? _runtimeInspector;
-        private const int ScaleFactor = 4;
+        private DelegateRenderHost? _mguiHost;
+        private IMonoGameDesktopBackend? _mguiRenderer;
+        private MGDesktop? _desktop;
+        private FrmGameDebugPanelController? _debugPanelController;
+        private const string DebugPanelFontFamily = "JetBrainsMono";
+        private const int DebugPanelFontSize = 9;
+        private const int DefaultScaleFactor = 4;
+        private const int DebugPanelWidth = 512;
+        private int _renderScaleFactor = DefaultScaleFactor;
+        private readonly string? _datasBinFilePath;
+        private int GameRenderWidth => StaticVariables.ScreenWidth * _renderScaleFactor;
+        private int GameRenderHeight => StaticVariables.ScreenHeight * _renderScaleFactor;
 
-        public AlundraGame()
+        public AlundraGame(string? datasBinFilePath = null)
         {
+            _datasBinFilePath = datasBinFilePath;
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             
-            // Configure window size to 4x native resolution
-            _graphics.PreferredBackBufferWidth = StaticVariables.ScreenWidth * ScaleFactor;
-            _graphics.PreferredBackBufferHeight = StaticVariables.ScreenHeight * ScaleFactor;
+            SetPreferredBackBufferSize(false);
         }
 
         protected override void Initialize()
@@ -54,11 +70,21 @@ namespace AlundraGame
                 0,
                 RenderTargetUsage.PreserveContents);
             
-            var gamePath = "D:\\development\\repo\\Alundra Remake\\Alundra (France)\\Alundra (France)_extracted";
+            string dataFolder;
+            DatasBin datasBin;
+            if (!string.IsNullOrWhiteSpace(_datasBinFilePath))
+            {
+                dataFolder = Path.GetDirectoryName(_datasBinFilePath)
+                    ?? throw new DirectoryNotFoundException($"Unable to resolve the data folder from '{_datasBinFilePath}'.");
+                datasBin = new DatasBin(_datasBinFilePath);
+            }
+            else
+            {
+                var gamePath = "D:\\development\\repo\\Alundra Remake\\Alundra (France)\\Alundra (France)_extracted";
+                dataFolder = Path.Combine(gamePath, "DATA");
+                datasBin = new DatasBin(Path.Combine(dataFolder, "DATAS.BIN"));
+            }
 
-            var dataFolder = Path.Combine(gamePath, "DATA");
-
-            var datasBin = new DatasBin(Path.Combine(dataFolder, "DATAS.BIN"));
             var balanceFile = Path.Combine(dataFolder, "BALANCE.BIN");
             var balanceBin = new BalanceBin(balanceFile);
             var soundBinFileName = Path.Combine(dataFolder, "SOUND.BIN");
@@ -78,17 +104,8 @@ namespace AlundraGame
 
             var alundraRenderer = new AlundraRenderer(_spriteBatch, GraphicsDevice);
 
-            StaticVariables.ForceDesiredMap = -1;
-
-            var savePath = @"D:\development\repo\alundra-datas-analyser\AlundraTools\AlundraTools\bin\Debug\net9.0-windows7.0\SaveStates\";
-            StaticVariables.GameStateFileNameToLoad =
-                savePath + "67 - boss - crypte de lars.json";
-                //savePath + "71 - bonaire's dream save room.json";
-                //savePath + "73 - bonaire's dream before boss.json";
-                
-
-        _gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3, alundraRenderer);
-            _gameEngine.InitializeEngine(false);
+            _gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3, alundraRenderer);
+            _gameEngine.InitializeEngine(true);
             
             _inputManager = new InputManager(_gameEngine);
             _runtimeInspector = RuntimeInspectorHost.TryStart(this, _gameEngine);
@@ -96,10 +113,14 @@ namespace AlundraGame
             {
                 _gameEngine.AttachRuntimeInspector(_runtimeInspector);
             }
+
+            InitializeMguiDebugPanel();
         }
 
         protected override void Update(GameTime gameTime)
         {
+            _mguiHost?.NotifyPreviewUpdate(gameTime.TotalGameTime);
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed 
                 || Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
@@ -108,8 +129,12 @@ namespace AlundraGame
 
             _runtimeInspector?.Checkpoint("AlundraGame.Update");
             _inputManager.Update();
+            _debugPanelController?.Refresh();
+            _desktop?.Update();
 
             base.Update(gameTime);
+
+            _mguiHost?.NotifyEndUpdate();
         }
 
         protected override void Draw(GameTime gameTime)
@@ -134,13 +159,114 @@ namespace AlundraGame
 
             var destinationRectangle = new Rectangle(
                 0, 0,
-                StaticVariables.ScreenWidth * ScaleFactor,
-                StaticVariables.ScreenHeight * ScaleFactor);
+                GameRenderWidth,
+                GameRenderHeight);
 
             _spriteBatch.Draw(_renderTarget, destinationRectangle, Color.White);
             _spriteBatch.End();
 
+            _desktop?.Draw();
+
             base.Draw(gameTime);
+        }
+
+        // JUSTIFICATION: backend MonoGame only
+        private void InitializeMguiDebugPanel()
+        {
+            MonoGameBackendSession<DelegateRenderHost> backend = MonoGameBackendBootstrap.Create(
+                new DelegateRenderHost(
+                    GraphicsDevice,
+                    () => new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height),
+                    Services));
+
+            _mguiHost = backend.Host;
+            _mguiRenderer = backend.Renderer;
+            _desktop = new MGDesktop((IUIDesktopRuntime)_mguiRenderer);
+            _desktop.InputTracker.GamePad.Enabled = false;
+            InitializeMguiFonts(_desktop, _mguiRenderer);
+            _desktop.Resources.DefaultTheme = new MGTheme(MGTheme.BuiltInTheme.Dark, DebugPanelFontFamily);
+            _desktop.Theme.FontSettings.DefaultFontSize = DebugPanelFontSize;
+            _desktop.Theme.FontSettings.SmallFontSize = DebugPanelFontSize;
+            _desktop.Theme.FontSettings.MediumFontSize = DebugPanelFontSize;
+            _debugPanelController = FrmGameDebugPanelController.Load(
+                _desktop,
+                _gameEngine,
+                GameRenderWidth,
+                GameRenderHeight,
+                SaveSnapshot,
+                SetZoomLevel);
+        }
+
+        // JUSTIFICATION: backend MonoGame only
+        private static void InitializeMguiFonts(MGDesktop desktop, IMonoGameDesktopBackend renderer)
+        {
+            string fontDirectory = Path.Combine(AppContext.BaseDirectory, "Content", DebugPanelFontFamily);
+            FontStashSharpTextEngine textEngine = new();
+
+            byte[] regular = File.ReadAllBytes(Path.Combine(fontDirectory, "JetBrainsMono-Regular.ttf"));
+            textEngine.AddFontSystem(DebugPanelFontFamily, CustomFontStyles.Normal, CreateFontSystem(regular), regular);
+
+            byte[] bold = File.ReadAllBytes(Path.Combine(fontDirectory, "JetBrainsMono-Bold.ttf"));
+            textEngine.AddFontSystem(DebugPanelFontFamily, CustomFontStyles.Bold, CreateFontSystem(bold));
+
+            byte[] boldItalic = File.ReadAllBytes(Path.Combine(fontDirectory, "JetBrainsMono-BoldItalic.ttf"));
+            textEngine.AddFontSystem(DebugPanelFontFamily, CustomFontStyles.Bold | CustomFontStyles.Italic, CreateFontSystem(boldItalic));
+
+            renderer.FontManager.DefaultFontFamily = DebugPanelFontFamily;
+            desktop.Theme.FontSettings.DefaultFontFamily = DebugPanelFontFamily;
+            desktop.Theme.FontSettings.DefaultFontSize = DebugPanelFontSize;
+            desktop.Theme.FontSettings.SmallFontSize = DebugPanelFontSize;
+            desktop.Theme.FontSettings.MediumFontSize = DebugPanelFontSize;
+            desktop.TextEngine = textEngine;
+        }
+
+        // JUSTIFICATION: backend MonoGame only
+        private static FontSystem CreateFontSystem(byte[] fontBytes)
+        {
+            FontSystem fontSystem = new();
+            fontSystem.AddFont(fontBytes);
+            return fontSystem;
+        }
+
+        // JUSTIFICATION: backend MonoGame only
+        private void SetZoomLevel(int zoomScale)
+        {
+            _renderScaleFactor = zoomScale;
+            SetPreferredBackBufferSize(true);
+            _debugPanelController?.SetPanelBounds(GameRenderWidth, GameRenderHeight);
+        }
+
+        // JUSTIFICATION: backend MonoGame only
+        private void SetPreferredBackBufferSize(bool applyChanges)
+        {
+            _graphics.PreferredBackBufferWidth = GameRenderWidth + DebugPanelWidth;
+            _graphics.PreferredBackBufferHeight = GameRenderHeight;
+
+            if (applyChanges)
+            {
+                _graphics.ApplyChanges();
+            }
+        }
+
+        // JUSTIFICATION: backend MonoGame only
+        private void SaveSnapshot()
+        {
+            string snapshotDirectory = Path.Combine(Environment.CurrentDirectory, "Snapshots");
+            Directory.CreateDirectory(snapshotDirectory);
+
+            int snapshotIndex = 0;
+            while (true)
+            {
+                string fileName = Path.Combine(snapshotDirectory, $"Snapshot_{snapshotIndex++}.png");
+                if (File.Exists(fileName))
+                {
+                    continue;
+                }
+
+                using FileStream stream = File.Create(fileName);
+                _renderTarget.SaveAsPng(stream, _renderTarget.Width, _renderTarget.Height);
+                break;
+            }
         }
 
         protected override void Dispose(bool disposing)

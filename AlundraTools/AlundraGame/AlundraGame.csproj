@@ -8,6 +8,7 @@
     <LangVersion>13.0</LangVersion>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -16,9 +17,14 @@
   <ItemGroup>
     <None Remove="Icon.ico" />
     <None Remove="Icon.bmp" />
+    <None Remove="Content\JetBrainsMono\JetBrainsMono-Bold.ttf" />
+    <None Remove="Content\JetBrainsMono\JetBrainsMono-BoldItalic.ttf" />
+    <None Remove="Content\JetBrainsMono\JetBrainsMono-Regular.ttf" />
+    <None Remove="UI\FrmGameDebugPanel.xaml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.manifest" />
+    <Content Include="..\AlundraTools\EntityNames.csv" Link="EntityNames.csv" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icon.ico">
@@ -27,6 +33,10 @@
     <EmbeddedResource Include="Icon.bmp">
       <LogicalName>Icon.bmp</LogicalName>
     </EmbeddedResource>
+    <Content Include="Content\JetBrainsMono\JetBrainsMono-Bold.ttf" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Content\JetBrainsMono\JetBrainsMono-BoldItalic.ttf" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Content\JetBrainsMono\JetBrainsMono-Regular.ttf" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="UI\FrmGameDebugPanel.xaml" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="$(MonoGameVersion)" />
@@ -36,6 +46,7 @@
     <ProjectReference Include="..\..\MGUI\MGUI.Core\MGUI.Core.csproj" />
     <ProjectReference Include="..\..\MGUI\MGUI.FontStashSharp\MGUI.FontStashSharp.csproj" />
     <ProjectReference Include="..\..\MGUI\MGUI.MonoGame.Integration\MGUI.MonoGame.Integration.csproj" />
+    <ProjectReference Include="..\..\MGUI\MGUI.MonoGame.LegacyRenderer\MGUI.MonoGame.LegacyRenderer.csproj" />
     <ProjectReference Include="..\..\MGUI\MGUI.Rendering.Abstractions\MGUI.Rendering.Abstractions.csproj" />
     <ProjectReference Include="..\..\MGUI\MGUI.Shared\MGUI.Shared.csproj" />
     <ProjectReference Include="..\AlundraEngine\AlundraEngine.csproj" />

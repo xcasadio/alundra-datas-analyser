@@ -13,3 +13,11 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin JetBrainsMono/JetBrainsMono-Bold.ttf
+/copy:JetBrainsMono/JetBrainsMono-Bold.ttf
+
+#begin JetBrainsMono/JetBrainsMono-BoldItalic.ttf
+/copy:JetBrainsMono/JetBrainsMono-BoldItalic.ttf
+
+#begin JetBrainsMono/JetBrainsMono-Regular.ttf
+/copy:JetBrainsMono/JetBrainsMono-Regular.ttf
