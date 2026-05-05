@@ -1,0 +1,4 @@
+[submodule "MGUI"]
+	path = MGUI
+	url = https://github.com/xcasadio/MGUI.git
+	branch = develop
