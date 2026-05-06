@@ -1733,6 +1733,76 @@ public class GameEngine
         }
     }
 
+    // GHIDRA: FUN_8003AF70 @ 0x8003AF70
+    public int FUN_8003AF70(Entity ownerEntity, uint requiredFlagsMask, int balanceIndex, Entity[] entityBuffer, int[] distanceSquaredBuffer)
+    {
+        var matchCount = 0;
+
+        for (var entityIndex = 1; entityIndex < StaticVariables.g_numberOfEntities; entityIndex++)
+        {
+            var candidate = StaticVariables.g_entitySlots[entityIndex];
+
+            if (candidate == ownerEntity)
+            {
+                continue;
+            }
+
+            if ((uint)(candidate.Status - 2) >= 2U)
+            {
+                continue;
+            }
+
+            if (candidate.BlockedByEntity != null)
+            {
+                continue;
+            }
+
+            if ((candidate.Flags & requiredFlagsMask) == 0)
+            {
+                continue;
+            }
+
+            if (candidate.FrameCollisionTickCounter != 0)
+            {
+                continue;
+            }
+
+            if (candidate.DamagedTickCounter != 0)
+            {
+                continue;
+            }
+
+            if ((candidate.AnimFlags & 0x40) != 0)
+            {
+                continue;
+            }
+
+            if (candidate.BalanceRecord == null)
+            {
+                continue;
+            }
+
+            if ((candidate.BalanceRecord.Values[balanceIndex - 1] & 0xC0) == 0x80)
+            {
+                continue;
+            }
+
+            var deltaX = (candidate.PosX - ownerEntity.PosX) >> 16;
+            var deltaY = (candidate.PosY - ownerEntity.PosY) >> 16;
+
+            entityBuffer[matchCount] = candidate;
+            distanceSquaredBuffer[matchCount] = deltaX * deltaX + deltaY * deltaY;
+            matchCount += 1;
+        }
+
+        if (matchCount >= 3)
+        {
+            Array.Sort(distanceSquaredBuffer, entityBuffer, 0, matchCount);
+        }
+
+        return matchCount;
+    }
+
     //80032b90
     public int SpawnEntityContents(Entity entity)
     {

@@ -664,7 +664,7 @@ public class EntityManager
     // 80038e84
     private void UpdateActiveEffects()
     {
-        for (var i = 0; i < _gameEngine.StaticVariables.g_numberOfEntities; i++)
+        for (var i = 0; i <= _gameEngine.StaticVariables.g_numberOfEntities; i++)
         {
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
             if (entity.Status - 2 >= 2 || (entity.DamagedTickCounter & 3) == 3)
@@ -739,7 +739,7 @@ public class EntityManager
                     }
 
                     _gameEngine.EffectManager.CreateEffectEntity(
-                        (byte)0, _gameEngine.CurrentMap.Info.SlideEffectId, 0, //_gameEngine.CurrentMap.Info.C
+                        (byte)0, _gameEngine.CurrentMap.Info.C, 0, //_gameEngine.CurrentMap.Info.C
                         entity.PosX, entity.PosY, entity.FloorHeight);
                     break;
 
@@ -747,21 +747,22 @@ public class EntityManager
                     effect.Status = 1;
                     if ((entity.FrameCounter & 7) != 0)
                     {
-                        break;
+                        continue;
                     }
 
                     if ((entity.ForceX | entity.ForceY) == 0)
                     {
-                        break;
+                        continue;
                     }
 
                     _gameEngine.EffectManager.CreateEffectEntity(
                         (byte)0, 0x15, 0,
                         entity.PosX, entity.PosY, entity.FloorHeight);
-                    break;
+
+                    continue;
             }
 
-            var animId = 5 - (entity.ModdedPosZ - entity.FloorHeight) >> 20;
+            var animId = ((int)(entity.Flags & 0x7) - 1) - ((entity.PosZ - entity.FloorHeight) >> 20);
 
             if (animId >= 6)
             {

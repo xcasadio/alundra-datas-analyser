@@ -1921,46 +1921,46 @@ public class PlayerManager
 
         switch (switchValue)
         {
-            case 0: // mapId == 0x1f
+            case 0: // itemId == 0x1f
                 result = TrySpawnWarpEntity(itemId);
                 break;
 
-            case 1: // mapId == 0x20
-                result = FUN_80034320(itemId);
+            case 1: // itemId == 0x20
+                result = TryUseSandCape();
                 break;
 
-            case 4: // mapId == 0x23
-                result = FUN_8003453c(itemId);
+            case 4: // itemId == 0x23
+                result = TryUseBomb();
                 break;
 
-            case 5: // mapId == 0x24
+            case 5: // itemId == 0x24
                 FUN_80034680(itemId);
                 return 1;
 
-            case 6: // mapId == 0x25
-                TryWarpToMap(itemId);
+            case 6: // itemId == 0x25
+                TryUseHpRecoveryItem(itemId);
                 return 1;
 
-            case 7: // mapId == 0x26
+            case 7: // itemId == 0x26
                 UseMagicalItem(itemId);
                 return 1;
 
-            case 8: // mapId == 0x27
+            case 8: // itemId == 0x27
                 PlayCutscene(itemId);
                 return 1;
 
-            case 10: // mapId == 0x29
+            case 10: // itemId == 0x29
                 TryWarpWithExplosionEffect(itemId);
                 return 1;
 
-            case 13: // mapId == 0x2c
-            case 14: // mapId == 0x2d
-            case 15: // mapId == 0x2e
-            case 16: // mapId == 0x2f
-            case 17: // mapId == 0x30
-            case 18: // mapId == 0x31
-            case 19: // mapId == 0x32
-            case 12: // mapId == 0x2b
+            case 13: // itemId == 0x2c
+            case 14: // itemId == 0x2d
+            case 15: // itemId == 0x2e
+            case 16: // itemId == 0x2f
+            case 17: // itemId == 0x30
+            case 18: // itemId == 0x31
+            case 19: // itemId == 0x32
+            case 12: // itemId == 0x2b
                 result = TryLaunchMagic(itemId);
                 break;
 
@@ -2027,15 +2027,139 @@ public class PlayerManager
     }
 
     //80034320
-    private int FUN_80034320(uint itemId)
+    private int TryUseSandCape()
     {
-        Breakpoint.TriggerBreak();
+        var player = _gameEngine.StaticVariables.PlayerEntity;
+
+        if (_gameEngine.StaticVariables.g_warpLockTimer == 0)
+        {
+            if (player.Slope_18c != 3)
+            {
+                _gameEngine.SoundManager.PlaySoundEffect(3);
+                return 1;
+            }
+
+            if (player.TargetAnimationId >= 2)
+            {
+                _gameEngine.SoundManager.PlaySoundEffect(3);
+                return 1;
+            }
+
+            player.TargetAnimationId = (uint)PlayerAnimation.EnterSand;
+            return 0;
+        }
+
+        if (player.TargetAnimationId != (uint)PlayerAnimation.InSand)
+        {
+            _gameEngine.SoundManager.PlaySoundEffect(3);
+            return 1;
+        }
+
+        if (player.FinalForceX != 0)
+        {
+            _gameEngine.SoundManager.PlaySoundEffect(3);
+            return 1;
+        }
+
+        if (player.FinalForceY != 0)
+        {
+            _gameEngine.SoundManager.PlaySoundEffect(3);
+            return 1;
+        }
+
+        if (player.IsOnGround == 0)
+        {
+            _gameEngine.SoundManager.PlaySoundEffect(3);
+            return 1;
+        }
+
+        var playerModdedPosX = player.ModdedPosX;
+        var playerModdedPosY = player.ModdedPosY;
+        var playerModdedPosZ = player.ModdedPosZ;
+        var playerWidth = player.Width;
+        var playerHeight = player.Height;
+        var playerDepth = player.Depth;
+
+        if (_gameEngine.StaticVariables.g_numberOfEntities > 0)
+        {
+            for (var i = 1; i <= _gameEngine.StaticVariables.g_numberOfEntities; i++)
+            {
+                var entity = _gameEngine.StaticVariables.g_entitySlots[i];
+
+                if ((uint)(entity.Status - 2) >= 2U)
+                {
+                    continue;
+                }
+
+                if (entity.BlockedByEntity != null)
+                {
+                    continue;
+                }
+
+                if ((entity.Flags & 0x80) == 0)
+                {
+                    continue;
+                }
+
+                if ((entity.AnimFlags & 0x80) != 0)
+                {
+                    continue;
+                }
+
+                if (entity.PlatformEntity != null)
+                {
+                    continue;
+                }
+
+                var xDifference = playerModdedPosX - entity.PosX;
+                if (xDifference >= 0)
+                {
+                    if (xDifference >= entity.Width + 1)
+                    {
+                        continue;
+                    }
+                }
+                else if (entity.PosX - playerModdedPosX >= playerWidth + 1)
+                {
+                    continue;
+                }
+
+                var yDifference = playerModdedPosY - entity.PosY;
+                if (yDifference >= 0)
+                {
+                    if (yDifference >= entity.Height + 1)
+                    {
+                        continue;
+                    }
+                }
+                else if (entity.PosY - playerModdedPosY >= playerHeight + 1)
+                {
+                    continue;
+                }
+
+                var zDifference = playerModdedPosZ - entity.PosZ;
+                if (zDifference >= 0)
+                {
+                    if (zDifference < entity.Depth + 1)
+                    {
+                        _gameEngine.SoundManager.PlaySoundEffect(3);
+                        return 1;
+                    }
+                }
+                else if (entity.PosZ - playerModdedPosZ < playerDepth + 1)
+                {
+                    _gameEngine.SoundManager.PlaySoundEffect(3);
+                    return 1;
+                }
+            }
+        }
+
+        player.TargetAnimationId = (uint)PlayerAnimation.ExitSand;
         return 0;
     }
 
     //8003453c
-    //create bomb
-    private int FUN_8003453c(uint itemId)
+    private int TryUseBomb()
     {
         Entity entitySpawned;
         int entityIndex = 0;
@@ -2110,10 +2234,21 @@ public class PlayerManager
         }
     }
 
-    //800346f0
-    private void TryWarpToMap(uint itemId)
+    // 0x800346F0
+    private void TryUseHpRecoveryItem(uint itemId)
     {
-        Breakpoint.TriggerBreak();
+        var player = _gameEngine.StaticVariables.PlayerEntity;
+
+        if (player.Hp < player.HpMax)
+        {
+            RestoreHpAndCreateEffect(player);
+            _gameEngine.SoundManager.PlaySoundEffect(0x32);
+            UseItem(itemId);
+        }
+        else
+        {
+            _gameEngine.SoundManager.PlaySoundEffect(3);
+        }
     }
 
     //80034760
@@ -2139,9 +2274,22 @@ public class PlayerManager
         return 1;
     }
 
+    // GHIDRA: FUN_800347D4 @ 0x800347D4
     private void TryWarpWithExplosionEffect(uint itemId)
     {
-        Breakpoint.TriggerBreak();
+        var player = _gameEngine.StaticVariables.PlayerEntity;
+
+        if (player.Hp < player.HpMax
+            || GetPlayerMp() < GetPlayerMpMax())
+        {
+            RestoreHpAndMpAndCreateEffect(player);
+            _gameEngine.SoundManager.PlaySoundEffect(0x30);
+            UseItem(itemId);
+        }
+        else
+        {
+            _gameEngine.SoundManager.PlaySoundEffect(3);
+        }
     }
 
     //800348e0
@@ -2198,7 +2346,7 @@ public class PlayerManager
                     iVar1 = FUN_80035204();
                     break;
                 case 0x20:
-                    iVar1 = FUN_80035260();
+                    iVar1 = ProcessSandCapeUseSequence();
                     break;
                 default:
                     iVar1 = 1;
@@ -2210,17 +2358,17 @@ public class PlayerManager
                     iVar1 = ProcessEarthMagicLevel1Sequence();
                     break;
                 case 0x2c:
-                    iVar1 = FUN_800354d0();
+                    iVar1 = ProcessRadialBurstEffectSequence();
                     break;
                 case 0x2d:
                 case 0x2e:
-                    iVar1 = ProcessPlayerEffectSequence(_gameEngine.StaticVariables.g_warpLockTimer);
+                    iVar1 = ProcessTimedRecoveryEffectSequence(_gameEngine.StaticVariables.g_warpLockTimer);
                     break;
                 case 0x2f:
-                    iVar1 = FUN_80035a84();
+                    iVar1 = ProcessAnchorSparkEffectSequence();
                     break;
                 case 0x30:
-                    iVar1 = FUN_80035c64();
+                    iVar1 = ProcessAnchorScrollShakeEffectSequence();
                     break;
                 case 0x31:
                     iVar1 = FUN_80035eb0();
@@ -2244,44 +2392,589 @@ public class PlayerManager
         return iVar1;
     }
 
+    // 80036218
     private int FUN_80036218()
     {
-
         Breakpoint.TriggerBreak();
+
+        var staticVariables = _gameEngine.StaticVariables;
+        var player = staticVariables.PlayerEntity;
+
+        if (staticVariables.g_playerEffectPhase == 1)
+        {
+            if (IsFadeActive() != 0)
+            {
+                return 1;
+            }
+
+            if (staticVariables.DAT_80127130.Index2 == staticVariables.DAT_80127134)
+            {
+                return 0;
+            }
+
+            player.TargetAnimationId = 0x34;
+            staticVariables.g_playerEffectPhase += 1;
+            return 0;
+        }
+
+        if (staticVariables.g_playerEffectPhase == 2)
+        {
+            if (player.TargetAnimationId != 0x34)
+            {
+                return 1;
+            }
+
+            return 0;
+        }
+
+        if (IsFadeActive() != 0)
+        {
+            return 1;
+        }
+
+        if (player.TargetAnimationId != 0x33)
+        {
+            return 0;
+        }
+
+        var entitySpawned = _gameEngine.SpawnWarpEntity(player,
+            0, 0x18,
+            player.PosX,
+            player.PosY,
+            player.PosZ,
+            0);
+
+        staticVariables.DAT_80127130 = entitySpawned;
+
+        if (entitySpawned == null)
+        {
+            return 1;
+        }
+
+        staticVariables.DAT_80127134 = entitySpawned.Index2;
+        staticVariables.g_playerEffectPhase += 1;
         return 0;
     }
 
+    // 80035EB0
     private int FUN_80035eb0()
     {
-
         Breakpoint.TriggerBreak();
+
+        var staticVariables = _gameEngine.StaticVariables;
+        var player = staticVariables.PlayerEntity;
+
+        if (staticVariables.g_playerEffectPhase == 0)
+        {
+            staticVariables.DAT_8012712c = null;
+            staticVariables.g_playerEffectPhase = 1;
+        }
+
+        if (staticVariables.g_playerEffectPhase == 1)
+        {
+            if (IsFadeActive() != 0)
+            {
+                return 1;
+            }
+
+            if (player.TargetAnimationId != 0x33)
+            {
+                return 0;
+            }
+
+            var frameTable = staticVariables.SHORT_ARRAY_800235e0;
+            var frameIndex = 0;
+
+            while ((ushort)frameTable[frameIndex] <= staticVariables.g_playerEffectCurrentFrame)
+            {
+                if ((ushort)frameTable[frameIndex] == staticVariables.g_playerEffectCurrentFrame)
+                {
+                    var nearbyEntities = new Entity[staticVariables.g_entitySlots.Length];
+                    var distanceSquared = new int[nearbyEntities.Length];
+                    var nearbyCount = _gameEngine.FUN_8003AF70(player, 1, 0x0B, nearbyEntities, distanceSquared);
+                    Entity targetEntity = null;
+
+                    for (var nearbyIndex = 0; nearbyIndex < nearbyCount; nearbyIndex++)
+                    {
+                        var candidate = nearbyEntities[nearbyIndex];
+
+                        if (player.PosZ + 0x00500000 < candidate.PosZ)
+                        {
+                            continue;
+                        }
+
+                        if (candidate == staticVariables.DAT_8012712c)
+                        {
+                            continue;
+                        }
+
+                        if (distanceSquared[nearbyIndex] >= 0x6401)
+                        {
+                            continue;
+                        }
+
+                        targetEntity = candidate;
+                        break;
+                    }
+
+                    if (targetEntity != null)
+                    {
+                        var entitySpawned = _gameEngine.SpawnWarpEntity(player,
+                            0, 0x16,
+                            targetEntity.PosX,
+                            targetEntity.PosY,
+                            targetEntity.PosZ + 0x00800000,
+                            0);
+
+                        staticVariables.DAT_8012712c = targetEntity;
+
+                        if (entitySpawned != null)
+                        {
+                            if (entitySpawned.IsOnGround != 0)
+                            {
+                                _gameEngine.DestroyEntity(entitySpawned);
+                                staticVariables.DAT_8012712c = null;
+                            }
+                            else
+                            {
+                                entitySpawned.ForceZ = -0x00080000;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var randomX = (int)((Random.Next() * 0x00C00001ul) >> 32) - 0x00600000;
+                        var randomY = (int)((Random.Next() * 0x00800001ul) >> 32) - 0x00400000;
+                        var entitySpawned = _gameEngine.SpawnWarpEntity(player,
+                            0, 0x16,
+                            player.PosX + randomX,
+                            player.PosY + randomY,
+                            player.PosZ + 0x00800000,
+                            0);
+
+                        staticVariables.DAT_8012712c = null;
+
+                        if (entitySpawned != null)
+                        {
+                            if (entitySpawned.IsOnGround != 0)
+                            {
+                                _gameEngine.DestroyEntity(entitySpawned);
+                            }
+                            else
+                            {
+                                entitySpawned.ForceZ = -0x00080000;
+                            }
+                        }
+                    }
+                }
+
+                frameIndex += 1;
+            }
+
+            if (frameTable[frameIndex] != -1)
+            {
+                return 0;
+            }
+
+            player.TargetAnimationId = 0x34;
+            staticVariables.g_playerEffectPhase += 1;
+            return 0;
+        }
+
+        if (staticVariables.g_playerEffectPhase == 2)
+        {
+            if (player.TargetAnimationId != 0x34)
+            {
+                return 1;
+            }
+
+            return 0;
+        }
+
         return 0;
     }
 
-    private int FUN_80035c64()
+    // 80035C64
+    private int ProcessAnchorScrollShakeEffectSequence()
     {
-
         Breakpoint.TriggerBreak();
+
+        var staticVariables = _gameEngine.StaticVariables;
+        var player = staticVariables.PlayerEntity;
+
+        if (staticVariables.g_playerEffectPhase == 1)
+        {
+            if (IsFadeActive() != 0)
+            {
+                return 1;
+            }
+
+            if (staticVariables.DAT_80127124.Index2 == staticVariables.DAT_80127128)
+            {
+                staticVariables.g_scrollingParameters.Flag = 1;
+                staticVariables.g_scrollingParameters.LimitX = staticVariables.g_playerEffectCurrentFrame >> 6;
+                staticVariables.g_scrollingParameters.LimitY = staticVariables.g_playerEffectCurrentFrame >> 4;
+                staticVariables.g_scrollingParameters.SpeedX = staticVariables.g_playerEffectCurrentFrame >> 6;
+                staticVariables.g_scrollingParameters.SpeedY = staticVariables.g_playerEffectCurrentFrame >> 4;
+                return 0;
+            }
+
+            staticVariables.g_scrollingParameters.Flag = staticVariables.DAT_80127138.Flag;
+            staticVariables.g_scrollingParameters.LimitX = staticVariables.DAT_80127138.LimitX;
+            staticVariables.g_scrollingParameters.LimitY = staticVariables.DAT_80127138.LimitY;
+            staticVariables.g_scrollingParameters.SpeedX = staticVariables.DAT_80127138.SpeedX;
+            staticVariables.g_scrollingParameters.SpeedY = staticVariables.DAT_80127138.SpeedY;
+            staticVariables.g_scrollingParameters.OffsetX = staticVariables.DAT_80127138.OffsetX;
+            staticVariables.g_scrollingParameters.OffsetY = staticVariables.DAT_80127138.OffsetY;
+            staticVariables.g_scrollingParameters.XReachMin = staticVariables.DAT_80127138.XReachMin;
+            staticVariables.g_scrollingParameters.YReachMin = staticVariables.DAT_80127138.YReachMin;
+
+            player.TargetAnimationId = 0x34;
+            staticVariables.g_playerEffectPhase += 1;
+            return 0;
+        }
+
+        if (staticVariables.g_playerEffectPhase == 2)
+        {
+            if (player.TargetAnimationId != 0x34)
+            {
+                return 1;
+            }
+
+            return 0;
+        }
+
+        if (IsFadeActive() != 0)
+        {
+            return 1;
+        }
+
+        if (player.TargetAnimationId != 0x33)
+        {
+            return 0;
+        }
+
+        var entitySpawned = _gameEngine.SpawnWarpEntity(player,
+            0, 0x15,
+            player.PosX,
+            player.PosY,
+            player.PosZ,
+            0);
+
+        staticVariables.DAT_80127124 = entitySpawned;
+
+        if (entitySpawned == null)
+        {
+            return 1;
+        }
+
+        staticVariables.DAT_80127138.Flag = staticVariables.g_scrollingParameters.Flag;
+        staticVariables.DAT_80127138.LimitX = staticVariables.g_scrollingParameters.LimitX;
+        staticVariables.DAT_80127138.LimitY = staticVariables.g_scrollingParameters.LimitY;
+        staticVariables.DAT_80127138.SpeedX = staticVariables.g_scrollingParameters.SpeedX;
+        staticVariables.DAT_80127138.SpeedY = staticVariables.g_scrollingParameters.SpeedY;
+        staticVariables.DAT_80127138.OffsetX = staticVariables.g_scrollingParameters.OffsetX;
+        staticVariables.DAT_80127138.OffsetY = staticVariables.g_scrollingParameters.OffsetY;
+        staticVariables.DAT_80127138.XReachMin = staticVariables.g_scrollingParameters.XReachMin;
+        staticVariables.DAT_80127138.YReachMin = staticVariables.g_scrollingParameters.YReachMin;
+
+        staticVariables.g_playerEffectPhase += 1;
+        staticVariables.DAT_80127128 = entitySpawned.Index2;
         return 0;
     }
 
-    private int FUN_80035a84()
+    // 80035A84
+    private int ProcessAnchorSparkEffectSequence()
     {
-
         Breakpoint.TriggerBreak();
+
+        var staticVariables = _gameEngine.StaticVariables;
+        var player = staticVariables.PlayerEntity;
+
+        if (staticVariables.g_playerEffectPhase == 1)
+        {
+            if (IsFadeActive() != 0)
+            {
+                return 1;
+            }
+
+            if (staticVariables.DAT_8012711c.Index2 == staticVariables.DAT_80127120)
+            {
+                if ((staticVariables.g_playerEffectCurrentFrame & 7) != 0)
+                {
+                    return 0;
+                }
+
+                var direction = (uint)((Random.Next() * 0x20ul) >> 32);
+                var entitySpawned = _gameEngine.SpawnWarpEntity(player,
+                    0, 0x17,
+                    player.PosX,
+                    player.PosY,
+                    player.PosZ + 0x00100000,
+                    direction);
+
+                if (entitySpawned != null)
+                {
+                    entitySpawned.ForceZ = 0x00080000;
+                    entitySpawned.Bytes[0] = 0x10;
+                    entitySpawned.Bytes[1] = 0;
+                    entitySpawned.Bytes[2] = 0;
+                    entitySpawned.Bytes[3] = 0;
+                    entitySpawned.DelayOrAngle = 0;
+                }
+
+                return 0;
+            }
+
+            player.TargetAnimationId = 0x34;
+            staticVariables.g_playerEffectPhase += 1;
+            return 0;
+        }
+
+        if (staticVariables.g_playerEffectPhase == 2)
+        {
+            if (player.TargetAnimationId != 0x34)
+            {
+                return 1;
+            }
+
+            return 0;
+        }
+
+        if (IsFadeActive() != 0)
+        {
+            return 1;
+        }
+
+        if (player.TargetAnimationId != 0x33)
+        {
+            return 0;
+        }
+
+        var entityAnchor = _gameEngine.SpawnWarpEntity(player,
+            0, 0x14,
+            player.PosX,
+            player.PosY,
+            player.PosZ,
+            0);
+
+        staticVariables.DAT_8012711c = entityAnchor;
+
+        if (entityAnchor == null)
+        {
+            return 1;
+        }
+
+        staticVariables.DAT_80127120 = entityAnchor.Index2;
+        staticVariables.g_playerEffectPhase += 1;
         return 0;
     }
 
-    private int ProcessPlayerEffectSequence(int timer)
+    // 0x80035790
+    private int ProcessTimedRecoveryEffectSequence(int timer)
     {
         Breakpoint.TriggerBreak();
+
+        var staticVariables = _gameEngine.StaticVariables;
+        var player = staticVariables.PlayerEntity;
+
+        if (staticVariables.g_playerEffectPhase == 1)
+        {
+            if (IsFadeActive() != 0)
+            {
+                return 1;
+            }
+
+            staticVariables.g_playerEffectTimer += 1;
+
+            if (staticVariables.g_playerEffectTimer == 0x1E)
+            {
+                if (timer == 0x2D)
+                {
+                    AddMediumHpAndSpawnEffect(player);
+                    _gameEngine.SoundManager.PlaySoundEffect(0x31);
+                }
+                else
+                {
+                    RestoreHpAndCreateEffect(player);
+                    _gameEngine.SoundManager.PlaySoundEffect(0x30);
+                }
+            }
+
+            if (staticVariables.g_playerEffectTimer < 0x3C)
+            {
+                return 0;
+            }
+
+            player.TargetAnimationId = 0x34;
+            staticVariables.g_playerEffectPhase += 1;
+            return 0;
+        }
+
+        if (staticVariables.g_playerEffectPhase == 2)
+        {
+            if (player.TargetAnimationId == 0x34)
+            {
+                return 0;
+            }
+
+            for (var entityIndex = 1;
+                 entityIndex <= staticVariables.g_numberOfEntities && entityIndex < staticVariables.g_entitySlots.Length;
+                 entityIndex++)
+            {
+                var entity = staticVariables.g_entitySlots[entityIndex];
+                var aiValue = (ushort)entity.AIValues[8] | ((ushort)entity.AIValues[9] << 16);
+
+                if (entity.SpriteTableIndex == 0x13
+                    && aiValue > 0)
+                {
+                    return 0;
+                }
+            }
+
+            return 1;
+        }
+
+        if (IsFadeActive() != 0)
+        {
+            return 1;
+        }
+
+        var parameterTable = timer == 0x2D
+            ? staticVariables.SHORT_ARRAY_80023544
+            : staticVariables.SHORT_ARRAY_8002357c;
+        var parameterIndex = 0;
+
+        while ((ushort)parameterTable[parameterIndex] <= staticVariables.g_playerEffectCurrentFrame)
+        {
+            if ((ushort)parameterTable[parameterIndex] == staticVariables.g_playerEffectCurrentFrame)
+            {
+                var entitySpawned = _gameEngine.SpawnWarpEntity(player,
+                    0, 0x13,
+                    player.PosX,
+                    player.PosY,
+                    player.PosZ + 0x00800000,
+                    0);
+
+                if (entitySpawned != null)
+                {
+                    var word274 = parameterTable[parameterIndex + 1];
+                    var word280 = parameterTable[parameterIndex + 4] * staticVariables.g_playerEffectCurrentFrame;
+                    var word28c = (parameterTable[parameterIndex + 5] + word280) % 0x100;
+                    var word290 = parameterTable[parameterIndex + 6] - staticVariables.g_playerEffectCurrentFrame;
+
+                    entitySpawned.SpriteProgramIndexes[0] = 0x00FE;
+                    entitySpawned.Bytes[0] = (byte)word274;
+                    entitySpawned.Bytes[1] = (byte)(word274 >> 8);
+                    entitySpawned.Bytes[2] = (byte)(word274 >> 16);
+                    entitySpawned.Bytes[3] = (byte)(word274 >> 24);
+                    entitySpawned.DelayOrAngle = parameterTable[parameterIndex + 2];
+                    entitySpawned.ItemState = parameterTable[parameterIndex + 3];
+                    entitySpawned.AIValues[0] = (short)word280;
+                    entitySpawned.AIValues[1] = (short)(word280 >> 16);
+                    entitySpawned.AIValues[2] = 1;
+                    entitySpawned.AIValues[3] = 0;
+                    entitySpawned.AIValues[4] = 0;
+                    entitySpawned.AIValues[5] = 0;
+                    entitySpawned.AIValues[6] = (short)word28c;
+                    entitySpawned.AIValues[7] = (short)(word28c >> 16);
+                    entitySpawned.AIValues[8] = (short)word290;
+                    entitySpawned.AIValues[9] = (short)(word290 >> 16);
+                }
+            }
+
+            parameterIndex += 7;
+        }
+
+        if (parameterTable[parameterIndex] != -1)
+        {
+            return 0;
+        }
+
+        staticVariables.g_playerEffectTimer = 0;
+        staticVariables.g_playerEffectPhase += 1;
         return 0;
     }
 
-    private int FUN_800354d0()
+    // 800354D0
+    private int ProcessRadialBurstEffectSequence()
     {
-
         Breakpoint.TriggerBreak();
+
+        var staticVariables = _gameEngine.StaticVariables;
+        var player = staticVariables.PlayerEntity;
+
+        if (staticVariables.g_playerEffectPhase == 1)
+        {
+            if (IsFadeActive() != 0)
+            {
+                return 1;
+            }
+
+            if (staticVariables.g_playerEffectCurrentFrame < 0x118)
+            {
+                return 0;
+            }
+
+            player.TargetAnimationId = 0x34;
+            staticVariables.g_playerEffectPhase += 1;
+            return 0;
+        }
+
+        if (staticVariables.g_playerEffectPhase == 2)
+        {
+            if (player.TargetAnimationId != 0x34)
+            {
+                return 1;
+            }
+
+            return 0;
+        }
+
+        if (IsFadeActive() != 0)
+        {
+            return 1;
+        }
+
+        var parameterTable = staticVariables.SHORT_ARRAY_80023504;
+        var parameterIndex = 0;
+
+        while ((ushort)parameterTable[parameterIndex] <= staticVariables.g_playerEffectCurrentFrame)
+        {
+            if ((ushort)parameterTable[parameterIndex] == staticVariables.g_playerEffectCurrentFrame)
+            {
+                var radius = parameterTable[parameterIndex + 1] + 0x0A00;
+                var randomYIndex = (int)((Random.Next() * 0x20ul) >> 32);
+                var randomXIndex = (int)((Random.Next() * 0x20ul) >> 32);
+                var entitySpawned = _gameEngine.SpawnWarpEntity(player,
+                    0, 0x11,
+                    player.PosX + staticVariables.g_offsetXList[randomXIndex] * radius,
+                    player.PosY + staticVariables.g_offsetYList[randomYIndex] * radius,
+                    player.PosZ + 0x01000000,
+                    (uint)randomXIndex);
+
+                if (entitySpawned != null)
+                {
+                    if (player.PosZ + 0x01000000 < entitySpawned.TerrainHeight)
+                    {
+                        _gameEngine.DestroyEntity(entitySpawned);
+                    }
+                    else
+                    {
+                        entitySpawned.ForceZ = -0x00080000;
+                    }
+                }
+            }
+
+            parameterIndex += 2;
+        }
+
+        if (parameterTable[parameterIndex] != -1)
+        {
+            return 0;
+        }
+
+        staticVariables.g_playerEffectPhase += 1;
         return 0;
     }
 
@@ -2376,6 +3069,7 @@ public class PlayerManager
         return 0;
     }
 
+    //800352c4
     private int FUN_800352c4()
     {
         if (_gameEngine.StaticVariables.PlayerEntity.CarriedEntity != null)
@@ -2396,11 +3090,20 @@ public class PlayerManager
         return 1;
     }
 
-    private int FUN_80035260()
+    // GHIDRA: FUN_80035260 @ 0x80035260
+    private int ProcessSandCapeUseSequence()
     {
+        var player = _gameEngine.StaticVariables.PlayerEntity;
 
-        Breakpoint.TriggerBreak();
-        return 0;
+        if (player.TargetAnimationId - 0x20U < 5
+            && player.IsOnGround != 0
+            && player.Slope_18c != 4)
+        {
+            return 0;
+        }
+
+        AnimateWarpEffect();
+        return 1;
     }
 
     //handle haricot
@@ -2426,7 +3129,6 @@ public class PlayerManager
 
     //800351b8
     public int IsFadeActive()
-
     {
         int result = 0;
 
@@ -2883,14 +3585,12 @@ public class PlayerManager
                     break;
                 }
 
-                frameOffset = animIndex * 2;
                 if (animIndex > 3)
                 {
                     animIndex = 3;
-                    frameOffset = 6;
                 }
 
-                var effectInterval = _gameEngine.StaticVariables.g_prepareSprintParameters[baseIndex] + frameOffset;
+                var effectInterval = _gameEngine.StaticVariables.g_prepareSprintParameters[baseIndex + animIndex];
                 if ((_gameEngine.StaticVariables.PlayerEntity.FrameCounter & effectInterval) != 0)
                 {
                     break;
@@ -2925,8 +3625,8 @@ public class PlayerManager
 
                     rand = Random.Next();
                     index = baseIndex + 0x18;
-                    spriteEffect.ForceZ = (int)((_gameEngine.StaticVariables.g_prepareSprintParameters[index + 1] * animIndex +
-                                                 (uint)(rand * (ulong)(_gameEngine.StaticVariables.g_prepareSprintParameters[index] * animIndex + 1))) >> 0x20);
+                    spriteEffect.ForceZ = _gameEngine.StaticVariables.g_prepareSprintParameters[index + 1] * animIndex +
+                                          (int)((rand * (ulong)(_gameEngine.StaticVariables.g_prepareSprintParameters[index] * animIndex + 1)) >> 0x20);
                 }
                 
                 break;
@@ -2971,7 +3671,7 @@ public class PlayerManager
                     effectId = _gameEngine.CurrentMap.Info.C;
                 }
 
-                if ((_gameEngine.StaticVariables.g_prepareSprintParameters[animIndex /*+ 0x34*/] & _gameEngine.StaticVariables.PlayerEntity.FrameCounter) != 0)
+                if ((_gameEngine.StaticVariables.g_prepareSprintParameters[animIndex + 0x1a] & _gameEngine.StaticVariables.PlayerEntity.FrameCounter) != 0)
                 {
                     goto SkipEffects;
                 }
@@ -2989,11 +3689,11 @@ public class PlayerManager
 
                 if (spriteEffect != null)
                 {
-                    int forceMult = _gameEngine.StaticVariables.g_prepareSprintParameters[baseIndex * 2 + animIndex/*+ 0x36*/];
+                    int forceMult = _gameEngine.StaticVariables.g_prepareSprintParameters[animIndex + baseIndex + 0x1b];
                     spriteEffect.ForceX = (_gameEngine.StaticVariables.PlayerEntity.ForceX * forceMult) >> 8;
                     spriteEffect.ForceY = (_gameEngine.StaticVariables.PlayerEntity.ForceY * forceMult) >> 8;
-                    int zOffset = (int)((Random.Next() * (ulong)(_gameEngine.StaticVariables.g_prepareSprintParameters[0x18] * animIndex + 1)) >> 32);
-                    spriteEffect.ForceZ = _gameEngine.StaticVariables.g_prepareSprintParameters[0x19] * animIndex + (short)zOffset;
+                    int zOffset = (int)((Random.Next() * (ulong)(_gameEngine.StaticVariables.g_prepareSprintParameters[animIndex + 0x1d] + 1)) >> 32);
+                    spriteEffect.ForceZ = _gameEngine.StaticVariables.g_prepareSprintParameters[animIndex + 0x1e] + zOffset;
                 }
                 break;
 
@@ -3012,13 +3712,19 @@ public class PlayerManager
                 }
 
                 CaseRandomEffect:
+                effectId = _gameEngine.CurrentMap.Info._10;
+                if (effectId == 0)
+                {
+                    goto SkipEffects;
+                }
+
                 spriteEffect = _gameEngine.EffectManager.CreateEffectEntity(
                     0,
-                    (byte)_gameEngine.CurrentMap.Info._10,
+                    effectId,
                     0,
                     _gameEngine.StaticVariables.PlayerEntity.PosX,
                     _gameEngine.StaticVariables.PlayerEntity.PosY,
-                    _gameEngine.StaticVariables.PlayerEntity.TerrainHeight);
+                    _gameEngine.StaticVariables.PlayerEntity.FloorHeight);
 
                 if (spriteEffect != null)
                 {
@@ -3044,7 +3750,7 @@ public class PlayerManager
                     0,
                     _gameEngine.StaticVariables.PlayerEntity.PosX,
                     _gameEngine.StaticVariables.PlayerEntity.PosY,
-                    _gameEngine.StaticVariables.PlayerEntity.TerrainHeight);
+                    _gameEngine.StaticVariables.PlayerEntity.FloorHeight);
 
                 if (spriteEffect == null)
                 {
@@ -3226,35 +3932,19 @@ public class PlayerManager
                         var mapWidth = _gameEngine.CurrentMap.Map.Width;
                         var tile = _gameEngine.CurrentMap.Map.MapTiles[tileY * mapWidth + tileX];
 
-                        if ((tile.Walkability & 2) != 0)
+                        if (_gameEngine.StaticVariables.PlayerEntity.HitBoxZ < ((tile.Height & 0xFF) << 20)
+                            || (tile.Walkability & 0x40) != 0)
                         {
-                            // Vérifier si la hauteur de la boîte de collision croise la hauteur de l'effet
-                            var tileEffectZ = (tile.Height & 0xFF) << 20;
-
-                            Breakpoint.TriggerBreak();
-
-                            if (_gameEngine.StaticVariables.PlayerEntity.HitBoxZ <= tileEffectZ + 0x80000 
-                                && tileEffectZ + 0x80000 <= _gameEngine.StaticVariables.PlayerEntity.HitBoxZ + _gameEngine.StaticVariables.PlayerEntity.CollisionHeight)
+                            if (_gameEngine.StaticVariables.PlayerEntity.IsOnGround == 0)
                             {
-                                // Désactiver l'effet pour éviter de le déclencher plusieurs fois
-                                //TODO
-                                //tile.GroundProperty &= 0xFFFD;
-                                //tile.Height = 0xFFFF;
-                                Breakpoint.TriggerBreak();
-
-                                var effectX = worldXCoords[i] * 0x180000 + 0xC0000;
-                                var effectY = worldYCoords[i] * 0x100000 + 0x80000;
-
-                                _gameEngine.EffectManager.CreateEffectEntity(
-                                    0,
-                                    _gameEngine.CurrentMap.Info.F, //_gameEngine.CurrentMap.Info.C
-                                    0,
-                                    effectX,
-                                    effectY,
-                                    tileEffectZ);
-                                _gameEngine.EffectManager.RandomlySpawnItem(0xFF, effectX, effectY, tileEffectZ);
-                                _gameEngine.SoundManager.PlaySoundEffect(0x1F);
+                                _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = _gameEngine.StaticVariables.g_flailHitAnimations[attackType * 2 + 1];
                             }
+                            else
+                            {
+                                _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = _gameEngine.StaticVariables.g_flailHitAnimations[attackType * 2];
+                            }
+
+                            return;
                         }
                     }
                 }
@@ -3285,6 +3975,8 @@ public class PlayerManager
     {
         if (_gameEngine.StaticVariables.g_warpLockTimer != 0)
         {
+            Breakpoint.TriggerBreak();
+
             switch (_gameEngine.StaticVariables.g_warpLockTimer)
             {
                 case 0x1f:

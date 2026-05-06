@@ -11835,6 +11835,56 @@ public class StaticVariables
 };
 
 
+    // GHIDRA: SHORT_ARRAY_80023504 @ 0x80023504
+    public readonly short[] SHORT_ARRAY_80023504 =
+    [
+        0x0010, 0x0200,
+        0x0020, 0x0400,
+        0x0030, 0x0600,
+        0x0040, 0x0800,
+        0x0050, 0x0A00,
+        0x0060, 0x0C00,
+        0x0070, 0x0E00,
+        0x0080, 0x1000,
+        0x0090, 0x1200,
+        0x00A0, 0x1400,
+        0x00B0, 0x1600,
+        0x00C0, 0x1800,
+        0x00E0, 0x1A00,
+        0x00E0, 0x1C00,
+        0x00F0, 0x1E00,
+        -1,     0x0000,
+    ];
+
+    // GHIDRA: SHORT_ARRAY_80023544 @ 0x80023544
+    public readonly short[] SHORT_ARRAY_80023544 =
+    [
+        0x0028, 0x0400, 0x0C00, 0x0010, 0x0007, 0x0000, 0x0154,
+        0x003C, 0x0400, 0x0C00, 0x0010, 0x0007, 0x0055, 0x0154,
+        0x0050, 0x0400, 0x0C00, 0x0010, 0x0007, 0x00AA, 0x0154,
+        -1,
+    ];
+
+    // GHIDRA: SHORT_ARRAY_8002357C @ 0x8002357C
+    public readonly short[] SHORT_ARRAY_8002357c =
+    [
+        0x0028, 0x0E00, 0x0E00, 0x0000, 0x0008, 0x0000, 0x015E,
+        0x003C, 0x0E00, 0x0E00, 0x0000, 0x0008, 0x0055, 0x015E,
+        0x0050, 0x0E00, 0x0E00, 0x0000, 0x0008, 0x00AA, 0x015E,
+        0x0064, 0x0008, 0x0C00, 0x0020, unchecked((short)0xFFFA), 0x0080, 0x0186,
+        0x0078, 0x0008, 0x0C00, 0x0020, unchecked((short)0xFFFA), 0x00D5, 0x0186,
+        0x008C, 0x0008, 0x0C00, 0x0020, unchecked((short)0xFFFA), 0x002A, 0x0186,
+        -1,
+    ];
+
+    // GHIDRA: SHORT_ARRAY_800235E0 @ 0x800235E0
+    public readonly short[] SHORT_ARRAY_800235e0 =
+    [
+        0x001E, 0x0028, 0x0032, 0x003C, 0x0046, 0x0050, 0x005A, 0x0064,
+        -1,     0x0000,
+    ];
+
+
     public short DAT_80023544; // 80023544
     public short DAT_80023546; // 80023546
     public short DAT_80023548; // 80023548
@@ -12760,6 +12810,31 @@ public class StaticVariables
     public byte[] g_playerEffectTransitionCooldown = new byte[4]; // 80127110
     public uint g_playerEffectStepFlags; // 80127114
     public int g_playerEffectTimer; // 80127118
+
+    // GHIDRA: DAT_8012711C @ 0x8012711C
+    public Entity DAT_8012711c;
+
+    // GHIDRA: DAT_80127120 @ 0x80127120
+    public int DAT_80127120;
+
+    // GHIDRA: DAT_80127124 @ 0x80127124
+    public Entity DAT_80127124;
+
+    // GHIDRA: DAT_80127128 @ 0x80127128
+    public int DAT_80127128;
+
+    // GHIDRA: DAT_8012712C @ 0x8012712C
+    public Entity DAT_8012712c;
+
+    // GHIDRA: DAT_80127130 @ 0x80127130
+    public Entity DAT_80127130;
+
+    // GHIDRA: DAT_80127134 @ 0x80127134
+    public int DAT_80127134;
+
+    // GHIDRA: DAT_80127138 @ 0x80127138
+    public readonly ScrollingParameters DAT_80127138 = new();
+
     public Entity[] g_spawnedWarpEntity = new Entity[16]; // 8012711C
     public int g_playerEffectCurrentFrame; // 8012715C
     public int g_playerEffectPhase; // 80127160

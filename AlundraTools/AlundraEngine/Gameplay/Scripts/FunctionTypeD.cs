@@ -251,7 +251,8 @@ public static class FunctionTypeD
     //8007df4c
     public static void AI_FUN_8007df4c(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Orc (hache) Niv.1")
         {
             Breakpoint.TriggerBreak();
         }

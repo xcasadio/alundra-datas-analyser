@@ -459,11 +459,13 @@ public static class FunctionTypeC
     {
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "Tonneau générique"
-            && entity.Name != "I36_Herbe médicinale"
-            && entity.Name != "I41_Potion S"
-            && entity.Name != "I38_Extrait magique"
-            && entity.Name != "I83_Récipient de vie"
+            && entity.Name != "I18_Veste en cuir"
             && entity.Name != "I20_Veste en argent"
+            && entity.Name != "I36_Herbe médicinale"
+            && entity.Name != "I37_Potion L"
+            && entity.Name != "I38_Extrait magique"
+            && entity.Name != "I41_Potion S"
+            && entity.Name != "I83_Récipient de vie"
             && entity.Name != "Pierre générique"
             && !string.IsNullOrEmpty(entity.Name))
         {
@@ -2005,7 +2007,8 @@ public static class FunctionTypeC
     public static void AI_FUN_8006b8cc(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
-            && entity.Name != "◆Projectile")
+            && entity.Name != "◆Projectile"
+            && entity.Name != "◆Projectile Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -12762,18 +12765,24 @@ SetAnim6:
     //Item spawn
     public static void FUN_8007c174(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "I83_Récipient de vie"
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "I32_Cape de sable"
+            && entity.Name != "I36_Herbe médicinale"
+            && entity.Name != "I38_Extrait magique"
+            && entity.Name != "I39_Breuvage de soin"
             && entity.Name != "I43_Tome de la Terre (haut)"
-            && entity.Name != "I80_Graine magique"
             && entity.Name != "I62_Emblème du sang de pigeon"
-            && entity.Name != "I84_Petit cœur"
-            && entity.Name != "I85_Cœur moyen"
-            && entity.Name != "I86_Grand cœur"
+            && entity.Name != "I61_Clé"
             && entity.Name != "I69_1 Gilda"
             && entity.Name != "I70_5 Gildas"
             && entity.Name != "I71_10 Gildas"
-            && entity.Name != "I61_Clé"
+            && entity.Name != "I72_30 Gildas"
             && entity.Name != "I79_Bec en or"
+            && entity.Name != "I80_Graine magique"
+            && entity.Name != "I83_Récipient de vie"
+            && entity.Name != "I84_Petit cœur"
+            && entity.Name != "I85_Cœur moyen"
+            && entity.Name != "I86_Grand cœur"
             && !string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
