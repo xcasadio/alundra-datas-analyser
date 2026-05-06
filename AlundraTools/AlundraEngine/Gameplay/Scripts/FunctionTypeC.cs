@@ -12366,7 +12366,8 @@ SetAnim6:
     //80062bc0
     public static void AI_UpdateMelzas2CutsceneChannels(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Tentacule")
         {
             Breakpoint.TriggerBreak();
         }

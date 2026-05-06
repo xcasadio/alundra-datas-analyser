@@ -722,15 +722,18 @@ public class GraphicManager
         } while (i < 0xd);
     }
 
-    //8005b670
+    // GHIDRA: RenderAllTileLayers @ 0x8005B670
     private int RenderAllTileLayers(int[] orderingTableBuffer1, int[] orderingTableBuffer2, int cameraX, int cameraY)
     {
-        int numberOfLayerRendered;
-        int additionalTiles;
+        var scrollParameters = _gameEngine.CurrentMap.ScrollParameters;
+        if (scrollParameters == null || scrollParameters.Infos.Enabled == 0)
+        {
+            return 0;
+        }
 
-        numberOfLayerRendered = 0;
+        var numberOfLayerRendered = 0;
 
-        if (_gameEngine.CurrentMap.ScrollScreen != null && _gameEngine.CurrentMap.ScrollScreen.ScrollYSpeed != 0)
+        if (scrollParameters.HasGraphics)
         {
             _gameEngine.StaticVariables.g_renderingBufferIndex = _gameEngine.StaticVariables.g_renderingBufferIndex != 1 ? 1 : 0;
             _gameEngine.StaticVariables.INT_800c48c4 += 1;
@@ -740,29 +743,26 @@ public class GraphicManager
                 UpdateScrollingTileAnimation();
             }
 
-            numberOfLayerRendered = 0;
-
-            if ((_gameEngine.StaticVariables.g_tileAnimationMode & 1U) != 0)
+            if ((_gameEngine.StaticVariables.g_tileAnimationMode & 1) != 0)
             {
-                //numberOfLayerRendered = RenderLayerToBuffer(0, orderingTableBuffer1, orderingTableBuffer2, cameraX, cameraY);
+                numberOfLayerRendered += RenderLayerToBuffer(0, orderingTableBuffer1, orderingTableBuffer2, cameraX, cameraY);
             }
 
-            if ((_gameEngine.StaticVariables.g_tileAnimationMode & 2U) != 0)
+            if ((_gameEngine.StaticVariables.g_tileAnimationMode & 2) != 0)
             {
-                //additionalTiles = RenderLayerToBuffer(1, orderingTableBuffer1, orderingTableBuffer2, cameraX, cameraY);
-                //numberOfLayerRendered += additionalTiles;
+                numberOfLayerRendered += RenderLayerToBuffer(1, orderingTableBuffer1, orderingTableBuffer2, cameraX, cameraY);
             }
+        }
 
-            if (_gameEngine.CurrentMap.ScrollScreen.ScrollYPeriod != 0)
-            {
-                //RenderTileOverlayLayer(orderingTableBuffer2);
-            }
+        if (scrollParameters.Infos.BGColorA != 0)
+        {
+            RenderTileOverlayLayer(orderingTableBuffer2);
         }
 
         return numberOfLayerRendered;
     }
 
-    //8005b7a0
+    // GHIDRA: UpdateScrollingTileAnimation @ 0x8005B7A0
     private void UpdateScrollingTileAnimation()
     {
         //_gameEngine.StaticVariables.g_tileOffset = _gameEngine.StaticVariables.g_animationData >> 5;
@@ -783,6 +783,546 @@ public class GraphicManager
         //        //_gameEngine.StaticVariables.g_animationData = _gameEngine.StaticVariables.g_tile_set + tileSetMetaData.tileAnimationOffset;
         //    }
         //}
+    }
+
+    // GHIDRA: RenderLayerToBuffer @ 0x8005B848
+    private int RenderLayerToBuffer(int layerId, int[] orderingTableBuffer1, int[] orderingTableBuffer2, int cameraX, int cameraY)
+    {
+        const int scrollScreenWidth = 320;
+        const int scrollScreenHeight = 240;
+        const int scrollTileSize = 16;
+        const int scrollWrapWidth = 640;
+        const int scrollWrapHeight = 480;
+        const int scrollMapWidth = 0x28;
+        const int scrollMapHeight = 0x1E;
+        const int scrollRowStride = 0x50;
+        const int secondScrollOffset = 0x960;
+        const int scrollBackgroundDepthBase = -0x10000000;
+        const int scrollForegroundDepthBase = SpriteDepth.BackgroundUI - 1000;
+
+        var scrollParameters = _gameEngine.CurrentMap.ScrollParameters;
+        if (scrollParameters == null || layerId < 0 || layerId >= scrollParameters.Infos.ModeLayer.Length)
+        {
+            return 0;
+        }
+
+        if (!scrollParameters.HasGraphics)
+        {
+            return 0;
+        }
+
+        var layerMode = scrollParameters.Infos.ModeLayer[layerId];
+        if (layerMode == 0)
+        {
+            return 0;
+        }
+
+        var layerInfos = scrollParameters.LayerInfos[layerId];
+        var shaderBlendMode = layerInfos.BlendMode;
+        var blendMode = shaderBlendMode switch
+        {
+            1 => BlendMode.Average,
+            2 => BlendMode.Additive,
+            3 => BlendMode.Subtractive,
+            4 => BlendMode.AdditiveDim,
+            _ => BlendMode.None,
+        };
+        var layerOrderOffset = layerId == 0 ? 1 : 0;
+        var layerDepth = layerInfos.Ground != 0
+            ? scrollForegroundDepthBase + layerOrderOffset
+            : scrollBackgroundDepthBase + layerOrderOffset;
+
+        if (layerMode == 1)
+        {
+            var scrollar = scrollParameters.Scrollars[layerId];
+            if (scrollar.FactorXDenom == 0 || scrollar.FactorYDenom == 0)
+            {
+                return 0;
+            }
+
+            scrollParameters.ParallaxOffsetX[layerId] = cameraX * scrollar.FactorXNum / scrollar.FactorXDenom;
+            scrollParameters.ParallaxOffsetY[layerId] = cameraY * scrollar.FactorYNum / scrollar.FactorYDenom;
+
+            var animNum = scrollParameters.Infos.AnimNum <= 0 ? 1 : scrollParameters.Infos.AnimNum;
+            if (++scrollParameters.AnimFrameTimer[layerId] > layerInfos.AnimTimer)
+            {
+                if (++scrollParameters.AnimFrameCounter[layerId] >= animNum)
+                {
+                    scrollParameters.AnimFrameCounter[layerId] = 0;
+                }
+
+                scrollParameters.AnimFrameTimer[layerId] = 0;
+            }
+
+            scrollParameters.TimerX[layerId]++;
+            scrollParameters.OffsetX[layerId] += scrollar.ScrollXSpeed;
+            var periodX = Math.Abs((int)scrollar.ScrollXPeriod);
+            if (periodX > 0 && scrollParameters.TimerX[layerId] >= periodX)
+            {
+                scrollParameters.OffsetX[layerId] += scrollParameters.ScrollDirX[layerId];
+                scrollParameters.TimerX[layerId] = 0;
+            }
+
+            scrollParameters.TimerY[layerId]++;
+            scrollParameters.OffsetY[layerId] += scrollar.ScrollYSpeed;
+            var periodY = Math.Abs((int)scrollar.ScrollYPeriod);
+            if (periodY > 0 && scrollParameters.TimerY[layerId] >= periodY)
+            {
+                scrollParameters.OffsetY[layerId] += scrollParameters.ScrollDirY[layerId];
+                scrollParameters.TimerY[layerId] = 0;
+            }
+
+            var screenPosX = scrollParameters.OffsetX[layerId] + scrollParameters.ParallaxOffsetX[layerId];
+            var screenPosY = scrollParameters.OffsetY[layerId] + scrollParameters.ParallaxOffsetY[layerId];
+
+            while (screenPosX < 0)
+            {
+                scrollParameters.OffsetX[layerId] += scrollWrapWidth;
+                screenPosX += scrollWrapWidth;
+            }
+
+            while (screenPosX >= scrollWrapWidth)
+            {
+                scrollParameters.OffsetX[layerId] -= scrollWrapWidth;
+                screenPosX -= scrollWrapWidth;
+            }
+
+            while (screenPosY < 0)
+            {
+                scrollParameters.OffsetY[layerId] += scrollWrapHeight;
+                screenPosY += scrollWrapHeight;
+            }
+
+            while (screenPosY >= scrollWrapHeight)
+            {
+                scrollParameters.OffsetY[layerId] -= scrollWrapHeight;
+                screenPosY -= scrollWrapHeight;
+            }
+
+            var tileX = screenPosX >> 4;
+            var tileY = screenPosY >> 4;
+            var subX = screenPosX & 15;
+            var subY = screenPosY & 15;
+
+            var secondScroll = layerId != 0 && scrollParameters.Infos.ModeLayer[0] == 1 && scrollParameters.Infos.ModeLayer[1] == 1;
+            var baseMapOffset = (int)scrollParameters.Graphics + 0x8100 + (secondScroll ? secondScrollOffset : 0);
+            if (baseMapOffset < 0 || baseMapOffset >= scrollParameters.DataSize)
+            {
+                return 0;
+            }
+
+            var xStart = -subX;
+            var yStart = -subY;
+            var cols = (scrollScreenWidth - xStart + 15) >> 4;
+            var rows = (scrollScreenHeight - yStart + 15) >> 4;
+            var vAnim = (scrollParameters.AnimFrameCounter[layerId] << 8) / animNum;
+            var primCount = 0;
+
+            for (var y = 0; y < rows; y++)
+            {
+                var ty = tileY + y;
+                if (ty >= scrollMapHeight)
+                {
+                    ty -= scrollMapHeight;
+                }
+
+                var rowOffset = baseMapOffset + ty * scrollRowStride;
+
+                for (var x = 0; x < cols; x++)
+                {
+                    var tx = tileX + x;
+                    if (tx >= scrollMapWidth)
+                    {
+                        tx -= scrollMapWidth;
+                    }
+
+                    var entryOffset = rowOffset + (tx << 1);
+                    if (entryOffset + 1 >= scrollParameters.DataSize)
+                    {
+                        continue;
+                    }
+
+                    var tileVal = scrollParameters.Data[entryOffset];
+                    if (tileVal == 0)
+                    {
+                        continue;
+                    }
+
+                    var palDex = scrollParameters.Data[entryOffset + 1];
+                    var x0 = xStart + (x << 4);
+                    var y0 = yStart + (y << 4);
+                    AddScrollBitmap(scrollParameters, palDex, (tileVal & 0x0F) << 4, ((tileVal & 0xF0) + vAnim) & 0xFF, scrollTileSize, scrollTileSize, x0, y0, layerDepth, shaderBlendMode, blendMode);
+                    primCount++;
+                }
+            }
+
+            return primCount;
+        }
+
+        if (layerMode != 2)
+        {
+            return 0;
+        }
+
+        var cellular = scrollParameters.Cellulars[layerId];
+        var cells = scrollParameters.Cells[layerId];
+        if (cells.Length == 0)
+        {
+            return 0;
+        }
+
+        var layerAnimNum = scrollParameters.Infos.AnimNum <= 0 ? 1 : scrollParameters.Infos.AnimNum;
+        if (++scrollParameters.AnimFrameTimer[layerId] > layerInfos.AnimTimer)
+        {
+            if (++scrollParameters.AnimFrameCounter[layerId] >= layerAnimNum)
+            {
+                scrollParameters.AnimFrameCounter[layerId] = 0;
+            }
+
+            scrollParameters.AnimFrameTimer[layerId] = 0;
+        }
+
+        var phase = (scrollParameters.AnimFrameCounter[layerId] << 8) / layerAnimNum;
+        scrollParameters.WaveTick[layerId] = (byte)(scrollParameters.WaveTick[layerId] + 1);
+
+        var cellularPrimCount = 0;
+        var cellNum = Math.Min(cells.Length, ScrollParameters.CellMax);
+
+        for (var i = 0; i < cellNum; i++)
+        {
+            var curCell = cells[i];
+            switch ((CellType)curCell.Type)
+            {
+                case CellType.Normal:
+                {
+                    var posX = scrollParameters.CellPosX[layerId, i];
+                    var posY = scrollParameters.CellPosY[layerId, i];
+                    var tickX = scrollParameters.CellTickX[layerId, i];
+                    var tickY = scrollParameters.CellTickY[layerId, i];
+
+                    posX += curCell.DX;
+                    posY += curCell.DY;
+
+                    if (curCell.PeriodX != 0)
+                    {
+                        var stepX = (curCell.DX < 0 || curCell.PeriodX < 0) ? -1 : +1;
+                        var absPX = Math.Abs((int)curCell.PeriodX);
+                        if (++tickX >= absPX)
+                        {
+                            posX += stepX;
+                            tickX = 0;
+                        }
+                    }
+
+                    if (curCell.PeriodY != 0)
+                    {
+                        var stepY = (curCell.DY < 0 || curCell.PeriodY < 0) ? -1 : +1;
+                        var absPY = Math.Abs((int)curCell.PeriodY);
+                        if (++tickY >= absPY)
+                        {
+                            posY += stepY;
+                            tickY = 0;
+                        }
+                    }
+
+                    var baseX = 0;
+                    var baseY = 0;
+                    if (curCell.CamXDen != 0)
+                    {
+                        baseX = cameraX * curCell.CamXNum / curCell.CamXDen;
+                    }
+
+                    if (curCell.CamYDen != 0)
+                    {
+                        baseY = cameraY * curCell.CamYNum / curCell.CamYDen;
+                    }
+
+                    var sx = posX - baseX;
+                    var sy = posY - baseY;
+
+                    var minX = curCell.U0 - curCell.U1;
+                    if (sx < minX)
+                    {
+                        posX += scrollScreenWidth - minX;
+                        sx = posX - baseX;
+                    }
+                    else if (sx > scrollScreenWidth - 1)
+                    {
+                        posX += -scrollScreenWidth + minX;
+                        sx = posX - baseX;
+                    }
+
+                    var minY = curCell.V0 - curCell.V1;
+                    if (sy < minY)
+                    {
+                        posY += scrollScreenHeight - minY;
+                        sy = posY - baseY;
+                    }
+                    else if (sy > scrollScreenHeight - 1)
+                    {
+                        posY += -scrollScreenHeight + minY;
+                        sy = posY - baseY;
+                    }
+
+                    scrollParameters.CellPosX[layerId, i] = posX;
+                    scrollParameters.CellPosY[layerId, i] = posY;
+                    scrollParameters.CellTickX[layerId, i] = tickX;
+                    scrollParameters.CellTickY[layerId, i] = tickY;
+
+                    var width = curCell.U1 - curCell.U0 + 1;
+                    var height = curCell.V1 - curCell.V0 + 1;
+                    AddScrollBitmap(scrollParameters, curCell.PalDex, curCell.U0, (curCell.V0 + phase) & 0xFF, width, height, sx, sy, layerDepth, shaderBlendMode, blendMode);
+                    cellularPrimCount++;
+                    break;
+                }
+
+                case CellType.ScriptTrack:
+                    break;
+
+                case CellType.FallRespawn:
+                {
+                    var posX = scrollParameters.CellPosX[layerId, i];
+                    var posY = scrollParameters.CellPosY[layerId, i];
+                    var tickX = scrollParameters.CellTickX[layerId, i];
+                    var tickY = scrollParameters.CellTickY[layerId, i];
+
+                    posX += curCell.DX;
+                    posY += curCell.DY;
+
+                    var stepX = 0;
+                    var stepY = 0;
+                    if (curCell.PeriodX != 0)
+                    {
+                        stepX = (curCell.DX < 0 || curCell.PeriodX < 0) ? -1 : +1;
+                    }
+
+                    if (curCell.PeriodY != 0)
+                    {
+                        stepY = (curCell.DY < 0 || curCell.PeriodY < 0) ? -1 : +1;
+                    }
+
+                    var absPX = Math.Abs((int)curCell.PeriodX);
+                    var absPY = Math.Abs((int)curCell.PeriodY);
+                    if (absPX > 0 && ++tickX >= absPX)
+                    {
+                        posX += stepX;
+                        tickX = 0;
+                    }
+
+                    if (absPY > 0 && ++tickY >= absPY)
+                    {
+                        posY += stepY;
+                        tickY = 0;
+                    }
+
+                    var baseX = 0;
+                    var baseY = 0;
+                    if (curCell.CamXDen != 0)
+                    {
+                        baseX = cameraX * curCell.CamXNum / curCell.CamXDen;
+                    }
+
+                    if (curCell.CamYDen != 0)
+                    {
+                        baseY = cameraY * curCell.CamYNum / curCell.CamYDen;
+                    }
+
+                    var sx = posX - baseX;
+                    var sy = posY - baseY;
+
+                    var minX = curCell.U0 - curCell.U1;
+                    if (sx < minX)
+                    {
+                        posX += scrollScreenWidth - minX;
+                        sx = posX - baseX;
+                    }
+                    else if (sx > scrollScreenWidth - 1)
+                    {
+                        posX += -scrollScreenWidth + minX;
+                        sx = posX - baseX;
+                    }
+
+                    if (sy > scrollScreenHeight - 1)
+                    {
+                        posX = (int)((AlundraEngine.Random.Next() * (ulong)scrollScreenWidth) >> 32);
+                        posY += -scrollScreenHeight + (curCell.V0 - curCell.V1);
+                        sx = posX - baseX;
+                        sy = posY - baseY;
+                    }
+
+                    scrollParameters.CellPosX[layerId, i] = posX;
+                    scrollParameters.CellPosY[layerId, i] = posY;
+                    scrollParameters.CellTickX[layerId, i] = tickX;
+                    scrollParameters.CellTickY[layerId, i] = tickY;
+
+                    var width = curCell.U1 - curCell.U0 + 1;
+                    var height = curCell.V1 - curCell.V0 + 1;
+                    AddScrollBitmap(scrollParameters, curCell.PalDex, curCell.U0, (curCell.V0 + phase) & 0xFF, width, height, sx, sy, layerDepth, shaderBlendMode, blendMode);
+                    cellularPrimCount++;
+                    break;
+                }
+
+                case CellType.WaveX:
+                {
+                    if (scrollParameters.WaveLut.Length == 0)
+                    {
+                        break;
+                    }
+
+                    var width = curCell.U1 - curCell.U0 + 1;
+                    var height = curCell.V1 - curCell.V0 + 1;
+
+                    var idxA1 = (curCell.Y0 * cellular.AWaveY) & 0xFF;
+                    var idxA2 = (scrollParameters.WaveTick[layerId] * cellular.AWavePhase) & 0xFF;
+                    var aW = scrollParameters.WaveLut[idxA1] * scrollParameters.WaveLut[idxA2] * cellular.AWaveAmp;
+                    if (aW < 0)
+                    {
+                        aW += 0x7F;
+                    }
+
+                    var idxB = (curCell.Y0 * cellular.BWaveY + scrollParameters.WaveTick[layerId] * cellular.BWavePhase) & 0xFF;
+                    var bW = scrollParameters.WaveLut[idxB] * cellular.BWaveWeight;
+
+                    var tSum = (aW >> 7) + bW;
+                    if (tSum < 0)
+                    {
+                        tSum += 0x7F;
+                    }
+
+                    var x = curCell.X0 + (tSum >> 7) - 8;
+                    var y = curCell.Y0;
+                    AddScrollBitmap(scrollParameters, curCell.PalDex, curCell.U0, (curCell.V0 + phase) & 0xFF, width, height, x, y, layerDepth, shaderBlendMode, blendMode);
+                    cellularPrimCount++;
+                    break;
+                }
+            }
+        }
+
+        return cellularPrimCount;
+    }
+
+    // JUSTIFICATION: backend renderer adaptation only
+    // RELATION: adapter for the C port MainShader STP split used by scrolling Batch draws
+    private void AddScrollBitmap(ScrollParameters scrollParameters, int paletteIndex, int u, int v, int width, int height, int x, int y, int depth, byte shaderBlendMode, BlendMode blendMode)
+    {
+        var opaqueBitmap = scrollParameters.GetScrollBitmap(paletteIndex, u, v, width, height, shaderBlendMode, semiTransOnly: false);
+        if (opaqueBitmap != null)
+        {
+            _gameEngine.Renderer.AddSprite(x, y, width, height, depth, opaqueBitmap);
+        }
+
+        if (blendMode == BlendMode.None)
+        {
+            return;
+        }
+
+        var semiTransBitmap = scrollParameters.GetScrollBitmap(paletteIndex, u, v, width, height, shaderBlendMode, semiTransOnly: true);
+        if (semiTransBitmap != null)
+        {
+            _gameEngine.Renderer.AddSprite(x, y, width, height, depth, semiTransBitmap, 1.0f, 1.0f, 1.0f, 1.0f, blendMode);
+        }
+    }
+
+    // GHIDRA: RenderTileOverlayLayer @ 0x8005BA40
+    private void RenderTileOverlayLayer(int[] orderingTableBuffer2)
+    {
+        const int overlayDepth = SpriteDepth.BackgroundUI - 2000;
+        const int overlayWidth = 320;
+        const int overlayHeight = 240;
+
+        var scrollParameters = _gameEngine.CurrentMap.ScrollParameters;
+        if (scrollParameters == null || scrollParameters.Infos.Enabled == 0)
+        {
+            return;
+        }
+
+        var flag = scrollParameters.Infos.BGColorA;
+        if (flag == 0)
+        {
+            return;
+        }
+
+        var extended = !(flag < 0x65);
+        scrollParameters.OvrTick++;
+
+        var ovrPtr = extended ? scrollParameters.OverlayExt : scrollParameters.Overlay;
+        var ovrSize = extended ? 0x10u : 0x04u;
+        if (ovrPtr == 0 || ovrPtr >= scrollParameters.DataSize)
+        {
+            return;
+        }
+
+        if (scrollParameters.OvrTick >= scrollParameters.OvrHold)
+        {
+            var frameOffset = (int)(ovrPtr + scrollParameters.OvrOff);
+            if (frameOffset + ovrSize > scrollParameters.DataSize)
+            {
+                scrollParameters.OvrOff = 0;
+                frameOffset = (int)ovrPtr;
+            }
+
+            scrollParameters.OvrHold = extended
+                ? scrollParameters.Data[frameOffset + 12]
+                : scrollParameters.Data[frameOffset + 3];
+            scrollParameters.OvrTick = 0;
+            scrollParameters.OvrOff += ovrSize;
+
+            if (scrollParameters.OvrHold == 0)
+            {
+                scrollParameters.OvrOff = 0;
+            }
+        }
+
+        var prevOffset = scrollParameters.OvrOff >= ovrSize ? scrollParameters.OvrOff - ovrSize : 0;
+        var baseOffset = (int)(ovrPtr + prevOffset);
+        if (baseOffset + ovrSize > scrollParameters.DataSize)
+        {
+            return;
+        }
+
+        var alpha = flag < 0x65 ? 0.5f : 0.25f;
+        if (!extended)
+        {
+            var tile = new TILE
+            {
+                x0 = 0,
+                y0 = 0,
+                w = overlayWidth,
+                h = overlayHeight,
+                r0 = scrollParameters.Data[baseOffset],
+                g0 = scrollParameters.Data[baseOffset + 1],
+                b0 = scrollParameters.Data[baseOffset + 2],
+            };
+
+            _gameEngine.Renderer.AddRectangle(tile, overlayDepth, alpha);
+            return;
+        }
+
+        var poly = new POLY_G4
+        {
+            x0 = 0,
+            y0 = 0,
+            x1 = overlayWidth,
+            y1 = 0,
+            x2 = 0,
+            y2 = overlayHeight,
+            x3 = overlayWidth,
+            y3 = overlayHeight,
+            r0 = scrollParameters.Data[baseOffset],
+            g0 = scrollParameters.Data[baseOffset + 1],
+            b0 = scrollParameters.Data[baseOffset + 2],
+            r1 = scrollParameters.Data[baseOffset + 3],
+            g1 = scrollParameters.Data[baseOffset + 4],
+            b1 = scrollParameters.Data[baseOffset + 5],
+            r2 = scrollParameters.Data[baseOffset + 6],
+            g2 = scrollParameters.Data[baseOffset + 7],
+            b2 = scrollParameters.Data[baseOffset + 8],
+            r3 = scrollParameters.Data[baseOffset + 9],
+            g3 = scrollParameters.Data[baseOffset + 10],
+            b3 = scrollParameters.Data[baseOffset + 11],
+        };
+
+        _gameEngine.Renderer.AddQuadColor(poly, overlayDepth, alpha);
     }
 
     static int Fixed16ToInt(int v) { return v >> 16; }

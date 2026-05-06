@@ -129,9 +129,14 @@ public class Renderer(System.Drawing.Graphics graphics) : IRenderer
 
     private void RenderSprite(System.Drawing.Graphics graphics, Sprite sprite)
     {
-        // Note: GDI+ ne supporte pas nativement les blend modes PSX (additif/soustractif)
-        // On applique uniquement l'alpha et les couleurs via ColorMatrix
-        float effectiveAlpha = sprite.Alpha;
+        // Note: GDI+ ne supporte pas nativement les blend modes PSX additif/soustractif.
+        // Average/AdditiveDim use the source factor from the C port shader as a desktop approximation.
+        float effectiveAlpha = sprite.BlendMode switch
+        {
+            BlendMode.Average => sprite.Alpha * 0.5f,
+            BlendMode.AdditiveDim => sprite.Alpha * 0.25f,
+            _ => sprite.Alpha,
+        };
 
         var useMatrix = Math.Abs(effectiveAlpha - 1.0f) > 0.001f ||
                         Math.Abs(sprite.R - 1.0f) > 0.001f ||

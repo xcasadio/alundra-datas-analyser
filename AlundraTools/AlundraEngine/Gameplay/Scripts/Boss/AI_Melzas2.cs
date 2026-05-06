@@ -274,10 +274,9 @@ public static class AI_Melzas2
     public static void AI_UpdateMelzas2CutsceneChannels(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
-            && entity.Name != "Melzas2_FinalBoss")
+            && entity.Name != "◆Tentacule")
         {
             Breakpoint.TriggerBreak();
-            return;
         }
 
         bool bVar1;

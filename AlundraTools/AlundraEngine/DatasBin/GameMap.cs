@@ -90,6 +90,7 @@ public class GameMap
         //scrollscreen
         if (Header.ScrollingScreenOffset != -1)
         {
+            br.BaseStream.Position = Offset + Header.ScrollingScreenOffset;
             ScrollParameters = new ScrollParameters(br, Header.StringTableOffset - Header.ScrollingScreenOffset);
             //ScrollScreen = new ScrollScreen(ScrollParameters);
         }

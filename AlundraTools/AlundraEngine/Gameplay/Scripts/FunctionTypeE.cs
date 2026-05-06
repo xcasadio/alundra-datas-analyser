@@ -705,7 +705,9 @@ public static class FunctionTypeE
     //8007fb38
     public static void AI_DestroyEntity(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Homme-lézard (épée) Niv.1"
+            && entity.Name != "◆Bras, projectiles")
         {
             Breakpoint.TriggerBreak();
         }
