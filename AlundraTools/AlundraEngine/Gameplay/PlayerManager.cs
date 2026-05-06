@@ -3090,7 +3090,7 @@ public class PlayerManager
         return 1;
     }
 
-    // GHIDRA: FUN_80035260 @ 0x80035260
+    // 0x80035260
     private int ProcessSandCapeUseSequence()
     {
         var player = _gameEngine.StaticVariables.PlayerEntity;
@@ -3975,8 +3975,6 @@ public class PlayerManager
     {
         if (_gameEngine.StaticVariables.g_warpLockTimer != 0)
         {
-            Breakpoint.TriggerBreak();
-
             switch (_gameEngine.StaticVariables.g_warpLockTimer)
             {
                 case 0x1f:
@@ -4007,46 +4005,211 @@ public class PlayerManager
         }
     }
 
-    //80034ec4
+    // GHIDRA: FUN_80034EC4 @ 0x80034EC4
     private void FUN_80034ec4()
     {
         Breakpoint.TriggerBreak();
+
+        var staticVariables = _gameEngine.StaticVariables;
+
+        for (var entityIndex = 1;
+             entityIndex <= staticVariables.g_numberOfEntities && entityIndex < staticVariables.g_entitySlots.Length;
+             entityIndex++)
+        {
+            var entity = staticVariables.g_entitySlots[entityIndex];
+
+            if (entity.SpriteTableIndex != 0x18
+                || entity.Status != 2)
+            {
+                continue;
+            }
+
+            entity.Status = 3;
+            entity.BlockedByEntity = null;
+
+            for (var effectIndex = 0; effectIndex < 0x10; effectIndex++)
+            {
+                var directionState = Random.Next();
+                var heightState = Random.Next();
+                var effect = _gameEngine.EffectManager.CreateEffectEntity(0, 0x12, 0,
+                    entity.PosX,
+                    entity.PosY,
+                    entity.PosZ + (int)((heightState * 0x00600001ul) >> 32));
+
+                if (effect == null)
+                {
+                    continue;
+                }
+
+                var directionIndex = (int)((directionState * 0x20ul) >> 32);
+                effect.ForceX = staticVariables.g_offsetXList[directionIndex] << 9;
+                effect.ForceY = staticVariables.g_offsetYList[directionIndex] << 9;
+
+                var forceZState = Random.Next();
+                effect.ForceZ = (int)((forceZState * 0x00010001ul) >> 32) - 0x8000;
+            }
+        }
     }
 
-    //80034e08
+    // GHIDRA: FUN_80034E08 @ 0x80034E08
     private void FUN_80034e08()
     {
         Breakpoint.TriggerBreak();
+
+        var staticVariables = _gameEngine.StaticVariables;
+
+        staticVariables.g_scrollingParameters.Flag = staticVariables.DAT_80127138.Flag;
+        staticVariables.g_scrollingParameters.LimitX = staticVariables.DAT_80127138.LimitX;
+        staticVariables.g_scrollingParameters.LimitY = staticVariables.DAT_80127138.LimitY;
+        staticVariables.g_scrollingParameters.SpeedX = staticVariables.DAT_80127138.SpeedX;
+        staticVariables.g_scrollingParameters.SpeedY = staticVariables.DAT_80127138.SpeedY;
+        staticVariables.g_scrollingParameters.OffsetX = staticVariables.DAT_80127138.OffsetX;
+        staticVariables.g_scrollingParameters.OffsetY = staticVariables.DAT_80127138.OffsetY;
+        staticVariables.g_scrollingParameters.XReachMin = staticVariables.DAT_80127138.XReachMin;
+        staticVariables.g_scrollingParameters.YReachMin = staticVariables.DAT_80127138.YReachMin;
+
+        for (var entityIndex = 1;
+             entityIndex <= staticVariables.g_numberOfEntities && entityIndex < staticVariables.g_entitySlots.Length;
+             entityIndex++)
+        {
+            var entity = staticVariables.g_entitySlots[entityIndex];
+
+            if (entity.SpriteTableIndex == 0x15
+                && entity.Status == 2)
+            {
+                entity.Status = 3;
+                entity.BlockedByEntity = null;
+            }
+        }
     }
 
-    //80034d2c
+    // GHIDRA: FUN_80034D2C @ 0x80034D2C
     private void FUN_80034d2c()
     {
         Breakpoint.TriggerBreak();
+
+        var staticVariables = _gameEngine.StaticVariables;
+
+        for (var entityIndex = 1;
+             entityIndex <= staticVariables.g_numberOfEntities && entityIndex < staticVariables.g_entitySlots.Length;
+             entityIndex++)
+        {
+            var entity = staticVariables.g_entitySlots[entityIndex];
+
+            if (entity.Status != 2)
+            {
+                continue;
+            }
+
+            if (entity.SpriteTableIndex == 0x14)
+            {
+                _gameEngine.EffectManager.CreateEffectEntity(0, 0x13, 2,
+                    entity.PosX,
+                    entity.PosY,
+                    entity.PosZ);
+                _gameEngine.DestroyEntity(entity);
+            }
+
+            if (entity.SpriteTableIndex == 0x17)
+            {
+                entity.Status = 3;
+                entity.BlockedByEntity = null;
+            }
+        }
     }
 
-    //80034c54
+    // GHIDRA: FUN_80034C54 @ 0x80034C54
     private void FUN_80034c54()
     {
         Breakpoint.TriggerBreak();
+
+        var staticVariables = _gameEngine.StaticVariables;
+
+        for (var entityIndex = 1;
+             entityIndex <= staticVariables.g_numberOfEntities && entityIndex < staticVariables.g_entitySlots.Length;
+             entityIndex++)
+        {
+            var entity = staticVariables.g_entitySlots[entityIndex];
+
+            if (entity.SpriteTableIndex == 0x13
+                && entity.Status == 2)
+            {
+                _gameEngine.EffectManager.CreateEffectEntity(0, 0x1A, 0,
+                    entity.PosX,
+                    entity.PosY,
+                    entity.PosZ);
+                _gameEngine.DestroyEntity(entity);
+            }
+        }
     }
 
-    //80034bdc
+    // GHIDRA: FUN_80034BDC @ 0x80034BDC
     private void FUN_80034bdc()
     {
         Breakpoint.TriggerBreak();
+
+        var staticVariables = _gameEngine.StaticVariables;
+
+        for (var entityIndex = 1;
+             entityIndex <= staticVariables.g_numberOfEntities && entityIndex < staticVariables.g_entitySlots.Length;
+             entityIndex++)
+        {
+            var entity = staticVariables.g_entitySlots[entityIndex];
+
+            if (entity.SpriteTableIndex == 0x11
+                && entity.Status == 2)
+            {
+                entity.Status = 3;
+                entity.BlockedByEntity = null;
+                entity.TargetAnimationId = (uint)entityIndex;
+            }
+        }
     }
 
-    //80034b54
+    // GHIDRA: FUN_80034B54 @ 0x80034B54
     private void FUN_80034b54()
     {
         Breakpoint.TriggerBreak();
+
+        var player = _gameEngine.StaticVariables.PlayerEntity;
+        var carriedEntity = player.CarriedEntity;
+
+        if (carriedEntity == null
+            || carriedEntity.SpriteTableIndex != 2
+            || carriedEntity.BlockedByEntity != null)
+        {
+            return;
+        }
+
+        player.CarriedEntity = null;
+        _gameEngine.EffectManager.CreateEffectEntity(0, 0x0C, 0,
+            carriedEntity.PosX,
+            carriedEntity.PosY,
+            carriedEntity.PosZ);
+        _gameEngine.DestroyEntity(carriedEntity);
     }
 
-    //80034acc
+    // GHIDRA: FUN_80034ACC @ 0x80034ACC
     private void FUN_80034acc()
     {
         Breakpoint.TriggerBreak();
+
+        var player = _gameEngine.StaticVariables.PlayerEntity;
+        var carriedEntity = player.CarriedEntity;
+
+        if (carriedEntity == null
+            || carriedEntity.SpriteTableIndex != 1
+            || carriedEntity.BlockedByEntity != null)
+        {
+            return;
+        }
+
+        player.CarriedEntity = null;
+        _gameEngine.EffectManager.CreateEffectEntity(0, 0x08, 0,
+            carriedEntity.PosX,
+            carriedEntity.PosY,
+            carriedEntity.PosZ);
+        _gameEngine.DestroyEntity(carriedEntity);
     }
 
     //8004df68
