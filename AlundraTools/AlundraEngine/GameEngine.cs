@@ -290,7 +290,7 @@ public class GameEngine
         GraphicManager.RenderScene();
     }
 
-    //8005d668
+    // GHIDRA: SetScrollingMode @ 0x8005D668
     public void SetScrollingMode(int animationMode, int animationBankIndex)
     {
         StaticVariables.g_tileAnimationMode = animationMode;
@@ -298,13 +298,30 @@ public class GameEngine
         StaticVariables.g_animationFrameCounter = 1;
         StaticVariables.g_tileOffset = 0;
 
-        if (0 < animationBankIndex)
+        if (animationBankIndex <= 0)
         {
-            Breakpoint.TriggerBreak();
-            //
-            // g_animationData =
-            //    (int)g_scrollingParameters2 +
-            //    (animationBankIndex + -1) * 0x10 + g_scrollingParameters->offsetX;
+            return;
+        }
+
+        var scrollParameters = CurrentMap.ScrollParameters;
+        if (scrollParameters == null || scrollParameters.Data.Length < 0x18)
+        {
+            return;
+        }
+
+        // PARTIAL: the desktop port models the original RAM pointers as offsets into
+        // the current scrolling block, because the raw scrolling bytes already match
+        // the original base structure observed at DAT_80186788 / *PTR_8018CF58.
+        StaticVariables.DAT_80186788 = 0;
+        StaticVariables.PTR_8018CF58 = 0;
+
+        var animationDataOffset = StaticVariables.DAT_80186788
+            + BitConverter.ToInt32(scrollParameters.Data, StaticVariables.PTR_8018CF58 + 0x14)
+            + ((animationBankIndex - 1) << 4);
+
+        if ((uint)animationDataOffset < (uint)scrollParameters.Data.Length)
+        {
+            StaticVariables.g_animationData = animationDataOffset;
         }
     }
 

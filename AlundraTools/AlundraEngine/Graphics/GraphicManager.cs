@@ -765,24 +765,45 @@ public class GraphicManager
     // GHIDRA: UpdateScrollingTileAnimation @ 0x8005B7A0
     private void UpdateScrollingTileAnimation()
     {
-        //_gameEngine.StaticVariables.g_tileOffset = _gameEngine.StaticVariables.g_animationData >> 5;
-        //_gameEngine.StaticVariables.g_animationCounter += 1;
-        //
-        //if ((_gameEngine.StaticVariables.g_animationData.field1 & 0x1f) < _gameEngine.StaticVariables.g_animationCounter)
-        //{
-        //    _gameEngine.StaticVariables.g_animationData += 1;
-        //    _gameEngine.StaticVariables.g_animationCounter = 2;
-        //    _gameEngine.StaticVariables.g_animationFrameCounter += 1;
-        //
-        //    if (_gameEngine.StaticVariables.g_animationFrameCounter > 16)
-        //    {
-        //        _gameEngine.StaticVariables.g_animationFrameCounter = 1;
-        //        //_gameEngine.StaticVariables.g_animationData = _gameEngine.StaticVariables.g_tile_set + (_gameEngine.StaticVariables.g_tileAnimationType + -1) * 0x10 + _gameEngine.StaticVariables.g_tileSetMetaData.TileAnimationOffset;
-        //
-        //        var tileSetMetaData = _gameEngine.StaticVariables.g_tileSetMetaData[_gameEngine.StaticVariables.g_tileAnimationType + -1];
-        //        //_gameEngine.StaticVariables.g_animationData = _gameEngine.StaticVariables.g_tile_set + tileSetMetaData.tileAnimationOffset;
-        //    }
-        //}
+        var scrollParameters = _gameEngine.CurrentMap.ScrollParameters;
+        if (scrollParameters == null || scrollParameters.Data.Length < 0x18)
+        {
+            return;
+        }
+
+        if ((uint)_gameEngine.StaticVariables.g_animationData >= (uint)scrollParameters.Data.Length)
+        {
+            return;
+        }
+
+        var oldCounter = _gameEngine.StaticVariables.g_animationCounter;
+        var currentByte = scrollParameters.Data[_gameEngine.StaticVariables.g_animationData];
+
+        _gameEngine.StaticVariables.g_tileOffset = currentByte >> 5;
+        _gameEngine.StaticVariables.g_animationCounter = oldCounter + 1;
+
+        if ((currentByte & 0x1f) < oldCounter)
+        {
+            _gameEngine.StaticVariables.g_animationData += 1;
+            _gameEngine.StaticVariables.g_animationCounter = 2;
+
+            var oldFrameCounter = _gameEngine.StaticVariables.g_animationFrameCounter;
+            _gameEngine.StaticVariables.g_animationFrameCounter = oldFrameCounter + 1;
+
+            if (oldFrameCounter >= 16)
+            {
+                _gameEngine.StaticVariables.g_animationFrameCounter = 1;
+
+                var animationDataOffset = _gameEngine.StaticVariables.DAT_80186788
+                    + BitConverter.ToInt32(scrollParameters.Data, _gameEngine.StaticVariables.PTR_8018CF58 + 0x14)
+                    + ((_gameEngine.StaticVariables.g_tileAnimationType - 1) << 4);
+
+                if ((uint)animationDataOffset < (uint)scrollParameters.Data.Length)
+                {
+                    _gameEngine.StaticVariables.g_animationData = animationDataOffset;
+                }
+            }
+        }
     }
 
     // GHIDRA: RenderLayerToBuffer @ 0x8005B848

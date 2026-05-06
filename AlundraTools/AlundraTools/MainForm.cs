@@ -5,6 +5,7 @@ using AlundraEngine.Editor;
 using AlundraEngine.Etc;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
+using System.Threading;
 using AlundraTools.GameControls;
 
 namespace AlundraTools;
@@ -12,6 +13,12 @@ namespace AlundraTools;
 public partial class MainForm : Form
 {
     private static int _isGameRunning;
+    private static readonly object _gameLaunchLock = new();
+    private static readonly AutoResetEvent _gameLaunchSignal = new(false);
+    private static Thread? _gameThread;
+    private static string? _pendingDatasBinFilePath;
+    private static int _pendingMapId;
+    private static string? _pendingGameStateFile;
 
     public MainForm()
     {
@@ -108,14 +115,7 @@ public partial class MainForm : Form
                     }
 
                     var datasBinFilePath = ofd.FileName;
-                    var gameThread = new Thread(() => RunGameInProcess(datasBinFilePath, mapId, gameStateFile))
-                    {
-                        IsBackground = true,
-                        Name = "AlundraGameThread"
-                    };
-
-                    gameThread.SetApartmentState(ApartmentState.STA);
-                    gameThread.Start();
+                    QueueGameLaunch(datasBinFilePath, mapId, gameStateFile);
                 }
                 catch (Exception ex)
                 {
@@ -123,6 +123,77 @@ public partial class MainForm : Form
                     MessageBox.Show(ex.Message, "Unable to launch AlundraGame", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+        }
+    }
+
+    // JUSTIFICATION: backend MonoGame only
+    private static void QueueGameLaunch(string datasBinFilePath, int mapId, string? gameStateFile)
+    {
+        EnsureGameThread();
+
+        lock (_gameLaunchLock)
+        {
+            _pendingDatasBinFilePath = datasBinFilePath;
+            _pendingMapId = mapId;
+            _pendingGameStateFile = gameStateFile;
+        }
+
+        _gameLaunchSignal.Set();
+    }
+
+    // JUSTIFICATION: backend MonoGame only
+    private static void EnsureGameThread()
+    {
+        if (_gameThread != null)
+        {
+            return;
+        }
+
+        lock (_gameLaunchLock)
+        {
+            if (_gameThread != null)
+            {
+                return;
+            }
+
+            _gameThread = new Thread(GameThreadLoop)
+            {
+                IsBackground = true,
+                Name = "AlundraGameThread"
+            };
+
+            _gameThread.SetApartmentState(ApartmentState.STA);
+            _gameThread.Start();
+        }
+    }
+
+    // JUSTIFICATION: backend MonoGame only
+    private static void GameThreadLoop()
+    {
+        while (true)
+        {
+            _gameLaunchSignal.WaitOne();
+
+            string? datasBinFilePath;
+            int mapId;
+            string? gameStateFile;
+
+            lock (_gameLaunchLock)
+            {
+                datasBinFilePath = _pendingDatasBinFilePath;
+                mapId = _pendingMapId;
+                gameStateFile = _pendingGameStateFile;
+                _pendingDatasBinFilePath = null;
+                _pendingGameStateFile = null;
+            }
+
+            if (string.IsNullOrWhiteSpace(datasBinFilePath))
+            {
+                Interlocked.Exchange(ref _isGameRunning, 0);
+                continue;
+            }
+
+            RunGameInProcess(datasBinFilePath, mapId, gameStateFile);
         }
     }
 

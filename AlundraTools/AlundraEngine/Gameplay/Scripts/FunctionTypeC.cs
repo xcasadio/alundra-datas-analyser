@@ -605,6 +605,7 @@ public static class FunctionTypeC
     public static void AI_FUN_80069f44(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Orc (masse) Niv.1"
             && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();

@@ -55,43 +55,31 @@ public class AlundraRenderer : IRenderer
         };
         
         // Créer les BlendStates PSX personnalisés
-        // Average: 0.5 * Back + 0.5 * Front
-        _blendStateAverage = new BlendState
-        {
-            ColorSourceBlend = Blend.DestinationColor,
-            ColorDestinationBlend = Blend.SourceColor,
-            AlphaSourceBlend = Blend.SourceAlpha,
-            AlphaDestinationBlend = Blend.DestinationAlpha
-        };
+        // Average: alpha is adjusted at draw time to preserve transparent texels.
+        _blendStateAverage = BlendState.NonPremultiplied;
         
         // Additive: Back + Front
         _blendStateAdditive = new BlendState
         {
-            ColorSourceBlend = Blend.One,
+            ColorSourceBlend = Blend.SourceAlpha,
             ColorDestinationBlend = Blend.One,
-            AlphaSourceBlend = Blend.One,
+            AlphaSourceBlend = Blend.SourceAlpha,
             AlphaDestinationBlend = Blend.One
         };
         
         // Subtractive: Back - Front
         _blendStateSubtractive = new BlendState
         {
-            ColorSourceBlend = Blend.One,
+            ColorSourceBlend = Blend.SourceAlpha,
             ColorDestinationBlend = Blend.One,
             ColorBlendFunction = BlendFunction.ReverseSubtract,
-            AlphaSourceBlend = Blend.One,
+            AlphaSourceBlend = Blend.SourceAlpha,
             AlphaDestinationBlend = Blend.One,
             AlphaBlendFunction = BlendFunction.Add
         };
         
-        // AdditiveDim: Back + 0.25 * Front
-        _blendStateAdditiveDim = new BlendState
-        {
-            ColorSourceBlend = Blend.BlendFactor,
-            ColorDestinationBlend = Blend.One,
-            AlphaSourceBlend = Blend.SourceAlpha,
-            AlphaDestinationBlend = Blend.One
-        };
+        // AdditiveDim: alpha is adjusted at draw time to preserve transparent texels.
+        _blendStateAdditiveDim = _blendStateAdditive;
     }
 
     private Texture2D CreateWhiteTexture()
@@ -117,12 +105,6 @@ public class AlundraRenderer : IRenderer
                     _spriteBatch.End();
 
                     currentBlendState = requiredBlendState;
-                    if (sprite.BlendMode == BlendMode.AdditiveDim)
-                    {
-                        // Configurer BlendFactor pour 0.25 (25%)
-                        _graphicsDevice.BlendFactor = new Microsoft.Xna.Framework.Color(64, 64, 64, 64);
-                    }
-
                     if (sprite.IsDeformed)
                     {
                         _graphicsDevice.BlendState = currentBlendState;
@@ -160,11 +142,18 @@ public class AlundraRenderer : IRenderer
         if (texture == null) return;
 
         // Le BlendState est déjà configuré dans Render(), on applique juste la couleur
+        var alpha = sprite.BlendMode switch
+        {
+            BlendMode.Average => sprite.Alpha * 0.5f,
+            BlendMode.AdditiveDim => sprite.Alpha * 0.25f,
+            _ => sprite.Alpha,
+        };
+
         var color = new Microsoft.Xna.Framework.Color(
             sprite.R,
             sprite.G,
             sprite.B,
-            sprite.Alpha);
+            alpha);
 
         var x = sprite.X;
         var y = sprite.Y;
@@ -670,7 +659,14 @@ public class AlundraRenderer : IRenderer
             0, 1);
         _graphicsDevice.DepthStencilState = DepthStencilState.None;
         
-        var color = new Microsoft.Xna.Framework.Color(sprite.R, sprite.G, sprite.B, sprite.Alpha);
+        var alpha = sprite.BlendMode switch
+        {
+            BlendMode.Average => sprite.Alpha * 0.5f,
+            BlendMode.AdditiveDim => sprite.Alpha * 0.25f,
+            _ => sprite.Alpha,
+        };
+
+        var color = new Microsoft.Xna.Framework.Color(sprite.R, sprite.G, sprite.B, alpha);
         
         // Triangle 1: 0-1-2
         _quadVertices[0] = new VertexPositionColorTexture(
