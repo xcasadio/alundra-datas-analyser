@@ -270,6 +270,33 @@ public class AlundraRenderer : IRenderer
         _sprites.Clear();
     }
 
+    // JUSTIFICATION: backend MonoGame only
+    public Bitmap? CaptureFrameBuffer()
+    {
+        var renderTargets = _graphicsDevice.GetRenderTargets();
+        if (renderTargets.Length == 0)
+        {
+            return null;
+        }
+
+        var renderTarget = renderTargets[0].RenderTarget as RenderTarget2D;
+        if (renderTarget == null)
+        {
+            return null;
+        }
+
+        _graphicsDevice.SetRenderTarget(null);
+
+        try
+        {
+            return CreateBitmapFromTexture(renderTarget);
+        }
+        finally
+        {
+            _graphicsDevice.SetRenderTargets(renderTargets);
+        }
+    }
+
     private void ClearTextureCache()
     {
         foreach (var texture in _textureCache.Values)
@@ -387,6 +414,44 @@ public class AlundraRenderer : IRenderer
         Array.Fill(pixels, color);
         texture.SetData(pixels);
         return texture;
+    }
+
+    // JUSTIFICATION: backend MonoGame only
+    private static Bitmap CreateBitmapFromTexture(Texture2D texture)
+    {
+        var pixels = new Microsoft.Xna.Framework.Color[texture.Width * texture.Height];
+        texture.GetData(pixels);
+
+        var bitmap = new Bitmap(texture.Width, texture.Height, PixelFormat.Format32bppArgb);
+        var rect = new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height);
+        var bitmapData = bitmap.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
+        try
+        {
+            unsafe
+            {
+                byte* scan0 = (byte*)bitmapData.Scan0;
+                for (int y = 0; y < bitmap.Height; y++)
+                {
+                    byte* row = scan0 + y * bitmapData.Stride;
+                    for (int x = 0; x < bitmap.Width; x++)
+                    {
+                        var color = pixels[y * bitmap.Width + x];
+                        var offset = x * 4;
+                        row[offset] = color.B;
+                        row[offset + 1] = color.G;
+                        row[offset + 2] = color.R;
+                        row[offset + 3] = color.A;
+                    }
+                }
+            }
+        }
+        finally
+        {
+            bitmap.UnlockBits(bitmapData);
+        }
+
+        return bitmap;
     }
 
     public void AddQuadColor(POLY_G4 polyG4, int depthSortValue, float alpha = 1, float r = 1, float g = 1, float b = 1)

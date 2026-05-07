@@ -259,7 +259,7 @@ public partial class FrmGame : Form
         _graphics = Graphics.FromImage(_backBuffer);
         _graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 
-        _gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3, new Renderer(_graphics));
+        _gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3, new Renderer(_graphics, _backBuffer));
 
         InitializeFlagControls();
     }

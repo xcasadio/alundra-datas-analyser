@@ -36,8 +36,11 @@ namespace AlundraGame
         private const int DebugPanelFontSize = 9;
         private const int DefaultScaleFactor = 4;
         private const int DebugPanelWidth = 512;
+        private static readonly int[] TemporaryWarpEffectIds = [0, 2, 4, 5, 6, 8, 9, 10, 11];
         private int _renderScaleFactor = DefaultScaleFactor;
+        private int _temporaryWarpEffectIndex = Array.IndexOf(TemporaryWarpEffectIds, 8);
         private readonly string? _datasBinFilePath;
+        private KeyboardState _previousKeyboardState;
         private int GameRenderWidth => StaticVariables.ScreenWidth * _renderScaleFactor;
         private int GameRenderHeight => StaticVariables.ScreenHeight * _renderScaleFactor;
 
@@ -115,17 +118,22 @@ namespace AlundraGame
             }
 
             InitializeMguiDebugPanel();
+            UpdateTemporaryDebugHotkeyTitle();
         }
 
         protected override void Update(GameTime gameTime)
         {
             _mguiHost?.NotifyPreviewUpdate(gameTime.TotalGameTime);
 
+            var keyboardState = Keyboard.GetState();
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed 
-                || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                || keyboardState.IsKeyDown(Keys.Escape))
             {
                 Exit();
             }
+
+            HandleTemporaryDebugHotkeys(keyboardState);
 
             _runtimeInspector?.Checkpoint("AlundraGame.Update");
             _inputManager.Update();
@@ -193,7 +201,7 @@ namespace AlundraGame
                 _gameEngine,
                 GameRenderWidth,
                 GameRenderHeight,
-                SaveSnapshot,
+                () => SaveSnapshot(),
                 SetZoomLevel);
         }
 
@@ -249,7 +257,49 @@ namespace AlundraGame
         }
 
         // JUSTIFICATION: backend MonoGame only
-        private void SaveSnapshot()
+        private void HandleTemporaryDebugHotkeys(KeyboardState keyboardState)
+        {
+            bool isPreviousEffectHotkeyPressed = keyboardState.IsKeyDown(Keys.F7)
+                && (keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.RightControl));
+            bool wasPreviousEffectHotkeyPressed = _previousKeyboardState.IsKeyDown(Keys.F7)
+                && (_previousKeyboardState.IsKeyDown(Keys.LeftControl) || _previousKeyboardState.IsKeyDown(Keys.RightControl));
+            bool isQueueEffectHotkeyPressed = keyboardState.IsKeyDown(Keys.F8)
+                && (keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.RightControl));
+            bool wasQueueEffectHotkeyPressed = _previousKeyboardState.IsKeyDown(Keys.F8)
+                && (_previousKeyboardState.IsKeyDown(Keys.LeftControl) || _previousKeyboardState.IsKeyDown(Keys.RightControl));
+            bool isNextEffectHotkeyPressed = keyboardState.IsKeyDown(Keys.F9)
+                && (keyboardState.IsKeyDown(Keys.LeftControl) || keyboardState.IsKeyDown(Keys.RightControl));
+            bool wasNextEffectHotkeyPressed = _previousKeyboardState.IsKeyDown(Keys.F9)
+                && (_previousKeyboardState.IsKeyDown(Keys.LeftControl) || _previousKeyboardState.IsKeyDown(Keys.RightControl));
+
+            if (isPreviousEffectHotkeyPressed && !wasPreviousEffectHotkeyPressed)
+            {
+                _temporaryWarpEffectIndex = (_temporaryWarpEffectIndex + TemporaryWarpEffectIds.Length - 1) % TemporaryWarpEffectIds.Length;
+                UpdateTemporaryDebugHotkeyTitle();
+            }
+
+            if (isNextEffectHotkeyPressed && !wasNextEffectHotkeyPressed)
+            {
+                _temporaryWarpEffectIndex = (_temporaryWarpEffectIndex + 1) % TemporaryWarpEffectIds.Length;
+                UpdateTemporaryDebugHotkeyTitle();
+            }
+
+            if (isQueueEffectHotkeyPressed && !wasQueueEffectHotkeyPressed)
+            {
+                _gameEngine.QueueTemporaryWarpTransitionEffect(TemporaryWarpEffectIds[_temporaryWarpEffectIndex]);
+            }
+
+            _previousKeyboardState = keyboardState;
+        }
+
+        // JUSTIFICATION: backend MonoGame only
+        private void UpdateTemporaryDebugHotkeyTitle()
+        {
+            Window.Title = $"AlundraGame - Temp warp effect {TemporaryWarpEffectIds[_temporaryWarpEffectIndex]} (Ctrl+F7/F9 select, Ctrl+F8 queue)";
+        }
+
+        // JUSTIFICATION: backend MonoGame only
+        private string SaveSnapshot()
         {
             string snapshotDirectory = Path.Combine(Environment.CurrentDirectory, "Snapshots");
             Directory.CreateDirectory(snapshotDirectory);
@@ -265,7 +315,7 @@ namespace AlundraGame
 
                 using FileStream stream = File.Create(fileName);
                 _renderTarget.SaveAsPng(stream, _renderTarget.Width, _renderTarget.Height);
-                break;
+                return fileName;
             }
         }
 
