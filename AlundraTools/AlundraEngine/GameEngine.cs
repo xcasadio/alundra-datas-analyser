@@ -216,7 +216,7 @@ public class GameEngine
             {
                 StaticVariables.g_debugMessage = "";
                 _padManager.UpdatePads();
-                //isEffectRunning = FUN_80044440(StaticVariables.g_orderingTableBuffer + 3, StaticVariables.g_mapTransitionEffectId);
+                isEffectRunning = GraphicManager.FUN_80044440(StaticVariables.g_orderingTableBuffer, StaticVariables.g_mapTransitionEffectId);
                 SoundManager.HandleMapSoundStreaming();
                 //PauseGameDuringNbFrame(1);
                 //DoNothing();
@@ -1057,8 +1057,11 @@ public class GameEngine
         return StaticVariables.g_defaultSoundOffsetList[mapId];
     }
 
+    // GHIDRA: StartWarpTransition @ 0x80044320
     private void StartWarpTransition(int warpType)
     {
+        GraphicManager.CaptureWarpTransitionFrame();
+
         //DrawSync(0);
         //MoveImage(StaticVariables.g_currentDrawEnv, 0x140, 0);
         //DrawSync(0);
@@ -1102,7 +1105,7 @@ public class GameEngine
         }
     }
 
-    //80043540
+    // GHIDRA: InitializeCutsceneWarp @ 0x80043540
     private void InitializeCutsceneWarp()
     {
         //DR_MOVE effectPtr, effectPtr2;
@@ -1123,7 +1126,7 @@ public class GameEngine
         //    i = i + 1;
         //} while (i < 0xf0);
 
-        StaticVariables.g_warpEffectBuffer[1] = (short)((StaticVariables.g_warpEffectBuffer[1] & 0x0000_FFFF) | (0xEF << 16));
+        StaticVariables.g_warpEffectBuffer[3] = 0x00ef;
         StaticVariables.g_targetFadeColorR = 0xff0000;
         StaticVariables.g_targetFadeColorG = 0xff0000;
         StaticVariables.g_targetFadeColorB = 0xff0000;

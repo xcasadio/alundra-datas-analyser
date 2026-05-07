@@ -6,6 +6,8 @@ namespace AlundraEngine.Graphics;
 
 public class GraphicManager
 {
+    private const int WarpTransitionDepth = SpriteDepth.FadeTransitionEffect - 100;
+
     private static readonly Font FontEntityId = new Font(FontFamily.GenericSansSerif, 9f);
     private static readonly Font FontTileInfo = new Font(FontFamily.GenericSansSerif, 7f);
 
@@ -17,10 +19,18 @@ public class GraphicManager
 
 
     private readonly GameEngine _gameEngine;
+    private Bitmap? _warpTransitionBitmap;
 
     public GraphicManager(GameEngine gameEngine)
     {
         _gameEngine = gameEngine;
+    }
+
+    // JUSTIFICATION: backend renderer adaptation only
+    public void CaptureWarpTransitionFrame()
+    {
+        _warpTransitionBitmap?.Dispose();
+        _warpTransitionBitmap = _gameEngine.Renderer.CaptureFrameBuffer();
     }
 
     // 8002bd60
@@ -1915,5 +1925,374 @@ public class GraphicManager
             //sprt.clut = _gameEngine.StaticVariables.g_clutTableBase[image.Palette]; //why ? => number bigger than 30000
             //SetSprt(sprt);
         }
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static int GetWarpTransitionOrderingTable(int[] orderingTableBuffer)
+    {
+        return orderingTableBuffer.Length > 3 ? orderingTableBuffer[3] : 0;
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private int GetWarpEffectWord(int shortIndex)
+    {
+        var warpEffectBuffer = _gameEngine.StaticVariables.g_warpEffectBuffer;
+        return unchecked((int)((uint)(ushort)warpEffectBuffer[shortIndex] | ((uint)(ushort)warpEffectBuffer[shortIndex + 1] << 16)));
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private void SetWarpEffectWord(int shortIndex, int value)
+    {
+        var warpEffectBuffer = _gameEngine.StaticVariables.g_warpEffectBuffer;
+        warpEffectBuffer[shortIndex] = (short)value;
+        warpEffectBuffer[shortIndex + 1] = (short)(value >> 16);
+    }
+
+    // JUSTIFICATION: backend renderer adaptation only
+    private void QueueWarpTransitionSlice(int sourceX, int sourceY, int width, int height, int destinationX, int destinationY)
+    {
+        if (_warpTransitionBitmap == null || width <= 0 || height <= 0)
+        {
+            return;
+        }
+
+        if (destinationX < 0)
+        {
+            sourceX -= destinationX;
+            width += destinationX;
+            destinationX = 0;
+        }
+
+        if (destinationY < 0)
+        {
+            sourceY -= destinationY;
+            height += destinationY;
+            destinationY = 0;
+        }
+
+        if (sourceX < 0)
+        {
+            destinationX -= sourceX;
+            width += sourceX;
+            sourceX = 0;
+        }
+
+        if (sourceY < 0)
+        {
+            destinationY -= sourceY;
+            height += sourceY;
+            sourceY = 0;
+        }
+
+        width = Math.Min(width, StaticVariables.ScreenWidth - destinationX);
+        width = Math.Min(width, _warpTransitionBitmap.Width - sourceX);
+        height = Math.Min(height, StaticVariables.ScreenHeight - destinationY);
+        height = Math.Min(height, _warpTransitionBitmap.Height - sourceY);
+
+        if (width <= 0 || height <= 0)
+        {
+            return;
+        }
+
+        var u0 = sourceX / (float)_warpTransitionBitmap.Width;
+        var v0 = sourceY / (float)_warpTransitionBitmap.Height;
+        var u1 = (sourceX + width) / (float)_warpTransitionBitmap.Width;
+        var v1 = (sourceY + height) / (float)_warpTransitionBitmap.Height;
+
+        _gameEngine.Renderer.DrawDeformedQuad(
+            _warpTransitionBitmap,
+            destinationX, destinationY, u0, v0,
+            destinationX + width, destinationY, u1, v0,
+            destinationX, destinationY + height, u0, v1,
+            destinationX + width, destinationY + height, u1, v1,
+            WarpTransitionDepth,
+            0x80, 0x80, 0x80,
+            1.0f);
+    }
+
+    // GHIDRA: FUN_800435e0 @ 0x800435E0
+    private byte FUN_800435e0(int[] orderingTableBuffer)
+    {
+        var transitionState = (byte)RenderTransitionEffects(GetWarpTransitionOrderingTable(orderingTableBuffer));
+
+        _gameEngine.StaticVariables.g_effectRenderToggle += 1;
+        QueueWarpTransitionSlice(0, 0, StaticVariables.ScreenWidth, StaticVariables.ScreenHeight, 0, 0);
+
+        return transitionState;
+    }
+
+    // GHIDRA: FUN_800436a0 @ 0x800436A0
+    private byte FUN_800436a0(int[] orderingTableBuffer)
+    {
+        RenderTransitionEffects(GetWarpTransitionOrderingTable(orderingTableBuffer));
+
+        byte isEffectRunning = 0;
+        var warpEffectBuffer = _gameEngine.StaticVariables.g_warpEffectBuffer;
+
+        _gameEngine.StaticVariables.g_effectRenderToggle += 1;
+
+        for (var row = 0; row < 0x0f; row++)
+        {
+            var sourceY = row << 4;
+
+            for (var column = 0; column < 0x14; column++)
+            {
+                var sourceX = column << 4;
+                var baseIndex = row * 80 + column * 4;
+                var counter = (short)(warpEffectBuffer[baseIndex] + 1);
+                warpEffectBuffer[baseIndex] = counter;
+
+                if (counter <= 0)
+                {
+                    continue;
+                }
+
+                var duration = warpEffectBuffer[baseIndex + 1];
+                var remaining = duration - counter;
+                if (remaining <= 0)
+                {
+                    continue;
+                }
+
+                var progress = (remaining << 16) / duration;
+                var shrink = 8 - ((progress * 8) >> 16);
+                if ((uint)shrink >= 8u)
+                {
+                    continue;
+                }
+
+                var interpolatedX = ((progress * (warpEffectBuffer[baseIndex + 2] - 0x98)) >> 16) + 0x98;
+                var destinationX = interpolatedX + ((progress * (sourceX - interpolatedX)) >> 16) + shrink;
+                var interpolatedY = ((progress * (warpEffectBuffer[baseIndex + 3] - 0x70)) >> 16) + 0x70;
+                var destinationY = interpolatedY + ((progress * (sourceY - interpolatedY)) >> 16) + shrink;
+                var size = 0x10 - (shrink << 1);
+
+                QueueWarpTransitionSlice(sourceX + shrink, sourceY + shrink, size, size, destinationX, destinationY);
+                isEffectRunning = 1;
+            }
+        }
+
+        _gameEngine.StaticVariables.g_renderEffectDoneFlag = isEffectRunning == 0;
+        _gameEngine.StaticVariables.g_renderEffectCompleted = isEffectRunning == 0;
+
+        return isEffectRunning;
+    }
+
+    // GHIDRA: FUN_8004392c @ 0x8004392C
+    private byte FUN_8004392c(int[] orderingTableBuffer)
+    {
+        var transitionState = (byte)RenderTransitionEffects(GetWarpTransitionOrderingTable(orderingTableBuffer));
+        var amplitude = GetWarpEffectWord(0);
+
+        _gameEngine.StaticVariables.g_effectRenderToggle += 1;
+
+        for (var row = 0; row < StaticVariables.ScreenHeight; row++)
+        {
+            var randomValue = (uint)Random.Next();
+            var centeredRandom = (int)((randomValue * 0x201UL) >> 32) - 0x100;
+            var offsetX = (int)(((long)centeredRandom * amplitude) >> 16);
+
+            if (offsetX >= 0)
+            {
+                if (offsetX < StaticVariables.ScreenWidth)
+                {
+                    QueueWarpTransitionSlice(0, row, StaticVariables.ScreenWidth - offsetX, 1, offsetX, row);
+                }
+
+                continue;
+            }
+
+            if (offsetX <= -StaticVariables.ScreenWidth)
+            {
+                continue;
+            }
+
+            QueueWarpTransitionSlice(-offsetX, row, StaticVariables.ScreenWidth + offsetX, 1, 0, row);
+        }
+
+        SetWarpEffectWord(0, amplitude + 0x80);
+
+        return transitionState;
+    }
+
+    // GHIDRA: FUN_80043b34 @ 0x80043B34
+    private byte FUN_80043b34(int[] orderingTableBuffer)
+    {
+        RenderTransitionEffects(GetWarpTransitionOrderingTable(orderingTableBuffer));
+
+        byte isEffectRunning = 0;
+        var warpEffectBuffer = _gameEngine.StaticVariables.g_warpEffectBuffer;
+
+        _gameEngine.StaticVariables.g_effectRenderToggle += 1;
+
+        for (var row = 0; row < 0x0f; row++)
+        {
+            for (var column = 0; column < 0x14; column++)
+            {
+                var sourceX = column << 4;
+                var sourceY = row << 4;
+                var destinationX = sourceX;
+                var destinationY = sourceY;
+                var width = 0x10;
+                var height = 0x10;
+                var baseIndex = row * 80 + column * 4;
+                var counter = GetWarpEffectWord(baseIndex);
+
+                if (counter > 0)
+                {
+                    destinationX += (warpEffectBuffer[baseIndex + 2] * counter) >> 4;
+                    destinationY += warpEffectBuffer[baseIndex + 3] >> 4;
+
+                    if (destinationX < 0)
+                    {
+                        if (destinationX < -0x0f)
+                        {
+                            SetWarpEffectWord(baseIndex, counter + 1);
+                            continue;
+                        }
+
+                        width = destinationX + 0x10;
+                        sourceX -= destinationX;
+                        destinationX = 0;
+                    }
+                    else if (destinationX >= StaticVariables.ScreenWidth)
+                    {
+                        if (destinationX >= 0x140)
+                        {
+                            SetWarpEffectWord(baseIndex, counter + 1);
+                            continue;
+                        }
+
+                        width = StaticVariables.ScreenWidth - destinationX;
+                    }
+
+                    if (destinationY < 0)
+                    {
+                        if (destinationY < -0x0f)
+                        {
+                            SetWarpEffectWord(baseIndex, counter + 1);
+                            continue;
+                        }
+
+                        height = destinationY + 0x10;
+                        sourceY -= destinationY;
+                        destinationY = 0;
+                    }
+                    else if (destinationY >= StaticVariables.ScreenHeight)
+                    {
+                        if (destinationY >= 0x0f0)
+                        {
+                            SetWarpEffectWord(baseIndex, counter + 1);
+                            continue;
+                        }
+
+                        height = StaticVariables.ScreenHeight - destinationY;
+                    }
+
+                    warpEffectBuffer[baseIndex + 3] = (short)(warpEffectBuffer[baseIndex + 3] + (counter << 2));
+                    QueueWarpTransitionSlice(sourceX, sourceY, width, height, destinationX, destinationY);
+                    isEffectRunning = 1;
+                }
+
+                SetWarpEffectWord(baseIndex, counter + 1);
+            }
+        }
+
+        return isEffectRunning;
+    }
+
+    // GHIDRA: FUN_80043d54 @ 0x80043D54
+    private byte FUN_80043d54(int[] orderingTableBuffer)
+    {
+        var transitionState = (byte)RenderTransitionEffects(GetWarpTransitionOrderingTable(orderingTableBuffer));
+        var warpEffectBuffer = _gameEngine.StaticVariables.g_warpEffectBuffer;
+
+        _gameEngine.StaticVariables.g_effectRenderToggle += 1;
+
+        if (transitionState != 0)
+        {
+            QueueWarpTransitionSlice(0, 0, StaticVariables.ScreenWidth, StaticVariables.ScreenHeight, 0, 0);
+            return 1;
+        }
+
+        byte isEffectRunning = 0;
+
+        for (var row = 0; row < 0x0f; row++)
+        {
+            var sourceY = row << 4;
+
+            for (var column = 0; column < 0x14; column++)
+            {
+                var sourceX = column << 4;
+                var baseIndex = row * 80 + column * 4;
+                var countdown = GetWarpEffectWord(baseIndex);
+                var shrink = 0;
+
+                if (countdown != 0)
+                {
+                    SetWarpEffectWord(baseIndex, countdown - 1);
+                }
+                else
+                {
+                    var phase = warpEffectBuffer[baseIndex + 2] + 0x80;
+                    if (phase >= 0x800)
+                    {
+                        continue;
+                    }
+
+                    warpEffectBuffer[baseIndex + 2] = (short)phase;
+                    shrink = phase >> 8;
+                    isEffectRunning = 1;
+                }
+
+                var size = 0x10 - (shrink << 1);
+                QueueWarpTransitionSlice(sourceX + shrink, sourceY + shrink, size, size, sourceX + shrink, sourceY + shrink);
+            }
+        }
+
+        return isEffectRunning;
+    }
+
+    // GHIDRA: FUN_80043f8c @ 0x80043F8C
+    private byte FUN_80043f8c(int[] orderingTableBuffer)
+    {
+        var transitionState = (byte)RenderTransitionEffects(GetWarpTransitionOrderingTable(orderingTableBuffer));
+        var warpEffectBuffer = _gameEngine.StaticVariables.g_warpEffectBuffer;
+
+        _gameEngine.StaticVariables.g_effectRenderToggle += 1;
+
+        for (var row = 0; row < StaticVariables.ScreenHeight; row++)
+        {
+            var destinationY = warpEffectBuffer[3] < row ? warpEffectBuffer[3] : row;
+            QueueWarpTransitionSlice(0, row, StaticVariables.ScreenWidth, 1, 0, destinationY);
+        }
+
+        if (warpEffectBuffer[3] > 0)
+        {
+            warpEffectBuffer[3] -= 1;
+        }
+
+        return transitionState;
+    }
+
+    // GHIDRA: FUN_80044440 @ 0x80044440
+    public byte FUN_80044440(int[] orderingTableBuffer, int transitionEffectId)
+    {
+        return transitionEffectId switch
+        {
+            0 => FUN_800435e0(orderingTableBuffer),
+            1 => (byte)(FUN_800435e0(orderingTableBuffer) & 0),
+            2 => FUN_800435e0(orderingTableBuffer),
+            3 => (byte)(FUN_800435e0(orderingTableBuffer) & 0),
+            4 => FUN_800436a0(orderingTableBuffer),
+            5 => FUN_8004392c(orderingTableBuffer),
+            6 => FUN_80043b34(orderingTableBuffer),
+            7 => (byte)(FUN_800435e0(orderingTableBuffer) & 0),
+            8 => FUN_80043d54(orderingTableBuffer),
+            9 => FUN_800435e0(orderingTableBuffer),
+            10 => FUN_800435e0(orderingTableBuffer),
+            11 => FUN_80043f8c(orderingTableBuffer),
+            _ => (byte)(FUN_800435e0(orderingTableBuffer) & 0),
+        };
     }
 }

@@ -4,6 +4,7 @@ public interface IRenderer
 {
     void Render();
     void Clear();
+    Bitmap? CaptureFrameBuffer();
 
     void AddSprite(SPRT sprt, int depthSortValue, Bitmap bitmap, float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f);
     void AddSprite(int x, int y, int width, int height, int depthSortValue, Bitmap bitmap, float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f, BlendMode blendMode = BlendMode.None);

@@ -2,10 +2,11 @@
 
 namespace AlundraEngine.Graphics;
 
-public class Renderer(System.Drawing.Graphics graphics) : IRenderer
+public class Renderer(System.Drawing.Graphics graphics, Bitmap? frameBuffer = null) : IRenderer
 {
     private readonly SortedDictionary<int, List<Sprite>> _sprites = new();
     public readonly Bitmap WhiteBitmap = CreateWhiteBitmap();
+    private readonly Bitmap? _frameBuffer = frameBuffer;
 
     private readonly Dictionary<QuadColorKey, Bitmap> _quadColorCache = new();
     private readonly Dictionary<RectangleColorKey, Bitmap> _rectangleCache = new();
@@ -216,6 +217,12 @@ public class Renderer(System.Drawing.Graphics graphics) : IRenderer
     public void Clear()
     {
         _sprites.Clear();
+    }
+
+    // JUSTIFICATION: backend renderer adaptation only
+    public Bitmap? CaptureFrameBuffer()
+    {
+        return _frameBuffer == null ? null : (Bitmap)_frameBuffer.Clone();
     }
 
     public void ClearQuadCache()
