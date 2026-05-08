@@ -1930,15 +1930,7 @@ namespace AlundraTools.GameControls
 
         private void buttonPlaySelectedMap_Click(object sender, EventArgs e)
         {
-            StaticVariables.ForceDesiredMap = lstGameMaps.SelectedIndex;
-
-            var frmGame = new FrmGame(
-                _datasBin,
-                _balanceBin,
-                _soundBin,
-                _etcRes,
-                _font3);
-            frmGame.Show();
+            MainForm.LaunchGame(lstGameMaps.SelectedIndex, null);
         }
     }
 }

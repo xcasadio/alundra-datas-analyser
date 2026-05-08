@@ -360,7 +360,7 @@ public static class PhysicsEngine
         return collisionDetected;
     }
 
-    // 80037730
+    // GHIDRA: ComputeXYPosition @ 0x80037730
     public static Entity ComputeXYPosition(Entity entity, GameEngine gameEngine)
     {
         Entity? candidate = null;
@@ -405,14 +405,13 @@ public static class PhysicsEngine
 
         modX = 0;
         candidate = null;
+        result = null;
         i = 0;
 
     TRY_ADVANCE:
         posX = entity.PosX;
         posY = entity.PosY;
         posZ = entity.PosZ;
-
-        result = candidate;
 
         collisionFlags[0] = 0;
         collisionFlags[1] = 0;
@@ -478,6 +477,11 @@ public static class PhysicsEngine
     RESTORE_POS:
         candidate = FindEntityCollisionCandidate(entity, gameEngine);
         candidateIndex = candidate?.Index ?? -1;
+
+        if (candidate != null)
+        {
+            result = candidate;
+        }
 
         if (candidate == null)
         {
@@ -1161,25 +1165,26 @@ public static class PhysicsEngine
         return flags[0] | flags[1] | flags[2] | flags[3];
     }
 
-    // 80036f34
+    // GHIDRA: FindEntityCollisionCandidate @ 0x80036F34
     public static Entity? FindEntityCollisionCandidate(Entity entity, GameEngine gameEngine)
     {
         int value;
         Entity currentEntity;
         Entity[] collideableEntities;
 
-        if ((entity != gameEngine.StaticVariables.PlayerEntity
-             || gameEngine.StaticVariables.g_debugState != 0xFFFFFFFF
-             || (gameEngine.StaticVariables.g_debugFlags & 0x80000000) == 0)
-            && (entity.Flags & 0x80U) != 0
-            && (entity.AnimFlags & 0x80U) == 0
-            && entity.PlatformEntity == null)
+        //Disable collision
+        if (entity == gameEngine.StaticVariables.PlayerEntity
+            && (gameEngine.StaticVariables.g_debugState & 0x80000000) != 0
+            && (gameEngine.StaticVariables.g_debugFlags & 0x80000000) != 0)
         {
-            if (gameEngine.StaticVariables.g_collideableEntitiesCount <= 0)
-            {
-                return null;
-            }
+            return null;
+        }
 
+        if ((entity.Flags & 0x80U) != 0
+            && (entity.AnimFlags & 0x80U) == 0
+            && entity.PlatformEntity == null
+            && gameEngine.StaticVariables.g_collideableEntitiesCount > 0)
+        {
             collideableEntities = gameEngine.StaticVariables.g_collideableEntities;
 
             for (int i = 0; i < gameEngine.StaticVariables.g_collideableEntitiesCount; i++)

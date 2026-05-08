@@ -4413,13 +4413,13 @@ public static class FunctionTypeC
             {
                 //goto LAB_8003acf4;
 
-                return (entity1.PosY < entity2.PosY ? 1 : 0) << 4;
+                return (entity2.PosY < entity1.PosY ? 1 : 0) << 4;
             }
         }
         else if (diffX <= entity1.Width)
         {
             LAB_8003acf4:
-            return (entity1.PosY < entity2.PosY ? 1 : 0) << 4;
+            return (entity2.PosY < entity1.PosY ? 1 : 0) << 4;
         }
 
         diffX = 0x18;
