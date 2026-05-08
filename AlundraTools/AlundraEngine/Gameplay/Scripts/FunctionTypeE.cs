@@ -530,7 +530,8 @@ public static class FunctionTypeE
     public static void AI_FUN_8007f690(GameEngine gameEngine, Entity entity)
     {
         if (entity.Name != "Couvercle de tige-bombe (vertical)"
-            && entity.Name != "Couvercle de tige-bombe (dessus)")
+            && entity.Name != "Couvercle de tige-bombe (dessus)"
+            && entity.Name != "Rocher roulant (grand)")
         {
             Breakpoint.TriggerBreak();
         }

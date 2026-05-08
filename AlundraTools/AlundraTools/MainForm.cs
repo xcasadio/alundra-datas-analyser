@@ -96,7 +96,8 @@ public partial class MainForm : Form
             LaunchGame(-1, filePath);
         }
     }
-    private static void LaunchGame(int mapId, string? gameStateFile)
+
+    public static void LaunchGame(int mapId, string? gameStateFile)
     {
         var ofd = new OpenFileDialog();
         ofd.Filter = "DATAS.BIN|DATAS.BIN|All Files (*.*)|*.*";
