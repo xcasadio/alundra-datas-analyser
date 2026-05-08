@@ -55,7 +55,6 @@ public static class PhysicsEngine
     {
         if (ridingEntity.RidingEntity != null)
         {
-            //TODO: bug maybe in CheckRidingEntities why overflow ???
             UpdateRidingEntity(ridingEntity, ridingEntity.RidingEntity);
         }
 

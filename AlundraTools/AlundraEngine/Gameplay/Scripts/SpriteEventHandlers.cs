@@ -123,7 +123,7 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramCTick, 73, FunctionTypeC.AI_FUN_8007bb30);
         Register(ScriptHelper.ProgramCTick, 74, FunctionTypeC.AI_FUN_8007bb9c);
         Register(ScriptHelper.ProgramCTick, 75, FunctionTypeC.AI_FUN_8007bd8c);
-        Register(ScriptHelper.ProgramCTick, 76, FunctionTypeC.AI_FUN_8007c024);
+        Register(ScriptHelper.ProgramCTick, 76, FunctionTypeC.AI_UpdatePushablePillarPushState);
         Register(ScriptHelper.ProgramCTick, 77, AncientGuardian.AI_ApplyZGravityIfIdle);
         Register(ScriptHelper.ProgramCTick, 78, FunctionTypeC.AI_FUN_8007c768);
         Register(ScriptHelper.ProgramCTick, 79, FunctionTypeC.AI_FUN_8006f860);

@@ -30,12 +30,17 @@ public class Entity
         get => _TargetAnimationId;
         set
         {
+            if (value == _TargetAnimationId)
+            {
+                return;
+            }
+
             if (value > 95)
             {
                 Breakpoint.TriggerBreak();
             }
 
-            if (Index == 19)
+            if (Index == 0)
             {
                //Breakpoint.TriggerBreak();
             }
@@ -77,7 +82,12 @@ public class Entity
         get => _PosX;
         set
         {
-            if (Index == 0 && value <= 800360)
+            if (value == _PosX)
+            {
+                return;
+            }
+
+            if (Index == 0 /*&& value <= 800360*/)
             {
                 //Breakpoint.TriggerBreak();
             }

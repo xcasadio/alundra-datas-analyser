@@ -466,6 +466,10 @@ public static class FunctionTypeC
             && entity.Name != "I38_Extrait magique"
             && entity.Name != "I41_Potion S"
             && entity.Name != "I83_Récipient de vie"
+            && entity.Name != "Objet étoile (transportable)"
+            && entity.Name != "Objet lune (transportable)"
+            && entity.Name != "Objet eau (transportable)"
+            && entity.Name != "Objet soleil (transportable)"
             && entity.Name != "Pierre générique"
             && !string.IsNullOrEmpty(entity.Name))
         {
@@ -4355,7 +4359,7 @@ public static class FunctionTypeC
     }
 
     //8007c024
-    public static void AI_FUN_8007c024(GameEngine gameEngine, Entity entity)
+    public static void AI_UpdatePushablePillarPushState(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "Pilier poussable (PRG)")
@@ -4367,13 +4371,13 @@ public static class FunctionTypeC
         {
             if (entity.Bytes[0] < 0x1f)
             {
-                entity.Bytes[0] = entity.Bytes[1];
+                entity.Bytes[0] = (byte)(entity.Bytes[0] + 1);
                 return;
             }
 
             gameEngine.SoundManager.PlaySoundEffect(0x19);
             entity.TargetAnimationId = 1;
-            var result = FUN_8003ac9c(entity, gameEngine.StaticVariables.PlayerEntity);
+            var result = GetPushablePillarPushDirection(entity, gameEngine.StaticVariables.PlayerEntity);
 
             if (result != -1)
             {
@@ -4388,14 +4392,11 @@ public static class FunctionTypeC
         }
 
         entity.Bytes[0] = 0;
-        entity.Bytes[1] = 0;
-        entity.Bytes[2] = 0;
-        entity.Bytes[3] = 0;
         entity.TargetAnimationId = 0;
     }
 
     //8003ac9c
-    private static int FUN_8003ac9c(Entity entity1, Entity entity2)
+    private static int GetPushablePillarPushDirection(Entity entity1, Entity entity2)
     {
         int diffX;
 
@@ -4412,13 +4413,13 @@ public static class FunctionTypeC
             {
                 //goto LAB_8003acf4;
 
-                return (entity2.PosY < entity1.PosY ? 1 : 0) << 4;
+                return (entity1.PosY < entity2.PosY ? 1 : 0) << 4;
             }
         }
         else if (diffX <= entity1.Width)
         {
             LAB_8003acf4:
-            return (entity2.PosY < entity1.PosY ? 1 : 0) << 4;
+            return (entity1.PosY < entity2.PosY ? 1 : 0) << 4;
         }
 
         diffX = 0x18;

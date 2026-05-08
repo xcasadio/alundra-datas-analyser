@@ -2052,7 +2052,7 @@ public class EntityEventHandlers
         {
             var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
             //AlundraEngine.Debug.Debugger.Breakpoint();
-            if (logicEntity.RidingEntity == entity)
+            if (entity.RidingEntity == logicEntity)
             {
                 eventProgramState.Result = 1;
                 return 2;
