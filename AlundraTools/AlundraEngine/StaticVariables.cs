@@ -12694,7 +12694,7 @@ public class StaticVariables
     public ushort[] g_scrollingClutTableInit = new ushort[16]; // 800CA210
     public int[] g_orderTableFrame0 = new int[372]; // 800CA230
     public int[] g_orderTableFrame1 = new int[964]; // 800CB140
-    public int[] g_orderingTableBuffer = new int[4]; // 800CC050
+    public OrderingTableBuffer g_orderingTableBuffer = new(); // 800CC050
     //public int g_orderingTableBufferAlt; // 800CC054
     public byte[] g_bufferImage2 = new byte[65536]; // 800CC058
     public uint g_debugState; // 800DC058

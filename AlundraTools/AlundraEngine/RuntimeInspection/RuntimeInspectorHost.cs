@@ -21,10 +21,12 @@ public sealed class RuntimeInspectorHost : IDisposable
     private readonly ConcurrentQueue<PendingRequest> _pendingRequests = new();
     private readonly Queue<RuntimeTraceEntry> _traceEntries = new();
     private readonly object _traceLock = new();
+    private readonly object _playerXYMoveLock = new();
     private readonly CancellationTokenSource _shutdown = new();
     private readonly Task _listenTask;
 
     private long _traceSequence;
+    private RuntimePlayerXYMoveSnapshot? _lastPlayerXYMoveSnapshot;
 
     private RuntimeInspectorHost(object gameRoot, GameEngine engine, string pipeName, int maxTraceEntries)
     {
@@ -58,6 +60,15 @@ public sealed class RuntimeInspectorHost : IDisposable
     {
         RecordTrace(checkpoint);
         ProcessPendingRequests(checkpoint);
+    }
+
+    // JUSTIFICATION: backend MonoGame only
+    internal void RecordPlayerXYMoveSnapshot(RuntimePlayerXYMoveSnapshot snapshot)
+    {
+        lock (_playerXYMoveLock)
+        {
+            _lastPlayerXYMoveSnapshot = snapshot;
+        }
     }
 
     public void Dispose()
@@ -200,16 +211,84 @@ public sealed class RuntimeInspectorHost : IDisposable
         => request.Command switch
         {
             "status" => RuntimeInspectionResponse.FromData(CreateStatusSnapshot(checkpoint)),
+            "player-collision" => RuntimeInspectionResponse.FromData(CapturePlayerCollisionSnapshot(checkpoint)),
+            "player-xy-move" => RuntimeInspectionResponse.FromData(CapturePlayerXYMoveSnapshot()),
+            "frame-probe" => RuntimeInspectionResponse.FromData(CaptureFrameProbe(checkpoint)),
             "stack" => RuntimeInspectionResponse.FromData(new RuntimeStackSnapshot
             {
                 Checkpoint = checkpoint,
                 StackTrace = new StackTrace(skipFrames: 1, fNeedFileInfo: true).ToString(),
             }),
+            "queue-start-fade-out" => RuntimeInspectionResponse.FromData(QueueStartFadeOut()),
+            "queue-temporary-warp-effect" => RuntimeInspectionResponse.FromData(QueueTemporaryWarpEffect(ParseArguments<RuntimeTemporaryWarpQueueRequest>(request.Arguments))),
+            "snapshot" => RuntimeInspectionResponse.FromData(CaptureSnapshot()),
             "trace" => RuntimeInspectionResponse.FromData(CreateTraceSnapshot(ParseArguments<RuntimeTraceRequest>(request.Arguments))),
             "read" => RuntimeInspectionResponse.FromData(ReadValue(ParseArguments<RuntimePathRequest>(request.Arguments))),
             "members" => RuntimeInspectionResponse.FromData(ListMembers(ParseArguments<RuntimePathRequest>(request.Arguments))),
             _ => RuntimeInspectionResponse.FromError($"Unknown command '{request.Command}'."),
         };
+
+    // JUSTIFICATION: backend MonoGame only
+    private RuntimeFadeOutQueueResponse QueueStartFadeOut()
+    {
+        _engine.StaticVariables.g_postProcessState = 1;
+
+        return new RuntimeFadeOutQueueResponse
+        {
+            Frame = _engine.StaticVariables.FrameNumber,
+            PostProcessState = _engine.StaticVariables.g_postProcessState,
+            CurrentTransitionType = _engine.StaticVariables.g_currentTransitionType,
+        };
+    }
+
+    // JUSTIFICATION: backend MonoGame only
+    private RuntimeTemporaryWarpQueueResponse QueueTemporaryWarpEffect(RuntimeTemporaryWarpQueueRequest request)
+    {
+        _engine.QueueTemporaryWarpTransitionEffect(request.EffectId);
+
+        return new RuntimeTemporaryWarpQueueResponse
+        {
+            Frame = _engine.StaticVariables.FrameNumber,
+            EffectId = request.EffectId,
+            MapTransitionEffectId = _engine.StaticVariables.g_mapTransitionEffectId,
+        };
+    }
+
+    // JUSTIFICATION: backend MonoGame only
+    private RuntimeSnapshotResponse CaptureSnapshot()
+        => new()
+        {
+            FilePath = CaptureSnapshotPath(),
+        };
+
+    // JUSTIFICATION: backend MonoGame only
+    private RuntimeFrameProbeSnapshot CaptureFrameProbe(string checkpoint)
+        => new()
+        {
+            Checkpoint = checkpoint,
+            Frame = _engine.StaticVariables.FrameNumber,
+            IsWarpTransitionRunning = _engine.GetType()
+                .GetField("_isWarpTransitionRunning", BindingFlags.Instance | BindingFlags.NonPublic)?
+                .GetValue(_engine) as bool? ?? false,
+            MapTransitionEffectId = _engine.StaticVariables.g_mapTransitionEffectId,
+            IsGameEnding = _engine.StaticVariables.g_isGameEnding,
+            FilePath = CaptureSnapshotPath(),
+        };
+
+    // JUSTIFICATION: backend MonoGame only
+    private string CaptureSnapshotPath()
+    {
+        var saveSnapshotMethod = _gameRoot.GetType().GetMethod("SaveSnapshot", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("The game host does not expose a SaveSnapshot method.");
+
+        var snapshotPath = saveSnapshotMethod.Invoke(_gameRoot, null) as string;
+        if (string.IsNullOrWhiteSpace(snapshotPath))
+        {
+            throw new InvalidOperationException("SaveSnapshot did not return a snapshot path.");
+        }
+
+        return snapshotPath;
+    }
 
     private RuntimeStatusSnapshot CreateStatusSnapshot(string checkpoint)
     {
@@ -235,6 +314,87 @@ public sealed class RuntimeInspectorHost : IDisposable
                     TargetAnimationId = player.TargetAnimationId,
                 },
         };
+    }
+
+    // JUSTIFICATION: backend MonoGame only
+    private RuntimePlayerCollisionSnapshot CapturePlayerCollisionSnapshot(string checkpoint)
+    {
+        var player = _engine.StaticVariables.PlayerEntity
+            ?? throw new InvalidOperationException("Player entity is not available.");
+
+        var collisionFlags = new uint[4];
+        var collisionFlagsOr = global::AlundraEngine.PhysicsEngine.GetCollisionFlagsWithPlayer(player, collisionFlags, _engine);
+        var tiles = new RuntimeCollisionTileSnapshot[4];
+
+        for (var index = 0; index < 4; index++)
+        {
+            var tile = player.MapTiles[index];
+            uint tileFlags = 0;
+            byte walkability = 0;
+            byte groundProperty = 0;
+            byte slope = 0;
+            byte height = 0;
+
+            if (tile != null)
+            {
+                walkability = tile.Walkability;
+                groundProperty = tile.GroundProperty;
+                slope = tile.Slope;
+                height = tile.Height;
+                tileFlags = (uint)(walkability | (groundProperty << 8) | (slope << 16) | (height << 24));
+            }
+
+            tiles[index] = new RuntimeCollisionTileSnapshot
+            {
+                Index = index,
+                MapHeight = player.MapHeights[index],
+                Walkability = walkability,
+                GroundProperty = groundProperty,
+                Slope = slope,
+                Height = height,
+                TileFlags = tileFlags,
+                CollisionFlag = collisionFlags[index],
+            };
+        }
+
+        return new RuntimePlayerCollisionSnapshot
+        {
+            Checkpoint = checkpoint,
+            Frame = _engine.StaticVariables.FrameNumber,
+            PosX = player.PosX,
+            PosY = player.PosY,
+            PosZ = player.PosZ,
+            ModdedPosZ = player.ModdedPosZ,
+            TerrainHeight = player.TerrainHeight,
+            EntityFlags = player.Flags,
+            TileAttributes = player.TileAttributes,
+            Slope18c = player.Slope_18c,
+            CurrentAnimationId = player.CurrentAnimationId,
+            TargetAnimationId = player.TargetAnimationId,
+            FinalForceX = player.FinalForceX,
+            FinalForceY = player.FinalForceY,
+            ForceAdjusted = player.ForceAdjusted,
+            WarpLockTimer = _engine.StaticVariables.g_warpLockTimer,
+            GravityFlag = _engine.StaticVariables.g_gravityFlag,
+            CollisionFlagsOr = collisionFlagsOr,
+            CollisionFlags = collisionFlags.ToArray(),
+            Tiles = tiles,
+        };
+    }
+
+    // JUSTIFICATION: backend MonoGame only
+    private RuntimePlayerXYMoveSnapshot CapturePlayerXYMoveSnapshot()
+    {
+        lock (_playerXYMoveLock)
+        {
+            return _lastPlayerXYMoveSnapshot ?? new RuntimePlayerXYMoveSnapshot
+            {
+                Frame = _engine.StaticVariables.FrameNumber,
+                CandidateIndex = -1,
+                ResultIndex = -1,
+                ExitPath = "NoSnapshot",
+            };
+        }
     }
 
     private RuntimeTraceSnapshot CreateTraceSnapshot(RuntimeTraceRequest request)

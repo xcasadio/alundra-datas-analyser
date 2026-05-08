@@ -1602,7 +1602,24 @@ public class GraphicManager
         tile.b0 = (byte)(_gameEngine.StaticVariables.g_currentFadeColorR >> 0x10);
 
         //fullscreen image used to create fade effect
-        _gameEngine.Renderer.DrawColoredRectangle(tile.x0, tile.y0, tile.w, tile.h, SpriteDepth.FadeTransitionEffect, tile.r0 / 255f, 0f, 0f, 0f);
+        var fadeBlendMode = _gameEngine.StaticVariables.g_fadeTPagePrim1 switch
+        {
+            1 => BlendMode.Additive,
+            2 => BlendMode.Subtractive,
+            _ => BlendMode.None,
+        };
+
+        _gameEngine.Renderer.DrawColoredRectangle(
+            tile.x0,
+            tile.y0,
+            tile.w,
+            tile.h,
+            SpriteDepth.FadeTransitionEffect,
+            1.0f,
+            tile.r0 / 255f,
+            tile.g0 / 255f,
+            tile.b0 / 255f,
+            fadeBlendMode);
 
     LAB_80042ee4:
         return _gameEngine.StaticVariables.g_warpFlags | _gameEngine.StaticVariables.g_fadeStepFlags;
@@ -1928,9 +1945,9 @@ public class GraphicManager
     }
 
     // JUSTIFICATION: C# language bridge only
-    private static int GetWarpTransitionOrderingTable(int[] orderingTableBuffer)
+    private static int GetWarpTransitionOrderingTable(OrderingTableBuffer orderingTableBuffer)
     {
-        return orderingTableBuffer.Length > 3 ? orderingTableBuffer[3] : 0;
+        return orderingTableBuffer[3];
     }
 
     // JUSTIFICATION: C# language bridge only
@@ -2011,7 +2028,7 @@ public class GraphicManager
     }
 
     // GHIDRA: FUN_800435e0 @ 0x800435E0
-    private byte FUN_800435e0(int[] orderingTableBuffer)
+    private byte FUN_800435e0(OrderingTableBuffer orderingTableBuffer)
     {
         var transitionState = (byte)RenderTransitionEffects(GetWarpTransitionOrderingTable(orderingTableBuffer));
 
@@ -2022,7 +2039,7 @@ public class GraphicManager
     }
 
     // GHIDRA: FUN_800436a0 @ 0x800436A0
-    private byte FUN_800436a0(int[] orderingTableBuffer)
+    private byte FUN_800436a0(OrderingTableBuffer orderingTableBuffer)
     {
         RenderTransitionEffects(GetWarpTransitionOrderingTable(orderingTableBuffer));
 
@@ -2044,6 +2061,8 @@ public class GraphicManager
 
                 if (counter <= 0)
                 {
+                    QueueWarpTransitionSlice(sourceX, sourceY, 0x10, 0x10, sourceX, sourceY);
+                    isEffectRunning = 1;
                     continue;
                 }
 
@@ -2079,7 +2098,7 @@ public class GraphicManager
     }
 
     // GHIDRA: FUN_8004392c @ 0x8004392C
-    private byte FUN_8004392c(int[] orderingTableBuffer)
+    private byte FUN_8004392c(OrderingTableBuffer orderingTableBuffer)
     {
         var transitionState = (byte)RenderTransitionEffects(GetWarpTransitionOrderingTable(orderingTableBuffer));
         var amplitude = GetWarpEffectWord(0);
@@ -2116,7 +2135,7 @@ public class GraphicManager
     }
 
     // GHIDRA: FUN_80043b34 @ 0x80043B34
-    private byte FUN_80043b34(int[] orderingTableBuffer)
+    private byte FUN_80043b34(OrderingTableBuffer orderingTableBuffer)
     {
         RenderTransitionEffects(GetWarpTransitionOrderingTable(orderingTableBuffer));
 
@@ -2147,7 +2166,6 @@ public class GraphicManager
                     {
                         if (destinationX < -0x0f)
                         {
-                            SetWarpEffectWord(baseIndex, counter + 1);
                             continue;
                         }
 
@@ -2159,7 +2177,6 @@ public class GraphicManager
                     {
                         if (destinationX >= 0x140)
                         {
-                            SetWarpEffectWord(baseIndex, counter + 1);
                             continue;
                         }
 
@@ -2170,7 +2187,6 @@ public class GraphicManager
                     {
                         if (destinationY < -0x0f)
                         {
-                            SetWarpEffectWord(baseIndex, counter + 1);
                             continue;
                         }
 
@@ -2182,7 +2198,6 @@ public class GraphicManager
                     {
                         if (destinationY >= 0x0f0)
                         {
-                            SetWarpEffectWord(baseIndex, counter + 1);
                             continue;
                         }
 
@@ -2202,7 +2217,7 @@ public class GraphicManager
     }
 
     // GHIDRA: FUN_80043d54 @ 0x80043D54
-    private byte FUN_80043d54(int[] orderingTableBuffer)
+    private byte FUN_80043d54(OrderingTableBuffer orderingTableBuffer)
     {
         var transitionState = (byte)RenderTransitionEffects(GetWarpTransitionOrderingTable(orderingTableBuffer));
         var warpEffectBuffer = _gameEngine.StaticVariables.g_warpEffectBuffer;
@@ -2250,11 +2265,27 @@ public class GraphicManager
             }
         }
 
+        if (isEffectRunning == 0)
+        {
+            // 0x801FB424 sits inside g_heapBuffer at 0x801F7F24 + 0x3500.
+            var heapBuffer = _gameEngine.StaticVariables.g_heapBuffer;
+            var heapBufferWord = heapBuffer[0x3500]
+                | (heapBuffer[0x3501] << 8)
+                | (heapBuffer[0x3502] << 16)
+                | (heapBuffer[0x3503] << 24);
+
+            heapBufferWord |= 0x00400000;
+            heapBuffer[0x3500] = (byte)heapBufferWord;
+            heapBuffer[0x3501] = (byte)(heapBufferWord >> 8);
+            heapBuffer[0x3502] = (byte)(heapBufferWord >> 16);
+            heapBuffer[0x3503] = (byte)(heapBufferWord >> 24);
+        }
+
         return isEffectRunning;
     }
 
     // GHIDRA: FUN_80043f8c @ 0x80043F8C
-    private byte FUN_80043f8c(int[] orderingTableBuffer)
+    private byte FUN_80043f8c(OrderingTableBuffer orderingTableBuffer)
     {
         var transitionState = (byte)RenderTransitionEffects(GetWarpTransitionOrderingTable(orderingTableBuffer));
         var warpEffectBuffer = _gameEngine.StaticVariables.g_warpEffectBuffer;
@@ -2276,7 +2307,7 @@ public class GraphicManager
     }
 
     // GHIDRA: FUN_80044440 @ 0x80044440
-    public byte FUN_80044440(int[] orderingTableBuffer, int transitionEffectId)
+    public byte FUN_80044440(OrderingTableBuffer orderingTableBuffer, int transitionEffectId)
     {
         return transitionEffectId switch
         {

@@ -48,6 +48,40 @@ internal sealed class RuntimeTraceRequest
     public int Count { get; init; } = 20;
 }
 
+internal sealed class RuntimeSnapshotResponse
+{
+    public string FilePath { get; init; } = string.Empty;
+}
+
+internal sealed class RuntimeFrameProbeSnapshot
+{
+    public string Checkpoint { get; init; } = string.Empty;
+    public uint Frame { get; init; }
+    public bool IsWarpTransitionRunning { get; init; }
+    public int MapTransitionEffectId { get; init; }
+    public int IsGameEnding { get; init; }
+    public string FilePath { get; init; } = string.Empty;
+}
+
+internal sealed class RuntimeFadeOutQueueResponse
+{
+    public uint Frame { get; init; }
+    public int PostProcessState { get; init; }
+    public int CurrentTransitionType { get; init; }
+}
+
+internal sealed class RuntimeTemporaryWarpQueueRequest
+{
+    public int EffectId { get; init; }
+}
+
+internal sealed class RuntimeTemporaryWarpQueueResponse
+{
+    public uint Frame { get; init; }
+    public int EffectId { get; init; }
+    public int MapTransitionEffectId { get; init; }
+}
+
 internal sealed class RuntimeStatusSnapshot
 {
     public string Checkpoint { get; init; } = string.Empty;
@@ -57,6 +91,68 @@ internal sealed class RuntimeStatusSnapshot
     public uint CurrentMap { get; init; }
     public uint DesiredMap { get; init; }
     public RuntimePlayerSnapshot? Player { get; init; }
+}
+
+internal sealed class RuntimeCollisionTileSnapshot
+{
+    public int Index { get; init; }
+    public int MapHeight { get; init; }
+    public byte Walkability { get; init; }
+    public byte GroundProperty { get; init; }
+    public byte Slope { get; init; }
+    public byte Height { get; init; }
+    public uint TileFlags { get; init; }
+    public uint CollisionFlag { get; init; }
+}
+
+internal sealed class RuntimePlayerCollisionSnapshot
+{
+    public string Checkpoint { get; init; } = string.Empty;
+    public uint Frame { get; init; }
+    public int PosX { get; init; }
+    public int PosY { get; init; }
+    public int PosZ { get; init; }
+    public int ModdedPosZ { get; init; }
+    public int TerrainHeight { get; init; }
+    public uint EntityFlags { get; init; }
+    public int TileAttributes { get; init; }
+    public int Slope18c { get; init; }
+    public uint CurrentAnimationId { get; init; }
+    public uint TargetAnimationId { get; init; }
+    public int FinalForceX { get; init; }
+    public int FinalForceY { get; init; }
+    public int ForceAdjusted { get; init; }
+    public int WarpLockTimer { get; init; }
+    public uint GravityFlag { get; init; }
+    public uint CollisionFlagsOr { get; init; }
+    public IReadOnlyList<uint> CollisionFlags { get; init; } = [];
+    public IReadOnlyList<RuntimeCollisionTileSnapshot> Tiles { get; init; } = [];
+}
+
+internal sealed class RuntimePlayerXYMoveSnapshot
+{
+    public uint Frame { get; init; }
+    public int StartPosX { get; init; }
+    public int StartPosY { get; init; }
+    public int StartPosZ { get; init; }
+    public int EntryFinalForceX { get; init; }
+    public int EntryFinalForceY { get; init; }
+    public int AttemptedPosX { get; init; }
+    public int AttemptedPosY { get; init; }
+    public int AttemptedPosZ { get; init; }
+    public int AttemptedGroundHeight { get; init; }
+    public int ExitPosX { get; init; }
+    public int ExitPosY { get; init; }
+    public int ExitPosZ { get; init; }
+    public int ExitTerrainHeight { get; init; }
+    public uint CollisionFlagsOr { get; init; }
+    public IReadOnlyList<uint> CollisionFlags { get; init; } = [];
+    public int CandidateIndex { get; init; }
+    public int ResultIndex { get; init; }
+    public int IterationCount { get; init; }
+    public int DidAdjustForObstacle { get; init; }
+    public int ModXState { get; init; }
+    public string ExitPath { get; init; } = string.Empty;
 }
 
 internal sealed class RuntimePlayerSnapshot

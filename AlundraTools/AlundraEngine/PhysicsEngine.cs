@@ -1,5 +1,6 @@
 using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
+using AlundraEngine.RuntimeInspection;
 
 namespace AlundraEngine;
 
@@ -368,9 +369,21 @@ public static class PhysicsEngine
         int i = 0;
         const int s6 = -1;
 
+        int entryPosX = entity.PosX;
+        int entryPosY = entity.PosY;
+        int entryPosZ = entity.PosZ;
+        int entryFinalForceX = entity.FinalForceX;
+        int entryFinalForceY = entity.FinalForceY;
+
         int dx, dy;
         int posX, posY, posZ;
         uint[] collisionFlags = new uint[4];
+        uint collisionFlagsOr = 0;
+        int attemptedPosX = entity.PosX;
+        int attemptedPosY = entity.PosY;
+        int attemptedPosZ = entity.PosZ;
+        int attemptedGroundHeight = entity.TerrainHeight;
+        int candidateIndex = -1;
 
         int modX = 0;
         int didAdjustForObstacle = 0;
@@ -410,12 +423,17 @@ public static class PhysicsEngine
         entity.PosX = entity.PosX + dx;
         entity.PosY = entity.PosY + dy;
 
+        attemptedPosX = entity.PosX;
+        attemptedPosY = entity.PosY;
+        attemptedPosZ = entity.PosZ;
+
         entity.ModdedPosZ = entity.PosZ + entity.ModZ;
         entity.ModdedPosX = entity.PosX + entity.ModX;
         entity.ModdedPosY = entity.PosY + entity.ModY;
 
         int groundHeight = ComputeEntityGroundHeight(entity, gameEngine);
         entity.TerrainHeight = groundHeight;
+        attemptedGroundHeight = groundHeight;
 
         if ((entity.Flags & 0x100) != 0)
         {
@@ -460,6 +478,7 @@ public static class PhysicsEngine
 
     RESTORE_POS:
         candidate = FindEntityCollisionCandidate(entity, gameEngine);
+        candidateIndex = candidate?.Index ?? -1;
 
         if (candidate == null)
         {
@@ -470,6 +489,7 @@ public static class PhysicsEngine
 
     CHECK_ENTITY_COLLISION:
         uint flags = collisionFunc(entity, collisionFlags);
+        collisionFlagsOr = flags;
 
         if (flags == 0)
         {
@@ -798,6 +818,26 @@ public static class PhysicsEngine
         entity.ModdedPosZ = entity.PosZ + entity.ModZ;
 
         entity.TerrainHeight = ComputeEntityGroundHeight(entity, gameEngine);
+        RecordPlayerXYMoveSnapshot(
+            entity,
+            gameEngine,
+            "FinalizeCommon",
+            entryPosX,
+            entryPosY,
+            entryPosZ,
+            entryFinalForceX,
+            entryFinalForceY,
+            attemptedPosX,
+            attemptedPosY,
+            attemptedPosZ,
+            attemptedGroundHeight,
+            collisionFlagsOr,
+            collisionFlags,
+            candidateIndex,
+            result,
+            i,
+            didAdjustForObstacle,
+            modX);
         return result;
 
     FINALIZE_NO_MOVE:
@@ -808,10 +848,104 @@ public static class PhysicsEngine
         entity.ModdedPosZ = entity.PosZ + entity.ModZ;
 
         entity.TerrainHeight = ComputeEntityGroundHeight(entity, gameEngine);
+        RecordPlayerXYMoveSnapshot(
+            entity,
+            gameEngine,
+            "FinalizeNoMove",
+            entryPosX,
+            entryPosY,
+            entryPosZ,
+            entryFinalForceX,
+            entryFinalForceY,
+            attemptedPosX,
+            attemptedPosY,
+            attemptedPosZ,
+            attemptedGroundHeight,
+            collisionFlagsOr,
+            collisionFlags,
+            candidateIndex,
+            result,
+            i,
+            didAdjustForObstacle,
+            modX);
         return result;
 
     RETURN_RESULT:
+        RecordPlayerXYMoveSnapshot(
+            entity,
+            gameEngine,
+            "ReturnResult",
+            entryPosX,
+            entryPosY,
+            entryPosZ,
+            entryFinalForceX,
+            entryFinalForceY,
+            attemptedPosX,
+            attemptedPosY,
+            attemptedPosZ,
+            attemptedGroundHeight,
+            collisionFlagsOr,
+            collisionFlags,
+            candidateIndex,
+            result,
+            i,
+            didAdjustForObstacle,
+            modX);
         return result;
+    }
+
+    // JUSTIFICATION: backend MonoGame only
+    private static void RecordPlayerXYMoveSnapshot(
+        Entity entity,
+        GameEngine gameEngine,
+        string exitPath,
+        int entryPosX,
+        int entryPosY,
+        int entryPosZ,
+        int entryFinalForceX,
+        int entryFinalForceY,
+        int attemptedPosX,
+        int attemptedPosY,
+        int attemptedPosZ,
+        int attemptedGroundHeight,
+        uint collisionFlagsOr,
+        uint[] collisionFlags,
+        int candidateIndex,
+        Entity? result,
+        int iterationCount,
+        int didAdjustForObstacle,
+        int modX)
+    {
+        if (entity != gameEngine.StaticVariables.PlayerEntity || gameEngine.RuntimeInspector == null)
+        {
+            return;
+        }
+
+        gameEngine.RuntimeInspector.RecordPlayerXYMoveSnapshot(new RuntimePlayerXYMoveSnapshot
+        {
+            Frame = gameEngine.StaticVariables.FrameNumber,
+            StartPosX = entryPosX,
+            StartPosY = entryPosY,
+            StartPosZ = entryPosZ,
+            EntryFinalForceX = entryFinalForceX,
+            EntryFinalForceY = entryFinalForceY,
+            AttemptedPosX = attemptedPosX,
+            AttemptedPosY = attemptedPosY,
+            AttemptedPosZ = attemptedPosZ,
+            AttemptedGroundHeight = attemptedGroundHeight,
+            ExitPosX = entity.PosX,
+            ExitPosY = entity.PosY,
+            ExitPosZ = entity.PosZ,
+            ExitTerrainHeight = entity.TerrainHeight,
+            CollisionFlagsOr = collisionFlagsOr,
+            CollisionFlags = collisionFlags.ToArray(),
+            CandidateIndex = candidateIndex,
+            ResultIndex = result?.Index ?? -1,
+            IterationCount = iterationCount,
+            DidAdjustForObstacle = didAdjustForObstacle,
+            ModXState = modX,
+            ExitPath = exitPath,
+        });
     }
 
 
@@ -935,7 +1069,7 @@ public static class PhysicsEngine
         return highest;
     }
 
-    //80037488
+    // GHIDRA: GetCollisionFlagsWithPlayer @ 0x80037488
     public static uint GetCollisionFlagsWithPlayer(Entity entity, uint[] collisionFlags, GameEngine gameEngine)
     {
         //Disable collision
@@ -980,8 +1114,8 @@ public static class PhysicsEngine
             }
 
             if (lockTimer == 0x20
-                && moddedZPos == player.MapHeights[i] + 1
-                && (player.MapTiles[i].Flags & 0xe00) == 0x600)
+                && (moddedZPos != player.MapHeights[i] + 1
+                    || (player.MapTiles[i].Flags & 0xe00) != 0x600))
             {
                 collisionFlags[i] = 1;
             }

@@ -550,10 +550,10 @@ public class Renderer(System.Drawing.Graphics graphics, Bitmap? frameBuffer = nu
         AddSprite(x, y, bmp.Width, bmp.Height, z, bmp);
     }
 
-    public void DrawColoredRectangle(short tileX0, short tileY0, short tileW, short tileH, int fadeTransitionEffect, float tileR0,
-        float f, float f1, float f2)
+    public void DrawColoredRectangle(short tileX0, short tileY0, short tileW, short tileH, int fadeTransitionEffect, float alpha,
+        float r, float g, float b, BlendMode blendMode = BlendMode.None)
     {
-        AddSprite(tileX0, tileY0, tileW, tileH, fadeTransitionEffect, WhiteBitmap, tileR0, f, f1, f2);
+        AddSprite(tileX0, tileY0, tileW, tileH, fadeTransitionEffect, WhiteBitmap, alpha, r, g, b, blendMode);
     }
 }
 

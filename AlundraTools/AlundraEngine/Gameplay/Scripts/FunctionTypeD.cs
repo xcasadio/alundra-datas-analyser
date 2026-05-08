@@ -116,7 +116,8 @@ public static class FunctionTypeD
     //mimique niveau 1 touch
     public static void AI_FUN_8007dbe0(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Homme momie Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -154,7 +155,8 @@ public static class FunctionTypeD
     //fish
     public static void AI_FUN_8007dcd8(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Ver Niv.1")
         {
             Breakpoint.TriggerBreak();
         }

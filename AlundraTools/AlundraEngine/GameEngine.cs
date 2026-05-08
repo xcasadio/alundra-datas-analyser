@@ -18,8 +18,6 @@ namespace AlundraEngine;
 
 public class GameEngine
 {
-    public readonly ReplayManager ReplayManager = new();
-
     public readonly DatasBin.DatasBin DatasBin;
     public readonly BalanceBin BalanceBin;
     public readonly EtcRes EtcRes;
@@ -50,6 +48,8 @@ public class GameEngine
     private readonly EntityEventHandlers _entityEventHandlers;
     private readonly GameInitializer _gameInitializer;
     private readonly PadManager _padManager;
+    private bool _isWarpTransitionRunning;
+    private int? _pendingTemporaryWarpEffectId;
 
     //TODO : find the variable in StaticVariables
     public int DialogState, DialogNameState, DialogName;
@@ -101,16 +101,27 @@ public class GameEngine
         RuntimeInspector = runtimeInspector;
     }
 
+    // JUSTIFICATION: backend MonoGame only
+    public void QueueTemporaryWarpTransitionEffect(int effectId)
+    {
+        _pendingTemporaryWarpEffectId = effectId;
+    }
+
     // 8002bfe0
     public void MainLoop()
     {
         RuntimeInspector?.Checkpoint("GameEngine.MainLoop");
         StaticVariables.g_spriteNumberOfImage = 0;
 
-        byte isEffectRunning = 0;
         var playerPosX = 0;
         var playerPosY = 0;
         var playerPosZ = 0;
+
+        if (_isWarpTransitionRunning)
+        {
+            AdvanceWarpTransitionFrame();
+            return;
+        }
 
         //do
         //{
@@ -177,21 +188,8 @@ public class GameEngine
 
         if (IsRunning())
         {
-            if (ReplayManager.ApplyCurrentFrame)
-            {
-                ReplayManager.PlayOneFrame(this);
-            }
-            else
-            {
-                Update(0);
-                StaticVariables.FrameNumber++;
-            }
-
-            if (ReplayManager.IsSaving)
-            {
-                ReplayManager.SaveFrame(this);
-            }
-
+            Update(0);
+            StaticVariables.FrameNumber++;
             StaticVariables.DoNextFrame = false;
         }
 
@@ -205,6 +203,15 @@ public class GameEngine
         //DoNothing();
         //} while (StaticVariables.g_isGameEnding == 0);
 
+        if (_pendingTemporaryWarpEffectId.HasValue && StaticVariables.g_isGameEnding == 0)
+        {
+            StaticVariables.g_desiredMap = StaticVariables.g_currentMap;
+            StaticVariables.g_mapTransitionEffectId = _pendingTemporaryWarpEffectId.Value;
+            StaticVariables.g_warpSoundEffectId = 0;
+            StaticVariables.g_isGameEnding = 1;
+            _pendingTemporaryWarpEffectId = null;
+        }
+
         //end game
         if (StaticVariables.g_isGameEnding != 0)
         {
@@ -212,37 +219,9 @@ public class GameEngine
             StaticVariables.g_warpSoundEffectId = 0;
             StartWarpTransition(StaticVariables.g_mapTransitionEffectId);
             StaticVariables.INT_800dc4e4 = 1;
-            do
-            {
-                StaticVariables.g_debugMessage = "";
-                _padManager.UpdatePads();
-                isEffectRunning = GraphicManager.FUN_80044440(StaticVariables.g_orderingTableBuffer, StaticVariables.g_mapTransitionEffectId);
-                SoundManager.HandleMapSoundStreaming();
-                //PauseGameDuringNbFrame(1);
-                //DoNothing();
-            } while (isEffectRunning != 0);
-
-            EndGame();
-            //FUN_80049ff8(); //sound
-            if (StaticVariables.g_mapTransitionEffectId != 9)
-            {
-                return; //break;
-            }
-
-            //LoadBgm(0);
-            //LoadSomethingInDatasBin(g_indexInDatasBin);
-            //_96_remove();
-            //_96_init();
-            //syscall();
-            //LoadExec();
-            //DoNothing();
-            Breakpoint.TriggerBreak();
-            Environment.Exit(0);
-
-            LAB_8002c590:
-            //LoadBgm(0);
-            StaticVariables.g_playerControlFlags = 0;
-            InitializeMapWarpPosition();
+            _isWarpTransitionRunning = true;
+            AdvanceWarpTransitionFrame();
+            return;
             //}
             //if (9 < StaticVariables.g_mapTransitionEffectId)
             //{
@@ -274,9 +253,44 @@ public class GameEngine
         //} while (true);
     }
 
+    // JUSTIFICATION: C# language bridge only
+    private void AdvanceWarpTransitionFrame()
+    {
+        StaticVariables.g_debugMessage = "";
+        _padManager.UpdatePads();
+
+        var isEffectRunning = GraphicManager.FUN_80044440(StaticVariables.g_orderingTableBuffer, StaticVariables.g_mapTransitionEffectId);
+        // Warp rendering bypasses RenderScene(), so present the queued primitives here.
+        Renderer.Render();
+        Renderer.Clear();
+        SoundManager.HandleMapSoundStreaming();
+
+        // Some warp handlers only report their per-cell activity and rely on
+        // the shared fade state to keep the blocking PSX transition alive.
+        if (isEffectRunning != 0 || StaticVariables.g_warpFlags != 0 || StaticVariables.g_fadeStepFlags != 0)
+        {
+            return;
+        }
+
+        _isWarpTransitionRunning = false;
+        return;
+        EndGame();
+
+        if (StaticVariables.g_mapTransitionEffectId != 9)
+        {
+            return;
+        }
+
+        Breakpoint.TriggerBreak();
+        Environment.Exit(0);
+
+        StaticVariables.g_playerControlFlags = 0;
+        InitializeMapWarpPosition();
+    }
+
     private bool IsRunning()
     {
-        return !StaticVariables.IsGamePaused || StaticVariables.DoNextFrame || ReplayManager.ApplyCurrentFrame;
+        return !StaticVariables.IsGamePaused || StaticVariables.DoNextFrame;
     }
 
     // 8002bd60
@@ -911,6 +925,9 @@ public class GameEngine
 
     public void BeginFadeEffect(int fadeTPageIndex, int fadeDuration)
     {
+        StaticVariables.g_fadeTPagePrim1 = fadeTPageIndex;
+        StaticVariables.g_fadeTPagePrim2 = fadeTPageIndex;
+
         if (StaticVariables.g_fadeStepFlags == 0)
         {
             StaticVariables.g_fadeColorStepR = 0;
@@ -1199,57 +1216,51 @@ public class GameEngine
     //800432a4
     private void InitSpecialWarpEffect()
     {
-        ulong uVar1;
-        int iVar2;
-        ulong uVar3;
-        int iVar4;
-        int iVar5;
-        int iVar6;
-        int iVar7;
-
-        iVar6 = 0;
-        iVar7 = 0;
-
-        Breakpoint.TriggerBreak();
+        var row = 0;
+        var rowShortOffset = 0;
 
         do
         {
-            iVar4 = 0;
-            iVar5 = iVar7;
+            var column = 0;
+            var cellShortOffset = rowShortOffset;
 
             do
             {
-                if (iVar4 < 10)
+                int distanceBias;
+                if (column < 10)
                 {
-                    iVar2 = iVar4 + 7;
+                    distanceBias = column + 7;
                 }
                 else
                 {
-                    iVar2 = 0x1a - iVar4;
+                    distanceBias = 0x1a - column;
                 }
 
-                if (7 - iVar6 < 0)
+                if (7 - row < 0)
                 {
-                    iVar2 = iVar2 + 7 - iVar6;
+                    distanceBias = distanceBias + 7 - row;
                 }
                 else
                 {
-                    iVar2 = iVar2 + -7 + iVar6;
+                    distanceBias = distanceBias - 7 + row;
                 }
 
-                StaticVariables.g_warpEffectBuffer[iVar5] = (short)(iVar2 * -2);
-                uVar3 = Random.Next();
-                uVar1 = Random.Next();
-                iVar4 += 1;
-                StaticVariables.g_warpEffectBuffer[iVar5 + 4] = (short)(0x40 - (short)((uVar3 * 0x81) >> 0x20));
-                StaticVariables.g_warpEffectBuffer[iVar5 + 6] = (short)(-0x10 - (short)((uVar1 * 0x41) >> 0x20));
-                iVar5 += 8;
-            } while (iVar4 < 0x14);
+                var counter = distanceBias * -2;
+                var randomX = Random.Next();
+                var randomY = Random.Next();
 
-            iVar6 += 1;
-            iVar7 += 0xa0;
+                StaticVariables.g_warpEffectBuffer[cellShortOffset] = (short)counter;
+                StaticVariables.g_warpEffectBuffer[cellShortOffset + 1] = (short)(counter >> 16);
+                StaticVariables.g_warpEffectBuffer[cellShortOffset + 2] = (short)(0x40 - (short)((randomX * 0x81) >> 0x20));
+                StaticVariables.g_warpEffectBuffer[cellShortOffset + 3] = (short)(-0x10 - (short)((randomY * 0x41) >> 0x20));
 
-        } while (iVar6 < 0xf);
+                column += 1;
+                cellShortOffset += 4;
+            } while (column < 0x14);
+
+            row += 1;
+            rowShortOffset += 0x50;
+        } while (row < 0xf);
 
         StaticVariables.g_warpFadeColorG = 0xff0000;
         StaticVariables.g_warpFadeColorR = 0xff0000;
@@ -1289,6 +1300,7 @@ public class GameEngine
         //} while (entityIndex < 0xf0);
 
         StaticVariables.g_warpEffectBuffer[0] = 0;
+        StaticVariables.g_warpEffectBuffer[1] = 0;
         StaticVariables.g_targetFadeColorR = 0xff0000;
         StaticVariables.g_targetFadeColorG = 0xff0000;
         StaticVariables.g_targetFadeColorB = 0xff0000;
@@ -1335,6 +1347,7 @@ public class GameEngine
         ulong randomSeed1;
         ulong randomSeed2;
         ulong randomSeed3;
+        ulong randomSeed4;
         int innerLoopCounter;
         int offsetY;
         int offsetX;
@@ -1357,10 +1370,11 @@ public class GameEngine
                 randomSeed1 = Random.Next();
                 randomSeed2 = Random.Next();
                 randomSeed3 = Random.Next();
+                randomSeed4 = Random.Next();
                 StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 0] = (short)(-(short)((randomSeed1 * 0x15) >> 0x20) - (short)((offsetX * offsetX + offsetY * offsetY) >> 10));
                 StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 1] = (short)((short)((randomSeed2 * 0x15) >> 0x20) + 0x14);
                 StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 2] = (short)((randomSeed3 * 0x130) >> 0x20);
-                StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 3] = (short)((uint)((randomSeed3 * 0xe0) >> 0x20));
+                StaticVariables.g_warpEffectBuffer[iterationCounter * 4 + 3] = (short)((uint)((randomSeed4 * 0xe0) >> 0x20));
                 offsetX += 0x10;
                 iterationCounter += 1;
                 innerLoopCounter += 1;

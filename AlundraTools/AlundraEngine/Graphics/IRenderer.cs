@@ -16,7 +16,7 @@ public interface IRenderer
     void DrawLine(int x1, int y1, int x2, int y2, Color color);
     void DrawCenterString(string text, Font font, Color color, int x, int y, int z);
     void DrawString(string text, Font font, Color color, int x, int y, int z);
-    void DrawColoredRectangle(short tileX0, short tileY0, short tileW, short tileH, int fadeTransitionEffect, float tileR0, float f, float f1, float f2);
+    void DrawColoredRectangle(short tileX0, short tileY0, short tileW, short tileH, int fadeTransitionEffect, float alpha, float r, float g, float b, BlendMode blendMode = BlendMode.None);
     void DrawDeformedQuad(
         Bitmap bitmap,
         int x0, int y0, float u0, float v0,
