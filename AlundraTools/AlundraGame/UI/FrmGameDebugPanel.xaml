@@ -90,14 +90,7 @@
                     <TextBlock Name="labelActiveCollisionEntity" CanvasLeft="422" CanvasTop="99" Text="" />
                     <TextBlock Name="label14" CanvasLeft="3" CanvasTop="125" Text="Entities" />
                     <ListBox Name="listBoxEntities" CanvasLeft="4" CanvasTop="143" Width="103" Height="574" ItemType="{x:Type System:String}" />
-                    <DataGrid Name="propertyGridEntity" CanvasLeft="113" CanvasTop="143" Width="386" Height="589" ItemType="{x:Type System:Object}" RowHeight="16" SelectionMode="Row">
-                        <ListViewColumn Width="120">
-                            <ListViewColumn.Header><TextBlock Text="Property" /></ListViewColumn.Header>
-                        </ListViewColumn>
-                        <ListViewColumn Width="*">
-                            <ListViewColumn.Header><TextBlock Text="Value" /></ListViewColumn.Header>
-                        </ListViewColumn>
-                    </DataGrid>
+                    <PropertyGrid Name="propertyGridEntity" CanvasLeft="113" CanvasTop="143" Width="386" Height="589" LabelColumnWidth="120" />
                 </Canvas>
             </TabItem>
 
@@ -108,14 +101,7 @@
                 <Canvas Width="503" Height="739">
                     <TextBlock Name="label28" CanvasLeft="2" CanvasTop="2" Text="Effects" />
                     <ListBox Name="listBoxEffects" CanvasLeft="3" CanvasTop="20" Width="103" Height="709" ItemType="{x:Type System:String}" />
-                    <DataGrid Name="propertyGridEffect" CanvasLeft="112" CanvasTop="20" Width="386" Height="714" ItemType="{x:Type System:Object}" RowHeight="16" SelectionMode="Row">
-                        <ListViewColumn Width="120">
-                            <ListViewColumn.Header><TextBlock Text="Property" /></ListViewColumn.Header>
-                        </ListViewColumn>
-                        <ListViewColumn Width="*">
-                            <ListViewColumn.Header><TextBlock Text="Value" /></ListViewColumn.Header>
-                        </ListViewColumn>
-                    </DataGrid>
+                    <PropertyGrid Name="propertyGridEffect" CanvasLeft="112" CanvasTop="20" Width="386" Height="714" LabelColumnWidth="120" />
                 </Canvas>
             </TabItem>
 

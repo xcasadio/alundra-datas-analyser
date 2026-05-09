@@ -679,10 +679,10 @@ public class AlundraRenderer : IRenderer
         }
     }
 
-    public void DrawColoredRectangle(short tileX0, short tileY0, short tileW, short tileH, int fadeTransitionEffect, float tileR0,
-        float f, float f1, float f2)
+    public void DrawColoredRectangle(short tileX0, short tileY0, short tileW, short tileH, int fadeTransitionEffect, float alpha,
+        float r, float g, float b, BlendMode blendMode = BlendMode.None)
     {
-        AddSpriteFromTexture(tileX0, tileY0, tileW, tileH, fadeTransitionEffect, _whiteTexture, tileR0, f, f1, f2);
+        AddSpriteFromTexture(tileX0, tileY0, tileW, tileH, fadeTransitionEffect, _whiteTexture, alpha, r, g, b, blendMode);
     }
 
     public void DrawDeformedQuad(

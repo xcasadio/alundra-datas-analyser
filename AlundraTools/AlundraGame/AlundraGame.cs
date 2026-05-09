@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using AlundraEngine.Etc;
 using AlundraEngine.RuntimeInspection;
@@ -136,6 +137,7 @@ namespace AlundraGame
             HandleTemporaryDebugHotkeys(keyboardState);
 
             _runtimeInspector?.Checkpoint("AlundraGame.Update");
+
             _inputManager.Update();
             _debugPanelController?.Refresh();
             _desktop?.Update();
@@ -152,6 +154,7 @@ namespace AlundraGame
             //draw game
             GraphicsDevice.SetRenderTarget(_renderTarget);
             GraphicsDevice.Clear(Color.Black);
+
             _gameEngine.MainLoop();
 
             //draw texture to screen

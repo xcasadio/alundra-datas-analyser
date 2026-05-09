@@ -4,17 +4,14 @@ using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Graphics;
 using MGUI.Core.UI;
 using MGUI.Core.UI.Brushes.Fill_Brushes;
-using MGUI.Core.UI.Containers;
 using MGUI.Core.UI.Containers.Grids;
 using MGUI.Core.UI.XAML;
-using MGUI.Shared.Input.Mouse;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 
 namespace AlundraGame;
@@ -22,13 +19,9 @@ namespace AlundraGame;
 // JUSTIFICATION: backend MonoGame only
 internal sealed class FrmGameDebugPanelController
 {
-    private const string ShiftedDescriptorName = "ShiftedFieldDescriptor";
-    private const string MapTilesDescriptorName = "MapTilesFieldDescriptor";
     private const int DebugFontSize = 9;
     private const int MaxVisibleLogLines = 1000;
     private const int MaxVisibleScriptLines = 2000;
-    private const int PropertyGridMinimumPropertyColumnWidth = 60;
-    private const int PropertyGridMinimumValueColumnWidth = 80;
 
     private readonly GameEngine _gameEngine;
     private readonly MGDesktop _desktop;
@@ -40,8 +33,8 @@ internal sealed class FrmGameDebugPanelController
     private readonly MGListBox<string> _listBoxEntities;
     private readonly MGListBox<string> _listBoxEffects;
     private readonly MGListBox<string> _listBoxLogs;
-    private readonly MGDataGrid<object> _propertyGridEntity;
-    private readonly MGDataGrid<object> _propertyGridEffect;
+    private readonly MGPropertyGrid _propertyGridEntity;
+    private readonly MGPropertyGrid _propertyGridEffect;
     private readonly MGDataGrid<object> _dataGridViewTemporaryFlags;
     private readonly MGDataGrid<object> _dataGridViewGameFlags;
     private readonly MGComboBox<string> _comboBoxWeapon;
@@ -55,12 +48,12 @@ internal sealed class FrmGameDebugPanelController
     private readonly Dictionary<string, MGTextBox> _textBoxesByName = new();
     private readonly Dictionary<string, string> _lastTextValues = new();
     private readonly Dictionary<string, string> _lastTextBoxValues = new();
-    private readonly Dictionary<Type, PropertyMemberAccessor[]> _propertyAccessorsByType = new();
-    private readonly PropertyGridCache _entityPropertyGridCache = new();
-    private readonly PropertyGridCache _effectPropertyGridCache = new();
+    private readonly PropertyGridSelectionCache _entityPropertyGridCache = new();
+    private readonly PropertyGridSelectionCache _effectPropertyGridCache = new();
     private readonly FlagGridCache _gameFlagGridCache = new();
     private readonly FlagGridCache _temporaryFlagGridCache = new();
     private uint _lastMapId = 0xFFFFFFFF;
+    private bool? _lastPauseButtonIsPaused;
     private bool _isRefreshing;
 
     private readonly Dictionary<string, string> _entityCategories = new()
@@ -192,46 +185,46 @@ internal sealed class FrmGameDebugPanelController
 
     private readonly Dictionary<string, string> _entityDescriptors = new()
     {
-        [nameof(Entity.PosX)] = ShiftedDescriptorName,
-        [nameof(Entity.PosY)] = ShiftedDescriptorName,
-        [nameof(Entity.PosZ)] = ShiftedDescriptorName,
-        [nameof(Entity.RelativeWarpOffsetX)] = ShiftedDescriptorName,
-        [nameof(Entity.RelativeWarpOffsetY)] = ShiftedDescriptorName,
-        [nameof(Entity.RelativeWarpOffsetZ)] = ShiftedDescriptorName,
-        [nameof(Entity.ScreenClipX)] = ShiftedDescriptorName,
-        [nameof(Entity.ScreenClipY)] = ShiftedDescriptorName,
-        [nameof(Entity.ScreenClipZ)] = ShiftedDescriptorName,
-        [nameof(Entity.NegModX)] = ShiftedDescriptorName,
-        [nameof(Entity.ModdedPosX)] = ShiftedDescriptorName,
-        [nameof(Entity.ModdedPosY)] = ShiftedDescriptorName,
-        [nameof(Entity.ModdedPosZ)] = ShiftedDescriptorName,
-        [nameof(Entity.ModX)] = ShiftedDescriptorName,
-        [nameof(Entity.ModY)] = ShiftedDescriptorName,
-        [nameof(Entity.ModZ)] = ShiftedDescriptorName,
-        [nameof(Entity.Width)] = ShiftedDescriptorName,
-        [nameof(Entity.Height)] = ShiftedDescriptorName,
-        [nameof(Entity.Depth)] = ShiftedDescriptorName,
-        [nameof(Entity.ZUpperBound)] = ShiftedDescriptorName,
-        [nameof(Entity.RenderSortKey)] = ShiftedDescriptorName,
-        [nameof(Entity.TargetForceX)] = ShiftedDescriptorName,
-        [nameof(Entity.TargetForceY)] = ShiftedDescriptorName,
-        [nameof(Entity.ForceX)] = ShiftedDescriptorName,
-        [nameof(Entity.ForceY)] = ShiftedDescriptorName,
-        [nameof(Entity.ForceZ)] = ShiftedDescriptorName,
-        [nameof(Entity.PreviousAdjustedForceX)] = ShiftedDescriptorName,
-        [nameof(Entity.PreviousAdjustedForceY)] = ShiftedDescriptorName,
-        [nameof(Entity.ForceStepX)] = ShiftedDescriptorName,
-        [nameof(Entity.ForceStepY)] = ShiftedDescriptorName,
-        [nameof(Entity.AdjustedForceX)] = ShiftedDescriptorName,
-        [nameof(Entity.AdjustedForceY)] = ShiftedDescriptorName,
-        [nameof(Entity.FinalForceX)] = ShiftedDescriptorName,
-        [nameof(Entity.FinalForceY)] = ShiftedDescriptorName,
-        [nameof(Entity.FinalForceZ)] = ShiftedDescriptorName,
-        [nameof(Entity.Acceleration)] = ShiftedDescriptorName,
-        [nameof(Entity.Speed)] = ShiftedDescriptorName,
-        [nameof(Entity.FloorHeight)] = ShiftedDescriptorName,
-        [nameof(Entity.TerrainHeight)] = ShiftedDescriptorName,
-        [nameof(Entity.MapTiles)] = MapTilesDescriptorName,
+        [nameof(Entity.PosX)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.PosY)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.PosZ)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.RelativeWarpOffsetX)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.RelativeWarpOffsetY)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.RelativeWarpOffsetZ)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.ScreenClipX)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.ScreenClipY)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.ScreenClipZ)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.NegModX)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.ModdedPosX)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.ModdedPosY)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.ModdedPosZ)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.ModX)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.ModY)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.ModZ)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.Width)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.Height)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.Depth)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.ZUpperBound)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.RenderSortKey)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.TargetForceX)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.TargetForceY)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.ForceX)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.ForceY)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.ForceZ)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.PreviousAdjustedForceX)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.PreviousAdjustedForceY)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.ForceStepX)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.ForceStepY)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.AdjustedForceX)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.AdjustedForceY)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.FinalForceX)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.FinalForceY)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.FinalForceZ)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.Acceleration)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.Speed)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.FloorHeight)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.TerrainHeight)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(Entity.MapTiles)] = DebugPropertyGridSelectedObject.MapTilesDescriptorName,
     };
 
     private readonly Dictionary<string, string> _effectCategories = new()
@@ -259,13 +252,13 @@ internal sealed class FrmGameDebugPanelController
 
     private readonly Dictionary<string, string> _effectDescriptors = new()
     {
-        [nameof(SpriteEffect.X)] = ShiftedDescriptorName,
-        [nameof(SpriteEffect.Y)] = ShiftedDescriptorName,
-        [nameof(SpriteEffect.Z)] = ShiftedDescriptorName,
-        [nameof(SpriteEffect.DepthSortValue)] = ShiftedDescriptorName,
-        [nameof(SpriteEffect.ForceX)] = ShiftedDescriptorName,
-        [nameof(SpriteEffect.ForceY)] = ShiftedDescriptorName,
-        [nameof(SpriteEffect.ForceZ)] = ShiftedDescriptorName,
+        [nameof(SpriteEffect.X)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(SpriteEffect.Y)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(SpriteEffect.Z)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(SpriteEffect.DepthSortValue)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(SpriteEffect.ForceX)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(SpriteEffect.ForceY)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
+        [nameof(SpriteEffect.ForceZ)] = DebugPropertyGridSelectedObject.ShiftedDescriptorName,
     };
 
     // JUSTIFICATION: backend MonoGame only
@@ -287,8 +280,8 @@ internal sealed class FrmGameDebugPanelController
         _listBoxEntities = Element<MGListBox<string>>("listBoxEntities");
         _listBoxEffects = Element<MGListBox<string>>("listBoxEffects");
         _listBoxLogs = Element<MGListBox<string>>("listBoxLogs");
-        _propertyGridEntity = Element<MGDataGrid<object>>("propertyGridEntity");
-        _propertyGridEffect = Element<MGDataGrid<object>>("propertyGridEffect");
+        _propertyGridEntity = Element<MGPropertyGrid>("propertyGridEntity");
+        _propertyGridEffect = Element<MGPropertyGrid>("propertyGridEffect");
         _dataGridViewTemporaryFlags = Element<MGDataGrid<object>>("dataGridViewTemporaryFlags");
         _dataGridViewGameFlags = Element<MGDataGrid<object>>("dataGridViewGameFlags");
         _comboBoxWeapon = Element<MGComboBox<string>>("comboBoxWeapon");
@@ -363,6 +356,7 @@ internal sealed class FrmGameDebugPanelController
             RefreshEntityAndEffectLists();
             RefreshSelectedEntityGrid();
             RefreshSelectedEffectGrid();
+
             RefreshFlagGrids();
             RefreshDynamicFlags();
             RefreshDialogControls();
@@ -393,10 +387,8 @@ internal sealed class FrmGameDebugPanelController
     // JUSTIFICATION: backend MonoGame only
     private void ConfigureGridColumns()
     {
-        ConfigureTwoTextColumns(_propertyGridEntity, true);
-        ConfigureTwoTextColumns(_propertyGridEffect, true);
-        ConfigureTwoTextColumns(_dataGridViewTemporaryFlags, false);
-        ConfigureTwoTextColumns(_dataGridViewGameFlags, false);
+        ConfigureTwoTextColumns(_dataGridViewTemporaryFlags);
+        ConfigureTwoTextColumns(_dataGridViewGameFlags);
     }
 
     // JUSTIFICATION: backend MonoGame only
@@ -441,7 +433,7 @@ internal sealed class FrmGameDebugPanelController
     }
 
     // JUSTIFICATION: backend MonoGame only
-    private void ConfigureTwoTextColumns(MGDataGrid<object> grid, bool addPropertySplitter)
+    private void ConfigureTwoTextColumns(MGDataGrid<object> grid)
     {
         if (grid.Columns.Count < 2)
         {
@@ -451,11 +443,6 @@ internal sealed class FrmGameDebugPanelController
         grid.Columns[0].CellTemplate = CreateGridRowNameTextBlock;
         grid.Columns[1].CellTemplate = CreateGridRowValueTextBlock;
         ConfigureDataGridSeparators(grid);
-
-        if (addPropertySplitter)
-        {
-            grid.Columns[0].Header = CreatePropertyGridHeader(grid);
-        }
     }
 
     // JUSTIFICATION: backend MonoGame only
@@ -476,79 +463,6 @@ internal sealed class FrmGameDebugPanelController
         grid.GridLinesVisibility = visibility;
         grid.HorizontalGridLineBrush = lineBrush;
         grid.VerticalGridLineBrush = lineBrush;
-    }
-
-    // JUSTIFICATION: backend MonoGame only
-    private MGGrid CreatePropertyGridHeader(MGDataGrid<object> grid)
-    {
-        MGGrid header = new(_window)
-        {
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
-        };
-        header.AddRow(GridLength.Auto);
-        header.AddColumn(GridLength.CreateWeightedLength(1));
-        header.AddColumn(GridLength.CreatePixelLength(5));
-
-        MGTextBlock title = new(_window, "Property", Color.Black, DebugFontSize)
-        {
-            IsBold = true,
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Center,
-        };
-
-        MGRectangle splitter = new(_window, 5, 16, Color.Transparent, 0, new MGSolidFillBrush(new Color(145, 145, 145)))
-        {
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
-        };
-        ConfigurePropertyColumnSplitter(grid, splitter);
-
-        header.TryAddChild(0, 0, title);
-        header.TryAddChild(0, 1, splitter);
-        return header;
-    }
-
-    // JUSTIFICATION: backend MonoGame only
-    private void ConfigurePropertyColumnSplitter(MGDataGrid<object> grid, MGElement splitter)
-    {
-        int startWidth = GetPropertyColumnWidth(grid);
-        splitter.MouseHandler.DragStartCondition = DragStartCondition.MousePressed;
-        splitter.MouseHandler.DragStart += (_, e) =>
-        {
-            if (!e.IsLMB)
-            {
-                return;
-            }
-
-            startWidth = GetPropertyColumnWidth(grid);
-            e.SetHandledBy(splitter, false);
-        };
-        splitter.MouseHandler.Dragged += (_, e) =>
-        {
-            if (!e.IsLMB)
-            {
-                return;
-            }
-
-            float scalar = 1.0f / _window.Scale;
-            int deltaX = (int)(e.PositionDelta.X * scalar);
-            int gridWidth = grid.PreferredWidth ?? grid.LayoutBounds.Width;
-            int maxWidth = Math.Max(PropertyGridMinimumPropertyColumnWidth, gridWidth - PropertyGridMinimumValueColumnWidth);
-            int newWidth = Math.Clamp(startWidth + deltaX, PropertyGridMinimumPropertyColumnWidth, maxWidth);
-            grid.ResizeColumnPixels(0, newWidth);
-        };
-    }
-
-    // JUSTIFICATION: backend MonoGame only
-    private static int GetPropertyColumnWidth(MGDataGrid<object> grid)
-    {
-        if (grid.Columns[0].Width.IsAbsoluteWidth)
-        {
-            return grid.Columns[0].Width.WidthPixels;
-        }
-
-        return grid.Columns[0].DataColumn.Width;
     }
 
     // JUSTIFICATION: backend MonoGame only
@@ -854,45 +768,53 @@ internal sealed class FrmGameDebugPanelController
 
     // JUSTIFICATION: backend MonoGame only
     private void RefreshPropertyGrid(
-        MGDataGrid<object> grid,
-        PropertyGridCache cache,
+        MGPropertyGrid grid,
+        PropertyGridSelectionCache cache,
         int selectedIndex,
         object target,
         Dictionary<string, string> categories,
         Dictionary<string, string> descriptors)
     {
-        PropertyMemberAccessor[] accessors = GetPropertyAccessors(target.GetType(), categories, descriptors);
-        bool targetChanged = cache.SelectedIndex != selectedIndex || !ReferenceEquals(cache.Target, target) || !ReferenceEquals(cache.Accessors, accessors);
+        bool targetChanged = cache.SelectedIndex != selectedIndex || !ReferenceEquals(cache.Target, target);
 
         if (targetChanged)
         {
             cache.SelectedIndex = selectedIndex;
             cache.Target = target;
-            cache.Accessors = accessors;
-            cache.Rows = CreatePropertyRows(target, accessors);
-            grid.SetItemsSource(cache.Rows);
+
+            if (cache.SelectedObject == null || !cache.SelectedObject.CanReuseFor(target, categories, descriptors))
+            {
+                cache.SelectedObject = new DebugPropertyGridSelectedObject(target, categories, descriptors);
+                grid.SelectedObject = cache.SelectedObject;
+            }
+            else
+            {
+                cache.SelectedObject.SetInstance(target);
+                if (!ReferenceEquals(grid.SelectedObject, cache.SelectedObject))
+                {
+                    grid.SelectedObject = cache.SelectedObject;
+                }
+                else
+                {
+                    grid.RefreshVisibleValues();
+                }
+            }
             return;
         }
 
-        foreach (object row in cache.Rows)
-        {
-            if (row is PropertyGridRow propertyRow)
-            {
-                propertyRow.Refresh(target);
-            }
-        }
+        grid.RefreshVisibleValues();
     }
 
     // JUSTIFICATION: backend MonoGame only
-    private static void ClearPropertyGrid(MGDataGrid<object> grid, PropertyGridCache cache)
+    private static void ClearPropertyGrid(MGPropertyGrid grid, PropertyGridSelectionCache cache)
     {
-        if (cache.Rows.Count == 0 && cache.Target == null)
+        if (cache.Target == null && grid.SelectedObject == null)
         {
             return;
         }
 
         cache.Clear();
-        grid.SetItemsSource(new List<object>());
+        grid.SelectedObject = null;
     }
 
     // JUSTIFICATION: backend MonoGame only
@@ -1017,16 +939,23 @@ internal sealed class FrmGameDebugPanelController
     // JUSTIFICATION: backend MonoGame only
     private void SetPauseButtonState()
     {
-        if (_gameEngine.StaticVariables.IsGamePaused)
+        bool isPaused = _gameEngine.StaticVariables.IsGamePaused;
+
+        if (_lastPauseButtonIsPaused != isPaused)
         {
-            _buttonPauseGame.SetContent("Paused", Color.DarkRed);
-            _buttonRunOneFrame.IsEnabled = true;
+            if (isPaused)
+            {
+                _buttonPauseGame.SetContent("Paused", Color.DarkRed);
+            }
+            else
+            {
+                _buttonPauseGame.SetContent("Running", Color.ForestGreen);
+            }
+
+            _lastPauseButtonIsPaused = isPaused;
         }
-        else
-        {
-            _buttonPauseGame.SetContent("Running", Color.ForestGreen);
-            _buttonRunOneFrame.IsEnabled = false;
-        }
+
+        _buttonRunOneFrame.IsEnabled = isPaused;
     }
 
     // JUSTIFICATION: backend MonoGame only
@@ -1311,122 +1240,6 @@ internal sealed class FrmGameDebugPanelController
     }
 
     // JUSTIFICATION: backend MonoGame only
-    private List<object> CreatePropertyRows(object target, PropertyMemberAccessor[] accessors)
-    {
-        List<object> rows = new(accessors.Length);
-        string currentCategory = string.Empty;
-        foreach (PropertyMemberAccessor accessor in accessors)
-        {
-            if (!string.Equals(currentCategory, accessor.Category, StringComparison.Ordinal))
-            {
-                currentCategory = accessor.Category;
-                if (!string.IsNullOrEmpty(currentCategory))
-                {
-                    rows.Add(new PropertyGridCategoryRow(currentCategory));
-                }
-            }
-
-            rows.Add(new PropertyGridRow(accessor, target));
-        }
-
-        return rows;
-    }
-
-    // JUSTIFICATION: backend MonoGame only
-    private PropertyMemberAccessor[] GetPropertyAccessors(Type targetType, Dictionary<string, string> categories, Dictionary<string, string> descriptors)
-    {
-        if (_propertyAccessorsByType.TryGetValue(targetType, out PropertyMemberAccessor[]? accessors))
-        {
-            return accessors;
-        }
-
-        List<PropertyMemberAccessor> rows = new();
-        Dictionary<string, int> categoryOrder = CreateCategoryOrder(categories);
-        foreach (PropertyInfo property in targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-        {
-            if (!property.CanRead || property.GetIndexParameters().Length != 0)
-            {
-                continue;
-            }
-
-            string category = GetCategoryName(property.Name, categories);
-            rows.Add(new PropertyMemberAccessor(category, property.Name, target =>
-            {
-                object? value = ReadPropertyValue(target, property);
-                return FormatPropertyValue(property.Name, value, descriptors);
-            }));
-        }
-
-        foreach (FieldInfo field in targetType.GetFields(BindingFlags.Public | BindingFlags.Instance))
-        {
-            if (descriptors.TryGetValue(field.Name, out string? descriptor) && descriptor == MapTilesDescriptorName)
-            {
-                for (int mapTileIndex = 0; mapTileIndex < 4; mapTileIndex++)
-                {
-                    int capturedIndex = mapTileIndex;
-                    string memberName = $"{field.Name}[{capturedIndex}]";
-                    string category = GetCategoryName(field.Name, categories);
-                    rows.Add(new PropertyMemberAccessor(category, memberName, target =>
-                    {
-                        object? value = field.GetValue(target);
-                        return value is Array mapTiles && capturedIndex < mapTiles.Length
-                            ? FormatMapTile(mapTiles.GetValue(capturedIndex))
-                            : string.Empty;
-                    }));
-                }
-            }
-            else
-            {
-                string category = GetCategoryName(field.Name, categories);
-                rows.Add(new PropertyMemberAccessor(category, field.Name, target =>
-                {
-                    object? value = field.GetValue(target);
-                    return FormatPropertyValue(field.Name, value, descriptors);
-                }));
-            }
-        }
-
-        accessors = rows
-            .OrderBy(accessor => GetCategorySortIndex(accessor.Category, categoryOrder))
-            .ThenBy(accessor => accessor.Name, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
-        _propertyAccessorsByType[targetType] = accessors;
-        return accessors;
-    }
-
-    // JUSTIFICATION: backend MonoGame only
-    private static Dictionary<string, int> CreateCategoryOrder(Dictionary<string, string> categories)
-    {
-        Dictionary<string, int> order = new(StringComparer.Ordinal);
-        int index = 0;
-        foreach (string category in categories.Values)
-        {
-            if (!order.ContainsKey(category))
-            {
-                order.Add(category, index++);
-            }
-        }
-
-        return order;
-    }
-
-    // JUSTIFICATION: backend MonoGame only
-    private static string GetCategoryName(string memberName, Dictionary<string, string> categories)
-    {
-        return categories.TryGetValue(memberName, out string? category) ? category : string.Empty;
-    }
-
-    // JUSTIFICATION: backend MonoGame only
-    private static int GetCategorySortIndex(string category, Dictionary<string, int> categoryOrder)
-    {
-        if (string.IsNullOrEmpty(category))
-        {
-            return int.MaxValue;
-        }
-
-        return categoryOrder.TryGetValue(category, out int sortIndex) ? sortIndex : int.MaxValue - 1;
-    }
-
     // JUSTIFICATION: backend MonoGame only
     private static ulong ComputeFlagSignature(uint[] flags)
     {
@@ -1449,60 +1262,6 @@ internal sealed class FrmGameDebugPanelController
         }
 
         return hash;
-    }
-
-    // JUSTIFICATION: backend MonoGame only
-    private object? ReadPropertyValue(object target, PropertyInfo property)
-    {
-        try
-        {
-            return property.GetValue(target);
-        }
-        catch (TargetInvocationException exception)
-        {
-            return exception.InnerException?.Message ?? exception.Message;
-        }
-    }
-
-    // JUSTIFICATION: backend MonoGame only
-    private string FormatPropertyValue(string memberName, object? value, Dictionary<string, string> descriptors)
-    {
-        if (value == null)
-        {
-            return string.Empty;
-        }
-
-        if (descriptors.TryGetValue(memberName, out string? descriptor) && descriptor == ShiftedDescriptorName && value is int rawValue)
-        {
-            return rawValue + " (" + (rawValue >> 16) + ")";
-        }
-
-        return Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty;
-    }
-
-    // JUSTIFICATION: backend MonoGame only
-    private string FormatMapTile(object? mapTile)
-    {
-        if (mapTile == null)
-        {
-            return string.Empty;
-        }
-
-        return $"{ReadMember(mapTile, "TileX")}x{ReadMember(mapTile, "TileY")} {ReadMember(mapTile, "Walkability")} {ReadMember(mapTile, "GroundProperty")} {ReadMember(mapTile, "Slope")} {ReadMember(mapTile, "Height")} {ReadMember(mapTile, "TileId")} {ReadMember(mapTile, "WallTilesOffset")}";
-    }
-
-    // JUSTIFICATION: backend MonoGame only
-    private object ReadMember(object target, string memberName)
-    {
-        Type type = target.GetType();
-        PropertyInfo? property = type.GetProperty(memberName, BindingFlags.Public | BindingFlags.Instance);
-        if (property != null)
-        {
-            return property.GetValue(target) ?? string.Empty;
-        }
-
-        FieldInfo? field = type.GetField(memberName, BindingFlags.Public | BindingFlags.Instance);
-        return field?.GetValue(target) ?? string.Empty;
     }
 
     // JUSTIFICATION: backend MonoGame only
@@ -1670,65 +1429,18 @@ internal sealed class FrmGameDebugPanelController
         }
     }
 
-    private sealed class PropertyGridRow : GridTextRow
-    {
-        private readonly PropertyMemberAccessor _accessor;
-        public override int NameIndentPixels => 8;
-
-        // JUSTIFICATION: backend MonoGame only
-        public PropertyGridRow(PropertyMemberAccessor accessor, object target)
-            : base(accessor.Name, accessor.ReadValue(target))
-        {
-            _accessor = accessor;
-        }
-
-        // JUSTIFICATION: backend MonoGame only
-        public void Refresh(object target)
-        {
-            SetValue(_accessor.ReadValue(target));
-        }
-    }
-
-    private sealed class PropertyGridCategoryRow : GridTextRow
-    {
-        public override bool IsNameBold => true;
-
-        // JUSTIFICATION: backend MonoGame only
-        public PropertyGridCategoryRow(string category)
-            : base(category, string.Empty)
-        {
-        }
-    }
-
-    private sealed class PropertyMemberAccessor
-    {
-        public string Category { get; }
-        public string Name { get; }
-        public Func<object, string> ReadValue { get; }
-
-        // JUSTIFICATION: backend MonoGame only
-        public PropertyMemberAccessor(string category, string name, Func<object, string> readValue)
-        {
-            Category = category;
-            Name = name;
-            ReadValue = readValue;
-        }
-    }
-
-    private sealed class PropertyGridCache
+    private sealed class PropertyGridSelectionCache
     {
         public int SelectedIndex { get; set; } = int.MinValue;
         public object? Target { get; set; }
-        public PropertyMemberAccessor[]? Accessors { get; set; }
-        public List<object> Rows { get; set; } = new();
+        public DebugPropertyGridSelectedObject? SelectedObject { get; set; }
 
         // JUSTIFICATION: backend MonoGame only
         public void Clear()
         {
             SelectedIndex = int.MinValue;
             Target = null;
-            Accessors = null;
-            Rows = new List<object>();
+            SelectedObject = null;
         }
     }
 
