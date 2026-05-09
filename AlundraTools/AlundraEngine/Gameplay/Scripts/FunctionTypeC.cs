@@ -7,6 +7,40 @@ namespace AlundraEngine.Gameplay.Scripts;
 
 public static class FunctionTypeC
 {
+    // GHIDRA: SHORT_ARRAY_80027e54 @ 0x80027E54
+    private static readonly short[] SHORT_ARRAY_80027e54 = [0x64, 0x05, 0x05, 0x05, 0x05, 0x05];
+
+    // GHIDRA: INT_ARRAY_80027e6c @ 0x80027E6C
+    private static readonly int[] INT_ARRAY_80027e6c =
+    [
+        unchecked((int)0xFFB80000), 0x00100000, 0x00100000,
+        unchecked((int)0xFFD80000), 0x00100000, 0x00200000,
+        unchecked((int)0xFFE80000), 0x00100000, 0x00280000,
+        0x00000000, 0x00100000, 0x00300000,
+        0x00180000, 0x00100000, 0x00380000,
+        unchecked((int)0xFFD00000), 0x00100000, 0x00300000
+    ];
+
+    // GHIDRA: INT_ARRAY_80027eb4 @ 0x80027EB4
+    private static readonly int[] INT_ARRAY_80027eb4 =
+    [
+        0x00180000, 0x00D00000,
+        0x01080000, 0x00D00000,
+        0x00180000, 0x01200000,
+        0x01080000, 0x01200000
+    ];
+
+    // GHIDRA: INT_ARRAY_80027ed4 @ 0x80027ED4
+    private static readonly int[] INT_ARRAY_80027ed4 =
+    [
+        0x00300000, 0x00F00000,
+        0x00900000, 0x01200000,
+        0x00300000, 0x01500000,
+        0x00900000, 0x00F00000,
+        0x00300000, 0x01200000,
+        0x00900000, 0x01500000
+    ];
+
     // 80065ED4
     public static void AI_UpdateEntityAI_IdleSkittish(GameEngine gameEngine, Entity entity)
     {
@@ -974,14 +1008,12 @@ public static class FunctionTypeC
         }
     }
 
-    //800647b0
+    // GHIDRA: AI_FUN_800647b0 @ 0x800647B0
     public static void AI_FUN_800647b0(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
-
         if (entity.ParentEntity.AIValues[4] == 0)
         {
-            entity.Flags &= 0xfffffffe;
+            entity.Flags &= 0xFFFFFFFE;
         }
 
         if (entity.Bytes[0] != 0)
@@ -990,7 +1022,7 @@ public static class FunctionTypeC
             {
                 if (entity.SpriteTableIndex == 0x125 && entity.ParentEntity.AIValues[4] != 0)
                 {
-                    entity.TargetDirection = (entity.TargetDirection + 0x10) & 0x1f;
+                    entity.TargetDirection = (entity.TargetDirection + 0x10U) & 0x1F;
                     entity.DelayOrAngle = -entity.DelayOrAngle;
                 }
                 else
@@ -998,15 +1030,15 @@ public static class FunctionTypeC
                     gameEngine.DestroyEntity(entity);
                 }
             }
+
             if (entity.Bytes[0] != 0)
             {
-                goto LAB_80064864;
+                entity.PreviousAdjustedForceX = entity.DelayOrAngle;
+                return;
             }
         }
 
         entity.Bytes[0] = 1;
-
-    LAB_80064864:
         entity.PreviousAdjustedForceX = entity.DelayOrAngle;
     }
 
@@ -1221,11 +1253,9 @@ public static class FunctionTypeC
         entity.AIValues[1] = sVar3;
     }
 
-    //80064d90
+    // GHIDRA: AI_FUN_80064d90 @ 0x80064D90
     public static void AI_FUN_80064d90(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
-
         if (!string.IsNullOrEmpty(entity.Name) 
             && entity.Name != "Melzas2_FinalBoss")
         {
@@ -1233,142 +1263,135 @@ public static class FunctionTypeC
             return;
         }
 
-        //byte bVar1;
-        //short sVar2;
-        //short uVar3;
-        //Entity spawnedEntity;
-        //Entity entity2;
-        //int iVar5;
-        //int iVar6;
-        //uint entityRecordId;
-        //short psVar7;
-        //short psVar8;
-        //
-        //if ((gameEngine.StaticVariables.g_temporaryFlags[0] & 1) != 0)
-        //{
-        //    if (entity.AIValues[4] == 0)
-        //    {
-        //        if ((gameEngine.StaticVariables.g_temporaryFlags[0] & 0x80) != 0)
-        //        {
-        //            entity.Bytes[1] = 0;
-        //            gameEngine.StaticVariables.g_temporaryFlags[0] = gameEngine.StaticVariables.g_temporaryFlags[0] & 0xffffff7f;
-        //        }
-        //        bVar1 = entity.Bytes[1];
-        //        entity.Bytes[2] = 0;
-        //        entity.ItemState = 0;
-        //        entity.AIValues[1] = 0;
-        //        gameEngine.StaticVariables.DAT_80191144 = UNK_80026e6c + (uint)bVar1 * 0x28;
-        //        gameEngine.StaticVariables.g_temporaryFlags[0] = gameEngine.StaticVariables.g_temporaryFlags[0] & 0xfffffeff;
-        //        entity.AIValues[4] = 1;
-        //    }
-        //
-        //    uVar3 = (short)(entity.AIValues[1] + 1);
-        //    entity.AIValues[1] = uVar3;
-        //    iVar5 = 0;
-        //    if (uVar3 < 0x708)
-        //    {
-        //        if (-1 < gameEngine.StaticVariables.g_numberOfEntities)
-        //        {
-        //            do
-        //            {
-        //                entity2 = gameEngine.StaticVariables.g_entitySlots[iVar5];
-        //                iVar5 = iVar5 + 1;
-        //
-        //                if (entity2.EntityRefId - 4U < 9)
-        //                {
-        //                    return;
-        //                }
-        //            } while (iVar5 <= gameEngine.StaticVariables.g_numberOfEntities);
-        //        }
-        //
-        //        iVar5 = entity.DelayOrAngle - 1;
-        //
-        //        if (entity.DelayOrAngle == 0)
-        //        {
-        //            iVar5 = gameEngine.StaticVariables.DAT_80191144[entity.ItemState * 2];
-        //            entity.ItemState = entity.ItemState + 1;
-        //
-        //            switch (iVar5)
-        //            {
-        //                case 1:
-        //                    iVar6 = 0;
-        //                    psVar8 = gameEngine.StaticVariables.SHORT_80026f34;
-        //                    break;
-        //
-        //                case 2:
-        //                    iVar6 = 2;
-        //                    psVar8 = gameEngine.StaticVariables.SHORT_80026f3c;
-        //                    break;
-        //
-        //                case 3:
-        //                    iVar6 = 1;
-        //                    psVar8 = gameEngine.StaticVariables.SHORT_80026f60;
-        //                    break;
-        //
-        //                case 4:
-        //                    iVar6 = 1;
-        //                    psVar8 = gameEngine.StaticVariables.SHORT_80026f84;
-        //                    break;
-        //
-        //                case 6:
-        //                    iVar6 = 1;
-        //                    psVar8 = gameEngine.StaticVariables.SHORT_80026fb4;
-        //                    break;
-        //
-        //                default:
-        //                    entity.ItemState = entity.ItemState - 1;
-        //                    return;
-        //            }
-        //
-        //            psVar8 = (short)(psVar8 + iVar5 * (int)((Random.Next() * (ulong)(iVar6 + 1)) >> 0x20) * 3);
-        //            
-        //            if (iVar5 != 0)
-        //            {
-        //                psVar7 = psVar8 + 2;
-        //
-        //                do
-        //                {
-        //                    entityRecordId = (uint)psVar7[-1];
-        //
-        //                    if ((entityRecordId & 0x80) != 0)
-        //                    {
-        //                        entityRecordId = (gameEngine.StaticVariables.DAT_80026e5e + (entityRecordId & 0xf) * 4) +
-        //                            (int)(Random.Next() * (ulong)((gameEngine.StaticVariables.SHORT_80026e5c)[(entityRecordId & 0xf) * 2] + 1) >> 0x20);
-        //                    }
-        //
-        //                    spawnedEntity = gameEngine.SpawnEntity(entity, entityRecordId, 1);
-        //                    sVar2 = *psVar8;
-        //                    psVar8 = psVar8 + 3;
-        //                    iVar5 = iVar5 - 1;
-        //                    spawnedEntity.AIValues[1] = sVar2;
-        //                    sVar2 = *psVar7;
-        //                    psVar7 = psVar7 + 3;
-        //                    spawnedEntity.ContentsItemId = 0;
-        //                    spawnedEntity.AIValues[4] = sVar2;
-        //                } while (iVar5 != 0);
-        //            }
-        //
-        //            iVar5 = 0x14;
-        //        }
-        //
-        //        entity.DelayOrAngle = iVar5;
-        //    }
-        //    else
-        //    {
-        //        gameEngine.StaticVariables.INT_ARRAY_80191908[0] = (int)entity.Bytes[2];
-        //
-        //        if (gameEngine.StaticVariables.INT_80026e50[entity.Bytes[1] * 2] <= entity.Bytes[2])
-        //        {
-        //            gameEngine.StaticVariables.g_temporaryFlags[0] = gameEngine.StaticVariables.g_temporaryFlags[0] | 0x100;
-        //        }
-        //
-        //        bVar1 = entity.Bytes[1];
-        //        entity.AIValues[4] = 0;
-        //        entity.Bytes[1] = (byte)(bVar1 + 1);
-        //
-        //        gameEngine.StaticVariables.g_temporaryFlags[0] = gameEngine.StaticVariables.g_temporaryFlags[0] & 0xfffffffe;
-        //    }
-        //}
+        const int DAT_80026e5c_Index = 0x06;
+        const int UNK_80026e6c_Index = 0x0E;
+        const int SHORT_80026f34_Index = 0x72;
+        const int SHORT_80026f3c_Index = 0x76;
+        const int SHORT_80026f60_Index = 0x88;
+        const int SHORT_80026f84_Index = 0x9A;
+        const int SHORT_80026fb4_Index = 0xB2;
+
+        var staticVariables = gameEngine.StaticVariables;
+        var rawTable = staticVariables.SHORT_ARRAY_80026e50;
+
+        if ((staticVariables.g_temporaryFlags[0] & 1U) == 0)
+        {
+            return;
+        }
+
+        if (entity.AIValues[4] == 0)
+        {
+            if ((staticVariables.g_temporaryFlags[0] & 0x80U) != 0)
+            {
+                entity.Bytes[1] = 0;
+                staticVariables.g_temporaryFlags[0] &= 0xFFFFFF7F;
+            }
+
+            var phase = entity.Bytes[1];
+            entity.Bytes[2] = 0;
+            entity.ItemState = 0;
+            entity.AIValues[1] = 0;
+            staticVariables.DAT_80191144 = UNK_80026e6c_Index + (phase * 20);
+            staticVariables.g_temporaryFlags[0] &= 0xFFFFFEFF;
+            entity.AIValues[4] = 1;
+        }
+
+        var aiCounter = (ushort)(entity.AIValues[1] + 1);
+        entity.AIValues[1] = unchecked((short)aiCounter);
+
+        if (aiCounter >= 0x708)
+        {
+            staticVariables.INT_ARRAY_80191908[0] = entity.Bytes[2];
+
+            if (rawTable[entity.Bytes[1]] <= entity.Bytes[2])
+            {
+                staticVariables.g_temporaryFlags[0] |= 0x100U;
+            }
+
+            entity.AIValues[4] = 0;
+            entity.Bytes[1] = (byte)(entity.Bytes[1] + 1);
+            staticVariables.g_temporaryFlags[0] &= 0xFFFFFFFE;
+            return;
+        }
+
+        for (var entityIndex = 0;
+             entityIndex <= staticVariables.g_numberOfEntities && entityIndex < staticVariables.g_entitySlots.Length;
+             entityIndex++)
+        {
+            var entity2 = staticVariables.g_entitySlots[entityIndex];
+
+            if (unchecked((uint)(entity2.EntityRefId - 4)) < 9U)
+            {
+                return;
+            }
+        }
+
+        var delay = entity.DelayOrAngle - 1;
+
+        if (entity.DelayOrAngle == 0)
+        {
+            var sequenceValue = rawTable[staticVariables.DAT_80191144 + entity.ItemState];
+            entity.ItemState += 1;
+
+            int randomVariantCount;
+            int patternBaseIndex;
+
+            switch (sequenceValue)
+            {
+                case 1:
+                    randomVariantCount = 0;
+                    patternBaseIndex = SHORT_80026f34_Index;
+                    break;
+
+                case 2:
+                    randomVariantCount = 2;
+                    patternBaseIndex = SHORT_80026f3c_Index;
+                    break;
+
+                case 3:
+                    randomVariantCount = 1;
+                    patternBaseIndex = SHORT_80026f60_Index;
+                    break;
+
+                case 4:
+                    randomVariantCount = 1;
+                    patternBaseIndex = SHORT_80026f84_Index;
+                    break;
+
+                case 6:
+                    randomVariantCount = 1;
+                    patternBaseIndex = SHORT_80026fb4_Index;
+                    break;
+
+                default:
+                    entity.ItemState -= 1;
+                    return;
+            }
+
+            var patternIndex = patternBaseIndex + (sequenceValue * RandomRange((uint)(randomVariantCount + 1)) * 3);
+
+            for (var spawnIndex = 0; spawnIndex < sequenceValue; spawnIndex++)
+            {
+                var nextAiValue = rawTable[patternIndex];
+                var entityRecordId = (ushort)rawTable[patternIndex + 1];
+
+                if ((entityRecordId & 0x80U) != 0)
+                {
+                    var pairIndex = DAT_80026e5c_Index + ((entityRecordId & 0x0FU) * 2);
+                    entityRecordId = (ushort)(rawTable[pairIndex + 1] + RandomRange((uint)(rawTable[pairIndex] + 1)));
+                }
+
+                var spawnedEntity = gameEngine.SpawnEntity(entity, entityRecordId, 1);
+                spawnedEntity.AIValues[1] = nextAiValue;
+                spawnedEntity.ContentsItemId = 0;
+                spawnedEntity.AIValues[4] = rawTable[patternIndex + 2];
+                patternIndex += 3;
+            }
+
+            delay = 0x14;
+        }
+
+        entity.DelayOrAngle = delay;
     }
 
     //80065100
@@ -1426,14 +1449,189 @@ public static class FunctionTypeC
         }
     }
 
-    //80065204
+    // GHIDRA: AI_FUN_80065204 @ 0x80065204
     public static void AI_FUN_80065204(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
-
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
+        }
+
+        var staticVariables = gameEngine.StaticVariables;
+
+        if (entity.Bytes[0] == 0)
+        {
+            entity.Bytes[0] = 1;
+
+            foreach (var effect in staticVariables.g_effectSlots)
+            {
+                if (effect.Status != 2)
+                {
+                    continue;
+                }
+
+                switch (effect.MapEffectId)
+                {
+                    case 0:
+                        if (staticVariables.PTR_ARRAY_80191160[0] == null)
+                        {
+                            staticVariables.PTR_ARRAY_80191160[0] = effect;
+                        }
+                        break;
+
+                    case 1:
+                        staticVariables.PTR_ARRAY_80191160[1] = effect;
+                        break;
+
+                    case 2:
+                        staticVariables.PTR_ARRAY_80191160[2] = effect;
+                        break;
+
+                    case 3:
+                        staticVariables.PTR_ARRAY_80191160[3] = effect;
+                        break;
+                }
+            }
+
+            var effectY = 0x00A80000;
+
+            for (var effectIndex = 0; effectIndex < 4; effectIndex++)
+            {
+                var effect = gameEngine.EffectManager.SpawnSpriteEffect(4, 1);
+
+                if (effect != null)
+                {
+                    staticVariables.PTR_ARRAY_80191150[effectIndex] = effect;
+                    effect.Y = effectY;
+                    effectY += 0x00700000;
+                    effect.X = 0x01E00000;
+                    effect.Z = 0x00300001;
+                }
+            }
+
+            staticVariables.DAT_80191170 = 0;
+            entity.Flags &= 0xFFFFFF7F;
+        }
+
+        if ((staticVariables.g_temporaryFlags[0] & 1U) == 0)
+        {
+            return;
+        }
+
+        if (entity.Bytes[1] == 0)
+        {
+            if (entity.TargetAnimationId == 0)
+            {
+                entity.TargetAnimationId = 1;
+                staticVariables.DAT_80191170 = staticVariables.g_cameraScrollingY;
+                entity.TargetDirection = 0;
+            }
+            else
+            {
+                var deltaY = (staticVariables.g_cameraScrollingY - staticVariables.DAT_80191170) << 16;
+                staticVariables.DAT_80191170 = staticVariables.g_cameraScrollingY;
+
+                if (deltaY != 0)
+                {
+                    staticVariables.g_temporaryFlags[0] |= 2U;
+                }
+
+                foreach (var effect in staticVariables.g_effectSlots)
+                {
+                    var skipTrackedEffect = false;
+
+                    if (effect.Status != 2)
+                    {
+                        continue;
+                    }
+
+                    for (var trackedIndex = 0; trackedIndex < staticVariables.PTR_ARRAY_80191150.Length; trackedIndex++)
+                    {
+                        if (ReferenceEquals(effect, staticVariables.PTR_ARRAY_80191150[trackedIndex]))
+                        {
+                            skipTrackedEffect = true;
+                            break;
+                        }
+                    }
+
+                    if (!skipTrackedEffect)
+                    {
+                        effect.Y += deltaY;
+                    }
+                }
+
+                var aiCounter = (ushort)(entity.AIValues[1] + 1);
+                entity.AIValues[1] = unchecked((short)aiCounter);
+
+                if (aiCounter == 0x130)
+                {
+                    for (var effectIndex = 0; effectIndex < staticVariables.PTR_ARRAY_80191150.Length; effectIndex++)
+                    {
+                        staticVariables.PTR_ARRAY_80191150[effectIndex]!.TargetAnimation = 1;
+                    }
+                }
+
+                if (aiCounter == 0x180)
+                {
+                    staticVariables.g_temporaryFlags[0] |= 4U;
+                    entity.TargetAnimationId = 0;
+                    entity.Bytes[1] = 1;
+                    entity.AIValues[1] = 0;
+                }
+            }
+        }
+
+        entity.DelayOrAngle += 1;
+
+        if ((entity.DelayOrAngle & 7) != 0)
+        {
+            return;
+        }
+
+        var effectId = 5;
+
+        if (entity.ItemState == 0)
+        {
+            effectId = 6;
+            entity.ItemState = 6;
+        }
+
+        for (var sourceIndex = 0; sourceIndex < 2; sourceIndex++)
+        {
+            entity.ItemState -= 1;
+
+            var leftSpawnedEffect = gameEngine.EffectManager.SpawnSpriteEffect(effectId, 1);
+
+            if (leftSpawnedEffect != null)
+            {
+                var sourceEffect = staticVariables.PTR_ARRAY_80191160[sourceIndex]!;
+                leftSpawnedEffect.X = sourceEffect.X + (RandomRange(Random.Next(), 5U) << 19) + 0x00400000;
+                leftSpawnedEffect.Y = sourceEffect.Y - (RandomRange(Random.Next(), 0x0FU) << 19) + 0x00A00000;
+                leftSpawnedEffect.Z = sourceEffect.Z + 0x00A00000;
+
+                if (effectId == 6)
+                {
+                    leftSpawnedEffect.ForceZ = 0x4000;
+                    leftSpawnedEffect.ForceX = -0x4000;
+                }
+            }
+
+            var rightSpawnedEffect = gameEngine.EffectManager.SpawnSpriteEffect(effectId, 1);
+
+            if (rightSpawnedEffect != null)
+            {
+                var sourceEffect = staticVariables.PTR_ARRAY_80191160[sourceIndex + 2]!;
+                rightSpawnedEffect.X = sourceEffect.X + (RandomRange(Random.Next(), 5U) << 19) - 0x00580000;
+                rightSpawnedEffect.Y = sourceEffect.Y - (RandomRange(Random.Next(), 0x0FU) << 19) + 0x00A00000;
+                rightSpawnedEffect.Z = sourceEffect.Z + 0x00A00000;
+
+                if (effectId == 6)
+                {
+                    rightSpawnedEffect.ForceZ = 0x4000;
+                    rightSpawnedEffect.ForceX = 0x4000;
+                }
+            }
         }
     }
 
@@ -2255,6 +2453,21 @@ public static class FunctionTypeC
         }
     }
 
+    // GHIDRA: SHORT_ARRAY_80027644 @ 0x80027644
+    private static readonly short[] SHORT_ARRAY_80027644 = new short[]
+    {
+        0x0C, 0x14, 0x0C, 0x14,
+        0x0C, 0x14, 0x0C, 0x14,
+        0x14, 0x1C, 0x14, 0x1C,
+        0x04, 0x0C, 0x14, 0x1C,
+        0x04, 0x0C, 0x04, 0x0C,
+        0x04, 0x0C, 0x14, 0x1C,
+        0x04, 0x0C, 0x14, 0x1C,
+        0x14, 0x1C, 0x14, 0x1C,
+        0x04, 0x0C, 0x14, 0x1C,
+        0x04, 0x0C, 0x04, 0x0C,
+    };
+
     //8006e83c
     public static void AI_FUN_8006e83c(GameEngine gameEngine, Entity entity)
     {
@@ -2278,11 +2491,402 @@ public static class FunctionTypeC
         }
     }
 
-    //8006eb9c
-    //Abyss Niv.1
+    // GHIDRA: AI_FUN_8006eb9c @ 0x8006EB9C
+    // Abyss Niv.1
     public static void AI_FUN_8006eb9c(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (entity.Bytes[3] != 0 && entity.TargetAnimationId == 0)
+        {
+            if (entity.Bytes[3] < 4)
+            {
+                AI_Melzas2.UpdateEntityAI_BossExplode(gameEngine, entity);
+                return;
+            }
+
+            entity.TargetAnimationId = 7;
+            entity.Flags |= 0x40;
+            return;
+        }
+
+        switch (entity.TargetAnimationId)
+        {
+            case 0:
+                switch (entity.Bytes[2])
+                {
+                    case 3:
+                    {
+                        ushort delay = (ushort)entity.AIValues[1];
+                        if (delay != 0)
+                        {
+                            delay--;
+                            entity.AIValues[1] = unchecked((short)delay);
+                            if (delay != 0)
+                            {
+                                return;
+                            }
+                        }
+
+                        entity.AIValues[1] = 0xB4;
+                        var occupiedSlots = gameEngine.StaticVariables.DAT_80191178;
+                        Array.Clear(occupiedSlots);
+
+                        for (var spawnIndex = 0; spawnIndex != 12; spawnIndex++)
+                        {
+                            var column = (int)((Random.Next() * 6) >> 0x20);
+                            var row = (int)((Random.Next() * 4) >> 0x20);
+                            var occupiedIndex = row * 6 + column;
+
+                            while (occupiedSlots[occupiedIndex] != 0)
+                            {
+                                column += 2;
+
+                                if (column >= 6)
+                                {
+                                    column -= 6;
+                                    row += 1;
+
+                                    if (row >= 6)
+                                    {
+                                        row = 0;
+                                    }
+                                }
+
+                                occupiedIndex = row * 6 + column;
+                            }
+
+                            occupiedSlots[occupiedIndex] = 1;
+
+                            var posX = ((row * 5) << 19) + 0x01800000;
+                            var posY = ((column * 3) << 20) + 0x01500000;
+                            var spawned = gameEngine.SpawnWarpEntity(entity, 1, (uint)(0xE6 | (spawnIndex & 1)), posX, posY, entity.PosZ, 0);
+
+                            if (spawned != null)
+                            {
+                                Random.Next();
+                                spawned.TargetAnimationId = 8;
+                                spawned.Bytes[2] = 3;
+                                spawned.AIValues[1] = (short)(spawnIndex * 3 + 0x0A);
+                            }
+                        }
+
+                        return;
+                    }
+
+                    case 4:
+                    {
+                        ushort delay = (ushort)entity.AIValues[1];
+                        if (delay != 0)
+                        {
+                            delay--;
+                            entity.AIValues[1] = unchecked((short)delay);
+                            return;
+                        }
+
+                        entity.AIValues[1] = 0xC8;
+                        var delayOrAngle = 0x0A;
+
+                        for (var spawnIndex = 0; spawnIndex != 4; spawnIndex++)
+                        {
+                            var direction = ((int)((Random.Next() * 4) >> 0x20) << 3) + 4;
+                            var phase = ((0x20 - direction) & 0x1F) << 3;
+                            var posY = entity.PosY + ((gameEngine.StaticVariables.g_sinTable[phase] * 3) << 11);
+                            var posX = entity.PosX + ((gameEngine.StaticVariables.g_cosTable[phase] * 3) << 11);
+
+                            if ((uint)(posY - 0x01380000) <= 0x01200000 && 0x017FFFFF < posX && posX <= 0x0250FFFF)
+                            {
+                                var spawned = gameEngine.SpawnWarpEntity(entity, 1, (uint)(0xE6 | (spawnIndex & 1)), posX, posY, entity.PosZ, (uint)direction);
+
+                                if (spawned != null)
+                                {
+                                    spawned.TargetAnimationId = 4;
+                                    spawned.DelayOrAngle = delayOrAngle;
+                                    spawned.Bytes[2] = 4;
+                                    spawned.AIValues[1] = (short)(((Random.Next() * 0x15) >> 0x20) + 0x1E);
+
+                                    if ((spawned.PosZ >> 16) != (entity.PosZ >> 16))
+                                    {
+                                        gameEngine.DestroyEntity(spawned);
+                                    }
+                                }
+                            }
+
+                            delayOrAngle += 0x1E;
+                        }
+
+                        return;
+                    }
+
+                    case 5:
+                    {
+                        var delay = (ushort)(entity.AIValues[1] - 1);
+                        entity.AIValues[1] = unchecked((short)delay);
+
+                        if (delay == 0)
+                        {
+                            entity.TargetAnimationId = 3;
+                        }
+
+                        return;
+                    }
+                }
+
+                return;
+
+            case 2:
+                if (entity.ForceResetAnimationFlag != 0)
+                {
+                    entity.TargetAnimationId = 0;
+                }
+
+                return;
+
+            case 3:
+                if (entity.ForceResetAnimationFlag != 0)
+                {
+                    entity.TargetAnimationId = 8;
+                    entity.Bytes[2] = 0;
+                    entity.AIValues[1] = 0x3C;
+                }
+
+                return;
+
+            case 4:
+            {
+                ushort delay = (ushort)entity.AIValues[1];
+                if (delay != 0)
+                {
+                    delay--;
+                    entity.AIValues[1] = unchecked((short)delay);
+                }
+
+                if ((delay & 7) == 0)
+                {
+                    var spawned = gameEngine.SpawnWarpEntity(entity, 1, 0xE4, entity.PosX - 0x10000, entity.PosY, entity.PosZ, 0);
+
+                    if (spawned != null)
+                    {
+                        spawned.TargetAnimationId = 2;
+                        spawned.Flags = (spawned.Flags & 0xFFFFFFFCU) | 0x40;
+                    }
+                }
+
+                if ((delay & 0x3F) == 0)
+                {
+                    var player = gameEngine.StaticVariables.g_entitySlots[0];
+                    var posY = player.PosY + (((int)((Random.Next() * 0x0D) >> 0x20)) << 19) - 0x300000;
+                    if (posY <= 0x0137FFFF)
+                    {
+                        posY = 0x012C0000;
+                    }
+                    else if (posY > 0x02580000)
+                    {
+                        posY = 0x02640000;
+                    }
+
+                    var posX = player.PosX + (((int)((Random.Next() * 0x11) >> 0x20)) << 18) - 0x200000;
+                    if (posX <= 0x017FFFFF)
+                    {
+                        posX = 0x01780000;
+                    }
+                    else if (posX > 0x0250FFFF)
+                    {
+                        posX = 0x02580000;
+                    }
+
+                    var spawned = gameEngine.SpawnWarpEntity(entity, 1, 0xE6, posX, posY, player.PosZ, 0);
+                    if (spawned != null)
+                    {
+                        spawned.TargetAnimationId = 2;
+                        spawned.Bytes[2] = 1;
+                    }
+                }
+
+                if (delay == 0)
+                {
+                    entity.TargetAnimationId = 8;
+                    entity.AIValues[1] = 0x28;
+                    entity.TargetDirection = (entity.TargetDirection + 0x10U) & 0x1FU;
+                }
+
+                return;
+            }
+
+            case 6:
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                if (entity.Bytes[3] != 0)
+                {
+                    entity.TargetAnimationId = 0;
+                    entity.AIValues[1] = 0x12C;
+                    entity.AIValues[5] = 0x1E;
+                    entity.Flags &= 0xFFFFFFFCU;
+                    return;
+                }
+
+                entity.TargetAnimationId = 3;
+                entity.Bytes[2] = 0;
+                entity.AIValues[1] = 0x3C;
+                return;
+
+            case 8:
+            {
+                ushort delay = (ushort)entity.AIValues[1];
+                if (delay != 0)
+                {
+                    delay--;
+                    entity.AIValues[1] = unchecked((short)delay);
+                    if (delay != 0)
+                    {
+                        return;
+                    }
+                }
+
+                switch (entity.Bytes[2])
+                {
+                    case 0:
+                        entity.Bytes[2] = 1;
+                        entity.AIValues[1] = 0x3C;
+                        entity.Bytes[1] = (byte)(((Random.Next() * 3) >> 0x20) + 1);
+                        return;
+
+                    case 1:
+                        if (entity.Bytes[1] != 0)
+                        {
+                            entity.Bytes[1] = (byte)(entity.Bytes[1] - 1);
+                            entity.Bytes[2] = 1;
+                            entity.TargetAnimationId = 4;
+                            entity.AIValues[1] = 0x40;
+
+                            var directionIndex = (int)((Random.Next() * 4) >> 0x20);
+                            var baseIndex = entity.Bytes[0] << 2;
+                            short targetDirection;
+
+                            do
+                            {
+                                targetDirection = SHORT_ARRAY_80027644[baseIndex + directionIndex];
+                                directionIndex = (directionIndex + 1) & 3;
+                            } while ((uint)targetDirection == entity.TargetDirection);
+
+                            entity.TargetDirection = (uint)targetDirection;
+
+                            if (targetDirection == 4)
+                            {
+                                entity.Bytes[0] = (byte)(entity.Bytes[0] - 3);
+                            }
+                            else if (targetDirection == 0x0C)
+                            {
+                                entity.Bytes[0] = (byte)(entity.Bytes[0] + 2);
+                            }
+                            else if (targetDirection == 0x14)
+                            {
+                                entity.Bytes[0] = (byte)(entity.Bytes[0] + 3);
+                            }
+                            else
+                            {
+                                entity.Bytes[0] = (byte)(entity.Bytes[0] - 2);
+                            }
+
+                            return;
+                        }
+
+                        if ((entity.Bytes[0] == 3 || entity.Bytes[0] == 5 || entity.Bytes[0] == 6 || entity.Bytes[0] == 8)
+                            && (int)((Random.Next() * 3) >> 0x20) == 0)
+                        {
+                            entity.Bytes[2] = 5;
+                            return;
+                        }
+
+                        switch ((int)((Random.Next() * 8) >> 0x20))
+                        {
+                            case 0:
+                            case 2:
+                            case 4:
+                                entity.Bytes[2] = 2;
+                                entity.AIValues[4] = 8;
+                                entity.DelayOrAngle = (int)((Random.Next() * 0x20) >> 0x20);
+                                return;
+
+                            case 6:
+                            case 7:
+                                entity.Bytes[2] = 3;
+                                return;
+
+                            default:
+                                entity.Bytes[2] = 4;
+                                return;
+                        }
+
+                    case 2:
+                        if (entity.AIValues[4] == 0)
+                        {
+                            entity.Bytes[2] = 0;
+                            return;
+                        }
+
+                        entity.AIValues[4] = (short)(entity.AIValues[4] - 1);
+                        entity.AIValues[1] = 0x0C;
+                        entity.DelayOrAngle = (entity.DelayOrAngle + 2) & 0x1F;
+                        gameEngine.SoundManager.PlaySoundEffect(0xBE);
+
+                        for (var spawnIndex = 0; spawnIndex != 4; spawnIndex++)
+                        {
+                            var direction = (entity.DelayOrAngle + (spawnIndex << 3)) & 0x1F;
+                            var phase = ((0x20 - direction) & 0x1F) << 3;
+                            var posY = entity.PosY + ((gameEngine.StaticVariables.g_sinTable[phase] * 3) << 11);
+                            var posX = entity.PosX + ((gameEngine.StaticVariables.g_cosTable[phase] * 3) << 11);
+                            var spawned = gameEngine.SpawnWarpEntity(entity, 1, 0xE4, posX, posY, entity.PosZ, (uint)direction);
+
+                            if (spawned != null)
+                            {
+                                spawned.TargetAnimationId = 3;
+                                spawned.AIValues[1] = (short)(spawnIndex * 3);
+                            }
+                        }
+
+                        return;
+
+                    case 3:
+                        entity.TargetAnimationId = 2;
+                        entity.AIValues[1] = 0x14;
+                        return;
+
+                    case 4:
+                        entity.TargetAnimationId = 2;
+                        return;
+
+                    case 5:
+                    {
+                        entity.TargetAnimationId = 2;
+                        entity.AIValues[1] = 0x78;
+                        var direction = 0;
+
+                        for (var spawnIndex = 0; spawnIndex != 8; spawnIndex++)
+                        {
+                            var phase = ((0x20 - direction) & 0x1F) << 3;
+                            var posY = entity.PosY + (gameEngine.StaticVariables.g_sinTable[phase] << 12);
+                            var posX = entity.PosX + (gameEngine.StaticVariables.g_cosTable[phase] << 12);
+                            var spawned = gameEngine.SpawnWarpEntity(entity, 1, (uint)(0xE6 | (spawnIndex & 1)), posX, posY, entity.PosZ, (uint)direction);
+
+                            if (spawned != null)
+                            {
+                                spawned.TargetAnimationId = 2;
+                                spawned.Bytes[2] = 5;
+                                spawned.AIValues[1] = 0x5A;
+                            }
+
+                            direction = (direction - 4) & 0x1F;
+                        }
+
+                        return;
+                    }
+                }
+
+                return;
+            }
+        }
     }
 
     //8006f860
@@ -2313,23 +2917,241 @@ public static class FunctionTypeC
         }
     }
 
-    //8006f8e4
+    // GHIDRA: AI_FUN_8006f8e4 @ 0x8006F8E4
     public static void AI_FUN_8006f8e4(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        var parentEntity = entity.ParentEntity;
+
+        if (parentEntity.Bytes[3] != 0)
+        {
+            if (entity.TargetAnimationId != 8 && entity.TargetAnimationId != 4)
+            {
+                entity.TargetAnimationId = 7;
+                entity.Flags |= 0x40;
+                return;
+            }
+
+            gameEngine.DestroyEntity(entity);
+            return;
+        }
+
+        var relativePositions = new int[6];
+        ScriptHelper.CalculateEntityRelativePosition(entity, gameEngine.StaticVariables.PlayerEntity, relativePositions);
+
+        switch (entity.TargetAnimationId)
+        {
+            case 1:
+            {
+                entity.DelayOrAngle += 1;
+
+                if ((entity.DelayOrAngle & 7) == 0)
+                {
+                    var spawned = gameEngine.SpawnWarpEntity(entity, 1, 0xE4, entity.PosX, entity.PosY - 0x10000, entity.PosZ, 0);
+
+                    if (spawned != null)
+                    {
+                        spawned.TargetAnimationId = 2;
+                        spawned.Flags = (spawned.Flags & 0xFFFFFFFCU) | 0x40;
+                    }
+                }
+
+                if (entity.Bytes[2] == 4)
+                {
+                    if (parentEntity.TargetAnimationId == 3)
+                    {
+                        entity.TargetAnimationId = 10;
+                        return;
+                    }
+
+                    ushort delay = (ushort)entity.AIValues[1];
+                    if (delay != 0)
+                    {
+                        delay--;
+                        entity.AIValues[1] = unchecked((short)delay);
+                        if (delay != 0)
+                        {
+                            return;
+                        }
+                    }
+
+                    entity.AIValues[1] = 8;
+                    entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(
+                        gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                        gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                    entity.Bytes[0] = (byte)(entity.Bytes[0] + 1);
+                    return;
+                }
+
+                if (entity.Bytes[2] != 5)
+                {
+                    return;
+                }
+
+                short delay2 = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = delay2;
+
+                if (delay2 != 0 && entity.ForceAdjusted == 0)
+                {
+                    byte state = (byte)(entity.Bytes[0] - 1);
+                    entity.Bytes[0] = state;
+                    if (state != 0)
+                    {
+                        return;
+                    }
+
+                    entity.Bytes[0] = 6;
+                    entity.TargetDirection = (entity.TargetDirection + 1) & 0x1F;
+                    return;
+                }
+
+                entity.TargetAnimationId = 10;
+                return;
+            }
+
+            case 2:
+            {
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                byte byte2 = entity.Bytes[2];
+                if (byte2 == 3 || byte2 == 1)
+                {
+                    entity.TargetAnimationId = 3;
+                    byte2 = entity.Bytes[2];
+                }
+
+                if (byte2 == 5)
+                {
+                    gameEngine.SoundManager.PlaySoundEffect(0x6E);
+                    entity.TargetAnimationId = 1;
+                    entity.Bytes[0] = 6;
+                }
+
+                if (entity.Bytes[2] == 4)
+                {
+                    entity.TargetAnimationId = 1;
+                    entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(
+                        gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                        gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                }
+
+                return;
+            }
+
+            case 3:
+            case 10:
+            {
+                if (entity.ForceResetAnimationFlag != 0)
+                {
+                    entity.TargetAnimationId = 9;
+                }
+
+                return;
+            }
+
+            case 4:
+            {
+                if (parentEntity.Bytes[2] != entity.Bytes[2])
+                {
+                    gameEngine.DestroyEntity(entity);
+                    return;
+                }
+
+                if (parentEntity.Bytes[2] != 4)
+                {
+                    return;
+                }
+
+                ushort delay = (ushort)entity.AIValues[1];
+                if (delay != 0)
+                {
+                    delay--;
+                    entity.AIValues[1] = unchecked((short)delay);
+                    if (delay != 0 && entity.ForceAdjusted == 0)
+                    {
+                        return;
+                    }
+                }
+
+                entity.TargetAnimationId = 8;
+                entity.AIValues[1] = (short)entity.DelayOrAngle;
+                return;
+            }
+
+            case 8:
+            {
+                if (parentEntity.Bytes[2] != entity.Bytes[2])
+                {
+                    gameEngine.DestroyEntity(entity);
+                    return;
+                }
+
+                ushort delay = (ushort)entity.AIValues[1];
+                delay--;
+                entity.AIValues[1] = unchecked((short)delay);
+                if (delay == 0)
+                {
+                    entity.TargetAnimationId = 2;
+                }
+
+                return;
+            }
+
+            case 9:
+            {
+                if (entity.ForceResetAnimationFlag != 0)
+                {
+                    gameEngine.DestroyEntity(entity);
+                }
+
+                return;
+            }
+        }
     }
 
-    //80073728
+    // GHIDRA: AI_FUN_80073728 @ 0x80073728
     public static void AI_FUN_80073728(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        var parent = entity.ParentEntity;
+        entity.PosY = parent.PosY;
+
+        if (parent.TargetAnimationId == 9 || parent.TargetAnimationId == 6)
+        {
+            entity.TargetAnimationId = 2;
+            entity.Flags |= 0x40;
+        }
+
+        if (entity.TargetAnimationId == 1)
+        {
+            if (entity.ForceResetAnimationFlag != 0)
+            {
+                entity.TargetAnimationId = 0;
+                entity.AIValues[1] = 0xB4;
+            }
+
+            return;
+        }
+
+        if (entity.TargetAnimationId != 0)
+        {
+            return;
+        }
+
+        var delay = (ushort)(entity.AIValues[1] - 1);
+        entity.AIValues[1] = unchecked((short)delay);
+
+        if (delay == 0)
+        {
+            entity.TargetAnimationId = 2;
+            entity.Flags |= 0x40;
+        }
     }
 
-    //80074ae8
+    // GHIDRA: AI_FUN_80074ae8 @ 0x80074AE8
     public static void AI_FUN_80074ae8(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
-
         short sVar1;
         uint uVar2;
         Entity entity2;
@@ -2515,12 +3337,709 @@ public static class FunctionTypeC
         }
     }
 
-    //80075a3c
+    // GHIDRA: AI_FUN_80075a3c @ 0x80075A3C
     public static void AI_FUN_80075a3c(GameEngine gameEngine, Entity entity)
     {
         if (entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
+        }
+
+        byte bVar2;
+        short sVar4;
+        int iVar5;
+        int iVar9;
+        uint uVar6;
+        Entity? pEVar7;
+        int[] positions = new int[6];
+        var staticVariables = gameEngine.StaticVariables;
+        var player = staticVariables.g_entitySlots[0];
+        var spawnTable = staticVariables.INT_ARRAY_80027c80;
+
+        if (entity.DelayOrAngle == 0)
+        {
+            entity.DelayOrAngle = 1;
+            staticVariables.DAT_801911cc = 0;
+            staticVariables.DAT_801911c8 = 0;
+            staticVariables.DAT_801911c4 = 0;
+            staticVariables.DAT_801911c0 = 0;
+            staticVariables.DAT_801911dc = 0;
+            staticVariables.DAT_801911d8 = 0;
+            staticVariables.DAT_801911d4 = 0;
+            staticVariables.DAT_801911d0 = 0;
+            staticVariables.DAT_801911e8 = 0;
+            staticVariables.DAT_801911e4 = 0;
+            staticVariables.DAT_801911e0 = 0;
+            staticVariables.PTR_801911ec = null;
+        }
+
+        iVar5 = staticVariables.DAT_801911e8 - 1;
+        if (staticVariables.DAT_801911e8 != 0)
+        {
+            staticVariables.DAT_801911e8 = iVar5;
+
+            if (iVar5 == 0)
+            {
+                staticVariables.g_scrollingParameters.Flag = 0;
+            }
+        }
+
+        if (entity.Bytes[0] == 6)
+        {
+            entity.ItemState += 1;
+
+            if ((entity.ItemState & 0xF) == 0)
+            {
+                int targetX;
+                int targetY;
+
+                if (staticVariables.PTR_801911ec == null)
+                {
+                    targetX = entity.PosX;
+                    targetY = entity.PosY;
+                }
+                else
+                {
+                    targetX = staticVariables.PTR_801911ec.PosX;
+                    targetY = staticVariables.PTR_801911ec.PosY;
+                }
+
+                staticVariables.DAT_801911dc = ScriptHelper.GetDirectionToTarget(player.PosX - targetX, player.PosY - targetY);
+
+                if (entity.TargetAnimationId == 5)
+                {
+                    pEVar7 = gameEngine.SpawnWarpEntity(entity, 1, 0xE0,
+                        entity.PosX - 0x1E0000,
+                        entity.PosY + 0x200000,
+                        entity.TerrainHeight,
+                        0);
+
+                    if (pEVar7 != null)
+                    {
+                        pEVar7.TargetAnimationId = 4;
+                        pEVar7.Flags |= 0x40;
+                    }
+                }
+            }
+
+            iVar5 = staticVariables.g_offsetXList[staticVariables.DAT_801911dc] * 0xA0;
+            if (((iVar5 >= 0) || (0x900000 < entity.ModdedPosX - 0x10000)) &&
+                ((iVar5 <= 0) || (entity.ModdedPosX + entity.Width + 0x10001 < 0x2100000)))
+            {
+                entity.PreviousAdjustedForceX = iVar5;
+            }
+
+            iVar5 = staticVariables.g_offsetYList[staticVariables.DAT_801911dc] * 0xA0;
+            if (((iVar5 >= 0) || (0x2700000 < entity.ModdedPosY - 0x10000)) &&
+                ((iVar5 <= 0) || (entity.ModdedPosY + entity.Height + 0x10001 < 0x3900000)))
+            {
+                entity.PreviousAdjustedForceY = iVar5;
+            }
+
+            if (staticVariables.PTR_801911ec != null)
+            {
+                staticVariables.PTR_801911ec.PosX = entity.PosX - 0x1E0000;
+                staticVariables.PTR_801911ec.PosY = entity.PosY + 0x1A0000;
+            }
+        }
+
+        if (entity.Bytes[3] != 0 && entity.TargetAnimationId == 0)
+        {
+            if (entity.Bytes[3] < 4)
+            {
+                AI_Melzas2.UpdateEntityAI_BossExplode(gameEngine, entity);
+                return;
+            }
+
+            entity.TargetAnimationId = 8;
+            entity.Flags |= 0x40;
+            return;
+        }
+
+        FUN_8007fe8c(gameEngine, entity, positions);
+
+        switch (entity.TargetAnimationId)
+        {
+            case 0:
+                if (entity.AIValues[1] != 0)
+                {
+                    entity.AIValues[1] = (short)(entity.AIValues[1] - 1);
+                    return;
+                }
+
+                if (entity.Bytes[0] == 8)
+                {
+                    if (entity.PosZ - entity.TerrainHeight < 0xA00000)
+                    {
+                        entity.TargetAnimationId = 2;
+                        entity.Bytes[0] = 0;
+                        break;
+                    }
+
+                    entity.TargetAnimationId = 3;
+                    entity.AIValues[1] = 0;
+                    entity.ItemState = 0x1C;
+                    entity.Flags |= 0x100;
+                    break;
+                }
+
+                bVar2 = entity.Bytes[2];
+                if (bVar2 != 0)
+                {
+                    entity.Bytes[2] = (byte)(bVar2 - 1);
+                }
+
+                if ((bVar2 == 0 || bVar2 == 1) &&
+                    entity.IsOnGround != 0 &&
+                    positions[3] >= 0 &&
+                    positions[3] < 2 &&
+                    positions[4] < 0)
+                {
+                    entity.TargetAnimationId = 4;
+                    return;
+                }
+
+                if (entity.Bytes[0] == 1)
+                {
+                    if (entity.Bytes[1] == 0)
+                    {
+                        staticVariables.DAT_801911c8 = (staticVariables.DAT_801911d8 - 3) * 0x80;
+                        staticVariables.DAT_801911cc = staticVariables.DAT_801911c8;
+                        entity.Bytes[1] = 1;
+                        staticVariables.DAT_801911c0 = 0x01500000 + (entity.PosX - spawnTable[staticVariables.DAT_801911d8 * 2]);
+                        staticVariables.DAT_801911c4 = (entity.PosY - spawnTable[(staticVariables.DAT_801911d8 * 2) + 1]) + 0x03100000;
+                    }
+
+                    staticVariables.DAT_801911c8 = (staticVariables.DAT_801911c8 + 2) & 0x1FF;
+                    if (staticVariables.DAT_801911c8 == staticVariables.DAT_801911cc)
+                    {
+                        entity.Bytes[0] = 0;
+                        entity.TargetAnimationId = 2;
+                    }
+
+                    entity.PosX = staticVariables.DAT_801911c0 + staticVariables.g_sinus[staticVariables.DAT_801911c8] * 0x3000;
+                    entity.PosY = staticVariables.DAT_801911c4 + staticVariables.g_cosinus[staticVariables.DAT_801911c8] * -0x3000;
+                    return;
+                }
+
+                if (entity.Bytes[0] != 2)
+                {
+                    sVar4 = entity.AIValues[4];
+                    entity.Bytes[0] = 0;
+
+                    switch (sVar4 == 0 ? 4 : (int)((Random.Next() * 4UL) >> 32))
+                    {
+                        case 0:
+                        case 3:
+                            entity.Bytes[0] = 4;
+                            entity.Bytes[1] = 5;
+                            entity.TargetAnimationId = 1;
+                            entity.AIValues[4] = (short)(sVar4 - 1);
+                            entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(player.PosX - entity.PosX, player.PosY - entity.PosY);
+                            entity.AIValues[1] = 0x3C;
+                            return;
+
+                        case 1:
+                            entity.Bytes[0] = 3;
+                            entity.Bytes[1] = 5;
+                            entity.AIValues[4] = (short)(sVar4 - 1);
+                            entity.TargetAnimationId = 1;
+                            entity.AIValues[1] = 0x3C;
+                            entity.TargetDirection = (uint)((Random.Next() * 0x20UL) >> 32);
+                            return;
+
+                        case 2:
+                            entity.Bytes[0] = 8;
+                            entity.TargetAnimationId = 1;
+                            entity.AIValues[4] = (short)(sVar4 - 1);
+                            staticVariables.DAT_801911d8 = 3;
+                            return;
+
+                        case 4:
+                            entity.TargetAnimationId = 2;
+                            entity.Bytes[0] = 5;
+                            entity.AIValues[4] = (short)(((Random.Next() * 3UL) >> 32) + 2);
+                            return;
+
+                        default:
+                            return;
+                    }
+                }
+
+                switch (entity.Bytes[1])
+                {
+                    case 0:
+                        entity.Bytes[1] = (byte)(staticVariables.DAT_801911d8 + 1);
+                        staticVariables.DAT_801911c4 = (entity.PosY - spawnTable[(staticVariables.DAT_801911d8 * 2) + 1]) + 0x02C00000;
+
+                        if (staticVariables.DAT_801911d8 == 0)
+                        {
+                            staticVariables.DAT_801911c8 = 0x180;
+                            iVar9 = entity.PosX - spawnTable[0];
+                            iVar5 = 0x1080000;
+                        }
+                        else
+                        {
+                            if (staticVariables.DAT_801911d8 == 1)
+                            {
+                                staticVariables.DAT_801911c8 = 0x180;
+                                iVar9 = entity.PosX - spawnTable[2];
+                            }
+                            else
+                            {
+                                staticVariables.DAT_801911c8 = 0x80;
+                                iVar9 = entity.PosX - spawnTable[staticVariables.DAT_801911d8 * 2];
+                            }
+
+                            iVar5 = 0x1980000;
+                        }
+
+                        staticVariables.DAT_801911c0 = iVar9 + iVar5;
+                        break;
+
+                    case 1:
+                        staticVariables.DAT_801911c8 = (staticVariables.DAT_801911c8 + 4) & 0x1FF;
+                        if (staticVariables.DAT_801911c8 == 0x80)
+                        {
+                            if (staticVariables.DAT_801911d8 == 1)
+                            {
+                                entity.Bytes[0] = 0x80;
+                            }
+
+                            staticVariables.DAT_801911c8 = 0x180;
+                            staticVariables.DAT_801911c0 += 0x900000;
+                            entity.Bytes[1] = 2;
+                        }
+                        break;
+
+                    case 2:
+                        staticVariables.DAT_801911c8 = (staticVariables.DAT_801911c8 - 4) & 0x1FF;
+                        if (staticVariables.DAT_801911c8 == 0x80)
+                        {
+                            if (staticVariables.DAT_801911d8 == 2)
+                            {
+                                entity.Bytes[0] = 0x80;
+                            }
+
+                            entity.Bytes[1] = 3;
+                        }
+                        break;
+
+                    case 3:
+                        staticVariables.DAT_801911c8 = (staticVariables.DAT_801911c8 - 4) & 0x1FF;
+                        if (staticVariables.DAT_801911c8 == 0x180)
+                        {
+                            staticVariables.DAT_801911c8 = 0x80;
+                            staticVariables.DAT_801911c0 -= 0x900000;
+                            entity.Bytes[1] = 4;
+                        }
+                        break;
+
+                    case 4:
+                        staticVariables.DAT_801911c8 = (staticVariables.DAT_801911c8 + 4) & 0x1FF;
+                        if (staticVariables.DAT_801911c8 == 0x180)
+                        {
+                            if (staticVariables.DAT_801911d8 == 0)
+                            {
+                                entity.Bytes[0] = 0x80;
+                            }
+
+                            entity.Bytes[1] = 1;
+                        }
+                        break;
+                }
+
+                entity.PosX = staticVariables.DAT_801911c0 + staticVariables.g_sinus[staticVariables.DAT_801911c8] * 0x1800;
+                entity.PosY = staticVariables.DAT_801911c4 + staticVariables.g_cosinus[staticVariables.DAT_801911c8] * -0x1800;
+
+                if (entity.Bytes[0] == 0x80)
+                {
+                    entity.Bytes[0] = 0;
+                    entity.TargetAnimationId = 2;
+                }
+
+                return;
+
+            case 1:
+                bVar2 = entity.Bytes[0];
+                if (bVar2 == 5 || bVar2 == 8)
+                {
+                    iVar9 = entity.PosX - spawnTable[staticVariables.DAT_801911d8 * 2];
+                    int iVar10 = entity.PosY - spawnTable[(staticVariables.DAT_801911d8 * 2) + 1];
+                    iVar5 = iVar9;
+                    if (iVar5 < 0)
+                    {
+                        iVar5 = -iVar5;
+                    }
+
+                    if (0x60000 < iVar5)
+                    {
+                        entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(-iVar9, -iVar10);
+                        return;
+                    }
+
+                    iVar5 = iVar10;
+                    if (iVar5 < 0)
+                    {
+                        iVar5 = -iVar5;
+                    }
+
+                    if (0x60000 < iVar5)
+                    {
+                        entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(-iVar9, -iVar10);
+                        return;
+                    }
+
+                    if (bVar2 == 5)
+                    {
+                        entity.TargetAnimationId = 3;
+                        return;
+                    }
+
+                    entity.TargetAnimationId = 2;
+                    return;
+                }
+
+                sVar4 = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = sVar4;
+                if (sVar4 != 0)
+                {
+                    if (entity.ForceAdjusted != 0 ||
+                        entity.PosX < 0x900000 ||
+                        0x1F80000 < entity.PosX ||
+                        entity.PosY < 0x2700000 ||
+                        0x3A00000 < entity.PosY)
+                    {
+                        bVar2 = staticVariables.g_directionFlipTable[entity.TargetDirection];
+                        entity.ForceStepY = 0;
+                        entity.ForceStepX = 0;
+                        entity.ForceY = 0;
+                        entity.ForceX = 0;
+                        entity.TargetForceY = 0;
+                        entity.TargetForceX = 0;
+                        entity.TargetDirection = bVar2;
+                        return;
+                    }
+
+                    if (positions[0] < 3 && positions[1] < 3)
+                    {
+                        entity.TargetAnimationId = 10;
+                        entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(player.PosX - entity.PosX, player.PosY - entity.PosY);
+                        entity.Flags |= 0x100;
+                        return;
+                    }
+
+                    if (0x35FFFFF < entity.PosY)
+                    {
+                        return;
+                    }
+
+                    if (!gameEngine.EntityGameplayManager.TryAttackPlayer2(entity, positions, 0, 3, 5, 0x500000))
+                    {
+                        return;
+                    }
+
+                    entity.Bytes[0] = 6;
+                    entity.TargetAnimationId = 4;
+                    entity.ItemState = 0;
+                    staticVariables.DAT_801911dc = ScriptHelper.GetDirectionToTarget(player.PosX - entity.PosX, player.PosY - entity.PosY);
+                    entity.TargetDirection = (uint)staticVariables.DAT_801911dc;
+                    return;
+                }
+
+                bVar2 = (byte)(entity.Bytes[1] - 1);
+                entity.Bytes[1] = bVar2;
+                if (bVar2 != 0)
+                {
+                    if (entity.Bytes[0] == 3)
+                    {
+                        entity.TargetDirection = (uint)((Random.Next() * 0x20UL) >> 32);
+                    }
+                    else
+                    {
+                        entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(player.PosX - entity.PosX, player.PosY - entity.PosY);
+                    }
+
+                    entity.AIValues[1] = 0x3C;
+                    return;
+                }
+
+                entity.TargetAnimationId = 0;
+                entity.AIValues[1] = 0x3C;
+                entity.Bytes[0] = 0;
+                break;
+
+            case 2:
+                iVar5 = entity.PosZ - entity.TerrainHeight;
+                bVar2 = entity.Bytes[0];
+                entity.AIValues[1] = (short)((entity.AIValues[1] + 1) & 0xF);
+
+                if (bVar2 == 8)
+                {
+                    if (0x9FFFFF < iVar5)
+                    {
+                        entity.ForceZ = 0;
+                        entity.Flags &= 0xFFFFFEFFU;
+                        gameEngine.SoundManager.PlaySoundEffect(0x63);
+                        entity.AIValues[1] = 0x28;
+                        entity.TargetAnimationId = 0;
+                        return;
+                    }
+                }
+                else if (0x3FFFFF < iVar5)
+                {
+                    entity.ForceZ = 0;
+                    entity.Flags &= 0xFFFFFEFFU;
+
+                    if (entity.Bytes[0] == 5)
+                    {
+                        entity.TargetAnimationId = 1;
+                        staticVariables.DAT_801911d8 = (int)((Random.Next() * 7UL) >> 32);
+                        return;
+                    }
+
+                    entity.TargetAnimationId = 0;
+                    entity.AIValues[1] = 0x3C;
+                    return;
+                }
+
+                if (0x2FFFFF < iVar5 || entity.AIValues[1] != 0 || entity.Bytes[0] == 7)
+                {
+                    entity.Flags &= 0xFFFFFEFFU;
+                    return;
+                }
+
+                entity.Flags |= 0x100;
+                break;
+
+            case 3:
+                if (entity.Bytes[0] == 8)
+                {
+                    iVar5 = entity.ItemState;
+                    if (7 < iVar5)
+                    {
+                        staticVariables.DAT_801911e4 = (positions[1] << 20) / iVar5;
+                        staticVariables.DAT_801911e0 = (positions[0] * 0x180000) / iVar5;
+
+                        if (positions[3] >= 0)
+                        {
+                            staticVariables.DAT_801911e0 = -staticVariables.DAT_801911e0;
+                        }
+
+                        if (positions[4] >= 0)
+                        {
+                            staticVariables.DAT_801911e4 = -staticVariables.DAT_801911e4;
+                        }
+
+                        entity.ItemState -= 1;
+                    }
+
+                    if (entity.ModdedPosX - 0x10000 < 0x900001 ||
+                        0x20FFFFF < entity.ModdedPosX + entity.Width + 0x10001)
+                    {
+                        staticVariables.DAT_801911e0 = 0;
+                    }
+                    else if (entity.ModdedPosY - 0x10000 < 0x2700001 ||
+                             0x3AFFFFF < entity.ModdedPosY + entity.Height + 0x10001)
+                    {
+                        staticVariables.DAT_801911e4 = 0;
+                    }
+
+                    entity.PreviousAdjustedForceX = staticVariables.DAT_801911e0;
+                    entity.PreviousAdjustedForceY = staticVariables.DAT_801911e4;
+                }
+
+                if (entity.AIValues[1] == 0 && entity.PosZ - entity.TerrainHeight < 0x200001)
+                {
+                    entity.AIValues[1] = 1;
+                    entity.ForceZ >>= 1;
+
+                    if (entity.Bytes[0] == 8)
+                    {
+                        entity.Flags &= 0xFFFFFEFFU;
+                    }
+                }
+
+                if (entity.IsOnGround != 0)
+                {
+                    bVar2 = entity.Bytes[0];
+                    entity.AIValues[1] = 0;
+                    entity.TargetAnimationId = 0;
+
+                    if (bVar2 == 5)
+                    {
+                        entity.Bytes[1] = 0;
+                        bVar2 = 2;
+                        if (2 < staticVariables.DAT_801911d8)
+                        {
+                            bVar2 = 1;
+                        }
+
+                        entity.Bytes[0] = bVar2;
+                    }
+
+                    if (entity.Bytes[0] == 8)
+                    {
+                        staticVariables.DAT_801911e4 = 0;
+                        staticVariables.DAT_801911e0 = 0;
+                        entity.AIValues[1] = 0x1E;
+                        staticVariables.DAT_801911e8 = 0x14;
+                        staticVariables.g_scrollingParameters.Flag = 1;
+                        staticVariables.g_scrollingParameters.SpeedX = 1;
+                        staticVariables.g_scrollingParameters.SpeedY = 1;
+                        staticVariables.g_scrollingParameters.LimitX = 2;
+                        staticVariables.g_scrollingParameters.LimitY = 2;
+                    }
+                }
+                break;
+
+            case 4:
+                if (entity.ForceResetAnimationFlag != 0)
+                {
+                    entity.TargetAnimationId = 5;
+                    if (entity.IsOnGround == 0)
+                    {
+                        gameEngine.SoundManager.PlaySoundEffect(0x62);
+                        staticVariables.PTR_801911ec = gameEngine.SpawnWarpEntity(entity, 1, 0xE0,
+                            entity.PosX - 0x1E0000,
+                            entity.PosY + 0x1A0000,
+                            entity.PosZ - 0x3C0000,
+                            0);
+                        entity.AIValues[1] = 0xF0;
+                    }
+                    else
+                    {
+                        entity.AIValues[1] = 1;
+                        entity.Bytes[2] = 0;
+                    }
+                }
+                break;
+
+            case 5:
+                sVar4 = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = sVar4;
+                if (sVar4 == 0)
+                {
+                    if (entity.IsOnGround == 0)
+                    {
+                        gameEngine.SoundManager.PlaySoundEffect(0x62);
+                        Entity effectEntity = staticVariables.PTR_801911ec!;
+                        entity.TargetAnimationId = 6;
+                        staticVariables.PTR_801911ec = null;
+                        effectEntity.TargetAnimationId = 2;
+                        effectEntity.Flags |= 0x40;
+                    }
+                    else
+                    {
+                        gameEngine.SoundManager.PlaySoundEffect(0x61);
+                        uVar6 = 0x1D;
+                        do
+                        {
+                            pEVar7 = gameEngine.SpawnWarpEntity(entity, 1, 0xE1,
+                                entity.PosX - 0x1C0000,
+                                entity.PosY + 0x200000,
+                                entity.PosZ + 0x100000,
+                                uVar6);
+
+                            if (pEVar7 != null)
+                            {
+                                pEVar7.TargetAnimationId = 1;
+                            }
+
+                            uVar6 = (uVar6 + 1) & 0x1F;
+                        } while (uVar6 != 4);
+
+                        entity.AIValues[1] = 0x19;
+                        bVar2 = (byte)(entity.Bytes[2] + 1);
+                        entity.Bytes[2] = bVar2;
+                        if (bVar2 == 3)
+                        {
+                            entity.TargetAnimationId = 6;
+                        }
+                    }
+                }
+                break;
+
+            case 6:
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                entity.TargetAnimationId = 0;
+                if (entity.IsOnGround != 0)
+                {
+                    entity.Bytes[2] = 0x28;
+                    return;
+                }
+
+                entity.Bytes[0] = 0;
+                break;
+
+            case 7:
+                if (staticVariables.PTR_801911ec != null)
+                {
+                    gameEngine.SoundManager.PlaySoundEffect(0x62);
+                    Entity effectEntity = staticVariables.PTR_801911ec;
+                    uint effectFlags = effectEntity.Flags;
+                    staticVariables.PTR_801911ec = null;
+                    effectEntity.TargetAnimationId = 2;
+                    effectEntity.Flags = effectFlags | 0x40;
+                }
+
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                if (entity.Bytes[3] != 0)
+                {
+                    entity.AIValues[1] = 300;
+                    entity.AIValues[5] = 0x1E;
+                    entity.TargetAnimationId = 0;
+                    entity.Flags &= 0xFFFFFFFCU;
+                    staticVariables.g_scrollingParameters.Flag = 0;
+                    entity.ForceZ = 0;
+                    return;
+                }
+
+                entity.DamagedTickCounter = 0x5A;
+                if ((uint)(entity.Bytes[0] - 1) < 2U)
+                {
+                    entity.TargetAnimationId = 0;
+                    entity.Bytes[2] = 0x28;
+                    return;
+                }
+
+                entity.TargetAnimationId = 2;
+                entity.Bytes[0] = 0;
+                break;
+
+            case 9:
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                entity.TargetAnimationId = 2;
+                return;
+
+            case 10:
+                if (entity.IsOnGround == 0)
+                {
+                    return;
+                }
+
+                entity.AIValues[1] = 0;
+                entity.Flags &= 0xFFFFFEFFU;
+                if (((Random.Next() * 3UL) >> 32) == 0)
+                {
+                    entity.TargetAnimationId = 9;
+                    return;
+                }
+
+                entity.TargetAnimationId = 2;
+                return;
         }
     }
 
@@ -2590,13 +4109,835 @@ public static class FunctionTypeC
         entity.TargetAnimationId = 1;
     }
 
-    //80077734
+    // GHIDRA: AI_FUN_80077734 @ 0x80077734
     public static void AI_FUN_80077734(GameEngine gameEngine, Entity entity)
     {
         if (entity.Name != "◆Wilda (tête)")
         {
             Breakpoint.TriggerBreak();
         }
+
+        var staticVariables = gameEngine.StaticVariables;
+        byte bVar3 = 0;
+        short sVar4 = 0;
+        ushort uVar5;
+        uint uVar6;
+        Entity? entitySpawned;
+        SpriteEffect? spriteEffect;
+        int iVar9;
+        int iVar10;
+        int iVar11;
+        int iVar12;
+        int iVar13;
+        int iVar15;
+        int local_40 = 0;
+
+        if (staticVariables.g_loaderInitialized == 0)
+        {
+            staticVariables.PTR_ARRAY_80191204[0] = null;
+            staticVariables.g_loaderInitialized = 1;
+            staticVariables.DAT_80191200 = 0;
+            staticVariables.DAT_801911fe = 0;
+        }
+
+        if (entity.TargetAnimationId == 0 && entity.ForceResetAnimationFlag != 0)
+        {
+            entity.CurrentAnimationId = 0xFF;
+        }
+
+        if (entity.TargetAnimationId == 1 && entity.ForceResetAnimationFlag != 0)
+        {
+            entity.CurrentAnimationId = 0xFF;
+        }
+
+        if ((staticVariables.g_globalFlags[3] & 0x10) == 0)
+        {
+            return;
+        }
+
+        if (entity.DelayOrAngle != 0)
+        {
+            uVar6 = (uint)(entity.DelayOrAngle - 1);
+            entity.DelayOrAngle = (int)uVar6;
+
+            if (uVar6 == 0)
+            {
+                staticVariables.g_scrollingParameters.Flag = 0;
+            }
+            else if ((uVar6 & 0x1F) == 0)
+            {
+                entity.AIValues[4] = 6;
+                entity.Bytes[2] = (byte)((Random.Next() * 0x20UL) >> 32);
+            }
+
+            if (entity.AIValues[4] != 0)
+            {
+                Entity player = staticVariables.g_entitySlots[0];
+                entity.AIValues[4] -= 1;
+
+                if (player.IsOnGround != 0 && (player.AnimFlags & 0x40) == 0)
+                {
+                    player.PreviousAdjustedForceX = staticVariables.g_offsetXList[entity.Bytes[2]] * 0xC0;
+                    player.PreviousAdjustedForceY = staticVariables.g_offsetYList[entity.Bytes[2]] * 0xC0;
+                }
+            }
+        }
+
+        entitySpawned = staticVariables.PTR_ARRAY_80191204[0];
+
+        if (entity.TargetAnimationId == 8)
+        {
+            if (entitySpawned != null)
+            {
+                entitySpawned.TargetAnimationId = 2;
+                staticVariables.PTR_ARRAY_80191204[0] = null;
+                entitySpawned.Flags |= 0x40;
+            }
+
+            if (entity.ForceResetAnimationFlag == 0)
+            {
+                return;
+            }
+
+            if (entity.Bytes[3] == 0)
+            {
+                if (entity.AIValues[5] == 0 && ((Random.Next() * 3UL) >> 32) != 0)
+                {
+                    entity.AIValues[5] = 1;
+                    entity.TargetAnimationId = 6;
+
+                    if (((Random.Next() * 2UL) >> 32) == 0)
+                    {
+                        entity.Bytes[0] = 9;
+                        entity.Bytes[1] = 2;
+                    }
+                    else
+                    {
+                        entity.Bytes[0] = 2;
+                        entity.Bytes[1] = 2;
+                    }
+                }
+                else
+                {
+                    entity.TargetAnimationId = 3;
+                    entity.Bytes[0] = 4;
+                    entity.Bytes[1] = 0;
+                    entity.AIValues[5] = 0;
+                }
+
+                entity.DamagedTickCounter = 0x5A;
+                return;
+            }
+
+            Entity linkedEntity = staticVariables.g_entitySlots[entity.AIValues.GetInt32(2)];
+            entity.TargetAnimationId = 9;
+            linkedEntity.TargetAnimationId = 1;
+            linkedEntity.AIValues[1] = 300;
+            linkedEntity.AIValues[5] = 0x1E;
+            linkedEntity.Bytes[3] = entity.Bytes[3];
+            entity.Bytes[0] = 5;
+            entity.Bytes[1] = 0;
+            entity.AIValues[1] = 0;
+            staticVariables.g_scrollingParameters.Flag = 0;
+            return;
+        }
+
+        switch (entity.Bytes[0])
+        {
+            case 0:
+                sVar4 = entity.AIValues[1];
+                entity.TargetAnimationId = 0;
+                entity.Bytes[1] = 0;
+
+                if (sVar4 != 0)
+                {
+                    goto code_r0x80078450;
+                }
+
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    goto switchD_80078810_caseD_5;
+                }
+
+                staticVariables.DAT_80191200 += 1;
+
+                if (staticVariables.DAT_80191200 < 4)
+                {
+                    iVar13 = (int)((Random.Next() * 9UL) >> 32);
+                }
+                else
+                {
+                    staticVariables.DAT_80191200 = 0;
+                    iVar13 = (int)((Random.Next() * 3UL) >> 32) + 4;
+                }
+
+                switch (iVar13)
+                {
+                    case 0:
+                    case 6:
+                        entity.Bytes[0] = 2;
+                        break;
+
+                    case 1:
+                    case 8:
+                        entity.Bytes[0] = 1;
+                        break;
+
+                    case 2:
+                    case 7:
+                        entity.Bytes[0] = 9;
+                        break;
+
+                    case 3:
+                        entity.Bytes[0] = 3;
+                        break;
+
+                    case 4:
+                        if (entity.DelayOrAngle == 0)
+                        {
+                            entity.Bytes[0] = 7;
+                            entity.TargetAnimationId = 0xB;
+                            entity.AIValues[1] = 10;
+                            break;
+                        }
+
+                        entity.Bytes[0] = 1;
+                        break;
+
+                    case 5:
+                        entity.Bytes[0] = 8;
+                        entity.AIValues[1] = 0x30;
+
+                        if (staticVariables.DAT_801911fe == 0)
+                        {
+                            iVar13 = (int)((Random.Next() * 4UL) >> 32);
+                            entity.Bytes[1] = staticVariables.BYTE_ARRAY_80028b54[iVar13];
+                            staticVariables.DAT_801911fe = (short)(iVar13 + 1);
+                        }
+                        else
+                        {
+                            entity.Bytes[1] = (byte)((staticVariables.BYTE_ARRAY_80028b54[staticVariables.DAT_801911fe - 1] + 0x10) & 0x1F);
+                            staticVariables.DAT_801911fe = 0;
+                        }
+
+                        break;
+                }
+
+                goto switchD_80078810_caseD_5;
+
+            case 1:
+                bVar3 = entity.Bytes[1];
+
+                if (bVar3 == 1)
+                {
+                    sVar4 = (short)(entity.AIValues[1] - 1);
+                    entity.AIValues[1] = sVar4;
+
+                    if (sVar4 != 0)
+                    {
+                        goto switchD_80078810_caseD_5;
+                    }
+
+                    bVar3 = entity.Bytes[1];
+                    entity.AIValues[1] = 1;
+                }
+                else
+                {
+                    if (bVar3 < 2)
+                    {
+                        if (bVar3 != 0)
+                        {
+                            goto switchD_80078810_caseD_5;
+                        }
+
+                        entity.AIValues[1] = 0x4E;
+                        staticVariables.DAT_801911fc = 0;
+                        staticVariables.DAT_801911f8 = (short)((Random.Next() * 3UL) >> 32);
+                        staticVariables.DAT_801911fa = (short)(staticVariables.DAT_801911f8 + 2);
+                        bVar3 = entity.Bytes[1];
+                        uVar6 = 4;
+                        goto LAB_80078970;
+                    }
+
+                    if (bVar3 != 2)
+                    {
+                        if (bVar3 != 3 || entity.ForceResetAnimationFlag == 0)
+                        {
+                            goto switchD_80078810_caseD_5;
+                        }
+
+                        entity.Bytes[1] = 0;
+
+                        if (((Random.Next() * 2UL) >> 32) == 0)
+                        {
+                            entity.Bytes[0] = 2;
+                            goto switchD_80078810_caseD_5;
+                        }
+
+                        entity.Bytes[0] = 0;
+                        sVar4 = (short)((Random.Next() * 0x10UL) >> 32);
+                        goto LAB_80078748;
+                    }
+
+                    sVar4 = entity.AIValues[1];
+
+                    if (sVar4 != 0)
+                    {
+                        entity.AIValues[1] = (short)(sVar4 - 1);
+
+                        if (sVar4 == 1)
+                        {
+                            iVar13 = staticVariables.DAT_801911fc;
+
+                            if (iVar13 < 5)
+                            {
+                                uVar6 = (uint)(0xC - iVar13 * 2);
+                            }
+                            else if (iVar13 < 10)
+                            {
+                                uVar6 = (uint)(iVar13 * 2 - 6);
+                            }
+                            else
+                            {
+                                uVar6 = (uint)(0xC - (iVar13 - 10) * 2);
+                            }
+
+                            entitySpawned = gameEngine.SpawnWarpEntity(entity, 1, 0x9F,
+                                entity.PosX - 0x480000, entity.PosY, entity.PosZ + 0x300000, uVar6);
+
+                            if (entitySpawned != null)
+                            {
+                                entitySpawned.Bytes[1] = 1;
+                                entitySpawned.Bytes[0] = (byte)staticVariables.DAT_801911fa;
+                            }
+
+                            staticVariables.DAT_801911fc += 1;
+
+                            if (staticVariables.DAT_801911fc == 5)
+                            {
+                                staticVariables.DAT_801911fa = (short)(staticVariables.DAT_801911f8 == 1 ? 2 : 3);
+                            }
+                            else if (staticVariables.DAT_801911fc == 10 || staticVariables.DAT_801911fc == 0xF)
+                            {
+                                staticVariables.DAT_801911fa = (short)(staticVariables.DAT_801911f8 == 2 ? staticVariables.DAT_801911f8 : 4);
+                            }
+                            else
+                            {
+                                entity.AIValues[1] = 0xF;
+                            }
+                        }
+                    }
+
+                    if (entity.ForceResetAnimationFlag == 0)
+                    {
+                        goto switchD_80078810_caseD_5;
+                    }
+
+                    if (staticVariables.DAT_801911fc != 0xF)
+                    {
+                        entity.TargetAnimationId = 4;
+                        entity.AIValues[1] = 0x4E;
+                        entity.Bytes[1] = 1;
+                        goto switchD_80078810_caseD_5;
+                    }
+
+                    bVar3 = entity.Bytes[1];
+                    entity.TargetAnimationId = 0;
+                }
+
+                goto LAB_80078974;
+
+            case 2:
+                switch (entity.Bytes[1])
+                {
+                    case 0:
+                        bVar3 = entity.Bytes[1];
+                        uVar6 = 2;
+                        goto LAB_80078970;
+
+                    case 1:
+                        if (entity.ForceResetAnimationFlag == 0)
+                        {
+                            goto switchD_80078810_caseD_5;
+                        }
+
+                        bVar3 = (byte)(entity.Bytes[1] + 1);
+                        goto LAB_80078978;
+
+                    case 2:
+                        entity.TargetAnimationId = 6;
+                        bVar3 = entity.Bytes[1];
+                        entity.AIValues[1] = 0x14;
+                        break;
+
+                    case 3:
+                        local_40 = 0x40;
+                        sVar4 = (short)(entity.AIValues[1] - 1);
+                        entity.AIValues[1] = sVar4;
+
+                        if (sVar4 != 0)
+                        {
+                            goto switchD_80078810_caseD_5;
+                        }
+
+                        staticVariables.PTR_ARRAY_80191204[0] = gameEngine.SpawnWarpEntity(entity, 1, 0x9E,
+                            entity.PosX - 0xA00000, entity.PosY + 0x300000, entity.PosZ - 0x100000,
+                            entity.TargetDirection);
+                        bVar3 = entity.Bytes[1];
+                        entity.ItemState = 0;
+                        break;
+
+                    case 4:
+                        local_40 = 0xA0;
+                        uVar5 = (ushort)(entity.AIValues[1] + 1);
+                        entity.AIValues[1] = (short)uVar5;
+
+                        if ((uVar5 & 3) == 0)
+                        {
+                            iVar13 = (int)((Random.Next() * 2UL) >> 32);
+                            iVar15 = 0;
+
+                            do
+                            {
+                                uVar6 = (uint)Random.Next();
+                                iVar9 = entity.ItemState;
+                                iVar11 = entity.ItemState + 1;
+                                entity.ItemState = iVar11;
+                                iVar10 = INT_ARRAY_80027ed4[iVar9 * 2];
+                                iVar9 = INT_ARRAY_80027ed4[iVar9 * 2 + 1];
+
+                                if (iVar11 > 5)
+                                {
+                                    entity.ItemState = 0;
+                                }
+
+                                Entity spawnedEntity = gameEngine.SpawnWarpEntity(entity, 0, 0xEC,
+                                    iVar10 + (int)((uVar6 * 0x19UL) >> 32) * 0x40000,
+                                    iVar9 + (int)((Random.Next() * 0x19UL) >> 32) * 0x20000,
+                                    0x30000, 0)!;
+                                iVar15 += 1;
+                                spawnedEntity.ForceZ = 0x8000;
+                            }
+                            while (iVar15 != iVar13 + 2);
+                        }
+
+                        if (entity.ForceResetAnimationFlag == 0)
+                        {
+                            goto switchD_80078810_caseD_5;
+                        }
+
+                        bVar3 = entity.Bytes[1];
+                        entity.CurrentAnimationId = 0xFFFFFFFFU;
+                        break;
+
+                    case 5:
+                        local_40 = 0xA0;
+
+                        if (entity.ForceResetAnimationFlag != 0)
+                        {
+                            entity.Bytes[1] = (byte)(entity.Bytes[1] + 1);
+                            entitySpawned = staticVariables.PTR_ARRAY_80191204[0];
+                            entity.TargetAnimationId = 1;
+
+                            if (entitySpawned != null)
+                            {
+                                entitySpawned.TargetAnimationId = 2;
+                                staticVariables.PTR_ARRAY_80191204[0] = null;
+                                entitySpawned.Flags |= 0x40;
+                            }
+                        }
+
+                        goto switchD_80078810_caseD_5;
+
+                    case 6:
+                        if (entity.ForceResetAnimationFlag == 0)
+                        {
+                            goto switchD_80078810_caseD_5;
+                        }
+
+                        if (entity.AIValues[5] == 0 && ((Random.Next() * 2UL) >> 32) == 0)
+                        {
+                            entity.Bytes[1] = 2;
+                            entity.AIValues[5] = 1;
+                            goto switchD_80078810_caseD_5;
+                        }
+
+                        bVar3 = (byte)(entity.Bytes[1] + 1);
+                        goto LAB_80078978;
+
+                    case 7:
+                        uVar6 = 3;
+
+                        if (entity.ForceResetAnimationFlag == 0)
+                        {
+                            goto switchD_80078810_caseD_5;
+                        }
+
+                        bVar3 = entity.Bytes[1];
+                        goto LAB_80078970;
+
+                    case 8:
+                        if (entity.ForceResetAnimationFlag != 0)
+                        {
+                            entity.Bytes[0] = 0;
+                            entity.AIValues[1] = 0x1E;
+                            entity.AIValues[5] = 0;
+                        }
+
+                        goto switchD_80078810_caseD_5;
+                }
+
+                goto LAB_80078974;
+
+            case 3:
+                bVar3 = entity.Bytes[1];
+
+                if (bVar3 == 1)
+                {
+                    if (entity.ForceResetAnimationFlag == 0)
+                    {
+                        goto switchD_80078810_caseD_5;
+                    }
+
+                    entity.TargetAnimationId = 3;
+                    entity.Bytes[1] = 2;
+                    goto switchD_80078810_caseD_5;
+                }
+
+                if (bVar3 < 2)
+                {
+                    if (bVar3 == 0)
+                    {
+                        entity.TargetAnimationId = 2;
+                        entity.Bytes[1] = 1;
+                    }
+
+                    goto switchD_80078810_caseD_5;
+                }
+
+                sVar4 = 0x28;
+
+                if (bVar3 != 2 || entity.ForceResetAnimationFlag == 0)
+                {
+                    goto switchD_80078810_caseD_5;
+                }
+
+                entity.Bytes[0] = 0;
+                break;
+
+            case 4:
+                sVar4 = 0x1E;
+
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    goto switchD_80078810_caseD_5;
+                }
+
+                entity.Bytes[0] = 0;
+                break;
+
+            case 5:
+                if (entity.TargetAnimationId == 9 && entity.ForceResetAnimationFlag != 0)
+                {
+                    if ((staticVariables.g_globalFlags[0] & 1) == 0)
+                    {
+                        staticVariables.g_globalFlags[0] |= 1;
+                    }
+
+                    if ((staticVariables.g_globalFlags[0] & 0x20) != 0)
+                    {
+                        Entity linkedEntity = staticVariables.g_entitySlots[entity.AIValues.GetInt32(2)];
+
+                        if (linkedEntity.Bytes[3] < 2)
+                        {
+                            iVar15 = linkedEntity.ModdedPosZ;
+                            iVar13 = linkedEntity.ModdedPosY;
+                            linkedEntity.ModdedPosY = iVar13 + 0x500000;
+                            linkedEntity.ModdedPosZ = iVar15 + 0x500000;
+                            AI_Melzas2.UpdateEntityAI_BossExplode(gameEngine, linkedEntity);
+                            linkedEntity.ModdedPosY = iVar13;
+                            linkedEntity.ModdedPosZ = iVar15;
+                        }
+                        else if ((staticVariables.g_globalFlags[0] & 0x40) == 0)
+                        {
+                            staticVariables.g_globalFlags[0] |= 0x40;
+                            entity.TargetAnimationId = 10;
+                            entity.AIValues[1] = 0;
+                        }
+                    }
+
+                    goto switchD_80078810_caseD_5;
+                }
+
+                if (entity.TargetAnimationId != 10)
+                {
+                    goto switchD_80078810_caseD_5;
+                }
+
+                sVar4 = entity.AIValues[1];
+
+                if (sVar4 != 0)
+                {
+                    entity.AIValues[1] = (short)(sVar4 - 1);
+
+                    if (sVar4 == 1)
+                    {
+                        iVar12 = entity.PosX;
+                        iVar13 = entity.Bytes[1] * 3;
+                        iVar11 = INT_ARRAY_80027e6c[iVar13];
+                        iVar10 = entity.PosY;
+                        iVar15 = INT_ARRAY_80027e6c[iVar13 + 1];
+                        iVar13 = INT_ARRAY_80027e6c[iVar13 + 2];
+                        iVar9 = entity.PosZ;
+                        gameEngine.SoundManager.PlaySoundEffect(0xC4);
+                        gameEngine.EffectManager.CreateEffectEntity(0, 8, 0,
+                            iVar12 + iVar11,
+                            iVar10 + iVar15 + 0x500000,
+                            iVar9 + iVar13 + 0x500000);
+                        bVar3 = (byte)(entity.Bytes[1] + 1);
+                        entity.Bytes[1] = bVar3;
+
+                        if (bVar3 == 6)
+                        {
+                            entity.Bytes[0] = 6;
+                        }
+                    }
+
+                    goto switchD_80078810_caseD_5;
+                }
+
+                sVar4 = SHORT_ARRAY_80027e54[entity.Bytes[1]];
+                goto code_r0x80078450;
+
+            case 7:
+                bVar3 = entity.Bytes[1];
+
+                if (bVar3 != 1)
+                {
+                    if (bVar3 < 2)
+                    {
+                        if (bVar3 == 0)
+                        {
+                            sVar4 = entity.AIValues[1];
+
+                            if (sVar4 != 0)
+                            {
+                                entity.AIValues[1] = (short)(sVar4 - 1);
+
+                                if (sVar4 == 1)
+                                {
+                                    staticVariables.g_scrollingParameters.Flag = 1;
+                                    staticVariables.g_scrollingParameters.LimitX = 4;
+                                    staticVariables.g_scrollingParameters.SpeedX = 1;
+                                    staticVariables.g_scrollingParameters.SpeedY = 1;
+                                    staticVariables.g_scrollingParameters.LimitY = 2;
+                                    entity.Bytes[1] = 1;
+                                    entity.AIValues[1] = 0x1E;
+                                }
+                            }
+                        }
+
+                        goto switchD_80078810_caseD_5;
+                    }
+
+                    if (bVar3 != 2)
+                    {
+                        goto switchD_80078810_caseD_5;
+                    }
+
+                    uVar5 = (ushort)(entity.AIValues[1] + 1);
+                    entity.AIValues[1] = (short)uVar5;
+
+                    if ((uVar5 & 0xF) == 0)
+                    {
+                        iVar13 = 0;
+
+                        do
+                        {
+                            uVar6 = (uint)Random.Next();
+                            spriteEffect = gameEngine.EffectManager.CreateEffectEntity(0, 0x16, 1,
+                                INT_ARRAY_80027eb4[iVar13 * 2] + (int)((uVar6 * 0xFUL) >> 32) * 0xC0000,
+                                INT_ARRAY_80027eb4[iVar13 * 2 + 1] + (int)((Random.Next() * 0x13UL) >> 32) * 0x80000,
+                                0x1100000);
+
+                            if (spriteEffect != null)
+                            {
+                                spriteEffect.ForceZ = (int)((Random.Next() * 5UL) >> 32) * 0x4000 - 0x40000;
+                            }
+
+                            iVar13 += 1;
+                        }
+                        while (iVar13 != 4);
+                    }
+
+                    if (entity.ForceResetAnimationFlag == 0)
+                    {
+                        goto switchD_80078810_caseD_5;
+                    }
+
+                    staticVariables.g_scrollingParameters.LimitX = 2;
+                    entity.Bytes[0] = 0;
+                    sVar4 = (short)((Random.Next() * 0x10UL) >> 32);
+                    entity.DelayOrAngle = 600;
+                    goto LAB_80078748;
+                }
+
+                sVar4 = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = sVar4;
+
+                if (sVar4 != 0)
+                {
+                    goto switchD_80078810_caseD_5;
+                }
+
+                entity.Bytes[1] = 2;
+                goto switchD_80078810_caseD_5;
+
+            case 8:
+                sVar4 = staticVariables.g_offsetXList[entity.Bytes[1]];
+                iVar13 = entity.AIValues.GetInt32(2);
+
+                if (iVar13 != 0)
+                {
+                    staticVariables.g_entitySlots[iVar13].PreviousAdjustedForceX = sVar4 * 0x30;
+                }
+
+                entity.PreviousAdjustedForceX = sVar4 * 0x30;
+                sVar4 = staticVariables.g_offsetYList[entity.Bytes[1]];
+
+                if (iVar13 != 0)
+                {
+                    staticVariables.g_entitySlots[iVar13].PreviousAdjustedForceY = sVar4 * 0x30;
+                }
+
+                entity.PreviousAdjustedForceY = staticVariables.g_offsetYList[entity.Bytes[1]] * 0x30;
+                entity.AIValues[1] = (short)(entity.AIValues[1] - 1);
+                sVar4 = 0x1E;
+
+                if (entity.AIValues[1] != 0)
+                {
+                    goto switchD_80078810_caseD_5;
+                }
+
+                entity.Bytes[0] = 0;
+                break;
+
+            case 9:
+                switch (entity.Bytes[1])
+                {
+                    case 0:
+                        bVar3 = entity.Bytes[1];
+                        uVar6 = 2;
+                        goto LAB_80078970;
+
+                    case 1:
+                        if (entity.ForceResetAnimationFlag == 0)
+                        {
+                            break;
+                        }
+
+                        bVar3 = (byte)(entity.Bytes[1] + 1);
+                        goto LAB_80078978;
+
+                    case 2:
+                        entity.TargetAnimationId = 6;
+                        bVar3 = entity.Bytes[1];
+                        entity.AIValues[1] = 0x14;
+                        entity.Bytes[1] = (byte)(bVar3 + 1);
+                        staticVariables.DAT_801911fc = 0;
+                        staticVariables.DAT_801911f8 = (short)(staticVariables.g_entitySlots[0].PosY < 0x1300000 ? 0 : 1);
+                        goto switchD_80078810_caseD_5;
+
+                    case 3:
+                        iVar13 = staticVariables.DAT_801911fc;
+
+                        if (iVar13 != 6)
+                        {
+                            sVar4 = (short)(entity.AIValues[1] - 1);
+                            entity.AIValues[1] = sVar4;
+
+                            if (sVar4 == 0)
+                            {
+                                uVar6 = staticVariables.DAT_801911f8 == 0
+                                    ? (uint)(0xF - iVar13 * 2)
+                                    : (uint)(iVar13 * 2 + 1);
+                                entitySpawned = gameEngine.SpawnWarpEntity(entity, 1, 0x9F,
+                                    entity.PosX - 0x780000, entity.PosY + 0x100000, entity.PosZ, uVar6);
+
+                                if (entitySpawned != null)
+                                {
+                                    entitySpawned.Bytes[0] = 4;
+                                    entitySpawned.Bytes[1] = 9;
+                                }
+
+                                entity.AIValues[1] = 10;
+                                staticVariables.DAT_801911fc += 1;
+                            }
+                        }
+
+                        goto switchD_80077fb0_caseD_7;
+
+                    case 4:
+                        goto switchD_80078810_caseD_4;
+                }
+
+                goto switchD_80078810_caseD_5;
+        }
+
+        entity.AIValues[1] = sVar4;
+
+    switchD_80078810_caseD_5:
+        if (local_40 != 0)
+        {
+            for (iVar13 = 0; iVar13 != 0x40; iVar13++)
+            {
+                Entity candidate = staticVariables.g_entitySlots[iVar13];
+                if (iVar13 == 0 || candidate.SpriteTableIndex == 2 || (candidate.SpriteTableIndex == 0xEC && candidate.TargetAnimationId == 0))
+                {
+                    candidate.PreviousAdjustedForceX = staticVariables.g_offsetXList[8] * local_40;
+                }
+            }
+        }
+
+        return;
+
+    LAB_80078970:
+        entity.TargetAnimationId = uVar6;
+        goto LAB_80078974;
+
+    LAB_80078974:
+        bVar3 = (byte)(bVar3 + 1);
+
+    LAB_80078978:
+        entity.Bytes[1] = bVar3;
+        goto switchD_80078810_caseD_5;
+
+    LAB_80078748:
+        entity.AIValues[1] = (short)(sVar4 + 0x1E);
+        goto switchD_80078810_caseD_5;
+
+    code_r0x80078450:
+        entity.AIValues[1] = (short)(sVar4 - 1);
+        goto switchD_80078810_caseD_5;
+
+    switchD_80077fb0_caseD_7:
+        uVar6 = 3;
+        if (entity.ForceResetAnimationFlag == 0)
+        {
+            goto switchD_80078810_caseD_5;
+        }
+        bVar3 = entity.Bytes[1];
+        goto LAB_80078970;
+
+    switchD_80078810_caseD_4:
+        if (entity.ForceResetAnimationFlag != 0)
+        {
+            entity.Bytes[0] = 0;
+            entity.AIValues[1] = 0x1E;
+            entity.AIValues[5] = 0;
+        }
+
+        goto switchD_80078810_caseD_5;
     }
 
     //80078a5c
@@ -3888,13 +6229,81 @@ public static class FunctionTypeC
         entity.TargetAnimationId = 0;
     }
 
-    //8007ac60
+    // GHIDRA: AI_FUN_8007ac60 @ 0x8007AC60
     public static void AI_FUN_8007ac60(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
+
+        uint countdown = entity.Bytes.GetUInt32();
+
+        if (countdown != 0)
+        {
+            entity.Bytes.Set((int)(countdown - 1));
+            return;
+        }
+
+        entity.ForceZ = unchecked((int)0xFFFD0000);
+        Entity trackedEntity;
+
+        if (entity.DelayOrAngle != 0)
+        {
+            trackedEntity = gameEngine.StaticVariables.g_entitySlots[entity.DelayOrAngle];
+
+            if (trackedEntity.Status != 2 || trackedEntity.Index2 != entity.ItemState)
+            {
+                entity.DelayOrAngle = 0;
+                return;
+            }
+        }
+        else
+        {
+            Entity[] matchingEntities = gameEngine.StaticVariables.g_matchingEntitiesBuffer;
+            int[] distanceSquared = new int[matchingEntities.Length];
+            int matchCount = gameEngine.FUN_8003AF70(entity, 1, entity.BalanceAnimValRef!.Val & 0x0F, matchingEntities, distanceSquared);
+
+            if (matchCount == 0)
+            {
+                entity.Bytes.Set((int)((Random.Next() * 9UL) >> 32));
+                return;
+            }
+
+            trackedEntity = matchingEntities[0];
+            entity.DelayOrAngle = trackedEntity.Index;
+            entity.ItemState = trackedEntity.Index2;
+        }
+
+        int direction = ScriptHelper.GetDirectionToTarget(trackedEntity.PosX - entity.PosX, trackedEntity.PosY - entity.PosY);
+        int targetDirection = (int)entity.TargetDirection;
+
+        if (targetDirection == direction)
+        {
+            return;
+        }
+
+        if (direction < targetDirection)
+        {
+            if (targetDirection - direction < 4)
+            {
+                entity.TargetDirection = (uint)direction;
+            }
+            else
+            {
+                entity.TargetDirection = (uint)(targetDirection - 4);
+            }
+        }
+        else if (direction - targetDirection < 4)
+        {
+            entity.TargetDirection = (uint)direction;
+        }
+        else
+        {
+            entity.TargetDirection = (uint)(targetDirection + 4);
+        }
+
+        entity.Bytes.Set(2);
     }
 
     //8007b04c
@@ -3976,21 +6385,186 @@ public static class FunctionTypeC
         AI_FUN_8007b04c_common(gameEngine, entity, 0xc00, 0x240000);
     }
 
-    //8007b3c4
+    // GHIDRA: AI_FUN_8007b3c4 @ 0x8007B3C4
     public static void AI_FUN_8007b3c4(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
+
+        switch (entity.Bytes[0])
+        {
+            case 0:
+                entity.Bytes[0] = 1;
+                entity.AIValues[1] = 0x180;
+                entity.DelayOrAngle = entity.PosX - gameEngine.StaticVariables.g_sinus[0x180] * 0x1400;
+                entity.ItemState = entity.PosY - gameEngine.StaticVariables.g_cosinus[0x180] * 0x1400;
+
+                entity.AIValues[1] = (short)((entity.AIValues[1] + 4U) & 0x1FF);
+                entity.PosX = entity.DelayOrAngle + gameEngine.StaticVariables.g_sinus[(ushort)entity.AIValues[1]] * 0x1400;
+                entity.PosY = entity.ItemState + gameEngine.StaticVariables.g_cosinus[(ushort)entity.AIValues[1]] * 0x1400;
+
+                if (gameEngine.GetMatchingEntityBySearchType(entity, entity.EntityRefId - 1) != 0)
+                {
+                    return;
+                }
+
+                entity.Bytes[1] = 2;
+                entity.Bytes[0] = (byte)(entity.Bytes[0] + 1);
+                gameEngine.SoundManager.PlaySoundEffect(0x78);
+                break;
+
+            case 1:
+                entity.AIValues[1] = (short)((entity.AIValues[1] + 4U) & 0x1FF);
+                entity.PosX = entity.DelayOrAngle + gameEngine.StaticVariables.g_sinus[(ushort)entity.AIValues[1]] * 0x1400;
+                entity.PosY = entity.ItemState + gameEngine.StaticVariables.g_cosinus[(ushort)entity.AIValues[1]] * 0x1400;
+                entity.Bytes[1] = (byte)(entity.Bytes[1] - 1);
+
+                if (entity.Bytes[1] != 0)
+                {
+                    return;
+                }
+
+                entity.TargetAnimationId = 3;
+                entity.Bytes[1] = 0x50;
+                entity.Bytes[0] = (byte)(entity.Bytes[0] + 1);
+                entity.TargetDirection = (uint)((0x18 - ((ushort)entity.AIValues[1] >> 4)) & 0x1F);
+                break;
+
+            case 2:
+                entity.Bytes[1] = (byte)(entity.Bytes[1] - 1);
+
+                if (entity.ForceAdjusted == 0 && entity.Bytes[1] != 0)
+                {
+                    return;
+                }
+
+                gameEngine.SoundManager.PlaySoundEffect(0xE1);
+                entity.TargetAnimationId = 2;
+                entity.Flags |= 0x100;
+                entity.Bytes[0] = (byte)(entity.Bytes[0] + 1);
+                break;
+
+            case 3:
+                int deltaX = entity.PosX - gameEngine.StaticVariables.PlayerEntity.PosX;
+
+                if (0x2FFFFF < Math.Abs(deltaX))
+                {
+                    entity.Flags = (entity.Flags & 0xFFFFFFFDU) | 0x81U;
+                    entity.Bytes[0] = (byte)(entity.Bytes[0] + 1);
+                    break;
+                }
+
+                int deltaY = entity.PosY - gameEngine.StaticVariables.PlayerEntity.PosY;
+
+                if (0x1FFFFF < Math.Abs(deltaY))
+                {
+                    entity.Flags = (entity.Flags & 0xFFFFFFFDU) | 0x81U;
+                    entity.Bytes[0] = (byte)(entity.Bytes[0] + 1);
+                }
+                break;
+
+            case 4:
+                if (entity.TargetAnimationId != 4)
+                {
+                    return;
+                }
+
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                if (entity.Bytes[2] < 4)
+                {
+                    entity.TargetAnimationId = 2;
+                    return;
+                }
+
+                gameEngine.SoundManager.PlaySoundEffect(0x2E);
+                gameEngine.DestroyEntity(entity, 10);
+                break;
+        }
     }
 
-    //8007b6ec
+    // GHIDRA: AI_FUN_8007b6ec @ 0x8007B6EC
     public static void AI_FUN_8007b6ec(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
+        }
+
+        var player = gameEngine.StaticVariables.PlayerEntity;
+
+        switch (entity.TargetAnimationId)
+        {
+            case 0:
+                if (entity.TouchingEntity == player || player.TouchingEntity == entity)
+                {
+                    var delay = entity.DelayOrAngle + 1;
+                    entity.DelayOrAngle = delay;
+
+                    if (delay != 0x14)
+                    {
+                        return;
+                    }
+
+                    entity.DelayOrAngle = 0;
+                    entity.TargetAnimationId = 1;
+
+                    int directionIndex;
+                    var delta = player.ModdedPosX - entity.ModdedPosX;
+
+                    if (delta < 0)
+                    {
+                        if (entity.ModdedPosX - player.ModdedPosX < player.Width)
+                        {
+                            goto LAB_800809d8;
+                        }
+                    }
+                    else if (delta < entity.Width)
+                    {
+                        goto LAB_800809d8;
+                    }
+
+                    directionIndex = player.PosX < entity.PosX ? 1 : 0;
+                    goto LAB_8007b770;
+
+                LAB_800809d8:
+                    delta = player.ModdedPosY - entity.ModdedPosY;
+
+                    if (delta < 0)
+                    {
+                        if (entity.ModdedPosY - player.ModdedPosY < player.Height)
+                        {
+                            directionIndex = -1;
+                            goto LAB_8007b770;
+                        }
+                    }
+                    else if (delta < entity.Height)
+                    {
+                        directionIndex = -1;
+                        goto LAB_8007b770;
+                    }
+
+                    directionIndex = entity.PosY < player.PosY ? 2 : 3;
+
+                LAB_8007b770:
+                    entity.TargetDirection = gameEngine.StaticVariables.BYTE_ARRAY_80028b54[directionIndex];
+                    return;
+                }
+
+                entity.DelayOrAngle = 0;
+                break;
+
+            case 1:
+                if (entity.ForceResetAnimationFlag != 0)
+                {
+                    entity.TargetAnimationId = 0;
+                }
+                break;
         }
     }
 
@@ -4349,13 +6923,96 @@ public static class FunctionTypeC
         }
     }
 
-    //8007bd8c
+    // GHIDRA: AI_FUN_8007bd8c @ 0x8007BD8C
     public static void AI_FUN_8007bd8c(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        int word290 = entity.AIValues.GetInt32(8);
+
+        if ((gameEngine.StaticVariables.g_padState1.ButtonsHold & PadState.Circle) == 0)
         {
-            Breakpoint.TriggerBreak();
+            word290 -= 1;
+            entity.AIValues[8] = (short)word290;
+            entity.AIValues[9] = (short)(word290 >> 16);
         }
+
+        if (word290 > 0)
+        {
+            int word274 = entity.Bytes.GetInt32();
+            int word278 = entity.DelayOrAngle;
+            int word27c = entity.ItemState;
+            int word280 = entity.AIValues.GetInt32(0);
+            int word284 = entity.AIValues.GetInt32(2);
+            int word288 = entity.AIValues.GetInt32(4);
+            int selectedWord = word284 == 0 ? word274 : word278;
+            int compareWord = word288 < word274 ? 1 : 0;
+
+            if (selectedWord < word288)
+            {
+                word288 -= word27c;
+
+                if (!(selectedWord < word288))
+                {
+                    word288 = selectedWord;
+                    word284 ^= 1;
+                    entity.AIValues[2] = (short)word284;
+                    entity.AIValues[3] = (short)(word284 >> 16);
+                }
+            }
+            else
+            {
+                word288 += word27c + (compareWord << 6);
+
+                if (!(word288 < selectedWord))
+                {
+                    word288 = selectedWord;
+                    word284 ^= 1;
+                    entity.AIValues[2] = (short)word284;
+                    entity.AIValues[3] = (short)(word284 >> 16);
+                }
+            }
+
+            entity.AIValues[4] = (short)word288;
+            entity.AIValues[5] = (short)(word288 >> 16);
+
+            int word28c = (entity.AIValues.GetInt32(6) + word280) & 0xff;
+            entity.AIValues[6] = (short)word28c;
+            entity.AIValues[7] = (short)(word28c >> 16);
+
+            Entity player = gameEngine.StaticVariables.PlayerEntity;
+            int forceX = gameEngine.StaticVariables.g_sinTable[word28c] * word288 * 3;
+            int forceY = gameEngine.StaticVariables.g_cosTable[word28c] * word288 * 3;
+
+            entity.PreviousAdjustedForceX = player.PosX + player.ForceX + forceX - entity.PosX;
+            entity.PreviousAdjustedForceY = player.PosY + player.ForceY + forceY - entity.PosY;
+            entity.ForceZ = player.PosZ + 0x00080000 - entity.PosZ;
+            return;
+        }
+
+        if (word290 == 0)
+        {
+            Entity[] matchingEntities = gameEngine.StaticVariables.g_matchingEntitiesBuffer;
+            int[] distanceSquared = new int[matchingEntities.Length];
+            int matchCount = gameEngine.FUN_8003AF70(entity, 1, entity.BalanceAnimValRef!.Val & 0x0F, matchingEntities, distanceSquared);
+            int direction;
+
+            if (matchCount != 0 && distanceSquared[0] < 0x3840)
+            {
+                Entity trackedEntity = matchingEntities[0];
+                direction = ScriptHelper.GetDirectionToTarget(trackedEntity.PosX - entity.PosX, trackedEntity.PosY - entity.PosY);
+            }
+            else
+            {
+                direction = (int)((Random.Next() * 0x20UL) >> 32);
+            }
+
+            entity.Bytes.Set(gameEngine.StaticVariables.g_offsetXList[direction] << 8);
+            entity.DelayOrAngle = gameEngine.StaticVariables.g_offsetYList[direction] << 8;
+            entity.Flags |= 0x2130;
+            entity.ForceZ = 0x000A0000;
+        }
+
+        entity.PreviousAdjustedForceX = entity.Bytes.GetInt32();
+        entity.PreviousAdjustedForceY = entity.DelayOrAngle;
     }
 
     //8007c024
@@ -4932,12 +7589,187 @@ public static class FunctionTypeC
         }
     }
 
-    //8007d554
+    // GHIDRA: AI_FUN_8007d554 @ 0x8007D554
     public static void AI_FUN_8007d554(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
+        }
+
+        var staticVariables = gameEngine.StaticVariables;
+        var player = staticVariables.g_entitySlots[0];
+        var parentEntity = entity.ParentEntity!;
+
+        if ((ushort)parentEntity.AIValues[4] != 0)
+        {
+            parentEntity.AIValues[4] = 0;
+            entity.TargetAnimationId = 3;
+        }
+
+        parentEntity.PosX = entity.PosX;
+        parentEntity.PosY = entity.PosY - 0x00100000;
+
+        if (entity.Bytes[0] != parentEntity.Bytes[2])
+        {
+            parentEntity.PosZ -= 0x8000;
+            parentEntity.Bytes[2] = (byte)(parentEntity.Bytes[2] + 1);
+        }
+        else if (parentEntity.Bytes[1] != 0)
+        {
+            parentEntity.Bytes[1] = (byte)(parentEntity.Bytes[1] - 1);
+        }
+        else if (parentEntity.PosZ != entity.PosZ + 0x00300000)
+        {
+            parentEntity.PosZ += 0x8000;
+            entity.Bytes[0] = (byte)(entity.Bytes[0] - 1);
+            parentEntity.Bytes[2] = (byte)(parentEntity.Bytes[2] - 1);
+        }
+
+        if (entity.Bytes[3] != 0 && entity.TargetAnimationId == 0)
+        {
+            if (entity.Bytes[3] < 4)
+            {
+                AI_Melzas2.UpdateEntityAI_BossExplode(gameEngine, entity);
+                return;
+            }
+
+            entity.TargetAnimationId = 4;
+            entity.Flags |= 0x40;
+            gameEngine.DestroyEntity(entity);
+            entity.SpriteProgramIndexes[ScriptHelper.ProgramCTick] = 0;
+            return;
+        }
+
+        switch (entity.TargetAnimationId)
+        {
+            case 0:
+            {
+                Entity? matchingEntity = null;
+
+                for (var index = 0; index != 0x40; index++)
+                {
+                    var candidate = staticVariables.g_entitySlots[index];
+
+                    if ((uint)(candidate.Status - 2) >= 2U
+                        || candidate.BlockedByEntity != null
+                        || candidate == entity
+                        || candidate.SpriteTableIndex != 0x1D8)
+                    {
+                        continue;
+                    }
+
+                    var diffX = candidate.ModdedPosX - entity.ModdedPosX;
+                    if (diffX >= 0)
+                    {
+                        if (!(diffX < entity.Width + 1))
+                        {
+                            continue;
+                        }
+                    }
+                    else if (!(entity.ModdedPosX - candidate.ModdedPosX < candidate.Width + 1))
+                    {
+                        continue;
+                    }
+
+                    var diffY = candidate.ModdedPosY - entity.ModdedPosY;
+                    if (diffY >= 0)
+                    {
+                        if (!(diffY < entity.Height + 1))
+                        {
+                            continue;
+                        }
+                    }
+                    else if (!(entity.ModdedPosY - candidate.ModdedPosY < candidate.Height + 1))
+                    {
+                        continue;
+                    }
+
+                    matchingEntity = candidate;
+                    break;
+                }
+
+                if (matchingEntity != null)
+                {
+                    entity.TargetAnimationId = 1;
+                    entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(
+                        entity.PosX - matchingEntity.PosX,
+                        entity.PosY - matchingEntity.PosY);
+                    entity.AIValues[1] = 0x1E;
+                    break;
+                }
+
+                if ((ushort)entity.AIValues[1] != 0)
+                {
+                    SetAiValue(entity, 1, entity.AIValues[1] - 1);
+                    break;
+                }
+
+                gameEngine.EntityGameplayManager.StartFlying(entity, 1, 0x3C, 0x46);
+
+                if (entity.Bytes[0] != 0)
+                {
+                    entity.Bytes[0] = 0;
+                    entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(
+                        player.PosX - entity.PosX,
+                        player.PosY - entity.PosY);
+                }
+                break;
+            }
+
+            case 1:
+                if ((ushort)entity.AIValues[1] != 0)
+                {
+                    SetAiValue(entity, 1, entity.AIValues[1] - 1);
+                }
+                else
+                {
+                    entity.TargetAnimationId = 0;
+                    entity.AIValues[1] = (short)(RandomRange(0x1FU) + 0x3C);
+                }
+                break;
+
+            case 2:
+                if (entity.ForceResetAnimationFlag != 0)
+                {
+                    entity.TargetAnimationId = 0;
+                }
+                break;
+
+            case 3:
+                if (entity.ForceResetAnimationFlag != 0)
+                {
+                    entity.TargetAnimationId = 0;
+
+                    if (parentEntity.Bytes[3] != 0)
+                    {
+                        entity.AIValues[1] = 0x12C;
+                        entity.AIValues[5] = 0x1E;
+                        entity.Bytes[3] = 1;
+                        entity.Flags &= 0xFFFFFFFCU;
+                    }
+                    else
+                    {
+                        parentEntity.TargetAnimationId = 0;
+                        entity.DamagedTickCounter = 0x5A;
+                        parentEntity.DamagedTickCounter = 0x5A;
+                        entity.Bytes[0] = 1;
+                        entity.AIValues[1] = (short)(RandomRange(0x1FU) + 0x14);
+                    }
+                }
+                break;
+
+            case 4:
+                break;
+
+            case 5:
+                if (entity.ForceResetAnimationFlag != 0)
+                {
+                    entity.TargetAnimationId = 0;
+                    parentEntity.TargetAnimationId = 0;
+                    entity.AIValues[1] = 0x3C;
+                }
+                break;
         }
     }
 
@@ -5458,21 +8290,548 @@ public static class FunctionTypeC
         }
     }
 
-    //80067138
+    // GHIDRA: AI_UpdateEntityAI_4 @ 0x80067138
     public static void AI_UpdateEntityAI_4(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
+
+        short val;
+        uint direction;
+        int z;
+        int[] positions = new int[6];
+        byte[] byteArray80028b54 = new byte[] { 0, 0x10, 0x08, 0x18, 0x4d };
+
+        ScriptHelper.CalculateEntityRelativePosition(entity, gameEngine.StaticVariables.PlayerEntity, positions);
+
+        switch (entity.TargetAnimationId)
+        {
+            case 0:
+                if (entity.Bytes[1] == 0)
+                {
+                    entity.Bytes[1] = 10;
+                }
+
+                if (entity.AIValues[1] != 0)
+                {
+                    val = (short)(entity.AIValues[1] - 1);
+                    entity.AIValues[1] = val;
+
+                    if (val != 0)
+                    {
+                        return;
+                    }
+                }
+
+                if (entity.Bytes[1] == 10
+                    && gameEngine.EntityGameplayManager.TryAttackPlayerFront(entity, positions, 1, 2, 0))
+                {
+                    direction = (uint)ScriptHelper.GetDirectionToTarget(
+                        gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                        gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                    entity.TargetDirection = direction;
+                    entity.TargetAnimationId = 3;
+                    entity.Bytes[1] = 0;
+                    return;
+                }
+
+                if ((uint)(entity.Bytes[1] - 10) >= 7
+                    && entity.Bytes[1] != 0x14
+                    && entity.Bytes[1] != 0x15)
+                {
+                    return;
+                }
+
+                if (gameEngine.EntityGameplayManager.TryAttackPlayerFront(entity, positions, 2, 6, 0))
+                {
+                    direction = (uint)ScriptHelper.GetDirectionToTarget(
+                        gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                        gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                    entity.TargetDirection = direction;
+                    entity.TargetAnimationId = 1;
+                    entity.AIValues[1] = 0x78;
+                    return;
+                }
+
+                entity.Bytes[1] = (byte)(entity.Bytes[1] + 1);
+
+                switch (entity.Bytes[1])
+                {
+                    case 0x0b:
+                    case 0x0e:
+                        entity.AIValues[1] = 0x28;
+                        entity.ForceStepY = 0;
+                        entity.ForceStepX = 0;
+                        entity.ForceY = 0;
+                        entity.ForceX = 0;
+                        entity.TargetForceY = 0;
+                        entity.TargetForceX = 0;
+                        entity.TargetDirection = (uint)((gameEngine.StaticVariables.BYTE_ARRAY_80028b54[entity.AnimationDirection] - 8) & 0x1f);
+                        break;
+
+                    case 0x0c:
+                    case 0x0f:
+                    case 0x15:
+                        entity.AIValues[1] = 0x28;
+                        entity.ForceStepY = 0;
+                        entity.ForceStepX = 0;
+                        entity.ForceY = 0;
+                        entity.ForceX = 0;
+                        entity.TargetForceY = 0;
+                        entity.TargetForceX = 0;
+                        entity.TargetDirection = (uint)((gameEngine.StaticVariables.BYTE_ARRAY_80028b54[entity.AnimationDirection] + 0x10) & 0x1f);
+                        break;
+
+                    case 0x0d:
+                        gameEngine.EntityGameplayManager.StartFlying(entity, 1, 0x78, 0x1e);
+                        break;
+
+                    case 0x10:
+                    case 0x16:
+                        entity.TargetAnimationId = 5;
+                        break;
+                }
+                break;
+
+            case 1:
+                val = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = val;
+
+                if (val == 0)
+                {
+                    entity.TargetAnimationId = 0;
+                    return;
+                }
+
+                if (entity.ForceAdjusted != 0)
+                {
+                    direction = gameEngine.StaticVariables.g_directionFlipTable[entity.TargetDirection];
+                    entity.ForceStepY = 0;
+                    entity.ForceStepX = 0;
+                    entity.ForceY = 0;
+                    entity.ForceX = 0;
+                    entity.TargetForceY = 0;
+                    entity.TargetForceX = 0;
+                    entity.TargetDirection = direction;
+                }
+                else
+                {
+                    z = entity.FloorHeight - gameEngine.StaticVariables.PlayerEntity.FloorHeight;
+
+                    if (z >= 0)
+                    {
+                        gameEngine.EntityGameplayManager.HandleAnimationDirection(entity, 1, z);
+                    }
+                }
+
+                if (entity.Bytes[1] != 0)
+                {
+                    return;
+                }
+
+                if (gameEngine.EntityGameplayManager.TryAttackPlayerFront(entity, positions, 1, 2, 0))
+                {
+                    direction = (uint)ScriptHelper.GetDirectionToTarget(
+                        gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                        gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                    entity.TargetDirection = direction;
+                    entity.TargetAnimationId = 3;
+                    entity.Bytes[1] = 0;
+                }
+                break;
+
+            case 2:
+                if (entity.AIValues[1] != 0)
+                {
+                    entity.AIValues[1] = (short)(entity.AIValues[1] - 1);
+                }
+
+                if (entity.Bytes[1] != 0)
+                {
+                    return;
+                }
+
+                if (positions[0] < 3 && positions[1] < 3 && positions[2] <= 0)
+                {
+                    entity.TargetAnimationId = 4;
+                    entity.Bytes[1] = 10;
+                    return;
+                }
+
+                if (entity.AIValues[1] == 0)
+                {
+                    entity.TargetAnimationId = 4;
+                    entity.Bytes[1] = 0x14;
+                }
+                break;
+
+            case 3:
+                if (gameEngine.StaticVariables.PlayerEntity.TouchingEntity == entity)
+                {
+                    entity.Bytes[1] = (byte)(entity.Bytes[1] + 1);
+                }
+
+                if (entity.IsOnGround == 0)
+                {
+                    return;
+                }
+
+                if ((entity.Bytes[1] & 0xf) != 0)
+                {
+                    direction = (uint)ScriptHelper.GetDirectionToTarget(
+                        gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                        gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                    entity.TargetDirection = direction;
+                    entity.TargetAnimationId = 0;
+                    entity.Bytes[1] = 10;
+                    entity.AIValues[1] = (short)(((Random.Next() * 8) >> 0x20) + 0x14);
+                    return;
+                }
+
+                if (gameEngine.EntityGameplayManager.TryAttackPlayerFront(entity, positions, 1, 1, 0))
+                {
+                    direction = (uint)ScriptHelper.GetDirectionToTarget(
+                        gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                        gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                    entity.TargetDirection = direction;
+
+                    if (entity.Bytes[1] == 0)
+                    {
+                        entity.TargetAnimationId = 3;
+                        entity.Bytes[1] = 0x80;
+                    }
+                    else
+                    {
+                        entity.TargetAnimationId = 1;
+                        entity.Bytes[1] = 0;
+                        entity.AIValues[1] = 0x14;
+                    }
+
+                    return;
+                }
+
+                entity.TargetAnimationId = 0;
+                entity.Bytes[1] = 10;
+                entity.AIValues[1] = (short)(((Random.Next() * 0x10) >> 0x20) + 0x14);
+                break;
+
+            case 4:
+                if (entity.IsOnGround == 0)
+                {
+                    return;
+                }
+
+                if (entity.Bytes[1] != 10 && entity.Bytes[1] != 0x14)
+                {
+                    return;
+                }
+
+                direction = (uint)ScriptHelper.GetDirectionToTarget(
+                    gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                    gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                entity.TargetDirection = direction;
+                entity.TargetAnimationId = 0;
+                entity.AIValues[1] = (short)(((Random.Next() * 0x10) >> 0x20) + 0x14);
+                break;
+
+            case 5:
+                if (entity.IsOnGround != 0)
+                {
+                    entity.TargetAnimationId = 2;
+                    entity.AIValues[1] = 0x78;
+                }
+                break;
+
+            case 6:
+            case 9:
+                break;
+
+            case 7:
+                if (entity.IsOnGround == 0)
+                {
+                    return;
+                }
+
+                if (entity.Bytes[3] != 0)
+                {
+                    entity.TargetAnimationId = 8;
+                    entity.AIValues[1] = 8;
+                    entity.Flags |= 0x40;
+                    return;
+                }
+
+                if ((int)((Random.Next() * 4) >> 0x20) == 1)
+                {
+                    entity.TargetAnimationId = 5;
+                    return;
+                }
+
+                entity.Bytes[1] = 0;
+                entity.AIValues[1] = 0;
+                entity.TargetAnimationId = 0;
+                direction = byteArray80028b54[(int)((Random.Next() * 5) >> 0x20)];
+
+                var entitySpawned = gameEngine.SpawnWarpEntity(entity, 1, 0x91,
+                    entity.PosX, entity.PosY, entity.PosZ + 0x1000000, direction);
+
+                if (entitySpawned != null)
+                {
+                    entitySpawned.SpriteProgramIndexes[0] = 0;
+                    entitySpawned.TargetAnimationId = 0xb;
+                    entitySpawned.ContentsItemId = 0;
+                }
+                break;
+
+            case 8:
+                val = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = val;
+
+                if (val != 0)
+                {
+                    return;
+                }
+
+                direction = 4;
+
+                for (int i = 0; i < 4; i++, direction += 8)
+                {
+                    entitySpawned = gameEngine.SpawnWarpEntity(entity, 1, 0x91,
+                        entity.PosX, entity.PosY, entity.PosZ + 0x1000000, direction);
+
+                    if (entitySpawned != null)
+                    {
+                        entitySpawned.SpriteProgramIndexes[0] = 0;
+                        entitySpawned.TargetAnimationId = 0xb;
+                        entitySpawned.ContentsItemId = 0;
+                    }
+                }
+                break;
+
+            case 10:
+                val = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = val;
+
+                if (val == 0)
+                {
+                    gameEngine.SoundManager.PlaySoundEffect(0x40);
+                    gameEngine.DestroyEntity(entity, -1);
+                }
+                break;
+
+            case 11:
+                if (entity.ForceResetAnimationFlag != 0)
+                {
+                    entity.TargetAnimationId = 10;
+                    entity.AIValues[1] = 0x3c;
+                }
+                break;
+        }
     }
 
-    //8006790c
+    // GHIDRA: AI_UpdateEntityAI_5 @ 0x8006790C
     public static void AI_UpdateEntityAI_5(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
+        }
+
+        short val;
+        uint direction;
+        int[] positions = new int[6];
+
+        ScriptHelper.CalculateEntityRelativePosition(entity, gameEngine.StaticVariables.PlayerEntity, positions);
+
+        switch (entity.TargetAnimationId)
+        {
+            case 0:
+            case 1:
+                val = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = val;
+
+                if (val == 0)
+                {
+                    entity.TargetAnimationId = 4;
+                    break;
+                }
+
+                if (positions[0] < 3 && positions[1] < 3 && positions[2] <= 0x100000)
+                {
+                    entity.TargetAnimationId = 5;
+                    entity.Bytes[0] = 0;
+                    entity.AIValues[1] = 0x5e;
+                    entity.Flags |= 0x40;
+                    break;
+                }
+
+                if (entity.ForceAdjusted != 0)
+                {
+                    direction = gameEngine.StaticVariables.g_directionFlipTable[entity.TargetDirection];
+                    entity.ForceStepY = 0;
+                    entity.ForceStepX = 0;
+                    entity.ForceY = 0;
+                    entity.ForceX = 0;
+                    entity.TargetForceY = 0;
+                    entity.TargetForceX = 0;
+                    entity.TargetDirection = direction;
+                }
+                else
+                {
+                    gameEngine.EntityGameplayManager.HandleAnimationDirection(entity, 1, 0);
+                }
+                break;
+
+            case 2:
+                if (entity.AIValues[1] == 0)
+                {
+                    entity.TargetAnimationId = 3;
+                    break;
+                }
+
+                entity.AIValues[1] = (short)(entity.AIValues[1] - 1);
+
+                if (positions[0] < 5 && positions[1] < 5 && positions[2] <= 0x100000)
+                {
+                    entity.TargetAnimationId = 3;
+                    entity.Bytes[1] = 3;
+                }
+                else
+                {
+                    entity.Bytes[1] = 0;
+                }
+                break;
+
+            case 3:
+                if (entity.IsOnGround != 0)
+                {
+                    if (entity.Bytes[1] == 3)
+                    {
+                        entity.TargetAnimationId = 0xb;
+                        entity.AIValues[1] = 0x28;
+                        entity.Bytes[1] = 0;
+                    }
+                    else
+                    {
+                        gameEngine.EntityGameplayManager.StartFlying(entity, 1, 0x78, 0x1e);
+                    }
+                }
+                break;
+
+            case 4:
+                if (entity.IsOnGround != 0)
+                {
+                    entity.TargetAnimationId = 2;
+                    entity.AIValues[1] = (short)(((Random.Next() * 0x15) >> 0x20) + 0x78);
+                }
+                break;
+
+            case 5:
+                if (entity.Bytes[0] != 0)
+                {
+                    return;
+                }
+
+                val = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = val;
+
+                if (val != 0)
+                {
+                    return;
+                }
+
+                entity.Bytes[0] = 1;
+                gameEngine.SoundManager.PlaySoundEffect(0x2d);
+                direction = 4;
+
+                for (int i = 0; i < 4; i++, direction += 8)
+                {
+                    var entitySpawned = gameEngine.SpawnWarpEntity(entity, 1, 0x8b,
+                        entity.PosX, entity.PosY, entity.PosZ + 0x100000, direction);
+
+                    if (entitySpawned != null)
+                    {
+                        entitySpawned.SpriteProgramIndexes[0] = 0;
+                        entitySpawned.TargetAnimationId = 10;
+                        entitySpawned.ContentsItemId = 0;
+                    }
+                }
+                break;
+
+            case 6:
+                direction = (uint)(entity.AIValues[6] + 1);
+                entity.AIValues[6] = (short)direction;
+
+                if ((direction & 7) == 0)
+                {
+                    gameEngine.EffectManager.CreateEffectEntity(0, gameEngine.CurrentMap.Info.SlideEffectId, 0,
+                        entity.PosX, entity.PosY, entity.FloorHeight);
+                }
+
+                val = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = val;
+
+                if (val == 0)
+                {
+                    entity.TargetAnimationId = 4;
+                }
+                break;
+
+            case 7:
+            case 9:
+                break;
+
+            case 8:
+                if (entity.IsOnGround == 0)
+                {
+                    return;
+                }
+
+                if (entity.Bytes[3] != 0)
+                {
+                    entity.TargetAnimationId = 9;
+                    entity.Flags |= 0x40;
+                    return;
+                }
+
+                if ((int)((Random.Next() * 5) >> 0x20) == 2)
+                {
+                    entity.TargetAnimationId = 5;
+                    entity.Bytes[0] = 0;
+                    entity.AIValues[1] = 0x5e;
+                    entity.Flags |= 0x40;
+                }
+                else
+                {
+                    entity.TargetAnimationId = 4;
+                    entity.AIValues[1] = 0x1e;
+                }
+                break;
+
+            case 10:
+                if (entity.ForceResetAnimationFlag != 0)
+                {
+                    gameEngine.DestroyEntity(entity, -1);
+                }
+                break;
+
+            case 11:
+                val = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = val;
+
+                if (val == 0)
+                {
+                    entity.TargetAnimationId = 6;
+                    direction = (uint)ScriptHelper.GetDirectionToTarget(
+                        gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                        gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                    entity.TargetDirection = direction;
+                    entity.AIValues[1] = 0x78;
+                    entity.AIValues[6] = 0;
+                    entity.AIValues[7] = 0;
+                }
+                break;
         }
     }
 
@@ -5986,45 +9345,931 @@ public static class FunctionTypeC
         entity.TargetDirection = (entity.TargetDirection + 2) & 0x1c;
     }
 
-    //80068930
+    // GHIDRA: AI_UpdateEntityAI_7 @ 0x80068930
     public static void AI_UpdateEntityAI_7(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        short sVar3;
+        int iVar4;
+        uint uVar5;
+        int[] positions = new int[6];
 
-        if (!string.IsNullOrEmpty(entity.Name))
+        ScriptHelper.CalculateEntityRelativePosition(entity, gameEngine.StaticVariables.PlayerEntity, positions);
+
+        switch (entity.TargetAnimationId)
         {
-            Breakpoint.TriggerBreak();
+            case 0:
+                sVar3 = entity.AIValues[1];
+
+                if (sVar3 != 0)
+                {
+                    entity.AIValues[1] = (short)(sVar3 - 1);
+
+                    if (sVar3 != 1)
+                    {
+                        return;
+                    }
+                }
+
+                if (5 < positions[0] || 5 < positions[1] || 0x100000 < positions[2])
+                {
+                    gameEngine.EntityGameplayManager.SetEntityRandomDirection(entity, 1, 300);
+                    return;
+                }
+
+                if (gameEngine.StaticVariables.PlayerEntity.FrameCollision == null ||
+                    gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef == null ||
+                    gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef.Val == 0)
+                {
+                    uVar5 = (uint)ScriptHelper.GetDirectionToTarget(
+                        entity.PosX - gameEngine.StaticVariables.PlayerEntity.PosX,
+                        entity.PosY - gameEngine.StaticVariables.PlayerEntity.PosY);
+                    entity.TargetDirection = uVar5;
+                    entity.TargetAnimationId = 1;
+                    entity.AIValues[1] = 300;
+                    return;
+                }
+
+                goto LAB_80068c00;
+
+            case 1:
+                if (5 < positions[0] ||
+                    5 < positions[1] ||
+                    0x100000 < positions[2] ||
+                    gameEngine.StaticVariables.PlayerEntity.FrameCollision == null ||
+                    gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef == null ||
+                    gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef.Val == 0)
+                {
+                    sVar3 = (short)(entity.AIValues[1] - 1);
+                    entity.AIValues[1] = sVar3;
+
+                    if (sVar3 != 0 && entity.ForceAdjusted == 0)
+                    {
+                        iVar4 = gameEngine.EntityGameplayManager.HandleAnimationDirection(entity, 1, 0x200000);
+
+                        if (iVar4 == 0)
+                        {
+                            return;
+                        }
+                    }
+
+                    sVar3 = 0x3c;
+                    entity.TargetAnimationId = 0;
+                    goto LAB_80068c58;
+                }
+
+            LAB_80068c00:
+                entity.TargetAnimationId = 3;
+                entity.Bytes[1] = 10;
+                break;
+
+            case 3:
+                if (entity.ForceResetAnimationFlag != 0)
+                {
+                    uVar5 = (uint)ScriptHelper.GetDirectionToTarget(
+                        gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                        gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                    var uVar1 = ((Random.Next() * 9) >> 0x20) - 4;
+                    var bVar2 = entity.Bytes[1];
+
+                    entity.TargetAnimationId = 4;
+                    entity.AIValues[1] = 0x3c;
+                    entity.Bytes[1] = (byte)(bVar2 - 1);
+                    entity.TargetDirection = (uint)((uVar5 + uVar1) & 0x1f);
+                }
+                break;
+
+            case 4:
+                sVar3 = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = sVar3;
+
+                if (sVar3 != 0 && entity.ForceAdjusted == 0)
+                {
+                    iVar4 = gameEngine.EntityGameplayManager.HandleAnimationDirection(entity, 4, 0x200000);
+
+                    if (iVar4 == 0)
+                    {
+                        return;
+                    }
+                }
+
+                var bVar3 = (byte)(entity.Bytes[1] - 1);
+                entity.Bytes[1] = bVar3;
+
+                if (bVar3 != 0)
+                {
+                    gameEngine.EntityGameplayManager.StartFlying(entity, 4, 0x28, 0x1e);
+                    return;
+                }
+
+                uVar5 = 5;
+                goto LAB_80068cb0;
+
+            case 5:
+                sVar3 = 0x1e;
+
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                entity.TargetAnimationId = 0;
+
+            LAB_80068c58:
+                entity.AIValues[1] = sVar3;
+                break;
+
+            case 7:
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                if (entity.Bytes[3] != 0)
+                {
+                    entity.TargetAnimationId = 2;
+                    entity.Flags |= 0x40;
+                    return;
+                }
+
+                if (entity.Bytes[1] == 0)
+                {
+                    entity.Bytes[1] = 10;
+                }
+
+                uVar5 = 3;
+
+            LAB_80068cb0:
+                entity.TargetAnimationId = uVar5;
+                break;
         }
     }
 
-    //80068cc8
+    // GHIDRA: AI_UpdateEntityAI_8 @ 0x80068CC8
     public static void AI_UpdateEntityAI_8(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        ushort uVar1;
+        ulong uVar2;
+        byte bVar3;
+        bool bVar4;
+        short sVar5;
+        int iVar6;
+        int iVar7;
+        uint uVar8;
+        int[] relativePositions = new int[6];
+
+        ScriptHelper.CalculateEntityRelativePosition(entity, gameEngine.StaticVariables.PlayerEntity, relativePositions);
+
+        uVar8 = entity.TargetAnimationId;
+
+        if (uVar8 == 6)
         {
-            Breakpoint.TriggerBreak();
+            return;
         }
+
+        if (uVar8 == 7)
+        {
+            if (entity.ForceResetAnimationFlag == 0)
+            {
+                return;
+            }
+
+            if (entity.Bytes[3] != 0)
+            {
+                gameEngine.SoundManager.PlaySoundEffect(0x40);
+                entity.TargetAnimationId = 2;
+                entity.Flags |= 0x40;
+                return;
+            }
+
+            gameEngine.SoundManager.PlaySoundEffect(0x7d);
+            bVar3 = entity.Bytes[2];
+            entity.TargetAnimationId = 4;
+            entity.DelayOrAngle = 0;
+
+            if (bVar3 != 0)
+            {
+                entity.Bytes[0] = 4;
+                entity.Bytes[1] = 7;
+                return;
+            }
+
+            bVar3 = 3;
+            goto LAB_800691a8;
+        }
+
+        if (((uVar8 < 2) || (uVar8 == 5)) &&
+            gameEngine.StaticVariables.PlayerEntity.FrameCollision != null &&
+            gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef != null &&
+            gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef.Val != 0 &&
+            relativePositions[0] < 3 &&
+            relativePositions[1] < 3)
+        {
+            gameEngine.SoundManager.PlaySoundEffect(0x7d);
+            entity.TargetAnimationId = 4;
+            bVar3 = 3;
+            goto LAB_800691a8;
+        }
+
+        bVar3 = entity.Bytes[0];
+
+        if (bVar3 != 1)
+        {
+            if (bVar3 < 2)
+            {
+                if (bVar3 != 0)
+                {
+                    return;
+                }
+
+                if (entity.AIValues[1] != 0)
+                {
+                    entity.AIValues[1] = (short)(entity.AIValues[1] - 1);
+                    return;
+                }
+
+                entity.Bytes[1] = 0;
+
+                if ((int)((Random.Next() * 4) >> 0x20) != 0)
+                {
+                    entity.Bytes[0] = 3;
+                    gameEngine.SoundManager.PlaySoundEffect(0x7d);
+                    entity.TargetAnimationId = 4;
+                    return;
+                }
+
+                entity.Bytes[0] = 1;
+                uVar2 = Random.Next();
+                entity.TargetAnimationId = 1;
+                entity.AIValues[1] = 0x78;
+                entity.TargetDirection = (uint)((uVar2 * 0x20) >> 0x20);
+                return;
+            }
+
+            if (bVar3 == 3)
+            {
+                bVar3 = entity.Bytes[1];
+
+                if (bVar3 != 1)
+                {
+                    if (bVar3 < 2)
+                    {
+                        if (bVar3 != 0)
+                        {
+                            return;
+                        }
+
+                        if (entity.ForceResetAnimationFlag == 0)
+                        {
+                            return;
+                        }
+
+                        gameEngine.EntityGameplayManager.StartFlying(entity, 9, 0x50, 0x46);
+                        entity.Bytes[1] = 1;
+                        return;
+                    }
+
+                    if (bVar3 != 2)
+                    {
+                        return;
+                    }
+
+                    if (entity.ForceResetAnimationFlag == 0)
+                    {
+                        return;
+                    }
+
+                    sVar5 = (short)((Random.Next() * 0x10) >> 0x20);
+                    entity.TargetAnimationId = 0;
+                    entity.Bytes[0] = 0;
+                    goto LAB_80069628;
+                }
+
+                sVar5 = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = sVar5;
+
+                if (sVar5 == 0)
+                {
+                    gameEngine.SoundManager.PlaySoundEffect(0x7d);
+                    entity.TargetAnimationId = 5;
+                    bVar3 = 2;
+                }
+                else
+                {
+                    if (entity.ForceAdjusted != 0 || CanMoveForward(entity, 0) != 0)
+                    {
+                        goto LAB_80069270;
+                    }
+
+                    bVar4 = gameEngine.EntityGameplayManager.TryAttackPlayerFront(entity, relativePositions, 2, 5, 0);
+
+                    if (!bVar4)
+                    {
+                        return;
+                    }
+
+                    entity.Bytes[0] = 4;
+                    bVar3 = 2;
+                }
+            }
+            else
+            {
+                if (bVar3 != 4)
+                {
+                    return;
+                }
+
+                switch (entity.Bytes[1])
+                {
+                    case 0:
+                        gameEngine.SoundManager.PlaySoundEffect(0x7d);
+                        entity.TargetAnimationId = 4;
+                        bVar3 = 1;
+                        break;
+
+                    case 1:
+                    case 2:
+                        if (entity.ForceResetAnimationFlag == 0 && entity.Bytes[1] != 2)
+                        {
+                            return;
+                        }
+
+                        entity.TargetAnimationId = 9;
+                        uVar8 = (uint)ScriptHelper.GetDirectionToTarget(
+                            gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                            gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                        uVar2 = Random.Next();
+                        entity.DelayOrAngle = 0;
+                        entity.AIValues[1] = 0x50;
+                        entity.Bytes[2] = 3;
+                        entity.Bytes[1] = 3;
+                        entity.TargetDirection = (uint)(((int)uVar8 + (int)((uVar2 * 9) >> 0x20) - 4) & 0x1f);
+                        return;
+
+                    case 3:
+                        sVar5 = (short)(entity.AIValues[1] - 1);
+                        entity.AIValues[1] = sVar5;
+
+                        if (sVar5 == 0 || entity.ForceAdjusted != 0 || CanMoveForward(entity, 0) != 0)
+                        {
+                            bVar3 = (byte)(entity.Bytes[2] - 1);
+                            entity.Bytes[2] = bVar3;
+
+                            if (bVar3 != 0)
+                            {
+                                entity.TargetAnimationId = 9;
+                                uVar8 = (uint)ScriptHelper.GetDirectionToTarget(
+                                    gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                                    gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                                entity.TargetDirection = uVar8;
+                                entity.AIValues[1] = 0x3c;
+                                return;
+                            }
+
+                            gameEngine.SoundManager.PlaySoundEffect(0x7d);
+                            entity.TargetAnimationId = 5;
+                            bVar3 = 6;
+                        }
+                        else
+                        {
+                            iVar6 = entity.DelayOrAngle - 1;
+
+                            if (entity.DelayOrAngle != 0)
+                            {
+                                entity.DelayOrAngle = iVar6;
+
+                                if (iVar6 != 0)
+                                {
+                                    return;
+                                }
+                            }
+
+                            if (2 < relativePositions[0] || 2 < relativePositions[1] || relativePositions[2] != 0)
+                            {
+                                return;
+                            }
+
+                            if (0x27 < (ushort)entity.AIValues[1])
+                            {
+                                return;
+                            }
+
+                            gameEngine.SoundManager.PlaySoundEffect(0x7d);
+                            entity.TargetAnimationId = 5;
+                            uVar8 = (uint)ScriptHelper.GetDirectionToTarget(
+                                gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                                gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                            entity.TargetDirection = uVar8;
+                            bVar3 = 4;
+                        }
+                        break;
+
+                    case 4:
+                        if (entity.ForceResetAnimationFlag == 0)
+                        {
+                            return;
+                        }
+
+                        entity.TargetAnimationId = 3;
+                        bVar3 = 5;
+                        break;
+
+                    case 5:
+                        if (entity.ForceResetAnimationFlag == 0 && entity.TargetAnimationId != 0)
+                        {
+                            return;
+                        }
+
+                        bVar3 = 6;
+
+                        if (entity.Bytes[2] != 1)
+                        {
+                            gameEngine.SoundManager.PlaySoundEffect(0x7d);
+                            entity.TargetAnimationId = 4;
+                            entity.Bytes[1] = 7;
+                            entity.DelayOrAngle = 0x1e;
+                            return;
+                        }
+
+                        entity.TargetAnimationId = 0;
+                        break;
+
+                    case 6:
+                        if (entity.ForceResetAnimationFlag == 0 && entity.TargetAnimationId != 0)
+                        {
+                            return;
+                        }
+
+                        entity.Bytes[0] = 0;
+                        sVar5 = (short)((Random.Next() * 0x10) >> 0x20);
+                        entity.TargetAnimationId = 0;
+                        goto LAB_80069628;
+
+                    case 7:
+                        if (entity.ForceResetAnimationFlag == 0)
+                        {
+                            return;
+                        }
+
+                        entity.TargetAnimationId = 9;
+                        entity.AIValues[1] = 1;
+                        bVar3 = 3;
+                        break;
+
+                    default:
+                        return;
+                }
+            }
+
+        LAB_80069664:
+            entity.Bytes[1] = bVar3;
+            return;
+        }
+
+        switch (entity.Bytes[1])
+        {
+            case 0:
+                sVar5 = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = sVar5;
+
+                if (sVar5 == 0)
+                {
+                    entity.TargetAnimationId = 0;
+                    bVar3 = gameEngine.StaticVariables.BYTE_ARRAY_80028b54[entity.AnimationDirection];
+                    entity.Bytes[1] = 4;
+                    entity.AIValues[1] = 0x3c;
+                    entity.TargetDirection = (uint)((bVar3 + 8) & 0x1f);
+                    return;
+                }
+
+                if (entity.ForceAdjusted != 0)
+                {
+                    var stepDistance = entity.SpriteRecord!.AnimSets[9].Acceleration;
+                    iVar6 = gameEngine.EntityGameplayManager.GetTileHeightAtOffset(
+                        entity,
+                        gameEngine.StaticVariables.g_offsetXList[entity.TargetDirection] * stepDistance,
+                        gameEngine.StaticVariables.g_offsetYList[entity.TargetDirection] * stepDistance);
+                    iVar6 -= entity.FloorHeight;
+
+                    if (iVar6 < 0x300001)
+                    {
+                        gameEngine.SoundManager.PlaySoundEffect(0x7d);
+                        uVar1 = (ushort)entity.AIValues[1];
+                        entity.TargetAnimationId = 4;
+                        entity.DelayOrAngle = iVar6;
+                        entity.Bytes[1] = 1;
+                        entity.ItemState = uVar1;
+                        return;
+                    }
+
+                    goto LAB_80069270;
+                }
+
+                if (CanMoveForward(entity, 0x300000) != 0)
+                {
+                    goto LAB_80069270;
+                }
+
+                iVar6 = 4;
+                break;
+
+            case 1:
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                iVar6 = entity.PosZ;
+                iVar7 = entity.DelayOrAngle;
+                entity.AIValues[1] = 0xf;
+                entity.TargetAnimationId = 9;
+                entity.Bytes[1] = 2;
+                entity.PosZ = iVar6 + iVar7;
+                return;
+
+            case 2:
+                sVar5 = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = sVar5;
+
+                if (sVar5 != 0)
+                {
+                    return;
+                }
+
+                gameEngine.SoundManager.PlaySoundEffect(0x7d);
+                iVar6 = entity.ItemState;
+                entity.TargetAnimationId = 5;
+                entity.Bytes[1] = 3;
+                entity.AIValues[1] = (short)iVar6;
+                return;
+
+            case 3:
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                entity.TargetAnimationId = 1;
+                entity.Bytes[1] = 0;
+                return;
+
+            case 4:
+            case 5:
+            case 6:
+                sVar5 = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = sVar5;
+
+                if (sVar5 == 0)
+                {
+                    bVar3 = entity.Bytes[1];
+                    entity.AIValues[1] = 0x28;
+
+                    if (bVar3 == 4)
+                    {
+                        entity.TargetDirection = (uint)((gameEngine.StaticVariables.BYTE_ARRAY_80028b54[entity.AnimationDirection] + 0x10) & 0x1f);
+                    }
+
+                    bVar3 = entity.Bytes[1];
+
+                    if (bVar3 == 5)
+                    {
+                        entity.TargetDirection = (uint)((gameEngine.StaticVariables.BYTE_ARRAY_80028b54[entity.AnimationDirection] - 8) & 0x1f);
+                        bVar3 = entity.Bytes[1];
+                    }
+
+                    if (bVar3 == 6)
+                    {
+                        entity.Bytes[0] = 0;
+                        entity.AIValues[1] = (short)((int)((Random.Next() * 0x21) >> 0x20) + entity.AIValues[1]);
+                    }
+
+                    bVar3 = (byte)(entity.Bytes[1] + 1);
+                    entity.Bytes[1] = bVar3;
+                    return;
+                }
+
+                iVar6 = 5;
+                break;
+
+            default:
+                return;
+        }
+
+        bVar4 = gameEngine.EntityGameplayManager.TryAttackPlayerFront(entity, relativePositions, 2, iVar6, 0);
+        bVar3 = 4;
+
+        if (!bVar4)
+        {
+            return;
+        }
+
+    LAB_800691a8:
+        entity.Bytes[0] = bVar3;
+        entity.Bytes[1] = 0;
+        return;
+
+    LAB_80069270:
+        bVar3 = gameEngine.StaticVariables.g_directionFlipTable[entity.TargetDirection];
+        entity.ForceStepY = 0;
+        entity.ForceStepX = 0;
+        entity.ForceY = 0;
+        entity.ForceX = 0;
+        entity.TargetForceY = 0;
+        entity.TargetForceX = 0;
+        entity.TargetDirection = bVar3;
+        return;
+
+    LAB_80069628:
+        entity.AIValues[1] = (short)(sVar5 + 0x1e);
     }
 
-    //80069684
+    // GHIDRA: AI_UpdateEntityAI_8_2 @ 0x80069684
     public static void AI_UpdateEntityAI_8_2(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        bool bVar1;
+        short sVar2;
+        int iVar3;
+        uint uVar4;
+        int[] relativePositions = new int[6];
 
-        if (!string.IsNullOrEmpty(entity.Name))
+        ScriptHelper.CalculateEntityRelativePosition(entity, gameEngine.StaticVariables.PlayerEntity, relativePositions);
+
+        switch (entity.TargetAnimationId)
         {
-            Breakpoint.TriggerBreak();
+            case 0:
+                sVar2 = entity.AIValues[1];
+
+                if (sVar2 != 0)
+                {
+                    entity.AIValues[1] = (short)(sVar2 - 1);
+
+                    if (sVar2 != 1 || entity.Bytes[1] != 1)
+                    {
+                        return;
+                    }
+
+                    entity.TargetAnimationId = 3;
+                    return;
+                }
+
+                if (relativePositions[0] < 5 && relativePositions[1] < 5 && relativePositions[2] < 0x200001)
+                {
+                    goto LAB_800697c0;
+                }
+
+                bVar1 = gameEngine.EntityGameplayManager.TryAttackPlayerFront(entity, relativePositions, 1, 10, 0x200000);
+
+                if (!bVar1)
+                {
+                    gameEngine.EntityGameplayManager.StartFlying(entity, 1, 0xb4, 0x46);
+                    return;
+                }
+
+                break;
+
+            case 1:
+                sVar2 = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = sVar2;
+
+                if (sVar2 == 0)
+                {
+                    goto LAB_800698ac;
+                }
+
+                bVar1 = gameEngine.EntityGameplayManager.TryAttackPlayerFront(entity, relativePositions, 2, 3, 0x300000);
+
+                if (bVar1)
+                {
+                    goto LAB_800697c0;
+                }
+
+                bVar1 = gameEngine.EntityGameplayManager.TryAttackPlayerFront(entity, relativePositions, 1, 5, 0x200000);
+
+                if (!bVar1)
+                {
+                    if (entity.ForceAdjusted != 0)
+                    {
+                        gameEngine.EntityGameplayManager.UpdateDirectionForced(entity, 1, 2, 0x300000);
+                        return;
+                    }
+
+                    gameEngine.EntityGameplayManager.HandleAnimationDirection(entity, 1, 0x300000);
+                    return;
+                }
+
+                break;
+
+            case 5:
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                if (entity.Bytes[3] != 0)
+                {
+                    entity.TargetAnimationId = 6;
+                    entity.Flags |= 0x40;
+                    return;
+                }
+
+                entity.TargetAnimationId = 0;
+                entity.AIValues[1] = 0;
+                goto LAB_800699a8;
+
+            case 7:
+                if (entity.IsOnGround == 0)
+                {
+                    return;
+                }
+
+                if (entity.Bytes[1] != 1)
+                {
+                    entity.TargetAnimationId = 0;
+                    entity.AIValues[1] = 0;
+                    return;
+                }
+
+                entity.TargetAnimationId = 9;
+                uVar4 = (uint)ScriptHelper.GetDirectionToTarget(
+                    entity.PosX - gameEngine.StaticVariables.PlayerEntity.PosX,
+                    entity.PosY - gameEngine.StaticVariables.PlayerEntity.PosY);
+                entity.TargetDirection = uVar4;
+                entity.AIValues[1] = 0x78;
+                goto LAB_800699a8;
+
+            case 9:
+                sVar2 = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = sVar2;
+
+                if (sVar2 != 0)
+                {
+                    if (entity.ForceAdjusted != 0)
+                    {
+                        entity.TargetAnimationId = 8;
+                        entity.TargetDirection = (entity.TargetDirection - 0x10) & 0x1f;
+                        return;
+                    }
+
+                    uVar4 = entity.TargetDirection;
+                    iVar3 = gameEngine.EntityGameplayManager.HandleAnimationDirection(entity, 1, 0);
+
+                    if (iVar3 == 0)
+                    {
+                        return;
+                    }
+
+                    entity.TargetDirection = (byte)uVar4;
+                    entity.TargetAnimationId = 0;
+                    entity.AIValues[1] = 0x1e;
+                    return;
+                }
+
+            LAB_800698ac:
+                entity.TargetAnimationId = 0;
+                return;
+
+            default:
+                return;
         }
+
+        entity.TargetAnimationId = 9;
+        uVar4 = (uint)ScriptHelper.GetDirectionToTarget(
+            gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+            gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+        entity.TargetDirection = uVar4;
+        entity.AIValues[1] = 0xb4;
+        return;
+
+    LAB_800697c0:
+        entity.Bytes[1] = 1;
+        uVar4 = (uint)ScriptHelper.GetDirectionToTarget(
+            gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+            gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+        entity.TargetDirection = uVar4;
+        entity.AIValues[1] = 0x1e;
+        return;
+
+    LAB_800699a8:
+        entity.Bytes[1] = 0;
     }
 
-    //800699c4
+    // GHIDRA: AI_UpdateEntityAI_9 @ 0x800699C4
     public static void AI_UpdateEntityAI_9(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        byte bVar1;
+        bool bVar2;
+        ushort uVar3;
+        short sVar4;
+        uint uVar5;
+        int[] relativePositions = new int[6];
 
-        if (!string.IsNullOrEmpty(entity.Name))
+        ScriptHelper.CalculateEntityRelativePosition(entity, gameEngine.StaticVariables.PlayerEntity, relativePositions);
+
+        switch (entity.TargetAnimationId)
         {
-            Breakpoint.TriggerBreak();
+            case 0:
+                entity.TargetAnimationId = 1;
+                entity.AIValues[1] = (short)(((Random.Next() * 0x10) >> 0x20) + 0xb4);
+                break;
+
+            case 1:
+                uVar3 = (ushort)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = (short)uVar3;
+
+                if ((uVar3 & 0x1f) == 0)
+                {
+                    if (relativePositions[0] < 5
+                        && relativePositions[1] < 5
+                        && gameEngine.StaticVariables.PlayerEntity.FrameCollision != null
+                        && gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef != null
+                        && gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef.Val != 0)
+                    {
+                        entity.TargetAnimationId = 8;
+                        uVar5 = (uint)ScriptHelper.GetDirectionToTarget(
+                            entity.PosX - gameEngine.StaticVariables.PlayerEntity.PosX,
+                            entity.PosY - gameEngine.StaticVariables.PlayerEntity.PosY);
+                        entity.TargetDirection = uVar5;
+                        return;
+                    }
+
+                    bVar2 = gameEngine.EntityGameplayManager.TryAttackPlayerFront(entity, relativePositions, 1, 8, 0x100000);
+
+                    if (bVar2)
+                    {
+                        uVar5 = (uint)ScriptHelper.GetDirectionToTarget(
+                            gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                            gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                        entity.TargetDirection = uVar5;
+                        entity.TargetAnimationId = 3;
+                        entity.AIValues[1] = 0xb4;
+                        return;
+                    }
+                }
+
+                if (entity.AIValues[1] != 0)
+                {
+                    if (entity.ForceAdjusted != 0)
+                    {
+                        gameEngine.EntityGameplayManager.UpdateDirectionForced(entity, 1, 2, 0x300000);
+                        return;
+                    }
+
+                    gameEngine.EntityGameplayManager.HandleAnimationDirection(entity, 1, 0x300000);
+                    return;
+                }
+
+                entity.TargetAnimationId = 0;
+                bVar1 = gameEngine.StaticVariables.BYTE_ARRAY_80028b54[entity.AnimationDirection];
+                entity.ForceStepY = 0;
+                entity.ForceStepX = 0;
+                entity.ForceY = 0;
+                entity.ForceX = 0;
+                entity.TargetForceY = 0;
+                entity.TargetForceX = 0;
+                entity.TargetDirection = (uint)((bVar1 - 8) & 0x1f);
+                break;
+
+            case 3:
+                sVar4 = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = sVar4;
+
+                if (sVar4 == 0)
+                {
+                    entity.TargetAnimationId = 0;
+                    break;
+                }
+
+                if (entity.ForceAdjusted == 0)
+                {
+                    return;
+                }
+
+                entity.TargetAnimationId = 8;
+                entity.TargetDirection = (entity.TargetDirection - 0x10) & 0x1f;
+                break;
+
+            case 5:
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                if (entity.Bytes[3] != 0)
+                {
+                    entity.TargetAnimationId = 6;
+                    entity.Flags |= 0x40;
+                    return;
+                }
+
+                entity.TargetAnimationId = 0;
+                break;
+
+            case 7:
+            case 9:
+                if (entity.IsOnGround != 0)
+                {
+                    entity.TargetAnimationId = 0;
+                }
+                break;
         }
     }
 
@@ -6490,13 +10735,358 @@ public static class FunctionTypeC
         return result;
     }
 
-    //8006abb0
+    // GHIDRA: AI_UpdateEntityAI_13 @ 0x8006ABB0
     public static void AI_UpdateEntityAI_13(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
         }
+
+        short sVar1 = 0;
+        uint uVar2 = 0;
+        int iVar3 = 0;
+        byte bVar4 = 0;
+        int[] relativePositions = new int[6];
+
+        ScriptHelper.CalculateEntityRelativePosition(entity, gameEngine.StaticVariables.PlayerEntity, relativePositions);
+
+        switch (entity.TargetAnimationId)
+        {
+            case 0:
+                uVar2 = 10;
+
+                if (entity.Bytes[0] != 3)
+                {
+                    if (entity.AIValues[1] != 0)
+                    {
+                        entity.AIValues[1] = (short)(entity.AIValues[1] - 1);
+                        return;
+                    }
+
+                    if (relativePositions[0] < 4 && relativePositions[1] < 4 && relativePositions[2] == 0)
+                    {
+                        uVar2 = (uint)((Random.Next() * 4) >> 0x20);
+                        bVar4 = 1;
+
+                        if (uVar2 == 1)
+                        {
+                            entity.TargetAnimationId = 1;
+                            uVar2 = (uint)ScriptHelper.GetDirectionToTarget(
+                                gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                                gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                            entity.TargetDirection = uVar2;
+                        }
+                        else
+                        {
+                            if (uVar2 < 2)
+                            {
+                                if (uVar2 != 0)
+                                {
+                                    return;
+                                }
+
+                                entity.TargetAnimationId = 3;
+                                goto LAB_8006b0b0;
+                            }
+
+                            if (uVar2 == 2)
+                            {
+                                entity.TargetAnimationId = 1;
+                                uVar2 = (uint)ScriptHelper.GetDirectionToTarget(
+                                    gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                                    gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                                uVar2 += 4;
+                            }
+                            else
+                            {
+                                if (uVar2 != 3)
+                                {
+                                    return;
+                                }
+
+                                entity.TargetAnimationId = 1;
+                                uVar2 = (uint)ScriptHelper.GetDirectionToTarget(
+                                    gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                                    gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                                uVar2 -= 4;
+                            }
+
+                            entity.TargetDirection = uVar2 & 0x1f;
+                        }
+
+                        entity.AIValues[1] = 0x28;
+                        return;
+                    }
+
+                    uVar2 = 9;
+
+                    if (relativePositions[0] < 5 && relativePositions[1] < 5 && relativePositions[2] == 0)
+                    {
+                        iVar3 = (int)((Random.Next() * 2) >> 0x20);
+
+                        if (iVar3 == 0)
+                        {
+                            entity.TargetAnimationId = 1;
+                            uVar2 = (uint)ScriptHelper.GetDirectionToTarget(
+                                gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                                gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                            entity.TargetDirection = uVar2;
+                            entity.AIValues[1] = (short)(((Random.Next() * 0x10) >> 0x20) + 0x14);
+                            return;
+                        }
+
+                        if (iVar3 != 1)
+                        {
+                            return;
+                        }
+
+                        entity.TargetAnimationId = 3;
+                        uVar2 = (uint)ScriptHelper.GetDirectionToTarget(
+                            gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                            gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                        entity.TargetDirection = uVar2;
+                        entity.Bytes[0] = 2;
+                        return;
+                    }
+
+                    goto LAB_8006b160;
+                }
+
+                break;
+
+            case 1:
+                sVar1 = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = sVar1;
+
+                if (sVar1 == 0)
+                {
+                    entity.TargetAnimationId = 0;
+                    return;
+                }
+
+                uVar2 = 9;
+
+                if (4 < relativePositions[0] || 4 < relativePositions[1])
+                {
+                    goto LAB_8006b160;
+                }
+
+                if (entity.ForceAdjusted == 0 && CanMoveForward(entity, 0) == 0)
+                {
+                    return;
+                }
+
+                var stepDistance = entity.SpriteRecord!.AnimSets[10].Acceleration;
+                iVar3 = gameEngine.EntityGameplayManager.GetTileHeightAtOffset(
+                    entity,
+                    gameEngine.StaticVariables.g_offsetXList[entity.TargetDirection] * stepDistance,
+                    gameEngine.StaticVariables.g_offsetYList[entity.TargetDirection] * stepDistance);
+
+                if (iVar3 == 0x7800000)
+                {
+                    return;
+                }
+
+                bVar4 = 3;
+
+                if (relativePositions[2] != 0)
+                {
+                    entity.TargetAnimationId = 3;
+                    goto LAB_8006b0b0;
+                }
+
+                entity.TargetAnimationId = 0;
+                goto LAB_8006b080;
+
+            case 2:
+                sVar1 = (short)(entity.AIValues[1] - 1);
+                entity.AIValues[1] = sVar1;
+
+                if (sVar1 != 0)
+                {
+                    return;
+                }
+
+                entity.TargetAnimationId = 5;
+                return;
+
+            case 3:
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                bVar4 = entity.Bytes[0];
+
+                if (bVar4 != 2)
+                {
+                    if (2 < bVar4)
+                    {
+                        uVar2 = 5;
+
+                        if (bVar4 != 3)
+                        {
+                            return;
+                        }
+
+                        goto LAB_8006b160;
+                    }
+
+                    if (bVar4 != 1)
+                    {
+                        return;
+                    }
+
+                    entity.TargetAnimationId = 4;
+                    goto LAB_8006b20c;
+                }
+
+                entity.TargetAnimationId = 2;
+                uVar2 = (uint)ScriptHelper.GetDirectionToTarget(
+                    gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                    gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                entity.TargetDirection = uVar2;
+                sVar1 = 10;
+                goto LAB_8006b208;
+
+            case 4:
+                uVar2 = 5;
+
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                break;
+
+            case 5:
+                sVar1 = 0x1e;
+
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                goto LAB_8006b1c0;
+
+            case 7:
+                if (entity.ForceResetAnimationFlag == 0)
+                {
+                    return;
+                }
+
+                if (entity.Bytes[3] != 0)
+                {
+                    entity.TargetAnimationId = 8;
+                    entity.Flags |= 0x40;
+                    return;
+                }
+
+                sVar1 = 0x14;
+                entity.TargetAnimationId = 0;
+                goto LAB_8006b208;
+
+            case 9:
+                if (0x1e < relativePositions[0])
+                {
+                    return;
+                }
+
+                if (0x1e < relativePositions[1])
+                {
+                    return;
+                }
+
+                entity.TargetAnimationId = 10;
+                goto LAB_8006b080;
+
+            case 10:
+                if (entity.Bytes[0] == 3)
+                {
+                    sVar1 = (short)(entity.AIValues[1] - 1);
+                    entity.AIValues[1] = sVar1;
+
+                    if (sVar1 != 0)
+                    {
+                        return;
+                    }
+
+                    entity.Bytes[0] = 0;
+                    return;
+                }
+
+                if (relativePositions[0] != 0 || relativePositions[1] != 0 || relativePositions[2] != 0)
+                {
+                    uVar2 = (uint)ScriptHelper.GetDirectionToTarget(
+                        gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+                        gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                    entity.TargetDirection = uVar2;
+
+                    if (entity.ForceAdjusted == 0)
+                    {
+                        return;
+                    }
+
+                    stepDistance = entity.SpriteRecord!.AnimSets[10].Acceleration;
+                    iVar3 = gameEngine.EntityGameplayManager.GetTileHeightAtOffset(
+                        entity,
+                        gameEngine.StaticVariables.g_offsetXList[uVar2] * stepDistance,
+                        gameEngine.StaticVariables.g_offsetYList[uVar2] * stepDistance);
+
+                    if (iVar3 == 0x7800000)
+                    {
+                        return;
+                    }
+
+                    iVar3 -= entity.FloorHeight;
+                    entity.TerrainHeight += iVar3;
+                    entity.FloorHeight += iVar3;
+                    entity.PosZ += iVar3;
+                    return;
+                }
+
+                sVar1 = 0x78;
+                goto LAB_8006b1c0;
+
+            default:
+                return;
+        }
+
+        entity.TargetAnimationId = uVar2;
+        entity.AIValues[1] = 0x3c;
+        return;
+
+    LAB_8006b080:
+        uVar2 = (uint)ScriptHelper.GetDirectionToTarget(
+            gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+            gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+        entity.TargetDirection = uVar2;
+        return;
+
+    LAB_8006b0b0:
+        uVar2 = (uint)ScriptHelper.GetDirectionToTarget(
+            gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
+            gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+        entity.TargetDirection = uVar2;
+        entity.Bytes[0] = bVar4;
+        return;
+
+    LAB_8006b160:
+        entity.TargetAnimationId = uVar2;
+        entity.AIValues[1] = 0;
+        return;
+
+    LAB_8006b1c0:
+        entity.TargetAnimationId = 0;
+        entity.AIValues[1] = sVar1;
+        return;
+
+    LAB_8006b208:
+        entity.AIValues[1] = sVar1;
+
+    LAB_8006b20c:
+        entity.Bytes[0] = 0;
     }
 
     //8006b234
