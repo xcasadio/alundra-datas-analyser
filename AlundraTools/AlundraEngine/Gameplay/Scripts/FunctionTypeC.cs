@@ -12766,28 +12766,30 @@ SetAnim6:
     //Item spawn
     public static void FUN_8007c174(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name)
-            && entity.Name != "I32_Cape de sable"
-            && entity.Name != "I36_Herbe médicinale"
-            && entity.Name != "I38_Extrait magique"
-            && entity.Name != "I39_Breuvage de soin"
-            && entity.Name != "I43_Tome de la Terre (haut)"
-            && entity.Name != "I62_Emblème du sang de pigeon"
-            && entity.Name != "I61_Clé"
-            && entity.Name != "I69_1 Gilda"
-            && entity.Name != "I70_5 Gildas"
-            && entity.Name != "I71_10 Gildas"
-            && entity.Name != "I72_30 Gildas"
-            && entity.Name != "I79_Bec en or"
-            && entity.Name != "I80_Graine magique"
-            && entity.Name != "I83_Récipient de vie"
-            && entity.Name != "I84_Petit cœur"
-            && entity.Name != "I85_Cœur moyen"
-            && entity.Name != "I86_Grand cœur"
-            && !string.IsNullOrEmpty(entity.Name))
-        {
-            Breakpoint.TriggerBreak();
-        }
+        //if (!string.IsNullOrEmpty(entity.Name)
+        //    && entity.Name != "I07_Bâton magique"
+        //    && entity.Name != "I31_Haricots de Jack"
+        //    && entity.Name != "I32_Cape de sable"
+        //    && entity.Name != "I36_Herbe médicinale"
+        //    && entity.Name != "I38_Extrait magique"
+        //    && entity.Name != "I39_Breuvage de soin"
+        //    && entity.Name != "I43_Tome de la Terre (haut)"
+        //    && entity.Name != "I62_Emblème du sang de pigeon"
+        //    && entity.Name != "I61_Clé"
+        //    && entity.Name != "I69_1 Gilda"
+        //    && entity.Name != "I70_5 Gildas"
+        //    && entity.Name != "I71_10 Gildas"
+        //    && entity.Name != "I72_30 Gildas"
+        //    && entity.Name != "I79_Bec en or"
+        //    && entity.Name != "I80_Graine magique"
+        //    && entity.Name != "I83_Récipient de vie"
+        //    && entity.Name != "I84_Petit cœur"
+        //    && entity.Name != "I85_Cœur moyen"
+        //    && entity.Name != "I86_Grand cœur"
+        //    && !string.IsNullOrEmpty(entity.Name))
+        //{
+        //    Breakpoint.TriggerBreak();
+        //}
 
         int itemState;
         Entity entity2;

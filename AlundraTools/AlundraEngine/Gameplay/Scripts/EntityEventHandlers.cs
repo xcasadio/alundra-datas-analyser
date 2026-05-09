@@ -1030,8 +1030,6 @@ public class EntityEventHandlers
     // 8003DC84
     public int Script_44_02C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        //AlundraEngine.Debug.Debugger.Breakpoint();
-
         var num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
         eventProgramState.Result = num == 0 ? 1 : 0;
         return 2;
@@ -1096,23 +1094,10 @@ public class EntityEventHandlers
     public int Script_48_030(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint flag = (uint)(variables[1] + variables[2] * 0x100);
-        //uint[] flags;
-        //
-        //
-        //if ((flag & 0x8000) == 0)
-        //{
-        //    flags = _gameEngine.StaticVariables.g_saveData.GameFlags;
-        //}
-        //else
-        //{
-        //    flags = _gameEngine.StaticVariables.g_temporaryFlags;
-        //}
-        //
-        //var index = ((flag >> 3) & 0xffc) >> 2;
         var mask = 1 << (variables[1] & 0x1f);
         flag = _gameEngine.GetFlag(flag);
 
-        if ((/*flags[index]*/flag & mask) != 0)
+        if ((flag & mask) != 0)
         {
             return (((variables[4] << 8) | variables[3]) * 0x10000) >> 0x10;
         }
@@ -1124,23 +1109,10 @@ public class EntityEventHandlers
     public int Script_49_031(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint flag = (uint)(variables[1] + variables[2] * 0x100);
-        //uint[] flags;
-        //
-        //
-        //if ((flag & 0x8000) == 0)
-        //{
-        //    flags = _gameEngine.StaticVariables.g_saveData.GameFlags;
-        //}
-        //else
-        //{
-        //    flags = _gameEngine.StaticVariables.g_temporaryFlags;
-        //}
-        //
-        //var index = ((flag >> 3) & 0xffc) >> 2;
         var mask = 1 << (variables[1] & 0x1f);
         flag = _gameEngine.GetFlag(flag);
 
-        if ((/*flags[index]*/flag & mask) == 0)
+        if ((flag & mask) == 0)
         {
             return (((variables[4] << 8) | variables[3]) * 0x10000) >> 0x10;
         }
@@ -1152,19 +1124,6 @@ public class EntityEventHandlers
     public int Script_50_032(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var flag = (uint)((variables[2] << 8) | variables[1]);
-        //uint[] flags;
-        //
-        //if ((flag & 0x8000) == 0)
-        //{
-        //    flags = _gameEngine.StaticVariables.g_saveData.GameFlags;
-        //}
-        //else
-        //{
-        //    flags = _gameEngine.StaticVariables.g_temporaryFlags;
-        //}
-        //
-        //var index = ((flag >> 3) & 0xffc) >> 2;
-        //flags[index] ^= mask;
         var mask = (uint)(1 << (variables[1] & 0x1f));
         _gameEngine.XorFlag(flag, mask);
 
@@ -1177,22 +1136,9 @@ public class EntityEventHandlers
         for (int i = 0; i < 4; i++)
         {
             var flag = variables[i * 2 + 1] + (variables[i * 2 + 2] << 8);
-            //uint[] flags;
-            //
-            //
-            //if ((flag & 0x8000) == 0)
-            //{
-            //    flags = _gameEngine.StaticVariables.g_saveData.GameFlags;
-            //}
-            //else
-            //{
-            //    flags = _gameEngine.StaticVariables.g_temporaryFlags;
-            //}
-            //
-            //var index = ((flag >> 3) & 0xffc) >> 2;
             var mask = 1 << (variables[1] & 0x1f);
 
-            if ((/*flags[index]*/flag & mask) == 0)
+            if ((flag & mask) == 0)
             {
                 eventProgramState.Result = 0;
                 return 9;
@@ -1209,22 +1155,9 @@ public class EntityEventHandlers
         for (int i = 0; i < 4; i++)
         {
             var flag = (uint)(variables[i * 2 + 1] | (variables[i * 2 + 2] << 8));
-
-            //uint[] flags;
-            //
-            //if ((flag & 0x8000) == 0)
-            //{
-            //    flags = _gameEngine.StaticVariables.g_saveData.GameFlags;
-            //}
-            //else
-            //{
-            //    flags = _gameEngine.StaticVariables.g_temporaryFlags;
-            //}
-            //var index = (flag >> 5) & 0x3ff;
-
             var mask = (uint)(1 << (int)(flag & 0x1f));
 
-            if ((/*flags[index]*/_gameEngine.GetFlag(flag) & mask) != 0)
+            if ((_gameEngine.GetFlag(flag) & mask) != 0)
             {
                 eventProgramState.Result = 0;
                 return 9;
@@ -1239,21 +1172,9 @@ public class EntityEventHandlers
     public int Script_53_035(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint flag = (uint)((variables[2] << 8) | variables[1]);
-        //uint[] flags;
-        //
-        //if ((flag & 0x8000) == 0)
-        //{
-        //    flags = _gameEngine.StaticVariables.g_saveData.GameFlags;
-        //}
-        //else
-        //{
-        //    flags = _gameEngine.StaticVariables.g_temporaryFlags;
-        //}
-        //
-        //var index = ((flag >> 3) & 0xffc) >> 2;
         var mask = 1 << (variables[1] & 0x1f);
 
-        if ((/*flags[index]*/_gameEngine.GetFlag(flag) & mask) == 0)
+        if ((_gameEngine.GetFlag(flag) & mask) == 0)
         {
             return 3;
         }
@@ -1265,21 +1186,9 @@ public class EntityEventHandlers
     public int Script_54_036(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         uint flag = (uint)((variables[2] << 8) | variables[1]);
-        //uint[] flags;
-        //
-        //if ((flag & 0x8000) == 0)
-        //{
-        //    flags = _gameEngine.StaticVariables.g_saveData.GameFlags;
-        //}
-        //else
-        //{
-        //    flags = _gameEngine.StaticVariables.g_temporaryFlags;
-        //}
-        //
-        //var index = ((flag >> 3) & 0xffc) >> 2;
         var mask = 1 << (variables[1] & 0x1f);
 
-        if ((/*flags[index]*/_gameEngine.GetFlag(flag) & mask) != 0)
+        if ((_gameEngine.GetFlag(flag) & mask) != 0)
         {
             return 3;
         }
