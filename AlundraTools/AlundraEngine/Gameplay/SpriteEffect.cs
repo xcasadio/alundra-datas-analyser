@@ -6,6 +6,21 @@ namespace AlundraEngine.Gameplay;
 //0x80 byte record
 public class SpriteEffect
 {
+
+    public byte TargetAnimation
+    {
+        get => _TargetAnimation;
+        set
+        {
+            if (Id == 12)
+            {
+                Breakpoint.TriggerBreak();
+            }
+
+            _TargetAnimation = value;
+        }
+    }
+
     public int Id;//0
     public MapEffectRecord? MapEffectRecord;//4
     public SpriteEffectRecord? SpriteEffectRecord;//8
@@ -30,7 +45,7 @@ public class SpriteEffect
     public byte CurrentIsMapSprite;//6d
     public byte TargetSpriteTableIndex; //6e
     public byte CurrentSpriteTableIndex;    //6f
-    public byte TargetAnimation;             //70
+    public byte _TargetAnimation;             //70
     public byte CurrentAnimation;                //71
     public short _72;
     public SiEffectFrame? Frame;   //74
