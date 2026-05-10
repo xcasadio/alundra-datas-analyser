@@ -40,7 +40,7 @@ public class Entity
                 Breakpoint.TriggerBreak();
             }
 
-            if (Index == 0)
+            if (Index == 18 && value == 0)
             {
                //Breakpoint.TriggerBreak();
             }
@@ -144,6 +144,20 @@ public class Entity
         }
     }
 
+    public Entity? XCollisionEntity
+    {
+        get => _XCollisionEntity;
+        set
+        {
+            if (Index == 0 && value == null)
+            {
+                //Breakpoint.TriggerBreak();
+            }
+
+            _XCollisionEntity = value;
+        }
+    }
+
     public int Index;
     public int Index2;
     public Entity? ChildEntity;
@@ -200,7 +214,7 @@ public class Entity
     public int TileY;
     public int TileZ;
     public Entity? RidingEntity; //12c
-    public Entity? XCollisionEntity;
+    public Entity? _XCollisionEntity;
     public int FloorHeight;
     public int TerrainHeight;//
     public int ForceAdjusted;//0x13c
