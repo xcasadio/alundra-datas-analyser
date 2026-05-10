@@ -673,7 +673,7 @@ public class EntityManager
         for (var i = 0; i <= _gameEngine.StaticVariables.g_numberOfEntities; i++)
         {
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
-            if (entity.Status - 2 >= 2 || (entity.DamagedTickCounter & 3) == 3)
+            if ((uint)(entity.Status - 2) >= 2U || (entity.DamagedTickCounter & 3) == 3)
             {
                 if (entity.ActiveEffect != null)
                 {
