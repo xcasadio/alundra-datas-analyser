@@ -14,7 +14,7 @@ public class SpriteEffect
         {
             if (Id == 12)
             {
-                Breakpoint.TriggerBreak();
+                //Breakpoint.TriggerBreak();
             }
 
             _TargetAnimation = value;

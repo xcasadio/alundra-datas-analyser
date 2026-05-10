@@ -2344,49 +2344,49 @@ public class PlayerManager
     //8003634c
     private int MaybeStartWarpAnimation()
     {
-        int iVar1;
+        int result;
 
         if (_gameEngine.StaticVariables.g_warpLockTimer == 0)
         {
-            iVar1 = 1;
+            result = 1;
         }
         else
         {
             switch (_gameEngine.StaticVariables.g_warpLockTimer)
             {
                 case 0x1f:
-                    iVar1 = FUN_80035204();
+                    result = FUN_80035204();
                     break;
                 case 0x20:
-                    iVar1 = ProcessSandCapeUseSequence();
-                    break;
-                default:
-                    iVar1 = 1;
+                    result = ProcessSandCapeUseSequence();
                     break;
                 case 0x23:
-                    iVar1 = FUN_800352c4();
+                    result = FUN_800352c4();
                     break;
                 case 0x2b:
-                    iVar1 = ProcessEarthMagicLevel1Sequence();
+                    result = ProcessEarthMagicLevel1Sequence();
                     break;
                 case 0x2c:
-                    iVar1 = ProcessRadialBurstEffectSequence();
+                    result = ProcessEarthMagicLevel2Sequence();
                     break;
                 case 0x2d:
                 case 0x2e:
-                    iVar1 = ProcessTimedRecoveryEffectSequence(_gameEngine.StaticVariables.g_warpLockTimer);
+                    result = ProcessTimedRecoveryEffectSequence(_gameEngine.StaticVariables.g_warpLockTimer);
                     break;
                 case 0x2f:
-                    iVar1 = ProcessAnchorSparkEffectSequence();
+                    result = ProcessAnchorSparkEffectSequence();
                     break;
                 case 0x30:
-                    iVar1 = ProcessAnchorScrollShakeEffectSequence();
+                    result = ProcessAnchorScrollShakeEffectSequence();
                     break;
                 case 0x31:
-                    iVar1 = FUN_80035eb0();
+                    result = FUN_80035eb0();
                     break;
                 case 0x32:
-                    iVar1 = FUN_80036218();
+                    result = FUN_80036218();
+                    break;
+                default:
+                    result = 1;
                     break;
             }
 
@@ -2395,13 +2395,13 @@ public class PlayerManager
                 _gameEngine.StaticVariables.g_playerEffectCurrentFrame += 1;
             }
 
-            if (iVar1 != 0)
+            if (result != 0)
             {
                 _gameEngine.StaticVariables.g_warpLockTimer = 0;
             }
         }
 
-        return iVar1;
+        return result;
     }
 
     // 80036218
@@ -2785,21 +2785,20 @@ public class PlayerManager
     // 0x80035790
     private int ProcessTimedRecoveryEffectSequence(int timer)
     {
-        Breakpoint.TriggerBreak();
+        //Breakpoint.TriggerBreak();
 
-        var staticVariables = _gameEngine.StaticVariables;
-        var player = staticVariables.PlayerEntity;
+        var player = _gameEngine.StaticVariables.PlayerEntity;
 
-        if (staticVariables.g_playerEffectPhase == 1)
+        if (_gameEngine.StaticVariables.g_playerEffectPhase == 1)
         {
             if (IsFadeActive() != 0)
             {
                 return 1;
             }
 
-            staticVariables.g_playerEffectTimer += 1;
+            _gameEngine.StaticVariables.g_playerEffectTimer += 1;
 
-            if (staticVariables.g_playerEffectTimer == 0x1E)
+            if (_gameEngine.StaticVariables.g_playerEffectTimer == 0x1E)
             {
                 if (timer == 0x2D)
                 {
@@ -2813,17 +2812,17 @@ public class PlayerManager
                 }
             }
 
-            if (staticVariables.g_playerEffectTimer < 0x3C)
+            if (_gameEngine.StaticVariables.g_playerEffectTimer < 0x3C)
             {
                 return 0;
             }
 
             player.TargetAnimationId = 0x34;
-            staticVariables.g_playerEffectPhase += 1;
+            _gameEngine.StaticVariables.g_playerEffectPhase += 1;
             return 0;
         }
 
-        if (staticVariables.g_playerEffectPhase == 2)
+        if (_gameEngine.StaticVariables.g_playerEffectPhase == 2)
         {
             if (player.TargetAnimationId == 0x34)
             {
@@ -2831,10 +2830,10 @@ public class PlayerManager
             }
 
             for (var entityIndex = 1;
-                 entityIndex <= staticVariables.g_numberOfEntities && entityIndex < staticVariables.g_entitySlots.Length;
+                 entityIndex <= _gameEngine.StaticVariables.g_numberOfEntities && entityIndex < _gameEngine.StaticVariables.g_entitySlots.Length;
                  entityIndex++)
             {
-                var entity = staticVariables.g_entitySlots[entityIndex];
+                var entity = _gameEngine.StaticVariables.g_entitySlots[entityIndex];
                 var aiValue = (ushort)entity.AIValues[8] | ((ushort)entity.AIValues[9] << 16);
 
                 if (entity.SpriteTableIndex == 0x13
@@ -2853,13 +2852,13 @@ public class PlayerManager
         }
 
         var parameterTable = timer == 0x2D
-            ? staticVariables.SHORT_ARRAY_80023544
-            : staticVariables.SHORT_ARRAY_8002357c;
+            ? _gameEngine.StaticVariables.SHORT_ARRAY_80023544
+            : _gameEngine.StaticVariables.SHORT_ARRAY_8002357c;
         var parameterIndex = 0;
 
-        while ((ushort)parameterTable[parameterIndex] <= staticVariables.g_playerEffectCurrentFrame)
+        while ((ushort)parameterTable[parameterIndex] <= _gameEngine.StaticVariables.g_playerEffectCurrentFrame)
         {
-            if ((ushort)parameterTable[parameterIndex] == staticVariables.g_playerEffectCurrentFrame)
+            if ((ushort)parameterTable[parameterIndex] == _gameEngine.StaticVariables.g_playerEffectCurrentFrame)
             {
                 var entitySpawned = _gameEngine.SpawnWarpEntity(player,
                     0, 0x13,
@@ -2871,9 +2870,9 @@ public class PlayerManager
                 if (entitySpawned != null)
                 {
                     var word274 = parameterTable[parameterIndex + 1];
-                    var word280 = parameterTable[parameterIndex + 4] * staticVariables.g_playerEffectCurrentFrame;
+                    var word280 = parameterTable[parameterIndex + 4] * _gameEngine.StaticVariables.g_playerEffectCurrentFrame;
                     var word28c = (parameterTable[parameterIndex + 5] + word280) % 0x100;
-                    var word290 = parameterTable[parameterIndex + 6] - staticVariables.g_playerEffectCurrentFrame;
+                    var word290 = parameterTable[parameterIndex + 6] - _gameEngine.StaticVariables.g_playerEffectCurrentFrame;
 
                     entitySpawned.SpriteProgramIndexes[0] = 0x00FE;
                     entitySpawned.Bytes[0] = (byte)word274;
@@ -2903,37 +2902,36 @@ public class PlayerManager
             return 0;
         }
 
-        staticVariables.g_playerEffectTimer = 0;
-        staticVariables.g_playerEffectPhase += 1;
+        _gameEngine.StaticVariables.g_playerEffectTimer = 0;
+        _gameEngine.StaticVariables.g_playerEffectPhase += 1;
         return 0;
     }
 
     // 800354D0
-    private int ProcessRadialBurstEffectSequence()
+    private int ProcessEarthMagicLevel2Sequence()
     {
-        Breakpoint.TriggerBreak();
+        //Breakpoint.TriggerBreak();
 
-        var staticVariables = _gameEngine.StaticVariables;
-        var player = staticVariables.PlayerEntity;
+        var player = _gameEngine.StaticVariables.PlayerEntity;
 
-        if (staticVariables.g_playerEffectPhase == 1)
+        if (_gameEngine.StaticVariables.g_playerEffectPhase == 1)
         {
             if (IsFadeActive() != 0)
             {
                 return 1;
             }
 
-            if (staticVariables.g_playerEffectCurrentFrame < 0x118)
+            if (_gameEngine.StaticVariables.g_playerEffectCurrentFrame < 0x118)
             {
                 return 0;
             }
 
             player.TargetAnimationId = 0x34;
-            staticVariables.g_playerEffectPhase += 1;
+            _gameEngine.StaticVariables.g_playerEffectPhase += 1;
             return 0;
         }
 
-        if (staticVariables.g_playerEffectPhase == 2)
+        if (_gameEngine.StaticVariables.g_playerEffectPhase == 2)
         {
             if (player.TargetAnimationId != 0x34)
             {
@@ -2948,20 +2946,20 @@ public class PlayerManager
             return 1;
         }
 
-        var parameterTable = staticVariables.SHORT_ARRAY_80023504;
+        var parameterTable = _gameEngine.StaticVariables.SHORT_ARRAY_80023504;
         var parameterIndex = 0;
 
-        while ((ushort)parameterTable[parameterIndex] <= staticVariables.g_playerEffectCurrentFrame)
+        while ((ushort)parameterTable[parameterIndex] <= _gameEngine.StaticVariables.g_playerEffectCurrentFrame)
         {
-            if ((ushort)parameterTable[parameterIndex] == staticVariables.g_playerEffectCurrentFrame)
+            if ((ushort)parameterTable[parameterIndex] == _gameEngine.StaticVariables.g_playerEffectCurrentFrame)
             {
                 var radius = parameterTable[parameterIndex + 1] + 0x0A00;
                 var randomYIndex = (int)((Random.Next() * 0x20ul) >> 32);
                 var randomXIndex = (int)((Random.Next() * 0x20ul) >> 32);
                 var entitySpawned = _gameEngine.SpawnWarpEntity(player,
                     0, 0x11,
-                    player.PosX + staticVariables.g_offsetXList[randomXIndex] * radius,
-                    player.PosY + staticVariables.g_offsetYList[randomYIndex] * radius,
+                    player.PosX + _gameEngine.StaticVariables.g_offsetXList[randomXIndex] * radius,
+                    player.PosY + _gameEngine.StaticVariables.g_offsetYList[randomYIndex] * radius,
                     player.PosZ + 0x01000000,
                     (uint)randomXIndex);
 
@@ -2986,7 +2984,7 @@ public class PlayerManager
             return 0;
         }
 
-        staticVariables.g_playerEffectPhase += 1;
+        _gameEngine.StaticVariables.g_playerEffectPhase += 1;
         return 0;
     }
 

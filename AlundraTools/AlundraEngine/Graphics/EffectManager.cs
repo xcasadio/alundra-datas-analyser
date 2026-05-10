@@ -41,8 +41,8 @@ public class EffectManager
 
             var spriteEffect = SpawnSpriteEffect(i, 0);
             if (spriteEffect == null 
-                  /*&& (_gameEngine.StaticVariables.g_debugState & 0x80000000U) != 0
-                 && (_gameEngine.StaticVariables.g_debugFlags & 0x20) != 0*/)
+                  && (_gameEngine.StaticVariables.g_debugState & 0x80000000U) != 0
+                 && (_gameEngine.StaticVariables.g_debugFlags & 0x20) != 0)
             {
                 Breakpoint.TriggerBreak();
             }
@@ -203,7 +203,7 @@ public class EffectManager
                 effect.CurrentFrameIndex++;
 
                 //Todo fix bug : during the first scene with Lars the effect bugs
-                //effect.CurrentFrameIndex = Math.Min(effect.CurrentFrameIndex, anim.Frames.Length - 1);
+                effect.CurrentFrameIndex = Math.Min(effect.CurrentFrameIndex, anim.Frames.Length - 1);
 
                 try
                 {

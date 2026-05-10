@@ -768,7 +768,7 @@ public class EntityManager
                     continue;
             }
 
-            var animId = ((int)(entity.Flags & 0x7) - 1) - ((entity.PosZ - entity.FloorHeight) >> 20);
+            var animId = ((int)((entity.Flags >> 0x10) & 0x7) - 1) - ((entity.PosZ - entity.FloorHeight) >> 20);
 
             if (animId >= 6)
             {
