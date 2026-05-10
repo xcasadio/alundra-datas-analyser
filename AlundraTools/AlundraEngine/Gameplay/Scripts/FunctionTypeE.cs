@@ -27,7 +27,7 @@ public static class FunctionTypeE
             && entity.Name != "Cruche générique"
             && entity.Name != "Tonneau générique"
             && entity.Name != "Pierre générique"
-            && !string.IsNullOrEmpty(entity.Name))
+            && entity.Name != "Rocher tortue non ennemi")
         {
             Breakpoint.TriggerBreak();
         }
@@ -362,7 +362,8 @@ public static class FunctionTypeE
     public static void AI_FUN_8007f3b0(GameEngine gameEngine, Entity entity)
     {
         if (entity.Name != "◆Homme-lézard (épée) Niv.1"
-            && entity.Name != "Mur à boule de fer (2×2×2) permanent")
+            && entity.Name != "Mur à boule de fer (2×2×2) permanent"
+            && entity.Name != "Mur à boule de fer (111)")
         {
             Breakpoint.TriggerBreak();
         }
@@ -517,7 +518,8 @@ public static class FunctionTypeE
     //8007f5c0
     public static void AI_FUN_8007f658(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Boule de fer (grande)")
+        if (entity.Name != "Boule de fer (grande)"
+            && entity.Name != "Boule de fer (petite)")
         {
             Breakpoint.TriggerBreak();
         }

@@ -44,6 +44,7 @@ public class StaticVariables
     public bool DisplayWallTileZ { get; set; }
     public bool DisplayTiles { get; set; } = true;
     public bool DisplayWallTiles { get; set; } = true;
+    public bool IsGodMode { get; set; } = true;
 
     //debug
     public uint FrameNumber;
@@ -12385,6 +12386,7 @@ public class StaticVariables
     public UIBoxConfiguration PTR_UIBoxConfiguration_800c4214 => PTR_UIBoxConfiguration_800c419c[1].field_0x04;
     public UIBoxConfiguration PTR_UIBoxConfiguration_800c4288 => PTR_UIBoxConfiguration_800c419c[2].field_0x04;
     public UIBoxConfiguration PTR_UIBoxConfiguration_800c42fc => PTR_UIBoxConfiguration_800c419c[3].field_0x04;
+
     public TextToDisplay TextToDisplay_800c41a4 = new(); //800c41a4
     public SPRT[] SPRT_ARRAY_800c41c0 = Enumerable.Range(0, 8).Select(x => new SPRT()).ToArray(); // 800c41c0
     public TextToDisplay TextToDisplay_800c4218 = new(); //800c4218

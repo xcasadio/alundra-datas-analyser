@@ -8,7 +8,7 @@ public static class AncientGuardian
     public static void AI_ApplyZGravityIfIdle(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
-            && entity.Name == "◆Roche élémentaire")
+            && entity.Name != "◆Roche élémentaire")
         {
             Breakpoint.TriggerBreak();
         }

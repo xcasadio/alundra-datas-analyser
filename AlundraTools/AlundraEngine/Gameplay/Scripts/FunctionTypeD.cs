@@ -86,7 +86,8 @@ public static class FunctionTypeD
     //8007db38
     public static void AI_FUN_8007db38(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Tortue de roche Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -235,6 +236,7 @@ public static class FunctionTypeD
     {
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "◆Guêpe Niv.1"
+            && entity.Name != "◆Homme de boue Niv.1"
             && entity.Name != "◆Zombie Niv.1")
         {
             Breakpoint.TriggerBreak();
@@ -254,7 +256,8 @@ public static class FunctionTypeD
     public static void AI_FUN_8007df4c(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
-            && entity.Name != "◆Orc (hache) Niv.1")
+            && entity.Name != "◆Orc (hache) Niv.1"
+            && entity.Name != "◆Orc (masse) Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -472,6 +475,7 @@ public static class FunctionTypeD
     {
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "Bombe"
+            && entity.Name != "Mur à boule de fer (111)"
             && entity.Name != "Mur à boule de fer (2×2×2) permanent")
         {
             Breakpoint.TriggerBreak();

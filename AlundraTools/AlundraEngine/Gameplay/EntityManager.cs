@@ -374,7 +374,13 @@ public class EntityManager
     public void UpdateEntities()
     {
         LogAIState();
-        
+
+        if (_gameEngine.StaticVariables.IsGodMode)
+        {
+            _gameEngine.StaticVariables.PlayerEntity.Hp = _gameEngine.StaticVariables.PlayerEntity.HpMax;
+            _gameEngine.StaticVariables.g_playerStats.Mp = _gameEngine.StaticVariables.g_playerStats.MpMax;
+        }
+
         if ((_gameEngine.StaticVariables.g_playerControlFlags & 0x48) == 0)
         {
             UpdateDestroyedEntities();

@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace AlundraGame;
 
@@ -24,7 +23,6 @@ internal sealed class FrmGameDebugPanelController
     private const int MaxVisibleScriptLines = 2000;
 
     private readonly GameEngine _gameEngine;
-    private readonly MGDesktop _desktop;
     private readonly MGWindow _window;
     private readonly Action _saveSnapshot;
     private readonly Action<int> _setZoomLevel;
@@ -263,13 +261,11 @@ internal sealed class FrmGameDebugPanelController
 
     // JUSTIFICATION: backend MonoGame only
     private FrmGameDebugPanelController(
-        MGDesktop desktop,
         MGWindow window,
         GameEngine gameEngine,
         Action saveSnapshot,
         Action<int> setZoomLevel)
     {
-        _desktop = desktop;
         _window = window;
         _gameEngine = gameEngine;
         _saveSnapshot = saveSnapshot;
@@ -317,7 +313,7 @@ internal sealed class FrmGameDebugPanelController
         window.WindowHeight = gameRenderHeight;
         desktop.Windows.Add(window);
 
-        return new FrmGameDebugPanelController(desktop, window, gameEngine, saveSnapshot, setZoomLevel);
+        return new FrmGameDebugPanelController(window, gameEngine, saveSnapshot, setZoomLevel);
     }
 
     // JUSTIFICATION: backend MonoGame only
@@ -356,7 +352,6 @@ internal sealed class FrmGameDebugPanelController
             RefreshEntityAndEffectLists();
             RefreshSelectedEntityGrid();
             RefreshSelectedEffectGrid();
-
             RefreshFlagGrids();
             RefreshDynamicFlags();
             RefreshDialogControls();
@@ -401,10 +396,17 @@ internal sealed class FrmGameDebugPanelController
         RemoveListItemSeparators(_listBoxLogs);
         RemoveListItemSeparators(_listBoxScript);
 
-        _listBoxLogs.VirtualizationMode = ListBoxVirtualizationMode.Always;
-        _listBoxLogs.VirtualizationThreshold = 1;
-        _listBoxScript.VirtualizationMode = ListBoxVirtualizationMode.Always;
-        _listBoxScript.VirtualizationThreshold = 1;
+        EnableAlwaysOnVirtualization(_listBoxEntities);
+        EnableAlwaysOnVirtualization(_listBoxEffects);
+        EnableAlwaysOnVirtualization(_listBoxLogs);
+        EnableAlwaysOnVirtualization(_listBoxScript);
+    }
+
+    // JUSTIFICATION: backend MonoGame only
+    private static void EnableAlwaysOnVirtualization<T>(MGListBox<T> listBox)
+    {
+        listBox.VirtualizationMode = ListBoxVirtualizationMode.Always;
+        listBox.VirtualizationThreshold = 1;
     }
 
     // JUSTIFICATION: backend MonoGame only
@@ -1087,6 +1089,7 @@ internal sealed class FrmGameDebugPanelController
     }
 
     // JUSTIFICATION: backend MonoGame only
+    // JUSTIFICATION: backend MonoGame only
     private void RefreshLogs()
     {
         IReadOnlyList<string> lines = GetSelectedLogLines();
@@ -1200,6 +1203,7 @@ internal sealed class FrmGameDebugPanelController
     }
 
     // JUSTIFICATION: backend MonoGame only
+    // JUSTIFICATION: backend MonoGame only
     private static ICollection<string> CreateVisibleStringWindow(IReadOnlyList<string> lines, int maxVisibleLines, string label)
     {
         if (lines.Count <= maxVisibleLines && lines is ICollection<string> collection)
@@ -1239,7 +1243,6 @@ internal sealed class FrmGameDebugPanelController
         return rows;
     }
 
-    // JUSTIFICATION: backend MonoGame only
     // JUSTIFICATION: backend MonoGame only
     private static ulong ComputeFlagSignature(uint[] flags)
     {

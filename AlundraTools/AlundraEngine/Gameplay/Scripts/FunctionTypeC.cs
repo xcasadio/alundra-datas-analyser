@@ -200,7 +200,8 @@ public static class FunctionTypeC
     // 80066250
     public static void AI_UpdateEntityAI_CuriousFlying(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name) 
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Homme-lézard (épée) Niv.1"
             && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
@@ -505,6 +506,7 @@ public static class FunctionTypeC
             && entity.Name != "Objet eau (transportable)"
             && entity.Name != "Objet soleil (transportable)"
             && entity.Name != "Pierre générique"
+            && entity.Name != "Tronc (transportable), petite boule de fer"
             && !string.IsNullOrEmpty(entity.Name))
         {
             Breakpoint.TriggerBreak();
@@ -2171,10 +2173,12 @@ public static class FunctionTypeC
     //Caisse en bois générique
     public static void AI_FUN_8006b848(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Caisse en bois générique" 
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Caisse en bois générique" 
             && entity.Name != "Cruche générique"
             && entity.Name != "Pierre très lourde"
-            && !string.IsNullOrEmpty(entity.Name))
+            && entity.Name != "Cruche n°2"
+            && entity.Name != "Rocher tortue non ennemi")
         {
             Breakpoint.TriggerBreak();
         }
@@ -6310,7 +6314,7 @@ public static class FunctionTypeC
     public static void AI_FUN_8007b04c(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
-            && !string.IsNullOrEmpty(entity.Name))
+            && entity.Name != "Boule de fer (petite)")
         {
             Breakpoint.TriggerBreak();
         }
@@ -6320,7 +6324,8 @@ public static class FunctionTypeC
 
     private static void AI_FUN_8007b04c_common(GameEngine gameEngine, Entity entity, int factor, int offsetX)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Boule de fer (petite)")
         {
             Breakpoint.TriggerBreak();
         }
@@ -6377,7 +6382,8 @@ public static class FunctionTypeC
     //8007b1f0
     public static void AI_FUN_8007b1f0(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Boule de fer (petite)")
         {
             Breakpoint.TriggerBreak();
         }
@@ -6388,7 +6394,8 @@ public static class FunctionTypeC
     // GHIDRA: AI_FUN_8007b3c4 @ 0x8007B3C4
     public static void AI_FUN_8007b3c4(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Mur à boule de fer (222) – boule de fer")
         {
             Breakpoint.TriggerBreak();
         }
@@ -12127,7 +12134,8 @@ public static class FunctionTypeC
     // 0x8006D550
     public static void AI_UpdateEntityAI_20_2(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Homme de boue Niv.1")
         {
             Breakpoint.TriggerBreak();
         }

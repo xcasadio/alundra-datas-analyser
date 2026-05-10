@@ -1713,6 +1713,12 @@ public class PlayerManager
             _gameEngine.StaticVariables.g_playerStats.HpMax = 0x32;
         }
 
+        if (_gameEngine.StaticVariables.IsGodMode)
+        {
+            _gameEngine.StaticVariables.g_playerStats.Hp = _gameEngine.StaticVariables.g_playerStats.HpMax;
+            _gameEngine.StaticVariables.PlayerEntity.Hp = _gameEngine.StaticVariables.PlayerEntity.HpMax;
+        }
+
         return _gameEngine.StaticVariables.g_playerStats.HpMax;
     }
 
@@ -1731,6 +1737,12 @@ public class PlayerManager
         else
         {
             _gameEngine.StaticVariables.g_playerStats.Hp = amount;
+        }
+
+        if (_gameEngine.StaticVariables.IsGodMode)
+        {
+            _gameEngine.StaticVariables.g_playerStats.Hp = _gameEngine.StaticVariables.g_playerStats.HpMax;
+            _gameEngine.StaticVariables.PlayerEntity.Hp = _gameEngine.StaticVariables.PlayerEntity.HpMax;
         }
 
         return _gameEngine.StaticVariables.g_playerStats.Hp;
