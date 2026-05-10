@@ -721,7 +721,8 @@ public static class FunctionTypeE
     //8007fb58
     public static void AI_FUN_8007fb58(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name)
+             && entity.Name != "Magie de feu Niv.2")
         {
             Breakpoint.TriggerBreak();
         }

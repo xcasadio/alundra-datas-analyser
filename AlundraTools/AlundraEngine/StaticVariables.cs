@@ -12906,10 +12906,10 @@ public class StaticVariables
     public Entity DAT_8012712c;
 
     // GHIDRA: DAT_80127130 @ 0x80127130
-    public Entity DAT_80127130;
+    public Entity g_windMagicEntityPtr;
 
     // GHIDRA: DAT_80127134 @ 0x80127134
-    public int DAT_80127134;
+    public int g_windMagicEntityIndex2;
 
     // GHIDRA: DAT_80127138 @ 0x80127138
     public readonly ScrollingParameters DAT_80127138 = new();

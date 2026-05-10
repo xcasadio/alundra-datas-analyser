@@ -2371,19 +2371,19 @@ public class PlayerManager
                     break;
                 case 0x2d:
                 case 0x2e:
-                    result = ProcessTimedRecoveryEffectSequence(_gameEngine.StaticVariables.g_warpLockTimer);
+                    result = ProcessWaterMagicLevel2Sequence(_gameEngine.StaticVariables.g_warpLockTimer);
                     break;
                 case 0x2f:
                     result = ProcessAnchorSparkEffectSequence();
                     break;
                 case 0x30:
-                    result = ProcessAnchorScrollShakeEffectSequence();
+                    result = ProcessFireMagicLevel2Sequence();
                     break;
                 case 0x31:
                     result = FUN_80035eb0();
                     break;
                 case 0x32:
-                    result = FUN_80036218();
+                    result = ProcessWindMagicLevel2Sequence();
                     break;
                 default:
                     result = 1;
@@ -2405,31 +2405,29 @@ public class PlayerManager
     }
 
     // 80036218
-    private int FUN_80036218()
+    private int ProcessWindMagicLevel2Sequence()
     {
-        Breakpoint.TriggerBreak();
+        //Breakpoint.TriggerBreak();
+        var player = _gameEngine.StaticVariables.PlayerEntity;
 
-        var staticVariables = _gameEngine.StaticVariables;
-        var player = staticVariables.PlayerEntity;
-
-        if (staticVariables.g_playerEffectPhase == 1)
+        if (_gameEngine.StaticVariables.g_playerEffectPhase == 1)
         {
             if (IsFadeActive() != 0)
             {
                 return 1;
             }
 
-            if (staticVariables.DAT_80127130.Index2 == staticVariables.DAT_80127134)
+            if (_gameEngine.StaticVariables.g_windMagicEntityPtr.Index2 == _gameEngine.StaticVariables.g_windMagicEntityIndex2)
             {
                 return 0;
             }
 
             player.TargetAnimationId = 0x34;
-            staticVariables.g_playerEffectPhase += 1;
+            _gameEngine.StaticVariables.g_playerEffectPhase += 1;
             return 0;
         }
 
-        if (staticVariables.g_playerEffectPhase == 2)
+        if (_gameEngine.StaticVariables.g_playerEffectPhase == 2)
         {
             if (player.TargetAnimationId != 0x34)
             {
@@ -2456,15 +2454,15 @@ public class PlayerManager
             player.PosZ,
             0);
 
-        staticVariables.DAT_80127130 = entitySpawned;
+        _gameEngine.StaticVariables.g_windMagicEntityPtr = entitySpawned;
 
         if (entitySpawned == null)
         {
             return 1;
         }
 
-        staticVariables.DAT_80127134 = entitySpawned.Index2;
-        staticVariables.g_playerEffectPhase += 1;
+        _gameEngine.StaticVariables.g_windMagicEntityIndex2 = entitySpawned.Index2;
+        _gameEngine.StaticVariables.g_playerEffectPhase += 1;
         return 0;
     }
 
@@ -2607,46 +2605,45 @@ public class PlayerManager
     }
 
     // 80035C64
-    private int ProcessAnchorScrollShakeEffectSequence()
+    private int ProcessFireMagicLevel2Sequence()
     {
-        Breakpoint.TriggerBreak();
+        //Breakpoint.TriggerBreak();
 
-        var staticVariables = _gameEngine.StaticVariables;
-        var player = staticVariables.PlayerEntity;
+        var player = _gameEngine.StaticVariables.PlayerEntity;
 
-        if (staticVariables.g_playerEffectPhase == 1)
+        if (_gameEngine.StaticVariables.g_playerEffectPhase == 1)
         {
             if (IsFadeActive() != 0)
             {
                 return 1;
             }
 
-            if (staticVariables.DAT_80127124.Index2 == staticVariables.DAT_80127128)
+            if (_gameEngine.StaticVariables.DAT_80127124.Index2 == _gameEngine.StaticVariables.DAT_80127128)
             {
-                staticVariables.g_scrollingParameters.Flag = 1;
-                staticVariables.g_scrollingParameters.LimitX = staticVariables.g_playerEffectCurrentFrame >> 6;
-                staticVariables.g_scrollingParameters.LimitY = staticVariables.g_playerEffectCurrentFrame >> 4;
-                staticVariables.g_scrollingParameters.SpeedX = staticVariables.g_playerEffectCurrentFrame >> 6;
-                staticVariables.g_scrollingParameters.SpeedY = staticVariables.g_playerEffectCurrentFrame >> 4;
+                _gameEngine.StaticVariables.g_scrollingParameters.Flag = 1;
+                _gameEngine.StaticVariables.g_scrollingParameters.LimitX = _gameEngine.StaticVariables.g_playerEffectCurrentFrame >> 6;
+                _gameEngine.StaticVariables.g_scrollingParameters.LimitY = _gameEngine.StaticVariables.g_playerEffectCurrentFrame >> 4;
+                _gameEngine.StaticVariables.g_scrollingParameters.SpeedX = _gameEngine.StaticVariables.g_playerEffectCurrentFrame >> 6;
+                _gameEngine.StaticVariables.g_scrollingParameters.SpeedY = _gameEngine.StaticVariables.g_playerEffectCurrentFrame >> 4;
                 return 0;
             }
 
-            staticVariables.g_scrollingParameters.Flag = staticVariables.DAT_80127138.Flag;
-            staticVariables.g_scrollingParameters.LimitX = staticVariables.DAT_80127138.LimitX;
-            staticVariables.g_scrollingParameters.LimitY = staticVariables.DAT_80127138.LimitY;
-            staticVariables.g_scrollingParameters.SpeedX = staticVariables.DAT_80127138.SpeedX;
-            staticVariables.g_scrollingParameters.SpeedY = staticVariables.DAT_80127138.SpeedY;
-            staticVariables.g_scrollingParameters.OffsetX = staticVariables.DAT_80127138.OffsetX;
-            staticVariables.g_scrollingParameters.OffsetY = staticVariables.DAT_80127138.OffsetY;
-            staticVariables.g_scrollingParameters.XReachMin = staticVariables.DAT_80127138.XReachMin;
-            staticVariables.g_scrollingParameters.YReachMin = staticVariables.DAT_80127138.YReachMin;
+            _gameEngine.StaticVariables.g_scrollingParameters.Flag = _gameEngine.StaticVariables.DAT_80127138.Flag;
+            _gameEngine.StaticVariables.g_scrollingParameters.LimitX = _gameEngine.StaticVariables.DAT_80127138.LimitX;
+            _gameEngine.StaticVariables.g_scrollingParameters.LimitY = _gameEngine.StaticVariables.DAT_80127138.LimitY;
+            _gameEngine.StaticVariables.g_scrollingParameters.SpeedX = _gameEngine.StaticVariables.DAT_80127138.SpeedX;
+            _gameEngine.StaticVariables.g_scrollingParameters.SpeedY = _gameEngine.StaticVariables.DAT_80127138.SpeedY;
+            _gameEngine.StaticVariables.g_scrollingParameters.OffsetX = _gameEngine.StaticVariables.DAT_80127138.OffsetX;
+            _gameEngine.StaticVariables.g_scrollingParameters.OffsetY = _gameEngine.StaticVariables.DAT_80127138.OffsetY;
+            _gameEngine.StaticVariables.g_scrollingParameters.XReachMin = _gameEngine.StaticVariables.DAT_80127138.XReachMin;
+            _gameEngine.StaticVariables.g_scrollingParameters.YReachMin = _gameEngine.StaticVariables.DAT_80127138.YReachMin;
 
             player.TargetAnimationId = 0x34;
-            staticVariables.g_playerEffectPhase += 1;
+            _gameEngine.StaticVariables.g_playerEffectPhase += 1;
             return 0;
         }
 
-        if (staticVariables.g_playerEffectPhase == 2)
+        if (_gameEngine.StaticVariables.g_playerEffectPhase == 2)
         {
             if (player.TargetAnimationId != 0x34)
             {
@@ -2673,25 +2670,25 @@ public class PlayerManager
             player.PosZ,
             0);
 
-        staticVariables.DAT_80127124 = entitySpawned;
+        _gameEngine.StaticVariables.DAT_80127124 = entitySpawned;
 
         if (entitySpawned == null)
         {
             return 1;
         }
 
-        staticVariables.DAT_80127138.Flag = staticVariables.g_scrollingParameters.Flag;
-        staticVariables.DAT_80127138.LimitX = staticVariables.g_scrollingParameters.LimitX;
-        staticVariables.DAT_80127138.LimitY = staticVariables.g_scrollingParameters.LimitY;
-        staticVariables.DAT_80127138.SpeedX = staticVariables.g_scrollingParameters.SpeedX;
-        staticVariables.DAT_80127138.SpeedY = staticVariables.g_scrollingParameters.SpeedY;
-        staticVariables.DAT_80127138.OffsetX = staticVariables.g_scrollingParameters.OffsetX;
-        staticVariables.DAT_80127138.OffsetY = staticVariables.g_scrollingParameters.OffsetY;
-        staticVariables.DAT_80127138.XReachMin = staticVariables.g_scrollingParameters.XReachMin;
-        staticVariables.DAT_80127138.YReachMin = staticVariables.g_scrollingParameters.YReachMin;
+        _gameEngine.StaticVariables.DAT_80127138.Flag = _gameEngine.StaticVariables.g_scrollingParameters.Flag;
+        _gameEngine.StaticVariables.DAT_80127138.LimitX = _gameEngine.StaticVariables.g_scrollingParameters.LimitX;
+        _gameEngine.StaticVariables.DAT_80127138.LimitY = _gameEngine.StaticVariables.g_scrollingParameters.LimitY;
+        _gameEngine.StaticVariables.DAT_80127138.SpeedX = _gameEngine.StaticVariables.g_scrollingParameters.SpeedX;
+        _gameEngine.StaticVariables.DAT_80127138.SpeedY = _gameEngine.StaticVariables.g_scrollingParameters.SpeedY;
+        _gameEngine.StaticVariables.DAT_80127138.OffsetX = _gameEngine.StaticVariables.g_scrollingParameters.OffsetX;
+        _gameEngine.StaticVariables.DAT_80127138.OffsetY = _gameEngine.StaticVariables.g_scrollingParameters.OffsetY;
+        _gameEngine.StaticVariables.DAT_80127138.XReachMin = _gameEngine.StaticVariables.g_scrollingParameters.XReachMin;
+        _gameEngine.StaticVariables.DAT_80127138.YReachMin = _gameEngine.StaticVariables.g_scrollingParameters.YReachMin;
 
-        staticVariables.g_playerEffectPhase += 1;
-        staticVariables.DAT_80127128 = entitySpawned.Index2;
+        _gameEngine.StaticVariables.g_playerEffectPhase += 1;
+        _gameEngine.StaticVariables.DAT_80127128 = entitySpawned.Index2;
         return 0;
     }
 
@@ -2783,7 +2780,7 @@ public class PlayerManager
     }
 
     // 0x80035790
-    private int ProcessTimedRecoveryEffectSequence(int timer)
+    private int ProcessWaterMagicLevel2Sequence(int timer)
     {
         //Breakpoint.TriggerBreak();
 
