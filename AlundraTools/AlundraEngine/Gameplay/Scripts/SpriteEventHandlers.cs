@@ -94,7 +94,7 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramCTick, 44, FunctionTypeC.AI_UpdateEntityAI_SpecialBoss);
         Register(ScriptHelper.ProgramCTick, 45, FunctionTypeC.AI_UpdateEntityIA_WatcherBehavior);
         Register(ScriptHelper.ProgramCTick, 46, FunctionTypeC.AI_UpdateEntityDelayedSoundTrigger);
-        Register(ScriptHelper.ProgramCTick, 47, FunctionTypeC.AI_UpdateEntityAI_0);
+        Register(ScriptHelper.ProgramCTick, 47, FunctionTypeC.AI_UpdateEntityAI_0_00);
         Register(ScriptHelper.ProgramCTick, 48, FunctionTypeC.AI_UpdateEntityAI_WarpBoss);
         Register(ScriptHelper.ProgramCTick, 49, FunctionTypeC.AI_FUN_80075a3c);
         Register(ScriptHelper.ProgramCTick, 50, FunctionTypeC.AI_UpdateLoaderBossAI);

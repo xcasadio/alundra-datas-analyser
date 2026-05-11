@@ -14919,6 +14919,15 @@ SetAnim6:
         otherEntity.ForceStepX = -entity.ForceStepX;
     }
 
+    // 80073cfc
+    public static void AI_UpdateEntityAI_0_00(GameEngine gameEngine, Entity entity)
+    {
+        if (!string.IsNullOrEmpty(entity.Name))
+        {
+            Breakpoint.TriggerBreak();
+        }
+    }
+
     // GHIDRA: AI_UpdateEntityAI_WarpBoss @ 0x80074D00
     public static void AI_UpdateEntityAI_WarpBoss(GameEngine gameEngine, Entity entity)
     {

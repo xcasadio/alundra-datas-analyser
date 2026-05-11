@@ -481,7 +481,61 @@ public static class FunctionTypeD
     {
         Breakpoint.TriggerBreak();
 
-        // BLOCKED: fixed entity state at 0x80138258 and helper 0x80073940 are not yet closed in the C# port.
+        if (gameEngine.StaticVariables.g_entitySlots[2].Bytes[1] == 5 
+            || gameEngine.StaticVariables.g_entitySlots[2].Bytes[1] == 7 
+            || gameEngine.StaticVariables.g_entitySlots[2].Bytes[1] == 8 
+            || gameEngine.StaticVariables.g_entitySlots[2].Bytes[0] != 0xf)
+        {
+            if (entity != gameEngine.StaticVariables.g_entitySlots[2])
+            {
+                return;
+            }
+        }
+        else
+        {
+            var count = 0;
+
+            if (entity != gameEngine.StaticVariables.g_entitySlots[2])
+            {
+                if (gameEngine.EntityManager.ComputeNewHp(entity))
+                {
+                    entity.Bytes[3] = 1;
+                }
+                entity.TargetAnimationId = 4;
+                FUN_80073940(gameEngine, entity);
+                return;
+            }
+
+            var i = 0;
+
+            do
+            {
+                if (gameEngine.StaticVariables.g_entitySlots[2 + i].Bytes[3] != 0)
+                {
+                    count += 1;
+                }
+
+                i = i + 1;
+            } while (i != 0xe);
+
+            if (count == 6)
+            {
+                if (gameEngine.EntityManager.ComputeNewHp(gameEngine.StaticVariables.g_entitySlots[2]))
+                {
+                    gameEngine.StaticVariables.g_entitySlots[2].Bytes[3] = 1;
+                    gameEngine.StaticVariables.g_entitySlots[2].DelayOrAngle = 0;
+                    gameEngine.StaticVariables.g_entitySlots[2].Bytes[1] = 0x10;
+                }
+                gameEngine.StaticVariables.g_entitySlots[2].TargetAnimationId = 4;
+            }
+        }
+
+        FunctionTypeC.AI_UpdateEntityAI_0_00(gameEngine, entity);
+    }
+
+    private static void FUN_80073940(GameEngine gameEngine, Entity entity)
+    {
+        
     }
 
     //8007e548
