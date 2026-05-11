@@ -533,9 +533,107 @@ public static class FunctionTypeD
         FunctionTypeC.AI_UpdateEntityAI_0_00(gameEngine, entity);
     }
 
-    private static void FUN_80073940(GameEngine gameEngine, Entity entity)
+    // GHIDRA: FUN_80073940 @ 0x80073940
+    internal static void FUN_80073940(GameEngine gameEngine, Entity entity)
     {
-        
+        var entitySlots = gameEngine.StaticVariables.g_entitySlots;
+        int entityIndex = Array.IndexOf(entitySlots, entity);
+
+        if (entityIndex < 0 || entityIndex + 14 >= entitySlots.Length)
+        {
+            return;
+        }
+
+        for (int i = 0; i < 15; i++)
+        {
+            Entity current = entitySlots[entityIndex + i];
+
+            if (current.Status != 2)
+            {
+                continue;
+            }
+
+            uint spriteTableIndex = current.SpriteTableIndex;
+            if (spriteTableIndex < 0x1E8U || spriteTableIndex >= 0x1EDU)
+            {
+                continue;
+            }
+
+            if ((current.TargetAnimationId == 6 || current.TargetAnimationId == 7)
+                && current.ForceResetAnimationFlag != 0
+                && i != 0)
+            {
+                current.TargetAnimationId = current.Bytes[3] != 0 ? 10U : 0U;
+            }
+
+            current.TargetAnimationId &= 0xFEU;
+
+            uint targetDirection = current.TargetDirection;
+            int animationDirection;
+            bool incrementAnimation;
+            bool currentDirectionMatches;
+
+            if (targetDirection < 2U || targetDirection >= 30U)
+            {
+                animationDirection = 0;
+                incrementAnimation = false;
+                currentDirectionMatches = current.CurrentDirection < 2U || current.CurrentDirection >= 30U;
+            }
+            else if (targetDirection < 6U)
+            {
+                animationDirection = 0;
+                incrementAnimation = true;
+                currentDirectionMatches = current.CurrentDirection >= 2U && current.CurrentDirection < 6U;
+            }
+            else if (targetDirection < 10U)
+            {
+                animationDirection = 2;
+                incrementAnimation = false;
+                currentDirectionMatches = current.CurrentDirection >= 6U && current.CurrentDirection < 10U;
+            }
+            else if (targetDirection < 14U)
+            {
+                animationDirection = 2;
+                incrementAnimation = true;
+                currentDirectionMatches = current.CurrentDirection >= 10U && current.CurrentDirection < 14U;
+            }
+            else if (targetDirection < 18U)
+            {
+                animationDirection = 1;
+                incrementAnimation = false;
+                currentDirectionMatches = current.CurrentDirection >= 14U && current.CurrentDirection < 18U;
+            }
+            else if (targetDirection < 22U)
+            {
+                animationDirection = 1;
+                incrementAnimation = true;
+                currentDirectionMatches = current.CurrentDirection >= 18U && current.CurrentDirection < 22U;
+            }
+            else if (targetDirection < 26U)
+            {
+                animationDirection = 3;
+                incrementAnimation = false;
+                currentDirectionMatches = current.CurrentDirection >= 22U && current.CurrentDirection < 26U;
+            }
+            else
+            {
+                animationDirection = 3;
+                incrementAnimation = true;
+                currentDirectionMatches = current.CurrentDirection >= 26U && current.CurrentDirection < 30U;
+            }
+
+            if (current.AnimationDirection != animationDirection || !currentDirectionMatches)
+            {
+                current.CurrentAnimationId = 0xFFFFFFFFU;
+            }
+
+            current.AnimationDirection = animationDirection;
+
+            if (incrementAnimation)
+            {
+                current.TargetAnimationId += 1;
+            }
+        }
     }
 
     //8007e548
