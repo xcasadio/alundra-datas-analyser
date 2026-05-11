@@ -774,7 +774,11 @@ public static class FunctionTypeD
     //8007e86c
     public static void AI_FUN_8007e86c(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Colonne de glace")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         if ((entity.TouchingEntity.BalanceAnimValRef.Val & 0xf) == 2)
         {

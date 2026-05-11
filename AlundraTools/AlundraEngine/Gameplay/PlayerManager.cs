@@ -3164,6 +3164,7 @@ public class PlayerManager
         var player = _gameEngine.StaticVariables.PlayerEntity;
 
         entity2 = player.TouchingEntity;
+
         if (player.TouchingEntity == null)
         {
             direction = 0xffffffff;

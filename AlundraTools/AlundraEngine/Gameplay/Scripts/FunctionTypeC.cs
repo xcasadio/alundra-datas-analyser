@@ -6513,45 +6513,50 @@ public static class FunctionTypeC
     }
 
     // GHIDRA: FUN_80080990 @ 0x80080990
-    private static int FUN_80080990(Entity param_1, Entity param_2)
+    private static int FUN_80080990(Entity entity1, Entity entity2)
     {
-        int iVar1 = param_1.ModdedPosX;
-        int iVar2 = param_2.ModdedPosX;
-        int iVar3;
+        int entity1Pos = entity1.ModdedPosX;
+        int entity2Pos = entity2.ModdedPosX;
+        int val;
 
-        if (iVar1 < iVar2)
+        if (entity1Pos < entity2Pos)
         {
-            iVar3 = param_1.Width;
-            iVar2 -= iVar1;
+            val = entity1.Width;
+            entity1Pos = entity2Pos - entity1Pos;
         }
         else
         {
-            iVar3 = param_2.Width;
-            iVar2 = iVar1 - iVar2;
+            val = entity2.Width;
+            entity1Pos = entity1Pos - entity2Pos;
         }
 
-        if (iVar3 < iVar2)
+        if (val >= entity1Pos)
         {
-            return param_2.PosY < param_1.PosY ? 1 : 0;
+            return entity2.PosY < entity1.PosY ? 1 : 0;
         }
 
-        iVar1 = param_1.ModdedPosY;
-        iVar2 = param_2.ModdedPosY;
+        entity1Pos = entity1.ModdedPosY;
+        entity2Pos = entity2.ModdedPosY;
 
-        if (iVar1 < iVar2)
+        if (entity1Pos < entity2Pos)
         {
-            iVar3 = param_1.Height;
-            iVar2 -= iVar1;
+            val = entity1.Height;
+            entity1Pos = entity2Pos - entity1Pos;
         }
         else
         {
-            iVar3 = param_2.Height;
-            iVar2 = iVar1 - iVar2;
+            val = entity2.Height;
+            entity1Pos = entity1Pos - entity2Pos;
         }
 
-        if (iVar3 < iVar2)
+        if (entity1Pos <= val)
         {
-            return param_2.PosX < param_1.PosX ? 2 : 3;
+            if (entity1.PosX <= entity2.PosX)
+            {
+                return 3;
+            }
+
+            return 2;
         }
 
         return -1;
@@ -6571,18 +6576,21 @@ public static class FunctionTypeC
         switch (entity.TargetAnimationId)
         {
             case 0:
-                if (entity.TouchingEntity == player || player.TouchingEntity == entity)
+                if (entity.XCollisionEntity == player || player.XCollisionEntity == entity)
                 {
-                    var delay = entity.DelayOrAngle + 1;
-                    entity.DelayOrAngle = delay;
+                    entity.DelayOrAngle += 1;
 
-                    if (delay != 0x14)
+                    if (entity.DelayOrAngle != 0x14)
                     {
                         return;
                     }
 
                     entity.DelayOrAngle = 0;
                     entity.TargetAnimationId = 1;
+                    //0: droite
+                    //1: gauche
+                    //2: bas
+                    //3: haut
 
                     int directionIndex = FUN_80080990(player, entity);
                     entity.TargetDirection = directionIndex == -1
