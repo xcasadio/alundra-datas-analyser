@@ -45,7 +45,8 @@ public static class FunctionTypeC
     public static void AI_UpdateEntityAI_IdleSkittish(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
-            && entity.Name != "◆Beannoïde")
+            && entity.Name != "◆Beannoïde"
+            && entity.Name != "◆Petit slime")
         {
             Breakpoint.TriggerBreak();
         }
@@ -500,6 +501,9 @@ public static class FunctionTypeC
             && entity.Name != "I37_Potion L"
             && entity.Name != "I38_Extrait magique"
             && entity.Name != "I41_Potion S"
+            && entity.Name != "I51_Anneau d’orc"
+            && entity.Name != "I53_Bracelet d’armure d’acier"
+            && entity.Name != "I55_Anneau de régénération"
             && entity.Name != "I83_Récipient de vie"
             && entity.Name != "Objet étoile (transportable)"
             && entity.Name != "Objet lune (transportable)"
@@ -3239,7 +3243,8 @@ public static class FunctionTypeC
     //Giles (homme religieux)
     public static void AI_FUN_800756ec(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (entity.Name != "Melzas2_FinalBoss"
+            && entity.Name != "Klein (rêve uniquement)")
         {
             Breakpoint.TriggerBreak();
         }
@@ -6253,7 +6258,8 @@ public static class FunctionTypeC
     // GHIDRA: AI_FUN_8007ac60 @ 0x8007AC60
     public static void AI_FUN_8007ac60(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Projectile de magie de feu Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -6603,7 +6609,7 @@ public static class FunctionTypeC
                 break;
 
             case 1:
-                if (entity.ForceResetAnimationFlag != 0)
+                if (entity.ForceAdjusted != 0)
                 {
                     entity.TargetAnimationId = 0;
                 }
@@ -10780,7 +10786,8 @@ public static class FunctionTypeC
     // GHIDRA: AI_UpdateEntityAI_13 @ 0x8006ABB0
     public static void AI_UpdateEntityAI_13(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Homme-ombre Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -12369,7 +12376,8 @@ public static class FunctionTypeC
     // 0x8006D998
     public static void AI_UpdateEntityAI_21(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (string.IsNullOrEmpty(entity.Name)
+            || entity.Name != "◆Homme-lézard (projectiles) Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -13003,7 +13011,8 @@ public static class FunctionTypeC
     //8006e89c
     public static void AI_UpdateEntityAI_23_2(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Loup-garou Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -13139,7 +13148,8 @@ public static class FunctionTypeC
     // GHIDRA: AI_UpdateEntityAI_Boss @ 0x8006FC7C
     public static void AI_UpdateEntityAI_Boss(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Boss lézard Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -15533,7 +15543,8 @@ SetAnim6:
     // GHIDRA: AI_UpdateEntityAI_WarpBoss @ 0x80074D00
     public static void AI_UpdateEntityAI_WarpBoss(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name) 
+            && entity.Name != "◆Monsieur Aspiration")
         {
             Breakpoint.TriggerBreak();
         }

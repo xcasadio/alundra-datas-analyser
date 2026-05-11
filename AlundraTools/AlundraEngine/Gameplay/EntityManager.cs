@@ -430,7 +430,7 @@ public class EntityManager
         }
     }
 
-    //80039300
+    // GHIDRA: UpdateBalanceRecords @ 0x80039300
     private void UpdateBalanceRecords()
     {
         _gameEngine.StaticVariables.g_balanceAnimIndex = (int)_gameEngine.StaticVariables.PlayerEntity.TargetAnimationId;
@@ -438,6 +438,11 @@ public class EntityManager
         for (var i = 0; i < _gameEngine.StaticVariables.g_activeEntityCount; i++)
         {
             var entity = _gameEngine.StaticVariables.g_activeEntities[i];
+
+            //if (entity.Index == 0 || entity.Index == 9)
+            //{
+            //    Breakpoint.TriggerBreak();
+            //}
 
             if (entity.FrameCollision == null)
             {
@@ -474,10 +479,10 @@ public class EntityManager
                     continue;
                 }
 
-                //if ((otherEntity.Index == 2 || otherEntity.Index == 12)
-                //    && (entity.Index == 2 || entity.Index == 12))
+                //if ((otherEntity.Index == 0 || otherEntity.Index == 9)
+                //    && (entity.Index == 0 || entity.Index == 9))
                 //{
-                //    AlundraEngine.Debug.Debugger.Breakpoint();
+                //    Breakpoint.TriggerBreak();
                 //}
 
                 if (otherEntity.FrameCollisionTickCounter != 0)
@@ -499,10 +504,6 @@ public class EntityManager
                 {
                     continue;
                 }
-
-                //other.ModdedPosX = 36175872
-                //other.ModdedPosY = 52428800
-                //other.ModdedPosZ = 2097153
 
                 //X
                 var difx = entity.HitBoxX - otherEntity.ModdedPosX;
@@ -561,7 +562,9 @@ public class EntityManager
                 //AlundraEngine.Debug.Debugger.Breakpoint();
 
                 var balanceValueIndex = entity.BalanceAnimValRef.Val & 0xf;
-                var val = otherEntity.BalanceRecord.Values[balanceValueIndex - 1];
+                byte val = balanceValueIndex == 0
+                    ? otherEntity.BalanceRecord.Hp
+                    : otherEntity.BalanceRecord.Values[balanceValueIndex - 1];
 
                 //if (_gameEngine.StaticVariables.g_debugState < 0
                 //    && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
@@ -582,7 +585,7 @@ public class EntityManager
                 {
                     if (balanceValueIndex == 6 || balanceValueIndex == 0xa)
                     {
-                        _gameEngine.EffectManager.CreateAttachedEffect(0, 4, 0, otherEntity, width, 0, 0, 0);
+                        _gameEngine.EffectManager.CreateAttachedEffect(0, 4, 0, otherEntity, 1, 0, 0, 0);
                     }
 
                     if (balanceValueIndex == 7 || balanceValueIndex == 9)

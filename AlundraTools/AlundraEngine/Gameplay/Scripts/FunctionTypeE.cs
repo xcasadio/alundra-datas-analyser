@@ -53,6 +53,7 @@ public static class FunctionTypeE
             && entity.Name != "◆Projectile"
             && entity.Name != "◆Roche élémentaire"
             && entity.Name != "◆Projectile Niv.1"
+            && entity.Name != "Projectile de magie de feu Niv.1"
             && entity.Name != "Magie de terre Niv.1")
         {
             Breakpoint.TriggerBreak();
@@ -379,7 +380,7 @@ public static class FunctionTypeE
     //8007f3e8
     public static void AI_FUN_8007f3e8(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (entity.Name != "Pilier détruisible (UD■/LR●)")
         {
             Breakpoint.TriggerBreak();
         }
@@ -391,7 +392,9 @@ public static class FunctionTypeE
     //8007f420
     public static void AI_UpdateArrows(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Flèches Niv.2")
+        if (string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Flèches Niv.1"
+            && entity.Name != "Flèches Niv.2")
         {
             Breakpoint.TriggerBreak();
         }
@@ -436,7 +439,7 @@ public static class FunctionTypeE
 
                             if (entity != entityTarget
                                 && (entityTarget.AnimFlags & 0x40) == 0
-                                && entityTarget.BalanceRecord.Values[5] == 0
+                                && entityTarget.BalanceRecord?.Values[5] == 0
                                 && (entityTarget.Flags & collisionMask) != 0)
                             {
                                 var withinX = entity.HitBoxX - entityTarget.HitBoxOriginX; //entityTarget.ModdedPosX

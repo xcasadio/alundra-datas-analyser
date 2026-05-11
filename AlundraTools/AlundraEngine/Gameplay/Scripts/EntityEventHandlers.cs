@@ -1270,7 +1270,7 @@ public class EntityEventHandlers
     // 8003E64C
     public int Script_61_03D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Breakpoint.TriggerBreak();
+        //Breakpoint.TriggerBreak();
 
         for (int i = 0; i < _gameEngine.StaticVariables.g_numberOfEntities; i++)
         {

@@ -21,7 +21,9 @@ public static class FunctionTypeD
     //8007da08
     public static void AI_FUN_8007da08(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name) 
+            && entity.Name != "◆Homme-lézard (épée) Niv.1"
+            && entity.Name != "◆Homme-lézard (projectiles) Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -151,7 +153,8 @@ public static class FunctionTypeD
     public static void AI_FUN_8007dcd8(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
-            && entity.Name != "◆Ver Niv.1")
+            && entity.Name != "◆Ver Niv.1"
+            && entity.Name != "◆Homme-ombre Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -355,7 +358,8 @@ public static class FunctionTypeD
     //8007e140
     public static void AI_FUN_8007e140(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Boss lézard Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -639,14 +643,15 @@ public static class FunctionTypeD
     //8007e548
     public static void AI_FUN_8007e548(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
-
-        if (gameEngine.StaticVariables.g_currentMap != 0x7b)
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Monsieur Aspiration")
         {
-            if (gameEngine.EntityManager.ComputeNewHp(entity))
-            {
-                entity.Bytes[3] = 1;
-            }
+            Breakpoint.TriggerBreak();
+        }
+
+        if (gameEngine.EntityManager.ComputeNewHp(entity) && gameEngine.StaticVariables.g_currentMap != 0x7b)
+        {
+            entity.Bytes[3] = 1;
         }
 
         entity.TargetAnimationId = 6;
@@ -657,7 +662,11 @@ public static class FunctionTypeD
     //8007e5b0
     public static void AI_FUN_8007e5b0(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Petit slime")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         if (gameEngine.EntityManager.ComputeNewHp(entity))
         {
@@ -744,6 +753,7 @@ public static class FunctionTypeD
     {
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "Bombe"
+            && entity.Name != "Pilier détruisible (UD■/LR●)"
             && entity.Name != "Mur à boule de fer (111)"
             && entity.Name != "Mur à boule de fer (112) – axe"
             && entity.Name != "Mur à boule de fer (222) – boule de fer"

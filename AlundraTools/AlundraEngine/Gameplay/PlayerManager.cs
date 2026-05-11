@@ -2377,13 +2377,13 @@ public class PlayerManager
                     result = ProcessWaterMagicLevel2Sequence(_gameEngine.StaticVariables.g_warpLockTimer);
                     break;
                 case 0x2f:
-                    result = ProcessAnchorSparkEffectSequence();
+                    result = ProcessFireMagicLevel1Sequence();
                     break;
                 case 0x30:
                     result = ProcessFireMagicLevel2Sequence();
                     break;
                 case 0x31:
-                    result = FUN_80035eb0();
+                    result = ProcessWindMagicLevel1Sequence();
                     break;
                 case 0x32:
                     result = ProcessWindMagicLevel2Sequence();
@@ -2470,20 +2470,17 @@ public class PlayerManager
     }
 
     // 80035EB0
-    private int FUN_80035eb0()
+    private int ProcessWindMagicLevel1Sequence()
     {
-        Breakpoint.TriggerBreak();
+        var player = _gameEngine.StaticVariables.PlayerEntity;
 
-        var staticVariables = _gameEngine.StaticVariables;
-        var player = staticVariables.PlayerEntity;
-
-        if (staticVariables.g_playerEffectPhase == 0)
+        if (_gameEngine.StaticVariables.g_playerEffectPhase == 0)
         {
-            staticVariables.DAT_8012712c = null;
-            staticVariables.g_playerEffectPhase = 1;
+            _gameEngine.StaticVariables.DAT_8012712c = null;
+            _gameEngine.StaticVariables.g_playerEffectPhase = 1;
         }
 
-        if (staticVariables.g_playerEffectPhase == 1)
+        if (_gameEngine.StaticVariables.g_playerEffectPhase == 1)
         {
             if (IsFadeActive() != 0)
             {
@@ -2495,14 +2492,14 @@ public class PlayerManager
                 return 0;
             }
 
-            var frameTable = staticVariables.SHORT_ARRAY_800235e0;
+            var frameTable = _gameEngine.StaticVariables.SHORT_ARRAY_800235e0;
             var frameIndex = 0;
 
-            while ((ushort)frameTable[frameIndex] <= staticVariables.g_playerEffectCurrentFrame)
+            while ((ushort)frameTable[frameIndex] <= _gameEngine.StaticVariables.g_playerEffectCurrentFrame)
             {
-                if ((ushort)frameTable[frameIndex] == staticVariables.g_playerEffectCurrentFrame)
+                if ((ushort)frameTable[frameIndex] == _gameEngine.StaticVariables.g_playerEffectCurrentFrame)
                 {
-                    var nearbyEntities = new Entity[staticVariables.g_entitySlots.Length];
+                    var nearbyEntities = new Entity[_gameEngine.StaticVariables.g_entitySlots.Length];
                     var distanceSquared = new int[nearbyEntities.Length];
                     var nearbyCount = _gameEngine.FUN_8003AF70(player, 1, 0x0B, nearbyEntities, distanceSquared);
                     Entity targetEntity = null;
@@ -2516,7 +2513,7 @@ public class PlayerManager
                             continue;
                         }
 
-                        if (candidate == staticVariables.DAT_8012712c)
+                        if (candidate == _gameEngine.StaticVariables.DAT_8012712c)
                         {
                             continue;
                         }
@@ -2539,14 +2536,14 @@ public class PlayerManager
                             targetEntity.PosZ + 0x00800000,
                             0);
 
-                        staticVariables.DAT_8012712c = targetEntity;
+                        _gameEngine.StaticVariables.DAT_8012712c = targetEntity;
 
                         if (entitySpawned != null)
                         {
                             if (entitySpawned.IsOnGround != 0)
                             {
                                 _gameEngine.DestroyEntity(entitySpawned);
-                                staticVariables.DAT_8012712c = null;
+                                _gameEngine.StaticVariables.DAT_8012712c = null;
                             }
                             else
                             {
@@ -2565,7 +2562,7 @@ public class PlayerManager
                             player.PosZ + 0x00800000,
                             0);
 
-                        staticVariables.DAT_8012712c = null;
+                        _gameEngine.StaticVariables.DAT_8012712c = null;
 
                         if (entitySpawned != null)
                         {
@@ -2590,11 +2587,11 @@ public class PlayerManager
             }
 
             player.TargetAnimationId = 0x34;
-            staticVariables.g_playerEffectPhase += 1;
+            _gameEngine.StaticVariables.g_playerEffectPhase += 1;
             return 0;
         }
 
-        if (staticVariables.g_playerEffectPhase == 2)
+        if (_gameEngine.StaticVariables.g_playerEffectPhase == 2)
         {
             if (player.TargetAnimationId != 0x34)
             {
@@ -2696,23 +2693,20 @@ public class PlayerManager
     }
 
     // 80035A84
-    private int ProcessAnchorSparkEffectSequence()
+    private int ProcessFireMagicLevel1Sequence()
     {
-        Breakpoint.TriggerBreak();
+        var player = _gameEngine.StaticVariables.PlayerEntity;
 
-        var staticVariables = _gameEngine.StaticVariables;
-        var player = staticVariables.PlayerEntity;
-
-        if (staticVariables.g_playerEffectPhase == 1)
+        if (_gameEngine.StaticVariables.g_playerEffectPhase == 1)
         {
             if (IsFadeActive() != 0)
             {
                 return 1;
             }
 
-            if (staticVariables.DAT_8012711c.Index2 == staticVariables.DAT_80127120)
+            if (_gameEngine.StaticVariables.DAT_8012711c.Index2 == _gameEngine.StaticVariables.DAT_80127120)
             {
-                if ((staticVariables.g_playerEffectCurrentFrame & 7) != 0)
+                if ((_gameEngine.StaticVariables.g_playerEffectCurrentFrame & 7) != 0)
                 {
                     return 0;
                 }
@@ -2739,11 +2733,11 @@ public class PlayerManager
             }
 
             player.TargetAnimationId = 0x34;
-            staticVariables.g_playerEffectPhase += 1;
+            _gameEngine.StaticVariables.g_playerEffectPhase += 1;
             return 0;
         }
 
-        if (staticVariables.g_playerEffectPhase == 2)
+        if (_gameEngine.StaticVariables.g_playerEffectPhase == 2)
         {
             if (player.TargetAnimationId != 0x34)
             {
@@ -2770,15 +2764,15 @@ public class PlayerManager
             player.PosZ,
             0);
 
-        staticVariables.DAT_8012711c = entityAnchor;
+        _gameEngine.StaticVariables.DAT_8012711c = entityAnchor;
 
         if (entityAnchor == null)
         {
             return 1;
         }
 
-        staticVariables.DAT_80127120 = entityAnchor.Index2;
-        staticVariables.g_playerEffectPhase += 1;
+        _gameEngine.StaticVariables.DAT_80127120 = entityAnchor.Index2;
+        _gameEngine.StaticVariables.g_playerEffectPhase += 1;
         return 0;
     }
 
