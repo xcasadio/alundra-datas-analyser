@@ -6408,7 +6408,7 @@ public static class FunctionTypeC
         AI_FUN_8007b04c_common(gameEngine, entity, 0xc00, 0x240000);
     }
 
-    // GHIDRA: AI_FUN_8007b3c4 @ 0x8007B3C4
+    // 8007B3C4
     public static void AI_FUN_8007b3c4(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
@@ -6512,7 +6512,7 @@ public static class FunctionTypeC
         }
     }
 
-    // GHIDRA: AI_FUN_8007b6ec @ 0x8007B6EC
+    // 8007B6EC
     public static void AI_FUN_8007b6ec(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)

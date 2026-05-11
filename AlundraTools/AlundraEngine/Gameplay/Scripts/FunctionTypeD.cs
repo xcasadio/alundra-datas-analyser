@@ -950,7 +950,8 @@ public static class FunctionTypeD
     //8007eba8
     public static void AI_FUN_8007eba8(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Bras, projectiles")
         {
             Breakpoint.TriggerBreak();
         }
