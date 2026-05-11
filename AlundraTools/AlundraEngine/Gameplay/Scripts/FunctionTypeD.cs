@@ -223,7 +223,8 @@ public static class FunctionTypeD
     //8007de68
     public static void AI_FUN_8007de68(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆P-Zoldia Niv.1")
         {
             Breakpoint.TriggerBreak();
         }

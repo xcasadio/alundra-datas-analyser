@@ -27,6 +27,7 @@ public static class FunctionTypeE
             && entity.Name != "Cruche générique"
             && entity.Name != "Tonneau générique"
             && entity.Name != "Pierre générique"
+            && entity.Name != "Bloc de glace transportable"
             && entity.Name != "Rocher tortue non ennemi")
         {
             Breakpoint.TriggerBreak();

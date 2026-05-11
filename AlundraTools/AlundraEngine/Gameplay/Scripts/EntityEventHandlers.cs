@@ -519,22 +519,6 @@ public class EntityEventHandlers
     public int Script_5_005(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var flag = (uint)((variables[2] << 8) | variables[1]);
-
-        //uint[] flags;
-        //
-        //if ((flag & 0x8000) == 0)
-        //{
-        //    flags = _gameEngine.StaticVariables.g_saveData.GameFlags;
-        //}
-        //else
-        //{
-        //    flags = _gameEngine.StaticVariables.g_temporaryFlags;
-        //}
-        //
-        //var index = (flag >> 5) & 0x3ff;
-        //var mask = (uint)(1 << (variables[1] & 0x1f));
-        //flags[index] |= mask;
-        
         var mask = (uint)(1 << (variables[1] & 0x1f));
         _gameEngine.AddFlag(flag, mask);
 
@@ -545,22 +529,6 @@ public class EntityEventHandlers
     public int Script_6_006(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         var flag = (uint)((variables[2] << 8) | variables[1]);
-
-        //uint[] flags;
-        //
-        //if ((flag & 0x8000) == 0)
-        //{
-        //    flags = _gameEngine.StaticVariables.g_saveData.GameFlags;
-        //}
-        //else
-        //{
-        //    flags = _gameEngine.StaticVariables.g_temporaryFlags;
-        //}
-        //
-        //var index = (flag >> 5) & 0x3ff;
-        //var mask = 1 << (variables[1] & 0x1f);
-        //flags[index] &= (uint)(~mask);
-
         uint mask = (uint)(1 << (variables[1] & 0x1f));
         _gameEngine.SetFlag(flag, ~mask);
 
@@ -1142,8 +1110,9 @@ public class EntityEventHandlers
     {
         for (int i = 0; i < 4; i++)
         {
-            var flag = variables[i * 2 + 1] + (variables[i * 2 + 2] << 8);
-            var mask = 1 << (variables[1] & 0x1f);
+            uint flag = (uint)(variables[i * 2 + 1] + (variables[i * 2 + 2] << 8));
+            var mask = (uint)(1 << (int)(flag & 0x1f));
+            flag = _gameEngine.GetFlag(flag);
 
             if ((flag & mask) == 0)
             {
@@ -1163,15 +1132,16 @@ public class EntityEventHandlers
         {
             var flag = (uint)(variables[i * 2 + 1] | (variables[i * 2 + 2] << 8));
             var mask = (uint)(1 << (int)(flag & 0x1f));
+            flag = _gameEngine.GetFlag(flag);
 
-            if ((_gameEngine.GetFlag(flag) & mask) != 0)
+            if ((flag & mask) != 0)
             {
                 eventProgramState.Result = 0;
                 return 9;
             }
         }
 
-        eventProgramState.Result = 0;
+        eventProgramState.Result = 1;
         return 9;
     }
 

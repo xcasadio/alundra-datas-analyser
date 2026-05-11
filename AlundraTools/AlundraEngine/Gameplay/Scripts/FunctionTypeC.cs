@@ -2178,6 +2178,7 @@ public static class FunctionTypeC
             && entity.Name != "Cruche générique"
             && entity.Name != "Pierre très lourde"
             && entity.Name != "Cruche n°2"
+            && entity.Name != "Bloc de glace transportable"
             && entity.Name != "Rocher tortue non ennemi")
         {
             Breakpoint.TriggerBreak();
@@ -6514,7 +6515,8 @@ public static class FunctionTypeC
     // GHIDRA: AI_FUN_8007b6ec @ 0x8007B6EC
     public static void AI_FUN_8007b6ec(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Colonne de glace")
         {
             Breakpoint.TriggerBreak();
         }
@@ -7137,11 +7139,10 @@ public static class FunctionTypeC
     }
 
     //8007c768
-    //P-Zoldia Niv.1
     public static void AI_FUN_8007c768(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
-            && entity.Name != "P-Zoldia Niv.1")
+            && entity.Name != "◆P-Zoldia Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
