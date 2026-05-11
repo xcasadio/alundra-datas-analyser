@@ -6512,7 +6512,52 @@ public static class FunctionTypeC
         }
     }
 
-    // 8007B6EC
+    // GHIDRA: FUN_80080990 @ 0x80080990
+    private static int FUN_80080990(Entity param_1, Entity param_2)
+    {
+        int iVar1 = param_1.ModdedPosX;
+        int iVar2 = param_2.ModdedPosX;
+        int iVar3;
+
+        if (iVar1 < iVar2)
+        {
+            iVar3 = param_1.Width;
+            iVar2 -= iVar1;
+        }
+        else
+        {
+            iVar3 = param_2.Width;
+            iVar2 = iVar1 - iVar2;
+        }
+
+        if (iVar3 < iVar2)
+        {
+            return param_2.PosY < param_1.PosY ? 1 : 0;
+        }
+
+        iVar1 = param_1.ModdedPosY;
+        iVar2 = param_2.ModdedPosY;
+
+        if (iVar1 < iVar2)
+        {
+            iVar3 = param_1.Height;
+            iVar2 -= iVar1;
+        }
+        else
+        {
+            iVar3 = param_2.Height;
+            iVar2 = iVar1 - iVar2;
+        }
+
+        if (iVar3 < iVar2)
+        {
+            return param_2.PosX < param_1.PosX ? 2 : 3;
+        }
+
+        return -1;
+    }
+
+    // GHIDRA: AI_FUN_8007b6ec @ 0x8007B6EC
     public static void AI_FUN_8007b6ec(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
@@ -6539,45 +6584,10 @@ public static class FunctionTypeC
                     entity.DelayOrAngle = 0;
                     entity.TargetAnimationId = 1;
 
-                    int directionIndex;
-                    var delta = player.ModdedPosX - entity.ModdedPosX;
-
-                    if (delta < 0)
-                    {
-                        if (entity.ModdedPosX - player.ModdedPosX < player.Width)
-                        {
-                            goto LAB_800809d8;
-                        }
-                    }
-                    else if (delta < entity.Width)
-                    {
-                        goto LAB_800809d8;
-                    }
-
-                    directionIndex = player.PosX < entity.PosX ? 1 : 0;
-                    goto LAB_8007b770;
-
-                LAB_800809d8:
-                    delta = player.ModdedPosY - entity.ModdedPosY;
-
-                    if (delta < 0)
-                    {
-                        if (entity.ModdedPosY - player.ModdedPosY < player.Height)
-                        {
-                            directionIndex = -1;
-                            goto LAB_8007b770;
-                        }
-                    }
-                    else if (delta < entity.Height)
-                    {
-                        directionIndex = -1;
-                        goto LAB_8007b770;
-                    }
-
-                    directionIndex = entity.PosY < player.PosY ? 2 : 3;
-
-                LAB_8007b770:
-                    entity.TargetDirection = gameEngine.StaticVariables.BYTE_ARRAY_80028b54[directionIndex];
+                    int directionIndex = FUN_80080990(player, entity);
+                    entity.TargetDirection = directionIndex == -1
+                        ? 0x18U
+                        : gameEngine.StaticVariables.BYTE_ARRAY_80028b54[directionIndex];
                     return;
                 }
 
