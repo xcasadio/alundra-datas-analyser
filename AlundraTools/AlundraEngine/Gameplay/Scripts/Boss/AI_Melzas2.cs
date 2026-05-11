@@ -167,7 +167,8 @@ public static class AI_Melzas2
     public static void UpdateEntityAI_BossExplode(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
-            && entity.Name != "◆Élément Niv.1")
+            && entity.Name != "◆Élément Niv.1"
+            && entity.Name != "◆Abyss Niv.1")
         {
             Breakpoint.TriggerBreak();
         }

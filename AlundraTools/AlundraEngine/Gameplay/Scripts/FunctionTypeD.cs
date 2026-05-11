@@ -337,19 +337,47 @@ public static class FunctionTypeD
     //8007e0d8
     public static void AI_FUN_8007e0d8(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Abyss Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
+
+        if (gameEngine.EntityManager.ComputeNewHp(entity))
+        {
+            entity.Bytes[3] = 1;
+        }
+
+        entity.TargetAnimationId = 5;
     }
 
     //8007e114
     public static void AI_FUN_8007e114(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Abyss (droite)"
+            && entity.Name != "◆Abyss (gauche)")
         {
             Breakpoint.TriggerBreak();
         }
+
+        uint animationId;
+
+        if (entity.TargetAnimationId == 2)
+        {
+            animationId = 9;
+        }
+        else
+        {
+            animationId = 3;
+
+            if (entity.TargetAnimationId == 1)
+            {
+                animationId = 10;
+            }
+        }
+
+        entity.TargetAnimationId = animationId;
     }
 
     //8007e140
@@ -476,6 +504,8 @@ public static class FunctionTypeD
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "Bombe"
             && entity.Name != "Mur à boule de fer (111)"
+            && entity.Name != "Mur à boule de fer (112) – axe"
+            && entity.Name != "Mur à boule de fer (222) – boule de fer"
             && entity.Name != "Mur à boule de fer (2×2×2) permanent")
         {
             Breakpoint.TriggerBreak();
@@ -541,7 +571,14 @@ public static class FunctionTypeD
     //8007e994
     public static void AI_FUN_8007e994(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Abyss (projectiles-bulles)")
+        {
+            Breakpoint.TriggerBreak();
+        }
+
+        entity.TargetAnimationId = 1;
+        entity.Flags |= 0x40;
     }
 
     //8007e9ac

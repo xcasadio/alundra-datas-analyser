@@ -1453,13 +1453,13 @@ public class PlayerManager
     //8002f49c
     private int UpdatePlayerWeaponEffect()
     {
+        var weaponFlagsIndex = _gameEngine.StaticVariables.g_currentWeaponFlags * 13;
         var buttonHeld = (_gameEngine.StaticVariables.g_padState1.ButtonsHold & PadState.Square) != 0;
         var buttonReleased = (_gameEngine.StaticVariables.g_padState1.ButtonsReleased & PadState.Square) != 0;
 
         if (buttonHeld || buttonReleased)
         {
-            var currentWeaponFlags = _gameEngine.StaticVariables.g_currentWeaponFlags;
-            var weaponInitFlag = (uint)_gameEngine.StaticVariables.g_weaponInitFlags[currentWeaponFlags];
+            var weaponInitFlag = (uint)_gameEngine.StaticVariables.g_weaponInitFlags[weaponFlagsIndex];
 
             if (weaponInitFlag != 0)
             {
@@ -1501,21 +1501,29 @@ public class PlayerManager
                     3,    // effectid  
                     0,    // animid
                     _gameEngine.StaticVariables.PlayerEntity, // entity
-                    0x10000, // depthsortmod
+                    1,    // depthsortmod
                     0,    // xoff
                     0,    // yoff
-                    0     // zoff
+                    0x100000 // zoff
                 );
 
                 _gameEngine.StaticVariables.g_playerWarpEffect = attachedEffect;
             }
             else
             {
-                // Check if effect should be destroyed
-                if (_gameEngine.StaticVariables.g_playerWarpEffect.Status == 0)
+                if (_gameEngine.StaticVariables.g_playerWarpEffect.DestroyFlag != 0)
                 {
-                    _gameEngine.StaticVariables.g_playerWarpEffect = null;
-                    return _gameEngine.StaticVariables.g_playerWarpTimer;
+                    var attachedEffect = _gameEngine.EffectManager.CreateAttachedEffect(
+                        0,
+                        3,
+                        0,
+                        _gameEngine.StaticVariables.PlayerEntity,
+                        1,
+                        0,
+                        0,
+                        0x100000);
+
+                    _gameEngine.StaticVariables.g_playerWarpEffect = attachedEffect;
                 }
             }
 
@@ -1555,14 +1563,9 @@ public class PlayerManager
                         var adjustedXForce = randomXComponent * 5;
 
                         // Complex math for random Y force  
-                        var temp2 = Random.Next() * 0x40001;
+                        var temp2 = randomSeed2 * 0x40001;
                         var randomYComponent = (int)(temp2 >> 32);
                         randomYComponent -= 0x20000; // Bias
-                        var adjustedYForce = randomYComponent * 5;
-
-                        // Apply forces relative to player's current forces
-                        spriteEffect.ForceX += adjustedXForce;
-                        spriteEffect.ForceY += adjustedYForce;
 
                         // Subtract player forces to create relative motion
                         spriteEffect.ForceX = _gameEngine.StaticVariables.PlayerEntity.ForceX - randomXComponent;

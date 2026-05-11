@@ -2470,12 +2470,18 @@ public static class FunctionTypeC
         0x14, 0x1C, 0x14, 0x1C,
         0x04, 0x0C, 0x14, 0x1C,
         0x04, 0x0C, 0x04, 0x0C,
+        0x04, 0x1C, 0x04, 0x1C,
+        0x04, 0x1C, 0x04, 0x1C,
     };
 
     //8006e83c
     public static void AI_FUN_8006e83c(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Abyss Niv.1")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         uint uVar1;
 
@@ -2496,9 +2502,14 @@ public static class FunctionTypeC
     }
 
     // GHIDRA: AI_FUN_8006eb9c @ 0x8006EB9C
-    // Abyss Niv.1
     public static void AI_FUN_8006eb9c(GameEngine gameEngine, Entity entity)
     {
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Abyss Niv.1")
+        {
+            Breakpoint.TriggerBreak();
+        }
+
         if (entity.Bytes[3] != 0 && entity.TargetAnimationId == 0)
         {
             if (entity.Bytes[3] < 4)
@@ -2896,7 +2907,11 @@ public static class FunctionTypeC
     //8006f860
     public static void AI_FUN_8006f860(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Abyss (projectiles-bulles)")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         if (entity.TargetAnimationId == 0)
         {
@@ -6087,7 +6102,8 @@ public static class FunctionTypeC
     //8007a958
     public static void AI_FUN_8007a958(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Épée d’onde Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -11555,7 +11571,7 @@ public static class FunctionTypeC
     public static void AI_UpdateEntityAI_18(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
-            && entity.Name != "")
+            && entity.Name != "◆Homme de bois Niv.1")
         {
             Breakpoint.TriggerBreak();
         }

@@ -241,7 +241,8 @@ public static class FunctionTypeE
     //8007f23c
     public static void AI_FUN_8007f23c(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Épée d’onde Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -363,6 +364,8 @@ public static class FunctionTypeE
     {
         if (entity.Name != "◆Homme-lézard (épée) Niv.1"
             && entity.Name != "Mur à boule de fer (2×2×2) permanent"
+            && entity.Name != "Mur à boule de fer (222) – boule de fer"
+            && entity.Name != "Mur à boule de fer (112) – axe"
             && entity.Name != "Mur à boule de fer (111)")
         {
             Breakpoint.TriggerBreak();

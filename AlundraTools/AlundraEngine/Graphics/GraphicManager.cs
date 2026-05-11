@@ -447,12 +447,6 @@ public class GraphicManager
         for (var i = 0; i < _gameEngine.StaticVariables.g_visibleEntityCount; i++)
         {
             var entity = _gameEngine.StaticVariables.g_visibleEntities[i];
-        
-            //if (entity.TileY != y)
-            //{
-            //    continue;//if its not in this row, continue
-            //}
-        
             var scx = (entity.PosX >> 16) - cameraX;
             var scy = (entity.PosY >> 16) - (entity.PosZ >> 16) - cameraY;
             

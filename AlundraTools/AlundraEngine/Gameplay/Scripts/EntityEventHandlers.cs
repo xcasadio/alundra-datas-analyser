@@ -7,6 +7,13 @@ public class EntityEventHandlers
 {
     private readonly GameEngine _gameEngine;
 
+    // GHIDRA: DAT_80023d2c @ 0x80023D2C
+    // PARTIAL: Script_136_088 only consumes the first three 32-bit entries before adjacent string data.
+    private static readonly int[] DAT_80023d2c =
+    [
+        2, 3, 4
+    ];
+
     public delegate int EntityEventHandler(Entity entity, Entity entitySelf, int[] exp, EventProgramState eventProgramState);
 
     public readonly SpriteEventHandlers SpriteHandlers;
@@ -1960,7 +1967,7 @@ public class EntityEventHandlers
         for (int i = 0; i < num; i++)
         {
             var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
-            //AlundraEngine.Debug.Debugger.Breakpoint();
+
             if (entity.RidingEntity == logicEntity)
             {
                 eventProgramState.Result = 1;
@@ -1981,7 +1988,7 @@ public class EntityEventHandlers
         for (int i = 0; i < num; i++)
         {
             var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
-            //Breakpoint.TriggerBreak();
+
             if (logicEntity.RidingEntity == entity)
             {
                 eventProgramState.Result = 1;
@@ -2542,20 +2549,17 @@ public class EntityEventHandlers
     // 8004011C
     public int Script_136_088(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Breakpoint.TriggerBreak();
-        
-        //int matchingEntityCount;
-        //var val = _gameEngine.StaticVariables.BYTE_ARRAY_80023d2c[variables[2]];
-        //matchingEntityCount = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
-        //
-        //if (0 < matchingEntityCount)
-        //{
-        //    do
-        //    {
-        //        var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[--matchingEntityCount];
-        //        entity.Status = val;
-        //    } while (0 < matchingEntityCount);
-        //}
+        var status = DAT_80023d2c[variables[2]];
+        var matchingEntityCount = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
+
+        if (0 < matchingEntityCount)
+        {
+            do
+            {
+                var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[--matchingEntityCount];
+                entity.Status = status;
+            } while (0 < matchingEntityCount);
+        }
 
         return 3;
     }
@@ -3207,69 +3211,47 @@ public class EntityEventHandlers
     // 80041174
     public int Script_169_0A9(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Breakpoint.TriggerBreak();
-        return 0;
-        /*
-        int iVar1;
-        int piVar2;
-        iVar1 = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
+        var matchingEntityCount = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
-        if (0 < iVar1)
+        if (0 < matchingEntityCount)
         {
-            piVar2 = _gameEngine.StaticVariables.g_activeEntityRefId + iVar1;
-
             do
             {
-                if (logicEntity.XCollisionEntity == piVar2)
+                var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[--matchingEntityCount];
+
+                if (logicEntity.XCollisionEntity == entity)
                 {
                     eventProgramState.Result = 1;
                     return 2;
                 }
-
-                iVar1 = iVar1 + -1;
-                piVar2 = piVar2 + -1;
-            } while (0 < iVar1);
+            } while (0 < matchingEntityCount);
         }
 
         eventProgramState.Result = 0;
-
-        return 2;*/
+        return 2;
     }
 
     // 80041200
     public int Script_170_0AA(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Breakpoint.TriggerBreak();
-        return 0;
-        /*
-        int iVar1;
+        var matchingEntityCount = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
 
-        int piVar2;
-
-        iVar1 = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]);
-
-        if (0 < iVar1)
+        if (0 < matchingEntityCount)
         {
-            piVar2 = _gameEngine.StaticVariables.g_activeEntityRefId + iVar1;
-
             do
             {
-                if (piVar2 + 0x130 == logicEntity)
+                var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[--matchingEntityCount];
+
+                if (entity.XCollisionEntity == logicEntity)
                 {
                     eventProgramState.Result = 1;
-
                     return 2;
                 }
-
-                iVar1 = iVar1 + -1;
-
-                piVar2 = piVar2 + -1;
-            } while (0 < iVar1);
+            } while (0 < matchingEntityCount);
         }
 
         eventProgramState.Result = 0;
-
-        return 2;*/
+        return 2;
     }
 
     // 80041290
