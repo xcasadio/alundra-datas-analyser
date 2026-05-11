@@ -13418,6 +13418,24 @@ public class StaticVariables
     // GHIDRA: DAT_8019119c @ 0x8019119C
     public int DAT_8019119c; // 8019119C
 
+    // GHIDRA: DAT_801911A0 @ 0x801911A0
+    public int DAT_801911a0;
+
+    // GHIDRA: DAT_801911A4 @ 0x801911A4
+    public int DAT_801911a4;
+
+    // GHIDRA: DAT_801911A8 @ 0x801911A8
+    public int DAT_801911a8;
+
+    // GHIDRA: DAT_801911AC @ 0x801911AC
+    public int DAT_801911ac;
+
+    // GHIDRA: DAT_801911B0 @ 0x801911B0
+    public int DAT_801911b0;
+
+    // GHIDRA: DAT_801911B4 @ 0x801911B4
+    public int DAT_801911b4;
+
     public Entity g_bossSpawnedEffectEntity; // 801911B8
     public Entity g_bossEffectEntity; // 801911BC
     public int DAT_801911c0; // 801911C0
