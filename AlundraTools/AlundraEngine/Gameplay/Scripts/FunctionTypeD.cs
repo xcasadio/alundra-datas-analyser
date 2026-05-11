@@ -14,14 +14,8 @@ public static class FunctionTypeD
             Breakpoint.TriggerBreak();
         }
 
-        if (gameEngine.EntityManager.ComputeNewHp(entity))
-        {
-            entity.Bytes[3] = 1;
-        }
 
-        entity.TargetAnimationId = 5;
-        var direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
-        entity.TargetDirection = direction;
+        HitCommon(gameEngine, entity, 5);
     }
 
     //8007da08
@@ -162,14 +156,7 @@ public static class FunctionTypeD
             Breakpoint.TriggerBreak();
         }
 
-        if (gameEngine.EntityManager.ComputeNewHp(entity))
-        {
-            entity.Bytes[3] = 1;
-        }
-
-        entity.TargetAnimationId = 6;
-        var direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
-        entity.TargetDirection = direction;
+        HitCommon(gameEngine, entity, 6);
     }
 
     //8007dd3c
@@ -180,7 +167,7 @@ public static class FunctionTypeD
             Breakpoint.TriggerBreak();
         }
 
-        Breakpoint.TriggerBreak();
+        HitCommon(gameEngine, entity, 7);
     }
 
     //8007dda0
@@ -191,14 +178,7 @@ public static class FunctionTypeD
             Breakpoint.TriggerBreak();
         }
 
-        if (gameEngine.EntityManager.ComputeNewHp(entity))
-        {
-            entity.Bytes[3] = 1;
-        }
-
-        entity.TargetAnimationId = 4;
-        var direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
-        entity.TargetDirection = direction;
+        HitCommon(gameEngine, entity, 4);
     }
 
     //8007de04
@@ -210,14 +190,7 @@ public static class FunctionTypeD
             Breakpoint.TriggerBreak();
         }
 
-        if (gameEngine.EntityManager.ComputeNewHp(entity))
-        {
-            entity.Bytes[3] = 1;
-        }
-
-        entity.TargetAnimationId = 2;
-        var direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
-        entity.TargetDirection = direction;
+        HitCommon(gameEngine, entity, 2);
     }
 
     //8007de68
@@ -229,7 +202,12 @@ public static class FunctionTypeD
             Breakpoint.TriggerBreak();
         }
 
-        Breakpoint.TriggerBreak();
+        HitCommon(gameEngine, entity, 6);
+
+        if (entity.SpriteTableIndex - 0x1c4U < 2)
+        {
+            gameEngine.SoundManager.PlaySoundEffect(0x41);
+        }
     }
 
     //8007dee8
@@ -249,8 +227,7 @@ public static class FunctionTypeD
         }
 
         entity.TargetAnimationId = 4;
-        var direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.PlayerEntity.PosX, entity.PosY - gameEngine.StaticVariables.PlayerEntity.PosY);
-        entity.TargetDirection = direction;
+        entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.PlayerEntity.PosX, entity.PosY - gameEngine.StaticVariables.PlayerEntity.PosY); ;
     }
 
     //8007df4c
@@ -325,14 +302,8 @@ public static class FunctionTypeD
             Breakpoint.TriggerBreak();
         }
 
-        if (gameEngine.EntityManager.ComputeNewHp(entity))
-        {
-            entity.Bytes[3] = 1;
-        }
 
-        entity.TargetAnimationId = 3;
-        var direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
-        entity.TargetDirection = direction;
+        HitCommon(gameEngine, entity, 3);
     }
 
     //8007e0d8
@@ -388,6 +359,23 @@ public static class FunctionTypeD
         {
             Breakpoint.TriggerBreak();
         }
+
+        entity.Bytes[2] = 0;
+
+        if (entity.Bytes[1] == 0)
+        {
+            if (gameEngine.EntityManager.ComputeNewHp(entity))
+            {
+                entity.Bytes[3] = 1;
+            }
+
+            entity.TargetAnimationId = 8;
+            entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY); ;
+        }
+        else
+        {
+            entity.TargetAnimationId = 0x10;
+        }
     }
 
     //8007e1c4
@@ -399,58 +387,142 @@ public static class FunctionTypeD
             Breakpoint.TriggerBreak();
         }
 
-        uint direction;
+        HitCommon(gameEngine, entity, 8);
+    }
 
+    public static void HitCommon(GameEngine gameEngine, Entity entity, uint animationId)
+    {
         if (gameEngine.EntityManager.ComputeNewHp(entity))
         {
             entity.Bytes[3] = 1;
         }
 
-        entity.TargetAnimationId = 8;
-        direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
-        entity.TargetDirection = direction;
+        entity.TargetAnimationId = animationId;
+        entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
     }
 
     //8007e228
     public static void AI_FUN_8007e228(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        if (gameEngine.EntityManager.ComputeNewHp(entity))
+        {
+            entity.Bytes[3] = 1;
+            entity.ParentEntity.DelayOrAngle -= 1;
+        }
+
+        entity.TargetAnimationId = 2;
+        entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
     }
 
     //8007e2a0
     public static void AI_FUN_8007e2a0(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        HitCommon(gameEngine, entity, 8);
     }
 
     //8007e304
     public static void AI_FUN_8007e304(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        Entity primaryEntity = entity;
+        Entity secondaryEntity;
+        int entityRef = entity.AIValues.GetInt32(2);
+        int direction;
+
+        if (entityRef != 0)
+        {
+            secondaryEntity = gameEngine.StaticVariables.g_entitySlots[entityRef];
+            direction = ScriptHelper.GetDirectionToTarget(primaryEntity.PosX - gameEngine.StaticVariables.PlayerEntity.PosX, primaryEntity.PosY - gameEngine.StaticVariables.PlayerEntity.PosY);
+            primaryEntity.TargetDirection = (uint)direction;
+            secondaryEntity.TargetDirection = (uint)((0x20 - direction) & 0x1f);
+
+            if (gameEngine.EntityManager.ComputeNewHp(primaryEntity))
+            {
+                primaryEntity.Bytes[3] = 1;
+            }
+
+            secondaryEntity.Hp = primaryEntity.Hp;
+        }
+        else
+        {
+            secondaryEntity = primaryEntity;
+            primaryEntity = secondaryEntity.ParentEntity!;
+            direction = ScriptHelper.GetDirectionToTarget(secondaryEntity.PosX - gameEngine.StaticVariables.PlayerEntity.PosX, secondaryEntity.PosY - gameEngine.StaticVariables.PlayerEntity.PosY);
+            secondaryEntity.TargetDirection = (uint)direction;
+            primaryEntity.TargetDirection = (uint)((0x20 - direction) & 0x1f);
+
+            if (gameEngine.EntityManager.ComputeNewHp(secondaryEntity))
+            {
+                primaryEntity.Bytes[3] = 1;
+            }
+
+            primaryEntity.Hp = secondaryEntity.Hp;
+        }
+
+        if (primaryEntity.Bytes[2] == 0)
+        {
+            primaryEntity.TargetAnimationId = 9;
+            secondaryEntity.TargetAnimationId = 6;
+        }
+        else
+        {
+            primaryEntity.TargetAnimationId = 6;
+            secondaryEntity.TargetAnimationId = 9;
+        }
     }
 
     //8007e424
     public static void AI_FUN_8007e424(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        // BLOCKED: fixed entity state at 0x80138258 and helper 0x80073940 are not yet closed in the C# port.
     }
 
     //8007e548
     public static void AI_FUN_8007e548(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        if (gameEngine.StaticVariables.g_currentMap != 0x7b)
+        {
+            if (gameEngine.EntityManager.ComputeNewHp(entity))
+            {
+                entity.Bytes[3] = 1;
+            }
+        }
+
+        entity.TargetAnimationId = 6;
+        entity.Bytes[1] += 1;
+        entity.Bytes[0] += 1;
     }
 
     //8007e5b0
     public static void AI_FUN_8007e5b0(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        if (gameEngine.EntityManager.ComputeNewHp(entity))
+        {
+            entity.Bytes[3] = 1;
+            entity.ParentEntity.Bytes[2] -= 1;
+        }
+
+        entity.TargetAnimationId = 5;
+        entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
     }
 
     //8007e628
     public static void AI_FUN_8007e628(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        HitCommon(gameEngine, entity, 7);
     }
 
     //8007e68c
@@ -463,24 +535,40 @@ public static class FunctionTypeD
     public static void AI_FUN_8007e694(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        var value = entity.TouchingEntity.BalanceAnimValRef.Val & 0xf;
+
+        if (value == 7 || value == 9)
+        {
+            HitCommon(gameEngine, entity, 8);
+        }
     }
 
     //8007e704
     public static void AI_FUN_8007e704(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        if (entity.TargetAnimationId != 4)
+        {
+            HitCommon(gameEngine, entity, 6);
+        }
     }
 
     //8007e754
     public static void AI_FUN_8007e754(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        HitCommon(gameEngine, entity, 7);
     }
 
     //8007e790
     public static void AI_FUN_8007e790(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        entity.TargetAnimationId = 0xd;
     }
 
     //8007e79c
@@ -514,8 +602,8 @@ public static class FunctionTypeD
 
         if ((entity.TouchingEntity.BalanceAnimValRef.Val & 0xf) == 2)
         {
-            entity.TargetAnimationId = entity.TargetAnimationId + 1;
-            entity.Flags = entity.Flags | 0x40;
+            entity.TargetAnimationId += 1;
+            entity.Flags |= 0x40;
         }
     }
 
@@ -523,18 +611,36 @@ public static class FunctionTypeD
     public static void AI_FUN_8007e828(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        if ((entity.TouchingEntity.BalanceAnimValRef.Val & 0xf) == 4)
+        {
+            entity.TargetAnimationId += 1;
+            entity.Flags |= 0x40;
+        }
     }
 
     //8007e86c
     public static void AI_FUN_8007e86c(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        if ((entity.TouchingEntity.BalanceAnimValRef.Val & 0xf) == 2)
+        {
+            entity.TargetAnimationId = 2;
+            entity.Flags |= 0x40;
+        }
     }
 
     //8007e8ac
     public static void AI_FUN_8007e8ac(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        if ((entity.TouchingEntity.BalanceAnimValRef.Val & 0xf) == 6)
+        {
+            entity.TargetAnimationId = 1;
+            entity.Flags = (entity.Flags | 0x46U) & 0xFFFFFF7FU;
+        }
     }
 
     //8007e8f0
@@ -559,8 +665,7 @@ public static class FunctionTypeD
             }
 
             entity.TargetAnimationId = 6;
-            var direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
-            entity.TargetDirection = direction;
+            entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY); ;
         }
         else
         {
@@ -586,30 +691,86 @@ public static class FunctionTypeD
     public static void AI_FUN_8007e9ac(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        if (gameEngine.EntityManager.ComputeNewHp(entity))
+        {
+            entity.Bytes[3] = 1;
+        }
+
+        entity.TargetAnimationId = 1;
     }
 
     //8007e9e8
     public static void AI_FUN_8007e9e8(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        if (gameEngine.EntityManager.ComputeNewHp(entity))
+        {
+            entity.Bytes[3] = 1;
+        }
+
+        entity.TargetAnimationId = 2;
     }
 
     //8007ea24
     public static void AI_FUN_8007ea24(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        if (gameEngine.EntityManager.ComputeNewHp(entity)
+            || entity.TouchingEntity!.SpriteTableIndex == 0x1ef)
+        {
+            entity.Bytes[3] = 1;
+        }
+
+        entity.TargetAnimationId = 3;
     }
 
     //8007ea84
     public static void AI_FUN_8007ea84(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        Entity parentEntity = entity.ParentEntity!;
+
+        if (entity.SpriteTableIndex == 0x1d7)
+        {
+            if (gameEngine.EntityManager.ComputeNewHp(entity))
+            {
+                entity.Bytes[3] = 1;
+            }
+
+            entity.TargetAnimationId = 2;
+            entity.AIValues[4] = 1;
+            return;
+        }
+
+        entity.TargetAnimationId = 2;
+
+        if (parentEntity.Bytes[0] < 0x60)
+        {
+            parentEntity.Bytes[0] = (byte)(parentEntity.Bytes[0] + 0x20);
+            parentEntity.Bytes[1] = 0x10;
+
+            if (parentEntity.Bytes[0] >= 0x61)
+            {
+                parentEntity.Bytes[0] = 0x60;
+            }
+        }
     }
 
     //8007eb1c
     public static void AI_FUN_8007eb1c(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        if (gameEngine.EntityManager.ComputeNewHp(entity))
+        {
+            entity.Bytes[3] = 1;
+        }
+
+        entity.TargetAnimationId = 3;
     }
 
     //8007eb58
@@ -645,9 +806,8 @@ public static class FunctionTypeD
         entity.ForceZ = 0;
         entity.PreviousAdjustedForceY = 0;
         entity.PreviousAdjustedForceX = 0;
-        var bVar1 = gameEngine.EntityManager.ComputeNewHp(entity);
 
-        if (bVar1)
+        if (gameEngine.EntityManager.ComputeNewHp(entity))
         {
             entity.Bytes[3] = 1;
         }
@@ -659,12 +819,34 @@ public static class FunctionTypeD
     public static void AI_FUN_8007ebf0(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        Entity parentEntity = entity.ParentEntity!;
+        uint soundEffectId = 3;
+
+        if (entity.SpriteTableIndex == 0x14f)
+        {
+            soundEffectId = 2;
+            parentEntity.Bytes[2] += 1;
+        }
+        else
+        {
+            parentEntity.Bytes[0] += 1;
+        }
+
+        gameEngine.SoundManager.PlaySoundEffect(soundEffectId);
+        gameEngine.DestroyEntity(entity, 8);
     }
 
     //8007ec60
     public static void AI_FUN_8007ec60(GameEngine gameEngine, Entity entity)
     {
         Breakpoint.TriggerBreak();
+
+        if ((entity.TouchingEntity!.BalanceAnimValRef!.Val & 0xf) == 2)
+        {
+            entity.TargetAnimationId = 4;
+            entity.Bytes[2] += 1;
+        }
     }
 
     //8007ec9c
@@ -691,1002 +873,4 @@ public static class FunctionTypeD
         var direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
         entity.TargetDirection = direction;
     }
-
-    //8007eda4
-    public static void AI_FUN_8007eda4(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007ee00
-    public static void AI_FUN_8007ee00(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007ee68
-    public static void AI_FUN_8007ee68(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007eedc
-    public static void AI_FUN_8007eedc(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007ef58
-    public static void AI_FUN_8007ef58(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007efb0
-    public static void AI_FUN_8007efb0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f004
-    public static void AI_FUN_8007f004(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f07c
-    public static void AI_FUN_8007f07c(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f0e0
-    public static void AI_FUN_8007f0e0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f148
-    public static void AI_FUN_8007f148(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f1b4
-    public static void AI_FUN_8007f1b4(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f220
-    public static void AI_FUN_8007f220(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f288
-    public static void AI_FUN_8007f288(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f2ec
-    public static void AI_FUN_8007f2ec(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f360
-    public static void AI_FUN_8007f360(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f3bc
-    public static void AI_FUN_8007f3bc(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f424
-    public static void AI_FUN_8007f424(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f4a8
-    public static void AI_FUN_8007f4a8(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f534
-    public static void AI_FUN_8007f534(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f5a0
-    public static void AI_FUN_8007f5a0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f608
-    public static void AI_FUN_8007f608(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f668
-    public static void AI_FUN_8007f668(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f6cc
-    public static void AI_FUN_8007f6cc(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f748
-    public static void AI_FUN_8007f748(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f7a4
-    public static void AI_FUN_8007f7a4(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f800
-    public static void AI_FUN_8007f800(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f868
-    public static void AI_FUN_8007f868(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f8d0
-    public static void AI_FUN_8007f8d0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f930
-    public static void AI_FUN_8007f930(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007f9a8
-    public static void AI_FUN_8007f9a8(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007fa04
-    public static void AI_FUN_8007fa04(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007fa60
-    public static void AI_FUN_8007fa60(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8007fac8
-    public static void AI_FUN_8007fac8(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b1a0
-    public static void AI_FUN_8008b1a0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b210
-    public static void AI_FUN_8008b210(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b288
-    public static void AI_FUN_8008b288(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b300
-    public static void AI_FUN_8008b300(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b378
-    public static void AI_FUN_8008b378(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b3f0
-    public static void AI_FUN_8008b3f0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b448
-    public static void AI_FUN_8008b448(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b4a0
-    public static void AI_FUN_8008b4a0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b4f8
-    public static void AI_FUN_8008b4f8(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b560
-    public static void AI_FUN_8008b560(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b5c8
-    public static void AI_FUN_8008b5c8(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b630
-    public static void AI_FUN_8008b630(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b698
-    public static void AI_FUN_8008b698(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b6f0
-    public static void AI_FUN_8008b6f0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b748
-    public static void AI_FUN_8008b748(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b7b0
-    public static void AI_FUN_8008b7b0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b810
-    public static void AI_FUN_8008b810(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b878
-    public static void AI_FUN_8008b878(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b8e0
-    public static void AI_FUN_8008b8e0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b950
-    public static void AI_FUN_8008b950(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008b9c8
-    public static void AI_FUN_8008b9c8(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008ba40
-    public static void AI_FUN_8008ba40(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008baa8
-    public static void AI_FUN_8008baa8(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008bb10
-    public static void AI_FUN_8008bb10(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008bb78
-    public static void AI_FUN_8008bb78(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008bc00
-    public static void AI_FUN_8008bc00(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008bc68
-    public static void AI_FUN_8008bc68(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008bcd0
-    public static void AI_FUN_8008bcd0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008bd38
-    public static void AI_FUN_8008bd38(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008bd70
-    public static void AI_FUN_8008bd70(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008bd9c
-    public static void AI_FUN_8008bd9c(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008be08
-    public static void AI_FUN_8008be08(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008be70
-    public static void AI_FUN_8008be70(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008beb8
-    public static void AI_FUN_8008beb8(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008bf20
-    public static void AI_FUN_8008bf20(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008bf7c
-    public static void AI_FUN_8008bf7c(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c004
-    public static void AI_FUN_8008c004(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c074
-    public static void AI_FUN_8008c074(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c0d0
-    public static void AI_FUN_8008c0d0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c138
-    public static void AI_FUN_8008c138(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c1a0
-    public static void AI_FUN_8008c1a0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c218
-    public static void AI_FUN_8008c218(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c290
-    public static void AI_FUN_8008c290(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c2f0
-    public static void AI_FUN_8008c2f0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c358
-    public static void AI_FUN_8008c358(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c3c0
-    public static void AI_FUN_8008c3c0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c428
-    public static void AI_FUN_8008c428(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c498
-    public static void AI_FUN_8008c498(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c508
-    public static void AI_FUN_8008c508(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c588
-    public static void AI_FUN_8008c588(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c600
-    public static void AI_FUN_8008c600(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c678
-    public static void AI_FUN_8008c678(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c6f0
-    public static void AI_FUN_8008c6f0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c748
-    public static void AI_FUN_8008c748(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c7b0
-    public static void AI_FUN_8008c7b0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c818
-    public static void AI_FUN_8008c818(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c890
-    public static void AI_FUN_8008c890(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c8f0
-    public static void AI_FUN_8008c8f0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c948
-    public static void AI_FUN_8008c948(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008c9b8
-    public static void AI_FUN_8008c9b8(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008ca30
-    public static void AI_FUN_8008ca30(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008ca80
-    public static void AI_FUN_8008ca80(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008cb00
-    public static void AI_FUN_8008cb00(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008cb80
-    public static void AI_FUN_8008cb80(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008cc00
-    public static void AI_FUN_8008cc00(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008cc60
-    public static void AI_FUN_8008cc60(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008cce0
-    public static void AI_FUN_8008cce0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008cd40
-    public static void AI_FUN_8008cd40(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008cda0
-    public static void AI_FUN_8008cda0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008ce00
-    public static void AI_FUN_8008ce00(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008ce40
-    public static void AI_FUN_8008ce40(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008ce80
-    public static void AI_FUN_8008ce80(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008ced0
-    public static void AI_FUN_8008ced0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008cf40
-    public static void AI_FUN_8008cf40(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008cfa0
-    public static void AI_FUN_8008cfa0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d004
-    public static void AI_FUN_8008d004(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d074
-    public static void AI_FUN_8008d074(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d0c0
-    public static void AI_FUN_8008d0c0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d130
-    public static void AI_FUN_8008d130(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d1a0
-    public static void AI_FUN_8008d1a0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d218
-    public static void AI_FUN_8008d218(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d290
-    public static void AI_FUN_8008d290(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d2f0
-    public static void AI_FUN_8008d2f0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d458
-    public static void AI_FUN_8008d458(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d4a0
-    public static void AI_FUN_8008d4a0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d508
-    public static void AI_FUN_8008d508(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d578
-    public static void AI_FUN_8008d578(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d600
-    public static void AI_FUN_8008d600(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d678
-    public static void AI_FUN_8008d678(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d6e0
-    public static void AI_FUN_8008d6e0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d748
-    public static void AI_FUN_8008d748(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d7b0
-    public static void AI_FUN_8008d7b0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d818
-    public static void AI_FUN_8008d818(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d898
-    public static void AI_FUN_8008d898(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d900
-    public static void AI_FUN_8008d900(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008d964
-    public static void AI_FUN_8008d964(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008da0c
-    public static void AI_FUN_8008da0c(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008da60
-    public static void AI_FUN_8008da60(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008dac8
-    public static void AI_FUN_8008dac8(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008db54
-    public static void AI_FUN_8008db54(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008dbbc
-    public static void AI_FUN_8008dbbc(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008dc38
-    public static void AI_FUN_8008dc38(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008dc70
-    public static void AI_FUN_8008dc70(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008dcd8
-    public static void AI_FUN_8008dcd8(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008dd44
-    public static void AI_FUN_8008dd44(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008ddd0
-    public static void AI_FUN_8008ddd0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008de3c
-    public static void AI_FUN_8008de3c(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008deec
-    public static void AI_FUN_8008deec(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008df54
-    public static void AI_FUN_8008df54(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008dfe4
-    public static void AI_FUN_8008dfe4(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e054
-    public static void AI_FUN_8008e054(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e0bc
-    public static void AI_FUN_8008e0bc(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e148
-    public static void AI_FUN_8008e148(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e1a0
-    public static void AI_FUN_8008e1a0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e228
-    public static void AI_FUN_8008e228(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e2b8
-    public static void AI_FUN_8008e2b8(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e334
-    public static void AI_FUN_8008e334(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e3a4
-    public static void AI_FUN_8008e3a4(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e424
-    public static void AI_FUN_8008e424(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e4b0
-    public static void AI_FUN_8008e4b0(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e54c
-    public static void AI_FUN_8008e54c(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e5d8
-    public static void AI_FUN_8008e5d8(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e674
-    public static void AI_FUN_8008e674(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e6ec
-    public static void AI_FUN_8008e6ec(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e764
-    public static void AI_FUN_8008e764(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e7dc
-    public static void AI_FUN_8008e7dc(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e854
-    public static void AI_FUN_8008e854(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e8cc
-    public static void AI_FUN_8008e8cc(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008e944
-    public static void AI_FUN_8008e944(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008ea3c
-    public static void AI_FUN_8008ea3c(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008eaec
-    public static void AI_FUN_8008eaec(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008eb74
-    public static void AI_FUN_8008eb74(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    //8008ebfc
-    public static void AI_FUN_8008ebfc(GameEngine gameEngine, Entity entity)
-    {
-        Breakpoint.TriggerBreak();
-    }
-
-    // ...existing code...
 }
