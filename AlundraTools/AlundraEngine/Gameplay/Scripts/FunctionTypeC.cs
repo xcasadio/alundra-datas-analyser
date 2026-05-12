@@ -2694,7 +2694,7 @@ public static class FunctionTypeC
 
                 if ((delay & 0x3F) == 0)
                 {
-                    var player = gameEngine.StaticVariables.g_entitySlots[0];
+                    var player = gameEngine.StaticVariables.PlayerEntity;
                     var posY = player.PosY + (((int)((Random.Next() * 0x0D) >> 0x20)) << 19) - 0x300000;
                     if (posY <= 0x0137FFFF)
                     {
@@ -3381,7 +3381,7 @@ public static class FunctionTypeC
         Entity? pEVar7;
         int[] positions = new int[6];
         var staticVariables = gameEngine.StaticVariables;
-        var player = staticVariables.g_entitySlots[0];
+        var player = staticVariables.PlayerEntity;
         var spawnTable = staticVariables.INT_ARRAY_80027c80;
 
         if (entity.DelayOrAngle == 0)
@@ -4200,7 +4200,7 @@ public static class FunctionTypeC
 
             if (entity.AIValues[4] != 0)
             {
-                Entity player = staticVariables.g_entitySlots[0];
+                Entity player = staticVariables.PlayerEntity;
                 entity.AIValues[4] -= 1;
 
                 if (player.IsOnGround != 0 && (player.AnimFlags & 0x40) == 0)
@@ -4873,7 +4873,7 @@ public static class FunctionTypeC
                         entity.AIValues[1] = 0x14;
                         entity.Bytes[1] = (byte)(bVar3 + 1);
                         staticVariables.DAT_801911fc = 0;
-                        staticVariables.DAT_801911f8 = (short)(staticVariables.g_entitySlots[0].PosY < 0x1300000 ? 0 : 1);
+                        staticVariables.DAT_801911f8 = (short)(staticVariables.PlayerEntity.PosY < 0x1300000 ? 0 : 1);
                         goto switchD_80078810_caseD_5;
 
                     case 3:
@@ -6647,8 +6647,14 @@ public static class FunctionTypeC
         }
         else
         {
-            //same as g_scriptAnimationTable
             entity.TargetAnimationId = (uint)gameEngine.StaticVariables.g_scriptAnimationTable3[entity.Flags2];
+        }
+
+        entity.Flags2 = 0;
+
+        if (entity.PlatformEntity != null)
+        {
+            entity.PlatformEntity.CarriedEntity = null;
         }
 
         entity.PlatformEntity = null;
@@ -7176,7 +7182,7 @@ public static class FunctionTypeC
         }
 
         var staticVariables = gameEngine.StaticVariables;
-        var player = staticVariables.g_entitySlots[0];
+        var player = staticVariables.PlayerEntity;
 
         if (entity.Bytes[0] == 1 && staticVariables.PTR_801912e8!.Bytes[1] == 2)
         {
@@ -7650,7 +7656,7 @@ public static class FunctionTypeC
         }
 
         var staticVariables = gameEngine.StaticVariables;
-        var player = staticVariables.g_entitySlots[0];
+        var player = staticVariables.PlayerEntity;
         var parentEntity = entity.ParentEntity!;
 
         if ((ushort)parentEntity.AIValues[4] != 0)
@@ -8687,7 +8693,8 @@ public static class FunctionTypeC
     // GHIDRA: AI_UpdateEntityAI_5 @ 0x8006790C
     public static void AI_UpdateEntityAI_5(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Tête de roche Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -16707,17 +16714,17 @@ SetAnim6:
             return;
         }
 
-        if (gameEngine.StaticVariables.g_entitySlots[0].CarriedEntity == entityMatched)
+        if (gameEngine.StaticVariables.PlayerEntity.CarriedEntity == entityMatched)
         {
             entity.ForceZ = 0;
             entity.Flags &= 0xFFFFFEFF;
             entity.PosZ = entityMatched.PosZ;
-            entity.TargetForceX = -gameEngine.StaticVariables.g_entitySlots[0].TargetForceX;
-            entity.TargetForceY = -gameEngine.StaticVariables.g_entitySlots[0].TargetForceY;
-            entity.ForceX = -gameEngine.StaticVariables.g_entitySlots[0].ForceX;
-            entity.ForceY = -gameEngine.StaticVariables.g_entitySlots[0].ForceY;
-            entity.ForceStepX = -gameEngine.StaticVariables.g_entitySlots[0].ForceStepX;
-            entity.ForceStepY = -gameEngine.StaticVariables.g_entitySlots[0].ForceStepY;
+            entity.TargetForceX = -gameEngine.StaticVariables.PlayerEntity.TargetForceX;
+            entity.TargetForceY = -gameEngine.StaticVariables.PlayerEntity.TargetForceY;
+            entity.ForceX = -gameEngine.StaticVariables.PlayerEntity.ForceX;
+            entity.ForceY = -gameEngine.StaticVariables.PlayerEntity.ForceY;
+            entity.ForceStepX = -gameEngine.StaticVariables.PlayerEntity.ForceStepX;
+            entity.ForceStepY = -gameEngine.StaticVariables.PlayerEntity.ForceStepY;
             return;
         }
 

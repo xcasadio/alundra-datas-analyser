@@ -509,7 +509,7 @@ public class StaticVariables
     //80027604
     public readonly short[] SHORT_ARRAY_80027604 = [0, 0, 0, 8, 0, 0, 0, -8, 0, -10, 0, 0, 0, 10, 0, 0];
     //800281dc
-    public readonly int[] g_scriptAnimationTable3 = [0, 3, 1, 4,];
+    public readonly int[] g_scriptAnimationTable3 = [0, 3, 1, 4];
 
     //80028230
     public readonly uint[] BYTE_ARRAY_80028230 =

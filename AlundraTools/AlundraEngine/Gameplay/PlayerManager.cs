@@ -4088,11 +4088,10 @@ public class PlayerManager
         }
     }
 
-    // GHIDRA: FUN_80034D2C @ 0x80034D2C
+    // 80034D2C
+    // torce fire
     private void FUN_80034d2c()
     {
-        Breakpoint.TriggerBreak();
-
         var staticVariables = _gameEngine.StaticVariables;
 
         for (var entityIndex = 1;

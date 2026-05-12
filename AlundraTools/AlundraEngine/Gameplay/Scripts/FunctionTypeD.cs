@@ -220,6 +220,7 @@ public static class FunctionTypeD
     {
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "◆Guêpe Niv.1"
+            && entity.Name != "◆Mimming (faux) Niv.1"
             && entity.Name != "◆Homme de boue Niv.1"
             && entity.Name != "◆Zombie Niv.1")
         {
@@ -803,6 +804,7 @@ public static class FunctionTypeD
     public static void AI_FUN_8007e8ac(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Ronces enflammées 112"
             && entity.Name != "Ronces enflammées 222")
         {
             Breakpoint.TriggerBreak();

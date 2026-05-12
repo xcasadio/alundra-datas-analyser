@@ -562,33 +562,31 @@ public static class FunctionTypeE
             Breakpoint.TriggerBreak();
         }
 
-        if (entity.TargetAnimationId == 2)
+        if (entity.TargetAnimationId == 2
+            && entity.ForceResetAnimationFlag == 1)
         {
-            if (entity.ForceResetAnimationFlag == 1)
+            if (entity.Bytes[0] == 0)
             {
-                if (entity.Bytes[0] == 0)
+                Entity entitySpawned = gameEngine.SpawnWarpEntity(
+                    entity,
+                    0,
+                    0x0C,
+                    entity.PosX,
+                    entity.PosY,
+                    entity.PosZ,
+                    entity.TargetDirection)!;
+
+                for (int i = 0; i < entitySpawned.SpriteProgramIndexes.Length; i++)
                 {
-                    Entity entitySpawned = gameEngine.SpawnWarpEntity(
-                        entity,
-                        0,
-                        0x0C,
-                        entity.PosX,
-                        entity.PosY,
-                        entity.PosZ,
-                        entity.TargetDirection)!;
-
-                    for (int i = 0; i < entitySpawned.SpriteProgramIndexes.Length; i++)
-                    {
-                        entitySpawned.SpriteProgramIndexes[i] = 0;
-                    }
-
-                    entitySpawned.TargetAnimationId = 3;
-                    entitySpawned.Flags = (entitySpawned.Flags & 0xFFFFFFEFU) | 2U;
+                    entitySpawned.SpriteProgramIndexes[i] = 0;
                 }
 
-                gameEngine.DestroyEntity(entity, -1);
-                return;
+                entitySpawned.TargetAnimationId = 3;
+                entitySpawned.Flags = (entitySpawned.Flags & 0xFFFFFFEFU) | 2U;
             }
+
+            gameEngine.DestroyEntity(entity, -1);
+            return;
         }
 
         entity.TargetAnimationId = 2;
