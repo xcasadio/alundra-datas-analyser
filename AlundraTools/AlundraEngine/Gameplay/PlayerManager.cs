@@ -3208,7 +3208,7 @@ public class PlayerManager
             goto LAB_8002FAF0;
         }
 
-        if (carriedEntity.BalanceRecord.NumAnimVals == 0 && mode == 1)
+        if (carriedEntity.BalanceRecord?.NumAnimVals == 0 && mode == 1)
         {
             mode = 0;
         }

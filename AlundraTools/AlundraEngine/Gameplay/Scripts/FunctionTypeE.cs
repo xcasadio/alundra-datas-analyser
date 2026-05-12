@@ -553,16 +553,53 @@ public static class FunctionTypeE
         gameEngine.DestroyEntity(entity, -1);
     }
 
-    //8007f6c8
+    // GHIDRA: AI_FUN_8007f6c8 @ 0x8007F6C8
     public static void AI_FUN_8007f6c8(GameEngine gameEngine, Entity entity)
     {
-        if (string.IsNullOrEmpty(entity.Name)
+        if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "Torche")
         {
             Breakpoint.TriggerBreak();
         }
 
+        if (entity.TargetAnimationId == 2)
+        {
+            if (entity.ForceResetAnimationFlag == 1)
+            {
+                if (entity.Bytes[0] == 0)
+                {
+                    Entity entitySpawned = gameEngine.SpawnWarpEntity(
+                        entity,
+                        0,
+                        0x0C,
+                        entity.PosX,
+                        entity.PosY,
+                        entity.PosZ,
+                        entity.TargetDirection)!;
 
+                    for (int i = 0; i < entitySpawned.SpriteProgramIndexes.Length; i++)
+                    {
+                        entitySpawned.SpriteProgramIndexes[i] = 0;
+                    }
+
+                    entitySpawned.TargetAnimationId = 3;
+                    entitySpawned.Flags = (entitySpawned.Flags & 0xFFFFFFEFU) | 2U;
+                }
+
+                gameEngine.DestroyEntity(entity, -1);
+                return;
+            }
+        }
+
+        entity.TargetAnimationId = 2;
+        entity.Flags = (entity.Flags & 0xFFFFFFCFU) | 0x40U;
+
+        Entity? xCollisionEntity = entity.XCollisionEntity;
+
+        if (xCollisionEntity != null && xCollisionEntity.SpriteTableIndex == 0x187)
+        {
+            entity.Bytes[0] = 1;
+        }
     }
 
     //8007f7a0
