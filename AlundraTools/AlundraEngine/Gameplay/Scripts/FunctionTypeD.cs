@@ -308,7 +308,6 @@ public static class FunctionTypeD
             Breakpoint.TriggerBreak();
         }
 
-
         HitCommon(gameEngine, entity, 3);
     }
 

@@ -3515,10 +3515,10 @@ public class PlayerManager
             }
             else if (playerEntity.CarriedEntity != null)
             {
-                Entity warpEntity = playerEntity.CarriedEntity;
-                warpEntity.PosX += targetCamX - playerEntity.PosX;
-                warpEntity.PosY += targetCamY - playerEntity.PosY;
-                warpEntity.PosZ += targetCamZ - playerEntity.PosZ;
+                Entity carriedEntity = playerEntity.CarriedEntity;
+                carriedEntity.PosX += targetCamX - playerEntity.PosX;
+                carriedEntity.PosY += targetCamY - playerEntity.PosY;
+                carriedEntity.PosZ += targetCamZ - playerEntity.PosZ;
             }
 
             playerEntity.PosX = targetCamX;
