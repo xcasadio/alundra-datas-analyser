@@ -27,6 +27,8 @@ public static class FunctionTypeE
             && entity.Name != "Cruche générique"
             && entity.Name != "Tonneau générique"
             && entity.Name != "Pierre générique"
+            && entity.Name != "Pierre très lourde"
+            && entity.Name != "Herbe transportable"
             && entity.Name != "Bloc de glace transportable"
             && entity.Name != "Rocher tortue non ennemi")
         {
@@ -255,7 +257,8 @@ public static class FunctionTypeE
     //8007f25c
     public static void AI_FUN_8007f25c(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Monsieur Aspiration")
         {
             Breakpoint.TriggerBreak();
         }
@@ -266,7 +269,8 @@ public static class FunctionTypeE
     //8003a648
     public static void FUN_8003a648(GameEngine gameEngine, Entity entity, int effectType)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Monsieur Aspiration")
         {
             Breakpoint.TriggerBreak();
         }
@@ -552,13 +556,20 @@ public static class FunctionTypeE
     //8007f6c8
     public static void AI_FUN_8007f6c8(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Torche")
+        {
+            Breakpoint.TriggerBreak();
+        }
+
+
     }
 
     //8007f7a0
     public static void AI_FUN_8007f7cc(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Haricots de Jack")
+        if (string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Haricots de Jack")
         {
             Breakpoint.TriggerBreak();
         }

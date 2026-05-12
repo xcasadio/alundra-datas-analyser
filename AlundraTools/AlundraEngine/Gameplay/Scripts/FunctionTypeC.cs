@@ -510,6 +510,7 @@ public static class FunctionTypeC
             && entity.Name != "Objet eau (transportable)"
             && entity.Name != "Objet soleil (transportable)"
             && entity.Name != "Pierre générique"
+            && entity.Name != "Bloc de glace transportable"
             && entity.Name != "Tronc (transportable), petite boule de fer"
             && !string.IsNullOrEmpty(entity.Name))
         {
@@ -2182,6 +2183,7 @@ public static class FunctionTypeC
             && entity.Name != "Cruche générique"
             && entity.Name != "Pierre très lourde"
             && entity.Name != "Cruche n°2"
+            && entity.Name != "Herbe transportable"
             && entity.Name != "Bloc de glace transportable"
             && entity.Name != "Rocher tortue non ennemi")
         {
@@ -3244,6 +3246,7 @@ public static class FunctionTypeC
     public static void AI_FUN_800756ec(GameEngine gameEngine, Entity entity)
     {
         if (entity.Name != "Melzas2_FinalBoss"
+            && entity.Name != "Giles (homme religieux)"
             && entity.Name != "Klein (rêve uniquement)")
         {
             Breakpoint.TriggerBreak();
@@ -6621,7 +6624,8 @@ public static class FunctionTypeC
     //jar sandboxes
     public static void AI_FUN_8007b7b0(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Torche")
         {
             Breakpoint.TriggerBreak();
         }
@@ -8341,7 +8345,8 @@ public static class FunctionTypeC
     // GHIDRA: AI_UpdateEntityAI_4 @ 0x80067138
     public static void AI_UpdateEntityAI_4(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Homme-insecte Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -8350,7 +8355,6 @@ public static class FunctionTypeC
         uint direction;
         int z;
         int[] positions = new int[6];
-        byte[] byteArray80028b54 = new byte[] { 0, 0x10, 0x08, 0x18, 0x4d };
 
         ScriptHelper.CalculateEntityRelativePosition(entity, gameEngine.StaticVariables.PlayerEntity, positions);
 
@@ -8521,7 +8525,7 @@ public static class FunctionTypeC
                     entity.Bytes[1] = (byte)(entity.Bytes[1] + 1);
                 }
 
-                if (entity.IsOnGround == 0)
+                if (entity.ForceResetAnimationFlag == 0)
                 {
                     return;
                 }
@@ -8566,7 +8570,7 @@ public static class FunctionTypeC
                 break;
 
             case 4:
-                if (entity.IsOnGround == 0)
+                if (entity.ForceResetAnimationFlag == 0)
                 {
                     return;
                 }
@@ -8585,9 +8589,10 @@ public static class FunctionTypeC
                 break;
 
             case 5:
-                if (entity.IsOnGround != 0)
+                if (entity.ForceResetAnimationFlag != 0)
                 {
                     entity.TargetAnimationId = 2;
+                    entity.Bytes[1] = 0;
                     entity.AIValues[1] = 0x78;
                 }
                 break;
@@ -8597,7 +8602,7 @@ public static class FunctionTypeC
                 break;
 
             case 7:
-                if (entity.IsOnGround == 0)
+                if (entity.ForceResetAnimationFlag == 0)
                 {
                     return;
                 }
@@ -8619,7 +8624,8 @@ public static class FunctionTypeC
                 entity.Bytes[1] = 0;
                 entity.AIValues[1] = 0;
                 entity.TargetAnimationId = 0;
-                direction = byteArray80028b54[(int)((Random.Next() * 5) >> 0x20)];
+                int directionIndex = (int)((Random.Next() * 4) >> 0x20);
+                direction = gameEngine.StaticVariables.BYTE_ARRAY_80028b54[directionIndex];
 
                 var entitySpawned = gameEngine.SpawnWarpEntity(entity, 1, 0x91,
                     entity.PosX, entity.PosY, entity.PosZ + 0x1000000, direction);
@@ -8669,7 +8675,7 @@ public static class FunctionTypeC
                 break;
 
             case 11:
-                if (entity.ForceResetAnimationFlag != 0)
+                if (entity.IsOnGround != 0)
                 {
                     entity.TargetAnimationId = 10;
                     entity.AIValues[1] = 0x3c;

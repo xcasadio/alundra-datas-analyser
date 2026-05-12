@@ -168,6 +168,7 @@ public static class AI_Melzas2
     {
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "◆Boss lézard Niv.1"
+            && entity.Name != "◆Monsieur Aspiration"
             && entity.Name != "◆Élément Niv.1"
             && entity.Name != "◆Abyss Niv.1")
         {

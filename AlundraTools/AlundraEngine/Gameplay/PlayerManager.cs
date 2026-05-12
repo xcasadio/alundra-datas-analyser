@@ -2358,7 +2358,7 @@ public class PlayerManager
             switch (_gameEngine.StaticVariables.g_warpLockTimer)
             {
                 case 0x1f:
-                    result = FUN_80035204();
+                    result = FUN_80035204(); // haricot
                     break;
                 case 0x20:
                     result = ProcessSandCapeUseSequence();
