@@ -220,6 +220,7 @@ public static class FunctionTypeD
     public static void AI_FUN_8007dee8(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Mouche Niv.1"
             && entity.Name != "◆Guêpe Niv.1"
             && entity.Name != "◆Mimming (faux) Niv.1"
             && entity.Name != "◆Homme de boue Niv.1"
@@ -487,6 +488,8 @@ public static class FunctionTypeD
     public static void AI_FUN_8007e424(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Mille-pattes (tronc)"
+            && entity.Name != "◆Mille-pattes (tronc 2)"
             && entity.Name != "◆Mille-pattes (corps principal)")
         {
             Breakpoint.TriggerBreak();
@@ -868,7 +871,11 @@ public static class FunctionTypeD
     //8007e9ac
     public static void AI_FUN_8007e9ac(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Mille-pattes (projectiles réfléchis)")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         if (gameEngine.EntityManager.ComputeNewHp(entity))
         {
@@ -881,7 +888,11 @@ public static class FunctionTypeD
     //8007e9e8
     public static void AI_FUN_8007e9e8(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Mille-pattes (œufs explosifs)")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         if (gameEngine.EntityManager.ComputeNewHp(entity))
         {

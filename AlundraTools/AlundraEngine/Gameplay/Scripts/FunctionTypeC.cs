@@ -2025,15 +2025,18 @@ public static class FunctionTypeC
         entity.AIValues[1] = uVar2;
     }
 
-    //8006b510
+    // GHIDRA: AI_FUN_8006b510 @ 0x8006B510
     public static void AI_FUN_8006b510(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Mouche Niv.1"
+            && entity.Name != "◆Mille-pattes (œufs explosifs)"
+            && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
         }
 
-        short sVar1;
+        ushort uVar1;
         byte bVar2;
         uint uVar3;
         int[] positions = new int[6];
@@ -2043,14 +2046,14 @@ public static class FunctionTypeC
         switch (entity.TargetAnimationId)
         {
             case 0:
-                sVar1 = entity.AIValues[1];
+                uVar1 = (ushort)entity.AIValues[1];
 
-                if (sVar1 > 0)
+                if (uVar1 != 0)
                 {
-                    entity.AIValues[1] = (short)(sVar1 - 1);
+                    entity.AIValues[1] = unchecked((short)(uVar1 - 1));
                 }
 
-                if (sVar1 == 0 || sVar1 == 1)
+                if (uVar1 < 2)
                 {
 
                     if (entity.Bytes[0] == 0)
@@ -2135,7 +2138,7 @@ public static class FunctionTypeC
                     {
                         if (gameEngine.StaticVariables.g_currentMap == 0x5f)
                         {
-                            entity.ParentEntity.AIValues[4] = (short)(entity.ParentEntity.AIValues[4] - 1);
+                            entity.ParentEntity.AIValues[4] = unchecked((short)(((ushort)entity.ParentEntity.AIValues[4]) - 1));
                         }
 
                         entity.TargetAnimationId = 6;
@@ -2158,7 +2161,7 @@ public static class FunctionTypeC
                 {
                     if (gameEngine.StaticVariables.g_currentMap == 0x5f)
                     {
-                        entity.ParentEntity.AIValues[4] = (short)(entity.ParentEntity.AIValues[4] - 1);
+                        entity.ParentEntity.AIValues[4] = unchecked((short)(((ushort)entity.ParentEntity.AIValues[4]) - 1));
                         gameEngine.DestroyEntity(entity);
                     }
                     else
@@ -15232,9 +15235,9 @@ SetAnim6:
                                         nextEntity.DelayOrAngle = (nextEntity.DelayOrAngle + step) & 0x1FF;
                                         nextEntity.TargetDirection = (uint)(nextEntity.DelayOrAngle >> 4);
 
-                                        int trigIndex = nextEntity.DelayOrAngle << 1;
-                                        nextEntity.PosX = currentEntity.PosX + gameEngine.StaticVariables.g_cosTable[trigIndex] * 0x500;
-                                        nextEntity.PosY = currentEntity.PosY - gameEngine.StaticVariables.g_sinTable[trigIndex] * 0x500;
+                                        int trigIndex = nextEntity.DelayOrAngle;
+                                        nextEntity.PosX = currentEntity.PosX + gameEngine.StaticVariables.g_sinus[trigIndex] * 0x500;
+                                        nextEntity.PosY = currentEntity.PosY - gameEngine.StaticVariables.g_cosinus[trigIndex] * 0x500;
                                     }
 
                                     if (matchingFollowers == 14)
@@ -15255,10 +15258,10 @@ SetAnim6:
 
                                         int multiplier = ((i + (i >> 31)) >> 1) + 1;
                                         int angle = (entity.DelayOrAngle + gameEngine.StaticVariables.DAT_801911a4 * multiplier) & 0x1FF;
-                                        int trigIndex = angle << 1;
+                                        int trigIndex = angle;
                                         nextEntity.TargetDirection = (uint)angle;
-                                        nextEntity.PosX = currentEntity.PosX + gameEngine.StaticVariables.g_cosTable[trigIndex] * radius;
-                                        nextEntity.PosY = currentEntity.PosY - gameEngine.StaticVariables.g_sinTable[trigIndex] * radius;
+                                        nextEntity.PosX = currentEntity.PosX + gameEngine.StaticVariables.g_sinus[trigIndex] * radius;
+                                        nextEntity.PosY = currentEntity.PosY - gameEngine.StaticVariables.g_cosinus[trigIndex] * radius;
                                         radius += 4;
                                     }
 
@@ -15300,10 +15303,10 @@ SetAnim6:
                                                 int historyFill = 0;
                                                 for (int i = 0; i <= 0x54; i++)
                                                 {
-                                                    int trigIndex = (int)entity.TargetDirection << 5;
+                                                    int trigIndex = (int)entity.TargetDirection << 4;
                                                     gameEngine.StaticVariables.g_loaderDirectionHistory[i] = (short)entity.TargetDirection;
-                                                    gameEngine.StaticVariables.DAT_80191508[i] = (short)((entity.PosX + gameEngine.StaticVariables.g_cosTable[trigIndex] * historyFill) >> 16);
-                                                    gameEngine.StaticVariables.DAT_80191708[i] = (short)((entity.PosY - gameEngine.StaticVariables.g_sinTable[trigIndex] * historyFill) >> 16);
+                                                    gameEngine.StaticVariables.DAT_80191508[i] = (short)((entity.PosX + gameEngine.StaticVariables.g_sinus[trigIndex] * historyFill) >> 16);
+                                                    gameEngine.StaticVariables.DAT_80191708[i] = (short)((entity.PosY - gameEngine.StaticVariables.g_cosinus[trigIndex] * historyFill) >> 16);
                                                     historyFill += 0xD5;
                                                 }
 
@@ -16822,7 +16825,8 @@ SetAnim6:
     // GHIDRA: AI_UpdateFollowerBehaviorIfTriggered @ 0x800749A4
     public static void AI_UpdateFollowerBehaviour(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Mille-pattes (projectiles réfléchis)")
         {
             Breakpoint.TriggerBreak();
         }
