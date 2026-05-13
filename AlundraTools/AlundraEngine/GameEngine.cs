@@ -2485,30 +2485,6 @@ public class GameEngine
         StaticVariables.g_etcAnimationMode = mode;
     }
 
-    //80032b28
-    public void SetGameOrMapFlag(uint flag)
-    {
-        uint[] flags;
-
-        if (flag == 0)
-        {
-            return;
-        }
-
-        if ((flag & 0x8000) == 0)
-        {
-            flags = StaticVariables.g_saveData.GameFlags;
-        }
-        else
-        {
-            flags = StaticVariables.g_temporaryFlags;
-        }
-
-        var index = ((flag >> 3) & 0xffc) >> 2;
-        var mask = (uint)(1 << (int)(flag & 0x1f));
-        flags[index] |= mask;
-    }
-
     //8004248c
     public int IsDialogFinished2()
     {
@@ -2746,6 +2722,30 @@ public class GameEngine
         //var index = (flag >> 5) & 0x3ff;
 
         return flags[index];
+    }
+
+    //80032b28
+    public void SetGameOrTemporaryFlag(uint flag)
+    {
+        uint[] flags;
+
+        if (flag == 0)
+        {
+            return;
+        }
+
+        if ((flag & 0x8000) == 0)
+        {
+            flags = StaticVariables.g_saveData.GameFlags;
+        }
+        else
+        {
+            flags = StaticVariables.g_temporaryFlags;
+        }
+
+        var index = ((flag >> 3) & 0xffc) >> 2;
+        var mask = (uint)(1 << (int)(flag & 0x1f));
+        flags[index] |= mask;
     }
 
     public void AddFlag(uint flag, uint mask)

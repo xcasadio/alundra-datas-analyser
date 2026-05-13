@@ -13505,8 +13505,6 @@ public class StaticVariables
     public int INT_801eab60; // 801EAB60
     public SaveData g_saveData = new(); // 801EB2E8
     public uint[] g_temporaryFlags = new uint[1024]; // 801EBA40 //64
-    // GHIDRA: g_globalFlags @ 0x801FBA40
-    public uint[] g_globalFlags = new uint[4]; // 801FBA40..801FBA4C
     public byte[] g_bufferEtc = new byte[12288]; // 801EBB40
     public int g_bufferEtcPtr; // 801EEB40
     public long g_randSeed; // 801EEB48

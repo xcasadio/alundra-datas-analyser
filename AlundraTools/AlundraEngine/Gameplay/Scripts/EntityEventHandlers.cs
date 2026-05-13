@@ -841,8 +841,9 @@ public class EntityEventHandlers
     public int Script_32_020(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int result = 0;
+        int commandIndex = eventProgramState.CodeIndex;
 
-        if (eventProgramState.Parameters[1] == variables[0])
+        if (eventProgramState.Parameters[1] == commandIndex)
         {
             var diff = eventProgramState.Parameters[2] - logicEntity.PosZ;
 
@@ -861,7 +862,7 @@ public class EntityEventHandlers
         }
         else
         {
-            eventProgramState.Parameters[1] = variables[0];
+            eventProgramState.Parameters[1] = commandIndex;
             eventProgramState.Parameters[2] = logicEntity.PosZ;
         }
 

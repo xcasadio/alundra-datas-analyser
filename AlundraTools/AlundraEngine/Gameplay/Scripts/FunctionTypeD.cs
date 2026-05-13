@@ -486,7 +486,11 @@ public static class FunctionTypeD
     //8007e424
     public static void AI_FUN_8007e424(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Mille-pattes (corps principal)")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         if (gameEngine.StaticVariables.g_entitySlots[2].Bytes[1] == 5 
             || gameEngine.StaticVariables.g_entitySlots[2].Bytes[1] == 7 
