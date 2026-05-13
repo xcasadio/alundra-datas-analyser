@@ -6650,13 +6650,7 @@ public static class FunctionTypeC
             entity.TargetAnimationId = (uint)gameEngine.StaticVariables.g_scriptAnimationTable3[entity.Flags2];
         }
 
-        entity.Flags2 = 0;
-
-        if (entity.PlatformEntity != null)
-        {
-            entity.PlatformEntity.CarriedEntity = null;
-        }
-
+        entity.PlatformEntity.CarriedEntity = null;
         entity.PlatformEntity = null;
         entity.Flags = (entity.Flags | 0x34) & 0xffffff7f;//turn off bit 8, turn on bits 5 and 6
     }
@@ -8630,8 +8624,7 @@ public static class FunctionTypeC
                 entity.Bytes[1] = 0;
                 entity.AIValues[1] = 0;
                 entity.TargetAnimationId = 0;
-                int directionIndex = (int)((Random.Next() * 4) >> 0x20);
-                direction = gameEngine.StaticVariables.BYTE_ARRAY_80028b54[directionIndex];
+                direction = gameEngine.StaticVariables.BYTE_ARRAY_80028b54[(int)((Random.Next() * 4) >> 0x20)];
 
                 var entitySpawned = gameEngine.SpawnWarpEntity(entity, 1, 0x91,
                     entity.PosX, entity.PosY, entity.PosZ + 0x1000000, direction);
@@ -15096,7 +15089,8 @@ SetAnim6:
     // 80073CFC
     public static void AI_UpdateEntityAI_0_00(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Mille-pattes (corps principal)")
         {
             Breakpoint.TriggerBreak();
         }
@@ -15213,8 +15207,8 @@ SetAnim6:
                         case 4:
                         {
                             entity.TargetAnimationId = 2;
-                            int mode = (int)((Random.Next() * 4) >> 32);
-                            if (mode == 0)
+                            int aimPlayerRoll = (int)((Random.Next() * 4) >> 32);
+                            if (aimPlayerRoll == 0)
                             {
                                 entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(
                                     player.PosX - entity.PosX,
@@ -15222,7 +15216,8 @@ SetAnim6:
                             }
                             else
                             {
-                                entity.TargetDirection = (entity.TargetDirection + (uint)(mode - 4)) & 0x1FU;
+                                int directionOffset = (int)((Random.Next() * 9) >> 32) - 4;
+                                entity.TargetDirection = (uint)(((int)entity.TargetDirection + directionOffset) & 0x1F);
                             }
 
                             break;

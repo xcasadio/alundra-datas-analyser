@@ -593,6 +593,7 @@ public class EntityManager
                         _gameEngine.EffectManager.CreateAttachedEffect(0, 5, 0, otherEntity, 1, 0, 0, 0);
                     }
 
+                    var previousTouchingEntity = otherEntity.TouchingEntity;
                     otherEntity.TouchingEntity = entity;
                 }
 

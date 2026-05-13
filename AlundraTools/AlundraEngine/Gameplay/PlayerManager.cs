@@ -1085,6 +1085,7 @@ public class PlayerManager
     //8002edbc
     private int PlayerTryInteractWithEntity(Entity entity)
     {
+        var player = _gameEngine.StaticVariables.PlayerEntity;
         var platformFlagBits = (entity.Flags & 0x600) >> 9;
         var result = 1;
 
@@ -1112,23 +1113,23 @@ public class PlayerManager
         return result;
 
         TriggerWarp:
-        _gameEngine.StaticVariables.PlayerEntity.CarriedEntity = entity;
-        entity.PlatformEntity = _gameEngine.StaticVariables.PlayerEntity;
+        player.CarriedEntity = entity;
+        entity.PlatformEntity = player;
 
-        var above = _gameEngine.StaticVariables.PlayerEntity.IsOnGround;
+        var above = player.IsOnGround;
 
-        if (entity.RidingEntity == _gameEngine.StaticVariables.PlayerEntity)
+        if (entity.RidingEntity == player)
         {
-            _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (byte)(above != 0 ? (int)PlayerAnimation.HoldObject : (int)PlayerAnimation.JumpWithObject);
+            player.TargetAnimationId = (byte)(above != 0 ? (int)PlayerAnimation.HoldObject : (int)PlayerAnimation.JumpWithObject);
         }
         else
         {
-            _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (byte)(above != 0 ? (int)PlayerAnimation.PickupObject : (int)PlayerAnimation.Reserved0B);
+            player.TargetAnimationId = (byte)(above != 0 ? (int)PlayerAnimation.PickupObject : (int)PlayerAnimation.Reserved0B);
         }
 
-        _gameEngine.StaticVariables.PlayerEntity.RelativeWarpOffsetX = entity.PosX - _gameEngine.StaticVariables.PlayerEntity.PosX;
-        _gameEngine.StaticVariables.PlayerEntity.RelativeWarpOffsetY = entity.PosY - _gameEngine.StaticVariables.PlayerEntity.PosY;
-        _gameEngine.StaticVariables.PlayerEntity.RelativeWarpOffsetZ = entity.PosZ - _gameEngine.StaticVariables.PlayerEntity.PosZ;
+        player.RelativeWarpOffsetX = entity.PosX - player.PosX;
+        player.RelativeWarpOffsetY = entity.PosY - player.PosY;
+        player.RelativeWarpOffsetZ = entity.PosZ - player.PosZ;
 
         return result;
     }
@@ -3156,7 +3157,6 @@ public class PlayerManager
         Entity entity2;
 
         var player = _gameEngine.StaticVariables.PlayerEntity;
-
         entity2 = player.TouchingEntity;
 
         if (player.TouchingEntity == null)
@@ -3188,13 +3188,14 @@ public class PlayerManager
         }
         else
         {
+            hp = player.Hp;
             _gameEngine.EntityManager.ComputeNewHp(player);
             direction = (uint)ScriptHelper.GetDirectionToTarget(player.PosX - entity2.PosX, player.PosY - entity2.PosY);
         }
         return direction;
     }
 
-    // 8002f884
+    // GHIDRA: UpdatePlayerCarriedEntity @ 0x8002F884
     private void UpdatePlayerCarriedEntity(int mode)
     {
         int dx, dy, dz;
@@ -3236,7 +3237,7 @@ public class PlayerManager
                 newDx = newDy;
             }
 
-            if (newDx < newDz)
+            if (newDz < newDx)
             {   /* assez proche sur Z, on amortit X & Y */
                 dx = StepTowards(dx, 0, 0x00010000);
                 dy = StepTowards(dy, 0, 0x00010000);
@@ -3273,9 +3274,9 @@ public class PlayerManager
             newDy = dy >= 0 ? dy : -dy;
             newDz = dz >= 0 ? dz : -dz;
 
-            /* si déjà très proche (<0x0000_FFFF) sur chaque axe,
+                /* si déjà très proche (<0x0002_0000) sur chaque axe,
                on détruit l’entité-warp et termine                 */
-            if (newDx < 0x0000FFFF && newDy < 0x0000FFFF && newDz < 0x0000FFFF)
+                if (newDx < 0x00020000 && newDy < 0x00020000 && newDz < 0x00020000)
             {
                 _gameEngine.DestroyEntity(carriedEntity);
                 goto LAB_8002FAF8;

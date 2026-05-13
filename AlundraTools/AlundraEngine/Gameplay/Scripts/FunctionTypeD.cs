@@ -114,6 +114,7 @@ public static class FunctionTypeD
     public static void AI_FUN_8007dbe0(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Fourneau Niv.1"
             && entity.Name != "◆Homme momie Niv.1"
             && entity.Name != "◆Mimique Niv.1")
         {
