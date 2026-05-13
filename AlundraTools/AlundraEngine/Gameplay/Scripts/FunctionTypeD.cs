@@ -417,7 +417,7 @@ public static class FunctionTypeD
         if (gameEngine.EntityManager.ComputeNewHp(entity))
         {
             entity.Bytes[3] = 1;
-            entity.ParentEntity.DelayOrAngle -= 1;
+            entity.ParentEntity.DelayOrAngleOrEntityId -= 1;
         }
 
         entity.TargetAnimationId = 2;
@@ -537,7 +537,7 @@ public static class FunctionTypeD
                 if (gameEngine.EntityManager.ComputeNewHp(gameEngine.StaticVariables.g_entitySlots[2]))
                 {
                     gameEngine.StaticVariables.g_entitySlots[2].Bytes[3] = 1;
-                    gameEngine.StaticVariables.g_entitySlots[2].DelayOrAngle = 0;
+                    gameEngine.StaticVariables.g_entitySlots[2].DelayOrAngleOrEntityId = 0;
                     gameEngine.StaticVariables.g_entitySlots[2].Bytes[1] = 0x10;
                 }
                 gameEngine.StaticVariables.g_entitySlots[2].TargetAnimationId = 4;

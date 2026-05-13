@@ -1696,29 +1696,25 @@ public class GameEngine
         }
     }
 
-    // 8003a774
+    // GHIDRA: DestroyEntity @ 0x8003A774
     public void DestroyEntity(Entity entity)
     {
-        //SpawnEntityContents(entity);
-        //
-        //entity.Status = 4;
-        //entity.EventTrigger = -1;
-        //
-        //if (entity.ActiveEffect != null)
-        //{
-        //    entity.ActiveEffect.CurrentSpriteTableIndex = 0;
-        //    entity.ActiveEffect = null;
-        //}
-        //
-        //if (entity.PlatformEntity != null)
-        //{
-        //    entity.PlatformEntity.CarriedEntity = null;
-        //}
+        entity.Status = 4;
+        entity.EventTrigger = -1;
 
-        DestroyEntity(entity, -2);
+        if (entity.ActiveEffect != null)
+        {
+            entity.ActiveEffect.Status = 0;
+            entity.ActiveEffect = null;
+        }
+
+        if (entity.PlatformEntity != null)
+        {
+            entity.PlatformEntity.CarriedEntity = null;
+        }
     }
 
-    // 8003a59c
+    // GHIDRA: DestroyEntity @ 0x8003A59C
     public void DestroyEntity(Entity entity, int effectId)
     {
         LogManager.Log(entity, $"to destroy => status:{entity.Status} flags:{entity.Flags} Bytes:{string.Join('-', entity.Bytes)} AIValues:{string.Join('-', entity.AIValues)}");
@@ -1855,7 +1851,7 @@ public class GameEngine
             delay = -1;
         }
 
-        spawnedEntity.DelayOrAngle = delay;
+        spawnedEntity.DelayOrAngleOrEntityId = delay;
         spawnedEntity.ItemState = 0;
         spawnedEntity.AIValues[0] = (short)(entity.ContentsGameFlag & 0xFFFF);
         spawnedEntity.AIValues[1] = (short)((entity.ContentsGameFlag >> 16) & 0xFFFF);
@@ -2112,6 +2108,40 @@ public class GameEngine
         }
 
         return entityResult;
+    }
+
+    // GHIDRA: FUN_8003A048 @ 0x8003A048
+    public Entity SpawnChildEntity(Entity entity, Entity parentEntity, int isCurrentMapSprite, uint spriteTableIndex, int posX, int posY, int posZ, uint direction)
+    {
+        int entityIndex = entity.Index;
+        entity.Clear();
+        entity.Index = entityIndex;
+
+        SpriteRecord spriteRecord = GetSpriteFromSpriteTable(isCurrentMapSprite != 0, spriteTableIndex, out int paletteIndex, out int sheetSize);
+        if (spriteRecord == null)
+        {
+            return null;
+        }
+
+        entity.Clear();
+        entity.Index = entityIndex;
+
+        if (isCurrentMapSprite != 0)
+        {
+            spriteTableIndex += 0x100;
+        }
+
+        entity.IsMapSprite = isCurrentMapSprite != 0;
+
+        EntityManager.InitializeEntity(entity, parentEntity,
+            spriteRecord, null, spriteTableIndex, -1,
+            posX, posY, posZ,
+            0, direction,
+            paletteIndex, sheetSize);
+
+        LogManager.Log(entity, $"SpawnedSpecific=> parent:[{(parentEntity == null ? "null" : parentEntity)}] x:{entity.PosX >> 16} y:{entity.PosY >> 16} z:{entity.PosZ >> 16} from:{(isCurrentMapSprite != 0 ? "currentMap" : "alundraMap")} spriteIndex:{spriteTableIndex}");
+
+        return entity;
     }
 
     public void RunScript(Entity entity, int eventType)
@@ -2673,7 +2703,7 @@ public class GameEngine
         BeginFadeEffect(1, duration);
     }
 
-    //8003abcc
+    // GHIDRA: ResetEntity @ 0x8003ABCC
     public bool ResetEntity(Entity entity)
     {
         var entityRecord = entity.EntityRecord;

@@ -1,7 +1,7 @@
 {
     "chat.mcp.access": "all",
     "chat.mcp.serverSampling": {
-        "parasite-eve-1/.vscode/mcp.json: ReVa": {
+        "alundra-datas-analyser/.vscode/mcp.json: ReVa": {
             "allowedModels": [
                 "copilot/claude-sonnet-4.6",
                 "copilot/claude-opus-4.6",
@@ -19,5 +19,5 @@
         "file_operations": true,
         "terminal_operations": true
     },
-    "github.copilot.chat.defaultAgent": "ghidra"
+    "github.copilot.chat.defaultAgent": "Transliterate C Runtime to C#"
 }

@@ -201,6 +201,18 @@ internal sealed class RuntimeTraceEntry
     public string Checkpoint { get; init; } = string.Empty;
     public uint Frame { get; init; }
     public DateTimeOffset TimestampUtc { get; init; }
+    public int BossSlotIndex { get; init; } = -1;
+    public int BossStatus { get; init; }
+    public uint BossTargetAnimationId { get; init; }
+    public int BossBytes1 { get; init; }
+    public int BossBytes2 { get; init; }
+    public int BossDelayOrAngle { get; init; }
+    public int BossAIValue1 { get; init; }
+    public int BossAIValue4 { get; init; }
+    public int GlobalA4 { get; init; }
+    public int GlobalB4 { get; init; }
+    public int MatchingFollowers { get; init; } = -1;
+    public IReadOnlyList<int> BossDelays { get; init; } = [];
 }
 
 internal sealed class RuntimeTraceSnapshot

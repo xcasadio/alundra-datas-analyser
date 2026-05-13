@@ -53,7 +53,7 @@ public sealed class RuntimeInspectorHost : IDisposable
             gameRoot,
             engine,
             string.IsNullOrWhiteSpace(pipeName) ? DefaultPipeName : pipeName,
-            Math.Clamp(maxTraceEntries, 32, 2048));
+            Math.Clamp(maxTraceEntries, 32, 32768));
     }
 
     public void Checkpoint(string checkpoint)
@@ -586,15 +586,86 @@ public sealed class RuntimeInspectorHost : IDisposable
             ["renderer"] = _engine.Renderer,
         };
 
-    private void RecordTrace(string checkpoint)
+    // JUSTIFICATION: backend MonoGame only
+    private RuntimeTraceEntry CreateTraceEntry(string checkpoint)
     {
-        var entry = new RuntimeTraceEntry
+        var bossSlotIndex = -1;
+        var bossStatus = 0;
+        uint bossTargetAnimationId = 0;
+        var bossBytes1 = 0;
+        var bossBytes2 = 0;
+        var bossDelayOrAngle = 0;
+        var bossAIValue1 = 0;
+        var bossAIValue4 = 0;
+        var matchingFollowers = -1;
+        IReadOnlyList<int> bossDelays = [];
+
+        var entitySlots = _engine.StaticVariables.g_entitySlots;
+        for (var index = 0; index < entitySlots.Length; index++)
+        {
+            var entity = entitySlots[index];
+            if (string.IsNullOrWhiteSpace(entity.Name) ||
+                !entity.Name.Contains("Mille-pattes (corps principal)", StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            bossSlotIndex = index;
+            bossStatus = entity.Status;
+            bossTargetAnimationId = entity.TargetAnimationId;
+            bossBytes1 = entity.Bytes[1];
+            bossBytes2 = entity.Bytes[2];
+            bossDelayOrAngle = entity.DelayOrAngleOrEntityId;
+            bossAIValue1 = entity.AIValues[1];
+            bossAIValue4 = entity.AIValues[4];
+
+            if (index + 14 < entitySlots.Length)
+            {
+                var delays = new int[15];
+                for (var delayIndex = 0; delayIndex < delays.Length; delayIndex++)
+                {
+                    delays[delayIndex] = entitySlots[index + delayIndex].DelayOrAngleOrEntityId;
+                }
+
+                matchingFollowers = 0;
+                for (var delayIndex = 0; delayIndex < delays.Length - 1; delayIndex++)
+                {
+                    if (delays[delayIndex] == delays[delayIndex + 1])
+                    {
+                        matchingFollowers++;
+                    }
+                }
+
+                bossDelays = delays;
+            }
+
+            break;
+        }
+
+        return new RuntimeTraceEntry
         {
             Sequence = Interlocked.Increment(ref _traceSequence),
             Checkpoint = checkpoint,
             Frame = _engine.StaticVariables.FrameNumber,
             TimestampUtc = DateTimeOffset.UtcNow,
+            BossSlotIndex = bossSlotIndex,
+            BossStatus = bossStatus,
+            BossTargetAnimationId = bossTargetAnimationId,
+            BossBytes1 = bossBytes1,
+            BossBytes2 = bossBytes2,
+            BossDelayOrAngle = bossDelayOrAngle,
+            BossAIValue1 = bossAIValue1,
+            BossAIValue4 = bossAIValue4,
+            GlobalA4 = _engine.StaticVariables.DAT_801911a4,
+            GlobalB4 = _engine.StaticVariables.DAT_801911b4,
+            MatchingFollowers = matchingFollowers,
+            BossDelays = bossDelays,
         };
+    }
+
+    private void RecordTrace(string checkpoint)
+    {
+        var entry = CreateTraceEntry(checkpoint);
 
         lock (_traceLock)
         {

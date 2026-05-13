@@ -35,11 +35,11 @@ public static class AncientGuardian
         short aiVal;
         byte val;
 
-        delay = entity.DelayOrAngle - 1;
+        delay = entity.DelayOrAngleOrEntityId - 1;
 
-        if (entity.DelayOrAngle != 0)
+        if (entity.DelayOrAngleOrEntityId != 0)
         {
-            entity.DelayOrAngle = delay;
+            entity.DelayOrAngleOrEntityId = delay;
 
             if (delay == 0)
             {
@@ -222,7 +222,7 @@ public static class AncientGuardian
                         gameEngine.StaticVariables.g_scrollingParameters.SpeedY = 1;
                         gameEngine.StaticVariables.g_scrollingParameters.LimitX = 2;
                         gameEngine.StaticVariables.g_scrollingParameters.LimitY = 2;
-                        entity.DelayOrAngle = 0x28;
+                        entity.DelayOrAngleOrEntityId = 0x28;
                     }
                 }
 

@@ -17,7 +17,7 @@ public static class AI_Melzas2
 
         int z = 0xF40000;
         entity.ItemState = 1;
-        entity.DelayOrAngle = 1;
+        entity.DelayOrAngleOrEntityId = 1;
 
         Entity parentEntity = gameEngine.SpawnWarpEntity(entity, 1, 0xD1, 0x2400000, 0x2600000, z, 0);
         parentEntity.Bytes[0] = 0;
@@ -84,11 +84,11 @@ public static class AI_Melzas2
             goto HANDLE_ANIMATION;
         }
 
-        if (entity.DelayOrAngle != 0)
+        if (entity.DelayOrAngleOrEntityId != 0)
         {
-            entity.DelayOrAngle -= 1;
+            entity.DelayOrAngleOrEntityId -= 1;
 
-            if (entity.DelayOrAngle == 0)
+            if (entity.DelayOrAngleOrEntityId == 0)
             {
                 Entity warp = gameEngine.SpawnWarpEntity(
                     entity,
@@ -431,13 +431,13 @@ public static class AI_Melzas2
                     {
                         i = cutSceneChannel.BaseXorTarget;
 
-                        if (i < entity.DelayOrAngle)
+                        if (i < entity.DelayOrAngleOrEntityId)
                         {
                             cutSceneChannel.BaseXorTarget = i + 0x80000;
                             i = cutSceneChannel.BaseXorTarget;
                         }
 
-                        if (entity.DelayOrAngle < i)
+                        if (entity.DelayOrAngleOrEntityId < i)
                         {
                             cutSceneChannel.BaseXorTarget = i - 0x80000;
                         }
@@ -611,7 +611,7 @@ public static class AI_Melzas2
                         entity.AIValues[1] = 0x18;
                         entity.Bytes[2] = 0;
                         entity.Bytes[1] = 1;
-                        entity.DelayOrAngle = (int)(gameEngine.StaticVariables.g_offsetXList[direction] * 0x2400 & 0xfff80000);
+                        entity.DelayOrAngleOrEntityId = (int)(gameEngine.StaticVariables.g_offsetXList[direction] * 0x2400 & 0xfff80000);
                     }
                 }
 
@@ -679,7 +679,7 @@ public static class AI_Melzas2
                                 uVar2 = entity.TargetAnimationId;
                                 entity.Bytes[2] = 1;
                                 entity.AIValues[4] = 7;
-                                entity.DelayOrAngle = 0;
+                                entity.DelayOrAngleOrEntityId = 0;
 
                                 if (uVar2 == 0)
                                 {
@@ -713,8 +713,8 @@ public static class AI_Melzas2
                                     entity2.Bytes[0] = 1;
                                     entity2.Flags &= 0xfffffffe;
 
-                                    i = entity.DelayOrAngle + 1;
-                                    entity.DelayOrAngle = i;
+                                    i = entity.DelayOrAngleOrEntityId + 1;
+                                    entity.DelayOrAngleOrEntityId = i;
 
                                     if (i == 10)
                                     {

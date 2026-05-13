@@ -2727,7 +2727,7 @@ public class PlayerManager
                     entitySpawned.Bytes[1] = 0;
                     entitySpawned.Bytes[2] = 0;
                     entitySpawned.Bytes[3] = 0;
-                    entitySpawned.DelayOrAngle = 0;
+                    entitySpawned.DelayOrAngleOrEntityId = 0;
                 }
 
                 return 0;
@@ -2874,7 +2874,7 @@ public class PlayerManager
                     entitySpawned.Bytes[1] = (byte)(word274 >> 8);
                     entitySpawned.Bytes[2] = (byte)(word274 >> 16);
                     entitySpawned.Bytes[3] = (byte)(word274 >> 24);
-                    entitySpawned.DelayOrAngle = parameterTable[parameterIndex + 2];
+                    entitySpawned.DelayOrAngleOrEntityId = parameterTable[parameterIndex + 2];
                     entitySpawned.ItemState = parameterTable[parameterIndex + 3];
                     entitySpawned.AIValues[0] = (short)word280;
                     entitySpawned.AIValues[1] = (short)(word280 >> 16);

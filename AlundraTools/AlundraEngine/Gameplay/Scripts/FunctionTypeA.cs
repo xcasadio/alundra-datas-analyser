@@ -259,7 +259,7 @@ public static class FunctionTypeA
         entity.AIValues[1] = -1;
         entity.AIValues[2] = 0;
         entity.AIValues[3] = 0;
-        entity.DelayOrAngle = entity.ContentsGameFlag;
+        entity.DelayOrAngleOrEntityId = entity.ContentsGameFlag;
         entity.ItemState = 0;
     }
 }

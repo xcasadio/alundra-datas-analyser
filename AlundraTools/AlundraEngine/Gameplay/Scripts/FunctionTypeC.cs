@@ -366,9 +366,9 @@ public static class FunctionTypeC
                     entity.AIValues[1] = (short)(entity.AIValues[1] - 1);
                 }
 
-                if (entity.DelayOrAngle != 0)
+                if (entity.DelayOrAngleOrEntityId != 0)
                 {
-                    entity.DelayOrAngle -= 1;
+                    entity.DelayOrAngleOrEntityId -= 1;
                 }
 
                 if (entity.AIValues[1] == 0)
@@ -377,7 +377,7 @@ public static class FunctionTypeC
                     entity.AIValues[1] = (short)(((Random.Next() * 0x1f) >> 0x20) + 0xb4);
                 }
 
-                if (entity.DelayOrAngle != 0 || 2 < relPos[0] || 2 < relPos[1] || 0x100000 < relPos[2])
+                if (entity.DelayOrAngleOrEntityId != 0 || 2 < relPos[0] || 2 < relPos[1] || 0x100000 < relPos[2])
                 {
                     if (entity.ForceAdjusted != 0)
                     {
@@ -420,11 +420,11 @@ public static class FunctionTypeC
                         }
 
                         entity.AIValues[1] = 0x3c;
-                        entity.DelayOrAngle = 0x3c;
+                        entity.DelayOrAngleOrEntityId = 0x3c;
                     }
                     else
                     {
-                        entity.DelayOrAngle = 0;
+                        entity.DelayOrAngleOrEntityId = 0;
                         entity.TargetAnimationId = 6;
                         entity.AIValues[1] = (short)(((Random.Next() * 0x1f) >> 0x20) + 0xb4);
                     }
@@ -566,7 +566,7 @@ public static class FunctionTypeC
                 if (entity.IsOnGround != 0 || entity.HitCounter != 0)
                 {
                     gameEngine.SoundManager.PlaySoundEffect(0x18);
-                    entity.DelayOrAngle = 0;
+                    entity.DelayOrAngleOrEntityId = 0;
                     value = 0;
                     entity2 = entity;
 
@@ -595,9 +595,9 @@ public static class FunctionTypeC
 
                 if (entity.IsOnGround == 0)
                 {
-                    if (entity.ForceZ > 0 && entity.DelayOrAngle == 0)
+                    if (entity.ForceZ > 0 && entity.DelayOrAngleOrEntityId == 0)
                     {
-                        entity.DelayOrAngle = 1;
+                        entity.DelayOrAngleOrEntityId = 1;
                         entity.TargetDirection = (entity.TargetDirection + 0x10) & 0x1f;
                         gameEngine.EffectManager.CreateEffectEntity(0, 9, 0, entity.PosX, entity.PosY, entity.PosZ + 0x80000);
                     }
@@ -823,7 +823,7 @@ public static class FunctionTypeC
         if (entity.AIValues[4] == 0)
         {
             bVar1 = entity.Bytes[1];
-            entity.DelayOrAngle = 100;
+            entity.DelayOrAngleOrEntityId = 100;
             entity.AIValues[4] = 1;
             entity.AIValues[1] = 0;
             entity.Bytes[2] = 0;
@@ -838,11 +838,11 @@ public static class FunctionTypeC
 
                 if (entity.Bytes[1] == 1)
                 {
-                    entity2.DelayOrAngle = 0x20000;
+                    entity2.DelayOrAngleOrEntityId = 0x20000;
                 }
                 else
                 {
-                    entity2.DelayOrAngle = 0x28000;
+                    entity2.DelayOrAngleOrEntityId = 0x28000;
                 }
             }
 
@@ -851,8 +851,8 @@ public static class FunctionTypeC
         entityRecordId = 0;
         entity.AIValues[1] = (short)(entity.AIValues[1] + 1);
         uVar2 = (ushort)entity.AIValues[1];
-        iVar5 = entity.DelayOrAngle + 1;
-        entity.DelayOrAngle = iVar5;
+        iVar5 = entity.DelayOrAngleOrEntityId + 1;
+        entity.DelayOrAngleOrEntityId = iVar5;
         if (uVar2 < 600)
         {
             entityRecordId = (iVar5 < 121 ? 1 : 0) << 1;
@@ -914,7 +914,7 @@ public static class FunctionTypeC
             goto LAB_800645f8;
         }
 
-        entity.DelayOrAngle = 0;
+        entity.DelayOrAngleOrEntityId = 0;
 
         if (gameEngine.StaticVariables.DAT_80191134 == 0)
         {
@@ -931,7 +931,7 @@ public static class FunctionTypeC
 
         if ((uVar2 & 1) == 0)
         {
-            entity2.DelayOrAngle = gameEngine.StaticVariables.DAT_80191130 + 0x12000;
+            entity2.DelayOrAngleOrEntityId = gameEngine.StaticVariables.DAT_80191130 + 0x12000;
             uVar4 = 0x18;
 
             if ((uVar2 & 2) != 0)
@@ -949,7 +949,7 @@ public static class FunctionTypeC
         {
             iVar5 = gameEngine.StaticVariables.DAT_80191130 + 0x14000;
             entity2.PosZ += 0x180000;
-            entity2.DelayOrAngle = iVar5;
+            entity2.DelayOrAngleOrEntityId = iVar5;
             if ((uVar2 & 2) == 0)
             {
                 entity2.TargetDirection = 0x18;
@@ -966,7 +966,7 @@ public static class FunctionTypeC
         if (entity2.TargetDirection == 8)
         {
             entity2.PosX += 0xf00000;
-            entity2.DelayOrAngle = -entity2.DelayOrAngle;
+            entity2.DelayOrAngleOrEntityId = -entity2.DelayOrAngleOrEntityId;
         }
 
     LAB_800645f8:
@@ -1000,12 +1000,12 @@ public static class FunctionTypeC
                     entity2.TargetDirection = 8;
                 }
 
-                entity2.DelayOrAngle = 0x22000;
+                entity2.DelayOrAngleOrEntityId = 0x22000;
 
                 if (entity2.TargetDirection == 8)
                 {
                     entity2.PosX += 0xf00000;
-                    entity2.DelayOrAngle = -entity2.DelayOrAngle;
+                    entity2.DelayOrAngleOrEntityId = -entity2.DelayOrAngleOrEntityId;
                 }
             }
             else
@@ -1030,7 +1030,7 @@ public static class FunctionTypeC
                 if (entity.SpriteTableIndex == 0x125 && entity.ParentEntity.AIValues[4] != 0)
                 {
                     entity.TargetDirection = (entity.TargetDirection + 0x10U) & 0x1F;
-                    entity.DelayOrAngle = -entity.DelayOrAngle;
+                    entity.DelayOrAngleOrEntityId = -entity.DelayOrAngleOrEntityId;
                 }
                 else
                 {
@@ -1040,13 +1040,13 @@ public static class FunctionTypeC
 
             if (entity.Bytes[0] != 0)
             {
-                entity.PreviousAdjustedForceX = entity.DelayOrAngle;
+                entity.PreviousAdjustedForceX = entity.DelayOrAngleOrEntityId;
                 return;
             }
         }
 
         entity.Bytes[0] = 1;
-        entity.PreviousAdjustedForceX = entity.DelayOrAngle;
+        entity.PreviousAdjustedForceX = entity.DelayOrAngleOrEntityId;
     }
 
     //80064884
@@ -1088,7 +1088,7 @@ public static class FunctionTypeC
             }
 
             bVar2 = false;
-            gameEngine.StaticVariables.DAT_8019113c = entity.DelayOrAngle;
+            gameEngine.StaticVariables.DAT_8019113c = entity.DelayOrAngleOrEntityId;
             local_c = (int)((Random.Next() * 3) >> 0x20);
             gameEngine.StaticVariables.DAT_80191140 = local_c + 3;
             entity.AIValues[1] = 0x3c;
@@ -1096,32 +1096,32 @@ public static class FunctionTypeC
             iVar5 = (int)((Random.Next() * 5) >> 0x20) + 0x46;
             entity.ItemState = iVar5;
             bVar1 = entity.Bytes[1];
-            entity.DelayOrAngle = (entity.DelayOrAngle + iVar5) & 0xf;
+            entity.DelayOrAngleOrEntityId = (entity.DelayOrAngleOrEntityId + iVar5) & 0xf;
 
             if (3 < bVar1 && (int)((Random.Next() * 3) >> 0x20) == 0)
             {
-                iVar5 = entity.DelayOrAngle;
+                iVar5 = entity.DelayOrAngleOrEntityId;
 
                 if (iVar5 == 1)
                 {
-                    entity.DelayOrAngle = 0;
+                    entity.DelayOrAngleOrEntityId = 0;
                     entity.ItemState -= 1;
-                    iVar5 = entity.DelayOrAngle;
+                    iVar5 = entity.DelayOrAngleOrEntityId;
                 }
 
                 if (iVar5 == 0xf)
                 {
-                    entity.DelayOrAngle = 0;
+                    entity.DelayOrAngleOrEntityId = 0;
                     entity.ItemState += 1;
                 }
             }
 
-            if (entity.DelayOrAngle == 0)
+            if (entity.DelayOrAngleOrEntityId == 0)
             {
             LAB_80064ae0:
                 if (entity.Bytes[1] < 2 && (int)((Random.Next() * 3) >> 0x20) == 0)
                 {
-                    uVar7 = (uint)((entity.DelayOrAngle + 1U) & 0xf);
+                    uVar7 = (uint)((entity.DelayOrAngleOrEntityId + 1U) & 0xf);
 
                     if (uVar7 != 0)
                     {
@@ -1140,7 +1140,7 @@ public static class FunctionTypeC
                         if ((flags[index] & mask) != 0)
                         {
                             bVar2 = true;
-                            entity.DelayOrAngle = (int)uVar7;
+                            entity.DelayOrAngleOrEntityId = (int)uVar7;
                             entity.ItemState += 1;
                         }
                     }
@@ -1148,7 +1148,7 @@ public static class FunctionTypeC
             }
             else
             {
-                if (((gameEngine.StaticVariables.INT_ARRAY_80026d90[entity.DelayOrAngle] - 0x8000) & 0x8000) == 0)
+                if (((gameEngine.StaticVariables.INT_ARRAY_80026d90[entity.DelayOrAngleOrEntityId] - 0x8000) & 0x8000) == 0)
                 {
                     flags = gameEngine.StaticVariables.g_saveData.GameFlags;
                 }
@@ -1157,15 +1157,15 @@ public static class FunctionTypeC
                     flags = gameEngine.StaticVariables.g_temporaryFlags;
                 }
 
-                var index = ((gameEngine.StaticVariables.INT_ARRAY_80026d90[entity.DelayOrAngle] - 0x8000) >> 3) & 0xffc;
-                var mask = 1 << (int)((gameEngine.StaticVariables.INT_ARRAY_80026d90[entity.DelayOrAngle] + 0x8000U) & 0x1f);
+                var index = ((gameEngine.StaticVariables.INT_ARRAY_80026d90[entity.DelayOrAngleOrEntityId] - 0x8000) >> 3) & 0xffc;
+                var mask = 1 << (int)((gameEngine.StaticVariables.INT_ARRAY_80026d90[entity.DelayOrAngleOrEntityId] + 0x8000U) & 0x1f);
 
                 if ((flags[index] & mask) == 0)
                 {
                     //goto LAB_80064ae0;
                     if (entity.Bytes[1] < 2 && (int)((Random.Next() * 3) >> 0x20) == 0)
                     {
-                        uVar7 = (uint)((entity.DelayOrAngle + 1U) & 0xf);
+                        uVar7 = (uint)((entity.DelayOrAngleOrEntityId + 1U) & 0xf);
 
                         if (uVar7 != 0)
                         {
@@ -1184,7 +1184,7 @@ public static class FunctionTypeC
                             if ((flags[index] & mask) != 0)
                             {
                                 bVar2 = true;
-                                entity.DelayOrAngle = (int)uVar7;
+                                entity.DelayOrAngleOrEntityId = (int)uVar7;
                                 entity.ItemState += 1;
                             }
                         }
@@ -1332,9 +1332,9 @@ public static class FunctionTypeC
             }
         }
 
-        var delay = entity.DelayOrAngle - 1;
+        var delay = entity.DelayOrAngleOrEntityId - 1;
 
-        if (entity.DelayOrAngle == 0)
+        if (entity.DelayOrAngleOrEntityId == 0)
         {
             var sequenceValue = rawTable[gameEngine.StaticVariables.DAT_80191144 + entity.ItemState];
             entity.ItemState += 1;
@@ -1397,7 +1397,7 @@ public static class FunctionTypeC
             delay = 0x14;
         }
 
-        entity.DelayOrAngle = delay;
+        entity.DelayOrAngleOrEntityId = delay;
     }
 
     //80065100
@@ -1586,9 +1586,9 @@ public static class FunctionTypeC
             }
         }
 
-        entity.DelayOrAngle += 1;
+        entity.DelayOrAngleOrEntityId += 1;
 
-        if ((entity.DelayOrAngle & 7) != 0)
+        if ((entity.DelayOrAngleOrEntityId & 7) != 0)
         {
             return;
         }
@@ -2260,14 +2260,14 @@ public static class FunctionTypeC
             case 1:
             case 7:
             case 8:
-                iVar4 = entity.DelayOrAngle - 1;
+                iVar4 = entity.DelayOrAngleOrEntityId - 1;
 
                 if (iVar4 >= 0)
                 {
-                    entity.DelayOrAngle = iVar4;
+                    entity.DelayOrAngleOrEntityId = iVar4;
                 }
 
-                if ((entity.DelayOrAngle == 0 || iVar4 == 0)
+                if ((entity.DelayOrAngleOrEntityId == 0 || iVar4 == 0)
                     && entity.Bytes[1] == 0
                     && entity.Bytes[2] == 0
                     && -1 < positions[5]
@@ -2335,7 +2335,7 @@ public static class FunctionTypeC
                         }
 
                         direction = (uint)((Random.Next() * 0x20) >> 0x20);
-                        entity.DelayOrAngle = 0x32;
+                        entity.DelayOrAngleOrEntityId = 0x32;
                     }
 
                 LAB_8006d430:
@@ -2621,7 +2621,7 @@ public static class FunctionTypeC
                                 if (spawned != null)
                                 {
                                     spawned.TargetAnimationId = 4;
-                                    spawned.DelayOrAngle = delayOrAngle;
+                                    spawned.DelayOrAngleOrEntityId = delayOrAngle;
                                     spawned.Bytes[2] = 4;
                                     spawned.AIValues[1] = (short)(((Random.Next() * 0x15) >> 0x20) + 0x1E);
 
@@ -2828,7 +2828,7 @@ public static class FunctionTypeC
                             case 4:
                                 entity.Bytes[2] = 2;
                                 entity.AIValues[4] = 8;
-                                entity.DelayOrAngle = (int)((Random.Next() * 0x20) >> 0x20);
+                                entity.DelayOrAngleOrEntityId = (int)((Random.Next() * 0x20) >> 0x20);
                                 return;
 
                             case 6:
@@ -2850,12 +2850,12 @@ public static class FunctionTypeC
 
                         entity.AIValues[4] = (short)(entity.AIValues[4] - 1);
                         entity.AIValues[1] = 0x0C;
-                        entity.DelayOrAngle = (entity.DelayOrAngle + 2) & 0x1F;
+                        entity.DelayOrAngleOrEntityId = (entity.DelayOrAngleOrEntityId + 2) & 0x1F;
                         gameEngine.SoundManager.PlaySoundEffect(0xBE);
 
                         for (var spawnIndex = 0; spawnIndex != 4; spawnIndex++)
                         {
-                            var direction = (entity.DelayOrAngle + (spawnIndex << 3)) & 0x1F;
+                            var direction = (entity.DelayOrAngleOrEntityId + (spawnIndex << 3)) & 0x1F;
                             var phase = ((0x20 - direction) & 0x1F) << 3;
                             var posY = entity.PosY + ((gameEngine.StaticVariables.g_sinTable[phase] * 3) << 11);
                             var posX = entity.PosX + ((gameEngine.StaticVariables.g_cosTable[phase] * 3) << 11);
@@ -2968,9 +2968,9 @@ public static class FunctionTypeC
         {
             case 1:
             {
-                entity.DelayOrAngle += 1;
+                entity.DelayOrAngleOrEntityId += 1;
 
-                if ((entity.DelayOrAngle & 7) == 0)
+                if ((entity.DelayOrAngleOrEntityId & 7) == 0)
                 {
                     var spawned = gameEngine.SpawnWarpEntity(entity, 1, 0xE4, entity.PosX, entity.PosY - 0x10000, entity.PosZ, 0);
 
@@ -3102,7 +3102,7 @@ public static class FunctionTypeC
                 }
 
                 entity.TargetAnimationId = 8;
-                entity.AIValues[1] = (short)entity.DelayOrAngle;
+                entity.AIValues[1] = (short)entity.DelayOrAngleOrEntityId;
                 return;
             }
 
@@ -3258,7 +3258,7 @@ public static class FunctionTypeC
 
         gameEngine.GetMatchingEntityBySearchType(entity, 0);
 
-        if (gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].DelayOrAngle != 0 ||
+        if (gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].DelayOrAngleOrEntityId != 0 ||
            gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].Bytes[3] != 0)
         {
             entity.TargetAnimationId = 0;
@@ -3383,9 +3383,9 @@ public static class FunctionTypeC
         var player = gameEngine.StaticVariables.PlayerEntity;
         var spawnTable = gameEngine.StaticVariables.INT_ARRAY_80027c80;
 
-        if (entity.DelayOrAngle == 0)
+        if (entity.DelayOrAngleOrEntityId == 0)
         {
-            entity.DelayOrAngle = 1;
+            entity.DelayOrAngleOrEntityId = 1;
             gameEngine.StaticVariables.DAT_801911cc = 0;
             gameEngine.StaticVariables.DAT_801911c8 = 0;
             gameEngine.StaticVariables.DAT_801911c4 = 0;
@@ -4181,10 +4181,10 @@ public static class FunctionTypeC
             return;
         }
 
-        if (entity.DelayOrAngle != 0)
+        if (entity.DelayOrAngleOrEntityId != 0)
         {
-            uVar6 = (uint)(entity.DelayOrAngle - 1);
-            entity.DelayOrAngle = (int)uVar6;
+            uVar6 = (uint)(entity.DelayOrAngleOrEntityId - 1);
+            entity.DelayOrAngleOrEntityId = (int)uVar6;
 
             if (uVar6 == 0)
             {
@@ -4319,7 +4319,7 @@ public static class FunctionTypeC
                         break;
 
                     case 4:
-                        if (entity.DelayOrAngle == 0)
+                        if (entity.DelayOrAngleOrEntityId == 0)
                         {
                             entity.Bytes[0] = 7;
                             entity.TargetAnimationId = 0xB;
@@ -4804,7 +4804,7 @@ public static class FunctionTypeC
                     gameEngine.StaticVariables.g_scrollingParameters.LimitX = 2;
                     entity.Bytes[0] = 0;
                     sVar4 = (short)((Random.Next() * 0x10UL) >> 32);
-                    entity.DelayOrAngle = 600;
+                    entity.DelayOrAngleOrEntityId = 600;
                     goto LAB_80078748;
                 }
 
@@ -5043,7 +5043,7 @@ public static class FunctionTypeC
             if (parentEntity.Bytes[0] == 0)
             {
             LAB_80078d70:
-                dx = entity.PosX - entity.DelayOrAngle;
+                dx = entity.PosX - entity.DelayOrAngleOrEntityId;
                 dy = entity.PosY - entity.ItemState;
 
                 if (dx < 0)
@@ -5087,7 +5087,7 @@ public static class FunctionTypeC
                     }
 
                     //goto LAB_80078d70;
-                    dx = entity.PosX - entity.DelayOrAngle;
+                    dx = entity.PosX - entity.DelayOrAngleOrEntityId;
                     dy = entity.PosY - entity.ItemState;
 
                     if (dx < 0)
@@ -5162,7 +5162,7 @@ public static class FunctionTypeC
             if (parentEntity.Bytes[0] == 0)
             {
             LAB_80078d70:
-                dx = entity.PosX - entity.DelayOrAngle;
+                dx = entity.PosX - entity.DelayOrAngleOrEntityId;
                 dy = entity.PosY - entity.ItemState;
 
                 if (dx < 0)
@@ -5206,7 +5206,7 @@ public static class FunctionTypeC
                     }
 
                     //goto LAB_80078d70;
-                    dx = entity.PosX - entity.DelayOrAngle;
+                    dx = entity.PosX - entity.DelayOrAngleOrEntityId;
                     dy = entity.PosY - entity.ItemState;
 
                     if (dx < 0)
@@ -5268,7 +5268,7 @@ public static class FunctionTypeC
             case 0:
                 uVar3 = (uint)ScriptHelper.GetDirectionToTarget(gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX, gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
                 entity.TargetDirection = uVar3;
-                entity.DelayOrAngle = gameEngine.StaticVariables.PlayerEntity.PosX;
+                entity.DelayOrAngleOrEntityId = gameEngine.StaticVariables.PlayerEntity.PosX;
                 entity.ItemState = gameEngine.StaticVariables.PlayerEntity.PosY;
                 return;
 
@@ -5363,7 +5363,7 @@ public static class FunctionTypeC
                 }
             }
 
-            index = (uint)(parentEntity.DelayOrAngle + entity.DelayOrAngle & 0x1ff);
+            index = (uint)(parentEntity.DelayOrAngleOrEntityId + entity.DelayOrAngleOrEntityId & 0x1ff);
             entity.PosX = iVar2 + gameEngine.StaticVariables.g_sinus[index] * (parentEntity.ItemState + 0x1000);
             entity.PosY = iVar1 - gameEngine.StaticVariables.g_cosinus[index] * (parentEntity.ItemState + 0x1000);
             targetAnimationId = entity.TargetAnimationId;
@@ -5917,9 +5917,9 @@ public static class FunctionTypeC
 
             if (entity.TargetAnimationId == 1)
             {
-                if (entity.DelayOrAngle < 0x1800)
+                if (entity.DelayOrAngleOrEntityId < 0x1800)
                 {
-                    entity.DelayOrAngle += 0x40;
+                    entity.DelayOrAngleOrEntityId += 0x40;
                 }
                 else
                 {
@@ -5927,15 +5927,15 @@ public static class FunctionTypeC
                 }
 
                 entity.AIValues[4] = (short)((entity.AIValues[4] + 10U) & 0x1ff);
-                entity.PosX = gameEngine.StaticVariables.g_sinus[(ushort)entity.AIValues[4]] * entity.DelayOrAngle + 0x01500000;
-                entity.PosY = gameEngine.StaticVariables.g_cosinus[(ushort)entity.AIValues[4]] * entity.DelayOrAngle + 0x3100000;
+                entity.PosX = gameEngine.StaticVariables.g_sinus[(ushort)entity.AIValues[4]] * entity.DelayOrAngleOrEntityId + 0x01500000;
+                entity.PosY = gameEngine.StaticVariables.g_cosinus[(ushort)entity.AIValues[4]] * entity.DelayOrAngleOrEntityId + 0x3100000;
 
                 if (entity.ItemState == 0)
                 {
                     gameEngine.SoundManager.PlaySoundEffect(0x127);
                     uVar1 = (ushort)entity.AIValues[4];
                     entity.TargetAnimationId = 2;
-                    entity.TargetDirection = (uint)(0x20 - ((uVar1 >> 4) & 0x1f));
+                    entity.TargetDirection = (uint)((0x20 - ((uVar1 >> 4) & 0x1f)) & 0x1f);
                 }
             }
             else if (entity.TargetAnimationId == 2 && entity.ForceAdjusted != 0)
@@ -6218,12 +6218,12 @@ public static class FunctionTypeC
                 return;
             }
 
-            if (entity.DelayOrAngle != 0)
+            if (entity.DelayOrAngleOrEntityId != 0)
             {
                 return;
             }
 
-            entity.DelayOrAngle = 1;
+            entity.DelayOrAngleOrEntityId = 1;
             entity.TargetDirection = (entity.TargetDirection + 0x10) & 0x1f;
             gameEngine.EffectManager.CreateEffectEntity(0, 9, 0, entity.PosX, entity.PosY, entity.PosZ + 0x80000);
             return;
@@ -6234,7 +6234,7 @@ public static class FunctionTypeC
         }
 
         gameEngine.SoundManager.PlaySoundEffect(0x18);
-        entity.DelayOrAngle = 0;
+        entity.DelayOrAngleOrEntityId = 0;
         i = 0;
 
         do
@@ -6274,15 +6274,15 @@ public static class FunctionTypeC
         }
 
         entity.ForceZ = unchecked((int)0xFFFD0000);
-        Entity trackedEntity;
+        Entity trackedEntity = null;
 
-        if (entity.DelayOrAngle != 0)
+        if (entity.DelayOrAngleOrEntityId != 0)
         {
-            trackedEntity = gameEngine.StaticVariables.g_entitySlots[entity.DelayOrAngle];
+            trackedEntity = gameEngine.StaticVariables.g_entitySlots[entity.DelayOrAngleOrEntityId];
 
             if (trackedEntity.Status != 2 || trackedEntity.Index2 != entity.ItemState)
             {
-                entity.DelayOrAngle = 0;
+                entity.DelayOrAngleOrEntityId = 0;
                 return;
             }
         }
@@ -6299,7 +6299,7 @@ public static class FunctionTypeC
             }
 
             trackedEntity = matchingEntities[0];
-            entity.DelayOrAngle = trackedEntity.Index;
+            entity.DelayOrAngleOrEntityId = trackedEntity.Index;
             entity.ItemState = trackedEntity.Index2;
         }
 
@@ -6366,7 +6366,7 @@ public static class FunctionTypeC
                 }
 
                 entity.AIValues[1] = (short)((entity.AIValues[1] + 4U) & 0x1ff);
-                entity.PosX = entity.DelayOrAngle + gameEngine.StaticVariables.g_sinus[(ushort)entity.AIValues[1]] * factor;
+                entity.PosX = entity.DelayOrAngleOrEntityId + gameEngine.StaticVariables.g_sinus[(ushort)entity.AIValues[1]] * factor;
                 entity.PosY = entity.ItemState + gameEngine.StaticVariables.g_cosinus[(ushort)entity.AIValues[1]] * factor;
                 entity.Bytes[1] = (byte)(entity.Bytes[1] - 1);
 
@@ -6387,12 +6387,12 @@ public static class FunctionTypeC
 
             entity.AIValues[1] = 0x180;
             entity.Bytes[0] = 1;
-            entity.DelayOrAngle = entity.PosX + offsetX;
+            entity.DelayOrAngleOrEntityId = entity.PosX + offsetX;
             entity.ItemState = entity.PosY;
         }
 
         entity.AIValues[1] = (short)((entity.AIValues[1] + 4U) & 0x1ff);
-        entity.PosX = entity.DelayOrAngle + gameEngine.StaticVariables.g_sinus[(ushort)entity.AIValues[1]] * factor;
+        entity.PosX = entity.DelayOrAngleOrEntityId + gameEngine.StaticVariables.g_sinus[(ushort)entity.AIValues[1]] * factor;
         entity.PosY = entity.ItemState + gameEngine.StaticVariables.g_cosinus[(ushort)entity.AIValues[1]] * factor;
         var iVar3 = gameEngine.GetMatchingEntityBySearchType(entity, entity.EntityRefId - 1);
 
@@ -6429,11 +6429,11 @@ public static class FunctionTypeC
             case 0:
                 entity.Bytes[0] = 1;
                 entity.AIValues[1] = 0x180;
-                entity.DelayOrAngle = entity.PosX - gameEngine.StaticVariables.g_sinus[0x180] * 0x1400;
+                entity.DelayOrAngleOrEntityId = entity.PosX - gameEngine.StaticVariables.g_sinus[0x180] * 0x1400;
                 entity.ItemState = entity.PosY - gameEngine.StaticVariables.g_cosinus[0x180] * 0x1400;
 
                 entity.AIValues[1] = (short)((entity.AIValues[1] + 4U) & 0x1FF);
-                entity.PosX = entity.DelayOrAngle + gameEngine.StaticVariables.g_sinus[(ushort)entity.AIValues[1]] * 0x1400;
+                entity.PosX = entity.DelayOrAngleOrEntityId + gameEngine.StaticVariables.g_sinus[(ushort)entity.AIValues[1]] * 0x1400;
                 entity.PosY = entity.ItemState + gameEngine.StaticVariables.g_cosinus[(ushort)entity.AIValues[1]] * 0x1400;
 
                 if (gameEngine.GetMatchingEntityBySearchType(entity, entity.EntityRefId - 1) != 0)
@@ -6448,7 +6448,7 @@ public static class FunctionTypeC
 
             case 1:
                 entity.AIValues[1] = (short)((entity.AIValues[1] + 4U) & 0x1FF);
-                entity.PosX = entity.DelayOrAngle + gameEngine.StaticVariables.g_sinus[(ushort)entity.AIValues[1]] * 0x1400;
+                entity.PosX = entity.DelayOrAngleOrEntityId + gameEngine.StaticVariables.g_sinus[(ushort)entity.AIValues[1]] * 0x1400;
                 entity.PosY = entity.ItemState + gameEngine.StaticVariables.g_cosinus[(ushort)entity.AIValues[1]] * 0x1400;
                 entity.Bytes[1] = (byte)(entity.Bytes[1] - 1);
 
@@ -6585,14 +6585,14 @@ public static class FunctionTypeC
             case 0:
                 if (entity.XCollisionEntity == player || player.XCollisionEntity == entity)
                 {
-                    entity.DelayOrAngle += 1;
+                    entity.DelayOrAngleOrEntityId += 1;
 
-                    if (entity.DelayOrAngle != 0x14)
+                    if (entity.DelayOrAngleOrEntityId != 0x14)
                     {
                         return;
                     }
 
-                    entity.DelayOrAngle = 0;
+                    entity.DelayOrAngleOrEntityId = 0;
                     entity.TargetAnimationId = 1;
                     //0: droite
                     //1: gauche
@@ -6606,7 +6606,7 @@ public static class FunctionTypeC
                     return;
                 }
 
-                entity.DelayOrAngle = 0;
+                entity.DelayOrAngleOrEntityId = 0;
                 break;
 
             case 1:
@@ -6764,14 +6764,14 @@ public static class FunctionTypeC
                 gameEngine.SetEtcAnimationMode(4);
 
             LABEL_WaitBeforeNextWarpStep:
-                entity.DelayOrAngle = 0x3C;
+                entity.DelayOrAngleOrEntityId = 0x3C;
                 WriteWarpState(entity, state + 1);
                 break;
 
             case 2:
-                entity.DelayOrAngle -= 1;
+                entity.DelayOrAngleOrEntityId -= 1;
 
-                if (entity.DelayOrAngle != -1)
+                if (entity.DelayOrAngleOrEntityId != -1)
                 {
                     return;
                 }
@@ -6807,16 +6807,16 @@ public static class FunctionTypeC
                         return;
                     }
 
-                    entity.DelayOrAngle = 0x3C;
+                    entity.DelayOrAngleOrEntityId = 0x3C;
                     WriteWarpState(entity, state + 1);
                     return;
                 }
 
             case 5:
                 {
-                    entity.DelayOrAngle -= 1;
+                    entity.DelayOrAngleOrEntityId -= 1;
 
-                    if (entity.DelayOrAngle != -1)
+                    if (entity.DelayOrAngleOrEntityId != -1)
                     {
                         return;
                     }
@@ -6989,7 +6989,7 @@ public static class FunctionTypeC
         if (word290 > 0)
         {
             int word274 = entity.Bytes.GetInt32();
-            int word278 = entity.DelayOrAngle;
+            int word278 = entity.DelayOrAngleOrEntityId;
             int word27c = entity.ItemState;
             int word280 = entity.AIValues.GetInt32(0);
             int word284 = entity.AIValues.GetInt32(2);
@@ -7057,13 +7057,13 @@ public static class FunctionTypeC
             }
 
             entity.Bytes.Set(gameEngine.StaticVariables.g_offsetXList[direction] << 8);
-            entity.DelayOrAngle = gameEngine.StaticVariables.g_offsetYList[direction] << 8;
+            entity.DelayOrAngleOrEntityId = gameEngine.StaticVariables.g_offsetYList[direction] << 8;
             entity.Flags |= 0x2130;
             entity.ForceZ = 0x000A0000;
         }
 
         entity.PreviousAdjustedForceX = entity.Bytes.GetInt32();
-        entity.PreviousAdjustedForceY = entity.DelayOrAngle;
+        entity.PreviousAdjustedForceY = entity.DelayOrAngleOrEntityId;
     }
 
     //8007c024
@@ -7395,7 +7395,7 @@ public static class FunctionTypeC
                             {
                                 entity.AIValues[1] = (short)(gameEngine.StaticVariables.DAT_801912fc << 4);
                                 entity.Bytes[1] = 1;
-                                entity.DelayOrAngle = angle;
+                                entity.DelayOrAngleOrEntityId = angle;
                             }
                             else
                             {
@@ -7406,7 +7406,7 @@ public static class FunctionTypeC
                                 spawned.SpriteProgramIndexes[ScriptHelper.ProgramCTick] = 0x4e;
                                 spawned.SpriteProgramIndexes[ScriptHelper.ProgramDTouch] = 0x23;
                                 spawned.AIValues[1] = (short)(gameEngine.StaticVariables.DAT_80191300 << 4);
-                                spawned.DelayOrAngle = angle;
+                                spawned.DelayOrAngleOrEntityId = angle;
                             }
 
                             gameEngine.StaticVariables.DAT_80191300++;
@@ -7609,17 +7609,17 @@ public static class FunctionTypeC
 
     private static void UpdatePZoldiaOrbitPosition(StaticVariables staticVariables, Entity entity)
     {
-        entity.DelayOrAngle = entity.DelayOrAngle + 2 & 0x1ff;
+        entity.DelayOrAngleOrEntityId = entity.DelayOrAngleOrEntityId + 2 & 0x1ff;
         var radius = staticVariables.DAT_801912f8;
-        entity.PosX = staticVariables.DAT_801912ec + staticVariables.g_sinus[entity.DelayOrAngle] * radius;
-        entity.PosY = staticVariables.DAT_801912f0 + staticVariables.g_cosinus[entity.DelayOrAngle] * radius;
+        entity.PosX = staticVariables.DAT_801912ec + staticVariables.g_sinus[entity.DelayOrAngleOrEntityId] * radius;
+        entity.PosY = staticVariables.DAT_801912f0 + staticVariables.g_cosinus[entity.DelayOrAngleOrEntityId] * radius;
 
         if (entity.TargetAnimationId != 0 && entity.TargetAnimationId != 8)
         {
             return;
         }
 
-        var sector = entity.DelayOrAngle >> 4;
+        var sector = entity.DelayOrAngleOrEntityId >> 4;
         if ((uint)(sector - 4) <= 7U)
         {
             entity.TargetDirection = 8;
@@ -8014,7 +8014,7 @@ public static class FunctionTypeC
         }
     }
 
-    //8007fe8c
+    // GHIDRA: FUN_8007fe8c @ 0x8007FE8C
     private static void FUN_8007fe8c(GameEngine gameEngine, Entity entity, int[] positions)
     {
         int x;
@@ -8023,7 +8023,7 @@ public static class FunctionTypeC
 
         x = entity.TileX - gameEngine.StaticVariables.PlayerEntity.TileX;
         y = entity.TileY - gameEngine.StaticVariables.PlayerEntity.TileY;
-        z = entity.PosZ - gameEngine.StaticVariables.PlayerEntity.FloorHeight;
+        z = entity.FloorHeight - gameEngine.StaticVariables.PlayerEntity.FloorHeight;
         positions[3] = x;
 
         if (x < 0)
@@ -8095,7 +8095,7 @@ public static class FunctionTypeC
                 newPhase = entity.Bytes[1];
                 entity.TargetDirection = direction;
                 entity.TargetAnimationId = 3;
-                entity.DelayOrAngle = 0;
+                entity.DelayOrAngleOrEntityId = 0;
 
                 if (newPhase == 6)
                 {
@@ -8151,7 +8151,7 @@ public static class FunctionTypeC
                     if (newPhase == 1)
                     {
                         entity.TargetAnimationId = 3;
-                        entity.DelayOrAngle = 0;
+                        entity.DelayOrAngleOrEntityId = 0;
                         return;
                     }
 
@@ -8184,7 +8184,7 @@ public static class FunctionTypeC
             case 3:
                 if (gameEngine.StaticVariables.PlayerEntity.TouchingEntity == entity)
                 {
-                    entity.DelayOrAngle = 1;
+                    entity.DelayOrAngleOrEntityId = 1;
                 }
 
                 if (entity.ForceResetAnimationFlag == 0)
@@ -8192,11 +8192,11 @@ public static class FunctionTypeC
                     return;
                 }
 
-                if (entity.DelayOrAngle != 0)
+                if (entity.DelayOrAngleOrEntityId != 0)
                 {
                     entity.TargetAnimationId = 0;
                     entity.AIValues[1] = 0x1e;
-                    entity.DelayOrAngle = 0;
+                    entity.DelayOrAngleOrEntityId = 0;
                     return;
                 }
 
@@ -9594,7 +9594,7 @@ public static class FunctionTypeC
             gameEngine.SoundManager.PlaySoundEffect(0x7d);
             bVar3 = entity.Bytes[2];
             entity.TargetAnimationId = 4;
-            entity.DelayOrAngle = 0;
+            entity.DelayOrAngleOrEntityId = 0;
 
             if (bVar3 != 0)
             {
@@ -9748,7 +9748,7 @@ public static class FunctionTypeC
                             gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX,
                             gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
                         uVar2 = Random.Next();
-                        entity.DelayOrAngle = 0;
+                        entity.DelayOrAngleOrEntityId = 0;
                         entity.AIValues[1] = 0x50;
                         entity.Bytes[2] = 3;
                         entity.Bytes[1] = 3;
@@ -9781,11 +9781,11 @@ public static class FunctionTypeC
                         }
                         else
                         {
-                            iVar6 = entity.DelayOrAngle - 1;
+                            iVar6 = entity.DelayOrAngleOrEntityId - 1;
 
-                            if (entity.DelayOrAngle != 0)
+                            if (entity.DelayOrAngleOrEntityId != 0)
                             {
-                                entity.DelayOrAngle = iVar6;
+                                entity.DelayOrAngleOrEntityId = iVar6;
 
                                 if (iVar6 != 0)
                                 {
@@ -9836,7 +9836,7 @@ public static class FunctionTypeC
                             gameEngine.SoundManager.PlaySoundEffect(0x7d);
                             entity.TargetAnimationId = 4;
                             entity.Bytes[1] = 7;
-                            entity.DelayOrAngle = 0x1e;
+                            entity.DelayOrAngleOrEntityId = 0x1e;
                             return;
                         }
 
@@ -9905,7 +9905,7 @@ public static class FunctionTypeC
                         gameEngine.SoundManager.PlaySoundEffect(0x7d);
                         uVar1 = (ushort)entity.AIValues[1];
                         entity.TargetAnimationId = 4;
-                        entity.DelayOrAngle = iVar6;
+                        entity.DelayOrAngleOrEntityId = iVar6;
                         entity.Bytes[1] = 1;
                         entity.ItemState = uVar1;
                         return;
@@ -9929,7 +9929,7 @@ public static class FunctionTypeC
                 }
 
                 iVar6 = entity.PosZ;
-                iVar7 = entity.DelayOrAngle;
+                iVar7 = entity.DelayOrAngleOrEntityId;
                 entity.AIValues[1] = 0xf;
                 entity.TargetAnimationId = 9;
                 entity.Bytes[1] = 2;
@@ -11396,15 +11396,15 @@ public static class FunctionTypeC
                     return;
                 }
 
-                if (entity.DelayOrAngle == 0 && (int)((Random.Next() * 4) >> 0x20) == 0)
+                if (entity.DelayOrAngleOrEntityId == 0 && (int)((Random.Next() * 4) >> 0x20) == 0)
                 {
                     entity.CurrentAnimationId = 0xffffffff;
                     entity.AIValues[1] = 0x10;
-                    entity.DelayOrAngle = 1;
+                    entity.DelayOrAngleOrEntityId = 1;
                     return;
                 }
 
-                entity.DelayOrAngle = 0;
+                entity.DelayOrAngleOrEntityId = 0;
                 entity.TargetAnimationId = 1;
                 entity.ItemState = 0x1e;
                 delay = (short)(((Random.Next() * 0x10) >> 0x20) + 0x1e);
@@ -12146,7 +12146,7 @@ public static class FunctionTypeC
                     if (entity.Bytes[1] != 0)
                     {
                         entity.Bytes[1] = 0;
-                        entity.PosX += entity.DelayOrAngle;
+                        entity.PosX += entity.DelayOrAngleOrEntityId;
                         entity.PosY += entity.ItemState;
                     }
 
@@ -13163,10 +13163,10 @@ public static class FunctionTypeC
         var player = gameEngine.StaticVariables.PlayerEntity;
         int[] relPos = new int[6];
 
-        i = entity.DelayOrAngle - 1;
-        if (entity.DelayOrAngle != 0)
+        i = entity.DelayOrAngleOrEntityId - 1;
+        if (entity.DelayOrAngleOrEntityId != 0)
         {
-            entity.DelayOrAngle = i;
+            entity.DelayOrAngleOrEntityId = i;
             if (i == 0)
             {
                 gameEngine.StaticVariables.g_scrollingParameters.Flag = 0;
@@ -13285,7 +13285,7 @@ public static class FunctionTypeC
                 {
                     entity.TargetAnimationId = 6;
                     entity.Bytes[2] = 5;
-                    entity.DelayOrAngle = 0x32;
+                    entity.DelayOrAngleOrEntityId = 0x32;
                     gameEngine.SoundManager.PlaySoundEffect(0x55);
                     gameEngine.StaticVariables.g_scrollingParameters.Flag = 1;
                     gameEngine.StaticVariables.g_scrollingParameters.SpeedX = 1;
@@ -13712,7 +13712,7 @@ public static class FunctionTypeC
 
                         entity.TargetAnimationId = 0;
                         entity.AIValues[1] = 0x0B4;
-                        entity.DelayOrAngle += 4;
+                        entity.DelayOrAngleOrEntityId += 4;
                     }
                     else
                     {
@@ -13853,7 +13853,7 @@ public static class FunctionTypeC
                     iVar7 += 3;
                 }
 
-                if (entity.Hp <= (iVar7 >> 2) && entity.DelayOrAngle < 4)
+                if (entity.Hp <= (iVar7 >> 2) && entity.DelayOrAngleOrEntityId < 4)
                 {
                     entity.TargetAnimationId = 2;
                     entity.Bytes[1] = 0;
@@ -13944,8 +13944,8 @@ SetDelay:
 
         if (entity.Bytes[2] < 5)
         {
-            iVar4 = entity.DelayOrAngle + 1;
-            entity.DelayOrAngle = iVar4;
+            iVar4 = entity.DelayOrAngleOrEntityId + 1;
+            entity.DelayOrAngleOrEntityId = iVar4;
             if (iVar4 == 300)
             {
                 int baseIndex = entity.Bytes[1] * 2;
@@ -13954,7 +13954,7 @@ SetDelay:
 
                 byte bVar1 = entity.Bytes[2];
                 byte bVar2 = (byte)(entity.Bytes[1] + 1);
-                entity.DelayOrAngle = 0;
+                entity.DelayOrAngleOrEntityId = 0;
                 entity.Bytes[1] = bVar2;
                 entity.Bytes[2] = (byte)(bVar1 + 1);
 
@@ -14966,7 +14966,7 @@ SetAnim6:
                     for (int i = 0; i < 15; i++)
                     {
                         Entity current = entitySlots[entityIndex + i];
-                        current.DelayOrAngle = (int)current.TargetDirection << 4;
+                        current.DelayOrAngleOrEntityId = (int)current.TargetDirection << 4;
                     }
                 }
 
@@ -14983,25 +14983,25 @@ SetAnim6:
 
                 if (entity.TargetDirection < 8U)
                 {
-                    entity.DelayOrAngle = 0;
+                    entity.DelayOrAngleOrEntityId = 0;
                     entity.TargetDirection = 0;
                     entity.ItemState = 1;
                 }
                 else if (entity.TargetDirection < 0x10U)
                 {
-                    entity.DelayOrAngle = 0x10;
+                    entity.DelayOrAngleOrEntityId = 0x10;
                     entity.TargetDirection = 0x10;
                     entity.ItemState = -1;
                 }
                 else if (entity.TargetDirection < 0x18U)
                 {
-                    entity.DelayOrAngle = 0x10;
+                    entity.DelayOrAngleOrEntityId = 0x10;
                     entity.TargetDirection = 0x10;
                     entity.ItemState = 1;
                 }
                 else
                 {
-                    entity.DelayOrAngle = 0;
+                    entity.DelayOrAngleOrEntityId = 0;
                     entity.TargetDirection = 0;
                     entity.ItemState = -1;
                 }
@@ -15030,9 +15030,10 @@ SetAnim6:
 
         int targetY = param_2 + (param_3 != 0 ? 0x00700000 : unchecked((int)0xFF900000));
         entity.AIValues[1] = 6;
-        entity.Bytes[0] = (byte)(entity.Bytes[0] + 1);
+        int oldByte0 = entity.Bytes[0];
+        entity.Bytes[0] = (byte)(oldByte0 + 1);
 
-        int spawnIndex = entity.Bytes[0] - 1;
+        int spawnIndex = oldByte0 - 1;
         if ((uint)spawnIndex >= 14U)
         {
             return;
@@ -15068,16 +15069,16 @@ SetAnim6:
             return;
         }
 
-        int parentIndex = entityIndex + spawnIndex;
-        if ((uint)parentIndex >= gameEngine.StaticVariables.g_entitySlots.Length)
+        int targetIndex = entityIndex + oldByte0;
+        if ((uint)targetIndex >= gameEngine.StaticVariables.g_entitySlots.Length)
         {
             return;
         }
 
-        gameEngine.SpawnWarpEntity(gameEngine.StaticVariables.g_entitySlots[parentIndex], 1, spriteTableIndex, entity.PosX, targetY, entity.PosZ, (uint)param_3);
+        gameEngine.SpawnChildEntity(gameEngine.StaticVariables.g_entitySlots[targetIndex], entity, 1, spriteTableIndex, entity.PosX, targetY, entity.PosZ, (uint)param_3);
     }
 
-    // 80073CFC
+    // GHIDRA: AI_UpdateEntityAI_0_00 @ 0x80073CFC
     public static void AI_UpdateEntityAI_0_00(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
@@ -15224,18 +15225,18 @@ SetAnim6:
                                     {
                                         Entity currentEntity = entitySlots[entityIndex + i];
                                         Entity nextEntity = entitySlots[entityIndex + i + 1];
-                                        if (currentEntity.DelayOrAngle == nextEntity.DelayOrAngle)
+                                        if (currentEntity.DelayOrAngleOrEntityId == nextEntity.DelayOrAngleOrEntityId)
                                         {
                                             matchingFollowers += 1;
                                             continue;
                                         }
 
-                                        int delta = currentEntity.DelayOrAngle - nextEntity.DelayOrAngle;
-                                        int step = (delta - 1 < 0xFF || delta < -0x100) ? 4 : -4;
-                                        nextEntity.DelayOrAngle = (nextEntity.DelayOrAngle + step) & 0x1FF;
-                                        nextEntity.TargetDirection = (uint)(nextEntity.DelayOrAngle >> 4);
+                                        int delta = currentEntity.DelayOrAngleOrEntityId - nextEntity.DelayOrAngleOrEntityId;
+                                        int step = ((uint)(delta - 1) < 0xFFU || delta < -0x100) ? 4 : -4;
+                                        nextEntity.DelayOrAngleOrEntityId = (nextEntity.DelayOrAngleOrEntityId + step) & 0x1FF;
+                                        nextEntity.TargetDirection = (uint)(nextEntity.DelayOrAngleOrEntityId >> 4);
 
-                                        int trigIndex = nextEntity.DelayOrAngle;
+                                        int trigIndex = nextEntity.DelayOrAngleOrEntityId;
                                         nextEntity.PosX = currentEntity.PosX + gameEngine.StaticVariables.g_sinus[trigIndex] * 0x500;
                                         nextEntity.PosY = currentEntity.PosY - gameEngine.StaticVariables.g_cosinus[trigIndex] * 0x500;
                                     }
@@ -15257,9 +15258,8 @@ SetAnim6:
                                             currentEntity.PosY - nextEntity.PosY);
 
                                         int multiplier = ((i + (i >> 31)) >> 1) + 1;
-                                        int angle = (entity.DelayOrAngle + gameEngine.StaticVariables.DAT_801911a4 * multiplier) & 0x1FF;
+                                        int angle = (entity.DelayOrAngleOrEntityId + gameEngine.StaticVariables.DAT_801911a4 * multiplier) & 0x1FF;
                                         int trigIndex = angle;
-                                        nextEntity.TargetDirection = (uint)angle;
                                         nextEntity.PosX = currentEntity.PosX + gameEngine.StaticVariables.g_sinus[trigIndex] * radius;
                                         nextEntity.PosY = currentEntity.PosY - gameEngine.StaticVariables.g_cosinus[trigIndex] * radius;
                                         radius += 4;
@@ -15303,10 +15303,11 @@ SetAnim6:
                                                 int historyFill = 0;
                                                 for (int i = 0; i <= 0x54; i++)
                                                 {
+                                                    int positionHistoryIndex = 0x54 - i;
                                                     int trigIndex = (int)entity.TargetDirection << 4;
                                                     gameEngine.StaticVariables.g_loaderDirectionHistory[i] = (short)entity.TargetDirection;
-                                                    gameEngine.StaticVariables.DAT_80191508[i] = (short)((entity.PosX + gameEngine.StaticVariables.g_sinus[trigIndex] * historyFill) >> 16);
-                                                    gameEngine.StaticVariables.DAT_80191708[i] = (short)((entity.PosY - gameEngine.StaticVariables.g_cosinus[trigIndex] * historyFill) >> 16);
+                                                    gameEngine.StaticVariables.DAT_80191508[positionHistoryIndex] = (short)((entity.PosX + gameEngine.StaticVariables.g_sinus[trigIndex] * historyFill) >> 16);
+                                                    gameEngine.StaticVariables.DAT_80191708[positionHistoryIndex] = (short)((entity.PosY - gameEngine.StaticVariables.g_cosinus[trigIndex] * historyFill) >> 16);
                                                     historyFill += 0xD5;
                                                 }
 
@@ -15378,7 +15379,7 @@ SetAnim6:
                     {
                         entity.TargetDirection = (entity.TargetDirection + (uint)entity.ItemState) & 0x1FU;
                         entity.AIValues[1] = 4;
-                        if (entity.TargetDirection == (uint)entity.DelayOrAngle)
+                        if (entity.TargetDirection == (uint)entity.DelayOrAngleOrEntityId)
                         {
                             entity.AIValues[1] = 0x3C;
                             entity.TargetAnimationId = 0;
@@ -15521,10 +15522,10 @@ SetAnim6:
             }
             else
             {
-                entity.DelayOrAngle += 1;
-                if (entity.DelayOrAngle == 10)
+                entity.DelayOrAngleOrEntityId += 1;
+                if (entity.DelayOrAngleOrEntityId == 10)
                 {
-                    entity.DelayOrAngle = 0;
+                    entity.DelayOrAngleOrEntityId = 0;
                     int targetIndex = entity.Bytes[1];
                     if ((uint)targetIndex < entitySlots.Length)
                     {
@@ -15572,7 +15573,7 @@ SetAnim6:
             2, 0x1E, 4, 0x1C, 1, 0x1F
         };
 
-        if (entity.DelayOrAngle != 0)
+        if (entity.DelayOrAngleOrEntityId != 0)
         {
             return;
         }
@@ -15912,7 +15913,7 @@ SetAnim6:
                 {
                     gameEngine.GetMatchingEntityBySearchType(entity, 6);
                     gameEngine.DestroyEntity(gameEngine.StaticVariables.g_matchingEntitiesBuffer[0]);
-                    entity.DelayOrAngle = 1;
+                    entity.DelayOrAngleOrEntityId = 1;
                 }
                 break;
         }
@@ -15965,13 +15966,13 @@ SetAnim6:
             entity.Bytes[0] = 2;
             entity.TargetAnimationId = 0x0B;
             gameEngine.StaticVariables.g_scrollingParameters.Flag = 0;
-            entity.DelayOrAngle = 0;
+            entity.DelayOrAngleOrEntityId = 0;
         }
 
-        if (entity.DelayOrAngle != 0)
+        if (entity.DelayOrAngleOrEntityId != 0)
         {
-            int delay = entity.DelayOrAngle - 1;
-            entity.DelayOrAngle = delay;
+            int delay = entity.DelayOrAngleOrEntityId - 1;
+            entity.DelayOrAngleOrEntityId = delay;
             if (delay == 0)
             {
                 gameEngine.StaticVariables.g_scrollingParameters.Flag = 0;
@@ -16003,11 +16004,11 @@ SetAnim6:
                 gameEngine.StaticVariables.g_scrollingParameters.SpeedY = 1;
                 gameEngine.StaticVariables.g_scrollingParameters.LimitX = 2;
                 gameEngine.StaticVariables.g_scrollingParameters.LimitY = 2;
-                entity.DelayOrAngle = 0x1E;
+                entity.DelayOrAngleOrEntityId = 0x1E;
             }
         }
 
-        if (entity.DelayOrAngle == 0x1E || entity.DelayOrAngle == 0x19 || entity.DelayOrAngle == 0x14)
+        if (entity.DelayOrAngleOrEntityId == 0x1E || entity.DelayOrAngleOrEntityId == 0x19 || entity.DelayOrAngleOrEntityId == 0x14)
         {
             for (int i = 0; i < 2; i++)
             {
@@ -16300,7 +16301,7 @@ SetAnim6:
         else
         {
             Entity? attached = GetFireAiEntityRef(gameEngine, entity);
-            entity.DelayOrAngle = (entity.DelayOrAngle - (ushort)entity.AIValues[4] + 0x0C) & 0x1FF;
+            entity.DelayOrAngleOrEntityId = (entity.DelayOrAngleOrEntityId - (ushort)entity.AIValues[4] + 0x0C) & 0x1FF;
 
             if (attached == null)
             {
@@ -16572,12 +16573,12 @@ SetAnim6:
                             entity.AIValues[4] = 8;
                             gameEngine.StaticVariables.DAT_80191254 = 0;
                             entity.ItemState = 0;
-                            entity.DelayOrAngle = 0;
+                            entity.DelayOrAngleOrEntityId = 0;
 
                             for (int i = 0; i != 8; i++)
                             {
                                 Entity flame = gameEngine.SpawnWarpEntity(entity, 1, 0xC2, 0, 0, entity.PosZ + 0xC0000, 0);
-                                flame.DelayOrAngle = i << 6;
+                                flame.DelayOrAngleOrEntityId = i << 6;
                                 flame.TargetAnimationId = 1;
                             }
                         }
@@ -17087,9 +17088,9 @@ SetAnim6:
                     entity.AIValues[1] = (short)(entity.AIValues[1] - 1);
                 }
 
-                entity.DelayOrAngle = (entity.DelayOrAngle + gameEngine.StaticVariables.INT_ARRAY_80026cdc[slotIndex + 2]) & 0x1FF;
-                entity.PosX = warpSlot.BaseX + gameEngine.StaticVariables.g_sinus[entity.DelayOrAngle] * 0x1200;
-                entity.PosY = warpSlot.BaseY + gameEngine.StaticVariables.g_cosinus[entity.DelayOrAngle] * 0x1200;
+                entity.DelayOrAngleOrEntityId = (entity.DelayOrAngleOrEntityId + gameEngine.StaticVariables.INT_ARRAY_80026cdc[slotIndex + 2]) & 0x1FF;
+                entity.PosX = warpSlot.BaseX + gameEngine.StaticVariables.g_sinus[entity.DelayOrAngleOrEntityId] * 0x1200;
+                entity.PosY = warpSlot.BaseY + gameEngine.StaticVariables.g_cosinus[entity.DelayOrAngleOrEntityId] * 0x1200;
                 warpSlot.SavedX = entity.PosX;
                 warpSlot.SavedY = entity.PosY;
 
@@ -17324,7 +17325,7 @@ SetAnim6:
                     entity.Flags |= 0x40U;
                     if (slotIndex == 0)
                     {
-                        parentEntity.DelayOrAngle = 0x708;
+                        parentEntity.DelayOrAngleOrEntityId = 0x708;
                     }
                     else
                     {
@@ -17362,8 +17363,8 @@ SetAnim6:
                 break;
 
             case 8:
-                entity.PosX = warpSlot.BaseX + gameEngine.StaticVariables.g_sinus[entity.DelayOrAngle] * 0x1200;
-                entity.PosY = warpSlot.BaseY + gameEngine.StaticVariables.g_cosinus[entity.DelayOrAngle] * 0x1200;
+                entity.PosX = warpSlot.BaseX + gameEngine.StaticVariables.g_sinus[entity.DelayOrAngleOrEntityId] * 0x1200;
+                entity.PosY = warpSlot.BaseY + gameEngine.StaticVariables.g_cosinus[entity.DelayOrAngleOrEntityId] * 0x1200;
                 entity.PosZ = 0x00E00000;
                 if (entity.ForceResetAnimationFlag != 0)
                 {
@@ -17649,7 +17650,7 @@ SetAnim6:
             entity.TargetAnimationId = 10;
             entity.Flags = (entity.Flags & 0xfff8ff7fU) | 0x10000;
             entity.ItemState = entity.PosY;
-            entity.DelayOrAngle = entity.PosX;
+            entity.DelayOrAngleOrEntityId = entity.PosX;
         }
         else
         {
@@ -17724,7 +17725,7 @@ SetAnim6:
                             entity.TargetDirection = (uint)(Random.Next() % 32);
                         }
 
-                        deltaX = entity.PosX - entity.DelayOrAngle;
+                        deltaX = entity.PosX - entity.DelayOrAngleOrEntityId;
                         deltaY = entity.PosY - entity.ItemState;
 
                         if (deltaX < 0)
@@ -17742,7 +17743,7 @@ SetAnim6:
                             return;
                         }
 
-                        deltaX = entity.DelayOrAngle - entity.PosX;
+                        deltaX = entity.DelayOrAngleOrEntityId - entity.PosX;
                         deltaY = entity.ItemState - entity.PosY;
                     }
                     else
@@ -17790,7 +17791,7 @@ SetAnim6:
                 {
                     entity.TargetAnimationId = 0xd;
                     entity.ForceZ = 0;
-                    entity.PosX = entity.DelayOrAngle;
+                    entity.PosX = entity.DelayOrAngleOrEntityId;
                     entity.PosY = entity.ItemState;
                 }
             }
@@ -17841,9 +17842,9 @@ SetAnim6:
 
         if (entity.Bytes[0] == 2)
         {
-            if (entity.DelayOrAngle != 0)
+            if (entity.DelayOrAngleOrEntityId != 0)
             {
-                entity.DelayOrAngle -= 1;
+                entity.DelayOrAngleOrEntityId -= 1;
                 return;
             }
 
@@ -17956,11 +17957,11 @@ SetAnim6:
                 entity.ForceZ = value;
             }
 
-            var delay = entity.DelayOrAngle - 1;
+            var delay = entity.DelayOrAngleOrEntityId - 1;
 
-            if (0 < entity.DelayOrAngle)
+            if (0 < entity.DelayOrAngleOrEntityId)
             {
-                entity.DelayOrAngle = delay;
+                entity.DelayOrAngleOrEntityId = delay;
 
                 if (delay == 0)
                 {

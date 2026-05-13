@@ -471,7 +471,7 @@ public class EffectManager
         //AlundraEngine.Debug.Debugger.Breakpoint();
         var initPosX = _gameEngine.StaticVariables.g_itemDropProperties[itemId].Field1 == 0 ? -1 : 600;
 
-        itemEntity.DelayOrAngle = initPosX;
+        itemEntity.DelayOrAngleOrEntityId = initPosX;
         itemEntity.ItemState = 0;
         itemEntity.AIValues[0] = 0;
         itemEntity.AIValues[1] = 0;

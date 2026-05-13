@@ -1135,7 +1135,7 @@ public class EntityManager
         return sortValue;
     }
 
-    // 8003a374
+    // GHIDRA: ComputeNewHp @ 0x8003A374
     public bool ComputeNewHp(Entity entity)
     {
         int newHp;
