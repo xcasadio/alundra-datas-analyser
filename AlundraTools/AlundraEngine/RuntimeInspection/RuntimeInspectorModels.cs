@@ -204,13 +204,34 @@ internal sealed class RuntimeTraceEntry
     public int BossSlotIndex { get; init; } = -1;
     public int BossStatus { get; init; }
     public uint BossTargetAnimationId { get; init; }
+    public uint BossTargetDirection { get; init; }
+    public uint BossCurrentDirection { get; init; }
     public int BossBytes1 { get; init; }
     public int BossBytes2 { get; init; }
     public int BossDelayOrAngle { get; init; }
     public int BossAIValue1 { get; init; }
     public int BossAIValue4 { get; init; }
+    public int BossPosX { get; init; }
+    public int BossPosY { get; init; }
+    public int BossForceX { get; init; }
+    public int BossForceY { get; init; }
+    public int BossTargetForceX { get; init; }
+    public int BossTargetForceY { get; init; }
+    public int BossFinalForceX { get; init; }
+    public int BossFinalForceY { get; init; }
     public int GlobalA4 { get; init; }
+    public int GlobalA8 { get; init; }
+    public int GlobalAC { get; init; }
+    public int GlobalB0 { get; init; }
     public int GlobalB4 { get; init; }
+    public int BossNextStatus { get; init; }
+    public uint BossNextSpriteTableIndex { get; init; }
+    public uint BossNextTargetAnimationId { get; init; }
+    public uint BossNextTargetDirection { get; init; }
+    public uint BossNextCurrentDirection { get; init; }
+    public int BossNextDelayOrAngle { get; init; }
+    public int BossNextPosX { get; init; }
+    public int BossNextPosY { get; init; }
     public int MatchingFollowers { get; init; } = -1;
     public IReadOnlyList<int> BossDelays { get; init; } = [];
 }

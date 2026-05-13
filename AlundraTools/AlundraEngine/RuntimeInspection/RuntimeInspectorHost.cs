@@ -592,11 +592,29 @@ public sealed class RuntimeInspectorHost : IDisposable
         var bossSlotIndex = -1;
         var bossStatus = 0;
         uint bossTargetAnimationId = 0;
+        uint bossTargetDirection = 0;
+        uint bossCurrentDirection = 0;
         var bossBytes1 = 0;
         var bossBytes2 = 0;
         var bossDelayOrAngle = 0;
         var bossAIValue1 = 0;
         var bossAIValue4 = 0;
+        var bossPosX = 0;
+        var bossPosY = 0;
+        var bossForceX = 0;
+        var bossForceY = 0;
+        var bossTargetForceX = 0;
+        var bossTargetForceY = 0;
+        var bossFinalForceX = 0;
+        var bossFinalForceY = 0;
+        var bossNextStatus = 0;
+        uint bossNextSpriteTableIndex = 0;
+        uint bossNextTargetAnimationId = 0;
+        uint bossNextTargetDirection = 0;
+        uint bossNextCurrentDirection = 0;
+        var bossNextDelayOrAngle = 0;
+        var bossNextPosX = 0;
+        var bossNextPosY = 0;
         var matchingFollowers = -1;
         IReadOnlyList<int> bossDelays = [];
 
@@ -613,11 +631,34 @@ public sealed class RuntimeInspectorHost : IDisposable
             bossSlotIndex = index;
             bossStatus = entity.Status;
             bossTargetAnimationId = entity.TargetAnimationId;
+            bossTargetDirection = entity.TargetDirection;
+            bossCurrentDirection = entity.CurrentDirection;
             bossBytes1 = entity.Bytes[1];
             bossBytes2 = entity.Bytes[2];
             bossDelayOrAngle = entity.DelayOrAngleOrEntityId;
             bossAIValue1 = entity.AIValues[1];
             bossAIValue4 = entity.AIValues[4];
+            bossPosX = entity.PosX;
+            bossPosY = entity.PosY;
+            bossForceX = entity.ForceX;
+            bossForceY = entity.ForceY;
+            bossTargetForceX = entity.TargetForceX;
+            bossTargetForceY = entity.TargetForceY;
+            bossFinalForceX = entity.FinalForceX;
+            bossFinalForceY = entity.FinalForceY;
+
+            if (index + 1 < entitySlots.Length)
+            {
+                var nextEntity = entitySlots[index + 1];
+                bossNextStatus = nextEntity.Status;
+                bossNextSpriteTableIndex = nextEntity.SpriteTableIndex;
+                bossNextTargetAnimationId = nextEntity.TargetAnimationId;
+                bossNextTargetDirection = nextEntity.TargetDirection;
+                bossNextCurrentDirection = nextEntity.CurrentDirection;
+                bossNextDelayOrAngle = nextEntity.DelayOrAngleOrEntityId;
+                bossNextPosX = nextEntity.PosX;
+                bossNextPosY = nextEntity.PosY;
+            }
 
             if (index + 14 < entitySlots.Length)
             {
@@ -651,13 +692,34 @@ public sealed class RuntimeInspectorHost : IDisposable
             BossSlotIndex = bossSlotIndex,
             BossStatus = bossStatus,
             BossTargetAnimationId = bossTargetAnimationId,
+            BossTargetDirection = bossTargetDirection,
+            BossCurrentDirection = bossCurrentDirection,
             BossBytes1 = bossBytes1,
             BossBytes2 = bossBytes2,
             BossDelayOrAngle = bossDelayOrAngle,
             BossAIValue1 = bossAIValue1,
             BossAIValue4 = bossAIValue4,
+            BossPosX = bossPosX,
+            BossPosY = bossPosY,
+            BossForceX = bossForceX,
+            BossForceY = bossForceY,
+            BossTargetForceX = bossTargetForceX,
+            BossTargetForceY = bossTargetForceY,
+            BossFinalForceX = bossFinalForceX,
+            BossFinalForceY = bossFinalForceY,
             GlobalA4 = _engine.StaticVariables.DAT_801911a4,
+            GlobalA8 = _engine.StaticVariables.DAT_801911a8,
+            GlobalAC = _engine.StaticVariables.DAT_801911ac,
+            GlobalB0 = _engine.StaticVariables.DAT_801911b0,
             GlobalB4 = _engine.StaticVariables.DAT_801911b4,
+            BossNextStatus = bossNextStatus,
+            BossNextSpriteTableIndex = bossNextSpriteTableIndex,
+            BossNextTargetAnimationId = bossNextTargetAnimationId,
+            BossNextTargetDirection = bossNextTargetDirection,
+            BossNextCurrentDirection = bossNextCurrentDirection,
+            BossNextDelayOrAngle = bossNextDelayOrAngle,
+            BossNextPosX = bossNextPosX,
+            BossNextPosY = bossNextPosY,
             MatchingFollowers = matchingFollowers,
             BossDelays = bossDelays,
         };
