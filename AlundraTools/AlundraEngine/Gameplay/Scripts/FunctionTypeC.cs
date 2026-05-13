@@ -15420,7 +15420,7 @@ SetAnim6:
                     break;
                 }
 
-                if (entity.ChildEntity != null)
+                if (entity.ForceAdjusted != 0)
                 {
                     int stateMinusOne = entity.Bytes[1] - 1;
                     if ((uint)stateMinusOne < 2U)
