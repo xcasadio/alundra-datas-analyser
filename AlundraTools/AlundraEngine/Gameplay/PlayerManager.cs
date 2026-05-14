@@ -3448,8 +3448,6 @@ public class PlayerManager
                 return;
             }
 
-            direction = ScriptHelper.FixDirection(direction);
-
             if (_gameEngine.StaticVariables.PlayerEntity.CurrentDirection >> 3 != direction)
             {
                 return;

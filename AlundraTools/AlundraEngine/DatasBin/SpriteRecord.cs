@@ -25,11 +25,9 @@ public class SpriteRecord
         {
             for (uint dirIndex = 0; dirIndex < 4; dirIndex++)
             {
-                var direction = ScriptHelper.FixDirection(dirIndex);
-
-                if (AnimSets[i].AnimationOffsets[direction] != 0xffff)
+                if (AnimSets[i].AnimationOffsets[dirIndex] != 0xffff)
                 {
-                    AnimSets[i].PreloadedAnims[dirIndex] = GetAnimation(br, AnimSets[i].AnimationOffsets[direction]);
+                    AnimSets[i].PreloadedAnims[dirIndex] = GetAnimation(br, AnimSets[i].AnimationOffsets[dirIndex]);
                 }
             }
         }

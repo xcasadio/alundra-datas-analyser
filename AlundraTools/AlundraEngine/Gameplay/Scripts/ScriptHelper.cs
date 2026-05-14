@@ -10,17 +10,6 @@ public static class ScriptHelper
     public const int ProgramEDeactivate = 4;
     public const int ProgramFInteract = 5;
 
-
-    public static uint FixDirection(uint direction)
-    {
-        return direction switch
-        {
-            1 => 2,
-            2 => 1,
-            _ => direction
-        };
-    }
-
     public static int SignExtendWord(int i)
     {
         if ((i & 0x8000) == 0)
