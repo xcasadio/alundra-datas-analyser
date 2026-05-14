@@ -7,10 +7,94 @@ using AlundraEngine.UI;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using AlundraEngine.Balance;
 
 namespace AlundraEngine;
+
+// PARTIAL: runtime sequence track layout closed by xrefs, full command semantics still unknown
+[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 0xAC)]
+public unsafe struct SequenceTrackState
+{
+    public uint field_0x00;
+    public int SeqPosition;
+    public int SeqStartPos;
+    public int SeqLoopPos;
+    public byte field_0x10;
+    public byte MessageType;
+    public byte CurrentChannel;
+    public byte field_0x13;
+    public ushort field_0x14;
+    public byte field_0x16;
+    public fixed byte Orientation[16];
+    public byte field_0x27;
+    public byte Loops;
+    public byte field_0x29;
+    public byte field_0x2A;
+    public byte field_0x2B;
+    public fixed byte Channel[16];
+    public uint ResetLoop;
+    public uint field_0x40;
+    public ushort field_0x44;
+    public ushort LoopCount;
+    public ushort TimesPlayed;
+    public ushort Tempo;
+    public ushort Vab;
+    public fixed ushort Volume[16];
+    public short PreDelay;
+    public ushort CurrentTempo;
+    public ushort field_0x72;
+    public ushort field_0x74;
+    public ushort field_0x76;
+    public ushort field_0x78;
+    public ushort field_0x7A;
+    public uint field_0x7C;
+    public uint Playtime;
+    public uint field_0x84;
+    public uint Delay;
+    public uint field_0x8C;
+    public uint Flags;
+    public uint field_0x94;
+    public uint field_0x98;
+    public uint field_0x9C;
+    public uint field_0xA0;
+    public uint field_0xA4;
+    public uint field_0xA8;
+}
+
+// PARTIAL: runtime voice slot layout closed by xrefs, full field semantics still unknown
+[StructLayout(LayoutKind.Explicit, Size = 0x34)]
+public struct VoiceRuntimeSlot
+{
+    [FieldOffset(0x00)] public ushort field_0x00;
+    [FieldOffset(0x02)] public short ReplacementAge;
+    [FieldOffset(0x04)] public short CurrentPitch;
+    [FieldOffset(0x06)] public short VoiceStatus;
+    [FieldOffset(0x08)] public short field_0x08;
+    [FieldOffset(0x0A)] public byte field_0x0A;
+    [FieldOffset(0x0C)] public short Note;
+    [FieldOffset(0x0E)] public short SequenceKey;
+    [FieldOffset(0x10)] public short VabFirstToneIndex;
+    [FieldOffset(0x12)] public short ProgramIndex;
+    [FieldOffset(0x14)] public short ToneIndex;
+    [FieldOffset(0x16)] public short VabId;
+    [FieldOffset(0x18)] public short Priority;
+    [FieldOffset(0x1A)] public byte field_0x1A;
+    [FieldOffset(0x1B)] public byte NoiseState;
+    [FieldOffset(0x1C)] public short field_0x1C;
+    [FieldOffset(0x1E)] public short field_0x1E;
+    [FieldOffset(0x20)] public short field_0x20;
+    [FieldOffset(0x22)] public short field_0x22;
+    [FieldOffset(0x24)] public short field_0x24;
+    [FieldOffset(0x26)] public short field_0x26;
+    [FieldOffset(0x28)] public short field_0x28;
+    [FieldOffset(0x2A)] public short field_0x2A;
+    [FieldOffset(0x2C)] public short field_0x2C;
+    [FieldOffset(0x2E)] public short field_0x2E;
+    [FieldOffset(0x30)] public short field_0x30;
+    [FieldOffset(0x32)] public short field_0x32;
+}
 
 public class StaticVariables
 {
@@ -12254,10 +12338,13 @@ public class StaticVariables
     //public byte  PTR_s_(void_)NULL_800a7c58; // 800A7C58
     public byte PTR_DAT_800a7c5c; // 800A7C5C
     public byte PTR_DAT_800a7c60; // 800A7C60
-    public int[] g_sequenceOffsets = new int[7]; // 800A81C8
+    // GHIDRA: g_soundEffectSeqOffsets @ 0x800A81C8
+    public int[] g_soundEffectSeqOffsets = new int[7];
     public short g_currentVabId; // 800A8244
-    //public short g_vabHeader; // 800A8246
-    public short g_altSoundDriver; // 800A8248
+    // GHIDRA: g_globalSoundVabId @ 0x800A8246
+    public short g_globalSoundVabId;
+    // GHIDRA: g_mapSoundVabId @ 0x800A8248
+    public short g_mapSoundVabId;
     public int g_soundLoadState; // 800A824C
     public int g_partialVabBodyLoadState; // 800A8250
     public int g_forceStopAllSound; // 800A8254
@@ -12277,7 +12364,8 @@ public class StaticVariables
     public int g_cdIsReady; // 800A82B0
     public int g_cdReadMode; // 800A82B4
     public int DAT_800a82b8; // 800A82B8
-    public int g_soundEffectData; // 800A82E8
+    // GHIDRA: g_soundEffectData @ 0x800A82E8
+    public int g_soundEffectData;
     public short g_soundPitch; // 800A82EC
     public short g_soundNote; // 800A82EE
     public short g_soundBankTable; // 800A82F0
@@ -13097,7 +13185,8 @@ public class StaticVariables
     public int DAT_8016502c; // 8016502C
     public int DAT_80165120; // 80165120
     public int DAT_80165124; // 80165124
-    public short g_requestedSeqId; // 80165128
+    // GHIDRA: g_requestedSeqId @ 0x80165128
+    public short g_requestedSeqId;
     public int g_resetSoundFlag; // 8016512C
     public int g_animVolumeMap; // 80165130
     public int DAT_801660d0; // 801660D0
@@ -13105,18 +13194,27 @@ public class StaticVariables
     //public SpuReverbAttr g_spuReverbAttr; // 80166128
     //public SpuCommonAttr SpuCommonAttr_80166140; // 80166140
     public int g_errorMarker2; // 80166168
-    public short g_currentMapSoundIndex; // 80173844
-    public int g_currentSoundGroup; // 80173848
+    // GHIDRA: g_currentMapSoundIndex @ 0x80173844
+    public short g_currentMapSoundIndex;
+    // GHIDRA: g_currentSoundGroup @ 0x80173848
+    public int g_currentSoundGroup;
     public int DAT_8017384c; // 8017384C
-    public int g_soundEffectState; // 80175850
-    public byte[] g_voiceState = new byte[24]; // 80175858
-    public int[] INT_ARRAY_80175874 = new int[23]; // 80175874
-    public int g_voiceType; // 801758D0
-    public int g_voicePitch; // 80175930
-    public int g_voiceVolumeLeft; // 80175990
-    public int g_voiceVolumeRight; // 801759F0
-    public int INT_80175a50; // 80175A50
-    public short DAT_80175cfe; // 80175CFE
+    // GHIDRA: g_soundBinSequenceBuffer @ 0x80173850
+    public byte[] g_soundBinSequenceBuffer = new byte[0x800]; // 80173850
+    // GHIDRA: g_soundEffectState @ 0x80175850
+    public int g_soundEffectState;
+    // GHIDRA: g_voiceState @ 0x80175858
+    public byte[] g_voiceState = new byte[24];
+    // GHIDRA: g_voiceSfxId @ 0x80175870
+    public int[] g_voiceSfxId = new int[24];
+    // GHIDRA: g_voiceVabId @ 0x801758D0
+    public int[] g_voiceVabId = new int[24];
+    // GHIDRA: g_voiceToneIndex @ 0x80175930
+    public int[] g_voiceToneIndex = new int[24];
+    // GHIDRA: g_voiceToneVolume @ 0x80175990
+    public int[] g_voiceToneVolume = new int[24];
+    // GHIDRA: g_voiceTonePan @ 0x801759F0
+    public int[] g_voiceTonePan = new int[24];
     public short[] g_loadedSequenceHandles = new short[8]; // 80175D00
     public short SHORT_80175d10; // 80175D10
     public short SHORT_80175d12; // 80175D12
@@ -13553,14 +13651,21 @@ public class StaticVariables
     public int DAT_801f6554; // 801F6554
     public uint g_padStateFromPsx; // 801F6CC8
     public int g_padMode; // 801F6CCC
-    public int DAT_801f6cd0; // 801F6CD0
-    public int DAT_801f6cd8; // 801F6CD8
+    // GHIDRA: g_voiceCommandLock @ 0x801F6CD0
+    public int g_voiceCommandLock; // 801F6CD0
+    // GHIDRA: g_sequenceSlotMask @ 0x801F6CD8
+    public int g_sequenceSlotMask; // 801F6CD8
     public int DAT_801f6ce0; // 801F6CE0
-    public int DAT_801f6ce8; // 801F6CE8
-    public short DAT_801f7568; // 801F7568
-    public short DAT_801f7570; // 801F7570
+    // GHIDRA: g_sequenceStatePointers @ 0x801F6CE8
+    // SOURCE: FUN_8008EEAC(0x80175A50, 4, 1) maps entries to SequenceTrackState[4], stride 0xAC.
+    public SequenceTrackState[] g_sequenceStatePointers = new SequenceTrackState[4]; // 801F6CE8 -> 80175A50
+    // GHIDRA: g_sequenceSlotCount @ 0x801F7568
+    public short g_sequenceSlotCount; // 801F7568
+    // GHIDRA: g_sequenceTrackCount @ 0x801F7570
+    public short g_sequenceTrackCount; // 801F7570
     //public SpuReverbAttr g_spuReverbAttr2; // 801F7578
-    public int DAT_801f75d0; // 801F75D0
+    // GHIDRA: g_loadedVabHeaderPointers @ 0x801F75D0
+    public int[] g_loadedVabHeaderPointers = new int[16]; // 801F75D0
     public short DAT_sound_801f7610; // 801F7610
     public short DAT_sound_801f7658; // 801F7658
     public short DAT_sound_801f7660; // 801F7660
@@ -13593,65 +13698,34 @@ public class StaticVariables
     public short DAT_maybeCurrentVoiceIndex_801f76b2; // 801F76B2
     public short DAT_801f76b4; // 801F76B4
     public short DAT_801f76b6; // 801F76B6
-    public byte[] DAT_sound_801f76b8 = new byte[16]; // 801F76B8
+    // GHIDRA: g_loadedVabState @ 0x801F76B8
+    public byte[] g_loadedVabState = new byte[16]; // 801F76B8
     public byte g_voiceLockFlag; // 801F76C8
-    public short DAT_sound_801f7710; // 801F7710
-    public int DAT_sound_801f7718; // 801F7718
-    public int DAT_801f7758; // 801F7758
-    public short g_volumesL; // 801F7798
-    public short g_volumesR; // 801F779A
-    public short g_pitches; // 801F779C
-    public short g_reverbs; // 801F779E
-    public short g_adsrAttack; // 801F77A0
-    public short g_adsrSustain; // 801F77A2
-    public byte g_voiceUpdateFlags; // 801F7918
+    // GHIDRA: g_loadedVabBodySizes @ 0x801F76D0
+    public int[] g_loadedVabBodySizes = new int[16]; // 801F76D0
+    // GHIDRA: g_loadedVabCount @ 0x801F7710
+    public short g_loadedVabCount; // 801F7710
+    // GHIDRA: g_loadedVabSpuAllocationPointers @ 0x801F7718
+    public int[] g_loadedVabSpuAllocationPointers = new int[16]; // 801F7718
+    // GHIDRA: g_loadedVabSampleDataPointers @ 0x801F7758
+    public int[] g_loadedVabSampleDataPointers = new int[16]; // 801F7758
+    // GHIDRA: g_spuVoiceVolumeLeft @ 0x801F7798
+    public short g_spuVoiceVolumeLeft; // 801F7798
+    // GHIDRA: g_spuVoiceVolumeRight @ 0x801F779A
+    public short g_spuVoiceVolumeRight; // 801F779A
+    // GHIDRA: g_spuVoicePitch @ 0x801F779C
+    public short g_spuVoicePitch; // 801F779C
+    // GHIDRA: g_spuVoiceReverb @ 0x801F779E
+    public short g_spuVoiceReverb; // 801F779E
+    // GHIDRA: g_spuVoiceAdsr1 @ 0x801F77A0
+    public short g_spuVoiceAdsr1; // 801F77A0
+    // GHIDRA: g_spuVoiceAdsr2 @ 0x801F77A2
+    public short g_spuVoiceAdsr2; // 801F77A2
+    // GHIDRA: g_spuVoiceDirtyFlags @ 0x801F7918
+    public byte g_spuVoiceDirtyFlags; // 801F7918
     public byte DAT_801f7919; // 801F7919
-    public short DAT_sound_801f7930; // 801F7930
-    public short DAT_sound_801f7932; // 801F7932
-    public short DAT_sound_801f7934; // 801F7934
-    public short g_voiceStatusTable; // 801F7936
-    public short DAT_sound_801f7938; // 801F7938
-    public byte DAT_sound_801f793a; // 801F793A
-    public short DAT_801f793c; // 801F793C
-    public short DAT_sound_801f793e; // 801F793E
-    public short DAT_sound_801f7940; // 801F7940
-    public short DAT_sound_801f7942; // 801F7942
-    public short DAT_sound_801f7944; // 801F7944
-    public short DAT_801f7946; // 801F7946
-    public short DAT_801f7948; // 801F7948
-    public byte g_voiceNoiseFlags; // 801F794B
-    public short DAT_sound_801f794c; // 801F794C
-    public short DAT_sound_801f794e; // 801F794E
-    public short DAT_sound_801f7950; // 801F7950
-    public short DAT_sound_801f7952; // 801F7952
-    public short DAT_sound_801f7954; // 801F7954
-    public short DAT_sound_801f7958; // 801F7958
-    public short DAT_sound_801f795a; // 801F795A
-    public short DAT_sound_801f795c; // 801F795C
-    public short DAT_sound_801f795e; // 801F795E
-    public short DAT_sound_801f7960; // 801F7960
-    public short DAT_801f7964; // 801F7964
-    public short DAT_801f7966; // 801F7966
-    public short DAT_801f7968; // 801F7968
-    public short DAT_801f796a; // 801F796A
-    public short DAT_801f796c; // 801F796C
-    public byte DAT_801f796e; // 801F796E
-    public short DAT_801f7970; // 801F7970
-    public short DAT_801f7972; // 801F7972
-    public short DAT_801f7974; // 801F7974
-    public short DAT_801f7976; // 801F7976
-    public short DAT_801f7978; // 801F7978
-    public byte DAT_801f797f; // 801F797F
-    public short DAT_801f7980; // 801F7980
-    public short DAT_801f7982; // 801F7982
-    public short DAT_801f7984; // 801F7984
-    public short DAT_801f7986; // 801F7986
-    public short DAT_801f7988; // 801F7988
-    public short DAT_801f798c; // 801F798C
-    public short DAT_801f798e; // 801F798E
-    public short DAT_801f7990; // 801F7990
-    public short DAT_801f7992; // 801F7992
-    public short DAT_801f7994; // 801F7994
+    // GHIDRA: g_voiceRuntimeSlots @ 0x801F7930
+    public VoiceRuntimeSlot[] g_voiceRuntimeSlots = new VoiceRuntimeSlot[24]; // 801F7930
     public int g_activeVoiceBufferIndex; // 801F7E10
     public int g_voiceActiveTable; // 801F7E18
     public int DAT_801f7e1c; // 801F7E1C

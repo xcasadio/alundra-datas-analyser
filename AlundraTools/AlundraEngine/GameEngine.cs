@@ -1027,16 +1027,17 @@ public class GameEngine
         StaticVariables.g_animationCounter = 2;
     }
 
-    // 8004a09c
+    // GHIDRA: LoadMapSounds @ 0x8004A09C
     private int LoadMapSounds(uint mapId)
     {
         SoundManager.LoadMapSounds(mapId);
+        MainInventoryManager.FUN_8005ac90();
         HudManager.InitializeHudPositionBeforeHide();
         return 1;
     }
 
-    //80049d3c
-    public int GetSoundOffsetByMapId(uint mapId)
+    // GHIDRA: GetMapSoundIndex @ 0x80049D3C
+    public int GetMapSoundIndex(uint mapId)
     {
         int currentMapId;
         var i = 0;

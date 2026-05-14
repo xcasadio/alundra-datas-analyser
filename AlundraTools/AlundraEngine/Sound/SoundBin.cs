@@ -3,11 +3,26 @@
 public class SoundBin
 {
     private readonly string _soundBinfile;
+    private const byte SoundBinSectionTypeUnknown = 0;
+    private const byte SoundBinSectionTypeSequence = 1;
+    private const byte SoundBinSectionTypeVab = 2;
+
+    public int SoundBinSectionCount;
+    public int[] SoundBinSectionOffsets = [];
+    public int[] SoundBinSectionSizes = [];
+    public byte[] SoundBinSectionTypes = [];
+    public int SequenceSectionCount;
+    public int[] SequenceSectionOffsets = [];
+    public int[] SequenceSectionSizes = [];
+    public int VabSectionCount;
+    public int[] VabSectionOffsets = [];
+    public int[] VabSectionSizes = [];
 
     public SoundBin(string soundBinfile)
     {
         _soundBinfile = soundBinfile;
         SfxRecords = SfxRecordsData.Select(x => new SfxRecord(x)).ToArray();
+        ScanSoundBinSections(soundBinfile);
 
         using var br = new BinaryReader(File.OpenRead(soundBinfile));
         //red seq buff
@@ -31,6 +46,101 @@ public class SoundBin
         _globalSfxVabBodyBuff = new byte[len];
         br.BaseStream.Position = pos;
         br.Read(_globalSfxVabBodyBuff, 0, len);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    private void ScanSoundBinSections(string soundBinfile)
+    {
+        var buffer = File.ReadAllBytes(soundBinfile);
+        var sectionCount = 0;
+        var sequenceSectionCount = 0;
+        var vabSectionCount = 0;
+
+        for (var i = 0; i + 4 <= buffer.Length; i++)
+        {
+            var sectionType = GetSoundBinSectionType(buffer, i);
+
+            if (sectionType == SoundBinSectionTypeUnknown)
+            {
+                continue;
+            }
+
+            sectionCount++;
+
+            if (sectionType == SoundBinSectionTypeSequence)
+            {
+                sequenceSectionCount++;
+            }
+            else if (sectionType == SoundBinSectionTypeVab)
+            {
+                vabSectionCount++;
+            }
+        }
+
+        SoundBinSectionCount = sectionCount;
+        SoundBinSectionOffsets = new int[sectionCount];
+        SoundBinSectionSizes = new int[sectionCount];
+        SoundBinSectionTypes = new byte[sectionCount];
+        SequenceSectionCount = sequenceSectionCount;
+        SequenceSectionOffsets = new int[sequenceSectionCount];
+        SequenceSectionSizes = new int[sequenceSectionCount];
+        VabSectionCount = vabSectionCount;
+        VabSectionOffsets = new int[vabSectionCount];
+        VabSectionSizes = new int[vabSectionCount];
+
+        var sectionIndex = 0;
+        for (var i = 0; i + 4 <= buffer.Length; i++)
+        {
+            var sectionType = GetSoundBinSectionType(buffer, i);
+
+            if (sectionType == SoundBinSectionTypeUnknown)
+            {
+                continue;
+            }
+
+            SoundBinSectionOffsets[sectionIndex] = i;
+            SoundBinSectionTypes[sectionIndex] = sectionType;
+            sectionIndex++;
+        }
+
+        var sequenceSectionIndex = 0;
+        var vabSectionIndex = 0;
+        for (var i = 0; i < sectionCount; i++)
+        {
+            var sectionStart = SoundBinSectionOffsets[i];
+            var sectionEnd = i + 1 < sectionCount ? SoundBinSectionOffsets[i + 1] : buffer.Length;
+            var sectionSize = sectionEnd - sectionStart;
+            SoundBinSectionSizes[i] = sectionSize;
+
+            if (SoundBinSectionTypes[i] == SoundBinSectionTypeSequence)
+            {
+                SequenceSectionOffsets[sequenceSectionIndex] = sectionStart;
+                SequenceSectionSizes[sequenceSectionIndex] = sectionSize;
+                sequenceSectionIndex++;
+            }
+            else if (SoundBinSectionTypes[i] == SoundBinSectionTypeVab)
+            {
+                VabSectionOffsets[vabSectionIndex] = sectionStart;
+                VabSectionSizes[vabSectionIndex] = sectionSize;
+                vabSectionIndex++;
+            }
+        }
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static byte GetSoundBinSectionType(byte[] buffer, int offset)
+    {
+        if (buffer[offset] == (byte)'p' && buffer[offset + 1] == (byte)'Q' && buffer[offset + 2] == (byte)'E' && buffer[offset + 3] == (byte)'S')
+        {
+            return SoundBinSectionTypeSequence;
+        }
+
+        if (buffer[offset] == (byte)'p' && buffer[offset + 1] == (byte)'B' && buffer[offset + 2] == (byte)'A' && buffer[offset + 3] == (byte)'V')
+        {
+            return SoundBinSectionTypeVab;
+        }
+
+        return SoundBinSectionTypeUnknown;
     }
 
     private int _mapVabIndex = -1;
@@ -253,9 +363,8 @@ public class SoundBin
         var filterTablePos = new[] { 0, 60, 115, 98, 122 };
         var filterTableNeg = new[] { 0, 0, -52, -55, -60 };
 
-        var currentBlockSamples = new short[SamplesFromLastBlock + SamplesPerBlock];
-        var adpcmLastSamples = new short[2];
-        var lastSamples = new short[2];
+        var oldSmp = 0;
+        var olderSmpl = 0;
         var numblocks = len / 16;
         var dpos = pos;
         var block = new AdpcmBlock();
@@ -288,31 +397,27 @@ public class SoundBin
                 }
             }
 
-            //process block
-            currentBlockSamples[2] = currentBlockSamples[SamplesFromLastBlock + SamplesPerBlock - 1];
-            currentBlockSamples[1] = currentBlockSamples[SamplesFromLastBlock + SamplesPerBlock - 2];
-            currentBlockSamples[0] = currentBlockSamples[SamplesFromLastBlock + SamplesPerBlock - 3];
             var shift = (byte)(block.ShiftFilter & 0xf);
-            //shift = shift > 12 ? (byte)9 : shift;
+            shift = shift > 12 ? (byte)9 : shift;
             var filterIndex = (byte)((block.ShiftFilter >> 4) & 0x7);
             filterIndex = filterIndex > 4 ? (byte)4 : filterIndex;
             var filterPos = filterTablePos[filterIndex];
             var filterNeg = filterTableNeg[filterIndex];
-            lastSamples[0] = adpcmLastSamples[0];
-            lastSamples[1] = adpcmLastSamples[1];
+
             for (var sdex = 0; sdex < SamplesPerBlock; sdex++)
             {
                 var nib = block.Data[sdex / 2] >> (sdex % 2 * 4) & 0xf;
-                var sample = (short)(nib << 12) >> shift;
-                sample += (lastSamples[0] * filterPos) >> 6;
-                sample += (lastSamples[1] * filterNeg) >> 6;
+                var rawSample = (sbyte)(nib << 4) >> 4;
+                var shiftedSample = rawSample << (12 - shift);
+                var filteredSample = shiftedSample + (oldSmp * filterPos + olderSmpl * filterNeg + 32) / 64;
+                var clampedSample = (short)(filteredSample < -0x8000 ? -0x8000 : filteredSample > 0x7FFF ? 0x7FFF : filteredSample);
 
-                lastSamples[1] = lastSamples[0];
-                lastSamples[0] = (short)(sample < -0x8000 ? -0x8000 : sample > 0x7FFF ? 0x7FFF : sample);
-                currentBlockSamples[SamplesFromLastBlock + sdex] = lastSamples[0];
+                olderSmpl = oldSmp;
+                oldSmp = clampedSample;
+
                 if (is8Bit)
                 {
-                    int s = lastSamples[0];
+                    int s = clampedSample;
                     var samplemax = 0x7fff;
                     var scaledmax = 0x7f;
                     s = (int)(s * ((float)scaledmax / samplemax));
@@ -322,14 +427,11 @@ public class SoundBin
                 }
                 else
                 {
-                    pcm[pcmpos + 1] = (byte)(lastSamples[0] & 0xff);
-                    pcm[pcmpos + 0] = (byte)((lastSamples[0] & 0xff00) >> 8);
+                    pcm[pcmpos + 1] = (byte)(clampedSample & 0xff);
+                    pcm[pcmpos + 0] = (byte)((clampedSample & 0xff00) >> 8);
                     pcmpos += 2;
                 }
             }
-
-            adpcmLastSamples[0] = currentBlockSamples[0];
-            adpcmLastSamples[1] = currentBlockSamples[1];
 
             dpos += 16;
         }

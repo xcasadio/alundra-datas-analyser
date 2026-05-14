@@ -42,7 +42,7 @@ public class SoundManager
         //FUN_8008e398();
         //SpuSetMute(1);
         //FUN_8008ec8c(4);
-        //_gameEngine.StaticVariables.g_vabHeader = -1;
+        //_gameEngine.StaticVariables.g_globalSoundVabId = -1;
         _gameEngine.StaticVariables.g_currentVabId = -1;
         //FUN_8008f994();
 
@@ -108,11 +108,11 @@ public class SoundManager
                 _gameEngine.StaticVariables.g_currentMapSoundIndex = 0;
                 InitializeBgm(_gameEngine.StaticVariables.g_requestedSeqId);
                 ResetSomethingSound(_gameEngine.StaticVariables.g_requestedSeqId);
-                MaybeFreeSound(_gameEngine.StaticVariables.g_currentVabId);
+                FreeLoadedVab(_gameEngine.StaticVariables.g_currentVabId);
             }
             else if (_gameEngine.StaticVariables.g_cdIsReady == 0)
             {
-                MaybeLoadSound(soundIndex, stopAllSound);
+                LoadMapSequence(soundIndex, stopAllSound);
 
                 if (stopAllSound == 0)
                 {
@@ -129,22 +129,22 @@ public class SoundManager
         }
     }
 
-    //80049be0
-    public void MaybeLoadSound(int soundIndex, int stopAllSound)
+    // GHIDRA: LoadMapSequence @ 0x80049BE0
+    public void LoadMapSequence(int soundIndex, int stopAllSound)
     {
         int segId;
 
         _gameEngine.StaticVariables.g_currentMapSoundIndex = (short)soundIndex;
         InitializeBgm(_gameEngine.StaticVariables.g_requestedSeqId);
         ResetSomethingSound(_gameEngine.StaticVariables.g_requestedSeqId);
-        MaybeFreeSound(_gameEngine.StaticVariables.g_currentVabId);
+        FreeLoadedVab(_gameEngine.StaticVariables.g_currentVabId);
 
         if (_gameEngine.StaticVariables.g_currentMapSoundIndex == -1)
         {
             _gameEngine.StaticVariables.g_currentMapSoundIndex = 1;
         }
 
-        //FUN_8004a184(_gameEngine.StaticVariables.g_currentVabId, _gameEngine.StaticVariables.DAT_8015b1a0, _gameEngine.StaticVariables.g_wind_tx_buffer, 0x39040);
+        //LoadMapSequenceVab(_gameEngine.StaticVariables.g_currentVabId, _gameEngine.StaticVariables.DAT_8015b1a0, _gameEngine.StaticVariables.g_wind_tx_buffer, 0x39040);
 
         if (_gameEngine.StaticVariables.g_currentVabId < 0)
         {
@@ -174,21 +174,21 @@ public class SoundManager
         _gameEngine.StaticVariables.g_resetSoundFlag = 1;
     }
 
-    //8008f9a4
-    private void MaybeFreeSound(short vabId)
+    // GHIDRA: FreeLoadedVab @ 0x8008F9A4
+    private void FreeLoadedVab(short vabId)
     {
         if (vabId < 0x10 && vabId > 0)
         {
-            if (_gameEngine.StaticVariables.DAT_sound_801f76b8[vabId] == 1)
+            if (_gameEngine.StaticVariables.g_loadedVabState[vabId] == 1)
             {
-                //SpuFree(_gameEngine.StaticVariables.DAT_sound_801f7718[vabId]);
-                _gameEngine.StaticVariables.DAT_sound_801f76b8[vabId] = 0;
-                _gameEngine.StaticVariables.DAT_sound_801f7710 = (short)(_gameEngine.StaticVariables.DAT_sound_801f7710 - 1);
+                //SpuFree(_gameEngine.StaticVariables.g_loadedVabSpuAllocationPointers[vabId]);
+                _gameEngine.StaticVariables.g_loadedVabState[vabId] = 0;
+                _gameEngine.StaticVariables.g_loadedVabCount = (short)(_gameEngine.StaticVariables.g_loadedVabCount - 1);
             }
         }
     }
 
-    //8008df04
+    // GHIDRA: ResetSomethingSound @ 0x8008DF04
     public void ResetSomethingSound(short vabId)
     {
         ResetSomethingSound2(vabId);
@@ -215,16 +215,29 @@ public class SoundManager
         }
     }
     
-    // 8008f458
+    // GHIDRA: InitializeBgm @ 0x8008F458
     public void InitializeBgm(short seqId)
     {
         FUN_8008f2e8(seqId, 0);
     }
 
-    // 8008f2e8
+    // GHIDRA: FUN_8008F2E8 @ 0x8008F2E8
     private void FUN_8008f2e8(short seqId, short i)
     {
         //AlundraEngine.Debug.Debugger.Breakpoint();
+    }
+
+    // GHIDRA: FUN_8008A718 @ 0x8008A718
+    private void FUN_8008a718(int param_1)
+    {
+        // BLOCKED: PSX sound driver wait/update/counter contract is not ported in the current C# audio backend.
+    }
+
+    // GHIDRA: FUN_8008F808 @ 0x8008F808
+    private void FUN_8008f808(short param_1, int param_2, int param_3)
+    {
+        // PARTIAL: wrapper to FUN_8008F760(seqId, 0, volume, fadeTicks) closed.
+        // BLOCKED: underlying sequence state at 0x801F6CE8 is not ported in the current C# audio backend.
     }
 
     //80049af4
@@ -286,47 +299,125 @@ public class SoundManager
         //}
     }
 
-    //8004a09c
+    // GHIDRA: FindSfxRecordForSoundGroup @ 0x80048A14
+    public int FindSfxRecordForSoundGroup(int sfxId, int vabId)
+    {
+        int refSfxId = sfxId;
+
+        while (true)
+        {
+            var soundEffectData = _gameEngine.SoundBin.SfxRecords[refSfxId];
+
+            if (soundEffectData.VabId == vabId)
+            {
+                return refSfxId;
+            }
+
+            refSfxId = soundEffectData.RefSfxId;
+
+            if (refSfxId == 0)
+            {
+                return -1;
+            }
+        }
+    }
+
+    // GHIDRA: FindVoiceBySfxId @ 0x80049714
+    public int FindVoiceBySfxId(int param_1)
+    {
+        var iVar1 = 0;
+
+        do
+        {
+            if (_gameEngine.StaticVariables.g_voiceSfxId[iVar1] == param_1)
+            {
+                return iVar1;
+            }
+
+            iVar1++;
+        }
+        while (iVar1 < 0x18);
+
+        return -1;
+    }
+
+    // GHIDRA: FindVoiceBySfxIdAndToneIndex @ 0x8004974C
+    public int FindVoiceBySfxIdAndToneIndex(int param_1, int param_2)
+    {
+        var iVar1 = 0;
+
+        do
+        {
+            if (_gameEngine.StaticVariables.g_voiceSfxId[iVar1] == param_1
+                && _gameEngine.StaticVariables.g_voiceToneIndex[iVar1] == param_2)
+            {
+                return iVar1;
+            }
+
+            iVar1++;
+        }
+        while (iVar1 < 0x18);
+
+        return -1;
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: sound-side body split from LoadMapSounds @ 0x8004A09C
     public void LoadMapSounds(uint mapId)
     {
-        var soundoffset = _gameEngine.GetSoundOffsetByMapId(mapId);
+        var soundoffset = _gameEngine.GetMapSoundIndex(mapId);
 
         if (soundoffset != 0)
         {
             int iVar2 = _gameEngine.StaticVariables.g_currentMapSoundIndex;
-            soundoffset = _gameEngine.GetSoundOffsetByMapId(mapId);
+            soundoffset = _gameEngine.GetMapSoundIndex(mapId);
 
             if (iVar2 != soundoffset)
             {
                 if (_gameEngine.StaticVariables.g_requestedSeqId >= 0)
                 {
                     InitializeBgm(_gameEngine.StaticVariables.g_requestedSeqId);
+                    FUN_8008a718(0);
                     ResetSomethingSound(_gameEngine.StaticVariables.g_requestedSeqId);
                 }
                     
-                soundoffset = _gameEngine.GetSoundOffsetByMapId(mapId);
+                soundoffset = _gameEngine.GetMapSoundIndex(mapId);
                 if (soundoffset != 0x2d)
                 {
-                    soundoffset = _gameEngine.GetSoundOffsetByMapId(mapId);
-                    MaybeLoadSound(soundoffset, 0);
+                    soundoffset = _gameEngine.GetMapSoundIndex(mapId);
+                    LoadMapSequence(soundoffset, 0);
                 }
 
-                //FUN_8008f808(_gameEngine.StaticVariables.g_requestedSeqId, 0x7f, 10);
+                FUN_8008f808(_gameEngine.StaticVariables.g_requestedSeqId, 0x7f, 10);
             }
         }
 
-        //iVar1 = GetSoundGroupBbyMapId(mapId);
-        //
-        //if (_gameEngine.StaticVariables.g_currentSoundGroup != iVar1)
-        //{
-        //    FUN_800489c8(mapId);
-        //}
-        //
-        //FUN_8005ac90();
-        Debug.WriteLine("!!!!!!!!!!!!!!!! Implement LoadMapSounds 8004a09c");
+        var iVar1 = GetSoundGroupByMapId(mapId);
+
+        if (_gameEngine.StaticVariables.g_currentSoundGroup != iVar1)
+        {
+            LoadMapSoundGroup(mapId);
+        }
     }
 
-    //80049794
+    // GHIDRA: GetSoundGroupByMapId @ 0x80049F00
+    public int GetSoundGroupByMapId(uint mapId)
+    {
+        return SoundBin.VabIndexByMapId[mapId];
+    }
+
+    // GHIDRA: LoadMapSoundGroup @ 0x800489C8
+    private void LoadMapSoundGroup(uint mapId)
+    {
+        FreeLoadedVab(_gameEngine.StaticVariables.g_mapSoundVabId);
+        var iVar1 = GetSoundGroupByMapId(mapId);
+        _gameEngine.StaticVariables.g_currentSoundGroup = iVar1;
+
+        // PARTIAL: original calls FUN_80048850 after storing g_currentSoundGroup; SoundBin currently exposes the equivalent map-id VAB loader.
+        _gameEngine.SoundBin.OpenMap(mapId);
+    }
+
+    // GHIDRA: PlaySoundEffectWithToneVolumeMix @ 0x80049794
     public void PlaySoundEffectWithToneVolumeMix(int param_1, int param_2, int param_3)
     {
         Debug.WriteLine("!!!!!!!!!!!!!!!! Implement PlaySoundEffectWithToneVolumeMix 80049794");
@@ -346,14 +437,14 @@ public class SoundManager
         if (soundEffectData[s4].Id == -1)
         {
             s0 = s4;
-            param_1 = _gameEngine.StaticVariables.g_vabHeader;
+            param_1 = _gameEngine.StaticVariables.g_globalSoundVabId;
             param_2 = soundEffectData[s4].Pitch;
         }
         else
         {
             param_2 = _gameEngine.StaticVariables.g_currentSoundGroup;
-            s0 = _gameEngine.FUN_80048a14(s4, param_2);
-            param_1 = _gameEngine.StaticVariables.g_altSoundDriver;
+            s0 = _gameEngine.FindSfxRecordForSoundGroup(s4, param_2);
+            param_1 = _gameEngine.StaticVariables.g_mapSoundVabId;
             param_2 = soundEffectData[s0].Pitch;
         }
 
@@ -364,18 +455,18 @@ public class SoundManager
         {
             do
             {
-                voiceId = _gameEngine.FUN_8004974c(s4, soundEffectData[s0].Pitch + s1);
+                voiceId = _gameEngine.FindVoiceBySfxIdAndToneIndex(s4, soundEffectData[s0].Pitch + s1);
 
                 if (voiceId != -1)
                 {
-                    int volumeRight = _gameEngine.StaticVariables.g_voiceVolumeRight[voiceId];
-                    int volumeLeft = _gameEngine.StaticVariables.g_voiceVolumeLeft[voiceId];
+                    int tonePan = _gameEngine.StaticVariables.g_voiceTonePan[voiceId];
+                    int toneVolume = _gameEngine.StaticVariables.g_voiceToneVolume[voiceId];
 
-                    int t1 = (volumeRight < 65) ? volumeRight : (127 - volumeRight);
-                    int t0 = (volumeRight < 64) ? volumeRight : 63;
+                    int t1 = (tonePan < 65) ? tonePan : (127 - tonePan);
+                    int t0 = (tonePan < 64) ? tonePan : 63;
 
                     int volCalc1 = (s7 + 1) * (s7 + 1);
-                    int volCalc2 = (volumeLeft + 1) * (volumeLeft + 1);
+                    int volCalc2 = (toneVolume + 1) * (toneVolume + 1);
 
                     int combinedVolume = (((volCalc1 - 1) * (volCalc2 - 1)) * 0x800209) >> 13;
 
@@ -392,10 +483,10 @@ public class SoundManager
         }*/
     }
 
-    //80049f1c
+    // GHIDRA: HandleMapSoundEffects @ 0x80049F1C
     public int HandleMapSoundEffects(uint mapId, uint soundEffectId)
     {
-        InitializeSoundSomething();
+        ResetSoundEffectRuntime();
 
         if (SoundBin.SfxRecordsData[soundEffectId][0] == 0xFF &&
             SoundBin.SfxRecordsData[soundEffectId][6] == 0)
@@ -403,7 +494,7 @@ public class SoundManager
             soundEffectId = 0;
         }
 
-        var offset = _gameEngine.GetSoundOffsetByMapId(mapId);
+        var offset = _gameEngine.GetMapSoundIndex(mapId);
 
         if (offset == 0)
         {
@@ -432,8 +523,8 @@ public class SoundManager
         return 1;
     }
 
-    //80048e44
-    private void InitializeSoundSomething()
+    // GHIDRA: ResetSoundEffectRuntime @ 0x80048E44
+    private void ResetSoundEffectRuntime()
     {
         //undefined1 uVar1;
         //undefined3 extraout_var;
@@ -448,7 +539,7 @@ public class SoundManager
         //{
         //    if ((g_voiceState[iVar3] != 0) && (*(int*)(pbVar4 + 0x78) != -2))
         //    {
-        //        FUN_80094f20((ushort)iVar3);
+        //        StopVoice((ushort)iVar3);
         //    }
         //    iVar3 = iVar3 + 1;
         //    pbVar4 = pbVar4 + 4;

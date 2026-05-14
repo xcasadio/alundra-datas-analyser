@@ -1941,8 +1941,8 @@ public class MainInventoryManager
         FUN_8005ac90();
     }
 
-    //8005ac90
-    private void FUN_8005ac90()
+    // GHIDRA: FUN_8005AC90 @ 0x8005AC90
+    public void FUN_8005ac90()
     {
         uint iVar1;
         int iVar2;
@@ -1979,6 +1979,7 @@ public class MainInventoryManager
                     return;
                 }
             }
+            // PARTIAL: SetCdReadPosition(iVar2) is not ported in the current C# CD/audio backend.
             //SetCdReadPosition(iVar2);
         }
     }

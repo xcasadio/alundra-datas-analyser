@@ -38,7 +38,7 @@ public class HudManager
         }
     }
 
-    //8004be0c
+    // GHIDRA: FUN_8004BE0C @ 0x8004BE0C
     public void InitializeHudPositionBeforeHide()
     {
         if ((_gameEngine.StaticVariables.g_saveData.GameFlags[0x33] & 0x40000000U) != 0
