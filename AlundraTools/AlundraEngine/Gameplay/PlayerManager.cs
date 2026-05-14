@@ -3448,7 +3448,7 @@ public class PlayerManager
                 return;
             }
 
-            if (_gameEngine.StaticVariables.PlayerEntity.CurrentDirection >> 3 != direction)
+            if (_gameEngine.StaticVariables.PlayerEntity.AnimationDirection != direction)
             {
                 return;
             }

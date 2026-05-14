@@ -46,7 +46,7 @@ public static class ScriptHelper
         var greatest = x;
         if (x < y)
         {
-            y = greatest;
+            greatest = y;
         }
 
         var div = 0;

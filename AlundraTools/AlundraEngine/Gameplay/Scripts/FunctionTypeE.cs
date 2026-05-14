@@ -25,6 +25,7 @@ public static class FunctionTypeE
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "Caisse en bois générique"
             && entity.Name != "Cruche générique"
+            && entity.Name != "Cruche n°2"
             && entity.Name != "Tonneau générique"
             && entity.Name != "Pierre générique"
             && entity.Name != "Pierre très lourde"
