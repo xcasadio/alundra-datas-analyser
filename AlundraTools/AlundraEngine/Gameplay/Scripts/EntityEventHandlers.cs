@@ -603,9 +603,9 @@ public class EntityEventHandlers
     {
         logicEntity.TargetAnimationId = (uint)variables[1];
 
-        if (eventProgramState.Parameters[1] != variables[0])
+        if (eventProgramState.Parameters[1] != eventProgramState.CodeIndex)
         {
-            eventProgramState.Parameters[1] = variables[0];
+            eventProgramState.Parameters[1] = eventProgramState.CodeIndex;
             eventProgramState.Parameters[2] = logicEntity.PosX;
             eventProgramState.Parameters[3] = logicEntity.PosY;
             return 0;
@@ -746,9 +746,9 @@ public class EntityEventHandlers
     // 8003D7FC
     public int Script_28_01C(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        if (eventProgramState.Parameters[1] != variables[0])
+        if (eventProgramState.Parameters[1] != eventProgramState.CodeIndex)
         {
-            eventProgramState.Parameters[1] = variables[0];
+            eventProgramState.Parameters[1] = eventProgramState.CodeIndex;
             eventProgramState.Parameters[2] = 0;
             logicEntity.AnimCompleteCounter = 0;
             return 0;
@@ -841,9 +841,8 @@ public class EntityEventHandlers
     public int Script_32_020(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
         int result = 0;
-        int commandIndex = eventProgramState.CodeIndex;
 
-        if (eventProgramState.Parameters[1] == commandIndex)
+        if (eventProgramState.Parameters[1] == eventProgramState.CodeIndex)
         {
             var diff = eventProgramState.Parameters[2] - logicEntity.PosZ;
 
@@ -862,7 +861,7 @@ public class EntityEventHandlers
         }
         else
         {
-            eventProgramState.Parameters[1] = commandIndex;
+            eventProgramState.Parameters[1] = eventProgramState.CodeIndex;
             eventProgramState.Parameters[2] = logicEntity.PosZ;
         }
 
@@ -887,7 +886,7 @@ public class EntityEventHandlers
     {
         bool isSmaller;
 
-        if (eventProgramState.Parameters[1] == variables[0])
+        if (eventProgramState.Parameters[1] == eventProgramState.CodeIndex)
         {
             if (eventProgramState.Parameters[2] == logicEntity.PosZ)
             {
@@ -912,7 +911,7 @@ public class EntityEventHandlers
         }
         else
         {
-            eventProgramState.Parameters[1] = variables[0];
+            eventProgramState.Parameters[1] = eventProgramState.CodeIndex;
             var entityRecord = logicEntity.EntityRecord;
             if (entityRecord == null)
             {
@@ -1177,18 +1176,17 @@ public class EntityEventHandlers
     // 8003E3DC
     public int Script_55_037(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        int command;
-        command = variables[0];
-
-        if (command != eventProgramState.Parameters[1])
+        if (eventProgramState.Parameters[1] != eventProgramState.CodeIndex)
         {
-            eventProgramState.Parameters[1] = command;
+            eventProgramState.Parameters[1] = eventProgramState.CodeIndex;
             eventProgramState.Parameters[2] = 0;
             return 0;
         }
 
         eventProgramState.Parameters[2]++;
         var toWait = variables[1];
+
+        _gameEngine.LogManager.Log(logicEntity, $"wait {eventProgramState.Parameters[2]}/{toWait}");
 
         if (eventProgramState.Parameters[2] >= toWait)
         {
@@ -1376,7 +1374,7 @@ public class EntityEventHandlers
     //wait dialog choice
     public int Script_68_044(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        if (eventProgramState.Parameters[1] == variables[0])
+        if (eventProgramState.Parameters[1] == eventProgramState.CodeIndex)
         {
             if (_gameEngine.StaticVariables.g_scriptDialogChoiceResult != 0)
             {
@@ -1405,7 +1403,7 @@ public class EntityEventHandlers
                 return 0;
             }
 
-            eventProgramState.Parameters[1] = variables[0];
+            eventProgramState.Parameters[1] = eventProgramState.CodeIndex;
         }
 
         return 0;
@@ -1806,9 +1804,9 @@ public class EntityEventHandlers
     {
         Breakpoint.TriggerBreak();
 
-        if (eventProgramState.Parameters[1] != variables[0])
+        if (eventProgramState.Parameters[1] != eventProgramState.CodeIndex)
         {
-            eventProgramState.Parameters[1] = variables[0];
+            eventProgramState.Parameters[1] = eventProgramState.CodeIndex;
             eventProgramState.Parameters[2] = ownerEntity.PosX;
             eventProgramState.Parameters[3] = ownerEntity.PosY;
             eventProgramState.Parameters[4] = ownerEntity.PosZ;
@@ -3553,7 +3551,7 @@ public class EntityEventHandlers
 
             if ((_gameEngine.StaticVariables.g_temporaryFlags[0] & 2U) == 0)
             {
-                if (eventProgramState.Parameters[1] == variables[0])
+                if (eventProgramState.Parameters[1] == eventProgramState.CodeIndex)
                 {
                     if (_gameEngine.StaticVariables.g_debugState < 0)
                     {
@@ -3589,7 +3587,7 @@ public class EntityEventHandlers
                     _gameEngine.PlayerManager.RestoreHpAndMpAndCreateEffect(_gameEngine.StaticVariables.PlayerEntity);
                     _gameEngine.SoundManager.PlaySoundEffect(0x31);
                     result = 0;
-                    eventProgramState.Parameters[1] = variables[0];
+                    eventProgramState.Parameters[1] = eventProgramState.CodeIndex;
                     eventProgramState.Parameters[2] = 0;
                 }
             }

@@ -6074,6 +6074,7 @@ public static class FunctionTypeC
     public static void AI_UpdateIceProjectile(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Boule de feu chargée"
             && entity.Name != "Boule de feu"
             && entity.Name != "Boule de glace")
         {

@@ -289,26 +289,26 @@ public class SoundManager
     //8004a09c
     public void LoadMapSounds(uint mapId)
     {
-        var iVar1 = _gameEngine.GetSoundOffsetByMapId(mapId);
+        var soundoffset = _gameEngine.GetSoundOffsetByMapId(mapId);
 
-        if (iVar1 != 0)
+        if (soundoffset != 0)
         {
             int iVar2 = _gameEngine.StaticVariables.g_currentMapSoundIndex;
-            iVar1 = _gameEngine.GetSoundOffsetByMapId(mapId);
+            soundoffset = _gameEngine.GetSoundOffsetByMapId(mapId);
 
-            if (iVar2 != iVar1)
+            if (iVar2 != soundoffset)
             {
                 if (_gameEngine.StaticVariables.g_requestedSeqId >= 0)
                 {
                     InitializeBgm(_gameEngine.StaticVariables.g_requestedSeqId);
                     ResetSomethingSound(_gameEngine.StaticVariables.g_requestedSeqId);
                 }
-
-                iVar1 = _gameEngine.GetSoundOffsetByMapId(mapId);
-                if (iVar1 != 0x2d)
+                    
+                soundoffset = _gameEngine.GetSoundOffsetByMapId(mapId);
+                if (soundoffset != 0x2d)
                 {
-                    iVar1 = _gameEngine.GetSoundOffsetByMapId(mapId);
-                    MaybeLoadSound((int)iVar1, 0);
+                    soundoffset = _gameEngine.GetSoundOffsetByMapId(mapId);
+                    MaybeLoadSound(soundoffset, 0);
                 }
 
                 //FUN_8008f808(_gameEngine.StaticVariables.g_requestedSeqId, 0x7f, 10);
@@ -323,13 +323,13 @@ public class SoundManager
         //}
         //
         //FUN_8005ac90();
-        Debug.WriteLine("!!!!!!!!!!!!!!!! Implement PlaySoundEffectWithToneVolumeMix");
+        Debug.WriteLine("!!!!!!!!!!!!!!!! Implement LoadMapSounds 8004a09c");
     }
 
     //80049794
     public void PlaySoundEffectWithToneVolumeMix(int param_1, int param_2, int param_3)
     {
-        Debug.WriteLine("!!!!!!!!!!!!!!!! Implement LoadMapSounds 0x8004a09c");
+        Debug.WriteLine("!!!!!!!!!!!!!!!! Implement PlaySoundEffectWithToneVolumeMix 80049794");
         //TODO
         /*
         int s4 = param_1;
