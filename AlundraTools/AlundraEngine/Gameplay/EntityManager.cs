@@ -224,7 +224,7 @@ public class EntityManager
             //_gameEngine.LogManager.Log(entity, $"{entity.TargetAnimationId}:{entity.TargetDirection >> 3} Reset frame {entity.AnimationFrameIndex}");
 
             animSet = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
-            currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[entity.AnimationFrameIndex];
+            currentFrame = animSet.PreloadedAnims[entity.AnimationDirection].Frames[entity.AnimationFrameIndex];
 
             entity.AnimationSet = animSet;
             entity._Frame = currentFrame;
@@ -261,7 +261,7 @@ public class EntityManager
                 return;
             }
 
-            SiAnimation preloadedAnim = entity.AnimationSet.PreloadedAnims[entity.TargetDirection >> 3];
+            SiAnimation preloadedAnim = entity.AnimationSet.PreloadedAnims[entity.AnimationDirection];
 
             if (entity.AnimationFrameIndex == preloadedAnim.Frames.Length - 1)
             {
@@ -295,12 +295,12 @@ public class EntityManager
         //_gameEngine.LogManager.Log(entity, $"{entity.TargetAnimationId}-{entity.TargetDirection >> 3} Change frame {entity.AnimationFrameIndex}");
 
         animSet = entity.SpriteRecord.AnimSets[entity.TargetAnimationId];
-        var frameIndex = Math.Min(entity.AnimationFrameIndex, animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames.Length - 1);
-        currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[frameIndex];
+        var frameIndex = Math.Min(entity.AnimationFrameIndex, animSet.PreloadedAnims[entity.AnimationDirection].Frames.Length - 1);
+        currentFrame = animSet.PreloadedAnims[entity.AnimationDirection].Frames[frameIndex];
 
         if (currentFrame.IsTransitionFrame && frameIndex > 0)
         {
-            currentFrame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[frameIndex - 1];
+            currentFrame = animSet.PreloadedAnims[entity.AnimationDirection].Frames[frameIndex - 1];
         }
 
         if ((currentFrame.Delay & 0x80) != 0)
@@ -310,13 +310,13 @@ public class EntityManager
 
             var nextFrameIndex = entity.AnimationFrameIndex + 1;
 
-            if (nextFrameIndex >= animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames.Length)
+            if (nextFrameIndex >= animSet.PreloadedAnims[entity.AnimationDirection].Frames.Length)
             {
                 nextFrameIndex = entity.AnimationFrameIndex;
                 updateFrameIndex = false;
             }
 
-            entity._Frame = animSet.PreloadedAnims[entity.TargetDirection >> 3].Frames[nextFrameIndex]; //currentFrame;
+            entity._Frame = animSet.PreloadedAnims[entity.AnimationDirection].Frames[nextFrameIndex]; //currentFrame;
 
             if (!updateFrameIndex && entity.AnimationFrameIndex == 0)
             {
@@ -356,7 +356,7 @@ public class EntityManager
 
         if (updateFrameIndex)
         {
-            var anim = entity.AnimationSet.PreloadedAnims[entity.TargetDirection >> 3];
+            var anim = entity.AnimationSet.PreloadedAnims[entity.AnimationDirection];
             var nextFrameIndex = entity.AnimationFrameIndex + 1;
 
             if (nextFrameIndex > anim.NumberOfFrames)
