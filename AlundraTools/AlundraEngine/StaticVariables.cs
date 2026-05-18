@@ -13,89 +13,6 @@ using AlundraEngine.Balance;
 
 namespace AlundraEngine;
 
-// PARTIAL: runtime sequence track layout closed by xrefs, full command semantics still unknown
-[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 0xAC)]
-public unsafe struct SequenceTrackState
-{
-    public uint field_0x00;
-    public int SeqPosition;
-    public int SeqStartPos;
-    public int SeqLoopPos;
-    public byte field_0x10;
-    public byte MessageType;
-    public byte CurrentChannel;
-    public byte field_0x13;
-    public ushort field_0x14;
-    public byte field_0x16;
-    public fixed byte Orientation[16];
-    public byte field_0x27;
-    public byte Loops;
-    public byte field_0x29;
-    public byte field_0x2A;
-    public byte field_0x2B;
-    public fixed byte Channel[16];
-    public uint ResetLoop;
-    public uint field_0x40;
-    public ushort field_0x44;
-    public ushort LoopCount;
-    public ushort TimesPlayed;
-    public ushort Tempo;
-    public ushort Vab;
-    public fixed ushort Volume[16];
-    public short PreDelay;
-    public ushort CurrentTempo;
-    public ushort field_0x72;
-    public ushort field_0x74;
-    public ushort field_0x76;
-    public ushort field_0x78;
-    public ushort field_0x7A;
-    public uint field_0x7C;
-    public uint Playtime;
-    public uint field_0x84;
-    public uint Delay;
-    public uint field_0x8C;
-    public uint Flags;
-    public uint field_0x94;
-    public uint field_0x98;
-    public uint field_0x9C;
-    public uint field_0xA0;
-    public uint field_0xA4;
-    public uint field_0xA8;
-}
-
-// PARTIAL: runtime voice slot layout closed by xrefs, full field semantics still unknown
-[StructLayout(LayoutKind.Explicit, Size = 0x34)]
-public struct VoiceRuntimeSlot
-{
-    [FieldOffset(0x00)] public ushort field_0x00;
-    [FieldOffset(0x02)] public short ReplacementAge;
-    [FieldOffset(0x04)] public short CurrentPitch;
-    [FieldOffset(0x06)] public short VoiceStatus;
-    [FieldOffset(0x08)] public short field_0x08;
-    [FieldOffset(0x0A)] public byte field_0x0A;
-    [FieldOffset(0x0C)] public short Note;
-    [FieldOffset(0x0E)] public short SequenceKey;
-    [FieldOffset(0x10)] public short VabFirstToneIndex;
-    [FieldOffset(0x12)] public short ProgramIndex;
-    [FieldOffset(0x14)] public short ToneIndex;
-    [FieldOffset(0x16)] public short VabId;
-    [FieldOffset(0x18)] public short Priority;
-    [FieldOffset(0x1A)] public byte field_0x1A;
-    [FieldOffset(0x1B)] public byte NoiseState;
-    [FieldOffset(0x1C)] public short field_0x1C;
-    [FieldOffset(0x1E)] public short field_0x1E;
-    [FieldOffset(0x20)] public short field_0x20;
-    [FieldOffset(0x22)] public short field_0x22;
-    [FieldOffset(0x24)] public short field_0x24;
-    [FieldOffset(0x26)] public short field_0x26;
-    [FieldOffset(0x28)] public short field_0x28;
-    [FieldOffset(0x2A)] public short field_0x2A;
-    [FieldOffset(0x2C)] public short field_0x2C;
-    [FieldOffset(0x2E)] public short field_0x2E;
-    [FieldOffset(0x30)] public short field_0x30;
-    [FieldOffset(0x32)] public short field_0x32;
-}
-
 public class StaticVariables
 {
     //editor
@@ -12365,7 +12282,7 @@ public class StaticVariables
     public int g_cdReadMode; // 800A82B4
     public int DAT_800a82b8; // 800A82B8
     // GHIDRA: g_soundEffectData @ 0x800A82E8
-    public int g_soundEffectData;
+    public SoundEffectRecord[] g_soundEffectData = [];
     public short g_soundPitch; // 800A82EC
     public short g_soundNote; // 800A82EE
     public short g_soundBankTable; // 800A82F0
@@ -13174,7 +13091,10 @@ public class StaticVariables
     public int g_postProcessState; // 80153194
     public int g_currentTransitionType; // 80153198
     public CallBackInfo g_activeTransitionCallback; // 8015319C
-    public char[] g_partialVabBodyBuffer = new char[256]; // 801531A0
+    // GHIDRA: g_partialVabBodyBuffer @ 0x801531A0
+    public byte[] g_partialVabBodyBuffer = new byte[0x8000]; // 801531A0
+    // GHIDRA: DAT_8015B1A0 @ 0x8015B1A0
+    public byte[] DAT_8015b1a0 = new byte[0x9E20]; // 8015B1A0
     public int DAT_80164fc0; // 80164FC0
     public int g_vabBaseSector; // 80164FC4
     public int g_vabBodyOffset; // 80164FC8
@@ -13710,25 +13630,25 @@ public class StaticVariables
     // GHIDRA: g_loadedVabSampleDataPointers @ 0x801F7758
     public int[] g_loadedVabSampleDataPointers = new int[16]; // 801F7758
     // GHIDRA: g_spuVoiceVolumeLeft @ 0x801F7798
-    public short g_spuVoiceVolumeLeft; // 801F7798
+    public short[] g_spuVoiceVolumeLeft = new short[24]; // 801F7798, stride 0x10
     // GHIDRA: g_spuVoiceVolumeRight @ 0x801F779A
-    public short g_spuVoiceVolumeRight; // 801F779A
+    public short[] g_spuVoiceVolumeRight = new short[24]; // 801F779A, stride 0x10
     // GHIDRA: g_spuVoicePitch @ 0x801F779C
-    public short g_spuVoicePitch; // 801F779C
+    public short[] g_spuVoicePitch = new short[24]; // 801F779C, stride 0x10
     // GHIDRA: g_spuVoiceReverb @ 0x801F779E
-    public short g_spuVoiceReverb; // 801F779E
+    public short[] g_spuVoiceReverb = new short[24]; // 801F779E, stride 0x10
     // GHIDRA: g_spuVoiceAdsr1 @ 0x801F77A0
-    public short g_spuVoiceAdsr1; // 801F77A0
+    public short[] g_spuVoiceAdsr1 = new short[24]; // 801F77A0, stride 0x10
     // GHIDRA: g_spuVoiceAdsr2 @ 0x801F77A2
-    public short g_spuVoiceAdsr2; // 801F77A2
+    public short[] g_spuVoiceAdsr2 = new short[24]; // 801F77A2, stride 0x10
     // GHIDRA: g_spuVoiceDirtyFlags @ 0x801F7918
-    public byte g_spuVoiceDirtyFlags; // 801F7918
+    public byte[] g_spuVoiceDirtyFlags = new byte[24]; // 801F7918
     public byte DAT_801f7919; // 801F7919
     // GHIDRA: g_voiceRuntimeSlots @ 0x801F7930
     public VoiceRuntimeSlot[] g_voiceRuntimeSlots = new VoiceRuntimeSlot[24]; // 801F7930
     public int g_activeVoiceBufferIndex; // 801F7E10
-    public int g_voiceActiveTable; // 801F7E18
-    public int DAT_801f7e1c; // 801F7E1C
+    public int[] DAT_801f7e18 = new int[16]; // 801F7E18
+    public byte[] DAT_801f7e58 = new byte[8]; // 801F7E58
     public char[] SPUBuffer_801f7e60 = new char[136]; // 801F7E60
     public short g_voiceCommandPlayingLeft; // 801F7EE8
     public short g_voiceCommandPlayingRight; // 801F7EF0

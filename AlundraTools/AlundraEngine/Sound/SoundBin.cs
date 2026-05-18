@@ -3,6 +3,9 @@
 public class SoundBin
 {
     private readonly string _soundBinfile;
+    private ISoundPlaybackBackend? _playbackBackend;
+    private int _masterVolumeLeft = 0x7F;
+    private int _masterVolumeRight = 0x7F;
     private const byte SoundBinSectionTypeUnknown = 0;
     private const byte SoundBinSectionTypeSequence = 1;
     private const byte SoundBinSectionTypeVab = 2;
@@ -46,6 +49,11 @@ public class SoundBin
         _globalSfxVabBodyBuff = new byte[len];
         br.BaseStream.Position = pos;
         br.Read(_globalSfxVabBodyBuff, 0, len);
+    }
+
+    public void AttachPlaybackBackend(ISoundPlaybackBackend playbackBackend)
+    {
+        _playbackBackend = playbackBackend;
     }
 
     // JUSTIFICATION: PSX hardware adaptation only
@@ -143,6 +151,29 @@ public class SoundBin
         return SoundBinSectionTypeUnknown;
     }
 
+    // JUSTIFICATION: PSX hardware adaptation only
+    public byte[] ReadRange(int offset, int length)
+    {
+        if (length <= 0)
+        {
+            return [];
+        }
+
+        using var br = new BinaryReader(File.OpenRead(_soundBinfile));
+        var buffer = new byte[length];
+        br.BaseStream.Position = offset;
+        br.Read(buffer, 0, length);
+        return buffer;
+    }
+
+    // JUSTIFICATION: PSX data buffer exposure only
+    public byte[] GetSoundEffectSequenceBuffer()
+    {
+        var buffer = new byte[_seqDataBuff.Length];
+        Array.Copy(_seqDataBuff, buffer, _seqDataBuff.Length);
+        return buffer;
+    }
+
     private int _mapVabIndex = -1;
 
     public void OpenMap(uint mapid)
@@ -176,9 +207,12 @@ public class SoundBin
     private readonly byte[] _seqDataBuff;
     private readonly byte[] _globalSfxVabHeaderBuff;
     private readonly byte[] _globalSfxVabBodyBuff;
-    public VabHeader MapVabHeader;
-    private byte[] _mapSfxVabHeaderBuff;
-    private byte[] _mapSfxVabBodyBuff;
+    public VabHeader MapVabHeader = null!;
+    private byte[] _mapSfxVabHeaderBuff = Array.Empty<byte>();
+    private byte[] _mapSfxVabBodyBuff = Array.Empty<byte>();
+    private readonly int[] _voiceFramesRemaining = new int[24];
+    private readonly System.Media.SoundPlayer?[] _voicePlayers = new System.Media.SoundPlayer[24];
+    private readonly Stream?[] _voiceStreams = new Stream[24];
 
     public readonly SfxRecord[] SfxRecords;
 
@@ -193,7 +227,7 @@ public class SoundBin
 
     }
 
-    public byte[] PlaySoundEffect(int sfxid, int note, int velocity, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
+    public byte[]? PlaySoundEffect(int sfxid, int note, int velocity, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
     {
         loopStart = loopEnd = -1;
         repeat = false;
@@ -232,7 +266,7 @@ public class SoundBin
             //check how many voices are already playing this sfx
             //return if its too many to play another one
 
-            byte[] wavetoreturn = null;
+            byte[]? wavetoreturn = null;
             for (var dex = 0; dex < record.NumTones; dex++)
             {
                 var wave = PlaySfxInner(GlobalVabHeader, _globalSfxVabBodyBuff, record.ProgramNumber, record.ToneNumber + dex, note != -1 ? note : record.Note, is8Bit, out loopStart, out loopEnd, out repeat);
@@ -251,6 +285,11 @@ public class SoundBin
         }
         else //its a mapvab
         {
+            if (MapVabHeader == null)
+            {
+                return null;
+            }
+
             //get a sfx in the group (refsfxchains through the group) that is for the currently loaded mapvab
             while (record.VabId != _mapVabIndex)
             {
@@ -258,7 +297,17 @@ public class SoundBin
                 {
                     return null;//the vab requested is not loaded
                 }
+
+                if ((uint)record.RefSfxId >= (uint)SfxRecords.Length)
+                {
+                    return null;
+                }
+
                 record = SfxRecords[record.RefSfxId];
+                if (record == null)
+                {
+                    return null;
+                }
             }
 
             if (record.SeqNum != -1)
@@ -275,7 +324,7 @@ public class SoundBin
             //check how many voices are already playing this sfx
             //return if its too many to play another one
 
-            byte[] wavetoreturn = null;
+            byte[]? wavetoreturn = null;
             for (var dex = 0; dex < record.NumTones; dex++)
             {
                 var wave = PlaySfxInner(MapVabHeader, _mapSfxVabBodyBuff, record.ProgramNumber, record.ToneNumber + dex, note != -1 ? note : record.Note, is8Bit, out loopStart, out loopEnd, out repeat);
@@ -304,17 +353,17 @@ public class SoundBin
         return PlaySfxInner(sfx, MapVabHeader, _mapSfxVabBodyBuff, pitch, is8Bit, out loopStart, out loopEnd, out repeat);
     }
 
-    private byte[] PlaySfxInner(VabHeader header, byte[] bodybuff, int prognum, int tonenum, int note, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
+    private byte[] PlaySfxInner(VabHeader header, byte[] bodybuff, int prognum, int tonenum, int note, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat, int voiceId = -1)
     {
         var basePitch = 44100;// 22050;// 11025;
         var attr = header.VagAttributes[prognum][tonenum];
         var dif = note - attr.Center;
         dif += (int)(attr.Shift / 100f);
         var pitch = (int)(basePitch * Math.Pow(2, dif / 12f));
-        return PlaySfxInner(attr.Vag, header, bodybuff, pitch, is8Bit, out loopStart, out loopEnd, out repeat);
+        return PlaySfxInner(attr.Vag, header, bodybuff, pitch, is8Bit, out loopStart, out loopEnd, out repeat, voiceId);
     }
 
-    private byte[] PlaySfxInner(int sfx, VabHeader header, byte[] bodybuff, int pitch, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
+    private byte[] PlaySfxInner(int sfx, VabHeader header, byte[] bodybuff, int pitch, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat, int voiceId = -1)
     {
         var pos = 0;
         for (var i = 0; i < sfx; i++)
@@ -340,16 +389,87 @@ public class SoundBin
         }
         loopStart = blockloopstart * SamplesPerBlock;//loops to start of block
         loopEnd = blockloopend * SamplesPerBlock + SamplesPerBlock - 1;//loops at end of block
-        var ms = WriteWavFile(buff, 0, buff.Length, pitch, is8Bit);
-        PlayWave(ms);
+        var ms = WriteWavFile(buff, 0, buff.Length, pitch, is8Bit, _masterVolumeLeft, _masterVolumeRight);
+        PlayWave(ms, voiceId);
 
         return buff;
     }
 
-    private System.Media.SoundPlayer _sp;
-
-    public void PlayWave(Stream s)
+    // JUSTIFICATION: PSX hardware adaptation only
+    public byte[] PlayLoadedVabTone(int voiceId, VabHeader header, byte[] bodyBuffer, int programNumber, int toneNumber, int note, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
     {
+        return PlaySfxInner(header, bodyBuffer, programNumber, toneNumber, note, is8Bit, out loopStart, out loopEnd, out repeat, voiceId);
+    }
+
+    private System.Media.SoundPlayer _sp = null!;
+    private Stream? _spStream;
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: adapter for SpuSetCommonAttr master-volume observable contract
+    public void SetMasterVolume(int volumeLeft, int volumeRight)
+    {
+        if (volumeLeft < 0)
+        {
+            volumeLeft = 0;
+        }
+        else if (volumeLeft > 0x7F)
+        {
+            volumeLeft = 0x7F;
+        }
+
+        if (volumeRight < 0)
+        {
+            volumeRight = 0;
+        }
+        else if (volumeRight > 0x7F)
+        {
+            volumeRight = 0x7F;
+        }
+
+        _masterVolumeLeft = volumeLeft;
+        _masterVolumeRight = volumeRight;
+    }
+
+    public void PlayWave(Stream s, int voiceId = -1)
+    {
+        if (_playbackBackend != null && _playbackBackend.Play(s, voiceId))
+        {
+            s.Dispose();
+            return;
+        }
+
+        if ((uint)voiceId < (uint)_voicePlayers.Length)
+        {
+            var currentVoicePlayer = _voicePlayers[voiceId];
+            if (currentVoicePlayer != null)
+            {
+                currentVoicePlayer.Stop();
+            }
+
+            var currentVoiceStream = _voiceStreams[voiceId];
+            if (currentVoiceStream != null)
+            {
+                currentVoiceStream.Dispose();
+            }
+
+            var voicePlayer = new System.Media.SoundPlayer(s);
+            _voiceStreams[voiceId] = s;
+            _voicePlayers[voiceId] = voicePlayer;
+            voicePlayer.Play();
+            return;
+        }
+
+        if (_sp != null)
+        {
+            _sp.Stop();
+        }
+
+        if (_spStream != null)
+        {
+            _spStream.Dispose();
+        }
+
+        _spStream = s;
         _sp = new System.Media.SoundPlayer(s);
         //sp.PlayLooping();
         _sp.Play();
@@ -454,7 +574,7 @@ public class SoundBin
         public bool IsLooprepeat { get { return (Flags & 2) != 0; } }
     }
 
-    public static MemoryStream WriteWavFile(byte[] sampleData, int start, int length, int sampleRate, bool is8Bit)
+    public static MemoryStream WriteWavFile(byte[] sampleData, int start, int length, int sampleRate, bool is8Bit, int masterVolumeLeft, int masterVolumeRight)
     {
         var ms = new MemoryStream();
 
@@ -504,6 +624,17 @@ public class SoundBin
 
         br.Write((byte)'d');
         br.Write((byte)'a');
+
+        // Mono desktop playback preserves the common-volume contract by folding left/right into one gain.
+        var monoMasterVolume = (masterVolumeLeft + masterVolumeRight + 1) >> 1;
+        if (monoMasterVolume < 0)
+        {
+            monoMasterVolume = 0;
+        }
+        else if (monoMasterVolume > 0x7F)
+        {
+            monoMasterVolume = 0x7F;
+        }
         br.Write((byte)'t');
         br.Write((byte)'a');
         br.Write(subChunk2Size);
@@ -518,14 +649,36 @@ public class SoundBin
                 //br.Write(sampleData[dex + 1]);
                 //br.Write((byte)0);
                 int i = (sbyte)sampleData[dex];
+                i = (i * monoMasterVolume) / 0x7F;
                 i += 0x7f;
+
+                if (i < 0)
+                {
+                    i = 0;
+                }
+                else if (i > 0xFF)
+                {
+                    i = 0xFF;
+                }
+
                 br.Write((byte)i);
-                //br.Write(sampleData[dex]);
             }
             else
             {
-                br.Write(sampleData[dex + 1]);
-                br.Write(sampleData[dex]);
+                var sample = (short)((sampleData[dex] << 8) | sampleData[dex + 1]);
+                var scaledSample = (sample * monoMasterVolume) / 0x7F;
+
+                if (scaledSample < short.MinValue)
+                {
+                    scaledSample = short.MinValue;
+                }
+                else if (scaledSample > short.MaxValue)
+                {
+                    scaledSample = short.MaxValue;
+                }
+
+                br.Write((byte)(scaledSample & 0xFF));
+                br.Write((byte)((scaledSample >> 8) & 0xFF));
             }
         }
 
@@ -680,6 +833,196 @@ public class SoundBin
 
     public byte[] VoicesAreActive = new byte[24];
     public VoiceInfo VoiceInfo = new();
+
+    public void AdvanceTrackedVoices()
+    {
+        for (var voiceId = 0; voiceId < VoicesAreActive.Length; voiceId++)
+        {
+            if (VoicesAreActive[voiceId] == 0)
+            {
+                continue;
+            }
+
+            var framesRemaining = _voiceFramesRemaining[voiceId];
+            if (framesRemaining < 0)
+            {
+                continue;
+            }
+
+            if (framesRemaining > 0)
+            {
+                framesRemaining--;
+                _voiceFramesRemaining[voiceId] = framesRemaining;
+            }
+
+            if (framesRemaining == 0)
+            {
+                VoicesAreActive[voiceId] = 0;
+
+                _playbackBackend?.Stop(voiceId);
+
+                var currentVoicePlayer = _voicePlayers[voiceId];
+                if (currentVoicePlayer != null)
+                {
+                    currentVoicePlayer.Stop();
+                    _voicePlayers[voiceId] = null;
+                }
+
+                var currentVoiceStream = _voiceStreams[voiceId];
+                if (currentVoiceStream != null)
+                {
+                    currentVoiceStream.Dispose();
+                    _voiceStreams[voiceId] = null;
+                }
+            }
+        }
+    }
+
+    public void StopTrackedVoice(int voiceId)
+    {
+        if ((uint)voiceId >= (uint)VoicesAreActive.Length)
+        {
+            return;
+        }
+
+        VoicesAreActive[voiceId] = 0;
+        _voiceFramesRemaining[voiceId] = 0;
+        _playbackBackend?.Stop(voiceId);
+
+        var currentVoicePlayer = _voicePlayers[voiceId];
+        if (currentVoicePlayer != null)
+        {
+            currentVoicePlayer.Stop();
+            _voicePlayers[voiceId] = null;
+        }
+
+        var currentVoiceStream = _voiceStreams[voiceId];
+        if (currentVoiceStream != null)
+        {
+            currentVoiceStream.Dispose();
+            _voiceStreams[voiceId] = null;
+        }
+    }
+
+    public void TrackVoicePlayback(bool useMapVab, int voiceId, int programNumber, int toneNumber, int note, VabHeader? explicitHeader = null, byte[]? explicitBodyBuffer = null)
+    {
+        if ((uint)voiceId >= (uint)VoicesAreActive.Length)
+        {
+            return;
+        }
+
+        VoicesAreActive[voiceId] = 1;
+        if (!TryGetToneFrameLifetime(useMapVab, programNumber, toneNumber, note, out var frameCount, out var repeat, explicitHeader, explicitBodyBuffer))
+        {
+            _voiceFramesRemaining[voiceId] = 1;
+            return;
+        }
+
+        _voiceFramesRemaining[voiceId] = repeat ? -1 : Math.Max(frameCount, 1);
+    }
+
+    private bool TryGetToneFrameLifetime(bool useMapVab, int programNumber, int toneNumber, int note, out int frameCount, out bool repeat, VabHeader? explicitHeader = null, byte[]? explicitBodyBuffer = null)
+    {
+        frameCount = 0;
+        repeat = false;
+
+        VabHeader header;
+        byte[] bodyBuffer;
+        if (explicitHeader != null && explicitBodyBuffer != null)
+        {
+            header = explicitHeader;
+            bodyBuffer = explicitBodyBuffer;
+        }
+        else if (!TryGetToneSource(useMapVab, out header, out bodyBuffer))
+        {
+            return false;
+        }
+
+        if ((uint)programNumber >= (uint)header.VagAttributes.Length || (uint)programNumber >= (uint)header.ProgAttributes.Length)
+        {
+            return false;
+        }
+
+        var tones = header.VagAttributes[programNumber];
+        if ((uint)toneNumber >= (uint)tones.Length)
+        {
+            return false;
+        }
+
+        var tone = tones[toneNumber];
+        var vagIndex = tone.Vag;
+        if ((uint)vagIndex >= (uint)header.VagOffsetTable.Length)
+        {
+            return false;
+        }
+
+        var sampleRate = CalculateToneSampleRate(tone, note);
+        if (sampleRate <= 0)
+        {
+            return false;
+        }
+
+        var start = 0;
+        for (var vagOffsetIndex = 0; vagOffsetIndex < vagIndex; vagOffsetIndex++)
+        {
+            start += header.VagOffsetTable[vagOffsetIndex] << 3;
+        }
+
+        var length = header.VagOffsetTable[vagIndex] << 3;
+        if (length <= 0)
+        {
+            return false;
+        }
+
+        var blocks = length / 0x10;
+        if (blocks <= 0 || start < 0 || start + length > bodyBuffer.Length)
+        {
+            return false;
+        }
+
+        for (var blockIndex = 0; blockIndex < blocks; blockIndex++)
+        {
+            var flags = bodyBuffer[start + (blockIndex * 0x10) + 1];
+            if ((flags & 0x01) != 0)
+            {
+                repeat = (flags & 0x02) != 0;
+                break;
+            }
+        }
+
+        var sampleCount = blocks * SamplesPerBlock;
+        frameCount = Math.Max(1, (int)Math.Ceiling(sampleCount * 60.0 / sampleRate));
+        return true;
+    }
+
+    private bool TryGetToneSource(bool useMapVab, out VabHeader header, out byte[] bodyBuffer)
+    {
+        if (useMapVab)
+        {
+            if (_mapVabIndex < 0 || _mapSfxVabBodyBuff == null || _mapSfxVabHeaderBuff == null)
+            {
+                header = null!;
+                bodyBuffer = null!;
+                return false;
+            }
+
+            header = MapVabHeader;
+            bodyBuffer = _mapSfxVabBodyBuff;
+            return true;
+        }
+
+        header = GlobalVabHeader;
+        bodyBuffer = _globalSfxVabBodyBuff;
+        return true;
+    }
+
+    private static int CalculateToneSampleRate(VabHeader.VagAtr tone, int note)
+    {
+        var basePitch = 44100;
+        var delta = note - tone.Center;
+        delta += (int)(tone.Shift / 100f);
+        return (int)(basePitch * Math.Pow(2, delta / 12f));
+    }
 
     public class SfxRecord
     {

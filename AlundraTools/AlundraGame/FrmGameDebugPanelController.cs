@@ -86,7 +86,7 @@ internal sealed class FrmGameDebugPanelController
         [nameof(Entity.Status)] = "Gameplay",
         [nameof(Entity.ContentsItemId)] = "Gameplay",
         [nameof(Entity.ContentsGameFlag)] = "Gameplay",
-        [nameof(Entity.DelayOrAngle)] = "Gameplay",
+        [nameof(Entity.DelayOrAngleOrEntityId)] = "Gameplay",
         [nameof(Entity.ItemState)] = "Gameplay",
         [nameof(Entity.ProgramIndexes)] = "Script",
         [nameof(Entity.SpriteProgramIndexes)] = "Script",

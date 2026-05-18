@@ -1,4 +1,5 @@
-﻿using static AlundraEngine.Sound.SoundBin;
+﻿using System.Runtime.InteropServices;
+using static AlundraEngine.Sound.SoundBin;
 
 namespace AlundraEngine.Sound;
 
@@ -583,3 +584,4 @@ public class SfModulator
         Switch = 3
     }
 }
+

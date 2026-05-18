@@ -50,6 +50,7 @@ public class GameEngine
     private readonly PadManager _padManager;
     private bool _isWarpTransitionRunning;
     private int? _pendingTemporaryWarpEffectId;
+    private int _warpSoundIdleFramesRemaining = -1;
 
     //TODO : find the variable in StaticVariables
     public int DialogState, DialogNameState, DialogName;
@@ -122,6 +123,8 @@ public class GameEngine
             AdvanceWarpTransitionFrame();
             return;
         }
+
+        SoundManager.AdvanceSoundFrame();
 
         //do
         //{
@@ -219,6 +222,7 @@ public class GameEngine
             StaticVariables.g_warpSoundEffectId = 0;
             StartWarpTransition(StaticVariables.g_mapTransitionEffectId);
             StaticVariables.INT_800dc4e4 = 1;
+            _warpSoundIdleFramesRemaining = -1;
             _isWarpTransitionRunning = true;
             AdvanceWarpTransitionFrame();
             return;
@@ -269,9 +273,16 @@ public class GameEngine
         // the shared fade state to keep the blocking PSX transition alive.
         if (isEffectRunning != 0 || StaticVariables.g_warpFlags != 0 || StaticVariables.g_fadeStepFlags != 0)
         {
+            _warpSoundIdleFramesRemaining = -1;
             return;
         }
 
+        if (!SoundManager.WaitForSoundEffectsIdleStep(ref _warpSoundIdleFramesRemaining))
+        {
+            return;
+        }
+
+        _warpSoundIdleFramesRemaining = -1;
         _isWarpTransitionRunning = false;
         return;
         EndGame();

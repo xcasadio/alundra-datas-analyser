@@ -92,6 +92,7 @@ namespace AlundraGame
             var balanceBin = new BalanceBin(balanceFile);
             var soundBinFileName = Path.Combine(dataFolder, "SOUND.BIN");
             var soundBin = new SoundBin(soundBinFileName);
+            soundBin.AttachPlaybackBackend(new MonoGameSoundPlaybackBackend());
             var font3 = new Font3(Path.Combine(dataFolder, "..", "TAKI\\SCREEN"));
             var etcResFileName = PathHelper.GetEtcFileName(dataFolder);
             EtcRes etcRes;

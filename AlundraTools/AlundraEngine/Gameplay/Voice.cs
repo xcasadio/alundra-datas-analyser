@@ -34,4 +34,22 @@ public class Voice {
     short _19a;
     byte[] _19c = new byte[14];
     ushort _1aa;
+
+    public ushort field_0x194
+    {
+        get => _194;
+        set => _194 = value;
+    }
+
+    public ushort field_0x196
+    {
+        get => _196;
+        set => _196 = value;
+    }
+
+    public ushort field_0x1AA
+    {
+        get => _1aa;
+        set => _1aa = value;
+    }
 };

@@ -3,7 +3,15 @@ target: vscode
 name: Transliterate C Runtime to C#
 description: Strict repository agent for near 1:1 transliteration of runtime from original C/PSX code to C# with MonoGame desktop backend
 tools:
-  [vscode, execute, read, agent, edit, search, web, browser, 'pcsx-redux/*', 'reva/*', vscode.mermaid-chat-features/renderMermaidDiagram, todo]
+  - search/codebase
+  - search/usages
+  - edit
+  - read/terminalLastCommand
+  - web/fetch
+  - agent
+  - todo
+  - reva/*
+  - pcsx-redux/*
 ---
 
 # Agent Specification: Parasite Eve 1 Global C to C# Transliteration
