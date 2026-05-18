@@ -1,6 +1,6 @@
 # Analyse audio Alundra: musiques SEQ/VAB et SFX C#
 
-Date: 2026-05-14
+Date: 2026-05-18
 
 ## Portee
 
@@ -12,7 +12,7 @@ Cette note analyse:
 
 Validation effectuee:
 
-- `dotnet build AlundraTools\AlundraEngine\AlundraEngine.csproj --no-restore`: OK, 674 avertissements existants;
+- `dotnet build AlundraTools\AlundraEngine\AlundraEngine.csproj --no-restore`: OK, 655 avertissements existants;
 - chargement reflectif de `SoundBin` depuis `D:\development\repo\Alundra Remake\Alundra (France)\Alundra (France)_extracted\DATA\SOUND.BIN`: OK;
 - headers lus: 962 `SfxRecord`, VAB global `Ps=11`, `Vs=58`, VAB map 0 `Ps=1`, `Vs=10`;
 - decode ADPCM sans lecture audio sur quelques VAG: OK pour les buffers non vides, boucles detectees.
@@ -55,17 +55,28 @@ Points partiels dans ce lecteur C:
 
 ## Etat des musiques dans la version C#
 
-La version C# charge bien `SOUND.BIN` dans `AlundraEngine.Sound.SoundBin`, mais la partie musique n'est pas portee.
+La note precedente n'est plus a jour: le runtime C# ne se limite plus a enumerer `SOUND.BIN`. Le pipeline BGM/SEQ/VAB est maintenant translittere en grande partie dans `SoundManager` et branche vers une sortie audio desktop.
 
 Indices principaux:
 
-- `SoundBin` lit seulement `_seqDataBuff = new byte[SfxVabHeaderOffset]`, soit les 0x800 premiers octets, et expose `SeqOffsets = { 0x000, 0x084, 0x0d4, 0x254, 0x2b8, 0x2e4, 0x324 }`;
-- les sections BGM `pQES/pBAV` scannees par le port C sont maintenant enumerees dans `SoundBin` via `SoundBinSectionOffsets/Sizes/Types`, `SequenceSectionOffsets/Sizes`, et `VabSectionOffsets/Sizes`, mais elles ne sont pas encore branchees a un lecteur BGM runtime;
-- `SoundManager.LoadBgm()`, `InitializeBgm()`, `FUN_8008f2e8()`, `LoadMapSequence()` et `HandleMapSoundStreaming()` sont surtout des squelettes/TODO;
-- `Script_166_0A6` appelle `LoadBgm(variables[1])`, et `Script_167_0A7` appelle `FUN_8004b114(variables[1], variables[2])`, mais ces fonctions ne declenchent pas une lecture BGM reelle;
-- `Script_168_0A8` retourne toujours `0` via `IsSoundLoading()`, car le chargement asynchrone son n'est pas implemente.
+- `SoundBin` scanne les sections `pQES/pBAV` et expose `SoundBinSectionOffsets/Sizes/Types`, `SequenceSectionOffsets/Sizes`, `VabSectionOffsets/Sizes`, `MusicSeqVabOffsets`, plus la lecture par plages via `ReadRange()`;
+- `SoundManager.LoadBgm()`, `InitializeBgm()`, `FUN_8008f2e8()`, `LoadMapSequence()`, `LoadMapSequenceVab()`, `HandleMapSoundStreaming()`, `LoadSeq()`, `PlaySeq()`, `FUN_8008F808()`, `FUN_8008F760()` et `FUN_8008F690()` ont maintenant du controle de flux et des mutations runtime materialises;
+- `Script_166_0A6` appelle `LoadBgm(variables[1])` et `Script_167_0A7` appelle `FUN_8004b114(variables[1], variables[2])`; ces deux chemins alimentent maintenant un vrai runtime sequence/VAB cote C#;
+- `Script_168_0A8` ne retourne pas toujours `0`: `IsSoundLoading()` reflète directement `g_soundLoadState != 0`;
+- le blocage CERTAIN observe pendant cet audit etait local: `HandleMapSoundStreaming()` n'etait plus appele dans la boucle normale. Ce tick a ete reactive dans `GameEngine`, donc le chargement asynchrone declenche par `Script_167_0A7` progresse maintenant hors transitions de warp;
+- les notes de sequence finissent sur la sortie audio desktop: le chemin passe par `TryPlaySequenceNoteVoice`/`FUN_800934B8`, puis `SoundBin.PlayLoadedVabTone()`, `PlaySfxInner()`, `WriteWavFile()`, et enfin `PlayWave()` vers `MonoGameSoundPlaybackBackend` ou `System.Media.SoundPlayer`.
 
-Conclusion: les musiques ne sont pas encore lues dans le runtime C# actuel. Le port C contient le lecteur exploitable, et le C# sait maintenant enumerer les sections `pQES/pBAV`; il reste a porter mecaniquement le pipeline `pQES/pBAV -> VAB/SoundFont -> SEQPlayer` ou a creer une adaptation desktop equivalente, mais sans deplacer la logique runtime dans une architecture audio moderne.
+Conclusion: le runtime C# sait maintenant charger des VAB/SEQ et declencher une lecture sonore. Le blocage principal n'est plus l'absence d'un pipeline BGM, mais le fait que le backend desktop ne reproduit pas encore le contrat SPU par voix requis pour une lecture fidele.
+
+Blocages CERTAINS restants pour les musiques:
+
+- `ISoundPlaybackBackend` expose maintenant `UpdateVoiceStereoVolume(...)` et `UpdateVoicePitch(...)`: les dirty flags SPU volume gauche/droite et pitch sont consommes sur les voix MonoGame suivies via `FUN_8009311C` et les pushes immediats des helpers runtime;
+- `MonoGameSoundPlaybackBackend` applique maintenant volume/pan et pitch par voix; en revanche il n'expose toujours ni controle de boucle par points de boucle, ni reverb equivalente au SPU;
+- `PlaySfxInner()` transporte maintenant jusqu'au backend le sous-cas `repeat && loopStart == 0 && loopEnd == sampleCount - 1`: les loops couvrant tout l'echantillon peuvent boucler fidelement, mais les vraies boucles a sous-plage (intro + sustain) restent non reproduites;
+- quand le backend MonoGame est actif, le WAV desktop est maintenant encode avec un sample rate neutre (`44100`) et le pitch initial est pousse vers `SoundEffectInstance.Pitch`; le fallback `SoundPlayer` reste, lui, sur le pitch bake dans le WAV;
+- `FUN_800912B4` ecrit bien les etats bruts `g_spuVoiceAdsr1[]` / `g_spuVoiceAdsr2[]` et pose le dirty flag ADSR `0x30`, mais `FUN_8009311C` et le contrat `ISoundPlaybackBackend` ne propagent toujours vers le desktop que volume stereo et pitch: l'enveloppe ADSR PSX reste donc non reproduite sur les voix suivies;
+- les helpers reverb (`FUN_800906A8`, `FUN_800906C8`, `FUN_80090728` et leurs ecritures associees) restent des no-op desktop ou de simples enregistrements d'etat brut;
+- la table de callback `0x801F6D68` n'est pas encore portee dans `FUN_8008C918`: on sait maintenant localement que `FUN_8008CA40` peut armer `field_0x16 = 0x28`, que `FUN_8008C918` recoit ensuite l'octet de controle associe, et que le chemin normal non-callback range ce couple dans `field_0x14` / `field_0x2A` avant consommation par `FUN_8008CC70`; il manque donc toujours la dereference effective de `0x801F6D68` et la signature exacte du callback.
 
 ## Lecture des SFX dans le jeu C#
 
@@ -95,13 +106,14 @@ Ce qui n'est pas fidele au runtime original:
 
 - aucune allocation de voix SPU equivalente n'est maintenue;
 - `g_voiceState`, `g_voiceToneVolume`, `g_voiceTonePan`, priorites, max voices, flags de lecture et etat des voix ne sont pas correctement pilotes;
-- les SFX dont `SeqNum != -1` retournent `null`: les SFX sequences ne sont pas supportes;
+- les SFX dont `SeqNum != -1` ne sont plus ignores: ils passent maintenant par `TryPlaySoundEffectSequence()`, `LoadSeq()` et `PlaySeq()`, mais restent soumis aux limites du backend sequence/voix decrit ci-dessus;
 - `record.Flags & 2` est teste, mais les flags ne sont jamais vraiment mis a jour comme dans le runtime original;
-- les effets ADSR/reverb/pan/volume/pitch SPU ne sont pas reproduits dans le jeu C#;
-- `System.Media.SoundPlayer` ne donne ni mixage multi-voix controle, ni stop par voix, ni volume par voix, ni callback equivalent;
-- `StopAllSound()` ne stoppe pas les `SoundPlayer` deja lances par `SoundBin`.
+- les effets ADSR/reverb SPU ne sont toujours pas reproduits fidelement dans le jeu C#: volume/pan/pitch sont maintenant pousses sur les voix MonoGame suivies, mais pas les autres effets hardware;
+- `System.Media.SoundPlayer` ne donne toujours ni mixage multi-voix controle par l'etat SPU, ni callback equivalent; `MonoGameSoundPlaybackBackend` couvre maintenant volume/pan/pitch par voix suivie mais pas les callbacks ni les loops par points;
+- les loops SFX decodees (`loopStart`, `loopEnd`, `repeat`) ne sont gerees que partiellement a la lecture runtime: le sous-cas boucle sur tout l'echantillon est maintenant transporte jusqu'au backend, mais pas les loops a sous-plage;
+- `StopAllSound()` coupe maintenant explicitement les 24 voix runtime avant de relancer la sequence courante, mais ce redemarrage repose toujours sur le backend sequence/voix partiel decrit ci-dessus.
 
-Conclusion: les SFX C# sont lus partiellement. Le chemin est utile pour ecouter/identifier des samples, mais il n'est pas encore un port fidele du systeme sonore du jeu.
+Conclusion: les SFX C# sont lus partiellement. Le chemin est utile pour ecouter/identifier des samples, mais il n'est pas encore un port fidele du systeme sonore du jeu. En particulier, seules les loops couvrant tout l'echantillon sont maintenant gerees; les loops a sous-plage restent absentes.
 
 ## Lecture des SFX dans l'editeur C#
 

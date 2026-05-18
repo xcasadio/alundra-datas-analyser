@@ -2,13 +2,13 @@
 
 public class SoundBin
 {
-    private readonly string _soundBinfile;
-    private ISoundPlaybackBackend? _playbackBackend;
     private int _masterVolumeLeft = 0x7F;
     private int _masterVolumeRight = 0x7F;
     private const byte SoundBinSectionTypeUnknown = 0;
     private const byte SoundBinSectionTypeSequence = 1;
     private const byte SoundBinSectionTypeVab = 2;
+    private readonly string _soundBinfile;
+    private ISoundPlaybackBackend _playbackBackend;
 
     public int SoundBinSectionCount;
     public int[] SoundBinSectionOffsets = [];
@@ -20,6 +20,7 @@ public class SoundBin
     public int VabSectionCount;
     public int[] VabSectionOffsets = [];
     public int[] VabSectionSizes = [];
+
 
     public SoundBin(string soundBinfile)
     {
@@ -371,8 +372,7 @@ public class SoundBin
             pos += header.VagOffsetTable[i] << 3;
         }
         var length = header.VagOffsetTable[sfx] << 3;
-        var blocks = length / 16;
-
+        var blocks = length / 0x10;
         var bytespersample = 2;
         if (is8Bit)
         {
@@ -389,8 +389,11 @@ public class SoundBin
         }
         loopStart = blockloopstart * SamplesPerBlock;//loops to start of block
         loopEnd = blockloopend * SamplesPerBlock + SamplesPerBlock - 1;//loops at end of block
-        var ms = WriteWavFile(buff, 0, buff.Length, pitch, is8Bit, _masterVolumeLeft, _masterVolumeRight);
-        PlayWave(ms, voiceId);
+        var sampleCount = buff.Length / bytespersample;
+        var shouldLoop = repeat && loopStart == 0 && loopEnd == sampleCount - 1;
+        var encodedSampleRate = _playbackBackend == null ? pitch : 44100;
+        var ms = WriteWavFile(buff, 0, buff.Length, encodedSampleRate, is8Bit, _masterVolumeLeft, _masterVolumeRight);
+        PlayWave(ms, voiceId, (short)pitch, shouldLoop);
 
         return buff;
     }
@@ -430,12 +433,20 @@ public class SoundBin
         _masterVolumeRight = volumeRight;
     }
 
-    public void PlayWave(Stream s, int voiceId = -1)
+    public void PlayWave(Stream s, int voiceId = -1, short initialPitch = 0, bool shouldLoop = false)
     {
-        if (_playbackBackend != null && _playbackBackend.Play(s, voiceId))
+        if (_playbackBackend != null)
         {
-            s.Dispose();
-            return;
+            if (initialPitch != 0)
+            {
+                _playbackBackend.UpdateVoicePitch(voiceId, initialPitch);
+            }
+
+            if (_playbackBackend.Play(s, voiceId, shouldLoop))
+            {
+                s.Dispose();
+                return;
+            }
         }
 
         if ((uint)voiceId < (uint)_voicePlayers.Length)
@@ -455,7 +466,14 @@ public class SoundBin
             var voicePlayer = new System.Media.SoundPlayer(s);
             _voiceStreams[voiceId] = s;
             _voicePlayers[voiceId] = voicePlayer;
+        if (shouldLoop)
+        {
+            voicePlayer.PlayLooping();
+        }
+        else
+        {
             voicePlayer.Play();
+        }
             return;
         }
 
@@ -471,9 +489,39 @@ public class SoundBin
 
         _spStream = s;
         _sp = new System.Media.SoundPlayer(s);
-        //sp.PlayLooping();
+    if (shouldLoop)
+    {
+        _sp.PlayLooping();
+    }
+    else
+    {
         _sp.Play();
     }
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: adapter for raw SPU per-voice left/right updates on already playing desktop voices
+    public void UpdateTrackedVoiceStereoVolume(int voiceId, short volumeLeft, short volumeRight)
+    {
+        if ((uint)voiceId >= (uint)VoicesAreActive.Length)
+        {
+            return;
+        }
+
+        _playbackBackend?.UpdateVoiceStereoVolume(voiceId, volumeLeft, volumeRight);
+    }
+
+// JUSTIFICATION: PSX hardware adaptation only
+// RELATION: adapter for raw SPU per-voice pitch updates on desktop tracked voices
+public void UpdateTrackedVoicePitch(int voiceId, short pitch)
+{
+    if ((uint)voiceId >= (uint)VoicesAreActive.Length)
+    {
+        return;
+    }
+
+    _playbackBackend?.UpdateVoicePitch(voiceId, pitch);
+}
 
     public static void DecodeAdpcm(byte[] adpcm, int pos, int len, byte[] pcm, bool is8Bit, out int loopstart, out int loopend, out bool looprepeat)
     {
@@ -784,10 +832,10 @@ public class SoundBin
             public byte Mode;//play mode
             public byte Vol;//tone volume
             public byte Pan;//tone panning
-            public readonly byte Center;//center note
-            public readonly byte Shift;//center note fine tune
-            public readonly byte Min;//minimum note limit
-            public readonly byte Max;//maximum note limit
+            public byte Center;//center note
+            public byte Shift;//center note fine tune
+            public byte Min;//minimum note limit
+            public byte Max;//minimum note limit
             public byte VibW;//vibrate depth
             public byte VibT;//vibrate duration
             public byte PorW;//portamento depth
@@ -799,7 +847,7 @@ public class SoundBin
             public ushort Adsr1;//adsr1
             public ushort Adsr2;//adsr2
             public short Prog;//parent program
-            public readonly short Vag;//vag reference
+            public short Vag;//vag reference
             public readonly short[] Reserved = new short[4];
             public VagAtr(BinaryReader br)
             {
@@ -1360,6 +1408,8 @@ public class SoundBin
         0x00b8f800,//0x8c
         0x00b9f000,//0x8d
     };
+
+
     //800c6d28
     public static readonly int[] VabIndexByMapId =
     [
@@ -1851,7 +1901,6 @@ public class SoundBin
     public static readonly byte[][] SfxRecordsData = new byte[][]{
         new byte[]{0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0x00,0x00,0xff,0xff,0x00,0x00,0x00,0x00,0x00,0x00,},
         new byte[]{0xff,0xff,0x00,0x00,0x00,0x00,0x3c,0x00,0x00,0x00,0xff,0xff,0x00,0x00,0xff,0xff,0x02,0x00,0x00,0x00,0x01,0x00,},
-        new byte[]{0xff,0xff,0x00,0x00,0x01,0x00,0x3d,0x00,0x00,0x00,0xff,0xff,0x00,0x00,0xff,0xff,0x02,0x00,0x00,0x00,0x01,0x00,},
         new byte[]{0xff,0xff,0x00,0x00,0x02,0x00,0x3e,0x00,0x01,0x00,0xff,0xff,0x00,0x00,0xff,0xff,0x01,0x00,0x00,0x00,0x01,0x00,},
         new byte[]{0xff,0xff,0x00,0x00,0x03,0x00,0x3f,0x00,0x00,0x00,0xff,0xff,0x00,0x00,0xff,0xff,0x01,0x00,0x00,0x00,0x01,0x00,},
         new byte[]{0xff,0xff,0x00,0x00,0x04,0x00,0x40,0x00,0x00,0x00,0xff,0xff,0x00,0x00,0xff,0xff,0x01,0x00,0x00,0x00,0x01,0x00,},

@@ -13583,25 +13583,38 @@ public class StaticVariables
     public short g_sequenceSlotCount; // 801F7568
     // GHIDRA: g_sequenceTrackCount @ 0x801F7570
     public short g_sequenceTrackCount; // 801F7570
-    //public SpuReverbAttr g_spuReverbAttr2; // 801F7578
+    // GHIDRA: g_spuReverbAttr2 @ 0x801F7578
+    // PARTIAL: only mask/mode/feedback/delay writes are proven locally so far.
+    public SpuReverbAttrPartial g_spuReverbAttr2; // 801F7578
+    // GHIDRA: g_loadedVabProgramAttrPointers @ 0x801F7590
+    public int[] g_loadedVabProgramAttrPointers = new int[16]; // 801F7590
     // GHIDRA: g_loadedVabHeaderPointers @ 0x801F75D0
     public int[] g_loadedVabHeaderPointers = new int[16]; // 801F75D0
     public short DAT_sound_801f7610; // 801F7610
+    // GHIDRA: g_loadedVabToneAttrPointers @ 0x801F7618
+    public int[] g_loadedVabToneAttrPointers = new int[16]; // 801F7618
     public short DAT_sound_801f7658; // 801F7658
     public short DAT_sound_801f7660; // 801F7660
-    public int DAT_801f7668; // 801F7668
-    public int DAT_801f7678; // 801F7678
-    public int DAT_801f7680; // 801F7680
+    // GHIDRA: g_currentVabProgramAttrs @ 0x801F7668
+    public int g_currentVabProgramAttrs; // 801F7668, pointer to the current VAB program-attr block
+    // GHIDRA: g_currentVabHeaderPointer @ 0x801F7678
+    public int g_currentVabHeaderPointer; // 801F7678, pointer to the current VAB header block
+    // GHIDRA: g_currentVabToneAttrs @ 0x801F7680
+    public int g_currentVabToneAttrs; // 801F7680, pointer to the current VAB tone-attr block
     public byte g_numberOfVoices; // 801F7688
     public short g_audioFadeState; // 801F7690
-    public byte DAT_801f7698; // 801F7698
-    public byte DAT_801f7699; // 801F7699
+    // GHIDRA: g_currentVabToneCount @ 0x801F7698
+    public byte g_currentVabToneCount; // 801F7698
+    // GHIDRA: g_currentVabId @ 0x801F7699
+    public byte g_currentVabIdByte; // 801F7699
     public byte DAT_801f769a; // 801F769A
     public byte DAT_801f769b; // 801F769B
     public byte DAT_801f769c; // 801F769C
     public byte DAT_801f769d; // 801F769D
-    public byte DAT_801f769e; // 801F769E
-    public byte DAT_801f769f; // 801F769F
+    // GHIDRA: g_currentVabProgramIndex @ 0x801F769E
+    public byte g_currentVabProgramIndex; // 801F769E
+    // GHIDRA: g_currentVabFirstToneIndex @ 0x801F769F
+    public byte g_currentVabFirstToneIndex; // 801F769F
     public byte DAT_801f76a2; // 801F76A2
     public byte DAT_801f76a3; // 801F76A3
     public byte DAT_801f76a4; // 801F76A4

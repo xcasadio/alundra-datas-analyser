@@ -1532,7 +1532,7 @@ public class GameEngine
             StaticVariables.g_isGameEnding = 1;
         }
 
-        //HandleMapSoundStreaming();
+        SoundManager.HandleMapSoundStreaming();
 
         Random.Next();
 

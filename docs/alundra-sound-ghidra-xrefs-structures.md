@@ -156,6 +156,25 @@ Chemin VAB ferme par xrefs:
 | `0x801F7918` | `byte[24]` | `g_spuVoiceDirtyFlags` | `SetVoiceVolume` OR `0x3`; `FUN_800912B4` OR `0x8`; `FUN_80090C58` OR `0x7` |
 | `0x801F7930` | `VoiceRuntimeSlot[24], stride 0x34` | `g_voiceRuntimeSlots` | `TriggerVoice`, `AllocateVoiceSlot`, et le code init calculent `voice * 0x34` |
 
+Les xrefs Reva ferment maintenant aussi les alias runtime vers ces memes labels: `g_volumesL -> g_spuVoiceVolumeLeft`, `g_volumesR -> g_spuVoiceVolumeRight`, `g_pitches -> g_spuVoicePitch`, `g_reverbs -> g_spuVoiceReverb`, `g_adsrAttack -> g_spuVoiceAdsr1`, `g_adsrSustain -> g_spuVoiceAdsr2`.
+
+Ces six symboles ne peuvent pas etre six tableaux `short[24]` distincts: leurs bases ne sont espacees que de `+0x2` octets (`0x801F7798`, `0x779A`, `0x779C`, `0x779E`, `0x77A0`, `0x77A2`), alors que les xrefs d'ecriture/lecture gardent un stride voix `voiceId << 4`. La forme fermee par xrefs est donc un tableau de 24 records SPU de `0x10` octets, de base `0x801F7798`, qui occupe exactement `0x180` octets jusqu'a `0x801F7917`; `g_spuVoiceDirtyFlags @ 0x801F7918` commence immediatement apres.
+
+```c
+struct UnkSpuVoiceSlot_0x10 {
+	short volumeLeft;   // +0x00, g_spuVoiceVolumeLeft / g_volumesL
+	short volumeRight;  // +0x02, g_spuVoiceVolumeRight / g_volumesR
+	short pitch;        // +0x04, g_spuVoicePitch / g_pitches
+	short reverb;       // +0x06, g_spuVoiceReverb / g_reverbs
+	short adsr1;        // +0x08, g_spuVoiceAdsr1 / g_adsrAttack
+	short adsr2;        // +0x0A, g_spuVoiceAdsr2 / g_adsrSustain
+	short unk_0C;       // +0x0C, non ferme
+	short unk_0E;       // +0x0E, non ferme
+};
+
+// table base 0x801F7798, indexed with voiceId << 4, count 24
+```
+
 Layout partiel d'un `VoiceRuntimeSlot` sous `0x801F7930 + voice * 0x34`:
 
 | Offset | Type | Sens partiel |
@@ -164,6 +183,8 @@ Layout partiel d'un `VoiceRuntimeSlot` sous `0x801F7930 + voice * 0x34`:
 | `+0x02` | `short` | age/ordre de remplacement; incremente pour toutes les voix dans `AllocateVoiceSlot`, remis a 0 pour la voix choisie |
 | `+0x04` | `short` | valeur passee a `FUN_80090C58`/note partielle, recopiee dans `0x801F779C` |
 | `+0x06` | `ushort` | critere de remplacement compare avec la priorite courante; mis a `0x7FFF` par `FUN_800912B4` |
+| `+0x08` | `short` | scalaire par voix ecrit depuis `param_5` dans `FUN_800934B8`, puis relu par `FUN_8009410C` avant multiplication par le volume de canal; le nom semantique exact reste a fermer |
+| `+0x0A` | `byte` | champ ecrit depuis `param_6` dans `FUN_800934B8`; aucune lecture certaine fermee dans cette passe |
 | `+0x0C` | `short` | parametre tonal stocke par `TriggerVoice`, compare par les wrappers de stop conditionnel |
 | `+0x0E` | `short` | cle sequence proprietaire: `0x21` pour voix SFX directe, sinon `(track << 8) | seqId`; comparee par `UpdateSequenceVolumeBalance`, `FUN_8009410C`, `FUN_80093EF4`, et les stops conditionnels |
 | `+0x10` | `short` | copie de `g_currentVabFirstToneIndex` |
@@ -172,6 +193,8 @@ Layout partiel d'un `VoiceRuntimeSlot` sous `0x801F7930 + voice * 0x34`:
 | `+0x16` | `short` | VAB id stocke par `TriggerVoice` et compare avant stop conditionnel |
 | `+0x18` | `short` | priorite effective utilisee par `AllocateVoiceSlot` |
 | `+0x1B` | `byte` | etat actif/noise: `0` libre, `1` voix tonale active, `2` voix noise active; les chemins `UpdateSoundVoicesState`, `AllocateVoiceSlot`, et `FUN_800914CC` traitent specialement la valeur `2` |
+
+Note pratique Ghidra: l'application directe de `VoiceRuntimeSlot` a `0x801F7930` reste bloquee dans cette passe par un conflit de donnees sur `0x801F7932-0x801F7933`, meme avec `clearExisting=true` dans ReVa. Si tu veux voir le layout en memoire plutot que par labels, il faut encore undefine ce sous-bloc dans Ghidra puis reappliquer la structure, idealement comme tableau `VoiceRuntimeSlot[24]`.
 
 ### `VabProgramAttr` partiel
 

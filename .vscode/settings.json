@@ -1,17 +1,19 @@
 {
     "chat.mcp.access": "all",
     "chat.mcp.serverSampling": {
-        "alundra-datas-analyser/.vscode/mcp.json: ReVa": {
+        "alundra-datas-analyser/.vscode/mcp.json: reva": {
             "allowedModels": [
-                "copilot/claude-sonnet-4.6",
-                "copilot/claude-opus-4.6",
-                "copilot/gpt-4.1",
-                "copilot/gpt-4o",
-                "copilot/gpt-5-mini",
-                "copilot/gpt-5.2",
-                "copilot/gpt-5.2-codex",
+                "copilot/auto",
+                "copilotcli/claude-sonnet-4.6",
+                "claude-code/claude-haiku-4.5",
+                "copilotcli/claude-haiku-4.5",
+                "copilot/claude-haiku-4.5",
+                "copilotcli/gpt-5.3-codex",
+                "copilot/gpt-5.3-codex",
+                "copilotcli/gpt-5.4",
                 "copilot/gpt-5.4",
-                "copilot/gpt-5.5",
+                "copilotcli/gpt-5.5",
+                "copilot/gpt-5.5"
             ]
         }
     },

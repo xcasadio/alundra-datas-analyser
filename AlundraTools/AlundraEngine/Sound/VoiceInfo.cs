@@ -193,3 +193,12 @@ public struct VabToneAttributesCopy
     [FieldOffset(0x14)] public ushort Program;
     [FieldOffset(0x16)] public ushort Vag;
 }
+
+// PARTIAL: only the fields proven by FUN_800905F8 / FUN_800906E8 / FUN_800907E4 are modeled.
+public struct SpuReverbAttrPartial
+{
+    public int Mask;
+    public int Mode;
+    public int Feedback;
+    public int Delay;
+}

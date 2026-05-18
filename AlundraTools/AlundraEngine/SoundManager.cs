@@ -617,11 +617,61 @@ public class SoundManager
     }
 
     // GHIDRA: UpdateSoundVoicesState @ 0x8009311C
-    private void FUN_8009311c()
+    // PARTIAL: this currently flushes only raw per-voice stereo volume (0x01/0x02) and pitch (0x04); reverb (0x08) and ADSR (0x30) dirty-flag side effects are still not consumed on desktop.
+    private void UpdateSoundVoicesState()
     {
-        // PARTIAL: the original flushes pending SPU voice state to hardware here.
-        // The current desktop backend applies voice playback eagerly via SoundBin on trigger/stop,
-        // so there is no extra SPU-style batch flush to perform in this path yet.
+        // PARTIAL: raw left/right and pitch voice updates are now pushed to the desktop backend here.
+        // Reverb and ADSR hardware side effects remain partial.
+        var voiceCount = Math.Min(_gameEngine.StaticVariables.g_numberOfVoices, _gameEngine.StaticVariables.g_spuVoiceDirtyFlags.Length);
+        for (var voiceId = 0; voiceId < voiceCount; voiceId++)
+        {
+            var dirtyFlags = _gameEngine.StaticVariables.g_spuVoiceDirtyFlags[voiceId];
+            if ((dirtyFlags & 0x07) == 0)
+            {
+                continue;
+            }
+
+            if ((dirtyFlags & 0x03) != 0)
+            {
+                PushTrackedVoiceStereoVolume((short)voiceId);
+            }
+
+            if ((dirtyFlags & 0x04) != 0)
+            {
+                PushTrackedVoicePitch((short)voiceId);
+            }
+
+            _gameEngine.StaticVariables.g_spuVoiceDirtyFlags[voiceId] = (byte)(dirtyFlags & ~0x07);
+        }
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: adapter for raw SPU per-voice left/right updates on desktop tracked voices
+    private void PushTrackedVoiceStereoVolume(short voiceId)
+    {
+        if ((uint)voiceId >= (uint)_gameEngine.StaticVariables.g_spuVoiceVolumeLeft.Length)
+        {
+            return;
+        }
+
+        _gameEngine.SoundBin.UpdateTrackedVoiceStereoVolume(
+            voiceId,
+            _gameEngine.StaticVariables.g_spuVoiceVolumeLeft[voiceId],
+            _gameEngine.StaticVariables.g_spuVoiceVolumeRight[voiceId]);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: adapter for raw SPU per-voice pitch updates on desktop tracked voices
+    private void PushTrackedVoicePitch(short voiceId)
+    {
+        if ((uint)voiceId >= (uint)_gameEngine.StaticVariables.g_spuVoicePitch.Length)
+        {
+            return;
+        }
+
+        _gameEngine.SoundBin.UpdateTrackedVoicePitch(
+            voiceId,
+            _gameEngine.StaticVariables.g_spuVoicePitch[voiceId]);
     }
 
     // GHIDRA: FUN_8008E3D8 @ 0x8008E3D8
@@ -633,7 +683,7 @@ public class SoundManager
         }
 
         _gameEngine.StaticVariables.g_voiceCommandLock = 1;
-        FUN_8009311c();
+        UpdateSoundVoicesState();
 
         var sequenceSlotCount = _gameEngine.StaticVariables.g_sequenceSlotCount;
         var sequenceTrackCount = _gameEngine.StaticVariables.g_sequenceTrackCount;
@@ -1083,7 +1133,7 @@ public class SoundManager
     }
 
     // GHIDRA: FUN_8008C1B8 @ 0x8008C1B8
-    // PARTIAL: controller cases 6, 0x41, and the active-voice refresh side effects driven by FUN_8009410C are not fully closed yet.
+    // PARTIAL: active-voice refresh side effects driven by FUN_8009410C and desktop SPU reverb application remain partial.
     private void FUN_8008c1b8(short seqId, short trackId, byte control)
     {
         if ((uint)seqId >= (uint)_loadedSequenceData.Length)
@@ -1122,7 +1172,8 @@ public class SoundManager
                 break;
 
             case 6:
-                break;
+                FUN_8008cc70(seqId, trackId, value);
+                return;
 
             case 7:
                 FUN_8009410c((ushort)ComposeSequenceKey(seqId, trackId), (ushort)sequenceState.Vab, programNumber,
@@ -1154,7 +1205,8 @@ public class SoundManager
                 break;
 
             case 0x41:
-                break;
+                FUN_8008c70c(seqId, trackId, value);
+                return;
 
             case 0x5B:
                 FUN_80090728(value, value);
@@ -1185,6 +1237,38 @@ public class SoundManager
         }
 
         sequenceState.Delay = FUN_8008d8d0((short)seqId, trackId);
+    }
+
+    // GHIDRA: FUN_8008C70C @ 0x8008C70C
+    private void FUN_8008c70c(short seqId, short trackId, byte value)
+    {
+        if ((uint)seqId >= (uint)_gameEngine.StaticVariables.g_sequenceStatePointers.Length)
+        {
+            return;
+        }
+
+        ref var sequenceState = ref _gameEngine.StaticVariables.g_sequenceStatePointers[seqId];
+        var currentChannel = sequenceState.CurrentChannel;
+        var programNumber = (short)GetSequenceChannelMapping(ref sequenceState, currentChannel);
+        FUN_800901a8(sequenceState.Vab, programNumber, out var programAttributes);
+
+        for (short toneIndex = 0; toneIndex < programAttributes.Tones; toneIndex++)
+        {
+            FUN_80090370(sequenceState.Vab, programNumber, toneIndex, out var toneAttributes);
+
+            if (value < 0x40)
+            {
+                toneAttributes.Mode = 2;
+            }
+            else if (value < 0x80)
+            {
+                toneAttributes.Mode = 0;
+            }
+
+            FUN_80090824(sequenceState.Vab, programNumber, toneIndex, ref toneAttributes);
+        }
+
+        sequenceState.Delay = FUN_8008d8d0(seqId, trackId);
     }
 
     // GHIDRA: FUN_8008C854 @ 0x8008C854
@@ -1318,6 +1402,251 @@ public class SoundManager
         sequenceState.Delay = FUN_8008d8d0(seqId, trackId);
     }
 
+    // GHIDRA: FUN_8008CC70 @ 0x8008CC70
+    private void FUN_8008cc70(short seqId, short trackId, byte value)
+    {
+        if ((uint)seqId >= (uint)_gameEngine.StaticVariables.g_sequenceStatePointers.Length)
+        {
+            return;
+        }
+
+        ref var sequenceState = ref _gameEngine.StaticVariables.g_sequenceStatePointers[seqId];
+        var currentChannel = sequenceState.CurrentChannel;
+        var programNumber = (short)GetSequenceChannelMapping(ref sequenceState, currentChannel);
+        FUN_800901a8(sequenceState.Vab, programNumber, out var programAttributes);
+
+        if (sequenceState.field_0x27 == 1 && sequenceState.field_0x10 == 0)
+        {
+            sequenceState.Loops = value;
+            sequenceState.field_0x10 = 1;
+            sequenceState.Delay = FUN_8008d8d0(seqId, trackId);
+            return;
+        }
+
+        var registeredParameter = unchecked((byte)sequenceState.field_0x14);
+        if (sequenceState.field_0x29 == 2)
+        {
+            if (sequenceState.field_0x13 == 0 && registeredParameter == 0)
+            {
+                for (short toneIndex = 0; toneIndex < programAttributes.Tones; toneIndex++)
+                {
+                    FUN_80090370(sequenceState.Vab, programNumber, toneIndex, out var toneAttributes);
+                    toneAttributes.PitchBendMin = unchecked((byte)(value & 0x7F));
+                    toneAttributes.PitchBendMax = unchecked((byte)(value & 0x7F));
+                    FUN_80090824(sequenceState.Vab, programNumber, toneIndex, ref toneAttributes);
+                }
+            }
+
+            if (sequenceState.field_0x13 == 1 && registeredParameter == 0)
+            {
+                for (short toneIndex = 0; toneIndex < programAttributes.Tones; toneIndex++)
+                {
+                    FUN_80090370(sequenceState.Vab, programNumber, toneIndex, out var toneAttributes);
+                    FUN_80090824(sequenceState.Vab, programNumber, toneIndex, ref toneAttributes);
+                }
+            }
+
+            if (sequenceState.field_0x13 == 2 && registeredParameter == 0)
+            {
+                for (short toneIndex = 0; toneIndex < programAttributes.Tones; toneIndex++)
+                {
+                    FUN_80090370(sequenceState.Vab, programNumber, toneIndex, out var toneAttributes);
+                    FUN_80090824(sequenceState.Vab, programNumber, toneIndex, ref toneAttributes);
+                }
+            }
+
+            sequenceState.Delay = FUN_8008d8d0(seqId, trackId);
+            sequenceState.field_0x29 = 0;
+            return;
+        }
+
+        if (sequenceState.field_0x2A == 2)
+        {
+            var controller = unchecked((byte)(sequenceState.field_0x14 >> 8));
+            if (sequenceState.field_0x16 == 0x10)
+            {
+                for (short toneIndex = 0; toneIndex < programAttributes.Tones; toneIndex++)
+                {
+                    FUN_8008d1f4(sequenceState.Vab, programNumber, toneIndex, controller, value);
+                }
+            }
+            else
+            {
+                FUN_8008d1f4(sequenceState.Vab, programNumber, sequenceState.field_0x16, controller, value);
+            }
+
+            sequenceState.Delay = FUN_8008d8d0(seqId, trackId);
+            sequenceState.field_0x2A = 0;
+            return;
+        }
+
+        sequenceState.Delay = FUN_8008d8d0(seqId, trackId);
+    }
+
+    // GHIDRA: FUN_8008D1F4 @ 0x8008D1F4
+    // PARTIAL: controller subcases touching SPU reverb only record the proven raw reverb fields; the desktop backend still does not apply PSX reverb.
+    private void FUN_8008d1f4(short vabId, short programIndex, short toneIndex, byte controller, byte value)
+    {
+        FUN_80090370(vabId, programIndex, toneIndex, out var toneAttributes);
+
+        switch (controller)
+        {
+            case 0:
+                toneAttributes.Priority = value;
+                FUN_80090824(vabId, programIndex, toneIndex, ref toneAttributes);
+                break;
+
+            case 1:
+                toneAttributes.Mode = value;
+                FUN_80090824(vabId, programIndex, toneIndex, ref toneAttributes);
+                if (value == 0)
+                {
+                    FUN_800906c8();
+                }
+                else if (value == 4)
+                {
+                    FUN_800906a8();
+                }
+
+                break;
+
+            case 2:
+            case 3:
+                FUN_80090824(vabId, programIndex, toneIndex, ref toneAttributes);
+                break;
+
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+            case 0x0B:
+            case 0x0C:
+            case 0x0D:
+            case 0x0E:
+                var adsrFields = new ushort[9];
+                FUN_8008d988(toneAttributes.Adsr1, toneAttributes.Adsr2, adsrFields);
+                var rawValue = (ushort)value;
+
+                switch (controller - 4)
+                {
+                    case 0:
+                        adsrFields[5] = 0;
+                        adsrFields[0] = rawValue;
+                        break;
+
+                    case 1:
+                        adsrFields[5] = 1;
+                        adsrFields[0] = rawValue;
+                        break;
+
+                    case 2:
+                        adsrFields[1] = rawValue;
+                        break;
+
+                    case 3:
+                        adsrFields[2] = rawValue;
+                        break;
+
+                    case 4:
+                        adsrFields[6] = 0;
+                        adsrFields[3] = rawValue;
+                        break;
+
+                    case 5:
+                        adsrFields[6] = 1;
+                        adsrFields[3] = rawValue;
+                        break;
+
+                    case 6:
+                        adsrFields[7] = 0;
+                        adsrFields[4] = rawValue;
+                        break;
+
+                    case 7:
+                        adsrFields[7] = 1;
+                        adsrFields[4] = rawValue;
+                        break;
+
+                    case 8:
+                        if (value != 0 && value < 0x40)
+                        {
+                            adsrFields[8] = 0;
+                        }
+                        else if (unchecked((byte)(value - 0x40)) < 0x40)
+                        {
+                            adsrFields[8] = 1;
+                        }
+
+                        break;
+
+                    case 9:
+                        break;
+
+                    case 10:
+                        toneAttributes.PortamentoWidth = value;
+                        break;
+                }
+
+                FUN_8008d9e4(adsrFields, out var adsr1, out var adsr2);
+                toneAttributes.Adsr1 = adsr1;
+                toneAttributes.Adsr2 = adsr2;
+                FUN_80090824(vabId, programIndex, toneIndex, ref toneAttributes);
+                break;
+
+            case 0x0F:
+                FUN_800905f8(value);
+                break;
+
+            case 0x10:
+                FUN_80090728(value, value);
+                break;
+
+            case 0x11:
+                FUN_800906e8(value);
+                break;
+
+            case 0x12:
+            case 0x13:
+                FUN_800907e4(value);
+                break;
+        }
+    }
+
+    // GHIDRA: FUN_8008D988 @ 0x8008D988
+    private static void FUN_8008d988(ushort adsr1, ushort adsr2, ushort[] unpackedFields)
+    {
+        unpackedFields[5] = (ushort)(adsr1 & 0x8000);
+        unpackedFields[6] = (ushort)(adsr2 & 0x8000);
+        unpackedFields[8] = (ushort)(adsr2 & 0x4000);
+        unpackedFields[7] = (ushort)(adsr2 & 0x20);
+        unpackedFields[0] = (ushort)((adsr1 >> 8) & 0x7F);
+        unpackedFields[1] = (ushort)((adsr1 >> 4) & 0x0F);
+        unpackedFields[2] = (ushort)(adsr1 & 0x0F);
+        unpackedFields[3] = (ushort)((adsr2 >> 6) & 0x7F);
+        unpackedFields[4] = (ushort)(adsr2 & 0x1F);
+    }
+
+    // GHIDRA: FUN_8008D9E4 @ 0x8008D9E4
+    private static void FUN_8008d9e4(ushort[] unpackedFields, out ushort adsr1, out ushort adsr2)
+    {
+        var highAdsr2 = unpackedFields[6] != 0 ? (ushort)0x8000 : (ushort)0;
+        if (unpackedFields[8] != 0)
+        {
+            highAdsr2 |= 0x4000;
+        }
+
+        adsr1 = (ushort)((unpackedFields[5] != 0 ? 0x8000 : 0)
+            | ((unpackedFields[0] & 0x7F) << 8)
+            | ((unpackedFields[1] & 0x0F) << 4)
+            | (unpackedFields[2] & 0x0F));
+        adsr2 = (ushort)(highAdsr2
+            | ((unpackedFields[3] & 0x7F) << 6)
+            | (unpackedFields[4] & 0x1F));
+    }
+
     // GHIDRA: FUN_80090144 @ 0x80090144
     private void FUN_80090144()
     {
@@ -1330,10 +1659,46 @@ public class SoundManager
         _gameEngine.StaticVariables.DAT_sound_801f7610 = 2;
     }
 
+    // GHIDRA: FUN_800905F8 @ 0x800905F8
+    // PARTIAL: records the proven g_spuReverbAttr2 writes, but the desktop backend does not apply PSX SPU reverb.
+    private int FUN_800905f8(ushort value)
+    {
+        var signedValue = unchecked((short)value);
+        var isNegative = signedValue < 0;
+        var magnitude = isNegative ? (ushort)(-signedValue) : value;
+        if (magnitude >= 10)
+        {
+            return -1;
+        }
+
+        _gameEngine.StaticVariables.g_spuReverbAttr2.Mask = 1;
+        _gameEngine.StaticVariables.g_spuReverbAttr2.Mode = isNegative ? magnitude | 0x100 : magnitude;
+        if (magnitude == 0)
+        {
+            FUN_800906c8();
+        }
+
+        return magnitude;
+    }
+
+    // GHIDRA: FUN_800906A8 @ 0x800906A8
+    // PARTIAL: desktop backend does not expose a PSX reverb enable toggle.
+    private void FUN_800906a8()
+    {
+    }
+
     // GHIDRA: FUN_800906C8 @ 0x800906C8
     // PARTIAL: desktop backend has no SPU reverb path yet.
     private void FUN_800906c8()
     {
+    }
+
+    // GHIDRA: FUN_800906E8 @ 0x800906E8
+    // PARTIAL: records the proven raw reverb feedback field, but the desktop backend does not apply PSX SPU reverb.
+    private void FUN_800906e8(short value)
+    {
+        _gameEngine.StaticVariables.g_spuReverbAttr2.Mask = 0x10;
+        _gameEngine.StaticVariables.g_spuReverbAttr2.Feedback = value;
     }
 
     // GHIDRA: FUN_80090728 @ 0x80090728
@@ -1342,6 +1707,62 @@ public class SoundManager
     {
         _ = param_1;
         _ = param_2;
+    }
+
+    // GHIDRA: FUN_800907E4 @ 0x800907E4
+    // PARTIAL: records the proven raw reverb delay field, but the desktop backend does not apply PSX SPU reverb.
+    private void FUN_800907e4(short value)
+    {
+        _gameEngine.StaticVariables.g_spuReverbAttr2.Mask = 8;
+        _gameEngine.StaticVariables.g_spuReverbAttr2.Delay = value;
+    }
+
+    // GHIDRA: FUN_80090824 @ 0x80090824
+    private int FUN_80090824(short vabId, short programIndex, short toneIndex, ref VabToneAttributesCopy toneAttributes)
+    {
+        var vabIndex = (ushort)vabId;
+        if ((uint)vabIndex >= (uint)_gameEngine.StaticVariables.g_loadedVabState.Length
+            || _gameEngine.StaticVariables.g_loadedVabState[vabIndex] != 1)
+        {
+            return -1;
+        }
+
+        if (SelectLoadedVabProgram(vabId, programIndex) < 0 || !TryGetLoadedVabHeader(vabId, out var vabHeader))
+        {
+            return -1;
+        }
+
+        if ((uint)programIndex >= (uint)vabHeader.VagAttributes.Length)
+        {
+            return -1;
+        }
+
+        var tones = vabHeader.VagAttributes[programIndex];
+        if ((uint)toneIndex >= (uint)tones.Length)
+        {
+            return -1;
+        }
+
+        var toneAttr = tones[toneIndex];
+        toneAttr.Prior = toneAttributes.Priority;
+        toneAttr.Mode = toneAttributes.Mode;
+        toneAttr.Vol = toneAttributes.Volume;
+        toneAttr.Pan = toneAttributes.Pan;
+        toneAttr.Center = toneAttributes.Center;
+        toneAttr.Shift = toneAttributes.Shift;
+        toneAttr.Min = toneAttributes.Min;
+        toneAttr.Max = toneAttributes.Max;
+        toneAttr.VibW = toneAttributes.VibratoWidth;
+        toneAttr.VibT = toneAttributes.VibratoTime;
+        toneAttr.PorW = toneAttributes.PortamentoWidth;
+        toneAttr.PorT = toneAttributes.PortamentoTime;
+        toneAttr.Pbmin = toneAttributes.PitchBendMin;
+        toneAttr.Pbmax = toneAttributes.PitchBendMax;
+        toneAttr.Adsr1 = toneAttributes.Adsr1;
+        toneAttr.Adsr2 = toneAttributes.Adsr2;
+        toneAttr.Prog = unchecked((short)toneAttributes.Program);
+        toneAttr.Vag = unchecked((short)toneAttributes.Vag);
+        return 0;
     }
 
     // GHIDRA: FUN_80093F8C @ 0x80093F8C
@@ -1450,6 +1871,7 @@ public class SoundManager
             _gameEngine.StaticVariables.g_spuVoiceVolumeLeft[voiceId] = (short)leftVolume;
             _gameEngine.StaticVariables.g_spuVoiceVolumeRight[voiceId] = (short)rightVolume;
             _gameEngine.StaticVariables.g_spuVoiceDirtyFlags[voiceId] = (byte)(_gameEngine.StaticVariables.g_spuVoiceDirtyFlags[voiceId] | 0x03);
+            PushTrackedVoiceStereoVolume((short)voiceId);
             refreshedVoices++;
         }
 
@@ -1722,6 +2144,7 @@ public class SoundManager
             }
         }
 
+        PushTrackedVoiceStereoVolume(voiceId);
         return true;
     }
 
@@ -2623,6 +3046,7 @@ public class SoundManager
                     _gameEngine.StaticVariables.g_spuVoiceVolumeLeft[voiceIndex] = spuVolumeLeft;
                     _gameEngine.StaticVariables.g_spuVoiceVolumeRight[voiceIndex] = spuVolumeRight;
                     _gameEngine.StaticVariables.g_spuVoiceDirtyFlags[voiceIndex] |= 0x03;
+                    PushTrackedVoiceStereoVolume((short)voiceIndex);
                 }
             }
         }
@@ -2707,8 +3131,11 @@ public class SoundManager
         {
             if (_gameEngine.StaticVariables.g_soundEffectState != 0)
             {
-                //SpuSetKey(0, 0xffffff);
-                //VSync(0);
+                for (short voiceId = 0; voiceId < _gameEngine.StaticVariables.g_voiceState.Length; voiceId++)
+                {
+                    StopVoice(voiceId);
+                }
+
                 _gameEngine.StaticVariables.g_soundEffectState = 0;
             }
 
@@ -2856,11 +3283,13 @@ public class SoundManager
             if (loadedVabBody != null)
             {
                 _gameEngine.SoundBin.TrackVoicePlayback(soundEffectRecord.VabId != -1, voiceId, soundEffectRecord.ProgramNumber, toneIndex, soundEffectRecord.Note, loadedVabHeader, loadedVabBody);
+                PushTrackedVoiceStereoVolume(voiceId);
                 return;
             }
         }
 
         _gameEngine.SoundBin.TrackVoicePlayback(soundEffectRecord.VabId != -1, voiceId, soundEffectRecord.ProgramNumber, toneIndex, soundEffectRecord.Note);
+        PushTrackedVoiceStereoVolume(voiceId);
     }
 
     // GHIDRA: CountActiveVoicesForSfx @ 0x80049060
@@ -3041,19 +3470,19 @@ public class SoundManager
             // GHIDRA: FUN_80091204 @ 0x80091204
             private byte FUN_80091204(byte[] toneIndices, byte[] voiceIds)
             {
-                if (!TryGetLoadedVabHeader(_gameEngine.StaticVariables.DAT_801f7699, out var vabHeader))
+                if (!TryGetLoadedVabHeader(_gameEngine.StaticVariables.g_currentVabIdByte, out var vabHeader))
                 {
                     return 0;
                 }
 
-                var programIndex = _gameEngine.StaticVariables.DAT_801f769e;
+                var programIndex = _gameEngine.StaticVariables.g_currentVabProgramIndex;
                 if ((uint)programIndex >= (uint)vabHeader.VagAttributes.Length)
                 {
                     return 0;
                 }
 
                 var tones = vabHeader.VagAttributes[programIndex];
-                var toneCount = Math.Min(_gameEngine.StaticVariables.DAT_801f7698, (byte)tones.Length);
+                var toneCount = Math.Min(_gameEngine.StaticVariables.g_currentVabToneCount, (byte)tones.Length);
                 byte matchCount = 0;
                 for (byte toneIndex = 0; toneIndex < toneCount; toneIndex++)
                 {
@@ -3130,11 +3559,11 @@ public class SoundManager
                 var programAttr = vabHeader.ProgAttributes[programNumber];
                 _gameEngine.StaticVariables.DAT_801f76a2 = programAttr.Mvol;
                 _gameEngine.StaticVariables.DAT_801f76a3 = programAttr.Mpan;
-                _gameEngine.StaticVariables.DAT_801f7698 = programAttr.Tones;
+                _gameEngine.StaticVariables.g_currentVabToneCount = programAttr.Tones;
                 _gameEngine.StaticVariables.g_sequenceKey = unchecked((short)sequenceKey);
 
                 var playedMask = 0xFFFFFFFFu;
-                if (_gameEngine.StaticVariables.DAT_801f769f >= vabHeader.Header.Ts)
+                if (_gameEngine.StaticVariables.g_currentVabFirstToneIndex >= vabHeader.Header.Ts)
                 {
                     return playedMask;
                 }
@@ -3186,7 +3615,7 @@ public class SoundManager
                     voiceSlot.ReplacementAge = 0;
                     voiceSlot.SequenceKey = unchecked((short)sequenceKey);
                     voiceSlot.VabId = unchecked((short)vabId);
-                    voiceSlot.VabFirstToneIndex = unchecked((short)_gameEngine.StaticVariables.DAT_801f769f);
+                    voiceSlot.VabFirstToneIndex = unchecked((short)_gameEngine.StaticVariables.g_currentVabFirstToneIndex);
                     voiceSlot.ProgramIndex = programNumber;
                     if ((short)sequenceKey != 0x21)
                     {
@@ -3217,6 +3646,7 @@ public class SoundManager
 
                         _gameEngine.SoundBin.TrackVoicePlayback(false, voiceId, programNumber, _gameEngine.StaticVariables.DAT_801f76a4,
                             note, vabHeader, loadedVabBody);
+                        PushTrackedVoiceStereoVolume(voiceId);
                     }
 
                     _gameEngine.StaticVariables.g_voiceState[voiceId] = 0x80;
@@ -3403,9 +3833,9 @@ public class SoundManager
         }
 
         var firstToneIndex = unchecked((byte)vabHeader.ProgAttributes[programIndex].Reserved1);
-        _gameEngine.StaticVariables.DAT_801f7699 = (byte)vabId;
-        _gameEngine.StaticVariables.DAT_801f769e = (byte)programIndex;
-        _gameEngine.StaticVariables.DAT_801f769f = firstToneIndex;
+        _gameEngine.StaticVariables.g_currentVabIdByte = (byte)vabId;
+        _gameEngine.StaticVariables.g_currentVabProgramIndex = (byte)programIndex;
+        _gameEngine.StaticVariables.g_currentVabFirstToneIndex = firstToneIndex;
         return 0;
     }
 
@@ -3549,12 +3979,12 @@ public class SoundManager
         programAttr = null!;
         toneAttr = null!;
 
-        if (!TryGetLoadedVabHeader(_gameEngine.StaticVariables.DAT_801f7699, out vabHeader))
+        if (!TryGetLoadedVabHeader(_gameEngine.StaticVariables.g_currentVabIdByte, out vabHeader))
         {
             return false;
         }
 
-        var programIndex = _gameEngine.StaticVariables.DAT_801f769e;
+        var programIndex = _gameEngine.StaticVariables.g_currentVabProgramIndex;
         var toneIndex = _gameEngine.StaticVariables.DAT_801f76a4;
 
         if ((uint)programIndex >= (uint)vabHeader.ProgAttributes.Length || (uint)programIndex >= (uint)vabHeader.VagAttributes.Length)
@@ -3622,7 +4052,7 @@ public class SoundManager
         }
 
         _gameEngine.StaticVariables.DAT_801f76b4 = (short)(voiceId << 3);
-        _gameEngine.StaticVariables.DAT_801f76b6 = (short)((_gameEngine.StaticVariables.DAT_801f769f << 4) + _gameEngine.StaticVariables.DAT_801f76a4);
+        _gameEngine.StaticVariables.DAT_801f76b6 = (short)((_gameEngine.StaticVariables.g_currentVabFirstToneIndex << 4) + _gameEngine.StaticVariables.DAT_801f76a4);
         _gameEngine.StaticVariables.g_voiceRuntimeSlots[voiceId].VoiceStatus = 0x7fff;
 
         var clearMask = ~(1 << voiceId);
@@ -3721,6 +4151,8 @@ public class SoundManager
         _gameEngine.StaticVariables.g_spuVoiceVolumeRight[voiceId] = unchecked((short)rightVolume);
         _gameEngine.StaticVariables.g_spuVoicePitch[voiceId] = pitch;
         _gameEngine.StaticVariables.g_spuVoiceDirtyFlags[voiceId] = (byte)(_gameEngine.StaticVariables.g_spuVoiceDirtyFlags[voiceId] | 0x07);
+        PushTrackedVoiceStereoVolume(voiceId);
+        PushTrackedVoicePitch(voiceId);
         _gameEngine.StaticVariables.g_voiceRuntimeSlots[voiceId].CurrentPitch = pitch;
         _gameEngine.StaticVariables.g_voiceRuntimeSlots[voiceId].NoiseState = 1;
 
@@ -3811,6 +4243,7 @@ public class SoundManager
         _gameEngine.StaticVariables.g_spuVoiceVolumeRight[voiceId] = unchecked((short)rightVolume);
         _gameEngine.StaticVariables.g_spuVoiceVolumeLeft[voiceId] = unchecked((short)leftVolume);
         _gameEngine.StaticVariables.g_spuVoiceDirtyFlags[voiceId] = (byte)(_gameEngine.StaticVariables.g_spuVoiceDirtyFlags[voiceId] | 0x03);
+        PushTrackedVoiceStereoVolume(voiceId);
         _gameEngine.StaticVariables.g_voiceRuntimeSlots[voiceId].CurrentPitch = 10;
 
         var voiceCount = Math.Min(_gameEngine.StaticVariables.g_numberOfVoices, _gameEngine.StaticVariables.g_voiceRuntimeSlots.Length);
@@ -3888,7 +4321,7 @@ public class SoundManager
 
             _gameEngine.StaticVariables.DAT_801f76a2 = programAttr.Mvol;
             _gameEngine.StaticVariables.DAT_801f76a3 = programAttr.Mpan;
-            _gameEngine.StaticVariables.DAT_801f7698 = programAttr.Tones;
+            _gameEngine.StaticVariables.g_currentVabToneCount = programAttr.Tones;
             _gameEngine.StaticVariables.DAT_801f76a7 = toneAttr.Prior;
             _gameEngine.StaticVariables.DAT_801f76b0 = unchecked((short)(ushort)toneAttr.Vag);
             _gameEngine.StaticVariables.DAT_801f76a5 = toneAttr.Vol;
@@ -3899,7 +4332,7 @@ public class SoundManager
             _gameEngine.StaticVariables.DAT_801f76aa = toneAttr.Pbmin;
             _gameEngine.StaticVariables.DAT_801f76ab = toneAttr.Pbmax;
 
-            if (_gameEngine.StaticVariables.DAT_801f7698 == 0)
+            if (_gameEngine.StaticVariables.g_currentVabToneCount == 0)
             {
                 return -1;
             }
@@ -3916,7 +4349,7 @@ public class SoundManager
             voiceSlot.SequenceKey = 0x21;
             voiceSlot.VabId = vabId;
             voiceSlot.ProgramIndex = programIndex;
-            voiceSlot.VabFirstToneIndex = unchecked((short)_gameEngine.StaticVariables.DAT_801f769f);
+            voiceSlot.VabFirstToneIndex = unchecked((short)_gameEngine.StaticVariables.g_currentVabFirstToneIndex);
             voiceSlot.Note = note;
             voiceSlot.Priority = unchecked((short)_gameEngine.StaticVariables.DAT_801f76a7);
             voiceSlot.NoiseState = 1;
@@ -4092,6 +4525,7 @@ public class SoundManager
         _gameEngine.StaticVariables.g_spuVoiceVolumeRight[voiceId] = volumeRight;
         _gameEngine.StaticVariables.g_spuVoiceDirtyFlags[voiceId] = (byte)(_gameEngine.StaticVariables.g_spuVoiceDirtyFlags[voiceId] | 0x03);
         _gameEngine.StaticVariables.g_voiceCommandLock = 0;
+        PushTrackedVoiceStereoVolume(voiceId);
     }
 
     // GHIDRA: StopVoice @ 0x80094F20
