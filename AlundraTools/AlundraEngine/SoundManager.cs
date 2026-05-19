@@ -178,6 +178,7 @@ public class SoundManager
         EnsureSoundEffectDataInitialized();
         Array.Clear(_gameEngine.StaticVariables.g_voiceState);
         Array.Clear(_gameEngine.StaticVariables.g_voiceSfxId);
+        Array.Clear(_gameEngine.StaticVariables.DAT_801f6d68);
         var soundEffectSequenceBuffer = _gameEngine.SoundBin.GetSoundEffectSequenceBuffer();
         if (_gameEngine.StaticVariables.g_soundBinSequenceBuffer.Length != soundEffectSequenceBuffer.Length)
         {
@@ -196,6 +197,7 @@ public class SoundManager
         //FUN_8008e398();
         //SpuSetMute(1);
         FUN_8008ec8c(4);
+        FUN_8008df4c();
         //_gameEngine.StaticVariables.g_globalSoundVabId = -1;
         _gameEngine.StaticVariables.g_currentVabId = -1;
         //FUN_8008f994();
@@ -616,17 +618,84 @@ public class SoundManager
         }
     }
 
+    // GHIDRA: FUN_8008DF4C @ 0x8008DF4C
+    private void FUN_8008df4c()
+    {
+        FUN_8009299c(0x18);
+        Array.Clear(_gameEngine.StaticVariables.DAT_801f6d68);
+        _gameEngine.StaticVariables.DAT_801f6ce0 = 0x3C;
+        _gameEngine.StaticVariables.g_sequenceSlotMask = 0;
+        _gameEngine.StaticVariables.g_voiceCommandLock = 0;
+    }
+
+    // GHIDRA: FUN_8009299C @ 0x8009299C
+    // PARTIAL: PSX transfer allocator reset remains backend-only; the proven runtime/global reset is transliterated here.
+    private void FUN_8009299c(int numberOfVoices)
+    {
+        var staticVariables = _gameEngine.StaticVariables;
+        var voiceResetCount = Math.Min(staticVariables.g_voiceRuntimeSlots.Length, 0x18);
+
+        staticVariables.g_audioFadeState = 0;
+        staticVariables.DAT_sound_801f7610 = 0;
+
+        Array.Clear(staticVariables.g_spuVoiceVolumeLeft);
+        Array.Clear(staticVariables.g_spuVoiceVolumeRight);
+        Array.Clear(staticVariables.g_spuVoicePitch);
+        Array.Clear(staticVariables.g_spuVoiceReverb);
+        Array.Clear(staticVariables.g_spuVoiceAdsr1);
+        Array.Clear(staticVariables.g_spuVoiceAdsr2);
+        Array.Clear(staticVariables.g_spuVoiceDirtyFlags);
+
+        staticVariables.g_loadedVabCount = 0;
+        Array.Clear(staticVariables.g_loadedVabState);
+
+        staticVariables.g_numberOfVoices = (byte)Math.Min(numberOfVoices, voiceResetCount);
+        staticVariables.g_voiceCommandPlayingLeft = 0;
+        staticVariables.g_voiceCommandPlayingRight = 0;
+        staticVariables.g_voiceCommandPendingLeft = 0;
+        staticVariables.g_voiceCommandPendingRight = 0;
+        staticVariables.DAT_sound_801f7ef8 = 0;
+        staticVariables.DAT_sound_801f7f00 = 0;
+
+        for (var voiceId = 0; voiceId < voiceResetCount; voiceId++)
+        {
+            staticVariables.g_voiceRuntimeSlots[voiceId] = new VoiceRuntimeSlot();
+            ref var voiceSlot = ref staticVariables.g_voiceRuntimeSlots[voiceId];
+            voiceSlot.field_0x00 = 0x00FF;
+            voiceSlot.ReplacementAge = 0x18;
+            voiceSlot.field_0x0A = 0x40;
+            voiceSlot.SequenceKey = -1;
+            voiceSlot.ToneIndex = unchecked((short)0x00FF);
+
+            staticVariables.g_spuVoiceAdsr1[voiceId] = 0x1000;
+            staticVariables.g_spuVoiceAdsr2[voiceId] = 0x0200;
+
+            staticVariables.DAT_maybeCurrentVoiceIndex_801f76b2 = (short)voiceId;
+            FUN_80091134(voiceId);
+        }
+
+        staticVariables.g_spuReverbAttr2.Mask = 0;
+        staticVariables.g_spuReverbAttr2.DepthLeft = 0x3FFF;
+        staticVariables.g_spuReverbAttr2.DepthRight = 0x3FFF;
+        staticVariables.g_spuReverbAttr2.Mode = 0;
+        staticVariables.g_voiceLockFlag = 0;
+        staticVariables.DAT_sound_801f7658 = 0;
+        staticVariables.DAT_sound_801f7660 = 0x80;
+
+        UpdateSoundVoicesState();
+    }
+
     // GHIDRA: UpdateSoundVoicesState @ 0x8009311C
-    // PARTIAL: this currently flushes only raw per-voice stereo volume (0x01/0x02) and pitch (0x04); reverb (0x08) and ADSR (0x30) dirty-flag side effects are still not consumed on desktop.
+    // PARTIAL: this now flushes raw per-voice stereo volume, pitch, reverb, ADSR, pending stop masks, and the raw common-block tail snapshot; the original hardware voice-status/history path still remains unported.
     private void UpdateSoundVoicesState()
     {
-        // PARTIAL: raw left/right and pitch voice updates are now pushed to the desktop backend here.
-        // Reverb and ADSR hardware side effects remain partial.
+        // PARTIAL: raw voice shadow state is mirrored into the desktop adaptation layer here.
+        // MonoGame playback still does not reproduce the audible SPU reverb/envelope behavior.
         var voiceCount = Math.Min(_gameEngine.StaticVariables.g_numberOfVoices, _gameEngine.StaticVariables.g_spuVoiceDirtyFlags.Length);
         for (var voiceId = 0; voiceId < voiceCount; voiceId++)
         {
             var dirtyFlags = _gameEngine.StaticVariables.g_spuVoiceDirtyFlags[voiceId];
-            if ((dirtyFlags & 0x07) == 0)
+            if (dirtyFlags == 0)
             {
                 continue;
             }
@@ -641,8 +710,50 @@ public class SoundManager
                 PushTrackedVoicePitch((short)voiceId);
             }
 
-            _gameEngine.StaticVariables.g_spuVoiceDirtyFlags[voiceId] = (byte)(dirtyFlags & ~0x07);
+            if ((dirtyFlags & 0x08) != 0)
+            {
+                PushTrackedVoiceReverb((short)voiceId);
+            }
+
+            if ((dirtyFlags & 0x30) != 0)
+            {
+                PushTrackedVoiceAdsr((short)voiceId);
+            }
+
+            _gameEngine.StaticVariables.g_spuVoiceDirtyFlags[voiceId] = 0;
         }
+
+        var pendingLeft = unchecked((ushort)_gameEngine.StaticVariables.g_voiceCommandPendingLeft);
+        var pendingRight = unchecked((ushort)_gameEngine.StaticVariables.g_voiceCommandPendingRight);
+        var driverVoiceState = _gameEngine.StaticVariables.PTR_VOICE_00_LEFT_RIGHT_800c9794 ??= new AlundraEngine.Gameplay.Voice();
+        driverVoiceState.field_0x188 = _gameEngine.StaticVariables.g_voiceCommandPlayingLeft;
+        driverVoiceState.field_0x18A = _gameEngine.StaticVariables.g_voiceCommandPlayingRight;
+        driverVoiceState.field_0x18C = (byte)pendingLeft;
+        driverVoiceState.field_0x18D = (byte)(pendingLeft >> 8);
+        driverVoiceState.field_0x18E = _gameEngine.StaticVariables.g_voiceCommandPendingRight;
+        driverVoiceState.field_0x198 = _gameEngine.StaticVariables.DAT_sound_801f7ef8;
+        driverVoiceState.field_0x19A = _gameEngine.StaticVariables.DAT_sound_801f7f00;
+        ProcessVoiceStop(pendingLeft, pendingRight);
+    }
+
+    // GHIDRA: ProcessVoiceStop @ 0x8009261C
+    // PARTIAL: the desktop port consumes pending stop masks through tracked backend voices; original hardware voice-status/history side effects remain outside this helper.
+    private void ProcessVoiceStop(ushort pendingLeft, ushort pendingRight)
+    {
+        var trackedVoiceCount = Math.Min(_gameEngine.StaticVariables.g_voiceRuntimeSlots.Length, _gameEngine.SoundBin.VoicesAreActive.Length);
+        for (var voiceId = 0; voiceId < trackedVoiceCount; voiceId++)
+        {
+            GetVoiceCommandMasks((short)voiceId, out var leftMask, out var rightMask);
+            if (((pendingLeft & leftMask) != 0) || ((pendingRight & rightMask) != 0))
+            {
+                _gameEngine.SoundBin.StopTrackedVoice(voiceId);
+            }
+        }
+
+        _gameEngine.StaticVariables.g_voiceCommandPendingLeft = 0;
+        _gameEngine.StaticVariables.g_voiceCommandPendingRight = 0;
+        _gameEngine.StaticVariables.g_voiceCommandPlayingLeft = 0;
+        _gameEngine.StaticVariables.g_voiceCommandPlayingRight = 0;
     }
 
     // JUSTIFICATION: PSX hardware adaptation only
@@ -672,6 +783,36 @@ public class SoundManager
         _gameEngine.SoundBin.UpdateTrackedVoicePitch(
             voiceId,
             _gameEngine.StaticVariables.g_spuVoicePitch[voiceId]);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: adapter for raw SPU per-voice reverb shadow updates on desktop tracked voices
+    private void PushTrackedVoiceReverb(short voiceId)
+    {
+        if ((uint)voiceId >= (uint)_gameEngine.StaticVariables.g_spuVoiceReverb.Length)
+        {
+            return;
+        }
+
+        _gameEngine.SoundBin.UpdateTrackedVoiceReverb(
+            voiceId,
+            _gameEngine.StaticVariables.g_spuVoiceReverb[voiceId]);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: adapter for raw SPU per-voice ADSR shadow updates on desktop tracked voices
+    private void PushTrackedVoiceAdsr(short voiceId)
+    {
+        if ((uint)voiceId >= (uint)_gameEngine.StaticVariables.g_spuVoiceAdsr1.Length
+            || (uint)voiceId >= (uint)_gameEngine.StaticVariables.g_spuVoiceAdsr2.Length)
+        {
+            return;
+        }
+
+        _gameEngine.SoundBin.UpdateTrackedVoiceAdsr(
+            voiceId,
+            _gameEngine.StaticVariables.g_spuVoiceAdsr1[voiceId],
+            _gameEngine.StaticVariables.g_spuVoiceAdsr2[voiceId]);
     }
 
     // GHIDRA: FUN_8008E3D8 @ 0x8008E3D8
@@ -1292,7 +1433,7 @@ public class SoundManager
     }
 
     // GHIDRA: FUN_8008C918 @ 0x8008C918
-    // PARTIAL: the callback table at 0x801F6D68 is not ported yet, so the field_0x16 == 0x28 callback path is skipped.
+    // PARTIAL: the 0x801F6D68 callback table now dispatches through raw registered entries, but its registration/lifecycle semantics remain unresolved.
     private void FUN_8008c918(short seqId, short trackId, byte value)
     {
         if ((uint)seqId >= (uint)_gameEngine.StaticVariables.g_sequenceStatePointers.Length)
@@ -1313,6 +1454,15 @@ public class SoundManager
             {
                 sequenceState.field_0x14 = (ushort)((sequenceState.field_0x14 & 0x00FF) | (value << 8));
                 sequenceState.field_0x2A++;
+            }
+        }
+
+        if (sequenceState.field_0x16 == 0x28)
+        {
+            var callbackIndex = (((int)(ushort)seqId) << 4) + (ushort)trackId;
+            if ((uint)callbackIndex < (uint)_gameEngine.StaticVariables.DAT_801f6d68.Length)
+            {
+                _gameEngine.StaticVariables.DAT_801f6d68[callbackIndex]?.Invoke(seqId, trackId, value);
             }
         }
 
@@ -1673,6 +1823,7 @@ public class SoundManager
 
         _gameEngine.StaticVariables.g_spuReverbAttr2.Mask = 1;
         _gameEngine.StaticVariables.g_spuReverbAttr2.Mode = isNegative ? magnitude | 0x100 : magnitude;
+        _gameEngine.SoundBin.UpdateReverbAttr(_gameEngine.StaticVariables.g_spuReverbAttr2);
         if (magnitude == 0)
         {
             FUN_800906c8();
@@ -1682,15 +1833,17 @@ public class SoundManager
     }
 
     // GHIDRA: FUN_800906A8 @ 0x800906A8
-    // PARTIAL: desktop backend does not expose a PSX reverb enable toggle.
+    // PARTIAL: desktop adaptation records the reverb enable toggle, but the backend does not reproduce audible SPU reverb.
     private void FUN_800906a8()
     {
+        _gameEngine.SoundBin.SetReverbEnabled(true);
     }
 
     // GHIDRA: FUN_800906C8 @ 0x800906C8
-    // PARTIAL: desktop backend has no SPU reverb path yet.
+    // PARTIAL: desktop adaptation records the reverb disable toggle, but the backend does not reproduce audible SPU reverb.
     private void FUN_800906c8()
     {
+        _gameEngine.SoundBin.SetReverbEnabled(false);
     }
 
     // GHIDRA: FUN_800906E8 @ 0x800906E8
@@ -1699,14 +1852,17 @@ public class SoundManager
     {
         _gameEngine.StaticVariables.g_spuReverbAttr2.Mask = 0x10;
         _gameEngine.StaticVariables.g_spuReverbAttr2.Feedback = value;
+        _gameEngine.SoundBin.UpdateReverbAttr(_gameEngine.StaticVariables.g_spuReverbAttr2);
     }
 
     // GHIDRA: FUN_80090728 @ 0x80090728
-    // PARTIAL: desktop backend has no SPU reverb parameter path yet.
+    // PARTIAL: desktop adaptation records the proven raw reverb depth fields, but the backend does not reproduce audible SPU reverb.
     private void FUN_80090728(short param_1, short param_2)
     {
-        _ = param_1;
-        _ = param_2;
+        _gameEngine.StaticVariables.g_spuReverbAttr2.Mask = 6;
+        _gameEngine.StaticVariables.g_spuReverbAttr2.DepthLeft = (short)((param_1 * 0x7fff) / 0x7f);
+        _gameEngine.StaticVariables.g_spuReverbAttr2.DepthRight = (short)((param_2 * 0x7fff) / 0x7f);
+        _gameEngine.SoundBin.UpdateReverbAttr(_gameEngine.StaticVariables.g_spuReverbAttr2);
     }
 
     // GHIDRA: FUN_800907E4 @ 0x800907E4
@@ -1715,6 +1871,7 @@ public class SoundManager
     {
         _gameEngine.StaticVariables.g_spuReverbAttr2.Mask = 8;
         _gameEngine.StaticVariables.g_spuReverbAttr2.Delay = value;
+        _gameEngine.SoundBin.UpdateReverbAttr(_gameEngine.StaticVariables.g_spuReverbAttr2);
     }
 
     // GHIDRA: FUN_80090824 @ 0x80090824
@@ -1783,7 +1940,6 @@ public class SoundManager
     }
 
     // GHIDRA: FUN_8009410C @ 0x8009410C
-    // PARTIAL: reuses the current C# per-voice tone state and raw velocity table instead of the original packed metadata block.
     private int FUN_8009410c(ushort sequenceKey, ushort vabId, short programNumber, uint channelVolume, ushort orientation)
     {
         var sequenceId = sequenceKey & 0xFF;
@@ -2179,7 +2335,7 @@ public class SoundManager
     // GHIDRA: FUN_8008E610 @ 0x8008E610
     private void FUN_8008e610(short seqId, short trackId)
     {
-        // PARTIAL: control flow and mutated fields are ported; exact musical meaning of +0x3E/+0x40/+0x42 remains partial.
+        // PARTIAL: control flow and mutated fields are ported; xrefs close +0x3E/+0x40/+0x42 as transition magnitude / working counter / signed step-divisor, but exact musical naming remains partial.
         if ((uint)seqId >= _gameEngine.StaticVariables.g_sequenceStatePointers.Length || trackId != 0)
         {
             return;
@@ -2258,7 +2414,7 @@ public class SoundManager
     // GHIDRA: FUN_8008E8D0 @ 0x8008E8D0
     private void FUN_8008e8d0(short seqId, short trackId)
     {
-        // PARTIAL: control flow and mutated fields are ported; exact musical meaning of +0x3E/+0x40/+0x42 remains partial.
+        // PARTIAL: control flow and mutated fields are ported; xrefs close +0x3E/+0x40/+0x42 as transition magnitude / working counter / signed step-divisor, but exact musical naming remains partial.
         if ((uint)seqId >= _gameEngine.StaticVariables.g_sequenceStatePointers.Length || trackId != 0)
         {
             return;
@@ -2450,6 +2606,22 @@ public class SoundManager
                 FUN_80091134(0);
             }
         }
+    }
+
+    // GHIDRA: FUN_80091B1C @ 0x80091B1C
+    // PARTIAL: raw note-off writes are closed; PTR_VOICE_00_LEFT_RIGHT_800c9794.field_0x194/0x196 now close as raw left/right voice command masks, but their downstream hardware consumption remains outside the desktop port.
+    private void FUN_80091b1c(short voiceId)
+    {
+        if ((uint)voiceId >= (uint)_gameEngine.StaticVariables.g_voiceRuntimeSlots.Length)
+        {
+            return;
+        }
+
+        ref var voiceSlot = ref _gameEngine.StaticVariables.g_voiceRuntimeSlots[voiceId];
+        voiceSlot.NoiseState = 0;
+        voiceSlot.CurrentPitch = 0;
+        _gameEngine.StaticVariables.PTR_VOICE_00_LEFT_RIGHT_800c9794.field_0x194 = 0;
+        _gameEngine.StaticVariables.PTR_VOICE_00_LEFT_RIGHT_800c9794.field_0x196 = 0;
     }
 
     private static void GetVoiceCommandMasks(short voiceId, out ushort leftMask, out ushort rightMask)
@@ -2680,7 +2852,7 @@ public class SoundManager
     }
 
     // GHIDRA: FUN_80093A04 @ 0x80093A04
-    // PARTIAL: the original FUN_80091B1C path is not yet closed; StopVoice is used as the current best local equivalent for matched sequence voices.
+    // PARTIAL: raw note-off cleanup now follows FUN_80091B1C; the desktop backend still stops tracked voices in lieu of PSX release handling.
     private int FUN_80093a04(short sequenceKey, short vabId, short programNumber, uint note)
     {
         var stoppedVoices = 0;
@@ -2696,7 +2868,8 @@ public class SoundManager
                 continue;
             }
 
-            StopVoice((short)voiceId);
+            FUN_80091b1c((short)voiceId);
+            _gameEngine.SoundBin.StopTrackedVoice(voiceId);
             stoppedVoices++;
         }
 
@@ -2851,6 +3024,8 @@ public class SoundManager
 
         sequenceState.field_0x84 = unchecked((uint)roundedTempo);
         sequenceState.field_0x8C = unchecked((uint)roundedTempo);
+
+        sequenceState.SeqPosition = sequenceIndex + 2;
 
         var initialDelay = FUN_8008d8d0(sequenceSlot, 0);
 
@@ -3057,7 +3232,8 @@ public class SoundManager
     // GHIDRA: LoadVabHeader @ 0x8008FAAC
     private short LoadVabHeader(byte[] vabHeaderBuffer, short requestedVabId, int uploadBase)
     {
-        // PARTIAL: desktop bridge reserves a runtime VAB slot and marks it as body-loading, but does not yet port the full PSX VAB table population.
+        // PARTIAL: desktop bridge reserves a runtime VAB slot, resets body state, parses the managed header/program/tone data, and marks it body-loading,
+        // but it still does not mirror the raw PSX pointer-table population from LoadVabHeaderCore (header/program/tone/sample/SPU-allocation pointers).
         short vabId = requestedVabId;
 
         if (vabId <= 0 || vabId >= 0x10 || _gameEngine.StaticVariables.g_loadedVabState[vabId] != 0)
@@ -3151,7 +3327,29 @@ public class SoundManager
         _gameEngine.SoundBin.SetMasterVolume(volumeLeft, volumeRight);
     }
 
-    //800490fc or 80049634 ???
+    // GHIDRA: IsSoundEffectAlreadyPlaying @ 0x80048DF4
+    // PARTIAL: the helper logic is now closed, but PlaySoundEffect keeps the guard disabled until the clear site for DAT_80165028 is proven.
+    private int IsSoundEffectAlreadyPlaying(int sfxId)
+    {
+        for (var index = 0; index < _gameEngine.StaticVariables.DAT_80165028.Length; index++)
+        {
+            var currentSfxId = _gameEngine.StaticVariables.DAT_80165028[index];
+            if (currentSfxId == sfxId)
+            {
+                return 1;
+            }
+
+            if (currentSfxId == 0)
+            {
+                _gameEngine.StaticVariables.DAT_80165028[index] = sfxId;
+                return 0;
+            }
+        }
+
+        return 0;
+    }
+
+    // GHIDRA: PlaySoundEffect @ 0x800490FC
     public void PlaySoundEffect(uint sfxId)
     {
         if (_gameEngine.StaticVariables.g_soundEffectState != 0)
@@ -3212,12 +3410,14 @@ public class SoundManager
 
     private void SyncSoundEffectVoiceStates()
     {
-        // PARTIAL: backend voice snapshot is SoundBin.VoicesAreActive; full SPU status snapshot is not ported.
+        // PARTIAL: backend voice snapshot is SoundBin.VoicesAreActive; raw slot cleanup is mirrored here when a tracked voice ends, but the full SPU status/history snapshot is not ported.
         for (var voiceIndex = 0; voiceIndex < 0x18; voiceIndex++)
         {
             if (_gameEngine.SoundBin.VoicesAreActive[voiceIndex] == 0 &&
                 _gameEngine.StaticVariables.g_voiceState[voiceIndex] != 0)
             {
+                _gameEngine.StaticVariables.g_voiceRuntimeSlots[voiceIndex].NoiseState = 0;
+                _gameEngine.StaticVariables.g_voiceRuntimeSlots[voiceIndex].CurrentPitch = 0;
                 _gameEngine.StaticVariables.g_voiceState[voiceIndex] = 0;
                 _gameEngine.StaticVariables.g_voiceSfxId[voiceIndex] = 0;
                 _gameEngine.StaticVariables.g_voiceVabId[voiceIndex] = -2;
@@ -3502,20 +3702,16 @@ public class SoundManager
             private uint FUN_80091b60()
             {
                 var noteDelta = (_gameEngine.StaticVariables.DAT_801f769a + 0x3C) - _gameEngine.StaticVariables.DAT_801f76a8;
+                var octaveQuotient = noteDelta / 12;
+                var semitoneRemainder = noteDelta % 12;
                 var fineIndex = _gameEngine.StaticVariables.DAT_801f76a9 >> 3;
                 if (fineIndex > 0x0F)
                 {
                     fineIndex = 0x0F;
                 }
 
-                var semitone = noteDelta % 12;
-                if (semitone < 0)
-                {
-                    semitone += 12;
-                }
-
-                uint pitch = s_voicePitchTable[(semitone << 4) + fineIndex];
-                var octaveShift = (noteDelta - semitone) / 12 - 5;
+                uint pitch = s_voicePitchTable[(semitoneRemainder << 4) + fineIndex];
+                var octaveShift = octaveQuotient - 5;
                 if (octaveShift < 0)
                 {
                     pitch >>= -octaveShift;
@@ -3529,7 +3725,7 @@ public class SoundManager
             }
 
             // GHIDRA: FUN_800934B8 @ 0x800934B8
-            // PARTIAL: the original SPU voice start is bridged to desktop playback through TryPlayLoadedVabToneVoice and TrackVoicePlayback.
+            // PARTIAL: the original SPU voice start is bridged to desktop playback through TryPlayLoadedVabToneVoice and TrackVoicePlayback; raw note velocity/orientation and tone volume/pan storage are now closed.
             private uint FUN_800934b8(uint sequenceKey, ushort vabId, short programNumber, ushort note, ushort velocity, byte orientation)
             {
                 var seqId = (short)(sequenceKey & 0xFF);
@@ -3816,7 +4012,7 @@ public class SoundManager
             return false;
         }
 
-        return _gameEngine.SoundBin.PlayLoadedVabTone(voiceId, vabHeader, loadedVabBody, programNumber, toneIndex, note, true, out _, out _, out _) != null;
+        return _gameEngine.SoundBin.PlayLoadedVabTone(voiceId, vabHeader, loadedVabBody, programNumber, toneIndex, note, false, out _, out _, out _) != null;
     }
 
     // GHIDRA: SelectLoadedVabProgram @ 0x800902AC
@@ -3907,14 +4103,14 @@ public class SoundManager
         var candidateVoiceIndex = 0;
         var replacementFound = false;
         var bestPriority = (ushort)_gameEngine.StaticVariables.DAT_801f76a7;
-        var bestVoiceStatus = ushort.MaxValue;
+        var bestReplacementCriterion = ushort.MaxValue;
         short bestReplacementAge = 0;
         var voiceCount = Math.Min(_gameEngine.StaticVariables.g_numberOfVoices, _gameEngine.StaticVariables.g_voiceRuntimeSlots.Length);
 
         for (var voiceIndex = 0; voiceIndex < voiceCount; voiceIndex++)
         {
             ref var voiceSlot = ref _gameEngine.StaticVariables.g_voiceRuntimeSlots[voiceIndex];
-            if (voiceSlot.NoiseState == 0 && voiceSlot.VoiceStatus == 0)
+            if (voiceSlot.NoiseState == 0 && voiceSlot.field_0x06 == 0)
             {
                 selectedVoiceIndex = voiceIndex;
                 break;
@@ -3924,7 +4120,7 @@ public class SoundManager
             if (voicePriority < bestPriority)
             {
                 bestPriority = voicePriority;
-                bestVoiceStatus = (ushort)voiceSlot.VoiceStatus;
+                bestReplacementCriterion = (ushort)voiceSlot.field_0x06;
                 bestReplacementAge = voiceSlot.ReplacementAge;
                 candidateVoiceIndex = voiceIndex;
                 replacementFound = true;
@@ -3936,10 +4132,10 @@ public class SoundManager
                 continue;
             }
 
-            var voiceStatus = (ushort)voiceSlot.VoiceStatus;
-            if (voiceStatus < bestVoiceStatus || (voiceStatus == bestVoiceStatus && voiceSlot.ReplacementAge > bestReplacementAge))
+            var replacementCriterion = (ushort)voiceSlot.field_0x06;
+            if (replacementCriterion < bestReplacementCriterion || (replacementCriterion == bestReplacementCriterion && voiceSlot.ReplacementAge > bestReplacementAge))
             {
-                bestVoiceStatus = voiceStatus;
+                bestReplacementCriterion = replacementCriterion;
                 bestReplacementAge = voiceSlot.ReplacementAge;
                 candidateVoiceIndex = voiceIndex;
                 replacementFound = true;
@@ -3967,7 +4163,7 @@ public class SoundManager
 
         if (selectedVoice.NoiseState == 2)
         {
-            // PARTIAL: the original also clears the backend noise voice through a SPU helper.
+            _gameEngine.SoundBin.StopTrackedVoice(selectedVoiceIndex);
         }
 
         return (short)selectedVoiceIndex;
@@ -4053,7 +4249,7 @@ public class SoundManager
 
         _gameEngine.StaticVariables.DAT_801f76b4 = (short)(voiceId << 3);
         _gameEngine.StaticVariables.DAT_801f76b6 = (short)((_gameEngine.StaticVariables.g_currentVabFirstToneIndex << 4) + _gameEngine.StaticVariables.DAT_801f76a4);
-        _gameEngine.StaticVariables.g_voiceRuntimeSlots[voiceId].VoiceStatus = 0x7fff;
+        _gameEngine.StaticVariables.g_voiceRuntimeSlots[voiceId].field_0x06 = 0x7fff;
 
         var clearMask = ~(1 << voiceId);
         for (var index = 0; index < _gameEngine.StaticVariables.DAT_801f7e18.Length; index++)

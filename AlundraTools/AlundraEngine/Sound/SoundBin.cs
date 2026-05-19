@@ -2,6 +2,26 @@
 
 public class SoundBin
 {
+    private static readonly ushort[] s_voicePitchTable =
+    {
+        0x1000, 0x100E, 0x101D, 0x102C, 0x103B, 0x104A, 0x1059, 0x1068, 0x1078, 0x1087, 0x1096, 0x10A5,
+        0x10B5, 0x10C4, 0x10D4, 0x10E3, 0x10F3, 0x1103, 0x1113, 0x1122, 0x1132, 0x1142, 0x1152, 0x1162,
+        0x1172, 0x1182, 0x1193, 0x11A3, 0x11B3, 0x11C4, 0x11D4, 0x11E5, 0x11F5, 0x1206, 0x1216, 0x1227,
+        0x1238, 0x1249, 0x125A, 0x126B, 0x127C, 0x128D, 0x129E, 0x12AF, 0x12C1, 0x12D2, 0x12E3, 0x12F5,
+        0x1306, 0x1318, 0x132A, 0x133C, 0x134D, 0x135F, 0x1371, 0x1383, 0x1395, 0x13A7, 0x13BA, 0x13CC,
+        0x13DE, 0x13F1, 0x1403, 0x1416, 0x1428, 0x143B, 0x144E, 0x1460, 0x1473, 0x1486, 0x1499, 0x14AC,
+        0x14BF, 0x14D3, 0x14E6, 0x14F9, 0x150D, 0x1520, 0x1534, 0x1547, 0x155B, 0x156F, 0x1583, 0x1597,
+        0x15AB, 0x15BF, 0x15D3, 0x15E7, 0x15FB, 0x1610, 0x1624, 0x1638, 0x164D, 0x1662, 0x1676, 0x168B,
+        0x16A0, 0x16B5, 0x16CA, 0x16DF, 0x16F4, 0x170A, 0x171F, 0x1734, 0x174A, 0x175F, 0x1775, 0x178B,
+        0x17A1, 0x17B6, 0x17CC, 0x17E2, 0x17F9, 0x180F, 0x1825, 0x183B, 0x1852, 0x1868, 0x187F, 0x1896,
+        0x18AC, 0x18C3, 0x18DA, 0x18F1, 0x1908, 0x191F, 0x1937, 0x194E, 0x1965, 0x197D, 0x1995, 0x19AC,
+        0x19C4, 0x19DC, 0x19F4, 0x1A0C, 0x1A24, 0x1A3C, 0x1A55, 0x1A6D, 0x1A85, 0x1A9E, 0x1AB7, 0x1ACF,
+        0x1AE8, 0x1B01, 0x1B1A, 0x1B33, 0x1B4C, 0x1B66, 0x1B7F, 0x1B98, 0x1BB2, 0x1BCC, 0x1BE5, 0x1BFF,
+        0x1C19, 0x1C33, 0x1C4D, 0x1C67, 0x1C82, 0x1C9C, 0x1CB7, 0x1CD1, 0x1CEC, 0x1D07, 0x1D22, 0x1D3D,
+        0x1D58, 0x1D73, 0x1D8E, 0x1DA9, 0x1DC5, 0x1DE0, 0x1DFC, 0x1E18, 0x1E34, 0x1E50, 0x1E6C, 0x1E88,
+        0x1EA4, 0x1EC1, 0x1EDD, 0x1EFA, 0x1F16, 0x1F33, 0x1F50, 0x1F6D, 0x1F8A, 0x1FA7, 0x1FC5, 0x1FE2,
+    };
+
     private int _masterVolumeLeft = 0x7F;
     private int _masterVolumeRight = 0x7F;
     private const byte SoundBinSectionTypeUnknown = 0;
@@ -214,6 +234,11 @@ public class SoundBin
     private readonly int[] _voiceFramesRemaining = new int[24];
     private readonly System.Media.SoundPlayer?[] _voicePlayers = new System.Media.SoundPlayer[24];
     private readonly Stream?[] _voiceStreams = new Stream[24];
+    private readonly short[] _voiceReverbs = new short[24];
+    private readonly short[] _voiceAdsr1 = new short[24];
+    private readonly short[] _voiceAdsr2 = new short[24];
+    private bool _reverbEnabled;
+    private SpuReverbAttrPartial _reverbAttr;
 
     public readonly SfxRecord[] SfxRecords;
 
@@ -260,9 +285,9 @@ public class SoundBin
                     return null;//its already playing
                 }
 
-                //load and play the sequence
+                //direct SoundBin playback does not route sequence SFX; runtime sequence playback lives in SoundManager.TryPlaySoundEffectSequence
 
-                return null;//but not now we dont suppot sequences yet
+                return null;//direct SoundBin helper still does not route sequence SFX
             }
             //check how many voices are already playing this sfx
             //return if its too many to play another one
@@ -318,9 +343,9 @@ public class SoundBin
                     return null;//its already playing
                 }
 
-                //load and play the sequence
+                //direct SoundBin playback does not route sequence SFX; runtime sequence playback lives in SoundManager.TryPlaySoundEffectSequence
 
-                return null;//but not now we dont suppot sequences yet
+                return null;//direct SoundBin helper still does not route sequence SFX
             }
             //check how many voices are already playing this sfx
             //return if its too many to play another one
@@ -356,15 +381,13 @@ public class SoundBin
 
     private byte[] PlaySfxInner(VabHeader header, byte[] bodybuff, int prognum, int tonenum, int note, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat, int voiceId = -1)
     {
-        var basePitch = 44100;// 22050;// 11025;
         var attr = header.VagAttributes[prognum][tonenum];
-        var dif = note - attr.Center;
-        dif += (int)(attr.Shift / 100f);
-        var pitch = (int)(basePitch * Math.Pow(2, dif / 12f));
-        return PlaySfxInner(attr.Vag, header, bodybuff, pitch, is8Bit, out loopStart, out loopEnd, out repeat, voiceId);
+        var rawPitch = CalculateToneRawPitch(attr, note);
+        var sampleRate = ConvertRawPitchToSampleRate(rawPitch);
+        return PlaySfxInner(attr.Vag, header, bodybuff, sampleRate, is8Bit, out loopStart, out loopEnd, out repeat, voiceId, rawPitch);
     }
 
-    private byte[] PlaySfxInner(int sfx, VabHeader header, byte[] bodybuff, int pitch, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat, int voiceId = -1)
+    private byte[] PlaySfxInner(int sfx, VabHeader header, byte[] bodybuff, int pitch, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat, int voiceId = -1, short rawPitch = 0)
     {
         var pos = 0;
         for (var i = 0; i < sfx; i++)
@@ -389,11 +412,21 @@ public class SoundBin
         }
         loopStart = blockloopstart * SamplesPerBlock;//loops to start of block
         loopEnd = blockloopend * SamplesPerBlock + SamplesPerBlock - 1;//loops at end of block
-        var sampleCount = buff.Length / bytespersample;
-        var shouldLoop = repeat && loopStart == 0 && loopEnd == sampleCount - 1;
-        var encodedSampleRate = _playbackBackend == null ? pitch : 44100;
+        var encodedSampleRate = pitch > 0 ? pitch : 44100;
+        short initialPitch = 0;
+        if (_playbackBackend != null && pitch > 0)
+        {
+            var backendPitch = rawPitch;
+            if (backendPitch == 0)
+            {
+                backendPitch = unchecked((short)((pitch * 0x1000 + 22050) / 44100));
+            }
+
+            initialPitch = backendPitch;
+        }
         var ms = WriteWavFile(buff, 0, buff.Length, encodedSampleRate, is8Bit, _masterVolumeLeft, _masterVolumeRight);
-        PlayWave(ms, voiceId, (short)pitch, shouldLoop);
+        // PARTIAL: MonoGame SoundEffectInstance has no loop-point support; keep repeating PSX looped samples audible by looping the whole decoded sample.
+        PlayWave(ms, voiceId, initialPitch, repeat);
 
         return buff;
     }
@@ -521,6 +554,45 @@ public void UpdateTrackedVoicePitch(int voiceId, short pitch)
     }
 
     _playbackBackend?.UpdateVoicePitch(voiceId, pitch);
+}
+
+// JUSTIFICATION: PSX hardware adaptation only
+// RELATION: adapter for raw SPU per-voice reverb-word updates on desktop tracked voices
+public void UpdateTrackedVoiceReverb(int voiceId, short reverb)
+{
+    if ((uint)voiceId >= (uint)VoicesAreActive.Length)
+    {
+        return;
+    }
+
+    _voiceReverbs[voiceId] = reverb;
+}
+
+// JUSTIFICATION: PSX hardware adaptation only
+// RELATION: adapter for raw SPU per-voice ADSR words on desktop tracked voices
+public void UpdateTrackedVoiceAdsr(int voiceId, short adsr1, short adsr2)
+{
+    if ((uint)voiceId >= (uint)VoicesAreActive.Length)
+    {
+        return;
+    }
+
+    _voiceAdsr1[voiceId] = adsr1;
+    _voiceAdsr2[voiceId] = adsr2;
+}
+
+// JUSTIFICATION: PSX hardware adaptation only
+// RELATION: adapter for the SpuSetReverb on/off observable contract on desktop
+public void SetReverbEnabled(bool enabled)
+{
+    _reverbEnabled = enabled;
+}
+
+// JUSTIFICATION: PSX hardware adaptation only
+// RELATION: adapter for raw SpuSetReverbModeParam writes staged through g_spuReverbAttr2
+public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
+{
+    _reverbAttr = reverbAttr;
 }
 
     public static void DecodeAdpcm(byte[] adpcm, int pos, int len, byte[] pcm, bool is8Bit, out int loopstart, out int loopend, out bool looprepeat)
@@ -891,6 +963,12 @@ public void UpdateTrackedVoicePitch(int voiceId, short pitch)
                 continue;
             }
 
+            if (_playbackBackend != null && !_playbackBackend.IsPlaying(voiceId))
+            {
+                StopTrackedVoice(voiceId);
+                continue;
+            }
+
             var framesRemaining = _voiceFramesRemaining[voiceId];
             if (framesRemaining < 0)
             {
@@ -1064,12 +1142,58 @@ public void UpdateTrackedVoicePitch(int voiceId, short pitch)
         return true;
     }
 
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: local raw SPU pitch derivation for SoundBin playback and tracked-voice lifetime
+    private static short CalculateToneRawPitch(VabHeader.VagAtr tone, int note)
+    {
+        short fine = 0;
+        var fineIndex = fine + tone.Shift;
+        if (fineIndex < 0)
+        {
+            fineIndex += 7;
+        }
+
+        fineIndex >>= 3;
+
+        var octaveCarry = 0;
+        if (fineIndex >= 0x10)
+        {
+            octaveCarry = 1;
+            fineIndex -= 0x10;
+        }
+
+        var noteDelta = octaveCarry + (note + 0x3c - tone.Center);
+        var octaveShift = (noteDelta / 12) - 5;
+        var pitch = s_voicePitchTable[((noteDelta % 12) << 4) + fineIndex];
+
+        if (octaveShift > 0)
+        {
+            pitch = (ushort)(pitch << octaveShift);
+        }
+        else if (octaveShift < 0)
+        {
+            pitch = (ushort)(pitch >> -octaveShift);
+        }
+
+        return unchecked((short)pitch);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: convert raw SPU pitch units to desktop WAV sample-rate for timing and fallback playback
+    private static int ConvertRawPitchToSampleRate(short rawPitch)
+    {
+        var pitch = unchecked((ushort)rawPitch);
+        if (pitch == 0)
+        {
+            return 0;
+        }
+
+        return (int)(((uint)pitch * 44100u + 0x800u) >> 12);
+    }
+
     private static int CalculateToneSampleRate(VabHeader.VagAtr tone, int note)
     {
-        var basePitch = 44100;
-        var delta = note - tone.Center;
-        delta += (int)(tone.Shift / 100f);
-        return (int)(basePitch * Math.Pow(2, delta / 12f));
+        return ConvertRawPitchToSampleRate(CalculateToneRawPitch(tone, note));
     }
 
     public class SfxRecord

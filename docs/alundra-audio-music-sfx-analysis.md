@@ -71,12 +71,13 @@ Conclusion: le runtime C# sait maintenant charger des VAB/SEQ et declencher une 
 Blocages CERTAINS restants pour les musiques:
 
 - `ISoundPlaybackBackend` expose maintenant `UpdateVoiceStereoVolume(...)` et `UpdateVoicePitch(...)`: les dirty flags SPU volume gauche/droite et pitch sont consommes sur les voix MonoGame suivies via `FUN_8009311C` et les pushes immediats des helpers runtime;
-- `MonoGameSoundPlaybackBackend` applique maintenant volume/pan et pitch par voix; en revanche il n'expose toujours ni controle de boucle par points de boucle, ni reverb equivalente au SPU;
+- `MonoGameSoundPlaybackBackend` applique maintenant volume/pan et pitch par voix; le runtime desktop consomme aussi desormais les dirty flags reverb/ADSR et les miroirise en etat brut cote adaptation, mais le backend n'expose toujours ni controle de boucle par points de boucle, ni reverb equivalente au SPU;
 - `PlaySfxInner()` transporte maintenant jusqu'au backend le sous-cas `repeat && loopStart == 0 && loopEnd == sampleCount - 1`: les loops couvrant tout l'echantillon peuvent boucler fidelement, mais les vraies boucles a sous-plage (intro + sustain) restent non reproduites;
 - quand le backend MonoGame est actif, le WAV desktop est maintenant encode avec un sample rate neutre (`44100`) et le pitch initial est pousse vers `SoundEffectInstance.Pitch`; le fallback `SoundPlayer` reste, lui, sur le pitch bake dans le WAV;
-- `FUN_800912B4` ecrit bien les etats bruts `g_spuVoiceAdsr1[]` / `g_spuVoiceAdsr2[]` et pose le dirty flag ADSR `0x30`, mais `FUN_8009311C` et le contrat `ISoundPlaybackBackend` ne propagent toujours vers le desktop que volume stereo et pitch: l'enveloppe ADSR PSX reste donc non reproduite sur les voix suivies;
-- les helpers reverb (`FUN_800906A8`, `FUN_800906C8`, `FUN_80090728` et leurs ecritures associees) restent des no-op desktop ou de simples enregistrements d'etat brut;
-- la table de callback `0x801F6D68` n'est pas encore portee dans `FUN_8008C918`: on sait maintenant localement que `FUN_8008CA40` peut armer `field_0x16 = 0x28`, que `FUN_8008C918` recoit ensuite l'octet de controle associe, et que le chemin normal non-callback range ce couple dans `field_0x14` / `field_0x2A` avant consommation par `FUN_8008CC70`; il manque donc toujours la dereference effective de `0x801F6D68` et la signature exacte du callback.
+- `FUN_800912B4` ecrit bien les etats bruts `g_spuVoiceAdsr1[]` / `g_spuVoiceAdsr2[]` et pose le dirty flag ADSR `0x30`; `FUN_8009311C` consomme maintenant aussi ces flags et remet le dirty byte a zero comme l'original, mais l'enveloppe ADSR PSX reste non reproduite audiblement sur les voix suivies car le backend MonoGame ne sait toujours pas l'appliquer;
+- les helpers reverb `FUN_800906A8` / `FUN_800906C8` / `FUN_80090728` ne sont plus des no-op cote runtime: ils miroirisent maintenant fidelement l'etat brut prouve (`SpuSetReverb` on/off, `g_spuReverbAttr2.mask = 6`, `depth.left/right = (param * 0x7FFF) / 0x7F`) vers l'adaptation desktop; en revanche le backend MonoGame ne reproduit toujours pas l'effet audible SPU;
+- ces deux manques ne sont plus des blocages de reverse sur le runtime lui-meme: `ISoundPlaybackBackend` n'expose aujourd'hui que `Play/Stop/UpdateVoiceStereoVolume/UpdateVoicePitch`, et `MonoGameSoundPlaybackBackend` repose sur `SoundEffectInstance`, sans DSP, enveloppe ni reverb par voix; le blocage restant est donc structurel cote backend audio.
+- le path callback de `FUN_8008C918` est maintenant porte sous forme d'une table brute `DAT_801f6d68` avec signature fermee `(seqId, trackId, value)` et index local `seqId << 4 | trackId`; la forme xref-fermee reste celle d'une table a stride de ligne `0x40` bytes, clear au boot et au cleanup, mais aucun writer xref de registration n'a ete trouve dans `ALUN_CD.EXE`, donc le cycle d'enregistrement/remplissage reste bloque par preuve manquante plutot que par reverse local incomplet.
 
 ## Lecture des SFX dans le jeu C#
 
@@ -153,14 +154,14 @@ Comportement ferme:
 Etat C# apres translitteration:
 
 - `GameEngine.LoadMapSounds(uint mapId)` porte maintenant le commentaire `GHIDRA: LoadMapSounds @ 0x8004A09C` et conserve la fin originale: appel du bloc son, appel `FUN_8005ac90()`, appel `InitializeHudPositionBeforeHide()`, retour `1`;
-- `SoundManager.LoadMapSounds(uint mapId)` reste le split C# existant pour la partie son, avec une relation explicite vers `0x8004A09C`;
+- `SoundManager.LoadMapSounds(uint mapId)` conserve maintenant le controle de flux son actif autour de `InitializeBgm`, `FUN_8008A718(0)`, `ResetSomethingSound`, `LoadMapSequence`, `FUN_8008F808` et `LoadMapSoundGroup`, avec une relation explicite vers `0x8004A09C`;
 - `GetSoundGroupByMapId(uint mapId)` a ete ajoute et retourne la table `SoundBin.VabIndexByMapId`, correspondant a `DAT_800C6D28`;
 - `LoadMapSoundGroup(uint mapId)` a ete ajoute: il libere `g_mapSoundVabId`, met a jour `g_currentSoundGroup`, puis recharge le VAB de map via `SoundBin.OpenMap(mapId)`;
-- `FUN_8008a718(0)` et `FUN_8008f808(g_requestedSeqId, 0x7F, 10)` sont presents dans le flux mais restent bloques, car le contrat de driver son PSX/sequence fade n'est pas encore porte dans le backend C#;
+- `FUN_8008a718(0)` et `FUN_8008f808(g_requestedSeqId, 0x7F, 10)` sont presents dans le flux actif, mais leur contrat de driver son PSX/sequence fade reste encore partiel cote backend C#;
 - `MainInventoryManager.FUN_8005ac90()` est maintenant appelable depuis `LoadMapSounds`, mais son appel interne `SetCdReadPosition(iVar2)` reste partiel dans le runtime C# actuel;
 - `HudManager.InitializeHudPositionBeforeHide()` est annote comme `FUN_8004BE0C @ 0x8004BE0C`.
 
-Interpretation prudente: `LoadMapSounds` n'est pas seulement un chargement BGM. C'est aussi le point de synchronisation entre offset son de map, groupe VAB/SFX de map, et etat UI/HUD apres changement de map. La translitteration C# respecte maintenant ce controle de flux, mais le chargement audio reste partiel tant que `FUN_80048850`, `FUN_8008A718` et `FUN_8008F808` ne sont pas portes avec un backend sonore controle par voix/sequence.
+Interpretation prudente: `LoadMapSounds` n'est pas seulement un chargement BGM. C'est aussi le point de synchronisation entre offset son de map, groupe VAB/SFX de map, et etat UI/HUD apres changement de map. La translitteration C# respecte maintenant ce controle de flux; le delta restant ne porte plus sur `LoadMapSounds` lui-meme, mais sur les helpers sequence/streaming encore partiels autour de `FUN_8008A718`, `FUN_8008F808` et `HandleMapSoundStreaming @ 0x8004B1D4`.
 
 ## Fonction originale `FUN_80049794 @ 0x80049794`
 
@@ -184,11 +185,11 @@ Interpretation prudente: `FUN_80049794` n'est pas un simple `PlaySoundEffect` av
 
 Etat C# actuel:
 
-- `SoundManager.PlaySoundEffectWithToneVolumeMix(int param_1, int param_2, int param_3)` est un TODO;
-- les scripts `Script_171_0AB` et `Script_191_0BF` l'appellent, mais l'appel ne produit aucun effet;
-- un pseudo-code commente existe dans `SoundManager.cs`; les recherches pures `FindSfxRecordForSoundGroup @ 0x80048A14` et `FindVoiceBySfxIdAndToneIndex @ 0x8004974C` sont maintenant portees, mais les dependances d'execution restent non portees: `g_soundEffectData` mutable, `CopyVabProgramAttributes @ 0x800901A8`, tables VAB runtime, voix actives backend et `SetVoiceVolume`.
+- `SoundManager.PlaySoundEffectWithToneVolumeMix(int param_1, int param_2, int param_3)` est maintenant materialise;
+- les scripts `Script_171_0AB` et `Script_191_0BF` ne tombent plus sur un no-op;
+- le runtime initialise `g_soundEffectData` a la demande, resout le record via `TryResolveSoundEffectRecord`, ferme la dependance `CopyVabProgramAttributes @ 0x800901A8`, parcourt les tones resolus, retrouve chaque voix via `(sfxId, toneIndex)`, puis pousse le mix stereo final avec `SetVoiceVolume`.
 
-Conclusion: tous les comportements scriptes qui reposent sur `0x80049794` sont actuellement perdus dans le runtime C#.
+Conclusion: `0x80049794` n'est plus perdu cote C#; le delta restant sur cette zone porte surtout sur le nommage/fermeture semantique de certains champs de transition sequence (`+0x3E/+0x40/+0x42`) utilises ensuite par `FUN_8008E610 @ 0x8008E610` et `FUN_8008E8D0 @ 0x8008E8D0`.
 
 ## Decodeur ADPCM C#
 
@@ -214,9 +215,9 @@ Le decodeur C# applique aussi la formule de filtre avec le biais `+32` avant div
 | Conversion VAB/SoundFont | Oui | `SoundFont.cs` existe, non branche BGM | Non utilisee par soundboard |
 | Lecture SFX VAG | Non principal | Oui, partielle | Oui, partielle |
 | SFX map VAB | N/A musique | Oui, via `OpenMap` | Oui, via `ChangeMap` |
-| SFX sequence (`SeqNum`) | BGM SEQ oui, SFX seq non verifie | Non | Non |
+| SFX sequence (`SeqNum`) | BGM SEQ oui, SFX seq non verifie | Oui, via `TryPlaySoundEffectSequence` / `LoadSeq` / `PlaySeq` | Non |
 | Etat voix SPU | Partiel dans `SEQPlayer`, pas runtime C# | Non | Non |
-| Effet `0x80049794` tone/volume | Non porte dans C# | TODO, aucun effet | Non applicable |
+| Effet `0x80049794` tone/volume | Non porte dans C# | Oui, calcul MIPS porte; sortie dependante du backend audio | Non applicable |
 
 ## Plan de portage detaille pour agent IA
 
@@ -542,7 +543,11 @@ Closed dans `SoundManager.cs` et `GameEngine.cs`:
 - `AreSoundEffectsIdle @ 0x80049E10` est maintenant porte avec le comportement ferme par ASM: scan de `g_voiceSfxId[24]`, puis scan des records `g_soundEffectData` sequences avec `Flags & 0x2` et `FUN_8008DD1C(seqSlot, 0) == 1`.
 - `WaitForSoundEffectsIdle @ 0x80049FF8` est maintenant adapte cote C# sur le chemin warp: la transition ne se termine plus des la fin visuelle, elle attend d'abord l'expiration de `g_soundEffectState`, puis l'idle SFX, puis 3 frames audio supplementaires.
 - `InitializeSoundSystem @ 0x800484E8` aligne maintenant le reset original des tables runtime en nettoyant aussi `g_voiceSfxId @ 0x80175870` avec `g_voiceState @ 0x80175858`.
+- `FUN_8009299C @ 0x8009299C` et son wrapper boot `FUN_8008DF4C @ 0x8008DF4C` sont maintenant portes dans `SoundManager`: reset prouve de `g_spuVoice*`, `g_voiceRuntimeSlots`, `g_loadedVabState`, `g_spuReverbAttr2`, `g_sequenceSlotMask` et `g_voiceCommandLock` au boot audio. `SyncSoundEffectVoiceStates @ 0x80048FCC` relie maintenant aussi la fin naturelle d'une voix desktop au clear brut de `VoiceRuntimeSlot.NoiseState/CurrentPitch`; `UpdateSoundVoicesState @ 0x8009311C` consomme maintenant les pending stop masks, stoppe les voix desktop correspondantes, et materialise le snapshot raw common block du tail original (`+0x188..+0x19A`). Le delta exact restant sur cette chaine est donc le path original de voice-status/history SPU, pas le nettoyage observable des slots voix.
 - `FUN_8008A718 @ 0x8008A718` a maintenant un bridge hote minimal pour les dependances visibles de ce slice: decrement de `g_soundEffectState` et synchro des voix SFX desktop exposees par `SoundBin.VoicesAreActive`.
+- `FUN_80091B1C @ 0x80091B1C` est maintenant materialisee comme helper raw de note-off pour les voix sequence: remise a zero de `VoiceRuntimeSlot.CurrentPitch`, `VoiceRuntimeSlot.NoiseState` et des masques bruts gauche/droite `PTR_VOICE_00_LEFT_RIGHT_800c9794 + 0x194/+0x196` (ecrits aussi par `FUN_800914CC` depuis `leftMask/rightMask`). `FUN_80093A04 @ 0x80093A04` n'utilise plus `StopVoice()` pour les note-off MIDI apparies; l'ecart restant sur ce chemin est la release ADSR PSX, encore adaptee par `SoundBin.StopTrackedVoice()` cote desktop.
+- `ProcessVoiceStop @ 0x8009261C` est maintenant materialisee explicitement comme helper GHIDRA au lieu de rester inline dans `UpdateSoundVoicesState`: le helper consomme les pending stop masks gauche/droite, stoppe les voix desktop trackees correspondantes, puis clear `g_voiceCommandPending*` et `g_voiceCommandPlaying*`. Le reste non ferme sur cette chaine demeure le statut/historique SPU original.
+- `FUN_800934B8 @ 0x800934B8` et `FUN_8009410C @ 0x8009410C` sont maintenant fermes cote stockages bruts: l'original ne lit pas un bloc metadata cache pour ce refresh, mais relit bien `VoiceRuntimeSlot + 0x08` comme velocite de note, puis les tables paralleles `g_voiceToneVolume` et `g_voiceTonePan`. Le C# suit deja cette forme; le delta restant sur cette chaine est le demarrage/SPU audible, toujours adapte par le backend desktop.
 
 Partial:
 
@@ -551,5 +556,5 @@ Partial:
 
 Blocked:
 
-- la garde `IsSoundEffectAlreadyPlaying @ 0x80048DF4` reste non branchee dans le runtime C# tant que le site d'effacement de la table `0x80165028` n'est pas prouve; les xrefs locaux essayes sur `InitializeSoundSystem @ 0x800484E8`, `MainLoop @ 0x8002BFE0`, `UpdateWorld @ 0x8002E34C`, et le helper audio `0x8008E034` n'ont montre aucun reset local de cette table.
+- la garde `IsSoundEffectAlreadyPlaying @ 0x80048DF4` n'est plus ouverte sur son controle de flux: PCSX ferme maintenant une table brute de 64 mots sous `0x80165028`, scannee pour retrouver `sfxId` puis ecrite au premier slot nul. En revanche son clear reste non prouve, meme apres passe exacte sur `InitializeSoundSystem @ 0x800484E8`, `MainLoop @ 0x8002BFE0`, `UpdateWorld @ 0x8002E34C`, `FUN_8008E034 @ 0x8008E034`, et `FUN_80090168 @ 0x80090168`; la garde reste donc volontairement non branchee dans le runtime C# tant que ce cycle de vie n'est pas ferme.
 - `TriggerVoice @ 0x80094660`, `CalculateVoicePitch @ 0x80091C18`, et le backend de voix SPU restent les prochains blocages structurants pour fermer le chemin direct VAG avec fidelite.

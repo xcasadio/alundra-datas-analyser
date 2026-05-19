@@ -35,7 +35,8 @@ Labels Ghidra appliques avec confiance haute:
 | `0x800909E8` | `AllocateVoiceSlot` | choisit une voix libre ou remplace selon priorite/age, remet l'age a 0 et retourne l'index |
 | `0x800901A8` | `CopyVabProgramAttributes` | appelle `SelectLoadedVabProgram`, copie les attributs programme VAB vers un buffer sortie |
 | `0x800902AC` | `SelectLoadedVabProgram` | valide VAB/programme, installe les pointeurs courants VAB et le premier tone courant |
-| `0x80094F20` | `StopVoice` | protege par `g_voiceCommandLock`, selectionne `g_currentVoiceIndex`, puis appelle `FUN_80091134(0)` |
+| `0x80091B1C` | `FUN_80091B1C` | note-off raw: efface `VoiceRuntimeSlot.NoiseState`, `VoiceRuntimeSlot.CurrentPitch`, puis remet a zero les masques bruts gauche/droite `PTR_VOICE_00_LEFT_RIGHT_800c9794 + 0x194/+0x196`; `FUN_800914CC` les ecrit depuis `leftMask/rightMask`, et `FUN_80093A04` l'utilise maintenant pour les note-off sequence |
+| `0x80094F20` | `StopVoice` | protege par `g_voiceCommandLock`, selectionne `g_currentVoiceIndex`, puis appelle `FUN_80091134(0)`; le note-off sequence brut passe maintenant par `FUN_80091B1C`, pas par ce helper |
 | `0x8004A184` | `LoadMapSequenceVab` | lit la section VAB associee a l'index son courant, charge le header, puis streame le body par chunks |
 | `0x8008FAAC` | `LoadVabHeader` | wrapper qui force le mode header/body standard et appelle `LoadVabHeaderCore` |
 | `0x8008FB0C` | `LoadVabHeaderCore` | parse le header `pBAV`, reserve/valide un slot VAB et remplit les tables runtime VAB |
@@ -101,8 +102,8 @@ Les fonctions `PlaySoundEffect`, `FindVoiceBySfxId`, `FindVoiceBySfxIdAndToneInd
 | `0x80175870` | `int[24]` | `g_voiceSfxId` | `FindVoiceBySfxId` compare `base + 0x18 + i*4` |
 | `0x801758D0` | `int[24]` | `g_voiceVabId` | `PlaySoundEffect` stocke `SfxRecord.VabId`; `CountActiveVoicesForSfx` compare au record courant |
 | `0x80175930` | `int[24]` | `g_voiceToneIndex` | stocke `SfxRecord.ToneNumber + toneLoopIndex`; utilise par `FindVoiceBySfxIdAndToneIndex` |
-| `0x80175990` | `int[24]` | `g_voiceToneVolume` | recoit `VagToneAttr.Vol` depuis `CopyVabToneAttributes` sortie offset `0x02` |
-| `0x801759F0` | `int[24]` | `g_voiceTonePan` | recoit `VagToneAttr.Pan` depuis `CopyVabToneAttributes` sortie offset `0x03`; utilise pour calcul gauche/droite dans `0x80049794` |
+| `0x80175990` | `int[24]` | `g_voiceToneVolume` | recoit `VagToneAttr.Vol` depuis `CopyVabToneAttributes` sortie offset `0x02`; relu tel quel par `FUN_8009410C` pour le refresh de volume des voix sequence |
+| `0x801759F0` | `int[24]` | `g_voiceTonePan` | recoit `VagToneAttr.Pan` depuis `CopyVabToneAttributes` sortie offset `0x03`; relu tel quel par `FUN_8009410C` pour le calcul gauche/droite des voix sequence |
 
 Point corrige: les deux champs `0x80175990` et `0x801759F0` ne sont pas les volumes gauche/droite de sortie. Les vrais volumes de sortie SPU sont dans les structures sous `0x801F7798/0x801F779A` et sont mis a jour par `SetVoiceVolume @ 0x80095298`.
 
@@ -158,7 +159,9 @@ Chemin VAB ferme par xrefs:
 
 Les xrefs Reva ferment maintenant aussi les alias runtime vers ces memes labels: `g_volumesL -> g_spuVoiceVolumeLeft`, `g_volumesR -> g_spuVoiceVolumeRight`, `g_pitches -> g_spuVoicePitch`, `g_reverbs -> g_spuVoiceReverb`, `g_adsrAttack -> g_spuVoiceAdsr1`, `g_adsrSustain -> g_spuVoiceAdsr2`.
 
-Ces six symboles ne peuvent pas etre six tableaux `short[24]` distincts: leurs bases ne sont espacees que de `+0x2` octets (`0x801F7798`, `0x779A`, `0x779C`, `0x779E`, `0x77A0`, `0x77A2`), alors que les xrefs d'ecriture/lecture gardent un stride voix `voiceId << 4`. La forme fermee par xrefs est donc un tableau de 24 records SPU de `0x10` octets, de base `0x801F7798`, qui occupe exactement `0x180` octets jusqu'a `0x801F7917`; `g_spuVoiceDirtyFlags @ 0x801F7918` commence immediatement apres.
+Ces six symboles ne peuvent pas etre six tableaux `short[24]` distincts: leurs bases ne sont espacees que de `+0x2` octets (`0x801F7798`, `0x779A`, `0x779C`, `0x779E`, `0x77A0`, `0x77A2`), alors que les xrefs d'ecriture/lecture gardent un stride voix `voiceId << 4`. La forme fermee par xrefs est donc un tableau de 24 records SPU de `0x10` octets, de base `0x801F7798`, qui occupe exactement `0x180` octets jusqu'a `0x801F7917`; `g_spuVoiceDirtyFlags @ 0x801F7918` commence immediatement apres. `FUN_8009299C` ferme en plus que le bloc complet fait bien `0x18 * 8` halfwords: sa boucle ecrit `(&g_spuVoiceVolumeLeft)[voiceIndex2] = 0` jusqu'a `0xC0`, donc les mots `+0x0C/+0x0E` appartiennent bien au meme record meme si aucun acces semantique dedie n'est encore ferme par xref. La chaine xref entrante fermee dans Reva est `main -> MainLoop -> InitSound -> ResetAllVoicesAndAudioBuffers -> FUN_8009299C(0x18)`: ce clear global appartient donc au reset audio de boot, pas a un evenement carte local.
+
+Etat C# courant: `SoundManager` contient maintenant `FUN_8009299c @ 0x8009299C` et le wrapper boot `FUN_8008df4c @ 0x8008DF4C`; le reset prouve des shadow slots/SPU globals est porte, `ProcessVoiceStop @ 0x8009261C` est maintenant materialise comme helper dedie pour consommer les pending stop masks et clear `g_voiceCommandPending*`/`g_voiceCommandPlaying*`, `SyncSoundEffectVoiceStates @ 0x80048FCC` relie maintenant la fin naturelle d'une voix desktop au clear brut de `VoiceRuntimeSlot.NoiseState/CurrentPitch`, puis `UpdateSoundVoicesState @ 0x8009311C` materialise le snapshot raw common block du tail original dans `PTR_VOICE_00_LEFT_RIGHT_800c9794`. Le path hardware voice-status/history reste toutefois partiel.
 
 ```c
 struct UnkSpuVoiceSlot_0x10 {
@@ -168,8 +171,8 @@ struct UnkSpuVoiceSlot_0x10 {
 	short reverb;       // +0x06, g_spuVoiceReverb / g_reverbs
 	short adsr1;        // +0x08, g_spuVoiceAdsr1 / g_adsrAttack
 	short adsr2;        // +0x0A, g_spuVoiceAdsr2 / g_adsrSustain
-	short unk_0C;       // +0x0C, non ferme
-	short unk_0E;       // +0x0E, non ferme
+	short unk_0C;       // +0x0C, bulk-zeroed par FUN_8009299C, semantique non fermee
+	short unk_0E;       // +0x0E, bulk-zeroed par FUN_8009299C, semantique non fermee
 };
 
 // table base 0x801F7798, indexed with voiceId << 4, count 24
@@ -183,7 +186,7 @@ Layout partiel d'un `VoiceRuntimeSlot` sous `0x801F7930 + voice * 0x34`:
 | `+0x02` | `short` | age/ordre de remplacement; incremente pour toutes les voix dans `AllocateVoiceSlot`, remis a 0 pour la voix choisie |
 | `+0x04` | `short` | valeur passee a `FUN_80090C58`/note partielle, recopiee dans `0x801F779C` |
 | `+0x06` | `ushort` | critere de remplacement compare avec la priorite courante; mis a `0x7FFF` par `FUN_800912B4` |
-| `+0x08` | `short` | scalaire par voix ecrit depuis `param_5` dans `FUN_800934B8`, puis relu par `FUN_8009410C` avant multiplication par le volume de canal; le nom semantique exact reste a fermer |
+| `+0x08` | `short` | velocite de note ecrite depuis `param_5` dans `FUN_800934B8`, puis relue par `FUN_8009410C` avant multiplication par le volume de canal |
 | `+0x0A` | `byte` | champ ecrit depuis `param_6` dans `FUN_800934B8`; aucune lecture certaine fermee dans cette passe |
 | `+0x0C` | `short` | parametre tonal stocke par `TriggerVoice`, compare par les wrappers de stop conditionnel |
 | `+0x0E` | `short` | cle sequence proprietaire: `0x21` pour voix SFX directe, sinon `(track << 8) | seqId`; comparee par `UpdateSequenceVolumeBalance`, `FUN_8009410C`, `FUN_80093EF4`, et les stops conditionnels |
@@ -192,7 +195,7 @@ Layout partiel d'un `VoiceRuntimeSlot` sous `0x801F7930 + voice * 0x34`:
 | `+0x14` | `short` | tone index courant stocke par `TriggerVoice` |
 | `+0x16` | `short` | VAB id stocke par `TriggerVoice` et compare avant stop conditionnel |
 | `+0x18` | `short` | priorite effective utilisee par `AllocateVoiceSlot` |
-| `+0x1B` | `byte` | etat actif/noise: `0` libre, `1` voix tonale active, `2` voix noise active; les chemins `UpdateSoundVoicesState`, `AllocateVoiceSlot`, et `FUN_800914CC` traitent specialement la valeur `2` |
+| `+0x1B` | `byte` | etat actif/noise: `0` libre, `1` voix tonale active, `2` voix noise active; les chemins `UpdateSoundVoicesState`, `AllocateVoiceSlot`, et `FUN_800914CC` traitent specialement la valeur `2`. Cote C#, `AllocateVoiceSlot` stoppe maintenant aussi la voix desktop trackee avant reallocation du slot si `NoiseState == 2`. |
 
 Note pratique Ghidra: l'application directe de `VoiceRuntimeSlot` a `0x801F7930` reste bloquee dans cette passe par un conflit de donnees sur `0x801F7932-0x801F7933`, meme avec `clearExisting=true` dans ReVa. Si tu veux voir le layout en memoire plutot que par labels, il faut encore undefine ce sous-bloc dans Ghidra puis reappliquer la structure, idealement comme tableau `VoiceRuntimeSlot[24]`.
 
@@ -223,13 +226,13 @@ Champs confirmes par correspondance avec les attributs VAB:
 
 ## Chemin voix SFX
 
-1. `PlaySoundEffect @ 0x800490FC` sort immediatement si `g_soundEffectState != 0`, si `sfxId <= 0`, si `sfxId` depasse la borne globale lue sous `0x80026848`, ou si `IsSoundEffectAlreadyPlaying @ 0x80048DF4` retourne non-zero.
+1. `PlaySoundEffect @ 0x800490FC` sort immediatement si `g_soundEffectState != 0`, si `sfxId <= 0`, si `sfxId` depasse la borne globale lue sous `0x80026848`, ou si `IsSoundEffectAlreadyPlaying @ 0x80048DF4` retourne non-zero. `IsSoundEffectAlreadyPlaying` est maintenant ferme par PCSX: il scanne 64 mots sous `0x80165028`, retourne `1` si `sfxId` y est deja present, sinon ecrit `sfxId` dans le premier slot nul puis retourne `0`.
 2. La fonction appelle ensuite `SyncSoundEffectVoiceStates @ 0x80048FCC`, calcule `SfxRecord = 0x800A82E8 + sfxId * 0x16`, et ignore le record si `VabId == -2`.
 3. Si `VabId == -1`, le record utilise le VAB global `g_globalSoundVabId`. Si `SeqNum != -1` et que `Flags & 0x2` est nul, le chemin charge une sequence SFX via `LoadSeq @ 0x8008BC00`, stocke le slot sequence dans la table sous `0x80175D00 + SeqNum * 2`, appelle `PlaySeq @ 0x8008F188(seqSlot, 1, 1)`, pose `Flags |= 0x2`, puis sort.
 4. Si `VabId == -1` et `SeqNum == -1`, le chemin direct VAG appelle `CountActiveVoicesForSfx @ 0x80049060`; si le resultat est superieur ou egal a `MaxVoices`, il imprime un message via `sprintf @ 0x80082918` et sort. Sinon il boucle sur `ToneCount` et appelle `TriggerVoice @ 0x80094660(g_globalSoundVabId, ProgramNumber, ToneNumber + toneIndex, Note, 0, 0x7F, 0x7F)`.
 5. Si `VabId != -1`, le code compare le record au groupe son courant sous `0x80173848`. Si le record ne correspond pas, il suit la chaine `RefSfxId` jusqu'a trouver un record dont `VabId` matche le groupe courant; si la chaine tombe a `0`, il imprime un message via `sprintf` et sort.
 6. Pour un record map avec `SeqNum != -1` et `Flags & 0x2 == 0`, le chemin charge une sequence depuis `0x80173850 + (g_soundEffectSeqOffsets[SeqNum] & ~3)`, utilise `g_mapSoundVabId`, stocke le slot sous `0x80175D00 + SeqNum * 2`, appelle `PlaySeq(seqSlot, 1, 1)`, pose `Flags |= 0x2`, puis sort.
-7. Pour un record map direct VAG, la logique de limite `MaxVoices`, de boucle `ToneCount`, et d'appel `TriggerVoice` est identique au chemin global, mais avec `g_mapSoundVabId` comme VAB charge. Le code ecrit aussi une table byte sous `0x80165130 + sfxId * 4 + toneIndex`; le sens exact de cette table reste partiel.
+7. Pour un record map direct VAG, la logique de limite `MaxVoices`, de boucle `ToneCount`, et d'appel `TriggerVoice` est identique au chemin global, mais avec `g_mapSoundVabId` comme VAB charge. Le code ecrit aussi une table byte sous `0x80165130 + sfxId * 4 + toneIndex`; le store brut est maintenant ferme comme `sb lbu(sp+0x8A)`, mais la provenance/lifecycle fonctionnelle exacte de ce byte reste partielle.
 8. Apres un `TriggerVoice` reussi, `PlaySoundEffect` pose `SfxRecord.Flags |= 0x1`, met `g_voiceState[voice] = 0x80`, puis remplit `g_voiceSfxId`, `g_voiceVabId`, `g_voiceToneIndex`. Il appelle `CopyVabToneAttributes @ 0x80090370` et stocke les octets tone `+0x02/+0x03` dans `g_voiceToneVolume/g_voiceTonePan`.
 9. Si `TriggerVoice` retourne negatif dans le chemin map direct, la fonction imprime un message via `sprintf`, puis appelle `0x800815EC` sur ce buffer avant de continuer la boucle.
 10. `PlaySoundEffectWithToneVolumeMix @ 0x80049794` ne lance aucune nouvelle voix: elle cherche les voix existantes par SFX/tone et appelle `SetVoiceVolume @ 0x80095298`.
@@ -244,7 +247,7 @@ Les xrefs depuis `LoadMapSounds @ 0x8004A09C` et `HandleMapSoundEffects @ 0x8004
 4. `HandleMapSoundEffects` est appele depuis `MainLoop`; il appelle `ResetSoundEffectRuntime`, gere le delai `g_soundEffectState`, appelle `LoadBgm(0)` en cas de changement map avec SFX actif, puis lance `PlaySoundEffect`.
 5. `WaitForSoundEffectsIdle @ 0x80049FF8` attend la fin de `g_soundEffectState`, attend `AreSoundEffectsIdle`, puis fait 3 frames audio supplementaires.
 6. `InitializeSoundSystem @ 0x800484E8` remet explicitement a zero `g_voiceState @ 0x80175858` et `g_voiceSfxId @ 0x80175870` dans la meme boucle d'init; le port C# doit donc nettoyer les deux tables ensemble.
-7. La remise a zero de la table de dedup `0x80165028` utilisee par `IsSoundEffectAlreadyPlaying @ 0x80048DF4` n'a pas encore ete retrouvee par xrefs locaux dans `InitializeSoundSystem`, `MainLoop`, `UpdateWorld`, ni dans le helper audio `0x8008E034`; la fonction est fermee au niveau controle de flux, mais son integration reste bloquee tant que ce cycle de vie n'est pas prouve.
+7. La remise a zero de la table de dedup `0x80165028` utilisee par `IsSoundEffectAlreadyPlaying @ 0x80048DF4` n'a toujours pas ete retrouvee apres passe PCSX exacte sur `InitializeSoundSystem @ 0x800484E8`, `MainLoop @ 0x8002BFE0`, `UpdateWorld @ 0x8002E34C`, `FUN_8008E034 @ 0x8008E034`, et `FUN_80090168 @ 0x80090168`; la fonction elle-meme est maintenant fermee, mais son integration reste bloquee tant que ce cycle de vie n'est pas prouve.
 
 ## Structure sequence partielle
 
@@ -270,9 +273,9 @@ Layout partiel d'un `SequenceTrackState`:
 |---:|---|---|
 | `+0x04` | `byte*` | pointeur courant de lecture sequence; `FUN_8008BDD0` lit un octet puis l'incremente |
 | `+0x2B` | `byte` | bascule par `FUN_8008EB5C`/`FUN_8008EC24`; sens exact partiel |
-| `+0x3E` | `short` | volume cible ou valeur de transition ecrite par `FUN_8008F690` |
-| `+0x40` | `short` | valeur courante/copie initiale de volume |
-| `+0x42` | `short` | pas de transition calcule selon `fadeTicks` et delta volume |
+| `+0x3E` | `short` | magnitude brute de transition ecrite par `FUN_8008F690`, relue comme unsigned par `FUN_8008E610/FUN_8008E8D0` |
+| `+0x40` | `short` | compteur de travail initialise depuis `+0x3E`, decrete ou avance jusqu'a extinction de la transition |
+| `+0x42` | `short` | diviseur/pas signe calcule depuis `fadeTicks` et `abs(param_3)`; positif = gate modulo, negatif = ajout direct a `+0x40` |
 | `+0x44` | `short` | pas ou cadence utilise par `FUN_8008F4AC` |
 | `+0x4A` | `short` | facteur utilise par `FUN_8008F4AC` dans le calcul de `+0x70` |
 | `+0x6E` | `short` | compteur/reload partiel pour l'avancement sequence dans `FUN_8008BCC4` |
@@ -306,8 +309,8 @@ Ordre des flags dans `+0x90`:
 | Flag | Fonction appelee | Effet ferme ou partiel |
 |---:|---|---|
 | `0x01` | `FUN_8008EBF8(seqSlot, track)` -> `FUN_8008BCC4` | avance le parseur sequence; les flags `0x10/0x20/0x40/0x80` ne sont testes que si ce bit est pose |
-| `0x10` | `FUN_8008E610(seqSlot, track)` | transition de volume partielle; decompte `+0x98`, utilise `+0x40/+0x42/+0x94`, appelle `FUN_80093DE8` et `UpdateSequenceVolumeBalance @ 0x80093C78`, efface `0x10` quand terminee |
-| `0x20` | `FUN_8008E8D0(seqSlot, track)` | transition de volume opposee/voisine; meme famille de champs, appelle `FUN_80093DE8` et `UpdateSequenceVolumeBalance`, efface `0x20` quand terminee |
+| `0x10` | `FUN_8008E610(seqSlot, track)` | transition de volume partielle; decompte `+0x98`, avec `+0x3E` = magnitude brute, `+0x40` = compteur de travail, `+0x42` = pas/diviseur signe, appelle `FUN_80093DE8` et `UpdateSequenceVolumeBalance @ 0x80093C78`, efface `0x10` quand terminee |
+| `0x20` | `FUN_8008E8D0(seqSlot, track)` | transition de volume opposee/voisine; meme triplet `+0x3E/+0x40/+0x42` et meme famille d'appels, efface `0x20` quand terminee |
 | `0x40` | `FUN_8008F4AC(seqSlot, track)` | transition partielle sur `+0x8C` vers `+0xA4`, cadence `+0x44`, compteur `+0xA0`, recalcule `+0x70` |
 | `0x80` | `FUN_8008F4AC(seqSlot, track)` | meme handler que `0x40`; quand la cible est atteinte, le handler efface `0x40` et `0x80` |
 | `0x02` | `FUN_8008EB5C(seqSlot, track)` | appelle `FUN_80093EF4((track << 8) | seqSlot)`, met `+0x2B = 0`, efface `0x02` |
@@ -335,9 +338,9 @@ Hierarchie appelee observee depuis `FUN_8008E3D8`:
 
 ## Bloque ou partiel
 
-- `FUN_800912B4`, `FUN_80090C58`, et `FUN_800914CC` sont lies au backend SPU/voix; leurs controles de flux sont documentes partiellement, mais leurs noms fonctionnels exacts restent bloques.
+- `FUN_800912B4`, `FUN_80090C58`, et `FUN_800914CC` sont lies au backend SPU/voix; leurs controles de flux sont documentes partiellement. Cote C#, la reallocation d'un slot `NoiseState == 2` stoppe maintenant la voix desktop trackee correspondante, mais leurs noms fonctionnels exacts restent bloques.
 - `FUN_8008E3D8` est ferme comme dispatcher/tick sequence+voix, mais son nom fonctionnel exact reste partiel; aucun label primaire n'a ete propose en dehors de cette description.
-- `FUN_8008E610`, `FUN_8008E8D0`, `FUN_8008F4AC`, `FUN_8008BCC4`, `FUN_8008BDD0`, et les handlers `FUN_8008C064/FUN_8008C144/FUN_8008C1B8/FUN_8008D4C0/FUN_8008D568/FUN_8008D8D0` restent bruts tant que les commandes sequence exactes ne sont pas fermees.
+- `FUN_8008E610` et `FUN_8008E8D0` ne sont plus brutes: leur controle de flux et leurs mutations sont portes, avec un triplet de transition `+0x3E/+0x40/+0x42` maintenant borne comme magnitude / compteur / pas signe, mais leur nommage musical exact reste partiel. `FUN_8008F4AC`, `FUN_8008BCC4`, `FUN_8008BDD0`, et les handlers `FUN_8008C064/FUN_8008C144/FUN_8008C1B8/FUN_8008D4C0/FUN_8008D568/FUN_8008D8D0` restent bruts tant que les commandes sequence exactes ne sont pas fermees.
 - `FUN_8008F760` et `FUN_8008F808` restent partiels cote nommage, meme si leurs acces a `g_sequenceStatePointers` et aux champs de fade sont documentes.
 - `ResetSoundEffectRuntime`, `SyncSoundEffectVoiceStates`, `LoadMapSequence`, et `GetMapSoundIndex` ont ete ajoutes comme labels, mais les anciens primaires Ghidra restent visibles pour ces adresses.
 - `FreeLoadedVab` a ete ajoute comme label, mais l'ancien primaire `MaybeFreeSound` reste visible dans Ghidra.

@@ -13,7 +13,10 @@
                 "copilotcli/gpt-5.4",
                 "copilot/gpt-5.4",
                 "copilotcli/gpt-5.5",
-                "copilot/gpt-5.5"
+                "copilot/gpt-5.5",
+                "claude-code/*",
+                "copilot/*",
+                "copilotcli/*"
             ]
         }
     },

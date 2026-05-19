@@ -47,6 +47,48 @@ public class Voice {
         set => _196 = value;
     }
 
+    public short field_0x188
+    {
+        get => _188;
+        set => _188 = value;
+    }
+
+    public short field_0x18A
+    {
+        get => _18a;
+        set => _18a = value;
+    }
+
+    public byte field_0x18C
+    {
+        get => _18c;
+        set => _18c = value;
+    }
+
+    public byte field_0x18D
+    {
+        get => _18d;
+        set => _18d = value;
+    }
+
+    public short field_0x18E
+    {
+        get => _18e;
+        set => _18e = value;
+    }
+
+    public short field_0x198
+    {
+        get => _198;
+        set => _198 = value;
+    }
+
+    public short field_0x19A
+    {
+        get => _19a;
+        set => _19a = value;
+    }
+
     public ushort field_0x1AA
     {
         get => _1aa;

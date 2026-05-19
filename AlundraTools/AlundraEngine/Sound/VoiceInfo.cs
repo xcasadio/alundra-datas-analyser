@@ -12,6 +12,10 @@ public class VoiceInfo
 }
 
 
+// BLOCKED: callback signature and dispatch index are closed at FUN_8008C918, but no registration writer xref has been found in ALUN_CD.EXE.
+public delegate void DAT_801f6d68_Callback(short seqId, short trackId, byte value);
+
+
 // PARTIAL: runtime sequence track layout closed by xrefs, full command semantics still unknown
 [StructLayout(LayoutKind.Explicit, Size = 0xAC)]
 public struct SequenceTrackState
@@ -65,9 +69,9 @@ public struct SequenceTrackState
     [FieldOffset(0x3B)] public byte Channel15;
     [FieldOffset(0x3C)] public byte field_0x3C;
     [FieldOffset(0x3D)] public byte field_0x3D;
-    [FieldOffset(0x3E)] public short field_0x3E;
-    [FieldOffset(0x40)] public short field_0x40;
-    [FieldOffset(0x42)] public short field_0x42;
+    [FieldOffset(0x3E)] public short field_0x3E; // raw transition magnitude written by FUN_8008f690 and read unsigned by FUN_8008e610/FUN_8008e8d0
+    [FieldOffset(0x40)] public short field_0x40; // working transition counter initialized from field_0x3E and decremented/advanced until exhaustion
+    [FieldOffset(0x42)] public short field_0x42; // signed transition step divisor: positive values gate modulo ticks, negative values are added directly to field_0x40
     [FieldOffset(0x44)] public short field_0x44;
     [FieldOffset(0x46)] public short LoopCount;
     [FieldOffset(0x48)] public ushort TimesPlayed;
@@ -118,9 +122,9 @@ public struct VoiceRuntimeSlot
     [FieldOffset(0x00)] public ushort field_0x00;
     [FieldOffset(0x02)] public short ReplacementAge;
     [FieldOffset(0x04)] public short CurrentPitch;
-    [FieldOffset(0x06)] public short VoiceStatus;
-    [FieldOffset(0x08)] public short field_0x08; // PARTIAL: DAT_sound_801f7938 via g_voiceRuntimeSlots stride 0x34
-    [FieldOffset(0x0A)] public byte field_0x0A; // PARTIAL: DAT_sound_801f793A via g_voiceRuntimeSlots stride 0x34
+    [FieldOffset(0x06)] public short field_0x06; // raw replacement criterion compared by AllocateVoiceSlot and written to 0x7FFF by FUN_800912B4
+    [FieldOffset(0x08)] public short field_0x08; // raw note velocity written by FUN_800934B8 and reused by FUN_8009410C during channel-volume refresh
+    [FieldOffset(0x0A)] public byte field_0x0A; // raw orientation parameter written by FUN_800934B8 param_6; no reader is proven even from 0x801F7930 base-block xrefs
     [FieldOffset(0x0C)] public short Note;
     [FieldOffset(0x0E)] public short SequenceKey;
     [FieldOffset(0x10)] public short VabFirstToneIndex;
@@ -194,11 +198,13 @@ public struct VabToneAttributesCopy
     [FieldOffset(0x16)] public ushort Vag;
 }
 
-// PARTIAL: only the fields proven by FUN_800905F8 / FUN_800906E8 / FUN_800907E4 are modeled.
+// PARTIAL: only the fields proven by FUN_800905F8 / FUN_800906E8 / FUN_80090728 / FUN_800907E4 are modeled.
 public struct SpuReverbAttrPartial
 {
     public int Mask;
     public int Mode;
+    public short DepthLeft;
+    public short DepthRight;
     public int Feedback;
     public int Delay;
 }

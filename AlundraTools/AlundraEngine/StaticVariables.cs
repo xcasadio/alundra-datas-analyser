@@ -13101,14 +13101,13 @@ public class StaticVariables
     public int g_vabBodyRemainingSize; // 80164FCC
     public int DAT_80164fd0; // 80164FD0
     public int DAT_80165024; // 80165024
-    public int DAT_80165028; // 80165028
-    public int DAT_8016502c; // 8016502C
-    public int DAT_80165120; // 80165120
-    public int DAT_80165124; // 80165124
+    // GHIDRA: DAT_80165028 @ 0x80165028
+    public int[] DAT_80165028 = new int[0x40]; // 64-word raw SFX dedup table spanning 0x80165028..0x80165127
     // GHIDRA: g_requestedSeqId @ 0x80165128
     public short g_requestedSeqId;
     public int g_resetSoundFlag; // 8016512C
-    public int g_animVolumeMap; // 80165130
+    // GHIDRA: g_animVolumeMap @ 0x80165130
+    public byte[] g_animVolumeMap = new byte[0xFA0]; // raw byte table spanning 0x80165130..0x801660CF; writer is closed, reader remains unresolved
     public int DAT_801660d0; // 801660D0
     public int DAT_80166124; // 80166124
     //public SpuReverbAttr g_spuReverbAttr; // 80166128
@@ -13579,12 +13578,15 @@ public class StaticVariables
     // GHIDRA: g_sequenceStatePointers @ 0x801F6CE8
     // SOURCE: FUN_8008EEAC(0x80175A50, 4, 1) maps entries to SequenceTrackState[4], stride 0xAC.
     public SequenceTrackState[] g_sequenceStatePointers = new SequenceTrackState[4]; // 801F6CE8 -> 80175A50
+    // GHIDRA: DAT_801F6D68 @ 0x801F6D68
+    // PARTIAL: callback table use site is closed in FUN_8008C918 as seq-row stride 0x40, entry stride 4, signature (seqId, trackId, value); registration/lifecycle still unresolved.
+    public DAT_801f6d68_Callback?[] DAT_801f6d68 = new DAT_801f6d68_Callback?[0x200]; // 801F6D68
     // GHIDRA: g_sequenceSlotCount @ 0x801F7568
     public short g_sequenceSlotCount; // 801F7568
     // GHIDRA: g_sequenceTrackCount @ 0x801F7570
     public short g_sequenceTrackCount; // 801F7570
     // GHIDRA: g_spuReverbAttr2 @ 0x801F7578
-    // PARTIAL: only mask/mode/feedback/delay writes are proven locally so far.
+    // PARTIAL: only mask/mode/depth/feedback/delay writes are proven locally so far.
     public SpuReverbAttrPartial g_spuReverbAttr2; // 801F7578
     // GHIDRA: g_loadedVabProgramAttrPointers @ 0x801F7590
     public int[] g_loadedVabProgramAttrPointers = new int[16]; // 801F7590
