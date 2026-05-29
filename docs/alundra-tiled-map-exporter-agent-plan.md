@@ -332,7 +332,7 @@ Validation :
 
 Commit: `test(tiled): validate exported tiled map`
 
-### ⬜ T14 - Documenter l’utilisation
+### ✅ T14 - Documenter l’utilisation
 
 Périmètre : documenter comment exécuter l’extracteur et ouvrir la sortie Tiled.
 
@@ -342,6 +342,8 @@ Périmètre : documenter comment exécuter l’extracteur et ouvrir la sortie Ti
 - Inclure les arguments de ligne de commande pour `AlundraDataExtractor` tels qu’ils existent après implémentation.
 - Lister les fichiers Tiled générés et clarifier que la V1 est uniquement à sens unique.
 - Mentionner le JSON compagnon brut et les données qui restent hors des couches de tiles natives Tiled.
+
+Documentation ajoutée : `docs/alundra-tiled-map-exporter-usage.md`.
 
 Validation :
 
