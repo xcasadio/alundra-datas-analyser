@@ -309,7 +309,7 @@ Validation :
 
 Commit: `tools(tiled): export tile animations`
 
-### ⬜ T13 - Ajouter une commande ou un test de validation d’export
+### ✅ T13 - Ajouter une commande ou un test de validation d’export
 
 Périmètre : rendre les futurs travaux d’agent faciles à vérifier.
 
@@ -318,6 +318,12 @@ Périmètre : rendre les futurs travaux d’agent faciles à vérifier.
 - Ajouter un test, script ou commande ciblé documenté dans ce fichier qui valide structurellement une carte exportée.
 - Vérifier les dimensions des couches, les plages de gids, le chemin d’image du tileset, la présence des propriétés de couches d’objets et le nombre de cellules brutes compagnons.
 - Garder la validation indépendante du runtime complet du jeu autant que possible.
+
+Commande ajoutée :
+
+```powershell
+& .\scripts\validate-tiled-export.ps1 -DataPath "D:\development\repo\Alundra Remake\remaster-data-extracted\data" -MapName map_0
+```
 
 Validation :
 
