@@ -109,6 +109,13 @@ Assert-True ([int]$tileset.columns -gt 0) "Tileset columns must be positive"
 Assert-True ([int]$tileset.imagewidth -gt 0) "Tileset image width must be positive"
 Assert-True ([int]$tileset.imageheight -gt 0) "Tileset image height must be positive"
 
+$gidByRawTileId = @{}
+foreach ($tile in @($tileset.tiles)) {
+    $tileProperties = Get-TiledPropertyMap $tile.properties
+    Assert-True ($tileProperties.ContainsKey("TileId")) "Tileset tile '$($tile.id)' is missing TileId"
+    $gidByRawTileId[[string]$tileProperties["TileId"]] = [int]$tile.id + 1
+}
+
 $tilesetImagePath = Join-Path (Split-Path -Parent $tilesetPath) $tileset.image
 Assert-True (Test-Path -LiteralPath $tilesetImagePath) "Tileset image is missing: $tilesetImagePath"
 Add-Type -AssemblyName System.Drawing
@@ -130,10 +137,144 @@ foreach ($layer in @($map.layers | Where-Object { $_.type -eq "tilelayer" })) {
     }
 }
 
+foreach ($wallLayer in @($map.layers | Where-Object { $_.name -like "Walls_*" })) {
+    $expectedData = New-Object 'int[]' $cellCount
+    $stackIndex = [int]($wallLayer.name -replace '^Walls_', '')
+
+    foreach ($cell in @($companion.cells)) {
+        if ($null -eq $cell.wallTiles -or $stackIndex -ge @($cell.wallTiles.tiles).Count) {
+            continue
+        }
+
+        $rawTileId = [int]$cell.wallTiles.tiles[$stackIndex]
+        if ($rawTileId -eq 65535) {
+            continue
+        }
+
+        $targetY = [int]$cell.y - [int]$cell.height - [int]$cell.wallTiles.offset + $stackIndex + 1
+        if ($targetY -lt 0 -or $targetY -ge [int]$map.height) {
+            continue
+        }
+
+        Assert-True ($gidByRawTileId.ContainsKey([string]$rawTileId)) "Wall layer '$($wallLayer.name)' references raw tile id $rawTileId missing from tileset"
+        $targetIndex = $targetY * [int]$map.width + [int]$cell.x
+        $expectedData[$targetIndex] = [int]$gidByRawTileId[[string]$rawTileId]
+    }
+
+    for ($index = 0; $index -lt $cellCount; $index++) {
+        Assert-True ([int]$wallLayer.data[$index] -eq $expectedData[$index]) "Wall layer '$($wallLayer.name)' mismatch at cell index $index"
+    }
+}
+
+$renderLayers = @($map.layers | Where-Object { $_.name -like "Render_*" })
+Assert-True ($renderLayers.Count -gt 0) "Expected visible renderer-ordered Render_* layers"
+
+$rawGroundLayer = Get-LayerByName $map "Ground"
+Assert-True ($rawGroundLayer.visible -eq $false) "Raw Ground layer must be hidden; visible Render_* layers provide game renderer ordering"
+foreach ($wallLayer in @($map.layers | Where-Object { $_.name -like "Walls_*" })) {
+    Assert-True ($wallLayer.visible -eq $false) "Raw wall layer '$($wallLayer.name)' must be hidden; visible Render_* layers provide game renderer ordering"
+}
+
+$expectedRenderLayers = @()
+for ($sourceY = 0; $sourceY -lt [int]$map.height; $sourceY++) {
+    $groundData = New-Object 'int[]' $cellCount
+    $hasGroundTile = $false
+
+    foreach ($cell in @($companion.cells | Where-Object { [int]$_.y -eq $sourceY })) {
+        $rawTileId = [int]$cell.tileId
+        if ($rawTileId -eq 65535) {
+            continue
+        }
+
+        $targetY = [int]$cell.y - [int]$cell.height
+        if ($targetY -lt 0 -or $targetY -ge [int]$map.height) {
+            continue
+        }
+
+        Assert-True ($gidByRawTileId.ContainsKey([string]$rawTileId)) "Render ground row $sourceY references raw tile id $rawTileId missing from tileset"
+        $targetIndex = $targetY * [int]$map.width + [int]$cell.x
+        $groundData[$targetIndex] = [int]$gidByRawTileId[[string]$rawTileId]
+        $hasGroundTile = $true
+    }
+
+    if ($hasGroundTile) {
+        $expectedRenderLayers += [pscustomobject]@{
+            Name = "Render_{0:D2}_Ground" -f $sourceY
+            Data = $groundData
+        }
+    }
+
+    $rowCells = @($companion.cells | Where-Object { [int]$_.y -eq $sourceY -and $null -ne $_.wallTiles })
+    $rowMaxWallCount = 0
+    foreach ($cell in $rowCells) {
+        $rowMaxWallCount = [Math]::Max($rowMaxWallCount, [int]$cell.wallTiles.count)
+    }
+
+    for ($stackIndex = 0; $stackIndex -lt $rowMaxWallCount; $stackIndex++) {
+        $wallData = New-Object 'int[]' $cellCount
+        $hasWallTile = $false
+
+        foreach ($cell in $rowCells) {
+            if ($stackIndex -ge [int]$cell.wallTiles.count -or $stackIndex -ge @($cell.wallTiles.tiles).Count) {
+                continue
+            }
+
+            $rawTileId = [int]$cell.wallTiles.tiles[$stackIndex]
+            if ($rawTileId -eq 65535) {
+                continue
+            }
+
+            $targetY = [int]$cell.y - [int]$cell.height - [int]$cell.wallTiles.offset + $stackIndex + 1
+            if ($targetY -lt 0 -or $targetY -ge [int]$map.height) {
+                continue
+            }
+
+            Assert-True ($gidByRawTileId.ContainsKey([string]$rawTileId)) "Render wall row $sourceY stack $stackIndex references raw tile id $rawTileId missing from tileset"
+            $targetIndex = $targetY * [int]$map.width + [int]$cell.x
+            $wallData[$targetIndex] = [int]$gidByRawTileId[[string]$rawTileId]
+            $hasWallTile = $true
+        }
+
+        if ($hasWallTile) {
+            $expectedRenderLayers += [pscustomobject]@{
+                Name = "Render_{0:D2}_Walls_{1}" -f $sourceY, $stackIndex
+                Data = $wallData
+            }
+        }
+    }
+}
+
+Assert-True ($renderLayers.Count -eq $expectedRenderLayers.Count) "Render layer count mismatch: expected $($expectedRenderLayers.Count), found $($renderLayers.Count)"
+for ($layerIndex = 0; $layerIndex -lt $expectedRenderLayers.Count; $layerIndex++) {
+    $expectedLayer = $expectedRenderLayers[$layerIndex]
+    $actualLayer = $renderLayers[$layerIndex]
+    Assert-True ($actualLayer.name -eq $expectedLayer.Name) "Render layer order mismatch at index ${layerIndex}: expected '$($expectedLayer.Name)', found '$($actualLayer.name)'"
+    Assert-True ($actualLayer.visible -ne $false) "Render layer '$($actualLayer.name)' must be visible"
+
+    for ($index = 0; $index -lt $cellCount; $index++) {
+        Assert-True ([int]$actualLayer.data[$index] -eq $expectedLayer.Data[$index]) "Render layer '$($actualLayer.name)' mismatch at cell index $index"
+    }
+}
+
 $portalsLayer = Assert-ObjectLayer $map "Portals" @("Index", "X1", "Y1", "X2", "Y2", "DestMapId", "DestTileX", "DestTileY", "ZLevel", "Flags")
 Assert-TiledProperties $portalsLayer.properties @("ValidityFilter", "Placement") "Portals layer" | Out-Null
 Assert-ObjectLayer $map "MapEvents" @("Index", "X1", "Y1", "X2", "Y2", "EventCodesBIndex", "Ub1", "Ub2", "Ub3") | Out-Null
-Assert-ObjectLayer $map "Entities" @("Index", "XMin", "YMin", "XMax", "YMax", "IsEnabled", "SpriteDirection", "SpriteTableIndex", "XPos", "YPos", "Height", "EventCodesA_LoadIndex", "EventCodesB_MapIndex", "EventCodesC_TickIndex", "EventCodesD_TouchIndex", "EventCodesE_DeactivateIndex", "EventCodesF_InteractIndex", "_10", "Contents", "DisplayX", "DisplayY", "DisplayHeight") | Out-Null
+$entitiesLayer = Assert-ObjectLayer $map "Entities" @("Index", "XMin", "YMin", "XMax", "YMax", "IsEnabled", "SpriteDirection", "SpriteTableIndex", "XPos", "YPos", "Height", "EventCodesA_LoadIndex", "EventCodesB_MapIndex", "EventCodesC_TickIndex", "EventCodesD_TouchIndex", "EventCodesE_DeactivateIndex", "EventCodesF_InteractIndex", "_10", "Contents", "DisplayX", "DisplayY", "DisplayHeight", "DisplayPixelX", "DisplayPixelY")
+foreach ($object in @($entitiesLayer.objects)) {
+    $entityProperties = Get-TiledPropertyMap $object.properties
+    $displayTileX = [int][Math]::Truncate([int]$entityProperties["XPos"] / 2)
+    $displayTileY = [int][Math]::Truncate([int]$entityProperties["YPos"] / 2)
+    $displayHeight = [int][Math]::Truncate([int]$entityProperties["Height"] / 2)
+    $expectedX = $displayTileX * [int]$map.tilewidth
+    $expectedY = ($displayTileY - $displayHeight) * [int]$map.tileheight
+
+    Assert-True ([int]$object.x -eq $expectedX) "Entity '$($object.name)' x mismatch"
+    Assert-True ([int]$object.y -eq $expectedY) "Entity '$($object.name)' y mismatch"
+    Assert-True ([int]$object.width -eq [int]$map.tilewidth) "Entity '$($object.name)' width mismatch"
+    Assert-True ([int]$object.height -eq [int]$map.tileheight) "Entity '$($object.name)' height mismatch"
+    Assert-True ([int]$entityProperties["DisplayPixelX"] -eq $expectedX) "Entity '$($object.name)' DisplayPixelX mismatch"
+    Assert-True ([int]$entityProperties["DisplayPixelY"] -eq $expectedY) "Entity '$($object.name)' DisplayPixelY mismatch"
+}
 
 foreach ($tile in @($tileset.tiles | Where-Object { $_.animation -ne $null })) {
     $animationProperties = Assert-TiledProperties $tile.properties @("AnimationSpriteIndex", "AnimationFrameCount", "AnimationTileHeight", "AnimationFrameDuration") "Animated tile '$($tile.id)'"
