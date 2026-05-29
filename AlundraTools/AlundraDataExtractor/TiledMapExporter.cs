@@ -152,7 +152,17 @@ public static class TiledMapExporter
                 TiledProperty.File("AlundraCompanionJson", companionFileName.Replace('\\', '/')),
                 TiledProperty.String("WallLayerPlacement", "logical source cell; exact renderer wall offset data is stored in AlundraCompanionJson"),
                 TiledProperty.Int("MapIndex", mapIndex),
-                TiledProperty.Int("MapId", Convert.ToInt32(gameMap.Info.MapId))
+                TiledProperty.Int("MapId", Convert.ToInt32(gameMap.Info.MapId)),
+                TiledProperty.Int("Gravity", gameMap.Info.Gravity),
+                TiledProperty.Int("ZViscosity", gameMap.Info.ZViscosity),
+                TiledProperty.Int("SlideEffectId", gameMap.Info.SlideEffectId),
+                TiledProperty.Int("BalanceLevel", gameMap.Info.BalanceLevel),
+                TiledProperty.Int("C", gameMap.Info.C),
+                TiledProperty.Int("D", gameMap.Info.D),
+                TiledProperty.Int("E", gameMap.Info.E),
+                TiledProperty.Int("F", gameMap.Info.F),
+                TiledProperty.Int("_10", gameMap.Info._10),
+                TiledProperty.Int("_11", gameMap.Info._11)
             ],
             Layers = layers
         };

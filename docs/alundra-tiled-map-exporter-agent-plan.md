@@ -218,7 +218,7 @@ Validation :
 
 Commit: `tools(tiled): export wall layers`
 
-### ⬜ T08 - Exporter les propriétés de carte
+### ✅ T08 - Exporter les propriétés de carte
 
 Périmètre : attacher les métadonnées vérifiées de niveau carte à la carte Tiled.
 
