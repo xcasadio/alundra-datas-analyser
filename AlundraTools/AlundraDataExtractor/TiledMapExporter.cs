@@ -127,11 +127,8 @@ public static class TiledMapExporter
         var layers = new List<TiledLayerJson> { CreateGroundLayer(gameMap, catalog, 1) };
         layers.AddRange(CreateWallLayers(gameMap, catalog, layers.Count + 1));
         layers.Add(CreatePortalLayer(gameMap, layers.Count + 1, 1));
-        var nextObjectId = layers
-            .SelectMany(layer => layer.Objects ?? [])
-            .Select(tiledObject => tiledObject.Id)
-            .DefaultIfEmpty(0)
-            .Max() + 1;
+        layers.Add(CreateMapEventLayer(gameMap, layers.Count + 1, GetNextObjectId(layers)));
+        var nextObjectId = GetNextObjectId(layers);
 
         return new TiledMapJson
         {
@@ -302,6 +299,61 @@ public static class TiledMapExporter
 
     private static bool IsValidPortal(Portal portal) =>
         portal.X2 != 0xff && portal.Y2 != 0xff;
+
+    private static TiledLayerJson CreateMapEventLayer(GameMap gameMap, int layerId, int firstObjectId)
+    {
+        var objects = new List<TiledObjectJson>();
+        var records = gameMap.SpriteInfo?.MapEvents?.Records ?? [];
+
+        for (var index = 0; index < records.Length; index++)
+        {
+            var record = records[index];
+
+            if (record == null)
+            {
+                continue;
+            }
+
+            objects.Add(new TiledObjectJson
+            {
+                Id = firstObjectId + objects.Count,
+                Name = $"MapEvent_{index}",
+                Type = "MapEvent",
+                X = record.X1 * StaticVariables.MapTileWidth,
+                Y = record.Y1 * StaticVariables.MapTileHeight,
+                Width = (record.X2 - record.X1 + 1) * StaticVariables.MapTileWidth,
+                Height = (record.Y2 - record.Y1 + 1) * StaticVariables.MapTileHeight,
+                Properties =
+                [
+                    TiledProperty.Int("Index", index),
+                    TiledProperty.Int("X1", record.X1),
+                    TiledProperty.Int("Y1", record.Y1),
+                    TiledProperty.Int("X2", record.X2),
+                    TiledProperty.Int("Y2", record.Y2),
+                    TiledProperty.Int("EventCodesBIndex", record.EventCodesBIndex),
+                    TiledProperty.Int("EventCodesBIndexMasked", record.EventCodesBIndex & 0x7f),
+                    TiledProperty.Int("Ub1", record.Ub1),
+                    TiledProperty.Int("Ub2", record.Ub2),
+                    TiledProperty.Int("Ub3", record.Ub3)
+                ]
+            });
+        }
+
+        return new TiledLayerJson
+        {
+            Id = layerId,
+            Name = "MapEvents",
+            Type = "objectgroup",
+            Objects = objects
+        };
+    }
+
+    private static int GetNextObjectId(IEnumerable<TiledLayerJson> layers) =>
+        layers
+            .SelectMany(layer => layer.Objects ?? [])
+            .Select(tiledObject => tiledObject.Id)
+            .DefaultIfEmpty(0)
+            .Max() + 1;
 
     private static AlundraTiledCompanionJson CreateCompanionJson(GameMap gameMap, int mapIndex)
     {

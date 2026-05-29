@@ -254,7 +254,7 @@ Validation :
 
 Commit: `tools(tiled): export portal objects`
 
-### ⬜ T10 - Exporter la couche d’objets des événements de carte
+### ✅ T10 - Exporter la couche d’objets des événements de carte
 
 Périmètre : ajouter les rectangles d’événements de carte comme objets Tiled.
 
