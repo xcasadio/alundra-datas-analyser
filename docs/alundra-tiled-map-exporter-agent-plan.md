@@ -109,7 +109,7 @@ Résultat T01 :
 
 Commit: `docs(tiled): verify tiled export format`
 
-### ⬜ T02 - Ajouter le point d’entrée de l’exporteur
+### ✅ T02 - Ajouter le point d’entrée de l’exporteur
 
 Périmètre : ajouter le plus petit chemin de code pouvant être appelé depuis `SaveMap` sans modifier les sorties existantes.
 

@@ -360,6 +360,7 @@ internal class Program
 
         GameMapHelper.SaveTileSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_tilesheet.png"), tileAnimDescriptors);
         GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_spritesheet.png"));
+        TiledMapExporter.ExportMap(gameMap, id, extractionPath, tileAnimDescriptors);
     }
 
     private static void GetEntitySpriteSheets(GameMap gameMap, int id, string extractionPath)
