@@ -126,7 +126,7 @@ Validation :
 
 Commit: `tools(tiled): add map exporter entry point`
 
-### ⬜ T03 - Construire un catalogue de tiles déterministe
+### ✅ T03 - Construire un catalogue de tiles déterministe
 
 Périmètre : collecter les ids de tiles bruts Alundra qui doivent apparaître dans le tileset Tiled.
 
