@@ -291,7 +291,7 @@ Validation :
 
 Commit: `tools(tiled): export entity objects`
 
-### ⬜ T12 - Exporter les animations de tiles
+### ✅ T12 - Exporter les animations de tiles
 
 Périmètre : ajouter les métadonnées d’animation de tiles Tiled après stabilisation des tiles statiques et des gids.
 

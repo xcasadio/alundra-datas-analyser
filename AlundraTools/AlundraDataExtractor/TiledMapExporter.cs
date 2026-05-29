@@ -21,17 +21,15 @@ public static class TiledMapExporter
 
     public static void ExportMap(GameMap gameMap, int mapId, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors)
     {
-        _ = tileAnimDescriptors;
-
         var tiledPath = Path.Combine(extractionPath, "tiled");
         Directory.CreateDirectory(tiledPath);
 
-        var catalog = CreateTileCatalog(gameMap);
+        var catalog = CreateTileCatalog(gameMap, tileAnimDescriptors);
         var tilesetImageFileName = $"map_{mapId}_tileset.png";
         var tilesetFileName = $"map_{mapId}_tileset.tsj";
         var companionFileName = $"map_{mapId}.alundra.json";
         var tilesetLayout = SaveCompactTilesetImage(gameMap, catalog, Path.Combine(tiledPath, tilesetImageFileName));
-        var tilesetJson = CreateTilesetJson(mapId, catalog, tilesetImageFileName, tilesetLayout);
+        var tilesetJson = CreateTilesetJson(gameMap, mapId, catalog, tilesetImageFileName, tilesetLayout, tileAnimDescriptors);
         File.WriteAllText(Path.Combine(tiledPath, tilesetFileName), JsonSerializer.Serialize(tilesetJson, TiledJsonOptions));
 
         var companionJson = CreateCompanionJson(gameMap, mapId);
@@ -43,10 +41,26 @@ public static class TiledMapExporter
 
     public static TiledTileCatalog CreateTileCatalog(GameMap gameMap)
     {
-        return TiledTileCatalog.Create(EnumerateRawTileIds(gameMap));
+        return CreateTileCatalog(gameMap, null);
     }
 
-    private static IEnumerable<ushort> EnumerateRawTileIds(GameMap gameMap)
+    private static TiledTileCatalog CreateTileCatalog(GameMap gameMap, TileAnimDescriptor[]? tileAnimDescriptors)
+    {
+        return TiledTileCatalog.Create(EnumerateRawTileIds(gameMap, tileAnimDescriptors));
+    }
+
+    private static IEnumerable<ushort> EnumerateRawTileIds(GameMap gameMap, TileAnimDescriptor[]? tileAnimDescriptors)
+    {
+        foreach (var rawTileId in EnumerateBaseRawTileIds(gameMap))
+        {
+            foreach (var animationFrameRawTileId in EnumerateAnimationFrameRawTileIds(gameMap, rawTileId, tileAnimDescriptors))
+            {
+                yield return animationFrameRawTileId;
+            }
+        }
+    }
+
+    private static IEnumerable<ushort> EnumerateBaseRawTileIds(GameMap gameMap)
     {
         foreach (var mapTile in gameMap.Map.MapTiles)
         {
@@ -67,6 +81,22 @@ public static class TiledMapExporter
                     yield return wallTileId;
                 }
             }
+        }
+    }
+
+    private static IEnumerable<ushort> EnumerateAnimationFrameRawTileIds(GameMap gameMap, ushort rawTileId, TileAnimDescriptor[]? tileAnimDescriptors)
+    {
+        var animationSource = GetTileAnimationSource(gameMap, rawTileId, tileAnimDescriptors);
+
+        if (animationSource == null)
+        {
+            yield return rawTileId;
+            yield break;
+        }
+
+        for (var frame = 0; frame < animationSource.Entry.NumberOfFrame; frame++)
+        {
+            yield return (ushort)(rawTileId + frame * animationSource.Entry.TileHeight);
         }
     }
 
@@ -93,7 +123,7 @@ public static class TiledMapExporter
         return new TiledTilesetLayout(columns, tileCount, imageWidth, imageHeight);
     }
 
-    private static TiledTilesetJson CreateTilesetJson(int mapId, TiledTileCatalog catalog, string imageFileName, TiledTilesetLayout layout)
+    private static TiledTilesetJson CreateTilesetJson(GameMap gameMap, int mapId, TiledTileCatalog catalog, string imageFileName, TiledTilesetLayout layout, TileAnimDescriptor[]? tileAnimDescriptors)
     {
         return new TiledTilesetJson
         {
@@ -108,18 +138,91 @@ public static class TiledMapExporter
             ImageWidth = layout.ImageWidth,
             ImageHeight = layout.ImageHeight,
             Tiles = catalog.Entries
-                .Select(entry => new TiledTileJson
-                {
-                    Id = entry.LocalTileId,
-                    Properties =
-                    [
-                        TiledProperty.Int("TileId", entry.RawTileId),
-                        TiledProperty.Int("Palette", entry.Palette),
-                        TiledProperty.Int("Tile", entry.Tile)
-                    ]
-                })
+                .Select(entry => CreateTileJson(gameMap, catalog, entry, tileAnimDescriptors))
                 .ToList()
         };
+    }
+
+    private static TiledTileJson CreateTileJson(GameMap gameMap, TiledTileCatalog catalog, TiledTileCatalogEntry entry, TileAnimDescriptor[]? tileAnimDescriptors)
+    {
+        var properties = new List<TiledProperty>
+        {
+            TiledProperty.Int("TileId", entry.RawTileId),
+            TiledProperty.Int("Palette", entry.Palette),
+            TiledProperty.Int("Tile", entry.Tile)
+        };
+        var animationSource = GetTileAnimationSource(gameMap, entry.RawTileId, tileAnimDescriptors);
+        var animation = CreateTileAnimationFrames(catalog, entry.RawTileId, animationSource);
+
+        if (animationSource != null && animation != null)
+        {
+            properties.Add(TiledProperty.Int("AnimationSpriteIndex", animationSource.SpriteIndex));
+            properties.Add(TiledProperty.Int("AnimationFrameCount", animationSource.Entry.NumberOfFrame));
+            properties.Add(TiledProperty.Int("AnimationTileHeight", animationSource.Entry.TileHeight));
+            properties.Add(TiledProperty.Int("AnimationFrameDuration", animationSource.Entry.FrameDuration));
+        }
+
+        return new TiledTileJson
+        {
+            Id = entry.LocalTileId,
+            Properties = properties,
+            Animation = animation
+        };
+    }
+
+    private static List<TiledTileAnimationFrameJson>? CreateTileAnimationFrames(TiledTileCatalog catalog, ushort rawTileId, TiledTileAnimationSource? animationSource)
+    {
+        if (animationSource == null)
+        {
+            return null;
+        }
+
+        var frames = new List<TiledTileAnimationFrameJson>(animationSource.Entry.NumberOfFrame);
+
+        for (var frame = 0; frame < animationSource.Entry.NumberOfFrame; frame++)
+        {
+            var animationFrameRawTileId = (ushort)(rawTileId + frame * animationSource.Entry.TileHeight);
+            if (!catalog.TryGetLocalTileId(animationFrameRawTileId, out var localTileId))
+            {
+                return null;
+            }
+
+            frames.Add(new TiledTileAnimationFrameJson
+            {
+                TileId = localTileId,
+                Duration = animationSource.Entry.FrameDuration
+            });
+        }
+
+        return frames;
+    }
+
+    private static TiledTileAnimationSource? GetTileAnimationSource(GameMap gameMap, ushort rawTileId, TileAnimDescriptor[]? tileAnimDescriptors)
+    {
+        if (tileAnimDescriptors == null)
+        {
+            return null;
+        }
+
+        var tile = rawTileId & 0x3ff;
+        if (tile >= tileAnimDescriptors.Length)
+        {
+            return null;
+        }
+
+        var spriteIndex = tileAnimDescriptors[tile].SpriteIndex;
+        if (spriteIndex == 0 || spriteIndex >= gameMap.Info.SpriteMapEntries.Length)
+        {
+            return null;
+        }
+
+        var entry = gameMap.Info.SpriteMapEntries[spriteIndex];
+        if (entry.Enabled != 1 || entry.NumberOfFrame == 0)
+        {
+            return null;
+        }
+
+        return new TiledTileAnimationSource(spriteIndex, entry);
     }
 
     private static TiledMapJson CreateMapJson(GameMap gameMap, int mapIndex, TiledTileCatalog catalog, string tilesetFileName, string companionFileName)
@@ -710,6 +813,18 @@ public sealed class TiledTileJson
 
     [JsonPropertyName("properties")]
     public List<TiledProperty> Properties { get; init; } = [];
+
+    [JsonPropertyName("animation")]
+    public List<TiledTileAnimationFrameJson>? Animation { get; init; }
+}
+
+public sealed class TiledTileAnimationFrameJson
+{
+    [JsonPropertyName("tileid")]
+    public int TileId { get; init; }
+
+    [JsonPropertyName("duration")]
+    public int Duration { get; init; }
 }
 
 public sealed class TiledProperty
@@ -772,7 +887,21 @@ public sealed class TiledTileCatalog
     {
         return rawTileId == 0xffff ? 0 : _entriesByRawTileId[rawTileId].Gid;
     }
+
+    public bool TryGetLocalTileId(ushort rawTileId, out int localTileId)
+    {
+        if (_entriesByRawTileId.TryGetValue(rawTileId, out var entry))
+        {
+            localTileId = entry.LocalTileId;
+            return true;
+        }
+
+        localTileId = 0;
+        return false;
+    }
 }
+
+public sealed record TiledTileAnimationSource(int SpriteIndex, SpriteMapEntry Entry);
 
 public sealed record TiledTileCatalogEntry(
     ushort RawTileId,
