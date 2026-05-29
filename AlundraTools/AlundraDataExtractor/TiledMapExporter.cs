@@ -128,6 +128,7 @@ public static class TiledMapExporter
         layers.AddRange(CreateWallLayers(gameMap, catalog, layers.Count + 1));
         layers.Add(CreatePortalLayer(gameMap, layers.Count + 1, 1));
         layers.Add(CreateMapEventLayer(gameMap, layers.Count + 1, GetNextObjectId(layers)));
+        layers.Add(CreateEntityLayer(gameMap, layers.Count + 1, GetNextObjectId(layers)));
         var nextObjectId = GetNextObjectId(layers);
 
         return new TiledMapJson
@@ -346,6 +347,78 @@ public static class TiledMapExporter
             Type = "objectgroup",
             Objects = objects
         };
+    }
+
+    private static TiledLayerJson CreateEntityLayer(GameMap gameMap, int layerId, int firstObjectId)
+    {
+        var objects = new List<TiledObjectJson>();
+        var records = gameMap.SpriteInfo?.Entities?.Entities ?? [];
+
+        for (var index = 0; index < records.Length; index++)
+        {
+            var record = records[index];
+
+            if (record == null)
+            {
+                continue;
+            }
+
+            objects.Add(new TiledObjectJson
+            {
+                Id = firstObjectId + objects.Count,
+                Name = $"Entity_{index}",
+                Type = "Entity",
+                X = record.XPos / 2,
+                Y = record.YPos / 2,
+                Point = true,
+                Properties = CreateEntityProperties(record, index)
+            });
+        }
+
+        return new TiledLayerJson
+        {
+            Id = layerId,
+            Name = "Entities",
+            Type = "objectgroup",
+            Objects = objects
+        };
+    }
+
+    private static List<TiledProperty> CreateEntityProperties(SiEntityRecord record, int index)
+    {
+        var properties = new List<TiledProperty>
+        {
+            TiledProperty.Int("Index", index),
+            TiledProperty.Int("XMin", record.XMin),
+            TiledProperty.Int("YMin", record.YMin),
+            TiledProperty.Int("XMax", record.XMax),
+            TiledProperty.Int("YMax", record.YMax),
+            TiledProperty.Int("IsEnabled", record.IsEnabled),
+            TiledProperty.Int("SpriteDirection", record.SpriteDirection),
+            TiledProperty.Int("SpriteTableIndex", record.SpriteTableIndex),
+            TiledProperty.Int("XPos", record.XPos),
+            TiledProperty.Int("YPos", record.YPos),
+            TiledProperty.Int("Height", record.Height),
+            TiledProperty.Int("EventCodesA_LoadIndex", record.EventCodesA_LoadIndex),
+            TiledProperty.Int("EventCodesB_MapIndex", record.EventCodesB_MapIndex),
+            TiledProperty.Int("EventCodesC_TickIndex", record.EventCodesC_TickIndex),
+            TiledProperty.Int("EventCodesD_TouchIndex", record.EventCodesD_TouchIndex),
+            TiledProperty.Int("EventCodesE_DeactivateIndex", record.EventCodesE_DeactivateIndex),
+            TiledProperty.Int("EventCodesF_InteractIndex", record.EventCodesF_InteractIndex),
+            TiledProperty.Int("_10", record._10),
+            TiledProperty.Int("Contents", record.Contents),
+            TiledProperty.Int("DisplayX", record.XPos / 2),
+            TiledProperty.Int("DisplayY", record.YPos / 2),
+            TiledProperty.Int("DisplayHeight", record.Height / 2)
+        };
+
+        var entityName = EntityNames.GetName(record.SpriteDirection, record.SpriteTableIndex);
+        if (entityName != null)
+        {
+            properties.Add(TiledProperty.String("EntityName", entityName));
+        }
+
+        return properties;
     }
 
     private static int GetNextObjectId(IEnumerable<TiledLayerJson> layers) =>
@@ -575,6 +648,9 @@ public sealed class TiledObjectJson
 
     [JsonPropertyName("height")]
     public int Height { get; init; }
+
+    [JsonPropertyName("point")]
+    public bool? Point { get; init; }
 
     [JsonPropertyName("properties")]
     public List<TiledProperty> Properties { get; init; } = [];

@@ -272,7 +272,7 @@ Validation :
 
 Commit: `tools(tiled): export map event objects`
 
-### ⬜ T11 - Exporter la couche d’objets des entités
+### ✅ T11 - Exporter la couche d’objets des entités
 
 Périmètre : ajouter les enregistrements d’entités de carte comme objets Tiled sans perdre les octets bruts.
 
