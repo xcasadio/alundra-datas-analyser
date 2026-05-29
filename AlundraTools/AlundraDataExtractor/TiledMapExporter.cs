@@ -257,7 +257,7 @@ public static class TiledMapExporter
                 TiledProperty.String("SourceFileName", $"map_{mapIndex}.json"),
                 TiledProperty.File("SourceJson", $"../map_{mapIndex}.json"),
                 TiledProperty.File("AlundraCompanionJson", companionFileName.Replace('\\', '/')),
-                TiledProperty.String("WallLayerPlacement", "logical source cell; exact renderer wall offset data is stored in AlundraCompanionJson"),
+                TiledProperty.String("WallLayerPlacement", "renderer target cell; source cell and wall offset data are stored in AlundraCompanionJson"),
                 TiledProperty.Int("MapIndex", mapIndex),
                 TiledProperty.Int("MapId", Convert.ToInt32(gameMap.Info.MapId)),
                 TiledProperty.Int("Gravity", gameMap.Info.Gravity),
@@ -312,14 +312,29 @@ public static class TiledMapExporter
 
             for (var index = 0; index < map.MapTiles.Length; index++)
             {
-                var wallTiles = map.MapTiles[index].WallTiles;
+                var mapTile = map.MapTiles[index];
+                var wallTiles = mapTile.WallTiles;
 
                 if (wallTiles?.Tiles == null || stackIndex >= wallTiles.Tiles.Length)
                 {
                     continue;
                 }
 
-                data[index] = catalog.GetGidOrEmpty(wallTiles.Tiles[stackIndex]);
+                var wallTileId = wallTiles.Tiles[stackIndex];
+                if (wallTileId == EmptyTileId)
+                {
+                    continue;
+                }
+
+                var targetY = index / map.Width - mapTile.Height - wallTiles.Offset + stackIndex + 1;
+
+                if (targetY < 0 || targetY >= map.Height)
+                {
+                    continue;
+                }
+
+                var targetIndex = targetY * map.Width + index % map.Width;
+                data[targetIndex] = catalog.GetGidOrEmpty(wallTileId);
             }
 
             layers.Add(new TiledLayerJson
@@ -333,7 +348,7 @@ public static class TiledMapExporter
                 Properties =
                 [
                     TiledProperty.Int("StackIndex", stackIndex),
-                    TiledProperty.String("Placement", "logical source cell"),
+                    TiledProperty.String("Placement", "renderer target cell"),
                     TiledProperty.String("RendererYFormula", "(Y - Height - WallTiles.Offset + StackIndex + 1) * TileHeight")
                 ]
             });
@@ -466,14 +481,21 @@ public static class TiledMapExporter
                 continue;
             }
 
+            var displayTileX = record.XPos / 2;
+            var displayTileY = record.YPos / 2;
+            var displayHeight = record.Height / 2;
+            var displayPixelX = displayTileX * StaticVariables.MapTileWidth;
+            var displayPixelY = (displayTileY - displayHeight) * StaticVariables.MapTileHeight;
+
             objects.Add(new TiledObjectJson
             {
                 Id = firstObjectId + objects.Count,
                 Name = $"Entity_{index}",
                 Type = "Entity",
-                X = record.XPos / 2,
-                Y = record.YPos / 2,
-                Point = true,
+                X = displayPixelX,
+                Y = displayPixelY,
+                Width = StaticVariables.MapTileWidth,
+                Height = StaticVariables.MapTileHeight,
                 Properties = CreateEntityProperties(record, index)
             });
         }
@@ -512,7 +534,9 @@ public static class TiledMapExporter
             TiledProperty.Int("Contents", record.Contents),
             TiledProperty.Int("DisplayX", record.XPos / 2),
             TiledProperty.Int("DisplayY", record.YPos / 2),
-            TiledProperty.Int("DisplayHeight", record.Height / 2)
+            TiledProperty.Int("DisplayHeight", record.Height / 2),
+            TiledProperty.Int("DisplayPixelX", (record.XPos / 2) * StaticVariables.MapTileWidth),
+            TiledProperty.Int("DisplayPixelY", (record.YPos / 2 - record.Height / 2) * StaticVariables.MapTileHeight)
         };
 
         var entityName = EntityNames.GetName(record.SpriteDirection, record.SpriteTableIndex);
