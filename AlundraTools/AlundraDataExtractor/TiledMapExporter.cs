@@ -126,6 +126,12 @@ public static class TiledMapExporter
     {
         var layers = new List<TiledLayerJson> { CreateGroundLayer(gameMap, catalog, 1) };
         layers.AddRange(CreateWallLayers(gameMap, catalog, layers.Count + 1));
+        layers.Add(CreatePortalLayer(gameMap, layers.Count + 1, 1));
+        var nextObjectId = layers
+            .SelectMany(layer => layer.Objects ?? [])
+            .Select(tiledObject => tiledObject.Id)
+            .DefaultIfEmpty(0)
+            .Max() + 1;
 
         return new TiledMapJson
         {
@@ -136,7 +142,7 @@ public static class TiledMapExporter
             TileWidth = StaticVariables.MapTileWidth,
             TileHeight = StaticVariables.MapTileHeight,
             NextLayerId = layers.Count + 1,
-            NextObjectId = 1,
+            NextObjectId = nextObjectId,
             Tilesets =
             [
                 new TiledMapTilesetJson
@@ -234,6 +240,68 @@ public static class TiledMapExporter
 
         return layers;
     }
+
+    private static TiledLayerJson CreatePortalLayer(GameMap gameMap, int layerId, int firstObjectId)
+    {
+        var map = gameMap.Map;
+        var objects = new List<TiledObjectJson>();
+
+        for (var index = 0; index < gameMap.Info.Portals.Length; index++)
+        {
+            var portal = gameMap.Info.Portals[index];
+
+            if (!IsValidPortal(portal))
+            {
+                continue;
+            }
+
+            var tile = map.MapTiles[portal.X1 + portal.Y1 * map.Width];
+            var x1 = portal.X1 * StaticVariables.MapTileWidth;
+            var y1 = (portal.Y1 - tile.Height) * StaticVariables.MapTileHeight;
+            var x2 = (portal.X2 + 1) * StaticVariables.MapTileWidth;
+            var y2 = (portal.Y2 - tile.Height + 1) * StaticVariables.MapTileHeight;
+
+            objects.Add(new TiledObjectJson
+            {
+                Id = firstObjectId + objects.Count,
+                Name = $"Portal_{index}",
+                Type = "Portal",
+                X = x1,
+                Y = y1,
+                Width = x2 - x1,
+                Height = y2 - y1,
+                Properties =
+                [
+                    TiledProperty.Int("Index", index),
+                    TiledProperty.Int("X1", portal.X1),
+                    TiledProperty.Int("Y1", portal.Y1),
+                    TiledProperty.Int("X2", portal.X2),
+                    TiledProperty.Int("Y2", portal.Y2),
+                    TiledProperty.Int("DestMapId", portal.DestMapId),
+                    TiledProperty.Int("DestTileX", portal.DestTileX),
+                    TiledProperty.Int("DestTileY", portal.DestTileY),
+                    TiledProperty.Int("ZLevel", portal.ZLevel),
+                    TiledProperty.Int("Flags", portal.Flags)
+                ]
+            });
+        }
+
+        return new TiledLayerJson
+        {
+            Id = layerId,
+            Name = "Portals",
+            Type = "objectgroup",
+            Objects = objects,
+            Properties =
+            [
+                TiledProperty.String("ValidityFilter", "X2 != 0xff && Y2 != 0xff"),
+                TiledProperty.String("Placement", "frmAlundra portal rectangle formula")
+            ]
+        };
+    }
+
+    private static bool IsValidPortal(Portal portal) =>
+        portal.X2 != 0xff && portal.Y2 != 0xff;
 
     private static AlundraTiledCompanionJson CreateCompanionJson(GameMap gameMap, int mapIndex)
     {
@@ -425,6 +493,36 @@ public sealed class TiledLayerJson
 
     [JsonPropertyName("data")]
     public int[]? Data { get; init; }
+
+    [JsonPropertyName("objects")]
+    public List<TiledObjectJson>? Objects { get; init; }
+
+    [JsonPropertyName("properties")]
+    public List<TiledProperty> Properties { get; init; } = [];
+}
+
+public sealed class TiledObjectJson
+{
+    [JsonPropertyName("id")]
+    public int Id { get; init; }
+
+    [JsonPropertyName("name")]
+    public string Name { get; init; } = string.Empty;
+
+    [JsonPropertyName("type")]
+    public string Type { get; init; } = string.Empty;
+
+    [JsonPropertyName("x")]
+    public int X { get; init; }
+
+    [JsonPropertyName("y")]
+    public int Y { get; init; }
+
+    [JsonPropertyName("width")]
+    public int Width { get; init; }
+
+    [JsonPropertyName("height")]
+    public int Height { get; init; }
 
     [JsonPropertyName("properties")]
     public List<TiledProperty> Properties { get; init; } = [];

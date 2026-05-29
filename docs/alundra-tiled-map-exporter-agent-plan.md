@@ -235,7 +235,7 @@ Validation :
 
 Commit: `tools(tiled): export map properties`
 
-### ⬜ T09 - Exporter la couche d’objets des portails
+### ✅ T09 - Exporter la couche d’objets des portails
 
 Périmètre : ajouter les rectangles de portails comme objets Tiled.
 
