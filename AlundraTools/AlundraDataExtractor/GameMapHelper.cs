@@ -5,41 +5,9 @@ using System.Drawing.Imaging;
 
 namespace AlundraDataExtractor;
 
-record GameMapJson
+public static class GameMapHelper
 {
-    public GameMapInfoJson GameMapInfo { get; set; }
-    public MapJson Map { get; set; }
-    public SpriteInfoJson SpriteInfo { get; set; }
-    public ScrollParametersJson ScrollParameters { get; set; }
-    public string[] Strings { get; set; }
-
-    public GameMapJson()
-    {
-    }
-
-    public GameMapJson(GameMap gameMap)
-    {
-        if (gameMap.Info != null)
-        {
-            GameMapInfo = new GameMapInfoJson(gameMap.Info);
-        }
-
-        if (gameMap.Map != null)
-        {
-            Map = new MapJson(gameMap.Map);
-        }
-        
-        SpriteInfo = new SpriteInfoJson(gameMap.SpriteInfo);
-
-        if (gameMap.ScrollParameters != null)
-        {
-            ScrollParameters = new ScrollParametersJson(gameMap.ScrollParameters);
-        }
-
-        Strings = gameMap.Strings;
-    }
-
-    public void SaveTileSheet(GameMap gameMap, string fileName, TileAnimDescriptor[] tileAnimDescriptors = null)
+    public static void SaveTileSheet(GameMap gameMap, string fileName, TileAnimDescriptor[] tileAnimDescriptors = null)
     {
         using var bitmap = new Bitmap(256, 256 * 6);
         using var graphics = Graphics.FromImage(bitmap);
@@ -117,7 +85,7 @@ record GameMapJson
         graphics.DrawImage(tileBitmap, x, y);
     }
 
-    public void SaveSpriteSheet(GameMap gameMap, string fileName)
+    public static void SaveSpriteSheet(GameMap gameMap, string fileName)
     {
         using var bitmap = new Bitmap(256, 256 * 8);
         using var graphics = Graphics.FromImage(bitmap);

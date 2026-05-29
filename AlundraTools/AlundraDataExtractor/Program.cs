@@ -2,18 +2,18 @@
 using AlundraEngine.Balance;
 using AlundraEngine.DatasBin;
 using AlundraEngine.Editor;
+using AlundraEngine.Etc;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text.Json;
-using AlundraEngine.Etc;
 
 namespace AlundraDataExtractor;
 
 internal class Program
 {
-    private static readonly JsonSerializerOptions _jsonSerializerOptions = new() { WriteIndented = true };
+    private static readonly JsonSerializerOptions _jsonSerializerOptions = new() { WriteIndented = true, IncludeFields = true };
     private static Dictionary<string, HashSet<string>> entitySpriteSheetIds = new();
     private static HashSet<string> entitySpriteSheetAlreadySaved = new();
 
@@ -23,6 +23,8 @@ internal class Program
         var extractionPath = args[1];
         Console.WriteLine($"Extract data from {gamePath}");
         Console.WriteLine($"To {extractionPath}");
+
+        _jsonSerializerOptions.Converters.Add(new ByteArrayAsNumbersConverter());
 
         var dataFolder = Path.Combine(gamePath, "DATA");
 
@@ -67,10 +69,9 @@ internal class Program
 
     private static void ExtractDataFromBalanceBin(BalanceBin balanceBin, string extractionPath)
     {
-        var elements = balanceBin.BalanceRecords.Select(x => new BalanceRecordJson(x));
         var balanceBinPath = Path.Combine(extractionPath, "data");
         Directory.CreateDirectory(balanceBinPath);
-        File.WriteAllText(Path.Combine(balanceBinPath, $"{Path.GetFileName(balanceBin.FileName)}.json"), JsonSerializer.Serialize(elements, _jsonSerializerOptions));
+        File.WriteAllText(Path.Combine(balanceBinPath, $"{Path.GetFileName(balanceBin.FileName)}.json"), JsonSerializer.Serialize(balanceBin, _jsonSerializerOptions));
     }
 
     private static void ExtractDataFromScreenFolder(Font3 font3, StaticVariables staticVariables, string extractionPath)
@@ -339,22 +340,26 @@ internal class Program
 
     private static void SaveAlundraMap(GameMap gameMap, string extractionPath)
     {
-        var gameMapJson = ConvertGameMap(gameMap);
-        File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
+        File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMap, _jsonSerializerOptions));
 
-        gameMapJson.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, "map_alundra_spritesheet.png"));
+        //var gameMapJson = ConvertGameMap(gameMap);
+        //File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
+
+        GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, "map_alundra_spritesheet.png"));
     }
 
     private static void SaveMap(GameMap gameMap, int id, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors)
     {
-        var gameMapJson = ConvertGameMap(gameMap);
-        File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
+        //var gameMapJson = ConvertGameMap(gameMap);
+        //File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
+
+        File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMap, _jsonSerializerOptions));
 
         //try to extract all entity infos from all map
         //GetEntitySpriteSheets(gameMap, id, extractionPath);
 
-        gameMapJson.SaveTileSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_tilesheet.png"), tileAnimDescriptors);
-        gameMapJson.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_spritesheet.png"));
+        GameMapHelper.SaveTileSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_tilesheet.png"), tileAnimDescriptors);
+        GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_spritesheet.png"));
     }
 
     private static void GetEntitySpriteSheets(GameMap gameMap, int id, string extractionPath)
@@ -466,10 +471,5 @@ internal class Program
         }
 
         bitmap.Save(fileName, ImageFormat.Png);
-    }
-
-    private static GameMapJson ConvertGameMap(GameMap gameMap)
-    {
-        return new GameMapJson(gameMap);
     }
 }

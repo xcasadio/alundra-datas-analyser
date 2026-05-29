@@ -55,10 +55,10 @@ public class ScrollParameters // LiningHeader
     public int[] ScrollDirY;
 
     public const int CellMax = 200;
-    public int[,] CellPosX;
-    public int[,] CellPosY;
-    public int[,] CellTickX;
-    public int[,] CellTickY;
+    public int[][] CellPosX;
+    public int[][] CellPosY;
+    public int[][] CellTickX;
+    public int[][] CellTickY;
     public byte[] WaveTick;
 
     public uint OvrOff;
@@ -94,10 +94,18 @@ public class ScrollParameters // LiningHeader
         ScrollDirX = new int[LayerCount];
         ScrollDirY = new int[LayerCount];
 
-        CellPosX = new int[LayerCount, CellMax];
-        CellPosY = new int[LayerCount, CellMax];
-        CellTickX = new int[LayerCount, CellMax];
-        CellTickY = new int[LayerCount, CellMax];
+        CellPosX = new int[LayerCount][];
+        CellPosY = new int[LayerCount][];
+        CellTickX = new int[LayerCount][];
+        CellTickY = new int[LayerCount][];
+        for (var layerId = 0; layerId < LayerCount; layerId++)
+        {
+            CellPosX[layerId] = new int[CellMax];
+            CellPosY[layerId] = new int[CellMax];
+            CellTickX[layerId] = new int[CellMax];
+            CellTickY[layerId] = new int[CellMax];
+        }
+
         WaveTick = new byte[LayerCount];
 
         if (DataSize < 0x24)
@@ -228,10 +236,10 @@ public class ScrollParameters // LiningHeader
         var divisionCount = Math.Min(cellCount, Cellulars[layerId].Divisions);
         for (var i = 0; i < divisionCount; i++)
         {
-            CellPosX[layerId, i] = Cells[layerId][i].X0;
-            CellPosY[layerId, i] = Cells[layerId][i].Y0;
-            CellTickX[layerId, i] = 0;
-            CellTickY[layerId, i] = 0;
+            CellPosX[layerId][i] = Cells[layerId][i].X0;
+            CellPosY[layerId][i] = Cells[layerId][i].Y0;
+            CellTickX[layerId][i] = 0;
+            CellTickY[layerId][i] = 0;
         }
     }
 

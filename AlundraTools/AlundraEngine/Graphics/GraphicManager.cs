@@ -1020,10 +1020,10 @@ public class GraphicManager
             {
                 case CellType.Normal:
                 {
-                    var posX = scrollParameters.CellPosX[layerId, i];
-                    var posY = scrollParameters.CellPosY[layerId, i];
-                    var tickX = scrollParameters.CellTickX[layerId, i];
-                    var tickY = scrollParameters.CellTickY[layerId, i];
+                    var posX = scrollParameters.CellPosX[layerId][i];
+                    var posY = scrollParameters.CellPosY[layerId][i];
+                    var tickX = scrollParameters.CellTickX[layerId][i];
+                    var tickY = scrollParameters.CellTickY[layerId][i];
 
                     posX += curCell.DX;
                     posY += curCell.DY;
@@ -1089,10 +1089,10 @@ public class GraphicManager
                         sy = posY - baseY;
                     }
 
-                    scrollParameters.CellPosX[layerId, i] = posX;
-                    scrollParameters.CellPosY[layerId, i] = posY;
-                    scrollParameters.CellTickX[layerId, i] = tickX;
-                    scrollParameters.CellTickY[layerId, i] = tickY;
+                    scrollParameters.CellPosX[layerId][i] = posX;
+                    scrollParameters.CellPosY[layerId][i] = posY;
+                    scrollParameters.CellTickX[layerId][i] = tickX;
+                    scrollParameters.CellTickY[layerId][i] = tickY;
 
                     var width = curCell.U1 - curCell.U0 + 1;
                     var height = curCell.V1 - curCell.V0 + 1;
@@ -1106,10 +1106,10 @@ public class GraphicManager
 
                 case CellType.FallRespawn:
                 {
-                    var posX = scrollParameters.CellPosX[layerId, i];
-                    var posY = scrollParameters.CellPosY[layerId, i];
-                    var tickX = scrollParameters.CellTickX[layerId, i];
-                    var tickY = scrollParameters.CellTickY[layerId, i];
+                    var posX = scrollParameters.CellPosX[layerId][i];
+                    var posY = scrollParameters.CellPosY[layerId][i];
+                    var tickX = scrollParameters.CellTickX[layerId][i];
+                    var tickY = scrollParameters.CellTickY[layerId][i];
 
                     posX += curCell.DX;
                     posY += curCell.DY;
@@ -1175,10 +1175,10 @@ public class GraphicManager
                         sy = posY - baseY;
                     }
 
-                    scrollParameters.CellPosX[layerId, i] = posX;
-                    scrollParameters.CellPosY[layerId, i] = posY;
-                    scrollParameters.CellTickX[layerId, i] = tickX;
-                    scrollParameters.CellTickY[layerId, i] = tickY;
+                    scrollParameters.CellPosX[layerId][i] = posX;
+                    scrollParameters.CellPosY[layerId][i] = posY;
+                    scrollParameters.CellTickX[layerId][i] = tickX;
+                    scrollParameters.CellTickY[layerId][i] = tickY;
 
                     var width = curCell.U1 - curCell.U0 + 1;
                     var height = curCell.V1 - curCell.V0 + 1;

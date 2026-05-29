@@ -1,6 +1,4 @@
-﻿using System.Reflection.Emit;
-
-namespace AlundraEngine.DatasBin;
+﻿namespace AlundraEngine.DatasBin;
 
 public class SpriteInfoEventCodes
 {
