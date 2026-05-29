@@ -163,7 +163,7 @@ Validation :
 
 Commit: `tools(tiled): generate compact tileset image`
 
-### ⬜ T05 - Exporter la couche de tiles de sol
+### ✅ T05 - Exporter la couche de tiles de sol
 
 Périmètre : créer la première carte Tiled qui affiche le sol.
 

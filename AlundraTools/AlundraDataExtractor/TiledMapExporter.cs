@@ -32,6 +32,9 @@ public static class TiledMapExporter
         var tilesetLayout = SaveCompactTilesetImage(gameMap, catalog, Path.Combine(tiledPath, tilesetImageFileName));
         var tilesetJson = CreateTilesetJson(mapId, catalog, tilesetImageFileName, tilesetLayout);
         File.WriteAllText(Path.Combine(tiledPath, tilesetFileName), JsonSerializer.Serialize(tilesetJson, TiledJsonOptions));
+
+        var mapJson = CreateMapJson(gameMap, mapId, catalog, tilesetFileName);
+        File.WriteAllText(Path.Combine(tiledPath, $"map_{mapId}.tmj"), JsonSerializer.Serialize(mapJson, TiledJsonOptions));
     }
 
     public static TiledTileCatalog CreateTileCatalog(GameMap gameMap)
@@ -114,6 +117,153 @@ public static class TiledMapExporter
                 .ToList()
         };
     }
+
+    private static TiledMapJson CreateMapJson(GameMap gameMap, int mapIndex, TiledTileCatalog catalog, string tilesetFileName)
+    {
+        var groundLayer = CreateGroundLayer(gameMap, catalog, 1);
+
+        return new TiledMapJson
+        {
+            Version = TiledJsonVersion,
+            TiledVersion = TiledVersion,
+            Width = gameMap.Map.Width,
+            Height = gameMap.Map.Height,
+            TileWidth = StaticVariables.MapTileWidth,
+            TileHeight = StaticVariables.MapTileHeight,
+            NextLayerId = 2,
+            NextObjectId = 1,
+            Tilesets =
+            [
+                new TiledMapTilesetJson
+                {
+                    FirstGid = 1,
+                    Source = tilesetFileName.Replace('\\', '/')
+                }
+            ],
+            Layers = [groundLayer],
+            Properties =
+            [
+                TiledProperty.String("SourceFileName", $"map_{mapIndex}.json"),
+                TiledProperty.File("SourceJson", $"../map_{mapIndex}.json"),
+                TiledProperty.Int("MapIndex", mapIndex),
+                TiledProperty.Int("MapId", Convert.ToInt32(gameMap.Info.MapId))
+            ]
+        };
+    }
+
+    private static TiledLayerJson CreateGroundLayer(GameMap gameMap, TiledTileCatalog catalog, int layerId)
+    {
+        var map = gameMap.Map;
+        var data = new int[map.MapTiles.Length];
+
+        for (var index = 0; index < map.MapTiles.Length; index++)
+        {
+            data[index] = catalog.GetGidOrEmpty(map.MapTiles[index].TileId);
+        }
+
+        return new TiledLayerJson
+        {
+            Id = layerId,
+            Name = "Ground",
+            Type = "tilelayer",
+            Width = map.Width,
+            Height = map.Height,
+            Data = data
+        };
+    }
+}
+
+public sealed class TiledMapJson
+{
+    [JsonPropertyName("type")]
+    public string Type { get; init; } = "map";
+
+    [JsonPropertyName("version")]
+    public string Version { get; init; } = "";
+
+    [JsonPropertyName("tiledversion")]
+    public string TiledVersion { get; init; } = "";
+
+    [JsonPropertyName("orientation")]
+    public string Orientation { get; init; } = "orthogonal";
+
+    [JsonPropertyName("renderorder")]
+    public string RenderOrder { get; init; } = "right-down";
+
+    [JsonPropertyName("compressionlevel")]
+    public int CompressionLevel { get; init; } = -1;
+
+    [JsonPropertyName("width")]
+    public int Width { get; init; }
+
+    [JsonPropertyName("height")]
+    public int Height { get; init; }
+
+    [JsonPropertyName("tilewidth")]
+    public int TileWidth { get; init; }
+
+    [JsonPropertyName("tileheight")]
+    public int TileHeight { get; init; }
+
+    [JsonPropertyName("infinite")]
+    public bool Infinite { get; init; }
+
+    [JsonPropertyName("nextlayerid")]
+    public int NextLayerId { get; init; }
+
+    [JsonPropertyName("nextobjectid")]
+    public int NextObjectId { get; init; }
+
+    [JsonPropertyName("properties")]
+    public List<TiledProperty> Properties { get; init; } = [];
+
+    [JsonPropertyName("tilesets")]
+    public List<TiledMapTilesetJson> Tilesets { get; init; } = [];
+
+    [JsonPropertyName("layers")]
+    public List<TiledLayerJson> Layers { get; init; } = [];
+}
+
+public sealed class TiledMapTilesetJson
+{
+    [JsonPropertyName("firstgid")]
+    public int FirstGid { get; init; }
+
+    [JsonPropertyName("source")]
+    public string Source { get; init; } = "";
+}
+
+public sealed class TiledLayerJson
+{
+    [JsonPropertyName("id")]
+    public int Id { get; init; }
+
+    [JsonPropertyName("name")]
+    public string Name { get; init; } = "";
+
+    [JsonPropertyName("type")]
+    public string Type { get; init; } = "";
+
+    [JsonPropertyName("width")]
+    public int Width { get; init; }
+
+    [JsonPropertyName("height")]
+    public int Height { get; init; }
+
+    [JsonPropertyName("x")]
+    public int X { get; init; }
+
+    [JsonPropertyName("y")]
+    public int Y { get; init; }
+
+    [JsonPropertyName("opacity")]
+    public double Opacity { get; init; } = 1;
+
+    [JsonPropertyName("visible")]
+    public bool Visible { get; init; } = true;
+
+    [JsonPropertyName("data")]
+    public int[]? Data { get; init; }
 }
 
 public sealed record TiledTilesetLayout(int Columns, int TileCount, int ImageWidth, int ImageHeight);
@@ -186,6 +336,16 @@ public sealed class TiledProperty
     public static TiledProperty Int(string name, int value)
     {
         return new TiledProperty { Name = name, Type = "int", Value = value };
+    }
+
+    public static TiledProperty String(string name, string value)
+    {
+        return new TiledProperty { Name = name, Type = "string", Value = value };
+    }
+
+    public static TiledProperty File(string name, string value)
+    {
+        return new TiledProperty { Name = name, Type = "file", Value = value };
     }
 }
 
