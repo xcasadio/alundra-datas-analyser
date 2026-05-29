@@ -29,11 +29,15 @@ public static class TiledMapExporter
         var catalog = CreateTileCatalog(gameMap);
         var tilesetImageFileName = $"map_{mapId}_tileset.png";
         var tilesetFileName = $"map_{mapId}_tileset.tsj";
+        var companionFileName = $"map_{mapId}.alundra.json";
         var tilesetLayout = SaveCompactTilesetImage(gameMap, catalog, Path.Combine(tiledPath, tilesetImageFileName));
         var tilesetJson = CreateTilesetJson(mapId, catalog, tilesetImageFileName, tilesetLayout);
         File.WriteAllText(Path.Combine(tiledPath, tilesetFileName), JsonSerializer.Serialize(tilesetJson, TiledJsonOptions));
 
-        var mapJson = CreateMapJson(gameMap, mapId, catalog, tilesetFileName);
+        var companionJson = CreateCompanionJson(gameMap, mapId);
+        File.WriteAllText(Path.Combine(tiledPath, companionFileName), JsonSerializer.Serialize(companionJson, TiledJsonOptions));
+
+        var mapJson = CreateMapJson(gameMap, mapId, catalog, tilesetFileName, companionFileName);
         File.WriteAllText(Path.Combine(tiledPath, $"map_{mapId}.tmj"), JsonSerializer.Serialize(mapJson, TiledJsonOptions));
     }
 
@@ -118,7 +122,7 @@ public static class TiledMapExporter
         };
     }
 
-    private static TiledMapJson CreateMapJson(GameMap gameMap, int mapIndex, TiledTileCatalog catalog, string tilesetFileName)
+    private static TiledMapJson CreateMapJson(GameMap gameMap, int mapIndex, TiledTileCatalog catalog, string tilesetFileName, string companionFileName)
     {
         var groundLayer = CreateGroundLayer(gameMap, catalog, 1);
 
@@ -145,6 +149,7 @@ public static class TiledMapExporter
             [
                 TiledProperty.String("SourceFileName", $"map_{mapIndex}.json"),
                 TiledProperty.File("SourceJson", $"../map_{mapIndex}.json"),
+                TiledProperty.File("AlundraCompanionJson", companionFileName.Replace('\\', '/')),
                 TiledProperty.Int("MapIndex", mapIndex),
                 TiledProperty.Int("MapId", Convert.ToInt32(gameMap.Info.MapId))
             ]
@@ -171,6 +176,72 @@ public static class TiledMapExporter
             Data = data
         };
     }
+
+    private static AlundraTiledCompanionJson CreateCompanionJson(GameMap gameMap, int mapIndex)
+    {
+        var map = gameMap.Map;
+        var cells = new List<AlundraCellJson>(map.MapTiles.Length);
+
+        for (var index = 0; index < map.MapTiles.Length; index++)
+        {
+            var tile = map.MapTiles[index];
+            cells.Add(new AlundraCellJson
+            {
+                Index = index,
+                X = index % map.Width,
+                Y = index / map.Width,
+                Walkability = tile.Walkability,
+                GroundProperty = tile.GroundProperty,
+                Slope = tile.Slope,
+                Height = tile.Height,
+                WallTilesOffset = tile.WallTilesOffset,
+                TileId = tile.TileId,
+                Palette = tile.Palette,
+                Tile = tile.Tile,
+                Flags = tile.Flags
+            });
+        }
+
+        return new AlundraTiledCompanionJson
+        {
+            MapIndex = mapIndex,
+            MapId = gameMap.Info.MapId,
+            Width = map.Width,
+            Height = map.Height,
+            TileWidth = StaticVariables.MapTileWidth,
+            TileHeight = StaticVariables.MapTileHeight,
+            CellOrder = "y * Width + x",
+            Cells = cells
+        };
+    }
+}
+
+public sealed class AlundraTiledCompanionJson
+{
+    public int MapIndex { get; init; }
+    public uint MapId { get; init; }
+    public int Width { get; init; }
+    public int Height { get; init; }
+    public int TileWidth { get; init; }
+    public int TileHeight { get; init; }
+    public string CellOrder { get; init; } = "";
+    public List<AlundraCellJson> Cells { get; init; } = [];
+}
+
+public sealed class AlundraCellJson
+{
+    public int Index { get; init; }
+    public int X { get; init; }
+    public int Y { get; init; }
+    public byte Walkability { get; init; }
+    public byte GroundProperty { get; init; }
+    public byte Slope { get; init; }
+    public byte Height { get; init; }
+    public short WallTilesOffset { get; init; }
+    public ushort TileId { get; init; }
+    public short Palette { get; init; }
+    public short Tile { get; init; }
+    public uint Flags { get; init; }
 }
 
 public sealed class TiledMapJson

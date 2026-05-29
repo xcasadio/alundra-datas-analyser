@@ -181,7 +181,7 @@ Validation :
 
 Commit: `tools(tiled): export ground layer`
 
-### ⬜ T06 - Préserver les données brutes par cellule de carte
+### ✅ T06 - Préserver les données brutes par cellule de carte
 
 Périmètre : garder les métadonnées de cellules Alundra disponibles sans prétendre qu’il s’agit de données natives de couche de tiles Tiled.
 
