@@ -199,7 +199,7 @@ Validation :
 
 Commit: `tools(tiled): preserve raw cell metadata`
 
-### ⬜ T07 - Exporter les couches de tiles de mur
+### ✅ T07 - Exporter les couches de tiles de mur
 
 Périmètre : visualiser `WallTiles` sans perdre la structure brute des murs.
 

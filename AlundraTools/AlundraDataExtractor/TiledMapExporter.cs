@@ -124,7 +124,8 @@ public static class TiledMapExporter
 
     private static TiledMapJson CreateMapJson(GameMap gameMap, int mapIndex, TiledTileCatalog catalog, string tilesetFileName, string companionFileName)
     {
-        var groundLayer = CreateGroundLayer(gameMap, catalog, 1);
+        var layers = new List<TiledLayerJson> { CreateGroundLayer(gameMap, catalog, 1) };
+        layers.AddRange(CreateWallLayers(gameMap, catalog, layers.Count + 1));
 
         return new TiledMapJson
         {
@@ -134,7 +135,7 @@ public static class TiledMapExporter
             Height = gameMap.Map.Height,
             TileWidth = StaticVariables.MapTileWidth,
             TileHeight = StaticVariables.MapTileHeight,
-            NextLayerId = 2,
+            NextLayerId = layers.Count + 1,
             NextObjectId = 1,
             Tilesets =
             [
@@ -144,15 +145,16 @@ public static class TiledMapExporter
                     Source = tilesetFileName.Replace('\\', '/')
                 }
             ],
-            Layers = [groundLayer],
             Properties =
             [
                 TiledProperty.String("SourceFileName", $"map_{mapIndex}.json"),
                 TiledProperty.File("SourceJson", $"../map_{mapIndex}.json"),
                 TiledProperty.File("AlundraCompanionJson", companionFileName.Replace('\\', '/')),
+                TiledProperty.String("WallLayerPlacement", "logical source cell; exact renderer wall offset data is stored in AlundraCompanionJson"),
                 TiledProperty.Int("MapIndex", mapIndex),
                 TiledProperty.Int("MapId", Convert.ToInt32(gameMap.Info.MapId))
-            ]
+            ],
+            Layers = layers
         };
     }
 
@@ -177,6 +179,52 @@ public static class TiledMapExporter
         };
     }
 
+    private static List<TiledLayerJson> CreateWallLayers(GameMap gameMap, TiledTileCatalog catalog, int firstLayerId)
+    {
+        var map = gameMap.Map;
+        var maxWallCount = map.MapTiles
+            .Where(tile => tile.WallTiles != null)
+            .Select(tile => (int)tile.WallTiles!.Count)
+            .DefaultIfEmpty(0)
+            .Max();
+        var layers = new List<TiledLayerJson>(maxWallCount);
+
+        for (var stackIndex = 0; stackIndex < maxWallCount; stackIndex++)
+        {
+            var data = new int[map.MapTiles.Length];
+
+            for (var index = 0; index < map.MapTiles.Length; index++)
+            {
+                var wallTiles = map.MapTiles[index].WallTiles;
+
+                if (wallTiles?.Tiles == null || stackIndex >= wallTiles.Tiles.Length)
+                {
+                    continue;
+                }
+
+                data[index] = catalog.GetGidOrEmpty(wallTiles.Tiles[stackIndex]);
+            }
+
+            layers.Add(new TiledLayerJson
+            {
+                Id = firstLayerId + stackIndex,
+                Name = $"Walls_{stackIndex}",
+                Type = "tilelayer",
+                Width = map.Width,
+                Height = map.Height,
+                Data = data,
+                Properties =
+                [
+                    TiledProperty.Int("StackIndex", stackIndex),
+                    TiledProperty.String("Placement", "logical source cell"),
+                    TiledProperty.String("RendererYFormula", "(Y - Height - WallTiles.Offset + StackIndex + 1) * TileHeight")
+                ]
+            });
+        }
+
+        return layers;
+    }
+
     private static AlundraTiledCompanionJson CreateCompanionJson(GameMap gameMap, int mapIndex)
     {
         var map = gameMap.Map;
@@ -185,11 +233,13 @@ public static class TiledMapExporter
         for (var index = 0; index < map.MapTiles.Length; index++)
         {
             var tile = map.MapTiles[index];
+            var x = index % map.Width;
+            var y = index / map.Width;
             cells.Add(new AlundraCellJson
             {
                 Index = index,
-                X = index % map.Width,
-                Y = index / map.Width,
+                X = x,
+                Y = y,
                 Walkability = tile.Walkability,
                 GroundProperty = tile.GroundProperty,
                 Slope = tile.Slope,
@@ -198,7 +248,8 @@ public static class TiledMapExporter
                 TileId = tile.TileId,
                 Palette = tile.Palette,
                 Tile = tile.Tile,
-                Flags = tile.Flags
+                Flags = tile.Flags,
+                WallTiles = CreateWallTilesJson(tile, x, y)
             });
         }
 
@@ -212,6 +263,25 @@ public static class TiledMapExporter
             TileHeight = StaticVariables.MapTileHeight,
             CellOrder = "y * Width + x",
             Cells = cells
+        };
+    }
+
+    private static AlundraWallTilesJson? CreateWallTilesJson(MapTile tile, int x, int y)
+    {
+        if (tile.WallTiles?.Tiles == null)
+        {
+            return null;
+        }
+
+        return new AlundraWallTilesJson
+        {
+            Offset = tile.WallTiles.Offset,
+            Count = tile.WallTiles.Count,
+            Tiles = tile.WallTiles.Tiles.ToList(),
+            RendererTileYByStackIndex = tile.WallTiles.Tiles
+                .Select((_, stackIndex) => y - tile.Height - tile.WallTiles.Offset + stackIndex + 1)
+                .ToList(),
+            RendererPixelX = x * StaticVariables.MapTileWidth
         };
     }
 }
@@ -242,6 +312,16 @@ public sealed class AlundraCellJson
     public short Palette { get; init; }
     public short Tile { get; init; }
     public uint Flags { get; init; }
+    public AlundraWallTilesJson? WallTiles { get; init; }
+}
+
+public sealed class AlundraWallTilesJson
+{
+    public sbyte Offset { get; init; }
+    public byte Count { get; init; }
+    public List<ushort> Tiles { get; init; } = [];
+    public List<int> RendererTileYByStackIndex { get; init; } = [];
+    public int RendererPixelX { get; init; }
 }
 
 public sealed class TiledMapJson
@@ -335,6 +415,9 @@ public sealed class TiledLayerJson
 
     [JsonPropertyName("data")]
     public int[]? Data { get; init; }
+
+    [JsonPropertyName("properties")]
+    public List<TiledProperty> Properties { get; init; } = [];
 }
 
 public sealed record TiledTilesetLayout(int Columns, int TileCount, int ImageWidth, int ImageHeight);
