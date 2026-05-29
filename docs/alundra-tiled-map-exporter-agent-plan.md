@@ -145,7 +145,7 @@ Validation :
 
 Commit: `tools(tiled): build raw tile catalog`
 
-### ⬜ T04 - Générer le PNG de tileset Tiled compact
+### ✅ T04 - Générer le PNG de tileset Tiled compact
 
 Périmètre : créer le PNG visuel utilisé par Tiled à partir du catalogue de tiles.
 
