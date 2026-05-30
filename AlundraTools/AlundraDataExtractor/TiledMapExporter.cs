@@ -258,7 +258,7 @@ public static class TiledMapExporter
                 TiledProperty.String("SourceFileName", $"map_{mapIndex}.json"),
                 TiledProperty.File("SourceJson", $"../map_{mapIndex}.json"),
                 TiledProperty.File("AlundraCompanionJson", companionFileName.Replace('\\', '/')),
-                TiledProperty.String("TileLayerPlacement", "Render_* layers are visible and follow the game renderer row order; Ground/Walls_* layers are hidden raw data layers"),
+                TiledProperty.String("TileLayerPlacement", "RenderY_* layers are visible and packed by renderer target height; Ground/Walls_* layers are hidden raw data layers"),
                 TiledProperty.String("WallLayerPlacement", "renderer target cell; source cell and wall offset data are stored in AlundraCompanionJson"),
                 TiledProperty.Int("MapIndex", mapIndex),
                 TiledProperty.Int("MapId", Convert.ToInt32(gameMap.Info.MapId)),
@@ -280,71 +280,27 @@ public static class TiledMapExporter
     private static List<TiledLayerJson> CreateRendererOrderedTileLayers(GameMap gameMap, TiledTileCatalog catalog, int firstLayerId)
     {
         var map = gameMap.Map;
-        var layers = new List<TiledLayerJson>();
+        var layerDataByTargetY = new SortedDictionary<int, List<int[]>>();
 
         for (var sourceY = 0; sourceY < map.Height; sourceY++)
         {
-            var groundData = new int[map.MapTiles.Length];
-            var hasGroundTile = false;
-
             for (var sourceX = 0; sourceX < map.Width; sourceX++)
             {
                 var sourceIndex = sourceY * map.Width + sourceX;
                 var mapTile = map.MapTiles[sourceIndex];
-                if (mapTile.TileId == EmptyTileId)
+                if (mapTile.TileId != EmptyTileId)
+                {
+                    AddRendererTile(layerDataByTargetY, map.Width, map.Height, sourceX, sourceY - mapTile.Height, catalog.GetGidOrEmpty(mapTile.TileId));
+                }
+
+                var wallTiles = mapTile.WallTiles;
+                if (wallTiles?.Tiles == null)
                 {
                     continue;
                 }
 
-                var targetY = sourceY - mapTile.Height;
-                if (targetY < 0 || targetY >= map.Height)
+                for (var stackIndex = 0; stackIndex < wallTiles.Count && stackIndex < wallTiles.Tiles.Length; stackIndex++)
                 {
-                    continue;
-                }
-
-                groundData[targetY * map.Width + sourceX] = catalog.GetGidOrEmpty(mapTile.TileId);
-                hasGroundTile = true;
-            }
-
-            if (hasGroundTile)
-            {
-                layers.Add(CreateRendererTileLayer(
-                    firstLayerId + layers.Count,
-                    $"Render_{sourceY:D2}_Ground",
-                    map.Width,
-                    map.Height,
-                    groundData,
-                    sourceY,
-                    "Ground",
-                    null));
-            }
-
-            var rowMaxWallCount = 0;
-            for (var sourceX = 0; sourceX < map.Width; sourceX++)
-            {
-                var wallTiles = map.MapTiles[sourceY * map.Width + sourceX].WallTiles;
-                if (wallTiles != null)
-                {
-                    rowMaxWallCount = Math.Max(rowMaxWallCount, wallTiles.Count);
-                }
-            }
-
-            for (var stackIndex = 0; stackIndex < rowMaxWallCount; stackIndex++)
-            {
-                var wallData = new int[map.MapTiles.Length];
-                var hasWallTile = false;
-
-                for (var sourceX = 0; sourceX < map.Width; sourceX++)
-                {
-                    var sourceIndex = sourceY * map.Width + sourceX;
-                    var mapTile = map.MapTiles[sourceIndex];
-                    var wallTiles = mapTile.WallTiles;
-
-                    if (wallTiles?.Tiles == null || stackIndex >= wallTiles.Count || stackIndex >= wallTiles.Tiles.Length)
-                    {
-                        continue;
-                    }
-
                     var wallTileId = wallTiles.Tiles[stackIndex];
                     if (wallTileId == EmptyTileId)
                     {
@@ -352,52 +308,64 @@ public static class TiledMapExporter
                     }
 
                     var targetY = sourceY - mapTile.Height - wallTiles.Offset + stackIndex + 1;
-                    if (targetY < 0 || targetY >= map.Height)
-                    {
-                        continue;
-                    }
-
-                    wallData[targetY * map.Width + sourceX] = catalog.GetGidOrEmpty(wallTileId);
-                    hasWallTile = true;
+                    AddRendererTile(layerDataByTargetY, map.Width, map.Height, sourceX, targetY, catalog.GetGidOrEmpty(wallTileId));
                 }
+            }
+        }
 
-                if (hasWallTile)
-                {
-                    layers.Add(CreateRendererTileLayer(
-                        firstLayerId + layers.Count,
-                        $"Render_{sourceY:D2}_Walls_{stackIndex}",
-                        map.Width,
-                        map.Height,
-                        wallData,
-                        sourceY,
-                        "Walls",
-                        stackIndex));
-                }
+        var layers = new List<TiledLayerJson>();
+
+        foreach (var (targetY, layerDataForTargetY) in layerDataByTargetY)
+        {
+            for (var planeIndex = 0; planeIndex < layerDataForTargetY.Count; planeIndex++)
+            {
+                var layerName = planeIndex == 0
+                    ? $"RenderY_{targetY:D2}"
+                    : $"RenderY_{targetY:D2}_{planeIndex}";
+                layers.Add(CreateRendererTileLayer(
+                    firstLayerId + layers.Count,
+                    layerName,
+                    map.Width,
+                    map.Height,
+                    layerDataForTargetY[planeIndex],
+                    targetY,
+                    planeIndex));
             }
         }
 
         return layers;
     }
 
-    private static TiledLayerJson CreateRendererTileLayer(int layerId, string name, int width, int height, int[] data, int sourceY, string renderPass, int? stackIndex)
+    private static void AddRendererTile(SortedDictionary<int, List<int[]>> layerDataByTargetY, int width, int height, int targetX, int targetY, int gid)
     {
-        var properties = new List<TiledProperty>
+        if (gid == 0 || targetX < 0 || targetX >= width || targetY < 0 || targetY >= height)
         {
-            TiledProperty.Int("SourceY", sourceY),
-            TiledProperty.String("RenderPass", renderPass),
-            TiledProperty.String("Placement", "renderer row order")
-        };
-
-        if (stackIndex.HasValue)
-        {
-            properties.Add(TiledProperty.Int("StackIndex", stackIndex.Value));
-            properties.Add(TiledProperty.String("RendererYFormula", "(Y - Height - WallTiles.Offset + StackIndex + 1) * TileHeight"));
-        }
-        else
-        {
-            properties.Add(TiledProperty.String("RendererYFormula", "(Y - Height) * TileHeight"));
+            return;
         }
 
+        if (!layerDataByTargetY.TryGetValue(targetY, out var layerDataForTargetY))
+        {
+            layerDataForTargetY = [new int[width * height]];
+            layerDataByTargetY.Add(targetY, layerDataForTargetY);
+        }
+
+        var targetIndex = targetY * width + targetX;
+        foreach (var layerData in layerDataForTargetY)
+        {
+            if (layerData[targetIndex] == 0)
+            {
+                layerData[targetIndex] = gid;
+                return;
+            }
+        }
+
+        var collisionLayerData = new int[width * height];
+        collisionLayerData[targetIndex] = gid;
+        layerDataForTargetY.Add(collisionLayerData);
+    }
+
+    private static TiledLayerJson CreateRendererTileLayer(int layerId, string name, int width, int height, int[] data, int targetY, int collisionPlane)
+    {
         return new TiledLayerJson
         {
             Id = layerId,
@@ -406,7 +374,13 @@ public static class TiledMapExporter
             Width = width,
             Height = height,
             Data = data,
-            Properties = properties
+            Properties =
+            [
+                TiledProperty.Int("TargetY", targetY),
+                TiledProperty.Int("CollisionPlane", collisionPlane),
+                TiledProperty.String("Placement", "renderer target height"),
+                TiledProperty.String("MergeStrategy", "one layer per targetY; extra planes only when multiple renderer tiles target the same cell")
+            ]
         };
     }
 

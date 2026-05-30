@@ -166,80 +166,78 @@ foreach ($wallLayer in @($map.layers | Where-Object { $_.name -like "Walls_*" })
     }
 }
 
-$renderLayers = @($map.layers | Where-Object { $_.name -like "Render_*" })
-Assert-True ($renderLayers.Count -gt 0) "Expected visible renderer-ordered Render_* layers"
+$renderLayers = @($map.layers | Where-Object { $_.name -like "RenderY_*" })
+Assert-True ($renderLayers.Count -gt 0) "Expected visible renderer-height-packed RenderY_* layers"
 
 $rawGroundLayer = Get-LayerByName $map "Ground"
-Assert-True ($rawGroundLayer.visible -eq $false) "Raw Ground layer must be hidden; visible Render_* layers provide game renderer ordering"
+Assert-True ($rawGroundLayer.visible -eq $false) "Raw Ground layer must be hidden; visible RenderY_* layers provide game renderer ordering"
 foreach ($wallLayer in @($map.layers | Where-Object { $_.name -like "Walls_*" })) {
-    Assert-True ($wallLayer.visible -eq $false) "Raw wall layer '$($wallLayer.name)' must be hidden; visible Render_* layers provide game renderer ordering"
+    Assert-True ($wallLayer.visible -eq $false) "Raw wall layer '$($wallLayer.name)' must be hidden; visible RenderY_* layers provide game renderer ordering"
 }
 
-$expectedRenderLayers = @()
-for ($sourceY = 0; $sourceY -lt [int]$map.height; $sourceY++) {
-    $groundData = New-Object 'int[]' $cellCount
-    $hasGroundTile = $false
+function Add-ExpectedRenderTile {
+    param(
+        [hashtable]$Buckets,
+        [int]$TargetX,
+        [int]$TargetY,
+        [int]$Gid
+    )
 
-    foreach ($cell in @($companion.cells | Where-Object { [int]$_.y -eq $sourceY })) {
-        $rawTileId = [int]$cell.tileId
+    if ($Gid -eq 0 -or $TargetX -lt 0 -or $TargetX -ge [int]$map.width -or $TargetY -lt 0 -or $TargetY -ge [int]$map.height) {
+        return
+    }
+
+    $bucketKey = [string]$TargetY
+    if (-not $Buckets.ContainsKey($bucketKey)) {
+        $Buckets[$bucketKey] = [System.Collections.ArrayList]::new()
+        [void]$Buckets[$bucketKey].Add((New-Object 'int[]' $cellCount))
+    }
+
+    $targetIndex = $TargetY * [int]$map.width + $TargetX
+    foreach ($layerData in @($Buckets[$bucketKey])) {
+        if ([int]$layerData[$targetIndex] -eq 0) {
+            $layerData[$targetIndex] = $Gid
+            return
+        }
+    }
+
+    $collisionLayerData = New-Object 'int[]' $cellCount
+    $collisionLayerData[$targetIndex] = $Gid
+    [void]$Buckets[$bucketKey].Add($collisionLayerData)
+}
+
+$expectedRenderBuckets = @{}
+foreach ($cell in @($companion.cells | Sort-Object { [int]$_.index })) {
+    $rawTileId = [int]$cell.tileId
+    if ($rawTileId -ne 65535) {
+        Assert-True ($gidByRawTileId.ContainsKey([string]$rawTileId)) "Render ground cell $($cell.index) references raw tile id $rawTileId missing from tileset"
+        Add-ExpectedRenderTile $expectedRenderBuckets ([int]$cell.x) ([int]$cell.y - [int]$cell.height) ([int]$gidByRawTileId[[string]$rawTileId])
+    }
+
+    if ($null -eq $cell.wallTiles) {
+        continue
+    }
+
+    for ($stackIndex = 0; $stackIndex -lt [int]$cell.wallTiles.count -and $stackIndex -lt @($cell.wallTiles.tiles).Count; $stackIndex++) {
+        $rawTileId = [int]$cell.wallTiles.tiles[$stackIndex]
         if ($rawTileId -eq 65535) {
             continue
         }
 
-        $targetY = [int]$cell.y - [int]$cell.height
-        if ($targetY -lt 0 -or $targetY -ge [int]$map.height) {
-            continue
-        }
-
-        Assert-True ($gidByRawTileId.ContainsKey([string]$rawTileId)) "Render ground row $sourceY references raw tile id $rawTileId missing from tileset"
-        $targetIndex = $targetY * [int]$map.width + [int]$cell.x
-        $groundData[$targetIndex] = [int]$gidByRawTileId[[string]$rawTileId]
-        $hasGroundTile = $true
+        Assert-True ($gidByRawTileId.ContainsKey([string]$rawTileId)) "Render wall cell $($cell.index) stack $stackIndex references raw tile id $rawTileId missing from tileset"
+        $targetY = [int]$cell.y - [int]$cell.height - [int]$cell.wallTiles.offset + $stackIndex + 1
+        Add-ExpectedRenderTile $expectedRenderBuckets ([int]$cell.x) $targetY ([int]$gidByRawTileId[[string]$rawTileId])
     }
+}
 
-    if ($hasGroundTile) {
+$expectedRenderLayers = @()
+foreach ($targetY in @($expectedRenderBuckets.Keys | ForEach-Object { [int]$_ } | Sort-Object)) {
+    $layerDataForTargetY = $expectedRenderBuckets[[string]$targetY]
+    for ($planeIndex = 0; $planeIndex -lt $layerDataForTargetY.Count; $planeIndex++) {
+        $layerName = if ($planeIndex -eq 0) { "RenderY_{0:D2}" -f $targetY } else { "RenderY_{0:D2}_{1}" -f $targetY, $planeIndex }
         $expectedRenderLayers += [pscustomobject]@{
-            Name = "Render_{0:D2}_Ground" -f $sourceY
-            Data = $groundData
-        }
-    }
-
-    $rowCells = @($companion.cells | Where-Object { [int]$_.y -eq $sourceY -and $null -ne $_.wallTiles })
-    $rowMaxWallCount = 0
-    foreach ($cell in $rowCells) {
-        $rowMaxWallCount = [Math]::Max($rowMaxWallCount, [int]$cell.wallTiles.count)
-    }
-
-    for ($stackIndex = 0; $stackIndex -lt $rowMaxWallCount; $stackIndex++) {
-        $wallData = New-Object 'int[]' $cellCount
-        $hasWallTile = $false
-
-        foreach ($cell in $rowCells) {
-            if ($stackIndex -ge [int]$cell.wallTiles.count -or $stackIndex -ge @($cell.wallTiles.tiles).Count) {
-                continue
-            }
-
-            $rawTileId = [int]$cell.wallTiles.tiles[$stackIndex]
-            if ($rawTileId -eq 65535) {
-                continue
-            }
-
-            $targetY = [int]$cell.y - [int]$cell.height - [int]$cell.wallTiles.offset + $stackIndex + 1
-            if ($targetY -lt 0 -or $targetY -ge [int]$map.height) {
-                continue
-            }
-
-            Assert-True ($gidByRawTileId.ContainsKey([string]$rawTileId)) "Render wall row $sourceY stack $stackIndex references raw tile id $rawTileId missing from tileset"
-            $targetIndex = $targetY * [int]$map.width + [int]$cell.x
-            $wallData[$targetIndex] = [int]$gidByRawTileId[[string]$rawTileId]
-            $hasWallTile = $true
-        }
-
-        if ($hasWallTile) {
-            $expectedRenderLayers += [pscustomobject]@{
-                Name = "Render_{0:D2}_Walls_{1}" -f $sourceY, $stackIndex
-                Data = $wallData
-            }
+            Name = $layerName
+            Data = $layerDataForTargetY[$planeIndex]
         }
     }
 }
