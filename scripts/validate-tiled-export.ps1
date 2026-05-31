@@ -275,13 +275,16 @@ foreach ($object in @($entitiesLayer.objects)) {
 }
 
 foreach ($tile in @($tileset.tiles | Where-Object { $_.animation -ne $null })) {
-    $animationProperties = Assert-TiledProperties $tile.properties @("AnimationSpriteIndex", "AnimationFrameCount", "AnimationTileHeight", "AnimationFrameDuration") "Animated tile '$($tile.id)'"
+    $animationProperties = Assert-TiledProperties $tile.properties @("AnimationSpriteIndex", "AnimationFrameCount", "AnimationTileHeight", "AnimationFrameDuration", "AnimationFrameDurationPsxFrames", "AnimationFrameDurationMs", "AnimationPsxFrameRateHz") "Animated tile '$($tile.id)'"
     Assert-True (@($tile.animation).Count -eq [int]$animationProperties["AnimationFrameCount"]) "Animated tile '$($tile.id)' frame count mismatch"
+    Assert-True ([int]$animationProperties["AnimationFrameDuration"] -eq [int]$animationProperties["AnimationFrameDurationPsxFrames"]) "Animated tile '$($tile.id)' raw frame duration property mismatch"
+    $expectedFrameDurationMs = [Math]::Max(1, [int][Math]::Round([int]$animationProperties["AnimationFrameDurationPsxFrames"] * 1000.0 / [int]$animationProperties["AnimationPsxFrameRateHz"], [MidpointRounding]::AwayFromZero))
+    Assert-True ([int]$animationProperties["AnimationFrameDurationMs"] -eq $expectedFrameDurationMs) "Animated tile '$($tile.id)' converted frame duration mismatch"
 
     foreach ($frame in @($tile.animation)) {
         Assert-True ([int]$frame.tileid -ge 0) "Animated tile '$($tile.id)' has a negative frame tileid"
         Assert-True ([int]$frame.tileid -lt [int]$tileset.tilecount) "Animated tile '$($tile.id)' references tileid $($frame.tileid) outside tilecount $($tileset.tilecount)"
-        Assert-True ([int]$frame.duration -eq [int]$animationProperties["AnimationFrameDuration"]) "Animated tile '$($tile.id)' duration mismatch"
+        Assert-True ([int]$frame.duration -eq [int]$animationProperties["AnimationFrameDurationMs"]) "Animated tile '$($tile.id)' duration mismatch"
     }
 }
 

@@ -37,6 +37,8 @@ Pour chaque carte `map_N`, les fichiers Tiled sont ecrits dans `<sortie>\data\ti
 
 Le compagnon brut conserve notamment les donnees par cellule (`Walkability`, `GroundProperty`, `Slope`, `Height`, `WallTilesOffset`, `TileId`, `Palette`, `Tile`, `Flags`) et les piles de murs (`Offset`, `Count`, ids de tiles bruts, positions renderer calculees). Les couches visibles `RenderY_*` sont fusionnees par hauteur de rendu (`targetY`). Une sous-couche supplementaire n'est creee que lorsque plusieurs tiles ciblent la meme cellule de cette hauteur. Les couches `Ground` et `Walls_*` restent presentes mais masquees pour conserver les donnees brutes et les positions renderer calculees.
 
+Les animations de tiles Tiled utilisent des durees en millisecondes. La duree brute Alundra `FrameDuration` est conservee dans `AnimationFrameDurationPsxFrames`, puis convertie avec la frequence PSX de l'extraction (`50 Hz` pour les donnees PAL, `60 Hz` pour les donnees USA). Par exemple, une duree brute de `8` frames PAL devient `160` ms dans les entrees `animation[].duration`.
+
 ## Ouvrir dans Tiled
 
 Ouvrir directement `map_N.tmj` dans Tiled. Le fichier reference le tileset externe `map_N_tileset.tsj`, qui reference lui-meme `map_N_tileset.png` dans le meme dossier.

@@ -55,7 +55,8 @@ internal class Program
         ExtractDataFromBalanceBin(balanceBin, extractionPath);
         ExtractDataFromScreenFolder(font3, gameEngine.StaticVariables, extractionPath);
         ExtractDataFromEtcRes(etcRes, gameEngine.StaticVariables, extractionPath);
-        ExtractDataFromDatasBin(datasBin, gameEngine.StaticVariables, extractionPath);
+        var psxFramesPerSecond = etcRes is EtcResUsa ? 60 : 50;
+        ExtractDataFromDatasBin(datasBin, gameEngine.StaticVariables, extractionPath, psxFramesPerSecond);
     }
 
     private static void ExtractDataFromAlunCdExe(AlunCdExe alunCdExe, string extractionPath)
@@ -304,7 +305,7 @@ internal class Program
         File.WriteAllText(path, JsonSerializer.Serialize(sortedData, _jsonSerializerOptions));
     }
 
-    private static void ExtractDataFromDatasBin(DatasBin datasBin, StaticVariables staticVariables, string extractionPath)
+    private static void ExtractDataFromDatasBin(DatasBin datasBin, StaticVariables staticVariables, string extractionPath, int psxFramesPerSecond)
     {
         datasBin.LoadingScreen.Save(Path.Combine(extractionPath, "data", "loading_screen.png"), ImageFormat.Png);
 
@@ -324,7 +325,7 @@ internal class Program
             Console.WriteLine($"Extract map {i}");
             var gameMap = datasBin.GameMaps[i];
             gameMap.Load(br);
-            SaveMap(gameMap, i, dataPath, tileAnimDescriptors);
+            SaveMap(gameMap, i, dataPath, tileAnimDescriptors, psxFramesPerSecond);
         }
 
         foreach (var entitySpriteSheet in entitySpriteSheetIds)
@@ -348,7 +349,7 @@ internal class Program
         GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, "map_alundra_spritesheet.png"));
     }
 
-    private static void SaveMap(GameMap gameMap, int id, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors)
+    private static void SaveMap(GameMap gameMap, int id, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors, int psxFramesPerSecond)
     {
         //var gameMapJson = ConvertGameMap(gameMap);
         //File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
@@ -360,7 +361,7 @@ internal class Program
 
         GameMapHelper.SaveTileSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_tilesheet.png"), tileAnimDescriptors);
         GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_spritesheet.png"));
-        TiledMapExporter.ExportMap(gameMap, id, extractionPath, tileAnimDescriptors);
+        TiledMapExporter.ExportMap(gameMap, id, extractionPath, tileAnimDescriptors, psxFramesPerSecond);
     }
 
     private static void GetEntitySpriteSheets(GameMap gameMap, int id, string extractionPath)
