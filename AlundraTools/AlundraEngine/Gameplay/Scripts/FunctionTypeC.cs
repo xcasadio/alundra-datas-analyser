@@ -6894,7 +6894,7 @@ public static class FunctionTypeC
     }
 
     //8007bb9c
-    public static void AI_FUN_8007bb9c(GameEngine gameEngine, Entity entity)
+    public static void MagicPotTick(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "Pot magique (boïng)")
@@ -6902,7 +6902,7 @@ public static class FunctionTypeC
             Breakpoint.TriggerBreak();
         }
 
-        switch ((int)entity.TargetAnimationId - 1)
+        switch (entity.TargetAnimationId)
         {
             case 1:
                 {
@@ -6918,9 +6918,9 @@ public static class FunctionTypeC
                     }
 
                     {
+                        var randForceX = Random.Next();
                         var randForceY = Random.Next();
-                        var randForceX = (Random.Next() * 0x30001) >> 0x20;
-                        effect.ForceX = (int)(randForceX - 0x18000);
+                        effect.ForceX = (int)(((randForceX * 0x30001) >> 0x20) - 0x18000);
                         effect.ForceY = (int)(((randForceY * 0x20001) >> 0x20) - 0x10000);
                         effect.ForceZ = 0x20000;
                     }
@@ -6929,7 +6929,7 @@ public static class FunctionTypeC
 
             case 2:
                 {
-                    entity.ForceZ = ((int)entity.LastTargetDirection - entity.PosZ) >> 1;
+                    entity.ForceZ = (entity.Bytes.GetInt32() - entity.PosZ) >> 1;
 
                     if (gameEngine.StaticVariables.PlayerEntity.RidingEntity == entity)
                     {
@@ -6957,7 +6957,7 @@ public static class FunctionTypeC
 
                     if (gameEngine.StaticVariables.PlayerEntity.ForceZ > 0)
                     {
-                        gameEngine.StaticVariables.PlayerEntity.ForceZ = 0x00098000;
+                        gameEngine.StaticVariables.PlayerEntity.ForceZ = 0x98000;
                         entity.TargetAnimationId = 5;
                     }
                     else
@@ -6967,9 +6967,9 @@ public static class FunctionTypeC
                     break;
                 }
 
-            default:
+            case 5:
                 {
-                    entity.ForceZ = ((int)entity.LastTargetDirection - entity.PosZ) >> 1;
+                    entity.ForceZ = (entity.Bytes.GetInt32() - entity.PosZ) >> 1;
                     break;
                 }
         }
@@ -17809,30 +17809,32 @@ SetAnim6:
     //Item spawn
     public static void FUN_8007c174(GameEngine gameEngine, Entity entity)
     {
-        //if (!string.IsNullOrEmpty(entity.Name)
-        //    && entity.Name != "I07_Bâton magique"
-        //    && entity.Name != "I31_Haricots de Jack"
-        //    && entity.Name != "I32_Cape de sable"
-        //    && entity.Name != "I36_Herbe médicinale"
-        //    && entity.Name != "I38_Extrait magique"
-        //    && entity.Name != "I39_Breuvage de soin"
-        //    && entity.Name != "I43_Tome de la Terre (haut)"
-        //    && entity.Name != "I62_Emblème du sang de pigeon"
-        //    && entity.Name != "I61_Clé"
-        //    && entity.Name != "I69_1 Gilda"
-        //    && entity.Name != "I70_5 Gildas"
-        //    && entity.Name != "I71_10 Gildas"
-        //    && entity.Name != "I72_30 Gildas"
-        //    && entity.Name != "I79_Bec en or"
-        //    && entity.Name != "I80_Graine magique"
-        //    && entity.Name != "I83_Récipient de vie"
-        //    && entity.Name != "I84_Petit cœur"
-        //    && entity.Name != "I85_Cœur moyen"
-        //    && entity.Name != "I86_Grand cœur"
-        //    && !string.IsNullOrEmpty(entity.Name))
-        //{
-        //    Breakpoint.TriggerBreak();
-        //}
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "I07_Bâton magique"
+            && entity.Name != "I31_Haricots de Jack"
+            && entity.Name != "I32_Cape de sable"
+            && entity.Name != "I36_Herbe médicinale"
+            && entity.Name != "I38_Extrait magique"
+            && entity.Name != "I39_Breuvage de soin"
+            && entity.Name != "I41_Potion S"
+            && entity.Name != "I43_Tome de la Terre (haut)"
+            && entity.Name != "I44_Tome de la Terre (bas)"
+            && entity.Name != "I62_Emblème du sang de pigeon"
+            && entity.Name != "I61_Clé"
+            && entity.Name != "I69_1 Gilda"
+            && entity.Name != "I70_5 Gildas"
+            && entity.Name != "I71_10 Gildas"
+            && entity.Name != "I72_30 Gildas"
+            && entity.Name != "I79_Bec en or"
+            && entity.Name != "I80_Graine magique"
+            && entity.Name != "I83_Récipient de vie"
+            && entity.Name != "I84_Petit cœur"
+            && entity.Name != "I85_Cœur moyen"
+            && entity.Name != "I86_Grand cœur"
+            && !string.IsNullOrEmpty(entity.Name))
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         int itemState;
         Entity entity2;

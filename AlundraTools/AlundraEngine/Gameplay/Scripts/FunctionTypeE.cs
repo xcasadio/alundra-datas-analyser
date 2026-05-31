@@ -612,8 +612,9 @@ public static class FunctionTypeE
 
         Entity ridingEntity = entity.RidingEntity;
 
-        if (ridingEntity != null && ridingEntity.SpriteTableIndex == 0x199 &&
-            ridingEntity.TargetAnimationId == 0)
+        if (ridingEntity != null 
+            && ridingEntity.SpriteTableIndex == 0x199 
+            && ridingEntity.TargetAnimationId == 0)
         {
             ridingEntity.TargetAnimationId = 1;
             gameEngine.DestroyEntity(entity);

@@ -169,7 +169,7 @@ public static class FunctionTypeA
     // 800619DC
     public static void SetCustomByteFromZPos(GameEngine gameEngine, Entity entity)
     {
-        entity.Bytes[0] = (byte)(entity.PosZ & 0xFF);
+        entity.Bytes.Set(entity.PosZ);
     }
 
     // 800619E8

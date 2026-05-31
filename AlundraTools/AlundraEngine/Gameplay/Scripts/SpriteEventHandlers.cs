@@ -121,7 +121,7 @@ public class SpriteEventHandlers
         Register(ScriptHelper.ProgramCTick, 71, FunctionTypeC.AI_FUN_8007b834);
         Register(ScriptHelper.ProgramCTick, 72, FunctionTypeC.AI_ProcessWarpTransitionState);
         Register(ScriptHelper.ProgramCTick, 73, FunctionTypeC.AI_FUN_8007bb30);
-        Register(ScriptHelper.ProgramCTick, 74, FunctionTypeC.AI_FUN_8007bb9c);
+        Register(ScriptHelper.ProgramCTick, 74, FunctionTypeC.MagicPotTick);
         Register(ScriptHelper.ProgramCTick, 75, FunctionTypeC.AI_FUN_8007bd8c);
         Register(ScriptHelper.ProgramCTick, 76, FunctionTypeC.AI_UpdatePushablePillarPushState);
         Register(ScriptHelper.ProgramCTick, 77, AncientGuardian.AI_ApplyZGravityIfIdle);

@@ -4670,14 +4670,14 @@ public class PlayerManager
         }
 
         var itemIdIndex = itemId * 2; // In the assembly: itemIdIndex = (itemId * 4) + g_saveData.NumberOfItems
-        var currentUsage = _gameEngine.StaticVariables.g_saveData.NumberOfItems[itemIdIndex + 1];
+        var numberOfItem = _gameEngine.StaticVariables.g_saveData.NumberOfItems[itemIdIndex + 1];
         var itemPropertyId = itemId * 5;
         var unlockRequirement = _gameEngine.StaticVariables.g_itemsProperties[itemPropertyId + 3];
 
-        if (currentUsage != unlockRequirement)
+        if (numberOfItem != unlockRequirement)
         {
-            _gameEngine.StaticVariables.g_saveData.NumberOfItems[itemIdIndex + 1] = (short)(currentUsage + 1);
-            return currentUsage + 1;
+            _gameEngine.StaticVariables.g_saveData.NumberOfItems[itemIdIndex + 1] = (short)(numberOfItem + 1);
+            return numberOfItem + 1;
         }
 
         return itemId;
