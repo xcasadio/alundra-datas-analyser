@@ -274,7 +274,7 @@ public static class TiledMapExporter
                 TiledProperty.String("SourceFileName", $"map_{mapIndex}.json"),
                 TiledProperty.File("SourceJson", $"../map_{mapIndex}.json"),
                 TiledProperty.File("AlundraCompanionJson", companionFileName.Replace('\\', '/')),
-                TiledProperty.String("TileLayerPlacement", "RenderY_* layers are visible and packed by renderer target height; Ground/Walls_* layers are hidden raw data layers"),
+                TiledProperty.String("TileLayerPlacement", "Render_* layers are visible and minimally packed by renderer draw order; Ground/Walls_* layers are hidden raw data layers"),
                 TiledProperty.String("WallLayerPlacement", "renderer target cell; source cell and wall offset data are stored in AlundraCompanionJson"),
                 TiledProperty.Int("MapIndex", mapIndex),
                 TiledProperty.Int("MapId", Convert.ToInt32(gameMap.Info.MapId)),
@@ -296,7 +296,7 @@ public static class TiledMapExporter
     private static List<TiledLayerJson> CreateRendererOrderedTileLayers(GameMap gameMap, TiledTileCatalog catalog, int firstLayerId)
     {
         var map = gameMap.Map;
-        var layerDataByTargetY = new SortedDictionary<int, List<int[]>>();
+        var layerDataByPlane = new List<int[]>();
 
         for (var sourceY = 0; sourceY < map.Height; sourceY++)
         {
@@ -306,7 +306,7 @@ public static class TiledMapExporter
                 var mapTile = map.MapTiles[sourceIndex];
                 if (mapTile.TileId != EmptyTileId)
                 {
-                    AddRendererTile(layerDataByTargetY, map.Width, map.Height, sourceX, sourceY - mapTile.Height, catalog.GetGidOrEmpty(mapTile.TileId));
+                    AddRendererTile(layerDataByPlane, map.Width, map.Height, sourceX, sourceY - mapTile.Height, catalog.GetGidOrEmpty(mapTile.TileId));
                 }
 
                 var wallTiles = mapTile.WallTiles;
@@ -324,49 +324,35 @@ public static class TiledMapExporter
                     }
 
                     var targetY = sourceY - mapTile.Height - wallTiles.Offset + stackIndex + 1;
-                    AddRendererTile(layerDataByTargetY, map.Width, map.Height, sourceX, targetY, catalog.GetGidOrEmpty(wallTileId));
+                    AddRendererTile(layerDataByPlane, map.Width, map.Height, sourceX, targetY, catalog.GetGidOrEmpty(wallTileId));
                 }
             }
         }
 
-        var layers = new List<TiledLayerJson>();
-
-        foreach (var (targetY, layerDataForTargetY) in layerDataByTargetY)
+        var layers = new List<TiledLayerJson>(layerDataByPlane.Count);
+        for (var planeIndex = 0; planeIndex < layerDataByPlane.Count; planeIndex++)
         {
-            for (var planeIndex = 0; planeIndex < layerDataForTargetY.Count; planeIndex++)
-            {
-                var layerName = planeIndex == 0
-                    ? $"RenderY_{targetY:D2}"
-                    : $"RenderY_{targetY:D2}_{planeIndex}";
-                layers.Add(CreateRendererTileLayer(
-                    firstLayerId + layers.Count,
-                    layerName,
-                    map.Width,
-                    map.Height,
-                    layerDataForTargetY[planeIndex],
-                    targetY,
-                    planeIndex));
-            }
+            layers.Add(CreateRendererTileLayer(
+                firstLayerId + layers.Count,
+                $"Render_{planeIndex}",
+                map.Width,
+                map.Height,
+                layerDataByPlane[planeIndex],
+                planeIndex));
         }
 
         return layers;
     }
 
-    private static void AddRendererTile(SortedDictionary<int, List<int[]>> layerDataByTargetY, int width, int height, int targetX, int targetY, int gid)
+    private static void AddRendererTile(List<int[]> layerDataByPlane, int width, int height, int targetX, int targetY, int gid)
     {
         if (gid == 0 || targetX < 0 || targetX >= width || targetY < 0 || targetY >= height)
         {
             return;
         }
 
-        if (!layerDataByTargetY.TryGetValue(targetY, out var layerDataForTargetY))
-        {
-            layerDataForTargetY = [new int[width * height]];
-            layerDataByTargetY.Add(targetY, layerDataForTargetY);
-        }
-
         var targetIndex = targetY * width + targetX;
-        foreach (var layerData in layerDataForTargetY)
+        foreach (var layerData in layerDataByPlane)
         {
             if (layerData[targetIndex] == 0)
             {
@@ -375,12 +361,12 @@ public static class TiledMapExporter
             }
         }
 
-        var collisionLayerData = new int[width * height];
-        collisionLayerData[targetIndex] = gid;
-        layerDataForTargetY.Add(collisionLayerData);
+        var layerDataForNewPlane = new int[width * height];
+        layerDataForNewPlane[targetIndex] = gid;
+        layerDataByPlane.Add(layerDataForNewPlane);
     }
 
-    private static TiledLayerJson CreateRendererTileLayer(int layerId, string name, int width, int height, int[] data, int targetY, int collisionPlane)
+    private static TiledLayerJson CreateRendererTileLayer(int layerId, string name, int width, int height, int[] data, int renderPlane)
     {
         return new TiledLayerJson
         {
@@ -392,10 +378,10 @@ public static class TiledMapExporter
             Data = data,
             Properties =
             [
-                TiledProperty.Int("TargetY", targetY),
-                TiledProperty.Int("CollisionPlane", collisionPlane),
-                TiledProperty.String("Placement", "renderer target height"),
-                TiledProperty.String("MergeStrategy", "one layer per targetY; extra planes only when multiple renderer tiles target the same cell")
+                TiledProperty.Int("Z", renderPlane),
+                TiledProperty.Int("RenderPlane", renderPlane),
+                TiledProperty.String("Placement", "renderer draw order"),
+                TiledProperty.String("MergeStrategy", "minimum visible layer count; extra planes only when multiple renderer tiles target the same cell")
             ]
         };
     }

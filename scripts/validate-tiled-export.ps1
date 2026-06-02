@@ -166,18 +166,18 @@ foreach ($wallLayer in @($map.layers | Where-Object { $_.name -like "Walls_*" })
     }
 }
 
-$renderLayers = @($map.layers | Where-Object { $_.name -like "RenderY_*" })
-Assert-True ($renderLayers.Count -gt 0) "Expected visible renderer-height-packed RenderY_* layers"
+$renderLayers = @($map.layers | Where-Object { $_.name -match '^Render_\d+$' })
+Assert-True ($renderLayers.Count -gt 0) "Expected visible renderer-packed Render_* layers"
 
 $rawGroundLayer = Get-LayerByName $map "Ground"
-Assert-True ($rawGroundLayer.visible -eq $false) "Raw Ground layer must be hidden; visible RenderY_* layers provide game renderer ordering"
+Assert-True ($rawGroundLayer.visible -eq $false) "Raw Ground layer must be hidden; visible Render_* layers provide game renderer ordering"
 foreach ($wallLayer in @($map.layers | Where-Object { $_.name -like "Walls_*" })) {
-    Assert-True ($wallLayer.visible -eq $false) "Raw wall layer '$($wallLayer.name)' must be hidden; visible RenderY_* layers provide game renderer ordering"
+    Assert-True ($wallLayer.visible -eq $false) "Raw wall layer '$($wallLayer.name)' must be hidden; visible Render_* layers provide game renderer ordering"
 }
 
 function Add-ExpectedRenderTile {
     param(
-        [hashtable]$Buckets,
+        [System.Collections.ArrayList]$Planes,
         [int]$TargetX,
         [int]$TargetY,
         [int]$Gid
@@ -187,31 +187,25 @@ function Add-ExpectedRenderTile {
         return
     }
 
-    $bucketKey = [string]$TargetY
-    if (-not $Buckets.ContainsKey($bucketKey)) {
-        $Buckets[$bucketKey] = [System.Collections.ArrayList]::new()
-        [void]$Buckets[$bucketKey].Add((New-Object 'int[]' $cellCount))
-    }
-
     $targetIndex = $TargetY * [int]$map.width + $TargetX
-    foreach ($layerData in @($Buckets[$bucketKey])) {
+    foreach ($layerData in @($Planes)) {
         if ([int]$layerData[$targetIndex] -eq 0) {
             $layerData[$targetIndex] = $Gid
             return
         }
     }
 
-    $collisionLayerData = New-Object 'int[]' $cellCount
-    $collisionLayerData[$targetIndex] = $Gid
-    [void]$Buckets[$bucketKey].Add($collisionLayerData)
+    $newPlaneData = New-Object 'int[]' $cellCount
+    $newPlaneData[$targetIndex] = $Gid
+    [void]$Planes.Add($newPlaneData)
 }
 
-$expectedRenderBuckets = @{}
+$expectedRenderPlanes = [System.Collections.ArrayList]::new()
 foreach ($cell in @($companion.cells | Sort-Object { [int]$_.index })) {
     $rawTileId = [int]$cell.tileId
     if ($rawTileId -ne 65535) {
         Assert-True ($gidByRawTileId.ContainsKey([string]$rawTileId)) "Render ground cell $($cell.index) references raw tile id $rawTileId missing from tileset"
-        Add-ExpectedRenderTile $expectedRenderBuckets ([int]$cell.x) ([int]$cell.y - [int]$cell.height) ([int]$gidByRawTileId[[string]$rawTileId])
+        Add-ExpectedRenderTile $expectedRenderPlanes ([int]$cell.x) ([int]$cell.y - [int]$cell.height) ([int]$gidByRawTileId[[string]$rawTileId])
     }
 
     if ($null -eq $cell.wallTiles) {
@@ -226,19 +220,15 @@ foreach ($cell in @($companion.cells | Sort-Object { [int]$_.index })) {
 
         Assert-True ($gidByRawTileId.ContainsKey([string]$rawTileId)) "Render wall cell $($cell.index) stack $stackIndex references raw tile id $rawTileId missing from tileset"
         $targetY = [int]$cell.y - [int]$cell.height - [int]$cell.wallTiles.offset + $stackIndex + 1
-        Add-ExpectedRenderTile $expectedRenderBuckets ([int]$cell.x) $targetY ([int]$gidByRawTileId[[string]$rawTileId])
+        Add-ExpectedRenderTile $expectedRenderPlanes ([int]$cell.x) $targetY ([int]$gidByRawTileId[[string]$rawTileId])
     }
 }
 
 $expectedRenderLayers = @()
-foreach ($targetY in @($expectedRenderBuckets.Keys | ForEach-Object { [int]$_ } | Sort-Object)) {
-    $layerDataForTargetY = $expectedRenderBuckets[[string]$targetY]
-    for ($planeIndex = 0; $planeIndex -lt $layerDataForTargetY.Count; $planeIndex++) {
-        $layerName = if ($planeIndex -eq 0) { "RenderY_{0:D2}" -f $targetY } else { "RenderY_{0:D2}_{1}" -f $targetY, $planeIndex }
-        $expectedRenderLayers += [pscustomobject]@{
-            Name = $layerName
-            Data = $layerDataForTargetY[$planeIndex]
-        }
+for ($planeIndex = 0; $planeIndex -lt $expectedRenderPlanes.Count; $planeIndex++) {
+    $expectedRenderLayers += [pscustomobject]@{
+        Name = "Render_{0}" -f $planeIndex
+        Data = $expectedRenderPlanes[$planeIndex]
     }
 }
 
@@ -248,6 +238,9 @@ for ($layerIndex = 0; $layerIndex -lt $expectedRenderLayers.Count; $layerIndex++
     $actualLayer = $renderLayers[$layerIndex]
     Assert-True ($actualLayer.name -eq $expectedLayer.Name) "Render layer order mismatch at index ${layerIndex}: expected '$($expectedLayer.Name)', found '$($actualLayer.name)'"
     Assert-True ($actualLayer.visible -ne $false) "Render layer '$($actualLayer.name)' must be visible"
+    $renderProperties = Assert-TiledProperties $actualLayer.properties @("Z", "RenderPlane", "Placement", "MergeStrategy") "Render layer '$($actualLayer.name)'"
+    Assert-True ([int]$renderProperties["Z"] -eq $layerIndex) "Render layer '$($actualLayer.name)' Z property mismatch"
+    Assert-True ([int]$renderProperties["RenderPlane"] -eq $layerIndex) "Render layer '$($actualLayer.name)' RenderPlane property mismatch"
 
     for ($index = 0; $index -lt $cellCount; $index++) {
         Assert-True ([int]$actualLayer.data[$index] -eq $expectedLayer.Data[$index]) "Render layer '$($actualLayer.name)' mismatch at cell index $index"
