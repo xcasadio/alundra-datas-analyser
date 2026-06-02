@@ -16,7 +16,11 @@ public static class EntityNames
     public static void Load(Language language)
     {
         var lines = new List<string>();
-        using (var reader = new StreamReader("EntityNames.csv", Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
+        var entityNamesFileName = "EntityNames.csv";
+        var entityNamesPath = File.Exists(entityNamesFileName)
+            ? entityNamesFileName
+            : Path.Combine(AppContext.BaseDirectory, entityNamesFileName);
+        using (var reader = new StreamReader(entityNamesPath, Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
         {
             string? line;
             while ((line = reader.ReadLine()) != null)

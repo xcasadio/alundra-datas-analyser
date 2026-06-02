@@ -462,10 +462,21 @@ public class UIManager
         callBackInfo.RenderFunc = FUN_800501a4;
         InitializeDialogBackgroundSprites(callBackInfo);
     }
+
     //8004afe8
-    public void Fun_8004afe8(CallBackInfo callBackInfo)
+    public void InitializeDebugBgmMenu(CallBackInfo callBackInfo)
     {
         Breakpoint.TriggerBreak();
+        //char acStack_68[80];
+        //
+        //g_debugMenuBgmIndex = 0;
+        //g_playerControlFlags = g_playerControlFlags | 0x18;
+        //strcpy(acStack_68, g_numberCharacterJpArray[0]);
+        //strcat(acStack_68, g_numberCharacterJpArray[(g_debugMenuBgmIndex / 10) % 10]);
+        //strcat(acStack_68, g_numberCharacterJpArray[g_debugMenuBgmIndex % 10]);
+        //DAT_80166124 = 0;
+        //callBackInfo.RenderFunc = DisplayDebugBgmMenu;
+        //return 1;
     }
 
     //8005a268

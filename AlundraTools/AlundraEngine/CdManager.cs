@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace AlundraEngine;
 
@@ -385,19 +386,195 @@ public class CdManager
         }
     }
 
-    //8005abe0
+    // GHIDRA: SetCdToAranXaMusicIndex @ 0x8005ABE0
     public void SetCdToAranXaMusicIndex(int mode)
     {
-        /*
-           CdlLOC cdlLoc [2];
-           u_char buffer [8];
+        if ((_gameEngine.StaticVariables.g_isCdResetRequested != 0) ||
+            (_gameEngine.StaticVariables.g_cdIsReady != 0 && _gameEngine.StaticVariables.g_cdDataLoaded == 0))
+        {
+            _gameEngine.StaticVariables.g_cdDataStartPtr = _gameEngine.StaticVariables.DAT_CDAranXa_pos + _gameEngine.StaticVariables.g_mapCdDataOffsets[mode * 3];
+            PlayAranXaMusicIndexDesktopAdapter(mode);
+        }
+    }
 
-           if ((g_isCdResetRequested != 0) || ((g_cdIsReady != 0 && (g_cdDataLoaded == 0)))) {
-             g_cdDataStartPtr = DAT_CDAranXa_pos + g_mapCdDataOffsets[mode * 3];
-             CdIntToPos(g_cdDataStartPtr,cdlLoc);
-             CdControl('\x02',&cdlLoc[0].minute,buffer);
-             CdControl('\x15',(u_char *)0x0,buffer);
-           }
-         */
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: adapter for CdlSetloc + CdlReadS XA-ADPCM playback from extracted ARAN_XA.XA data
+    private void PlayAranXaMusicIndexDesktopAdapter(int mode)
+    {
+        var tableBase = mode * 3;
+        var startBlock = _gameEngine.StaticVariables.g_mapCdDataOffsets[tableBase];
+        var channel = _gameEngine.StaticVariables.g_mapCdDataOffsets[tableBase + 1];
+        var blockCount = _gameEngine.StaticVariables.g_mapCdDataOffsets[tableBase + 2];
+        var dataFolder = Path.GetDirectoryName(_gameEngine.DatasBin.Binfile);
+        if (dataFolder == null)
+        {
+            return;
+        }
+
+        var xaFile = Path.GetFullPath(Path.Combine(dataFolder, "..", "ARAN_XA.XA"));
+        if (!File.Exists(xaFile))
+        {
+            return;
+        }
+
+        var waveStream = DecodeAranXaMusicIndexToWave(xaFile, startBlock, channel, blockCount);
+        if (waveStream == null)
+        {
+            return;
+        }
+
+        _gameEngine.SoundBin.PlayWave(waveStream, -1, 0x1000);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: adapter for extracted raw 0x800-byte ARAN_XA.XA blocks that contain 0x80-byte XA-ADPCM groups
+    private static MemoryStream? DecodeAranXaMusicIndexToWave(string xaFile, int startBlock, int channel, int blockCount)
+    {
+        const int sourceBlockSize = 0x800;
+        const int xaInterleave = 8;
+        const int xaGroupSize = 0x80;
+        const int xaGroupsPerSourceBlock = sourceBlockSize / xaGroupSize;
+        const int xaBlocksPerGroup = 4;
+        const int xaSamplesPerBlock = 28;
+        const int channelCount = 2;
+        const int bitsPerSample = 16;
+        const int sampleRate = 37800;
+
+        if (startBlock < 0 || channel < 0 || blockCount <= 0)
+        {
+            return null;
+        }
+
+        var firstPhysicalBlock = startBlock + channel;
+        var lastPhysicalBlock = firstPhysicalBlock + (blockCount - 1) * xaInterleave;
+        var fileLength = new FileInfo(xaFile).Length;
+        if (firstPhysicalBlock < 0 || lastPhysicalBlock < firstPhysicalBlock || (long)lastPhysicalBlock * sourceBlockSize + sourceBlockSize > fileLength)
+        {
+            return null;
+        }
+
+        var totalSampleFrames = blockCount * xaGroupsPerSourceBlock * xaBlocksPerGroup * xaSamplesPerBlock;
+        var pcmLength = totalSampleFrames * channelCount * (bitsPerSample >> 3);
+        var pcm = new byte[pcmLength];
+        var pcmPosition = 0;
+        var group = new byte[xaGroupSize];
+        var oldLeft = 0;
+        var olderLeft = 0;
+        var oldRight = 0;
+        var olderRight = 0;
+
+        using var stream = File.OpenRead(xaFile);
+        for (var blockIndex = 0; blockIndex < blockCount; blockIndex++)
+        {
+            var physicalBlock = firstPhysicalBlock + blockIndex * xaInterleave;
+            stream.Position = (long)physicalBlock * sourceBlockSize;
+
+            for (var groupIndex = 0; groupIndex < xaGroupsPerSourceBlock; groupIndex++)
+            {
+                var bytesRead = stream.Read(group, 0, group.Length);
+                if (bytesRead != group.Length)
+                {
+                    return null;
+                }
+
+                DecodeXaAdpcmGroup(group, pcm, ref pcmPosition, ref oldLeft, ref olderLeft, ref oldRight, ref olderRight);
+            }
+        }
+
+        return WriteStereoPcmWave(pcm, sampleRate);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: CD-XA 4-bit stereo ADPCM sound-group decoder used by the desktop CdlReadS adapter
+    private static void DecodeXaAdpcmGroup(byte[] group, byte[] pcm, ref int pcmPosition, ref int oldLeft, ref int olderLeft, ref int oldRight, ref int olderRight)
+    {
+        for (var block = 0; block < 4; block++)
+        {
+            for (var sampleIndex = 0; sampleIndex < 28; sampleIndex++)
+            {
+                var data = group[0x10 + block + sampleIndex * 4];
+                var left = DecodeXaAdpcmNibble(group[4 + block * 2], data & 0x0F, ref oldLeft, ref olderLeft);
+                var right = DecodeXaAdpcmNibble(group[5 + block * 2], data >> 4, ref oldRight, ref olderRight);
+
+                pcm[pcmPosition++] = (byte)(left & 0xFF);
+                pcm[pcmPosition++] = (byte)((left >> 8) & 0xFF);
+                pcm[pcmPosition++] = (byte)(right & 0xFF);
+                pcm[pcmPosition++] = (byte)((right >> 8) & 0xFF);
+            }
+        }
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: XA-ADPCM uses the same predictor contract as PSX ADPCM with XA nibble/header layout
+    private static short DecodeXaAdpcmNibble(byte header, int nibble, ref int oldSample, ref int olderSample)
+    {
+        var shift = header & 0x0F;
+        if (shift > 12)
+        {
+            shift = 9;
+        }
+
+        var filterIndex = (header >> 4) & 0x03;
+        var filterPos = filterIndex switch
+        {
+            1 => 60,
+            2 => 115,
+            3 => 98,
+            _ => 0
+        };
+        var filterNeg = filterIndex switch
+        {
+            2 => -52,
+            3 => -55,
+            _ => 0
+        };
+        var rawSample = (sbyte)(nibble << 4) >> 4;
+        var shiftedSample = rawSample << (12 - shift);
+        var filteredSample = shiftedSample + (oldSample * filterPos + olderSample * filterNeg + 32) / 64;
+        var clampedSample = (short)(filteredSample < short.MinValue ? short.MinValue : filteredSample > short.MaxValue ? short.MaxValue : filteredSample);
+        olderSample = oldSample;
+        oldSample = clampedSample;
+        return clampedSample;
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: packages decoded CD-XA stereo PCM for the existing desktop playback backend
+    private static MemoryStream WriteStereoPcmWave(byte[] pcm, int sampleRate)
+    {
+        const short channelCount = 2;
+        const short bitsPerSample = 16;
+        var byteRate = sampleRate * channelCount * bitsPerSample / 8;
+        var blockAlign = (short)(channelCount * bitsPerSample / 8);
+        var stream = new MemoryStream();
+        var writer = new BinaryWriter(stream);
+
+        writer.Write((byte)'R');
+        writer.Write((byte)'I');
+        writer.Write((byte)'F');
+        writer.Write((byte)'F');
+        writer.Write(4 + 8 + 16 + 8 + pcm.Length);
+        writer.Write((byte)'W');
+        writer.Write((byte)'A');
+        writer.Write((byte)'V');
+        writer.Write((byte)'E');
+        writer.Write((byte)'f');
+        writer.Write((byte)'m');
+        writer.Write((byte)'t');
+        writer.Write((byte)' ');
+        writer.Write(16);
+        writer.Write((short)1);
+        writer.Write(channelCount);
+        writer.Write(sampleRate);
+        writer.Write(byteRate);
+        writer.Write(blockAlign);
+        writer.Write(bitsPerSample);
+        writer.Write((byte)'d');
+        writer.Write((byte)'a');
+        writer.Write((byte)'t');
+        writer.Write((byte)'a');
+        writer.Write(pcm.Length);
+        writer.Write(pcm);
+        stream.Position = 0;
+        return stream;
     }
 }

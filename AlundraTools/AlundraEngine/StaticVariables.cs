@@ -30,6 +30,7 @@ public class StaticVariables
     public bool IsLogScriptEnabled { get; set; }
     public bool IsLogDamageEnabled { get; set; }
     public bool IsLogAIEnabled { get; set; }
+    public bool IsBgmActivated { get; set; } = false;
 
     public bool DisplayCollisions { get; set; }
 
@@ -11422,7 +11423,7 @@ public class StaticVariables
                 Id = 5, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x0C, Width = 0x20,
                 Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.InitializeDialogBackgroundSprites,
-                RenderFunc = gameEngine.UIDebugManager.InitializeDebugMenuSound, Arg = 0
+                RenderFunc = gameEngine.UIDebugManager.InitializeDebugSfxMenu, Arg = 0
             },
             new CallBackInfo
             {
@@ -11440,7 +11441,7 @@ public class StaticVariables
                 Id = 8, Flags = 0, Data = g_uiBoxesInventoryDescriptionBackground, X = 0x10, Y = 0x0C, Width = 0x20,
                 Height = 0x04,
                 InitializeFunc = gameEngine.UIManager.InitializeDialogBackgroundSprites,
-                RenderFunc = gameEngine.UIManager.Fun_8004afe8, Arg = 0
+                RenderFunc = gameEngine.UIManager.InitializeDebugBgmMenu, Arg = 0
             },
             new CallBackInfo
             {

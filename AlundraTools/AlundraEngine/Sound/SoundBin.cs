@@ -237,6 +237,22 @@ public class SoundBin
     private readonly short[] _voiceReverbs = new short[24];
     private readonly short[] _voiceAdsr1 = new short[24];
     private readonly short[] _voiceAdsr2 = new short[24];
+    private readonly short[] _voiceVolumeLeft = new short[24];
+    private readonly short[] _voiceVolumeRight = new short[24];
+    private const int VoiceEnvelopeLevelMax = 0x7fff;
+    private const byte VoiceEnvelopeStageOff = 0;
+    private const byte VoiceEnvelopeStageAttack = 1;
+    private const byte VoiceEnvelopeStageDecay = 2;
+    private const byte VoiceEnvelopeStageSustain = 3;
+    private const byte VoiceEnvelopeStageRelease = 4;
+    private readonly byte[] _voiceEnvelopeStages = new byte[24];
+    private readonly int[] _voiceEnvelopeLevels = new int[24];
+    private readonly int[] _voiceEnvelopeStageFramesRemaining = new int[24];
+    private readonly int[] _voiceEnvelopeStageFrameCount = new int[24];
+    private readonly int[] _voiceEnvelopeSustainLevels = new int[24];
+    private readonly int[] _voiceReleaseFramesRemaining = new int[24];
+    private readonly int[] _voiceReleaseFrameCount = new int[24];
+    private readonly int[] _voiceReleaseStartEnvelopeLevels = new int[24];
     private bool _reverbEnabled;
     private SpuReverbAttrPartial _reverbAttr;
 
@@ -379,22 +395,25 @@ public class SoundBin
         return PlaySfxInner(sfx, MapVabHeader, _mapSfxVabBodyBuff, pitch, is8Bit, out loopStart, out loopEnd, out repeat);
     }
 
-    private byte[] PlaySfxInner(VabHeader header, byte[] bodybuff, int prognum, int tonenum, int note, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat, int voiceId = -1)
+    private byte[] PlaySfxInner(VabHeader header, byte[] bodybuff, int prognum, int tonenum, int note, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat, int voiceId = -1, short rawPitchOverride = 0)
     {
         var attr = header.VagAttributes[prognum][tonenum];
-        var rawPitch = CalculateToneRawPitch(attr, note);
+        var vagIndex = attr.Vag > 0 ? attr.Vag - 1 : attr.Vag;
+        var rawPitch = rawPitchOverride != 0 ? rawPitchOverride : CalculateToneRawPitch(attr, note);
         var sampleRate = ConvertRawPitchToSampleRate(rawPitch);
-        return PlaySfxInner(attr.Vag, header, bodybuff, sampleRate, is8Bit, out loopStart, out loopEnd, out repeat, voiceId, rawPitch);
+        return PlaySfxInner(vagIndex, header, bodybuff, sampleRate, is8Bit, out loopStart, out loopEnd, out repeat, voiceId, rawPitch);
     }
 
     private byte[] PlaySfxInner(int sfx, VabHeader header, byte[] bodybuff, int pitch, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat, int voiceId = -1, short rawPitch = 0)
     {
-        var pos = 0;
-        for (var i = 0; i < sfx; i++)
+        if (!TryGetVagBodyRange(header, sfx, out var pos, out var length))
         {
-            pos += header.VagOffsetTable[i] << 3;
+            loopStart = -1;
+            loopEnd = -1;
+            repeat = false;
+            return [];
         }
-        var length = header.VagOffsetTable[sfx] << 3;
+
         var blocks = length / 0x10;
         var bytespersample = 2;
         if (is8Bit)
@@ -402,9 +421,22 @@ public class SoundBin
             bytespersample = 1;
         }
 
-        var buff = new byte[blocks * SamplesPerBlock * bytespersample];
-        int blockloopstart, blockloopend;
-        DecodeAdpcm(bodybuff, pos, length, buff, is8Bit, out blockloopstart, out blockloopend, out repeat);
+        byte[] buff = null!;
+        int blockloopstart = -1;
+        int blockloopend = -1;
+        int decodedLength = 0;
+        repeat = false;
+        var cacheHit = !is8Bit && TryGetCachedDecodedVag16(header, sfx, out buff, out decodedLength, out blockloopstart, out blockloopend, out repeat);
+        if (!cacheHit)
+        {
+            buff = new byte[blocks * SamplesPerBlock * bytespersample];
+            decodedLength = DecodeAdpcm(bodybuff, pos, length, buff, is8Bit, out blockloopstart, out blockloopend, out repeat);
+            if (!is8Bit)
+            {
+                CacheDecodedVag16(header, sfx, buff, decodedLength, blockloopstart, blockloopend, repeat);
+            }
+        }
+
         if ((blockloopend == -1 || blockloopstart == -1) && length != 0)
         {
             //this is not good, all samples should have loop points set, even if they arent used
@@ -413,6 +445,11 @@ public class SoundBin
         loopStart = blockloopstart * SamplesPerBlock;//loops to start of block
         loopEnd = blockloopend * SamplesPerBlock + SamplesPerBlock - 1;//loops at end of block
         var encodedSampleRate = pitch > 0 ? pitch : 44100;
+        if (_playbackBackend != null)
+        {
+            encodedSampleRate = ClampDesktopPcmSampleRate(encodedSampleRate);
+        }
+
         short initialPitch = 0;
         if (_playbackBackend != null && pitch > 0)
         {
@@ -424,17 +461,83 @@ public class SoundBin
 
             initialPitch = backendPitch;
         }
-        var ms = WriteWavFile(buff, 0, buff.Length, encodedSampleRate, is8Bit, _masterVolumeLeft, _masterVolumeRight);
-        // PARTIAL: MonoGame SoundEffectInstance has no loop-point support; keep repeating PSX looped samples audible by looping the whole decoded sample.
-        PlayWave(ms, voiceId, initialPitch, repeat);
+        var ms = WriteWavFile(buff, 0, decodedLength, encodedSampleRate, is8Bit, _masterVolumeLeft, _masterVolumeRight);
+        PlayWave(ms, voiceId, initialPitch, repeat, loopStart, loopEnd);
 
         return buff;
     }
 
     // JUSTIFICATION: PSX hardware adaptation only
-    public byte[] PlayLoadedVabTone(int voiceId, VabHeader header, byte[] bodyBuffer, int programNumber, int toneNumber, int note, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
+    // RELATION: desktop mirror of already-uploaded SPU sample data; avoids re-decoding the same VAG on every key-on
+    private static bool TryGetCachedDecodedVag16(VabHeader header, int vagIndex, out byte[] decodedPcm, out int decodedLength, out int loopStartBlock, out int loopEndBlock, out bool repeat)
     {
-        return PlaySfxInner(header, bodyBuffer, programNumber, toneNumber, note, is8Bit, out loopStart, out loopEnd, out repeat, voiceId);
+        decodedPcm = null!;
+        decodedLength = 0;
+        loopStartBlock = -1;
+        loopEndBlock = -1;
+        repeat = false;
+
+        if ((uint)vagIndex >= (uint)header.DecodedPcm16Cache.Length)
+        {
+            return false;
+        }
+
+        var cachedPcm = header.DecodedPcm16Cache[vagIndex];
+        if (cachedPcm == null || header.DecodedPcm16LengthCache[vagIndex] <= 0)
+        {
+            return false;
+        }
+
+        decodedPcm = cachedPcm;
+        decodedLength = header.DecodedPcm16LengthCache[vagIndex];
+        loopStartBlock = header.DecodedPcm16LoopStartBlockCache[vagIndex];
+        loopEndBlock = header.DecodedPcm16LoopEndBlockCache[vagIndex];
+        repeat = header.DecodedPcm16RepeatCache[vagIndex];
+        return true;
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: desktop mirror of already-uploaded SPU sample data; avoids re-decoding the same VAG on every key-on
+    private static void CacheDecodedVag16(VabHeader header, int vagIndex, byte[] decodedPcm, int decodedLength, int loopStartBlock, int loopEndBlock, bool repeat)
+    {
+        if ((uint)vagIndex >= (uint)header.DecodedPcm16Cache.Length || decodedLength <= 0)
+        {
+            return;
+        }
+
+        header.DecodedPcm16Cache[vagIndex] = decodedPcm;
+        header.DecodedPcm16LengthCache[vagIndex] = decodedLength;
+        header.DecodedPcm16LoopStartBlockCache[vagIndex] = loopStartBlock;
+        header.DecodedPcm16LoopEndBlockCache[vagIndex] = loopEndBlock;
+        header.DecodedPcm16RepeatCache[vagIndex] = repeat;
+    }
+
+    // JUSTIFICATION: PSX data layout bridge only
+    // RELATION: mirrors Alundraportage VAB VAG_OffsetTable convention: entry 0 is pre-sample offset, entries 1.. are VAG sizes
+    private static bool TryGetVagBodyRange(VabHeader header, int vagIndex, out int start, out int length)
+    {
+        start = 0;
+        length = 0;
+
+        if (vagIndex < 0 || vagIndex + 1 >= header.VagOffsetTable.Length)
+        {
+            return false;
+        }
+
+        start = header.VagOffsetTable[0] << 3;
+        for (var vagOffsetIndex = 1; vagOffsetIndex <= vagIndex; vagOffsetIndex++)
+        {
+            start += header.VagOffsetTable[vagOffsetIndex] << 3;
+        }
+
+        length = header.VagOffsetTable[vagIndex + 1] << 3;
+        return length > 0;
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    public byte[] PlayLoadedVabTone(int voiceId, VabHeader header, byte[] bodyBuffer, int programNumber, int toneNumber, int note, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat, short rawPitchOverride = 0)
+    {
+        return PlaySfxInner(header, bodyBuffer, programNumber, toneNumber, note, is8Bit, out loopStart, out loopEnd, out repeat, voiceId, rawPitchOverride);
     }
 
     private System.Media.SoundPlayer _sp = null!;
@@ -466,8 +569,13 @@ public class SoundBin
         _masterVolumeRight = volumeRight;
     }
 
-    public void PlayWave(Stream s, int voiceId = -1, short initialPitch = 0, bool shouldLoop = false)
+    public void PlayWave(Stream s, int voiceId = -1, short initialPitch = 0, bool shouldLoop = false, int loopStartSample = -1, int loopEndSample = -1)
     {
+        if ((uint)voiceId < (uint)_voiceReleaseFramesRemaining.Length)
+        {
+            ClearVoiceEnvelopeState(voiceId);
+        }
+
         if (_playbackBackend != null)
         {
             if (initialPitch != 0)
@@ -475,7 +583,7 @@ public class SoundBin
                 _playbackBackend.UpdateVoicePitch(voiceId, initialPitch);
             }
 
-            if (_playbackBackend.Play(s, voiceId, shouldLoop))
+            if (_playbackBackend.Play(s, voiceId, shouldLoop, loopStartSample, loopEndSample))
             {
                 s.Dispose();
                 return;
@@ -541,7 +649,14 @@ public class SoundBin
             return;
         }
 
-        _playbackBackend?.UpdateVoiceStereoVolume(voiceId, volumeLeft, volumeRight);
+        _voiceVolumeLeft[voiceId] = volumeLeft;
+        _voiceVolumeRight[voiceId] = volumeRight;
+        if (_voiceReleaseFramesRemaining[voiceId] > 0)
+        {
+            return;
+        }
+
+        ApplyTrackedVoiceAudibleVolume(voiceId);
     }
 
 // JUSTIFICATION: PSX hardware adaptation only
@@ -582,6 +697,22 @@ public void UpdateTrackedVoiceAdsr(int voiceId, short adsr1, short adsr2)
 }
 
 // JUSTIFICATION: PSX hardware adaptation only
+// RELATION: adapter for SPU key-off release envelope on desktop tracked voices
+public void KeyOffTrackedVoice(int voiceId)
+{
+    if ((uint)voiceId >= (uint)VoicesAreActive.Length || VoicesAreActive[voiceId] == 0)
+    {
+        return;
+    }
+
+    var releaseFrames = CalculateReleaseFrameCount(_voiceAdsr2[voiceId]);
+    _voiceReleaseFrameCount[voiceId] = releaseFrames;
+    _voiceReleaseFramesRemaining[voiceId] = releaseFrames;
+    _voiceReleaseStartEnvelopeLevels[voiceId] = GetTrackedVoiceEnvelopeLevel(voiceId);
+    _voiceEnvelopeStages[voiceId] = VoiceEnvelopeStageRelease;
+}
+
+// JUSTIFICATION: PSX hardware adaptation only
 // RELATION: adapter for the SpuSetReverb on/off observable contract on desktop
 public void SetReverbEnabled(bool enabled)
 {
@@ -595,7 +726,7 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
     _reverbAttr = reverbAttr;
 }
 
-    public static void DecodeAdpcm(byte[] adpcm, int pos, int len, byte[] pcm, bool is8Bit, out int loopstart, out int loopend, out bool looprepeat)
+    public static int DecodeAdpcm(byte[] adpcm, int pos, int len, byte[] pcm, bool is8Bit, out int loopstart, out int loopend, out bool looprepeat)
     {
         loopstart = loopend = -1;
         looprepeat = false;
@@ -674,7 +805,24 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
             }
 
             dpos += 16;
+
+            if (block.IsLoopend)
+            {
+                break;
+            }
         }
+
+        if (loopstart == -1)
+        {
+            loopstart = 0;
+        }
+
+        if (loopend == -1 && numblocks > 0)
+        {
+            loopend = numblocks - 1;
+        }
+
+        return pcmpos;
     }
 
     public class AdpcmBlock
@@ -838,6 +986,11 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
         public readonly ProgAtr[] ProgAttributes = new ProgAtr[128];
         public readonly VagAtr[][] VagAttributes;
         public readonly ushort[] VagOffsetTable = new ushort[256];
+        public readonly byte[]?[] DecodedPcm16Cache = new byte[256][];
+        public readonly int[] DecodedPcm16LengthCache = new int[256];
+        public readonly int[] DecodedPcm16LoopStartBlockCache = new int[256];
+        public readonly int[] DecodedPcm16LoopEndBlockCache = new int[256];
+        public readonly bool[] DecodedPcm16RepeatCache = new bool[256];
         //int[] VagOffsetTable = new int[256];
 
         public class VabHdr//32 byte
@@ -954,6 +1107,18 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
     public byte[] VoicesAreActive = new byte[24];
     public VoiceInfo VoiceInfo = new();
 
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: adapter for Voice.status read by UpdateSoundVoicesState @ 0x8009311C
+    public short GetTrackedVoiceStatus(int voiceId)
+    {
+        if ((uint)voiceId >= (uint)VoicesAreActive.Length || VoicesAreActive[voiceId] == 0)
+        {
+            return 0;
+        }
+
+        return unchecked((short)Math.Max(1, (0x7fff * GetTrackedVoiceEnvelopeLevel(voiceId)) / VoiceEnvelopeLevelMax));
+    }
+
     public void AdvanceTrackedVoices()
     {
         for (var voiceId = 0; voiceId < VoicesAreActive.Length; voiceId++)
@@ -968,6 +1133,14 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
                 StopTrackedVoice(voiceId);
                 continue;
             }
+
+            if (_voiceReleaseFramesRemaining[voiceId] > 0)
+            {
+                AdvanceTrackedVoiceRelease(voiceId);
+                continue;
+            }
+
+            AdvanceTrackedVoiceEnvelope(voiceId);
 
             var framesRemaining = _voiceFramesRemaining[voiceId];
             if (framesRemaining < 0)
@@ -1013,6 +1186,7 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
 
         VoicesAreActive[voiceId] = 0;
         _voiceFramesRemaining[voiceId] = 0;
+        ClearVoiceEnvelopeState(voiceId);
         _playbackBackend?.Stop(voiceId);
 
         var currentVoicePlayer = _voicePlayers[voiceId];
@@ -1038,6 +1212,7 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
         }
 
         VoicesAreActive[voiceId] = 1;
+        StartVoiceEnvelope(voiceId);
         if (!TryGetToneFrameLifetime(useMapVab, programNumber, toneNumber, note, out var frameCount, out var repeat, explicitHeader, explicitBodyBuffer))
         {
             _voiceFramesRemaining[voiceId] = 1;
@@ -1045,6 +1220,399 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
         }
 
         _voiceFramesRemaining[voiceId] = repeat ? -1 : Math.Max(frameCount, 1);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: advances the desktop approximation of SPU ADSR key-off release
+    private void AdvanceTrackedVoiceRelease(int voiceId)
+    {
+        var remaining = _voiceReleaseFramesRemaining[voiceId] - 1;
+        if (remaining <= 0)
+        {
+            StopTrackedVoice(voiceId);
+            return;
+        }
+
+        _voiceReleaseFramesRemaining[voiceId] = remaining;
+        var frameCount = _voiceReleaseFrameCount[voiceId];
+        if (frameCount <= 0)
+        {
+            StopTrackedVoice(voiceId);
+            return;
+        }
+
+        _voiceEnvelopeLevels[voiceId] = (_voiceReleaseStartEnvelopeLevels[voiceId] * remaining) / frameCount;
+        ApplyTrackedVoiceAudibleVolume(voiceId);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: starts the desktop approximation of SPU ADSR attack/decay/sustain on key-on
+    private void StartVoiceEnvelope(int voiceId)
+    {
+        ClearVoiceEnvelopeState(voiceId);
+        _voiceEnvelopeSustainLevels[voiceId] = CalculateSustainLevel(_voiceAdsr1[voiceId]);
+        var attackFrames = CalculateAttackFrameCount(_voiceAdsr1[voiceId]);
+        if (attackFrames > 1)
+        {
+            _voiceEnvelopeStages[voiceId] = VoiceEnvelopeStageAttack;
+            _voiceEnvelopeStageFrameCount[voiceId] = attackFrames;
+            _voiceEnvelopeStageFramesRemaining[voiceId] = attackFrames;
+            _voiceEnvelopeLevels[voiceId] = 0;
+            ApplyTrackedVoiceAudibleVolume(voiceId);
+            return;
+        }
+
+        _voiceEnvelopeLevels[voiceId] = VoiceEnvelopeLevelMax;
+        EnterTrackedVoiceDecay(voiceId);
+        ApplyTrackedVoiceAudibleVolume(voiceId);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: advances attack/decay/sustain portions of the desktop ADSR approximation
+    private void AdvanceTrackedVoiceEnvelope(int voiceId)
+    {
+        switch (_voiceEnvelopeStages[voiceId])
+        {
+            case VoiceEnvelopeStageAttack:
+                AdvanceTrackedVoiceAttack(voiceId);
+                break;
+
+            case VoiceEnvelopeStageDecay:
+                AdvanceTrackedVoiceDecay(voiceId);
+                break;
+        }
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: advances the desktop attack ramp derived from SPU ADSR1
+    private void AdvanceTrackedVoiceAttack(int voiceId)
+    {
+        var frameCount = _voiceEnvelopeStageFrameCount[voiceId];
+        var remaining = _voiceEnvelopeStageFramesRemaining[voiceId] - 1;
+        if (remaining <= 0 || frameCount <= 0)
+        {
+            _voiceEnvelopeLevels[voiceId] = VoiceEnvelopeLevelMax;
+            EnterTrackedVoiceDecay(voiceId);
+            ApplyTrackedVoiceAudibleVolume(voiceId);
+            return;
+        }
+
+        _voiceEnvelopeStageFramesRemaining[voiceId] = remaining;
+        _voiceEnvelopeLevels[voiceId] = (VoiceEnvelopeLevelMax * (frameCount - remaining)) / frameCount;
+        ApplyTrackedVoiceAudibleVolume(voiceId);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: enters the desktop decay ramp derived from SPU ADSR1
+    private void EnterTrackedVoiceDecay(int voiceId)
+    {
+        var decayFrames = CalculateDecayFrameCount(_voiceAdsr1[voiceId]);
+        var sustainLevel = _voiceEnvelopeSustainLevels[voiceId];
+        if (decayFrames <= 1 || sustainLevel >= VoiceEnvelopeLevelMax)
+        {
+            _voiceEnvelopeStages[voiceId] = VoiceEnvelopeStageSustain;
+            _voiceEnvelopeLevels[voiceId] = sustainLevel;
+            _voiceEnvelopeStageFrameCount[voiceId] = 0;
+            _voiceEnvelopeStageFramesRemaining[voiceId] = 0;
+            return;
+        }
+
+        _voiceEnvelopeStages[voiceId] = VoiceEnvelopeStageDecay;
+        _voiceEnvelopeStageFrameCount[voiceId] = decayFrames;
+        _voiceEnvelopeStageFramesRemaining[voiceId] = decayFrames;
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: advances the desktop decay ramp toward the SPU ADSR1 sustain level
+    private void AdvanceTrackedVoiceDecay(int voiceId)
+    {
+        var frameCount = _voiceEnvelopeStageFrameCount[voiceId];
+        var remaining = _voiceEnvelopeStageFramesRemaining[voiceId] - 1;
+        var sustainLevel = _voiceEnvelopeSustainLevels[voiceId];
+        if (remaining <= 0 || frameCount <= 0)
+        {
+            _voiceEnvelopeStages[voiceId] = VoiceEnvelopeStageSustain;
+            _voiceEnvelopeLevels[voiceId] = sustainLevel;
+            ApplyTrackedVoiceAudibleVolume(voiceId);
+            return;
+        }
+
+        _voiceEnvelopeStageFramesRemaining[voiceId] = remaining;
+        _voiceEnvelopeLevels[voiceId] = sustainLevel + (((VoiceEnvelopeLevelMax - sustainLevel) * remaining) / frameCount);
+        ApplyTrackedVoiceAudibleVolume(voiceId);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: applies current desktop ADSR level to the raw SPU voice volume mirror
+    private void ApplyTrackedVoiceAudibleVolume(int voiceId)
+    {
+        var envelopeLevel = GetTrackedVoiceEnvelopeLevel(voiceId);
+        var volumeLeft = unchecked((short)((_voiceVolumeLeft[voiceId] * envelopeLevel) / VoiceEnvelopeLevelMax));
+        var volumeRight = unchecked((short)((_voiceVolumeRight[voiceId] * envelopeLevel) / VoiceEnvelopeLevelMax));
+        _playbackBackend?.UpdateVoiceStereoVolume(voiceId, volumeLeft, volumeRight);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: returns full level until a desktop ADSR stage is active, matching prior backend behavior for untracked voices
+    private int GetTrackedVoiceEnvelopeLevel(int voiceId)
+    {
+        return _voiceEnvelopeStages[voiceId] == VoiceEnvelopeStageOff
+            ? VoiceEnvelopeLevelMax
+            : _voiceEnvelopeLevels[voiceId];
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: clears the desktop ADSR/release state when the tracked voice is reused or hard-stopped
+    private void ClearVoiceEnvelopeState(int voiceId)
+    {
+        _voiceEnvelopeStages[voiceId] = VoiceEnvelopeStageOff;
+        _voiceEnvelopeLevels[voiceId] = VoiceEnvelopeLevelMax;
+        _voiceEnvelopeStageFramesRemaining[voiceId] = 0;
+        _voiceEnvelopeStageFrameCount[voiceId] = 0;
+        _voiceEnvelopeSustainLevels[voiceId] = VoiceEnvelopeLevelMax;
+        _voiceReleaseFramesRemaining[voiceId] = 0;
+        _voiceReleaseFrameCount[voiceId] = 0;
+        _voiceReleaseStartEnvelopeLevels[voiceId] = VoiceEnvelopeLevelMax;
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: decodes the SPU ADSR1 sustain nibble to the desktop envelope scale
+    private static int CalculateSustainLevel(short adsr1)
+    {
+        var rawAdsr1 = unchecked((ushort)adsr1);
+        var sustainLevel = ((rawAdsr1 & 0x000f) + 1) * 0x800;
+        if (sustainLevel > VoiceEnvelopeLevelMax)
+        {
+            sustainLevel = VoiceEnvelopeLevelMax;
+        }
+
+        return sustainLevel;
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: derives attack duration from SPU ADSR1 using the Alundraportage/P.E.Op.S rate-table convention
+    private static int CalculateAttackFrameCount(short adsr1)
+    {
+        const double sampleRate = 44100.0;
+        const double frameRate = 60.0;
+        const int maxEnvelopeFrames = 600;
+        var rawAdsr1 = unchecked((ushort)adsr1);
+        var attackMode = (rawAdsr1 & 0x8000) != 0;
+        var attackRate = (rawAdsr1 & 0x7f00) >> 8;
+        if ((attackRate ^ 0x7f) < 0x10)
+        {
+            attackRate = 0;
+        }
+
+        var rate = GetAdsrRate(RoundToZero((attackRate ^ 0x7f) - 0x10) + 32);
+        if (rate == 0)
+        {
+            return 1;
+        }
+
+        double samples;
+        if (!attackMode)
+        {
+            samples = Math.Ceiling(0x7fffffff / (double)rate);
+        }
+        else
+        {
+            samples = 0x60000000 / (double)rate;
+            var remainder = 0x60000000 % rate;
+            var rate2 = GetAdsrRate(RoundToZero((attackRate ^ 0x7f) - 0x18) + 32);
+            if (rate2 != 0)
+            {
+                samples += Math.Ceiling(Math.Max(0, 0x1fffffff - remainder) / (double)rate2);
+            }
+        }
+
+        return ClampEnvelopeFrames((int)Math.Ceiling(samples / sampleRate * frameRate), maxEnvelopeFrames);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: derives decay duration from SPU ADSR1 using the Alundraportage/P.E.Op.S rate-table convention
+    private static int CalculateDecayFrameCount(short adsr1)
+    {
+        const double sampleRate = 44100.0;
+        const double frameRate = 60.0;
+        const int maxEnvelopeFrames = 600;
+        var rawAdsr1 = unchecked((ushort)adsr1);
+        var decayRate = (rawAdsr1 & 0x00f0) >> 4;
+        if (4 * (decayRate ^ 0x1f) < 0x18)
+        {
+            decayRate = 0;
+        }
+
+        var sustainLevel = CalculateSustainLevel(adsr1);
+        var targetEnvelopeLevel = (long)((sustainLevel / (double)VoiceEnvelopeLevelMax) * 0x7fffffff);
+        var envelopeLevel = 0x7fffffffL;
+        var sampleCount = 0;
+        var maxSamples = (int)(sampleRate * (maxEnvelopeFrames / frameRate));
+        while (envelopeLevel > targetEnvelopeLevel && sampleCount < maxSamples)
+        {
+            var rate = GetExponentialDecayRate(decayRate, envelopeLevel);
+            if (rate == 0)
+            {
+                break;
+            }
+
+            envelopeLevel -= rate;
+            sampleCount++;
+        }
+
+        return ClampEnvelopeFrames((int)Math.Ceiling(sampleCount / sampleRate * frameRate), maxEnvelopeFrames);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: mirrors the decay-rate lookup used by Alundraportage DecodeADSR
+    private static uint GetExponentialDecayRate(int decayRate, long envelopeLevel)
+    {
+        var range = (int)((envelopeLevel >> 28) & 0x7);
+        var offset = range switch
+        {
+            0 => 0,
+            1 => 4,
+            2 => 6,
+            3 => 8,
+            4 => 9,
+            5 => 10,
+            6 => 11,
+            _ => 12,
+        };
+
+        return GetAdsrRate(RoundToZero((4 * (decayRate ^ 0x1f)) - 0x18 + offset) + 32);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: clamps desktop ADSR durations to a practical frame range for tracked voices
+    private static int ClampEnvelopeFrames(int frames, int maxEnvelopeFrames)
+    {
+        if (frames < 1)
+        {
+            return 1;
+        }
+
+        return Math.Min(frames, maxEnvelopeFrames);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: derives a frame count from SPU ADSR2 release fields using the Alundraportage/P.E.Op.S rate-table convention
+    private static int CalculateReleaseFrameCount(short adsr2)
+    {
+        const double sampleRate = 44100.0;
+        const double frameRate = 60.0;
+        const int maxReleaseFrames = 600;
+        var rawAdsr2 = unchecked((ushort)adsr2);
+        var releaseRate = rawAdsr2 & 0x001f;
+        var releaseMode = (rawAdsr2 & 0x0020) != 0;
+        double samples;
+
+        if (!releaseMode)
+        {
+            var rate = GetAdsrRate(RoundToZero((4 * (releaseRate ^ 0x1f)) - 0x0c) + 32);
+            samples = rate != 0 ? Math.Ceiling(0x7fffffff / (double)rate) : 0;
+        }
+        else
+        {
+            if ((releaseRate ^ 0x1f) * 4 < 0x18)
+            {
+                releaseRate = 0;
+            }
+
+            var envelopeLevel = 0x7fffffffL;
+            var sampleCount = 0;
+            var maxSamples = (int)(sampleRate * (maxReleaseFrames / frameRate));
+            while (envelopeLevel > 0 && sampleCount < maxSamples)
+            {
+                var rate = GetExponentialReleaseRate(releaseRate, envelopeLevel);
+                if (rate == 0)
+                {
+                    break;
+                }
+
+                envelopeLevel -= rate;
+                sampleCount++;
+            }
+
+            samples = sampleCount;
+        }
+
+        var frames = (int)Math.Ceiling(samples / sampleRate * frameRate);
+        if (frames < 1)
+        {
+            return 1;
+        }
+
+        return Math.Min(frames, maxReleaseFrames);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: mirrors the rate-table lookup used by Alundraportage DecodeADSR
+    private static uint GetExponentialReleaseRate(int releaseRate, long envelopeLevel)
+    {
+        var range = (int)((envelopeLevel >> 28) & 0x7);
+        var offset = range switch
+        {
+            0 => 0,
+            1 => 4,
+            2 => 6,
+            3 => 8,
+            4 => 9,
+            5 => 10,
+            6 => 11,
+            _ => 12,
+        };
+
+        return GetAdsrRate(RoundToZero((4 * (releaseRate ^ 0x1f)) - 0x18 + offset) + 32);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: mirrors Alundraportage roundToZero for SPU ADSR rate-table indices
+    private static int RoundToZero(int value)
+    {
+        return value < 0 ? 0 : value;
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: builds one entry of the Alundraportage/P.E.Op.S SPU ADSR rate table on demand
+    private static uint GetAdsrRate(int tableIndex)
+    {
+        if (tableIndex < 32)
+        {
+            return 0;
+        }
+
+        if (tableIndex > 159)
+        {
+            tableIndex = 159;
+        }
+
+        uint rate = 3;
+        uint rateStep = 1;
+        var rateDivider = 0;
+        uint currentValue = 0;
+        for (var index = 32; index <= tableIndex; index++)
+        {
+            if (rate < 0x3fffffff)
+            {
+                rate += rateStep;
+                rateDivider++;
+                if (rateDivider == 5)
+                {
+                    rateDivider = 1;
+                    rateStep *= 2;
+                }
+            }
+
+            if (rate > 0x3fffffff)
+            {
+                rate = 0x3fffffff;
+            }
+
+            currentValue = rate;
+        }
+
+        return currentValue;
     }
 
     private bool TryGetToneFrameLifetime(bool useMapVab, int programNumber, int toneNumber, int note, out int frameCount, out bool repeat, VabHeader? explicitHeader = null, byte[]? explicitBodyBuffer = null)
@@ -1076,7 +1644,7 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
         }
 
         var tone = tones[toneNumber];
-        var vagIndex = tone.Vag;
+        var vagIndex = tone.Vag > 0 ? tone.Vag - 1 : tone.Vag;
         if ((uint)vagIndex >= (uint)header.VagOffsetTable.Length)
         {
             return false;
@@ -1088,14 +1656,7 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
             return false;
         }
 
-        var start = 0;
-        for (var vagOffsetIndex = 0; vagOffsetIndex < vagIndex; vagOffsetIndex++)
-        {
-            start += header.VagOffsetTable[vagOffsetIndex] << 3;
-        }
-
-        var length = header.VagOffsetTable[vagIndex] << 3;
-        if (length <= 0)
+        if (!TryGetVagBodyRange(header, vagIndex, out var start, out var length))
         {
             return false;
         }
@@ -1106,17 +1667,19 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
             return false;
         }
 
+        var usedBlocks = blocks;
         for (var blockIndex = 0; blockIndex < blocks; blockIndex++)
         {
             var flags = bodyBuffer[start + (blockIndex * 0x10) + 1];
             if ((flags & 0x01) != 0)
             {
                 repeat = (flags & 0x02) != 0;
+                usedBlocks = blockIndex + 1;
                 break;
             }
         }
 
-        var sampleCount = blocks * SamplesPerBlock;
+        var sampleCount = usedBlocks * SamplesPerBlock;
         frameCount = Math.Max(1, (int)Math.Ceiling(sampleCount * 60.0 / sampleRate));
         return true;
     }
@@ -1176,6 +1739,23 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
         }
 
         return unchecked((short)pitch);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: keep desktop PCM rates inside MonoGame's accepted DynamicSoundEffectInstance range; residual SPU pitch is applied by the backend.
+    private static int ClampDesktopPcmSampleRate(int sampleRate)
+    {
+        if (sampleRate < 8000)
+        {
+            return 8000;
+        }
+
+        if (sampleRate > 48000)
+        {
+            return 48000;
+        }
+
+        return sampleRate;
     }
 
     // JUSTIFICATION: PSX hardware adaptation only

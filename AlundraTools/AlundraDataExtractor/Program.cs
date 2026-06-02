@@ -14,39 +14,33 @@ namespace AlundraDataExtractor;
 internal class Program
 {
     private static readonly JsonSerializerOptions _jsonSerializerOptions = new() { WriteIndented = true, IncludeFields = true };
+    private static readonly JsonSerializerOptions _jsonLineSerializerOptions = new() { IncludeFields = true };
     private static Dictionary<string, HashSet<string>> entitySpriteSheetIds = new();
     private static HashSet<string> entitySpriteSheetAlreadySaved = new();
 
     static void Main(string[] args)
     {
+        _jsonSerializerOptions.Converters.Add(new ByteArrayAsNumbersConverter());
+
+        if (args.Length > 0 && string.Equals(args[0], "--trace-bgm", StringComparison.OrdinalIgnoreCase))
+        {
+            TraceBgm(args);
+            return;
+        }
+
+        if (args.Length < 2)
+        {
+            Console.WriteLine("Usage: AlundraDataExtractor <gamePath> <extractionPath>");
+            Console.WriteLine("       AlundraDataExtractor --trace-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
+            return;
+        }
+
         var gamePath = args[0];
         var extractionPath = args[1];
         Console.WriteLine($"Extract data from {gamePath}");
         Console.WriteLine($"To {extractionPath}");
 
-        _jsonSerializerOptions.Converters.Add(new ByteArrayAsNumbersConverter());
-
-        var dataFolder = Path.Combine(gamePath, "DATA");
-
-        var datasBin = new DatasBin(Path.Combine(dataFolder, "DATAS.BIN"));
-        var balanceFile = Path.Combine(dataFolder, "BALANCE.BIN");
-        var balanceBin = new BalanceBin(balanceFile);
-        var soundBinFileName = Path.Combine(dataFolder, "SOUND.BIN");
-        var soundBin = new SoundBin(soundBinFileName);
-        var font3 = new Font3(Path.Combine(dataFolder, "..", "TAKI\\SCREEN"));
-        var etcResFileName = PathHelper.GetEtcFileName(dataFolder);
-        EtcRes etcRes;
-
-        if (Path.GetFileName(etcResFileName).Contains("usa", StringComparison.InvariantCultureIgnoreCase))
-        {
-            etcRes = new EtcResUsa(etcResFileName);
-        }
-        else
-        {
-            etcRes = new EtcResR(etcResFileName);
-        }
-
-        var gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3, null);
+        var gameEngine = CreateGameEngine(gamePath, out var balanceBin, out var font3, out var etcRes);
         gameEngine.InitializeEngine();
 
         var alunCdExe = new AlunCdExe(gamePath);
@@ -56,7 +50,333 @@ internal class Program
         ExtractDataFromScreenFolder(font3, gameEngine.StaticVariables, extractionPath);
         ExtractDataFromEtcRes(etcRes, gameEngine.StaticVariables, extractionPath);
         var psxFramesPerSecond = etcRes is EtcResUsa ? 60 : 50;
-        ExtractDataFromDatasBin(datasBin, gameEngine.StaticVariables, extractionPath, psxFramesPerSecond);
+        ExtractDataFromDatasBin(gameEngine.DatasBin, gameEngine.StaticVariables, extractionPath, psxFramesPerSecond);
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static GameEngine CreateGameEngine(string gamePath, out BalanceBin balanceBin, out Font3 font3, out EtcRes etcRes)
+    {
+        var dataFolder = Path.Combine(gamePath, "DATA");
+        var datasBin = new DatasBin(Path.Combine(dataFolder, "DATAS.BIN"));
+        balanceBin = new BalanceBin(Path.Combine(dataFolder, "BALANCE.BIN"));
+        var soundBin = new SoundBin(Path.Combine(dataFolder, "SOUND.BIN"));
+        font3 = new Font3(Path.Combine(dataFolder, "..", "TAKI\\SCREEN"));
+        var etcResFileName = PathHelper.GetEtcFileName(dataFolder);
+        etcRes = Path.GetFileName(etcResFileName).Contains("usa", StringComparison.InvariantCultureIgnoreCase)
+            ? new EtcResUsa(etcResFileName)
+            : new EtcResR(etcResFileName);
+
+        return new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3, null);
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static void TraceBgm(string[] args)
+    {
+        if (args.Length < 3)
+        {
+            Console.WriteLine("Usage: AlundraDataExtractor --trace-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
+            return;
+        }
+
+        var soundBinPath = ResolveSoundBinPath(args[1]);
+        var outputPath = args[2];
+        var bgmIndex = ReadIntOption(args, "--bgm-index", 1);
+        var frames = ReadIntOption(args, "--frames", 600);
+
+        Directory.CreateDirectory(outputPath);
+
+        var gameEngine = CreateSoundOnlyGameEngine(soundBinPath);
+
+        var traceFileName = Path.Combine(outputPath, $"bgm_{bgmIndex:D3}_csharp_trace.jsonl");
+        using var writer = new StreamWriter(traceFileName) { AutoFlush = true };
+
+        WriteBgmTraceHeader(writer, gameEngine, bgmIndex, frames);
+        gameEngine.SoundManager.LoadMapSequence(bgmIndex, 1);
+        WriteBgmTraceFrame(writer, gameEngine, -1, "after-load");
+
+        for (var frame = 0; frame < frames; frame++)
+        {
+            gameEngine.SoundManager.AdvanceSoundFrame();
+            WriteBgmTraceFrame(writer, gameEngine, frame, "frame");
+        }
+
+        Console.WriteLine($"Trace BGM C# written to {traceFileName}");
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static string ResolveSoundBinPath(string inputPath)
+    {
+        if (File.Exists(inputPath))
+        {
+            return inputPath;
+        }
+
+        var directSoundBinPath = Path.Combine(inputPath, "SOUND.BIN");
+        if (File.Exists(directSoundBinPath))
+        {
+            return directSoundBinPath;
+        }
+
+        var dataSoundBinPath = Path.Combine(inputPath, "DATA", "SOUND.BIN");
+        if (File.Exists(dataSoundBinPath))
+        {
+            return dataSoundBinPath;
+        }
+
+        throw new FileNotFoundException("SOUND.BIN was not found from trace input path.", inputPath);
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static GameEngine CreateSoundOnlyGameEngine(string soundBinPath)
+    {
+        var soundBin = new SoundBin(soundBinPath);
+        soundBin.AttachPlaybackBackend(new TraceSoundPlaybackBackend());
+        var gameEngine = new GameEngine(null!, null!, soundBin, null!, null!, null);
+        gameEngine.StaticVariables.Initialize(gameEngine);
+        gameEngine.SoundManager.InitializeSoundSystem();
+        return gameEngine;
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static int ReadIntOption(string[] args, string optionName, int defaultValue)
+    {
+        for (var index = 0; index + 1 < args.Length; index++)
+        {
+            if (string.Equals(args[index], optionName, StringComparison.OrdinalIgnoreCase) && int.TryParse(args[index + 1], out var value))
+            {
+                return value;
+            }
+        }
+
+        return defaultValue;
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static void WriteBgmTraceHeader(TextWriter writer, GameEngine gameEngine, int bgmIndex, int frames)
+    {
+        var offsetIndex = bgmIndex * 3;
+        var sequenceOffset = SafeRead(gameEngine.SoundBin.MusicSeqVabOffsets, offsetIndex);
+        var vabHeaderOffset = SafeRead(gameEngine.SoundBin.MusicSeqVabOffsets, offsetIndex + 1);
+        var vabBodyOffset = SafeRead(gameEngine.SoundBin.MusicSeqVabOffsets, offsetIndex + 2);
+        var sequenceSectionIndex = Array.IndexOf(gameEngine.SoundBin.SequenceSectionOffsets, sequenceOffset);
+        var vabSectionIndex = Array.IndexOf(gameEngine.SoundBin.VabSectionOffsets, vabHeaderOffset);
+
+        WriteJsonLine(writer, new
+        {
+            eventName = "trace-start",
+            bgmIndex,
+            frames,
+            sequenceOffset,
+            vabHeaderOffset,
+            vabBodyOffset,
+            sequenceSectionIndex,
+            vabSectionIndex,
+            originalEntry = "DisplayDebugBgmMenu @ 0x8004A9D8 -> LoadMapSequence(index, 1)"
+        });
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static void WriteBgmTraceFrame(TextWriter writer, GameEngine gameEngine, int frame, string eventName)
+    {
+        var staticVariables = gameEngine.StaticVariables;
+        var seq = staticVariables.g_requestedSeqId >= 0 && staticVariables.g_requestedSeqId < staticVariables.g_sequenceStatePointers.Length
+            ? staticVariables.g_sequenceStatePointers[staticVariables.g_requestedSeqId]
+            : default;
+
+        WriteJsonLine(writer, new
+        {
+            eventName,
+            frame,
+            currentMapSoundIndex = staticVariables.g_currentMapSoundIndex,
+            currentVabId = staticVariables.g_currentVabId,
+            requestedSeqId = staticVariables.g_requestedSeqId,
+            sequenceSlotMask = staticVariables.g_sequenceSlotMask,
+            seqFlags = seq.Flags,
+            seqPosition = seq.SeqPosition,
+            seqDelay = seq.Delay,
+            seqTempo = seq.CurrentTempo,
+            seqMessageType = seq.MessageType,
+            seqChannel = seq.CurrentChannel,
+            seqVolumeLeft = seq.field_0x74,
+            seqVolumeRight = seq.field_0x76,
+            seqChannelMapping = ReadSequenceChannelMapping(seq, seq.CurrentChannel),
+            seqChannelVolume = ReadSequenceChannelVolume(seq, seq.CurrentChannel),
+            seqChannelOrientation = ReadSequenceChannelOrientation(seq, seq.CurrentChannel),
+            reverbMask = staticVariables.g_spuReverbAttr2.Mask,
+            reverbMode = staticVariables.g_spuReverbAttr2.Mode,
+            reverbDepthLeft = staticVariables.g_spuReverbAttr2.DepthLeft,
+            reverbDepthRight = staticVariables.g_spuReverbAttr2.DepthRight,
+            reverbDelay = staticVariables.g_spuReverbAttr2.Delay,
+            reverbFeedback = staticVariables.g_spuReverbAttr2.Feedback
+        });
+
+        var voiceCount = Math.Min(staticVariables.g_numberOfVoices, staticVariables.g_voiceRuntimeSlots.Length);
+        for (var voiceId = 0; voiceId < voiceCount; voiceId++)
+        {
+            ref var voiceSlot = ref staticVariables.g_voiceRuntimeSlots[voiceId];
+            var active = gameEngine.SoundBin.VoicesAreActive[voiceId] != 0 || voiceSlot.SequenceKey >= 0 || voiceSlot.field_0x00 != 0;
+            if (!active)
+            {
+                continue;
+            }
+
+            WriteJsonLine(writer, new
+            {
+                eventName = "voice",
+                frame,
+                voiceId,
+                backendActive = gameEngine.SoundBin.VoicesAreActive[voiceId],
+                voiceSlot.field_0x00,
+                voiceSlot.ReplacementAge,
+                voiceSlot.CurrentPitch,
+                voiceSlot.field_0x06,
+                voiceSlot.field_0x08,
+                voiceSlot.field_0x0A,
+                voiceSlot.Note,
+                voiceSlot.SequenceKey,
+                voiceSlot.VabFirstToneIndex,
+                voiceSlot.ProgramIndex,
+                voiceSlot.ToneIndex,
+                voiceSlot.VabId,
+                voiceSlot.Priority,
+                voiceSlot.NoiseState,
+                volumeLeft = staticVariables.g_spuVoiceVolumeLeft[voiceId],
+                volumeRight = staticVariables.g_spuVoiceVolumeRight[voiceId],
+                pitch = staticVariables.g_spuVoicePitch[voiceId],
+                adsr1 = staticVariables.g_spuVoiceAdsr1[voiceId],
+                adsr2 = staticVariables.g_spuVoiceAdsr2[voiceId],
+                reverb = staticVariables.g_spuVoiceReverb[voiceId],
+                dirtyFlags = staticVariables.g_spuVoiceDirtyFlags[voiceId]
+            });
+        }
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static int SafeRead(int[] values, int index)
+    {
+        return (uint)index < (uint)values.Length ? values[index] : -1;
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static void WriteJsonLine<T>(TextWriter writer, T value)
+    {
+        writer.WriteLine(JsonSerializer.Serialize(value, _jsonLineSerializerOptions));
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static byte ReadSequenceChannelMapping(SequenceTrackState seq, byte channel)
+    {
+        return channel switch
+        {
+            0 => seq.Channel0,
+            1 => seq.Channel1,
+            2 => seq.Channel2,
+            3 => seq.Channel3,
+            4 => seq.Channel4,
+            5 => seq.Channel5,
+            6 => seq.Channel6,
+            7 => seq.Channel7,
+            8 => seq.Channel8,
+            9 => seq.Channel9,
+            10 => seq.Channel10,
+            11 => seq.Channel11,
+            12 => seq.Channel12,
+            13 => seq.Channel13,
+            14 => seq.Channel14,
+            15 => seq.Channel15,
+            _ => 0
+        };
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static ushort ReadSequenceChannelVolume(SequenceTrackState seq, byte channel)
+    {
+        return channel switch
+        {
+            0 => seq.Volume0,
+            1 => seq.Volume1,
+            2 => seq.Volume2,
+            3 => seq.Volume3,
+            4 => seq.Volume4,
+            5 => seq.Volume5,
+            6 => seq.Volume6,
+            7 => seq.Volume7,
+            8 => seq.Volume8,
+            9 => seq.Volume9,
+            10 => seq.Volume10,
+            11 => seq.Volume11,
+            12 => seq.Volume12,
+            13 => seq.Volume13,
+            14 => seq.Volume14,
+            15 => seq.Volume15,
+            _ => 0
+        };
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static byte ReadSequenceChannelOrientation(SequenceTrackState seq, byte channel)
+    {
+        return channel switch
+        {
+            0 => seq.Orientation0,
+            1 => seq.Orientation1,
+            2 => seq.Orientation2,
+            3 => seq.Orientation3,
+            4 => seq.Orientation4,
+            5 => seq.Orientation5,
+            6 => seq.Orientation6,
+            7 => seq.Orientation7,
+            8 => seq.Orientation8,
+            9 => seq.Orientation9,
+            10 => seq.Orientation10,
+            11 => seq.Orientation11,
+            12 => seq.Orientation12,
+            13 => seq.Orientation13,
+            14 => seq.Orientation14,
+            15 => seq.Orientation15,
+            _ => 0
+        };
+    }
+
+    private sealed class TraceSoundPlaybackBackend : ISoundPlaybackBackend
+    {
+        private readonly byte[] _playing = new byte[24];
+
+        // JUSTIFICATION: backend desktop adaptation only
+        public bool Play(Stream stream, int voiceId, bool shouldLoop, int loopStartSample, int loopEndSample)
+        {
+            if ((uint)voiceId < (uint)_playing.Length)
+            {
+                _playing[voiceId] = 1;
+            }
+
+            return true;
+        }
+
+        // JUSTIFICATION: backend desktop adaptation only
+        public void Stop(int voiceId)
+        {
+            if ((uint)voiceId < (uint)_playing.Length)
+            {
+                _playing[voiceId] = 0;
+            }
+        }
+
+        // JUSTIFICATION: backend desktop adaptation only
+        public bool IsPlaying(int voiceId)
+        {
+            return (uint)voiceId < (uint)_playing.Length && _playing[voiceId] != 0;
+        }
+
+        // JUSTIFICATION: backend desktop adaptation only
+        public void UpdateVoiceStereoVolume(int voiceId, short volumeLeft, short volumeRight)
+        {
+        }
+
+        // JUSTIFICATION: backend desktop adaptation only
+        public void UpdateVoicePitch(int voiceId, short pitch)
+        {
+        }
     }
 
     private static void ExtractDataFromAlunCdExe(AlunCdExe alunCdExe, string extractionPath)

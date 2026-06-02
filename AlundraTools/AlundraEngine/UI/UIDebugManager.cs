@@ -396,7 +396,7 @@ public class UIDebugManager
     }
 
     //8004a8a8
-    public void InitializeDebugMenuSound(CallBackInfo callBackInfo)
+    public void InitializeDebugSfxMenu(CallBackInfo callBackInfo)
     {
         Breakpoint.TriggerBreak();
 
@@ -407,7 +407,7 @@ public class UIDebugManager
         //strcpy(acStack_68, g_numberCharacterJpArray[0]);
         //strcat(acStack_68, g_numberCharacterJpArray[((int)g_debugSoundMenuSoundIndex / 10) % 10]);
         //strcat(acStack_68, g_numberCharacterJpArray[(int)g_debugSoundMenuSoundIndex % 10]);
-        //callBackInfo.RenderFunc = DisplayDebugMenuSound;
+        //callBackInfo.RenderFunc = DisplayDebugSfxMenu;
         //return 1;
     }
 
