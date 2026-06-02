@@ -244,8 +244,6 @@ public static class TiledMapExporter
     private static TiledMapJson CreateMapJson(GameMap gameMap, int mapIndex, TiledTileCatalog catalog, string tilesetFileName, string companionFileName)
     {
         var layers = CreateRendererOrderedTileLayers(gameMap, catalog, 1);
-        layers.Add(CreateGroundLayer(gameMap, catalog, layers.Count + 1, false));
-        layers.AddRange(CreateWallLayers(gameMap, catalog, layers.Count + 1, false));
         layers.Add(CreatePortalLayer(gameMap, layers.Count + 1, 1));
         layers.Add(CreateMapEventLayer(gameMap, layers.Count + 1, GetNextObjectId(layers)));
         layers.Add(CreateEntityLayer(gameMap, layers.Count + 1, GetNextObjectId(layers)));
@@ -274,7 +272,7 @@ public static class TiledMapExporter
                 TiledProperty.String("SourceFileName", $"map_{mapIndex}.json"),
                 TiledProperty.File("SourceJson", $"../map_{mapIndex}.json"),
                 TiledProperty.File("AlundraCompanionJson", companionFileName.Replace('\\', '/')),
-                TiledProperty.String("TileLayerPlacement", "Render_* layers are visible and minimally packed by renderer draw order; Ground/Walls_* layers are hidden raw data layers"),
+                TiledProperty.String("TileLayerPlacement", "Render_* layers are visible and minimally packed by renderer draw order; raw ground/wall data are stored in AlundraCompanionJson"),
                 TiledProperty.String("WallLayerPlacement", "renderer target cell; source cell and wall offset data are stored in AlundraCompanionJson"),
                 TiledProperty.Int("MapIndex", mapIndex),
                 TiledProperty.Int("MapId", Convert.ToInt32(gameMap.Info.MapId)),
@@ -384,94 +382,6 @@ public static class TiledMapExporter
                 TiledProperty.String("MergeStrategy", "minimum visible layer count; extra planes only when multiple renderer tiles target the same cell")
             ]
         };
-    }
-
-    private static TiledLayerJson CreateGroundLayer(GameMap gameMap, TiledTileCatalog catalog, int layerId, bool visible = true)
-    {
-        var map = gameMap.Map;
-        var data = new int[map.MapTiles.Length];
-
-        for (var index = 0; index < map.MapTiles.Length; index++)
-        {
-            data[index] = catalog.GetGidOrEmpty(map.MapTiles[index].TileId);
-        }
-
-        return new TiledLayerJson
-        {
-            Id = layerId,
-            Name = "Ground",
-            Type = "tilelayer",
-            Width = map.Width,
-            Height = map.Height,
-            Visible = visible,
-            Data = data,
-            Properties =
-            [
-                TiledProperty.String("Role", "raw logical data")
-            ]
-        };
-    }
-
-    private static List<TiledLayerJson> CreateWallLayers(GameMap gameMap, TiledTileCatalog catalog, int firstLayerId, bool visible = true)
-    {
-        var map = gameMap.Map;
-        var maxWallCount = map.MapTiles
-            .Where(tile => tile.WallTiles != null)
-            .Select(tile => (int)tile.WallTiles!.Count)
-            .DefaultIfEmpty(0)
-            .Max();
-        var layers = new List<TiledLayerJson>(maxWallCount);
-
-        for (var stackIndex = 0; stackIndex < maxWallCount; stackIndex++)
-        {
-            var data = new int[map.MapTiles.Length];
-
-            for (var index = 0; index < map.MapTiles.Length; index++)
-            {
-                var mapTile = map.MapTiles[index];
-                var wallTiles = mapTile.WallTiles;
-
-                if (wallTiles?.Tiles == null || stackIndex >= wallTiles.Tiles.Length)
-                {
-                    continue;
-                }
-
-                var wallTileId = wallTiles.Tiles[stackIndex];
-                if (wallTileId == EmptyTileId)
-                {
-                    continue;
-                }
-
-                var targetY = index / map.Width - mapTile.Height - wallTiles.Offset + stackIndex + 1;
-
-                if (targetY < 0 || targetY >= map.Height)
-                {
-                    continue;
-                }
-
-                var targetIndex = targetY * map.Width + index % map.Width;
-                data[targetIndex] = catalog.GetGidOrEmpty(wallTileId);
-            }
-
-            layers.Add(new TiledLayerJson
-            {
-                Id = firstLayerId + stackIndex,
-                Name = $"Walls_{stackIndex}",
-                Type = "tilelayer",
-                Width = map.Width,
-                Height = map.Height,
-                Visible = visible,
-                Data = data,
-                Properties =
-                [
-                    TiledProperty.Int("StackIndex", stackIndex),
-                    TiledProperty.String("Placement", "renderer target cell"),
-                    TiledProperty.String("RendererYFormula", "(Y - Height - WallTiles.Offset + StackIndex + 1) * TileHeight")
-                ]
-            });
-        }
-
-        return layers;
     }
 
     private static TiledLayerJson CreatePortalLayer(GameMap gameMap, int layerId, int firstObjectId)

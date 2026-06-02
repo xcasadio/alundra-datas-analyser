@@ -137,43 +137,10 @@ foreach ($layer in @($map.layers | Where-Object { $_.type -eq "tilelayer" })) {
     }
 }
 
-foreach ($wallLayer in @($map.layers | Where-Object { $_.name -like "Walls_*" })) {
-    $expectedData = New-Object 'int[]' $cellCount
-    $stackIndex = [int]($wallLayer.name -replace '^Walls_', '')
-
-    foreach ($cell in @($companion.cells)) {
-        if ($null -eq $cell.wallTiles -or $stackIndex -ge @($cell.wallTiles.tiles).Count) {
-            continue
-        }
-
-        $rawTileId = [int]$cell.wallTiles.tiles[$stackIndex]
-        if ($rawTileId -eq 65535) {
-            continue
-        }
-
-        $targetY = [int]$cell.y - [int]$cell.height - [int]$cell.wallTiles.offset + $stackIndex + 1
-        if ($targetY -lt 0 -or $targetY -ge [int]$map.height) {
-            continue
-        }
-
-        Assert-True ($gidByRawTileId.ContainsKey([string]$rawTileId)) "Wall layer '$($wallLayer.name)' references raw tile id $rawTileId missing from tileset"
-        $targetIndex = $targetY * [int]$map.width + [int]$cell.x
-        $expectedData[$targetIndex] = [int]$gidByRawTileId[[string]$rawTileId]
-    }
-
-    for ($index = 0; $index -lt $cellCount; $index++) {
-        Assert-True ([int]$wallLayer.data[$index] -eq $expectedData[$index]) "Wall layer '$($wallLayer.name)' mismatch at cell index $index"
-    }
-}
-
 $renderLayers = @($map.layers | Where-Object { $_.name -match '^Render_\d+$' })
 Assert-True ($renderLayers.Count -gt 0) "Expected visible renderer-packed Render_* layers"
-
-$rawGroundLayer = Get-LayerByName $map "Ground"
-Assert-True ($rawGroundLayer.visible -eq $false) "Raw Ground layer must be hidden; visible Render_* layers provide game renderer ordering"
-foreach ($wallLayer in @($map.layers | Where-Object { $_.name -like "Walls_*" })) {
-    Assert-True ($wallLayer.visible -eq $false) "Raw wall layer '$($wallLayer.name)' must be hidden; visible Render_* layers provide game renderer ordering"
-}
+Assert-True (@($map.layers | Where-Object { $_.name -eq "Ground" }).Count -eq 0) "Ground must not be exported as a Tiled layer; raw data belong in the companion JSON"
+Assert-True (@($map.layers | Where-Object { $_.name -like "Walls_*" }).Count -eq 0) "Walls_* must not be exported as Tiled layers; raw data belong in the companion JSON"
 
 function Add-ExpectedRenderTile {
     param(

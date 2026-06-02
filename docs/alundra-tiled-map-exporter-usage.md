@@ -30,12 +30,12 @@ Pop-Location
 
 Pour chaque carte `map_N`, les fichiers Tiled sont ecrits dans `<sortie>\data\tiled` :
 
-- `map_N.tmj` : carte Tiled JSON, avec les couches visibles `Render_*`, les couches brutes masquees `Ground`/`Walls_*`, puis `Portals`, `MapEvents` et `Entities`.
+- `map_N.tmj` : carte Tiled JSON, avec les couches visibles `Render_*`, puis `Portals`, `MapEvents` et `Entities`.
 - `map_N_tileset.tsj` : tileset Tiled JSON externe, avec les proprietes brutes `TileId`, `Palette`, `Tile` et les animations de tiles quand elles sont disponibles.
 - `map_N_tileset.png` : tileset compact genere pour Tiled.
 - `map_N.alundra.json` : compagnon brut Alundra pour les donnees qui ne rentrent pas proprement dans les couches natives Tiled.
 
-Le compagnon brut conserve notamment les donnees par cellule (`Walkability`, `GroundProperty`, `Slope`, `Height`, `WallTilesOffset`, `TileId`, `Palette`, `Tile`, `Flags`) et les piles de murs (`Offset`, `Count`, ids de tiles bruts, positions renderer calculees). Les couches visibles `Render_*` sont un packing minimal de l'ordre de rendu du jeu. Une couche supplementaire n'est creee que lorsque plusieurs tiles ciblent la meme cellule Tiled ; chaque couche expose un `Z`/`RenderPlane` custom. Les couches `Ground` et `Walls_*` restent presentes mais masquees pour conserver les donnees brutes et les positions renderer calculees.
+Le compagnon brut conserve notamment les donnees par cellule (`Walkability`, `GroundProperty`, `Slope`, `Height`, `WallTilesOffset`, `TileId`, `Palette`, `Tile`, `Flags`) et les piles de murs (`Offset`, `Count`, ids de tiles bruts, positions renderer calculees). Les couches visibles `Render_*` sont un packing minimal de l'ordre de rendu du jeu. Une couche supplementaire n'est creee que lorsque plusieurs tiles ciblent la meme cellule Tiled ; chaque couche expose un `Z`/`RenderPlane` custom. Les donnees brutes `Ground` et `Walls_*` ne sont plus exportees comme couches Tiled et restent uniquement dans le fichier compagnon.
 
 Les animations de tiles Tiled utilisent des durees en millisecondes. La duree brute Alundra `FrameDuration` est conservee dans `AnimationFrameDurationPsxFrames`, puis convertie avec la frequence PSX de l'extraction (`50 Hz` pour les donnees PAL, `60 Hz` pour les donnees USA). Par exemple, une duree brute de `8` frames PAL devient `160` ms dans les entrees `animation[].duration`.
 
