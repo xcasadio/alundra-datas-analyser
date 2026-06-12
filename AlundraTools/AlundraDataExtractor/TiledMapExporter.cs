@@ -20,23 +20,24 @@ public static class TiledMapExporter
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
 
-    public static void ExportMap(GameMap gameMap, int mapId, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors, int psxFramesPerSecond = 50)
+    public static void ExportMap(GameMap gameMap, int mapId, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors, int psxFramesPerSecond = 50, TiledTilesetLayoutMode tilesetLayoutMode = TiledTilesetLayoutMode.Compact)
     {
         var tiledPath = Path.Combine(extractionPath, "tiled");
         Directory.CreateDirectory(tiledPath);
 
         var catalog = CreateTileCatalog(gameMap, tileAnimDescriptors);
+        var tilesetLayout = catalog.CreateTilesetLayout(tilesetLayoutMode);
         var tilesetImageFileName = $"map_{mapId}_tileset.png";
         var tilesetFileName = $"map_{mapId}_tileset.tsj";
         var companionFileName = $"map_{mapId}.alundra.json";
-        var tilesetLayout = SaveCompactTilesetImage(gameMap, catalog, Path.Combine(tiledPath, tilesetImageFileName));
-        var tilesetJson = CreateTilesetJson(gameMap, mapId, catalog, tilesetImageFileName, tilesetLayout, tileAnimDescriptors, psxFramesPerSecond);
+        SaveTilesetImage(gameMap, tilesetLayout, Path.Combine(tiledPath, tilesetImageFileName));
+        var tilesetJson = CreateTilesetJson(gameMap, mapId, tilesetLayout, tilesetImageFileName, tileAnimDescriptors, psxFramesPerSecond);
         File.WriteAllText(Path.Combine(tiledPath, tilesetFileName), JsonSerializer.Serialize(tilesetJson, TiledJsonOptions));
 
         var companionJson = CreateCompanionJson(gameMap, mapId);
         File.WriteAllText(Path.Combine(tiledPath, companionFileName), JsonSerializer.Serialize(companionJson, TiledJsonOptions));
 
-        var mapJson = CreateMapJson(gameMap, mapId, catalog, tilesetFileName, companionFileName);
+        var mapJson = CreateMapJson(gameMap, mapId, tilesetLayout, tilesetFileName, companionFileName);
         File.WriteAllText(Path.Combine(tiledPath, $"map_{mapId}.tmj"), JsonSerializer.Serialize(mapJson, TiledJsonOptions));
     }
 
@@ -101,30 +102,21 @@ public static class TiledMapExporter
         }
     }
 
-    private static TiledTilesetLayout SaveCompactTilesetImage(GameMap gameMap, TiledTileCatalog catalog, string fileName)
+    private static void SaveTilesetImage(GameMap gameMap, TiledTilesetLayout tilesetLayout, string fileName)
     {
-        var tileCount = catalog.Entries.Count;
-        var columns = tileCount == 0 ? 1 : Math.Min(TilesetColumns, tileCount);
-        var rows = Math.Max(1, (tileCount + columns - 1) / columns);
-        var imageWidth = columns * StaticVariables.MapTileWidth;
-        var imageHeight = rows * StaticVariables.MapTileHeight;
-
-        using var bitmap = new Bitmap(imageWidth, imageHeight);
+        using var bitmap = new Bitmap(tilesetLayout.ImageWidth, tilesetLayout.ImageHeight);
         using var graphics = Graphics.FromImage(bitmap);
         graphics.Clear(Color.Transparent);
 
-        foreach (var entry in catalog.Entries)
+        foreach (var entry in tilesetLayout.Entries)
         {
-            var x = entry.LocalTileId % columns * StaticVariables.MapTileWidth;
-            var y = entry.LocalTileId / columns * StaticVariables.MapTileHeight;
-            graphics.DrawImage(gameMap.GetTileBitmap(entry.RawTileId), x, y, StaticVariables.MapTileWidth, StaticVariables.MapTileHeight);
+            graphics.DrawImage(gameMap.GetTileBitmap(entry.RawTileId), entry.ImageX, entry.ImageY, StaticVariables.MapTileWidth, StaticVariables.MapTileHeight);
         }
 
         bitmap.Save(fileName, ImageFormat.Png);
-        return new TiledTilesetLayout(columns, tileCount, imageWidth, imageHeight);
     }
 
-    private static TiledTilesetJson CreateTilesetJson(GameMap gameMap, int mapId, TiledTileCatalog catalog, string imageFileName, TiledTilesetLayout layout, TileAnimDescriptor[]? tileAnimDescriptors, int psxFramesPerSecond)
+    private static TiledTilesetJson CreateTilesetJson(GameMap gameMap, int mapId, TiledTilesetLayout tilesetLayout, string imageFileName, TileAnimDescriptor[]? tileAnimDescriptors, int psxFramesPerSecond)
     {
         return new TiledTilesetJson
         {
@@ -133,18 +125,18 @@ public static class TiledMapExporter
             Name = $"map_{mapId}_tileset",
             TileWidth = StaticVariables.MapTileWidth,
             TileHeight = StaticVariables.MapTileHeight,
-            Columns = layout.Columns,
-            TileCount = layout.TileCount,
+            Columns = tilesetLayout.Columns,
+            TileCount = tilesetLayout.TileCount,
             Image = imageFileName.Replace('\\', '/'),
-            ImageWidth = layout.ImageWidth,
-            ImageHeight = layout.ImageHeight,
-            Tiles = catalog.Entries
-                .Select(entry => CreateTileJson(gameMap, catalog, entry, tileAnimDescriptors, psxFramesPerSecond))
+            ImageWidth = tilesetLayout.ImageWidth,
+            ImageHeight = tilesetLayout.ImageHeight,
+            Tiles = tilesetLayout.Entries
+                .Select(entry => CreateTileJson(gameMap, tilesetLayout, entry, tileAnimDescriptors, psxFramesPerSecond))
                 .ToList()
         };
     }
 
-    private static TiledTileJson CreateTileJson(GameMap gameMap, TiledTileCatalog catalog, TiledTileCatalogEntry entry, TileAnimDescriptor[]? tileAnimDescriptors, int psxFramesPerSecond)
+    private static TiledTileJson CreateTileJson(GameMap gameMap, TiledTilesetLayout tilesetLayout, TiledTilesetLayoutEntry entry, TileAnimDescriptor[]? tileAnimDescriptors, int psxFramesPerSecond)
     {
         var properties = new List<TiledProperty>
         {
@@ -153,7 +145,7 @@ public static class TiledMapExporter
             TiledProperty.Int("Tile", entry.Tile)
         };
         var animationSource = GetTileAnimationSource(gameMap, entry.RawTileId, tileAnimDescriptors);
-        var animation = CreateTileAnimationFrames(catalog, entry.RawTileId, animationSource, psxFramesPerSecond);
+        var animation = CreateTileAnimationFrames(tilesetLayout, entry.RawTileId, animationSource, psxFramesPerSecond);
 
         if (animationSource != null && animation != null)
         {
@@ -175,7 +167,7 @@ public static class TiledMapExporter
         };
     }
 
-    private static List<TiledTileAnimationFrameJson>? CreateTileAnimationFrames(TiledTileCatalog catalog, ushort rawTileId, TiledTileAnimationSource? animationSource, int psxFramesPerSecond)
+    private static List<TiledTileAnimationFrameJson>? CreateTileAnimationFrames(TiledTilesetLayout tilesetLayout, ushort rawTileId, TiledTileAnimationSource? animationSource, int psxFramesPerSecond)
     {
         if (animationSource == null)
         {
@@ -188,7 +180,7 @@ public static class TiledMapExporter
         for (var frame = 0; frame < animationSource.Entry.NumberOfFrame; frame++)
         {
             var animationFrameRawTileId = (ushort)(rawTileId + frame * animationSource.Entry.TileHeight);
-            if (!catalog.TryGetLocalTileId(animationFrameRawTileId, out var localTileId))
+            if (!tilesetLayout.TryGetLocalTileId(animationFrameRawTileId, out var localTileId))
             {
                 return null;
             }
@@ -241,9 +233,9 @@ public static class TiledMapExporter
         return new TiledTileAnimationSource(spriteIndex, entry);
     }
 
-    private static TiledMapJson CreateMapJson(GameMap gameMap, int mapIndex, TiledTileCatalog catalog, string tilesetFileName, string companionFileName)
+    private static TiledMapJson CreateMapJson(GameMap gameMap, int mapIndex, TiledTilesetLayout tilesetLayout, string tilesetFileName, string companionFileName)
     {
-        var layers = CreateRendererOrderedTileLayers(gameMap, catalog, 1);
+        var layers = CreateRendererOrderedTileLayers(gameMap, tilesetLayout, 1);
         layers.Add(CreatePortalLayer(gameMap, layers.Count + 1, 1));
         layers.Add(CreateMapEventLayer(gameMap, layers.Count + 1, GetNextObjectId(layers)));
         layers.Add(CreateEntityLayer(gameMap, layers.Count + 1, GetNextObjectId(layers)));
@@ -272,6 +264,7 @@ public static class TiledMapExporter
                 TiledProperty.String("SourceFileName", $"map_{mapIndex}.json"),
                 TiledProperty.File("SourceJson", $"../map_{mapIndex}.json"),
                 TiledProperty.File("AlundraCompanionJson", companionFileName.Replace('\\', '/')),
+                TiledProperty.String("TilesetLayoutMode", tilesetLayout.ModeId),
                 TiledProperty.String("TileLayerPlacement", "Render_* layers are visible and minimally packed by renderer draw order; raw ground/wall data are stored in AlundraCompanionJson"),
                 TiledProperty.String("WallLayerPlacement", "renderer target cell; source cell and wall offset data are stored in AlundraCompanionJson"),
                 TiledProperty.Int("MapIndex", mapIndex),
@@ -291,7 +284,7 @@ public static class TiledMapExporter
         };
     }
 
-    private static List<TiledLayerJson> CreateRendererOrderedTileLayers(GameMap gameMap, TiledTileCatalog catalog, int firstLayerId)
+    private static List<TiledLayerJson> CreateRendererOrderedTileLayers(GameMap gameMap, TiledTilesetLayout tilesetLayout, int firstLayerId)
     {
         var map = gameMap.Map;
         var layerDataByPlane = new List<int[]>();
@@ -304,7 +297,7 @@ public static class TiledMapExporter
                 var mapTile = map.MapTiles[sourceIndex];
                 if (mapTile.TileId != EmptyTileId)
                 {
-                    AddRendererTile(layerDataByPlane, map.Width, map.Height, sourceX, sourceY - mapTile.Height, catalog.GetGidOrEmpty(mapTile.TileId));
+                    AddRendererTile(layerDataByPlane, map.Width, map.Height, sourceX, sourceY - mapTile.Height, tilesetLayout.GetGidOrEmpty(mapTile.TileId));
                 }
 
                 var wallTiles = mapTile.WallTiles;
@@ -322,7 +315,7 @@ public static class TiledMapExporter
                     }
 
                     var targetY = sourceY - mapTile.Height - wallTiles.Offset + stackIndex + 1;
-                    AddRendererTile(layerDataByPlane, map.Width, map.Height, sourceX, targetY, catalog.GetGidOrEmpty(wallTileId));
+                    AddRendererTile(layerDataByPlane, map.Width, map.Height, sourceX, targetY, tilesetLayout.GetGidOrEmpty(wallTileId));
                 }
             }
         }
@@ -810,8 +803,6 @@ public sealed class TiledObjectJson
     public List<TiledProperty> Properties { get; init; } = [];
 }
 
-public sealed record TiledTilesetLayout(int Columns, int TileCount, int ImageWidth, int ImageHeight);
-
 public sealed class TiledTilesetJson
 {
     [JsonPropertyName("type")]
@@ -905,14 +896,17 @@ public sealed class TiledProperty
     }
 }
 
+public enum TiledTilesetLayoutMode
+{
+    Original,
+    Compact
+}
+
 public sealed class TiledTileCatalog
 {
-    private readonly Dictionary<ushort, TiledTileCatalogEntry> _entriesByRawTileId;
-
     private TiledTileCatalog(TiledTileCatalogEntry[] entries)
     {
         Entries = entries;
-        _entriesByRawTileId = entries.ToDictionary(entry => entry.RawTileId);
     }
 
     public IReadOnlyList<TiledTileCatalogEntry> Entries { get; }
@@ -923,10 +917,8 @@ public sealed class TiledTileCatalog
             .Where(rawTileId => rawTileId != 0xffff)
             .Distinct()
             .OrderBy(rawTileId => rawTileId)
-            .Select((rawTileId, index) => new TiledTileCatalogEntry(
+            .Select(rawTileId => new TiledTileCatalogEntry(
                 rawTileId,
-                index,
-                index + 1,
                 (rawTileId & 0xf000) >> 12,
                 rawTileId & 0x3ff))
             .ToArray();
@@ -934,9 +926,56 @@ public sealed class TiledTileCatalog
         return new TiledTileCatalog(entries);
     }
 
+    public TiledTilesetLayout CreateTilesetLayout(TiledTilesetLayoutMode mode)
+    {
+        return TiledTilesetLayout.Create(this, mode);
+    }
+}
+
+public sealed class TiledTilesetLayout
+{
+    private const ushort EmptyRawTileId = 0xffff;
+    private const int CompactColumns = 16;
+    private readonly Dictionary<ushort, TiledTilesetLayoutEntry> _entriesByRawTileId;
+
+    private TiledTilesetLayout(TiledTilesetLayoutMode mode, TiledTilesetLayoutEntry[] entries, int columns, int tileCount, int imageWidth, int imageHeight)
+    {
+        Mode = mode;
+        Entries = entries;
+        Columns = columns;
+        TileCount = tileCount;
+        ImageWidth = imageWidth;
+        ImageHeight = imageHeight;
+        _entriesByRawTileId = entries.ToDictionary(entry => entry.RawTileId);
+    }
+
+    public TiledTilesetLayoutMode Mode { get; }
+
+    public string ModeId => Mode.ToString().ToLowerInvariant();
+
+    public IReadOnlyList<TiledTilesetLayoutEntry> Entries { get; }
+
+    public int Columns { get; }
+
+    public int TileCount { get; }
+
+    public int ImageWidth { get; }
+
+    public int ImageHeight { get; }
+
+    public static TiledTilesetLayout Create(TiledTileCatalog catalog, TiledTilesetLayoutMode mode)
+    {
+        return mode switch
+        {
+            TiledTilesetLayoutMode.Original => CreateOriginal(catalog),
+            TiledTilesetLayoutMode.Compact => CreateCompact(catalog),
+            _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, "Unsupported tileset layout mode")
+        };
+    }
+
     public int GetGidOrEmpty(ushort rawTileId)
     {
-        return rawTileId == 0xffff ? 0 : _entriesByRawTileId[rawTileId].Gid;
+        return rawTileId == EmptyRawTileId ? 0 : _entriesByRawTileId[rawTileId].Gid;
     }
 
     public bool TryGetLocalTileId(ushort rawTileId, out int localTileId)
@@ -950,13 +989,78 @@ public sealed class TiledTileCatalog
         localTileId = 0;
         return false;
     }
+
+    private static TiledTilesetLayout CreateCompact(TiledTileCatalog catalog)
+    {
+        var tileCount = catalog.Entries.Count;
+        var columns = tileCount == 0 ? 1 : Math.Min(CompactColumns, tileCount);
+        var rows = Math.Max(1, (tileCount + columns - 1) / columns);
+        var imageWidth = columns * StaticVariables.MapTileWidth;
+        var imageHeight = rows * StaticVariables.MapTileHeight;
+        var entries = catalog.Entries
+            .Select((entry, index) => new TiledTilesetLayoutEntry(
+                entry.RawTileId,
+                index,
+                index + 1,
+                entry.Palette,
+                entry.Tile,
+                index % columns * StaticVariables.MapTileWidth,
+                index / columns * StaticVariables.MapTileHeight))
+            .ToArray();
+
+        return new TiledTilesetLayout(TiledTilesetLayoutMode.Compact, entries, columns, tileCount, imageWidth, imageHeight);
+    }
+
+    private static TiledTilesetLayout CreateOriginal(TiledTileCatalog catalog)
+    {
+        var rawTileIdByLocalTileId = new Dictionary<int, ushort>();
+        var entries = new List<TiledTilesetLayoutEntry>(catalog.Entries.Count);
+
+        foreach (var entry in catalog.Entries)
+        {
+            if (!GameMapTilesheetLayout.TryGetOriginalLocalTileId(entry.RawTileId, out var localTileId))
+            {
+                throw new InvalidOperationException($"Raw tile id 0x{entry.RawTileId:x4} is outside the original map tilesheet layout");
+            }
+
+            if (rawTileIdByLocalTileId.TryGetValue(localTileId, out var existingRawTileId))
+            {
+                throw new InvalidOperationException($"Raw tile ids 0x{existingRawTileId:x4} and 0x{entry.RawTileId:x4} collide on original map tilesheet slot {localTileId}");
+            }
+
+            rawTileIdByLocalTileId.Add(localTileId, entry.RawTileId);
+            entries.Add(new TiledTilesetLayoutEntry(
+                entry.RawTileId,
+                localTileId,
+                localTileId + 1,
+                entry.Palette,
+                entry.Tile,
+                GameMapTilesheetLayout.GetTileX(localTileId),
+                GameMapTilesheetLayout.GetTileY(localTileId)));
+        }
+
+        return new TiledTilesetLayout(
+            TiledTilesetLayoutMode.Original,
+            entries.OrderBy(entry => entry.LocalTileId).ToArray(),
+            GameMapTilesheetLayout.OriginalColumns,
+            GameMapTilesheetLayout.OriginalTileCount,
+            GameMapTilesheetLayout.OriginalImageWidth,
+            GameMapTilesheetLayout.OriginalImageHeight);
+    }
 }
 
 public sealed record TiledTileAnimationSource(int SpriteIndex, SpriteMapEntry Entry);
 
 public sealed record TiledTileCatalogEntry(
     ushort RawTileId,
+    int Palette,
+    int Tile);
+
+public sealed record TiledTilesetLayoutEntry(
+    ushort RawTileId,
     int LocalTileId,
     int Gid,
     int Palette,
-    int Tile);
+    int Tile,
+    int ImageX,
+    int ImageY);

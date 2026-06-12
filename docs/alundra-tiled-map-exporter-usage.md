@@ -12,6 +12,18 @@ dotnet ..\AlundraDataExtractor\bin\Debug\net9.0-windows\AlundraDataExtractor.dll
 Pop-Location
 ```
 
+Le layout de tileset Tiled par defaut est `compact`. Il packe uniquement les tiles utilisees et reste le mode de rendu Tiled fiable quand plusieurs `rawTileId` reutilisent le meme slot historique avec des palettes differentes.
+
+Pour forcer le layout historique `original`, ajouter l'option suivante :
+
+```powershell
+Push-Location AlundraTools\AlundraTools
+dotnet ..\AlundraDataExtractor\bin\Debug\net9.0-windows\AlundraDataExtractor.dll "D:\development\repo\Alundra Remake\Alundra (France)\Alundra (France)_extracted" "D:\development\repo\Alundra Remake\remaster-data-extracted" --tiled-tileset-layout original
+Pop-Location
+```
+
+Le mode `original` reprend exactement le layout historique de `map_N_tilesheet.png`, y compris les trous inutilises. Il echoue explicitement si une carte reutilise le meme slot historique pour plusieurs `rawTileId` distincts, car ce tilesheet ne peut alors pas representer toutes les variantes sans perte.
+
 Les deux arguments sont :
 
 - le dossier des donnees extraites du disque original ;
@@ -32,10 +44,10 @@ Pour chaque carte `map_N`, les fichiers Tiled sont ecrits dans `<sortie>\data\ti
 
 - `map_N.tmj` : carte Tiled JSON, avec les couches visibles `Render_*`, puis `Portals`, `MapEvents` et `Entities`.
 - `map_N_tileset.tsj` : tileset Tiled JSON externe, avec les proprietes brutes `TileId`, `Palette`, `Tile` et les animations de tiles quand elles sont disponibles.
-- `map_N_tileset.png` : tileset compact genere pour Tiled.
+- `map_N_tileset.png` : tileset Tiled. Par defaut il repacke uniquement les tiles utilisees ; le mode optionnel `original` reprend exactement le layout historique du tilesheet de carte, avec ses trous, quand la carte ne reutilise pas le meme slot pour plusieurs variants bruts.
 - `map_N.alundra.json` : compagnon brut Alundra pour les donnees qui ne rentrent pas proprement dans les couches natives Tiled.
 
-Le compagnon brut conserve notamment les donnees par cellule (`Walkability`, `GroundProperty`, `Slope`, `Height`, `WallTilesOffset`, `TileId`, `Palette`, `Tile`, `Flags`) et les piles de murs (`Offset`, `Count`, ids de tiles bruts, positions renderer calculees). Les couches visibles `Render_*` sont un packing minimal de l'ordre de rendu du jeu. Une couche supplementaire n'est creee que lorsque plusieurs tiles ciblent la meme cellule Tiled ; chaque couche expose un `Z`/`RenderPlane` custom. Les donnees brutes `Ground` et `Walls_*` ne sont plus exportees comme couches Tiled et restent uniquement dans le fichier compagnon.
+Le compagnon brut conserve notamment les donnees par cellule (`Walkability`, `GroundProperty`, `Slope`, `Height`, `WallTilesOffset`, `TileId`, `Palette`, `Tile`, `Flags`) et les piles de murs (`Offset`, `Count`, ids de tiles bruts, positions renderer calculees). Les couches visibles `Render_*` sont un packing minimal de l'ordre de rendu du jeu. Une couche supplementaire n'est creee que lorsque plusieurs tiles ciblent la meme cellule Tiled ; chaque couche expose un `Z`/`RenderPlane` custom. Les donnees brutes `Ground` et `Walls_*` ne sont plus exportees comme couches Tiled et restent uniquement dans le fichier compagnon. Le tileset Tiled peut suivre soit le layout historique `original`, soit le layout `compact`; dans les deux cas, le mapping `TileId` brut vers gid Tiled reste explicite dans le `.tsj`.
 
 Les animations de tiles Tiled utilisent des durees en millisecondes. La duree brute Alundra `FrameDuration` est conservee dans `AnimationFrameDurationPsxFrames`, puis convertie avec la frequence PSX de l'extraction (`50 Hz` pour les donnees PAL, `60 Hz` pour les donnees USA). Par exemple, une duree brute de `8` frames PAL devient `160` ms dans les entrees `animation[].duration`.
 

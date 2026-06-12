@@ -28,10 +28,17 @@ internal class Program
             return;
         }
 
+        if (args.Length > 0 && string.Equals(args[0], "--render-bgm", StringComparison.OrdinalIgnoreCase))
+        {
+            RenderBgm(args);
+            return;
+        }
+
         if (args.Length < 2)
         {
-            Console.WriteLine("Usage: AlundraDataExtractor <gamePath> <extractionPath>");
+            Console.WriteLine("Usage: AlundraDataExtractor <gamePath> <extractionPath> [--tiled-tileset-layout original|compact]");
             Console.WriteLine("       AlundraDataExtractor --trace-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
+            Console.WriteLine("       AlundraDataExtractor --render-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
             return;
         }
 
@@ -50,7 +57,8 @@ internal class Program
         ExtractDataFromScreenFolder(font3, gameEngine.StaticVariables, extractionPath);
         ExtractDataFromEtcRes(etcRes, gameEngine.StaticVariables, extractionPath);
         var psxFramesPerSecond = etcRes is EtcResUsa ? 60 : 50;
-        ExtractDataFromDatasBin(gameEngine.DatasBin, gameEngine.StaticVariables, extractionPath, psxFramesPerSecond);
+        var tiledTilesetLayoutMode = ReadTiledTilesetLayoutMode(args, "--tiled-tileset-layout", TiledTilesetLayoutMode.Compact);
+        ExtractDataFromDatasBin(gameEngine.DatasBin, gameEngine.StaticVariables, extractionPath, psxFramesPerSecond, tiledTilesetLayoutMode);
     }
 
     // JUSTIFICATION: C# language bridge only
@@ -104,6 +112,110 @@ internal class Program
     }
 
     // JUSTIFICATION: C# language bridge only
+    // RELATION: offline validation harness for SpuMixerSoundPlaybackBackend; renders the desktop
+    // synthesis of the staged SPU voice state to a listenable 44100 Hz stereo WAV with level stats.
+    private static void RenderBgm(string[] args)
+    {
+        if (args.Length < 3)
+        {
+            Console.WriteLine("Usage: AlundraDataExtractor --render-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
+            return;
+        }
+
+        var soundBinPath = ResolveSoundBinPath(args[1]);
+        var outputPath = args[2];
+        var bgmIndex = ReadIntOption(args, "--bgm-index", 1);
+        var frames = ReadIntOption(args, "--frames", 600);
+
+        Directory.CreateDirectory(outputPath);
+
+        var soundBin = new SoundBin(soundBinPath);
+        var mixer = new SpuMixerSoundPlaybackBackend();
+        soundBin.AttachPlaybackBackend(mixer);
+        var gameEngine = new GameEngine(null!, null!, soundBin, null!, null!, null);
+        gameEngine.StaticVariables.Initialize(gameEngine);
+        gameEngine.SoundManager.InitializeSoundSystem();
+
+        gameEngine.SoundManager.LoadMapSequence(bgmIndex, 1);
+
+        if (args.Contains("--no-reverb", StringComparer.OrdinalIgnoreCase))
+        {
+            mixer.SetReverbEnabled(false);
+        }
+
+        const int samplesPerFrame = SpuMixerSoundPlaybackBackend.OutputSampleRate / 60;
+        var renderBuffer = new short[samplesPerFrame * 2];
+        var allSamples = new short[frames * samplesPerFrame * 2];
+        long sumSquaresLeft = 0;
+        long sumSquaresRight = 0;
+        var peakLeft = 0;
+        var peakRight = 0;
+        var firstAudibleFrame = -1;
+
+        for (var frame = 0; frame < frames; frame++)
+        {
+            gameEngine.SoundManager.AdvanceSoundFrame();
+            mixer.RenderSamples(renderBuffer, samplesPerFrame);
+            Array.Copy(renderBuffer, 0, allSamples, frame * samplesPerFrame * 2, samplesPerFrame * 2);
+
+            for (var i = 0; i < samplesPerFrame; i++)
+            {
+                int left = renderBuffer[i * 2];
+                int right = renderBuffer[i * 2 + 1];
+                sumSquaresLeft += (long)left * left;
+                sumSquaresRight += (long)right * right;
+                if (Math.Abs(left) > peakLeft)
+                {
+                    peakLeft = Math.Abs(left);
+                }
+
+                if (Math.Abs(right) > peakRight)
+                {
+                    peakRight = Math.Abs(right);
+                }
+
+                if (firstAudibleFrame < 0 && (Math.Abs(left) > 64 || Math.Abs(right) > 64))
+                {
+                    firstAudibleFrame = frame;
+                }
+            }
+        }
+
+        var waveFileName = Path.Combine(outputPath, $"bgm_{bgmIndex:D3}_csharp_render.wav");
+        WriteStereoWav(waveFileName, allSamples, SpuMixerSoundPlaybackBackend.OutputSampleRate);
+
+        var totalSamples = (long)frames * samplesPerFrame;
+        var rmsLeft = Math.Sqrt(sumSquaresLeft / (double)totalSamples);
+        var rmsRight = Math.Sqrt(sumSquaresRight / (double)totalSamples);
+        Console.WriteLine($"Render BGM C# written to {waveFileName}");
+        Console.WriteLine($"frames={frames} firstAudibleFrame={firstAudibleFrame} peakL={peakLeft} peakR={peakRight} rmsL={rmsLeft:F1} rmsR={rmsRight:F1}");
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    private static void WriteStereoWav(string fileName, short[] interleavedStereo, int sampleRate)
+    {
+        using var writer = new BinaryWriter(File.Create(fileName));
+        var dataLength = interleavedStereo.Length * sizeof(short);
+        writer.Write("RIFF"u8);
+        writer.Write(36 + dataLength);
+        writer.Write("WAVE"u8);
+        writer.Write("fmt "u8);
+        writer.Write(16);
+        writer.Write((short)1);
+        writer.Write((short)2);
+        writer.Write(sampleRate);
+        writer.Write(sampleRate * 2 * sizeof(short));
+        writer.Write((short)(2 * sizeof(short)));
+        writer.Write((short)16);
+        writer.Write("data"u8);
+        writer.Write(dataLength);
+        foreach (var sample in interleavedStereo)
+        {
+            writer.Write(sample);
+        }
+    }
+
+    // JUSTIFICATION: C# language bridge only
     private static string ResolveSoundBinPath(string inputPath)
     {
         if (File.Exists(inputPath))
@@ -146,6 +258,26 @@ internal class Program
             {
                 return value;
             }
+        }
+
+        return defaultValue;
+    }
+
+    private static TiledTilesetLayoutMode ReadTiledTilesetLayoutMode(string[] args, string optionName, TiledTilesetLayoutMode defaultValue)
+    {
+        for (var index = 0; index + 1 < args.Length; index++)
+        {
+            if (!string.Equals(args[index], optionName, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            if (Enum.TryParse<TiledTilesetLayoutMode>(args[index + 1], true, out var value))
+            {
+                return value;
+            }
+
+            throw new ArgumentException($"Unsupported value '{args[index + 1]}' for {optionName}. Expected 'original' or 'compact'.");
         }
 
         return defaultValue;
@@ -375,6 +507,21 @@ internal class Program
 
         // JUSTIFICATION: backend desktop adaptation only
         public void UpdateVoicePitch(int voiceId, short pitch)
+        {
+        }
+
+        // JUSTIFICATION: backend desktop adaptation only
+        public void UpdateVoiceReverb(int voiceId, bool reverbEnabled)
+        {
+        }
+
+        // JUSTIFICATION: backend desktop adaptation only
+        public void SetReverbEnabled(bool enabled)
+        {
+        }
+
+        // JUSTIFICATION: backend desktop adaptation only
+        public void SetReverbState(int mode, short depthLeft, short depthRight)
         {
         }
     }
@@ -625,7 +772,7 @@ internal class Program
         File.WriteAllText(path, JsonSerializer.Serialize(sortedData, _jsonSerializerOptions));
     }
 
-    private static void ExtractDataFromDatasBin(DatasBin datasBin, StaticVariables staticVariables, string extractionPath, int psxFramesPerSecond)
+    private static void ExtractDataFromDatasBin(DatasBin datasBin, StaticVariables staticVariables, string extractionPath, int psxFramesPerSecond, TiledTilesetLayoutMode tiledTilesetLayoutMode)
     {
         datasBin.LoadingScreen.Save(Path.Combine(extractionPath, "data", "loading_screen.png"), ImageFormat.Png);
 
@@ -645,7 +792,7 @@ internal class Program
             Console.WriteLine($"Extract map {i}");
             var gameMap = datasBin.GameMaps[i];
             gameMap.Load(br);
-            SaveMap(gameMap, i, dataPath, tileAnimDescriptors, psxFramesPerSecond);
+            SaveMap(gameMap, i, dataPath, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode);
         }
 
         foreach (var entitySpriteSheet in entitySpriteSheetIds)
@@ -669,7 +816,7 @@ internal class Program
         GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, "map_alundra_spritesheet.png"));
     }
 
-    private static void SaveMap(GameMap gameMap, int id, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors, int psxFramesPerSecond)
+    private static void SaveMap(GameMap gameMap, int id, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors, int psxFramesPerSecond, TiledTilesetLayoutMode tiledTilesetLayoutMode)
     {
         //var gameMapJson = ConvertGameMap(gameMap);
         //File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
@@ -681,7 +828,7 @@ internal class Program
 
         GameMapHelper.SaveTileSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_tilesheet.png"), tileAnimDescriptors);
         GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_spritesheet.png"));
-        TiledMapExporter.ExportMap(gameMap, id, extractionPath, tileAnimDescriptors, psxFramesPerSecond);
+        TiledMapExporter.ExportMap(gameMap, id, extractionPath, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode);
     }
 
     private static void GetEntitySpriteSheets(GameMap gameMap, int id, string extractionPath)

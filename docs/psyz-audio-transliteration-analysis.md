@@ -134,8 +134,54 @@ Alundra-specific follow-up from targeted PCSX/Ghidra evidence:
   `SpuSetReverbDepth`, `SpuSetReverbVoice(1, 0xFFFFFF)`, and `SpuSetReverb(1)`.
   PCSX RAM at `0x80166128` confirms `07 00 00 00 04 01 00 00 00 2A 00 2A`.
   The C# port now records this in the desktop adaptation reverb state; BGM21 and
-  BGM1 traces show nonzero per-voice reverb words, but MonoGame still does not
-  synthesize the audible PSX reverb tail.
+  BGM1 traces show nonzero per-voice reverb words.
+- CLOSED (backend synthesis): the desktop backend is now a software SPU-style
+  mixer, `AlundraEngine/Sound/SpuMixerSoundPlaybackBackend.cs`, producing one
+  44100 Hz stereo s16 stream (the PsyZ/SDL SPU output contract). It consumes the
+  raw staged SPU words directly: independent left/right voice gains
+  (`raw/0x4000`, replacing the MonoGame volume+pan law), raw SPU pitch step
+  `pitch/0x1000` (replacing the host `+/-1` octave pitch clamp), sample-accurate
+  VAG loop points, and the SPU reverb unit. `MonoGameSoundPlaybackBackend` is
+  now a thin wrapper that pushes the mixed stream into a single
+  `DynamicSoundEffectInstance`.
+- CLOSED (reverb synthesis): the mixer implements the nocash psx-spx reverb
+  formula at 22050 Hz with the `SPU_REV_MODE_STUDIO_C` ("Studio Large") preset
+  registers (work area `0x6FE0` bytes), selected by Alundra's mode `0x104` and
+  scaled by the recorded depth `0x2A00`. Per-voice reverb enables flow through
+  `ISoundPlaybackBackend.UpdateVoiceReverb` (BGM traces show `reverb=-1`, i.e.
+  all-voices, matching `SpuSetReverbVoice(1, 0xFFFFFF)`). Offline A/B on BGM 1
+  (`--render-bgm ... --no-reverb`) measures the reverb contribution at diff RMS
+  ~4638 (~-17 dBFS), stable over 10 s (no filter runaway).
+- CLOSED (sustain decrease): VAB ADSR2 words for BGM tones (e.g. `0xCF29`,
+  `0x5009`, `0xCCAA`) have `Sd=1`: on the SPU, ENVX keeps decreasing during the
+  sustain phase. The desktop envelope in `SoundBin` previously held the
+  sustain-entry level forever, leaving every sustained voice at full envelope.
+  `AdvanceTrackedVoiceSustain` now steps a 31-bit envelope mirror down with the
+  P.E.Op.S rate-table convention (linear and pseudo-exponential modes).
+  Sustain-increase (`Sd=0`) still holds, pending a proven case. Note: this also
+  changes `Voice.status`/ENVX feedback into `UpdateSoundVoicesState`, so voice
+  slot allocation order can shift; the proven BGM21 note-on tuple
+  (program 4, note 50, velocity 75 -> left 826, right 1775, pitch 1528,
+  ADSR1 0x80FF, ADSR2 0xCF29) still appears at frame 32, on a different slot.
+- CLOSED (sequencer tempo, root cause of "music plays everything at once"): the
+  pQES SEQ header stores resolution (ticks per quarter) big-endian at bytes
+  8-9, like the big-endian u24 tempo at bytes 10-12. The C# seq init read it
+  little-endian, turning BGM21's `01 E0` (480 PPQN) into 0xE001 (57345), so
+  `CurrentTempo` came out 15929 instead of 133 and the sequencer consumed ~119x
+  too many delay ticks per 60 Hz frame. Every BGM executed its whole event
+  stream in a few frames and relooped continuously: all channels keyed
+  simultaneously, sequenced echo layers (e.g. BGM21 ch8 note 52 at ticks
+  720/760/800/840) landed in the same frame in phase, and the mix sat at RMS
+  ~14700 with ~4% rail clipping. Fixed to a big-endian read in the seq init
+  (`SoundManager.cs`, GHIDRA seq-open path near `LoadSeq @ 0x8008BC00`).
+  After the fix, BGM21 traces show `seqTempo=133` (= 480 PPQN x 100 BPM x 10 /
+  3600), zero voices before frame 36 (first SEQ note is at tick 480 = 0.6 s),
+  the ch8 echo spread over frames 64/69/73/78, and renders with no rail
+  clipping at RMS ~3500 (BGM1: ~3030). The earlier "frame 32" reference for the
+  proven note-on tuple was an artifact of the fast tempo; the tuple pipeline
+  itself (FUN_800934B8 -> 826/1775/1528/0x80FF/0xCF29) is unchanged by this
+  fix. Next PCSX-Redux session: re-anchor one BGM21 note-on frame-for-frame at
+  the correct tempo to confirm tick alignment against the original.
 
 ## SPU backend contract from PsyZ
 

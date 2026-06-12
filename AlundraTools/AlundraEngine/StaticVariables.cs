@@ -30,7 +30,7 @@ public class StaticVariables
     public bool IsLogScriptEnabled { get; set; }
     public bool IsLogDamageEnabled { get; set; }
     public bool IsLogAIEnabled { get; set; }
-    public bool IsBgmActivated { get; set; } = false;
+    public bool IsBgmActivated { get; set; } = true;
 
     public bool DisplayCollisions { get; set; }
 

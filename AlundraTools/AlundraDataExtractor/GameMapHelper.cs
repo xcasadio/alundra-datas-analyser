@@ -9,7 +9,7 @@ public static class GameMapHelper
 {
     public static void SaveTileSheet(GameMap gameMap, string fileName, TileAnimDescriptor[] tileAnimDescriptors = null)
     {
-        using var bitmap = new Bitmap(256, 256 * 6);
+        using var bitmap = new Bitmap(GameMapTilesheetLayout.OriginalImageWidth, GameMapTilesheetLayout.OriginalImageHeight);
         using var graphics = Graphics.FromImage(bitmap);
         var tileCache = new HashSet<ushort>();
 
@@ -79,9 +79,9 @@ public static class GameMapHelper
     private static void DrawTile(GameMap gameMap, ushort tileId, Graphics graphics)
     {
         var tileBitmap = gameMap.GetTileBitmap(tileId);
-        var position = tileId & 0x3ff;
-        var x = position % 10 * StaticVariables.MapTileWidth;
-        var y = position / 10 * StaticVariables.MapTileHeight;
+        var localTileId = tileId & 0x3ff;
+        var x = GameMapTilesheetLayout.GetTileX(localTileId);
+        var y = GameMapTilesheetLayout.GetTileY(localTileId);
         graphics.DrawImage(tileBitmap, x, y);
     }
 

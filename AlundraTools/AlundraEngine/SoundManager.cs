@@ -3212,7 +3212,10 @@ public class SoundManager
         }
 
         sequenceState.SeqPosition = 9;
-        sequenceState.Tempo = (ushort)(sequenceData[8] | (sequenceData[9] << 8));
+        // The SEQ header resolution (ticks per quarter note) is stored big-endian like the
+        // rest of the pQES header; reading it little-endian turned 0x01E0 (480) into 0xE001
+        // (57345) and made the sequencer consume ~119x too many ticks per frame.
+        sequenceState.Tempo = (ushort)((sequenceData[8] << 8) | sequenceData[9]);
         if (sequenceState.Tempo == 0)
         {
             return -1;

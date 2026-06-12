@@ -247,6 +247,7 @@ public class SoundBin
     private const byte VoiceEnvelopeStageRelease = 4;
     private readonly byte[] _voiceEnvelopeStages = new byte[24];
     private readonly int[] _voiceEnvelopeLevels = new int[24];
+    private readonly long[] _voiceSustainEnvelope31 = new long[24];
     private readonly int[] _voiceEnvelopeStageFramesRemaining = new int[24];
     private readonly int[] _voiceEnvelopeStageFrameCount = new int[24];
     private readonly int[] _voiceEnvelopeSustainLevels = new int[24];
@@ -681,6 +682,7 @@ public void UpdateTrackedVoiceReverb(int voiceId, short reverb)
     }
 
     _voiceReverbs[voiceId] = reverb;
+    _playbackBackend?.UpdateVoiceReverb(voiceId, reverb != 0);
 }
 
 // JUSTIFICATION: PSX hardware adaptation only
@@ -717,6 +719,7 @@ public void KeyOffTrackedVoice(int voiceId)
 public void SetReverbEnabled(bool enabled)
 {
     _reverbEnabled = enabled;
+    _playbackBackend?.SetReverbEnabled(enabled);
 }
 
 // JUSTIFICATION: PSX hardware adaptation only
@@ -724,6 +727,7 @@ public void SetReverbEnabled(bool enabled)
 public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
 {
     _reverbAttr = reverbAttr;
+    _playbackBackend?.SetReverbState(reverbAttr.Mode, reverbAttr.DepthLeft, reverbAttr.DepthRight);
 }
 
     public static int DecodeAdpcm(byte[] adpcm, int pos, int len, byte[] pcm, bool is8Bit, out int loopstart, out int loopend, out bool looprepeat)
@@ -1280,7 +1284,97 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
             case VoiceEnvelopeStageDecay:
                 AdvanceTrackedVoiceDecay(voiceId);
                 break;
+
+            case VoiceEnvelopeStageSustain:
+                AdvanceTrackedVoiceSustain(voiceId);
+                break;
         }
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: advances the SPU ADSR2 sustain phase. On real hardware ENVX keeps stepping during
+    // sustain: Sd=1 decreases toward zero (linear or pseudo-exponential), it does not hold the
+    // sustain-entry level. Holding it constant left every sustained BGM voice at full envelope and
+    // overdrove the desktop mix. Sustain-increase (Sd=0) keeps the previous hold behavior until a
+    // case is proven to need it.
+    private void AdvanceTrackedVoiceSustain(int voiceId)
+    {
+        var rawAdsr2 = unchecked((ushort)_voiceAdsr2[voiceId]);
+        var sustainDecrease = (rawAdsr2 & 0x4000) != 0;
+        var sustainRate = (rawAdsr2 >> 6) & 0x7f;
+        if (!sustainDecrease || sustainRate == 0x7f)
+        {
+            return;
+        }
+
+        var level = _voiceSustainEnvelope31[voiceId];
+        if (level <= 0)
+        {
+            return;
+        }
+
+        const int samplesPerFrame = 44100 / 60;
+        var sustainExponential = (rawAdsr2 & 0x8000) != 0;
+        var remainingSamples = samplesPerFrame;
+        while (remainingSamples > 0 && level > 0)
+        {
+            uint rate;
+            if (sustainExponential)
+            {
+                rate = GetExponentialSustainRate(sustainRate, level);
+                if (rate == 0)
+                {
+                    break;
+                }
+
+                var rangeFloor = level & ~0xFFFFFFFL;
+                var stepsToRangeFloor = ((level - rangeFloor) / rate) + 1;
+                var steps = Math.Min(remainingSamples, stepsToRangeFloor);
+                level -= rate * steps;
+                remainingSamples -= (int)steps;
+            }
+            else
+            {
+                rate = GetAdsrRate(RoundToZero((sustainRate ^ 0x7f) - 0x0f) + 32);
+                if (rate == 0)
+                {
+                    break;
+                }
+
+                level -= (long)rate * remainingSamples;
+                remainingSamples = 0;
+            }
+        }
+
+        if (level < 0)
+        {
+            level = 0;
+        }
+
+        _voiceSustainEnvelope31[voiceId] = level;
+        _voiceEnvelopeLevels[voiceId] = (int)(level >> 16);
+        ApplyTrackedVoiceAudibleVolume(voiceId);
+    }
+
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: mirrors the rate-table lookup used by Alundraportage DecodeADSR for the
+    // pseudo-exponential sustain-decrease phase
+    private static uint GetExponentialSustainRate(int sustainRate, long envelopeLevel)
+    {
+        var range = (int)((envelopeLevel >> 28) & 0x7);
+        var offset = range switch
+        {
+            0 => 0,
+            1 => 4,
+            2 => 6,
+            3 => 8,
+            4 => 9,
+            5 => 10,
+            6 => 11,
+            _ => 12,
+        };
+
+        return GetAdsrRate(RoundToZero((sustainRate ^ 0x7f) - 0x1b + offset) + 32);
     }
 
     // JUSTIFICATION: PSX hardware adaptation only
@@ -1312,6 +1406,7 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
         {
             _voiceEnvelopeStages[voiceId] = VoiceEnvelopeStageSustain;
             _voiceEnvelopeLevels[voiceId] = sustainLevel;
+            _voiceSustainEnvelope31[voiceId] = (long)sustainLevel << 16;
             _voiceEnvelopeStageFrameCount[voiceId] = 0;
             _voiceEnvelopeStageFramesRemaining[voiceId] = 0;
             return;
@@ -1333,6 +1428,7 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
         {
             _voiceEnvelopeStages[voiceId] = VoiceEnvelopeStageSustain;
             _voiceEnvelopeLevels[voiceId] = sustainLevel;
+            _voiceSustainEnvelope31[voiceId] = (long)sustainLevel << 16;
             ApplyTrackedVoiceAudibleVolume(voiceId);
             return;
         }
@@ -1367,6 +1463,7 @@ public void UpdateReverbAttr(SpuReverbAttrPartial reverbAttr)
     {
         _voiceEnvelopeStages[voiceId] = VoiceEnvelopeStageOff;
         _voiceEnvelopeLevels[voiceId] = VoiceEnvelopeLevelMax;
+        _voiceSustainEnvelope31[voiceId] = (long)VoiceEnvelopeLevelMax << 16;
         _voiceEnvelopeStageFramesRemaining[voiceId] = 0;
         _voiceEnvelopeStageFrameCount[voiceId] = 0;
         _voiceEnvelopeSustainLevels[voiceId] = VoiceEnvelopeLevelMax;
