@@ -124,7 +124,13 @@ public class GameEngine
             return;
         }
 
-        SoundManager.AdvanceSoundFrame();
+        // On the original this tick runs from the 60 Hz VSync/timer interrupt, not from the
+        // main loop; when a desktop tick driver provides that interrupt, the main loop must
+        // not tick again (and the music keeps running while LoadMap blocks this loop).
+        if (!SoundManager.HasExternalSoundTickDriver)
+        {
+            SoundManager.AdvanceSoundFrame();
+        }
 
         //do
         //{

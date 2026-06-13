@@ -6,6 +6,19 @@ namespace AlundraEngine;
 
 public class SoundManager
 {
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: on the original, FUN_8008A718 @ 0x8008A718 runs from the 60 Hz VSync/timer
+    // interrupt and keeps the music ticking while the main loop blocks on CD reads
+    // (g_voiceCommandLock @ 0x801F6CD0 is its interrupt-vs-mainline guard). On desktop the
+    // tick runs on a dedicated audio-driver thread, so this gate provides the mutual
+    // exclusion the PSX got from interrupt masking: the tick thread and every game-thread
+    // sound entry point serialize on it.
+    private readonly object _soundTickGate = new();
+
+    // RELATION: set when a desktop audio-driver thread delivers the 60 Hz sound tick;
+    // the main-loop and warp-wait call sites then stop ticking by themselves.
+    public bool HasExternalSoundTickDriver { get; set; }
+
     private readonly GameEngine _gameEngine;
     private readonly SoundBin.VabHeader?[] _loadedVabHeaders = new SoundBin.VabHeader[16];
     private readonly byte[]?[] _loadedVabBodies = new byte[16][];
@@ -153,6 +166,14 @@ public class SoundManager
     // GHIDRA: InitializeSoundSystem @ 0x800484E8
     public int InitializeSoundSystem()
     {
+        lock (_soundTickGate)
+        {
+            return InitializeSoundSystemCore();
+        }
+    }
+
+    private int InitializeSoundSystemCore()
+    {
         int result;
 
         if (_gameEngine.StaticVariables.g_isCdResetRequested != 0)
@@ -256,6 +277,14 @@ public class SoundManager
     // 8004b114
     public void FUN_8004b114(int soundIndex, int stopAllSound)
     {
+        lock (_soundTickGate)
+        {
+            FUN_8004b114Core(soundIndex, stopAllSound);
+        }
+    }
+
+    private void FUN_8004b114Core(int soundIndex, int stopAllSound)
+    {
         if (!_gameEngine.StaticVariables.IsBgmActivated && soundIndex > 0)
         {
             _gameEngine.StaticVariables.g_soundLoadState = 0;
@@ -339,6 +368,14 @@ public class SoundManager
 
     // GHIDRA: LoadMapSequence @ 0x80049BE0
     public void LoadMapSequence(int soundIndex, int stopAllSound)
+    {
+        lock (_soundTickGate)
+        {
+            LoadMapSequenceCore(soundIndex, stopAllSound);
+        }
+    }
+
+    private void LoadMapSequenceCore(int soundIndex, int stopAllSound)
     {
         int segId;
 
@@ -456,6 +493,14 @@ public class SoundManager
 
     // 80049b7c
     public void LoadBgm(int bgmIndex)
+    {
+        lock (_soundTickGate)
+        {
+            LoadBgmCore(bgmIndex);
+        }
+    }
+
+    private void LoadBgmCore(int bgmIndex)
     {
         _gameEngine.StaticVariables.g_resetSoundFlag = 0;
 
@@ -2788,7 +2833,10 @@ public class SoundManager
 
     public void AdvanceSoundFrame()
     {
-        FUN_8008a718(0);
+        lock (_soundTickGate)
+        {
+            FUN_8008a718(0);
+        }
     }
 
     // GHIDRA: FUN_8008F808 @ 0x8008F808
@@ -3533,6 +3581,14 @@ public class SoundManager
     // GHIDRA: StopAllSound @ 0x80049AF4
     public void StopAllSound()
     {
+        lock (_soundTickGate)
+        {
+            StopAllSoundCore();
+        }
+    }
+
+    private void StopAllSoundCore()
+    {
         if (-1 < _gameEngine.StaticVariables.g_currentMapSoundIndex)
         {
             if (_gameEngine.StaticVariables.g_soundEffectState != 0)
@@ -3584,6 +3640,14 @@ public class SoundManager
 
     // GHIDRA: PlaySoundEffect @ 0x800490FC
     public void PlaySoundEffect(uint sfxId)
+    {
+        lock (_soundTickGate)
+        {
+            PlaySoundEffectCore(sfxId);
+        }
+    }
+
+    private void PlaySoundEffectCore(uint sfxId)
     {
         if (_gameEngine.StaticVariables.g_soundEffectState != 0)
         {
@@ -3799,8 +3863,21 @@ public class SoundManager
 
     public bool WaitForSoundEffectsIdleStep(ref int extraFramesRemaining)
     {
-        AdvanceSoundFrame();
+        // With an external 60 Hz tick driver, the interrupt-style tick already runs in real
+        // time; ticking again here would double the music rate during warp waits.
+        if (!HasExternalSoundTickDriver)
+        {
+            AdvanceSoundFrame();
+        }
 
+        lock (_soundTickGate)
+        {
+            return WaitForSoundEffectsIdleStepCore(ref extraFramesRemaining);
+        }
+    }
+
+    private bool WaitForSoundEffectsIdleStepCore(ref int extraFramesRemaining)
+    {
         if (extraFramesRemaining > 0)
         {
             extraFramesRemaining--;
@@ -4815,6 +4892,14 @@ public class SoundManager
     // RELATION: sound-side body split from LoadMapSounds @ 0x8004A09C
     public void LoadMapSounds(uint mapId)
     {
+        lock (_soundTickGate)
+        {
+            LoadMapSoundsCore(mapId);
+        }
+    }
+
+    private void LoadMapSoundsCore(uint mapId)
+    {
         var soundoffset = _gameEngine.GetMapSoundIndex(mapId);
 
         if (soundoffset != 0)
@@ -4871,6 +4956,14 @@ public class SoundManager
 
     // GHIDRA: PlaySoundEffectWithToneVolumeMix @ 0x80049794
     public void PlaySoundEffectWithToneVolumeMix(int param_1, int param_2, int param_3)
+    {
+        lock (_soundTickGate)
+        {
+            PlaySoundEffectWithToneVolumeMixCore(param_1, param_2, param_3);
+        }
+    }
+
+    private void PlaySoundEffectWithToneVolumeMixCore(int param_1, int param_2, int param_3)
     {
         EnsureSoundEffectDataInitialized();
 
@@ -4994,6 +5087,14 @@ public class SoundManager
     // GHIDRA: HandleMapSoundEffects @ 0x80049F1C
     public int HandleMapSoundEffects(uint mapId, uint soundEffectId)
     {
+        lock (_soundTickGate)
+        {
+            return HandleMapSoundEffectsCore(mapId, soundEffectId);
+        }
+    }
+
+    private int HandleMapSoundEffectsCore(uint mapId, uint soundEffectId)
+    {
         ResetSoundEffectRuntime();
 
         if (SoundBin.SfxRecordsData[soundEffectId][0] == 0xFF &&
@@ -5072,6 +5173,14 @@ public class SoundManager
 
     // GHIDRA: HandleMapSoundStreaming @ 0x8004B1D4
     public void HandleMapSoundStreaming()
+    {
+        lock (_soundTickGate)
+        {
+            HandleMapSoundStreamingCore();
+        }
+    }
+
+    private void HandleMapSoundStreamingCore()
     {
         if (_gameEngine.StaticVariables.g_resetSoundFlag != 0)
         {
@@ -5216,6 +5325,9 @@ public class SoundManager
     //8004b104
     public bool IsSoundLoading()
     {
-        return _gameEngine.StaticVariables.g_soundLoadState != 0;
+        lock (_soundTickGate)
+        {
+            return _gameEngine.StaticVariables.g_soundLoadState != 0;
+        }
     }
 }
