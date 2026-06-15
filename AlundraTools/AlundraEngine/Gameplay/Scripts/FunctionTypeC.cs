@@ -7,10 +7,10 @@ namespace AlundraEngine.Gameplay.Scripts;
 
 public static class FunctionTypeC
 {
-    // GHIDRA: SHORT_ARRAY_80027e54 @ 0x80027E54
+    // 80027E54
     private static readonly short[] SHORT_ARRAY_80027e54 = [0x64, 0x05, 0x05, 0x05, 0x05, 0x05];
 
-    // GHIDRA: INT_ARRAY_80027e6c @ 0x80027E6C
+    // 80027E6C
     private static readonly int[] INT_ARRAY_80027e6c =
     [
         unchecked((int)0xFFB80000), 0x00100000, 0x00100000,
@@ -21,7 +21,7 @@ public static class FunctionTypeC
         unchecked((int)0xFFD00000), 0x00100000, 0x00300000
     ];
 
-    // GHIDRA: INT_ARRAY_80027eb4 @ 0x80027EB4
+    // 80027EB4
     private static readonly int[] INT_ARRAY_80027eb4 =
     [
         0x00180000, 0x00D00000,
@@ -30,7 +30,7 @@ public static class FunctionTypeC
         0x01080000, 0x01200000
     ];
 
-    // GHIDRA: INT_ARRAY_80027ed4 @ 0x80027ED4
+    // 80027ED4
     private static readonly int[] INT_ARRAY_80027ed4 =
     [
         0x00300000, 0x00F00000,
@@ -40,6 +40,67 @@ public static class FunctionTypeC
         0x00300000, 0x01200000,
         0x00900000, 0x01500000
     ];
+
+    // 80027890
+    private static readonly int[] INT_ARRAY_80027890 =
+    {
+        0x009C0000, 0x02780000,
+        0x02040000, 0x02780000,
+        0x009C0000, 0x03980000,
+        0x02040000, 0x03980000,
+        0x01500000, 0x03000000
+    };
+
+    // 800278b8
+    private static readonly int[] INT_ARRAY_800278b8 =
+    {
+        0, 0, 1,
+        -0x300000, 0, 0x0F,
+        0x300000, 0, 0x0F,
+        0, -0x200000, 0x0F,
+        0, 0x200000, 0x0F,
+        -0x600000, 0, 0x1E,
+        0x600000, 0, 0x1E,
+        0, -0x400000, 0x1E,
+        0, 0x400000, 0x1E,
+
+        0, 0, 1,
+        -0x300000, -0x200000, 0x0F,
+        -0x300000, 0x200000, 0x0F,
+        0x300000, -0x200000, 0x0F,
+        0x300000, 0x200000, 0x0F,
+        -0x600000, -0x400000, 0x1E,
+        -0x600000, 0x400000, 0x1E,
+        0x600000, -0x400000, 0x1E,
+        0x600000, 0x400000, 0x1E,
+
+        -0x600000, 0, 1,
+        0x600000, 0, 1,
+        0, -0x400000, 1,
+        0, 0x400000, 1,
+        -0x300000, 0, 0x0F,
+        0x300000, 0, 0x0F,
+        0, -0x200000, 0x0F,
+        0, 0x200000, 0x0F,
+        0, 0, 0x1E
+    };
+
+    // 80027644
+    private static readonly short[] SHORT_ARRAY_80027644 = new short[]
+    {
+        0x0C, 0x14, 0x0C, 0x14,
+        0x0C, 0x14, 0x0C, 0x14,
+        0x14, 0x1C, 0x14, 0x1C,
+        0x04, 0x0C, 0x14, 0x1C,
+        0x04, 0x0C, 0x04, 0x0C,
+        0x04, 0x0C, 0x14, 0x1C,
+        0x04, 0x0C, 0x14, 0x1C,
+        0x14, 0x1C, 0x14, 0x1C,
+        0x04, 0x0C, 0x14, 0x1C,
+        0x04, 0x0C, 0x04, 0x0C,
+        0x04, 0x1C, 0x04, 0x1C,
+        0x04, 0x1C, 0x04, 0x1C,
+    };
 
     // 80065ED4
     public static void AI_UpdateEntityAI_IdleSkittish(GameEngine gameEngine, Entity entity)
@@ -490,7 +551,7 @@ public static class FunctionTypeC
         }
     }
 
-    //80066984
+    // 80066984
     public static void AI_FUN_80066984(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
@@ -648,7 +709,7 @@ public static class FunctionTypeC
         entity.TargetAnimationId = 0;
     }
 
-    //80069f44
+    // 80069f44
     public static void AI_FUN_80069f44(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
@@ -797,7 +858,7 @@ public static class FunctionTypeC
         }
     }
 
-    //80064294
+    // 80064294
     public static void AI_FUN_80064294(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name) 
@@ -1015,7 +1076,7 @@ public static class FunctionTypeC
         }
     }
 
-    // GHIDRA: AI_FUN_800647b0 @ 0x800647B0
+    // 800647B0
     public static void AI_FUN_800647b0(GameEngine gameEngine, Entity entity)
     {
         if (entity.ParentEntity.AIValues[4] == 0)
@@ -1049,7 +1110,7 @@ public static class FunctionTypeC
         entity.PreviousAdjustedForceX = entity.DelayOrAngleOrEntityId;
     }
 
-    //80064884
+    // 80064884
     public static void AI_FUN_80064884(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name) 
@@ -2175,7 +2236,6 @@ public static class FunctionTypeC
     }
 
     //8006b848
-    //Caisse en bois générique
     public static void AI_FUN_8006b848(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
@@ -2463,23 +2523,6 @@ public static class FunctionTypeC
                 break;
         }
     }
-
-    // GHIDRA: SHORT_ARRAY_80027644 @ 0x80027644
-    private static readonly short[] SHORT_ARRAY_80027644 = new short[]
-    {
-        0x0C, 0x14, 0x0C, 0x14,
-        0x0C, 0x14, 0x0C, 0x14,
-        0x14, 0x1C, 0x14, 0x1C,
-        0x04, 0x0C, 0x14, 0x1C,
-        0x04, 0x0C, 0x04, 0x0C,
-        0x04, 0x0C, 0x14, 0x1C,
-        0x04, 0x0C, 0x14, 0x1C,
-        0x14, 0x1C, 0x14, 0x1C,
-        0x04, 0x0C, 0x14, 0x1C,
-        0x04, 0x0C, 0x04, 0x0C,
-        0x04, 0x1C, 0x04, 0x1C,
-        0x04, 0x1C, 0x04, 0x1C,
-    };
 
     //8006e83c
     public static void AI_FUN_8006e83c(GameEngine gameEngine, Entity entity)
@@ -13896,47 +13939,6 @@ SetDelay:
         Entity? pEVar5;
         var player = gameEngine.StaticVariables.PlayerEntity;
         int[] positions = new int[6];
-        int[] dat80027890 =
-        {
-            0x009C0000, 0x02780000,
-            0x02040000, 0x02780000,
-            0x009C0000, 0x03980000,
-            0x02040000, 0x03980000,
-            0x01500000, 0x03000000
-        };
-        int[] dat800278b8 =
-        {
-            0, 0, 1,
-            -0x300000, 0, 0x0F,
-            0x300000, 0, 0x0F,
-            0, -0x200000, 0x0F,
-            0, 0x200000, 0x0F,
-            -0x600000, 0, 0x1E,
-            0x600000, 0, 0x1E,
-            0, -0x400000, 0x1E,
-            0, 0x400000, 0x1E,
-
-            0, 0, 1,
-            -0x300000, -0x200000, 0x0F,
-            -0x300000, 0x200000, 0x0F,
-            0x300000, -0x200000, 0x0F,
-            0x300000, 0x200000, 0x0F,
-            -0x600000, -0x400000, 0x1E,
-            -0x600000, 0x400000, 0x1E,
-            0x600000, -0x400000, 0x1E,
-            0x600000, 0x400000, 0x1E,
-
-            -0x600000, 0, 1,
-            0x600000, 0, 1,
-            0, -0x400000, 1,
-            0, 0x400000, 1,
-            -0x300000, 0, 0x0F,
-            0x300000, 0, 0x0F,
-            0, -0x200000, 0x0F,
-            0, 0x200000, 0x0F,
-            0, 0, 0x1E
-        };
-        int dat8019119c = gameEngine.StaticVariables.DAT_8019119c;
 
         if ((gameEngine.StaticVariables.g_temporaryFlags[0] & 1U) != 0)
         {
@@ -13950,7 +13952,7 @@ SetDelay:
             if (iVar4 == 300)
             {
                 int baseIndex = entity.Bytes[1] * 2;
-                pEVar5 = gameEngine.SpawnWarpEntity(entity, 1, 0xFF, dat80027890[baseIndex], dat80027890[baseIndex + 1], 0x01500000, 0);
+                pEVar5 = gameEngine.SpawnWarpEntity(entity, 1, 0xFF, INT_ARRAY_80027890[baseIndex], INT_ARRAY_80027890[baseIndex + 1], 0x01500000, 0);
                 pEVar5.TargetAnimationId = 4;
 
                 byte bVar1 = entity.Bytes[2];
@@ -13974,7 +13976,7 @@ SetDelay:
             {
                 var rand = (ulong)Random.Next();
                 int offsetIndex = (int)((rand * 0x20UL) >> 32);
-                int radius = dat8019119c * 0x40 + 0xA00;
+                int radius = gameEngine.StaticVariables.DAT_8019119c * 0x40 + 0xA00;
 
                 rand = (ulong)Random.Next();
                 direction = (uint)((rand * 0x20UL) >> 32);
@@ -13998,8 +14000,8 @@ SetDelay:
                     pEVar5.ForceZ = -0x80000;
                 }
 
-                dat8019119c += 8;
-                gameEngine.StaticVariables.DAT_8019119c = dat8019119c;
+                gameEngine.StaticVariables.DAT_8019119c += 8;
+                gameEngine.StaticVariables.DAT_8019119c = gameEngine.StaticVariables.DAT_8019119c;
             }
         }
 
@@ -14155,13 +14157,13 @@ SetDelay:
                                 entity,
                                 1,
                                 0xFE,
-                                player.PosX + dat800278b8[tri],
-                                player.PosY + dat800278b8[tri + 1],
+                                player.PosX + INT_ARRAY_800278b8[tri],
+                                player.PosY + INT_ARRAY_800278b8[tri + 1],
                                 player.TerrainHeight,
                                 0);
 
                             pEVar5.TargetAnimationId = 4;
-                            pEVar5.AIValues[1] = (short)dat800278b8[tri + 2];
+                            pEVar5.AIValues[1] = (short)INT_ARRAY_800278b8[tri + 2];
                         }
                     }
                 }
@@ -14188,7 +14190,7 @@ SetDelay:
                     if (sVar3 == 1)
                     {
                         entity.ItemState = 0x100;
-                        dat8019119c = 0;
+                        gameEngine.StaticVariables.DAT_8019119c = 0;
                         gameEngine.StaticVariables.DAT_8019119c = 0;
                         gameEngine.InitializeAndBeginFadeEffect();
                     }
