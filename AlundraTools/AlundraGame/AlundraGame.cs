@@ -25,6 +25,7 @@ namespace AlundraGame
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch = null!;
         private GameEngine _gameEngine = null!;
+        private MonoGameSoundPlaybackBackend? _soundBackend;
         private RenderTarget2D _renderTarget = null!;
         private InputManager _inputManager = null!;
         private RuntimeInspectorHost? _runtimeInspector;
@@ -92,7 +93,8 @@ namespace AlundraGame
             var balanceBin = new BalanceBin(balanceFile);
             var soundBinFileName = Path.Combine(dataFolder, "SOUND.BIN");
             var soundBin = new SoundBin(soundBinFileName);
-            soundBin.AttachPlaybackBackend(new MonoGameSoundPlaybackBackend());
+            _soundBackend = new MonoGameSoundPlaybackBackend();
+            soundBin.AttachPlaybackBackend(_soundBackend);
             var font3 = new Font3(Path.Combine(dataFolder, "..", "TAKI\\SCREEN"));
             var etcResFileName = PathHelper.GetEtcFileName(dataFolder);
             EtcRes etcRes;
@@ -110,7 +112,13 @@ namespace AlundraGame
 
             _gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3, alundraRenderer);
             _gameEngine.InitializeEngine(true);
-            
+
+            // Desktop adaptation of the original 60 Hz VSync/timer sound interrupt: the sound
+            // tick keeps running on its own thread while this thread blocks on map loading.
+            _gameEngine.SoundManager.HasExternalSoundTickDriver = true;
+            _soundBackend.StartTickDriver(_gameEngine.SoundManager.AdvanceSoundFrame);
+
+
             _inputManager = new InputManager(_gameEngine);
             _runtimeInspector = RuntimeInspectorHost.TryStart(this, _gameEngine);
             if (_runtimeInspector != null)
@@ -323,6 +331,7 @@ namespace AlundraGame
         {
             if (disposing)
             {
+                _soundBackend?.StopTickDriver();
                 _runtimeInspector?.Dispose();
                 _renderTarget?.Dispose();
             }
