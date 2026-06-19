@@ -182,6 +182,28 @@ Alundra-specific follow-up from targeted PCSX/Ghidra evidence:
   itself (FUN_800934B8 -> 826/1775/1528/0x80FF/0xCF29) is unchanged by this
   fix. Next PCSX-Redux session: re-anchor one BGM21 note-on frame-for-frame at
   the correct tempo to confirm tick alignment against the original.
+- CLOSED (interrupt-driven sound tick, music stalling during map loads): on the
+  original, the sound tick `FUN_8008A718 @ 0x8008A718` runs from the 60 Hz
+  VSync/timer interrupt, which is why BGM keeps playing at full tempo while the
+  main loop blocks on CD reads during map changes; `g_voiceCommandLock @
+  0x801F6CD0` is its interrupt-vs-mainline re-entrancy guard (already
+  transliterated at the top of `FUN_8008E3D8`). The C# port instead ticked from
+  `GameEngine.MainLoop`, so a blocking `LoadMap` froze the sequencer and
+  starved the audio queue (music slowed/stuttered exactly during loads). The
+  desktop adaptation now mirrors the interrupt:
+  `MonoGameSoundPlaybackBackend.StartTickDriver` runs a dedicated thread that
+  pairs one `SoundManager.AdvanceSoundFrame()` tick with one 735-sample buffer
+  submission, so the tick rate is locked to the audio clock (exactly 60/s) and
+  survives any game-thread stall. `SoundManager` gained `_soundTickGate`, the
+  desktop equivalent of the interrupt masking: the tick and every game-thread
+  sound entry point (`PlaySoundEffect`, `LoadMapSequence`, `LoadBgm`,
+  `FUN_8004B114`, `StopAllSound`, `LoadMapSounds`, `HandleMapSoundStreaming`,
+  `HandleMapSoundEffects`, `PlaySoundEffectWithToneVolumeMix`,
+  `InitializeSoundSystem`, `IsSoundLoading`, `WaitForSoundEffectsIdleStep`)
+  serialize on it. `GameEngine.MainLoop` and `WaitForSoundEffectsIdleStep` skip
+  their own tick when `HasExternalSoundTickDriver` is set, so the tick is never
+  double-driven. Trace/render harnesses keep calling `AdvanceSoundFrame`
+  manually (no driver) and reproduce identical traces.
 
 ## SPU backend contract from PsyZ
 

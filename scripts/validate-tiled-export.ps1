@@ -97,22 +97,27 @@ Assert-True ([int]$map.height -gt 0) "Map height must be positive"
 Assert-True ([int]$map.tilewidth -eq 24) "Map tile width must be 24"
 Assert-True ([int]$map.tileheight -eq 16) "Map tile height must be 16"
 
-$mapProperties = Assert-TiledProperties $map.properties @("AlundraCompanionJson", "MapId", "Gravity", "ZViscosity") "Map '$MapName'"
+$mapProperties = Assert-TiledProperties $map.properties @("AlundraCompanionJson", "TilesetLayoutMode", "MapId", "Gravity", "ZViscosity") "Map '$MapName'"
 Assert-True ($mapProperties["AlundraCompanionJson"] -eq "$MapName.alundra.json") "Map companion property points to '$($mapProperties["AlundraCompanionJson"])'"
 
 Assert-True ([int]$companion.width -eq [int]$map.width) "Companion width mismatch"
 Assert-True ([int]$companion.height -eq [int]$map.height) "Companion height mismatch"
 Assert-True (@($companion.cells).Count -eq ([int]$map.width * [int]$map.height)) "Companion cell count mismatch"
 
-Assert-True ([int]$tileset.tilecount -eq @($tileset.tiles).Count) "Tileset tilecount does not match tiles array count"
+Assert-True ([int]$tileset.tilecount -ge @($tileset.tiles).Count) "Tileset tilecount must cover every explicit tileset tile entry"
 Assert-True ([int]$tileset.columns -gt 0) "Tileset columns must be positive"
 Assert-True ([int]$tileset.imagewidth -gt 0) "Tileset image width must be positive"
 Assert-True ([int]$tileset.imageheight -gt 0) "Tileset image height must be positive"
 
 $gidByRawTileId = @{}
+$tileIds = [System.Collections.Generic.HashSet[int]]::new()
 foreach ($tile in @($tileset.tiles)) {
+    Assert-True ([int]$tile.id -ge 0) "Tileset tile id '$($tile.id)' must be non-negative"
+    Assert-True ([int]$tile.id -lt [int]$tileset.tilecount) "Tileset tile id '$($tile.id)' must be below tilecount $($tileset.tilecount)"
+    Assert-True ($tileIds.Add([int]$tile.id)) "Tileset tile id '$($tile.id)' is duplicated"
     $tileProperties = Get-TiledPropertyMap $tile.properties
     Assert-True ($tileProperties.ContainsKey("TileId")) "Tileset tile '$($tile.id)' is missing TileId"
+    Assert-True (-not $gidByRawTileId.ContainsKey([string]$tileProperties["TileId"])) "Raw tile id '$($tileProperties["TileId"])' is duplicated in the tileset metadata"
     $gidByRawTileId[[string]$tileProperties["TileId"]] = [int]$tile.id + 1
 }
 
