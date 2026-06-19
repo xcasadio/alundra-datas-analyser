@@ -344,13 +344,25 @@ public static class FunctionTypeE
     //8007f30c
     public static void AI_FUN_8007f30c(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "")
         {
             Breakpoint.TriggerBreak();
         }
 
-        gameEngine.SoundManager.PlaySoundEffect(0x2d);
-        gameEngine.DestroyEntity(entity, -1);
+        if (entity.TargetAnimationId == 1)
+        {
+            if (entity.ForceResetAnimationFlag == 1)
+            {
+                gameEngine.DestroyEntity(entity, -1);
+            }
+        }
+        else
+        {
+            gameEngine.StaticVariables.g_cameraDebugOffsetY = 2;
+            entity.TargetAnimationId = 1;
+            entity.Flags = (entity.Flags | 0x40u) & ~0x30u;
+        }
     }
 
     //8007f378
