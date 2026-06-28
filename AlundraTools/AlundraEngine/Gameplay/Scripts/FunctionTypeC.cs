@@ -861,7 +861,8 @@ public static class FunctionTypeC
     // 80064294
     public static void AI_FUN_80064294(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name) 
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Bloc transparent (1×1×2)"
             && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
@@ -1113,7 +1114,8 @@ public static class FunctionTypeC
     // 80064884
     public static void AI_FUN_80064884(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name) 
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Bloc transparent (1×1×2)"
             && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
@@ -17816,6 +17818,7 @@ SetAnim6:
             && entity.Name != "I31_Haricots de Jack"
             && entity.Name != "I32_Cape de sable"
             && entity.Name != "I36_Herbe médicinale"
+            && entity.Name != "I37_Potion L"
             && entity.Name != "I38_Extrait magique"
             && entity.Name != "I39_Breuvage de soin"
             && entity.Name != "I41_Potion S"

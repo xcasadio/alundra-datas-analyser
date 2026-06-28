@@ -345,7 +345,7 @@ public static class FunctionTypeE
     public static void AI_FUN_8007f30c(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
-            && entity.Name != "")
+            && entity.Name != "Magie de terre Niv.2")
         {
             Breakpoint.TriggerBreak();
         }
