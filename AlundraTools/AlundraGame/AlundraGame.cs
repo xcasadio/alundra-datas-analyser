@@ -101,10 +101,12 @@ namespace AlundraGame
 
             if (Path.GetFileName(etcResFileName).Contains("usa", StringComparison.InvariantCultureIgnoreCase))
             {
+                AlundraConfiguration.Version = AlundraVersion.Usa;
                 etcRes = new EtcResUsa(etcResFileName);
             }
             else
             {
+                AlundraConfiguration.Version = AlundraVersion.European;
                 etcRes = new EtcResR(etcResFileName);
             }
 

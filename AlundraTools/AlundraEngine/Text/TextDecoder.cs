@@ -111,7 +111,6 @@ public static class TextDecoder
     {
         var newValue = c;
         TokensWithoutSpecialCharacter.TryGetValue(c, out newValue);
-
         return newValue;
     }
 
@@ -119,8 +118,15 @@ public static class TextDecoder
     {
         int latin1 = cp850;
 
+        if (AlundraConfiguration.Version == AlundraVersion.Usa)
+        {
+            return cp850 - 0x10;
+        }
+
         if (cp850 >= 128 && Cp850ToLatin1.TryGetValue((byte)cp850, out int mapped))
+        {
             latin1 = mapped;
+        }
 
         return latin1;
     }
@@ -130,7 +136,6 @@ public static class TextDecoder
     {
         uint uVar1;
         char pcVar2;
-        uint puVar3;
         int fontWidth;
         char[] textBuffer = new char[8];
         char[] numericString = new char[16];
@@ -175,7 +180,7 @@ public static class TextDecoder
 
             if (shouldRender)
             {
-            switchD_80046540_RENDER_NEXT_CHARACTER:
+                switchD_80046540_RENDER_NEXT_CHARACTER:
                 gameEngine.StaticVariables.g_textCursor = cursor;
                 currentChar = gameEngine.StaticVariables.g_scriptBuffer[gameEngine.StaticVariables.g_textCursor];
 
