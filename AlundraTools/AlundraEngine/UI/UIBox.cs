@@ -1,18 +1,6 @@
-﻿using AlundraEngine.Gameplay;
-using AlundraEngine.Graphics;
-using static System.Windows.Forms.AxHost;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
+﻿using AlundraEngine.Graphics;
 
 namespace AlundraEngine.UI;
-
-public class UiBoxAnimated
-{
-    public short X;
-    public short Y;
-    public short Width;//in 8s
-    public short Height;// in 8s
-    public UiDrawCmd[][] Boxcommands = new UiDrawCmd[0xa][];//drawareaid is an index into this
-}
 
 public class UIBoxConfiguration
 {

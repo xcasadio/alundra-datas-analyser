@@ -116,12 +116,12 @@ public static class TextDecoder
 
     public static int ConvertCp850ToLatin1(char cp850)
     {
-        int latin1 = cp850;
-
         if (AlundraConfiguration.Version == AlundraVersion.Usa)
         {
             return cp850 - 0x10;
         }
+
+        int latin1 = cp850;
 
         if (cp850 >= 128 && Cp850ToLatin1.TryGetValue((byte)cp850, out int mapped))
         {

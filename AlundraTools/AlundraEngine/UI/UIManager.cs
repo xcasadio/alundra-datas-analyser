@@ -1,7 +1,5 @@
 ﻿using AlundraEngine.Graphics;
 using AlundraEngine.Text;
-using System;
-using System.Diagnostics;
 using static AlundraEngine.Graphics.Renderer;
 
 namespace AlundraEngine.UI;
