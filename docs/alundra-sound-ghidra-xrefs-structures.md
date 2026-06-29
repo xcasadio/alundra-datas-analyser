@@ -247,7 +247,7 @@ Les xrefs depuis `LoadMapSounds @ 0x8004A09C` et `HandleMapSoundEffects @ 0x8004
 4. `HandleMapSoundEffects` est appele depuis `MainLoop`; il appelle `ResetSoundEffectRuntime`, gere le delai `g_soundEffectState`, appelle `LoadBgm(0)` en cas de changement map avec SFX actif, puis lance `PlaySoundEffect`.
 5. `WaitForSoundEffectsIdle @ 0x80049FF8` attend la fin de `g_soundEffectState`, attend `AreSoundEffectsIdle`, puis fait 3 frames audio supplementaires.
 6. `InitializeSoundSystem @ 0x800484E8` remet explicitement a zero `g_voiceState @ 0x80175858` et `g_voiceSfxId @ 0x80175870` dans la meme boucle d'init; le port C# doit donc nettoyer les deux tables ensemble.
-7. La remise a zero de la table de dedup `0x80165028` utilisee par `IsSoundEffectAlreadyPlaying @ 0x80048DF4` n'a toujours pas ete retrouvee apres passe PCSX exacte sur `InitializeSoundSystem @ 0x800484E8`, `MainLoop @ 0x8002BFE0`, `UpdateWorld @ 0x8002E34C`, `FUN_8008E034 @ 0x8008E034`, et `FUN_80090168 @ 0x80090168`; la fonction elle-meme est maintenant fermee, mais son integration reste bloquee tant que ce cycle de vie n'est pas prouve.
+7. La remise a zero de la table de dedup `0x80165028` est fermee: `FinalizeAudioBuffers @ 0x80048CD4` clear les 64 mots a zero, appelee depuis `HandleMapSoundStreaming @ 0x8004B1D4` a chaque frame audio. `FinalizeAudioBuffers` appelle aussi `UpdateSoundStream`, `FUN_8004B674` (countdown `g_soundEffectState` avec fade volume), et nettoie les SFX records dont la sequence est terminee (`FUN_8008dd1c == 0`).
 
 ## Structure sequence partielle
 

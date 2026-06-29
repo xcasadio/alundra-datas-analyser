@@ -13103,7 +13103,7 @@ public class StaticVariables
     public int DAT_80164fd0; // 80164FD0
     public int DAT_80165024; // 80165024
     // GHIDRA: DAT_80165028 @ 0x80165028
-    public int[] DAT_80165028 = new int[0x40]; // 64-word raw SFX dedup table spanning 0x80165028..0x80165127
+    public int[] INT_ARRAY_80165028 = new int[0x40]; // 64-word raw SFX dedup table spanning 0x80165028..0x80165127
     // GHIDRA: g_requestedSeqId @ 0x80165128
     public short g_requestedSeqId;
     public int g_resetSoundFlag; // 8016512C

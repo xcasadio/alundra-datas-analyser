@@ -1,8 +1,7 @@
 ﻿using System.Diagnostics;
-using System.IO;
-using AlundraEngine.Sound;
+using System.Drawing.Imaging.Effects;
 
-namespace AlundraEngine;
+namespace AlundraEngine.Sound;
 
 public class SoundManager
 {
@@ -3616,13 +3615,92 @@ public class SoundManager
         _gameEngine.SoundBin.SetMasterVolume(volumeLeft, volumeRight);
     }
 
-    // GHIDRA: IsSoundEffectAlreadyPlaying @ 0x80048DF4
-    // PARTIAL: the helper logic is now closed, but PlaySoundEffect keeps the guard disabled until the clear site for DAT_80165028 is proven.
-    private int IsSoundEffectAlreadyPlaying(int sfxId)
+    // GHIDRA: FUN_8004B674 @ 0x8004B674
+    private void FUN_8004b674()
     {
-        for (var index = 0; index < _gameEngine.StaticVariables.DAT_80165028.Length; index++)
+        if (_gameEngine.StaticVariables.g_soundEffectState == 0)
         {
-            var currentSfxId = _gameEngine.StaticVariables.DAT_80165028[index];
+            return;
+        }
+
+        var iVar2 = _gameEngine.StaticVariables.g_soundEffectState - 1;
+
+        if (iVar2 == 3)
+        {
+            _gameEngine.StaticVariables.g_soundEffectState = iVar2;
+            FUN_8008b878(0x7f, 0x7f);
+            return;
+        }
+
+        if (iVar2 == 0x3c)
+        {
+            _gameEngine.StaticVariables.g_soundEffectState = iVar2;
+            FUN_8008b878(0, 0);
+            InitializeBgm(_gameEngine.StaticVariables.g_requestedSeqId);
+            // JUSTIFICATION: PSX hardware adaptation only
+            // RELATION: SpuSetKey(0, 0xffffff) key-off all 24 voices
+            for (short voiceId = 0; voiceId < 0x18; voiceId++)
+            {
+                StopVoice(voiceId);
+            }
+            return;
+        }
+
+        if (iVar2 < 0x3d)
+        {
+            _gameEngine.StaticVariables.g_soundEffectState = iVar2;
+            return;
+        }
+
+        var sVar1 = (short)((_gameEngine.StaticVariables.g_soundEffectState - 0x3d) * 0x7f / 0x3c);
+        _gameEngine.StaticVariables.g_soundEffectState = iVar2;
+        FUN_8008b878(sVar1, sVar1);
+    }
+
+    // GHIDRA: FinalizeAudioBuffers @ 0x80048CD4
+    private void FinalizeAudioBuffers()
+    {
+        SyncSoundEffectVoiceStates();
+        FUN_8004b674();
+
+        for (var i = 0x3f; i >= 0; i--)
+        {
+            _gameEngine.StaticVariables.INT_ARRAY_80165028[i] = 0;
+        }
+
+        EnsureSoundEffectDataInitialized();
+        for (var sfxId = 0; sfxId < _gameEngine.StaticVariables.g_soundEffectData.Length; sfxId++)
+        {
+            ref var soundEffectRecord = ref _gameEngine.StaticVariables.g_soundEffectData[sfxId];
+
+            if (soundEffectRecord.SeqNum < 0 || (soundEffectRecord.Flags & 0x0002) == 0)
+            {
+                continue;
+            }
+
+            if ((uint)soundEffectRecord.SeqNum >= (uint)_gameEngine.StaticVariables.g_loadedSequenceHandles.Length)
+            {
+                continue;
+            }
+
+            var sequenceSlot = _gameEngine.StaticVariables.g_loadedSequenceHandles[soundEffectRecord.SeqNum];
+            if (sequenceSlot < 0 || FUN_8008dd1c(sequenceSlot, 0) != 0)
+            {
+                continue;
+            }
+
+            InitializeBgm(sequenceSlot);
+            ResetSomethingSound(sequenceSlot);
+            soundEffectRecord.Flags = (short)(soundEffectRecord.Flags & ~0x0002);
+        }
+    }
+
+    // GHIDRA: IsSoundEffectAlreadyPlaying @ 0x80048DF4
+    private int IsSoundEffectAlreadyPlaying(uint sfxId)
+    {
+        for (var index = 0; index < _gameEngine.StaticVariables.INT_ARRAY_80165028.Length; index++)
+        {
+            var currentSfxId = _gameEngine.StaticVariables.INT_ARRAY_80165028[index];
             if (currentSfxId == sfxId)
             {
                 return 1;
@@ -3630,7 +3708,7 @@ public class SoundManager
 
             if (currentSfxId == 0)
             {
-                _gameEngine.StaticVariables.DAT_80165028[index] = sfxId;
+                _gameEngine.StaticVariables.INT_ARRAY_80165028[index] = (int)sfxId;
                 return 0;
             }
         }
@@ -3664,9 +3742,19 @@ public class SoundManager
             return;
         }
 
+        if (IsSoundEffectAlreadyPlaying(sfxId) != 0)
+        {
+            return;
+        }
+
         EnsureSoundEffectDataInitialized();
 
-        if ((uint)sfxId >= (uint)_gameEngine.StaticVariables.g_soundEffectData.Length)
+        if ((sfxId & 0x100) != 0)
+        {
+            //sfxId = (sfxId & 0x0FF) - 43;
+        }
+
+        if (sfxId >= (uint)_gameEngine.StaticVariables.g_soundEffectData.Length)
         {
             return;
         }
@@ -5187,6 +5275,8 @@ public class SoundManager
             StopAllSound();
             _gameEngine.StaticVariables.g_resetSoundFlag = 0;
         }
+
+        FinalizeAudioBuffers();
 
         if (_gameEngine.StaticVariables.g_soundLoadState < 1 || _gameEngine.StaticVariables.g_soundLoadState > 5)
         {

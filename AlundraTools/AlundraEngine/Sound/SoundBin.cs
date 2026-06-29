@@ -262,14 +262,6 @@ public class SoundBin
     public const int SamplesPerBlock = 28;
     private const int SamplesFromLastBlock = 3;
 
-    public void PlaySoundEffect(int sfxid)
-    {
-        int start, end;
-        bool repeat;
-        PlaySoundEffect(sfxid, -1, 1, true, out start, out end, out repeat);
-
-    }
-
     public byte[]? PlaySoundEffect(int sfxid, int note, int velocity, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
     {
         loopStart = loopEnd = -1;
@@ -386,6 +378,7 @@ public class SoundBin
         }
 
     }
+
     public byte[] PlaySfx(int sfx, int pitch, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
     {
         return PlaySfxInner(sfx, GlobalVabHeader, _globalSfxVabBodyBuff, pitch, is8Bit, out loopStart, out loopEnd, out repeat);
