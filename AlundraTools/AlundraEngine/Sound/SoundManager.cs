@@ -3749,7 +3749,7 @@ public class SoundManager
 
         if ((sfxId & 0x100) != 0)
         {
-            sfxId = (sfxId & 0x0FF) - 43;
+            //sfxId = (sfxId & 0x0FF) - 43;
         }
 
         if (sfxId >= (uint)_gameEngine.StaticVariables.g_soundEffectData.Length)
