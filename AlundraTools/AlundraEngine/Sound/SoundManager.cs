@@ -2819,10 +2819,8 @@ public class SoundManager
     {
         _gameEngine.SoundBin.AdvanceTrackedVoices();
 
-        if (_gameEngine.StaticVariables.g_soundEffectState > 0)
-        {
-            _gameEngine.StaticVariables.g_soundEffectState--;
-        }
+        // g_soundEffectState is decremented only by FUN_8004b674 (called from FinalizeAudioBuffers
+        // each game frame). The PSX original FUN_8008A718 does not touch g_soundEffectState.
 
         SyncSoundEffectVoiceStates();
         FUN_8008e3d8();
@@ -3751,7 +3749,7 @@ public class SoundManager
 
         if ((sfxId & 0x100) != 0)
         {
-            //sfxId = (sfxId & 0x0FF) - 43;
+            sfxId = (sfxId & 0x0FF) - 43;
         }
 
         if (sfxId >= (uint)_gameEngine.StaticVariables.g_soundEffectData.Length)
