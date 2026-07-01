@@ -1181,7 +1181,7 @@ public static class FunctionTypeC
 
             if (entity.DelayOrAngleOrEntityId == 0)
             {
-            LAB_80064ae0:
+                LAB_80064ae0:
                 if (entity.Bytes[1] < 2 && (int)((Random.Next() * 3) >> 0x20) == 0)
                 {
                     uVar7 = (uint)((entity.DelayOrAngleOrEntityId + 1U) & 0xf);
@@ -1297,7 +1297,8 @@ public static class FunctionTypeC
 
         entity.ItemState -= 1;
         gameEngine.StaticVariables.DAT_8019113c = (gameEngine.StaticVariables.DAT_8019113c + 1) & 0xf;
-        SpriteEffect spriteEffect = gameEngine.StaticVariables.g_effectSlots[entity.AIValues[4]];
+        entity.AIValues[4]++;  // PSX line 117: AIValues[4]++ drives speed ramp-up: step(N) delay = N*-6+36 → accelerates toward 6 frames/step
+        SpriteEffect spriteEffect = gameEngine.StaticVariables.g_effectSlots[entity.AIValues[2]];  // PSX: iVar8 = *(entity->AIValues+2) = stored effect ptr; use AIValues[2] = stored slot id
         spriteEffect.X = gameEngine.StaticVariables.INT_ARRAY_80026dd0[gameEngine.StaticVariables.DAT_8019113c * 2];
         spriteEffect.Y = gameEngine.StaticVariables.INT_ARRAY_80026dd0[gameEngine.StaticVariables.DAT_8019113c * 2 + 1];
 
@@ -16729,7 +16730,8 @@ SetAnim6:
     // GHIDRA: AI_UpdateHomingProjectileBehavior @ 0x8007AF20
     public static void AI_UpdateHomingProject(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Magie de vent Niv.2 (bas)")
         {
             Breakpoint.TriggerBreak();
         }

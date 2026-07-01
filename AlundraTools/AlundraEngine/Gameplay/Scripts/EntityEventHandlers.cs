@@ -2932,9 +2932,9 @@ public class EntityEventHandlers
     // 80040B00
     public int Script_154_09A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var iVar1 = _gameEngine.PlayerManager.GetMoney();
+        var money = _gameEngine.PlayerManager.GetMoney();
 
-        if (iVar1 < variables[1])
+        if (money < variables[1])
         {
             eventProgramState.Result = 0;
         }
