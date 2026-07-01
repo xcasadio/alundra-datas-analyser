@@ -1008,7 +1008,11 @@ public static class FunctionTypeD
     //8007ebf0
     public static void AI_FUN_8007ebf0(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Beannoïde")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         Entity parentEntity = entity.ParentEntity!;
         uint soundEffectId = 3;
@@ -1030,7 +1034,10 @@ public static class FunctionTypeD
     //8007ec60
     public static void AI_FUN_8007ec60(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name))
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         if ((entity.TouchingEntity!.BalanceAnimValRef!.Val & 0xf) == 2)
         {
@@ -1042,7 +1049,8 @@ public static class FunctionTypeD
     //8007ec9c
     public static void AI_FUN_8007ec9c(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Slime géant (grand)"
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Slime géant (grand)"
             && entity.Name != "◆Slime géant (petit)")
         {
             Breakpoint.TriggerBreak();

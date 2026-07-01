@@ -3648,7 +3648,7 @@ public class EntityEventHandlers
     // 80041CDC
     public int Script_192_0C0(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        Breakpoint.TriggerBreak();
+        //Breakpoint.TriggerBreak();
         _gameEngine.PlayerManager.SetPlayerWeaponId((ushort)(variables[1] + 1));
         _gameEngine.StaticVariables.g_playerControlFlags |= 0x80;
         return 2;

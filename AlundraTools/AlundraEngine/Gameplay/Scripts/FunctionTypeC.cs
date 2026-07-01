@@ -917,7 +917,8 @@ public static class FunctionTypeC
         entity.DelayOrAngleOrEntityId = iVar5;
         if (uVar2 < 600)
         {
-            entityRecordId = (iVar5 < 121 ? 1 : 0) << 1;
+            // PSX: (iVar5 < 0x78 ^ 1) << 1 — spawn when iVar5 >= 0x78 (120)
+            entityRecordId = (iVar5 < 0x78 ? 0 : 1) << 1;
         }
         else
         {
@@ -968,8 +969,12 @@ public static class FunctionTypeC
         }
 
         entity2 = gameEngine.SpawnEntity(entity, entityRecordId, 1);
-        entity2.ContentsItemId = 0;
-        entity2.Flags = (entity2.Flags & 0xfff8ffffU) | 0x30000;
+        // PSX: null pointer writes silently ignored; guard entity2 accesses
+        if (entity2 != null)
+        {
+            entity2.ContentsItemId = 0;
+            entity2.Flags = (entity2.Flags & 0xfff8ffffU) | 0x30000;
+        }
 
         if (entityRecordId == 0)
         {
@@ -991,44 +996,47 @@ public static class FunctionTypeC
         uVar2 = (ushort)(gameEngine.StaticVariables.DAT_80191134 * 2 + gameEngine.StaticVariables.DAT_80191138 * 8
                                                                      + gameEngine.StaticVariables.CutsceneChannel_ARRAY_80026d30[0].AngleZ);
 
-        if ((uVar2 & 1) == 0)
+        if (entity2 != null)
         {
-            entity2.DelayOrAngleOrEntityId = gameEngine.StaticVariables.DAT_80191130 + 0x12000;
-            uVar4 = 0x18;
-
-            if ((uVar2 & 2) != 0)
+            if ((uVar2 & 1) == 0)
             {
-                //goto LAB_800645bc;
-                entity2.TargetDirection = uVar4;
-                entity2.PosY += -0x100000;
+                entity2.DelayOrAngleOrEntityId = gameEngine.StaticVariables.DAT_80191130 + 0x12000;
+                uVar4 = 0x18;
+
+                if ((uVar2 & 2) != 0)
+                {
+                    //goto LAB_800645bc;
+                    entity2.TargetDirection = uVar4;
+                    entity2.PosY += -0x100000;
+                }
+                else
+                {
+                    entity2.TargetDirection = 8;
+                }
             }
             else
             {
-                entity2.TargetDirection = 8;
+                iVar5 = gameEngine.StaticVariables.DAT_80191130 + 0x14000;
+                entity2.PosZ += 0x180000;
+                entity2.DelayOrAngleOrEntityId = iVar5;
+                if ((uVar2 & 2) == 0)
+                {
+                    entity2.TargetDirection = 0x18;
+                }
+                else
+                {
+                    uVar4 = 8;
+                LAB_800645bc:
+                    entity2.TargetDirection = uVar4;
+                    entity2.PosY += -0x100000;
+                }
             }
-        }
-        else
-        {
-            iVar5 = gameEngine.StaticVariables.DAT_80191130 + 0x14000;
-            entity2.PosZ += 0x180000;
-            entity2.DelayOrAngleOrEntityId = iVar5;
-            if ((uVar2 & 2) == 0)
-            {
-                entity2.TargetDirection = 0x18;
-            }
-            else
-            {
-                uVar4 = 8;
-            LAB_800645bc:
-                entity2.TargetDirection = uVar4;
-                entity2.PosY += -0x100000;
-            }
-        }
 
-        if (entity2.TargetDirection == 8)
-        {
-            entity2.PosX += 0xf00000;
-            entity2.DelayOrAngleOrEntityId = -entity2.DelayOrAngleOrEntityId;
+            if (entity2.TargetDirection == 8)
+            {
+                entity2.PosX += 0xf00000;
+                entity2.DelayOrAngleOrEntityId = -entity2.DelayOrAngleOrEntityId;
+            }
         }
 
     LAB_800645f8:
@@ -1046,28 +1054,35 @@ public static class FunctionTypeC
                 }
 
                 entity2 = gameEngine.SpawnEntity(entity, 1, 1);
-                entity2.ContentsItemId = 0;
-                entity2.Flags = (entity2.Flags & 0xfff8ffffU) | 0x30000;
+                // PSX: null pointer writes silently ignored; guard entity2 accesses
+                if (entity2 != null)
+                {
+                    entity2.ContentsItemId = 0;
+                    entity2.Flags = (entity2.Flags & 0xfff8ffffU) | 0x30000;
+                }
                 uVar2 = (ushort)(gameEngine.StaticVariables.DAT_80191134 + (int)((((Random.Next() * 4) >> 0x20) & 3U) * 2)
                                                                          + gameEngine.StaticVariables.DAT_80191138 * 8
                                                                          + gameEngine.StaticVariables.CutsceneChannel_ARRAY_80026d30[0].AngleZ);
 
-                if ((uVar2 & 1) != 0)
+                if (entity2 != null)
                 {
-                    entity2.PosZ += 0x180000;
-                }
+                    if ((uVar2 & 1) != 0)
+                    {
+                        entity2.PosZ += 0x180000;
+                    }
 
-                if ((uVar2 & 2) != 0)
-                {
-                    entity2.TargetDirection = 8;
-                }
+                    if ((uVar2 & 2) != 0)
+                    {
+                        entity2.TargetDirection = 8;
+                    }
 
-                entity2.DelayOrAngleOrEntityId = 0x22000;
+                    entity2.DelayOrAngleOrEntityId = 0x22000;
 
-                if (entity2.TargetDirection == 8)
-                {
-                    entity2.PosX += 0xf00000;
-                    entity2.DelayOrAngleOrEntityId = -entity2.DelayOrAngleOrEntityId;
+                    if (entity2.TargetDirection == 8)
+                    {
+                        entity2.PosX += 0xf00000;
+                        entity2.DelayOrAngleOrEntityId = -entity2.DelayOrAngleOrEntityId;
+                    }
                 }
             }
             else
@@ -1328,7 +1343,8 @@ public static class FunctionTypeC
     public static void AI_FUN_80064d90(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name) 
-            && entity.Name != "Melzas2_FinalBoss")
+            && entity.Name != "Melzas2_FinalBoss"
+            && entity.Name != "Bloc transparent (1×1×2)")
         {
             Breakpoint.TriggerBreak();
             return;
@@ -1467,7 +1483,9 @@ public static class FunctionTypeC
     //80065100
     public static void AI_FUN_80065100(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Beannoïde"
+            && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
         }

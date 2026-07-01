@@ -2177,7 +2177,7 @@ public class GameEngine
     public void ChangeAreaTileProperties(int tileId)
     {
         //AlundraEngine.Debug.Debugger.Breakpoint();
-        var mapCopy = CurrentMap.Map.MapCopies[tileId]; //tileId - 2
+        var mapCopy = CurrentMap.Map.MapCopies[tileId]; // PSX: g_Map->MapCopies + tileId - 2, but the MapCopies ptr is 2 entries into the raw array, so net index = tileId
         ChangeAreaTileProperties(mapCopy.FromX, mapCopy.FromY, mapCopy.Width, mapCopy.Height, mapCopy.ToX, mapCopy.ToY);
     }
 
@@ -2221,12 +2221,14 @@ public class GameEngine
                         var tileSource = map.MapTiles[startX + x + (startY + y) * mapWidth];
                         tileDestination.Walkability = tileSource.Walkability;
                         tileDestination.GroundProperty = tileSource.GroundProperty;
+                        tileDestination.Slope = tileSource.Slope;
                         tileDestination.Height = tileSource.Height;
                         tileDestination.TileId = tileSource.TileId;
                         tileDestination.WallTilesOffset = tileSource.WallTilesOffset;
 
                         if (tileSource.WallTiles != null)
                         {
+                            // PSX copies only the raw tilesOffset field. When source has WallTiles, copy them.
                             //override in original source code
                             //if (tileSource.WallTiles.Tiles.Length != (tileDestination.WallTiles?.Tiles?.Length ?? 0))
                             //{
@@ -2247,6 +2249,12 @@ public class GameEngine
                             }
 
                             Array.Copy(tileSource.WallTiles.Tiles, tileDestination.WallTiles.Tiles, length);
+                        }
+                        else
+                        {
+                            // PSX: tilesOffset=0xFFFF stops renderer from drawing wall tiles.
+                            // C# renderer checks WallTiles != null, so must clear the object.
+                            tileDestination.WallTiles = null;
                         }
 
                         x++;
