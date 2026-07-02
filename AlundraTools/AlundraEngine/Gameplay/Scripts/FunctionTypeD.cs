@@ -223,6 +223,7 @@ public static class FunctionTypeD
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "◆Mouche Niv.1"
             && entity.Name != "◆Guêpe Niv.1"
+            && entity.Name != "◆Mimming (rotation) Niv.1"
             && entity.Name != "◆Mimming (faux) Niv.1"
             && entity.Name != "◆Homme de boue Niv.1"
             && entity.Name != "◆Zombie Niv.1")
@@ -906,7 +907,13 @@ public static class FunctionTypeD
     //8007ea24
     public static void AI_FUN_8007ea24(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Chute de rochers de Nilude (111)"
+            && entity.Name != "◆Chute de rochers de Nilude (112)"
+            && entity.Name != "◆Chute de rochers de Nilude (222)")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         if (gameEngine.EntityManager.ComputeNewHp(entity)
             || entity.TouchingEntity!.SpriteTableIndex == 0x1ef)

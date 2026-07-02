@@ -2,6 +2,7 @@ using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay.Scripts.Boss;
 using System;
 using System.Diagnostics;
+using System.Xml.Linq;
 
 namespace AlundraEngine.Gameplay.Scripts;
 
@@ -4137,7 +4138,11 @@ public static class FunctionTypeC
     //8007763c
     public static void AI_FUN_8007763c(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Chute de rochers de Nilude (111)"
+            && entity.Name != "◆Chute de rochers de Nilude (112)"
+            && entity.Name != "◆Chute de rochers de Nilude (222)"
+            && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
         }
@@ -4203,7 +4208,8 @@ public static class FunctionTypeC
     // GHIDRA: AI_FUN_80077734 @ 0x80077734
     public static void AI_FUN_80077734(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "◆Wilda (tête)")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Wilda (tête)")
         {
             Breakpoint.TriggerBreak();
         }
@@ -6140,6 +6146,7 @@ public static class FunctionTypeC
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "Boule de feu chargée"
             && entity.Name != "Boule de feu"
+            && entity.Name != "Boule de glace chargée"
             && entity.Name != "Boule de glace")
         {
             Breakpoint.TriggerBreak();
@@ -15953,7 +15960,8 @@ SetAnim6:
     // GHIDRA: AI_UpdateLoaderBossAI @ 0x80076DA0
     public static void AI_UpdateLoaderBossAI(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Nirude (avec corps)")
         {
             Breakpoint.TriggerBreak();
         }
@@ -17835,7 +17843,7 @@ SetAnim6:
     {
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "I07_Bâton magique"
-            && entity.Name != "14_Bâton des glaces flottantes"
+            && entity.Name != "I14_Bâton des glaces flottantes"
             && entity.Name != "I16_Bâton de feu"
             && entity.Name != "I31_Haricots de Jack"
             && entity.Name != "I32_Cape de sable"
@@ -17847,8 +17855,10 @@ SetAnim6:
             && entity.Name != "I43_Tome de la Terre (haut)"
             && entity.Name != "I44_Tome de la Terre (bas)"
             && entity.Name != "I46_Tome du démon d’eau (bas)"
-            && entity.Name != "I62_Emblème du sang de pigeon"
+            && entity.Name != "I54_Bracelet d’armure d’argent"
             && entity.Name != "I61_Clé"
+            && entity.Name != "I62_Emblème du sang de pigeon"
+            && entity.Name != "I64_Emblème de topaze"
             && entity.Name != "I69_1 Gilda"
             && entity.Name != "I70_5 Gildas"
             && entity.Name != "I71_10 Gildas"

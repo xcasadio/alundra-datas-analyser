@@ -4149,8 +4149,6 @@ public class PlayerManager
     // GHIDRA: FUN_80034BDC @ 0x80034BDC
     private void FUN_80034bdc()
     {
-        Breakpoint.TriggerBreak();
-
         var staticVariables = _gameEngine.StaticVariables;
 
         for (var entityIndex = 1;
@@ -4164,7 +4162,7 @@ public class PlayerManager
             {
                 entity.Status = 3;
                 entity.BlockedByEntity = null;
-                entity.TargetAnimationId = (uint)entityIndex;
+                //entity.TargetAnimationId = 1;
             }
         }
     }

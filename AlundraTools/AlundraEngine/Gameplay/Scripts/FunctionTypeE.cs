@@ -155,6 +155,7 @@ public static class FunctionTypeE
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "Boule de feu chargée"
             && entity.Name != "Boule de feu"
+            && entity.Name != "Boule de glace chargée"
             && entity.Name != "Boule de glace")
         {
             Breakpoint.TriggerBreak();
@@ -667,7 +668,10 @@ public static class FunctionTypeE
     //8007f8ac
     public static void AI_FUN_8007f8ac(GameEngine gameEngine, Entity entity)
     {        
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Chute de rochers de Nilude (111)"
+            && entity.Name != "◆Chute de rochers de Nilude (112)"
+            && entity.Name != "◆Chute de rochers de Nilude (222)")
         {
             Breakpoint.TriggerBreak();
         }
