@@ -56,6 +56,7 @@ public static class FunctionTypeE
             && entity.Name != "◆Projectile"
             && entity.Name != "◆Roche élémentaire"
             && entity.Name != "◆Projectile Niv.1"
+            && entity.Name != "◆Cercle magique de Zoldia"
             && entity.Name != "Projectile de magie de feu Niv.1"
             && entity.Name != "Magie de terre Niv.1")
         {
@@ -250,7 +251,8 @@ public static class FunctionTypeE
     public static void AI_FUN_8007f23c(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
-            && entity.Name != "Épée d’onde Niv.1")
+            && entity.Name != "Épée d’onde Niv.1"
+            && entity.Name != "Épée d’onde Niv.2")
         {
             Breakpoint.TriggerBreak();
         }
@@ -692,6 +694,7 @@ public static class FunctionTypeE
         }
 
         gameEngine.EffectManager.CreateEffectEntity(0, 0xb, 0, x, y, z);
+        gameEngine.DestroyEntity(entity);
     }
 
     //8007f974

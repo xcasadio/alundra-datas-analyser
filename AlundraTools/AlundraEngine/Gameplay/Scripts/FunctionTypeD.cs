@@ -114,6 +114,7 @@ public static class FunctionTypeD
     public static void AI_FUN_8007dbe0(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Orc (armure de fer) Niv.1"
             && entity.Name != "◆Fourneau Niv.1"
             && entity.Name != "◆Homme momie Niv.1"
             && entity.Name != "◆Homme de bois Niv.1"
@@ -157,6 +158,7 @@ public static class FunctionTypeD
     {
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "◆Ver Niv.1"
+            && entity.Name != "◆Roper Niv.1"
             && entity.Name != "◆Homme-insecte Niv.1"
             && entity.Name != "◆Homme-ombre Niv.1")
         {

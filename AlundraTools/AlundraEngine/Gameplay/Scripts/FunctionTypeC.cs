@@ -6182,7 +6182,8 @@ public static class FunctionTypeC
     public static void AI_FUN_8007a958(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
-            && entity.Name != "Épée d’onde Niv.1")
+            && entity.Name != "Épée d’onde Niv.1"
+            && entity.Name != "Épée d’onde Niv.2")
         {
             Breakpoint.TriggerBreak();
         }
@@ -17842,6 +17843,7 @@ SetAnim6:
     public static void FUN_8007c174(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "I03_Destructeur de démons"
             && entity.Name != "I07_Bâton magique"
             && entity.Name != "I14_Bâton des glaces flottantes"
             && entity.Name != "I16_Bâton de feu"

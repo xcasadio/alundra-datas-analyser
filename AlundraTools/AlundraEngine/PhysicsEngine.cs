@@ -1392,9 +1392,11 @@ public static class PhysicsEngine
 
                         zForceMax = gameEngine.CurrentMap.Info.ZViscosity * 0x100;
                         entity.ForceZ = spriteZForceTemp;
-                        if (zForceMax < spriteZForceAbs && spriteZForceTemp < 1)
+                        if (zForceMax < spriteZForceAbs)
                         {
-                            entity.ForceZ = gameEngine.CurrentMap.Info.ZViscosity * -0x100;
+                            entity.ForceZ = spriteZForceTemp < 0
+                                ? gameEngine.CurrentMap.Info.ZViscosity * -0x100
+                                : gameEngine.CurrentMap.Info.ZViscosity * 0x100;
                         }
                     }
                 }
