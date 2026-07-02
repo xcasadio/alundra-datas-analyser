@@ -3500,15 +3500,15 @@ public class EntityEventHandlers
     // 80041988
     public int Script_184_0B8(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        var targetDirection = (byte)variables[2];
+        var targetAnimationId = (uint)variables[2];
 
-        int i = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[2]) - 1;
+        int i = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[1]) - 1;
 
-        while (i > 0)
+        while (i >= 0)
         {
             var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
 
-            if (entity.TargetDirection == targetDirection)
+            if (entity.TargetAnimationId == targetAnimationId)
             {
                 eventProgramState.Result = 1;
                 return 3;

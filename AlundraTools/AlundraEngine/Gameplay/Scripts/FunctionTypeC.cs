@@ -17835,6 +17835,7 @@ SetAnim6:
     {
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "I07_Bâton magique"
+            && entity.Name != "14_Bâton des glaces flottantes"
             && entity.Name != "I16_Bâton de feu"
             && entity.Name != "I31_Haricots de Jack"
             && entity.Name != "I32_Cape de sable"

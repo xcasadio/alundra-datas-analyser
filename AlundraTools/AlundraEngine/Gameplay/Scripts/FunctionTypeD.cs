@@ -116,6 +116,7 @@ public static class FunctionTypeD
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "◆Fourneau Niv.1"
             && entity.Name != "◆Homme momie Niv.1"
+            && entity.Name != "◆Homme de bois Niv.1"
             && entity.Name != "◆Mimique Niv.1")
         {
             Breakpoint.TriggerBreak();
