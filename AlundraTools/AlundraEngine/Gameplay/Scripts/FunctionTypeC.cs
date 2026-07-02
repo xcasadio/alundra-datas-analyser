@@ -17835,6 +17835,7 @@ SetAnim6:
     {
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "I07_Bâton magique"
+            && entity.Name != "I16_Bâton de feu"
             && entity.Name != "I31_Haricots de Jack"
             && entity.Name != "I32_Cape de sable"
             && entity.Name != "I36_Herbe médicinale"
@@ -17844,6 +17845,7 @@ SetAnim6:
             && entity.Name != "I41_Potion S"
             && entity.Name != "I43_Tome de la Terre (haut)"
             && entity.Name != "I44_Tome de la Terre (bas)"
+            && entity.Name != "I46_Tome du démon d’eau (bas)"
             && entity.Name != "I62_Emblème du sang de pigeon"
             && entity.Name != "I61_Clé"
             && entity.Name != "I69_1 Gilda"

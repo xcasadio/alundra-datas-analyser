@@ -152,7 +152,9 @@ public static class FunctionTypeE
     //8007ef50
     public static void AI_HandleIceLightHitEffect(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Boule de feu"
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Boule de feu chargée"
+            && entity.Name != "Boule de feu"
             && entity.Name != "Boule de glace")
         {
             Breakpoint.TriggerBreak();
