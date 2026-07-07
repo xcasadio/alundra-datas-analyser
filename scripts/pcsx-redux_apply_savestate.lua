@@ -51,8 +51,13 @@ end
 -- ============================================================
 
 -- Globals de navigation de carte
-local G_DESIRED_MAP     = 0x800DC4CC  -- uint32 : carte cible (à écrire)
--- G_CURRENT_MAP        = 0x800DC5A0  -- uint32 : carte active (NE PAS TOUCHER)
+local G_IS_GAME_ENDING        = 0x800DC4C4  -- int32  : 1 = déclenche le warp
+local G_MAP_TRANSITION_EFFECT = 0x800DC4C8  -- int32  : 0 = fondu standard
+local G_DESIRED_MAP           = 0x800DC4CC  -- uint32 : carte cible (à écrire)
+-- G_CURRENT_MAP              = 0x800DC5A0  -- uint32 : carte active (NE PAS TOUCHER)
+local G_RESET_ANIMATION_ID    = 0x800DC4D0  -- int32  : 0x36 = idle
+local G_RESET_DIRECTION_ID    = 0x800DC4D4  -- int32  : 0 = défaut
+local G_WARP_SOUND_EFFECT_ID  = 0x800DC4E8  -- uint32 : 0 = sans son
 
 -- Globals de caméra
 local G_CAMERA_TARGET_X = 0x800DC4D8  -- int32
@@ -100,7 +105,7 @@ local TILE_H = 16
 -- ============================================================
 
 local function apply_savestate(path, status_out)
-    -- Chargement du fichier JSON
+    -- Chargement du fichier JSON (avant pause)
     local f = io.open(path, "r")
     if not f then
         status_out[1] = "ERREUR : impossible d'ouvrir " .. path
@@ -109,10 +114,9 @@ local function apply_savestate(path, status_out)
     local content = f:read("*all")
     f:close()
 
-    -- Chargement du module json (json.lua doit être dans le dossier scripts)
     local json_ok, json = pcall(require, "json")
     if not json_ok then
-        status_out[1] = "ERREUR : module json.lua introuvable : " .. tostring(json)
+        status_out[1] = "ERREUR : json.lua introuvable : " .. tostring(json)
         return false
     end
 
@@ -123,11 +127,10 @@ local function apply_savestate(path, status_out)
     end
 
     -- --------------------------------------------------------
-    -- Écriture dans g_saveData
+    -- g_saveData @ 0x801EB2E8
     -- --------------------------------------------------------
-
-    write_s32(G_SAVE_DATA + OFF_SLOT_DATA, save.SlotData or 1)
-    write_u32(G_SAVE_DATA + OFF_LAST_MAP_ID, save.LastMapId or 0xFFFFFFFF)
+    write_s32(G_SAVE_DATA + OFF_SLOT_DATA,        save.SlotData or 1)
+    write_u32(G_SAVE_DATA + OFF_LAST_MAP_ID,       save.LastMapId or 0xFFFFFFFF)
     write_str(G_SAVE_DATA + OFF_CURRENT_FLAG_NAME, save.CurrentFlagName or "", 32)
     write_str(G_SAVE_DATA + OFF_GAME_STATE_DESC,   save.GameStateDescription or "", 32)
     write_u32(G_SAVE_DATA + OFF_GAME_TIME,         save.GameTime or 0)
@@ -136,25 +139,21 @@ local function apply_savestate(path, status_out)
     write_s32(G_SAVE_DATA + OFF_CAMERA_TILE_Y,     save.CameraTileY or 0)
     write_s32(G_SAVE_DATA + OFF_CAMERA_TILE_Z,     save.CameraTileZ or 0)
 
-    -- GameFlags[64]
     if save.GameFlags then
         for i = 0, 63 do
-            local v = save.GameFlags[i + 1] or 0
-            write_u32(G_SAVE_DATA + OFF_GAME_FLAGS + i * 4, v)
+            write_u32(G_SAVE_DATA + OFF_GAME_FLAGS + i * 4, save.GameFlags[i + 1] or 0)
         end
     end
 
-    -- MapIdToInternalMapIndexTable[500]
     if save.MapIdToInternalMapIndexTable then
         for i = 0, 499 do
-            local v = save.MapIdToInternalMapIndexTable[i + 1] or 0
-            write_u16(G_SAVE_DATA + OFF_MAP_ID_TABLE + i * 2, v)
+            write_u16(G_SAVE_DATA + OFF_MAP_ID_TABLE + i * 2,
+                      save.MapIdToInternalMapIndexTable[i + 1] or 0)
         end
     end
 
-    -- PlayerStats dans g_saveData
     if save.PlayerStats then
-        local ps = save.PlayerStats
+        local ps   = save.PlayerStats
         local base = G_SAVE_DATA + OFF_PLAYER_STATS
         write_s16(base + 0x00, ps.Hp          or 0)
         write_s16(base + 0x02, ps.HpMax       or 0)
@@ -165,47 +164,45 @@ local function apply_savestate(path, status_out)
         write_s16(base + 0x0C, ps.ItemId      or 0)
         write_s16(base + 0x0E, ps.FalconTemp  or 0)
         write_s16(base + 0x10, ps.Falcon      or 0)
-
-        -- Synchronise aussi les stats joueur en temps réel (g_playerStats)
-        write_s16(G_PLAYER_STATS + 0x00, ps.Hp          or 0)
-        write_s16(G_PLAYER_STATS + 0x02, ps.HpMax       or 0)
-        write_s16(G_PLAYER_STATS + 0x04, ps.Mp          or 0)
-        write_s16(G_PLAYER_STATS + 0x06, ps.MpMax       or 0)
-        write_s16(G_PLAYER_STATS + 0x08, ps.MoneyAmount or 0)
-        write_s16(G_PLAYER_STATS + 0x0A, ps.WeaponId    or 0)
-        write_s16(G_PLAYER_STATS + 0x0C, ps.ItemId      or 0)
-        write_s16(G_PLAYER_STATS + 0x0E, ps.FalconTemp  or 0)
-        write_s16(G_PLAYER_STATS + 0x10, ps.Falcon      or 0)
+        -- g_playerStats @ 0x80176318 est un POINTEUR vers la struct live.
+        -- On le déréférence pour écrire dans la vraie struct.
+        local ptr_val = tonumber(ffi.cast("uint32_t*", memory + (G_PLAYER_STATS - 0x80000000))[0])
+        local phys    = bit.band(ptr_val, 0x1FFFFFFF)
+        if phys > 0 and phys < 0x200000 then
+            local live = 0x80000000 + phys
+            write_s16(live + 0x00, ps.Hp          or 0)
+            write_s16(live + 0x02, ps.HpMax       or 0)
+            write_s16(live + 0x04, ps.Mp          or 0)
+            write_s16(live + 0x06, ps.MpMax       or 0)
+            write_s16(live + 0x08, ps.MoneyAmount or 0)
+            write_s16(live + 0x0A, ps.WeaponId    or 0)
+            write_s16(live + 0x0C, ps.ItemId      or 0)
+            write_s16(live + 0x0E, ps.FalconTemp  or 0)
+            write_s16(live + 0x10, ps.Falcon      or 0)
+        else
+            print(string.format("[SaveState] WARN g_playerStats ptr invalide: 0x%08X", ptr_val))
+        end
     end
 
-    -- NumberOfItems[256]
     if save.NumberOfItems then
         for i = 0, 255 do
-            local v = save.NumberOfItems[i + 1] or 0
-            write_s16(G_SAVE_DATA + OFF_NUMBER_OF_ITEMS + i * 2, v)
+            write_s16(G_SAVE_DATA + OFF_NUMBER_OF_ITEMS + i * 2,
+                      save.NumberOfItems[i + 1] or 0)
         end
     end
 
     write_u8(G_SAVE_DATA + OFF_SAVE_SLOT_INDEX, save.SaveSlotIndex or 1)
-    write_u8(G_SAVE_DATA + OFF_FIELD_757,       save.Field_757     or 0)
+    write_u8(G_SAVE_DATA + OFF_FIELD_757,        save.Field_757    or 0)
 
     -- --------------------------------------------------------
-    -- g_desiredMap = InitialMapId (g_currentMap NON modifié)
+    -- Caméra (InitializeMapWarpPosition @ 0x800315B0)
     -- --------------------------------------------------------
-    local map_id = save.InitialMapId or 0
-    write_u32(G_DESIRED_MAP, map_id)
-
-    -- --------------------------------------------------------
-    -- Position caméra calculée depuis les tuiles de sauvegarde
-    -- (même formule que InitializeMapWarpPosition @ 0x800315B0)
-    -- --------------------------------------------------------
-    local tx = save.CameraTileX or 0
-    local ty = save.CameraTileY or 0
-    local tz = save.CameraTileZ or 0
-
+    local tx    = save.CameraTileX or 0
+    local ty    = save.CameraTileY or 0
+    local tz    = save.CameraTileZ or 0
     local cam_x = (tx * TILE_W + TILE_W / 2) * 65536
     local cam_y = (ty * TILE_H + TILE_H / 2) * 65536
-    local cam_z = tz * 1048576   -- << 20
+    local cam_z = tz * 1048576  -- << 20
 
     write_s32(G_CAMERA_TARGET_X, cam_x)
     write_s32(G_CAMERA_TARGET_Y, cam_y)
@@ -213,14 +210,26 @@ local function apply_savestate(path, status_out)
     write_s32(G_CAMERA_LOOKAT_X, cam_x)
     write_s32(G_CAMERA_LOOKAT_Y, cam_y)
     write_s32(G_CAMERA_LOOKAT_Z, cam_z)
-
-    -- Temps de jeu
     write_u32(G_GAMEPLAY_TIME, save.GameTime or 0)
 
+    -- --------------------------------------------------------
+    -- Déclenchement du warp vers la map sauvegardée
+    -- g_currentMap sera mis à jour par le jeu via son mécanisme warp normal.
+    -- g_isGameEnding DOIT être écrit EN DERNIER.
+    -- --------------------------------------------------------
+    local map_id = save.InitialMapId or 0
+    write_u32(G_DESIRED_MAP,           map_id)
+    write_s32(G_MAP_TRANSITION_EFFECT, 0)      -- fondu standard
+    write_s32(G_RESET_ANIMATION_ID,    0x36)   -- animation idle
+    write_s32(G_RESET_DIRECTION_ID,    0)      -- direction par défaut
+    write_u32(G_WARP_SOUND_EFFECT_ID,  0)      -- sans son
+    write_s32(G_IS_GAME_ENDING,        1)      -- déclenche le warp (EN DERNIER)
+
     local fname = path:match("[^\\/]+$") or path
-    status_out[1] = string.format("OK — carte=%d  tuile=(%d,%d)  fichier=%s", map_id, tx, ty, fname)
+    status_out[1] = string.format("OK carte=%d tuile=(%d,%d) %s", map_id, tx, ty, fname)
     return true
 end
+
 
 -- ============================================================
 -- Listage des fichiers .json dans un dossier
