@@ -1543,6 +1543,7 @@ public static class FunctionTypeC
     public static void AI_FUN_80065204(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Bloc transparent (1×1×2)" //utilisé pour faire apparaitre le chateau de Melzas
             && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();

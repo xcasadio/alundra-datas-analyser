@@ -271,6 +271,7 @@ public static class FunctionTypeE
     public static void AI_FUN_8007f25c(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Zorgia"
             && entity.Name != "◆Ronan divin corrompu"
             && entity.Name != "◆Zazan-Roi Muruta"
             && entity.Name != "◆Monsieur Aspiration")
@@ -284,7 +285,8 @@ public static class FunctionTypeE
     //8003a648
     public static void FUN_8003a648(GameEngine gameEngine, Entity entity, int effectType)
     {
-        if (!string.IsNullOrEmpty(entity.Name) 
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Zorgia"
             && entity.Name != "◆Ronan divin corrompu"
             && entity.Name != "◆Zazan-Roi Muruta"
             && entity.Name != "◆Monsieur Aspiration")

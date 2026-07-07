@@ -4056,9 +4056,10 @@ public class PlayerManager
     }
 
     // GHIDRA: FUN_80034E08 @ 0x80034E08
+    // transition Zorgia boss
     private void FUN_80034e08()
     {
-        Breakpoint.TriggerBreak();
+        //Breakpoint.TriggerBreak();
 
         var staticVariables = _gameEngine.StaticVariables;
 

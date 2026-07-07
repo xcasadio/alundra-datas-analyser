@@ -8,7 +8,9 @@ public static class FunctionTypeA
     // 8006174C
     public static void SetSpawnFlagFromZPos(GameEngine gameEngine, Entity entity)
     {
-        entity.AIValues.Set(entity.PosZ >> 16);
+        // PSX: lh v0, 0x11e(a0)  → upper 16 bits of PosZ (short)
+        //      sh v0, 0x0280(a0) → write to AIValues[0] ONLY
+        entity.AIValues[0] = (short)(entity.PosZ >> 16);
     }
 
     // 80061758
