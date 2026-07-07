@@ -21,7 +21,8 @@ public static class FunctionTypeD
     //8007da08
     public static void AI_FUN_8007da08(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name) 
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Zazan-Roi Muruta"
             && entity.Name != "◆Homme-lézard (épée) Niv.1"
             && entity.Name != "◆Homme-lézard (projectiles) Niv.1")
         {
@@ -83,7 +84,8 @@ public static class FunctionTypeD
     public static void AI_FUN_8007db38(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
-            && entity.Name != "◆Tortue de roche Niv.1")
+            && entity.Name != "◆Tortue de roche Niv.1"
+            && entity.Name != "◆Tortue de roche Niv.2")
         {
             Breakpoint.TriggerBreak();
         }
@@ -228,6 +230,7 @@ public static class FunctionTypeD
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "◆Mouche Niv.1"
             && entity.Name != "◆Guêpe Niv.1"
+            && entity.Name != "◆Oiseau de feu Niv.1"
             && entity.Name != "◆Mimming (rotation) Niv.1"
             && entity.Name != "◆Mimming (faux) Niv.1"
             && entity.Name != "◆Homme de boue Niv.1"
@@ -309,7 +312,6 @@ public static class FunctionTypeD
     }
 
     //8007e074
-    //muruta arc nv1
     public static void AI_FUN_8007e074(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
@@ -713,7 +715,11 @@ public static class FunctionTypeD
     //8007e694
     public static void AI_FUN_8007e694(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Wilda (tête)")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         var value = entity.TouchingEntity.BalanceAnimValRef.Val & 0xf;
 

@@ -53,8 +53,10 @@ public static class FunctionTypeE
     public static void AI_FUN_8007eda0(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Débris du roi" // ◆Zazan - Roi Muruta
             && entity.Name != "◆Boomerang Niv.1"
             && entity.Name != "◆Spores Niv.1"
+            && entity.Name != "◆Projectiles (plumes) Niv.1"
             && entity.Name != "◆Flèche Niv.1"
             && entity.Name != "◆Projectile"
             && entity.Name != "◆Roche élémentaire"
@@ -99,7 +101,8 @@ public static class FunctionTypeE
     //8007ee68
     public static void AI_FUN_8007ee68(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Boule de feu")
         {
             Breakpoint.TriggerBreak();
         }
@@ -267,6 +270,7 @@ public static class FunctionTypeE
     public static void AI_FUN_8007f25c(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Zazan-Roi Muruta"
             && entity.Name != "◆Monsieur Aspiration")
         {
             Breakpoint.TriggerBreak();
@@ -279,6 +283,7 @@ public static class FunctionTypeE
     public static void FUN_8003a648(GameEngine gameEngine, Entity entity, int effectType)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Zazan-Roi Muruta"
             && entity.Name != "◆Monsieur Aspiration")
         {
             Breakpoint.TriggerBreak();
@@ -704,7 +709,8 @@ public static class FunctionTypeE
     //8007f974
     public static void AI_FUN_8007f974(GameEngine gameEngine, Entity entity)
     {
-        //if (entity.Name != "◆Homme-lézard (épée) Niv.1")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Grand rocher du roi") // ◆Zazan-Roi Muruta
         {
             Breakpoint.TriggerBreak();
         }

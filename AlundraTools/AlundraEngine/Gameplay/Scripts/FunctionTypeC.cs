@@ -407,7 +407,8 @@ public static class FunctionTypeC
     public static void AI_UpdateEntityAI_1(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name) 
-            && entity.Name != "◆Tortue de roche Niv.1")
+            && entity.Name != "◆Tortue de roche Niv.1"
+            && entity.Name != "◆Tortue de roche Niv.2")
         {
             Breakpoint.TriggerBreak();
             return;
@@ -2303,6 +2304,8 @@ public static class FunctionTypeC
     public static void AI_FUN_8006b8cc(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Grand rocher du roi" // ◆Zazan-Roi Muruta
+            && entity.Name != "◆Projectiles (plumes) Niv.1"
             && entity.Name != "◆Spores Niv.1"
             && entity.Name != "◆Flèche Niv.1"
             && entity.Name != "◆Projectile"
@@ -2317,7 +2320,9 @@ public static class FunctionTypeC
     //8006ce08
     public static void AI_FUN_8006ce08(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Oiseau de feu Niv.1"
+            && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
         }
@@ -5043,7 +5048,9 @@ public static class FunctionTypeC
     //80078a5c
     public static void AI_FUN_80078a5c(GameEngine gameEngine, Entity entity)
     {
-        if (entity.Name != "Melzas2_FinalBoss")
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Boule de feu"
+            && entity.Name != "Melzas2_FinalBoss")
         {
             Breakpoint.TriggerBreak();
         }
@@ -13571,7 +13578,8 @@ public static class FunctionTypeC
     // GHIDRA: AI_UpdateEntityAI_BoosPhase3 @ 0x80071164
     public static void AI_UpdateEntityAI_BoosPhase3(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Zazan-Roi Muruta")
         {
             Breakpoint.TriggerBreak();
         }
@@ -17857,6 +17865,7 @@ SetAnim6:
             && entity.Name != "I07_Bâton magique"
             && entity.Name != "I14_Bâton des glaces flottantes"
             && entity.Name != "I16_Bâton de feu"
+            && entity.Name != "I28_Bottes magiques"
             && entity.Name != "I31_Haricots de Jack"
             && entity.Name != "I32_Cape de sable"
             && entity.Name != "I36_Herbe médicinale"
@@ -17867,10 +17876,14 @@ SetAnim6:
             && entity.Name != "I43_Tome de la Terre (haut)"
             && entity.Name != "I44_Tome de la Terre (bas)"
             && entity.Name != "I46_Tome du démon d’eau (bas)"
+            && entity.Name != "I48_Tome du dragon de feu (bas)"
             && entity.Name != "I54_Bracelet d’armure d’argent"
             && entity.Name != "I61_Clé"
             && entity.Name != "I62_Emblème du sang de pigeon"
             && entity.Name != "I64_Emblème de topaze"
+            && entity.Name != "I65_Emblème brun"
+            && entity.Name != "I66_Emblème écarlate"
+            && entity.Name != "I67_Emblème vert sombre"
             && entity.Name != "I69_1 Gilda"
             && entity.Name != "I70_5 Gildas"
             && entity.Name != "I71_10 Gildas"
@@ -17881,8 +17894,7 @@ SetAnim6:
             && entity.Name != "I83_Récipient de vie"
             && entity.Name != "I84_Petit cœur"
             && entity.Name != "I85_Cœur moyen"
-            && entity.Name != "I86_Grand cœur"
-            && !string.IsNullOrEmpty(entity.Name))
+            && entity.Name != "I86_Grand cœur")
         {
             Breakpoint.TriggerBreak();
         }
