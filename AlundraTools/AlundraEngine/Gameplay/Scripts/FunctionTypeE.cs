@@ -53,6 +53,9 @@ public static class FunctionTypeE
     public static void AI_FUN_8007eda0(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Boomerang Niv.1"
+            && entity.Name != "◆Spores Niv.1"
+            && entity.Name != "◆Flèche Niv.1"
             && entity.Name != "◆Projectile"
             && entity.Name != "◆Roche élémentaire"
             && entity.Name != "◆Projectile Niv.1"

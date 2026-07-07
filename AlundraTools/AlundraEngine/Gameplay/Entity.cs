@@ -158,6 +158,20 @@ public class Entity
         }
     }
 
+    public Entity? TouchingEntity
+    {
+        get => _TouchingEntity;
+        set
+        {
+            if (Index == 0 && value != null)
+            {
+                //Breakpoint.TriggerBreak();
+            }
+
+            _TouchingEntity = value;
+        }
+    }
+
     public int Index;
     public int Index2;
     public Entity? ChildEntity;
@@ -256,7 +270,7 @@ public class Entity
     public int CollisionDepth;//218
     public int CollisionHeight;//21c
     public int HitCounter;//220
-    public Entity? TouchingEntity;//224
+    public Entity? _TouchingEntity;//224
     public int _EventTrigger;//228
     public int MapEventProgramId;//22c
     public Entity LogicContextEntity; //self

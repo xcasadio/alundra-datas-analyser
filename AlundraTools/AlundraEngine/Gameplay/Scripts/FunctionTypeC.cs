@@ -2293,6 +2293,7 @@ public static class FunctionTypeC
             entity.TargetAnimationId = (uint)gameEngine.StaticVariables.g_scriptAnimationTable2[entity.Flags2];
         }
 
+        entity.Flags2 = 0;
         entity.PlatformEntity.CarriedEntity = null;
         entity.PlatformEntity = null;
         entity.Flags = (entity.Flags | 0x30) & 0xffffff7f;//turn off bit 8, turn on bits 5 and 6
@@ -2302,6 +2303,8 @@ public static class FunctionTypeC
     public static void AI_FUN_8006b8cc(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Spores Niv.1"
+            && entity.Name != "◆Flèche Niv.1"
             && entity.Name != "◆Projectile"
             && entity.Name != "◆Projectile Niv.1")
         {
@@ -2550,6 +2553,7 @@ public static class FunctionTypeC
     public static void AI_FUN_8006e83c(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Boomerang Niv.1"
             && entity.Name != "Abyss Niv.1")
         {
             Breakpoint.TriggerBreak();
@@ -7216,7 +7220,8 @@ public static class FunctionTypeC
     //8007c0d8
     public static void AI_FUN_8007c0d8(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Flèches chargées")
         {
             Breakpoint.TriggerBreak();
         }
@@ -12690,7 +12695,8 @@ public static class FunctionTypeC
     //8006de68
     public static void AI_UpdateEntityAI_22(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Muruta (arc) Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -12870,7 +12876,8 @@ public static class FunctionTypeC
     //8006e2d8
     public static void AI_UpdateEntityAI_23(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Muruta (boomerang) Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -17846,6 +17853,7 @@ SetAnim6:
     {
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "I03_Destructeur de démons"
+            && entity.Name != "I06_Arc de William"
             && entity.Name != "I07_Bâton magique"
             && entity.Name != "I14_Bâton des glaces flottantes"
             && entity.Name != "I16_Bâton de feu"
@@ -17869,6 +17877,7 @@ SetAnim6:
             && entity.Name != "I72_30 Gildas"
             && entity.Name != "I79_Bec en or"
             && entity.Name != "I80_Graine magique"
+            && entity.Name != "I81_Petit cristal"
             && entity.Name != "I83_Récipient de vie"
             && entity.Name != "I84_Petit cœur"
             && entity.Name != "I85_Cœur moyen"

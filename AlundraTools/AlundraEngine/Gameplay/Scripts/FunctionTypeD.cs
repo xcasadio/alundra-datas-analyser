@@ -157,8 +157,10 @@ public static class FunctionTypeD
     public static void AI_FUN_8007dcd8(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Muruta (boomerang) Niv.1"
             && entity.Name != "◆Ver Niv.1"
             && entity.Name != "◆Roper Niv.1"
+            && entity.Name != "◆Champignon Niv.1"
             && entity.Name != "◆Homme-insecte Niv.1"
             && entity.Name != "◆Homme-ombre Niv.1")
         {
@@ -194,7 +196,8 @@ public static class FunctionTypeD
     //muruta griffes nv1
     public static void AI_FUN_8007de04(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Muruta (griffes) Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -309,7 +312,8 @@ public static class FunctionTypeD
     //muruta arc nv1
     public static void AI_FUN_8007e074(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Muruta (arc) Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
