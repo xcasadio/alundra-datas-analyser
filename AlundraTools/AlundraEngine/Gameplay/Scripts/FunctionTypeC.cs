@@ -5395,125 +5395,111 @@ public static class FunctionTypeC
             Breakpoint.TriggerBreak();
         }
 
-        int iVar1 = 0;
+        Entity parentEntity = entity.ParentEntity;
         int iVar2 = 0;
-        uint targetAnimationId;
-        uint index;
-        Entity parentEntity;
-        bool label_800799a4_activated = true;
-
-        parentEntity = entity.ParentEntity;
-
-        if (entity.TargetAnimationId != 2)
-        {
-            if (parentEntity.Bytes[3] == 0)
-            {
-                label_800799a4_activated = false;
-
-                if (parentEntity.AIValues[2] == 0)
-                {
-                    //goto LAB_800799b4;
-                    iVar2 = parentEntity.PosX;
-                    iVar1 = parentEntity.PosY;
-                }
-
-                if (parentEntity.AIValues[2] + 0x118 < 0x1e00000)
-                {
-                    //goto LAB_800799a4;
-                    label_800799a4_activated = true;
-                }
-            }
-        }
+        int iVar1 = 0;
+        bool doPositionUpdate;
 
         if (entity.TargetAnimationId == 2)
         {
-            if (label_800799a4_activated)
+            // LAB_800799a4: read PosX/Y from entity ref or parent
+            int entityRef = parentEntity.AIValues[2];
+            if (entityRef == 0)
             {
-                //LAB_800799a4:
-                iVar1 = parentEntity.AIValues[2];
-
-                if (iVar1 == 0)
-                {
-                LAB_800799b4:
-                    iVar2 = parentEntity.PosX;
-                    iVar1 = parentEntity.PosY;
-                }
-                else
-                {
-                    iVar2 = iVar1 + 0x114;
-                    iVar1 = iVar1 + 0x118;
-                }
-            }
-
-            index = (uint)(parentEntity.DelayOrAngleOrEntityId + entity.DelayOrAngleOrEntityId & 0x1ff);
-            entity.PosX = iVar2 + gameEngine.StaticVariables.g_sinus[index] * (parentEntity.ItemState + 0x1000);
-            entity.PosY = iVar1 - gameEngine.StaticVariables.g_cosinus[index] * (parentEntity.ItemState + 0x1000);
-            targetAnimationId = entity.TargetAnimationId;
-
-            if (targetAnimationId == 1)
-            {
-                if (entity.ForceResetAnimationFlag == 0)
-                {
-                    return;
-                }
+                // LAB_800799b4:
+                iVar2 = parentEntity.PosX;
+                iVar1 = parentEntity.PosY;
             }
             else
             {
-                if ((int)targetAnimationId < 2)
+                Entity linkedEntity = gameEngine.StaticVariables.g_entitySlots[entityRef];
+                iVar2 = linkedEntity.PosX;
+                iVar1 = linkedEntity.PosY;
+            }
+            doPositionUpdate = true;
+        }
+        else
+        {
+            doPositionUpdate = false;
+            if (parentEntity.Bytes[3] == 0)
+            {
+                int entityRef = parentEntity.AIValues[2];
+                if (entityRef == 0)
                 {
-                    return;
+                    // goto LAB_800799b4 — use parent position, still run position update
+                    iVar2 = parentEntity.PosX;
+                    iVar1 = parentEntity.PosY;
+                    doPositionUpdate = true;
                 }
-
-                if (targetAnimationId == 2)
+                else if (gameEngine.StaticVariables.g_entitySlots[entityRef].PosY < 0x1e00000)
                 {
-                    if (entity.ForceResetAnimationFlag == 0)
-                    {
-                        return;
-                    }
-
-                    parentEntity.AIValues[4] = (short)(parentEntity.AIValues[4] - 1);
-                    gameEngine.DestroyEntity(entity, -1);
-                    return;
+                    // goto LAB_800799a4 — use linked entity position, still run position update
+                    Entity linkedEntity = gameEngine.StaticVariables.g_entitySlots[entityRef];
+                    iVar2 = linkedEntity.PosX;
+                    iVar1 = linkedEntity.PosY;
+                    doPositionUpdate = true;
                 }
+            }
+        }
 
-                if (targetAnimationId != 3)
-                {
-                    return;
-                }
+        if (!doPositionUpdate)
+        {
+            // LAB_80079a94:
+            entity.TargetAnimationId = 2;
+            return;
+        }
 
+        uint index = (uint)((parentEntity.DelayOrAngleOrEntityId + entity.DelayOrAngleOrEntityId) & 0x1ff);
+        entity.PosX = iVar2 + gameEngine.StaticVariables.g_sinus[index] * (parentEntity.ItemState + 0x1000);
+        entity.PosY = iVar1 - gameEngine.StaticVariables.g_cosinus[index] * (parentEntity.ItemState + 0x1000);
+
+        uint targetAnimationId = entity.TargetAnimationId;
+
+        if (targetAnimationId == 1)
+        {
+            if (entity.ForceResetAnimationFlag == 0)
+            {
+                return;
+            }
+        }
+        else
+        {
+            if ((int)targetAnimationId < 2)
+            {
+                return;
+            }
+
+            if (targetAnimationId == 2)
+            {
                 if (entity.ForceResetAnimationFlag == 0)
                 {
                     return;
                 }
 
-                if (entity.Bytes[3] != 0)
-                {
-                    //goto LAB_80079a94;
-                    entity.TargetAnimationId = 2;
-                    return;
-                }
+                parentEntity.AIValues[4] = (short)(parentEntity.AIValues[4] - 1);
+                gameEngine.DestroyEntity(entity, -1);
+                return;
             }
 
-            entity.TargetAnimationId = 0;
-        }
-        else
-        {
-        //if (parentEntity.Bytes[3] == 0)
-        //{
-        //    if (parentEntity.AIValues[2] == 0)
-        //    {
-        //        goto LAB_800799b4;
-        //    }
-        //
-        //    if (parentEntity.AIValues[2] + 0x118 < 0x1e00000)
-        //    {
-        //        goto LAB_800799a4;
-        //    }
-        //}
+            if (targetAnimationId != 3)
+            {
+                return;
+            }
 
-        LAB_80079a94:
-            entity.TargetAnimationId = 2;
+            if (entity.ForceResetAnimationFlag == 0)
+            {
+                return;
+            }
+
+            if (entity.Bytes[3] != 0)
+            {
+                // LAB_80079a94:
+                entity.TargetAnimationId = 2;
+                return;
+            }
         }
+
+        entity.TargetAnimationId = 0;
     }
 
     //80079b14
@@ -6195,7 +6181,8 @@ public static class FunctionTypeC
     {
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "Épée d’onde Niv.1"
-            && entity.Name != "Épée d’onde Niv.2")
+            && entity.Name != "Épée d’onde Niv.2"
+            && entity.Name != "Épée d’onde Niv.3")
         {
             Breakpoint.TriggerBreak();
         }
@@ -13974,7 +13961,8 @@ SetDelay:
     //80071BF4
     public static void AI_UpdateEntityAI_SpecialBoss(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Zorgia")
         {
             Breakpoint.TriggerBreak();
         }
@@ -14037,18 +14025,20 @@ SetDelay:
                     entity.PosZ + 0x1000000,
                     direction);
 
-                if (entity.PosZ + 0x1000000 < pEVar5.TerrainHeight)
+                if (pEVar5 != null)
                 {
-                    gameEngine.DestroyEntity(pEVar5);
-                }
-                else
-                {
-                    gameEngine.SoundManager.PlaySoundEffect(0xB7);
-                    pEVar5.ForceZ = -0x80000;
+                    if (entity.PosZ + 0x1000000 < pEVar5.TerrainHeight)
+                    {
+                        gameEngine.DestroyEntity(pEVar5);
+                    }
+                    else
+                    {
+                        gameEngine.SoundManager.PlaySoundEffect(0xB7);
+                        pEVar5.ForceZ = -0x80000;
+                    }
                 }
 
                 gameEngine.StaticVariables.DAT_8019119c += 8;
-                gameEngine.StaticVariables.DAT_8019119c = gameEngine.StaticVariables.DAT_8019119c;
             }
         }
 
@@ -14238,7 +14228,6 @@ SetDelay:
                     {
                         entity.ItemState = 0x100;
                         gameEngine.StaticVariables.DAT_8019119c = 0;
-                        gameEngine.StaticVariables.DAT_8019119c = 0;
                         gameEngine.InitializeAndBeginFadeEffect();
                     }
                 }
@@ -14295,7 +14284,8 @@ SetAnim6:
     // GHIDRA: AI_UpdateEntityIA_WatcherBehavior @ 0x8007252C
     public static void AI_UpdateEntityIA_WatcherBehavior(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Projectiles de Zoldia")
         {
             Breakpoint.TriggerBreak();
         }
@@ -14626,6 +14616,20 @@ SetAnim6:
                     case 4:
                     case 5:
                     {
+                        // PSX: check if bosses are exactly 10 tiles apart and both can line up → trigger lightning attack
+                        if (rightEntity.TileX - leftEntity.TileX == 10)
+                        {
+                            bool leftLightningLineUp = leftRelativePositions[1] <= 6 && leftRelativePositions[3] <= 0 && 1 <= leftRelativePositions[0] && leftRelativePositions[0] <= 8;
+                            bool rightLightningLineUp = rightRelativePositions[1] <= 6 && rightRelativePositions[3] >= 0 && 1 <= rightRelativePositions[0] && rightRelativePositions[0] <= 8;
+
+                            if (leftLightningLineUp && rightLightningLineUp)
+                            {
+                                entity.TargetAnimationId = 0xF;
+                                entity.TargetDirection = leftRelativePositions[4] < 0 ? 0U : 0x10U;
+                                break;
+                            }
+                        }
+
                         ushort delay = (ushort)entity.AIValues[1];
                         delay--;
                         entity.AIValues[1] = (short)delay;
@@ -14728,11 +14732,11 @@ SetAnim6:
                         {
                             entity.TargetAnimationId = 3;
                             entity.AIValues[1] = 0x1E;
+                            resetForces = true;
                             break;
                         }
 
                         entity.TargetDirection = (entity.TargetDirection + (uint)(((Random.Next() * 7) >> 0x20) + 9)) & 0x1F;
-                        entity.AIValues[1] = 0x3C;
                         resetForces = true;
                         break;
                     }

@@ -437,7 +437,11 @@ public static class FunctionTypeD
     //8007e2a0
     public static void AI_FUN_8007e2a0(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Zorgia")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         HitCommon(gameEngine, entity, 8);
     }

@@ -31,7 +31,7 @@ public class SpriteInfo
 
         //read sprite table
         br.BaseStream.Position = _binOffset + Header.SpriteTablePointer;
-        SpriteTable = new int[0xff];
+        SpriteTable = new int[Header.SpriteTableSize / 4];
         for (var i = 0; i < SpriteTable.Length; i++)
         {
             SpriteTable[i] = br.ReadInt32();
