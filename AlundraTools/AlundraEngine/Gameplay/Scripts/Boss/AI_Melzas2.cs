@@ -169,7 +169,10 @@ public static class AI_Melzas2
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "◆Corps" // wilda
             && entity.Name != "◆Zazan-Roi Muruta"
+            && entity.Name != "◆Ronan divin corrompu"
             && entity.Name != "◆Boss lézard Niv.1"
+            && entity.Name != "◆Frère Rayon (aîné) Niv.1"
+            && entity.Name != "◆Frère Rayon (cadet)"
             && entity.Name != "◆Monsieur Aspiration"
             && entity.Name != "◆Élément Niv.1"
             && entity.Name != "◆Abyss Niv.1"

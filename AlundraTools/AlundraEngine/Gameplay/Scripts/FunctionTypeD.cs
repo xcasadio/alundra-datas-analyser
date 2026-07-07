@@ -445,11 +445,16 @@ public static class FunctionTypeD
     //8007e304
     public static void AI_FUN_8007e304(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Frère Rayon (cadet)"
+            && entity.Name != "◆Frère Rayon (aîné) Niv.1")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         Entity primaryEntity = entity;
         Entity secondaryEntity;
-        int entityRef = entity.AIValues.GetInt32(2);
+        int entityRef = entity.AIValues[0];
         int direction;
 
         if (entityRef != 0)
@@ -732,7 +737,11 @@ public static class FunctionTypeD
     //8007e704
     public static void AI_FUN_8007e704(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Ronan divin corrompu")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         if (entity.TargetAnimationId != 4)
         {
@@ -978,7 +987,11 @@ public static class FunctionTypeD
     //8007eb1c
     public static void AI_FUN_8007eb1c(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Bouclier de Roein")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         if (gameEngine.EntityManager.ComputeNewHp(entity))
         {
