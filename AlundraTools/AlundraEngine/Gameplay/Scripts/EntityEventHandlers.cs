@@ -549,6 +549,8 @@ public class EntityEventHandlers
 
         if (0 < val)
         {
+            // PSX iterates g_matchingEntitiesBuffer[count-1] down to buffer[0] via entity[-1] pointer steps.
+            // val starts at count; each iteration checks buffer[val-1] then decrements.
             var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[val - 1];
 
             do
@@ -568,7 +570,9 @@ public class EntityEventHandlers
                 }
 
                 val -= 1;
-                entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[val];
+                // PSX: entity-- (moves to the previous buffer slot, i.e. buffer[val-1])
+                if (val > 0)
+                    entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[val - 1];
             } while (0 < val);
         }
 
