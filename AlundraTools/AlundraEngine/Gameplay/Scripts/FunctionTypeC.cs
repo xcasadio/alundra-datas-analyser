@@ -5389,7 +5389,8 @@ public static class FunctionTypeC
     //80079950
     public static void AI_FUN_80079950(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Bouclier de Roein")
         {
             Breakpoint.TriggerBreak();
         }
@@ -14366,9 +14367,10 @@ SetAnim6:
     }
 
     // GHIDRA: AI_UpdateEntityAI_TwinBoss @ 0x80072728
-    public static void AI_UpdateEntityDelayedSoundTrigger(GameEngine gameEngine, Entity entity)
+    public static void AI_UpdateEntityAI_TwinBoss(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Frère Rayon (aîné) Niv.1")
         {
             Breakpoint.TriggerBreak();
         }
@@ -16301,7 +16303,8 @@ SetAnim6:
     // GHIDRA: AI_UpdateEntityIA_Fire @ 0x80078E34
     public static void AI_UpdateEntityIA_Fire(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Ronan divin corrompu")
         {
             Breakpoint.TriggerBreak();
         }
@@ -16734,7 +16737,8 @@ SetAnim6:
     // GHIDRA: AI_ApplyMatchingEntityKnockback @ 0x8007ADDC
     public static void AI_ApplyMatchingEntity(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "Tonneau générique")
         {
             Breakpoint.TriggerBreak();
         }
@@ -16946,7 +16950,8 @@ SetAnim6:
     // GHIDRA: AI_UpdateEntityDelayedSoundTrigger @ 0x80072680
     public static void AI_UpdateEntityDelayed(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Cercle magique de Zoldia")
         {
             Breakpoint.TriggerBreak();
         }
@@ -17877,6 +17882,7 @@ SetAnim6:
             && entity.Name != "I44_Tome de la Terre (bas)"
             && entity.Name != "I46_Tome du démon d’eau (bas)"
             && entity.Name != "I48_Tome du dragon de feu (bas)"
+            && entity.Name != "I50_Tome du dieu du vent (bas)"
             && entity.Name != "I54_Bracelet d’armure d’argent"
             && entity.Name != "I61_Clé"
             && entity.Name != "I62_Emblème du sang de pigeon"
@@ -17888,6 +17894,7 @@ SetAnim6:
             && entity.Name != "I70_5 Gildas"
             && entity.Name != "I71_10 Gildas"
             && entity.Name != "I72_30 Gildas"
+            && entity.Name != "I78_Pierre de Zolist"
             && entity.Name != "I79_Bec en or"
             && entity.Name != "I80_Graine magique"
             && entity.Name != "I81_Petit cristal"
