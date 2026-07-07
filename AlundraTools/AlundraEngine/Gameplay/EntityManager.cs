@@ -523,7 +523,7 @@ public class EntityManager
                     continue;
                 }
 
-                //Y
+                //Y  (PSX: rangeY = entity->collisionDepth)
                 var dify = entity.HitBoxY - otherEntity.ModdedPosY;
                 int depth;
                 if (dify > 0)
@@ -533,7 +533,7 @@ public class EntityManager
                 else
                 {
                     dify = otherEntity.ModdedPosY - entity.HitBoxY;
-                    depth = entity.CollisionHeight + 1;
+                    depth = entity.CollisionDepth + 1;
                 }
 
                 if (dify >= depth)
@@ -541,7 +541,7 @@ public class EntityManager
                     continue;
                 }
 
-                //Z
+                //Z  (PSX: rangeZ = entity->collisionHeight)
                 var difz = entity.HitBoxZ - otherEntity.ModdedPosZ;
                 int height;
                 if (difz > 0)
@@ -551,7 +551,7 @@ public class EntityManager
                 else
                 {
                     difz = otherEntity.ModdedPosZ - entity.HitBoxZ;
-                    height = entity.CollisionDepth + 1;
+                    height = entity.CollisionHeight + 1;
                 }
 
                 if (difz >= height)

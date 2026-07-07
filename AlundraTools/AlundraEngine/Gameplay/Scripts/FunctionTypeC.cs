@@ -7756,9 +7756,10 @@ public static class FunctionTypeC
                 return;
             }
 
+            // PSX: DestroyEntity(pEVar8) where pEVar8 = entity->ParentEntity (the eye entity)
             entity.TargetAnimationId = 4;
             entity.Flags |= 0x40;
-            gameEngine.DestroyEntity(entity);
+            gameEngine.DestroyEntity(parentEntity);
             entity.SpriteProgramIndexes[ScriptHelper.ProgramCTick] = 0;
             return;
         }

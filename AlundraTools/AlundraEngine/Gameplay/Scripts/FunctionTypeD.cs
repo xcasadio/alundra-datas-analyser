@@ -767,7 +767,8 @@ public static class FunctionTypeD
     {
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "Bombe"
-            && entity.Name != "Pilier détruisible (UD■/LR●)"
+            && entity.Name != "Bombe"
+            && entity.Name != "Mur à boule de fer (2×2×1) permanent"
             && entity.Name != "Mur à boule de fer (111)"
             && entity.Name != "Mur à boule de fer (112) – axe"
             && entity.Name != "Mur à boule de fer (222) – boule de fer"
