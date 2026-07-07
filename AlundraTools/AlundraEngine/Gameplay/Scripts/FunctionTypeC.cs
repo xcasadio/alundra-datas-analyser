@@ -7714,7 +7714,8 @@ public static class FunctionTypeC
     // GHIDRA: AI_FUN_8007d554 @ 0x8007D554
     public static void AI_FUN_8007d554(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Slime géant (corps)")
         {
             Breakpoint.TriggerBreak();
         }

@@ -1183,12 +1183,11 @@ public class EntityEventHandlers
             return 0;
         }
 
-        eventProgramState.Parameters[2]++;
+        var counter = eventProgramState.Parameters[2];
+        eventProgramState.Parameters[2] = counter + 1;
         var toWait = variables[1];
 
-        _gameEngine.LogManager.Log(logicEntity, $"wait {eventProgramState.Parameters[2]}/{toWait}");
-
-        if (eventProgramState.Parameters[2] >= toWait)
+        if (counter >= toWait)
         {
             return 2;
         }

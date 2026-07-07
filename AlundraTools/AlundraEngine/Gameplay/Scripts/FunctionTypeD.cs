@@ -929,7 +929,12 @@ public static class FunctionTypeD
     //8007ea84
     public static void AI_FUN_8007ea84(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Slime géant (corps)"
+            && entity.Name != "◆Slime géant (œil)")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         Entity parentEntity = entity.ParentEntity!;
 
