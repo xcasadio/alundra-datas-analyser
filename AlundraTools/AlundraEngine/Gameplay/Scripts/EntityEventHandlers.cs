@@ -2357,25 +2357,12 @@ public class EntityEventHandlers
     // 8003FD74
     public int Script_JumpFromStoredParamIfFlagSet_080(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        uint[] flags;
-        int result;
+        int result = 3;
+        uint flag = (uint)(variables[1] + variables[2] * 0x100);
+        var mask = 1 << (variables[1] & 0x1f);
+        flag = _gameEngine.GetFlag(flag);
 
-        var flag = (uint)((variables[2] << 8) | variables[1]);
-
-        if ((flag & 0x8000) == 0)
-        {
-            flags = _gameEngine.StaticVariables.g_saveData.GameFlags;
-        }
-        else
-        {
-            flags = _gameEngine.StaticVariables.g_temporaryFlags;
-        }
-
-        result = 5;
-        var index = ((flag >> 3) & 0xffc) >> 2;
-        var mask = (uint)(1 << (variables[1] & 0x1f));
-
-        if ((flags[index] & mask) != 0)
+        if ((flag & mask) != 0)
         {
             result = eventProgramState._34 - eventProgramState.CodeIndex; //eventProgramState._34 - variables[0];
         }
@@ -2386,25 +2373,12 @@ public class EntityEventHandlers
     // 8003FDF8
     public int Script_JumpFromStoredParamIfFlagClear_081(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        uint[] flags;
-        int result;
+        int result = 3;
+        uint flag = (uint)(variables[1] + variables[2] * 0x100);
+        var mask = 1 << (variables[1] & 0x1f);
+        flag = _gameEngine.GetFlag(flag);
 
-        var flag = (uint)((variables[2] << 8) | variables[1]);
-
-        if ((flag & 0x8000) == 0)
-        {
-            flags = _gameEngine.StaticVariables.g_saveData.GameFlags;
-        }
-        else
-        {
-            flags = _gameEngine.StaticVariables.g_temporaryFlags;
-        }
-
-        result = 5;
-        var index = ((flag >> 3) & 0xffc) >> 2;
-        var mask = (uint)(1 << (variables[1] & 0x1f));
-
-        if ((flags[index] & mask) == 0)
+        if ((flag & mask) == 0)
         {
             result = eventProgramState._34 - eventProgramState.CodeIndex; //eventProgramState._34 - variables[0];
         }
