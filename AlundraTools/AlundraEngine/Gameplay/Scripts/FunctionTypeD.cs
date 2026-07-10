@@ -119,6 +119,7 @@ public static class FunctionTypeD
             && entity.Name != "◆Orc (armure de fer) Niv.1"
             && entity.Name != "◆Fourneau Niv.1"
             && entity.Name != "◆Homme momie Niv.1"
+            && entity.Name != "◆Homme momie Niv.2"
             && entity.Name != "◆Homme de bois Niv.1"
             && entity.Name != "◆Mimique Niv.1")
         {
@@ -162,6 +163,7 @@ public static class FunctionTypeD
             && entity.Name != "◆Muruta (boomerang) Niv.1"
             && entity.Name != "◆Ver Niv.1"
             && entity.Name != "◆Roper Niv.1"
+            && entity.Name != "◆Roper Niv.2"
             && entity.Name != "◆Champignon Niv.1"
             && entity.Name != "◆Homme-insecte Niv.1"
             && entity.Name != "◆Homme-ombre Niv.1")
