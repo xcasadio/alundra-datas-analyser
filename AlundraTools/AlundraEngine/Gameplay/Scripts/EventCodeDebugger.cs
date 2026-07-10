@@ -262,7 +262,7 @@ public class EventCodeDebugger
         {0x86, new(0x86, 4, "Add DamagedTickCounter", nameof(EntityEventHandlers.Script_134_086)) },
         {0x87, new(0x87, 3, "If TouchingEntity anim value", nameof(EntityEventHandlers.Script_135_087)) },
         {0x88, new(0x88, 3, "", nameof(EntityEventHandlers.Script_136_088)) },
-        {0x89, new(0x89, 9, "Move entities", nameof(EntityEventHandlers.Script_137_089)) },
+        {0x89, new(0x89, 9, "Set matched entities position relative to reference", nameof(EntityEventHandlers.Script_137_089)) },
         {0x8A, new(0x8A, 8, "Spawn entity at position", nameof(EntityEventHandlers.Script_138_08A)) },
         {0x8B, new(0x8B, 9, "Spawn entity next to entity ", nameof(EntityEventHandlers.Script_139_08B)) },
         {0x8C, new(0x8C, 2, "Random < variable", nameof(EntityEventHandlers.Script_140_08C)) },

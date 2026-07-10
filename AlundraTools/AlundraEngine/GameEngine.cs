@@ -1893,17 +1893,19 @@ public class GameEngine
         return false;
     }
 
-    // 8003c954
+    // GHIDRA: GetMatchingEntityBySearchType @ 0x8003C954
     public int GetMatchingEntityBySearchType(Entity ownerEntity, int searchType)
     {
         var matchCount = 0;
 
         if ((searchType & 0x80) == 0)
         {
-            GetEntityRecord(searchType);
-            
-            foreach (var entity in StaticVariables.g_entitySlots.Skip(1))
+            CheckEntityRecord(searchType);
+
+            for (var entityIndex = 1; entityIndex < StaticVariables.g_numberOfEntities; entityIndex++)
             {
+                var entity = StaticVariables.g_entitySlots[entityIndex];
+
                 if (ownerEntity.IsLoadedNormalOrDeactivated && entity.EntityRefId == searchType)
                 {
                     StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;
@@ -2069,9 +2071,23 @@ public class GameEngine
         return matchCount;
     }
 
-    public SiEntityRecord GetEntityRecord(int id)
+    // GHIDRA: CheckEntityRecord @ 0x8003C914
+    private SiEntityRecord? CheckEntityRecord(int entityId)
     {
-        SiEntityRecord res;
+        var entityRecord = GetEntityRecord(entityId);
+
+        if (entityRecord == null)
+        {
+            PrintCommandMap("Illegal InitData Number!!");
+        }
+
+        return entityRecord;
+    }
+
+    // GHIDRA: GetEntityRecord @ 0x80039BD0
+    public SiEntityRecord? GetEntityRecord(int id)
+    {
+        SiEntityRecord? res;
 
         if (id < 0 || CurrentMap.SpriteInfo.Entities.Entities.Length <= id) // StaticVariables.g_maxEntityRecord
         {

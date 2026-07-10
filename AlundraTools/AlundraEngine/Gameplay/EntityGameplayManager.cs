@@ -259,13 +259,13 @@ public class EntityGameplayManager
         return heightDiff;
     }
 
-    private int GetEntityTileHeight(Entity entity, uint animIndex, uint direction)
+    // GHIDRA: GetEntityTileHeight @ 0x8003AB54
+    public int GetEntityTileHeight(Entity entity, uint animIndex, uint direction)
     {
         int height;
         uint stepDistance;
 
-        //stepDistance = entity.SpriteRecord.AnimationOffsetsPointer[animIndex * 0xe + 8];
-        stepDistance = entity.SpriteRecord.AnimSets[animIndex].Acceleration; // TODO check which property => flag or acceleration...
+        stepDistance = entity.SpriteRecord.AnimSets[animIndex].Speed;
         height = GetTileHeightAtOffset(entity,
             _gameEngine.StaticVariables.g_offsetXList[direction] * (int)stepDistance,
             _gameEngine.StaticVariables.g_offsetYList[direction] * (int)stepDistance);

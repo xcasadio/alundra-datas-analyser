@@ -584,7 +584,7 @@ public class EntityEventHandlers
     // 8003D404
     public int Script_8_008(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        logicEntity.TargetDirection = (uint)(logicEntity.TargetDirection + variables[1] & 0x1f);
+        logicEntity.TargetDirection = (uint)((logicEntity.TargetDirection + variables[1]) & 0x1f);
         return 2;
     }
 
@@ -877,7 +877,7 @@ public class EntityEventHandlers
     {
         var result = Script_32_020(logicEntity, ownerEntity, variables, eventProgramState);
 
-        if (result == 0 && logicEntity.CollidedWithEntityZ != 0)
+        if (result == 0 && logicEntity.CollidedWithEntityZ == 0)
         {
             return 0;
         }
@@ -2111,7 +2111,7 @@ public class EntityEventHandlers
             iVar1 = -iVar1;
         }
 
-        eventProgramState.Result = iVar1 < (variables[1] << 0x10 ^ 1) ? 1 : 0;
+        eventProgramState.Result = iVar1 < ((variables[1] | (variables[2] << 8)) << 0x10) ? 0 : 1;
 
         return 3;
     }
@@ -2126,7 +2126,7 @@ public class EntityEventHandlers
             iVar1 = -iVar1;
         }
 
-        eventProgramState.Result = iVar1 < (variables[1] << 0x10 ^ 1) ? 1 : 0;
+        eventProgramState.Result = iVar1 < ((variables[1] | (variables[2] << 8)) << 0x10) ? 0 : 1;
         return 3;
     }
 
@@ -2140,7 +2140,7 @@ public class EntityEventHandlers
             iVar1 = -iVar1;
         }
 
-        eventProgramState.Result = iVar1 < (variables[1] << 0x10 ^ 1) ? 1 : 0;
+        eventProgramState.Result = iVar1 < ((variables[1] | (variables[2] << 8)) << 0x10) ? 0 : 1;
         return 3;
     }
 
@@ -2543,13 +2543,11 @@ public class EntityEventHandlers
 
         if (num != 0)
         {
-            var x = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].PosX;
-            var y = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].PosY;
-            var z = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].PosZ;
+            var referenceEntity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0];
 
-            var targetX = x + (variables[3] + variables[4] * 0x100) * 0x10000;
-            var targetY = y + (variables[5] + variables[6] * 0x100) * 0x10000;
-            var targetZ = z + (variables[7] + variables[8] * 0x100) * 0x10000;
+            var targetX = referenceEntity.PosX + ((variables[3] & 0xff) << 16 | (variables[4] & 0xff) << 24);
+            var targetY = referenceEntity.PosY + ((variables[5] & 0xff) << 16 | (variables[6] & 0xff) << 24);
+            var targetZ = referenceEntity.PosZ + ((variables[7] & 0xff) << 16 | (variables[8] & 0xff) << 24);
 
             num = _gameEngine.GetMatchingEntityBySearchType(logicEntity, variables[2]);
 
@@ -2598,7 +2596,7 @@ public class EntityEventHandlers
         {
             var entity2 = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0];
 
-            entity.PosX = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].PosX + (variables[3] + variables[4] * 0x100) * 0x10000;
+            entity.PosX = entity2.PosX + (variables[3] + variables[4] * 0x100) * 0x10000;
             entity.PosY = entity2.PosY + (variables[5] + variables[6] * 0x100) * 0x10000;
             entity.PosZ = entity2.PosZ + (variables[7] + variables[8] * 0x100) * 0x10000;
         }

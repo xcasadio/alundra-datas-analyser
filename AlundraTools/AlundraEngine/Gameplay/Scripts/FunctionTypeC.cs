@@ -9969,11 +9969,7 @@ public static class FunctionTypeC
 
                 if (entity.ForceAdjusted != 0)
                 {
-                    var stepDistance = entity.SpriteRecord!.AnimSets[9].Acceleration;
-                    iVar6 = gameEngine.EntityGameplayManager.GetTileHeightAtOffset(
-                        entity,
-                        gameEngine.StaticVariables.g_offsetXList[entity.TargetDirection] * stepDistance,
-                        gameEngine.StaticVariables.g_offsetYList[entity.TargetDirection] * stepDistance);
+                    iVar6 = gameEngine.EntityGameplayManager.GetEntityTileHeight(entity, 9, entity.TargetDirection);
                     iVar6 -= entity.FloorHeight;
 
                     if (iVar6 < 0x300001)
@@ -11004,11 +11000,7 @@ public static class FunctionTypeC
                     return;
                 }
 
-                var stepDistance = entity.SpriteRecord!.AnimSets[10].Acceleration;
-                iVar3 = gameEngine.EntityGameplayManager.GetTileHeightAtOffset(
-                    entity,
-                    gameEngine.StaticVariables.g_offsetXList[entity.TargetDirection] * stepDistance,
-                    gameEngine.StaticVariables.g_offsetYList[entity.TargetDirection] * stepDistance);
+                iVar3 = gameEngine.EntityGameplayManager.GetEntityTileHeight(entity, 10, entity.TargetDirection);
 
                 if (iVar3 == 0x7800000)
                 {
@@ -11155,11 +11147,7 @@ public static class FunctionTypeC
                         return;
                     }
 
-                    stepDistance = entity.SpriteRecord!.AnimSets[10].Acceleration;
-                    iVar3 = gameEngine.EntityGameplayManager.GetTileHeightAtOffset(
-                        entity,
-                        gameEngine.StaticVariables.g_offsetXList[uVar2] * stepDistance,
-                        gameEngine.StaticVariables.g_offsetYList[uVar2] * stepDistance);
+                    iVar3 = gameEngine.EntityGameplayManager.GetEntityTileHeight(entity, 10, uVar2);
 
                     if (iVar3 == 0x7800000)
                     {
