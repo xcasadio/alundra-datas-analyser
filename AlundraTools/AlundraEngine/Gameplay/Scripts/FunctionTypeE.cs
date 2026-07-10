@@ -271,6 +271,7 @@ public static class FunctionTypeE
     public static void AI_FUN_8007f25c(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Dragon"
             && entity.Name != "◆Zorgia"
             && entity.Name != "◆Ronan divin corrompu"
             && entity.Name != "◆Zazan-Roi Muruta"
@@ -286,6 +287,7 @@ public static class FunctionTypeE
     public static void FUN_8003a648(GameEngine gameEngine, Entity entity, int effectType)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Dragon"
             && entity.Name != "◆Zorgia"
             && entity.Name != "◆Ronan divin corrompu"
             && entity.Name != "◆Zazan-Roi Muruta"
@@ -400,6 +402,7 @@ public static class FunctionTypeE
     public static void AI_FUN_8007f3b0(GameEngine gameEngine, Entity entity)
     {
         if (entity.Name != "◆Homme-lézard (épée) Niv.1"
+            && entity.Name != "◆Triple projectile de dragon"
             && entity.Name != "Mur à boule de fer (2×2×1) permanent"
             && entity.Name != "Mur à boule de fer (2×2×2) permanent"
             && entity.Name != "Mur à boule de fer (222) – boule de fer"

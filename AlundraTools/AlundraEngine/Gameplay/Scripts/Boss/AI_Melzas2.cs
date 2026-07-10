@@ -167,6 +167,7 @@ public static class AI_Melzas2
     public static void UpdateEntityAI_BossExplode(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Dragon"
             && entity.Name != "◆Corps" // wilda
             && entity.Name != "◆Zazan-Roi Muruta"
             && entity.Name != "◆Ronan divin corrompu"
