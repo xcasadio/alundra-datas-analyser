@@ -5568,8 +5568,7 @@ public static class FunctionTypeC
                     }
 
                     gameEngine.StaticVariables.g_effectSlots[entity.AIValues[2]].TargetAnimation = 2;
-                    entity.AIValues[2] = 0;
-                    entity.AIValues[3] = 0;
+                    entity.AIValues[2] = -1;
                 }
                 break;
 
@@ -5735,13 +5734,15 @@ public static class FunctionTypeC
                     {
                         gameEngine.SoundManager.PlaySoundEffect(0x12a);
                         effect = gameEngine.EffectManager.CreateEffectEntity(1, 0, 0, entity.PosX, entity.PosY, entity.PosZ);
+                        entity.AIValues[2] = (byte)effect.Id;
                         bVar2 = entity.Bytes[0];
-                        entity.AIValues[2] = (short)effect.Id;
                         entity.Bytes[0] = (byte)(bVar2 + 1);
                         return;
                     }
 
-                    if (entity.Bytes[0] == 2 && gameEngine.StaticVariables.g_effectSlots[entity.AIValues[2]].TargetAnimation == 1)
+                    if (entity.Bytes[0] == 2 
+                        && entity.AIValues[2] != -1
+                        && gameEngine.StaticVariables.g_effectSlots[entity.AIValues[2]].TargetAnimation == 1)
                     {
                         entity.TargetAnimationId = 1;
                     }
@@ -5913,8 +5914,7 @@ public static class FunctionTypeC
                 {
                     entity.Flags |= 0x40;
                     gameEngine.StaticVariables.g_effectSlots[entity.AIValues[2]].TargetAnimation = 2;
-                    entity.AIValues[2] = 0;
-                    entity.AIValues[3] = 0;
+                    entity.AIValues[2] = -1;
                 }
                 break;
 
@@ -5929,7 +5929,7 @@ public static class FunctionTypeC
                 {
                     gameEngine.SoundManager.PlaySoundEffect(0x12a);
                     effect = gameEngine.EffectManager.CreateEffectEntity(1, 0, 0, entity.PosX, entity.PosY, entity.PosZ);
-                    entity.AIValues[2] = (short)effect.Id;
+                    entity.AIValues[2] = (byte)effect.Id;
                     entity.Bytes[0] = 0;
                     return;
                 }
