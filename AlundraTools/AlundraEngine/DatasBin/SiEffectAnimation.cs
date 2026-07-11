@@ -9,10 +9,16 @@ public class SiEffectAnimation
     public SiEffectAnimation(BinaryReader br, int effectid, int binoffset, int memoryAddress)
     {
         MemoryAddress = memoryAddress;
-        Frames = new SiEffectFrame[32];//we can compute the number of frames before
 
-        for (var i = 0; i < Frames.Length; i++)
+        // JUSTIFICATION: C# language bridge only
+        // The raw animation data is a variable-length byte stream terminated by a
+        // sentinel frame (top bit clear), not a fixed-size table, so the frame count
+        // isn't known up front and must grow to fit whatever the stream contains.
+        var frames = new List<SiEffectFrame>();
+
+        while (true)
         {
+            var i = frames.Count;
             var test = br.ReadByte();
 
             if ((test & 0x80) == 0) // != 0x80
@@ -27,28 +33,27 @@ public class SiEffectAnimation
                 //check if the frame is a transition frame
 
                 //if ((value & 0x80) == 0 /*&& value != 0*/) // TODO check value != 0
-                NumberOfFrames++;
-                Frames[i] = new SiEffectFrame(test, value, memoryAddress + i * 3);
-
-                Array.Resize(ref Frames, NumberOfFrames);
+                frames.Add(new SiEffectFrame(test, value, memoryAddress + i * 3));
                 break;
             }
 
-            NumberOfFrames++;
             br.BaseStream.Position -= 1;
 
-            Frames[i] = new SiEffectFrame(br, effectid, binoffset, memoryAddress + i * 3);
+            var frame = new SiEffectFrame(br, effectid, binoffset, memoryAddress + i * 3);
 
-            for (var j = 0; j < i; j++)
+            for (var j = 0; j < frames.Count; j++)
             {
-                if (Frames[j].ImageSetPointer == Frames[i].ImageSetPointer)
+                if (frames[j].ImageSetPointer == frame.ImageSetPointer)
                 {
-                    Frames[i].Images = Frames[j].Images;
+                    frame.Images = frames[j].Images;
                     break;
                 }
             }
+
+            frames.Add(frame);
         }
 
-        NumberOfFrames = Frames?.Length ?? 0;
+        Frames = frames.ToArray();
+        NumberOfFrames = Frames.Length;
     }
 }

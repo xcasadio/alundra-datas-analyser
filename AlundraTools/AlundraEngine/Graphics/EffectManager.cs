@@ -202,7 +202,9 @@ public class EffectManager
                 effect.NextFrameDelay = (byte)(frameData.Delay & 0x7f);
                 effect.CurrentFrameIndex++;
 
-                //Todo fix bug : during the first scene with Lars the effect bugs
+                // Safety net only: SiEffectAnimation parsing now grows to fit the real
+                // frame count (was previously capped at 32, truncating longer animations
+                // before their terminator frame and freezing them here forever).
                 effect.CurrentFrameIndex = Math.Min(effect.CurrentFrameIndex, anim.Frames.Length - 1);
 
                 try
