@@ -1902,7 +1902,7 @@ public class GameEngine
         {
             CheckEntityRecord(searchType);
 
-            for (var entityIndex = 1; entityIndex < StaticVariables.g_numberOfEntities; entityIndex++)
+            for (var entityIndex = 1; entityIndex <= StaticVariables.g_numberOfEntities; entityIndex++)
             {
                 var entity = StaticVariables.g_entitySlots[entityIndex];
 

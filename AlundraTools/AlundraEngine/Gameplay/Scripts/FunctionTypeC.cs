@@ -5506,7 +5506,8 @@ public static class FunctionTypeC
     //80079b14
     public static void AI_FUN_80079b14(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Melzas (corps principal)")
         {
             Breakpoint.TriggerBreak();
         }
@@ -5532,7 +5533,7 @@ public static class FunctionTypeC
         }
 
         FUN_80079ad4(gameEngine.StaticVariables.g_ai_spriteEffect_ptr);
-        FUN_80079ad4(gameEngine.StaticVariables.g_effectSlots[entity.AIValues[2]]);
+        FUN_80079ad4(entity.AIValues[2] == -1 ? null : gameEngine.StaticVariables.g_effectSlots[entity.AIValues[2]]);
 
         switch (entity.TargetAnimationId)
         {
@@ -5843,7 +5844,8 @@ public static class FunctionTypeC
     //8007a2f8
     public static void AI_FUN_8007a2f8(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Double de Melzas")
         {
             Breakpoint.TriggerBreak();
         }
@@ -5859,7 +5861,7 @@ public static class FunctionTypeC
 
         if (parentEntity.TargetAnimationId == 7)
         {
-        LAB_8007a460:
+            LAB_8007a460:
             entity.TargetAnimationId = 0xd;
             return;
         }
@@ -5961,7 +5963,9 @@ public static class FunctionTypeC
     //8007a4b0
     public static void AI_FUN_8007a4b0(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Projectiles en spirale (lents)" // Melzas
+            )
         {
             Breakpoint.TriggerBreak();
         }
@@ -6021,10 +6025,12 @@ public static class FunctionTypeC
         }
     }
 
-    //8007a680
+    // GHIDRA: AI_FUN_8007a680 @ 0x8007A680
     public static void AI_FUN_8007a680(GameEngine gameEngine, Entity entity)
     {
-        if (!string.IsNullOrEmpty(entity.Name))
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Projectiles à tête chercheuse (lents)" //Melzas
+            )
         {
             Breakpoint.TriggerBreak();
         }
@@ -6101,38 +6107,38 @@ public static class FunctionTypeC
             case 7:
                 sVar2 = entity.AIValues[1];
 
-                if (entity.AIValues[1] > 0)
+                if (sVar2 != 0)
                 {
                     entity.AIValues[1] = (short)(sVar2 - 1);
-                }
 
-                if (entity.AIValues[1] == 0)
-                {
-                    uVar3 = (uint)ScriptHelper.GetDirectionToTarget(gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX, gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
-                    iVar4 = (int)(entity.TargetDirection - uVar3);
-
-                    if (0xf < iVar4 || iVar4 + 0x10U < 0x10)
+                    if (sVar2 == 1)
                     {
-                        entity.Bytes[1] = 1;
-                    }
+                        uVar3 = (uint)ScriptHelper.GetDirectionToTarget(gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX, gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
+                        iVar4 = (int)(entity.TargetDirection - uVar3);
 
-                    if (iVar4 - 1U < 0xf || iVar4 < -0x10)
-                    {
-                        entity.Bytes[1] = 0xff;
-                    }
+                        if (0xf < iVar4 || iVar4 + 0x10U < 0x10)
+                        {
+                            entity.Bytes[1] = 1;
+                        }
 
-                    if (iVar4 < 0)
-                    {
-                        iVar4 = -iVar4;
-                    }
+                        if (iVar4 - 1U < 0xf || iVar4 < -0x10)
+                        {
+                            entity.Bytes[1] = 0xff;
+                        }
 
-                    if (7 < iVar4)
-                    {
-                        entity.Bytes[1] <<= 1;
-                    }
+                        if (iVar4 < 0)
+                        {
+                            iVar4 = -iVar4;
+                        }
 
-                    entity.TargetDirection = entity.TargetDirection + entity.Bytes[1] & 0x1f;
-                    entity.AIValues[1] = (short)((entity.TargetAnimationId - 4) * -4 + 0x12);
+                        if (7 < iVar4)
+                        {
+                            entity.Bytes[1] <<= 1;
+                        }
+
+                        entity.TargetDirection = entity.TargetDirection + entity.Bytes[1] & 0x1f;
+                        entity.AIValues[1] = (short)((entity.TargetAnimationId - 4) * -4 + 0x12);
+                    }
                 }
 
                 break;

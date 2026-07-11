@@ -763,7 +763,11 @@ public static class FunctionTypeD
     //8007e754
     public static void AI_FUN_8007e754(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Melzas (corps principal)")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         HitCommon(gameEngine, entity, 7);
     }
@@ -771,7 +775,11 @@ public static class FunctionTypeD
     //8007e790
     public static void AI_FUN_8007e790(GameEngine gameEngine, Entity entity)
     {
-        Breakpoint.TriggerBreak();
+        if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Double de Melzas")
+        {
+            Breakpoint.TriggerBreak();
+        }
 
         entity.TargetAnimationId = 0xd;
     }
