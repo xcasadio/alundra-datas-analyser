@@ -2078,7 +2078,7 @@ public class GameEngine
 
         if (entityRecord == null)
         {
-            PrintCommandMap("Illegal InitData Number!!");
+            //PrintCommandMap("Illegal InitData Number!!");
         }
 
         return entityRecord;
