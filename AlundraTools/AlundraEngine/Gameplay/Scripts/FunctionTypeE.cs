@@ -277,6 +277,7 @@ public static class FunctionTypeE
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "◆Dragon"
             && entity.Name != "◆Zorgia"
+            && entity.Name != "◆Melzas (corps principal)"
             && entity.Name != "◆Ronan divin corrompu"
             && entity.Name != "◆Zazan-Roi Muruta"
             && entity.Name != "◆Monsieur Aspiration")
@@ -293,6 +294,7 @@ public static class FunctionTypeE
         if (!string.IsNullOrEmpty(entity.Name)
             && entity.Name != "◆Dragon"
             && entity.Name != "◆Zorgia"
+            && entity.Name != "◆Melzas (corps principal)"
             && entity.Name != "◆Ronan divin corrompu"
             && entity.Name != "◆Zazan-Roi Muruta"
             && entity.Name != "◆Monsieur Aspiration")

@@ -177,6 +177,7 @@ public static class AI_Melzas2
             && entity.Name != "◆Monsieur Aspiration"
             && entity.Name != "◆Élément Niv.1"
             && entity.Name != "◆Abyss Niv.1"
+            && entity.Name != "◆Après Melzas"
             && entity.Name != "◆Slime géant (corps)")
         {
             Breakpoint.TriggerBreak();
