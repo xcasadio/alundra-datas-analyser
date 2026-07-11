@@ -93,7 +93,8 @@ public static class ScriptHelper
 
         deltaX = entity.TileX - playerEntity.TileX;
         deltaY = entity.TileY - playerEntity.TileY;
-        deltaZ = entity.FloorHeight - playerEntity.FloorHeight;
+        //deltaZ = entity.FloorHeight - playerEntity.FloorHeight;
+        deltaZ = entity.TerrainHeight - playerEntity.TerrainHeight;
 
         relativePositions[3] = deltaX;
 

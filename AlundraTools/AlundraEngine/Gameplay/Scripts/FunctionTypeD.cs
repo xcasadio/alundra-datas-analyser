@@ -1007,6 +1007,7 @@ public static class FunctionTypeD
     public static void AI_FUN_8007eb1c(GameEngine gameEngine, Entity entity)
     {
         if (!string.IsNullOrEmpty(entity.Name)
+            && entity.Name != "◆Projectiles à tête chercheuse (lents)" // Melzas
             && entity.Name != "◆Bouclier de Roein")
         {
             Breakpoint.TriggerBreak();
