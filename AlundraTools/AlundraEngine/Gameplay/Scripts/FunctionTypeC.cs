@@ -5790,6 +5790,15 @@ public static class FunctionTypeC
                                 entitySpawned.TargetAnimationId = 0xe;
                                 entitySpawned.Bytes[0] = 1;
                                 entitySpawned.AIValues[1] = sVar4;
+
+                                // JUSTIFICATION: C# language bridge only
+                                // Original AIValues[2..3] is a raw SpriteEffect* that starts
+                                // NULL (zero-inited entity slot), so FUN_80079ad4(NULL) is a
+                                // safe no-op. The port reuses AIValues[2] as an index into
+                                // g_effectSlots[], where 0 is a live slot, not "no effect" -
+                                // must be reset explicitly here or the top-of-function
+                                // FUN_80079ad4 call corrupts whatever effect now owns slot 0.
+                                entitySpawned.AIValues[2] = -1;
                             }
 
                             val += 2;
@@ -5856,7 +5865,7 @@ public static class FunctionTypeC
         int iVar3;
         Entity parentEntity;
 
-        FUN_80079ad4(gameEngine.StaticVariables.g_effectSlots[entity.AIValues[2]]);
+        FUN_80079ad4(entity.AIValues[2] == -1 ? null : gameEngine.StaticVariables.g_effectSlots[entity.AIValues[2]]);
         parentEntity = entity.ParentEntity;
 
         if (parentEntity.TargetAnimationId == 7)
