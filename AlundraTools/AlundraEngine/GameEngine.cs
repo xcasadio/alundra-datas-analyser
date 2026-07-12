@@ -268,7 +268,6 @@ public class GameEngine
             //_96_init();
             //syscall();
             //LoadExec("cdrom:\\END.EXE;1");
-            //\\MOVIE\\ARAN_END.MOV
             // after closing.exe
             return GameState.EndScene;
 

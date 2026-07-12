@@ -14,6 +14,18 @@ public static class TimLoader
 
     public static Bitmap LoadTim(BinaryReader br, int paletteIndex = 0, Color? transparentKey = null, int tolerance = 0)
     {
+        var raw = LoadTimRaw(br, transparentKey, tolerance);
+        return DecodeBuffer(paletteIndex, raw.Width, raw.Height, raw.Bpp, raw.Palettes, raw.ImgWWords, raw.ImgData);
+    }
+
+    public record TimRawData(int Bpp, bool HasClut, Color[][]? Palettes, int Width, int Height, ushort ImgWWords, byte[] ImgData);
+
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: exposes the parsed-but-undecoded TIM contents (palette + raw indexed pixel bytes)
+    // for callers that need to operate on the indexed/nibble data directly (e.g. a nibble-level
+    // software blit) instead of the final decoded ARGB Bitmap that LoadTim/DecodeBuffer produce.
+    public static TimRawData LoadTimRaw(BinaryReader br, Color? transparentKey = null, int tolerance = 0)
+    {
         uint magic = br.ReadUInt32(); // 0x10 00 00 00
         if (magic != 0x10)
         {
@@ -93,8 +105,7 @@ public static class TimLoader
         int dataBytes = checked((int)imgLen - 12); // remove x,y,w,h (8 bytes) + length field was separate
         byte[] imgData = br.ReadBytes(dataBytes);
 
-        // --- Decode to 32-bit ARGB ---
-        return DecodeBuffer(paletteIndex, width, height, bpp, palettes, imgWWords, imgData);
+        return new TimRawData(bpp, hasClut, palettes, width, height, imgWWords, imgData);
     }
 
     public static Bitmap DecodeBuffer(int paletteIndex, int width, int height, int bpp, Color[][]? palettes,

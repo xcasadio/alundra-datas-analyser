@@ -40,6 +40,15 @@ namespace AlundraEngine.Closing
 
         public static int ImageCount => ImageSignatures.Length;
 
+        // JUSTIFICATION: C# language bridge only
+        // RELATION: ClosingEngine needs raw (undecoded) access to the same CLOSING.EXE bytes this
+        // class already loaded, both for the credits font's raw 4bpp pixel data (index 10's TIM,
+        // which SaveAllImages already exports as closing_10.png) and for the credits data tables
+        // (CreditsBlock/CreditsPictureEntry/glyph metrics) that live alongside the TIM resources in
+        // the same file. Avoids loading CLOSING.EXE a second time.
+        public byte[] ExeBytes => _exeBytes;
+        public int GetImageFileOffset(int index) => _imageOffsets[index];
+
         public Inspector(string gamePath)
         {
             var exeFilePath = Path.Combine(gamePath, "CLOSING.EXE");
