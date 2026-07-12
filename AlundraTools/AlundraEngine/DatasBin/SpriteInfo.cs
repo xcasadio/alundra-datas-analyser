@@ -93,7 +93,7 @@ public class SpriteInfo
         SpriteRecords = new SpriteRecord[SpriteTable.Length];
         for (var i = 0; i < SpriteRecords.Length; i++)
         {
-            if (SpriteTable[i] != -1)
+            if (SpriteTable[i] != -1 && SpriteTable[i] != 0)
             {
                 br.BaseStream.Position = _binOffset + SpriteTable[i];
                 SpriteRecords[i] = new SpriteRecord(br, _binOffset, i, memoryAddress + SpriteTable[i], memoryAddress);

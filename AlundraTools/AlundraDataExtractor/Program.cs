@@ -1,5 +1,6 @@
 ﻿using AlundraEngine;
 using AlundraEngine.Balance;
+using AlundraEngine.Closing;
 using AlundraEngine.DatasBin;
 using AlundraEngine.Editor;
 using AlundraEngine.Etc;
@@ -51,14 +52,242 @@ internal class Program
         gameEngine.InitializeEngine();
 
         var alunCdExe = new AlunCdExe(gamePath);
+        var closingExe = new Inspector(gamePath);
 
         ExtractDataFromAlunCdExe(alunCdExe, extractionPath);
+        ExtractDataFromClosingExe(closingExe, extractionPath);
         ExtractDataFromBalanceBin(balanceBin, extractionPath);
         ExtractDataFromScreenFolder(font3, gameEngine.StaticVariables, extractionPath);
         ExtractDataFromEtcRes(etcRes, gameEngine.StaticVariables, extractionPath);
         var psxFramesPerSecond = etcRes is EtcResUsa ? 60 : 50;
         var tiledTilesetLayoutMode = ReadTiledTilesetLayoutMode(args, "--tiled-tileset-layout", TiledTilesetLayoutMode.Compact);
         ExtractDataFromDatasBin(gameEngine.DatasBin, gameEngine.StaticVariables, extractionPath, psxFramesPerSecond, tiledTilesetLayoutMode);
+        ExtractDataFromSoundBin(gameEngine.SoundBin, extractionPath);
+        ExtractDataFromBgm(Path.Combine(gamePath, "DATA", "SOUND.BIN"), extractionPath);
+    }
+
+    private record BgmExportRecord(int SoundIndex, string File, int Frames, double DurationSeconds, bool LoopDetected, int PeakLeft, int PeakRight, double RmsLeft, double RmsRight, int FirstAudibleFrame);
+
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: batch counterpart to --render-bgm; renders every LoadMapSequence-addressable track
+    // (MusicSeqVabOffsets triplets) through the same SPU mixer, stopping at the actual loop point.
+    // SequenceTrackState.TimesPlayed (incremented on the '/' end-of-track meta-event, gated by
+    // LoopCount) never fires for these tracks - PlaySeq(seqId, 1, 1) sets LoopCount=1, but the real
+    // repeat mechanism used by background music is a separate loop-marker meta-event (0x1E, in
+    // SoundManager.FUN_8008ca40) that jumps SeqPosition back to SeqLoopPos directly, without ever
+    // touching TimesPlayed. So the loop point is detected the model-free way instead: watch
+    // SequenceTrackState.SeqPosition frame to frame and stop the first time it goes backwards.
+    // Capped at maxSeconds as a safety net for tracks that never loop within that window.
+    private static void ExtractDataFromBgm(string soundBinPath, string extractionPath)
+    {
+        Console.WriteLine("Extract BGM");
+
+        var soundPath = Path.Combine(extractionPath, "sound");
+        var bgmPath = Path.Combine(soundPath, "bgm");
+        Directory.CreateDirectory(bgmPath);
+
+        var soundBin = new SoundBin(soundBinPath);
+        var mixer = new SpuMixerSoundPlaybackBackend();
+        soundBin.AttachPlaybackBackend(mixer);
+        var gameEngine = new GameEngine(null!, null!, soundBin, null!, null!, null);
+        gameEngine.StaticVariables.Initialize(gameEngine);
+        gameEngine.SoundManager.InitializeSoundSystem();
+
+        const int maxSeconds = 240;
+        const int maxFrames = maxSeconds * 60;
+        var maxSoundIndex = (soundBin.MusicSeqVabOffsets.Length - 4) / 3;
+        var exported = new List<BgmExportRecord>();
+
+        for (var soundIndex = 1; soundIndex <= maxSoundIndex; soundIndex++)
+        {
+            try
+            {
+                gameEngine.SoundManager.LoadMapSequence(soundIndex, 1);
+                var seqId = gameEngine.StaticVariables.g_requestedSeqId;
+                if (seqId < 0)
+                {
+                    continue;
+                }
+
+                var result = RenderBgmTrackUntilLoop(gameEngine, mixer, seqId, maxFrames);
+                var fileName = $"bgm_{soundIndex:D3}.wav";
+                WriteStereoWav(Path.Combine(bgmPath, fileName), result.Samples, SpuMixerSoundPlaybackBackend.OutputSampleRate);
+                exported.Add(new BgmExportRecord(soundIndex, fileName, result.Frames, result.Frames / 60.0, result.LoopDetected, result.PeakLeft, result.PeakRight, result.RmsLeft, result.RmsRight, result.FirstAudibleFrame));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"BGM {soundIndex} failed: {ex.Message}");
+            }
+        }
+
+        File.WriteAllText(Path.Combine(soundPath, "bgm.json"), JsonSerializer.Serialize(exported, _jsonSerializerOptions));
+        Console.WriteLine($"Extracted {exported.Count}/{maxSoundIndex} BGM tracks");
+    }
+
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: a handful of MusicSeqVabOffsets slots are unused/silent placeholders (or one-shot
+    // stingers with no loop marker at all) rather than real looping tracks, and would otherwise
+    // burn the full maxFrames as near-silence; silenceGraceFrames cuts those short once nothing
+    // has crossed the audible threshold for a few seconds.
+    private static (short[] Samples, int Frames, bool LoopDetected, int PeakLeft, int PeakRight, double RmsLeft, double RmsRight, int FirstAudibleFrame) RenderBgmTrackUntilLoop(GameEngine gameEngine, SpuMixerSoundPlaybackBackend mixer, short seqId, int maxFrames)
+    {
+        const int samplesPerFrame = SpuMixerSoundPlaybackBackend.OutputSampleRate / 60;
+        const int silenceGraceFrames = 5 * 60;
+        var renderBuffer = new short[samplesPerFrame * 2];
+        var allSamples = new List<short>(maxFrames * samplesPerFrame * 2 / 4);
+        long sumSquaresLeft = 0;
+        long sumSquaresRight = 0;
+        var peakLeft = 0;
+        var peakRight = 0;
+        var firstAudibleFrame = -1;
+        var silentFrameRun = 0;
+        var loopDetected = false;
+        var sequenceStates = gameEngine.StaticVariables.g_sequenceStatePointers;
+        var previousSeqPosition = (uint)sequenceStates[seqId].SeqPosition;
+
+        var frame = 0;
+        for (; frame < maxFrames; frame++)
+        {
+            gameEngine.SoundManager.AdvanceSoundFrame();
+            mixer.RenderSamples(renderBuffer, samplesPerFrame);
+            allSamples.AddRange(renderBuffer);
+
+            var frameAudible = false;
+            for (var i = 0; i < samplesPerFrame; i++)
+            {
+                int left = renderBuffer[i * 2];
+                int right = renderBuffer[i * 2 + 1];
+                sumSquaresLeft += (long)left * left;
+                sumSquaresRight += (long)right * right;
+                peakLeft = Math.Max(peakLeft, Math.Abs(left));
+                peakRight = Math.Max(peakRight, Math.Abs(right));
+
+                if (Math.Abs(left) > 64 || Math.Abs(right) > 64)
+                {
+                    frameAudible = true;
+                    if (firstAudibleFrame < 0)
+                    {
+                        firstAudibleFrame = frame;
+                    }
+                }
+            }
+
+            silentFrameRun = frameAudible ? 0 : silentFrameRun + 1;
+            if (silentFrameRun >= silenceGraceFrames)
+            {
+                frame++;
+                break;
+            }
+
+            var currentSeqPosition = (uint)sequenceStates[seqId].SeqPosition;
+            if (currentSeqPosition < previousSeqPosition)
+            {
+                loopDetected = true;
+                frame++;
+                break;
+            }
+
+            previousSeqPosition = currentSeqPosition;
+        }
+
+        var totalSamples = (long)frame * samplesPerFrame;
+        var rmsLeft = totalSamples > 0 ? Math.Sqrt(sumSquaresLeft / (double)totalSamples) : 0;
+        var rmsRight = totalSamples > 0 ? Math.Sqrt(sumSquaresRight / (double)totalSamples) : 0;
+
+        return (allSamples.ToArray(), frame, loopDetected, peakLeft, peakRight, rmsLeft, rmsRight, firstAudibleFrame);
+    }
+
+    private record SfxToneExport(int ToneIndex, string File, int SampleRate, int LoopStart, int LoopEnd, bool Repeat);
+
+    private record SfxExportRecord(int Id, short VabId, short ProgramNumber, short ToneNumber, short Note, short SeqNum, short RefSfxId, short MaxVoices, short NumTones, string? SkipReason, SfxToneExport[] Tones);
+
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: exhaustive archival export of every SfxRecord (global VabId=-1 bank plus every
+    // per-map VAB reachable through VabIndexByMapId/RefSfxId chains) to mono 16-bit WAV + a
+    // companion JSON with the loop/pitch/routing metadata a WAV file cannot carry on its own.
+    private static void ExtractDataFromSoundBin(SoundBin soundBin, string extractionPath)
+    {
+        Console.WriteLine("Extract sound effects");
+
+        var soundPath = Path.Combine(extractionPath, "sound");
+        var sfxPath = Path.Combine(soundPath, "sfx");
+        Directory.CreateDirectory(sfxPath);
+
+        var exported = new SortedDictionary<int, SfxExportRecord>();
+
+        // Only records a result on successful resolution; unresolved ids are retried on every
+        // OpenMapVab pass below since a given map-specific VabId is only reachable once that
+        // particular map VAB is the one currently loaded.
+        bool TryExtractSfx(int sfxid)
+        {
+            if (exported.ContainsKey(sfxid))
+            {
+                return true;
+            }
+
+            var tones = soundBin.DecodeSfxTones(sfxid);
+            if (tones == null)
+            {
+                return false;
+            }
+
+            var record = soundBin.SfxRecords[sfxid];
+            var toneExports = new SfxToneExport[tones.Count];
+            for (var i = 0; i < tones.Count; i++)
+            {
+                var tone = tones[i];
+                var fileName = tones.Count == 1 ? $"sfx_{sfxid:D4}.wav" : $"sfx_{sfxid:D4}_{tone.ToneIndex}.wav";
+                using (var wav = SoundBin.WriteWavFile(tone.Pcm, 0, tone.Pcm.Length, tone.SampleRate, false, 0x7F, 0x7F))
+                {
+                    File.WriteAllBytes(Path.Combine(sfxPath, fileName), wav.ToArray());
+                }
+
+                toneExports[i] = new SfxToneExport(tone.ToneIndex, fileName, tone.SampleRate, tone.LoopStart, tone.LoopEnd, tone.Repeat);
+            }
+
+            var skipReason = tones.Count == 0 ? "no tones (NumTones=0)" : null;
+            exported[sfxid] = new SfxExportRecord(sfxid, record.VabId, record.ProgramNumber, record.ToneNumber, record.Note, record.SeqNum, record.RefSfxId, record.MaxVoices, record.NumTones, skipReason, toneExports);
+            return true;
+        }
+
+        for (var sfxid = 1; sfxid < soundBin.SfxRecords.Length; sfxid++)
+        {
+            if (soundBin.SfxRecords[sfxid].VabId == -1)
+            {
+                TryExtractSfx(sfxid);
+            }
+        }
+
+        foreach (var vabIndex in SoundBin.VabIndexByMapId.Distinct().OrderBy(x => x))
+        {
+            soundBin.OpenMapVab(vabIndex);
+            for (var sfxid = 1; sfxid < soundBin.SfxRecords.Length; sfxid++)
+            {
+                if (soundBin.SfxRecords[sfxid].VabId >= 0)
+                {
+                    TryExtractSfx(sfxid);
+                }
+            }
+        }
+
+        // Anything left unresolved after every known map VAB has been tried is genuinely
+        // undecodable (invalid record, sequence-triggered, or an unreachable VabId) - document why.
+        for (var sfxid = 1; sfxid < soundBin.SfxRecords.Length; sfxid++)
+        {
+            if (exported.ContainsKey(sfxid))
+            {
+                continue;
+            }
+
+            var record = soundBin.SfxRecords[sfxid];
+            var reason = record.VabId == -2 ? "invalid (VabId=-2)"
+                : record.SeqNum != -1 ? "sequence-triggered, not a decodable sample"
+                : "map VAB not resolvable";
+            exported[sfxid] = new SfxExportRecord(sfxid, record.VabId, record.ProgramNumber, record.ToneNumber, record.Note, record.SeqNum, record.RefSfxId, record.MaxVoices, record.NumTones, reason, []);
+        }
+
+        File.WriteAllText(Path.Combine(soundPath, "sfx.json"), JsonSerializer.Serialize(exported.Values, _jsonSerializerOptions));
+        Console.WriteLine($"Extracted {exported.Values.Count(r => r.Tones.Length > 0)}/{soundBin.SfxRecords.Length - 1} sound effects ({exported.Values.Sum(r => r.Tones.Length)} WAV files)");
     }
 
     // JUSTIFICATION: C# language bridge only
@@ -533,6 +762,11 @@ internal class Program
         alunCdExe.MemoryCardFrame1Image.Save(Path.Combine(memoryCardPath, "memorycardframe1.png"), ImageFormat.Png);
         alunCdExe.MemoryCardFrame2Image.Save(Path.Combine(memoryCardPath, "memorycardframe2.png"), ImageFormat.Png);
         alunCdExe.MemoryCardFrame3Image.Save(Path.Combine(memoryCardPath, "memorycardframe3.png"), ImageFormat.Png);
+    }
+
+    private static void ExtractDataFromClosingExe(Inspector inspector, string extractionPath)
+    {
+        inspector.SaveAllImages(Path.Combine(extractionPath, "closing"));
     }
 
     private static void ExtractDataFromBalanceBin(BalanceBin balanceBin, string extractionPath)

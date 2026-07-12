@@ -1015,17 +1015,20 @@ public sealed class TiledTilesetLayout
     {
         var rawTileIdByLocalTileId = new Dictionary<int, ushort>();
         var entries = new List<TiledTilesetLayoutEntry>(catalog.Entries.Count);
+        var nextOverflowLocalTileId = GameMapTilesheetLayout.OriginalTileCount;
 
         foreach (var entry in catalog.Entries)
         {
-            if (!GameMapTilesheetLayout.TryGetOriginalLocalTileId(entry.RawTileId, out var localTileId))
-            {
-                throw new InvalidOperationException($"Raw tile id 0x{entry.RawTileId:x4} is outside the original map tilesheet layout");
-            }
+            var hasOriginalSlot = GameMapTilesheetLayout.TryGetOriginalLocalTileId(entry.RawTileId, out var localTileId);
 
-            if (rawTileIdByLocalTileId.TryGetValue(localTileId, out var existingRawTileId))
+            if (!hasOriginalSlot || rawTileIdByLocalTileId.ContainsKey(localTileId))
             {
-                throw new InvalidOperationException($"Raw tile ids 0x{existingRawTileId:x4} and 0x{entry.RawTileId:x4} collide on original map tilesheet slot {localTileId}");
+                // Either this raw tile index (0x3ff) has no modeled slot in the original VRAM layout
+                // (>= OriginalTileCount - some tiles live in a page this layout doesn't cover), or the
+                // slot is already claimed by another palette variant of the same index (catalog.Entries
+                // is sorted by raw tile id, so the lowest palette keeps the authentic slot when one
+                // exists). Either way, append past the authentic layout instead of failing.
+                localTileId = nextOverflowLocalTileId++;
             }
 
             rawTileIdByLocalTileId.Add(localTileId, entry.RawTileId);
@@ -1039,13 +1042,17 @@ public sealed class TiledTilesetLayout
                 GameMapTilesheetLayout.GetTileY(localTileId)));
         }
 
+        var tileCount = Math.Max(GameMapTilesheetLayout.OriginalTileCount, nextOverflowLocalTileId);
+        var rows = (tileCount + GameMapTilesheetLayout.OriginalColumns - 1) / GameMapTilesheetLayout.OriginalColumns;
+        var imageHeight = Math.Max(GameMapTilesheetLayout.OriginalImageHeight, rows * StaticVariables.MapTileHeight);
+
         return new TiledTilesetLayout(
             TiledTilesetLayoutMode.Original,
             entries.OrderBy(entry => entry.LocalTileId).ToArray(),
             GameMapTilesheetLayout.OriginalColumns,
-            GameMapTilesheetLayout.OriginalTileCount,
+            tileCount,
             GameMapTilesheetLayout.OriginalImageWidth,
-            GameMapTilesheetLayout.OriginalImageHeight);
+            imageHeight);
     }
 }
 

@@ -1,7 +1,10 @@
 ﻿using AlundraEngine;
 using AlundraEngine.Balance;
+using AlundraEngine.Closing;
 using AlundraEngine.DatasBin;
 using AlundraEngine.Editor;
+using AlundraEngine.Etc;
+using AlundraEngine.RuntimeInspection;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
 using FontStashSharp;
@@ -15,8 +18,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.IO;
-using AlundraEngine.Etc;
-using AlundraEngine.RuntimeInspection;
 
 namespace AlundraGame
 {
@@ -42,6 +43,8 @@ namespace AlundraGame
         private int _temporaryWarpEffectIndex = Array.IndexOf(TemporaryWarpEffectIds, 8);
         private readonly string? _datasBinFilePath;
         private KeyboardState _previousKeyboardState;
+        private GameState _state = GameState.Game;
+        private ClosingEngine _closingEngine;
         private int GameRenderWidth => StaticVariables.ScreenWidth * _renderScaleFactor;
         private int GameRenderHeight => StaticVariables.ScreenHeight * _renderScaleFactor;
 
@@ -76,15 +79,18 @@ namespace AlundraGame
             
             string dataFolder;
             DatasBin datasBin;
+
+            var gamePath = "D:\\development\\repo\\Alundra Remake\\Alundra (France)\\Alundra (France)_extracted";
+
             if (!string.IsNullOrWhiteSpace(_datasBinFilePath))
             {
+                gamePath = _datasBinFilePath.Replace(Path.Combine("DATA", "DATAS.BIN"), string.Empty);
                 dataFolder = Path.GetDirectoryName(_datasBinFilePath)
                     ?? throw new DirectoryNotFoundException($"Unable to resolve the data folder from '{_datasBinFilePath}'.");
                 datasBin = new DatasBin(_datasBinFilePath);
             }
             else
             {
-                var gamePath = "D:\\development\\repo\\Alundra Remake\\Alundra (France)\\Alundra (France)_extracted";
                 dataFolder = Path.Combine(gamePath, "DATA");
                 datasBin = new DatasBin(Path.Combine(dataFolder, "DATAS.BIN"));
             }
@@ -114,6 +120,9 @@ namespace AlundraGame
 
             _gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3, alundraRenderer);
             _gameEngine.InitializeEngine(true);
+
+            _closingEngine = new ClosingEngine(alundraRenderer);
+            _closingEngine.InitializeEngine(gamePath);
 
             // Desktop adaptation of the original 60 Hz VSync/timer sound interrupt: the sound
             // tick keeps running on its own thread while this thread blocks on map loading.
@@ -162,7 +171,20 @@ namespace AlundraGame
             GraphicsDevice.SetRenderTarget(_renderTarget);
             GraphicsDevice.Clear(Color.Black);
 
-            _gameEngine.MainLoop();
+            switch (_state)
+            {
+                case GameState.MainMenu:
+                    //_state = _mainMenuEngine.MainLoop();
+                    Breakpoint.TriggerBreak();
+                    break;
+                case GameState.Game:
+                    _state = _gameEngine.MainLoop();
+                    break;
+                case GameState.EndScene:
+                    _state = _closingEngine.MainLoop();
+                    break;
+            }
+
 
             //draw texture to screen
             GraphicsDevice.SetRenderTarget(null);

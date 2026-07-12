@@ -1,18 +1,13 @@
 ﻿using AlundraEngine.Balance;
 using AlundraEngine.DatasBin;
-using AlundraEngine.Editor;
 using AlundraEngine.Gameplay;
 using AlundraEngine.Gameplay.Scripts;
 using AlundraEngine.Sound;
 using AlundraEngine.Text;
 using AlundraEngine.UI;
-using System;
-using System.Diagnostics;
-using System.Drawing.Imaging.Effects;
 using AlundraEngine.Etc;
 using AlundraEngine.Graphics;
 using AlundraEngine.RuntimeInspection;
-using Microsoft.VisualBasic.Logging;
 
 namespace AlundraEngine;
 
@@ -109,7 +104,7 @@ public class GameEngine
     }
 
     // 8002bfe0
-    public void MainLoop()
+    public GameState MainLoop()
     {
         RuntimeInspector?.Checkpoint("GameEngine.MainLoop");
         StaticVariables.g_spriteNumberOfImage = 0;
@@ -121,7 +116,7 @@ public class GameEngine
         if (_isWarpTransitionRunning)
         {
             AdvanceWarpTransitionFrame();
-            return;
+            return GameState.Game;
         }
 
         // On the original this tick runs from the 60 Hz VSync/timer interrupt, not from the
@@ -231,36 +226,58 @@ public class GameEngine
             _warpSoundIdleFramesRemaining = -1;
             _isWarpTransitionRunning = true;
             AdvanceWarpTransitionFrame();
-            return;
-            //}
-            //if (9 < StaticVariables.g_mapTransitionEffectId)
-            //{
-            //    if (StaticVariables.g_mapTransitionEffectId != 10)
-            //    {
-            //        if (StaticVariables.g_mapTransitionEffectId == 0xb)
-            //        {
-            //            LoadBgm(0);
-            //            LoadSomethingInDatasBin(g_indexInDatasBin);
-            //            LoadLOADER_EXE();
-            //            DoNothing();
-            //            exit();
-            //        }
-            //        goto LAB_8002c5dc;
-            //    }
-            //    goto LAB_8002c590;
-            //}
-            //if (StaticVariables.g_mapTransitionEffectId == 8)
-            //{
-            //    StaticVariables.g_systemFlags = StaticVariables.g_systemFlags & 0xbfffffff;
-            //}
-            //else
-            //{
-            //    //LAB_8002c5dc:
-            //    //DoNothing();
+
+            if (StaticVariables.g_mapTransitionEffectId != 9)
+            {
+                if (9 < StaticVariables.g_mapTransitionEffectId)
+                {
+                    if (StaticVariables.g_mapTransitionEffectId != 10)
+                    {
+                        if (StaticVariables.g_mapTransitionEffectId == 0xb)
+                        {
+                            //return to main menu
+
+                            //LoadBgm(0);
+                            //LoadSomethingInDatasBin(g_indexInDatasBin);
+                            //LoadLOADER_EXE();
+                            //return GameState.MainMenu;
+                            //DoNothing();
+                            //exit();
+                        }
+                        //goto LAB_8002c5dc;
+                    }
+
+                    //goto LAB_8002c590;
+                    return GameState.Game;
+                }
+
+                if (StaticVariables.g_mapTransitionEffectId == 8)
+                {
+                    StaticVariables.g_saveData.GameFlags[0x33] &= 0xbfffffff;
+                }
+                else
+                {
+                    //LAB_8002c5dc:
+                    //DoNothing();
+                }
+            }
+
+            //LoadBgm(0);
+            //LoadLoadingScreens(g_dataBinHeader.LoadingScreens);
+            //_96_remove();
+            //_96_init();
+            //syscall();
+            //LoadExec("cdrom:\\END.EXE;1");
+            //\\MOVIE\\ARAN_END.MOV
+            // after closing.exe
+            return GameState.EndScene;
+
             //}
         }
 
         //} while (true);
+
+        return GameState.Game;
     }
 
     // JUSTIFICATION: C# language bridge only

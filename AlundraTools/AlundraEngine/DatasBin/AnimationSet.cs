@@ -25,7 +25,7 @@ public class AnimationSet
         AnimationOffsets = new int[4];
         for (var i = 0; i < AnimationOffsets.Length; i++)
         {
-            AnimationOffsets[i] = br.ReadInt16();
+            AnimationOffsets[i] = br.ReadUInt16();
         }
 
         Speed = br.ReadUInt16();

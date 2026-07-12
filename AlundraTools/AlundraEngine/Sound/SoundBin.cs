@@ -200,7 +200,15 @@ public class SoundBin
     public void OpenMap(uint mapid)
     {
         //FUN_80048850
-        _mapVabIndex = VabIndexByMapId[mapid];
+        OpenMapVab(VabIndexByMapId[mapid]);
+    }
+
+    // JUSTIFICATION: PSX data layout bridge only
+    // RELATION: same load performed by OpenMap, addressed directly by VAB index instead of by mapid,
+    // so callers (e.g. archival extraction) can load a map VAB without needing a mapid that references it.
+    public void OpenMapVab(int vabIndex)
+    {
+        _mapVabIndex = vabIndex;
         using var br = new BinaryReader(File.OpenRead(_soundBinfile));
         var index = _mapVabIndex * 2;
 
@@ -377,6 +385,107 @@ public class SoundBin
             return wavetoreturn;
         }
 
+    }
+
+    public readonly record struct SfxToneSample(int ToneIndex, byte[] Pcm, int SampleRate, int LoopStart, int LoopEnd, bool Repeat);
+
+    // JUSTIFICATION: C# language bridge only
+    // RELATION: archival counterpart to PlaySoundEffect; decodes every tone of a SfxRecord instead of
+    // only the first, for exhaustive extraction. Requires OpenMapVab(record.VabId) to already be loaded
+    // for map-specific records (VabId >= 0). Decodes directly (bypassing PlaySfxInner's WriteWavFile/
+    // PlayWave/runtime-cache side effects) so the returned buffer is trimmed to the true decoded length
+    // instead of the full pre-allocated block size.
+    public List<SfxToneSample>? DecodeSfxTones(int sfxid, bool is8Bit = false)
+    {
+        if (!TryResolveSfxVab(sfxid, out var record, out var header, out var bodybuff))
+        {
+            return null;
+        }
+
+        var tones = new List<SfxToneSample>(record.NumTones);
+        for (var dex = 0; dex < record.NumTones; dex++)
+        {
+            var toneIndex = record.ToneNumber + dex;
+            var attr = header.VagAttributes[record.ProgramNumber][toneIndex];
+            var vagIndex = attr.Vag > 0 ? attr.Vag - 1 : attr.Vag;
+
+            if (!TryGetVagBodyRange(header, vagIndex, out var pos, out var length))
+            {
+                continue;
+            }
+
+            var blocks = length / 0x10;
+            var bytesPerSample = is8Bit ? 1 : 2;
+            var buff = new byte[blocks * SamplesPerBlock * bytesPerSample];
+            var decodedLength = DecodeAdpcm(bodybuff, pos, length, buff, is8Bit, out var loopStartBlock, out var loopEndBlock, out var repeat);
+            if (decodedLength != buff.Length)
+            {
+                Array.Resize(ref buff, decodedLength);
+            }
+
+            var loopStart = loopStartBlock * SamplesPerBlock;
+            var loopEnd = loopEndBlock * SamplesPerBlock + SamplesPerBlock - 1;
+            var sampleRate = CalculateToneSampleRate(attr, record.Note);
+            tones.Add(new SfxToneSample(dex, buff, sampleRate, loopStart, loopEnd, repeat));
+        }
+
+        return tones;
+    }
+
+    private bool TryResolveSfxVab(int sfxid, out SfxRecord record, out VabHeader header, out byte[] bodybuff)
+    {
+        record = null!;
+        header = null!;
+        bodybuff = null!;
+
+        if (sfxid <= 0 || sfxid >= SfxRecords.Length)
+        {
+            return false;
+        }
+
+        var candidate = SfxRecords[sfxid];
+        if (candidate == null || candidate.VabId == -2)
+        {
+            return false;
+        }
+
+        if (candidate.VabId == -1)
+        {
+            header = GlobalVabHeader;
+            bodybuff = _globalSfxVabBodyBuff;
+        }
+        else
+        {
+            if (MapVabHeader == null)
+            {
+                return false;
+            }
+
+            while (candidate.VabId != _mapVabIndex)
+            {
+                if (candidate.RefSfxId == 0 || (uint)candidate.RefSfxId >= (uint)SfxRecords.Length)
+                {
+                    return false;
+                }
+
+                candidate = SfxRecords[candidate.RefSfxId];
+                if (candidate == null)
+                {
+                    return false;
+                }
+            }
+
+            header = MapVabHeader;
+            bodybuff = _mapSfxVabBodyBuff;
+        }
+
+        if (candidate.SeqNum != -1)
+        {
+            return false;
+        }
+
+        record = candidate;
+        return true;
     }
 
     public byte[] PlaySfx(int sfx, int pitch, bool is8Bit, out int loopStart, out int loopEnd, out bool repeat)
