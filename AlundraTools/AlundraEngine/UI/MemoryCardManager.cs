@@ -1792,13 +1792,14 @@ public class MemoryCardManager
                 records[recordIndex].field_0x4c
             ];
 
+            // GHIDRA: FUN_80058c44 @ 0x80058C44 overwrites SPRT x0/y0 to (boxCfg->X+16, boxCfg->Y+8) and (boxCfg->X+16, boxCfg->Y+32)
             _gameEngine.UIManager.DisplayIconName(
                 sprites,
                 MemoryFileBlocSprites,
                 entry.field_0x0?.ToCharArray(),
                 0x10,
-                uiBox.X,
-                uiBox.Y,
+                (short)(uiBox.X + 16),
+                (short)(uiBox.Y + 8),
                 recordIndex * 2 + 1);
 
             _gameEngine.UIManager.DisplayIconName(
@@ -1806,8 +1807,8 @@ public class MemoryCardManager
                 MemoryFileBlocSprites,
                 entry.field_0x4?.ToCharArray(),
                 0x10,
-                uiBox.X,
-                uiBox.Y,
+                (short)(uiBox.X + 16),
+                (short)(uiBox.Y + 32),
                 recordIndex * 2 + 2);
         }
     }
@@ -2052,6 +2053,8 @@ public class MemoryCardManager
 
         _gameEngine.StaticVariables.INT_80180120 = 0;
         _gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] = _gameEngine.StaticVariables.UINT_ARRAY_800c4190[1] & 3;
+        // GHIDRA: InitializeMemoryCardMenu @ 0x800583EC — one final ring-advance after the second FUN_80058b28 call
+        _gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] = (_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 1) & 3;
 
         //return 1;
     }
