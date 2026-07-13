@@ -177,9 +177,11 @@ namespace AlundraGame
                     //_state = _mainMenuEngine.MainLoop();
                     Breakpoint.TriggerBreak();
                     break;
+
                 case GameState.Game:
                     _state = _gameEngine.MainLoop();
                     break;
+
                 case GameState.EndScene:
                     _state = _closingEngine.MainLoop();
                     break;

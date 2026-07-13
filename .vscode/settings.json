@@ -4,19 +4,9 @@
         "alundra-datas-analyser/.vscode/mcp.json: reva": {
             "allowedModels": [
                 "copilot/auto",
-                "copilotcli/claude-sonnet-4.6",
-                "claude-code/claude-haiku-4.5",
-                "copilotcli/claude-haiku-4.5",
-                "copilot/claude-haiku-4.5",
-                "copilotcli/gpt-5.3-codex",
-                "copilot/gpt-5.3-codex",
-                "copilotcli/gpt-5.4",
-                "copilot/gpt-5.4",
-                "copilotcli/gpt-5.5",
-                "copilot/gpt-5.5",
-                "claude-code/*",
+                "copilotcli/*",
                 "copilot/*",
-                "copilotcli/*"
+                "claude-code/*",
             ]
         }
     },

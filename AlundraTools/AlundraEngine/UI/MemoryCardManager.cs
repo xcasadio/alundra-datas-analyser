@@ -2660,7 +2660,7 @@ public class MemoryCardManager
         if (rColorOffset == duration1)
         {
             uiMemoryFileBox.R = uiMemoryFileBox.TargetR;
-            uiMemoryFileBox.G = uiMemoryFileBox.TargetB;
+            uiMemoryFileBox.G = uiMemoryFileBox.TargetG;
             uiMemoryFileBox.B = uiMemoryFileBox.TargetB;
             if (uiMemoryFileBox.Enabled == 0)
             {
