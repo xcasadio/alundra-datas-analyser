@@ -293,7 +293,10 @@ public class Renderer(System.Drawing.Graphics graphics, Bitmap? frameBuffer = nu
         AddSprite(sprite);
     }
 
-    private static float PsxColorMultiplier(byte color) => color / 128f;
+    // JUSTIFICATION: PSX hardware adaptation only
+    // RELATION: PSX GPU Gouraud/flat texture-blend shading multiplies texel color by vertex RGB/128
+    // (0x80 = neutral/1.0x, matching the SetSprt-tinted primitives ported from FUN_80058c44 @ 0x80058C44)
+    internal static float PsxColorMultiplier(byte color) => color / 128f;
 
     public class Sprite
     {

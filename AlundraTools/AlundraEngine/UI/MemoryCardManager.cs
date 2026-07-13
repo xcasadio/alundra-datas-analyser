@@ -1826,20 +1826,15 @@ public class MemoryCardManager
         MemoryFileBlocSprites.Clear();
         Array.Fill(DAT_memoryCardEntryIndexByRecord, -1);
 
-        //var i = 0;
-        //ppUVar2 = &PTR_800c419c;
-        //psVar3 = SHORT_ARRAY_800C436C;
-        //do
-        //{
-        //    psVar3 = psVar3 + 2;
-        //    i = i + 1;
-        //    ppUVar2[1].Y = *psVar3;
-        //    *ppUVar2 = (UIBoxConfiguration*)0x0;
-        //    ppUVar2 = ppUVar2 + 0x1d;
-        //} while (i < 4);
-
+        // Original: ppUVar2 = &PTR_UIBoxConfiguration_800c419c; psVar3 = SHORT_ARRAY_800c436c;
+        // do { psVar3 += 2; ppUVar2[1]->Y = *psVar3; *ppUVar2 = 0; ppUVar2 += 0x1d; } while (++i < 4);
+        // ppUVar2[1]->Y is record[recordIndex].field_0x04.Y; *ppUVar2 is record[recordIndex].field_0x00.
+        // psVar3 advances by 2 shorts (= 1 int stride) before each read, so recordIndex 0..3 read
+        // SHORT_ARRAY_800c436c[1..4] (see SHORT_ARRAY_800C436C declaration for the int-stride evidence).
         for (var recordIndex = 0; recordIndex < 4; recordIndex++)
         {
+            _gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c419c[recordIndex].field_0x04.Y =
+                _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[recordIndex + 1];
             _gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c419c[recordIndex].field_0x00 = 0;
         }
 
@@ -2157,60 +2152,64 @@ public class MemoryCardManager
                             do
                             {
                                 uVar4 = (uVar4 + 1) & 3;
-                                _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2];
-                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.mode = 2;
-                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.tick = 0;
-                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.speed = 0xf;
-                                pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
-        
+                                // PARTIAL: original indexed (&PTR_UIBoxConfiguration_800c41a0)[uVar4*0x1d] / TextToDisplay_800c41a4+uVar4*0x74,
+                                // i.e. it rotates through all 4 (UIBoxConfiguration, TextToDisplay) record pairs via uVar4, not the fixed record 0.
+                                var box = _gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c419c[(int)uVar4].field_0x04;
+                                var text = _gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c419c[(int)uVar4].field_0x08;
+                                box.Y = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2];
+                                text.mode = 2;
+                                text.tick = 0;
+                                text.speed = 0xf;
+                                pUVar7 = box;
+
                                 if (pUVar7.X < 0)
                                 {
-                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.x = (short)(pUVar7.X + pUVar7.Width * -8);
+                                    text.x = (short)(pUVar7.X + pUVar7.Width * -8);
                                 }
                                 else
                                 {
-                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.x = pUVar7.X;
+                                    text.x = pUVar7.X;
                                 }
-        
-                                piVar5 = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2];
-        
+
+                                piVar5 = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2 + 1];
+
                                 if (piVar5 < 0)
                                 {
-                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.y = (short)(piVar5 + _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Height * -8);
+                                    text.y = (short)(piVar5 + box.Height * -8);
                                 }
                                 else
                                 {
-                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.y = piVar5;
+                                    text.y = piVar5;
                                 }
-        
-                                pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
-        
+
+                                pUVar7 = box;
+
                                 if (pUVar7.X < 0)
                                 {
-                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.startX = (short)(pUVar7.X + pUVar7.Width * -8);
+                                    text.startX = (short)(pUVar7.X + pUVar7.Width * -8);
                                 }
                                 else
                                 {
-                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.startX = pUVar7.X;
+                                    text.startX = pUVar7.X;
                                 }
-        
-                                pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
-        
+
+                                pUVar7 = box;
+
                                 if (pUVar7.Y < 0)
                                 {
-                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.startY = (short)(pUVar7.Y + pUVar7.Height * -8);
+                                    text.startY = (short)(pUVar7.Y + pUVar7.Height * -8);
                                 }
                                 else
                                 {
-                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.startY = pUVar7.Y;
+                                    text.startY = pUVar7.Y;
                                 }
-        
-                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.originX = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.X;
-                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.originY = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y;
-        
+
+                                text.originX = box.X;
+                                text.originY = box.Y;
+
                                 iVar2 += 1;
-        
-                                _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.UIBoxConfiguration_800bcb30, _gameEngine.StaticVariables.TextToDisplay_800c41a4);
+
+                                _gameEngine.UIManager.UpdateUiBoxesPosition(box, text);
                             } while (iVar2 < 4);
         
                             InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0]], 0, 0, 0, 0x40, 0x40, 0x40, 0xf);
@@ -2236,63 +2235,66 @@ public class MemoryCardManager
                         {
                             _gameEngine.StaticVariables.UINT_ARRAY_800c4190[2] |= 4;
                             uVar4 = _gameEngine.StaticVariables.UINT_ARRAY_800c4190[0];
-        
+
                             do
                             {
-                                _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2];
-                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.mode = 2;
-                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.tick = 0;
-                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.speed = 0xf;
-                                pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
-        
+                                // PARTIAL: see the add-slot loop above; rotates through all 4 record pairs via uVar4.
+                                var box = _gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c419c[(int)uVar4].field_0x04;
+                                var text = _gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c419c[(int)uVar4].field_0x08;
+                                box.Y = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2 + 1];
+                                text.mode = 2;
+                                text.tick = 0;
+                                text.speed = 0xf;
+                                pUVar7 = box;
+
                                 if (pUVar7.X < 0)
                                 {
-                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.x = (short)(pUVar7.X + pUVar7.Width * -8);
+                                    text.x = (short)(pUVar7.X + pUVar7.Width * -8);
                                 }
                                 else
                                 {
-                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.x = pUVar7.X;
+                                    text.x = pUVar7.X;
                                 }
-        
+
                                 piVar5 = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2];
-        
+
                                 if (piVar5 < 0)
                                 {
-                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.y = (short)(piVar5 + _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Height * -8);
+                                    text.y = (short)(piVar5 + box.Height * -8);
                                 }
                                 else
                                 {
-                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.y = piVar5;
+                                    text.y = piVar5;
                                 }
-        
-                                pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
-        
+
+                                pUVar7 = box;
+
                                 if (pUVar7.X < 0)
                                 {
-                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.startX = (short)(pUVar7.X + pUVar7.Width * -8);
+                                    text.startX = (short)(pUVar7.X + pUVar7.Width * -8);
                                 }
                                 else
                                 {
-                                    (_gameEngine.StaticVariables.TextToDisplay_800c41a4.startX) = pUVar7.X;
+                                    text.startX = pUVar7.X;
                                 }
-        
-                                pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
-        
+
+                                pUVar7 = box;
+
                                 if (pUVar7.Y < 0)
                                 {
-                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.startY = (short)(pUVar7.Y + pUVar7.Height * -8);
+                                    text.startY = (short)(pUVar7.Y + pUVar7.Height * -8);
                                 }
                                 else
                                 {
-                                    _gameEngine.StaticVariables.TextToDisplay_800c41a4.startY = pUVar7.Y;
+                                    text.startY = pUVar7.Y;
                                 }
-        
-                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.originX = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.X;
-                                _gameEngine.StaticVariables.TextToDisplay_800c41a4.originY = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y;
-                                
-                                _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.UIBoxConfiguration_800bcb30, _gameEngine.StaticVariables.TextToDisplay_800c41a4);
-        
-                                iVar2 += 1; 
+
+                                text.originX = box.X;
+                                text.originY = box.Y;
+
+                                _gameEngine.UIManager.UpdateUiBoxesPosition(box, text);
+
+                                iVar2 += 1;
                                 uVar4 = uVar4 + 1 & 3;
                             } while (iVar2 < 4);
         
@@ -2350,58 +2352,61 @@ public class MemoryCardManager
                     do
                     {
                         uVar4 = uVar4 + 1 & 3;
-                        _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y = -1;
-                        _gameEngine.StaticVariables.TextToDisplay_800c41a4.mode = 2;
-                        _gameEngine.StaticVariables.TextToDisplay_800c41a4.tick = 0;
-                        _gameEngine.StaticVariables.TextToDisplay_800c41a4.speed = 0xf;
-                        pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
-        
+                        // PARTIAL: see the add-slot loop above; rotates through all 4 record pairs via uVar4.
+                        var box = _gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c419c[(int)uVar4].field_0x04;
+                        var text = _gameEngine.StaticVariables.PTR_UIBoxConfiguration_800c419c[(int)uVar4].field_0x08;
+                        box.Y = -1;
+                        text.mode = 2;
+                        text.tick = 0;
+                        text.speed = 0xf;
+                        pUVar7 = box;
+
                         if (pUVar7.X < 0)
                         {
-                            _gameEngine.StaticVariables.TextToDisplay_800c41a4.x = (short)(pUVar7.X + pUVar7.Width * -8);
+                            text.x = (short)(pUVar7.X + pUVar7.Width * -8);
                         }
                         else
                         {
-                            _gameEngine.StaticVariables.TextToDisplay_800c41a4.x = pUVar7.X;
+                            text.x = pUVar7.X;
                         }
-        
-                        piVar5 = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2];
-        
+
+                        piVar5 = _gameEngine.StaticVariables.SHORT_ARRAY_800C436C[iVar2 + 1];
+
                         if (piVar5 < 0)
                         {
-                            _gameEngine.StaticVariables.TextToDisplay_800c41a4.y = (short)(piVar5 + _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Height * -8);
+                            text.y = (short)(piVar5 + box.Height * -8);
                         }
                         else
                         {
-                            _gameEngine.StaticVariables.TextToDisplay_800c41a4.y = piVar5;
+                            text.y = piVar5;
                         }
-        
-                        pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
-        
+
+                        pUVar7 = box;
+
                         if (pUVar7.X < 0)
                         {
-                            _gameEngine.StaticVariables.TextToDisplay_800c41a4.startX = (short)(pUVar7.X + pUVar7.Width * -8);
+                            text.startX = (short)(pUVar7.X + pUVar7.Width * -8);
                         }
                         else
                         {
-                            _gameEngine.StaticVariables.TextToDisplay_800c41a4.startX = pUVar7.X;
+                            text.startX = pUVar7.X;
                         }
-        
-                        pUVar7 = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30;
-        
+
+                        pUVar7 = box;
+
                         if (pUVar7.Y < 0)
                         {
-                            _gameEngine.StaticVariables.TextToDisplay_800c41a4.startY = (short)(pUVar7.Y + pUVar7.Height * -8);
+                            text.startY = (short)(pUVar7.Y + pUVar7.Height * -8);
                         }
                         else
                         {
-                            _gameEngine.StaticVariables.TextToDisplay_800c41a4.startY = pUVar7.Y;
+                            text.startY = pUVar7.Y;
                         }
-        
-                        _gameEngine.StaticVariables.TextToDisplay_800c41a4.originX = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.X;
-                        _gameEngine.StaticVariables.TextToDisplay_800c41a4.originY = _gameEngine.StaticVariables.UIBoxConfiguration_800bcb30.Y;
+
+                        text.originX = box.X;
+                        text.originY = box.Y;
                         iVar2 += 1;
-                        _gameEngine.UIManager.UpdateUiBoxesPosition(_gameEngine.StaticVariables.UIBoxConfiguration_800bcb30, _gameEngine.StaticVariables.TextToDisplay_800c41a4);
+                        _gameEngine.UIManager.UpdateUiBoxesPosition(box, text);
                     } while (iVar2 < 3);
         
                     InitializeUIMemoryFileBox(_gameEngine.StaticVariables.UIMemoryFileBox_ARRAY_80180150[_gameEngine.StaticVariables.UINT_ARRAY_800c4190[0] + 1 & 3], 0x40, 0x40, 0x40, 0, 0, 0, 0xf);
@@ -2526,9 +2531,13 @@ public class MemoryCardManager
         _gameEngine.StaticVariables.SPRT_ARRAY_80180210[0].x0 = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.X + 0x10);
         _gameEngine.StaticVariables.SPRT_ARRAY_80180210[0].y0 = (short)(_gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y + 0x10);
 
-        var memoryFileDescriptionSprite = _gameEngine.StaticVariables.SPRT_ARRAY_80180210[0];
-        var memoryFileDescriptionBitmap = _gameEngine.Font3.GenerateHudBitmapFromSprite(memoryFileDescriptionSprite);
-        _gameEngine.Renderer.AddSprite(memoryFileDescriptionSprite, SpriteDepth.ForegroundUI, memoryFileDescriptionBitmap);
+        // PARTIAL: original addPrim'd SPRT_ARRAY_80180210[uVar1] here (0x80058F24 @ lines 338-345);
+        // its u0/v0/w/h/clut were populated by a CPU-blitted glyph strip that RenderTextBitmap wrote
+        // into the WIND.TX VRAM region. The desktop port renders that same text as individual glyph
+        // sprites into MemoryFileBlocSprites instead of blitting into WIND.TX (see JUSTIFICATION on
+        // RebuildMemoryCardMenuTextSprites), so WIND.TX at this sprite's u0/v0 is never updated and
+        // sampling it here only reproduces unrelated window-art tile data. The textured-quad draw is
+        // dropped; its text content is already covered by the MemoryFileBlocSprites loop below.
 
         foreach (var sprite in MemoryFileBlocSprites)
         {
@@ -2609,9 +2618,9 @@ public class MemoryCardManager
                     SpriteDepth.BackgroundUI,
                     bitmap,
                     1.0f,
-                    p.r0 / 255.0f,
-                    p.g0 / 255.0f,
-                    p.b0 / 255.0f);
+                    PsxColorMultiplier(p.r0),
+                    PsxColorMultiplier(p.g0),
+                    PsxColorMultiplier(p.b0));
 
                 /* Probable PsyQ macro: addPrim(). */
                 //p->tag = p->tag & 0xff000000 | *puVar3 & 0xffffff;

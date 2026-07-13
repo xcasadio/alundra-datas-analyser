@@ -12398,7 +12398,12 @@ public class StaticVariables
     public TextToDisplay TextToDisplay_800c4218 = new(); //800c4218
     public TextToDisplay TextToDisplay_800c428c = new(); //800c428c
     public TextToDisplay TextToDisplay_800c4300 = new(); // 800C431A
-    public readonly short[] SHORT_ARRAY_800C436C = [-1, -1, 0, 0]; // 800C436C
+    // PARTIAL: Ghidra typed this short[4], but DisplayMemoryCardMenu reads it through int-sized
+    // strides (SHORT_ARRAY_800c436c + iVar2*2 [+2] reinterpreted as int*), and raw memory at
+    // 0x800C436C shows 5 little-endian 32-bit values (-1,0,0x40,0x80,0xF0) whose upper halves are 0
+    // (upper halves alias what Ghidra separately named DAT_800c4370/DAT_800c4374, both unused
+    // elsewhere). Sized/valued to match the real int-strided sequence consumed by that loop.
+    public readonly short[] SHORT_ARRAY_800C436C = [-1, 0, 0x40, 0x80, 0xF0]; // 800C436C
     public int DAT_800c4370; // 800C4370
     public short DAT_800c4374; // 800C4374
     public byte g_characterNameTable; // 800C440C
