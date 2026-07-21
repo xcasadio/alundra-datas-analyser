@@ -60,7 +60,7 @@ internal class Program
         ExtractDataFromScreenFolder(font3, gameEngine.StaticVariables, extractionPath);
         ExtractDataFromEtcRes(etcRes, gameEngine.StaticVariables, extractionPath);
         var psxFramesPerSecond = etcRes is EtcResUsa ? 60 : 50;
-        var tiledTilesetLayoutMode = ReadTiledTilesetLayoutMode(args, "--tiled-tileset-layout", TiledTilesetLayoutMode.Compact);
+        var tiledTilesetLayoutMode = ReadTiledTilesetLayoutMode(args, "--tiled-tileset-layout", TiledTilesetLayoutMode.Original);
         ExtractDataFromDatasBin(gameEngine.DatasBin, gameEngine.StaticVariables, extractionPath, psxFramesPerSecond, tiledTilesetLayoutMode);
         ExtractDataFromSoundBin(gameEngine.SoundBin, extractionPath);
         ExtractDataFromBgm(Path.Combine(gamePath, "DATA", "SOUND.BIN"), extractionPath);
@@ -1042,16 +1042,24 @@ internal class Program
 
     private static void SaveAlundraMap(GameMap gameMap, string extractionPath)
     {
+        // Must run before the JSON dump below: it populates SiImage.AtlasX/AtlasY, which the
+        // serialized map_alundra.json needs to carry.
+        GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, "map_alundra_spritesheet.png"));
+
         File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMap, _jsonSerializerOptions));
 
         //var gameMapJson = ConvertGameMap(gameMap);
         //File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
-
-        GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, "map_alundra_spritesheet.png"));
     }
 
     private static void SaveMap(GameMap gameMap, int id, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors, int psxFramesPerSecond, TiledTilesetLayoutMode tiledTilesetLayoutMode)
     {
+        GameMapHelper.SaveTileSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_tilesheet.png"), tileAnimDescriptors);
+
+        // Must run before the JSON dump below: it populates SiImage.AtlasX/AtlasY, which the
+        // serialized map_{id}.json needs to carry.
+        GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_spritesheet.png"));
+
         //var gameMapJson = ConvertGameMap(gameMap);
         //File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
 
@@ -1060,8 +1068,6 @@ internal class Program
         //try to extract all entity infos from all map
         //GetEntitySpriteSheets(gameMap, id, extractionPath);
 
-        GameMapHelper.SaveTileSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_tilesheet.png"), tileAnimDescriptors);
-        GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_spritesheet.png"));
         TiledMapExporter.ExportMap(gameMap, id, extractionPath, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode);
     }
 

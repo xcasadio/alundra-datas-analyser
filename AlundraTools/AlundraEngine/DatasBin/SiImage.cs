@@ -21,6 +21,14 @@ public class SiImage
 
     public readonly long Signature;
 
+    // Not part of the original PSX binary layout. Populated by GameMapHelper.SaveSpriteSheet()
+    // as this quad's position in the exported spritesheet PNG (same Swidth/Sheight as the crop
+    // size). Unlike Sx/Sy (native VRAM coordinates, shared by any quad that reused the same VRAM
+    // region under a different palette), AtlasX/AtlasY are unique per (region, palette) so every
+    // quad crops the color it was actually meant to show.
+    public int AtlasX;
+    public int AtlasY;
+
     public SiImage(BinaryReader br)
     {
         Spritesheet = br.ReadByte();
