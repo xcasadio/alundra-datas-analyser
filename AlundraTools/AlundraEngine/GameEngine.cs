@@ -115,8 +115,8 @@ public class GameEngine
 
         if (_isWarpTransitionRunning)
         {
-            AdvanceWarpTransitionFrame();
-            return GameState.Game;
+            var completedState = AdvanceWarpTransitionFrame();
+            return completedState ?? GameState.Game;
         }
 
         // On the original this tick runs from the 60 Hz VSync/timer interrupt, not from the
@@ -225,53 +225,8 @@ public class GameEngine
             StaticVariables.INT_800dc4e4 = 1;
             _warpSoundIdleFramesRemaining = -1;
             _isWarpTransitionRunning = true;
-            AdvanceWarpTransitionFrame();
-
-            if (StaticVariables.g_mapTransitionEffectId != 9)
-            {
-                if (9 < StaticVariables.g_mapTransitionEffectId)
-                {
-                    if (StaticVariables.g_mapTransitionEffectId != 10)
-                    {
-                        if (StaticVariables.g_mapTransitionEffectId == 0xb)
-                        {
-                            //return to main menu
-
-                            //LoadBgm(0);
-                            //LoadSomethingInDatasBin(g_indexInDatasBin);
-                            //LoadLOADER_EXE();
-                            //return GameState.MainMenu;
-                            //DoNothing();
-                            //exit();
-                        }
-                        //goto LAB_8002c5dc;
-                    }
-
-                    //goto LAB_8002c590;
-                    return GameState.Game;
-                }
-
-                if (StaticVariables.g_mapTransitionEffectId == 8)
-                {
-                    StaticVariables.g_saveData.GameFlags[0x33] &= 0xbfffffff;
-                }
-                else
-                {
-                    //LAB_8002c5dc:
-                    //DoNothing();
-                }
-            }
-
-            //LoadBgm(0);
-            //LoadLoadingScreens(g_dataBinHeader.LoadingScreens);
-            //_96_remove();
-            //_96_init();
-            //syscall();
-            //LoadExec("cdrom:\\END.EXE;1");
-            // after closing.exe
-            return GameState.EndScene;
-
-            //}
+            var completedState = AdvanceWarpTransitionFrame();
+            return completedState ?? GameState.Game;
         }
 
         //} while (true);
@@ -280,7 +235,12 @@ public class GameEngine
     }
 
     // JUSTIFICATION: C# language bridge only
-    private void AdvanceWarpTransitionFrame()
+    // Mirrors the original's second warp do-while plus everything that ran right after it broke
+    // out (EndFrame/WaitForSoundEffectsIdle and the g_mapTransitionEffectId branch), since the
+    // port advances that whole tail one host frame at a time instead of blocking. A null result
+    // means the transition is still running (or just finished into a normal continue); a non-null
+    // result is the terminal GameState the caller should return this frame.
+    private GameState? AdvanceWarpTransitionFrame()
     {
         StaticVariables.g_debugMessage = "";
         _padManager.UpdatePads();
@@ -296,29 +256,57 @@ public class GameEngine
         if (isEffectRunning != 0 || StaticVariables.g_warpFlags != 0 || StaticVariables.g_fadeStepFlags != 0)
         {
             _warpSoundIdleFramesRemaining = -1;
-            return;
+            return null;
         }
 
         if (!SoundManager.WaitForSoundEffectsIdleStep(ref _warpSoundIdleFramesRemaining))
         {
-            return;
+            return null;
         }
 
         _warpSoundIdleFramesRemaining = -1;
         _isWarpTransitionRunning = false;
-        return;
         EndGame();
 
-        if (StaticVariables.g_mapTransitionEffectId != 9)
+        if (StaticVariables.g_mapTransitionEffectId == 9)
         {
-            return;
+            //LoadBgm(0);
+            //LoadLoadingScreens(g_dataBinHeader.LoadingScreens);
+            //_96_remove();
+            //_96_init();
+            //syscall();
+            //LoadExec("cdrom:\\END.EXE;1");
+            // after closing.exe
+            return GameState.EndScene;
         }
 
-        Breakpoint.TriggerBreak();
-        Environment.Exit(0);
+        if (StaticVariables.g_mapTransitionEffectId == 0xb)
+        {
+            //return to main menu
+            //LoadBgm(0);
+            //LoadLoadingScreens(g_dataBinHeader.LoadingScreens);
+            //LoadLOADER_EXE();
+            return GameState.MainMenu;
+        }
 
-        StaticVariables.g_playerControlFlags = 0;
-        InitializeMapWarpPosition();
+        if (StaticVariables.g_mapTransitionEffectId == 10)
+        {
+            // LAB_8002c590 in the original: goto's back into the map-load loop after resetting
+            // the player to the save point, instead of falling through to the normal continue.
+            SoundManager.LoadBgm(0);
+            StaticVariables.g_playerControlFlags = 0;
+            InitializeMapWarpPosition();
+        }
+        else if (StaticVariables.g_mapTransitionEffectId == 8)
+        {
+            StaticVariables.g_saveData.GameFlags[0x33] &= 0xbfffffff;
+        }
+
+        // Every other outcome resumes the game on the (possibly new) map: re-arm the same flag
+        // used to bootstrap the very first map load so MainLoop reruns the map (re)initialization
+        // block next call, instead of the goto-into-loop the original used to reach the same code.
+        StaticVariables.g_isGameEnding = 1;
+        return null;
     }
 
     private bool IsRunning()
