@@ -6,7 +6,9 @@ namespace AlundraEngine;
 public class LogManager
 {
     private const string DefaultCategory = "default";
-    private string CurrentCategory = DefaultCategory;
+    private const string LogFilePath = "log.txt";
+    private string _currentCategory = DefaultCategory;
+    private readonly StreamWriter _logFileWriter;
 
     public bool TraceEnabled { get; set; } = false;
 
@@ -14,21 +16,20 @@ public class LogManager
 
     public List<string> Logs { get; } = new();
 
-    public Dictionary<string, List<string>> LogByCategories { get; } = new();
-
     public LogManager(GameEngine gameEngine)
     {
         _gameEngine = gameEngine;
+        _logFileWriter = new StreamWriter(LogFilePath, append: false) { AutoFlush = true };
     }
 
     public void SetCategory(string categoryName)
     {
-        CurrentCategory = categoryName;
+        _currentCategory = categoryName;
     }
 
     public void ResetCategory()
     {
-        CurrentCategory = DefaultCategory;
+        _currentCategory = DefaultCategory;
     }
 
     public void Log(string message)
@@ -49,7 +50,7 @@ public class LogManager
     private void LogImpl(string message)
     {
         var logPrefix = $"map#{_gameEngine.StaticVariables.g_currentMap:d3} frame#{_gameEngine.StaticVariables.FrameNumber:d6}";
-        var logWithCategory = $"{logPrefix} [{CurrentCategory}] {message}";
+        var logWithCategory = $"{logPrefix} [{_currentCategory}] {message}";
 
         if (TraceEnabled)
         {
@@ -57,18 +58,11 @@ public class LogManager
         }
 
         Logs.Add(logWithCategory);
-
-        if (!LogByCategories.ContainsKey(CurrentCategory))
-        {
-            LogByCategories[CurrentCategory] = new List<string>();
-        }
-
-        LogByCategories[CurrentCategory].Add($"{logPrefix} {message}");
+        _logFileWriter.WriteLine(logWithCategory);
     }
 
     public void Clear()
     {
-        LogByCategories.Clear();
         Logs.Clear();
     }
 }

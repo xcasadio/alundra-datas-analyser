@@ -235,7 +235,7 @@ namespace AlundraGame
                 _gameEngine,
                 GameRenderWidth,
                 GameRenderHeight,
-                () => SaveSnapshot(),
+                SaveSnapshot,
                 SetZoomLevel);
         }
 

@@ -249,8 +249,7 @@
                     <ComboBox Name="comboBoxSpawnItemId" CanvasLeft="126" CanvasTop="695" Width="108" Height="23" ItemType="{x:Type System:String}">
                         <System:String>36</System:String><System:String>37</System:String><System:String>41</System:String><System:String>69</System:String><System:String>70</System:String><System:String>71</System:String><System:String>72</System:String><System:String>79</System:String><System:String>80</System:String><System:String>81</System:String><System:String>82</System:String><System:String>83</System:String><System:String>84</System:String><System:String>85</System:String><System:String>86</System:String>
                     </ComboBox>
-                    <Button Name="buttonAlundraCabine" CanvasLeft="247" CanvasTop="671" Width="142" Height="23" Content="Pass alundra cabine" CommandName="buttonAlundraCabine_Click" />
-                    <CheckBox Name="checkBoxDisableCollision" CanvasLeft="395" CanvasTop="675" Content="Disable collision" />
+                    <CheckBox Name="checkBoxDisableCollision" CanvasLeft="247" CanvasTop="671" Content="Disable collision" />
                     <Button Name="buttonControlAlundra" CanvasLeft="247" CanvasTop="699" Width="142" Height="22" Content="Control alundra" CommandName="buttonControlAlundra_Click" />
                 </Canvas>
             </TabItem>
@@ -385,5 +384,6 @@
         <Button Name="buttonRunOneFrame" CanvasLeft="88" CanvasTop="772" Width="35" Height="23" Content="&gt;|" CommandName="buttonNextFrame_Click" />
         <Button Name="buttonSnapshot" CanvasLeft="425" CanvasTop="772" Width="75" Height="23" Content="Snapshot" CommandName="buttonSnapshot_Click" />
         <Button Name="buttonSaveState" CanvasLeft="7" CanvasTop="867" Width="75" Height="23" Content="Save state" CommandName="buttonSaveState_Click" />
+        <Button Name="buttonReportBug" CanvasLeft="88" CanvasTop="867" Width="90" Height="23" Content="Report bug" CommandName="buttonReportBug_Click" />
     </Canvas>
 </Window>

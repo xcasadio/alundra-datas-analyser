@@ -9,6 +9,7 @@ using MGUI.Core.UI.XAML;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -22,9 +23,11 @@ internal sealed class FrmGameDebugPanelController
     private const int MaxVisibleLogLines = 1000;
     private const int MaxVisibleScriptLines = 2000;
 
+    private const string GitHubIssuesUrl = "https://github.com/xcasadio/alundra-datas-analyser/issues/new";
+
     private readonly GameEngine _gameEngine;
     private readonly MGWindow _window;
-    private readonly Action _saveSnapshot;
+    private readonly Func<string> _saveSnapshot;
     private readonly Action<int> _setZoomLevel;
     private readonly MGButton _buttonPauseGame;
     private readonly MGButton _buttonRunOneFrame;
@@ -263,7 +266,7 @@ internal sealed class FrmGameDebugPanelController
     private FrmGameDebugPanelController(
         MGWindow window,
         GameEngine gameEngine,
-        Action saveSnapshot,
+        Func<string> saveSnapshot,
         Action<int> setZoomLevel)
     {
         _window = window;
@@ -302,7 +305,7 @@ internal sealed class FrmGameDebugPanelController
         GameEngine gameEngine,
         int gameRenderWidth,
         int gameRenderHeight,
-        Action saveSnapshot,
+        Func<string> saveSnapshot,
         Action<int> setZoomLevel)
     {
         string xamlPath = Path.Combine(AppContext.BaseDirectory, "UI", "FrmGameDebugPanel.xaml");
@@ -507,8 +510,9 @@ internal sealed class FrmGameDebugPanelController
     {
         RegisterCommand("buttonPauseGame_Click", TogglePauseGame);
         RegisterCommand("buttonNextFrame_Click", RunOneFrame);
-        RegisterCommand("buttonSnapshot_Click", _saveSnapshot);
+        RegisterCommand("buttonSnapshot_Click", () => _saveSnapshot());
         RegisterCommand("buttonSaveState_Click", SaveState);
+        RegisterCommand("buttonReportBug_Click", ReportBug);
         RegisterCommand("buttonRestoreHpAndMp_Click", () => _gameEngine.PlayerManager.RestoreHpAndMpAndCreateEffect(_gameEngine.StaticVariables.PlayerEntity));
         RegisterCommand("buttonIncreaseMpMax_Click", () => _gameEngine.PlayerManager.IncreaseMpMaxAndCreateEffect(_gameEngine.StaticVariables.PlayerEntity));
         RegisterCommand("buttonRestoreMp_Click", () => _gameEngine.PlayerManager.RestoreMpAndCreateEffect(_gameEngine.StaticVariables.PlayerEntity));
@@ -521,7 +525,6 @@ internal sealed class FrmGameDebugPanelController
         RegisterCommand("buttonAddHugeHp_Click", () => _gameEngine.PlayerManager.AddHugeHpAndSpawnEffect(_gameEngine.StaticVariables.PlayerEntity));
         RegisterCommand("buttonAllItems_Click", () => Array.Fill(_gameEngine.StaticVariables.g_saveData.NumberOfItems, (short)1));
         RegisterCommand("buttonSpawnItem_Click", SpawnSelectedItem);
-        RegisterCommand("buttonAlundraCabine_Click", PassAlundraCabinFlags);
         RegisterCommand("buttonControlAlundra_Click", () => _gameEngine.StaticVariables.g_playerControlFlags &= 0xfffffffb);
         RegisterCommand("buttonZoomX1_Click", () => ApplyZoomLevel(1));
         RegisterCommand("buttonZoomX2_Click", () => ApplyZoomLevel(2));
@@ -1045,15 +1048,6 @@ internal sealed class FrmGameDebugPanelController
     }
 
     // JUSTIFICATION: backend MonoGame only
-    private void PassAlundraCabinFlags()
-    {
-        _gameEngine.StaticVariables.g_saveData.GameFlags[27] |= 4;
-        _gameEngine.StaticVariables.g_saveData.GameFlags[27] |= 32;
-        _gameEngine.StaticVariables.g_saveData.GameFlags[27] |= 64;
-        _gameEngine.StaticVariables.g_saveData.GameFlags[27] |= 128;
-    }
-
-    // JUSTIFICATION: backend MonoGame only
     private void SetDisableCollision(bool isChecked)
     {
         if (isChecked)
@@ -1083,25 +1077,25 @@ internal sealed class FrmGameDebugPanelController
     // JUSTIFICATION: backend MonoGame only
     private void CopyAllLogs()
     {
-        IReadOnlyList<string> lines = GetSelectedLogLines();
-        string text = string.Join(Environment.NewLine, lines);
-        System.Windows.Forms.Clipboard.SetText(text);
+        //IReadOnlyList<string> lines = GetSelectedLogLines();
+        //string text = string.Join(Environment.NewLine, lines);
+        //System.Windows.Forms.Clipboard.SetText(text);
     }
 
     // JUSTIFICATION: backend MonoGame only
     // JUSTIFICATION: backend MonoGame only
     private void RefreshLogs()
     {
-        IReadOnlyList<string> lines = GetSelectedLogLines();
-        _listBoxLogs.SetItemsSource(CreateVisibleStringWindow(lines, MaxVisibleLogLines, "log lines"));
-
-        string selectedCategory = _comboBoxLogCategories.SelectedIndex == -1 ? string.Empty : _comboBoxLogCategories.SelectedItem ?? string.Empty;
-        List<string> categories = _gameEngine.LogManager.LogByCategories.Keys.ToList();
-        _comboBoxLogCategories.SetItemsSource(categories);
-        if (!string.IsNullOrEmpty(selectedCategory) && categories.Contains(selectedCategory))
-        {
-            _comboBoxLogCategories.SelectedItem = selectedCategory;
-        }
+        //IReadOnlyList<string> lines = GetSelectedLogLines();
+        //_listBoxLogs.SetItemsSource(CreateVisibleStringWindow(lines, MaxVisibleLogLines, "log lines"));
+        //
+        //string selectedCategory = _comboBoxLogCategories.SelectedIndex == -1 ? string.Empty : _comboBoxLogCategories.SelectedItem ?? string.Empty;
+        //List<string> categories = _gameEngine.LogManager.LogByCategories.Keys.ToList();
+        //_comboBoxLogCategories.SetItemsSource(categories);
+        //if (!string.IsNullOrEmpty(selectedCategory) && categories.Contains(selectedCategory))
+        //{
+        //    _comboBoxLogCategories.SelectedItem = selectedCategory;
+        //}
     }
 
     // JUSTIFICATION: backend MonoGame only
@@ -1184,22 +1178,72 @@ internal sealed class FrmGameDebugPanelController
     }
 
     // JUSTIFICATION: backend MonoGame only
+    private void ReportBug()
+    {
+        string bugReportDirectory = Path.Combine(Path.GetTempPath(), "AlundraBugReports", $"BugReport_{DateTime.Now:yyyyMMdd_HHmmss}");
+        Directory.CreateDirectory(bugReportDirectory);
+
+        string screenshotSourcePath = _saveSnapshot();
+        File.Copy(screenshotSourcePath, Path.Combine(bugReportDirectory, "screenshot.png"), true);
+
+        _gameEngine.UpdateSavedData(false);
+        _gameEngine.StaticVariables.g_saveData.SaveToJson(Path.Combine(bugReportDirectory, "savestate.json"));
+
+        File.WriteAllLines(Path.Combine(bugReportDirectory, "log.txt"), _gameEngine.LogManager.Logs);
+
+        string title = $"[Bug] Map #{_gameEngine.StaticVariables.g_currentMap:d3} - frame #{_gameEngine.StaticVariables.FrameNumber:d6}";
+        string body = BuildBugReportIssueBody(bugReportDirectory);
+
+        OpenInExplorer(bugReportDirectory);
+        OpenGitHubNewIssue(title, body);
+    }
+
+    // JUSTIFICATION: backend MonoGame only
+    private string BuildBugReportIssueBody(string bugReportDirectory)
+    {
+        return
+            "### Description\n" +
+            "<!-- Describe what happened and how to reproduce it -->\n\n" +
+            "### Context\n" +
+            $"- Map: {_gameEngine.StaticVariables.g_currentMap}\n" +
+            $"- Frame: {_gameEngine.StaticVariables.FrameNumber}\n" +
+            $"- Player position: {_gameEngine.StaticVariables.PlayerEntity?.PosX} x {_gameEngine.StaticVariables.PlayerEntity?.PosY} x {_gameEngine.StaticVariables.PlayerEntity?.PosZ}\n\n" +
+            "### Attachments\n" +
+            $"<!-- Drag and drop the files from `{bugReportDirectory}` here (an Explorer window was opened for you): screenshot.png, savestate.json, log.txt -->\n";
+    }
+
+    // JUSTIFICATION: backend MonoGame only
+    private static void OpenInExplorer(string directoryPath)
+    {
+        Process.Start(new ProcessStartInfo("explorer.exe", $"\"{directoryPath}\"") { UseShellExecute = true });
+    }
+
+    // JUSTIFICATION: backend MonoGame only
+    private static void OpenGitHubNewIssue(string title, string body)
+    {
+        string url = $"{GitHubIssuesUrl}?title={Uri.EscapeDataString(title)}&body={Uri.EscapeDataString(body)}";
+        Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+    }
+
+    // JUSTIFICATION: backend MonoGame only
     private IReadOnlyList<string> GetSelectedLogLines()
     {
-        if (_comboBoxLogCategories.SelectedIndex == -1)
-        {
-            return _gameEngine.LogManager.Logs;
-        }
+        //if (_comboBoxLogCategories.SelectedIndex == -1)
+        //{
+        //    return _gameEngine.LogManager.Logs;
+        //}
+        //
+        //string? category = _comboBoxLogCategories.SelectedItem;
+        //if (string.IsNullOrEmpty(category))
+        //{
+        //    return Array.Empty<string>();
+        //}
+        //
+        //return _gameEngine.LogManager.LogByCategories.TryGetValue(category, out List<string>? categoryLogs)
+        //    ? categoryLogs
+        //    : Array.Empty<string>();
 
-        string? category = _comboBoxLogCategories.SelectedItem;
-        if (string.IsNullOrEmpty(category))
-        {
-            return Array.Empty<string>();
-        }
-
-        return _gameEngine.LogManager.LogByCategories.TryGetValue(category, out List<string>? categoryLogs)
-            ? categoryLogs
-            : Array.Empty<string>();
+        return Array.Empty<string>();
     }
 
     // JUSTIFICATION: backend MonoGame only

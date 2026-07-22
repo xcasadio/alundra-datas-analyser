@@ -27,9 +27,9 @@ public class StaticVariables
     public bool DoNextFrame { get; set; }
 
     public bool DebugPortalsEnabled { get; set; }
-    public bool IsLogScriptEnabled { get; set; }
+    public bool IsLogScriptEnabled { get; set; } = true;
     public bool IsLogDamageEnabled { get; set; }
-    public bool IsLogAIEnabled { get; set; }
+    public bool IsLogAIEnabled { get; set; } = true;
     public bool IsBgmActivated { get; set; } = true;
 
     public bool DisplayCollisions { get; set; }
@@ -46,7 +46,8 @@ public class StaticVariables
     public bool DisplayWallTileZ { get; set; }
     public bool DisplayTiles { get; set; } = true;
     public bool DisplayWallTiles { get; set; } = true;
-    public bool IsGodMode { get; set; } = true;
+
+    public bool IsGodMode { get; set; } = false;
 
     //debug
     public uint FrameNumber;
