@@ -566,6 +566,7 @@ internal sealed class FrmGameDebugPanelController
         BindCheckBox("checkBoxDebugPortal", value => _gameEngine.StaticVariables.DebugPortalsEnabled = value);
         BindCheckBox("checkBoxLogAI", value => _gameEngine.StaticVariables.IsLogAIEnabled = value);
         BindCheckBox("checkBoxDisableCollision", SetDisableCollision);
+        BindCheckBox("checkBoxGodMode", SetGodMode);
 
         BindNumeric("numericUpDownHpMax", value => _gameEngine.StaticVariables.g_saveData.PlayerStats.HpMax = (short)value);
         BindNumeric("numericUpDownHp", value => _gameEngine.StaticVariables.g_saveData.PlayerStats.HpMax = (short)value);
@@ -1058,6 +1059,11 @@ internal sealed class FrmGameDebugPanelController
         {
             _gameEngine.StaticVariables.g_debugState &= 0x7FFFFFFF;
         }
+    }
+    
+    private void SetGodMode(bool isChecked)
+    {
+        _gameEngine.StaticVariables.IsGodMode = isChecked;
     }
 
     // JUSTIFICATION: backend MonoGame only

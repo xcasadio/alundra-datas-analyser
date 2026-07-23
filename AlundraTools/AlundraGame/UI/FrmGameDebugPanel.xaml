@@ -249,8 +249,9 @@
                     <ComboBox Name="comboBoxSpawnItemId" CanvasLeft="126" CanvasTop="695" Width="108" Height="23" ItemType="{x:Type System:String}">
                         <System:String>36</System:String><System:String>37</System:String><System:String>41</System:String><System:String>69</System:String><System:String>70</System:String><System:String>71</System:String><System:String>72</System:String><System:String>79</System:String><System:String>80</System:String><System:String>81</System:String><System:String>82</System:String><System:String>83</System:String><System:String>84</System:String><System:String>85</System:String><System:String>86</System:String>
                     </ComboBox>
-                    <CheckBox Name="checkBoxDisableCollision" CanvasLeft="247" CanvasTop="671" Content="Disable collision" />
-                    <Button Name="buttonControlAlundra" CanvasLeft="247" CanvasTop="699" Width="142" Height="22" Content="Control alundra" CommandName="buttonControlAlundra_Click" />
+                    <CheckBox Name="checkBoxDisableCollision" CanvasLeft="200" CanvasTop="671" Content="Disable collision" />
+                    <CheckBox Name="checkBoxGodMode" CanvasLeft="350" CanvasTop="671" Content="God mode" />
+					<Button Name="buttonControlAlundra" CanvasLeft="200" CanvasTop="699" Width="142" Height="22" Content="Control alundra" CommandName="buttonControlAlundra_Click" />
                 </Canvas>
             </TabItem>
 
