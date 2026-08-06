@@ -15,7 +15,7 @@ namespace AlundraEngine.Loader;
 /// same sequence is expressed as a state machine; every counter, timeout and button test keeps its
 /// original value.
 /// </summary>
-public class LoaderEngine(IRenderer renderer)
+public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = null)
 {
     // GHIDRA: PromptNewGameOrContinue @ 0x80021c28 reads these masks out of PadRead(0).
     // Bit values follow AlundraEngine.Gameplay.PadState.
@@ -32,6 +32,14 @@ public class LoaderEngine(IRenderer renderer)
 
     /// <summary>GHIDRA: MainLoop @ 0x8002538c calls PromptNewGameOrContinue(0x708, ...).</summary>
     private const int TitleMenuTimeoutFrames = 0x708;
+
+    /// <summary>
+    /// How much wall-clock time one <see cref="MainLoop"/> call represents. The host calls it once
+    /// per rendered frame and MonoGame's defaults (fixed time step, 60 Hz) are left in place, so
+    /// this must stay in step with <c>AlundraGame</c>'s target elapsed time — it is what converts
+    /// the engine's frame-based loop into the movie player's wall-clock pacing.
+    /// </summary>
+    private const double HostFrameSeconds = 1.0 / 60.0;
 
     /// <summary>
     /// GHIDRA: RunLoadingScreenIntro @ 0x80024fa8 — fade in over 0xFF/2 ticks, hold 500 ticks,
@@ -61,6 +69,10 @@ public class LoaderEngine(IRenderer renderer)
 
     private StrMoviePlayer? _moviePlayer;
     private readonly MovieFrameBitmap _movieFrame = new();
+
+    // Staging buffer for one MainLoop's worth of decoded PCM. A movie frame carries about
+    // 1.25 XA sectors, so ~2520 stereo frames; this is comfortably above a burst of four.
+    private readonly short[] _audioDrain = new short[1 << 16];
 
     private Bitmap? _loadingScreen;
     private Bitmap? _titleScreen;
@@ -195,11 +207,11 @@ public class LoaderEngine(IRenderer renderer)
             return;
         }
 
-        // One MainLoop call is one 60 Hz display frame, matching the original's VSync(0) pacing.
-        // The player converts that into movie frames at the stream's own rate (~30 fps), so it
-        // only produces a new image every other call - re-uploading the unchanged one in between
-        // would just burn a full-frame colour-swizzled copy for nothing.
-        var newFrame = _moviePlayer.Tick(1.0 / 60.0, buttons);
+        // The player converts host time into movie frames at the stream's own rate (15 fps), so at
+        // 60 Hz it produces a new image exactly every fourth call; re-uploading the unchanged one
+        // in between would just burn a full-frame colour-swizzled copy for nothing.
+        var newFrame = _moviePlayer.Tick(HostFrameSeconds, buttons);
+        PumpMovieAudio();
 
         if (newFrame && _moviePlayer.Width > 0 && _moviePlayer.FrameRgb24.Length > 0)
         {
@@ -318,12 +330,21 @@ public class LoaderEngine(IRenderer renderer)
         _state = movieState;
 
         var isEuro = movieState == LoaderState.PlayMovieEuro;
-        var fileName = isEuro ? "EURO_OP.MOV" : "ARAN_OP.MOV";
-        var fullPath = Path.Combine(_moviePath, fileName);
+        var baseName = isEuro ? "EURO_OP" : "ARAN_OP";
+
+        // A ".STR" alongside the ".MOV" is the raw 2352-byte-per-sector re-extraction, which is the
+        // only form that carries complete XA audio: an extractor that writes a flat 2048 bytes per
+        // sector truncates every Form 2 sector from 2324 bytes, losing 2 of its 18 ADPCM sound
+        // groups. Prefer it when present, fall back to the ".MOV" (video only) otherwise.
+        var fullPath = Path.Combine(_moviePath, baseName + ".STR");
+        if (!File.Exists(fullPath))
+        {
+            fullPath = Path.Combine(_moviePath, baseName + ".MOV");
+        }
 
         if (!File.Exists(fullPath))
         {
-            Debug.WriteLine($"Movie '{fullPath}' not found; skipping it.");
+            Debug.WriteLine($"Movie '{baseName}' not found in '{_moviePath}'; skipping it.");
             AdvancePastMovie();
             return;
         }
@@ -353,11 +374,49 @@ public class LoaderEngine(IRenderer renderer)
         {
             Debug.WriteLine($"Could not open movie '{fullPath}': {exception.Message}");
             AdvancePastMovie();
+            return;
+        }
+
+        if (audioOutput is not null && _moviePlayer.HasAudio)
+        {
+            audioOutput.Volume = 1f;
+            audioOutput.Start(_moviePlayer.AudioSampleRate, _moviePlayer.AudioChannels);
+        }
+        else if (!_moviePlayer.HasAudio)
+        {
+            Debug.WriteLine(
+                $"'{Path.GetFileName(fullPath)}' carries no usable XA audio (2048-byte sectors). " +
+                "Re-extract the MOVIE files from the CD image preserving 2352-byte sectors to get sound.");
+        }
+    }
+
+    /// <summary>
+    /// Drains the decoded PCM into the host's audio device and tracks the movie's CD volume ramp.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA: FUN_80027f10 @ 0x80027f10 sets the SPU's CD input volume from <c>g_volume</c>
+    /// (0..0x7FFF); PlayMovie ramps it down over the last frames and at a skip. The player keeps
+    /// that value, so the desktop sink only has to follow it.
+    /// </remarks>
+    private void PumpMovieAudio()
+    {
+        if (audioOutput is null || _moviePlayer is null || !_moviePlayer.HasAudio)
+        {
+            return;
+        }
+
+        audioOutput.Volume = _moviePlayer.Volume / 32767f;
+
+        int read;
+        while ((read = _moviePlayer.ReadAudio(_audioDrain, 0, _audioDrain.Length)) > 0)
+        {
+            audioOutput.Submit(_audioDrain, 0, read);
         }
     }
 
     private void DisposeMoviePlayer()
     {
+        audioOutput?.Stop();
         _moviePlayer?.Dispose();
         _moviePlayer = null;
     }

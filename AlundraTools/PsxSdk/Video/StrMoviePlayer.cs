@@ -1,3 +1,4 @@
+using PsxSdk.Audio;
 using PsxSdk.Cd;
 using PsxSdk.Mdec;
 using PsxSdk.Streaming;
@@ -26,16 +27,40 @@ namespace PsxSdk.Video;
 public sealed class StrMoviePlayer : IDisposable
 {
     /// <summary>
-    /// Sector delivery rate assumed for playback pacing. The original opens the stream with
-    /// <c>CdRead2(0x1c0)</c>, whose <c>CdlModeSpeed</c> bit selects double speed: 300 sectors per
-    /// second.
+    /// Sector delivery rate at CD-ROM single speed: 75 sectors per second (150 KB/s of 2048-byte
+    /// user data).
     /// </summary>
-    public const double DoubleSpeedSectorsPerSecond = 300.0;
+    public const double SingleSpeedSectorsPerSecond = 75.0;
+
+    /// <summary>
+    /// Sector delivery rate at double speed, which is what the original selects: it opens the
+    /// stream with <c>CdRead2(0x1c0)</c>, whose <c>CdlModeSpeed</c> bit (0x80) is set.
+    /// </summary>
+    /// <remarks>
+    /// Cross-checked against the interleaved XA audio, which pins the rate down without relying on
+    /// any assumption about the drive: the audio is 37800 Hz stereo 4-bit, so one Form 2 sector
+    /// carries 2016 sample frames per channel = 53.33 ms, i.e. 18.75 audio sectors per second. The
+    /// muxer places one audio sector every 8, so the stream must be delivered at 150 sectors per
+    /// second. With ~10 sectors per frame that gives 15 fps, and dividing each movie's frame count
+    /// by its total XA audio duration returns 15.00 / 14.86 / 14.96 / 14.99 fps for
+    /// EURO_OP / ARAN_OP / ARAN_END / MATRIX.
+    /// </remarks>
+    public const double DoubleSpeedSectorsPerSecond = 2 * SingleSpeedSectorsPerSecond;
 
     private readonly StrSectorReader _reader;
     private readonly MoviePlaybackOptions _options;
     private readonly MdecVlcDecoder _vlcDecoder = new();
     private readonly MdecImageDecoder _imageDecoder = new();
+    private readonly XaAdpcmDecoder _audioDecoder = new();
+    private readonly short[] _audioScratch = new short[XaAdpcmDecoder.MaxSamplesPerSector];
+
+    // Ring buffer holding decoded PCM until the host drains it. Four seconds of 37800 Hz stereo is
+    // far more than the pipeline can get ahead by, since audio and video come from the same
+    // sectors and are therefore produced at exactly the right ratio.
+    private readonly short[] _audioRing = new short[37800 * 2 * 4];
+    private int _audioRead;
+    private int _audioWrite;
+    private int _audioCount;
 
     private ushort[]? _codes;
     private byte[] _frameRgb24 = [];
@@ -55,6 +80,7 @@ public sealed class StrMoviePlayer : IDisposable
 
         _reader = reader;
         _options = options;
+        _reader.OnAudioSector = OnAudioSector;
 
         var tail = reader.ProbeTail();
         TotalFrames = (int)tail.LastFrameNumber;
@@ -276,7 +302,65 @@ public sealed class StrMoviePlayer : IDisposable
         return lastFrame > 0 ? lastFrame - _options.FadeOutFrames : 0;
     }
 
-    /// <summary>Number of 2048-byte sectors in the underlying stream.</summary>
+    /// <summary>
+    /// True when the source carries usable XA audio, i.e. when it is a raw 2352-byte-per-sector
+    /// stream. A source written as flat 2048-byte user data has lost 2 of every 18 ADPCM sound
+    /// groups and offers no audio at all rather than a broken one.
+    /// </summary>
+    public bool HasAudio => _reader.HasAudio;
+
+    /// <summary>Sample rate of the decoded audio, valid once the first audio sector was read.</summary>
+    public int AudioSampleRate => _audioDecoder.SampleRate;
+
+    /// <summary>Channel count of the decoded audio.</summary>
+    public int AudioChannels => _audioDecoder.Channels;
+
+    /// <summary>Number of decoded PCM shorts waiting to be drained.</summary>
+    public int AvailableAudioSamples => _audioCount;
+
+    /// <summary>
+    /// Number of PCM shorts dropped because the host was not draining fast enough. Should stay 0;
+    /// anything else means the audio sink is not keeping up.
+    /// </summary>
+    public int DroppedAudioSamples { get; private set; }
+
+    /// <summary>
+    /// Drains decoded PCM into <paramref name="destination"/>, interleaved at
+    /// <see cref="AudioChannels"/> channels.
+    /// </summary>
+    /// <returns>Number of shorts written, which may be fewer than requested.</returns>
+    public int ReadAudio(short[] destination, int offset, int count)
+    {
+        ArgumentNullException.ThrowIfNull(destination);
+        var taken = Math.Min(count, _audioCount);
+        for (var i = 0; i < taken; i++)
+        {
+            destination[offset + i] = _audioRing[_audioRead];
+            _audioRead = (_audioRead + 1) % _audioRing.Length;
+        }
+
+        _audioCount -= taken;
+        return taken;
+    }
+
+    private void OnAudioSector(ReadOnlySpan<byte> userData, byte codingInfo)
+    {
+        var written = _audioDecoder.Decode(userData, codingInfo, _audioScratch);
+        for (var i = 0; i < written; i++)
+        {
+            if (_audioCount >= _audioRing.Length)
+            {
+                DroppedAudioSamples += written - i;
+                return;
+            }
+
+            _audioRing[_audioWrite] = _audioScratch[i];
+            _audioWrite = (_audioWrite + 1) % _audioRing.Length;
+            _audioCount++;
+        }
+    }
+
+    /// <summary>Number of sectors in the underlying stream.</summary>
     public int SectorCount => _reader.SectorCount;
 
     /// <summary>Sector size this player expects, exposed for host-side diagnostics.</summary>

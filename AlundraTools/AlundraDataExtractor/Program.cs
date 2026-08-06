@@ -19,6 +19,61 @@ internal class Program
     private static Dictionary<string, HashSet<string>> entitySpriteSheetIds = new();
     private static HashSet<string> entitySpriteSheetAlreadySaved = new();
 
+    /// <summary>
+    /// Re-extracts the MOVIE/*.MOV streams from a CD image, keeping whole 2352-byte sectors.
+    ///
+    /// The usual extraction writes a flat 2048 bytes per sector, which is the Form 1 user data
+    /// size. That is fine for the video sectors but truncates every Form 2 (XA audio) sector from
+    /// 2324 bytes, losing 2 of its 18 ADPCM sound groups - about 11% of every 53 ms of sound. The
+    /// raw copy produced here keeps the subheaders and the full audio payload, and is what
+    /// LoaderEngine looks for first (".STR" beside the ".MOV").
+    /// </summary>
+    private static void ExtractMovies(string[] args)
+    {
+        if (args.Length < 3)
+        {
+            Console.WriteLine("Usage: AlundraDataExtractor --extract-movies <cdImage.bin> <movieOutputPath>");
+            return;
+        }
+
+        var imagePath = args[1];
+        var outputPath = args[2];
+
+        using var image = PsxSdk.Cd.CdImageReader.OpenFile(imagePath);
+        Console.WriteLine($"Image  : {imagePath}");
+        Console.WriteLine($"Layout : {image.SectorSize} bytes/sector ({(image.IsRaw ? "raw" : "iso")})");
+
+        if (!image.IsRaw)
+        {
+            Console.WriteLine("This image holds 2048-byte sectors only, so its XA audio is already incomplete.");
+            Console.WriteLine("Use a raw BIN/IMG rip (2352 bytes per sector) to recover movie sound.");
+            return;
+        }
+
+        Directory.CreateDirectory(outputPath);
+        var movies = image.ListFiles()
+            .Where(file => file.Path.StartsWith("MOVIE", StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        if (movies.Count == 0)
+        {
+            Console.WriteLine("No MOVIE directory found in this image.");
+            return;
+        }
+
+        foreach (var movie in movies)
+        {
+            var target = Path.Combine(outputPath, Path.ChangeExtension(movie.Name, ".STR"));
+            Console.Write($"  {movie.Name} -> {Path.GetFileName(target)} ... ");
+            using (var stream = File.Create(target))
+            {
+                image.ExtractFileRaw(movie, stream);
+            }
+
+            Console.WriteLine($"{new FileInfo(target).Length:N0} bytes");
+        }
+    }
+
     static void Main(string[] args)
     {
         _jsonSerializerOptions.Converters.Add(new ByteArrayAsNumbersConverter());
@@ -35,11 +90,18 @@ internal class Program
             return;
         }
 
+        if (args.Length > 0 && string.Equals(args[0], "--extract-movies", StringComparison.OrdinalIgnoreCase))
+        {
+            ExtractMovies(args);
+            return;
+        }
+
         if (args.Length < 2)
         {
             Console.WriteLine("Usage: AlundraDataExtractor <gamePath> <extractionPath> [--tiled-tileset-layout original|compact]");
             Console.WriteLine("       AlundraDataExtractor --trace-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
             Console.WriteLine("       AlundraDataExtractor --render-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
+            Console.WriteLine("       AlundraDataExtractor --extract-movies <cdImage.bin> <movieOutputPath>");
             return;
         }
 

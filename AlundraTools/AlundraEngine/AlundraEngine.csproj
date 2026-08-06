@@ -13,4 +13,8 @@
     <PackageReference Include="EPPlus" Version="$(EPPlusVersion)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PsxSdk\PsxSdk.csproj" />
+  </ItemGroup>
+
 </Project>

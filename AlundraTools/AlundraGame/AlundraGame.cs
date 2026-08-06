@@ -28,6 +28,7 @@ namespace AlundraGame
         private SpriteBatch _spriteBatch = null!;
         private GameEngine _gameEngine = null!;
         private MonoGameSoundPlaybackBackend? _soundBackend;
+        private MonoGameMovieAudioOutput? _movieAudioOutput;
         private RenderTarget2D _renderTarget = null!;
         private InputManager _inputManager = null!;
         private RuntimeInspectorHost? _runtimeInspector;
@@ -123,7 +124,8 @@ namespace AlundraGame
             _gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3, alundraRenderer);
             _gameEngine.InitializeEngine(true);
 
-            _loaderEngine = new LoaderEngine(alundraRenderer);
+            _movieAudioOutput = new MonoGameMovieAudioOutput();
+            _loaderEngine = new LoaderEngine(alundraRenderer, _movieAudioOutput);
             _loaderEngine.InitializeEngine(gamePath);
 
             _closingEngine = new ClosingEngine(alundraRenderer);
@@ -362,6 +364,7 @@ namespace AlundraGame
             if (disposing)
             {
                 _soundBackend?.StopTickDriver();
+                _movieAudioOutput?.Dispose();
                 _runtimeInspector?.Dispose();
                 _renderTarget?.Dispose();
             }
