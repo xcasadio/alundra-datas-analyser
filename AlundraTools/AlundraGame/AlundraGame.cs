@@ -18,6 +18,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.IO;
+using AlundraEngine.Loader;
 
 namespace AlundraGame
 {
@@ -43,8 +44,9 @@ namespace AlundraGame
         private int _temporaryWarpEffectIndex = Array.IndexOf(TemporaryWarpEffectIds, 8);
         private readonly string? _datasBinFilePath;
         private KeyboardState _previousKeyboardState;
-        private GameState _state = GameState.Game;
+        private GameState _state = GameState.MainMenu; // GameState.Game
         private ClosingEngine _closingEngine;
+        private LoaderEngine _loaderEngine;
         private int GameRenderWidth => StaticVariables.ScreenWidth * _renderScaleFactor;
         private int GameRenderHeight => StaticVariables.ScreenHeight * _renderScaleFactor;
 
@@ -121,6 +123,9 @@ namespace AlundraGame
             _gameEngine = new GameEngine(datasBin, balanceBin, soundBin, etcRes, font3, alundraRenderer);
             _gameEngine.InitializeEngine(true);
 
+            _loaderEngine = new LoaderEngine(alundraRenderer);
+            _loaderEngine.InitializeEngine(gamePath);
+
             _closingEngine = new ClosingEngine(alundraRenderer);
             _closingEngine.InitializeEngine(gamePath);
 
@@ -174,8 +179,7 @@ namespace AlundraGame
             switch (_state)
             {
                 case GameState.MainMenu:
-                    //_state = _mainMenuEngine.MainLoop();
-                    Breakpoint.TriggerBreak();
+                    _state = _loaderEngine.MainLoop();
                     break;
 
                 case GameState.Game:

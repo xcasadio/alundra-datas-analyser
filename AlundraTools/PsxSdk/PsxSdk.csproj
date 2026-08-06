@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Game-agnostic PlayStation 1 SDK support library.
+
+    Deliberately has NO dependency on AlundraEngine, System.Drawing, Windows Forms or MonoGame:
+    this project is meant to be reusable as-is for any other PSX title. It only ever exposes
+    plain byte[]/Stream/struct data; deciding how to display or store a decoded frame is the
+    host application's job.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Configurations>Debug;Release</Configurations>
+    <RootNamespace>PsxSdk</RootNamespace>
+  </PropertyGroup>
+
+</Project>

@@ -222,11 +222,46 @@ public class AlundraRenderer : IRenderer
         return texture;
     }
 
+    /// <summary>
+    /// Re-uploads a cached bitmap whose pixels were modified in place.
+    ///
+    /// JUSTIFICATION: backend MonoGame only
+    /// RELATION: <see cref="_textureCache"/> is keyed on the Bitmap instance, which assumes a
+    /// bitmap's contents never change once uploaded. That holds for every static resource, but not
+    /// for a movie frame buffer, which is one long-lived Bitmap rewritten 30 times a second. Rather
+    /// than allocating a Bitmap per frame (which would push a new Texture2D into the cache every
+    /// frame), the owner tells the renderer the pixels moved and the existing texture is refreshed
+    /// in place.
+    /// </summary>
+    public void InvalidateTexture(Bitmap? bitmap)
+    {
+        if (bitmap is null || !_textureCache.TryGetValue(bitmap, out var texture))
+        {
+            // Never uploaded yet: the next RenderSprite will build it from the current pixels.
+            return;
+        }
+
+        if (texture.Width != bitmap.Width || texture.Height != bitmap.Height)
+        {
+            _textureCache.Remove(bitmap);
+            texture.Dispose();
+            return;
+        }
+
+        UploadBitmapInto(texture, bitmap);
+    }
+
     private Texture2D? BitmapToTexture2D(Bitmap bitmap)
     {
         if (bitmap.Width <= 0 || bitmap.Height <= 0) return null;
 
         var texture = new Texture2D(_graphicsDevice, bitmap.Width, bitmap.Height);
+        UploadBitmapInto(texture, bitmap);
+        return texture;
+    }
+
+    private static void UploadBitmapInto(Texture2D texture, Bitmap bitmap)
+    {
         var bitmapData = bitmap.LockBits(
             new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
             ImageLockMode.ReadOnly,
@@ -261,8 +296,6 @@ public class AlundraRenderer : IRenderer
         {
             bitmap.UnlockBits(bitmapData);
         }
-
-        return texture;
     }
 
     public void Clear()

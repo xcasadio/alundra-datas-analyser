@@ -3,7 +3,7 @@ using System.Drawing.Imaging;
 
 namespace AlundraEngine.Closing
 {
-    public class Inspector
+    public class ClosingExeInspector
     {
         // Each entry: (Width, Height, Bpp, HasClut), taken from the resource scan below (Dimensions/Bpp,
         // HasClut inferred from Palettes>1 => Bpp=4 needs a CLUT; the two Bpp=16 shapes never carry one).
@@ -49,7 +49,7 @@ namespace AlundraEngine.Closing
         public byte[] ExeBytes => _exeBytes;
         public int GetImageFileOffset(int index) => _imageOffsets[index];
 
-        public Inspector(string gamePath)
+        public ClosingExeInspector(string gamePath)
         {
             var exeFilePath = Path.Combine(gamePath, "CLOSING.EXE");
             _exeBytes = File.ReadAllBytes(exeFilePath);

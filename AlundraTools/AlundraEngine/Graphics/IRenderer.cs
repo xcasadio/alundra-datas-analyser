@@ -6,6 +6,13 @@ public interface IRenderer
     void Clear();
     Bitmap? CaptureFrameBuffer();
 
+    /// <summary>
+    /// Tells the renderer that <paramref name="bitmap"/>'s pixels were rewritten in place, so any
+    /// GPU copy it holds must be refreshed. Backends that read the Bitmap on every draw can ignore
+    /// this. Needed by long-lived, frequently rewritten images such as a decoded movie frame.
+    /// </summary>
+    void InvalidateTexture(Bitmap? bitmap);
+
     void AddSprite(SPRT sprt, int depthSortValue, Bitmap bitmap, float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f);
     void AddSprite(int x, int y, int width, int height, int depthSortValue, Bitmap bitmap, float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f, BlendMode blendMode = BlendMode.None);
     void AddSprite(Renderer.Sprite sprite);

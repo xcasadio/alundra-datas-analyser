@@ -52,7 +52,7 @@ internal class Program
         gameEngine.InitializeEngine();
 
         var alunCdExe = new AlunCdExe(gamePath);
-        var closingExe = new Inspector(gamePath);
+        var closingExe = new ClosingExeInspector(gamePath);
 
         ExtractDataFromAlunCdExe(alunCdExe, extractionPath);
         ExtractDataFromClosingExe(closingExe, extractionPath);
@@ -764,9 +764,9 @@ internal class Program
         alunCdExe.MemoryCardFrame3Image.Save(Path.Combine(memoryCardPath, "memorycardframe3.png"), ImageFormat.Png);
     }
 
-    private static void ExtractDataFromClosingExe(Inspector inspector, string extractionPath)
+    private static void ExtractDataFromClosingExe(ClosingExeInspector closingExeInspector, string extractionPath)
     {
-        inspector.SaveAllImages(Path.Combine(extractionPath, "closing"));
+        closingExeInspector.SaveAllImages(Path.Combine(extractionPath, "closing"));
     }
 
     private static void ExtractDataFromBalanceBin(BalanceBin balanceBin, string extractionPath)

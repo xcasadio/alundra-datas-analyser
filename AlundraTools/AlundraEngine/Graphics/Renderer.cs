@@ -225,6 +225,14 @@ public class Renderer(System.Drawing.Graphics graphics, Bitmap? frameBuffer = nu
         return _frameBuffer == null ? null : (Bitmap)_frameBuffer.Clone();
     }
 
+    /// <summary>
+    /// No-op: this backend draws straight from the Bitmap on every call, so it never holds a stale
+    /// copy that could need refreshing.
+    /// </summary>
+    public void InvalidateTexture(Bitmap? bitmap)
+    {
+    }
+
     public void ClearQuadCache()
     {
         foreach (var bitmap in _quadColorCache.Values)

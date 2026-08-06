@@ -8,7 +8,7 @@ public class ClosingEngine(IRenderer renderer)
     // formule: File Offset = RAM Address - 0x8001F800
     private const uint RamToFileOffsetDelta = 0x8001F800;
 
-    private Inspector _inspector;
+    private ClosingExeInspector _closingExeInspector;
     private byte[] _exeBytes = [];
     private CreditsPictureEntry[] CreditsPictureEntry_ARRAY_8003a28c = [];
     private CreditsBlock[] g_creditsBlockTable = [];
@@ -102,8 +102,8 @@ public class ClosingEngine(IRenderer renderer)
 
     public void InitializeEngine(string gamePath)
     {
-        _inspector = new Inspector(gamePath);
-        _exeBytes = _inspector.ExeBytes;
+        _closingExeInspector = new ClosingExeInspector(gamePath);
+        _exeBytes = _closingExeInspector.ExeBytes;
         CreditsPictureEntry_ARRAY_8003a28c = ReadCreditsPictureTable();
         g_creditsBlockTable = ReadCreditsBlockTable();
         g_creditsGlyphTable = ReadCreditsGlyphTable();
@@ -540,7 +540,7 @@ public class ClosingEngine(IRenderer renderer)
         g_creditsPictureTablePtr++;
 
         _currentCreditsPictureBitmap = tableEntry.InspectorImageIndex >= 0
-            ? _inspector.LoadImage(tableEntry.InspectorImageIndex)
+            ? _closingExeInspector.LoadImage(tableEntry.InspectorImageIndex)
             : LoadTimFromFileOffset(tableEntry.TimDataFileOffset);
 
         g_creditsPictureLayoutIndex = tableEntry.LayoutIndex;
@@ -559,7 +559,7 @@ public class ClosingEngine(IRenderer renderer)
     // against RAM-address-minus-0x8001F800 for this address).
     private void LoadCreditsFont()
     {
-        var fontTimFileOffset = _inspector.GetImageFileOffset(10);
+        var fontTimFileOffset = _closingExeInspector.GetImageFileOffset(10);
         using var stream = new MemoryStream(_exeBytes, fontTimFileOffset, _exeBytes.Length - fontTimFileOffset, writable: false);
         using var br = new BinaryReader(stream);
         var raw = TimLoader.LoadTimRaw(br);
@@ -731,9 +731,9 @@ public class ClosingEngine(IRenderer renderer)
     // RELATION: see CreditsPictureEntry.InspectorImageIndex.
     private int ResolveInspectorImageIndex(int fileOffset)
     {
-        for (var i = 0; i < Inspector.ImageCount; i++)
+        for (var i = 0; i < ClosingExeInspector.ImageCount; i++)
         {
-            if (_inspector.GetImageFileOffset(i) == fileOffset)
+            if (_closingExeInspector.GetImageFileOffset(i) == fileOffset)
             {
                 return i;
             }

@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MGUI.Shared", "..\MGUI\MGUI
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MGUI.MonoGame.LegacyRenderer", "..\MGUI\MGUI.MonoGame.LegacyRenderer\MGUI.MonoGame.LegacyRenderer.csproj", "{3CBEAC44-700B-D554-5B0E-427A8592A3EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsxSdk", "PsxSdk\PsxSdk.csproj", "{026C202E-A90B-4629-80C6-A2764AE3D55E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -169,6 +171,18 @@ Global
 		{3CBEAC44-700B-D554-5B0E-427A8592A3EE}.Release|x64.Build.0 = Release|Any CPU
 		{3CBEAC44-700B-D554-5B0E-427A8592A3EE}.Release|x86.ActiveCfg = Release|Any CPU
 		{3CBEAC44-700B-D554-5B0E-427A8592A3EE}.Release|x86.Build.0 = Release|Any CPU
+		{026C202E-A90B-4629-80C6-A2764AE3D55E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{026C202E-A90B-4629-80C6-A2764AE3D55E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{026C202E-A90B-4629-80C6-A2764AE3D55E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{026C202E-A90B-4629-80C6-A2764AE3D55E}.Debug|x64.Build.0 = Debug|Any CPU
+		{026C202E-A90B-4629-80C6-A2764AE3D55E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{026C202E-A90B-4629-80C6-A2764AE3D55E}.Debug|x86.Build.0 = Debug|Any CPU
+		{026C202E-A90B-4629-80C6-A2764AE3D55E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{026C202E-A90B-4629-80C6-A2764AE3D55E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{026C202E-A90B-4629-80C6-A2764AE3D55E}.Release|x64.ActiveCfg = Release|Any CPU
+		{026C202E-A90B-4629-80C6-A2764AE3D55E}.Release|x64.Build.0 = Release|Any CPU
+		{026C202E-A90B-4629-80C6-A2764AE3D55E}.Release|x86.ActiveCfg = Release|Any CPU
+		{026C202E-A90B-4629-80C6-A2764AE3D55E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
