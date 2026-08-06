@@ -15,7 +15,7 @@ namespace AlundraEngine.Loader;
 /// same sequence is expressed as a state machine; every counter, timeout and button test keeps its
 /// original value.
 /// </summary>
-public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = null)
+public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = null, Sound.SoundManager? soundManager = null)
 {
     // GHIDRA: PromptNewGameOrContinue @ 0x80021c28 reads these masks out of PadRead(0).
     // Bit values follow AlundraEngine.Gameplay.PadState.
@@ -61,11 +61,55 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
     ///
     /// Set to false to run the timing faithfully once Phase 3 provides the real scene.
     /// </summary>
-    private const bool SkipBootLoadingScreen = true;
+    // Deliberately a field, not a const: as a const the compiler folds the branch and reports the
+    // faithful path as unreachable, which would hide it from any later change.
+    private static readonly bool SkipBootLoadingScreen = true;
+
+    /// <summary>
+    /// GHIDRA: PromptNewGameOrContinue @ 0x80021c28 — the unselected entry sits at 0x40 and the
+    /// selected one at 0xA0, around which FUN_80021a1c pulses it.
+    /// </summary>
+    private const byte MenuColorSelected = 0xA0;
+    private const byte MenuColorUnselected = 0x40;
+
+    /// <summary>GHIDRA: PromptNewGameOrContinue — INT_80042f6c += 0x58 per frame, wrapping at 0xFFF.</summary>
+    private const int MenuPulseStep = 0x58;
+    private const int MenuPulseWrap = 0xFFF;
 
     private LoaderState _state = LoaderState.LoadingScreen;
     private LoaderExeInspector? _inspector;
     private string _moviePath = string.Empty;
+
+    private LoaderUiRenderer? _ui;
+
+    // GHIDRA: the title screen's UI elements, laid out by InitBootSequenceGraphics @ 0x800213c4.
+    private readonly UiBox[] _titleTopBoxes = [new(), new(), new(), new(), new()];
+    private readonly UiBox[] _menuOptionBoxes = [new(), new()];
+    private readonly UiBox[] _titleFooterBoxes = [new(), new(), new(), new(), new()];
+    private readonly UiBox _systemMessageBox = new();
+
+    /// <summary>GHIDRA: INT_80042f6c — phase of the selected entry's brightness pulse.</summary>
+    private int _menuPulsePhase;
+
+    // The loader's own sound tables, read out of LOADER.EXE rather than SOUND.BIN's.
+    private LoaderExeInspector.BgmTrack[] _bgmTracks = [];
+    private Sound.SoundEffectRecord[] _sfxRecords = [];
+    private short _sfxVabId = -1;
+
+    /// <summary>
+    /// GHIDRA: MainLoop @ 0x8002538c calls PromptNewGameOrContinue(0x708, 1) — the title screen's
+    /// music is track 1.
+    /// </summary>
+    private const int TitleBgmTrack = 1;
+
+    /// <summary>GHIDRA: PromptNewGameOrContinue @ 0x80021c28 — PlaySoundEffect(1) on Up and Down.</summary>
+    private const int SfxCursorMove = 1;
+
+    /// <summary>GHIDRA: PromptNewGameOrContinue @ 0x80021c28 — PlaySoundEffect(2) on confirm.</summary>
+    private const int SfxConfirm = 2;
+
+    /// <summary>True once the title BGM has been started for the current visit to the menu.</summary>
+    private bool _titleBgmStarted;
 
     private StrMoviePlayer? _moviePlayer;
     private readonly MovieFrameBitmap _movieFrame = new();
@@ -108,6 +152,10 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
 
         _loadingScreen = _inspector.LoadImage(LoaderExeInspector.LoadingScreenIndex);
         _titleScreen = _inspector.LoadImage(LoaderExeInspector.TitleFullIndex);
+
+        _ui = new LoaderUiRenderer(renderer);
+        InitBootSequenceGraphics();
+        InitSoundTables(gamePath);
 
         _loadingScreenTick = 0;
         _loadingScreenFade = 0;
@@ -162,6 +210,198 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
         renderer.Clear();
         return GameState.MainMenu;
     }
+
+    /// <summary>
+    /// GHIDRA: InitBootSequenceGraphics @ 0x800213c4 — uploads the title screen to VRAM and lays
+    /// out the UI elements that sample it.
+    /// </summary>
+    /// <remarks>
+    /// PARTIAL: the original also builds eight tile layers from
+    /// <c>GetEtcResource(g_loadRoomBackgroundTimPtr, "ANM", 1..8)</c>, an animation container held
+    /// inside LOADER.EXE that is not parsed yet. FUN_80021a1c cycles those layers into VRAM at
+    /// (0x180, 0) every eight frames, which is what animates the logo. Until that container is
+    /// read, only the static g_TitleFull upload is done - see <see cref="TitleAnimationAvailable"/>.
+    /// </remarks>
+    private void InitBootSequenceGraphics()
+    {
+        if (_ui is null || _inspector is null)
+        {
+            return;
+        }
+
+        // InitializeTileLayer(&g_tileMapTitleFull, g_TitleFull) then
+        // SetTileLayerBounds(&g_tileMapTitleFull, 0x180, 0, 0, 0x1e2, 0):
+        // the 320x240 8bpp title screen lands at VRAM (0x180, 0) - 160 words wide - and its CLUT
+        // at (0, 0x1e2).
+        _ui.UploadTim(_inspector.ExeBytes, _inspector.GetImageFileOffset(LoaderExeInspector.TitleFullIndex),
+            destX: 0x180, destY: 0, clutDestX: 0, clutDestY: 0x1E2);
+
+        // The five boxes covering the animated logo area: 64x160 each, side by side, sourced from
+        // VRAM x 0x180 stepping 0x20 words (= 64 pixels at 8bpp).
+        //
+        // DELIBERATE INTERIM: the original gives these clutY 0x1E3, the palette of the ANM layers
+        // that overwrite this VRAM region every eight frames. With those layers not yet loaded
+        // that palette is empty, so they are pointed at the title screen's own CLUT instead, which
+        // renders the static logo correctly. Restore 0x1E3 together with the ANM container.
+        var topClutY = (short)(TitleAnimationAvailable ? 0x1E3 : 0x1E2);
+        for (short i = 0; i < 5; i++)
+        {
+            var box = _titleTopBoxes[i];
+            box.Initialize(1, -1, (short)(0x180 + i * 0x20), 0, 0x40, 0xA0, 0, topClutY);
+            box.SetOffset((short)(i * 0x40), 0);
+            box.SetBaseAndRotation(0, 0, 0, -1);
+        }
+
+        // The two menu entries, 128x16 each, from VRAM (0x1b0, 0xa0) and (0x1b0, 0xb0).
+        for (short i = 0; i < 2; i++)
+        {
+            var box = _menuOptionBoxes[i];
+            box.Initialize(1, -1, 0x1B0, (short)(0xA0 + i * 0x10), 0x80, 0x10, 0, 0x1E2);
+            box.SetOffset(0x60, (short)(0x90 + i * 0x10));
+            box.SetBaseAndRotation(0, 0, 1, -1);
+        }
+
+        // The copyright block: five 64x48 boxes along the bottom.
+        for (short i = 0; i < 5; i++)
+        {
+            var box = _titleFooterBoxes[i];
+            box.Initialize(1, -1, (short)(0x180 + i * 0x20), 0xC0, 0x40, 0x30, 0, 0x1E2);
+            box.SetOffset((short)(i * 0x40), 0xC0);
+            box.SetBaseAndRotation(0, 0, 0, -1);
+        }
+
+        _systemMessageBox.Initialize(1, -1, 0x180, 0xA0, 0x20, 0x10, 0, 0x1E2);
+        _systemMessageBox.SetOffset(0x11D, 0x1D);
+        _systemMessageBox.SetBaseAndRotation(0, 0, 1, -1);
+
+        ResetMenuColors();
+    }
+
+    /// <summary>
+    /// GHIDRA: InitializeSoundDriver @ 0x80028338 — reads the loader's own BGM and sound-effect
+    /// tables and opens the sound-effect VAB bank.
+    /// </summary>
+    private void InitSoundTables(string gamePath)
+    {
+        if (_inspector is null || soundManager is null)
+        {
+            return;
+        }
+
+        var soundBinPath = Path.Combine(gamePath, "DATA", "SOUND.BIN");
+        if (!File.Exists(soundBinPath))
+        {
+            Debug.WriteLine($"SOUND.BIN not found at '{soundBinPath}'; the loader will run silently.");
+            return;
+        }
+
+        var soundBinLength = (int)new FileInfo(soundBinPath).Length;
+        _bgmTracks = _inspector.ReadBgmTrackTable(soundBinLength);
+        _sfxRecords = _inspector.ReadSoundEffectTable();
+
+        var banks = _inspector.ReadSfxVabBankTable(soundBinLength);
+        if (LoaderExeInspector.SfxVabBankIndex < banks.Length)
+        {
+            var bank = banks[LoaderExeInspector.SfxVabBankIndex];
+            _sfxVabId = soundManager.LoadLoaderSfxVab(bank.HeaderOffset, bank.BodyOffset, bank.BodyEnd);
+        }
+    }
+
+    /// <summary>GHIDRA: PlayBgmTrack @ 0x80028dd8.</summary>
+    private void PlayBgmTrack(int trackId)
+    {
+        if (soundManager is null || (uint)trackId >= (uint)_bgmTracks.Length)
+        {
+            return;
+        }
+
+        var track = _bgmTracks[trackId];
+        soundManager.PlayLoaderBgm(track.SeqOffset, track.SeqEnd, track.VabBodyOffset, track.VabBodyEnd);
+    }
+
+    /// <summary>
+    /// GHIDRA: PlaySoundEffect @ 0x80028b40.
+    /// </summary>
+    private void PlaySoundEffect(int sfxId)
+    {
+        if (soundManager is null || _sfxRecords.Length == 0 || _sfxVabId < 0)
+        {
+            return;
+        }
+
+        soundManager.PlayLoaderSoundEffect(_sfxRecords, sfxId, _sfxVabId);
+    }
+
+    /// <summary>
+    /// False until the "ANM" animation container inside LOADER.EXE is parsed; see
+    /// <see cref="InitBootSequenceGraphics"/>.
+    /// </summary>
+    // Field rather than const, for the same reason as SkipBootLoadingScreen above.
+    private static readonly bool TitleAnimationAvailable = false;
+
+    /// <summary>GHIDRA: PromptNewGameOrContinue @ 0x80021c28 sets both entries' base colours.</summary>
+    private void ResetMenuColors()
+    {
+        for (var i = 0; i < _menuOptionBoxes.Length; i++)
+        {
+            var level = i == _titleMenuSelection ? MenuColorSelected : MenuColorUnselected;
+            _menuOptionBoxes[i].R = level;
+            _menuOptionBoxes[i].G = level;
+            _menuOptionBoxes[i].B = level;
+        }
+    }
+
+    /// <summary>
+    /// GHIDRA: FUN_80021a1c @ 0x80021a1c — draws one frame of the title screen: the logo strip, the
+    /// two menu entries with the selected one pulsing, the copyright block and the message box.
+    /// </summary>
+    private void DrawTitleScreen()
+    {
+        if (_ui is null)
+        {
+            return;
+        }
+
+        _titleTopBoxes[0].SetBaseAndRotation(0, 0, 0, -1);
+        _ui.RenderRun(_titleTopBoxes, 0, 5);
+
+        // The selected entry's brightness is its base colour plus a cosine of the running phase,
+        // divided by 64 (the original corrects the arithmetic shift so the division truncates
+        // toward zero), clamped to a byte. It is restored right after drawing so the pulse never
+        // accumulates.
+        var selected = _menuOptionBoxes[_titleMenuSelection];
+        var baseLevel = selected.R;
+
+        var cosine = FixedCosine(_menuPulsePhase);
+        if (cosine < 0)
+        {
+            cosine += 0x3F;
+        }
+
+        var pulsed = Math.Clamp(baseLevel + (cosine >> 6), 0, 0xFF);
+        selected.R = (byte)pulsed;
+        selected.G = (byte)pulsed;
+        selected.B = (byte)pulsed;
+
+        _menuOptionBoxes[0].SetBaseAndRotation(0, 0, 1, -1);
+        _ui.RenderRun(_menuOptionBoxes, 0, 2);
+
+        selected.R = baseLevel;
+        selected.G = baseLevel;
+        selected.B = baseLevel;
+
+        _titleFooterBoxes[0].SetBaseAndRotation(0, 0, 0, -1);
+        _ui.RenderRun(_titleFooterBoxes, 0, 5);
+
+        _ui.Render(_systemMessageBox);
+    }
+
+    /// <summary>
+    /// PsyQ <c>ccos</c>: cosine in 1.12 fixed point, with a full turn spanning 4096 units.
+    /// </summary>
+    /// <remarks>GHIDRA: ccos @ 0x80030910.</remarks>
+    private static int FixedCosine(int angle) =>
+        (int)Math.Round(Math.Cos(angle * 2.0 * Math.PI / 4096.0) * 4096.0);
 
     /// <summary>
     /// GHIDRA: RunLoadingScreenIntro @ 0x80024fa8. The original fades a cursor overlay in, holds
@@ -249,33 +489,46 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
     /// </summary>
     private void UpdateTitleMenu(uint buttons, uint justPressed)
     {
-        if (_titleScreen is not null)
+        // GHIDRA: PromptNewGameOrContinue @ 0x80021c28 advances the pulse phase every frame and
+        // wraps it at 0xFFF, then calls FUN_80021a1c to draw.
+        _menuPulsePhase += MenuPulseStep;
+        if (_menuPulsePhase > MenuPulseWrap)
         {
-            renderer.AddSprite(0, 0, _titleScreen.Width, _titleScreen.Height,
-                SpriteDepth.BackgroundUI, _titleScreen);
+            _menuPulsePhase = 0;
         }
 
-        // PARTIAL: the two option labels are baked into g_TitleFull, so they are already on
-        // screen, but the original also highlights the selected one through its own UIBox layer
-        // (FUN_80021a1c @ 0x80021a1c, which pulses the selected entry with
-        // `colour + (ccos(phase) >> 6)` around 0xA0, the other staying at 0x40). That layer is not
-        // transliterated yet, so the selection is tracked but not yet shown.
+        DrawTitleScreen();
+
+        // GHIDRA: PromptNewGameOrContinue @ 0x80021c28 starts the BGM once on entry, before the
+        // input loop.
+        if (!_titleBgmStarted)
+        {
+            PlayBgmTrack(TitleBgmTrack);
+            _titleBgmStarted = true;
+        }
 
         if ((justPressed & ButtonUp) != 0)
         {
             _titleMenuSelection = 0;
+            ResetMenuColors();
+            PlaySoundEffect(SfxCursorMove);
         }
 
         if ((justPressed & ButtonDown) != 0)
         {
             _titleMenuSelection = 1;
+            ResetMenuColors();
+            PlaySoundEffect(SfxCursorMove);
         }
 
         if ((justPressed & (ButtonStart | ButtonCross)) != 0)
         {
+            PlaySoundEffect(SfxConfirm);
+
             // GHIDRA: MainLoop @ 0x8002538c - result 0 starts a new game (SlotData = 0 then
             // LoadExec), result 1 goes through the save slot selection first.
             _state = _titleMenuSelection == 0 ? LoaderState.Finished : LoaderState.SlotSelection;
+            StopTitleBgm();
             return;
         }
 
@@ -324,8 +577,22 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
         _titleMenuSelection = 0;
     }
 
+    /// <summary>
+    /// GHIDRA: PromptNewGameOrContinue @ 0x80021c28 ends on FUN_80028d90(1), which releases the
+    /// sequence it opened; the next visit to the menu opens it again.
+    /// </summary>
+    private void StopTitleBgm()
+    {
+        if (_titleBgmStarted)
+        {
+            soundManager?.StopLoaderBgm();
+            _titleBgmStarted = false;
+        }
+    }
+
     private void BeginMovie(LoaderState movieState)
     {
+        StopTitleBgm();
         DisposeMoviePlayer();
         _state = movieState;
 

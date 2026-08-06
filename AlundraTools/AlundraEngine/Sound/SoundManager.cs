@@ -135,6 +135,152 @@ public class SoundManager
         return vabId;
     }
 
+    /// <summary>
+    /// Loads and starts one of LOADER.EXE's own BGM tracks.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA: PlayBgmTrack @ 0x80028dd8 (LOADER.EXE) — frees the previous sequence and VAB, opens
+    /// the track's VAB head and body, opens the sequence, sets both volumes to 0x7F and starts it
+    /// looping. LOADER.EXE keeps its own copy of the sound driver but the data format is the one
+    /// the game already reads, so only the offsets differ; they come from the loader's own track
+    /// table rather than from SoundBin's.
+    /// </remarks>
+    /// <param name="seqOffset">Offset of the sequence inside SOUND.BIN.</param>
+    /// <param name="seqEnd">End of the sequence, which is also the VAB header's offset.</param>
+    /// <param name="vabBodyOffset">Offset of the VAB body.</param>
+    /// <param name="vabBodyEnd">End of the VAB body.</param>
+    /// <returns>The sequence slot, or -1 on failure.</returns>
+    public short PlayLoaderBgm(int seqOffset, int seqEnd, int vabBodyOffset, int vabBodyEnd)
+    {
+        lock (_soundTickGate)
+        {
+            StopLoaderBgmCore();
+
+            var vabId = LoadVabFromSoundBinRange(seqEnd, vabBodyOffset, vabBodyEnd, _loaderVabId);
+            if (vabId < 0)
+            {
+                Debug.WriteLine("PlayLoaderBgm: VAB open failed");
+                return -1;
+            }
+
+            _loaderVabId = vabId;
+
+            var sequenceData = _gameEngine.SoundBin.ReadRange(seqOffset, seqEnd - seqOffset);
+            var sequenceSlot = LoadSeq(sequenceData, vabId);
+            if (sequenceSlot < 0)
+            {
+                Debug.WriteLine("PlayLoaderBgm: sequence open failed");
+                return -1;
+            }
+
+            _loaderSequenceId = sequenceSlot;
+            SetSeqVolume(sequenceSlot, 0x7F, 0x7F);
+
+            // SsSeqPlay(seq, SSPLAY_PLAY, 0): 0 repeats means loop forever.
+            PlaySeq(sequenceSlot, 1, 0);
+            return sequenceSlot;
+        }
+    }
+
+    /// <summary>Stops and releases whatever <see cref="PlayLoaderBgm"/> last started.</summary>
+    public void StopLoaderBgm()
+    {
+        lock (_soundTickGate)
+        {
+            StopLoaderBgmCore();
+        }
+    }
+
+    private void StopLoaderBgmCore()
+    {
+        if (_loaderSequenceId >= 0)
+        {
+            InitializeBgm(_loaderSequenceId);
+            ResetSomethingSound(_loaderSequenceId);
+            _loaderSequenceId = -1;
+        }
+
+        if (_loaderVabId >= 0)
+        {
+            FreeLoadedVab(_loaderVabId);
+            _loaderVabId = -1;
+        }
+    }
+
+    /// <summary>
+    /// Triggers one of LOADER.EXE's own sound effects.
+    /// </summary>
+    /// <remarks>
+    /// The record layout is the same 22-byte <see cref="SoundEffectRecord"/> the game uses, so only
+    /// the table instance differs; it is passed in rather than installed over
+    /// <c>g_soundEffectData</c>, which the game owns and re-populates from SoundBin.
+    ///
+    /// PARTIAL: only the <c>VabId == -1</c> branch is ported. That is the one both menu sounds take,
+    /// and it is the only branch reachable before the loader has any sequence-backed effect
+    /// registered; the chained branch walks <c>RefSfxId</c> looking for an already-open VAB.
+    /// </remarks>
+    /// <param name="table">The loader's sound-effect table.</param>
+    /// <param name="sfxId">Index into that table.</param>
+    /// <param name="sfxVabId">VAB the effect's samples live in.</param>
+    public void PlayLoaderSoundEffect(SoundEffectRecord[] table, int sfxId, short sfxVabId)
+    {
+        ArgumentNullException.ThrowIfNull(table);
+
+        lock (_soundTickGate)
+        {
+            if (sfxId <= 0 || sfxId >= table.Length || sfxVabId < 0)
+            {
+                return;
+            }
+
+            ref var record = ref table[sfxId];
+
+            // -2 marks an entry that is switched off; SeqNum must be -1 for the direct branch.
+            if (record.VabId == -2 || record.VabId != -1 || record.SeqNum != -1)
+            {
+                return;
+            }
+
+            SyncSoundEffectVoiceStates();
+            TryPlayDirectSoundEffectVoices(sfxId, ref record, sfxVabId);
+        }
+    }
+
+    /// <summary>
+    /// Opens the sound-effect VAB bank the loader installs at boot and keeps it resident.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA: FUN_80028650 @ 0x80028650, called as FUN_80028650(0x25) from InitializeSoundDriver
+    /// @ 0x80028338 (LOADER.EXE). Its bank table is separate from the BGM track table.
+    /// </remarks>
+    /// <returns>The VAB id, or -1 on failure.</returns>
+    public short LoadLoaderSfxVab(int headerOffset, int bodyOffset, int bodyEnd)
+    {
+        lock (_soundTickGate)
+        {
+            if (_loaderSfxVabId >= 0)
+            {
+                FreeLoadedVab(_loaderSfxVabId);
+                _loaderSfxVabId = -1;
+            }
+
+            var vabId = LoadVabFromSoundBinRange(headerOffset, bodyOffset, bodyEnd, -1);
+            if (vabId < 0)
+            {
+                Debug.WriteLine("LoadLoaderSfxVab: VAB open failed");
+                return -1;
+            }
+
+            _loaderSfxVabId = vabId;
+            return vabId;
+        }
+    }
+
+    /// <summary>Sequence slot and VABs currently held by the loader, or -1.</summary>
+    private short _loaderSequenceId = -1;
+    private short _loaderVabId = -1;
+    private short _loaderSfxVabId = -1;
+
     private void LoadGlobalSoundVab()
     {
         _gameEngine.StaticVariables.g_globalSoundVabId = LoadVabFromSoundBinRange(

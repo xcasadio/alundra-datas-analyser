@@ -125,7 +125,11 @@ namespace AlundraGame
             _gameEngine.InitializeEngine(true);
 
             _movieAudioOutput = new MonoGameMovieAudioOutput();
-            _loaderEngine = new LoaderEngine(alundraRenderer, _movieAudioOutput);
+
+            // The game's SoundManager is already constructed and its 60 Hz tick is started below,
+            // so the loader reuses it rather than standing up a second sound driver. It only feeds
+            // it LOADER.EXE's own BGM and sound-effect tables instead of ALUN_CD.EXE's.
+            _loaderEngine = new LoaderEngine(alundraRenderer, _movieAudioOutput, _gameEngine.SoundManager);
             _loaderEngine.InitializeEngine(gamePath);
 
             _closingEngine = new ClosingEngine(alundraRenderer);

@@ -93,6 +93,149 @@ public class LoaderExeInspector
     /// <summary>Converts a RAM address from Ghidra into an offset into <see cref="ExeBytes"/>.</summary>
     public static int RamToFileOffset(uint ramAddress) => (int)(ramAddress - RamToFileOffsetDelta);
 
+    /// <summary>Where one BGM track's data lives inside SOUND.BIN.</summary>
+    /// <param name="SeqOffset">Start of the sequence.</param>
+    /// <param name="SeqEnd">End of the sequence, which is also the start of the VAB header.</param>
+    /// <param name="VabBodyOffset">Start of the VAB body.</param>
+    /// <param name="VabBodyEnd">End of the VAB body.</param>
+    public readonly record struct BgmTrack(int SeqOffset, int SeqEnd, int VabBodyOffset, int VabBodyEnd);
+
+    /// <summary>Where one sound-effect VAB bank lives inside SOUND.BIN.</summary>
+    public readonly record struct SfxVabBank(int HeaderOffset, int BodyOffset, int BodyEnd);
+
+    /// <summary>
+    /// The loader's BGM track table.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA: DAT_8012d398 — entries of 12 bytes (three u32). The boundaries chain into the next
+    /// entry: PlayBgmTrack reads +0 and +4 for the sequence, ReadSound reads +4 and +8 for the VAB
+    /// header and +8 and +12 (the next entry's first field) for the body.
+    ///
+    /// SOURCE: read out of LOADER.EXE and cross-checked against SOUND.BIN — 47 entries have
+    /// strictly increasing offsets that stay inside the file, and the magics land where predicted
+    /// ("SEQp" at each SeqOffset, "VABp" at each SeqEnd).
+    ///
+    /// Track 1 is the title screen's music: MainLoop @ 0x8002538c calls
+    /// PromptNewGameOrContinue(0x708, 1).
+    /// </remarks>
+    public BgmTrack[] ReadBgmTrackTable(int soundBinLength)
+    {
+        const uint ramAddress = 0x8012D398;
+        var offset = RamToFileOffset(ramAddress);
+        var tracks = new List<BgmTrack>();
+
+        for (var index = 0; ; index++)
+        {
+            var entry = offset + index * 12;
+            if (entry + 16 > _exeBytes.Length)
+            {
+                break;
+            }
+
+            var seq = BitConverter.ToInt32(_exeBytes, entry);
+            var seqEnd = BitConverter.ToInt32(_exeBytes, entry + 4);
+            var body = BitConverter.ToInt32(_exeBytes, entry + 8);
+            var bodyEnd = BitConverter.ToInt32(_exeBytes, entry + 12);
+
+            if (seq <= 0 || seq >= seqEnd || seqEnd >= body || body >= bodyEnd || bodyEnd > soundBinLength)
+            {
+                break;
+            }
+
+            tracks.Add(new BgmTrack(seq, seqEnd, body, bodyEnd));
+        }
+
+        return tracks.ToArray();
+    }
+
+    /// <summary>
+    /// The loader's sound-effect VAB bank table.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA: DAT_8012d13c — entries of 8 bytes, again chaining into the next entry for the body's
+    /// end. FUN_80028650 @ 0x80028650, called from InitializeSoundDriver with 0x25, is what loads
+    /// the bank the menu sounds play from.
+    /// </remarks>
+    public SfxVabBank[] ReadSfxVabBankTable(int soundBinLength)
+    {
+        const uint ramAddress = 0x8012D13C;
+        var offset = RamToFileOffset(ramAddress);
+        var banks = new List<SfxVabBank>();
+
+        for (var index = 0; ; index++)
+        {
+            var entry = offset + index * 8;
+            if (entry + 12 > _exeBytes.Length)
+            {
+                break;
+            }
+
+            var head = BitConverter.ToInt32(_exeBytes, entry);
+            var body = BitConverter.ToInt32(_exeBytes, entry + 4);
+            var next = BitConverter.ToInt32(_exeBytes, entry + 8);
+
+            if (head <= 0 || head >= body || body >= next || next > soundBinLength)
+            {
+                break;
+            }
+
+            banks.Add(new SfxVabBank(head, body, next));
+        }
+
+        return banks.ToArray();
+    }
+
+    /// <summary>Sound-effect bank the loader installs at boot.</summary>
+    /// <remarks>GHIDRA: InitializeSoundDriver @ 0x80028338 calls FUN_80028650(0x25).</remarks>
+    public const int SfxVabBankIndex = 0x25;
+
+    /// <summary>
+    /// The loader's sound-effect table.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA: BYTE_ARRAY_8012d5e4 — 962 entries (the count PlaySoundEffect checks against
+    /// DAT_8002031c = 0x3C2) of 22 bytes, which is 21164 bytes in total.
+    ///
+    /// The record layout is byte for byte the <see cref="Sound.SoundEffectRecord"/> the game
+    /// already uses; LOADER.EXE simply carries its own instance of the table. Entry 1 is the cursor
+    /// move (program 0, tone 0, note 60) and entry 2 the confirmation.
+    /// </remarks>
+    public Sound.SoundEffectRecord[] ReadSoundEffectTable()
+    {
+        const uint ramAddress = 0x8012D5E4;
+        const int recordCount = 0x3C2;
+        const int recordSize = 22;
+
+        var offset = RamToFileOffset(ramAddress);
+        var records = new Sound.SoundEffectRecord[recordCount];
+
+        for (var index = 0; index < recordCount; index++)
+        {
+            var entry = offset + index * recordSize;
+            if (entry + recordSize > _exeBytes.Length)
+            {
+                break;
+            }
+
+            records[index] = new Sound.SoundEffectRecord
+            {
+                VabId = BitConverter.ToInt16(_exeBytes, entry),
+                ProgramNumber = BitConverter.ToInt16(_exeBytes, entry + 2),
+                ToneNumber = BitConverter.ToInt16(_exeBytes, entry + 4),
+                Note = BitConverter.ToInt16(_exeBytes, entry + 6),
+                Flags = BitConverter.ToInt16(_exeBytes, entry + 8),
+                SeqNum = BitConverter.ToInt16(_exeBytes, entry + 10),
+                RefSfxId = BitConverter.ToInt16(_exeBytes, entry + 12),
+                field_0x0E = BitConverter.ToInt16(_exeBytes, entry + 14),
+                MaxVoices = BitConverter.ToInt16(_exeBytes, entry + 16),
+                field_0x12 = BitConverter.ToInt16(_exeBytes, entry + 18),
+                ToneCount = BitConverter.ToInt16(_exeBytes, entry + 20),
+            };
+        }
+
+        return records;
+    }
+
     public Bitmap LoadImage(int index)
     {
         if (_images.TryGetValue(index, out var cached))
