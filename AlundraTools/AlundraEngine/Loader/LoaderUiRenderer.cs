@@ -181,12 +181,25 @@ public sealed class LoaderUiRenderer(IRenderer renderer) : IDisposable
         var (x2, y2) = Rotate(-halfX, halfY);
         var (x3, y3) = Rotate(halfX, halfY);
 
+        // CORRECTION: IRenderer.DrawDeformedQuad takes NORMALISED texture coordinates, not pixels -
+        // both backends prove it, GraphicManager passing `img.Swidth / (float)bitmap.Width` and
+        // AlundraRenderer feeding the values straight into Vector2(u, v). Passing the pixel spans
+        // here made every rotated element sample its texture dozens of times over: the walking
+        // sprite's shadow came out as a streak beside itself and the three spinning rays around the
+        // sage's orb as scattered specks instead of beams.
+        //
+        // The extent is (w-1)/w, not 1: the original's POLY_FT4 spans u..u+(w-1) across a quad that
+        // is also (w-1) wide, so texel i lands exactly on pixel i. The sampled bitmap is the box's
+        // own rectangle, so w here is box.Width.
+        var u1 = spanX / (float)box.Width;
+        var v1 = spanY / (float)box.Height;
+
         renderer.DrawDeformedQuad(
             bitmap,
             x0, y0, 0, 0,
-            x1, y1, spanX, 0,
-            x2, y2, 0, spanY,
-            x3, y3, spanX, spanY,
+            x1, y1, u1, 0,
+            x2, y2, 0, v1,
+            x3, y3, u1, v1,
             DepthBase + box.OtIndex,
             box.R, box.G, box.B,
             1f,

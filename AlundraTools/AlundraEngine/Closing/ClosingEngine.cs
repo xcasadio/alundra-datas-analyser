@@ -1,8 +1,26 @@
+using System.Diagnostics;
 using AlundraEngine.Graphics;
+using AlundraEngine.Loader;
+using PsxSdk.Video;
 
 namespace AlundraEngine.Closing;
 
-public class ClosingEngine(IRenderer renderer)
+/// <summary>
+/// The ending: END.EXE's movie, then CLOSING.EXE's credits.
+/// </summary>
+/// <remarks>
+/// GHIDRA: main @ 0x80021304 (END.EXE) and main @ 0x800226d0 (CLOSING.EXE).
+///
+/// These are two executables on the console, chained by
+/// <c>LoadExec("cdrom:\CLOSING.EXE;1")</c> at the end of END.EXE's main. Here they are one state
+/// machine, because there is no LoadExec — the movie is simply the state that runs before the
+/// credits.
+///
+/// <see cref="MovieFrameBitmap"/> and <see cref="IMovieAudioOutput"/> live under Loader/ only
+/// because the loader needed them first; both are plain movie-playback plumbing with nothing
+/// loader-specific in them, so they are reused here rather than duplicated.
+/// </remarks>
+public class ClosingEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = null)
 {
     // SOURCE: comment on the constructor below (pre-existing in this file).
     // formule: File Offset = RAM Address - 0x8001F800
@@ -100,8 +118,52 @@ public class ClosingEngine(IRenderer renderer)
     private int scene2Counter;
     private ClosingState _closingState = ClosingState.PlayMovie;
 
+    // ---- END.EXE's movie ------------------------------------------------------------------------
+
+    /// <summary>
+    /// GHIDRA: END.EXE main @ 0x80021304 —
+    /// <c>MainLoop(0, 0x28, &amp;g_ARAN_END_MOV_fileInfo, 0x19c5, 0x800, 0)</c>. That MainLoop
+    /// @ 0x80023ce8 is the same six-parameter movie player LOADER.EXE calls PlayMovie @ 0x80027ff4:
+    /// identical skip test, identical 15-frame audio ramp, identical frame-went-backwards watchdog.
+    /// So PsxSdk's StrMoviePlayer covers it as-is and only the parameters differ.
+    /// </summary>
+    private const int MovieScreenX = 0;
+
+    private const int MovieScreenY = 0x28;
+
+    /// <summary>GHIDRA: <c>param_5 = 0x800</c> — Start alone skips the ending movie, not Cross.</summary>
+    private const uint MovieSkipButtonMask = 0x0800;
+
+    /// <summary>GHIDRA: <c>param_6 = 0</c> — skippable from the first frame, unlike EURO_OP.</summary>
+    private const int MovieSkipAfterFrame = 0;
+
+    /// <summary>
+    /// GHIDRA: <c>param_4 = 0x19c5</c> = 6597, against 6602 frames actually in ARAN_END.
+    ///
+    /// DELIBERATE DEVIATION, same as §4.7 of the loader plan and for the same reason:
+    /// <see cref="MoviePlaybackOptions.StopAtLastFrame"/> is left false so the movie runs to its
+    /// natural end instead of being cut five frames short. Set it to true to restore the original
+    /// truncation exactly.
+    /// </summary>
+    private const int MovieLastFrame = 0x19C5;
+
+    /// <summary>
+    /// One <see cref="MainLoop"/> call is one rendered frame, and the host runs at a fixed 60 Hz;
+    /// this is what converts that into the movie player's wall-clock pacing.
+    /// </summary>
+    private const double HostFrameSeconds = 1.0 / 60.0;
+
+    private string _moviePath = string.Empty;
+    private StrMoviePlayer? _moviePlayer;
+    private bool _movieStarted;
+    private readonly MovieFrameBitmap _movieFrame = new();
+
+    // One MainLoop's worth of decoded PCM; a movie frame carries about 1.25 XA sectors.
+    private readonly short[] _audioDrain = new short[1 << 16];
+
     public void InitializeEngine(string gamePath)
     {
+        _moviePath = Path.Combine(gamePath, "MOVIE");
         _closingExeInspector = new ClosingExeInspector(gamePath);
         _exeBytes = _closingExeInspector.ExeBytes;
         CreditsPictureEntry_ARRAY_8003a28c = ReadCreditsPictureTable();
@@ -123,8 +185,7 @@ public class ClosingEngine(IRenderer renderer)
         switch (_closingState)
         {
             case ClosingState.PlayMovie:
-                //play \\MOVIE\\ARAN_END.MOV
-                _closingState = ClosingState.Scene1;
+                UpdateMovie();
                 break;
 
             case ClosingState.Scene1:
@@ -229,6 +290,151 @@ public class ClosingEngine(IRenderer renderer)
         renderer.Clear();
 
         return GameState.EndScene;
+    }
+
+    /// <summary>
+    /// GHIDRA: END.EXE main @ 0x80021304 — <c>FUN_8002127c()</c> resolves
+    /// <c>"\MOVIE\ARAN_END.MOV;1"</c> on the disc, then MainLoop @ 0x80023ce8 plays it.
+    /// </summary>
+    /// <remarks>
+    /// A ".STR" next to the ".MOV" is the raw 2352-byte-per-sector re-extraction, the only form that
+    /// carries complete XA audio: an extractor writing a flat 2048 bytes per sector truncates every
+    /// Form 2 sector from 2324, losing 2 of its 18 ADPCM sound groups. Prefer it, fall back to the
+    /// ".MOV" (video only). Same rule as LoaderEngine.BeginMovie.
+    /// </remarks>
+    private void BeginMovie()
+    {
+        _movieStarted = true;
+
+        var fullPath = Path.Combine(_moviePath, "ARAN_END.STR");
+        if (!File.Exists(fullPath))
+        {
+            fullPath = Path.Combine(_moviePath, "ARAN_END.MOV");
+        }
+
+        if (!File.Exists(fullPath))
+        {
+            Debug.WriteLine($"Movie 'ARAN_END' not found in '{_moviePath}'; skipping it.");
+            return;
+        }
+
+        var options = new MoviePlaybackOptions
+        {
+            ScreenX = MovieScreenX,
+            ScreenY = MovieScreenY,
+            LastFrame = MovieLastFrame,
+            StopAtLastFrame = false,
+            SkipButtonMask = MovieSkipButtonMask,
+            SkipAfterFrame = MovieSkipAfterFrame,
+        };
+
+        try
+        {
+            _moviePlayer = new StrMoviePlayer(fullPath, options);
+        }
+        catch (Exception exception)
+        {
+            Debug.WriteLine($"Could not open movie '{fullPath}': {exception.Message}");
+            return;
+        }
+
+        if (audioOutput is not null && _moviePlayer.HasAudio)
+        {
+            audioOutput.Volume = 1f;
+            audioOutput.Start(_moviePlayer.AudioSampleRate, _moviePlayer.AudioChannels);
+        }
+        else if (!_moviePlayer.HasAudio)
+        {
+            Debug.WriteLine(
+                $"'{Path.GetFileName(fullPath)}' carries no usable XA audio (2048-byte sectors). " +
+                "Re-extract the MOVIE files from the CD image preserving 2352-byte sectors to get sound.");
+        }
+    }
+
+    /// <summary>
+    /// GHIDRA: MainLoop @ 0x80023ce8 (END.EXE), one iteration of its do-while. All the decoding
+    /// lives in PsxSdk; this supplies the parameters and draws the frame the player produced.
+    /// </summary>
+    private void UpdateMovie()
+    {
+        if (!_movieStarted)
+        {
+            BeginMovie();
+        }
+
+        if (_moviePlayer is null)
+        {
+            // Nothing to play; END.EXE's main falls straight through to LoadExec(CLOSING.EXE).
+            FinishMovie();
+            return;
+        }
+
+        // GHIDRA: MainLoop @ 0x80023ce8 reads PadRead(1); PadManager holds the same bit layout.
+        var newFrame = _moviePlayer.Tick(HostFrameSeconds, (uint)PadManager.ButtonStates);
+        PumpMovieAudio();
+
+        // The player converts host time into movie frames at the stream's own rate (15 fps), so at
+        // 60 Hz it produces a new image every fourth call; re-uploading the unchanged one in between
+        // would burn a full-frame colour-swizzled copy for nothing.
+        if (newFrame && _moviePlayer.Width > 0 && _moviePlayer.FrameRgb24.Length > 0)
+        {
+            var updated = _movieFrame.Update(_moviePlayer.FrameRgb24, _moviePlayer.Width, _moviePlayer.Height);
+
+            // The same Bitmap instance is rewritten every frame, so a backend caching a GPU copy
+            // keyed on that instance would keep showing the very first one.
+            renderer.InvalidateTexture(updated);
+        }
+
+        if (_movieFrame.Bitmap is { } frame &&
+            frame.Width == _moviePlayer.Width &&
+            frame.Height == _moviePlayer.Height)
+        {
+            renderer.AddSprite(
+                _moviePlayer.ScreenX, _moviePlayer.ScreenY,
+                _moviePlayer.Width, _moviePlayer.Height,
+                SpriteDepth.BackgroundUI, frame);
+        }
+
+        if (_moviePlayer.IsFinished)
+        {
+            FinishMovie();
+        }
+    }
+
+    /// <summary>
+    /// GHIDRA: END.EXE main @ 0x80021304 hands over to CLOSING.EXE with
+    /// <c>LoadExec("cdrom:\CLOSING.EXE;1")</c>; here that is just the next state.
+    /// </summary>
+    private void FinishMovie()
+    {
+        audioOutput?.Stop();
+        _moviePlayer?.Dispose();
+        _moviePlayer = null;
+        _closingState = ClosingState.Scene1;
+    }
+
+    /// <summary>
+    /// Drains the decoded PCM into the host's audio sink and follows the movie's CD volume ramp.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA: MainLoop @ 0x80023ce8 calls FUN_80023c04 with <c>g_volume - 0x400</c> over the last
+    /// 15 frames, the same SpuSetCommonAttr ramp LOADER.EXE uses. StrMoviePlayer keeps that value,
+    /// so the sink only has to follow it.
+    /// </remarks>
+    private void PumpMovieAudio()
+    {
+        if (audioOutput is null || _moviePlayer is null || !_moviePlayer.HasAudio)
+        {
+            return;
+        }
+
+        audioOutput.Volume = _moviePlayer.Volume / 32767f;
+
+        int read;
+        while ((read = _moviePlayer.ReadAudio(_audioDrain, 0, _audioDrain.Length)) > 0)
+        {
+            audioOutput.Submit(_audioDrain, 0, read);
+        }
     }
 
     // GHIDRA: UpdateAndDrawCreditsFade @ 0x800222f0

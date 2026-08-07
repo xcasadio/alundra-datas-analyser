@@ -134,7 +134,9 @@ namespace AlundraGame
             _loaderEngine = new LoaderEngine(alundraRenderer, _movieAudioOutput, _gameEngine.SoundManager);
             _loaderEngine.InitializeEngine(gamePath);
 
-            _closingEngine = new ClosingEngine(alundraRenderer);
+            // The ending movie (END.EXE) reuses the loader's movie audio sink: the two never play at
+            // the same time, the loader having long finished by the time the credits roll.
+            _closingEngine = new ClosingEngine(alundraRenderer, _movieAudioOutput);
             _closingEngine.InitializeEngine(gamePath);
 
             // --game-state-file bypasses the loader entirely and drops straight into the save it
