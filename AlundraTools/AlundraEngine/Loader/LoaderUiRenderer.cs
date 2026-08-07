@@ -21,12 +21,27 @@ namespace AlundraEngine.Loader;
 public sealed class LoaderUiRenderer(IRenderer renderer) : IDisposable
 {
     /// <summary>
-    /// The ordering table is walked so that higher indices are drawn later, hence on top; sprite
-    /// depth follows the same order.
+    /// The loader's ordering table holds 0x100 slots and higher indices end up on top — the fade
+    /// quad sits at 200, the cursor at 0x78, the text at 0x6E, the panels at 100 and the backdrop at
+    /// 0. Sprite depth follows the same order, so the whole range is mapped just below
+    /// <see cref="SpriteDepth.BackgroundUI"/>.
     /// </summary>
-    private const int DepthBase = SpriteDepth.BackgroundUI;
+    /// <remarks>
+    /// CORRECTION: this used to be <c>SpriteDepth.BackgroundUI</c> itself. That constant is
+    /// <c>int.MaxValue - 4</c>, so <c>DepthBase + otIndex</c> overflowed for any slot past 4 and
+    /// came out as a large negative depth — behind everything. The title screen only ever used
+    /// slots 0 and 1, which is why it never showed; the selection screen uses 0 to 200 and its
+    /// backdrop fill, ornaments, panels and text all landed underneath the map.
+    /// </remarks>
+    private const int OrderingTableSize = 0x100;
 
+    private const int DepthBase = SpriteDepth.BackgroundUI - OrderingTableSize;
+
+    // Sprite bitmaps are kept for the lifetime of the loader and refilled in place when VRAM
+    // changes, never disposed and rebuilt. A renderer that caches a GPU texture keyed on the
+    // Bitmap instance (AlundraRenderer does) would otherwise be left holding a disposed key.
     private readonly Dictionary<SpriteKey, Bitmap> _spriteCache = new();
+    private readonly Dictionary<SpriteKey, int> _spriteGeneration = new();
     private byte[] _pixelScratch = new byte[256 * 256 * 4];
 
     /// <summary>The emulated framebuffer every UI element samples from.</summary>
@@ -42,20 +57,15 @@ public sealed class LoaderUiRenderer(IRenderer renderer) : IDisposable
     public void UploadTim(byte[] data, int offset, int destX, int destY, int clutDestX, int clutDestY)
     {
         Vram.UploadTim(data, offset, destX, destY, clutDestX, clutDestY);
-        InvalidateSpriteCache();
     }
 
-    /// <summary>Drops every cached sprite, e.g. after VRAM was rewritten.</summary>
-    public void InvalidateSpriteCache()
-    {
-        foreach (var bitmap in _spriteCache.Values)
-        {
-            renderer.InvalidateTexture(bitmap);
-            bitmap.Dispose();
-        }
-
-        _spriteCache.Clear();
-    }
+    /// <summary>
+    /// A cached sprite is stale as soon as VRAM has been written to since it was sampled.
+    /// <see cref="PsxVram.Generation"/> counts those writes, so every upload path — a TIM, a tile
+    /// layer, a single typed glyph — invalidates without having to report itself here. The bitmaps
+    /// are kept and refilled in place, never disposed.
+    /// </summary>
+    private int VramGeneration => Vram.Generation;
 
     /// <summary>
     /// GHIDRA: InitializeUiBoxBasePosition @ 0x80026320 — propagates the first box's base position
@@ -98,20 +108,30 @@ public sealed class LoaderUiRenderer(IRenderer renderer) : IDisposable
         var posX = box.BaseX + box.OffsetX;
         var posY = box.BaseY + box.OffsetY;
 
+        // The clip test is skipped entirely on the rotated path, because a rotated quad can reach
+        // the screen from a base position that is off it.
         if (box.RotationZ == -1 &&
             !(posX < 0x140 && posY < 0xF0 && posX + box.Width >= 0 && posY + box.Height >= 0))
         {
             return;
         }
 
-        // BLOCKED: the rotated path builds a POLY_FT4 and runs the four corners through the GTE
-        // (RotMatrix / RotTrans). No loader element ever sets a rotation - every caller passes -1 -
-        // so it is not ported; a rotated box would draw unrotated here.
         var (depth, tpageX, tpageY, u, v) = ResolveSource(box);
         var clutX = box.ClutXRaw & 0x3F0;
         var bitmap = GetSprite(depth, tpageX, tpageY, u, v, box.Width, box.Height, clutX, box.ClutY);
         if (bitmap is null)
         {
+            return;
+        }
+
+        // GHIDRA: the abr field selects the GPU's semi-transparency rate and -1 means opaque; the
+        // primitive's semi-transparency bit is set from `abr != -1`, so the rate itself is passed
+        // straight through rather than being forced to one mode.
+        var blend = box.AbrOrMinus1 == -1 ? BlendMode.None : (BlendMode)box.AbrOrMinus1;
+
+        if (box.RotationZ != -1)
+        {
+            RenderRotated(box, posX, posY, bitmap, blend);
             return;
         }
 
@@ -122,8 +142,64 @@ public sealed class LoaderUiRenderer(IRenderer renderer) : IDisposable
             bitmap,
             1f,
             box.R / 128f, box.G / 128f, box.B / 128f,
-            box.AbrOrMinus1 == -1 ? BlendMode.None : BlendMode.Average);
+            blend);
     }
+
+    /// <summary>
+    /// GHIDRA: RenderUIBox @ 0x80025dfc, rotated path (rotationZ != -1).
+    /// </summary>
+    /// <remarks>
+    /// CORRECTION: an earlier pass recorded this path as unreachable, on the grounds that every
+    /// loader element passes -1. That is wrong. InitSaveSlotSelectionUI @ 0x80023500 gives
+    /// UIBox_ARRAY_8014f390[0..1] a rotation of 0 and UIBox_ARRAY_8014f548[1..3] rotations that
+    /// UpdateMenuGraphics @ 0x80023b14 advances every frame, so the selection screen's spinning
+    /// ornaments and the walking sprite's shadow all take it.
+    ///
+    /// The original builds a POLY_FT4 whose four corners are (+/-(w-1)/2, +/-(h-1)/2) put through
+    /// RotMatrix / RotTrans with only vz set — a plain Z rotation in the GTE's 1.12 fixed point,
+    /// 4096 units to the turn — and translated to the box's centre. The texture coordinates stay
+    /// the axis-aligned rectangle, which here is the whole sampled bitmap.
+    /// </remarks>
+    private void RenderRotated(UiBox box, int posX, int posY, Bitmap bitmap, BlendMode blend)
+    {
+        var spanX = box.Width - 1;
+        var spanY = box.Height - 1;
+        var halfX = spanX >> 1;
+        var halfY = spanY >> 1;
+
+        var centreX = posX + halfX;
+        var centreY = posY + halfY;
+
+        var cos = FixedCosine(box.RotationZ);
+        var sin = FixedSine(box.RotationZ);
+
+        (int X, int Y) Rotate(int x, int y) =>
+            (centreX + ((cos * x - sin * y) >> 12), centreY + ((sin * x + cos * y) >> 12));
+
+        var (x0, y0) = Rotate(-halfX, -halfY);
+        var (x1, y1) = Rotate(halfX, -halfY);
+        var (x2, y2) = Rotate(-halfX, halfY);
+        var (x3, y3) = Rotate(halfX, halfY);
+
+        renderer.DrawDeformedQuad(
+            bitmap,
+            x0, y0, 0, 0,
+            x1, y1, spanX, 0,
+            x2, y2, 0, spanY,
+            x3, y3, spanX, spanY,
+            DepthBase + box.OtIndex,
+            box.R, box.G, box.B,
+            1f,
+            blend);
+    }
+
+    /// <summary>PsyQ <c>ccos</c> / <c>csin</c>: 1.12 fixed point, 4096 units to a full turn.</summary>
+    /// <remarks>GHIDRA: ccos @ 0x80030910, csin @ 0x80030918.</remarks>
+    private static int FixedCosine(int angle) =>
+        (int)Math.Round(Math.Cos(angle * 2.0 * Math.PI / 4096.0) * 4096.0);
+
+    private static int FixedSine(int angle) =>
+        (int)Math.Round(Math.Sin(angle * 2.0 * Math.PI / 4096.0) * 4096.0);
 
     /// <summary>
     /// GHIDRA: RenderUiBoxFlatQuad @ 0x80026408 — an untextured POLY_F4. The field reuse is the
@@ -140,14 +216,13 @@ public sealed class LoaderUiRenderer(IRenderer renderer) : IDisposable
             return;
         }
 
-        // The high half of RotationZ is always 0 for the three boxes that reach this path.
-        var x0 = box.BaseX;
-
-        // PARTIAL: the original reads BaseY plus the 16-bit value formed by the R and G bytes.
-        // For every box that reaches here those two are written together as one short, so the
-        // reconstruction below is exact.
-        var y0 = box.BaseY + (short)(box.R | (box.G << 8));
+        var x0 = box.BaseX + box.FlatOffsetX;
+        var y0 = box.BaseY + box.FlatOffsetY;
         var x1 = x0 + box.OffsetX;
+
+        // Not a typo, and not a decompiler artifact: the original really computes the bottom edge
+        // from x0, not y0 (`iVar8 = iVar6 + uiBox->offsetY`). Every quad that reaches this path is
+        // positioned at x0 = 0, so the two agree and the quirk has never been visible.
         var y1 = x0 + box.OffsetY;
 
         if (x0 >= 0x140 || y0 >= 0xF0 || x1 < 0 || y1 < 0)
@@ -155,11 +230,15 @@ public sealed class LoaderUiRenderer(IRenderer renderer) : IDisposable
             return;
         }
 
+        var abr = box.FlatAbr;
+        var blend = abr == -1 ? BlendMode.None : (BlendMode)abr;
+
         renderer.DrawColoredRectangle(
             (short)x0, (short)y0, (short)(x1 - x0), (short)(y1 - y0),
             DepthBase + box.OtIndex,
             1f,
-            box.FlatColorR / 255f, box.FlatColorG / 255f, (byte)box.RotationZ / 255f);
+            box.FlatColorR / 255f, box.FlatColorG / 255f, box.FlatColorB / 255f,
+            blend);
     }
 
     /// <summary>
@@ -187,9 +266,10 @@ public sealed class LoaderUiRenderer(IRenderer renderer) : IDisposable
         }
 
         var key = new SpriteKey((int)depth, tpageX, tpageY, u, v, w, h, clutX, clutY);
-        if (_spriteCache.TryGetValue(key, out var cached))
+        var cached = _spriteCache.TryGetValue(key, out var existing);
+        if (cached && _spriteGeneration.GetValueOrDefault(key, -1) == VramGeneration)
         {
-            return cached;
+            return existing;
         }
 
         var required = w * h * 4;
@@ -200,7 +280,7 @@ public sealed class LoaderUiRenderer(IRenderer renderer) : IDisposable
 
         Vram.ReadSprite(depth, tpageX, tpageY, u, v, w, h, clutX, clutY, _pixelScratch);
 
-        var bitmap = new Bitmap(w, h, PixelFormat.Format32bppArgb);
+        var bitmap = cached ? existing! : new Bitmap(w, h, PixelFormat.Format32bppArgb);
         var data = bitmap.LockBits(new Rectangle(0, 0, w, h), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
         try
         {
@@ -226,8 +306,25 @@ public sealed class LoaderUiRenderer(IRenderer renderer) : IDisposable
         }
 
         _spriteCache[key] = bitmap;
+        _spriteGeneration[key] = VramGeneration;
+
+        if (cached)
+        {
+            // Same instance, new pixels: the renderer's GPU copy has to be refreshed.
+            renderer.InvalidateTexture(bitmap);
+        }
+
         return bitmap;
     }
 
-    public void Dispose() => InvalidateSpriteCache();
+    public void Dispose()
+    {
+        foreach (var bitmap in _spriteCache.Values)
+        {
+            bitmap.Dispose();
+        }
+
+        _spriteCache.Clear();
+        _spriteGeneration.Clear();
+    }
 }

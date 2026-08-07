@@ -24,6 +24,13 @@ public sealed class PsxVram
 
     private readonly ushort[] _words = new ushort[Width * Height];
 
+    /// <summary>
+    /// Bumped by every <see cref="LoadImage"/> and <see cref="Clear"/>. A host that caches sampled
+    /// sprites can compare it against the value it sampled at to know whether its copy is stale,
+    /// without having to be told about each upload.
+    /// </summary>
+    public int Generation { get; private set; }
+
     /// <summary>Colour depth of a texture page.</summary>
     public enum BitDepth
     {
@@ -41,7 +48,11 @@ public sealed class PsxVram
     public ushort this[int x, int y] => (uint)x < Width && (uint)y < Height ? _words[y * Width + x] : (ushort)0;
 
     /// <summary>Clears the whole framebuffer.</summary>
-    public void Clear() => Array.Clear(_words);
+    public void Clear()
+    {
+        Array.Clear(_words);
+        Generation++;
+    }
 
     /// <summary>
     /// Copies 16-bit words into a VRAM rectangle, the way <c>LoadImage</c> does.
@@ -55,6 +66,8 @@ public sealed class PsxVram
     public void LoadImage(int x, int y, int w, int h, byte[] source, int sourceOffset)
     {
         ArgumentNullException.ThrowIfNull(source);
+
+        Generation++;
 
         for (var row = 0; row < h; row++)
         {
@@ -169,10 +182,18 @@ public sealed class PsxVram
     /// <param name="clutX">CLUT x in words.</param>
     /// <param name="clutY">CLUT y.</param>
     /// <param name="destination">RGBA output, four bytes per pixel, at least w*h*4 long.</param>
-    /// <param name="treatIndexZeroAsTransparent">
-    /// PSX convention: for CLUT modes, index 0 is fully transparent; for 16-bit, the all-zero word
-    /// is transparent.
+    /// <param name="treatBlackAsTransparent">
+    /// PSX rule: a texel is transparent when its 15-bit colour is 0x0000 — that is, after the CLUT
+    /// lookup in an indexed mode, not on the index itself.
     /// </param>
+    /// <remarks>
+    /// CORRECTION: this used to test the CLUT *index* against 0. That happens to agree for images
+    /// whose palette entry 0 is black, but not otherwise: LOADER.EXE's load-room backdrop keys its
+    /// transparent areas on a non-zero index whose palette entry is 0x0000, and testing the index
+    /// made the whole foreground strip opaque, painting a black band across the middle of the
+    /// selection screen. The game's own software blit settles it — FUN_80026c10 @ 0x80026c10 reads
+    /// <c>clut[index]</c> and skips the pixel when that entry is 0.
+    /// </remarks>
     public void ReadSprite(
         BitDepth depth,
         int tpageX,
@@ -184,7 +205,7 @@ public sealed class PsxVram
         int clutX,
         int clutY,
         byte[] destination,
-        bool treatIndexZeroAsTransparent = true)
+        bool treatBlackAsTransparent = true)
     {
         ArgumentNullException.ThrowIfNull(destination);
         if (destination.Length < w * h * 4)
@@ -201,7 +222,6 @@ public sealed class PsxVram
             {
                 var pixelX = u + column;
                 ushort colour;
-                var transparent = false;
 
                 switch (depth)
                 {
@@ -209,7 +229,6 @@ public sealed class PsxVram
                     {
                         var word = this[tpageX + (pixelX >> 2), sourceY];
                         var index = (word >> ((pixelX & 3) * 4)) & 0x0F;
-                        transparent = treatIndexZeroAsTransparent && index == 0;
                         colour = this[clutX + index, clutY];
                         break;
                     }
@@ -218,16 +237,16 @@ public sealed class PsxVram
                     {
                         var word = this[tpageX + (pixelX >> 1), sourceY];
                         var index = (pixelX & 1) != 0 ? word >> 8 : word & 0xFF;
-                        transparent = treatIndexZeroAsTransparent && index == 0;
                         colour = this[clutX + index, clutY];
                         break;
                     }
 
                     default:
                         colour = this[tpageX + pixelX, sourceY];
-                        transparent = treatIndexZeroAsTransparent && colour == 0;
                         break;
                 }
+
+                var transparent = treatBlackAsTransparent && colour == 0;
 
                 // 15-bit BGR, five bits per channel, replicated into the top bits so full-scale
                 // stays full-scale.

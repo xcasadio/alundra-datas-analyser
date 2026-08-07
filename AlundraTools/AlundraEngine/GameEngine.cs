@@ -92,6 +92,40 @@ public class GameEngine
         _gameInitializer.Initialize();
     }
 
+    /// <summary>
+    /// Re-runs the part of the boot that depends on <c>g_saveDataInRam</c>, after LOADER.EXE has
+    /// filled it in.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA: MainLoop @ 0x8002538c (LOADER.EXE) copies the chosen record into g_saveDataInRam,
+    /// sets SlotData and LastMapId, and hands over with
+    /// <c>LoadExec("cdrom:\ALUN_CD.EXE;1")</c>. LoadExec does not clear that block, which is the
+    /// whole point: ALUN_CD.EXE boots afterwards and InitializeGameState @ 0x80031700 reads it back
+    /// out of RAM to decide between a new game and a loaded one.
+    ///
+    /// JUSTIFICATION: PSX hardware adaptation only.
+    /// RELATION: there is no LoadExec here — both executables are one process, and
+    /// <see cref="InitializeEngine"/> already ran at construction so the loader could use the sound
+    /// driver while it played. That put InitializeGameState *before* the loader instead of after it.
+    /// This restores the original order for the save-dependent half only: the resource loads either
+    /// side of it in GameInitializer.Initialize (sprites, map file, font, sound, scrolling renderer)
+    /// do not read the save and must not be redone.
+    ///
+    /// The trailing assignment is the one GameInitializer.Initialize makes right after the same
+    /// call: g_desiredMap has just been set from the save, and forcing g_currentMap to its
+    /// complement is what makes the first frame load that map.
+    ///
+    /// <c>StaticVariables.GameStateFileNameToLoad</c>, the --game-state-file development override,
+    /// still wins inside InitializeGameState. That is deliberate and no longer a conflict: when it
+    /// is set, AlundraGame starts in GameState.InGame and never runs the loader, so the two can never
+    /// disagree about which save is in play.
+    /// </remarks>
+    public void ApplyLoaderSelection()
+    {
+        _gameInitializer.InitializeGameState();
+        StaticVariables.g_currentMap = ~StaticVariables.g_desiredMap;
+    }
+
     public void AttachRuntimeInspector(RuntimeInspectorHost runtimeInspector)
     {
         RuntimeInspector = runtimeInspector;
@@ -116,7 +150,7 @@ public class GameEngine
         if (_isWarpTransitionRunning)
         {
             var completedState = AdvanceWarpTransitionFrame();
-            return completedState ?? GameState.Game;
+            return completedState ?? GameState.InGame;
         }
 
         // On the original this tick runs from the 60 Hz VSync/timer interrupt, not from the
@@ -226,12 +260,12 @@ public class GameEngine
             _warpSoundIdleFramesRemaining = -1;
             _isWarpTransitionRunning = true;
             var completedState = AdvanceWarpTransitionFrame();
-            return completedState ?? GameState.Game;
+            return completedState ?? GameState.InGame;
         }
 
         //} while (true);
 
-        return GameState.Game;
+        return GameState.InGame;
     }
 
     // JUSTIFICATION: C# language bridge only

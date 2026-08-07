@@ -3,6 +3,6 @@
 public enum GameState
 {
     MainMenu = 0,
-    Game = 1,
+    InGame = 1,
     EndScene = 2
 }

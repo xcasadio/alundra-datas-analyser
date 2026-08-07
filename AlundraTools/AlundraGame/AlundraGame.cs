@@ -45,7 +45,9 @@ namespace AlundraGame
         private int _temporaryWarpEffectIndex = Array.IndexOf(TemporaryWarpEffectIds, 8);
         private readonly string? _datasBinFilePath;
         private KeyboardState _previousKeyboardState;
-        private GameState _state = GameState.MainMenu; // GameState.Game
+        // Starts on the loader. Pass --game-state-file to start in GameState.InGame on that save
+        // instead; see LoadContent.
+        private GameState _state = GameState.MainMenu;
         private ClosingEngine _closingEngine;
         private LoaderEngine _loaderEngine;
         private int GameRenderWidth => StaticVariables.ScreenWidth * _renderScaleFactor;
@@ -135,6 +137,19 @@ namespace AlundraGame
             _closingEngine = new ClosingEngine(alundraRenderer);
             _closingEngine.InitializeEngine(gamePath);
 
+            // --game-state-file bypasses the loader entirely and drops straight into the save it
+            // names. GameEngine.InitializeEngine has already run GameInitializer.InitializeGameState,
+            // which reads StaticVariables.GameStateFileNameToLoad, loads that file into
+            // g_saveDataInRam and forces SlotData = 1 - so the world is already standing on that
+            // save and there is nothing left for the loader to decide.
+            //
+            // JUSTIFICATION: backend MonoGame only. This is a development entry point; the original
+            // has no equivalent because ALUN_CD.EXE is always reached through LOADER.EXE.
+            if (StaticVariables.GameStateFileNameToLoad != null)
+            {
+                _state = GameState.InGame;
+            }
+
             // Desktop adaptation of the original 60 Hz VSync/timer sound interrupt: the sound
             // tick keeps running on its own thread while this thread blocks on map loading.
             _gameEngine.SoundManager.HasExternalSoundTickDriver = true;
@@ -186,9 +201,26 @@ namespace AlundraGame
             {
                 case GameState.MainMenu:
                     _state = _loaderEngine.MainLoop();
+
+                    // GHIDRA: MainLoop @ 0x8002538c (LOADER.EXE) copies the chosen save slot into
+                    // g_saveDataInRam, sets SlotData and LastMapId, then hands over with
+                    // LoadExec("cdrom:\ALUN_CD.EXE;1"). The game boots next and reads that block
+                    // back. Here the two executables share a process, so the copy is done directly
+                    // and the game's save-dependent boot is re-run against it.
+                    if (_state == GameState.InGame)
+                    {
+                        if (_loaderEngine.SelectedSave is { } chosenSave)
+                        {
+                            _gameEngine.StaticVariables.g_saveDataInRam.CopyFrom(chosenSave);
+                        }
+
+                        _gameEngine.StaticVariables.g_saveDataInRam.SlotData = _loaderEngine.SelectedSlotData;
+                        _gameEngine.ApplyLoaderSelection();
+                    }
+
                     break;
 
-                case GameState.Game:
+                case GameState.InGame:
                     _state = _gameEngine.MainLoop();
                     break;
 

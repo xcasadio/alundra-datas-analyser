@@ -93,6 +93,80 @@ public class LoaderExeInspector
     /// <summary>Converts a RAM address from Ghidra into an offset into <see cref="ExeBytes"/>.</summary>
     public static int RamToFileOffset(uint ramAddress) => (int)(ramAddress - RamToFileOffsetDelta);
 
+    /// <summary>One entry of the resource container embedded in LOADER.EXE.</summary>
+    /// <param name="Name">Three-character tag, "TIM" or "ANM".</param>
+    /// <param name="Index">Index within that tag, 1-based.</param>
+    /// <param name="PayloadOffset">File offset of the payload, i.e. of the TIM's magic word.</param>
+    /// <param name="PayloadSize">Payload length in bytes.</param>
+    public readonly record struct EtcResource(string Name, int Index, int PayloadOffset, int PayloadSize);
+
+    /// <summary>
+    /// Walks the resource container LOADER.EXE carries, the one <c>g_loadRoomBackgroundTimPtr</c>
+    /// points at.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA: GetEtcResource @ 0x800276bc. Each entry is
+    /// <c>[u32 packedId][u32 payloadSize][payload]</c>, where the id packs the three tag characters
+    /// little-endian plus the index in the top byte, and the list ends on the sentinel
+    /// <c>0xFF444E45</c> ("END" plus 0xFF).
+    ///
+    /// SOURCE: walked directly in the France build and cross-checked against loader.idx — the 15
+    /// payload offsets land exactly on catalogue entries 0..14. That identifies the eight "ANM"
+    /// entries as g_TitleFrame0..7, the frames FUN_80021a1c cycles into VRAM to animate the title
+    /// logo, and "TIM" #3 as the selection screen's backdrop.
+    ///
+    /// g_TitleFull is deliberately absent: it sits past the sentinel and InitBootSequenceGraphics
+    /// passes it to InitializeTileLayer directly rather than through GetEtcResource.
+    /// </remarks>
+    public EtcResource[] ReadEtcResources()
+    {
+        // The container starts eight bytes before the first catalogued TIM, i.e. at that entry's
+        // header rather than its payload.
+        var position = Resources[0].FileOffset - 8;
+        var entries = new List<EtcResource>();
+
+        while (position + 8 <= _exeBytes.Length)
+        {
+            var packedId = BitConverter.ToUInt32(_exeBytes, position);
+            if (packedId == 0xFF444E45)
+            {
+                break;
+            }
+
+            var payloadSize = (int)BitConverter.ToUInt32(_exeBytes, position + 4);
+            var name = new string([(char)(packedId & 0xFF), (char)((packedId >> 8) & 0xFF), (char)((packedId >> 16) & 0xFF)]);
+            var index = (int)((packedId >> 24) & 0xFF);
+
+            if (payloadSize <= 0 || position + 8 + payloadSize > _exeBytes.Length || !name.All(char.IsAsciiLetterUpper))
+            {
+                throw new InvalidDataException(
+                    $"LOADER.EXE: malformed resource entry at 0x{position:X6} (id 0x{packedId:X8}, size 0x{payloadSize:X}).");
+            }
+
+            entries.Add(new EtcResource(name, index, position + 8, payloadSize));
+            position += 8 + payloadSize;
+        }
+
+        return entries.ToArray();
+    }
+
+    /// <summary>
+    /// Finds a resource by tag and index, the way <c>GetEtcResource</c> does; returns null when
+    /// absent.
+    /// </summary>
+    public EtcResource? FindEtcResource(string name, int index)
+    {
+        foreach (var entry in ReadEtcResources())
+        {
+            if (entry.Index == index && string.Equals(entry.Name, name, StringComparison.Ordinal))
+            {
+                return entry;
+            }
+        }
+
+        return null;
+    }
+
     /// <summary>Where one BGM track's data lives inside SOUND.BIN.</summary>
     /// <param name="SeqOffset">Start of the sequence.</param>
     /// <param name="SeqEnd">End of the sequence, which is also the start of the VAB header.</param>
@@ -149,12 +223,45 @@ public class LoaderExeInspector
     }
 
     /// <summary>
-    /// The loader's sound-effect VAB bank table.
+    /// The global sound-effect VAB — the one the menu sounds actually play from.
     /// </summary>
     /// <remarks>
-    /// GHIDRA: DAT_8012d13c — entries of 8 bytes, again chaining into the next entry for the body's
-    /// end. FUN_80028650 @ 0x80028650, called from InitializeSoundDriver with 0x25, is what loads
-    /// the bank the menu sounds play from.
+    /// GHIDRA: FUN_80028504 @ 0x80028504, called from InitializeSoundDriver @ 0x80028338. It reads
+    /// three fixed offsets rather than a table: head = [DAT_8012d134, DAT_8012d138), body =
+    /// [DAT_8012d138, DAT_8012d13c). The handle it produces is <c>DAT_8012d5d2</c>, which is
+    /// precisely the one PlaySoundEffect's direct branch (VabId == -1) passes to SsUtKeyOnV.
+    ///
+    /// CORRECTION: this port first used bank 0x25 of <see cref="ReadSfxVabBankTable"/> instead.
+    /// That bank is a valid VAB, so the mistake survived a magic check, but it is the *SeGroup*
+    /// VAB loaded by FUN_80028650 into a different handle (<c>DAT_8012d5d4</c>) for the records
+    /// that reference a group. Playing the cursor sound out of it produced noise on a runaway loop,
+    /// because the program/tone indices addressed unrelated samples.
+    ///
+    /// The three offsets sit immediately before the bank table, so the whole run is one contiguous
+    /// chain of u32 offsets and DAT_8012d13c serves both as this VAB's body end and as the bank
+    /// table's first entry.
+    /// </remarks>
+    public SfxVabBank ReadSfxVab()
+    {
+        const uint ramAddress = 0x8012D134;
+        var offset = RamToFileOffset(ramAddress);
+
+        return new SfxVabBank(
+            BitConverter.ToInt32(_exeBytes, offset),
+            BitConverter.ToInt32(_exeBytes, offset + 4),
+            BitConverter.ToInt32(_exeBytes, offset + 8));
+    }
+
+    /// <summary>
+    /// The loader's sound-effect VAB *group* bank table.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA: DAT_8012d13c — entries of 8 bytes, chaining into the next entry for the body's end.
+    /// FUN_80028650 @ 0x80028650 loads one of these into <c>DAT_8012d5d4</c>; InitializeSoundDriver
+    /// asks for 0x25.
+    ///
+    /// This is NOT where the menu sounds live — see <see cref="ReadSfxVab"/>. These banks serve the
+    /// records whose VabId is a group reference, a branch of PlaySoundEffect that is not ported yet.
     /// </remarks>
     public SfxVabBank[] ReadSfxVabBankTable(int soundBinLength)
     {
@@ -185,9 +292,9 @@ public class LoaderExeInspector
         return banks.ToArray();
     }
 
-    /// <summary>Sound-effect bank the loader installs at boot.</summary>
+    /// <summary>Sound-effect *group* bank the loader installs at boot, for the group branch.</summary>
     /// <remarks>GHIDRA: InitializeSoundDriver @ 0x80028338 calls FUN_80028650(0x25).</remarks>
-    public const int SfxVabBankIndex = 0x25;
+    public const int SfxVabGroupBankIndex = 0x25;
 
     /// <summary>
     /// The loader's sound-effect table.
@@ -235,6 +342,133 @@ public class LoaderExeInspector
 
         return records;
     }
+
+    /// <summary>
+    /// The loader's proportional font metrics.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA: g_characterPositionInSpriteSheet @ 0x80042f80 — 256 entries of 20 bytes (five int).
+    ///
+    /// SOURCE: the field roles come from FUN_800223ec @ 0x800223ec, the only consumer, which passes
+    /// them to the tile blit as
+    /// <c>Blit(dst, cursorX, cursorY + e[16], font, e[8], e[12], e[0], e[4])</c> and then advances
+    /// the cursor by <c>e[0]</c>. Ghidra's FontCharacter field names are shuffled with respect to
+    /// the memory order, so the mapping is stated by offset rather than by name.
+    ///
+    /// Entries 0 to 15 are the 16x16 cells of the sheet's first row — the animated cursor
+    /// g_saveSlotBox steps through comes from there.
+    /// </remarks>
+    public LoaderFontCharacter[] ReadFontCharacterTable()
+    {
+        const uint ramAddress = 0x80042F80;
+        const int entryCount = 256;
+        const int entrySize = 20;
+
+        var offset = RamToFileOffset(ramAddress);
+        var characters = new LoaderFontCharacter[entryCount];
+
+        for (var index = 0; index < entryCount; index++)
+        {
+            var entry = offset + index * entrySize;
+            if (entry + entrySize > _exeBytes.Length)
+            {
+                break;
+            }
+
+            characters[index] = new LoaderFontCharacter(
+                BitConverter.ToInt32(_exeBytes, entry),
+                BitConverter.ToInt32(_exeBytes, entry + 4),
+                BitConverter.ToInt32(_exeBytes, entry + 8),
+                BitConverter.ToInt32(_exeBytes, entry + 12),
+                BitConverter.ToInt32(_exeBytes, entry + 16));
+        }
+
+        return characters;
+    }
+
+    /// <summary>One rectangle of the selection screen's hotspot map.</summary>
+    /// <param name="Code">What walking into it means: 0..3 a save slot, 6 the way out, 0x64+ a wall.</param>
+    public readonly record struct SelectionHotspot(int Code, int X, int Y, int Width, int Height);
+
+    /// <summary>
+    /// The selection screen's hotspot map.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA: DAT_800443b0 — records of five shorts (code, x, y, w, h), ending on code -1. Walked
+    /// by FUN_800239c4 @ 0x800239c4, which tests the camera's *tentative* next position against
+    /// every rectangle and, on a hit, returns the code without committing the move. That single
+    /// detail is what makes codes 0x64 and up walls: they stop the walk and are then rejected by
+    /// ValidateSelection, which only accepts 0..3.
+    ///
+    /// SOURCE: read out of the France build. The eleven records are the four save houses
+    /// (0..3, 16x44 at x = 0x50, 0x80, 0xB0, 0xE0, y = 0x78), the exit strip along the bottom
+    /// (6, 320x16 at y = 0xF0) and six walls closing the map in.
+    /// </remarks>
+    public SelectionHotspot[] ReadSelectionHotspots()
+    {
+        const uint ramAddress = 0x800443B0;
+        var offset = RamToFileOffset(ramAddress);
+        var hotspots = new List<SelectionHotspot>();
+
+        for (var index = 0; ; index++)
+        {
+            var entry = offset + index * 10;
+            if (entry + 10 > _exeBytes.Length)
+            {
+                break;
+            }
+
+            var code = BitConverter.ToInt16(_exeBytes, entry);
+            if (code == -1)
+            {
+                break;
+            }
+
+            hotspots.Add(new SelectionHotspot(
+                code,
+                BitConverter.ToInt16(_exeBytes, entry + 2),
+                BitConverter.ToInt16(_exeBytes, entry + 4),
+                BitConverter.ToInt16(_exeBytes, entry + 6),
+                BitConverter.ToInt16(_exeBytes, entry + 8)));
+        }
+
+        return hotspots.ToArray();
+    }
+
+    /// <summary>
+    /// Reads a NUL-terminated byte string out of the executable at a RAM address.
+    /// </summary>
+    /// <remarks>
+    /// Used for the two strings that drive the save-marker animation:
+    /// <c>s_0_80044380</c> ("0", the resting frame) and
+    /// <c>s_01234563456..._80044384</c>, which UpdateMenuGraphics @ 0x80023b14 consumes one
+    /// character per frame — an opening run of 0 to 6 followed by a 3456 loop. Offset 0x24 into the
+    /// second string lands on its terminator, which is how the marker parks on frame 3: reaching the
+    /// NUL steps the cursor one character back, so it oscillates on the last '3' forever.
+    /// </remarks>
+    public byte[] ReadStringAt(uint ramAddress)
+    {
+        var offset = RamToFileOffset(ramAddress);
+        var end = offset;
+        while (end < _exeBytes.Length && _exeBytes[end] != 0)
+        {
+            end++;
+        }
+
+        return _exeBytes[offset..(end + 1)];
+    }
+
+    /// <summary>GHIDRA: s_0_80044380 — the marker's resting frame.</summary>
+    public const uint SlotMarkerRestingStringAddress = 0x80044380;
+
+    /// <summary>GHIDRA: s_01234563456345634563456345634563_80044384 — the marker's animation.</summary>
+    public const uint SlotMarkerAnimationStringAddress = 0x80044384;
+
+    /// <summary>
+    /// GHIDRA: ValidateSelection parks the marker on <c>s_..._80044384 + 0x24</c>, which is that
+    /// string's terminator.
+    /// </summary>
+    public const int SlotMarkerParkedOffset = 0x24;
 
     public Bitmap LoadImage(int index)
     {

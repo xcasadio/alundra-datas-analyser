@@ -324,7 +324,11 @@ public class GameInitializer
     }
 
     // 80031700
-    private void InitializeGameState()
+    //
+    // Public because it has to run a second time once LOADER.EXE has chosen a save: it is the half
+    // of the boot that reads g_saveDataInRam, and on the console that read happens after LoadExec,
+    // i.e. after the loader has filled it. See GameEngine.ApplyLoaderSelection.
+    public void InitializeGameState()
     {
         int iconIndex;
         int iconEtcEntryPtr;

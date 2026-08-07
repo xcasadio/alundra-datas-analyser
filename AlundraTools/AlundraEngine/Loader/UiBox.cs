@@ -66,6 +66,83 @@ public sealed class UiBox
     public short ClutXRaw;
     public short ClutY;
 
+    // ---- flat quad aliases ------------------------------------------------------------------
+    // GHIDRA: InitCursorObject @ 0x800263ac, SetCursorColor @ 0x800263ec and RenderUiBoxFlatQuad
+    // @ 0x80026408 read four of the fields above under completely different meanings. The three
+    // properties below name those readings rather than duplicating storage, which is exactly the
+    // field reuse the original performs.
+
+    /// <summary>Flat quad: added to <see cref="BaseX"/>. The high half of <see cref="RotationZ"/>.</summary>
+    public short FlatOffsetX
+    {
+        get => (short)(RotationZ >> 16);
+        set => RotationZ = (RotationZ & 0xFFFF) | (value << 16);
+    }
+
+    /// <summary>Flat quad: added to <see cref="BaseY"/>. <see cref="R"/> and <see cref="G"/> as one short.</summary>
+    public short FlatOffsetY
+    {
+        get => (short)(R | (G << 8));
+        set
+        {
+            R = (byte)value;
+            G = (byte)(value >> 8);
+        }
+    }
+
+    /// <summary>Flat quad: semi-transparency rate, -1 for opaque. <see cref="B"/> and <see cref="Pad0F"/>.</summary>
+    public short FlatAbr
+    {
+        get => (short)(B | (Pad0F << 8));
+        set
+        {
+            B = (byte)value;
+            Pad0F = (byte)(value >> 8);
+        }
+    }
+
+    /// <summary>Flat quad: blue channel. The low byte of <see cref="RotationZ"/>.</summary>
+    public byte FlatColorB
+    {
+        get => (byte)RotationZ;
+        set => RotationZ = (int)(RotationZ & 0xFFFFFF00) | value;
+    }
+
+    /// <summary>
+    /// GHIDRA: InitCursorObject @ 0x800263ac — sets up a flat-coloured quad. Its second argument is
+    /// the semi-transparency rate, then the quad's size, then its colour.
+    /// </summary>
+    public void InitializeCursorObject(short abr, short width, short height, byte r, byte g, byte b)
+    {
+        OtIndex = -1;
+        BaseY = -1;
+        BaseX = -1;
+        FlatAbr = abr;
+        OffsetX = width;
+        OffsetY = height;
+        R = 0;
+        G = 0;
+        RotationZ = 0;
+        FlatColorR = r;
+        FlatColorG = g;
+        FlatColorB = b;
+    }
+
+    /// <summary>GHIDRA: SetCursorColor @ 0x800263ec — the quad's two position offsets, oddly named.</summary>
+    public void SetCursorColor(short offsetX, short offsetY)
+    {
+        FlatOffsetX = offsetX;
+        FlatOffsetY = offsetY;
+    }
+
+    /// <summary>GHIDRA: SetCursorPosition @ 0x800263f8.</summary>
+    public void SetCursorPosition(short x, short y, short otIndex)
+    {
+        BaseX = x;
+        BaseY = y;
+        OtIndex = otIndex;
+    }
+
     /// <summary>GHIDRA: InitializeUiBox @ 0x80025d5c.</summary>
     public void Initialize(short bppMode, short abrOrMinus1, short packedU, short packedV, short width, short height, short clutXRaw, short clutY)
     {

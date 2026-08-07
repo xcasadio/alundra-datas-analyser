@@ -48,22 +48,18 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
     private const int LoadingScreenHoldFrames = 500;
 
     /// <summary>
-    /// DELIBERATE DEVIATION, default on.
+    /// Whether to skip the boot screen entirely.
     ///
-    /// The original holds its boot screen for 500 ticks (about 12.6 s in total with the fades) to
-    /// cover the CD access that follows — time that buys nothing on desktop, where the movie file
-    /// opens instantly.
-    ///
-    /// It is also not yet possible to draw the right thing: RunLoadingScreenIntro shows the
-    /// animated "load room" — GetEtcResource(g_loadRoomBackgroundTimPtr, "TIM", 7) composited over
-    /// a scrolling tile layer (InitializeTileLayer @ 0x80026730) with a cursor sprite — none of
-    /// which is transliterated yet. Showing g_loadingScreenTim instead would be the wrong image.
-    ///
-    /// Set to false to run the timing faithfully once Phase 3 provides the real scene.
+    /// The original holds it for 500 ticks (about 12.6 s in total with the fades) to cover the CD
+    /// access that follows. That is now drawn faithfully — the scene is
+    /// <c>GetEtcResource(g_loadRoomBackgroundTimPtr, "TIM", 7)</c>, which resolves to
+    /// g_licenceScreenTim, uploaded to VRAM (0x180, 0x100) and shown at (0x20, -8) under a
+    /// subtractive full-screen quad that fades in and back out. An earlier pass guessed
+    /// g_loadingScreenTim, which was the wrong image.
     /// </summary>
     // Deliberately a field, not a const: as a const the compiler folds the branch and reports the
-    // faithful path as unreachable, which would hide it from any later change.
-    private static readonly bool SkipBootLoadingScreen = true;
+    // other path as unreachable, which would hide it from any later change.
+    private static readonly bool SkipBootLoadingScreen = false;
 
     /// <summary>
     /// GHIDRA: PromptNewGameOrContinue @ 0x80021c28 — the unselected entry sits at 0x40 and the
@@ -78,6 +74,7 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
 
     private LoaderState _state = LoaderState.LoadingScreen;
     private LoaderExeInspector? _inspector;
+    private LoaderEtcStrings? _etcStrings;
     private string _moviePath = string.Empty;
 
     private LoaderUiRenderer? _ui;
@@ -118,8 +115,32 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
     // 1.25 XA sectors, so ~2520 stereo frames; this is comfortably above a burst of four.
     private readonly short[] _audioDrain = new short[1 << 16];
 
-    private Bitmap? _loadingScreen;
     private Bitmap? _titleScreen;
+
+    /// <summary>GHIDRA: g_TileMapTileFrame0 — the boot screen's tile layer.</summary>
+    private readonly LoaderTileMap _bootScreenLayer = new();
+
+    /// <summary>GHIDRA: g_loadingScreenBackgroundBox @ RunLoadingScreenIntro 0x80024fa8.</summary>
+    private readonly UiBox _bootScreenBox = new();
+
+    /// <summary>GHIDRA: g_loadingScreenCursorBox — the subtractive quad that fades the screen.</summary>
+    private readonly UiBox _bootScreenFadeQuad = new();
+
+    /// <summary>GHIDRA: RunLoaderMainSequence @ 0x80024e28 and everything under it.</summary>
+    private LoaderSelectionScreen? _selectionScreen;
+
+    /// <summary>
+    /// The save the player picked, or null when they started a new game.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA: MainLoop @ 0x8002538c copies g_saveSlotRecords + index * 0x76C into g_saveDataInRam
+    /// word by word, then sets SlotData = 1 and LastMapId = index before LoadExec hands over to
+    /// ALUN_CD.EXE. Here the record is already a SaveData, so the copy is the reference itself.
+    /// </remarks>
+    public SaveData? SelectedSave { get; private set; }
+
+    /// <summary>GHIDRA: g_saveDataInRam.SlotData — 0 for a new game, 1 for a loaded one.</summary>
+    public int SelectedSlotData { get; private set; }
 
     /// <summary>
     /// GHIDRA: LaunchGame's <c>mode</c> parameter, widened to the skip mask it represents.
@@ -150,15 +171,24 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
         _inspector = new LoaderExeInspector(gamePath);
         _moviePath = Path.Combine(gamePath, "MOVIE");
 
-        _loadingScreen = _inspector.LoadImage(LoaderExeInspector.LoadingScreenIndex);
         _titleScreen = _inspector.LoadImage(LoaderExeInspector.TitleFullIndex);
+        _etcStrings = LoaderEtcStrings.Load(gamePath);
 
         _ui = new LoaderUiRenderer(renderer);
         InitBootSequenceGraphics();
         InitSoundTables(gamePath);
+        InitLoadingScreenGraphics();
 
+        // GHIDRA: MainLoop @ 0x8002538c builds the selection screen before the title menu runs,
+        // and it stays resident in VRAM alongside it - the two use disjoint rectangles.
+        _selectionScreen = new LoaderSelectionScreen(
+            _ui, _inspector, _etcStrings, PlaySoundEffect, PlayBgmTrack, StopTitleBgm);
+        _selectionScreen.Initialize();
+
+        // GHIDRA: RunLoadingScreenIntro @ 0x80024fa8 sets g_cursorFadeLevel = 0xFF before its first
+        // tick, so the screen starts fully covered by the subtractive quad and fades up from there.
         _loadingScreenTick = 0;
-        _loadingScreenFade = 0;
+        _loadingScreenFade = 0xFF;
 
         if (SkipBootLoadingScreen)
         {
@@ -191,16 +221,11 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
                 break;
 
             case LoaderState.SlotSelection:
-                // BLOCKED: RunLoaderMainSequence @ 0x80024e28 and the save-slot UI it drives
-                // (InitSaveSlotSelectionUI @ 0x80023500, UpdateSelectionCursor @ 0x80024888, ...)
-                // are not transliterated yet. Until they are, choosing Continue behaves like the
-                // original does when the player backs out of slot selection: return to the title.
-                _state = LoaderState.TitleMenu;
-                _titleMenuTimer = TitleMenuTimeoutFrames;
+                UpdateSlotSelection(buttons);
                 break;
 
             case LoaderState.Finished:
-                return GameState.Game;
+                return GameState.InGame;
 
             default:
                 throw new ArgumentOutOfRangeException();
@@ -270,6 +295,24 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
             box.SetBaseAndRotation(0, 0, 0, -1);
         }
 
+        // GHIDRA: InitBootSequenceGraphics builds one tile layer per "ANM" resource, 1 to 8, in
+        // that order. FUN_80021a1c then walks them by index, so the array order is what matters.
+        var animation = new List<int>();
+        for (var index = 1; index <= 8; index++)
+        {
+            var resource = _inspector.FindEtcResource("ANM", index);
+            if (resource is null)
+            {
+                break;
+            }
+
+            animation.Add(resource.Value.PayloadOffset);
+        }
+
+        _titleAnimationOffsets = animation.ToArray();
+        _titleAnimationHold = 0;
+        _titleAnimationLayer = 0;
+
         _systemMessageBox.Initialize(1, -1, 0x180, 0xA0, 0x20, 0x10, 0, 0x1E2);
         _systemMessageBox.SetOffset(0x11D, 0x1D);
         _systemMessageBox.SetBaseAndRotation(0, 0, 1, -1);
@@ -299,12 +342,10 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
         _bgmTracks = _inspector.ReadBgmTrackTable(soundBinLength);
         _sfxRecords = _inspector.ReadSoundEffectTable();
 
-        var banks = _inspector.ReadSfxVabBankTable(soundBinLength);
-        if (LoaderExeInspector.SfxVabBankIndex < banks.Length)
-        {
-            var bank = banks[LoaderExeInspector.SfxVabBankIndex];
-            _sfxVabId = soundManager.LoadLoaderSfxVab(bank.HeaderOffset, bank.BodyOffset, bank.BodyEnd);
-        }
+        // GHIDRA: FUN_80028504 @ 0x80028504 — the global sound-effect VAB, which is the handle
+        // PlaySoundEffect's direct branch uses. Not the group bank that FUN_80028650(0x25) loads.
+        var sfxVab = _inspector.ReadSfxVab();
+        _sfxVabId = soundManager.LoadLoaderSfxVab(sfxVab.HeaderOffset, sfxVab.BodyOffset, sfxVab.BodyEnd);
     }
 
     /// <summary>GHIDRA: PlayBgmTrack @ 0x80028dd8.</summary>
@@ -337,7 +378,20 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
     /// <see cref="InitBootSequenceGraphics"/>.
     /// </summary>
     // Field rather than const, for the same reason as SkipBootLoadingScreen above.
-    private static readonly bool TitleAnimationAvailable = false;
+    private static readonly bool TitleAnimationAvailable = true;
+
+    /// <summary>
+    /// GHIDRA: the eight "ANM" resources InitBootSequenceGraphics @ 0x800213c4 turns into tile
+    /// layers, in the order it asks for them. They are g_TitleFrame0..7 — the frames FUN_80021a1c
+    /// cycles into VRAM to animate the logo.
+    /// </summary>
+    private int[] _titleAnimationOffsets = [];
+
+    /// <summary>GHIDRA: INT_80042f68 — frames held on the current animation layer.</summary>
+    private int _titleAnimationHold;
+
+    /// <summary>GHIDRA: INT_80042f64 — index of the tile layer currently uploaded.</summary>
+    private int _titleAnimationLayer;
 
     /// <summary>GHIDRA: PromptNewGameOrContinue @ 0x80021c28 sets both entries' base colours.</summary>
     private void ResetMenuColors()
@@ -361,6 +415,8 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
         {
             return;
         }
+
+        AdvanceTitleAnimation();
 
         _titleTopBoxes[0].SetBaseAndRotation(0, 0, 0, -1);
         _ui.RenderRun(_titleTopBoxes, 0, 5);
@@ -397,6 +453,47 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
     }
 
     /// <summary>
+    /// GHIDRA: FUN_80021a1c @ 0x80021a1c, opening block — holds the current animation layer for
+    /// eight frames, then on the ninth uploads the next one and advances the index.
+    /// </summary>
+    /// <remarks>
+    /// The index wraps from 8 back to <b>3</b>, not to 0: the first pass walks all eight frames as
+    /// an opening flourish, then the animation settles into a five-frame loop over ANM 4 to 8.
+    ///
+    /// The destination is VRAM (0x180, 0) with CLUT (0, 0x1E3) — the same rectangle g_TitleFull
+    /// occupies. The frames are 320x160 and g_TitleFull is 320x240, so each upload overwrites only
+    /// the logo area and leaves the menu entries and the copyright block, which live below y=160,
+    /// standing.
+    /// </remarks>
+    private void AdvanceTitleAnimation()
+    {
+        if (_ui is null || _inspector is null || _titleAnimationOffsets.Length == 0)
+        {
+            return;
+        }
+
+        if (_titleAnimationHold < 8)
+        {
+            _titleAnimationHold++;
+            return;
+        }
+
+        _titleAnimationHold = 0;
+
+        if (_titleAnimationLayer < _titleAnimationOffsets.Length)
+        {
+            _ui.UploadTim(_inspector.ExeBytes, _titleAnimationOffsets[_titleAnimationLayer],
+                destX: 0x180, destY: 0, clutDestX: 0, clutDestY: 0x1E3);
+        }
+
+        _titleAnimationLayer++;
+        if (_titleAnimationLayer == 8)
+        {
+            _titleAnimationLayer = 3;
+        }
+    }
+
+    /// <summary>
     /// PsyQ <c>ccos</c>: cosine in 1.12 fixed point, with a full turn spanning 4096 units.
     /// </summary>
     /// <remarks>GHIDRA: ccos @ 0x80030910.</remarks>
@@ -404,35 +501,126 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
         (int)Math.Round(Math.Cos(angle * 2.0 * Math.PI / 4096.0) * 4096.0);
 
     /// <summary>
-    /// GHIDRA: RunLoadingScreenIntro @ 0x80024fa8. The original fades a cursor overlay in, holds
-    /// for 500 ticks and fades back out; the fade level drives the tint of the loading screen.
+    /// GHIDRA: RunLoadingScreenIntro @ 0x80024fa8, setup block.
+    /// </summary>
+    /// <remarks>
+    /// CORRECTION: an earlier pass assumed the boot screen was g_loadingScreenTim. It is not — the
+    /// original asks for <c>GetEtcResource(g_loadRoomBackgroundTimPtr, "TIM", 7)</c>, and the ETC
+    /// container's seventh "TIM" is payload #6, g_licenceScreenTim (256x256, 4bpp). It goes to VRAM
+    /// (0x180, 0x100) with its CLUT at (0, 0x1E5) and is shown at (0x20, -8), i.e. a 256x256 image
+    /// centred horizontally on a 320-wide screen and pushed 8 pixels off the top.
+    /// </remarks>
+    private void InitLoadingScreenGraphics()
+    {
+        if (_ui is null || _inspector is null)
+        {
+            return;
+        }
+
+        var resource = _inspector.FindEtcResource("TIM", 7);
+        if (resource is not null)
+        {
+            _bootScreenLayer.InitializeTileLayer(_inspector.ExeBytes, resource.Value.PayloadOffset);
+            _bootScreenLayer.SetTileLayerBounds(_ui.Vram, 0x180, 0x100, 0, 0x1E5, 0);
+        }
+
+        _bootScreenBox.Initialize(0, -1, 0x180, 0x100, 0x100, 0x100, 0, 0x1E5);
+        _bootScreenBox.SetOffset(0, 0);
+        _bootScreenBox.SetBaseAndRotation(0x20, -8, 0, -1);
+
+        // GHIDRA: InitCursorObject(&g_loadingScreenCursorBox, 2, 0x140, 0xf0, 0xff, 0xff, 0xff) -
+        // abr 2 is the GPU's subtractive rate, so the quad darkens the whole screen by its colour.
+        _bootScreenFadeQuad.InitializeCursorObject(2, 0x140, 0xF0, 0xFF, 0xFF, 0xFF);
+        _bootScreenFadeQuad.SetCursorColor(0, 0);
+        _bootScreenFadeQuad.SetCursorPosition(0, 0, 200);
+
+        _loadingScreenFade = 0xFF;
+    }
+
+    /// <summary>
+    /// GHIDRA: RunLoadingScreenIntro @ 0x80024fa8 and TickLoadingScreenTransition @ 0x80024f4c —
+    /// g_cursorFadeLevel runs 0xFF down to 0 in steps of 2, holds 500 ticks, then climbs back.
     /// </summary>
     private void UpdateLoadingScreen()
     {
-        if (_loadingScreen is not null)
+        if (_ui is null)
         {
-            var level = Math.Clamp(_loadingScreenFade, 0, 255) / 255f;
-            renderer.AddSprite(0, 0, _loadingScreen.Width, _loadingScreen.Height,
-                SpriteDepth.BackgroundUI, _loadingScreen, 1f, level, level, level);
+            BeginMovie(LoaderState.PlayMovieEuro);
+            return;
         }
 
+        _bootScreenFadeQuad.FlatColorR = (byte)_loadingScreenFade;
+        _bootScreenFadeQuad.FlatColorG = (byte)_loadingScreenFade;
+        _bootScreenFadeQuad.FlatColorB = (byte)_loadingScreenFade;
+
+        _ui.Render(_bootScreenBox);
+        _ui.RenderFlatQuad(_bootScreenFadeQuad);
+
+        // The original's three loops in order: fade in while the level is above 0, hold 500 ticks,
+        // then fade back out until the level is 0xFF again.
+        const int fadeFrames = 0xFF / 2;
         _loadingScreenTick++;
 
-        // g_cursorFadeLevel steps by 2 per tick in both directions (0xFF..0 then 0..0xFF).
-        const int fadeFrames = 0xFF / 2;
         if (_loadingScreenTick <= fadeFrames)
         {
-            _loadingScreenFade = Math.Min(255, _loadingScreenFade + 2);
+            _loadingScreenFade = Math.Max(0, _loadingScreenFade - 2);
         }
         else if (_loadingScreenTick > fadeFrames + LoadingScreenHoldFrames)
         {
-            _loadingScreenFade = Math.Max(0, _loadingScreenFade - 2);
+            _loadingScreenFade = Math.Min(0xFF, _loadingScreenFade + 2);
         }
 
         if (_loadingScreenTick >= fadeFrames * 2 + LoadingScreenHoldFrames)
         {
+            _loadingScreenFade = 0xFF;
             BeginMovie(LoaderState.PlayMovieEuro);
         }
+    }
+
+    /// <summary>
+    /// GHIDRA: RunLoaderMainSequence @ 0x80024e28, plus the block of MainLoop @ 0x8002538c that
+    /// copies the chosen record into g_saveDataInRam.
+    /// </summary>
+    private void UpdateSlotSelection(uint buttons)
+    {
+        if (_selectionScreen is null)
+        {
+            _state = LoaderState.TitleMenu;
+            _titleMenuTimer = TitleMenuTimeoutFrames;
+            return;
+        }
+
+        if (_selectionScreen.CurrentPhase == LoaderSelectionScreen.Phase.Idle)
+        {
+            _selectionScreen.Start();
+        }
+
+        if (!_selectionScreen.Update(buttons))
+        {
+            return;
+        }
+
+        var slot = _selectionScreen.Result;
+        if (slot < 0)
+        {
+            // GHIDRA: MainLoop loops back to PromptNewGameOrContinue when the sequence returns -1.
+            _state = LoaderState.TitleMenu;
+            _titleMenuTimer = TitleMenuTimeoutFrames;
+            _titleMenuSelection = 0;
+            ResetMenuColors();
+            _selectionScreen.Reset();
+            return;
+        }
+
+        SelectedSave = _selectionScreen.ChosenSave;
+        SelectedSlotData = 1;
+        if (SelectedSave is not null)
+        {
+            SelectedSave.SlotData = 1;
+            SelectedSave.LastMapId = (uint)slot;
+        }
+
+        _state = LoaderState.Finished;
     }
 
     /// <summary>
@@ -527,6 +715,12 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
 
             // GHIDRA: MainLoop @ 0x8002538c - result 0 starts a new game (SlotData = 0 then
             // LoadExec), result 1 goes through the save slot selection first.
+            if (_titleMenuSelection == 0)
+            {
+                SelectedSave = null;
+                SelectedSlotData = 0;
+            }
+
             _state = _titleMenuSelection == 0 ? LoaderState.Finished : LoaderState.SlotSelection;
             StopTitleBgm();
             return;

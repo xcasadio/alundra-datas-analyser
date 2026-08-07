@@ -130,7 +130,18 @@ public class Renderer(System.Drawing.Graphics graphics, Bitmap? frameBuffer = nu
 
     private void RenderSprite(System.Drawing.Graphics graphics, Sprite sprite)
     {
-        // Note: GDI+ ne supporte pas nativement les blend modes PSX additif/soustractif.
+        // GDI+ has no additive or subtractive blend, so those two are composited by hand straight
+        // into the frame buffer. Without this they fell through to an opaque draw, which turns a
+        // PSX fade quad - a full-screen primitive whose whole point is to add to or subtract from
+        // what is already there - into a flat rectangle that hides the scene.
+        if (sprite.BlendMode is BlendMode.Additive or BlendMode.Subtractive &&
+            _frameBuffer is not null &&
+            !sprite.IsDeformed &&
+            CompositeSprite(graphics, sprite))
+        {
+            return;
+        }
+
         // Average/AdditiveDim use the source factor from the C port shader as a desktop approximation.
         float effectiveAlpha = sprite.BlendMode switch
         {
@@ -164,6 +175,118 @@ public class Renderer(System.Drawing.Graphics graphics, Bitmap? frameBuffer = nu
         {
             graphics.DrawImage(sprite.Bitmap, sprite.X, sprite.Y, sprite.Width, sprite.Height);
         }
+    }
+
+    /// <summary>
+    /// Composites one sprite onto <see cref="_frameBuffer"/> with the PSX's additive
+    /// (<c>B + F</c>) or subtractive (<c>B - F</c>) rate, both saturating.
+    /// </summary>
+    /// <remarks>
+    /// JUSTIFICATION: backend renderer adaptation only.
+    /// RELATION: the console's GPU applies the rate selected by the primitive's abr field to every
+    /// texel it writes. MonoGame reproduces that with a BlendState; GDI+ cannot, so this walks the
+    /// destination rectangle instead. Sampling is nearest-neighbour, which is what the GPU does.
+    /// </remarks>
+    /// <returns>False when the composite could not be done, so the caller falls back to GDI+.</returns>
+    private bool CompositeSprite(System.Drawing.Graphics graphics, Sprite sprite)
+    {
+        if (_frameBuffer is null || sprite.Width <= 0 || sprite.Height <= 0)
+        {
+            return false;
+        }
+
+        // Everything drawn so far went through GDI+; make sure it has reached the bitmap before the
+        // pixels are read back.
+        graphics.Flush(System.Drawing.Drawing2D.FlushIntention.Sync);
+
+        var subtract = sprite.BlendMode == BlendMode.Subtractive;
+        var clipLeft = Math.Max(0, sprite.X);
+        var clipTop = Math.Max(0, sprite.Y);
+        var clipRight = Math.Min(_frameBuffer.Width, sprite.X + sprite.Width);
+        var clipBottom = Math.Min(_frameBuffer.Height, sprite.Y + sprite.Height);
+
+        if (clipLeft >= clipRight || clipTop >= clipBottom)
+        {
+            return true;
+        }
+
+        var source = sprite.Bitmap;
+        BitmapData? sourceData = null;
+        BitmapData? destinationData = null;
+
+        try
+        {
+            sourceData = source.LockBits(
+                new Rectangle(0, 0, source.Width, source.Height),
+                ImageLockMode.ReadOnly,
+                PixelFormat.Format32bppArgb);
+
+            destinationData = _frameBuffer.LockBits(
+                new Rectangle(clipLeft, clipTop, clipRight - clipLeft, clipBottom - clipTop),
+                ImageLockMode.ReadWrite,
+                PixelFormat.Format32bppArgb);
+
+            unsafe
+            {
+                var sourceBase = (byte*)sourceData.Scan0;
+                var destinationBase = (byte*)destinationData.Scan0;
+
+                for (var y = clipTop; y < clipBottom; y++)
+                {
+                    var sourceY = (y - sprite.Y) * source.Height / sprite.Height;
+                    var sourceRow = sourceBase + sourceY * sourceData.Stride;
+                    var destinationRow = destinationBase + (y - clipTop) * destinationData.Stride;
+
+                    for (var x = clipLeft; x < clipRight; x++)
+                    {
+                        var sourceX = (x - sprite.X) * source.Width / sprite.Width;
+                        var sourcePixel = sourceRow + sourceX * 4;
+
+                        // GDI+ stores B, G, R, A.
+                        var sourceAlpha = sourcePixel[3];
+                        if (sourceAlpha == 0)
+                        {
+                            continue;
+                        }
+
+                        var scale = sprite.Alpha * (sourceAlpha / 255f);
+                        var addB = sourcePixel[0] * sprite.B * scale;
+                        var addG = sourcePixel[1] * sprite.G * scale;
+                        var addR = sourcePixel[2] * sprite.R * scale;
+
+                        var destinationPixel = destinationRow + (x - clipLeft) * 4;
+                        destinationPixel[0] = Saturate(destinationPixel[0], addB, subtract);
+                        destinationPixel[1] = Saturate(destinationPixel[1], addG, subtract);
+                        destinationPixel[2] = Saturate(destinationPixel[2], addR, subtract);
+                        destinationPixel[3] = 255;
+                    }
+                }
+            }
+
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+        finally
+        {
+            if (sourceData is not null)
+            {
+                source.UnlockBits(sourceData);
+            }
+
+            if (destinationData is not null)
+            {
+                _frameBuffer.UnlockBits(destinationData);
+            }
+        }
+    }
+
+    private static byte Saturate(byte background, float amount, bool subtract)
+    {
+        var result = subtract ? background - amount : background + amount;
+        return result <= 0f ? (byte)0 : result >= 255f ? (byte)255 : (byte)result;
     }
 
     private void RenderDeformedSprite(System.Drawing.Graphics graphics, Sprite sprite)
