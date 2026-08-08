@@ -145,7 +145,11 @@ public class GameMap
 
     public Bitmap GenerateSpriteBitmap(SiImage img, Color[] pal)
     {
-        var shiftleft = img.Sx % 2 == 1;
+        // SourceX/SourceY, not Sx/Sy: a mirrored quad names its VRAM window one texel early (see
+        // SiImage). Cropping at the raw Sx pulled in a column of the neighbouring sprite and cut
+        // the quad's own last column, which showed up in game as stray pixels beside every
+        // mirrored sprite.
+        var shiftleft = img.SourceX % 2 == 1;
         int swidth = img.Swidth;
         var readwidth = swidth;
         int outputwidth = img.Swidth;
@@ -170,7 +174,7 @@ public class GameMap
 
         for (var y = 0; y < img.Sheight; y++)
         {
-            Buffer.BlockCopy(_spriteSheetImageData, ((img.Spritesheet & 0x7) * 256 + img.Sy + y) * 256 / 2 + img.Sx / 2, readbuff, 0, readwidth / 2);
+            Buffer.BlockCopy(_spriteSheetImageData, ((img.Spritesheet & 0x7) * 256 + img.SourceY + y) * 256 / 2 + img.SourceX / 2, readbuff, 0, readwidth / 2);
 
             if (shiftleft)
             {

@@ -19,7 +19,14 @@ public class LogManager
     public LogManager(GameEngine gameEngine)
     {
         _gameEngine = gameEngine;
-        _logFileWriter = new StreamWriter(LogFilePath, append: false) { AutoFlush = true };
+        // Shared handle: a run that builds a second GameEngine while the first is still alive - the
+        // extractor does, its BGM stage creates one after the map stage - otherwise dies here on an
+        // exclusive-lock IOException, after the earlier stages have already written their output.
+        _logFileWriter = new StreamWriter(
+            new FileStream(LogFilePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
+        {
+            AutoFlush = true
+        };
     }
 
     public void SetCategory(string categoryName)
