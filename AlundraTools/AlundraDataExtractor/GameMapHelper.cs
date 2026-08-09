@@ -5,6 +5,20 @@ using System.Drawing.Imaging;
 
 namespace AlundraDataExtractor;
 
+public enum SpriteSheetLayoutMode
+{
+    /// <summary>
+    /// The eight native 256x256 VRAM pages stacked vertically, holes included. Default: it keeps the
+    /// exported sheet aligned with the original VRAM coordinates.
+    /// </summary>
+    Original,
+
+    /// <summary>
+    /// Only the quads actually used, shelf-packed, one cell per (VRAM region, palette) pair.
+    /// </summary>
+    Compact
+}
+
 public static class GameMapHelper
 {
     public static void SaveTileSheet(GameMap gameMap, string fileName, TileAnimDescriptor[] tileAnimDescriptors = null)
@@ -85,20 +99,16 @@ public static class GameMapHelper
         graphics.DrawImage(tileBitmap, x, y);
     }
 
-    // Native VRAM coordinates (Spritesheet/Sx/Sy) are not collision-free: the same VRAM region is
-    // legitimately reused with a different palette across frames of the same animation (e.g. a
-    // color-cycling sparkle effect). Packing straight at (Sx, Spritesheet*256+Sy) like the old
-    // layout did means whichever quad is drawn last simply overwrites the others there, so every
-    // earlier frame referencing that region ends up cropping the wrong color. Instead, pack one
-    // cell per unique Signature (Spritesheet+Palette+Sx+Sy+Swidth+Sheight already combined, see
-    // SiImage) and record where each one landed on every SiImage instance that shares it, via the
-    // AtlasX/AtlasY fields. Call this before serializing the map to JSON so those fields are set.
-    public static void SaveSpriteSheet(GameMap gameMap, string fileName)
+    // Writes the map spritesheet PNG and records, on every SiImage, where its quad landed there
+    // (AtlasX/AtlasY). Call this before serializing the map to JSON so those fields are set.
+    //
+    // Two layouts are available, see SpriteSheetLayoutMode. Both deduplicate on Signature
+    // (Spritesheet+Palette+SourceX+SourceY+Swidth+Sheight already combined, see SiImage), so a quad
+    // and its mirrored twin share one cell, and both stamp the resulting position on every SiImage
+    // instance carrying that signature.
+    public static void SaveSpriteSheet(GameMap gameMap, string fileName, SpriteSheetLayoutMode layoutMode = SpriteSheetLayoutMode.Original)
     {
-        const int canvasWidth = 512;
-        const int padding = 1; // keep neighbouring cells from bleeding into each other when sampled
-
-        var firstImageBySignature = new Dictionary<long, SiImage>();
+        var uniqueImages = new List<SiImage>();
         var imagesBySignature = new Dictionary<long, List<SiImage>>();
 
         foreach (var image in EnumerateImages(gameMap))
@@ -107,15 +117,76 @@ public static class GameMapHelper
             {
                 images = new List<SiImage>();
                 imagesBySignature[image.Signature] = images;
-                firstImageBySignature[image.Signature] = image;
+                uniqueImages.Add(image);
             }
 
             images.Add(image);
         }
 
-        // Tallest-first shelf packing: simple, deterministic, and good enough for the small
-        // (mostly 16-48px) quads found in practice.
-        var packingOrder = firstImageBySignature.Values
+        var layout = layoutMode switch
+        {
+            SpriteSheetLayoutMode.Original => CreateOriginalSpriteSheetLayout(uniqueImages),
+            SpriteSheetLayoutMode.Compact => CreateCompactSpriteSheetLayout(uniqueImages),
+            _ => throw new ArgumentOutOfRangeException(nameof(layoutMode), layoutMode, "Unsupported spritesheet layout mode.")
+        };
+
+        using (var bitmap = new Bitmap(layout.Width, layout.Height))
+        {
+            using (var graphics = Graphics.FromImage(bitmap))
+            {
+                foreach (var image in layout.DrawOrder)
+                {
+                    var spriteBitmap = gameMap.GetSpriteBitmap(image);
+                    var (x, y) = layout.PositionBySignature[image.Signature];
+                    graphics.DrawImage(spriteBitmap, x, y);
+                }
+            }
+
+            bitmap.Save(fileName, ImageFormat.Png);
+        }
+
+        foreach (var (signature, position) in layout.PositionBySignature)
+        {
+            foreach (var image in imagesBySignature[signature])
+            {
+                image.AtlasX = position.X;
+                image.AtlasY = position.Y;
+            }
+        }
+    }
+
+    // Historical layout: the eight 256x256 VRAM pages stacked vertically, each quad drawn at the
+    // VRAM window it samples (SourceX/SourceY, not Sx/Sy - a mirrored quad names its source one
+    // texel early, see SiImage). Pages keep their holes, so the sheet stays readable next to the
+    // original VRAM dumps, and AtlasX/AtlasY come out equal to the native coordinates.
+    //
+    // These coordinates are not collision-free: the same VRAM region is legitimately reused with a
+    // different palette across frames of the same animation (e.g. a color-cycling sparkle), and all
+    // of those quads land on one cell here, so the last one drawn wins and the others crop the
+    // wrong color. Draw order is first-seen order, as the historical export had it. Use Compact
+    // when every (region, palette) pair must survive.
+    private static SpriteSheetLayout CreateOriginalSpriteSheetLayout(List<SiImage> uniqueImages)
+    {
+        var positionBySignature = new Dictionary<long, (int X, int Y)>();
+
+        foreach (var image in uniqueImages)
+        {
+            positionBySignature[image.Signature] = (image.SourceX, (image.Spritesheet & 0x7) * VramPageSize + image.SourceY);
+        }
+
+        return new SpriteSheetLayout(VramPageSize, VramPageSize * VramPageCount, uniqueImages, positionBySignature);
+    }
+
+    // Compact layout: one cell per unique Signature, so a region reused under several palettes gets
+    // one cell per palette and every quad crops the color it was meant to show. Tallest-first shelf
+    // packing: simple, deterministic, and good enough for the small (mostly 16-48px) quads found in
+    // practice.
+    private static SpriteSheetLayout CreateCompactSpriteSheetLayout(List<SiImage> uniqueImages)
+    {
+        const int canvasWidth = 512;
+        const int padding = 1; // keep neighbouring cells from bleeding into each other when sampled
+
+        var packingOrder = uniqueImages
             .OrderByDescending(image => image.Sheight)
             .ThenBy(image => image.Signature)
             .ToList();
@@ -141,30 +212,19 @@ public static class GameMapHelper
             canvasHeight = Math.Max(canvasHeight, cursorY + shelfHeight);
         }
 
-        using (var bitmap = new Bitmap(canvasWidth, Math.Max(canvasHeight, 1)))
-        {
-            using (var graphics = Graphics.FromImage(bitmap))
-            {
-                foreach (var image in packingOrder)
-                {
-                    var spriteBitmap = gameMap.GetSpriteBitmap(image);
-                    var (x, y) = positionBySignature[image.Signature];
-                    graphics.DrawImage(spriteBitmap, x, y);
-                }
-            }
-
-            bitmap.Save(fileName, ImageFormat.Png);
-        }
-
-        foreach (var (signature, position) in positionBySignature)
-        {
-            foreach (var image in imagesBySignature[signature])
-            {
-                image.AtlasX = position.X;
-                image.AtlasY = position.Y;
-            }
-        }
+        return new SpriteSheetLayout(canvasWidth, Math.Max(canvasHeight, 1), packingOrder, positionBySignature);
     }
+
+    // JUSTIFICATION: C# language bridge only - carries one resolved spritesheet layout so both modes
+    // share the drawing and AtlasX/AtlasY stamping code above.
+    private sealed record SpriteSheetLayout(
+        int Width,
+        int Height,
+        IReadOnlyList<SiImage> DrawOrder,
+        Dictionary<long, (int X, int Y)> PositionBySignature);
+
+    private const int VramPageSize = 256;
+    private const int VramPageCount = 8;
 
     private static IEnumerable<SiImage> EnumerateImages(GameMap gameMap)
     {

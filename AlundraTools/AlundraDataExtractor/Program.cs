@@ -98,7 +98,7 @@ internal class Program
 
         if (args.Length < 2)
         {
-            Console.WriteLine("Usage: AlundraDataExtractor <gamePath> <extractionPath> [--tiled-tileset-layout original|compact]");
+            Console.WriteLine("Usage: AlundraDataExtractor <gamePath> <extractionPath> [--tiled-tileset-layout original|compact] [--spritesheet-layout original|compact]");
             Console.WriteLine("       AlundraDataExtractor --trace-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
             Console.WriteLine("       AlundraDataExtractor --render-bgm <gamePath|soundBinPath> <outputPath> [--bgm-index N] [--frames N]");
             Console.WriteLine("       AlundraDataExtractor --extract-movies <cdImage.bin> <movieOutputPath>");
@@ -122,8 +122,9 @@ internal class Program
         ExtractDataFromScreenFolder(font3, gameEngine.StaticVariables, extractionPath);
         ExtractDataFromEtcRes(etcRes, gameEngine.StaticVariables, extractionPath);
         var psxFramesPerSecond = etcRes is EtcResUsa ? 60 : 50;
-        var tiledTilesetLayoutMode = ReadTiledTilesetLayoutMode(args, "--tiled-tileset-layout", TiledTilesetLayoutMode.Original);
-        ExtractDataFromDatasBin(gameEngine.DatasBin, gameEngine.StaticVariables, extractionPath, psxFramesPerSecond, tiledTilesetLayoutMode);
+        var tiledTilesetLayoutMode = ReadEnumOption(args, "--tiled-tileset-layout", TiledTilesetLayoutMode.Compact);
+        var spriteSheetLayoutMode = ReadEnumOption(args, "--spritesheet-layout", SpriteSheetLayoutMode.Original);
+        ExtractDataFromDatasBin(gameEngine.DatasBin, gameEngine.StaticVariables, extractionPath, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode);
         ExtractDataFromSoundBin(gameEngine.SoundBin, extractionPath);
         ExtractDataFromBgm(Path.Combine(gamePath, "DATA", "SOUND.BIN"), extractionPath);
     }
@@ -554,7 +555,8 @@ internal class Program
         return defaultValue;
     }
 
-    private static TiledTilesetLayoutMode ReadTiledTilesetLayoutMode(string[] args, string optionName, TiledTilesetLayoutMode defaultValue)
+    // JUSTIFICATION: C# language bridge only
+    private static TEnum ReadEnumOption<TEnum>(string[] args, string optionName, TEnum defaultValue) where TEnum : struct, Enum
     {
         for (var index = 0; index + 1 < args.Length; index++)
         {
@@ -563,12 +565,14 @@ internal class Program
                 continue;
             }
 
-            if (Enum.TryParse<TiledTilesetLayoutMode>(args[index + 1], true, out var value))
+            // Enum.TryParse also accepts raw numbers, hence the IsDefined guard.
+            if (Enum.TryParse<TEnum>(args[index + 1], true, out var value) && Enum.IsDefined(value))
             {
                 return value;
             }
 
-            throw new ArgumentException($"Unsupported value '{args[index + 1]}' for {optionName}. Expected 'original' or 'compact'.");
+            var expected = string.Join(" or ", Enum.GetNames<TEnum>().Select(name => $"'{name.ToLowerInvariant()}'"));
+            throw new ArgumentException($"Unsupported value '{args[index + 1]}' for {optionName}. Expected {expected}.");
         }
 
         return defaultValue;
@@ -1068,7 +1072,7 @@ internal class Program
         File.WriteAllText(path, JsonSerializer.Serialize(sortedData, _jsonSerializerOptions));
     }
 
-    private static void ExtractDataFromDatasBin(DatasBin datasBin, StaticVariables staticVariables, string extractionPath, int psxFramesPerSecond, TiledTilesetLayoutMode tiledTilesetLayoutMode)
+    private static void ExtractDataFromDatasBin(DatasBin datasBin, StaticVariables staticVariables, string extractionPath, int psxFramesPerSecond, TiledTilesetLayoutMode tiledTilesetLayoutMode, SpriteSheetLayoutMode spriteSheetLayoutMode)
     {
         datasBin.LoadingScreen.Save(Path.Combine(extractionPath, "data", "loading_screen.png"), ImageFormat.Png);
 
@@ -1081,14 +1085,14 @@ internal class Program
         Console.WriteLine("Extract map alundra");
         using var br = datasBin.OpenBin();
         datasBin.AlundraGameMap.Load(br);
-        SaveAlundraMap(datasBin.AlundraGameMap, dataPath);
+        SaveAlundraMap(datasBin.AlundraGameMap, dataPath, spriteSheetLayoutMode);
 
         for (int i = 0; i < 483; i++)
         {
             Console.WriteLine($"Extract map {i}");
             var gameMap = datasBin.GameMaps[i];
             gameMap.Load(br);
-            SaveMap(gameMap, i, dataPath, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode);
+            SaveMap(gameMap, i, dataPath, tileAnimDescriptors, psxFramesPerSecond, tiledTilesetLayoutMode, spriteSheetLayoutMode);
         }
 
         foreach (var entitySpriteSheet in entitySpriteSheetIds)
@@ -1102,11 +1106,11 @@ internal class Program
         }
     }
 
-    private static void SaveAlundraMap(GameMap gameMap, string extractionPath)
+    private static void SaveAlundraMap(GameMap gameMap, string extractionPath, SpriteSheetLayoutMode spriteSheetLayoutMode)
     {
         // Must run before the JSON dump below: it populates SiImage.AtlasX/AtlasY, which the
         // serialized map_alundra.json needs to carry.
-        GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, "map_alundra_spritesheet.png"));
+        GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, "map_alundra_spritesheet.png"), spriteSheetLayoutMode);
 
         File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMap, _jsonSerializerOptions));
 
@@ -1114,13 +1118,13 @@ internal class Program
         //File.WriteAllText(Path.Combine(extractionPath, "map_alundra.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));
     }
 
-    private static void SaveMap(GameMap gameMap, int id, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors, int psxFramesPerSecond, TiledTilesetLayoutMode tiledTilesetLayoutMode)
+    private static void SaveMap(GameMap gameMap, int id, string extractionPath, TileAnimDescriptor[] tileAnimDescriptors, int psxFramesPerSecond, TiledTilesetLayoutMode tiledTilesetLayoutMode, SpriteSheetLayoutMode spriteSheetLayoutMode)
     {
         GameMapHelper.SaveTileSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_tilesheet.png"), tileAnimDescriptors);
 
         // Must run before the JSON dump below: it populates SiImage.AtlasX/AtlasY, which the
         // serialized map_{id}.json needs to carry.
-        GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_spritesheet.png"));
+        GameMapHelper.SaveSpriteSheet(gameMap, Path.Combine(extractionPath, $"map_{id}_spritesheet.png"), spriteSheetLayoutMode);
 
         //var gameMapJson = ConvertGameMap(gameMap);
         //File.WriteAllText(Path.Combine(extractionPath, $"map_{id}.json"), JsonSerializer.Serialize(gameMapJson, _jsonSerializerOptions));

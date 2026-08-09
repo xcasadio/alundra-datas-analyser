@@ -12,19 +12,7 @@ dotnet ..\AlundraDataExtractor\bin\Debug\net9.0-windows\AlundraDataExtractor.dll
 Pop-Location
 ```
 
-Le layout de tileset Tiled par defaut est `compact`. Il packe uniquement les tiles utilisees et reste le mode de rendu Tiled fiable quand plusieurs `rawTileId` reutilisent le meme slot historique avec des palettes differentes.
-
-Pour forcer le layout historique `original`, ajouter l'option suivante :
-
-```powershell
-Push-Location AlundraTools\AlundraTools
-dotnet ..\AlundraDataExtractor\bin\Debug\net9.0-windows\AlundraDataExtractor.dll "D:\development\repo\Alundra Remake\Alundra (France)\Alundra (France)_extracted" "D:\development\repo\Alundra Remake\remaster-data-extracted" --tiled-tileset-layout original
-Pop-Location
-```
-
-Le mode `original` reprend exactement le layout historique de `map_N_tilesheet.png`, y compris les trous inutilises. Il echoue explicitement si une carte reutilise le meme slot historique pour plusieurs `rawTileId` distincts, car ce tilesheet ne peut alors pas representer toutes les variantes sans perte.
-
-Les deux arguments sont :
+Les deux arguments positionnels sont :
 
 - le dossier des donnees extraites du disque original ;
 - le dossier de sortie de l'extracteur.
@@ -37,6 +25,25 @@ Push-Location AlundraTools\AlundraTools
 dotnet ..\AlundraDataExtractor\obj\copilot-build\manual\Debug\net9.0-windows\AlundraDataExtractor.dll "D:\development\repo\Alundra Remake\Alundra (France)\Alundra (France)_extracted" "D:\development\repo\Alundra Remake\remaster-data-extracted"
 Pop-Location
 ```
+
+## Options de layout
+
+Deux sorties image ont un layout configurable, avec des defauts differents : le tileset Tiled est `compact`, le spritesheet reste `original`.
+
+| Option | Sortie concernee | Defaut | Modes |
+| --- | --- | --- | --- |
+| `--tiled-tileset-layout original\|compact` | `data\tiled\map_N_tileset.png` | `compact` | `compact` packe uniquement les tiles utilisees, une cellule par `rawTileId` ; `original` reprend le layout historique du tilesheet |
+| `--spritesheet-layout original\|compact` | `data\map_N_spritesheet.png` et `data\map_alundra_spritesheet.png` | `original` | `original` empile les pages VRAM natives ; `compact` packe uniquement les quads utilises, une cellule par couple (region VRAM, palette) |
+
+```powershell
+Push-Location AlundraTools\AlundraTools
+dotnet ..\AlundraDataExtractor\bin\Debug\net9.0-windows\AlundraDataExtractor.dll "D:\development\repo\Alundra Remake\Alundra (France)\Alundra (France)_extracted" "D:\development\repo\Alundra Remake\remaster-data-extracted" --tiled-tileset-layout original --spritesheet-layout compact
+Pop-Location
+```
+
+Le layout de tileset par defaut est `compact` : il packe uniquement les tiles utilisees et reste le mode de rendu Tiled fiable quand plusieurs `rawTileId` reutilisent le meme slot historique avec des palettes differentes. Le mode `original` reprend le layout historique de `map_N_tilesheet.png`, trous inutilises compris ; quand un slot historique est deja pris par une autre variante de palette du meme index, ou qu'il n'est pas modelise par ce layout, la tile est ajoutee a la suite de la zone authentique (l'image grandit vers le bas) plutot que de faire echouer l'export.
+
+Le mode `original` du spritesheet empile les huit pages VRAM natives de 256x256, chaque quad etant dessine a la fenetre VRAM qu'il echantillonne : le PNG mesure toujours 256x2048, les trous sont conserves, et les champs `AtlasX`/`AtlasY` des `SiImage` serialises valent exactement `(SourceX, page * 256 + SourceY)`. Ces coordonnees ne sont pas exemptes de collisions : une meme region VRAM reutilisee sous plusieurs palettes (scintillement a cycle de couleurs, par exemple) tombe sur une seule cellule, donc le dernier quad dessine gagne et les autres decoupent la mauvaise couleur. Sur `map_10`, 499 signatures distinctes se ramenent ainsi a 333 cellules. Le mode `compact` donne une cellule par signature, donc chaque quad decoupe bien la couleur prevue.
 
 ## Fichiers generes
 
