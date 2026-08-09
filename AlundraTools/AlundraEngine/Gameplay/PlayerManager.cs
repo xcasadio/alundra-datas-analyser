@@ -1182,8 +1182,9 @@ public class PlayerManager
             i--;
         }
 
+        // 80030904 : (i - 1U < 0x61) est une comparaison non signee, donc la plage valide est 1..0x61 inclus.
         var itemId = (int)_gameEngine.PlayerManager.GetItemIdFromCurrentWeapon();
-        if (itemId > 0 && itemId < 0x61)
+        if (itemId > 0 && itemId <= 0x61)
         {
             var tileIconFlags = (byte)(_gameEngine.StaticVariables.g_itemDropProperties[itemId].Field3 & 0x7F);
 
@@ -1191,12 +1192,12 @@ public class PlayerManager
             {
                 var itemData = _gameEngine.BalanceBin.GetItemDataPointer(itemId, _gameEngine.StaticVariables.g_itemIdThreshold);
                 _gameEngine.StaticVariables.g_itemBalanceRecords[1].BalanceRecord = itemData;
-                _gameEngine.StaticVariables.g_itemBalanceRecords[1].ItemId = i + 0x1E;
+                _gameEngine.StaticVariables.g_itemBalanceRecords[1].ItemId = itemId + 0x1E;
             }
         }
 
         var currentItemId = _gameEngine.PlayerManager.SetItemIdFromCurrentItemId();
-        if (currentItemId > 0 && currentItemId < 0x61)
+        if (currentItemId > 0 && currentItemId <= 0x61)
         {
             var warpIconFlags = (byte)(_gameEngine.StaticVariables.g_itemDropProperties[currentItemId].Field3 & 0x7F);
 
@@ -1204,31 +1205,35 @@ public class PlayerManager
             {
                 var itemData = _gameEngine.BalanceBin.GetItemDataPointer((int)currentItemId, _gameEngine.StaticVariables.g_itemIdThreshold);
                 _gameEngine.StaticVariables.g_itemBalanceRecords[2].BalanceRecord = itemData;
-                _gameEngine.StaticVariables.g_itemBalanceRecords[2].ItemId = i + 0x1E;
+                _gameEngine.StaticVariables.g_itemBalanceRecords[2].ItemId = (int)currentItemId + 0x1E;
             }
         }
 
         var balanceRecordSource = _gameEngine.StaticVariables.g_itemBalanceRecords[0].BalanceRecord ?? _gameEngine.StaticVariables.PlayerEntity.BalanceRecord;
-        _gameEngine.StaticVariables.g_balanceRecord[0].CopyFrom(balanceRecordSource);
+        _gameEngine.StaticVariables.g_balanceRecord.CopyFrom(balanceRecordSource);
 
         var valueB = 0x10;
         var valueA = 0x10;
         i = 1;
 
+        // 80030b18 : le code original parcourt g_balanceRecord octet par octet (p += 1 puis lecture de *(p + 2)).
+        // L'iteration i lit et reecrit donc damageResponses[i - 1], pas un enregistrement distinct.
+        var effectiveStats = _gameEngine.StaticVariables.g_balanceRecord;
+
         do
         {
-            var balanceRecord = _gameEngine.StaticVariables.g_balanceRecord[i - 1];
+            var baseResponse = effectiveStats.DamageResponses[i - 1];
 
-            var result = (uint)balanceRecord.Hp;
+            var result = (uint)baseResponse;
 
             if (_gameEngine.StaticVariables. g_itemBalanceRecords[1].BalanceRecord != null)
             {
-                valueA = _gameEngine.StaticVariables.g_itemBalanceRecords[1].BalanceRecord.Values[i + -1];
+                valueA = _gameEngine.StaticVariables.g_itemBalanceRecords[1].BalanceRecord.DamageResponses[i + -1];
             }
 
             if (_gameEngine.StaticVariables.g_itemBalanceRecords[2].BalanceRecord != null)
             {
-                valueB = _gameEngine.StaticVariables.g_itemBalanceRecords[2].BalanceRecord.Values[i + -1];
+                valueB = _gameEngine.StaticVariables.g_itemBalanceRecords[2].BalanceRecord.DamageResponses[i + -1];
             }
 
             var flagsA = valueA & 0xc0;
@@ -1240,7 +1245,7 @@ public class PlayerManager
             }
             else
             {
-                if ((balanceRecord.Hp & 0xc0) != 0)
+                if ((baseResponse & 0xc0) != 0)
                 {
                     result = 0x10;
 
@@ -1281,7 +1286,7 @@ public class PlayerManager
             }
 
             LAB_80030c0c:
-            balanceRecord.Hp = (byte)result;
+            effectiveStats.DamageResponses[i - 1] = (byte)result;
 
             i = i + 1;
         } while (i < 0xc);
@@ -1298,11 +1303,11 @@ public class PlayerManager
                 {
                     var balanceRecord2 = _gameEngine.StaticVariables.g_itemBalanceRecords[i].BalanceRecord;
 
-                    if (balanceRecord2 != null && balanceRecord2.Hp != 0)
+                    if (balanceRecord2 != null && balanceRecord2.MaxHp != 0)
                     {
                         _gameEngine.StaticVariables.INT_ARRAY_80126fe8[i]++;
 
-                        if (balanceRecord2.Hp <= _gameEngine.StaticVariables.INT_ARRAY_80126fe8[i])
+                        if (balanceRecord2.MaxHp <= _gameEngine.StaticVariables.INT_ARRAY_80126fe8[i])
                         {
                             _gameEngine.StaticVariables.INT_ARRAY_80126fe8[i] = 0;
                             _gameEngine.StaticVariables.PlayerEntity.Hp++;
@@ -3209,7 +3214,7 @@ public class PlayerManager
             goto LAB_8002FAF0;
         }
 
-        if (carriedEntity.BalanceRecord?.NumAnimVals == 0 && mode == 1)
+        if (carriedEntity.BalanceRecord?.AttackCount == 0 && mode == 1)
         {
             mode = 0;
         }
@@ -3254,7 +3259,7 @@ public class PlayerManager
         if (mode == 1)
         {
             LAB_8002F9AC:
-            if (carriedEntity.BalanceRecord.NumAnimVals == 0)
+            if (carriedEntity.BalanceRecord.AttackCount == 0)
             {
                 goto LAB_8002FAF0;
             }

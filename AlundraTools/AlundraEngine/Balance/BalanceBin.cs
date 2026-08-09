@@ -1,18 +1,22 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 
 namespace AlundraEngine.Balance;
 
 public class BalanceBin
 {
     public readonly string FileName;
-    public readonly List<BalanceRecord> BalanceRecords = new();
-    public readonly List<int> Offsets = new();
+
+    // Têtes de chaîne indexées par index de la table de sprites.
+    // La fenêtre 0x1f..0x7f est réservée aux objets (voir GetItemDataPointer) ;
+    // les sprites qui tombent dedans sont rabattus sur l'entrée 0x1e.
+    public readonly List<BalanceRecord> EntriesBySpriteIndex = new();
 
     public BalanceBin(string fileName)
     {
         FileName = fileName;
         using var br = new BinaryReader(File.OpenRead(fileName));
         var firstOffset = 0;
+        var offsets = new List<int>();
 
         while (firstOffset == 0 || br.BaseStream.Position < firstOffset)
         {
@@ -22,13 +26,13 @@ public class BalanceBin
                 firstOffset = offset;
             }
 
-            Offsets.Add(offset);
+            offsets.Add(offset);
         }
 
-        foreach (var offset in Offsets)
+        foreach (var offset in offsets)
         {
             var record = new BalanceRecord(br, offset);
-            BalanceRecords.Add(record);
+            EntriesBySpriteIndex.Add(record);
         }
     }
 
@@ -40,20 +44,13 @@ public class BalanceBin
             spriteIndex = 0x1e;
         }
 
-        var offset = Offsets[spriteIndex];
-        var balanceRecord = BalanceRecords[spriteIndex];
-
-        if (balanceRecord.Offset != offset)
-        {
-            Breakpoint.TriggerBreak();
-        }
-
-        var currentId = balanceRecord.Level;
+        var balanceRecord = EntriesBySpriteIndex[spriteIndex];
+        var currentId = balanceRecord.BalanceLevel;
 
         while (currentId < itemIdThreshold)
         {
-            balanceRecord = balanceRecord.Next;
-            currentId = balanceRecord.Level;
+            balanceRecord = balanceRecord.NextLevel;
+            currentId = balanceRecord.BalanceLevel;
         }
         return balanceRecord;
     }
@@ -69,22 +66,15 @@ public class BalanceBin
             Breakpoint.TriggerBreak();
         }
 
-        var offset = Offsets[itemId + 0x1e];
-        var itemDataPtr = BalanceRecords[itemId + 0x1e];
+        var itemDataPtr = EntriesBySpriteIndex[itemId + 0x1e];
+        var currentId = itemDataPtr.BalanceLevel;
 
-        if (itemDataPtr.Offset != offset)
-        {
-            Breakpoint.TriggerBreak();
-        }
-
-        var currentId = itemDataPtr.Level;
-        
         while (currentId < itemIdThreshold)
         {
-            itemDataPtr = itemDataPtr.Next;
-            currentId = itemDataPtr.Level;
+            itemDataPtr = itemDataPtr.NextLevel;
+            currentId = itemDataPtr.BalanceLevel;
         }
-        
+
         return itemDataPtr;
     }
 }

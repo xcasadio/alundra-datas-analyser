@@ -467,7 +467,7 @@ public class StaticVariables
     //80098f10
     public readonly string[] g_directionNames = ["X", "R", "L", "U", "D"];
     //80098f64
-    public readonly string[] g_weaponNames = ["No Effect", "Sword", "Hammer", "Arrow", "B", "Tackle", "F", "I", "Earth Magic", "Water Magic", "Fire Magic", "Air Magic"];
+    public readonly string[] g_weaponNames = ["No Effect", "Sword", "Hammer", "Arrow", "Bom", "Tackle", "Fire", "Ice", "Earth Magic", "Water Magic", "Fire Magic", "Air Magic"];
     //80098f94
     public readonly string[] g_damageNames = ["Normal Damage", "Critical", "No Effect", "Error!"];
     //80098f34
@@ -12895,7 +12895,7 @@ public class StaticVariables
     public SpriteEffect g_playerWarpEffect; // 80126FF8
     public int g_playerWarpTimer; // 80126FFC
     public uint g_gravityFlag; // 80127000
-    public BalanceRecordData[] g_balanceRecord = Enumerable.Range(0, 15).Select(x => new BalanceRecordData()).ToArray(); // 80127008
+    public EffectiveBalanceStats g_balanceRecord = new(); // 80127008 - un seul enregistrement de 15 octets, pas un tableau
     public Entity g_activeCollisionEntity; // 80127108
     public uint g_currentWeaponFlags; // 8012710C
     public byte[] g_playerEffectTransitionCooldown = new byte[4]; // 80127110
@@ -13017,7 +13017,7 @@ public class StaticVariables
     public int g_itemIdThreshold; // 80143DF0
     public byte[] g_balanceBin = new byte[12288]; // 80143DF8
     public int g_balanceAnimIndex; // 80146DF8
-    public ItemBalanceRecord[] g_itemBalanceRecords = Enumerable.Range(0, 3).Select(x => new ItemBalanceRecord()).ToArray(); // 80146E00
+    public EquippedItemBalance[] g_itemBalanceRecords = Enumerable.Range(0, 3).Select(x => new EquippedItemBalance()).ToArray(); // 80146E00
     public short g_balanceHpTotal; // 80146E18
     public short g_balanceParams; // 80146E1A
     public short g_balanceHp; // 80146E1C

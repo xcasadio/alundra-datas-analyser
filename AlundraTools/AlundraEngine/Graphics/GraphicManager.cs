@@ -1468,9 +1468,9 @@ public class GraphicManager
                 }
 
                 int highlight = 0;
-                if (e.BalanceAnimValRef != null)
+                if (e.CurrentAttack != null)
                 {
-                    if (e.BalanceAnimValRef.Val != 0)
+                    if (e.CurrentAttack.AttackAttribute != 0)
                     {
                         highlight = 1;
                     }

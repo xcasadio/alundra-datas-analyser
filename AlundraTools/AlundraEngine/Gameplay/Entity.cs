@@ -253,7 +253,7 @@ public class Entity
     public int _ZUpperBound;//1bc
     public int RenderSortKey;//1c0
     public BalanceRecord? BalanceRecord;//1c4
-    public BalanceAnimValRef? BalanceAnimValRef;//1c8
+    public BalanceAttack? CurrentAttack;//1c8
     public int DamagedTickCounter;//1cc
     public int FrameCollisionTickCounter;//1d0
     public FrameCollisionData? FrameCollision;//1d4
@@ -421,7 +421,7 @@ public class Entity
         ZUpperBound = other.ZUpperBound;
         RenderSortKey = other.RenderSortKey;
         BalanceRecord = other.BalanceRecord;
-        BalanceAnimValRef = other.BalanceAnimValRef;
+        CurrentAttack = other.CurrentAttack;
         DamagedTickCounter = other.DamagedTickCounter;
         FrameCollisionTickCounter = other.FrameCollisionTickCounter;
         FrameCollision = other.FrameCollision;
@@ -571,7 +571,7 @@ public class Entity
         ZUpperBound = 0;
         RenderSortKey = 0;
         BalanceRecord = null;
-        BalanceAnimValRef = null;
+        CurrentAttack = null;
         DamagedTickCounter = 0;
         FrameCollisionTickCounter = 0;
         FrameCollision = null;

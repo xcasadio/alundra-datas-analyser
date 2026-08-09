@@ -33,7 +33,7 @@ public static class FunctionTypeD
         uint uVar3;
         uint iVar4;
 
-        bVar1 = entity.TouchingEntity.BalanceAnimValRef.Val;
+        bVar1 = entity.TouchingEntity.CurrentAttack.AttackAttribute;
         entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.PlayerEntity.PosX, entity.PosY - gameEngine.StaticVariables.PlayerEntity.PosY);
 
         if ((bVar1 & 0xf) - 1 < 3)
@@ -130,7 +130,7 @@ public static class FunctionTypeD
         uint direction;
         byte val;
 
-        val = entity.TouchingEntity.BalanceAnimValRef.Val;
+        val = entity.TouchingEntity.CurrentAttack.AttackAttribute;
         direction = (uint)ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
         entity.TargetDirection = direction;
 
@@ -264,7 +264,7 @@ public static class FunctionTypeD
         bool bVar1;
         byte val;
 
-        val = entity.TouchingEntity.BalanceAnimValRef.Val;
+        val = entity.TouchingEntity.CurrentAttack.AttackAttribute;
         var direction = ScriptHelper.GetDirectionToTarget(entity.PosX - gameEngine.StaticVariables.g_entitySlots[0].PosX, entity.PosY - gameEngine.StaticVariables.g_entitySlots[0].PosY);
         entity.TargetDirection = (uint)direction;
 
@@ -737,7 +737,7 @@ public static class FunctionTypeD
             Breakpoint.TriggerBreak();
         }
 
-        var value = entity.TouchingEntity.BalanceAnimValRef.Val & 0xf;
+        var value = entity.TouchingEntity.CurrentAttack.AttackAttribute & 0xf;
 
         if (value == 7 || value == 9)
         {
@@ -793,7 +793,7 @@ public static class FunctionTypeD
             Breakpoint.TriggerBreak();
         }
 
-        var value = entity.TouchingEntity.BalanceAnimValRef.Val & 0xf;
+        var value = entity.TouchingEntity.CurrentAttack.AttackAttribute & 0xf;
         if (value == 4 || value == 6 || value == 10)
         {
             entity.Status = 3;
@@ -815,7 +815,7 @@ public static class FunctionTypeD
             Breakpoint.TriggerBreak();
         }
 
-        if ((entity.TouchingEntity.BalanceAnimValRef.Val & 0xf) == 2)
+        if ((entity.TouchingEntity.CurrentAttack.AttackAttribute & 0xf) == 2)
         {
             entity.TargetAnimationId += 1;
             entity.Flags |= 0x40;
@@ -827,7 +827,7 @@ public static class FunctionTypeD
     {
         Breakpoint.TriggerBreak();
 
-        if ((entity.TouchingEntity.BalanceAnimValRef.Val & 0xf) == 4)
+        if ((entity.TouchingEntity.CurrentAttack.AttackAttribute & 0xf) == 4)
         {
             entity.TargetAnimationId += 1;
             entity.Flags |= 0x40;
@@ -843,7 +843,7 @@ public static class FunctionTypeD
             Breakpoint.TriggerBreak();
         }
 
-        if ((entity.TouchingEntity.BalanceAnimValRef.Val & 0xf) == 2)
+        if ((entity.TouchingEntity.CurrentAttack.AttackAttribute & 0xf) == 2)
         {
             entity.TargetAnimationId = 2;
             entity.Flags |= 0x40;
@@ -860,7 +860,7 @@ public static class FunctionTypeD
             Breakpoint.TriggerBreak();
         }
 
-        if ((entity.TouchingEntity.BalanceAnimValRef.Val & 0xf) == 6)
+        if ((entity.TouchingEntity.CurrentAttack.AttackAttribute & 0xf) == 6)
         {
             entity.TargetAnimationId = 1;
             entity.Flags = (entity.Flags | 0x46U) & 0xFFFFFF7FU;
@@ -1098,7 +1098,7 @@ public static class FunctionTypeD
             Breakpoint.TriggerBreak();
         }
 
-        if ((entity.TouchingEntity!.BalanceAnimValRef!.Val & 0xf) == 2)
+        if ((entity.TouchingEntity!.CurrentAttack!.AttackAttribute & 0xf) == 2)
         {
             entity.TargetAnimationId = 4;
             entity.Bytes[2] += 1;

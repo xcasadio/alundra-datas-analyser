@@ -1,40 +1,53 @@
-﻿namespace AlundraEngine.Balance;
+namespace AlundraEngine.Balance;
 
 public class BalanceRecord
 {
-    public readonly byte Level;//0
-    public readonly byte OffsetToNextLevel;//1
-    public byte Hp;//2 
-    public readonly byte[] Values = new byte[11];
-    public readonly byte NumAnimVals;
-    public readonly BalanceAnimValRef[] AnimVals;
+    public readonly byte BalanceLevel;//0
+    public readonly byte RecordSize;//1
+    public readonly byte MaxHp;//2 - également DamageResponses[-1], slot 0 du tableau de réponses
+    public readonly byte[] DamageResponses = new byte[11];//3
+    public readonly byte AttackCount;//e
+    public readonly BalanceAttack[] Attacks;//f
 
-    public readonly int Offset;
-    public readonly BalanceRecord Next;
+    public readonly int FileOffset;
+    public readonly BalanceRecord NextLevel;
 
     public BalanceRecord(BinaryReader br, int offset)
     {
-        Offset = offset;
+        FileOffset = offset;
         br.BaseStream.Position = offset;
-        Level = br.ReadByte();
-        OffsetToNextLevel = br.ReadByte();
-        Hp = br.ReadByte();
-        br.Read(Values, 0, 11);
-        NumAnimVals = br.ReadByte();
+        BalanceLevel = br.ReadByte();
+        RecordSize = br.ReadByte();
+        MaxHp = br.ReadByte();
+        br.Read(DamageResponses, 0, 11);
+        AttackCount = br.ReadByte();
 
-        if (NumAnimVals > 0)
+        if (AttackCount > 0)
         {
-            AnimVals = new BalanceAnimValRef[NumAnimVals];
+            Attacks = new BalanceAttack[AttackCount];
 
-            for (var i = 0; i < NumAnimVals; i++)
+            for (var i = 0; i < AttackCount; i++)
             {
-                AnimVals[i] = new BalanceAnimValRef(br);
+                Attacks[i] = new BalanceAttack(br);
             }
         }
 
-        if (Level < 255)
+        if (BalanceLevel < 255)
         {
-            Next = new BalanceRecord(br, offset + OffsetToNextLevel);
+            NextLevel = new BalanceRecord(br, offset + RecordSize);
         }
+    }
+
+    // 80038ab4 / 8004464c : l'attaque de l'animation N est stockée dans Attacks[N + 1],
+    // l'élément 0 servant de repli quand N + 1 dépasse AttackCount.
+    public BalanceAttack? GetAttackForAnimation(int animationId)
+    {
+        if (AttackCount == 0)
+        {
+            return null;
+        }
+
+        var index = animationId + 1 >= AttackCount ? 0 : animationId + 1;
+        return Attacks[index];
     }
 }

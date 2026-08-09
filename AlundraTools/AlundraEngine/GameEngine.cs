@@ -208,7 +208,7 @@ public class GameEngine
             //DoNothing();
             ClearTemporaryFlags();
             ResetCameraAndLoadVRAMAssets();
-            InitializeItems(CurrentMap.Info._11); //StaticVariables.g_gameMapInfo->d
+            InitializeItems(CurrentMap.Info.D);
             LoadMapAndInitializeEntities(null);//((int)&g_currentMapBuffer.infoBlockOffset + g_currentMapBuffer.spriteSheetsOffset));
             WarpPlayer(playerPosX, playerPosY, playerPosZ, StaticVariables.g_mapTransitionEffectId);
             InitializeScrollingMode();
@@ -457,7 +457,7 @@ public class GameEngine
 
         do
         {
-            StaticVariables.g_itemBalanceRecords[i].ItemId = 0;
+            StaticVariables.g_itemBalanceRecords[i].BalanceRecord = null;
             i -= 1;
         } while (i >= 0);
     }
@@ -1851,7 +1851,7 @@ public class GameEngine
                 continue;
             }
 
-            if ((candidate.BalanceRecord.Values[balanceIndex - 1] & 0xC0) == 0x80)
+            if ((candidate.BalanceRecord.DamageResponses[balanceIndex - 1] & 0xC0) == 0x80)
             {
                 continue;
             }

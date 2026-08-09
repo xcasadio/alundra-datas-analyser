@@ -29,11 +29,11 @@
 
 | Fichier | Classe | Statut | Description |
 |---------|--------|--------|-------------|
-| BalanceAnimValRef.cs | `BalanceAnimValRef` | **Asset Loading** | Lit une référence de valeur d'animation balance depuis BinaryReader |
+| BalanceAttack.cs | `BalanceAttack` | **Asset Loading** | Attaque infligée pendant une animation : attribut (type + bit bonus équipement) et puissance |
 | BalanceBin.cs | `BalanceBin` | **Both** | Charge balance.bin et fournit la recherche runtime des records par index sprite/item |
-| BalanceRecord.cs | `BalanceRecord` | **Asset Loading** | Lit un record balance en liste chaînée (HP, valeurs, anim vals) depuis BinaryReader |
-| BalanceRecordData.cs | `BalanceRecordData` | **Runtime** | Copie mutable d'un BalanceRecord utilisée au runtime pour les stats d'entités |
-| ItemBalanceRecord.cs | `ItemBalanceRecord` | **Runtime** | Conteneur simple associant un ID d'item à son balance record |
+| BalanceRecord.cs | `BalanceRecord` | **Asset Loading** | Lit un record balance chaîné par palier de puissance (PV max, réponses aux dégâts, attaques) |
+| EffectiveBalanceStats.cs | `EffectiveBalanceStats` | **Runtime** | Copie mutable des stats effectives du joueur (base + arme + bouclier), recalculée chaque frame |
+| EquippedItemBalance.cs | `EquippedItemBalance` | **Runtime** | Un des 3 emplacements d'équipement suivis par le jeu : ID d'item + son balance record |
 
 ## DatasBin/
 

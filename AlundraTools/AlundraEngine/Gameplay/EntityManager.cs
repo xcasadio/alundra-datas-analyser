@@ -103,7 +103,7 @@ public class EntityManager
 
         BalanceRecord balanceRecord = _gameEngine.BalanceBin.GetBalanceRecordFromSpriteIndex((int)spriteTableIndex, _gameEngine.StaticVariables.g_itemIdThreshold);
         entity.BalanceRecord = balanceRecord;
-        byte balanceHp = balanceRecord.Hp;
+        byte balanceHp = balanceRecord.MaxHp;
         entity.HpMax = balanceHp;
         entity.Hp = balanceHp;
 
@@ -235,15 +235,7 @@ public class EntityManager
             entity.ForceResetAnimationFlag = 0;
             entity.AnimFlags = entity.AnimationSet.Acceleration; // TODO Acceleration ??
 
-            if (entity.BalanceRecord.NumAnimVals == 0)
-            {
-                entity.BalanceAnimValRef = null;
-            }
-            else
-            {
-                var index = entity.TargetAnimationId + 1 >= entity.BalanceRecord.NumAnimVals ? 0 : entity.TargetAnimationId + 1;
-                entity.BalanceAnimValRef = entity.BalanceRecord.AnimVals[index];
-            }
+            entity.CurrentAttack = entity.BalanceRecord.GetAttackForAnimation((int)entity.TargetAnimationId);
 
             uint sfxId = entity.AnimationSet.Sfx;
             if ((entity.AnimationSet.Flags & 0x20) != 0)
@@ -449,12 +441,12 @@ public class EntityManager
                 continue;
             }
 
-            if (entity.BalanceAnimValRef == null)
+            if (entity.CurrentAttack == null)
             {
                 continue;
             }
 
-            if (entity.BalanceAnimValRef.Val == 0)
+            if (entity.CurrentAttack.AttackAttribute == 0)
             {
                 continue;
             }
@@ -561,10 +553,10 @@ public class EntityManager
 
                 //AlundraEngine.Debug.Debugger.Breakpoint();
 
-                var balanceValueIndex = entity.BalanceAnimValRef.Val & 0xf;
+                var balanceValueIndex = entity.CurrentAttack.AttackAttribute & 0xf;
                 byte val = balanceValueIndex == 0
-                    ? otherEntity.BalanceRecord.Hp
-                    : otherEntity.BalanceRecord.Values[balanceValueIndex - 1];
+                    ? otherEntity.BalanceRecord.MaxHp
+                    : otherEntity.BalanceRecord.DamageResponses[balanceValueIndex - 1];
 
                 //if (_gameEngine.StaticVariables.g_debugState < 0
                 //    && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
@@ -1140,20 +1132,20 @@ public class EntityManager
     {
         int newHp;
         int strLength;
-        BalanceRecordData balanceRecord;
+        EffectiveBalanceStats balanceRecord;
         string debugStr = string.Empty;
 
         if (entity == _gameEngine.StaticVariables.PlayerEntity)
         {
-            balanceRecord = _gameEngine.StaticVariables.g_balanceRecord[0];
+            balanceRecord = _gameEngine.StaticVariables.g_balanceRecord;
         }
         else
         {
-            balanceRecord = new BalanceRecordData();
+            balanceRecord = new EffectiveBalanceStats();
             balanceRecord.CopyFrom(entity.BalanceRecord);
         }
 
-        newHp = ResolveBalanceTarget(entity.TouchingEntity.BalanceAnimValRef, balanceRecord, entity.Hp);
+        newHp = ResolveBalanceTarget(entity.TouchingEntity.CurrentAttack, balanceRecord, entity.Hp);
 
         //if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
         if (_gameEngine.StaticVariables.IsLogDamageEnabled)
@@ -1208,10 +1200,10 @@ public class EntityManager
     }
 
     // 8004464c
-    private int ResolveBalanceTarget(BalanceAnimValRef balanceConfig, BalanceRecordData balanceRecordData, int hp)
+    private int ResolveBalanceTarget(BalanceAttack balanceConfig, EffectiveBalanceStats balanceRecordData, int hp)
     {
-        BalanceAnimValRef values;
-        ItemBalanceRecord[] balanceSources;
+        BalanceAttack values;
+        EquippedItemBalance[] balanceSources;
         BalanceRecord balanceRecord;
         int i;
         int adjustedHpValue;
@@ -1231,18 +1223,18 @@ public class EntityManager
             return hp;
         }
 
-        balanceId = balanceConfig.Val;
+        balanceId = balanceConfig.AttackAttribute;
 
         if (balanceId == 0)
         {
             return hp;
         }
 
-        balanceMultiplier = balanceRecordData.Values[(balanceId & 0xf) - 1];
+        balanceMultiplier = balanceRecordData.DamageResponses[(balanceId & 0xf) - 1];
 
         if ((balanceMultiplier & 0xc0) == 0)
         {
-            adjustedHpValue = balanceConfig.U2;
+            adjustedHpValue = balanceConfig.Power;
 
             if ((balanceId & 0x80) != 0)
             {
@@ -1255,22 +1247,11 @@ public class EntityManager
 
                     if (balanceRecord != null)
                     {
-                        if (balanceRecord.NumAnimVals == 0)
-                        {
-                            values = null;
-                        }
-                        else if (_gameEngine.StaticVariables.g_balanceAnimIndex + 1 < balanceRecord.NumAnimVals)
-                        {
-                            values = balanceRecord.AnimVals[(_gameEngine.StaticVariables.g_balanceAnimIndex << 1) + 0xf + 2];
-                        }
-                        else
-                        {
-                            values = balanceRecord.AnimVals[0];
-                        }
+                        values = balanceRecord.GetAttackForAnimation(_gameEngine.StaticVariables.g_balanceAnimIndex);
 
                         if (values != null)
                         {
-                            adjustedHpValue = adjustedHpValue + values.Val;
+                            adjustedHpValue = adjustedHpValue + values.Power;
                         }
                     }
 
@@ -1300,9 +1281,9 @@ public class EntityManager
                 //if (_gameEngine.StaticVariables.g_debugState < 0 && (_gameEngine.StaticVariables.g_debugFlags & 0x800) != 0)
             {
                 _gameEngine.StaticVariables.g_balanceHp = (short)adjustedHpValue;
-                _gameEngine.StaticVariables.g_balanceParams = balanceConfig.U2;
+                _gameEngine.StaticVariables.g_balanceParams = balanceConfig.Power;
                 _gameEngine.StaticVariables.g_balanceResult = (short)i;
-                _gameEngine.StaticVariables.g_balanceHpTotal = balanceConfig.Val;
+                _gameEngine.StaticVariables.g_balanceHpTotal = balanceConfig.AttackAttribute;
                 _gameEngine.StaticVariables.g_balanceMultiplier = balanceMultiplier;
             }
         }
@@ -1315,7 +1296,7 @@ public class EntityManager
                 _gameEngine.StaticVariables.g_balanceHp = 0;
                 _gameEngine.StaticVariables.g_balanceParams = 0;
                 _gameEngine.StaticVariables.g_balanceResult = (short)hp;
-                _gameEngine.StaticVariables.g_balanceHpTotal = balanceConfig.Val;
+                _gameEngine.StaticVariables.g_balanceHpTotal = balanceConfig.AttackAttribute;
                 _gameEngine.StaticVariables.g_balanceMultiplier = balanceMultiplier;
             }
 

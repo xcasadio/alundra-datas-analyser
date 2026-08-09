@@ -6378,7 +6378,7 @@ public static class FunctionTypeC
         {
             Entity[] matchingEntities = gameEngine.StaticVariables.g_matchingEntitiesBuffer;
             int[] distanceSquared = new int[matchingEntities.Length];
-            int matchCount = gameEngine.FUN_8003AF70(entity, 1, entity.BalanceAnimValRef!.Val & 0x0F, matchingEntities, distanceSquared);
+            int matchCount = gameEngine.FUN_8003AF70(entity, 1, entity.CurrentAttack!.AttackAttribute & 0x0F, matchingEntities, distanceSquared);
 
             if (matchCount == 0)
             {
@@ -7131,7 +7131,7 @@ public static class FunctionTypeC
         {
             Entity[] matchingEntities = gameEngine.StaticVariables.g_matchingEntitiesBuffer;
             int[] distanceSquared = new int[matchingEntities.Length];
-            int matchCount = gameEngine.FUN_8003AF70(entity, 1, entity.BalanceAnimValRef!.Val & 0x0F, matchingEntities, distanceSquared);
+            int matchCount = gameEngine.FUN_8003AF70(entity, 1, entity.CurrentAttack!.AttackAttribute & 0x0F, matchingEntities, distanceSquared);
             int direction;
 
             if (matchCount != 0 && distanceSquared[0] < 0x3840)
@@ -9287,8 +9287,8 @@ public static class FunctionTypeC
                 direction = (uint)ScriptHelper.GetDirectionToTarget(gameEngine.StaticVariables.PlayerEntity.PosX - entity.PosX, gameEngine.StaticVariables.PlayerEntity.PosY - entity.PosY);
                 entity.TargetDirection = direction;
                 if (gameEngine.StaticVariables.PlayerEntity.FrameCollision != null &&
-                    gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef != null &&
-                    gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef.Val != 0 &&
+                    gameEngine.StaticVariables.PlayerEntity.CurrentAttack != null &&
+                    gameEngine.StaticVariables.PlayerEntity.CurrentAttack.AttackAttribute != 0 &&
                     positions[0] < 5 && positions[1] < 5)
                 {
                     if ((int)((Random.Next() * 4) >> 0x20) == 0)
@@ -9518,8 +9518,8 @@ public static class FunctionTypeC
                 }
 
                 if (gameEngine.StaticVariables.PlayerEntity.FrameCollision == null ||
-                    gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef == null ||
-                    gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef.Val == 0)
+                    gameEngine.StaticVariables.PlayerEntity.CurrentAttack == null ||
+                    gameEngine.StaticVariables.PlayerEntity.CurrentAttack.AttackAttribute == 0)
                 {
                     uVar5 = (uint)ScriptHelper.GetDirectionToTarget(
                         entity.PosX - gameEngine.StaticVariables.PlayerEntity.PosX,
@@ -9537,8 +9537,8 @@ public static class FunctionTypeC
                     5 < positions[1] ||
                     0x100000 < positions[2] ||
                     gameEngine.StaticVariables.PlayerEntity.FrameCollision == null ||
-                    gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef == null ||
-                    gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef.Val == 0)
+                    gameEngine.StaticVariables.PlayerEntity.CurrentAttack == null ||
+                    gameEngine.StaticVariables.PlayerEntity.CurrentAttack.AttackAttribute == 0)
                 {
                     sVar3 = (short)(entity.AIValues[1] - 1);
                     entity.AIValues[1] = sVar3;
@@ -9700,8 +9700,8 @@ public static class FunctionTypeC
 
         if (((uVar8 < 2) || (uVar8 == 5)) &&
             gameEngine.StaticVariables.PlayerEntity.FrameCollision != null &&
-            gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef != null &&
-            gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef.Val != 0 &&
+            gameEngine.StaticVariables.PlayerEntity.CurrentAttack != null &&
+            gameEngine.StaticVariables.PlayerEntity.CurrentAttack.AttackAttribute != 0 &&
             relativePositions[0] < 3 &&
             relativePositions[1] < 3)
         {
@@ -10317,8 +10317,8 @@ public static class FunctionTypeC
                     if (relativePositions[0] < 5
                         && relativePositions[1] < 5
                         && gameEngine.StaticVariables.PlayerEntity.FrameCollision != null
-                        && gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef != null
-                        && gameEngine.StaticVariables.PlayerEntity.BalanceAnimValRef.Val != 0)
+                        && gameEngine.StaticVariables.PlayerEntity.CurrentAttack != null
+                        && gameEngine.StaticVariables.PlayerEntity.CurrentAttack.AttackAttribute != 0)
                     {
                         entity.TargetAnimationId = 8;
                         uVar5 = (uint)ScriptHelper.GetDirectionToTarget(
@@ -16792,7 +16792,7 @@ SetAnim6:
             Breakpoint.TriggerBreak();
         }
 
-        int distance = entity.BalanceAnimValRef!.Val & 0x0F;
+        int distance = entity.CurrentAttack!.AttackAttribute & 0x0F;
         Entity?[] nearbyEntities = new Entity?[gameEngine.StaticVariables.g_numberOfEntities];
         int[] distanceSquared = new int[nearbyEntities.Length];
         int nearbyCount = 0;
@@ -16841,7 +16841,7 @@ SetAnim6:
                 continue;
             }
 
-            if ((candidate.BalanceRecord.Values[distance - 1] & 0xC0) == 0x80)
+            if ((candidate.BalanceRecord.DamageResponses[distance - 1] & 0xC0) == 0x80)
             {
                 continue;
             }

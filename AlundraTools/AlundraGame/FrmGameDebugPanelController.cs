@@ -163,7 +163,7 @@ internal sealed class FrmGameDebugPanelController
         [nameof(Entity.Slope_190)] = "Physics",
         [nameof(Entity.TileAttributes)] = "Physics",
         [nameof(Entity.BalanceRecord)] = "Collision",
-        [nameof(Entity.BalanceAnimValRef)] = "Collision",
+        [nameof(Entity.CurrentAttack)] = "Collision",
         [nameof(Entity.CollisionOffsetX)] = "Collision",
         [nameof(Entity.CollisionOffsetY)] = "Collision",
         [nameof(Entity.CollisionOffsetZ)] = "Collision",

@@ -11,13 +11,13 @@ public class GameMapInfo
     public readonly short Gravity; //4
     public readonly short ZViscosity; //6
     public readonly byte SlideEffectId; // XYResistance
-    public readonly byte BalanceLevel; // AnimDeleteWall
-    public readonly byte C;
-    public readonly byte D;
-    public readonly byte E;
-    public readonly byte F;
-    public readonly byte _10; // AnimLandFloor
-    public readonly byte _11; // item something
+    public readonly byte BalanceLevel; //9 - AnimDeleteWall. NOM NON PROUVE : ce n'est PAS le niveau de balance, c'est D qui l'est.
+    public readonly byte C; //a
+    public readonly byte D; //b - vrai niveau de balance de la map, passe a InitializeItems (lbu a0,0xb(v0) @ 8002c39c)
+    public readonly byte E; //c
+    public readonly byte F; //d
+    public readonly byte _10; //e - AnimLandFloor
+    public readonly byte _11; //f
     public readonly Color[][] Palettes;
     public readonly SpriteMapEntry[] SpriteMapEntries;
     public readonly Portal[] Portals;
@@ -44,7 +44,7 @@ public class GameMapInfo
         E = br.ReadByte();//e
         F = br.ReadByte();//f
         _10 = br.ReadByte();//10
-        _11 = br.ReadByte();//10
+        _11 = br.ReadByte();//11
 
         //read palettes
         var maxPalettes = 32;

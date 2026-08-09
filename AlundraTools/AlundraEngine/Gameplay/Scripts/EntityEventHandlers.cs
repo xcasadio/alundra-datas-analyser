@@ -2477,9 +2477,9 @@ public class EntityEventHandlers
 
                 if (touchingEntity != null 
                     && touchingEntity.FrameCollision != null
-                    && touchingEntity.BalanceAnimValRef != null
-                    && touchingEntity.BalanceAnimValRef.Val != 0 
-                    && (touchingEntity.BalanceAnimValRef.Val & 0xf) == expectedNibble)
+                    && touchingEntity.CurrentAttack != null
+                    && touchingEntity.CurrentAttack.AttackAttribute != 0 
+                    && (touchingEntity.CurrentAttack.AttackAttribute & 0xf) == expectedNibble)
                 {
                     eventProgramState.Result = 1;
                     return 3;
@@ -2777,12 +2777,12 @@ public class EntityEventHandlers
                 continue;
             }
 
-            if (e.BalanceAnimValRef == null)
+            if (e.CurrentAttack == null)
             {
                 continue;
             }
 
-            byte val = e.BalanceAnimValRef.Val;
+            byte val = e.CurrentAttack.AttackAttribute;
             if (val == 0)
             {
                 continue;
