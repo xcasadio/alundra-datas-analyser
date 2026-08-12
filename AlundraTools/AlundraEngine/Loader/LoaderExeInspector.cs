@@ -4,12 +4,16 @@ using System.Drawing.Imaging;
 namespace AlundraEngine.Loader;
 
 /// <summary>
-/// Gives access to the 16 TIM resources embedded in LOADER.EXE, plus the raw executable bytes.
+/// Gives access to the TIM resources embedded in the loader executable, plus the raw bytes.
 ///
 /// JUSTIFICATION: PSX hardware adaptation only.
 /// RELATION: on the console these resources are simply resident in RAM at fixed addresses once the
 /// executable is loaded, and the code dereferences them directly. On desktop the executable is a
 /// file, so each resource is reached by a file offset instead.
+///
+/// Nothing here is tied to one regional build. The RAM-to-file delta comes from the PS-EXE header,
+/// the resources from the embedded container, and the sound tables from where that container ends;
+/// what genuinely differs between discs lives in <see cref="LoaderBuild"/>.
 /// </summary>
 public class LoaderExeInspector
 {

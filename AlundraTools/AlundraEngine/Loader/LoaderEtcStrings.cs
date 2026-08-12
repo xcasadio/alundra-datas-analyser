@@ -3,7 +3,8 @@ using System.Diagnostics;
 namespace AlundraEngine.Loader;
 
 /// <summary>
-/// The loader's string table, <c>DATA/ETC_RES.R</c>.
+/// The loader's string table under <c>DATA</c> — <c>ETC_RES.R</c> on France, <c>ETC_USA.R</c> on
+/// the USA disc; see <see cref="LoaderBuild.EtcFileName"/>.
 ///
 /// GHIDRA: loaded by InitializePsx @ 0x80025238 with
 /// <c>LoadEtcFile("DATA\ETC_RES.R", &amp;g_etcResRBuffer, 0x3000)</c>, read by GetEtcResourceEntry
@@ -11,8 +12,9 @@ namespace AlundraEngine.Loader;
 /// <c>return g_etcResRBuffer.Index + (u16)g_etcResRBuffer.Index[entryIndex];</c>
 ///
 /// The file therefore starts with an array of 16-bit offsets, each relative to the start of the file
-/// itself, and the strings follow. On the France build the array is 0x800 bytes (1024 entries) and
-/// entry 0 points at 0x0801.
+/// itself, and the strings follow. Both discs hold 1024 entries: the array is 0x801 bytes on France,
+/// whose entry 0 points at 0x0801, and 0x800 on USA. An entry the build does not use reads 0xFFFF,
+/// which is past the buffer and so resolves to "no entry".
 ///
 /// JUSTIFICATION: PSX hardware adaptation only.
 /// RELATION: the original reads the file off the CD into a fixed RAM buffer and hands out pointers
@@ -65,7 +67,7 @@ public sealed class LoaderEtcStrings
         var entryCount = firstOffset / 2;
         if (entryCount <= 0 || firstOffset > content.Length)
         {
-            Debug.WriteLine($"ETC_RES.R at '{path}' has an unusable index (first offset 0x{firstOffset:X}).");
+            Debug.WriteLine($"The string table at '{path}' has an unusable index (first offset 0x{firstOffset:X}).");
             return null;
         }
 
