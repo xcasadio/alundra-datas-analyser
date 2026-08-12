@@ -20,17 +20,18 @@ public readonly record struct LoaderResourceKey(string Tag, int Index)
 /// <param name="InsertMemoryCard">Shown when no card is present at all.</param>
 /// <param name="NoSaveData">Shown when the card holds no Alundra save.</param>
 /// <param name="ConfirmLoad">The question above the confirmation prompt.</param>
-/// <param name="Yes">The confirmation prompt's left label, or -1 when the build has none.</param>
-/// <param name="No">Its right label, or -1 when the build has none.</param>
+/// <param name="Yes">
+/// The confirmation prompt's left label, or -1 when the build draws it from the executable instead
+/// — see <see cref="LoaderBuild.ConfirmYesStringAddress"/>.
+/// </param>
+/// <param name="No">Its right label, on the same terms.</param>
 /// <remarks>
 /// The indices are not stable across regions. The USA table runs one lower throughout — its 0xC0 is
 /// the France 0xC1, its 0xC7 the France 0xC8 — and stops at 0xC8: every index above that reads
 /// 0xFFFF, the table's "no entry" marker.
 ///
-/// GAP: that truncation is why <see cref="Yes"/> and <see cref="No"/> are -1 on the USA build. Its
-/// confirmation prompt has to source those two labels somewhere this port has not found yet; the
-/// drawing calls fail soft on -1, so the panel comes up without them. Reading the indices
-/// SetSpriteImage is given in that build's equivalent of the selection screen is what would close it.
+/// That truncation is why the USA build has no entry for the two confirmation labels: it does not
+/// keep them in the string table at all.
 /// </remarks>
 public readonly record struct LoaderStringIds(
     int UsingMemoryCard,
@@ -135,6 +136,23 @@ public sealed record LoaderBuild
     public required LoaderStringIds Strings { get; init; }
 
     /// <summary>
+    /// Where the confirmation prompt's "yes" label lives inside the executable, for a build that
+    /// does not keep it in the string table; null when <see cref="LoaderStringIds.Yes"/> supplies it.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA (USA): FUN_80022d7c draws the two labels 0x30 apart, exactly as France does, but
+    /// passes <c>&amp;DAT_800200e4</c> and <c>&amp;DAT_800200e8</c> rather than string-table entries.
+    /// Read back, those are "Yes" and "No " — plain literals in the executable's data.
+    ///
+    /// That is why the USA string table simply stops before France's 0xCA/0xCB: this build never
+    /// needed those entries.
+    /// </remarks>
+    public uint? ConfirmYesStringAddress { get; init; }
+
+    /// <summary>The same for the "no" label.</summary>
+    public uint? ConfirmNoStringAddress { get; init; }
+
+    /// <summary>
     /// The selection screen's hotspot map: records of five shorts, ending on code -1.
     /// </summary>
     /// <remarks>
@@ -220,7 +238,8 @@ public sealed record LoaderBuild
         // SOURCE: matched against the France entries by meaning, one index lower throughout —
         // 0xC0 "Using the Book in Slot 1.", 0xC1 "Please insert a History Book in Slot 1.",
         // 0xC7 "No record exists of Alundra's adventures.", 0xC8 "Would you like to rejoin the
-        // tale in this chapter?". The table ends there; see the GAP note on LoaderStringIds.
+        // tale in this chapter?". The table ends there, and the two confirmation labels come out
+        // of the executable instead.
         Strings = new LoaderStringIds(
             UsingMemoryCard: 0xC0,
             InsertMemoryCard: 0xC1,
@@ -228,6 +247,8 @@ public sealed record LoaderBuild
             ConfirmLoad: 0xC8,
             Yes: LoaderStringIds.Absent,
             No: LoaderStringIds.Absent),
+        ConfirmYesStringAddress = 0x800200E4,
+        ConfirmNoStringAddress = 0x800200E8,
         SelectionHotspotTableAddress = 0x80043828,
         SlotMarkerRestingStringAddress = 0x800437F8,
         SlotMarkerAnimationStringAddress = 0x800437FC,

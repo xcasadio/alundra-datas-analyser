@@ -462,13 +462,13 @@ public sealed class LoaderSelectionScreen
         _textLayer3.SetTextLayer(_tileMap3, _textBox3);
 
         // GHIDRA: the two labels of the confirmation prompt, drawn side by side 0x30 apart into the
-        // third tile map. Entries 0xCA and 0xCB of ETC_RES.R on the France build; the USA string
-        // table stops before them, so there both draws are no-ops.
+        // third tile map. Entries 0xCA and 0xCB of ETC_RES.R on the France build; on the USA build
+        // FUN_80022d7c passes the executable's own "Yes" and "No " literals instead.
         //
         // CORRECTION: an earlier pass read the SetSpriteImage calls here as loading cursor sprites.
         // SetSpriteImage draws text (renamed DrawTextToLayer), so these are strings.
-        DrawStringEntry(_textLayer3, _inspector.Build.Strings.Yes, 0, 0, 0);
-        DrawStringEntry(_textLayer3, _inspector.Build.Strings.No, 0x30, 0, 1);
+        DrawConfirmLabel(_textLayer3, _inspector.Build.Strings.Yes, _inspector.Build.ConfirmYesStringAddress, 0, 0);
+        DrawConfirmLabel(_textLayer3, _inspector.Build.Strings.No, _inspector.Build.ConfirmNoStringAddress, 0x30, 1);
 
         _hudTopLeft.Set(0, 0xF0, 0, 4, 0, 0xF0);
         _hudTopRight.Set(0, 0xF0, 0, 8, 0, 0xF0);
@@ -1215,6 +1215,26 @@ public sealed class LoaderSelectionScreen
 
         layer.Text = _strings.Buffer;
         layer.TextPosition = offset;
+    }
+
+    /// <summary>
+    /// Draws one confirmation label, from wherever this build keeps it.
+    /// </summary>
+    /// <remarks>
+    /// France reads it out of ETC_RES.R like every other string; the USA build has it as a literal
+    /// in the executable, so the bytes come from there and the cursor work is the same either way.
+    /// </remarks>
+    private void DrawConfirmLabel(LoaderTextLayer layer, int entryIndex, uint? exeAddress, int cursorX, int sync)
+    {
+        if (exeAddress is not { } address)
+        {
+            DrawStringEntry(layer, entryIndex, cursorX, 0, sync);
+            return;
+        }
+
+        layer.CursorX = cursorX;
+        layer.CursorY = 0;
+        layer.DrawText(_inspector.ExeBytes, _inspector.RamToFileOffset(address), sync);
     }
 
     /// <summary>Draws a string-table entry into a layer in one call, at a given cursor position.</summary>
