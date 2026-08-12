@@ -65,21 +65,6 @@ public class LoaderExeInspector
         [("", -1)] = "g_TitleFull",
     };
 
-    /// <summary>Index of the first frame of the animated title logo.</summary>
-    public const int TitleFrame0Index = 7;
-
-    /// <summary>Number of frames in the animated title logo.</summary>
-    public const int TitleFrameCount = 8;
-
-    /// <summary>Index of the full title screen image.</summary>
-    public const int TitleFullIndex = 15;
-
-    /// <summary>Index of the boot loading screen.</summary>
-    public const int LoadingScreenIndex = 5;
-
-    /// <summary>Index of the licence screen.</summary>
-    public const int LicenceScreenIndex = 6;
-
     private readonly byte[] _exeBytes;
     private readonly EtcResource[] _resources;
     private readonly Dictionary<int, Bitmap> _images = new();
@@ -319,6 +304,42 @@ public class LoaderExeInspector
         }
 
         return null;
+    }
+
+    /// <summary>Same lookup, for the roles <see cref="LoaderBuild"/> names.</summary>
+    public EtcResource? FindEtcResource(LoaderResourceKey key) => FindEtcResource(key.Tag, key.Index);
+
+    /// <summary>
+    /// Every animation frame of the title logo, in container order.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA: InitBootSequenceGraphics @ 0x800213c4 builds one tile layer per "ANM" resource and
+    /// FUN_80021a1c walks them by index, so the container's own order and count are what matter.
+    /// France holds eight, matching the loop bound read off that function; USA holds nine.
+    /// </remarks>
+    public EtcResource[] ReadTitleAnimationFrames() =>
+        [.. _resources.Where(r => r.Name == "ANM").OrderBy(r => r.Index)];
+
+    /// <summary>Decodes the resource a role names, or null when the build does not carry it.</summary>
+    public Bitmap? LoadImage(LoaderResourceKey key)
+    {
+        var index = IndexOf(key);
+        return index < 0 ? null : LoadImage(index);
+    }
+
+    /// <summary>Position of a role's resource in container order, or -1 when absent.</summary>
+    public int IndexOf(LoaderResourceKey key)
+    {
+        for (var index = 0; index < _resources.Length; index++)
+        {
+            if (_resources[index].Index == key.Index &&
+                string.Equals(_resources[index].Name, key.Tag, StringComparison.Ordinal))
+            {
+                return index;
+            }
+        }
+
+        return -1;
     }
 
     /// <summary>Where one BGM track's data lives inside SOUND.BIN.</summary>

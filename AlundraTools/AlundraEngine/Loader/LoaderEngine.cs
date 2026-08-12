@@ -172,7 +172,7 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
         _inspector = new LoaderExeInspector(gamePath, build);
         _moviePath = Path.Combine(gamePath, "MOVIE");
 
-        _titleScreen = _inspector.LoadImage(LoaderExeInspector.TitleFullIndex);
+        _titleScreen = _inspector.LoadImage(build.TitleFull);
         _etcStrings = LoaderEtcStrings.Load(gamePath);
 
         _ui = new LoaderUiRenderer(renderer);
@@ -259,7 +259,7 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
         // SetTileLayerBounds(&g_tileMapTitleFull, 0x180, 0, 0, 0x1e2, 0):
         // the 320x240 8bpp title screen lands at VRAM (0x180, 0) - 160 words wide - and its CLUT
         // at (0, 0x1e2).
-        _ui.UploadTim(_inspector.ExeBytes, _inspector.GetImageFileOffset(LoaderExeInspector.TitleFullIndex),
+        _ui.UploadTim(_inspector.ExeBytes, _inspector.GetImageFileOffset(_inspector.IndexOf(_inspector.Build.TitleFull)),
             destX: 0x180, destY: 0, clutDestX: 0, clutDestY: 0x1E2);
 
         // The five boxes covering the animated logo area: 64x160 each, side by side, sourced from
@@ -296,21 +296,10 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
             box.SetBaseAndRotation(0, 0, 0, -1);
         }
 
-        // GHIDRA: InitBootSequenceGraphics builds one tile layer per "ANM" resource, 1 to 8, in
-        // that order. FUN_80021a1c then walks them by index, so the array order is what matters.
-        var animation = new List<int>();
-        for (var index = 1; index <= 8; index++)
-        {
-            var resource = _inspector.FindEtcResource("ANM", index);
-            if (resource is null)
-            {
-                break;
-            }
-
-            animation.Add(resource.Value.PayloadOffset);
-        }
-
-        _titleAnimationOffsets = animation.ToArray();
+        // GHIDRA: InitBootSequenceGraphics builds one tile layer per "ANM" resource, in that order.
+        // FUN_80021a1c then walks them by index, so the container's own order and count are what
+        // matter - eight frames on France, nine on USA.
+        _titleAnimationOffsets = [.. _inspector.ReadTitleAnimationFrames().Select(frame => frame.PayloadOffset)];
         _titleAnimationHold = 0;
         _titleAnimationLayer = 0;
 
@@ -488,9 +477,9 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
         }
 
         _titleAnimationLayer++;
-        if (_titleAnimationLayer == 8)
+        if (_titleAnimationLayer == _titleAnimationOffsets.Length)
         {
-            _titleAnimationLayer = 3;
+            _titleAnimationLayer = _inspector.Build.TitleAnimationLoopStart;
         }
     }
 
@@ -518,7 +507,9 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
             return;
         }
 
-        var resource = _inspector.FindEtcResource("TIM", 7);
+        var resource = _inspector.Build.BootScreen is { } bootScreen
+            ? _inspector.FindEtcResource(bootScreen)
+            : null;
         if (resource is not null)
         {
             _bootScreenLayer.InitializeTileLayer(_inspector.ExeBytes, resource.Value.PayloadOffset);

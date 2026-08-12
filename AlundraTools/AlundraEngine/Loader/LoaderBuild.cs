@@ -3,6 +3,17 @@ using System.Text.RegularExpressions;
 namespace AlundraEngine.Loader;
 
 /// <summary>
+/// Names one record of the executable's resource container.
+/// </summary>
+/// <param name="Tag">The three-character tag, "TIM" or "ANM"; empty for an untagged record.</param>
+/// <param name="Index">Index within that tag; -1 for an untagged record.</param>
+public readonly record struct LoaderResourceKey(string Tag, int Index)
+{
+    /// <summary>The records past the "END" sentinel, which carry no tag.</summary>
+    public static LoaderResourceKey Untagged => new(string.Empty, -1);
+}
+
+/// <summary>
 /// Everything about the loader that differs from one regional build of the disc to the next.
 ///
 /// JUSTIFICATION: PSX hardware adaptation only.
@@ -33,11 +44,51 @@ public sealed record LoaderBuild
     /// </remarks>
     public required string[] ExeFileNames { get; init; }
 
+    /// <summary>
+    /// Where the full title screen lives, the image InitBootSequenceGraphics uploads to VRAM
+    /// (0x180, 0).
+    /// </summary>
+    /// <remarks>
+    /// The one resource whose place in the container differs between the two discs. France keeps it
+    /// past the "END" sentinel, untagged, which is why the original reaches it by a direct pointer
+    /// rather than through GetEtcResource; the USA build carries it inside the container as TIM #0.
+    ///
+    /// SOURCE: both decoded and compared — 320x240 8bpp, the "START / CONTINUE" screen, with the
+    /// Psygnosis line on France and the Working Designs line on USA.
+    /// </remarks>
+    public required LoaderResourceKey TitleFull { get; init; }
+
+    /// <summary>
+    /// The image RunLoadingScreenIntro shows while the game loads, or null when the build has none.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA: <c>GetEtcResource(g_loadRoomBackgroundTimPtr, "TIM", 7)</c> — on France that is
+    /// g_licenceScreenTim, the "licensed by SCEE" screen PAL releases are required to show. The USA
+    /// build has no TIM #7 at all: US discs get that screen from the console's own boot ROM, so
+    /// there is nothing to display here.
+    /// </remarks>
+    public LoaderResourceKey? BootScreen { get; init; }
+
+    /// <summary>
+    /// The frame the title-logo animation restarts on once it has played through.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA (France): FUN_80021a1c @ 0x80021a1c wraps the layer index from 8 back to 3 — the
+    /// opening flourish walks all eight frames, then the animation settles into a five-frame loop.
+    ///
+    /// PROBABLE on USA: that build carries nine ANM records rather than eight, and 4 keeps the same
+    /// five-frame loop. Not read off its code — confirm against its FUN_80021a1c before trusting it.
+    /// </remarks>
+    public required int TitleAnimationLoopStart { get; init; }
+
     /// <summary>The France disc: SLES-01198, boots SLES_011.98.</summary>
     public static readonly LoaderBuild France = new()
     {
         Version = AlundraVersion.European,
         ExeFileNames = ["LOADER.EXE", "SLES_011.98"],
+        TitleFull = LoaderResourceKey.Untagged,
+        BootScreen = new LoaderResourceKey("TIM", 7),
+        TitleAnimationLoopStart = 3,
     };
 
     /// <summary>The USA 1.1 disc: SLUS-00553, boots SLUS_005.53.</summary>
@@ -45,6 +96,9 @@ public sealed record LoaderBuild
     {
         Version = AlundraVersion.Usa,
         ExeFileNames = ["SLUS_005.53"],
+        TitleFull = new LoaderResourceKey("TIM", 0),
+        BootScreen = null,
+        TitleAnimationLoopStart = 4,
     };
 
     private static readonly LoaderBuild[] KnownBuilds = [France, Usa];
