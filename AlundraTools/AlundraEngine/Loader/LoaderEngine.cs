@@ -789,10 +789,11 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
             ? _inspector.Build.PublisherMovieName
             : "ARAN_OP";
 
-        // A ".STR" alongside the ".MOV" is the raw 2352-byte-per-sector re-extraction, which is the
-        // only form that carries complete XA audio: an extractor that writes a flat 2048 bytes per
-        // sector truncates every Form 2 sector from 2324 bytes, losing 2 of its 18 ADPCM sound
-        // groups. Prefer it when present, fall back to the ".MOV" (video only) otherwise.
+        // A ".STR" alongside the ".MOV" is the raw 2352-byte-per-sector re-extraction, the only form
+        // that carries complete XA audio: an extractor that writes a flat 2048 bytes per sector
+        // truncates every Form 2 sector from 2324 bytes, costing 2 of its 18 ADPCM sound groups.
+        // Both play, with sound; prefer the ".STR" when present because the ".MOV" pays for those
+        // missing groups with a short gap every sector.
         var fullPath = Path.Combine(_moviePath, baseName + ".STR");
         if (!File.Exists(fullPath))
         {
@@ -839,11 +840,13 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
             audioOutput.Volume = 1f;
             audioOutput.Start(_moviePlayer.AudioSampleRate, _moviePlayer.AudioChannels);
         }
-        else if (!_moviePlayer.HasAudio)
+
+        if (!_moviePlayer.AudioIsComplete)
         {
             Debug.WriteLine(
-                $"'{Path.GetFileName(fullPath)}' carries no usable XA audio (2048-byte sectors). " +
-                "Re-extract the MOVIE files from the CD image preserving 2352-byte sectors to get sound.");
+                $"'{Path.GetFileName(fullPath)}' is a 2048-byte-per-sector extraction, so 2 of every 18 " +
+                "ADPCM sound groups are missing: it plays with its soundtrack, interrupted by a 6 ms gap " +
+                "every sector. Re-extract the MOVIE files preserving 2352-byte sectors for clean audio.");
         }
     }
 

@@ -299,8 +299,8 @@ public class ClosingEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = 
     /// <remarks>
     /// A ".STR" next to the ".MOV" is the raw 2352-byte-per-sector re-extraction, the only form that
     /// carries complete XA audio: an extractor writing a flat 2048 bytes per sector truncates every
-    /// Form 2 sector from 2324, losing 2 of its 18 ADPCM sound groups. Prefer it, fall back to the
-    /// ".MOV" (video only). Same rule as LoaderEngine.BeginMovie.
+    /// Form 2 sector from 2324, costing 2 of its 18 ADPCM sound groups. Both play, with sound;
+    /// prefer the ".STR". Same rule as LoaderEngine.BeginMovie.
     /// </remarks>
     private void BeginMovie()
     {
@@ -343,11 +343,12 @@ public class ClosingEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = 
             audioOutput.Volume = 1f;
             audioOutput.Start(_moviePlayer.AudioSampleRate, _moviePlayer.AudioChannels);
         }
-        else if (!_moviePlayer.HasAudio)
+        if (!_moviePlayer.AudioIsComplete)
         {
             Debug.WriteLine(
-                $"'{Path.GetFileName(fullPath)}' carries no usable XA audio (2048-byte sectors). " +
-                "Re-extract the MOVIE files from the CD image preserving 2352-byte sectors to get sound.");
+                $"'{Path.GetFileName(fullPath)}' is a 2048-byte-per-sector extraction, so 2 of every 18 " +
+                "ADPCM sound groups are missing: it plays with its soundtrack, interrupted by a 6 ms gap " +
+                "every sector. Re-extract the MOVIE files preserving 2352-byte sectors for clean audio.");
         }
     }
 
