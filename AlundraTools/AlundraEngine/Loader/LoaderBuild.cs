@@ -156,22 +156,31 @@ public sealed record LoaderBuild
     /// <remarks>GHIDRA (France): s_01234563456..._80044384. SOURCE (USA): 0x800437FC, identical.</remarks>
     public required uint SlotMarkerAnimationStringAddress { get; init; }
 
-    /// <summary>
-    /// The proportional font's metrics: 256 entries of five ints, or null when not yet located.
-    /// </summary>
+    /// <summary>The proportional font's metrics: entries of five ints, one per character code.</summary>
     /// <remarks>
     /// GHIDRA (France): g_characterPositionInSpriteSheet @ 0x80042f80, consumed by FUN_800223ec.
     ///
-    /// GAP: unknown on the USA build, and the one table that cannot be carried over. The other
-    /// three are byte-identical across the discs and so could be found by content; these metrics
-    /// describe that build's own font sheet and genuinely differ. Structural search does not pin
-    /// them either: the entries sit on the sheet's 16x16 grid, but 70 of the 256 break that rule on
-    /// France alone, so no exact signature exists to match. Reading the address FUN_800223ec's
-    /// equivalent loads is what would close it.
+    /// GHIDRA (USA): 0x80042df8, consumed by FUN_80022718 @ 0x80022718, which indexes it at a
+    /// stride of 0x14 and hands the fields to the blit in the same order France does —
+    /// <c>Blit(dst, cursorX, cursorY + e[16], font, e[8], e[12], e[0], e[4])</c>. The five field
+    /// loads are what fix the base: e[0] at 0x80042df8, e[4] at 0x80042dfc, e[8] at 0x80042e00,
+    /// e[12] at 0x80042e04 and e[16] at 0x80042e08.
     ///
-    /// Until then the selection screen draws no text on the USA build.
+    /// This is the one table that could not be carried over by content — it describes each build's
+    /// own font sheet, so the bytes genuinely differ.
     /// </remarks>
-    public uint? FontCharacterTableAddress { get; init; }
+    public required uint FontCharacterTableAddress { get; init; }
+
+    /// <summary>Number of entries the font metrics table holds.</summary>
+    /// <remarks>
+    /// GHIDRA (USA): FUN_80022718 gates the table on <c>(code &amp; 0xffff) &lt; 0x80</c> and sends
+    /// everything else to the kanji path, so its table stops at 128. France's port reads 256.
+    ///
+    /// The difference is not observable: the text walker only ever forms a code below 0x80 or a
+    /// two-byte code of 0x8000 and up, so entries 0x80..0xFF are never indexed on either build.
+    /// It is stated per build because it is what each one actually carries.
+    /// </remarks>
+    public required int FontCharacterCount { get; init; }
 
     /// <summary>The France disc: SLES-01198, boots SLES_011.98.</summary>
     public static readonly LoaderBuild France = new()
@@ -194,6 +203,7 @@ public sealed record LoaderBuild
         SlotMarkerRestingStringAddress = 0x80044380,
         SlotMarkerAnimationStringAddress = 0x80044384,
         FontCharacterTableAddress = 0x80042F80,
+        FontCharacterCount = 256,
     };
 
     /// <summary>The USA 1.1 disc: SLUS-00553, boots SLUS_005.53.</summary>
@@ -221,7 +231,8 @@ public sealed record LoaderBuild
         SelectionHotspotTableAddress = 0x80043828,
         SlotMarkerRestingStringAddress = 0x800437F8,
         SlotMarkerAnimationStringAddress = 0x800437FC,
-        FontCharacterTableAddress = null,
+        FontCharacterTableAddress = 0x80042DF8,
+        FontCharacterCount = 128,
     };
 
     private static readonly LoaderBuild[] KnownBuilds = [France, Usa];

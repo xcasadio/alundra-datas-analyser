@@ -562,17 +562,10 @@ public class LoaderExeInspector
     /// </remarks>
     public LoaderFontCharacter[] ReadFontCharacterTable()
     {
-        const int entryCount = 256;
         const int entrySize = 20;
 
-        if (Build.FontCharacterTableAddress is not { } ramAddress)
-        {
-            // See the GAP note on LoaderBuild.FontCharacterTableAddress: an all-zero table means
-            // every glyph is zero-width, so the text layers draw nothing rather than garbage.
-            return new LoaderFontCharacter[entryCount];
-        }
-
-        var offset = RamToFileOffset(ramAddress);
+        var entryCount = Build.FontCharacterCount;
+        var offset = RamToFileOffset(Build.FontCharacterTableAddress);
         var characters = new LoaderFontCharacter[entryCount];
 
         for (var index = 0; index < entryCount; index++)
