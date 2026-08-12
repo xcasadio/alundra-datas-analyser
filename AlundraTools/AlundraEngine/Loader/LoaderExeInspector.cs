@@ -320,6 +320,33 @@ public class LoaderExeInspector
     public readonly record struct SfxVabBank(int HeaderOffset, int BodyOffset, int BodyEnd);
 
     /// <summary>
+    /// Where the four sound tables begin: on the first byte past the resource container.
+    /// </summary>
+    /// <remarks>
+    /// SOURCE: on the France build this lands on 0x10D934, which is exactly
+    /// <c>DAT_8012d134</c> — the first of the four. The USA build has the same adjacency at
+    /// 0x11178C, and its four tables are byte for byte the France ones (SOUND.BIN is identical
+    /// across the two discs, down to its length), so the offsets below hold for both.
+    ///
+    /// This is what replaces four hardcoded RAM addresses. Those addresses are not portable: the
+    /// USA build's sound tables sit 0x3E58 higher, while its selection hotspots sit 0xB88 lower,
+    /// so no single regional delta exists.
+    /// </remarks>
+    private int SoundTableBaseOffset => ContainerEndOffset;
+
+    /// <summary>GHIDRA (France): DAT_8012d134, the global sound-effect VAB's three offsets.</summary>
+    private const int SfxVabRelativeOffset = 0x000;
+
+    /// <summary>GHIDRA (France): DAT_8012d13c, the sound-effect VAB group bank table.</summary>
+    private const int SfxVabBankTableRelativeOffset = 0x008;
+
+    /// <summary>GHIDRA (France): DAT_8012d398, the BGM track table.</summary>
+    private const int BgmTrackTableRelativeOffset = 0x264;
+
+    /// <summary>GHIDRA (France): BYTE_ARRAY_8012d5e4, the sound-effect record table.</summary>
+    private const int SoundEffectTableRelativeOffset = 0x4B0;
+
+    /// <summary>
     /// The loader's BGM track table.
     /// </summary>
     /// <remarks>
@@ -336,8 +363,7 @@ public class LoaderExeInspector
     /// </remarks>
     public BgmTrack[] ReadBgmTrackTable(int soundBinLength)
     {
-        const uint ramAddress = 0x8012D398;
-        var offset = RamToFileOffset(ramAddress);
+        var offset = SoundTableBaseOffset + BgmTrackTableRelativeOffset;
         var tracks = new List<BgmTrack>();
 
         for (var index = 0; ; index++)
@@ -385,8 +411,7 @@ public class LoaderExeInspector
     /// </remarks>
     public SfxVabBank ReadSfxVab()
     {
-        const uint ramAddress = 0x8012D134;
-        var offset = RamToFileOffset(ramAddress);
+        var offset = SoundTableBaseOffset + SfxVabRelativeOffset;
 
         return new SfxVabBank(
             BitConverter.ToInt32(_exeBytes, offset),
@@ -407,8 +432,7 @@ public class LoaderExeInspector
     /// </remarks>
     public SfxVabBank[] ReadSfxVabBankTable(int soundBinLength)
     {
-        const uint ramAddress = 0x8012D13C;
-        var offset = RamToFileOffset(ramAddress);
+        var offset = SoundTableBaseOffset + SfxVabBankTableRelativeOffset;
         var banks = new List<SfxVabBank>();
 
         for (var index = 0; ; index++)
@@ -451,11 +475,10 @@ public class LoaderExeInspector
     /// </remarks>
     public Sound.SoundEffectRecord[] ReadSoundEffectTable()
     {
-        const uint ramAddress = 0x8012D5E4;
         const int recordCount = 0x3C2;
         const int recordSize = 22;
 
-        var offset = RamToFileOffset(ramAddress);
+        var offset = SoundTableBaseOffset + SoundEffectTableRelativeOffset;
         var records = new Sound.SoundEffectRecord[recordCount];
 
         for (var index = 0; index < recordCount; index++)
