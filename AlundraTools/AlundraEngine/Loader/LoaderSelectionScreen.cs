@@ -683,7 +683,7 @@ public sealed class LoaderSelectionScreen
                     // UpdateSelectionCursor @ 0x80024888.
                     _isIdle = 1;
                     _textLayer1.ClearTextLayer(1);
-                    SetLayerText(_textLayer1, 199);
+                    SetLayerText(_textLayer1, _inspector.Build.Strings.ChooseSlot);
                     _playSoundEffect(4);
                     _panelMode = 1;
                     CurrentPhase = Phase.Prompt;

@@ -19,6 +19,10 @@ public readonly record struct LoaderResourceKey(string Tag, int Index)
 /// <param name="UsingMemoryCard">Shown while at least one save was found.</param>
 /// <param name="InsertMemoryCard">Shown when no card is present at all.</param>
 /// <param name="NoSaveData">Shown when the card holds no Alundra save.</param>
+/// <param name="ChooseSlot">
+/// The instruction shown once the selection screen has faded in, telling the player to walk onto
+/// the save they want.
+/// </param>
 /// <param name="ConfirmLoad">The question above the confirmation prompt.</param>
 /// <param name="Yes">
 /// The confirmation prompt's left label, or -1 when the build draws it from the executable instead
@@ -37,6 +41,7 @@ public readonly record struct LoaderStringIds(
     int UsingMemoryCard,
     int InsertMemoryCard,
     int NoSaveData,
+    int ChooseSlot,
     int ConfirmLoad,
     int Yes,
     int No)
@@ -230,6 +235,7 @@ public sealed record LoaderBuild
             UsingMemoryCard: 0xC1,
             InsertMemoryCard: 0xC2,
             NoSaveData: 0xC8,
+            ChooseSlot: 0xC7,
             ConfirmLoad: 0xC9,
             Yes: 0xCA,
             No: 0xCB),
@@ -261,6 +267,7 @@ public sealed record LoaderBuild
             UsingMemoryCard: 0xC0,
             InsertMemoryCard: 0xC1,
             NoSaveData: 0xC7,
+            ChooseSlot: 0xC6,
             ConfirmLoad: 0xC8,
             Yes: LoaderStringIds.Absent,
             No: LoaderStringIds.Absent),
