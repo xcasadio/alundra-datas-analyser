@@ -39,14 +39,15 @@ public sealed class LoaderEtcStrings
     }
 
     /// <summary>
-    /// Reads <c>DATA/ETC_RES.R</c>, or returns null when it is missing or malformed.
+    /// Reads the build's string table under <c>DATA</c>, or returns null when it is missing or
+    /// malformed.
     /// </summary>
-    public static LoaderEtcStrings? Load(string gamePath)
+    public static LoaderEtcStrings? Load(string gamePath, LoaderBuild build)
     {
-        var path = Path.Combine(gamePath, "DATA", "ETC_RES.R");
+        var path = Path.Combine(gamePath, "DATA", build.EtcFileName);
         if (!File.Exists(path))
         {
-            Debug.WriteLine($"ETC_RES.R not found at '{path}'; the loader will run without its strings.");
+            Debug.WriteLine($"{build.EtcFileName} not found at '{path}'; the loader will run without its strings.");
             return null;
         }
 

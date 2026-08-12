@@ -462,12 +462,13 @@ public sealed class LoaderSelectionScreen
         _textLayer3.SetTextLayer(_tileMap3, _textBox3);
 
         // GHIDRA: the two labels of the confirmation prompt, drawn side by side 0x30 apart into the
-        // third tile map. Entries 0xCA and 0xCB of ETC_RES.R.
+        // third tile map. Entries 0xCA and 0xCB of ETC_RES.R on the France build; the USA string
+        // table stops before them, so there both draws are no-ops.
         //
         // CORRECTION: an earlier pass read the SetSpriteImage calls here as loading cursor sprites.
         // SetSpriteImage draws text (renamed DrawTextToLayer), so these are strings.
-        DrawStringEntry(_textLayer3, 0xCA, 0, 0, 0);
-        DrawStringEntry(_textLayer3, 0xCB, 0x30, 0, 1);
+        DrawStringEntry(_textLayer3, _inspector.Build.Strings.Yes, 0, 0, 0);
+        DrawStringEntry(_textLayer3, _inspector.Build.Strings.No, 0x30, 0, 1);
 
         _hudTopLeft.Set(0, 0xF0, 0, 4, 0, 0xF0);
         _hudTopRight.Set(0, 0xF0, 0, 8, 0, 0xF0);
@@ -583,7 +584,7 @@ public sealed class LoaderSelectionScreen
         // The five card errors reduce to one on desktop; the message indices are the original's.
         if (result == LoaderSaveSlots.ResultNoCard)
         {
-            SetLayerText(_textLayer1, 0xC2);
+            SetLayerText(_textLayer1, _inspector.Build.Strings.InsertMemoryCard);
             return -1;
         }
 
@@ -601,11 +602,11 @@ public sealed class LoaderSelectionScreen
 
         if (occupied != 0)
         {
-            SetLayerText(_textLayer1, 0xC1);
+            SetLayerText(_textLayer1, _inspector.Build.Strings.UsingMemoryCard);
             return 0;
         }
 
-        SetLayerText(_textLayer1, 0xC8);
+        SetLayerText(_textLayer1, _inspector.Build.Strings.NoSaveData);
         return -1;
     }
 
@@ -827,7 +828,7 @@ public sealed class LoaderSelectionScreen
         _textLayer2.ClearTextLayer(1);
         _isIdle = 1;
 
-        SetLayerText(_textLayer1, 0xC9);
+        SetLayerText(_textLayer1, _inspector.Build.Strings.ConfirmLoad);
 
         // The chapter name comes from the four ASCII digits at the head of CurrentFlagName, read as
         // a string-table index; the save's own summary line is the 0x20 bytes at +0x28. An index of

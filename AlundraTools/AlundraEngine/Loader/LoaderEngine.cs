@@ -173,7 +173,7 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
         _moviePath = Path.Combine(gamePath, "MOVIE");
 
         _titleScreen = _inspector.LoadImage(build.TitleFull);
-        _etcStrings = LoaderEtcStrings.Load(gamePath);
+        _etcStrings = LoaderEtcStrings.Load(gamePath, build);
 
         _ui = new LoaderUiRenderer(renderer);
         InitBootSequenceGraphics();
@@ -782,8 +782,12 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
         DisposeMoviePlayer();
         _state = movieState;
 
-        var isEuro = movieState == LoaderState.PlayMovieEuro;
-        var baseName = isEuro ? "EURO_OP" : "ARAN_OP";
+        // The publisher logo is the disc's own - EURO_OP on France, USA_OP on the USA disc - while
+        // ARAN_OP, the attract-mode intro, is the same file on both.
+        var isPublisher = movieState == LoaderState.PlayMovieEuro;
+        var baseName = isPublisher && _inspector is not null
+            ? _inspector.Build.PublisherMovieName
+            : "ARAN_OP";
 
         // A ".STR" alongside the ".MOV" is the raw 2352-byte-per-sector re-extraction, which is the
         // only form that carries complete XA audio: an extractor that writes a flat 2048 bytes per
@@ -811,12 +815,12 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
         // frames early respectively, cutting off the tail of each movie.
         var options = new MoviePlaybackOptions
         {
-            ScreenX = isEuro ? 0 : 8,
-            ScreenY = isEuro ? 0x28 : 0x10,
-            LastFrame = isEuro ? 0xAF4 : 0xEAB,
+            ScreenX = isPublisher ? 0 : 8,
+            ScreenY = isPublisher ? 0x28 : 0x10,
+            LastFrame = isPublisher ? 0xAF4 : 0xEAB,
             StopAtLastFrame = false,
             SkipButtonMask = _skipButtonMask,
-            SkipAfterFrame = isEuro ? 0x136 : 0,
+            SkipAfterFrame = isPublisher ? 0x136 : 0,
         };
 
         try

@@ -14,6 +14,37 @@ public readonly record struct LoaderResourceKey(string Tag, int Index)
 }
 
 /// <summary>
+/// The entries of <c>ETC_RES.R</c> the loader draws, by role.
+/// </summary>
+/// <param name="UsingMemoryCard">Shown while at least one save was found.</param>
+/// <param name="InsertMemoryCard">Shown when no card is present at all.</param>
+/// <param name="NoSaveData">Shown when the card holds no Alundra save.</param>
+/// <param name="ConfirmLoad">The question above the confirmation prompt.</param>
+/// <param name="Yes">The confirmation prompt's left label, or -1 when the build has none.</param>
+/// <param name="No">Its right label, or -1 when the build has none.</param>
+/// <remarks>
+/// The indices are not stable across regions. The USA table runs one lower throughout — its 0xC0 is
+/// the France 0xC1, its 0xC7 the France 0xC8 — and stops at 0xC8: every index above that reads
+/// 0xFFFF, the table's "no entry" marker.
+///
+/// GAP: that truncation is why <see cref="Yes"/> and <see cref="No"/> are -1 on the USA build. Its
+/// confirmation prompt has to source those two labels somewhere this port has not found yet; the
+/// drawing calls fail soft on -1, so the panel comes up without them. Reading the indices
+/// SetSpriteImage is given in that build's equivalent of the selection screen is what would close it.
+/// </remarks>
+public readonly record struct LoaderStringIds(
+    int UsingMemoryCard,
+    int InsertMemoryCard,
+    int NoSaveData,
+    int ConfirmLoad,
+    int Yes,
+    int No)
+{
+    /// <summary>The value both drawing helpers treat as "nothing to draw".</summary>
+    public const int Absent = -1;
+}
+
+/// <summary>
 /// Everything about the loader that differs from one regional build of the disc to the next.
 ///
 /// JUSTIFICATION: PSX hardware adaptation only.
@@ -81,6 +112,28 @@ public sealed record LoaderBuild
     /// </remarks>
     public required int TitleAnimationLoopStart { get; init; }
 
+    /// <summary>
+    /// The string table under <c>DATA</c>, whose name carries the language.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA: InitializePsx @ 0x80025238 calls <c>LoadEtcFile("DATA\ETC_RES.R", ...)</c> on the
+    /// France build. Both discs use the same format — 1024 u16 offsets then the strings — but the
+    /// USA one is called ETC_USA.R.
+    /// </remarks>
+    public required string EtcFileName { get; init; }
+
+    /// <summary>
+    /// The publisher movie under <c>MOVIE</c>, the one LaunchGame plays before the title menu.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA: LaunchGame @ 0x800255f0 alternates this with ARAN_OP, which both discs share.
+    /// France plays the Psygnosis logo, EURO_OP; the USA disc ships USA_OP in its place.
+    /// </remarks>
+    public required string PublisherMovieName { get; init; }
+
+    /// <summary>Which entries of <see cref="EtcFileName"/> the loader draws.</summary>
+    public required LoaderStringIds Strings { get; init; }
+
     /// <summary>The France disc: SLES-01198, boots SLES_011.98.</summary>
     public static readonly LoaderBuild France = new()
     {
@@ -89,6 +142,15 @@ public sealed record LoaderBuild
         TitleFull = LoaderResourceKey.Untagged,
         BootScreen = new LoaderResourceKey("TIM", 7),
         TitleAnimationLoopStart = 3,
+        EtcFileName = "ETC_RES.R",
+        PublisherMovieName = "EURO_OP",
+        Strings = new LoaderStringIds(
+            UsingMemoryCard: 0xC1,
+            InsertMemoryCard: 0xC2,
+            NoSaveData: 0xC8,
+            ConfirmLoad: 0xC9,
+            Yes: 0xCA,
+            No: 0xCB),
     };
 
     /// <summary>The USA 1.1 disc: SLUS-00553, boots SLUS_005.53.</summary>
@@ -99,6 +161,20 @@ public sealed record LoaderBuild
         TitleFull = new LoaderResourceKey("TIM", 0),
         BootScreen = null,
         TitleAnimationLoopStart = 4,
+        EtcFileName = "ETC_USA.R",
+        PublisherMovieName = "USA_OP",
+
+        // SOURCE: matched against the France entries by meaning, one index lower throughout —
+        // 0xC0 "Using the Book in Slot 1.", 0xC1 "Please insert a History Book in Slot 1.",
+        // 0xC7 "No record exists of Alundra's adventures.", 0xC8 "Would you like to rejoin the
+        // tale in this chapter?". The table ends there; see the GAP note on LoaderStringIds.
+        Strings = new LoaderStringIds(
+            UsingMemoryCard: 0xC0,
+            InsertMemoryCard: 0xC1,
+            NoSaveData: 0xC7,
+            ConfirmLoad: 0xC8,
+            Yes: LoaderStringIds.Absent,
+            No: LoaderStringIds.Absent),
     };
 
     private static readonly LoaderBuild[] KnownBuilds = [France, Usa];
