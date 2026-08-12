@@ -302,12 +302,30 @@ public sealed class StrMoviePlayer : IDisposable
         return lastFrame > 0 ? lastFrame - _options.FadeOutFrames : 0;
     }
 
-    /// <summary>
-    /// True when the source carries usable XA audio, i.e. when it is a raw 2352-byte-per-sector
-    /// stream. A source written as flat 2048-byte user data has lost 2 of every 18 ADPCM sound
-    /// groups and offers no audio at all rather than a broken one.
-    /// </summary>
+    /// <summary>True when the source carries XA audio at all.</summary>
     public bool HasAudio => _reader.HasAudio;
+
+    /// <summary>
+    /// True when every audio sector arrives whole, i.e. when the source is a raw
+    /// 2352-byte-per-sector stream.
+    /// </summary>
+    /// <remarks>
+    /// False for a source written as flat 2048-byte user data, which keeps 16 of each sector's 18
+    /// ADPCM sound groups. Those 16 decode exactly; the missing pair is held open as silence — see
+    /// <see cref="SilencePaddedAudioSamples"/> — so playback stays in step with the video.
+    /// </remarks>
+    public bool AudioIsComplete => _reader.IsRawSource;
+
+    /// <summary>
+    /// PCM shorts emitted as silence to stand in for sound groups the source does not carry.
+    /// </summary>
+    /// <remarks>
+    /// Zero on a raw source. On a truncated one this settles at 2 groups in every 18, i.e. 1/9 of
+    /// the stream. Dropping those samples instead would let the audio run short of the video by that
+    /// fraction — twenty seconds of drift over a three-minute movie — so the gap is held open
+    /// rather than closed.
+    /// </remarks>
+    public int SilencePaddedAudioSamples { get; private set; }
 
     /// <summary>Sample rate of the decoded audio, valid once the first audio sector was read.</summary>
     public int AudioSampleRate => _audioDecoder.SampleRate;
@@ -346,6 +364,19 @@ public sealed class StrMoviePlayer : IDisposable
     private void OnAudioSector(ReadOnlySpan<byte> userData, byte codingInfo)
     {
         var written = _audioDecoder.Decode(userData, codingInfo, _audioScratch);
+
+        // A sector always occupies the same slice of the timeline whether or not the source kept
+        // all of it, so a short one is filled out to the sample count a whole sector would have
+        // produced. Without this the audio would fall behind the video by however much the
+        // extraction dropped.
+        var expected = FullSectorSampleCount(written, userData.Length);
+        if (expected > written)
+        {
+            Array.Clear(_audioScratch, written, expected - written);
+            SilencePaddedAudioSamples += expected - written;
+            written = expected;
+        }
+
         for (var i = 0; i < written; i++)
         {
             if (_audioCount >= _audioRing.Length)
@@ -358,6 +389,19 @@ public sealed class StrMoviePlayer : IDisposable
             _audioWrite = (_audioWrite + 1) % _audioRing.Length;
             _audioCount++;
         }
+    }
+
+    /// <summary>
+    /// How many PCM shorts a complete sector would have yielded, given what a partial one did.
+    /// </summary>
+    /// <remarks>
+    /// The decoder emits the same number of samples per sound group whatever the coding, so scaling
+    /// by the group count needs no assumption about rate, width or channel layout.
+    /// </remarks>
+    private static int FullSectorSampleCount(int written, int payloadBytes)
+    {
+        var groups = payloadBytes / XaAdpcmDecoder.SoundGroupSize;
+        return groups <= 0 ? written : written / groups * XaAdpcmDecoder.SoundGroupCount;
     }
 
     /// <summary>Number of sectors in the underlying stream.</summary>

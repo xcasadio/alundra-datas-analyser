@@ -1,3 +1,4 @@
+using PsxSdk.Audio;
 using PsxSdk.Cd;
 
 namespace PsxSdk.Streaming;
@@ -7,12 +8,15 @@ namespace PsxSdk.Streaming;
 /// interleaved XA audio sectors when the source carries them.
 ///
 /// Two source layouts are accepted:
-///   - <b>raw</b>, 2352 bytes per sector: the sector subheader is present, so Form 1 (video) and
-///     Form 2 (audio) sectors can be told apart properly and the full 2324-byte audio payload is
-///     available. This is the only layout that yields complete audio.
-///   - <b>user data only</b>, 2048 bytes per sector: what a naive extractor produces. Video is
-///     intact, but every Form 2 sector has been truncated from 2324 to 2048 bytes, losing 2 of its
-///     18 ADPCM sound groups, so audio is not offered at all rather than played broken.
+///   - <b>raw</b>, 2352 bytes per sector (Alundra's ".STR" re-extractions): the sector subheader is
+///     present, so Form 1 (video) and Form 2 (audio) sectors are told apart by their submode and
+///     the full 2324-byte audio payload is available. This is the only layout that yields complete
+///     audio.
+///   - <b>user data only</b>, 2048 bytes per sector (Alundra's ".MOV" files): what a naive
+///     extractor produces. Video is intact and byte-identical to the raw source's. Audio sectors
+///     are still present but truncated from 2324 to 2048 bytes, which keeps 16 of their 18 ADPCM
+///     sound groups; there is no subheader to identify them, so they are recognised by structure
+///     instead — see <see cref="LooksLikeXaSector"/>.
 ///
 /// JUSTIFICATION: PSX hardware adaptation only.
 /// RELATION: replaces the whole real-time CD streaming layer of the original —
@@ -36,6 +40,17 @@ public sealed class StrSectorReader : IDisposable
 
     /// <summary>Submode bit marking an audio sector.</summary>
     private const byte SubModeAudio = 0x04;
+
+    /// <summary>
+    /// Coding info assumed for a source that has no subheader to state it: 4-bit stereo, 37800 Hz.
+    /// </summary>
+    /// <remarks>
+    /// SOURCE: every audio sector of every ".STR" on the France disc carries exactly this value —
+    /// 16824 of them across EURO_OP, ARAN_OP, MATRIX and ARAN_END, with no other value present.
+    /// ARAN_OP and ARAN_END are the same files on the USA disc, so the only movie this is not
+    /// directly evidenced on is USA_OP, which the same muxer produced.
+    /// </remarks>
+    private const byte AssumedCodingInfo = 0x01;
 
     private readonly Stream _stream;
     private readonly bool _ownsStream;
@@ -86,8 +101,19 @@ public sealed class StrSectorReader : IDisposable
     /// <summary>Number of sectors that failed validation and were dropped.</summary>
     public int DroppedSectors { get; private set; }
 
-    /// <summary>True when the source is raw and therefore carries usable XA audio.</summary>
-    public bool HasAudio => _sectorSize == CdSector.RawSize;
+    /// <summary>True when the source is raw, i.e. carries subheaders and complete audio payloads.</summary>
+    public bool IsRawSource => _sectorSize == CdSector.RawSize;
+
+    /// <summary>True when audio sectors can be dispatched at all, whatever the layout.</summary>
+    public bool HasAudio => true;
+
+    /// <summary>
+    /// ADPCM bytes each audio sector of this source yields: the full 2304 on a raw source, 2048 on
+    /// a user-data one, which is 16 of the 18 sound groups.
+    /// </summary>
+    public int AdpcmBytesPerAudioSector => IsRawSource
+        ? XaAdpcmDecoder.AdpcmBytesPerSector
+        : CdSector.Form1UserDataSize / XaAdpcmDecoder.SoundGroupSize * XaAdpcmDecoder.SoundGroupSize;
 
     /// <summary>True once every sector has been consumed.</summary>
     public bool EndOfStream => SectorPosition >= SectorCount;
@@ -98,7 +124,11 @@ public sealed class StrSectorReader : IDisposable
     /// </summary>
     public delegate void AudioSectorHandler(ReadOnlySpan<byte> userData, byte codingInfo);
 
-    /// <summary>Receives audio sectors as they are read. Only ever invoked when <see cref="HasAudio"/>.</summary>
+    /// <summary>
+    /// Receives audio sectors as they are read. The span holds
+    /// <see cref="AdpcmBytesPerAudioSector"/> bytes, which is short of a whole sector on a
+    /// user-data source.
+    /// </summary>
     public AudioSectorHandler? OnAudioSector { get; set; }
 
     /// <summary>A complete demuxed frame.</summary>
@@ -237,7 +267,7 @@ public sealed class StrSectorReader : IDisposable
     /// </summary>
     private bool IsVideoSector(out StrFrameHeader header)
     {
-        if (HasAudio && (_sector[SubHeaderOffset + 2] & SubModeForm2) != 0)
+        if (IsRawSource && (_sector[SubHeaderOffset + 2] & SubModeForm2) != 0)
         {
             header = default;
             return false;
@@ -249,19 +279,61 @@ public sealed class StrSectorReader : IDisposable
 
     private void DispatchAudioSector()
     {
-        if (!HasAudio || OnAudioSector is null)
+        if (OnAudioSector is null)
         {
             return;
         }
 
-        var subMode = _sector[SubHeaderOffset + 2];
-        if ((subMode & SubModeAudio) == 0 || (subMode & SubModeForm2) == 0)
+        if (IsRawSource)
         {
+            var subMode = _sector[SubHeaderOffset + 2];
+            if ((subMode & SubModeAudio) == 0 || (subMode & SubModeForm2) == 0)
+            {
+                return;
+            }
+
+            OnAudioSector(_sector.AsSpan(_userDataOffset, CdSector.Form2UserDataSize), _sector[SubHeaderOffset + 3]);
             return;
         }
 
-        var codingInfo = _sector[SubHeaderOffset + 3];
-        OnAudioSector(_sector.AsSpan(_userDataOffset, CdSector.Form2UserDataSize), codingInfo);
+        if (LooksLikeXaSector())
+        {
+            OnAudioSector(_sector.AsSpan(0, AdpcmBytesPerAudioSector), AssumedCodingInfo);
+        }
+    }
+
+    /// <summary>
+    /// Decides whether a non-video sector of a user-data source is XA audio, by structure alone.
+    /// </summary>
+    /// <remarks>
+    /// A user-data source has no subheader, so the submode that would settle it is gone. What
+    /// remains is an invariant of the ADPCM format itself: in every 128-byte sound group the four
+    /// parameter bytes at 00h..03h are a copy of those at 04h..07h, and 08h..0Bh a copy of
+    /// 0Ch..0Fh. Sixteen groups have to agree, which is 128 bytes of coincidence for a sector that
+    /// is not audio.
+    ///
+    /// SOURCE: checked against every audio sector of the four France ".STR" files — 16824 of them,
+    /// all satisfying it over the 16 groups that survive truncation.
+    ///
+    /// Trailing padding, which is all zeroes, passes too and decodes to silence. That is harmless:
+    /// padding only ever follows the last video sector, which playback stops at.
+    /// </remarks>
+    private bool LooksLikeXaSector()
+    {
+        for (var offset = 0; offset + XaAdpcmDecoder.SoundGroupSize <= AdpcmBytesPerAudioSector;
+             offset += XaAdpcmDecoder.SoundGroupSize)
+        {
+            for (var i = 0; i < 4; i++)
+            {
+                if (_sector[offset + i] != _sector[offset + 4 + i] ||
+                    _sector[offset + 8 + i] != _sector[offset + 12 + i])
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     private void StartFrame(StrFrameHeader header)
