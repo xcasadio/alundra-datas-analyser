@@ -95,9 +95,21 @@ public class LoaderExeInspector
     /// </summary>
     public int ContainerEndOffset { get; }
 
+    /// <summary>Which disc this executable came from.</summary>
+    public LoaderBuild Build { get; }
+
     public LoaderExeInspector(string gamePath)
+        : this(gamePath, LoaderBuild.Detect(gamePath) ?? LoaderBuild.France)
     {
-        var exeFilePath = Path.Combine(gamePath, "LOADER.EXE");
+    }
+
+    public LoaderExeInspector(string gamePath, LoaderBuild build)
+    {
+        Build = build;
+        var exeFilePath = build.FindExeFilePath(gamePath)
+            ?? throw new FileNotFoundException(
+                $"No loader executable ({string.Join(" or ", build.ExeFileNames)}) found in '{gamePath}'.");
+
         _exeBytes = File.ReadAllBytes(exeFilePath);
         RamToFileOffsetDelta = ReadRamToFileOffsetDelta(_exeBytes, exeFilePath);
         _resources = WalkResourceContainer(_exeBytes, exeFilePath, out var containerEnd);

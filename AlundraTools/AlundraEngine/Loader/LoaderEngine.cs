@@ -161,14 +161,15 @@ public class LoaderEngine(IRenderer renderer, IMovieAudioOutput? audioOutput = n
 
     public void InitializeEngine(string gamePath)
     {
-        if (!File.Exists(Path.Combine(gamePath, "LOADER.EXE")))
+        var build = LoaderBuild.Detect(gamePath);
+        if (build?.FindExeFilePath(gamePath) == null)
         {
-            Debug.WriteLine($"LOADER.EXE not found in '{gamePath}'; the boot sequence will be skipped.");
+            Debug.WriteLine($"No loader executable found in '{gamePath}'; the boot sequence will be skipped.");
             _state = LoaderState.Finished;
             return;
         }
 
-        _inspector = new LoaderExeInspector(gamePath);
+        _inspector = new LoaderExeInspector(gamePath, build);
         _moviePath = Path.Combine(gamePath, "MOVIE");
 
         _titleScreen = _inspector.LoadImage(LoaderExeInspector.TitleFullIndex);
