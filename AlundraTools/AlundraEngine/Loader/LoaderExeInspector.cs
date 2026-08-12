@@ -28,42 +28,42 @@ public class LoaderExeInspector
     /// </summary>
     public uint RamToFileOffsetDelta { get; }
 
+    /// <summary>GHIDRA: the record id GetEtcResource stops on — "END" plus 0xFF.</summary>
+    private const uint EndSentinelId = 0xFF444E45;
+
     /// <summary>
-    /// The embedded TIM resources, in the order jPSXdec catalogues them in <c>loader.idx</c>.
-    ///
-    /// SOURCE: each entry's file offset resolves from the index as
-    /// <c>sectorStart * 2048 + startOffset</c>; all sixteen were verified to land on a valid TIM
-    /// header whose dimensions and bit depth match the index. Adding
-    /// <see cref="RamToFileOffsetDelta"/> to each offset lands on an already-named Ghidra symbol,
-    /// which is where the names below come from.
-    ///
-    /// Unlike <see cref="Closing.ClosingExeInspector"/> these are hardcoded rather than located by
-    /// scanning for a matching TIM signature. The eight title frames share one signature
-    /// (320x160, 8bpp, with CLUT), so a signature scan could only tell them apart by file order
-    /// anyway, and the offsets here are backed by named symbols.
-    ///
-    /// CAUTION: established on the France build. The USA build may order these differently — the
-    /// same check must be re-run against its LOADER.EXE before this table is trusted there.
+    /// The id the records past the sentinel carry: no tag, no index, just 0xFFFFFFFF.
     /// </summary>
-    private static readonly (string Name, int FileOffset, int Width, int Height, int Bpp)[] Resources =
-    [
-        ("g_loadRoomBackgroundTimBuffer", 0x024C38, 320, 384,  8), //  0
-        ("g_loadRoomCloudsTim",           0x042E60, 320, 128,  4), //  1
-        ("g_loadRoomBackgroundMessageTim",0x047EA8, 256, 256,  4), //  2
-        ("g_loadRoomFontTim",             0x04FEF0, 256, 256,  4), //  3
-        ("g_loadRoomSpriteSheetTim",      0x057F38, 256, 256,  8), //  4
-        ("g_loadingScreenTim",            0x068160, 320, 240, 16), //  5
-        ("g_licenceScreenTim",            0x08D97C, 256, 256,  4), //  6
-        ("g_TitleFrame0",                 0x0959C4, 320, 160,  8), //  7
-        ("g_TitleFrame1",                 0x0A23EC, 320, 160,  8), //  8
-        ("g_TitleFrame2",                 0x0AEE14, 320, 160,  8), //  9
-        ("g_TitleFrame3",                 0x0BB83C, 320, 160,  8), // 10
-        ("g_TitleFrame4",                 0x0C8264, 320, 160,  8), // 11
-        ("g_TitleFrame5",                 0x0D4C8C, 320, 160,  8), // 12
-        ("g_TitleFrame6",                 0x0E16B4, 320, 160,  8), // 13
-        ("g_TitleFrame7",                 0x0EE0DC, 320, 160,  8), // 14
-        ("g_TitleFull",                   0x0FAB0C, 320, 240,  8), // 15
-    ];
+    /// <remarks>
+    /// GetEtcResource never sees these, but the container format continues across the sentinel and
+    /// the France build parks <c>g_TitleFull</c> in one of them — which is why the original reaches
+    /// that image by a direct pointer rather than through the lookup.
+    /// </remarks>
+    private const uint UntaggedRecordId = 0xFFFFFFFF;
+
+    /// <summary>Ghidra symbol names for the France build's records, keyed by tag and index.</summary>
+    /// <remarks>
+    /// Cosmetic only — used to name the PNGs <see cref="SaveAllImages"/> writes. Resolution no
+    /// longer goes through this table, so a record it does not know about is still readable; it
+    /// simply gets its tag and index as a name.
+    ///
+    /// SOURCE: each name is the Ghidra symbol found at the record's payload address on the France
+    /// build. Tags #1..#6 hold the same roles on the USA build, verified by shape.
+    /// </remarks>
+    private static readonly Dictionary<(string Tag, int Index), string> ResourceNames = new()
+    {
+        [("TIM", 1)] = "g_loadRoomBackgroundTimBuffer",
+        [("TIM", 2)] = "g_loadRoomCloudsTim",
+        [("TIM", 3)] = "g_loadRoomBackgroundMessageTim",
+        [("TIM", 4)] = "g_loadRoomFontTim",
+        [("TIM", 5)] = "g_loadRoomSpriteSheetTim",
+        [("TIM", 6)] = "g_loadingScreenTim",
+        [("TIM", 7)] = "g_licenceScreenTim",
+
+        // The France build's single untagged record, past the sentinel. The USA build has none —
+        // it carries the same image as TIM #0, which is why that tag has no entry here.
+        [("", -1)] = "g_TitleFull",
+    };
 
     /// <summary>Index of the first frame of the animated title logo.</summary>
     public const int TitleFrame0Index = 7;
@@ -81,24 +81,38 @@ public class LoaderExeInspector
     public const int LicenceScreenIndex = 6;
 
     private readonly byte[] _exeBytes;
+    private readonly EtcResource[] _resources;
     private readonly Dictionary<int, Bitmap> _images = new();
 
-    public static int ImageCount => Resources.Length;
+    public int ImageCount => _resources.Length;
 
     /// <summary>Raw LOADER.EXE bytes, for reading data tables that sit alongside the TIMs.</summary>
     public byte[] ExeBytes => _exeBytes;
+
+    /// <summary>
+    /// File offset of the first byte past the resource container, where the sound offset tables
+    /// begin.
+    /// </summary>
+    public int ContainerEndOffset { get; }
 
     public LoaderExeInspector(string gamePath)
     {
         var exeFilePath = Path.Combine(gamePath, "LOADER.EXE");
         _exeBytes = File.ReadAllBytes(exeFilePath);
         RamToFileOffsetDelta = ReadRamToFileOffsetDelta(_exeBytes, exeFilePath);
-        ValidateResourceTable();
+        _resources = WalkResourceContainer(_exeBytes, exeFilePath, out var containerEnd);
+        ContainerEndOffset = containerEnd;
     }
 
-    public int GetImageFileOffset(int index) => Resources[index].FileOffset;
+    public int GetImageFileOffset(int index) => _resources[index].PayloadOffset;
 
-    public string GetImageName(int index) => Resources[index].Name;
+    public string GetImageName(int index)
+    {
+        var resource = _resources[index];
+        return ResourceNames.TryGetValue((resource.Name, resource.Index), out var name)
+            ? name
+            : $"{resource.Name}{resource.Index}";
+    }
 
     /// <summary>Converts a RAM address from Ghidra into an offset into <see cref="ExeBytes"/>.</summary>
     public int RamToFileOffset(uint ramAddress) => (int)(ramAddress - RamToFileOffsetDelta);
@@ -123,61 +137,160 @@ public class LoaderExeInspector
     }
 
     /// <summary>One entry of the resource container embedded in LOADER.EXE.</summary>
-    /// <param name="Name">Three-character tag, "TIM" or "ANM".</param>
-    /// <param name="Index">Index within that tag, 1-based.</param>
+    /// <param name="Name">Three-character tag, "TIM" or "ANM", or empty past the sentinel.</param>
+    /// <param name="Index">Index within that tag, 1-based; -1 past the sentinel.</param>
     /// <param name="PayloadOffset">File offset of the payload, i.e. of the TIM's magic word.</param>
     /// <param name="PayloadSize">Payload length in bytes.</param>
-    public readonly record struct EtcResource(string Name, int Index, int PayloadOffset, int PayloadSize);
+    public readonly record struct EtcResource(string Name, int Index, int PayloadOffset, int PayloadSize)
+    {
+        /// <summary>True for the records past the sentinel, which carry no tag.</summary>
+        public bool IsUntagged => Name.Length == 0;
+    }
+
+    /// <summary>Every record of the container, in file order, tagged ones first.</summary>
+    public EtcResource[] ReadEtcResources() => _resources;
 
     /// <summary>
     /// Walks the resource container LOADER.EXE carries, the one <c>g_loadRoomBackgroundTimPtr</c>
     /// points at.
     /// </summary>
     /// <remarks>
-    /// GHIDRA: GetEtcResource @ 0x800276bc. Each entry is
+    /// GHIDRA: GetEtcResource @ 0x800276bc. Each record is
     /// <c>[u32 packedId][u32 payloadSize][payload]</c>, where the id packs the three tag characters
-    /// little-endian plus the index in the top byte, and the list ends on the sentinel
+    /// little-endian plus the index in the top byte, and the tagged list ends on the sentinel
     /// <c>0xFF444E45</c> ("END" plus 0xFF).
     ///
-    /// SOURCE: walked directly in the France build and cross-checked against loader.idx — the 15
-    /// payload offsets land exactly on catalogue entries 0..14. That identifies the eight "ANM"
-    /// entries as g_TitleFrame0..7, the frames FUN_80021a1c cycles into VRAM to animate the title
-    /// logo, and "TIM" #3 as the selection screen's backdrop.
+    /// GetEtcResource stops there, but the format does not: the sentinel is followed by records
+    /// whose id is <see cref="UntaggedRecordId"/>, ending on the first one with a zero size. The
+    /// France build keeps <c>g_TitleFull</c> in such a record, which is why the original reaches
+    /// that one image by a direct pointer instead of through the lookup. The USA build has no
+    /// untagged payload at all — it carries the same image as TIM #0 inside the container.
     ///
-    /// g_TitleFull is deliberately absent: it sits past the sentinel and InitBootSequenceGraphics
-    /// passes it to InitializeTileLayer directly rather than through GetEtcResource.
+    /// SOURCE: walking replaces the offset table this class used to hardcode. It is self-validating
+    /// in a way that table was not: the chain only walks to the exact sentinel if every size along
+    /// the way is right, and every payload is checked to start on a TIM magic word. Verified to
+    /// yield 16 records on the France build (TIM #1..#7, ANM #1..#8, then the untagged g_TitleFull)
+    /// at exactly the sixteen offsets previously hardcoded, and 16 on the USA build (TIM #0..#6,
+    /// ANM #1..#9) matching that build's jPSXdec catalogue.
     /// </remarks>
-    public EtcResource[] ReadEtcResources()
+    private static EtcResource[] WalkResourceContainer(byte[] exeBytes, string exeFilePath, out int containerEnd)
     {
-        // The container starts eight bytes before the first catalogued TIM, i.e. at that entry's
-        // header rather than its payload.
-        var position = Resources[0].FileOffset - 8;
-        var entries = new List<EtcResource>();
+        var position = FindContainerStart(exeBytes, exeFilePath);
+        var records = new List<EtcResource>();
 
-        while (position + 8 <= _exeBytes.Length)
+        // The tagged run, the part GetEtcResource sees.
+        while (true)
         {
-            var packedId = BitConverter.ToUInt32(_exeBytes, position);
-            if (packedId == 0xFF444E45)
+            var packedId = BitConverter.ToUInt32(exeBytes, position);
+            if (packedId == EndSentinelId)
+            {
+                position += 8;
+                break;
+            }
+
+            var payloadSize = (int)BitConverter.ToUInt32(exeBytes, position + 4);
+            var name = TagOf(packedId);
+
+            if (payloadSize <= 0 || position + 8 + payloadSize > exeBytes.Length || !name.All(char.IsAsciiLetterUpper))
+            {
+                throw new InvalidDataException(
+                    $"'{exeFilePath}': malformed resource record at 0x{position:X6} (id 0x{packedId:X8}, size 0x{payloadSize:X}).");
+            }
+
+            records.Add(new EtcResource(name, (int)((packedId >> 24) & 0xFF), position + 8, payloadSize));
+            position += 8 + payloadSize;
+        }
+
+        // The untagged run past the sentinel, ending on the first zero-sized record.
+        while (position + 8 <= exeBytes.Length && BitConverter.ToUInt32(exeBytes, position) == UntaggedRecordId)
+        {
+            var payloadSize = (int)BitConverter.ToUInt32(exeBytes, position + 4);
+            position += 8;
+            if (payloadSize <= 0 || position + payloadSize > exeBytes.Length)
             {
                 break;
             }
 
-            var payloadSize = (int)BitConverter.ToUInt32(_exeBytes, position + 4);
-            var name = new string([(char)(packedId & 0xFF), (char)((packedId >> 8) & 0xFF), (char)((packedId >> 16) & 0xFF)]);
-            var index = (int)((packedId >> 24) & 0xFF);
+            records.Add(new EtcResource(string.Empty, -1, position, payloadSize));
+            position += payloadSize;
+        }
 
-            if (payloadSize <= 0 || position + 8 + payloadSize > _exeBytes.Length || !name.All(char.IsAsciiLetterUpper))
+        containerEnd = position;
+        return records.ToArray();
+    }
+
+    /// <summary>
+    /// Finds the container's first record header by scanning for a chain that walks to the sentinel.
+    /// </summary>
+    /// <remarks>
+    /// The original dereferences <c>g_loadRoomBackgroundTimPtr</c>, a pointer this port has no
+    /// equivalent for without hardcoding one address per regional build. A record header is
+    /// recognisable enough on its own — an uppercase three-letter tag whose payload starts on a TIM
+    /// magic word — and the candidate is only accepted once the whole chain from it reaches the
+    /// sentinel, which no coincidental match survives.
+    /// </remarks>
+    private static int FindContainerStart(byte[] exeBytes, string exeFilePath)
+    {
+        for (var position = PsxExeHeaderSize; position + 12 <= exeBytes.Length; position += 4)
+        {
+            if (BitConverter.ToUInt32(exeBytes, position + 8) != TimMagic ||
+                !TagOf(BitConverter.ToUInt32(exeBytes, position)).All(char.IsAsciiLetterUpper))
             {
-                throw new InvalidDataException(
-                    $"LOADER.EXE: malformed resource entry at 0x{position:X6} (id 0x{packedId:X8}, size 0x{payloadSize:X}).");
+                continue;
             }
 
-            entries.Add(new EtcResource(name, index, position + 8, payloadSize));
+            if (ChainReachesSentinel(exeBytes, position))
+            {
+                return position;
+            }
+        }
+
+        throw new InvalidDataException($"'{exeFilePath}': no embedded resource container found.");
+    }
+
+    /// <summary>Follows a candidate chain and reports whether it lands exactly on the sentinel.</summary>
+    private static bool ChainReachesSentinel(byte[] exeBytes, int position)
+    {
+        for (var record = 0; record < MaxContainerRecords; record++)
+        {
+            if (position + 8 > exeBytes.Length)
+            {
+                return false;
+            }
+
+            var packedId = BitConverter.ToUInt32(exeBytes, position);
+            if (packedId == EndSentinelId)
+            {
+                return true;
+            }
+
+            var payloadSize = (int)BitConverter.ToUInt32(exeBytes, position + 4);
+            if (payloadSize <= 0 ||
+                position + 8 + payloadSize > exeBytes.Length ||
+                !TagOf(packedId).All(char.IsAsciiLetterUpper) ||
+                BitConverter.ToUInt32(exeBytes, position + 8) != TimMagic)
+            {
+                return false;
+            }
+
             position += 8 + payloadSize;
         }
 
-        return entries.ToArray();
+        return false;
     }
+
+    /// <summary>The three tag characters a record id packs, little-endian.</summary>
+    private static string TagOf(uint packedId) =>
+        new([(char)(packedId & 0xFF), (char)((packedId >> 8) & 0xFF), (char)((packedId >> 16) & 0xFF)]);
+
+    /// <summary>First word of a TIM header.</summary>
+    private const uint TimMagic = 0x10;
+
+    /// <summary>
+    /// Walk cutoff for a candidate chain. Both known builds hold 15 tagged records; this only has
+    /// to stay above that and below "scans the whole file on every false positive".
+    /// </summary>
+    private const int MaxContainerRecords = 64;
 
     /// <summary>
     /// Finds a resource by tag and index, the way <c>GetEtcResource</c> does; returns null when
@@ -506,12 +619,12 @@ public class LoaderExeInspector
             return cached;
         }
 
-        if ((uint)index >= (uint)Resources.Length)
+        if ((uint)index >= (uint)_resources.Length)
         {
             throw new ArgumentOutOfRangeException(nameof(index));
         }
 
-        var offset = Resources[index].FileOffset;
+        var offset = _resources[index].PayloadOffset;
         using var stream = new MemoryStream(_exeBytes, offset, _exeBytes.Length - offset, writable: false);
         using var br = new BinaryReader(stream);
         var bitmap = TimLoader.LoadTim(br);
@@ -526,47 +639,37 @@ public class LoaderExeInspector
         Directory.CreateDirectory(directoryPath);
         for (var index = 0; index < ImageCount; index++)
         {
-            SaveImage(index, Path.Combine(directoryPath, $"loader_{index:D2}_{Resources[index].Name}.png"));
+            SaveImage(index, Path.Combine(directoryPath, $"loader_{index:D2}_{GetImageName(index)}.png"));
         }
     }
 
+    /// <summary>What a TIM resource looks like, without decoding its pixels.</summary>
+    public readonly record struct TimShape(int Width, int Height, int Bpp);
+
     /// <summary>
-    /// Fails fast if the hardcoded offsets do not point at TIM headers of the expected shape,
-    /// which is what a different regional build would look like.
+    /// Reads one resource's dimensions and bit depth straight out of its TIM header.
     /// </summary>
-    private void ValidateResourceTable()
+    /// <remarks>
+    /// This is what identifies a record's role across regional builds: the container states the tag
+    /// and index, the header states the shape, and the two together are enough to tell the load-room
+    /// background from the font sheet without knowing either build's addresses.
+    /// </remarks>
+    public TimShape ReadShape(int index)
     {
-        for (var index = 0; index < Resources.Length; index++)
+        var offset = _resources[index].PayloadOffset;
+        var flags = BitConverter.ToUInt32(_exeBytes, offset + 4);
+        var bpp = (flags & 0x07) switch { 0 => 4, 1 => 8, 2 => 16, 3 => 24, _ => -1 };
+
+        var headerPos = offset + 8;
+        if ((flags & 0x08) != 0)
         {
-            var (name, offset, width, height, bpp) = Resources[index];
-            if (offset < 0 || offset + 20 > _exeBytes.Length)
-            {
-                throw new InvalidDataException($"LOADER.EXE: resource #{index} ({name}) is outside the file.");
-            }
-
-            if (BitConverter.ToUInt32(_exeBytes, offset) != 0x10)
-            {
-                throw new InvalidDataException($"LOADER.EXE: resource #{index} ({name}) at 0x{offset:X6} is not a TIM.");
-            }
-
-            var flags = BitConverter.ToUInt32(_exeBytes, offset + 4);
-            var actualBpp = (flags & 0x07) switch { 0 => 4, 1 => 8, 2 => 16, 3 => 24, _ => -1 };
-            var headerPos = offset + 8;
-            if ((flags & 0x08) != 0)
-            {
-                headerPos += (int)BitConverter.ToUInt32(_exeBytes, headerPos);
-            }
-
-            var widthWords = BitConverter.ToUInt16(_exeBytes, headerPos + 8);
-            var actualHeight = BitConverter.ToUInt16(_exeBytes, headerPos + 10);
-            var actualWidth = actualBpp switch { 4 => widthWords * 4, 8 => widthWords * 2, 16 => widthWords, _ => 0 };
-
-            if (actualBpp != bpp || actualWidth != width || actualHeight != height)
-            {
-                throw new InvalidDataException(
-                    $"LOADER.EXE: resource #{index} ({name}) is {actualWidth}x{actualHeight} {actualBpp}bpp, expected {width}x{height} {bpp}bpp. " +
-                    "This is most likely a different regional build; the offset table in LoaderExeInspector was established on the France version.");
-            }
+            headerPos += (int)BitConverter.ToUInt32(_exeBytes, headerPos);
         }
+
+        var widthWords = BitConverter.ToUInt16(_exeBytes, headerPos + 8);
+        var height = BitConverter.ToUInt16(_exeBytes, headerPos + 10);
+        var width = bpp switch { 4 => widthWords * 4, 8 => widthWords * 2, 16 => widthWords, _ => 0 };
+
+        return new TimShape(width, height, bpp);
     }
 }
