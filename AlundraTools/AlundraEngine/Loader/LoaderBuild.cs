@@ -108,8 +108,12 @@ public sealed record LoaderBuild
     /// GHIDRA (France): FUN_80021a1c @ 0x80021a1c wraps the layer index from 8 back to 3 — the
     /// opening flourish walks all eight frames, then the animation settles into a five-frame loop.
     ///
-    /// PROBABLE on USA: that build carries nine ANM records rather than eight, and 4 keeps the same
-    /// five-frame loop. Not read off its code — confirm against its FUN_80021a1c before trusting it.
+    /// GHIDRA (USA): FUN_80021cb8 @ 0x80021cb8 does the same, holding each layer for 8 ticks and
+    /// wrapping <c>if (layer == 9) layer = 3</c>. So the restart frame is 3 on both; the USA loop is
+    /// six frames rather than five because that build carries nine ANM records instead of eight.
+    ///
+    /// CORRECTION: this was first set to 4 on the USA build, reasoning that the same five-frame loop
+    /// would have been kept. It was not — the loop simply got longer.
     /// </remarks>
     public required int TitleAnimationLoopStart { get; init; }
 
@@ -231,7 +235,7 @@ public sealed record LoaderBuild
         ExeFileNames = ["SLUS_005.53"],
         TitleFull = new LoaderResourceKey("TIM", 0),
         BootScreen = null,
-        TitleAnimationLoopStart = 4,
+        TitleAnimationLoopStart = 3,
         EtcFileName = "ETC_USA.R",
         PublisherMovieName = "USA_OP",
 
