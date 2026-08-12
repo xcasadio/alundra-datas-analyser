@@ -17,8 +17,12 @@ public sealed class XaAdpcmDecoder
     /// <summary>ADPCM bytes in a Form 2 sector: 18 sound groups of 128 bytes.</summary>
     public const int AdpcmBytesPerSector = 2304;
 
-    private const int SoundGroupSize = 128;
-    private const int SoundGroupCount = 18;
+    /// <summary>Bytes in one sound group, the smallest independently decodable unit.</summary>
+    public const int SoundGroupSize = 128;
+
+    /// <summary>Sound groups a complete Form 2 sector carries.</summary>
+    public const int SoundGroupCount = 18;
+
     private const int SamplesPerSoundUnit = 28;
 
     // Prediction filter coefficients, in 1/64 units.
@@ -60,18 +64,24 @@ public sealed class XaAdpcmDecoder
     /// <summary>
     /// Decodes one sector's ADPCM payload into interleaved PCM.
     /// </summary>
-    /// <param name="adpcm">The sector's first <see cref="AdpcmBytesPerSector"/> user-data bytes.</param>
+    /// <param name="adpcm">
+    /// The sector's user-data bytes. A complete Form 2 sector supplies
+    /// <see cref="AdpcmBytesPerSector"/>; a shorter span is decoded as far as its whole sound
+    /// groups reach, which is what a movie extracted at 2048 bytes per sector leaves behind — 16 of
+    /// the 18 groups. Whatever is missing is the caller's to account for, since only the caller
+    /// knows whether the gap should shorten the stream or be held open.
+    /// </param>
     /// <param name="codingInfo">Coding-info byte from the sector subheader.</param>
     /// <param name="destination">Buffer of at least <see cref="MaxSamplesPerSector"/> shorts.</param>
     /// <returns>Number of shorts written (frames * channels).</returns>
     public int Decode(ReadOnlySpan<byte> adpcm, byte codingInfo, short[] destination)
     {
         ArgumentNullException.ThrowIfNull(destination);
-        if (adpcm.Length < AdpcmBytesPerSector)
+        var groupCount = Math.Min(adpcm.Length / SoundGroupSize, SoundGroupCount);
+        if (groupCount == 0)
         {
             throw new ArgumentException(
-                $"An XA sector carries {AdpcmBytesPerSector} ADPCM bytes; got {adpcm.Length}. " +
-                "A source written as 2048 bytes per sector has lost 2 of every 18 sound groups.",
+                $"An XA payload needs at least one {SoundGroupSize}-byte sound group; got {adpcm.Length} bytes.",
                 nameof(adpcm));
         }
 
@@ -90,7 +100,7 @@ public sealed class XaAdpcmDecoder
         var frameCursor = new int[2];
         var written = 0;
 
-        for (var group = 0; group < SoundGroupCount; group++)
+        for (var group = 0; group < groupCount; group++)
         {
             var groupOffset = group * SoundGroupSize;
 
