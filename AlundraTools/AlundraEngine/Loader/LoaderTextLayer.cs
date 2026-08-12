@@ -34,6 +34,12 @@ public sealed class LoaderFont
     public LoaderFontCharacter[] Characters { get; private set; } = [];
 
     /// <summary>
+    /// Pixels this build adds to a glyph's width when advancing the cursor.
+    /// </summary>
+    /// <remarks>See <see cref="LoaderBuild.GlyphAdvancePadding"/> — 0 on France, 1 on USA.</remarks>
+    public int AdvancePadding { get; private set; }
+
+    /// <summary>
     /// GHIDRA: ResetGraphicsState @ 0x80022160.
     /// </summary>
     /// <remarks>
@@ -47,12 +53,13 @@ public sealed class LoaderFont
     /// LOADER.EXE image, which is exactly what the original mutates too (the resource is resident
     /// in RAM), so the effect is identical and idempotent.
     /// </remarks>
-    public void InitFontTileMap(PsxVram vram, byte[] exeBytes, int fontTimOffset, LoaderFontCharacter[] characters)
+    public void InitFontTileMap(PsxVram vram, byte[] exeBytes, int fontTimOffset, LoaderFontCharacter[] characters, int advancePadding = 0)
     {
         ArgumentNullException.ThrowIfNull(vram);
         ArgumentNullException.ThrowIfNull(exeBytes);
 
         Characters = characters;
+        AdvancePadding = advancePadding;
         Sheet.InitializeTileLayer(exeBytes, fontTimOffset);
 
         if (Sheet.ClutBuffer is not null)
@@ -197,7 +204,7 @@ public sealed class LoaderTextLayer
                 Target.SetTileLayerBounds(_vram, -1, -1, -1, -1, 0);
             }
 
-            CursorX += character.Width;
+            CursorX += _font.AdvancePadding + character.Width;
             return character.Width;
         }
 

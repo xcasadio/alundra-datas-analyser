@@ -388,11 +388,19 @@ public sealed class LoaderSelectionScreen
     /// <summary>GHIDRA: InitializeSelectionScreenGraphics @ 0x80022af4.</summary>
     private void InitializeSelectionScreenGraphics()
     {
-        _font.InitFontTileMap(
-            _ui.Vram,
-            _inspector.ExeBytes,
-            _inspector.FindEtcResource("TIM", 4)?.PayloadOffset ?? _inspector.GetImageFileOffset(3),
-            _inspector.ReadFontCharacterTable());
+        // The fallback used to be image #3, which is the font only on the France build - on the USA
+        // one that index is the background message. "TIM" #4 resolves on both, so a build without it
+        // is a build this port does not understand, and guessing an index would draw the wrong sheet.
+        var fontTim = _inspector.FindEtcResource("TIM", 4);
+        if (fontTim is not null)
+        {
+            _font.InitFontTileMap(
+                _ui.Vram,
+                _inspector.ExeBytes,
+                fontTim.Value.PayloadOffset,
+                _inspector.ReadFontCharacterTable(),
+                _inspector.Build.GlyphAdvancePadding);
+        }
 
         var panel = _inspector.FindEtcResource("TIM", 3);
         if (panel is not null)

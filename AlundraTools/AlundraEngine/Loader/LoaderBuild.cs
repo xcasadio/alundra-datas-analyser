@@ -193,6 +193,18 @@ public sealed record LoaderBuild
     /// </remarks>
     public required uint FontCharacterTableAddress { get; init; }
 
+    /// <summary>Pixels added to a glyph's own width when advancing the text cursor.</summary>
+    /// <remarks>
+    /// GHIDRA (USA): FUN_80022718 advances with <c>cursorX = cursorX + 1 + width</c> on the
+    /// single-byte path, the same <c>1 +</c> the two-byte path uses.
+    ///
+    /// France stays at 0, which is what this port was transliterated to — its FUN_800223ec was read
+    /// as advancing by the glyph width alone. That build is not in the Ghidra project, so the two
+    /// cannot be compared here; if France turns out to carry the same <c>1 +</c>, this is where it
+    /// gets corrected, and text there is currently one pixel tight per character.
+    /// </remarks>
+    public required int GlyphAdvancePadding { get; init; }
+
     /// <summary>Number of entries the font metrics table holds.</summary>
     /// <remarks>
     /// GHIDRA (USA): FUN_80022718 gates the table on <c>(code &amp; 0xffff) &lt; 0x80</c> and sends
@@ -226,6 +238,7 @@ public sealed record LoaderBuild
         SlotMarkerAnimationStringAddress = 0x80044384,
         FontCharacterTableAddress = 0x80042F80,
         FontCharacterCount = 256,
+        GlyphAdvancePadding = 0,
     };
 
     /// <summary>The USA 1.1 disc: SLUS-00553, boots SLUS_005.53.</summary>
@@ -258,6 +271,7 @@ public sealed record LoaderBuild
         SlotMarkerAnimationStringAddress = 0x800437FC,
         FontCharacterTableAddress = 0x80042DF8,
         FontCharacterCount = 128,
+        GlyphAdvancePadding = 1,
     };
 
     private static readonly LoaderBuild[] KnownBuilds = [France, Usa];
