@@ -134,6 +134,45 @@ public sealed record LoaderBuild
     /// <summary>Which entries of <see cref="EtcFileName"/> the loader draws.</summary>
     public required LoaderStringIds Strings { get; init; }
 
+    /// <summary>
+    /// The selection screen's hotspot map: records of five shorts, ending on code -1.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA (France): DAT_800443b0, walked by FUN_800239c4 @ 0x800239c4.
+    ///
+    /// SOURCE (USA): the same 110 bytes, byte for byte, at 0x80043828 — the map is the same eleven
+    /// rectangles, only relocated.
+    /// </remarks>
+    public required uint SelectionHotspotTableAddress { get; init; }
+
+    /// <summary>The save marker's resting frame, the string "0".</summary>
+    /// <remarks>
+    /// GHIDRA (France): s_0_80044380. SOURCE (USA): the identical pair four bytes below, at
+    /// 0x800437F8, confirmed by reading both strings back.
+    /// </remarks>
+    public required uint SlotMarkerRestingStringAddress { get; init; }
+
+    /// <summary>The save marker's animation, "0123456345634563456345634563".</summary>
+    /// <remarks>GHIDRA (France): s_01234563456..._80044384. SOURCE (USA): 0x800437FC, identical.</remarks>
+    public required uint SlotMarkerAnimationStringAddress { get; init; }
+
+    /// <summary>
+    /// The proportional font's metrics: 256 entries of five ints, or null when not yet located.
+    /// </summary>
+    /// <remarks>
+    /// GHIDRA (France): g_characterPositionInSpriteSheet @ 0x80042f80, consumed by FUN_800223ec.
+    ///
+    /// GAP: unknown on the USA build, and the one table that cannot be carried over. The other
+    /// three are byte-identical across the discs and so could be found by content; these metrics
+    /// describe that build's own font sheet and genuinely differ. Structural search does not pin
+    /// them either: the entries sit on the sheet's 16x16 grid, but 70 of the 256 break that rule on
+    /// France alone, so no exact signature exists to match. Reading the address FUN_800223ec's
+    /// equivalent loads is what would close it.
+    ///
+    /// Until then the selection screen draws no text on the USA build.
+    /// </remarks>
+    public uint? FontCharacterTableAddress { get; init; }
+
     /// <summary>The France disc: SLES-01198, boots SLES_011.98.</summary>
     public static readonly LoaderBuild France = new()
     {
@@ -151,6 +190,10 @@ public sealed record LoaderBuild
             ConfirmLoad: 0xC9,
             Yes: 0xCA,
             No: 0xCB),
+        SelectionHotspotTableAddress = 0x800443B0,
+        SlotMarkerRestingStringAddress = 0x80044380,
+        SlotMarkerAnimationStringAddress = 0x80044384,
+        FontCharacterTableAddress = 0x80042F80,
     };
 
     /// <summary>The USA 1.1 disc: SLUS-00553, boots SLUS_005.53.</summary>
@@ -175,6 +218,10 @@ public sealed record LoaderBuild
             ConfirmLoad: 0xC8,
             Yes: LoaderStringIds.Absent,
             No: LoaderStringIds.Absent),
+        SelectionHotspotTableAddress = 0x80043828,
+        SlotMarkerRestingStringAddress = 0x800437F8,
+        SlotMarkerAnimationStringAddress = 0x800437FC,
+        FontCharacterTableAddress = null,
     };
 
     private static readonly LoaderBuild[] KnownBuilds = [France, Usa];

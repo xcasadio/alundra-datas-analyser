@@ -326,8 +326,8 @@ public sealed class LoaderSelectionScreen
     public void Initialize()
     {
         _hotspots = _inspector.ReadSelectionHotspots();
-        _markerRestingString = _inspector.ReadStringAt(LoaderExeInspector.SlotMarkerRestingStringAddress);
-        _markerAnimationString = _inspector.ReadStringAt(LoaderExeInspector.SlotMarkerAnimationStringAddress);
+        _markerRestingString = _inspector.ReadSlotMarkerRestingString();
+        _markerAnimationString = _inspector.ReadSlotMarkerAnimationString();
 
         InitSelectionBackdropTiles();
         InitializeSelectionScreenGraphics();

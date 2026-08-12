@@ -558,9 +558,15 @@ public class LoaderExeInspector
     /// </remarks>
     public LoaderFontCharacter[] ReadFontCharacterTable()
     {
-        const uint ramAddress = 0x80042F80;
         const int entryCount = 256;
         const int entrySize = 20;
+
+        if (Build.FontCharacterTableAddress is not { } ramAddress)
+        {
+            // See the GAP note on LoaderBuild.FontCharacterTableAddress: an all-zero table means
+            // every glyph is zero-width, so the text layers draw nothing rather than garbage.
+            return new LoaderFontCharacter[entryCount];
+        }
 
         var offset = RamToFileOffset(ramAddress);
         var characters = new LoaderFontCharacter[entryCount];
@@ -600,12 +606,12 @@ public class LoaderExeInspector
     ///
     /// SOURCE: read out of the France build. The eleven records are the four save houses
     /// (0..3, 16x44 at x = 0x50, 0x80, 0xB0, 0xE0, y = 0x78), the exit strip along the bottom
-    /// (6, 320x16 at y = 0xF0) and six walls closing the map in.
+    /// (6, 320x16 at y = 0xF0) and six walls closing the map in. The USA build carries the same
+    /// 110 bytes at a different address — see <see cref="LoaderBuild.SelectionHotspotTableAddress"/>.
     /// </remarks>
     public SelectionHotspot[] ReadSelectionHotspots()
     {
-        const uint ramAddress = 0x800443B0;
-        var offset = RamToFileOffset(ramAddress);
+        var offset = RamToFileOffset(Build.SelectionHotspotTableAddress);
         var hotspots = new List<SelectionHotspot>();
 
         for (var index = 0; ; index++)
@@ -656,11 +662,11 @@ public class LoaderExeInspector
         return _exeBytes[offset..(end + 1)];
     }
 
-    /// <summary>GHIDRA: s_0_80044380 — the marker's resting frame.</summary>
-    public const uint SlotMarkerRestingStringAddress = 0x80044380;
+    /// <summary>The marker's resting frame, at this build's address.</summary>
+    public byte[] ReadSlotMarkerRestingString() => ReadStringAt(Build.SlotMarkerRestingStringAddress);
 
-    /// <summary>GHIDRA: s_01234563456345634563456345634563_80044384 — the marker's animation.</summary>
-    public const uint SlotMarkerAnimationStringAddress = 0x80044384;
+    /// <summary>The marker's animation, at this build's address.</summary>
+    public byte[] ReadSlotMarkerAnimationString() => ReadStringAt(Build.SlotMarkerAnimationStringAddress);
 
     /// <summary>
     /// GHIDRA: ValidateSelection parks the marker on <c>s_..._80044384 + 0x24</c>, which is that
