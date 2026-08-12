@@ -13,11 +13,20 @@ namespace AlundraEngine.Loader;
 /// </summary>
 public class LoaderExeInspector
 {
+    /// <summary>The PS-EXE header every PSX executable carries ahead of its text segment.</summary>
+    private const int PsxExeHeaderSize = 0x800;
+
     /// <summary>
-    /// LOADER.EXE loads at <c>t_addr = 0x80020000</c> and its PS-EXE header occupies the first
-    /// 0x800 bytes, so <c>fileOffset = ramAddress - 0x8001F800</c>. Same delta as CLOSING.EXE.
+    /// <c>fileOffset = ramAddress - RamToFileOffsetDelta</c>, i.e. the executable's load address
+    /// minus the header the file carries ahead of it.
+    ///
+    /// SOURCE: read from this executable's own PS-EXE header (<c>t_addr</c> at +0x18) rather than
+    /// hardcoded, so the conversion holds for any regional build. Every Alundra executable checked
+    /// loads at 0x80020000 — LOADER.EXE and SLES_011.98 (France), SLUS_005.53 (USA 1.1), plus
+    /// CLOSING.EXE and ALUN_CD.EXE on both discs — which is why 0x8001F800 was right everywhere so
+    /// far; deriving it simply removes the assumption.
     /// </summary>
-    public const uint RamToFileOffsetDelta = 0x8001F800;
+    public uint RamToFileOffsetDelta { get; }
 
     /// <summary>
     /// The embedded TIM resources, in the order jPSXdec catalogues them in <c>loader.idx</c>.
@@ -83,6 +92,7 @@ public class LoaderExeInspector
     {
         var exeFilePath = Path.Combine(gamePath, "LOADER.EXE");
         _exeBytes = File.ReadAllBytes(exeFilePath);
+        RamToFileOffsetDelta = ReadRamToFileOffsetDelta(_exeBytes, exeFilePath);
         ValidateResourceTable();
     }
 
@@ -91,7 +101,26 @@ public class LoaderExeInspector
     public string GetImageName(int index) => Resources[index].Name;
 
     /// <summary>Converts a RAM address from Ghidra into an offset into <see cref="ExeBytes"/>.</summary>
-    public static int RamToFileOffset(uint ramAddress) => (int)(ramAddress - RamToFileOffsetDelta);
+    public int RamToFileOffset(uint ramAddress) => (int)(ramAddress - RamToFileOffsetDelta);
+
+    /// <summary>
+    /// Reads the load address out of the PS-EXE header and turns it into the RAM-to-file delta.
+    /// </summary>
+    /// <remarks>
+    /// The header is the 0x800-byte block every PSX executable starts with: the magic "PS-X EXE"
+    /// at +0, then pc0 at +0x10, t_addr at +0x18 and t_size at +0x1C.
+    /// </remarks>
+    private static uint ReadRamToFileOffsetDelta(byte[] exeBytes, string exeFilePath)
+    {
+        if (exeBytes.Length < PsxExeHeaderSize ||
+            System.Text.Encoding.ASCII.GetString(exeBytes, 0, 8) != "PS-X EXE")
+        {
+            throw new InvalidDataException($"'{exeFilePath}' does not start with a PS-EXE header.");
+        }
+
+        var loadAddress = BitConverter.ToUInt32(exeBytes, 0x18);
+        return loadAddress - PsxExeHeaderSize;
+    }
 
     /// <summary>One entry of the resource container embedded in LOADER.EXE.</summary>
     /// <param name="Name">Three-character tag, "TIM" or "ANM".</param>
