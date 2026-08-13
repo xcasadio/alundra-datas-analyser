@@ -475,14 +475,14 @@ public sealed class LoaderSelectionScreen
         //
         // CORRECTION: an earlier pass read the SetSpriteImage calls here as loading cursor sprites.
         // SetSpriteImage draws text (renamed DrawTextToLayer), so these are strings.
-        DrawConfirmLabel(_textLayer3, _inspector.Build.Strings.Yes, _inspector.Build.ConfirmYesStringAddress, 0, 0);
-        DrawConfirmLabel(_textLayer3, _inspector.Build.Strings.No, _inspector.Build.ConfirmNoStringAddress, 0x30, 1);
+        DrawMessage(_textLayer3, _inspector.Build.Messages.Yes, 0, 0, 0);
+        DrawMessage(_textLayer3, _inspector.Build.Messages.No, 0x30, 0, 1);
 
         _hudTopLeft.Set(0, 0xF0, 0, 4, 0, 0xF0);
         _hudTopRight.Set(0, 0xF0, 0, 8, 0, 0xF0);
         _hudTitle.Set(0x140, 0x90, 0x10, 4, 0x140, 0x90);
 
-        _saveSlotBox.Initialize(0, -1, 0x2C0, 0x100, 0x10, 0x10, 0x100, 0x1E1);
+        _saveSlotBox.Initialize(0, -1, 0x2C0, _inspector.Build.SaveSlotCursorSourceY, 0x10, 0x10, 0x100, 0x1E1);
         _saveSlotBox.SetOffset(0, 0);
         _saveSlotBox.SetBaseAndRotation(0xAF, 0x85, 0x78, -1);
 
@@ -592,7 +592,7 @@ public sealed class LoaderSelectionScreen
         // The five card errors reduce to one on desktop; the message indices are the original's.
         if (result == LoaderSaveSlots.ResultNoCard)
         {
-            SetLayerText(_textLayer1, _inspector.Build.Strings.InsertMemoryCard);
+            SetLayerText(_textLayer1, _inspector.Build.Messages.InsertMemoryCard);
             return -1;
         }
 
@@ -610,11 +610,11 @@ public sealed class LoaderSelectionScreen
 
         if (occupied != 0)
         {
-            SetLayerText(_textLayer1, _inspector.Build.Strings.UsingMemoryCard);
+            SetLayerText(_textLayer1, _inspector.Build.Messages.UsingMemoryCard);
             return 0;
         }
 
-        SetLayerText(_textLayer1, _inspector.Build.Strings.NoSaveData);
+        SetLayerText(_textLayer1, _inspector.Build.Messages.NoSaveData);
         return -1;
     }
 
@@ -683,7 +683,7 @@ public sealed class LoaderSelectionScreen
                     // UpdateSelectionCursor @ 0x80024888.
                     _isIdle = 1;
                     _textLayer1.ClearTextLayer(1);
-                    SetLayerText(_textLayer1, _inspector.Build.Strings.ChooseSlot);
+                    SetLayerText(_textLayer1, _inspector.Build.Messages.ChooseSlot);
                     _playSoundEffect(4);
                     _panelMode = 1;
                     CurrentPhase = Phase.Prompt;
@@ -836,7 +836,7 @@ public sealed class LoaderSelectionScreen
         _textLayer2.ClearTextLayer(1);
         _isIdle = 1;
 
-        SetLayerText(_textLayer1, _inspector.Build.Strings.ConfirmLoad);
+        SetLayerText(_textLayer1, _inspector.Build.Messages.ConfirmLoad);
 
         // The chapter name comes from the four ASCII digits at the head of CurrentFlagName, read as
         // a string-table index; the save's own summary line is the 0x20 bytes at +0x28. An index of
@@ -1210,39 +1210,50 @@ public sealed class LoaderSelectionScreen
         return -1;
     }
 
-    /// <summary>Points a layer at a string-table entry so its typewriter can walk it.</summary>
-    private void SetLayerText(LoaderTextLayer layer, int entryIndex)
+    /// <summary>
+    /// Resolves a message to the buffer and offset its bytes start at, or null when this build
+    /// cannot supply it.
+    /// </summary>
+    /// <remarks>
+    /// The typewriter's blip is gated on the parity of the character's address. The RAM-to-file
+    /// delta is even, so a file offset into the executable carries the same parity the original's
+    /// RAM pointer had, and an executable literal blips exactly as a string-table entry does.
+    /// </remarks>
+    private (byte[] Buffer, int Offset)? Resolve(LoaderMessage message)
     {
-        var offset = _strings?.GetEntryOffset(entryIndex) ?? -1;
-        if (offset < 0 || _strings is null)
+        if (message.ExeAddress is { } address)
+        {
+            return (_inspector.ExeBytes, _inspector.RamToFileOffset(address));
+        }
+
+        var offset = _strings?.GetEntryOffset(message.EtcIndex) ?? -1;
+        return offset < 0 || _strings is null ? null : (_strings.Buffer, offset);
+    }
+
+    /// <summary>Points a layer at a message so its typewriter can walk it.</summary>
+    private void SetLayerText(LoaderTextLayer layer, LoaderMessage message)
+    {
+        if (Resolve(message) is not { } source)
         {
             layer.Text = Encoding.Latin1.GetBytes("\0");
             layer.TextPosition = 0;
             return;
         }
 
-        layer.Text = _strings.Buffer;
-        layer.TextPosition = offset;
+        layer.Text = source.Buffer;
+        layer.TextPosition = source.Offset;
     }
 
-    /// <summary>
-    /// Draws one confirmation label, from wherever this build keeps it.
-    /// </summary>
-    /// <remarks>
-    /// France reads it out of ETC_RES.R like every other string; the USA build has it as a literal
-    /// in the executable, so the bytes come from there and the cursor work is the same either way.
-    /// </remarks>
-    private void DrawConfirmLabel(LoaderTextLayer layer, int entryIndex, uint? exeAddress, int cursorX, int sync)
+    /// <summary>Draws a message into a layer in one call, at a given cursor position.</summary>
+    private void DrawMessage(LoaderTextLayer layer, LoaderMessage message, int cursorX, int cursorY, int sync)
     {
-        if (exeAddress is not { } address)
-        {
-            DrawStringEntry(layer, entryIndex, cursorX, 0, sync);
-            return;
-        }
-
         layer.CursorX = cursorX;
-        layer.CursorY = 0;
-        layer.DrawText(_inspector.ExeBytes, _inspector.RamToFileOffset(address), sync);
+        layer.CursorY = cursorY;
+
+        if (Resolve(message) is { } source)
+        {
+            layer.DrawText(source.Buffer, source.Offset, sync);
+        }
     }
 
     /// <summary>Draws a string-table entry into a layer in one call, at a given cursor position.</summary>

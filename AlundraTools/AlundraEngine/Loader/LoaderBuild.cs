@@ -14,8 +14,39 @@ public readonly record struct LoaderResourceKey(string Tag, int Index)
 }
 
 /// <summary>
-/// The entries of <c>ETC_RES.R</c> the loader draws, by role.
+/// One message the loader draws, and where this build keeps it.
 /// </summary>
+/// <remarks>
+/// The two discs do not agree on this. France reads every message out of <c>ETC_RES.R</c>; the USA
+/// build keeps them all as literals in the executable and never touches its string table for them.
+///
+/// The difference is not cosmetic. The executable literals carry the <c>\N</c> line breaks; the
+/// matching ETC_USA.R entries do not, because that file holds the lines concatenated with their
+/// trailing spaces dropped — "History Bookin Slot 1.", "detected in anyslot.", "hold thechapter".
+/// Drawing those gives one long run that the text box clips, which is what a USA player saw.
+/// </remarks>
+public readonly record struct LoaderMessage
+{
+    private LoaderMessage(int etcIndex, uint? exeAddress)
+    {
+        EtcIndex = etcIndex;
+        ExeAddress = exeAddress;
+    }
+
+    /// <summary>Index into the build's string table, or -1 when the text is not there.</summary>
+    public int EtcIndex { get; }
+
+    /// <summary>RAM address of the literal, or null when the string table supplies the text.</summary>
+    public uint? ExeAddress { get; }
+
+    /// <summary>A message the build keeps in its string table.</summary>
+    public static LoaderMessage Etc(int index) => new(index, null);
+
+    /// <summary>A message the build keeps as a literal in the executable.</summary>
+    public static LoaderMessage InExecutable(uint address) => new(-1, address);
+}
+
+/// <summary>The messages the loader draws, by role.</summary>
 /// <param name="UsingMemoryCard">Shown while at least one save was found.</param>
 /// <param name="InsertMemoryCard">Shown when no card is present at all.</param>
 /// <param name="NoSaveData">Shown when the card holds no Alundra save.</param>
@@ -24,31 +55,16 @@ public readonly record struct LoaderResourceKey(string Tag, int Index)
 /// the save they want.
 /// </param>
 /// <param name="ConfirmLoad">The question above the confirmation prompt.</param>
-/// <param name="Yes">
-/// The confirmation prompt's left label, or -1 when the build draws it from the executable instead
-/// — see <see cref="LoaderBuild.ConfirmYesStringAddress"/>.
-/// </param>
-/// <param name="No">Its right label, on the same terms.</param>
-/// <remarks>
-/// The indices are not stable across regions. The USA table runs one lower throughout — its 0xC0 is
-/// the France 0xC1, its 0xC7 the France 0xC8 — and stops at 0xC8: every index above that reads
-/// 0xFFFF, the table's "no entry" marker.
-///
-/// That truncation is why the USA build has no entry for the two confirmation labels: it does not
-/// keep them in the string table at all.
-/// </remarks>
-public readonly record struct LoaderStringIds(
-    int UsingMemoryCard,
-    int InsertMemoryCard,
-    int NoSaveData,
-    int ChooseSlot,
-    int ConfirmLoad,
-    int Yes,
-    int No)
-{
-    /// <summary>The value both drawing helpers treat as "nothing to draw".</summary>
-    public const int Absent = -1;
-}
+/// <param name="Yes">The confirmation prompt's left label.</param>
+/// <param name="No">Its right label.</param>
+public readonly record struct LoaderMessages(
+    LoaderMessage UsingMemoryCard,
+    LoaderMessage InsertMemoryCard,
+    LoaderMessage NoSaveData,
+    LoaderMessage ChooseSlot,
+    LoaderMessage ConfirmLoad,
+    LoaderMessage Yes,
+    LoaderMessage No);
 
 /// <summary>
 /// Everything about the loader that differs from one regional build of the disc to the next.
@@ -141,25 +157,22 @@ public sealed record LoaderBuild
     /// </remarks>
     public required string PublisherMovieName { get; init; }
 
-    /// <summary>Which entries of <see cref="EtcFileName"/> the loader draws.</summary>
-    public required LoaderStringIds Strings { get; init; }
+    /// <summary>The messages the loader draws, and where this build keeps each of them.</summary>
+    public required LoaderMessages Messages { get; init; }
 
     /// <summary>
-    /// Where the confirmation prompt's "yes" label lives inside the executable, for a build that
-    /// does not keep it in the string table; null when <see cref="LoaderStringIds.Yes"/> supplies it.
+    /// VRAM row the save-slot pointer and yes/no cursor sample their 16x16 frames from.
     /// </summary>
     /// <remarks>
-    /// GHIDRA (USA): FUN_80022d7c draws the two labels 0x30 apart, exactly as France does, but
-    /// passes <c>&amp;DAT_800200e4</c> and <c>&amp;DAT_800200e8</c> rather than string-table entries.
-    /// Read back, those are "Yes" and "No " — plain literals in the executable's data.
+    /// GHIDRA (USA): FUN_80022d7c sets the box up with
+    /// <c>(u, v) = (0x2c0, 0x170), 0x10 x 0x10, clut (0x100, 0x1e1)</c>; every other argument
+    /// matches the France call this port was written from, which uses v = 0x100.
     ///
-    /// That is why the USA string table simply stops before France's 0xCA/0xCB: this build never
-    /// needed those entries.
+    /// France keeps its cursor frames on the font sheet's first row, which is why entries 0..15 of
+    /// its metrics table are the sheet's 16x16 cells. The USA build has nothing there — its entries
+    /// 0..15 are 1x1 — and puts the frames further down the sheet instead.
     /// </remarks>
-    public uint? ConfirmYesStringAddress { get; init; }
-
-    /// <summary>The same for the "no" label.</summary>
-    public uint? ConfirmNoStringAddress { get; init; }
+    public required short SaveSlotCursorSourceY { get; init; }
 
     /// <summary>
     /// The selection screen's hotspot map: records of five shorts, ending on code -1.
@@ -231,20 +244,21 @@ public sealed record LoaderBuild
         TitleAnimationLoopStart = 3,
         EtcFileName = "ETC_RES.R",
         PublisherMovieName = "EURO_OP",
-        Strings = new LoaderStringIds(
-            UsingMemoryCard: 0xC1,
-            InsertMemoryCard: 0xC2,
-            NoSaveData: 0xC8,
-            ChooseSlot: 0xC7,
-            ConfirmLoad: 0xC9,
-            Yes: 0xCA,
-            No: 0xCB),
+        Messages = new LoaderMessages(
+            UsingMemoryCard: LoaderMessage.Etc(0xC1),
+            InsertMemoryCard: LoaderMessage.Etc(0xC2),
+            NoSaveData: LoaderMessage.Etc(0xC8),
+            ChooseSlot: LoaderMessage.Etc(0xC7),
+            ConfirmLoad: LoaderMessage.Etc(0xC9),
+            Yes: LoaderMessage.Etc(0xCA),
+            No: LoaderMessage.Etc(0xCB)),
         SelectionHotspotTableAddress = 0x800443B0,
         SlotMarkerRestingStringAddress = 0x80044380,
         SlotMarkerAnimationStringAddress = 0x80044384,
         FontCharacterTableAddress = 0x80042F80,
         FontCharacterCount = 256,
         GlyphAdvancePadding = 0,
+        SaveSlotCursorSourceY = 0x100,
     };
 
     /// <summary>The USA 1.1 disc: SLUS-00553, boots SLUS_005.53.</summary>
@@ -258,27 +272,29 @@ public sealed record LoaderBuild
         EtcFileName = "ETC_USA.R",
         PublisherMovieName = "USA_OP",
 
-        // SOURCE: matched against the France entries by meaning, one index lower throughout —
-        // 0xC0 "Using the Book in Slot 1.", 0xC1 "Please insert a History Book in Slot 1.",
-        // 0xC7 "No record exists of Alundra's adventures.", 0xC8 "Would you like to rejoin the
-        // tale in this chapter?". The table ends there, and the two confirmation labels come out
-        // of the executable instead.
-        Strings = new LoaderStringIds(
-            UsingMemoryCard: 0xC0,
-            InsertMemoryCard: 0xC1,
-            NoSaveData: 0xC7,
-            ChooseSlot: 0xC6,
-            ConfirmLoad: 0xC8,
-            Yes: LoaderStringIds.Absent,
-            No: LoaderStringIds.Absent),
-        ConfirmYesStringAddress = 0x800200E4,
-        ConfirmNoStringAddress = 0x800200E8,
+        // GHIDRA: this build never reads its string table for these. FUN_800248b4 points the layer
+        // at 0x8002020c, FUN_80024bf8 at 0x80020284, FUN_80024e78 assigns 0x8002032c, and
+        // FUN_80022d7c draws 0x800200e4 / 0x800200e8 as the two confirmation labels. The remaining
+        // two were read back from the same run of literals.
+        //
+        // ETC_USA.R does hold near-matches one index below the France ones, and using those was the
+        // first attempt here. They are the wrong text: they lack the \N line breaks and read "in
+        // Slot 1." where the executable says "in Memory Card Slot 1.".
+        Messages = new LoaderMessages(
+            UsingMemoryCard: LoaderMessage.InExecutable(0x80020258),
+            InsertMemoryCard: LoaderMessage.InExecutable(0x8002010C),
+            NoSaveData: LoaderMessage.InExecutable(0x8002020C),
+            ChooseSlot: LoaderMessage.InExecutable(0x80020284),
+            ConfirmLoad: LoaderMessage.InExecutable(0x8002032C),
+            Yes: LoaderMessage.InExecutable(0x800200E4),
+            No: LoaderMessage.InExecutable(0x800200E8)),
         SelectionHotspotTableAddress = 0x80043828,
         SlotMarkerRestingStringAddress = 0x800437F8,
         SlotMarkerAnimationStringAddress = 0x800437FC,
         FontCharacterTableAddress = 0x80042DF8,
         FontCharacterCount = 128,
         GlyphAdvancePadding = 1,
+        SaveSlotCursorSourceY = 0x170,
     };
 
     private static readonly LoaderBuild[] KnownBuilds = [France, Usa];
