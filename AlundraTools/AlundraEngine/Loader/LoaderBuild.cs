@@ -216,17 +216,17 @@ public sealed record LoaderBuild
     /// GHIDRA (USA): FUN_80022718 advances with <c>cursorX = cursorX + 1 + width</c> on the
     /// single-byte path, the same <c>1 +</c> the two-byte path uses.
     ///
-    /// France stays at 0, which is what this port was transliterated to — its FUN_800223ec was read
-    /// as advancing by the glyph width alone. That build is not in the Ghidra project, so the two
-    /// cannot be compared here; if France turns out to carry the same <c>1 +</c>, this is where it
-    /// gets corrected, and text there is currently one pixel tight per character.
+    /// GHIDRA (France): DrawGlyphToTileMap @ 0x800223ec advances with <c>cursorX = cursorX + width</c>
+    /// there, and keeps the <c>1 +</c> for the two-byte path only. The two discs genuinely differ,
+    /// so this is a real per-build value rather than an unverified carry-over.
     /// </remarks>
     public required int GlyphAdvancePadding { get; init; }
 
     /// <summary>Number of entries the font metrics table holds.</summary>
     /// <remarks>
     /// GHIDRA (USA): FUN_80022718 gates the table on <c>(code &amp; 0xffff) &lt; 0x80</c> and sends
-    /// everything else to the kanji path, so its table stops at 128. France's port reads 256.
+    /// everything else to the kanji path, so its table stops at 128. GHIDRA (France):
+    /// DrawGlyphToTileMap @ 0x800223ec gates on <c>&lt; 0x100</c>, so its table holds 256.
     ///
     /// The difference is not observable: the text walker only ever forms a code below 0x80 or a
     /// two-byte code of 0x8000 and up, so entries 0x80..0xFF are never indexed on either build.
