@@ -2694,6 +2694,11 @@ public class GameEngine
     //80030fc8
     private void UpdateMenuStatusText()
     {
+        // GHIDRA: the function opens on GetFirstEnabledFlagIndex(g_saveData.CurrentFlagName), which
+        // fills the save's chapter field. Omitting it is why the loader's confirmation panel had a
+        // blank line above the HP/TIME summary on both discs: the field it reads was never written.
+        StaticVariables.g_saveData.CurrentFlagName = ChapterFlags.CurrentFlagName(StaticVariables.g_saveData.GameFlags);
+
         string template = "  HP 00       TIME 00:00:00   ";
         var chars = template.ToCharArray();
 
