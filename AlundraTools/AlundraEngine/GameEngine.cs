@@ -2703,7 +2703,12 @@ public class GameEngine
         var chars = template.ToCharArray();
 
         // --- HP (de PlayerEntity) ---
-        int hp = StaticVariables.PlayerEntity.Hp;
+        // CORRECTION: this read Hp, the current hit points. GHIDRA: UpdateMenuStatusText @
+        // 0x80030fc8 reads g_entitySlots[0].HpMax - the summary line names the save's maximum,
+        // not how hurt the player happened to be when saving, so it matched only while the two
+        // were still equal. The 0..99 clamp below has no counterpart in the original, which
+        // would push a third digit into the next character; it is kept as a port-side guard.
+        int hp = StaticVariables.PlayerEntity.HpMax;
         if (hp < 0)
         {
             hp = 0;
