@@ -221,7 +221,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 6;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
                 delay = 0x28;
@@ -379,7 +379,7 @@ public static class FunctionTypeC
                     else
                     {
                         entity.TargetAnimationId = 8;
-                        entity.Flags |= 0x40;
+                        entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     }
                 }
                 break;
@@ -539,7 +539,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 2;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -595,7 +595,7 @@ public static class FunctionTypeC
                     entity.TargetAnimationId = 3;
                     if (value == 2)
                     {
-                        entity.Flags = (entity.Flags & 0xffffff7fU) | 0x10;
+                        entity.Flags = (entity.Flags & ~EntityFlags.Collidable) | EntityFlags.DeactivateOnImpact;
                     }
                 }
                 else
@@ -673,7 +673,7 @@ public static class FunctionTypeC
 
                         if (((tile.Walkability | (tile.GroundProperty << 8)) & 0x1001) == 0x1001)
                         {
-                            entity.Status = 3;
+                            entity.Status = EntityStatus.Deactivated;
                         }
 
                         value++;
@@ -836,7 +836,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 2;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -975,7 +975,7 @@ public static class FunctionTypeC
         if (entity2 != null)
         {
             entity2.ContentsItemId = 0;
-            entity2.Flags = (entity2.Flags & 0xfff8ffffU) | 0x30000;
+            entity2.Flags = EntityFlags.WithShadowSize(entity2.Flags, 3);
         }
 
         if (entityRecordId == 0)
@@ -1060,7 +1060,7 @@ public static class FunctionTypeC
                 if (entity2 != null)
                 {
                     entity2.ContentsItemId = 0;
-                    entity2.Flags = (entity2.Flags & 0xfff8ffffU) | 0x30000;
+                    entity2.Flags = EntityFlags.WithShadowSize(entity2.Flags, 3);
                 }
                 uVar2 = (ushort)(gameEngine.StaticVariables.DAT_80191134 + (int)((((Random.Next() * 4) >> 0x20) & 3U) * 2)
                                                                          + gameEngine.StaticVariables.DAT_80191138 * 8
@@ -1099,7 +1099,7 @@ public static class FunctionTypeC
     {
         if (entity.ParentEntity.AIValues[4] == 0)
         {
-            entity.Flags &= 0xFFFFFFFE;
+            entity.Flags &= ~EntityFlags.ClassA;
         }
 
         if (entity.Bytes[0] != 0)
@@ -1600,7 +1600,7 @@ public static class FunctionTypeC
             }
 
             gameEngine.StaticVariables.DAT_80191170 = 0;
-            entity.Flags &= 0xFFFFFF7F;
+            entity.Flags &= ~EntityFlags.Collidable;
         }
 
         if ((gameEngine.StaticVariables.g_temporaryFlags[0] & 1U) == 0)
@@ -1750,7 +1750,7 @@ public static class FunctionTypeC
             uVar4 = entity.Flags;
             entity.AIValues[4] = (short)iVar5;
             entity.AIValues[5] = (short)iVar6;
-            entity.Flags = (uVar4 & 0xffffdfff) | 8;
+            entity.Flags = (uVar4 & ~EntityFlags.NoObstacleSlide) | EntityFlags.ClassB;
         }
 
         ScriptHelper.CalculateEntityRelativePosition(entity, gameEngine.StaticVariables.PlayerEntity, relativePositions);
@@ -2227,7 +2227,7 @@ public static class FunctionTypeC
                         }
 
                         entity.TargetAnimationId = 6;
-                        entity.Flags |= 0x40;
+                        entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     }
                 }
                 break;
@@ -2298,7 +2298,7 @@ public static class FunctionTypeC
         entity.Flags2 = 0;
         entity.PlatformEntity.CarriedEntity = null;
         entity.PlatformEntity = null;
-        entity.Flags = (entity.Flags | 0x30) & 0xffffff7f;//turn off bit 8, turn on bits 5 and 6
+        entity.Flags = (entity.Flags | (EntityFlags.DeactivateOnImpact | EntityFlags.DeactivateOnHit)) & ~EntityFlags.Collidable;
     }
 
     //8006b8cc
@@ -2412,7 +2412,7 @@ public static class FunctionTypeC
                         if (pEVar5 != null)
                         {
                             pEVar5.ForceZ = -0x10000;
-                            pEVar5.Flags &= 0xfffffeff;
+                            pEVar5.Flags &= ~EntityFlags.Gravity;
                         }
 
                         bVar6 = (byte)(entity.Bytes[2] - 1);
@@ -2538,7 +2538,7 @@ public static class FunctionTypeC
                     else
                     {
                         entity.TargetAnimationId = 6;
-                        entity.Flags |= 0x40;
+                        entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     }
                 }
                 break;
@@ -2601,7 +2601,7 @@ public static class FunctionTypeC
             }
 
             entity.TargetAnimationId = 7;
-            entity.Flags |= 0x40;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
             return;
         }
 
@@ -2763,7 +2763,7 @@ public static class FunctionTypeC
                     if (spawned != null)
                     {
                         spawned.TargetAnimationId = 2;
-                        spawned.Flags = (spawned.Flags & 0xFFFFFFFCU) | 0x40;
+                        spawned.Flags = (spawned.Flags & ~(EntityFlags.ClassA | EntityFlags.HitsClassB)) | EntityFlags.DeactivateOnAnimationEnd;
                     }
                 }
 
@@ -2819,7 +2819,7 @@ public static class FunctionTypeC
                     entity.TargetAnimationId = 0;
                     entity.AIValues[1] = 0x12C;
                     entity.AIValues[5] = 0x1E;
-                    entity.Flags &= 0xFFFFFFFCU;
+                    entity.Flags &= ~(EntityFlags.ClassA | EntityFlags.HitsClassB);
                     return;
                 }
 
@@ -3002,7 +3002,7 @@ public static class FunctionTypeC
                 || gameEngine.StaticVariables.PlayerEntity.TouchingEntity == entity)
             {
                 entity.TargetAnimationId = 1;
-                entity.Flags |= 0x40;
+                entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
             }
         }
         else if (entity.TargetAnimationId == 3)
@@ -3028,7 +3028,7 @@ public static class FunctionTypeC
             if (entity.TargetAnimationId != 8 && entity.TargetAnimationId != 4)
             {
                 entity.TargetAnimationId = 7;
-                entity.Flags |= 0x40;
+                entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                 return;
             }
 
@@ -3052,7 +3052,7 @@ public static class FunctionTypeC
                     if (spawned != null)
                     {
                         spawned.TargetAnimationId = 2;
-                        spawned.Flags = (spawned.Flags & 0xFFFFFFFCU) | 0x40;
+                        spawned.Flags = (spawned.Flags & ~(EntityFlags.ClassA | EntityFlags.HitsClassB)) | EntityFlags.DeactivateOnAnimationEnd;
                     }
                 }
 
@@ -3221,7 +3221,7 @@ public static class FunctionTypeC
         if (parent.TargetAnimationId == 9 || parent.TargetAnimationId == 6)
         {
             entity.TargetAnimationId = 2;
-            entity.Flags |= 0x40;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
         }
 
         if (entity.TargetAnimationId == 1)
@@ -3246,7 +3246,7 @@ public static class FunctionTypeC
         if (delay == 0)
         {
             entity.TargetAnimationId = 2;
-            entity.Flags |= 0x40;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
         }
     }
 
@@ -3290,7 +3290,7 @@ public static class FunctionTypeC
                 else
                 {
                     entity.TargetAnimationId = 3;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     entity.ParentEntity.AIValues[4] = (short)(entity.ParentEntity.AIValues[4] - 3);
                 }
             }
@@ -3302,7 +3302,7 @@ public static class FunctionTypeC
             if (entity.ForceResetAnimationFlag != 0)
             {
                 entity2 = entity.ParentEntity;
-                entity.Status = 3;
+                entity.Status = EntityStatus.Deactivated;
 
                 do
                 {
@@ -3519,7 +3519,7 @@ public static class FunctionTypeC
                     if (pEVar7 != null)
                     {
                         pEVar7.TargetAnimationId = 4;
-                        pEVar7.Flags |= 0x40;
+                        pEVar7.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     }
                 }
             }
@@ -3554,7 +3554,7 @@ public static class FunctionTypeC
             }
 
             entity.TargetAnimationId = 8;
-            entity.Flags |= 0x40;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
             return;
         }
 
@@ -3581,7 +3581,7 @@ public static class FunctionTypeC
                     entity.TargetAnimationId = 3;
                     entity.AIValues[1] = 0;
                     entity.ItemState = 0x1C;
-                    entity.Flags |= 0x100;
+                    entity.Flags |= EntityFlags.Gravity;
                     break;
                 }
 
@@ -3827,7 +3827,7 @@ public static class FunctionTypeC
                     {
                         entity.TargetAnimationId = 10;
                         entity.TargetDirection = (uint)ScriptHelper.GetDirectionToTarget(player.PosX - entity.PosX, player.PosY - entity.PosY);
-                        entity.Flags |= 0x100;
+                        entity.Flags |= EntityFlags.Gravity;
                         return;
                     }
 
@@ -3881,7 +3881,7 @@ public static class FunctionTypeC
                     if (0x9FFFFF < iVar5)
                     {
                         entity.ForceZ = 0;
-                        entity.Flags &= 0xFFFFFEFFU;
+                        entity.Flags &= ~EntityFlags.Gravity;
                         gameEngine.SoundManager.PlaySoundEffect(0x63);
                         entity.AIValues[1] = 0x28;
                         entity.TargetAnimationId = 0;
@@ -3891,7 +3891,7 @@ public static class FunctionTypeC
                 else if (0x3FFFFF < iVar5)
                 {
                     entity.ForceZ = 0;
-                    entity.Flags &= 0xFFFFFEFFU;
+                    entity.Flags &= ~EntityFlags.Gravity;
 
                     if (entity.Bytes[0] == 5)
                     {
@@ -3907,11 +3907,11 @@ public static class FunctionTypeC
 
                 if (0x2FFFFF < iVar5 || entity.AIValues[1] != 0 || entity.Bytes[0] == 7)
                 {
-                    entity.Flags &= 0xFFFFFEFFU;
+                    entity.Flags &= ~EntityFlags.Gravity;
                     return;
                 }
 
-                entity.Flags |= 0x100;
+                entity.Flags |= EntityFlags.Gravity;
                 break;
 
             case 3:
@@ -3958,7 +3958,7 @@ public static class FunctionTypeC
 
                     if (entity.Bytes[0] == 8)
                     {
-                        entity.Flags &= 0xFFFFFEFFU;
+                        entity.Flags &= ~EntityFlags.Gravity;
                     }
                 }
 
@@ -4029,7 +4029,7 @@ public static class FunctionTypeC
                         entity.TargetAnimationId = 6;
                         gameEngine.StaticVariables.PTR_801911ec = null;
                         effectEntity.TargetAnimationId = 2;
-                        effectEntity.Flags |= 0x40;
+                        effectEntity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     }
                     else
                     {
@@ -4086,7 +4086,7 @@ public static class FunctionTypeC
                     uint effectFlags = effectEntity.Flags;
                     gameEngine.StaticVariables.PTR_801911ec = null;
                     effectEntity.TargetAnimationId = 2;
-                    effectEntity.Flags = effectFlags | 0x40;
+                    effectEntity.Flags = effectFlags | EntityFlags.DeactivateOnAnimationEnd;
                 }
 
                 if (entity.ForceResetAnimationFlag == 0)
@@ -4099,7 +4099,7 @@ public static class FunctionTypeC
                     entity.AIValues[1] = 300;
                     entity.AIValues[5] = 0x1E;
                     entity.TargetAnimationId = 0;
-                    entity.Flags &= 0xFFFFFFFCU;
+                    entity.Flags &= ~(EntityFlags.ClassA | EntityFlags.HitsClassB);
                     gameEngine.StaticVariables.g_scrollingParameters.Flag = 0;
                     entity.ForceZ = 0;
                     return;
@@ -4133,7 +4133,7 @@ public static class FunctionTypeC
                 }
 
                 entity.AIValues[1] = 0;
-                entity.Flags &= 0xFFFFFEFFU;
+                entity.Flags &= ~EntityFlags.Gravity;
                 if (((Random.Next() * 3UL) >> 32) == 0)
                 {
                     entity.TargetAnimationId = 9;
@@ -4171,7 +4171,7 @@ public static class FunctionTypeC
             if (entity.Bytes[3] != 0)
             {
                 entity.TargetAnimationId = 4;
-                entity.Flags |= 0x40;
+                entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                 entity.ParentEntity.AIValues[4] = (short)(entity.ParentEntity.AIValues[4] - 1);
                 return;
             }
@@ -4196,7 +4196,7 @@ public static class FunctionTypeC
                 }
 
                 entity.TargetAnimationId = 2;
-                entity.Flags = (entity.Flags & 0xffffbfffU) | 0x100;
+                entity.Flags = (entity.Flags & ~EntityFlags.NoRiders) | EntityFlags.Gravity;
                 return;
             }
 
@@ -4297,7 +4297,7 @@ public static class FunctionTypeC
             {
                 entitySpawned.TargetAnimationId = 2;
                 gameEngine.StaticVariables.PTR_ARRAY_80191204[0] = null;
-                entitySpawned.Flags |= 0x40;
+                entitySpawned.Flags |= EntityFlags.DeactivateOnAnimationEnd;
             }
 
             if (entity.ForceResetAnimationFlag == 0)
@@ -4649,7 +4649,7 @@ public static class FunctionTypeC
                             {
                                 entitySpawned.TargetAnimationId = 2;
                                 gameEngine.StaticVariables.PTR_ARRAY_80191204[0] = null;
-                                entitySpawned.Flags |= 0x40;
+                                entitySpawned.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                             }
                         }
 
@@ -5112,7 +5112,7 @@ public static class FunctionTypeC
         if (parentEntity.Bytes[3] != 0)
         {
             entity.TargetAnimationId = 2;
-            entity.Flags = entity.Flags | 0x40;
+            entity.Flags = entity.Flags | EntityFlags.DeactivateOnAnimationEnd;
         }
 
         uVar3 = entity.TargetAnimationId;
@@ -5206,7 +5206,7 @@ public static class FunctionTypeC
             }
 
             entity.TargetAnimationId = 1;
-            uVar3 = entity.Flags | 0x100;
+            uVar3 = entity.Flags | EntityFlags.Gravity;
 
         LAB_80078e18:
             entity.Flags = uVar3;
@@ -5225,7 +5225,7 @@ public static class FunctionTypeC
             }
 
             entity.TargetAnimationId = 2;
-            uVar3 = entity.Flags | 0x40;
+            uVar3 = entity.Flags | EntityFlags.DeactivateOnAnimationEnd;
             //goto LAB_80078e18;
             entity.Flags = uVar3;
             return;
@@ -5325,7 +5325,7 @@ public static class FunctionTypeC
             }
 
             entity.TargetAnimationId = 1;
-            uVar3 = entity.Flags | 0x100;
+            uVar3 = entity.Flags | EntityFlags.Gravity;
 
         LAB_80078e18:
             entity.Flags = uVar3;
@@ -5705,7 +5705,7 @@ public static class FunctionTypeC
                     entity.TargetAnimationId = 0xf;
                     entity.AIValues[1] = 0x3c;
                     effect = gameEngine.StaticVariables.g_ai_spriteEffect_ptr;
-                    entity.Flags &= 0xfffffffc;
+                    entity.Flags &= ~(EntityFlags.ClassA | EntityFlags.HitsClassB);
 
                     if (gameEngine.StaticVariables.g_ai_spriteEffect_ptr == null)
                     {
@@ -5923,7 +5923,7 @@ public static class FunctionTypeC
             case 0xd:
                 if (entity.ForceResetAnimationFlag != 0)
                 {
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     gameEngine.StaticVariables.g_effectSlots[entity.AIValues[2]].TargetAnimation = 2;
                     entity.AIValues[2] = -1;
                 }
@@ -6023,14 +6023,14 @@ public static class FunctionTypeC
             else if (entity.TargetAnimationId == 2 && entity.ForceAdjusted != 0)
             {
                 entity.TargetAnimationId = 3;
-                entity.Flags |= 0x40;
+                entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                 parentEntity.AIValues[4] = (short)(parentEntity.AIValues[4] - 1);
             }
         }
         else
         {
             entity.TargetAnimationId = 3;
-            entity.Flags |= 0x40;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
         }
     }
 
@@ -6054,7 +6054,7 @@ public static class FunctionTypeC
         if (parentEntity.Bytes[3] != 0)
         {
             entity.TargetAnimationId = 2;
-            entity.Flags |= 0x40;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
             return;
         }
 
@@ -6104,7 +6104,7 @@ public static class FunctionTypeC
                     else
                     {
                         entity.TargetAnimationId = 2;
-                        entity.Flags |= 0x40;
+                        entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                         parentEntity.Bytes[2] -= 1;
                     }
                 }
@@ -6231,7 +6231,7 @@ public static class FunctionTypeC
 
         if (rand2 == 0)
         {
-            entity.Status = 3;
+            entity.Status = EntityStatus.Deactivated;
 
             if (entity.PlatformEntity != null)
             {
@@ -6291,7 +6291,7 @@ public static class FunctionTypeC
                 {
                     if ((entity.MapTiles[i].Flags & 0x1001) == 0x1001)
                     {
-                        entity.Status = 3;
+                        entity.Status = EntityStatus.Deactivated;
                     }
 
                     i = i + 1;
@@ -6368,7 +6368,7 @@ public static class FunctionTypeC
         {
             trackedEntity = gameEngine.StaticVariables.g_entitySlots[entity.DelayOrAngleOrEntityId];
 
-            if (trackedEntity.Status != 2 || trackedEntity.Index2 != entity.ItemState)
+            if (trackedEntity.Status != EntityStatus.Normal || trackedEntity.Index2 != entity.ItemState)
             {
                 entity.DelayOrAngleOrEntityId = 0;
                 return;
@@ -6378,7 +6378,7 @@ public static class FunctionTypeC
         {
             Entity[] matchingEntities = gameEngine.StaticVariables.g_matchingEntitiesBuffer;
             int[] distanceSquared = new int[matchingEntities.Length];
-            int matchCount = gameEngine.FUN_8003AF70(entity, 1, entity.CurrentAttack!.AttackAttribute & 0x0F, matchingEntities, distanceSquared);
+            int matchCount = gameEngine.FUN_8003AF70(entity, EntityFlags.ClassA, entity.CurrentAttack!.AttackAttribute & 0x0F, matchingEntities, distanceSquared);
 
             if (matchCount == 0)
             {
@@ -6463,7 +6463,7 @@ public static class FunctionTypeC
                     return;
                 }
 
-                entity.Status = 3;
+                entity.Status = EntityStatus.Deactivated;
                 gameEngine.SoundManager.PlaySoundEffect(0xe1);
                 return;
             }
@@ -6561,7 +6561,7 @@ public static class FunctionTypeC
 
                 gameEngine.SoundManager.PlaySoundEffect(0xE1);
                 entity.TargetAnimationId = 2;
-                entity.Flags |= 0x100;
+                entity.Flags |= EntityFlags.Gravity;
                 entity.Bytes[0] = (byte)(entity.Bytes[0] + 1);
                 break;
 
@@ -6570,7 +6570,7 @@ public static class FunctionTypeC
 
                 if (0x2FFFFF < Math.Abs(deltaX))
                 {
-                    entity.Flags = (entity.Flags & 0xFFFFFFFDU) | 0x81U;
+                    entity.Flags = (entity.Flags & ~EntityFlags.HitsClassB) | (EntityFlags.ClassA | EntityFlags.Collidable);
                     entity.Bytes[0] = (byte)(entity.Bytes[0] + 1);
                     break;
                 }
@@ -6579,7 +6579,7 @@ public static class FunctionTypeC
 
                 if (0x1FFFFF < Math.Abs(deltaY))
                 {
-                    entity.Flags = (entity.Flags & 0xFFFFFFFDU) | 0x81U;
+                    entity.Flags = (entity.Flags & ~EntityFlags.HitsClassB) | (EntityFlags.ClassA | EntityFlags.Collidable);
                     entity.Bytes[0] = (byte)(entity.Bytes[0] + 1);
                 }
                 break;
@@ -6738,7 +6738,7 @@ public static class FunctionTypeC
 
         entity.PlatformEntity.CarriedEntity = null;
         entity.PlatformEntity = null;
-        entity.Flags = (entity.Flags | 0x34) & 0xffffff7f;//turn off bit 8, turn on bits 5 and 6
+        entity.Flags = (entity.Flags | (EntityFlags.HitsClassA | EntityFlags.DeactivateOnImpact | EntityFlags.DeactivateOnHit)) & ~EntityFlags.Collidable;
     }
 
     //8007b834
@@ -6770,7 +6770,7 @@ public static class FunctionTypeC
                 {
                     entity.TargetAnimationId = 1;
                     entity.Bytes[0] = 2;
-                    entity.Flags |= 0x100;
+                    entity.Flags |= EntityFlags.Gravity;
                 }
                 break;
 
@@ -6784,7 +6784,7 @@ public static class FunctionTypeC
 
             case 3:
                 entity.Bytes[0] = 4;
-                entity.Flags = entity.Flags & 0xffffff7f;
+                entity.Flags = entity.Flags & ~EntityFlags.Collidable;
                 entity2 = entity.RidingEntity;
 
                 if (entity.RidingEntity == gameEngine.StaticVariables.PlayerEntity)
@@ -6794,7 +6794,7 @@ public static class FunctionTypeC
 
                 if (entity2 != null && entity2.SpriteTableIndex == 0x189)
                 {
-                    entity2.Status = 3;
+                    entity2.Status = EntityStatus.Deactivated;
                     entity2.Bytes[0] = 1;
                 }
                 break;
@@ -6807,7 +6807,7 @@ public static class FunctionTypeC
                     gameEngine.StaticVariables.g_clearProgramState = 1;
                     entity.TargetAnimationId = 0;
                     entity.ForceZ = 0;
-                    entity.Flags = entity.Flags & 0xfffffeffU | 0x80;
+                    entity.Flags = entity.Flags & ~EntityFlags.Gravity | EntityFlags.Collidable;
                     iVar3 = entity.PosZ;
                     entity.ProgramIndexes[2] = bVar1;
                     entity.PosZ = iVar3 + 0xa00000;
@@ -6960,7 +6960,7 @@ public static class FunctionTypeC
         {
             if (entity.IsOnGround != 0)
             {
-                entity.Status = 3;
+                entity.Status = EntityStatus.Deactivated;
             }
         }
         else if (entity.Flags2 == 0)
@@ -6976,7 +6976,7 @@ public static class FunctionTypeC
                 entity.PlatformEntity.CarriedEntity = null;
             }
             entity.PlatformEntity = null;
-            entity.Flags |= 0x10;
+            entity.Flags |= EntityFlags.DeactivateOnImpact;
         }
     }
 
@@ -7131,7 +7131,7 @@ public static class FunctionTypeC
         {
             Entity[] matchingEntities = gameEngine.StaticVariables.g_matchingEntitiesBuffer;
             int[] distanceSquared = new int[matchingEntities.Length];
-            int matchCount = gameEngine.FUN_8003AF70(entity, 1, entity.CurrentAttack!.AttackAttribute & 0x0F, matchingEntities, distanceSquared);
+            int matchCount = gameEngine.FUN_8003AF70(entity, EntityFlags.ClassA, entity.CurrentAttack!.AttackAttribute & 0x0F, matchingEntities, distanceSquared);
             int direction;
 
             if (matchCount != 0 && distanceSquared[0] < 0x3840)
@@ -7146,7 +7146,7 @@ public static class FunctionTypeC
 
             entity.Bytes.Set(gameEngine.StaticVariables.g_offsetXList[direction] << 8);
             entity.DelayOrAngleOrEntityId = gameEngine.StaticVariables.g_offsetYList[direction] << 8;
-            entity.Flags |= 0x2130;
+            entity.Flags |= (EntityFlags.DeactivateOnImpact | EntityFlags.DeactivateOnHit | EntityFlags.Gravity | EntityFlags.NoObstacleSlide);
             entity.ForceZ = 0x000A0000;
         }
 
@@ -7370,7 +7370,7 @@ public static class FunctionTypeC
                     {
                         entity.ContentsItemId = 0;
                         entity.TargetAnimationId = 2;
-                        entity.Flags |= 0x40;
+                        entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     }
                 }
                 break;
@@ -7428,7 +7428,7 @@ public static class FunctionTypeC
                                 spawned.Bytes[0] = 3;
                                 spawned.ContentsItemId = 0;
                                 spawned.PosZ = player.FloorHeight;
-                                spawned.Flags |= 0x2000;
+                                spawned.Flags |= EntityFlags.NoObstacleSlide;
                                 gameEngine.StaticVariables.DAT_80191300++;
                             }
                         }
@@ -7453,7 +7453,7 @@ public static class FunctionTypeC
                                 spawned.AIValues[1] = (short)delay;
                                 spawned.ContentsItemId = 0;
                                 gameEngine.StaticVariables.DAT_80191300++;
-                                spawned.Flags |= 0x2000;
+                                spawned.Flags |= EntityFlags.NoObstacleSlide;
                             }
 
                             delay += 0x28;
@@ -7774,7 +7774,7 @@ public static class FunctionTypeC
 
             // PSX: DestroyEntity(pEVar8) where pEVar8 = entity->ParentEntity (the eye entity)
             entity.TargetAnimationId = 4;
-            entity.Flags |= 0x40;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
             gameEngine.DestroyEntity(parentEntity);
             entity.SpriteProgramIndexes[ScriptHelper.ProgramCTick] = 0;
             return;
@@ -7790,7 +7790,7 @@ public static class FunctionTypeC
                 {
                     var candidate = gameEngine.StaticVariables.g_entitySlots[index];
 
-                    if ((uint)(candidate.Status - 2) >= 2U
+                    if (!candidate.Status.IsActive()
                         || candidate.BlockedByEntity != null
                         || candidate == entity
                         || candidate.SpriteTableIndex != 0x1D8)
@@ -7885,7 +7885,7 @@ public static class FunctionTypeC
                         entity.AIValues[1] = 0x12C;
                         entity.AIValues[5] = 0x1E;
                         entity.Bytes[3] = 1;
-                        entity.Flags &= 0xFFFFFFFCU;
+                        entity.Flags &= ~(EntityFlags.ClassA | EntityFlags.HitsClassB);
                     }
                     else
                     {
@@ -8097,7 +8097,7 @@ public static class FunctionTypeC
                     else
                     {
                         entity.TargetAnimationId = 6;
-                        entity.Flags |= 0x40;
+                        entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     }
                 }
 
@@ -8305,7 +8305,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 7;
-                    entity.Flags = entity.Flags | 0x40;
+                    entity.Flags = entity.Flags | EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -8422,7 +8422,7 @@ public static class FunctionTypeC
                     else
                     {
                         entity.TargetAnimationId = 7;
-                        entity.Flags |= 0x40;
+                        entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     }
                 }
                 break;
@@ -8698,7 +8698,7 @@ public static class FunctionTypeC
                 {
                     entity.TargetAnimationId = 8;
                     entity.AIValues[1] = 8;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -8803,7 +8803,7 @@ public static class FunctionTypeC
                     entity.TargetAnimationId = 5;
                     entity.Bytes[0] = 0;
                     entity.AIValues[1] = 0x5e;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     break;
                 }
 
@@ -8932,7 +8932,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 9;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -8941,7 +8941,7 @@ public static class FunctionTypeC
                     entity.TargetAnimationId = 5;
                     entity.Bytes[0] = 0;
                     entity.AIValues[1] = 0x5e;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                 }
                 else
                 {
@@ -9139,7 +9139,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 2;
-                    entity.Flags = entity.Flags | 0x40;
+                    entity.Flags = entity.Flags | EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -9421,7 +9421,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 6;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     goto switchD_800685cc_caseD_8;
                 }
 
@@ -9628,7 +9628,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 2;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -9678,7 +9678,7 @@ public static class FunctionTypeC
             {
                 gameEngine.SoundManager.PlaySoundEffect(0x40);
                 entity.TargetAnimationId = 2;
-                entity.Flags |= 0x40;
+                entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                 return;
             }
 
@@ -10204,7 +10204,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 6;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -10393,7 +10393,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 6;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -10531,7 +10531,7 @@ public static class FunctionTypeC
                     else
                     {
                         entity.TargetAnimationId = 2;
-                        entity.Flags |= 0x40;
+                        entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     }
                 }
 
@@ -10673,7 +10673,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 7;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -10781,7 +10781,7 @@ public static class FunctionTypeC
             if (entity.Bytes[3] != 0)
             {
                 entity.TargetAnimationId = 8;
-                entity.Flags |= 0x40;
+                entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                 return;
             }
 
@@ -11113,7 +11113,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 8;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -11325,7 +11325,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 2;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -11498,7 +11498,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 8;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -11655,7 +11655,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 6;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
                 state = 0x28;
@@ -11841,7 +11841,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 7;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -12012,7 +12012,7 @@ public static class FunctionTypeC
                     if (entity.Bytes[3] != 0)
                     {
                         entity.TargetAnimationId = 7;
-                        entity.Flags |= 0x40;
+                        entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     }
                     else
                     {
@@ -12245,7 +12245,7 @@ public static class FunctionTypeC
                     else
                     {
                         entity.TargetAnimationId = 8;
-                        entity.Flags |= 0x40;
+                        entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     }
                 }
                 return;
@@ -12431,7 +12431,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 2;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -12657,7 +12657,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 8;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -12778,7 +12778,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 5;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -13022,7 +13022,7 @@ public static class FunctionTypeC
                 else
                 {
                     entity.TargetAnimationId = 8;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                 }
             }
         }
@@ -13214,7 +13214,7 @@ public static class FunctionTypeC
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 6;
-                    entity.Flags |= 0x40;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     return;
                 }
 
@@ -13274,7 +13274,7 @@ public static class FunctionTypeC
             }
 
             entity.TargetAnimationId = 7;
-            entity.Flags |= 0x40;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
             return;
         }
 
@@ -13440,7 +13440,7 @@ public static class FunctionTypeC
                         entity.AIValues[1] = 300;
                         entity.AIValues[5] = 0x1E;
                         entity.TargetAnimationId = 0;
-                        entity.Flags &= 0xFFFFFFFCU;
+                        entity.Flags &= ~(EntityFlags.ClassA | EntityFlags.HitsClassB);
                     }
                 }
                 break;
@@ -13610,7 +13610,7 @@ public static class FunctionTypeC
             }
 
             entity.TargetAnimationId = 9;
-            entity.Flags |= 0x40;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
             return;
         }
 
@@ -13923,7 +13923,7 @@ public static class FunctionTypeC
                     entity.AIValues[1] = 300;
                     entity.AIValues[5] = 0x1E;
                     entity.TargetAnimationId = 0;
-                    entity.Flags &= 0xFFFFFFFCU;
+                    entity.Flags &= ~(EntityFlags.ClassA | EntityFlags.HitsClassB);
                     gameEngine.StaticVariables.g_scrollingParameters.Flag = 0;
                     return;
                 }
@@ -14356,7 +14356,7 @@ SetAnim6:
         else
         {
             entity.TargetAnimationId = 1;
-            entity.Flags |= 0x40;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
         }
     }
 
@@ -14446,9 +14446,9 @@ SetAnim6:
                 }
 
                 entity.TargetAnimationId = 0x0B;
-                entity.Flags |= 0x40;
+                entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                 otherEntity.ForceResetAnimationFlag = 0;
-                otherEntity.Flags |= 0x40;
+                otherEntity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                 return;
             }
         }
@@ -14775,8 +14775,8 @@ SetAnim6:
                     if (entity.Bytes[3] != 0)
                     {
                         entity.TargetAnimationId = 3;
-                        entity.Flags &= 0xFFFFFFFCU;
-                        otherEntity.Flags &= 0xFFFFFFFCU;
+                        entity.Flags &= ~(EntityFlags.ClassA | EntityFlags.HitsClassB);
+                        otherEntity.Flags &= ~(EntityFlags.ClassA | EntityFlags.HitsClassB);
                         entity.AIValues[1] = 0x12C;
                         otherEntity.AIValues[1] = 0x12C;
                         entity.AIValues[5] = 0x1E;
@@ -14902,7 +14902,7 @@ SetAnim6:
                         spawned.SpriteProgramIndexes[ScriptHelper.ProgramALoad] = 0;
                         spawned.SpriteProgramIndexes[ScriptHelper.ProgramCTick] = 0;
                         spawned.TargetAnimationId = 0x11;
-                        spawned.Flags |= 0x40;
+                        spawned.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     }
 
                     spawned = gameEngine.SpawnWarpEntity(
@@ -14920,7 +14920,7 @@ SetAnim6:
                         spawned.SpriteProgramIndexes[ScriptHelper.ProgramALoad] = 0;
                         spawned.SpriteProgramIndexes[ScriptHelper.ProgramCTick] = 0;
                         spawned.TargetAnimationId = 0x0E;
-                        spawned.Flags |= 0x40;
+                        spawned.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     }
                 }
 
@@ -15180,7 +15180,7 @@ SetAnim6:
             for (int i = 0; i < 14; i++)
             {
                 Entity follower = entitySlots[16 - i];
-                if (follower.Status == 2)
+                if (follower.Status == EntityStatus.Normal)
                 {
                     follower.TargetDirection = (uint)(ushort)gameEngine.StaticVariables.g_loaderDirectionHistory[historyIndex];
                     follower.PosX = gameEngine.StaticVariables.DAT_80191508[historyIndex] << 16;
@@ -15530,7 +15530,7 @@ SetAnim6:
                             Entity current = entitySlots[entityIndex + i];
                             current.AIValues[1] = 0x12C;
                             current.AIValues[5] = 0x1E;
-                            current.Flags &= 0xFFFFFFFCU;
+                            current.Flags &= ~(EntityFlags.ClassA | EntityFlags.HitsClassB);
                         }
                     }
 
@@ -15589,7 +15589,7 @@ SetAnim6:
                     if ((uint)targetIndex < entitySlots.Length)
                     {
                         entitySlots[targetIndex].TargetAnimationId = 8;
-                        entitySlots[targetIndex].Flags |= 0x40U;
+                        entitySlots[targetIndex].Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     }
 
                     entity.Bytes[1] = (byte)(entity.Bytes[1] - 1);
@@ -15664,7 +15664,7 @@ SetAnim6:
             }
 
             entity.TargetAnimationId = 7;
-            entity.Flags = (entity.Flags & 0xFFFFFEFFU) | 0x40U;
+            entity.Flags = (entity.Flags & ~EntityFlags.Gravity) | EntityFlags.DeactivateOnAnimationEnd;
             entity.PosZ += 0x200000;
             return;
         }
@@ -15703,7 +15703,7 @@ SetAnim6:
                     if (effectEntity != null)
                     {
                         effectEntity.TargetAnimationId = 2;
-                        effectEntity.Flags |= 4;
+                        effectEntity.Flags |= EntityFlags.HitsClassA;
                     }
                 }
                 break;
@@ -15848,7 +15848,7 @@ SetAnim6:
                         else
                         {
                             effectEntity.TargetAnimationId = 1;
-                            effectEntity.Flags |= 2;
+                            effectEntity.Flags |= EntityFlags.HitsClassB;
 
                             if (entity.AIValues[4] == 1)
                             {
@@ -15944,7 +15944,7 @@ SetAnim6:
                     entity.AIValues[1] = 300;
                     entity.AIValues[5] = 0x1E;
                     entity.TargetAnimationId = 0;
-                    entity.Flags &= 0xFFFFFFFCU;
+                    entity.Flags &= ~(EntityFlags.ClassA | EntityFlags.HitsClassB);
                     break;
                 }
 
@@ -15980,7 +15980,7 @@ SetAnim6:
         if (triggerFinalWarp)
         {
             gameEngine.StaticVariables.g_bossSpawnedEffectEntity.TargetAnimationId = 2;
-            gameEngine.StaticVariables.g_bossSpawnedEffectEntity.Flags |= 0x40;
+            gameEngine.StaticVariables.g_bossSpawnedEffectEntity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
             gameEngine.DestroyEntity(gameEngine.StaticVariables.g_bossEffectEntity);
         }
     }
@@ -16339,7 +16339,7 @@ SetAnim6:
             }
 
             entity.TargetAnimationId = 7;
-            entity.Flags |= 0x40;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
             return;
         }
 
@@ -16373,7 +16373,7 @@ SetAnim6:
                     if (spawned != null)
                     {
                         spawned.TargetAnimationId = 4;
-                        spawned.Flags &= 0xFFFFFF7FU;
+                        spawned.Flags &= ~EntityFlags.Collidable;
                     }
                 }
                 else
@@ -16567,7 +16567,7 @@ SetAnim6:
                     {
                         Entity spawned = gameEngine.StaticVariables.PTR_ARRAY_80191204[i]!;
                         spawned.TargetAnimationId = 1;
-                        spawned.Flags |= 0x40;
+                        spawned.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                         gameEngine.StaticVariables.PTR_ARRAY_80191204[i] = null;
                     }
 
@@ -16687,7 +16687,7 @@ SetAnim6:
                     if (spawned != null)
                     {
                         spawned.TargetAnimationId = 1;
-                        spawned.Flags |= 0x40;
+                        spawned.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                         gameEngine.StaticVariables.PTR_ARRAY_80191204[i] = null;
                     }
                 }
@@ -16702,7 +16702,7 @@ SetAnim6:
                     entity.AIValues[1] = 300;
                     entity.AIValues[5] = 0x1E;
                     entity.TargetAnimationId = 0;
-                    entity.Flags &= 0xFFFFFFFC;
+                    entity.Flags &= ~(EntityFlags.ClassA | EntityFlags.HitsClassB);
                     return;
                 }
 
@@ -16762,7 +16762,7 @@ SetAnim6:
         if (gameEngine.StaticVariables.PlayerEntity.CarriedEntity == entityMatched)
         {
             entity.ForceZ = 0;
-            entity.Flags &= 0xFFFFFEFF;
+            entity.Flags &= ~EntityFlags.Gravity;
             entity.PosZ = entityMatched.PosZ;
             entity.TargetForceX = -gameEngine.StaticVariables.PlayerEntity.TargetForceX;
             entity.TargetForceY = -gameEngine.StaticVariables.PlayerEntity.TargetForceY;
@@ -16773,7 +16773,7 @@ SetAnim6:
             return;
         }
 
-        entity.Flags |= 0x100;
+        entity.Flags |= EntityFlags.Gravity;
         entity.PosZ = entityMatched.PosZ;
         entity.TargetForceX = -entityMatched.TargetForceX;
         entity.TargetForceY = -entityMatched.TargetForceY;
@@ -16806,7 +16806,7 @@ SetAnim6:
                 continue;
             }
 
-            if ((uint)(candidate.Status - 2) >= 2U)
+            if (!candidate.Status.IsActive())
             {
                 continue;
             }
@@ -16816,7 +16816,7 @@ SetAnim6:
                 continue;
             }
 
-            if ((candidate.Flags & 1) == 0)
+            if ((candidate.Flags & EntityFlags.ClassA) == 0)
             {
                 continue;
             }
@@ -16898,7 +16898,7 @@ SetAnim6:
         if (entity.ParentEntity.Bytes[3] != 0)
         {
             entity.TargetAnimationId = 2;
-            entity.Flags |= 0x40;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
             return;
         }
 
@@ -16921,7 +16921,7 @@ SetAnim6:
             }
 
             entity.TargetAnimationId = 2;
-            entity.Flags |= 0x40;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
             return;
         }
 
@@ -16952,7 +16952,7 @@ SetAnim6:
         }
 
         entity.TargetAnimationId = 2;
-        entity.Flags |= 0x40;
+        entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
     }
 
     // GHIDRA: AI_UpdateEntityDelayedSoundTrigger @ 0x80072680
@@ -16992,7 +16992,7 @@ SetAnim6:
         }
 
         entity.TargetAnimationId = 1;
-        entity.Flags |= 0x40;
+        entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
     }
 
     // GHIDRA: AI_SpawnWarpIfValid @ 0x80061EB8
@@ -17024,7 +17024,7 @@ SetAnim6:
             {
                 gameEngine.SoundManager.PlaySoundEffect(0x19D);
                 entity.TargetAnimationId = 9;
-                entity.Flags |= 0x40U;
+                entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                 gameEngine.TriggerScreenEffect(unchecked((int)0x60000000), 2, 0, 1);
                 return;
             }
@@ -17036,7 +17036,7 @@ SetAnim6:
                 ulong random3 = Random.Next();
 
                 entity.TargetAnimationId = 10;
-                entity.Flags |= 0x100U;
+                entity.Flags |= EntityFlags.Gravity;
                 entity.PosX = (int)((random1 * 0x18UL) >> 32) * 0xC0000 + (int)((random2 * 7UL) >> 32) * 0x10000 + 0x01E00000;
                 entity.PosY = (int)((random3 * 0x10UL) >> 32) * 0x80000 + (int)((random3 * 5UL) >> 32) * 0x10000 + 0x02800000;
             }
@@ -17070,7 +17070,7 @@ SetAnim6:
         if (parentEntity.Hp == 0)
         {
             entity.TargetAnimationId = 7;
-            entity.Flags |= 0x40U;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
 
             if (warpSlot.Phase == 0)
             {
@@ -17111,7 +17111,7 @@ SetAnim6:
                         gameEngine.StaticVariables.g_entitySpawned = spawnedEntity;
                         spawnedEntity.TargetAnimationId = 0x11;
                         spawnedEntity.SpriteProgramIndexes[2] = 0;
-                        spawnedEntity.Flags = (spawnedEntity.Flags | 2U) & 0xFFFFFF7FU;
+                        spawnedEntity.Flags = (spawnedEntity.Flags | EntityFlags.HitsClassB) & ~EntityFlags.Collidable;
                         player.AnimFlags &= unchecked((int)0xFFFFFFBF);
                         entity.Bytes[2] = 1;
                     }
@@ -17250,7 +17250,7 @@ SetAnim6:
                             {
                                 entity.TargetAnimationId = 4;
                                 entity.ForceZ = 0x00020000;
-                                entity.Flags &= 0xFFFFFFFEU;
+                                entity.Flags &= ~EntityFlags.ClassA;
 
                                 delta = warpSlot.BaseX - entity.PosX;
                                 if (delta < 0)
@@ -17268,7 +17268,7 @@ SetAnim6:
                                 warpSlot.A1 = delta >> 5;
                                 player.TargetAnimationId = 0x56;
                                 gameEngine.StaticVariables.g_playerControlFlags |= 0x20U;
-                                player.Flags &= 0xFFFFFEF7U;
+                                player.Flags &= ~(EntityFlags.ClassB | EntityFlags.Gravity);
                                 warpSlot.Phase = 1;
                                 break;
                             }
@@ -17336,11 +17336,11 @@ SetAnim6:
                 if (entity.ForceZ == 0 && warpSlot.A0 == 0 && warpSlot.A1 == 0)
                 {
                     entity.TargetAnimationId = 5;
-                    entity.Flags |= 1U;
+                    entity.Flags |= EntityFlags.ClassA;
                     warpSlot.Phase = 2;
                     player.TargetAnimationId = 0x31;
                     player.TargetDirection = 0;
-                    player.Flags |= 0x108U;
+                    player.Flags |= (EntityFlags.ClassB | EntityFlags.Gravity);
                     player.PosX = entity.PosX;
                     player.PosY = entity.PosY;
                 }
@@ -17386,7 +17386,7 @@ SetAnim6:
                 if (entity.Bytes[3] != 0)
                 {
                     entity.TargetAnimationId = 7;
-                    entity.Flags |= 0x40U;
+                    entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
                     if (slotIndex == 0)
                     {
                         parentEntity.DelayOrAngleOrEntityId = 0x708;
@@ -17712,7 +17712,7 @@ SetAnim6:
         if ((int)entity.TargetAnimationId < 10)
         {
             entity.TargetAnimationId = 10;
-            entity.Flags = (entity.Flags & 0xfff8ff7fU) | 0x10000;
+            entity.Flags = EntityFlags.WithShadowSize(entity.Flags & ~EntityFlags.Collidable, 1);
             entity.ItemState = entity.PosY;
             entity.DelayOrAngleOrEntityId = entity.PosX;
         }
@@ -17840,7 +17840,7 @@ SetAnim6:
                         }
 
                         entity.TargetAnimationId = 0xc;
-                        entity.Flags &= 0xfffffeff;
+                        entity.Flags &= ~EntityFlags.Gravity;
                         deltaX = entity.PosX - gameEngine.StaticVariables.PlayerEntity.PosX;
                         deltaY = entity.PosY - gameEngine.StaticVariables.PlayerEntity.PosY;
                     }
@@ -17863,7 +17863,7 @@ SetAnim6:
             {
                 entity.TargetAnimationId = 10;
                 entity.PosZ = 0;
-                entity.Flags |= 0x100;
+                entity.Flags |= EntityFlags.Gravity;
             }
         }
     }

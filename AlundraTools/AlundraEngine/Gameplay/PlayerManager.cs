@@ -56,7 +56,7 @@ public class PlayerManager
             goto END;
         }
 
-        _gameEngine.StaticVariables.PlayerEntity.Flags |= 0x100;
+        _gameEngine.StaticVariables.PlayerEntity.Flags |= EntityFlags.Gravity;
         CreatePlayerAnimationEffects(0);
         dir = FindWarpFacingDirection();
 
@@ -548,7 +548,8 @@ public class PlayerManager
                 {
                     if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressed & PadState.Square) == 0)
                     {
-                        if ((_gameEngine.StaticVariables.PlayerEntity.CarriedEntity.Flags & 0x600U) == 0x600)
+                        if (EntityFlags.GetPickupKind(_gameEngine.StaticVariables.PlayerEntity.CarriedEntity.Flags)
+                            == EntityPickupKind.LiftableHeavy)
                         {
                             _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.JumpWithObject;
 
@@ -691,7 +692,7 @@ public class PlayerManager
                     _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.ClimbStill;
                     _gameEngine.StaticVariables.PlayerEntity.ForceZ = 0;
                     LAB_800322a8:
-                    _gameEngine.StaticVariables.PlayerEntity.Flags &= 0xfffffeff;
+                    _gameEngine.StaticVariables.PlayerEntity.Flags &= ~EntityFlags.Gravity;
                 }
                 else
                 {
@@ -703,7 +704,7 @@ public class PlayerManager
                             LAB_8003229c:
                             _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Climbing;
                             //goto LAB_800322a8;             
-                            _gameEngine.StaticVariables.PlayerEntity.Flags &= 0xfffffeff;
+                            _gameEngine.StaticVariables.PlayerEntity.Flags &= ~EntityFlags.Gravity;
                             goto END;
                         }
                     }
@@ -720,7 +721,7 @@ public class PlayerManager
                             _gameEngine.StaticVariables.PlayerEntity.ForceZ = 0x10000;
                             //goto LAB_8003229c;
                             _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = (int)PlayerAnimation.Climbing;
-                            _gameEngine.StaticVariables.PlayerEntity.Flags &= 0xfffffeff;
+                            _gameEngine.StaticVariables.PlayerEntity.Flags &= ~EntityFlags.Gravity;
                             goto END;
                         }
                     }
@@ -1061,9 +1062,7 @@ public class PlayerManager
         {
             ref var entity = ref _gameEngine.StaticVariables.g_entitySlots[i];
 
-            // status ∈ {2, 3}  <=> (status - 2) in [0,1]
-            var status = entity.Status - 2;
-            if (status >= 0 && status < 2)
+            if (entity.Status.IsActive())
             {
                 if (entity.BlockedByEntity == null)
                 {
@@ -1086,21 +1085,22 @@ public class PlayerManager
     private int PlayerTryInteractWithEntity(Entity entity)
     {
         var player = _gameEngine.StaticVariables.PlayerEntity;
-        var platformFlagBits = (entity.Flags & 0x600) >> 9;
+        var pickupKind = EntityFlags.GetPickupKind(entity.Flags);
         var result = 1;
 
-        if (platformFlagBits == 1)
+        if (pickupKind == EntityPickupKind.Liftable)
         {
             goto TriggerWarp;
         }
 
-        if (platformFlagBits == 0)
+        if (pickupKind == EntityPickupKind.NotLiftable)
         {
             return 0;
         }
 
         // have keys ?
-        if (platformFlagBits < 4)
+        // The field is only 2 bits wide, so this test always passes; kept for fidelity.
+        if ((uint)pickupKind < 4)
         {
             if (_gameEngine.PlayerManager.GetNumberOfItem(0x3B) != 0)
             {
@@ -1625,7 +1625,7 @@ public class PlayerManager
                 }
             }
         }
-        else if ((playerEntity.XCollisionEntity.Flags & 0x8000U) != 0)
+        else if ((playerEntity.XCollisionEntity.Flags & EntityFlags.InteractRequiresButton) != 0)
         {
             _gameEngine.StaticVariables.g_lastWarpFacing = playerEntity.XCollisionEntity.Index2;
             _gameEngine.StaticVariables.g_lastValidWarpEntity = playerEntity.XCollisionEntity;
@@ -1648,7 +1648,7 @@ public class PlayerManager
         if (collidedEntity != null &&
             (collidedEntity.ProgramIndexes[5] != 0 || collidedEntity.SpriteProgramIndexes[5] != 0))
         {
-            if ((collidedEntity.Flags & 0x8000U) == 0)
+            if ((collidedEntity.Flags & EntityFlags.InteractRequiresButton) == 0)
             {
                 res = 1;
                 _gameEngine.StaticVariables.g_activeCollisionEntity = collidedEntity;
@@ -2107,7 +2107,7 @@ public class PlayerManager
             {
                 var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
-                if ((uint)(entity.Status - 2) >= 2U)
+                if (!entity.Status.IsActive())
                 {
                     continue;
                 }
@@ -2117,7 +2117,7 @@ public class PlayerManager
                     continue;
                 }
 
-                if ((entity.Flags & 0x80) == 0)
+                if ((entity.Flags & EntityFlags.Collidable) == 0)
                 {
                     continue;
                 }
@@ -2507,7 +2507,7 @@ public class PlayerManager
                 {
                     var nearbyEntities = new Entity[_gameEngine.StaticVariables.g_entitySlots.Length];
                     var distanceSquared = new int[nearbyEntities.Length];
-                    var nearbyCount = _gameEngine.FUN_8003AF70(player, 1, 0x0B, nearbyEntities, distanceSquared);
+                    var nearbyCount = _gameEngine.FUN_8003AF70(player, EntityFlags.ClassA, 0x0B, nearbyEntities, distanceSquared);
                     Entity targetEntity = null;
 
                     for (var nearbyIndex = 0; nearbyIndex < nearbyCount; nearbyIndex++)
@@ -4028,12 +4028,12 @@ public class PlayerManager
             var entity = staticVariables.g_entitySlots[entityIndex];
 
             if (entity.SpriteTableIndex != 0x18
-                || entity.Status != 2)
+                || entity.Status != EntityStatus.Normal)
             {
                 continue;
             }
 
-            entity.Status = 3;
+            entity.Status = EntityStatus.Deactivated;
             entity.BlockedByEntity = null;
 
             for (var effectIndex = 0; effectIndex < 0x10; effectIndex++)
@@ -4085,9 +4085,9 @@ public class PlayerManager
             var entity = staticVariables.g_entitySlots[entityIndex];
 
             if (entity.SpriteTableIndex == 0x15
-                && entity.Status == 2)
+                && entity.Status == EntityStatus.Normal)
             {
-                entity.Status = 3;
+                entity.Status = EntityStatus.Deactivated;
                 entity.BlockedByEntity = null;
             }
         }
@@ -4105,7 +4105,7 @@ public class PlayerManager
         {
             var entity = staticVariables.g_entitySlots[entityIndex];
 
-            if (entity.Status != 2)
+            if (entity.Status != EntityStatus.Normal)
             {
                 continue;
             }
@@ -4121,7 +4121,7 @@ public class PlayerManager
 
             if (entity.SpriteTableIndex == 0x17)
             {
-                entity.Status = 3;
+                entity.Status = EntityStatus.Deactivated;
                 entity.BlockedByEntity = null;
             }
         }
@@ -4141,7 +4141,7 @@ public class PlayerManager
             var entity = staticVariables.g_entitySlots[entityIndex];
 
             if (entity.SpriteTableIndex == 0x13
-                && entity.Status == 2)
+                && entity.Status == EntityStatus.Normal)
             {
                 _gameEngine.EffectManager.CreateEffectEntity(0, 0x1A, 0,
                     entity.PosX,
@@ -4164,9 +4164,9 @@ public class PlayerManager
             var entity = staticVariables.g_entitySlots[entityIndex];
 
             if (entity.SpriteTableIndex == 0x11
-                && entity.Status == 2)
+                && entity.Status == EntityStatus.Normal)
             {
-                entity.Status = 3;
+                entity.Status = EntityStatus.Deactivated;
                 entity.BlockedByEntity = null;
                 //entity.TargetAnimationId = 1;
             }

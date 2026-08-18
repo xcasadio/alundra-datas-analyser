@@ -56,7 +56,7 @@ public static class AncientGuardian
                 return;
             }
             entity.TargetAnimationId = 10;
-            entity.Flags |= 0x40;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
             return;
         }
 
@@ -331,7 +331,7 @@ public static class AncientGuardian
                 if (aiVal == 0)
                 {
                     entity.TargetAnimationId = 7;
-                    entity.Flags |= 0x100;
+                    entity.Flags |= EntityFlags.Gravity;
                 }
                 break;
 

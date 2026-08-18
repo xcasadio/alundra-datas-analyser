@@ -629,7 +629,7 @@ public sealed class RuntimeInspectorHost : IDisposable
             }
 
             bossSlotIndex = index;
-            bossStatus = entity.Status;
+            bossStatus = (int)entity.Status;
             bossTargetAnimationId = entity.TargetAnimationId;
             bossTargetDirection = entity.TargetDirection;
             bossCurrentDirection = entity.CurrentDirection;
@@ -650,7 +650,7 @@ public sealed class RuntimeInspectorHost : IDisposable
             if (index + 1 < entitySlots.Length)
             {
                 var nextEntity = entitySlots[index + 1];
-                bossNextStatus = nextEntity.Status;
+                bossNextStatus = (int)nextEntity.Status;
                 bossNextSpriteTableIndex = nextEntity.SpriteTableIndex;
                 bossNextTargetAnimationId = nextEntity.TargetAnimationId;
                 bossNextTargetDirection = nextEntity.TargetDirection;

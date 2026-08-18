@@ -6,13 +6,15 @@ namespace AlundraEngine.Gameplay;
 
 public class Entity
 {
-    public bool IsLoadedNormalOrDeactivated => (uint)(Status - (int)EntityStatus.Loaded) < 3U;
+    public bool IsLoadedNormalOrDeactivated =>
+        Status is EntityStatus.Loaded or EntityStatus.Normal or EntityStatus.Deactivated;
 
     public int Index;
     public int Index2;
     public Entity? ChildEntity;
     public Entity? ParentEntity;
-    public int Status;//0=destroyed,1=loaded,2=normal,3=deactivated,4=flagtodestroy,5=?
+    /// <summary>Lifecycle state of the slot; see <see cref="EntityStatus"/>.</summary>
+    public EntityStatus Status;//10
     public int Hp;
     public int HpMax;
     public int FrameCounter;//1c
@@ -30,7 +32,8 @@ public class Entity
     public readonly int[] ProgramIndexes = new int[6]; //4c
     public SpriteRecord? SpriteRecord;
     public uint SpriteTableIndex;
-    public uint Flags;//0x800000 = portrait,0x0100 = gravity,0xf = ?, 0x1 = ? , 0x80 = collidable
+    /// <summary>Static behaviour bits built at spawn time; see <see cref="EntityFlags"/>.</summary>
+    public uint Flags;//6c
     public readonly int[] SpriteProgramIndexes = new int[6]; //70
     public uint TargetAnimationId; //88
     public uint TargetDirection;
@@ -292,7 +295,7 @@ public class Entity
         Index2 = 0;
         ChildEntity = null;
         ParentEntity = null;
-        Status = 0;
+        Status = EntityStatus.Destroyed;
         Hp = 0;
         HpMax = 0;
         FrameCounter = 0;

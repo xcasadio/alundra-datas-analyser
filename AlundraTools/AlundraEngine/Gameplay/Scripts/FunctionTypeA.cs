@@ -225,13 +225,13 @@ public static class FunctionTypeA
             }
             else
             {
-                entity.Status = 1;
+                entity.Status = EntityStatus.Loaded;
             }
 
             return;
         }
 
-        entity.Flags &= 0xffffff7f;
+        entity.Flags &= ~EntityFlags.Collidable;
 
         if (entity.ContentsGameFlag != 0)
         {

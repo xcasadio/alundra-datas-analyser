@@ -126,7 +126,7 @@ public static class PhysicsEngine
                 {
                     entity.CollidedWithEntityZ = 1;
                     entity.PosZ = platformHeight - entity.ModZ;
-                    if ((entity.Flags & 0x100) == 0)
+                    if ((entity.Flags & EntityFlags.Gravity) == 0)
                     {
                         return;
                     }
@@ -149,7 +149,7 @@ public static class PhysicsEngine
                 {
                     entity.CollidedWithEntityZ = 1;
                     entity.PosZ = platformHeight - entity.ModZ - entity.Depth;
-                    if ((entity.Flags & 0x100) == 0)
+                    if ((entity.Flags & EntityFlags.Gravity) == 0)
                     {
                         return;
                     }
@@ -186,7 +186,7 @@ public static class PhysicsEngine
             platformTopZ = entity.TerrainHeight + 1;
         }
 
-        if ((entity.Flags & 0x80) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.PlatformEntity == null)
+        if ((entity.Flags & EntityFlags.Collidable) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.PlatformEntity == null)
         {
             entityIndex = 0;
 
@@ -284,7 +284,7 @@ public static class PhysicsEngine
             platformCandidateZ = 0x77fffff;
         }
 
-        if ((entity.Flags & 0x80) != 0
+        if ((entity.Flags & EntityFlags.Collidable) != 0
             && (entity.AnimFlags & 0x80) == 0
             && entity.PlatformEntity == null)
         {
@@ -433,7 +433,7 @@ public static class PhysicsEngine
         entity.TerrainHeight = groundHeight;
         attemptedGroundHeight = groundHeight;
 
-        if ((entity.Flags & 0x100) != 0)
+        if ((entity.Flags & EntityFlags.Gravity) != 0)
         {
             if (entity.ForceZ == 0)
             {
@@ -605,7 +605,7 @@ public static class PhysicsEngine
             goto FINALIZE_COMMON;
         }
 
-        if (didAdjustForObstacle == 1 || (entity.Flags & 0x2000) != 0 || candidate != null)
+        if (didAdjustForObstacle == 1 || (entity.Flags & EntityFlags.NoObstacleSlide) != 0 || candidate != null)
         {
             goto FINAL_OBSTACLE;
         }
@@ -1084,7 +1084,7 @@ public static class PhysicsEngine
         Entity player = gameEngine.StaticVariables.PlayerEntity;
         uint flag;
 
-        if ((player.Flags & 0x8) != 0)
+        if ((player.Flags & EntityFlags.ClassB) != 0)
         {
             flag = 0x41;
         }
@@ -1093,7 +1093,7 @@ public static class PhysicsEngine
             flag = 0x40;
         }
 
-        if ((player.Flags & 0x1) != 0)
+        if ((player.Flags & EntityFlags.ClassA) != 0)
         {
             flag |= 0x1000;
         }
@@ -1138,12 +1138,12 @@ public static class PhysicsEngine
     {
         var flag = 0x40;
 
-        if ((entity.Flags & 0x8) != 0) // 0x8 = � traverse cliff ? �
+        if ((entity.Flags & EntityFlags.ClassB) != 0)
         {
             flag = 0x41;
         }
 
-        if ((entity.Flags & 0x1) != 0) // 0x1 = hole
+        if ((entity.Flags & EntityFlags.ClassA) != 0)
         {
             flag |= 0x1000;
         }
@@ -1180,7 +1180,7 @@ public static class PhysicsEngine
             return null;
         }
 
-        if ((entity.Flags & 0x80U) != 0
+        if ((entity.Flags & EntityFlags.Collidable) != 0
             && (entity.AnimFlags & 0x80U) == 0
             && entity.PlatformEntity == null
             && gameEngine.StaticVariables.g_collideableEntitiesCount > 0)
@@ -1287,7 +1287,7 @@ public static class PhysicsEngine
         {
             var entity = gameEngine.StaticVariables.g_collideableEntities[i];
             
-            if ((entity.Flags & 0x4100) != 0x0100)
+            if ((entity.Flags & (EntityFlags.Gravity | EntityFlags.NoRiders)) != EntityFlags.Gravity)
             {
                 continue;
             }
@@ -1380,7 +1380,7 @@ public static class PhysicsEngine
             {
                 if (entity.IsZForceApplied == 0)
                 {
-                    if ((entity.Flags & 0x100U) != 0)
+                    if ((entity.Flags & EntityFlags.Gravity) != 0)
                     {
                         spriteZForceTemp = entity.ForceZ + gameEngine.CurrentMap.Info.Gravity * -0x100;
 
@@ -1400,7 +1400,7 @@ public static class PhysicsEngine
                         }
                     }
                 }
-                else if ((entity.Flags & 0x100U) == 0
+                else if ((entity.Flags & EntityFlags.Gravity) == 0
                          || (entity.CombinedVramFlagsOR & 0x10U) == 0
                          || 0 < gameEngine.StaticVariables.g_gravityFlag)
                 {
@@ -1457,7 +1457,7 @@ public static class PhysicsEngine
                 {
                     if (entity.IsZForceApplied == 0)
                     {
-                        if ((entity.Flags & 0x100U) != 0)
+                        if ((entity.Flags & EntityFlags.Gravity) != 0)
                         {
                             var force = entity.ForceZ - (gameEngine.CurrentMap.Info.Gravity << 8);
                             var forceAbs = force;
@@ -1476,7 +1476,7 @@ public static class PhysicsEngine
                         }
                     }
                     else if ((short)entity.IsZForceApplied == -0x8000
-                             && (entity.Flags & 0x100U) == 0)
+                             && (entity.Flags & EntityFlags.Gravity) == 0)
                     {
                         entity.ForceZ = 0;
                     }
@@ -1603,7 +1603,7 @@ public static class PhysicsEngine
     {
         var collision = entity.TerrainHeight + 1;
 
-        if ((entity.Flags & 0x80) == 0)
+        if ((entity.Flags & EntityFlags.Collidable) == 0)
         {
             return collision;
         }
@@ -1703,7 +1703,7 @@ public static class PhysicsEngine
         entity.FloorHeight = hitz;
         entity.IsOnGround = hitz < entity.PosZ ? 0 : 1;
 
-        if ((entity.Flags & 0x100U) == 0)
+        if ((entity.Flags & EntityFlags.Gravity) == 0)
         {
             tileX = entity.TileX;
             bestFlagMask = 0;

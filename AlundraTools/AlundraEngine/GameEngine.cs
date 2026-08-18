@@ -658,7 +658,7 @@ public class GameEngine
             StaticVariables.g_resetDirectionId,
             0xb, 0x60);
 
-        StaticVariables.PlayerEntity.Status = 2;
+        StaticVariables.PlayerEntity.Status = EntityStatus.Normal;
         StaticVariables.PlayerEntity.HpMax = PlayerManager.GetPlayerHpMax();
         StaticVariables.PlayerEntity.Hp = PlayerManager.GetPlayerHp();
         StaticVariables.g_activeCollisionEntity = null;
@@ -1755,7 +1755,7 @@ public class GameEngine
     // GHIDRA: DestroyEntity @ 0x8003A774
     public void DestroyEntity(Entity entity)
     {
-        entity.Status = 4;
+        entity.Status = EntityStatus.FlagToDestroy;
         entity.EventTrigger = -1;
 
         if (entity.ActiveEffect != null)
@@ -1773,11 +1773,11 @@ public class GameEngine
     // GHIDRA: DestroyEntity @ 0x8003A59C
     public void DestroyEntity(Entity entity, int effectId)
     {
-        LogManager.Log(entity, $"to destroy => status:{entity.Status} flags:{entity.Flags} Bytes:{string.Join('-', entity.Bytes)} AIValues:{string.Join('-', entity.AIValues)}");
+        LogManager.Log(entity, $"to destroy => status:{entity.Status} flags:{EntityFlags.Describe(entity.Flags)} Bytes:{string.Join('-', entity.Bytes)} AIValues:{string.Join('-', entity.AIValues)}");
 
         SpawnEntityContents(entity);
 
-        entity.Status = 4;
+        entity.Status = EntityStatus.FlagToDestroy;
         entity.EventTrigger = -1;
 
         if (entity.ActiveEffect != null)
@@ -1816,7 +1816,7 @@ public class GameEngine
                 continue;
             }
 
-            if ((uint)(candidate.Status - 2) >= 2U)
+            if (!candidate.Status.IsActive())
             {
                 continue;
             }
@@ -1898,7 +1898,7 @@ public class GameEngine
         spawnedEntity.Bytes[1] = 0;
         spawnedEntity.Bytes[2] = 0;
         spawnedEntity.Bytes[3] = 0;
-        spawnedEntity.Flags &= 0xffffff7f;
+        spawnedEntity.Flags &= ~EntityFlags.Collidable;
 
         var delay = 600;
         //AlundraEngine.Debug.Debugger.Breakpoint();
@@ -1997,7 +1997,7 @@ public class GameEngine
                     var entity = StaticVariables.g_entitySlots[i];
 
                     if (ownerEntity.IsLoadedNormalOrDeactivated
-                        && (entity.Flags & 0x80) != 0
+                        && (entity.Flags & EntityFlags.Collidable) != 0
                         && (entity.AnimFlags & 0x80) == 0
                         && entity.PlatformEntity == null)
                     {

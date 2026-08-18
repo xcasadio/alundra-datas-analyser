@@ -584,7 +584,7 @@ public static class FunctionTypeD
         {
             Entity current = entitySlots[entityIndex + i];
 
-            if (current.Status != 2)
+            if (current.Status != EntityStatus.Normal)
             {
                 continue;
             }
@@ -796,7 +796,7 @@ public static class FunctionTypeD
         var value = entity.TouchingEntity.CurrentAttack.AttackAttribute & 0xf;
         if (value == 4 || value == 6 || value == 10)
         {
-            entity.Status = 3;
+            entity.Status = EntityStatus.Deactivated;
         }
     }
 
@@ -818,7 +818,7 @@ public static class FunctionTypeD
         if ((entity.TouchingEntity.CurrentAttack.AttackAttribute & 0xf) == 2)
         {
             entity.TargetAnimationId += 1;
-            entity.Flags |= 0x40;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
         }
     }
 
@@ -830,7 +830,7 @@ public static class FunctionTypeD
         if ((entity.TouchingEntity.CurrentAttack.AttackAttribute & 0xf) == 4)
         {
             entity.TargetAnimationId += 1;
-            entity.Flags |= 0x40;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
         }
     }
 
@@ -846,7 +846,7 @@ public static class FunctionTypeD
         if ((entity.TouchingEntity.CurrentAttack.AttackAttribute & 0xf) == 2)
         {
             entity.TargetAnimationId = 2;
-            entity.Flags |= 0x40;
+            entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
         }
     }
 
@@ -863,7 +863,7 @@ public static class FunctionTypeD
         if ((entity.TouchingEntity.CurrentAttack.AttackAttribute & 0xf) == 6)
         {
             entity.TargetAnimationId = 1;
-            entity.Flags = (entity.Flags | 0x46U) & 0xFFFFFF7FU;
+            entity.Flags = (entity.Flags | (EntityFlags.HitsClassB | EntityFlags.HitsClassA | EntityFlags.DeactivateOnAnimationEnd)) & ~EntityFlags.Collidable;
         }
     }
 
@@ -908,7 +908,7 @@ public static class FunctionTypeD
         }
 
         entity.TargetAnimationId = 1;
-        entity.Flags |= 0x40;
+        entity.Flags |= EntityFlags.DeactivateOnAnimationEnd;
     }
 
     //8007e9ac

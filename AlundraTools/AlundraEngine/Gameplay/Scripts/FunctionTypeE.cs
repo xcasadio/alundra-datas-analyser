@@ -44,7 +44,7 @@ public static class FunctionTypeE
         else
         {
             entity.TargetAnimationId = 2;
-            entity.Flags = (entity.Flags & 0xffffffcfU) | 0x40;
+            entity.Flags = (entity.Flags & ~(EntityFlags.DeactivateOnImpact | EntityFlags.DeactivateOnHit)) | EntityFlags.DeactivateOnAnimationEnd;
         }
     }
 
@@ -75,7 +75,7 @@ public static class FunctionTypeE
         else
         {
             entity.TargetAnimationId = 1;
-            entity.Flags = (entity.Flags & 0xffffffcfU) | 0x40;
+            entity.Flags = (entity.Flags & ~(EntityFlags.DeactivateOnImpact | EntityFlags.DeactivateOnHit)) | EntityFlags.DeactivateOnAnimationEnd;
         }
     }
 
@@ -94,7 +94,7 @@ public static class FunctionTypeE
         else
         {
             entity.TargetAnimationId = 4;
-            entity.Flags = (entity.Flags & 0xffffffcfU) | 0x40;
+            entity.Flags = (entity.Flags & ~(EntityFlags.DeactivateOnImpact | EntityFlags.DeactivateOnHit)) | EntityFlags.DeactivateOnAnimationEnd;
         }
     }
 
@@ -118,7 +118,7 @@ public static class FunctionTypeE
         else
         {
             entity.TargetAnimationId = 1;
-            entity.Flags = entity.Flags & 0xffffffcfU | 0x40;
+            entity.Flags = entity.Flags & ~(EntityFlags.DeactivateOnImpact | EntityFlags.DeactivateOnHit) | EntityFlags.DeactivateOnAnimationEnd;
             gameEngine.EffectManager.CreateEffectEntity(0, 8, 0, entity.PosX, entity.PosY, entity.PosZ);
         }
     }
@@ -252,7 +252,7 @@ public static class FunctionTypeE
                 } while (loopCounter < 5);
 
                 entity.TargetAnimationId = 1;
-                entity.Flags = (entity.Flags & 0xffffffcfU) | 0x40;
+                entity.Flags = (entity.Flags & ~(EntityFlags.DeactivateOnImpact | EntityFlags.DeactivateOnHit)) | EntityFlags.DeactivateOnAnimationEnd;
             }
         }
     }
@@ -320,7 +320,7 @@ public static class FunctionTypeE
         }
 
         gameEngine.SpawnEntityContents(entity);
-        entity.Status = 4;
+        entity.Status = EntityStatus.FlagToDestroy;
         entity.EventTrigger = -1;
 
         if (entity.ActiveEffect != null)
@@ -363,7 +363,7 @@ public static class FunctionTypeE
         {
             gameEngine.CheckAndTriggerTileEffect(entity);
             entity.TargetAnimationId = 1;
-            entity.Flags = (entity.Flags & 0xffffffcfU) | 0x40;
+            entity.Flags = (entity.Flags & ~(EntityFlags.DeactivateOnImpact | EntityFlags.DeactivateOnHit)) | EntityFlags.DeactivateOnAnimationEnd;
         }
     }
 
@@ -387,7 +387,8 @@ public static class FunctionTypeE
         {
             gameEngine.StaticVariables.g_cameraDebugOffsetY = 2;
             entity.TargetAnimationId = 1;
-            entity.Flags = (entity.Flags | 0x40u) & ~0x30u;
+            entity.Flags = (entity.Flags | EntityFlags.DeactivateOnAnimationEnd)
+                           & ~(EntityFlags.DeactivateOnImpact | EntityFlags.DeactivateOnHit);
         }
     }
 
@@ -458,16 +459,18 @@ public static class FunctionTypeE
             if (entity.HitCounter != 0)
             {
                 var flags = entity.Flags;
-                var collisionMask = (flags & 2) << 2;
+                // Same class fan-out as EntityManager: HitsClassB -> ClassB, HitsClassA -> ClassA,
+                // HitsClassC -> ClassC.
+                var collisionMask = (flags & EntityFlags.HitsClassB) << 2;
 
-                if ((flags & 0x4) != 0)
+                if ((flags & EntityFlags.HitsClassA) != 0)
                 {
-                    collisionMask |= 1;
+                    collisionMask |= EntityFlags.ClassA;
                 }
 
-                if ((flags & 0x1000) != 0)
+                if ((flags & EntityFlags.HitsClassC) != 0)
                 {
-                    collisionMask |= 0x800;
+                    collisionMask |= EntityFlags.ClassC;
                 }
 
                 var noValidCollisionFound = true;
@@ -542,7 +545,7 @@ public static class FunctionTypeE
 
                     if (noValidCollisionFound)
                     {
-                        entity.Status = 2;
+                        entity.Status = EntityStatus.Normal;
                         return;
                     }
                 }
@@ -552,7 +555,7 @@ public static class FunctionTypeE
 
             entity.TargetAnimationId = 1;
             entity.TargetDirection = (entity.TargetDirection + 0x10) & 0X1F;
-            entity.Flags = (entity.Flags & 0XFFFFFFCF) | 0x140;
+            entity.Flags = (entity.Flags & ~(EntityFlags.DeactivateOnImpact | EntityFlags.DeactivateOnHit)) | (EntityFlags.DeactivateOnAnimationEnd | EntityFlags.Gravity);
         }
     }
 
@@ -623,7 +626,7 @@ public static class FunctionTypeE
                 }
 
                 entitySpawned.TargetAnimationId = 3;
-                entitySpawned.Flags = (entitySpawned.Flags & 0xFFFFFFEFU) | 2U;
+                entitySpawned.Flags = (entitySpawned.Flags & ~EntityFlags.DeactivateOnImpact) | EntityFlags.HitsClassB;
             }
 
             gameEngine.DestroyEntity(entity, -1);
@@ -631,7 +634,7 @@ public static class FunctionTypeE
         }
 
         entity.TargetAnimationId = 2;
-        entity.Flags = (entity.Flags & 0xFFFFFFCFU) | 0x40U;
+        entity.Flags = (entity.Flags & ~(EntityFlags.DeactivateOnImpact | EntityFlags.DeactivateOnHit)) | EntityFlags.DeactivateOnAnimationEnd;
 
         Entity? xCollisionEntity = entity.XCollisionEntity;
 
@@ -668,7 +671,7 @@ public static class FunctionTypeE
         }
 
         entity.TargetAnimationId = 1;
-        entity.Flags = entity.Flags & 0xffffffcfU | 0x40;
+        entity.Flags = entity.Flags & ~(EntityFlags.DeactivateOnImpact | EntityFlags.DeactivateOnHit) | EntityFlags.DeactivateOnAnimationEnd;
     }
 
     //8007f878
@@ -772,7 +775,7 @@ public static class FunctionTypeE
             }
 
             entity.TargetAnimationId = 1;
-            entity.Flags = (entity.Flags & 0xffffffcfU) | 0x40;
+            entity.Flags = (entity.Flags & ~(EntityFlags.DeactivateOnImpact | EntityFlags.DeactivateOnHit)) | EntityFlags.DeactivateOnAnimationEnd;
         }
     }
 
@@ -806,7 +809,7 @@ public static class FunctionTypeE
             return;
         }
         entity.TargetAnimationId = 1;
-        entity.Flags = (entity.Flags & 0xffffffcfU) | 0x40;
+        entity.Flags = (entity.Flags & ~(EntityFlags.DeactivateOnImpact | EntityFlags.DeactivateOnHit)) | EntityFlags.DeactivateOnAnimationEnd;
     }
 
     //8007fb38

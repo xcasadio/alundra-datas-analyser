@@ -305,7 +305,7 @@ public class SpriteEventHandlers
                     _gameEngine.EntityManager.BlockEntitiesBy(entity);
                     entitySpawn.ForceZ = 0x8000;
                     entitySpawn.DelayOrAngleOrEntityId = 0x40;
-                    entitySpawn.Flags &= 0xfffffe7f;
+                    entitySpawn.Flags &= ~(EntityFlags.Collidable | EntityFlags.Gravity);
                     entitySpawn.BlockedByEntity = null;
                     entitySpawn.Bytes[0] = 2;
                     entitySpawn.Bytes[1] = 0;

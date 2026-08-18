@@ -1386,7 +1386,7 @@ public class GraphicManager
             {
                 Entity e = _gameEngine.StaticVariables.g_entitySlots[i];
 
-                if (e.Status - 2 >= 2)
+                if (!e.Status.IsActive())
                 {
                     continue;
                 }
@@ -1452,7 +1452,7 @@ public class GraphicManager
             {
                 Entity e = _gameEngine.StaticVariables.g_entitySlots[i];
 
-                if (e.Status - 2 >= 2)
+                if (!e.Status.IsActive())
                 {
                     continue;
                 }

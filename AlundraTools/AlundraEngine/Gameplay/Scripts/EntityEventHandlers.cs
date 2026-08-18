@@ -650,7 +650,7 @@ public class EntityEventHandlers
     //open dialog
     public int Script_OpenDialog_13_00D(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        if ((logicEntity.Flags & 0x800000U) != 0) // has portrait
+        if ((logicEntity.Flags & EntityFlags.HasPortrait) != 0) // has portrait
         {
             using var binaryReader = _gameEngine.DatasBin.OpenBin();
             var imgset = logicEntity.SpriteRecord.GetPortraitImageset(binaryReader);
@@ -715,21 +715,21 @@ public class EntityEventHandlers
     // 8003D774
     public int Script_22_016(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        logicEntity.Flags |= 0x100;
+        logicEntity.Flags |= EntityFlags.Gravity;
         return 1;
     }
 
     // 8003D78C
     public int Script_23_017(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        logicEntity.Flags &= 0xfffffeff;
+        logicEntity.Flags &= ~EntityFlags.Gravity;
         return 1;
     }
 
     // 8003D7A4
     public int Script_25_019(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        logicEntity.Status = 3;
+        logicEntity.Status = EntityStatus.Deactivated;
         return 1;
     }
 
@@ -981,28 +981,28 @@ public class EntityEventHandlers
     // 8003DC24
     public int Script_40_028(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        logicEntity.Flags |= 8;
+        logicEntity.Flags |= EntityFlags.ClassB;
         return 1;
     }
 
     // 8003DC3C
     public int Script_41_029(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        logicEntity.Flags &= 0xfffffff7;
+        logicEntity.Flags &= ~EntityFlags.ClassB;
         return 1;
     }
 
     // 8003DC54
     public int Script_42_02A(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        logicEntity.Flags |= 1;
+        logicEntity.Flags |= EntityFlags.ClassA;
         return 1;
     }
 
     // 8003DC6C
     public int Script_43_02B(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        logicEntity.Flags &= 0xfffffffe;
+        logicEntity.Flags &= ~EntityFlags.ClassA;
         return 1;
     }
 
@@ -1251,7 +1251,7 @@ public class EntityEventHandlers
 
             if (entity.IsLoadedNormalOrDeactivated
                 && (entity.AnimFlags & 0x80U) != 0
-                && (entity.Flags & 0x80U) == 0
+                && (entity.Flags & EntityFlags.Collidable) == 0
                 && entity.PlatformEntity == null)
             {
                 if (variables[1] <= entity.TileX && entity.TileX <= variables[2]
@@ -1415,14 +1415,14 @@ public class EntityEventHandlers
     // 8003E954
     public int Script_69_045(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        logicEntity.Flags &= 0xffffdfff;
+        logicEntity.Flags &= ~EntityFlags.NoObstacleSlide;
         return 1;
     }
 
     // 8003E96C
     public int Script_70_046(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        logicEntity.Flags |= 0x2000;
+        logicEntity.Flags |= EntityFlags.NoObstacleSlide;
         return 1;
     }
 
@@ -1745,7 +1745,7 @@ public class EntityEventHandlers
         {
             matchedEntity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0];
 
-            if ((matchedEntity.Flags & 0x800000U) != 0)
+            if ((matchedEntity.Flags & EntityFlags.HasPortrait) != 0)
             {
                 using var binaryReader = _gameEngine.DatasBin.OpenBin();
                 var imgset = matchedEntity.SpriteRecord.GetPortraitImageset(binaryReader);
@@ -1780,7 +1780,7 @@ public class EntityEventHandlers
         for (int i = 0; i < num; i++)
         {
             var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[i];
-            entity.Status = 3;
+            entity.Status = EntityStatus.Deactivated;
         }
 
         return 2;
@@ -2503,7 +2503,7 @@ public class EntityEventHandlers
             do
             {
                 var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[--matchingEntityCount];
-                entity.Status = status;
+                entity.Status = (EntityStatus)status;
             } while (0 < matchingEntityCount);
         }
 
@@ -2757,7 +2757,7 @@ public class EntityEventHandlers
             }
 
             // ASM: (Status - 2) < 2 → Status must be 2 or 3
-            if (e.Status - 2 > 1)
+            if (!e.Status.IsActive())
             {
                 continue;
             }
@@ -3213,10 +3213,7 @@ public class EntityEventHandlers
         if (count != 0)
         {
             var entity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0];
-            uint flags = entity.Flags & 0xfff8ffff;
-            var newBits = (uint)(variables[2] & 7);
-            newBits <<= 16;
-            entity.Flags = flags | newBits;
+            entity.Flags = EntityFlags.WithShadowSize(entity.Flags, (uint)variables[2]);
         }
 
         return 4;
@@ -3671,7 +3668,7 @@ public class EntityEventHandlers
 
         if (entityCount != 0)
         {
-            if ((_gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].Flags & 0x800000U) != 0)
+            if ((_gameEngine.StaticVariables.g_matchingEntitiesBuffer[0].Flags & EntityFlags.HasPortrait) != 0)
             {
                 var targetEntity = _gameEngine.StaticVariables.g_matchingEntitiesBuffer[0];
                 var image = targetEntity.SpriteRef.Images[targetEntity.AnimationDirection];

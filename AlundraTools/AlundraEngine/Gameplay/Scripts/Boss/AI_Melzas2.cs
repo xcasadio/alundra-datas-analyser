@@ -144,7 +144,7 @@ public static class AI_Melzas2
         {
             entity.AIValues[1] = 0x012C;
             entity.AIValues[5] = 0x001E;
-            entity.Flags = (uint)(entity.Flags & ~3);
+            entity.Flags &= ~(EntityFlags.ClassA | EntityFlags.HitsClassB);
             entity.TargetAnimationId = 0;
 
             gameEngine.SoundManager.PlaySoundEffect(0x55);
@@ -404,7 +404,7 @@ public static class AI_Melzas2
             do
             {
                 i += 1;
-                entity.Flags &= 0xfffffffc;
+                entity.Flags &= ~(EntityFlags.ClassA | EntityFlags.HitsClassB);
                 entity = GetEntityById(gameEngine, entity, entity.AIValues[2]);
             } while (i != 8);
 
@@ -719,7 +719,7 @@ public static class AI_Melzas2
                                     entity2.TargetAnimationId = 0xf;
                                     entity2.ForceZ = 0x40000;
                                     entity2.Bytes[0] = 1;
-                                    entity2.Flags &= 0xfffffffe;
+                                    entity2.Flags &= ~EntityFlags.ClassA;
 
                                     i = entity.DelayOrAngleOrEntityId + 1;
                                     entity.DelayOrAngleOrEntityId = i;
@@ -878,7 +878,7 @@ public static class AI_Melzas2
                                 {
                                     entity2.TargetAnimationId = entity.TargetAnimationId + 10;
                                     entity2.Bytes[0] = 2;
-                                    entity2.Flags = (entity2.Flags & 0xfffffffeU) | 0x100;
+                                    entity2.Flags = (entity2.Flags & ~EntityFlags.ClassA) | EntityFlags.Gravity;
                                     entity2.Bytes[1] = (byte)(entity.AIValues[4] + 2);
 
                                     angleSwing = (short)(entity.AIValues[4] + 1);

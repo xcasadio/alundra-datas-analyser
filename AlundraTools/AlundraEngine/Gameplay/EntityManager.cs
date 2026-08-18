@@ -29,7 +29,7 @@ public class EntityManager
     {
         for (int i = 1; i < _gameEngine.StaticVariables.g_entitySlots.Length; i++)
         {
-            if (_gameEngine.StaticVariables.g_entitySlots[i].Status == 0)
+            if (_gameEngine.StaticVariables.g_entitySlots[i].Status == EntityStatus.Destroyed)
             {
                 return _gameEngine.StaticVariables.g_entitySlots[i];
             }
@@ -79,7 +79,7 @@ public class EntityManager
             entity.EntityRefId = -1;
         }
 
-        entity.Status = 1;
+        entity.Status = EntityStatus.Loaded;
         entity.Index2 = ++_gameEngine.StaticVariables.g_nextEntityIndex;
 
         entity.CurrentAnimationId = ~animationId;
@@ -87,6 +87,8 @@ public class EntityManager
         entity.TargetAnimationId = animationId;
         entity.TargetDirection = direction;
         //uint flags = animData.Flags;
+        // Packing documented by EntityFlags: header byte 0x10 -> bits 0-7, 0x11 -> bits 8-15,
+        // 0x12 -> bits 16-23.
         entity.Flags = (uint)(spriteRecord.Header.MoreFlags | spriteRecord.Header.CanPickup << 8 |
                               spriteRecord.Header.FlagsPortraitShadowType << 16);
 
@@ -414,7 +416,7 @@ public class EntityManager
             {
                 var entity = _gameEngine.StaticVariables.g_activeEntities[i];
                 _gameEngine.LogManager.SetCategory($"entity {entity.Index} - AI log");
-                _gameEngine.LogManager.Log(entity, $"status:{entity.Status} flags:{entity.Flags} Bytes:{string.Join('-', entity.Bytes)} AIValues:{string.Join('-', entity.AIValues)}");
+                _gameEngine.LogManager.Log(entity, $"status:{entity.Status} flags:{EntityFlags.Describe(entity.Flags)} Bytes:{string.Join('-', entity.Bytes)} AIValues:{string.Join('-', entity.AIValues)}");
             }
 
             _gameEngine.LogManager.ResetCategory();
@@ -450,10 +452,12 @@ public class EntityManager
                 continue;
             }
 
-            var flags = ((entity.Flags >> 2) & 1) | ((entity.Flags << 2) & 8);
-            if ((entity.Flags & 0x1000) != 0)
+                // Branchless fan-out of the "my attacks reach that class" bits onto the matching
+            // "I belong to that class" bits: HitsClassA -> ClassA, HitsClassB -> ClassB.
+            var flags = ((entity.Flags >> 2) & EntityFlags.ClassA) | ((entity.Flags << 2) & EntityFlags.ClassB);
+            if ((entity.Flags & EntityFlags.HitsClassC) != 0)
             {
-                flags |= 0x800;
+                flags |= EntityFlags.ClassC;
             }
 
             if (flags == 0)
@@ -668,7 +672,7 @@ public class EntityManager
         for (var i = 0; i <= _gameEngine.StaticVariables.g_numberOfEntities; i++)
         {
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
-            if ((uint)(entity.Status - 2) >= 2U || (entity.DamagedTickCounter & 3) == 3)
+            if (!entity.Status.IsActive() || (entity.DamagedTickCounter & 3) == 3)
             {
                 if (entity.ActiveEffect != null)
                 {
@@ -696,7 +700,7 @@ public class EntityManager
                 entity.ActiveEffect = effect;
             }
 
-            if ((entity.Flags & 0x7) == 0
+            if ((entity.Flags & (EntityFlags.ClassA | EntityFlags.HitsClassB | EntityFlags.HitsClassA)) == 0
                 || (entity.AnimFlags & 0x10) != 0
                 || entity.PlatformEntity != null)
             {
@@ -763,7 +767,7 @@ public class EntityManager
                     continue;
             }
 
-            var animId = ((int)((entity.Flags >> 0x10) & 0x7) - 1) - ((entity.PosZ - entity.FloorHeight) >> 20);
+            var animId = ((int)EntityFlags.GetShadowSize(entity.Flags) - 1) - ((entity.PosZ - entity.FloorHeight) >> 20);
 
             if (animId >= 6)
             {
@@ -812,29 +816,29 @@ public class EntityManager
             {
                 switch (entity.Status)
                 {
-                    case (int)EntityStatus.Destroyed:
-                    case (int)EntityStatus.FlagToDestroy:
+                    case EntityStatus.Destroyed:
+                    case EntityStatus.FlagToDestroy:
                         eventProgramType = ScriptHelper.ProgramUnknown;
                         break;
 
-                    case (int)EntityStatus.Loaded:
+                    case EntityStatus.Loaded:
                         eventProgramType = ScriptHelper.ProgramALoad;
-                        entity.Status = (int)EntityStatus.Normal;
+                        entity.Status = EntityStatus.Normal;
                         break;
 
-                    case (int)EntityStatus.Normal:
+                    case EntityStatus.Normal:
                         var flags = entity.Flags;
 
-                        if ((flags & 0x100000) == 0 || entity.Slope_18c != 4)
+                        if ((flags & EntityFlags.DestroyOnSlidingSlope) == 0 || entity.Slope_18c != 4)
                         {
-                            if ((flags & 0x200000) == 0 || (entity.CombinedVramFlagsOR & 0x8004U) == 0)
+                            if ((flags & EntityFlags.DestroyOnVramFlags) == 0 || (entity.CombinedVramFlagsOR & 0x8004U) == 0)
                             {
                                 if (
-                                    ((flags & 0x10) != 0 && (entity.ForceAdjusted != 0 || entity.IsOnGround != 0))
-                                    || ((flags & 0x20) != 0 && entity.HitCounter != 0)
-                                    || ((flags & 0x40) != 0 && entity.ForceResetAnimationFlag != 0))
+                                    ((flags & EntityFlags.DeactivateOnImpact) != 0 && (entity.ForceAdjusted != 0 || entity.IsOnGround != 0))
+                                    || ((flags & EntityFlags.DeactivateOnHit) != 0 && entity.HitCounter != 0)
+                                    || ((flags & EntityFlags.DeactivateOnAnimationEnd) != 0 && entity.ForceResetAnimationFlag != 0))
                                 {
-                                    entity.Status = 3;
+                                    entity.Status = EntityStatus.Deactivated;
                                     eventProgramType = ScriptHelper.ProgramEDeactivate;
                                     break;
                                 }
@@ -869,7 +873,7 @@ public class EntityManager
 
                         break;
 
-                    case (int)EntityStatus.Deactivated:
+                    case EntityStatus.Deactivated:
                         eventProgramType = ScriptHelper.ProgramEDeactivate;
                         break;
                 }
@@ -951,12 +955,12 @@ public class EntityManager
         {
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
-            if (entity.Status == 4)
+            if (entity.Status == EntityStatus.FlagToDestroy)
             {
                 entity.Clear();
                 entity.Index = i;
             }
-            else if (entity.Status != 0)
+            else if (entity.Status != EntityStatus.Destroyed)
             {
                 max = i;
             }
@@ -981,20 +985,19 @@ public class EntityManager
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
             //processable
-            if (entity.Status >= 2 && entity.Status <= 3 && entity.BlockedByEntity == null)
+            if (entity.Status.IsActive() && entity.BlockedByEntity == null)
             {
                 _gameEngine.StaticVariables.g_activeEntities[_gameEngine.StaticVariables.g_activeEntityCount++] = entity;
             }
 
             //collidable
-            if ((entity.Flags & 0x80) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.PlatformEntity == null)
+            if ((entity.Flags & EntityFlags.Collidable) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.PlatformEntity == null)
             {
                 _gameEngine.StaticVariables.g_collideableEntities[_gameEngine.StaticVariables.g_collideableEntitiesCount++] = entity;
             }
 
             //renderable
-            if (entity.Status >= 2 
-                && entity.Status <= 3
+            if (entity.Status.IsActive()
                 //flicker effect, every 3rd frame when being damaged
                 && (entity.DamagedTickCounter & 0x3) != 0x3) 
             {
@@ -1045,7 +1048,7 @@ public class EntityManager
 
         var sortValue = entity.PosY + (entity.SpriteRef.ImageDepthSortValue << 16);
 
-        if ((entity.Flags & 0x80) != 0 && (entity.AnimFlags & 0x80) == 0)
+        if ((entity.Flags & EntityFlags.Collidable) != 0 && (entity.AnimFlags & 0x80) == 0)
         {
             if (entity.PlatformEntity != null)
             {
@@ -1324,7 +1327,7 @@ public class EntityManager
                 entity2 = _gameEngine.StaticVariables.g_entitySlots[i];
 
                 if (entity2 != entity 
-                    && entity2.Status - 2 < 2 
+                    && entity2.Status.IsActive() 
                     && entity2.BlockedByEntity == null)
                 {
                     entity2.BlockedByEntity = entity; // pointer of the entity

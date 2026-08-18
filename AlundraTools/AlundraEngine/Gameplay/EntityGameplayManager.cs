@@ -297,8 +297,8 @@ public class EntityGameplayManager
         yCoords[3] = (tileY + entity.Height) >> 0x14;
         yCoords[2] = yCoords[3];
 
-        flagBits = (ushort)((entity.Flags & 8U) != 0 ? 1 : 0);
-        if ((entity.Flags & 1U) != 0)
+        flagBits = (ushort)((entity.Flags & EntityFlags.ClassB) != 0 ? 1 : 0);
+        if ((entity.Flags & EntityFlags.ClassA) != 0)
         {
             flagBits |= 0x1000;
         }

@@ -267,13 +267,13 @@ public class EffectManager
         if (effect.UpdateMode == 1)
         {
             var entity = effect.AttachedEntity;
-            if (entity.Status != 0)
+            if (entity.Status != EntityStatus.Destroyed)
             {
                 effect.X = entity.PosX + effect.OffsetX;
                 effect.Y = entity.PosY + effect.OffsetY;
                 effect.Z = entity.PosZ + effect.OffsetZ;
                 effect.DepthSortValue = entity.ZUpperBound + effect.DepthSortOffset;
-                if (entity.Status == 4)
+                if (entity.Status == EntityStatus.FlagToDestroy)
                 {
                     effect.UpdateMode = 2;
                 }
@@ -293,11 +293,11 @@ public class EffectManager
         effect.Y += effect.ForceY;
         effect.Z += effect.ForceZ;
 
-        if (effect.AttachedEntity.Status != 0)
+        if (effect.AttachedEntity.Status != EntityStatus.Destroyed)
         {
             effect.DepthSortValue = effect.AttachedEntity.ZUpperBound + effect.DepthSortOffset;
 
-            if (effect.AttachedEntity.Status == 4)
+            if (effect.AttachedEntity.Status == EntityStatus.FlagToDestroy)
             {
                 effect.UpdateMode = 2;
             }
@@ -467,7 +467,7 @@ public class EffectManager
         itemEntity.Bytes[1] = 0;
         itemEntity.Bytes[2] = 0;
         itemEntity.Bytes[3] = 0;
-        itemEntity.Flags &= 0xffffff7f; // ~0x80
+        itemEntity.Flags &= ~EntityFlags.Collidable;
 
         ////[itemId * 2 + 1]
         //AlundraEngine.Debug.Debugger.Breakpoint();
