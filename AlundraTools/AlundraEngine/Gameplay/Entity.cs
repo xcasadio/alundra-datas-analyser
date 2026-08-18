@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using AlundraEngine.Balance;
+﻿using AlundraEngine.Balance;
 using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay.Scripts;
 
@@ -7,176 +6,13 @@ namespace AlundraEngine.Gameplay;
 
 public class Entity
 {
-    public uint TargetDirection
-    {
-        get => _TargetDirection;
-        set
-        {
-            //if (Index == 1)
-            //{
-            //    Breakpoint.TriggerBreak();
-            //}
-
-            if (value > 32)
-            {
-                Breakpoint.TriggerBreak();
-            }
-            _TargetDirection = value;   
-        }
-    }
-
-    public uint TargetAnimationId
-    {
-        get => _TargetAnimationId;
-        set
-        {
-            if (value == _TargetAnimationId)
-            {
-                return;
-            }
-
-            if (value > 95)
-            {
-                Breakpoint.TriggerBreak();
-            }
-
-            if (Index == 18 && value == 0)
-            {
-               //Breakpoint.TriggerBreak();
-            }
-
-            _TargetAnimationId = value;
-        }
-    }
-
-    public int Status
-    {
-        get => _Status;
-        set
-        {
-            if (Index > 2 && value > 2)
-            {
-                //Breakpoint.TriggerBreak();
-            }
-            _Status = value;
-        }
-    }
-
     public bool IsLoadedNormalOrDeactivated => (uint)(Status - (int)EntityStatus.Loaded) < 3U;
-
-    public int EventTrigger
-    {
-        get => _EventTrigger;
-        set
-        {
-            //if (Index == 1 && value != -1 && value != 2)
-            //{
-            //    Breakpoint.TriggerBreak();
-            //}
-            _EventTrigger = value;
-        }
-    }
-
-    public int PosX
-    {
-        get => _PosX;
-        set
-        {
-            if (value == _PosX)
-            {
-                return;
-            }
-
-            if (Index == 0 /*&& value <= 800360*/)
-            {
-                //Breakpoint.TriggerBreak();
-            }
-
-            _PosX = value;
-        }
-    }
-
-    public int AdjustedForceX
-    {
-        get => _AdjustedForceX;
-        set
-        {
-            if (Index == 0 && value > 80280000)
-            {
-                Breakpoint.TriggerBreak();
-            }
-
-            _AdjustedForceX = value;
-        }
-    }
-
-    public SiFrame? Frame
-    {
-        get
-        {
-            if (_Frame == null || _Frame.Images == null || _Frame.Images.Images == null || _Frame.Images!.Images!.Length == 0)
-            {
-                if (AnimationSet == null)
-                {
-                    return null;
-                }
-
-                var index = Math.Max(0, AnimationFrameIndex - 1);
-                //return AnimationSet.PreloadedAnims[TargetDirection >> 3].Frames[index];
-                return _Frame;
-            }
-
-            return _Frame;
-        }
-    }
-
-    public int ZUpperBound
-    {
-        get => _ZUpperBound;
-        set
-        {
-            if (Index == 0 && value >= 65536080)
-            {
-                //Breakpoint.TriggerBreak();
-            }
-
-            _ZUpperBound = value;
-        }
-    }
-
-    public Entity? XCollisionEntity
-    {
-        get => _XCollisionEntity;
-        set
-        {
-            if (Index == 0 && value == null)
-            {
-                //Breakpoint.TriggerBreak();
-            }
-
-            _XCollisionEntity = value;
-        }
-    }
-
-    public Entity? TouchingEntity
-    {
-        get => _TouchingEntity;
-        set
-        {
-            if (Index == 0 && value != null)
-            {
-                //Breakpoint.TriggerBreak();
-            }
-
-            _TouchingEntity = value;
-        }
-    }
 
     public int Index;
     public int Index2;
     public Entity? ChildEntity;
     public Entity? ParentEntity;
-    public int _Status;//0=destroyed,1=loaded,2=normal,3=deactivated,4=flagtodestroy,5=?
+    public int Status;//0=destroyed,1=loaded,2=normal,3=deactivated,4=flagtodestroy,5=?
     public int Hp;
     public int HpMax;
     public int FrameCounter;//1c
@@ -196,14 +32,14 @@ public class Entity
     public uint SpriteTableIndex;
     public uint Flags;//0x800000 = portrait,0x0100 = gravity,0xf = ?, 0x1 = ? , 0x80 = collidable
     public readonly int[] SpriteProgramIndexes = new int[6]; //70
-    public uint _TargetAnimationId; //88
-    public uint _TargetDirection;
+    public uint TargetAnimationId; //88
+    public uint TargetDirection;
     public uint CurrentAnimationId;
     public uint CurrentDirection;
     public int AnimationDirection;
     public AnimationSet? AnimationSet;
     public SiFrame? FirstFrame;
-    public SiFrame? _Frame;
+    public SiFrame? Frame;
     public int NextFrameDelay;
     public int ForceResetAnimationFlag;
     public int AnimCompleteCounter;
@@ -214,21 +50,21 @@ public class Entity
     public int PreviousAdjustedForceX;//?cc
     public int PreviousAdjustedForceY;//?d0
     public int ForceStepX, ForceStepY;//d4,d8
-    public int _AdjustedForceX, AdjustedForceY;//dc,e0
+    public int AdjustedForceX, AdjustedForceY;//dc,e0
     public int FinalForceX, FinalForceY, FinalForceZ;//e4,e8,ec
     public int Acceleration;//f0
     public int Speed;//f4
     public int IsZForceApplied;//this is probably named wrong, has to do with animation  f8
     public int ScreenClipX, ScreenClipY, ScreenClipZ;
     public int NegModX, NegModY, NegModZ;
-    public int _PosX; //114
+    public int PosX; //114
     public int PosY;
     public int PosZ;
     public int TileX;
     public int TileY;
     public int TileZ;
     public Entity? RidingEntity; //12c
-    public Entity? _XCollisionEntity;
+    public Entity? XCollisionEntity;
     public int FloorHeight;
     public int TerrainHeight;//
     public int ForceAdjusted;//0x13c
@@ -250,7 +86,7 @@ public class Entity
     public SpriteRef SpriteRef = new SpriteRef();//194
     public int SpriteSheetOffset, PaletteOffset;//represents offset where the pallets and sheets are in memory for map vs global sprites, prob not used with my engine
     public SpriteEffect? ActiveEffect;
-    public int _ZUpperBound;//1bc
+    public int ZUpperBound;//1bc
     public int RenderSortKey;//1c0
     public BalanceRecord? BalanceRecord;//1c4
     public BalanceAttack? CurrentAttack;//1c8
@@ -270,8 +106,8 @@ public class Entity
     public int CollisionDepth;//218
     public int CollisionHeight;//21c
     public int HitCounter;//220
-    public Entity? _TouchingEntity;//224
-    public int _EventTrigger;//228
+    public Entity? TouchingEntity;//224
+    public int EventTrigger;//228
     public int MapEventProgramId;//22c
     public Entity LogicContextEntity; //self
     public readonly EventProgramState EventProgramState = new();
@@ -284,21 +120,7 @@ public class Entity
 
     //used for animation
 
-    public int _AnimationFrameIndex;
-
-    public int AnimationFrameIndex
-    {
-        get => _AnimationFrameIndex;
-        set
-        {
-            if (Index == 0 && value == 0)
-            {
-                //Breakpoint.TriggerBreak();
-            }
-
-            _AnimationFrameIndex = value;
-        }
-    }
+    public int AnimationFrameIndex;
 
     public bool IsMapSprite { get; set; }
 
@@ -351,7 +173,7 @@ public class Entity
         AnimationDirection = other.AnimationDirection;
         AnimationSet = other.AnimationSet;
         FirstFrame = other.FirstFrame;
-        _Frame = other._Frame;
+        Frame = other.Frame;
         NextFrameDelay = other.NextFrameDelay;
         ForceResetAnimationFlag = other.ForceResetAnimationFlag;
         AnimCompleteCounter = other.AnimCompleteCounter;
@@ -501,7 +323,7 @@ public class Entity
         AnimationDirection = 0;
         AnimationSet = null;
         FirstFrame = null;
-        _Frame = null;
+        Frame = null;
         NextFrameDelay = 0;
         ForceResetAnimationFlag = 0;
         AnimCompleteCounter = 0;

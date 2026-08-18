@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using AlundraEngine.Balance;
+﻿using AlundraEngine.Balance;
 using AlundraEngine.DatasBin;
 using AlundraEngine.Gameplay.Scripts;
 
@@ -227,7 +226,7 @@ public class EntityManager
             currentFrame = animSet.PreloadedAnims[entity.AnimationDirection].Frames[entity.AnimationFrameIndex];
 
             entity.AnimationSet = animSet;
-            entity._Frame = currentFrame;
+            entity.Frame = currentFrame;
             entity.FirstFrame = currentFrame;
             entity.IsZForceApplied = animSet.IsZForceApplied;
 
@@ -257,13 +256,13 @@ public class EntityManager
 
             if (entity.AnimationFrameIndex == preloadedAnim.Frames.Length - 1)
             {
-                var lastFrame = entity._Frame;//preloadedAnim.Frames[entity.AnimationFrameIndex + 1];
+                var lastFrame = entity.Frame;//preloadedAnim.Frames[entity.AnimationFrameIndex + 1];
 
                 if (lastFrame.Delay == 1)
                 {
                     entity.AnimationFrameIndex = 0;
                     //_gameEngine.LogManager.Log(entity, $"{entity.TargetAnimationId}-{entity.TargetDirection >> 3} Reset loop frame {entity.AnimationFrameIndex}");
-                    entity._Frame = entity.FirstFrame;
+                    entity.Frame = entity.FirstFrame;
                     entity.AnimCompleteCounter++;
                 }
                 else if ((lastFrame.Delay & 0x80) == 0)
@@ -308,7 +307,7 @@ public class EntityManager
                 updateFrameIndex = false;
             }
 
-            entity._Frame = animSet.PreloadedAnims[entity.AnimationDirection].Frames[nextFrameIndex]; //currentFrame;
+            entity.Frame = animSet.PreloadedAnims[entity.AnimationDirection].Frames[nextFrameIndex]; //currentFrame;
 
             if (!updateFrameIndex && entity.AnimationFrameIndex == 0)
             {
@@ -354,7 +353,7 @@ public class EntityManager
             if (nextFrameIndex > anim.NumberOfFrames)
             {
                 nextFrameIndex = 0;
-                entity._Frame = entity.FirstFrame;
+                entity.Frame = entity.FirstFrame;
                 entity.AnimCompleteCounter++;
             }
 
