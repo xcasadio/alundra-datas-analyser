@@ -65,10 +65,6 @@ public static class ImageHelper
             int sheet = 0x8000;
             var dataBits = new byte[sheet];
             Array.Copy(src, dataBits, Math.Min(sheet, src.Length));
-            for (int i = 0; i < dataBits.Length; i++)
-            {
-                dataBits[i] = Bswap(dataBits[i]);
-            }
 
             return dataBits;
         }
@@ -86,7 +82,7 @@ public static class ImageHelper
                 byte dist = src[rhead++];
                 if (dist == 0)
                 {
-                    buffer[whead++] = Bswap(cur);
+                    buffer[whead++] = cur;
                 }
                 else
                 {
@@ -104,7 +100,7 @@ public static class ImageHelper
             }
             else
             {
-                buffer[whead++] = Bswap(cur);
+                buffer[whead++] = cur;
             }
         }
 
@@ -117,9 +113,6 @@ public static class ImageHelper
 
         return Array.Empty<byte>();
     }
-
-    // bswap utility (swap nibbles)
-    private static byte Bswap(byte x) => (byte)(((x << 4) | (x >> 4)) & 0xFF);
 
     public static Bitmap BitmapFromPsxBuff(byte[] imagedata, int width, int height, int bpp, Color[] pal)
     {
