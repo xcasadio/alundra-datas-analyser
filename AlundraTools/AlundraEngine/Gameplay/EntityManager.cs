@@ -374,7 +374,7 @@ public class EntityManager
             _gameEngine.StaticVariables.g_playerStats.Mp = _gameEngine.StaticVariables.g_playerStats.MpMax;
         }
 
-        if ((_gameEngine.StaticVariables.g_playerControlFlags & 0x48) == 0)
+        if ((_gameEngine.StaticVariables.g_playerControlFlags & PlayerControlFlags.GameplayBlockedMask) == 0)
         {
             UpdateDestroyedEntities();
             UpdateEntitiesEvents();
@@ -490,7 +490,7 @@ public class EntityManager
                     continue;
                 }
 
-                if ((otherEntity.AnimFlags & 0x40) != 0)
+                if ((otherEntity.AnimFlags & EntityAnimFlags.Invulnerable) != 0)
                 {
                     continue;
                 }
@@ -701,7 +701,7 @@ public class EntityManager
             }
 
             if ((entity.Flags & (EntityFlags.ClassA | EntityFlags.HitsClassB | EntityFlags.HitsClassA)) == 0
-                || (entity.AnimFlags & 0x10) != 0
+                || (entity.AnimFlags & EntityAnimFlags.NoShadow) != 0
                 || entity.PlatformEntity != null)
             {
                 effect.Status = 1;
@@ -991,7 +991,7 @@ public class EntityManager
             }
 
             //collidable
-            if ((entity.Flags & EntityFlags.Collidable) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.PlatformEntity == null)
+            if ((entity.Flags & EntityFlags.Collidable) != 0 && (entity.AnimFlags & EntityAnimFlags.NoEntityCollision) == 0 && entity.PlatformEntity == null)
             {
                 _gameEngine.StaticVariables.g_collideableEntities[_gameEngine.StaticVariables.g_collideableEntitiesCount++] = entity;
             }
@@ -1048,7 +1048,7 @@ public class EntityManager
 
         var sortValue = entity.PosY + (entity.SpriteRef.ImageDepthSortValue << 16);
 
-        if ((entity.Flags & EntityFlags.Collidable) != 0 && (entity.AnimFlags & 0x80) == 0)
+        if ((entity.Flags & EntityFlags.Collidable) != 0 && (entity.AnimFlags & EntityAnimFlags.NoEntityCollision) == 0)
         {
             if (entity.PlatformEntity != null)
             {

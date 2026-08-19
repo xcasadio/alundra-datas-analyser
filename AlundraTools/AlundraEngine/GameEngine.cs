@@ -1666,7 +1666,7 @@ public class GameEngine
     //8003c67c
     private void RunMapEvents()
     {
-        if ((StaticVariables.g_playerControlFlags & 0x48) != 0)
+        if ((StaticVariables.g_playerControlFlags & PlayerControlFlags.GameplayBlockedMask) != 0)
         {
             return;
         }
@@ -1841,7 +1841,7 @@ public class GameEngine
                 continue;
             }
 
-            if ((candidate.AnimFlags & 0x40) != 0)
+            if ((candidate.AnimFlags & EntityAnimFlags.Invulnerable) != 0)
             {
                 continue;
             }
@@ -1998,7 +1998,7 @@ public class GameEngine
 
                     if (ownerEntity.IsLoadedNormalOrDeactivated
                         && (entity.Flags & EntityFlags.Collidable) != 0
-                        && (entity.AnimFlags & 0x80) == 0
+                        && (entity.AnimFlags & EntityAnimFlags.NoEntityCollision) == 0
                         && entity.PlatformEntity == null)
                     {
                         StaticVariables.g_matchingEntitiesBuffer[matchCount++] = entity;

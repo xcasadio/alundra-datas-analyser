@@ -46,6 +46,7 @@ public class Entity
     public int NextFrameDelay;
     public int ForceResetAnimationFlag;
     public int AnimCompleteCounter;
+    /// <summary>Per-animation bits reloaded on each animation change; see <see cref="EntityAnimFlags"/>.</summary>
     public int AnimFlags;
     public int ForceZ;//rise/fall speed
     public int TargetForceX, TargetForceY;

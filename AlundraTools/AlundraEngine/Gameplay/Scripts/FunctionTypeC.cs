@@ -1857,7 +1857,7 @@ public static class FunctionTypeC
 
                     if (bVar1 != 0
                         && sVar3 == 0x47
-                        && (gameEngine.StaticVariables.g_playerControlFlags & 4U) == 0)
+                        && (gameEngine.StaticVariables.g_playerControlFlags & PlayerControlFlags.ControlLocked) == 0)
                     {
                         gameEngine.SoundManager.PlaySoundEffect(0xca);
                     }
@@ -4281,7 +4281,7 @@ public static class FunctionTypeC
                 Entity player = gameEngine.StaticVariables.PlayerEntity;
                 entity.AIValues[4] -= 1;
 
-                if (player.IsOnGround != 0 && (player.AnimFlags & 0x40) == 0)
+                if (player.IsOnGround != 0 && (player.AnimFlags & EntityAnimFlags.Invulnerable) == 0)
                 {
                     player.PreviousAdjustedForceX = gameEngine.StaticVariables.g_offsetXList[entity.Bytes[2]] * 0xC0;
                     player.PreviousAdjustedForceY = gameEngine.StaticVariables.g_offsetYList[entity.Bytes[2]] * 0xC0;
@@ -6930,7 +6930,7 @@ public static class FunctionTypeC
     private static void ResetWarpState(GameEngine gameEngine, Entity entity)
     {
         WriteWarpState(entity, 0);
-        gameEngine.StaticVariables.g_playerControlFlags &= 0xfffffffb;
+        gameEngine.StaticVariables.g_playerControlFlags &= ~PlayerControlFlags.ControlLocked;
     }
 
     private static int ReadWarpState(Entity e)
@@ -13386,7 +13386,7 @@ public static class FunctionTypeC
                         Entity entity2 = gameEngine.StaticVariables.g_entitySlots[slotIndex];
                         if ((slotIndex == 0 || entity2.SpriteTableIndex == 0x16A || entity2.SpriteTableIndex == 0x173)
                             && entity2.IsOnGround != 0
-                            && (entity2.AnimFlags & 0x40U) == 0
+                            && (entity2.AnimFlags & EntityAnimFlags.Invulnerable) == 0
                             && entity2.DamagedTickCounter == 0)
                         {
                             entity2.ForceStepY = 0;
@@ -15637,14 +15637,14 @@ SetAnim6:
             return;
         }
 
-        if ((gameEngine.StaticVariables.g_playerControlFlags & 0x20U) != 0)
+        if ((gameEngine.StaticVariables.g_playerControlFlags & PlayerControlFlags.ForcedSequence) != 0)
         {
             if (player.TouchingEntity == null)
             {
                 if (player.TargetAnimationId == 0x58 && player.IsOnGround != 0)
                 {
                     player.DamagedTickCounter = 0x78;
-                    gameEngine.StaticVariables.g_playerControlFlags &= 0xFFFFFFDFU;
+                    gameEngine.StaticVariables.g_playerControlFlags &= ~PlayerControlFlags.ForcedSequence;
                     player.TargetAnimationId = 0;
                 }
             }
@@ -15783,13 +15783,13 @@ SetAnim6:
                                     if (entity.TargetAnimationId != 4)
                                     {
                                         if (slotIndex == 0
-                                            && (entity2.AnimFlags & 0x40U) == 0
+                                            && (entity2.AnimFlags & EntityAnimFlags.Invulnerable) == 0
                                             && entity2.DamagedTickCounter == 0)
                                         {
                                             triggerFinalWarp = true;
                                             entity2.TargetAnimationId = 0x56;
                                             entity.TargetAnimationId = 4;
-                                            gameEngine.StaticVariables.g_playerControlFlags |= 0x20U;
+                                            gameEngine.StaticVariables.g_playerControlFlags |= PlayerControlFlags.ForcedSequence;
                                             entity.AIValues[1] = 0x9A;
                                             entity.AIValues[4] = 1;
                                             entity2.ForceStepY = 0;
@@ -16831,7 +16831,7 @@ SetAnim6:
                 continue;
             }
 
-            if ((candidate.AnimFlags & 0x40) != 0)
+            if ((candidate.AnimFlags & EntityAnimFlags.Invulnerable) != 0)
             {
                 continue;
             }
@@ -17080,7 +17080,7 @@ SetAnim6:
             player.PosX = entity.PosX;
             player.PosY = entity.PosY;
             player.TargetAnimationId = 0;
-            gameEngine.StaticVariables.g_playerControlFlags &= 0xFFFFFFDFU;
+            gameEngine.StaticVariables.g_playerControlFlags &= ~PlayerControlFlags.ForcedSequence;
             warpSlot.Phase = 0;
             return;
         }
@@ -17112,7 +17112,7 @@ SetAnim6:
                         spawnedEntity.TargetAnimationId = 0x11;
                         spawnedEntity.SpriteProgramIndexes[2] = 0;
                         spawnedEntity.Flags = (spawnedEntity.Flags | EntityFlags.HitsClassB) & ~EntityFlags.Collidable;
-                        player.AnimFlags &= unchecked((int)0xFFFFFFBF);
+                        player.AnimFlags &= ~EntityAnimFlags.Invulnerable;
                         entity.Bytes[2] = 1;
                     }
                     else if (player.DamagedTickCounter != 0)
@@ -17127,7 +17127,7 @@ SetAnim6:
             else if (player.TargetAnimationId == 0x4E && player.ForceResetAnimationFlag != 0)
             {
                 gameEngine.StaticVariables.g_scrollingParameters.Flag = 0;
-                gameEngine.StaticVariables.g_playerControlFlags &= 0xFFFFFFDFU;
+                gameEngine.StaticVariables.g_playerControlFlags &= ~PlayerControlFlags.ForcedSequence;
                 if (player.Hp != 0)
                 {
                     player.TargetAnimationId = 0;
@@ -17244,7 +17244,7 @@ SetAnim6:
                             }
 
                             if (overlapZ
-                                && (player.AnimFlags & 0x40) == 0
+                                && (player.AnimFlags & EntityAnimFlags.Invulnerable) == 0
                                 && player.DamagedTickCounter == 0
                                 && gameEngine.StaticVariables.WarpSlotState_ARRAY_801910a0[slotIndex ^ 1].Phase == 0)
                             {
@@ -17267,7 +17267,7 @@ SetAnim6:
 
                                 warpSlot.A1 = delta >> 5;
                                 player.TargetAnimationId = 0x56;
-                                gameEngine.StaticVariables.g_playerControlFlags |= 0x20U;
+                                gameEngine.StaticVariables.g_playerControlFlags |= PlayerControlFlags.ForcedSequence;
                                 player.Flags &= ~(EntityFlags.ClassB | EntityFlags.Gravity);
                                 warpSlot.Phase = 1;
                                 break;
@@ -17566,7 +17566,7 @@ SetAnim6:
         if (entity.AIValues[4] == 0)
         {
             if (relativePositions[0] < 9 && relativePositions[1] < 9 &&
-               (gameEngine.StaticVariables.g_playerControlFlags & 4U) == 0)
+               (gameEngine.StaticVariables.g_playerControlFlags & PlayerControlFlags.ControlLocked) == 0)
             {
                 gameEngine.SoundManager.PlaySoundEffect(0x1d6);
             }
@@ -17674,7 +17674,7 @@ SetAnim6:
         {
             if (relativePositions[0] < 4 && relativePositions[1] < 4 && relativePositions[5] < 1)
             {
-                if ((gameEngine.StaticVariables.g_playerControlFlags & 4U) == 0)
+                if ((gameEngine.StaticVariables.g_playerControlFlags & PlayerControlFlags.ControlLocked) == 0)
                 {
                     gameEngine.SoundManager.PlaySoundEffect(0x1d4);
                 }
@@ -17724,7 +17724,7 @@ SetAnim6:
 
                 if (entity.AIValues[4] == 0)
                 {
-                    if (relativePos[0] < 9 && relativePos[1] < 9 && (gameEngine.StaticVariables.g_playerControlFlags & 4U) == 0)
+                    if (relativePos[0] < 9 && relativePos[1] < 9 && (gameEngine.StaticVariables.g_playerControlFlags & PlayerControlFlags.ControlLocked) == 0)
                     {
                         gameEngine.SoundManager.PlaySoundEffect(0x192);
                     }

@@ -35,7 +35,7 @@ public class PlayerManager
             goto END;
         }
 
-        if ((_gameEngine.StaticVariables.g_playerControlFlags & 0x34U) != 0)
+        if ((_gameEngine.StaticVariables.g_playerControlFlags & PlayerControlFlags.InputBlockedMask) != 0)
         {
             CreatePlayerAnimationEffects(1);
             _gameEngine.StaticVariables.g_playerWarpTimer = 0;
@@ -43,7 +43,7 @@ public class PlayerManager
             UpdatePlayerCarriedEntity(1);
             AnimateWarpEffect();
 
-            if (_gameEngine.StaticVariables.g_playerControlFlags == 0x20)
+            if (_gameEngine.StaticVariables.g_playerControlFlags == PlayerControlFlags.ForcedSequence)
             {
                 dir = FindWarpFacingDirection();
 
@@ -142,7 +142,7 @@ public class PlayerManager
                             _gameEngine.StaticVariables.g_warpSoundEffectId = 0;
                             _gameEngine.StaticVariables.g_desiredMap = 0x1dd;
                             _gameEngine.StaticVariables.g_resetAnimationId = 0;
-                            _gameEngine.StaticVariables.g_playerControlFlags |= 4;
+                            _gameEngine.StaticVariables.g_playerControlFlags |= PlayerControlFlags.ControlLocked;
                             break;
                         }
 
@@ -1292,37 +1292,37 @@ public class PlayerManager
         } while (i < 0xc);
 
 
-        if (_gameEngine.StaticVariables.g_playerControlFlags == 0
+        // 80030c24 : l'original teste (flags & 0x7c) == 0 (et non == 0) et bascule dans le else,
+        // qui remet les compteurs a zero, des que les HP sont pleins ou nuls.
+        if ((_gameEngine.StaticVariables.g_playerControlFlags & PlayerControlFlags.HpRegenBlockedMask) == 0
             && _gameEngine.StaticVariables.PlayerEntity.BlockedByEntity == null
-            && _gameEngine.StaticVariables.g_padState1.ButtonsHold == 0)
+            && _gameEngine.StaticVariables.g_padState1.ButtonsHold == 0
+            && _gameEngine.StaticVariables.PlayerEntity.Hp != 0
+            && _gameEngine.StaticVariables.PlayerEntity.Hp < _gameEngine.StaticVariables.PlayerEntity.HpMax)
         {
-            if (_gameEngine.StaticVariables.PlayerEntity.Hp != 0
-                && _gameEngine.StaticVariables.PlayerEntity.Hp < _gameEngine.StaticVariables.PlayerEntity.HpMax)
+            for (i = 0; i < 3; i++)
             {
-                for (i = 0; i < 3; i++)
+                var balanceRecord2 = _gameEngine.StaticVariables.g_itemBalanceRecords[i].BalanceRecord;
+
+                if (balanceRecord2 != null && balanceRecord2.MaxHp != 0)
                 {
-                    var balanceRecord2 = _gameEngine.StaticVariables.g_itemBalanceRecords[i].BalanceRecord;
+                    _gameEngine.StaticVariables.INT_ARRAY_80126fe8[i]++;
 
-                    if (balanceRecord2 != null && balanceRecord2.MaxHp != 0)
-                    {
-                        _gameEngine.StaticVariables.INT_ARRAY_80126fe8[i]++;
-
-                        if (balanceRecord2.MaxHp <= _gameEngine.StaticVariables.INT_ARRAY_80126fe8[i])
-                        {
-                            _gameEngine.StaticVariables.INT_ARRAY_80126fe8[i] = 0;
-                            _gameEngine.StaticVariables.PlayerEntity.Hp++;
-                        }
-                    }
-                    else
+                    if (balanceRecord2.MaxHp <= _gameEngine.StaticVariables.INT_ARRAY_80126fe8[i])
                     {
                         _gameEngine.StaticVariables.INT_ARRAY_80126fe8[i] = 0;
+                        _gameEngine.StaticVariables.PlayerEntity.Hp++;
                     }
                 }
-
-                if (_gameEngine.StaticVariables.PlayerEntity.Hp > _gameEngine.StaticVariables.PlayerEntity.HpMax)
+                else
                 {
-                    _gameEngine.StaticVariables.PlayerEntity.Hp = _gameEngine.StaticVariables.PlayerEntity.HpMax;
+                    _gameEngine.StaticVariables.INT_ARRAY_80126fe8[i] = 0;
                 }
+            }
+
+            if (_gameEngine.StaticVariables.PlayerEntity.Hp > _gameEngine.StaticVariables.PlayerEntity.HpMax)
+            {
+                _gameEngine.StaticVariables.PlayerEntity.Hp = _gameEngine.StaticVariables.PlayerEntity.HpMax;
             }
         }
         else
@@ -2122,7 +2122,7 @@ public class PlayerManager
                     continue;
                 }
 
-                if ((entity.AnimFlags & 0x80) != 0)
+                if ((entity.AnimFlags & EntityAnimFlags.NoEntityCollision) != 0)
                 {
                     continue;
                 }
@@ -3385,7 +3385,7 @@ public class PlayerManager
                         }
                         else
                         {
-                            direction = (uint)(portal.Flags >> 14);
+                            direction = portal.RequiredFacingDirection;
                             ushort requiredInput = _gameEngine.StaticVariables.SHORT_ARRAY_80022776[direction];
 
                             if ((_gameEngine.StaticVariables.g_padState1.ButtonsHold & requiredInput) == 0
@@ -3445,7 +3445,7 @@ public class PlayerManager
                 return;
             }
 
-            direction = (uint)(portal.Flags >> 14);
+            direction = portal.RequiredFacingDirection;
             ushort requiredInput = _gameEngine.StaticVariables.SHORT_ARRAY_80022776[direction];
 
             if ((_gameEngine.StaticVariables.g_padState1.ButtonsHold & requiredInput) == 0)
@@ -3458,12 +3458,12 @@ public class PlayerManager
                 return;
             }
 
-            if ((portal.Flags & 0x3000) >> 12 > 3)
+            if (portal.ArrivalDirectionIndex > 3)
             {
                 Breakpoint.TriggerBreak();
             }
 
-            directionId = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 12];
+            directionId = _gameEngine.StaticVariables.g_cardinalDirectionTable[portal.ArrivalDirectionIndex];
         }
         else
         {
@@ -3473,12 +3473,12 @@ public class PlayerManager
                 return;
             }
 
-            if ((portal.Flags & 0x3000) >> 12 > 3)
+            if (portal.ArrivalDirectionIndex > 3)
             {
                 Breakpoint.TriggerBreak();
             }
 
-            directionId = _gameEngine.StaticVariables.g_cardinalDirectionTable[(portal.Flags & 0x3000) >> 12];
+            directionId = _gameEngine.StaticVariables.g_cardinalDirectionTable[portal.ArrivalDirectionIndex];
         }
 
         HandleWarpTransition(portal, 0x36, directionId);
@@ -3492,7 +3492,7 @@ public class PlayerManager
             return;
         }
 
-        _gameEngine.StaticVariables.g_mapTransitionEffectId = (portal.Flags & 0x70) >> 4;
+        _gameEngine.StaticVariables.g_mapTransitionEffectId = portal.TransitionEffectId;
 
         _gameEngine.StaticVariables.g_desiredMap = _gameEngine.StaticVariables.g_saveData.MapIdToInternalMapIndexTable[portal.DestMapId];
 
@@ -3508,7 +3508,7 @@ public class PlayerManager
         int targetCamY = (deltaY * StaticVariables.MapTileHeight + StaticVariables.MapTileHeight / 2) << 16;
         int targetCamZ = portal.ZLevel << 20;
 
-        _gameEngine.StaticVariables.g_warpSoundEffectId = (uint)_gameEngine.StaticVariables.g_warpBehaviorTable[portal.Flags & 0xF];
+        _gameEngine.StaticVariables.g_warpSoundEffectId = (uint)_gameEngine.StaticVariables.g_warpBehaviorTable[portal.WarpBehaviorId];
 
         if (_gameEngine.StaticVariables.g_mapTransitionEffectId == 3)
         {

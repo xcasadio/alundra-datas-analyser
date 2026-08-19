@@ -274,7 +274,7 @@ public class SpriteEventHandlers
         entity.Bytes[2] = 0;
         entity.Bytes[3] = 0;
         _gameEngine.StaticVariables.PlayerEntity.TargetAnimationId = 0;
-        _gameEngine.StaticVariables.g_playerControlFlags |= 4;
+        _gameEngine.StaticVariables.g_playerControlFlags |= PlayerControlFlags.ControlLocked;
     }
 
     //8007fc88

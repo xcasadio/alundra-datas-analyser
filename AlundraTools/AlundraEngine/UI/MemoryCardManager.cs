@@ -607,7 +607,7 @@ public class MemoryCardManager
                 {
                     _gameEngine.StaticVariables.g_isMemoryCopyInProgress = 1;
                     _gameEngine.StaticVariables.g_fadeFrame = 0;
-                    _gameEngine.StaticVariables.g_playerControlFlags |= 0x8;
+                    _gameEngine.StaticVariables.g_playerControlFlags |= PlayerControlFlags.MenuOpen;
 
                     string s0 = _gameEngine.EtcRes.GetEtcString(0x87);
                     string s1 = _gameEngine.EtcRes.GetEtcString(0x88);
@@ -1495,7 +1495,7 @@ public class MemoryCardManager
                 _gameEngine.StaticVariables.g_fadeFrame = 0;
                 _gameEngine.StaticVariables.g_isMemoryCopyInProgress = 0;
                 _gameEngine.StaticVariables.g_globalTransitionState = 0;
-                _gameEngine.StaticVariables.g_playerControlFlags = (uint)(_gameEngine.StaticVariables.g_playerControlFlags & ~0x8);
+                _gameEngine.StaticVariables.g_playerControlFlags &= ~PlayerControlFlags.MenuOpen;
                 return result;
 
             /* ------------------------------------------------------------ */

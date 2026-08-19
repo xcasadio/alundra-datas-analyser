@@ -123,7 +123,7 @@ public class EffectManager
                 continue;
             }
 
-            if ((_gameEngine.StaticVariables.g_playerControlFlags & 0x48) == 0)
+            if ((_gameEngine.StaticVariables.g_playerControlFlags & PlayerControlFlags.GameplayBlockedMask) == 0)
             {
                 if (effect.DestroyFlag != 0)
                 {

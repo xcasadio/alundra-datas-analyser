@@ -486,7 +486,7 @@ public static class FunctionTypeE
                             var entityTarget = gameEngine.StaticVariables.g_entitySlots[entityTargetIndex];
 
                             if (entity != entityTarget
-                                && (entityTarget.AnimFlags & 0x40) == 0
+                                && (entityTarget.AnimFlags & EntityAnimFlags.Invulnerable) == 0
                                 && entityTarget.BalanceRecord?.DamageResponses[5] == 0
                                 && (entityTarget.Flags & collisionMask) != 0)
                             {

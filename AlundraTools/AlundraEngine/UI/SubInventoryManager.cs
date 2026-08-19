@@ -25,7 +25,7 @@ public class SubInventoryManager
         _gameEngine.StaticVariables.TextToDisplay_8017f344.mode = 2;
         _gameEngine.StaticVariables.TextToDisplay_8017f344.tick = 0;
         _gameEngine.StaticVariables.TextToDisplay_8017f344.speed = 0xf;
-        _gameEngine.StaticVariables.g_playerControlFlags |= 8;
+        _gameEngine.StaticVariables.g_playerControlFlags |= PlayerControlFlags.MenuOpen;
         _gameEngine.StaticVariables.TextToDisplay_8017f344.x = (short)~(_gameEngine.StaticVariables.UIBoxConfiguration_800af664.Width << 3);
 
         if (_gameEngine.StaticVariables.UIBoxConfiguration_800af664.Y < 0)
@@ -371,7 +371,7 @@ public class SubInventoryManager
             if ((_gameEngine.StaticVariables.g_padState1.ButtonsJustPressedByInterval & PadState.OpenSubInventory) != 0)
             {
                 FUN_800526cc();
-                _gameEngine.StaticVariables.g_playerControlFlags |= 8;
+                _gameEngine.StaticVariables.g_playerControlFlags |= PlayerControlFlags.MenuOpen;
                 _gameEngine.MainInventoryManager.UpdateHudTransitionState();
                 _gameEngine.StaticVariables.g_postProcessState = 2;
             }
@@ -413,7 +413,7 @@ public class SubInventoryManager
 
                     if ((_gameEngine.StaticVariables.g_postProcessState & 2U) == 0)
                     {
-                        _gameEngine.StaticVariables.g_playerControlFlags &= 0xfffffff7;
+                        _gameEngine.StaticVariables.g_playerControlFlags &= ~PlayerControlFlags.MenuOpen;
                     }
 
                     _gameEngine.UIManager.FUN_80047cb0(callBackInfo);

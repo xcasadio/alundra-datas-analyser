@@ -1026,7 +1026,7 @@ public class UIManager
     {
         _gameEngine.UIManager.FUN_80047cb0(callBackInfo);
         _gameEngine.StaticVariables.g_dialog_flags = 0;
-        _gameEngine.StaticVariables.g_playerControlFlags &= 0xffffffe7;
+        _gameEngine.StaticVariables.g_playerControlFlags &= ~(PlayerControlFlags.MenuOpen | PlayerControlFlags.MessageBox);
     }
 
     
@@ -1190,7 +1190,7 @@ public class UIManager
         _gameEngine.StaticVariables.g_backgroundMessageAnimation.originY = _gameEngine.StaticVariables.g_uiBoxesInventoryDescriptionBackground.Y;
         
         _gameEngine.StaticVariables.g_dialog_flags = 5;
-        _gameEngine.StaticVariables.g_playerControlFlags |= (uint)(controlPlayer == 1 ? 0x10 : 0x8);
+        _gameEngine.StaticVariables.g_playerControlFlags |= controlPlayer == 1 ? PlayerControlFlags.MessageBox : PlayerControlFlags.MenuOpen;
 
         _gameEngine.StaticVariables.g_textPrimitives = 0;
         _gameEngine.StaticVariables.g_textHoldState_2 = 0;

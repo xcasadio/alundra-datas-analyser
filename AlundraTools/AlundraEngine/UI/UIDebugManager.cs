@@ -23,7 +23,7 @@ public class UIDebugManager
 
         _gameEngine.StaticVariables.UINT_8017e8d8 = 0xffffffff;
         _gameEngine.StaticVariables.SHORT_8017e8dc = 0;
-        _gameEngine.StaticVariables.g_playerControlFlags |= 8;
+        _gameEngine.StaticVariables.g_playerControlFlags |= PlayerControlFlags.MenuOpen;
         Array.Clear(_gameEngine.StaticVariables.SHORT_ARRAY_8017e8de);
 
         index = _gameEngine.StaticVariables.DAT_8017e998;
@@ -390,7 +390,7 @@ public class UIDebugManager
             } while (i < 5);
 
             _gameEngine.SoundManager.PlaySoundEffect(5);
-            _gameEngine.StaticVariables.g_playerControlFlags &= 0xfffffff7;
+            _gameEngine.StaticVariables.g_playerControlFlags &= ~PlayerControlFlags.MenuOpen;
             _gameEngine.UIManager.FUN_80047cb0(callBackInfo);
         }
     }

@@ -679,15 +679,14 @@ public class EntityEventHandlers
     // 8003D688
     public int Script_16_010(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        //dialog ??
-        _gameEngine.StaticVariables.g_playerControlFlags |= 4;
+        _gameEngine.StaticVariables.g_playerControlFlags |= PlayerControlFlags.ControlLocked;
         return 1;
     }
 
     // 8003D6A4
     public int Script_17_011(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.StaticVariables.g_playerControlFlags &= 0xfffffffb;
+        _gameEngine.StaticVariables.g_playerControlFlags &= ~PlayerControlFlags.ControlLocked;
         return 1;
     }
 
@@ -1250,7 +1249,7 @@ public class EntityEventHandlers
             var entity = _gameEngine.StaticVariables.g_entitySlots[i];
 
             if (entity.IsLoadedNormalOrDeactivated
-                && (entity.AnimFlags & 0x80U) != 0
+                && (entity.AnimFlags & EntityAnimFlags.NoEntityCollision) != 0
                 && (entity.Flags & EntityFlags.Collidable) == 0
                 && entity.PlatformEntity == null)
             {
@@ -3622,14 +3621,14 @@ public class EntityEventHandlers
     {
         //Breakpoint.TriggerBreak();
         _gameEngine.PlayerManager.SetPlayerWeaponId((ushort)(variables[1] + 1));
-        _gameEngine.StaticVariables.g_playerControlFlags |= 0x80;
+        _gameEngine.StaticVariables.g_playerControlFlags |= PlayerControlFlags.ForcedWeapon;
         return 2;
     }
 
     // 80041D18
     public int Script_193_0C1(Entity logicEntity, Entity ownerEntity, int[] variables, EventProgramState eventProgramState)
     {
-        _gameEngine.StaticVariables.g_playerControlFlags &= 0xffffff7f;
+        _gameEngine.StaticVariables.g_playerControlFlags &= ~PlayerControlFlags.ForcedWeapon;
         return 1;
     }
 

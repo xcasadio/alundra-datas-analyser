@@ -573,7 +573,7 @@ public static class AI_Melzas2
                 ScriptHelper.CalculateEntityRelativePosition(entity, gameEngine.StaticVariables.PlayerEntity, positions);
                 bVar1 = true;
 
-                if (((gameEngine.StaticVariables.g_playerControlFlags & 0x20U) == 0) && ((gameEngine.StaticVariables.g_temporaryFlags[0] & 2) != 0))
+                if (((gameEngine.StaticVariables.g_playerControlFlags & PlayerControlFlags.ForcedSequence) == 0) && ((gameEngine.StaticVariables.g_temporaryFlags[0] & 2) != 0))
                 {
                     if (direction - 6 < 0x15)
                     {

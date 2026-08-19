@@ -12812,7 +12812,7 @@ public class StaticVariables
     public int INT_800dc4ac; // 800DC4AC
     public int INT_800dc4b0; // 800DC4B0
     public int g_warpDelayFrames; // 800DC4B4
-    public uint g_playerControlFlags; // 800DC4B8
+    public uint g_playerControlFlags; // 800DC4B8, see PlayerControlFlags
     public int g_isWarpDisabled; // 800DC4C0
     public int g_isGameEnding; // 800DC4C4
     public int g_mapTransitionEffectId; // 800DC4C8

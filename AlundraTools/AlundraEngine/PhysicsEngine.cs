@@ -186,7 +186,7 @@ public static class PhysicsEngine
             platformTopZ = entity.TerrainHeight + 1;
         }
 
-        if ((entity.Flags & EntityFlags.Collidable) != 0 && (entity.AnimFlags & 0x80) == 0 && entity.PlatformEntity == null)
+        if ((entity.Flags & EntityFlags.Collidable) != 0 && (entity.AnimFlags & EntityAnimFlags.NoEntityCollision) == 0 && entity.PlatformEntity == null)
         {
             entityIndex = 0;
 
@@ -285,7 +285,7 @@ public static class PhysicsEngine
         }
 
         if ((entity.Flags & EntityFlags.Collidable) != 0
-            && (entity.AnimFlags & 0x80) == 0
+            && (entity.AnimFlags & EntityAnimFlags.NoEntityCollision) == 0
             && entity.PlatformEntity == null)
         {
             entityIndex = 0;
@@ -1181,7 +1181,7 @@ public static class PhysicsEngine
         }
 
         if ((entity.Flags & EntityFlags.Collidable) != 0
-            && (entity.AnimFlags & 0x80U) == 0
+            && (entity.AnimFlags & EntityAnimFlags.NoEntityCollision) == 0
             && entity.PlatformEntity == null
             && gameEngine.StaticVariables.g_collideableEntitiesCount > 0)
         {
@@ -1608,7 +1608,7 @@ public static class PhysicsEngine
             return collision;
         }
 
-        if ((entity.AnimFlags & 0x80) != 0)
+        if ((entity.AnimFlags & EntityAnimFlags.NoEntityCollision) != 0)
         {
             return collision;
         }
